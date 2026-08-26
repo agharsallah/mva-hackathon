@@ -1,0 +1,1396 @@
+=>Readme
+<h1 align="center">
+
+  🧬 Rare Disease, Real Kid: The MVA Hackathon 2026
+
+</h1>
+
+The genome and clinical story here belong to a real child living with Mosaic Variegated
+Aneuploidy (MVA), an ultra-rare genetic condition affecting fewer than 50 people worldwide.
+There is currently no established treatment, and care today means managing symptoms.
+
+The family has opened the case to the research community, hoping someone can find an answer.
+
+<h3 align="center">Help us understand MVA better!</h3>
+
+*The MVA Hackathon is not intended to provide general medical care, diagnosis, or professional medical advice.*
+
+=>ABOUT
+<main>
+
+  <section id="about" class="section">
+    <div class="container">
+      <p>
+        Every person's DNA contains millions of tiny variations, and almost all of them are harmless. But
+        every so often, one of those variations disrupts something important, and the result is a disease.
+        For many rare diseases, doctors and researchers recognize the symptoms but don't know the exact
+        genetic variations responsible for them.
+      </p>
+      <p>
+        This MVA Hackathon releases real genetic and clinical data, shared with full, explicit
+        permission from the family it belongs to, and asks the global research community to help make sense
+        of it.
+      </p>
+      <p>
+        Access to the data is controlled. The research outputs are open: participant
+        submissions, code, and reports are released under CC BY 4.0, so methods developed for this
+        case can be reused for other undiagnosed individuals.
+      </p>
+    </div>
+  </section>
+
+  <section id="story" class="section section-alt">
+    <div class="container story-container">
+      <div class="story-text">
+        <h2>Why This Hackathon Exists</h2>
+        <p>
+          Behind this project is a family who made a deeply personal decision: to share their child's most
+          private information - their genome - with strangers around the world, in the hope that someone,
+          somewhere, might help understand their child's rare condition.
+        </p>
+        <p>
+          Their child lives with <strong>Mosaic Variegated Aneuploidy (MVA)</strong>, a condition few
+          clinicians will ever encounter in their careers. There is currently no established treatment, but
+          the MVA Society is funding focused research to bring treatments closer. Care today means managing
+          symptoms and fighting cancer cells.
+        </p>
+      </div>
+      {story_figure}
+    </div>
+  </section>
+
+  <section id="tracks" class="section">
+    <div class="container">
+      <h2>Two Tracks</h2>
+      <div class="card-grid">
+
+        <div class="info-card track-card">
+          <h3>🧬 Track 1 - Variant Prediction</h3>
+          <div class="track-goal">
+            <strong>The Goal:</strong> Predict the specific genetic variant(s) that may be driving the child's
+            condition using their clinical symptoms and genomic data.
+          </div>
+          <p>
+            You'll be given the child's genomic data (FASTQ + VCF) and a description of their symptoms, and asked to
+            predict which specific variant(s) may be causing the condition. Secondary or incidental findings are
+            welcome too.
+          </p>
+          <p>
+            Your ranked predictions are automatically checked against the clinically confirmed answer
+            and your score updates live on the public leaderboard.
+          </p>
+          <ul class="note-small">
+            <li>What you submit: A ranked list of variant predictions, a Github link, and a methods writeup.</li>
+            <li>Submission limit: 6</li>
+          </ul>
+          <span class="sub-heading">Scoring</span>
+          <p>
+            Track 1 is scored automatically on two primary metrics:
+          </p>
+          <ul>
+            <li><strong>Rank points</strong> - How high did you rank the true variant(s). If your top-ranked
+            variant(s) is correct, you'll get 100pts. If you get the correct variant(s) within your top 10
+            ranked ones, you'll get partial credit. If you correctly identify one of the two variants in a
+            heterozygous pair, you'll get half credit.</li>
+            <li><strong>F-max</strong> - the best balance of precision and recall your submission achieves at
+            any confidence threshold, rewarding submissions that pinpoint the right answer without burying it
+            in noise. Secondary or incidental findings won't hurt your automated score.</li>
+          </ul>
+        </div>
+
+        <div class="info-card track-card">
+          <h3>💊 Track 2 - Drug Repurposing</h3>
+          <div class="track-goal">
+            <strong>The Goal:</strong> Identify existing, approved medications that are plausible
+            candidates for further investigation, based on the biological mechanisms disrupted in this
+            case. Submissions are hypotheses for follow-up, not evidence that a medicine works.
+          </div>
+          <p>
+            Once you know (or have a strong guess at) what biological mechanisms are involved, the next question
+            is: Does an existing medication work on this biological problem? 
+          </p>
+          <p>
+            For this track, you'll characterize the mechanism behind the variant(s) and write up your reasoning
+            and proposed candidate medication(s). An independent panel of expert judges evaluates submissions on
+            scientific merit and real-world potential.
+          </p>
+          <ul class="note-small">
+            <li>What you submit: A detailed report, a Github link, and a 3-minute pitch video</li>
+            <li>Submission limit: 1</li>
+          </ul>
+          <span class="sub-heading">Scoring</span>
+          <p>
+            Track 2 is scored by our expert panel across four weighted criteria:
+          </p>
+          <!-- Hiding for now, I dont think it adds much value
+          <div class="criteria-stacked-bar" aria-hidden="true">
+            <div class="csb-seg" style="--w:35%; --c:#1f9bea" data-tip="Scientific Rigor - 35%"></div>
+            <div class="csb-seg" style="--w:25%; --c:#59c959" data-tip="Potential Impact - 25%"></div>
+            <div class="csb-seg" style="--w:25%; --c:#7b5ea7" data-tip="Innovation - 25%"></div>
+            <div class="csb-seg" style="--w:15%; --c:#e0509a" data-tip="Scalability - 15%"></div>
+          </div>
+          -->
+          <div class="criteria-list">
+            <div class="criterion">
+              <div class="criterion-label">
+                <span>
+                  <span class="criterion-swatch" style="--c:#1f9bea"></span>
+                  <strong>Scientific Rigor</strong>
+                </span>
+                <strong>35%</strong>
+              </div>
+              <p class="criterion-desc">
+                Is the variant mechanism characterization sound, and is the proposed drug repurposing
+                candidate well-supported by that mechanism?
+              </p>
+            </div>
+            <div class="criterion">
+              <div class="criterion-label">
+                <span>
+                  <span class="criterion-swatch" style="--c:#59c959"></span>
+                  <strong>Potential Impact</strong>
+                </span>
+                <strong>25%</strong>
+              </div>
+              <p class="criterion-desc">
+                If independently validated, how much could this contribute to understanding or
+                diagnosing MVA, for this child or for others living with it?
+              </p>
+            </div>
+            <div class="criterion">
+              <div class="criterion-label">
+                <span>
+                  <span class="criterion-swatch" style="--c:#7b5ea7"></span>
+                  <strong>Innovation</strong>
+                </span>
+                <strong>25%</strong>
+              </div>
+              <p class="criterion-desc">
+                Did you bring a genuinely creative angle, method, or tool to the problem?
+              </p>
+            </div>
+            <div class="criterion">
+              <div class="criterion-label">
+                <span>
+                  <span class="criterion-swatch" style="--c:#e0509a"></span>
+                  <strong>Scalability</strong>
+                </span>
+                <strong>15%</strong>
+              </div>
+              <p class="criterion-desc">
+                Could your approach realistically be applied to other individuals, other diseases, or larger
+                datasets - not just this one case?
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="prizes" class="section">
+    <div class="container">
+      <h2>Prizes</h2>
+      <p>
+        <strong>$50,000 total</strong> - $25,000 in cash from the AWS Imagine Grant program + $25,000 in Claude credits from Anthropic*.
+      </p>
+      <div class="prize-grid">
+        <div class="prize-card gold">
+          <div class="prize-place">🥇 1st Place</div>
+          <div class="prize-amount">1x $12,000 cash</div>
+          <div class="prize-amount">1x $12,000 credits</div>
+        </div>
+        <div class="prize-card silver">
+          <div class="prize-place">🥈 2nd Place</div>
+          <div class="prize-amount">1x $7,000 cash</div>
+          <div class="prize-amount">1x $7,000 credits</div>
+        </div>
+        <div class="prize-card bronze">
+          <div class="prize-place">🥉 3rd Place</div>
+          <div class="prize-amount">1x $4,000 cash</div>
+          <div class="prize-amount">1x $4,000 credits</div>
+        </div>
+        <div class="prize-card special">
+          <div class="prize-place">🌟 Innovation</div>
+          <div class="prize-amount">1x $2,000 cash</div>
+          <div class="prize-amount">1x $2,000 credits</div>
+        </div>
+      </div>
+      <p class="note-small"><em>
+        *Anthropic credits are provided for use with Claude Science, intended to help winning teams deepen
+        their computational analysis and extend their findings on MVA beyond the Hackathon itself, not as a
+        cash-equivalent award.
+      </em></p>
+    </div>
+  </section>
+
+  <section id="how-to-participate" class="section section-alt">
+    <div class="container">
+      <h2>How to Participate</h2>
+      <p>
+        Anyone can join, and no previous hackathon experience is needed. The tracks are built for a
+            mix of backgrounds: ML engineers and computational biologists, clinicians and geneticists,
+            students and citizen scientists.
+      </p>
+      <ol class="steps">
+        <li>
+          <span class="step-num">1</span>
+          <div>
+            <strong>Sign in</strong>
+            <p>
+              Log in with your Hugging Face account. Don't have one? <a href="https://huggingface.co/join" target="_blank" rel="noopener">Create one for free</a>.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">2</span>
+          <div>
+            <strong>Get the data</strong>
+            <p>
+              Because the data comes from a real person, you must first request access. Fill out the
+              short form on the <a href="{DATASET_URL}" target="_blank" rel="noopener">dataset page</a>
+              confirming you understand and agree to the data usage rules. The data is shared under a
+              protocol approved by WCG IRB (protocol #20252010).
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">3</span>
+          <div>
+            <strong>Choose your track</strong>
+            <p>
+              Decide whether you want to try identifying the causal variant (Track 1), propose a
+              repurposed medication (Track 2), or take on both - many teams do. You don't need to
+              finish one to start the other.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">4</span>
+          <div>
+            <strong>Build and submit</strong>
+            <p>
+              Work through the data at your own pace using whatever tools, software, or methods you prefer.
+              When ready, navigate to the "Submit - Track 1" or "Submit - Track 2" tabs for instructions and
+              submission guidelines.
+            </p>
+          </div>
+        </li>
+        <li>
+          <span class="step-num">5</span>
+          <div>
+            <strong>Join the community</strong>
+            <p>
+              Have questions or want to connect with other participants? Join the conversation on the
+              <a href="{DISCUSSIONS_URL}" target="_blank" rel="noopener">Community page</a>.
+            </p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+<section id="timeline" class="section">
+  <div class="container">
+    <h2>Timeline</h2>
+    <p>
+      Dates are subject to change. Any updates to key milestones will be reflected in this table
+      posted to the <a href="{DISCUSSIONS_URL}" target="_blank" rel="noopener">Community page</a>.
+    </p>
+    <table class="timeline-table">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Milestone</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>August 24</td>
+          <td>Hackathon launch; dataset available for request and download</td>
+        </tr>
+        <tr>
+          <td>August 25</td>
+          <td>Submissions open</td>
+        </tr>
+        <tr>
+          <td>October 24 (23:59 UTC)</td>
+          <td>Submissions close; Track 1 leaderboard frozen</td>
+        </tr>
+        <tr>
+          <td>October 24 - November 24</td>
+          <td>Track 1 qualitative evaluation; Track 2 expert panel judging</td>
+        </tr>
+        <tr>
+          <td>November 25</td>
+          <td>Winners announced; prizes awarded</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section id="acknowledgements" class="section section-alt">
+  <div class="container">
+    <h2>Acknowledgements</h2>
+    <p>
+      We are deeply grateful to the child and their family who chose to share their genomic data openly
+      with the research community. This hackathon would not exist without their generosity and trust.
+    </p>
+    <p>
+      This hackathon was organized in partnership with
+          <a href="https://sagebionetworks.org" target="_blank" rel="noopener">Sage Bionetworks</a>,
+          the <a href="https://mvasociety.org" target="_blank" rel="noopener">MVA Society</a>,
+          <a href="https://huggingface.co" target="_blank" rel="noopener">Hugging Face</a>,
+          and <a href="https://conscience.ca/beacon/" target="_blank" rel="noopener">BEACON</a>
+          (The Benchmarking, Evaluation, and Assessment Consortium for Science),
+          with prize sponsorship from
+          <a href="https://aws.amazon.com" target="_blank" rel="noopener">AWS</a>
+          and <a href="https://www.anthropic.com" target="_blank" rel="noopener">Anthropic</a>.
+        </p>
+    <p>
+      We thank the <a href="https://wilhelmfoundation.org" target="_blank" rel="noopener">Wilhelm Foundation</a>
+      for their guidance and insight on this project.
+    </p>
+  </div>
+</section>
+
+  <div class="back-to-top-row">
+    <a class="back-to-top" href="javascript:void(0)" onclick="document.getElementById('page-top').scrollIntoView({{behavior:'smooth'}})">↑ Back to top</a>
+  </div>
+
+</main>
+
+
+
+=>FAQ
+FAQ_ITEMS = [
+    (
+        "Who can participate?",
+        "Anyone with a Hugging Face account can participate - data scientists, ML engineers, clinicians, "
+        "students, and citizen scientists alike. You must be at least 18 years old. See the **Official Rules** "
+        "tab for details.",
+    ),
+    (
+        "Can I participate in both tracks?",
+        "Yes. Track 1 and Track 2 are scored independently. You can submit to one or both.",
+    ),
+    (
+        "Can I participate as a team?",
+        "Yes.\n\nEach team member must register individually with their own Hugging Face account. For Track 1, each "
+        "team member may submit independently and your best score counts. For Track 2, designate one person to submit "
+        "on the team's behalf - only one Track 2 submission per team is accepted, and additional submissions from "
+        "other team members will be ignored.",
+    ),
+    (
+        "How is Track 1 scored?",
+        "Submissions are scored the way large-scale rare disease benchmarks (like Stenton et al., 2024) score solved "
+        "cases applied to this single, clinically confirmed answer.\n\nTwo metrics are computed automatically: **rank points** "
+        "(based on how high the true variant(s) land in your ranked list, with partial credit if you recover only one of "
+        "two compound-heterozygous variants) and **F-max** (the best precision/recall balance across your submitted"
+        "confidence thresholds).",
+    ),
+    (
+        "Are secondary or incidental findings scored?",
+        "They won't hurt your automated Track 1 score — include them as additional rows if you'd like. They're set aside "
+        "for qualitative review by the judging panel rather than folded into the automated rank points/F-max calculation, "
+        "since there's no fixed \"correct\" answer for secondary findings the way there is for the primary causal variant.\n\n"
+        "Use the optional `notes` column to briefly explain why you're flagging it (e.g. \"well-established pathogenic "
+        "variant, unrelated to primary phenotype, recommend clinical follow-up\")",
+
+    ),
+    (
+        "How is Track 2 scored?",
+        "Reports are reviewed by an independent panel, and will be judged on scientific rigor, potential impact, innovation, "
+        "and scalability.",
+    ),
+    (
+        "How many submissions can I make?",
+        "Track 1 allows up to **6 submissions** per participant; only your highest-scoring submission appears on the "
+        "leaderboard. Track 2 accepts **one final submission** per participant. No re-submissions allowed, so make "
+        "them count.",
+    ),
+    (
+        "What compute resources are available?",
+        "This Space runs on CPU-basic hardware. You are welcome to use your own compute for training, as only "
+        "the final submission files need to be uploaded here.",
+    ),
+    (
+        "What is the data license?",
+        "The underlying dataset is **gated** and subject to the terms of the Hackathon Rules and Data Transfer Agreement "
+        "- access requires approval, redistribution is prohibited, and all data must be deleted upon conclusion of the "
+        "Hackathon.\n\nParticipant submissions and results (predictions, code, reports) are released under **CC BY 4.0** and "
+        "may be reused with attribution.",
+    ),
+    (
+        "When will results be announced?",
+        "Final rankings will be announced after the ~2-3 month judging window closes. The exact date will be posted in the "
+        f"[Community tab]({DISCUSSIONS_URL}).",
+    ),
+    (
+        "I have a question not answered here.",
+        f"Post in the [Discussions tab]({DISCUSSIONS_URL}) and the community or organizers will respond!",
+    ),
+]
+
+
+=>LEADERBOARD
+LEADERBOARD_MD = """
+## Track 1 Leaderboard
+
+Rankings update automatically as valid Track 1 submissions are scored. Only your team's highest-scoring
+submission is displayed.
+
+**Metrics:** Rank Points & F-max (adapted from _Stenton et al., 2024_)
+"""
+
+
+
+=>RULES
+RULES_MD = """
+## Official Rules
+
+To participate in this Hackathon, you must review and accept the following terms. Please read carefully and proceed
+only if you agree to comply with the conditions below.
+
+---
+
+### Terms of Service & Eligibility
+- You must abide by the [Hugging Face Terms of Service](https://huggingface.co/terms-of-service) and by these Hackathon
+  Rules.
+- You must be 18 years of age or older to participate.
+- Each member of your Hackathon team must individually register as a participant and agree to these Hackathon Rules.
+
+---
+
+### Data Privacy & Recontact Restrictions
+- You agree that you will not attempt to recontact the data subject, data subject family members, or any points of
+  contact at the MVA Society.
+- Your use of the data will comply with all applicable laws, rules, regulations, and professional standards.
+- If any unauthorized disclosure of the data occurs or is suspected, you agree to contact Sage Bionetworks' Privacy and
+  Compliance Office via Sage's Help Center.
+- You will not release or otherwise grant data access to anyone, and you will establish appropriate safeguards to
+  prevent unauthorized data use.
+
+---
+
+### Hackathon Flow:
+
+1. <u>Registration:</u>  Participants must register with Hugging Face and request access to the data, including a valid
+  email address and attestation to accepting these Hackathon Rules.
+
+2. <u>Hackathon Tasks:</u> The Hackathon consists of two tasks:
+   - Track 1 - Variant Identification: identify the disease-causing variant(s) using genetic variant information and
+     phenotypic presentations.
+   - Track 2 - Drug Repurposing: leveraging the genetic information and variant prediction from Task 1, identify
+     existing market-approved medications whose mechanism of action may target the disease-causing pathway(s).
+
+3. <u>Team Formation:</u> Teams are not required. Participants may form teams based on skills and interests.
+
+4. <u>Data and Resource Provision:</u>
+    - File types: genomic data in VCF format; raw sequencing data optionally in BAM/CRAM. Phenotypic data as
+      standardized HPO terms.
+    - Data size: ~85 GB (single-subject dataset).
+    - Access: participants request access via Hugging Face's gated-dataset mechanism. No data may be reshared through
+      any channel.
+    - Compute: participants are responsible for their own compute environment and any associated costs.
+
+
+5. <u>Development and Prototyping:</u>
+    * Teams work intensively to develop a prototype or solution that addresses the Hackathon.
+    * This involves brainstorming, coding, data analysis, and design.
+
+6. <u>Data Deletion:</u>
+    - Data retention after the Hackathon is not permitted for any purpose.
+    - All data must be deleted within 30 days of Hackathon close from all environments (local machines, cloud instances,
+      notebooks, private repos, and any intermediate or derived datasets).
+    - <mark>All participants must email RarediseaserealkidMVAhackathon2026@synapse.org to confirm data has been deleted.
+      **If you do not contact us, we may contact you directly in 30 days**</mark>
+
+7. <u>Presentations & Judging:</u>
+    - Each team's submission includes a written report, a GitHub repository, and a 3-minute recorded pitch video.
+    - A panel of expert judges - researchers, clinicians, and patient advocates - will review all Track 2 submissions.
+    - Judging takes place over approximately 2-3 months following submission close.
+    - Presentations are pre-recorded; there is no live Q&A round.
+
+8. <u>Evaluation and Outcome:</u>
+    - Track 1 - Variant Prediction (automated): scored automatically against the NHS-validated causal variant(s) using
+      rank points and F-max.
+    - Track 2 - Drug Repurposing (panel-judged):
+        * Scientific Rigor (35%)
+        * Potential Impact (25%)
+        * Innovation (25%)
+        * Scalability (15%)
+
+9. <u>Prizes:</u>
+    The total prize pool is $50,000, sponsored by the AWS Imagine Grant program and Anthropic:
+      * 🥇 1st Place: $12,000 cash + $12,000 Claude credits
+      * 🥈 2nd Place: $7,000 cash + $7,000 Claude credits
+      * 🥉 3rd Place: $4,000 cash + $4,000 Claude credits
+      * 🌟 Innovation/Community Award: $2,000 cash + $2,000 Claude credits
+      
+      The Innovation/Community Award will be awarded at the judges' discretion to a submission demonstrating
+      exceptional creativity, community impact, or patient-centered design, independent of overall placement
+
+10. <u>Research Progress & Post-Hackathon Data Handling:</u>
+    - Participants may publish and present on Hackathon results, subject to the embargo policy below.
+    - All data must be deleted from participants' systems within 30 days of Hackathon close.
+    - Anonymized results remain available to the research community via Synapse and/or Hugging Face after the Hackathon
+      ends.
+    - Submissions are released under a CC-BY license.
+
+11. <u>Embargo Policy:</u>
+    - The embargo period begins at Hackathon close and ends upon public posting of the hackathon summary report or
+      preprint by the organizing team.
+    - During the embargo period, participants may not submit manuscripts for peer-reviewed publication that use the
+      hackathon dataset.
+    - Participants are free to publicly share their code, models, and derived outputs at any time.
+    - Participants may present preliminary findings in conference abstracts or posters with prior written approval from
+      the organizers.
+
+---
+
+### Submission Reuse:
+
+By registering, participants acknowledge that submissions may be rerun by the Hackathon organizers. Submissions are
+subject to a CC-BY license, and your name will be shared as part of the open-access attribution.
+
+---
+
+### Recontact:
+
+By providing your email address and participating, you consent to being recontacted by the Hackathon organizers for
+purposes related to the Hackathon.
+
+---
+
+### Post-Hackathon Information Sharing:
+
+All submitted results will be accessible to the broader research community to foster collaboration and innovacation.
+Leading submissions may be prominently featured on the Hugging Face, Sage Bionetworks, or various Synapse-based websites,
+ensuring visibility and recognition for impactful contributions. Additionally, follow-up activities such as blog posts,
+video recaps, and social media highlights will showcase key submissions and behind-the-scenes moments. This open-access
+approach ensures that the knowledge generated benefits the broader research community while inspiring future advancements
+in rare disease research.
+
+---
+
+## Citation and Acknowledgement:
+
+Any publication, preprint, conference abstract, or public communication arising from participation in this Hackathon
+must include the following acknowledgement:
+
+> _"This work was made possible through the Hackathon, organized by Sage Bionetworks in partnership with the MVA_
+> _Society, Hugging Face, and BEACON (The Benchmarking, Evaluation, and Assessment Consortium for Science), with prize_
+> _sponsorship from AWS and Anthropic. We are deeply grateful to the child and their family who generously contributed_
+> _their data and their story to advance research into this rare disease. We acknowledge their trust in making this_
+> _Hackathon possible."_
+
+In addition, participants must observe the following requirements:
+
+* **Data subject privacy** - Any publication referencing the underlying individual-level data must not include any information
+  that could re-identify the data subject or their family, beyond what is already publicly available through the
+  family's own blog posts and public communications.
+* **Dataset citation** - The Hackathon dataset must be cited using the reference provided on the Hackathon Synapse page
+  at the time of publication.
+"""
+
+
+
+
+
+=>TRACK1_SUBMIT
+"""Submit tab for Track 1."""
+
+from __future__ import annotations
+
+import os
+import tempfile
+import traceback
+from datetime import datetime, timezone
+from pathlib import Path
+
+import gradio as gr
+
+from config import MAX_TRACK1_SUBMISSIONS
+from evaluation import load_submission, score_proband
+from groundtruth import load_groundtruth
+from utils import (
+    append_submission,
+    get_hf_username,
+    hf_username_to_display_slug,
+    submissions_by_user,
+)
+
+# Loaded once at startup (from private HF dataset if HF_TOKEN is set, else local fallback)
+_GT = load_groundtruth()
+
+INTRO_MD = f"""
+Upload your Track 1 predictions file below to receive instant evaluation against the confirmed clinical groundtruth.
+
+You are allowed up to <u>{MAX_TRACK1_SUBMISSIONS} submissions</u>; only your highest-scoring submission will be
+featured on the leaderboard.
+
+**Team Participation:** Each member receives their own submission quota; coordinate with your teammates to avoid
+using submissions unnecessarily, and ensure everyone uses the exact same team name so your entries group
+together on the leaderboard.
+"""
+
+INSTRUCTIONS_MD = """
+### 1. Create your predictions file.
+
+One row per proposed causal variant (or compound-het pair). Rank your predictions by your own estimated probability
+of causal relationship (EPCR), where 1 is most likely causal and 0 is least likely. There is no fixed "confident enough"
+cutoff, as only your ranking relative to your own guesses matters for scoring. Coordinates must use GRCh38.
+
+**Up to 10 candidate rows accepted**. This is one case, not a cohort, so we're asking for your best-ranked guesses, not
+an exhaustive list. Flag whether each row is your primary candidate or a secondary/incidental finding using the `finding_type`
+column. Secondary or incidental findings won't hurt your automated score - include them if you want them considered.
+
+| Field | Type | Description |
+|---|---|---|
+| `proband_id` | string | Proband identifier (provided in the dataset) |
+| `chrom_1` | string | Chromosome of the first (or only) variant (e.g. `chr15`) |
+| `pos_1` | integer | GRCh38 base-pair position of the first variant |
+| `ref_1` | string | Reference allele of the first variant |
+| `alt_1` | string | Alternate allele of the first variant |
+| `chrom_2` | string | Chromosome of the second variant (if any); compound-het pairs only, blank otherwise |
+| `pos_2` | integer | GRCh38 base-pair position of the second variant (blank if not applicable) |
+| `ref_2` | string | Reference allele of the second variant (blank if not applicable) |
+| `alt_2` | string | Alternate allele of the second variant (blank if not applicable) |
+| `epcr` | float | Estimated probability of causal relationship, (0, 1] |
+| `finding_type` | string | `primary` or `secondary` |
+| `notes` | string | Optional - brief rationale, especially for secondary findings. For example, findings unrelated to the primary condition, but still worth surfacing |
+
+When saving your predictions file, please include your username (or team name) in the filename, as well as a 
+short descriptive name for your model or approach. For example, if your HF username is `jane-doe`, you might
+name your predictions file:
+
+* `jane-doe_gatk-haplotype.csv`
+* `jane-doe_deepvariant-v2.csv`
+
+### 2. Write your report.
+
+Each model must include a brief report (PDF or Markdown) describing your approach, rationale, and any supporting evidence.
+This is required for judging, but is not scored automatically.
+
+Not sure what details to include? Please use the provided methods description template to organize your analysis, then
+export your report as a PDF or Markdown file for submission.
+
+When saving your report, please include your username (or team name) in the filename. For example, if your HF username
+is `jane-doe`, you might name your report file:
+
+* `jane-doe_track1_report.pdf` (`.md` also accepted)
+
+### 3. Prepare other supporting materials.
+
+* Push documented, reproducible code to a public GitHub repository.
+
+### 4. After submission:
+
+Your CSV submission is evaluated automatically using rank points and F-max against the clinically confirmed
+answer on the leaderboard.
+
+Your method(s) will be reviewed separately as part of the judging criteria (e.g. innovation and scalability).
+"""
+
+
+def _score_csv_bytes(csv_bytes: bytes) -> tuple:
+    """Write bytes to a temp file, run the scorer, return (ScoreResult, proband_id)."""
+    with tempfile.NamedTemporaryFile(suffix=".csv", delete=False, mode="wb") as tmp:
+        tmp.write(csv_bytes)
+        tmp_path = tmp.name
+    try:
+        submissions = load_submission(tmp_path)
+        if not submissions:
+            raise ValueError("No valid rows found in the CSV.")
+        proband_id = next(iter(submissions))
+        true_variants = _GT.get(proband_id)
+        if true_variants is None:
+            raise ValueError(
+                f"Unknown proband_id '{proband_id}'. "
+                "Only PROBAND01 is accepted in this challenge."
+            )
+        result = score_proband(proband_id, submissions[proband_id], true_variants)
+        return result, proband_id
+    finally:
+        os.unlink(tmp_path)
+
+
+def _handle_submit(display_name_input: str, github_url: str, report_file, csv_file, request: gr.Request, oauth_profile: gr.OAuthProfile | None = None) -> tuple:
+    """Gradio callback - returns (feedback_md, quota_md)."""
+    hf_username = get_hf_username(request, oauth_profile)
+    if not hf_username:
+        return "⚠️ Please sign in with your Hugging Face account to submit.", ""
+
+    display_name = (display_name_input or "").strip() or hf_username_to_display_slug(hf_username)
+
+    github_url = (github_url or "").strip()
+    if not github_url.startswith("https://github.com/"):
+        return "⚠️ GitHub URL must start with `https://github.com/`.", _quota_status(request)
+
+    if report_file is None:
+        return "⚠️ Please upload your report (PDF or Markdown).", _quota_status(request)
+    report_path = report_file if isinstance(report_file, str) else report_file.name
+    if Path(report_path).suffix.lower() not in {".pdf", ".md"}:
+        return "⚠️ Report must be a PDF (.pdf) or Markdown (.md) file.", _quota_status(request)
+    report_filename = Path(report_path).name
+
+    if csv_file is None:
+        return "⚠️ Please upload a CSV file.", _quota_status(request)
+
+    csv_path = csv_file if isinstance(csv_file, str) else csv_file.name
+    csv_filename = Path(csv_path).name
+    if Path(csv_path).suffix.lower() != ".csv":
+        return "⚠️ File must be a CSV (.csv).", _quota_status(request)
+
+    count = submissions_by_user(hf_username)
+    if count >= MAX_TRACK1_SUBMISSIONS:
+        return (
+            f"⚠️ You have already used all {MAX_TRACK1_SUBMISSIONS} submissions. "
+            "Only your best-scoring submission counts toward final ranking.",
+            _quota_status(request),
+        )
+    model_n = count + 1
+
+    try:
+        if isinstance(csv_file, str):
+            csv_bytes = Path(csv_file).read_bytes()
+        else:
+            csv_bytes = csv_file.read() if hasattr(csv_file, "read") else Path(csv_file.name).read_bytes()
+    except Exception as e:
+        return f"⚠️ Could not read uploaded file: {e}", _quota_status(request)
+
+    try:
+        result, proband_id = _score_csv_bytes(csv_bytes)
+    except Exception as e:
+        tb = traceback.format_exc()
+        return (
+            f"❌ **Scoring error:** {e}\n\n"
+            f"<details><summary>Technical details</summary>\n\n```\n{tb}\n```\n</details>",
+            _quota_status(request),
+        )
+
+    entry = {
+        "hf_username": hf_username,
+        "display_name": display_name,
+        "filename": f"model{model_n}_{csv_filename}",
+        "github_url": github_url,
+        "report_filename": report_filename,
+        "proband_id": proband_id,
+        "rank_points": result.rank_points,
+        "f_max": result.f_max,
+        "full_match_rank": result.full_match_rank,
+        "partial_match_rank": result.partial_match_rank,
+        "submitted_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+    }
+    append_submission(entry, report_path)
+
+    match_desc = (
+        f"✅ **Full match** at rank {result.full_match_rank}"
+        if result.full_match_rank is not None
+        else (
+            f"⚠️ **Partial match** (one of two compound-het variants) at rank {result.partial_match_rank}"
+            if result.partial_match_rank is not None
+            else "❌ **No match** - true variant(s) not found in submission."
+        )
+    )
+
+    feedback = f"""
+## Submission received ✓
+
+**{display_name}** (`{hf_username}`) &nbsp;|&nbsp; **Submission:** {model_n} &nbsp;|&nbsp; **Proband:** {proband_id}
+
+---
+
+### Your scores
+
+| Metric | Value |
+|---|---|
+| Rank points | **{result.rank_points:.1f}** / 100 |
+| F-max | **{result.f_max:.3f}** |
+| F-max EPCR threshold | {result.f_max_threshold if result.f_max_threshold is not None else "-"} |
+
+{match_desc}
+"""
+    return feedback.strip(), _quota_status(request)
+
+
+def _quota_status(request: gr.Request, oauth_profile: gr.OAuthProfile | None = None) -> str:
+    hf_username = get_hf_username(request, oauth_profile)
+    if not hf_username:
+        return ""
+    count = submissions_by_user(hf_username)
+    remaining = MAX_TRACK1_SUBMISSIONS - count
+    return (
+        f'<div class="info-card quota-card">'
+        f'<strong>{count} / {MAX_TRACK1_SUBMISSIONS}</strong> submissions used &nbsp;·&nbsp; '
+        f'<strong>{remaining}</strong> remaining'
+        f'</div>'
+    )
+
+
+def render() -> None:
+    with gr.Tab("Submit - Track 1") as tab:
+        gr.Markdown(INTRO_MD)
+        quota_md = gr.HTML()
+        with gr.Accordion("📋 Submission Format & Instructions", open=True, elem_classes=["faq-accordion"]):
+            gr.Markdown("**Templates:**")
+            with gr.Row():
+                gr.DownloadButton(
+                    label="📄 Submission template (CSV)",
+                    value="static/templates/track1_submission_template.csv",
+                    size="sm",
+                    elem_classes=["template-dl-btn"],
+                )
+                gr.DownloadButton(
+                    label="📄 Methods description template (Excel)",
+                    value="static/templates/methods_description_form.xlsx",
+                    size="sm",
+                    elem_classes=["template-dl-btn"],
+                )
+            gr.Markdown(INSTRUCTIONS_MD)
+        gr.Markdown("---")
+        with gr.Row():
+            with gr.Column():
+                team_name_box = gr.Textbox(
+                    label="Team / Display Name (optional)",
+                    placeholder="e.g. helix-squad",
+                    info="This will be displayed on the public leaderboard. Leave blank to use your "
+                         "HF username if you are participating individually.",
+                )
+                github_box = gr.Textbox(
+                                    label="GitHub repo URL *",
+                                    placeholder="https://github.com/your-org/your-repo",
+                                )
+            with gr.Column():
+                csv_file = gr.File(label="Predictions file (CSV) *", file_types=[".csv"])
+                report_file = gr.File(
+                    label="Report file (PDF or Markdown) *",
+                    file_types=[".pdf", ".md"],
+                )
+        submit_btn = gr.Button("Submit & Score", variant="primary")
+        result_md = gr.Markdown(label="Result")
+        submit_btn.click(
+            fn=_handle_submit,
+            inputs=[team_name_box, github_box, report_file, csv_file],
+            outputs=[result_md, quota_md],
+        )
+        tab.select(fn=_quota_status, inputs=[], outputs=quota_md)
+    return quota_md
+
+
+
+
+
+=>TRACK2_SUBMIT
+"""Submit tab for Track 2."""
+
+from __future__ import annotations
+
+import io
+import json
+import os
+from datetime import datetime, timezone
+from pathlib import Path
+
+import gradio as gr
+
+from config import LEADERBOARD_DATASET, TRACK2_SUBMISSIONS_FOLDER
+from utils import _LOCAL_DEV_DIR, _sanitize, get_hf_username, hf_username_to_display_slug
+
+INTRO_MD = """
+Upload your Track 2 proposal here for review by our independent expert judging panel. Unlike Track 1,
+this track uses qualitative evaluation rather than automated scoring.
+
+Only <u>one submission</u> is accepted for this track.
+
+**Team Participation:** Please designate a single team member to submit on the team's behalf. Additional
+or duplicate submissions from other team members will not be reviewed.
+"""
+
+INSTRUCTIONS_MD = """
+### 1. Write your report.
+
+Prepare a written report (PDF or Markdown) proposing repositioned drug candidates supported by your
+analysis. Include a characterization of the variant's mechanism (loss-of-function / gain-of-function,
+pathway disrupted, downstream biological consequence) as the basis for your repurposing rationale.
+
+Not sure what details to include? Please use the provided methods description template to organize your
+analysis and supporting materials, then export your report as a PDF or Markdown file for submission.
+
+When saving your report, please include your username (or team name) in the filename. For example, if your
+HF username is `jane-doe`, you might name your report file:
+
+* `jane-doe_track2_report.pdf` (`.md` also accepted)
+
+### 2. Prepare other supporting materials.
+
+* Push documented, reproducible code to a public GitHub repository.
+* Record a 3-minute pitch video walking through your reasoning and proposed candidates and upload it to
+  YouTube or Vimeo.
+
+### 3. After submission:
+
+The independent panel will review all entries over a ~2-3 month window. Results will be announced at a
+later date.
+"""
+
+def _save_track2_submission(entry: dict, report_path: str) -> None:
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S_%f")
+    safe_user = _sanitize(entry.get("hf_username", "unknown"))
+    subfolder = f"{TRACK2_SUBMISSIONS_FOLDER}{safe_user}/"
+    filename = f"sub_{timestamp}.json"
+    payload = json.dumps(entry, indent=2).encode()
+    token = os.environ.get("HF_TOKEN")
+    if token:
+        from huggingface_hub import upload_file
+        upload_file(
+            path_or_fileobj=io.BytesIO(payload),
+            path_in_repo=f"{subfolder}{filename}",
+            repo_id=LEADERBOARD_DATASET,
+            repo_type="dataset",
+            token=token,
+            commit_message=f"track2: {entry.get('display_name', entry.get('hf_username', '?'))}",
+        )
+        upload_file(
+            path_or_fileobj=report_path,
+            path_in_repo=f"{subfolder}{entry['report_filename']}",
+            repo_id=LEADERBOARD_DATASET,
+            repo_type="dataset",
+            token=token,
+            commit_message=f"track2 report: {entry.get('display_name', entry.get('hf_username', '?'))}",
+        )
+    else:
+        local_dir = _LOCAL_DEV_DIR / "track2_submissions" / safe_user
+        local_dir.mkdir(parents=True, exist_ok=True)
+        (local_dir / filename).write_bytes(payload)
+        import shutil
+        shutil.copy(report_path, local_dir / entry['report_filename'])
+
+def _track2_submissions_by_user(hf_username: str) -> int:
+    """Count Track 2 submissions for a given HF user."""
+    safe_user = _sanitize(hf_username)
+    token = os.environ.get("HF_TOKEN")
+    if token:
+        from huggingface_hub import HfApi
+        api = HfApi()
+        try:
+            return sum(
+                1 for f in api.list_repo_files(
+                    LEADERBOARD_DATASET, repo_type="dataset", token=token
+                )
+                if f.startswith(f"{TRACK2_SUBMISSIONS_FOLDER}{safe_user}/sub_") and f.endswith(".json")
+            )
+        except Exception:
+            return 0
+    # Local dev fallback
+    local_dir = _LOCAL_DEV_DIR / "track2_submissions" / safe_user
+    if not local_dir.exists():
+        return 0
+    return sum(1 for _ in local_dir.glob("sub_*.json"))
+
+
+def _submission_status(request: gr.Request, oauth_profile: gr.OAuthProfile | None = None) -> str:
+    hf_username = get_hf_username(request, oauth_profile)
+    if not hf_username:
+        return ""
+    count = _track2_submissions_by_user(hf_username)
+    if count >= 1:
+        return '<div class="info-card quota-card">✅ <strong>Track 2 submission received.</strong> Only one submission per team is accepted.</div>'
+    return '<div class="info-card quota-card"><strong>0 / 1</strong> submissions used &nbsp;·&nbsp; <strong>1</strong> remaining</div>'
+
+
+def _handle_submit(
+    display_name_input: str,
+    github_url: str,
+    video_url: str,
+    report_file,
+    notes: str,
+    request: gr.Request,
+    oauth_profile: gr.OAuthProfile | None = None,
+) -> str:
+    hf_username = get_hf_username(request, oauth_profile)
+    if not hf_username:
+        return "⚠️ Please sign in with your Hugging Face account to submit."
+
+    display_name = (display_name_input or "").strip() or hf_username_to_display_slug(hf_username)
+
+    count = _track2_submissions_by_user(hf_username)
+    if count >= 1:
+        return "⚠️ You have already submitted a Track 2 entry. Only one submission per participant is accepted."
+
+    github_url = (github_url or "").strip()
+    if not github_url.startswith("https://github.com/"):
+        return "⚠️ GitHub URL must start with `https://github.com/`."
+    video_url = (video_url or "").strip()
+    if not video_url:
+        return "⚠️ A pitch video URL is required. Please upload your 3-minute video to YouTube or Vimeo and paste the link."
+    if report_file is None:
+        return "⚠️ Please upload your report (PDF or Markdown)."
+
+    report_path = report_file if isinstance(report_file, str) else report_file.name
+    if Path(report_path).suffix.lower() not in {".pdf", ".md"}:
+        return "⚠️ Report must be a PDF (.pdf) or Markdown (.md) file."
+
+    report_name = Path(
+        report_file if isinstance(report_file, str) else report_file.name
+    ).name
+
+    entry = {
+        "hf_username": hf_username,
+        "display_name": display_name,
+        "github_url": github_url,
+        "video_url": (video_url or "").strip(),
+        "report_filename": report_name,
+        "notes": (notes or "").strip(),
+        "submitted_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+    }
+    _save_track2_submission(entry, report_path)
+
+    video_line = f"[{entry['video_url']}]({entry['video_url']})" if entry["video_url"] else "_(not provided)_"
+
+    return f"""
+## Track 2 submission received ✓
+
+**{display_name}** (`{hf_username}`)
+
+Your submission has been logged and will be reviewed by the expert judging panel over the
+~2-3 month judging window. Results will be announced after the judging period closes.
+
+**What you submitted:**
+- GitHub repository: [{github_url}]({github_url})
+- Video: {video_line}
+- Report file: `{report_name}`
+""".strip()
+
+
+def render() -> None:
+    with gr.Tab("Submit - Track 2") as tab:
+        gr.Markdown(INTRO_MD)
+        status_md = gr.HTML()
+        with gr.Accordion("📋 Submission Format & Instructions", open=True, elem_classes=["faq-accordion"]):
+            gr.Markdown("**Templates:**")
+            with gr.Row():
+                gr.DownloadButton(
+                    label="📄 Methods description template (Excel)",
+                    value="static/templates/methods_description_form.xlsx",
+                    size="sm",
+                    elem_classes=["template-dl-btn"],
+                )
+            gr.Markdown(INSTRUCTIONS_MD)
+        gr.Markdown("---")
+        with gr.Row():
+            with gr.Column():
+                team_name_box = gr.Textbox(
+                    label="Team / Display Name (optional)",
+                    placeholder="e.g. helix-squad",
+                    info="This will be used for the public announcement. Leave blank to use your "
+                         "HF username if you are participating individually.",
+                )
+                github_box = gr.Textbox(
+                    label="GitHub repo URL *",
+                    placeholder="https://github.com/your-org/your-repo",
+                )
+                video_box = gr.Textbox(
+                    label="Pitch video URL *",
+                    placeholder="https://youtu.be/...",
+                )
+                notes_box = gr.Textbox(
+                    label="Notes for judges (optional)",
+                    lines=3,
+                    placeholder="Anything you want judges to know before they open your submission…",
+                )
+            with gr.Column():
+                report_file = gr.File(
+                    label="Report file (PDF or Markdown) *",
+                    file_types=[".pdf", ".md"],
+                )
+        submit_btn = gr.Button("Submit", variant="primary")
+        result_md = gr.Markdown(label="Confirmation")
+        submit_btn.click(
+            fn=_handle_submit,
+            inputs=[team_name_box, github_box, video_box, report_file, notes_box],
+            outputs=result_md,
+        )
+        tab.select(fn=_submission_status, inputs=[], outputs=status_md)
+    return status_md
+
+
+
+
+
+=>EVALUATION
+"""
+Track 1 (Variant Prediction) automated scoring.
+
+Adapted from the CAGI6 Rare Genomes Project Challenge assessment methodology
+(Stenton et al., 2024), simplified for a single proband ("N-of-1") with a
+clinically validated compound-heterozygous answer key.
+
+Submission format (CSV):
+    proband_id,chrom_1,pos_1,ref_1,alt_1,chrom_2,pos_2,ref_2,alt_2,epcr
+
+    - One row per proposed causal variant (or compound-het variant pair).
+    - chrom_2/pos_2/ref_2/alt_2 are left blank for single-variant proposals.
+    - epcr = Estimated Probability of Causal Relationship, in (0, 1].
+    - Up to 10 rows per proband. Rows do NOT need to be pre-sorted by the
+      submitter; this script sorts by epcr descending before scoring
+      (but will warn if the file wasn't already sorted, since real CAGI
+      submissions are expected to be pre-ranked).
+
+Two metrics are computed, matching CAGI's two numeric metrics:
+    1. Rank points  - weighted score based on the rank position of the
+       true causal variant(s) in the submission.
+    2. F-max        - the maximum F-measure (harmonic mean of precision
+       and recall) for causal-variant identification, swept across all
+       unique EPCR thresholds present in the submission.
+
+Because there is only one proband, "mean rank points across probands"
+collapses to a single score, and F-max is computed by treating each
+individual variant (not each row) as a classifiable unit - this keeps
+the metric meaningful even at N=1, since a compound-het true answer
+still has two independent variants to be recovered.
+"""
+
+from __future__ import annotations
+
+import csv
+from dataclasses import dataclass
+
+Variant = tuple[str, int, str, str]  # (chrom, pos, ref, alt)
+
+# Rank-point scale, compressed from CAGI's RGP weighting to fit a single
+# proband with a max of 10 submitted candidates (rather than CAGI's
+# multi-family, up-to-100-candidate benchmark).
+RANK_POINT_TIERS = [
+    (1, 100),
+    (3, 50),
+    (5, 25),
+    (10, 10),
+]
+
+
+@dataclass
+class SubmissionRow:
+    variants: frozenset[Variant]  # 1 element = single variant, 2 = compound het
+    epcr: float
+    rank: int  # 1-indexed position after sorting by epcr descending
+    finding_type: str = "primary"  # "primary" or "secondary" - informational only,
+                                    # does not affect the automated score
+
+
+@dataclass
+class ScoreResult:
+    proband_id: str
+    full_match_rank: int | None
+    partial_match_rank: int | None
+    rank_points: float
+    f_max: float
+    f_max_threshold: float | None
+    n_predictions_at_f_max: int
+
+
+def _parse_variant(chrom: str, pos: str, ref: str, alt: str) -> Variant | None:
+    if not chrom or not pos:
+        return None
+    return (chrom.strip(), int(pos), ref.strip().upper(), alt.strip().upper())
+
+
+def load_submission(csv_path: str) -> dict[str, list[SubmissionRow]]:
+    """Load a Track 1 submission CSV and group rows by proband, sorted by EPCR desc."""
+    by_proband: dict[str, list[tuple[frozenset[Variant], float, str]]] = {}
+
+    with open(csv_path, newline="") as f:
+        reader = csv.DictReader(f)
+        for row in reader:
+            pid = row["proband_id"].strip()
+            v1 = _parse_variant(row["chrom_1"], row["pos_1"], row["ref_1"], row["alt_1"])
+            v2 = _parse_variant(row.get("chrom_2", ""), row.get("pos_2", ""),
+                                 row.get("ref_2", ""), row.get("alt_2", ""))
+            if v1 is None:
+                raise ValueError(f"Row missing primary variant for proband {pid}")
+            variants = frozenset([v1, v2]) if v2 else frozenset([v1])
+            epcr = float(row["epcr"])
+            if not (0 < epcr <= 1):
+                raise ValueError(f"EPCR {epcr} out of range (0,1] for proband {pid}")
+            finding_type = (row.get("finding_type") or "primary").strip().lower()
+            if finding_type not in ("primary", "secondary"):
+                raise ValueError(
+                    f"finding_type must be 'primary' or 'secondary' for proband {pid}, "
+                    f"got '{finding_type}'"
+                )
+            by_proband.setdefault(pid, []).append((variants, epcr, finding_type))
+
+    result: dict[str, list[SubmissionRow]] = {}
+    for pid, rows in by_proband.items():
+        if len(rows) > 10:
+            raise ValueError(f"Proband {pid} has {len(rows)} rows; max is 10")
+        # Sort descending by EPCR (ties broken by original order)
+        rows_sorted = sorted(enumerate(rows), key=lambda x: (-x[1][1], x[0]))
+        result[pid] = [
+            SubmissionRow(variants=v, epcr=e, rank=i + 1, finding_type=ft)
+            for i, (_, (v, e, ft)) in enumerate(rows_sorted)
+        ]
+    return result
+
+
+def _rank_to_points(rank: int) -> int:
+    for max_rank, points in RANK_POINT_TIERS:
+        if rank <= max_rank:
+            return points
+    return 0
+
+
+def score_proband(
+    proband_id: str,
+    submission_rows: list[SubmissionRow],
+    true_variants: frozenset[Variant],
+) -> ScoreResult:
+    """
+    Score a single proband's submission against its known causal variant(s).
+
+    true_variants: frozenset of 1 variant (simple dominant/de novo case) or
+                   2 variants (compound heterozygous recessive case).
+    """
+    is_compound_het = len(true_variants) == 2
+
+    full_match_rank = None
+    partial_match_rank = None
+
+    for row in submission_rows:
+        if row.variants == true_variants:
+            full_match_rank = row.rank
+            break  # first (best) full match is what counts
+
+    if is_compound_het and full_match_rank is None:
+        # Look for a row containing exactly one of the two true variants -
+        # either proposed alone, or paired with an incorrect second variant.
+        for row in submission_rows:
+            if row.variants & true_variants:
+                partial_match_rank = row.rank
+                break
+
+    # --- Rank points (metric 1) ---
+    if full_match_rank is not None:
+        rank_points = float(_rank_to_points(full_match_rank))
+    elif partial_match_rank is not None:
+        # CAGI-style partial credit: half weight for recovering only one
+        # of two causal variants in a compound-het pair.
+        rank_points = 0.5 * _rank_to_points(partial_match_rank)
+    else:
+        rank_points = 0.0
+
+    # --- F-max (metric 2), computed at the individual-variant level ---
+    thresholds = sorted({row.epcr for row in submission_rows}, reverse=True)
+    best_f = 0.0
+    best_threshold = None
+    best_n = 0
+
+    for t in thresholds:
+        predicted_variants: set[Variant] = set()
+        n_rows_at_threshold = 0
+        for row in submission_rows:
+            if row.epcr >= t:
+                predicted_variants |= row.variants
+                n_rows_at_threshold += 1
+
+        tp = len(predicted_variants & true_variants)
+        fp = len(predicted_variants - true_variants)
+        fn = len(true_variants - predicted_variants)
+
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+        recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+        f = (2 * precision * recall / (precision + recall)) if (precision + recall) > 0 else 0.0
+
+        if f > best_f:
+            best_f = f
+            best_threshold = t
+            best_n = n_rows_at_threshold
+
+    return ScoreResult(
+        proband_id=proband_id,
+        full_match_rank=full_match_rank,
+        partial_match_rank=partial_match_rank,
+        rank_points=rank_points,
+        f_max=best_f,
+        f_max_threshold=best_threshold,
+        n_predictions_at_f_max=best_n,
+    )
+
+
+
+
+
+
+=>GROUNDTRUTH
+"""
+Groundtruth loader for Track 1 evaluation.
+
+* In production: load data from private HF dataset
+* In local dev: use small hardcoded dataset (_LOCAL_FALLBACK)
+"""
+
+from __future__ import annotations
+
+import json
+import os
+import warnings
+from pathlib import Path
+
+from config import GROUNDTRUTH_DATASET, GROUNDTRUTH_FILENAME
+
+# Fallback for local development only.
+_LOCAL_FALLBACK: dict[str, frozenset] = {
+    "PROBAND01": frozenset([
+        ("chr2", 12345678, "T", "G"),
+        ("chr15", 12345678, "T", "G"),
+    ]),
+}
+
+
+def load_groundtruth() -> dict[str, frozenset]:
+    """
+    Load the ground truth from a private HF dataset if HF_TOKEN is set,
+    otherwise warn and return the local fallback.
+    """
+    token = os.environ.get("HF_TOKEN")
+
+    if not token:
+        warnings.warn(
+            "HF_TOKEN not set - using local fallback ground truth. "
+            "Set HF_TOKEN as a Space secret in production.",
+            stacklevel=2,
+        )
+        return _LOCAL_FALLBACK
+
+    try:
+        from huggingface_hub import hf_hub_download
+
+        path = hf_hub_download(
+            repo_id=GROUNDTRUTH_DATASET,
+            filename=GROUNDTRUTH_FILENAME,
+            repo_type="dataset",
+            token=token,
+        )
+        raw: dict = json.loads(Path(path).read_text())
+        result = {}
+        for proband_id, entry in raw.items():
+            if proband_id.startswith("_"):
+                continue
+            if isinstance(entry, list):
+                result[proband_id] = frozenset(tuple(v) for v in entry)
+            else:
+                variants = entry.get("primary_variants", [])
+                result[proband_id] = frozenset(
+                    (v["chrom"], v["pos"], v["ref"], v["alt"]) for v in variants
+                )
+        return result
+    except Exception as e:
+        warnings.warn(
+            f"Failed to load ground truth from {GROUNDTRUTH_DATASET}: {e}. "
+            "Falling back to local data.",
+            stacklevel=2,
+        )
+        return _LOCAL_FALLBACK
