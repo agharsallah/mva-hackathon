@@ -24,6 +24,22 @@ against the actual files before it drives a decision.
 | Deterministic vs probabilistic | Both, layered: deterministic = variant canonicalization, Mendelian/zygosity logic, phase-based exclusion, set algebra of the scorer; probabilistic = genotype likelihoods, Bayesian causality posterior, phenotype LRs, calibrated ranking. Deterministic layer shrinks the space; probabilistic layer orders what survives. |
 | Own DB? | **No new curated database.** Reuse ClinVar / gnomAD v4 / HPO / OMIM / dbNSFP / VEP caches, and build only a thin local analytical store (one DuckDB file + Parquet) that is itself a *derived dataset* and must be deleted within 30 days of close. |
 
+### 0.1 Recommendation matrix (best option per question, one line each)
+
+| # | Question | ⭐ Recommended option | Why it beats the alternatives |
+|---|---|---|---|
+| 1 | Data handling | Headers-first checklist, then **mapping-free k-mer strike** on FASTQ for published MVA alleles | Detects a known allele in minutes, no alignment, even if the VCF missed it |
+| 2 | Query/visualize | DuckDB+Parquet for SQL, `slivar` for comp-het logic, igv-reports for evidence | Zero infra, deterministic, reproducible; dashboards are week-3 luxuries |
+| 3 | Disease model | Soft Bayesian gene priors (BUB1B-heavy), never hard gene exclusion | Malignancy favors BUB1B, but a hard filter is the classic trap |
+| 4 | Literature | Automated **reported-allele catalogue** (PubTator3/LitVar2 + ClinVar) joined against the VCF, LLM triage on top | A published-allele match is a near-instant solve; join is mechanical |
+| 5 | Data structures | Scorer-identical dataclasses + DuckDB + **probe simulator** with bitmask hypothesis space | The simulator turns probe design into computed optimization, not judgment |
+| 6 | Models | Tiered escalation: standard stack → raw-data rescue → foundation models | Tier 1 solves the published-allele scenario; deep models only pay on a miss |
+| 7 | Statistics | Bayesian ACMG posterior as `epcr` backbone; greedy info-gain probe policy | Defensible arithmetic in the report; decode tables are already near-optimal |
+| 8 | ML | Reciprocal-rank fusion primary + LLM evidence-tournament re-ranker (audited) | Robust at N=1, transparent, and the agentic layer is the Innovation story |
+| 9 | Evaluation | Local scorer reimplementation + GIAB spike-in probands + read-level spiked alleles | Only honest pre-oracle measurement; class-sensitivity table exposes blind spots |
+| 10 | Det. vs prob. | Deterministic shrink → probabilistic rank → decision-theoretic probe | Soundness first, efficiency second; filters logged with removal counts |
+| 11 | Database | No new DB; thin DuckDB layer; optionally publish the public-only "N-of-1 toolkit" | Reproducibility + Scalability points without curation liability |
+
 ---
 
 ## 1. What is the type of the data?
@@ -101,6 +117,29 @@ HPO terms are nodes of a directed acyclic graph (`hp.obo` / `hp.json`, released 
 closure*, never as strings: phenotype similarity requires walking the ontology (Resnik/Lin/Phenomizer-style
 information-content measures, §7.3).
 
+### 1.5 Solution space & ⭐ recommendation
+
+Three ways to attack 85 GB of raw data, in increasing cost:
+
+- **Option A — headers-first, VCF-only week 1.** Run the §1.3 checklist, ignore FASTQ until the VCF fails.
+  Cheapest; risks losing a week if the second allele is not in the VCF.
+- **Option B — mapping-free k-mer strike (creative shortcut).** Build k-mer signatures (k=31) for *every
+  allele ever reported* in the MVA genes (ClinVar + OMIM allelic tables + literature-mined variants, §4) and
+  scan the FASTQ directly with a MALVA-style / jellyfish-count approach. No alignment, no calling — minutes of
+  CPU per allele set. If the child's allele is already published (plausible for BUB1B, where recurrent alleles
+  exist), this finds it **even if the VCF missed it**, on day 1, before any pipeline exists. Same trick doubles
+  as an alignment-free *verification* of any candidate: count REF-kmers vs ALT-kmers spanning the site → crude
+  VAF estimate straight from FASTQ.
+- **Option C — full realignment + re-calling upfront (bwa-mem2 → DeepVariant on Modal).** Maximum sensitivity,
+  ~$20–60 of compute and a day of wall-clock; only justified once targeted approaches have failed or to feed
+  the SV/mosaic scan.
+
+**⭐ Recommendation: A + B in parallel on day 1, C started in the background on Modal.** A and B are hours of
+work and cover both the "answer is in the VCF" and the "answer is published but missed by the caller" worlds;
+C is the insurance policy for the "novel hard allele" world and is needed for phasing/IGV evidence anyway. B is
+also a genuinely novel methods-form story (alignment-free known-allele screen for N-of-1 diagnosis — Innovation
+points).
+
 ---
 
 ## 2. Can we visualize it? And query it?
@@ -170,6 +209,21 @@ Two visualization payoffs specific to MVA:
    **Compliance:** screenshots of patient reads are patient data — they go in the report submitted to organizers,
    **never** into the public GitHub repo (`raw_hackathon.txt` data-resharing clause).
 
+### 2.3 Solution space & ⭐ recommendation
+
+- **Option A — DuckDB + Parquet + `slivar`** (as above): SQL analytics + expression-based comp-het filtering.
+- **Option B — team dashboard**: a small Streamlit/marimo app over the DuckDB file (candidate table, filters,
+  per-gene coverage, oracle-ledger view) + **igv-reports** for static, self-contained HTML locus views the whole
+  team can open without a running IGV. Good for 3-person coordination once candidates exist.
+- **Option C — Hail / Spark**: cohort-scale machinery. At N = 1 it buys nothing except a Scalability paragraph.
+- **Option D — pure CLI (`bcftools query` + grep)**: fastest to first answer, unmaintainable past ~day 3.
+
+**⭐ Recommendation: A as the backbone, D for hour-one questions, B only after the candidate list exists
+(week 2+), C never executed — cite it as the documented scale-out path in the methods form.** Rationale:
+the bottleneck is biological interpretation, not query throughput; every hour of infra before the first
+panel-gene query is a strategic loss. igv-reports specifically is worth the 30 minutes: evidence panels
+end up directly in the Track 1 report.
+
 ---
 
 ## 3. What is MVA?
@@ -233,6 +287,28 @@ Three independent facts converge:
 Note also that *KNL1/CASC5* sits at 15q15.1 next to *BUB1B* — do not let a `chr15` hit auto-assign to *BUB1B*
 without checking the transcript.
 
+### 3.5 Solution space & ⭐ recommendation (how to encode the disease knowledge)
+
+- **Option A — hard gene panel filter**: analyse only the MVA genes. Fastest; catastrophic if the answer is the
+  novel-gene world (the phenotype "MVA" is cytogenetic, not molecular — a new SAC/kinetochore gene is possible).
+- **Option B — soft Bayesian gene prior**: weight, don't exclude. Concretely: prior mass ≈ BUB1B 0.55 /
+  TRIP13 0.20 / CEP57 0.05 (malignancy argues against, but published exceptions exist) / other SAC-panel genes
+  0.10 / genome-wide remainder 0.10. The prior multiplies the phenotype LR and ACMG posterior in the ranking;
+  nothing is ever removed.
+- **Option C — phenotype-blind genome-wide first**: run Exomiser/LIRICAL with no MVA assumption at all, compare
+  with B. Useful as a bias control and as an ablation row in the report ("the pipeline finds it *without* being
+  told the diagnosis" is a powerful Scalability claim if true).
+- **Creative check — diagnose the aneuploidy itself from the data**: binned-depth + BAF karyogram (§7.5). If a
+  mosaic aneuploidy signal is visible in blood-derived WGS, it (i) corroborates the MVA diagnosis, (ii) may
+  estimate the mosaic fraction, and (iii) is a report figure nobody else will have. Also check the **PCS trait**
+  logic: BUB1B cases show premature chromatid separation — not directly testable in WGS, but worth one line of
+  differential discussion.
+
+**⭐ Recommendation: B as the ranking prior + C as the honesty control, panel-first only as an *ordering* of
+effort (grep the panel first because it is cheap, not because the rest is excluded).** Rationale: soft priors
+capture all the biology value of the panel with zero risk of excluding the truth, and the B-vs-C comparison
+itself becomes methods-form content.
+
 ---
 
 ## 4. Can we access papers on this disease, similar diseases, and on predicting the causal variant?
@@ -292,6 +368,26 @@ Papers, annotations, prediction scores, code: public, shareable, repo-safe.
 Anything derived from the proband's reads or genotypes — VCF slices, read snippets, IGV screenshots, coordinate
 lists of proband variants, intermediate annotation tables — is **patient data**: private repo only, deleted
 within 30 days of close, deletion confirmed by email (`raw_hackathon.txt` §6, `hackathon-intel.md` §6).
+
+### 4.5 Solution space & ⭐ recommendation
+
+- **Option A — manual expert reading**: read the ~30–50 MVA case reports by hand. High precision, days of work,
+  no reuse value.
+- **Option B — automated reported-allele catalogue (the decisive artefact)**: PubTator3/LitVar2 variant
+  annotations + ClinVar `variant_summary` + OMIM allelic tables → normalize every reported MVA-gene allele to
+  GRCh38 `(chrom,pos,ref,alt)` (HGVS → VCF via VariantValidator/mutalyzer, then `bcftools norm`) → **one SQL
+  join against the proband VCF (and one k-mer scan against the FASTQ, §1.5-B)**. If either allele of the pair
+  has ever been published, this closes the case in day 1–2. The catalogue is public-data-only → publishable in
+  the open repo.
+- **Option C — agentic LLM literature layer**: a retrieval-grounded agent that (i) triages Corpus A/B,
+  (ii) extracts variant/phenotype claims with PMID anchors, (iii) drafts ACMG evidence text. 2025–26 systems
+  (agentic traceable-reasoning diagnosis, DAVP-style iterative LLM tournaments, LA-MARRVEL) show this works when
+  grounded; ungrounded it hallucinates. Every claim must carry a PMID/DOI and survive a human spot-check.
+
+**⭐ Recommendation: B first (it is a *solver*, not a helper — highest expected-value artefact per hour in the
+whole project), C wrapped around it for recall and report drafting, A reserved for the final 10 candidate
+alleles.** Rationale: the intersection of "published allele" ∩ "proband genotype" is mechanical, exhaustive and
+auditable; LLMs add recall and speed but only the join produces certainty.
 
 ---
 
@@ -381,6 +477,25 @@ class OracleProbe:                  # one submission = one adaptive experiment
   plausible; keep `(variant, alt_depth, total_depth)` and test against a binomial/beta-binomial null (§7.4)
   rather than a fixed VAF cutoff.
 
+### 5.5 Solution space & ⭐ recommendation
+
+- **Option A — scorer-identical dataclasses + DuckDB** (as above): minimal, auditable, unit-testable.
+- **Option B — bitmask hypothesis space + probe simulator (creative, high leverage)**: with a candidate pool
+  `C` of N alleles, represent each pair hypothesis as a bit in a `C(N,2)`-bit vector (N=200 → 19,900 bits ≈
+  2.5 KB). A **probe simulator** — the local reimplementation of `evaluation.py` run against every surviving
+  hypothesis as if it were the truth — computes, for any candidate probe, the exact partition of outcomes
+  `(full_match_rank, partial_match_rank, f_max, threshold)` over the hypothesis space. Probe design then stops
+  being judgment and becomes computation: pick the probe whose worst-case surviving set is smallest (minimax)
+  or whose expected posterior entropy is lowest (Bayes, §7.6). Oracle feedback = one bitwise AND to collapse
+  the space. ~200 lines of Python, testable end-to-end without touching patient data.
+- **Option C — full knowledge graph store (Neo4j/RDF)**: premature for Track 1; the graph earns its keep only
+  for the Track 2 drug hop, and a property table in DuckDB serves that too.
+
+**⭐ Recommendation: A + B; C deferred to Track 2 and only if the drug hop outgrows SQL joins.** Rationale: B is
+the piece that converts the leaked scorer from "intel" into "machinery" — it guarantees no probe is wasted on a
+question whose answer wouldn't discriminate hypotheses, and it is the single most defensible Innovation claim in
+the methods form ("sequential experimental design with an exact simulator of the official scorer").
+
 ---
 
 ## 6. What open-source models can we use for prediction, and what are their limitations?
@@ -439,6 +554,29 @@ option at N = 1.
    known false-duplication regions; a `PASS` filter can drop a true call in a hard region.
 6. **Calibration** — nearly all of these emit scores, not probabilities. `epcr` must be in (0,1] and should be
    *meaningfully* calibrated for F-max to behave (§9.3).
+
+### 6.4 Solution space & ⭐ recommendation (which models actually run, and when)
+
+Escalation tiers — each tier runs only if the previous one has not produced a confirmed pair:
+
+| Tier | Trigger | Stack | Cost |
+|---|---|---|---|
+| **1 — standard strike** (day 1–3) | always | `bcftools norm` → VEP(+LOFTEE, SpliceAI ±1000, AlphaMissense, dbNSFP) → slivar comp-het → Exomiser + LIRICAL → ACMG points → probe S₁ | hours, local |
+| **2 — raw-data rescue** (day 2+, parallel on Modal) | one allele confirmed, second missing; or Tier 1 candidates all refuted | bwa-mem2 realign → DeepVariant; Manta+Delly+smoove 2-of-3 SV consensus; GATK-gCNV/mosdepth exon deletions; Mutect2 tumour-only low-VAF scan restricted to the localized gene; WhatsHap phasing | ~$20–60, 1–2 days |
+| **3 — foundation-model sweep** (week 3+) | Tiers 1–2 exhausted | Evo 2 delta-likelihood + AlphaGenome splicing/regulatory tracks over the full candidate gene; ESM1b for all missense; MALVA-style k-mer re-check of every literature allele | GPU-days on Modal |
+
+Cross-cutting choices:
+- Splice prediction: **SpliceAI (±1000 nt, masked+unmasked) + Pangolin, agree/disagree flagged** — the two
+  disagree exactly where human review is needed. AbSplice only if tissue-specificity becomes an argument.
+- Missense: **AlphaMissense + REVEL (supervised) alongside ESM1b (unsupervised)** — the supervised/unsupervised
+  agreement pattern is the circularity disclosure, pre-packaged.
+- LoF verification: **LOFTEE + NMD-escape logic on every truncating candidate** — the MVA1 null+hypomorph rule
+  means a "LoF" that escapes NMD may actually be the hypomorph.
+
+**⭐ Recommendation: strictly tiered, with Tier 2 started early in the background (it also produces the phasing
+and IGV evidence the report needs regardless).** Rationale: expected time-to-solve is dominated by the
+published-allele and clean-comp-het worlds, which Tier 1 covers; deep models have the worst
+information-per-hour early and the best late (they only pay when the search is truly stuck in non-coding space).
 
 ---
 
@@ -557,6 +695,29 @@ One honesty constraint: the oracle is a *validator*, so use it as an adaptive hy
 make the *final* leaderboard submission the genuine output of a pipeline that independently ranks the pair
 first (`hackathon-intel.md` §9.5). Report both layers in the methods form.
 
+### 7.7 Solution space & ⭐ recommendation
+
+Where should `epcr` come from?
+- **Option A — Bayesian ACMG posterior** (§7.1): every number traceable to a named evidence code; the exact
+  framework clinical judges already trust.
+- **Option B — calibrated ML score** (§8.2): better ranking on benchmarks, but its calibration lives on
+  synthetic data and its reasoning is a feature table.
+- **Option C — rank-fusion pseudo-probability**: robust ordering, but the values are not probabilities and
+  F-max thresholds inherit that arbitrariness.
+
+How should probes be chosen?
+- **Option D — fixed playbook** (S-scan → decode → P-scan → F): simple, already near-optimal for the expected
+  candidate-pool sizes.
+- **Option E — simulator-driven experimental design** (§5.5-B): exact minimax/max-EIG probe selection over the
+  surviving hypothesis space; matters when candidates are many, correlated (shared alleles across pairs), or
+  when a probe must double as a leaderboard attempt.
+- **Option F — formal ILP/covering optimization** of probe composition: correct but over-engineered below a few
+  hundred hypotheses; enumeration in the simulator answers the same question.
+
+**⭐ Recommendation: A for `epcr` (with B computed as a cross-check and reported), E for probe design with D as
+its sanity baseline, F skipped.** Rationale: `epcr` is read by human judges — the ACMG arithmetic *is* the
+report; probe choice is read by no one but decides the 18-query budget — so let the machine do it exactly.
+
 ---
 
 ## 8. What types of machine learning models can be applied to this data?
@@ -634,6 +795,26 @@ not "reweighted feature 7 until it worked"), (ii) demonstrate generalization on 
 and (iii) declare it plainly in the methods form. Judges reward a pipeline that works on *any* N-of-1 case —
 that is the Scalability criterion (15%).
 
+### 8.8 Solution space & ⭐ recommendation
+
+- **Option A — pure classical ensemble**: Exomiser + LIRICAL + ACMG + slivar, fused by reciprocal-rank fusion.
+  Zero training, maximally defensible, ~the current published state of practice.
+- **Option B — A + learning-to-rank trained on synthetic probands** (§8.1): measurable gains on the benchmark,
+  a real ML contribution for the methods form; risk is benchmark–reality mismatch.
+- **Option C — A + agentic LLM evidence tournament (creative, 2026-current)**: for the top ~20 fused candidates,
+  compile a structured dossier per pair (annotations, ACMG codes, phenotype LRs, literature hits with PMIDs) and
+  run pairwise LLM comparisons in a bracket/tournament that must cite dossier fields to justify each verdict —
+  the DAVP-style pattern that reached expert-level prioritization in 2026 benchmarks. Auditable because inputs
+  are structured and every verdict is traceable; cheap because it touches only 20 candidates.
+- **Option D — end-to-end deep model / GNN as primary ranker**: nothing to train on at N = 1; the KG link
+  predictor belongs to Track 2, not here.
+
+**⭐ Recommendation: A as the backbone (it must stand alone), C as the re-ranking layer and headline Innovation
+claim, B if week-3 time allows (its benchmark table strengthens Scalability), D only as the Track 2 drug-hop
+model.** Rationale: at N = 1 the win comes from *combining verified evidence*, not from model capacity; C adds
+reasoning over evidence without adding unverifiable parameters, and it is the only option that also writes half
+the report as a side effect.
+
 ---
 
 ## 9. What are the methods to evaluate the performance of these models?
@@ -705,6 +886,25 @@ adaptively**, and record every probe and outcome in the ledger. Two disciplines:
 silently rewrite the reported pipeline performance — report offline benchmark numbers and oracle outcomes
 separately; (ii) keep ≥2 submissions in reserve for indel-representation retries and endgame defense.
 
+### 9.5 Solution space & ⭐ recommendation
+
+- **Option A — VCF-level spike-ins** (§9.2 as written): inject ClinVar pathogenic pairs into GIAB/1000G VCFs.
+  Tests the *ranking* layer only — the injected variants are, by construction, already "called".
+- **Option B — read-level spike-ins (tests what actually decides this contest)**: edit the alleles into the
+  *reads* of a public BAM (BAMSurgeon/VarBen), including a leaky splice variant, a single-exon deletion, and a
+  20%-VAF mosaic SNV, then run the **full** pipeline from alignment onward. This measures the discovery layer —
+  exactly the class of failure the hidden second allele is designed to exploit. The per-class sensitivity table
+  it produces is the most informative figure the methods form can contain.
+- **Option C — time-split ClinVar honesty check**: evaluate the ranker using only predictor versions/labels
+  predating the spiked variants' ClinVar submission dates, to bound the circularity inflation (§6 limitation 1).
+- **Option D — Stenton/CAGI6 RGP replication**: the official metric's source benchmark; data access is gated and
+  slow — do not block on it; cite it as the metric provenance instead.
+
+**⭐ Recommendation: A for fast iteration (minutes per run, drives day-to-day development), B once, seriously,
+in week 2 (it is the only honest answer to "would we find the hard allele?"), C as a one-paragraph disclosure,
+D cited not executed.** Rationale: A optimizes the layer we iterate on; B validates the layer we bet on; the
+combination is cheap and covers both.
+
 ---
 
 ## 10. Is there a deterministic theory and a probabilistic theory that can be applied to this data?
@@ -753,6 +953,21 @@ where the posterior mass is). The classic failure mode in rare-disease pipelines
 deterministic filter — a `FILTER != PASS` drop, an AF cutoff, a "coding only" restriction — that removes the
 answer before any model sees it. **Every filter must be logged with the count of variants it removed**, and for
 the candidate genes the pipeline should be run *unfiltered* as well.
+
+### 10.4 Solution space & ⭐ recommendation
+
+The composition order itself has alternatives:
+- **Option A — deterministic-first** (as in §10.3): shrink, then rank, then probe. Risk: an unsound filter.
+- **Option B — probabilistic-first**: score everything genome-wide, never filter, rank 5M variants. Sound by
+  construction but drowns the signal in predictor noise and multiple-testing burden (§7.4).
+- **Option C — dual-lane (recommended)**: run A as the fast lane and keep a slow lane where every "deterministic"
+  exclusion is demoted to a strong negative prior instead of removal (filtered variants keep a small posterior
+  mass, revisited only if the fast lane's hypotheses are refuted by probes). The oracle's refutations then have
+  somewhere principled to redirect probability mass — without this, a refuted top-10 forces ad-hoc re-filtering.
+
+**⭐ Recommendation: C.** It costs one boolean column (`hard_excluded` → `prior_penalty`) and buys a principled
+recovery path for exactly the scenario that kills teams: "our candidates were all wrong and we don't know what
+we filtered away."
 
 ---
 
@@ -816,6 +1031,22 @@ Why this and not more:
 4. **Provenance.** Pin every external resource version in a manifest (ClinVar release, gnomAD version, VEP
    cache, HPO release, container digests). Needed for the report, and it is what makes results reproducible
    after the data is destroyed.
+
+### 11.4 Solution space & ⭐ recommendation
+
+- **Option A — thin DuckDB layer over authoritative sources** (as above).
+- **Option B — publish the public half as an "N-of-1 toolkit" (creative, CC-BY-safe)**: the reported-allele
+  catalogue builder (§4.5-B), the scorer reimplementation + probe simulator, the synthetic-proband benchmark,
+  and the pinned annotation-join recipes contain **zero patient data** — released as a documented package they
+  become a reusable resource for other undiagnosed cases, which is verbatim the hackathon's stated purpose
+  ("methods developed for this case can be reused for other undiagnosed individuals") and a direct play for the
+  Innovation/Community award ($2k+$2k, judged on community impact independent of placement).
+- **Option C — a genuinely new curated database** (e.g. hand-curated MVA allele registry): curation liability,
+  unreviewable in 8 weeks, and the moment it contains a proband-derived row it becomes deletable patient data.
+
+**⭐ Recommendation: A during the contest, B packaged in the final week from artefacts that already exist,
+C never.** Rationale: B costs ~2 days of packaging because every component is already required by the strategy;
+it is the cheapest credible shot at a second prize category.
 
 ---
 
@@ -883,3 +1114,15 @@ Aneuploidy-selective pharmacology (Track 2):
 - [Targeting the mitochondrial RNA methyltransferase TRMT61B in aneuploid cancer cells — bioRxiv](https://www.biorxiv.org/content/10.1101/2021.04.25.441348.full.pdf)
 - [AICAR-mediated selection of karyotypically normal cells in Pallister–Killian syndrome fibroblasts — bioRxiv](https://www.biorxiv.org/content/10.1101/2022.01.27.478025.full.pdf)
 - [Homing in on genomic instability as a therapeutic target in cancer — Nature Communications](https://www.nature.com/articles/s41467-021-23965-5)
+
+Agentic / LLM prioritization (2025–2026, feeds §4.5-C and §8.8-C):
+- [An agentic system for rare disease diagnosis with traceable reasoning — PMC](https://pmc.ncbi.nlm.nih.gov/articles/PMC12999473/)
+- [Deep Agentic Variant Prioritisation for expert-level genetic diagnosis (DAVP) — medRxiv](https://www.medrxiv.org/content/10.64898/2026.02.17.26346421v2.full)
+- [Hygieia: a versatile AI agent for rare disease diagnosis and risk gene prioritization — arXiv](https://arxiv.org/html/2605.06226v2)
+- [LA-MARRVEL: knowledge-grounded LLM framework for rare disease gene prioritization — arXiv](https://arxiv.org/pdf/2511.02263)
+- [LLM-assisted reanalysis of unsolved rare disease genomes increases diagnostic yield — ResearchGate](https://www.researchgate.net/publication/407279253_LLM-Assisted_Reanalysis_of_Unsolved_Rare_Disease_Genomes_Increases_Diagnostic_Yield)
+
+Mapping-free / k-mer genotyping (feeds §1.5-B):
+- [MALVA: genotyping by mapping-free allele detection of known variants — iScience](https://www.sciencedirect.com/science/article/pii/S2589004219302366)
+- [2-kupl: mapping-free variant detection from DNA-seq of matched samples — PMC](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8180056/)
+- [SKA2: split k-mer analysis — Genome Research](https://genome.cshlp.org/content/34/10/1661)
