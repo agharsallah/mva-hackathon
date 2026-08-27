@@ -21,5 +21,19 @@ raw/
 # The panel BED is public gene coordinates, not patient data — keep it.
 !ressources/data-profile/mva_panel_grch38.bed
 
+# Synthetic test fixtures. Plain-text VCF only, never the bgzipped form: a reviewer can
+# read a .vcf in a diff and confirm by eye that it is fabricated, which is not true of a
+# binary .vcf.gz. Tests bgzip/index these into a tmp dir at run time.
+!tests/fixtures/*.vcf
+tests/fixtures/*.vcf.gz
+tests/fixtures/*.vcf.gz.tbi
+
 .DS_Store
 __pycache__/
+
+# Python environments and build artifacts
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
