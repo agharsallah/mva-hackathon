@@ -1,0 +1,25 @@
+# ── DTA guard ────────────────────────────────────────────────────────────────
+# Patient genomic data must never enter this repository. These patterns are a
+# safety net, not a substitute for keeping the data outside the git tree.
+*.vcf
+*.vcf.gz
+*.vcf.gz.tbi
+*.bcf
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.bai
+*.cram
+*.crai
+*.sam
+mva-data/
+work/
+raw/
+
+# The panel BED is public gene coordinates, not patient data — keep it.
+!ressources/data-profile/mva_panel_grch38.bed
+
+.DS_Store
+__pycache__/
