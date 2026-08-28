@@ -1,5 +1,23 @@
 # Project Instructions
 
+## Goal
+- We are competing in the MVA Hackathon 2026: identify the causal compound-heterozygous variant
+  pair for one child with Mosaic Variegated Aneuploidy (Track 1) and propose drug repurposing
+  candidates (Track 2). The full intelligence brief — challenge rules, scorer mechanics,
+  biology priors, oracle protocol, and the master plan — lives in
+  [`ideation/hackathon-intel.md`](ideation/hackathon-intel.md). Read it before making strategy
+  decisions.
+- Be **scientific yet creative**: ground every claim in executed runs and citable evidence, but
+  actively try new methodologies (e.g. adaptive oracle probing, novel ranking approaches, new visualization tools) rather
+  than only replaying standard pipelines. Innovation is an explicitly judged criterion.
+- Build **two deliverables at once**: (1) a solution to this specific case, and (2) a reusable
+  tooling set — generic, well-factored modules and pipelines that transfer to other N-of-1 /
+  rare-disease problems. Prefer parameterized, case-agnostic tools over one-off scripts.
+- The endgame requires **strong reporting with lots of visuals**: every phase should produce
+  report-ready material (figures, diagrams, tables, worked examples) as it runs, not as an
+  afterthought. Qualitative review of the report and repo is the tiebreaker — treat report
+  quality as a first-class output, following the Visualizations rules below.
+
 ## Python
 - Use `uv` for all Python work: `uv run`, `uv add`, `uv sync`. Do not use `pip`, `python -m venv`, or bare `python`.
 
