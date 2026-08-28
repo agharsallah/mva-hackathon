@@ -35,10 +35,12 @@ class Annotation:
 
     @property
     def is_loss_of_function(self) -> bool:
+        """True when the consequence abolishes the protein rather than altering it."""
         return self.consequence in LOSS_OF_FUNCTION
 
     @property
     def is_protein_altering(self) -> bool:
+        """True for anything that changes the protein sequence, LoF included."""
         return self.is_loss_of_function or self.consequence in MISSENSE
 
 
@@ -49,6 +51,7 @@ class Annotator(Protocol):
     """Anything that can describe a variant's functional consequence."""
 
     def annotate(self, variant: Variant) -> Annotation:
+        """Describe one variant. Must return :data:`UNKNOWN` rather than raise."""
         ...
 
 
@@ -59,6 +62,7 @@ class DictAnnotator:
         self.by_variant = dict(by_variant)
 
     def annotate(self, variant: Variant) -> Annotation:
+        """Look the variant up, falling back to :data:`UNKNOWN`."""
         # An unseen variant is unknown, never an error: a genome-wide run will always
         # reach variants outside any cache, and crashing there would lose the run.
         return self.by_variant.get(variant, UNKNOWN)

@@ -38,6 +38,8 @@ class ScoreResult:
 
 @dataclass(frozen=True)
 class RankedRow:
+    """A submission row after ranking, in the form the scorer compares."""
+
     variants: frozenset[Variant]
     epcr: float
     rank: int

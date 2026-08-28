@@ -37,6 +37,7 @@ class Call:
 
     @property
     def is_pass(self) -> bool:
+        """True when the caller flagged no problem with this record."""
         return self.filters == ("PASS",)
 
     @property
@@ -47,6 +48,7 @@ class Call:
 
     @property
     def is_hom_alt(self) -> bool:
+        """True when both haplotypes carry this ALT — its own second hit, not half a pair."""
         alleles = _alleles(self.genotype)
         return bool(alleles) and set(alleles) == {self._allele_index}
 
@@ -62,6 +64,7 @@ class Call:
 
 
 def read_calls(path: str | Path) -> list[Call]:
+    """Read every call in ``path`` into memory. See :func:`iter_calls` to stream."""
     return list(iter_calls(path))
 
 

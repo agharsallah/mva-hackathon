@@ -1,2 +1,3 @@
-# source this: adds the bio toolchain and the project venv to PATH
-export PATH="$HOME/.local/micromamba/envs/bio/bin:/home/abdu/ubuntu/mva-hackathon/.venv/bin:$PATH"
+# source this: puts the bioinformatics binaries on PATH.
+# Python work goes through `uv run` (see CLAUDE.md), so no venv is activated here.
+export PATH="$HOME/.local/micromamba/envs/bio/bin:$PATH"

@@ -29,9 +29,9 @@ diff and confirm by eye is fabricated. Tests bgzip them into a tmp dir at run ti
 ## Getting started
 
 ```bash
-tools/setup-env.sh            # micromamba (bcftools, samtools, seqkit, fastp) + venv
-source tools/activate.sh
-pytest                        # runs entirely on synthetic fixtures, no data needed
+tools/setup-env.sh            # uv + micromamba (bcftools, samtools, seqkit, fastp)
+source tools/activate.sh      # puts the bio binaries on PATH
+uv run pytest                 # runs entirely on synthetic fixtures, no data needed
 ```
 
 To reproduce the data profile (needs the gated dataset, ~10 min):
@@ -39,6 +39,17 @@ To reproduce the data profile (needs the gated dataset, ~10 min):
 ```bash
 tools/profile-genomic-data.sh ~/ubuntu/data
 ```
+
+## Documentation
+
+| | |
+|---|---|
+| [`CONTEXT.md`](CONTEXT.md) | the domain vocabulary this codebase speaks |
+| [`docs/architecture.md`](docs/architecture.md) | the map: data flow, seams, sharp edges |
+| [`docs/roadmap.md`](docs/roadmap.md) | status, next steps, and the plan for the full 80 GB |
+| [`docs/notes/`](docs/notes/) | why the code looks like this, and what is still provisional |
+| [`ideation/data-findings.md`](ideation/data-findings.md) | what is measurably in the data |
+| [`methodology/`](methodology/) | how each result was reached, reproducibly |
 
 ## Layout
 

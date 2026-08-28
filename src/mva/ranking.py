@@ -29,6 +29,8 @@ RARE_AF = 1e-3
 
 @dataclass(frozen=True)
 class RankedPair:
+    """A compound-heterozygote hypothesis with the score that ordered it."""
+
     left: Variant
     right: Variant
     gene: str | None

@@ -46,6 +46,7 @@ class Row:
     notes: str = ""
 
     def as_fields(self) -> list[str]:
+        """Render as the twelve CSV columns, blanking the pair columns for a single."""
         v, p = self.variant, self.partner
         return [
             PROBAND_ID,
