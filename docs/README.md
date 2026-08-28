@@ -4,7 +4,8 @@ Start here, in this order.
 
 | Document | Answers |
 |---|---|
-| [`../CONTEXT.md`](../CONTEXT.md) | What do the words mean? Domain vocabulary — proband, cis/trans, epcr, probe, non-PASS. |
+| [`dictionary.md`](dictionary.md) | I have no genetics background — what *is* any of this? Every domain term explained from scratch, with diagrams. |
+| [`../CONTEXT.md`](../CONTEXT.md) | Which word do we use for it? Naming discipline for code and write-ups — proband, cis/trans, epcr, probe, non-PASS, plus what to avoid. |
 | [`architecture.md`](architecture.md) | How do the pieces fit? Data flow, seams, sharp edges, extension points. |
 | [`roadmap.md`](roadmap.md) | What is done, what is next, and how the 80 GB gets handled. |
 | [`../ideation/data-findings.md`](../ideation/data-findings.md) | What is actually in the data? Measured, not assumed. |
