@@ -776,9 +776,39 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 
 **pysam / cyvcf2** — Python libraries to read these files in code.
 
-**DuckDB** — a database that runs inside your script, no server needed. You ask questions in SQL.
+**DuckDB** — a database that runs *inside* your program, as a library, with the whole database in a single file. There is no server process, no port and no database accounts — the same arrangement as SQLite, but column-oriented and built for analytics. This is the single most commonly misunderstood thing about it: you cannot "expose DuckDB on a server", because there is nothing listening. Putting it on a shared machine means putting *the file* there and reaching it the way you already reach that machine.
+*Example: `duckdb profile.duckdb "SELECT * FROM panel_variant_counts"` — the binary opens the file, answers, and exits.*
 
-**Parquet** — a file format that stores tables by column. Very fast to scan millions of rows.
+**Embedded database** — a database that is a library linked into your process rather than a service you connect to. The opposite is a **client–server database** (PostgreSQL, MySQL), where a long-running daemon owns the data and clients talk to it over a socket. Embedded means zero setup and no network attack surface; it also means one writer at a time, because the lock is a file lock. [DuckDB](#8-the-toolbox-what-each-program-does) and SQLite are embedded; Postgres is not.
+
+**Parquet** — a file format that stores tables by column rather than by row, so scanning one column of millions of rows never reads the others. It also carries its own schema, so the column types survive the trip; a TSV does not, which is why a number written to a TSV comes back as text unless something re-infers it.
+*Example: `vcf_chrom_allele_balance.parquet` — 24 rows, 1.3 KB, and `mean_dp` is a `DOUBLE` on the way out because it was one on the way in.*
+
+**Type inference / sniffing** — reading the first rows of a text table to guess each column's type. DuckDB's CSV reader does this; `mva-warehouse` leans on it deliberately rather than hand-rolling a guesser, so the staging step and an analyst's own `read_csv` can never disagree.
+
+**Data warehouse** — one queryable copy of derived tables, kept apart from the raw data they came from. Here it is deliberately small: the [profile](exploration.md) tables, typed and joinable, on a machine the team shares. It is a *derived dataset* — rebuildable at any time, and therefore safe to delete.
+*Example: `uv run mva-warehouse ship --host box` — see [the warehouse](warehouse.md).*
+
+**PostgreSQL (Postgres)** — the mainstream open-source client–server database. A daemon owns the data; clients connect over a socket, authenticate, and many can read and write at the same time. Row-oriented, so it is slower than a column store for wide analytical scans — but that is not what you ask it for. Use it for the things that *change*: a ledger, a results table, anything several people append to.
+*Example: measured on 5,012,204 variant records — 653 MB in Postgres versus 17 MB as [Parquet](#8-the-toolbox-what-each-program-does), and 287 ms versus 18 ms on the same filter query.*
+
+**Single-writer lock** — the restriction that only one process may hold an [embedded database](#8-the-toolbox-what-each-program-does) file open. In DuckDB it is stricter than it sounds: a held write lock blocks **readers** as well, so one long write makes the file unreadable for everyone. This, not speed, is the reason a shared team store needs a real server.
+
+**Attach (DuckDB)** — pointing DuckDB at another database so its tables appear alongside your own, queryable in one statement. This is how DuckDB acts as an engine over Postgres rather than a replacement for it.
+*Example: `ATTACH 'host=box dbname=mva' AS pg (TYPE postgres);` then `CREATE TABLE pg.results AS SELECT … FROM read_parquet('variants.parquet')` — DuckDB does the scan, Postgres keeps the answer.*
+
+**DuckLake** — a lakehouse format from the DuckDB project: the *data* stays as [Parquet](#8-the-toolbox-what-each-program-does) files, while the *catalog* (which files make up which table, and at which version) lives in a real database such as Postgres. That split buys concurrent writers and time travel without giving up columnar speed.
+
+**Catalog** — the bookkeeping that says which files constitute which table. Keeping it in a transactional database is what lets several writers agree on what the table currently is.
+
+**Time travel** — querying a table as it was at an earlier version, because every change was recorded as a snapshot instead of overwriting. Useful well beyond undo: it is an audit trail, which is what a scientific result needs when someone asks *which* version of the candidate table produced a submission.
+*Example: `SELECT count(*) FROM lake.panel AT (VERSION => 1)` returned 8 while the live table held 9.*
+
+**Row store vs column store** — whether a table is laid out one record at a time or one column at a time. A row store fetches a whole record cheaply, which suits transactions; a column store reads one field across millions of records without touching the others, which suits analytics. Postgres is the former, DuckDB and Parquet the latter — the reason both appear in this design rather than one winning.
+
+**rsync** — a copy tool that transfers only the parts of a file that changed, and resumes where it left off. The right way to move a directory to a remote box repeatedly; `scp` re-sends everything every time.
+
+**Idempotent** — an operation that gives the same result whether you run it once or five times. `mva-warehouse provision` is idempotent: on a box that already has the pinned DuckDB it prints a line and exits, so it is safe to make it a step in every deploy rather than a ritual someone must remember.
 
 **SQL** — the language for asking a database questions.
 

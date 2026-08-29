@@ -38,3 +38,6 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [005](005-fastq-structure-and-quality.md) | What are the raw reads, and what depth do they give? |
 | [006](006-phasing-power-on-bub1b.md) | How much of the compound-het search space can phasing resolve? |
 | [007](007-exploration-toolkit.md) | Can the whole data profile be read, graded and rendered from code? |
+| [008](008-duckdb-warehouse.md) | Can the derived tables be queried in SQL on a shared box, and what does "install DuckDB on a server" mean? |
+| [009](009-hosted-database-choice.md) | Which hosted database should sit under DuckDB, and what goes in it? |
+| [010](010-postgres-ingest-and-derivations.md) | Can the profile be ingested into hosted Postgres and have results written back? |

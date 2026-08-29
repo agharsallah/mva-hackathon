@@ -45,3 +45,14 @@ venv/
 env/
 *.egg-info/
 .pytest_cache/
+
+# Warehouse staging. The Parquet and the .duckdb file are *derived* — rebuilt from the
+# committed profile by `mva-warehouse stage` in under a second — so the tree carries the
+# recipe, not the output. This also keeps a future warehouse built over patient-derived
+# tables from ever being committed by reflex.
+build/
+*.duckdb
+*.duckdb.wal
+
+# Live database credentials. `.env.example` is the committed template; `.env` never is.
+.env

@@ -51,6 +51,31 @@ uv run mva-explore report ressources/data-profile     # figures/explore-report.h
 callset, filters, chromosomes and candidate genes, each carrying the words that make it
 readable. See [`docs/exploration.md`](docs/exploration.md).
 
+To query the same profile in SQL, locally or on a box the team shares:
+
+```bash
+uv run mva-warehouse stage                  # profile dir -> typed Parquet, no network
+uv run mva-warehouse local                  # build the .duckdb here
+uv run mva-warehouse ship --host user@box   # stage + provision + push + load, over ssh
+```
+
+DuckDB is embedded, so there is no server to run and no port to open — the warehouse is a
+file on the box, reached over the SSH access it already has.
+
+When the warehouse is *shared* — several people or agents writing at once — a file will not
+do, and the tooling targets a hosted PostgreSQL instead, with DuckDB still as the engine:
+
+```bash
+./tools/setup-warehouse-server.sh          # on the server, once; prints the .env block
+cp .env.example .env                       # on your machine; fill in PGPASSWORD
+
+uv run mva-warehouse pg-check              # resolved settings + a live probe
+uv run mva-warehouse pg-ingest             # staged Parquet -> the `warehouse` schema
+uv run mva-warehouse pg-derive             # analyses -> the `results` schema
+```
+
+See [`docs/warehouse.md`](docs/warehouse.md).
+
 ## Documentation
 
 | | |
@@ -58,6 +83,7 @@ readable. See [`docs/exploration.md`](docs/exploration.md).
 | [`CONTEXT.md`](CONTEXT.md) | the domain vocabulary this codebase speaks |
 | [`docs/architecture.md`](docs/architecture.md) | the map: data flow, seams, sharp edges |
 | [`docs/exploration.md`](docs/exploration.md) | the exploration toolkit: how to actually *look* at the data |
+| [`docs/warehouse.md`](docs/warehouse.md) | the warehouse: derived tables in DuckDB, and why it has no server |
 | [`docs/roadmap.md`](docs/roadmap.md) | status, next steps, and the plan for the full 80 GB |
 | [`docs/notes/`](docs/notes/) | why the code looks like this, and what is still provisional |
 | [`ideation/data-findings.md`](ideation/data-findings.md) | what is measurably in the data |
@@ -83,8 +109,17 @@ src/mva/
     views/          overview, sequencing, callset, filters, chromosomes, genes, locus
     report.py       exhibits assembled into one interactive HTML page
     cli.py          `mva-explore` — checks, report, locus, export
+  warehouse/        derived tables into DuckDB — see docs/warehouse.md
+    catalog.py      what lands in the warehouse, and each source file's shape
+    stage.py        normalise a profile directory into typed Parquet
+    remote.py       the ssh/rsync/load commands, built separately from being run
+    settings.py     connection settings from .env, with the password never printed
+    postgres.py     ingest and derive against a hosted PostgreSQL, via DuckDB
+    analysis.py     the derivations, as data: one named SQL statement each
+    cli.py          `mva-warehouse` — the file verbs, plus pg-check/ingest/derive/list/query
 tests/              one test module per seam, plus an end-to-end tracer
-tools/              environment setup, data profiling, panel BED construction
+tools/              environment setup, data profiling, panel BED construction,
+                    setup-warehouse-server.sh (run on the Postgres box)
 figures/            generated reports and exhibits
 ideation/           strategy brief, data findings, method notes
 ressources/         challenge documents and committable data profiles
