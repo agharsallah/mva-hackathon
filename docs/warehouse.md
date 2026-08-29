@@ -371,6 +371,25 @@ was never published.
 
 **Dashboard:** `http://<server>:9013` — always a different port from the API.
 
+**Its login is the same credential pair the script prints.** MinIO's root user serves both
+the S3 API and the console, so `S3_ACCESS_KEY` / `S3_SECRET_KEY` in your `.env` *are* the
+dashboard username and password (`mva` plus the generated secret, unless you passed
+`--user` / `--password`).
+
+If the generated password is lost, it is still in the container's environment:
+
+```bash
+podman inspect mva-minio --format '{{range .Config.Env}}{{println .}}{{end}}' | grep MINIO_ROOT
+```
+
+Or set your own and recreate the container — objects live in `~/mva-objects` on the host,
+so they survive:
+
+```bash
+podman rm -f mva-minio
+./tools/setup-object-store.sh --password 'your-password'
+```
+
 ### On your machine
 
 ```bash

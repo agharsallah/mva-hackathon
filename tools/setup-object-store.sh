@@ -203,8 +203,14 @@ HOST_HINT=$(hostname -f 2>/dev/null || hostname)
 say "Published ports"
 $RUNTIME port "$NAME" 2>&1 | sed 's/^/    /' || echo "    (none — nothing outside the container can reach it)"
 echo
-echo "    Console (open in a browser):  http://${HOST_HINT}:${CONSOLE_PORT}"
-echo "    Log in with the user and password below."
+echo
+echo "    ┌─ Dashboard ────────────────────────────────────────────────────────"
+echo "    │  URL       http://${HOST_HINT}:${CONSOLE_PORT}"
+echo "    │  Username  ${ACCESS_USER}"
+echo "    │  Password  ${ACCESS_PASSWORD}"
+echo "    └────────────────────────────────────────────────────────────────────"
+echo "    The same pair is the S3 access key and secret below — MinIO's root"
+echo "    credentials serve both the API and the console."
 
 cat <<ENVBLOCK
 
@@ -220,7 +226,18 @@ S3_USE_SSL=false
 ENVBLOCK
 
 if [[ "${GENERATED:-0}" == "1" ]]; then
-  echo "The password above was generated and is shown ONCE. Save it now."
+  cat <<GENNOTE
+The password above was generated and is shown ONCE. Save it now.
+
+Lost it later? It is stored in the container's environment — read it back with:
+    ${RUNTIME} inspect ${NAME} --format '{{range .Config.Env}}{{println .}}{{end}}' \
+      | grep MINIO_ROOT
+
+Or choose your own and recreate the container. Objects live in ${DATA_DIR} on the
+host, so they survive:
+    ${RUNTIME} rm -f ${NAME}
+    $0 --password 'your-password' --port ${PORT} --console-port ${CONSOLE_PORT}
+GENNOTE
 fi
 
 cat <<NEXT
