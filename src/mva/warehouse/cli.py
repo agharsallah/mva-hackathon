@@ -47,6 +47,17 @@ SSH session is needed.
 ``s3-sort``
     Rewrite an object clustered by the columns you filter on, which is what makes
     range requests small.
+
+A fifth family covers the two **ledgers** — append-only records of things that cannot be
+reconstructed after the fact.
+
+``lineage-repair`` / ``lineage-backfill`` / ``lineage-list``
+    Which bytes produced which table. ``pg-derive`` records its own edges; these two
+    repair edges written before the delivery reached the object store, and backfill runs
+    that predate the automatic recording.
+``probe-log`` / ``probe-list`` / ``probe-budget``
+    Which of the team's oracle submissions has been spent, by whom, with what content and
+    what reply.
 """
 
 import argparse
@@ -54,6 +65,7 @@ import sys
 from dataclasses import replace
 from pathlib import Path
 
+from . import cli_ledger
 from . import cli_objects
 from . import cli_source
 from . import cli_vcf
@@ -146,6 +158,7 @@ def _do_pg_derive(args) -> int:
               f"  {item.rows:>5,} rows")
     print("\nprovenance appended to "
           f"{settings.result_schema}.derivation_runs")
+    print(f"lineage edges appended to {settings.schema}.data_lineage")
     return 0
 
 
@@ -213,5 +226,6 @@ def _parser() -> argparse.ArgumentParser:
     cli_vcf.register(subparsers)
     cli_objects.register(subparsers)
     cli_source.register(subparsers)
+    cli_ledger.register(subparsers)
 
     return parser

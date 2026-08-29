@@ -211,13 +211,20 @@ def derive(settings: Postgres, names: list[str] | None = None) -> list[Ingested]
     stamps :data:`~mva.warehouse.analysis.PROVENANCE_TABLE` so a result sitting in the
     database can be traced to when it was produced and by which statement.
     """
+    from datetime import datetime, timezone
+
+    from . import lineage
     from .analysis import DERIVATIONS, PROVENANCE_TABLE, by_name, resolve
 
     chosen = [by_name(name) for name in names] if names else list(DERIVATIONS)
     produced: list[Ingested] = []
+    # One timestamp for the whole run, so the provenance stamp and the lineage edge that
+    # references it name the *same* instant. Per-statement ``now()`` would not.
+    run_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
     with attached(settings) as connection:
         ensure_schemas(connection, settings)
+        lineage.ensure_tables(connection, settings.schema)
         source = f"{ALIAS}.{safe_identifier(settings.schema)}"
         target = safe_identifier(settings.result_schema)
         stamps: list[tuple[str, str, int]] = []
@@ -231,13 +238,19 @@ def derive(settings: Postgres, names: list[str] | None = None) -> list[Ingested]
                 f"SELECT count(*) FROM {ALIAS}.{target}.{table}").fetchone()[0]
             produced.append(Ingested(table, count, target))
             stamps.append((derivation.name, derivation.question, count))
+            # Recorded here rather than by a separate verb: a result whose lineage is a
+            # second command someone has to remember is a result that will lack lineage.
+            lineage.derivation_edge(
+                connection, settings.schema, result_schema=target,
+                derivation=derivation, target_rows=count,
+                run_ref=f"{run_at:%Y-%m-%d %H:%M:%S.%f}")
 
-        _stamp_provenance(connection, target, stamps, PROVENANCE_TABLE)
+        _stamp_provenance(connection, target, stamps, PROVENANCE_TABLE, run_at)
     return produced
 
 
 def _stamp_provenance(connection, schema: str, stamps: list[tuple[str, str, int]],
-                      table: str) -> None:
+                      table: str, run_at) -> None:
     """Record what was derived, when, and how many rows it produced.
 
     Appended rather than replaced: the point is the history. Someone asking "which run
@@ -249,4 +262,5 @@ def _stamp_provenance(connection, schema: str, stamps: list[tuple[str, str, int]
         "  run_at TIMESTAMP, derivation VARCHAR, question VARCHAR, n_rows BIGINT)")
     for name, question, count in stamps:
         connection.execute(
-            f"INSERT INTO {qualified} VALUES (now(), ?, ?, ?)", [name, question, count])
+            f"INSERT INTO {qualified} VALUES (?, ?, ?, ?)",
+            [run_at, name, question, count])

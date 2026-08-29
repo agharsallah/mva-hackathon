@@ -70,14 +70,25 @@ the other. That second case is the designed trap, and it is where the raw reads 
 
 Not before steps 2–4. A probe is worth spending once the candidate list is real; before
 that it is a coin flip that burns 1/18 of the team's total budget. Rehearse it in
-`scorer.py` first, and keep a ledger of who spent what and what came back.
+`scorer.py` first, then record the spend — the ledger is built:
+
+```bash
+uv run mva-warehouse probe-budget                       # how many of the 18 are left
+uv run mva-warehouse probe-log --by <member> --type S \
+    --payload-file build/probe_s1.csv --response '<what the scorer replied>' \
+    --rationale 'singles scan, decode per intel §9.1'
+uv run mva-warehouse probe-list
+```
 
 ---
 
 ## 2. Phase 2 — the platform work, in order
 
 The pipeline steps above need a platform underneath them. This is that work, sequenced so
-each item unblocks the next. Nothing here is started.
+each item unblocks the next. Nothing in the table below is started. Two former items —
+closing the lineage gap and building the probe ledger — are **done** and now belong to
+[`current-state.md`](current-state.md); the evidence is
+[`methodology/016`](../methodology/016-lineage-backfill-and-probe-ledger.md).
 
 | # | Item | Why now | Owner doc |
 |---|---|---|---|
@@ -85,8 +96,6 @@ each item unblocks the next. Nothing here is started.
 | 2 | **Port the annotator** — implement `Annotator.annotate()` against Ensembl VEP REST | the critical path; the port and its tests already exist | [note](notes/annotation-as-a-port.md) |
 | 3 | **Mine the non-PASS calls** | minutes of work against a day of re-calling; needs only layer 2 | §1 step 4 |
 | 4 | **The FASTQ path** — k-mer strike first, full re-call only if it fails | the only route to a structural allele; conditional, not a prerequisite | §3 |
-| 5 | **Close the lineage gap** — real object keys, real hashes, and one edge per derivation | "which bytes produced this result" must be a query, not an argument, before the report | [note](notes/delivery-is-immutable.md) |
-| 6 | **Build the probe ledger** — a Postgres table of who spent which submission, its content, and the decoded reply | the budget is 18 submissions and it is tracked nowhere; this is exactly the mutable shared state Postgres was chosen for | [note](notes/postgres-for-shared-state.md) |
 
 ## 2b. Still open — questions with no answer yet
 

@@ -203,6 +203,27 @@ uv run mva-warehouse source-check      # survey the bucket, verify hashes, refre
 local copy and `--verify` checks each object against the publisher's SHA-256. Evidence:
 [`methodology/014`](../methodology/014-source-of-truth-and-lineage.md).
 
+### The two append-only ledgers
+
+`warehouse.data_lineage` answers "which bytes produced this table"; `warehouse.probe_ledger`
+answers "which of our 18 oracle submissions is spent, by whom, with what content and what
+reply". Neither is ever updated or deleted — a correction is a newer row saying what it
+supersedes.
+
+```bash
+uv run mva-warehouse lineage-list --current    # newest edge per target table
+uv run mva-warehouse lineage-repair            # repoint local-path edges at the verified object
+uv run mva-warehouse lineage-backfill          # one edge per already-logged derivation run
+uv run mva-warehouse probe-budget              # "n/18 spent, m remaining"
+uv run mva-warehouse probe-log --by <member> --type S --payload-file <submission.csv> \
+    --response '<scorer reply>' --rationale '<what this probe decides>'
+uv run mva-warehouse probe-list
+```
+
+`pg-derive` records its own lineage edge on every run, so `lineage-backfill` exists only for
+runs that predate that; both repair verbs are idempotent and safe to re-run. Evidence:
+[`methodology/016`](../methodology/016-lineage-backfill-and-probe-ledger.md).
+
 ### Sorting is what makes remote queries cheap
 
 Row-group statistics can only skip a group when the filter column is **clustered**. Same

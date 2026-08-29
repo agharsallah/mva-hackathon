@@ -49,3 +49,4 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [013](013-remote-object-store.md) | How can server-side files be queried from a laptop without SSH? |
 | [014](014-source-of-truth-and-lineage.md) | Is the delivery preserved unchanged, verified, and traceable? |
 | [015](015-step-1-consolidation.md) | Is the repository coherent enough to build phase 2 on? |
+| [016](016-lineage-backfill-and-probe-ledger.md) | Which bytes produced each table, and who spent which oracle submission? |

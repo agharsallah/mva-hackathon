@@ -825,8 +825,14 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 **Object versioning** — a store setting where writing to an existing key creates a *new version* beside the old one instead of replacing it. It makes an accidental overwrite recoverable, which is what turns "we keep the raw data" into something that survives a mistake.
 *Example: the VCF was uploaded twice — from a laptop, then re-fetched on the server — and MinIO holds both versions.*
 
-**Data lineage** — the record of which inputs produced which table, by which transformation. Not "it came from a VCF", but *which object, at which version, with which checksum, producing how many rows*. Without it, a disputed result cannot be traced back.
-*Example: `warehouse.data_lineage` links `variants_raw` to the exact object version it was read from.*
+**Data lineage** — the record of which inputs produced which table, by which transformation. Not "it came from a VCF", but *which object, at which version, with which checksum, producing how many rows*. Without it, a disputed result cannot be traced back. Stored as an [append-only](#8-command-line-tools-youll-see) edge list: one row per (input → output) pair.
+*Example: `warehouse.data_lineage` links `variants_raw` to `s3://mva/source/WGS_EX2312012_HGWCNDSX7.vcf.gz`, sha256 `bec64c68…`, version `3a79ea8b…`, 5,012,204 rows.*
+
+**Lineage edge** — one row of that record: one output table, one input, one transformation. A derived table with no edge is a table nobody can vouch for. Read the edges with `mva-warehouse lineage-list`.
+*Example: `results.panel_gene_density` ← `warehouse.panel_variant_counts, warehouse.mva_panel_grch38`, tool `mva-warehouse pg-derive`.*
+
+**Superseding record** — how an append-only table is corrected: you append a *newer* row and say in its `notes` which earlier row it replaces. The wrong row stays, because the fact that the claim changed is itself evidence. Updating in place would destroy that.
+*Example: the first `variants_raw` edge named a laptop path with no checksum; the superseding edge names the verified object in the bucket and carries `supersedes the edge produced at 2026-08-29 16:37:29`.*
 
 **Append-only** — a table that only ever gains rows; nothing is edited or deleted. Used where the history *is* the point, such as an upload ledger or a lineage log. A record that can be quietly rewritten is not evidence.
 
@@ -1155,6 +1161,9 @@ one answer, half the universe deleted -- with certainty, not probability.
 **Priority queue** — a list that always hands you the highest-scoring item first.
 
 **Append-only ledger** — a log you only ever add to, never edit. Keeps an honest record of all 18 submissions.
+
+**Probe ledger** — the concrete table that does that: `warehouse.probe_ledger`, one row per spent [submission / probe](#13-hackathon-scoring-words), holding who spent it, its probe type ([S](#13-hackathon-scoring-words) / [P](#13-hackathon-scoring-words) / [F](#13-hackathon-scoring-words)), the exact payload uploaded, the [oracle](#13-hackathon-scoring-words)'s reply, and the rationale. A shared submission budget tracked in chat messages is a budget that gets double-spent.
+*Example: `mva-warehouse probe-budget` → `all tracks: 0/18 spent, 18 remaining`.*
 
 ---
 
