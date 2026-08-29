@@ -14,6 +14,9 @@ Layers, each usable on its own:
 ``theme`` / ``figure``
     One palette for the whole repository, and the rule that a figure travels with its
     caption and its legend.
+``views``
+    Plotly exhibits grouped into report sections — sequencing, callset, filters,
+    chromosomes, candidate genes, and a locus browser over live calls.
 
 The quick path::
 
@@ -27,6 +30,7 @@ from .checks import Check, Verdict, run_checks
 from .figure import Exhibit, Section
 from .profile import CallsetProfile, ProfileLayout
 from .theme import install_template
+from .views import SECTIONS, build_sections
 
 # Every figure in the package inherits the repository's palette and axes without each
 # view having to ask for them.
@@ -34,5 +38,5 @@ install_template()
 
 __all__ = [
     "CallsetProfile", "ProfileLayout", "Check", "Verdict", "run_checks",
-    "Exhibit", "Section", "install_template",
+    "Exhibit", "Section", "SECTIONS", "build_sections", "install_template",
 ]
