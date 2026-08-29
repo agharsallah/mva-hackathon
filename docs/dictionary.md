@@ -806,9 +806,28 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 
 **Row store vs column store** — whether a table is laid out one record at a time or one column at a time. A row store fetches a whole record cheaply, which suits transactions; a column store reads one field across millions of records without touching the others, which suits analytics. Postgres is the former, DuckDB and Parquet the latter — the reason both appear in this design rather than one winning.
 
+**Source of truth** — the one copy everything else is derived from, kept unchanged on purpose. Here it is the delivered files in object storage: no parsing, no filtering, no typing. Anything wrong downstream can be rebuilt from it; it can never be rebuilt from anything else.
+*Example: `s3://mva/source/` holds all 12 delivered files, 84.99 GB, byte-for-byte as published.*
+
+**Checksum / SHA-256** — a short fingerprint computed from every byte of a file. Two files with the same SHA-256 are the same file; change one bit and the fingerprint changes completely. It is how you prove a transfer did not corrupt anything.
+*Example: the delivered VCF is `bec64c68d3ad10d0…`, and the publisher says the same, so our copy is the delivery.*
+
+**Git LFS (Large File Storage)** — a Git extension that keeps big files outside the repository and leaves a pointer behind. It records a real SHA-256 for each stored file; ordinary Git objects instead carry a 40-character **blob SHA-1**, computed over different bytes with a different algorithm. Comparing one against the other produces a mismatch that means nothing.
+
+**Object versioning** — a store setting where writing to an existing key creates a *new version* beside the old one instead of replacing it. It makes an accidental overwrite recoverable, which is what turns "we keep the raw data" into something that survives a mistake.
+*Example: the VCF was uploaded twice — from a laptop, then re-fetched on the server — and MinIO holds both versions.*
+
+**Data lineage** — the record of which inputs produced which table, by which transformation. Not "it came from a VCF", but *which object, at which version, with which checksum, producing how many rows*. Without it, a disputed result cannot be traced back.
+*Example: `warehouse.data_lineage` links `variants_raw` to the exact object version it was read from.*
+
+**Append-only** — a table that only ever gains rows; nothing is edited or deleted. Used where the history *is* the point, such as an upload ledger or a lineage log. A record that can be quietly rewritten is not evidence.
+
+**Landing zone / raw layer** — the first place data arrives, stored in its delivered form before anything is interpreted. Separating it from the typed, queryable layer means a parsing mistake is always recoverable.
+*Example: `warehouse.variants_raw` — one row per VCF line, every field text, nothing filtered.*
+
 **rsync** — a copy tool that transfers only the parts of a file that changed, and resumes where it left off. The right way to move a directory to a remote box repeatedly; `scp` re-sends everything every time.
 
-**Idempotent** — an operation that gives the same result whether you run it once or five times. `mva-warehouse provision` is idempotent: on a box that already has the pinned DuckDB it prints a line and exits, so it is safe to make it a step in every deploy rather than a ritual someone must remember.
+**Idempotent** — an operation that gives the same result whether you run it once or five times. An upload that lands the same file twice records both attempts in the ledger but leaves one object in the store, so repeating it is safe. `mva-warehouse provision` is idempotent: on a box that already has the pinned DuckDB it prints a line and exits, so it is safe to make it a step in every deploy rather than a ritual someone must remember.
 
 **SQL** — the language for asking a database questions.
 

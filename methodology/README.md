@@ -44,3 +44,4 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [011](011-duckdb-fidelity-and-ingestion-gates.md) | Is DuckDB lossless, and what of the 85 GB should actually be ingested? |
 | [012](012-read-storage-options.md) | How should the raw reads be normalised and stored, and in what database? |
 | [013](013-remote-object-store.md) | How can server-side files be queried from a laptop without SSH? |
+| [014](014-source-of-truth-and-lineage.md) | Is the delivery preserved unchanged, verified, and traceable? |
