@@ -3,7 +3,9 @@ name = "mva"
 version = "0.1.0"
 description = "N-of-1 causal variant pipeline for the MVA Hackathon 2026 proband"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "plotly>=7.0.0",
+]
 
 [dependency-groups]
 dev = ["pytest>=8"]
