@@ -1,5 +1,9 @@
 # MVA Proband Diagnosis
 
+**Standing:** the naming discipline for code and write-ups — one chosen word per idea, plus
+what to avoid. Distinct from [`docs/dictionary.md`](docs/dictionary.md), which *teaches*
+the concepts; this file *fixes the vocabulary*. Last checked 2026-08-29.
+
 Identifying the two causal variants in one child with Mosaic Variegated Aneuploidy, from
 whole-genome sequencing, and submitting them in the form the challenge scorer accepts.
 

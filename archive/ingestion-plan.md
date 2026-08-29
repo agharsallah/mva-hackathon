@@ -1,3 +1,5 @@
+> **Archived 2026-08-29.** Superseded by `docs/data-layers.md`. Its "awaiting review — nothing has been ingested" status is no longer true: layers 0 and 1 are live, see `docs/current-state.md`. Never edited.
+
 # Ingestion plan — for review before anything is loaded
 
 **Status: awaiting review. Nothing has been ingested.** Everything below is either a

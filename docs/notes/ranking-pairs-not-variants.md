@@ -13,7 +13,8 @@ diagnosis.
 
 ## Consequences
 
-The candidate space is quadratic. BUB1B alone yields 1,653 pairs from 58 heterozygous calls,
-and physical phasing resolves only five of them, so the combinatorics cannot be escaped
+The candidate space is quadratic. BUB1B alone yields over a thousand pairs from its
+heterozygous calls, and physical phasing resolves a handful
+([measured](../../ideation/data-findings.md) §2.4), so the combinatorics cannot be escaped
 through phasing. Rarity and consequence have to do the narrowing, which is what makes
 [annotation as a port](annotation-as-a-port.md) the critical path rather than a refinement.

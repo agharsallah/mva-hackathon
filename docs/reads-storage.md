@@ -1,12 +1,17 @@
 # Making the raw reads queryable
 
-How to normalise 1,079,858,785 sequencing reads into something you can query, and which
+**Standing:** a storage design study, not a build. Nothing here is implemented — no read
+Parquet exists. Measurements are real (`methodology/012`); the schema is a proposal.
+Last checked 2026-08-29.
+
+How to normalise the delivered sequencing reads
+([how many](../ideation/data-findings.md) §1) into something you can query, and which
 database to put them in. Every number below is measured on this dataset unless labelled an
 estimate.
 
 ## The short answer
 
-**DuckDB over Parquet — not PostgreSQL.** Measured, for all 1.08 billion reads:
+**DuckDB over Parquet — not PostgreSQL.** Measured, for the whole read set:
 
 | Store | Size | Note |
 |---|---|---|
@@ -52,7 +57,7 @@ erDiagram
   READS { uint8 read_num string sequence string quality bool is_filtered }
 ```
 
-> **Legend** — `RUNS` is constant per file (**one row**, not 1.08 billion).
+> **Legend** — `RUNS` is constant per file (**one row**, not one per read).
 > `FRAGMENTS` is the flowcell coordinate `(lane, tile, x, y)`, which is the natural key
 > **shared by a read and its mate** — that is what pairs R1 with R2, and it removes the
 > duplicated read name across the two files. `READS` carries the payload.
@@ -84,9 +89,9 @@ Two reasons the payload cannot shrink much further:
 
 ## What you can actually query, and how fast
 
-Measured on 1,000,000 reads, extrapolated linearly to all 1.08 billion:
+Measured on 1,000,000 reads, extrapolated linearly to the whole set:
 
-| Query | 1M reads | All 1.08B |
+| Query | 1M reads | Whole set |
 |---|---|---|
 | Exact 31-mer substring scan | 143 ms | **~2.6 min** |
 | 31-mer + reverse complement | 200 ms | **~3.6 min** |
@@ -163,20 +168,15 @@ reads/lane=1/part-*.parquet
 they are constant within a file. `(lane, tile, x, y)` joins a read to its mate.
 
 **Cost to build:** parsing ran at ~100,000 reads/second single-threaded, so ~3 hours for
-all 1.08 billion, or well under an hour across the 8 files in parallel.
+the whole set, or well under an hour across the 8 files in parallel.
 
 ## Getting it onto the server
 
 The reads are too large for a laptop, so the Parquet lives in the object store and is
-queried in place over HTTP range requests — see
-[the object store](warehouse.md#the-object-store-bulk-files-queried-in-place). Set it up
-with:
+queried in place over HTTP range requests. Setup, ports, credentials and the SSL gap are in
+[`infrastructure.md` §2](infrastructure.md#2-the-object-store--bulk-files-queried-in-place).
 
-```bash
-./tools/setup-object-store.sh --bucket mva     # API on :9012, console on :9013
-```
-
-Then upload and sort for the queries you will actually run:
+Upload and sort for the queries you will actually run:
 
 ```bash
 uv run mva-warehouse s3-put reads_lane1.parquet --key reads/lane=1/part-0.parquet
@@ -187,6 +187,6 @@ uv run mva-warehouse s3-query "SELECT count(*) FROM 's3://mva/reads/**/*.parquet
 ## Data handling
 
 Reads are patient data, and the `index_pair` barcode is library identity — the committed
-profile redacts it deliberately. Whatever store is built must live outside the repository,
-on access-controlled infrastructure, and be deleted within 30 days of close along with
-everything else derived from the delivery.
+profile redacts it deliberately. The rule and the locations are in the
+[root README](../README.md) and
+[its note](notes/no-patient-data-in-the-repository.md).

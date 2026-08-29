@@ -1,8 +1,9 @@
 # Architecture — the map
 
-How the pieces fit, what each seam guarantees, and where to plug the next thing in.
-Vocabulary is defined in [`../CONTEXT.md`](../CONTEXT.md); the reasoning behind the shape
-is in [`notes/`](notes/).
+**Standing:** a map, not a manual. Module names and seam guarantees checked against the
+tree 2026-08-29. Counts, provisioned state and gaps live in
+[`current-state.md`](current-state.md); vocabulary in [`../CONTEXT.md`](../CONTEXT.md);
+the reasoning behind each choice in [`decisions.md`](decisions.md).
 
 ## The shape of the problem
 
@@ -22,37 +23,37 @@ That framing sets the whole design: the ranked unit is a **pair**, not a variant
           │  bcftools: index, normalize, region-query        tools/profile-genomic-data.sh
           ▼
   ┌───────────────┐
-  │    vcf.py     │  read_calls() → one Call per ALT allele
+  │pipeline/vcf.py│  read_calls() → one Call per ALT allele
   └───────┬───────┘  keeps non-PASS, never rewrites alleles
           │
           │  Call(variant, genotype, depths, phase_set, phase_gt, filters)
           ▼
   ┌───────────────┐
-  │compound_het.py│  candidate_pairs() → every het pair, classified
+  │  compound_het │  candidate_pairs() → every het pair, classified
   └───────┬───────┘  CIS rejected · TRANS confirmed · UNKNOWN kept
           │
           │  VariantPair(left, right, phase)
           ▼
   ┌───────────────┐        ┌──────────────────┐
-  │  ranking.py   │◄───────│  annotation.py   │  the port: gene, consequence, gnomAD AF
+  │    ranking    │◄───────│   annotation     │  the port: gene, consequence, gnomAD AF
   └───────┬───────┘        └──────────────────┘  DictAnnotator today, VEP later
           │                                       see notes/
           │  RankedPair(left, right, gene, score)
           ▼
   ┌───────────────┐
-  │ submission.py │  write_submission() → the 12-column Track 1 CSV
+  │   submission  │  write_submission() → the 12-column Track 1 CSV
   └───────┬───────┘  validates: PROBAND01 · ≤10 rows · epcr ∈ (0,1] distinct
           │
           ├──────────────► the real leaderboard          (spends one of 18)
           │
           ▼
   ┌───────────────┐
-  │   scorer.py   │  score(rows, hypothesis) → rank_points, f_max, match ranks
+  │     scorer    │  score(rows, hypothesis) → rank_points, f_max, match ranks
   └───────────────┘  a local replica — rehearse the probe before spending it
 ```
 
-`variant.py` sits under all of it: every module speaks `Variant`, and it is the only place
-allowed to build a chromosome string.
+Every module above is `src/mva/pipeline/`. `variant.py` sits under all of it: every module speaks `Variant`, and it is the only place
+allowed to build a chromosome string ([the chr-prefix bridge](notes/chr-prefix-bridge.md)).
 
 ## The second branch: exploration
 
@@ -91,31 +92,37 @@ Full documentation in [`exploration.md`](exploration.md).
 | `submission.py` | Nothing the scorer would reject or rank ambiguously can be written. | `test_submission.py` |
 | `scorer.py` | Faithful to the published evaluation code, including its tie-breaking. | `test_scorer.py` |
 | the whole chain | A VCF in, a scored CSV out. | `test_pipeline_end_to_end.py` |
-| `explore/readers.py` | A malformed or truncated artifact is a gap, never an exception. | `test_explore_readers.py` |
+| `io/readers.py` | A malformed or truncated artifact is a gap, never an exception. | `test_explore_readers.py` |
 | `explore/profile.py` | Every section is optional, and the filename mapping is a parameter. | `test_explore_profile.py` |
 | `explore/checks.py` | Every verdict states its band and the reasoning behind it. | `test_explore_checks.py` |
 | `explore/views/` | A figure never travels without its caption and its legend. | `test_explore_views.py` |
 | `explore/report.py` | Every exhibit is rendered, reachable, and drawn exactly once. | `test_explore_report.py` |
 
-127 tests, running in about a second on synthetic fixtures with no dataset present.
+All of it runs on synthetic fixtures with no dataset and no services present — the
+current test count is in [`current-state.md`](current-state.md).
 
 ## Where the sharp edges are
 
 **The `chr` prefix.** The VCF says `15`; the scorer demands `chr15` and compares strings
-verbatim. `Variant.from_vcf()` is the bridge. Region queries go the other way — `bcftools`
-needs the bare contig — so the panel BED is stripped on the way in and prefixed on the way
-out. Building a chromosome string anywhere else is the single easiest way to score zero
-while looking correct.
+verbatim. `pipeline/variant.py` owns the conversion and nothing else may build a chromosome
+string — [the chr-prefix bridge](notes/chr-prefix-bridge.md).
 
-**Normalization is not done yet.** 66,860 multiallelic sites and 930k indels face a scorer
-that does exact string matching with no left-alignment. `bcftools norm -m -both -f <no-chr
-GRCh38>` must run before candidate extraction, against the *no-chr* reference to match the
-VCF. This is the highest-value unimplemented step after annotation.
+**Normalization is not done yet.** Multiallelic sites and indels
+([counts](../ideation/data-findings.md)) face a scorer that does exact string matching with
+no left-alignment. `bcftools norm -m -both -f <no-chr GRCh38>` must run before candidate
+extraction, against the *no-chr* reference to match the VCF. This is the highest-value
+unimplemented step after annotation.
 
 **`INFO/AF` is a trap.** It is within-sample. With one sample it is 0.5 or 1.0 and carries
 no population information. Population frequency comes only from the annotation port.
 
-**Unknown phase is not a rejection.** It is the verdict on 99.7% of pairs.
+**Unknown phase is not a rejection.** It is the verdict on the overwhelming majority of
+pairs; phasing is a tiebreaker, not the discriminator
+([measured](../ideation/data-findings.md)).
+
+**`pg-query` addresses tables as `pg.<schema>.<table>`.** It runs in DuckDB, which reaches
+Postgres through `ATTACH`. A bare `warehouse.foo` is a "table does not exist" error, not a
+permissions problem — [`infrastructure.md`](infrastructure.md).
 
 ## Extension points
 
@@ -128,7 +135,38 @@ no population information. Population frequency comes only from the annotation p
   a DeepVariant re-call, an SV caller, a non-PASS rescue pass — feeds the same pipeline.
   This is how the structural-variant path attaches when it is built.
 
+## The third branch: storage
+
+`warehouse/` is the infrastructure half — how the delivered bytes and the derived tables
+get somewhere the team can query them. It has no opinion about variants.
+
+| Module group | Modules | What it does |
+|---|---|---|
+| **CLI** | `cli.py`, `cli_objects.py`, `cli_source.py`, `cli_vcf.py` | `mva-warehouse`, split so one verb family lives in one module rather than one 1,000-line entry point |
+| **Postgres path (live)** | `settings.py`, `stage.py`, `postgres.py`, `analysis.py`, `vcfstage.py` | profile → typed Parquet → the `warehouse` schema → derivations into `results` |
+| **Object store** | `objects.py`, `source.py` | the bucket, and the delivery inside it |
+| **Guarantees** | `integrity.py`, `lineage.py` | fingerprints and provenance edges |
+| **File path (superseded)** | `remote.py`, `catalog.py` | the DuckDB-file-over-SSH verbs |
+
+**Path A vs Path B.** The first warehouse was a `.duckdb` file on a box reached over SSH
+(Path A). It never ran against a real host: DuckDB's file lock excludes readers as well as
+writers, so a shared warehouse needs a real server, and the tooling moved to hosted
+PostgreSQL with MinIO alongside for bulk files (Path B). Path A's verbs are still in the
+CLI and `stage.py` is still live because `pg-ingest` consumes its Parquet — retiring the
+rest is an open decision. One paragraph, one link:
+[postgres for shared state](notes/postgres-for-shared-state.md).
+
+What the guarantee modules buy:
+
+| Module | Guarantee |
+|---|---|
+| `integrity.py` | A hop either reproduces the source exactly or fails loudly — row counts, per-column checksums, and NULL vs empty-string accounting, so DuckDB's one lossy case cannot pass silently |
+| `lineage.py` | An append-only edge list saying which input produced which output. **Currently a stub** — see [`current-state.md` §5](current-state.md#5-known-gaps) |
+| `objects.py` | An object is written once, hashed, and never rewritten in place; the bucket is versioned |
+| `source.py` | The delivery is stored as the publisher shipped it and verified against the publisher's own SHA-256 — [delivery is immutable](notes/delivery-is-immutable.md) |
+
 ## What is not here yet
 
-No alignment, no re-calling, no SV detection, no normalization step, and no real
-annotator. The only CLI is `mva-explore`; the pipeline itself is still library-only. See [`roadmap.md`](roadmap.md).
+No alignment, no re-calling, no SV detection, no normalization step, no real annotator, and
+no probe ledger. Two CLIs exist — `mva-explore` and `mva-warehouse` — but the *pipeline*
+has none: it is still library-only. See [`roadmap.md`](roadmap.md).

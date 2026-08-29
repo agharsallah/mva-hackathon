@@ -1,16 +1,20 @@
 # Test fixtures — synthetic, safe to commit
 
+**Standing:** firm — the rule behind this directory is
+[synthetic fixtures](../../docs/notes/synthetic-fixtures.md). Shape re-checked 2026-08-29.
+
 **No patient data is in this directory.** Every base, position and genotype here is
 invented. The fixtures reproduce the *shape* of the real challenge data — header
 structure, contig naming, FORMAT fields, the specific representational traps — so the
 pipeline can be developed and tested without touching the gated 85 GB dataset.
 
-Real patient slices live in `~/ubuntu/work/` (outside the repo, gitignored, deleted
-within 30 days of hackathon close).
+Real patient slices live outside the repo — see the
+[data-handling perimeter](../../README.md#data-handling--read-this-first).
 
 ## Shape mirrored from the real VCF
 
-Established by profiling the real file (see `ressources/data-profile/`):
+Established by profiling the real file (evidence: `ressources/data-profile/`; numbers:
+[`ideation/data-findings.md`](../../ideation/data-findings.md)):
 
 | Property | Real VCF | Fixture |
 |---|---|---|
@@ -19,8 +23,8 @@ Established by profiling the real file (see `ressources/data-profile/`):
 | Caller | Sentieon Haplotyper → GATK VariantFiltration | same header lines |
 | FORMAT | `GT:AD:DP:GQ:PGT:PID:PL` | same |
 | FILTER vocabulary | `PASS,LowQual,MQ40,QD2,FS60,MQRankSum-12.5,RPRS-8` | same |
-| Multiallelic sites | 66,860 present | one included |
-| Physical phasing | 770,458 records carry `PID` | cis, trans and unphased cases |
+| Multiallelic sites | present ([count](../../ideation/data-findings.md)) | one included |
+| Physical phasing | a minority of records carry `PID` ([count](../../ideation/data-findings.md)) | cis, trans and unphased cases |
 | No SV/CNV records | SNV+indel only | same |
 
 ## The traps each fixture record encodes

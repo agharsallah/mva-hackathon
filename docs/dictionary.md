@@ -1,7 +1,15 @@
-# Dictionary — every unclear word from `hackathon-intel.md` + `draft0-answers.md`
+# Dictionary — every unclear word in this repository
+
+**Standing:** the one glossary. Never duplicated elsewhere; enriched whenever a new domain
+term, gene, file format or tool appears in the work. Last checked 2026-08-29.
 
 Explained like you're 12. Ordered so each word only uses words defined above it.
 Format: **term** — what it means. *Example.*
+
+Concrete values in `*Example:*` lines are illustrations, not the source of truth for a
+measurement. Dataset numbers are owned by
+[`../ideation/data-findings.md`](../ideation/data-findings.md); repository and
+infrastructure numbers by [`current-state.md`](current-state.md).
 
 Diagrams: `mermaid` blocks render automatically on GitHub, in VS Code with the Markdown preview,
 and on Obsidian/Notion. If you are reading this in a plain text editor they will look like code — open it on
@@ -787,7 +795,7 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 **Type inference / sniffing** — reading the first rows of a text table to guess each column's type. DuckDB's CSV reader does this; `mva-warehouse` leans on it deliberately rather than hand-rolling a guesser, so the staging step and an analyst's own `read_csv` can never disagree.
 
 **Data warehouse** — one queryable copy of derived tables, kept apart from the raw data they came from. Here it is deliberately small: the [profile](exploration.md) tables, typed and joinable, on a machine the team shares. It is a *derived dataset* — rebuildable at any time, and therefore safe to delete.
-*Example: `uv run mva-warehouse ship --host box` — see [the warehouse](warehouse.md).*
+*Example: `uv run mva-warehouse pg-ingest` — see [the infrastructure runbook](infrastructure.md).*
 
 **PostgreSQL (Postgres)** — the mainstream open-source client–server database. A daemon owns the data; clients connect over a socket, authenticate, and many can read and write at the same time. Row-oriented, so it is slower than a column store for wide analytical scans — but that is not what you ask it for. Use it for the things that *change*: a ledger, a results table, anything several people append to.
 *Example: measured on 5,012,204 variant records — 653 MB in Postgres versus 17 MB as [Parquet](#8-the-toolbox-what-each-program-does), and 287 ms versus 18 ms on the same filter query.*

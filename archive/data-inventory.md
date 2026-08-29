@@ -1,3 +1,5 @@
+> **Archived 2026-08-29.** Written before the files were opened. Superseded by `ressources/hackathon-rules/README.md` (challenge documents) and `ideation/data-findings.md` (the measured dataset). Never edited.
+
 # Data Inventory — what we have, what's in it, how we use it
 
 Companion to [hackathon-intel.md](hackathon-intel.md) (strategy) and [draft0-answers.md](draft0-answers.md) (method design).

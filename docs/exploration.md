@@ -1,5 +1,8 @@
 # The exploration toolkit
 
+**Standing:** module names and section list checked against `src/mva/explore/` on
+2026-08-29. Test and exhibit counts live in [`current-state.md`](current-state.md).
+
 A genomic dataset arrives as tens of gigabytes of compressed text and one question: *is
 there anything here?* Answering it normally means running four or five command-line tools,
 reading their output tables by eye, remembering which numbers are acceptable, and writing
@@ -43,11 +46,11 @@ flowchart TB
     VCF[["a real VCF<br/>patient records"]]
   end
 
-  READERS["readers.py<br/><i>TSV · bcftools stats · BED · VCF header</i>"]
+  READERS["io/readers.py<br/><i>TSV · bcftools stats · BED · VCF header</i>"]
   PROFILEMOD["profile.py<br/><i>CallsetProfile, one typed object</i>"]
   LAYOUT{{"ProfileLayout<br/>which filename holds what"}}
   CHECKS["checks.py<br/><i>measured number + stated band = verdict</i>"]
-  VIEWS["views/<br/><i>overview · sequencing · callset<br/>filters · chromosomes · genes · locus</i>"]
+  VIEWS["views/<br/><i>overview · reads · callset · quality<br/>karyotype · panel · locus</i>"]
   THEME{{"theme.py<br/>one palette, repository-wide"}}
   FIGURE["figure.py<br/><i>Exhibit = figure + caption + legend</i>"]
   REPORT["report.py"]
@@ -78,15 +81,19 @@ flowchart TB
 > concern · yellow: a configuration seam you are meant to change · green: the artifacts you
 > read · dotted arrows: configuration rather than data flow.
 
-Each layer is usable without the ones above it. `readers` parses file shapes and knows
+Each layer is usable without the ones above it. `io/readers` parses file shapes and knows
 nothing about this case; `profile` assembles a directory into one object and knows nothing
 about charts; `views` build figures and know nothing about HTML.
 
 ---
 
-## The twenty exhibits, and what each one answers
+## The exhibits, and what each one answers
 
-### Overview
+One section per module in `views/`. The heading names below are what a reader sees; the
+module name is in brackets, because the two are deliberately allowed to differ — a section
+can be retitled without renaming a module.
+
+### Overview  *(`overview.py`)*
 
 | Exhibit | The question |
 |---|---|
@@ -94,7 +101,7 @@ about charts; `views` build figures and know nothing about HTML.
 | Quality checks | Is any of it outside what a healthy genome looks like? |
 | Where this file came from | Which reference genome, which caller, which chromosome naming? |
 
-### Sequencing — the raw reads
+### Sequencing — the raw reads  *(`reads.py`)*
 
 | Exhibit | The question |
 |---|---|
@@ -102,7 +109,7 @@ about charts; `views` build figures and know nothing about HTML.
 | Library quality against expected bands | Q30, GC, duplication, insert size — each against its band |
 | What read filtering removed | What did quality filtering cost, and what did it buy? |
 
-### Callset — what the variant caller produced
+### Callset — what the variant caller produced  *(`callset.py`)*
 
 | Exhibit | The question |
 |---|---|
@@ -111,7 +118,7 @@ about charts; `views` build figures and know nothing about HTML.
 | Indel length spectrum | How long are the insertions and deletions? |
 | Depth distribution | How many reads sit under a typical call? |
 
-### Filters & phase — what was held back
+### Filters & phase — what was held back  *(`quality.py`)*
 
 | Exhibit | The question |
 |---|---|
@@ -120,7 +127,7 @@ about charts; `views` build figures and know nothing about HTML.
 | Genotype composition | How many heterozygous calls could form half a pair? |
 | How much of the callset is phased | Can variants be placed onto a specific chromosome copy? |
 
-### Chromosomes — the aneuploidy question
+### Chromosomes — the aneuploidy question  *(`karyotype.py`)*
 
 | Exhibit | The question |
 |---|---|
@@ -128,7 +135,7 @@ about charts; `views` build figures and know nothing about HTML.
 | Read depth by chromosome | Does the coverage agree with what the allele balance says? |
 | Variant density by chromosome | Is any chromosome contributing a suspicious excess of calls? |
 
-### Candidate genes — where the search starts
+### Candidate genes — where the search starts  *(`panel.py`)*
 
 | Exhibit | The question |
 |---|---|
@@ -136,7 +143,7 @@ about charts; `views` build figures and know nothing about HTML.
 | Calls in each candidate gene | Which gene has an unusual share of suppressed calls? |
 | The pair search space | How many hypotheses are there, against ten submission rows? |
 
-### Locus — over a real VCF, not a summary
+### Locus — over a real VCF, not a summary  *(`locus.py`)*
 
 | Exhibit | The question |
 |---|---|
@@ -233,9 +240,9 @@ PNGs when the engine is installed and says so when it is not.
 
 ## Testing
 
-58 tests over the toolkit, running in about a second against a synthetic profile directory
-in [`tests/fixtures/profile/`](../tests/fixtures/profile/) with no dataset present. They
-cover the parsers' handling of real file quirks (rollup lines glued under a table, quoted
+The toolkit's tests run against a synthetic profile directory in
+[`tests/fixtures/profile/`](../tests/fixtures/profile/) with no dataset present — the suite
+total is in [`current-state.md`](current-state.md). They cover the parsers' handling of real file quirks (rollup lines glued under a table, quoted
 descriptions containing commas), graceful degradation on missing artifacts, the layout
 swap, the check bands, chromosome ordering, and the report shell.
 

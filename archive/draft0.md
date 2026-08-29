@@ -1,3 +1,5 @@
+> **Archived 2026-08-29.** The first open questions, before any data was opened. Answered in `archive/draft0-answers.md`; the live successors are `docs/roadmap.md` and `docs/decisions.md`. Never edited.
+
 I still haven't explored the data yet, there is alot of unkown now.
 
 I know we have genetic and clinical data.

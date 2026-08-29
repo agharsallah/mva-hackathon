@@ -1,144 +1,78 @@
 # MVA Hackathon 2026
 
-An N-of-1 causal-variant pipeline for the [Rare Disease, Real Kid: MVA Hackathon 2026](https://sagebio-rare-disease-real-kid-mva-hackathon-2026.hf.space/).
+**Standing:** the front door. What this is, where the data may live, how to start. Every
+other topic is one link away in [`docs/README.md`](docs/README.md), which is the only
+documentation index. Last checked 2026-08-29.
+
+An N-of-1 causal-variant pipeline for the
+[Rare Disease, Real Kid: MVA Hackathon 2026](https://sagebio-rare-disease-real-kid-mva-hackathon-2026.hf.space/).
 
 One child with Mosaic Variegated Aneuploidy, whole-genome sequencing, and a
 compound-heterozygous answer key: two variants in one gene, one on each allele.
 
 ## Data handling — read this first
 
-The 80 GB dataset is gated under a Data Transfer Agreement. **No patient sequence enters
-this repository**, ever: no VCF slice, no read, no variant table with real coordinates,
-no IGV screenshot. `.gitignore` blocks the file types as a safety net, but the real
-control is keeping the data outside the git tree entirely.
+The dataset is gated under a Data Transfer Agreement. **No patient sequence enters this
+repository**, ever: no VCF slice, no read, no variant table with real coordinates, no IGV
+screenshot. The rule, why it is absolute rather than proportionate, and what it forbids:
+[no patient data in the repository](docs/notes/no-patient-data-in-the-repository.md).
+
+Where everything lives:
 
 | | Location | In git |
 |---|---|---|
-| Raw dataset | `~/ubuntu/data/` | no |
+| Raw dataset (local convenience mirror) | `~/ubuntu/data/` | no |
 | Derived patient slices, panel extracts, smoke samples | `~/ubuntu/work/` | no |
+| The delivery as source of truth | MinIO bucket `mva`, `source/` — remote VPS | no |
+| Ingested and derived tables | PostgreSQL `mva` — remote VPS | no |
 | Aggregate profiles, counts, redacted headers | `ressources/data-profile/` | yes |
 | Synthetic fixtures | `tests/fixtures/` | yes |
 
-Everything must be deleted within 30 days of the hackathon close, with confirmation
-emailed to the organisers.
+`.gitignore` blocks the genomic file types as a safety net; the real control is keeping the
+data outside the git tree entirely. The fixture guard is deliberately narrow —
+`tests/fixtures/*.vcf` is allowed but `*.vcf.gz` is not — so any fixture entering git is
+plain text a reviewer can read in a diff and confirm by eye is fabricated.
 
-The fixture guard is deliberately narrow: `tests/fixtures/*.vcf` is allowed but
-`*.vcf.gz` is not, so any fixture entering git is plain text a reviewer can read in a
-diff and confirm by eye is fabricated. Tests bgzip them into a tmp dir at run time.
+Everything must be deleted within 30 days of the hackathon close, with confirmation emailed
+to the organisers.
 
 ## Getting started
 
 ```bash
 tools/setup-env.sh            # uv + micromamba (bcftools, samtools, seqkit, fastp)
 source tools/activate.sh      # puts the bio binaries on PATH
-uv run pytest                 # 127 tests on synthetic fixtures, no data needed
+uv run pytest                 # hermetic: synthetic fixtures, no dataset, no services
 ```
 
-To reproduce the data profile (needs the gated dataset, ~10 min):
-
-```bash
-tools/profile-genomic-data.sh ~/ubuntu/data
-```
-
-To look at what that profile says (needs no dataset — the profile is committed):
+Look at the data profile (needs no dataset — the profile is committed):
 
 ```bash
 uv run mva-explore checks ressources/data-profile     # graded metrics, in the terminal
 uv run mva-explore report ressources/data-profile     # figures/explore-report.html
 ```
 
-`report` writes one self-contained interactive page: twenty exhibits across sequencing,
-callset, filters, chromosomes and candidate genes, each carrying the words that make it
-readable. See [`docs/exploration.md`](docs/exploration.md).
-
-To query the same profile in SQL, locally or on a box the team shares:
+Reproduce the profile itself (needs the gated dataset, ~10 min):
 
 ```bash
-uv run mva-warehouse stage                  # profile dir -> typed Parquet, no network
-uv run mva-warehouse local                  # build the .duckdb here
-uv run mva-warehouse ship --host user@box   # stage + provision + push + load, over ssh
+tools/profile-genomic-data.sh ~/ubuntu/data
 ```
 
-DuckDB is embedded, so there is no server to run and no port to open — the warehouse is a
-file on the box, reached over the SSH access it already has.
-
-When the warehouse is *shared* — several people or agents writing at once — a file will not
-do, and the tooling targets a hosted PostgreSQL instead, with DuckDB still as the engine:
+Query the same data in SQL, against the shared Postgres and object store:
 
 ```bash
-./tools/setup-warehouse-server.sh          # on the server, once; prints the .env block
-cp .env.example .env                       # on your machine; fill in PGPASSWORD
-
+cp .env.example .env                       # fill in PGPASSWORD and the S3 keys
 uv run mva-warehouse pg-check              # resolved settings + a live probe
-uv run mva-warehouse pg-ingest             # staged Parquet -> the `warehouse` schema
-uv run mva-warehouse pg-derive             # analyses -> the `results` schema
+uv run mva-warehouse s3-check
 ```
 
-See [`docs/warehouse.md`](docs/warehouse.md).
-
-## Documentation
-
-| | |
-|---|---|
-| [`CONTEXT.md`](CONTEXT.md) | the domain vocabulary this codebase speaks |
-| [`docs/architecture.md`](docs/architecture.md) | the map: data flow, seams, sharp edges |
-| [`docs/exploration.md`](docs/exploration.md) | the exploration toolkit: how to actually *look* at the data |
-| [`docs/warehouse.md`](docs/warehouse.md) | the warehouse: derived tables in DuckDB, and why it has no server |
-| [`docs/roadmap.md`](docs/roadmap.md) | status, next steps, and the plan for the full 80 GB |
-| [`docs/notes/`](docs/notes/) | why the code looks like this, and what is still provisional |
-| [`ideation/data-findings.md`](ideation/data-findings.md) | what is measurably in the data |
-| [`methodology/`](methodology/) | how each result was reached, reproducibly |
-
-## Layout
-
-```
-src/mva/
-  variant.py        variant identity in the scorer's exact representation
-  vcf.py            reading the callset into per-ALT-allele calls
-  compound_het.py   pairing het calls, classifying cis / trans / unknown
-  annotation.py     the functional-annotation port (VEP, gnomAD) + a lookup fake
-  ranking.py        scoring pairs so the best lands at rank 1
-  submission.py     the Track 1 CSV contract
-  scorer.py         a local replica of the challenge scorer, for rehearsing probes
-  explore/          exploration and visualisation — see docs/exploration.md
-    readers.py      parsers for TSV, bcftools stats, BED, VCF headers
-    profile.py      a profile directory loaded into one typed object
-    checks.py       measured numbers graded against stated, cited bands
-    theme.py        one palette for every figure in the repository
-    figure.py       an Exhibit: a figure with its caption and its legend
-    views/          overview, sequencing, callset, filters, chromosomes, genes, locus
-    report.py       exhibits assembled into one interactive HTML page
-    cli.py          `mva-explore` — checks, report, locus, export
-  warehouse/        derived tables into DuckDB — see docs/warehouse.md
-    catalog.py      what lands in the warehouse, and each source file's shape
-    stage.py        normalise a profile directory into typed Parquet
-    remote.py       the ssh/rsync/load commands, built separately from being run
-    settings.py     connection settings from .env, with the password never printed
-    postgres.py     ingest and derive against a hosted PostgreSQL, via DuckDB
-    analysis.py     the derivations, as data: one named SQL statement each
-    cli.py          `mva-warehouse` — the file verbs, plus pg-check/ingest/derive/list/query
-tests/              one test module per seam, plus an end-to-end tracer
-tools/              environment setup, data profiling, panel BED construction,
-                    setup-warehouse-server.sh (run on the Postgres box)
-figures/            generated reports and exhibits
-ideation/           strategy brief, data findings, method notes
-ressources/         challenge documents and committable data profiles
-```
+Setup, ports, credentials and the sharp edges: [`docs/infrastructure.md`](docs/infrastructure.md).
 
 ## Where the work stands
 
-Measured facts about the dataset are in [`ideation/data-findings.md`](ideation/data-findings.md);
-strategy is in [`ideation/hackathon-intel.md`](ideation/hackathon-intel.md). The three
-findings that most shape the pipeline:
+Test count, what is provisioned, what runs, and the known gaps:
+[`docs/current-state.md`](docs/current-state.md).
+What is measurably in the data: [`ideation/data-findings.md`](ideation/data-findings.md).
 
-1. **The VCF's contigs have no `chr` prefix and the scorer does not normalize them.**
-   Submitting `15` instead of `chr15` is a well-formed, silent, total miss.
-2. **The callset is SNV + indel only — no SV or CNV caller in its provenance.** If one
-   causal allele is structural it is absent at every FILTER level, and the FASTQ is the
-   only path to it.
-3. **Physical phasing resolves 0.3% of candidate pairs.** It reaches ~300 bp, so it is a
-   confirmatory tool, not the discriminator. Rarity and consequence must carry the ranking.
+## Documentation
 
-The blocking dependency is functional annotation — gnomAD frequency and VEP consequence.
-It is designed as a port (`annotation.py`) with a fake in tests, so ranking logic is
-already testable and the real backend is a swap.
+Everything is indexed in **[`docs/README.md`](docs/README.md)**. Start there.

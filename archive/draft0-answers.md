@@ -1,3 +1,5 @@
+> **Archived 2026-08-29.** Superseded by `docs/decisions.md` (its §0.1 recommendation matrix) and `docs/roadmap.md` (its §12.2 still-open list). Numbers here predate later runs and may be wrong; `ideation/data-findings.md` owns them now. Never edited.
+
 # draft0 — Answered
 
 Companion to `draft0.md` (open questions) and `hackathon-intel.md` (strategy/intel).

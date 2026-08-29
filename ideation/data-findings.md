@@ -1,8 +1,17 @@
 # Data findings — what is actually in the 85 GB
 
-Empirical companion to [data-inventory.md](data-inventory.md), which was written before
-the files were opened. Everything below was measured, not assumed. Where a measurement
-contradicts an earlier assumption the contradiction is called out explicitly.
+**Standing:** the **single owner of every measured number about the dataset**. Other
+documents link here; none restate a value. Measured 2026-08-28, re-checked 2026-08-29
+against the object-store inventory. Evidence for how each number was produced is in the
+[`methodology/`](../methodology/) entry cited beside it.
+
+Empirical companion to `data-inventory.md` (written before the files were opened, now in
+[`archive/`](../archive/data-inventory.md)). Everything below was measured, not assumed.
+Where a measurement contradicts an earlier assumption the contradiction is called out
+explicitly.
+
+Repository and infrastructure numbers — test counts, table counts, what is provisioned —
+are **not** here; they belong to [`docs/current-state.md`](../docs/current-state.md).
 
 Reproduce with `tools/profile-genomic-data.sh ~/ubuntu/data`. Committable summaries land
 in [`ressources/data-profile/`](../ressources/data-profile/); patient-derived slices land
@@ -12,16 +21,28 @@ in `~/ubuntu/work/`, outside the repo.
 
 ## 1. Inventory
 
-10 files, 80 GiB on disk.
+| File | Count | Size | What it is |
+|---|---|---|---|
+| `WGS_EX2312012_HGWCNDSX7.vcf.gz` (+`.tbi`) | 2 | 315 MB + 2.34 MB | The callset — 5,012,204 variants |
+| `..._S16_L00{1..4}_R{1,2}_001.fastq.gz` | 8 | 8 × ~10.5 GB, 84.67 GB total | Raw reads, 4 lanes × paired ends |
+| `Challenge_Clinical_Phenotype_1.docx` | 1 | 17 KB | Phenotype (transcribed to [`ressources/hackathon-rules/`](../ressources/hackathon-rules/)) |
+| `README.md`, `.gitattributes` | 2 | 8 KB | HF dataset metadata |
 
-| File | Size | What it is |
-|---|---|---|
-| `WGS_EX2312012_HGWCNDSX7.vcf.gz` (+`.tbi`) | 315 MB | The callset — 5,012,204 variants |
-| `..._S16_L00{1..4}_R{1,2}_001.fastq.gz` | 8 × ~10.5 GB | Raw reads, 4 lanes × paired ends |
-| `Challenge_Clinical_Phenotype_1.docx` | 17 KB | Phenotype (already transcribed to `ressources/`) |
-| `README.md`, `.gitattributes` | 8 KB | HF dataset metadata |
+**Delivery totals**, as counted in the object store
+([`methodology/014`](../methodology/014-source-of-truth-and-lineage.md)):
 
-There is **no BAM/CRAM**. Any read-level work means aligning 161 Gbases ourselves.
+| | Value |
+|---|---|
+| Objects | **12** |
+| Bytes | **84,985,953,378 — 84.99 GB** |
+| Reads across the 8 FASTQ | **1,079,858,785** |
+| Bases | **160.9 Gb** |
+
+The "10 files" seen on disk and the 12 objects in the bucket are the same delivery counted
+differently: the disk figure omits the HF `README.md` and `.gitattributes`, which are
+dataset metadata rather than data. Both counts are correct for what they count.
+
+There is **no BAM/CRAM**. Any read-level work means aligning 160.9 Gbases ourselves.
 
 ---
 
@@ -138,8 +159,8 @@ statement, not evidence of absence.
 | Instrument | `A01973` — NovaSeq 6000, flowcell `HGWCNDSX7` (S4) |
 | Layout | 4 lanes, paired end, one library (single index pair, redacted) |
 | Read length | **2 × 149** (not 151) |
-| Estimated reads | ~1.08 billion |
-| Estimated bases | **160.9 Gb → ~52× raw** |
+| Reads | **1,079,858,785** (~1.08 billion) |
+| Bases | **160.9 Gb → ~52× raw** |
 | Mean mapped depth (from VCF `DP`) | **~44×** |
 | Q30 | 92.9% (R1), 90.0% (R2) |
 | Duplication | 9.3% |

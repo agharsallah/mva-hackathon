@@ -1,5 +1,8 @@
 # A synthetic profile directory
 
+**Standing:** firm. Values are invented and must never be quoted as a result. Last checked
+2026-08-29.
+
 Deliberately tiny, deliberately not this proband. It exists so the exploration toolkit can
 be tested end to end — readers, profile assembly, checks, every view and the report shell —
 without any real dataset present and without any patient-derived number entering the

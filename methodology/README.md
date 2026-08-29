@@ -19,11 +19,14 @@ All runs below, unless stated otherwise:
 | | |
 |---|---|
 | Machine | 12 cores, 15 GB RAM, Linux 6.6.87.2-microsoft-standard-WSL2 |
-| Date | 2026-08-28 |
+| Dates | 001–007: 2026-08-28. 008–015: 2026-08-29. Each entry states its own. |
 | Data | `~/ubuntu/data/`, 10 files, 80 GiB, unmodified |
 | bcftools / samtools / htslib | 1.24 (micromamba, conda-forge + bioconda) |
 | fastp | 1.3.6 |
-| Python | 3.12.3 |
+| Python | 3.13 (the project venv, `uv`) |
+
+This index may be corrected. **The numbered entries may not** — they are append-only, and a
+superseded finding is corrected by a new entry that says so, never by editing the old one.
 
 Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate.sh`.
 
@@ -45,3 +48,4 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [012](012-read-storage-options.md) | How should the raw reads be normalised and stored, and in what database? |
 | [013](013-remote-object-store.md) | How can server-side files be queried from a laptop without SSH? |
 | [014](014-source-of-truth-and-lineage.md) | Is the delivery preserved unchanged, verified, and traceable? |
+| [015](015-step-1-consolidation.md) | Is the repository coherent enough to build phase 2 on? |

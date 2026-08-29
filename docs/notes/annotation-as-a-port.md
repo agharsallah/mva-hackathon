@@ -18,8 +18,8 @@ Ensembl REST, a prebuilt table — becomes a swap rather than a rewrite.
 
 Wiring VEP directly was rejected because it would have made every ranking test depend on a
 multi-gigabyte cache download, and because the backend choice is genuinely still open: the
-offline cache is right for the genome-wide run and wrong for annotating 861 panel variants
-today.
+offline cache is right for the genome-wide run and wrong for annotating the
+[panel](../../ideation/data-findings.md) today.
 
 ## Consequences
 
