@@ -74,6 +74,7 @@ from dataclasses import replace
 from pathlib import Path
 
 from . import cli_objects
+from . import cli_source
 from . import cli_vcf
 from . import postgres as pg
 from .analysis import DERIVATIONS
@@ -354,5 +355,6 @@ def _parser() -> argparse.ArgumentParser:
 
     cli_vcf.register(subparsers)
     cli_objects.register(subparsers)
+    cli_source.register(subparsers)
 
     return parser
