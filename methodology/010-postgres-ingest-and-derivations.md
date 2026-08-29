@@ -162,6 +162,63 @@ $ uv run pytest tests/ -q
 connection opens — a credential reaching a log, an identifier reaching SQL unvalidated, a
 derivation referencing a table ingest never produces.
 
+## Follow-up: Postgres in a container
+
+The first real-server run failed at the first step:
+
+```
+$ ./tools/setup-warehouse-server.sh --db mva --user mva
+==> Checking the server
+cannot reach the postgres superuser role using:
+    sudo -u postgres psql -v ON_ERROR_STOP=1 -qtA
+```
+
+The server runs Postgres in Docker, so there is no local `postgres` OS user to `sudo` to —
+the superuser lives *inside* the container. The script now discovers this rather than
+requiring the operator to construct the command. Verified against a containerised Postgres:
+
+```
+$ ./tools/setup-warehouse-server.sh --db mva --user mva --password ****
+==> Finding the database
+    ✓ discovered Postgres container 'mva-pg-docker' via docker
+    ✓ postgres reachable — 18.6 (Debian 18.6-1.pgdg13+2)
+…
+PGHOST=DESKTOP-IRPBBMJ.localdomain
+PGPORT=55993
+```
+
+**`PGPORT=55993`, not 5432** — which is the substantive part. Inside a container Postgres
+answers `SHOW port` with 5432 no matter what is mapped on the host, so the previous code
+would have emitted a `.env` that looked right and could not connect. The port now comes
+from `docker port <container> 5432/tcp`.
+
+Ambiguity and the unpublished case are both handled:
+
+```
+$ ./tools/setup-warehouse-server.sh …
+several Postgres containers are running:
+    mva-pg-nopub
+    mva-pg-docker
+Pick one with --docker <name>.
+```
+
+```
+⚠  Container 'mva-pg-nopub' does not publish port 5432 to the host, so nothing
+   outside it can connect yet — not even this server.
+```
+
+The full pipeline was then re-run end to end against the container the script had just
+configured — `pg-check`, `pg-ingest` (14 tables), `pg-derive` (5 result tables) — all
+succeeding.
+
+### A second bug, caught in that work
+
+`set -o pipefail` plus `docker port` aborted the script silently. `docker port` exits
+non-zero when nothing is published, so the pipeline assigning `PUBLISHED_PORT` failed and
+`set -e` killed the run at exactly the moment it was trying to *detect and explain* that
+situation — exit code 1, no message. Fixed with a `|| true` on that pipeline, with a comment
+saying why it is load-bearing.
+
 ## Bug this run caught
 
 **A lazy relation outlived its connection.** `pg-query` raised

@@ -213,11 +213,40 @@ already running there — the client connects over the network.
 
 Creates the role, the database and two schemas, and prints the `.env` block to paste on
 your machine. It is idempotent — safe to re-run — and pins no version: it reports whatever
-`SHOW server_version` says and works with it. If `sudo -u postgres psql` is not how you
-reach the superuser, override it:
+`SHOW server_version` says and works with it.
+
+**It finds the database itself.** There are three arrangements in the wild, and guessing
+wrong is the difference between "it just worked" and a confusing auth error, so the script
+tries each in turn:
+
+| Arrangement | How it connects |
+|---|---|
+| You said how | `MVA_PSQL_SUPER` is set — always wins |
+| **Postgres in a container** | Discovers the running container, goes in via `docker exec` / `podman exec` |
+| Packaged Postgres | `sudo -u postgres psql`, the Debian/Ubuntu default |
+
+The container case matters because the superuser lives *inside* the container — there is no
+local `postgres` OS user to `sudo` to, so the stock guess cannot work. If several Postgres
+containers are running, the script lists them and asks:
 
 ```bash
-MVA_PSQL_SUPER="psql 'postgresql://admin:pw@host:5432/postgres'"   ./tools/setup-warehouse-server.sh
+./tools/setup-warehouse-server.sh --docker <container-name>
+```
+
+**The port it reports is the published one, not `SHOW port`.** Inside a container Postgres
+always answers 5432 regardless of what is mapped on the host, so a `.env` built from that
+looks correct and cannot connect. If the container publishes nothing at all, the script
+says so rather than handing you a broken `.env`:
+
+```
+⚠  Container 'pg' does not publish port 5432 to the host, so nothing outside
+   it can connect yet — not even this server.
+```
+
+Anything unusual still works by naming the connection yourself:
+
+```bash
+MVA_PSQL_SUPER="psql 'postgresql://admin:pw@host:5432/postgres'" ./tools/setup-warehouse-server.sh
 ```
 
 Add `--no-duckdb` to skip installing the DuckDB CLI on the box; it is a convenience for

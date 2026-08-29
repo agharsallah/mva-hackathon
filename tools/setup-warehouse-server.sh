@@ -29,20 +29,9 @@ DB_PASSWORD=""
 SCHEMAS=(warehouse results)
 INSTALL_DUCKDB=1
 PRINT_ONLY=0
-# How to reach the superuser. The default suits a stock Debian/Ubuntu install where the
-# `postgres` OS user owns the cluster. Override it when that is not how you get in — a
-# managed instance reached over TCP, say:
-#   MVA_PSQL_SUPER="psql 'postgresql://admin:pw@host:5432/postgres'" ./setup-warehouse-server.sh
-# ...or a Postgres running in a container, where the superuser lives inside it:
-#   MVA_PSQL_SUPER="podman exec -i postgres_db psql -U postgres" ./setup-warehouse-server.sh
-if [[ -n "${MVA_PSQL_SUPER:-}" ]]; then
-  read -r -a PSQL_SUPER <<< "$MVA_PSQL_SUPER"
-else
-  PSQL_SUPER=(sudo -u postgres psql)
-fi
-PSQL_SUPER+=(-v ON_ERROR_STOP=1 -qtA)
-# Same connection, but against the warehouse database rather than the maintenance one.
-psql_db() { "${PSQL_SUPER[@]}" -d "$1" "${@:2}"; }
+CONTAINER=""          # set by --docker, or discovered
+RUNTIME=""            # "docker", "podman", or the sudo-prefixed form
+PUBLISHED_PORT=""     # host-side port when Postgres is containerised
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -50,6 +39,7 @@ while [[ $# -gt 0 ]]; do
     --user)           DB_USER="$2"; shift 2 ;;
     --password)       DB_PASSWORD="$2"; shift 2 ;;
     --schema)         SCHEMAS+=("$2"); shift 2 ;;
+    --docker)         CONTAINER="$2"; shift 2 ;;
     --no-duckdb)      INSTALL_DUCKDB=0; shift ;;
     --print-env-only) PRINT_ONLY=1; shift ;;
     -h|--help)        sed -n '2,26p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
@@ -60,18 +50,99 @@ done
 say() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
 ok()  { printf '    \033[32m✓\033[0m %s\n' "$*"; }
 
-# ── 0. Preconditions ─────────────────────────────────────────────────────────
-say "Checking the server"
-# The client may be a bare `psql`, or a wrapper that reaches one — `podman exec`,
-# `docker exec`, `ssh`. Check whatever MVA_PSQL_SUPER actually starts with.
+# ── 0. Find a way in ─────────────────────────────────────────────────────────
+#
+# There are three arrangements in the wild and the script tries each in turn, because
+# guessing wrong is the difference between "it just worked" and a confusing auth error:
+#
+#   1. MVA_PSQL_SUPER — you told us exactly how to connect. Always wins.
+#   2. A Postgres in a container. The superuser lives *inside* it, so there is no local
+#      `postgres` OS user to sudo to and the stock guess cannot work.
+#   3. A packaged Postgres owned by the `postgres` OS user — the Debian/Ubuntu default.
+
+# Find a working container runtime, preferring one that needs no sudo.
+find_runtime() {
+  local candidate
+  for candidate in "docker" "podman" "sudo docker" "sudo podman"; do
+    command -v "${candidate%% *}" >/dev/null 2>&1 || continue
+    if $candidate ps >/dev/null 2>&1; then echo "$candidate"; return 0; fi
+  done
+  return 1
+}
+
+# Names of running containers whose image looks like a Postgres.
+find_pg_containers() {
+  $1 ps --format '{{.Names}}\t{{.Image}}' 2>/dev/null \
+    | awk -F'\t' 'tolower($2) ~ /postgres|postgis|timescale|pgvector/ { print $1 }'
+}
+
+# The image's superuser: POSTGRES_USER if the container was built with one, else postgres.
+container_superuser() {
+  local user
+  user=$($RUNTIME exec "$1" printenv POSTGRES_USER 2>/dev/null | tr -d '\r') || true
+  echo "${user:-postgres}"
+}
+
+say "Finding the database"
+
+if [[ -n "${MVA_PSQL_SUPER:-}" ]]; then
+  read -r -a PSQL_SUPER <<< "$MVA_PSQL_SUPER"
+  ok "using MVA_PSQL_SUPER"
+else
+  # A container was named, or one can be discovered.
+  if [[ -n "$CONTAINER" ]] || ! sudo -n -u postgres psql -tAc 'SELECT 1' >/dev/null 2>&1; then
+    if RUNTIME=$(find_runtime); then
+      if [[ -z "$CONTAINER" ]]; then
+        mapfile -t FOUND < <(find_pg_containers "$RUNTIME")
+        if [[ ${#FOUND[@]} -eq 1 ]]; then
+          CONTAINER="${FOUND[0]}"
+          ok "discovered Postgres container '$CONTAINER' via $RUNTIME"
+        elif [[ ${#FOUND[@]} -gt 1 ]]; then
+          echo "several Postgres containers are running:" >&2
+          printf '    %s\n' "${FOUND[@]}" >&2
+          echo "Pick one with --docker <name>." >&2
+          exit 1
+        fi
+      else
+        ok "using container '$CONTAINER' via $RUNTIME"
+      fi
+    fi
+  fi
+
+  if [[ -n "$CONTAINER" ]]; then
+    SUPERUSER=$(container_superuser "$CONTAINER")
+    read -r -a PSQL_SUPER <<< "$RUNTIME exec -i $CONTAINER psql -U $SUPERUSER"
+    # The port inside the container is almost always 5432; what the client needs is the
+    # port published on the host, which is a different question and a common way to get
+    # a .env that cannot connect.
+    # `|| true` is load-bearing: with `set -o pipefail`, `docker port` exits non-zero
+    # when nothing is published, which would abort the script at exactly the moment we
+    # are trying to detect and explain that situation.
+    PUBLISHED_PORT=$($RUNTIME port "$CONTAINER" 5432/tcp 2>/dev/null \
+                     | head -1 | sed 's/.*://' | tr -d '\r' || true)
+  else
+    PSQL_SUPER=(sudo -u postgres psql)
+  fi
+fi
+
+PSQL_SUPER+=(-v ON_ERROR_STOP=1 -qtA)
+# Same connection, but against the warehouse database rather than the maintenance one.
+psql_db() { "${PSQL_SUPER[@]}" -d "$1" "${@:2}"; }
+
 command -v "${PSQL_SUPER[0]}" >/dev/null || {
   echo "'${PSQL_SUPER[0]}' not found — is PostgreSQL (or your container runtime) installed?" >&2
   exit 1; }
+
 if ! "${PSQL_SUPER[@]}" -c 'SELECT 1' >/dev/null 2>&1; then
   echo "cannot reach the postgres superuser role using:" >&2
   echo "    ${PSQL_SUPER[*]}" >&2
-  echo "Run this as a user with sudo, or set MVA_PSQL_SUPER to a command that connects" >&2
-  echo "as a superuser (see the comment at the top of the script)." >&2
+  echo >&2
+  echo "If PostgreSQL runs in a container, name it:" >&2
+  echo "    ./setup-warehouse-server.sh --docker <container-name>" >&2
+  echo "List them with:  docker ps" >&2
+  echo >&2
+  echo "Or set MVA_PSQL_SUPER to a command that connects as a superuser:" >&2
+  echo "    MVA_PSQL_SUPER=\"docker exec -i pg psql -U postgres\" ./setup-warehouse-server.sh" >&2
   exit 1
 fi
 ok "postgres reachable — $("${PSQL_SUPER[@]}" -c 'SHOW server_version')"
@@ -152,7 +223,20 @@ fi  # PRINT_ONLY
 
 # ── 5. The .env block ────────────────────────────────────────────────────────
 HOST_HINT=$(hostname -f 2>/dev/null || hostname)
-PORT=$("${PSQL_SUPER[@]}" -c 'SHOW port' 2>/dev/null || echo 5432)
+
+# Which port the *client* needs. For a containerised Postgres this is emphatically not
+# `SHOW port`, which reports 5432 from inside the container regardless of what is
+# published on the host — a .env built from it looks right and cannot connect.
+if [[ -n "$CONTAINER" ]]; then
+  if [[ -n "$PUBLISHED_PORT" ]]; then
+    PORT="$PUBLISHED_PORT"
+  else
+    PORT="5432"
+    NOT_PUBLISHED=1
+  fi
+else
+  PORT=$("${PSQL_SUPER[@]}" -c 'SHOW port' 2>/dev/null || echo 5432)
+fi
 
 cat <<ENVBLOCK
 
@@ -173,6 +257,20 @@ if [[ "${GENERATED:-0}" == "1" ]]; then
   echo "The password above was generated and is shown ONCE. Save it now."
 fi
 
+if [[ "${NOT_PUBLISHED:-0}" == "1" ]]; then
+  cat <<UNPUBLISHED
+
+⚠  Container '$CONTAINER' does not publish port 5432 to the host, so nothing outside
+   it can connect yet — not even this server. Pick one:
+
+   a) Republish the container with  -p 5432:5432  (recreates it; the data volume survives)
+   b) Connect through the container network from this box only
+   c) Reverse-proxy or tunnel it
+
+   Check what is published with:  ${RUNTIME:-docker} port $CONTAINER
+UNPUBLISHED
+fi
+
 cat <<'NEXT'
 
 Two things to check before ingesting from your laptop:
@@ -181,8 +279,12 @@ Two things to check before ingesting from your laptop:
        listen_addresses = '*'      in postgresql.conf
        a host line for your client in pg_hba.conf   (prefer hostssl + scram-sha-256)
      Then: sudo systemctl reload postgresql
-     If you only ever connect through an SSH tunnel, leave both alone — that is
-     the safer default, and the client supports it.
+     If Postgres runs in a container, those files are INSIDE it — the host-side
+     control is the published port instead. Check with: docker port <container>
+
+     If you only ever connect through an SSH tunnel, leave all of that alone — that
+     is the safer default, and the client supports it:
+       ssh -L 5432:localhost:PORT user@server     # then PGHOST=localhost in .env
 
   2. From your machine:
        uv run mva-warehouse pg-check
