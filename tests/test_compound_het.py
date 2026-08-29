@@ -8,8 +8,7 @@ so a meaningful fraction of pairs can be resolved without parental sequencing.
 """
 from pathlib import Path
 
-from mva.compound_het import Phase, candidate_pairs
-from mva.vcf import read_calls
+from mva.pipeline import Phase, candidate_pairs, read_calls
 
 FIXTURE = Path(__file__).parent / "fixtures" / "mini.vcf"
 

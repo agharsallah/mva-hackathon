@@ -9,8 +9,7 @@ import io
 
 import pytest
 
-from mva.submission import Row, write_submission
-from mva.variant import Variant
+from mva.pipeline import Row, Variant, write_submission
 
 A = Variant("chr15", 40143000, "T", "C")
 B = Variant("chr15", 40143500, "G", "T")

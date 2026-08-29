@@ -82,7 +82,7 @@ def run_checks(profile: CallsetProfile) -> list[Check]:
 
 def _callset_checks(profile: CallsetProfile) -> list[Check]:
     out: list[Check] = []
-    tstv = _ts_tv(profile)
+    tstv = ts_tv(profile)
     if tstv is not None:
         out.append(Check(
             name="Transition/transversion ratio",
@@ -272,7 +272,7 @@ def _balance_checks(profile: CallsetProfile) -> list[Check]:
     return out
 
 
-def _ts_tv(profile: CallsetProfile) -> float | None:
+def ts_tv(profile: CallsetProfile) -> float | None:
     rows = profile.stats.get("TSTV")
     if not rows or len(rows[0]) < 3:
         return None

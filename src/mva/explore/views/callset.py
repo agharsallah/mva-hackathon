@@ -13,9 +13,10 @@ instead of spread across twelve bars.
 
 import plotly.graph_objects as go
 
+from ..checks import ts_tv
 from ..figure import Exhibit, sized
 from ..profile import CallsetProfile
-from ..readers import as_float, as_int
+from ...io.readers import as_float, as_int
 from ..theme import BAD, GOOD, MACHINE, MUTED, RAW, SUBTLE_INK, legend_line
 
 #: Pyrimidine-centric collapse: each substitution and its reverse complement are one event.
@@ -126,11 +127,11 @@ def substitution_spectrum(profile: CallsetProfile) -> Exhibit:
     figure.update_layout(xaxis_title="substitution, collapsed onto the pyrimidine strand",
                          yaxis_title="substitutions", showlegend=False, bargap=0.4)
 
-    ts_tv = _ts_tv(profile)
+    ratio = ts_tv(profile)
     notes = []
-    if ts_tv is not None:
+    if ratio is not None:
         notes.append(
-            f"Transition/transversion ratio {ts_tv:.2f}. Transitions outnumber "
+            f"Transition/transversion ratio {ratio:.2f}. Transitions outnumber "
             "transversions about two to one in real human variation; random error would "
             "push this toward 0.5."
         )
@@ -288,11 +289,4 @@ def _overflow_note(points: list[tuple[int, int]]) -> str:
                 "catch-alls holding the entire long tail."
             )
     return ""
-
-
-def _ts_tv(profile: CallsetProfile) -> float | None:
-    rows = profile.stats.get("TSTV")
-    if not rows or len(rows[0]) < 3:
-        return None
-    return as_float(rows[0][2])
 

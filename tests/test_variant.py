@@ -6,7 +6,7 @@ than improvised at submission time.
 """
 import pytest
 
-from mva.variant import Variant
+from mva.pipeline import Variant
 
 
 def test_vcf_contig_gains_chr_prefix_for_submission():

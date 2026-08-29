@@ -10,7 +10,7 @@ Two things are worth knowing about why it works this way.
 have no header, one is cut into ``##`` blocks, and several glue two-column rollup lines
 (``est_raw_coverage_x  51.9``) under the table proper. Handing those to a CSV reader
 directly gives either a parse error or a silently truncated table, so each is normalised
-through :mod:`mva.explore.readers` first.
+through :mod:`mva.io.readers` first.
 
 **Why DuckDB does the typing.** Writing every column as text would make the warehouse
 useless for arithmetic — ``mean_dp > 40`` has to compare numbers, not strings. Rather than
@@ -27,7 +27,7 @@ import csv
 from dataclasses import dataclass
 from pathlib import Path
 
-from ..explore import readers
+from ..io import readers
 from .catalog import Dataset, discover
 
 #: The table that collects every two-column rollup line found across all sources.

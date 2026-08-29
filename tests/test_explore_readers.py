@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-from mva.explore import readers
+from mva.io import readers
 
 PROFILE = Path(__file__).parent / "fixtures" / "profile"
 

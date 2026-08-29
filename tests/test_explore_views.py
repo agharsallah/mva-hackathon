@@ -5,7 +5,7 @@ import pytest
 
 from mva.explore import CallsetProfile, build_sections
 from mva.explore.views import SECTIONS, karyotype, locus, panel
-from mva.vcf import read_calls
+from mva.pipeline import read_calls
 
 PROFILE = Path(__file__).parent / "fixtures" / "profile"
 MINI_VCF = Path(__file__).parent / "fixtures" / "mini.vcf"

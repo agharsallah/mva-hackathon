@@ -1,8 +1,7 @@
 """The VCF-reading seam: turning records into calls the ranker can reason about."""
 from pathlib import Path
 
-from mva.variant import Variant
-from mva.vcf import read_calls
+from mva.pipeline import Variant, read_calls
 
 FIXTURE = Path(__file__).parent / "fixtures" / "mini.vcf"
 

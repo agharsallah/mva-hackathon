@@ -10,9 +10,7 @@ prediction. Only the dbSNP membership flag is usable raw, and it is a weak novel
 """
 import pytest
 
-from mva.annotation import Annotation, DictAnnotator
-from mva.ranking import rank_pairs
-from mva.variant import Variant
+from mva.pipeline import Annotation, DictAnnotator, Variant, rank_pairs
 
 A = Variant("chr15", 40143000, "T", "C")   # rare stop-gain
 B = Variant("chr15", 40143500, "G", "T")   # rare missense

@@ -12,9 +12,7 @@ literal below is that formula evaluated by hand.
 """
 import pytest
 
-from mva.scorer import score
-from mva.submission import Row
-from mva.variant import Variant
+from mva.pipeline import Row, Variant, score
 
 A = Variant("chr15", 40143000, "T", "C")
 B = Variant("chr15", 40143500, "G", "T")

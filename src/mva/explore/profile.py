@@ -19,8 +19,8 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Callable
 
-from . import readers
-from .readers import Region, Sections, Table, VcfHeader
+from ..io import readers
+from ..io.readers import Region, Sections, Table, VcfHeader
 
 
 @dataclass(frozen=True)

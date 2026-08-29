@@ -1,7 +1,7 @@
 """Locus views over live calls — what an analyst opens IGV to see.
 
 The other view modules read summary tables. These read the calls themselves, through
-:mod:`mva.vcf`, and answer the questions that are normally answered by loading a BAM into
+:mod:`mva.pipeline.vcf`, and answer the questions that are normally answered by loading a BAM into
 a genome browser and squinting: where in this gene are the variants, how well supported is
 each one, and which of them can be placed on the same or opposite copies of the chromosome.
 
@@ -21,8 +21,7 @@ import plotly.graph_objects as go
 
 from ..figure import Exhibit, sized
 from ..theme import BAD, DECISION, GOOD, MACHINE, MUTED, RAW, SUBTLE_INK, legend_line
-from ...compound_het import Phase, candidate_pairs
-from ...vcf import Call
+from ...pipeline import Call, Phase, candidate_pairs
 
 #: The allele balance a true heterozygous site is expected to show.
 DIPLOID_VAF = 0.5

@@ -2,9 +2,10 @@
 
 A layered toolkit, each layer usable on its own:
 
-``readers``
+``mva.io.readers`` (below this package)
     Parsers for the plain-text formats bioinformatics tools emit — TSV tables,
-    ``bcftools stats``, BED intervals, VCF headers. Case-agnostic.
+    ``bcftools stats``, BED intervals, VCF headers. Case-agnostic, and shared with
+    the warehouse.
 ``profile``
     A directory of profiling artifacts loaded into one typed object, with the filename
     mapping in a swappable :class:`~mva.explore.profile.ProfileLayout`.

@@ -43,14 +43,6 @@ class Table:
         """Every value in one column, in file order."""
         return [row[name] for row in self.rows if name in row]
 
-    def floats(self, name: str) -> list[float | None]:
-        """One column as numbers, with unparseable cells as ``None``."""
-        return [as_float(value) for value in self.column(name)]
-
-    def ints(self, name: str) -> list[int | None]:
-        """One column as whole numbers, with unparseable cells as ``None``."""
-        return [as_int(value) for value in self.column(name)]
-
 
 @dataclass(frozen=True)
 class Sections:

@@ -133,7 +133,7 @@ def _checks(args) -> int:
 
 
 def _locus(args) -> int:
-    from ..vcf import read_calls
+    from ..pipeline import read_calls
 
     if not args.vcf.exists():
         print(f"No such VCF: {args.vcf}", file=sys.stderr)
