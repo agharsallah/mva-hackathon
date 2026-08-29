@@ -835,7 +835,7 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 
 **rsync** — a copy tool that transfers only the parts of a file that changed, and resumes where it left off. The right way to move a directory to a remote box repeatedly; `scp` re-sends everything every time.
 
-**Idempotent** — an operation that gives the same result whether you run it once or five times. An upload that lands the same file twice records both attempts in the ledger but leaves one object in the store, so repeating it is safe. `mva-warehouse provision` is idempotent: on a box that already has the pinned DuckDB it prints a line and exits, so it is safe to make it a step in every deploy rather than a ritual someone must remember.
+**Idempotent** — an operation that gives the same result whether you run it once or five times. An upload that lands the same file twice records both attempts in the ledger but leaves one object in the store, so repeating it is safe. `mva-warehouse stage` is idempotent too: it rewrites `build/warehouse/*.parquet` from the profile directory, so running it twice costs time and changes nothing.
 
 **SQL** — the language for asking a database questions.
 

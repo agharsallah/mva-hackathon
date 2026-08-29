@@ -54,7 +54,7 @@ provisional, what would prompt a rethink. Full register with results:
 | [No patient data in the repository](notes/no-patient-data-in-the-repository.md) | firm — follows from the DTA |
 | [Synthetic fixtures](notes/synthetic-fixtures.md) | firm — follows from the above |
 | [Delivery is immutable](notes/delivery-is-immutable.md) | firm — verified 12/12 hashes |
-| [Postgres for shared state](notes/postgres-for-shared-state.md) | settled; Path A retirement open |
+| [Postgres for shared state](notes/postgres-for-shared-state.md) | firm; Path A deleted 2026-08-29 |
 | [The chr-prefix bridge](notes/chr-prefix-bridge.md) | firm — one function, enforced by test |
 | [Annotation enters through a port](notes/annotation-as-a-port.md) | port settled, backend open |
 | [A local replica of the scorer](notes/local-scorer-replica.md) | settled for the challenge |

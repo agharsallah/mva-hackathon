@@ -85,17 +85,18 @@ same bytes.
 ## 3. What runs today
 
 ```bash
-uv run pytest -q                            # 285 passed, 3.7 s, no services needed
+uv run pytest -q                            # 268 passed, no services needed
 uv run mva-explore report ressources/data-profile
+uv run mva-warehouse stage                  # profile dir -> build/warehouse/*.parquet
 uv run mva-warehouse pg-check
 ```
 
 | | Verbs | Notes |
 |---|---|---|
 | `mva-explore` | 4 — `report`, `checks`, `locus`, `export` | reads the committed profile; `locus` reads a real VCF |
-| `mva-warehouse` | 27 — file-warehouse (8), `pg-*` (5), `vcf-*` (4), `s3-*` (5), `source-*` (5) | measured from `mva-warehouse --help` |
+| `mva-warehouse` | 20 — `stage`, `pg-*` (5), `vcf-*` (4), `s3-*` (5), `source-*` (5) | measured from `mva-warehouse --help` |
 
-The **285 tests are hermetic**: synthetic fixtures only, no dataset, no Postgres, no MinIO.
+The **268 tests are hermetic**: synthetic fixtures only, no dataset, no Postgres, no MinIO.
 A green suite says nothing about whether the infrastructure is up — that is what `pg-check`
 and `s3-check` are for.
 
@@ -110,7 +111,7 @@ and `s3-check` are for.
 | `pipeline/` | the causal-variant pipeline | `variant`, `vcf`, `compound_het`, `annotation`, `ranking`, `scorer`, `submission` |
 | `explore/` | the report toolkit | `profile`, `checks`, `theme`, `figure`, `report`, `cli`, `views/` (callset, karyotype, locus, overview, panel, quality, reads) |
 | `io/` | file parsing shared by both | `readers` |
-| `warehouse/` | storage and infrastructure | `settings`, `catalog`, `stage`, `postgres`, `analysis`, `objects`, `source`, `integrity`, `lineage`, `vcfstage`, `remote`, `cli`, `cli_objects`, `cli_source`, `cli_vcf` |
+| `warehouse/` | storage and infrastructure | `settings`, `catalog`, `stage`, `postgres`, `analysis`, `objects`, `source`, `integrity`, `lineage`, `vcfstage`, `cli`, `cli_objects`, `cli_source`, `cli_vcf` |
 
 Dependencies run one way: `explore/` and `warehouse/` may use `io/` and `pipeline/`;
 `pipeline/` uses neither. A change to a chart can never affect a submission. The map with
@@ -126,7 +127,6 @@ Stated here so they are not discovered later. Sequencing is in [`roadmap.md`](ro
 |---|---|---|
 | **Lineage is a stub** | `warehouse.data_lineage` holds **1 row**, pointing at a *local* path with an **empty sha256**, and there are **no edges for the 5 derivations** | "which bytes produced this result" is not yet answerable from the database |
 | **Staged Parquet is single-homed** | `build/warehouse/` exists only on one laptop | regenerable, so not data loss — but it is an undeclared dependency of `pg-ingest` |
-| **Path A is superseded but in-tree** | the DuckDB-file-over-SSH verbs (`stage`/`local`/`ship`/`preflight`/`push`/`load`/`query`) still exist; `stage.py` is still live because `pg-ingest` needs it | two warehouse stories in one CLI — retirement is an open decision, see [`decisions.md`](decisions.md) |
 | **No probe ledger** | nothing records which oracle submission was spent, by whom, with what content | the budget is 18 submissions and it is currently tracked nowhere |
 | **Layer 2 not built** | `variants` / `genotypes` / `variant_info` are designed only | see [`data-layers.md`](data-layers.md) |
 | **No real annotator** | `annotation.py` is a port with a lookup fake behind it | the critical path for ranking — see [the note](notes/annotation-as-a-port.md) |

@@ -88,10 +88,6 @@ each item unblocks the next. Nothing here is started.
 | 5 | **Close the lineage gap** — real object keys, real hashes, and one edge per derivation | "which bytes produced this result" must be a query, not an argument, before the report | [note](notes/delivery-is-immutable.md) |
 | 6 | **Build the probe ledger** — a Postgres table of who spent which submission, its content, and the decoded reply | the budget is 18 submissions and it is tracked nowhere; this is exactly the mutable shared state Postgres was chosen for | [note](notes/postgres-for-shared-state.md) |
 
-One infrastructure gap sits alongside these and is not blocked by them: the DuckDB
-file-warehouse verbs are superseded but still in the CLI. See
-[`current-state.md` §5](current-state.md#5-known-gaps).
-
 ## 2b. Still open — questions with no answer yet
 
 Carried over from `ideation/draft0-answers.md` §12.2 (now in [`archive/`](../archive/)),

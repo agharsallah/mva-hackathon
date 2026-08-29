@@ -36,11 +36,12 @@ Nothing depends on a particular Postgres release. The setup script prints
 The pipeline shape did not change — DuckDB is still the engine, and derivations are still
 plain SQL. Only the destination moved.
 
-Two warehouse stories now live in one CLI. The file verbs (`preflight`, `stage`, `local`,
-`provision`, `push`, `load`, `ship`, `query`) and their modules (`remote.py`, `catalog.py`,
-`analysis.py`) are kept in-tree, and **`stage.py` is still live** because `pg-ingest`
-consumes its Parquet. Retiring the rest is an open decision, not a done one. The archived
-document describing that path is
+The file-warehouse half was **deleted 2026-08-29**: `remote.py` and the `preflight`,
+`provision`, `push`, `load`, `ship`, `local` and `query` verbs are gone. `catalog.py`,
+`stage.py` and the `stage` verb stay — they produce `build/warehouse/*.parquet`, which is
+what `pg-ingest` reads; `analysis.py` stays because `pg-derive` reads its derivation
+records. One-off local DuckDB work is now a plain Python script, not a CLI verb. The
+archived document describing the deleted path is
 [`archive/duckdb-file-warehouse.md`](../../archive/duckdb-file-warehouse.md).
 
 If the *variant* tables ever need versioning and time travel, point DuckLake at the same

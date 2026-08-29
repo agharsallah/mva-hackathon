@@ -143,17 +143,16 @@ get somewhere the team can query them. It has no opinion about variants.
 | Module group | Modules | What it does |
 |---|---|---|
 | **CLI** | `cli.py`, `cli_objects.py`, `cli_source.py`, `cli_vcf.py` | `mva-warehouse`, split so one verb family lives in one module rather than one 1,000-line entry point |
-| **Postgres path (live)** | `settings.py`, `stage.py`, `postgres.py`, `analysis.py`, `vcfstage.py` | profile → typed Parquet → the `warehouse` schema → derivations into `results` |
+| **Postgres path (live)** | `settings.py`, `catalog.py`, `stage.py`, `postgres.py`, `analysis.py`, `vcfstage.py` | profile → typed Parquet → the `warehouse` schema → derivations into `results` |
 | **Object store** | `objects.py`, `source.py` | the bucket, and the delivery inside it |
 | **Guarantees** | `integrity.py`, `lineage.py` | fingerprints and provenance edges |
-| **File path (superseded)** | `remote.py`, `catalog.py` | the DuckDB-file-over-SSH verbs |
 
 **Path A vs Path B.** The first warehouse was a `.duckdb` file on a box reached over SSH
 (Path A). It never ran against a real host: DuckDB's file lock excludes readers as well as
 writers, so a shared warehouse needs a real server, and the tooling moved to hosted
-PostgreSQL with MinIO alongside for bulk files (Path B). Path A's verbs are still in the
-CLI and `stage.py` is still live because `pg-ingest` consumes its Parquet — retiring the
-rest is an open decision. One paragraph, one link:
+PostgreSQL with MinIO alongside for bulk files (Path B). Path A's SSH verbs and `remote.py`
+were **deleted 2026-08-29**; `catalog.py` and `stage.py` survive because `pg-ingest`
+consumes their Parquet. One paragraph, one link:
 [postgres for shared state](notes/postgres-for-shared-state.md).
 
 What the guarantee modules buy:

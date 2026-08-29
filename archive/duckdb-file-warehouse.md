@@ -1,7 +1,8 @@
 > **Archived 2026-08-29.** Superseded by the Postgres + MinIO path before it ever ran
-> against a real host (`methodology/008` vs `010`). The verbs still exist and `stage.py`
-> still feeds `pg-ingest`; retiring them is an open decision — see `docs/decisions.md`.
-> The live infrastructure runbook is `docs/infrastructure.md`. Never edited.
+> against a real host (`methodology/008` vs `010`). The SSH verbs and `remote.py` were
+> **removed 2026-08-29** — plain local DuckDB scripting replaces them; only `stage`
+> survives, feeding `pg-ingest`. See `docs/decisions.md`. The live infrastructure runbook
+> is `docs/infrastructure.md`. Never edited.
 
 # The warehouse: derived tables in DuckDB, on a box you already have
 

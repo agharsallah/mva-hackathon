@@ -13,7 +13,8 @@ in one sentence and links the note. Nothing re-argues a decision elsewhere.
 | Patient data in git | Absolute prohibition, any size. Aggregates only. | firm — follows from the DTA, not a preference | [note](notes/no-patient-data-in-the-repository.md) |
 | Test data | Synthetic fixtures; only plaintext VCFs may enter git | firm — follows from the above | [note](notes/synthetic-fixtures.md) |
 | The delivered bytes | Versioned bucket + hash verification is the source of truth; everything else is derived | firm — 12/12 verified 2026-08-29 | [note](notes/delivery-is-immutable.md) |
-| Where shared state lives | Postgres for mutable shared state, Parquet for bulk immutable reads, DuckDB as the engine over both | settled; retiring the superseded file-warehouse verbs is open | [note](notes/postgres-for-shared-state.md) |
+| Where shared state lives | Postgres for mutable shared state, Parquet for bulk immutable reads, DuckDB as the engine over both | firm | [note](notes/postgres-for-shared-state.md) |
+| Retire the DuckDB file-warehouse (Path A) | **Decided 2026-08-29: deleted.** `remote.py` and the `preflight`/`provision`/`push`/`load`/`ship`/`local`/`query` verbs are gone; `catalog.py` + `stage.py` + the `stage` verb stay because `pg-ingest` reads their Parquet. Rationale: no data-manipulation strategy is settled yet, everything upstream is drafts, and one-off local DuckDB work is a plain Python script — Postgres + MinIO is the platform. | firm | [note](notes/postgres-for-shared-state.md) |
 | Chromosome naming | The `chr` prefix is added in one function, `pipeline/variant.py` | firm — enforced by test | [note](notes/chr-prefix-bridge.md) |
 | Functional annotation | Enters through a port with a lookup fake; the backend is deliberately unchosen | port settled, backend open | [note](notes/annotation-as-a-port.md) |
 | Scorer | A local transcription of the published evaluation code, for rehearsing probes offline | settled for the challenge | [note](notes/local-scorer-replica.md) |
@@ -25,7 +26,6 @@ in one sentence and links the note. Nothing re-argues a decision elsewhere.
 
 | Question | Why it is still open |
 |---|---|
-| Retire the DuckDB file-warehouse verbs? | Superseded by the Postgres path, but `stage.py` still feeds `pg-ingest`, so removal is not a straight deletion. See [`current-state.md` §5](current-state.md#5-known-gaps). |
 | Which annotation backend? | Ensembl VEP REST is right for the panel variants today; an offline cache is right for the genome-wide run. Both, staged, is the current lean — see [`roadmap.md`](roadmap.md). |
 | Layer-2 schema details | Multi-allelic splitting and INFO-as-columns-vs-MAP are recorded but unresolved — see [`data-layers.md`](data-layers.md). |
 | How to close the object-store SSL gap | Tunnel, TLS reverse proxy, or firewall. Not chosen. |

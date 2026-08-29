@@ -1,10 +1,8 @@
-"""Tests for the warehouse: shape inference, normalisation, and the remote commands.
+"""Tests for the staging half of the warehouse: shape inference and normalisation.
 
-The remote half is tested by *building* commands and asserting on their text, never by
-contacting a machine. That is the whole reason :mod:`mva.warehouse.remote` separates
-command construction from :func:`~mva.warehouse.remote.run` — the parts that are easy to
-get wrong (a path that will not expand, a quote that will not survive the remote shell)
-are the parts that can be checked without a server.
+:mod:`mva.warehouse.catalog` and :mod:`mva.warehouse.stage` are what produce
+``build/warehouse/*.parquet``, the input ``pg-ingest`` reads. Everything here runs on a
+synthetic profile directory in ``tmp_path`` — no dataset, no network, no services.
 """
 
 from pathlib import Path
@@ -12,7 +10,6 @@ from pathlib import Path
 import pytest
 
 from mva.warehouse.catalog import OVERRIDES, Dataset, discover, sniff, table_name
-from mva.warehouse.remote import Remote, load_sql, load_command, provision_script, query_command
 from mva.warehouse.stage import normalise, safe_column, safe_columns, stage
 
 
@@ -105,44 +102,3 @@ class TestStage:
     def test_intermediate_tsv_is_cleaned_up(self, profile: Path, tmp_path: Path):
         stage(profile, tmp_path / "out")
         assert not list((tmp_path / "out").glob("*.tsv"))
-
-
-class TestRemoteCommands:
-    remote = Remote(host="box", root="~/warehouse")
-
-    def test_load_sql_uses_relative_paths(self):
-        sql = load_sql(["counts"], self.remote)
-        assert "read_parquet('parquet/counts.parquet')" in sql
-        assert "~" not in sql, "a tilde inside a SQL literal is never expanded by anyone"
-
-    def test_load_command_cds_to_the_root_first(self):
-        script = load_command(self.remote, load_sql(["counts"], self.remote))[-1]
-        assert script.index("cd ~/warehouse") < script.index("duckdb")
-
-    def test_load_heredoc_is_quoted_against_shell_expansion(self):
-        script = load_command(self.remote, "SELECT '$HOME`x`';\n")[-1]
-        assert "<<'MVA_WAREHOUSE_SQL'" in script
-        assert "$HOME`x`" in script
-
-    def test_query_is_readonly(self):
-        assert "-readonly" in query_command(self.remote, "SELECT 1")[-1]
-
-    def test_query_sql_is_quoted_as_one_argument(self):
-        script = query_command(self.remote, "SELECT 'a b'; rm -rf /")[-1]
-        assert "rm -rf /" in script
-        assert script.count("&&") == 1, "the injected command must stay inside the quotes"
-
-    def test_rsync_mirrors_rather_than_accumulates(self, tmp_path: Path):
-        assert "--delete" in self.remote.rsync_command(tmp_path)
-
-    def test_rsync_source_has_a_trailing_slash(self, tmp_path: Path):
-        source = self.remote.rsync_command(tmp_path)[-2]
-        assert source.endswith("/"), "without it rsync nests the directory inside itself"
-
-    def test_provision_is_idempotent(self):
-        script = provision_script(self.remote)
-        assert "already installed" in script and "exit 0" in script
-
-    def test_provision_pins_a_version(self):
-        from mva.warehouse.remote import DUCKDB_VERSION
-        assert f"v{DUCKDB_VERSION}/" in provision_script(self.remote)
