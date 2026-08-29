@@ -28,6 +28,14 @@ raw/
 tests/fixtures/*.vcf.gz
 tests/fixtures/*.vcf.gz.tbi
 
+# Exploration output. The assembled report is committed — it is built from the committable
+# profile and contains no patient record. The per-exhibit copies are regenerable noise, and
+# a locus page IS patient coordinates: `mva-explore locus` writes wherever it is told, so
+# anything but the synthetic-fixture page stays out of the tree.
+figures/exhibits/
+figures/locus-*.html
+!figures/locus-fixture.html
+
 .DS_Store
 __pycache__/
 
