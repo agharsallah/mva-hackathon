@@ -2,9 +2,26 @@
 
 Companion to `draft0.md` (open questions) and `hackathon-intel.md` (strategy/intel).
 Scope: every question in `draft0.md`, answered with concrete tools, schemas, math, and limitations.
-Status of facts: biology/tooling = literature-grounded; dataset internals = inferred from the rules dump
-(`ressources/hackathon-rules/raw_hackathon.txt`) and marked **[verify on data]** where it must be checked
-against the actual files before it drives a decision.
+Status of facts: biology/tooling = literature-grounded; **dataset internals are now measured, not inferred.**
+Every dataset claim below traces to [`ressources/data-profile/`](../ressources/data-profile/) — committable
+aggregate summaries (headers, counts, distributions; no variant record, no read sequence) of the gated 85 GB —
+with the interpretation in [data-findings.md](data-findings.md) and per-question reproduction notes in
+[`methodology/`](../methodology/). Claims that the pre-data version got wrong are marked **[was wrong]** next to
+the correction, because those corrections change the plan rather than merely refine it.
+
+### Revision log — the six measurements that changed decisions
+
+| # | Pre-data assumption | Measured reality | Consequence |
+|---|---|---|---|
+| 1 | BAM/CRAM optionally shipped | **No BAM, no CRAM.** 85.0 GB = 1 VCF (+index) + 8 FASTQ + a phenotype `.docx` + a dataset README | Every read-level question starts with us aligning 161 Gbases. Realignment moved from insurance policy to required infrastructure (§1.1, §1.5) |
+| 2 | VCF is `chr`-prefixed GRCh38 | Contigs are **bare** (`15`, not `chr15`); reference is the `…_no_chr` no-alt analysis set + hs38d1 decoys | `bcftools -r 15:…` on the way in, `chr15` on the way out. A coordinate copied straight from the VCF into the submission scores 0 while looking well-formed (§1.3, §5.1) |
+| 3 | ~30× WGS | **52× raw / ~44× mapped**, 2 × 149 bp, 4 lanes, one library, NovaSeq 6000 | Enough depth for confident hets, for SV calling, and for a low-VAF mosaic scan (§1.2) |
+| 4 | Phenotype ≈ microcephaly + intellectual disability + neoplasm | **Rhabdomyosarcoma, nephrocalcinosis, short stature, failure to thrive, skeletal muscle atrophy, 32-week prematurity, ~1 kg SGA, parental recurrent miscarriage.** Microcephaly and intellectual disability are *not* among the reported terms | The gene prior must be re-derived from the real terms, and the rhabdomyosarcoma differentials (*TP53*, *DICER1*) are now first-class panel members, not footnotes (§1.4, §3.4) |
+| 5 | Read-backed phasing would collapse the compound-het space | On *BUB1B*: 1,653 candidate pairs → **3 trans, 2 cis, 1,648 unknown (0.3% resolved)**; reach ≈ a few hundred bp | Phasing is a tiebreaker, not the discriminator. Rarity + consequence must carry the ranking (§5.4, §10.1) |
+| 6 | The provided VCF might already carry usable annotation | `INFO` is caller statistics only — no VEP, no gnomAD, no ClinVar, no CADD. `INFO/AF` is **within-sample** (0.5 or 1.0) and carries zero population information | Annotation is the critical path and the one blocking dependency. Reading `INFO/AF` as a frequency filter would be a serious, silent error (§2.1, §7.2) |
+
+A seventh measurement is a *negative* result worth stating early: **there is no whole-chromosome mosaic
+aneuploidy detectable in this sample** (§3.5). That does not contradict the diagnosis — it bounds it.
 
 ---
 
@@ -12,8 +29,8 @@ against the actual files before it drives a decision.
 
 | Question | One-line answer |
 |---|---|
-| Data type | Paired-end short-read WGS: FASTQ + germline VCF on GRCh38, optional BAM/CRAM, phenotype as HPO term list. ~85 GB, 11 files, single subject `PROBAND01`. |
-| Visualize / query | Yes. `bcftools`/`tabix` + VEP → Parquet → DuckDB SQL for querying; IGV/igv.js + mosdepth/MultiQC for visual inspection; HPO DAG via `pyhpo`/`oaklib`. |
+| Data type | Paired-end short-read WGS on GRCh38 (`no_chr` no-alt analysis set + hs38d1 decoys): 8 FASTQ (4 lanes × R1/R2, 2 × 149 bp, ~52× raw) + one germline VCF of 5,012,204 SNV/indel records + an HPO table in a `.docx`. **No BAM/CRAM, no SVs in the callset.** 85.0 GB, single subject, VCF sample column `WGS_EX2312012` (**not** `PROBAND01`). |
+| Visualize / query | Query: yes, today — `bcftools`/`tabix` + VEP → Parquet → DuckDB SQL. Visualize reads: **not until we align the FASTQ ourselves** — IGV, mosdepth and samplot all need a BAM that was never shipped. HPO DAG via `pyhpo`/`oaklib` works now. |
 | What is MVA | Autosomal-recessive chromosome-missegregation syndrome: 25–50% of somatic cells carry random gains/losses ("variegated"). Caused by biallelic loss of spindle-assembly-checkpoint / centrosome genes. Microcephaly, growth failure, cancer predisposition. |
 | Literature access | Yes, fully open: PubMed E-utilities, Europe PMC, PubTator3, OMIM/GeneReviews/Orphanet, ClinVar, OpenAlex. Papers are public; the *patient data* is not — never mix them in a public repo. |
 | Data structures | Canonical variant tuple `(chrom, pos, ref, alt)` → columnar variant table (Parquet/DuckDB) + interval index over gene models + HPO DAG + candidate-pair `frozenset` mirror of the scorer + append-only oracle ledger. |
@@ -22,18 +39,20 @@ against the actual files before it drives a decision.
 | ML model families | Learning-to-rank (LambdaMART/XGBoost-rank) over annotated candidates, calibrated classifiers for `epcr`, PU-learning (only positives labeled), sequence/protein deep models as frozen feature extractors, GNN over a gene–phenotype–variant knowledge graph, LLM agents for literature triage. **No in-patient training: N = 1.** |
 | Evaluation | Rank metrics (top-1, recall@k, MRR), F-max (the official metric — reimplement it), PR-AUC over ROC-AUC (extreme imbalance), calibration (Brier/ECE) because `epcr` is a probability, validated on synthetic probands built by spiking ClinVar pathogenic pairs into public control genomes (GIAB/1000G). |
 | Deterministic vs probabilistic | Both, layered: deterministic = variant canonicalization, Mendelian/zygosity logic, phase-based exclusion, set algebra of the scorer; probabilistic = genotype likelihoods, Bayesian causality posterior, phenotype LRs, calibrated ranking. Deterministic layer shrinks the space; probabilistic layer orders what survives. |
+| Aneuploidy visible? | **No.** Mean het VAF 0.472–0.497 and mean depth 43.7–46.1 across every autosome — flat. Below what allele balance can detect (≈<10–15% aneuploid fraction) in this bulk blood DNA. Report the negative with the numbers. |
+| Proband sex | **Male**, from the data: chrX carries ~½ autosomal variant density with few hets (4,858, PAR-concentrated), chrY present at real depth (36.3×, 4,301 hets). |
 | Own DB? | **No new curated database.** Reuse ClinVar / gnomAD v4 / HPO / OMIM / dbNSFP / VEP caches, and build only a thin local analytical store (one DuckDB file + Parquet) that is itself a *derived dataset* and must be deleted within 30 days of close. |
 
 ### 0.1 Recommendation matrix (best option per question, one line each)
 
 | # | Question | ⭐ Recommended option | Why it beats the alternatives |
 |---|---|---|---|
-| 1 | Data handling | Headers-first checklist, then **mapping-free k-mer strike** on FASTQ for published MVA alleles | Detects a known allele in minutes, no alignment, even if the VCF missed it |
+| 1 | Data handling | Headers-first checklist (**done** — §1), then **mapping-free k-mer strike** on FASTQ for published MVA alleles, with the alignment job launched in parallel on day 1 | Detects a known allele in minutes with no alignment; and with no BAM shipped, alignment is a 1–2 day dependency that must start immediately rather than on trigger |
 | 2 | Query/visualize | DuckDB+Parquet for SQL, `slivar` for comp-het logic, igv-reports for evidence | Zero infra, deterministic, reproducible; dashboards are week-3 luxuries |
-| 3 | Disease model | Soft Bayesian gene priors (BUB1B-heavy), never hard gene exclusion | Malignancy favors BUB1B, but a hard filter is the classic trap |
+| 3 | Disease model | Soft Bayesian gene priors, **flattened** against the measured phenotype (*BUB1B* 0.40, not 0.55), never hard gene exclusion | Rhabdomyosarcoma still favours *BUB1B*, but the absent microcephaly removes the strongest MVA1-specific term and promotes the *TP53*/*DICER1* differentials — and a hard filter was always the classic trap |
 | 4 | Literature | Automated **reported-allele catalogue** (PubTator3/LitVar2 + ClinVar) joined against the VCF, LLM triage on top | A published-allele match is a near-instant solve; join is mechanical |
-| 5 | Data structures | Scorer-identical dataclasses + DuckDB + **probe simulator** with bitmask hypothesis space | The simulator turns probe design into computed optimization, not judgment |
-| 6 | Models | Tiered escalation: standard stack → raw-data rescue → foundation models | Tier 1 solves the published-allele scenario; deep models only pay on a miss |
+| 5 | Data structures | Scorer-identical dataclasses + DuckDB + **probe simulator** with bitmask hypothesis space, plus one contig-namespace conversion (`15` → `chr15`) in exactly one place | The simulator turns probe design into computed optimization, not judgment; the namespace conversion is a measured, live scoring bug if done by hand |
+| 6 | Models | Tiered escalation: **free tier (non-PASS + `1/2` sites)** → standard stack → raw-data rescue (now unconditional) → foundation models | Tier 1.5 is minutes and targets the "caller saw it and suppressed it" world; Tier 1 solves the published-allele scenario; Tier 2 is the only source of SV evidence that will ever exist; deep models only pay on a miss |
 | 7 | Statistics | Bayesian ACMG posterior as `epcr` backbone; greedy info-gain probe policy | Defensible arithmetic in the report; decode tables are already near-optimal |
 | 8 | ML | Reciprocal-rank fusion primary + LLM evidence-tournament re-ranker (audited) | Robust at N=1, transparent, and the agentic layer is the Innovation story |
 | 9 | Evaluation | Local scorer reimplementation + GIAB spike-in probands + read-level spiked alleles | Only honest pre-oracle measurement; class-sensitivity table exposes blind spots |
@@ -44,101 +63,180 @@ against the actual files before it drives a decision.
 
 ## 1. What is the type of the data?
 
-### 1.1 What the rules state (authoritative)
+*Measured, not inferred. Evidence: [`ressources/data-profile/`](../ressources/data-profile/);
+reproduction: `tools/profile-genomic-data.sh ~/ubuntu/data`; methodology entries
+[001](../methodology/001-vcf-provenance-and-structure.md), [002](../methodology/002-callset-quality-and-composition.md),
+[005](../methodology/005-fastq-structure-and-quality.md).*
 
-From the rules dump (`raw_hackathon.txt:492-494`):
+### 1.1 The actual inventory
 
-> File types: genomic data in VCF format; raw sequencing data optionally in BAM/CRAM. Phenotypic data as
-> standardized HPO terms.
-> Data size: ~85 GB (single-subject dataset).
+12 objects, **85.0 GB (79.1 GiB)** — `manifest.tsv`:
 
-Track 1 description (`raw_hackathon.txt:74`): *"the child's genomic data (FASTQ + VCF) and a description of their symptoms"*.
-
-So three modalities:
-
-| Modality | Format | Role in the analysis |
+| File(s) | Size | What it is |
 |---|---|---|
-| Raw reads | FASTQ (gzipped, paired R1/R2), optional aligned BAM/CRAM | Re-calling, SV/CNV detection, low-VAF mosaic scan, manual IGV confirmation |
-| Called variants | VCF (GRCh38 / hg38, `chr`-prefixed) | Primary hunting ground: SNV/indel candidate extraction and annotation |
-| Phenotype | HPO term list (possibly a Phenopacket JSON) | Drives phenotype-aware prioritization (Exomiser/LIRICAL) and gene-level priors |
+| `WGS_EX2312012_HGWCNDSX7.vcf.gz` + `.tbi` | 315 MB + 2.3 MB | Germline small-variant callset, **5,012,204** records |
+| `…_S16_L00{1..4}_R{1,2}_001.fastq.gz` | 8 × ~10.5 GB = **84.7 GB** | Raw reads: 4 lanes × paired ends |
+| `Challenge_Clinical_Phenotype_1.docx` | 17 KB | Phenotype — an HPO table in Word, transcribed to [`Challenge_Clinical_Phenotype_1.md`](../ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md) |
+| `README.md` | 5 KB | Hugging Face dataset card |
 
-### 1.2 What the size implies
+**[was wrong] There is no BAM and no CRAM.** The pre-data version listed aligned reads as
+"optionally present". They are absent. FASTQ is 99.6% of the payload, and *every* read-level
+question — IGV evidence panels, SV/CNV calling, per-exon depth, read-backed phasing beyond what
+the caller already emitted, the low-VAF mosaic scan — begins with us aligning 161 Gbases. That is
+now the largest single compute item in the project and it is on the critical path for the report,
+not just for the rescue tier.
 
-85 GB across 11 files for one subject is consistent with **~30× short-read WGS**, not exome:
+So the three modalities, corrected:
 
-- 30× WGS ≈ 90–100 Gbp → gzipped FASTQ ≈ 60–80 GB (two files, or lane-split);
-- a CRAM at 30× ≈ 15–25 GB; a BAM ≈ 60–90 GB;
-- a single-sample WGS VCF ≈ 4–6 M variants ≈ 1–2 GB uncompressed, ~150–250 MB as `.vcf.gz`.
+| Modality | Format, as delivered | Role in the analysis |
+|---|---|---|
+| Raw reads | FASTQ, gzipped, 4 lanes × R1/R2. **Not aligned.** | The only source of SVs, CNVs, mosaic VAFs, and any read-level evidence. Requires alignment first. |
+| Called variants | VCF, bgzip+tabix, GRCh38 `no_chr`, **SNV + indel only** | Primary hunting ground for the small-variant half of the pair |
+| Phenotype | 8 HPO terms in a `.docx` table, with free-text notes | Gene priors, Exomiser/LIRICAL input, differential framing |
 
-Practical read: FASTQ dominates the 85 GB. **This matters strategically** — WGS (not WES) means non-coding,
-deep-intronic and structural second alleles are *in scope*, which is exactly the compound-het trap flagged in
-`hackathon-intel.md` §3.
+### 1.2 Sequencing shape and depth
 
-### 1.3 First-hour verification checklist **[verify on data]**
+`fastq_profile.tsv`, `fastq_qc_L001.tsv`, `fastq_read_headers.tsv`:
 
-```bash
-# inventory
-ls -l  # confirm the 11 files and which modalities are actually present
+| Property | Measured | Reading |
+|---|---|---|
+| Instrument / flowcell | `A01973` (NovaSeq 6000), `HGWCNDSX7` (S4) | Standard clinical WGS run |
+| Layout | 4 lanes, paired end, **one library** (single index pair) | Lanes are technical replicates — merge them; no multi-library batch effect |
+| Read length | **2 × 149** (not 151) | Off-by-two matters for adapter and trimming configs |
+| Reads / bases | ~1.08 billion reads, **160.9 Gb** | |
+| Raw coverage | **51.9×** | |
+| Mapped depth (from VCF `DP`) | **~44×** | ~15% loss to duplicates + unmapped — normal |
+| Q30 | 91.5% before filtering, 92.2% after | Good |
+| Duplication | 9.3% | Normal for PCR-free-ish clinical WGS |
+| Insert size peak | **266 bp** | This is what caps read-backed phasing at a few hundred bases (§5.4) |
+| GC | 41.4% | Human, no contamination signal |
+| Adapter-trimmed reads | 32,746 / 1,000,000 sampled | Low; light trimming suffices |
 
-# VCF: reference build, chrom naming, sample id, caller, variant count
-bcftools head calls.vcf.gz | head -50          # ##reference, ##contig, ##source, #CHROM line
-bcftools query -l calls.vcf.gz                 # sample name — is it literally PROBAND01?
-bcftools index -n calls.vcf.gz                 # record count
-bcftools stats calls.vcf.gz > stats.txt        # SNV/indel ratio, TSTV, singleton profile
+**[was wrong] This is 52× raw / 44× mapped, not the ~30× the size estimate implied.** Practical
+consequences, all favourable: 44× is comfortably enough for confident heterozygous calls, viable for
+SV calling from split reads and discordant pairs, and enough to give a mosaic scan real power at
+VAF ≳ 0.10 inside a small, prior-justified region (§7.4).
 
-# is it single-sample or a trio? (decides whether phasing is free)
-# is it already phased? look for GT with '|' and for PS/HP FORMAT fields
-bcftools query -f '[%GT\t%PS\n]' -r chr15 calls.vcf.gz | head
+The strategic point from the pre-data version survives intact and is now confirmed: this is **WGS, not
+WES**, so non-coding, deep-intronic and structural second alleles are in scope.
 
-# FASTQ: read length, lane structure, encoding
-zcat R1.fastq.gz | head -8
-zcat R1.fastq.gz | head -400000 | awk 'NR%4==2{print length($0)}' | sort -n | uniq -c | tail
+### 1.3 VCF provenance and the two identity traps
 
-# BAM/CRAM if present: aligner, sort order, dup marking, reference used
-samtools view -H aln.cram | grep -E '^@RG|^@PG|^@HD'
+`vcf_header.txt`, `vcf_fields.tsv`, `vcf_contig_counts.tsv`:
+
+```
+##reference=…/GCA_000001405.15_GRCh38_no_alt_analysis_set_plus_hs38d1_maskedGRC_exclusions_v2_no_chr.fasta
+##contig=<ID=15,length=101991189>
+#CHROM POS ID REF ALT QUAL FILTER INFO FORMAT   WGS_EX2312012
+##SentieonCommandLine.Haplotyper=<Version="sentieon-genomics-202308.02", …>
+##SentieonCommandLine.GVCFtyper=<Version="sentieon-genomics-202308.02", …>
+##GATKCommandLine=<ID=VariantFiltration, Version="4.2.4.0", Date="February 5, 2025">
 ```
 
-Five facts to nail down before any modelling:
+**Trap 1 — the contig namespace. [was wrong]** The VCF says `15`. The submission template says `chr15`.
+The scorer compares chromosome strings verbatim; it only `.strip()`s them. A coordinate copied straight
+out of the VCF into a submission is a silent, total miss that still validates as well-formed CSV. Every
+`bcftools` region query uses the bare contig (`-r 15:40140984-40241137`); the panel BED in this repo is
+`chr`-prefixed. **Strip on the way in, add on the way out**, in exactly one place in the code
+(`Variant.from_vcf()`), never by hand.
 
-1. **Exact `proband_id`** in the VCF vs the `PROBAND01` the scorer demands (they can differ; the scorer only
-   accepts `PROBAND01`, matched case-sensitively after `.strip()`).
-2. **Chromosome naming** (`chr15` vs `15`) — the scorer does **not** normalize `chrom`; the template uses `chr1`.
-3. **Reference build + patch** (GRCh38 with/without alt contigs; which FASTA to use for `bcftools norm`).
-4. **Singleton vs trio/duo** — if parents are present, compound-het phasing is solved for free; if not, use
-   read-backed phasing (§5.4, §10.2).
-5. **Caller and filter status** — a `PASS`-only VCF may already have discarded the hard second allele
-   (low-VAF, near-indel, repeat-region calls). Always analyse the *unfiltered* records too.
+1,690 contigs are declared: 25 primary (`1`–`22`, `X`, `Y`, `M`) + 40 `_random` + 108 unplaced `Un_` +
+1,517 hs38d1 `_decoy`. No alt contigs. 116,485 records (2.3%) sit off the primary assembly and are
+noise for our purposes.
 
-### 1.4 Phenotype data shape
+**Trap 2 — the sample identifier.** The VCF sample column carries the lab accession `WGS_EX2312012`.
+Submissions are rejected unless `proband_id` is exactly `PROBAND01`. The two strings are unrelated and
+the mapping exists nowhere in the data — it is a convention of the challenge.
 
-HPO terms are nodes of a directed acyclic graph (`hp.obo` / `hp.json`, released monthly). Expect something like
-`HP:0000252` (Microcephaly), `HP:0001518` (Small for gestational age), `HP:0002664` (Neoplasm),
-`HP:0001249` (Intellectual disability) **[verify on data]**. Handle them as a *set of DAG nodes with ancestor
-closure*, never as strings: phenotype similarity requires walking the ontology (Resnik/Lin/Phenomizer-style
-information-content measures, §7.3).
+**The callset is SNV + indel only.** Sentieon Haplotyper → Sentieon GVCFtyper → GATK `VariantFiltration`
+is a small-variant pipeline end to end. There is no SV or CNV caller anywhere in the provenance chain,
+no `<DEL>`/`<DUP>` symbolic ALTs, no `SVTYPE`. **The trap the strategy brief anticipated is real and
+live:** if either causal allele is an exon deletion, a large insertion, or anything structural, it is
+*not in this VCF at any FILTER level*, and no amount of VCF analysis will surface it. That allele can
+only come from re-calling the FASTQ — which is precisely why 85 GB of reads ship alongside a 315 MB
+answer-shaped file.
+
+**The VCF carries no annotation worth ranking on. [was wrong]** `INFO` holds caller statistics only:
+`AC AF AN BaseQRankSum ClippingRankSum DB DP ExcessHet FS InbreedingCoeff MLEAC MLEAF MQ MQRankSum QD
+ReadPosRankSum SOR`. No VEP, no snpEff, no gnomAD, no ClinVar, no CADD. Note especially that `INFO/AF`
+is **within-sample** — with one sample it is 0.5 or 1.0 and carries no population information at all.
+The only usable raw annotation is the `DB` flag (dbSNP membership), a weak novelty proxy. Everything
+else we must add ourselves, which is why annotation is the blocking dependency (§2.1).
+
+Callset quality, from `vcf_stats_summary.txt` and `vcf_filter_gt_counts.tsv`:
+
+| Metric | Value | Reading |
+|---|---|---|
+| Records | 5,012,204 | Normal for WGS |
+| SNPs / indels | 4,086,641 / 930,181 | Normal ratio |
+| Multiallelic sites | 66,860 | **`bcftools norm -m -both` is mandatory** |
+| ts/tv | 1.94 | Slightly below the 2.0–2.1 ideal; acceptable, mildly noisy |
+| Genotypes: `0/1` / `1/1` / `1/2` | 3,047,077 / 1,898,267 / 66,860 | het:hom-alt = 1.61 — normal, no gross contamination |
+| PASS | 4,740,790 (94.6%) | |
+| non-PASS | 271,414 (5.4%) | Dominated by `MQ40` (177,522) and `QD2` (35,402) |
+| Records with `PGT`/`PID` | 770,458 (15.4%) | Physical phasing — see §5.4 for what it is actually worth |
+
+**The 271k non-PASS records are a search space, not garbage.** They are calls the caller *saw* and did
+not trust. `MQ40` (low mapping quality) is exactly the filter that fires in segmental duplications and
+repeats, where a real variant hides. Mining them is minutes of work versus a day of re-calling, and it
+comes before Tier 2 in the escalation order (§6.4).
+
+### 1.4 Phenotype data shape — the real terms
+
+**[was wrong]** The pre-data version guessed microcephaly / intellectual disability / small-for-gestational-age
+/ neoplasm. Four of eight guessed terms are wrong, and the two most load-bearing MVA1 features are not in
+the document at all. The delivered terms:
+
+| HPO ID | Term | Note from the document |
+|---|---|---|
+| `HP:0002859` | Rhabdomyosarcoma | Malignant soft-tissue tumour — the oncological event that triggered urgent investigation |
+| `HP:0000121` | Nephrocalcinosis | Calcium deposits in kidney tissue; **present since birth** |
+| `HP:0004322` | Short stature | Significantly below expected for age and family background |
+| `HP:0001508` | Failure to thrive | Documented repeatedly; poor weight gain from early life |
+| `HP:0003202` | Skeletal muscle atrophy | Reduced muscle bulk alongside failure to thrive |
+| `HP:0001622` | Premature birth | Born at 32 weeks |
+| `HP:0001518` | Small for gestational age | ~1 kg at birth — severe IUGR |
+| `HP:0200067` | Recurrent spontaneous abortion | Multiple parental pregnancy losses before the proband's birth |
+
+Absent from the list: **microcephaly** (`HP:0000252`) and **intellectual disability** (`HP:0001249`) — the
+two features most associated with MVA1 in the literature. Read that carefully: the document is titled
+*"Clinical Features Leading to Diagnosis"*, so it is the referral-triggering subset, not a complete
+phenotype. Their absence is weak evidence, not a rule-out — but it must not be silently overwritten by a
+textbook MVA profile when computing phenotype likelihood ratios. Run the pipeline on the terms actually
+given, and if a candidate gene requires microcephaly to fit, say so as an open discrepancy.
+
+The document also flags `HP:0200067` explicitly as *phenotypic input, not background* — reproductive loss
+is a direct read-out of a chromosome-instability mechanism in the parents. Whether the HPO term for a
+parental feature belongs in the proband's term set is a real modelling decision (most tools assume proband
+terms); the defensible handling is to score both with and without it and report the delta.
+
+Handle all of these as *DAG nodes with ancestor closure*, never as strings: similarity requires walking the
+ontology (Resnik/Lin/Phenomizer information-content measures, §7.3).
 
 ### 1.5 Solution space & ⭐ recommendation
 
-Three ways to attack 85 GB of raw data, in increasing cost:
+The three attack routes, re-costed against what was actually delivered:
 
-- **Option A — headers-first, VCF-only week 1.** Run the §1.3 checklist, ignore FASTQ until the VCF fails.
-  Cheapest; risks losing a week if the second allele is not in the VCF.
-- **Option B — mapping-free k-mer strike (creative shortcut).** Build k-mer signatures (k=31) for *every
-  allele ever reported* in the MVA genes (ClinVar + OMIM allelic tables + literature-mined variants, §4) and
-  scan the FASTQ directly with a MALVA-style / jellyfish-count approach. No alignment, no calling — minutes of
-  CPU per allele set. If the child's allele is already published (plausible for BUB1B, where recurrent alleles
-  exist), this finds it **even if the VCF missed it**, on day 1, before any pipeline exists. Same trick doubles
-  as an alignment-free *verification* of any candidate: count REF-kmers vs ALT-kmers spanning the site → crude
-  VAF estimate straight from FASTQ.
-- **Option C — full realignment + re-calling upfront (bwa-mem2 → DeepVariant on Modal).** Maximum sensitivity,
-  ~$20–60 of compute and a day of wall-clock; only justified once targeted approaches have failed or to feed
-  the SV/mosaic scan.
+- **Option A — headers-first, VCF-only.** *Done; this section is its output.* It bought the six corrections
+  in the revision log for ~10 minutes of compute. What it cannot do is finish: the VCF has no annotation to
+  rank on and no SVs to find, so A terminates at "861 panel variants, mostly common intronic dbSNP entries".
+- **Option B — mapping-free k-mer strike.** Build k=31 signatures for *every allele ever reported* in the MVA
+  genes (ClinVar + OMIM allelic tables + literature-mined variants, §4) and scan the FASTQ directly,
+  MALVA/jellyfish-style. **This got more attractive, not less:** with no BAM, alignment is a day of compute,
+  and a k-mer scan needs none. If the child's allele is already published — plausible for *BUB1B*, where
+  recurrent alleles exist — this finds it in minutes even though the VCF cannot contain it (SV) or did not
+  trust it (non-PASS). Same trick doubles as alignment-free verification: count REF-kmers vs ALT-kmers
+  spanning a site → crude VAF straight from FASTQ.
+- **Option C — full realignment + re-calling (bwa-mem2 → DeepVariant, on Modal).** **[was wrong — this is no
+  longer optional.]** It was scoped as the insurance policy for a novel hard allele. With no BAM shipped it is
+  the *only* path to SVs, to per-exon depth, to IGV evidence panels for the report, and to any phasing beyond
+  the caller's 266 bp reach. 161 Gb at 44× is real money and a day of wall-clock; start it now, in the
+  background, so it is finished before it is needed.
 
-**⭐ Recommendation: A + B in parallel on day 1, C started in the background on Modal.** A and B are hours of
-work and cover both the "answer is in the VCF" and the "answer is published but missed by the caller" worlds;
-C is the insurance policy for the "novel hard allele" world and is needed for phasing/IGV evidence anyway. B is
-also a genuinely novel methods-form story (alignment-free known-allele screen for N-of-1 diagnosis — Innovation
-points).
+**⭐ Recommendation: B immediately (hours, highest information-per-hour), C started in the background today
+because it is on the critical path for the report regardless of how the search resolves, and A already banked.**
+Before either, mine the 271k non-PASS calls in the panel genes — minutes of work, and it targets exactly the
+"caller saw it and suppressed it" world that sits between A and C.
 
 ---
 
@@ -151,13 +249,23 @@ because they answer different questions.
 
 Pipeline: **VCF → normalize → annotate → columnar → SQL**
 
+Two measured constraints bind this pipeline before a single command runs. **The reference must be the
+`no_chr` build** — `GCA_000001405.15_GRCh38_no_alt_analysis_set_plus_hs38d1_maskedGRC_exclusions_v2_no_chr.fasta`,
+the one named in the VCF header — or `bcftools norm` will silently fail to match contigs. And **the panel BED
+in this repo is `chr`-prefixed while the VCF is not**, so the BED is stripped on the way in (§1.3, trap 1).
+
 ```bash
+# 0. contig namespace: repo BED (chr15) -> VCF namespace (15)
+sed 's/^chr//' ressources/data-profile/mva_panel_grch38.bed > panel_nochr.bed
+
 # 1. canonicalize (critical for scorer string-equality matching)
-bcftools norm -f GRCh38.fa -m -both -c w calls.vcf.gz -Oz -o norm.vcf.gz
+#    66,860 multiallelic sites and 930,181 indels make -m -both mandatory, not hygienic
+bcftools norm -f GRCh38_no_chr.fa -m -both -c w calls.vcf.gz -Oz -o norm.vcf.gz
 bcftools index -t norm.vcf.gz
 
 # 2. targeted extraction: MVA + SAC/centrosome panel first (minutes, not days)
-bcftools view -R mva_panel.bed norm.vcf.gz -Oz -o panel.vcf.gz
+#    -f PASS is deliberately absent: 271,414 non-PASS calls are a search space (§1.3)
+bcftools view -R panel_nochr.bed norm.vcf.gz -Oz -o panel.vcf.gz
 
 # 3. annotate (Ensembl VEP, offline cache + plugins)
 vep -i norm.vcf.gz -o annotated.vcf --cache --offline --assembly GRCh38 \
@@ -170,7 +278,11 @@ bcftools +split-vep annotated.vcf -d -f '%CHROM\t%POS\t%REF\t%ALT\t%SYMBOL\t%Con
   > variants.tsv     # → convert to Parquet
 ```
 
-Then query with **DuckDB** directly over Parquet — zero-server, SQL, fast on millions of rows:
+Steps 3–4 are the blocking dependency, not a refinement: with `INFO` carrying caller statistics only (§1.3),
+**nothing in the delivered VCF separates the 861 panel variants into candidates.** Rarity (gnomAD) and
+consequence (VEP) are the only discriminating signals available, and both have to be joined in by us.
+
+Then query with **DuckDB** directly over Parquet — zero-server, SQL, fast on 5,012,204 rows:
 
 ```sql
 SELECT chrom, pos, ref, alt, symbol, consequence,
@@ -191,19 +303,23 @@ Alternatives, and when they earn their cost:
 
 | What you need to see | Tool |
 |---|---|
-| Reads over a candidate locus (the decisive human check) | **IGV** desktop on BAM/CRAM; `igv.js` for a shareable, screenshot-friendly report figure |
-| Per-exon / per-base coverage (single-exon deletions) | **mosdepth** + a simple matplotlib/Altair coverage track |
-| Sequencing / alignment QC | **FastQC → MultiQC**, `samtools stats`, `bcftools stats` plots |
+| Reads over a candidate locus (the decisive human check) | **IGV** desktop on BAM/CRAM; `igv.js` for a shareable, screenshot-friendly report figure — **blocked until we align the FASTQ ourselves (§1.1)** |
+| Per-exon / per-base coverage (single-exon deletions) | **mosdepth** + a simple matplotlib/Altair coverage track — **also blocked on alignment** |
+| Sequencing / alignment QC | **FastQC/fastp → MultiQC** (runs on FASTQ today), `samtools stats` (needs a BAM), `bcftools stats` plots (done — §1.3) |
 | Genome-wide CNV / aneuploidy view | Binned depth (mosdepth 10–100 kb) → log2 ratio plot; this is also how you *look for the aneuploidy itself* |
 | SV inspection | **samplot** or IGV split-read/discordant-pair view; `svtools`/`AnnotSV` for tabular SV annotation |
 | Gene/transcript context, domains | Ensembl / UCSC browser, UniProt feature viewer, AlphaFold structure + PyMOL/py3Dmol for residue mapping |
 | Phenotype context | HPO term set vs disease profiles; a simple similarity heatmap makes a strong report figure |
 
 Two visualization payoffs specific to MVA:
-1. **A binned-depth karyogram of the proband.** MVA is mosaic aneuploidy in *somatic* cells. Depending on the
-   sequenced tissue and mosaic fraction, whole-chromosome copy-number *shifts* may be visible as subtle log2
-   deviations (a 20% mosaic trisomy ≈ log2 ratio ~0.14 — small but detectable with enough bins). Finding it is
-   not required to win, but it is a striking, defensible report figure and a sanity check on the diagnosis.
+1. **A per-chromosome allele-balance chart — already computed, and it is a negative result.**
+   `vcf_chrom_allele_balance.tsv` measures mean heterozygous VAF and mean depth per chromosome straight from
+   the VCF, no alignment needed. A mosaic trisomy at fraction *f* shifts het VAF off 0.5 by ≈ *f*/(2+*f*) and
+   shifts median depth; neither happens. Mean het VAF ranges **0.472–0.497** across chr1–22 and mean depth
+   **43.7–46.1**. chr20 (0.472) and chr22 (0.473) are marginally low and within GC-driven noise. **No
+   whole-chromosome mosaic aneuploidy is detectable in this sample** — see §3.5 for how to say that honestly.
+   A binned-depth karyogram from aligned reads would push the detection floor lower and remains worth doing
+   once Tier 2 produces a BAM; the allele-balance version is the free first pass and it is already done.
 2. **IGV panels for the two final alleles.** The report is a tiebreaker (`hackathon-intel.md` §4 Phase 4);
    read-level screenshots of both alleles, plus the phasing evidence, is what a clinical reviewer wants to see.
    **Compliance:** screenshots of patient reads are patient data — they go in the report submitted to organizers,
@@ -221,8 +337,10 @@ Two visualization payoffs specific to MVA:
 **⭐ Recommendation: A as the backbone, D for hour-one questions, B only after the candidate list exists
 (week 2+), C never executed — cite it as the documented scale-out path in the methods form.** Rationale:
 the bottleneck is biological interpretation, not query throughput; every hour of infra before the first
-panel-gene query is a strategic loss. igv-reports specifically is worth the 30 minutes: evidence panels
-end up directly in the Track 1 report.
+panel-gene query is a strategic loss. Confirmed by the data: hour-one CLI work (D) produced §1 in its
+entirety, and the measured blocker is annotation, not throughput. igv-reports is still worth the 30 minutes,
+but note it is now **downstream of the alignment job**, so schedule it accordingly rather than assuming a
+BAM exists.
 
 ---
 
@@ -270,44 +388,110 @@ biallelic hypomorphic/LoF variant → reduced SAC or spindle fidelity → chromo
 | *CEP192* | 18p11.21 | candidate | Reported with tetraploidy and male infertility (case-level evidence). |
 | *CENPE*, *SMC5*, *BUB1*, *BUB3*, *KNL1/CASC5*, *PLK4* | 4q24 / 9q21 / 2q13 / 10q26.3 / 15q15.1 / 4q28 | candidate / atypical, MVA-like | Individual case reports of SAC or kinetochore genes with aneuploidy phenotypes. Keep on the panel; do not lead with them. |
 
-### 3.4 Why this drives the whole strategy
+### 3.4 Why this drives the whole strategy — re-derived from the real phenotype
 
-Three independent facts converge:
+Four facts converge, and the third is now measured rather than assumed:
+
 1. The leaked evaluator says the answer is **compound heterozygous** (`hackathon-intel.md` §2.1) → recessive,
    two variants, one gene, one per allele.
-2. The public story says care today means *"managing symptoms and fighting cancer cells"* (`raw_hackathon.txt:55`)
-   → **active malignancy** → favours the cancer-predisposing subtypes: **BUB1B** ≫ TRIP13 > CEP57 (CEP57
-   classically lacks malignancy).
-3. Biallelic *complete* BUB1B loss is not viable, so real BUB1B patients are typically **one truncating/null
+2. Biallelic *complete* BUB1B loss is not viable, so real *BUB1B* patients are typically **one truncating/null
    allele + one hypomorphic allele** — and hypomorphic alleles are frequently **deep-intronic / splice-altering
-   or otherwise not called cleanly**. That is precisely why FASTQ ships alongside the VCF.
+   or otherwise not called cleanly**. That is precisely why 85 GB of FASTQ ships alongside a 315 MB VCF, and
+   §1.3 confirms the VCF cannot contain a structural allele at all.
+3. **The phenotype is now known exactly (§1.4), and it is not the textbook MVA1 profile.** What it does contain:
+   - **Rhabdomyosarcoma** (`HP:0002859`) — an early, aggressive solid tumour. This is the strongest single
+     signal. Rhabdomyosarcoma is a documented tumour in *BUB1B*-MVA alongside Wilms tumour and ALL, and it is
+     the classic reason to weight the **cancer-predisposing** subtypes: *BUB1B* ≫ *TRIP13* > *CEP57*
+     (*CEP57*/MVA2 classically lacks malignancy).
+   - **Severe IUGR** — 32-week prematurity at ~1 kg, short stature, failure to thrive, skeletal muscle atrophy.
+     Growth restriction is core MVA across subtypes and is consistent with a chromosome-missegregation
+     mechanism operating from early development.
+   - **Parental recurrent miscarriage** (`HP:0200067`) — reproductive loss is a direct read-out of chromosome
+     instability in the parental germline, and the challenge document explicitly instructs that it be treated
+     as phenotypic input. It is also, quietly, a consistency argument for a *recessive* mechanism with carrier
+     parents.
+   - **Nephrocalcinosis since birth** (`HP:0000121`) — not a classic MVA feature. Either an independent finding,
+     or a pointer worth one line of differential discussion. Do not force it into the MVA story.
+4. **What the phenotype does *not* contain: microcephaly and intellectual disability.** These are the two
+   features most tightly associated with MVA1 in the literature, and their absence is the single most
+   important thing that changed from the pre-data version. Treat it as weak evidence, not a rule-out — the
+   document lists the features that *led to* the diagnosis, not the complete phenotype (§1.4). But it does
+   two concrete things: it removes the free win that a microcephaly-driven phenotype prior would have given
+   *BUB1B* and *TRIP13*, and it means any candidate whose fit depends on microcephaly must be reported with
+   that discrepancy stated.
 
-**Working hypothesis before touching data: compound het in *BUB1B* (chr15q15.1), one clean LoF + one hard
-(splice/intronic/SV/low-VAF) allele.** Fallbacks in order: TRIP13, CEP57, CEP192/CENPE/SMC5, then novel gene.
-Note also that *KNL1/CASC5* sits at 15q15.1 next to *BUB1B* — do not let a `chr15` hit auto-assign to *BUB1B*
-without checking the transcript.
+A consequence worth making explicit: **rhabdomyosarcoma has strong, common non-MVA explanations**, and they
+are already on the measured panel — *TP53* (Li-Fraumeni) with 120 variants and *DICER1* with 87 (§3.6). A
+compound-het answer key does not by itself exclude a *TP53* or *DICER1* mechanism from being the *reason the
+child was sequenced*; it constrains what the challenge is scoring. Keep both on the panel and check them.
+
+**Working hypothesis, unchanged in direction but now differently supported: compound het in *BUB1B*
+(15q15.1), one clean LoF + one hard (splice/intronic/SV/low-VAF) allele.** The malignancy still points here;
+the missing microcephaly weakens it; nothing yet contradicts it. Fallbacks in order: *TRIP13*, *CEP57*,
+*CEP192*/*CENPE*/*SMC5*, then novel gene. Note also that *KNL1/CASC5* sits at 15q15.1 next to *BUB1B* — do
+not let a `15` hit auto-assign to *BUB1B* without checking the transcript.
 
 ### 3.5 Solution space & ⭐ recommendation (how to encode the disease knowledge)
 
 - **Option A — hard gene panel filter**: analyse only the MVA genes. Fastest; catastrophic if the answer is the
   novel-gene world (the phenotype "MVA" is cytogenetic, not molecular — a new SAC/kinetochore gene is possible).
-- **Option B — soft Bayesian gene prior**: weight, don't exclude. Concretely: prior mass ≈ BUB1B 0.55 /
-  TRIP13 0.20 / CEP57 0.05 (malignancy argues against, but published exceptions exist) / other SAC-panel genes
-  0.10 / genome-wide remainder 0.10. The prior multiplies the phenotype LR and ACMG posterior in the ranking;
-  nothing is ever removed.
+- **Option B — soft Bayesian gene prior**: weight, don't exclude. Re-derived against the measured phenotype
+  (§1.4): rhabdomyosarcoma still concentrates mass on the cancer-predisposing subtypes, but the absent
+  microcephaly removes the strongest MVA1-specific term, so the prior should be **flatter than the pre-data
+  version proposed**. Concretely: *BUB1B* 0.40 (was 0.55) / *TRIP13* 0.15 / *CEP57* 0.05 (malignancy argues
+  against, published exceptions exist) / other SAC-panel genes 0.15 / rhabdomyosarcoma predisposition
+  differentials *TP53* + *DICER1* 0.10 / genome-wide remainder 0.15. These are stated priors, not measured
+  quantities — their job is to be explicit and auditable, and the report should show the ranking's
+  sensitivity to them. The prior multiplies the phenotype LR and ACMG posterior; nothing is ever removed.
 - **Option C — phenotype-blind genome-wide first**: run Exomiser/LIRICAL with no MVA assumption at all, compare
   with B. Useful as a bias control and as an ablation row in the report ("the pipeline finds it *without* being
   told the diagnosis" is a powerful Scalability claim if true).
-- **Creative check — diagnose the aneuploidy itself from the data**: binned-depth + BAF karyogram (§7.5). If a
-  mosaic aneuploidy signal is visible in blood-derived WGS, it (i) corroborates the MVA diagnosis, (ii) may
-  estimate the mosaic fraction, and (iii) is a report figure nobody else will have. Also check the **PCS trait**
-  logic: BUB1B cases show premature chromatid separation — not directly testable in WGS, but worth one line of
-  differential discussion.
+- **Creative check — diagnose the aneuploidy itself from the data: run, and it came back negative.**
+  Per-chromosome het allele balance and depth (`vcf_chrom_allele_balance.tsv`, §2.2) are flat: mean het VAF
+  0.472–0.497 and mean depth 43.7–46.1 across chr1–22. **No whole-chromosome mosaic aneuploidy is detectable.**
+
+  This needs care in the write-up, because it is easy to misreport in both directions. MVA is diagnosed by
+  *karyotype*, typically on cultured lymphocytes or fibroblasts, and the aneuploid fraction varies widely by
+  tissue and by cell-division history. A bulk blood WGS sample showing no aneuploidy signal **does not
+  contradict the diagnosis** — it says the aneuploid fraction in *this DNA* is below what allele balance can
+  detect, roughly <10–15%. Stating that explicitly, with the numbers and the detection floor, is stronger than
+  staying silent about a negative result, and it is exactly the kind of thing Scientific Rigor rewards.
+  A binned-depth + BAF karyogram from aligned reads (§7.5) would lower the floor and is still worth running
+  once Tier 2 produces a BAM. Also worth one line: the **PCS trait** — *BUB1B* cases show premature chromatid
+  separation, not directly testable in WGS, but a real differential point.
 
 **⭐ Recommendation: B as the ranking prior + C as the honesty control, panel-first only as an *ordering* of
 effort (grep the panel first because it is cheap, not because the rest is excluded).** Rationale: soft priors
 capture all the biology value of the panel with zero risk of excluding the truth, and the B-vs-C comparison
 itself becomes methods-form content.
+
+### 3.6 The panel, measured
+
+`mva_panel_grch38.bed` (Ensembl GRCh38 gene spans + 20 kb padding) joined against the real VCF —
+`panel_variant_counts.tsv`, methodology [003](../methodology/003-panel-gene-variant-counts.md):
+
+| Gene | Locus (repo BED is `chr`-prefixed; the VCF is not) | All | PASS | Role |
+|---|---|---|---|---|
+| **BUB1B** | chr15:40,140,984–40,241,137 | 80 | 76 | MVA1. 58 het, 23 hom-alt, 4 non-PASS |
+| **CEP57** | chr11:95,769,965–95,857,070 | 13 | 13 | MVA2 |
+| **TRIP13** | chr5:872,849–939,357 | 12 | **6** | MVA3 — half filtered, see below |
+| CENPE | chr4:103,085,349–103,218,463 | 169 | 166 | Atypical MVA |
+| CEP192 | chr18:12,971,283–13,145,053 | 255 | 251 | Candidate, centrosome |
+| SMC5 | chr9:70,238,270–70,374,874 | 125 | 124 | Candidate, chromosome maintenance |
+| TP53 | chr17:7,641,779–7,707,546 | 120 | 118 | Rhabdomyosarcoma differential (§3.4) |
+| DICER1 | chr14:95,066,228–95,178,010 | 87 | 87 | Rhabdomyosarcoma differential |
+
+**861 variants across the panel, and without annotation this table cannot be narrowed further.** The spans
+include introns, and *BUB1B*'s 80 variants are overwhelmingly `DB`-flagged common dbSNP entries. Six *BUB1B*
+variants lack the dbSNP flag; that is the only novelty signal available today, and it is a starting point,
+not a candidate list. This is the concrete, measured reason annotation is the blocking dependency (§2.1) and
+not a refinement.
+
+**TRIP13 is the cautionary case.** 6 of its 12 variants are non-PASS, mostly `MQ40`, with alt depths of 2–6
+reads. *TRIP13* sits at chr5:872,849–939,357, close to the telomere in difficult sequence. Low confidence
+there is a **coverage and mappability statement, not evidence of absence** — precisely the situation where a
+`FILTER == PASS` habit deletes the answer. Any "no variant found in *TRIP13*" conclusion must be paired with
+per-exon depth from the aligned reads before it means anything.
 
 ---
 
@@ -406,10 +590,12 @@ from typing import FrozenSet, Optional
 
 @dataclass(frozen=True, order=True)
 class Variant:                      # canonical, hashable, scorer-identical
-    chrom: str                      # 'chr15'  — chr-prefixed, lowercase 'chr', NOT normalized by the scorer
+    chrom: str                      # 'chr15'  — chr-prefixed, lowercase 'chr', NOT normalized by the scorer.
+                                    # MEASURED: the delivered VCF says '15'. from_vcf() adds the prefix;
+                                    # nothing else in the codebase builds this string. (§1.3, trap 1)
     pos: int                        # 1-based VCF POS, after `bcftools norm -m -both` left-alignment
     ref: str                        # uppercase
-    alt: str                        # uppercase, single allele (multiallelics already split)
+    alt: str                        # uppercase, single allele (66,860 multiallelic sites must be split first)
 
 Pair = FrozenSet[Variant]           # exactly how the scorer represents a row; |Pair| ∈ {1, 2}
 ```
@@ -417,11 +603,17 @@ Pair = FrozenSet[Variant]           # exactly how the scorer represents a row; |
 Everything downstream keys off `Variant`. One normalization function, one place, unit-tested against a handful
 of hand-built indel cases (the indel-representation trap in `hackathon-intel.md` §8.1 is the #1 silent failure).
 
+Two measured facts make this stricter than it looks. **The contig namespace differs between the source and the
+sink** — `15` in, `chr15` out — so a hand-built chromosome string is a scoring bug that no test of biology will
+catch. And **930,181 indels plus 66,860 multiallelic sites** mean left-alignment and allele splitting are load-
+bearing on a large fraction of the callset, not an edge case.
+
 ### 5.2 Storage layer
 
 | Layer | Structure | Why |
 |---|---|---|
 | Raw callset | `bgzip` + `tabix` (CSI/TBI) VCF | Random access by region in O(log n); the standard everyone expects |
+| Contig namespace | One conversion function, `15` ⇄ `chr15`, applied at the two boundaries (VCF in, submission and repo BED out) | Measured mismatch between source and sink (§1.3); a hand-built chromosome string is a silent scoring bug |
 | Analytical table | **Parquet**, partitioned by chromosome, read via **DuckDB** | Columnar scan of millions of rows, SQL joins to annotations, no server, trivially reproducible |
 | Annotation joins | dbNSFP / gnomAD / ClinVar slices as Parquet, joined on `(chrom,pos,ref,alt)` | Avoids re-running VEP for exploratory questions |
 | Gene models | Interval index (**interval tree** / `pyranges`, or `bcftools -R` over a BED) | O(log n + k) "which variants fall in this gene/exon/intron" |
@@ -467,10 +659,27 @@ class OracleProbe:                  # one submission = one adaptive experiment
 ### 5.4 Structures for the hard second allele
 
 - **Phase blocks**: union-find / disjoint-set over variants linked by shared reads (this is what WhatsHap
-  computes). Two candidate variants in the same phase block with *opposite* haplotype assignment = *trans* =
-  a valid compound het; same haplotype = *cis* = excluded deterministically. Read-backed phasing only spans
-  read/fragment length (~250 bp–1 kb), so most gene-scale pairs come back `unknown` — but every `cis` call is a
-  free, certain elimination (SmartPhase reports ~22% of pairs excluded in singletons this way).
+  computes, and what Sentieon already emitted as `PGT`/`PID`). Two candidate variants in the same phase block
+  with *opposite* haplotype assignment = *trans* = a valid compound het; same haplotype = *cis* = excluded
+  deterministically.
+
+  **[was wrong] Measured, this resolves almost nothing.** 770,458 records (15.4%) carry `PGT`/`PID`, which
+  sounds usable and is not: with a 266 bp insert size (§1.2) the reach is a few hundred bases. On *BUB1B* —
+  58 het calls, 1,653 candidate pairs — phasing returns **3 trans, 2 cis, 1,648 unknown: 0.3% resolved**, and
+  the four phase-resolved pairs at distinct positions were 3, 42, 3 and 4 bp apart
+  ([methodology 006](../methodology/006-phasing-power-on-bub1b.md)). The pre-data version cited SmartPhase's
+  ~22%-of-pairs figure; that does not transfer to this dataset's insert size and gene-scale pair distances.
+
+  Three design consequences: (i) **`UNKNOWN` is the verdict on 99.7% of pairs and must never be treated as a
+  rejection** — only `CIS` excludes; (ii) ranking must be carried by rarity and consequence, with phase as a
+  tiebreaker that kills a handful of cis pairs and promotes a handful of proven-trans ones; (iii) real phasing
+  power needs longer fragments than this library has, so it is not recoverable by re-aligning — the ceiling is
+  physical.
+
+  **The one place phase comes free: a `1/2` multiallelic genotype.** One copy of each ALT means one per
+  haplotype — compound heterozygosity proven by the genotype itself, no read evidence required. There are
+  **66,860** such sites in the callset. Splitting them with `bcftools norm -m -both` produces two calls that
+  are `TRANS` by construction, and that rule belongs in the pair finder explicitly.
 - **Coverage arrays / HMM state sequence** for CNV and single-exon deletions: per-base or per-exon depth →
   normalized log2 ratio → HMM segmentation (§7.5).
 - **Sparse VAF table** for the mosaic scan: MVA involves mosaicism, so a somatic-style low-VAF second hit is
@@ -504,6 +713,17 @@ Split by job. Nothing here needs training on the proband — all are pretrained 
 option at N = 1.
 
 ### 6.1 Variant calling / discovery (recover the allele the VCF missed)
+
+Two measured facts reframe this whole table. **There are no structural variants in the delivered callset at
+any FILTER level** — the provenance chain is Sentieon Haplotyper → Sentieon GVCFtyper → GATK
+`VariantFiltration`, a small-variant pipeline end to end, with no `SVTYPE` and no symbolic ALTs (§1.3). So the
+SV callers below are not "recovering what the VCF missed"; they are the *only* source of SV evidence that will
+ever exist for this case. And **no BAM was shipped**, so every tool in this table that takes an alignment is
+gated behind aligning 161 Gbases first (§1.1).
+
+Before any of that, there is a cheaper move: **271,414 non-PASS records** are calls the caller saw and did not
+trust, dominated by `MQ40` (177,522) — exactly the filter that fires in segmental duplications and repeats
+where a real variant hides. Mining them inside the panel is minutes; re-calling is a day.
 
 | Tool | Job | Key limitation |
 |---|---|---|
@@ -562,7 +782,8 @@ Escalation tiers — each tier runs only if the previous one has not produced a 
 | Tier | Trigger | Stack | Cost |
 |---|---|---|---|
 | **1 — standard strike** (day 1–3) | always | `bcftools norm` → VEP(+LOFTEE, SpliceAI ±1000, AlphaMissense, dbNSFP) → slivar comp-het → Exomiser + LIRICAL → ACMG points → probe S₁ | hours, local |
-| **2 — raw-data rescue** (day 2+, parallel on Modal) | one allele confirmed, second missing; or Tier 1 candidates all refuted | bwa-mem2 realign → DeepVariant; Manta+Delly+smoove 2-of-3 SV consensus; GATK-gCNV/mosdepth exon deletions; Mutect2 tumour-only low-VAF scan restricted to the localized gene; WhatsHap phasing | ~$20–60, 1–2 days |
+| **1.5 — the free tier (do this first)** | always, before Tier 2 | Mine the **271,414 non-PASS** records inside the panel; split and re-phase the **66,860 `1/2`** multiallelic sites (free trans evidence, §5.4); check the 6 non-`DB` *BUB1B* variants | minutes, local |
+| **2 — raw-data rescue** (start day 1 in the background, not day 2 on trigger) | **[was wrong — no longer trigger-gated]** No BAM shipped and no SVs in the callset, so this is the only path to SV/CNV evidence, per-exon depth, IGV panels for the report, and phasing beyond 266 bp | bwa-mem2 align 161 Gb → DeepVariant; Manta+Delly+smoove 2-of-3 SV consensus; GATK-gCNV/mosdepth exon deletions; Mutect2 tumour-only low-VAF scan restricted to the localized gene; WhatsHap phasing | ~$20–60, 1–2 days |
 | **3 — foundation-model sweep** (week 3+) | Tiers 1–2 exhausted | Evo 2 delta-likelihood + AlphaGenome splicing/regulatory tracks over the full candidate gene; ESM1b for all missense; MALVA-style k-mer re-check of every literature allele | GPU-days on Modal |
 
 Cross-cutting choices:
@@ -573,10 +794,12 @@ Cross-cutting choices:
 - LoF verification: **LOFTEE + NMD-escape logic on every truncating candidate** — the MVA1 null+hypomorph rule
   means a "LoF" that escapes NMD may actually be the hypomorph.
 
-**⭐ Recommendation: strictly tiered, with Tier 2 started early in the background (it also produces the phasing
-and IGV evidence the report needs regardless).** Rationale: expected time-to-solve is dominated by the
-published-allele and clean-comp-het worlds, which Tier 1 covers; deep models have the worst
-information-per-hour early and the best late (they only pay when the search is truly stuck in non-coding space).
+**⭐ Recommendation: Tier 1.5 immediately (minutes), Tier 1 as the main line, and Tier 2 launched on day 1 in
+the background rather than held as a trigger.** Rationale: expected time-to-solve is still dominated by the
+published-allele and clean-comp-het worlds that Tier 1 covers, but the measured absence of a BAM and of any SV
+call means Tier 2 is a *dependency of the report itself*, not a contingency — and a 1–2 day job you might need
+in week 2 should be started in week 1. Deep models keep the worst information-per-hour early and the best late;
+Tier 3 stays gated.
 
 ---
 
@@ -609,6 +832,12 @@ frequencies `p₁, p₂` the compound-het genotype frequency is `2·p₁·p₂`.
 - With MVA at <50 patients worldwide, plausible pathogenic alleles must be **vanishingly rare** — an allele at
   gnomAD AF 1e-3 as *one half* of the pair implies far too many affected individuals. Hard filter: AF < 1e-4
   for the primary hypothesis, AF < 1e-3 as the permissive boundary **[verify against gnomAD v4 per gene]**.
+
+  ⚠️ **Measured trap: `INFO/AF` in the delivered VCF is *within-sample*, not population frequency.** With one
+  sample it takes the value 0.5 or 1.0 and carries no population information whatsoever (§1.3). Every `AF`
+  threshold in this section refers to **joined gnomAD v4 frequency**, which does not exist in the file and must
+  be added by annotation. Filtering on the VCF's own `AF` column would remove roughly every heterozygous
+  variant in the genome and look like it worked.
 - Ratio of `2·p₁·p₂` across candidate pairs is a legitimate, quantitative prior term in the ranking model.
 
 Also use **gene-level constraint** (gnomAD pLI / LOEUF, and the missense z-score) as a prior on the gene, and
@@ -870,14 +1099,31 @@ Metrics on that benchmark:
 Also worth reporting: **ablations** (what does removing HPO / SpliceAI / phase constraint cost?) — cheap to run,
 and it is the difference between "we ran tools" and "we understand our pipeline".
 
-### 9.3 Technical QC that must pass before any metric is believed
+### 9.3 Technical QC — what has already passed, and what is still gated
 
-`FastQC/MultiQC` on reads; `samtools stats` + `mosdepth` for coverage (mean, % ≥20×, and *specifically* the
-coverage of every exon and splice site of the candidate genes — a "no variant found" conclusion is worthless in
-a 5× region); `bcftools stats` (Ti/Tv ≈ 2.0–2.1 for WGS, het/hom ratio, indel size distribution); concordance
-of the provided VCF vs your re-called VCF (`hap.py`/`rtg vcfeval` against GIAB for the *method*, and
-provided-vs-recalled for *this* sample); contamination/sex checks (`verifyBamID`, `somalier`) — `somalier` also
-sanity-checks whether the FASTQ, BAM and VCF really come from the same individual.
+Done, on the delivered files (`ressources/data-profile/`, methodology
+[002](../methodology/002-callset-quality-and-composition.md),
+[004](../methodology/004-sex-and-aneuploidy-from-allele-balance.md),
+[005](../methodology/005-fastq-structure-and-quality.md)):
+
+| Check | Result | Verdict |
+|---|---|---|
+| Read QC (fastp, 500k pairs from L001) | Q30 91.5% → 92.2%, GC 41.4%, dup 9.3%, insert peak 266 bp | Pass |
+| `bcftools stats` | ts/tv **1.94** (ideal 2.0–2.1), het:hom-alt **1.61**, indel size distribution normal | Pass, mildly noisy |
+| Contamination proxy | het:hom-alt 1.61 shows no gross excess heterozygosity | No contamination signal |
+| Sex check, from allele balance | chrX at ~½ autosomal variant density with 4,858 hets (PAR-concentrated); chrY present at 36.3× with 4,301 hets | **Male** |
+| Aneuploidy check | Mean het VAF 0.472–0.497 and mean depth 43.7–46.1 across chr1–22 | Flat — no detectable mosaic aneuploidy (§3.5) |
+| Depth | ~44× mapped from VCF `DP`, 52× raw from FASTQ | Ample |
+
+Still gated behind alignment (§1.1), and each one blocks a conclusion rather than a refinement:
+
+- `samtools stats` + **mosdepth** per-exon and per-splice-site coverage of the candidate genes. A "no variant
+  found" conclusion is worthless in a 5× region, and *TRIP13* — 6 of 12 calls filtered, telomere-proximal
+  (§3.6) — is exactly that scenario waiting to be misread.
+- Concordance of the provided VCF against our re-called VCF (`hap.py`/`rtg vcfeval`; GIAB for validating the
+  *method*, provided-vs-recalled for *this* sample). This is how we measure what the delivered callset lost.
+- `verifyBamID` / `somalier` for contamination and for confirming that the FASTQ and the VCF really come from
+  the same individual — both need a BAM, so both are Tier 2 deliverables.
 
 ### 9.4 Using the oracle without fooling yourself
 
@@ -917,8 +1163,8 @@ probabilistic inference to *order* what survives, decision theory to *choose the
 | Deterministic object | Content | Payoff |
 |---|---|---|
 | **Variant canonicalization** | Left-alignment + parsimony (`bcftools norm -f REF -m -both`) gives a *unique* representation per allele; multiallelic splitting makes identity well-defined | Makes the scorer's string equality safe; eliminates the #1 silent-failure mode |
-| **Mendelian / zygosity logic** | AR compound het requires: two distinct rare variants, same gene, both het, **in trans**. Homozygous or hemizygous configurations are excluded by the leaked "compound-heterozygous answer key" | Removes whole classes of hypotheses with certainty |
-| **Phase exclusion** | Read-backed phasing (WhatsHap/SmartPhase/HiPhase): any pair proven *in cis* cannot be the compound het | Every `cis` call is a certain elimination (~22% of pairs in singletons) |
+| **Mendelian / zygosity logic** | AR compound het requires: two distinct rare variants, same gene, both het, **in trans**. Homozygous or hemizygous configurations are excluded by the leaked "compound-heterozygous answer key". The proband is **male** (measured, §9.3), so chrX is hemizygous and cannot host a compound het at all — chrX is deterministically out of scope for the pair | Removes whole classes of hypotheses with certainty |
+| **Phase exclusion** | Read-backed phasing (WhatsHap/SmartPhase/HiPhase, plus the caller's own `PGT`/`PID`): any pair proven *in cis* cannot be the compound het. A `1/2` multiallelic genotype proves *trans* outright | Certain, but rare: **measured 0.3% of pairs resolved on BUB1B** (3 trans, 2 cis, 1,648 unknown). A tiebreaker, not a space-collapser (§5.4). The 66,860 `1/2` sites are the free half |
 | **Set algebra of the scorer** | Rows are `frozenset`s; order within a row is irrelevant; a duplicated variant collapses to a single-variant row; ranks come from sorting by `epcr` desc with ties broken by file order | Lets you *prove* what each probe can and cannot reveal, and construct probes deliberately |
 | **Interval / graph logic** | Which variants lie in which transcript, exon, splice region; NMD-boundary rules; reading-frame arithmetic for indels | Deterministic consequence assignment (the basis of PVS1) |
 | **Combinatorial enumeration** | With N rare variants in a gene, exactly `C(N,2)` pairs; the probe design is then a covering problem over that finite set | Turns "search" into a bounded, auditable enumeration |
@@ -1052,27 +1298,50 @@ it is the cheapest credible shot at a second prize category.
 
 ## 12. Remaining unknowns and how to close them
 
+### 12.1 Closed by the data profile
+
+| Was unknown | Answer | Evidence |
+|---|---|---|
+| Exact file inventory | 85.0 GB: 1 VCF + index, 8 FASTQ, 1 phenotype `.docx`, 1 dataset README. **No BAM, no CRAM** | `manifest.tsv`, §1.1 |
+| Singleton vs trio/duo | **Singleton.** One sample column, `WGS_EX2312012` | `vcf_header.txt`, §1.3 |
+| Exact HPO term list | 8 terms; rhabdomyosarcoma, nephrocalcinosis, short stature, failure to thrive, muscle atrophy, prematurity, SGA, parental recurrent miscarriage. **No microcephaly, no intellectual disability** | Phenotype document, §1.4 |
+| Malignancy type | **Rhabdomyosarcoma** (`HP:0002859`) | §1.4 |
+| Chromosome naming + reference | Bare contigs (`15`); `GCA_000001405.15_GRCh38_no_alt_analysis_set_plus_hs38d1_maskedGRC_exclusions_v2_no_chr.fasta`; 1,690 contigs incl. 1,517 decoys | `vcf_header.txt`, §1.3 |
+| Caller + filter status | Sentieon Haplotyper 202308.02 → GVCFtyper → GATK `VariantFiltration` 4.2.4.0. 94.6% PASS, 271,414 non-PASS (`MQ40` 177,522) | §1.3 |
+| Are structural variants in the callset? | **No.** SNV + indel only; no SV/CNV caller in the provenance chain | §1.3 |
+| Does the VCF carry annotation? | **No.** Caller statistics only; `INFO/AF` is within-sample | §1.3 |
+| How much does phasing resolve? | 0.3% of *BUB1B* pairs (3 trans, 2 cis, 1,648 unknown) | [methodology 006](../methodology/006-phasing-power-on-bub1b.md), §5.4 |
+| Mosaic aneuploidy visible in allele balance? | **No.** Het VAF 0.472–0.497, depth 43.7–46.1 across chr1–22 | §3.5 |
+| Proband sex | **Male** | §9.3 |
+| Sequencing depth and read shape | 2 × 149 bp, 4 lanes, 1 library, 52× raw / ~44× mapped | §1.2 |
+
+### 12.2 Still open
+
 | Unknown | How to resolve | Blocks what |
 |---|---|---|
-| Exact file inventory (11 files: FASTQ pairs? BAM? CRAM? phenopacket?) | `ls -l` + headers, §1.3 | Compute plan |
-| Singleton vs trio/duo | `bcftools query -l` | Whether phasing is free or must be read-backed |
-| Exact HPO term list | Read the phenotype file | Exomiser/LIRICAL runs, gene prior, malignancy confirmation |
-| Whether the child's malignancy type is stated | Phenotype file + story page | Sharpens BUB1B vs TRIP13; central to Track 2 framing |
-| Chromosome naming + reference FASTA/patch | VCF header | Scorer string matching, `bcftools norm` |
-| Caller + filter status of the provided VCF | VCF header, `FILTER` distribution | Whether the second allele was filtered out |
-| Coverage of BUB1B/TRIP13/CEP57 exons and splice sites | `mosdepth` on the candidate loci | Whether "absent" means absent |
-| Whether either candidate allele is already in ClinVar | ClinVar join | Circularity disclosure; near-instant confirmation if yes |
-| Whether a mosaic aneuploidy signal is visible in depth/BAF | Binned depth + BAF plots | Diagnostic corroboration + a strong report figure |
+| Consequence and population frequency of the 861 panel variants | VEP + gnomAD v4 + dbNSFP join — **the blocking dependency** | Everything downstream of §3.6; there is no ranking signal in the file today |
+| Coverage of BUB1B/TRIP13/CEP57 exons and splice sites | `mosdepth` on the candidate loci — needs a BAM, so gated on Tier 2 | Whether "absent" means absent, especially for telomere-proximal *TRIP13* |
+| Whether an SV is one of the two alleles | Align 161 Gb → Manta/Delly/smoove 2-of-3 consensus + GATK-gCNV | The single largest blind spot: an SV allele *cannot* be in the delivered VCF |
+| Whether either candidate allele is already in ClinVar | ClinVar join (public data, runnable today) | Circularity disclosure; near-instant confirmation if yes |
+| Whether the aneuploid fraction is simply below the allele-balance floor | Binned-depth + BAF karyogram from aligned reads (lower floor than §3.5's VCF-only pass) | Strength of the diagnostic corroboration paragraph |
+| Whether `HP:0200067` (a parental feature) should enter the proband's term set | Run Exomiser/LIRICAL with and without, report the delta | Phenotype LR calibration, §1.4 |
+| Whether nephrocalcinosis is part of the MVA picture or independent | Literature check against reported MVA cases | Whether it is a differential lead or a footnote |
 
-### Priority ordering (first 48 hours)
+### Priority ordering, revised
 
-1. Inventory + headers + QC (§1.3) — one hour, prevents every downstream mistake.
-2. `bcftools norm` the VCF, then **grep the panel genes** (BUB1B, TRIP13, CEP57, CENPE, CEP192, SMC5, BUB1,
-   BUB3, KNL1, PLK4, MAD1L1, MAD2L1, CDC20, TTK/MPS1) and annotate with VEP. The answer is probably here.
-3. Parse HPO terms; run Exomiser + LIRICAL genome-wide in parallel (unbiased backbone for the report).
-4. Enumerate rare het pairs per gene, compute ACMG points and read-backed phase, rank.
-5. Build the local scorer reimplementation + CSV validator **before** the first submission.
-6. Only then spend probe S₁.
+1. ~~Inventory + headers + QC~~ — **done** (§1.1–§1.3, §9.3). It produced six plan-changing corrections.
+2. **Annotate.** `bcftools norm -f <no-chr GRCh38> -m -both`, then VEP + gnomAD v4 + dbNSFP over the panel and
+   then genome-wide. This is the only step that turns 861 counted variants into candidates, and nothing after
+   it can start without it.
+3. **Launch the alignment job** (bwa-mem2 → DeepVariant → SV consensus) in the background on day 1. It is a
+   1–2 day dependency of the report and of the entire SV hypothesis, not a contingency (§6.4).
+4. Mine the **271,414 non-PASS** calls and split the **66,860 `1/2`** sites inside the panel — minutes, and
+   free trans evidence (§5.4, §6.4 Tier 1.5).
+5. Run Exomiser + LIRICAL on the **real** 8 HPO terms, genome-wide, with and without `HP:0200067`.
+6. Enumerate rare het pairs per gene, compute ACMG points and phase, rank.
+7. Build the local scorer reimplementation + CSV validator **before** the first submission — including the
+   `15` → `chr15` conversion test, which is now a known live failure mode rather than a hypothetical one.
+8. Only then spend probe S₁.
 
 ---
 

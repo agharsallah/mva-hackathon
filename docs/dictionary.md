@@ -109,12 +109,22 @@ flowchart TB
 **Sequencing** — machine reads the DNA letters. It cannot read the whole book at once, so it shreds it and reads tiny scraps.
 
 **Read** — one scrap the machine read. Typically 150 letters long.
+*Example: this case is 2 × 149 letters.*
+
+**Base quality / Phred score / Q30** — a per-letter confidence number. Q30 means "1 chance in 1,000 this letter is wrong". People quote the **Q30 rate**: the share of letters at Q30 or better.
+*Example: 92% Q30 in this dataset — good. Below ~80% and you start distrusting calls.*
 
 **Paired-end** — machine reads both ends of each scrap. Two files, `R1` and `R2`, that pair up.
 
 ![Paired-end reads and the known gap between them](assets/paired-end.svg)
 
 > **Legend** — blue: the R1 read · orange: the R2 read · gray: the middle, never read · the arrows show which direction each end is read from.
+
+**Insert size (fragment length)** — the full length of the original scrap, R1 + the unread middle + R2. It is the physical reach of one piece of evidence.
+*Example: 266 letters here. Two variants further apart than that can never sit on the same fragment, which is exactly why [phasing](#4-inheritance--how-the-answer-is-shaped) fails at gene scale in this case.*
+
+**Lane / flowcell / instrument** — the machine's own subdivisions. One library of DNA is spread across several lanes and read in parallel; the lane number is in every read's name.
+*Example: `@A01973:164:HGWCNDSX7:1:…` = instrument `A01973` (a NovaSeq 6000), flowcell `HGWCNDSX7`, lane `1`. This case is 4 lanes × 2 ends = 8 FASTQ files, all one library — so the lanes are technical repeats and you just merge them.*
 
 **Coverage / depth (e.g. 30×)** — how many scraps cover each letter, on average. 30× = each letter was read ~30 times.
 *More coverage = more confident. At 5× coverage, "nothing found here" means nothing.*
@@ -152,9 +162,22 @@ A hole in the stack is why "we found nothing in that exon" can be a lie.
 **Reference genome / GRCh38 (= hg38)** — the standard "official" human book everyone compares against. Version 38.
 *Positions only mean something relative to a reference. `chr15:40,000,000` in GRCh38 ≠ same spot in GRCh37.*
 
+**Contig** — one continuous named sequence in the reference. Chromosomes are contigs; so is every leftover fragment nobody could place.
+
+**`chr` prefix (contig naming)** — the same chromosome is written `chr15` in some references and plain `15` in others. Both are GRCh38; only the *string* differs. Programs that compare names literally will silently find nothing.
+*Example: this case's VCF says `15`, the submission format demands `chr15`. Convert in exactly one place in your code, never by hand.*
+
+**Analysis set / no-alt / decoy (hs38d1)** — the packaging of a reference for real analysis. **Alt contigs** are alternative versions of tricky regions; a **no-alt** set leaves them out so each read has one obvious home. **Decoy** sequence (`hs38d1`) is junk DNA added deliberately as a magnet, so reads that belong nowhere stick to it instead of piling up on a real gene and inventing a variant.
+*Example: this VCF declares 1,690 contigs — 25 real ones (`1`–`22`, `X`, `Y`, `M`), 148 unplaced fragments, and 1,517 decoys.*
+
+**Unplaced / random contig (`_random`, `Un_`)** — a real piece of human sequence that could not be pinned to a chromosome. Variants there are almost always noise for a diagnosis.
+
 **BAM / CRAM** — the file of scraps AFTER alignment (each scrap now has an address). CRAM = same thing, squeezed smaller.
 
 **bwa-mem2** — a popular aligner program (does the puzzle step).
+
+**Duplicate reads / duplication rate** — copies of the *same* original scrap, made during library prep, not real independent evidence. They get marked and ignored, so they cost you coverage.
+*Example: 9.3% here — normal. That is part of why 52× of raw letters becomes ~44× of usable depth.*
 
 **Variant calling** — comparing the person's scraps to the reference and writing down every difference.
 
@@ -190,7 +213,13 @@ flowchart LR
 
 **QC (quality control)** — checking the data isn't broken before trusting any result. *Tools: FastQC, MultiQC, samtools stats, bcftools stats, mosdepth.*
 
-**Ti/Tv ratio** — a sanity number. Real human data lands around 2.0–2.1. Way off = something is wrong.
+**Ti/Tv ratio** (also written **ts/tv**) — a sanity number: transitions divided by transversions (two chemically different kinds of letter swap). Real human WGS lands around 2.0–2.1. Way off = something is wrong.
+*Example: 1.94 here — slightly noisy, acceptable.*
+
+**Sentieon** — a commercial re-implementation of the GATK variant-calling algorithms, much faster and giving near-identical results. Common in clinical labs, so you meet it in VCF headers rather than by choosing it.
+*Example: this callset was made by Sentieon Haplotyper → Sentieon GVCFtyper → GATK `VariantFiltration`. Reading that chain tells you it is a **small-variant pipeline only** — no structural variants will ever appear in this file.*
+
+**fastp / FastQC** — programs that read a FASTQ and report [Q30](#2-reading-dna-sequencing-and-the-files-it-makes), GC content, [duplication](#2-reading-dna-sequencing-and-the-files-it-makes), [insert size](#2-reading-dna-sequencing-and-the-files-it-makes) and adapter contamination. `fastp` also trims; `MultiQC` merges many reports into one page.
 
 ---
 
@@ -271,6 +300,9 @@ The easy classes are already in the VCF. **The hidden second allele is almost ce
 *Example: a mistake happened after you were an embryo, so only some cells carry it. Standard callers assume 0/50/100% and throw 12% away as noise.*
 
 **Low-VAF scan** — deliberately hunting for those weird-fraction variants that got thrown away.
+
+**Allele balance** — the average [VAF](#3-variants-the-differences-you-hunt) across all the heterozygous calls on a chromosome. Should sit at 0.5. It is a free whole-chromosome copy-number test: if a fraction of cells carry an extra copy, the average drifts off 0.5 and the depth drifts up.
+*Example: measured 0.472–0.497 on every autosome here — flat. That is how we know no [mosaic aneuploidy](#5-the-disease--mva) is visible in this blood sample, without aligning a single read. It bounds the aneuploid fraction below roughly 10–15%; it does not disprove the diagnosis, because MVA is diagnosed on cultured cells, not blood.*
 
 ```text
 30 reads stacked on one position. How many show the ALT letter?
@@ -360,11 +392,20 @@ Two rare variants in the same gene look identical in a VCF. **Only phasing tells
 
 **Phase block / PS tag** — a stretch where phasing was successfully worked out.
 
+**`PGT` / `PID`** — the caller's own phasing columns in a VCF. `PGT` is the arrangement (`0|1` or `1|0`) and `PID` is the group id shared by variants phased together. Same `PID` + different `PGT` = *in trans*.
+*Example: 15% of records here carry them, which sounds useful and is not — the reach is one [fragment](#2-reading-dna-sequencing-and-the-files-it-makes), ~266 letters. On BUB1B it settled 5 of 1,653 candidate pairs.*
+
+**`1/2` genotype (multiallelic site)** — at one position the child carries **two different non-reference letters** and no reference copy. One of each, so one per parent copy: **compound heterozygosity proven by the genotype alone**, no read evidence needed. The one place phase is free.
+*Example: 66,860 such sites in this callset. `bcftools norm -m -both` splits each into two rows that are in trans by construction.*
+
 **Haplotype** — one full copy of a chromosome region, as inherited from one parent.
 
-**Trio / duo / singleton** — sequencing the child + both parents (trio), + one parent (duo), or only the child (singleton). Trio makes phasing free. This case looks like a singleton.
+**Trio / duo / singleton** — sequencing the child + both parents (trio), + one parent (duo), or only the child (singleton). Trio makes phasing free. **Confirmed singleton here** — the VCF has exactly one sample column — so nothing is free and everything leans on rarity and consequence.
 
-**Proband** — the patient the case is about. Here labeled `PROBAND01`.
+**Proband** — the patient the case is about. The submission must call them `PROBAND01`.
+*Careful: the VCF's own sample column says `WGS_EX2312012` (the lab's accession number). The two strings are unrelated, and the mapping exists nowhere in the data — it is a convention of the challenge. Submitting the accession scores zero.*
+
+**Accession number** — a lab's internal id for a sample or an order. Meaningless outside that lab, and usually the thing you must strip before publishing anything.
 
 **Segregation** — checking the variants track with disease across the family.
 
@@ -627,6 +668,25 @@ Arrows only point downward and never loop back = a DAG. Tick "Severe microcephal
 **Semantic similarity (Resnik / Lin / Jiang–Conrath / Phenomizer)** — math for "how alike are these two symptom lists", using the graph, not the words.
 
 **Phenopacket** — a standard file format holding a patient's HPO terms and case info.
+
+### The eight terms this child actually has
+
+Straight from the challenge's phenotype document. Note what is *missing*: microcephaly and intellectual disability, the two features most associated with MVA in textbooks.
+
+| HPO ID | Term | Plain English |
+|---|---|---|
+| `HP:0002859` | **Rhabdomyosarcoma** | A cancer of soft tissue that behaves like muscle. Rare in children, aggressive, and here it is the event that triggered the whole investigation. |
+| `HP:0000121` | **Nephrocalcinosis** | Calcium deposits building up inside kidney tissue. Present since birth in this child. |
+| `HP:0004322` | **Short stature** | Height well below the expected range for age — and below what the family's own height predicts. |
+| `HP:0001508` | **Failure to thrive** | Not gaining weight or growing at the expected rate, repeatedly documented over time. |
+| `HP:0003202` | **Skeletal muscle atrophy** | Reduced muscle bulk — visibly less muscle than expected. |
+| `HP:0001622` | **Premature birth** | Born before 37 weeks. This child: 32 weeks. |
+| `HP:0001518` | **Small for gestational age (SGA)** | Born much smaller than expected even for that early a birth. ~1 kg here. |
+| `HP:0200067` | **Recurrent spontaneous abortion** | Repeated miscarriages — a *parental* feature, not the child's own. |
+
+**IUGR (intrauterine growth restriction)** — the process behind [SGA](#6-describing-symptoms--hpo): the baby grew too slowly *in the womb*. SGA is the measurement at birth; IUGR is the cause.
+
+**Why the parental term matters.** Miscarriage is often caused by an embryo having the wrong number of chromosomes. Repeated miscarriages in the parents are therefore a read-out of the *same* chromosome-instability mechanism the child is being tested for — the challenge document says explicitly to treat it as evidence, not background. The catch: gene-ranking tools assume every term describes the patient, so feeding them a parental term is a modelling choice. Run it both ways and report the difference.
 
 **OMIM / Orphanet / GeneReviews / ClinGen / GenCC** — catalogues of genetic diseases: which gene causes what, and how well proven.
 
