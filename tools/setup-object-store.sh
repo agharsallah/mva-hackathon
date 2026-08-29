@@ -8,8 +8,8 @@
 # docker) and pins no version.
 #
 # Usage:
-#   ./setup-object-store.sh [--bucket mva] [--data-dir /srv/mva-objects]
-#                           [--port 9000] [--console-port 9001]
+#   ./setup-object-store.sh [--bucket mva] [--data-dir ~/mva-objects]
+#                           [--port 9002] [--console-port 9003]
 #                           [--user mva] [--password SECRET] [--name mva-minio]
 #
 # If --password is omitted a strong one is generated and shown once.
@@ -17,9 +17,15 @@
 set -euo pipefail
 
 BUCKET=mva
-DATA_DIR=/srv/mva-objects
-PORT=9000
-CONSOLE_PORT=9001
+# Under rootless podman the container runs as *you*, so a path outside your home is a
+# common cause of a container that starts and immediately dies on a write.
+DATA_DIR="${HOME}/mva-objects"
+# Host-side published ports. MinIO's own defaults, 9000/9001, are frequently already
+# taken on a shared box — and podman reports a clash only at container *start*, leaving
+# it stuck in `Created` with an empty log. 9002/9003 avoid that. The ports INSIDE the
+# container are always 9000 (API) and 9001 (console), whatever is published here.
+PORT=9002
+CONSOLE_PORT=9003
 ACCESS_USER=mva
 ACCESS_PASSWORD=""
 NAME=mva-minio
@@ -59,23 +65,122 @@ if [[ -z "$ACCESS_PASSWORD" ]]; then
   GENERATED=1
 fi
 
+# A port that is already taken is the single most likely reason this fails, and podman
+# reports it only at *start* time — leaving a container stuck in `Created` with an empty
+# log, which looks like nothing happened at all. Check first and say so plainly.
+port_owner() {
+  if command -v ss >/dev/null 2>&1; then
+    ss -lntp 2>/dev/null | awk -v p=":$1\$" '$4 ~ p {print $0; exit}'
+  elif command -v lsof >/dev/null 2>&1; then
+    lsof -nP -iTCP:"$1" -sTCP:LISTEN 2>/dev/null | tail -1
+  fi
+}
+
+say "Ports ${PORT} and ${CONSOLE_PORT}"
+CLASH=0
+for candidate in "$PORT" "$CONSOLE_PORT"; do
+  owner=$(port_owner "$candidate")
+  if [[ -n "$owner" ]]; then
+    echo "    port ${candidate} is ALREADY IN USE:" >&2
+    echo "      ${owner}" >&2
+    CLASH=1
+  else
+    ok "${candidate} free"
+  fi
+done
+if [[ $CLASH -eq 1 ]]; then
+  echo >&2
+  echo "  Pick ports nothing else holds and re-run, e.g.:" >&2
+  suggest=$PORT
+  while [[ -n "$(port_owner "$suggest")" ]]; do suggest=$((suggest + 10)); done
+  suggest2=$((suggest + 1))
+  while [[ -n "$(port_owner "$suggest2")" ]]; do suggest2=$((suggest2 + 1)); done
+  echo "      $0 --port ${suggest} --console-port ${suggest2} --data-dir ${DATA_DIR}" >&2
+  echo >&2
+  echo "  (podman only reports this at container START, which is why a clash leaves a" >&2
+  echo "   container stuck in 'Created' with an empty log.)" >&2
+  exit 1
+fi
+
 say "Data directory"
 mkdir -p "$DATA_DIR"
 ok "$DATA_DIR ($(df -h "$DATA_DIR" | tail -1 | awk '{print $4}') free)"
 
 say "MinIO container '$NAME'"
-if $RUNTIME ps -a --format '{{.Names}}' | grep -qx "$NAME"; then
-  ok "already exists — leaving it alone (remove it first to recreate)"
+EXISTING=$($RUNTIME ps -a --format '{{.Names}} {{.Status}}' | grep "^${NAME} " || true)
+if [[ -n "$EXISTING" ]]; then
+  if $RUNTIME ps --format '{{.Names}}' | grep -qx "$NAME"; then
+    ok "already running — leaving it alone"
+    # A container keeps the ports it was CREATED with. Re-running with a different
+    # --port does not change them, and printing a .env block for the requested port
+    # would hand out a value that cannot connect.
+    ACTUAL=$($RUNTIME port "$NAME" 2>/dev/null | awk -F: '/^9000\//{print $NF; exit}')
+    if [[ -n "$ACTUAL" && "$ACTUAL" != "$PORT" ]]; then
+      echo >&2
+      echo "  WARNING: it publishes the API on ${ACTUAL}, not the ${PORT} you asked for." >&2
+      echo "  Ports are fixed at creation. To change them:" >&2
+      echo "      $RUNTIME rm -f $NAME && $0 --port $PORT --console-port $CONSOLE_PORT" >&2
+      echo "  Using ${ACTUAL} in the .env block below." >&2
+      PORT="$ACTUAL"
+    fi
+  else
+    ok "exists but is NOT running: ${EXISTING#* }"
+    echo
+    echo "  Last lines of its log:" >&2
+    $RUNTIME logs --tail 20 "$NAME" 2>&1 | sed 's/^/    /' >&2
+    echo >&2
+    echo "  Remove it and re-run this script once the cause is fixed:" >&2
+    echo "      $RUNTIME rm -f $NAME" >&2
+    exit 1
+  fi
 else
   # MinIO stores objects as plain files under DATA_DIR, so the bytes remain readable
   # with ordinary tools and are not locked inside a database.
-  $RUNTIME run -d --name "$NAME" --restart unless-stopped \
-    -p "${PORT}:9000" -p "${CONSOLE_PORT}:9001" \
-    -e "MINIO_ROOT_USER=${ACCESS_USER}" \
-    -e "MINIO_ROOT_PASSWORD=${ACCESS_PASSWORD}" \
-    -v "${DATA_DIR}:/data:z" \
-    quay.io/minio/minio server /data --console-address ":9001" >/dev/null
-  ok "started on :${PORT} (console :${CONSOLE_PORT})"
+  #
+  # Output is deliberately NOT discarded. An earlier version sent it to /dev/null, so a
+  # failed start printed a .env block for a container that was not running — the worst
+  # kind of success message.
+  if ! $RUNTIME run -d --name "$NAME" \
+      -p "${PORT}:9000" -p "${CONSOLE_PORT}:9001" \
+      -e "MINIO_ROOT_USER=${ACCESS_USER}" \
+      -e "MINIO_ROOT_PASSWORD=${ACCESS_PASSWORD}" \
+      -v "${DATA_DIR}:/data:z" \
+      quay.io/minio/minio server /data --console-address ":9001"; then
+    echo >&2
+    echo "Failed to start the container. Common causes:" >&2
+    echo "  * port ${PORT} or ${CONSOLE_PORT} already in use — check: ss -lntp | grep -E '${PORT}|${CONSOLE_PORT}'" >&2
+    echo "  * ${DATA_DIR} not writable by this user (rootless podman runs as you)" >&2
+    echo "  * image could not be pulled — check: $RUNTIME pull quay.io/minio/minio" >&2
+    exit 1
+  fi
+  ok "container created"
+fi
+
+# A container that starts and immediately dies is the failure this catches. Without the
+# check, the script would happily print connection details for something already dead.
+say "Waiting for MinIO to answer"
+HEALTHY=0
+for _ in $(seq 1 30); do
+  if ! $RUNTIME ps --format '{{.Names}}' | grep -qx "$NAME"; then
+    echo "  the container exited. Its log:" >&2
+    $RUNTIME logs --tail 30 "$NAME" 2>&1 | sed 's/^/    /' >&2
+    echo >&2
+    echo "  If this says 'permission denied', ${DATA_DIR} is not writable by you." >&2
+    echo "  Rootless podman runs as your user, so try a path in your home:" >&2
+    echo "      $RUNTIME rm -f $NAME" >&2
+    echo "      $0 --data-dir \$HOME/mva-objects --port ${PORT} --console-port ${CONSOLE_PORT}" >&2
+    exit 1
+  fi
+  if curl -sf --max-time 2 "http://127.0.0.1:${PORT}/minio/health/live" >/dev/null 2>&1; then
+    HEALTHY=1; break
+  fi
+  sleep 1
+done
+if [[ $HEALTHY -eq 1 ]]; then
+  ok "healthy on :${PORT} (console :${CONSOLE_PORT})"
+else
+  ok "running, but /minio/health/live did not answer on :${PORT} within 30s"
+  echo "     check: $RUNTIME logs $NAME" >&2
 fi
 
 say "Bucket '$BUCKET'"
@@ -91,6 +196,13 @@ else
 fi
 
 HOST_HINT=$(hostname -f 2>/dev/null || hostname)
+
+say "Published ports"
+$RUNTIME port "$NAME" 2>&1 | sed 's/^/    /' || echo "    (none — nothing outside the container can reach it)"
+echo
+echo "    Console (open in a browser):  http://${HOST_HINT}:${CONSOLE_PORT}"
+echo "    Log in with the user and password below."
+
 cat <<ENVBLOCK
 
 ────────────────────────────────────────────────────────────────────────────

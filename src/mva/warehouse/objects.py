@@ -121,18 +121,76 @@ def sorted_copy(store: ObjectStore, source_url: str, key: str,
     return url
 
 
-def listing(store: ObjectStore, prefix: str = "") -> list[tuple[str, int]]:
-    """Every object under ``prefix``, as ``(key, bytes)``."""
+class Unreachable(RuntimeError):
+    """The object store did not answer, with a diagnosis attached."""
+
+
+def diagnose(store: ObjectStore, error: Exception) -> str:
+    """Turn a transport failure into something actionable.
+
+    A raw ``IOException: Could not connect`` says nothing about *why*, and the three
+    causes need completely different fixes. Each is checked here so the message names one.
+    """
+    host, _, port = store.endpoint.partition(":")
+    lines = [f"cannot reach the object store at {store.endpoint}", ""]
+
+    if host in ("localhost", "127.0.0.1"):
+        lines += [
+            "S3_ENDPOINT points at localhost — that is THIS machine, not the server.",
+            "That value is only correct while an SSH tunnel is open. Either:",
+            "",
+            f"  open the tunnel:  ssh -N -L {port or 9002}:localhost:{port or 9002} "
+            f"<user>@<server>",
+            "  or point straight at the server:  S3_ENDPOINT=<server-hostname>:"
+            f"{port or 9002}",
+            "",
+        ]
+    else:
+        lines += [
+            "Check, on the server:",
+            f"  <podman|docker> ps --filter name=minio        # is it running?",
+            f"  <podman|docker> port <container>              # is {port or 9002} published?",
+            f"  curl -sf http://localhost:{port or 9002}/minio/health/live && echo OK",
+            "",
+            "Then from here:",
+            f"  curl -v --max-time 5 http://{store.endpoint}/minio/health/live",
+            "  (a hang or timeout means a firewall; 'connection refused' means nothing "
+            "is listening)",
+            "",
+        ]
+
+    if store.use_ssl:
+        lines.append("S3_USE_SSL=true but MinIO serves plain HTTP unless you put TLS in "
+                     "front of it — try S3_USE_SSL=false over a tunnel.")
+    lines.append(f"underlying error: {str(error).splitlines()[0][:160]}")
+    return "\n".join(lines)
+
+
+def listing(store: ObjectStore, prefix: str = "") -> list[str]:
+    """Every object key under ``prefix``.
+
+    ``glob`` returns one column, the full URL. An earlier version invented a second
+    ``size`` column and swallowed the failure in a bare ``except``, which turned a
+    connection error into an empty listing — the worst possible outcome, since it looks
+    exactly like an empty bucket.
+    """
     pattern = store.url(f"{prefix.strip('/')}/**") if prefix else store.url("**")
-    with connect(store) as connection:
-        try:
-            rows = connection.execute(
-                "SELECT file, size FROM glob(?) g, "
-                "LATERAL (SELECT g.file AS file, 0 AS size)", [pattern]).fetchall()
-        except Exception:
-            rows = [(row[0], 0) for row in
-                    connection.execute("SELECT * FROM glob(?)", [pattern]).fetchall()]
-    return [(str(row[0]), int(row[1])) for row in rows]
+    try:
+        with connect(store) as connection:
+            rows = connection.execute("SELECT * FROM glob(?)", [pattern]).fetchall()
+    except RuntimeError:
+        raise
+    except Exception as error:
+        raise Unreachable(diagnose(store, error)) from error
+    return [str(row[0]) for row in rows]
+
+
+def console_url(store: ObjectStore) -> str:
+    """Best guess at the MinIO console address, for a human to open in a browser."""
+    host, _, port = store.endpoint.partition(":")
+    # setup-object-store.sh publishes the console one above the API port.
+    guess = f"{int(port) + 1}" if port.isdigit() else "9003"
+    return f"http://{host}:{guess}"
 
 
 def query(store: ObjectStore, sql: str):
