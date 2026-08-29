@@ -9,7 +9,7 @@
 #
 # Usage:
 #   ./setup-object-store.sh [--bucket mva] [--data-dir ~/mva-objects]
-#                           [--port 9002] [--console-port 9003]
+#                           [--port 9012] [--console-port 9013]
 #                           [--user mva] [--password SECRET] [--name mva-minio]
 #
 # If --password is omitted a strong one is generated and shown once.
@@ -20,12 +20,15 @@ BUCKET=mva
 # Under rootless podman the container runs as *you*, so a path outside your home is a
 # common cause of a container that starts and immediately dies on a write.
 DATA_DIR="${HOME}/mva-objects"
-# Host-side published ports. MinIO's own defaults, 9000/9001, are frequently already
-# taken on a shared box — and podman reports a clash only at container *start*, leaving
-# it stuck in `Created` with an empty log. 9002/9003 avoid that. The ports INSIDE the
-# container are always 9000 (API) and 9001 (console), whatever is published here.
-PORT=9002
-CONSOLE_PORT=9003
+# Host-side published ports for this project: 9012 API, 9013 console.
+#
+# Not MinIO's own 9000/9001, and not 9002/9003 — both were already taken on this server.
+# Podman reports a port clash only at container *start*, so a collision leaves a container
+# stuck in `Created` with an empty log and no error anywhere; the preflight below catches
+# it instead. The ports INSIDE the container are always 9000 (API) and 9001 (console),
+# whatever is published here.
+PORT=9012
+CONSOLE_PORT=9013
 ACCESS_USER=mva
 ACCESS_PASSWORD=""
 NAME=mva-minio

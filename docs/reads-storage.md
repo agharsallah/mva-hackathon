@@ -165,6 +165,25 @@ they are constant within a file. `(lane, tile, x, y)` joins a read to its mate.
 **Cost to build:** parsing ran at ~100,000 reads/second single-threaded, so ~3 hours for
 all 1.08 billion, or well under an hour across the 8 files in parallel.
 
+## Getting it onto the server
+
+The reads are too large for a laptop, so the Parquet lives in the object store and is
+queried in place over HTTP range requests — see
+[the object store](warehouse.md#the-object-store-bulk-files-queried-in-place). Set it up
+with:
+
+```bash
+./tools/setup-object-store.sh --bucket mva     # API on :9012, console on :9013
+```
+
+Then upload and sort for the queries you will actually run:
+
+```bash
+uv run mva-warehouse s3-put reads_lane1.parquet --key reads/lane=1/part-0.parquet
+uv run mva-warehouse s3-query "SELECT count(*) FROM 's3://mva/reads/**/*.parquet'
+                               WHERE contains(sequence, 'ACGT…')"
+```
+
 ## Data handling
 
 Reads are patient data, and the `index_pair` barcode is library identity — the committed

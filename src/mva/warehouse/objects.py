@@ -139,18 +139,18 @@ def diagnose(store: ObjectStore, error: Exception) -> str:
             "S3_ENDPOINT points at localhost — that is THIS machine, not the server.",
             "That value is only correct while an SSH tunnel is open. Either:",
             "",
-            f"  open the tunnel:  ssh -N -L {port or 9002}:localhost:{port or 9002} "
+            f"  open the tunnel:  ssh -N -L {port or 9012}:localhost:{port or 9012} "
             f"<user>@<server>",
             "  or point straight at the server:  S3_ENDPOINT=<server-hostname>:"
-            f"{port or 9002}",
+            f"{port or 9012}",
             "",
         ]
     else:
         lines += [
             "Check, on the server:",
             f"  <podman|docker> ps --filter name=minio        # is it running?",
-            f"  <podman|docker> port <container>              # is {port or 9002} published?",
-            f"  curl -sf http://localhost:{port or 9002}/minio/health/live && echo OK",
+            f"  <podman|docker> port <container>              # is {port or 9012} published?",
+            f"  curl -sf http://localhost:{port or 9012}/minio/health/live && echo OK",
             "",
             "Then from here:",
             f"  curl -v --max-time 5 http://{store.endpoint}/minio/health/live",
@@ -189,7 +189,7 @@ def console_url(store: ObjectStore) -> str:
     """Best guess at the MinIO console address, for a human to open in a browser."""
     host, _, port = store.endpoint.partition(":")
     # setup-object-store.sh publishes the console one above the API port.
-    guess = f"{int(port) + 1}" if port.isdigit() else "9003"
+    guess = f"{int(port) + 1}" if port.isdigit() else "9013"
     return f"http://{host}:{guess}"
 
 

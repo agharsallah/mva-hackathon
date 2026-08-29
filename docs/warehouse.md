@@ -328,3 +328,88 @@ ssh -L 5432:localhost:5432 user@server     # then PGHOST=localhost in .env
 ```
 
 Worked example with real output: [`methodology/010`](../methodology/010-postgres-ingest-and-derivations.md).
+
+## The object store: bulk files, queried in place
+
+PostgreSQL holds the tables people query and edit. The **bulk** files — raw layers, read
+Parquet, anything measured in gigabytes — go into an S3-compatible object store (MinIO) on
+the same box, and are queried *where they sit*.
+
+The reason is measured. DuckDB's `httpfs` extension fetches byte ranges over HTTP, and
+Parquet's footer tells it which ranges it needs:
+
+| Query against a 5,012,204-row Parquet | Downloaded |
+|---|---|
+| `count(*)` | 0.5% of the file |
+| One column, aggregated | 0.4% |
+| Filtered aggregate, row groups pruned | 0.2% |
+
+Nothing is cached locally, nothing is downloaded whole, and no SSH session is involved —
+which is the point when the data is too large to keep on a laptop.
+
+### On the server, once
+
+```bash
+./tools/setup-object-store.sh --bucket mva
+```
+
+Publishes the API on **9012** and the console on **9013**, with data under
+`~/mva-objects`. Both defaults exist because of failures worth knowing about:
+
+* **Ports.** MinIO's own defaults, 9000/9001, are often already taken on a shared box —
+  as were 9002/9003 on this one. Podman reports a port clash only at container *start*, so
+  a collision leaves a container stuck in `Created` with an **empty log** and no error
+  anywhere. The script checks both ports before creating anything and names the process
+  holding one.
+* **Data directory.** Rootless podman runs the container as *you*, so a path outside your
+  home is a common cause of a container that starts and immediately dies on a write.
+
+Override either with `--port` / `--console-port` / `--data-dir`. Note that **a container
+keeps the ports it was created with** — re-running with a different `--port` does not
+change them, and the script now warns rather than printing a `.env` block for a port that
+was never published.
+
+**Dashboard:** `http://<server>:9013` — always a different port from the API.
+
+### On your machine
+
+```bash
+uv run mva-warehouse s3-check          # settings, a live probe, and the console URL
+uv run mva-warehouse s3-put <file.parquet> --key raw/variants_raw.parquet
+uv run mva-warehouse s3-ls
+uv run mva-warehouse s3-query "SELECT count(*) FROM 's3://mva/raw/variants_raw.parquet'"
+```
+
+### Sorting is what makes remote queries cheap
+
+Row-group statistics can only skip a group when the filter column is **clustered**. The
+same gene lookup, same data:
+
+```
+gene filter, UNSORTED file            4.40 MB (24.6%)   1.03s
+gene filter, SORTED by symbol         0.07 MB ( 0.6%)   0.03s
+```
+
+40× less data, 33× faster. So rewrite anything that will be filtered repeatedly:
+
+```bash
+uv run mva-warehouse s3-sort raw/variants.parquet     --key raw/variants_by_gene.parquet --by symbol
+```
+
+### Credentials and exposure
+
+`S3_ENDPOINT` takes the **published host port** (9012), never MinIO's internal 9000, and
+the **server's hostname** — `localhost` is correct only while an SSH tunnel is open *on
+your machine*:
+
+```bash
+ssh -N -L 9012:localhost:9012 <user>@<server>    # run this on YOUR laptop
+```
+
+`S3_USE_SSL=false` sends the access key in clear text. This store will hold
+patient-derived data, so before uploading anything choose one of: an SSH tunnel, a TLS
+reverse proxy (then `S3_USE_SSL=true`), or a firewall limited to the team's addresses.
+`s3-check` warns whenever SSL is off.
+
+Measurements and the failure modes behind these defaults:
+[`methodology/013`](../methodology/013-remote-object-store.md).

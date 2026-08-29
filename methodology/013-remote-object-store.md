@@ -98,6 +98,40 @@ the round trip through object storage altered nothing.
    loader behaved correctly; the lesson is to append with a leading newline, which the
    setup script's output block already does.
 
+## Follow-up: three bugs found standing this up on the real server
+
+The first attempt on `vmi2938918` produced a container that never ran, with **no error
+anywhere**. `podman ps -a` showed `Created`, and `podman logs` was empty. The cause chain:
+
+1. **Port 9000 was already in use.** Podman reports a port clash only at container
+   *start*, not at create, so `podman run -d` left the container in `Created` and the
+   failure surfaced only on an explicit `podman start`:
+   `bind: address already in use`.
+2. **The script discarded `podman run` output** to `/dev/null`, hiding it.
+3. **"Container exists" was treated as success.** A second run with `--port 9002` took the
+   "already exists — leaving it alone" branch and printed a `.env` block advertising 9002,
+   while the container had been created with 9000 — **ports are fixed at creation**.
+
+Each alone was recoverable; together they produced a confident success message, complete
+with credentials, for something that had never started.
+
+Fixes: a port preflight that names the occupying process and proposes a free pair; no
+output discarded; the "exists" path checks the container is actually *running* and warns
+when its published ports differ from those requested; and a health-check loop that refuses
+to print a `.env` block unless `/minio/health/live` answers.
+
+Defaults changed as a result: **API 9012, console 9013** (9000/9001 and 9002/9003 were
+both already taken on this server), and
+`DATA_DIR` moved to `$HOME/mva-objects` — rootless podman runs the container as the calling
+user, so a path outside the home directory is a common cause of a container that dies on
+first write.
+
+Also corrected in the client: `listing()` used a malformed `LATERAL` query wrapped in a
+bare `except Exception`, which turned a connection failure into an **empty listing** —
+indistinguishable from an empty bucket. It now raises with a diagnosis that names the
+likely cause, and that is what revealed `S3_ENDPOINT=localhost:9002` pointing at the
+laptop rather than the server.
+
 ## Security note, unresolved
 
 `S3_USE_SSL=false` sends the access key in clear text. The store will hold patient-derived
