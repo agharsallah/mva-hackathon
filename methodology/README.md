@@ -37,3 +37,4 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [004](004-sex-and-aneuploidy-from-allele-balance.md) | What is the proband's sex, and is mosaic aneuploidy visible? |
 | [005](005-fastq-structure-and-quality.md) | What are the raw reads, and what depth do they give? |
 | [006](006-phasing-power-on-bub1b.md) | How much of the compound-het search space can phasing resolve? |
+| [007](007-exploration-toolkit.md) | Can the whole data profile be read, graded and rendered from code? |

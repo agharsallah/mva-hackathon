@@ -7,6 +7,7 @@ Start here, in this order.
 | [`dictionary.md`](dictionary.md) | I have no genetics background — what *is* any of this? Every domain term explained from scratch, with diagrams. |
 | [`../CONTEXT.md`](../CONTEXT.md) | Which word do we use for it? Naming discipline for code and write-ups — proband, cis/trans, epcr, probe, non-PASS, plus what to avoid. |
 | [`architecture.md`](architecture.md) | How do the pieces fit? Data flow, seams, sharp edges, extension points. |
+| [`exploration.md`](exploration.md) | How do I actually *look* at the data? The exploration toolkit — twenty exhibits, graded checks, one interactive page. |
 | [`roadmap.md`](roadmap.md) | What is done, what is next, and how the 80 GB gets handled. |
 | [`../ideation/data-findings.md`](../ideation/data-findings.md) | What is actually in the data? Measured, not assumed. |
 | [`../ideation/hackathon-intel.md`](../ideation/hackathon-intel.md) | What is the strategy? Scoring mechanics, probe protocol, timeline. |

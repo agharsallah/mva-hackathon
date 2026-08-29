@@ -54,6 +54,31 @@ That framing sets the whole design: the ranked unit is a **pair**, not a variant
 `variant.py` sits under all of it: every module speaks `Variant`, and it is the only place
 allowed to build a chromosome string.
 
+## The second branch: exploration
+
+The pipeline above answers *which two variants*. A second package answers *what is in this
+data at all*, and it reads the committed profile rather than the gated dataset:
+
+```
+  ressources/data-profile/       ~600 KB of tallies, committable
+          │
+          ▼
+  ┌───────────────┐
+  │  explore/     │  readers → profile → checks → views → report
+  └───────┬───────┘  one interactive HTML page, 20 exhibits
+          │
+          ├──────────────► figures/explore-report.html
+          │
+          └──────────────► uv run mva-explore checks   (graded table, terminal)
+```
+
+It also has a locus branch that reads real calls through `vcf.py` and classifies pairs
+through `compound_het.py`, which is how the pair matrix and phase map are drawn. Nothing
+in the pipeline depends on `explore/`; the dependency runs one way only, so a change to a
+chart can never affect a submission.
+
+Full documentation in [`exploration.md`](exploration.md).
+
 ## The seams, and what each one guarantees
 
 | Module | Guarantee | Test module |
@@ -66,8 +91,13 @@ allowed to build a chromosome string.
 | `submission.py` | Nothing the scorer would reject or rank ambiguously can be written. | `test_submission.py` |
 | `scorer.py` | Faithful to the published evaluation code, including its tie-breaking. | `test_scorer.py` |
 | the whole chain | A VCF in, a scored CSV out. | `test_pipeline_end_to_end.py` |
+| `explore/readers.py` | A malformed or truncated artifact is a gap, never an exception. | `test_explore_readers.py` |
+| `explore/profile.py` | Every section is optional, and the filename mapping is a parameter. | `test_explore_profile.py` |
+| `explore/checks.py` | Every verdict states its band and the reasoning behind it. | `test_explore_checks.py` |
+| `explore/views/` | A figure never travels without its caption and its legend. | `test_explore_views.py` |
+| `explore/report.py` | Every exhibit is rendered, reachable, and drawn exactly once. | `test_explore_report.py` |
 
-69 tests, running in 0.15 s on synthetic fixtures with no dataset present.
+127 tests, running in about a second on synthetic fixtures with no dataset present.
 
 ## Where the sharp edges are
 
@@ -100,5 +130,5 @@ no population information. Population frequency comes only from the annotation p
 
 ## What is not here yet
 
-No alignment, no re-calling, no SV detection, no normalization step, no real annotator, and
-no CLI. See [`roadmap.md`](roadmap.md).
+No alignment, no re-calling, no SV detection, no normalization step, and no real
+annotator. The only CLI is `mva-explore`; the pipeline itself is still library-only. See [`roadmap.md`](roadmap.md).

@@ -329,9 +329,25 @@ Every standard caller assumes only 0% / 50% / 100% exist. **MVA is a mosaicism d
 
 **Genotype likelihood (`PL` / `GL` / `GQ`)** — the caller's confidence numbers. A low `GQ` het is not proof of absence — look again.
 
-**Allelic balance** — a real het should show ~50/50 reads. Big deviation = mosaic, or a copy-number problem, or an error.
-
 **Reference bias** — the aligner slightly prefers reads that match the reference, so ALT counts run a bit low.
+
+**Substitution spectrum (mutational spectrum)** — a count of every kind of letter swap: how many A>G, how many C>T, and so on. Twelve possible swaps, so twelve bars. It is a fingerprint of *how* the DNA changed, and real biology has a very lopsided one.
+*Example: `C>T` and `T>C` dominate real human variation, because a chemically tagged C decays into T on its own all the time. Sequencing errors have no such preference — so a spectrum where all twelve bars are the same height is a callset full of artifacts.*
+
+**Strand collapse (pyrimidine-centric notation)** — DNA has two strands that mirror each other, so the same event reads as `G>A` from one side and `C>T` from the other. Collapsing folds each swap together with its mirror image, turning twelve bars into six. Standard in mutational-signature work (COSMIC).
+*Example: `G>A` counted separately from `C>T` splits one real signal in half and makes it look weaker than it is.*
+
+**Indel length spectrum** — how many [indels](#3-variants-the-differences-you-hunt) of each length, from a single letter up to tens. Deletions plotted as negative, insertions as positive.
+*Example: ±1 letter dwarfs everything else, so the count axis has to be logarithmic. Whether the length divides by three matters enormously — see [frameshift](#3-variants-the-differences-you-hunt).*
+
+**Variant density** — variants called per megabase (million letters). Raw variant counts just track chromosome length and say nothing; dividing by length makes a long chromosome and a short one comparable.
+*Example: ~1,540 variants per Mb, flat across every chromosome in this dataset. Flat is the expected result and worth confirming.*
+
+**Het:hom ratio** — heterozygous calls divided by homozygous-alternate calls. An outbred person lands around 1.3–2.0.
+*Example: 1.61 here (3,047,077 het / 1,898,267 hom). A low ratio would mean long stretches where both inherited copies are identical, which would argue for a homozygous answer rather than a [compound heterozygote](#4-inheritance--how-the-answer-is-shaped).*
+
+**Karyogram / ideogram** — a picture of all the chromosomes drawn side by side to scale, used to mark where something sits. The classic cytogenetics figure.
+*Example: the panel gene map in the exploration report is one — 24 bars, with a diamond at each candidate gene's real coordinates.*
 
 **Segmental duplication / repeat region / mappability** — parts of the genome that look like each other, so scraps can't be placed confidently. Callers do badly here.
 
@@ -752,6 +768,11 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 **Exomiser / LIRICAL / AMELIE / Phen2Gene / GADO / Phenolyzer** — programs that take the symptom list + the VCF and rank which gene is guilty.
 
 **slivar / GEMINI / vembrane** — filter VCFs with written rules, including compound-het logic.
+
+**plot-vcfstats** — turns `bcftools stats` output into charts: variant classes, [substitution spectrum](#3-variants-the-differences-you-hunt), [indel length spectrum](#3-variants-the-differences-you-hunt), depth. The reference for what a callset overview should show.
+
+**Plotly** — a charting library whose figures are interactive in a plain HTML file: zoom, hover for exact values, toggle a series off. No server and no build step, which is why `MultiQC` and this repository's exploration report both use it.
+*Example: `uv run mva-explore report ressources/data-profile` writes one such page — see [the exploration toolkit](exploration.md).*
 
 **pysam / cyvcf2** — Python libraries to read these files in code.
 

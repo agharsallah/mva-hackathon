@@ -105,6 +105,35 @@ A medically significant variant unrelated to the presenting phenotype, submitted
 `finding_type` `secondary`. Reviewed qualitatively and cannot lower the automated score.
 _Avoid_: incidental finding, off-target finding
 
+### Exploration and reporting
+
+**Profile**:
+A directory of committable summary statistics describing a dataset — headers, tallies,
+distributions — with no variant record and no read sequence in it. The substrate the
+exploration toolkit reads.
+_Avoid_: summary, stats dump, QC output
+
+**Exhibit**:
+One figure together with the caption saying how to read it and the legend decoding its
+colours. The unit the report is assembled from. Deliberately not *panel*, which in this
+project means the candidate gene set.
+_Avoid_: panel, chart, plot, card, tile
+
+**Check**:
+One measured number graded against a stated expected band, carrying the reasoning behind
+that band. Its result is a **verdict**: pass, warn, fail, or info.
+_Avoid_: metric, test, QC flag, rule
+
+**Band**:
+The range a measured value is expected to fall in. A community convention, not a
+measurement, and always cited as such.
+_Avoid_: threshold, cutoff, limit
+
+**Layout**:
+Which filename in a profile directory holds which artifact. The seam that makes the
+toolkit case-agnostic — reading another lab's profile is a layout swap.
+_Avoid_: schema, mapping, config
+
 ### Analysis inputs
 
 **Panel**:

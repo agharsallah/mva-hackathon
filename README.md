@@ -31,7 +31,7 @@ diff and confirm by eye is fabricated. Tests bgzip them into a tmp dir at run ti
 ```bash
 tools/setup-env.sh            # uv + micromamba (bcftools, samtools, seqkit, fastp)
 source tools/activate.sh      # puts the bio binaries on PATH
-uv run pytest                 # runs entirely on synthetic fixtures, no data needed
+uv run pytest                 # 127 tests on synthetic fixtures, no data needed
 ```
 
 To reproduce the data profile (needs the gated dataset, ~10 min):
@@ -40,12 +40,24 @@ To reproduce the data profile (needs the gated dataset, ~10 min):
 tools/profile-genomic-data.sh ~/ubuntu/data
 ```
 
+To look at what that profile says (needs no dataset — the profile is committed):
+
+```bash
+uv run mva-explore checks ressources/data-profile     # graded metrics, in the terminal
+uv run mva-explore report ressources/data-profile     # figures/explore-report.html
+```
+
+`report` writes one self-contained interactive page: twenty exhibits across sequencing,
+callset, filters, chromosomes and candidate genes, each carrying the words that make it
+readable. See [`docs/exploration.md`](docs/exploration.md).
+
 ## Documentation
 
 | | |
 |---|---|
 | [`CONTEXT.md`](CONTEXT.md) | the domain vocabulary this codebase speaks |
 | [`docs/architecture.md`](docs/architecture.md) | the map: data flow, seams, sharp edges |
+| [`docs/exploration.md`](docs/exploration.md) | the exploration toolkit: how to actually *look* at the data |
 | [`docs/roadmap.md`](docs/roadmap.md) | status, next steps, and the plan for the full 80 GB |
 | [`docs/notes/`](docs/notes/) | why the code looks like this, and what is still provisional |
 | [`ideation/data-findings.md`](ideation/data-findings.md) | what is measurably in the data |
@@ -62,8 +74,18 @@ src/mva/
   ranking.py        scoring pairs so the best lands at rank 1
   submission.py     the Track 1 CSV contract
   scorer.py         a local replica of the challenge scorer, for rehearsing probes
+  explore/          exploration and visualisation — see docs/exploration.md
+    readers.py      parsers for TSV, bcftools stats, BED, VCF headers
+    profile.py      a profile directory loaded into one typed object
+    checks.py       measured numbers graded against stated, cited bands
+    theme.py        one palette for every figure in the repository
+    figure.py       an Exhibit: a figure with its caption and its legend
+    views/          overview, sequencing, callset, filters, chromosomes, genes, locus
+    report.py       exhibits assembled into one interactive HTML page
+    cli.py          `mva-explore` — checks, report, locus, export
 tests/              one test module per seam, plus an end-to-end tracer
 tools/              environment setup, data profiling, panel BED construction
+figures/            generated reports and exhibits
 ideation/           strategy brief, data findings, method notes
 ressources/         challenge documents and committable data profiles
 ```
