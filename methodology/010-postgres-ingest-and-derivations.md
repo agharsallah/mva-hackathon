@@ -290,7 +290,63 @@ The hosted path works end-to-end and needs nothing on the server but the Postgre
 installed. Ingest is a pure function of the staged Parquet; derivations are a pure function
 of the ingested tables; the two live in separate schemas so neither can destroy the other.
 
-Everything above ran against a throwaway instance, which has been removed along with the
-test `.env`. **Not yet run against the real server** — that needs the `.env` credentials.
-
 One follow-up worth taking: `TRIP13`'s 50% filter rate.
+
+## Confirmed on the real server
+
+Run against `vmi2938918.contaboserver.net` (PostgreSQL 18.4, in a Podman container) with
+the credentials the setup script produced.
+
+```
+$ uv run mva-warehouse pg-check
+target:   mva@vmi2938918.contaboserver.net:5432/mva (password: set, …)
+connected.
+  server:  PostgreSQL 18.4 (Debian 18.4-1.pgdg12+1)
+  schemas: public, results, warehouse
+
+$ uv run mva-warehouse pg-ingest     → 14 tables      real 0m4.4s
+$ uv run mva-warehouse pg-derive     → 5 result tables real 0m4.7s
+```
+
+**Independent verification.** SSH to the box is not reachable from the client (port 22
+blocked; 5432 open), so rather than take DuckDB's word for it, PostgreSQL's own statistics
+view was asked what it physically holds:
+
+```
+table                                    rows (per Postgres)   on disk
+results.allele_balance_flags                              24   16 kB
+results.panel_gene_density                                 8   16 kB
+…
+warehouse.contig_counts                                1,690   152 kB
+warehouse.vcf_header_lines                             2,621   320 kB
+
+20 tables physically present in PostgreSQL
+```
+
+Row counts match the ingest report exactly, and the types survived the trip —
+`results.panel_gene_density` stores `bigint` and `double precision`, not text.
+
+**Cross-checks against earlier methodology, computed server-side:**
+
+| Check | Warehouse says | Established | Agree |
+|---|---|---|---|
+| Lane yields summed vs `est_total_gbases` | 160.9 | 160.9 ([005](005-fastq-structure-and-quality.md)) | ✓ |
+| FILTER counts summed vs `total_records` | 5,012,204 | 5,012,204 ([001](001-vcf-provenance-and-structure.md)) | ✓ |
+| Chromosomes flagged for allele imbalance | Y only; 23 balanced incl. X | no visible aneuploidy, male ([004](004-sex-and-aneuploidy-from-allele-balance.md)) | ✓ |
+| Panel gene counts | unchanged | [003](003-panel-gene-variant-counts.md) | ✓ |
+
+Two independent paths through different source files agree on 160.9 and 5,012,204, which
+is the evidence that normalisation, transport and ingest altered nothing.
+
+**The safety property holds in production.** A re-ingest — which replaces the `warehouse`
+schema wholesale — left all six result tables intact:
+
+```
+$ uv run mva-warehouse pg-ingest
+$ SELECT count(*) FROM information_schema.tables WHERE table_schema='results'
+  → 6
+```
+
+`TRIP13` at 50% pass rate reproduces on the real server and remains the open follow-up.
+
+The warehouse is live and browsable in pgAdmin.

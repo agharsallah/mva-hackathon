@@ -31,6 +31,11 @@ DEFAULTS = {
     "PGPASSWORD": "",
     "PGSCHEMA": "warehouse",
     "PGRESULTSCHEMA": "results",
+    "S3_ENDPOINT": "",
+    "S3_ACCESS_KEY": "",
+    "S3_SECRET_KEY": "",
+    "S3_BUCKET": "mva",
+    "S3_USE_SSL": "true",
 }
 
 #: Looked for upward from the working directory, so the CLI works from a subdirectory.
@@ -125,3 +130,24 @@ class Postgres:
 
     def __repr__(self) -> str:  # pragma: no cover - trivial
         return f"Postgres({self.describe()})"
+
+
+def object_store(start: Path | None = None):
+    """Build :class:`~mva.warehouse.objects.ObjectStore` settings from the same sources.
+
+    Kept here rather than in :mod:`mva.warehouse.objects` so that every credential this
+    tool reads is resolved by one loader with one precedence rule, and there is a single
+    place to look when something is picked up from the wrong file.
+    """
+    from .objects import ObjectStore
+
+    env_path = find_env(start)
+    from_file = parse_env(env_path.read_text(encoding="utf-8")) if env_path else {}
+    value = lambda key: os.environ.get(key) or from_file.get(key) or DEFAULTS[key]
+    return ObjectStore(
+        endpoint=value("S3_ENDPOINT"),
+        access_key=value("S3_ACCESS_KEY"),
+        secret_key=value("S3_SECRET_KEY"),
+        bucket=value("S3_BUCKET"),
+        use_ssl=value("S3_USE_SSL").strip().lower() not in ("false", "0", "no"),
+    )

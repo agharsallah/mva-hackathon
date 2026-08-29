@@ -41,3 +41,6 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [008](008-duckdb-warehouse.md) | Can the derived tables be queried in SQL on a shared box, and what does "install DuckDB on a server" mean? |
 | [009](009-hosted-database-choice.md) | Which hosted database should sit under DuckDB, and what goes in it? |
 | [010](010-postgres-ingest-and-derivations.md) | Can the profile be ingested into hosted Postgres and have results written back? |
+| [011](011-duckdb-fidelity-and-ingestion-gates.md) | Is DuckDB lossless, and what of the 85 GB should actually be ingested? |
+| [012](012-read-storage-options.md) | How should the raw reads be normalised and stored, and in what database? |
+| [013](013-remote-object-store.md) | How can server-side files be queried from a laptop without SSH? |

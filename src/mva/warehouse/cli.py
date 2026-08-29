@@ -38,6 +38,31 @@ server beyond the PostgreSQL already there.
 ``pg-query``
     Run one read-only SQL statement against the hosted database.
 
+A third family covers the **callset** itself, and exists so that "we kept 100% of the
+data" is a checked claim rather than an assumption. Run ``vcf-verify`` before any bulk
+ingest.
+
+``vcf-shape``
+    Report what a VCF's header declares. Reads no records.
+``vcf-verify``
+    Rebuild every record through DuckDB and compare SHA-256 against the source file.
+``vcf-stage``
+    Write the lossless all-text raw layer to Parquet.
+
+A fourth family targets the **object store** — the large immutable files kept on the
+server, queried in place over HTTP range requests so nothing is downloaded whole and no
+SSH session is needed.
+
+``s3-check`` / ``s3-ls``
+    Prove the store answers, and see what is in it.
+``s3-put``
+    Upload a Parquet.
+``s3-query``
+    Run SQL against a file that never leaves the server.
+``s3-sort``
+    Rewrite an object clustered by the columns you filter on, which is what makes
+    range requests small.
+
 ``--dry-run`` is accepted by every verb that touches the network and prints the exact
 commands instead of running them.
 """
@@ -48,6 +73,8 @@ import sys
 from dataclasses import replace
 from pathlib import Path
 
+from . import cli_objects
+from . import cli_vcf
 from . import postgres as pg
 from .analysis import DERIVATIONS
 from .catalog import discover
@@ -324,5 +351,8 @@ def _parser() -> argparse.ArgumentParser:
     pgquery = add_pg("pg-query", _do_pg_query,
                      "run one read-only SQL statement against the hosted database")
     pgquery.add_argument("sql", help="the statement to run")
+
+    cli_vcf.register(subparsers)
+    cli_objects.register(subparsers)
 
     return parser
