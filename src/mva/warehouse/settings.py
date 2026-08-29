@@ -36,10 +36,25 @@ DEFAULTS = {
     "S3_SECRET_KEY": "",
     "S3_BUCKET": "mva",
     "S3_USE_SSL": "true",
+    "MVA_SOURCE_DIR": str(Path.home() / "ubuntu" / "data"),
+    "MVA_STAGING_DIR": str(Path.home() / "mva-staging"),
+    "MVA_HF_REPO": "SageBio/mva-hackathon-2026-data",
 }
 
 #: Looked for upward from the working directory, so the CLI works from a subdirectory.
 ENV_FILENAME = ".env"
+
+
+def setting(key: str, start: Path | None = None) -> str:
+    """One setting, resolved by the same precedence as everything else here.
+
+    Real environment first, then the nearest ``.env``, then :data:`DEFAULTS`. Use it for
+    the plain-string knobs — a directory, a repository name — that do not belong to the
+    Postgres or object-store settings objects.
+    """
+    env_path = find_env(start)
+    from_file = parse_env(env_path.read_text(encoding="utf-8")) if env_path else {}
+    return os.environ.get(key) or from_file.get(key) or DEFAULTS.get(key, "")
 
 
 def find_env(start: Path | None = None) -> Path | None:

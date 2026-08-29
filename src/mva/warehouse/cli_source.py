@@ -12,9 +12,13 @@ from pathlib import Path
 
 from . import source
 from .postgres import ALIAS, attached, safe_identifier
-from .settings import Postgres, object_store
+from .settings import Postgres, object_store, setting
 
-DEFAULT_SOURCE = Path.home() / "ubuntu" / "data"
+#: Delivery directory, staging scratch directory, and the (gated) dataset the delivery
+#: came from. All three resolve as real environment > ``.env`` > ``settings.DEFAULTS``.
+DEFAULT_SOURCE = Path(setting("MVA_SOURCE_DIR"))
+DEFAULT_STAGING = Path(setting("MVA_STAGING_DIR"))
+DEFAULT_REPO = setting("MVA_HF_REPO")
 
 
 #: Width used to blank the progress line. Anything shorter leaves fragments of a longer
@@ -192,7 +196,7 @@ def register(subparsers) -> None:
     fetch.add_argument("--repo", default=DEFAULT_REPO, help="Hugging Face dataset repo")
     fetch.add_argument("--only", nargs="*", help="file names (default: all published)")
     fetch.add_argument("--token", help="Hugging Face token; else $HF_TOKEN")
-    fetch.add_argument("--staging", type=Path, default=Path.home() / "mva-staging",
+    fetch.add_argument("--staging", type=Path, default=DEFAULT_STAGING,
                        help="scratch directory, used only with --verify")
     fetch.add_argument("--keep", action="store_true",
                        help="with --verify, keep the downloaded copy instead of deleting")
@@ -203,10 +207,6 @@ def register(subparsers) -> None:
                        help="download to disk and check the publisher's SHA-256 first "
                             "(slower, needs disk for one file)")
     fetch.set_defaults(handler=do_fetch)
-
-
-#: The dataset the delivery came from. Gated: access must be granted to the token's account.
-DEFAULT_REPO = "SageBio/mva-hackathon-2026-data"
 
 
 def do_fetch(args) -> int:
@@ -224,7 +224,6 @@ def do_fetch(args) -> int:
     against the publisher's own SHA-256, uploaded, then deleted. Slower and needs disk for
     one file, but it is the stronger evidence if a transfer is ever disputed.
     """
-    import datetime
     import os
 
     store = object_store()
@@ -354,135 +353,6 @@ def _fetch_verified(args, store, connection, settings, name: str, want: str) -> 
               f"--only {local.name}")
     print()
     return verified
-
-
-def register(subparsers) -> None:
-    """Attach the ``source-*`` verbs to the top-level parser."""
-    def add(name, handler, help_text):
-        sub = subparsers.add_parser(name, help=help_text)
-        sub.add_argument("--directory", type=Path, default=DEFAULT_SOURCE,
-                         help=f"the delivery directory (default: {DEFAULT_SOURCE})")
-        sub.set_defaults(handler=handler)
-        return sub
-
-    add("source-scan", do_scan, "inventory the delivery without uploading")
-    upload = add("source-upload", do_upload,
-                 "hash, upload unchanged, verify, and record in the ledger")
-    upload.add_argument("--only", nargs="*",
-                        help="file names or kinds (fastq, vcf, index, document)")
-    upload.add_argument("--force", action="store_true",
-                        help="re-upload even when an identical copy is already there")
-    add("source-status", do_status, "compare the delivery on disk with the ledger")
-    add("source-check", do_check,
-        "survey the bucket, verify hashes, refresh the object inventory")
-
-    fetch = subparsers.add_parser(
-        "source-fetch",
-        help="RUN ON THE SERVER: download from the publisher straight into the bucket")
-    fetch.add_argument("--repo", default=DEFAULT_REPO, help="Hugging Face dataset repo")
-    fetch.add_argument("--only", nargs="*", help="file names (default: all published)")
-    fetch.add_argument("--token", help="Hugging Face token; else $HF_TOKEN")
-    fetch.add_argument("--staging", type=Path, default=Path.home() / "mva-staging",
-                       help="scratch directory, used only with --verify")
-    fetch.add_argument("--keep", action="store_true",
-                       help="with --verify, keep the downloaded copy instead of deleting")
-    fetch.add_argument("--tee", type=Path,
-                       help="also write each streamed file here, so a failed upload does "
-                            "not throw the download away")
-    fetch.add_argument("--verify", action="store_true",
-                       help="download to disk and check the publisher's SHA-256 first "
-                            "(slower, needs disk for one file)")
-    fetch.set_defaults(handler=do_fetch)
-
-
-#: The dataset the delivery came from. Gated: access must be granted to the token's account.
-DEFAULT_REPO = "SageBio/mva-hackathon-2026-data"
-
-
-def do_fetch(args) -> int:
-    """Download from the publisher, verify, push to the bucket, record, then delete.
-
-    Meant to run **on the server**, where the link to the publisher is far faster than a
-    domestic upload and the hop into MinIO is local. Each file is handled to completion
-    before the next begins, and its local copy removed, so peak disk stays at roughly one
-    file rather than the whole 85 GB delivery.
-    """
-    import os
-    import shutil
-
-    store = object_store()
-    if store.missing:
-        print("missing object-store settings: " + ", ".join(store.missing))
-        return 1
-    token = args.token or os.environ.get("HF_TOKEN") or os.environ.get(
-        "HUGGING_FACE_HUB_TOKEN")
-    if not token:
-        print("no Hugging Face token. The dataset is gated, so one is required:\n"
-              "    export HF_TOKEN=hf_...            (or pass --token)\n"
-              "The token's account must have been granted access to the dataset.")
-        return 1
-
-    expected = source.published_hashes()
-    names = args.only or sorted(expected)
-    if not names:
-        print("nothing to fetch — no published hash table and no --only given")
-        return 1
-
-    settings = Postgres.from_env()
-    staging = args.staging
-    print(f"repo      {args.repo}")
-    print(f"staging   {staging}  (each file deleted after upload)")
-    print(f"versioning on {store.bucket}: {source.enable_versioning(store)}\n")
-
-    failures = 0
-    with attached(settings) as connection:
-        source.ensure_ledger(connection, settings.schema)
-        for name in names:
-            print(f"  {name}")
-            want = expected.get(name, "")
-            try:
-                local = source.fetch(args.repo, name, staging, token)
-            except Exception as error:
-                print(f"    FAILED to download: {str(error).splitlines()[0][:120]}\n")
-                failures += 1
-                continue
-
-            size = local.stat().st_size
-            digest = source.checksum(local, _progress("hashing", size))
-            _clear()
-            if want and digest != want:
-                # The publisher's own hash disagreeing means the bytes are not the
-                # delivery. Uploading them would poison the source of truth.
-                print(f"    HASH MISMATCH — not uploading")
-                print(f"      published {want}")
-                print(f"      downloaded {digest}\n")
-                failures += 1
-                local.unlink(missing_ok=True)
-                continue
-            print(f"    sha256   {digest}{'  (matches publisher)' if want else ''}")
-
-            item = source.SourceFile(
-                local, size,
-                __import__("datetime").datetime.fromtimestamp(
-                    local.stat().st_mtime,
-                    tz=__import__("datetime").timezone.utc),
-                digest)
-            result = source.upload(store, item, _progress("uploading", size))
-            _clear()
-            after = source.remote_state(store, item.key) or {}
-            verified = after.get("size") == size and after.get("sha256") == digest
-            print(f"    version  {result.get('version_id', '') or 'n/a'}")
-            print(f"    verified {'yes' if verified else 'NO — size or hash mismatch'}")
-            source.record(connection, settings.schema, item, result, verified)
-
-            if not args.keep:
-                local.unlink(missing_ok=True)
-                print("    removed local copy")
-            print()
-
-    shutil.rmtree(staging / ".cache", ignore_errors=True)
-    print(f"done. {len(names) - failures}/{len(names)} succeeded.")
-    return 1 if failures else 0
 
 
 def do_check(args) -> int:
