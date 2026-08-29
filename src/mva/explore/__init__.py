@@ -1,6 +1,6 @@
 """Exploration and visualisation for genomic callsets.
 
-Layers, each usable on its own:
+A layered toolkit, each layer usable on its own:
 
 ``readers``
     Parsers for the plain-text formats bioinformatics tools emit — TSV tables,
@@ -17,18 +17,26 @@ Layers, each usable on its own:
 ``views``
     Plotly exhibits grouped into report sections — sequencing, callset, filters,
     chromosomes, candidate genes, and a locus browser over live calls.
+``report``
+    Those exhibits assembled into a single self-contained interactive HTML page.
 
 The quick path::
 
-    from mva.explore import CallsetProfile, run_checks
+    from mva.explore import CallsetProfile, write_report
 
-    for check in run_checks(CallsetProfile.load("ressources/data-profile")):
-        print(check.verdict.value, check.name, check.display)
+    profile = CallsetProfile.load("ressources/data-profile")
+    write_report(profile, "figures/explore-report.html", "Callset exploration")
+
+Or from the command line::
+
+    uv run mva-explore report ressources/data-profile -o figures/explore-report.html
+    uv run mva-explore checks ressources/data-profile
 """
 
 from .checks import Check, Verdict, run_checks
 from .figure import Exhibit, Section
 from .profile import CallsetProfile, ProfileLayout
+from .report import build_report, export_exhibits, render, write_report
 from .theme import install_template
 from .views import SECTIONS, build_sections
 
@@ -38,5 +46,6 @@ install_template()
 
 __all__ = [
     "CallsetProfile", "ProfileLayout", "Check", "Verdict", "run_checks",
-    "Exhibit", "Section", "SECTIONS", "build_sections", "install_template",
+    "Exhibit", "Section", "SECTIONS", "build_sections",
+    "build_report", "write_report", "render", "export_exhibits", "install_template",
 ]

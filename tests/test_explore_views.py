@@ -116,6 +116,18 @@ def test_a_generated_caption_agrees_with_its_own_count():
     assert "11 are heterozygous" in caption
 
 
+def test_the_locus_page_does_not_claim_to_be_built_from_summaries():
+    # The profile report reads aggregates; the locus report reads patient records. Saying
+    # the wrong one on the page that carries real coordinates is the dangerous direction.
+    from mva.explore.report import LOCUS_BLURB, render
+    from mva.explore.figure import Section
+
+    section = Section("locus", "Locus", "…", locus.exhibits(read_calls(MINI_VCF), "fixture"))
+    page = render([section], title="t", subject="s", blurb=LOCUS_BLURB)
+    assert "keep this page outside the repository" in page
+    assert "committable summary statistics" not in page
+
+
 def test_a_bcftools_overflow_bin_is_flagged_as_a_catch_all(tmp_path):
     # `bcftools stats` folds every indel longer than its limit into the outermost bin, so
     # the plot shows a spike at that exact length. A reader who does not know that reads
