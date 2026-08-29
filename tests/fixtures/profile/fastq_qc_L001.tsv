@@ -1,0 +1,11 @@
+metric	value
+before_filtering.total_reads	200000
+before_filtering.q30_rate	0.9100
+before_filtering.gc_content	0.4100
+after_filtering.total_reads	198000
+after_filtering.q30_rate	0.9200
+after_filtering.gc_content	0.4090
+duplication_rate	0.0800
+insert_size_peak	300
+adapter_trimmed_reads	5000
+# synthetic fixture, not sampled from any run

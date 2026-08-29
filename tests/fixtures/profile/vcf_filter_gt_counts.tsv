@@ -1,0 +1,11 @@
+## FILTER counts
+PASS	2400
+MQ40	150
+QD2	80
+LowQual;MQ40	20
+## genotype counts
+0/1	1600
+1/1	1000
+1/2	50
+## records_in_phase_group	400
+## total_records	2650

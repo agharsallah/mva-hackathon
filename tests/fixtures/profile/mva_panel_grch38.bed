@@ -1,0 +1,3 @@
+# Synthetic panel. Invented coordinates.
+chr1	1000000	1050000	GENEA	ENSG00000000001	a synthetic candidate
+chr2	2000000	2020000	GENEB	ENSG00000000002	a second synthetic candidate
