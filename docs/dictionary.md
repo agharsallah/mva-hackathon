@@ -749,6 +749,8 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 
 **PMID / DOI** — the ID number of a paper. Every claim must carry one, or it can't be checked.
 
+**Case report** — a paper describing one real patient: their symptoms, the variants found, how it was confirmed. For an ultra-rare disease the world's knowledge is mostly case reports — and a validated challenge case may itself have been published as one. *Example: "Compound heterozygous BUB1B variants in a child with MVA and rhabdomyosarcoma" would be a direct answer-key candidate.*
+
 **Reactome / STRING / Open Targets / PrimeKG** — databases of which proteins talk to which, and which drugs hit which target.
 
 **AlphaFold DB / PDB / UniProt** — 3D shapes and facts about proteins. Lets you see where in the protein your variant lands.
@@ -1232,6 +1234,8 @@ Track 1 walks left to right. **Track 2 is the same walk, one hop further, to the
 **Ensembling** — combining several models' opinions.
 
 **Borda count / reciprocal rank fusion (RRF)** — simple, robust ways to merge ranked lists. RRF adds up `1/(k + rank)` from each list. Needs no training — ideal here.
+
+**Pairwise tournament (Bradley–Terry ranking)** — rank items by playing them against each other two at a time and counting wins, like a sports league, instead of scoring each alone. Bradley–Terry is the statistics that turns the win/loss record into a ranking. Judging "is pair A a better explanation than pair B?" is easier and more reliable than "score pair A from 0 to 1". *Example: 10 candidate pairs → 45 judged matches → a win-count ranking.*
 
 **LLM (large language model)** — an AI like this one. Here: good at reading papers and drafting; must NEVER be trusted to state a genomic coordinate or a citation on its own.
 

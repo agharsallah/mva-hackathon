@@ -8,6 +8,10 @@
 
 ---
 
+The solution *portfolio* — six routes to the causal pair and the probe trigger — is owned
+by [`../ideation/solution-paths.md`](../ideation/solution-paths.md); the steps below are
+its execution order.
+
 ## 1. Next steps, in dependency order
 
 ### Step 1 — Normalize the callset (hours, local, unblocks everything)

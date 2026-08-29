@@ -28,6 +28,7 @@ Each topic has exactly one owner. Before writing a new doc, extend the owner bel
 | Document | Answers |
 |---|---|
 | [`roadmap.md`](roadmap.md) | What is next, in dependency order, and how the full 80 GB gets handled. |
+| [`../ideation/solution-paths.md`](../ideation/solution-paths.md) | Six routes to the causal pair, conventional → inventive, and when to spend a probe. Owns the portfolio. |
 | [`decisions.md`](decisions.md) | What was decided and does it still hold? The register over `notes/`. |
 | [`notes/`](notes/) | Why the code looks like this. One decision per file, each with a `Standing:` line. |
 
