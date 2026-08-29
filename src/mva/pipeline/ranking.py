@@ -19,12 +19,56 @@ carrier findings, not a biallelic diagnosis.
 
 from dataclasses import dataclass
 
-from .annotation import Annotator
+from .annotation import Annotation, Annotator
 from .variant import Variant
 
 # Frequency above which a variant is too common to cause an ultra-rare recessive
 # disease. Roughly: a carrier rate that would predict far more patients than exist.
 RARE_AF = 1e-3
+
+
+@dataclass(frozen=True)
+class PairEvidence:
+    """Why a pair scored what it scored — the terms, not just the sum.
+
+    ``rank_pairs`` computes rarity, severity and the gene prior for both alleles and then
+    adds them up. Keeping only the total makes "why is this pair at rank 1" a question you
+    answer by re-reading the code, which is not an answer a methods form accepts.
+
+    Held as a separate object rather than as fields on :class:`RankedPair` so that a caller
+    who does not care pays nothing, and so that :mod:`mva.science.dossier` has one thing to
+    turn into evidence rows.
+    """
+
+    left_annotation: Annotation
+    right_annotation: Annotation
+    left_rarity: float
+    right_rarity: float
+    left_severity: float
+    right_severity: float
+    gene_prior: float
+
+    @property
+    def terms(self) -> tuple[tuple[str, float], ...]:
+        """The arithmetic, labelled, in the order it was applied."""
+        return (
+            ("left rarity", self.left_rarity),
+            ("left severity", self.left_severity),
+            ("right rarity", self.right_rarity),
+            ("right severity", self.right_severity),
+            ("gene prior", self.gene_prior),
+        )
+
+    @property
+    def both_loss_of_function(self) -> bool:
+        """Whether both alleles break the protein — the strongest shape for a biallelic call."""
+        return (self.left_annotation.is_loss_of_function
+                and self.right_annotation.is_loss_of_function)
+
+    @property
+    def both_rare(self) -> bool:
+        """Whether neither allele is common enough to rule out an ultra-rare disease."""
+        return self.left_rarity == 1.0 and self.right_rarity == 1.0
 
 
 @dataclass(frozen=True)
@@ -35,6 +79,7 @@ class RankedPair:
     right: Variant
     gene: str | None
     score: float
+    evidence: PairEvidence | None = None
 
 
 def rank_pairs(
@@ -51,9 +96,13 @@ def rank_pairs(
         if a.gene != b.gene:
             continue
 
-        score = _variant_score(a) + _variant_score(b)
-        score *= gene_prior.get(a.gene, 1.0) if a.gene else 1.0
-        ranked.append(RankedPair(left, right, a.gene, score))
+        prior = gene_prior.get(a.gene, 1.0) if a.gene else 1.0
+        score = (_variant_score(a) + _variant_score(b)) * prior
+        ranked.append(RankedPair(left, right, a.gene, score, PairEvidence(
+            left_annotation=a, right_annotation=b,
+            left_rarity=_rarity(a.gnomad_af), right_rarity=_rarity(b.gnomad_af),
+            left_severity=_severity(a), right_severity=_severity(b),
+            gene_prior=prior)))
 
     return sorted(ranked, key=lambda p: p.score, reverse=True)
 

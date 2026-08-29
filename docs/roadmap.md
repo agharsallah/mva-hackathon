@@ -12,9 +12,17 @@ The solution *portfolio* — six routes to the causal pair and the probe trigger
 by [`../ideation/solution-paths.md`](../ideation/solution-paths.md); the steps below are
 its execution order.
 
+Each step below is a **research step with one goal**, and the claims under it live in the
+register: [`method.md`](method.md) is the loop, `uv run mva-science steps` is the
+machine-readable map, and `src/mva/science/steps.py` is where the goals are declared. This
+page owns the *sequencing argument*; the register owns what is currently believed.
+
 ## 1. Next steps, in dependency order
 
 ### Step 1 — Normalize the callset (hours, local, unblocks everything)
+
+**Goal:** does every variant have exactly one spelling, so an exact-match scorer can be
+trusted with an indel? Step page: [`step-1/README.md`](step-1/README.md).
 
 ```bash
 # The reference must be the no-chr analysis set, matching the VCF's contigs.

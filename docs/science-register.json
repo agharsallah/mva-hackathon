@@ -1,0 +1,77 @@
+{
+  "generator": "mva-science export",
+  "generated_at": "2026-08-29T21:27:36+00:00",
+  "steps": [
+    {
+      "slug": "step-0",
+      "title": "The platform",
+      "goal": "Can the delivered bytes be trusted, stored without loss, and queried in SQL?",
+      "kind": "platform",
+      "status": "done",
+      "unblocks": [
+        "step-1"
+      ]
+    },
+    {
+      "slug": "step-1",
+      "title": "Normalize the callset",
+      "goal": "Does every variant in the callset have exactly one spelling, so that an exact-string-matching scorer can be trusted with an indel?",
+      "kind": "research",
+      "status": "open",
+      "unblocks": [
+        "step-2",
+        "step-4"
+      ]
+    },
+    {
+      "slug": "step-2",
+      "title": "Annotate the callset",
+      "goal": "Which variants are rare enough and damaging enough to cause an ultra-rare recessive disease, and in which gene?",
+      "kind": "research",
+      "status": "planned",
+      "unblocks": [
+        "step-3",
+        "step-6"
+      ]
+    },
+    {
+      "slug": "step-3",
+      "title": "Rank by phenotype",
+      "goal": "Does an unbiased genome-wide ranking driven by the child's HPO terms agree with the panel-first candidate list?",
+      "kind": "research",
+      "status": "planned",
+      "unblocks": [
+        "step-6"
+      ]
+    },
+    {
+      "slug": "step-4",
+      "title": "Mine the suppressed calls",
+      "goal": "Is one of the two alleles hiding in a call the quality filters discarded, rather than absent from the sample?",
+      "kind": "research",
+      "status": "planned",
+      "unblocks": [
+        "step-6"
+      ]
+    },
+    {
+      "slug": "step-5",
+      "title": "Recover the second allele from the reads",
+      "goal": "Is the missing allele a variant the caller could not emit at all \u2014 a structural variant, a deep intronic call, or a low-fraction mosaic?",
+      "kind": "research",
+      "status": "planned",
+      "unblocks": [
+        "step-6"
+      ]
+    },
+    {
+      "slug": "step-6",
+      "title": "Spend the oracle budget",
+      "goal": "Which candidate pair does the scorer confirm, and what does each reply tell us that the next submission should exploit?",
+      "kind": "research",
+      "status": "planned",
+      "unblocks": []
+    }
+  ],
+  "hypotheses": []
+}

@@ -1461,3 +1461,70 @@ flowchart TB
 **Acknowledgement text** — the exact wording the organizers require you to include in anything public.
 
 **De-identified** — names removed. Note this is NOT the same as impossible to identify — genomes are inherently identifying, which is why the rules are strict.
+
+---
+
+## 15. The research record — words for what you believe
+
+Everything above this section is about the *data*. This section is about the *investigation*:
+how a question becomes a claim, a claim becomes a test, and a test becomes something you can
+put in a report. The words come from ordinary experimental science, and most of them have a
+close software analogy.
+
+The loop they describe:
+
+```mermaid
+flowchart LR
+  G[/"GOAL<br/>the one question a<br/>step exists to answer"/]:::raw
+  H["HYPOTHESIS<br/>a claim that could<br/>be proven wrong"]:::machine
+  T["TEST<br/>a run you actually did"]:::machine
+  E["EVIDENCE<br/>one observation,<br/>with its receipt"]:::machine
+  V{"VERDICT<br/>the evidence weighed<br/>into a confidence"}:::decide
+  S["SUBMISSION ROW<br/>scored by the oracle"]:::good
+  G --> H --> T --> E --> V -->|supported| S
+  S -.->|"the reply becomes<br/>new evidence"| E
+  classDef raw fill:#e0d4f7,stroke:#7a5cab,color:#000
+  classDef machine fill:#cfe8ff,stroke:#333,color:#000
+  classDef decide fill:#ffe9b3,stroke:#333,color:#000
+  classDef good fill:#8fd18f,stroke:#333,color:#000
+```
+
+> **Legend** — purple: the raw input, the only thing not derived from something else · blue: neutral machinery, the stations that turn a claim into an observation · yellow: the decision point · green: the goal. The dotted arrow is the feedback edge — a score is not the end, it is more evidence.
+
+**Research goal** — the single question a step exists to answer. Not a task ("normalize the VCF") but a question ("does every variant have exactly one spelling?"). A task is done when it runs; a goal is done when it is answered. *Example:* step 1's goal is whether an exact-match scorer can be trusted with an indel.
+
+**Hypothesis** — a claim that could turn out to be wrong, stated before you test it. In software terms it is an assertion you write before the code that makes it pass. *Example:* "the causal pair sits in BUB1B."
+
+**Falsifiable** — able to be proven wrong by some observation you could actually make. A claim nothing could disprove is not a hypothesis, it is an opinion. *Example:* "BUB1B is involved somehow" is not falsifiable; "both BUB1B alleles are rare and damaging" is.
+
+**Prediction** — what you must observe *if* the hypothesis is true. Written before the run, so the result cannot be reinterpreted afterwards to fit. *Example:* "two BUB1B variants with gnomAD frequency below 1 in 1000, on opposite copies."
+
+**Refutation condition** (`refuted_by`) — the observation that would kill the claim. The most valuable sentence in the whole record, and the one people skip. *Example:* "both BUB1B alleles turn out common in gnomAD, or phasing puts them on the same copy."
+
+**Test** — a run you actually executed. Here, a methodology entry is the test: it carries the exact commands, the inputs, and the raw output, so someone else can repeat it. Not the same as a software unit test.
+
+**Evidence** — one observation bearing on one claim. Not a conclusion — a single fact, tagged with which way it cuts. *Example:* "BUB1B is depleted of loss-of-function variants in gnomAD."
+
+**Direction** — which way an observation cuts: **supports**, **refutes**, or **neutral**. Neutral is recorded rather than dropped, because "we looked and it told us nothing" is a real finding that stops the same look being repeated. *Example:* a coverage check that came back normal is neutral evidence, not absence of evidence.
+
+**Strength** — how hard an observation cuts, from 0 to 1. A human judgment, not a computed statistic. *Example:* "absent from gnomAD entirely" is 0.8; "the gene is plausible" is 0.2.
+
+**Source reference** (`source_ref`) — the receipt an observation came from: a methodology entry, a warehouse table, a [PMID](#7-databases-and-annotation), a [ClinVar](#7-databases-and-annotation) record, or an oracle reply. An observation with no receipt is not evidence, because nobody can check it. *Example:* `methodology/003`.
+
+**Verdict** — the evidence weighed into a status and a number, with a written reason. *Example:* "supported at 0.8, because two independent paths reached BUB1B separately."
+
+**Confidence** — how strongly the claim is currently believed, 0 to 1. It is a [posterior](#11-math-probability-and-statistics-words) in spirit, but see the warning below. *Example:* 0.69.
+
+**Log-odds** — a way of adding up evidence. Instead of multiplying probabilities, you convert to `log(p / (1-p))`, where each piece of evidence becomes a number you simply **add**. Convert back at the end. Software analogy: working in log space to turn a product into a sum, exactly as you would to avoid floating-point underflow. *Example:* a confidence of 0.5 is log-odds 0; add +1.4 for a strong supporting observation and you are at 0.80.
+
+**Heuristic, not calibrated** — the crucial caveat on every confidence in this repository. The arithmetic adds evidence as if each piece were independent, and it is not: two observations computed from the same VCF are the same fact counted twice. The number is for **ordering and triage** — which claim deserves attention next — never for a probability you would quote as a result. Say this wherever the number appears.
+
+**Revision** — one recorded version of a claim. The register never edits: changing your mind appends a new revision, so the record of the belief *moving* survives. Software analogy: an event log, not a mutable row. *Example:* H001 revision 1 proposed, revision 2 supported at 0.8.
+
+**Append-only** — a table you only ever add rows to. No `UPDATE`, no `DELETE`. It is what makes a record evidence rather than a claim about the past. *Example:* `warehouse.evidence`.
+
+**Register** — the collection of all hypotheses and their revisions. *Example:* `warehouse.hypotheses`.
+
+**Dossier** — one claim plus everything recorded about it: every revision, every evidence row, and the weighing over them. What gets exported as a Markdown file and rendered as a report section. *Example:* `docs/step-1/hypotheses/h001-bub1b.md`.
+
+**Provenance vs belief** — two different questions, often confused. **Provenance** is *where did this byte come from* — answered by lineage and hashes. **Belief** is *what do we think is true and why* — answered by the register. A perfect provenance chain tells you nothing about whether a conclusion is right. *Example:* `data_lineage` says which VCF produced a table; `warehouse.evidence` says what that table made us believe.

@@ -1,6 +1,6 @@
 """Every registered verb parses and reaches a callable handler.
 
-Both CLIs dispatch through ``set_defaults(handler=...)``, so a verb that is registered
+All three CLIs dispatch through ``set_defaults(handler=...)``, so a verb that is registered
 twice — or registered pointing at a name that a later definition rebound — still shows up
 in ``--help`` while doing something else entirely. Walking the parser and calling nothing
 catches that class of bug without touching a database, a bucket or the network.
@@ -15,9 +15,12 @@ import pytest
 import mva
 
 from mva.explore import cli as explore_cli
+from mva.science import cli as science_cli
 from mva.warehouse import cli as warehouse_cli
 
-PARSERS = {"mva-explore": explore_cli._parser(), "mva-warehouse": warehouse_cli._parser()}
+PARSERS = {"mva-explore": explore_cli._parser(),
+           "mva-warehouse": warehouse_cli._parser(),
+           "mva-science": science_cli._parser()}
 
 
 def _verbs(parser: argparse.ArgumentParser) -> dict[str, argparse.ArgumentParser]:
@@ -28,6 +31,20 @@ def _verbs(parser: argparse.ArgumentParser) -> dict[str, argparse.ArgumentParser
     return {}
 
 
+def _value(action) -> str:
+    """A value this argument will actually accept.
+
+    An argument declaring ``choices`` rejects a placeholder, so the first choice is used
+    instead. Without this the walk cannot reach any verb that constrains its flags — which
+    is most of the ones worth checking.
+    """
+    if action.choices:
+        return str(next(iter(action.choices)))
+    if action.type in (int, float):
+        return "1"
+    return "x"
+
+
 def _minimal_argv(verb: str, sub: argparse.ArgumentParser) -> list[str]:
     """The shortest command line that satisfies this verb's required arguments."""
     argv = [verb]
@@ -35,18 +52,19 @@ def _minimal_argv(verb: str, sub: argparse.ArgumentParser) -> list[str]:
         if isinstance(action, argparse._HelpAction):
             continue
         if not action.option_strings:  # positional
-            argv.extend(["x"] * (1 if action.nargs in (None, "?", "*", "+") else action.nargs))
+            count = 1 if action.nargs in (None, "?", "*", "+") else action.nargs
+            argv.extend([_value(action)] * count)
         elif action.required:
             argv.append(action.option_strings[0])
             if action.nargs != 0:
-                argv.append("x")
+                argv.append(_value(action))
     return argv
 
 
 CASES = [(tool, verb) for tool, parser in PARSERS.items() for verb in _verbs(parser)]
 
 
-def test_both_clis_register_verbs():
+def test_every_cli_registers_verbs():
     for tool, parser in PARSERS.items():
         assert _verbs(parser), f"{tool} registered no subcommands"
 

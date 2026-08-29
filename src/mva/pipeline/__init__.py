@@ -32,7 +32,7 @@ The quick path::
 from .annotation import (LOSS_OF_FUNCTION, MISSENSE, UNKNOWN, Annotation,
                          Annotator, DictAnnotator)
 from .compound_het import Phase, VariantPair, candidate_pairs, classify_phase
-from .ranking import RARE_AF, RankedPair, rank_pairs
+from .ranking import RARE_AF, PairEvidence, RankedPair, rank_pairs
 from .scorer import RankedRow, ScoreResult, rank_rows, score
 from .submission import (FINDING_TYPES, HEADER, MAX_ROWS, PROBAND_ID, Row,
                          validate, write_submission)
@@ -42,7 +42,7 @@ from .vcf import Call, iter_calls, read_calls
 __all__ = [
     "Annotation", "Annotator", "DictAnnotator", "LOSS_OF_FUNCTION", "MISSENSE", "UNKNOWN",
     "Phase", "VariantPair", "candidate_pairs", "classify_phase",
-    "RARE_AF", "RankedPair", "rank_pairs",
+    "RARE_AF", "PairEvidence", "RankedPair", "rank_pairs",
     "RankedRow", "ScoreResult", "rank_rows", "score",
     "FINDING_TYPES", "HEADER", "MAX_ROWS", "PROBAND_ID", "Row", "validate",
     "write_submission",

@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The research record</title>
+<style>/* Report styling. Light only, deliberately: the Plotly figures are drawn on a white
+   canvas and a dark shell around them would read as a rendering bug rather than a theme.
+   Print rules keep the same page usable as a PDF for the write-up. */
+
+:root {
+  --ink: #333333;
+  --subtle: #666666;
+  --faint: #8a8a8a;
+  --rule: #e6e6e6;
+  --surface: #ffffff;
+  --ground: #fafafa;
+  --good: #8fd18f;
+  --good-line: #3f8f47;
+  --bad: #ff9999;
+  --bad-line: #c0392b;
+  --decision: #ffe9b3;
+  --decision-line: #c98f1e;
+  --machine: #cfe8ff;
+  --machine-line: #3d7ebd;
+  --raw: #e0d4f7;
+  --raw-line: #7a5cab;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --nav: 250px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--machine-line); }
+
+/* --- shell ---------------------------------------------------------------- */
+
+.layout { display: flex; align-items: flex-start; }
+
+nav.sidebar {
+  position: sticky;
+  top: 0;
+  width: var(--nav);
+  flex: 0 0 var(--nav);
+  height: 100vh;
+  overflow-y: auto;
+  padding: 28px 20px;
+  border-right: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+nav.sidebar h1 { font-size: 16px; margin: 0 0 4px; letter-spacing: -0.01em; }
+nav.sidebar .subject { font-size: 12px; color: var(--faint); margin: 0 0 20px; font-family: var(--mono); word-break: break-all; }
+nav.sidebar ol { list-style: none; margin: 0; padding: 0; }
+nav.sidebar > ol > li { margin-bottom: 14px; }
+nav.sidebar .section-link { display: block; font-weight: 600; font-size: 13px; color: var(--ink); text-decoration: none; padding: 3px 0; }
+nav.sidebar .exhibit-link { display: block; font-size: 12.5px; color: var(--subtle); text-decoration: none; padding: 2px 0 2px 12px; border-left: 2px solid var(--rule); }
+nav.sidebar .exhibit-link:hover, nav.sidebar .section-link:hover { color: var(--machine-line); }
+nav.sidebar .exhibit-link.active { border-left-color: var(--machine-line); color: var(--machine-line); }
+
+#filter {
+  width: 100%;
+  padding: 7px 10px;
+  margin-bottom: 18px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+}
+#filter:focus { outline: 2px solid var(--machine); outline-offset: -1px; }
+
+main { flex: 1 1 auto; min-width: 0; padding: 32px 40px 120px; max-width: 1180px; }
+
+header.masthead { margin-bottom: 32px; }
+header.masthead h1 { font-size: 30px; margin: 0 0 6px; letter-spacing: -0.02em; }
+header.masthead p { margin: 0; color: var(--subtle); max-width: 70ch; }
+header.masthead .meta { font-family: var(--mono); font-size: 12px; color: var(--faint); margin-top: 10px; }
+
+section.report-section { margin-bottom: 44px; }
+section.report-section > h2 {
+  font-size: 21px;
+  margin: 0 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--rule);
+  letter-spacing: -0.01em;
+}
+section.report-section > .blurb { margin: 0 0 22px; color: var(--subtle); max-width: 75ch; }
+
+/* --- exhibits --------------------------------------------------------------- */
+
+figure.exhibit {
+  margin: 0 0 24px;
+  padding: 22px 24px 18px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+figure.exhibit h3 { font-size: 17px; margin: 0 0 8px; letter-spacing: -0.01em; }
+figure.exhibit .caption { margin: 0 0 16px; color: var(--subtle); max-width: 78ch; }
+figure.exhibit .legend {
+  margin: 14px 0 0;
+  padding: 9px 12px;
+  background: var(--ground);
+  border-left: 3px solid var(--machine-line);
+  border-radius: 0 5px 5px 0;
+  font-size: 13px;
+  color: var(--subtle);
+}
+figure.exhibit .note {
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  color: var(--subtle);
+  max-width: 78ch;
+}
+figure.exhibit .note strong { color: var(--ink); }
+figure.exhibit.hidden { display: none; }
+
+/* --- tiles ---------------------------------------------------------------- */
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+.tile { padding: 16px 18px; background: var(--ground); border: 1px solid var(--rule); border-radius: 8px; }
+.tile-value { display: block; font-size: 27px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.15; }
+.tile-label { display: block; font-size: 13px; font-weight: 600; margin-top: 4px; }
+.tile-hint { display: block; font-size: 12px; color: var(--faint); margin-top: 3px; line-height: 1.45; }
+
+/* --- tables --------------------------------------------------------------- */
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+table th, table td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+table thead th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--faint); border-bottom-width: 2px; }
+table.facts th { width: 200px; color: var(--subtle); font-weight: 600; }
+td.numeric { font-family: var(--mono); white-space: nowrap; }
+table summary { cursor: pointer; font-weight: 600; }
+table summary::marker { color: var(--faint); }
+.reasoning { margin: 8px 0 4px; font-size: 13px; color: var(--subtle); max-width: 68ch; }
+.reasoning em { color: var(--ink); font-style: normal; display: block; margin-top: 6px; }
+
+.badge {
+  display: inline-block;
+  padding: 1px 9px;
+  border: 1px solid;
+  border-radius: 11px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.callout {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: #fff9ec;
+  border: 1px solid var(--decision);
+  border-left: 3px solid var(--decision-line);
+  border-radius: 0 7px 7px 0;
+}
+.callout p { margin: 0 0 6px; font-weight: 600; }
+.callout ul { margin: 0; padding-left: 20px; }
+.callout li { margin-bottom: 4px; color: var(--subtle); }
+.callout strong { color: var(--ink); }
+
+code { font-family: var(--mono); font-size: 0.9em; background: var(--ground); padding: 1px 5px; border-radius: 4px; }
+
+.empty { color: var(--faint); font-style: italic; }
+
+/* --- responsive & print --------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  nav.sidebar { position: static; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--rule); }
+  main { padding: 24px 18px 80px; }
+}
+
+@media print {
+  nav.sidebar { display: none; }
+  body { background: #fff; }
+  main { max-width: none; padding: 0; }
+  figure.exhibit { break-inside: avoid; border-color: #ddd; }
+  section.report-section { break-before: page; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar">
+  <h1>The research record</h1>
+  <p class="subject">docs/science-register.json</p>
+  <input id="filter" type="search" placeholder="Filter exhibits  ( / )" autocomplete="off">
+  <ol><li><a class="section-link" href="#section-method">The method</a><ol><li><a class="exhibit-link" href="#the-loop" data-target="the-loop">How a claim becomes a score</a></li><li><a class="exhibit-link" href="#the-rules" data-target="the-rules">What the register refuses to store</a></li></ol></li><li><a class="section-link" href="#section-questions">The questions</a><ol><li><a class="exhibit-link" href="#step-map" data-target="step-map">The steps, and what each one is trying to find out</a></li><li><a class="exhibit-link" href="#hypothesis-board" data-target="hypothesis-board">The hypothesis board</a></li></ol></li><li><a class="section-link" href="#section-evidence">The evidence</a><ol><li><a class="exhibit-link" href="#evidence-ledger" data-target="evidence-ledger">The evidence ledger</a></li></ol></li><li><a class="section-link" href="#section-oracle">The oracle</a><ol><li><a class="exhibit-link" href="#oracle-budget" data-target="oracle-budget">The oracle budget</a></li><li><a class="exhibit-link" href="#probe-trace" data-target="probe-trace">What each probe bought</a></li></ol></li><li><a class="section-link" href="#section-form">The methods form</a><ol><li><a class="exhibit-link" href="#methods-form" data-target="methods-form">The methods form, answered from the record</a></li></ol></li></ol>
+</nav>
+<main>
+<header class="masthead">
+  <h1>The research record</h1>
+  <p>The research record: what is being asked, what is claimed, what was observed, and what that adds up to. Every claim states what would refute it before it is tested, every observation names the run it came from, and every confidence shows the arithmetic behind it. Nothing here is asserted without a receipt, and what has not been established yet says so.</p>
+  <p class="meta">8 exhibits across 5 sections &middot; source
+  docs/science-register.json &middot; generated 2026-08-29 21:32 UTC &middot; press <code>/</code> to
+  filter</p>
+</header>
+<section class="report-section" id="section-method">
+  <h2>The method</h2>
+  <p class="blurb">How a research goal becomes a scored submission row, and what the register refuses to store.</p>
+  <figure class="exhibit" id="the-loop"><h3>How a claim becomes a score</h3><p class="caption">Every number on this page is produced by this loop. A step states one goal; a hypothesis under it says what must be true and what would prove it wrong; a test is an executed run; each observation from that run is one evidence row with a source; the verdict is those rows weighed. A supported claim becomes a submission row that carries its own hypothesis id, and the oracle&#x27;s reply re-enters as evidence — so a probe does not merely score, it moves a belief.</p><div class="table-wrap"><svg viewBox="0 0 1000 240" width="100%" role="img" aria-label="How a research goal becomes a scored submission row"><defs><marker id="tip" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#666666"/></marker><marker id="tip-good" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#3f8f47"/></marker><marker id="tip-decision" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#c98f1e"/></marker></defs><rect x="0" y="30" width="168" height="72" rx="8" fill="#e0d4f7" stroke="#7a5cab" stroke-width="1.5"/><text x="84.0" y="58" text-anchor="middle" font-size="15" font-weight="600" fill="#333333">Goal</text><text x="84.0" y="80" text-anchor="middle" font-size="10.5" fill="#666666">the one question a step exists</text><text x="84.0" y="92" text-anchor="middle" font-size="10.5" fill="#666666">to answer</text><path d="M171 66 L183 66" stroke="#666666" stroke-width="1.5" marker-end="url(#tip)"/><rect x="188" y="30" width="168" height="72" rx="8" fill="#cfe8ff" stroke="#3d7ebd" stroke-width="1.5"/><text x="272.0" y="58" text-anchor="middle" font-size="15" font-weight="600" fill="#333333">Hypothesis</text><text x="272.0" y="80" text-anchor="middle" font-size="10.5" fill="#666666">a falsifiable claim, with what</text><text x="272.0" y="92" text-anchor="middle" font-size="10.5" fill="#666666">would refute it</text><path d="M359 66 L371 66" stroke="#666666" stroke-width="1.5" marker-end="url(#tip)"/><rect x="376" y="30" width="168" height="72" rx="8" fill="#cfe8ff" stroke="#3d7ebd" stroke-width="1.5"/><text x="460.0" y="58" text-anchor="middle" font-size="15" font-weight="600" fill="#333333">Test</text><text x="460.0" y="80" text-anchor="middle" font-size="10.5" fill="#666666">an executed run, recorded as a</text><text x="460.0" y="92" text-anchor="middle" font-size="10.5" fill="#666666">methodology entry</text><path d="M547 66 L559 66" stroke="#666666" stroke-width="1.5" marker-end="url(#tip)"/><rect x="564" y="30" width="168" height="72" rx="8" fill="#cfe8ff" stroke="#3d7ebd" stroke-width="1.5"/><text x="648.0" y="58" text-anchor="middle" font-size="15" font-weight="600" fill="#333333">Evidence</text><text x="648.0" y="80" text-anchor="middle" font-size="10.5" fill="#666666">one observation, tagged and</text><text x="648.0" y="92" text-anchor="middle" font-size="10.5" fill="#666666">sourced</text><path d="M735 66 L747 66" stroke="#666666" stroke-width="1.5" marker-end="url(#tip)"/><rect x="752" y="30" width="168" height="72" rx="8" fill="#ffe9b3" stroke="#c98f1e" stroke-width="1.5"/><text x="836.0" y="58" text-anchor="middle" font-size="15" font-weight="600" fill="#333333">Verdict</text><text x="836.0" y="80" text-anchor="middle" font-size="10.5" fill="#666666">the evidence weighed into a</text><text x="836.0" y="92" text-anchor="middle" font-size="10.5" fill="#666666">confidence</text><path d="M836.0 102 L836.0 140 L630.0 140 L630.0 170" fill="none" stroke="#3f8f47" stroke-width="1.5" marker-end="url(#tip-good)"/><text x="700.0" y="134" font-size="10.5" fill="#3f8f47">supported</text><rect x="370.0" y="170" width="260" height="54" rx="8" fill="#8fd18f" stroke="#3f8f47" stroke-width="1.5"/><text x="500.0" y="192" text-anchor="middle" font-size="14" font-weight="600" fill="#333333">Submission row</text><text x="500.0" y="211" text-anchor="middle" font-size="10.5" fill="#666666">notes carry the hypothesis id</text><path d="M370.0 197 L60 197 L60 138 L604 138 L604 102" fill="none" stroke="#c98f1e" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#tip-decision)"/><text x="72" y="164" font-size="10.5" fill="#c98f1e">the oracle reply comes back as new evidence</text></svg></div><figcaption class="legend"><strong>Legend</strong> — the raw input; neutral machinery; a decision point; good / safe / the goal; the dashed arrow is the feedback edge: an oracle reply becomes evidence against the claim it was fired to test.</figcaption></figure>
+<figure class="exhibit" id="the-rules"><h3>What the register refuses to store</h3><p class="caption">Five rules enforced in code rather than asked for in a template, because a template is advice and a constructor is a gate. Each one costs friction at the moment of writing and buys a record that survives being disagreed with.</p><div class="table-wrap"><table class="checks"><thead><tr><th></th><th>What</th><th>Why it is worth the friction</th></tr></thead><tbody><tr><td><span class="badge" style="background:#ff9999;border-color:#c0392b">refused</span></td><td><strong>A hypothesis with no refutation condition</strong></td><td>A claim nothing could disprove is not a hypothesis. Writing the refutation sentence <em>before</em> the run is what stops a result being reinterpreted afterwards to fit.</td></tr><tr><td><span class="badge" style="background:#ff9999;border-color:#c0392b">refused</span></td><td><strong>An observation with no source</strong></td><td>Every evidence row names its receipt — a methodology entry, a table, a PMID, a ClinVar record, an oracle reply. An unsourced number is exactly what this register exists to make impossible.</td></tr><tr><td><span class="badge" style="background:#ff9999;border-color:#c0392b">refused</span></td><td><strong>A confidence with no stated reason</strong></td><td>The tool suggests a number and shows its arithmetic; committing it takes a human and a written reason. The suggestion is never written on its own.</td></tr><tr><td><span class="badge" style="background:#ff9999;border-color:#c0392b">refused</span></td><td><strong>A genomic position in an exported file</strong></td><td>The export scans for coordinates and refuses rather than trusting everyone to remember. Name the gene and the consequence; never the position.</td></tr><tr><td><span class="badge" style="background:#e6e6e6;border-color:#888888">refused</span></td><td><strong>An edit to anything already recorded</strong></td><td>Both tables are append-only. A changed belief is a new revision, so the record of the belief moving survives.</td></tr></tbody></table></div><figcaption class="legend"><strong>Legend</strong> — broken / dangerous / lost points; context, not the subject; red is a hard refusal; grey is a shape the schema makes impossible rather than an error it raises.</figcaption></figure>
+</section>
+<section class="report-section" id="section-questions">
+  <h2>The questions</h2>
+  <p class="blurb">What each step is trying to find out, and where every claim under it currently stands.</p>
+  <figure class="exhibit" id="step-map"><h3>The steps, and what each one is trying to find out</h3><p class="caption">Every hypothesis names one of these steps, so the record can be read by question rather than by date. A step is finished when its claims have verdicts — not when its code runs. Step 0 is the exception: it is machinery, and machinery is judged by whether it works, not by whether it is true.</p><div class="tiles"><div class="tile" style="border-left:4px solid #3f8f47"><span class="tile-value" style="font-size:1.05rem">The platform</span><span class="tile-label">Can the delivered bytes be trusted, stored without loss, and queried in SQL?</span><span class="tile-hint">step-0 · done · machinery — records decisions, not claims</span></div><div class="tile" style="border-left:4px solid #c98f1e"><span class="tile-value" style="font-size:1.05rem">Normalize the callset</span><span class="tile-label">Does every variant in the callset have exactly one spelling, so that an exact-string-matching scorer can be trusted with an indel?</span><span class="tile-hint">step-1 · open · no hypotheses recorded yet</span></div><div class="tile" style="border-left:4px solid #888888"><span class="tile-value" style="font-size:1.05rem">Annotate the callset</span><span class="tile-label">Which variants are rare enough and damaging enough to cause an ultra-rare recessive disease, and in which gene?</span><span class="tile-hint">step-2 · planned · no hypotheses recorded yet</span></div><div class="tile" style="border-left:4px solid #888888"><span class="tile-value" style="font-size:1.05rem">Rank by phenotype</span><span class="tile-label">Does an unbiased genome-wide ranking driven by the child's HPO terms agree with the panel-first candidate list?</span><span class="tile-hint">step-3 · planned · no hypotheses recorded yet</span></div><div class="tile" style="border-left:4px solid #888888"><span class="tile-value" style="font-size:1.05rem">Mine the suppressed calls</span><span class="tile-label">Is one of the two alleles hiding in a call the quality filters discarded, rather than absent from the sample?</span><span class="tile-hint">step-4 · planned · no hypotheses recorded yet</span></div><div class="tile" style="border-left:4px solid #888888"><span class="tile-value" style="font-size:1.05rem">Recover the second allele from the reads</span><span class="tile-label">Is the missing allele a variant the caller could not emit at all — a structural variant, a deep intronic call, or a low-fraction mosaic?</span><span class="tile-hint">step-5 · planned · no hypotheses recorded yet</span></div><div class="tile" style="border-left:4px solid #888888"><span class="tile-value" style="font-size:1.05rem">Spend the oracle budget</span><span class="tile-label">Which candidate pair does the scorer confirm, and what does each reply tell us that the next submission should exploit?</span><span class="tile-hint">step-6 · planned · no hypotheses recorded yet</span></div></div><figcaption class="legend"><strong>Legend</strong> — good / safe / the goal; a decision point; context, not the subject; the stripe is the step&#x27;s own status: finished, being worked, or not yet opened.</figcaption></figure>
+<figure class="exhibit" id="hypothesis-board"><h3>The hypothesis board</h3><p class="caption">No hypothesis has been recorded yet. That is a statement about the investigation, not a gap in the page: step 1 has not run, so there is nothing to believe or disbelieve. Claims appear here the moment one is proposed.</p><div class="callout"><p>The register is empty. <code>mva-science hypothesis-add</code> opens the first claim.</p></div><figcaption class="legend"><strong>Legend</strong> — context, not the subject; an empty register renders as empty, never as a placeholder that implies work.</figcaption></figure>
+</section>
+<section class="report-section" id="section-evidence">
+  <h2>The evidence</h2>
+  <p class="blurb">Every observation on the record, which way it cut, and the receipt behind it.</p>
+  <figure class="exhibit" id="evidence-ledger"><h3>The evidence ledger</h3><p class="caption">Nothing has been observed yet. Every row that appears here will name its own receipt — a methodology entry, a warehouse table, a publication, a database record, or an oracle reply — because an observation nobody can check is not evidence.</p><div class="callout"><p>No evidence recorded. <code>mva-science evidence-add</code> records the first observation.</p></div><figcaption class="legend"><strong>Legend</strong> — context, not the subject; an empty ledger is the honest rendering of an investigation that has not run yet.</figcaption></figure>
+</section>
+<section class="report-section" id="section-oracle">
+  <h2>The oracle</h2>
+  <p class="blurb">The finite submission budget, and what each irreversible spend bought.</p>
+  <figure class="exhibit" id="oracle-budget"><h3>The oracle budget</h3><p class="caption">The scorer answers every submission immediately with rank points, F-max, and which row matched — which makes it an instrument, not just a grader. It is also finite. Each pip is one submission; red is spent and cannot be recovered.</p><div class="tiles"><div class="tile"><span class="tile-value">18</span><span class="tile-label">submissions left</span><span class="tile-hint">of 18 the team will ever have</span></div><div class="tile"><span class="tile-value">0</span><span class="tile-label">spent</span><span class="tile-hint">each one is irreversible</span></div></div><div style="margin-top:12px"><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span><span style="display:inline-block;width:22px;height:30px;margin:2px;border-radius:4px;background:#8fd18f;border:1px solid #3f8f47"></span></div><div class="callout"><p>Nothing has been spent. The budget is intact, and a probe fired before at least two independent paths agree on a candidate is a coin flip that costs a fixed fraction of everything the team has.</p></div><figcaption class="legend"><strong>Legend</strong> — good / safe / the goal; broken / dangerous / lost points; green is a submission still available, red one already spent.</figcaption></figure>
+<figure class="exhibit" id="probe-trace"><h3>What each probe bought</h3><p class="caption">No probe has been fired, so there is nothing to decode. When one is, it appears here tied to the hypotheses it was aimed at, and the reply is recorded twice: once in the probe ledger as what happened, and once in the evidence ledger as what it means.</p><div class="callout"><p>No submissions spent. <code>mva-warehouse probe-log</code> records one.</p></div><figcaption class="legend"><strong>Legend</strong> — context, not the subject; empty because the budget is intact, not because the section is unfinished.</figcaption></figure>
+</section>
+<section class="report-section" id="section-form">
+  <h2>The methods form</h2>
+  <p class="blurb">The challenge&#x27;s own questions, answered from the record — and marked where they cannot be.</p>
+  <figure class="exhibit" id="methods-form"><h3>The methods form, answered from the record</h3><p class="caption">Generated from the same tables the rest of this page is drawn from, so the form and the repository cannot drift apart. Questions the record cannot yet answer are marked, along with what would have to be recorded first.</p><div class="callout"><p>3 questions are not answerable from the record yet. They stay blank rather than being filled with something plausible: a guessed answer to a methods question is worse than a blank, because the blank is honest.</p></div><div class="table-wrap"><table class="checks"><thead><tr><th>Q</th><th>Question</th><th>Answer</th></tr></thead><tbody><tr><td><code>Q10–11</code></td><td>Is the output automated or manually curated?</td><td>Automated. Every claim, observation and verdict is a row appended by <code>mva-science</code>; the submission rows are generated from the register and carry the hypothesis id that produced them.</td></tr><tr><td><code>Q12–14</code></td><td>Public data only?</td><td>Answerable once the annotation sources are recorded. Every evidence row carries a <code>source_ref</code>, so the set of sources used is a query — but no evidence has been recorded yet.</td></tr><tr><td><code>Q15</code></td><td>Can the approach output compound-heterozygous pairs?</td><td>Yes. The ranked object is a pair, not a variant, and a pair is emitted in one submission row through the second-variant columns — splitting a pair across two rows scores partial credit only.</td></tr><tr><td><code>Q16</code></td><td>How were secondary and incidental findings handled?</td><td><span class="badge" style="background:#ffe9b3;border-color:#c98f1e">not answerable from the record yet</span></td></tr><tr><td><code>Q17</code></td><td>Runtime and cost.</td><td><span class="badge" style="background:#ffe9b3;border-color:#c98f1e">not answerable from the record yet</span></td></tr><tr><td><code>Q18</code></td><td>Strengths and limitations.</td><td><span class="badge" style="background:#ffe9b3;border-color:#c98f1e">not answerable from the record yet</span></td></tr><tr><td><code>Oracle</code></td><td>How was the scoring feedback used?</td><td>0 of 18 submissions spent. Each reply is recorded in the probe ledger and re-entered as evidence against the hypotheses it was fired to test — iterative hypothesis testing against the provided validator.</td></tr></tbody></table></div><figcaption class="legend"><strong>Legend</strong> — good / safe / the goal; a decision point; context, not the subject; yellow marks a question the record cannot answer yet — a gap in the work, not in the page.</figcaption></figure>
+</section>
+</main>
+</div>
+<script>
+const filter = document.getElementById('filter');
+const exhibits = Array.from(document.querySelectorAll('figure.exhibit'));
+const navLinks = Array.from(document.querySelectorAll('.exhibit-link'));
+
+/* Type to narrow the page to the exhibits whose title, caption or legend mentions the
+   term. Everything is already in the DOM, so this is a display toggle, not a search. */
+filter?.addEventListener('input', () => {
+  const term = filter.value.trim().toLowerCase();
+  exhibits.forEach(exhibit => {
+    const hit = !term || exhibit.innerText.toLowerCase().includes(term);
+    exhibit.classList.toggle('hidden', !hit);
+  });
+  document.querySelectorAll('section.report-section').forEach(section => {
+    const visible = section.querySelectorAll('figure.exhibit:not(.hidden)').length;
+    section.style.display = visible ? '' : 'none';
+  });
+  navLinks.forEach(link => {
+    const target = document.getElementById(link.dataset.target);
+    link.style.display = target && target.classList.contains('hidden') ? 'none' : '';
+  });
+});
+
+/* Highlight the exhibit currently in view, so the sidebar tracks the scroll position. */
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const link = navLinks.find(l => l.dataset.target === entry.target.id);
+    if (link) link.classList.toggle('active', entry.isIntersecting);
+  });
+}, {rootMargin: '-45% 0px -45% 0px'});
+exhibits.forEach(exhibit => spy.observe(exhibit));
+
+/* "/" focuses the filter, the way every tool with a search box behaves. */
+document.addEventListener('keydown', event => {
+  if (event.key === '/' && document.activeElement !== filter) {
+    event.preventDefault();
+    filter?.focus();
+  }
+  if (event.key === 'Escape' && document.activeElement === filter) {
+    filter.value = '';
+    filter.dispatchEvent(new Event('input'));
+    filter.blur();
+  }
+});
+</script>
+</body>
+</html>

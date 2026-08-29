@@ -42,6 +42,11 @@ class Probe:
     response: str = ""
     score: float | None = None
     rationale: str = ""
+    #: Comma-separated ids of the hypotheses this submission was fired to test. A probe
+    #: exists to move a belief, so the reply is only decodable against the claims it was
+    #: aimed at. Empty is allowed and means "not tied to the register" — the ledger records
+    #: what happened, and refusing an untagged probe would lose the record of a real spend.
+    hypothesis_ids: str = ""
 
 
 @dataclass(frozen=True)
@@ -75,7 +80,8 @@ def ensure_table(connection, schema: str) -> None:
             n_rows         INTEGER,
             response       VARCHAR,
             score          DOUBLE,
-            rationale      VARCHAR
+            rationale      VARCHAR,
+            hypothesis_ids VARCHAR
         )""")
 
 
@@ -106,10 +112,10 @@ def log(connection, schema: str, probe: Probe) -> int:
     next_id = (connection.execute(
         f"SELECT coalesce(max(probe_id), 0) + 1 FROM {qualified}").fetchone() or [1])[0]
     connection.execute(
-        f"INSERT INTO {qualified} VALUES (?, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        f"INSERT INTO {qualified} VALUES (?, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [next_id, probe.track, probe.probe_type, probe.submitted_by,
          probe.submission_ref, probe.payload, probe.n_rows, probe.response,
-         probe.score, probe.rationale])
+         probe.score, probe.rationale, probe.hypothesis_ids])
     return int(next_id)
 
 
@@ -122,7 +128,8 @@ def listing(connection, schema: str, limit: int = 0) -> list[tuple]:
     sql = (f"SELECT probe_id, logged_at, track, probe_type, submitted_by, "
            f"submission_ref, n_rows, score, "
            f"left(coalesce(response, ''), 60) AS response, "
-           f"left(coalesce(payload, ''), 60) AS payload_head "
+           f"left(coalesce(payload, ''), 60) AS payload_head, "
+           f"coalesce(hypothesis_ids, '') AS hypothesis_ids "
            f"FROM {_qualified(schema)} ORDER BY probe_id")
     if limit:
         sql += f" LIMIT {int(limit)}"
@@ -131,4 +138,5 @@ def listing(connection, schema: str, limit: int = 0) -> list[tuple]:
 
 #: Column headers matching :func:`listing`, so the CLI does not restate them.
 LISTING_COLUMNS = ("probe_id", "logged_at", "track", "type", "submitted_by",
-                   "submission_ref", "n_rows", "score", "response", "payload_head")
+                   "submission_ref", "n_rows", "score", "response", "payload_head",
+                   "hypotheses")

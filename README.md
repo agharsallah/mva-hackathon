@@ -67,6 +67,20 @@ uv run mva-warehouse s3-check
 
 Setup, ports, credentials and the sharp edges: [`docs/step-0/infrastructure.md`](docs/step-0/infrastructure.md).
 
+## How a question becomes an answer
+
+Work is grouped by **step**, and every research step declares one goal. A claim under it
+states its prediction and what would refute it *before* it is tested; every observation is
+recorded with the run it came from; every verdict is weighed and appended, never edited.
+The loop, and what the register refuses to store: [`docs/method.md`](docs/method.md).
+
+```bash
+uv run mva-science steps                                   # the goals, no database needed
+uv run mva-science report --from docs/science-register.json  # the record, as a page
+```
+
+The register is currently **empty** — step 1 has not run, so nothing has been claimed.
+
 ## Where the work stands
 
 Test count, what is provisioned, what runs, and the known gaps:

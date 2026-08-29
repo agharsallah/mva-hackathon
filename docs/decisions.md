@@ -21,6 +21,8 @@ in one sentence and links the note. Nothing re-argues a decision elsewhere.
 | VCF parsing | Hand-rolled reader for the four FORMAT fields we need; `bcftools` still does the heavy lifting | provisional — revisit if real VCF surface area is needed | [note](notes/hand-rolled-vcf-reader.md) |
 | The ranked unit | A pair, not a variant, and pairs must sit in one gene | follows from the answer key; the scoring function inside is provisional | [note](notes/ranking-pairs-not-variants.md) |
 | Bio toolchain | micromamba into `~/.local` — no root available | provisional; revisit on Modal | [note](step-0/notes/toolchain-choice.md) |
+| How findings are recorded | **Decided 2026-08-29:** a hypothesis register, not an ADR log. Every research step declares one goal; every claim under it states its prediction and what would refute it *before* the test; every observation is an evidence row naming its source; every verdict is weighed and appended as a revision. Step 0 stays a decision log — machinery is judged by whether it works, not by whether it is true. | firm — the rules are enforced by constructors, not by a template | [`method.md`](method.md), [`017`](step-0/methodology/017-the-research-record.md) |
+| How confidence is assigned | A log-odds accumulation over evidence strengths that **suggests** a number and prints its arithmetic; committing takes a human, `--commit` and a stated reason | firm as a triage heuristic — explicitly **not** a calibrated posterior, and quoted that way everywhere | [`method.md`](method.md) |
 
 ## Open decisions
 
@@ -29,6 +31,7 @@ in one sentence and links the note. Nothing re-argues a decision elsewhere.
 | Which annotation backend? | Ensembl VEP REST is right for the panel variants today; an offline cache is right for the genome-wide run. Both, staged, is the current lean — see [`roadmap.md`](roadmap.md). |
 | Layer-2 schema details | Multi-allelic splitting and INFO-as-columns-vs-MAP are recorded but unresolved — see [`data-layers.md`](step-0/data-layers.md). |
 | How to close the object-store SSL gap | Tunnel, TLS reverse proxy, or firewall. Not chosen. |
+| Are the evidence strengths calibrated? | No, and deliberately so for now. Rows drawn from the same underlying data are not independent the way the log-odds sum treats them. A calibrated alternative would need either held-out cases or an explicit dependency structure; neither exists at N=1. Recorded as a limitation rather than solved — see [`method.md`](method.md). |
 
 ## The original recommendation matrix
 
@@ -45,7 +48,7 @@ note; the rest are recorded direction, not commitments, and several are not star
 | 4 | Literature | Automated **reported-allele catalogue** (PubTator3/LitVar2 + ClinVar) joined against the VCF, LLM triage on top | a published-allele match is a near-instant solve; the join is mechanical | not started |
 | 5 | Data structures | Scorer-identical dataclasses + DuckDB + a **probe simulator** with a bitmask hypothesis space, plus one contig-namespace conversion | the simulator turns probe design into computed optimization; the namespace conversion is a live scoring bug if done by hand | dataclasses and the [scorer replica](notes/local-scorer-replica.md) **done**; [contig conversion](step-0/notes/chr-prefix-bridge.md) **done**; probe simulator **not started** |
 | 6 | Models | Tiered escalation: **free tier (non-PASS + `1/2` sites)** → standard stack → raw-data rescue → foundation models | tier 1.5 is minutes and targets "the caller saw it and suppressed it"; tier 2 is the only source of SV evidence that will ever exist | sequencing kept in [`roadmap.md`](roadmap.md); nothing executed |
-| 7 | Statistics | Bayesian ACMG posterior as the `epcr` backbone; greedy info-gain probe policy | defensible arithmetic in the report; the decode tables are already near-optimal | not started |
+| 7 | Statistics | Bayesian ACMG posterior as the `epcr` backbone; greedy info-gain probe policy | defensible arithmetic in the report; the decode tables are already near-optimal | partly — the [evidence weighing](method.md) is a log-odds accumulation with visible arithmetic, but it is a triage heuristic, not an ACMG posterior; the probe policy is not started |
 | 8 | ML | Reciprocal-rank fusion primary + an audited LLM evidence-tournament re-ranker | robust at N=1, transparent, and the agentic layer is the Innovation story | not started |
 | 9 | Evaluation | Local scorer reimplementation + GIAB spike-in probands + read-level spiked alleles | the only honest pre-oracle measurement | [scorer replica](notes/local-scorer-replica.md) **done**; spike-ins **not started** |
 | 10 | Deterministic vs probabilistic | Deterministic shrink → probabilistic rank → decision-theoretic probe | soundness first, efficiency second; filters logged with removal counts | deterministic layer built ([`pipeline/`](../src/mva/pipeline/)); probabilistic layer not |

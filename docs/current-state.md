@@ -70,7 +70,8 @@ Postgres and MinIO both run on a **remote VPS**, not locally.
 | hash verification | 12/12 `hash_verified=true` — 10 against the publisher's SHA-256, 2 own-upload — **0 mismatches** |
 | `warehouse.source_files` | append-only ledger, 14 rows (VCF + `.tbi` uploaded twice, same hash — correct, not drift) |
 | `warehouse.data_lineage` | append-only edge list, **7 rows**: 2 for `variants_raw` (the original local-path edge and the superseding `s3://mva/source/…` edge carrying the verified sha256 and version) + 1 per derivation |
-| `warehouse.probe_ledger` | oracle submissions spent: **0 of 18** — the table exists and is empty because no probe has been spent |
+| `warehouse.probe_ledger` | oracle submissions spent: **0 of 18** — the table exists and is empty because no probe has been spent. Widened in entry 017 with a `hypothesis_ids` column; the widening has **not** been applied to the live table, which is empty |
+| `warehouse.hypotheses`, `warehouse.evidence` | the research register — **defined in code, not yet created in the database**. Created on first write, like every other ledger |
 
 Both probes connect: `uv run mva-warehouse pg-check`, `uv run mva-warehouse s3-check`.
 
@@ -90,8 +91,10 @@ same bytes.
 ## 3. What runs today
 
 ```bash
-uv run pytest -q                            # 305 passed, no services needed
+uv run pytest -q                            # 448 passed, no services needed
 uv run mva-explore report ressources/data-profile
+uv run mva-science steps                    # the research goals, needs no database
+uv run mva-science report --from docs/science-register.json
 uv run mva-warehouse stage                  # profile dir -> build/warehouse/*.parquet
 uv run mva-warehouse pg-check
 ```
@@ -100,27 +103,39 @@ uv run mva-warehouse pg-check
 |---|---|---|
 | `mva-explore` | 4 — `report`, `checks`, `locus`, `export` | reads the committed profile; `locus` reads a real VCF |
 | `mva-warehouse` | 26 — `stage`, `pg-*` (5), `vcf-*` (4), `s3-*` (5), `source-*` (5), `lineage-*` (3), `probe-*` (3) | measured from `mva-warehouse --help` |
+| `mva-science` | 12 — `steps`, `board`, `show`, `hypothesis-*` (2), `evidence-*` (2), `verdict`, `probe-link`, `check`, `export`, `report` | measured from `mva-science --help`; `steps` and `report --from` need no database |
 
-The **305 tests are hermetic**: synthetic fixtures only, no dataset, no Postgres, no MinIO.
+The **448 tests are hermetic**: synthetic fixtures only, no dataset, no Postgres, no MinIO.
 A green suite says nothing about whether the infrastructure is up — that is what `pg-check`
-and `s3-check` are for.
+and `s3-check` are for. 21 test files.
 
 ---
 
 ## 4. Repository layout
 
-`src/mva/` is four subpackages:
+`src/mva/` is six subpackages:
 
 | Package | Concern | Modules |
 |---|---|---|
 | `pipeline/` | the causal-variant pipeline | `variant`, `vcf`, `compound_het`, `annotation`, `ranking`, `scorer`, `submission` |
-| `explore/` | the report toolkit | `profile`, `checks`, `theme`, `figure`, `report`, `cli`, `views/` (callset, karyotype, locus, overview, panel, quality, reads) |
-| `io/` | file parsing shared by both | `readers` |
+| `render/` | the shared report shell and palette | `theme`, `figure`, `report` + `report.css` |
+| `explore/` | the data-profile report | `profile`, `checks`, `report`, `cli`, `views/` (callset, karyotype, locus, overview, panel, quality, reads); `theme` and `figure` are re-export shims over `render/` |
+| `science/` | the research record | `steps`, `hypothesis`, `evidence`, `dossier`, `record`, `export`, `report`, `cli`, `views/` (loop, board, ledger, submission, methods) |
+| `io/` | file parsing shared by all | `readers` |
 | `warehouse/` | storage and infrastructure | `settings`, `catalog`, `stage`, `postgres`, `analysis`, `objects`, `source`, `integrity`, `lineage`, `probes`, `vcfstage`, `cli`, `cli_ledger`, `cli_objects`, `cli_source`, `cli_vcf` |
 
-Dependencies run one way: `explore/` and `warehouse/` may use `io/` and `pipeline/`;
-`pipeline/` uses neither. A change to a chart can never affect a submission. The map with
-seam guarantees is [`architecture.md`](step-0/architecture.md).
+Dependencies run one way, and **nothing may use `science/`**:
+
+```
+render/     <-  explore/ , science/
+io/         <-  explore/ , science/ , warehouse/
+pipeline/   <-  explore/ , science/ , warehouse/
+warehouse/  <-  science/
+```
+
+`pipeline/` uses none of them. A change to a chart can never affect a submission, and a
+change to the research record can never affect the pipeline that feeds it. The map with
+seam guarantees is [`step-0/architecture.md`](step-0/architecture.md).
 
 ---
 
@@ -133,3 +148,5 @@ Stated here so they are not discovered later. Sequencing is in [`roadmap.md`](ro
 | **Staged Parquet is single-homed** | `build/warehouse/` exists only on one laptop | regenerable, so not data loss — but it is an undeclared dependency of `pg-ingest` |
 | **Layer 2 not built** | `variants` / `genotypes` / `variant_info` are designed only | see [`data-layers.md`](step-0/data-layers.md) |
 | **No real annotator** | `annotation.py` is a port with a lookup fake behind it | the critical path for ranking — see [the note](notes/annotation-as-a-port.md) |
+| **The research register is empty** | no hypothesis proposed, no evidence recorded, no probe spent | not a defect — step 1 has not run. The machinery is built and tested; nothing has been claimed. See [`method.md`](method.md) |
+| **The register tables are not in the database** | `warehouse.hypotheses` and `warehouse.evidence` are defined in code and covered by tests, but no connection has been made since | they appear on first write, like every other ledger. Until then `mva-science board` against a live database will create them |

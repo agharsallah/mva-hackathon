@@ -165,3 +165,64 @@ Rewriting variants to one canonical form — indels left-aligned and trimmed, mu
 sites split one allele per record. Mandatory before any comparison, because the scorer
 matches strings exactly.
 _Avoid_: canonicalisation, standardisation, cleaning
+
+### The research record
+
+**Step**:
+A unit of work carrying exactly one research goal. Every claim names one, so the record
+reads by question rather than by date. Step 0 is the exception — it is machinery and takes
+no claims.
+_Avoid_: phase, stage, milestone, sprint
+
+**Goal**:
+The single question a step exists to answer, phrased as a question. Not a task: a task is
+done when it runs, a goal is done when it is answered.
+_Avoid_: objective, aim, deliverable, task
+
+**Hypothesis**:
+A falsifiable claim about the patient, stated with its prediction and the observation that
+would refute it, before the test runs. Never used for an engineering decision — those are
+notes.
+_Avoid_: theory, idea, assumption, guess, lead
+
+**Refutation condition**:
+The observation that would kill a claim. Written before the run, and required — the register
+rejects a claim without one.
+_Avoid_: falsification criterion, kill switch, negative control
+
+**Evidence**:
+One observation bearing on one claim, carrying its direction, its strength and the source it
+came from. Singular and countable here: *an evidence row*, never *evidence* as a mass noun
+for a general impression.
+_Avoid_: finding, signal, support, data point, proof
+
+**Direction**:
+Which way an observation cuts — supports, refutes, or neutral. Neutral is recorded, not
+dropped.
+_Avoid_: sign, polarity, sentiment, vote
+
+**Strength**:
+How hard one observation cuts, 0 to 1. A stated human judgment. Deliberately not *weight*,
+which in this project belongs to the ranking score, nor *confidence*, which is the claim's.
+_Avoid_: weight, score, importance, significance
+
+**Verdict**:
+The evidence weighed into a status and a confidence, with a written reason. A verdict is a
+new revision, never an edit.
+_Avoid_: conclusion, decision, call, judgement
+
+**Confidence**:
+How strongly a claim is currently believed, 0 to 1. Always qualified as a triage heuristic,
+never quoted as a calibrated probability. Distinct from **epcr**, which is the number
+submitted to the scorer.
+_Avoid_: probability, posterior, certainty, likelihood, epcr
+
+**Dossier**:
+One claim plus every revision, every evidence row, and the weighing over them. The unit the
+export writes and the report renders.
+_Avoid_: case file, record, bundle, summary
+
+**Register**:
+The append-only collection of hypotheses and their revisions. The evidence table beside it is
+the **ledger**, matching the probe ledger and the upload ledger.
+_Avoid_: database, store, log, tracker

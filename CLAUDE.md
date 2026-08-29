@@ -62,6 +62,24 @@
   parameters), the exact commands run, the observed output, and the conclusion drawn — enough for
   someone else to reproduce it.
 
+## The scientific record
+The method is owned by [`docs/method.md`](docs/method.md). Read it before recording a finding.
+- Every research step declares **one goal**, declared in `src/mva/science/steps.py`. Step 0 is
+  platform machinery and takes no hypotheses; its reasoning is decisions, not claims.
+- From step 1 on, a methodology entry **is a test bound to a hypothesis**, and adds three sections
+  the step-0 entries lack: `## Hypothesis and prediction` and `## What would refute it`, both
+  written *before* the run, and `## Verdict` after it.
+- A claim goes in the register before it is tested: `mva-science hypothesis-add` requires a
+  prediction and a refutation condition, and refuses a claim without them.
+- Every observation is an evidence row naming its source — a methodology entry, a table, a PMID,
+  a ClinVar id, or a probe reply. `mva-science evidence-add` refuses an unsourced observation.
+- Confidence is never asserted. `mva-science verdict` suggests a number and prints its arithmetic;
+  committing it takes `--commit` and a stated reason. The weighing is a transparent heuristic for
+  triage, not a calibrated posterior — say so wherever it is quoted.
+- Never write a genomic position into a hypothesis, an evidence claim, or any exported file. Name
+  the gene and the consequence. `mva-science check` and `export` refuse and are not to be bypassed.
+- Both register tables are append-only. A changed belief is a new revision, never an edit.
+
 ## Writing style
 - Write the minimum text that still lands every main point. Cut filler, restatement, and hedging;
   never cut a point, a caveat, or a technical term. Compact must not become unclear or incomplete.

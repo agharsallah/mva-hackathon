@@ -18,6 +18,22 @@ the platform the causal-variant search runs on top of:
 It contains **no candidate variants and no ranking**. Step 0 answers "can we trust and
 query the bytes?", not "which pair is causal?".
 
+### Step 0 takes no hypotheses
+
+Step 0 is *machinery*, and that makes it a different kind of step from every one after it.
+"PostgreSQL is the right database" is a decision with alternatives, judged by whether it
+works — not a claim about the patient that evidence could refute. So:
+
+* its reasoning lives in [`notes/`](notes/) as **decisions**, not as hypotheses;
+* its [`methodology/001–016`](methodology/) are **platform records** — what was built and
+  what was measured, ending in *Conclusions*;
+* the register in `mva-science` **refuses** a hypothesis filed under `step-0`.
+
+From [step 1](../step-1/README.md) on it is the other way round: each step declares one
+research goal, every claim under it states what would refute it before it is tested, and
+every methodology entry is a test bound to a claim. That loop is
+[`../method.md`](../method.md).
+
 ```mermaid
 flowchart LR
   D[/"the delivery<br/>12 objects · 84.99 GB"/]:::raw

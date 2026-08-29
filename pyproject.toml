@@ -14,6 +14,7 @@ dependencies = [
 [project.scripts]
 mva-explore = "mva.explore.cli:main"
 mva-warehouse = "mva.warehouse.cli:main"
+mva-science = "mva.science.cli:main"
 
 [dependency-groups]
 dev = ["pytest>=8"]
