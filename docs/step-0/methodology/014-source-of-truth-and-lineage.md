@@ -30,7 +30,7 @@ and is better provenance — the bytes come from the source rather than from a c
 the publisher's own SHA-256 makes the result checkable.
 
 Those hashes are committed at
-[`ressources/data-profile/hf_lfs_sha256.tsv`](../ressources/data-profile/hf_lfs_sha256.tsv),
+[`ressources/data-profile/hf_lfs_sha256.tsv`](../../../ressources/data-profile/hf_lfs_sha256.tsv),
 read out of the `huggingface_hub` download cache. One subtlety: **only Git-LFS objects
 carry a SHA-256.** Small non-LFS files record a 40-character git blob SHA-1 — a different
 algorithm over different bytes — so comparing them would produce a false mismatch. They are
@@ -125,4 +125,4 @@ version it came from. Nothing has been transformed: `variants_raw` is the file, 
 
 Typed layers — `variants` split per ALT allele, `genotypes`, `variant_info` — are derived
 from this and can be rebuilt at will. Structure proposed in
-[`docs/ingestion-plan.md`](../docs/ingestion-plan.md); not yet built.
+[`docs/ingestion-plan.md`](../ingestion-plan.md); not yet built.

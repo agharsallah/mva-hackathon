@@ -3,7 +3,7 @@
 **Standing:** the **single owner of every measured number about the dataset**. Other
 documents link here; none restate a value. Measured 2026-08-28, re-checked 2026-08-29
 against the object-store inventory. Evidence for how each number was produced is in the
-[`methodology/`](../methodology/) entry cited beside it.
+[`methodology/`](../docs/step-0/methodology/) entry cited beside it.
 
 Empirical companion to `data-inventory.md` (written before the files were opened, now in
 [`archive/`](../archive/data-inventory.md)). Everything below was measured, not assumed.
@@ -29,7 +29,7 @@ in `~/ubuntu/work/`, outside the repo.
 | `README.md`, `.gitattributes` | 2 | 8 KB | HF dataset metadata |
 
 **Delivery totals**, as counted in the object store
-([`methodology/014`](../methodology/014-source-of-truth-and-lineage.md)):
+([`methodology/014`](../docs/step-0/methodology/014-source-of-truth-and-lineage.md)):
 
 | | Value |
 |---|---|

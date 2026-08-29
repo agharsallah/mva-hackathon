@@ -2,8 +2,8 @@
 
 **Standing:** a map, not a manual. Module names and seam guarantees checked against the
 tree 2026-08-29. Counts, provisioned state and gaps live in
-[`current-state.md`](current-state.md); vocabulary in [`../CONTEXT.md`](../CONTEXT.md);
-the reasoning behind each choice in [`decisions.md`](decisions.md).
+[`current-state.md`](../current-state.md); vocabulary in [`../CONTEXT.md`](../../CONTEXT.md);
+the reasoning behind each choice in [`decisions.md`](../decisions.md).
 
 ## The shape of the problem
 
@@ -11,9 +11,9 @@ One proband. Five million variants. An answer key of exactly two of them, in one
 on each chromosome copy. Eighteen chances to ask whether we are right.
 
 That framing sets the whole design: the ranked unit is a **pair**, not a variant
-([why pairs](notes/ranking-pairs-not-variants.md)), and a submission is a
+([why pairs](../notes/ranking-pairs-not-variants.md)), and a submission is a
 **measurement** to be designed before it is spent
-([why a replica](notes/local-scorer-replica.md)).
+([why a replica](../notes/local-scorer-replica.md)).
 
 ## Flow
 
@@ -99,7 +99,7 @@ Full documentation in [`exploration.md`](exploration.md).
 | `explore/report.py` | Every exhibit is rendered, reachable, and drawn exactly once. | `test_explore_report.py` |
 
 All of it runs on synthetic fixtures with no dataset and no services present — the
-current test count is in [`current-state.md`](current-state.md).
+current test count is in [`current-state.md`](../current-state.md).
 
 ## Where the sharp edges are
 
@@ -108,7 +108,7 @@ verbatim. `pipeline/variant.py` owns the conversion and nothing else may build a
 string — [the chr-prefix bridge](notes/chr-prefix-bridge.md).
 
 **Normalization is not done yet.** Multiallelic sites and indels
-([counts](../ideation/data-findings.md)) face a scorer that does exact string matching with
+([counts](../../ideation/data-findings.md)) face a scorer that does exact string matching with
 no left-alignment. `bcftools norm -m -both -f <no-chr GRCh38>` must run before candidate
 extraction, against the *no-chr* reference to match the VCF. This is the highest-value
 unimplemented step after annotation.
@@ -118,7 +118,7 @@ no population information. Population frequency comes only from the annotation p
 
 **Unknown phase is not a rejection.** It is the verdict on the overwhelming majority of
 pairs; phasing is a tiebreaker, not the discriminator
-([measured](../ideation/data-findings.md)).
+([measured](../../ideation/data-findings.md)).
 
 **`pg-query` addresses tables as `pg.<schema>.<table>`.** It runs in DuckDB, which reaches
 Postgres through `ATTACH`. A bare `warehouse.foo` is a "table does not exist" error, not a
@@ -160,7 +160,7 @@ What the guarantee modules buy:
 | Module | Guarantee |
 |---|---|
 | `integrity.py` | A hop either reproduces the source exactly or fails loudly — row counts, per-column checksums, and NULL vs empty-string accounting, so DuckDB's one lossy case cannot pass silently |
-| `lineage.py` | An append-only edge list saying which input produced which output. **Currently a stub** — see [`current-state.md` §5](current-state.md#5-known-gaps) |
+| `lineage.py` | An append-only edge list saying which input produced which output. **Currently a stub** — see [`current-state.md` §5](../current-state.md#5-known-gaps) |
 | `objects.py` | An object is written once, hashed, and never rewritten in place; the bucket is versioned |
 | `source.py` | The delivery is stored as the publisher shipped it and verified against the publisher's own SHA-256 — [delivery is immutable](notes/delivery-is-immutable.md) |
 
@@ -168,4 +168,4 @@ What the guarantee modules buy:
 
 No alignment, no re-calling, no SV detection, no normalization step, no real annotator, and
 no probe ledger. Two CLIs exist — `mva-explore` and `mva-warehouse` — but the *pipeline*
-has none: it is still library-only. See [`roadmap.md`](roadmap.md).
+has none: it is still library-only. See [`roadmap.md`](../roadmap.md).

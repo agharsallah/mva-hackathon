@@ -92,11 +92,11 @@ The pipeline steps above need a platform underneath them. This is that work, seq
 each item unblocks the next. Nothing in the table below is started. Two former items —
 closing the lineage gap and building the probe ledger — are **done** and now belong to
 [`current-state.md`](current-state.md); the evidence is
-[`methodology/016`](../methodology/016-lineage-backfill-and-probe-ledger.md).
+[`methodology/016`](step-0/methodology/016-lineage-backfill-and-probe-ledger.md).
 
 | # | Item | Why now | Owner doc |
 |---|---|---|---|
-| 1 | **Build layer 2** — `variants`, `genotypes`, `variant_info` from `variants_raw` | the annotation join has nowhere to land until the callset is typed and one-row-per-ALT | [`data-layers.md`](data-layers.md) |
+| 1 | **Build layer 2** — `variants`, `genotypes`, `variant_info` from `variants_raw` | the annotation join has nowhere to land until the callset is typed and one-row-per-ALT | [`data-layers.md`](step-0/data-layers.md) |
 | 2 | **Port the annotator** — implement `Annotator.annotate()` against Ensembl VEP REST | the critical path; the port and its tests already exist | [note](notes/annotation-as-a-port.md) |
 | 3 | **Mine the non-PASS calls** | minutes of work against a day of re-calling; needs only layer 2 | §1 step 4 |
 | 4 | **The FASTQ path** — k-mer strike first, full re-call only if it fails | the only route to a structural allele; conditional, not a prerequisite | §3 |

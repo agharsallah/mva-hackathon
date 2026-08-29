@@ -147,7 +147,7 @@ content change, and NULL/empty conflation at every hop.
 
 The proposed structure — a lossless all-text `variants_raw` anchor, with typed layers
 derived from it — is written up for review in
-[`docs/ingestion-plan.md`](../docs/ingestion-plan.md).
+[`docs/ingestion-plan.md`](../ingestion-plan.md).
 
 **No data has been ingested.** No FASTQ was read beyond the committed profile, nothing was
 written to PostgreSQL, and only a 1,000,000-record sample was staged, outside the

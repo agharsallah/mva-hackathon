@@ -5,7 +5,7 @@ Parquet exists. Measurements are real (`methodology/012`); the schema is a propo
 Last checked 2026-08-29.
 
 How to normalise the delivered sequencing reads
-([how many](../ideation/data-findings.md) §1) into something you can query, and which
+([how many](../../ideation/data-findings.md) §1) into something you can query, and which
 database to put them in. Every number below is measured on this dataset unless labelled an
 estimate.
 
@@ -188,5 +188,5 @@ uv run mva-warehouse s3-query "SELECT count(*) FROM 's3://mva/reads/**/*.parquet
 
 Reads are patient data, and the `index_pair` barcode is library identity — the committed
 profile redacts it deliberately. The rule and the locations are in the
-[root README](../README.md) and
-[its note](notes/no-patient-data-in-the-repository.md).
+[root README](../../README.md) and
+[its note](../notes/no-patient-data-in-the-repository.md).

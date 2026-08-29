@@ -149,8 +149,8 @@ off. **This decision has not been made yet.**
 
 Both are network services on the same box, so a laptop needs only `.env` and no SSH
 session. Set up with `tools/setup-object-store.sh`; design notes in
-[`docs/reads-storage.md`](../docs/reads-storage.md) and
-[`docs/warehouse.md`](../docs/warehouse.md).
+[`docs/reads-storage.md`](../reads-storage.md) and
+[`docs/warehouse.md`](../warehouse.md).
 
 **Nothing has been uploaded.** The measurements used a synthetic Parquet and a committed
 profile table; the test MinIO and the temporary `.env` entries have been removed, and the

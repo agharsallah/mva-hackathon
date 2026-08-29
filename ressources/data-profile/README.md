@@ -45,7 +45,7 @@ Roughly 600 KB for a complete picture of an 80 GB dataset.
 `hf_lfs_sha256.tsv` is load-bearing rather than descriptive: it is what
 `mva-warehouse source-check` compares uploaded objects against, so it is the reason
 "hash-verified" means *verified against the publisher* and not merely *self-consistent*.
-Added by [`methodology/014`](../../methodology/014-source-of-truth-and-lineage.md).
+Added by [`methodology/014`](../../docs/step-0/methodology/014-source-of-truth-and-lineage.md).
 
 ## Redaction
 

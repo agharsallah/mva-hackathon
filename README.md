@@ -65,7 +65,7 @@ uv run mva-warehouse pg-check              # resolved settings + a live probe
 uv run mva-warehouse s3-check
 ```
 
-Setup, ports, credentials and the sharp edges: [`docs/infrastructure.md`](docs/infrastructure.md).
+Setup, ports, credentials and the sharp edges: [`docs/step-0/infrastructure.md`](docs/step-0/infrastructure.md).
 
 ## Where the work stands
 

@@ -1,7 +1,7 @@
 # Infrastructure — the live runbook
 
 **Verified:** 2026-08-29. `pg-check` and `s3-check` both connect; what is provisioned and
-how much is in it is in [`current-state.md`](current-state.md). This page is *how to
+how much is in it is in [`current-state.md`](../current-state.md). This page is *how to
 operate it*, not what it currently holds.
 
 Two services on one remote VPS:
@@ -103,7 +103,7 @@ ingested tables. Nothing is ever edited in place, so a wrong number is fixed by 
 input and running again.
 
 Worked example with real output:
-[`methodology/010`](../methodology/010-postgres-ingest-and-derivations.md).
+[`methodology/010`](methodology/010-postgres-ingest-and-derivations.md).
 
 ### Adding an analysis
 
@@ -135,7 +135,7 @@ same box and are queried *where they sit*: DuckDB's `httpfs` extension fetches b
 over HTTP, and Parquet's footer tells it which ranges it needs, so a `count(*)` over a
 5-million-row Parquet downloads under 1% of the file. Nothing is cached locally, nothing is
 downloaded whole, and no SSH session is involved. Measurements:
-[`methodology/013`](../methodology/013-remote-object-store.md).
+[`methodology/013`](methodology/013-remote-object-store.md).
 
 ### On the server, once
 
@@ -201,7 +201,7 @@ uv run mva-warehouse source-check      # survey the bucket, verify hashes, refre
 
 `source-fetch` streams from the publisher straight into the bucket; `--tee` also writes a
 local copy and `--verify` checks each object against the publisher's SHA-256. Evidence:
-[`methodology/014`](../methodology/014-source-of-truth-and-lineage.md).
+[`methodology/014`](methodology/014-source-of-truth-and-lineage.md).
 
 ### The two append-only ledgers
 
@@ -222,7 +222,7 @@ uv run mva-warehouse probe-list
 
 `pg-derive` records its own lineage edge on every run, so `lineage-backfill` exists only for
 runs that predate that; both repair verbs are idempotent and safe to re-run. Evidence:
-[`methodology/016`](../methodology/016-lineage-backfill-and-probe-ledger.md).
+[`methodology/016`](methodology/016-lineage-backfill-and-probe-ledger.md).
 
 ### Sorting is what makes remote queries cheap
 
@@ -261,7 +261,7 @@ ssh -N -L 5432:localhost:5432 <user>@<server>    # Postgres, if it should not li
 
 Everything on this infrastructure is derived from, or is, the gated delivery. The rule and
 its reasoning are in
-[no patient data in the repository](notes/no-patient-data-in-the-repository.md); the
-locations are tabulated in the [root README](../README.md). The server-side consequence:
+[no patient data in the repository](../notes/no-patient-data-in-the-repository.md); the
+locations are tabulated in the [root README](../../README.md). The server-side consequence:
 it must be access-controlled, never public, and wiped on the same 30-day schedule as
 everything else.

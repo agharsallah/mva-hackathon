@@ -15,5 +15,5 @@ inlined.
 `locus-fixture.html` is deliberately built from the fixture rather than the real callset:
 the locus views are the only ones that read patient records, and a page built from the real
 VCF must be written outside the repository. See
-[`docs/exploration.md`](../docs/exploration.md) and the
+[`docs/exploration.md`](../docs/step-0/exploration.md) and the
 [data-handling perimeter](../README.md#data-handling--read-this-first).

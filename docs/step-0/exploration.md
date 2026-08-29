@@ -1,7 +1,7 @@
 # The exploration toolkit
 
 **Standing:** module names and section list checked against `src/mva/explore/` on
-2026-08-29. Test and exhibit counts live in [`current-state.md`](current-state.md).
+2026-08-29. Test and exhibit counts live in [`current-state.md`](../current-state.md).
 
 A genomic dataset arrives as tens of gigabytes of compressed text and one question: *is
 there anything here?* Answering it normally means running four or five command-line tools,
@@ -10,7 +10,7 @@ the interesting ones down before they scroll away.
 
 `mva.explore` turns that loop into a library and a single interactive page. It reads the
 committable summaries produced by
-[`tools/profile-genomic-data.sh`](../tools/profile-genomic-data.sh), grades every number
+[`tools/profile-genomic-data.sh`](../../tools/profile-genomic-data.sh), grades every number
 against a stated expectation, and renders twenty exhibits — each one carrying the words
 that make it readable.
 
@@ -166,7 +166,7 @@ transitions are chemically easier than transversions, so real variation runs abo
 while random error has no such bias.
 
 The bands are community conventions, not measurements, and they live in one file
-([`checks.py`](../src/mva/explore/checks.py)) precisely so they can be argued with. The
+([`checks.py`](../../src/mva/explore/checks.py)) precisely so they can be argued with. The
 alternative — thresholds scattered through drawing code — produces a report that must be
 trusted rather than read.
 
@@ -241,8 +241,8 @@ PNGs when the engine is installed and says so when it is not.
 ## Testing
 
 The toolkit's tests run against a synthetic profile directory in
-[`tests/fixtures/profile/`](../tests/fixtures/profile/) with no dataset present — the suite
-total is in [`current-state.md`](current-state.md). They cover the parsers' handling of real file quirks (rollup lines glued under a table, quoted
+[`tests/fixtures/profile/`](../../tests/fixtures/profile/) with no dataset present — the suite
+total is in [`current-state.md`](../current-state.md). They cover the parsers' handling of real file quirks (rollup lines glued under a table, quoted
 descriptions containing commas), graceful degradation on missing artifacts, the layout
 swap, the check bands, chromosome ordering, and the report shell.
 

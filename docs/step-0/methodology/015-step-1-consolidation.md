@@ -102,4 +102,4 @@ The five gaps above are the honest cost of that conclusion. None blocks phase 2,
 the lineage edges and the probe ledger — must close before the final report, because both
 are things the report will need to claim.
 
-Sequencing for the phase-2 work: [`docs/roadmap.md`](../docs/roadmap.md) §2.
+Sequencing for the phase-2 work: [`docs/roadmap.md`](../../roadmap.md) §2.

@@ -146,7 +146,7 @@ Choose by the question:
 They coexist; all are derived from the FASTQ, which stays untouched. PostgreSQL should hold
 read *aggregates*, never read *payloads*.
 
-Design and proposed schema: [`docs/reads-storage.md`](../docs/reads-storage.md).
+Design and proposed schema: [`docs/reads-storage.md`](../reads-storage.md).
 
 **Nothing was ingested.** One million reads were parsed into a scratch Parquet outside the
 repository for measurement, and deleted afterwards. The full read store is not built, and

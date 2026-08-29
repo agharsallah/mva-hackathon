@@ -30,7 +30,7 @@ answers `0/18 spent, 18 remaining`.
 - MinIO bucket `mva`, versioning Enabled; the verified truth read out of
   `warehouse.source_objects` (12 rows, populated by `source-check` in
   [`014`](014-source-of-truth-and-lineage.md)).
-- Oracle budget of 18 from [`ideation/hackathon-intel.md`](../ideation/hackathon-intel.md)
+- Oracle budget of 18 from [`ideation/hackathon-intel.md`](../../../ideation/hackathon-intel.md)
   §9; submission column set from `ressources/hackathon-rules/track1_submission_template.csv`
   and `src/mva/pipeline/submission.py`.
 

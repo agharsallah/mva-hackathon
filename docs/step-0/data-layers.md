@@ -1,14 +1,14 @@
 # Data layers — from delivered bytes to queryable tables
 
 **Standing:** layer 0 and layer 1 are **built and live** (verified 2026-08-29, see
-[`current-state.md`](current-state.md)). Layer 2 is **designed, not built** — the schema
+[`current-state.md`](../current-state.md)). Layer 2 is **designed, not built** — the schema
 below is the plan, and nothing has been written to it.
 
-Extracted 2026-08-29 from `docs/ingestion-plan.md` (now in [`archive/`](../archive/),
+Extracted 2026-08-29 from `docs/ingestion-plan.md` (now in [`archive/`](../../archive/),
 where its "awaiting review, nothing ingested" framing is preserved as history).
 
 Measured numbers about the dataset are owned by
-[`ideation/data-findings.md`](../ideation/data-findings.md); this page owns the *shape* of
+[`ideation/data-findings.md`](../../ideation/data-findings.md); this page owns the *shape* of
 each layer.
 
 ## The layers
@@ -47,7 +47,7 @@ precisely what this case may turn on.
 Typing is the largest source of silent loss, so this layer does none. Its whole job is to
 be provably identical to the source. Fidelity evidence and the one real DuckDB loss mode
 (empty string → NULL) are in
-[`methodology/011`](../methodology/011-duckdb-fidelity-and-ingestion-gates.md).
+[`methodology/011`](methodology/011-duckdb-fidelity-and-ingestion-gates.md).
 
 ## Layer 2 — typed and queryable, derived from layer 1
 
@@ -92,5 +92,5 @@ Each runs before the next step and fails loudly:
 | 4 | `fingerprint` + `compare` at every hop — row counts, per-column checksums, NULL and empty-string accounting | demonstrated over 1,000,000 records |
 | 5 | Layer 2 reconciliation | **not built** |
 
-Evidence: [`methodology/011`](../methodology/011-duckdb-fidelity-and-ingestion-gates.md)
-and [`methodology/014`](../methodology/014-source-of-truth-and-lineage.md).
+Evidence: [`methodology/011`](methodology/011-duckdb-fidelity-and-ingestion-gates.md)
+and [`methodology/014`](methodology/014-source-of-truth-and-lineage.md).

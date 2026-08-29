@@ -11,7 +11,7 @@ Space: https://huggingface.co/spaces/SageBio/rare-disease-real-kid-mva-hackathon
 Dataset: https://huggingface.co/datasets/SageBio/mva-hackathon-2026-data (gated). **12 objects, 84.99 GB** as counted in the bucket ([data-findings](data-findings.md) §1). Earlier drafts said 10 or 11 files; the discrepancy is only whether the HF `README.md` and `.gitattributes` are counted as part of the delivery.
 
 §12 of this brief — the *plan* for first contact with the files — was executed and
-superseded by [`methodology/001`–`006`](../methodology/). It is preserved at
+superseded by [`methodology/001`–`006`](../docs/step-0/methodology/). It is preserved at
 [`archive/hackathon-intel-exploration.md`](../archive/hackathon-intel-exploration.md).
 
 ---

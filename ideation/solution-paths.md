@@ -74,7 +74,7 @@ measured against, and the "automated pipeline" story the methods form requires.
   **Exomiser** and **LIRICAL** (symptom-list + VCF → ranked genes) on the HPO terms.
 - **Tools we build:** the real `Annotator` backend behind the existing
   [port](../docs/notes/annotation-as-a-port.md) (VEP REST now, offline cache later);
-  layer-2 tables ([design](../docs/data-layers.md)) so pair enumeration is SQL.
+  layer-2 tables ([design](../docs/step-0/data-layers.md)) so pair enumeration is SQL.
 - **Uniquely finds:** the "easy" coding allele, fast.
 - **Cost:** days. The annotator is the
   [critical path](data-findings.md) for the whole portfolio.
@@ -137,7 +137,7 @@ uncertainty).
   scan → final strike; reserve held to the freeze for indel-representation retries.
 - **Tools we build:** a `probe/` module — probe simulator, information-gain probe designer,
   decode-table verifier, and the Postgres **probe ledger**
-  ([already ruled: build now](../docs/notes/postgres-for-shared-state.md)).
+  ([already ruled: build now](../docs/step-0/notes/postgres-for-shared-state.md)).
 - **Uniquely finds:** ground truth itself. Converts any path's shortlist into confirmed
   alleles — two submissions in the best case.
 - **Cost:** days of tooling; each probe spent is irreversible budget.

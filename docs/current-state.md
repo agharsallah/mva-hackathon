@@ -2,8 +2,8 @@
 
 **Verified:** 2026-08-29, by executed runs (`pg-check`, `s3-check`, `pytest`, live SQL
 counts). Recorded in
-[`methodology/015`](../methodology/015-step-1-consolidation.md) and
-[`methodology/016`](../methodology/016-lineage-backfill-and-probe-ledger.md).
+[`methodology/015`](step-0/methodology/015-step-1-consolidation.md) and
+[`methodology/016`](step-0/methodology/016-lineage-backfill-and-probe-ledger.md).
 
 This page owns **repository and infrastructure numbers** — test counts, table counts,
 object counts, what is provisioned. **Dataset measurements** (variant counts, coverage,
@@ -51,7 +51,7 @@ MinIO source/  →  warehouse.variants_raw  →  results.*
 Each link is re-derivable from the one before it, and nothing is edited in place. Losing
 `results` costs a `pg-derive`; losing `variants_raw` costs a `vcf-ingest`; losing the
 bucket costs a re-fetch from the publisher. The rule that keeps this true:
-[delivery is immutable](notes/delivery-is-immutable.md).
+[delivery is immutable](step-0/notes/delivery-is-immutable.md).
 
 ---
 
@@ -120,7 +120,7 @@ and `s3-check` are for.
 
 Dependencies run one way: `explore/` and `warehouse/` may use `io/` and `pipeline/`;
 `pipeline/` uses neither. A change to a chart can never affect a submission. The map with
-seam guarantees is [`architecture.md`](architecture.md).
+seam guarantees is [`architecture.md`](step-0/architecture.md).
 
 ---
 
@@ -131,5 +131,5 @@ Stated here so they are not discovered later. Sequencing is in [`roadmap.md`](ro
 | Gap | What is actually wrong | Consequence |
 |---|---|---|
 | **Staged Parquet is single-homed** | `build/warehouse/` exists only on one laptop | regenerable, so not data loss — but it is an undeclared dependency of `pg-ingest` |
-| **Layer 2 not built** | `variants` / `genotypes` / `variant_info` are designed only | see [`data-layers.md`](data-layers.md) |
+| **Layer 2 not built** | `variants` / `genotypes` / `variant_info` are designed only | see [`data-layers.md`](step-0/data-layers.md) |
 | **No real annotator** | `annotation.py` is a port with a lookup fake behind it | the critical path for ranking — see [the note](notes/annotation-as-a-port.md) |

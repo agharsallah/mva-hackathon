@@ -21,7 +21,7 @@ Fetching happens **on the server, from the publisher** rather than uploading a l
 It is faster (uploading the local copy would have taken 8.7 hours at the measured rate) and
 it is better provenance: the bytes come from the source, and the publisher's own SHA-256
 makes the result checkable. Evidence:
-[`methodology/014`](../../methodology/014-source-of-truth-and-lineage.md).
+[`methodology/014`](../methodology/014-source-of-truth-and-lineage.md).
 
 The local `~/ubuntu/data/` copy is a **convenience mirror**, not the source of truth.
 Deleting it costs a download.
@@ -40,4 +40,4 @@ refreshes the object inventory. Run it before trusting a number that came out of
 points at a *local* path, its sha256 is empty, and there are no edges recording which
 source objects produced the five derivations. Until that is fixed, "which bytes produced
 this result" is answerable by argument, not by query. Tracked in
-[`../roadmap.md`](../roadmap.md).
+[`../roadmap.md`](../../roadmap.md).

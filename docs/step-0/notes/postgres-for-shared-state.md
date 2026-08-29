@@ -10,7 +10,7 @@ the access control is the box's own SSH. One surface instead of two.
 It does not survive contact with a team. DuckDB's file lock excludes **readers as well as
 writers**, so one teammate running a long write makes the warehouse unreadable for everyone
 else — measured, not assumed
-([`methodology/008`](../../methodology/008-duckdb-warehouse.md)). For a single-owner store
+([`methodology/008`](../methodology/008-duckdb-warehouse.md)). For a single-owner store
 rebuilt wholesale that is fine. For an oracle probe ledger, a submissions table or a run
 registry — state that is *edited* rather than rebuilt — it is disqualifying.
 
@@ -25,8 +25,8 @@ The split is by what the data **is**, not by which engine is preferred:
 Every claim was executed against a real PostgreSQL and DuckDB rather than read off
 documentation. The measurements, the rejected options (MotherDuck, ClickHouse, `pg_duckdb`,
 MySQL, SQLite) and the caveats on the synthetic sizing are in
-[`methodology/009`](../../methodology/009-hosted-database-choice.md); the working ingest is
-[`methodology/010`](../../methodology/010-postgres-ingest-and-derivations.md).
+[`methodology/009`](../methodology/009-hosted-database-choice.md); the working ingest is
+[`methodology/010`](../methodology/010-postgres-ingest-and-derivations.md).
 
 Nothing depends on a particular Postgres release. The setup script prints
 `SHOW server_version` and works with whatever the server has.
@@ -42,7 +42,7 @@ The file-warehouse half was **deleted 2026-08-29**: `remote.py` and the `preflig
 what `pg-ingest` reads; `analysis.py` stays because `pg-derive` reads its derivation
 records. One-off local DuckDB work is now a plain Python script, not a CLI verb. The
 archived document describing the deleted path is
-[`archive/duckdb-file-warehouse.md`](../../archive/duckdb-file-warehouse.md).
+[`archive/duckdb-file-warehouse.md`](../../../archive/duckdb-file-warehouse.md).
 
 If the *variant* tables ever need versioning and time travel, point DuckLake at the same
 Postgres as its catalog rather than installing a second server. Not needed yet.

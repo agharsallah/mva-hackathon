@@ -1,4 +1,11 @@
-# Methodology log
+# Methodology log — step 0
+
+**Relocated 2026-08-29** from the repository root `methodology/` to
+[`docs/step-0/methodology/`](.). Entries 001–016 all belong to step 0 (first contact with
+the delivery, then the platform), so the log moved whole rather than being split. The
+entries themselves are unchanged apart from relative link paths, which the move forced.
+Later steps get their own `docs/step-<n>/methodology/`, and the numbering continues across
+them — 017 is the next entry, wherever it lands.
 
 One entry per analysis actually executed, recording the question, the exact inputs and
 commands, the observed output, and the conclusion drawn — enough for someone else to
@@ -10,7 +17,7 @@ says so and gives the sampling parameters.
 
 **No patient variant coordinates appear here.** Entries record counts, distributions and
 classifications; the positions themselves stay in `~/ubuntu/work/`, per
-[no patient data in the repository](../docs/notes/no-patient-data-in-the-repository.md).
+[no patient data in the repository](../../notes/no-patient-data-in-the-repository.md).
 
 ## Environment
 

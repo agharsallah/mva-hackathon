@@ -73,7 +73,7 @@ proband_id,chrom_1,pos_1,ref_1,alt_1,chrom_2,pos_2,ref_2,alt_2,epcr,finding_type
 | `notes` | free text, unscored automatically, read by judges |
 
 Max 10 rows. The emitter and its validator are `src/mva/pipeline/submission.py`; the
-chr-prefix bridge that feeds it is [one function only](../../docs/notes/chr-prefix-bridge.md).
+chr-prefix bridge that feeds it is [one function only](../../docs/step-0/notes/chr-prefix-bridge.md).
 Row-layout strategy (pairs vs. singles as partial-match probes) is in
 [`hackathon-intel.md` §9](../../ideation/hackathon-intel.md).
 

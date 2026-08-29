@@ -29,17 +29,23 @@
 ## Documentation rules
 - One doc index: `docs/README.md`. The root `README.md` is the front door (what this is, data
   perimeter, quickstart) and links to the index; it never duplicates it.
+- Docs are grouped by roadmap step: `docs/step-<n>/` holds the pages, notes and methodology
+  entries for work that belongs to that step. `docs/step-0/` is the built platform (delivery,
+  object store, warehouse, exploration toolkit). Cross-step pages — `current-state.md`,
+  `roadmap.md`, `decisions.md`, `dictionary.md` — stay at `docs/` root. Each step folder carries
+  its own `README.md` index, linked from `docs/README.md`.
 - Every measured number about the dataset has exactly one owner: `ideation/data-findings.md`.
   Other docs link to it; they never restate the number. Evidence for how a number was measured
-  lives in the `methodology/` entry that produced it.
-- One decision, one note: design decisions live in `docs/notes/`, one file each, with a
+  lives in the `docs/step-<n>/methodology/` entry that produced it.
+- One decision, one note: design decisions live in `docs/notes/` when they govern every step, or
+  in `docs/step-<n>/notes/` when they belong to one step — one file each, with a
   `**Standing:**` line saying whether it still holds. Other docs state the *result* in one
   sentence and link the note; they never re-argue it.
 - Every doc outside `methodology/` and `archive/` carries a `Standing:` or `Verified:` line near
   the top with the date it was last checked against reality. A doc describing system state that
   has not been re-verified must say so.
 - `methodology/` is an append-only audit log: never edit an entry, only append a new one that
-  supersedes it (and says so).
+  supersedes it (and says so). Entry numbers are global and monotonic across step folders.
 - `archive/` holds superseded documents for provenance. Never edit them, never cite them as
   current, never delete them.
 - Before writing a new doc, check the index for an existing owner of the topic. Extend the owner;
@@ -50,7 +56,8 @@
   executed run whose output is visible. If something was not run, say so explicitly.
 
 ## Methodology tracking
-- Track the methodology and how each result was reached in the `methodology/` folder.
+- Track the methodology and how each result was reached in the `methodology/` folder of the step
+  it belongs to — `docs/step-0/methodology/` for the platform, `docs/step-<n>/methodology/` after.
 - After any analysis or pipeline run, record in `methodology/` the question, inputs (files, versions,
   parameters), the exact commands run, the observed output, and the conclusion drawn — enough for
   someone else to reproduce it.

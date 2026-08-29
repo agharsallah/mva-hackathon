@@ -154,4 +154,4 @@ SSH that open no network service. Confirmed working end-to-end against the real 
 Scope: derived tables only (counts, summaries, intervals, checksums). No reads, no
 genotypes, no patient variant records. `build/` and `*.duckdb` are gitignored.
 
-See [`docs/warehouse.md`](../docs/warehouse.md) for the pipeline diagram and usage.
+See [`docs/warehouse.md`](../warehouse.md) for the pipeline diagram and usage.
