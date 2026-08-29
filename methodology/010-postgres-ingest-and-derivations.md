@@ -211,6 +211,63 @@ The full pipeline was then re-run end to end against the container the script ha
 configured — `pg-check`, `pg-ingest` (14 tables), `pg-derive` (5 result tables) — all
 succeeding.
 
+### The real server: a superuser that is not `postgres`, and a database that does not exist
+
+Container discovery worked on the actual server but the connection still failed:
+
+```
+==> Finding the database
+    ✓ discovered Postgres container 'postgres_db' via podman
+cannot reach the postgres superuser role using:
+    podman exec -i postgres_db psql -U abdu -v ON_ERROR_STOP=1 -qtA
+```
+
+Read-only probing on the server established what was actually true — the facts the script
+had been guessing at:
+
+```
+POSTGRES_USER=abdu
+POSTGRES_DB=db
+
+  OK    -U abdu -d postgres
+  OK    -U abdu -d template1
+  fail  -U abdu -d abdu       → FATAL:  database "abdu" does not exist
+  fail  -U postgres -d postgres → FATAL:  role "postgres" does not exist
+```
+
+Two independent assumptions were wrong at once:
+
+1. **There is no `postgres` role.** The image was built with `POSTGRES_USER=abdu`, so that
+   is the superuser and the conventional name does not exist.
+2. **`psql -U abdu` with no `-d` opens a database named `abdu`,** which the image creates
+   only when `POSTGRES_DB` is unset. Here `POSTGRES_DB=db`, so it does not exist.
+
+The old code passed no `-d` at all, so even the correct superuser failed. Superuser and
+maintenance database are now probed **as pairs**, with candidates drawn from the
+container's own `POSTGRES_USER` / `POSTGRES_DB` plus `postgres` and `template1`.
+
+**The deeper defect was the error handling, not the guess.** The probe ran under
+`>/dev/null 2>&1`, so the operator got a dead end instead of `FATAL: database "abdu" does
+not exist` — which names the problem outright. Failures now print every pair tried with its
+real error.
+
+Verified against stubs replicating the server exactly (role `abdu`, no `postgres` role,
+databases `postgres`/`template1`/`db`, port published) — no containers involved, since a
+local container proves nothing about that host:
+
+```
+    ✓ discovered Postgres container 'postgres_db' via podman
+    ✓ superuser 'abdu', maintenance database 'postgres'
+    ✓ postgres reachable — 18.4 (Debian 18.4-1.pgdg12+1)
+==> Role 'mva'       ✓ created
+==> Database 'mva'   ✓ created, owned by mva
+==> Schemas          ✓ warehouse  ✓ results
+PGPORT=5432
+```
+
+Re-running was a no-op. The failure path was exercised too, and now lists all six
+attempted pairs with the actual psql error against each.
+
 ### A second bug, caught in that work
 
 `set -o pipefail` plus `docker port` aborted the script silently. `docker port` exits
