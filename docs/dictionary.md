@@ -794,6 +794,18 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 **Parquet** — a file format that stores tables by column rather than by row, so scanning one column of millions of rows never reads the others. It also carries its own schema, so the column types survive the trip; a TSV does not, which is why a number written to a TSV comes back as text unless something re-infers it.
 *Example: `vcf_chrom_allele_balance.parquet` — 24 rows, 1.3 KB, and `mean_dp` is a `DOUBLE` on the way out because it was one on the way in.*
 
+**Row group** — the horizontal slice a [Parquet](#8-command-line-tools-youll-see) file is built from: a block of rows whose columns are compressed and *indexed* together, with the minimum and maximum of each column recorded in the footer. Those min/max statistics are what lets a reader skip a whole block without reading it, and the reason sorting a file by the column you filter on makes it dramatically cheaper to query. The group is also the writer's buffer — it holds a full group in memory before flushing it — so the size you choose is a direct memory cost.
+*Example: 1,000,000 rows per group, so a read store shard of 4M reads has 4 skippable blocks.*
+
+**Shard / partition** — one file of a table that is deliberately split across many files, rather than one enormous file. Splitting buys parallelism (readers take a file each) and pruning (a query that only concerns lane 1 never opens the others). **Hive partitioning** is the convention that puts the partitioning column *in the directory name* — `lane=1/read=2/part-0007.parquet` — so the value is readable without opening the file, and query engines turn a `WHERE lane = 1` into "open only that directory".
+*Example: `s3://mva/reads/lane=3/read=1/part-0012.parquet`.*
+
+**Arrow (Apache Arrow)** — a standard layout for a table *in memory*, column by column. Its point is that two programs agreeing on it can hand a table to each other with no conversion and no copying: a Rust library can produce reads and DuckDB can query them in place. [Parquet](#8-command-line-tools-youll-see) is the on-disk form of the same idea; Arrow is the in-memory one.
+
+**Record batch** — a chunk of an [Arrow](#8-command-line-tools-youll-see) table, a few thousand rows at a time. Reading a file as a stream of batches is what makes a converter's memory bounded by the batch size rather than by the file size — the difference between converting an 11 GB FASTQ and running out of RAM trying.
+
+**noodles / oxbow / polars-bio** — Rust libraries for reading bioinformatics file formats. `noodles` is the parser itself; **oxbow** and **polars-bio** wrap it and hand the result out as [Arrow](#8-command-line-tools-youll-see) batches, which is what makes them usable from Python without a per-record Python loop. This repository uses **oxbow** to convert [FASTQ](#2-reading-dna-sequencing-and-the-files-it-makes) to Parquet, measured at ~854,000 reads/second versus ~50,000 for a shell pipeline ([methodology 018](step-0/methodology/018-fastq-conversion-engine-choice.md)).
+
 **Type inference / sniffing** — reading the first rows of a text table to guess each column's type. DuckDB's CSV reader does this; `mva-warehouse` leans on it deliberately rather than hand-rolling a guesser, so the staging step and an analyst's own `read_csv` can never disagree.
 
 **Data warehouse** — one queryable copy of derived tables, kept apart from the raw data they came from. Here it is deliberately small: the [profile](step-0/exploration.md) tables, typed and joinable, on a machine the team shares. It is a *derived dataset* — rebuildable at any time, and therefore safe to delete.

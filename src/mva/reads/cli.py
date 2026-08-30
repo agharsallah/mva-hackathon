@@ -37,14 +37,31 @@ def _sources(args) -> list[Path]:
 
 
 def do_bench(args) -> int:
+    """Race the engines, and — with ``--scale`` — prove the winner actually streams."""
     fastqs = _sources(args)
-    timings = bench.race(fastqs[0], reads=args.reads,
-                         contenders=tuple(args.engines.split(",")))
-    finished = [t for t in timings if not t.error]
-    if finished:
-        best = bench.winner(timings)
-        print(f"\nwinner: {best.engine} at {best.reads_per_second:,.0f} reads/s")
-    return 0 if finished else 1
+    contenders = tuple(args.engines.split(",")) if args.engines else ()
+    timings = bench.race(fastqs[0], reads=args.reads, contenders=contenders)
+    if not any(timing.ok for timing in timings):
+        return 1
+    if args.scale:
+        print(f"\nre-running at {args.reads * args.scale:,} reads to test memory growth …")
+        larger = {timing.engine: timing for timing in
+                  bench.race(fastqs[0], reads=args.reads * args.scale,
+                             contenders=contenders)}
+        for small in timings:
+            big = larger.get(small.engine)
+            if small.ok and big and big.ok:
+                verdict = "streams" if bench.streams(small, big) else "BUFFERS — unusable at full scale"
+                print(f"  {small.engine}: {small.peak_rss / 2**20:.0f} → "
+                      f"{big.peak_rss / 2**20:.0f} MiB peak RSS — {verdict}")
+        timings = [t for t in larger.values()
+                   if bench.streams(next(s for s in timings if s.engine == t.engine), t)]
+        if not timings:
+            print("\nno engine streamed at scale")
+            return 1
+    best = bench.winner(timings)
+    print(f"\nwinner: {best.engine} at {best.reads_per_second:,.0f} reads/s")
+    return 0
 
 
 def do_convert(args) -> int:
@@ -144,10 +161,13 @@ def _parser() -> argparse.ArgumentParser:
 
     b = add("bench", do_bench, "race the conversion engines on a sample")
     b.add_argument("--reads", type=int, default=1_000_000)
-    b.add_argument("--engines", default=",".join(ENGINES))
+    b.add_argument("--engines", default="", help="comma-separated subset to race")
+    b.add_argument("--scale", type=int, default=0, metavar="N",
+                   help="re-run at N× the sample and disqualify engines whose "
+                        "memory grows with it")
 
     c = add("convert", do_convert, "convert every FASTQ to sharded parquet and upload")
-    c.add_argument("--engine", choices=sorted(ENGINES), default="pipe")
+    c.add_argument("--engine", choices=sorted(ENGINES), default="oxbow")
     c.add_argument("--jobs", type=int, default=2, help="files converted concurrently")
     c.add_argument("--staging", help="local shard directory (default: MVA_STAGING_DIR)")
     c.add_argument("--no-upload", action="store_true")

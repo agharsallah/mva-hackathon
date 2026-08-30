@@ -2,22 +2,42 @@
 
 Cuts one sample of N reads from the head of a real FASTQ, recompresses it so every engine
 pays the same decompression bill, then runs the full conversion (parse, project, encode,
-shard) per engine and reports reads/second and output size. The winner converts the
-1.08-billion-read set; the numbers go in a methodology entry.
+shard) per engine and reports reads/second, output size, and peak memory.
+
+**Peak memory is not a footnote here.** An engine that materialises the file instead of
+streaming it looks fast on a one-million-read sample and dies on an eleven-gigabyte one,
+so the bake-off is meant to be run at two sample sizes: memory that grows with the sample
+means the engine buffers, and it is disqualified for the full set no matter how fast it
+looked. :func:`streams` does that comparison.
 
 The sample is written to a scratch directory and deleted with it — read payloads are
 patient data and never land in the repository.
 """
 
+import multiprocessing
+import resource
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
 
-from . import engines
+from . import engines, schema
 from .convert import convert_file
+
+
+def peak_rss_bytes() -> int:
+    """Peak resident memory of this process, in bytes.
+
+    ``ru_maxrss`` is kilobytes on Linux and bytes on macOS — normalise so the number
+    means the same thing in a methodology entry written on either. It is a high-water
+    mark that never falls, which is why each engine is measured in its own process:
+    inside one process the second engine measured would inherit the first one's peak.
+    """
+    scale = 1 if sys.platform == "darwin" else 1024
+    return scale * resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
 
 
 @dataclass(frozen=True)
@@ -25,14 +45,20 @@ class Timing:
     """One engine's result on the shared sample."""
 
     engine: str
+    reads: int
     rows: int
     seconds: float
     parquet_bytes: int
+    peak_rss: int = 0
     error: str = ""
 
     @property
     def reads_per_second(self) -> float:
         return self.rows / self.seconds if self.seconds else 0.0
+
+    @property
+    def ok(self) -> bool:
+        return bool(self.rows) and not self.error
 
 
 def cut_sample(fastq: Path, reads: int, scratch: Path) -> Path:
@@ -46,41 +72,89 @@ def cut_sample(fastq: Path, reads: int, scratch: Path) -> Path:
     return sample
 
 
+def _run_one(engine: str, sample: str, out_dir: str, queue) -> None:
+    """One engine's conversion, in a process of its own so its memory is its own."""
+    baseline = peak_rss_bytes()
+    started = time.perf_counter()
+    try:
+        done = convert_file(Path(sample), Path(out_dir), engine=engine)
+        queue.put(Timing(engine, 0, done.rows, done.seconds, done.parquet_bytes,
+                         peak_rss=max(0, peak_rss_bytes() - baseline)))
+    except Exception as error:  # a losing engine is a result, not a crash
+        queue.put(Timing(engine, 0, 0, time.perf_counter() - started, 0,
+                         error=f"{type(error).__name__}: {error}"))
+
+
 def race(fastq: Path, reads: int = 1_000_000,
-         contenders: tuple[str, ...] = ("pipe", "biobear"),
+         contenders: tuple[str, ...] = (),
          report=print) -> list[Timing]:
-    """Run every available engine over the same sample; never fake a missing one."""
+    """Run every available engine over the same sample; never fake a missing one.
+
+    Each engine runs in a fresh spawned process: peak memory is then attributable to
+    that engine alone, and a segfaulting reader cannot take the benchmark down with it.
+    """
+    contenders = contenders or tuple(engines.ENGINES)
+    context = multiprocessing.get_context("spawn")
     scratch = Path(tempfile.mkdtemp(prefix="mva-bench-"))
     timings: list[Timing] = []
+    if reads < schema.ROW_GROUP_SIZE:
+        report(f"note: {reads:,} reads is under one {schema.ROW_GROUP_SIZE:,}-row "
+               f"row group — timings are valid, memory comparisons are not")
     try:
         report(f"cutting {reads:,}-read sample from {fastq.name} …")
         sample = cut_sample(fastq, reads, scratch)
         for engine in contenders:
-            if engine == "biobear" and not engines.biobear_available():
-                timings.append(Timing(engine, 0, 0.0, 0, error="not installed"))
+            if not engines.available(engine):
+                timings.append(Timing(engine, reads, 0, 0.0, 0, error="not installed"))
                 report(f"  {engine}: not installed, skipped")
                 continue
-            out = scratch / f"out-{engine}"
-            started = time.perf_counter()
-            try:
-                done = convert_file(sample, out, engine=engine)
-            except Exception as error:  # a losing engine is a result, not a crash
-                timings.append(Timing(engine, 0, time.perf_counter() - started, 0,
-                                      error=str(error)))
-                report(f"  {engine}: FAILED — {error}")
-                continue
-            timings.append(Timing(engine, done.rows, done.seconds, done.parquet_bytes))
-            report(f"  {engine}: {done.rows:,} reads in {done.seconds:.1f}s "
-                   f"= {done.reads_per_second:,.0f} reads/s, "
-                   f"{done.parquet_bytes / 2**20:.1f} MiB parquet")
+            queue = context.Queue()
+            worker = context.Process(target=_run_one, args=(
+                engine, str(sample), str(scratch / f"out-{engine}"), queue))
+            worker.start()
+            worker.join()
+            result = queue.get() if not queue.empty() else Timing(
+                engine, reads, 0, 0.0, 0,
+                error=f"worker died with exit code {worker.exitcode}")
+            timing = Timing(engine, reads, result.rows, result.seconds,
+                            result.parquet_bytes, result.peak_rss, result.error)
+            timings.append(timing)
+            if timing.ok:
+                report(f"  {engine}: {timing.rows:,} reads in {timing.seconds:.1f}s "
+                       f"= {timing.reads_per_second:,.0f} reads/s, "
+                       f"{timing.parquet_bytes / 2**20:.1f} MiB parquet, "
+                       f"{timing.peak_rss / 2**20:.0f} MiB peak RSS")
+            else:
+                report(f"  {engine}: FAILED — {timing.error}")
     finally:
         shutil.rmtree(scratch, ignore_errors=True)
     return timings
 
 
+def streams(small: Timing, large: Timing, tolerance: float = 0.5) -> bool:
+    """Did memory stay flat while the sample grew? ``False`` means it buffers.
+
+    A streaming engine holds a bounded number of batches, so memory barely moves; a
+    buffering one grows with the input. ``tolerance`` is the share of proportional growth
+    allowed before the engine is called a buffer.
+
+    **Both samples must exceed one Parquet row group** (:data:`~mva.reads.schema.
+    ROW_GROUP_SIZE`), or this measures the wrong thing: DuckDB accumulates a full row
+    group before flushing it, so below that size memory grows with the sample for every
+    engine — that growth is the writer filling its buffer, not the reader hoarding the
+    file. :func:`race` warns when a sample is too small for the comparison to mean
+    anything.
+    """
+    if not (small.ok and large.ok and small.peak_rss):
+        return False
+    growth = large.peak_rss / small.peak_rss
+    proportional = large.rows / small.rows
+    return growth < 1 + tolerance * (proportional - 1)
+
+
 def winner(timings: list[Timing]) -> Timing:
     """Fastest engine that actually finished."""
-    finished = [t for t in timings if t.rows and not t.error]
+    finished = [timing for timing in timings if timing.ok]
     if not finished:
         raise RuntimeError("no engine completed the benchmark")
-    return max(finished, key=lambda t: t.reads_per_second)
+    return max(finished, key=lambda timing: timing.reads_per_second)

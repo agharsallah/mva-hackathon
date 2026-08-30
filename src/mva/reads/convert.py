@@ -46,11 +46,18 @@ def peek(fastq: Path) -> schema.RunFacts:
     return schema.RunFacts.from_header(fastq.name, header, sequence)
 
 
-def convert_file(fastq: Path, staging: Path, engine: str = "pipe",
-                 threads: int | None = None,
+def convert_file(fastq: Path, staging: Path, engine: str = "oxbow",
+                 threads: int | None = None, memory_limit: str | None = None,
                  row_group_size: int = schema.ROW_GROUP_SIZE,
                  row_groups_per_file: int = schema.ROW_GROUPS_PER_FILE) -> Converted:
-    """One FASTQ → one partition directory of shards, on one DuckDB connection."""
+    """One FASTQ → one partition directory of shards, on one DuckDB connection.
+
+    ``memory_limit`` matters as soon as more than one file converts at a time: a DuckDB
+    instance left to its default claims most of the machine's RAM for its buffer pool,
+    and eight of them doing that concurrently is an out-of-memory kill rather than a
+    speed-up. :func:`mva.reads.store.convert_all` divides the machine by the job count
+    and passes the share.
+    """
     import duckdb
 
     facts = peek(fastq)
@@ -65,6 +72,9 @@ def convert_file(fastq: Path, staging: Path, engine: str = "pipe",
     connection = duckdb.connect()
     if threads:
         connection.execute(f"SET threads = {int(threads)}")
+    if memory_limit:
+        connection.execute(f"SET memory_limit = '{memory_limit}'")
+    connection.execute(f"SET temp_directory = '{staging / '.duckdb-spill'}'")
     started = time.perf_counter()
     with engines.ENGINES[engine](connection, fastq) as raw:
         result = connection.execute(f"""

@@ -12,9 +12,8 @@ import subprocess
 
 import pytest
 
-from mva.reads import bench, scan, schema, store, verify
+from mva.reads import bench, engines, scan, schema, store, verify
 from mva.reads.convert import convert_file, peek
-from mva.reads.engines import biobear_available
 
 READS = 5_000
 PLANTED = "AGAGATAGGAAGCGGGACGAGGAAAGGAACA"  # 31-mer planted in read #123 of R1
@@ -81,26 +80,43 @@ def test_pipe_engine_converts_and_shards(delivery, tmp_path):
     assert done.out_dir.name == "read=1" and done.out_dir.parent.name == "lane=1"
 
 
-@pytest.mark.skipif(not biobear_available(), reason="biobear not installed")
-def test_biobear_engine_agrees_with_pipe(delivery, built, tmp_path):
+@pytest.mark.parametrize("engine", ["oxbow", "polars_bio"])
+def test_engines_agree_with_pipe(engine, delivery, built, tmp_path):
+    """Every engine must produce byte-identical rows — the contract, enforced."""
     import duckdb
 
+    if not engines.available(engine):
+        pytest.skip(f"{engine} not installed")
     fastq = store.discover(delivery)[0]
-    done = convert_file(fastq, tmp_path, engine="biobear")
+    done = convert_file(fastq, tmp_path, engine=engine)
     assert done.rows == READS
     root, _ = built
     connection = duckdb.connect()
     mismatch = connection.execute(f"""
         SELECT count(*) FROM
-            read_parquet('{tmp_path}/{schema.PREFIX}/lane=1/read=1/*.parquet') b
-        FULL JOIN (SELECT * FROM read_parquet('{root}/lane=1/read=1/*.parquet')) p
+            read_parquet('{tmp_path}/{schema.PREFIX}/lane=1/read=1/*.parquet') other
+        FULL JOIN (SELECT * FROM read_parquet('{root}/lane=1/read=1/*.parquet')) reference
         USING (tile, x, y)
-        WHERE b.sequence IS DISTINCT FROM p.sequence
-           OR b.quality IS DISTINCT FROM p.quality
-           OR b.is_filtered IS DISTINCT FROM p.is_filtered
-           OR b.index_pair IS DISTINCT FROM p.index_pair
+        WHERE other.sequence IS DISTINCT FROM reference.sequence
+           OR other.quality IS DISTINCT FROM reference.quality
+           OR other.is_filtered IS DISTINCT FROM reference.is_filtered
+           OR other.index_pair IS DISTINCT FROM reference.index_pair
     """).fetchone()[0]
     assert mismatch == 0
+
+
+def test_available_reports_missing_engine_without_raising(monkeypatch):
+    assert engines.available("pipe")
+    monkeypatch.setitem(engines.ENGINES, "nonexistent", None)
+    assert engines.available("nonexistent")  # unknown names are not import-gated
+
+
+def test_streams_flags_memory_growth():
+    small = bench.Timing("x", 1_000, 1_000, 1.0, 0, peak_rss=100 * 2**20)
+    flat = bench.Timing("x", 10_000, 10_000, 1.0, 0, peak_rss=110 * 2**20)
+    grows = bench.Timing("x", 10_000, 10_000, 1.0, 0, peak_rss=1_000 * 2**20)
+    assert bench.streams(small, flat)
+    assert not bench.streams(small, grows)
 
 
 def test_verify_passes_on_honest_store(delivery, built):
@@ -155,10 +171,11 @@ def test_round_trip_rebuilds_exact_name(delivery, built):
 def test_bench_race_reports_all_engines(delivery):
     timings = bench.race(store.discover(delivery)[0], reads=500,
                          report=lambda *_: None)
-    finished = [t for t in timings if not t.error]
+    assert {t.engine for t in timings} == set(engines.ENGINES)
+    finished = [t for t in timings if t.ok]
     assert finished, [t.error for t in timings]
     assert all(t.rows == 500 for t in finished)
-    assert bench.winner(timings).engine in {"pipe", "biobear"}
+    assert bench.winner(timings).engine in engines.ENGINES
 
 
 def test_manifest_and_runs_tables(built):
@@ -173,3 +190,18 @@ def test_manifest_and_runs_tables(built):
         f"SELECT sum(rows) FROM '{root}/manifest.parquet'").fetchone()[0]
     assert total == 2 * READS
     assert all(len(r.shards) >= 1 for r in results)
+
+
+def test_machine_share_divides_the_box(monkeypatch):
+    monkeypatch.setattr(store.os, "cpu_count", lambda: 16)
+    threads, memory = store.machine_share(jobs=4)
+    assert threads == 4
+    assert memory.endswith("GB") and int(memory[:-2]) >= 1
+    assert store.machine_share(jobs=1)[0] == 16
+
+
+def test_memory_limit_is_applied(delivery, tmp_path):
+    """A tight limit must not break a streaming conversion."""
+    fastq = store.discover(delivery)[0]
+    done = convert_file(fastq, tmp_path, engine="pipe", memory_limit="512MB")
+    assert done.rows == READS

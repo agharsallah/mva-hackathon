@@ -32,14 +32,31 @@ def discover(source_dir: Path) -> list[Path]:
                   if schema.FASTQ_NAME.search(path.name))
 
 
-def convert_all(fastqs: list[Path], staging: Path, engine: str = "pipe",
+def machine_share(jobs: int) -> tuple[int, str]:
+    """Threads and DuckDB memory limit for one job, given how many run at once.
+
+    Half the machine's RAM is divided between the jobs; the other half is left to the
+    page cache, the readers' own buffers and everything else on the box. Without this a
+    parallel run is an out-of-memory kill: each DuckDB defaults to claiming ~80% of RAM.
+    """
+    threads = max(1, (os.cpu_count() or 4) // max(1, jobs))
+    try:
+        total = os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES")
+    except (ValueError, OSError):  # not exposed on every platform
+        return threads, "2GB"
+    per_job_gib = max(1, int(total / 2**30 / 2 / max(1, jobs)))
+    return threads, f"{per_job_gib}GB"
+
+
+def convert_all(fastqs: list[Path], staging: Path, engine: str = "oxbow",
                 jobs: int = 2, report=print) -> list[Converted]:
-    """Convert every file, ``jobs`` at a time, splitting CPU threads fairly."""
-    total_threads = os.cpu_count() or 4
-    per_job = max(1, total_threads // max(1, jobs))
+    """Convert every file, ``jobs`` at a time, splitting the machine fairly between them."""
+    per_job, memory_limit = machine_share(jobs)
+    report(f"  each job: {per_job} threads, {memory_limit} DuckDB memory limit")
 
     def one(fastq: Path) -> Converted:
-        done = convert_file(fastq, staging, engine=engine, threads=per_job)
+        done = convert_file(fastq, staging, engine=engine, threads=per_job,
+                            memory_limit=memory_limit)
         report(f"  {fastq.name}: {done.rows:,} reads in {done.seconds:,.0f}s "
                f"({done.reads_per_second:,.0f}/s), {len(done.shards)} shards, "
                f"{done.parquet_bytes / 2**30:.2f} GiB")

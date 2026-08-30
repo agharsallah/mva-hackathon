@@ -1,19 +1,26 @@
-"""The two conversion engines, behind one contract.
+"""The conversion engines, behind one contract.
 
 An engine turns a ``.fastq.gz`` into a DuckDB view named by the caller with exactly three
 columns — ``header`` (name line, ``@`` stripped), ``sequence``, ``quality`` — and nothing
 else. Everything downstream (projection, sharding, verification) is engine-agnostic, so
-the bake-off swaps engines without touching the rest of the pipeline.
+engines can be raced against each other without touching the rest of the pipeline.
 
-**pipe** — no per-record Python at all. A decompressor streams into ``paste - - - -``,
-which folds the four-line FASTQ record into one tab-separated row (FASTQ bodies never
-contain tabs), and DuckDB's CSV reader consumes the FIFO. The decompressor is whichever of
-``igzip`` (ISA-L, fastest), ``pigz`` or ``gzip`` is installed — gzip is a single
-compressed stream so the win is a faster codec and pipeline overlap, not sharding.
+Three of them, none of which parses a record in Python:
 
-**biobear** — a Rust FASTQ reader (the exon engine) that emits Arrow record batches;
-DuckDB scans them zero-copy. Optional dependency: if ``import biobear`` fails the engine
-reports itself unavailable rather than breaking the module.
+**pipe** — no dependency at all. A decompressor streams into ``paste - - - -``, which
+folds the four-line FASTQ record into one tab-separated row (FASTQ bodies never contain
+tabs), and DuckDB's CSV reader consumes the FIFO. The decompressor is whichever of
+``igzip`` (ISA-L, fastest), ``pigz`` or ``gzip`` is installed. This is the floor: it works
+on a bare machine and is the fallback when a wheel will not build.
+
+**oxbow** — Rust (``noodles``) reader that exposes the file as a PyArrow dataset; DuckDB
+scans it in batches, so memory stays bounded regardless of file size.
+
+**polars_bio** — Rust + DataFusion reader exposed as a Polars ``LazyFrame``, which DuckDB
+picks up through its replacement scan.
+
+Both third-party engines are optional: an import failure makes the engine report itself
+unavailable rather than breaking the module, and ``pipe`` always remains.
 """
 
 import os
@@ -40,9 +47,9 @@ def find_decompressor() -> str:
 class Raw:
     """A live raw-contract view plus whatever must stay alive while it is read.
 
-    Single-consumption: both engines stream, so the view supports exactly one full
-    read (the ``COPY`` that converts it). Query it twice and the second pass sees
-    nothing — re-create the engine instead.
+    Single-consumption: every engine streams, so the view supports exactly one full read
+    (the ``COPY`` that converts it). Query it twice and the second pass may see nothing —
+    re-create the engine instead.
     """
 
     view: str
@@ -89,35 +96,50 @@ def pipe(connection, fastq: Path, view: str = "raw_reads") -> Raw:
     return Raw(view=view, _cleanup=[finish])
 
 
-def biobear(connection, fastq: Path, view: str = "raw_reads") -> Raw:
-    """The Rust reader → Arrow → DuckDB path."""
-    import biobear as bb
+def oxbow(connection, fastq: Path, view: str = "raw_reads",
+          batch_size: int = 131_072) -> Raw:
+    """The ``noodles`` reader → PyArrow dataset → DuckDB path."""
+    import oxbow as ox
 
-    session = bb.new_session()
-    reader = session.read_fastq_file(str(fastq)).to_arrow_record_batch_reader()
-    names = set(reader.schema.names)
-    # biobear splits the name line at the first space; rejoin to meet the contract.
-    header = ("name || ' ' || coalesce(description, '')"
-              if "description" in names else "name")
-    quality = "quality_scores" if "quality_scores" in names else "quality"
-    connection.register("biobear_reads", reader)
+    handle = ox.from_fastq(str(fastq), batch_size=batch_size)
+    connection.register("oxbow_reads", handle.dataset())
     connection.execute(f"""
         CREATE OR REPLACE VIEW {view} AS
-        SELECT {header} AS header, sequence, {quality} AS quality FROM biobear_reads
+        SELECT name || ' ' || coalesce(description, '') AS header, sequence, quality
+        FROM oxbow_reads
     """)
-    return Raw(view=view, _cleanup=[lambda: connection.unregister("biobear_reads")])
+    return Raw(view=view, _cleanup=[lambda: connection.unregister("oxbow_reads")])
 
 
-def biobear_available() -> bool:
+def polars_bio(connection, fastq: Path, view: str = "raw_reads") -> Raw:
+    """The DataFusion reader → Polars ``LazyFrame`` → DuckDB path."""
+    import polars_bio as pb
+
+    frame = pb.scan_fastq(str(fastq))
+    connection.register("polars_reads", frame)
+    connection.execute(f"""
+        CREATE OR REPLACE VIEW {view} AS
+        SELECT name || ' ' || coalesce(description, '') AS header,
+               sequence, quality_scores AS quality
+        FROM polars_reads
+    """)
+    return Raw(view=view, _cleanup=[lambda: connection.unregister("polars_reads")])
+
+
+def available(engine: str) -> bool:
+    """Whether ``engine`` can run here — a missing wheel is a fact, not a failure."""
+    module = {"oxbow": "oxbow", "polars_bio": "polars_bio"}.get(engine)
+    if module is None:
+        return True
     try:
-        import biobear  # noqa: F401
+        __import__(module)
         return True
     except ImportError:
         return False
 
 
 #: Engine name → factory. The bake-off and the CLI both index into this.
-ENGINES = {"pipe": pipe, "biobear": biobear}
+ENGINES = {"pipe": pipe, "oxbow": oxbow, "polars_bio": polars_bio}
 
 
 def shlex_quote(value) -> str:
