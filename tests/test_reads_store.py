@@ -373,3 +373,51 @@ def test_bench_race_runs_against_a_stream_only_source(delivery):
     finished = [timing for timing in timings if timing.ok]
     assert finished, [timing.error for timing in timings]
     assert all(timing.rows == 200 for timing in finished)
+
+
+def test_row_group_size_is_a_memory_budget():
+    """The default must stay small enough that a writer buffer is not a liability.
+
+    A read is ~300 uncompressed bytes and DuckDB holds a whole row group per writer
+    thread before flushing, so this product is the floor of a conversion's memory.
+    At 1,000,000 rows it ran a real conversion out of memory (methodology 021).
+    """
+    bytes_per_read = 300
+    assert schema.ROW_GROUP_SIZE * bytes_per_read <= 100 * 2**20, (
+        "row group would buffer more than 100 MiB per writer thread")
+    reads_per_shard = schema.ROW_GROUP_SIZE * schema.ROW_GROUPS_PER_FILE
+    assert 2_000_000 <= reads_per_shard <= 8_000_000, (
+        f"shard of {reads_per_shard:,} reads is outside the ~250 MB target")
+
+
+def test_bench_worker_passes_the_memory_limit_through(delivery, tmp_path, monkeypatch):
+    """A bench that measures without production's budget predicts nothing.
+
+    The worker is exercised directly: `race` spawns it in a fresh process, where a
+    monkeypatch in this one would not apply.
+    """
+    import queue as queue_module
+
+    seen = {}
+    real = bench.convert_file
+
+    def spy(fastq, staging, **kwargs):
+        seen["memory_limit"] = kwargs.get("memory_limit")
+        return real(fastq, staging, **kwargs)
+
+    monkeypatch.setattr(bench, "convert_file", spy)
+    results = queue_module.Queue()
+    bench._run_one("pipe", str(store.discover(delivery)[0].path), str(tmp_path),
+                   "512MB", results)
+    assert seen["memory_limit"] == "512MB"
+    assert results.get().ok
+
+
+def test_bench_defaults_its_budget_to_a_jobs_share(delivery):
+    """Without an explicit limit, the budget is what one job of a real run would get."""
+    lines = []
+    bench.race(store.discover(delivery)[0], reads=200, contenders=("pipe",),
+               jobs=4, report=lines.append)
+    budget = next(line for line in lines if "budget per engine" in line)
+    assert store.machine_share(4)[1] in budget
+    assert "4-job run" in budget

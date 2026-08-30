@@ -36,20 +36,30 @@ def discover(spec) -> list:
     return resolve(str(spec))
 
 
+#: Measured non-DuckDB cost of one job: the reader's Arrow batches, the Rust side and
+#: the interpreter. A 6M-read conversion held ~2 GB resident against a 1 GB DuckDB
+#: limit, so the budget hands DuckDB a gigabyte less than the arithmetic suggests.
+READER_OVERHEAD_GIB = 1
+
+
 def machine_share(jobs: int) -> tuple[int, str]:
     """Threads and DuckDB memory limit for one job, given how many run at once.
 
     Half the machine's RAM is divided between the jobs; the other half is left to the
-    page cache, the readers' own buffers and everything else on the box. Without this a
-    parallel run is an out-of-memory kill: each DuckDB defaults to claiming ~80% of RAM.
+    page cache and everything else on the box. Without this a parallel run is an
+    out-of-memory kill: each DuckDB defaults to claiming ~80% of RAM.
+
+    The limit governs DuckDB's buffer pool *only*, and the dominant part of that pool is
+    the Parquet writer holding one row group per thread — which is why
+    :data:`~mva.reads.schema.ROW_GROUP_SIZE` is as much a memory setting as a layout one.
     """
     threads = max(1, (os.cpu_count() or 4) // max(1, jobs))
     try:
         total = os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES")
     except (ValueError, OSError):  # not exposed on every platform
         return threads, "2GB"
-    per_job_gib = max(1, int(total / 2**30 / 2 / max(1, jobs)))
-    return threads, f"{per_job_gib}GB"
+    share = total / 2**30 / 2 / max(1, jobs)
+    return threads, f"{max(1, int(share) - READER_OVERHEAD_GIB)}GB"
 
 
 def convert_all(fastqs: list, staging: Path, engine: str = "oxbow",

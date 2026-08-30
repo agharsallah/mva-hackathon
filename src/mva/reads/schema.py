@@ -40,11 +40,19 @@ PROJECTION = """
     quality
 """
 
-#: One row group per this many reads; ~60 MB compressed at the measured 60 B/read.
-ROW_GROUP_SIZE = 1_000_000
+#: One row group per this many reads.
+#:
+#: **This number is a memory budget, not just a layout choice.** DuckDB's Parquet writer
+#: holds a whole row group in memory before flushing it, once per writer thread, and a
+#: read is ~300 uncompressed bytes — so 1,000,000 rows is ~300 MB per group and ran a
+#: conversion out of memory under a 1 GB limit (``methodology/021``). At 200,000 rows the
+#: same conversion peaks around 2 GB and runs at full speed.
+ROW_GROUP_SIZE = 200_000
 
-#: Shards roll over after this many row groups: ~4M reads ≈ 250 MB per shard.
-ROW_GROUPS_PER_FILE = 4
+#: Shards roll over after this many row groups: ~4M reads ≈ 250 MB per shard, unchanged
+#: from the larger row group — the shard size is set by the product, so shrinking the
+#: group and raising this count keeps the file size while cutting the writer's buffer.
+ROW_GROUPS_PER_FILE = 20
 
 #: Where the read store lives inside the bucket.
 PREFIX = "reads"

@@ -39,27 +39,32 @@ def _sources(args) -> list:
 
 
 def do_bench(args) -> int:
-    """Race the engines, and — with ``--scale`` — prove the winner actually streams."""
+    """Race the engines, and — with ``--scale`` — check the winner holds at size."""
     fastqs = _sources(args)
     contenders = tuple(args.engines.split(",")) if args.engines else ()
-    timings = bench.race(fastqs[0], reads=args.reads, contenders=contenders)
+    budget = dict(contenders=contenders, jobs=args.jobs,
+                  memory_limit=args.memory_limit)
+    timings = bench.race(fastqs[0], reads=args.reads, **budget)
     if not any(timing.ok for timing in timings):
         return 1
     if args.scale:
-        print(f"\nre-running at {args.reads * args.scale:,} reads to test memory growth …")
+        print(f"\nre-running at {args.reads * args.scale:,} reads on the same budget …")
         larger = {timing.engine: timing for timing in
-                  bench.race(fastqs[0], reads=args.reads * args.scale,
-                             contenders=contenders)}
+                  bench.race(fastqs[0], reads=args.reads * args.scale, **budget)}
         for small in timings:
             big = larger.get(small.engine)
-            if small.ok and big and big.ok:
-                verdict = "streams" if bench.streams(small, big) else "BUFFERS — unusable at full scale"
-                print(f"  {small.engine}: {small.peak_rss / 2**20:.0f} → "
-                      f"{big.peak_rss / 2**20:.0f} MiB peak RSS — {verdict}")
-        timings = [t for t in larger.values()
-                   if bench.streams(next(s for s in timings if s.engine == t.engine), t)]
+            if not (small.ok and big):
+                continue
+            if not big.ok:
+                print(f"  {small.engine}: FAILED at {args.scale}× — {big.error}")
+                continue
+            verdict = ("flat — need does not grow with input" if bench.streams(small, big)
+                       else "GROWS with input — check it fits the full file")
+            print(f"  {small.engine}: {small.peak_rss / 2**20:.0f} → "
+                  f"{big.peak_rss / 2**20:.0f} MiB peak RSS — {verdict}")
+        timings = [timing for timing in larger.values() if timing.ok]
         if not timings:
-            print("\nno engine streamed at scale")
+            print("\nno engine completed at scale within the budget")
             return 1
     best = bench.winner(timings)
     print(f"\nwinner: {best.engine} at {best.reads_per_second:,.0f} reads/s")
@@ -167,8 +172,11 @@ def _parser() -> argparse.ArgumentParser:
     b.add_argument("--reads", type=int, default=1_000_000)
     b.add_argument("--engines", default="", help="comma-separated subset to race")
     b.add_argument("--scale", type=int, default=0, metavar="N",
-                   help="re-run at N× the sample and disqualify engines whose "
-                        "memory grows with it")
+                   help="re-run at N× the sample and report whether memory grows with it")
+    b.add_argument("--jobs", type=int, default=1,
+                   help="size the memory budget as one job of a JOBS-way run")
+    b.add_argument("--memory-limit",
+                   help="DuckDB memory limit per engine (default: the --jobs share)")
 
     c = add("convert", do_convert, "convert every FASTQ to sharded parquet and upload")
     c.add_argument("--engine", choices=sorted(ENGINES), default="oxbow")

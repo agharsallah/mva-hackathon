@@ -69,6 +69,7 @@ def cut_sample(fastq, reads: int, scratch: Path) -> Path:
     """
     source = as_source(fastq)
     decompressor = engines.find_decompressor()
+    scratch.mkdir(parents=True, exist_ok=True)
     sample = scratch / source.name  # keep the name: lane/read parse must still work
     local = "" if source.path is None else f" {engines.shlex_quote(source.path)}"
     command = (f"{engines.shlex_quote(decompressor)} -dc{local} "
@@ -93,12 +94,13 @@ def cut_sample(fastq, reads: int, scratch: Path) -> Path:
     return sample
 
 
-def _run_one(engine: str, sample: str, out_dir: str, queue) -> None:
+def _run_one(engine: str, sample: str, out_dir: str, memory_limit: str, queue) -> None:
     """One engine's conversion, in a process of its own so its memory is its own."""
     baseline = peak_rss_bytes()
     started = time.perf_counter()
     try:
-        done = convert_file(Path(sample), Path(out_dir), engine=engine)
+        done = convert_file(Path(sample), Path(out_dir), engine=engine,
+                            memory_limit=memory_limit)
         queue.put(Timing(engine, 0, done.rows, done.seconds, done.parquet_bytes,
                          peak_rss=max(0, peak_rss_bytes() - baseline)))
     except Exception as error:  # a losing engine is a result, not a crash
@@ -108,13 +110,25 @@ def _run_one(engine: str, sample: str, out_dir: str, queue) -> None:
 
 def race(fastq, reads: int = 1_000_000,
          contenders: tuple[str, ...] = (),
+         jobs: int = 1, memory_limit: str | None = None,
          report=print) -> list[Timing]:
     """Run every available engine over the same sample; never fake a missing one.
 
     Each engine runs in a fresh spawned process: peak memory is then attributable to
     that engine alone, and a segfaulting reader cannot take the benchmark down with it.
+
+    **The memory limit is part of the measurement.** Left unset, DuckDB claims most of
+    the machine for its buffer pool, so peak memory reflects what was available rather
+    than what is needed, and an engine can look like it hoards when it is only being
+    allowed to. The default is the share one job would get in a real ``jobs``-way run
+    (:func:`mva.reads.store.machine_share`), so a bench result predicts the conversion.
     """
+    from .store import machine_share
+
     contenders = contenders or tuple(engines.ENGINES)
+    memory_limit = memory_limit or machine_share(jobs)[1]
+    report(f"budget per engine: {memory_limit} DuckDB memory "
+           f"(the share of a {jobs}-job run)")
     context = multiprocessing.get_context("spawn")
     scratch = Path(tempfile.mkdtemp(prefix="mva-bench-"))
     timings: list[Timing] = []
@@ -131,7 +145,7 @@ def race(fastq, reads: int = 1_000_000,
                 continue
             queue = context.Queue()
             worker = context.Process(target=_run_one, args=(
-                engine, str(sample), str(scratch / f"out-{engine}"), queue))
+                engine, str(sample), str(scratch / f"out-{engine}"), memory_limit, queue))
             worker.start()
             worker.join()
             result = queue.get() if not queue.empty() else Timing(
@@ -165,6 +179,10 @@ def streams(small: Timing, large: Timing, tolerance: float = 0.5) -> bool:
     engine — that growth is the writer filling its buffer, not the reader hoarding the
     file. :func:`race` warns when a sample is too small for the comparison to mean
     anything.
+
+    Read the verdict together with the memory limit :func:`race` reports. An engine that
+    *fails* under the budget says so as an error; this only compares the survivors, and
+    what it answers is "does the need grow with the input", not "did it fit this time".
     """
     if not (small.ok and large.ok and small.peak_rss):
         return False
