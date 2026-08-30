@@ -140,9 +140,14 @@ def oxbow(connection, source, view: str = "raw_reads",
     target = str(local) if local is not None else getattr(source, "url", "")
     if not target:
         raise RuntimeError(
-            f"the oxbow engine needs a file path or an s3:// URL; {source.name} is a "
-            f"plain stream. Use --engine pipe for a stream-only source.")
-    handle = ox.from_fastq(target, batch_size=batch_size)
+            f"the oxbow engine needs a file path or a URL; {source.name} is a plain "
+            f"stream. Use --engine pipe for a stream-only source.")
+    # Compression must be stated for a URL, never inferred: oxbow infers it from
+    # `endswith('.gz')`, and a presigned link ends in its signature query string, not in
+    # the filename. Left to infer, the reader would hand raw gzip bytes to the FASTQ
+    # parser. Every source here is gzip by construction — the name pattern requires it.
+    handle = (ox.from_fastq(target, batch_size=batch_size) if local is not None
+              else ox.from_fastq(target, compression="gzip", batch_size=batch_size))
     connection.register("oxbow_reads", handle.dataset())
     connection.execute(f"""
         CREATE OR REPLACE VIEW {view} AS

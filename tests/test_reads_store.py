@@ -267,7 +267,7 @@ def test_pipe_engine_converts_a_stream_only_source(delivery, tmp_path):
     assert done.rows == READS
 
 
-@pytest.mark.parametrize("engine,message", [("oxbow", "path or an s3:// URL"),
+@pytest.mark.parametrize("engine,message", [("oxbow", "file path or a URL"),
                                             ("polars_bio", "needs a local file")])
 def test_seeking_engines_refuse_a_stream_clearly(engine, message, delivery, tmp_path):
     """A reader that must seek says so, and names the engine that can cope."""
@@ -290,7 +290,8 @@ def _range_server(directory):
             pass
 
         def do_GET(self):
-            payload = (directory / self.path.lstrip("/")).read_bytes()
+            name = self.path.lstrip("/").partition("?")[0]  # drop the query string
+            payload = (directory / name).read_bytes()
             requested = self.headers.get("Range")
             status, body = 200, payload
             if requested and requested.startswith("bytes="):
@@ -323,9 +324,12 @@ def test_oxbow_converts_over_http_range_requests(delivery, tmp_path):
     fastq = store.discover(delivery)[0]
     server = _range_server(fastq.path.parent)
     try:
+        # The query string is the point: a presigned link ends in its signature, not in
+        # '.gz', so anything that infers compression from the name gets it wrong.
         remote = source_mod.Source(
             name=fastq.name, path=None, size=fastq.size,
-            url=f"http://127.0.0.1:{server.server_port}/{fastq.name}",
+            url=(f"http://127.0.0.1:{server.server_port}/{fastq.name}"
+                 f"?X-Amz-Signature=deadbeef&X-Amz-Expires=43200"),
             open_stream=fastq.open_stream)
         done = convert_file(remote, tmp_path, engine="oxbow")
         assert done.rows == READS
@@ -346,3 +350,26 @@ def test_presigned_url_is_generated_for_the_right_object():
     assert calls["params"] == {"Bucket": "mva", "Key": "source/x.fastq.gz"}
     assert calls["expires"] == source_mod.PRESIGN_SECONDS
     assert url.startswith("https://")
+
+
+def test_bench_cuts_a_sample_from_a_stream_only_source(delivery, tmp_path):
+    """`bench` against `--source s3`: the sample is cut by streaming the object.
+
+    Must also stop early — `head` closes the pipe once it has enough, so a 2M-read
+    sample never pulls a whole 10 GB object.
+    """
+    fastq = store.discover(delivery)[0]
+    sample = bench.cut_sample(_streamed(fastq), 100, tmp_path)
+    assert sample.is_file() and sample.stat().st_size > 0
+    with gzip.open(sample, "rt") as handle:
+        lines = handle.readlines()
+    assert len(lines) == 400  # 100 records × 4 lines
+    assert peek(sample).lane == 1
+
+
+def test_bench_race_runs_against_a_stream_only_source(delivery):
+    timings = bench.race(_streamed(store.discover(delivery)[0]), reads=200,
+                         report=lambda *_: None)
+    finished = [timing for timing in timings if timing.ok]
+    assert finished, [timing.error for timing in timings]
+    assert all(timing.rows == 200 for timing in finished)
