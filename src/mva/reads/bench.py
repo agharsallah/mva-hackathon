@@ -25,7 +25,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from . import engines, schema
-from .convert import convert_file
+from .convert import as_source, convert_file
 
 
 def peak_rss_bytes() -> int:
@@ -61,14 +61,35 @@ class Timing:
         return bool(self.rows) and not self.error
 
 
-def cut_sample(fastq: Path, reads: int, scratch: Path) -> Path:
-    """The first ``reads`` records of ``fastq``, as a fresh gzip in ``scratch``."""
+def cut_sample(fastq, reads: int, scratch: Path) -> Path:
+    """The first ``reads`` records of ``fastq``, as a fresh gzip in ``scratch``.
+
+    Written to disk on purpose: every engine must race the same bytes, and one of them
+    can only read a path. A remote object is streamed through the same pipeline.
+    """
+    source = as_source(fastq)
     decompressor = engines.find_decompressor()
-    sample = scratch / fastq.name  # keep the name: lane/read parse must still work
-    subprocess.run(
-        f"{engines.shlex_quote(decompressor)} -dc {engines.shlex_quote(fastq)} "
-        f"| head -n {int(reads) * 4} | gzip -1 > {engines.shlex_quote(sample)}",
-        shell=True, check=True)
+    sample = scratch / source.name  # keep the name: lane/read parse must still work
+    local = "" if source.path is None else f" {engines.shlex_quote(source.path)}"
+    command = (f"{engines.shlex_quote(decompressor)} -dc{local} "
+               f"| head -n {int(reads) * 4} | gzip -1 > {engines.shlex_quote(sample)}")
+    if source.path is not None:
+        subprocess.run(command, shell=True, check=True)
+    else:
+        process = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE)
+        with source.open_stream() as stream:
+            try:
+                shutil.copyfileobj(stream, process.stdin, length=8 * 1024 * 1024)
+            except BrokenPipeError:
+                pass  # `head` closed the pipe once it had enough — expected
+            finally:
+                try:
+                    process.stdin.close()
+                except BrokenPipeError:
+                    pass
+        process.wait()
+    if not sample.exists() or sample.stat().st_size == 0:
+        raise RuntimeError(f"could not cut a sample from {source.name}")
     return sample
 
 
@@ -85,7 +106,7 @@ def _run_one(engine: str, sample: str, out_dir: str, queue) -> None:
                          error=f"{type(error).__name__}: {error}"))
 
 
-def race(fastq: Path, reads: int = 1_000_000,
+def race(fastq, reads: int = 1_000_000,
          contenders: tuple[str, ...] = (),
          report=print) -> list[Timing]:
     """Run every available engine over the same sample; never fake a missing one.
@@ -101,7 +122,7 @@ def race(fastq: Path, reads: int = 1_000_000,
         report(f"note: {reads:,} reads is under one {schema.ROW_GROUP_SIZE:,}-row "
                f"row group — timings are valid, memory comparisons are not")
     try:
-        report(f"cutting {reads:,}-read sample from {fastq.name} …")
+        report(f"cutting {reads:,}-read sample from {as_source(fastq).name} …")
         sample = cut_sample(fastq, reads, scratch)
         for engine in contenders:
             if not engines.available(engine):

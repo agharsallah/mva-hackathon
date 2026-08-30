@@ -19,6 +19,7 @@ mva-reads = "mva.reads.cli:main"
 
 [dependency-groups]
 bench = [
+    "aiohttp>=3.14.3",
     "oxbow>=0.8.1",
     "polars-bio>=0.35.1",
 ]

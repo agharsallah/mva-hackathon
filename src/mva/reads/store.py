@@ -20,16 +20,20 @@ from pathlib import Path
 from ..warehouse.source import client
 from . import schema
 from .convert import Converted, convert_file
+from .source import resolve
 
 #: Object keys for the two describing tables.
 RUNS_KEY = f"{schema.PREFIX}/runs.parquet"
 MANIFEST_KEY = f"{schema.PREFIX}/manifest.parquet"
 
 
-def discover(source_dir: Path) -> list[Path]:
-    """The paired FASTQ files in a delivery directory, in name order."""
-    return sorted(path for path in source_dir.iterdir()
-                  if schema.FASTQ_NAME.search(path.name))
+def discover(spec) -> list:
+    """Every FASTQ at ``spec`` — a local directory, or ``s3``/``s3://bucket/prefix``.
+
+    Thin pass-through to :func:`mva.reads.source.resolve`, kept because "discover the
+    delivery" is the verb the rest of the pipeline thinks in.
+    """
+    return resolve(str(spec))
 
 
 def machine_share(jobs: int) -> tuple[int, str]:
@@ -48,16 +52,16 @@ def machine_share(jobs: int) -> tuple[int, str]:
     return threads, f"{per_job_gib}GB"
 
 
-def convert_all(fastqs: list[Path], staging: Path, engine: str = "oxbow",
+def convert_all(fastqs: list, staging: Path, engine: str = "oxbow",
                 jobs: int = 2, report=print) -> list[Converted]:
     """Convert every file, ``jobs`` at a time, splitting the machine fairly between them."""
     per_job, memory_limit = machine_share(jobs)
     report(f"  each job: {per_job} threads, {memory_limit} DuckDB memory limit")
 
-    def one(fastq: Path) -> Converted:
+    def one(fastq) -> Converted:
         done = convert_file(fastq, staging, engine=engine, threads=per_job,
                             memory_limit=memory_limit)
-        report(f"  {fastq.name}: {done.rows:,} reads in {done.seconds:,.0f}s "
+        report(f"  {done.facts.source}: {done.rows:,} reads in {done.seconds:,.0f}s "
                f"({done.reads_per_second:,.0f}/s), {len(done.shards)} shards, "
                f"{done.parquet_bytes / 2**30:.2f} GiB")
         return done

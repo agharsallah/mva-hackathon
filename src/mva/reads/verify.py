@@ -16,12 +16,13 @@ deliberately not hard-coded here, because this module must stay case-agnostic.
 """
 
 import gzip
+import shutil
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
 from . import engines, schema
-from .convert import peek
+from .convert import as_source, peek
 
 
 @dataclass
@@ -75,9 +76,10 @@ def pair_symmetry(connection, root: str, report: Report) -> None:
         report.expect(r1 == r2, f"lane {lane}: R1 {r1:,} == R2 {r2:,}")
 
 
-def round_trip(connection, root: str, fastq: Path, report: Report) -> None:
+def round_trip(connection, root: str, fastq, report: Report) -> None:
     """First and last source records must rebuild exactly from stored columns."""
-    facts = peek(fastq)
+    source = as_source(fastq)
+    facts = peek(source)
     partition = f"{root}/{schema.shard_dir(facts.lane, facts.read_num)}/part-*.parquet"
 
     def stored(tile: int, x: int, y: int) -> tuple | None:
@@ -86,36 +88,51 @@ def round_trip(connection, root: str, fastq: Path, report: Report) -> None:
             f"FROM read_parquet('{partition}') WHERE tile=? AND x=? AND y=?",
             [tile, x, y]).fetchone()
 
-    for label, record in (("first", _first_record(fastq)),
-                          ("last", _last_record(fastq))):
+    for label, record in (("first", _first_record(source)),
+                          ("last", _last_record(source))):
         name, sequence, quality = record
         head = name.split(" ")[0].split(":")
         row = stored(int(head[4]), int(head[5]), int(head[6]))
         if row is None:
-            report.failures.append(f"FAIL: {fastq.name} {label} record not in store")
+            report.failures.append(f"FAIL: {source.name} {label} record not in store")
             continue
         rebuilt = facts.rebuild_name(row[0], row[1], row[2], row[3], row[4])
         report.expect(rebuilt == name and row[5] == sequence and row[6] == quality,
-                      f"{fastq.name}: {label} record round-trips byte-identically")
+                      f"{source.name}: {label} record round-trips byte-identically")
 
 
-def _first_record(fastq: Path) -> tuple[str, str, str]:
-    with gzip.open(fastq, "rt") as handle:
+def _first_record(source) -> tuple[str, str, str]:
+    with source.open_stream() as raw, gzip.open(raw, "rt") as handle:
         name, sequence, _, quality = (handle.readline().rstrip("\n") for _ in range(4))
     return name, sequence, quality
 
 
-def _last_record(fastq: Path) -> tuple[str, str, str]:
-    """The final record, via a full streaming decompression (the honest way)."""
+def _last_record(source) -> tuple[str, str, str]:
+    """The final record, via a full streaming decompression (the honest way).
+
+    There is no cheap way to do this: gzip has no index, so the last record costs a full
+    pass over the source. That cost is the proof — it is what shows the conversion ran to
+    the true end of the stream rather than stopping early.
+    """
     decompressor = engines.find_decompressor()
-    tail = subprocess.run(
-        f"{engines.shlex_quote(decompressor)} -dc {engines.shlex_quote(fastq)} "
-        f"| tail -n 4",
-        shell=True, check=True, capture_output=True, text=True).stdout.splitlines()
+    local = "" if source.path is None else f" {engines.shlex_quote(source.path)}"
+    command = f"{engines.shlex_quote(decompressor)} -dc{local} | tail -n 4"
+    if source.path is not None:
+        completed = subprocess.run(command, shell=True, check=True,
+                                   capture_output=True, text=True)
+        tail = completed.stdout.splitlines()
+    else:
+        process = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE,
+                                   stdout=subprocess.PIPE, text=False)
+        with source.open_stream() as stream:
+            shutil.copyfileobj(stream, process.stdin, length=8 * 1024 * 1024)
+            process.stdin.close()
+        tail = process.stdout.read().decode().splitlines()
+        process.wait()
     return tail[0], tail[1], tail[3]
 
 
-def run(root: str, sources: list[Path], expected_total: int | None = None,
+def run(root: str, sources: list, expected_total: int | None = None,
         deep: bool = True, connection=None) -> Report:
     """All checks over one store root (a local staging dir or an ``s3://`` prefix).
 

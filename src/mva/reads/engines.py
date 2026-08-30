@@ -67,15 +67,24 @@ class Raw:
         self.close()
 
 
-def pipe(connection, fastq: Path, view: str = "raw_reads") -> Raw:
-    """The decompressor → ``paste`` → FIFO → DuckDB CSV path."""
+def pipe(connection, source, view: str = "raw_reads") -> Raw:
+    """The decompressor → ``paste`` → FIFO → DuckDB CSV path.
+
+    A local file is handed to the decompressor by name; a remote object is pumped into
+    its standard input by a feeder thread, so the same pipeline serves both.
+    """
     decompressor = find_decompressor()
     workdir = tempfile.mkdtemp(prefix="mva-reads-")
     fifo = os.path.join(workdir, "reads.tsv")
     os.mkfifo(fifo)
+    local = getattr(source, "path", source)
+    from_stdin = local is None
+    input_spec = "" if from_stdin else f" {shlex_quote(local)}"
     producer = subprocess.Popen(
-        f"{decompressor} -dc {shlex_quote(fastq)} | paste - - - - > {shlex_quote(fifo)}",
-        shell=True, stderr=subprocess.PIPE)
+        f"{decompressor} -dc{input_spec} | paste - - - - > {shlex_quote(fifo)}",
+        shell=True, stderr=subprocess.PIPE,
+        stdin=subprocess.PIPE if from_stdin else None)
+    feeder = _feed(producer, source) if from_stdin else None
     connection.execute(f"""
         CREATE OR REPLACE VIEW {view} AS
         SELECT substr(column0, 2) AS header, column1 AS sequence, column3 AS quality
@@ -90,18 +99,50 @@ def pipe(connection, fastq: Path, view: str = "raw_reads") -> Raw:
         code = producer.wait()
         stderr = producer.stderr.read().decode(errors="replace") if producer.stderr else ""
         shutil.rmtree(workdir, ignore_errors=True)
+        if feeder is not None:
+            feeder.join(timeout=30)
         if code != 0:
             raise RuntimeError(f"decompress pipeline failed ({code}): {stderr.strip()}")
 
     return Raw(view=view, _cleanup=[finish])
 
 
-def oxbow(connection, fastq: Path, view: str = "raw_reads",
+def _feed(producer, source):
+    """Pump a remote object into the pipeline's standard input, on a thread."""
+    import threading
+
+    def pump():
+        try:
+            with source.open_stream() as stream:
+                shutil.copyfileobj(stream, producer.stdin, length=8 * 1024 * 1024)
+        except (BrokenPipeError, ValueError):
+            pass  # the reader stopped early; its own error is the one that matters
+        finally:
+            try:
+                producer.stdin.close()
+            except (BrokenPipeError, ValueError):
+                pass
+
+    thread = threading.Thread(target=pump, daemon=True)
+    thread.start()
+    return thread
+
+
+def oxbow(connection, source, view: str = "raw_reads",
           batch_size: int = 131_072) -> Raw:
     """The ``noodles`` reader → PyArrow dataset → DuckDB path."""
     import oxbow as ox
 
-    handle = ox.from_fastq(str(fastq), batch_size=batch_size)
+    # oxbow's reader must be able to seek, so it takes a path or an fsspec URL — never
+    # the plain stream, which is a pipe. Credentials for an s3:// URL are exported by
+    # mva.reads.source.export_credentials.
+    local = getattr(source, "path", source)
+    target = str(local) if local is not None else getattr(source, "url", "")
+    if not target:
+        raise RuntimeError(
+            f"the oxbow engine needs a file path or an s3:// URL; {source.name} is a "
+            f"plain stream. Use --engine pipe for a stream-only source.")
+    handle = ox.from_fastq(target, batch_size=batch_size)
     connection.register("oxbow_reads", handle.dataset())
     connection.execute(f"""
         CREATE OR REPLACE VIEW {view} AS
@@ -111,11 +152,21 @@ def oxbow(connection, fastq: Path, view: str = "raw_reads",
     return Raw(view=view, _cleanup=[lambda: connection.unregister("oxbow_reads")])
 
 
-def polars_bio(connection, fastq: Path, view: str = "raw_reads") -> Raw:
-    """The DataFusion reader → Polars ``LazyFrame`` → DuckDB path."""
+def polars_bio(connection, source, view: str = "raw_reads") -> Raw:
+    """The DataFusion reader → Polars ``LazyFrame`` → DuckDB path.
+
+    Path-only: its reader opens the file itself, so a source that exists solely as a
+    stream cannot be handed to it. That is a real limitation of this engine, reported as
+    one rather than worked around by spooling the object to disk.
+    """
     import polars_bio as pb
 
-    frame = pb.scan_fastq(str(fastq))
+    local = getattr(source, "path", source)
+    if local is None:
+        raise RuntimeError(
+            f"the polars_bio engine needs a local file; {source.name} is a remote "
+            f"object. Use --engine oxbow (or pipe) for object-store sources.")
+    frame = pb.scan_fastq(str(local))
     connection.register("polars_reads", frame)
     connection.execute(f"""
         CREATE OR REPLACE VIEW {view} AS

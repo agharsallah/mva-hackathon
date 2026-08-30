@@ -59,3 +59,4 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [016](016-lineage-backfill-and-probe-ledger.md) | Which bytes produced each table, and who spent which oracle submission? |
 | [017](017-the-research-record.md) | Can the investigation itself be made machine-readable? **The last platform entry** — from 018 every entry is a test bound to a hypothesis under a research goal ([`../../method.md`](../../method.md)). |
 | [018](018-fastq-conversion-engine-choice.md) | Which library should parse 1.08 billion reads into Parquet? *(step-0 machinery, so no hypothesis — see the entry's opening note.)* |
+| [019](019-where-the-read-bytes-come-from.md) | Where do the FASTQ bytes come from, and can they be read straight out of the object store? *(step-0 machinery, no hypothesis.)* |

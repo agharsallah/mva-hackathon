@@ -13,6 +13,7 @@ import subprocess
 import pytest
 
 from mva.reads import bench, engines, scan, schema, store, verify
+from mva.reads import source as source_mod
 from mva.reads.convert import convert_file, peek
 
 READS = 5_000
@@ -162,7 +163,7 @@ def test_qc_shape(built):
 def test_round_trip_rebuilds_exact_name(delivery, built):
     fastq = store.discover(delivery)[0]
     facts = peek(fastq)
-    with gzip.open(fastq, "rt") as handle:
+    with gzip.open(fastq.path, "rt") as handle:
         name = handle.readline().rstrip("\n")
     assert facts.rebuild_name(1101, 1000, 2000, False,
                               "GTGACGGAGC+NGGACCGCCA") == name
@@ -205,3 +206,143 @@ def test_memory_limit_is_applied(delivery, tmp_path):
     fastq = store.discover(delivery)[0]
     done = convert_file(fastq, tmp_path, engine="pipe", memory_limit="512MB")
     assert done.rows == READS
+
+
+def test_minio_storage_directory_is_diagnosed(tmp_path):
+    """The exact shape that produced an IndexError on the server."""
+    fake = tmp_path / "objects"
+    obj = fake / "WGS_TEST_S16_L001_R1_001.fastq.gz"
+    (obj / "a1b2").mkdir(parents=True)
+    (obj / "xl.meta").write_bytes(b"XL2 ")
+    (obj / "a1b2" / "part.1").write_bytes(b"\x1f\x8b nonsense")
+    with pytest.raises(source_mod.NotADelivery) as caught:
+        source_mod.resolve(str(fake))
+    message = str(caught.value)
+    assert "MinIO's internal storage" in message
+    assert "--source s3" in message
+
+
+def test_empty_directory_says_what_it_looked_for(tmp_path):
+    with pytest.raises(source_mod.NotADelivery, match="_L00"):
+        source_mod.resolve(str(tmp_path))
+
+
+def test_missing_directory_is_named(tmp_path):
+    with pytest.raises(source_mod.NotADelivery, match="not a directory"):
+        source_mod.resolve(str(tmp_path / "nope"))
+
+
+def test_peek_rejects_a_file_that_is_not_gzip(tmp_path):
+    path = tmp_path / "WGS_TEST_S16_L001_R1_001.fastq.gz"
+    path.write_text("not gzip at all")
+    with pytest.raises(ValueError, match="not readable as gzip"):
+        peek(path)
+
+
+def test_peek_rejects_gzip_that_is_not_fastq(tmp_path):
+    path = tmp_path / "WGS_TEST_S16_L001_R1_001.fastq.gz"
+    with gzip.open(path, "wt") as handle:
+        handle.write("chr1\t100\tA\tG\n")
+    with pytest.raises(ValueError, match="does not start with a FASTQ record"):
+        peek(path)
+
+
+def test_peek_rejects_an_unparseable_read_name(tmp_path):
+    path = tmp_path / "WGS_TEST_S16_L001_R1_001.fastq.gz"
+    with gzip.open(path, "wt") as handle:
+        handle.write("@shortname\nACGT\n+\nFFFF\n")
+    with pytest.raises(ValueError, match="Illumina 8-field form"):
+        peek(path)
+
+
+def _streamed(fastq):
+    """The same reads, presented the way an object-store source is: no local path."""
+    return source_mod.Source(name=fastq.name, path=None, size=fastq.size,
+                             open_stream=fastq.open_stream)
+
+
+def test_pipe_engine_converts_a_stream_only_source(delivery, tmp_path):
+    """The s3:// case, exercised offline: only `pipe` can take a non-seekable stream."""
+    done = convert_file(_streamed(store.discover(delivery)[0]), tmp_path, engine="pipe")
+    assert done.rows == READS
+
+
+@pytest.mark.parametrize("engine,message", [("oxbow", "path or an s3:// URL"),
+                                            ("polars_bio", "needs a local file")])
+def test_seeking_engines_refuse_a_stream_clearly(engine, message, delivery, tmp_path):
+    """A reader that must seek says so, and names the engine that can cope."""
+    if not engines.available(engine):
+        pytest.skip(f"{engine} not installed")
+    with pytest.raises(RuntimeError, match=message):
+        convert_file(_streamed(store.discover(delivery)[0]), tmp_path, engine=engine)
+
+
+def _range_server(directory):
+    """A localhost HTTP server that honours `Range:` — as MinIO does, and as
+    `http.server` does **not**. Without range support a reader silently falls back to
+    re-reading from the beginning, so a test built on the stock handler would prove
+    nothing about the object-store path."""
+    import http.server
+    import threading
+
+    class Handler(http.server.BaseHTTPRequestHandler):
+        def log_message(self, *args):
+            pass
+
+        def do_GET(self):
+            payload = (directory / self.path.lstrip("/")).read_bytes()
+            requested = self.headers.get("Range")
+            status, body = 200, payload
+            if requested and requested.startswith("bytes="):
+                start, _, end = requested[6:].partition("-")
+                first = int(start or 0)
+                last = int(end) if end else len(payload) - 1
+                status, body = 206, payload[first:last + 1]
+            self.send_response(status)
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Accept-Ranges", "bytes")
+            if status == 206:
+                self.send_header("Content-Range",
+                                 f"bytes {first}-{first + len(body) - 1}/{len(payload)}")
+            self.end_headers()
+            self.wfile.write(body)
+
+    server = http.server.ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    return server
+
+
+def test_oxbow_converts_over_http_range_requests(delivery, tmp_path):
+    """The object-store path, proven without an object store.
+
+    A presigned URL is an ordinary HTTP GET, so serving the same file over localhost
+    exercises what oxbow does against MinIO: open a URL and seek inside it.
+    """
+    if not engines.available("oxbow"):
+        pytest.skip("oxbow not installed")
+    fastq = store.discover(delivery)[0]
+    server = _range_server(fastq.path.parent)
+    try:
+        remote = source_mod.Source(
+            name=fastq.name, path=None, size=fastq.size,
+            url=f"http://127.0.0.1:{server.server_port}/{fastq.name}",
+            open_stream=fastq.open_stream)
+        done = convert_file(remote, tmp_path, engine="oxbow")
+        assert done.rows == READS
+    finally:
+        server.shutdown()
+
+
+def test_presigned_url_is_generated_for_the_right_object():
+    calls = {}
+
+    class FakeS3:
+        def generate_presigned_url(self, operation, ExpiresIn, Params):
+            calls.update(operation=operation, expires=ExpiresIn, params=Params)
+            return "https://minio.example/mva/source/x.fastq.gz?sig=abc"
+
+    url = source_mod.presigned_url(FakeS3(), "mva", "source/x.fastq.gz")
+    assert calls["operation"] == "get_object"
+    assert calls["params"] == {"Bucket": "mva", "Key": "source/x.fastq.gz"}
+    assert calls["expires"] == source_mod.PRESIGN_SECONDS
+    assert url.startswith("https://")

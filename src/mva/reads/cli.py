@@ -12,6 +12,7 @@ from pathlib import Path
 from ..warehouse.settings import object_store, setting
 from . import bench, scan, schema, store, verify
 from .engines import ENGINES
+from .source import NotADelivery
 
 
 def _s3_root(cfg) -> str:
@@ -27,13 +28,14 @@ def _connection(root: str):
     return duckdb.connect()
 
 
-def _sources(args) -> list[Path]:
-    directory = Path(args.source or setting("MVA_SOURCE_DIR")).expanduser()
-    fastqs = store.discover(directory) if directory.is_dir() else []
-    if not fastqs:
-        print(f"no paired FASTQ files found in {directory}", file=sys.stderr)
+def _sources(args) -> list:
+    """Resolve ``--source``, and explain a bad one instead of raising through it."""
+    spec = args.source or setting("MVA_SOURCE_DIR")
+    try:
+        return store.discover(spec)
+    except NotADelivery as error:
+        print(f"{error}", file=sys.stderr)
         sys.exit(2)
-    return fastqs
 
 
 def do_bench(args) -> int:
@@ -154,7 +156,9 @@ def _parser() -> argparse.ArgumentParser:
     def add(name, handler, help_text):
         p = sub.add_parser(name, help=help_text)
         p.set_defaults(handler=handler)
-        p.add_argument("--source", help="delivery directory (default: MVA_SOURCE_DIR)")
+        p.add_argument("--source", help="delivery directory, or 's3' / "
+                                        "'s3://bucket/prefix' to stream from the object "
+                                        "store (default: MVA_SOURCE_DIR)")
         p.add_argument("--root", help="store root: staging path or s3:// prefix "
                                       "(default: the object store)")
         return p
