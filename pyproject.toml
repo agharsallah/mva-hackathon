@@ -15,8 +15,12 @@ dependencies = [
 mva-explore = "mva.explore.cli:main"
 mva-warehouse = "mva.warehouse.cli:main"
 mva-science = "mva.science.cli:main"
+mva-reads = "mva.reads.cli:main"
 
 [dependency-groups]
+bench = [
+    "biobear>=0.23.7",
+]
 dev = ["pytest>=8"]
 
 [build-system]
