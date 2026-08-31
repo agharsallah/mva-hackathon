@@ -16,25 +16,19 @@ Two conventions make the set safe to re-run at any time:
 The SQL is written against DuckDB, which is doing the computation; only the final table
 lands in PostgreSQL. That is why these can join, aggregate and window freely without
 worrying about what the server would make of it.
+
+The registry is assembled from two files. This one holds everything derived from the
+**delivery itself**; :mod:`mva.warehouse.analysis_reference` holds everything that
+compares the delivery against the committed **public reference** tables. Both produce
+:class:`~mva.warehouse.derivation.Derivation` records and both land in the same
+:data:`DERIVATIONS` tuple, so the runner, the CLI and the tests see one registry.
 """
 
-from dataclasses import dataclass
+from .analysis_reference import REFERENCE_DERIVATIONS
+from .derivation import SOURCE, Derivation, resolve  # noqa: F401  (re-exported)
 
-#: Placeholder replaced with the fully-qualified ingest schema before execution.
-SOURCE = "{src}"
-
-
-@dataclass(frozen=True)
-class Derivation:
-    """One analysis: a name, what it answers, and the SELECT that answers it."""
-
-    name: str
-    question: str
-    sql: str
-    depends_on: tuple[str, ...] = ()
-
-
-DERIVATIONS: tuple[Derivation, ...] = (
+#: Derivations over the delivered callset and read profile.
+CALLSET_DERIVATIONS: tuple[Derivation, ...] = (
     Derivation(
         name="panel_gene_density",
         question="Which candidate gene carries the most variation per base sequenced?",
@@ -221,6 +215,9 @@ DERIVATIONS: tuple[Derivation, ...] = (
     ),
 )
 
+#: Every derivation the runner knows about, in execution order.
+DERIVATIONS: tuple[Derivation, ...] = CALLSET_DERIVATIONS + REFERENCE_DERIVATIONS
+
 #: Written alongside the outputs so a result in the database can be traced to a run.
 PROVENANCE_TABLE = "derivation_runs"
 
@@ -232,8 +229,3 @@ def by_name(name: str) -> Derivation:
             return derivation
     known = ", ".join(item.name for item in DERIVATIONS)
     raise KeyError(f"unknown derivation {name!r}; known: {known}")
-
-
-def resolve(sql: str, source_schema: str) -> str:
-    """Point a derivation's SQL at a concrete schema."""
-    return sql.replace(SOURCE, source_schema)

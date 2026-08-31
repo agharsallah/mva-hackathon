@@ -5,7 +5,8 @@ Four verb families, each runnable and inspectable on its own.
 The first is the **staging** step, which has no network at all.
 
 ``stage``
-    Normalise a profile directory into typed Parquet under ``build/warehouse/``. This is
+    Normalise a profile directory **and** the committed public reference tables
+    (``ressources/reference/``) into typed Parquet under ``build/warehouse/``. This is
     what ``pg-ingest`` reads, so it is the first step of every load.
 
 The second targets a **hosted PostgreSQL** — the one shared, concurrently-written store.
@@ -34,7 +35,14 @@ ingest.
 ``vcf-stage``
     Write the lossless all-text raw layer to Parquet.
 
-A fourth family targets the **object store** — the large immutable files kept on the
+A fourth verb stands alone because it is the only one that reaches a **third party**.
+
+``annotate-panel``
+    Ask Ensembl VEP REST what every allele inside the candidate panel does, and land the
+    answer in ``warehouse.panel_annotations``. ``--dry-run`` prints the batch plan without
+    sending a request.
+
+A fifth family targets the **object store** — the large immutable files kept on the
 server, queried in place over HTTP range requests so nothing is downloaded whole and no
 SSH session is needed.
 
@@ -48,7 +56,7 @@ SSH session is needed.
     Rewrite an object clustered by the columns you filter on, which is what makes
     range requests small.
 
-A fifth family covers the two **ledgers** — append-only records of things that cannot be
+A sixth family covers the two **ledgers** — append-only records of things that cannot be
 reconstructed after the fact.
 
 ``lineage-repair`` / ``lineage-backfill`` / ``lineage-list``
@@ -65,17 +73,20 @@ import sys
 from dataclasses import replace
 from pathlib import Path
 
+from . import cli_annotate
 from . import cli_ledger
 from . import cli_objects
 from . import cli_source
 from . import cli_vcf
 from . import postgres as pg
+from . import reference
 from .analysis import DERIVATIONS
 from .catalog import discover
 from .settings import Postgres, find_env
 from .stage import stage as stage_profile
 
 DEFAULT_PROFILE = Path("ressources/data-profile")
+DEFAULT_REFERENCE = reference.DEFAULT_ROOT
 DEFAULT_STAGE = Path("build/warehouse")
 
 
@@ -94,10 +105,11 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _do_stage(args) -> int:
-    """Normalise the profile directory into Parquet and report what was written."""
-    datasets = discover(args.profile)
+    """Normalise the profile and reference directories into Parquet, and report."""
+    datasets = discover(args.profile) + reference.datasets(args.reference)
     staged = stage_profile(args.profile, args.stagedir, datasets)
-    print(f"staged {len(staged)} tables from {args.profile} into {args.stagedir}")
+    print(f"staged {len(staged)} tables from {args.profile} and {args.reference} "
+          f"into {args.stagedir}")
     width = max((len(s.table) for s in staged), default=0)
     for item in staged:
         size = item.parquet.stat().st_size
@@ -144,6 +156,10 @@ def _do_pg_ingest(args) -> int:
     width = max((len(item.table) for item in landed), default=0)
     for item in landed:
         print(f"  {item.table:<{width}}  {item.rows:>7,} rows")
+    edged = reference.record_lineage(settings, landed)
+    if edged:
+        print(f"\nlineage edges appended to {settings.schema}.data_lineage for "
+              + ", ".join(edged))
     return 0
 
 
@@ -193,6 +209,8 @@ def _parser() -> argparse.ArgumentParser:
         "stage", help="normalise a profile directory into typed Parquet")
     stage_parser.add_argument("--profile", type=Path, default=DEFAULT_PROFILE,
                               help="directory of source tables to stage")
+    stage_parser.add_argument("--reference", type=Path, default=DEFAULT_REFERENCE,
+                              help="directory of public reference tables to stage")
     stage_parser.add_argument("--stagedir", type=Path, default=DEFAULT_STAGE,
                               help="where the staged Parquet lives")
     stage_parser.set_defaults(handler=_do_stage)
@@ -224,6 +242,7 @@ def _parser() -> argparse.ArgumentParser:
     pgquery.add_argument("sql", help="the statement to run")
 
     cli_vcf.register(subparsers)
+    cli_annotate.register(subparsers)
     cli_objects.register(subparsers)
     cli_source.register(subparsers)
     cli_ledger.register(subparsers)

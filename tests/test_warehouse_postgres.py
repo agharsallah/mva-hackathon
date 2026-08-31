@@ -11,9 +11,12 @@ from pathlib import Path
 
 import pytest
 
+from mva.warehouse import reference
 from mva.warehouse.analysis import DERIVATIONS, SOURCE, by_name, resolve
+from mva.warehouse.annotate import ANNOTATIONS_TABLE
 from mva.warehouse.catalog import NOTES, OVERRIDES, table_name
 from mva.warehouse.cli_vcf import RAW_TABLE
+from mva.warehouse.stage import SCALARS_TABLE
 from mva.warehouse.postgres import (InvalidIdentifier, Result, render_table,
                                     safe_identifier)
 from mva.warehouse.settings import Postgres, find_env, parse_env
@@ -108,11 +111,13 @@ class TestDerivations:
                     f"{item.name} declares {table} but does not select from it"
 
     def test_dependencies_are_tables_that_staging_produces(self):
-        # Two producers land tables in the ingest schema: `stage` + `pg-ingest` for the
-        # profile-derived tables the catalogue describes, and `vcf-stage` + `vcf-ingest`
-        # for the callset's raw layer. A derivation may read either.
+        # Four producers land tables in the ingest schema: `stage` + `pg-ingest` for the
+        # profile-derived tables the catalogue describes and for the committed public
+        # reference tables, `vcf-stage` + `vcf-ingest` for the callset's raw layer, and
+        # `annotate-panel` for the VEP answers. A derivation may read any of them.
         produced = ({dataset.table for dataset in OVERRIDES.values()} | set(NOTES)
-                    | {RAW_TABLE})
+                    | {dataset.table for dataset in reference.datasets()}
+                    | {RAW_TABLE, ANNOTATIONS_TABLE, SCALARS_TABLE})
         for item in DERIVATIONS:
             for table in item.depends_on:
                 assert table in produced, f"{item.name} depends on unproduced {table}"

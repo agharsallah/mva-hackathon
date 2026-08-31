@@ -14,6 +14,12 @@ This module is that description, and it is deliberately split in two:
   headerless table has no way to announce its own column names — and supplies them.
 
 Adding a case means adding overrides, never editing the sniffer.
+
+A dataset may also come from **outside** the profile directory and need **explicit
+typing**: the public reference tables in :mod:`mva.warehouse.reference` do, because
+``NA`` is gnomAD's null and a sniffer reading it as text would silently make every
+constraint metric a string. :attr:`Dataset.root` and :attr:`Dataset.transform` carry those
+two cases without a second staging path.
 """
 
 from dataclasses import dataclass
@@ -34,6 +40,12 @@ class Dataset:
     of the file is taken as the header, which is the common case. ``description`` is
     carried through to the warehouse's own catalogue table so someone opening the database
     cold can see what each table is without going back to the repository.
+
+    ``root`` pins a dataset to its own directory, so one staging run can draw from the
+    profile directory *and* from the committed reference tables. ``transform`` is a SQL
+    select list applied over the parsed file before Parquet is written; when it is set the
+    file is read **all-VARCHAR** and the transform does every cast, which is the only way
+    to say "``NA`` here means null" rather than letting a sniffer decide.
     """
 
     table: str
@@ -41,10 +53,16 @@ class Dataset:
     shape: str = "table"
     columns: tuple[str, ...] = ()
     description: str = ""
+    root: str = ""
+    transform: str = ""
 
     def path(self, root: Path) -> Path:
-        """Where this dataset's source file lives under a profile directory."""
-        return root / self.source
+        """Where this dataset's source file lives.
+
+        Under its own ``root`` when it declares one, otherwise under the profile directory
+        the staging run was pointed at.
+        """
+        return (Path(self.root) if self.root else root) / self.source
 
 
 #: Files whose shape or column names cannot be read off the file itself.

@@ -126,13 +126,14 @@ def stage(root: Path, outdir: Path, datasets: list[Dataset] | None = None) -> li
             all_scalars += [[dataset.source, key, value] for key, value in scalars.items()]
             if not rows:
                 continue
-            parquet = _write_parquet(connection, outdir, dataset.table, columns, rows)
+            parquet, written = _write_parquet(connection, outdir, dataset.table,
+                                              columns, rows, dataset.transform)
             staged.append(Staged(dataset.table, parquet, len(rows),
-                                 safe_columns(columns), dataset.description))
+                                 written, dataset.description))
 
         if all_scalars:
-            parquet = _write_parquet(connection, outdir, SCALARS_TABLE,
-                                     ("source", "key", "value"), all_scalars)
+            parquet, _ = _write_parquet(connection, outdir, SCALARS_TABLE,
+                                        ("source", "key", "value"), all_scalars)
             staged.append(Staged(SCALARS_TABLE, parquet, len(all_scalars),
                                  ("source", "key", "value"),
                                  "Rollup totals stated at the foot of a source file."))
@@ -146,7 +147,7 @@ def _write_catalog(connection, outdir: Path, staged: list[Staged]) -> Staged:
     columns = ("table_name", "n_rows", "n_columns", "columns", "description")
     rows = [[s.table, str(s.rows), str(len(s.columns)), ",".join(s.columns), s.description]
             for s in staged]
-    parquet = _write_parquet(connection, outdir, CATALOG_TABLE, columns, rows)
+    parquet, _ = _write_parquet(connection, outdir, CATALOG_TABLE, columns, rows)
     return Staged(CATALOG_TABLE, parquet, len(rows), columns,
                   "What every other table in this warehouse holds.")
 
@@ -183,11 +184,20 @@ def safe_columns(names: tuple[str, ...]) -> tuple[str, ...]:
 
 
 def _write_parquet(connection, outdir: Path, table: str,
-                   columns: tuple[str, ...], rows: list[list[str]]) -> Path:
-    """Write tidy rows to Parquet, letting DuckDB infer each column's type.
+                   columns: tuple[str, ...], rows: list[list[str]],
+                   transform: str = "") -> tuple[Path, tuple[str, ...]]:
+    """Write tidy rows to Parquet and report the path and the columns that landed.
 
-    The intermediate TSV exists only so DuckDB's CSV sniffer can do the typing; it is
-    removed once the Parquet is on disk.
+    The intermediate TSV exists only so DuckDB can read the rows back; it is removed once
+    the Parquet is on disk.
+
+    Two typing regimes, and which one applies is the dataset's decision:
+
+    * **No transform** — DuckDB's CSV sniffer infers every type, over the whole file. One
+      inference engine, shared with anyone typing ``read_csv`` by hand.
+    * **A transform** — the file is read all-VARCHAR and the transform's select list does
+      every cast explicitly. A sniffer cannot know that ``NA`` is a null or that a
+      ``chr``-prefixed contig has to lose its prefix; a source that needs either says so.
     """
     tsv = outdir / f"{table}.tsv"
     with tsv.open("w", encoding="utf-8", newline="") as handle:
@@ -199,7 +209,11 @@ def _write_parquet(connection, outdir: Path, table: str,
     # `COPY ... TO` will not accept a bound parameter for its destination, and building
     # that path by string interpolation is how a filename with a quote in it becomes an
     # injection. The relation API takes both paths as values, so neither is ever parsed.
-    relation = connection.read_csv(str(tsv), delimiter="\t", header=True, sample_size=-1)
+    relation = connection.read_csv(str(tsv), delimiter="\t", header=True,
+                                   sample_size=-1, all_varchar=bool(transform))
+    if transform:
+        relation = relation.query("src", f"SELECT {transform} FROM src")
+    written = tuple(relation.columns)
     relation.write_parquet(str(parquet), compression="zstd")
     tsv.unlink()
-    return parquet
+    return parquet, written
