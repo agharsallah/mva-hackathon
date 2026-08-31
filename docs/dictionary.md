@@ -224,6 +224,12 @@ flowchart LR
 **Ti/Tv ratio** (also written **ts/tv**) — a sanity number: transitions divided by transversions (two chemically different kinds of letter swap). Real human WGS lands around 2.0–2.1. Way off = something is wrong.
 *Example: 1.94 here — slightly noisy, acceptable.*
 
+**bcftools stats section code** — the first column of every `bcftools stats` line, saying which table that line belongs to. One file holds a dozen stacked tables rather than one, so the code is how you tell them apart. Software analogy: a tagged-union log format — one line type per tag, and you dispatch on the tag. The ones this project reads: **SN** (summary numbers: records, SNPs, indels, multiallelic sites), **TSTV** (one row, the [Ti/Tv ratio](#4-quality-what-can-go-wrong-and-how-you-see-it)), **ST** (substitution spectrum: one row per `A>C`-style swap), **IDD** ([indel](#3-variants-the-differences-you-hunt) length distribution, negative = deletion), **DP** ([read depth](#2-reading-dna-sequencing-and-the-files-it-makes) distribution).
+*Example:* `ST	0	A>G	656121` — section `ST`, sample id `0`, 656,121 A-to-G substitutions.
+
+**Quality binning / quantised quality** — modern Illumina instruments do not emit every possible [Phred score](#2-reading-dna-sequencing-and-the-files-it-makes). They round each one to a handful of representative values so the [FASTQ](#2-reading-dna-sequencing-and-the-files-it-makes) compresses far better. So a "quality distribution" is genuinely a few tall bars, not a smooth curve — and plotting it as a density curve invents detail the instrument never recorded. Software analogy: lossy quantisation before compression, like reducing a colour palette.
+*Example:* this NovaSeq run uses exactly four levels — Phred 2, 11, 25 and 37 — measured in [`step-0/methodology/028`](step-0/methodology/028-viz-api.md).
+
 **Sentieon** — a commercial re-implementation of the GATK variant-calling algorithms, much faster and giving near-identical results. Common in clinical labs, so you meet it in VCF headers rather than by choosing it.
 *Example: this callset was made by Sentieon Haplotyper → Sentieon GVCFtyper → GATK `VariantFiltration`. Reading that chain tells you it is a **small-variant pipeline only** — no structural variants will ever appear in this file.*
 

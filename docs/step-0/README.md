@@ -56,6 +56,8 @@ the pieces.
 | Lineage + probe ledger | `warehouse.object_inventory`, `warehouse.data_lineage` (append-only edges), `warehouse.probe_ledger` (oracle budget) | `src/mva/warehouse/lineage.py`, `probes.py` | `mva-warehouse lineage-*`, `probe-*` |
 | Read store | All FASTQ reads converted to Parquet shards at `s3://mva/reads/lane=<n>/read=<1|2>/`, verified against the source; k-mer probe scans answered in minutes via Aho-Corasick | `src/mva/reads/` (`convert.py`, `engines.py`, `scan.py`, `verify.py`) | `mva-reads convert`, `verify`, `scan`, `count`, `qc`, `sql`, `status`, `bench` |
 | HTTP API | Every `mva-reads` verb over HTTP; long verbs return `202` + a job id, jobs persisted and cancellable; `X-API-Key` auth | `src/mva/reads/api/` (`app.py`, `jobs.py`, `models.py`, `runners.py`) | `mva-reads-api --host 0.0.0.0 --port 8765` |
+| Viz API | Warehouse + results tables, parsed `bcftools stats`, read-store aggregates and a reads-API proxy served as JSON for the browser; CORS, disk cache, `{data, cached_at, source}` envelope | `src/mva/viz/` | `mva-viz-api` (port 8900) |
+| Viz app | React app rendering the whole data profile — 7 pages, 23 exhibits, honest 3D only where the data is spatial; falls back to labelled fixtures when the API is down | `app/` | `cd app && npm run dev` (port 5173) |
 
 Three ways to read the data, one contract:
 
@@ -91,6 +93,8 @@ every methodology entry is a test bound to a claim. That loop is
 | [`exploration.md`](exploration.md) | How do I actually *look* at the data? Exhibits, graded checks, one interactive page. |
 | [`reads-storage.md`](reads-storage.md) | Where do the raw reads go, and what can you ask of them? **Built** — 1,071,835,104 reads as queryable Parquet. |
 | [`reads-api.md`](reads-api.md) | How do I query the store without a shell on the server? Every `mva-reads` verb over HTTP, long jobs handled. |
+| [`viz-api.md`](viz-api.md) | How does the browser read the warehouse? Every table and read-store aggregate as JSON — `mva-viz-api`, one origin, disk-cached. |
+| [`viz-app.md`](viz-app.md) | How do I *see* the data? The React app — 7 pages, 23 exhibits, 2D + 3D, runs on fixtures when the API is down. |
 
 ## Decisions
 
@@ -107,6 +111,6 @@ Cross-step decisions — [no patient data](../notes/no-patient-data-in-the-repos
 
 ## Evidence
 
-[`methodology/`](methodology/) — entries 001–027, append-only, one per executed run. 001–006
+[`methodology/`](methodology/) — entries 001–029, append-only, one per executed run. 001–006
 are first contact with the delivery; 007–017 are the warehouse platform; 018–027 are the
-read store and its API.
+read store and its API; 028–029 are the viz API and the React app.
