@@ -3,10 +3,12 @@ import { Chip, Exhibit } from '../../components/Exhibit';
 import { Plot, baseLayout } from '../../components/Plot';
 import { Loaded } from '../../components/QueryState';
 import { Select } from '../../components/Controls';
-import { useLocus, usePanelGenes } from '../../api/hooks';
-import type { LocusVariant } from '../../api/types';
+import { useGeneStructure, useLocus, usePanelGenes } from '../../api/hooks';
+import type { GeneStructure, LocusVariant } from '../../api/types';
 import { C } from '../../lib/palette';
 import { dec, int } from '../../lib/format';
+import { geneAxis, geneTrack } from './locus/geneTrack';
+import { DomainLollipop } from './DomainLollipop';
 
 const GT_SYMBOL: Record<string, string> = { '0/1': 'circle', '1/1': 'square', '1/2': 'star' };
 
@@ -17,61 +19,113 @@ function filterColor(f: string): string {
 /**
  * Locus explorer: every record inside one candidate gene, laid out along the gene.
  *
- * Two stacked tracks share the x axis, the way a genome browser does it. The top track is
- * the caller's confidence, the bottom is the allele balance — a heterozygous record whose
- * VAF is far off 0.5 is either a mosaic event or an artefact, and either way it is worth a
- * second look.
+ * Three stacked tracks share the x axis, the way a genome browser does it. The top track
+ * is the caller's confidence, the middle is the allele balance — a heterozygous record
+ * whose VAF is far off 0.5 is either a mosaic event or an artefact, and either way it is
+ * worth a second look — and the bottom is the gene's own structure from Ensembl, so a
+ * record can be read against the exon it falls in instead of against a bare number line.
  *
  * Positions on the x axis are real patient coordinates when the live API is answering, so
  * they are never persisted. The offline fixture uses a synthetic 1000, 2000, 3000 ladder.
+ * Exon coordinates are public reference data and *are* committed in the fixture.
+ *
+ * Under the tracks, {@link DomainLollipop} re-plots the same gene in amino-acid space.
  */
 export function LocusExplorer() {
   const genes = usePanelGenes();
   const [gene, setGene] = useState<string>('BUB1B');
   const q = useLocus(gene);
+  const anatomy = useGeneStructure(gene);
+  const structure = anatomy.data?.data;
 
   const options = (genes.data?.data ?? []).map((g) => ({ value: g.gene, label: `${g.gene} (${g.n_all})` }));
 
   return (
-    <Exhibit
-      title="Locus explorer — every record inside one candidate gene"
-      controls={
-        <>
-          <Select
-            value={gene}
-            options={options.length > 0 ? options : [{ value: 'BUB1B', label: 'BUB1B' }]}
-            onChange={setGene}
-            label="gene"
-          />
-          <span className="text-[11px] text-zinc-600">live query ≈5 s, then cached</span>
-        </>
-      }
-      legend={
-        <>
-          Top track: y = QUAL, the caller's confidence in the site. Bottom track: y = VAF, with a dashed line at{' '}
-          <span className="font-mono">0.5</span>. Both share the x axis (position along the gene). Colour ={' '}
-          <Chip color={C.good}>PASS</Chip> vs <Chip color={C.broken}>suppressed</Chip>. Marker shape = genotype:
-          ● 0/1 heterozygous, ■ 1/1 homozygous variant, ★ 1/2 two different variant alleles (compound het by
-          genotype). Marker size ∝ read depth.
-        </>
-      }
-      reading="Suppressed records are usually the low-QUAL ones, as expected — but check whether any ★ (1/2) record is suppressed. That would be a compound-heterozygous site inside a candidate gene, hidden behind a heuristic."
-      source={q.data?.source}
-      cachedAt={q.data?.cachedAt}
-      origin={q.data?.origin}
-    >
-      {!gene ? (
-        <p className="p-6 text-center text-sm text-zinc-500">pick a gene</p>
-      ) : (
-        <Loaded query={q} height={520}>
-          {(rows) => <Tracks rows={rows} gene={gene} />}
-        </Loaded>
-      )}
-    </Exhibit>
+    <div className="space-y-4">
+      <Exhibit
+        title="Locus explorer — every record inside one candidate gene"
+        controls={
+          <>
+            <Select
+              value={gene}
+              options={options.length > 0 ? options : [{ value: 'BUB1B', label: 'BUB1B' }]}
+              onChange={setGene}
+              label="gene"
+            />
+            <span className="text-[11px] text-zinc-600">live query ≈5 s, then cached</span>
+          </>
+        }
+        legend={
+          <>
+            Top track: y = QUAL, the caller's confidence in the site. Middle track: y = VAF, with a dashed line
+            at <span className="font-mono">0.5</span>. Bottom track: the gene itself —{' '}
+            <Chip color={C.machinery}>filled boxes are exons</Chip> (the stretches that survive into the
+            protein), the thin line between them is intron (spliced out and discarded), and the arrow marks the
+            TSS (transcription start site) pointing the way the gene is read. Hover an exon for its number and
+            span. All three share the x axis (position along the gene). Marker colour ={' '}
+            <Chip color={C.good}>PASS</Chip> vs <Chip color={C.broken}>suppressed</Chip>. Marker shape =
+            genotype: ● 0/1 heterozygous, ■ 1/1 homozygous variant, ★ 1/2 two different variant alleles
+            (compound het by genotype). Marker size ∝ read depth.
+          </>
+        }
+        reading="Suppressed records are usually the low-QUAL ones, as expected — but check whether any ★ (1/2) record is suppressed, and whether it sits over an exon. A suppressed 1/2 record inside an exon is a compound-heterozygous coding site hidden behind a heuristic."
+        source={q.data?.source}
+        cachedAt={q.data?.cachedAt}
+        origin={q.data?.origin}
+      >
+        {!gene ? (
+          <p className="p-6 text-center text-sm text-zinc-500">pick a gene</p>
+        ) : (
+          <>
+            <Loaded query={q} height={560}>
+              {(rows) => <Tracks rows={rows} gene={gene} structure={structure} />}
+            </Loaded>
+            <GeneTrackNote gene={gene} structure={structure} failed={anatomy.error} />
+          </>
+        )}
+      </Exhibit>
+      {gene && <DomainLollipop gene={gene} />}
+    </div>
   );
 }
 
-function Tracks({ rows, gene }: { rows: LocusVariant[]; gene: string }) {
+/** One line under the tracks: what the gene track is showing, or honestly why it is not. */
+function GeneTrackNote({
+  gene,
+  structure,
+  failed,
+}: {
+  gene: string;
+  structure?: GeneStructure;
+  failed: Error | null;
+}) {
+  if (failed) {
+    return (
+      <p className="mt-2 text-[11px] text-red-400">
+        gene track unavailable — {failed.message}. Nothing is drawn rather than a guessed structure.
+      </p>
+    );
+  }
+  if (!structure) return null;
+  return (
+    <p className="mt-2 text-[11px] text-zinc-500">
+      gene track: <span className="font-mono text-zinc-300">{structure.transcript}</span>, the canonical
+      transcript of {gene} — {int(structure.exons.length)} exons on the{' '}
+      {structure.strand >= 0 ? 'forward (+)' : 'reverse (−)'} strand, {int(structure.protein_length ?? 0)} amino
+      acids. Exon 1 is the first one <em>transcribed</em>, which on the reverse strand is the rightmost box.
+    </p>
+  );
+}
+
+function Tracks({
+  rows,
+  gene,
+  structure,
+}: {
+  rows: LocusVariant[];
+  gene: string;
+  structure?: GeneStructure;
+}) {
   if (rows.length === 0) {
     return <p className="p-6 text-center text-sm text-zinc-500">no records returned for {gene}</p>;
   }
@@ -90,11 +144,15 @@ function Tracks({ rows, gene }: { rows: LocusVariant[]; gene: string }) {
     'QUAL %{y:.1f}<br>%{customdata[0]} · %{customdata[1]}<br>depth %{customdata[2]}×' +
     '<br>VAF %{customdata[3]}<extra></extra>';
 
+  // The gene track is additive: without it the two original tracks simply take the space.
+  const anatomy = structure ? geneTrack(structure) : null;
+
   return (
     <>
       <Plot
-        height={480}
+        height={520}
         data={[
+          ...(anatomy?.traces ?? []),
           ...groups.map((g) => ({
             type: 'scatter',
             mode: 'markers',
@@ -137,7 +195,14 @@ function Tracks({ rows, gene }: { rows: LocusVariant[]; gene: string }) {
         ]}
         layout={baseLayout({
           margin: { l: 62, r: 16, t: 8, b: 46 },
-          grid: { rows: 2, columns: 1, pattern: 'coupled', roworder: 'top to bottom' },
+          grid: {
+            rows: anatomy ? 3 : 2,
+            columns: 1,
+            pattern: 'coupled',
+            roworder: 'top to bottom',
+          },
+          barmode: 'overlay',
+          annotations: anatomy?.annotations ?? [],
           xaxis: {
             title: { text: 'position along the gene', font: { color: C.inkDim, size: 12 } },
             gridcolor: C.grid,
@@ -148,15 +213,18 @@ function Tracks({ rows, gene }: { rows: LocusVariant[]; gene: string }) {
             title: { text: 'QUAL', font: { color: C.inkDim, size: 12 } },
             gridcolor: C.grid,
             tickfont: { color: C.inkDim, size: 10 },
-            domain: [0.56, 1],
+            domain: anatomy ? [0.62, 1] : [0.56, 1],
           },
           yaxis2: {
             title: { text: 'VAF', font: { color: C.inkDim, size: 12 } },
             gridcolor: C.grid,
             tickfont: { color: C.inkDim, size: 10 },
-            domain: [0, 0.44],
+            domain: anatomy ? [0.16, 0.56] : [0, 0.44],
             range: [0, 1.05],
           },
+          // `yaxis3` is the axis id GENE_AXIS ('y3') refers to; the track is only laid
+          // out when the structure actually arrived.
+          yaxis3: anatomy ? geneAxis([0, 0.1]) : undefined,
           shapes: [
             {
               type: 'line',
