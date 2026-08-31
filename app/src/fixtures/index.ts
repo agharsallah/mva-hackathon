@@ -23,6 +23,7 @@ import {
   tstvFixture,
 } from './callset';
 import { catalogObjectsFixture } from './catalog-objects';
+import { catalogColumnsFixture } from './catalog-semantics';
 import { catalogTablesFixture } from './catalog-tables';
 import {
   locusFixture,
@@ -78,6 +79,8 @@ const registry: Record<string, Builder> = {
   '/api/reads/quality-levels': () => env(qualityLevelsFixture, 'sampled per partition'),
   '/api/catalog/objects': () => env(catalogObjectsFixture, 'object ledger + delivery manifest'),
   '/api/catalog/tables': () => env(catalogTablesFixture, 'warehouse catalogue + meta.lineage'),
+  '/api/catalog/columns': () =>
+    env(catalogColumnsFixture, 'information_schema.columns + the column-meaning registry'),
   '/api/provenance/lineage': () => env(lineageFixture, 'meta.lineage'),
   '/api/provenance/derivations': () => env(derivationsFixture, 'meta.derivations'),
   '/api/provenance/sources': () => env(sourcesFixture, 'delivery manifest'),

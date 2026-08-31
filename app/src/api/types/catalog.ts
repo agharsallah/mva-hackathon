@@ -46,4 +46,25 @@ export interface CatalogTableRow {
   source_kind: string | null;
   source_ref: string | null;
   tool: string | null;
+  /**
+   * The verb that writes the table, and whether it replaces it or appends to it —
+   * e.g. `mva-warehouse stage + pg-ingest`, `append-only ledger — written by …`.
+   * Null when the server's semantics registry does not know the table.
+   */
+  created_by: string | null;
+  /** One sentence: the reason the table exists. Null for the same reason. */
+  why: string | null;
+}
+
+/** GET /api/catalog/columns — one row per column of every warehouse/results table. */
+export interface CatalogColumnRow {
+  schema: string;
+  table: string;
+  column: string;
+  /** The SQL type as `information_schema` spells it, e.g. `character varying`. */
+  data_type: string;
+  /** 1-based position of the column in the table. */
+  ordinal: number;
+  /** What the column means. Null = nothing describes it; render the gap, never blank. */
+  meaning: string | null;
 }

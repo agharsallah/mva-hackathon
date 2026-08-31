@@ -2,6 +2,7 @@ import { Callout, Explainer } from '../components/Explainer';
 import { Section } from '../components/Controls';
 import { DeliveryInventory } from './catalog/DeliveryInventory';
 import { TableCatalog } from './catalog/TableCatalog';
+import { TableExplainer } from './catalog/TableExplainer';
 import { ReadStoreCard } from './catalog/ReadStoreCard';
 
 /**
@@ -75,6 +76,16 @@ export default function CatalogPage() {
               'our own record of when each object first landed. Objects that predate it have no first-upload time, so the store’s last-modified stamp is shown instead — an upper bound, not the arrival',
           },
           {
+            term: 'schema (namespace)',
+            plain:
+              'a named group of tables inside one database, the way a package groups modules. Two schemas here: `warehouse` for ingested data and the hand-written ledgers, `results` for everything computed from them',
+          },
+          {
+            term: 'replaced vs appended vs rebuilt',
+            plain:
+              'three things a re-run can do to a table. `CREATE OR REPLACE` throws the old contents away (an ingest); an append-only ledger only ever gains rows, so history survives; a derivation rebuilds its output from scratch, which is safe precisely because it is a pure function of its inputs',
+          },
+          {
             term: 'partition / shard',
             plain:
               'a partition is a slice of a dataset addressable on its own (here: one lane × read direction); a shard is one physical file inside it. Sharding is what lets a query read part of a store instead of all of it',
@@ -103,6 +114,13 @@ export default function CatalogPage() {
         subtitle="every warehouse and results table, with the lineage edge that produced it — filterable by name or description"
       >
         <TableCatalog />
+      </Section>
+
+      <Section
+        title="What is actually in each table?"
+        subtitle="one expandable card per table: why it exists, which command writes it, and what every column means"
+      >
+        <TableExplainer />
       </Section>
 
       <Section

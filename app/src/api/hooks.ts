@@ -10,6 +10,7 @@ import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import { get, getBare, type Params, type Result } from './client';
 import type {
   AlleleBalanceRow,
+  CatalogColumnRow,
   CatalogObjectRow,
   CatalogTableRow,
   ContigDensityRow,
@@ -89,6 +90,7 @@ export const useQualityLevels = () => useEndpoint<QualityLevelRow[]>('/api/reads
 
 export const useCatalogObjects = () => useEndpoint<CatalogObjectRow[]>('/api/catalog/objects');
 export const useCatalogTables = () => useEndpoint<CatalogTableRow[]>('/api/catalog/tables');
+export const useCatalogColumns = () => useEndpoint<CatalogColumnRow[]>('/api/catalog/columns');
 
 export const useLineage = () => useEndpoint<LineageRow[]>('/api/provenance/lineage');
 export const useDerivations = () => useEndpoint<DerivationRow[]>('/api/provenance/derivations');

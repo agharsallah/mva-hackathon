@@ -1,4 +1,5 @@
 import type { CatalogTableRow } from '../api/types';
+import { CREATION } from './catalog-semantics';
 
 /**
  * FIXTURE — the warehouse and results table catalogue, one row per table.
@@ -6,8 +7,12 @@ import type { CatalogTableRow } from '../api/types';
  * Row counts and descriptions fill a shape; the live API reads `information_schema`, the
  * warehouse catalogue and the lineage log. The rows exercise every gap in the contract:
  * two carry **no lineage edge** (`warehouse.gnomad_af_panel`, `results.kmer_counts`), one
- * carries **no description** (`warehouse.vep_staging`), and `warehouse.variants_raw` states
- * in its description that its count is approximate rather than exact.
+ * carries **no description** (`warehouse.vep_staging`), one carries **no `created_by` and
+ * no `why`** (`results.kmer_counts`, absent from `CREATION`), and `warehouse.variants_raw`
+ * states in its description that its count is approximate rather than exact.
+ *
+ * `created_by` and `why` come from `fixtures/catalog-semantics.ts`, keyed by bare table
+ * name exactly as the server's registry is.
  */
 
 interface TableSeed {
@@ -22,9 +27,12 @@ interface TableSeed {
 }
 
 function table(schema: string, s: TableSeed): CatalogTableRow {
+  const [created_by, why] = CREATION[s.table] ?? [null, null];
   return {
     schema,
     table: s.table,
+    created_by,
+    why,
     description: s.description,
     rows: s.rows,
     produced_at: s.produced_at ?? null,
