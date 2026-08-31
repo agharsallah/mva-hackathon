@@ -62,7 +62,8 @@ uv run mva-reads status                                        # what the store 
 The same verbs are served over HTTP by `mva-reads-api` — long queries become pollable
 jobs, so nothing needs a shell on the server. See [`reads-api.md`](reads-api.md).
 
-`scan --kmer` is the **mapping-free k-mer strike**: does this exact sequence appear in the
+`scan --kmer` is the **mapping-free k-mer strike**, and probes batch: twenty in one
+pass cost 1.8× one ([`methodology/027`](methodology/027-aho-corasick-confirmed.md)): does this exact sequence appear in the
 raw reads, forward or reverse-complemented? It answers from the reads themselves, with no
 aligner and no index build — the check that a variant call is really supported by data.
 
