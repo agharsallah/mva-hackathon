@@ -38,3 +38,16 @@ def to_submission_contig(chrom: str) -> str:
     if name in ("M", "MT"):
         return "chrM"
     return f"chr{name}"
+
+
+def to_vcf_contig(chrom: str) -> str:
+    """Return the **bare** contig for a ``chr``-prefixed name — the other direction.
+
+    Needed because the panel BED is chr-prefixed while the callset is bare, so any
+    region query built from the panel has to be stripped on the way in. It lives beside
+    :func:`to_submission_contig` on purpose: ``docs/step-0/notes/chr-prefix-bridge.md``
+    makes this module the single owner of *both* directions, and a second normalizer
+    anywhere else is the failure mode that note exists to prevent.
+    """
+    name = chrom.strip().removeprefix("chr")
+    return "M" if name in ("M", "MT") else name

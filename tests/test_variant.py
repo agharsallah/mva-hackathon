@@ -40,3 +40,22 @@ def test_mitochondrial_contig_maps_to_chrM():
 def test_position_must_be_positive():
     with pytest.raises(ValueError):
         Variant.from_vcf("15", 0, "T", "C")
+
+
+def test_panel_contig_loses_chr_prefix_for_a_callset_query():
+    # The other direction: the panel BED says "chr15", the callset says "15". A region
+    # query built from the panel without stripping matches nothing at all — and matching
+    # nothing looks exactly like a gene with no variants.
+    from mva.pipeline.variant import to_vcf_contig
+
+    assert to_vcf_contig("chr15") == "15"
+    assert to_vcf_contig("15") == "15"
+    assert to_vcf_contig(" chrX ") == "X"
+
+
+def test_both_mitochondrial_spellings_survive_the_round_trip():
+    from mva.pipeline.variant import to_submission_contig, to_vcf_contig
+
+    for spelling in ("M", "MT", "chrM"):
+        assert to_submission_contig(spelling) == "chrM"
+        assert to_vcf_contig(spelling) == "M"
