@@ -87,6 +87,12 @@ flowchart LR
 
 **Transcript** — one specific version of a recipe (a gene can be spliced several ways). **MANE Select** = the one official version everyone agrees to quote.
 
+**Canonical transcript** — the one version Ensembl nominates as the gene's representative, and the one every tool reports against by default. It matters that everybody uses the *same* one: an exon number, a domain boundary and a variant's amino-acid position are only comparable if they are all measured on the same transcript. *Example:* `ENST00000287598` for BUB1B; Ensembl writes the pointer with a version suffix (`.11`) that the transcript's own id lacks.
+
+**Strand** — which of the DNA's two mirrored strands a gene is read from. **Forward / plus (`+1`)** reads left-to-right along the coordinate axis, **reverse / minus (`-1`)** reads right-to-left. Consequence: on a minus-strand gene, exon 1 is the *rightmost* box on a chart. *Example:* TP53 is `-1`, BUB1B is `+1`.
+
+**TSS (transcription start site)** — the first base actually copied into the transcript, i.e. where reading begins. On the minus strand it is the gene's *high* coordinate.
+
 **Allele** — one copy of a gene. You have 2 copies of every gene: one from each parent.
 
 ```mermaid
@@ -976,6 +982,12 @@ flowchart LR
 ![BubR1 domain map with a null allele and a hypomorph allele](assets/bubr1-domains.svg)
 
 > **Legend** — gray bar: the whole protein, bead 1 to bead 1050 · coloured blocks: named working parts · red arrow: the null allele · black arrow: the hypomorph allele.
+
+**Domain database (Pfam, SMART, PROSITE, Gene3D, SUPERFAMILY, CDD, PRINTS)** — seven independent catalogues that each scan a protein sequence and call out the domains they recognise. They overlap on purpose: the same region called by four of them is agreement, not duplication. **InterPro** is the umbrella that maps their accessions onto one shared id. *Example:* BUBR1's N-terminal region is `PF08311` to Pfam, `SM00777` to SMART and `PS51489` to PROSITE — all three `IPR013212` in InterPro. Ensembl serves them from `/overlap/translation/<protein id>`, mixed in with things that are *not* domains (PDB cross-references, AlphaFold models, disorder and coiled-coil predictions), so the list has to be filtered.
+
+**Lollipop plot** — the standard way to draw variants against a protein: the x axis is amino-acid position, domains are bars along it, and each variant is a stem with a coloured head at its position. It answers "does this change hit a working part?" — the question a genomic coordinate cannot.
+
+**Protein position (`protein_start`)** — which bead in the chain a variant changes, counted from 1. VEP reports it per transcript, and it is **absent** for anything outside the coding sequence — an intronic or splice-region change has no amino acid to name. *Example:* a `missense_variant` at `protein_start: 349` swaps bead 349.
 
 ---
 

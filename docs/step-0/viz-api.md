@@ -11,8 +11,11 @@ added and measured live against the hosted database
 ([`methodology/034`](methodology/034-data-catalog-endpoints.md)). Re-verified 2026-08-31
 when `/api/catalog/columns` was added and `/api/catalog/tables` gained `created_by` and
 `why`, measured live against the hosted database
-([`methodology/036`](methodology/036-table-semantics-registry.md)). Covered by
-`tests/test_viz_api.py`, `tests/test_viz_units.py`, `tests/test_viz_catalog.py` and
+([`methodology/036`](methodology/036-table-semantics-registry.md)). Re-verified 2026-08-31
+when `/api/callset/funnel` was added and measured live against the hosted database
+([`methodology/039`](methodology/039-candidate-funnel.md)). Covered by
+`tests/test_viz_api.py`, `tests/test_viz_units.py`, `tests/test_viz_catalog.py`,
+`tests/test_viz_funnel.py` and
 `tests/test_catalog_semantics.py`, mocked
 below the API. The reads-API
 proxy routes were verified only on their **503** path, because
@@ -78,6 +81,7 @@ so every chart reads a derived table instead:
 | gene constraint + ClinVar verdicts | `results.panel_gene_constraint` | 8 |
 | annotated panel alleles with genotypes | `results.panel_candidates` | 874 |
 | QC observed against published norms | `results.qc_observed_expected` | 12 |
+| the candidate waterfall, stage by stage | `results.candidate_funnel` | 9 |
 
 Those six tables are new derivations in `src/mva/warehouse/analysis.py`, built by
 `uv run mva-warehouse pg-derive`, each with a lineage edge. The five `stats_*` tables parse
@@ -100,6 +104,7 @@ came from; `cached_at` is non-null exactly when the payload came off disk.
 | `GET /api/genome/allele-balance` | `pg.results.allele_balance_flags` | live |
 | `GET /api/genome/contig-density` | `pg.results.contig_density` | live |
 | `GET /api/genome/density-bins?chrom=` | `pg.results.variant_density_bins` | live |
+| `GET /api/genome/baf-bins?chrom=` | `pg.results.baf_bins` | live |
 | `GET /api/callset/filters` | `pg.results.filter_impact` | live |
 | `GET /api/callset/genotypes` | `pg.warehouse.filter_gt_counts` | live |
 | `GET /api/callset/depth-distribution` | `pg.results.stats_dp` | live |
@@ -107,10 +112,13 @@ came from; `cached_at` is non-null exactly when the payload came off disk.
 | `GET /api/callset/tstv` | `pg.results.stats_tstv` | live, one object |
 | `GET /api/callset/indel-lengths` | `pg.results.stats_idd` | live |
 | `GET /api/callset/observed-expected` | `pg.results.qc_observed_expected` | live, 0.51 s, 12 rows |
+| `GET /api/callset/funnel` | `pg.results.candidate_funnel` | live, 0.48–0.54 s, 9 rows |
 | `GET /api/panel/genes` | 2 tables + the panel BED | live |
 | `GET /api/panel/constraint` | `pg.results.panel_gene_constraint` + the panel BED | live, 0.54 s, 8 rows |
 | `GET /api/panel/annotations?gene=` | `pg.results.panel_candidates` | live, 0.57 s, 874 rows |
 | `GET /api/panel/locus?gene=` | `pg.warehouse.variants_raw` | 8.4 s → cached |
+| `GET /api/panel/gene-structure?gene=` | Ensembl REST ×3 + `pg.results.panel_candidates` | 5.2–9.5 s → cached (0.002 s warm) |
+| `GET /api/panel/het-pairs?gene=` | `pg.results.panel_het_pairs` | live, 0.47–0.99 s, 5–163 alleles |
 | `GET /api/reads/runs` | `s3://mva/reads/runs.parquet` | live |
 | `GET /api/reads/partitions` | `s3://mva/reads/manifest.parquet` | live |
 | `GET /api/reads/flowcell?lane=&read=&shard=` | one shard, 3 columns | 2.4 s → cached |
@@ -120,11 +128,20 @@ came from; `cached_at` is non-null exactly when the payload came off disk.
 | `GET /api/provenance/derivations` | `pg.results.derivation_runs` | live |
 | `GET /api/provenance/sources` | `pg.warehouse.source_objects` | live |
 | `GET /api/probe/ledger` | `pg.warehouse.probe_ledger` | live (0 rows today) |
+| `GET /api/science/hypotheses` | `pg.warehouse.hypotheses` | live, 0.7–1.4 s (**table absent today**) |
+| `GET /api/science/evidence` | `pg.warehouse.evidence` | live, 0.7–2.0 s (**table absent today**) |
 | `GET /api/catalog/objects` | `pg.warehouse.source_objects` + `source_files` | live, 0.5 s, 12 rows |
 | `GET /api/catalog/tables` | `pg.information_schema` + `warehouse_catalog` + `data_lineage` + `pg.results.derivation_runs` + the semantics registry | 3.3–11.8 s → cached, 38 rows |
 | `GET /api/catalog/columns` | `pg.information_schema.columns` + the column-meaning registry | live, 0.95–1.6 s, 262 rows |
 
 Add `?refresh=true` to any cached endpoint to rebuild it.
+
+The two `/api/science/*` endpoints are the one exception to "`data` is a list of rows": both
+answer `{"table_exists": bool, "rows": [...]}`, because `warehouse.hypotheses` and
+`warehouse.evidence` are created on first write by `mva-science` and do **not** exist yet.
+An absent table and an empty one are different facts, and the flag is how the browser tells
+them apart. The endpoints are read-only and never create the tables — see
+[`methodology/041`](methodology/041-science-page.md).
 
 ### Proxied to `mva-reads-api`
 
@@ -162,9 +179,52 @@ chart has to respect:
   gene symbols — the 8 panel genes plus 10 flanking ones VEP found inside the BED's 20 kb
   padding — and **145 rows carry `gene: null`** (intergenic). Filtering by gene therefore
   never reaches those 145; a gene facet has to offer an "unassigned" bucket or say so.
+- **`/api/panel/het-pairs`** — not a list of rows: `{gene, variants, pairs, summary}`.
+  `variants` is one row per **heterozygous PASS ALT allele** in position order, and that
+  order **is** both axes of the pair matrix, so `pairs[].i/j` index it. A `1/2` record
+  contributes **two** entries, distinguished by `allele_ix`. `pairs` carries **only the
+  cells phasing resolves** — every pair not listed is `unknown`, which is 99.7 % of them on
+  BUB1B — with `auto: true` marking the `1/2` pair that is trans by genotype rather than by
+  phasing. `pgt`/`pid` travel raw so a client can check the verdict, and are **null** where
+  the caller could not phase. `annotated: false` leaves `consequence`, `impact`,
+  `gnomad_af`, `clin_sig`, `is_rare_recessive` and `is_protein_altering` **null, never
+  false**. An unknown `gene` is a **404**; a panel gene with no het PASS allele is an empty
+  matrix, not a 404. See [`methodology/038`](methodology/038-pair-matrix.md).
 - **`/api/callset/observed-expected`** — only metrics with **both** a published range and a
   measurable observation appear (12 of the 20 norms). A metric is absent rather than
   guessed. `source` is the norm's citation; `observed_from` names the table we measured.
+- **`/api/callset/funnel`** — nine stages of the candidate waterfall, in `stage_no` order.
+  `scope` is `genome` for the three stages measured over the whole callset and `panel` for
+  the six measurable only inside the eight-gene panel, which is the only region annotation
+  exists for: there is **no genome-wide annotation and no genome-wide ranking**.
+  `of_previous_pct` is **null** wherever the row is not a subset of the row above it — at
+  the scope change (stage 4) and at the two unit changes — rather than dividing two
+  different populations. The unit itself changes down the table (records → alleles →
+  pairs), so a stage may legitimately be *wider* than the one above it; `note` says where
+  and why. See [`methodology/039`](methodology/039-candidate-funnel.md).
+
+### The gene-structure endpoint
+
+`/api/panel/gene-structure?gene=` is the only route that calls a **third-party API**
+([`methodology/040`](methodology/040-locus-gene-track.md) has the probes and the timings).
+Four contract facts:
+
+- **The browser never calls Ensembl.** Three server-side REST calls — `/lookup/id?expand=1`
+  for exons and the canonical transcript, `/overlap/translation` for domains, and one
+  `POST /vep/…/region` for the protein positions our warehouse never stored — behind the
+  same disk cache as `/api/panel/locus`, because gene structure is static.
+- **No patient genomic coordinate is in the payload.** Candidates carry consequence,
+  impact, rsID, a `rare` flag and `protein_pos` only. Unlike the locus cache, this entry
+  holds nothing unpublishable.
+- **`protein_pos` is nullable and `reason` says why.** Either VEP put no amino-acid offset
+  on the canonical transcript (a splice-region or UTR consequence has none), or the VEP
+  call failed — in which case the structure and domains still render. A null candidate is
+  **listed with its reason**, never dropped.
+- **Ensembl unreachable is a `502` with the upstream detail**, never a fixture-shaped
+  stand-in. An unknown gene is a `404`, validated against the committed panel BED.
+  `domains` is filtered to real domain sources: PDB cross-references, AlphaFold models,
+  disorder/coiled-coil/low-complexity predictions and whole-protein PANTHER family calls
+  are excluded (4 of 28 features on BUB1B's translation survive).
 
 ### The two catalogue endpoints
 
