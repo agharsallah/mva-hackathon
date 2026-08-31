@@ -199,6 +199,9 @@ def test_machine_share_divides_the_box(monkeypatch):
     assert threads == 4
     assert memory.endswith("GB") and int(memory[:-2]) >= 1
     assert store.machine_share(jobs=1)[0] == 16
+    # Floored at 2: eight 1-thread jobs measured at half the speed of one 8-thread job.
+    monkeypatch.setattr(store.os, "cpu_count", lambda: 8)
+    assert store.machine_share(jobs=8)[0] == 2
 
 
 def test_memory_limit_is_applied(delivery, tmp_path):

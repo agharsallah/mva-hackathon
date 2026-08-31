@@ -83,8 +83,14 @@ def machine_share(jobs: int) -> tuple[int, str]:
     The limit governs DuckDB's buffer pool *only*, and the dominant part of that pool is
     the Parquet writer holding one row group per thread — which is why
     :data:`~mva.reads.schema.ROW_GROUP_SIZE` is as much a memory setting as a layout one.
+
+    Threads are floored at two per job rather than divided exactly. The full conversion
+    measured why (``methodology/023``): eight one-thread jobs ran at half the speed of
+    one eight-thread job, because the engine is CPU-bound in DuckDB's projection and
+    Parquet encoding, not in the gzip decompression that file-level parallelism overlaps.
+    Mild oversubscription costs little; starving the writer costs half the machine.
     """
-    threads = max(1, (os.cpu_count() or 4) // max(1, jobs))
+    threads = max(2, (os.cpu_count() or 4) // max(1, jobs))
     try:
         total = os.sysconf("SC_PAGE_SIZE") * os.sysconf("SC_PHYS_PAGES")
     except (ValueError, OSError):  # not exposed on every platform
@@ -94,9 +100,11 @@ def machine_share(jobs: int) -> tuple[int, str]:
 
 
 def convert_all(fastqs: list, staging: Path, engine: str = "oxbow",
-                jobs: int = 2, report=print) -> list[Converted]:
+                jobs: int = 2, threads: int | None = None,
+                report=print) -> list[Converted]:
     """Convert every file, ``jobs`` at a time, splitting the machine fairly between them."""
     per_job, memory_limit = machine_share(jobs)
+    per_job = threads or per_job
     report(f"  each job: {per_job} threads, {memory_limit} DuckDB memory limit")
 
     def one(fastq) -> Converted:

@@ -84,7 +84,8 @@ def do_convert(args) -> int:
         print(error, file=sys.stderr)
         return 2
     started = time.perf_counter()
-    results = store.convert_all(fastqs, staging, engine=args.engine, jobs=args.jobs)
+    results = store.convert_all(fastqs, staging, engine=args.engine, jobs=args.jobs,
+                                threads=args.threads)
     runs_path, manifest_path = store.write_tables(staging, results)
     total = sum(r.rows for r in results)
     elapsed = time.perf_counter() - started
@@ -189,7 +190,12 @@ def _parser() -> argparse.ArgumentParser:
 
     c = add("convert", do_convert, "convert every FASTQ to sharded parquet and upload")
     c.add_argument("--engine", choices=sorted(ENGINES), default="oxbow")
-    c.add_argument("--jobs", type=int, default=2, help="files converted concurrently")
+    c.add_argument("--jobs", type=int, default=4,
+                   help="files converted concurrently — more is not faster: the engine "
+                        "is CPU-bound, and 8x1-thread ran at half the speed of 1x8 "
+                        "(methodology/023)")
+    c.add_argument("--threads", type=int,
+                   help="DuckDB threads per job (default: a fair share, floored at 2)")
     c.add_argument("--staging", help="local shard directory (default: MVA_STAGING_DIR)")
     c.add_argument("--no-upload", action="store_true")
 
