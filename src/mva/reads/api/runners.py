@@ -76,10 +76,14 @@ def sql_runner(request) -> Callable[[Job], dict]:
     def run(job: Job) -> dict:
         root, connection = _open(job, request.root)
         started = time.perf_counter()
-        rows = scan.sql(connection, root, request.query)
+        # The cap is pushed into the engine: fetching everything and truncating in
+        # Python would materialise an unbounded result to throw most of it away.
+        # One extra row is asked for so "truncated" is a fact, not a guess.
+        capped = f"SELECT * FROM ({request.query}) LIMIT {int(request.limit) + 1}"
+        rows = scan.sql(connection, root, capped)
         columns = [name for name, *_ in connection.description or []]
         return {"root": root, "seconds": round(time.perf_counter() - started, 1),
-                "columns": columns, "row_count": len(rows),
+                "columns": columns, "row_count": min(len(rows), request.limit),
                 "truncated": len(rows) > request.limit,
                 "rows": [list(row) for row in rows[:request.limit]]}
     return run

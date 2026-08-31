@@ -480,3 +480,10 @@ def test_check_room_refuses_before_converting(delivery, tmp_path, monkeypatch):
                         lambda _: usage(total=1, used=1, free=1))
     with pytest.raises(store.NotEnoughRoom, match="not enough room"):
         store.check_room(tmp_path, store.discover(delivery))
+
+
+def test_pattern_is_one_alternation_of_both_strands():
+    p = scan.pattern(["AAAC", "GGGT"], ["a", "b"])
+    assert set(p.split("|")) == {"AAAC", "GTTT", "GGGT", "ACCC"}
+    with pytest.raises(ValueError, match="not a DNA sequence"):
+        scan.pattern(["AAA(C"])  # a metacharacter cannot reach the regex

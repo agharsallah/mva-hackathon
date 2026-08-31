@@ -113,8 +113,18 @@ def create_app(manager: Manager | None = None) -> FastAPI:
 
     @api.post("/convert", response_model=JobOut, status_code=202, tags=["build"])
     def convert(request: ConvertRequest) -> JobOut:
-        """Rebuild the whole store from the delivery. The hour-long verb — check
-        ``/jobs`` first so two converts never race for the same staging directory."""
+        """Rebuild the whole store from the delivery — the hour-long verb.
+
+        One at a time, enforced: two converts would race for the same staging
+        directory and the same object keys, so a second submission while one is
+        queued or running is refused with 409 rather than trusted to a docstring.
+        """
+        running = [job for job in manager.jobs(verb="convert")
+                   if job.state not in TERMINAL]
+        if running:
+            raise HTTPException(status_code=409,
+                                detail=f"convert {running[0].id} is already "
+                                       f"{running[0].state} — cancel it or wait")
         return submitted("convert", request.model_dump(),
                          runners.convert_runner(request))
 

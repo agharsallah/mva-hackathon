@@ -155,3 +155,41 @@ def test_token_required_when_configured(tmp_path, monkeypatch):
         assert client.get("/jobs", headers={"X-API-Key": "wrong"}).status_code == 401
         assert client.get("/jobs",
                           headers={"X-API-Key": "sesame"}).status_code == 200
+
+
+def test_sql_cap_is_pushed_into_the_engine(client, monkeypatch):
+    """The limit must reach DuckDB, not truncate a materialised result in Python."""
+    seen = {}
+
+    def spy(conn, root, query):
+        seen["query"] = query
+        return [(i,) for i in range(4)]  # limit+1 rows back means truncation
+
+    monkeypatch.setattr(runners.scan, "sql", spy)
+    job = finished(client, client.post("/sql", json={
+        "query": "SELECT lane FROM reads", "limit": 3}))
+    assert "LIMIT 4" in seen["query"]
+    assert job["result"]["truncated"] is True
+    assert job["result"]["row_count"] == 3
+    assert len(job["result"]["rows"]) == 3
+
+
+def test_second_convert_is_refused_while_one_runs(client, monkeypatch):
+    release = threading.Event()
+
+    def slow_convert(request):
+        def run(job):
+            release.wait(10)
+            return {"rows": 0}
+        return run
+
+    monkeypatch.setattr(runners, "convert_runner", slow_convert)
+    first = client.post("/convert", json={})
+    assert first.status_code == 202
+    second = client.post("/convert", json={})
+    assert second.status_code == 409
+    assert first.json()["id"] in second.json()["detail"]
+    release.set()
+    done = client.get(f"/jobs/{first.json()['id']}/wait", params={"timeout": 10})
+    assert done.json()["state"] == DONE
+    assert client.post("/convert", json={}).status_code == 202  # free again

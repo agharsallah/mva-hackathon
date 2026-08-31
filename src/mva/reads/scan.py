@@ -63,6 +63,14 @@ def probe_table(probes: list[str], names: list[str] | None = None) -> str:
     :func:`clean`, and names are reduced to word characters here. Neither can carry a
     quote into the statement.
     """
+    return ", ".join(f"('{name}', '{seq}', '{strand}')"
+                     for name, seq, strand in expand(probes, names))
+
+
+def expand(probes: list[str], names: list[str] | None = None) -> list[tuple]:
+    """Every (name, sequence, strand) row a probe set queries for — the one place
+    both the SQL table and the prefilter pattern are derived from, so they cannot
+    disagree about what is being searched."""
     names = names or [f"probe{i + 1}" for i in range(len(probes))]
     if len(names) != len(probes):
         raise ValueError(f"{len(names)} names for {len(probes)} probes")
@@ -70,9 +78,23 @@ def probe_table(probes: list[str], names: list[str] | None = None) -> str:
     for name, probe in zip(names, probes):
         safe = re.sub(r"[^A-Za-z0-9_.:-]", "_", str(name))[:64] or "probe"
         probe = clean(probe)
-        rows.append(f"('{safe}', '{probe}', '+')")
-        rows.append(f"('{safe}', '{reverse_complement(probe)}', '-')")
-    return ", ".join(rows)
+        rows.append((safe, probe, "+"))
+        rows.append((safe, reverse_complement(probe), "-"))
+    return rows
+
+
+def pattern(probes: list[str], names: list[str] | None = None) -> str:
+    """One regular expression matching any probe on either strand.
+
+    This is what makes many probes cost one pass instead of many: the engine compiles
+    the alternation of literals into a single automaton, so each read is examined
+    **once** however many probes ride along. A cross join of ``contains`` calls does the
+    opposite — one full substring search per probe per read — and was measured doing it
+    (``methodology/025``): 20 probes ran 32 minutes before being killed, against 3.5
+    minutes for one. Safe to interpolate: :func:`clean` admits only ``ACGTN``, and none
+    of those is a regex metacharacter.
+    """
+    return "|".join(sorted({seq for _, seq, _ in expand(probes, names)}))
 
 
 def kmer(connection, root: str, probe: str, limit: int = 100) -> list[Hit]:
@@ -84,26 +106,26 @@ def kmers(connection, root: str, probes: list[str], limit: int = 100,
           names: list[str] | None = None) -> list[Hit]:
     """The same strike for many probes, in **one pass** over the reads.
 
-    This is the difference between asking one question and asking fifty. A full scan is
-    dominated by reading and decompressing the ``sequence`` column — ~46 GiB — and every
-    extra probe only adds a substring search over bytes already in memory. Fifty probes
-    in one pass therefore cost far less than fifty passes, which is the shape of the real
-    question: *which of these candidate alleles appear in the reads at all?*
-
-    Each probe is matched forward and reverse-complemented, because a fragment is
+    Two stages, because they have wildly different costs. The scan itself matches every
+    read against **one** combined pattern (:func:`pattern`), so the 46 GiB pass costs the
+    same for fifty probes as for one. Only the survivors — dozens of reads, not a billion
+    — are then joined back to the probe list to attribute each hit to its probe and
+    strand. Each probe is matched forward and reverse-complemented, because a fragment is
     sequenced from whichever strand it came off.
     """
     if not probes:
         return []
-    values = probe_table(probes, names)
     found = connection.execute(f"""
-        WITH probes(name, seq, strand) AS (VALUES {values}),
+        WITH probes(name, seq, strand) AS (VALUES {probe_table(probes, names)}),
+        survivors AS (
+            SELECT lane, read, tile, x, y, sequence
+            FROM read_parquet('{glob(root)}', hive_partitioning=true)
+            WHERE regexp_matches(sequence, '{pattern(probes, names)}')),
         matches AS (
-            SELECT p.name, p.strand, r.lane, r.read, r.tile, r.x, r.y,
-                   position(p.seq IN r.sequence) AS found_at, r.sequence,
-                   row_number() OVER (PARTITION BY p.name ORDER BY r.lane, r.tile) AS rank
-            FROM read_parquet('{glob(root)}', hive_partitioning=true) r, probes p
-            WHERE contains(r.sequence, p.seq))
+            SELECT p.name, p.strand, s.lane, s.read, s.tile, s.x, s.y,
+                   position(p.seq IN s.sequence) AS found_at, s.sequence,
+                   row_number() OVER (PARTITION BY p.name ORDER BY s.lane, s.tile) AS rank
+            FROM survivors s JOIN probes p ON contains(s.sequence, p.seq))
         SELECT name, strand, lane, read, tile, x, y, found_at, sequence
         FROM matches WHERE rank <= {int(limit)}
     """).fetchall()
@@ -122,16 +144,18 @@ def counts(connection, root: str, probes: list[str],
     """
     if not probes:
         return []
-    values = probe_table(probes, names)
     return connection.execute(f"""
-        WITH probes(name, seq, strand) AS (VALUES {values})
+        WITH probes(name, seq, strand) AS (VALUES {probe_table(probes, names)}),
+        survivors AS (
+            SELECT lane, sequence
+            FROM read_parquet('{glob(root)}', hive_partitioning=true)
+            WHERE regexp_matches(sequence, '{pattern(probes, names)}'))
         SELECT p.name,
                count(*) FILTER (p.strand = '+') AS forward,
                count(*) FILTER (p.strand = '-') AS reverse,
                count(*) AS total,
-               count(DISTINCT r.lane) AS lanes
-        FROM read_parquet('{glob(root)}', hive_partitioning=true) r, probes p
-        WHERE contains(r.sequence, p.seq)
+               count(DISTINCT s.lane) AS lanes
+        FROM survivors s JOIN probes p ON contains(s.sequence, p.seq)
         GROUP BY p.name ORDER BY p.name
     """).fetchall()
 

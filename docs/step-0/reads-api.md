@@ -63,12 +63,12 @@ Properties that matter:
 | `GET /health` | — | liveness only |
 | `GET /store/status` | `mva-reads status` | seconds (reads the manifest) |
 | `GET /store/qc` | `mva-reads qc` | minutes (full scan) |
-| `POST /scan` | `mva-reads scan` | minutes — batch every probe into one request |
+| `POST /scan` | `mva-reads scan` | minutes — batch every probe into one request; one pass costs the same for 1 or 500 probes ([`methodology/025`](methodology/025-many-probes-one-pass.md)) |
 | `POST /count` | `mva-reads count` | minutes — same pass, returns verdicts |
 | `POST /sql` | `mva-reads sql` | depends; read-only, one statement, rows capped |
 | `POST /verify` | `mva-reads verify` | hours when deep (round-trips the FASTQ) |
 | `POST /bench` | `mva-reads bench` | minutes |
-| `POST /convert` | `mva-reads convert` | ~1 hour — rebuilds and republishes the store |
+| `POST /convert` | `mva-reads convert` | ~1 hour — rebuilds and republishes the store; one at a time, a second is refused with 409 |
 | `GET /jobs`, `GET /jobs/{id}` | — | job listing / one job |
 | `GET /jobs/{id}/wait?timeout=` | — | long-poll until terminal |
 | `POST /jobs/{id}/cancel` | — | interrupt the query |
