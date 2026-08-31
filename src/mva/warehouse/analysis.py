@@ -105,6 +105,106 @@ DERIVATIONS: tuple[Derivation, ...] = (
         """,
     ),
     Derivation(
+        name="variant_density_bins",
+        question="Where along each chromosome does variation and quality concentrate, "
+                 "at 1 Mb resolution?",
+        depends_on=("variants_raw",),
+        # `variants_raw` is five million all-text rows with no index, so a whole-genome
+        # scan is ~60 s. Precomputing it here is what lets the viz API answer a
+        # per-chromosome density request from a table of a few thousand rows instead of
+        # re-scanning the callset on an HTTP request.
+        #
+        # `//` is integer division. DuckDB's `/` is *float* division, so `pos / 1000000`
+        # would produce a fractional bin and one group per position.
+        sql=f"""
+            SELECT chrom,
+                   CAST(pos AS BIGINT) // 1000000                     AS mb,
+                   count(*)                                           AS n,
+                   count(*) FILTER (WHERE filter = 'PASS')            AS pass_n,
+                   count(*) FILTER (WHERE TRY_CAST(qual AS DOUBLE) < 30)
+                                                                      AS low_qual_n,
+                   round(avg(TRY_CAST(qual AS DOUBLE)), 1)            AS mean_qual
+            FROM {SOURCE}.variants_raw
+            WHERE length(chrom) <= 2
+            GROUP BY chrom, mb
+            ORDER BY chrom, mb
+        """,
+    ),
+    Derivation(
+        name="stats_sn",
+        question="What are the callset's headline counts, as bcftools measured them?",
+        depends_on=("stats_summary",),
+        # `stats_summary` holds bcftools-stats output verbatim: one tab-delimited line per
+        # row, section code in column 1. Parsing it into typed tables *here* rather than
+        # in the API means the numbers a chart shows are a table with lineage, not a
+        # regex that ran inside a web request.
+        sql=f"""
+            SELECT rtrim(split_part(line, chr(9), 3), ':')             AS metric,
+                   CAST(split_part(line, chr(9), 4) AS BIGINT)         AS value
+            FROM {SOURCE}.stats_summary
+            WHERE line LIKE 'SN' || chr(9) || '%'
+            ORDER BY line_no
+        """,
+    ),
+    Derivation(
+        name="stats_tstv",
+        question="What is the transition/transversion ratio — the callset's cheapest "
+                 "sanity check against a random error process?",
+        depends_on=("stats_summary",),
+        sql=f"""
+            SELECT CAST(split_part(line, chr(9), 3) AS BIGINT)         AS ts,
+                   CAST(split_part(line, chr(9), 4) AS BIGINT)         AS tv,
+                   CAST(split_part(line, chr(9), 5) AS DOUBLE)         AS ratio
+            FROM {SOURCE}.stats_summary
+            WHERE line LIKE 'TSTV' || chr(9) || '%'
+        """,
+    ),
+    Derivation(
+        name="stats_dp",
+        question="How is per-record read depth distributed across the callset?",
+        depends_on=("stats_summary",),
+        # DP layout: code, id, bin, n_genotypes, pct_genotypes, n_sites, pct_sites.
+        # This is a single-sample callset, so the genotype columns are zero and the site
+        # columns carry the distribution.
+        sql=f"""
+            SELECT CAST(split_part(line, chr(9), 3) AS INTEGER)        AS bin,
+                   CAST(split_part(line, chr(9), 6) AS BIGINT)         AS count,
+                   CAST(split_part(line, chr(9), 7) AS DOUBLE)         AS pct
+            FROM {SOURCE}.stats_summary
+            WHERE line LIKE 'DP' || chr(9) || '%'
+            ORDER BY bin
+        """,
+    ),
+    Derivation(
+        name="stats_st",
+        question="Which base substitutions dominate, and are they transitions?",
+        depends_on=("stats_summary",),
+        sql=f"""
+            SELECT split_part(line, chr(9), 3)                         AS sub_type,
+                   CAST(split_part(line, chr(9), 4) AS BIGINT)         AS count,
+                   split_part(line, chr(9), 3)
+                       IN ('A>G', 'G>A', 'C>T', 'T>C')                 AS is_transition
+            FROM {SOURCE}.stats_summary
+            WHERE line LIKE 'ST' || chr(9) || '%'
+            ORDER BY count DESC
+        """,
+    ),
+    Derivation(
+        name="stats_idd",
+        question="How long are the insertions and deletions, and is the length spectrum "
+                 "the expected exponential decay?",
+        depends_on=("stats_summary",),
+        # IDD layout: code, id, length, count, n_genotypes, mean_vaf. Negative length is
+        # a deletion, positive an insertion.
+        sql=f"""
+            SELECT CAST(split_part(line, chr(9), 3) AS INTEGER)        AS length,
+                   CAST(split_part(line, chr(9), 4) AS BIGINT)         AS count
+            FROM {SOURCE}.stats_summary
+            WHERE line LIKE 'IDD' || chr(9) || '%'
+            ORDER BY length
+        """,
+    ),
+    Derivation(
         name="sequencing_yield",
         question="What did each lane contribute, and is the read-1/read-2 balance sane?",
         depends_on=("fastq_profile",),
