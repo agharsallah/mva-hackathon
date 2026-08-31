@@ -106,6 +106,11 @@ def indel_lengths(settings: Postgres) -> list[dict]:
     return table(settings, "results", "stats_idd", "ORDER BY length")
 
 
+def observed_expected(settings: Postgres) -> list[dict]:
+    """Each QC metric this callset can be measured against, with its published range."""
+    return table(settings, "results", "qc_observed_expected", "ORDER BY metric")
+
+
 def tstv(settings: Postgres) -> dict:
     """The transition/transversion ratio as a single object."""
     found = table(settings, "results", "stats_tstv")
@@ -135,6 +140,44 @@ def panel_genes(settings: Postgres, bed: Path | None = None) -> list[dict]:
     extra = annotations(bed)
     for row in found:
         row.update(extra.get(row["gene"], {"ensembl_id": None, "note": None}))
+    return found
+
+
+def panel_constraint(settings: Postgres, bed: Path | None = None) -> list[dict]:
+    """The candidate panel graded against gnomAD constraint and ClinVar.
+
+    One derived table plus the same two BED-only columns ``panel_genes`` merges, so a
+    chart can show "this gene, this intolerant, this often already classified" without a
+    second request. ``chrom`` is ``chr``-prefixed, as the panel delivers it.
+    """
+    from .panelbed import annotations
+
+    found = table(settings, "results", "panel_gene_constraint",
+                  "ORDER BY loeuf NULLS LAST, gene")
+    extra = annotations(bed)
+    for row in found:
+        row.update(extra.get(row["gene"], {"ensembl_id": None, "note": None}))
+    return found
+
+
+def panel_candidates(settings: Postgres, gene: str | None = None) -> list[dict]:
+    """Every annotated panel allele with its genotype evidence, optionally one gene.
+
+    Reads the ``panel_candidates`` derivation, which has already done the expensive part —
+    joining 874 annotations to the five-million-row callset. 874 rows unfiltered, so no
+    cache. An unknown gene yields no rows and is reported as :class:`LookupError`, because
+    every gene the table knows has at least one row.
+    """
+    where = "WHERE gene = ?" if gene else ""
+    found = fetch(settings, f"""
+        SELECT chrom, pos, ref, alt, rsid, gene, consequence, impact,
+               gnomad_af, gnomad_af_grpmax, clin_sig, qual, filter, gt, dp, vaf,
+               is_rare_recessive, is_protein_altering
+        FROM pg.results.panel_candidates {where}
+        ORDER BY gene, pos, alt
+    """, [gene] if gene else None)
+    if gene and not found:
+        raise LookupError(gene)
     return found
 
 

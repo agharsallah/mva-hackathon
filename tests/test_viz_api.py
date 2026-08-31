@@ -38,6 +38,20 @@ ANSWERS = {
                             "n_filtered": 10, "span_bp": 1000,
                             "variants_per_mb": 200.0, "pct_pass": 95.0}],
     "mva_panel_grch38": [{"chrom": "chr15", "start": 1000, "end": 2000}],
+    "panel_gene_constraint": [{"gene": "BUB1B", "chrom": "chr15", "n_all": 80,
+                               "n_pass": 76, "loeuf": 0.707, "pli": 2.6e-14,
+                               "clinvar_plp": 84, "clinvar_vus": 1486,
+                               "clinvar_benign": 844}],
+    "panel_candidates": [{"chrom": "15", "pos": 1500, "ref": "T", "alt": "C",
+                          "gene": "BUB1B", "consequence": "missense_variant",
+                          "impact": "MODERATE", "gnomad_af": None, "qual": 812.5,
+                          "filter": "PASS", "gt": "0/1", "dp": 38, "vaf": 0.4737,
+                          "is_rare_recessive": True, "is_protein_altering": True}],
+    "qc_observed_expected": [{"metric": "tstv_genome_wide", "label": "Ts/Tv",
+                              "observed": 1.94, "expected_low": 2.0,
+                              "expected_high": 2.1, "unit": "ratio",
+                              "verdict": "below", "source": "Betschart 2024",
+                              "observed_from": "stats_summary TSTV"}],
     "variants_raw": [{"pos": "1500", "ref": "T", "alt": "C", "qual": "812.5",
                       "filter": "PASS", "format": "GT:AD:DP:GQ",
                       "sample_call": "0/1:20,18:38:99"}],
@@ -85,6 +99,8 @@ def test_health_is_the_one_route_without_an_envelope(client):
     "/api/genome/density-bins", "/api/callset/filters", "/api/callset/genotypes",
     "/api/callset/depth-distribution", "/api/callset/substitutions",
     "/api/callset/tstv", "/api/callset/indel-lengths", "/api/panel/genes",
+    "/api/callset/observed-expected", "/api/panel/constraint",
+    "/api/panel/annotations",
     "/api/provenance/lineage", "/api/provenance/derivations",
     "/api/provenance/sources", "/api/probe/ledger",
     "/api/reads/runs", "/api/reads/partitions",
@@ -145,6 +161,56 @@ def test_panel_genes_merges_the_bed_annotation_onto_the_density_row(client):
     assert row["ensembl_id"] == "ENSG00000156970"  # from the committed panel BED
     assert row["note"]
     assert row["start"] == 1000 and row["end"] == 2000
+
+
+def test_panel_constraint_merges_the_bed_annotation_like_panel_genes_does(client):
+    row = data(client.get("/api/panel/constraint"))[0]
+    assert row["gene"] == "BUB1B" and row["loeuf"] == 0.707
+    assert row["ensembl_id"] == "ENSG00000156970"  # from the committed panel BED
+    assert row["note"]
+
+
+def test_panel_annotations_without_a_gene_returns_the_whole_panel(client, monkeypatch):
+    seen = {}
+
+    def spy(settings, sql, params=None):
+        seen["sql"], seen["params"] = sql, params
+        return ANSWERS["panel_candidates"]
+
+    monkeypatch.setattr(queries, "fetch", spy)
+    assert data(client.get("/api/panel/annotations"))[0]["gene"] == "BUB1B"
+    assert "WHERE gene" not in seen["sql"] and seen["params"] is None
+
+
+def test_panel_annotations_pushes_the_gene_into_the_query(client, monkeypatch):
+    seen = {}
+
+    def spy(settings, sql, params=None):
+        seen["sql"], seen["params"] = sql, params
+        return ANSWERS["panel_candidates"]
+
+    monkeypatch.setattr(queries, "fetch", spy)
+    client.get("/api/panel/annotations", params={"gene": "BUB1B"})
+    assert "WHERE gene = ?" in seen["sql"] and seen["params"] == ["BUB1B"]
+
+
+def test_an_unknown_gene_in_annotations_is_a_404_not_an_empty_list(client, monkeypatch):
+    monkeypatch.setattr(queries, "fetch", lambda settings, sql, params=None: [])
+    response = client.get("/api/panel/annotations", params={"gene": "NOTAGENE"})
+    assert response.status_code == 404
+    assert "NOTAGENE" in response.json()["detail"]
+
+
+def test_an_empty_panel_is_an_empty_list_when_no_gene_was_asked_for(client, monkeypatch):
+    """No gene means no lookup, so an empty table is a chart's empty state, not a 404."""
+    monkeypatch.setattr(queries, "fetch", lambda settings, sql, params=None: [])
+    assert data(client.get("/api/panel/annotations")) == []
+
+
+def test_observed_expected_carries_both_the_measurement_and_the_range(client):
+    row = data(client.get("/api/callset/observed-expected"))[0]
+    assert row["observed"] == 1.94 and row["expected_low"] == 2.0
+    assert row["verdict"] == "below" and row["observed_from"]
 
 
 # ── the locus route: the one that reads the callset ──────────────────────────────────
