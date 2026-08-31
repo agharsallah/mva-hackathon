@@ -1,6 +1,7 @@
 import { Callout, Explainer } from '../components/Explainer';
 import { Section } from '../components/Controls';
 import { GeneScorecard } from './panel/GeneScorecard';
+import { ConstraintScorecard } from './panel/ConstraintScorecard';
 import { LocusExplorer } from './panel/LocusExplorer';
 
 export default function PanelPage() {
@@ -45,6 +46,16 @@ export default function PanelPage() {
             plain: 'both copies of the gene are affected — either the same variant twice (homozygous) or two different ones (compound het)',
           },
           {
+            term: 'constraint (LOEUF / pLI)',
+            plain:
+              'how strongly the healthy population avoids losing a copy of a gene. LOEUF low (<0.35) or pLI near 1 = intolerant. It is a dominant-disease prior and inverts on recessive genes — see the constraint exhibit',
+          },
+          {
+            term: 'ClinVar P/LP',
+            plain:
+              'the count of variants in a gene that clinical labs have already classified Pathogenic or Likely-pathogenic in the public ClinVar registry',
+          },
+          {
             term: 'variants per Mb',
             plain: 'records divided by the gene’s length in megabases; it makes a small gene comparable to a large one',
           },
@@ -62,6 +73,13 @@ export default function PanelPage() {
 
       <Section title="Which candidate genes have evidence, and how much of it is suppressed?">
         <GeneScorecard />
+      </Section>
+
+      <Section
+        title="What does the healthy population already say about these genes?"
+        subtitle="constraint and ClinVar burden — background on each gene, deliberately not a ranking"
+      >
+        <ConstraintScorecard />
       </Section>
 
       <Section

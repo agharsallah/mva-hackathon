@@ -61,6 +61,37 @@ export function verdictColor(verdict: string): string {
   return C.absent;
 }
 
+/**
+ * VEP severity bucket → colour. HIGH truncates the protein (broken), MODERATE changes an
+ * amino acid (a decision to make), LOW/MODIFIER are silent or non-coding (machinery).
+ */
+export function impactColor(impact: string): string {
+  switch (impact) {
+    case 'HIGH':
+      return C.broken;
+    case 'MODERATE':
+      return C.decision;
+    case 'LOW':
+    case 'MODIFIER':
+      return C.machinery;
+    default:
+      return C.absent;
+  }
+}
+
+/** Observed-vs-expected verdict → colour. Agreement is the good outcome. */
+export function oeVerdictColor(verdict: string): string {
+  switch (verdict) {
+    case 'within':
+      return C.good;
+    case 'above':
+    case 'below':
+      return C.broken;
+    default:
+      return C.absent;
+  }
+}
+
 export function jobStateColor(state: string): string {
   switch (state) {
     case 'done':

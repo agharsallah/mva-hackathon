@@ -18,10 +18,18 @@ import {
   filtersFixture,
   genotypesFixture,
   indelLengthsFixture,
+  observedExpectedFixture,
   substitutionsFixture,
   tstvFixture,
 } from './callset';
-import { locusFixture, panelGenesFixture } from './panel';
+import { catalogObjectsFixture } from './catalog-objects';
+import { catalogTablesFixture } from './catalog-tables';
+import {
+  locusFixture,
+  panelAnnotationsFixture,
+  panelConstraintFixture,
+  panelGenesFixture,
+} from './panel';
 import {
   cycleQualityFixture,
   flowcellFixture,
@@ -49,7 +57,14 @@ const registry: Record<string, Builder> = {
   '/api/callset/substitutions': () => env(substitutionsFixture, 'bcftools stats ST section'),
   '/api/callset/tstv': () => env(tstvFixture, 'bcftools stats TSTV section'),
   '/api/callset/indel-lengths': () => env(indelLengthsFixture, 'bcftools stats IDD section'),
+  '/api/callset/observed-expected': () =>
+    env(observedExpectedFixture, 'measured aggregates vs PLACEHOLDER published bands'),
   '/api/panel/genes': () => env(panelGenesFixture, 'results.panel_gene_density + panel BED'),
+  '/api/panel/constraint': () =>
+    env(panelConstraintFixture, 'PLACEHOLDER gnomAD constraint + ClinVar counts'),
+  // `gene` is optional here, unlike /api/panel/locus: omitted means the whole panel.
+  '/api/panel/annotations': (p) =>
+    env(panelAnnotationsFixture(p?.gene as string | undefined), 'SYNTHETIC positions — never real'),
   '/api/panel/locus': (p) =>
     env(locusFixture((p?.gene as string | undefined) ?? 'BUB1B'), 'SYNTHETIC positions — never real'),
   '/api/reads/runs': () => env(readRunsFixture, 'reads/runs.parquet'),
@@ -61,6 +76,8 @@ const registry: Record<string, Builder> = {
     ),
   '/api/reads/cycle-quality': () => env(cycleQualityFixture, '100k-row sample per partition'),
   '/api/reads/quality-levels': () => env(qualityLevelsFixture, 'sampled per partition'),
+  '/api/catalog/objects': () => env(catalogObjectsFixture, 'object ledger + delivery manifest'),
+  '/api/catalog/tables': () => env(catalogTablesFixture, 'warehouse catalogue + meta.lineage'),
   '/api/provenance/lineage': () => env(lineageFixture, 'meta.lineage'),
   '/api/provenance/derivations': () => env(derivationsFixture, 'meta.derivations'),
   '/api/provenance/sources': () => env(sourcesFixture, 'delivery manifest'),

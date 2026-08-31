@@ -8,9 +8,11 @@ const Overview = lazy(() => import('./pages/Overview'));
 const Genome = lazy(() => import('./pages/Genome'));
 const Callset = lazy(() => import('./pages/Callset'));
 const Panel = lazy(() => import('./pages/Panel'));
+const Compare = lazy(() => import('./pages/Compare'));
 const Reads = lazy(() => import('./pages/Reads'));
 const Probes = lazy(() => import('./pages/Probes'));
 const Provenance = lazy(() => import('./pages/Provenance'));
+const Catalog = lazy(() => import('./pages/Catalog'));
 
 export function App() {
   return (
@@ -23,9 +25,11 @@ export function App() {
             <Route path="/genome" element={<Genome />} />
             <Route path="/callset" element={<Callset />} />
             <Route path="/panel" element={<Panel />} />
+            <Route path="/compare" element={<Compare />} />
             <Route path="/reads" element={<Reads />} />
             <Route path="/probes" element={<Probes />} />
             <Route path="/provenance" element={<Provenance />} />
+            <Route path="/catalog" element={<Catalog />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

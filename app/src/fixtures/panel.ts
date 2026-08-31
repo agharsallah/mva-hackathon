@@ -1,4 +1,10 @@
-import type { LocusVariant, PanelGeneRow } from '../api/types';
+import type {
+  LocusVariant,
+  PanelAnnotationRow,
+  PanelConstraintRow,
+  PanelGeneRow,
+  VariantImpact,
+} from '../api/types';
 import { prng } from './prng';
 
 /**
@@ -92,4 +98,203 @@ export function locusFixture(geneName: string): LocusVariant[] {
     });
   }
   return out;
+}
+
+/**
+ * FIXTURE — gnomAD constraint + ClinVar counts per panel gene.
+ *
+ * ***SHAPE ONLY — none of these numbers is a measurement from this project.*** The live
+ * endpoint reads them from the gnomAD constraint table and a ClinVar summary; until it
+ * answers, these fill the chart so the exhibit is readable offline, and the app badges
+ * every one of them `fixture`.
+ *
+ * The shape it deliberately exercises is the counter-intuitive one the exhibit exists to
+ * show: MVA is **recessive**, so healthy carriers of a single broken copy are common and
+ * the established MVA genes score as *unconstrained* (pLI ≈ 0, LOEUF ≫ 0.35). TRIP13
+ * carries `null` constraint to exercise the unknown rendering — null is "no row in the
+ * source table", never "unconstrained".
+ */
+function constraint(
+  gene: string,
+  chrom: string,
+  nAll: number,
+  nPass: number,
+  loeuf: number | null,
+  pli: number | null,
+  misZ: number | null,
+  lofObs: number | null,
+  lofExp: number | null,
+  clinvar: [number, number, number],
+  note: string,
+): PanelConstraintRow {
+  return {
+    gene,
+    chrom,
+    n_all: nAll,
+    n_pass: nPass,
+    loeuf,
+    pli,
+    mis_z: misZ,
+    oe_lof: lofObs !== null && lofExp ? Math.round((lofObs / lofExp) * 1000) / 1000 : null,
+    lof_obs: lofObs,
+    lof_exp: lofExp,
+    clinvar_plp: clinvar[0],
+    clinvar_vus: clinvar[1],
+    clinvar_benign: clinvar[2],
+    ensembl_id: '', // supplied by the live API from the panel BED
+    note,
+  };
+}
+
+export const panelConstraintFixture: PanelConstraintRow[] = [
+  constraint('BUB1B', 'chr15', 80, 76, 0.98, 0.0, 0.71, 41, 42.1, [38, 214, 61], 'recessive MVA type 1 — carriers are healthy, so it is not LoF-constrained'),
+  constraint('CEP57', 'chr11', 13, 13, 1.24, 0.0, -0.32, 19, 18.4, [9, 47, 22], 'recessive MVA type 2 — same carrier logic'),
+  constraint('TRIP13', 'chr5', 12, 6, null, null, null, null, null, [6, 31, 14], 'no row in the constraint source — unknown, not unconstrained'),
+  constraint('CENPE', 'chr4', 169, 166, 0.86, 0.0, 1.44, 62, 68.9, [4, 96, 55], 'recessive microcephaly gene; also tolerant of single-copy loss'),
+  constraint('CEP192', 'chr18', 255, 251, 0.63, 0.02, 2.18, 33, 47.8, [1, 74, 40], 'essential centrosome scaffold, mildly depleted'),
+  constraint('SMC5', 'chr9', 125, 124, 0.72, 0.01, 1.96, 21, 27.5, [3, 58, 29], 'genome-stability complex'),
+  constraint('DICER1', 'chr14', 87, 87, 0.31, 0.97, 3.42, 12, 51.7, [212, 388, 96], 'dominant tumour-predisposition gene — strongly constrained, as dominance predicts'),
+  constraint('TP53', 'chr17', 120, 118, 0.34, 0.94, 3.11, 6, 24.3, [431, 512, 133], 'dominant tumour suppressor — strongly constrained'),
+];
+
+const CONSEQUENCES: [string, VariantImpact][] = [
+  ['intron_variant', 'MODIFIER'],
+  ['upstream_gene_variant', 'MODIFIER'],
+  ['3_prime_UTR_variant', 'MODIFIER'],
+  ['synonymous_variant', 'LOW'],
+  ['splice_region_variant', 'LOW'],
+  ['missense_variant', 'MODERATE'],
+  ['inframe_deletion', 'MODERATE'],
+];
+
+/**
+ * FIXTURE — per-variant annotations for the whole panel.
+ *
+ * ***SYNTHETIC POSITIONS, DELIBERATELY*** — the same 1000, 2000, 3000 … counter the locus
+ * fixture uses, for the same reason: this repo commits no genomic coordinate. Frequencies,
+ * consequences and ClinVar strings are shape, not measurement.
+ *
+ * The shape faithfully reproduces the real distillation: the generated bulk is either
+ * common (so not rare-recessive) or non-coding (so not protein-altering), and exactly two
+ * hand-placed BUB1B rows clear both gates — a `stop_gained` with a ClinVar pathogenic
+ * assertion, and a **novel** missense (`gnomad_af: null`, absent from gnomAD). The set also
+ * carries a `1/2` multiallelic row with `vaf: null`.
+ */
+export function panelAnnotationsFixture(geneName?: string): PanelAnnotationRow[] {
+  const bases = ['A', 'C', 'G', 'T'];
+  const out: PanelAnnotationRow[] = [];
+  let counter = 0;
+
+  for (const g of panelGenesFixture) {
+    const rand = prng(g.gene.split('').reduce((a, c) => a + c.charCodeAt(0), 31));
+    for (let i = 0; i < g.n_all; i++) {
+      counter += 1;
+      const r = rand();
+      // Protein-altering rows are given a common frequency; rare rows are non-coding.
+      // That is what keeps the candidate list at the two hand-placed rows below.
+      const coding = r < 0.22;
+      const pool = coding ? CONSEQUENCES.slice(5) : CONSEQUENCES.slice(0, 5);
+      const [consequence, impact] = pool[Math.floor(rand() * pool.length)];
+      const af = coding ? 0.02 + rand() * 0.4 : rand() < 0.12 ? null : rand() * 0.004;
+      const grpmax = af === null ? null : Math.min(0.999, Math.round(af * (1.1 + rand() * 0.8) * 1e6) / 1e6);
+      const multi = rand() < 0.02;
+      const dp = Math.max(6, Math.round(44 + (rand() - 0.5) * 26));
+      const filter = rand() < 0.05 ? 'MQ40' : 'PASS';
+      out.push({
+        chrom: g.chrom,
+        pos: counter * 1000, // SYNTHETIC — a counter, not a coordinate
+        ref: bases[Math.floor(rand() * 4)],
+        alt: bases[Math.floor(rand() * 4)],
+        rsid: af === null ? null : `rs${1_000_000 + counter * 37}`,
+        gene: g.gene,
+        consequence,
+        impact,
+        gnomad_af: af === null ? null : Math.round(af * 1e6) / 1e6,
+        gnomad_af_grpmax: grpmax,
+        clin_sig: coding && rand() < 0.15 ? 'Uncertain_significance' : null,
+        qual: Math.round((filter === 'PASS' ? 200 + rand() * 1600 : 20 + rand() * 90) * 10) / 10,
+        filter,
+        gt: multi ? '1/2' : rand() < 0.62 ? '0/1' : '1/1',
+        dp,
+        vaf: multi ? null : Math.round((0.42 + rand() * 0.17) * 1000) / 1000,
+        is_rare_recessive: af === null ? true : af < 0.005,
+        is_protein_altering: impact === 'HIGH' || impact === 'MODERATE',
+      });
+    }
+  }
+
+  const bub1b = panelGenesFixture[0];
+  out.push(
+    {
+      chrom: bub1b.chrom,
+      pos: 900_000, // SYNTHETIC
+      ref: 'C',
+      alt: 'T',
+      rsid: 'rs137852899',
+      gene: 'BUB1B',
+      consequence: 'stop_gained',
+      impact: 'HIGH',
+      gnomad_af: 0.0000062,
+      gnomad_af_grpmax: 0.0000141,
+      clin_sig: 'Pathogenic',
+      qual: 1841.6,
+      filter: 'PASS',
+      gt: '0/1',
+      dp: 47,
+      vaf: 0.511,
+      is_rare_recessive: true,
+      is_protein_altering: true,
+    },
+    {
+      chrom: bub1b.chrom,
+      pos: 901_000, // SYNTHETIC
+      ref: 'G',
+      alt: 'A',
+      rsid: null,
+      gene: 'BUB1B',
+      consequence: 'missense_variant',
+      impact: 'MODERATE',
+      gnomad_af: null, // novel — absent from gnomAD entirely
+      gnomad_af_grpmax: null,
+      clin_sig: null,
+      qual: 1204.3,
+      filter: 'PASS',
+      gt: '0/1',
+      dp: 39,
+      vaf: 0.487,
+      is_rare_recessive: true,
+      is_protein_altering: true,
+    },
+  );
+
+  // The live API carries intergenic rows (gene: null — the BED pads ±20 kb past each
+  // gene), so the fixture must exercise that bucket too.
+  const inter = prng(97);
+  for (let i = 0; i < 12; i++) {
+    counter += 1;
+    out.push({
+      chrom: panelGenesFixture[i % panelGenesFixture.length].chrom,
+      pos: counter * 1000, // SYNTHETIC — a counter, not a coordinate
+      ref: bases[Math.floor(inter() * 4)],
+      alt: bases[Math.floor(inter() * 4)],
+      rsid: `rs${2_000_000 + counter * 41}`,
+      gene: null,
+      consequence: 'intergenic_variant',
+      impact: 'MODIFIER',
+      gnomad_af: Math.round(inter() * 0.3 * 1e6) / 1e6,
+      gnomad_af_grpmax: Math.round(inter() * 0.4 * 1e6) / 1e6,
+      clin_sig: null,
+      qual: Math.round((200 + inter() * 900) * 10) / 10,
+      filter: 'PASS',
+      gt: '0/1',
+      dp: Math.max(6, Math.round(44 + (inter() - 0.5) * 26)),
+      vaf: Math.round((0.42 + inter() * 0.17) * 1000) / 1000,
+      is_rare_recessive: false,
+      is_protein_altering: false,
+    });
+  }
+
+  if (!geneName) return out;
+  const want = geneName.toUpperCase();
+  return out.filter((r) => r.gene !== null && r.gene.toUpperCase() === want);
 }

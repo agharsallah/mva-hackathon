@@ -10,6 +10,8 @@ import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import { get, getBare, type Params, type Result } from './client';
 import type {
   AlleleBalanceRow,
+  CatalogObjectRow,
+  CatalogTableRow,
   ContigDensityRow,
   CycleQualityRow,
   DensityBinRow,
@@ -22,7 +24,10 @@ import type {
   Job,
   LineageRow,
   LocusVariant,
+  ObservedExpectedRow,
   Overview,
+  PanelAnnotationRow,
+  PanelConstraintRow,
   PanelGeneRow,
   ProbeLedgerRow,
   QualityLevelRow,
@@ -61,8 +66,14 @@ export const useDepthDistribution = () => useEndpoint<DepthBinRow[]>('/api/calls
 export const useSubstitutions = () => useEndpoint<SubstitutionRow[]>('/api/callset/substitutions');
 export const useTsTv = () => useEndpoint<TsTv>('/api/callset/tstv');
 export const useIndelLengths = () => useEndpoint<IndelLengthRow[]>('/api/callset/indel-lengths');
+export const useObservedExpected = () =>
+  useEndpoint<ObservedExpectedRow[]>('/api/callset/observed-expected');
 
 export const usePanelGenes = () => useEndpoint<PanelGeneRow[]>('/api/panel/genes');
+export const usePanelConstraint = () => useEndpoint<PanelConstraintRow[]>('/api/panel/constraint');
+/** `gene` omitted returns every annotated panel row (~874). */
+export const usePanelAnnotations = (gene?: string) =>
+  useEndpoint<PanelAnnotationRow[]>('/api/panel/annotations', gene ? { gene } : undefined);
 /** ~5 s live: the server pushes the contig down into the raw variant table. */
 export const useLocus = (gene: string | null) =>
   useEndpoint<LocusVariant[]>('/api/panel/locus', gene ? { gene } : undefined, {
@@ -75,6 +86,9 @@ export const useFlowcell = (lane: number, read: number, shard: number) =>
   useEndpoint<FlowcellBinRow[]>('/api/reads/flowcell', { lane, read, shard });
 export const useCycleQuality = () => useEndpoint<CycleQualityRow[]>('/api/reads/cycle-quality');
 export const useQualityLevels = () => useEndpoint<QualityLevelRow[]>('/api/reads/quality-levels');
+
+export const useCatalogObjects = () => useEndpoint<CatalogObjectRow[]>('/api/catalog/objects');
+export const useCatalogTables = () => useEndpoint<CatalogTableRow[]>('/api/catalog/tables');
 
 export const useLineage = () => useEndpoint<LineageRow[]>('/api/provenance/lineage');
 export const useDerivations = () => useEndpoint<DerivationRow[]>('/api/provenance/derivations');

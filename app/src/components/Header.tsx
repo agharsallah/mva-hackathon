@@ -14,9 +14,11 @@ const PAGES = [
   { to: '/genome', label: 'Genome' },
   { to: '/callset', label: 'Callset' },
   { to: '/panel', label: 'Panel' },
+  { to: '/compare', label: 'Compare' },
   { to: '/reads', label: 'Reads' },
   { to: '/probes', label: 'Probes' },
   { to: '/provenance', label: 'Provenance' },
+  { to: '/catalog', label: 'Catalog' },
 ];
 
 function useApiHealth() {

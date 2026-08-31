@@ -3,6 +3,7 @@ import type {
   FilterRow,
   GenotypeRow,
   IndelLengthRow,
+  ObservedExpectedRow,
   SubstitutionRow,
   TsTv,
 } from '../api/types';
@@ -69,6 +70,100 @@ export const substitutionsFixture: SubstitutionRow[] = [
   { sub_type: 'T>A', count: 173_420, is_transition: false },
   { sub_type: 'T>C', count: 656_419, is_transition: true },
   { sub_type: 'T>G', count: 174_453, is_transition: false },
+];
+
+/**
+ * FIXTURE — observed against published healthy-genome expectations.
+ *
+ * `observed` is MEASURED for every row: the same aggregates the overview and bcftools
+ * fixtures carry (5,012,204 records, 94.58 % PASS, Ts/Tv 1.94, 44.3x mean depth,
+ * 930,181 indels, 66,860 multiallelic sites, 149 bp reads).
+ *
+ * `expected_low` / `expected_high` / `source` are SHAPE — plausible published bands with
+ * their citation strings, filled so the exhibit is readable offline. The live endpoint
+ * supplies the ranges it actually cites. All four verdicts are exercised.
+ */
+export const observedExpectedFixture: ObservedExpectedRow[] = [
+  {
+    metric: 'tstv',
+    label: 'Ts/Tv ratio (whole genome)',
+    observed: 1.94,
+    expected_low: 1.9,
+    expected_high: 2.1,
+    unit: 'ratio',
+    verdict: 'within',
+    source: 'Wang et al. 2015, WGS QC norms',
+  },
+  {
+    metric: 'mean_depth',
+    label: 'Mean read depth',
+    observed: 44.3,
+    expected_low: 30,
+    expected_high: 50,
+    unit: '×',
+    verdict: 'within',
+    source: 'clinical WGS 30× floor (ACMG/AMP lab guidance)',
+  },
+  {
+    metric: 'pass_rate',
+    label: 'PASS share of records',
+    observed: 94.58,
+    expected_low: 90,
+    expected_high: 99,
+    unit: '%',
+    verdict: 'within',
+    source: 'GATK VQSR tranche 99.0 typical yield',
+  },
+  {
+    metric: 'total_variants',
+    label: 'Variant records per genome',
+    observed: 5_012_204,
+    expected_low: 4_000_000,
+    expected_high: 5_000_000,
+    unit: 'records',
+    verdict: 'above',
+    source: '1000 Genomes phase 3, per-sample totals',
+  },
+  {
+    metric: 'indel_fraction',
+    label: 'Indels as a share of records',
+    observed: 18.56,
+    expected_low: 12,
+    expected_high: 18,
+    unit: '%',
+    verdict: 'above',
+    source: 'gnomAD v4 genome release notes',
+  },
+  {
+    metric: 'multiallelic_rate',
+    label: 'Multiallelic (1/2) sites',
+    observed: 1.33,
+    expected_low: 1.5,
+    expected_high: 3.5,
+    unit: '%',
+    verdict: 'below',
+    source: 'gnomAD v4 genome release notes',
+  },
+  {
+    metric: 'read_length',
+    label: 'Read length',
+    observed: 149,
+    expected_low: 150,
+    expected_high: 150,
+    unit: 'bp',
+    verdict: 'below',
+    source: 'Illumina 2×150 nominal (point estimate)',
+  },
+  {
+    metric: 'contamination',
+    label: 'Cross-sample contamination',
+    observed: 0,
+    expected_low: 0,
+    expected_high: 0.02,
+    unit: 'fraction',
+    verdict: 'unknown',
+    source: 'not measured — needs verifyBamID on the BAM, which was not delivered',
+  },
 ];
 
 /** FIXTURE — MEASURED ratio 1.94; ts/tv split derived from the 4,086,641 SNP total. */
