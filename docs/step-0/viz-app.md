@@ -1,7 +1,10 @@
 # The visualization app
 
 **Standing:** built and verified against the live `mva-viz-api` on 2026-08-31. Page map and
-env vars re-checked against `app/` on 2026-08-31 after the Catalog page landed. Measured dataset numbers are owned by
+env vars re-checked against `app/` on 2026-08-31 after the Catalog page's table explainer
+landed ([036](methodology/036-table-semantics-registry.md)); that exhibit is the first one
+verified against the **live** API rather than fixtures — all three catalogue endpoints
+answered 200. Measured dataset numbers are owned by
 [`ideation/data-findings.md`](../../ideation/data-findings.md); this page never restates them.
 
 > The **Compare** page and the Panel page's constraint scorecard were added on 2026-08-31 and
@@ -56,7 +59,7 @@ cd app && npm install && npm run dev    # http://127.0.0.1:5173
 | Reads | What does the raw measurement look like? | lane yield; store treemap; flowcell heatmap + 3D by tile; per-cycle quality + 3D surface; the 4-level phred binning |
 | Probes | Ask the raw reads a new question | k-mer console (submit → long-poll → result bars vs the expectation line); jobs monitor with cancel; oracle ledger |
 | Provenance | Where did every number come from? | lineage graph (SVG, hover an edge for its transform); derivations with their questions; flat lineage table |
-| Catalog | What data do we hold, what is in it, when did it arrive, where does it live? | delivery inventory (one card per raw object: description, size, sha256 short-form + who verified it, arrival time); table catalogue (every warehouse/results table with its lineage edge, free-text filter); read-store card |
+| Catalog | What data do we hold, what is in it, when did it arrive, where does it live? | delivery inventory (one card per raw object: description, size, sha256 short-form + who verified it, arrival time); table catalogue (every warehouse/results table with its lineage edge, free-text filter); **table explainer** (one expandable card per table: why it exists, the verb that writes it, and every column's type and meaning); read-store card |
 
 Exactly three views are 3D, each with a real third axis: density bins (chromosome × position ×
 count), flowcell (x × y × tile), cycle quality (cycle × partition × mean Q). 3D is never used for a
@@ -94,8 +97,19 @@ enforced in the rendering rather than left to the reader:
 - One file per exhibit; no source file over 400 lines. `api/types.ts` reached 398 when the three
   new endpoints were transcribed and was split into `api/types/` — one module per API domain
   behind a barrel `index.ts`, so every importer still writes `from '../api/types'`. Largest file
-  is now `fixtures/catalog-tables.ts` at 329 — the catalogue fixture was split from
-  `fixtures/catalog-objects.ts` for the same reason.
+  is now `fixtures/catalog-tables.ts` at 337 — the catalogue fixture was split from
+  `fixtures/catalog-objects.ts` for the same reason, and the `created_by` / `why` / column
+  meanings it needed went into `fixtures/catalog-semantics.ts` rather than growing it
+  further. On the server the same limit split the column registry into
+  `catalog_columns_ingest.py` and `catalog_columns_results.py`, one per managed schema.
+- **The catalogue explains itself, and the build enforces it.** `TableExplainer` enumerates
+  tables and columns from `/api/catalog/tables` and `/api/catalog/columns`, both of which
+  read `information_schema` live — so a table added to the database appears in the UI with
+  no front-end edit. What it appears *with* is the server's business: a hermetic test
+  (`tests/test_catalog_semantics.py`) walks every table name declared anywhere in the
+  Python and fails until it has a `created_by` (which command writes it, and whether that
+  replaces, rebuilds or appends) and a `why`. Adding a table without describing it breaks
+  `pytest`, and the failure names the entry to add and the file to add it to.
 - **A gap is rendered, never blanked.** A derived table with no lineage edge and a delivered
   object with no ingest-ledger row both draw a yellow chip saying which record is missing, in
   place of an empty cell. Same rule as "null is not zero" above, applied to provenance.

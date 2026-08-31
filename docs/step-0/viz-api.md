@@ -8,8 +8,12 @@ added and measured live against the hosted database
 ([`methodology/032`](methodology/032-reference-comparison-tables.md)). Re-verified
 2026-08-31 when the two data-catalogue endpoints (`/api/catalog/objects`,
 `/api/catalog/tables`) were added and measured live
-([`methodology/034`](methodology/034-data-catalog-endpoints.md)). Covered by
-`tests/test_viz_api.py`, `tests/test_viz_units.py` and `tests/test_viz_catalog.py`, mocked
+([`methodology/034`](methodology/034-data-catalog-endpoints.md)). Re-verified 2026-08-31
+when `/api/catalog/columns` was added and `/api/catalog/tables` gained `created_by` and
+`why`, measured live against the hosted database
+([`methodology/036`](methodology/036-table-semantics-registry.md)). Covered by
+`tests/test_viz_api.py`, `tests/test_viz_units.py`, `tests/test_viz_catalog.py` and
+`tests/test_catalog_semantics.py`, mocked
 below the API. The reads-API
 proxy routes were verified only on their **503** path, because
 [`mva-reads-api`](reads-api.md) is not running anywhere yet.
@@ -117,7 +121,8 @@ came from; `cached_at` is non-null exactly when the payload came off disk.
 | `GET /api/provenance/sources` | `pg.warehouse.source_objects` | live |
 | `GET /api/probe/ledger` | `pg.warehouse.probe_ledger` | live (0 rows today) |
 | `GET /api/catalog/objects` | `pg.warehouse.source_objects` + `source_files` | live, 0.5 s, 12 rows |
-| `GET /api/catalog/tables` | `pg.information_schema` + `warehouse_catalog` + `data_lineage` + `pg.results.derivation_runs` | 1.6–4.0 s → cached, 38 rows |
+| `GET /api/catalog/tables` | `pg.information_schema` + `warehouse_catalog` + `data_lineage` + `pg.results.derivation_runs` + the semantics registry | 3.3–11.8 s → cached, 38 rows |
+| `GET /api/catalog/columns` | `pg.information_schema.columns` + the column-meaning registry | live, 0.95–1.6 s, 262 rows |
 
 Add `?refresh=true` to any cached endpoint to rebuild it.
 
@@ -189,6 +194,34 @@ Four contract facts:
   table does carry a `description`: the staged catalogue for a staged table, the latest
   `derivation_runs.question` for a derived one, and an in-code one-liner
   (`catalog.UNCATALOGUED`) for the raw layer, the ledgers and the catalogue table itself.
+- **`created_by` and `why`** answer the two questions `description` does not: which named
+  command writes the table — and whether that write *replaces* it, *rebuilds* it or only
+  *appends* to it — and the one sentence saying what it is for. Both resolve from
+  `mva.viz.catalog_semantics`; a derivation's `why` is read off the question declared
+  beside its SQL rather than restated, so it cannot drift. Both are **null** for a table
+  the registry does not know: 0 of 38 today, and a hermetic test refuses to let a table
+  *declared in code* reach that state.
+
+### The column endpoint
+
+- **`GET /api/catalog/columns`** — one row per column of every table in both managed
+  schemas, live from `information_schema.columns`: `{schema, table, column, data_type,
+  ordinal, meaning}`. 262 rows today.
+- **`meaning` is the one field the database cannot supply.** `information_schema` knows
+  `mean_vaf` is a `double precision`; that it is the mean share of reads carrying the
+  alternate allele at heterozygous sites, and that 0.50 is the diploid value, is written
+  down in `mva.viz.catalog_columns`. It resolves table-specific first
+  (`contig_counts.length` is a contig's size, `stats_idd.length` an indel's), then a
+  **shared map** keyed by bare column name so one entry covers `chrom` in all fourteen
+  tables that carry it. **Null** where nothing describes the column — 0 of 262 today — and
+  the UI renders that gap rather than an empty cell.
+- **Live, not cached.** Metadata only: 0.95–1.6 s over HTTP against 3.3–11.8 s for the
+  exact row counts in `/api/catalog/tables`. Caching it would buy about a second and hide
+  the schema change the endpoint exists to surface.
+- **How it stays current.** `tests/test_catalog_semantics.py` walks every table name
+  declared anywhere in the code — the staged catalogue specs, the reference specs, every
+  `Derivation`, the ledgers, the raw layer, the annotation table and the research register
+  — and fails with the exact entry to add if any lacks a `created_by` and a `why`.
 
 ## Two things that are easy to get wrong
 
@@ -241,7 +274,10 @@ One new chart = one line, when the table already exists:
 | `routes_warehouse.py` | callset, panel, provenance routes |
 | `routes_reads.py` | read-store routes and the proxy routes |
 | `queries.py` | every warehouse SQL statement |
-| `catalog.py` | the data catalogue: object descriptions, table descriptions, row counts |
+| `catalog.py` | the data catalogue: object descriptions, table descriptions, row counts, the column list |
+| `catalog_semantics.py` | per table: the verb that writes it, why it exists, and the list of every table declared in code (the enforcement gate's input) |
+| `catalog_columns.py` | column meanings: the shared map for recurring names, and the resolution order |
+| `catalog_columns_ingest.py` / `catalog_columns_results.py` | the per-table column meanings, one module per managed schema |
 | `readstore.py` | every object-store SQL statement |
 | `overview.py` | the headline object, one connection |
 | `genotype.py` | decoding `format` + `sample_call` |

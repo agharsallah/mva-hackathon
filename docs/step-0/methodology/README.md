@@ -76,3 +76,4 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [033](033-compare-page.md) | Can the browser hold the case against the healthy population — rarity, constraint, and QC norms — on one page? *(step-0 machinery, no hypothesis.)* |
 | [034](034-data-catalog-endpoints.md) | Can two endpoints describe every object and table — what it is, what it contains, when it arrived, where it lives — without scanning the data? *(step-0 machinery, no hypothesis.)* |
 | [035](035-catalog-page.md) | Can the catalogue render as one page: the delivery's cards, a filterable table inventory, and the read store's card? *(step-0 machinery, no hypothesis.)* |
+| [036](036-table-semantics-registry.md) | Can every table and column state what it means and why it exists — and can a test refuse to let that description go stale when a new table lands? *(step-0 machinery, no hypothesis.)* |

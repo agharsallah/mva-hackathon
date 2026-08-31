@@ -826,6 +826,12 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 **Data warehouse** — one queryable copy of derived tables, kept apart from the raw data they came from. Here it is deliberately small: the [profile](step-0/exploration.md) tables, typed and joinable, on a machine the team shares. It is a *derived dataset* — rebuildable at any time, and therefore safe to delete.
 *Example: `uv run mva-warehouse pg-ingest` — see [the infrastructure runbook](step-0/infrastructure.md).*
 
+**Schema (namespace)** — a named group of tables inside one database, the way a package groups modules in code. A table's full address is `<schema>.<table>`, and two schemas can hold different tables with the same name. This warehouse uses exactly two: `warehouse` for ingested data and the hand-written append-only ledgers, and `results` for everything computed from them. The split is load-bearing — re-ingesting cannot destroy a derived table, and re-deriving cannot corrupt an input.
+*Example: `warehouse.variants_raw` is the delivered callset; `results.contig_density` is a table computed from it.*
+
+**`information_schema`** — a set of read-only views every SQL database exposes describing *itself*: which tables exist, which columns each has, and what type each column is. It is how a catalogue can list a database it was never told about. What it cannot supply is meaning — it knows `mean_vaf` is a floating-point number, not that 0.50 is the value a healthy diploid genome gives, which is why that sentence has to be written down in code.
+*Example: `/api/catalog/columns` reads it live and returns 262 rows, one per column of the 38 tables.*
+
 **PostgreSQL (Postgres)** — the mainstream open-source client–server database. A daemon owns the data; clients connect over a socket, authenticate, and many can read and write at the same time. Row-oriented, so it is slower than a column store for wide analytical scans — but that is not what you ask it for. Use it for the things that *change*: a ledger, a results table, anything several people append to.
 *Example: measured on 5,012,204 variant records — 653 MB in Postgres versus 17 MB as [Parquet](#8-the-toolbox-what-each-program-does), and 287 ms versus 18 ms on the same filter query.*
 
