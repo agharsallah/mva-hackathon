@@ -6,9 +6,11 @@ requires-python = ">=3.11,<3.15"
 dependencies = [
     "boto3>=1.43.83",
     "duckdb>=1.5.5",
+    "fastapi>=0.115",
     "huggingface-hub>=1.29.0",
     "plotly>=7.0.0",
     "requests>=2.34.2",
+    "uvicorn>=0.30",
 ]
 
 [project.scripts]
@@ -16,6 +18,7 @@ mva-explore = "mva.explore.cli:main"
 mva-warehouse = "mva.warehouse.cli:main"
 mva-science = "mva.science.cli:main"
 mva-reads = "mva.reads.cli:main"
+mva-reads-api = "mva.reads.api.serve:main"
 
 [dependency-groups]
 bench = [
@@ -23,7 +26,10 @@ bench = [
     "oxbow>=0.8.1",
     "polars-bio>=0.35.1",
 ]
-dev = ["pytest>=8"]
+dev = [
+    "httpx>=0.27",
+    "pytest>=8",
+]
 
 [build-system]
 requires = ["hatchling"]

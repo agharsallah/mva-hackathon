@@ -11,22 +11,11 @@ import time
 from pathlib import Path
 
 from ..warehouse.settings import object_store, setting
-from . import bench, scan, schema, store, verify
+from . import bench, scan, store, triage, verify
+from .access import connection as _connection
+from .access import s3_root as _s3_root
 from .engines import ENGINES
 from .source import NotADelivery
-
-
-def _s3_root(cfg) -> str:
-    return f"s3://{cfg.bucket}/{schema.PREFIX}"
-
-
-def _connection(root: str):
-    """A DuckDB connection able to read ``root`` — with the store secret when remote."""
-    if root.startswith("s3://"):
-        from ..warehouse.objects import connect
-        return connect(object_store())
-    import duckdb
-    return duckdb.connect()
 
 
 def _sources(args) -> list:
@@ -173,13 +162,10 @@ def do_count(args) -> int:
             print(f"{name:>20} {0:>7} {0:>7} {0:>7} {0:>6}  absent")
             continue
         _, forward, reverse, total, lanes = row
-        verdict = ("absent" if total == 0 else
-                   "error-level" if total <= 2 else
-                   "present" if lanes >= 2 else "one lane only — suspect")
-        print(f"{name:>20} {forward:>7} {reverse:>7} {total:>7} {lanes:>6}  {verdict}")
+        print(f"{name:>20} {forward:>7} {reverse:>7} {total:>7} {lanes:>6}  "
+              f"{triage.verdict(total, lanes)}")
     print(f"\n{len(probes)} probe(s) in one pass, {seconds:.1f}s over {root}")
-    print("expected ~35 reads for a real single-copy 31-mer at this depth "
-          "(44x * (149 - k + 1) / 149)")
+    print(triage.EXPECTED_HINT)
     return 0
 
 
