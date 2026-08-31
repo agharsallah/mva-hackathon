@@ -68,3 +68,8 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [025](025-many-probes-one-pass.md) | Why did 20 probes take 10× one probe, and what makes batching actually free? |
 | [026](026-multi-literal-matching-needs-aho-corasick.md) | Why did the regex fix fail on the server, and what is the delivery's k-mer noise floor? |
 | [027](027-aho-corasick-confirmed.md) | Does the Aho-Corasick fix hold on the server? **Closes 026: 335 s for 20 probes.** |
+| [028](028-viz-api.md) | Can one HTTP service serve the warehouse, the object store and the job API to a browser, with no endpoint able to trigger a whole-genome scan? *(step-0 machinery, no hypothesis.)* |
+| [029](029-viz-app.md) | Can a React app turn those endpoints into seven pages that each answer one question and explain their own domain terms? *(step-0 machinery, no hypothesis.)* |
+| [030](030-population-reference-data.md) | What does "normal" look like? Three public, non-patient reference tables, small enough to commit and join-ready. *(step-0 machinery, no hypothesis.)* |
+| [031](031-vep-rest-panel-annotation.md) | Can a REST-backed annotator fill the open annotation port and land every panel allele in the warehouse with lineage? *(step-0 machinery, no hypothesis.)* |
+| [032](032-reference-comparison-tables.md) | Can the reference tables be staged through the existing path and joined into three comparison tables the browser reads in under a second? *(step-0 machinery, no hypothesis.)* |

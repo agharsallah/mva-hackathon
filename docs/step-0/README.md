@@ -74,7 +74,7 @@ Step 0 is *machinery*, and that makes it a different kind of step from every one
 works — not a claim about the patient that evidence could refute. So:
 
 * its reasoning lives in [`notes/`](notes/) as **decisions**, not as hypotheses;
-* its [`methodology/001–027`](methodology/) are **platform records** — what was built and
+* its [`methodology/001–032`](methodology/) are **platform records** — what was built and
   what was measured, ending in *Conclusions*;
 * the register in `mva-science` **refuses** a hypothesis filed under `step-0`.
 
@@ -111,6 +111,7 @@ Cross-step decisions — [no patient data](../notes/no-patient-data-in-the-repos
 
 ## Evidence
 
-[`methodology/`](methodology/) — entries 001–029, append-only, one per executed run. 001–006
+[`methodology/`](methodology/) — entries 001–032, append-only, one per executed run. 001–006
 are first contact with the delivery; 007–017 are the warehouse platform; 018–027 are the
-read store and its API; 028–029 are the viz API and the React app.
+read store and its API; 028–029 are the viz API and the React app; 030–032 are the public
+reference data, the VEP annotator and the comparison tables they produce.
