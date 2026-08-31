@@ -9,6 +9,7 @@ dependencies = [
     "fastapi>=0.115",
     "huggingface-hub>=1.29.0",
     "plotly>=7.0.0",
+    "polars>=1.44.1",
     "requests>=2.34.2",
     "uvicorn>=0.30",
 ]

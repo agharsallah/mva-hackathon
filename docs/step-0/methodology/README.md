@@ -66,3 +66,4 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [023](023-the-exact-read-census.md) | Is the read store correct, and how many reads does the delivery actually hold? **Supersedes the read count of 005.** |
 | [024](024-the-kmer-strike-works.md) | Does a mapping-free k-mer search over 1.07 billion reads work, and how fast? |
 | [025](025-many-probes-one-pass.md) | Why did 20 probes take 10× one probe, and what makes batching actually free? |
+| [026](026-multi-literal-matching-needs-aho-corasick.md) | Why did the regex fix fail on the server, and what is the delivery's k-mer noise floor? |

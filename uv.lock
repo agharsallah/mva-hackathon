@@ -854,6 +854,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "huggingface-hub" },
     { name = "plotly" },
+    { name = "polars" },
     { name = "requests" },
     { name = "uvicorn" },
 ]
@@ -876,6 +877,7 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.115" },
     { name = "huggingface-hub", specifier = ">=1.29.0" },
     { name = "plotly", specifier = ">=7.0.0" },
+    { name = "polars", specifier = ">=1.44.1" },
     { name = "requests", specifier = ">=2.34.2" },
     { name = "uvicorn", specifier = ">=0.30" },
 ]

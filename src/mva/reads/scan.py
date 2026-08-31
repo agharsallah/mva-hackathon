@@ -97,6 +97,66 @@ def pattern(probes: list[str], names: list[str] | None = None) -> str:
     return "|".join(sorted({seq for _, seq, _ in expand(probes, names)}))
 
 
+def survivors(connection, root: str, probes: list[str],
+              names: list[str] | None = None) -> str:
+    """Register the reads matching any probe; returns the relation name to query.
+
+    The expensive stage of every probe verb is finding the needle-carrying reads among
+    1.07 billion. Two implementations, chosen by availability:
+
+    **Polars ``contains_any``** — a SIMD multi-literal matcher (Aho-Corasick/Teddy)
+    evaluated columnar over each chunk, so the automaton is built once and amortised
+    across the whole column, not re-entered per row. This is the fix for the measured
+    failure of both previous shapes (``methodology/026``): a cross join of ``contains``
+    and a 40-literal ``regexp_matches`` both cost ~32 minutes on the server, the regex
+    at ~1.9 µs of per-call overhead per read.
+
+    **DuckDB ``regexp_matches``** — the fallback when Polars is not installed. Correct
+    everywhere, fast only where per-call regex setup is cheap.
+
+    The survivor set is dozens-to-thousands of reads, so materialising it is free; the
+    caller joins it back to the probe table for attribution.
+    """
+    sequences = sorted({seq for _, seq, _ in expand(probes, names)})
+    try:
+        frame = _polars_survivors(root, sequences)
+    except ImportError:
+        connection.execute(f"""
+            CREATE OR REPLACE TEMP TABLE kmer_survivors AS
+            SELECT lane, read, tile, x, y, sequence
+            FROM read_parquet('{glob(root)}', hive_partitioning=true)
+            WHERE regexp_matches(sequence, '{"|".join(sequences)}')""")
+        return "kmer_survivors"
+    connection.register("kmer_survivors", frame)
+    return "kmer_survivors"
+
+
+def _polars_survivors(root: str, sequences: list[str]):
+    """One streaming pass with the multi-literal matcher; returns a Polars frame."""
+    import polars as pl
+
+    lazy = pl.scan_parquet(glob(root), hive_partitioning=True,
+                           storage_options=_polars_storage_options(root))
+    return (lazy.select("lane", "read", "tile", "x", "y", "sequence")
+                .filter(pl.col("sequence").str.contains_any(sequences))
+                .collect(engine="streaming"))
+
+
+def _polars_storage_options(root: str) -> dict | None:
+    """Credentials for an ``s3://`` root, from the same settings everything uses."""
+    if not root.startswith("s3://"):
+        return None
+    from ..warehouse.settings import object_store
+
+    store = object_store()
+    scheme = "https" if store.use_ssl else "http"
+    return {"aws_access_key_id": store.access_key,
+            "aws_secret_access_key": store.secret_key,
+            "aws_endpoint_url": f"{scheme}://{store.endpoint}",
+            "aws_region": store.region,
+            "aws_allow_http": str(not store.use_ssl).lower()}
+
+
 def kmer(connection, root: str, probe: str, limit: int = 100) -> list[Hit]:
     """Every read containing ``probe`` on either strand (up to ``limit`` reported)."""
     return kmers(connection, root, [probe], limit=limit)
@@ -115,17 +175,14 @@ def kmers(connection, root: str, probes: list[str], limit: int = 100,
     """
     if not probes:
         return []
+    source = survivors(connection, root, probes, names)
     found = connection.execute(f"""
         WITH probes(name, seq, strand) AS (VALUES {probe_table(probes, names)}),
-        survivors AS (
-            SELECT lane, read, tile, x, y, sequence
-            FROM read_parquet('{glob(root)}', hive_partitioning=true)
-            WHERE regexp_matches(sequence, '{pattern(probes, names)}')),
         matches AS (
             SELECT p.name, p.strand, s.lane, s.read, s.tile, s.x, s.y,
                    position(p.seq IN s.sequence) AS found_at, s.sequence,
                    row_number() OVER (PARTITION BY p.name ORDER BY s.lane, s.tile) AS rank
-            FROM survivors s JOIN probes p ON contains(s.sequence, p.seq))
+            FROM {source} s JOIN probes p ON contains(s.sequence, p.seq))
         SELECT name, strand, lane, read, tile, x, y, found_at, sequence
         FROM matches WHERE rank <= {int(limit)}
     """).fetchall()
@@ -144,18 +201,15 @@ def counts(connection, root: str, probes: list[str],
     """
     if not probes:
         return []
+    source = survivors(connection, root, probes, names)
     return connection.execute(f"""
-        WITH probes(name, seq, strand) AS (VALUES {probe_table(probes, names)}),
-        survivors AS (
-            SELECT lane, sequence
-            FROM read_parquet('{glob(root)}', hive_partitioning=true)
-            WHERE regexp_matches(sequence, '{pattern(probes, names)}'))
+        WITH probes(name, seq, strand) AS (VALUES {probe_table(probes, names)})
         SELECT p.name,
                count(*) FILTER (p.strand = '+') AS forward,
                count(*) FILTER (p.strand = '-') AS reverse,
                count(*) AS total,
                count(DISTINCT s.lane) AS lanes
-        FROM survivors s JOIN probes p ON contains(s.sequence, p.seq)
+        FROM {source} s JOIN probes p ON contains(s.sequence, p.seq)
         GROUP BY p.name ORDER BY p.name
     """).fetchall()
 

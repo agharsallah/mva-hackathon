@@ -487,3 +487,18 @@ def test_pattern_is_one_alternation_of_both_strands():
     assert set(p.split("|")) == {"AAAC", "GTTT", "GGGT", "ACCC"}
     with pytest.raises(ValueError, match="not a DNA sequence"):
         scan.pattern(["AAA(C"])  # a metacharacter cannot reach the regex
+
+
+def test_fallback_survivors_agree_with_polars(built, monkeypatch):
+    """The DuckDB regex fallback must return exactly what the fast path returns."""
+    import duckdb
+
+    root, _ = built
+    fast = scan.counts(duckdb.connect(), str(root), [PLANTED], names=["real"])
+
+    def no_polars(root, sequences):
+        raise ImportError("polars unavailable")
+
+    monkeypatch.setattr(scan, "_polars_survivors", no_polars)
+    slow = scan.counts(duckdb.connect(), str(root), [PLANTED], names=["real"])
+    assert fast == slow
