@@ -82,6 +82,22 @@ def density_bins(settings: Postgres, chrom: str | None = None) -> list[dict]:
                  [to_vcf_contig(chrom)] if chrom else None)
 
 
+def baf_bins(settings: Postgres, chrom: str | None = None) -> list[dict]:
+    """Heterozygous allele balance per 1 Mb bin, whole genome or one chromosome.
+
+    The per-megabase counterpart of ``allele_balance``, precomputed by the ``baf_bins``
+    derivation. ``low_confidence`` travels with the row so the chart can render a thin bin
+    as unmeasured rather than as signal; the row is never dropped, because an empty
+    stretch is itself information.
+    """
+    where = "WHERE chrom = ?" if chrom else ""
+    return fetch(settings,
+                 f"SELECT chrom, mb, n_het, mean_vaf, median_vaf, sd_vaf, vaf_deviation, "
+                 f"pct_in_0_40_0_60, mean_dp, low_confidence "
+                 f"FROM pg.results.baf_bins {where} ORDER BY chrom, mb",
+                 [to_vcf_contig(chrom)] if chrom else None)
+
+
 # ── callset ──────────────────────────────────────────────────────────────────────────
 
 def filters(settings: Postgres) -> list[dict]:
@@ -109,6 +125,18 @@ def indel_lengths(settings: Postgres) -> list[dict]:
 def observed_expected(settings: Postgres) -> list[dict]:
     """Each QC metric this callset can be measured against, with its published range."""
     return table(settings, "results", "qc_observed_expected", "ORDER BY metric")
+
+
+def candidate_funnel(settings: Postgres) -> list[dict]:
+    """The ranking waterfall, one row per filter stage, in stage order.
+
+    Two scopes in one table: ``scope = 'genome'`` rows are measured over the whole
+    callset, ``scope = 'panel'`` rows only inside the eight-gene candidate panel, which is
+    the only region annotation exists for. ``of_previous_pct`` is **null** wherever the
+    row is not a subset of the row above it — at the scope change — rather than dividing
+    two different populations.
+    """
+    return table(settings, "results", "candidate_funnel", "ORDER BY stage_no")
 
 
 def tstv(settings: Postgres) -> dict:
@@ -178,6 +206,27 @@ def panel_candidates(settings: Postgres, gene: str | None = None) -> list[dict]:
     """, [gene] if gene else None)
     if gene and not found:
         raise LookupError(gene)
+    return found
+
+
+def het_pairs(settings: Postgres, gene: str) -> list[dict]:
+    """One gene's heterozygous PASS alleles — the members of its compound-het pair grid.
+
+    Reads the ``panel_het_pairs`` derivation, so the request is a few hundred rows and no
+    cross product happens in SQL; :mod:`mva.viz.phase` builds the pairs. An empty result
+    is ambiguous — a gene with no het PASS allele looks exactly like a misspelt gene — so
+    the panel is consulted before answering, and only a name it does not know is a
+    :class:`LookupError`.
+    """
+    found = fetch(settings, """
+        SELECT gene, chrom, pos, ref, alt, allele_ix, gt, qual, dp, vaf, pgt, pid,
+               rsid, consequence, impact, gnomad_af, gnomad_af_grpmax, clin_sig,
+               annotated, is_rare_recessive, is_protein_altering
+        FROM pg.results.panel_het_pairs WHERE gene = ?
+        ORDER BY pos, allele_ix
+    """, [gene])
+    if not found:
+        gene_region(settings, gene)
     return found
 
 

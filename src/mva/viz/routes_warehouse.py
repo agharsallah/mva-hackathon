@@ -12,7 +12,7 @@ must never be written anywhere the repository can pick up.
 
 from fastapi import APIRouter, HTTPException, Query
 
-from . import catalog, phase, queries, science
+from . import catalog, genestructure, phase, queries, science
 from .cache import Cache, safe_key
 from .overview import overview
 from .response import Envelope, cached, live
@@ -30,6 +30,7 @@ TABLES = {
     "/callset/tstv": (queries.tstv, "pg.results.stats_tstv"),
     "/callset/observed-expected": (queries.observed_expected,
                                    "pg.results.qc_observed_expected"),
+    "/callset/funnel": (queries.candidate_funnel, "pg.results.candidate_funnel"),
     "/provenance/lineage": (queries.lineage, "pg.warehouse.data_lineage"),
     "/provenance/derivations": (queries.derivations, "pg.results.derivation_runs"),
     "/provenance/sources": (queries.sources, "pg.warehouse.source_objects"),
@@ -123,6 +124,21 @@ def router(settings, cache: Cache) -> APIRouter:
         return live(queries.density_bins(settings, chrom),
                     "pg.results.variant_density_bins")
 
+    @api.get("/genome/baf-bins", response_model=Envelope, tags=["genome"])
+    def baf_bins(chrom: str | None = Query(
+            default=None,
+            description="bare contig name as the callset spells it, e.g. \"15\"; "
+                        "omit for the whole genome")) -> dict:
+        """B-allele fraction and read depth of heterozygous PASS calls per 1 Mb bin.
+
+        The karyogram view of allele balance: ``/genome/allele-balance`` averages a whole
+        chromosome, which hides a shifted segment. Precomputed by the ``baf_bins``
+        derivation, so the request never scans the callset. A bin with fewer than 20
+        heterozygous calls carries ``low_confidence = true`` and must be rendered as
+        unmeasured, not as signal.
+        """
+        return live(queries.baf_bins(settings, chrom), "pg.results.baf_bins")
+
     @api.get("/panel/genes", response_model=Envelope, tags=["panel"])
     def panel_genes() -> dict:
         """The eight candidate genes: interval, density, PASS rate, and why each is here."""
@@ -178,6 +194,51 @@ def router(settings, cache: Cache) -> APIRouter:
                                 detail=f"no panel gene {unknown.args[0]!r}") from unknown
         return cached(entry, "pg.warehouse.variants_raw (chrom pushdown)")
 
+    @api.get("/panel/gene-structure", response_model=Envelope, tags=["panel"])
+    def panel_gene_structure(
+            gene: str = Query(description="panel gene symbol, e.g. BUB1B"),
+            refresh: bool = False) -> dict:
+        """One gene's exons, protein domains and protein-altering alleles.
+
+        Three Ensembl REST calls behind a disk cache, because gene structure is static
+        reference data. A ``502`` means Ensembl was unreachable or refused — never a
+        fixture-shaped stand-in. Unlike ``/panel/locus`` this payload carries **no**
+        patient genomic coordinate: alleles are placed in amino-acid space.
+        """
+        try:
+            key = safe_key("gene-structure", gene)
+        except ValueError as bad:
+            raise HTTPException(status_code=422, detail=str(bad)) from bad
+        try:
+            entry = cache.get_or_build(
+                key, lambda: genestructure.structure(gene, settings), refresh)
+        except LookupError as unknown:
+            raise HTTPException(status_code=404,
+                                detail=f"no panel gene {unknown.args[0]!r}") from unknown
+        except genestructure.EnsemblError as down:
+            raise HTTPException(status_code=502, detail=str(down)) from down
+        return cached(entry, genestructure.SOURCE)
+
+    @api.get("/panel/het-pairs", response_model=Envelope, tags=["panel"])
+    def panel_het_pairs(gene: str = Query(
+            description="panel gene symbol, e.g. BUB1B")) -> dict:
+        """One gene's compound-heterozygous pair matrix: the axis, and what phase resolves.
+
+        ``variants`` is one row per heterozygous PASS ALT allele, ordered by position —
+        that order **is** both axes of the matrix, so a cell is addressed by index.
+        ``pairs`` holds only the cells physical phasing resolves; short-read phasing
+        reaches ~300 bp, so on a real gene that is single digits out of thousands and
+        every unlisted cell is *unknown*. ``summary`` carries the counts that make the
+        emptiness legible instead of invisible.
+        """
+        try:
+            variants = queries.het_pairs(settings, gene)
+        except LookupError as unknown:
+            raise HTTPException(status_code=404,
+                                detail=f"no panel gene {unknown.args[0]!r}") from unknown
+        return live(phase.matrix(gene, variants), "pg.results.panel_het_pairs")
+
+    science.add_routes(api, settings)
     return api
 
 

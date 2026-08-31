@@ -108,4 +108,47 @@ RESULT_COLUMNS: dict[tuple[str, str], str] = {
     ("qc_observed_expected", "observed_from"): "Which table and section the observation "
                                                "was measured from, so the number is "
                                                "traceable.",
+    ("candidate_funnel", "stage_no"): "Position of the stage in the waterfall, 1 first. "
+                                      "Also the sort key.",
+    ("candidate_funnel", "stage"): "The filter this stage applies, in plain words.",
+    ("candidate_funnel", "scope"): "`genome` for a stage measured over the whole callset, "
+                                   "`panel` for one measurable only inside the eight-gene "
+                                   "candidate panel — the only region annotation exists "
+                                   "for.",
+    ("candidate_funnel", "n"): "How many survive the stage. The unit changes down the "
+                               "table: records, then alleles, then pairs — the note says "
+                               "which.",
+    ("candidate_funnel", "of_previous_pct"): "`n` as a percentage of the row above. Null "
+                                             "wherever this row is not a subset of that "
+                                             "one, rather than dividing two different "
+                                             "populations.",
+    ("candidate_funnel", "note"): "Why the filter is justified and what it does to the "
+                                  "unit being counted.",
+    ("panel_het_pairs", "allele_ix"): "Which alternate allele of the record this row is: 1 "
+                                      "always, 2 for the second allele of a `1/2` site. It "
+                                      "is what keeps the two halves of a multi-allelic "
+                                      "record distinguishable in the pair grid.",
+    ("panel_het_pairs", "gt"): "The sample's genotype call, read out of the record's own "
+                               "FORMAT keys. Only heterozygous calls are kept: `0/1`, or "
+                               "`1/2` for two different alternate alleles.",
+    ("panel_het_pairs", "dp"): "Reads covering the site for this sample.",
+    ("panel_het_pairs", "vaf"): "Fraction of the record's reads carrying *this* allele. "
+                                "Defined at a `1/2` site too, because the row is one "
+                                "allele rather than the whole record.",
+    ("panel_het_pairs", "pgt"): "Which haplotype the allele sits on inside its phase set, "
+                                "e.g. `0|1`. Null wherever the caller could not phase, "
+                                "which is the common case.",
+    ("panel_het_pairs", "pid"): "Phase-set identifier: two variants sharing it were seen "
+                                "on the same reads, so their relative phase is measured. "
+                                "Reach is about 300 bp. Null means unphased.",
+    ("panel_het_pairs", "annotated"): "Whether VEP was asked about this exact allele. "
+                                      "False leaves every annotation-derived column null "
+                                      "rather than false.",
+    ("panel_het_pairs", "is_rare_recessive"): "Whether the allele is rare enough to survive "
+                                              "a recessive search: gnomAD frequency under "
+                                              "0.01, or absent altogether. Null when the "
+                                              "allele was never annotated.",
+    ("panel_het_pairs", "is_protein_altering"): "Whether VEP's impact is HIGH or MODERATE, "
+                                                "i.e. the allele changes the protein. Null "
+                                                "when the allele was never annotated.",
 }
