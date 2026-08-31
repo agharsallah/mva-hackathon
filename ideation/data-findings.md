@@ -2,7 +2,7 @@
 
 **Standing:** the **single owner of every measured number about the dataset**. Other
 documents link here; none restate a value. Measured 2026-08-28, re-checked 2026-08-29
-against the object-store inventory. Evidence for how each number was produced is in the
+against the object-store inventory; §6.1 (panel annotation) added 2026-08-31. Evidence for how each number was produced is in the
 [`methodology/`](../docs/step-0/methodology/) entry cited beside it.
 
 Empirical companion to `data-inventory.md` (written before the files were opened, now in
@@ -251,13 +251,48 @@ the annotation port is the next blocking dependency rather than a refinement.
 Six BUB1B variants lack the dbSNP flag and are the only novelty signal available today.
 That is a starting point, not a candidate list.
 
+### 6.1 The panel, annotated (VEP REST, 2026-08-31)
+
+The annotation gap above is now closed for the panel
+([methodology 031](../docs/step-0/methodology/031-vep-rest-panel-annotation.md)):
+861 sites split into **874 alleles** (13 multiallelic ALT splits), all 874 annotated via
+Ensembl VEP REST (release 116, GRCh38) into `warehouse.panel_annotations`.
+
+| Measured | Value |
+|---|---|
+| Alleles annotated | 874 of 874 |
+| With a gnomAD frequency | 863 (11 novel) |
+| With a ClinVar record | 56 |
+| Impact | 850 MODIFIER · 13 MODERATE · 9 LOW · 2 HIGH |
+| Distinct gene symbols hit | 18 (panel spans catch flanking genes) |
+
+**The headline:** filtering to protein-altering (`impact ∈ {HIGH, MODERATE}`) **and** rare
+(gnomAD AF absent or < 0.01, the recessive threshold) leaves **exactly two alleles, both in
+BUB1B, both heterozygous, both PASS**:
+
+1. `stop_gained`, HIGH impact, gnomAD AF 3.29e-05, already ClinVar
+   `pathogenic;likely_pathogenic`.
+2. `missense_variant`, MODERATE impact, **absent from gnomAD**, no ClinVar record.
+
+That is the exact shape of a compound heterozygote in the strongest prior gene (MVA1).
+**Phase is not established** — two `0/1` calls are equally consistent with *cis* — so this
+is an observation, not a verdict. It belongs in the hypothesis register with a prediction
+and a refutation condition before any probe is spent.
+
+Population-reference context measured alongside
+([methodology 030](../docs/step-0/methodology/030-population-reference-data.md)):
+ClinVar (release 2026-08-29) holds 2,129 P/LP records across the panel genes (BUB1B 84);
+gnomAD v4.1 constraint scores BUB1B pLI = 2.6e-14 and CEP57 pLI = 6.8e-06 — the recessive
+carrier effect, which is why constraint must not be used to rank these candidates.
+
 ---
 
 ## 7. What this implies for the pipeline
 
 1. **Annotation is the critical path.** Rarity (gnomAD) and consequence (VEP) are the
    discriminating signals. Nothing else in the VCF separates 861 panel variants into
-   candidates. Everything else is built and tested; this is the gap.
+   candidates. *Closed for the panel* (§6.1) — and it collapsed 874 alleles to 2
+   candidates in one pass. Genome-wide annotation (offline VEP cache) remains open.
 2. **Normalize before comparing anything.** 66,860 multiallelic sites and 930k indels,
    against a scorer that does exact string matching with no left-alignment. `bcftools
    norm -m -both -f <no-chr GRCh38>` is mandatory, and the reference must be the

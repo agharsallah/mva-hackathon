@@ -728,7 +728,15 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 
 **Annotation** — attaching meaning to a raw variant. *"chr15:40162526 C>T" → "in BUB1B, exon 9, changes an amino acid, seen in 0 healthy people, predicted damaging".*
 
-**VEP (Variant Effect Predictor)** — the standard tool that does that attaching. Runs offline from a downloaded **cache**.
+**VEP (Variant Effect Predictor)** — the standard tool that does that attaching. Two ways to run it: offline from a downloaded **cache** (~25 GB, genome-scale), or the **REST API** at `rest.ensembl.org` (no download, rate-limited to 55,000 requests/hour, batches of 200 variants — right size for a gene panel).
+*Example: `mva-warehouse annotate-panel` sent the 874 panel alleles through the REST API in 5 requests ([methodology 031](step-0/methodology/031-vep-rest-panel-annotation.md)).*
+
+**Consequence** — VEP's answer to "what does this variant do to the gene", as a controlled vocabulary term. `stop_gained` = creates a premature stop, truncating the protein; `missense_variant` = swaps one amino acid; `intron_variant` = lands between exons, usually harmless.
+
+**Impact** — VEP's four-bucket severity rollup of the consequence: **HIGH** (protein destroyed), **MODERATE** (protein changed), **LOW** (protein grazed), **MODIFIER** (outside the protein — the overwhelming majority). A coarse first filter, not a verdict.
+*Example: of the 874 panel alleles, 850 are MODIFIER and only 2 are HIGH+rare or MODERATE+rare.*
+
+**rsID** — a variant's public catalogue number in **dbSNP** (NCBI's registry of every variant ever reported), like `rs1801516`. The VCF's `ID` column carries it when the caller recognised the site; `.` means unregistered. Known rsID ≠ harmless — it only means "seen before".
 
 **Plugin** — an add-on that lets VEP attach one more kind of score.
 
@@ -741,11 +749,12 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 
 **gnomAD** — database of DNA from ~800,000 healthy-ish people. Tells you how common a variant is.
 
-**AF (allele frequency)** — what fraction of people carry it. **popmax** = the highest frequency in any single population group (safer than the global average).
-*Logic here: MVA has under 50 patients worldwide, so a causing variant must be super rare. AF above 1e-3 (0.1%) = too common = not it.*
+**AF (allele frequency)** — what fraction of people carry it. **popmax** = the highest frequency in any single population group (safer than the global average); gnomAD v4 renamed it **grpmax**.
+*Logic here: MVA has under 50 patients worldwide, so a causing variant must be super rare. But the cut-off depends on inheritance: the literature uses AF < 1e-3 (0.1%) for **dominant** disease and AF < 1e-2 (1%) for **recessive** and compound-het — healthy carriers keep a recessive allele circulating (Pedersen 2021, PMID 34267211; Whiffin 2017, PMID 28518168). Filtering compound-het candidates at 1e-3 silently drops real alleles sitting between 0.1% and 1%. The thresholds live in `ressources/reference/qc_norms.tsv`.*
 
 **Constraint (pLI / LOEUF / missense z-score)** — measures whether a gene tolerates being broken in healthy people.
 *High pLI = nobody healthy has a broken copy = breaking it is probably serious.*
+*The recessive trap: gnomAD is full of healthy **carriers** of recessive disease alleles, so recessive-disease genes score as tolerant. Measured on our panel: BUB1B pLI = 2.6e-14 and CEP57 pLI = 6.8e-06 — the two established MVA genes look completely unconstrained. Never rank recessive candidates by constraint; show it only as context ([methodology 030](step-0/methodology/030-population-reference-data.md)).*
 
 **dbNSFP** — one giant pre-computed table with dozens of prediction scores already joined together. Saves days.
 
