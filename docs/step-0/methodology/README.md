@@ -63,3 +63,4 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [020](020-presigned-urls-defeat-compression-inference.md) | Does a reader still recognise gzip when the URL ends in a signature? **Amends 019.** |
 | [021](021-the-row-group-is-a-memory-budget.md) | Why did the winning engine run out of memory on real data? **Corrects the memory verdict of 018.** |
 | [022](022-engine-bakeoff-on-the-delivery.md) | Which engine converts the delivered reads, measured on the delivery? **Authorises the full conversion.** |
+| [023](023-the-exact-read-census.md) | Is the read store correct, and how many reads does the delivery actually hold? **Supersedes the read count of 005.** |

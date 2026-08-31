@@ -35,14 +35,14 @@ in `~/ubuntu/work/`, outside the repo.
 |---|---|
 | Objects | **12** |
 | Bytes | **84,985,953,378 — 84.99 GB** |
-| Reads across the 8 FASTQ | **1,079,858,785** |
-| Bases | **160.9 Gb** |
+| Reads across the 8 FASTQ | **1,071,835,104** — exact census ([`methodology/023`](../docs/step-0/methodology/023-the-exact-read-census.md)) |
+| Bases | **159.7 Gb** |
 
 The "10 files" seen on disk and the 12 objects in the bucket are the same delivery counted
 differently: the disk figure omits the HF `README.md` and `.gitattributes`, which are
 dataset metadata rather than data. Both counts are correct for what they count.
 
-There is **no BAM/CRAM**. Any read-level work means aligning 160.9 Gbases ourselves.
+There is **no BAM/CRAM**. Any read-level work means aligning 159.7 Gbases ourselves.
 
 ---
 
@@ -159,15 +159,31 @@ statement, not evidence of absence.
 | Instrument | `A01973` — NovaSeq 6000, flowcell `HGWCNDSX7` (S4) |
 | Layout | 4 lanes, paired end, one library (single index pair, redacted) |
 | Read length | **2 × 149** (not 151) |
-| Reads | **1,079,858,785** (~1.08 billion) |
-| Bases | **160.9 Gb → ~52× raw** |
+| Reads | **1,071,835,104** (~1.07 billion) — every read counted, not sampled |
+| Bases | **159.7 Gb → 51.5× raw** |
 | Mean mapped depth (from VCF `DP`) | **~44×** |
 | Q30 | 92.9% (R1), 90.0% (R2) |
 | Duplication | 9.3% |
 | Insert size peak | 266 bp |
 | GC | 41.4% — human, as expected |
 
-52× raw against 44× mapped is a normal ~15% loss to duplicates and unmapped reads. This
+**Per lane**, from the read store's `runs` table — R1 and R2 match exactly in every lane,
+which is what a paired-end delivery must do:
+
+| Lane | R1 = R2 reads | Lane total |
+|---|---|---|
+| 1 | 136,586,642 | 273,173,284 |
+| 2 | 134,884,912 | 269,769,824 |
+| 3 | 133,053,308 | 266,106,616 |
+| 4 | 131,392,690 | 262,785,380 |
+| **All** | | **1,071,835,104** |
+
+**This supersedes the 1,079,858,785 previously carried here**, which
+[`methodology/005`](../docs/step-0/methodology/005-fastq-structure-and-quality.md)
+estimated by scaling a 200 MB slice and which overstated the truth by 0.74%. The estimate
+was also **odd**, and a paired-end total cannot be — R1 must equal R2 in every lane.
+
+51.5× raw against 44× mapped is a normal ~15% loss to duplicates and unmapped reads. This
 is a good, clinical-grade dataset: 44× is comfortably enough for confident heterozygous
 calls, for SV calling, and for a low-VAF mosaic scan.
 
