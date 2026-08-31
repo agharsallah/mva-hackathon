@@ -73,3 +73,6 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [030](030-population-reference-data.md) | What does "normal" look like? Three public, non-patient reference tables, small enough to commit and join-ready. *(step-0 machinery, no hypothesis.)* |
 | [031](031-vep-rest-panel-annotation.md) | Can a REST-backed annotator fill the open annotation port and land every panel allele in the warehouse with lineage? *(step-0 machinery, no hypothesis.)* |
 | [032](032-reference-comparison-tables.md) | Can the reference tables be staged through the existing path and joined into three comparison tables the browser reads in under a second? *(step-0 machinery, no hypothesis.)* |
+| [033](033-compare-page.md) | Can the browser hold the case against the healthy population — rarity, constraint, and QC norms — on one page? *(step-0 machinery, no hypothesis.)* |
+| [034](034-data-catalog-endpoints.md) | Can two endpoints describe every object and table — what it is, what it contains, when it arrived, where it lives — without scanning the data? *(step-0 machinery, no hypothesis.)* |
+| [035](035-catalog-page.md) | Can the catalogue render as one page: the delivery's cards, a filterable table inventory, and the read store's card? *(step-0 machinery, no hypothesis.)* |
