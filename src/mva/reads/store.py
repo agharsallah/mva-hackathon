@@ -14,6 +14,7 @@ manifest, never this process's memory.
 """
 
 import os
+import shutil
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
@@ -34,6 +35,36 @@ def discover(spec) -> list:
     delivery" is the verb the rest of the pipeline thinks in.
     """
     return resolve(str(spec))
+
+
+#: Parquet written per byte of source gzip, measured on the delivery: a 6,000,000-read
+#: sample of ``L001_R1`` produced 339 MiB from source bytes in the same proportion
+#: (``methodology/022``). Slightly above the whole-set figure, so it errs toward asking
+#: for more room rather than less.
+OUTPUT_RATIO = 0.75
+
+
+class NotEnoughRoom(RuntimeError):
+    """Staging cannot hold the Parquet this conversion would write."""
+
+
+def check_room(staging: Path, sources: list, ratio: float = OUTPUT_RATIO) -> str:
+    """Refuse before converting if the staging filesystem cannot hold the output.
+
+    A conversion writes every shard locally before uploading, so it needs roughly
+    three quarters of the delivery's compressed size in free space. Finding that out
+    after four hours and 90% of the reads is the worst possible time.
+    """
+    needed = int(sum(source.size for source in sources) * ratio)
+    staging.mkdir(parents=True, exist_ok=True)
+    free = shutil.disk_usage(staging).free
+    summary = (f"{needed / 2**30:.1f} GiB needed, {free / 2**30:.1f} GiB free "
+               f"on {staging}")
+    if free < needed:
+        raise NotEnoughRoom(
+            f"not enough room to stage the conversion: {summary}.\n"
+            f"  Free space, point --staging at a bigger filesystem, or convert a subset.")
+    return summary
 
 
 #: Measured non-DuckDB cost of one job: the reader's Arrow batches, the Rust side and

@@ -7,6 +7,7 @@ methodology entry's "commands run" block.
 
 import argparse
 import sys
+import time
 from pathlib import Path
 
 from ..warehouse.settings import object_store, setting
@@ -74,13 +75,21 @@ def do_bench(args) -> int:
 def do_convert(args) -> int:
     fastqs = _sources(args)
     staging = Path(args.staging or setting("MVA_STAGING_DIR")).expanduser()
-    staging.mkdir(parents=True, exist_ok=True)
-    print(f"converting {len(fastqs)} files with engine={args.engine}, "
-          f"jobs={args.jobs}, staging={staging}")
+    source_bytes = sum(fastq.size for fastq in fastqs)
+    print(f"converting {len(fastqs)} files ({source_bytes / 2**30:.1f} GiB source) "
+          f"with engine={args.engine}, jobs={args.jobs}, staging={staging}")
+    try:
+        print(f"  disk: {store.check_room(staging, fastqs)}")
+    except store.NotEnoughRoom as error:
+        print(error, file=sys.stderr)
+        return 2
+    started = time.perf_counter()
     results = store.convert_all(fastqs, staging, engine=args.engine, jobs=args.jobs)
     runs_path, manifest_path = store.write_tables(staging, results)
     total = sum(r.rows for r in results)
-    print(f"total: {total:,} reads, "
+    elapsed = time.perf_counter() - started
+    print(f"total: {total:,} reads in {elapsed / 60:.1f} min "
+          f"({total / elapsed:,.0f} reads/s overall), "
           f"{sum(r.parquet_bytes for r in results) / 2**30:.2f} GiB parquet")
     print(f"wrote {runs_path} and {manifest_path}")
     if args.no_upload:

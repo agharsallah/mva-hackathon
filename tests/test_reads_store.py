@@ -421,3 +421,19 @@ def test_bench_defaults_its_budget_to_a_jobs_share(delivery):
     budget = next(line for line in lines if "budget per engine" in line)
     assert store.machine_share(4)[1] in budget
     assert "4-job run" in budget
+
+
+def test_check_room_passes_when_the_disk_fits(delivery, tmp_path):
+    summary = store.check_room(tmp_path, store.discover(delivery))
+    assert "GiB needed" in summary and "GiB free" in summary
+
+
+def test_check_room_refuses_before_converting(delivery, tmp_path, monkeypatch):
+    """The failure must arrive in the first second, not at 90% of a long run."""
+    import collections
+
+    usage = collections.namedtuple("usage", "total used free")
+    monkeypatch.setattr(store.shutil, "disk_usage",
+                        lambda _: usage(total=1, used=1, free=1))
+    with pytest.raises(store.NotEnoughRoom, match="not enough room"):
+        store.check_room(tmp_path, store.discover(delivery))
