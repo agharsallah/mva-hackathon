@@ -33,7 +33,7 @@ Full index and what "step 0" covers: [`step-0/README.md`](step-0/README.md).
 | [`step-0/exploration.md`](step-0/exploration.md) | How do I actually *look* at the data? The exploration toolkit — exhibits, graded checks, one interactive page. |
 | [`step-0/reads-storage.md`](step-0/reads-storage.md) | Where do the raw reads go, and what can you ask of them? Built — 1,071,835,104 reads as queryable Parquet. |
 | [`step-0/reads-api.md`](step-0/reads-api.md) | How do I query the store without a shell on the server? Every `mva-reads` verb over HTTP, long jobs handled. |
-| [`step-0/methodology/`](step-0/methodology/) | How was each step-0 result reached? One append-only entry per executed run, 001–016. |
+| [`step-0/methodology/`](step-0/methodology/) | How was each step-0 result reached? One append-only entry per executed run, 001–027. |
 | [`step-0/notes/`](step-0/notes/) | Why the platform looks like this. Four decisions, one file each. |
 
 ## Step 1 — Normalize the callset (open)
