@@ -114,17 +114,72 @@ def do_verify(args) -> int:
     return 0 if report.ok else 1
 
 
+def _probes(args) -> tuple[list[str], list[str]]:
+    """Probes from ``--kmer`` and/or a file of ``name<TAB>sequence`` (or bare sequences).
+
+    One pass over 1.07 billion reads costs the same whether it carries one probe or
+    fifty, so the file form is the one that matters: ask every candidate at once.
+    """
+    names, probes = [], []
+    for index, probe in enumerate(args.kmer or [], start=1):
+        names.append(f"kmer{index}")
+        probes.append(probe)
+    if args.kmers_file:
+        for line in Path(args.kmers_file).expanduser().read_text().splitlines():
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            parts = line.replace("\t", " ").split()
+            if len(parts) >= 2:
+                names.append(parts[0])
+                probes.append(parts[1])
+            else:
+                names.append(f"line{len(probes) + 1}")
+                probes.append(parts[0])
+    if not probes:
+        print("give at least one --kmer or a --kmers-file", file=sys.stderr)
+        sys.exit(2)
+    return names, probes
+
+
 def do_scan(args) -> int:
     root = args.root or _s3_root(object_store())
+    names, probes = _probes(args)
     connection = _connection(root)
-    import time
     started = time.perf_counter()
-    hits = scan.kmer(connection, root, args.kmer, limit=args.limit)
+    hits = scan.kmers(connection, root, probes, limit=args.limit, names=names)
     seconds = time.perf_counter() - started
     for hit in hits:
-        print(f"  lane {hit.lane} read {hit.read_num} tile {hit.tile} "
+        label = f"{hit.probe}: " if len(probes) > 1 else "  "
+        print(f"{label}lane {hit.lane} read {hit.read_num} tile {hit.tile} "
               f"({hit.x},{hit.y}) strand {hit.strand} at {hit.position}")
-    print(f"{len(hits)} hit(s) in {seconds:.1f}s over {root}")
+    print(f"{len(hits)} hit(s) for {len(probes)} probe(s) in {seconds:.1f}s over {root}")
+    return 0
+
+
+def do_count(args) -> int:
+    """How many reads carry each probe — the number that decides if an allele is real."""
+    root = args.root or _s3_root(object_store())
+    names, probes = _probes(args)
+    connection = _connection(root)
+    started = time.perf_counter()
+    rows = scan.counts(connection, root, probes, names=names)
+    seconds = time.perf_counter() - started
+    found = {row[0]: row for row in rows}
+    print(f"{'probe':>20} {'fwd':>7} {'rev':>7} {'total':>7} {'lanes':>6}  verdict")
+    for name in names:
+        row = found.get(name)
+        if row is None:
+            print(f"{name:>20} {0:>7} {0:>7} {0:>7} {0:>6}  absent")
+            continue
+        _, forward, reverse, total, lanes = row
+        verdict = ("absent" if total == 0 else
+                   "error-level" if total <= 2 else
+                   "present" if lanes >= 2 else "one lane only — suspect")
+        print(f"{name:>20} {forward:>7} {reverse:>7} {total:>7} {lanes:>6}  {verdict}")
+    print(f"\n{len(probes)} probe(s) in one pass, {seconds:.1f}s over {root}")
+    print("expected ~35 reads for a real single-copy 31-mer at this depth "
+          "(44x * (149 - k + 1) / 149)")
     return 0
 
 
@@ -205,9 +260,21 @@ def _parser() -> argparse.ArgumentParser:
     v.add_argument("--shallow", action="store_true",
                    help="skip the full-decompression round-trip checks")
 
-    s = add("scan", do_scan, "k-mer strike: find a subsequence on either strand")
-    s.add_argument("--kmer", required=True)
-    s.add_argument("--limit", type=int, default=100)
+    def add_probes(sub_parser):
+        sub_parser.add_argument("--kmer", action="append",
+                                help="a probe sequence; repeat for several")
+        sub_parser.add_argument("--kmers-file",
+                                help="file of probes: 'name<TAB>sequence' or one "
+                                     "sequence per line, '#' comments ignored")
+        return sub_parser
+
+    s = add_probes(add("scan", do_scan,
+                       "k-mer strike: find subsequences on either strand, one pass"))
+    s.add_argument("--limit", type=int, default=100,
+                   help="reads reported per probe (the scan itself is unlimited)")
+
+    add_probes(add("count", do_count,
+                   "count reads carrying each probe — one pass, no read listing"))
 
     add("qc", do_qc, "per-lane read counts, filter rate, quality profile")
 

@@ -152,6 +152,46 @@ def test_scan_finds_planted_kmer_both_strands(built):
     assert len(hits) == 1 and hits[0].strand == "-"
 
 
+def test_many_probes_in_one_pass_are_reported_separately(built):
+    """The batched strike: several questions, one read of the data."""
+    import duckdb
+
+    root, _ = built
+    absent = "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGA"
+    hits = scan.kmers(duckdb.connect(), str(root), [PLANTED, absent],
+                      names=["real", "absent"])
+    assert {hit.probe for hit in hits} == {"real"}
+    assert len(hits) == 1
+
+
+def test_counts_separate_real_from_absent(built):
+    import duckdb
+
+    root, _ = built
+    absent = "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGA"
+    rows = scan.counts(duckdb.connect(), str(root), [PLANTED, absent],
+                       names=["real", "absent"])
+    by_name = {row[0]: row for row in rows}
+    assert by_name["real"][3] == 1        # total
+    assert by_name["real"][1] == 1        # forward strand
+    assert "absent" not in by_name        # no rows at all
+
+
+def test_probe_table_rejects_non_dna_and_neuters_names():
+    with pytest.raises(ValueError, match="not a DNA sequence"):
+        scan.probe_table(["ACGT; DROP TABLE reads"])
+    values = scan.probe_table(["acgt"], ["nasty'; DROP--"])
+    # The name is a quoted literal, but the quote it tried to smuggle in is gone.
+    assert values.startswith("('nasty___DROP--', 'ACGT', '+')")
+    assert values.count("'") % 2 == 0
+
+
+def test_probe_table_pairs_each_probe_with_its_reverse_complement():
+    values = scan.probe_table(["AAAC"], ["p"])
+    assert "('p', 'AAAC', '+')" in values
+    assert "('p', 'GTTT', '-')" in values
+
+
 def test_qc_shape(built):
     import duckdb
 
