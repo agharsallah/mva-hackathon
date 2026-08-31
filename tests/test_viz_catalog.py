@@ -92,6 +92,13 @@ TABLE_ANSWERS = [
        "warehouse.stats_summary", "mva-warehouse pg-derive"),
       ("warehouse", "variants_raw", "2026-08-29T21:02:49", "object",
        "s3://mva/source/SAMPLE_FLOW.vcf.gz", "mva-warehouse")]),
+    #: One column of each kind the contract has to carry: a shared name, a name whose
+    #: meaning is specific to its table, and a name nothing in the registry describes.
+    ("information_schema.columns", ("schema", "table", "column", "data_type", "ordinal"),
+     [("results", "stats_tstv", "ratio", "double precision", 3),
+      ("warehouse", "contig_counts", "chrom", "character varying", 1),
+      ("warehouse", "contig_counts", "length", "bigint", 2),
+      ("warehouse", "nobody_owns_this", "mystery", "character varying", 1)]),
 ]
 
 
@@ -261,6 +268,64 @@ def test_one_attach_serves_the_whole_table_catalogue(fake):
     assert len(fake.seen) == 5  # list, counts, catalogue, questions, lineage
 
 
+# ── how a table is created, and why it exists ────────────────────────────────────────
+
+def test_every_table_carries_the_verb_that_writes_it_and_the_reason_it_exists(fake):
+    found = by_table(catalog.tables(settings=SETTINGS))
+    assert found["warehouse.variants_raw"]["created_by"] == \
+        "mva-warehouse vcf-ingest (replaces the table wholesale)"
+    assert "lossless" in found["warehouse.variants_raw"]["why"]
+    assert found["warehouse.contig_counts"]["created_by"] == \
+        "mva-warehouse stage + pg-ingest"
+
+
+def test_a_derived_tables_reason_is_the_question_its_derivation_declares(fake):
+    """`description` can come from the run log; `why` comes from the registry, so a table
+    that has never been run still says what it is for."""
+    from mva.warehouse.analysis import by_name
+
+    row = by_table(catalog.tables(settings=SETTINGS))["results.stats_tstv"]
+    assert row["why"] == by_name("stats_tstv").question
+    assert "pg-derive" in row["created_by"]
+
+
+def test_a_table_the_registry_does_not_know_gets_two_nulls_not_two_guesses(fake):
+    row = by_table(catalog.tables(settings=SETTINGS))["warehouse.nobody_owns_this"]
+    assert row["created_by"] is None and row["why"] is None
+
+
+# ── the column catalogue ─────────────────────────────────────────────────────────────
+
+def by_column(found: list[dict]) -> dict:
+    return {f"{row['schema']}.{row['table']}.{row['column']}": row for row in found}
+
+
+def test_every_column_is_listed_with_its_type_and_its_position(fake):
+    found = by_column(catalog.columns(settings=SETTINGS))
+    assert len(found) == 4
+    row = found["warehouse.contig_counts.length"]
+    assert (row["data_type"], row["ordinal"]) == ("bigint", 2)
+
+
+def test_a_recurring_column_is_described_by_the_shared_map(fake):
+    """`chrom` is written once and answers for every table that carries it."""
+    from mva.viz.catalog_columns import SHARED
+
+    row = by_column(catalog.columns(settings=SETTINGS))["warehouse.contig_counts.chrom"]
+    assert row["meaning"] == SHARED["chrom"]
+
+
+def test_a_table_specific_meaning_wins_over_the_shared_one(fake):
+    found = by_column(catalog.columns(settings=SETTINGS))
+    assert "contig" in found["warehouse.contig_counts.length"]["meaning"]
+    assert "Transitions over transversions" in found["results.stats_tstv.ratio"]["meaning"]
+
+
+def test_an_undescribed_column_is_null_rather_than_blank(fake):
+    row = by_column(catalog.columns(settings=SETTINGS))["warehouse.nobody_owns_this.mystery"]
+    assert row["meaning"] is None
+
+
 # ── the HTTP surface ─────────────────────────────────────────────────────────────────
 
 @pytest.fixture()
@@ -283,6 +348,14 @@ def test_the_object_catalogue_is_live_and_names_its_two_tables(client):
     assert body["cached_at"] is None
     assert "source_objects" in body["source"] and "source_files" in body["source"]
     assert len(body["data"]) == 4
+
+
+def test_the_column_catalogue_is_live_and_names_information_schema(client):
+    body = envelope(client.get("/api/catalog/columns"))
+    assert body["cached_at"] is None
+    assert "information_schema.columns" in body["source"]
+    assert len(body["data"]) == 4
+    assert [row["meaning"] for row in body["data"]].count(None) == 1
 
 
 def test_the_table_catalogue_is_cached_and_a_refresh_rebuilds_it(client, fake):

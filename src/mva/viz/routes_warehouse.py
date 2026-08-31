@@ -12,7 +12,7 @@ must never be written anywhere the repository can pick up.
 
 from fastapi import APIRouter, HTTPException, Query
 
-from . import catalog, queries
+from . import catalog, phase, queries, science
 from .cache import Cache, safe_key
 from .overview import overview
 from .response import Envelope, cached, live
@@ -44,7 +44,9 @@ OVERVIEW_SOURCE = ("pg.results.stats_sn + stats_tstv + allele_balance_flags, "
 #: What the two catalogue endpoints read, for the envelope's ``source`` field.
 CATALOG_OBJECTS_SOURCE = "pg.warehouse.source_objects + source_files"
 CATALOG_TABLES_SOURCE = ("pg.information_schema.tables, pg.warehouse.warehouse_catalog + "
-                         "data_lineage, pg.results.derivation_runs")
+                         "data_lineage, pg.results.derivation_runs, "
+                         "mva.viz.catalog_semantics")
+CATALOG_COLUMNS_SOURCE = "pg.information_schema.columns + mva.viz.catalog_columns"
 
 #: Cache key for the table catalogue. Named, not derived, because it takes no parameters.
 CATALOG_TABLES_KEY = "catalog-tables"
@@ -84,10 +86,26 @@ def router(settings, cache: Cache) -> APIRouter:
         costs seconds over the whole warehouse, which is what the cache is for.
         ``produced_at``, ``source_kind``, ``source_ref`` and ``tool`` are **null** for a
         table with no lineage edge; the ledgers and the staged tables have none.
+        ``created_by`` names the verb that writes the table and whether it replaces or
+        appends; ``why`` is the one sentence saying what the table is for. Both come from
+        the registry in ``mva.viz.catalog_semantics`` and are **null** for a table it does
+        not know — a state a hermetic test refuses to let a *declared* table reach.
         """
         entry = cache.get_or_build(CATALOG_TABLES_KEY,
                                    lambda: catalog.tables(settings), refresh)
         return cached(entry, CATALOG_TABLES_SOURCE)
+
+    @api.get("/catalog/columns", response_model=Envelope, tags=["catalog"])
+    def catalog_columns() -> dict:
+        """Every column of every table in both managed schemas, with what it means.
+
+        Live: ``information_schema.columns`` is metadata, so the whole warehouse's column
+        list is one round trip over a few hundred rows (0.95–1.6 s over HTTP, much of it
+        the ``ATTACH``) rather than a scan of anything. ``meaning`` is **null** wherever
+        nothing in ``mva.viz.catalog_columns`` describes the column — rendered as a
+        visible gap, never filled with a guess.
+        """
+        return live(catalog.columns(settings), CATALOG_COLUMNS_SOURCE)
 
     for path, (function, source) in TABLES.items():
         _add_table_route(api, path, function, source, settings)

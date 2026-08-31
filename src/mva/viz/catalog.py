@@ -26,6 +26,8 @@ from ..warehouse.postgres import ALIAS, attached, safe_identifier
 from ..warehouse.settings import Postgres
 from ..warehouse.source import LEDGER_TABLE
 from ..warehouse.stage import CATALOG_TABLE
+from .catalog_columns import meaning
+from .catalog_semantics import facts
 from .queries import rows
 
 #: What an object of each ``role`` contains, in one sentence. Keyed by the role
@@ -204,9 +206,17 @@ def tables(settings: Postgres) -> list[dict]:
 
 def _table(name: tuple[str, str], counts: dict, staged: dict, asked: dict,
            edges: dict) -> dict:
-    """One catalogue row. Three description sources, tried in order, then null."""
+    """One catalogue row. Three description sources, tried in order, then null.
+
+    ``created_by`` and ``why`` come from :mod:`mva.viz.catalog_semantics`, which is a
+    registry rather than a database read for the same reason ``description`` has a
+    fallback map: nothing in PostgreSQL records which command writes a table or what it is
+    for. Both are ``None`` for a table the registry does not know, and a hermetic test
+    fails the build when a declared table reaches that state.
+    """
     schema, table = name
     edge = edges.get(name, {})
+    fact = facts(table)
     return {
         "schema": schema,
         "table": table,
@@ -217,7 +227,48 @@ def _table(name: tuple[str, str], counts: dict, staged: dict, asked: dict,
         "source_kind": edge.get("source_kind"),
         "source_ref": edge.get("source_ref"),
         "tool": edge.get("tool"),
+        "created_by": fact.created_by if fact else None,
+        "why": fact.why if fact else None,
     }
+
+
+#: Every column of every table in the two managed schemas, in declaration order.
+COLUMNS_SQL = f"""
+    SELECT table_schema AS schema, table_name AS "table", column_name AS column,
+           data_type, ordinal_position AS ordinal
+    FROM {ALIAS}.information_schema.columns
+    WHERE table_schema IN (?, ?)
+    ORDER BY table_schema, table_name, ordinal_position
+"""
+
+
+def columns(settings: Postgres) -> list[dict]:
+    """One row per column of every table in both managed schemas, with its semantics.
+
+    Live on every request: ``information_schema.columns`` is metadata, so the read is one
+    round trip over a few hundred rows rather than a scan of any table. Measured against
+    the hosted warehouse (38 tables, 262 columns): **0.53–1.1 s** in-process and
+    **0.95–1.6 s** end to end over HTTP, of which ~0.33 s is the ``ATTACH`` every route
+    pays. Compare :func:`tables`, whose exact row counts cost 3.3–11.8 s over the same
+    link and are the reason *that* endpoint is cached. Caching this one would buy about a
+    second and add a way for the answer to be stale after a schema change — which is
+    exactly the change this endpoint exists to surface.
+
+    ``meaning`` is ``None`` wherever nothing in :mod:`mva.viz.catalog_columns` describes
+    the column. The front end renders that gap; it is never filled with a guess.
+    """
+    schema = safe_identifier(settings.schema)
+    results = safe_identifier(settings.result_schema)
+    with attached(settings, read_only=True) as connection:
+        found = rows(connection, COLUMNS_SQL, [schema, results])
+    return [{
+        "schema": row["schema"],
+        "table": row["table"],
+        "column": row["column"],
+        "data_type": row["data_type"],
+        "ordinal": int(row["ordinal"]),
+        "meaning": meaning(row["table"], row["column"]),
+    } for row in found]
 
 
 def _counts(connection, listed: list[tuple[str, str]]) -> dict[tuple[str, str], int]:
