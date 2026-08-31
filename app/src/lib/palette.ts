@@ -48,6 +48,32 @@ export const QUALITY_SCALE: [number, string][] = [
   [1, '#22c55e'],
 ];
 
+/**
+ * Diverging ramp for a signed deviation from a neutral midpoint, e.g. BAF away from 0.5.
+ *
+ * Green sits at the **centre**, not at an end: for allele balance the goal is the middle
+ * of the range, and both directions away from it are the abnormal outcome. Red marks a
+ * deficit (fewer variant reads than expected) and purple a surplus, so the sign of the
+ * shift is readable and neither direction is quietly privileged.
+ */
+export const DIVERGING_SCALE: [number, string][] = [
+  [0, '#7f1d1d'],
+  [0.25, '#ef4444'],
+  [0.42, '#166534'],
+  [0.5, '#22c55e'],
+  [0.58, '#166534'],
+  [0.75, '#a855f7'],
+  [1, '#e9d5ff'],
+];
+
+/** Sequential ramp for read depth: dark → blue → white-hot. Neutral machinery. */
+export const DEPTH_SCALE: [number, string][] = [
+  [0, '#0a0a0a'],
+  [0.3, '#1e3a8a'],
+  [0.65, '#3b82f6'],
+  [1, '#dbeafe'],
+];
+
 export function balanceColor(call: string): string {
   return call === 'balanced' ? C.good : C.broken;
 }

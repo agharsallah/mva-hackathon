@@ -4,6 +4,7 @@ import { AlleleBalance } from './genome/AlleleBalance';
 import { DepthVaf } from './genome/DepthVaf';
 import { Karyotype } from './genome/Karyotype';
 import { DensityBins } from './genome/DensityBins';
+import { BafKaryogram } from './genome/BafKaryogram';
 
 export default function GenomePage() {
   return (
@@ -69,6 +70,13 @@ export default function GenomePage() {
           <AlleleBalance />
           <DepthVaf />
         </div>
+      </Section>
+
+      <Section
+        title="Would a shifted segment survive the chromosome average?"
+        subtitle="A whole-chromosome mean hides a mosaic arm. The same allele-balance question, re-asked one megabase at a time."
+      >
+        <BafKaryogram />
       </Section>
 
       <Section title="How is the callset laid out over the genome?">

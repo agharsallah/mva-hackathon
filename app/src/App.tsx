@@ -11,6 +11,7 @@ const Panel = lazy(() => import('./pages/Panel'));
 const Compare = lazy(() => import('./pages/Compare'));
 const Reads = lazy(() => import('./pages/Reads'));
 const Probes = lazy(() => import('./pages/Probes'));
+const Science = lazy(() => import('./pages/Science'));
 const Provenance = lazy(() => import('./pages/Provenance'));
 const Catalog = lazy(() => import('./pages/Catalog'));
 
@@ -28,6 +29,7 @@ export function App() {
             <Route path="/compare" element={<Compare />} />
             <Route path="/reads" element={<Reads />} />
             <Route path="/probes" element={<Probes />} />
+            <Route path="/science" element={<Science />} />
             <Route path="/provenance" element={<Provenance />} />
             <Route path="/catalog" element={<Catalog />} />
             <Route path="*" element={<Navigate to="/" replace />} />

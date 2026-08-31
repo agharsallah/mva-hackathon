@@ -17,6 +17,7 @@ const PAGES = [
   { to: '/compare', label: 'Compare' },
   { to: '/reads', label: 'Reads' },
   { to: '/probes', label: 'Probes' },
+  { to: '/science', label: 'Science' },
   { to: '/provenance', label: 'Provenance' },
   { to: '/catalog', label: 'Catalog' },
 ];

@@ -13,6 +13,7 @@ import type { Envelope } from '../api/types';
 import type { Params } from '../api/client';
 import { overviewFixture } from './overview';
 import { alleleBalanceFixture, contigDensityFixture, densityBinsFixture } from './genome';
+import { bafBinsFixture } from './karyogram';
 import {
   depthDistributionFixture,
   filtersFixture,
@@ -22,15 +23,18 @@ import {
   substitutionsFixture,
   tstvFixture,
 } from './callset';
+import { candidateFunnelFixture } from './funnel';
 import { catalogObjectsFixture } from './catalog-objects';
 import { catalogColumnsFixture } from './catalog-semantics';
 import { catalogTablesFixture } from './catalog-tables';
+import { geneStructureFixture } from './gene-structure';
 import {
   locusFixture,
   panelAnnotationsFixture,
   panelConstraintFixture,
   panelGenesFixture,
 } from './panel';
+import { panelHetPairsFixture } from './panel-pairs';
 import {
   cycleQualityFixture,
   flowcellFixture,
@@ -39,6 +43,7 @@ import {
   readRunsFixture,
 } from './reads';
 import { derivationsFixture, lineageFixture, probeLedgerFixture, sourcesFixture } from './provenance';
+import { evidenceRegisterFixture, hypothesisRegisterFixture } from './science';
 
 function env<T>(data: T, source: string): Envelope<T> {
   return { data, cached_at: null, source: `fixture: ${source}` };
@@ -52,6 +57,10 @@ const registry: Record<string, Builder> = {
   '/api/genome/contig-density': () => env(contigDensityFixture, 'results.contig_density'),
   '/api/genome/density-bins': (p) =>
     env(densityBinsFixture(p?.chrom as string | undefined), 'results.variant_density_bins'),
+  // Carries one SYNTHETIC shifted arm so the karyogram is exercisable offline. The live
+  // table is flat; nothing here is a measurement.
+  '/api/genome/baf-bins': (p) =>
+    env(bafBinsFixture(p?.chrom as string | undefined), 'SYNTHETIC shifted arm — never measured'),
   '/api/callset/filters': () => env(filtersFixture, 'bcftools stats FILTER section'),
   '/api/callset/genotypes': () => env(genotypesFixture, 'bcftools stats genotype counts'),
   '/api/callset/depth-distribution': () => env(depthDistributionFixture, 'bcftools stats DP section'),
@@ -60,6 +69,7 @@ const registry: Record<string, Builder> = {
   '/api/callset/indel-lengths': () => env(indelLengthsFixture, 'bcftools stats IDD section'),
   '/api/callset/observed-expected': () =>
     env(observedExpectedFixture, 'measured aggregates vs PLACEHOLDER published bands'),
+  '/api/callset/funnel': () => env(candidateFunnelFixture, 'results.candidate_funnel'),
   '/api/panel/genes': () => env(panelGenesFixture, 'results.panel_gene_density + panel BED'),
   '/api/panel/constraint': () =>
     env(panelConstraintFixture, 'PLACEHOLDER gnomAD constraint + ClinVar counts'),
@@ -68,6 +78,16 @@ const registry: Record<string, Builder> = {
     env(panelAnnotationsFixture(p?.gene as string | undefined), 'SYNTHETIC positions — never real'),
   '/api/panel/locus': (p) =>
     env(locusFixture((p?.gene as string | undefined) ?? 'BUB1B'), 'SYNTHETIC positions — never real'),
+  '/api/panel/het-pairs': (p) =>
+    env(
+      panelHetPairsFixture((p?.gene as string | undefined) ?? 'BUB1B'),
+      'SYNTHETIC positions — never real',
+    ),
+  '/api/panel/gene-structure': (p) =>
+    env(
+      geneStructureFixture((p?.gene as string | undefined) ?? 'BUB1B'),
+      'BUB1B-SHAPED structure — synthetic coordinates, domains not measured',
+    ),
   '/api/reads/runs': () => env(readRunsFixture, 'reads/runs.parquet'),
   '/api/reads/partitions': () => env(readPartitionsFixture, 'reads/manifest.parquet'),
   '/api/reads/flowcell': (p) =>
@@ -85,6 +105,10 @@ const registry: Record<string, Builder> = {
   '/api/provenance/derivations': () => env(derivationsFixture, 'meta.derivations'),
   '/api/provenance/sources': () => env(sourcesFixture, 'delivery manifest'),
   '/api/probe/ledger': () => env(probeLedgerFixture, 'probe ledger (empty: 0/18 spent)'),
+  // INVENTED claims. The live register is empty and its tables do not exist yet; these
+  // exist so the populated layout can be reviewed before there is anything real to show.
+  '/api/science/hypotheses': () => env(hypothesisRegisterFixture, 'INVENTED research register'),
+  '/api/science/evidence': () => env(evidenceRegisterFixture, 'INVENTED research register'),
 };
 
 export function fixtureFor(path: string, params?: Params): Envelope<unknown> | undefined {

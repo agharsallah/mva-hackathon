@@ -10,6 +10,7 @@ import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
 import { get, getBare, type Params, type Result } from './client';
 import type {
   AlleleBalanceRow,
+  BafBinRow,
   CatalogColumnRow,
   CatalogObjectRow,
   CatalogTableRow,
@@ -18,9 +19,13 @@ import type {
   DensityBinRow,
   DepthBinRow,
   DerivationRow,
+  EvidenceRegister,
   FilterRow,
   FlowcellBinRow,
+  FunnelStageRow,
+  GeneStructure,
   GenotypeRow,
+  HypothesisRegister,
   IndelLengthRow,
   Job,
   LineageRow,
@@ -30,6 +35,7 @@ import type {
   PanelAnnotationRow,
   PanelConstraintRow,
   PanelGeneRow,
+  PanelHetPairs,
   ProbeLedgerRow,
   QualityLevelRow,
   ReadPartitionRow,
@@ -60,6 +66,8 @@ export const useAlleleBalance = () => useEndpoint<AlleleBalanceRow[]>('/api/geno
 export const useContigDensity = () => useEndpoint<ContigDensityRow[]>('/api/genome/contig-density');
 export const useDensityBins = (chrom?: string) =>
   useEndpoint<DensityBinRow[]>('/api/genome/density-bins', chrom ? { chrom } : undefined);
+export const useBafBins = (chrom?: string) =>
+  useEndpoint<BafBinRow[]>('/api/genome/baf-bins', chrom ? { chrom } : undefined);
 
 export const useFilters = () => useEndpoint<FilterRow[]>('/api/callset/filters');
 export const useGenotypes = () => useEndpoint<GenotypeRow[]>('/api/callset/genotypes');
@@ -69,6 +77,7 @@ export const useTsTv = () => useEndpoint<TsTv>('/api/callset/tstv');
 export const useIndelLengths = () => useEndpoint<IndelLengthRow[]>('/api/callset/indel-lengths');
 export const useObservedExpected = () =>
   useEndpoint<ObservedExpectedRow[]>('/api/callset/observed-expected');
+export const useCandidateFunnel = () => useEndpoint<FunnelStageRow[]>('/api/callset/funnel');
 
 export const usePanelGenes = () => useEndpoint<PanelGeneRow[]>('/api/panel/genes');
 export const usePanelConstraint = () => useEndpoint<PanelConstraintRow[]>('/api/panel/constraint');
@@ -78,6 +87,16 @@ export const usePanelAnnotations = (gene?: string) =>
 /** ~5 s live: the server pushes the contig down into the raw variant table. */
 export const useLocus = (gene: string | null) =>
   useEndpoint<LocusVariant[]>('/api/panel/locus', gene ? { gene } : undefined, {
+    enabled: !!gene,
+  });
+/** ~5–10 s cold (three Ensembl REST calls), then served from the server's disk cache. */
+export const useGeneStructure = (gene: string | null) =>
+  useEndpoint<GeneStructure>('/api/panel/gene-structure', gene ? { gene } : undefined, {
+    enabled: !!gene,
+  });
+/** ~0.5–1 s live: a derived table, so no cross product happens inside the request. */
+export const useHetPairs = (gene: string | null) =>
+  useEndpoint<PanelHetPairs>('/api/panel/het-pairs', gene ? { gene } : undefined, {
     enabled: !!gene,
   });
 
@@ -96,6 +115,11 @@ export const useLineage = () => useEndpoint<LineageRow[]>('/api/provenance/linea
 export const useDerivations = () => useEndpoint<DerivationRow[]>('/api/provenance/derivations');
 export const useSources = () => useEndpoint<SourceObjectRow[]>('/api/provenance/sources');
 export const useProbeLedger = () => useEndpoint<ProbeLedgerRow[]>('/api/probe/ledger');
+
+// The register may not exist yet, so both payloads are `{table_exists, rows}` rather than
+// a bare list — see `api/types/science.ts`.
+export const useHypotheses = () => useEndpoint<HypothesisRegister>('/api/science/hypotheses');
+export const useEvidence = () => useEndpoint<EvidenceRegister>('/api/science/evidence');
 
 const LIVE_STATES = new Set(['queued', 'running']);
 

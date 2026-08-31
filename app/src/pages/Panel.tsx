@@ -3,6 +3,7 @@ import { Section } from '../components/Controls';
 import { GeneScorecard } from './panel/GeneScorecard';
 import { ConstraintScorecard } from './panel/ConstraintScorecard';
 import { LocusExplorer } from './panel/LocusExplorer';
+import { PairMatrix } from './panel/PairMatrix';
 
 export default function PanelPage() {
   return (
@@ -87,6 +88,24 @@ export default function PanelPage() {
         subtitle="the live endpoint pushes the contig down into the raw variant table — about 5 s on first request, cached after"
       >
         <LocusExplorer />
+      </Section>
+
+      <Section
+        title="Which pairs inside a gene could actually be the answer?"
+        subtitle={
+          <>
+            The answer to Track 1 is a <em>pair</em>, so the object to look at is the grid of pairs, not a
+            list of variants. A compound heterozygote needs the two variants on <em>opposite</em> copies of
+            the chromosome (<strong>trans</strong>); two on the same copy (<strong>cis</strong>) leave one
+            working copy and are not a diagnosis. The only phase evidence in this data is physical phasing —
+            variants seen together on one read pair — which reaches about 300 bp, so it settles a handful of
+            pairs and leaves the rest open. That matters for the scorer directly: submitting a cis pair is a
+            wrong answer that looks well-formed, and a proven-trans pair is the strongest configuration
+            evidence available without parental samples.
+          </>
+        }
+      >
+        <PairMatrix />
       </Section>
     </div>
   );

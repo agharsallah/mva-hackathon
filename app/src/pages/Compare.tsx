@@ -2,6 +2,7 @@ import { Callout, Explainer } from '../components/Explainer';
 import { Section } from '../components/Controls';
 import { RarityScatter } from './compare/RarityScatter';
 import { CandidateTable } from './compare/CandidateTable';
+import { CandidateFunnel } from './compare/CandidateFunnel';
 import { ObservedExpected } from './compare/ObservedExpected';
 
 /**
@@ -99,6 +100,13 @@ export default function ComparePage() {
         subtitle="rare in the population and protein-altering — a short list is the intended outcome"
       >
         <CandidateTable />
+      </Section>
+
+      <Section
+        title="What did every filter cost?"
+        subtitle="the whole narrowing argument in nine stages — and the point where the scope stops being the genome"
+      >
+        <CandidateFunnel />
       </Section>
 
       <Section

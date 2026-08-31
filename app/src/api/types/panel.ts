@@ -94,3 +94,152 @@ export interface LocusVariant {
   vaf: number | null;
   gq: number | null;
 }
+
+/** One exon of the canonical transcript, numbered 1..n in *transcript* order. */
+export interface Exon {
+  /** Transcript-order number. On the minus strand exon 1 is the highest coordinate. */
+  n: number;
+  start: number;
+  end: number;
+  id: string | null;
+}
+
+/** One protein domain from Pfam / SMART / PROSITE / Gene3D / SUPERFAMILY / CDD / PRINTS. */
+export interface ProteinDomain {
+  source: string;
+  accession: string | null;
+  /** The database's description, falling back to the accession when it has none. */
+  name: string;
+  start_aa: number;
+  end_aa: number;
+  interpro: string | null;
+}
+
+/**
+ * One protein-altering allele in the gene, placed in *amino-acid* space.
+ *
+ * Deliberately carries **no genomic coordinate**: the locus tracks already show those,
+ * and keeping them out means this payload (unlike `/api/panel/locus`) holds nothing
+ * patient-identifying. `protein_pos` is null whenever VEP put no amino-acid offset on
+ * the canonical transcript, and `reason` then says why — never dropped silently.
+ */
+export interface GeneCandidate {
+  consequence: string;
+  impact: VariantImpact | null;
+  rsid: string | null;
+  /** gnomAD AF below the recessive threshold, or absent from gnomAD altogether. */
+  rare: boolean;
+  clin_sig: string | null;
+  gt: string | null;
+  filter: string | null;
+  /** Short human handle: `"missense · rs1801516"`. */
+  label: string;
+  protein_pos: number | null;
+  reason: string | null;
+}
+
+/**
+ * GET /api/panel/gene-structure?gene=… — one gene's anatomy, from Ensembl REST.
+ *
+ * Static reference data, disk-cached server-side (`?refresh=true` rebuilds). The browser
+ * never calls Ensembl itself. A 502 means Ensembl was unreachable — there is no fallback
+ * shape, because an invented gene structure is worse than a missing one.
+ */
+export interface GeneStructure {
+  gene: string;
+  ensembl_id: string;
+  /** Bare contig, the way the callset spells it (`"15"`, not `"chr15"`). */
+  chrom: string;
+  start: number;
+  end: number;
+  /** `1` = forward, `-1` = reverse. */
+  strand: number;
+  biotype: string | null;
+  /** Canonical transcript id, unversioned. Domains and `protein_pos` are both on it. */
+  transcript: string | null;
+  protein: string | null;
+  protein_length: number | null;
+  exons: Exon[];
+  domains: ProteinDomain[];
+  candidates: GeneCandidate[];
+}
+
+/**
+ * One heterozygous PASS ALT allele inside a panel gene — a *member* of the gene's
+ * compound-heterozygous pair grid, not a pair.
+ *
+ * A `1/2` multi-allelic record contributes **two** rows, distinguished by `allele_ix`:
+ * one copy of each ALT means one per haplotype, which is compound heterozygosity proven
+ * by the genotype alone.
+ *
+ * `pgt` / `pid` are Sentieon's physical phasing, carried raw so a client can check the
+ * server's verdict. `pid` names the read-backed island a variant belongs to and `pgt`
+ * which haplotype inside it; both are **null** on the ~85 % of records phasing never
+ * reached, and that is "unphased", not a missing measurement.
+ *
+ * `annotated` false means VEP never saw this allele, and then every annotation-derived
+ * field is **null** — never `false`, which would read as "measured and not rare".
+ *
+ * Real patient coordinates at runtime; never persisted (the fixture is synthetic).
+ */
+export interface PanelHetVariant {
+  gene: string;
+  /** Bare contig, the way the callset spells it (`"15"`, not `"chr15"`). */
+  chrom: string;
+  pos: number;
+  ref: string;
+  alt: string;
+  /** Which ALT of the record this row is: 1 always, 2 for the second allele of a `1/2`. */
+  allele_ix: number;
+  gt: string;
+  qual: number | null;
+  dp: number | null;
+  /** This allele's depth over the record's total — defined per allele, so never null on `1/2`. */
+  vaf: number | null;
+  /** Phased genotype within the phase set, e.g. `"0|1"`. Null = unphased. */
+  pgt: string | null;
+  /** Phase-set id: two variants sharing it were seen on the same reads. Null = unphased. */
+  pid: string | null;
+  rsid: string | null;
+  consequence: string | null;
+  impact: VariantImpact | null;
+  gnomad_af: number | null;
+  gnomad_af_grpmax: number | null;
+  clin_sig: string | null;
+  annotated: boolean;
+  is_rare_recessive: boolean | null;
+  is_protein_altering: boolean | null;
+}
+
+/**
+ * One cell of the pair matrix that phasing actually resolves. `i` and `j` index
+ * `PanelHetPairs.variants` in the order it arrives (position order), which is both axes.
+ * Every pair *not* listed is unknown — the common case by a wide margin.
+ */
+export interface PanelHetPair {
+  i: number;
+  j: number;
+  /** `trans` = opposite copies (a real compound het); `cis` = same copy (excluded). */
+  phase: 'trans' | 'cis';
+  /** True when the two alleles are the two ALTs of one `1/2` record — trans by genotype. */
+  auto: boolean;
+}
+
+/** How much of the grid the callset resolves. `pct_unknown` is null when there are no pairs. */
+export interface PanelHetPairSummary {
+  n_het: number;
+  n_pairs: number;
+  n_trans: number;
+  n_auto_trans: number;
+  n_cis: number;
+  n_unknown: number;
+  pct_unknown: number | null;
+}
+
+/** GET /api/panel/het-pairs?gene=… — one gene's compound-het pair matrix. */
+export interface PanelHetPairs {
+  gene: string;
+  variants: PanelHetVariant[];
+  pairs: PanelHetPair[];
+  summary: PanelHetPairSummary;
+}
