@@ -225,6 +225,17 @@ flowchart LR
 **The whole hackathon is a fight over what got lost between red and green.**
 
 **FILTER / PASS** — the caller's confidence flag on each line. `PASS` = caller trusts it. Non-PASS lines get thrown away by default — dangerous, because the real answer might be sitting there.
+*It is a **text column on a row the caller kept**, not a deletion: GATK's `VariantFiltration` writes the name of every threshold the line failed and leaves the line in the file. So "suppressed" means *downstream tools are expected to skip it*. When a line trips several thresholds the names are packed into one `;`-joined string, so `LowQual;QD2` is **one** record that failed two tests — counting it once under each name over-counts the file. Software analogy: a warning level on a log line, not a dropped log line.*
+*Example:* 271,414 of this callset's 5,012,204 lines are non-PASS — 5.4 %. What is inside those lines for the candidate genes is measured in [methodology 049](step-0/methodology/049-suppressed-calls.md).
+
+**mapping quality (MAPQ)** — the aligner's confidence, in [Phred](#2-reading-dna-sequencing-and-the-files-it-makes) units, that a [read](#2-reading-dna-sequencing-and-the-files-it-makes) came from the place it put it. It is low wherever the genome repeats itself, because the same read could have come from two or more places and the aligner cannot tell which. Not the same thing as base quality, which is the instrument's confidence in each letter. Software analogy: confidence in *which* bucket a hash landed in, as opposed to confidence in the bytes.
+*Example:* MAPQ 0 means "this read maps equally well somewhere else" — common in [segmental duplications](#3-variants-the-differences-you-hunt) and near [telomeres](#1-dna-basics-read-this-first-everything-else-needs-it).
+
+**MQ40** — a [FILTER](#2-reading-dna-sequencing-and-the-files-it-makes) label meaning *the mean [mapping quality](#2-reading-dna-sequencing-and-the-files-it-makes) at this site is under 40*. It fires in hard-to-map sequence, so it is a statement about **where** the variant is, not about whether it is real — which is exactly why non-PASS lines are worth mining: a real variant sitting in a repeat gets flagged too.
+*Example:* the heaviest suppression reason in this callset — 177,522 lines, and 12 of the candidate panel's 20 suppressed lines.
+
+**quality by depth (QD)** — the site's [QUAL](#2-reading-dna-sequencing-and-the-files-it-makes) score divided by the [read depth](#2-reading-dna-sequencing-and-the-files-it-makes) behind it. Raw QUAL grows with coverage, so a deeply covered site looks confident even on weak evidence; dividing normalises that out. Software analogy: a rate rather than a total.
+*Example:* the **QD2** FILTER label = QD under 2, i.e. very little confidence per read. 35,402 lines here.
 
 **tabix / bgzip / index** — compression + a table-of-contents so you can jump to `chr15` without reading the whole file.
 
@@ -753,6 +764,12 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 
 **rsID** — a variant's public catalogue number in **dbSNP** (NCBI's registry of every variant ever reported), like `rs1801516`. The VCF's `ID` column carries it when the caller recognised the site; `.` means unregistered. Known rsID ≠ harmless — it only means "seen before".
 
+**dbSNP membership rate** — of all the records in a callset, the share that already carry an [rsID](#7-databases-and-annotation). A QC metric, not a biological one: a healthy modern human genome is almost entirely made of variants somebody has already seen, so a low rate means novelty, and novelty in bulk usually means artefacts — or an old dbSNP build behind the `ID` column. Read it only alongside the population it was measured over: filtering, dropping decoy contigs and restricting to SNVs each move it. *Example: this callset reads 87.96% over every delivered record and 93.89% over PASS biallelic SNVs, against a published 99.2% per genome.*
+
+**Biallelic site** — one position with exactly **one** ALT allele, i.e. the opposite of a [multiallelic](#3-variants-the-differences-you-hunt) one. Careful: *biallelic* is used in two unrelated senses in this field. Here it is a property of a **VCF row** (how many ALTs are on the line); in the recessive-disease sense above it is a property of a **gene** (both copies hit). Nothing connects them. *Example: `REF=A ALT=G` is a biallelic site; `REF=A ALT=G,T` is not.*
+
+**SNV/indel ratio** — [SNV](#3-variants-the-differences-you-hunt) count divided by [indel](#3-variants-the-differences-you-hunt) count in one callset. A shape check: substitutions vastly outnumber insertions and deletions, and a ratio that drifts low says the caller is emitting more indels than a reference pipeline would. Strongly caller-dependent — the same reads give 4.7 through DeepVariant and 6.2 through GATK — so it flags a difference, never a defect on its own. *Example: 4,086,641 SNPs / 930,181 indels = 4.393 here, against 4.611–4.798 across the 1000G superpopulations.*
+
 **Plugin** — an add-on that lets VEP attach one more kind of score.
 
 **ClinVar** — public database of variants already judged by labs: pathogenic, benign, or unknown.
@@ -761,6 +778,14 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 **Pathogenic / Likely pathogenic / VUS / Likely benign / Benign** — the 5 verdicts.
 
 **VUS (variant of uncertain significance)** — "we don't know". Most variants are this.
+
+**Review status / assertion criteria (ClinVar "gold stars")** — how a [ClinVar](#7-databases-and-annotation) verdict was *arrived at*, not how strong the evidence behind it is. ClinVar renders it as 0–4 stars: ★★★★ `practice_guideline` (a clinical guideline says so), ★★★ `reviewed_by_expert_panel` (a curated expert group), ★★ `criteria_provided,_multiple_submitters,_no_conflicts` (several labs, stated criteria, agreeing), ★ `criteria_provided,_single_submitter` (one lab, stated criteria), ☆☆☆☆ `no_assertion_criteria_provided` (somebody asserted it without saying how). Software analogy: a code-review trail, not a test result — it tells you who signed off and under what process, never whether the code works. A separate value, `criteria_provided,_conflicting_classifications`, means submitters disagree; the P/LP predicate excludes it, because a disagreement is the opposite of an assertion.
+*Example: of the 2,129 pathogenic/likely-pathogenic ClinVar records inside the 8-gene panel, 111 are ★★★, 664 ★★, 1,265 ★ and 89 ☆☆☆☆ — nearly six in ten rest on a single submitter ([methodology 051](step-0/methodology/051-clinvar-presence.md)).*
+
+**Variation ID** — ClinVar's own stable key for a record, e.g. `533901`. Use it rather than the [rsID](#7-databases-and-annotation): 4,442 of the 17,832 rows in our committed ClinVar extract have no rsID at all, and every one has a Variation ID. Resolvable at `ncbi.nlm.nih.gov/clinvar/variation/<id>/`.
+
+**Presence cross-check** — running the ClinVar join *backwards*: instead of taking a variant the callset produced and asking what is known about it, take every site already classified pathogenic and ask whether the callset contains it. Both outcomes are results — a known-pathogenic site called heterozygous is a direct lead, and a gene whose known pathogenic sites are all absent says the case is not a repeat of a previously published family. The catch is spelling: an exact-string match under-counts indels unless both sides are [left-aligned](#3-variants-the-differences-you-hunt) first, so a presence count is a **lower bound**, never a ceiling.
+*Example: 2,129 pathogenic/likely-pathogenic panel sites checked, 1 present — the BUB1B `stop_gained`, heterozygous and PASS — with 1,306 of the 2,129 indel-shaped and therefore subject to the spelling caveat ([methodology 051](step-0/methodology/051-clinvar-presence.md)).*
 
 **gnomAD** — database of DNA from ~800,000 healthy-ish people. Tells you how common a variant is.
 

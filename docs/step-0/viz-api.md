@@ -124,6 +124,9 @@ came from; `cached_at` is non-null exactly when the payload came off disk.
 | `GET /api/panel/locus?gene=` | `pg.warehouse.variants_raw` | 8.4 s → cached |
 | `GET /api/panel/gene-structure?gene=` | Ensembl REST ×3 + `pg.results.panel_candidates` | 5.2–9.5 s → cached (0.002 s warm) |
 | `GET /api/panel/het-pairs?gene=` | `pg.results.panel_het_pairs` | live, 0.47–0.99 s, 5–163 alleles |
+| `GET /api/panel/background` | `pg.results.panel_gene_background` | live, 0.75–0.87 s, 8 rows |
+| `GET /api/panel/suppressed?gene=` | `pg.results.panel_filter_census` + `panel_suppressed` | live, 0.71–0.75 s, 20 census rows + 20 records |
+| `GET /api/panel/clinvar-presence?gene=` | `pg.results.clinvar_presence` + the panel BED | live, 0.74–1.22 s, 8 summary rows + 1 site |
 | `GET /api/reads/runs` | `s3://mva/reads/runs.parquet` | live |
 | `GET /api/reads/partitions` | `s3://mva/reads/manifest.parquet` | live |
 | `GET /api/reads/flowcell?lane=&read=&shard=` | one shard, 3 columns | 2.4 s → cached |
@@ -206,6 +209,44 @@ chart has to respect:
   `gnomad_af`, `clin_sig`, `is_rare_recessive` and `is_protein_altering` **null, never
   false**. An unknown `gene` is a **404**; a panel gene with no het PASS allele is an empty
   matrix, not a 404. See [`methodology/038`](methodology/038-pair-matrix.md).
+- **`/api/panel/background`** — eight rows, each gene's density and PASS share next to the
+  background of **1 Mb windows** it sits in (one window is one megabase, so a window's
+  record count is itself a density in variants/Mb). Every `z_*` is **null when the
+  background had no usable spread — never 0**, which is agreement. A low `z_pass_*` is a
+  **callability** reading (mappability, repeats), never a pathogenicity one; TRIP13 scores
+  −4.02 σ against chr5 and that is what it means. Windows under 100 records are excluded
+  from the PASS-share background only, so `contig_n_bins` can exceed the count behind
+  `contig_bin_mean_pct_pass`. `chrom` is `chr`-prefixed. See
+  [`methodology/048`](methodology/048-gene-background.md).
+- **`/api/panel/suppressed`** — not a list of rows: `{gene, census, records}`. `census` is
+  **always the whole panel** — one row per `(gene, FILTER value)` with **PASS included**, so
+  a gene's rows stack to `n_gene_all` — because the chart it feeds compares genes against
+  each other; only `records` narrows to `gene`. The `filter` string is **verbatim**: GATK
+  packs every threshold a record tripped into one `;`-joined value, so `LowQual;QD2` is one
+  record that failed two tests and is counted once, never split into two reason rows.
+  `records` is one row per **non-PASS record** (not per allele): a multi-allelic ALT stays
+  comma-packed and joins to its most severe annotated allele, named in `annotated_alt`.
+  `vaf` is null at a `1/2` site. `annotated: false` leaves every annotation field **null,
+  never false** — though on this callset all 20 are annotated, because VEP was asked about
+  panel alleles with no FILTER predicate. An unknown `gene` is a **404**; a panel gene with
+  nothing suppressed is an empty `records` list, not a 404. **`records` carries real patient
+  positions** — same rule as `/api/panel/locus`. See
+  [`methodology/049`](methodology/049-suppressed-calls.md).
+- **`/api/panel/clinvar-presence`** — not a list of rows: `{summary, sites}`, and the
+  reference join run **inward** — every P/LP site ClinVar holds in the panel, looked for in
+  the callset. `summary` counts off the panel BED, so a gene ClinVar has classified nothing
+  in appears with `n_plp = 0` rather than vanishing. `sites` carries only the **present**
+  and **uncomparable** rows; measured absences are counts, because two thousand rows of
+  "nothing called here" add nothing to them. `present` is a **lower bound** — matching is
+  exact on `(chrom, pos, ref)` plus ALT list membership with **no left-alignment on either
+  side**, so a differently spelled indel reads as absent (1,306 of the 2,129 P/LP sites are
+  indel-shaped). `present` is **null, never false**, where ClinVar states no alternate
+  allele (`comparable = false`). `carries_alt` is separate from `present`: a `0/1` call on a
+  `G -> A,C` record carries `A` and not `C`, so a record listing the allele is not a
+  genotype holding it. `review_stars` is NCBI's gold-star tier (4→0) and is **null** where
+  no status is stated, which is not zero stars. An unknown `gene` is a **404**. **`sites`
+  carries real patient positions** — same rule as `/api/panel/locus`. See
+  [`methodology/051`](methodology/051-clinvar-presence.md).
 - **`/api/callset/observed-expected`** — only metrics with **both** a published range and a
   measurable observation appear (12 of the 20 norms). A metric is absent rather than
   guessed. `source` is the norm's citation; `observed_from` names the table we measured.
