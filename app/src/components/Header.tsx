@@ -10,19 +10,17 @@ import { useQuery } from '@tanstack/react-query';
 import { API_URL, FIXTURES_ENABLED, fixtureModeStore, health } from '../api/client';
 import { AiExport } from './AiExport';
 
-const PAGES = [
-  { to: '/', label: 'Overview' },
-  { to: '/genome', label: 'Genome' },
-  { to: '/callset', label: 'Callset' },
-  { to: '/panel', label: 'Panel' },
-  { to: '/compare', label: 'Compare' },
-  { to: '/reads', label: 'Reads' },
-  { to: '/probes', label: 'Probes' },
-  { to: '/science', label: 'Science' },
-  { to: '/provenance', label: 'Provenance' },
-  { to: '/catalog', label: 'Catalog' },
-  { to: '/search', label: 'Search' },
-];
+/**
+ * Nav items are supplied by the caller (the module manifest in src/app), not
+ * hard-coded here, so the nav bar and the router read from one source and can
+ * never list different pages. `preload` is optional so Header stays usable
+ * without the app-shell's lazy-loading wiring.
+ */
+export interface HeaderNavItem {
+  to: string;
+  label: string;
+  preload?: () => void;
+}
 
 function useApiHealth() {
   return useQuery({
@@ -49,7 +47,7 @@ function statusTitle(state: 'checking' | 'up' | 'down'): string {
   );
 }
 
-export function Header() {
+export function Header({ items }: { items: HeaderNavItem[] }) {
   const onFixtures = useSyncExternalStore(fixtureModeStore.subscribe, fixtureModeStore.get);
   const h = useApiHealth();
   const state = h.isPending ? 'checking' : h.data?.ok ? 'up' : 'down';
@@ -65,11 +63,13 @@ export function Header() {
         </div>
 
         <nav className="flex flex-1 flex-wrap items-center gap-1">
-          {PAGES.map((p) => (
+          {items.map((p) => (
             <NavLink
               key={p.to}
               to={p.to}
               end={p.to === '/'}
+              onPointerEnter={p.preload}
+              onFocus={p.preload}
               className={({ isActive }) =>
                 `rounded-md px-2.5 py-1 text-xs transition ${
                   isActive ? 'bg-zinc-800 text-zinc-100' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
