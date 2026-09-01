@@ -69,8 +69,7 @@ export function optionLabel(v: PanelHetVariant, index: number): string {
 }
 
 /** `15:12345 C>T` — the detail line, and the only place a coordinate is rendered. */
-export const coordinate = (v: PanelHetVariant): string =>
-  `${v.chrom}:${v.pos} ${v.ref}>${v.alt}`;
+export const coordinate = (v: PanelHetVariant): string => `${v.chrom}:${v.pos} ${v.ref}>${v.alt}`;
 
 export const toRef = (v: PanelHetVariant): VariantRef => ({
   chrom: v.chrom,

@@ -24,9 +24,27 @@ const GAP = 42;
 
 const STATIONS: Station[] = [
   { x: 8, label: 'Claim', sub: 'falsifiable, registered', fill: '#1e3a8a55', stroke: C.machinery },
-  { x: 8 + (W + GAP), label: 'Predict', sub: 'what we should see', fill: '#1e3a8a55', stroke: C.machinery },
-  { x: 8 + 2 * (W + GAP), label: 'Test', sub: 'an executed run', fill: '#1e3a8a55', stroke: C.machinery },
-  { x: 8 + 3 * (W + GAP), label: 'Verdict', sub: 'the evidence weighed', fill: '#78350f55', stroke: C.decision },
+  {
+    x: 8 + (W + GAP),
+    label: 'Predict',
+    sub: 'what we should see',
+    fill: '#1e3a8a55',
+    stroke: C.machinery,
+  },
+  {
+    x: 8 + 2 * (W + GAP),
+    label: 'Test',
+    sub: 'an executed run',
+    fill: '#1e3a8a55',
+    stroke: C.machinery,
+  },
+  {
+    x: 8 + 3 * (W + GAP),
+    label: 'Verdict',
+    sub: 'the evidence weighed',
+    fill: '#78350f55',
+    stroke: C.decision,
+  },
 ];
 
 const REVISE_X = 8 + 1.5 * (W + GAP);
@@ -38,31 +56,69 @@ export function LoopDiagram() {
       title="The loop a claim goes through"
       legend={
         <>
-          <Chip color={C.machinery}>blue = neutral machinery</Chip> — the three stations that turn a claim
-          into an observation. <Chip color={C.decision}>yellow = the decision point</Chip> — the verdict,
-          where evidence becomes a status and a confidence.{' '}
-          <Chip color={C.absent}>grey dashed = the feedback edge</Chip> — a verdict that is not settled
-          sends a <em>new revision</em> of the claim back to the start. Solid arrows are the forward path;
-          nothing on this diagram is ever overwritten, because every pass appends a row.
+          <Chip color={C.machinery}>blue = neutral machinery</Chip> — the three stations that turn a
+          claim into an observation. <Chip color={C.decision}>yellow = the decision point</Chip> —
+          the verdict, where evidence becomes a status and a confidence.{' '}
+          <Chip color={C.absent}>grey dashed = the feedback edge</Chip> — a verdict that is not
+          settled sends a <em>new revision</em> of the claim back to the start. Solid arrows are the
+          forward path; nothing on this diagram is ever overwritten, because every pass appends a
+          row.
         </>
       }
       reading="Read it left to right once, then follow the dashed edge back: the register's whole job is to make that return trip leave a trace instead of quietly rewriting what was believed before."
       source="docs/method.md — the same loop, rendered client-side"
     >
-      <svg viewBox={`0 0 ${total} 150`} className="w-full" role="img" aria-label="claim, predict, test, verdict, revise">
+      <svg
+        viewBox={`0 0 ${total} 150`}
+        className="w-full"
+        role="img"
+        aria-label="claim, predict, test, verdict, revise"
+      >
         <defs>
-          <marker id="sci-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <marker
+            id="sci-arrow"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="6"
+            markerHeight="6"
+            orient="auto-start-reverse"
+          >
             <path d="M 0 0 L 10 5 L 0 10 z" fill={C.inkDim} />
           </marker>
-          <marker id="sci-arrow-dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <marker
+            id="sci-arrow-dim"
+            viewBox="0 0 10 10"
+            refX="9"
+            refY="5"
+            markerWidth="6"
+            markerHeight="6"
+            orient="auto-start-reverse"
+          >
             <path d="M 0 0 L 10 5 L 0 10 z" fill={C.absent} />
           </marker>
         </defs>
 
         {STATIONS.map((s, i) => (
           <g key={s.label}>
-            <rect x={s.x} y={Y} width={W} height={H} rx={8} fill={s.fill} stroke={s.stroke} strokeWidth={1.2} />
-            <text x={s.x + W / 2} y={Y + 25} textAnchor="middle" fontSize={13} fontWeight={600} fill={C.ink}>
+            <rect
+              x={s.x}
+              y={Y}
+              width={W}
+              height={H}
+              rx={8}
+              fill={s.fill}
+              stroke={s.stroke}
+              strokeWidth={1.2}
+            />
+            <text
+              x={s.x + W / 2}
+              y={Y + 25}
+              textAnchor="middle"
+              fontSize={13}
+              fontWeight={600}
+              fill={C.ink}
+            >
               {s.label}
             </text>
             <text x={s.x + W / 2} y={Y + 43} textAnchor="middle" fontSize={10} fill={C.inkDim}>

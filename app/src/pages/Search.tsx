@@ -11,13 +11,14 @@
  */
 
 import { useSearchParams } from 'react-router-dom';
-import { Callout, Explainer } from '../components/Explainer';
-import { Section } from '../components/Controls';
-import { Skeleton } from '../components/QueryState';
+
 import { ApiError } from '../api/client';
 import { useSearch } from '../api/hooks';
-import { SearchBox } from './search/SearchBox';
+import { Section } from '../components/Controls';
+import { Callout, Explainer } from '../components/Explainer';
+import { Skeleton } from '../components/QueryState';
 import { RegionResult, Resolution } from './search/Results';
+import { SearchBox } from './search/SearchBox';
 
 export default function SearchPage() {
   const [params, setParams] = useSearchParams();

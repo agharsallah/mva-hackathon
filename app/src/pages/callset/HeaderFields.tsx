@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Loaded } from '../../components/QueryState';
-import { DataTable, type Column } from '../../components/DataTable';
+
 import { useVcfFields } from '../../api/hooks';
 import type { FieldKind, VcfFieldRow } from '../../api/types';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Loaded } from '../../components/QueryState';
 import { C } from '../../lib/palette';
 
 /**
@@ -115,10 +116,10 @@ export function HeaderFields() {
           One row per header declaration, grouped by namespace:{' '}
           <Chip color={C.decision}>FILTER — a veto on a record</Chip> ·{' '}
           <Chip color={C.machinery}>INFO — one value per site</Chip> ·{' '}
-          <Chip color={C.raw}>FORMAT — one value per sample</Chip>. Descriptions are the caller&apos;s own
-          text, verbatim. The last column is green where something in this repo actually reads the
-          field and <span className="text-zinc-500">—</span> where nothing does. Sortable; the filter box
-          matches any cell.
+          <Chip color={C.raw}>FORMAT — one value per sample</Chip>. Descriptions are the
+          caller&apos;s own text, verbatim. The last column is green where something in this repo
+          actually reads the field and <span className="text-zinc-500">—</span> where nothing does.
+          Sortable; the filter box matches any cell.
         </>
       }
       reading={
@@ -127,8 +128,8 @@ export function HeaderFields() {
           <strong>the delivery ships no annotation worth ranking on</strong>. Every INFO field is a
           caller statistic — depth, strand bias, rank-sum tests — with no VEP consequence, no gnomAD
           frequency, no ClinVar verdict and no CADD score among them. The one exception is{' '}
-          <code className="text-zinc-300">DB</code>, a bare dbSNP-membership flag. Everything the Panel
-          page ranks on had to be fetched and joined by us.
+          <code className="text-zinc-300">DB</code>, a bare dbSNP-membership flag. Everything the
+          Panel page ranks on had to be fetched and joined by us.
         </>
       }
       data={q.data?.data}

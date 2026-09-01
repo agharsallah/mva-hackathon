@@ -25,7 +25,12 @@ export interface FieldListProps {
   className?: string;
 }
 
-export function FieldList({ fields, layout = 'columns', labelWidth = 96, className }: FieldListProps) {
+export function FieldList({
+  fields,
+  layout = 'columns',
+  labelWidth = 96,
+  className,
+}: FieldListProps) {
   if (layout === 'inline') {
     return (
       <dl className={className ?? 'space-y-1.5 text-xs leading-relaxed'}>

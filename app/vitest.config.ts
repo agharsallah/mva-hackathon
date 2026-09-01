@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url';
+
 import { defineConfig } from 'vitest/config';
 
 // Kept separate from vite.config.ts rather than merged: `vitest/config`'s `defineConfig`

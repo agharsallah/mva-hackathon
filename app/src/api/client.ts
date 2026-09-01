@@ -10,8 +10,8 @@
  * on fixture data. Endpoints with no fixture (the reads-API job proxy) still raise.
  */
 
-import type { Envelope, Health } from './types';
 import { fixtureFor } from '../fixtures';
+import type { Envelope, Health } from './types';
 
 export const API_URL: string = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8900';
 export const FIXTURES_ENABLED: boolean = import.meta.env.VITE_USE_FIXTURES !== 'false';
@@ -88,7 +88,10 @@ function isUnreachable(err: unknown): boolean {
 }
 
 async function raw<T>(path: string, params?: Params, signal?: AbortSignal): Promise<Result<T>> {
-  const res = await fetch(buildUrl(path, params), { signal, headers: { accept: 'application/json' } });
+  const res = await fetch(buildUrl(path, params), {
+    signal,
+    headers: { accept: 'application/json' },
+  });
   if (!res.ok) {
     let detail = `${res.status} ${res.statusText}`;
     try {
@@ -103,7 +106,11 @@ async function raw<T>(path: string, params?: Params, signal?: AbortSignal): Prom
   return { data: body.data, cachedAt: body.cached_at, source: body.source, origin: 'api' };
 }
 
-export async function get<T>(path: string, params?: Params, signal?: AbortSignal): Promise<Result<T>> {
+export async function get<T>(
+  path: string,
+  params?: Params,
+  signal?: AbortSignal,
+): Promise<Result<T>> {
   try {
     return await raw<T>(path, params, signal);
   } catch (err) {
@@ -115,7 +122,12 @@ export async function get<T>(path: string, params?: Params, signal?: AbortSignal
     const fixture = await fixtureFor(path, params);
     if (!fixture) throw err;
     markFixtureMode();
-    return { data: fixture.data as T, cachedAt: fixture.cached_at, source: fixture.source, origin: 'fixture' };
+    return {
+      data: fixture.data as T,
+      cachedAt: fixture.cached_at,
+      source: fixture.source,
+      origin: 'fixture',
+    };
   }
 }
 

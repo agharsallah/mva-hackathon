@@ -1,10 +1,10 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout, type Trace } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
 import { useGeneStructure } from '../../api/hooks';
 import type { GeneCandidate, GeneStructure, ProteinDomain } from '../../api/types';
-import { C, impactColor } from '../../lib/palette';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot, type Trace } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { int } from '../../lib/format';
+import { C, impactColor } from '../../lib/palette';
 
 /** Stem heights, cycled so neighbouring labels do not sit on the same line. */
 const STEMS = [1.0, 1.45, 1.2, 1.7];
@@ -30,15 +30,16 @@ export function DomainLollipop({ gene }: { gene: string }) {
       title={`Protein domains — where ${gene}'s protein-altering alleles land`}
       legend={
         <>
-          x = position along the protein, in amino acids (aa), 1 → the C-terminus. The grey bar is the whole
-          protein chain. <Chip color={C.machinery}>Blue bars</Chip> are annotated domains, one lane per source
-          database (Pfam, SMART, PROSITE, Gene3D, SUPERFAMILY, CDD, PRINTS) — several lanes describing the same
-          region is agreement, not duplication. Lollipops are this proband's protein-altering alleles:{' '}
-          <Chip color={C.broken}>HIGH</Chip> truncates or destroys the protein,{' '}
-          <Chip color={C.decision}>MODERATE</Chip> swaps one amino acid,{' '}
-          <Chip color={C.machinery}>LOW/MODIFIER</Chip> is unlikely to matter. A hollow head means the allele is
-          <em> not</em> rare in gnomAD, so it is a poor recessive candidate. Alleles VEP could not place are
-          listed to the right with the reason.
+          x = position along the protein, in amino acids (aa), 1 → the C-terminus. The grey bar is
+          the whole protein chain. <Chip color={C.machinery}>Blue bars</Chip> are annotated domains,
+          one lane per source database (Pfam, SMART, PROSITE, Gene3D, SUPERFAMILY, CDD, PRINTS) —
+          several lanes describing the same region is agreement, not duplication. Lollipops are this
+          proband's protein-altering alleles: <Chip color={C.broken}>HIGH</Chip> truncates or
+          destroys the protein, <Chip color={C.decision}>MODERATE</Chip> swaps one amino acid,{' '}
+          <Chip color={C.machinery}>LOW/MODIFIER</Chip> is unlikely to matter. A hollow head means
+          the allele is
+          <em> not</em> rare in gnomAD, so it is a poor recessive candidate. Alleles VEP could not
+          place are listed to the right with the reason.
         </>
       }
       reading="A HIGH-impact lollipop landing inside or upstream of a functional domain is the shape a damaging recessive allele has: it removes the part of the protein that does the work."
@@ -62,8 +63,8 @@ function Lollipop({ structure }: { structure: GeneStructure }) {
   if (!length) {
     return (
       <p className="p-6 text-center text-sm text-zinc-500">
-        {structure.gene} has no protein on its canonical transcript ({structure.transcript ?? 'unknown'}), so
-        there is no amino-acid axis to draw.
+        {structure.gene} has no protein on its canonical transcript (
+        {structure.transcript ?? 'unknown'}), so there is no amino-acid axis to draw.
       </p>
     );
   }
@@ -76,13 +77,20 @@ function Lollipop({ structure }: { structure: GeneStructure }) {
     <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_260px]">
       <Plot
         height={300}
-        data={[...domainTraces(structure.domains, lanes), ...stemTraces(placed), backbone(length, depth)]}
+        data={[
+          ...domainTraces(structure.domains, lanes),
+          ...stemTraces(placed),
+          backbone(length, depth),
+        ]}
         layout={baseLayout({
           margin: { l: 128, r: 16, t: 26, b: 46 },
           showlegend: false,
           bargap: 0.35,
           xaxis: {
-            title: { text: `amino-acid position (1 – ${int(length)} aa)`, font: { color: C.inkDim, size: 12 } },
+            title: {
+              text: `amino-acid position (1 – ${int(length)} aa)`,
+              font: { color: C.inkDim, size: 12 },
+            },
             range: [0, length + 1],
             gridcolor: C.grid,
             tickfont: { color: C.inkDim, size: 10 },
@@ -142,7 +150,14 @@ function domainTraces(domains: ProteinDomain[], lanes: Map<string, number>): Tra
       insidetextanchor: 'middle',
       textfont: { color: C.paper, size: 9 },
       cliponaxis: false,
-      customdata: domains.map((d) => [d.source, d.name, d.accession ?? '—', d.start_aa, d.end_aa, d.interpro ?? '—']),
+      customdata: domains.map((d) => [
+        d.source,
+        d.name,
+        d.accession ?? '—',
+        d.start_aa,
+        d.end_aa,
+        d.interpro ?? '—',
+      ]),
       hovertemplate:
         '<b>%{customdata[1]}</b><br>%{customdata[0]} %{customdata[2]}<br>' +
         'aa %{customdata[3]}–%{customdata[4]}<br>InterPro %{customdata[5]}<extra></extra>',
@@ -218,7 +233,8 @@ function Unplaceable({
         {int(placed)} placed · {int(rows.length)} not placeable
       </p>
       <p className="mb-2 text-zinc-500">
-        Domains and positions are both on <span className="font-mono">{transcript ?? 'the canonical transcript'}</span>.
+        Domains and positions are both on{' '}
+        <span className="font-mono">{transcript ?? 'the canonical transcript'}</span>.
       </p>
       {rows.length === 0 ? (
         <p className="text-zinc-500">
@@ -229,7 +245,11 @@ function Unplaceable({
       ) : (
         <ul className="space-y-2">
           {rows.map((c, i) => (
-            <li key={`${c.label}-${i}`} className="border-l-2 pl-2" style={{ borderColor: impactColor(c.impact ?? '') }}>
+            <li
+              key={`${c.label}-${i}`}
+              className="border-l-2 pl-2"
+              style={{ borderColor: impactColor(c.impact ?? '') }}
+            >
               <span className="font-mono text-zinc-300">{c.label}</span>
               <span className="ml-1 text-zinc-500">({c.impact ?? 'unknown impact'})</span>
               <p className="text-zinc-500">{c.reason}</p>

@@ -1,9 +1,9 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
 import { useReadRuns, useSequencingYield } from '../../api/hooks';
-import { C } from '../../lib/palette';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { compact, dec, int } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * What the delivery was *estimated* to hold, and how close that estimate turned out to be.
@@ -38,19 +38,20 @@ export function DeliveredYield() {
           Grouped bars, one pair per flowcell lane.{' '}
           <Chip color={C.raw}>estimated from the delivered bytes</Chip> ·{' '}
           <Chip color={C.machinery}>counted in the parquet store</Chip>. Bar height = reads for the
-          whole lane (R1 + R2). The table beneath carries the bases and the compressed size behind each
-          bar; the error column is <span style={{ color: C.good }}>green</span> under ±2 % and{' '}
-          <span style={{ color: C.decision }}>yellow</span> above it. A grey dash means the read store
-          was unreachable, so there is nothing to compare against.
+          whole lane (R1 + R2). The table beneath carries the bases and the compressed size behind
+          each bar; the error column is <span style={{ color: C.good }}>green</span> under ±2 % and{' '}
+          <span style={{ color: C.decision }}>yellow</span> above it. A grey dash means the read
+          store was unreachable, so there is nothing to compare against.
         </>
       }
       reading={
         <>
           The byte-size estimate lands <strong>0.32 % to 1.10 % high</strong>, and{' '}
-          <strong>high on all four lanes</strong> — a one-sided bias from gzip&apos;s ratio, not noise.
-          Over the whole delivery that is +0.75 %: 1,079,858,785 estimated against 1,071,835,104
-          counted. Good enough to size a disk and plan the conversion; not good enough to quote as a
-          read count, which is why every read figure elsewhere in this app comes from the counted store.
+          <strong>high on all four lanes</strong> — a one-sided bias from gzip&apos;s ratio, not
+          noise. Over the whole delivery that is +0.75 %: 1,079,858,785 estimated against
+          1,071,835,104 counted. Good enough to size a disk and plan the conversion; not good enough
+          to quote as a read count, which is why every read figure elsewhere in this app comes from
+          the counted store.
         </>
       }
       data={q.data?.data}
@@ -102,7 +103,11 @@ export function DeliveredYield() {
                   margin: { l: 66, r: 12, t: 8, b: 34 },
                   barmode: 'group',
                   bargap: 0.36,
-                  xaxis: { type: 'category', gridcolor: 'rgba(0,0,0,0)', tickfont: { color: C.inkDim, size: 11 } },
+                  xaxis: {
+                    type: 'category',
+                    gridcolor: 'rgba(0,0,0,0)',
+                    tickfont: { color: C.inkDim, size: 11 },
+                  },
                   yaxis: {
                     title: { text: 'reads in the lane', font: { color: C.inkDim, size: 12 } },
                     gridcolor: C.grid,
@@ -115,13 +120,27 @@ export function DeliveredYield() {
                 <table className="w-full border-collapse text-[11px]">
                   <thead className="text-zinc-500">
                     <tr>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-left font-medium">lane</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">files</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">delivered GB</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">est. Gbases</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">est. reads</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">counted reads</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">error</th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-left font-medium">
+                        lane
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">
+                        files
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">
+                        delivered GB
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">
+                        est. Gbases
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">
+                        est. reads
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">
+                        counted reads
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">
+                        error
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -130,17 +149,34 @@ export function DeliveredYield() {
                       const truth = real(r.lane);
                       return (
                         <tr key={r.lane}>
-                          <td className="border-b border-zinc-900 px-2 py-1 font-mono text-zinc-300">{r.lane}</td>
-                          <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-400">{r.n_files}</td>
-                          <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">{dec(r.gigabytes, 2)}</td>
-                          <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">{dec(r.est_gbases, 2)}</td>
-                          <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-purple-400">{int(r.est_reads)}</td>
+                          <td className="border-b border-zinc-900 px-2 py-1 font-mono text-zinc-300">
+                            {r.lane}
+                          </td>
+                          <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-400">
+                            {r.n_files}
+                          </td>
+                          <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">
+                            {dec(r.gigabytes, 2)}
+                          </td>
+                          <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">
+                            {dec(r.est_gbases, 2)}
+                          </td>
+                          <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-purple-400">
+                            {int(r.est_reads)}
+                          </td>
                           <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-blue-400">
-                            {truth === undefined ? <span className="text-zinc-600">—</span> : int(truth)}
+                            {truth === undefined ? (
+                              <span className="text-zinc-600">—</span>
+                            ) : (
+                              int(truth)
+                            )}
                           </td>
                           <td
                             className="border-b border-zinc-900 px-2 py-1 text-right font-mono"
-                            style={{ color: err === null ? C.absent : Math.abs(err) <= 2 ? C.good : C.decision }}
+                            style={{
+                              color:
+                                err === null ? C.absent : Math.abs(err) <= 2 ? C.good : C.decision,
+                            }}
                           >
                             {err === null ? '—' : `${err > 0 ? '+' : ''}${dec(err, 2)} %`}
                           </td>
@@ -152,21 +188,27 @@ export function DeliveredYield() {
               </div>
               <div className="mt-2 grid gap-2 text-[11px] text-zinc-500 sm:grid-cols-4">
                 <span>
-                  {totalFiles} FASTQ files · <span className="font-mono text-zinc-300">{dec(totalGb, 2)} GB</span> gzipped
+                  {totalFiles} FASTQ files ·{' '}
+                  <span className="font-mono text-zinc-300">{dec(totalGb, 2)} GB</span> gzipped
                 </span>
                 <span>
-                  <span className="font-mono text-zinc-300">{dec(totalGbases, 2)}</span> Gbases estimated
+                  <span className="font-mono text-zinc-300">{dec(totalGbases, 2)}</span> Gbases
+                  estimated
                 </span>
                 <span>
-                  <span className="font-mono text-purple-400">{compact(totalEst)}</span> reads estimated
+                  <span className="font-mono text-purple-400">{compact(totalEst)}</span> reads
+                  estimated
                 </span>
                 <span>
                   {totalCounted > 0 ? (
                     <>
-                      <span className="font-mono text-blue-400">{compact(totalCounted)}</span> reads counted
+                      <span className="font-mono text-blue-400">{compact(totalCounted)}</span> reads
+                      counted
                     </>
                   ) : (
-                    <span className="text-zinc-600">read store unreachable — nothing counted to compare</span>
+                    <span className="text-zinc-600">
+                      read store unreachable — nothing counted to compare
+                    </span>
                   )}
                 </span>
               </div>

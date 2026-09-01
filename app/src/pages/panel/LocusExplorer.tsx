@@ -1,14 +1,14 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
-import { Select } from '../../components/Controls';
 import { useGeneStructure, useLocus, usePanelGenes } from '../../api/hooks';
 import type { GeneStructure, LocusVariant } from '../../api/types';
-import { C } from '../../lib/palette';
+import { Select } from '../../components/Controls';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
+import { C } from '../../lib/palette';
 import { known, useUrlState } from '../../lib/urlstate';
-import { geneAxis, geneTrack } from './locus/geneTrack';
 import { DomainLollipop } from './DomainLollipop';
+import { geneAxis, geneTrack } from './locus/geneTrack';
 
 const GT_SYMBOL: Record<string, string> = { '0/1': 'circle', '1/1': 'square', '1/2': 'star' };
 
@@ -42,9 +42,16 @@ function filterColor(f: string): string {
 export function LocusExplorer() {
   const genes = usePanelGenes();
   const [param, setGene] = useUrlState('gene', DEFAULT_GENE);
-  const options = (genes.data?.data ?? []).map((g) => ({ value: g.gene, label: `${g.gene} (${g.n_all})` }));
+  const options = (genes.data?.data ?? []).map((g) => ({
+    value: g.gene,
+    label: `${g.gene} (${g.n_all})`,
+  }));
   // A gene the panel does not contain reads as the default rather than driving a doomed query.
-  const gene = known(param, options.map((o) => o.value), DEFAULT_GENE);
+  const gene = known(
+    param,
+    options.map((o) => o.value),
+    DEFAULT_GENE,
+  );
   const q = useLocus(gene);
   const anatomy = useGeneStructure(gene);
   const structure = anatomy.data?.data;
@@ -57,7 +64,9 @@ export function LocusExplorer() {
           <>
             <Select
               value={gene}
-              options={options.length > 0 ? options : [{ value: DEFAULT_GENE, label: DEFAULT_GENE }]}
+              options={
+                options.length > 0 ? options : [{ value: DEFAULT_GENE, label: DEFAULT_GENE }]
+              }
               onChange={setGene}
               label="gene"
             />
@@ -66,15 +75,16 @@ export function LocusExplorer() {
         }
         legend={
           <>
-            Top track: y = QUAL, the caller's confidence in the site. Middle track: y = VAF, with a dashed line
-            at <span className="font-mono">0.5</span>. Bottom track: the gene itself —{' '}
-            <Chip color={C.machinery}>filled boxes are exons</Chip> (the stretches that survive into the
-            protein), the thin line between them is intron (spliced out and discarded), and the arrow marks the
-            TSS (transcription start site) pointing the way the gene is read. Hover an exon for its number and
-            span. All three share the x axis (position along the gene). Marker colour ={' '}
-            <Chip color={C.good}>PASS</Chip> vs <Chip color={C.broken}>suppressed</Chip>. Marker shape =
-            genotype: ● 0/1 heterozygous, ■ 1/1 homozygous variant, ★ 1/2 two different variant alleles
-            (compound het by genotype). Marker size ∝ read depth.
+            Top track: y = QUAL, the caller's confidence in the site. Middle track: y = VAF, with a
+            dashed line at <span className="font-mono">0.5</span>. Bottom track: the gene itself —{' '}
+            <Chip color={C.machinery}>filled boxes are exons</Chip> (the stretches that survive into
+            the protein), the thin line between them is intron (spliced out and discarded), and the
+            arrow marks the TSS (transcription start site) pointing the way the gene is read. Hover
+            an exon for its number and span. All three share the x axis (position along the gene).
+            Marker colour = <Chip color={C.good}>PASS</Chip> vs{' '}
+            <Chip color={C.broken}>suppressed</Chip>. Marker shape = genotype: ● 0/1 heterozygous, ■
+            1/1 homozygous variant, ★ 1/2 two different variant alleles (compound het by genotype).
+            Marker size ∝ read depth.
           </>
         }
         reading="Suppressed records are usually the low-QUAL ones, as expected — but check whether any ★ (1/2) record is suppressed, and whether it sits over an exon. A suppressed 1/2 record inside an exon is a compound-heterozygous coding site hidden behind a heuristic."
@@ -118,10 +128,11 @@ function GeneTrackNote({
   if (!structure) return null;
   return (
     <p className="mt-2 text-[11px] text-zinc-500">
-      gene track: <span className="font-mono text-zinc-300">{structure.transcript}</span>, the canonical
-      transcript of {gene} — {int(structure.exons.length)} exons on the{' '}
-      {structure.strand >= 0 ? 'forward (+)' : 'reverse (−)'} strand, {int(structure.protein_length ?? 0)} amino
-      acids. Exon 1 is the first one <em>transcribed</em>, which on the reverse strand is the rightmost box.
+      gene track: <span className="font-mono text-zinc-300">{structure.transcript}</span>, the
+      canonical transcript of {gene} — {int(structure.exons.length)} exons on the{' '}
+      {structure.strand >= 0 ? 'forward (+)' : 'reverse (−)'} strand,{' '}
+      {int(structure.protein_length ?? 0)} amino acids. Exon 1 is the first one <em>transcribed</em>
+      , which on the reverse strand is the rightmost box.
     </p>
   );
 }
@@ -196,7 +207,13 @@ function Tracks({
               line: { color: C.paper, width: 1 },
               opacity: 0.9,
             },
-            customdata: g.rows.map((r) => [r.gt, r.filter, r.dp ?? 0, r.ad_alt ?? 0, r.ad_ref ?? 0]),
+            customdata: g.rows.map((r) => [
+              r.gt,
+              r.filter,
+              r.dp ?? 0,
+              r.ad_alt ?? 0,
+              r.ad_ref ?? 0,
+            ]),
             hovertemplate:
               'VAF %{y:.3f}<br>%{customdata[0]} · %{customdata[1]}<br>' +
               '%{customdata[3]} alt / %{customdata[4]} ref reads<extra></extra>',

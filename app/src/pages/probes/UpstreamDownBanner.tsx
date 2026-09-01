@@ -10,15 +10,16 @@ export function UpstreamDownBanner({ detail }: { detail?: string }) {
         Reads API unreachable — probes cannot run
       </div>
       <p className="mt-1.5 text-sm leading-relaxed text-zinc-300">
-        Every other page in this app reads precomputed tables and works without it. Probing needs the service
-        that owns the 1.07-billion-read parquet store. Start it, then submit again:
+        Every other page in this app reads precomputed tables and works without it. Probing needs
+        the service that owns the 1.07-billion-read parquet store. Start it, then submit again:
       </p>
       <pre className="mt-2 overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950 p-3 font-mono text-[11px] text-emerald-300">
-MVA_API_TOKEN=&lt;secret&gt; uv run mva-reads-api --host 0.0.0.0 --port 8765
+        MVA_API_TOKEN=&lt;secret&gt; uv run mva-reads-api --host 0.0.0.0 --port 8765
       </pre>
       <p className="mt-2 text-[11px] leading-relaxed text-zinc-500">
-        The viz API proxies it — it needs <code className="text-zinc-400">MVA_READS_API_URL</code> and{' '}
-        <code className="text-zinc-400">MVA_API_TOKEN</code> in its own environment to reach the service above.
+        The viz API proxies it — it needs <code className="text-zinc-400">MVA_READS_API_URL</code>{' '}
+        and <code className="text-zinc-400">MVA_API_TOKEN</code> in its own environment to reach the
+        service above.
       </p>
       {detail && <p className="mt-2 font-mono text-[11px] text-red-400/80">{detail}</p>}
     </div>

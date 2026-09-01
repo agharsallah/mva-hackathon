@@ -1,6 +1,6 @@
 import type { PanelAnnotationRow, VariantImpact } from '../../api/types';
-import { prng } from '../prng';
 import { rows } from '../loader';
+import { prng } from '../prng';
 import { panelGenesFixture } from './panel-genes';
 
 /**
@@ -50,7 +50,8 @@ export async function panelAnnotationsFixture(geneName?: string): Promise<PanelA
       const pool = coding ? CONSEQUENCES.slice(5) : CONSEQUENCES.slice(0, 5);
       const [consequence, impact] = pool[Math.floor(rand() * pool.length)];
       const af = coding ? 0.02 + rand() * 0.4 : rand() < 0.12 ? null : rand() * 0.004;
-      const grpmax = af === null ? null : Math.min(0.999, Math.round(af * (1.1 + rand() * 0.8) * 1e6) / 1e6);
+      const grpmax =
+        af === null ? null : Math.min(0.999, Math.round(af * (1.1 + rand() * 0.8) * 1e6) / 1e6);
       const multi = rand() < 0.02;
       const dp = Math.max(6, Math.round(44 + (rand() - 0.5) * 26));
       const filter = rand() < 0.05 ? 'MQ40' : 'PASS';

@@ -14,4 +14,3 @@ export function prng(seed: number): () => number {
     return s / 4294967296;
   };
 }
-

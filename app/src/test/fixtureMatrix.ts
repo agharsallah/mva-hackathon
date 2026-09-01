@@ -62,4 +62,6 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
 ];
 
 export const key = (path: string, params?: Record<string, string | number>): string =>
-  params ? `${path}?${new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)])).toString()}` : path;
+  params
+    ? `${path}?${new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)])).toString()}`
+    : path;

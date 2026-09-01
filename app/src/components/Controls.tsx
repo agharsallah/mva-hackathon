@@ -98,7 +98,15 @@ export function TextFilter({
   );
 }
 
-export function Section({ title, children, subtitle }: { title: string; subtitle?: ReactNode; children: ReactNode }) {
+export function Section({
+  title,
+  children,
+  subtitle,
+}: {
+  title: string;
+  subtitle?: ReactNode;
+  children: ReactNode;
+}) {
   return (
     <section className="space-y-3">
       <div>

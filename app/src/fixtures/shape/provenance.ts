@@ -1,4 +1,10 @@
-import type { DerivationRow, LineageRow, ProbeLedgerRow, ReadRunRow, SourceObjectRow } from '../../api/types';
+import type {
+  DerivationRow,
+  LineageRow,
+  ProbeLedgerRow,
+  ReadRunRow,
+  SourceObjectRow,
+} from '../../api/types';
 import { rows } from '../loader';
 
 /**

@@ -14,21 +14,22 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+
 import { Callout } from '../../components/Explainer';
+import { PAIR_PARAM } from '../compare/comparator';
 import { CandidatePicker } from './CandidatePicker';
 import { PayloadTable } from './PayloadTable';
-import { downloadCsv, useProbeBuild } from './useProbeBuild';
 import {
-  MAX_ROWS,
   addRow,
+  type DraftRow,
   ingestPairParam,
+  MAX_ROWS,
   moveRow,
   patchRow,
   removeRow,
   toRequest,
-  type DraftRow,
 } from './probePayload';
-import { PAIR_PARAM } from '../compare/comparator';
+import { downloadCsv, useProbeBuild } from './useProbeBuild';
 
 const FILENAME = 'track1_submission.csv';
 
@@ -79,9 +80,10 @@ export function ProbeBuilder() {
   return (
     <div className="space-y-4">
       <Callout tone="decision" title="Building costs nothing. Submitting costs 1 of 18.">
-        This page renders and checks the file. Nothing leaves the machine, no budget moves, and you can
-        rebuild as often as you like. The spend happens when the CSV is uploaded to the challenge Space —
-        and that spend is only recoverable as knowledge if it is written down. After any real submission:
+        This page renders and checks the file. Nothing leaves the machine, no budget moves, and you
+        can rebuild as often as you like. The spend happens when the CSV is uploaded to the
+        challenge Space — and that spend is only recoverable as knowledge if it is written down.
+        After any real submission:
         <pre className="mt-2 overflow-x-auto rounded-md border border-amber-900/50 bg-zinc-950 p-2 font-mono text-[11px] leading-relaxed text-amber-200">
           {LOG_COMMAND}
         </pre>
@@ -96,7 +98,10 @@ export function ProbeBuilder() {
         <div className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="text-xs font-medium text-zinc-300">
-              Payload <span className="text-zinc-500">· {rows.length} of {MAX_ROWS} rows</span>
+              Payload{' '}
+              <span className="text-zinc-500">
+                · {rows.length} of {MAX_ROWS} rows
+              </span>
             </div>
             {rows.length > 0 && (
               <button
@@ -126,17 +131,17 @@ export function ProbeBuilder() {
               {building ? 'validating…' : 'Validate & build'}
             </button>
             <span className="text-[11px] text-zinc-500">
-              checked against <span className="font-mono">mva.pipeline.submission</span> — the same rules
-              the offline pipeline writes with
+              checked against <span className="font-mono">mva.pipeline.submission</span> — the same
+              rules the offline pipeline writes with
             </span>
           </div>
 
           {error && (
             <p className="rounded-md border border-red-900/60 bg-red-950/30 p-2.5 text-[11px] leading-relaxed text-red-300">
-              The API did not answer: <span className="font-mono">{error.message}</span>. Nothing was
-              validated — there is no offline fallback here on purpose, because a builder that pretends to
-              check a file is worse than one that refuses. Start the API
-              (<span className="font-mono">uv run mva-viz-api</span>) and press the button again.
+              The API did not answer: <span className="font-mono">{error.message}</span>. Nothing
+              was validated — there is no offline fallback here on purpose, because a builder that
+              pretends to check a file is worse than one that refuses. Start the API (
+              <span className="font-mono">uv run mva-viz-api</span>) and press the button again.
             </p>
           )}
 
@@ -148,7 +153,8 @@ export function ProbeBuilder() {
         <div className="space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="text-xs font-medium text-zinc-300">
-              {FILENAME} <span className="text-zinc-500">· contigs are chr-prefixed on the way out</span>
+              {FILENAME}{' '}
+              <span className="text-zinc-500">· contigs are chr-prefixed on the way out</span>
             </div>
             <div className="flex gap-2">
               <button
@@ -207,8 +213,8 @@ function Verdict({
       {warnings.length > 0 && (
         <div className="rounded-lg border border-amber-800/60 bg-amber-950/25 p-3">
           <div className="text-[11px] font-semibold uppercase tracking-wider text-amber-400">
-            {warnings.length} warning{warnings.length === 1 ? '' : 's'} — the file is legal, the payload
-            may not be what you meant
+            {warnings.length} warning{warnings.length === 1 ? '' : 's'} — the file is legal, the
+            payload may not be what you meant
           </div>
           <ul className="mt-1 space-y-0.5 text-[11px] text-amber-300">
             {warnings.map((p) => (
@@ -239,9 +245,9 @@ function Verdict({
           </div>
           <p className="mt-1 text-[11px] leading-relaxed text-zinc-400">
             The emitted bytes were parsed back the way the scorer parses them and scored against a
-            synthetic answer key equal to row 1's own alleles. It proves the file <em>encodes</em> what
-            you staged — the chr prefix, the pair-in-one-row shape, the rank order. It says nothing about
-            whether row 1 is correct; only the oracle can say that.
+            synthetic answer key equal to row 1's own alleles. It proves the file <em>encodes</em>{' '}
+            what you staged — the chr prefix, the pair-in-one-row shape, the rank order. It says
+            nothing about whether row 1 is correct; only the oracle can say that.
           </p>
         </div>
       )}
@@ -255,45 +261,48 @@ function Legend() {
       <div className="font-semibold uppercase tracking-wider text-zinc-500">Legend</div>
       <ul className="mt-1.5 grid gap-1 sm:grid-cols-2">
         <li>
-          <span className="text-emerald-400">green</span> — the file is safe to upload, or rank 1, the
-          only rank that scores the maximum.
+          <span className="text-emerald-400">green</span> — the file is safe to upload, or rank 1,
+          the only rank that scores the maximum.
         </li>
         <li>
-          <span className="text-amber-400">yellow</span> — a decision point: an irreversible spend, or a
-          payload the scorer will read differently than it looks.
+          <span className="text-amber-400">yellow</span> — a decision point: an irreversible spend,
+          or a payload the scorer will read differently than it looks.
         </li>
         <li>
           <span className="text-red-400">red</span> — a rule violation. No CSV is rendered at all.
         </li>
         <li>
-          <span className="text-blue-400">blue</span> — machinery: staged alleles, the validate action.
+          <span className="text-blue-400">blue</span> — machinery: staged alleles, the validate
+          action.
         </li>
       </ul>
-      <div className="mt-3 font-semibold uppercase tracking-wider text-zinc-500">How the file is read</div>
+      <div className="mt-3 font-semibold uppercase tracking-wider text-zinc-500">
+        How the file is read
+      </div>
       <ul className="mt-1.5 space-y-1">
         <li>
-          <strong>epcr</strong> (estimated probability the row is causal) decides rank, descending. Ties
-          break by <em>file order</em>, so equal values make a rank ambiguous and an oracle reply
-          undecodable — the ladder is strictly descending for that reason alone.
+          <strong>epcr</strong> (estimated probability the row is causal) decides rank, descending.
+          Ties break by <em>file order</em>, so equal values make a rank ambiguous and an oracle
+          reply undecodable — the ladder is strictly descending for that reason alone.
         </li>
         <li>
-          <strong>A pair row is one hypothesis.</strong> Both alleles of a compound heterozygote (two
-          different broken copies of the same gene, one from each parent) must sit in the same row; split
-          across two rows, a correct answer scores partial credit only.
+          <strong>A pair row is one hypothesis.</strong> Both alleles of a compound heterozygote
+          (two different broken copies of the same gene, one from each parent) must sit in the same
+          row; split across two rows, a correct answer scores partial credit only.
         </li>
         <li>
-          <strong>Single rows fish for partial matches</strong> (intel §9.1). Ten singles plus the reply's{' '}
-          <span className="font-mono">partial_match_rank</span> and{' '}
+          <strong>Single rows fish for partial matches</strong> (intel §9.1). Ten singles plus the
+          reply's <span className="font-mono">partial_match_rank</span> and{' '}
           <span className="font-mono">f_max</span> identify which candidates are true alleles.
         </li>
         <li>
-          <strong>A full match anywhere beats any partial</strong> (§8.3) — a full match at rank 6 scores
-          10 while a partial at rank 1 would have scored 50. So the final strike carries the confirmed
-          pair at rank 1 with nothing above it.
+          <strong>A full match anywhere beats any partial</strong> (§8.3) — a full match at rank 6
+          scores 10 while a partial at rank 1 would have scored 50. So the final strike carries the
+          confirmed pair at rank 1 with nothing above it.
         </li>
         <li>
-          <strong>Rows below the winning threshold are free</strong> (§8.4), so curated secondary findings
-          with notes cost nothing and feed the qualitative review.
+          <strong>Rows below the winning threshold are free</strong> (§8.4), so curated secondary
+          findings with notes cost nothing and feed the qualitative review.
         </li>
       </ul>
     </div>

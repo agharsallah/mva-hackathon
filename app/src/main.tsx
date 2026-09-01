@@ -1,7 +1,9 @@
-import { createRoot } from 'react-dom/client';
-import { AppProviders } from './app/providers';
-import { AppShell } from './app/AppShell';
 import './index.css';
+
+import { createRoot } from 'react-dom/client';
+
+import { AppShell } from './app/AppShell';
+import { AppProviders } from './app/providers';
 
 createRoot(document.getElementById('root')!).render(
   <AppProviders>

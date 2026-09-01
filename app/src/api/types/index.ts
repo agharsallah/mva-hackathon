@@ -11,15 +11,15 @@
  * writing `from '../api/types'` regardless of which domain a type lives in.
  */
 
-export type * from './envelope';
-export type * from './overview';
-export type * from './genome';
 export type * from './callset';
 export type * from './catalog';
-export type * from './panel';
 export type * from './clinvar';
-export type * from './reads';
+export type * from './envelope';
+export type * from './genome';
+export type * from './jobs';
+export type * from './overview';
+export type * from './panel';
 export type * from './provenance';
+export type * from './reads';
 export type * from './science';
 export type * from './search';
-export type * from './jobs';

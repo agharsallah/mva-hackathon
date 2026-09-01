@@ -4,9 +4,10 @@
  * StrictMode > QueryClientProvider > BrowserRouter.
  */
 
-import { StrictMode, type ReactNode } from 'react';
-import { BrowserRouter } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { type ReactNode, StrictMode } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+
 import { queryClient } from '../lib/queryClient';
 
 export function AppProviders({ children }: { children: ReactNode }) {

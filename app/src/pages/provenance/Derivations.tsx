@@ -1,7 +1,7 @@
-import { Loaded } from '../../components/QueryState';
-import { DataTable, type Column } from '../../components/DataTable';
 import { useDerivations, useLineage } from '../../api/hooks';
 import type { DerivationRow, LineageRow } from '../../api/types';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Loaded } from '../../components/QueryState';
 import { int, iso } from '../../lib/format';
 
 /**
@@ -25,7 +25,11 @@ export function Derivations() {
       render: (r) => <span className="text-zinc-300">{r.question}</span>,
     },
     { key: 'rows', header: 'rows', align: 'right', render: (r) => int(r.n_rows) },
-    { key: 'at', header: 'run at', render: (r) => <span className="font-mono text-zinc-500">{iso(r.run_at)}</span> },
+    {
+      key: 'at',
+      header: 'run at',
+      render: (r) => <span className="font-mono text-zinc-500">{iso(r.run_at)}</span>,
+    },
   ];
   return (
     <div className="space-y-2">
@@ -40,7 +44,8 @@ export function Derivations() {
         )}
       </Loaded>
       <p className="text-[11px] text-zinc-600">
-        Each row is a table this app reads from. If a derivation cannot state its question, it should not exist.
+        Each row is a table this app reads from. If a derivation cannot state its question, it
+        should not exist.
       </p>
     </div>
   );
@@ -79,9 +84,21 @@ export function LineageTable() {
           <span className="text-zinc-600">inherited</span>
         ),
     },
-    { key: 'transform', header: 'transform', render: (r) => <span className="text-zinc-300">{r.transform}</span> },
-    { key: 'tool', header: 'tool', render: (r) => <span className="font-mono text-zinc-500">{r.tool}</span> },
-    { key: 'at', header: 'produced at', render: (r) => <span className="font-mono text-zinc-500">{iso(r.produced_at)}</span> },
+    {
+      key: 'transform',
+      header: 'transform',
+      render: (r) => <span className="text-zinc-300">{r.transform}</span>,
+    },
+    {
+      key: 'tool',
+      header: 'tool',
+      render: (r) => <span className="font-mono text-zinc-500">{r.tool}</span>,
+    },
+    {
+      key: 'at',
+      header: 'produced at',
+      render: (r) => <span className="font-mono text-zinc-500">{iso(r.produced_at)}</span>,
+    },
   ];
   return (
     <Loaded query={q} height={260}>

@@ -53,14 +53,21 @@ export async function bafBinsFixture(chrom?: string): Promise<BafBinRow[]> {
       // The centromere calls almost nothing, on every chromosome — a property of the
       // reference, reproduced here so the thin-bin styling has real gaps to render.
       const centro = Math.exp(-(((mb - bins * 0.38) / (bins * 0.05)) ** 2));
-      const nHet = Math.max(0, Math.round(perMb * Math.max(0.01, 1 - 0.97 * centro) * (0.7 + rand() * 0.6)));
+      const nHet = Math.max(
+        0,
+        Math.round(perMb * Math.max(0.01, 1 - 0.97 * centro) * (0.7 + rand() * 0.6)),
+      );
       if (nHet === 0) continue;
 
       const planted =
         c === SYNTHETIC_ARM.chrom && mb >= SYNTHETIC_ARM.from && mb <= SYNTHETIC_ARM.to;
       const jitter = (rand() - 0.5) * (hemizygous ? 0.09 : 0.012);
       const meanVaf = clamp(BASE_VAF + jitter + (planted ? SYNTHETIC_ARM.shift : 0), 0.05, 0.95);
-      const meanDp = BASE_DP * (hemizygous ? 0.4 : 1) * (0.96 + rand() * 0.08) * (planted ? SYNTHETIC_ARM.dpFactor : 1);
+      const meanDp =
+        BASE_DP *
+        (hemizygous ? 0.4 : 1) *
+        (0.96 + rand() * 0.08) *
+        (planted ? SYNTHETIC_ARM.dpFactor : 1);
       const spread = BASE_SD * (hemizygous ? 1.8 : 1) * (0.9 + rand() * 0.3);
 
       out.push({

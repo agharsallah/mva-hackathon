@@ -1,7 +1,7 @@
-import type { Envelope, RegionVariant, RegionWindow, SearchResolution } from '../../api/types';
 import type { Params } from '../../api/client';
-import { prng } from '../prng';
+import type { Envelope, RegionVariant, RegionWindow, SearchResolution } from '../../api/types';
 import { rows } from '../loader';
+import { prng } from '../prng';
 
 /**
  * FIXTURE — the universal search, offline.
@@ -172,9 +172,15 @@ function rsidFixture(
  * resolved-but-never-called state is the one this page exists to make legible, and a
  * fixture that quietly filled it would hide the case from review.
  */
-export async function regionFixture(chrom: string, start: number, end: number): Promise<RegionWindow> {
+export async function regionFixture(
+  chrom: string,
+  start: number,
+  end: number,
+): Promise<RegionWindow> {
   const { inDbsnpOnly } = await lookups();
-  const empty = Object.values(inDbsnpOnly).some((v) => v.chrom === chrom && start <= v.start && v.start <= end);
+  const empty = Object.values(inDbsnpOnly).some(
+    (v) => v.chrom === chrom && start <= v.start && v.start <= end,
+  );
   if (empty) return { chrom, start, end, n: 0, variants: [] };
 
   const width = Math.max(end - start + 1, 1);
@@ -247,7 +253,9 @@ const SYNTHETIC = 'SYNTHETIC positions — never real';
 /** `/api/search` offline: an envelope, or nothing when the fixture cannot answer honestly. */
 export async function searchEnvelope(params?: Params): Promise<Envelope<SearchResolution>> {
   const found = await searchFixture(params?.q as string | undefined);
-  return (found ? { data: found, cached_at: null, source: `fixture: ${SYNTHETIC}` } : undefined) as Envelope<SearchResolution>;
+  return (
+    found ? { data: found, cached_at: null, source: `fixture: ${SYNTHETIC}` } : undefined
+  ) as Envelope<SearchResolution>;
 }
 
 /** `/api/callset/region` offline: always answerable, because the window is fully specified. */

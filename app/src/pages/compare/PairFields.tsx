@@ -9,10 +9,11 @@
  */
 
 import type { ReactNode } from 'react';
+
 import type { PanelHetVariant } from '../../api/types';
 import { C, impactColor } from '../../lib/palette';
-import { af } from './rarity';
 import { coordinate, variantLabel } from './comparator';
+import { af } from './rarity';
 
 // --- the side-by-side table --------------------------------------------------
 
@@ -40,14 +41,19 @@ const FIELDS: Field[] = [
   {
     label: 'ClinVar',
     hint: 'Clinical-lab assertions about this variant. Absent means nobody has submitted one.',
-    render: (v) => (v.clin_sig ? <span className="text-amber-300">{v.clin_sig}</span> : dim('no assertion')),
+    render: (v) =>
+      v.clin_sig ? <span className="text-amber-300">{v.clin_sig}</span> : dim('no assertion'),
   },
   {
     label: 'gnomAD AF',
     hint: 'Frequency across ~800k mostly-healthy genomes. Absent from the database ⇒ "novel", never 0.',
     render: (v) =>
-      !v.annotated ? dim('unknown') : (
-        <span className={v.gnomad_af === null ? 'text-emerald-400' : 'text-zinc-200'}>{af(v.gnomad_af)}</span>
+      !v.annotated ? (
+        dim('unknown')
+      ) : (
+        <span className={v.gnomad_af === null ? 'text-emerald-400' : 'text-zinc-200'}>
+          {af(v.gnomad_af)}
+        </span>
       ),
   },
   {
@@ -65,7 +71,10 @@ const FIELDS: Field[] = [
       </span>
     ),
   },
-  { label: 'rsID', render: (v) => (v.rsid ? <span className="font-mono">{v.rsid}</span> : dim('none')) },
+  {
+    label: 'rsID',
+    render: (v) => (v.rsid ? <span className="font-mono">{v.rsid}</span> : dim('none')),
+  },
   {
     label: 'position',
     hint: 'The patient coordinate. Shown here, never in the primary label, and never committed to the repo.',
@@ -93,7 +102,8 @@ const FIELDS: Field[] = [
   {
     label: 'QUAL',
     hint: "The caller's phred-scaled confidence that a variant exists at this site.",
-    render: (v) => (v.qual === null ? dim('—') : <span className="font-mono">{v.qual.toFixed(0)}</span>),
+    render: (v) =>
+      v.qual === null ? dim('—') : <span className="font-mono">{v.qual.toFixed(0)}</span>,
   },
   {
     label: 'DP',
@@ -120,7 +130,10 @@ const FIELDS: Field[] = [
 ];
 
 export function Flag({ on, yes, no }: { on: boolean | null; yes: string; no: string }) {
-  if (on === null) return <span className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400">unknown</span>;
+  if (on === null)
+    return (
+      <span className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400">unknown</span>
+    );
   return (
     <span
       className={`rounded px-1.5 py-0.5 text-[10px] ${
@@ -145,10 +158,15 @@ function Vaf({ vaf }: { vaf: number | null }) {
         <span className="absolute inset-y-[-2px] left-1/2 w-px bg-zinc-500" />
         <span
           className="absolute inset-y-[-3px] w-[3px] rounded-sm"
-          style={{ left: `${Math.min(100, Math.max(0, vaf * 100))}%`, background: clean ? C.good : C.decision }}
+          style={{
+            left: `${Math.min(100, Math.max(0, vaf * 100))}%`,
+            background: clean ? C.good : C.decision,
+          }}
         />
       </span>
-      <span className="mt-0.5 block text-[10px] text-zinc-600">0 — 0.5 (one of two copies) — 1</span>
+      <span className="mt-0.5 block text-[10px] text-zinc-600">
+        0 — 0.5 (one of two copies) — 1
+      </span>
     </span>
   );
 }
@@ -160,18 +178,29 @@ export function Comparison({ a, b }: { a: PanelHetVariant; b: PanelHetVariant })
         <thead className="bg-zinc-900 text-zinc-400">
           <tr>
             <th className="w-40 border-b border-zinc-800 px-2 py-2 text-left font-medium">field</th>
-            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium text-blue-300">A</th>
-            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium text-purple-300">B</th>
+            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium text-blue-300">
+              A
+            </th>
+            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium text-purple-300">
+              B
+            </th>
           </tr>
         </thead>
         <tbody>
           {FIELDS.map((f) => (
             <tr key={f.label} className="odd:bg-zinc-900/30">
-              <td className="border-b border-zinc-900 px-2 py-1.5 align-top text-zinc-500" title={f.hint}>
+              <td
+                className="border-b border-zinc-900 px-2 py-1.5 align-top text-zinc-500"
+                title={f.hint}
+              >
                 {f.label}
               </td>
-              <td className="border-b border-zinc-900 px-2 py-1.5 align-top text-zinc-300">{f.render(a)}</td>
-              <td className="border-b border-zinc-900 px-2 py-1.5 align-top text-zinc-300">{f.render(b)}</td>
+              <td className="border-b border-zinc-900 px-2 py-1.5 align-top text-zinc-300">
+                {f.render(a)}
+              </td>
+              <td className="border-b border-zinc-900 px-2 py-1.5 align-top text-zinc-300">
+                {f.render(b)}
+              </td>
             </tr>
           ))}
         </tbody>

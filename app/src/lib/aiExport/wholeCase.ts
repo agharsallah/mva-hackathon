@@ -9,7 +9,7 @@
  */
 
 import { get } from '../../api/client';
-import { queryClient, FIVE_MIN } from '../queryClient';
+import { FIVE_MIN, queryClient } from '../queryClient';
 import { bundleMarkdown, endpointSection } from './markdown';
 import { withoutCoordinates } from './redact';
 import type { EndpointRecord } from './types';
@@ -90,7 +90,13 @@ async function fetchEntry(entry: Entry): Promise<EndpointRecord> {
       entry.redact && Array.isArray(result.data)
         ? withoutCoordinates(result.data as object[])
         : result.data;
-    return { path: entry.path, source: result.source, cachedAt: result.cachedAt, origin: result.origin, data };
+    return {
+      path: entry.path,
+      source: result.source,
+      cachedAt: result.cachedAt,
+      origin: result.origin,
+      data,
+    };
   } catch (err) {
     return { path: entry.path, error: err instanceof Error ? err.message : String(err) };
   }
@@ -106,7 +112,10 @@ async function sectionsFor(entries: Entry[]): Promise<string[]> {
 }
 
 export async function buildWholeCaseBundle(): Promise<string> {
-  const [datasets, dictionary] = await Promise.all([sectionsFor(MANIFEST), sectionsFor(DICTIONARY)]);
+  const [datasets, dictionary] = await Promise.all([
+    sectionsFor(MANIFEST),
+    sectionsFor(DICTIONARY),
+  ]);
   return bundleMarkdown(
     `the whole case — ${MANIFEST.length} datasets and the field dictionary`,
     [...datasets, DICTIONARY_NOTE, ...dictionary],

@@ -8,6 +8,7 @@
  * and the tile it sits on never disagree about what a colour means.
  */
 import type { ReactNode } from 'react';
+
 import { BADGE, cx } from '../lib/ui';
 
 export interface BadgeProps {
@@ -34,7 +35,17 @@ export function Badge({ tone = 'neutral', children, className, title }: BadgePro
 
 /** A boolean rendered as a badge: green when true, grey when false, a third "unknown" state
  * for `null` — the shape every ad hoc on/off pill in this app already converges on. */
-export function Flag({ on, yes, no, unknown = 'unknown' }: { on: boolean | null; yes: ReactNode; no: ReactNode; unknown?: ReactNode }) {
+export function Flag({
+  on,
+  yes,
+  no,
+  unknown = 'unknown',
+}: {
+  on: boolean | null;
+  yes: ReactNode;
+  no: ReactNode;
+  unknown?: ReactNode;
+}) {
   if (on === null) return <Badge tone="neutral">{unknown}</Badge>;
   return <Badge tone={on ? 'good' : 'neutral'}>{on ? yes : no}</Badge>;
 }

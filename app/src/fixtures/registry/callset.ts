@@ -6,8 +6,6 @@
  * endpoints take params, so there is no `shape/` module for this fragment.
  */
 
-import type { Entry } from '../loader';
-import { rows } from '../loader';
 import type {
   DepthBinRow,
   FilterRow,
@@ -21,6 +19,8 @@ import type {
   VcfFieldRow,
   ZygosityRow,
 } from '../../api/types';
+import type { Entry } from '../loader';
+import { rows } from '../loader';
 
 export const callsetEntries: Record<string, Entry> = {
   // MEASURED. Aggregates from the repo's executed exploration runs (counts and ratios

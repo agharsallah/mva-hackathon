@@ -1,6 +1,7 @@
-import { useMemo, useState, type ReactNode } from 'react';
-import { TextFilter } from './Controls';
+import { type ReactNode, useMemo, useState } from 'react';
+
 import { nodeText } from '../lib/nodeText';
+import { TextFilter } from './Controls';
 
 /**
  * The shared table. Sorting, filtering and pagination are additive: a call site that passes
@@ -70,7 +71,13 @@ function Pager({
     'rounded border border-zinc-700 bg-zinc-900 px-1.5 py-0.5 text-zinc-400 transition enabled:hover:bg-zinc-800 enabled:hover:text-zinc-200 disabled:opacity-30 focus:outline-none focus-visible:border-blue-700';
   return (
     <div className="flex items-center justify-end gap-2 text-[11px] text-zinc-500">
-      <button type="button" className={btn} aria-label="previous page" disabled={page === 0} onClick={() => onPage(page - 1)}>
+      <button
+        type="button"
+        className={btn}
+        aria-label="previous page"
+        disabled={page === 0}
+        onClick={() => onPage(page - 1)}
+      >
         ‹
       </button>
       <span>
@@ -158,7 +165,9 @@ export function DataTable<R>({
   // Tri-state: unsorted → asc → desc → back to the order the caller supplied.
   function toggle(key: string) {
     setPage(0);
-    setSort((s) => (s?.key !== key ? { key, dir: 'asc' } : s.dir === 'asc' ? { key, dir: 'desc' } : null));
+    setSort((s) =>
+      s?.key !== key ? { key, dir: 'asc' } : s.dir === 'asc' ? { key, dir: 'desc' } : null,
+    );
   }
 
   function onQuery(v: string) {
@@ -177,7 +186,12 @@ export function DataTable<R>({
 
   const controls = filterable ? (
     <div className="flex flex-wrap items-center gap-3">
-      <TextFilter value={query} onChange={onQuery} label={filterLabel} placeholder={filterPlaceholder} />
+      <TextFilter
+        value={query}
+        onChange={onQuery}
+        label={filterLabel}
+        placeholder={filterPlaceholder}
+      />
       {needle && filtered.length > 0 && (
         <span className="text-[11px] text-zinc-500">
           <span className="font-mono text-zinc-300">{filtered.length}</span> of {rows.length} match

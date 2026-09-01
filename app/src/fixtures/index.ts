@@ -14,8 +14,7 @@
 
 import type { Params } from '../api/client';
 import type { Envelope } from '../api/types';
-
-import { isEnvelopeEntry, type Entry } from './loader';
+import { type Entry, isEnvelopeEntry } from './loader';
 
 /** Fragment name → its paths. Static, so no fragment is loaded to find out who owns a path. */
 const OWNERS: Record<string, readonly string[]> = {

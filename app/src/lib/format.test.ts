@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { int } from './format';
 
 // Smoke test: proves `npm run test` actually runs Vitest against this project

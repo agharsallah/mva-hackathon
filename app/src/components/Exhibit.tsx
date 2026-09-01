@@ -10,13 +10,14 @@
  * page-level and case-level exports need nothing from the call sites.
  */
 
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { nodeText } from '../lib/nodeText';
-import { exhibitRegistry } from '../lib/aiExport/registry';
-import { exhibitBundle } from '../lib/aiExport/markdown';
+
 import { copyExport } from '../lib/aiExport/download';
+import { exhibitBundle } from '../lib/aiExport/markdown';
+import { exhibitRegistry } from '../lib/aiExport/registry';
 import type { ExhibitRecord } from '../lib/aiExport/types';
+import { nodeText } from '../lib/nodeText';
 import { CARD, cx } from '../lib/ui';
 
 export interface ExhibitProps {
@@ -55,7 +56,16 @@ export function Exhibit({
   const page = useLocation().pathname;
   const legendText = nodeText(legend);
   const readingText = reading === undefined ? undefined : nodeText(reading);
-  const record: ExhibitRecord = { page, title, legend: legendText, reading: readingText, source, cachedAt, origin, data };
+  const record: ExhibitRecord = {
+    page,
+    title,
+    legend: legendText,
+    reading: readingText,
+    source,
+    cachedAt,
+    origin,
+    data,
+  };
 
   useEffect(() => {
     exhibitRegistry.register({
@@ -93,7 +103,9 @@ export function Exhibit({
         {(source || origin) && (
           <p className="font-mono text-[11px] text-zinc-600">
             {origin === 'fixture' && (
-              <span className="mr-1.5 rounded bg-amber-500/15 px-1 py-px text-amber-400">fixture</span>
+              <span className="mr-1.5 rounded bg-amber-500/15 px-1 py-px text-amber-400">
+                fixture
+              </span>
             )}
             {source}
             {cachedAt ? ` · cached ${cachedAt.replace('T', ' ').slice(0, 19)}` : ''}

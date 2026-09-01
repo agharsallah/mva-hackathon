@@ -1,9 +1,9 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
 import { useAlleleBalance } from '../../api/hooks';
-import { C } from '../../lib/palette';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * Depth against balance. Two independent axes have to agree for a chromosome to be
@@ -18,15 +18,17 @@ export function DepthVaf() {
       title="Depth against balance — two axes that must both agree"
       legend={
         <>
-          One point per contig. x = mean read depth over heterozygous sites, y = mean VAF. Crosshair =
-          (autosomal mean depth, 0.50), the &quot;two intact copies, evenly covered&quot; point.{' '}
-          <Chip color={C.good}>balanced</Chip> · <Chip color={C.broken}>flagged</Chip>. Labels name the contig.
+          One point per contig. x = mean read depth over heterozygous sites, y = mean VAF. Crosshair
+          = (autosomal mean depth, 0.50), the &quot;two intact copies, evenly covered&quot; point.{' '}
+          <Chip color={C.good}>balanced</Chip> · <Chip color={C.broken}>flagged</Chip>. Labels name
+          the contig.
         </>
       }
       reading={
         <>
-          A whole-chromosome gain would sit up and right, a loss down and left. The autosomes form one tight
-          cluster on the crosshair; X and Y sit low-left because a male sample has a single copy of each.
+          A whole-chromosome gain would sit up and right, a loss down and left. The autosomes form
+          one tight cluster on the crosshair; X and Y sit low-left because a male sample has a
+          single copy of each.
         </>
       }
       data={q.data?.data}
@@ -36,8 +38,11 @@ export function DepthVaf() {
     >
       <Loaded query={q} height={400}>
         {(rows) => {
-          const autosomes = rows.filter((r) => !['X', 'Y', 'MT'].includes(r.chrom.replace(/^chr/, '')));
-          const meanDp = autosomes.reduce((a, r) => a + r.mean_dp, 0) / Math.max(1, autosomes.length);
+          const autosomes = rows.filter(
+            (r) => !['X', 'Y', 'MT'].includes(r.chrom.replace(/^chr/, '')),
+          );
+          const meanDp =
+            autosomes.reduce((a, r) => a + r.mean_dp, 0) / Math.max(1, autosomes.length);
           const groups: [string, typeof rows, string][] = [
             ['balanced', rows.filter((r) => r.balance_call === 'balanced'), C.good],
             ['flagged', rows.filter((r) => r.balance_call !== 'balanced'), C.broken],
@@ -66,7 +71,10 @@ export function DepthVaf() {
                 layout={baseLayout({
                   margin: { l: 62, r: 20, t: 10, b: 46 },
                   xaxis: {
-                    title: { text: 'mean read depth at heterozygous sites (×)', font: { color: C.inkDim, size: 12 } },
+                    title: {
+                      text: 'mean read depth at heterozygous sites (×)',
+                      font: { color: C.inkDim, size: 12 },
+                    },
                     gridcolor: C.grid,
                     tickfont: { color: C.inkDim, size: 11 },
                   },
@@ -112,7 +120,8 @@ export function DepthVaf() {
                 })}
               />
               <p className="mt-2 text-[11px] text-zinc-500">
-                autosomal mean depth <span className="font-mono text-zinc-300">{dec(meanDp, 1)}×</span> over{' '}
+                autosomal mean depth{' '}
+                <span className="font-mono text-zinc-300">{dec(meanDp, 1)}×</span> over{' '}
                 {autosomes.length} contigs
               </p>
             </>

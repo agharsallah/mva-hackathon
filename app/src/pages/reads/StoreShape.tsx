@@ -1,10 +1,10 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
-import { Select } from '../../components/Controls';
 import { useReadPartitions } from '../../api/hooks';
-import { C } from '../../lib/palette';
+import { Select } from '../../components/Controls';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
+import { C } from '../../lib/palette';
 import { useUrlEnum } from '../../lib/urlstate';
 
 type Metric = 'gib' | 'reads' | 'shards';
@@ -23,7 +23,11 @@ const METRICS: { value: Metric; label: string }[] = [
  */
 export function StoreShape() {
   // `?store.metric=reads`. See lib/urlstate.
-  const [metric, setMetric] = useUrlEnum<Metric>('store.metric', 'gib', METRICS.map((m) => m.value));
+  const [metric, setMetric] = useUrlEnum<Metric>(
+    'store.metric',
+    'gib',
+    METRICS.map((m) => m.value),
+  );
   const q = useReadPartitions();
   return (
     <Exhibit
@@ -32,8 +36,9 @@ export function StoreShape() {
       legend={
         <>
           Treemap: each tile is one partition (lane × read direction), area ∝ the selected metric.{' '}
-          <Chip color={C.raw}>R1 partitions</Chip> · <Chip color={C.machinery}>R2 partitions</Chip>. A shard is
-          one parquet file; sharding is what lets a query read a slice of the store instead of all of it.
+          <Chip color={C.raw}>R1 partitions</Chip> · <Chip color={C.machinery}>R2 partitions</Chip>.
+          A shard is one parquet file; sharding is what lets a query read a slice of the store
+          instead of all of it.
         </>
       }
       reading="Every partition is the same size — 34 shards each, evenly split. That uniformity is what makes a k-mer probe run predictable: no partition is a straggler."
@@ -76,15 +81,15 @@ export function StoreShape() {
               />
               <div className="mt-2 grid gap-2 text-[11px] text-zinc-500 sm:grid-cols-3">
                 <span>
-                  {rows.length} partitions · <span className="font-mono text-zinc-300">{int(totalShards)}</span>{' '}
-                  shards
+                  {rows.length} partitions ·{' '}
+                  <span className="font-mono text-zinc-300">{int(totalShards)}</span> shards
                 </span>
                 <span>
                   <span className="font-mono text-zinc-300">{int(totalReads)}</span> reads stored
                 </span>
                 <span>
-                  <span className="font-mono text-blue-400">{dec(totalGib, 2)} GiB</span> parquet vs 78.90 GiB
-                  gzip source
+                  <span className="font-mono text-blue-400">{dec(totalGib, 2)} GiB</span> parquet vs
+                  78.90 GiB gzip source
                 </span>
               </div>
             </>

@@ -47,7 +47,15 @@ export function addRow(
   label: string,
 ): DraftRow[] {
   if (rows.length >= MAX_ROWS) return rows;
-  const row: DraftRow = { id: nextId(), variant1, variant2, epcr: 0, findingType: 'primary', notes: '', label };
+  const row: DraftRow = {
+    id: nextId(),
+    variant1,
+    variant2,
+    epcr: 0,
+    findingType: 'primary',
+    notes: '',
+    label,
+  };
   return renumber([...rows, row]);
 }
 
@@ -100,12 +108,17 @@ export interface ParsedLine {
 
 /** `15:12345 C>T`, `chr15 12345 C T`, `15-12345-C-T` — anything a copy-paste produces. */
 function parseVariant(text: string): VariantRef | string {
-  const parts = text.trim().split(/[\s:>\-/,]+/).filter(Boolean);
+  const parts = text
+    .trim()
+    .split(/[\s:>\-/,]+/)
+    .filter(Boolean);
   if (parts.length !== 4) return `expected chrom, pos, ref, alt — got ${parts.length} fields`;
   const [chrom, pos, ref, alt] = parts;
   const position = Number(pos);
-  if (!Number.isInteger(position) || position < 1) return `position must be a whole number ≥ 1, got "${pos}"`;
-  if (!/^[ACGTN]+$/i.test(ref) || !/^[ACGTN]+$/i.test(alt)) return 'ref and alt must be DNA letters';
+  if (!Number.isInteger(position) || position < 1)
+    return `position must be a whole number ≥ 1, got "${pos}"`;
+  if (!/^[ACGTN]+$/i.test(ref) || !/^[ACGTN]+$/i.test(alt))
+    return 'ref and alt must be DNA letters';
   return { chrom, pos: position, ref: ref.toUpperCase(), alt: alt.toUpperCase() };
 }
 

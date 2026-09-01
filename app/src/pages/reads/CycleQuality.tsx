@@ -1,10 +1,10 @@
-import { Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout, scene3d } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
-import { Toggle } from '../../components/Controls';
 import { useCycleQuality } from '../../api/hooks';
-import { C, QUALITY_SCALE } from '../../lib/palette';
+import { Toggle } from '../../components/Controls';
+import { Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot, scene3d } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec } from '../../lib/format';
+import { C, QUALITY_SCALE } from '../../lib/palette';
 import { useUrlToggle } from '../../lib/urlstate';
 
 /**
@@ -30,13 +30,13 @@ export function CycleQuality() {
       }
       legend={
         <>
-          x = sequencing cycle (letter 1 to 149 of the read), y = mean phred quality at that cycle. Solid lines
-          are <span style={{ color: '#60a5fa' }}>R1</span> partitions, dashed lines are{' '}
+          x = sequencing cycle (letter 1 to 149 of the read), y = mean phred quality at that cycle.
+          Solid lines are <span style={{ color: '#60a5fa' }}>R1</span> partitions, dashed lines are{' '}
           <span style={{ color: '#a78bfa' }}>R2</span>; one line per lane. The dashed{' '}
-          <span style={{ color: C.good }}>green</span> line at Q30 is the 1-error-in-1000 level. In 3D: x =
-          cycle, y = partition, z = mean quality, on a{' '}
-          <span style={{ color: C.broken }}>red (low)</span> → <span style={{ color: C.good }}>green
-          (high)</span> ramp.
+          <span style={{ color: C.good }}>green</span> line at Q30 is the 1-error-in-1000 level. In
+          3D: x = cycle, y = partition, z = mean quality, on a{' '}
+          <span style={{ color: C.broken }}>red (low)</span> →{' '}
+          <span style={{ color: C.good }}>green (high)</span> ramp.
         </>
       }
       reading="R2 decays visibly faster than R1 — the same fragments, read second, after the chemistry has degraded. This is real and it is why R2's Q30 share is 90.0 % against R1's 92.9 %."
@@ -82,22 +82,39 @@ export function CycleQuality() {
                   layout={baseLayout({
                     margin: { l: 0, r: 0, t: 0, b: 0 },
                     scene: scene3d({
-                      xaxis: { title: { text: 'cycle' }, gridcolor: C.grid, tickfont: { color: C.inkDim, size: 10 } },
-                      yaxis: { title: { text: 'partition' }, gridcolor: C.grid, tickfont: { color: C.inkDim, size: 10 } },
-                      zaxis: { title: { text: 'mean phred' }, gridcolor: C.grid, tickfont: { color: C.inkDim, size: 10 } },
+                      xaxis: {
+                        title: { text: 'cycle' },
+                        gridcolor: C.grid,
+                        tickfont: { color: C.inkDim, size: 10 },
+                      },
+                      yaxis: {
+                        title: { text: 'partition' },
+                        gridcolor: C.grid,
+                        tickfont: { color: C.inkDim, size: 10 },
+                      },
+                      zaxis: {
+                        title: { text: 'mean phred' },
+                        gridcolor: C.grid,
+                        tickfont: { color: C.inkDim, size: 10 },
+                      },
                       camera: { eye: { x: 1.7, y: -1.5, z: 0.85 } },
                       aspectratio: { x: 1.7, y: 1, z: 0.6 },
                     }),
                   })}
                 />
                 <p className="mt-1 text-[11px] text-zinc-500">
-                  drag to rotate · the R2 half of the y axis sits visibly lower at high cycle numbers
+                  drag to rotate · the R2 half of the y axis sits visibly lower at high cycle
+                  numbers
                 </p>
               </>
             );
           }
-          const lastR1 = avg(series.filter((s) => s.readNum === 1).map((s) => s.pts[s.pts.length - 1].mean_q));
-          const lastR2 = avg(series.filter((s) => s.readNum === 2).map((s) => s.pts[s.pts.length - 1].mean_q));
+          const lastR1 = avg(
+            series.filter((s) => s.readNum === 1).map((s) => s.pts[s.pts.length - 1].mean_q),
+          );
+          const lastR2 = avg(
+            series.filter((s) => s.readNum === 2).map((s) => s.pts[s.pts.length - 1].mean_q),
+          );
           return (
             <>
               <Plot
@@ -118,7 +135,10 @@ export function CycleQuality() {
                 layout={baseLayout({
                   margin: { l: 60, r: 16, t: 8, b: 46 },
                   xaxis: {
-                    title: { text: 'sequencing cycle (base position in the read)', font: { color: C.inkDim, size: 12 } },
+                    title: {
+                      text: 'sequencing cycle (base position in the read)',
+                      font: { color: C.inkDim, size: 12 },
+                    },
                     gridcolor: C.grid,
                     tickfont: { color: C.inkDim, size: 11 },
                   },
@@ -154,7 +174,8 @@ export function CycleQuality() {
                 })}
               />
               <p className="mt-1 text-[11px] text-zinc-500">
-                last cycle mean: R1 <span className="font-mono text-blue-400">{dec(lastR1, 2)}</span> · R2{' '}
+                last cycle mean: R1{' '}
+                <span className="font-mono text-blue-400">{dec(lastR1, 2)}</span> · R2{' '}
                 <span className="font-mono text-purple-400">{dec(lastR2, 2)}</span> — a{' '}
                 {dec(lastR1 - lastR2, 2)} phred gap by the end of the read
               </p>

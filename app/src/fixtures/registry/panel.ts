@@ -9,14 +9,14 @@
 import type { PanelBackgroundRow } from '../../api/types';
 import type { Entry } from '../loader';
 import { rows } from '../loader';
-import { panelGenesFixture } from '../shape/panel-genes';
-import { panelConstraintFixture } from '../shape/panel-constraint';
-import { panelAnnotationsFixture } from '../shape/panel-annotations';
-import { locusFixture } from '../shape/panel-locus';
-import { panelHetPairsFixture } from '../shape/panel-het-pairs';
 import { clinvarPresenceFixture } from '../shape/clinvar-presence';
-import { panelSuppressedFixture } from '../shape/panel-suppressed';
 import { geneStructureFixture } from '../shape/gene-structure';
+import { panelAnnotationsFixture } from '../shape/panel-annotations';
+import { panelConstraintFixture } from '../shape/panel-constraint';
+import { panelGenesFixture } from '../shape/panel-genes';
+import { panelHetPairsFixture } from '../shape/panel-het-pairs';
+import { locusFixture } from '../shape/panel-locus';
+import { panelSuppressedFixture } from '../shape/panel-suppressed';
 
 export const panelEntries: Record<string, Entry> = {
   '/api/panel/genes': {

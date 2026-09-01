@@ -1,9 +1,9 @@
-import { Callout, Explainer } from '../components/Explainer';
 import { Section } from '../components/Controls';
+import { Callout, Explainer } from '../components/Explainer';
 import { DeliveryInventory } from './catalog/DeliveryInventory';
+import { ReadStoreCard } from './catalog/ReadStoreCard';
 import { TableCatalog } from './catalog/TableCatalog';
 import { TableExplainer } from './catalog/TableExplainer';
-import { ReadStoreCard } from './catalog/ReadStoreCard';
 
 /**
  * Catalog — the index over the data itself.
@@ -19,14 +19,15 @@ export default function CatalogPage() {
         intro={
           <>
             A data catalogue answers four questions about every piece of data in the platform:{' '}
-            <strong>what is it</strong>, <strong>what does it contain</strong>, <strong>when did it arrive</strong>,
-            and <strong>where does it live</strong>. There are only two kinds of answer here. The{' '}
-            <strong>raw delivery</strong> is what the publisher gave us: immutable — written once, never rewritten
-            — and hash-verified, so we can prove our copy is byte-for-byte theirs. Everything else is{' '}
-            <strong>derived</strong>: produced by a transform over some input, and carrying a{' '}
-            <strong>lineage edge</strong> recording which input, which transform, which tool. If a derived table
-            cannot name its edge, it cannot be re-derived or invalidated, and this page says so in yellow rather
-            than leaving the cell blank.
+            <strong>what is it</strong>, <strong>what does it contain</strong>,{' '}
+            <strong>when did it arrive</strong>, and <strong>where does it live</strong>. There are
+            only two kinds of answer here. The <strong>raw delivery</strong> is what the publisher
+            gave us: immutable — written once, never rewritten — and hash-verified, so we can prove
+            our copy is byte-for-byte theirs. Everything else is <strong>derived</strong>: produced
+            by a transform over some input, and carrying a <strong>lineage edge</strong> recording
+            which input, which transform, which tool. If a derived table cannot name its edge, it
+            cannot be re-derived or invalidated, and this page says so in yellow rather than leaving
+            the cell blank.
           </>
         }
         terms={[
@@ -95,11 +96,11 @@ export default function CatalogPage() {
       />
 
       <Callout tone="decision" title="What to look for on this page">
-        Two colours carry the whole reading. <strong>Green</strong> in the first exhibit means a checksum matched,
-        which is the precondition for every number in the app being about the right patient&apos;s data.{' '}
-        <strong>Yellow</strong> anywhere is an honest gap — an object with no recorded arrival time, or a table
-        with no lineage edge. Neither is fatal; both are things a reviewer is entitled to ask about, so they are
-        shown rather than smoothed over.
+        Two colours carry the whole reading. <strong>Green</strong> in the first exhibit means a
+        checksum matched, which is the precondition for every number in the app being about the
+        right patient&apos;s data. <strong>Yellow</strong> anywhere is an honest gap — an object
+        with no recorded arrival time, or a table with no lineage edge. Neither is fatal; both are
+        things a reviewer is entitled to ask about, so they are shown rather than smoothed over.
       </Callout>
 
       <Section

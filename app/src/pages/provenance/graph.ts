@@ -94,7 +94,9 @@ export function buildGraph(rows: LineageRow[]): { nodes: Node[]; edges: Edge[]; 
   }
 
   const perLevel = new Map<number, number>();
-  const ordered = [...nodes.values()].sort((a, b) => a.level - b.level || a.label.localeCompare(b.label));
+  const ordered = [...nodes.values()].sort(
+    (a, b) => a.level - b.level || a.label.localeCompare(b.label),
+  );
   for (const node of ordered) {
     const slot = perLevel.get(node.level) ?? 0;
     node.slot = slot;

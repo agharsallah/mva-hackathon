@@ -5,8 +5,9 @@
  * whole app one loading skeleton and one error card.
  */
 
-import type { ReactNode } from 'react';
 import type { UseQueryResult } from '@tanstack/react-query';
+import type { ReactNode } from 'react';
+
 import type { Result } from '../api/client';
 import { ApiError } from '../api/client';
 
@@ -29,8 +30,8 @@ export function ErrorCard({ error }: { error: Error }) {
       <p className="mt-1 font-mono text-xs text-red-400/80">{error.message}</p>
       {!upstream && (
         <p className="mt-2 text-xs text-zinc-400">
-          Start the viz API, or leave <code className="text-zinc-300">VITE_USE_FIXTURES</code> unset to
-          browse committed fixtures.
+          Start the viz API, or leave <code className="text-zinc-300">VITE_USE_FIXTURES</code> unset
+          to browse committed fixtures.
         </p>
       )}
     </div>

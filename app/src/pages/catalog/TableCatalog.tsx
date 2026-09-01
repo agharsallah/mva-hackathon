@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Loaded } from '../../components/QueryState';
-import { TextFilter } from '../../components/Controls';
-import { DataTable, type Column } from '../../components/DataTable';
+
 import { useCatalogTables } from '../../api/hooks';
 import type { CatalogTableRow } from '../../api/types';
-import { C } from '../../lib/palette';
+import { TextFilter } from '../../components/Controls';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Loaded } from '../../components/QueryState';
 import { int, iso } from '../../lib/format';
+import { C } from '../../lib/palette';
 import { useUrlText } from '../../lib/urlstate';
 
 /**
@@ -99,7 +100,11 @@ export function TableCatalog() {
         key: 'tool',
         header: 'tool',
         render: (r) =>
-          r.tool ? <span className="font-mono text-zinc-500">{r.tool}</span> : <span className="text-zinc-600">—</span>,
+          r.tool ? (
+            <span className="font-mono text-zinc-500">{r.tool}</span>
+          ) : (
+            <span className="text-zinc-600">—</span>
+          ),
       },
     ],
     [],
@@ -119,14 +124,15 @@ export function TableCatalog() {
       }
       legend={
         <>
-          One row per table in the warehouse. <Chip color={C.machinery}>schema · table</Chip> is the address you
-          would query; <span className="font-mono">from</span> is the lineage edge — the input this table was
-          derived from, by the named <span className="font-mono">tool</span>.{' '}
-          <Chip color={C.decision}>yellow chips mark a gap</Chip>: “no lineage edge” = nothing records what
-          produced that table; “undescribed” = nothing says what it holds. Both are shown rather than blanked.{' '}
-          <span className="font-mono">rows</span> is the catalogue&apos;s count as of its last refresh — the
-          endpoint is cached, and a count can be an estimate wherever an exact one is too expensive, so read the
-          magnitude before the digits. The filter box matches table name and description, case-insensitively.
+          One row per table in the warehouse. <Chip color={C.machinery}>schema · table</Chip> is the
+          address you would query; <span className="font-mono">from</span> is the lineage edge — the
+          input this table was derived from, by the named <span className="font-mono">tool</span>.{' '}
+          <Chip color={C.decision}>yellow chips mark a gap</Chip>: “no lineage edge” = nothing
+          records what produced that table; “undescribed” = nothing says what it holds. Both are
+          shown rather than blanked. <span className="font-mono">rows</span> is the catalogue&apos;s
+          count as of its last refresh — the endpoint is cached, and a count can be an estimate
+          wherever an exact one is too expensive, so read the magnitude before the digits. The
+          filter box matches table name and description, case-insensitively.
         </>
       }
       reading="Every row here should be reproducible from the raw delivery by following its lineage edge back. The yellow chips are the exceptions — tables that exist but cannot state their input."
@@ -153,12 +159,13 @@ export function TableCatalog() {
             <div className="space-y-2">
               <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] text-zinc-500">
                 <span>
-                  showing <span className="font-mono text-zinc-200">{int(shown.length)}</span> of {int(rows.length)}{' '}
-                  tables
+                  showing <span className="font-mono text-zinc-200">{int(shown.length)}</span> of{' '}
+                  {int(rows.length)} tables
                 </span>
                 {schemas.map((s) => (
                   <span key={s}>
-                    <span className="font-mono text-zinc-400">{s}</span> {rows.filter((r) => r.schema === s).length}
+                    <span className="font-mono text-zinc-400">{s}</span>{' '}
+                    {rows.filter((r) => r.schema === s).length}
                   </span>
                 ))}
                 <span className={orphans ? 'text-amber-400' : 'text-emerald-400'}>

@@ -1,15 +1,16 @@
 import { useMemo } from 'react';
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
-import { Select } from '../../components/Controls';
+
 import { usePanelAnnotations } from '../../api/hooks';
 import type { PanelAnnotationRow } from '../../api/types';
-import { C, impactColor } from '../../lib/palette';
-import { int } from '../../lib/format';
-import { known, useUrlState } from '../../lib/urlstate';
+import { Select } from '../../components/Controls';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { withoutCoordinates } from '../../lib/aiExport/redact';
-import { IMPACT_ORDER, af, geneOptions, isPathogenic, matchesGene } from './rarity';
+import { int } from '../../lib/format';
+import { C, impactColor } from '../../lib/palette';
+import { known, useUrlState } from '../../lib/urlstate';
+import { af, geneOptions, IMPACT_ORDER, isPathogenic, matchesGene } from './rarity';
 
 /** Where rows with no defined VAF (`1/2` multiallelic) are parked, below the 0 line. */
 const VAF_NA = -0.06;
@@ -30,10 +31,15 @@ export function RarityScatter() {
   // pages never inherit each other's selection by accident. See lib/urlstate.
   const [param, setGene] = useUrlState('gene', 'ALL');
   const options = q.data ? geneOptions(q.data.data) : [{ value: 'ALL', label: 'All genes' }];
-  const gene = known(param, options.map((o) => o.value), 'ALL');
+  const gene = known(
+    param,
+    options.map((o) => o.value),
+    'ALL',
+  );
   // The rows carry the proband's real chromosome and position; an export must not.
   const exportData = useMemo(
-    () => (q.data ? withoutCoordinates(q.data.data.filter((r) => matchesGene(r, gene))) : undefined),
+    () =>
+      q.data ? withoutCoordinates(q.data.data.filter((r) => matchesGene(r, gene))) : undefined,
     [q.data, gene],
   );
 
@@ -43,16 +49,17 @@ export function RarityScatter() {
       controls={<Select value={gene} options={options} onChange={setGene} label="gene" />}
       legend={
         <>
-          One point per annotated panel record. x = gnomAD allele frequency on a log axis (left = rarer);
-          y = VAF, the fraction of the patient&apos;s reads carrying the variant. Colour = VEP impact:{' '}
-          <Chip color={C.broken}>HIGH (truncates the protein)</Chip> ·{' '}
+          One point per annotated panel record. x = gnomAD allele frequency on a log axis (left =
+          rarer); y = VAF, the fraction of the patient&apos;s reads carrying the variant. Colour =
+          VEP impact: <Chip color={C.broken}>HIGH (truncates the protein)</Chip> ·{' '}
           <Chip color={C.decision}>MODERATE (changes an amino acid)</Chip> ·{' '}
           <Chip color={C.machinery}>LOW / MODIFIER (silent or non-coding)</Chip>. A{' '}
-          <span style={{ color: C.ink }}>white ring</span> marks a ClinVar pathogenic assertion. Two lanes sit
-          outside the normal grid: the <strong>novel lane</strong> left of the dashed vertical rule holds
-          variants <em>absent from gnomAD</em> (no frequency exists — they are not frequency zero), and the{' '}
-          <strong>VAF n/a lane</strong> below the dashed horizontal rule holds <span className="font-mono">1/2</span>{' '}
-          multiallelic records, where a single alternate fraction is undefined.
+          <span style={{ color: C.ink }}>white ring</span> marks a ClinVar pathogenic assertion. Two
+          lanes sit outside the normal grid: the <strong>novel lane</strong> left of the dashed
+          vertical rule holds variants <em>absent from gnomAD</em> (no frequency exists — they are
+          not frequency zero), and the <strong>VAF n/a lane</strong> below the dashed horizontal
+          rule holds <span className="font-mono">1/2</span> multiallelic records, where a single
+          alternate fraction is undefined.
         </>
       }
       reading="Read right to left. Everything on the right is common in healthy people and therefore cannot cause a rare recessive disease on its own. The candidates live in the far-left column and the novel lane, and a red or yellow point there with a VAF near 0.5 is a heterozygous, protein-altering, population-absent variant — the shape a compound-het partner has to have."
@@ -71,7 +78,9 @@ export function RarityScatter() {
 function Scatter({ rows }: { rows: PanelAnnotationRow[] }) {
   const view = useMemo(() => build(rows), [rows]);
   if (rows.length === 0) {
-    return <p className="p-6 text-center text-sm text-zinc-500">no annotated records for this gene</p>;
+    return (
+      <p className="p-6 text-center text-sm text-zinc-500">no annotated records for this gene</p>
+    );
   }
   const { traces, novelX, divider, novels, noVaf } = view;
 
@@ -84,13 +93,19 @@ function Scatter({ rows }: { rows: PanelAnnotationRow[] }) {
           margin: { l: 62, r: 20, t: 10, b: 52 },
           xaxis: {
             type: 'log',
-            title: { text: 'gnomAD allele frequency (log) — rarer to the left', font: { color: C.inkDim, size: 12 } },
+            title: {
+              text: 'gnomAD allele frequency (log) — rarer to the left',
+              font: { color: C.inkDim, size: 12 },
+            },
             range: [Math.log10(novelX / 2.4), Math.log10(1.4)],
             gridcolor: C.grid,
             tickfont: { color: C.inkDim, size: 11 },
           },
           yaxis: {
-            title: { text: 'VAF (fraction of the patient’s reads)', font: { color: C.inkDim, size: 12 } },
+            title: {
+              text: 'VAF (fraction of the patient’s reads)',
+              font: { color: C.inkDim, size: 12 },
+            },
             range: [VAF_NA - 0.05, 1.06],
             gridcolor: C.grid,
             tickfont: { color: C.inkDim, size: 11 },
@@ -157,9 +172,12 @@ function Scatter({ rows }: { rows: PanelAnnotationRow[] }) {
         })}
       />
       <p className="mt-2 text-[11px] text-zinc-500">
-        {int(rows.length)} records · <span className="text-purple-400">{int(novels)}</span> absent from gnomAD ·{' '}
-        <span className="text-zinc-300">{int(rows.filter((r) => isPathogenic(r.clin_sig)).length)}</span> with a
-        ClinVar pathogenic assertion
+        {int(rows.length)} records · <span className="text-purple-400">{int(novels)}</span> absent
+        from gnomAD ·{' '}
+        <span className="text-zinc-300">
+          {int(rows.filter((r) => isPathogenic(r.clin_sig)).length)}
+        </span>{' '}
+        with a ClinVar pathogenic assertion
       </p>
     </>
   );
@@ -201,7 +219,12 @@ function build(rows: PanelAnnotationRow[]) {
       name: imp,
       x: g.map(x),
       y: g.map(y),
-      marker: { color: impactColor(imp), size: 8, opacity: 0.72, line: { color: C.paper, width: 0.5 } },
+      marker: {
+        color: impactColor(imp),
+        size: 8,
+        opacity: 0.72,
+        line: { color: C.paper, width: 0.5 },
+      },
       customdata: g.map(custom),
       hovertemplate:
         '<b>%{customdata[0]}</b> · %{customdata[1]}<br>%{customdata[2]}<br>' +
@@ -218,7 +241,12 @@ function build(rows: PanelAnnotationRow[]) {
       name: 'ClinVar pathogenic',
       x: path.map(x),
       y: path.map(y),
-      marker: { color: 'rgba(0,0,0,0)', size: 17, symbol: 'circle-open', line: { color: C.ink, width: 2 } },
+      marker: {
+        color: 'rgba(0,0,0,0)',
+        size: 17,
+        symbol: 'circle-open',
+        line: { color: C.ink, width: 2 },
+      },
       // The filled point underneath already carries the full hover card.
       hoverinfo: 'skip',
     });

@@ -4,10 +4,11 @@
  * and a committed placeholder, so it stays visible on every page.
  */
 
+import { useQuery } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
 import { NavLink } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { API_URL, FIXTURES_ENABLED, fixtureModeStore, health } from '../api/client';
+
+import { API_URL, fixtureModeStore, FIXTURES_ENABLED, health } from '../api/client';
 import { AiExport } from './AiExport';
 
 /**
@@ -52,14 +53,22 @@ export function Header({ items }: { items: HeaderNavItem[] }) {
   const h = useApiHealth();
   const state = h.isPending ? 'checking' : h.data?.ok ? 'up' : 'down';
   const dot =
-    state === 'up' ? 'bg-emerald-500' : state === 'down' ? 'bg-red-500' : 'bg-zinc-500 animate-pulse';
+    state === 'up'
+      ? 'bg-emerald-500'
+      : state === 'down'
+        ? 'bg-red-500'
+        : 'bg-zinc-500 animate-pulse';
 
   return (
     <header className="sticky top-0 z-20 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-6 gap-y-2 px-5 py-2.5">
         <div className="flex items-baseline gap-2">
-          <span className="text-sm font-semibold tracking-tight text-zinc-100">MVA Case Explorer</span>
-          <span className="font-mono text-[11px] text-zinc-500">PROBAND01 · single sample, no trio</span>
+          <span className="text-sm font-semibold tracking-tight text-zinc-100">
+            MVA Case Explorer
+          </span>
+          <span className="font-mono text-[11px] text-zinc-500">
+            PROBAND01 · single sample, no trio
+          </span>
         </div>
 
         <nav className="flex flex-1 flex-wrap items-center gap-1">
@@ -72,7 +81,9 @@ export function Header({ items }: { items: HeaderNavItem[] }) {
               onFocus={p.preload}
               className={({ isActive }) =>
                 `rounded-md px-2.5 py-1 text-xs transition ${
-                  isActive ? 'bg-zinc-800 text-zinc-100' : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
+                  isActive
+                    ? 'bg-zinc-800 text-zinc-100'
+                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
                 }`
               }
             >
@@ -92,11 +103,17 @@ export function Header({ items }: { items: HeaderNavItem[] }) {
             </span>
           )}
           {!FIXTURES_ENABLED && (
-            <span className="rounded-md bg-zinc-800 px-2 py-1 text-[11px] text-zinc-400" title="VITE_USE_FIXTURES=false">
+            <span
+              className="rounded-md bg-zinc-800 px-2 py-1 text-[11px] text-zinc-400"
+              title="VITE_USE_FIXTURES=false"
+            >
               fixtures off
             </span>
           )}
-          <span className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-500" title={statusTitle(state)}>
+          <span
+            className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-500"
+            title={statusTitle(state)}
+          >
             <span className={`h-2 w-2 rounded-full ${dot}`} />
             api {state}
           </span>

@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
-import { Select } from '../../components/Controls';
+
 import { useBafBins } from '../../api/hooks';
 import type { BafBinRow } from '../../api/types';
-import { C, DEPTH_SCALE, DENSITY_SCALE, DIVERGING_SCALE } from '../../lib/palette';
+import { Select } from '../../components/Controls';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
+import { C, DENSITY_SCALE, DEPTH_SCALE, DIVERGING_SCALE } from '../../lib/palette';
 import { useUrlEnum, useUrlState } from '../../lib/urlstate';
 import { CHROM_ORDER, chromOrder } from './order';
 
@@ -42,13 +43,17 @@ function cell(row: BafBinRow, metric: Metric): number {
  * 1,800-call bin is the single easiest way for a heatmap to invent a finding.
  */
 function matrix(rows: BafBinRow[], metric: Metric) {
-  const chroms = [...new Set(rows.map((r) => r.chrom))].sort((a, b) => chromOrder(b) - chromOrder(a));
+  const chroms = [...new Set(rows.map((r) => r.chrom))].sort(
+    (a, b) => chromOrder(b) - chromOrder(a),
+  );
   const maxMb = Math.max(0, ...rows.map((r) => r.mb));
   const index = new Map(chroms.map((c, i) => [c, i]));
   const blank = () => chroms.map(() => Array<number | null>(maxMb + 1).fill(null));
   const z = blank();
   const thin = blank();
-  const meta: (BafBinRow | null)[][] = chroms.map(() => Array<BafBinRow | null>(maxMb + 1).fill(null));
+  const meta: (BafBinRow | null)[][] = chroms.map(() =>
+    Array<BafBinRow | null>(maxMb + 1).fill(null),
+  );
 
   for (const r of rows) {
     const i = index.get(r.chrom);
@@ -89,7 +94,11 @@ export function BafKaryogram() {
   // `baf.*`, not `bins.*`: this exhibit shares the Genome page with DensityBins, and the two
   // contig pickers are independent selections. See lib/urlstate.
   const [chrom, setChrom] = useUrlState('baf.chrom', 'all', CONTIGS);
-  const [metric, setMetric] = useUrlEnum<Metric>('baf.metric', 'vaf', METRICS.map((m) => m.value));
+  const [metric, setMetric] = useUrlEnum<Metric>(
+    'baf.metric',
+    'vaf',
+    METRICS.map((m) => m.value),
+  );
   const q = useBafBins(chrom === 'all' ? undefined : chrom);
 
   const chromOptions = useMemo(
@@ -108,40 +117,44 @@ export function BafKaryogram() {
       }
       legend={
         <>
-          <strong>B-allele fraction (BAF)</strong> — at a heterozygous site the two inherited copies differ, so
-          on a normal two-copy region the variant should appear in about half the reads: BAF ≈{' '}
-          <span className="font-mono">0.5</span>. A mosaic gain or loss makes the two alleles unequally
-          represented, so the bin&apos;s BAF shifts off 0.5 and its depth moves with it — both in proportion to
-          how many cells carry the event. One row per chromosome (karyotype order), one column per megabase.{' '}
+          <strong>B-allele fraction (BAF)</strong> — at a heterozygous site the two inherited copies
+          differ, so on a normal two-copy region the variant should appear in about half the reads:
+          BAF ≈ <span className="font-mono">0.5</span>. A mosaic gain or loss makes the two alleles
+          unequally represented, so the bin&apos;s BAF shifts off 0.5 and its depth moves with it —
+          both in proportion to how many cells carry the event. One row per chromosome (karyotype
+          order), one column per megabase.{' '}
           {metric === 'vaf' ? (
             <>
               Colour is mean BAF on a diverging ramp centred on 0.5:{' '}
-              <Chip color={C.good}>0.5, balanced</Chip> · <Chip color={C.broken}>≤ {dec(0.5 - VAF_SPAN, 2)}
-              , variant under-represented</Chip> · <Chip color={C.raw}>≥ {dec(0.5 + VAF_SPAN, 2)}, over-represented</Chip>.
+              <Chip color={C.good}>0.5, balanced</Chip> ·{' '}
+              <Chip color={C.broken}>≤ {dec(0.5 - VAF_SPAN, 2)}, variant under-represented</Chip> ·{' '}
+              <Chip color={C.raw}>≥ {dec(0.5 + VAF_SPAN, 2)}, over-represented</Chip>.
             </>
           ) : metric === 'dp' ? (
             <>
-              Colour is mean read depth on a dark → <span style={{ color: '#3b82f6' }}>blue</span> → white ramp.
-              A lost copy halves depth; a gained one raises it ~1.5×.
+              Colour is mean read depth on a dark → <span style={{ color: '#3b82f6' }}>blue</span> →
+              white ramp. A lost copy halves depth; a gained one raises it ~1.5×.
             </>
           ) : (
             <>
               Colour is the number of heterozygous calls in the bin, dark →{' '}
-              <span style={{ color: '#1d4ed8' }}>blue</span> → <span style={{ color: '#a855f7' }}>purple</span>.
+              <span style={{ color: '#1d4ed8' }}>blue</span> →{' '}
+              <span style={{ color: '#a855f7' }}>purple</span>.
             </>
           )}{' '}
-          <Chip color="#3f3f46">flat grey</Chip> = fewer than {THIN} heterozygous calls, so the bin is{' '}
-          <em>unmeasured</em>, not balanced — mostly centromeres, acrocentric arms, and the single-copy X and Y.
-          Blank cells are past the end of that chromosome.
+          <Chip color="#3f3f46">flat grey</Chip> = fewer than {THIN} heterozygous calls, so the bin
+          is <em>unmeasured</em>, not balanced — mostly centromeres, acrocentric arms, and the
+          single-copy X and Y. Blank cells are past the end of that chromosome.
         </>
       }
       reading={
         <>
-          A flat green field is the honest negative: at this resolution no segment&apos;s allele balance leaves
-          the 0.5 line and no arm steps in depth. That bounds the mosaic fraction — it does not disprove it. The
-          VCF is a coarse instrument: it reports one already-thresholded genotype per site, so a low-fraction
-          aneuploid clone stays under its floor. The read-level path is the lower floor, and it is where a
-          negative here has to be re-tested before it becomes a claim.
+          A flat green field is the honest negative: at this resolution no segment&apos;s allele
+          balance leaves the 0.5 line and no arm steps in depth. That bounds the mosaic fraction —
+          it does not disprove it. The VCF is a coarse instrument: it reports one
+          already-thresholded genotype per site, so a low-fraction aneuploid clone stays under its
+          floor. The read-level path is the lower floor, and it is where a negative here has to be
+          re-tested before it becomes a claim.
         </>
       }
       data={q.data?.data}
@@ -156,8 +169,11 @@ export function BafKaryogram() {
           const values = rows.filter((r) => !r.low_confidence).map((r) => cell(r, metric));
           const top = values.length ? Math.max(...values) : 1;
           const range =
-            metric === 'vaf' ? { zmin: 0.5 - VAF_SPAN, zmax: 0.5 + VAF_SPAN } : { zmin: 0, zmax: top };
-          const scale = metric === 'vaf' ? DIVERGING_SCALE : metric === 'dp' ? DEPTH_SCALE : DENSITY_SCALE;
+            metric === 'vaf'
+              ? { zmin: 0.5 - VAF_SPAN, zmax: 0.5 + VAF_SPAN }
+              : { zmin: 0, zmax: top };
+          const scale =
+            metric === 'vaf' ? DIVERGING_SCALE : metric === 'dp' ? DEPTH_SCALE : DENSITY_SCALE;
           const thinCount = rows.filter((r) => r.low_confidence).length;
           const worst = [...rows]
             .filter((r) => !r.low_confidence)
@@ -182,7 +198,10 @@ export function BafKaryogram() {
                       len: 0.85,
                       tickfont: { color: C.inkDim, size: 10 },
                       outlinewidth: 0,
-                      title: { text: METRICS.find((m) => m.value === metric)!.label, font: { color: C.inkDim, size: 10 } },
+                      title: {
+                        text: METRICS.find((m) => m.value === metric)!.label,
+                        font: { color: C.inkDim, size: 10 },
+                      },
                     },
                     hovertemplate: '%{text}<extra></extra>',
                   },
@@ -207,11 +226,18 @@ export function BafKaryogram() {
                 layout={baseLayout({
                   margin: { l: 44, r: 10, t: 8, b: 44 },
                   xaxis: {
-                    title: { text: 'position along the chromosome (Mb)', font: { color: C.inkDim, size: 12 } },
+                    title: {
+                      text: 'position along the chromosome (Mb)',
+                      font: { color: C.inkDim, size: 12 },
+                    },
                     gridcolor: 'rgba(0,0,0,0)',
                     tickfont: { color: C.inkDim, size: 11 },
                   },
-                  yaxis: { type: 'category', gridcolor: 'rgba(0,0,0,0)', tickfont: { color: C.inkDim, size: 10 } },
+                  yaxis: {
+                    type: 'category',
+                    gridcolor: 'rgba(0,0,0,0)',
+                    tickfont: { color: C.inkDim, size: 10 },
+                  },
                 })}
               />
               <div className="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-zinc-500">
@@ -219,8 +245,8 @@ export function BafKaryogram() {
                   {int(rows.length)} bins across {chroms.length} contigs
                 </span>
                 <span>
-                  <span className="font-mono text-zinc-400">{int(thinCount)}</span> under {THIN} het calls
-                  (rendered unmeasured)
+                  <span className="font-mono text-zinc-400">{int(thinCount)}</span> under {THIN} het
+                  calls (rendered unmeasured)
                 </span>
                 {worst && (
                   <span>

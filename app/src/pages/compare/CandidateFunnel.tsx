@@ -1,12 +1,12 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout, type Trace } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
-import { Callout } from '../../components/Explainer';
-import { DataTable, type Column } from '../../components/DataTable';
 import { useCandidateFunnel } from '../../api/hooks';
 import type { FunnelStageRow } from '../../api/types';
-import { C } from '../../lib/palette';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Callout } from '../../components/Explainer';
+import { baseLayout, Plot, type Trace } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { int, pct } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * The candidate waterfall — five million records down to a candidate pair set.
@@ -34,7 +34,12 @@ export function CandidateFunnel() {
   const q = useCandidateFunnel();
 
   const columns: Column<FunnelStageRow>[] = [
-    { key: 'no', header: '#', align: 'right', render: (r) => <span className="text-zinc-500">{r.stage_no}</span> },
+    {
+      key: 'no',
+      header: '#',
+      align: 'right',
+      render: (r) => <span className="text-zinc-500">{r.stage_no}</span>,
+    },
     {
       key: 'stage',
       header: 'stage',
@@ -49,21 +54,33 @@ export function CandidateFunnel() {
         </span>
       ),
     },
-    { key: 'n', header: 'n', align: 'right', render: (r) => <span className="text-zinc-100">{int(r.n)}</span> },
+    {
+      key: 'n',
+      header: 'n',
+      align: 'right',
+      render: (r) => <span className="text-zinc-100">{int(r.n)}</span>,
+    },
     {
       key: 'prev',
       header: '% of previous',
       align: 'right',
       render: (r) =>
         r.of_previous_pct === null ? (
-          <span className="text-zinc-600" title="not a subset of the row above — no ratio is meaningful">
+          <span
+            className="text-zinc-600"
+            title="not a subset of the row above — no ratio is meaningful"
+          >
             n/a
           </span>
         ) : (
           pct(r.of_previous_pct, 2)
         ),
     },
-    { key: 'note', header: 'why the filter is justified', render: (r) => <span className="text-zinc-400">{r.note}</span> },
+    {
+      key: 'note',
+      header: 'why the filter is justified',
+      render: (r) => <span className="text-zinc-400">{r.note}</span>,
+    },
   ];
 
   return (
@@ -73,17 +90,18 @@ export function CandidateFunnel() {
         <>
           One bar per filter stage, top to bottom in the order the pipeline applies them.{' '}
           <Chip color={C.machinery}>blue = genome scope</Chip>, measured over the whole callset ·{' '}
-          <Chip color={C.raw}>purple = panel scope</Chip>, measurable only inside the eight-gene candidate panel ·{' '}
-          <Chip color={C.good}>green = the goal</Chip>, the candidate pair set. The{' '}
-          <span style={{ color: C.decision }}>dashed yellow rule</span> is the scope change:{' '}
-          <strong>annotation exists only inside the panel</strong> — 874 VEP-annotated alleles, nothing
-          genome-wide — so every stage below it counts panel records only, and no genome-wide ranking exists to
-          show. The x axis is <strong>logarithmic</strong>: the span is nearly seven decades, so bar length is
-          not proportional to count and the printed number is the value — and a stage nothing survives has no
-          position on a log axis, so it is written in as <em>0 — nothing survives this stage</em> rather than
-          drawn. Hover a bar for its count, its share of the stage above, and why that filter is justified.{' '}
-          <span className="text-zinc-500">n/a</span> under &ldquo;% of previous&rdquo; means the row is not a
-          subset of the one above it.
+          <Chip color={C.raw}>purple = panel scope</Chip>, measurable only inside the eight-gene
+          candidate panel · <Chip color={C.good}>green = the goal</Chip>, the candidate pair set.
+          The <span style={{ color: C.decision }}>dashed yellow rule</span> is the scope change:{' '}
+          <strong>annotation exists only inside the panel</strong> — 874 VEP-annotated alleles,
+          nothing genome-wide — so every stage below it counts panel records only, and no
+          genome-wide ranking exists to show. The x axis is <strong>logarithmic</strong>: the span
+          is nearly seven decades, so bar length is not proportional to count and the printed number
+          is the value — and a stage nothing survives has no position on a log axis, so it is
+          written in as <em>0 — nothing survives this stage</em> rather than drawn. Hover a bar for
+          its count, its share of the stage above, and why that filter is justified.{' '}
+          <span className="text-zinc-500">n/a</span> under &ldquo;% of previous&rdquo; means the row
+          is not a subset of the one above it.
         </>
       }
       reading="Each row is a claim the report has to defend: this filter is justified, and this is what it cost. The cliffs are the argument — rarity removes 96% of what the annotation covers, and protein-altering removes 94% of what survives that."
@@ -95,7 +113,9 @@ export function CandidateFunnel() {
       <Loaded query={q} height={520}>
         {(rows) => {
           if (rows.length === 0) {
-            return <p className="p-6 text-center text-sm text-zinc-500">the funnel table is empty</p>;
+            return (
+              <p className="p-6 text-center text-sm text-zinc-500">the funnel table is empty</p>
+            );
           }
           const ordered = [...rows].sort((a, b) => a.stage_no - b.stage_no);
           const first = ordered[0];
@@ -106,17 +126,18 @@ export function CandidateFunnel() {
             <div className="space-y-3">
               <Waterfall rows={ordered} boundary={boundary} />
               <p className="text-[11px] text-zinc-500">
-                {int(first.n)} {first.stage} → <span className="text-zinc-200">{int(last.n)}</span> {last.stage} ·{' '}
-                {ordered.filter((r) => r.scope === 'genome').length} genome-scoped stages,{' '}
-                {ordered.filter((r) => r.scope === 'panel').length} panel-scoped
+                {int(first.n)} {first.stage} → <span className="text-zinc-200">{int(last.n)}</span>{' '}
+                {last.stage} · {ordered.filter((r) => r.scope === 'genome').length} genome-scoped
+                stages, {ordered.filter((r) => r.scope === 'panel').length} panel-scoped
               </p>
               <DataTable rows={ordered} columns={columns} rowKey={(r) => String(r.stage_no)} />
               <Callout tone="decision" title="What the funnel does not claim">
                 The bottom stage is a <em>shape</em>, not a diagnosis. Nothing here proves{' '}
-                <strong>phase</strong> — that the two alleles sit on different parental copies rather than both
-                on the same one — and with a single sample and no parents this dataset cannot settle it from
-                genotypes alone. Nor is the panel scope a screen of the genome: a causal pair outside the eight
-                genes would never enter this funnel, because no annotation exists to filter it with.
+                <strong>phase</strong> — that the two alleles sit on different parental copies
+                rather than both on the same one — and with a single sample and no parents this
+                dataset cannot settle it from genotypes alone. Nor is the panel scope a screen of
+                the genome: a causal pair outside the eight genes would never enter this funnel,
+                because no annotation exists to filter it with.
               </Callout>
             </div>
           );
@@ -202,7 +223,10 @@ function Waterfall({ rows, boundary }: { rows: FunnelStageRow[]; boundary: numbe
           // 0.5 keeps a single-row final stage off the axis line; 10^7.1 leaves room for
           // the printed count outside the widest bar.
           range: [Math.log10(0.5), 7.1],
-          title: { text: 'surviving records / alleles / pairs (log scale)', font: { color: C.inkDim, size: 12 } },
+          title: {
+            text: 'surviving records / alleles / pairs (log scale)',
+            font: { color: C.inkDim, size: 12 },
+          },
           gridcolor: C.grid,
           zerolinecolor: C.grid,
           tickfont: { color: C.inkDim, size: 11 },

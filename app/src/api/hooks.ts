@@ -7,6 +7,7 @@
  */
 
 import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+
 import { get, getBare, type Params, type Result } from './client';
 import type {
   AlleleBalanceRow,
@@ -79,7 +80,8 @@ export const useBafBins = (chrom?: string) =>
 
 export const useFilters = () => useEndpoint<FilterRow[]>('/api/callset/filters');
 export const useGenotypes = () => useEndpoint<GenotypeRow[]>('/api/callset/genotypes');
-export const useDepthDistribution = () => useEndpoint<DepthBinRow[]>('/api/callset/depth-distribution');
+export const useDepthDistribution = () =>
+  useEndpoint<DepthBinRow[]>('/api/callset/depth-distribution');
 export const useSubstitutions = () => useEndpoint<SubstitutionRow[]>('/api/callset/substitutions');
 export const useTsTv = () => useEndpoint<TsTv>('/api/callset/tstv');
 export const useIndelLengths = () => useEndpoint<IndelLengthRow[]>('/api/callset/indel-lengths');

@@ -27,7 +27,9 @@ export function StatTile({ label, value, sub, tone = 'neutral', hint, chip }: St
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-3.5" title={hint}>
       <div className="flex items-start justify-between gap-2">
-        <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">{label}</div>
+        <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+          {label}
+        </div>
         {chip}
       </div>
       <div className={`mt-1 font-mono text-2xl leading-none ${TONE[tone]}`}>{value}</div>

@@ -10,9 +10,9 @@
  */
 
 import type { SequencingYieldRow } from '../../api/types';
-import { rows, type Entry } from '../loader';
-import { densityBinsFixture } from '../shape/density-bins';
+import { type Entry, rows } from '../loader';
 import { bafBinsFixture } from '../shape/baf-bins';
+import { densityBinsFixture } from '../shape/density-bins';
 import { flowcellFixture } from '../shape/flowcell';
 import { cycleQualityFixture, qualityLevelsFixture } from '../shape/read-quality';
 

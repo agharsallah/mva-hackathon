@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
+
+import { useLineage } from '../../api/hooks';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Loaded } from '../../components/QueryState';
-import { useLineage } from '../../api/hooks';
-import { C } from '../../lib/palette';
 import { int } from '../../lib/format';
+import { C } from '../../lib/palette';
 import { buildGraph, type Edge, type Node } from './graph';
 
 const NODE_W = 210;
@@ -29,9 +30,11 @@ export function LineageGraph() {
       legend={
         <>
           Nodes are datasets, arrows are transforms, and flow reads left to right.{' '}
-          <Chip color={C.raw}>delivered object (the raw input; a padlock means its sha256 was verified)</Chip> ·{' '}
-          <Chip color={C.machinery}>derived table</Chip>. The number inside a node is its row count. Hover an
-          arrow to read the transform and the tool that ran it.
+          <Chip color={C.raw}>
+            delivered object (the raw input; a padlock means its sha256 was verified)
+          </Chip>{' '}
+          · <Chip color={C.machinery}>derived table</Chip>. The number inside a node is its row
+          count. Hover an arrow to read the transform and the tool that ran it.
         </>
       }
       reading="Nothing in this app is more than two hops from a hash-verified delivered object. That is the whole point of the diagram: any number on any page can be walked back to bytes whose checksum was confirmed."
@@ -80,10 +83,26 @@ function GraphSvg({
       <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950/60">
         <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} className="block">
           <defs>
-            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+            <marker
+              id="arrow"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto"
+            >
               <path d="M0,0 L10,5 L0,10 z" fill={C.inkDim} />
             </marker>
-            <marker id="arrowHot" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+            <marker
+              id="arrowHot"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="8"
+              markerHeight="8"
+              orient="auto"
+            >
               <path d="M0,0 L10,5 L0,10 z" fill={C.decision} />
             </marker>
           </defs>
@@ -133,14 +152,26 @@ function GraphSvg({
                   stroke={isRaw ? C.raw : C.machinery}
                   strokeWidth={1.2}
                 />
-                <text x={x(n) + 12} y={y(n) + 22} fill={C.ink} fontSize="12" fontFamily="ui-monospace, monospace">
+                <text
+                  x={x(n) + 12}
+                  y={y(n) + 22}
+                  fill={C.ink}
+                  fontSize="12"
+                  fontFamily="ui-monospace, monospace"
+                >
                   {n.label}
                 </text>
                 <text x={x(n) + 12} y={y(n) + 38} fill={C.inkDim} fontSize="10">
                   {n.sublabel}
                   {n.verified ? ' · sha256 ✓' : ''}
                 </text>
-                <text x={x(n) + 12} y={y(n) + 53} fill={isRaw ? C.raw : C.machinery} fontSize="10" fontFamily="ui-monospace, monospace">
+                <text
+                  x={x(n) + 12}
+                  y={y(n) + 53}
+                  fill={isRaw ? C.raw : C.machinery}
+                  fontSize="10"
+                  fontFamily="ui-monospace, monospace"
+                >
                   {n.rows === null ? '' : `${int(n.rows)} rows`}
                 </text>
               </g>

@@ -8,9 +8,10 @@
  * `TextFilter`.
  */
 
-import { useEffect, useState, type FormEvent } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 
-export const PLACEHOLDER = 'gene symbol (BUB1B) · region (15:40100000-40200000) · rsID (rs137852899)';
+export const PLACEHOLDER =
+  'gene symbol (BUB1B) · region (15:40100000-40200000) · rsID (rs137852899)';
 
 /** The three forms, as one-click examples. Kept in step with the server's `EXAMPLES`. */
 export const EXAMPLES: { q: string; what: string }[] = [

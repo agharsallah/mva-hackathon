@@ -9,7 +9,8 @@
 
 import type { EndpointRecord, ExhibitRecord } from './types';
 
-const NO_PAYLOAD = '_No structured payload captured for this exhibit — the narrative above is the whole record._';
+const NO_PAYLOAD =
+  '_No structured payload captured for this exhibit — the narrative above is the whole record._';
 
 const CAVEAT = [
   'Every `json` block below is the **endpoint payload as fetched**, and may be a superset of',
@@ -52,7 +53,11 @@ export function endpointSection(r: EndpointRecord): string {
 }
 
 /** Wrap sections in a preamble that says what the document is and how to read its JSON. */
-export function bundleMarkdown(scope: string, sections: string[], extraNotes: string[] = []): string {
+export function bundleMarkdown(
+  scope: string,
+  sections: string[],
+  extraNotes: string[] = [],
+): string {
   const head = [
     '# MVA case export',
     '',

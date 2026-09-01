@@ -40,5 +40,6 @@ export const exhibitRegistry = {
     if (records.delete(exhibitKey(page, title))) bump();
   },
   getAll: (): ExhibitRecord[] => [...records.values()],
-  getByPage: (page: string): ExhibitRecord[] => [...records.values()].filter((r) => r.page === page),
+  getByPage: (page: string): ExhibitRecord[] =>
+    [...records.values()].filter((r) => r.page === page),
 };

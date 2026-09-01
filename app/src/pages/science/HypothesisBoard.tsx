@@ -1,17 +1,18 @@
 import { useState } from 'react';
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Loaded } from '../../components/QueryState';
+
 import { useHypotheses } from '../../api/hooks';
 import type { HypothesisRow } from '../../api/types';
-import { C } from '../../lib/palette';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Loaded } from '../../components/QueryState';
 import { iso } from '../../lib/format';
+import { C } from '../../lib/palette';
 import {
+  type Claim,
+  claims,
   Confidence,
   EmptyRegister,
   STATUS_ORDER,
-  claims,
   statusColor,
-  type Claim,
 } from './register';
 
 /**
@@ -30,11 +31,12 @@ export function HypothesisBoard() {
       legend={
         <>
           Card border and status pill carry the claim's state:{' '}
-          <Chip color={C.machinery}>blue = proposed</Chip>, <Chip color={C.decision}>yellow = testing</Chip>,{' '}
-          <Chip color={C.good}>green = supported</Chip>, <Chip color={C.broken}>red = refuted</Chip>,{' '}
-          <Chip color={C.absent}>grey = superseded</Chip> — the same five colours{' '}
-          <span className="font-mono">mva.science.hypothesis.Status</span> uses. A dash means the field is
-          empty in the register, never that its value is zero.
+          <Chip color={C.machinery}>blue = proposed</Chip>,{' '}
+          <Chip color={C.decision}>yellow = testing</Chip>,{' '}
+          <Chip color={C.good}>green = supported</Chip>, <Chip color={C.broken}>red = refuted</Chip>
+          , <Chip color={C.absent}>grey = superseded</Chip> — the same five colours{' '}
+          <span className="font-mono">mva.science.hypothesis.Status</span> uses. A dash means the
+          field is empty in the register, never that its value is zero.
         </>
       }
       reading="Every card was written down before its test ran, refutation condition included. That is the only thing separating a hypothesis from a description of what the data turned out to say."
@@ -51,9 +53,9 @@ export function HypothesisBoard() {
               title="No hypothesis yet — the register opens when step 1 makes its first claim"
               verb="mva-science hypothesis-add"
             >
-              Step 0 is platform machinery and takes no hypotheses: its reasoning is decisions, not claims
-              about the patient, and the register refuses a claim filed under it. Nothing has been asserted
-              about this child yet, so there is nothing here to argue with.
+              Step 0 is platform machinery and takes no hypotheses: its reasoning is decisions, not
+              claims about the patient, and the register refuses a claim filed under it. Nothing has
+              been asserted about this child yet, so there is nothing here to argue with.
             </EmptyRegister>
           ) : (
             <Board rows={register.rows} />
@@ -72,7 +74,11 @@ function Board({ rows }: { rows: HypothesisRow[] }) {
   return (
     <div className="space-y-5">
       {present.map((status) => (
-        <Group key={status} status={status} items={grouped.filter((c) => c.latest.status === status)} />
+        <Group
+          key={status}
+          status={status}
+          items={grouped.filter((c) => c.latest.status === status)}
+        />
       ))}
       {other.length > 0 && <Group status="unrecognised status" items={other} />}
     </div>
@@ -84,7 +90,9 @@ function Group({ status, items }: { status: string; items: Claim[] }) {
     <div className="space-y-2">
       <div className="flex items-center gap-2">
         <span className="h-2 w-2 rounded-sm" style={{ background: statusColor(status) }} />
-        <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-400">{status}</span>
+        <span className="text-[11px] font-medium uppercase tracking-wider text-zinc-400">
+          {status}
+        </span>
         <span className="font-mono text-[11px] text-zinc-600">{items.length}</span>
       </div>
       <div className="grid gap-3 lg:grid-cols-2">
@@ -114,14 +122,22 @@ function Card({ claim }: { claim: Claim }) {
         >
           {row.status}
         </span>
-        <span className="rounded bg-zinc-800 px-1.5 py-px font-mono text-[10px] text-zinc-400">{row.step}</span>
+        <span className="rounded bg-zinc-800 px-1.5 py-px font-mono text-[10px] text-zinc-400">
+          {row.step}
+        </span>
         {row.gene && (
-          <span className="rounded bg-purple-500/15 px-1.5 py-px font-mono text-[10px] text-purple-300" title="the gene this claim is about">
+          <span
+            className="rounded bg-purple-500/15 px-1.5 py-px font-mono text-[10px] text-purple-300"
+            title="the gene this claim is about"
+          >
             {row.gene}
           </span>
         )}
         {row.path && (
-          <span className="rounded bg-zinc-800 px-1.5 py-px font-mono text-[10px] text-zinc-500" title="which line of attack this claim belongs to">
+          <span
+            className="rounded bg-zinc-800 px-1.5 py-px font-mono text-[10px] text-zinc-500"
+            title="which line of attack this claim belongs to"
+          >
             {row.path}
           </span>
         )}
@@ -142,18 +158,24 @@ function Card({ claim }: { claim: Claim }) {
 
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t border-zinc-800 pt-2">
         <div className="flex items-baseline gap-2">
-          <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">confidence</span>
+          <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-500">
+            confidence
+          </span>
           <Confidence value={row.confidence} inline />
         </div>
         <button
           onClick={() => setOpen((v) => !v)}
           className="rounded-md border border-zinc-700 px-2 py-0.5 text-[10px] text-zinc-400 hover:bg-zinc-800"
         >
-          {open ? 'hide history' : `${claim.history.length} revision${claim.history.length === 1 ? '' : 's'}`}
+          {open
+            ? 'hide history'
+            : `${claim.history.length} revision${claim.history.length === 1 ? '' : 's'}`}
         </button>
       </div>
 
-      {row.reasoning && <p className="text-[11px] leading-relaxed text-zinc-500">{row.reasoning}</p>}
+      {row.reasoning && (
+        <p className="text-[11px] leading-relaxed text-zinc-500">{row.reasoning}</p>
+      )}
 
       {open && <History history={claim.history} />}
     </article>

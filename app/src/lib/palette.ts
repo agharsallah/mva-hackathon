@@ -29,7 +29,16 @@ export const C = {
 } as const;
 
 /** Categorical ramp for "one line per lane/read" style series. Blue family = machinery. */
-export const SERIES = ['#60a5fa', '#3b82f6', '#2563eb', '#1d4ed8', '#a78bfa', '#8b5cf6', '#7c3aed', '#6d28d9'];
+export const SERIES = [
+  '#60a5fa',
+  '#3b82f6',
+  '#2563eb',
+  '#1d4ed8',
+  '#a78bfa',
+  '#8b5cf6',
+  '#7c3aed',
+  '#6d28d9',
+];
 
 /** Sequential ramp for density: dark neutral → blue → purple (raw input at the hot end). */
 export const DENSITY_SCALE: [number, string][] = [

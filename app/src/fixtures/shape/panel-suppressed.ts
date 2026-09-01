@@ -1,4 +1,9 @@
-import type { PanelFilterCensusRow, PanelSuppressed, PanelSuppressedRecord, VariantImpact } from '../../api/types';
+import type {
+  PanelFilterCensusRow,
+  PanelSuppressed,
+  PanelSuppressedRecord,
+  VariantImpact,
+} from '../../api/types';
 import { rows } from '../loader';
 
 /**

@@ -1,9 +1,9 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
 import { useGenotypes } from '../../api/hooks';
-import { C } from '../../lib/palette';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { int, pct } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * Genotype composition. The point of the figure is the 1/2 slice: those sites carry two
@@ -19,16 +19,18 @@ export function GenotypeDonut() {
       title="Genotype composition"
       legend={
         <>
-          <Chip color={C.machinery}>0/1 heterozygous (one reference copy, one variant copy)</Chip>{' '}
-          · <Chip color={C.raw}>1/1 homozygous variant (both copies changed)</Chip> ·{' '}
-          <Chip color={C.good}>1/2 two different variant alleles — a compound heterozygote proven by genotype</Chip>.
-          Slice angle is the share of called sites.
+          <Chip color={C.machinery}>0/1 heterozygous (one reference copy, one variant copy)</Chip> ·{' '}
+          <Chip color={C.raw}>1/1 homozygous variant (both copies changed)</Chip> ·{' '}
+          <Chip color={C.good}>
+            1/2 two different variant alleles — a compound heterozygote proven by genotype
+          </Chip>
+          . Slice angle is the share of called sites.
         </>
       }
       reading={
         <>
-          The 1/2 slice is the search space this case is built on: 66,860 sites where the caller itself
-          says the two copies carry different changes.
+          The 1/2 slice is the search space this case is built on: 66,860 sites where the caller
+          itself says the two copies carry different changes.
         </>
       }
       data={q.data?.data}
@@ -77,20 +79,28 @@ export function GenotypeDonut() {
               />
               <div className="space-y-2 self-center">
                 {rows.map((r) => (
-                  <div key={r.label} className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-2.5">
+                  <div
+                    key={r.label}
+                    className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-2.5"
+                  >
                     <div className="flex items-center justify-between">
-                      <span className="font-mono text-sm" style={{ color: COLOR[r.label] ?? C.absent }}>
+                      <span
+                        className="font-mono text-sm"
+                        style={{ color: COLOR[r.label] ?? C.absent }}
+                      >
                         {r.label}
                       </span>
-                      <span className="font-mono text-xs text-zinc-400">{pct((r.count / total) * 100)}</span>
+                      <span className="font-mono text-xs text-zinc-400">
+                        {pct((r.count / total) * 100)}
+                      </span>
                     </div>
                     <div className="mt-0.5 font-mono text-xs text-zinc-300">{int(r.count)}</div>
                   </div>
                 ))}
                 {multi && (
                   <p className="text-[11px] leading-relaxed text-emerald-400/90">
-                    1/2 = compound het by genotype. {int(multi.count)} sites need no parental data to
-                    establish that both copies are altered.
+                    1/2 = compound het by genotype. {int(multi.count)} sites need no parental data
+                    to establish that both copies are altered.
                   </p>
                 )}
               </div>

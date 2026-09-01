@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
-import { Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout, scene3d } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
-import { Select, Toggle } from '../../components/Controls';
+
 import { useDensityBins } from '../../api/hooks';
 import type { DensityBinRow } from '../../api/types';
-import { C, DENSITY_SCALE, QUALITY_SCALE } from '../../lib/palette';
+import { Select, Toggle } from '../../components/Controls';
+import { Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot, scene3d } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { int } from '../../lib/format';
+import { C, DENSITY_SCALE, QUALITY_SCALE } from '../../lib/palette';
 import { useUrlEnum, useUrlState, useUrlToggle } from '../../lib/urlstate';
 import { CHROM_ORDER, chromOrder } from './order';
 
@@ -29,7 +30,9 @@ function cell(row: DensityBinRow, metric: Metric): number {
 
 /** Reshape the long rows into a chrom × Mb matrix, which is what both views need. */
 function matrix(rows: DensityBinRow[], metric: Metric) {
-  const chroms = [...new Set(rows.map((r) => r.chrom))].sort((a, b) => chromOrder(b) - chromOrder(a));
+  const chroms = [...new Set(rows.map((r) => r.chrom))].sort(
+    (a, b) => chromOrder(b) - chromOrder(a),
+  );
   const maxMb = Math.max(...rows.map((r) => r.mb));
   const index = new Map(chroms.map((c, i) => [c, i]));
   const z: (number | null)[][] = chroms.map(() => Array<number | null>(maxMb + 1).fill(null));
@@ -52,7 +55,11 @@ export function DensityBins() {
   // Selections live in the URL (`?bins.chrom=7&bins.metric=mean_qual&bins.3d=1`) so a figure
   // in the report can be cited by link. See lib/urlstate.
   const [chrom, setChrom] = useUrlState('bins.chrom', 'all', CONTIGS);
-  const [metric, setMetric] = useUrlEnum<Metric>('bins.metric', 'n', METRICS.map((m) => m.value));
+  const [metric, setMetric] = useUrlEnum<Metric>(
+    'bins.metric',
+    'n',
+    METRICS.map((m) => m.value),
+  );
   const [threeD, setThreeD] = useUrlToggle('bins.3d');
   const q = useDensityBins(chrom === 'all' ? undefined : chrom);
 
@@ -87,8 +94,9 @@ export function DensityBins() {
           ) : (
             <>
               Colour follows {metric === 'n' ? 'the call count' : 'the PASS share'} on a dark →{' '}
-              <span style={{ color: '#1d4ed8' }}>blue</span> → <span style={{ color: '#a855f7' }}>purple</span>{' '}
-              ramp (purple = highest). Blank cells are past the end of that chromosome.
+              <span style={{ color: '#1d4ed8' }}>blue</span> →{' '}
+              <span style={{ color: '#a855f7' }}>purple</span> ramp (purple = highest). Blank cells
+              are past the end of that chromosome.
             </>
           )}{' '}
           In 3D the same matrix becomes a surface: x = megabase, y = chromosome, z = the metric.
@@ -117,7 +125,12 @@ export function DensityBins() {
                       y: chroms,
                       colorscale: scale,
                       showscale: true,
-                      colorbar: { thickness: 12, len: 0.6, tickfont: { color: C.inkDim, size: 10 }, outlinewidth: 0 },
+                      colorbar: {
+                        thickness: 12,
+                        len: 0.6,
+                        tickfont: { color: C.inkDim, size: 10 },
+                        outlinewidth: 0,
+                      },
                       contours: { z: { show: true, usecolormap: true, project: { z: true } } },
                       hovertemplate: 'chr%{y} @ %{x} Mb<br>' + label + ' %{z:.1f}<extra></extra>',
                     },
@@ -125,9 +138,21 @@ export function DensityBins() {
                   layout={baseLayout({
                     margin: { l: 0, r: 0, t: 0, b: 0 },
                     scene: scene3d({
-                      xaxis: { title: { text: 'position (Mb)' }, gridcolor: C.grid, tickfont: { color: C.inkDim, size: 10 } },
-                      yaxis: { title: { text: 'chromosome' }, gridcolor: C.grid, tickfont: { color: C.inkDim, size: 10 } },
-                      zaxis: { title: { text: label }, gridcolor: C.grid, tickfont: { color: C.inkDim, size: 10 } },
+                      xaxis: {
+                        title: { text: 'position (Mb)' },
+                        gridcolor: C.grid,
+                        tickfont: { color: C.inkDim, size: 10 },
+                      },
+                      yaxis: {
+                        title: { text: 'chromosome' },
+                        gridcolor: C.grid,
+                        tickfont: { color: C.inkDim, size: 10 },
+                      },
+                      zaxis: {
+                        title: { text: label },
+                        gridcolor: C.grid,
+                        tickfont: { color: C.inkDim, size: 10 },
+                      },
                       camera: { eye: { x: 1.7, y: -1.5, z: 0.9 } },
                       aspectratio: { x: 1.8, y: 1, z: 0.6 },
                     }),
@@ -151,21 +176,35 @@ export function DensityBins() {
                     y: chroms,
                     colorscale: scale,
                     hoverongaps: false,
-                    colorbar: { thickness: 12, len: 0.85, tickfont: { color: C.inkDim, size: 10 }, outlinewidth: 0 },
+                    colorbar: {
+                      thickness: 12,
+                      len: 0.85,
+                      tickfont: { color: C.inkDim, size: 10 },
+                      outlinewidth: 0,
+                    },
                     hovertemplate: 'chr%{y} @ %{x} Mb<br>' + label + ' %{z:.1f}<extra></extra>',
                   },
                 ]}
                 layout={baseLayout({
                   margin: { l: 44, r: 10, t: 8, b: 44 },
                   xaxis: {
-                    title: { text: 'position along the chromosome (Mb)', font: { color: C.inkDim, size: 12 } },
+                    title: {
+                      text: 'position along the chromosome (Mb)',
+                      font: { color: C.inkDim, size: 12 },
+                    },
                     gridcolor: 'rgba(0,0,0,0)',
                     tickfont: { color: C.inkDim, size: 11 },
                   },
-                  yaxis: { type: 'category', gridcolor: 'rgba(0,0,0,0)', tickfont: { color: C.inkDim, size: 10 } },
+                  yaxis: {
+                    type: 'category',
+                    gridcolor: 'rgba(0,0,0,0)',
+                    tickfont: { color: C.inkDim, size: 10 },
+                  },
                 })}
               />
-              <p className="mt-1 text-[11px] text-zinc-500">{int(rows.length)} bins across {chroms.length} contigs</p>
+              <p className="mt-1 text-[11px] text-zinc-500">
+                {int(rows.length)} bins across {chroms.length} contigs
+              </p>
             </>
           );
         }}

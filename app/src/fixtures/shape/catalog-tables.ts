@@ -52,5 +52,8 @@ export async function catalogTablesFixture(): Promise<CatalogTableRow[]> {
     };
   };
 
-  return [...data.warehouse.map((s) => table('warehouse', s)), ...data.results.map((s) => table('results', s))];
+  return [
+    ...data.warehouse.map((s) => table('warehouse', s)),
+    ...data.results.map((s) => table('results', s)),
+  ];
 }

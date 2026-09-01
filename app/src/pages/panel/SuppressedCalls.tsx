@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout, type Trace } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
-import { Select } from '../../components/Controls';
-import { Callout } from '../../components/Explainer';
-import { DataTable, type Column } from '../../components/DataTable';
+
 import { usePanelSuppressed } from '../../api/hooks';
 import type { PanelFilterCensusRow, PanelSuppressed, PanelSuppressedRecord } from '../../api/types';
-import { C, impactColor } from '../../lib/palette';
+import { Select } from '../../components/Controls';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Callout } from '../../components/Explainer';
+import { baseLayout, Plot, type Trace } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
+import { C, impactColor } from '../../lib/palette';
 
 /**
  * Reds and yellows for suppression reasons, heaviest reason first.
@@ -64,16 +65,17 @@ export function SuppressedCalls() {
         title="PASS against suppressed, per candidate gene and per filter reason"
         legend={
           <>
-            <Chip color={C.good}>green</Chip> = <span className="font-mono">PASS</span>, the records every
-            other exhibit on this page uses. Every other colour is one suppression reason, in{' '}
-            <Chip color={C.broken}>reds</Chip> and <Chip color={C.decision}>yellows</Chip>, assigned heaviest
-            reason first so the ordering is stable across callsets. <strong>Left panel</strong>: each gene’s
-            records as a share of that gene, so a small gene is comparable to a large one — the bars all reach
-            100 %. <strong>Right panel</strong>: the suppressed records alone, as counts, which is the actual
-            size of the search space. A gene missing from the right panel has nothing suppressed. A{' '}
-            <span className="font-mono">;</span>-joined label such as{' '}
-            <span className="font-mono">LowQual;QD2</span> is <em>one</em> record that tripped two thresholds,
-            counted once — never split in two.
+            <Chip color={C.good}>green</Chip> = <span className="font-mono">PASS</span>, the records
+            every other exhibit on this page uses. Every other colour is one suppression reason, in{' '}
+            <Chip color={C.broken}>reds</Chip> and <Chip color={C.decision}>yellows</Chip>, assigned
+            heaviest reason first so the ordering is stable across callsets.{' '}
+            <strong>Left panel</strong>: each gene’s records as a share of that gene, so a small
+            gene is comparable to a large one — the bars all reach 100 %.{' '}
+            <strong>Right panel</strong>: the suppressed records alone, as counts, which is the
+            actual size of the search space. A gene missing from the right panel has nothing
+            suppressed. A <span className="font-mono">;</span>-joined label such as{' '}
+            <span className="font-mono">LowQual;QD2</span> is <em>one</em> record that tripped two
+            thresholds, counted once — never split in two.
           </>
         }
         reading="TRIP13 is the case: an established MVA gene with 12 records, of which 6 are suppressed — 5 MQ40 and 1 QD2 — the worst PASS share on the panel by a wide margin. All six are heterozygous with 2–11 alternate reads. TRIP13 sits near the chromosome 5 telomere in hard-to-map sequence, so half its evidence being flagged is a statement about mappability, not about the child."
@@ -89,27 +91,33 @@ export function SuppressedCalls() {
         </Loaded>
       </Exhibit>
 
-      <Callout tone="decision" title="What a FILTER value actually is, and why a flagged het is worth opening">
+      <Callout
+        tone="decision"
+        title="What a FILTER value actually is, and why a flagged het is worth opening"
+      >
         <p>
-          <strong>The caller kept these records.</strong> <span className="font-mono">FILTER</span> is a text
-          column on the row, not a deletion: GATK’s <span className="font-mono">VariantFiltration</span> writes
-          the name of every threshold the record failed and leaves the row in the file. So &ldquo;suppressed&rdquo;
-          means <em>downstream tools are expected to skip it</em>, and that expectation is a heuristic tuned for
-          a population study, not a verdict about this child.
+          <strong>The caller kept these records.</strong> <span className="font-mono">FILTER</span>{' '}
+          is a text column on the row, not a deletion: GATK’s{' '}
+          <span className="font-mono">VariantFiltration</span> writes the name of every threshold
+          the record failed and leaves the row in the file. So &ldquo;suppressed&rdquo; means{' '}
+          <em>downstream tools are expected to skip it</em>, and that expectation is a heuristic
+          tuned for a population study, not a verdict about this child.
         </p>
         <p className="mt-2">
-          <strong>MQ40</strong> = mean <em>mapping quality</em> under 40. Mapping quality is the aligner’s
-          confidence that a read came from where it placed it, so MQ40 fires wherever the genome repeats itself
-          and a read could have come from two places. <strong>QD2</strong> = <em>quality by depth</em> under 2:
-          the site’s confidence score divided by the reads behind it, which catches a call that only looks
-          confident because it is deeply covered. Both are proxies for &ldquo;hard to sequence here&rdquo;, and
-          hard-to-sequence regions still contain variants.
+          <strong>MQ40</strong> = mean <em>mapping quality</em> under 40. Mapping quality is the
+          aligner’s confidence that a read came from where it placed it, so MQ40 fires wherever the
+          genome repeats itself and a read could have come from two places. <strong>QD2</strong> ={' '}
+          <em>quality by depth</em> under 2: the site’s confidence score divided by the reads behind
+          it, which catches a call that only looks confident because it is deeply covered. Both are
+          proxies for &ldquo;hard to sequence here&rdquo;, and hard-to-sequence regions still
+          contain variants.
         </p>
         <p className="mt-2">
-          A <strong>suppressed heterozygous call in a candidate gene</strong> is therefore exactly the shape a
-          hidden second allele takes: one broken copy, thin read support, in sequence the aligner mistrusts. It
-          is not proof of anything — the evidence to confirm one lives in the raw reads, not in the VCF — but it
-          is the cheapest place to look before re-calling 80 GB of FASTQ.
+          A <strong>suppressed heterozygous call in a candidate gene</strong> is therefore exactly
+          the shape a hidden second allele takes: one broken copy, thin read support, in sequence
+          the aligner mistrusts. It is not proof of anything — the evidence to confirm one lives in
+          the raw reads, not in the VCF — but it is the cheapest place to look before re-calling 80
+          GB of FASTQ.
         </p>
       </Callout>
 
@@ -136,7 +144,9 @@ function reasonOrder(census: PanelFilterCensusRow[]): string[] {
     if (row.is_pass) continue;
     totals.set(row.filter, (totals.get(row.filter) ?? 0) + row.n);
   }
-  return [...totals.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).map(([f]) => f);
+  return [...totals.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([f]) => f);
 }
 
 function CensusChart({ census }: { census: PanelFilterCensusRow[] }) {
@@ -156,7 +166,8 @@ function CensusChart({ census }: { census: PanelFilterCensusRow[] }) {
     (a, b) => (suppressedPct.get(b) ?? 0) - (suppressedPct.get(a) ?? 0) || a.localeCompare(b),
   );
 
-  const cell = (gene: string, filter: string) => census.find((r) => r.gene === gene && r.filter === filter);
+  const cell = (gene: string, filter: string) =>
+    census.find((r) => r.gene === gene && r.filter === filter);
 
   const traces: Trace[] = [];
   for (const filter of ['PASS', ...reasons]) {
@@ -188,7 +199,11 @@ function CensusChart({ census }: { census: PanelFilterCensusRow[] }) {
   }
 
   const totalSuppressed = [...suppressedN.values()].reduce((a, b) => a + b, 0);
-  const axis = { type: 'category' as const, gridcolor: 'rgba(0,0,0,0)', tickfont: { color: C.inkDim, size: 10 } };
+  const axis = {
+    type: 'category' as const,
+    gridcolor: 'rgba(0,0,0,0)',
+    tickfont: { color: C.inkDim, size: 10 },
+  };
 
   return (
     <Plot
@@ -254,7 +269,8 @@ function RecordTable({
   origin?: 'api' | 'fixture';
 }) {
   const counts = new Map<string, number>();
-  for (const row of payload.census) if (!row.is_pass) counts.set(row.gene, (counts.get(row.gene) ?? 0) + row.n);
+  for (const row of payload.census)
+    if (!row.is_pass) counts.set(row.gene, (counts.get(row.gene) ?? 0) + row.n);
   const options = [...new Set(payload.census.map((r) => r.gene))]
     .sort((a, b) => (counts.get(b) ?? 0) - (counts.get(a) ?? 0) || a.localeCompare(b))
     .map((g) => ({ value: g, label: `${g} (${counts.get(g) ?? 0} suppressed)` }));
@@ -293,7 +309,15 @@ function RecordTable({
       key: 'gt',
       header: 'GT',
       render: (r) => (
-        <span className="font-mono" style={{ color: r.is_het ? C.decision : C.inkDim }} title={r.is_het ? 'heterozygous — one broken copy, the shape a hidden second allele takes' : 'not heterozygous'}>
+        <span
+          className="font-mono"
+          style={{ color: r.is_het ? C.decision : C.inkDim }}
+          title={
+            r.is_het
+              ? 'heterozygous — one broken copy, the shape a hidden second allele takes'
+              : 'not heterozygous'
+          }
+        >
           {r.gt}
         </span>
       ),
@@ -303,7 +327,10 @@ function RecordTable({
       key: 'reads',
       header: 'alt / ref reads',
       align: 'right',
-      render: (r) => (r.ad_alt === null ? absent('multi-allelic: no single alternate') : `${int(r.ad_alt)} / ${int(r.ad_ref)}`),
+      render: (r) =>
+        r.ad_alt === null
+          ? absent('multi-allelic: no single alternate')
+          : `${int(r.ad_alt)} / ${int(r.ad_ref)}`,
       sortValue: (r) => r.ad_alt,
     },
     {
@@ -312,7 +339,10 @@ function RecordTable({
       align: 'right',
       render: (r) =>
         r.vaf === null ? (
-          <span className="text-zinc-600" title="multi-allelic record: no single alternate owns the reads">
+          <span
+            className="text-zinc-600"
+            title="multi-allelic record: no single alternate owns the reads"
+          >
             n/a
           </span>
         ) : (
@@ -334,8 +364,13 @@ function RecordTable({
       header: 'gnomAD AF',
       align: 'right',
       render: (r) =>
-        !r.annotated ? absent('VEP was never asked about this allele') : r.gnomad_af === null ? (
-          <span style={{ color: C.decision }} title="looked up and absent from gnomAD — novel, not frequency zero">
+        !r.annotated ? (
+          absent('VEP was never asked about this allele')
+        ) : r.gnomad_af === null ? (
+          <span
+            style={{ color: C.decision }}
+            title="looked up and absent from gnomAD — novel, not frequency zero"
+          >
             novel
           </span>
         ) : (
@@ -357,16 +392,22 @@ function RecordTable({
       }
       legend={
         <>
-          One row per record the caller flagged inside the selected gene — the whole search space, nothing
-          aggregated away. <span className="font-mono" style={{ color: C.broken }}>Red filter reason</span> is
-          the threshold the record failed, verbatim; hover it for what the label means.{' '}
-          <span className="font-mono" style={{ color: C.decision }}>Yellow GT</span> marks a heterozygous call —
-          the configuration a hidden second allele would have. Consequence is coloured by VEP severity:{' '}
-          <Chip color={C.broken}>HIGH</Chip> truncates the protein, <Chip color={C.decision}>MODERATE</Chip>{' '}
-          swaps an amino acid, <Chip color={C.machinery}>LOW / MODIFIER</Chip> is silent or non-coding.{' '}
-          <span className="text-zinc-600">Grey &ldquo;not annotated&rdquo;</span> means VEP was never asked
-          about the allele — absent, never &ldquo;looked up and harmless&rdquo;. Sort any column; the filter box
-          matches across every visible cell.
+          One row per record the caller flagged inside the selected gene — the whole search space,
+          nothing aggregated away.{' '}
+          <span className="font-mono" style={{ color: C.broken }}>
+            Red filter reason
+          </span>{' '}
+          is the threshold the record failed, verbatim; hover it for what the label means.{' '}
+          <span className="font-mono" style={{ color: C.decision }}>
+            Yellow GT
+          </span>{' '}
+          marks a heterozygous call — the configuration a hidden second allele would have.
+          Consequence is coloured by VEP severity: <Chip color={C.broken}>HIGH</Chip> truncates the
+          protein, <Chip color={C.decision}>MODERATE</Chip> swaps an amino acid,{' '}
+          <Chip color={C.machinery}>LOW / MODIFIER</Chip> is silent or non-coding.{' '}
+          <span className="text-zinc-600">Grey &ldquo;not annotated&rdquo;</span> means VEP was
+          never asked about the allele — absent, never &ldquo;looked up and harmless&rdquo;. Sort
+          any column; the filter box matches across every visible cell.
         </>
       }
       reading="Read down the gnomAD AF column first. A suppressed call that is common in the healthy population is a mapping artefact in a known-messy region, not a candidate — that is what every row in this panel turns out to be. The row worth wanting here is the opposite: rare or novel, heterozygous, protein-altering, and flagged. This panel has none, and that absence is a result: no second allele is hiding behind a FILTER in these eight genes, so a missing one has to come from re-calling the reads."

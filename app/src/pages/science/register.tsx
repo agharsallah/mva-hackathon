@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+
 import type { HypothesisRow } from '../../api/types';
 import { C } from '../../lib/palette';
 
@@ -11,8 +12,7 @@ import { C } from '../../lib/palette';
  */
 
 /** Repeated verbatim beside every confidence number on this page. */
-export const CONFIDENCE_CAVEAT =
-  'a transparent heuristic for triage, not a calibrated posterior';
+export const CONFIDENCE_CAVEAT = 'a transparent heuristic for triage, not a calibrated posterior';
 
 /**
  * Status → colour, mirroring `mva.science.hypothesis.Status.hue` so the browser and the
@@ -65,8 +65,7 @@ export function claims(rows: HypothesisRow[]): Claim[] {
       return { latest: history[history.length - 1], history };
     })
     .sort((a, b) => {
-      const rank =
-        STATUS_ORDER.indexOf(a.latest.status) - STATUS_ORDER.indexOf(b.latest.status);
+      const rank = STATUS_ORDER.indexOf(a.latest.status) - STATUS_ORDER.indexOf(b.latest.status);
       return rank !== 0 ? rank : a.latest.hypothesis_id.localeCompare(b.latest.hypothesis_id);
     });
 }
@@ -96,8 +95,9 @@ export function EmptyRegister({
       <p className="mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-zinc-400">{children}</p>
       <p className="mx-auto mt-2 max-w-2xl text-[11px] leading-relaxed text-zinc-500">
         An empty register is discipline, not absence of work. The method is written down in{' '}
-        <span className="font-mono text-zinc-400">docs/method.md</span>, and the register opens the moment
-        the first claim is filed with <span className="font-mono text-zinc-400">{verb}</span>.
+        <span className="font-mono text-zinc-400">docs/method.md</span>, and the register opens the
+        moment the first claim is filed with <span className="font-mono text-zinc-400">{verb}</span>
+        .
       </p>
       <p className="mt-2 font-mono text-[11px] text-zinc-600">
         {tableExists

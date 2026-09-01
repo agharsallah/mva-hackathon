@@ -50,10 +50,10 @@ flowchart LR
 
 ## Files
 
-| File | Role |
-|---|---|
-| `modules/types.ts` | `FeatureModule` shape |
-| `modules/index.ts` | manifest, one entry per page |
-| `AppShell.tsx` | Header + routes from the manifest |
-| `ModuleBoundary.tsx` | error boundary + Suspense + retry, per module |
-| `providers.tsx` | StrictMode + QueryClientProvider + BrowserRouter |
+| File                 | Role                                             |
+| -------------------- | ------------------------------------------------ |
+| `modules/types.ts`   | `FeatureModule` shape                            |
+| `modules/index.ts`   | manifest, one entry per page                     |
+| `AppShell.tsx`       | Header + routes from the manifest                |
+| `ModuleBoundary.tsx` | error boundary + Suspense + retry, per module    |
+| `providers.tsx`      | StrictMode + QueryClientProvider + BrowserRouter |

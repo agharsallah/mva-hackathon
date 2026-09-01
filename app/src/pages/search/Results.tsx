@@ -7,14 +7,14 @@
  * resolver, its provenance and its caveat are stated *above* the data, every time.
  */
 
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { DataTable, type Column } from '../../components/DataTable';
-import { Loaded } from '../../components/QueryState';
 import { useRegion } from '../../api/hooks';
 import type { RegionVariant, RegionWindow, SearchResolution } from '../../api/types';
-import { C } from '../../lib/palette';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
-import { DensityLegend, DensityStrip, bin } from './DensityStrip';
+import { C } from '../../lib/palette';
+import { bin, DensityLegend, DensityStrip } from './DensityStrip';
 
 const KIND_LABEL: Record<SearchResolution['kind'], string> = {
   region: 'region',
@@ -41,8 +41,7 @@ export function Resolution({ found }: { found: SearchResolution }) {
         <span className="text-xs text-zinc-500">{int(span)} bp window</span>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-zinc-400">
-        resolved by{' '}
-        <span className={`font-mono ${sourceTone(found.source)}`}>{found.source}</span>
+        resolved by <span className={`font-mono ${sourceTone(found.source)}`}>{found.source}</span>
         {found.note && <> — {found.note}</>}
       </p>
     </div>
@@ -136,7 +135,12 @@ function Window({
         cachedAt={cachedAt}
         origin={origin}
       >
-        <DataTable rows={window.variants} columns={COLUMNS} rowKey={(r) => `${r.pos}-${r.alt}`} maxHeight={520} />
+        <DataTable
+          rows={window.variants}
+          columns={COLUMNS}
+          rowKey={(r) => `${r.pos}-${r.alt}`}
+          maxHeight={520}
+        />
       </Exhibit>
     </div>
   );
@@ -183,7 +187,11 @@ const COLUMNS: Column<RegionVariant>[] = [
     key: 'id',
     header: 'rsID',
     render: (r) =>
-      r.id ? <span className="font-mono text-zinc-300">{r.id}</span> : <span className="text-zinc-700">—</span>,
+      r.id ? (
+        <span className="font-mono text-zinc-300">{r.id}</span>
+      ) : (
+        <span className="text-zinc-700">—</span>
+      ),
   },
   {
     key: 'change',
@@ -220,6 +228,11 @@ const COLUMNS: Column<RegionVariant>[] = [
     render: (r) => (r.ad_alt === null ? '—' : `${int(r.ad_alt)} / ${int(r.ad_ref)}`),
     align: 'right',
   },
-  { key: 'vaf', header: 'VAF', render: (r) => (r.vaf === null ? '—' : dec(r.vaf, 3)), align: 'right' },
+  {
+    key: 'vaf',
+    header: 'VAF',
+    render: (r) => (r.vaf === null ? '—' : dec(r.vaf, 3)),
+    align: 'right',
+  },
   { key: 'gq', header: 'GQ', render: (r) => int(r.gq), align: 'right' },
 ];

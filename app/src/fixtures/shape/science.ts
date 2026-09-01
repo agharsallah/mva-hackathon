@@ -1,4 +1,9 @@
-import type { EvidenceRegister, EvidenceRow, HypothesisRegister, HypothesisRow } from '../../api/types';
+import type {
+  EvidenceRegister,
+  EvidenceRow,
+  HypothesisRegister,
+  HypothesisRow,
+} from '../../api/types';
 import { rows } from '../loader';
 
 /**

@@ -1,11 +1,12 @@
 import { useMemo } from 'react';
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Skeleton, ErrorCard } from '../../components/QueryState';
-import { TextFilter } from '../../components/Controls';
+
 import { useCatalogColumns, useCatalogTables } from '../../api/hooks';
 import type { CatalogColumnRow, CatalogTableRow } from '../../api/types';
-import { C } from '../../lib/palette';
+import { TextFilter } from '../../components/Controls';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { ErrorCard, Skeleton } from '../../components/QueryState';
 import { int } from '../../lib/format';
+import { C } from '../../lib/palette';
 import { useUrlText } from '../../lib/urlstate';
 
 /**
@@ -63,7 +64,9 @@ function lineageLine(row: CatalogTableRow): string | null {
 
 function ColumnTable({ columns }: { columns: CatalogColumnRow[] }) {
   if (columns.length === 0) {
-    return <p className="text-[11px] text-zinc-500">No column metadata was returned for this table.</p>;
+    return (
+      <p className="text-[11px] text-zinc-500">No column metadata was returned for this table.</p>
+    );
   }
   return (
     <table className="w-full border-collapse text-left text-[11px]">
@@ -113,7 +116,9 @@ function TableCard({ row, columns }: { row: CatalogTableRow; columns: CatalogCol
         <span className="text-[11px] text-zinc-500">
           {int(row.rows)} rows · {columns.length} columns
         </span>
-        {undocumented > 0 && <Gap title={NO_MEANING}>{`${undocumented} column(s) unexplained`}</Gap>}
+        {undocumented > 0 && (
+          <Gap title={NO_MEANING}>{`${undocumented} column(s) unexplained`}</Gap>
+        )}
         <span className="ml-auto text-[11px] text-zinc-600 group-open:hidden">show columns ▸</span>
       </summary>
 
@@ -181,19 +186,20 @@ export function TableExplainer() {
       }
       legend={
         <>
-          One expandable card per table, grouped by <strong>schema</strong> — a schema is a namespace
-          inside the database, the way a package is in code. <span className="font-mono">warehouse</span>{' '}
-          holds ingested data and the hand-written ledgers; <span className="font-mono">results</span>{' '}
-          holds tables computed from them, every one re-derivable and stamped with a lineage edge.{' '}
-          <Chip color={C.machinery}>blue chip = the command that writes the table</Chip> — it also says
-          whether a re-run <em>replaces</em> the table, <em>rebuilds</em> it, or only <em>appends</em> to
-          it, which is what a reader needs before re-running anything.{' '}
+          One expandable card per table, grouped by <strong>schema</strong> — a schema is a
+          namespace inside the database, the way a package is in code.{' '}
+          <span className="font-mono">warehouse</span> holds ingested data and the hand-written
+          ledgers; <span className="font-mono">results</span> holds tables computed from them, every
+          one re-derivable and stamped with a lineage edge.{' '}
+          <Chip color={C.machinery}>blue chip = the command that writes the table</Chip> — it also
+          says whether a re-run <em>replaces</em> the table, <em>rebuilds</em> it, or only{' '}
+          <em>appends</em> to it, which is what a reader needs before re-running anything.{' '}
           <Chip color={C.decision}>yellow = a stated gap</Chip>: a table with no recorded reason or
-          creator, or a column no entry in the meaning registry covers. Gaps are rendered, never blanked.
-          Both lists are enumerated live from{' '}
-          <span className="font-mono">information_schema</span>, so a table added to the database shows up
-          here on its own — and the server&apos;s test suite then refuses to pass until somebody writes
-          its reason.
+          creator, or a column no entry in the meaning registry covers. Gaps are rendered, never
+          blanked. Both lists are enumerated live from{' '}
+          <span className="font-mono">information_schema</span>, so a table added to the database
+          shows up here on its own — and the server&apos;s test suite then refuses to pass until
+          somebody writes its reason.
         </>
       }
       reading="Read the blue chip first: it tells you what a re-run would do to the table. Then the reason — a table nobody can say the purpose of is a table that should be deleted or defended, not left in place."

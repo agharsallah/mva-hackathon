@@ -1,12 +1,12 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
-import { Callout } from '../../components/Explainer';
-import { DataTable, type Column } from '../../components/DataTable';
 import { usePanelConstraint } from '../../api/hooks';
 import type { PanelConstraintRow } from '../../api/types';
-import { C } from '../../lib/palette';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Callout } from '../../components/Explainer';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /** The conventional line below which a gene is called loss-of-function intolerant. */
 const LOEUF_CONSTRAINED = 0.35;
@@ -37,7 +37,11 @@ export function ConstraintScorecard() {
     );
 
   const columns: Column<PanelConstraintRow>[] = [
-    { key: 'gene', header: 'gene', render: (r) => <span className="font-mono text-zinc-100">{r.gene}</span> },
+    {
+      key: 'gene',
+      header: 'gene',
+      render: (r) => <span className="font-mono text-zinc-100">{r.gene}</span>,
+    },
     {
       key: 'loeuf',
       header: 'LOEUF',
@@ -48,12 +52,29 @@ export function ConstraintScorecard() {
             unknown
           </span>
         ) : (
-          <span style={{ color: r.loeuf < LOEUF_CONSTRAINED ? C.machinery : C.inkDim }}>{dec(r.loeuf, 2)}</span>
+          <span style={{ color: r.loeuf < LOEUF_CONSTRAINED ? C.machinery : C.inkDim }}>
+            {dec(r.loeuf, 2)}
+          </span>
         ),
     },
-    { key: 'pli', header: 'pLI', align: 'right', render: (r) => orUnknown(r.pli, (n) => dec(n, 2)) },
-    { key: 'misz', header: 'missense z', align: 'right', render: (r) => orUnknown(r.mis_z, (n) => dec(n, 2)) },
-    { key: 'oe', header: 'o/e LoF', align: 'right', render: (r) => orUnknown(r.oe_lof, (n) => dec(n, 3)) },
+    {
+      key: 'pli',
+      header: 'pLI',
+      align: 'right',
+      render: (r) => orUnknown(r.pli, (n) => dec(n, 2)),
+    },
+    {
+      key: 'misz',
+      header: 'missense z',
+      align: 'right',
+      render: (r) => orUnknown(r.mis_z, (n) => dec(n, 2)),
+    },
+    {
+      key: 'oe',
+      header: 'o/e LoF',
+      align: 'right',
+      render: (r) => orUnknown(r.oe_lof, (n) => dec(n, 3)),
+    },
     {
       key: 'lof',
       header: 'LoF obs / exp',
@@ -83,7 +104,11 @@ export function ConstraintScorecard() {
       align: 'right',
       render: (r) => <span className="text-emerald-400">{int(r.clinvar_benign)}</span>,
     },
-    { key: 'note', header: 'how to read this gene', render: (r) => <span className="text-zinc-400">{r.note}</span> },
+    {
+      key: 'note',
+      header: 'how to read this gene',
+      render: (r) => <span className="text-zinc-400">{r.note}</span>,
+    },
   ];
 
   return (
@@ -91,14 +116,15 @@ export function ConstraintScorecard() {
       title="Constraint and ClinVar burden per panel gene — context, not a ranking"
       legend={
         <>
-          Left axis, <Chip color={C.machinery}>blue bars</Chip>: LOEUF, how strongly the healthy population
-          avoids losing a copy of this gene — <strong>lower is more intolerant</strong>. The{' '}
-          <span style={{ color: C.decision }}>dashed yellow line at {LOEUF_CONSTRAINED}</span> is the
-          conventional cut-off for calling a gene loss-of-function constrained. Right axis,{' '}
-          <Chip color={C.broken}>red bars</Chip>: how many variants ClinVar already classes Pathogenic or
-          Likely-pathogenic in that gene. A gene with <span className="text-zinc-500">no bar and an
-          &ldquo;unknown&rdquo; tag</span> has no row in the constraint source — that is missing data, never a
-          score of zero and never &ldquo;unconstrained&rdquo;.
+          Left axis, <Chip color={C.machinery}>blue bars</Chip>: LOEUF, how strongly the healthy
+          population avoids losing a copy of this gene — <strong>lower is more intolerant</strong>.
+          The <span style={{ color: C.decision }}>dashed yellow line at {LOEUF_CONSTRAINED}</span>{' '}
+          is the conventional cut-off for calling a gene loss-of-function constrained. Right axis,{' '}
+          <Chip color={C.broken}>red bars</Chip>: how many variants ClinVar already classes
+          Pathogenic or Likely-pathogenic in that gene. A gene with{' '}
+          <span className="text-zinc-500">no bar and an &ldquo;unknown&rdquo; tag</span> has no row
+          in the constraint source — that is missing data, never a score of zero and never
+          &ldquo;unconstrained&rdquo;.
         </>
       }
       reading="Read this as gene background, not as a candidate ranking. The two established MVA genes sit on the wrong side of the constraint line, and that is expected — see the callout."
@@ -141,7 +167,11 @@ export function ConstraintScorecard() {
                   margin: { l: 60, r: 62, t: 8, b: 46 },
                   barmode: 'group',
                   bargap: 0.3,
-                  xaxis: { type: 'category', gridcolor: 'rgba(0,0,0,0)', tickfont: { color: C.inkDim, size: 11 } },
+                  xaxis: {
+                    type: 'category',
+                    gridcolor: 'rgba(0,0,0,0)',
+                    tickfont: { color: C.inkDim, size: 11 },
+                  },
                   yaxis: {
                     title: { text: 'LOEUF', font: { color: C.machinery, size: 12 } },
                     range: [0, maxLoeuf * 1.15],
@@ -191,15 +221,18 @@ export function ConstraintScorecard() {
                   legend: { orientation: 'h', y: 1.14, x: 0, font: { color: C.inkDim, size: 11 } },
                 })}
               />
-              <Callout tone="decision" title="Why the two known MVA genes look unconstrained — and why that is correct">
+              <Callout
+                tone="decision"
+                title="Why the two known MVA genes look unconstrained — and why that is correct"
+              >
                 Constraint measures selection against losing <em>one</em> copy. MVA is{' '}
-                <strong>recessive</strong>: a person with one broken copy of BUB1B or CEP57 is a healthy carrier,
-                so those variants persist in the population and the gene scores near pLI 0 with a LOEUF well
-                above {LOEUF_CONSTRAINED}. The dominant genes on this panel (TP53, DICER1) score the opposite way
-                for the same reason. So a candidate ranking that sorts by constraint would put the two
-                established MVA genes at the bottom.{' '}
-                <strong>Constraint must not be used to rank recessive candidates.</strong> It is shown here
-                because knowing the ranking is inverted is itself a result.
+                <strong>recessive</strong>: a person with one broken copy of BUB1B or CEP57 is a
+                healthy carrier, so those variants persist in the population and the gene scores
+                near pLI 0 with a LOEUF well above {LOEUF_CONSTRAINED}. The dominant genes on this
+                panel (TP53, DICER1) score the opposite way for the same reason. So a candidate
+                ranking that sorts by constraint would put the two established MVA genes at the
+                bottom. <strong>Constraint must not be used to rank recessive candidates.</strong>{' '}
+                It is shown here because knowing the ranking is inverted is itself a result.
               </Callout>
               <DataTable rows={ordered} columns={columns} rowKey={(r) => r.gene} />
             </div>

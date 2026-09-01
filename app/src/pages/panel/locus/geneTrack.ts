@@ -1,5 +1,5 @@
-import type { Trace } from '../../../components/Plot';
 import type { GeneStructure } from '../../../api/types';
+import type { Trace } from '../../../components/Plot';
 import { C } from '../../../lib/palette';
 
 /**

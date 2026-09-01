@@ -9,7 +9,8 @@
  * live now.
  */
 import type { ReactNode } from 'react';
-import { EMPTY_DASHED, cx } from '../lib/ui';
+
+import { cx, EMPTY_DASHED } from '../lib/ui';
 
 export interface EmptyStateProps {
   tone?: 'neutral' | 'good';
@@ -21,9 +22,19 @@ export interface EmptyStateProps {
 export function EmptyState({ tone = 'neutral', title, children, className }: EmptyStateProps) {
   return (
     <div className={cx('rounded-lg border p-6 text-center', EMPTY_DASHED[tone], className)}>
-      {title && <div className={cx('text-sm font-medium', tone === 'good' ? 'text-emerald-400' : undefined)}>{title}</div>}
+      {title && (
+        <div
+          className={cx('text-sm font-medium', tone === 'good' ? 'text-emerald-400' : undefined)}
+        >
+          {title}
+        </div>
+      )}
       {children && (
-        <div className={cx(title ? 'mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-zinc-400' : 'text-sm')}>
+        <div
+          className={cx(
+            title ? 'mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-zinc-400' : 'text-sm',
+          )}
+        >
           {children}
         </div>
       )}

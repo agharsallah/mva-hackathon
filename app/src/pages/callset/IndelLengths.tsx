@@ -1,9 +1,9 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
 import { useIndelLengths } from '../../api/hooks';
-import { C } from '../../lib/palette';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { int } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * Indel length spectrum. The clinically interesting shape is the multiple-of-three
@@ -18,11 +18,11 @@ export function IndelLengths() {
       title="Indel length spectrum"
       legend={
         <>
-          x = length in DNA letters, negative to the left. <Chip color={C.broken}>deletions (letters
-          lost)</Chip> · <Chip color={C.machinery}>insertions (letters gained)</Chip>. y is a log scale.
-          Lengths divisible by three are marked with a{' '}
-          <span style={{ color: C.decision }}>yellow</span> tick on the axis: those preserve the reading frame,
-          all the others shift it.
+          x = length in DNA letters, negative to the left.{' '}
+          <Chip color={C.broken}>deletions (letters lost)</Chip> ·{' '}
+          <Chip color={C.machinery}>insertions (letters gained)</Chip>. y is a log scale. Lengths
+          divisible by three are marked with a <span style={{ color: C.decision }}>yellow</span>{' '}
+          tick on the axis: those preserve the reading frame, all the others shift it.
         </>
       }
       reading="Geometric decay from ±1 bp, roughly symmetric, nothing beyond about 60 bp — the normal shape for short-read calling. Short indels are where a frameshift, the most destructive class of small variant, comes from."
@@ -66,7 +66,10 @@ export function IndelLengths() {
                   bargap: 0.1,
                   barmode: 'overlay',
                   xaxis: {
-                    title: { text: 'indel length (bp) — deletions negative', font: { color: C.inkDim, size: 12 } },
+                    title: {
+                      text: 'indel length (bp) — deletions negative',
+                      font: { color: C.inkDim, size: 12 },
+                    },
                     gridcolor: C.grid,
                     tickfont: { color: C.inkDim, size: 11 },
                     zerolinecolor: C.inkDim,
@@ -83,17 +86,24 @@ export function IndelLengths() {
               />
               <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-zinc-500">
                 <span>
-                  deletions <span className="font-mono text-red-400">{int(dels.reduce((a, r) => a + r.count, 0))}</span>
+                  deletions{' '}
+                  <span className="font-mono text-red-400">
+                    {int(dels.reduce((a, r) => a + r.count, 0))}
+                  </span>
                 </span>
                 <span>
-                  insertions <span className="font-mono text-blue-400">{int(ins.reduce((a, r) => a + r.count, 0))}</span>
+                  insertions{' '}
+                  <span className="font-mono text-blue-400">
+                    {int(ins.reduce((a, r) => a + r.count, 0))}
+                  </span>
                 </span>
                 <span>
                   frame-preserving (length divisible by 3){' '}
                   <span className="font-mono text-amber-400">
                     {((inFrameCount / total) * 100).toFixed(1)}%
                   </span>{' '}
-                  — the other {(100 - (inFrameCount / total) * 100).toFixed(1)}% shift the reading frame
+                  — the other {(100 - (inFrameCount / total) * 100).toFixed(1)}% shift the reading
+                  frame
                 </span>
               </div>
             </>

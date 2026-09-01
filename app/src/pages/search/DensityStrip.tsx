@@ -9,10 +9,10 @@
  * count per bin means nothing without it.
  */
 
-import { Chip } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { C } from '../../lib/palette';
 import type { RegionVariant } from '../../api/types';
+import { Chip } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { C } from '../../lib/palette';
 
 /** Roughly how many bars to draw, whatever the span. */
 const TARGET_BINS = 120;

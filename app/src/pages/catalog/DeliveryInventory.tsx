@@ -1,9 +1,9 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Loaded } from '../../components/QueryState';
 import { useCatalogObjects } from '../../api/hooks';
 import type { CatalogObjectRow } from '../../api/types';
-import { C } from '../../lib/palette';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Loaded } from '../../components/QueryState';
 import { bytes, int, iso } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * The raw delivery, object by object — what it is, what it contains, when it arrived,
@@ -19,8 +19,16 @@ type Group = 'callset' | 'reads' | 'metadata';
 
 const GROUPS: { key: Group; title: string; note: string }[] = [
   { key: 'callset', title: 'Callset', note: 'the variant records and their index' },
-  { key: 'reads', title: 'Reads (FASTQ)', note: 'the raw measurement, one object per lane × read direction' },
-  { key: 'metadata', title: 'Metadata and sidecars', note: 'summaries and manifests about the two above' },
+  {
+    key: 'reads',
+    title: 'Reads (FASTQ)',
+    note: 'the raw measurement, one object per lane × read direction',
+  },
+  {
+    key: 'metadata',
+    title: 'Metadata and sidecars',
+    note: 'summaries and manifests about the two above',
+  },
 ];
 
 function groupOf(r: CatalogObjectRow): Group {
@@ -103,7 +111,9 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
           </span>
         )}
         {r.flowcell && (
-          <span className="rounded bg-zinc-800 px-1 py-px font-mono text-zinc-500">{r.flowcell}</span>
+          <span className="rounded bg-zinc-800 px-1 py-px font-mono text-zinc-500">
+            {r.flowcell}
+          </span>
         )}
         <span className="ml-auto font-mono text-zinc-300">{bytes(r.size_bytes)}</span>
       </div>
@@ -148,15 +158,15 @@ export function DeliveryInventory() {
       title="Raw delivery — every object we were given"
       legend={
         <>
-          One card per object. <Chip color={C.raw}>purple = the raw measurement (FASTQ reads)</Chip> ·{' '}
-          <Chip color={C.machinery}>blue = callset and sidecars</Chip>.{' '}
-          <Chip color={C.good}>green border and ✓ = sha256 recomputed and matched</Chip>, with the chip naming{' '}
-          <em>whom</em> it matched: <span className="font-mono">publisher</span> (their manifest) or{' '}
-          <span className="font-mono">own-upload</span> (our own round-trip only).{' '}
+          One card per object. <Chip color={C.raw}>purple = the raw measurement (FASTQ reads)</Chip>{' '}
+          · <Chip color={C.machinery}>blue = callset and sidecars</Chip>.{' '}
+          <Chip color={C.good}>green border and ✓ = sha256 recomputed and matched</Chip>, with the
+          chip naming <em>whom</em> it matched: <span className="font-mono">publisher</span> (their
+          manifest) or <span className="font-mono">own-upload</span> (our own round-trip only).{' '}
           <Chip color={C.broken}>red = unverified or no digest</Chip>.{' '}
-          <Chip color={C.decision}>yellow on the date = no ingest-ledger row</Chip>, so the store&apos;s
-          last-modified time is shown instead of a real arrival time. The digest is truncated to 12
-          characters; hover for all 64.
+          <Chip color={C.decision}>yellow on the date = no ingest-ledger row</Chip>, so the
+          store&apos;s last-modified time is shown instead of a real arrival time. The digest is
+          truncated to 12 characters; hover for all 64.
         </>
       }
       reading="Raw delivery is immutable: these bytes are never rewritten, only read. A red card, or a yellow date on an object we later reasoned about, is the kind of gap that invalidates everything downstream of it."
@@ -168,7 +178,9 @@ export function DeliveryInventory() {
       <Loaded query={q} height={320}>
         {(rows) => {
           const verified = rows.filter((r) => r.hash_verified).length;
-          const publisher = rows.filter((r) => r.hash_verified && r.sha256_source === 'publisher').length;
+          const publisher = rows.filter(
+            (r) => r.hash_verified && r.sha256_source === 'publisher',
+          ).length;
           const totalBytes = rows.reduce((a, r) => a + r.size_bytes, 0);
           const ledgerless = rows.filter((r) => r.first_uploaded_at === null).length;
 
@@ -186,9 +198,7 @@ export function DeliveryInventory() {
                   {publisher} against the publisher)
                 </span>
                 {ledgerless > 0 && (
-                  <span className="text-amber-400">
-                    {ledgerless} with no first-upload record
-                  </span>
+                  <span className="text-amber-400">{ledgerless} with no first-upload record</span>
                 )}
               </div>
 
@@ -198,7 +208,9 @@ export function DeliveryInventory() {
                 return (
                   <div key={g.key}>
                     <div className="mb-2 flex items-baseline gap-2">
-                      <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">{g.title}</h4>
+                      <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                        {g.title}
+                      </h4>
                       <span className="text-[11px] text-zinc-600">
                         {g.note} · {group.length} object{group.length === 1 ? '' : 's'} ·{' '}
                         {bytes(group.reduce((a, r) => a + r.size_bytes, 0))}

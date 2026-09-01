@@ -1,11 +1,12 @@
-import { useMemo } from 'react';
-import { DataTable, type Column } from '../../components/DataTable';
-import { useJobs } from '../../api/hooks';
-import { post, ApiError } from '../../api/client';
 import { useQueryClient } from '@tanstack/react-query';
+import { useMemo } from 'react';
+
+import { ApiError, post } from '../../api/client';
+import { useJobs } from '../../api/hooks';
 import type { Job } from '../../api/types';
-import { jobStateColor } from '../../lib/palette';
+import { type Column, DataTable } from '../../components/DataTable';
 import { dec, iso } from '../../lib/format';
+import { jobStateColor } from '../../lib/palette';
 import { UpstreamDownBanner } from './UpstreamDownBanner';
 
 const LIVE = new Set(['queued', 'running']);
@@ -36,8 +37,16 @@ export function JobsMonitor() {
         ),
       },
       { key: 'verb', header: 'verb', render: (j) => <span className="font-mono">{j.verb}</span> },
-      { key: 'id', header: 'id', render: (j) => <span className="font-mono text-zinc-500">{j.id.slice(0, 12)}</span> },
-      { key: 'submitted', header: 'submitted', render: (j) => <span className="font-mono text-zinc-500">{iso(j.submitted_at)}</span> },
+      {
+        key: 'id',
+        header: 'id',
+        render: (j) => <span className="font-mono text-zinc-500">{j.id.slice(0, 12)}</span>,
+      },
+      {
+        key: 'submitted',
+        header: 'submitted',
+        render: (j) => <span className="font-mono text-zinc-500">{iso(j.submitted_at)}</span>,
+      },
       {
         key: 'elapsed',
         header: 'elapsed',
@@ -73,7 +82,9 @@ export function JobsMonitor() {
           LIVE.has(j.state) ? (
             <button
               onClick={() =>
-                post(`/api/jobs/${j.id}/cancel`).then(() => qc.invalidateQueries({ queryKey: ['/api/jobs'] }))
+                post(`/api/jobs/${j.id}/cancel`).then(() =>
+                  qc.invalidateQueries({ queryKey: ['/api/jobs'] }),
+                )
               }
               className="rounded border border-red-800 px-1.5 py-0.5 text-[10px] text-red-300 hover:bg-red-950/40"
             >
@@ -90,8 +101,8 @@ export function JobsMonitor() {
       <UpstreamDownBanner detail={jobs.error.message} />
     ) : (
       <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 text-xs text-zinc-500">
-        Job list unavailable — the viz API is not reachable. This table has no fixture: a job queue only exists
-        on a live server.
+        Job list unavailable — the viz API is not reachable. This table has no fixture: a job queue
+        only exists on a live server.
         <p className="mt-1 font-mono text-[11px] text-zinc-600">{jobs.error.message}</p>
       </div>
     );
@@ -115,14 +126,15 @@ export function JobsMonitor() {
       />
       <ul className="space-y-0.5 text-[11px] text-zinc-500">
         <li>
-          <span className="font-mono text-blue-400">queued / running</span> — accepted, machinery working
+          <span className="font-mono text-blue-400">queued / running</span> — accepted, machinery
+          working
         </li>
         <li>
           <span className="font-mono text-emerald-400">done</span> — result available
         </li>
         <li>
-          <span className="font-mono text-red-400">failed / lost</span> — errored, or the worker vanished
-          mid-run
+          <span className="font-mono text-red-400">failed / lost</span> — errored, or the worker
+          vanished mid-run
         </li>
         <li>
           <span className="font-mono text-zinc-400">cancelled</span> — stopped on request

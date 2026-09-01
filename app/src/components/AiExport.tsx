@@ -9,9 +9,10 @@
 
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
 import { useLocation } from 'react-router-dom';
-import { exhibitRegistry } from '../lib/aiExport/registry';
-import { exhibitBundle } from '../lib/aiExport/markdown';
+
 import { dateStamp, downloadExport, pageSlug } from '../lib/aiExport/download';
+import { exhibitBundle } from '../lib/aiExport/markdown';
+import { exhibitRegistry } from '../lib/aiExport/registry';
 import { buildWholeCaseBundle } from '../lib/aiExport/wholeCase';
 
 const BTN =
@@ -42,7 +43,12 @@ export function AiExport() {
 
   function exportPage() {
     const scope = `page ${pathname} — ${onPage.length} exhibit${onPage.length === 1 ? '' : 's'}`;
-    report(downloadExport(`mva-case-${pageSlug(pathname)}-${dateStamp()}.md`, exhibitBundle(scope, onPage)));
+    report(
+      downloadExport(
+        `mva-case-${pageSlug(pathname)}-${dateStamp()}.md`,
+        exhibitBundle(scope, onPage),
+      ),
+    );
   }
 
   async function exportCase() {
@@ -60,7 +66,9 @@ export function AiExport() {
   return (
     <div className="flex items-center gap-2">
       {said && (
-        <span className={`text-[11px] ${failed(said) ? 'text-red-400' : 'text-emerald-400'}`}>{said}</span>
+        <span className={`text-[11px] ${failed(said) ? 'text-red-400' : 'text-emerald-400'}`}>
+          {said}
+        </span>
       )}
       {onPage.length > 0 && (
         <button

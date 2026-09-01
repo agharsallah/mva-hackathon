@@ -1,13 +1,14 @@
 import { useMemo } from 'react';
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Loaded } from '../../components/QueryState';
-import { withoutCoordinates } from '../../lib/aiExport/redact';
-import { Callout } from '../../components/Explainer';
-import { DataTable, type Column } from '../../components/DataTable';
+
 import { usePanelAnnotations } from '../../api/hooks';
 import type { PanelAnnotationRow } from '../../api/types';
-import { C, impactColor } from '../../lib/palette';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Callout } from '../../components/Explainer';
+import { Loaded } from '../../components/QueryState';
+import { withoutCoordinates } from '../../lib/aiExport/redact';
 import { dec, int } from '../../lib/format';
+import { C, impactColor } from '../../lib/palette';
 import { af, candidates, isPathogenic } from './rarity';
 
 /**
@@ -21,7 +22,10 @@ import { af, candidates, isPathogenic } from './rarity';
 export function CandidateTable() {
   const q = usePanelAnnotations();
   // The rows carry the proband's real chromosome and position; an export must not.
-  const exportData = useMemo(() => (q.data ? withoutCoordinates(q.data.data) : undefined), [q.data]);
+  const exportData = useMemo(
+    () => (q.data ? withoutCoordinates(q.data.data) : undefined),
+    [q.data],
+  );
 
   const columns: Column<PanelAnnotationRow>[] = [
     {
@@ -29,7 +33,11 @@ export function CandidateTable() {
       header: 'gene',
       render: (r) => <span className="font-mono font-semibold text-zinc-100">{r.gene ?? '—'}</span>,
     },
-    { key: 'csq', header: 'consequence', render: (r) => <span className="font-mono">{r.consequence}</span> },
+    {
+      key: 'csq',
+      header: 'consequence',
+      render: (r) => <span className="font-mono">{r.consequence}</span>,
+    },
     {
       key: 'impact',
       header: 'impact',
@@ -45,7 +53,10 @@ export function CandidateTable() {
       align: 'right',
       render: (r) =>
         r.gnomad_af === null ? (
-          <span className="font-semibold text-purple-400" title="absent from gnomAD — not frequency zero">
+          <span
+            className="font-semibold text-purple-400"
+            title="absent from gnomAD — not frequency zero"
+          >
             novel
           </span>
         ) : (
@@ -56,7 +67,12 @@ export function CandidateTable() {
       key: 'grpmax',
       header: 'grpmax',
       align: 'right',
-      render: (r) => (r.gnomad_af_grpmax === null ? <span className="text-zinc-600">—</span> : af(r.gnomad_af_grpmax)),
+      render: (r) =>
+        r.gnomad_af_grpmax === null ? (
+          <span className="text-zinc-600">—</span>
+        ) : (
+          af(r.gnomad_af_grpmax)
+        ),
     },
     {
       key: 'clin',
@@ -65,7 +81,9 @@ export function CandidateTable() {
         r.clin_sig === null ? (
           <span className="text-zinc-600">no record</span>
         ) : (
-          <span className={isPathogenic(r.clin_sig) ? 'font-semibold text-red-400' : 'text-zinc-400'}>
+          <span
+            className={isPathogenic(r.clin_sig) ? 'font-semibold text-red-400' : 'text-zinc-400'}
+          >
             {r.clin_sig}
           </span>
         ),
@@ -83,7 +101,9 @@ export function CandidateTable() {
       header: 'FILTER',
       align: 'right',
       render: (r) => (
-        <span className={r.filter === 'PASS' ? 'text-emerald-400' : 'text-red-400'}>{r.filter}</span>
+        <span className={r.filter === 'PASS' ? 'text-emerald-400' : 'text-red-400'}>
+          {r.filter}
+        </span>
       ),
     },
   ];
@@ -93,14 +113,16 @@ export function CandidateTable() {
       title="Candidate list — rare in the population and able to change the protein"
       legend={
         <>
-          Two filters, both required: <span className="font-mono">is_rare_recessive</span> (rare enough in gnomAD
-          that healthy carriers are plausible but two hits are not) and{' '}
-          <span className="font-mono">is_protein_altering</span> (the consequence changes the protein sequence).
-          Impact colour: <Chip color={C.broken}>HIGH</Chip> · <Chip color={C.decision}>MODERATE</Chip>. A{' '}
-          <span className="text-purple-400">purple &ldquo;novel&rdquo;</span> is absent from gnomAD, sorted ahead
-          of every measured frequency because absent is rarer than rare. <span className="text-red-400">Red
-          ClinVar text</span> = an asserted pathogenic classification;{' '}
-          <span className="text-emerald-400">green FILTER</span> = the caller kept the record.
+          Two filters, both required: <span className="font-mono">is_rare_recessive</span> (rare
+          enough in gnomAD that healthy carriers are plausible but two hits are not) and{' '}
+          <span className="font-mono">is_protein_altering</span> (the consequence changes the
+          protein sequence). Impact colour: <Chip color={C.broken}>HIGH</Chip> ·{' '}
+          <Chip color={C.decision}>MODERATE</Chip>. A{' '}
+          <span className="text-purple-400">purple &ldquo;novel&rdquo;</span> is absent from gnomAD,
+          sorted ahead of every measured frequency because absent is rarer than rare.{' '}
+          <span className="text-red-400">Red ClinVar text</span> = an asserted pathogenic
+          classification; <span className="text-emerald-400">green FILTER</span> = the caller kept
+          the record.
         </>
       }
       reading="A short list is the intended outcome. Sorted most-damaging first, then rarest first."
@@ -123,8 +145,9 @@ export function CandidateTable() {
           return (
             <div className="space-y-3">
               <p className="text-[11px] text-zinc-500">
-                {int(rows.length)} annotated records in → <span className="text-zinc-200">{int(hits.length)}</span>{' '}
-                survive both filters, in {byGene.size} gene{byGene.size === 1 ? '' : 's'}
+                {int(rows.length)} annotated records in →{' '}
+                <span className="text-zinc-200">{int(hits.length)}</span> survive both filters, in{' '}
+                {byGene.size} gene{byGene.size === 1 ? '' : 's'}
               </p>
               <DataTable
                 rows={hits}
@@ -134,18 +157,21 @@ export function CandidateTable() {
               />
               {paired.length > 0 ? (
                 <Callout tone="decision" title="Two hits in one gene — the compound-het shape">
-                  <strong>{paired.map(([g, n]) => `${g} (${n})`).join(', ')}</strong> carries more than one rare,
-                  protein-altering, heterozygous record. That is the <em>shape</em> of a compound heterozygote
-                  (two different broken copies of one gene, one inherited from each parent). It is not proof:
-                  <strong> phase is unproven</strong> — nothing here shows the two variants sit on different
-                  copies rather than both on the same one, and with a single sample and no parents this dataset
-                  cannot settle it from genotypes alone. Read-backed phasing or a parental sample would.
+                  <strong>{paired.map(([g, n]) => `${g} (${n})`).join(', ')}</strong> carries more
+                  than one rare, protein-altering, heterozygous record. That is the <em>shape</em>{' '}
+                  of a compound heterozygote (two different broken copies of one gene, one inherited
+                  from each parent). It is not proof:
+                  <strong> phase is unproven</strong> — nothing here shows the two variants sit on
+                  different copies rather than both on the same one, and with a single sample and no
+                  parents this dataset cannot settle it from genotypes alone. Read-backed phasing or
+                  a parental sample would.
                 </Callout>
               ) : (
                 <Callout tone="neutral" title="No gene carries two hits">
-                  Every surviving record is alone in its gene, so no compound-heterozygous pair is visible at
-                  these thresholds. Either the partner variant is suppressed behind a FILTER, is outside the
-                  panel, or is a variant class this callset does not represent.
+                  Every surviving record is alone in its gene, so no compound-heterozygous pair is
+                  visible at these thresholds. Either the partner variant is suppressed behind a
+                  FILTER, is outside the panel, or is a variant class this callset does not
+                  represent.
                 </Callout>
               )}
             </div>

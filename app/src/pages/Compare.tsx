@@ -1,11 +1,11 @@
-import { Callout, Explainer } from '../components/Explainer';
 import { Section } from '../components/Controls';
-import { RarityScatter } from './compare/RarityScatter';
-import { CandidateTable } from './compare/CandidateTable';
+import { Callout, Explainer } from '../components/Explainer';
 import { CandidateFunnel } from './compare/CandidateFunnel';
+import { CandidateTable } from './compare/CandidateTable';
 import { ClinvarPresence } from './compare/ClinvarPresence';
-import { PairComparator } from './compare/PairComparator';
 import { ObservedExpected } from './compare/ObservedExpected';
+import { PairComparator } from './compare/PairComparator';
+import { RarityScatter } from './compare/RarityScatter';
 
 /**
  * Compare — this patient against the normal population.
@@ -21,15 +21,16 @@ export default function ComparePage() {
       <Explainer
         intro={
           <>
-            Nothing about a variant is remarkable on its own — five million records is what a normal genome
-            looks like. What makes one interesting is being <em>rare</em>. So this page holds the case up
-            against two baselines. The first is <strong>gnomAD</strong>, an aggregate database of roughly
-            800,000 mostly-healthy people&apos;s genomes: think of it as a read-only index of how often each
-            variant shows up in the general population. If a variant is common there, healthy people carry it,
-            so it cannot by itself cause a severe childhood disease — a causal rare-disease variant has to be
-            rare in gnomAD or absent from it entirely. The second baseline is a set of published{' '}
-            <strong>quality-control norms</strong> for healthy genomes: if this callset&apos;s own engineering
-            numbers sit where a normal genome&apos;s do, its biology is worth believing.
+            Nothing about a variant is remarkable on its own — five million records is what a normal
+            genome looks like. What makes one interesting is being <em>rare</em>. So this page holds
+            the case up against two baselines. The first is <strong>gnomAD</strong>, an aggregate
+            database of roughly 800,000 mostly-healthy people&apos;s genomes: think of it as a
+            read-only index of how often each variant shows up in the general population. If a
+            variant is common there, healthy people carry it, so it cannot by itself cause a severe
+            childhood disease — a causal rare-disease variant has to be rare in gnomAD or absent
+            from it entirely. The second baseline is a set of published{' '}
+            <strong>quality-control norms</strong> for healthy genomes: if this callset&apos;s own
+            engineering numbers sit where a normal genome&apos;s do, its biology is worth believing.
           </>
         }
         terms={[
@@ -84,10 +85,11 @@ export default function ComparePage() {
 
       <Callout tone="decision" title="What to look for on this page">
         Two things have to be true at once for a variant to survive here: it must be{' '}
-        <strong>rare or absent in gnomAD</strong>, and it must be able to <strong>change the protein</strong>.
-        Almost everything fails one of the two — that is the point of the funnel. Then check the third exhibit
-        before believing any of it: if the callset&apos;s own QC numbers do not sit where a healthy genome&apos;s
-        sit, the biology above is resting on a shaky measurement.
+        <strong>rare or absent in gnomAD</strong>, and it must be able to{' '}
+        <strong>change the protein</strong>. Almost everything fails one of the two — that is the
+        point of the funnel. Then check the third exhibit before believing any of it: if the
+        callset&apos;s own QC numbers do not sit where a healthy genome&apos;s sit, the biology
+        above is resting on a shaky measurement.
       </Callout>
 
       <Section

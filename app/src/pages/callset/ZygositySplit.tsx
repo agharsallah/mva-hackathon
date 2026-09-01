@@ -1,9 +1,9 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
 import { useZygositySplit } from '../../api/hooks';
-import { C } from '../../lib/palette';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec, int, pct } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * The `bcftools stats` AF section, which is a trap and therefore worth drawing.
@@ -32,8 +32,7 @@ const COLOR: Record<string, string> = {
   'homozygous alternate': C.machinery,
 };
 
-const label = (zygosity: string | null, bin: number): string =>
-  zygosity ?? `AF bin ${dec(bin, 2)}`;
+const label = (zygosity: string | null, bin: number): string => zygosity ?? `AF bin ${dec(bin, 2)}`;
 
 export function ZygositySplit() {
   const q = useZygositySplit();
@@ -44,8 +43,8 @@ export function ZygositySplit() {
         <>
           Left: stacked bars, one per bin, split into{' '}
           <Chip color={C.raw}>SNPs (single-base substitutions)</Chip> and{' '}
-          <Chip color={C.absent}>indels (insertions and deletions)</Chip>; bar height = alleles in the
-          bin. Right: each bin&apos;s transition/transversion ratio —{' '}
+          <Chip color={C.absent}>indels (insertions and deletions)</Chip>; bar height = alleles in
+          the bin. Right: each bin&apos;s transition/transversion ratio —{' '}
           <Chip color={C.decision}>heterozygous</Chip> ·{' '}
           <Chip color={C.machinery}>homozygous alternate</Chip> — against the{' '}
           <span style={{ color: C.broken }}>dashed line at {RANDOM_TSTV}</span>, where a ratio would
@@ -55,10 +54,10 @@ export function ZygositySplit() {
       reading={
         <>
           The two bins are a <strong>zygosity split, not a frequency spectrum</strong>: one sample
-          means AN is always 2, so bcftools&apos; &ldquo;allele frequency&rdquo; bins are just AC=1 and
-          AC=2. Both totals match the independent genotype counter exactly. Heterozygous calls carry
-          the lower Ts/Tv of the two, which is where false positives are expected to sit — one copy&apos;s
-          worth of evidence is half the evidence.
+          means AN is always 2, so bcftools&apos; &ldquo;allele frequency&rdquo; bins are just AC=1
+          and AC=2. Both totals match the independent genotype counter exactly. Heterozygous calls
+          carry the lower Ts/Tv of the two, which is where false positives are expected to sit — one
+          copy&apos;s worth of evidence is half the evidence.
         </>
       }
       data={q.data?.data}
@@ -99,13 +98,22 @@ export function ZygositySplit() {
                     margin: { l: 66, r: 10, t: 8, b: 36 },
                     barmode: 'stack',
                     bargap: 0.45,
-                    xaxis: { type: 'category', gridcolor: 'rgba(0,0,0,0)', tickfont: { color: C.inkDim, size: 11 } },
+                    xaxis: {
+                      type: 'category',
+                      gridcolor: 'rgba(0,0,0,0)',
+                      tickfont: { color: C.inkDim, size: 11 },
+                    },
                     yaxis: {
                       title: { text: 'alleles', font: { color: C.inkDim, size: 12 } },
                       gridcolor: C.grid,
                       tickfont: { color: C.inkDim, size: 11 },
                     },
-                    legend: { orientation: 'h', y: 1.14, x: 0, font: { color: C.inkDim, size: 11 } },
+                    legend: {
+                      orientation: 'h',
+                      y: 1.14,
+                      x: 0,
+                      font: { color: C.inkDim, size: 11 },
+                    },
                   })}
                 />
                 <Plot
@@ -128,7 +136,11 @@ export function ZygositySplit() {
                   layout={baseLayout({
                     margin: { l: 44, r: 10, t: 8, b: 36 },
                     bargap: 0.55,
-                    xaxis: { type: 'category', gridcolor: 'rgba(0,0,0,0)', tickfont: { color: C.inkDim, size: 11 } },
+                    xaxis: {
+                      type: 'category',
+                      gridcolor: 'rgba(0,0,0,0)',
+                      tickfont: { color: C.inkDim, size: 11 },
+                    },
                     yaxis: {
                       title: { text: 'Ts/Tv', font: { color: C.inkDim, size: 12 } },
                       range: [0, top],
@@ -164,13 +176,27 @@ export function ZygositySplit() {
                 <table className="w-full border-collapse text-[11px]">
                   <thead className="text-zinc-500">
                     <tr>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-left font-medium">bin</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-left font-medium">reading</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">SNPs</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">indels</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">alleles</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">share</th>
-                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">Ts/Tv</th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-left font-medium">
+                        bin
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-left font-medium">
+                        reading
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">
+                        SNPs
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">
+                        indels
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">
+                        alleles
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">
+                        share
+                      </th>
+                      <th className="border-b border-zinc-800 px-2 py-1 text-right font-medium">
+                        Ts/Tv
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -184,20 +210,30 @@ export function ZygositySplit() {
                             {r.zygosity ?? 'not a single-sample callset — no zygosity reading'}
                           </span>
                         </td>
-                        <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">{int(r.n_snps)}</td>
-                        <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">{int(r.n_indels)}</td>
-                        <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">{int(r.n_alleles)}</td>
-                        <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-400">{pct(r.pct_of_alleles, 2)}</td>
-                        <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">{dec(r.ts_tv, 3)}</td>
+                        <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">
+                          {int(r.n_snps)}
+                        </td>
+                        <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">
+                          {int(r.n_indels)}
+                        </td>
+                        <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">
+                          {int(r.n_alleles)}
+                        </td>
+                        <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-400">
+                          {pct(r.pct_of_alleles, 2)}
+                        </td>
+                        <td className="border-b border-zinc-900 px-2 py-1 text-right font-mono text-zinc-300">
+                          {dec(r.ts_tv, 3)}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
               <p className="mt-2 text-[11px] text-zinc-500">
-                <span className="font-mono text-zinc-300">{int(total)}</span> alleles counted in total.
-                Counted per <em>allele</em>, so a multi-allelic record contributes more than one — which
-                is why this exceeds the 5,012,204 record count.
+                <span className="font-mono text-zinc-300">{int(total)}</span> alleles counted in
+                total. Counted per <em>allele</em>, so a multi-allelic record contributes more than
+                one — which is why this exceeds the 5,012,204 record count.
               </p>
             </>
           );

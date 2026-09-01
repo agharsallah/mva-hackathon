@@ -1,9 +1,9 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
 import { useQualityLevels } from '../../api/hooks';
-import { C } from '../../lib/palette';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /** Q-score bin → colour: the repo's red-to-green quality ramp. */
 const LEVEL_COLOR: Record<number, string> = {
@@ -36,10 +36,11 @@ export function QualityLevels() {
       title="Base quality is only four values — the NovaSeq binning"
       legend={
         <>
-          Stacked bars, one per partition, normalised to 100 %. <Chip color={LEVEL_COLOR[37]}>Q37</Chip> ·{' '}
-          <Chip color={LEVEL_COLOR[25]}>Q25</Chip> · <Chip color={LEVEL_COLOR[11]}>Q11</Chip> ·{' '}
-          <Chip color={LEVEL_COLOR[2]}>Q2</Chip>. Green is good, red is a base the instrument itself disowns.
-          No other phred value occurs anywhere in the store.
+          Stacked bars, one per partition, normalised to 100 %.{' '}
+          <Chip color={LEVEL_COLOR[37]}>Q37</Chip> · <Chip color={LEVEL_COLOR[25]}>Q25</Chip> ·{' '}
+          <Chip color={LEVEL_COLOR[11]}>Q11</Chip> · <Chip color={LEVEL_COLOR[2]}>Q2</Chip>. Green
+          is good, red is a base the instrument itself disowns. No other phred value occurs anywhere
+          in the store.
         </>
       }
       reading="About 93 % of all bases sit in the single Q37 bin. The R2 partitions carry a visibly larger low-quality share — the same degradation the per-cycle curves show, counted instead of plotted."
@@ -74,7 +75,9 @@ export function QualityLevels() {
                   name: `Q${phred}`,
                   x: labels,
                   y: keys.map((k, i) => {
-                    const row = rows.find((r) => `${r.lane}:${r.read_num}` === k && r.phred === phred);
+                    const row = rows.find(
+                      (r) => `${r.lane}:${r.read_num}` === k && r.phred === phred,
+                    );
                     return totals[i] ? ((row?.count ?? 0) / totals[i]) * 100 : 0;
                   }),
                   marker: { color: LEVEL_COLOR[phred] ?? C.absent, line: { width: 0 } },
@@ -84,7 +87,11 @@ export function QualityLevels() {
                   margin: { l: 56, r: 16, t: 8, b: 40 },
                   barmode: 'stack',
                   bargap: 0.3,
-                  xaxis: { type: 'category', gridcolor: 'rgba(0,0,0,0)', tickfont: { color: C.inkDim, size: 11 } },
+                  xaxis: {
+                    type: 'category',
+                    gridcolor: 'rgba(0,0,0,0)',
+                    tickfont: { color: C.inkDim, size: 11 },
+                  },
                   yaxis: {
                     title: { text: '% of bases', font: { color: C.inkDim, size: 12 } },
                     gridcolor: C.grid,
@@ -97,14 +104,17 @@ export function QualityLevels() {
               <div className="mt-2 space-y-1 text-[11px] text-zinc-500">
                 <div className="flex flex-wrap gap-x-5">
                   <span>
-                    Q30+ share R1 <span className="font-mono text-emerald-400">{dec(q30Share(1), 1)}%</span>
+                    Q30+ share R1{' '}
+                    <span className="font-mono text-emerald-400">{dec(q30Share(1), 1)}%</span>
                   </span>
                   <span>
-                    Q30+ share R2 <span className="font-mono text-amber-400">{dec(q30Share(2), 1)}%</span>
+                    Q30+ share R2{' '}
+                    <span className="font-mono text-amber-400">{dec(q30Share(2), 1)}%</span>
                   </span>
                   <span>
                     distinct phred values present{' '}
-                    <span className="font-mono text-zinc-300">{levels.length}</span> ({levels.join(', ')})
+                    <span className="font-mono text-zinc-300">{levels.length}</span> (
+                    {levels.join(', ')})
                   </span>
                 </div>
                 {levels.map((l) => (

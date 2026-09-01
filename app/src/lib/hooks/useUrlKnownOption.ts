@@ -10,6 +10,7 @@
  * apart — this hook exists only to stop retyping the glue between the two.
  */
 import { useCallback } from 'react';
+
 import { known, useUrlState } from '../urlstate';
 
 export function useUrlKnownOption<T extends string>(

@@ -1,9 +1,9 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
 import { useReadRuns } from '../../api/hooks';
-import { C } from '../../lib/palette';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { bytes, compact, int } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * Yield per lane. Paired-end sequencing reads each fragment from both ends, so R1 and R2
@@ -18,9 +18,10 @@ export function LaneYield() {
       title="Yield per lane — R1 against R2"
       legend={
         <>
-          Grouped bars, one pair per flowcell lane. <Chip color={C.raw}>R1 (first end of the
-          fragment)</Chip> · <Chip color={C.machinery}>R2 (second end, sequenced in reverse)</Chip>. Bar height
-          = reads delivered. Equal heights within a lane is the correct result for paired-end data.
+          Grouped bars, one pair per flowcell lane.{' '}
+          <Chip color={C.raw}>R1 (first end of the fragment)</Chip> ·{' '}
+          <Chip color={C.machinery}>R2 (second end, sequenced in reverse)</Chip>. Bar height = reads
+          delivered. Equal heights within a lane is the correct result for paired-end data.
         </>
       }
       reading="Every lane is exactly balanced: R1 and R2 counts are identical. Lane 1 was verified to the read — 136,586,642 in each direction."
@@ -32,7 +33,8 @@ export function LaneYield() {
       <Loaded query={q} height={340}>
         {(rows) => {
           const lanes = [...new Set(rows.map((r) => r.lane))].sort((a, b) => a - b);
-          const byRead = (n: number) => lanes.map((l) => rows.find((r) => r.lane === l && r.read_num === n));
+          const byRead = (n: number) =>
+            lanes.map((l) => rows.find((r) => r.lane === l && r.read_num === n));
           const total = rows.reduce((a, r) => a + r.reads, 0);
           const srcBytes = rows.reduce((a, r) => a + r.source_bytes, 0);
           const pqBytes = rows.reduce((a, r) => a + r.parquet_bytes, 0);
@@ -57,7 +59,11 @@ export function LaneYield() {
                   margin: { l: 66, r: 16, t: 8, b: 40 },
                   barmode: 'group',
                   bargap: 0.34,
-                  xaxis: { type: 'category', gridcolor: 'rgba(0,0,0,0)', tickfont: { color: C.inkDim, size: 11 } },
+                  xaxis: {
+                    type: 'category',
+                    gridcolor: 'rgba(0,0,0,0)',
+                    tickfont: { color: C.inkDim, size: 11 },
+                  },
                   yaxis: {
                     title: { text: 'reads', font: { color: C.inkDim, size: 12 } },
                     gridcolor: C.grid,
@@ -68,7 +74,8 @@ export function LaneYield() {
               />
               <div className="mt-2 grid gap-2 text-[11px] text-zinc-500 sm:grid-cols-4">
                 <span>
-                  total reads <span className="font-mono text-zinc-300">{int(total)}</span> ({compact(total)})
+                  total reads <span className="font-mono text-zinc-300">{int(total)}</span> (
+                  {compact(total)})
                 </span>
                 <span>
                   gzip source <span className="font-mono text-purple-400">{bytes(srcBytes)}</span>
@@ -77,7 +84,9 @@ export function LaneYield() {
                   parquet store <span className="font-mono text-blue-400">{bytes(pqBytes)}</span>
                 </span>
                 <span className={imbalanced.length ? 'text-red-400' : 'text-emerald-400'}>
-                  {imbalanced.length ? `R1/R2 mismatch on lane ${imbalanced.join(', ')}` : 'R1/R2 balanced on every lane'}
+                  {imbalanced.length
+                    ? `R1/R2 mismatch on lane ${imbalanced.join(', ')}`
+                    : 'R1/R2 balanced on every lane'}
                 </span>
               </div>
             </>

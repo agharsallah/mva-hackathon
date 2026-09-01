@@ -1,4 +1,4 @@
-import type { Exon, GeneStructure, GeneCandidate, ProteinDomain } from '../../api/types';
+import type { Exon, GeneCandidate, GeneStructure, ProteinDomain } from '../../api/types';
 import { rows } from '../loader';
 
 /**
@@ -42,7 +42,12 @@ function buildExons(n: number, from: number, to: number): Exon[] {
   return Array.from({ length: n }, (_, i) => {
     const anchor = from + i * step;
     const width = Math.round(step * (0.12 + 0.18 * Math.sin((i / n) * Math.PI)));
-    return { n: i + 1, start: Math.round(anchor), end: Math.round(anchor) + width, id: `ENSE0000000${i + 1}` };
+    return {
+      n: i + 1,
+      start: Math.round(anchor),
+      end: Math.round(anchor) + width,
+      id: `ENSE0000000${i + 1}`,
+    };
   });
 }
 

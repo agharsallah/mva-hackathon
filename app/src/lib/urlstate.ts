@@ -139,7 +139,12 @@ export function useUrlText(key: string, fallback = '', delayMs = 300): [string, 
     }
   }, [committed]);
 
-  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+    },
+    [],
+  );
 
   const set = useCallback<Setter<string>>(
     (next) => {

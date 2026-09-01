@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useRef, useState } from 'react';
+
 import { C } from '../lib/palette';
 
 export type Trace = Record<string, unknown>;
@@ -87,18 +88,22 @@ export function Plot({ data, layout, height = 360, config }: PlotProps) {
       .then((Plotly) => {
         if (cancelled || !ref.current) return;
         setReady(true);
-        return Plotly.react(ref.current, data, { ...baseLayout(), ...layout }, {
-          responsive: true,
-          displaylogo: false,
-          modeBarButtonsToRemove: ['select2d', 'lasso2d', 'autoScale2d'],
-          ...config,
-        });
+        return Plotly.react(
+          ref.current,
+          data,
+          { ...baseLayout(), ...layout },
+          {
+            responsive: true,
+            displaylogo: false,
+            modeBarButtonsToRemove: ['select2d', 'lasso2d', 'autoScale2d'],
+            ...config,
+          },
+        );
       })
       .catch(() => !cancelled && setFailed(true));
     return () => {
       cancelled = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, layout, config]);
 
   useEffect(() => {

@@ -7,7 +7,8 @@
  * recognise the real word in a tool flag or a paper later.
  */
 
-import { useState, type ReactNode } from 'react';
+import { type ReactNode, useState } from 'react';
+
 import { BOX, cx } from '../lib/ui';
 
 export interface Term {

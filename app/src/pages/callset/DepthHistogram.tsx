@@ -1,9 +1,9 @@
-import { Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
 import { useDepthDistribution } from '../../api/hooks';
-import { C } from '../../lib/palette';
+import { Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { int } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * Depth distribution. One clean mode is the signal of a healthy library: a second bump
@@ -17,10 +17,10 @@ export function DepthHistogram() {
       title="Read depth across called sites"
       legend={
         <>
-          <span style={{ color: C.machinery }}>Blue bars</span> = number of called sites at each depth
-          (neutral machinery). y is a log scale, so a bar one gridline lower holds ten times fewer sites. The
-          dashed <span style={{ color: C.decision }}>yellow</span> line marks the mode — the single most common
-          depth.
+          <span style={{ color: C.machinery }}>Blue bars</span> = number of called sites at each
+          depth (neutral machinery). y is a log scale, so a bar one gridline lower holds ten times
+          fewer sites. The dashed <span style={{ color: C.decision }}>yellow</span> line marks the
+          mode — the single most common depth.
         </>
       }
       reading="Unimodal, mode at about 44×. One peak means one homogeneous library; the long thin right tail is repetitive sequence where reads pile up."

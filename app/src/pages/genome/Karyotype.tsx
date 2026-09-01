@@ -1,9 +1,9 @@
-import { Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
 import { useContigDensity } from '../../api/hooks';
-import { C, DENSITY_SCALE } from '../../lib/palette';
+import { Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
+import { C, DENSITY_SCALE } from '../../lib/palette';
 import { chromOrder } from './order';
 
 /**
@@ -18,10 +18,11 @@ export function Karyotype() {
       title="Karyotype — chromosomes to scale, coloured by call density"
       legend={
         <>
-          One horizontal bar per canonical chromosome, length = its real GRCh38 length in megabases. Fill
-          follows variants per Mb on a dark → <span style={{ color: '#1d4ed8' }}>blue</span> →{' '}
-          <span style={{ color: '#a855f7' }}>purple</span> ramp (purple = densest, the raw-input end of the
-          repo's scale). Bar length is a property of the reference; colour is a property of this sample.
+          One horizontal bar per canonical chromosome, length = its real GRCh38 length in megabases.
+          Fill follows variants per Mb on a dark → <span style={{ color: '#1d4ed8' }}>blue</span> →{' '}
+          <span style={{ color: '#a855f7' }}>purple</span> ramp (purple = densest, the raw-input end
+          of the repo's scale). Bar length is a property of the reference; colour is a property of
+          this sample.
         </>
       }
       reading="Lengths differ by 5× but densities only by about 1.25× across the autosomes — the callset is spread evenly. X and Y are the exception: a single copy yields far fewer heterozygous calls per Mb."
@@ -58,7 +59,11 @@ export function Karyotype() {
                         outlinewidth: 0,
                       },
                     },
-                    customdata: ordered.map((r) => [r.n_records, r.variants_per_mb, r.pct_of_callset]),
+                    customdata: ordered.map((r) => [
+                      r.n_records,
+                      r.variants_per_mb,
+                      r.pct_of_callset,
+                    ]),
                     hovertemplate:
                       'chr%{y}<br>%{x:.1f} Mb long<br>%{customdata[0]:,} records<br>' +
                       '%{customdata[1]:.1f} var/Mb<br>%{customdata[2]:.2f}% of the callset<extra></extra>',
@@ -68,7 +73,10 @@ export function Karyotype() {
                   margin: { l: 44, r: 20, t: 10, b: 44 },
                   bargap: 0.35,
                   xaxis: {
-                    title: { text: 'chromosome length (Mb, GRCh38)', font: { color: C.inkDim, size: 12 } },
+                    title: {
+                      text: 'chromosome length (Mb, GRCh38)',
+                      font: { color: C.inkDim, size: 12 },
+                    },
                     gridcolor: C.grid,
                     tickfont: { color: C.inkDim, size: 11 },
                   },
@@ -82,7 +90,8 @@ export function Karyotype() {
               />
               {densest && (
                 <p className="mt-2 text-[11px] text-zinc-500">
-                  densest contig <span className="font-mono text-purple-400">chr{densest.chrom}</span> at{' '}
+                  densest contig{' '}
+                  <span className="font-mono text-purple-400">chr{densest.chrom}</span> at{' '}
                   {dec(densest.variants_per_mb, 1)} var/Mb over {int(densest.n_records)} records
                 </p>
               )}

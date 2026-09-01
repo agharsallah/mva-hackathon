@@ -8,7 +8,16 @@
  * remount of a cached component — a chunk that failed to fetch gets fetched again.
  */
 
-import { Component, Suspense, lazy, useMemo, useState, type ComponentType, type ReactNode } from 'react';
+import {
+  Component,
+  type ComponentType,
+  lazy,
+  type ReactNode,
+  Suspense,
+  useMemo,
+  useState,
+} from 'react';
+
 import { Skeleton } from '../components/QueryState';
 import type { FeatureModule } from './modules/types';
 
@@ -39,7 +48,9 @@ class ModuleErrorBoundary extends Component<BoundaryProps, BoundaryState> {
     if (!error) return this.props.children;
     return (
       <div className="rounded-lg border border-red-900/60 bg-red-950/25 p-4 text-sm">
-        <div className="font-semibold text-red-300">Module &ldquo;{this.props.moduleId}&rdquo; failed to load</div>
+        <div className="font-semibold text-red-300">
+          Module &ldquo;{this.props.moduleId}&rdquo; failed to load
+        </div>
         <p className="mt-1 font-mono text-xs text-red-400/80">{error.message}</p>
         <p className="mt-2 text-xs text-zinc-400">
           The rest of the app is unaffected. Retry re-fetches this module only.

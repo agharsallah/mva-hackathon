@@ -12,12 +12,13 @@
  */
 
 import { useMemo, useState } from 'react';
-import { DataTable, type Column } from '../../components/DataTable';
-import { Loaded } from '../../components/QueryState';
-import { Toggle } from '../../components/Controls';
+
 import { usePanelAnnotations } from '../../api/hooks';
 import type { PanelAnnotationRow } from '../../api/types';
 import type { VariantRef } from '../../api/types/probebuild';
+import { Toggle } from '../../components/Controls';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Loaded } from '../../components/QueryState';
 import { impactColor } from '../../lib/palette';
 import { parseLines, variantLabel } from './probePayload';
 
@@ -123,10 +124,14 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
       {pending && (
         <div className="flex items-center justify-between gap-2 rounded-lg border border-amber-800/60 bg-amber-950/25 px-3 py-1.5 text-[11px] text-amber-300">
           <span>
-            pairing with <span className="font-mono">{variantLabel(pending.ref)}</span> — pick the second
-            allele
+            pairing with <span className="font-mono">{variantLabel(pending.ref)}</span> — pick the
+            second allele
           </span>
-          <button type="button" onClick={() => setPending(null)} className="text-amber-400 underline">
+          <button
+            type="button"
+            onClick={() => setPending(null)}
+            className="text-amber-400 underline"
+          >
             cancel
           </button>
         </div>
@@ -134,7 +139,9 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
 
       <Loaded query={annotations} height={220}>
         {(rows) => {
-          const shown = wide ? rows : rows.filter((r) => r.is_rare_recessive && r.is_protein_altering);
+          const shown = wide
+            ? rows
+            : rows.filter((r) => r.is_rare_recessive && r.is_protein_altering);
           return (
             <DataTable
               rows={shown}
@@ -143,7 +150,9 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
               maxHeight={260}
               filterable
               filterPlaceholder="gene, consequence…"
-              empty={wide ? 'no annotated panel alleles' : 'no allele is both rare and protein-altering'}
+              empty={
+                wide ? 'no annotated panel alleles' : 'no allele is both rare and protein-altering'
+              }
             />
           );
         }}
@@ -173,7 +182,9 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
           >
             add {good.length || ''} row{good.length === 1 ? '' : 's'}
           </button>
-          {bad.length > 0 && <span className="text-[11px] text-red-400">{bad.length} line(s) rejected</span>}
+          {bad.length > 0 && (
+            <span className="text-[11px] text-red-400">{bad.length} line(s) rejected</span>
+          )}
         </div>
         {bad.length > 0 && (
           <ul className="mt-1 space-y-0.5 text-[11px] text-red-400">

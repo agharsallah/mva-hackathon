@@ -15,16 +15,18 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Loaded } from '../../components/QueryState';
-import { Select } from '../../components/Controls';
-import { Callout } from '../../components/Explainer';
+
+import type { Origin } from '../../api/client';
 import { useHetPairs, usePanelGenes } from '../../api/hooks';
 import type { PanelHetPairs, PanelHetVariant } from '../../api/types';
-import type { Origin } from '../../api/client';
+import { Select } from '../../components/Controls';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Callout } from '../../components/Explainer';
+import { Loaded } from '../../components/QueryState';
 import { C } from '../../lib/palette';
 import { known, useUrlState } from '../../lib/urlstate';
-import { Comparison, Flag } from './PairFields';
+import { DEFAULT_GENE } from '../panel/LocusExplorer';
+import { useProbeBuild } from '../probes/useProbeBuild';
 import {
   defaultSelection,
   optionLabel,
@@ -34,8 +36,7 @@ import {
   probesPairHref,
   toRef,
 } from './comparator';
-import { useProbeBuild } from '../probes/useProbeBuild';
-import { DEFAULT_GENE } from '../panel/LocusExplorer';
+import { Comparison, Flag } from './PairFields';
 
 /**
  * The gene selection is keyed `cmp.gene`, distinct from the Panel page's `gene`, because
@@ -48,7 +49,11 @@ export function PairComparator() {
   const [, setB] = useUrlState('cmp.b', '');
 
   const options = (genes.data?.data ?? []).map((g) => ({ value: g.gene, label: g.gene }));
-  const gene = known(param, options.map((o) => o.value), DEFAULT_GENE);
+  const gene = known(
+    param,
+    options.map((o) => o.value),
+    DEFAULT_GENE,
+  );
   const q = useHetPairs(gene);
 
   return (
@@ -70,20 +75,21 @@ export function PairComparator() {
       }
       legend={
         <>
-          Two columns, one per selected allele, over the same fields. The colour of a field is what it
-          means, not what it is: <Chip color={C.broken}>red = HIGH impact</Chip> (the variant truncates
-          the protein), <Chip color={C.decision}>yellow = MODERATE</Chip> (it swaps an amino acid),{' '}
-          <Chip color={C.machinery}>blue = LOW / MODIFIER</Chip> (silent or non-coding), and{' '}
-          <Chip color={C.absent}>grey = not measured</Chip>, which is never the same as zero — an allele
-          absent from gnomAD reads <span className="font-mono">novel</span>, the rarest thing a variant
-          can be. The verdict bar at the bottom is the pair, not the alleles:{' '}
-          <Chip color={C.good}>green = resolved trans</Chip> (opposite copies — a proven compound
-          heterozygote), <Chip color={C.broken}>red = resolved cis</Chip> (same copy, so one intact copy
-          remains and the pair is excluded), <Chip color={C.decision}>yellow = auto-trans</Chip> (the two
-          ALT alleles of one <span className="font-mono">1/2</span> record, proven by genotype alone), and{' '}
-          <Chip color={C.absent}>grey = unknown</Chip>, which is the honest and by far the most common
-          state. The VAF cell draws the 0.5 line, where one of two chromosome copies puts a heterozygous
-          allele.
+          Two columns, one per selected allele, over the same fields. The colour of a field is what
+          it means, not what it is: <Chip color={C.broken}>red = HIGH impact</Chip> (the variant
+          truncates the protein), <Chip color={C.decision}>yellow = MODERATE</Chip> (it swaps an
+          amino acid), <Chip color={C.machinery}>blue = LOW / MODIFIER</Chip> (silent or
+          non-coding), and <Chip color={C.absent}>grey = not measured</Chip>, which is never the
+          same as zero — an allele absent from gnomAD reads <span className="font-mono">novel</span>
+          , the rarest thing a variant can be. The verdict bar at the bottom is the pair, not the
+          alleles: <Chip color={C.good}>green = resolved trans</Chip> (opposite copies — a proven
+          compound heterozygote), <Chip color={C.broken}>red = resolved cis</Chip> (same copy, so
+          one intact copy remains and the pair is excluded),{' '}
+          <Chip color={C.decision}>yellow = auto-trans</Chip> (the two ALT alleles of one{' '}
+          <span className="font-mono">1/2</span> record, proven by genotype alone), and{' '}
+          <Chip color={C.absent}>grey = unknown</Chip>, which is the honest and by far the most
+          common state. The VAF cell draws the 0.5 line, where one of two chromosome copies puts a
+          heterozygous allele.
         </>
       }
       reading="A pair earns a submission rank when both halves are rare and both are protein-altering, and phase has not excluded it. Cis is the only verdict that kills a pair outright; unknown does not, and grey cells are where the answer most likely is, because short-read phasing simply never reached across them."
@@ -110,7 +116,8 @@ function Card({ payload, origin }: { payload: PanelHetPairs; origin: Origin }) {
   if (variants.length < 2) {
     return (
       <p className="p-8 text-center text-sm text-zinc-500">
-        {gene} has {variants.length === 0 ? 'no' : 'one'} heterozygous PASS allele, and a pair needs two.
+        {gene} has {variants.length === 0 ? 'no' : 'one'} heterozygous PASS allele, and a pair needs
+        two.
       </p>
     );
   }
@@ -125,14 +132,27 @@ function Card({ payload, origin }: { payload: PanelHetPairs; origin: Origin }) {
   return (
     <div className="space-y-3">
       <div className="grid gap-2 sm:grid-cols-2">
-        <Picker label="variant A" value={String(i)} options={options} onChange={setA} accent="text-blue-300" />
-        <Picker label="variant B" value={String(j)} options={options} onChange={setB} accent="text-purple-300" />
+        <Picker
+          label="variant A"
+          value={String(i)}
+          options={options}
+          onChange={setA}
+          accent="text-blue-300"
+        />
+        <Picker
+          label="variant B"
+          value={String(j)}
+          options={options}
+          onChange={setB}
+          accent="text-purple-300"
+        />
       </div>
 
       {!distinct && (
         <p className="rounded-lg border border-amber-800/60 bg-amber-950/25 p-2.5 text-[11px] text-amber-300">
-          Both columns point at the same allele. A pair is two different alleles — the scorer holds a row
-          as a <em>set</em>, so a row whose two halves are identical is read as a single-variant row.
+          Both columns point at the same allele. A pair is two different alleles — the scorer holds
+          a row as a <em>set</em>, so a row whose two halves are identical is read as a
+          single-variant row.
         </p>
       )}
 
@@ -159,7 +179,9 @@ function Picker({
 }) {
   return (
     <label className="flex flex-col gap-1 rounded-lg border border-zinc-800 bg-zinc-950/40 p-2.5">
-      <span className={`text-[11px] font-semibold uppercase tracking-wider ${accent}`}>{label}</span>
+      <span className={`text-[11px] font-semibold uppercase tracking-wider ${accent}`}>
+        {label}
+      </span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
@@ -185,17 +207,30 @@ function VerdictBar({
   check: ReturnType<typeof pairCheck>;
 }) {
   return (
-    <div className="rounded-lg border p-3" style={{ borderColor: `${verdict.color}66`, background: `${verdict.color}12` }}>
+    <div
+      className="rounded-lg border p-3"
+      style={{ borderColor: `${verdict.color}66`, background: `${verdict.color}12` }}
+    >
       <div className="flex flex-wrap items-center gap-2">
-        <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: verdict.color }} />
-        <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: verdict.color }}>
+        <span
+          className="inline-block h-2.5 w-2.5 rounded-sm"
+          style={{ background: verdict.color }}
+        />
+        <span
+          className="text-xs font-semibold uppercase tracking-wider"
+          style={{ color: verdict.color }}
+        >
           {verdict.headline}
         </span>
       </div>
       <p className="mt-1.5 text-xs leading-relaxed text-zinc-300">{verdict.meaning}</p>
       <div className="mt-2 flex flex-wrap gap-1.5">
         <Flag on={check.bothRare} yes="both rare" no="one half is too common" />
-        <Flag on={check.bothProteinAltering} yes="both protein-altering" no="one half cannot change the protein" />
+        <Flag
+          on={check.bothProteinAltering}
+          yes="both protein-altering"
+          no="one half cannot change the protein"
+        />
         <Flag on={check.notCis} yes="not excluded by phase" no="excluded by phase" />
         <Flag on={check.distinct} yes="two distinct alleles" no="the same allele twice" />
       </div>
@@ -288,21 +323,24 @@ function HandOff({
         </button>
         <span className="text-[11px] text-zinc-500">
           building spends nothing — the row is rendered by{' '}
-          <span className="font-mono">mva.pipeline.submission</span> at epcr 0.99, never assembled here
+          <span className="font-mono">mva.pipeline.submission</span> at epcr 0.99, never assembled
+          here
         </span>
       </div>
 
       {!live && (
         <p className="rounded-md border border-amber-800/60 bg-amber-950/25 p-2.5 text-[11px] leading-relaxed text-amber-300">
-          {origin === 'fixture' ? FIXTURE_NOTE : 'Pick two different alleles before handing a pair over.'}
+          {origin === 'fixture'
+            ? FIXTURE_NOTE
+            : 'Pick two different alleles before handing a pair over.'}
         </p>
       )}
 
       {error && (
         <p className="rounded-md border border-red-900/60 bg-red-950/30 p-2.5 text-[11px] leading-relaxed text-red-300">
           The API did not answer: <span className="font-mono">{error.message}</span>. Nothing was
-          validated, and no CSV is shown — a hand-built row is exactly the mistake this button exists to
-          prevent.
+          validated, and no CSV is shown — a hand-built row is exactly the mistake this button
+          exists to prevent.
         </p>
       )}
 
@@ -333,14 +371,14 @@ function Worth() {
   return (
     <Callout tone="neutral" title="What makes a pair worth probing">
       Three conditions, and they are cheap to check here because both halves are on screen at once.{' '}
-      <strong>Both rare</strong> — a recessive cause needs two rare alleles, so one common half sinks the
-      pair however damaging the other looks. <strong>Both protein-altering</strong> — a silent or
-      non-coding half breaks nothing, so the second copy of the gene still works. <strong>Trans or
-      unknown, never cis</strong> — cis puts both hits on one copy and leaves an intact one, which is the
-      only verdict that excludes a pair outright. On the cost: building a row and copying it spends
-      nothing at all, and you can do it as many times as you like. Uploading a file to the challenge
-      Space spends <strong>1 of 18</strong> submissions, and that is the only irreversible action in the
-      whole workflow.
+      <strong>Both rare</strong> — a recessive cause needs two rare alleles, so one common half
+      sinks the pair however damaging the other looks. <strong>Both protein-altering</strong> — a
+      silent or non-coding half breaks nothing, so the second copy of the gene still works.{' '}
+      <strong>Trans or unknown, never cis</strong> — cis puts both hits on one copy and leaves an
+      intact one, which is the only verdict that excludes a pair outright. On the cost: building a
+      row and copying it spends nothing at all, and you can do it as many times as you like.
+      Uploading a file to the challenge Space spends <strong>1 of 18</strong> submissions, and that
+      is the only irreversible action in the whole workflow.
     </Callout>
   );
 }

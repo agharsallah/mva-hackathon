@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
-import { Select } from '../../components/Controls';
-import { Callout } from '../../components/Explainer';
-import { DataTable, type Column } from '../../components/DataTable';
+
 import { usePanelBackground } from '../../api/hooks';
 import type { PanelBackgroundRow } from '../../api/types';
-import { C } from '../../lib/palette';
+import { Select } from '../../components/Controls';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Callout } from '../../components/Explainer';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * Gene-versus-background: is each panel gene ordinary for where it sits?
@@ -68,8 +69,16 @@ export function GeneBackground() {
     );
 
   const columns: Column<PanelBackgroundRow>[] = [
-    { key: 'gene', header: 'gene', render: (r) => <span className="font-mono text-zinc-100">{r.gene}</span> },
-    { key: 'chrom', header: 'contig', render: (r) => <span className="text-zinc-400">{r.chrom}</span> },
+    {
+      key: 'gene',
+      header: 'gene',
+      render: (r) => <span className="font-mono text-zinc-100">{r.gene}</span>,
+    },
+    {
+      key: 'chrom',
+      header: 'contig',
+      render: (r) => <span className="text-zinc-400">{r.chrom}</span>,
+    },
     {
       key: 'gene_variants_per_mb',
       header: 'gene /Mb',
@@ -149,15 +158,15 @@ export function GeneBackground() {
       legend={
         <>
           One row per gene, x is a <strong>z-score</strong>: how many standard deviations the
-          gene&rsquo;s value sits from the mean of the background&rsquo;s 1 Mb windows (one window is one
-          megabase, so a window&rsquo;s record count is itself a density in variants/Mb).{' '}
+          gene&rsquo;s value sits from the mean of the background&rsquo;s 1 Mb windows (one window
+          is one megabase, so a window&rsquo;s record count is itself a density in variants/Mb).{' '}
           <Chip color={C.machinery}>circles</Chip> are variant density,{' '}
           <Chip color={C.machinery}>diamonds</Chip> are PASS share. The{' '}
           <span className="text-zinc-500">grey band</span> is |z| &lt; {Z_BAND} — ordinary for this
-          background. Outside it a point turns <Chip color={C.decision}>yellow</Chip> (2–{Z_STRONG} σ) and
-          then <Chip color={C.broken}>red</Chip> (past {Z_STRONG} σ). A{' '}
-          <Chip color={C.absent}>grey point</Chip> would mean the background had no usable spread, so no
-          z exists — never a z of zero. Hover carries the raw numbers behind each point.{' '}
+          background. Outside it a point turns <Chip color={C.decision}>yellow</Chip> (2–{Z_STRONG}{' '}
+          σ) and then <Chip color={C.broken}>red</Chip> (past {Z_STRONG} σ). A{' '}
+          <Chip color={C.absent}>grey point</Chip> would mean the background had no usable spread,
+          so no z exists — never a z of zero. Hover carries the raw numbers behind each point.{' '}
           <strong>
             A low PASS-share z is a callability statement — mappability, repeats, telomere-proximal
             sequence — never a pathogenicity one.
@@ -237,7 +246,14 @@ export function GeneBackground() {
                     'PASS share (callability)',
                     'diamond',
                     zPass,
-                    (r) => [r.chrom, r.gene_pct_pass, meanPass(r) ?? NaN, sdPass(r) ?? NaN, r.n_pass, r.n_all],
+                    (r) => [
+                      r.chrom,
+                      r.gene_pct_pass,
+                      meanPass(r) ?? NaN,
+                      sdPass(r) ?? NaN,
+                      r.n_pass,
+                      r.n_all,
+                    ],
                     '<b>%{y}</b> · PASS share<br>%{customdata[1]:.1f} % ' +
                       '(%{customdata[4]:,} of %{customdata[5]:,} records)<br>' +
                       'background %{customdata[0]} windows: %{customdata[2]:.1f} ± %{customdata[3]:.1f} %<br>' +
@@ -248,7 +264,10 @@ export function GeneBackground() {
                   margin: { l: 78, r: 24, t: 8, b: 46 },
                   hovermode: 'closest',
                   xaxis: {
-                    title: { text: 'z — standard deviations from the background mean', font: { color: C.inkDim, size: 12 } },
+                    title: {
+                      text: 'z — standard deviations from the background mean',
+                      font: { color: C.inkDim, size: 12 },
+                    },
                     range: [-extent, extent],
                     zeroline: false,
                     gridcolor: C.grid,
@@ -311,22 +330,25 @@ export function GeneBackground() {
                 })}
               />
               <Callout tone="decision" title="What the numbers actually show">
-                Against its own chromosome, <strong>TRIP13</strong> is the only gene whose PASS share
-                leaves the band, and it leaves it hard: 50 % of its records pass where chr5&rsquo;s windows
-                average 96.3 % ± 11.5, i.e. z = &minus;4.02 (&minus;3.54 against the whole genome). No other
-                panel gene is beyond ±0.5 on that axis. This is the predicted result — TRIP13 sits in
-                telomere-proximal chr5 sequence and 6 of its 12 records are suppressed, mostly by the
-                mapping-quality filter — so read it as <em>the evidence there is thin and hard to trust</em>,
-                in either direction, never as evidence of pathogenicity.
+                Against its own chromosome, <strong>TRIP13</strong> is the only gene whose PASS
+                share leaves the band, and it leaves it hard: 50 % of its records pass where
+                chr5&rsquo;s windows average 96.3 % ± 11.5, i.e. z = &minus;4.02 (&minus;3.54
+                against the whole genome). No other panel gene is beyond ±0.5 on that axis. This is
+                the predicted result — TRIP13 sits in telomere-proximal chr5 sequence and 6 of its
+                12 records are suppressed, mostly by the mapping-quality filter — so read it as{' '}
+                <em>the evidence there is thin and hard to trust</em>, in either direction, never as
+                evidence of pathogenicity.
                 <br />
                 <br />
-                The density axis says something different and easy to over-read: <em>every</em> panel gene
-                sits at or below its chromosome&rsquo;s window mean, and TRIP13 (&minus;3.07) and CEP57 (&minus;2.95)
-                are past two sigma. That is mostly a property of gene bodies, not of these genes — a 1 Mb
-                window of the genome is mostly intergenic and carries more variation than the coding-plus-intronic
-                span of a gene. It is also measured over spans well under one megabase (TRIP13&rsquo;s is 0.067 Mb),
-                so the per-Mb figure is an extrapolation from a small interval and noisier than the windows it
-                is compared against. The comparison is honest about direction, not about magnitude.
+                The density axis says something different and easy to over-read: <em>every</em>{' '}
+                panel gene sits at or below its chromosome&rsquo;s window mean, and TRIP13
+                (&minus;3.07) and CEP57 (&minus;2.95) are past two sigma. That is mostly a property
+                of gene bodies, not of these genes — a 1 Mb window of the genome is mostly
+                intergenic and carries more variation than the coding-plus-intronic span of a gene.
+                It is also measured over spans well under one megabase (TRIP13&rsquo;s is 0.067 Mb),
+                so the per-Mb figure is an extrapolation from a small interval and noisier than the
+                windows it is compared against. The comparison is honest about direction, not about
+                magnitude.
               </Callout>
               <DataTable rows={[...rows]} columns={columns} rowKey={(r) => r.gene} />
             </div>

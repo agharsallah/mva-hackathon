@@ -1,6 +1,6 @@
 import type { PanelHetPair, PanelHetPairs, PanelHetVariant, VariantImpact } from '../../api/types';
-import { prng } from '../prng';
 import { rows } from '../loader';
+import { prng } from '../prng';
 
 /**
  * FIXTURE — the compound-heterozygous pair matrix. `data/panel-het-pairs.json` carries the

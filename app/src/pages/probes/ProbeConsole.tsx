@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
-import { jobStateColor } from '../../lib/palette';
+
 import { dec } from '../../lib/format';
-import { isUpstreamDown, parseProbes, useProbeJob } from './useProbeJob';
+import { jobStateColor } from '../../lib/palette';
 import { ProbeResults } from './ProbeResults';
 import { UpstreamDownBanner } from './UpstreamDownBanner';
+import { isUpstreamDown, parseProbes, useProbeJob } from './useProbeJob';
 
 const PLACEHOLDER = `# one probe per line:  name  SEQUENCE   (name optional)
 # only A, C, G, T — 12 to 200 letters
@@ -47,7 +48,11 @@ export function ProbeConsole() {
               onClick={() => submit(valid.map((p) => ({ name: p.name, sequence: p.sequence })))}
               className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
             >
-              {submitting ? 'submitting…' : running ? 'running…' : `count ${valid.length || ''} probe${valid.length === 1 ? '' : 's'}`}
+              {submitting
+                ? 'submitting…'
+                : running
+                  ? 'running…'
+                  : `count ${valid.length || ''} probe${valid.length === 1 ? '' : 's'}`}
             </button>
             {running && (
               <button
@@ -67,7 +72,9 @@ export function ProbeConsole() {
             )}
             <span className="text-[11px] text-zinc-500">
               {valid.length} valid
-              {invalid.length > 0 && <span className="text-red-400"> · {invalid.length} rejected</span>}
+              {invalid.length > 0 && (
+                <span className="text-red-400"> · {invalid.length} rejected</span>
+              )}
             </span>
           </div>
           {invalid.length > 0 && (
@@ -85,8 +92,9 @@ export function ProbeConsole() {
           <div className="text-xs font-medium text-zinc-300">Job</div>
           {!job && !error && (
             <p className="text-[11px] leading-relaxed text-zinc-500">
-              No job submitted. A count runs one pass over the full store — about 5.6 minutes for 20 probes on
-              the server, so the browser follows it with a 60 s server-side long-poll rather than polling.
+              No job submitted. A count runs one pass over the full store — about 5.6 minutes for 20
+              probes on the server, so the browser follows it with a 60 s server-side long-poll
+              rather than polling.
             </p>
           )}
           {job && (
@@ -94,7 +102,10 @@ export function ProbeConsole() {
               <div className="flex items-center gap-2">
                 <span
                   className="rounded px-1.5 py-0.5 text-[10px] font-semibold uppercase"
-                  style={{ background: `${jobStateColor(job.state)}22`, color: jobStateColor(job.state) }}
+                  style={{
+                    background: `${jobStateColor(job.state)}22`,
+                    color: jobStateColor(job.state),
+                  }}
                 >
                   {job.state}
                 </span>

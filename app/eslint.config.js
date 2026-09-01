@@ -1,11 +1,11 @@
-import js from '@eslint/js';
-import globals from 'globals';
 import babelParser from '@babel/eslint-parser';
+import js from '@eslint/js';
+import prettierConfig from 'eslint-config-prettier';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
-import jsxA11y from 'eslint-plugin-jsx-a11y';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import prettierConfig from 'eslint-config-prettier';
+import globals from 'globals';
 
 // NOTE on the parser choice: `typescript-eslint` (all published 8.x releases, checked up
 // to 8.69.0) hard-fails at import time against TypeScript 7.x — this repo pins

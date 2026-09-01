@@ -8,9 +8,9 @@
  * if an edit breaks the descent.
  */
 
+import type { FindingType } from '../../api/types/probebuild';
 import type { DraftRow } from './probePayload';
 import { MAX_ROWS, variantLabel } from './probePayload';
-import type { FindingType } from '../../api/types/probebuild';
 
 export interface PayloadTableProps {
   rows: DraftRow[];
@@ -27,8 +27,8 @@ export function PayloadTable({ rows, onMove, onRemove, onPatch }: PayloadTablePr
   if (rows.length === 0) {
     return (
       <div className="rounded-lg border border-dashed border-zinc-800 p-6 text-center text-sm text-zinc-500">
-        Nothing staged. Add a pair row for each compound-het hypothesis, or single rows to fish for a
-        partial match.
+        Nothing staged. Add a pair row for each compound-het hypothesis, or single rows to fish for
+        a partial match.
       </div>
     );
   }

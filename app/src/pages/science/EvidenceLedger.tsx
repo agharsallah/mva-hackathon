@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react';
-import { DataTable, type Column } from '../../components/DataTable';
-import { TextFilter } from '../../components/Controls';
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Loaded } from '../../components/QueryState';
+
 import { useEvidence } from '../../api/hooks';
 import type { EvidenceRow } from '../../api/types';
-import { C } from '../../lib/palette';
+import { TextFilter } from '../../components/Controls';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { Loaded } from '../../components/QueryState';
 import { dec, iso } from '../../lib/format';
-import { EmptyRegister, directionColor } from './register';
+import { C } from '../../lib/palette';
+import { directionColor, EmptyRegister } from './register';
 
 /**
  * The evidence ledger: one row per sourced observation, tagged with the claim it moves.
@@ -28,9 +29,9 @@ export function EvidenceLedger() {
           <Chip color={C.good}>green = supports the claim</Chip>,{' '}
           <Chip color={C.broken}>red = refutes it</Chip>,{' '}
           <Chip color={C.absent}>grey = neutral</Chip>. The bar under <em>strength</em> is the human
-          judgement of how much the observation moves the claim (0–1), not a measured quantity. A dash in{' '}
-          <em>lineage</em> means the observation is not tied to one derivation — the register carries the
-          gap rather than inventing an edge.
+          judgement of how much the observation moves the claim (0–1), not a measured quantity. A
+          dash in <em>lineage</em> means the observation is not tied to one derivation — the
+          register carries the gap rather than inventing an edge.
         </>
       }
       reading="Filter by hypothesis id to see one claim's whole case, for and against, in the order it accumulated."
@@ -56,9 +57,10 @@ export function EvidenceLedger() {
               title="No evidence yet — nothing has been claimed for it to bear on"
               verb="mva-science evidence-add"
             >
-              Evidence is bound to a hypothesis, so the ledger cannot open before the board does. Every row
-              that lands here must name its source — a methodology entry, a table, a PMID, a ClinVar id or
-              an oracle reply — because an unsourced observation is refused rather than recorded.
+              Evidence is bound to a hypothesis, so the ledger cannot open before the board does.
+              Every row that lands here must name its source — a methodology entry, a table, a PMID,
+              a ClinVar id or an oracle reply — because an unsourced observation is refused rather
+              than recorded.
             </EmptyRegister>
           ) : (
             <Ledger rows={register.rows} filter={filter} />
@@ -99,8 +101,14 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
       key: 'direction',
       header: 'direction',
       render: (r) => (
-        <span className="inline-flex items-center gap-1.5 font-medium" style={{ color: directionColor(r.direction) }}>
-          <span className="h-2 w-2 rounded-sm" style={{ background: directionColor(r.direction) }} />
+        <span
+          className="inline-flex items-center gap-1.5 font-medium"
+          style={{ color: directionColor(r.direction) }}
+        >
+          <span
+            className="h-2 w-2 rounded-sm"
+            style={{ background: directionColor(r.direction) }}
+          />
           {r.direction}
         </span>
       ),
@@ -123,8 +131,16 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
         </span>
       ),
     },
-    { key: 'kind', header: 'kind', render: (r) => <span className="font-mono text-zinc-400">{r.kind}</span> },
-    { key: 'claim', header: 'observation', render: (r) => <span className="text-zinc-300">{r.claim}</span> },
+    {
+      key: 'kind',
+      header: 'kind',
+      render: (r) => <span className="font-mono text-zinc-400">{r.kind}</span>,
+    },
+    {
+      key: 'claim',
+      header: 'observation',
+      render: (r) => <span className="text-zinc-300">{r.claim}</span>,
+    },
     {
       key: 'source',
       header: 'source',
@@ -140,7 +156,9 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
     {
       key: 'at',
       header: 'recorded',
-      render: (r) => <span className="font-mono text-[11px] text-zinc-600">{iso(r.recorded_at)}</span>,
+      render: (r) => (
+        <span className="font-mono text-[11px] text-zinc-600">{iso(r.recorded_at)}</span>
+      ),
     },
   ];
 

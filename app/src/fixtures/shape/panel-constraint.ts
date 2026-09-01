@@ -30,7 +30,19 @@ type Row = [
   note: string,
 ];
 
-function build([gene, chrom, nAll, nPass, loeuf, pli, misZ, lofObs, lofExp, clinvar, note]: Row): PanelConstraintRow {
+function build([
+  gene,
+  chrom,
+  nAll,
+  nPass,
+  loeuf,
+  pli,
+  misZ,
+  lofObs,
+  lofExp,
+  clinvar,
+  note,
+]: Row): PanelConstraintRow {
   return {
     gene,
     chrom,

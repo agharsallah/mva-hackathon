@@ -1,11 +1,11 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
-import { DataTable, type Column } from '../../components/DataTable';
 import { useObservedExpected } from '../../api/hooks';
 import type { ObservedExpectedRow } from '../../api/types';
-import { C, oeVerdictColor } from '../../lib/palette';
+import { type Column, DataTable } from '../../components/DataTable';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { int } from '../../lib/format';
+import { C, oeVerdictColor } from '../../lib/palette';
 
 /**
  * Observed against published healthy-genome expectations.
@@ -20,7 +20,11 @@ export function ObservedExpected() {
   const q = useObservedExpected();
 
   const columns: Column<ObservedExpectedRow>[] = [
-    { key: 'label', header: 'metric', render: (r) => <span className="text-zinc-200">{r.label}</span> },
+    {
+      key: 'label',
+      header: 'metric',
+      render: (r) => <span className="text-zinc-200">{r.label}</span>,
+    },
     {
       key: 'observed',
       header: 'observed',
@@ -51,7 +55,11 @@ export function ObservedExpected() {
         </span>
       ),
     },
-    { key: 'source', header: 'where the expectation comes from', render: (r) => <span className="text-zinc-400">{r.source}</span> },
+    {
+      key: 'source',
+      header: 'where the expectation comes from',
+      render: (r) => <span className="text-zinc-400">{r.source}</span>,
+    },
   ];
 
   return (
@@ -59,13 +67,14 @@ export function ObservedExpected() {
       title="Observed against published healthy-genome expectations"
       legend={
         <>
-          One row per QC metric. The <Chip color={C.machineryDim}>grey-blue bar</Chip> is the published expected
-          range and the tick <span style={{ color: C.inkDim }}>│</span> marks a point estimate (where the range
-          has no width). The marker is what this callset actually measured:{' '}
-          <Chip color={C.good}>within the band</Chip> ·{' '}
-          <Chip color={C.broken}>above or below it</Chip> · <Chip color={C.absent}>unknown (not measured)</Chip>.
-          The x axis is each metric <em>relative to the midpoint of its own expected band</em> — 1.0 is dead
-          centre — because the metrics do not share a unit. Real values and units are in the table below.
+          One row per QC metric. The <Chip color={C.machineryDim}>grey-blue bar</Chip> is the
+          published expected range and the tick <span style={{ color: C.inkDim }}>│</span> marks a
+          point estimate (where the range has no width). The marker is what this callset actually
+          measured: <Chip color={C.good}>within the band</Chip> ·{' '}
+          <Chip color={C.broken}>above or below it</Chip> ·{' '}
+          <Chip color={C.absent}>unknown (not measured)</Chip>. The x axis is each metric{' '}
+          <em>relative to the midpoint of its own expected band</em> — 1.0 is dead centre — because
+          the metrics do not share a unit. Real values and units are in the table below.
         </>
       }
       reading="Agreement is evidence the callset is technically sound and its biology can be believed. A metric outside its band is not automatically wrong, but it has to be explained before any variant call resting on it is trusted."
@@ -77,7 +86,11 @@ export function ObservedExpected() {
       <Loaded query={q} height={420}>
         {(rows) => {
           if (rows.length === 0) {
-            return <p className="p-6 text-center text-sm text-zinc-500">no comparable metrics returned</p>;
+            return (
+              <p className="p-6 text-center text-sm text-zinc-500">
+                no comparable metrics returned
+              </p>
+            );
           }
           const counts = (v: string) => rows.filter((r) => r.verdict === v).length;
           return (
@@ -85,8 +98,10 @@ export function ObservedExpected() {
               <Dumbbell rows={rows} />
               <p className="text-[11px] text-zinc-500">
                 <span className="text-emerald-400">{int(counts('within'))} within</span> ·{' '}
-                <span className="text-red-400">{int(counts('above') + counts('below'))} outside</span> ·{' '}
-                <span className="text-zinc-400">{int(counts('unknown'))} not measured</span>
+                <span className="text-red-400">
+                  {int(counts('above') + counts('below'))} outside
+                </span>{' '}
+                · <span className="text-zinc-400">{int(counts('unknown'))} not measured</span>
               </p>
               <DataTable rows={rows} columns={columns} rowKey={(r) => r.metric} />
             </div>
@@ -127,7 +142,9 @@ function Dumbbell({ rows }: { rows: ObservedExpectedRow[] }) {
   const custom = (r: ObservedExpectedRow) => [
     r.label,
     num(r.observed),
-    r.expected_low === r.expected_high ? num(r.expected_low) : `${num(r.expected_low)} – ${num(r.expected_high)}`,
+    r.expected_low === r.expected_high
+      ? num(r.expected_low)
+      : `${num(r.expected_low)} – ${num(r.expected_high)}`,
     r.unit,
     r.verdict,
     r.source,
@@ -153,7 +170,12 @@ function Dumbbell({ rows }: { rows: ObservedExpectedRow[] }) {
           name: 'expected point estimate',
           x: points.map((r) => rel(r.expected_low, r)),
           y: points.map((r) => r.label),
-          marker: { color: C.inkDim, size: 18, symbol: 'line-ns-open', line: { width: 2, color: C.inkDim } },
+          marker: {
+            color: C.inkDim,
+            size: 18,
+            symbol: 'line-ns-open',
+            line: { width: 2, color: C.inkDim },
+          },
           hoverinfo: 'skip',
         },
         {
@@ -175,7 +197,10 @@ function Dumbbell({ rows }: { rows: ObservedExpectedRow[] }) {
       layout={baseLayout({
         margin: { l: 210, r: 24, t: 10, b: 48 },
         xaxis: {
-          title: { text: 'observed ÷ midpoint of the expected band (1.0 = dead centre)', font: { color: C.inkDim, size: 12 } },
+          title: {
+            text: 'observed ÷ midpoint of the expected band (1.0 = dead centre)',
+            font: { color: C.inkDim, size: 12 },
+          },
           gridcolor: C.grid,
           zerolinecolor: C.grid,
           tickfont: { color: C.inkDim, size: 11 },

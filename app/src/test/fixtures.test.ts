@@ -8,10 +8,12 @@
  */
 
 import { createHash } from 'node:crypto';
+
 import { describe, expect, it } from 'vitest';
+
 import { fixtureFor, fixturePaths } from '../fixtures';
 import hashes from './fixtureHashes.json';
-import { MATRIX, key } from './fixtureMatrix';
+import { key, MATRIX } from './fixtureMatrix';
 
 const digest = (v: unknown): string =>
   createHash('sha256').update(JSON.stringify(v)).digest('hex').slice(0, 16);

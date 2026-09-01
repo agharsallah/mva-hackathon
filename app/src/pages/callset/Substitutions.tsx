@@ -1,9 +1,9 @@
-import { Chip, Exhibit } from '../../components/Exhibit';
-import { Plot, baseLayout } from '../../components/Plot';
-import { Loaded } from '../../components/QueryState';
 import { useSubstitutions, useTsTv } from '../../api/hooks';
-import { C } from '../../lib/palette';
+import { Chip, Exhibit } from '../../components/Exhibit';
+import { baseLayout, Plot } from '../../components/Plot';
+import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * Substitution spectrum. Chemistry, not biology, sets the expectation: C→T and its
@@ -20,10 +20,12 @@ export function Substitutions() {
       legend={
         <>
           Twelve possible single-letter swaps.{' '}
-          <Chip color={C.good}>transition (A↔G or C↔T — chemically easy, expected to dominate)</Chip> ·{' '}
-          <Chip color={C.machinery}>transversion (every other swap)</Chip>. Bar height = record count. The
-          dashed <span style={{ color: C.decision }}>yellow</span> line is the mean transversion level, for
-          scale.
+          <Chip color={C.good}>
+            transition (A↔G or C↔T — chemically easy, expected to dominate)
+          </Chip>{' '}
+          · <Chip color={C.machinery}>transversion (every other swap)</Chip>. Bar height = record
+          count. The dashed <span style={{ color: C.decision }}>yellow</span> line is the mean
+          transversion level, for scale.
         </>
       }
       reading="C>T and G>A are the two tall bars — the same event seen from either DNA strand. Ts/Tv 1.94 is squarely in the normal human whole-genome range, so the callset is not artefact-driven."
@@ -35,7 +37,8 @@ export function Substitutions() {
       <Loaded query={q} height={340}>
         {(rows) => {
           const transversions = rows.filter((r) => !r.is_transition);
-          const meanTv = transversions.reduce((a, r) => a + r.count, 0) / Math.max(1, transversions.length);
+          const meanTv =
+            transversions.reduce((a, r) => a + r.count, 0) / Math.max(1, transversions.length);
           const ordered = [...rows].sort((a, b) => {
             if (a.is_transition !== b.is_transition) return a.is_transition ? -1 : 1;
             return b.count - a.count;
@@ -53,7 +56,9 @@ export function Substitutions() {
                       color: ordered.map((r) => (r.is_transition ? C.good : C.machinery)),
                       line: { width: 0 },
                     },
-                    customdata: ordered.map((r) => (r.is_transition ? 'transition' : 'transversion')),
+                    customdata: ordered.map((r) =>
+                      r.is_transition ? 'transition' : 'transversion',
+                    ),
                     hovertemplate: '%{x} — %{customdata}<br>%{y:,} records<extra></extra>',
                   },
                 ]}
@@ -101,16 +106,20 @@ export function Substitutions() {
               <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-zinc-500">
                 <span>
                   Ts/Tv{' '}
-                  <span className="font-mono text-emerald-400">{dec(t.data?.data.ratio ?? 0, 2)}</span>{' '}
+                  <span className="font-mono text-emerald-400">
+                    {dec(t.data?.data.ratio ?? 0, 2)}
+                  </span>{' '}
                   (expected ≈2.0)
                 </span>
                 {t.data && (
                   <>
                     <span>
-                      transitions <span className="font-mono text-zinc-300">{int(t.data.data.ts)}</span>
+                      transitions{' '}
+                      <span className="font-mono text-zinc-300">{int(t.data.data.ts)}</span>
                     </span>
                     <span>
-                      transversions <span className="font-mono text-zinc-300">{int(t.data.data.tv)}</span>
+                      transversions{' '}
+                      <span className="font-mono text-zinc-300">{int(t.data.data.tv)}</span>
                     </span>
                   </>
                 )}

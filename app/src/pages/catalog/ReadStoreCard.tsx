@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
+
+import { useReadPartitions, useReadRuns } from '../../api/hooks';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Loaded } from '../../components/QueryState';
-import { useReadPartitions, useReadRuns } from '../../api/hooks';
-import { C } from '../../lib/palette';
 import { compact, dec, int } from '../../lib/format';
+import { C } from '../../lib/palette';
 
 /**
  * The read store as one catalogue entry.
@@ -26,9 +27,9 @@ export function ReadStoreCard() {
       title="Derived read store — the FASTQ delivery, rewritten as parquet"
       legend={
         <>
-          One catalogue entry, not a chart. <Chip color={C.raw}>purple = the raw FASTQ input</Chip> ·{' '}
-          <Chip color={C.machinery}>blue = the derived parquet store</Chip>. A <em>partition</em> is one
-          lane × read direction; a <em>shard</em> is one parquet file inside it.{' '}
+          One catalogue entry, not a chart. <Chip color={C.raw}>purple = the raw FASTQ input</Chip>{' '}
+          · <Chip color={C.machinery}>blue = the derived parquet store</Chip>. A <em>partition</em>{' '}
+          is one lane × read direction; a <em>shard</em> is one parquet file inside it.{' '}
           <Chip color={C.decision}>yellow = a field the source table does not carry</Chip>.
         </>
       }
@@ -49,7 +50,12 @@ export function ReadStoreCard() {
 
           const facts: { k: string; v: ReactNode }[] = [
             { k: 'location', v: <span className="font-mono text-zinc-300">s3://mva/reads/</span> },
-            { k: 'format', v: <span className="text-zinc-300">parquet, partitioned by lane × read direction</span> },
+            {
+              k: 'format',
+              v: (
+                <span className="text-zinc-300">parquet, partitioned by lane × read direction</span>
+              ),
+            },
             {
               k: 'shape',
               v: (
@@ -63,7 +69,8 @@ export function ReadStoreCard() {
               k: 'contents',
               v: (
                 <span className="text-zinc-300">
-                  <span className="font-mono text-zinc-100">{int(reads)}</span> reads ({compact(reads)})
+                  <span className="font-mono text-zinc-100">{int(reads)}</span> reads (
+                  {compact(reads)})
                 </span>
               ),
             },
@@ -76,7 +83,9 @@ export function ReadStoreCard() {
               v: (
                 <span className="text-zinc-300">
                   <span className="font-mono text-purple-400">s3://mva/source/*.fastq.gz</span>
-                  {instruments.length > 0 && <span className="text-zinc-500"> · {instruments.join(', ')}</span>}
+                  {instruments.length > 0 && (
+                    <span className="text-zinc-500"> · {instruments.join(', ')}</span>
+                  )}
                 </span>
               ),
             },
@@ -86,7 +95,10 @@ export function ReadStoreCard() {
                 <span className="text-zinc-300">
                   <span className="font-mono text-zinc-100">{engines.join(', ')}</span>
                   {seconds > 0 && (
-                    <span className="text-zinc-500"> · {int(Math.round(seconds / 60))} min of conversion</span>
+                    <span className="text-zinc-500">
+                      {' '}
+                      · {int(Math.round(seconds / 60))} min of conversion
+                    </span>
                   )}
                 </span>
               ) : (

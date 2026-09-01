@@ -1,6 +1,6 @@
 import type { CatalogObjectRow, ReadRunRow } from '../../api/types';
-import { prng } from '../prng';
 import { rows } from '../loader';
+import { prng } from '../prng';
 
 /**
  * FIXTURE — the raw-data inventory, one row per object in the store.
