@@ -135,3 +135,29 @@ export function parseLines(text: string): ParsedLine[] {
   });
   return out;
 }
+
+// --- hand-off from another page ----------------------------------------------
+
+/**
+ * Stage a pair another exhibit handed over in the URL (`/probes?pair=…`).
+ *
+ * The parameter is written by `pages/compare/comparator.ts` as
+ * `chrom:pos:ref:alt+chrom:pos:ref:alt` — deliberately the free-entry grammar above, so the
+ * reader is `parseLines` and there is no second parser to drift from it. A malformed or
+ * duplicate-of-an-existing-row parameter is ignored rather than reported: a stale link is
+ * not a user mistake to correct, and the row it would have added is one click away anyway.
+ */
+export function ingestPairParam(rows: DraftRow[], raw: string | null, label: string): DraftRow[] {
+  if (!raw) return rows;
+  const parsed = parseLines(raw);
+  if (parsed.length !== 1) return rows;
+  const [only] = parsed;
+  if (!only.variant1) return rows;
+  const already = rows.some(
+    (r) =>
+      sameVariant(r.variant1, only.variant1!) &&
+      (only.variant2 ? !!r.variant2 && sameVariant(r.variant2, only.variant2) : !r.variant2),
+  );
+  if (already) return rows;
+  return addRow(rows, only.variant1, only.variant2 ?? null, label);
+}

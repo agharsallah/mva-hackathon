@@ -12,7 +12,8 @@
  * builder never renders a CSV of its own: an unvalidated preview is a file someone uploads.
  */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Callout } from '../../components/Explainer';
 import { CandidatePicker } from './CandidatePicker';
 import { PayloadTable } from './PayloadTable';
@@ -20,12 +21,14 @@ import { downloadCsv, useProbeBuild } from './useProbeBuild';
 import {
   MAX_ROWS,
   addRow,
+  ingestPairParam,
   moveRow,
   patchRow,
   removeRow,
   toRequest,
   type DraftRow,
 } from './probePayload';
+import { PAIR_PARAM } from '../compare/comparator';
 
 const FILENAME = 'track1_submission.csv';
 
@@ -36,6 +39,7 @@ const LOG_COMMAND = `uv run mva-warehouse probe-log --by <member> --type <S|P|F>
 export function ProbeBuilder() {
   const [rows, setRows] = useState<DraftRow[]>([]);
   const [copied, setCopied] = useState(false);
+  const [params, setParams] = useSearchParams();
   const { result, error, building, build, clear } = useProbeBuild();
 
   /** Any edit invalidates the last verdict — a stale "valid" beside changed rows is a lie. */
@@ -44,6 +48,30 @@ export function ProbeBuilder() {
     clear();
     setCopied(false);
   }
+
+  /**
+   * A pair handed over from another exhibit (`/probes?pair=…`, written by the Compare
+   * page's comparator) is staged once and the parameter is dropped, so a reload does not
+   * re-add the row and the address bar stops advertising a payload that is now editable
+   * state. The ref survives React StrictMode's double-mount, which would otherwise stage
+   * the pair twice in development.
+   */
+  const ingested = useRef(false);
+  useEffect(() => {
+    if (ingested.current) return;
+    ingested.current = true;
+    const raw = params.get(PAIR_PARAM);
+    if (!raw) return;
+    setRows((current) => ingestPairParam(current, raw, 'from the pair comparator'));
+    setParams(
+      (prev) => {
+        const out = new URLSearchParams(prev);
+        out.delete(PAIR_PARAM);
+        return out;
+      },
+      { replace: true },
+    );
+  }, [params, setParams]);
 
   const errors = result?.problems.filter((p) => p.severity === 'error') ?? [];
   const warnings = result?.problems.filter((p) => p.severity === 'warning') ?? [];
