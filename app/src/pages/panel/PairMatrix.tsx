@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Plot, baseLayout } from '../../components/Plot';
 import { Loaded } from '../../components/QueryState';
@@ -9,6 +9,8 @@ import { useHetPairs, usePanelGenes } from '../../api/hooks';
 import type { PanelHetPair, PanelHetPairs, PanelHetVariant } from '../../api/types';
 import { C } from '../../lib/palette';
 import { int, pct } from '../../lib/format';
+import { known, useUrlState, useUrlToggle } from '../../lib/urlstate';
+import { DEFAULT_GENE } from './LocusExplorer';
 
 /**
  * The compound-heterozygous pair matrix — the Track 1 answer space, drawn.
@@ -71,13 +73,21 @@ function afText(v: PanelHetVariant): string {
   return v.gnomad_af.toExponential(1);
 }
 
+/**
+ * The gene picker writes the **same `gene` parameter as {@link LocusExplorer}** — one gene per
+ * Panel page, deliberately. Both exhibits answer questions about one gene, and having the
+ * locus tracks and the pair grid disagree about which gene is open was never useful: it made
+ * `?gene=TRIP13` ambiguous and split one page into two half-selected views. The rare-only
+ * filter stays per-exhibit (`pairs.rare`) because it belongs to this grid alone.
+ */
 export function PairMatrix() {
   const genes = usePanelGenes();
-  const [gene, setGene] = useState('BUB1B');
-  const [narrow, setNarrow] = useState(false);
-  const q = useHetPairs(gene);
+  const [param, setGene] = useUrlState('gene', DEFAULT_GENE);
+  const [narrow, setNarrow] = useUrlToggle('pairs.rare');
 
   const options = (genes.data?.data ?? []).map((g) => ({ value: g.gene, label: g.gene }));
+  const gene = known(param, options.map((o) => o.value), DEFAULT_GENE);
+  const q = useHetPairs(gene);
 
   return (
     <Exhibit
@@ -86,7 +96,7 @@ export function PairMatrix() {
         <>
           <Select
             value={gene}
-            options={options.length > 0 ? options : [{ value: 'BUB1B', label: 'BUB1B' }]}
+            options={options.length > 0 ? options : [{ value: DEFAULT_GENE, label: DEFAULT_GENE }]}
             onChange={setGene}
             label="gene"
           />

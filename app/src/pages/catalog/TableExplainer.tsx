@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Skeleton, ErrorCard } from '../../components/QueryState';
 import { TextFilter } from '../../components/Controls';
@@ -6,6 +6,7 @@ import { useCatalogColumns, useCatalogTables } from '../../api/hooks';
 import type { CatalogColumnRow, CatalogTableRow } from '../../api/types';
 import { C } from '../../lib/palette';
 import { int } from '../../lib/format';
+import { useUrlText } from '../../lib/urlstate';
 
 /**
  * Every table in the database, explained: what it is for, which command writes it, and
@@ -140,7 +141,9 @@ function TableCard({ row, columns }: { row: CatalogTableRow; columns: CatalogCol
 export function TableExplainer() {
   const tables = useCatalogTables();
   const columns = useCatalogColumns();
-  const [filter, setFilter] = useState('');
+  // `columns.q`, not `tables.q`: this exhibit shares the Catalog page with TableCatalog and the
+  // two filters search different things (this one also matches column names). See lib/urlstate.
+  const [filter, setFilter] = useUrlText('columns.q');
 
   const byTable = useMemo(() => {
     const grouped = new Map<string, CatalogColumnRow[]>();

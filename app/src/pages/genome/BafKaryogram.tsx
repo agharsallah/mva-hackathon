@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Plot, baseLayout } from '../../components/Plot';
 import { Loaded } from '../../components/QueryState';
@@ -7,7 +7,8 @@ import { useBafBins } from '../../api/hooks';
 import type { BafBinRow } from '../../api/types';
 import { C, DEPTH_SCALE, DENSITY_SCALE, DIVERGING_SCALE } from '../../lib/palette';
 import { dec, int } from '../../lib/format';
-import { chromOrder } from './order';
+import { useUrlEnum, useUrlState } from '../../lib/urlstate';
+import { CHROM_ORDER, chromOrder } from './order';
 
 type Metric = 'vaf' | 'dp' | 'n_het';
 
@@ -16,6 +17,9 @@ const METRICS: { value: Metric; label: string }[] = [
   { value: 'dp', label: 'mean read depth' },
   { value: 'n_het', label: 'heterozygous calls' },
 ];
+
+/** The contig vocabulary the `baf.chrom` URL parameter accepts; anything else reads as `all`. */
+const CONTIGS = ['all', ...CHROM_ORDER.filter((c) => c !== 'MT')];
 
 /** Half-width of the colour range for the diverging view: ±0.15 BAF around 0.5. */
 const VAF_SPAN = 0.15;
@@ -82,18 +86,14 @@ function hover(meta: (BafBinRow | null)[][]): string[][] {
  * chromosome mean by almost nothing; here it would be a visible band.
  */
 export function BafKaryogram() {
-  const [chrom, setChrom] = useState('all');
-  const [metric, setMetric] = useState<Metric>('vaf');
+  // `baf.*`, not `bins.*`: this exhibit shares the Genome page with DensityBins, and the two
+  // contig pickers are independent selections. See lib/urlstate.
+  const [chrom, setChrom] = useUrlState('baf.chrom', 'all', CONTIGS);
+  const [metric, setMetric] = useUrlEnum<Metric>('baf.metric', 'vaf', METRICS.map((m) => m.value));
   const q = useBafBins(chrom === 'all' ? undefined : chrom);
 
   const chromOptions = useMemo(
-    () => [
-      { value: 'all', label: 'all canonical' },
-      ...[...Array.from({ length: 22 }, (_, i) => String(i + 1)), 'X', 'Y'].map((c) => ({
-        value: c,
-        label: `chr${c}`,
-      })),
-    ],
+    () => CONTIGS.map((c) => ({ value: c, label: c === 'all' ? 'all canonical' : `chr${c}` })),
     [],
   );
 

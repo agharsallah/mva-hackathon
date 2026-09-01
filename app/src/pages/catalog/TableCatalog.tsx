@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Loaded } from '../../components/QueryState';
 import { TextFilter } from '../../components/Controls';
@@ -7,6 +7,7 @@ import { useCatalogTables } from '../../api/hooks';
 import type { CatalogTableRow } from '../../api/types';
 import { C } from '../../lib/palette';
 import { int, iso } from '../../lib/format';
+import { useUrlText } from '../../lib/urlstate';
 
 /**
  * Every derived table, with the lineage edge that produced it.
@@ -37,7 +38,9 @@ function NoEdge() {
 
 export function TableCatalog() {
   const q = useCatalogTables();
-  const [filter, setFilter] = useState('');
+  // `?tables.q=lineage` — the box responds to every keystroke, the URL 300 ms after the last
+  // one, so typing a table name is one history entry rather than nine. See lib/urlstate.
+  const [filter, setFilter] = useUrlText('tables.q');
 
   const columns: Column<CatalogTableRow>[] = useMemo(
     () => [

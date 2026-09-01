@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Exhibit } from '../../components/Exhibit';
 import { Plot, baseLayout, scene3d } from '../../components/Plot';
 import { Loaded } from '../../components/QueryState';
@@ -7,9 +7,12 @@ import { useFlowcell } from '../../api/hooks';
 import type { FlowcellBinRow } from '../../api/types';
 import { C, DENSITY_SCALE } from '../../lib/palette';
 import { int } from '../../lib/format';
+import { useUrlNumber, useUrlToggle } from '../../lib/urlstate';
 
-const LANES = [1, 2, 3, 4].map((v) => ({ value: v, label: `lane ${v}` }));
-const READS = [1, 2].map((v) => ({ value: v, label: `R${v}` }));
+const LANE_VALUES = [1, 2, 3, 4];
+const READ_VALUES = [1, 2];
+const LANES = LANE_VALUES.map((v) => ({ value: v, label: `lane ${v}` }));
+const READS = READ_VALUES.map((v) => ({ value: v, label: `R${v}` }));
 
 /** Collapse the tile dimension: sum over tiles to get one occupancy map. */
 function surfaceMatrix(rows: FlowcellBinRow[]) {
@@ -35,9 +38,10 @@ function surfaceMatrix(rows: FlowcellBinRow[]) {
  * third axis is real data, not decoration.
  */
 export function Flowcell() {
-  const [lane, setLane] = useState(1);
-  const [read, setRead] = useState(1);
-  const [threeD, setThreeD] = useState(false);
+  // `?fc.lane=3&fc.read=2&fc.3d=1` names one flowcell view exactly. See lib/urlstate.
+  const [lane, setLane] = useUrlNumber('fc.lane', 1, LANE_VALUES);
+  const [read, setRead] = useUrlNumber('fc.read', 1, READ_VALUES);
+  const [threeD, setThreeD] = useUrlToggle('fc.3d');
   const q = useFlowcell(lane, read, 0);
 
   const cap = 6000; // 3D scatter stays interactive up to a few thousand markers

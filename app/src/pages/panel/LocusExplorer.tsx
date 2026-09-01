@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Plot, baseLayout } from '../../components/Plot';
 import { Loaded } from '../../components/QueryState';
@@ -7,10 +6,14 @@ import { useGeneStructure, useLocus, usePanelGenes } from '../../api/hooks';
 import type { GeneStructure, LocusVariant } from '../../api/types';
 import { C } from '../../lib/palette';
 import { dec, int } from '../../lib/format';
+import { known, useUrlState } from '../../lib/urlstate';
 import { geneAxis, geneTrack } from './locus/geneTrack';
 import { DomainLollipop } from './DomainLollipop';
 
 const GT_SYMBOL: Record<string, string> = { '0/1': 'circle', '1/1': 'square', '1/2': 'star' };
+
+/** The gene the Panel page opens on, and what an unknown `?gene=` falls back to. */
+export const DEFAULT_GENE = 'BUB1B';
 
 function filterColor(f: string): string {
   return f === 'PASS' ? C.good : C.broken;
@@ -29,16 +32,22 @@ function filterColor(f: string): string {
  * they are never persisted. The offline fixture uses a synthetic 1000, 2000, 3000 ladder.
  * Exon coordinates are public reference data and *are* committed in the fixture.
  *
- * Under the tracks, {@link DomainLollipop} re-plots the same gene in amino-acid space.
+ * Under the tracks, {@link DomainLollipop} re-plots the same gene in amino-acid space —
+ * always the same gene, because it is handed the one this exhibit selected.
+ *
+ * The selection is the `gene` URL parameter, deliberately **shared with {@link PairMatrix}**
+ * further down the Panel page: "which gene are we looking at" is a property of the page, not
+ * of one exhibit, so `?gene=TRIP13` moves the whole page and links to a coherent view.
  */
 export function LocusExplorer() {
   const genes = usePanelGenes();
-  const [gene, setGene] = useState<string>('BUB1B');
+  const [param, setGene] = useUrlState('gene', DEFAULT_GENE);
+  const options = (genes.data?.data ?? []).map((g) => ({ value: g.gene, label: `${g.gene} (${g.n_all})` }));
+  // A gene the panel does not contain reads as the default rather than driving a doomed query.
+  const gene = known(param, options.map((o) => o.value), DEFAULT_GENE);
   const q = useLocus(gene);
   const anatomy = useGeneStructure(gene);
   const structure = anatomy.data?.data;
-
-  const options = (genes.data?.data ?? []).map((g) => ({ value: g.gene, label: `${g.gene} (${g.n_all})` }));
 
   return (
     <div className="space-y-4">
@@ -48,7 +57,7 @@ export function LocusExplorer() {
           <>
             <Select
               value={gene}
-              options={options.length > 0 ? options : [{ value: 'BUB1B', label: 'BUB1B' }]}
+              options={options.length > 0 ? options : [{ value: DEFAULT_GENE, label: DEFAULT_GENE }]}
               onChange={setGene}
               label="gene"
             />

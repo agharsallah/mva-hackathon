@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Plot, baseLayout } from '../../components/Plot';
 import { Loaded } from '../../components/QueryState';
@@ -6,6 +5,7 @@ import { Select } from '../../components/Controls';
 import { useReadPartitions } from '../../api/hooks';
 import { C } from '../../lib/palette';
 import { dec, int } from '../../lib/format';
+import { useUrlEnum } from '../../lib/urlstate';
 
 type Metric = 'gib' | 'reads' | 'shards';
 
@@ -22,7 +22,8 @@ const METRICS: { value: Metric; label: string }[] = [
  * it needs). This treemap is what that store looks like: 8 partitions, 272 shards.
  */
 export function StoreShape() {
-  const [metric, setMetric] = useState<Metric>('gib');
+  // `?store.metric=reads`. See lib/urlstate.
+  const [metric, setMetric] = useUrlEnum<Metric>('store.metric', 'gib', METRICS.map((m) => m.value));
   const q = useReadPartitions();
   return (
     <Exhibit

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Plot, baseLayout } from '../../components/Plot';
 import { Loaded } from '../../components/QueryState';
@@ -7,6 +7,7 @@ import { usePanelAnnotations } from '../../api/hooks';
 import type { PanelAnnotationRow } from '../../api/types';
 import { C, impactColor } from '../../lib/palette';
 import { int } from '../../lib/format';
+import { known, useUrlState } from '../../lib/urlstate';
 import { IMPACT_ORDER, af, geneOptions, isPathogenic, matchesGene } from './rarity';
 
 /** Where rows with no defined VAF (`1/2` multiallelic) are parked, below the 0 line. */
@@ -23,21 +24,17 @@ const VAF_NA = -0.06;
  */
 export function RarityScatter() {
   const q = usePanelAnnotations();
-  const [gene, setGene] = useState('ALL');
+  // Same `gene` key as the Panel page's exhibits — one word for one idea across the app. The
+  // default differs (here: every gene at once), and a default writes no parameter, so the two
+  // pages never inherit each other's selection by accident. See lib/urlstate.
+  const [param, setGene] = useUrlState('gene', 'ALL');
+  const options = q.data ? geneOptions(q.data.data) : [{ value: 'ALL', label: 'All genes' }];
+  const gene = known(param, options.map((o) => o.value), 'ALL');
 
   return (
     <Exhibit
       title="Rarity in the healthy population against the patient's own allele fraction"
-      controls={
-        <Select
-          value={gene}
-          options={
-            q.data ? geneOptions(q.data.data) : [{ value: 'ALL', label: 'All genes' }]
-          }
-          onChange={setGene}
-          label="gene"
-        />
-      }
+      controls={<Select value={gene} options={options} onChange={setGene} label="gene" />}
       legend={
         <>
           One point per annotated panel record. x = gnomAD allele frequency on a log axis (left = rarer);

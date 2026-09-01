@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Exhibit } from '../../components/Exhibit';
 import { Plot, baseLayout, scene3d } from '../../components/Plot';
 import { Loaded } from '../../components/QueryState';
@@ -6,6 +5,7 @@ import { Toggle } from '../../components/Controls';
 import { useCycleQuality } from '../../api/hooks';
 import { C, QUALITY_SCALE } from '../../lib/palette';
 import { dec } from '../../lib/format';
+import { useUrlToggle } from '../../lib/urlstate';
 
 /**
  * Per-cycle quality — the third and last honest 3D view.
@@ -16,7 +16,9 @@ import { dec } from '../../lib/format';
  * genuine third axis (partition), which is the only reason 3D is used.
  */
 export function CycleQuality() {
-  const [threeD, setThreeD] = useState(false);
+  // `cq.3d`, distinct from Flowcell's `fc.3d`: both exhibits sit on the Reads page and each
+  // keeps its own 2D/3D choice. See lib/urlstate.
+  const [threeD, setThreeD] = useUrlToggle('cq.3d');
   const q = useCycleQuality();
   return (
     <Exhibit

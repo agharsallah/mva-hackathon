@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Exhibit } from '../../components/Exhibit';
 import { Plot, baseLayout, scene3d } from '../../components/Plot';
 import { Loaded } from '../../components/QueryState';
@@ -7,7 +7,8 @@ import { useDensityBins } from '../../api/hooks';
 import type { DensityBinRow } from '../../api/types';
 import { C, DENSITY_SCALE, QUALITY_SCALE } from '../../lib/palette';
 import { int } from '../../lib/format';
-import { chromOrder } from './order';
+import { useUrlEnum, useUrlState, useUrlToggle } from '../../lib/urlstate';
+import { CHROM_ORDER, chromOrder } from './order';
 
 type Metric = 'n' | 'pass_pct' | 'mean_qual';
 
@@ -16,6 +17,9 @@ const METRICS: { value: Metric; label: string }[] = [
   { value: 'pass_pct', label: 'PASS share per Mb' },
   { value: 'mean_qual', label: 'mean QUAL per Mb' },
 ];
+
+/** The contig vocabulary the `bins.chrom` URL parameter accepts; anything else reads as `all`. */
+const CONTIGS = ['all', ...CHROM_ORDER.filter((c) => c !== 'MT')];
 
 function cell(row: DensityBinRow, metric: Metric): number {
   if (metric === 'n') return row.n;
@@ -45,19 +49,15 @@ function matrix(rows: DensityBinRow[], metric: Metric) {
  * as one ridge line, which is the correct interpretation.
  */
 export function DensityBins() {
-  const [chrom, setChrom] = useState<string>('all');
-  const [metric, setMetric] = useState<Metric>('n');
-  const [threeD, setThreeD] = useState(false);
+  // Selections live in the URL (`?bins.chrom=7&bins.metric=mean_qual&bins.3d=1`) so a figure
+  // in the report can be cited by link. See lib/urlstate.
+  const [chrom, setChrom] = useUrlState('bins.chrom', 'all', CONTIGS);
+  const [metric, setMetric] = useUrlEnum<Metric>('bins.metric', 'n', METRICS.map((m) => m.value));
+  const [threeD, setThreeD] = useUrlToggle('bins.3d');
   const q = useDensityBins(chrom === 'all' ? undefined : chrom);
 
   const chromOptions = useMemo(
-    () => [
-      { value: 'all', label: 'all canonical' },
-      ...[...Array.from({ length: 22 }, (_, i) => String(i + 1)), 'X', 'Y'].map((c) => ({
-        value: c,
-        label: `chr${c}`,
-      })),
-    ],
+    () => CONTIGS.map((c) => ({ value: c, label: c === 'all' ? 'all canonical' : `chr${c}` })),
     [],
   );
 
