@@ -8,6 +8,7 @@
  */
 
 import { useState, type ReactNode } from 'react';
+import { BOX, cx } from '../lib/ui';
 
 export interface Term {
   term: string;
@@ -65,14 +66,8 @@ export function Callout({
   title: string;
   children: ReactNode;
 }) {
-  const skin = {
-    good: 'border-emerald-800/60 bg-emerald-950/25 text-emerald-300',
-    broken: 'border-red-900/60 bg-red-950/25 text-red-300',
-    decision: 'border-amber-800/60 bg-amber-950/25 text-amber-300',
-    neutral: 'border-zinc-800 bg-zinc-900/40 text-zinc-300',
-  }[tone];
   return (
-    <div className={`rounded-xl border p-4 ${skin}`}>
+    <div className={cx('rounded-xl border p-4', BOX[tone])}>
       <div className="text-xs font-semibold uppercase tracking-wider">{title}</div>
       <div className="mt-1.5 text-sm leading-relaxed text-zinc-300">{children}</div>
     </div>

@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import type { ObservedExpectedRow } from '../api/types';
+import { BADGE, cx } from '../lib/ui';
 
 /**
  * The verdict from `results.qc_observed_expected`, rendered small enough to sit on a
@@ -22,12 +23,13 @@ const TEXT: Record<string, string> = {
   unknown: 'not measured',
 };
 
-/** Tailwind classes rather than palette hex, because a tile chip is a background, not a mark. */
+/** Tailwind classes rather than palette hex, because a tile chip is a background, not a mark.
+ * Shares its tone recipes with `Badge` via `lib/ui.ts`'s `BADGE` map. */
 const STYLE: Record<string, string> = {
-  within: 'border-emerald-800 bg-emerald-950/60 text-emerald-400',
-  above: 'border-red-900 bg-red-950/60 text-red-400',
-  below: 'border-red-900 bg-red-950/60 text-red-400',
-  unknown: 'border-zinc-700 bg-zinc-900 text-zinc-400',
+  within: BADGE.good,
+  above: BADGE.broken,
+  below: BADGE.broken,
+  unknown: BADGE.neutral,
 };
 
 /**
@@ -60,9 +62,10 @@ export function NormChip({ row }: { row?: ObservedExpectedRow }) {
     <Link
       to="/compare"
       title={`published expectation ${band} — ${row.source}. Full comparison on the Compare page.`}
-      className={`inline-flex shrink-0 items-center rounded border px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider transition-opacity hover:opacity-75 ${
-        STYLE[row.verdict] ?? STYLE.unknown
-      }`}
+      className={cx(
+        'inline-flex shrink-0 items-center rounded border px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider transition-opacity hover:opacity-75',
+        STYLE[row.verdict] ?? STYLE.unknown,
+      )}
     >
       {TEXT[row.verdict] ?? row.verdict}
     </Link>

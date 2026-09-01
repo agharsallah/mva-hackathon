@@ -17,6 +17,7 @@ import { exhibitRegistry } from '../lib/aiExport/registry';
 import { exhibitBundle } from '../lib/aiExport/markdown';
 import { copyExport } from '../lib/aiExport/download';
 import type { ExhibitRecord } from '../lib/aiExport/types';
+import { CARD, cx } from '../lib/ui';
 
 export interface ExhibitProps {
   title: string;
@@ -71,9 +72,7 @@ export function Exhibit({
   }, [page, title, legendText, readingText, source, cachedAt, origin, data]);
 
   return (
-    <figure
-      className={`rounded-xl border border-zinc-800 bg-zinc-900/40 p-4 ${className}`}
-    >
+    <figure className={cx(CARD, className)}>
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="text-sm font-semibold tracking-tight text-zinc-100">{title}</h3>
         <div className="flex flex-wrap items-center gap-2">
