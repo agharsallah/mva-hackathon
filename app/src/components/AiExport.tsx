@@ -1,0 +1,86 @@
+/**
+ * The two wider export scopes, in the header where they apply to whatever is on screen.
+ *
+ * "Export page" is whatever the mounted exhibits registered; pages are lazy routes, so the
+ * count follows navigation on its own. "Export case" ignores the screen entirely and fetches
+ * every parameter-free endpoint — the one export that can plausibly outgrow a chat window,
+ * which is why its size is always reported back.
+ */
+
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react';
+import { useLocation } from 'react-router-dom';
+import { exhibitRegistry } from '../lib/aiExport/registry';
+import { exhibitBundle } from '../lib/aiExport/markdown';
+import { dateStamp, downloadExport, pageSlug } from '../lib/aiExport/download';
+import { buildWholeCaseBundle } from '../lib/aiExport/wholeCase';
+
+const BTN =
+  'rounded-md border border-zinc-800 bg-zinc-900 px-2 py-1 text-[11px] text-zinc-400 transition ' +
+  'enabled:hover:border-zinc-700 enabled:hover:text-zinc-200 disabled:opacity-40 focus:outline-none ' +
+  'focus-visible:border-blue-700';
+
+function failed(said: string): boolean {
+  return said.startsWith('export failed') || said.startsWith('clipboard blocked');
+}
+
+export function AiExport() {
+  const pathname = useLocation().pathname;
+  const version = useSyncExternalStore(exhibitRegistry.subscribe, exhibitRegistry.version);
+  const onPage = useMemo(() => exhibitRegistry.getByPage(pathname), [pathname, version]);
+
+  const [said, setSaid] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const timer = useRef<number | null>(null);
+
+  useEffect(() => () => window.clearTimeout(timer.current ?? undefined), []);
+
+  function report(outcome: string) {
+    setSaid(outcome);
+    window.clearTimeout(timer.current ?? undefined);
+    timer.current = window.setTimeout(() => setSaid(null), 6000);
+  }
+
+  function exportPage() {
+    const scope = `page ${pathname} — ${onPage.length} exhibit${onPage.length === 1 ? '' : 's'}`;
+    report(downloadExport(`mva-case-${pageSlug(pathname)}-${dateStamp()}.md`, exhibitBundle(scope, onPage)));
+  }
+
+  async function exportCase() {
+    setBusy(true);
+    try {
+      const bundle = await buildWholeCaseBundle();
+      report(downloadExport(`mva-case-full-${dateStamp()}.md`, bundle));
+    } catch (err) {
+      report(`export failed: ${err instanceof Error ? err.message : String(err)}`);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      {said && (
+        <span className={`text-[11px] ${failed(said) ? 'text-red-400' : 'text-emerald-400'}`}>{said}</span>
+      )}
+      {onPage.length > 0 && (
+        <button
+          type="button"
+          className={BTN}
+          onClick={exportPage}
+          title="Download every exhibit on this page — legends, provenance and underlying rows — as one Markdown file for an AI chat."
+        >
+          export page ({onPage.length})
+        </button>
+      )}
+      <button
+        type="button"
+        className={BTN}
+        onClick={exportCase}
+        disabled={busy}
+        title="Download every dataset in the app, plus the warehouse field dictionary, as one Markdown file for an AI chat."
+      >
+        {busy ? 'building…' : 'export case'}
+      </button>
+    </div>
+  );
+}

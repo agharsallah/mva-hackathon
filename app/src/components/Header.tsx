@@ -8,6 +8,7 @@ import { useSyncExternalStore } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { API_URL, FIXTURES_ENABLED, fixtureModeStore, health } from '../api/client';
+import { AiExport } from './AiExport';
 
 const PAGES = [
   { to: '/', label: 'Overview' },
@@ -81,6 +82,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <AiExport />
           {onFixtures && (
             <span
               className="rounded-md bg-amber-500/15 px-2 py-1 text-[11px] font-medium text-amber-400"
