@@ -58,6 +58,7 @@ export function GeneScorecard() {
         </>
       }
       reading="Of the well-covered genes, BUB1B has the worst PASS share at 95.0 %. But the real outlier is TRIP13: 6 of its 12 records are suppressed — half its evidence sits behind a filter, in an established MVA gene."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

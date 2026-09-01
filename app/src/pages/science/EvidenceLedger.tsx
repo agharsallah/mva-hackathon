@@ -43,6 +43,7 @@ export function EvidenceLedger() {
           width={260}
         />
       }
+      data={query.data?.data}
       source={query.data?.source}
       cachedAt={query.data?.cachedAt}
       origin={query.data?.origin}

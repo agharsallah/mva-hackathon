@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Loaded } from '../../components/QueryState';
+import { withoutCoordinates } from '../../lib/aiExport/redact';
 import { Callout } from '../../components/Explainer';
 import { DataTable, type Column } from '../../components/DataTable';
 import { usePanelAnnotations } from '../../api/hooks';
@@ -18,6 +20,8 @@ import { af, candidates, isPathogenic } from './rarity';
  */
 export function CandidateTable() {
   const q = usePanelAnnotations();
+  // The rows carry the proband's real chromosome and position; an export must not.
+  const exportData = useMemo(() => (q.data ? withoutCoordinates(q.data.data) : undefined), [q.data]);
 
   const columns: Column<PanelAnnotationRow>[] = [
     {
@@ -100,6 +104,7 @@ export function CandidateTable() {
         </>
       }
       reading="A short list is the intended outcome. Sorted most-damaging first, then rarest first."
+      data={exportData}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

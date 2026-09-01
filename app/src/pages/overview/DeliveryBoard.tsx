@@ -23,6 +23,7 @@ export function DeliveryBoard() {
         </>
       }
       reading="Nothing in the app is trustworthy if a card here is red. All of them are green."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

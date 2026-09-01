@@ -35,6 +35,7 @@ export function LineageGraph() {
         </>
       }
       reading="Nothing in this app is more than two hops from a hash-verified delivered object. That is the whole point of the diagram: any number on any page can be walked back to bytes whose checksum was confirmed."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

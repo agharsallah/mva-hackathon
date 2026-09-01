@@ -160,6 +160,7 @@ export function DeliveryInventory() {
         </>
       }
       reading="Raw delivery is immutable: these bytes are never rewritten, only read. A red card, or a yellow date on an object we later reasoned about, is the kind of gap that invalidates everything downstream of it."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

@@ -50,6 +50,7 @@ export function ProbeBudget() {
         </>
       }
       reading="The Probes page spends this budget; this panel asks what each spend bought in belief. Every reply should appear twice — once here as what happened, once in the evidence ledger as what it means."
+      data={ledger.data?.data}
       source={ledger.data?.source}
       cachedAt={ledger.data?.cachedAt}
       origin={ledger.data?.origin}

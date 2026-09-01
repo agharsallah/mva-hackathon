@@ -62,6 +62,7 @@ export function ProbeResults({ result }: { result: ProbeCountResult }) {
           both strands. Anything sitting near zero but non-zero is the noise floor, not evidence.
         </>
       }
+      data={result}
       source={`reads API · ${dec(result.seconds, 1)} s · ${result.root}`}
       origin="api"
     >

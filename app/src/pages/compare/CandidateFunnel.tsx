@@ -87,6 +87,7 @@ export function CandidateFunnel() {
         </>
       }
       reading="Each row is a claim the report has to defend: this filter is justified, and this is what it cost. The cliffs are the argument — rarity removes 96% of what the annotation covers, and protein-altering removes 94% of what survives that."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

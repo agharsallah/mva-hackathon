@@ -73,6 +73,7 @@ export function Flowcell() {
       }
       legend={legend}
       reading="Occupancy is even across the surface with a mild edge falloff — the normal pattern. A hot spot, a dead tile or a bright edge would mean a fraction of the reads are instrument artefacts rather than DNA."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

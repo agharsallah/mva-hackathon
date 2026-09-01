@@ -102,6 +102,7 @@ export function ConstraintScorecard() {
         </>
       }
       reading="Read this as gene background, not as a candidate ranking. The two established MVA genes sit on the wrong side of the constraint line, and that is expected — see the callout."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

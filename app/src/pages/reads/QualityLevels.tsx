@@ -43,6 +43,7 @@ export function QualityLevels() {
         </>
       }
       reading="About 93 % of all bases sit in the single Q37 bin. The R2 partitions carry a visibly larger low-quality share — the same degradation the per-cycle curves show, counted instead of plotted."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

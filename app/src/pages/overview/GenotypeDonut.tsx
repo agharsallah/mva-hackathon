@@ -31,6 +31,7 @@ export function GenotypeDonut() {
           says the two copies carry different changes.
         </>
       }
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

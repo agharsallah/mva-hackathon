@@ -29,6 +29,7 @@ export function DepthVaf() {
           cluster on the crosshair; X and Y sit low-left because a male sample has a single copy of each.
         </>
       }
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

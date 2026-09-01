@@ -38,6 +38,7 @@ export function HypothesisBoard() {
         </>
       }
       reading="Every card was written down before its test ran, refutation condition included. That is the only thing separating a hypothesis from a description of what the data turned out to say."
+      data={query.data?.data}
       source={query.data?.source}
       cachedAt={query.data?.cachedAt}
       origin={query.data?.origin}

@@ -131,6 +131,7 @@ export function HeaderFields() {
           page ranks on had to be fetched and joined by us.
         </>
       }
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

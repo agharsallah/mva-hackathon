@@ -27,6 +27,7 @@ export function Substitutions() {
         </>
       }
       reading="C>T and G>A are the two tall bars — the same event seen from either DNA strand. Ts/Tv 1.94 is squarely in the normal human whole-genome range, so the callset is not artefact-driven."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

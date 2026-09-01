@@ -95,6 +95,7 @@ export function DensityBins() {
         </>
       }
       reading="The deep trough that repeats on every chromosome is the centromere — highly repetitive sequence where reads cannot be placed uniquely, so the caller emits almost nothing. It is a property of the reference, not of this patient."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

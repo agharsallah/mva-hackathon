@@ -162,6 +162,8 @@ export function TableExplainer() {
   const shown = rows.filter((r) => matches(r, byTable.get(`${r.schema}.${r.table}`) ?? [], needle));
   const schemas = [...new Set(rows.map((r) => r.schema))].sort();
   const allColumns = columns.data?.data ?? [];
+  // Both payloads: the card only makes sense with its columns, so the export carries both.
+  const exportData = useMemo(() => ({ tables: rows, columns: allColumns }), [rows, allColumns]);
   const unexplained = allColumns.filter((c) => c.meaning === null).length;
   const undescribed = rows.filter((r) => r.why === null || r.created_by === null).length;
 
@@ -195,6 +197,7 @@ export function TableExplainer() {
         </>
       }
       reading="Read the blue chip first: it tells you what a re-run would do to the table. Then the reason — a table nobody can say the purpose of is a table that should be deleted or defended, not left in place."
+      data={exportData}
       source={tables.data?.source}
       cachedAt={tables.data?.cachedAt}
       origin={tables.data?.origin}

@@ -69,6 +69,7 @@ export function ObservedExpected() {
         </>
       }
       reading="Agreement is evidence the callset is technically sound and its biology can be believed. A metric outside its band is not automatically wrong, but it has to be explained before any variant call resting on it is trusted."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

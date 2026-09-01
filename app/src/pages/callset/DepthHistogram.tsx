@@ -24,6 +24,7 @@ export function DepthHistogram() {
         </>
       }
       reading="Unimodal, mode at about 44×. One peak means one homogeneous library; the long thin right tail is repetitive sequence where reads pile up."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

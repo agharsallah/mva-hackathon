@@ -37,6 +37,7 @@ export function StoreShape() {
         </>
       }
       reading="Every partition is the same size — 34 shards each, evenly split. That uniformity is what makes a k-mer probe run predictable: no partition is a straggler."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

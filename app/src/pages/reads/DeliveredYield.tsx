@@ -53,6 +53,7 @@ export function DeliveredYield() {
           read count, which is why every read figure elsewhere in this app comes from the counted store.
         </>
       }
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

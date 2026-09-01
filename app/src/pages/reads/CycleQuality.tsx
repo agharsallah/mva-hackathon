@@ -40,6 +40,7 @@ export function CycleQuality() {
         </>
       }
       reading="R2 decays visibly faster than R1 — the same fragments, read second, after the chemistry has degraded. This is real and it is why R2's Q30 share is 90.0 % against R1's 92.9 %."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

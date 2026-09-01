@@ -26,6 +26,7 @@ export function IndelLengths() {
         </>
       }
       reading="Geometric decay from ±1 bp, roughly symmetric, nothing beyond about 60 bp — the normal shape for short-read calling. Short indels are where a frameshift, the most destructive class of small variant, comes from."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

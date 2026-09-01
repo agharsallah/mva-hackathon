@@ -8,6 +8,7 @@ import type { PanelAnnotationRow } from '../../api/types';
 import { C, impactColor } from '../../lib/palette';
 import { int } from '../../lib/format';
 import { known, useUrlState } from '../../lib/urlstate';
+import { withoutCoordinates } from '../../lib/aiExport/redact';
 import { IMPACT_ORDER, af, geneOptions, isPathogenic, matchesGene } from './rarity';
 
 /** Where rows with no defined VAF (`1/2` multiallelic) are parked, below the 0 line. */
@@ -30,6 +31,11 @@ export function RarityScatter() {
   const [param, setGene] = useUrlState('gene', 'ALL');
   const options = q.data ? geneOptions(q.data.data) : [{ value: 'ALL', label: 'All genes' }];
   const gene = known(param, options.map((o) => o.value), 'ALL');
+  // The rows carry the proband's real chromosome and position; an export must not.
+  const exportData = useMemo(
+    () => (q.data ? withoutCoordinates(q.data.data.filter((r) => matchesGene(r, gene))) : undefined),
+    [q.data, gene],
+  );
 
   return (
     <Exhibit
@@ -50,6 +56,7 @@ export function RarityScatter() {
         </>
       }
       reading="Read right to left. Everything on the right is common in healthy people and therefore cannot cause a rare recessive disease on its own. The candidates live in the far-left column and the novel lane, and a red or yellow point there with a VAF near 0.5 is a heterozygous, protein-altering, population-absent variant — the shape a compound-het partner has to have."
+      data={exportData}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

@@ -33,6 +33,7 @@ export function AlleleBalance() {
           sample: one copy, so &quot;heterozygous&quot; calls there are mapping noise, not biology.
         </>
       }
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

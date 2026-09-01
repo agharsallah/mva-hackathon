@@ -130,6 +130,7 @@ export function TableCatalog() {
         </>
       }
       reading="Every row here should be reproducible from the raw delivery by following its lineage edge back. The yellow chips are the exceptions — tables that exist but cannot state their input."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

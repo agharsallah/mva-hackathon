@@ -33,6 +33,7 @@ export function ReadStoreCard() {
         </>
       }
       reading="The store is a format change, not a filter: the same reads, laid out columnar so a query can touch a slice instead of the whole 78.9 GiB stream."
+      data={parts.data?.data}
       source={parts.data?.source}
       cachedAt={parts.data?.cachedAt}
       origin={parts.data?.origin}

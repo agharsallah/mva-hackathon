@@ -24,6 +24,7 @@ export function LaneYield() {
         </>
       }
       reading="Every lane is exactly balanced: R1 and R2 counts are identical. Lane 1 was verified to the read — 136,586,642 in each direction."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

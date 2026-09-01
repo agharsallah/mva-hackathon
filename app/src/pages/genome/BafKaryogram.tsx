@@ -144,6 +144,7 @@ export function BafKaryogram() {
           negative here has to be re-tested before it becomes a claim.
         </>
       }
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

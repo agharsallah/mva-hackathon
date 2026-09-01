@@ -61,6 +61,7 @@ export function ZygositySplit() {
           worth of evidence is half the evidence.
         </>
       }
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

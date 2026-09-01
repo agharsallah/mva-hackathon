@@ -42,6 +42,7 @@ export function DomainLollipop({ gene }: { gene: string }) {
         </>
       }
       reading="A HIGH-impact lollipop landing inside or upstream of a functional domain is the shape a damaging recessive allele has: it removes the part of the protein that does the work."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

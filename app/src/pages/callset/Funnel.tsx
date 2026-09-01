@@ -25,6 +25,7 @@ export function Funnel() {
         </>
       }
       reading="271,414 records are suppressed. That is not a discard pile — it is where a real variant hides if the caller's mapping-quality or depth heuristic misjudged its locus."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}

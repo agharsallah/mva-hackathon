@@ -25,6 +25,7 @@ export function Karyotype() {
         </>
       }
       reading="Lengths differ by 5× but densities only by about 1.25× across the autosomes — the callset is spread evenly. X and Y are the exception: a single copy yields far fewer heterozygous calls per Mb."
+      data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}
