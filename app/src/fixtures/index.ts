@@ -35,7 +35,10 @@ import {
   panelConstraintFixture,
   panelGenesFixture,
 } from './panel';
+import { clinvarPresenceFixture } from './clinvar';
+import { panelBackgroundFixture } from './panel-background';
 import { panelHetPairsFixture } from './panel-pairs';
+import { panelSuppressedFixture } from './panel-suppressed';
 import {
   cycleQualityFixture,
   flowcellFixture,
@@ -77,6 +80,10 @@ const registry: Record<string, Builder> = {
   '/api/panel/genes': () => env(panelGenesFixture, 'results.panel_gene_density + panel BED'),
   '/api/panel/constraint': () =>
     env(panelConstraintFixture, 'PLACEHOLDER gnomAD constraint + ClinVar counts'),
+  // Transcribed from the executed derivation, so the offline exhibit shows the real
+  // result rather than a plausible-looking one. Still marked `fixture:` in the UI.
+  '/api/panel/background': () =>
+    env(panelBackgroundFixture, 'transcribed results.panel_gene_background'),
   // `gene` is optional here, unlike /api/panel/locus: omitted means the whole panel.
   '/api/panel/annotations': (p) =>
     env(panelAnnotationsFixture(p?.gene as string | undefined), 'SYNTHETIC positions — never real'),
@@ -86,6 +93,19 @@ const registry: Record<string, Builder> = {
     env(
       panelHetPairsFixture((p?.gene as string | undefined) ?? 'BUB1B'),
       'SYNTHETIC positions — never real',
+    ),
+  // The per-gene ClinVar P/LP counts are MEASURED off the committed extract; every
+  // callset-side hit and every position is shaped so the exhibit has one of each state.
+  '/api/panel/clinvar-presence': (p) =>
+    env(
+      clinvarPresenceFixture(p?.gene as string | undefined),
+      'measured ClinVar P/LP counts, SHAPED hits, SYNTHETIC positions',
+    ),
+  // The per-gene, per-FILTER census is MEASURED; the record positions are synthetic.
+  '/api/panel/suppressed': (p) =>
+    env(
+      panelSuppressedFixture(p?.gene as string | undefined),
+      'measured per-gene FILTER census, SYNTHETIC record positions',
     ),
   '/api/panel/gene-structure': (p) =>
     env(

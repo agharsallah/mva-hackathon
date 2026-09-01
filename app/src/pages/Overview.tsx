@@ -1,14 +1,19 @@
 import { Callout, Explainer } from '../components/Explainer';
 import { StatTile } from '../components/StatTile';
+import { NormChip, pickNorm } from '../components/NormChip';
 import { Section } from '../components/Controls';
 import { Skeleton, ErrorCard } from '../components/QueryState';
-import { useOverview } from '../api/hooks';
+import { useObservedExpected, useOverview } from '../api/hooks';
 import { compact, dec, int, pct } from '../lib/format';
 import { DeliveryBoard } from './overview/DeliveryBoard';
 import { GenotypeDonut } from './overview/GenotypeDonut';
 
 export default function OverviewPage() {
   const q = useOverview();
+  // Same payload the Compare page grades against, reused here so a tile can say whether
+  // its own figure is normal. Its loading state is never waited on: a tile renders
+  // exactly as before until the verdict arrives, and forever if there is no norm for it.
+  const norms = useObservedExpected().data?.data;
 
   return (
     <div className="space-y-6">
@@ -49,6 +54,7 @@ export default function OverviewPage() {
                 sub={`${int(q.data.data.total_variants)} records`}
                 tone="raw"
                 hint="Rows in the delivered VCF, one per ALT record."
+                chip={<NormChip row={pickNorm(norms, ['variant_sites_per_genome', 'total_variants'])} />}
               />
               <StatTile
                 label="PASS share"
@@ -71,6 +77,7 @@ export default function OverviewPage() {
                 value={dec(q.data.data.tstv, 2)}
                 sub="≈2.0 expected for a clean human WGS callset"
                 tone="good"
+                chip={<NormChip row={pickNorm(norms, ['tstv_genome_wide', 'tstv'])} />}
               />
               <StatTile
                 label="reads sequenced"
@@ -83,6 +90,7 @@ export default function OverviewPage() {
                 value={`${dec(q.data.data.est_coverage_x, 1)}×`}
                 sub={`raw · ${dec(q.data.data.mean_depth_x, 0)}× mean called depth`}
                 tone="good"
+                chip={<NormChip row={pickNorm(norms, ['mean_coverage_wgs', 'mean_depth'])} />}
               />
               <StatTile
                 label="samples"

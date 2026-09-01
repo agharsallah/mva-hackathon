@@ -2,8 +2,10 @@ import { Callout, Explainer } from '../components/Explainer';
 import { Section } from '../components/Controls';
 import { GeneScorecard } from './panel/GeneScorecard';
 import { ConstraintScorecard } from './panel/ConstraintScorecard';
+import { GeneBackground } from './panel/GeneBackground';
 import { LocusExplorer } from './panel/LocusExplorer';
 import { PairMatrix } from './panel/PairMatrix';
+import { SuppressedCalls } from './panel/SuppressedCalls';
 
 export default function PanelPage() {
   return (
@@ -81,6 +83,29 @@ export default function PanelPage() {
         subtitle="constraint and ClinVar burden — background on each gene, deliberately not a ranking"
       >
         <ConstraintScorecard />
+      </Section>
+
+      <Section
+        title="Is any of that unusual for where the gene sits?"
+        subtitle="each gene's density and PASS share z-scored against the 1 Mb windows of its own chromosome and of the whole callset"
+      >
+        <GeneBackground />
+      </Section>
+
+      <Section
+        title="What did the caller throw away here?"
+        subtitle={
+          <>
+            Every other exhibit on this page reads <span className="font-mono">PASS</span> records only. This
+            one reads the rest. A <span className="font-mono">FILTER</span> value is a warning label the caller
+            wrote on a record it <em>kept</em>, not a deletion — and the heaviest label genome-wide,{' '}
+            <span className="font-mono">MQ40</span>, fires precisely in repetitive sequence where a real variant
+            is hardest to call. The compound-heterozygous pair needs two damaging alleles in one gene, so if the
+            second one is behind a flag, a PASS-only search reports the gene as carrying one.
+          </>
+        }
+      >
+        <SuppressedCalls />
       </Section>
 
       <Section

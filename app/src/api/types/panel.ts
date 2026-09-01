@@ -243,3 +243,120 @@ export interface PanelHetPairs {
   pairs: PanelHetPair[];
   summary: PanelHetPairSummary;
 }
+
+/**
+ * GET /api/panel/background — one row per panel gene, its numbers next to the background.
+ *
+ * A raw density or PASS share means nothing on its own; the reading is the *distance* from
+ * what the surrounding sequence does. The background population is every 1 Mb window of
+ * the callset (one window is one megabase, so a window's record count is a density), and
+ * the distance is a **z-score**: standard deviations from that window distribution.
+ *
+ * Every `z_*` is nullable: **null means the background had no usable spread**, never zero.
+ * A low `z_pass_*` is a **callability** statement — mappability, repeats, telomeric
+ * sequence — and never a pathogenicity one.
+ */
+export interface PanelBackgroundRow {
+  gene: string;
+  /** `chr`-prefixed, as the panel delivers it. */
+  chrom: string;
+  n_all: number;
+  n_pass: number;
+  span_bp: number;
+  gene_variants_per_mb: number;
+  gene_pct_pass: number;
+  contig_variants_per_mb: number;
+  contig_pct_pass: number;
+  genome_variants_per_mb: number;
+  genome_pct_pass: number;
+  contig_n_bins: number;
+  contig_bin_mean_density: number;
+  contig_bin_sd_density: number | null;
+  contig_bin_mean_pct_pass: number | null;
+  contig_bin_sd_pct_pass: number | null;
+  genome_n_bins: number;
+  genome_bin_mean_density: number;
+  genome_bin_sd_density: number | null;
+  genome_bin_mean_pct_pass: number | null;
+  genome_bin_sd_pct_pass: number | null;
+  z_density_vs_contig: number | null;
+  z_density_vs_genome: number | null;
+  z_pass_vs_contig: number | null;
+  z_pass_vs_genome: number | null;
+}
+
+/**
+ * One row of GET /api/panel/suppressed → `census`: a panel gene's records counted per
+ * FILTER value, **PASS included**, so one gene's rows stack to its whole record count.
+ *
+ * `filter` is the caller's string verbatim. GATK packs every threshold a record tripped
+ * into one `;`-joined value, so `"LowQual;QD2"` is a single record that failed two tests
+ * — never two records, and never split into two reason rows.
+ */
+export interface PanelFilterCensusRow {
+  gene: string;
+  /** Bare contig, the way the callset spells it (`"15"`, not `"chr15"`). */
+  chrom: string;
+  filter: string;
+  is_pass: boolean;
+  n: number;
+  /** Records in the gene at every FILTER value — the denominator, repeated per row. */
+  n_gene_all: number;
+  pct_of_gene: number;
+}
+
+/**
+ * One suppressed (non-PASS) record inside a panel gene, from GET /api/panel/suppressed
+ * → `records`. Real patient coordinates at runtime; never persisted (the fixture is
+ * synthetic).
+ *
+ * A suppressed record is a call the caller **kept and flagged**, not one it deleted — so
+ * every field here is measured evidence a reader can weigh against the flag. `vaf` is
+ * null on a multi-allelic (`1/2`) record, where no single alternate owns the reads.
+ *
+ * `annotated` false means VEP never saw any alternate allele of this record, and then
+ * every annotation field is **null** — absent, never "looked up and harmless".
+ * `annotated_alt` names which alternate allele the annotation columns describe, because
+ * a comma-packed record joins once, to its most severe annotated allele.
+ */
+export interface PanelSuppressedRecord {
+  gene: string;
+  chrom: string;
+  pos: number;
+  ref: string;
+  /** Comma-packed on a multi-allelic record, exactly as the callset delivers it. */
+  alt: string;
+  qual: number | null;
+  /** The FILTER value verbatim, `;`-joined where the record tripped several thresholds. */
+  filter: string;
+  gt: string;
+  dp: number | null;
+  /** Genotype quality: confidence in the genotype, as distinct from QUAL's "it varies". */
+  gq: number | null;
+  ad_ref: number | null;
+  ad_alt: number | null;
+  vaf: number | null;
+  /** One copy of an alternate allele — the shape a hidden second allele would take. */
+  is_het: boolean;
+  annotated_alt: string | null;
+  rsid: string | null;
+  consequence: string | null;
+  impact: VariantImpact | null;
+  gnomad_af: number | null;
+  gnomad_af_grpmax: number | null;
+  clin_sig: string | null;
+  annotated: boolean;
+}
+
+/**
+ * GET /api/panel/suppressed?gene=… — the mining view over the calls the caller flagged.
+ *
+ * `census` is **always the whole panel** (the chart compares genes against each other);
+ * `records` is narrowed to `gene` when one is given. An empty `records` for a real panel
+ * gene is not an error — nothing suppressed there is the good outcome.
+ */
+export interface PanelSuppressed {
+  gene: string | null;
+  census: PanelFilterCensusRow[];
+  records: PanelSuppressedRecord[];
+}

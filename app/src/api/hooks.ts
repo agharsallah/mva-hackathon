@@ -14,6 +14,7 @@ import type {
   CatalogColumnRow,
   CatalogObjectRow,
   CatalogTableRow,
+  ClinvarPresence,
   ContigDensityRow,
   CycleQualityRow,
   DensityBinRow,
@@ -33,9 +34,11 @@ import type {
   ObservedExpectedRow,
   Overview,
   PanelAnnotationRow,
+  PanelBackgroundRow,
   PanelConstraintRow,
   PanelGeneRow,
   PanelHetPairs,
+  PanelSuppressed,
   ProbeLedgerRow,
   QualityLevelRow,
   ReadPartitionRow,
@@ -89,6 +92,8 @@ export const useVcfFields = () => useEndpoint<VcfFieldRow[]>('/api/callset/field
 
 export const usePanelGenes = () => useEndpoint<PanelGeneRow[]>('/api/panel/genes');
 export const usePanelConstraint = () => useEndpoint<PanelConstraintRow[]>('/api/panel/constraint');
+/** Each gene's density and PASS share z-scored against the 1 Mb-window background. */
+export const usePanelBackground = () => useEndpoint<PanelBackgroundRow[]>('/api/panel/background');
 /** `gene` omitted returns every annotated panel row (~874). */
 export const usePanelAnnotations = (gene?: string) =>
   useEndpoint<PanelAnnotationRow[]>('/api/panel/annotations', gene ? { gene } : undefined);
@@ -107,6 +112,19 @@ export const useHetPairs = (gene: string | null) =>
   useEndpoint<PanelHetPairs>('/api/panel/het-pairs', gene ? { gene } : undefined, {
     enabled: !!gene,
   });
+/**
+ * ~1 s live: a derived table, so the ClinVar-to-callset join is already done. `gene`
+ * omitted returns all eight panel genes. Only the present and uncomparable sites come
+ * back as rows; the absences are counts on `summary`.
+ */
+export const useClinvarPresence = (gene?: string) =>
+  useEndpoint<ClinvarPresence>('/api/panel/clinvar-presence', gene ? { gene } : undefined);
+/**
+ * ~0.7 s live: two derived tables, 20 rows each. `gene` narrows only the `records` half —
+ * the census is always the whole panel, so the same query key serves the whole chart.
+ */
+export const usePanelSuppressed = (gene?: string) =>
+  useEndpoint<PanelSuppressed>('/api/panel/suppressed', gene ? { gene } : undefined);
 
 /** Resolve a typed query to a window. 0.001 s for a region, ~1 s panel, ~2–5 s Ensembl. */
 export const useSearch = (q: string | null) =>

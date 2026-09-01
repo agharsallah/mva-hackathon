@@ -3,6 +3,8 @@ import { Section } from '../components/Controls';
 import { RarityScatter } from './compare/RarityScatter';
 import { CandidateTable } from './compare/CandidateTable';
 import { CandidateFunnel } from './compare/CandidateFunnel';
+import { ClinvarPresence } from './compare/ClinvarPresence';
+import { PairComparator } from './compare/PairComparator';
 import { ObservedExpected } from './compare/ObservedExpected';
 
 /**
@@ -107,6 +109,20 @@ export default function ComparePage() {
         subtitle="the whole narrowing argument in nine stages — and the point where the scope stops being the genome"
       >
         <CandidateFunnel />
+      </Section>
+
+      <Section
+        title="Has anyone already called one of these sites pathogenic?"
+        subtitle="the check run backwards — every P/LP site ClinVar holds in the panel, looked for in this callset"
+      >
+        <ClinvarPresence />
+      </Section>
+
+      <Section
+        title="Are these two the pair?"
+        subtitle="any two heterozygous alleles of one gene, side by side — and one click to stage them as a submission row"
+      >
+        <PairComparator />
       </Section>
 
       <Section

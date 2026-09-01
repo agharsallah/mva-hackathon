@@ -17,6 +17,7 @@ export type * from './genome';
 export type * from './callset';
 export type * from './catalog';
 export type * from './panel';
+export type * from './clinvar';
 export type * from './reads';
 export type * from './provenance';
 export type * from './science';
