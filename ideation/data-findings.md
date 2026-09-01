@@ -286,6 +286,25 @@ ClinVar (release 2026-08-29) holds 2,129 P/LP records across the panel genes (BU
 gnomAD v4.1 constraint scores BUB1B pLI = 2.6e-14 and CEP57 pLI = 6.8e-06 — the recessive
 carrier effect, which is why constraint must not be used to rank these candidates.
 
+### 6.2 The panel, cross-examined (2026-09-01)
+
+Four independent checks ran against the same candidate space
+(methodologies [048](../docs/step-0/methodology/048-gene-background.md),
+[049](../docs/step-0/methodology/049-suppressed-calls.md),
+[051](../docs/step-0/methodology/051-clinvar-presence.md),
+[037](../docs/step-0/methodology/037-baf-karyogram.md)):
+
+| Check | Measured result |
+|---|---|
+| ClinVar presence | 2,129 P/LP panel sites vs the callset: **exactly 1 present** — the BUB1B `stop_gained`, het, PASS, ClinVar condition `Mosaic_variegated_aneuploidy_syndrome_1`, ★★ review. Independent path from the VEP route in §6.1 (site-first vs call-first). Exact-string join, so a lower bound: 1,306 of the 2,129 are indel-shaped and unmatched without normalization |
+| Suppressed calls | 20 non-PASS records across the panel, all VEP-annotated, **0 rare + protein-altering**. TRIP13's 6 = paralogous-read pileup (VAF 0.12–0.28, all gnomAD-common) — roadmap step 4 closed for the panel: nothing hides behind a FILTER in these 8 genes |
+| Gene vs genome | TRIP13 is the sole PASS-share outlier (z −4.02 vs chr5, −3.54 vs genome) — a callability statement. Density z is direction-only honest (gene bodies vs mostly-intergenic Mb windows) |
+| BAF per Mb | all 22 autosomes flat (median bin BAF 0.4954–0.4984, depth 42.2–43.4×); every deviant bin pulls one-sided down with piled depth = reference bias, not mosaicism. VCF-level upper bound only — sub-threshold clones stay invisible |
+
+Consequence: if a second allele exists outside the §6.1 pair, it is structural,
+deep-intronic, or sub-threshold mosaic — reachable only through the FASTQ path.
+
+
 ---
 
 ## 7. What this implies for the pipeline
