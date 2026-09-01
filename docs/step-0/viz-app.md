@@ -53,14 +53,15 @@ cd app && npm install && npm run dev    # http://127.0.0.1:5173
 |---|---|---|
 | Overview | What is this case, in numbers? | stat tiles; delivery-integrity board (green per verified sha256); genotype donut with the `1/2` compound-het slice pulled out |
 | Genome | Is any chromosome present in the wrong number of copies? | allele-balance dot plot on the 0.5 line (**headline**); depth-vs-VAF with crosshair; karyotype to real length; 1 Mb density heat strips + 3D surface |
-| Callset | Is the delivered callset healthy, and what did it suppress? | filtering funnel; depth histogram; substitution spectrum; indel length spectrum |
+| Callset | Is the delivered callset healthy, and what did it suppress? | filtering funnel; depth histogram; substitution spectrum; indel length spectrum; **zygosity split** (the `bcftools` AF section, which on one sample is het-vs-hom and *not* population frequency — the exhibit says so, and puts each half's Ts/Tv against the random-error line); **header fields** (all 31 FILTER/INFO/FORMAT declarations, verbatim — the checkable evidence that the delivery ships no annotation worth ranking on) |
 | Panel | Which MVA candidate genes have evidence, and how much is hidden? | gene scorecard (PASS/suppressed + PASS % axis); **constraint scorecard** (LOEUF bars against ClinVar P/LP counts, with the recessive-inversion caveat); locus explorer with QUAL, VAF and **gene-structure** tracks (exons/introns/TSS from Ensembl); **protein-domain lollipop** placing each protein-altering allele in amino-acid space; **compound-het pair matrix** (the het × het grid, green = resolved trans, red = resolved cis, yellow = `1/2` auto-trans, blue = unknown shaded by pair rarity — 99.7 % of BUB1B's cells are unknown and the exhibit says so) |
 | Compare | How does this patient differ from the normal population? | rarity scatter (gnomAD AF on a log axis against VAF, with a dedicated **novel lane** for variants absent from gnomAD); candidate table (rare **and** protein-altering — a deliberately short list); **candidate waterfall** (nine filter stages on a log-x axis, blue = genome scope → purple = panel scope with the scope change drawn as a dashed rule and annotated: annotation exists only inside the 8-gene panel, so there is no genome-wide ranking to show); observed-vs-expected QC dumbbells against published healthy-genome bands |
-| Reads | What does the raw measurement look like? | lane yield; store treemap; flowcell heatmap + 3D by tile; per-cycle quality + 3D surface; the 4-level phred binning |
-| Probes | Ask the raw reads a new question | k-mer console (submit → long-poll → result bars vs the expectation line); jobs monitor with cancel; oracle ledger |
+| Reads | What does the raw measurement look like? | lane yield; store treemap; **delivered yield** (reads estimated from the gzip bytes against reads counted in the parquet store — the estimate runs +0.32 % to +1.10 % high on every lane); flowcell heatmap + 3D by tile; per-cycle quality + 3D surface; the 4-level phred binning |
+| Probes | Ask the raw reads a new question | k-mer console (submit → long-poll → result bars vs the expectation line); jobs monitor with cancel; submission builder (candidates → validated Track 1 CSV, [`methodology/046`](methodology/046-probe-builder.md)); oracle ledger |
 | Science | What do we believe, how strongly, and on what basis? | method loop diagram (claim → predict → test → verdict → revise); hypothesis board (one card per claim, latest revision, expandable revision history); evidence ledger (direction-coloured, filterable by hypothesis id); oracle budget read as research narrative. **Empty today by design** — the register tables do not exist until the first claim, and the page renders that as a designed state |
 | Provenance | Where did every number come from? | lineage graph (SVG, hover an edge for its transform); derivations with their questions; flat lineage table |
 | Catalog | What data do we hold, what is in it, when did it arrive, where does it live? | delivery inventory (one card per raw object: description, size, sha256 short-form + who verified it, arrival time); table catalogue (every warehouse/results table with its lineage edge, free-text filter); **table explainer** (one expandable card per table: why it exists, the verb that writes it, and every column's type and meaning); read-store card |
+| Search | What is at *this* locus — one I chose, not one the server pre-selected? | one box taking a gene symbol, a region in either `chr` spelling, or an rsID, with one-click examples; **resolution line** naming the window *and the resolver that placed it* (query string / candidate panel / the callset's own rsID column / Ensembl) plus its caveat; **density strip** (PASS stacked under suppressed, per adaptive bin so the strip stays ~120 bars at any span); the full record table. The query lives in the URL, so a result is a shareable link. Four states are drawn distinctly: unparseable-or-too-wide, unknown name, Ensembl down, and **resolved-with-zero-rows** — for an rsID placed by dbSNP that means *the site was never called*, which is a finding, not a failure. Verified **live** against the hosted database and Ensembl, [`methodology/042`](methodology/042-universal-search.md) |
 
 Exactly three views are 3D, each with a real third axis: density bins (chromosome × position ×
 count), flowcell (x × y × tile), cycle quality (cycle × partition × mean Q). 3D is never used for a
@@ -77,10 +78,15 @@ two-dimensional relationship.
   affected exhibit, so a placeholder can never be mistaken for a measurement.
 - Each module states which of its numbers are measured and which fill a shape.
 
-**Patient-data rule.** No genomic coordinate is committed. The locus and panel-annotation fixtures
-use a synthetic counter (1000, 2000, 3000 …) and say so; real positions exist only in the browser at
-runtime, served live. GRCh38 chromosome lengths are the coordinate *system*, not patient data, and
-are committed.
+**Patient-data rule.** No genomic coordinate is committed. The locus, panel-annotation and search
+fixtures use a synthetic counter (1000, 2000, 3000 … / a 1,000,000-based ladder) and say so; real
+positions exist only in the browser at runtime, served live. GRCh38 chromosome lengths are the
+coordinate *system*, not patient data, and are committed.
+
+**A fixture may answer nothing.** `fixtures/search.ts` is the one module that can decline: it
+mirrors the server's query grammar but knows only the example queries, and for anything else it
+returns no envelope at all, so the client re-raises the real error. An offline search box that
+invented a resolution for every string typed into it would be the worst possible fixture.
 
 **Null is not zero.** Two nullable fields carry meaning the UI must not flatten, and both are
 enforced in the rendering rather than left to the reader:
@@ -114,5 +120,13 @@ enforced in the rendering rather than left to the reader:
 - **A gap is rendered, never blanked.** A derived table with no lineage edge and a delivered
   object with no ingest-ledger row both draw a yellow chip saying which record is missing, in
   place of an empty cell. Same rule as "null is not zero" above, applied to provenance.
+- `DataTable` sorts (tri-state headers, type-aware, nulls last), filters (`filterable`) and paginates
+  (over `pageSize`, default 100) — all optional, defaults keep every existing call site and its pixels
+  unchanged ([043](methodology/043-datatable-upgrade.md)).
+- **Every exhibit selection lives in the URL, not in `useState`** — contig, metric, 2D/3D, gene,
+  filter text — via `lib/urlstate.ts`. A default writes no parameter, updates `replace` rather than
+  push, exhibit keys are namespaced (`bins.chrom` vs `baf.chrom`), and an invalid value falls back
+  silently. So one link is one complete figure reference for the report; the full key table is in
+  [044](methodology/044-url-state.md).
 - Colours come from `lib/palette.ts` only: green = good, red = broken/suppressed, yellow = a decision,
   blue = neutral machinery, purple = the raw input.

@@ -17,7 +17,10 @@ when `/api/callset/funnel` was added and measured live against the hosted databa
 `tests/test_viz_api.py`, `tests/test_viz_units.py`, `tests/test_viz_catalog.py`,
 `tests/test_viz_funnel.py` and
 `tests/test_catalog_semantics.py`, mocked
-below the API. The reads-API
+below the API. Re-verified 2026-09-01 when `/api/search` and `/api/callset/region` were
+added and measured live against the hosted database and Ensembl REST
+([`methodology/042`](methodology/042-universal-search.md), covered by
+`tests/test_viz_search.py`). The reads-API
 proxy routes were verified only on their **503** path, because
 [`mva-reads-api`](reads-api.md) is not running anywhere yet.
 
@@ -113,6 +116,8 @@ came from; `cached_at` is non-null exactly when the payload came off disk.
 | `GET /api/callset/indel-lengths` | `pg.results.stats_idd` | live |
 | `GET /api/callset/observed-expected` | `pg.results.qc_observed_expected` | live, 0.51 s, 12 rows |
 | `GET /api/callset/funnel` | `pg.results.candidate_funnel` | live, 0.48–0.54 s, 9 rows |
+| `GET /api/callset/zygosity-split` | `pg.results.stats_af` | live, 0.28–0.44 s, 2 rows |
+| `GET /api/callset/fields` | `pg.warehouse.vcf_fields` | live, 0.28–0.33 s, 31 rows |
 | `GET /api/panel/genes` | 2 tables + the panel BED | live |
 | `GET /api/panel/constraint` | `pg.results.panel_gene_constraint` + the panel BED | live, 0.54 s, 8 rows |
 | `GET /api/panel/annotations?gene=` | `pg.results.panel_candidates` | live, 0.57 s, 874 rows |
@@ -124,6 +129,7 @@ came from; `cached_at` is non-null exactly when the payload came off disk.
 | `GET /api/reads/flowcell?lane=&read=&shard=` | one shard, 3 columns | 2.4 s → cached |
 | `GET /api/reads/cycle-quality` | 100k reads × 8 partitions | 36 s → cached |
 | `GET /api/reads/quality-levels` | 100k reads × 8 partitions | 41 s → cached |
+| `GET /api/reads/yield` | `pg.results.sequencing_yield` | live, 0.28–0.36 s, 4 rows |
 | `GET /api/provenance/lineage` | `pg.warehouse.data_lineage` | live |
 | `GET /api/provenance/derivations` | `pg.results.derivation_runs` | live |
 | `GET /api/provenance/sources` | `pg.warehouse.source_objects` | live |
@@ -133,6 +139,9 @@ came from; `cached_at` is non-null exactly when the payload came off disk.
 | `GET /api/catalog/objects` | `pg.warehouse.source_objects` + `source_files` | live, 0.5 s, 12 rows |
 | `GET /api/catalog/tables` | `pg.information_schema` + `warehouse_catalog` + `data_lineage` + `pg.results.derivation_runs` + the semantics registry | 3.3–11.8 s → cached, 38 rows |
 | `GET /api/catalog/columns` | `pg.information_schema.columns` + the column-meaning registry | live, 0.95–1.6 s, 262 rows |
+| `POST /api/probe/build` | nothing — the request itself, through `mva.pipeline.submission` | live, 0.02 s |
+| `GET /api/search?q=` | the query string, the panel BED, `pg.warehouse.variants_raw` (id scan), or Ensembl REST | 0.001 s region · 1.1 s panel · 1.7–5.4 s Ensembl → cached |
+| `GET /api/callset/region?chrom=&start=&end=` | `pg.warehouse.variants_raw` (chrom pushdown) | 1.9–2.6 s → cached, **5 Mb span cap** |
 
 Add `?refresh=true` to any cached endpoint to rebuild it.
 
@@ -142,6 +151,13 @@ answer `{"table_exists": bool, "rows": [...]}`, because `warehouse.hypotheses` a
 An absent table and an empty one are different facts, and the flag is how the browser tells
 them apart. The endpoints are read-only and never create the tables — see
 [`methodology/041`](methodology/041-science-page.md).
+
+`POST /api/probe/build` is the other exception to "`data` is a list of rows": it answers
+`{csv, valid, problems, self_test}`. It reads no table — the payload is the request, put
+through the pipeline's own rules — takes **bare** contigs in and emits `chr`-prefixed ones,
+and writes nothing to disk. `csv` is empty and `self_test` null whenever `valid` is false.
+Building costs nothing; uploading the result spends one of eighteen oracle submissions. See
+[`methodology/046`](methodology/046-probe-builder.md).
 
 ### Proxied to `mva-reads-api`
 
@@ -202,6 +218,22 @@ chart has to respect:
   different populations. The unit itself changes down the table (records → alleles →
   pairs), so a stage may legitimately be *wider* than the one above it; `note` says where
   and why. See [`methodology/039`](methodology/039-candidate-funnel.md).
+- **`/api/callset/zygosity-split`** — the `bcftools stats` **AF** section, parsed. `af_bin`
+  is **not a population allele frequency**: one sample means `AN` is always 2, so bcftools
+  emits exactly two bins — its singleton row (`AC=1`, labelled `0.0`) and its `AC=2` row
+  (labelled `0.99`) — and they are heterozygous and homozygous-alternate. Reading `af_bin`
+  as rarity is the error [`data-findings` §2.5](../../ideation/data-findings.md) warns
+  about. `zygosity` carries that reading and is **null** on any callset with more than one
+  sample, where neither word applies. Both allele totals match the independent genotype
+  counter exactly. See [`methodology/045`](methodology/045-orphan-tables.md).
+- **`/api/callset/fields`** — the callset's own VCF header schema, 31 declarations ordered
+  FILTER → INFO → FORMAT. Descriptions are the caller's own prose, verbatim; nothing is our
+  writing. This is the checkable evidence for "the delivery ships no annotation worth
+  ranking on".
+- **`/api/reads/yield`** — per-lane reads and bases **estimated** from the delivered gzip
+  bytes, not counted. `/api/reads/runs` carries the count; the pair makes the estimate's
+  error measurable (+0.32 % to +1.10 %, high on all four lanes). `lane` is the file name's
+  spelling (`L001`), not the integer `/api/reads/runs` uses.
 
 ### The gene-structure endpoint
 
@@ -283,6 +315,36 @@ Four contract facts:
   `Derivation`, the ledgers, the raw layer, the annotation table and the research register
   — and fails with the exact entry to add if any lacks a `created_by` and a `why`.
 
+### The two search endpoints
+
+The only place a **user-chosen** locus enters the service, and the second route to read
+`variants_raw` ([`methodology/042`](methodology/042-universal-search.md) has the
+measurements). Five contract facts:
+
+- **Two requests, not one.** `/api/search?q=` resolves a typed query to a window;
+  `/api/callset/region` reads it. Resolution is cheap, cacheable and safe to share; the
+  region read is expensive and carries real patient positions. The split lets a client show
+  *what the query resolved to, and by which resolver*, before paying for the scan.
+- **`source` names the resolver, and is the envelope's `source` too** — the query string
+  (a region is parsed, never looked up), the candidate panel, the callset's own `id`
+  column, or Ensembl. `note` is a caveat the UI must render (an unpadded Ensembl span, an
+  rsID placed by dbSNP rather than by the callset) and is **null** when there is none.
+- **The rsID resolver is two stages, by measurement.** The callset's `id` column is scanned
+  first — 0.7–1.4 s, no network, and it hits for the 4,408,823 of 5,012,204 records that
+  carry an rsID — and Ensembl is consulted only on a miss. That is what keeps **404
+  unknown id** distinct from **200 with zero rows**, which means *real variant, this
+  callset never called it*. Either mechanism alone loses one of those two answers.
+- **The 5 Mb span cap is a payload guard, not a latency one.** The raw layer has no index,
+  so PostgreSQL seq-scans it either way and answers a 1 kb window and a whole chromosome in
+  the same ~2 s. What differs is the answer: 6 records and under a kilobyte against 101,130
+  records and 11 MB. Over the cap is a **422** naming the cap.
+- **Four failure modes, four statuses.** 422 the query is not one of the three forms or the
+  window is too wide; 404 valid shape, no authority knows the name; 502 Ensembl unreachable
+  — never a guessed coordinate; 200 resolved, and the table may still be empty. Note that
+  Ensembl answers an unknown name with **400**, not 404, which is why
+  `mva.viz.search_resolve` has its own REST helper rather than reusing
+  `genestructure._get` — there, every non-200 really is a fault.
+
 ## Two things that are easy to get wrong
 
 **Chromosome naming.** The callset says `15`, the panel BED says `chr15`, and the scorer
@@ -342,6 +404,9 @@ One new chart = one line, when the table already exists:
 | `overview.py` | the headline object, one connection |
 | `genotype.py` | decoding `format` + `sample_call` |
 | `panelbed.py` | the two panel columns only the BED has |
+| `search.py` | the search grammar: what a typed query means, the span cap, the region read |
+| `search_resolve.py` | turning a gene symbol or an rsID into a window — panel, callset, Ensembl |
+| `routes_search.py` | the two search routes and their four failure statuses |
 | `cache.py` | the disk cache |
 | `proxy.py` | forwarding to `mva-reads-api` |
 | `response.py` | the `{data, cached_at, source}` envelope |
