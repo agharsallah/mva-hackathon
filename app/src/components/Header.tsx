@@ -33,6 +33,20 @@ function useApiHealth() {
   });
 }
 
+/**
+ * A blocked fetch and a dead server look identical from JavaScript — both are a bare
+ * `TypeError`. The browser only prints the CORS reason to the console, so the dot names
+ * both causes and both origins, which is what tells them apart.
+ */
+function statusTitle(state: 'checking' | 'up' | 'down'): string {
+  if (state !== 'down') return API_URL;
+  return (
+    `${API_URL} did not answer.\n` +
+    `Either mva-viz-api is not running, or this page's origin (${window.location.origin}) ` +
+    `is blocked by the API's CORS policy — check the browser console for the CORS message.`
+  );
+}
+
 export function Header() {
   const onFixtures = useSyncExternalStore(fixtureModeStore.subscribe, fixtureModeStore.get);
   const h = useApiHealth();
@@ -79,7 +93,7 @@ export function Header() {
               fixtures off
             </span>
           )}
-          <span className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-500" title={API_URL}>
+          <span className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-500" title={statusTitle(state)}>
             <span className={`h-2 w-2 rounded-full ${dot}`} />
             api {state}
           </span>

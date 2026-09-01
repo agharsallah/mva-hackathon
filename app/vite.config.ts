@@ -4,7 +4,10 @@ import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server: { port: 5173, host: '127.0.0.1' },
+  // strictPort: without it Vite silently takes 5174 when 5173 is busy (a second dev
+  // server, or one left running), and the app then loads on an origin the API's CORS
+  // list does not name — which reaches the user as "api down", not as a port clash.
+  server: { port: 5173, host: '127.0.0.1', strictPort: true },
   build: {
     // Plotly is a ~4 MB bundle; keep it in its own lazily-loaded chunk.
     chunkSizeWarningLimit: 5000,
