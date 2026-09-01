@@ -28,6 +28,7 @@ from .analysis_funnel import FUNNEL_DERIVATIONS
 from .analysis_karyogram import KARYOGRAM_DERIVATIONS
 from .analysis_pairs import PAIR_DERIVATIONS
 from .analysis_reference import REFERENCE_DERIVATIONS
+from .analysis_stats import STATS_DERIVATIONS
 from .derivation import SOURCE, Derivation, resolve  # noqa: F401  (re-exported)
 
 #: Derivations over the delivered callset and read profile.
@@ -221,7 +222,7 @@ CALLSET_DERIVATIONS: tuple[Derivation, ...] = (
 #: Every derivation the runner knows about, in execution order.
 DERIVATIONS: tuple[Derivation, ...] = (CALLSET_DERIVATIONS + REFERENCE_DERIVATIONS
                                        + KARYOGRAM_DERIVATIONS + PAIR_DERIVATIONS
-                                       + FUNNEL_DERIVATIONS)
+                                       + FUNNEL_DERIVATIONS + STATS_DERIVATIONS)
 
 #: Written alongside the outputs so a result in the database can be traced to a run.
 PROVENANCE_TABLE = "derivation_runs"

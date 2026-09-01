@@ -145,6 +145,41 @@ def tstv(settings: Postgres) -> dict:
     return found[0] if found else {"ts": None, "tv": None, "ratio": None}
 
 
+def zygosity_split(settings: Postgres) -> list[dict]:
+    """The bcftools ``AF`` section, parsed — two rows on a single-sample callset.
+
+    ``zygosity`` is the reading, and it is **null** on anything but one sample, where the
+    bins really are population allele frequencies. See
+    :mod:`mva.warehouse.analysis_stats` for why AF here is a het/hom split.
+    """
+    return table(settings, "results", "stats_af", "ORDER BY af_bin")
+
+
+def vcf_fields(settings: Postgres) -> list[dict]:
+    """Every FILTER, INFO and FORMAT field the callset's own VCF header declares.
+
+    The callset's schema documentation, written by the caller that produced it. Ordered
+    so the three kinds stay grouped and stable across requests.
+    """
+    return fetch(settings,
+                 "SELECT kind, id, description FROM pg.warehouse.vcf_fields "
+                 "ORDER BY CASE kind WHEN 'FILTER' THEN 0 WHEN 'INFO' THEN 1 ELSE 2 END, "
+                 "id")
+
+
+# ── reads ────────────────────────────────────────────────────────────────────────────
+
+def sequencing_yield(settings: Postgres) -> list[dict]:
+    """What each flowcell lane contributed, estimated from the delivered FASTQ bytes.
+
+    Estimated, not counted: ``est_reads`` and ``est_gbases`` come from a file's compressed
+    size and its first read's length, because counting means decompressing 79 GB. The
+    counted figures live in ``/api/reads/runs``, which reads the converted parquet store —
+    the two together are what make the estimate's error measurable.
+    """
+    return table(settings, "results", "sequencing_yield", "ORDER BY lane")
+
+
 # ── panel ────────────────────────────────────────────────────────────────────────────
 
 def panel_genes(settings: Postgres, bed: Path | None = None) -> list[dict]:

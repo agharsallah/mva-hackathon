@@ -12,7 +12,7 @@ must never be written anywhere the repository can pick up.
 
 from fastapi import APIRouter, HTTPException, Query
 
-from . import catalog, genestructure, phase, queries, science
+from . import catalog, genestructure, phase, queries, routes_search, science
 from .cache import Cache, safe_key
 from .overview import overview
 from .response import Envelope, cached, live
@@ -31,6 +31,9 @@ TABLES = {
     "/callset/observed-expected": (queries.observed_expected,
                                    "pg.results.qc_observed_expected"),
     "/callset/funnel": (queries.candidate_funnel, "pg.results.candidate_funnel"),
+    "/callset/zygosity-split": (queries.zygosity_split, "pg.results.stats_af"),
+    "/callset/fields": (queries.vcf_fields, "pg.warehouse.vcf_fields"),
+    "/reads/yield": (queries.sequencing_yield, "pg.results.sequencing_yield"),
     "/provenance/lineage": (queries.lineage, "pg.warehouse.data_lineage"),
     "/provenance/derivations": (queries.derivations, "pg.results.derivation_runs"),
     "/provenance/sources": (queries.sources, "pg.warehouse.source_objects"),
@@ -238,6 +241,7 @@ def router(settings, cache: Cache) -> APIRouter:
                                 detail=f"no panel gene {unknown.args[0]!r}") from unknown
         return live(phase.matrix(gene, variants), "pg.results.panel_het_pairs")
 
+    routes_search.add_routes(api, settings, cache)
     science.add_routes(api, settings)
     return api
 

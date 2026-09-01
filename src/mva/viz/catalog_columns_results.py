@@ -66,6 +66,29 @@ RESULT_COLUMNS: dict[tuple[str, str], str] = {
     ("stats_idd", "length"): "Length of the insertion or deletion in bases — negative is "
                              "a deletion, positive an insertion.",
     ("stats_idd", "count"): "How many indels of that length the callset carries.",
+    ("stats_af", "af_bin"): "The non-reference allele-frequency bin `bcftools stats` "
+                            "labelled this row with. With one sample AN is always 2, so "
+                            "only two bins exist: `0.0` is its singleton (AC=1) row and "
+                            "`0.99` its AC=2 row. **Not** a population frequency.",
+    ("stats_af", "zygosity"): "What the bin means for a single-sample callset: "
+                              "`heterozygous` (one copy carries the allele) or "
+                              "`homozygous alternate` (both do). Null on any callset with "
+                              "more than one sample, where the bins really are allele "
+                              "frequencies and neither word applies.",
+    ("stats_af", "n_snps"): "Single-base substitutions in the bin.",
+    ("stats_af", "n_ts"): "Of those, transitions — A↔G or C↔T, the chemically easy swaps.",
+    ("stats_af", "n_tv"): "Of those, transversions — a purine swapped for a pyrimidine or "
+                          "the reverse. Rarer in real data.",
+    ("stats_af", "n_indels"): "Insertions and deletions in the bin.",
+    ("stats_af", "n_alleles"): "Every allele in the bin — SNPs plus indels. Counted per "
+                               "allele, so a multi-allelic record contributes more than "
+                               "one and the column exceeds the record count.",
+    ("stats_af", "ts_tv"): "Transitions over transversions inside this bin alone. A "
+                           "random error process drags it toward 0.5, so a het bin "
+                           "sitting well below the hom bin is false positives "
+                           "concentrating where they are expected to.",
+    ("stats_af", "pct_of_alleles"): "The bin's share of every allele the AF section "
+                                    "counts.",
     ("sequencing_yield", "gigabytes"): "Compressed bytes delivered for the lane, in "
                                        "billions.",
     ("sequencing_yield", "n_files"): "FASTQ files the lane contributed — two per lane for "
