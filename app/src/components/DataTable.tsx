@@ -1,5 +1,6 @@
-import { isValidElement, useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { TextFilter } from './Controls';
+import { nodeText } from '../lib/nodeText';
 
 /**
  * The shared table. Sorting, filtering and pagination are additive: a call site that passes
@@ -30,16 +31,6 @@ type Sort = { key: string; dir: 'asc' | 'desc' };
 /** Rows above this count paginate automatically; `pageSize` overrides, `pageSize={0}` disables. */
 const DEFAULT_PAGE_SIZE = 100;
 
-/** Flatten a rendered cell to the text a reader sees — used for filtering and as sort fallback. */
-function cellText(node: ReactNode): string {
-  if (node === null || node === undefined || typeof node === 'boolean') return '';
-  if (typeof node === 'string') return node;
-  if (typeof node === 'number') return String(node);
-  if (Array.isArray(node)) return node.map(cellText).join(' ');
-  if (isValidElement(node)) return cellText((node.props as { children?: ReactNode }).children);
-  return '';
-}
-
 function sortKeyOf<R>(col: Column<R>, row: R): string | number | null {
   if (col.sortValue) {
     const v = col.sortValue(row);
@@ -52,7 +43,7 @@ function sortKeyOf<R>(col: Column<R>, row: R): string | number | null {
     if (typeof raw === 'boolean') return raw ? 1 : 0;
     if (raw === null || raw === undefined) return null;
   }
-  return cellText(col.render(row)) || null;
+  return nodeText(col.render(row)) || null;
 }
 
 function compareKeys(a: string | number, b: string | number): number {
@@ -134,7 +125,7 @@ export function DataTable<R>({
     if (!needle) return rows;
     return rows.filter((r) =>
       columns
-        .map((c) => cellText(c.render(r)))
+        .map((c) => nodeText(c.render(r)))
         .join(' ')
         .toLowerCase()
         .includes(needle),
