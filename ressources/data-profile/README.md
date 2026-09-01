@@ -18,9 +18,9 @@ source tools/activate.sh
 tools/profile-genomic-data.sh ~/ubuntu/data     # ~10 min, mostly one full VCF pass
 ```
 
-Patient-derived artifacts (panel VCF extract, FASTQ smoke sample) are written to
-`~/ubuntu/work/` instead — outside the repo, covered by the `.gitignore` guard, and
-subject to the 30-day deletion obligation.
+Patient-derived artifacts (panel VCF extract, FASTQ smoke sample) are ingested into the
+warehouse database instead — outside the repo, queried through the reads API / viz API,
+and subject to the 30-day deletion obligation.
 
 ## What lands here
 
@@ -59,8 +59,8 @@ If you regenerate by hand, do the same.
 
 | Artifact | Where it goes | Why not here |
 |---|---|---|
-| `panel/panel_mva.vcf.gz` — the actual variants in the candidate genes | `~/ubuntu/work/` | real patient genotypes |
-| `smoke/smoke_200k_R{1,2}.fastq.gz` — pipeline smoke sample | `~/ubuntu/work/` | real patient sequence |
+| `panel/panel_mva.vcf.gz` — the actual variants in the candidate genes | warehouse DB, via the reads/viz API | real patient genotypes |
+| `smoke/smoke_200k_R{1,2}.fastq.gz` — pipeline smoke sample | warehouse DB, via the reads/viz API | real patient sequence |
 | Any BAM, any IGV screenshot, any variant table with patient coordinates | nowhere near git | breaks [the rule](../../docs/notes/no-patient-data-in-the-repository.md) |
 
 Synthetic stand-ins for the smoke sample live in [`tests/fixtures/`](../../tests/fixtures/)

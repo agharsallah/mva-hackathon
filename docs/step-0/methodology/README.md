@@ -16,7 +16,8 @@ was seen. Where a value is an estimate from sampling rather than a full count, t
 says so and gives the sampling parameters.
 
 **No patient variant coordinates appear here.** Entries record counts, distributions and
-classifications; the positions themselves stay in `~/ubuntu/work/`, per
+classifications; the positions themselves stay in the warehouse database, queried through
+the reads/viz API, per
 [no patient data in the repository](../../notes/no-patient-data-in-the-repository.md).
 
 ## Environment
@@ -82,3 +83,7 @@ Reproduce the environment with `tools/setup-env.sh`, then `source tools/activate
 | [039](039-candidate-funnel.md) | How does the callset narrow from 5,012,204 records to a candidate pair set, what does each filter cost, and can the genome→panel scope change be shown rather than hidden? *(step-0 machinery, no hypothesis.)* |
 | [040](040-locus-gene-track.md) | Can Ensembl REST supply a gene's exon structure and protein domains server-side — and can our own alleles be placed in amino-acid space at all, given that `panel_annotations` never stored a protein position? *(step-0 machinery, no hypothesis.)* |
 | [041](041-science-page.md) | Can a read-only surface render the research register honestly while its two tables do not exist yet — without creating them, and without confusing "absent" with "empty"? *(step-0 machinery, no hypothesis.)* |
+| [042](042-universal-search.md) | Can one box resolve a gene symbol, a region or an rsID against the live callset — and what actually limits how wide a window the unindexed raw layer can serve? **Measures the span cost (flat: the cap is a payload guard, not a latency one) and the rsID bake-off (both mechanisms are ~1 s, so the answer is to chain them).** *(step-0 machinery, no hypothesis.)* |
+| [044](044-url-state.md) | Can every exhibit selection move into the URL so one link is one complete figure reference — without noisy URLs, without history spam, and without two exhibits overwriting each other? *(step-0 machinery, no hypothesis.)* |
+| [045](045-orphan-tables.md) | Which warehouse tables and `bcftools stats` sections had no surface — and for each one, is it worth serving? **Measures the section census: the delivered stats file has no `QUAL` section, and `SiS` duplicates the `AF` singleton bin.** *(step-0 machinery, no hypothesis.)* |
+| [046](046-probe-builder.md) | Can dashboard candidates become a validated Track 1 submission CSV in the browser — with no coordinate typed, no second copy of the format rules, and the header proven against the organisers' own template? *(step-0 machinery, no hypothesis.)* |

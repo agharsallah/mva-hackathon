@@ -10,9 +10,10 @@ any fork of the public repository we are also required to publish. So the rule i
 rather than proportionate — no VCF slice, no read, no variant table with real coordinates,
 no IGV screenshot, regardless of how small.
 
-Real derived artifacts live in `~/ubuntu/work/`, outside the git tree. What may be
-committed is aggregate: counts, distributions, redacted headers, per-gene tallies. A count
-is not a record.
+Real derived artifacts live in the warehouse database on the remote VPS, queried through
+the reads API / viz API — never on a contributor's disk, outside the git tree either way.
+What may be committed is aggregate: counts, distributions, redacted headers, per-gene
+tallies. A count is not a record.
 
 ## Consequences
 

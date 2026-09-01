@@ -14,8 +14,9 @@ Repository and infrastructure numbers — test counts, table counts, what is pro
 are **not** here; they belong to [`docs/current-state.md`](../docs/current-state.md).
 
 Reproduce with `tools/profile-genomic-data.sh ~/ubuntu/data`. Committable summaries land
-in [`ressources/data-profile/`](../ressources/data-profile/); patient-derived slices land
-in `~/ubuntu/work/`, outside the repo.
+in [`ressources/data-profile/`](../ressources/data-profile/); patient-derived slices are
+ingested into the warehouse database and served over the reads API / viz API, outside the
+repo.
 
 ---
 

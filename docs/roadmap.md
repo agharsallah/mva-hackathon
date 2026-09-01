@@ -26,9 +26,11 @@ trusted with an indel? Step page: [`step-1/README.md`](step-1/README.md).
 
 ```bash
 # The reference must be the no-chr analysis set, matching the VCF's contigs.
-bcftools norm -m -both -f GRCh38_no_chr.fa ~/ubuntu/work/proband.vcf.gz \
-  -Oz -o ~/ubuntu/work/proband.norm.vcf.gz
-bcftools index -t ~/ubuntu/work/proband.norm.vcf.gz
+# <scratch>/ is a gitignored local scratch dir, materialized from the warehouse via the
+# reads/viz API — bcftools needs real file bytes regardless of the backing store.
+bcftools norm -m -both -f GRCh38_no_chr.fa <scratch>/proband.vcf.gz \
+  -Oz -o <scratch>/proband.norm.vcf.gz
+bcftools index -t <scratch>/proband.norm.vcf.gz
 ```
 
 Multiallelic sites and indels ([counts](../ideation/data-findings.md)) against an
@@ -204,7 +206,8 @@ Practical notes that decide whether this works:
 
 ### Strategy C — the smoke loop (already in place)
 
-`~/ubuntu/work/smoke/smoke_200k_R{1,2}.fastq.gz` holds 200k verified-paired read pairs.
+The warehouse database holds a 200k verified-paired read-pair smoke sample
+(`smoke/smoke_200k_R{1,2}.fastq.gz`), fetched through the reads/viz API.
 Develop and debug the whole align → call → annotate → rank → emit chain against it, where a
 full run takes seconds, and only then point the finished pipeline at the full delivery. It also turns
 the runtime answer on the methods form into something measured rather than guessed.
@@ -215,11 +218,12 @@ tile 1101. Fine for exercising a pipeline, not a representative quality sample �
 
 ### Data lifecycle and the deletion obligation
 
-Everything derived lands under `~/ubuntu/work/`, which is one directory to delete. That is
-deliberate: on close, `rm -rf ~/ubuntu/data ~/ubuntu/work` plus any Modal volumes covers
-the whole obligation, and the confirmation email to the organisers can be sent honestly.
+Everything derived lands in the warehouse database on the remote VPS, which is one thing
+to delete. That is deliberate: on close, dropping the warehouse schema plus
+`rm -rf ~/ubuntu/data` and any Modal volumes covers the whole obligation, and the
+confirmation email to the organisers can be sent honestly.
 
-Anything written outside that directory — a stray BAM in a home folder, a notebook
+Anything written outside the warehouse — a stray BAM in a home folder, a notebook
 checkpoint, a Modal volume nobody remembers — is a compliance liability. Keep the tree
 boring.
 

@@ -21,10 +21,9 @@ Where everything lives:
 
 | | Location | In git |
 |---|---|---|
-| Raw dataset (local convenience mirror) | `~/ubuntu/data/` | no |
-| Derived patient slices, panel extracts, smoke samples | `~/ubuntu/work/` | no |
 | The delivery as source of truth | MinIO bucket `mva`, `source/` — remote VPS | no |
 | Ingested and derived tables | PostgreSQL `mva` — remote VPS | no |
+| Derived patient slices, panel extracts, smoke samples | warehouse tables, queried via the reads API / viz API — remote VPS | no |
 | Aggregate profiles, counts, redacted headers | `ressources/data-profile/` | yes |
 | Synthetic fixtures | `tests/fixtures/` | yes |
 

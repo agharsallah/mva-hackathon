@@ -9,8 +9,8 @@ number is copied from a run whose output was seen.
 
 **No patient variant coordinates appear here**, per
 [no patient data in the repository](../../notes/no-patient-data-in-the-repository.md).
-Entries record counts, distributions and classifications; positions stay in
-`~/ubuntu/work/`.
+Entries record counts, distributions and classifications; positions stay in the warehouse
+database, queried through the reads/viz API.
 
 Entries are **append-only**: a superseded finding is corrected by a new entry that says so,
 never by editing the old one. This index may be corrected; the numbered entries may not.

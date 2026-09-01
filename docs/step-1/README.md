@@ -33,9 +33,11 @@ split before it can be submitted at all. Counts for both are in
 
 ```bash
 # The reference must be the no-chr analysis set, matching the VCF's contigs.
-bcftools norm -m -both -f GRCh38_no_chr.fa ~/ubuntu/work/proband.vcf.gz \
-  -Oz -o ~/ubuntu/work/proband.norm.vcf.gz
-bcftools index -t ~/ubuntu/work/proband.norm.vcf.gz
+# <scratch>/ is a gitignored local scratch dir, materialized from the warehouse via the
+# reads/viz API — bcftools needs real file bytes regardless of the backing store.
+bcftools norm -m -both -f GRCh38_no_chr.fa <scratch>/proband.vcf.gz \
+  -Oz -o <scratch>/proband.norm.vcf.gz
+bcftools index -t <scratch>/proband.norm.vcf.gz
 ```
 
 Needs the reference FASTA (~3 GB) fetched first.
