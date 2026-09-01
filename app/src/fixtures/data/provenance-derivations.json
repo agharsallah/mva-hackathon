@@ -1,0 +1,32 @@
+[
+  {
+    "run_at": "2026-08-28T10:02:00Z",
+    "derivation": "contig_density",
+    "question": "Is the callset spread evenly over the genome, or does some contig dominate?",
+    "n_rows": 25
+  },
+  {
+    "run_at": "2026-08-28T10:07:00Z",
+    "derivation": "variant_density_bins",
+    "question": "Where along each chromosome do calls concentrate, and where does the caller go quiet?",
+    "n_rows": 3088
+  },
+  {
+    "run_at": "2026-08-28T10:19:00Z",
+    "derivation": "allele_balance_flags",
+    "question": "Does any chromosome show the allele imbalance an extra or missing copy would cause?",
+    "n_rows": 25
+  },
+  {
+    "run_at": "2026-08-28T10:26:00Z",
+    "derivation": "panel_gene_density",
+    "question": "How many records land in each MVA candidate gene, and how many were suppressed?",
+    "n_rows": 8
+  },
+  {
+    "run_at": "2026-08-30T17:02:00Z",
+    "derivation": "reads_manifest",
+    "question": "What is the exact read census, and does it match the vendor claim?",
+    "n_rows": 272
+  }
+]

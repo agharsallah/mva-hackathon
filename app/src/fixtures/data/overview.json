@@ -1,0 +1,20 @@
+{
+  "total_variants": 5012204,
+  "pass_variants": 4740790,
+  "snps": 4086641,
+  "indels": 930181,
+  "multiallelic_sites": 66860,
+  "tstv": 1.94,
+  "samples": 1,
+  "total_reads": 1071835104,
+  "read_length": 149,
+  "est_coverage_x": 51.9,
+  "mean_depth_x": 44.3,
+  "canonical_contigs": 25,
+  "all_contigs": 1690,
+  "delivery_objects": 12,
+  "delivery_bytes": 84703196774,
+  "all_hashes_verified": true,
+  "probe_budget_total": 18,
+  "probe_budget_spent": 0
+}

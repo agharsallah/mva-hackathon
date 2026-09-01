@@ -1,0 +1,50 @@
+[
+  {
+    "evidence_id": 1,
+    "recorded_at": "2026-09-01T12:00:00",
+    "hypothesis_id": "H001",
+    "kind": "annotation",
+    "direction": "supports",
+    "strength": 0.7,
+    "claim": "BUB1B is strongly depleted of loss-of-function variants in gnomAD.",
+    "source_ref": "methodology/032",
+    "lineage_ref": "results.panel_gene_constraint",
+    "author": "FIXTURE"
+  },
+  {
+    "evidence_id": 2,
+    "recorded_at": "2026-09-01T12:10:00",
+    "hypothesis_id": "H001",
+    "kind": "absence",
+    "direction": "refutes",
+    "strength": 0.3,
+    "claim": "Only one protein-altering BUB1B allele survives the quality filters.",
+    "source_ref": "methodology/033",
+    "lineage_ref": null,
+    "author": "FIXTURE"
+  },
+  {
+    "evidence_id": 3,
+    "recorded_at": "2026-09-02T08:00:00",
+    "hypothesis_id": "H002",
+    "kind": "measurement",
+    "direction": "neutral",
+    "strength": 0.1,
+    "claim": "Three non-PASS calls exist inside the gene interval.",
+    "source_ref": "methodology/033",
+    "lineage_ref": null,
+    "author": "FIXTURE"
+  },
+  {
+    "evidence_id": 4,
+    "recorded_at": "2026-09-03T08:30:00",
+    "hypothesis_id": "H002",
+    "kind": "measurement",
+    "direction": "refutes",
+    "strength": 0.6,
+    "claim": "All three non-PASS calls are strand-skewed in the raw reads.",
+    "source_ref": "methodology/033",
+    "lineage_ref": "reads.kmer_probe",
+    "author": "FIXTURE"
+  }
+]

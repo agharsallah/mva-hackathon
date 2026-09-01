@@ -1,0 +1,24 @@
+[
+  {
+    "af_bin": 0.0,
+    "zygosity": "heterozygous",
+    "n_snps": 2536505,
+    "n_ts": 1665690,
+    "n_tv": 870815,
+    "n_indels": 644292,
+    "n_alleles": 3180797,
+    "ts_tv": 1.913,
+    "pct_of_alleles": 62.63
+  },
+  {
+    "af_bin": 0.99,
+    "zygosity": "homozygous alternate",
+    "n_snps": 1552121,
+    "n_ts": 1032666,
+    "n_tv": 519455,
+    "n_indels": 346146,
+    "n_alleles": 1898267,
+    "ts_tv": 1.988,
+    "pct_of_alleles": 37.37
+  }
+]

@@ -112,7 +112,7 @@ export async function get<T>(path: string, params?: Params, signal?: AbortSignal
     // not be papered over with fixture rows.
     const notImplemented = err instanceof ApiError && err.status === 501;
     if (!FIXTURES_ENABLED || !(isUnreachable(err) || notImplemented)) throw err;
-    const fixture = fixtureFor(path, params);
+    const fixture = await fixtureFor(path, params);
     if (!fixture) throw err;
     markFixtureMode();
     return { data: fixture.data as T, cachedAt: fixture.cached_at, source: fixture.source, origin: 'fixture' };

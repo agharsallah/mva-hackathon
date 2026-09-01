@@ -1,0 +1,16 @@
+{
+  "planted": [
+    { "pos": 1000, "alt": "A", "pgt": "0|1", "pid": "PS-1", "consequence": "stop_gained", "impact": "HIGH", "af": null, "rsid": null, "clin_sig": "Likely_pathogenic" },
+    { "pos": 1040, "alt": "T", "pgt": "1|0", "pid": "PS-1", "consequence": "missense_variant", "impact": "MODERATE", "af": 0.00004 },
+    { "pos": 2000, "alt": "G", "pgt": "0|1", "pid": "PS-2", "consequence": "missense_variant", "impact": "MODERATE", "af": 0.0021 },
+    { "pos": 2003, "alt": "C", "pgt": "0|1", "pid": "PS-2", "consequence": "synonymous_variant", "impact": "LOW", "af": 0.0021 },
+    { "pos": 3000, "alt": "A", "gt": "1/2", "allele_ix": 1, "consequence": "missense_variant", "impact": "MODERATE", "af": 0.031 },
+    { "pos": 3000, "alt": "AT", "gt": "1/2", "allele_ix": 2, "consequence": "frameshift_variant", "impact": "HIGH", "af": 0.028 },
+    { "pos": 3600, "alt": "G", "annotated": false }
+  ],
+  "resolved": [
+    { "i": 0, "j": 1, "phase": "trans", "auto": false },
+    { "i": 2, "j": 3, "phase": "cis", "auto": false },
+    { "i": 4, "j": 5, "phase": "trans", "auto": true }
+  ]
+}

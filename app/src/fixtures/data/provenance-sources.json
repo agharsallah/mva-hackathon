@@ -1,0 +1,46 @@
+[
+  {
+    "file_name": "proband01.vcf.gz",
+    "kind": "vcf.gz",
+    "role": "callset",
+    "size_bytes": 1412003776,
+    "hash_verified": true,
+    "sha256_source": "vendor manifest",
+    "version_id": "v1",
+    "lane": null,
+    "read_num": null
+  },
+  {
+    "file_name": "proband01.vcf.gz.tbi",
+    "kind": "tbi",
+    "role": "callset index",
+    "size_bytes": 2310144,
+    "hash_verified": true,
+    "sha256_source": "vendor manifest",
+    "version_id": "v1",
+    "lane": null,
+    "read_num": null
+  },
+  {
+    "file_name": "proband01.bcftools-stats.txt",
+    "kind": "txt",
+    "role": "callset summary",
+    "size_bytes": 184320,
+    "hash_verified": true,
+    "sha256_source": "vendor manifest",
+    "version_id": "v1",
+    "lane": null,
+    "read_num": null
+  },
+  {
+    "file_name": "checksums.sha256",
+    "kind": "sha256",
+    "role": "manifest",
+    "size_bytes": 1024,
+    "hash_verified": true,
+    "sha256_source": "self",
+    "version_id": "v1",
+    "lane": null,
+    "read_num": null
+  }
+]

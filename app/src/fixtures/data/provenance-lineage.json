@@ -1,0 +1,93 @@
+[
+  {
+    "produced_at": "2026-08-28T09:14:00Z",
+    "target_schema": "raw",
+    "target_table": "variants_raw",
+    "target_rows": 5012204,
+    "source_kind": "object",
+    "source_ref": "s3://mva/delivery/proband01.vcf.gz",
+    "source_version": "v1",
+    "source_sha256": "verified",
+    "transform": "VCF record stream → columnar rows (one row per ALT record)",
+    "tool": "duckdb + polars",
+    "notes": "no filtering; suppressed records kept as a search space"
+  },
+  {
+    "produced_at": "2026-08-28T10:02:00Z",
+    "target_schema": "results",
+    "target_table": "contig_density",
+    "target_rows": 25,
+    "source_kind": "table",
+    "source_ref": "raw.variants_raw",
+    "source_version": null,
+    "source_sha256": null,
+    "transform": "group by contig, join GRCh38 lengths, records per Mb",
+    "tool": "sql",
+    "notes": "canonical contigs only"
+  },
+  {
+    "produced_at": "2026-08-28T10:07:00Z",
+    "target_schema": "results",
+    "target_table": "variant_density_bins",
+    "target_rows": 3088,
+    "source_kind": "table",
+    "source_ref": "raw.variants_raw",
+    "source_version": null,
+    "source_sha256": null,
+    "transform": "bin position into 1 Mb windows, count all / PASS / LowQual, mean QUAL",
+    "tool": "sql",
+    "notes": "precomputed so the API can serve it instantly"
+  },
+  {
+    "produced_at": "2026-08-28T10:19:00Z",
+    "target_schema": "results",
+    "target_table": "allele_balance_flags",
+    "target_rows": 25,
+    "source_kind": "table",
+    "source_ref": "raw.variants_raw",
+    "source_version": null,
+    "source_sha256": null,
+    "transform": "heterozygous sites only → mean VAF and depth per contig, deviation from 0.5",
+    "tool": "sql",
+    "notes": "the aneuploidy screen"
+  },
+  {
+    "produced_at": "2026-08-28T10:26:00Z",
+    "target_schema": "results",
+    "target_table": "panel_gene_density",
+    "target_rows": 8,
+    "source_kind": "table",
+    "source_ref": "raw.variants_raw × mva_panel_grch38.bed",
+    "source_version": null,
+    "source_sha256": null,
+    "transform": "interval join of records onto panel gene spans, PASS split",
+    "tool": "sql",
+    "notes": "panel from the MVA literature"
+  },
+  {
+    "produced_at": "2026-08-30T16:41:00Z",
+    "target_schema": "reads",
+    "target_table": "store (parquet)",
+    "target_rows": 1071835104,
+    "source_kind": "object",
+    "source_ref": "s3://mva/delivery/*.fastq.gz (8 files)",
+    "source_version": "v1",
+    "source_sha256": "verified",
+    "transform": "4-line FASTQ records → parquet, 272 shards, 8 partitions",
+    "tool": "polars",
+    "notes": "78.9 GiB gzip → 63.03 GiB parquet"
+  },
+  {
+    "produced_at": "2026-08-30T17:02:00Z",
+    "target_schema": "reads",
+    "target_table": "manifest.parquet",
+    "target_rows": 272,
+    "source_kind": "table",
+    "source_ref": "reads.store",
+    "source_version": null,
+    "source_sha256": null,
+    "transform": "one row per shard: partition, rows, bytes",
+    "tool": "polars",
+    "notes": "the store index"
+  }
+]

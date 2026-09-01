@@ -1,0 +1,56 @@
+{
+  "ensembl_id": "ENSG00000000000",
+  "chrom": "0",
+  "start": 1000,
+  "end": 121000,
+  "strand": 1,
+  "biotype": "protein_coding",
+  "transcript": "ENST00000000000",
+  "protein": "ENSP00000000000",
+  "protein_length": 1050,
+  "domains": [
+    { "source": "Pfam", "accession": "PF00000", "name": "KEN box (APC/C degron)", "start_aa": 26, "end_aa": 32, "interpro": null },
+    { "source": "Pfam", "accession": "PF08311", "name": "Mad3/Bub1 homology region 1 (TPR)", "start_aa": 57, "end_aa": 179, "interpro": "IPR013212" },
+    { "source": "Smart", "accession": "SM00777", "name": "Mad3/Bub1 homology region 1 (TPR)", "start_aa": 55, "end_aa": 179, "interpro": "IPR013212" },
+    { "source": "Gene3D", "accession": "1.10.510.10", "name": "Transferase(Phosphotransferase) domain", "start_aa": 782, "end_aa": 1042, "interpro": null },
+    { "source": "SuperFamily", "accession": "SSF56112", "name": "Protein kinase-like domain superfamily", "start_aa": 791, "end_aa": 984, "interpro": "IPR011009" }
+  ],
+  "candidates": [
+    {
+      "consequence": "stop_gained",
+      "impact": "HIGH",
+      "rsid": "rs000000001",
+      "rare": true,
+      "clin_sig": null,
+      "gt": "0/1",
+      "filter": "PASS",
+      "label": "stop gained · rs000000001",
+      "protein_pos": 737,
+      "reason": null
+    },
+    {
+      "consequence": "missense_variant",
+      "impact": "MODERATE",
+      "rsid": null,
+      "rare": true,
+      "clin_sig": null,
+      "gt": "0/1",
+      "filter": "PASS",
+      "label": "missense",
+      "protein_pos": 1002,
+      "reason": null
+    },
+    {
+      "consequence": "splice_region_variant",
+      "impact": "LOW",
+      "rsid": null,
+      "rare": false,
+      "clin_sig": null,
+      "gt": "0/1",
+      "filter": "PASS",
+      "label": "splice region",
+      "protein_pos": null,
+      "reason": "VEP reports no amino-acid position for a splice_region_variant on ENST00000000000"
+    }
+  ]
+}
