@@ -13,6 +13,7 @@ from fastapi.testclient import TestClient
 
 from mva.viz import queries, readstore, routes_warehouse
 from mva.viz.app import create_app, cors_origins
+from mva.warehouse.settings import DEFAULTS
 from mva.viz.cache import Cache
 from mva.viz.proxy import Reply, Unreachable, Upstream
 
@@ -415,6 +416,25 @@ def test_the_dev_server_origin_is_allowed(client):
 
 
 def test_both_spellings_of_loopback_are_allowed_by_default():
-    """`localhost` and `127.0.0.1` are different origins to a browser."""
-    assert cors_origins() == ["http://localhost:5173", "http://127.0.0.1:5173"]
+    """`localhost` and `127.0.0.1` are different origins to a browser.
+
+    Read from :data:`DEFAULTS`, not from ``cors_origins()``: the no-argument call resolves
+    the developer's own ``.env``, which legitimately adds origins and is not under test.
+    """
+    assert cors_origins(DEFAULTS["MVA_VIZ_CORS"]) == [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
     assert cors_origins("http://a, http://b ,") == ["http://a", "http://b"]
+
+
+def test_a_drifted_dev_server_port_is_still_allowed(client):
+    """Vite takes 5174 when 5173 is busy; a port-exact list reads that as "api down"."""
+    response = client.get("/health", headers={"Origin": "http://127.0.0.1:5174"})
+    assert response.headers["access-control-allow-origin"] == "http://127.0.0.1:5174"
+
+
+def test_a_non_loopback_origin_is_not_allowed(client):
+    """The regex widens loopback only — it must not open the API to the network."""
+    response = client.get("/health", headers={"Origin": "http://evil.example:5173"})
+    assert "access-control-allow-origin" not in response.headers

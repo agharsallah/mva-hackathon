@@ -11,7 +11,10 @@ Two things are configured here rather than hard-coded, because a browser is invo
   refuses to read the response unless the server says the origin is allowed.
   ``MVA_VIZ_CORS`` is the comma-separated list, defaulting to the Vite dev server on both
   spellings of loopback (``localhost`` and ``127.0.0.1`` are *different* origins to a
-  browser, which is why both are there).
+  browser, which is why both are there). Any loopback port is allowed on top of that
+  list (:data:`LOOPBACK_ORIGIN`): Vite walks to 5174, 5175, … when 5173 is already taken,
+  and a port-exact list turns that silent drift into a blocked fetch that the app can
+  only report as "api down".
 * **The cache directory.** ``MVA_VIZ_CACHE``, under gitignored ``build/`` by default. The
   locus cache holds real patient positions, so this must never point inside the tree git
   tracks.
@@ -25,6 +28,12 @@ from . import routes_reads, routes_warehouse
 from .cache import Cache, default_directory
 
 SERVICE = "mva-viz-api"
+
+#: Any port on either spelling of loopback. The dev server's port is not stable — Vite
+#: takes the next free one when 5173 is busy — and a developer's own machine is not a
+#: cross-origin threat, so the port is not what makes this API safe. Deployed origins
+#: are never loopback and still have to be named in ``MVA_VIZ_CORS``.
+LOOPBACK_ORIGIN = r"^http://(localhost|127\.0\.0\.1)(:\d+)?$"
 
 
 def cors_origins(configured: str | None = None) -> list[str]:
@@ -48,6 +57,7 @@ def create_app(settings: Postgres | None = None, cache: Cache | None = None,
     app.add_middleware(
         CORSMiddleware,
         allow_origins=origins if origins is not None else cors_origins(),
+        allow_origin_regex=LOOPBACK_ORIGIN,
         allow_credentials=False,
         allow_methods=["GET", "POST", "OPTIONS"],
         allow_headers=["*"],
