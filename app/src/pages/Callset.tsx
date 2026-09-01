@@ -4,6 +4,8 @@ import { Funnel } from './callset/Funnel';
 import { DepthHistogram } from './callset/DepthHistogram';
 import { Substitutions } from './callset/Substitutions';
 import { IndelLengths } from './callset/IndelLengths';
+import { ZygositySplit } from './callset/ZygositySplit';
+import { HeaderFields } from './callset/HeaderFields';
 
 export default function CallsetPage() {
   return (
@@ -72,6 +74,20 @@ export default function CallsetPage() {
           <Substitutions />
           <IndelLengths />
         </div>
+      </Section>
+
+      <Section
+        title="One copy or two — and the trap in how bcftools labelled it"
+        subtitle="The stats file calls this section “allele frequency”. With one sample it is nothing of the kind."
+      >
+        <ZygositySplit />
+      </Section>
+
+      <Section
+        title="What the callset says about itself"
+        subtitle="The VCF header is a self-describing schema. This is the evidence that it ships no annotation worth ranking on."
+      >
+        <HeaderFields />
       </Section>
     </div>
   );

@@ -81,3 +81,39 @@ export interface FunnelStageRow {
   of_previous_pct: number | null;
   note: string;
 }
+
+/**
+ * GET /api/callset/zygosity-split — the bcftools `AF` section, parsed.
+ *
+ * `af_bin` is NOT a population allele frequency. This callset has one sample, so AN is
+ * always 2 and only two bins exist: bcftools' singleton row (AC=1, labelled 0.0) and its
+ * AC=2 row (labelled 0.99). `zygosity` is that reading, and is **null** on any callset
+ * with more than one sample, where the bins really are frequencies and neither word
+ * applies. Anything that treats `af_bin` as rarity is wrong — see data-findings §2.5.
+ */
+export interface ZygosityRow {
+  af_bin: number;
+  zygosity: string | null;
+  n_snps: number;
+  n_ts: number;
+  n_tv: number;
+  n_indels: number;
+  n_alleles: number;
+  ts_tv: number | null;
+  pct_of_alleles: number;
+}
+
+/** Which VCF header section declared a field. */
+export type FieldKind = 'FILTER' | 'INFO' | 'FORMAT';
+
+/**
+ * GET /api/callset/fields — the callset's own schema, out of its VCF header.
+ *
+ * One row per `##FILTER`, `##INFO` or `##FORMAT` declaration. The `description` is the
+ * caller's own prose, verbatim; nothing here is our writing.
+ */
+export interface VcfFieldRow {
+  kind: FieldKind;
+  id: string;
+  description: string;
+}

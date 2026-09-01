@@ -3,6 +3,7 @@ import { Section } from '../components/Controls';
 import { ProbeConsole } from './probes/ProbeConsole';
 import { JobsMonitor } from './probes/JobsMonitor';
 import { ProbeLedger } from './probes/ProbeLedger';
+import { ProbeBuilder } from './probes/ProbeBuilder';
 
 export default function ProbesPage() {
   return (
@@ -70,6 +71,13 @@ export default function ProbesPage() {
 
       <Section title="Jobs" subtitle="every read-store query the API has been asked to run, including from the CLI">
         <JobsMonitor />
+      </Section>
+
+      <Section
+        title="Submission builder"
+        subtitle="turn candidates into the Track 1 CSV without typing a coordinate — building is free, uploading spends 1 of 18"
+      >
+        <ProbeBuilder />
       </Section>
 
       <Section title="Oracle probe ledger">

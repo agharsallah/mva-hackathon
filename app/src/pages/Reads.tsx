@@ -1,6 +1,7 @@
 import { Callout, Explainer } from '../components/Explainer';
 import { Section } from '../components/Controls';
 import { LaneYield } from './reads/LaneYield';
+import { DeliveredYield } from './reads/DeliveredYield';
 import { StoreShape } from './reads/StoreShape';
 import { Flowcell } from './reads/Flowcell';
 import { CycleQuality } from './reads/CycleQuality';
@@ -76,6 +77,13 @@ export default function ReadsPage() {
           <LaneYield />
           <StoreShape />
         </div>
+      </Section>
+
+      <Section
+        title="How good was the guess before we counted?"
+        subtitle="Reads were estimated from the delivered bytes long before anything decompressed them. The parquet census makes that estimate's error measurable."
+      >
+        <DeliveredYield />
       </Section>
 
       <Section title="Where the reads came from, physically">

@@ -40,9 +40,14 @@ import type {
   QualityLevelRow,
   ReadPartitionRow,
   ReadRunRow,
+  RegionWindow,
+  SearchResolution,
+  SequencingYieldRow,
   SourceObjectRow,
   SubstitutionRow,
   TsTv,
+  VcfFieldRow,
+  ZygosityRow,
 } from './types';
 
 const FIVE_MIN = 5 * 60 * 1000;
@@ -78,6 +83,9 @@ export const useIndelLengths = () => useEndpoint<IndelLengthRow[]>('/api/callset
 export const useObservedExpected = () =>
   useEndpoint<ObservedExpectedRow[]>('/api/callset/observed-expected');
 export const useCandidateFunnel = () => useEndpoint<FunnelStageRow[]>('/api/callset/funnel');
+/** Two rows. `af_bin` is a het/hom split, never a population frequency — see the type. */
+export const useZygositySplit = () => useEndpoint<ZygosityRow[]>('/api/callset/zygosity-split');
+export const useVcfFields = () => useEndpoint<VcfFieldRow[]>('/api/callset/fields');
 
 export const usePanelGenes = () => useEndpoint<PanelGeneRow[]>('/api/panel/genes');
 export const usePanelConstraint = () => useEndpoint<PanelConstraintRow[]>('/api/panel/constraint');
@@ -100,12 +108,21 @@ export const useHetPairs = (gene: string | null) =>
     enabled: !!gene,
   });
 
+/** Resolve a typed query to a window. 0.001 s for a region, ~1 s panel, ~2–5 s Ensembl. */
+export const useSearch = (q: string | null) =>
+  useEndpoint<SearchResolution>('/api/search', q ? { q } : undefined, { enabled: !!q });
+/** ~1.5–2.5 s live on the unindexed raw callset layer, then served from the disk cache. */
+export const useRegion = (at: { chrom: string; start: number; end: number } | null) =>
+  useEndpoint<RegionWindow>('/api/callset/region', at ?? undefined, { enabled: !!at });
+
 export const useReadRuns = () => useEndpoint<ReadRunRow[]>('/api/reads/runs');
 export const useReadPartitions = () => useEndpoint<ReadPartitionRow[]>('/api/reads/partitions');
 export const useFlowcell = (lane: number, read: number, shard: number) =>
   useEndpoint<FlowcellBinRow[]>('/api/reads/flowcell', { lane, read, shard });
 export const useCycleQuality = () => useEndpoint<CycleQualityRow[]>('/api/reads/cycle-quality');
 export const useQualityLevels = () => useEndpoint<QualityLevelRow[]>('/api/reads/quality-levels');
+/** Per-lane yield **estimated** from the delivered bytes; `useReadRuns` is the count. */
+export const useSequencingYield = () => useEndpoint<SequencingYieldRow[]>('/api/reads/yield');
 
 export const useCatalogObjects = () => useEndpoint<CatalogObjectRow[]>('/api/catalog/objects');
 export const useCatalogTables = () => useEndpoint<CatalogTableRow[]>('/api/catalog/tables');

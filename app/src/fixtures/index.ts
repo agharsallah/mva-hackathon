@@ -24,6 +24,7 @@ import {
   tstvFixture,
 } from './callset';
 import { candidateFunnelFixture } from './funnel';
+import { sequencingYieldFixture, vcfFieldsFixture, zygositySplitFixture } from './orphans';
 import { catalogObjectsFixture } from './catalog-objects';
 import { catalogColumnsFixture } from './catalog-semantics';
 import { catalogTablesFixture } from './catalog-tables';
@@ -44,6 +45,7 @@ import {
 } from './reads';
 import { derivationsFixture, lineageFixture, probeLedgerFixture, sourcesFixture } from './provenance';
 import { evidenceRegisterFixture, hypothesisRegisterFixture } from './science';
+import { regionEnvelope, searchEnvelope } from './search';
 
 function env<T>(data: T, source: string): Envelope<T> {
   return { data, cached_at: null, source: `fixture: ${source}` };
@@ -70,6 +72,8 @@ const registry: Record<string, Builder> = {
   '/api/callset/observed-expected': () =>
     env(observedExpectedFixture, 'measured aggregates vs PLACEHOLDER published bands'),
   '/api/callset/funnel': () => env(candidateFunnelFixture, 'results.candidate_funnel'),
+  '/api/callset/zygosity-split': () => env(zygositySplitFixture, 'results.stats_af'),
+  '/api/callset/fields': () => env(vcfFieldsFixture, 'warehouse.vcf_fields'),
   '/api/panel/genes': () => env(panelGenesFixture, 'results.panel_gene_density + panel BED'),
   '/api/panel/constraint': () =>
     env(panelConstraintFixture, 'PLACEHOLDER gnomAD constraint + ClinVar counts'),
@@ -97,6 +101,7 @@ const registry: Record<string, Builder> = {
     ),
   '/api/reads/cycle-quality': () => env(cycleQualityFixture, '100k-row sample per partition'),
   '/api/reads/quality-levels': () => env(qualityLevelsFixture, 'sampled per partition'),
+  '/api/reads/yield': () => env(sequencingYieldFixture, 'results.sequencing_yield'),
   '/api/catalog/objects': () => env(catalogObjectsFixture, 'object ledger + delivery manifest'),
   '/api/catalog/tables': () => env(catalogTablesFixture, 'warehouse catalogue + meta.lineage'),
   '/api/catalog/columns': () =>
@@ -105,6 +110,10 @@ const registry: Record<string, Builder> = {
   '/api/provenance/derivations': () => env(derivationsFixture, 'meta.derivations'),
   '/api/provenance/sources': () => env(sourcesFixture, 'delivery manifest'),
   '/api/probe/ledger': () => env(probeLedgerFixture, 'probe ledger (empty: 0/18 spent)'),
+  // Both carry their own envelope: `search` answers nothing at all for a query it cannot
+  // resolve honestly, so the client re-raises the real error instead of faking a 404.
+  '/api/search': (p) => searchEnvelope(p),
+  '/api/callset/region': (p) => regionEnvelope(p),
   // INVENTED claims. The live register is empty and its tables do not exist yet; these
   // exist so the populated layout can be reviewed before there is anything real to show.
   '/api/science/hypotheses': () => env(hypothesisRegisterFixture, 'INVENTED research register'),

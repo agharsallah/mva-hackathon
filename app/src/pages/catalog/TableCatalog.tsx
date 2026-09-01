@@ -73,6 +73,8 @@ export function TableCatalog() {
       {
         key: 'produced',
         header: 'produced at',
+        // Sort on the raw timestamp so "no lineage edge" sorts as missing, not as text.
+        sortValue: (r) => r.produced_at,
         render: (r) =>
           r.produced_at ? (
             <span className="font-mono text-zinc-500">{iso(r.produced_at)}</span>

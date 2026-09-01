@@ -46,3 +46,20 @@ export interface QualityLevelRow {
   phred: number;
   count: number;
 }
+
+/**
+ * GET /api/reads/yield — what each lane was *estimated* to hold, before conversion.
+ *
+ * `est_reads` and `est_gbases` are extrapolated from a file's compressed size and its
+ * first read's length; counting means decompressing 79 GB, which is what the parquet
+ * conversion did once. `/api/reads/runs` carries the counted figure, so the pair of
+ * endpoints is what makes the estimate's error measurable. `lane` is the string as the
+ * file name spells it (`L001`), not the integer `ReadRunRow.lane` uses.
+ */
+export interface SequencingYieldRow {
+  lane: string;
+  est_reads: number;
+  est_gbases: number;
+  gigabytes: number;
+  n_files: number;
+}

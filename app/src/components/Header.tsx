@@ -20,6 +20,7 @@ const PAGES = [
   { to: '/science', label: 'Science' },
   { to: '/provenance', label: 'Provenance' },
   { to: '/catalog', label: 'Catalog' },
+  { to: '/search', label: 'Search' },
 ];
 
 function useApiHealth() {

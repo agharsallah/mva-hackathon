@@ -14,6 +14,7 @@ const Probes = lazy(() => import('./pages/Probes'));
 const Science = lazy(() => import('./pages/Science'));
 const Provenance = lazy(() => import('./pages/Provenance'));
 const Catalog = lazy(() => import('./pages/Catalog'));
+const Search = lazy(() => import('./pages/Search'));
 
 export function App() {
   return (
@@ -32,6 +33,7 @@ export function App() {
             <Route path="/science" element={<Science />} />
             <Route path="/provenance" element={<Provenance />} />
             <Route path="/catalog" element={<Catalog />} />
+            <Route path="/search" element={<Search />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>
