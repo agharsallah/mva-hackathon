@@ -26,6 +26,7 @@ gene symbol with no contig involved. ``panel_gene_constraint.chrom`` is delibera
 ``chr``-prefixed, matching what ``/api/panel/genes`` already returns.
 """
 
+from .analysis_reference_qc import EXTRA_CTES, EXTRA_OBSERVED
 from .derivation import SOURCE, Derivation
 
 #: ClinVar's germline classification is free text with ``|``- and ``/``-packed multi-values.
@@ -243,6 +244,7 @@ QC_OBSERVED_EXPECTED = Derivation(
                    / nullif(count(*), 0) AS pct
             FROM {SOURCE}.variants_raw
         ),
+        {EXTRA_CTES}
         observed(metric, label, obs, observed_from) AS (
             SELECT 'tstv_genome_wide',
                    'Transition/transversion ratio',
@@ -292,6 +294,7 @@ QC_OBSERVED_EXPECTED = Derivation(
                    'Raw sequencing coverage',
                    (SELECT x FROM cov),
                    'profile_scalars est_raw_coverage_x (yield-based, pre-alignment)'
+            {EXTRA_OBSERVED}
         )
         SELECT o.metric,
                o.label,

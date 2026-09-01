@@ -33,6 +33,7 @@ TABLES = {
     "/callset/funnel": (queries.candidate_funnel, "pg.results.candidate_funnel"),
     "/callset/zygosity-split": (queries.zygosity_split, "pg.results.stats_af"),
     "/callset/fields": (queries.vcf_fields, "pg.warehouse.vcf_fields"),
+    "/panel/background": (queries.panel_background, "pg.results.panel_gene_background"),
     "/reads/yield": (queries.sequencing_yield, "pg.results.sequencing_yield"),
     "/provenance/lineage": (queries.lineage, "pg.warehouse.data_lineage"),
     "/provenance/derivations": (queries.derivations, "pg.results.derivation_runs"),
@@ -240,6 +241,56 @@ def router(settings, cache: Cache) -> APIRouter:
             raise HTTPException(status_code=404,
                                 detail=f"no panel gene {unknown.args[0]!r}") from unknown
         return live(phase.matrix(gene, variants), "pg.results.panel_het_pairs")
+
+    @api.get("/panel/clinvar-presence", response_model=Envelope, tags=["panel"])
+    def panel_clinvar_presence(gene: str | None = Query(
+            default=None,
+            description="panel gene symbol, e.g. BUB1B; omit for all eight")) -> dict:
+        """Every ClinVar pathogenic / likely-pathogenic panel site, present here or not.
+
+        The inward direction of the reference join: instead of asking what the world knows
+        about an allele the callset has, it asks whether the callset contains a site the
+        world has already classified. ``summary`` is one row per panel gene — a gene with
+        no P/LP record at all still appears, with ``n_plp = 0``. ``sites`` lists only the
+        rows that are **present** or **uncomparable** (ClinVar states no alternate
+        allele); measured absences live in the counts, because two thousand rows of
+        "nothing called here" add nothing to them.
+
+        ``present`` is a **lower bound**. Matching is exact on (chrom, pos, ref) plus ALT
+        list membership, with no left-alignment on either side, so the same indel spelled
+        differently in the two sources reads as absent.
+        """
+        try:
+            found = queries.clinvar_presence(settings, gene)
+        except LookupError as unknown:
+            raise HTTPException(status_code=404,
+                                detail=f"no panel gene {unknown.args[0]!r}") from unknown
+        return live(found, "pg.results.clinvar_presence + pg.warehouse.mva_panel_grch38")
+
+    @api.get("/panel/suppressed", response_model=Envelope, tags=["panel"])
+    def panel_suppressed(gene: str | None = Query(
+            default=None,
+            description="panel gene symbol, e.g. TRIP13; omit for every suppressed "
+                        "record in the panel")) -> dict:
+        """The calls the caller kept but flagged inside the candidate panel.
+
+        Two grains in one payload, because the exhibit needs both at once. ``census`` is
+        **always the whole panel** — one row per gene per FILTER value, PASS included — so
+        a chart can put PASS next to each suppression reason without a second request.
+        ``records`` is the non-PASS records themselves, narrowed to ``gene`` when it is
+        given. A panel gene with an empty ``records`` list is not an error: nothing
+        suppressed there is the good outcome, and only a name the census does not know is
+        a 404.
+
+        Live: 20 census rows and 20 records for this panel, both off derived tables.
+        """
+        census = queries.panel_filter_census(settings)
+        if gene is not None and gene not in {row["gene"] for row in census}:
+            raise HTTPException(status_code=404, detail=f"no panel gene {gene!r}")
+        return live({"gene": gene,
+                     "census": census,
+                     "records": queries.panel_suppressed(settings, gene)},
+                    "pg.results.panel_filter_census + pg.results.panel_suppressed")
 
     routes_search.add_routes(api, settings, cache)
     science.add_routes(api, settings)

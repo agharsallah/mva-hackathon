@@ -223,6 +223,19 @@ def panel_constraint(settings: Postgres, bed: Path | None = None) -> list[dict]:
     return found
 
 
+def panel_background(settings: Postgres) -> list[dict]:
+    """Each panel gene's density and PASS share next to the background it sits in.
+
+    Eight rows off the ``panel_gene_background`` derivation, which did the whole-genome
+    1 Mb bin aggregate at derive time. The z-scores are standard deviations from that bin
+    distribution; a **null** z means the background had no usable spread, never zero. The
+    PASS-share z is a *callability* reading — mappability, repeats — not a pathogenicity
+    one. ``chrom`` is ``chr``-prefixed, as the panel delivers it.
+    """
+    return table(settings, "results", "panel_gene_background",
+                 "ORDER BY z_pass_vs_contig NULLS LAST, gene")
+
+
 def panel_candidates(settings: Postgres, gene: str | None = None) -> list[dict]:
     """Every annotated panel allele with its genotype evidence, optionally one gene.
 
@@ -263,6 +276,89 @@ def het_pairs(settings: Postgres, gene: str) -> list[dict]:
     if not found:
         gene_region(settings, gene)
     return found
+
+
+def clinvar_presence(settings: Postgres, gene: str | None = None) -> dict:
+    """Every ClinVar P/LP panel site the callset was checked for, summarised and listed.
+
+    Two halves, both off the ``clinvar_presence`` derivation, which has already done the
+    join to the five-million-row callset.
+
+    * ``summary`` is one row per **panel gene**, counted off the panel BED with a LEFT
+      join, so a gene ClinVar has classified nothing in appears with ``n_plp = 0`` rather
+      than vanishing. That absence is a result.
+    * ``sites`` is deliberately **not** every P/LP row. It is the rows that are present,
+      plus the rows that could never be compared (``comparable = false``). The measured
+      absences — the overwhelming majority — are carried as counts in ``summary``, because
+      shipping two thousand rows of "nothing was called here" per request would say
+      nothing the counts do not.
+
+    ``present`` is a **lower bound**: matching is exact on (chrom, pos, ref) plus ALT list
+    membership with no left-alignment on either side, so an indel spelled differently in
+    ClinVar and in the callset reads as absent.
+    """
+    # The summary counts off the panel BED and the site list off the derivation, so the
+    # optional gene filter names a different column in each.
+    by_panel = "AND b.name = ?" if gene else ""
+    by_site = "AND p.gene = ?" if gene else ""
+    params = [gene] if gene else None
+    summary = fetch(settings, f"""
+        SELECT b.name                                                AS gene,
+               count(p.variation_id)                                 AS n_plp,
+               count(*) FILTER (WHERE p.comparable)                  AS n_comparable,
+               count(*) FILTER (WHERE p.comparable IS FALSE)         AS n_uncomparable,
+               count(*) FILTER (WHERE p.present)                     AS n_present,
+               count(*) FILTER (WHERE p.present AND p.filter = 'PASS')
+                                                                     AS n_present_pass,
+               count(*) FILTER (WHERE p.is_het)                      AS n_present_het,
+               count(*) FILTER (WHERE p.present IS FALSE)            AS n_absent
+        FROM pg.warehouse.mva_panel_grch38 b
+        LEFT JOIN pg.results.clinvar_presence p ON p.gene = b.name
+        WHERE 1 = 1 {by_panel}
+        GROUP BY b.name
+        ORDER BY n_present DESC, n_plp DESC, b.name
+    """, params)
+    if gene and not summary:
+        raise LookupError(gene)
+    sites = fetch(settings, f"""
+        SELECT gene, chrom, pos, ref, alt, rsid, variation_id, clnsig, clnrevstat,
+               review_stars, condition, comparable, present, gt, filter, qual, dp,
+               allele_ix, vaf, carries_alt, is_het
+        FROM pg.results.clinvar_presence p
+        WHERE (p.present OR p.present IS NULL) {by_site}
+        ORDER BY gene, pos, alt
+    """, params)
+    return {"summary": summary, "sites": sites}
+
+
+def panel_filter_census(settings: Postgres) -> list[dict]:
+    """Every panel gene's records counted per FILTER value, PASS included.
+
+    Always the whole panel — 20 rows over 8 genes — because the chart it feeds compares
+    genes against each other. ``filter`` is verbatim, so a ``;``-joined value is one
+    record that tripped two thresholds and the stack over a gene sums to ``n_gene_all``.
+    """
+    return table(settings, "results", "panel_filter_census",
+                 "ORDER BY gene, is_pass DESC, n DESC, filter")
+
+
+def panel_suppressed(settings: Postgres, gene: str | None = None) -> list[dict]:
+    """The non-PASS records inside the panel, optionally one gene.
+
+    Reads the ``panel_suppressed`` derivation: 20 rows for the whole panel, so no cache and
+    no gene filter is needed for cost — the parameter exists because the table below the
+    chart shows one gene at a time. Unlike ``panel_candidates`` an empty result is **not**
+    a :class:`LookupError`: a panel gene with nothing suppressed is the good outcome, and
+    the caller validates the name against the census instead.
+    """
+    where = "WHERE gene = ?" if gene else ""
+    return fetch(settings, f"""
+        SELECT gene, chrom, pos, ref, alt, qual, filter, gt, dp, gq, ad_ref, ad_alt, vaf,
+               is_het, annotated_alt, rsid, consequence, impact, gnomad_af,
+               gnomad_af_grpmax, clin_sig, annotated
+        FROM pg.results.panel_suppressed {where}
+        ORDER BY gene, pos, ref, alt
+    """, [gene] if gene else None)
 
 
 def gene_region(settings: Postgres, gene: str) -> tuple[str, int, int]:
