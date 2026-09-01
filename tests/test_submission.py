@@ -10,6 +10,7 @@ import io
 import pytest
 
 from mva.pipeline import Row, Variant, write_submission
+from mva.pipeline.submission import problems, read_submission
 
 A = Variant("chr15", 40143000, "T", "C")
 B = Variant("chr15", 40143500, "G", "T")
@@ -84,3 +85,81 @@ def test_unknown_finding_type_is_rejected():
 def test_empty_submission_is_rejected():
     with pytest.raises(ValueError):
         write_submission([], io.StringIO())
+
+
+# --- problems(): the enumerating form, for an interactive builder ------------
+
+
+def test_problems_lists_every_violation_rather_than_the_first():
+    found = problems([Row(A, epcr=1.5), Row(B, epcr=1.6, finding_type="incidental")])
+    assert len(found) == 3  # two epcr, one finding_type
+    assert all(m.startswith("row ") for m in found)
+
+
+def test_problems_names_the_offending_row_by_file_position():
+    assert problems([Row(A, epcr=0.9), Row(B, epcr=0.8, finding_type="x")])[0].startswith(
+        "row 2:")
+
+
+def test_a_clean_submission_has_no_problems():
+    assert problems([Row(A, B, epcr=0.99), Row(C, epcr=0.98)]) == []
+
+
+def test_descending_is_not_checked_unless_asked_for():
+    rows = [Row(A, epcr=0.5), Row(B, epcr=0.9)]
+    assert problems(rows) == []
+    assert problems(rows, require_descending=True)[0].startswith("row 2:")
+
+
+def test_descending_rejects_equal_neighbours_as_well_as_ascending_ones():
+    # Distinctness already catches this; the ordering rule must not disagree with it.
+    assert problems([Row(A, epcr=0.9), Row(B, epcr=0.9)], require_descending=True)
+
+
+# --- Row.variants(): a row holds a SET of alleles (intel §8.2) ---------------
+
+
+def test_a_pair_row_holds_both_alleles_regardless_of_order():
+    assert Row(A, B, epcr=0.9).variants() == Row(B, A, epcr=0.9).variants()
+
+
+def test_a_row_whose_two_alleles_are_identical_is_a_single_variant_row():
+    assert Row(A, A, epcr=0.9).variants() == frozenset({A})
+
+
+# --- read_submission(): parse back the way the scorer parses -----------------
+
+
+def roundtrip(rows):
+    out = io.StringIO()
+    write_submission(rows, out)
+    return read_submission(io.StringIO(out.getvalue()))
+
+
+def test_a_written_submission_reads_back_identical():
+    rows = [Row(A, B, epcr=0.99, notes="a note, with a comma"),
+            Row(C, epcr=0.5, finding_type="secondary")]
+    assert roundtrip(rows) == sorted(rows, key=lambda r: -r.epcr)
+
+
+def test_reading_never_normalizes_the_contig():
+    # The scorer compares chrom verbatim, so a reader that "helpfully" added chr would
+    # hide the exact bug this parser exists to expose.
+    text = f"{','.join(TEMPLATE_HEADER)}\nPROBAND01,15,40143000,T,C,,,,,0.9,primary,\n"
+    assert read_submission(io.StringIO(text))[0].variant.chrom == "15"
+
+
+def test_a_wrong_header_is_rejected():
+    with pytest.raises(ValueError, match="header"):
+        read_submission(io.StringIO("chrom,pos\nchr1,1\n"))
+
+
+def test_a_wrong_proband_id_is_rejected():
+    text = f"{','.join(TEMPLATE_HEADER)}\nPROBAND02,chr15,40143000,T,C,,,,,0.9,primary,\n"
+    with pytest.raises(ValueError, match="proband_id"):
+        read_submission(io.StringIO(text))
+
+
+def test_an_empty_file_is_rejected():
+    with pytest.raises(ValueError):
+        read_submission(io.StringIO(""))

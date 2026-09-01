@@ -49,7 +49,7 @@ def rank_rows(rows: list[Row]) -> list[RankedRow]:
     """Assign ranks by descending epcr, ties broken by file order — as the scorer does."""
     ordered = sorted(enumerate(rows), key=lambda pair: (-pair[1].epcr, pair[0]))
     return [
-        RankedRow(_variants(row), row.epcr, index + 1)
+        RankedRow(row.variants(), row.epcr, index + 1)
         for index, (_, row) in enumerate(ordered)
     ]
 
@@ -112,9 +112,3 @@ def _rank_to_points(rank: int) -> int:
         if rank <= max_rank:
             return points
     return 0
-
-
-def _variants(row: Row) -> frozenset[Variant]:
-    if row.partner is None:
-        return frozenset({row.variant})
-    return frozenset({row.variant, row.partner})

@@ -24,7 +24,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from ..warehouse.settings import Postgres, setting
-from . import routes_reads, routes_warehouse
+from . import probebuild, routes_reads, routes_warehouse
 from .cache import Cache, default_directory
 
 SERVICE = "mva-viz-api"
@@ -72,4 +72,6 @@ def create_app(settings: Postgres | None = None, cache: Cache | None = None,
 
     app.include_router(routes_warehouse.router(settings, cache))
     app.include_router(routes_reads.router(cache, upstream))
+    # Reads nothing: the payload is the request, put through the pipeline's own rules.
+    app.include_router(probebuild.router())
     return app
