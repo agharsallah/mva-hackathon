@@ -4,6 +4,9 @@
 Row counts and per-gene breakdowns verified against the files in this directory on the
 same date. Method and observed output:
 [`docs/step-0/methodology/030-population-reference-data.md`](../../docs/step-0/methodology/030-population-reference-data.md).
+`qc_norms.tsv` was extended from 20 to **27 rows on 2026-09-01** and re-verified against
+the live derivation on that date:
+[`docs/step-0/methodology/047-observed-expected-extension.md`](../../docs/step-0/methodology/047-observed-expected-extension.md).
 
 A patient callset on its own says nothing. Five million variants is neither high nor low
 until you know what five million *should* be, and a broken gene copy is not a finding until
@@ -15,7 +18,7 @@ count into a judgement.
 |---|---|---|---|
 | `gnomad_constraint.tsv` | *Do healthy people tolerate damage to this gene?* | 18,314 | 3.2 MB |
 | `clinvar_panel.tsv` | *Has a clinical lab already classified this exact variant?* | 17,832 | 2.6 MB |
-| `qc_norms.tsv` | *Is this callset's shape normal for a human genome?* | 16 | 6 KB |
+| `qc_norms.tsv` | *Is this callset's shape normal for a human genome?* | 27 | 14 KB |
 
 Nothing here is patient-derived. The two large upstream files (95 MB and 193 MB) are
 downloaded to gitignored scratch and never enter the tree.
@@ -170,7 +173,7 @@ single-submitter (1 star), 257 `no_assertion_criteria_provided` (0 stars).
 
 ## `qc_norms.tsv` — expected shape of a healthy human genome
 
-**20 rows, 8 columns**, hand-curated 2026-08-31, no generator. Columns: `metric`,
+**27 rows, 8 columns**, hand-curated 2026-08-31, extended 2026-09-01, no generator. Columns: `metric`,
 `expected_low`, `expected_high`, `unit`, `applies_to`, `source`, `url`, `basis`. Every row
 carries the PMID/DOI and a paraphrase of the sentence the number came from. **A metric with
 no citable range is absent, not guessed.**
@@ -181,20 +184,65 @@ is the classic way to conclude a good genome is broken.
 
 Where a source gives a point estimate rather than a range, `expected_low == expected_high`
 and the `basis` column says so — `de_novo_snv_indel_per_genome`, `mean_coverage_wgs`,
-`candidate_comp_het_per_wgs_trio`.
+`candidate_comp_het_per_wgs_trio`, all three `dbsnp_membership_rate_*` rows, and the two
+cohort-scale context rows.
 
 | Source | PMID | Supplies |
 |---|---|---|
 | Betschart et al. 2024, *Biometrical Journal* | 38988195 | Ts/Tv (genome 2.0–2.1, coding 3–4), het/hom by ancestry, cross-publication dbSNP spread, typical coverage |
 | 1000 Genomes Project Consortium 2015, *Nature* | 26432245 | total variant sites and SVs per genome; low-coverage SNV/indel counts |
-| Byrska-Bishop et al. 2022, *Cell* | 36055201 | **30× per-sample** SNV and indel counts, and the insertion/deletion ratio |
-| Taliun et al. 2021, *Nature* (TOPMed) | 33568819 | per-genome dbSNP membership, 99.2% |
+| Byrska-Bishop et al. 2022, *Cell* | 36055201 | **30× per-sample** SNV and indel counts, the insertion/deletion ratio, the SNV/indel ratio, and two cohort-scale context rows (multi-allelic locus fraction, novel-allele rate vs dbSNP b155) |
+| Taliun et al. 2021, *Nature* (TOPMed) | 33568819 | per-genome dbSNP membership, 99.2% — for the whole callset and again for its PASS subset |
+| Supernat et al. 2018, *Scientific Reports* | 30552369 | per-genome heterozygote count, and the SNV/indel spread across three callers on one set of reads |
+| DePristo et al. 2011, *Nature Genetics* | 21478889 | dbSNP membership of a VQSR-passing SNP call set, 89.89% — the 2011 floor |
 | Pedersen et al. 2021, *npj Genomic Medicine* | 34267211 | AF filter thresholds, de-novo count, post-filter candidate yield per trio |
 | Whiffin et al. 2017, *Genetics in Medicine* | 28518168 | corroborates the 1% / 0.1% AF convention |
 
-Two rows are **derived arithmetic** over a paper's stated per-sample counts rather than a
+Four rows are **derived arithmetic** over a paper's stated per-sample counts rather than a
 quoted range, and their `basis` column says so and shows the division:
-`insertion_deletion_ratio` and `indel_per_genome_30x`.
+`insertion_deletion_ratio`, `indel_per_genome_30x`, `snv_to_indel_ratio` and
+`snv_to_indel_ratio_across_callers`.
+
+### Four rows are cited but **deliberately ungradeable**
+
+A metric id is the join key between this table and an observation. Four rows carry an id
+that matches **no** observation on purpose, so the comparison they would invite can never
+be made by accident:
+
+| row | why it must not be joined |
+|---|---|
+| `tstv_coding` | coding Ts/Tv is 3–4; a genome-wide callset measured against it looks broken when it is fine |
+| `multiallelic_locus_fraction_cohort` | 6.6% is measured across **3,202 samples**; a locus is multi-allelic only when two ALTs are seen across samples called together, so the fraction grows with cohort size and has no one-sample counterpart |
+| `dbsnp_novel_allele_rate_cohort_b155` | 5.9% novel is cohort-level and 92.7% of those novel alleles are singletons, so the per-genome rate is far lower and the paper states no per-genome figure |
+| `snv_to_indel_ratio_across_callers` | 4.744–6.201 is the spread across three callers on **the same reads** — present so the tight Byrska-Bishop band is never read as a hard threshold |
+
+`structural_variants_per_genome` is a fifth: nothing in a short-variant VCF can be measured
+against it.
+
+### The two dbSNP membership rows are the same number, pointed at two populations
+
+`dbsnp_membership_rate_per_genome` and `dbsnp_membership_rate_pass_only` both carry
+Taliun's 99.2%. No second number is introduced. TOPMed's *average of 3.78 million variants
+in each genome* is a **finished** callset, so 99.2% describes a filtered one; grading an
+unfiltered delivery against it is the loose comparison and grading its PASS subset against
+it is the tight one. Both rows exist so the distance between the two observations is a
+number rather than an argument. `dbsnp_membership_rate_pass_snv` is a *third*, independent
+figure — DePristo 2011's 89.89% for a VQSR-passing SNP call set — and is graded against the
+PASS **biallelic-SNV** observation because that source counts SNPs only. It is a historical
+floor: the 2011 dbSNP is orders of magnitude smaller than build 155+, so 89.89% and 99.2%
+do not contradict each other.
+
+### Metrics this warehouse can measure and this table deliberately does **not** norm
+
+Both are computed on every derivation run and emit no row until a citable band exists.
+Evidence and the sources checked:
+[`docs/step-0/methodology/047-observed-expected-extension.md`](../../docs/step-0/methodology/047-observed-expected-extension.md).
+
+| metric | why no band |
+|---|---|
+| multi-allelic site fraction (single sample) | cohort-size dependent; no source states a single-sample figure |
+| indel length 1–2 bp share | no primary source states it or tabulates it — Montgomery 2013 and Byrska-Bishop 2022 both carry it only as an unlabelled figure |
+| X/Y depth ratio for sex confirmation | Webster 2019 (PMID 31289836, DOI 10.1093/gigascience/giz074) found XX/XY separate cleanly *within* a dataset but the depths vary *between* datasets, and concludes a general cross-experiment threshold would be difficult to implement. `somalier` and `seGMM` likewise use cohort-derived gates, not fixed ratios |
 
 **Use the 30× rows, not the phase-3 rows,** when grading this project's callset: 1000G
 phase 3 was low-coverage and undercounts. Both are present so the comparison is explicit.
