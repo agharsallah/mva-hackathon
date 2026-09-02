@@ -138,7 +138,7 @@ def sorted_copy(
     return url
 
 
-class Unreachable(RuntimeError):
+class UnreachableError(RuntimeError):
     """The object store did not answer, with a diagnosis attached."""
 
 
@@ -156,8 +156,10 @@ def diagnose(store: ObjectStore, error: Exception) -> str:
             "S3_ENDPOINT points at localhost — that is THIS machine, not the server.",
             "That value is only correct while an SSH tunnel is open. Either:",
             "",
-            f"  open the tunnel:  ssh -N -L {port or 9012}:localhost:{port or 9012} "
-            f"<user>@<server>",
+            (
+                f"  open the tunnel:  ssh -N -L {port or 9012}:localhost:{port or 9012} "
+                f"<user>@<server>"
+            ),
             f"  or point straight at the server:  S3_ENDPOINT=<server-hostname>:{port or 9012}",
             "",
         ]
@@ -170,8 +172,10 @@ def diagnose(store: ObjectStore, error: Exception) -> str:
             "",
             "Then from here:",
             f"  curl -v --max-time 5 http://{store.endpoint}/minio/health/live",
-            "  (a hang or timeout means a firewall; 'connection refused' means nothing "
-            "is listening)",
+            (
+                "  (a hang or timeout means a firewall; 'connection refused' means nothing "
+                "is listening)"
+            ),
             "",
         ]
 
@@ -199,7 +203,7 @@ def listing(store: ObjectStore, prefix: str = "") -> list[str]:
     except RuntimeError:
         raise
     except Exception as error:
-        raise Unreachable(diagnose(store, error)) from error
+        raise UnreachableError(diagnose(store, error)) from error
     return [str(row[0]) for row in rows]
 
 

@@ -31,7 +31,7 @@ from typing import Any
 _ALLOWED = set("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_")
 
 
-class InvalidKey(ValueError):
+class InvalidKeyError(ValueError):
     """Raised when a cache key contains anything but letters, digits, ``-`` and ``_``."""
 
 
@@ -44,7 +44,7 @@ def safe_key(*parts: object) -> str:
     """
     key = "-".join(str(part) for part in parts if part not in (None, ""))
     if not key or not set(key) <= _ALLOWED:
-        raise InvalidKey(f"not a usable cache key: {key!r}")
+        raise InvalidKeyError(f"not a usable cache key: {key!r}")
     return key
 
 
@@ -93,7 +93,7 @@ class Cache:
         try:
             with os.fdopen(handle, "w", encoding="utf-8") as stream:
                 json.dump({"cached_at": entry.cached_at, "data": entry.data}, stream)
-            os.replace(temporary, self.path(key))
+            Path(temporary).replace(self.path(key))
         except BaseException:
             Path(temporary).unlink(missing_ok=True)
             raise

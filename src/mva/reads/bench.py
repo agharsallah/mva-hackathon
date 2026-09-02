@@ -14,6 +14,7 @@ The sample is written to a scratch directory and deleted with it — read payloa
 patient data and never land in the repository.
 """
 
+import contextlib
 import multiprocessing
 import resource
 import shutil
@@ -86,10 +87,8 @@ def cut_sample(fastq, reads: int, scratch: Path) -> Path:
             except BrokenPipeError:
                 pass  # `head` closed the pipe once it had enough — expected
             finally:
-                try:
+                with contextlib.suppress(BrokenPipeError):
                     process.stdin.close()
-                except BrokenPipeError:
-                    pass
         process.wait()
     if not sample.exists() or sample.stat().st_size == 0:
         raise RuntimeError(f"could not cut a sample from {source.name}")

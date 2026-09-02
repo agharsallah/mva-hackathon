@@ -76,7 +76,7 @@ def warehouse():
 
 def run(connection, derivation) -> list[dict]:
     relation = connection.sql(resolve(derivation.sql, "src"))
-    return [dict(zip(relation.columns, row)) for row in relation.fetchall()]
+    return [dict(zip(relation.columns, row, strict=True)) for row in relation.fetchall()]
 
 
 @pytest.fixture()

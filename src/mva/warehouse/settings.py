@@ -128,8 +128,8 @@ def parse_env(text: str) -> dict[str, str]:
     settings it is missing.
     """
     values: dict[str, str] = {}
-    for line in text.splitlines():
-        line = line.strip()
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
         if not line or line.startswith("#"):
             continue
         line = line.removeprefix("export ").lstrip()
@@ -222,7 +222,10 @@ def object_store(start: Path | None = None):
     from .objects import ObjectStore
 
     from_file = env_file_values(start)
-    value = lambda key: os.environ.get(key) or from_file.get(key) or DEFAULTS[key]
+
+    def value(key: str) -> str:
+        return os.environ.get(key) or from_file.get(key) or DEFAULTS[key]
+
     return ObjectStore(
         endpoint=value("S3_ENDPOINT"),
         access_key=value("S3_ACCESS_KEY"),

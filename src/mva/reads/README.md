@@ -67,7 +67,7 @@ flowchart LR
 | Module | Responsibility | Key exports |
 |---|---|---|
 | `schema.py` | Row shape, shard/partition layout, name↔columns codec | `COLUMNS`, `PROJECTION`, `ROW_GROUP_SIZE`, `ROW_GROUPS_PER_FILE`, `shard_key`, `lane_and_read`, `RunFacts` |
-| `source.py` | Where FASTQ bytes come from (local dir or `s3://`), as one byte-stream abstraction | `Source`, `resolve`, `presigned_url`, `NotADelivery` |
+| `source.py` | Where FASTQ bytes come from (local dir or `s3://`), as one byte-stream abstraction | `Source`, `resolve`, `presigned_url`, `NotADeliveryError` |
 | `engines.py` | Three interchangeable FASTQ→DuckDB-view readers | `pipe`, `oxbow`, `polars_bio`, `ENGINES`, `available`, `find_decompressor` |
 | `convert.py` | One FASTQ → one partition of Parquet shards | `convert_file`, `peek`, `as_source`, `Converted` |
 | `store.py` | Convert every file in parallel, size the machine, publish to the object store | `discover`, `convert_all`, `machine_share`, `check_room`, `write_tables`, `upload` |

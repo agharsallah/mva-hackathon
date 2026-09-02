@@ -66,7 +66,7 @@ flowchart LR
 | `serve.py` | `mva-viz-api` CLI entry point, uvicorn runner | `main` |
 | `cache.py` | Disk cache: JSON entries under `build/`, atomic write | `Cache`, `safe_key`, `default_directory` |
 | `response.py` | The one envelope shape every route returns | `Envelope`, `live`, `cached` |
-| `proxy.py` | Forwards requests to `mva-reads-api`; 503 on unreachable | `Upstream`, `forward`, `Unreachable` |
+| `proxy.py` | Forwards requests to `mva-reads-api`; 503 on unreachable | `Upstream`, `forward`, `UnreachableError` |
 
 ### Routes (route registration only)
 

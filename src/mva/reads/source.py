@@ -38,7 +38,7 @@ CHUNK = 8 * 1024 * 1024
 PRESIGN_SECONDS = 12 * 60 * 60
 
 
-class NotADelivery(RuntimeError):
+class NotADeliveryError(RuntimeError):
     """The place given does not hold readable FASTQ files, with a reason attached."""
 
 
@@ -78,15 +78,15 @@ def resolve(spec: str, store=None) -> list[Source]:
 def _from_directory(directory: Path) -> list[Source]:
     """FASTQ files in a local directory — refusing MinIO's storage layout by name."""
     if not directory.is_dir():
-        raise NotADelivery(f"{directory} is not a directory")
+        raise NotADeliveryError(f"{directory} is not a directory")
 
     candidates = sorted(path for path in directory.iterdir() if schema.FASTQ_NAME.search(path.name))
     if candidates and all(path.is_dir() for path in candidates):
-        raise NotADelivery(_minio_diagnosis(directory, candidates[0]))
+        raise NotADeliveryError(_minio_diagnosis(directory, candidates[0]))
 
     files = [path for path in candidates if path.is_file()]
     if not files:
-        raise NotADelivery(
+        raise NotADeliveryError(
             f"no readable FASTQ files in {directory}\n"
             f"  looked for names ending in _L00<n>_R<1|2>_001.fastq.gz"
         )
@@ -140,7 +140,7 @@ def _from_object_store(match, store) -> list[Source]:
                     )
                 )
     if not sources:
-        raise NotADelivery(f"no FASTQ objects under s3://{bucket}/{prefix}")
+        raise NotADeliveryError(f"no FASTQ objects under s3://{bucket}/{prefix}")
     return sorted(sources, key=lambda source: source.name)
 
 

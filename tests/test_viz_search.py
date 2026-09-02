@@ -19,7 +19,7 @@ from mva.viz import queries, readstore, routes_warehouse, search, search_resolve
 from mva.viz.app import create_app
 from mva.viz.cache import Cache
 from mva.viz.genestructure import EnsemblError
-from mva.viz.search import MAX_SPAN, NotFound, SpanTooLarge, Unparseable
+from mva.viz.search import MAX_SPAN, NotFoundError, SpanTooLargeError, UnparseableError
 
 # ── Ensembl replies, trimmed from live ones (public reference coordinates) ───────────
 
@@ -119,11 +119,11 @@ class TestClassify:
         "query", ["", "   ", "15:", "-", "15:abc-def", "drop table", "chr99:1-2", "??"]
     )
     def test_anything_else_is_refused_by_name(self, query):
-        with pytest.raises(Unparseable):
+        with pytest.raises(UnparseableError):
             search.classify(query)
 
     def test_the_refusal_names_all_three_forms(self):
-        with pytest.raises(Unparseable) as raised:
+        with pytest.raises(UnparseableError) as raised:
             search.classify("!!!")
         for example in search.EXAMPLES:
             assert example in str(raised.value)
@@ -147,7 +147,7 @@ class TestParseRegion:
         assert search.parse_region("15:10")[1] == 1
 
     def test_a_reversed_region_is_refused_rather_than_swapped(self):
-        with pytest.raises(Unparseable):
+        with pytest.raises(UnparseableError):
             search.parse_region("15:200-100")
 
 
@@ -156,16 +156,16 @@ class TestSpanCap:
         search.check_span(1, MAX_SPAN)
 
     def test_one_base_over_is_refused(self):
-        with pytest.raises(SpanTooLarge):
+        with pytest.raises(SpanTooLargeError):
             search.check_span(1, MAX_SPAN + 1)
 
     def test_the_message_carries_the_cap_so_the_ui_can_show_it(self):
-        with pytest.raises(SpanTooLarge) as raised:
+        with pytest.raises(SpanTooLargeError) as raised:
             search.check_span(1, 100_000_000)
         assert f"{MAX_SPAN:,}" in str(raised.value)
 
     def test_a_region_query_wider_than_the_cap_is_refused_at_resolution(self):
-        with pytest.raises(SpanTooLarge):
+        with pytest.raises(SpanTooLargeError):
             search.region_query("1:1-99000000")
 
 
@@ -183,7 +183,7 @@ def fake_fetch(monkeypatch, answers):
                 return [dict(row) for row in rows]
         return []
 
-    monkeypatch.setattr(queries, "fetch", fetch)
+    monkeypatch.setattr(queries.access, "fetch", fetch)
     return calls
 
 
@@ -229,7 +229,7 @@ class TestResolveGene:
 
     def test_a_symbol_ensembl_rejects_is_not_found_not_an_outage(self, monkeypatch):
         fake_fetch(monkeypatch, {})
-        with pytest.raises(NotFound):
+        with pytest.raises(NotFoundError):
             search_resolve.resolve(
                 "NOTAGENE",
                 settings=object(),
@@ -289,7 +289,9 @@ class TestResolveRsid:
         assert "id = ?" in sql and "LIKE" not in sql
         assert params == ["rs1"]
 
-    def test_the_query_is_lowercased_so_RS_and_rs_hit_the_same_row(self, monkeypatch):
+    def test_the_query_is_lowercased_so_RS_and_rs_hit_the_same_row(  # noqa: N802 - RS/rs is the case distinction under test
+        self, monkeypatch
+    ):
         calls = fake_fetch(monkeypatch, {"variants_raw": [{"chrom": "1", "pos": "9"}]})
         search_resolve.resolve(
             "RS137852899",
@@ -321,7 +323,7 @@ class TestResolveRsid:
 
     def test_an_unknown_rsid_is_not_found_even_though_ensembl_says_400(self, monkeypatch):
         fake_fetch(monkeypatch, {})
-        with pytest.raises(NotFound) as raised:
+        with pytest.raises(NotFoundError) as raised:
             search_resolve.resolve(
                 "rs99999999",
                 settings=object(),
@@ -341,7 +343,7 @@ class TestResolveRsid:
                 }
             ]
         }
-        with pytest.raises(NotFound):
+        with pytest.raises(NotFoundError):
             search_resolve.resolve(
                 "rs1",
                 settings=object(),
@@ -421,13 +423,13 @@ class TestRegionRead:
 
     def test_an_unspellable_contig_is_refused_before_any_query(self, monkeypatch):
         calls = fake_fetch(monkeypatch, {"variants_raw": RAW})
-        with pytest.raises(Unparseable):
+        with pytest.raises(UnparseableError):
             search.region(object(), "chr99", 1, 100)
         assert calls == []
 
     def test_a_window_over_the_cap_is_refused_before_any_query(self, monkeypatch):
         calls = fake_fetch(monkeypatch, {"variants_raw": RAW})
-        with pytest.raises(SpanTooLarge):
+        with pytest.raises(SpanTooLargeError):
             search.region(object(), "15", 1, MAX_SPAN + 2)
         assert calls == []
 
@@ -450,7 +452,7 @@ def api(tmp_path, monkeypatch):
             return [dict(row) for row in RAW]
         return []
 
-    monkeypatch.setattr(queries, "fetch", fetch)
+    monkeypatch.setattr(queries.access, "fetch", fetch)
     monkeypatch.setattr(routes_warehouse, "overview", lambda settings: {})
     monkeypatch.setattr(readstore, "root", lambda: "s3://test/reads")
     with TestClient(
@@ -508,7 +510,7 @@ class TestSearchEndpoint:
 
     def test_a_name_no_authority_knows_is_404(self, api, monkeypatch):
         def missing(*args, **kwargs):
-            raise NotFound("Ensembl does not know 'NOTAGENE'")
+            raise NotFoundError("Ensembl does not know 'NOTAGENE'")
 
         monkeypatch.setattr(search_resolve, "resolve", missing)
         response = api.get("/api/search", params={"q": "NOTAGENE"})

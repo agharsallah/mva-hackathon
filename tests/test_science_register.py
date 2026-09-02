@@ -193,9 +193,9 @@ def test_tables_live_in_the_ingest_schema_they_are_given(ensure, table):
 @pytest.mark.parametrize("schema", ["drop table x", "a-b", ""])
 @pytest.mark.parametrize("ensure", [ensure_hypotheses, ensure_evidence])
 def test_rejects_an_unsafe_schema_name(ensure, schema):
-    from mva.warehouse.postgres import InvalidIdentifier
+    from mva.warehouse.postgres import InvalidIdentifierError
 
-    with pytest.raises(InvalidIdentifier):
+    with pytest.raises(InvalidIdentifierError):
         ensure(FakeConnection(), schema)
 
 

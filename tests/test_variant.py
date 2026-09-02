@@ -33,7 +33,7 @@ def test_equality_ignores_construction_route():
     assert Variant.from_vcf("15", 40143000, "T", "C") == Variant("chr15", 40143000, "T", "C")
 
 
-def test_mitochondrial_contig_maps_to_chrM():
+def test_mitochondrial_contig_maps_to_chrM():  # noqa: N802 - chrM is GRCh38's contig name
     # The VCF calls it "M"; GRCh38 chr-prefixed naming is "chrM".
     assert Variant.from_vcf("M", 5000, "A", "G").chrom == "chrM"
 

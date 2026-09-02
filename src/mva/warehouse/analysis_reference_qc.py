@@ -83,7 +83,8 @@ EXTRA_OBSERVED = """
                    (SELECT het FROM gt) + coalesce(
                        (SELECT value FROM sn WHERE metric = 'number of multiallelic sites'),
                        0),
-                   'filter_gt_counts 0/1 plus stats_summary SN multiallelic sites (a 1/2 call is heterozygous)'
+                   'filter_gt_counts 0/1 plus stats_summary SN multiallelic sites '
+                   '(a 1/2 call is heterozygous)'
             UNION ALL SELECT 'multiallelic_site_fraction',
                    'Multiallelic (1/2) sites as a share of records',
                    100.0 * (SELECT value FROM sn WHERE metric = 'number of multiallelic sites')

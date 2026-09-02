@@ -40,7 +40,7 @@ def gene_map(profile: CallsetProfile) -> Exhibit:
     """
     contigs = [c for c in profile.primary_contigs if c.name.removeprefix("chr") != "M"]
     names = [f"chr{c.name.removeprefix('chr')}" for c in contigs]
-    lengths = {n: c.length / 1e6 for n, c in zip(names, contigs)}
+    lengths = {n: c.length / 1e6 for n, c in zip(names, contigs, strict=True)}
 
     figure = go.Figure()
     figure.add_trace(
@@ -103,10 +103,12 @@ def gene_map(profile: CallsetProfile) -> Exhibit:
         figure=sized(figure, 560),
         height=560,
         notes=[
-            f"The panel spans {panel_bases / 1e6:.2f} Mb of a {genome_bases / 1e9:.2f} Gb "
-            f"genome — {panel_bases / genome_bases:.4%} of it. Searching there first costs "
-            "almost nothing and is where a known disease gene is most likely to be; "
-            "searching there *only* is how a novel gene gets missed."
+            (
+                f"The panel spans {panel_bases / 1e6:.2f} Mb of a {genome_bases / 1e9:.2f} Gb "
+                f"genome — {panel_bases / genome_bases:.4%} of it. Searching there first costs "
+                "almost nothing and is where a known disease gene is most likely to be; "
+                "searching there *only* is how a novel gene gets missed."
+            )
         ],
     )
 
@@ -256,10 +258,12 @@ def search_space(profile: CallsetProfile) -> Exhibit:
         ),
         figure=sized(figure, 400),
         notes=[
-            "This is why annotation is the critical path rather than a refinement. Without "
-            "a consequence prediction and a population frequency, nothing separates one "
-            "pair in this space from another, and ten rows chosen from thousands of "
-            "indistinguishable candidates is a lottery ticket."
+            (
+                "This is why annotation is the critical path rather than a refinement. Without "
+                "a consequence prediction and a population frequency, nothing separates one "
+                "pair in this space from another, and ten rows chosen from thousands of "
+                "indistinguishable candidates is a lottery ticket."
+            )
         ],
     )
 

@@ -44,7 +44,7 @@ def discover(spec) -> list:
 OUTPUT_RATIO = 0.75
 
 
-class NotEnoughRoom(RuntimeError):
+class NotEnoughRoomError(RuntimeError):
     """Staging cannot hold the Parquet this conversion would write."""
 
 
@@ -60,7 +60,7 @@ def check_room(staging: Path, sources: list, ratio: float = OUTPUT_RATIO) -> str
     free = shutil.disk_usage(staging).free
     summary = f"{needed / 2**30:.1f} GiB needed, {free / 2**30:.1f} GiB free on {staging}"
     if free < needed:
-        raise NotEnoughRoom(
+        raise NotEnoughRoomError(
             f"not enough room to stage the conversion: {summary}.\n"
             f"  Free space, point --staging at a bigger filesystem, or convert a subset."
         )

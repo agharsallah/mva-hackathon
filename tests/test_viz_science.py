@@ -275,7 +275,7 @@ def test_revisions_are_ordered_by_claim_then_revision(populated):
     """Latest-revision-per-claim is the client's job, and it needs a stable order."""
     client, fake = populated
     client.get("/api/science/hypotheses")
-    read = [sql for sql, _ in fake.seen if "FROM pg.warehouse.hypotheses" in sql][0]
+    read = next(sql for sql, _ in fake.seen if "FROM pg.warehouse.hypotheses" in sql)
     assert "ORDER BY hypothesis_id, revision" in read
 
 
@@ -310,7 +310,7 @@ def test_the_columns_are_named_rather_than_star_selected(populated):
     """`SELECT *` would let a column added upstream change the browser's shape silently."""
     client, fake = populated
     client.get("/api/science/evidence")
-    read = [sql for sql, _ in fake.seen if "FROM pg.warehouse.evidence" in sql][0]
+    read = next(sql for sql, _ in fake.seen if "FROM pg.warehouse.evidence" in sql)
     assert "SELECT *" not in read
     for column in science.EVIDENCE_COLUMNS:
         assert column in read
@@ -328,8 +328,8 @@ def test_the_column_lists_match_the_register_ddl():
         recorded = []
 
         class Recorder:
-            def execute(self, sql, params=None):
-                recorded.append(sql)
+            def execute(self, sql, params=None, _recorded=recorded):
+                _recorded.append(sql)
 
         module.ensure_table(Recorder(), "warehouse")
         ddl = recorded[0]

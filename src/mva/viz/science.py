@@ -38,7 +38,7 @@ from ..science.evidence import EVIDENCE_TABLE
 from ..science.hypothesis import HYPOTHESIS_TABLE
 from ..warehouse.postgres import ALIAS, attached, safe_identifier
 from ..warehouse.settings import Postgres
-from .queries import rows
+from .queries.access import rows
 from .response import Envelope, live
 
 #: Columns of ``warehouse.hypotheses``, in the DDL's order

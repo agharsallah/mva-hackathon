@@ -34,7 +34,7 @@ def do_check(args) -> int:
 
     try:
         entries = objects.listing(store)
-    except objects.Unreachable as error:
+    except objects.UnreachableError as error:
         print(f"\n{error}")
         return 1
     print(f"\nconnected. {len(entries)} object(s) in {store.bucket}:")

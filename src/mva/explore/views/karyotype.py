@@ -162,10 +162,12 @@ def allele_balance(profile: CallsetProfile) -> Exhibit:
         figure=sized(figure, 620),
         height=620,
         notes=[
-            "The sex chromosomes are drawn in grey and deliberately not graded. A male "
-            "sample carries one X and one Y, so a heterozygous call on either is either "
-            "in the small region the two chromosomes share or is an error — in both "
-            "cases the allele balance says nothing about aneuploidy."
+            (
+                "The sex chromosomes are drawn in grey and deliberately not graded. A male "
+                "sample carries one X and one Y, so a heterozygous call on either is either "
+                "in the small region the two chromosomes share or is an error — in both "
+                "cases the allele balance says nothing about aneuploidy."
+            )
         ],
     )
 

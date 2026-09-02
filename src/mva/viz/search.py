@@ -55,7 +55,8 @@ from typing import Any
 
 from ..pipeline.variant import to_vcf_contig
 from ..warehouse.settings import Postgres
-from . import genotype, queries
+from . import genotype
+from .queries import access
 
 #: Largest window the region endpoint will read, in base pairs. A payload guard, not a
 #: latency one — see the measurements in the module docstring.
@@ -104,15 +105,15 @@ SOURCE_QUERY = "the query string (parsed, no lookup)"
 EXAMPLES = ("BUB1B", "15:40100000-40200000", "rs137852899")
 
 
-class Unparseable(ValueError):
+class UnparseableError(ValueError):
     """The query is not a region, a gene symbol or an rsID. Never guessed at."""
 
 
-class SpanTooLarge(ValueError):
+class SpanTooLargeError(ValueError):
     """The requested window is wider than :data:`MAX_SPAN`."""
 
 
-class NotFound(LookupError):
+class NotFoundError(LookupError):
     """The query has a valid shape, but nothing anywhere knows the name."""
 
 
@@ -145,7 +146,7 @@ def classify(query: str) -> str:
     """
     text = (query or "").strip()
     if not text:
-        raise Unparseable("empty query")
+        raise UnparseableError("empty query")
     compact = _SEPARATORS.sub("", text)
     if REGION_RE.match(compact) or POINT_RE.match(compact):
         return "region"
@@ -153,7 +154,7 @@ def classify(query: str) -> str:
         return "rsid"
     if SYMBOL_RE.match(text):
         return "gene"
-    raise Unparseable(
+    raise UnparseableError(
         f"{text!r} is not a gene symbol ({EXAMPLES[0]}), a region ({EXAMPLES[1]}) "
         f"or an rsID ({EXAMPLES[2]})"
     )
@@ -170,20 +171,20 @@ def parse_region(query: str) -> tuple[str, int, int]:
     if span:
         start, end = int(span["start"]), int(span["end"])
         if start > end:
-            raise Unparseable(f"start {start:,} is past end {end:,}")
+            raise UnparseableError(f"start {start:,} is past end {end:,}")
         return to_vcf_contig(span["chrom"]), max(start, 1), end
     point = POINT_RE.match(compact)
     if point:
         at = int(point["pos"])
         return to_vcf_contig(point["chrom"]), max(at - FLANK, 1), at + FLANK
-    raise Unparseable(f"{query!r} is not a region")
+    raise UnparseableError(f"{query!r} is not a region")
 
 
 def check_span(start: int, end: int) -> None:
     """Refuse a window wider than :data:`MAX_SPAN`, naming the cap in the message."""
     width = end - start + 1
     if width > MAX_SPAN:
-        raise SpanTooLarge(
+        raise SpanTooLargeError(
             f"{width:,} bp is wider than the {MAX_SPAN:,} bp cap. The raw callset layer "
             f"has no index, so a whole chromosome answers in the same ~2 s but weighs "
             f"11 MB over 101,130 rows; narrow the region and search again."
@@ -213,10 +214,10 @@ def region(settings: Postgres, chrom: str, start: int, end: int) -> dict:
     bare = normalise_contig(chrom)
     start, end = max(int(start), 1), int(end)
     if start > end:
-        raise Unparseable(f"start {start:,} is past end {end:,}")
+        raise UnparseableError(f"start {start:,} is past end {end:,}")
     check_span(start, end)
 
-    found = queries.fetch(
+    found = access.fetch(
         settings,
         """
         SELECT pos, id, ref, alt, qual, filter, format, sample_call
@@ -237,9 +238,9 @@ def region(settings: Postgres, chrom: str, start: int, end: int) -> dict:
 
 
 def normalise_contig(chrom: str) -> str:
-    """A contig name in the callset's spelling, or :class:`Unparseable`."""
+    """A contig name in the callset's spelling, or :class:`UnparseableError`."""
     if not CONTIG_RE.match((chrom or "").strip()):
-        raise Unparseable(
+        raise UnparseableError(
             f"{chrom!r} is not a contig this callset could spell "
             f"(1..22, X, Y, M/MT, with or without a chr prefix)"
         )

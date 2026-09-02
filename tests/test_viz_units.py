@@ -11,7 +11,7 @@ import pytest
 
 from mva.viz import genotype, panelbed
 from mva.viz import overview as overview_module
-from mva.viz.cache import Cache, InvalidKey, safe_key
+from mva.viz.cache import Cache, InvalidKeyError, safe_key
 
 # ── the disk cache ───────────────────────────────────────────────────────────────────
 
@@ -55,7 +55,7 @@ def test_a_corrupt_entry_is_a_miss_not_an_error(tmp_path):
 def test_a_key_cannot_escape_the_cache_directory():
     # Keys are built from query parameters, so this is the path-traversal guard.
     for bad in ("../secret", "a/b", "", "gene name"):
-        with pytest.raises(InvalidKey):
+        with pytest.raises(InvalidKeyError):
             safe_key(bad)
     assert safe_key("locus", "BUB1B") == "locus-BUB1B"
     assert safe_key("flowcell", 1, 2, 0) == "flowcell-1-2-0"

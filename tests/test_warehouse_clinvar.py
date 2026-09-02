@@ -106,7 +106,7 @@ def warehouse():
 def run(connection, name: str) -> list[dict]:
     relation = connection.sql(resolve(by_name(name).sql, "src"))
     columns = relation.columns
-    return [dict(zip(columns, row)) for row in relation.fetchall()]
+    return [dict(zip(columns, row, strict=True)) for row in relation.fetchall()]
 
 
 @pytest.fixture()

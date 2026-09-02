@@ -47,6 +47,9 @@ class ProfileLayout:
     panel_counts: str = "panel_variant_counts.tsv"
 
 
+_DEFAULT_LAYOUT = ProfileLayout()
+
+
 @dataclass(frozen=True)
 class Contig:
     """One reference sequence, with how many variants were called on it."""
@@ -177,12 +180,12 @@ class CallsetProfile:
 
     @classmethod
     def load(
-        cls, directory: str | Path, layout: ProfileLayout = ProfileLayout()
+        cls, directory: str | Path, layout: ProfileLayout = _DEFAULT_LAYOUT
     ) -> "CallsetProfile":
         """Load every artifact present in ``directory``, skipping every one that is not."""
         root = Path(directory)
         profile = cls(source=root, layout=layout)
-        for attribute, filename, build in _LOADERS(layout):
+        for _attribute, filename, build in _artifact_loaders(layout):
             path = root / filename
             if not path.exists():
                 continue
@@ -197,8 +200,7 @@ class CallsetProfile:
     @property
     def available(self) -> list[str]:
         """Names of the sections that actually loaded — what the report can show."""
-        present = []
-        for name in (
+        names = (
             "header",
             "contigs",
             "stats",
@@ -207,10 +209,8 @@ class CallsetProfile:
             "reads",
             "read_qc",
             "panel",
-        ):
-            if getattr(self, name):
-                present.append(name)
-        return present
+        )
+        return [name for name in names if getattr(self, name)]
 
     @property
     def primary_contigs(self) -> list[Contig]:
@@ -259,7 +259,7 @@ class CallsetProfile:
 
 # --- artifact loaders -------------------------------------------------------------
 # One per file. Each returns the keyword arguments to fold into the profile, so adding an
-# artifact is one function and one line in _LOADERS, with no change to CallsetProfile.load.
+# artifact is one function and one line in _artifact_loaders, with no change to CallsetProfile.load.
 
 
 def _load_header(path: Path) -> dict:
@@ -360,7 +360,7 @@ def _load_manifest(path: Path) -> dict:
     return {"manifest": readers.read_table(path)}
 
 
-def _LOADERS(layout: ProfileLayout) -> list[tuple[str, str, Callable[[Path], dict]]]:
+def _artifact_loaders(layout: ProfileLayout) -> list[tuple[str, str, Callable[[Path], dict]]]:
     return [
         ("header", layout.vcf_header, _load_header),
         ("contigs", layout.contig_counts, _load_contig_counts),

@@ -111,7 +111,7 @@ def client(tmp_path, monkeypatch):
         assert "ORDER BY stage_no" in sql, "the funnel is meaningless out of stage order"
         return [dict(row) for row in FUNNEL_ROWS]
 
-    monkeypatch.setattr(queries, "fetch", fetch)
+    monkeypatch.setattr(queries.access, "fetch", fetch)
     monkeypatch.setattr(readstore, "root", lambda: "s3://test/reads")
     with TestClient(
         create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])

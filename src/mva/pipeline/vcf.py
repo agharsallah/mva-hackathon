@@ -78,7 +78,7 @@ def _open(path: str | Path):
     path = Path(path)
     if path.suffix == ".gz":
         return gzip.open(path, "rt")
-    return open(path)
+    return path.open()
 
 
 def _iter_records(path: str | Path) -> Iterator[list[str]]:
@@ -92,7 +92,9 @@ def _iter_records(path: str | Path) -> Iterator[list[str]]:
 def _split_record(fields: list[str]) -> Iterator[Call]:
     chrom, pos, _id, ref, alt, _qual, filt = fields[:7]
     fmt_keys = fields[8].split(":")
-    sample = dict(zip(fmt_keys, fields[9].split(":")))
+    # VCF allows trailing sample subfields to be dropped when they're missing; a shorter
+    # values list than keys is a valid record, not corruption, so truncate rather than raise.
+    sample = dict(zip(fmt_keys, fields[9].split(":"), strict=False))
 
     filters = tuple(filt.split(";")) if filt not in (".", "") else ()
     genotype = sample.get("GT", "./.")
@@ -100,7 +102,7 @@ def _split_record(fields: list[str]) -> Iterator[Call]:
     depth = _int(sample.get("DP"))
 
     for index, allele in enumerate(alt.split(","), start=1):
-        if allele == "." or allele == "*":
+        if allele in {".", "*"}:
             continue
         yield Call(
             variant=Variant.from_vcf(chrom, int(pos), ref, allele),
@@ -116,11 +118,7 @@ def _split_record(fields: list[str]) -> Iterator[Call]:
 
 
 def _alleles(genotype: str) -> list[int]:
-    out = []
-    for part in genotype.replace("|", "/").split("/"):
-        if part.isdigit():
-            out.append(int(part))
-    return out
+    return [int(part) for part in genotype.replace("|", "/").split("/") if part.isdigit()]
 
 
 def _int(value: str | None) -> int | None:

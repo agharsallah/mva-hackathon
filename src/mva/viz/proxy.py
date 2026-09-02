@@ -60,7 +60,7 @@ class Upstream:
         *,
         params: dict | None = None,
         json: Any | None = None,
-        timeout: float = DEFAULT_TIMEOUT,
+        timeout: float = DEFAULT_TIMEOUT,  # noqa: ASYNC109 - forwarded to httpx's own timeout
     ) -> Reply:
         import httpx
 
@@ -71,11 +71,11 @@ class Upstream:
                     method, url, params=_clean(params), json=json, headers=headers()
                 )
         except Exception as failure:
-            raise Unreachable(base_url()) from failure
+            raise UnreachableError(base_url()) from failure
         return Reply(response.status_code, _decode(response))
 
 
-class Unreachable(RuntimeError):
+class UnreachableError(RuntimeError):
     """The upstream could not be reached at all — distinct from it returning an error."""
 
     def __init__(self, url: str) -> None:
@@ -90,12 +90,12 @@ async def forward(
     *,
     params: dict | None = None,
     json: Any | None = None,
-    timeout: float = DEFAULT_TIMEOUT,
+    timeout: float = DEFAULT_TIMEOUT,  # noqa: ASYNC109 - forwarded straight to httpx's own timeout
 ) -> Any:
     """Forward one call and return the upstream body, or raise the right HTTP error."""
     try:
         reply = await upstream.request(method, path, params=params, json=json, timeout=timeout)
-    except Unreachable as down:
+    except UnreachableError as down:
         raise HTTPException(status_code=503, detail=str(down)) from down
     if reply.status >= 400:
         detail = reply.body

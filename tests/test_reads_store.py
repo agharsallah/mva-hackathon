@@ -259,7 +259,7 @@ def test_minio_storage_directory_is_diagnosed(tmp_path):
     (obj / "a1b2").mkdir(parents=True)
     (obj / "xl.meta").write_bytes(b"XL2 ")
     (obj / "a1b2" / "part.1").write_bytes(b"\x1f\x8b nonsense")
-    with pytest.raises(source_mod.NotADelivery) as caught:
+    with pytest.raises(source_mod.NotADeliveryError) as caught:
         source_mod.resolve(str(fake))
     message = str(caught.value)
     assert "MinIO's internal storage" in message
@@ -267,12 +267,12 @@ def test_minio_storage_directory_is_diagnosed(tmp_path):
 
 
 def test_empty_directory_says_what_it_looked_for(tmp_path):
-    with pytest.raises(source_mod.NotADelivery, match="_L00"):
+    with pytest.raises(source_mod.NotADeliveryError, match="_L00"):
         source_mod.resolve(str(tmp_path))
 
 
 def test_missing_directory_is_named(tmp_path):
-    with pytest.raises(source_mod.NotADelivery, match="not a directory"):
+    with pytest.raises(source_mod.NotADeliveryError, match="not a directory"):
         source_mod.resolve(str(tmp_path / "nope"))
 
 
@@ -393,7 +393,7 @@ def test_presigned_url_is_generated_for_the_right_object():
     calls = {}
 
     class FakeS3:
-        def generate_presigned_url(self, operation, ExpiresIn, Params):
+        def generate_presigned_url(self, operation, ExpiresIn, Params):  # noqa: N803 - mirrors boto3's S3 client signature
             calls.update(operation=operation, expires=ExpiresIn, params=Params)
             return "https://minio.example/mva/source/x.fastq.gz?sig=abc"
 
@@ -487,7 +487,7 @@ def test_check_room_refuses_before_converting(delivery, tmp_path, monkeypatch):
 
     usage = collections.namedtuple("usage", "total used free")
     monkeypatch.setattr(store.shutil, "disk_usage", lambda _: usage(total=1, used=1, free=1))
-    with pytest.raises(store.NotEnoughRoom, match="not enough room"):
+    with pytest.raises(store.NotEnoughRoomError, match="not enough room"):
         store.check_room(tmp_path, store.discover(delivery))
 
 

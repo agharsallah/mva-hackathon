@@ -45,7 +45,7 @@ def build(connection, lines):
 
 def run(connection, name: str = "stats_af") -> list[dict]:
     relation = connection.sql(resolve(by_name(name).sql, "src"))
-    return [dict(zip(relation.columns, row)) for row in relation.fetchall()]
+    return [dict(zip(relation.columns, row, strict=True)) for row in relation.fetchall()]
 
 
 @pytest.fixture()
@@ -140,7 +140,7 @@ def test_a_single_sample_callset_gets_the_zygosity_reading(delivered):
 
 def test_more_than_one_sample_leaves_zygosity_null_rather_than_wrong():
     """With two samples AN is 4 and the bins are real frequencies; neither word applies."""
-    lines = [(1, "SN\t0\tnumber of samples:\t2")] + DELIVERED[2:]
+    lines = [(1, "SN\t0\tnumber of samples:\t2"), *DELIVERED[2:]]
     connection = build(duckdb.connect(), lines)
     try:
         assert [row["zygosity"] for row in run(connection)] == [None, None]

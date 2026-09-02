@@ -113,7 +113,7 @@ def fingerprint(connection, source: str, label: str, distinct: bool = True) -> T
 
     rows = int(row[0])
     columns = []
-    for index, (name, type_name) in enumerate(zip(names, types)):
+    for index, (name, type_name) in enumerate(zip(names, types, strict=True)):
         base = 1 + index * 4
         non_null, empties, distinct_n, checksum = (int(v) for v in row[base : base + 4])
         columns.append(

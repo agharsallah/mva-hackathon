@@ -124,10 +124,10 @@ class TestRoundTrip:
 
     def test_every_field_from_the_file_stays_text(self, vcf: Path, tmp_path: Path):
         out, _ = stage_raw(vcf, tmp_path / "raw.parquet")
-        types = dict(
-            (row[0], row[1])
+        types = {
+            row[0]: row[1]
             for row in duckdb.sql(f"DESCRIBE SELECT * FROM read_parquet('{out}')").fetchall()
-        )
+        }
         assert [*types] == list(RAW_COLUMNS)
         assert {types[name] for name in FILE_COLUMNS} == {"VARCHAR"}, (
             "typing a VCF field here would risk silent loss"
@@ -164,7 +164,7 @@ class TestFingerprint:
         found = compare(fingerprint(con, "t", "t"), fingerprint(con, "u", "u"))
         assert found, "the one loss DuckDB's CSV reader really causes must be detectable"
 
-    def test_null_is_not_confused_with_the_string_NULL(self, con):
+    def test_null_is_not_confused_with_the_string_NULL(self, con):  # noqa: N802 - "NULL" names the literal string under test
         con.execute("CREATE OR REPLACE TABLE t AS SELECT NULL::VARCHAR AS a")
         con.execute("CREATE OR REPLACE TABLE u AS SELECT 'NULL' AS a")
         assert compare(fingerprint(con, "t", "t"), fingerprint(con, "u", "u"))

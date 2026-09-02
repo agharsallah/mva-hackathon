@@ -32,7 +32,7 @@ IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
 ALIAS = "pg"
 
 
-class InvalidIdentifier(ValueError):
+class InvalidIdentifierError(ValueError):
     """Raised when a table or schema name is not a plain SQL identifier."""
 
 
@@ -43,7 +43,7 @@ def safe_identifier(name: str) -> str:
     quotes to be safe is a name that should never have reached the database.
     """
     if not IDENTIFIER.match(name or ""):
-        raise InvalidIdentifier(f"not a usable SQL identifier: {name!r}")
+        raise InvalidIdentifierError(f"not a usable SQL identifier: {name!r}")
     return name
 
 
@@ -194,10 +194,14 @@ def render_table(columns: tuple[str, ...], rows: list[tuple]) -> str:
         else len(str(columns[i]))
         for i in range(len(columns))
     ]
-    line = lambda l, m, r: l + m.join("─" * (w + 2) for w in widths) + r
-    fmt = lambda values: (
-        "│ " + " │ ".join(str(value).ljust(width) for value, width in zip(values, widths)) + " │"
-    )
+
+    def line(left: str, mid: str, right: str) -> str:
+        return left + mid.join("─" * (w + 2) for w in widths) + right
+
+    def fmt(values) -> str:
+        paired = zip(values, widths, strict=True)
+        return "│ " + " │ ".join(str(value).ljust(width) for value, width in paired) + " │"
+
     out = [line("┌", "┬", "┐"), fmt(columns), line("├", "┼", "┤")]
     out += [fmt(row) for row in cells]
     out.append(line("└", "┴", "┘"))

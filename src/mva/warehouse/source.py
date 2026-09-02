@@ -62,7 +62,7 @@ class SourceFile:
             return "fastq"
         if name.endswith((".vcf", ".vcf.gz")):
             return "vcf"
-        if name.endswith(".tbi") or name.endswith(".csi"):
+        if name.endswith((".tbi", ".csi")):
             return "index"
         if name.endswith((".docx", ".md", ".txt", ".pdf")):
             return "document"

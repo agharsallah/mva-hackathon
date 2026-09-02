@@ -52,7 +52,7 @@ def build_submission():
     epcrs = [round(0.99 - i / 100, 2) for i in range(len(ranked[:10]))]
     return [
         Row(p.left, p.right, epcr=e, notes=f"{p.gene} biallelic candidate")
-        for p, e in zip(ranked[:10], epcrs)
+        for p, e in zip(ranked[:10], epcrs, strict=True)
     ]
 
 

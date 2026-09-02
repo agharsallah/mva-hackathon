@@ -13,7 +13,7 @@ opening and closing the same connection.
 from ..warehouse.postgres import attached
 from ..warehouse.probes import BUDGET
 from ..warehouse.settings import Postgres
-from .queries import CANONICAL, rows
+from .queries.access import CANONICAL, rows
 
 
 def overview(settings: Postgres) -> dict:

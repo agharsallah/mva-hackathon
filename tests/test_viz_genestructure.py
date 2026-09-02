@@ -249,7 +249,7 @@ def settings(monkeypatch):
         assert "panel_candidates" in sql, sql
         return [dict(row) for row in CANDIDATES]
 
-    monkeypatch.setattr(queries, "fetch", fetch)
+    monkeypatch.setattr(queries.access, "fetch", fetch)
     return object()
 
 

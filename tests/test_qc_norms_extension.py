@@ -137,8 +137,8 @@ def rows(warehouse, norms_sql: str) -> dict[str, dict]:
     warehouse.execute(f"CREATE TABLE src.qc_norms AS {norms_sql}")
     sql = resolve(by_name("qc_observed_expected").sql, "src")
     found = warehouse.sql(sql)
-    columns = [name for name in found.columns]
-    return {row[0]: dict(zip(columns, row)) for row in found.fetchall()}
+    columns = list(found.columns)
+    return {row[0]: dict(zip(columns, row, strict=True)) for row in found.fetchall()}
 
 
 def norm(metric: str, low: float, high: float) -> str:

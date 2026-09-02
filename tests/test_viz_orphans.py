@@ -88,7 +88,7 @@ def client(tmp_path, monkeypatch, seen):
                 return [dict(row) for row in answer]
         raise AssertionError(f"unexpected SQL: {sql}")
 
-    monkeypatch.setattr(queries, "fetch", fetch)
+    monkeypatch.setattr(queries.access, "fetch", fetch)
     with TestClient(
         create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
     ) as running:

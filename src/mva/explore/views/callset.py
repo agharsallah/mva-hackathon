@@ -197,8 +197,8 @@ def indel_lengths(profile: CallsetProfile) -> Exhibit:
             points.append((length, count))
     points.sort()
 
-    deletions = [(l, c) for l, c in points if l < 0]
-    insertions = [(l, c) for l, c in points if l > 0]
+    deletions = [(length, c) for length, c in points if length < 0]
+    insertions = [(length, c) for length, c in points if length > 0]
 
     figure = go.Figure()
     for label, data, hue in (("deletions", deletions, BAD), ("insertions", insertions, MACHINE)):
@@ -206,7 +206,7 @@ def indel_lengths(profile: CallsetProfile) -> Exhibit:
             continue
         figure.add_trace(
             go.Bar(
-                x=[l for l, _ in data],
+                x=[length for length, _ in data],
                 y=[c for _, c in data],
                 name=label,
                 marker=dict(color=hue.fill, line=dict(color=hue.line, width=0.5)),
@@ -226,10 +226,12 @@ def indel_lengths(profile: CallsetProfile) -> Exhibit:
         if ins_count
         else "",
         _overflow_note(points),
-        "Lengths not divisible by three shift the reading frame of a coding sequence and "
-        "usually destroy the protein; lengths divisible by three remove or add whole amino "
-        "acids and are often survivable. That distinction is what makes indel length a "
-        "consequence prediction and not merely a size.",
+        (
+            "Lengths not divisible by three shift the reading frame of a coding sequence and "
+            "usually destroy the protein; lengths divisible by three remove or add whole amino "
+            "acids and are often survivable. That distinction is what makes indel length a "
+            "consequence prediction and not merely a size."
+        ),
     ]
 
     return Exhibit(
@@ -302,7 +304,7 @@ def depth_distribution(profile: CallsetProfile) -> Exhibit:
         bargap=0.05,
     )
 
-    low = sum(s for b, s in zip(bins, shares) if b < 10)
+    low = sum(s for b, s in zip(bins, shares, strict=True) if b < 10)
     return Exhibit(
         slug="depth-distribution",
         title="Depth distribution across called sites",

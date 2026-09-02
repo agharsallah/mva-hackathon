@@ -125,7 +125,7 @@ def test_an_already_prefixed_contig_is_not_prefixed_twice(client):
     assert "chrchr" not in text
 
 
-def test_the_mitochondrion_is_spelled_chrM(client):
+def test_the_mitochondrion_is_spelled_chrM(client):  # noqa: N802 - chrM is GRCh38's contig name
     text = built(client, [single_row({"chrom": "MT", "pos": 12345, "ref": "A", "alt": "G"})])
     assert ",chrM," in text["csv"]
 
@@ -153,7 +153,7 @@ def test_the_proband_id_is_constant_and_never_taken_from_the_request(client):
 def test_eleven_rows_is_an_error_and_ten_is_not(client):
     ten = [pair_row(epcr=0.99 - 0.01 * i) for i in range(10)]
     assert built(client, ten)["valid"]
-    payload = built(client, ten + [pair_row(epcr=0.88)])
+    payload = built(client, [*ten, pair_row(epcr=0.88)])
     assert not payload["valid"]
     assert any("at most 10 rows" in m for m in messages(payload))
 

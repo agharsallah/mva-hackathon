@@ -14,6 +14,7 @@ the dead process are marked ``lost`` — never silently re-run, because a conver
 idempotent and a re-scan should be an explicit choice.
 """
 
+import contextlib
 import json
 import threading
 import time
@@ -57,6 +58,26 @@ class Job:
         self._interrupt = interrupt
         if self._cancel_requested:
             interrupt()
+
+    def wait(self, timeout: float) -> bool:
+        """Block up to ``timeout`` seconds; True once the job reaches a terminal state."""
+        return self._completed.wait(timeout)
+
+    def mark_completed(self) -> None:
+        """Signal any waiters that the job has reached a terminal state."""
+        self._completed.set()
+
+    @property
+    def cancel_requested(self) -> bool:
+        """Whether cancellation was asked for, regardless of whether it has landed yet."""
+        return self._cancel_requested
+
+    def request_cancel(self) -> None:
+        """Flag the job for cancellation and pull the attached interrupt, if any."""
+        self._cancel_requested = True
+        if self._interrupt is not None:
+            with contextlib.suppress(Exception):  # the query may have just finished
+                self._interrupt()
 
     def snapshot(self) -> dict:
         """The job as a JSON-safe dict — the one shape the API and the disk share."""
@@ -113,7 +134,7 @@ class Manager:
 
     def wait(self, job: Job, timeout: float) -> bool:
         """Block up to ``timeout`` seconds; True when the job reached a terminal state."""
-        return job._completed.wait(timeout)
+        return job.wait(timeout)
 
     def cancel(self, job: Job) -> bool:
         """Ask a queued or running job to stop. False when it already finished.
@@ -124,12 +145,7 @@ class Manager:
         """
         if job.state in TERMINAL:
             return False
-        job._cancel_requested = True
-        if job._interrupt is not None:
-            try:
-                job._interrupt()
-            except Exception:  # the query may have just finished — that is fine
-                pass
+        job.request_cancel()
         return True
 
     def forget(self, job_id: str) -> bool:
@@ -144,7 +160,7 @@ class Manager:
         return True
 
     def _run(self, job: Job, runner: Callable[[Job], Any]) -> None:
-        if job._cancel_requested:
+        if job.cancel_requested:
             self._finish(job, CANCELLED, error="cancelled before it started")
             return
         job.state, job.started_at = RUNNING, time.time()
@@ -152,7 +168,7 @@ class Manager:
         try:
             result = runner(job)
         except Exception as error:
-            state = CANCELLED if job._cancel_requested else FAILED
+            state = CANCELLED if job.cancel_requested else FAILED
             self._finish(job, state, error=f"{type(error).__name__}: {error}")
         else:
             self._finish(job, DONE, result=result)
@@ -161,16 +177,14 @@ class Manager:
         job.state, job.result, job.error = state, result, error
         job.finished_at = time.time()
         self._persist(job)
-        job._completed.set()
+        job.mark_completed()
 
     def _persist(self, job: Job) -> None:
         if self._directory is None:
             return
         path = self._directory / f"{job.id}.json"
-        try:
+        with contextlib.suppress(OSError):  # a full disk must not take the query down with it
             path.write_text(json.dumps(job.snapshot(), default=str), encoding="utf-8")
-        except OSError:  # a full disk must not take the query down with it
-            pass
 
     def _load_history(self, directory: Path) -> None:
         for path in sorted(directory.glob("*.json")):
@@ -193,5 +207,5 @@ class Manager:
                 job.state = LOST
                 job.error = "the API restarted while this job was in flight"
                 self._persist(job)
-            job._completed.set()
+            job.mark_completed()
             self._jobs[job.id] = job

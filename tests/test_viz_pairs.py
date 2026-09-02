@@ -177,7 +177,7 @@ def client(tmp_path, monkeypatch):
             return [{"chrom": "chr5", "start": 100, "end": 900}] if gene == "TRIP13" else []
         raise AssertionError(f"unexpected SQL: {sql}")
 
-    monkeypatch.setattr(queries, "fetch", fetch)
+    monkeypatch.setattr(queries.access, "fetch", fetch)
     with TestClient(
         create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
     ) as running:

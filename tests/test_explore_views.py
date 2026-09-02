@@ -75,7 +75,7 @@ def test_sex_chromosomes_are_drawn_but_not_graded():
     from mva.explore.theme import MUTED
 
     figure = karyotype.allele_balance(CallsetProfile.load(PROFILE)).figure
-    colours = dict(zip(figure.data[0].x, figure.data[0].marker.color))
+    colours = dict(zip(figure.data[0].x, figure.data[0].marker.color, strict=True))
     assert colours["chrX"] == MUTED.fill
     assert colours["chrY"] == MUTED.fill
     assert colours["chr1"] != MUTED.fill

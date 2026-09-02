@@ -190,7 +190,7 @@ def convert_runner(request) -> Callable[[Job], dict]:
     def run(job: Job) -> dict:
         fastqs = store.discover(request.source or setting("MVA_SOURCE_DIR"))
         staging = Path(request.staging or setting("MVA_STAGING_DIR")).expanduser()
-        room = store.check_room(staging, fastqs)  # NotEnoughRoom -> a failed job
+        room = store.check_room(staging, fastqs)  # NotEnoughRoomError -> a failed job
         started = time.perf_counter()
         results = store.convert_all(
             fastqs, staging, engine=request.engine, jobs=request.jobs, threads=request.threads

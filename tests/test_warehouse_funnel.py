@@ -71,7 +71,7 @@ def funnel(connection) -> dict[int, dict]:
     """Run the real derivation SQL and index its rows by stage number."""
     relation = connection.sql(resolve(CANDIDATE_FUNNEL.sql, "src"))
     columns = relation.columns
-    return {row[0]: dict(zip(columns, row)) for row in relation.fetchall()}
+    return {row[0]: dict(zip(columns, row, strict=True)) for row in relation.fetchall()}
 
 
 # ── the heterozygosity predicate ─────────────────────────────────────────────────────

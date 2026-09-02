@@ -231,7 +231,7 @@ _SELECT = f"SELECT {', '.join(_COLUMNS)} FROM {{table}}"
 
 
 def _hydrate(row: tuple) -> Evidence:
-    fields = dict(zip(_COLUMNS, row))
+    fields = dict(zip(_COLUMNS, row, strict=True))
     fields["direction"] = Direction(fields["direction"])
     fields["strength"] = float(fields["strength"])
     fields["evidence_id"] = int(fields["evidence_id"])

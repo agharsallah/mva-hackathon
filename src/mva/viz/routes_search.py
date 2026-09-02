@@ -23,7 +23,7 @@ from fastapi import APIRouter, HTTPException, Query
 
 from ..warehouse.settings import Postgres
 from . import search, search_resolve
-from .cache import Cache, InvalidKey, safe_key
+from .cache import Cache, InvalidKeyError, safe_key
 from .genestructure import EnsemblError
 from .response import Envelope, cached, live
 
@@ -97,7 +97,7 @@ def add_routes(api: APIRouter, settings: Postgres, cache: Cache) -> None:
 
 def _resolve(q: str, settings: Postgres, cache: Cache, refresh: bool) -> dict:
     """Resolve, caching only the paths that cost a lookup."""
-    with _translated():
+    with _Translated():
         kind = search.classify(q)
         if kind == "region":
             # Nothing was consulted, so there is nothing to cache and nothing to stale.
@@ -115,7 +115,7 @@ def _resolve(q: str, settings: Postgres, cache: Cache, refresh: bool) -> dict:
 def _region(
     settings: Postgres, cache: Cache, chrom: str, start: int, end: int, refresh: bool
 ) -> dict:
-    with _translated():
+    with _Translated():
         bare = search.normalise_contig(chrom)
         search.check_span(start, end)
         key = safe_key("region", bare, start, end)
@@ -132,11 +132,11 @@ def _search_key(kind: str, q: str) -> str | None:
     """
     try:
         return safe_key("search", kind, q.strip().upper())
-    except InvalidKey:
+    except InvalidKeyError:
         return None
 
 
-class _translated:
+class _Translated:
     """Map this module's four failure modes onto their status codes, in one place."""
 
     def __enter__(self):
@@ -145,9 +145,9 @@ class _translated:
     def __exit__(self, kind, error, traceback):
         if error is None:
             return False
-        if isinstance(error, (search.Unparseable, search.SpanTooLarge)):
+        if isinstance(error, (search.UnparseableError, search.SpanTooLargeError)):
             raise HTTPException(status_code=422, detail=str(error)) from error
-        if isinstance(error, search.NotFound):
+        if isinstance(error, search.NotFoundError):
             raise HTTPException(status_code=404, detail=str(error)) from error
         if isinstance(error, EnsemblError):
             raise HTTPException(status_code=502, detail=str(error)) from error

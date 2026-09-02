@@ -8,7 +8,7 @@ as already done, what lands in ``notes``, and that nothing is ever UPDATEd or DE
 That last one is the point of the ledgers, so it is asserted directly.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 import pytest
 
@@ -62,7 +62,7 @@ def test_ledgers_never_update_or_delete():
 
 
 STALE_EDGE = (
-    datetime(2026, 8, 29, 16, 37, 29),
+    datetime(2026, 8, 29, 16, 37, 29, tzinfo=UTC),
     "warehouse",
     "variants_raw",
     5012204,
@@ -109,7 +109,7 @@ class TestRepoint:
 
     def test_matches_by_file_name_not_by_a_hardcoded_delivery(self):
         other = (
-            datetime(2026, 1, 1),
+            datetime(2026, 1, 1, tzinfo=UTC),
             "warehouse",
             "reads_raw",
             10,
@@ -125,7 +125,9 @@ class TestRepoint:
         assert appended[0]["now"] == "s3://mva/source/other.fastq.gz"
 
 
-RUNS = [(item.name, datetime(2026, 8, 29, 12, 49, 49, 377449), 8) for item in DERIVATIONS]
+RUNS = [
+    (item.name, datetime(2026, 8, 29, 12, 49, 49, 377449, tzinfo=UTC), 8) for item in DERIVATIONS
+]
 
 
 class TestBackfillDerivations:
@@ -154,7 +156,7 @@ class TestBackfillDerivations:
         assert lineage.backfill_derivations(connection, "warehouse", "results") == []
 
     def test_ignores_a_run_of_a_derivation_that_no_longer_exists(self):
-        connection = FakeConnection([[("retired", datetime(2026, 1, 1), 3)], []])
+        connection = FakeConnection([[("retired", datetime(2026, 1, 1, tzinfo=UTC), 3)], []])
         assert lineage.backfill_derivations(connection, "warehouse", "results") == []
 
 
@@ -216,9 +218,9 @@ class TestProbeLog:
 
     @pytest.mark.parametrize("schema", ["drop table x", "a-b", ""])
     def test_rejects_an_unsafe_schema_name(self, schema):
-        from mva.warehouse.postgres import InvalidIdentifier
+        from mva.warehouse.postgres import InvalidIdentifierError
 
-        with pytest.raises(InvalidIdentifier):
+        with pytest.raises(InvalidIdentifierError):
             probes.ensure_table(FakeConnection(), schema)
 
 

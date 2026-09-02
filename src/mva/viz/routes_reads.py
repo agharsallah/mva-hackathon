@@ -113,7 +113,10 @@ def router(cache: Cache, upstream: Upstream | None = None) -> APIRouter:
         return await _proxied(reads, "GET", f"/jobs/{job_id}")
 
     @api.get("/jobs/{job_id}/wait", response_model=Envelope, tags=["probe"])
-    async def job_wait(job_id: str, timeout: int = Query(default=30, ge=0, le=290)) -> dict:
+    async def job_wait(
+        job_id: str,
+        timeout: int = Query(default=30, ge=0, le=290),  # noqa: ASYNC109 - public query param
+    ) -> dict:
         """Long-poll until the job is terminal or ``timeout`` seconds pass.
 
         Capped at 290 s upstream to stay under common 300 s proxy limits; on timeout the

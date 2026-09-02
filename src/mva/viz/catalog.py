@@ -28,7 +28,7 @@ from ..warehouse.source import LEDGER_TABLE
 from ..warehouse.stage import CATALOG_TABLE
 from .catalog_columns import meaning
 from .catalog_semantics import facts
-from .queries import rows
+from .queries.access import rows
 
 #: What an object of each ``role`` contains, in one sentence. Keyed by the role
 #: :func:`mva.warehouse.lineage.enrich` parsed out of the file name, so a delivery with a

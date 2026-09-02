@@ -76,11 +76,11 @@ def expand(probes: list[str], names: list[str] | None = None) -> list[tuple]:
     if len(names) != len(probes):
         raise ValueError(f"{len(names)} names for {len(probes)} probes")
     rows = []
-    for name, probe in zip(names, probes):
+    for name, probe in zip(names, probes, strict=True):
         safe = re.sub(r"[^A-Za-z0-9_.:-]", "_", str(name))[:64] or "probe"
-        probe = clean(probe)
-        rows.append((safe, probe, "+"))
-        rows.append((safe, reverse_complement(probe), "-"))
+        clean_probe = clean(probe)
+        rows.append((safe, clean_probe, "+"))
+        rows.append((safe, reverse_complement(clean_probe), "-"))
     return rows
 
 

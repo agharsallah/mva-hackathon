@@ -151,7 +151,7 @@ def client(tmp_path, monkeypatch):
             return [dict(r) for r in SUMMARY if gene in (None, r["gene"])]
         return [dict(r) for r in SITES if gene in (None, r["gene"])]
 
-    monkeypatch.setattr(queries, "fetch", fetch)
+    monkeypatch.setattr(queries.access, "fetch", fetch)
     monkeypatch.setattr(readstore, "root", lambda: "s3://test/reads")
     with TestClient(
         create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
@@ -224,7 +224,7 @@ def test_the_filter_is_a_bound_parameter_not_string_interpolation(client):
 
 def test_an_unknown_gene_is_a_404_rather_than_an_empty_success(client, monkeypatch):
     """Zero rows for a misspelt gene reads exactly like a gene with nothing in it."""
-    monkeypatch.setattr(queries, "fetch", lambda *a, **k: [])
+    monkeypatch.setattr(queries.access, "fetch", lambda *a, **k: [])
     response = client.get("/api/panel/clinvar-presence?gene=NOTAGENE")
     assert response.status_code == 404
     assert "NOTAGENE" in response.json()["detail"]

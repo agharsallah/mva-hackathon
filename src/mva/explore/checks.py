@@ -280,7 +280,9 @@ def _balance_checks(profile: CallsetProfile) -> list[Check]:
     worst = max(autosomes, key=lambda b: abs(b.deviation))
     out = [
         Check(
-            name=f"Largest autosomal allele-balance deviation (chr{worst.chrom.removeprefix('chr')})",
+            name=(
+                f"Largest autosomal allele-balance deviation (chr{worst.chrom.removeprefix('chr')})"
+            ),
             value=worst.deviation,
             display=f"{worst.mean_vaf:.4f} (Δ {worst.deviation:+.4f})",
             verdict=_band(worst.mean_vaf, (0.48, 0.52), (0.46, 0.54)),

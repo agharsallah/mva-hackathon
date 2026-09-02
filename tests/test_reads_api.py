@@ -5,6 +5,7 @@ exercise exactly what the API adds — everything below it is covered elsewhere.
 """
 
 import threading
+from typing import ClassVar
 
 import pytest
 from fastapi.testclient import TestClient
@@ -16,7 +17,7 @@ from mva.reads.scan import Hit
 
 
 class FakeConnection:
-    description = [("lane",), ("n",)]
+    description: ClassVar = [("lane",), ("n",)]
 
     def interrupt(self):
         pass
@@ -40,8 +41,7 @@ def client(tmp_path, monkeypatch):
 def finished(client, response) -> dict:
     assert response.status_code == 202, response.text
     job_id = response.json()["id"]
-    done = client.get(f"/jobs/{job_id}/wait", params={"timeout": 10}).json()
-    return done
+    return client.get(f"/jobs/{job_id}/wait", params={"timeout": 10}).json()
 
 
 def test_scan_runs_as_a_job_and_returns_hits(client, monkeypatch):

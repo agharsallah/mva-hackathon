@@ -15,7 +15,7 @@ from . import bench, scan, store, triage, verify
 from .access import connection as _connection
 from .access import s3_root as _s3_root
 from .engines import ENGINES
-from .source import NotADelivery
+from .source import NotADeliveryError
 
 
 def _sources(args) -> list:
@@ -23,7 +23,7 @@ def _sources(args) -> list:
     spec = args.source or setting("MVA_SOURCE_DIR")
     try:
         return store.discover(spec)
-    except NotADelivery as error:
+    except NotADeliveryError as error:
         print(f"{error}", file=sys.stderr)
         sys.exit(2)
 
@@ -77,7 +77,7 @@ def do_convert(args) -> int:
     )
     try:
         print(f"  disk: {store.check_room(staging, fastqs)}")
-    except store.NotEnoughRoom as error:
+    except store.NotEnoughRoomError as error:
         print(error, file=sys.stderr)
         return 2
     started = time.perf_counter()
@@ -131,8 +131,8 @@ def _probes(args) -> tuple[list[str], list[str]]:
         names.append(f"kmer{index}")
         probes.append(probe)
     if args.kmers_file:
-        for line in Path(args.kmers_file).expanduser().read_text().splitlines():
-            line = line.strip()
+        for raw_line in Path(args.kmers_file).expanduser().read_text().splitlines():
+            line = raw_line.strip()
             if not line or line.startswith("#"):
                 continue
             parts = line.replace("\t", " ").split()

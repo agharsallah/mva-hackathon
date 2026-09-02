@@ -23,11 +23,13 @@ Both third-party engines are optional: an import failure makes the engine report
 unavailable rather than breaking the module, and ``pipe`` always remains.
 """
 
+import contextlib
 import os
 import shutil
 import subprocess
 import tempfile
 from dataclasses import dataclass, field
+from pathlib import Path
 
 #: Decompressors in preference order; each is invoked as ``<name> -dc <file>``.
 DECOMPRESSORS = ("igzip", "pigz", "gzip")
@@ -73,7 +75,7 @@ def pipe(connection, source, view: str = "raw_reads") -> Raw:
     """
     decompressor = find_decompressor()
     workdir = tempfile.mkdtemp(prefix="mva-reads-")
-    fifo = os.path.join(workdir, "reads.tsv")
+    fifo = Path(workdir) / "reads.tsv"
     os.mkfifo(fifo)
     local = getattr(source, "path", source)
     from_stdin = local is None
@@ -118,10 +120,8 @@ def _feed(producer, source):
         except (BrokenPipeError, ValueError):
             pass  # the reader stopped early; its own error is the one that matters
         finally:
-            try:
+            with contextlib.suppress(BrokenPipeError, ValueError):
                 producer.stdin.close()
-            except (BrokenPipeError, ValueError):
-                pass
 
     thread = threading.Thread(target=pump, daemon=True)
     thread.start()
@@ -193,9 +193,10 @@ def available(engine: str) -> bool:
         return True
     try:
         __import__(module)
-        return True
     except ImportError:
         return False
+    else:
+        return True
 
 
 #: Engine name → factory. The bake-off and the CLI both index into this.

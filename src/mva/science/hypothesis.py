@@ -233,7 +233,7 @@ _SELECT = f"SELECT {', '.join(_COLUMNS)} FROM {{table}}"
 
 def _hydrate(row: tuple) -> Hypothesis:
     """Rebuild a :class:`Hypothesis` from a row in :data:`_COLUMNS` order."""
-    fields = dict(zip(_COLUMNS, row))
+    fields = dict(zip(_COLUMNS, row, strict=True))
     fields["status"] = Status(fields["status"])
     fields["confidence"] = None if fields["confidence"] is None else float(fields["confidence"])
     fields["revision"] = int(fields["revision"])

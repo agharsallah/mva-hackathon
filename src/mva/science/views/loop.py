@@ -125,34 +125,44 @@ def the_rules(record: Record) -> Exhibit:
         (
             "A hypothesis with no refutation condition",
             BAD,
-            "A claim nothing could disprove is not a hypothesis. Writing the refutation "
-            "sentence <em>before</em> the run is what stops a result being reinterpreted "
-            "afterwards to fit.",
+            (
+                "A claim nothing could disprove is not a hypothesis. Writing the refutation "
+                "sentence <em>before</em> the run is what stops a result being reinterpreted "
+                "afterwards to fit."
+            ),
         ),
         (
             "An observation with no source",
             BAD,
-            "Every evidence row names its receipt — a methodology entry, a table, a PMID, a "
-            "ClinVar record, an oracle reply. An unsourced number is exactly what this "
-            "register exists to make impossible.",
+            (
+                "Every evidence row names its receipt — a methodology entry, a table, a PMID, a "
+                "ClinVar record, an oracle reply. An unsourced number is exactly what this "
+                "register exists to make impossible."
+            ),
         ),
         (
             "A confidence with no stated reason",
             BAD,
-            "The tool suggests a number and shows its arithmetic; committing it takes a human "
-            "and a written reason. The suggestion is never written on its own.",
+            (
+                "The tool suggests a number and shows its arithmetic; committing it takes a "
+                "human and a written reason. The suggestion is never written on its own."
+            ),
         ),
         (
             "A genomic position in an exported file",
             BAD,
-            "The export scans for coordinates and refuses rather than trusting everyone to "
-            "remember. Name the gene and the consequence; never the position.",
+            (
+                "The export scans for coordinates and refuses rather than trusting everyone to "
+                "remember. Name the gene and the consequence; never the position."
+            ),
         ),
         (
             "An edit to anything already recorded",
             MUTED,
-            "Both tables are append-only. A changed belief is a new revision, so the record "
-            "of the belief moving survives.",
+            (
+                "Both tables are append-only. A changed belief is a new revision, so the record "
+                "of the belief moving survives."
+            ),
         ),
     )
     rows = "".join(

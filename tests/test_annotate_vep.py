@@ -7,6 +7,8 @@ release 116, GRCh38), recorded in ``docs/step-0/methodology/031``; the positions
 are public reference sites, not the proband's.
 """
 
+from datetime import UTC
+
 import httpx
 import pytest
 
@@ -498,7 +500,7 @@ class TestRow:
         from datetime import datetime
 
         record = parse(TP53_MISSENSE, TP53, frozenset({"TP53"}))
-        row = row_of(record, datetime(2026, 1, 1), "ensembl-vep-rest release=116")
+        row = row_of(record, datetime(2026, 1, 1, tzinfo=UTC), "ensembl-vep-rest release=116")
         assert row[0] == "17"
         assert row[:4] == ["17", 7676154, "G", "C"]
         assert row[10] == "benign"
@@ -506,7 +508,7 @@ class TestRow:
     def test_an_empty_clin_sig_is_null_not_an_empty_string(self):
         from datetime import datetime
 
-        row = row_of(VepRecord(variant=BUB1B), datetime(2026, 1, 1), "x")
+        row = row_of(VepRecord(variant=BUB1B), datetime(2026, 1, 1, tzinfo=UTC), "x")
         assert row[10] is None
 
 

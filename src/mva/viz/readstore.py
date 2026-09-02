@@ -20,7 +20,7 @@ produces a "file not found" that looks like a missing shard rather than a naming
 
 from ..reads import access, schema
 from ..warehouse.settings import object_store
-from .queries import rows
+from .queries.access import rows
 
 #: Rows sampled per partition by the quality endpoints. 100k reads × 149 cycles is 14.9M
 #: quality values — a stable mean per cycle, from one row group, in seconds.
@@ -52,7 +52,7 @@ def _table(name: str) -> str:
 
 def runs() -> list[dict]:
     """The eight-row ``runs`` dimension: one row per delivered FASTQ."""
-    with _connected() as connection:
+    with _Connected() as connection:
         return rows(
             connection,
             f"""
@@ -65,7 +65,7 @@ def runs() -> list[dict]:
 
 def totals() -> dict:
     """Total reads and the read length, for the overview object."""
-    with _connected() as connection:
+    with _Connected() as connection:
         found = rows(
             connection,
             f"""
@@ -82,7 +82,7 @@ def totals() -> dict:
 
 def partitions() -> list[dict]:
     """Shards, reads and gibibytes per ``(lane, read)`` partition."""
-    with _connected() as connection:
+    with _Connected() as connection:
         return rows(
             connection,
             f"""
@@ -118,7 +118,7 @@ def flowcell(lane: int, read_num: int, shard: int = 0) -> list[dict]:
     Reads three narrow integer columns out of a ~240 MB shard, which is why this costs
     seconds rather than minutes.
     """
-    with _connected() as connection:
+    with _Connected() as connection:
         keys = shard_keys(connection, lane, read_num)
         if not keys:
             raise LookupError(f"no shards for lane {lane} read {read_num}")
@@ -190,7 +190,7 @@ def _per_partition(body: str, sample_rows: int) -> list[dict]:
     """
     limit = int(sample_rows)
     out: list[dict] = []
-    with _connected() as connection:
+    with _Connected() as connection:
         found = rows(
             connection,
             f"SELECT DISTINCT lane, read_num FROM {_table('manifest')} ORDER BY lane, read_num",
@@ -208,12 +208,11 @@ def _per_partition(body: str, sample_rows: int) -> list[dict]:
                 {body}
             """,
             )
-            for row in aggregated:
-                out.append({"lane": lane, "read_num": read_num, **row})
+            out.extend({"lane": lane, "read_num": read_num, **row} for row in aggregated)
     return out
 
 
-class _connected:
+class _Connected:
     """Context manager around :func:`opened` — DuckDB connections are not one."""
 
     def __enter__(self):

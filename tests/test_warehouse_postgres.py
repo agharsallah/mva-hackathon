@@ -16,7 +16,7 @@ from mva.warehouse.analysis import DERIVATIONS, SOURCE, by_name, resolve
 from mva.warehouse.annotate import ANNOTATIONS_TABLE
 from mva.warehouse.catalog import NOTES, OVERRIDES, table_name
 from mva.warehouse.cli_vcf import RAW_TABLE
-from mva.warehouse.postgres import InvalidIdentifier, Result, render_table, safe_identifier
+from mva.warehouse.postgres import InvalidIdentifierError, Result, render_table, safe_identifier
 from mva.warehouse.settings import ENV_FILE_OVERRIDE, Postgres, find_env, parse_env
 from mva.warehouse.stage import SCALARS_TABLE
 
@@ -115,7 +115,7 @@ class TestSafeIdentifier:
         "name", ["drop table x", 'x"; DROP TABLE y; --', "9lives", "", "a-b", "sch.table", None]
     )
     def test_rejects_anything_needing_quotes(self, name):
-        with pytest.raises(InvalidIdentifier):
+        with pytest.raises(InvalidIdentifierError):
             safe_identifier(name)
 
     def test_every_staged_table_name_is_accepted(self):

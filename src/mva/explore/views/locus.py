@@ -60,8 +60,8 @@ def variant_track(calls: list[Call], label: str = "locus") -> Exhibit:
         ),
         ("homozygous alternate", [c for c in calls if c.is_hom_alt], MACHINE, "square"),
     ]
-    for name, subset, hue, symbol in groups:
-        subset = [c for c in subset if c.vaf is not None]
+    for name, group, hue, symbol in groups:
+        subset = [c for c in group if c.vaf is not None]
         if not subset:
             continue
         figure.add_trace(
@@ -223,10 +223,12 @@ def phase_map(calls: list[Call], label: str = "locus") -> Exhibit:
         ),
         figure=sized(figure, 380),
         notes=[
-            f"The widest group here spans {reach:,} bp. That reach is set by how long the "
-            "sequenced fragments were, not by how far apart the interesting variants are, "
-            "which is why phasing confirms a pair it happens to catch and can never be the "
-            "filter that finds one."
+            (
+                f"The widest group here spans {reach:,} bp. That reach is set by how long the "
+                "sequenced fragments were, not by how far apart the interesting variants are, "
+                "which is why phasing confirms a pair it happens to catch and can never be the "
+                "filter that finds one."
+            )
         ],
     )
 
@@ -295,10 +297,12 @@ def pair_phase_matrix(calls: list[Call], label: str = "locus") -> Exhibit:
         figure=sized(figure, 520),
         height=520,
         notes=[
-            f"{tally[Phase.TRANS]:,} confirmed trans, {tally[Phase.CIS]:,} rejected cis, "
-            f"{tally[Phase.UNKNOWN]:,} of unknown phase — {live:,} pairs stay in play. "
-            "Unknown phase is the common verdict and is never a rejection: with no parental "
-            "samples sequenced, there is simply no evidence either way."
+            (
+                f"{tally[Phase.TRANS]:,} confirmed trans, {tally[Phase.CIS]:,} rejected cis, "
+                f"{tally[Phase.UNKNOWN]:,} of unknown phase — {live:,} pairs stay in play. "
+                "Unknown phase is the common verdict and is never a rejection: with no parental "
+                "samples sequenced, there is simply no evidence either way."
+            )
         ],
     )
 

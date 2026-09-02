@@ -129,7 +129,7 @@ def client(tmp_path, monkeypatch):
             return [dict(r) for r in RECORDS.get(gene, [])]
         raise AssertionError(f"unexpected SQL: {sql}")
 
-    monkeypatch.setattr(queries, "fetch", fetch)
+    monkeypatch.setattr(queries.access, "fetch", fetch)
     with TestClient(
         create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
     ) as running:

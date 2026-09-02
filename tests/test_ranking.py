@@ -56,7 +56,7 @@ def test_loss_of_function_outranks_missense_at_equal_frequency():
 
 def test_pairs_come_back_sorted_best_first():
     ranked = rank_pairs([(COMMON, BENIGN), (A, B), (A, COMMON)], ANNOTATOR)
-    assert [(p.left, p.right) for p in ranked][0] == (A, B)
+    assert next((p.left, p.right) for p in ranked) == (A, B)
     assert [p.score for p in ranked] == sorted((p.score for p in ranked), reverse=True)
 
 

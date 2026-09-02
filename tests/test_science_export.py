@@ -126,7 +126,7 @@ def test_the_register_json_round_trips(tmp_path):
     data = json.loads((tmp_path / "science-register.json").read_text())
     assert data["hypotheses"][0]["id"] == "H001"
     assert data["hypotheses"][0]["evidence"][0]["source_ref"] == "methodology/003"
-    assert [step["slug"] for step in data["steps"]][0] == "step-0"
+    assert next(step["slug"] for step in data["steps"]) == "step-0"
 
 
 def test_the_dossier_states_the_refutation_condition():

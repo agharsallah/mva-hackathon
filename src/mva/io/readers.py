@@ -18,6 +18,7 @@ Two conventions are shared across all of them:
   sentinel in the next.
 """
 
+from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -57,8 +58,8 @@ class Sections:
 
     def counts(self, block: str) -> dict[str, int]:
         """One block as a label-to-count mapping, dropping cells that are not integers."""
-        pairs = self.blocks.get(block, [])
-        return {label: as_int(value) for label, value in pairs if as_int(value) is not None}
+        parsed = ((label, as_int(value)) for label, value in self.blocks.get(block, []))
+        return {label: number for label, number in parsed if number is not None}
 
 
 @dataclass(frozen=True)
@@ -108,7 +109,7 @@ def read_table(path: str | Path) -> Table:
             columns = tuple(cells)
             continue
         if len(cells) == len(columns):
-            rows.append(dict(zip(columns, cells)))
+            rows.append(dict(zip(columns, cells, strict=True)))
         elif len(cells) == 2:
             # A rollup line appended below the table proper — a total, not a record.
             scalars[cells[0]] = cells[1]
@@ -238,7 +239,7 @@ def as_float(value: str | None) -> float | None:
         return None
 
 
-def _lines(path: str | Path, keep_blank: bool = False):
+def _lines(path: str | Path, keep_blank: bool = False) -> Iterator[str]:
     text = Path(path).read_text(encoding="utf-8", errors="replace")
     for raw in text.splitlines():
         line = raw.rstrip("\n").rstrip("\r")

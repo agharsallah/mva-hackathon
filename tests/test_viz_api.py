@@ -14,7 +14,7 @@ from fastapi.testclient import TestClient
 from mva.viz import queries, readstore, routes_warehouse
 from mva.viz.app import cors_origins, create_app
 from mva.viz.cache import Cache
-from mva.viz.proxy import Reply, Unreachable, Upstream
+from mva.viz.proxy import Reply, UnreachableError, Upstream
 from mva.warehouse.settings import DEFAULTS
 
 #: What the fake `fetch` returns, matched on a fragment of the SQL.
@@ -118,7 +118,7 @@ def client(tmp_path, monkeypatch):
                 return [dict(row) for row in answer]
         raise AssertionError(f"unexpected SQL: {sql}")
 
-    monkeypatch.setattr(queries, "fetch", fetch)
+    monkeypatch.setattr(queries.access, "fetch", fetch)
     monkeypatch.setattr(routes_warehouse, "overview", lambda settings: {"total_variants": 5012204})
     monkeypatch.setattr(readstore, "root", lambda: "s3://test/reads")
     monkeypatch.setattr(readstore, "runs", lambda: [{"lane": 1, "read_num": 1, "reads": 5}])
@@ -204,7 +204,7 @@ def test_density_bins_pushes_the_chromosome_into_the_query(client, monkeypatch):
         seen["sql"], seen["params"] = sql, params
         return []
 
-    monkeypatch.setattr(queries, "fetch", spy)
+    monkeypatch.setattr(queries.access, "fetch", spy)
     client.get("/api/genome/density-bins", params={"chrom": "15"})
     assert "WHERE chrom = ?" in seen["sql"] and seen["params"] == ["15"]
 
@@ -217,7 +217,7 @@ def test_a_chr_prefixed_chromosome_is_normalised_before_the_query(client, monkey
         seen["params"] = params
         return []
 
-    monkeypatch.setattr(queries, "fetch", spy)
+    monkeypatch.setattr(queries.access, "fetch", spy)
     client.get("/api/genome/density-bins", params={"chrom": "chr15"})
     assert seen["params"] == ["15"]
 
@@ -244,7 +244,7 @@ def test_panel_annotations_without_a_gene_returns_the_whole_panel(client, monkey
         seen["sql"], seen["params"] = sql, params
         return ANSWERS["panel_candidates"]
 
-    monkeypatch.setattr(queries, "fetch", spy)
+    monkeypatch.setattr(queries.access, "fetch", spy)
     assert data(client.get("/api/panel/annotations"))[0]["gene"] == "BUB1B"
     assert "WHERE gene" not in seen["sql"] and seen["params"] is None
 
@@ -256,13 +256,13 @@ def test_panel_annotations_pushes_the_gene_into_the_query(client, monkeypatch):
         seen["sql"], seen["params"] = sql, params
         return ANSWERS["panel_candidates"]
 
-    monkeypatch.setattr(queries, "fetch", spy)
+    monkeypatch.setattr(queries.access, "fetch", spy)
     client.get("/api/panel/annotations", params={"gene": "BUB1B"})
     assert "WHERE gene = ?" in seen["sql"] and seen["params"] == ["BUB1B"]
 
 
 def test_an_unknown_gene_in_annotations_is_a_404_not_an_empty_list(client, monkeypatch):
-    monkeypatch.setattr(queries, "fetch", lambda settings, sql, params=None: [])
+    monkeypatch.setattr(queries.access, "fetch", lambda settings, sql, params=None: [])
     response = client.get("/api/panel/annotations", params={"gene": "NOTAGENE"})
     assert response.status_code == 404
     assert "NOTAGENE" in response.json()["detail"]
@@ -270,7 +270,7 @@ def test_an_unknown_gene_in_annotations_is_a_404_not_an_empty_list(client, monke
 
 def test_an_empty_panel_is_an_empty_list_when_no_gene_was_asked_for(client, monkeypatch):
     """No gene means no lookup, so an empty table is a chart's empty state, not a 404."""
-    monkeypatch.setattr(queries, "fetch", lambda settings, sql, params=None: [])
+    monkeypatch.setattr(queries.access, "fetch", lambda settings, sql, params=None: [])
     assert data(client.get("/api/panel/annotations")) == []
 
 
@@ -298,7 +298,7 @@ def test_a_second_locus_request_is_served_from_disk(client, monkeypatch):
     def refuse(settings, sql, params=None):
         raise AssertionError("the callset must not be read twice")
 
-    monkeypatch.setattr(queries, "fetch", refuse)
+    monkeypatch.setattr(queries.access, "fetch", refuse)
     second = client.get("/api/panel/locus", params={"gene": "BUB1B"}).json()
     assert second == first
 
@@ -310,13 +310,13 @@ def test_refresh_busts_the_cache(client, monkeypatch):
         # the gene still resolves; the region simply has no variants this time
         return [] if "variants_raw" in sql else ANSWERS["mva_panel_grch38"]
 
-    monkeypatch.setattr(queries, "fetch", emptied)
+    monkeypatch.setattr(queries.access, "fetch", emptied)
     rebuilt = client.get("/api/panel/locus", params={"gene": "BUB1B", "refresh": "true"}).json()
     assert rebuilt["data"] == []
 
 
 def test_an_unknown_gene_is_a_404_not_an_empty_chart(client, monkeypatch):
-    monkeypatch.setattr(queries, "fetch", lambda settings, sql, params=None: [])
+    monkeypatch.setattr(queries.access, "fetch", lambda settings, sql, params=None: [])
     response = client.get("/api/panel/locus", params={"gene": "NOTAGENE"})
     assert response.status_code == 404
     assert "NOTAGENE" in response.json()["detail"]
@@ -385,14 +385,22 @@ class Down(Upstream):
     """An upstream that is not running — the current state of `mva-reads-api`."""
 
     async def request(self, *args, **kwargs):
-        raise Unreachable("http://127.0.0.1:8765")
+        raise UnreachableError("http://127.0.0.1:8765")
 
 
 class Fake(Upstream):
     def __init__(self, status=200, body=None):
         self.status, self.body, self.calls = status, body or {}, []
 
-    async def request(self, method, path, *, params=None, json=None, timeout=30.0):
+    async def request(
+        self,
+        method,
+        path,
+        *,
+        params=None,
+        json=None,
+        timeout=30.0,  # noqa: ASYNC109 - mirrors Upstream.request's signature
+    ):
         self.calls.append(
             {"method": method, "path": path, "params": params, "json": json, "timeout": timeout}
         )

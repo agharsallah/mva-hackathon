@@ -1,198 +1,18 @@
-"""Every warehouse read the viz API makes, as one function per endpoint.
+"""The gene panel, and the one endpoint allowed to touch the callset.
 
-Two rules govern this module, and both exist to keep an HTTP request from becoming a
-whole-genome scan:
-
-* **Charts read derived tables, never the callset.** ``variants_raw`` is five million
-  all-text rows with no index; the cheapest full aggregate over it is ~60 s. Anything a
-  chart needs is precomputed by a :mod:`~mva.warehouse.analysis` derivation, so the
-  request reads a few thousand rows.
-* **The one exception pushes its filter down.** The locus endpoint has to touch the
-  callset, so it always constrains ``chrom``, which PostgreSQL can satisfy without
-  reading the other 24 chromosomes (~4.4 s instead of ~21 s).
-
-Rows come back as dicts with JSON-safe values, because a chart component should not have
-to know that PostgreSQL hands DuckDB a ``Decimal`` and a naive ``datetime``.
+Two concerns that cannot be separated: the panel questions (which genes, which
+candidates, what ClinVar says) and the locus view, because the locus view is what a
+panel gene's page is built from. It is also the single query in this package that reads
+``variants_raw``, and it constrains ``chrom`` every time so PostgreSQL can skip the other
+24 chromosomes.
 """
 
-from datetime import date, datetime
-from decimal import Decimal
 from pathlib import Path
 
-from ..pipeline.variant import to_vcf_contig
-from ..warehouse.postgres import attached
-from ..warehouse.settings import Postgres
-from . import genotype
-
-#: Canonical contigs are the ones whose name is at most two characters — 1..22, X, Y, M.
-#: The same predicate is used by every derivation, so the API and the tables agree.
-CANONICAL = "length(chrom) <= 2"
-
-
-def jsonable(value):
-    """One value in a shape ``json.dumps`` accepts."""
-    if isinstance(value, (datetime, date)):
-        return value.isoformat()
-    if isinstance(value, Decimal):
-        return float(value)
-    if isinstance(value, (bytes, bytearray)):
-        return value.decode("utf-8", "replace")
-    return value
-
-
-def rows(connection, sql: str, params: list | None = None) -> list[dict]:
-    """Run one statement on an open connection and return JSON-safe dicts."""
-    cursor = connection.execute(sql, params or [])
-    columns = [description[0] for description in cursor.description or ()]
-    return [
-        {column: jsonable(value) for column, value in zip(columns, row)}
-        for row in cursor.fetchall()
-    ]
-
-
-def fetch(settings: Postgres, sql: str, params: list | None = None) -> list[dict]:
-    """Attach, run one read-only statement, detach."""
-    with attached(settings, read_only=True) as connection:
-        return rows(connection, sql, params)
-
-
-def table(settings: Postgres, schema: str, name: str, order: str = "") -> list[dict]:
-    """A whole (small) table, optionally ordered."""
-    from ..warehouse.postgres import safe_identifier
-
-    qualified = f"pg.{safe_identifier(schema)}.{safe_identifier(name)}"
-    return fetch(settings, f"SELECT * FROM {qualified} {order}")
-
-
-# ── genome ───────────────────────────────────────────────────────────────────────────
-
-
-def allele_balance(settings: Postgres) -> list[dict]:
-    return table(settings, "results", "allele_balance_flags", "ORDER BY abs(vaf_deviation) DESC")
-
-
-def contig_density(settings: Postgres) -> list[dict]:
-    return table(settings, "results", "contig_density", "ORDER BY variants_per_mb DESC")
-
-
-def density_bins(settings: Postgres, chrom: str | None = None) -> list[dict]:
-    """1 Mb bins, whole genome or one chromosome. Bare contig names, as delivered."""
-    where = "WHERE chrom = ?" if chrom else ""
-    return fetch(
-        settings,
-        f"SELECT chrom, mb, n, pass_n, low_qual_n, mean_qual "
-        f"FROM pg.results.variant_density_bins {where} ORDER BY chrom, mb",
-        [to_vcf_contig(chrom)] if chrom else None,
-    )
-
-
-def baf_bins(settings: Postgres, chrom: str | None = None) -> list[dict]:
-    """Heterozygous allele balance per 1 Mb bin, whole genome or one chromosome.
-
-    The per-megabase counterpart of ``allele_balance``, precomputed by the ``baf_bins``
-    derivation. ``low_confidence`` travels with the row so the chart can render a thin bin
-    as unmeasured rather than as signal; the row is never dropped, because an empty
-    stretch is itself information.
-    """
-    where = "WHERE chrom = ?" if chrom else ""
-    return fetch(
-        settings,
-        f"SELECT chrom, mb, n_het, mean_vaf, median_vaf, sd_vaf, vaf_deviation, "
-        f"pct_in_0_40_0_60, mean_dp, low_confidence "
-        f"FROM pg.results.baf_bins {where} ORDER BY chrom, mb",
-        [to_vcf_contig(chrom)] if chrom else None,
-    )
-
-
-# ── callset ──────────────────────────────────────────────────────────────────────────
-
-
-def filters(settings: Postgres) -> list[dict]:
-    return table(settings, "results", "filter_impact", "ORDER BY impact_rank")
-
-
-def genotypes(settings: Postgres) -> list[dict]:
-    return fetch(
-        settings,
-        "SELECT label, count FROM pg.warehouse.filter_gt_counts "
-        "WHERE section = 'genotype counts' ORDER BY count DESC",
-    )
-
-
-def depth_distribution(settings: Postgres) -> list[dict]:
-    return table(settings, "results", "stats_dp", "ORDER BY bin")
-
-
-def substitutions(settings: Postgres) -> list[dict]:
-    return table(settings, "results", "stats_st", "ORDER BY count DESC")
-
-
-def indel_lengths(settings: Postgres) -> list[dict]:
-    return table(settings, "results", "stats_idd", "ORDER BY length")
-
-
-def observed_expected(settings: Postgres) -> list[dict]:
-    """Each QC metric this callset can be measured against, with its published range."""
-    return table(settings, "results", "qc_observed_expected", "ORDER BY metric")
-
-
-def candidate_funnel(settings: Postgres) -> list[dict]:
-    """The ranking waterfall, one row per filter stage, in stage order.
-
-    Two scopes in one table: ``scope = 'genome'`` rows are measured over the whole
-    callset, ``scope = 'panel'`` rows only inside the eight-gene candidate panel, which is
-    the only region annotation exists for. ``of_previous_pct`` is **null** wherever the
-    row is not a subset of the row above it — at the scope change — rather than dividing
-    two different populations.
-    """
-    return table(settings, "results", "candidate_funnel", "ORDER BY stage_no")
-
-
-def tstv(settings: Postgres) -> dict:
-    """The transition/transversion ratio as a single object."""
-    found = table(settings, "results", "stats_tstv")
-    return found[0] if found else {"ts": None, "tv": None, "ratio": None}
-
-
-def zygosity_split(settings: Postgres) -> list[dict]:
-    """The bcftools ``AF`` section, parsed — two rows on a single-sample callset.
-
-    ``zygosity`` is the reading, and it is **null** on anything but one sample, where the
-    bins really are population allele frequencies. See
-    :mod:`mva.warehouse.analysis_stats` for why AF here is a het/hom split.
-    """
-    return table(settings, "results", "stats_af", "ORDER BY af_bin")
-
-
-def vcf_fields(settings: Postgres) -> list[dict]:
-    """Every FILTER, INFO and FORMAT field the callset's own VCF header declares.
-
-    The callset's schema documentation, written by the caller that produced it. Ordered
-    so the three kinds stay grouped and stable across requests.
-    """
-    return fetch(
-        settings,
-        "SELECT kind, id, description FROM pg.warehouse.vcf_fields "
-        "ORDER BY CASE kind WHEN 'FILTER' THEN 0 WHEN 'INFO' THEN 1 ELSE 2 END, "
-        "id",
-    )
-
-
-# ── reads ────────────────────────────────────────────────────────────────────────────
-
-
-def sequencing_yield(settings: Postgres) -> list[dict]:
-    """What each flowcell lane contributed, estimated from the delivered FASTQ bytes.
-
-    Estimated, not counted: ``est_reads`` and ``est_gbases`` come from a file's compressed
-    size and its first read's length, because counting means decompressing 79 GB. The
-    counted figures live in ``/api/reads/runs``, which reads the converted parquet store —
-    the two together are what make the estimate's error measurable.
-    """
-    return table(settings, "results", "sequencing_yield", "ORDER BY lane")
-
-
-# ── panel ────────────────────────────────────────────────────────────────────────────
+from ...pipeline.variant import to_vcf_contig
+from ...warehouse.settings import Postgres
+from .. import genotype
+from . import access
 
 
 def panel_genes(settings: Postgres, bed: Path | None = None) -> list[dict]:
@@ -204,9 +24,9 @@ def panel_genes(settings: Postgres, bed: Path | None = None) -> list[dict]:
     and ``ensembl_id``/``note`` from the panel BED's comment-documented extra columns,
     which the staged table drops.
     """
-    from .panelbed import annotations
+    from ..panelbed import annotations
 
-    found = fetch(
+    found = access.fetch(
         settings,
         """
         SELECT d.gene, d.chrom, c.start, c."end", d.n_all, d.n_pass, d.n_filtered,
@@ -229,9 +49,11 @@ def panel_constraint(settings: Postgres, bed: Path | None = None) -> list[dict]:
     chart can show "this gene, this intolerant, this often already classified" without a
     second request. ``chrom`` is ``chr``-prefixed, as the panel delivers it.
     """
-    from .panelbed import annotations
+    from ..panelbed import annotations
 
-    found = table(settings, "results", "panel_gene_constraint", "ORDER BY loeuf NULLS LAST, gene")
+    found = access.table(
+        settings, "results", "panel_gene_constraint", "ORDER BY loeuf NULLS LAST, gene"
+    )
     extra = annotations(bed)
     for row in found:
         row.update(extra.get(row["gene"], {"ensembl_id": None, "note": None}))
@@ -247,7 +69,7 @@ def panel_background(settings: Postgres) -> list[dict]:
     PASS-share z is a *callability* reading — mappability, repeats — not a pathogenicity
     one. ``chrom`` is ``chr``-prefixed, as the panel delivers it.
     """
-    return table(
+    return access.table(
         settings, "results", "panel_gene_background", "ORDER BY z_pass_vs_contig NULLS LAST, gene"
     )
 
@@ -261,7 +83,7 @@ def panel_candidates(settings: Postgres, gene: str | None = None) -> list[dict]:
     every gene the table knows has at least one row.
     """
     where = "WHERE gene = ?" if gene else ""
-    found = fetch(
+    found = access.fetch(
         settings,
         f"""
         SELECT chrom, pos, ref, alt, rsid, gene, consequence, impact,
@@ -286,7 +108,7 @@ def het_pairs(settings: Postgres, gene: str) -> list[dict]:
     the panel is consulted before answering, and only a name it does not know is a
     :class:`LookupError`.
     """
-    found = fetch(
+    found = access.fetch(
         settings,
         """
         SELECT gene, chrom, pos, ref, alt, allele_ix, gt, qual, dp, vaf, pgt, pid,
@@ -326,7 +148,7 @@ def clinvar_presence(settings: Postgres, gene: str | None = None) -> dict:
     by_panel = "AND b.name = ?" if gene else ""
     by_site = "AND p.gene = ?" if gene else ""
     params = [gene] if gene else None
-    summary = fetch(
+    summary = access.fetch(
         settings,
         f"""
         SELECT b.name                                                AS gene,
@@ -348,7 +170,7 @@ def clinvar_presence(settings: Postgres, gene: str | None = None) -> dict:
     )
     if gene and not summary:
         raise LookupError(gene)
-    sites = fetch(
+    sites = access.fetch(
         settings,
         f"""
         SELECT gene, chrom, pos, ref, alt, rsid, variation_id, clnsig, clnrevstat,
@@ -370,7 +192,7 @@ def panel_filter_census(settings: Postgres) -> list[dict]:
     genes against each other. ``filter`` is verbatim, so a ``;``-joined value is one
     record that tripped two thresholds and the stack over a gene sums to ``n_gene_all``.
     """
-    return table(
+    return access.table(
         settings, "results", "panel_filter_census", "ORDER BY gene, is_pass DESC, n DESC, filter"
     )
 
@@ -385,7 +207,7 @@ def panel_suppressed(settings: Postgres, gene: str | None = None) -> list[dict]:
     the caller validates the name against the census instead.
     """
     where = "WHERE gene = ?" if gene else ""
-    return fetch(
+    return access.fetch(
         settings,
         f"""
         SELECT gene, chrom, pos, ref, alt, qual, filter, gt, dp, gq, ad_ref, ad_alt, vaf,
@@ -406,7 +228,7 @@ def gene_region(settings: Postgres, gene: str) -> tuple[str, int, int]:
     bridge. Building the bare name with a ``removeprefix`` here would be a second
     normalizer, which is exactly the failure mode the chr-prefix rule forbids.
     """
-    found = fetch(
+    found = access.fetch(
         settings,
         'SELECT chrom, start, "end" FROM pg.warehouse.mva_panel_grch38 WHERE name = ?',
         [gene],
@@ -425,7 +247,7 @@ def locus(settings: Postgres, gene: str) -> list[dict]:
     because the column is text, where ``'999' > '1000'``.
     """
     chrom, start, end = gene_region(settings, gene)
-    found = fetch(
+    found = access.fetch(
         settings,
         """
         SELECT pos, ref, alt, qual, filter, format, sample_call
@@ -452,50 +274,6 @@ def locus(settings: Postgres, gene: str) -> list[dict]:
             }
         )
     return decoded
-
-
-# ── provenance ───────────────────────────────────────────────────────────────────────
-
-
-def lineage(settings: Postgres) -> list[dict]:
-    return fetch(
-        settings,
-        """
-        SELECT produced_at, target_schema, target_table, target_rows, source_kind,
-               source_ref, source_version, source_sha256, transform, tool, notes
-        FROM pg.warehouse.data_lineage ORDER BY produced_at DESC
-    """,
-    )
-
-
-def derivations(settings: Postgres) -> list[dict]:
-    return fetch(
-        settings,
-        "SELECT run_at, derivation, question, n_rows "
-        "FROM pg.results.derivation_runs ORDER BY run_at DESC",
-    )
-
-
-def sources(settings: Postgres) -> list[dict]:
-    return fetch(
-        settings,
-        """
-        SELECT file_name, kind, role, size_bytes, hash_verified, sha256_source,
-               version_id, lane, read_num
-        FROM pg.warehouse.source_objects ORDER BY file_name
-    """,
-    )
-
-
-def probe_ledger(settings: Postgres) -> list[dict]:
-    return fetch(
-        settings,
-        """
-        SELECT probe_id, logged_at, track, probe_type, payload, n_rows, response,
-               score, rationale
-        FROM pg.warehouse.probe_ledger ORDER BY probe_id
-    """,
-    )
 
 
 def _float(value) -> float | None:

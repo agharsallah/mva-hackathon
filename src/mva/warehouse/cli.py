@@ -10,8 +10,8 @@ The first is the **staging** step, which has no network at all.
     what ``pg-ingest`` reads, so it is the first step of every load.
 
 The second targets a **hosted PostgreSQL** — the one shared, concurrently-written store.
-They read connection settings from ``.env`` and connect over the network, so they need nothing installed on the
-server beyond the PostgreSQL already there.
+They read connection settings from ``.env`` and connect over the network, so they need
+nothing installed on the server beyond the PostgreSQL already there.
 
 ``pg-check``
     Show the resolved settings and probe the server. Reads nothing, writes nothing.

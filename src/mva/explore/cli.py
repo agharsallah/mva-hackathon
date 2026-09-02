@@ -145,10 +145,7 @@ def _checks(args) -> int:
     print(f"\n{args.directory} — {len(results)} checks\n")
     for check in results:
         verdict = check.verdict.value.upper()
-        if colour:
-            verdict = f"{ANSI[check.verdict]}{verdict:<5}{RESET}"
-        else:
-            verdict = f"{verdict:<5}"
+        verdict = f"{ANSI[check.verdict]}{verdict:<5}{RESET}" if colour else f"{verdict:<5}"
         print(
             f"  {verdict}  {check.name:<{width}}  {check.display:>18}   expected {check.expected}"
         )

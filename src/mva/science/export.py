@@ -70,8 +70,10 @@ def scan(dossiers: list[Dossier]) -> list[Leak]:
         for index, row in enumerate(dossier.evidence):
             texts[f"evidence[{index}].claim"] = row.claim
         for field, text in texts.items():
-            for match in COORDINATE.finditer(text or ""):
-                leaks.append(Leak(dossier.hypothesis.hypothesis_id, field, match.group(0)))
+            leaks.extend(
+                Leak(dossier.hypothesis.hypothesis_id, field, match.group(0))
+                for match in COORDINATE.finditer(text or "")
+            )
     return leaks
 
 
@@ -96,8 +98,10 @@ def dossier_markdown(dossier: Dossier) -> str:
         stamp,
         "",
         f"**Step:** [{h.step}](../README.md) — {dossier.step.goal}",
-        f"**Status:** {h.status.value}  |  **Confidence:** {confidence}  |  "
-        f"**Revisions:** {len(dossier.history)}",
+        (
+            f"**Status:** {h.status.value}  |  **Confidence:** {confidence}  |  "
+            f"**Revisions:** {len(dossier.history)}"
+        ),
         f"**Gene:** {h.gene or '—'}  |  **Path:** {h.path or '—'}",
         "",
         "## The claim",
@@ -136,8 +140,10 @@ def dossier_markdown(dossier: Dossier) -> str:
     if gap is not None and abs(gap) >= 0.15:
         lines += [
             "",
-            f"**The committed confidence differs from the suggestion by "
-            f"{gap:+.2f}.** The reasoning below is why.",
+            (
+                f"**The committed confidence differs from the suggestion by "
+                f"{gap:+.2f}.** The reasoning below is why."
+            ),
         ]
     lines.append("")
 

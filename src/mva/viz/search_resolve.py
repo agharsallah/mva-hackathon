@@ -58,7 +58,8 @@ from ..pipeline.variant import to_vcf_contig
 from ..warehouse.settings import Postgres
 from . import queries, search
 from .genestructure import ENSEMBL_BASE, EnsemblError
-from .search import CONTIG_RE, FLANK, NotFound, Resolved, check_span
+from .queries import access
+from .search import CONTIG_RE, FLANK, NotFoundError, Resolved, check_span
 
 #: Provenance strings, one per resolver path, so the page can say *how* it resolved.
 SOURCE_PANEL = "ressources/data-profile/mva_panel_grch38.bed via pg.warehouse.mva_panel_grch38"
@@ -119,7 +120,7 @@ def resolve_gene(
     chrom = to_vcf_contig(str(body.get("seq_region_name") or ""))
     start, end = _int(body.get("start")), _int(body.get("end"))
     if not chrom or start is None or end is None:
-        raise NotFound(f"Ensembl returned no interval for {symbol!r}")
+        raise NotFoundError(f"Ensembl returned no interval for {symbol!r}")
     check_span(start, end)
     return Resolved(
         "gene",
@@ -174,7 +175,7 @@ def resolve_rsid(
     body = _get(client, base_url, f"/variation/human/{name}", name)
     mapping = grch38_mapping(body)
     if mapping is None:
-        raise NotFound(f"Ensembl knows {name} but places it on no GRCh38 chromosome")
+        raise NotFoundError(f"Ensembl knows {name} but places it on no GRCh38 chromosome")
     chrom, at = mapping
     return Resolved(
         "rsid",
@@ -194,7 +195,7 @@ def callset_rsid(settings: Postgres, rsid: str) -> tuple[str, int] | None:
 
     The first record wins: dbSNP names a *site*, and a multiallelic site is one row here.
     """
-    found = queries.fetch(
+    found = access.fetch(
         settings, "SELECT chrom, pos FROM pg.warehouse.variants_raw WHERE id = ? LIMIT 1", [rsid]
     )
     if not found:
@@ -225,7 +226,7 @@ def grch38_mapping(body: Any) -> tuple[str, int] | None:
 
 
 def _get(client: httpx.Client, base_url: str, path: str, name: str) -> Any:
-    """One Ensembl GET. A 400/404 naming the query is :class:`NotFound`, not an outage.
+    """One Ensembl GET. A 400/404 naming the query is :class:`NotFoundError`, not an outage.
 
     This is the one behaviour :func:`mva.viz.genestructure._get` cannot be reused for.
     There, every non-200 is an :class:`EnsemblError`, because every id it sends came from
@@ -240,7 +241,7 @@ def _get(client: httpx.Client, base_url: str, path: str, name: str) -> Any:
     except httpx.HTTPError as error:
         raise EnsemblError(f"GET {url}: {type(error).__name__}: {error}") from error
     if response.status_code in (400, 404):
-        raise NotFound(
+        raise NotFoundError(
             f"Ensembl does not know {name!r}: {_error_text(response) or response.status_code}"
         )
     if response.status_code != 200:
