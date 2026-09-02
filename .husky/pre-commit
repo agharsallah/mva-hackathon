@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+# Husky pre-commit hook. Lives at the repo root (not app/.husky) because git
+# resolves `core.hooksPath` from the repository top level, and this one repo
+# holds two projects: the Python package at the root and the app/ React app.
+#
+# Only the app/ half has a commit-time gate (lint-staged: eslint --fix +
+# prettier --write on TS/TSX/JS/MJS, prettier on JSON/MD, see
+# app/.lintstagedrc.json). A commit that touches only Python or docs must not
+# pay for node/lint-staged startup at all, so check the staged path list
+# before touching anything under app/.
+set -e
+
+staged=$(git diff --cached --name-only --diff-filter=ACMR)
+staged_app=$(printf '%s\n' "$staged" | grep -E '^app/' || true)
+
+if [ -z "$staged_app" ]; then
+  echo "pre-commit: no staged files under app/ — skipping lint-staged"
+  exit 0
+fi
+
+echo "pre-commit: staged app/ changes — running lint-staged"
+# Run from inside app/ so lint-staged resolves the local eslint/prettier binaries
+# (a bare `prettier` is not on PATH when the hook is spawned from the repo root).
+cd app
+./node_modules/.bin/lint-staged --config .lintstagedrc.json

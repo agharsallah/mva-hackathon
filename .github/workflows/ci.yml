@@ -1,0 +1,93 @@
+name: CI
+
+# Two independent projects share this repo: the app/ React app (npm) and the
+# root Python package (uv). Each gets its own job so a Python-only change
+# does not wait on `npm ci`, and vice versa. Both jobs run on every push and
+# every pull request, mirroring the local pre-push gate exactly.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel a run that a newer push on the same branch/PR has already superseded.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  app:
+    name: app (node)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # app/package.json carries no "engines" field today; 22 is the current
+      # Node LTS and what this workflow pins. If an engines field is added
+      # later, point this at it instead of hand-editing the version here.
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install dependencies (npm ci)
+        run: npm ci
+
+      - name: Typecheck (tsc -b)
+        run: npm run typecheck
+
+      - name: Lint (eslint)
+        run: npm run lint
+
+      - name: Format check (prettier --check)
+        run: npm run format:check
+
+      - name: Test (vitest run)
+        run: npm run test
+
+      - name: Build (tsc -b && vite build)
+        run: npm run build
+
+      # tools/bundle-budget.mjs is owned by a different in-flight change; the
+      # step still runs by path so it activates the moment that file lands,
+      # with a visible (not silently green) notice until then.
+      - name: Bundle budget
+        run: |
+          if [ -f tools/bundle-budget.mjs ]; then
+            node tools/bundle-budget.mjs
+          else
+            echo "::warning title=bundle-budget not wired::app/tools/bundle-budget.mjs does not exist yet — skipping the bundle-budget gate. Remove this guard once it lands."
+          fi
+
+      # Dead-code scan: report-only for now (see app/knip.json / CONTRIBUTING.md
+      # for why). Never fails the job — `|| true` — until the existing findings
+      # are triaged.
+      - name: Dead code report (knip)
+        if: always()
+        run: npx knip --reporter compact || true
+
+  python:
+    name: python (uv)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      # --frozen refuses to touch uv.lock: the lockfile committed to the repo
+      # is exactly what gets installed, or the step fails loudly instead of
+      # silently re-resolving.
+      - name: Sync dependencies (uv sync --frozen)
+        run: uv sync --frozen
+
+      - name: Test (pytest)
+        run: uv run pytest

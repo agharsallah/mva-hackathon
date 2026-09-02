@@ -1,0 +1,4 @@
+{
+  "*.{ts,tsx,js,mjs}": ["npx --no-install eslint --fix", "npx --no-install prettier --write"],
+  "*.{json,md}": "npx --no-install prettier --write"
+}
