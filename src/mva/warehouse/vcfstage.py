@@ -203,9 +203,11 @@ def stage_raw(path: str | Path, out: Path, limit: int | None = None) -> tuple[Pa
             FROM ({bounded})
         ) TO '{out}' (FORMAT parquet, COMPRESSION zstd)
     """)
-    written = connection.execute(f"SELECT count(*) FROM read_parquet('{out}')").fetchone()[0]
+    count_row = connection.execute(f"SELECT count(*) FROM read_parquet('{out}')").fetchone()
+    if count_row is None:
+        raise RuntimeError(f"{out}: COUNT(*) returned no row — the parquet write did not complete")
     connection.close()
-    return out, written
+    return out, count_row[0]
 
 
 def verify_roundtrip(

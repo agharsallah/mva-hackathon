@@ -121,11 +121,11 @@ def _do_stage(args) -> int:
 def _settings(args) -> Postgres:
     """Resolve connection settings, letting flags override the environment and .env."""
     settings = Postgres.from_env()
-    overrides = {
-        key: getattr(args, key, None)
-        for key in ("schema", "result_schema")
-        if getattr(args, key, None)
-    }
+    overrides: dict[str, str] = {}
+    for key in ("schema", "result_schema"):
+        value = getattr(args, key, None)
+        if value:
+            overrides[key] = value
     return replace(settings, **overrides) if overrides else settings
 
 

@@ -32,7 +32,17 @@ from .analysis_pairs import PAIR_DERIVATIONS
 from .analysis_reference import REFERENCE_DERIVATIONS
 from .analysis_stats import STATS_DERIVATIONS
 from .analysis_suppressed import SUPPRESSED_DERIVATIONS
-from .derivation import SOURCE, Derivation, resolve  # noqa: F401  (re-exported)
+from .derivation import SOURCE, Derivation, resolve
+
+__all__ = [
+    "CALLSET_DERIVATIONS",
+    "DERIVATIONS",
+    "PROVENANCE_TABLE",
+    "SOURCE",
+    "Derivation",
+    "by_name",
+    "resolve",
+]
 
 #: Derivations over the delivered callset and read profile.
 CALLSET_DERIVATIONS: tuple[Derivation, ...] = (

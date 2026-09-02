@@ -32,6 +32,23 @@ from . import lineage
 from .postgres import ALIAS, attached, safe_identifier
 from .settings import Postgres
 
+__all__ = [
+    "ANNOTATIONS_TABLE",
+    "DEFAULT_BASE_URL",
+    "PANEL_TABLE",
+    "RAW_TABLE",
+    "TRANSFORM",
+    "Interval",
+    "alleles",
+    "ensure_table",
+    "intervals",
+    "plan",
+    "row_of",
+    "run",
+    "summarise",
+    "write",
+]
+
 #: Where the annotations land. One row per (site, ALT allele).
 ANNOTATIONS_TABLE = "panel_annotations"
 

@@ -80,7 +80,10 @@ flowchart TB
 | `stage.py` | Normalises sources into typed Parquet via DuckDB's CSV sniffer | `Staged`, `stage()`, `safe_column()` |
 | `vcfstage.py` | Lossless all-text raw VCF layer + round-trip proof | `VcfShape`, `stage_raw()`, `verify_roundtrip()`, `source_digest()` |
 | `derivation.py` | The `Derivation` dataclass + `{src}` schema placeholder | `Derivation`, `resolve()` |
-| `lineage.py` | Object inventory + append-only "what produced what" edges | `enrich()`, `survey()`, `record()`, `edges()`, `repoint()`, `derivation_edge()` |
+| `lineage.py` | The public entry point over the three modules below: re-exports them and owns `ensure_tables()` | `enrich()`, `survey()`, `record()`, `edges()`, `repoint()`, `derivation_edge()`, `ensure_tables()` |
+| `lineage_naming.py` | Parse a delivered filename into structured facts | `Enriched`, `enrich()` |
+| `lineage_inventory.py` | Survey what the bucket currently holds, and the object inventory table | `OBJECTS_TABLE`, `survey()`, `replace_objects()` |
+| `lineage_edges.py` | The append-only "what produced what" edge list: write, read, repair, backfill | `LINEAGE_TABLE`, `record()`, `edges()`, `repoint()`, `derivation_edge()`, `backfill_derivations()` |
 | `integrity.py` | Order-independent content fingerprints for ingest verification | `fingerprint()`, `compare()`, `retyped()`, `TableFingerprint` |
 | `reference.py` | Staging specs + lineage for the 3 committed public reference tables | `datasets()`, `LINEAGE`, `record_lineage()` |
 | `source.py` | Landing-zone ledger: hash, upload, verify, or stream from Hugging Face | `SourceFile`, `scan()`, `checksum()`, `upload()`, `stream_to_bucket()` |
@@ -109,7 +112,7 @@ flowchart TB
 | `cli_vcf.py` | `vcf-shape`, `vcf-verify`, `vcf-stage`, `vcf-ingest` |
 | `cli_annotate.py` | `annotate-panel` |
 | `cli_objects.py` | `s3-check`, `s3-put`, `s3-ls`, `s3-query`, `s3-sort` |
-| `cli_source.py` | `source-scan`, `source-upload`, `source-status`, `source-check`, `source-fetch` |
+| `cli_source/` | `source-scan`, `source-upload`, `source-status`, `source-check`, `source-fetch`. A package split by what each verb touches: `upload.py` (the local delivery directory), `fetch.py` (streaming from the publisher into the bucket), `check.py` (auditing bucket hashes), plus `parser.py` (the argparse surface) and `context.py` (the `attached`/`object_store` seams) |
 | `cli_ledger.py` | `lineage-repair`, `lineage-backfill`, `lineage-list`, `probe-log`, `probe-list`, `probe-budget` |
 
 `__init__.py` re-exports only `Dataset`, `Staged`, `discover`, `stage` — the case-agnostic
