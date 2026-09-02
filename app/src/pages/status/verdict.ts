@@ -19,6 +19,33 @@ export const KIND_GROUPS: { key: DependencyKind; title: string; note: string }[]
   { key: 'snapshot', title: 'Reference snapshot', note: 'ingested data, not a live service' },
 ];
 
+/**
+ * Grouping must never lose a check. Rendering only the four known kinds means a check the
+ * API labels with anything else — a kind added server-side, or a typo — disappears from a
+ * page whose whole job is to account for every dependency. This splits the payload into
+ * the known groups plus one catch-all, so the board always renders `checks.length` cards.
+ */
+export function groupChecks(
+  checks: DependencyCheck[],
+): { key: string; title: string; note: string; checks: DependencyCheck[] }[] {
+  const known = new Set(KIND_GROUPS.map((g) => g.key as string));
+  const groups = KIND_GROUPS.map((g) => ({
+    ...g,
+    key: g.key as string,
+    checks: checks.filter((c) => c.kind === g.key),
+  }));
+  const unknown = checks.filter((c) => !known.has(c.kind));
+  if (unknown.length > 0) {
+    groups.push({
+      key: 'other',
+      title: 'Other',
+      note: 'the API reported a kind this build does not know — shown so nothing is hidden',
+      checks: unknown,
+    });
+  }
+  return groups.filter((g) => g.checks.length > 0);
+}
+
 /** The tone vocabulary `Badge`/`Callout`/`StatTile` already share (good/decision/broken +
  * neutral for "not configured", which is not a failure and must not read as one). */
 export function statusTone(status: HealthStatus): 'good' | 'decision' | 'broken' | 'neutral' {

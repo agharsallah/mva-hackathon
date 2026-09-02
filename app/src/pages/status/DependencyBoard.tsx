@@ -3,7 +3,8 @@ import type { DependencyCheck } from '../../api/types';
 import { Badge, Callout, Chip, Exhibit, FieldList, Loaded } from '../../components';
 import { int } from '../../lib/format';
 import { C } from '../../lib/palette';
-import { KIND_GROUPS, statusLabel, statusTone } from './verdict';
+import { endpointFor } from './configured';
+import { groupChecks, statusLabel, statusTone } from './verdict';
 
 /**
  * One card per check, grouped by `kind`. This is the point of the page: a broken
@@ -11,15 +12,25 @@ import { KIND_GROUPS, statusLabel, statusTone } from './verdict';
  * card's `remedy` — multi-line shell advice from the endpoint — is rendered as
  * preformatted, wrapping text inside the card itself, not tucked behind a hover or a link.
  */
-function DependencyCard({ check }: { check: DependencyCheck }) {
+function DependencyCard({ check, origin }: { check: DependencyCheck; origin: 'api' | 'fixture' }) {
   const tone = statusTone(check.status);
+  // Offline, the committed fixture cannot know this checkout's hosts, so the address comes
+  // from the repo-root .env instead and says so — a loopback placeholder would be a lie
+  // for anyone whose services run on a server.
+  const endpoint = endpointFor(check.id, check.endpoint, origin);
   const fields = [
     {
       key: 'latency',
       label: 'latency',
       value: check.latency_ms === null ? '—' : `${int(check.latency_ms)} ms`,
     },
-    { key: 'endpoint', label: 'endpoint', value: check.endpoint ?? '—' },
+    {
+      key: 'endpoint',
+      label: 'endpoint',
+      value: endpoint
+        ? `${endpoint.value}${endpoint.fromEnv ? '  (configured in .env)' : ''}`
+        : '—',
+    },
     {
       key: 'powers',
       label: 'powers',
@@ -74,9 +85,8 @@ export function DependencyBoard() {
       <Loaded query={q} height={420}>
         {(data) => (
           <div className="space-y-5">
-            {KIND_GROUPS.map((g) => {
-              const checks = data.checks.filter((c) => c.kind === g.key);
-              if (checks.length === 0) return null;
+            {groupChecks(data.checks).map((g) => {
+              const checks = g.checks;
               return (
                 <div key={g.key}>
                   <div className="mb-2 flex items-baseline gap-2">
@@ -90,7 +100,7 @@ export function DependencyBoard() {
                   </div>
                   <div className="grid gap-3 lg:grid-cols-2">
                     {checks.map((c) => (
-                      <DependencyCard key={c.id} check={c} />
+                      <DependencyCard key={c.id} check={c} origin={q.data?.origin ?? 'api'} />
                     ))}
                   </div>
                 </div>
