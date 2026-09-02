@@ -9,8 +9,8 @@ claim yet, not a fault to paper over.
 
 So both endpoints answer with an object rather than a bare list::
 
-    {"table_exists": false, "rows": []}     # the register has never been written
-    {"table_exists": true,  "rows": [...]}  # it exists; it may still be empty
+    {"table_exists": false, "rows": []}  # the register has never been written
+    {"table_exists": true, "rows": [...]}  # it exists; it may still be empty
 
 The browser needs the distinction: *"no hypothesis has been recorded"* and *"the register
 does not exist yet"* are different sentences, and the page says which one is true. The
@@ -44,13 +44,35 @@ from .response import Envelope, live
 #: Columns of ``warehouse.hypotheses``, in the DDL's order
 #: (:func:`mva.science.hypothesis.ensure_table`). Named rather than ``SELECT *`` so a
 #: column added upstream cannot silently change the shape the browser is typed against.
-HYPOTHESIS_COLUMNS = ("hypothesis_id", "revision", "recorded_at", "step", "statement",
-                      "prediction", "refuted_by", "path", "gene", "status", "confidence",
-                      "reasoning", "author")
+HYPOTHESIS_COLUMNS = (
+    "hypothesis_id",
+    "revision",
+    "recorded_at",
+    "step",
+    "statement",
+    "prediction",
+    "refuted_by",
+    "path",
+    "gene",
+    "status",
+    "confidence",
+    "reasoning",
+    "author",
+)
 
 #: Columns of ``warehouse.evidence`` (:func:`mva.science.evidence.ensure_table`).
-EVIDENCE_COLUMNS = ("evidence_id", "recorded_at", "hypothesis_id", "kind", "direction",
-                    "strength", "claim", "source_ref", "lineage_ref", "author")
+EVIDENCE_COLUMNS = (
+    "evidence_id",
+    "recorded_at",
+    "hypothesis_id",
+    "kind",
+    "direction",
+    "strength",
+    "claim",
+    "source_ref",
+    "lineage_ref",
+    "author",
+)
 
 #: Every revision, oldest first per claim. The client picks the latest; the history is the
 #: point of an append-only register, so the API never throws the earlier revisions away.
@@ -64,12 +86,13 @@ EVIDENCE_SOURCE = f"pg.warehouse.{EVIDENCE_TABLE}"
 
 #: Does one table exist in one schema? ``information_schema`` is metadata, so this costs a
 #: round trip and no scan, and it runs on the connection the read is about to use.
-EXISTS_SQL = (f"SELECT table_name FROM {ALIAS}.information_schema.tables "
-              f"WHERE table_schema = ? AND table_name = ?")
+EXISTS_SQL = (
+    f"SELECT table_name FROM {ALIAS}.information_schema.tables "
+    f"WHERE table_schema = ? AND table_name = ?"
+)
 
 
-def register(settings: Postgres, table: str, columns: tuple[str, ...],
-             order: str) -> dict:
+def register(settings: Postgres, table: str, columns: tuple[str, ...], order: str) -> dict:
     """Read one register table, or report that it has never been written.
 
     One attach for both statements: the existence check and the read share a connection,
@@ -81,9 +104,10 @@ def register(settings: Postgres, table: str, columns: tuple[str, ...],
         if not rows(connection, EXISTS_SQL, [settings.schema, table]):
             return {"table_exists": False, "rows": []}
         selected = ", ".join(safe_identifier(column) for column in columns)
-        return {"table_exists": True,
-                "rows": rows(connection,
-                             f"SELECT {selected} FROM {ALIAS}.{schema}.{name} {order}")}
+        return {
+            "table_exists": True,
+            "rows": rows(connection, f"SELECT {selected} FROM {ALIAS}.{schema}.{name} {order}"),
+        }
 
 
 def hypotheses(settings: Postgres) -> dict:
@@ -104,8 +128,12 @@ def add_routes(api: APIRouter, settings: Postgres) -> None:
     generated ``/docs`` next to the endpoint, and the map has nowhere to put a docstring.
     """
 
-    @api.get("/science/hypotheses", response_model=Envelope, tags=["science"],
-             summary=f"read {HYPOTHESES_SOURCE}")
+    @api.get(
+        "/science/hypotheses",
+        response_model=Envelope,
+        tags=["science"],
+        summary=f"read {HYPOTHESES_SOURCE}",
+    )
     def science_hypotheses() -> dict:
         """Every revision of every registered claim.
 
@@ -122,8 +150,12 @@ def add_routes(api: APIRouter, settings: Postgres) -> None:
         """
         return live(hypotheses(settings), HYPOTHESES_SOURCE)
 
-    @api.get("/science/evidence", response_model=Envelope, tags=["science"],
-             summary=f"read {EVIDENCE_SOURCE}")
+    @api.get(
+        "/science/evidence",
+        response_model=Envelope,
+        tags=["science"],
+        summary=f"read {EVIDENCE_SOURCE}",
+    )
     def science_evidence() -> dict:
         """Every recorded observation, bound to the claim it moves and to its source.
 

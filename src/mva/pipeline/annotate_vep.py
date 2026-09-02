@@ -43,11 +43,11 @@ MAX_BATCH = 200
 #: put a population frequency in the reply at all — without them ``colocated_variants``
 #: carries identifiers and no numbers, and the ranker's rarity signal is empty.
 QUERY_PARAMS = {
-    "af_gnomadg": 1,     # gnomAD genomes AF, per genetic-ancestry group
-    "af_gnomade": 1,     # gnomAD exomes AF, the fallback where genomes are absent
+    "af_gnomadg": 1,  # gnomAD genomes AF, per genetic-ancestry group
+    "af_gnomade": 1,  # gnomAD exomes AF, the fallback where genomes are absent
     "variant_class": 1,  # SNV / deletion / insertion, for reading the record back
-    "canonical": 1,      # marks the representative transcript, used to break ties
-    "hgvs": 1,           # protein-level notation, the form a clinician recognises
+    "canonical": 1,  # marks the representative transcript, used to break ties
+    "hgvs": 1,  # protein-level notation, the form a clinician recognises
 }
 
 #: How long to wait when a 429 arrives without a ``Retry-After`` header.
@@ -63,7 +63,7 @@ def batches(items: Sequence, size: int = MAX_BATCH) -> list[Sequence]:
     if size < 1:
         raise ValueError(f"batch size must be positive; got {size}")
     step = min(size, MAX_BATCH)
-    return [items[start:start + step] for start in range(0, len(items), step)]
+    return [items[start : start + step] for start in range(0, len(items), step)]
 
 
 class VepRestAnnotator:
@@ -73,11 +73,18 @@ class VepRestAnnotator:
     two overlapping genes. Leaving it empty is valid and costs nothing but tie quality.
     """
 
-    def __init__(self, *, base_url: str = DEFAULT_BASE_URL,
-                 genes: Iterable[str] = (), client: httpx.Client | None = None,
-                 batch_size: int = MAX_BATCH, timeout: float = 60.0,
-                 max_attempts: int = 5, backoff: float = 1.0,
-                 sleep=time.sleep) -> None:
+    def __init__(
+        self,
+        *,
+        base_url: str = DEFAULT_BASE_URL,
+        genes: Iterable[str] = (),
+        client: httpx.Client | None = None,
+        batch_size: int = MAX_BATCH,
+        timeout: float = 60.0,
+        max_attempts: int = 5,
+        backoff: float = 1.0,
+        sleep=time.sleep,
+    ) -> None:
         self.base_url = base_url.rstrip("/")
         self.genes = frozenset(genes)
         self.batch_size = min(batch_size, MAX_BATCH)
@@ -117,8 +124,7 @@ class VepRestAnnotator:
         records = []
         for variant in variants:
             item = found.get(query_line(variant))
-            records.append(parse(item, variant, self.genes) if item
-                           else VepRecord(variant=variant))
+            records.append(parse(item, variant, self.genes) if item else VepRecord(variant=variant))
         return records
 
     # ── transport ────────────────────────────────────────────────────────────────────
@@ -173,12 +179,11 @@ class VepRestAnnotator:
                 self.sleep(self._backoff(attempt))
                 last = f"{response.status_code} server error"
                 continue
-            raise VepError(f"{method} {url} -> {response.status_code}: "
-                           f"{response.text[:200]}")
+            raise VepError(f"{method} {url} -> {response.status_code}: {response.text[:200]}")
         raise VepError(f"{method} {url} gave up after {self.max_attempts} attempts ({last})")
 
     def _backoff(self, attempt: int) -> float:
-        return self.backoff * (2 ** attempt)
+        return self.backoff * (2**attempt)
 
     def close(self) -> None:
         """Close the HTTP client, but only the one we created."""

@@ -58,12 +58,12 @@ def check_room(staging: Path, sources: list, ratio: float = OUTPUT_RATIO) -> str
     needed = int(sum(source.size for source in sources) * ratio)
     staging.mkdir(parents=True, exist_ok=True)
     free = shutil.disk_usage(staging).free
-    summary = (f"{needed / 2**30:.1f} GiB needed, {free / 2**30:.1f} GiB free "
-               f"on {staging}")
+    summary = f"{needed / 2**30:.1f} GiB needed, {free / 2**30:.1f} GiB free on {staging}"
     if free < needed:
         raise NotEnoughRoom(
             f"not enough room to stage the conversion: {summary}.\n"
-            f"  Free space, point --staging at a bigger filesystem, or convert a subset.")
+            f"  Free space, point --staging at a bigger filesystem, or convert a subset."
+        )
     return summary
 
 
@@ -99,20 +99,28 @@ def machine_share(jobs: int) -> tuple[int, str]:
     return threads, f"{max(1, int(share) - READER_OVERHEAD_GIB)}GB"
 
 
-def convert_all(fastqs: list, staging: Path, engine: str = "oxbow",
-                jobs: int = 2, threads: int | None = None,
-                report=print) -> list[Converted]:
+def convert_all(
+    fastqs: list,
+    staging: Path,
+    engine: str = "oxbow",
+    jobs: int = 2,
+    threads: int | None = None,
+    report=print,
+) -> list[Converted]:
     """Convert every file, ``jobs`` at a time, splitting the machine fairly between them."""
     per_job, memory_limit = machine_share(jobs)
     per_job = threads or per_job
     report(f"  each job: {per_job} threads, {memory_limit} DuckDB memory limit")
 
     def one(fastq) -> Converted:
-        done = convert_file(fastq, staging, engine=engine, threads=per_job,
-                            memory_limit=memory_limit)
-        report(f"  {done.facts.source}: {done.rows:,} reads in {done.seconds:,.0f}s "
-               f"({done.reads_per_second:,.0f}/s), {len(done.shards)} shards, "
-               f"{done.parquet_bytes / 2**30:.2f} GiB")
+        done = convert_file(
+            fastq, staging, engine=engine, threads=per_job, memory_limit=memory_limit
+        )
+        report(
+            f"  {done.facts.source}: {done.rows:,} reads in {done.seconds:,.0f}s "
+            f"({done.reads_per_second:,.0f}/s), {len(done.shards)} shards, "
+            f"{done.parquet_bytes / 2**30:.2f} GiB"
+        )
         return done
 
     with ThreadPoolExecutor(max_workers=jobs) as pool:
@@ -123,13 +131,29 @@ def write_tables(staging: Path, results: list[Converted]) -> tuple[Path, Path]:
     """Write ``runs.parquet`` and ``manifest.parquet`` into the staging root."""
     import duckdb
 
-    runs = [(c.facts.source, c.facts.instrument, c.facts.run, c.facts.flowcell,
-             c.facts.lane, c.facts.read_num, c.facts.control, c.facts.read_length,
-             c.rows, c.source_bytes, c.parquet_bytes, c.engine, round(c.seconds, 1))
-            for c in results]
-    manifest = [(shard_key(c, shard), shard.stat().st_size, c.facts.lane,
-                 c.facts.read_num, c.facts.source)
-                for c in results for shard in c.shards]
+    runs = [
+        (
+            c.facts.source,
+            c.facts.instrument,
+            c.facts.run,
+            c.facts.flowcell,
+            c.facts.lane,
+            c.facts.read_num,
+            c.facts.control,
+            c.facts.read_length,
+            c.rows,
+            c.source_bytes,
+            c.parquet_bytes,
+            c.engine,
+            round(c.seconds, 1),
+        )
+        for c in results
+    ]
+    manifest = [
+        (shard_key(c, shard), shard.stat().st_size, c.facts.lane, c.facts.read_num, c.facts.source)
+        for c in results
+        for shard in c.shards
+    ]
 
     root = staging / schema.PREFIX
     runs_path, manifest_path = root / "runs.parquet", root / "manifest.parquet"
@@ -157,8 +181,9 @@ def write_tables(staging: Path, results: list[Converted]) -> tuple[Path, Path]:
               ON s.filename LIKE '%/' || m.key
               ORDER BY m.key)
         TO '{manifest_path}' (FORMAT parquet)""")
-    connection.execute(f"COPY (SELECT * FROM runs ORDER BY lane, read_num) "
-                       f"TO '{runs_path}' (FORMAT parquet)")
+    connection.execute(
+        f"COPY (SELECT * FROM runs ORDER BY lane, read_num) TO '{runs_path}' (FORMAT parquet)"
+    )
     connection.close()
     return runs_path, manifest_path
 
@@ -179,8 +204,7 @@ def upload(store, staging: Path, results: list[Converted], report=print) -> int:
             sent += 1
         report(f"  uploaded {len(converted.shards)} shards for {converted.facts.source}")
     root = staging / schema.PREFIX
-    for path, key in ((root / "runs.parquet", RUNS_KEY),
-                      (root / "manifest.parquet", MANIFEST_KEY)):
+    for path, key in ((root / "runs.parquet", RUNS_KEY), (root / "manifest.parquet", MANIFEST_KEY)):
         s3.upload_file(str(path), store.bucket, key)
         sent += 1
     return sent

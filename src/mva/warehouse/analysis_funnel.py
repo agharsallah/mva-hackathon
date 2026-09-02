@@ -43,20 +43,26 @@ def het(column: str) -> str:
     the thing being excluded, along with the VCF's ``.`` for "not called".
     """
     left, right = f"str_split({column}, '/')[1]", f"str_split({column}, '/')[2]"
-    return (f"len(str_split({column}, '/')) = 2 "
-            f"AND {left} NOT IN ('.', '') AND {right} NOT IN ('.', '') "
-            f"AND {left} <> {right}")
+    return (
+        f"len(str_split({column}, '/')) = 2 "
+        f"AND {left} NOT IN ('.', '') AND {right} NOT IN ('.', '') "
+        f"AND {left} <> {right}"
+    )
 
 
 #: Pulls GT out of a record by reading its own FORMAT keys, never by position, and
 #: flattens the phase separator. Same technique as ``panel_candidates``.
-GT = ("replace(list_extract(str_split(sample_call, ':'), "
-      "coalesce(list_position(str_split(format, ':'), 'GT'), 0)), '|', '/')")
+GT = (
+    "replace(list_extract(str_split(sample_call, ':'), "
+    "coalesce(list_position(str_split(format, ':'), 'GT'), 0)), '|', '/')"
+)
 
 #: Printed into the notes so the scope change is legible in the table itself, not only in
 #: the chart that renders it.
-SCOPE_CHANGE = ("SCOPE CHANGE — annotation exists only inside the 8-gene panel, so every "
-                "stage below counts panel records only. ")
+SCOPE_CHANGE = (
+    "SCOPE CHANGE — annotation exists only inside the 8-gene panel, so every "
+    "stage below counts panel records only. "
+)
 
 
 CANDIDATE_FUNNEL = Derivation(
@@ -67,7 +73,8 @@ CANDIDATE_FUNNEL = Derivation(
         "the whole callset, six measurable only inside the eight-gene candidate panel, "
         "which is the only region VEP annotation exists for. of_previous_pct is NULL "
         "wherever the row is not a subset of the row above it — at the genome→panel scope "
-        "change — rather than reporting a ratio between two different populations."),
+        "change — rather than reporting a ratio between two different populations."
+    ),
     depends_on=("variants_raw", "panel_variant_counts", "panel_annotations"),
     sql=f"""
         WITH raw AS (
@@ -83,7 +90,7 @@ CANDIDATE_FUNNEL = Derivation(
             SELECT count(*)                                        AS n_all,
                    count(*) FILTER (WHERE filter = 'PASS')         AS n_pass,
                    count(*) FILTER (WHERE filter = 'PASS'
-                                      AND ({het('gt')}))           AS n_pass_het
+                                      AND ({het("gt")}))           AS n_pass_het
             FROM raw
         ),
         -- The interval stage is already counted, per gene, by the profiler that ran
@@ -110,7 +117,7 @@ CANDIDATE_FUNNEL = Derivation(
                    any_value(a.impact)                                  AS impact,
                    any_value(a.gnomad_af)                               AS gnomad_af,
                    bool_or(r.filter = 'PASS')                           AS any_pass,
-                   bool_or(r.filter = 'PASS' AND ({het('r.gt')}))       AS pass_het
+                   bool_or(r.filter = 'PASS' AND ({het("r.gt")}))       AS pass_het
             FROM {SOURCE}.panel_annotations a
             JOIN panel_raw r
                    ON r.chrom = a.chrom

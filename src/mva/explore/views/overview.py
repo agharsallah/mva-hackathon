@@ -42,24 +42,54 @@ def headline(profile: CallsetProfile) -> Exhibit:
     tiles: list[tuple[str, str, str]] = []
 
     if profile.total_records:
-        tiles.append((f"{profile.total_records:,}", "variants called",
-                      "every difference from the reference genome"))
+        tiles.append(
+            (
+                f"{profile.total_records:,}",
+                "variants called",
+                "every difference from the reference genome",
+            )
+        )
     if "PASS fraction" in graded:
-        tiles.append((graded["PASS fraction"].display, "passed the caller's filters",
-                      "the rest are a search space, not garbage"))
+        tiles.append(
+            (
+                graded["PASS fraction"].display,
+                "passed the caller's filters",
+                "the rest are a search space, not garbage",
+            )
+        )
     if "Estimated raw coverage" in graded:
-        tiles.append((graded["Estimated raw coverage"].display, "raw coverage",
-                      "times each position was read independently"))
+        tiles.append(
+            (
+                graded["Estimated raw coverage"].display,
+                "raw coverage",
+                "times each position was read independently",
+            )
+        )
     if profile.total_gigabases:
-        tiles.append((f"{profile.total_gigabases:,.0f} Gb", "bases sequenced",
-                      f"across {len(profile.reads)} files"))
+        tiles.append(
+            (
+                f"{profile.total_gigabases:,.0f} Gb",
+                "bases sequenced",
+                f"across {len(profile.reads)} files",
+            )
+        )
     if "Transition/transversion ratio" in graded:
-        tiles.append((graded["Transition/transversion ratio"].display, "transition/transversion",
-                      "about 2.0 means the calls are mostly real"))
+        tiles.append(
+            (
+                graded["Transition/transversion ratio"].display,
+                "transition/transversion",
+                "about 2.0 means the calls are mostly real",
+            )
+        )
     if profile.panel:
         total = sum(g.variants for g in profile.panel)
-        tiles.append((f"{total:,}", f"calls in {len(profile.panel)} candidate genes",
-                      "where the search starts"))
+        tiles.append(
+            (
+                f"{total:,}",
+                f"calls in {len(profile.panel)} candidate genes",
+                "where the search starts",
+            )
+        )
 
     if not tiles:
         return Exhibit(slug="headline", title="", caption="", legend="")
@@ -77,8 +107,9 @@ def headline(profile: CallsetProfile) -> Exhibit:
             "What was sequenced, how much of it survived quality control, and how much of "
             "it lands in genes already suspected of causing this condition."
         ),
-        legend=legend_line(MACHINE, extra="each tile is a measured value from the profile "
-                                          "run, not an estimate"),
+        legend=legend_line(
+            MACHINE, extra="each tile is a measured value from the profile run, not an estimate"
+        ),
         html=f'<div class="tiles">{cards}</div>',
     )
 
@@ -113,8 +144,10 @@ def quality_table(profile: CallsetProfile) -> Exhibit:
             "measured values come from executed runs. A yellow verdict is a prompt to look, "
             "never a finding on its own."
         ),
-        legend=legend_line(*[v.hue for v in (Verdict.PASS, Verdict.WARN, Verdict.FAIL)],
-                           extra="grey is reported without grading"),
+        legend=legend_line(
+            *[v.hue for v in (Verdict.PASS, Verdict.WARN, Verdict.FAIL)],
+            extra="grey is reported without grading",
+        ),
         html=table + summary,
     )
 
@@ -131,8 +164,9 @@ def provenance(profile: CallsetProfile) -> Exhibit:
     header = profile.header
     contig_names = [name for name, _ in header.contigs]
     prefixed = sum(1 for n in contig_names if n.startswith("chr"))
-    convention = ("chr-prefixed (chr15)" if prefixed > len(contig_names) / 2
-                  else "bare (15, no chr prefix)")
+    convention = (
+        "chr-prefixed (chr15)" if prefixed > len(contig_names) / 2 else "bare (15, no chr prefix)"
+    )
 
     facts = [
         ("Sample column", header.sample or "not declared"),
@@ -140,8 +174,10 @@ def provenance(profile: CallsetProfile) -> Exhibit:
         ("Written by", ", ".join(header.sources) or "not declared"),
         ("Contigs declared", f"{len(header.contigs):,}"),
         ("Chromosome naming", f"<strong>{convention}</strong>"),
-        ("Annotation fields", ", ".join(
-            f"{kind} ×{len(items)}" for kind, items in sorted(header.fields.items()))),
+        (
+            "Annotation fields",
+            ", ".join(f"{kind} ×{len(items)}" for kind, items in sorted(header.fields.items())),
+        ),
     ]
     rows = "".join(f"<tr><th>{k}</th><td>{v}</td></tr>" for k, v in facts)
 
@@ -154,16 +190,19 @@ def provenance(profile: CallsetProfile) -> Exhibit:
             "whether a position from this file can be compared to a position from anywhere "
             "else — and a mismatch produces silence, not an error."
         ),
-        legend=legend_line(MUTED, extra="every value is copied verbatim from the file's own "
-                                        "header"),
+        legend=legend_line(
+            MUTED, extra="every value is copied verbatim from the file's own header"
+        ),
         html=f'<div class="table-wrap"><table class="facts"><tbody>{rows}</tbody></table></div>',
     )
 
 
 def _row(check: Check) -> str:
     hue = check.verdict.hue
-    badge = (f'<span class="badge" style="background:{hue.fill};'
-             f'border-color:{hue.line};color:{hue.line}">{check.verdict.value}</span>')
+    badge = (
+        f'<span class="badge" style="background:{hue.fill};'
+        f'border-color:{hue.line};color:{hue.line}">{check.verdict.value}</span>'
+    )
     reasoning = check.basis + (f" <em>{check.consequence}</em>" if check.consequence else "")
     return (
         f"<tr><td><details><summary>{check.name}</summary>"

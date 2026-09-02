@@ -19,40 +19,57 @@ from .queries import CANONICAL, rows
 def overview(settings: Postgres) -> dict:
     """Assemble the headline object. One PostgreSQL connection, one object-store read."""
     with attached(settings, read_only=True) as connection:
-        summary = {row["metric"]: row["value"]
-                   for row in rows(connection, "SELECT metric, value "
-                                                "FROM pg.results.stats_sn")}
+        summary = {
+            row["metric"]: row["value"]
+            for row in rows(connection, "SELECT metric, value FROM pg.results.stats_sn")
+        }
         ratio = rows(connection, "SELECT ratio FROM pg.results.stats_tstv")
-        counts = _one(connection, f"""
+        counts = _one(
+            connection,
+            f"""
             SELECT count(*)                                    AS all_contigs,
                    count(*) FILTER (WHERE {CANONICAL})         AS canonical_contigs
             FROM pg.warehouse.contig_counts
-        """)
-        passing = _one(connection, """
+        """,
+        )
+        passing = _one(
+            connection,
+            """
             SELECT coalesce(sum(count), 0) AS pass_variants
             FROM pg.warehouse.filter_gt_counts
             WHERE section = 'FILTER counts' AND label = 'PASS'
-        """)
-        coverage = _one(connection, """
+        """,
+        )
+        coverage = _one(
+            connection,
+            """
             SELECT max(value) FILTER (WHERE key = 'est_raw_coverage_x') AS est_coverage_x
             FROM pg.warehouse.profile_scalars
-        """)
+        """,
+        )
         # Mean mapped depth is not stored as a scalar anywhere; it is the het-weighted
         # mean of the per-chromosome depths, restricted to autosomes so a sex chromosome
         # at half depth cannot pull the genome-wide figure down.
-        depth = _one(connection, """
+        depth = _one(
+            connection,
+            """
             SELECT round(sum(n_het * mean_dp) / nullif(sum(n_het), 0), 1) AS mean_depth_x
             FROM pg.results.allele_balance_flags
             WHERE chrom NOT IN ('X', 'Y', 'M')
-        """)
-        delivery = _one(connection, """
+        """,
+        )
+        delivery = _one(
+            connection,
+            """
             SELECT count(*)                        AS delivery_objects,
                    coalesce(sum(size_bytes), 0)    AS delivery_bytes,
                    bool_and(hash_verified)         AS all_hashes_verified
             FROM pg.warehouse.source_objects
-        """)
-        spent = _one(connection, "SELECT count(*) AS probe_budget_spent "
-                                 "FROM pg.warehouse.probe_ledger")
+        """,
+        )
+        spent = _one(
+            connection, "SELECT count(*) AS probe_budget_spent FROM pg.warehouse.probe_ledger"
+        )
 
     return {
         "total_variants": _int(summary.get("number of records")),

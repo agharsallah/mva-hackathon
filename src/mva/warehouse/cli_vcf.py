@@ -22,8 +22,10 @@ def do_shape(args) -> int:
     print(f"columns      : {len(shape.columns)}")
     print(f"sample       : {shape.sample}")
     if not shape.is_single_sample:
-        print(f"\nWARNING: expected {EXPECTED_FIELDS} columns for a single-sample "
-              f"callset; `vcf-stage` will refuse this file.")
+        print(
+            f"\nWARNING: expected {EXPECTED_FIELDS} columns for a single-sample "
+            f"callset; `vcf-stage` will refuse this file."
+        )
         return 1
     return 0
 
@@ -62,32 +64,39 @@ def register(subparsers) -> None:
     shape.set_defaults(handler=do_shape)
 
     verify = subparsers.add_parser(
-        "vcf-verify", help="prove the reader loses nothing, by SHA-256 round trip")
+        "vcf-verify", help="prove the reader loses nothing, by SHA-256 round trip"
+    )
     verify.add_argument("vcf", type=Path)
     verify.add_argument("--limit", type=int, help="only the first N records")
-    verify.add_argument("--parquet", type=Path,
-                        help="verify a staged Parquet instead of the live read")
+    verify.add_argument(
+        "--parquet", type=Path, help="verify a staged Parquet instead of the live read"
+    )
     verify.set_defaults(handler=do_verify)
 
     stage = subparsers.add_parser(
-        "vcf-stage", help="write the lossless all-text raw layer to Parquet")
+        "vcf-stage", help="write the lossless all-text raw layer to Parquet"
+    )
     stage.add_argument("vcf", type=Path)
-    stage.add_argument("-o", "--output", type=Path, required=True,
-                       help="destination Parquet; keep it OUTSIDE the repository")
+    stage.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        required=True,
+        help="destination Parquet; keep it OUTSIDE the repository",
+    )
     stage.add_argument("--limit", type=int, help="only the first N records")
-    stage.add_argument("--no-verify", action="store_true",
-                       help="skip the round-trip check (not recommended)")
+    stage.add_argument(
+        "--no-verify", action="store_true", help="skip the round-trip check (not recommended)"
+    )
     stage.set_defaults(handler=do_stage)
 
     ingest = subparsers.add_parser(
-        "vcf-ingest",
-        help="RUN ON THE SERVER: load the callset into PostgreSQL as the raw layer")
-    ingest.add_argument("--source", default=DEFAULT_VCF_OBJECT,
-                        help="s3:// object or a local path")
+        "vcf-ingest", help="RUN ON THE SERVER: load the callset into PostgreSQL as the raw layer"
+    )
+    ingest.add_argument("--source", default=DEFAULT_VCF_OBJECT, help="s3:// object or a local path")
     ingest.add_argument("--table", default=RAW_TABLE, help="target table name")
     ingest.add_argument("--limit", type=int, help="only the first N records")
-    ingest.add_argument("--skip", type=int,
-                        help="header lines + 1; required for an s3:// source")
+    ingest.add_argument("--skip", type=int, help="header lines + 1; required for an s3:// source")
     ingest.set_defaults(handler=do_ingest)
 
 
@@ -124,19 +133,24 @@ def do_ingest(args) -> int:
         connection = connect_objects(object_store())
         skip = args.skip
         if skip is None:
-            print("reading a remote gzip requires --skip (header lines + 1); "
-                  "for this delivery that is 2618")
+            print(
+                "reading a remote gzip requires --skip (header lines + 1); "
+                "for this delivery that is 2618"
+            )
             return 1
     else:
         import duckdb
+
         connection = duckdb.connect()
         shape = read_shape(args.source)
         skip = args.skip if args.skip is not None else shape.header_lines + 1
         print(f"header lines {shape.header_lines}, sample {shape.sample}")
 
-    reader = (f"read_csv('{source_ref}', delim=chr(9), header=false, all_varchar=true, "
-              f"quote='', escape='', skip={skip}, columns={RAW_SPEC}, "
-              f"max_line_size=100000000)")
+    reader = (
+        f"read_csv('{source_ref}', delim=chr(9), header=false, all_varchar=true, "
+        f"quote='', escape='', skip={skip}, columns={RAW_SPEC}, "
+        f"max_line_size=100000000)"
+    )
     bounded = f"SELECT * FROM {reader}" + (f" LIMIT {args.limit}" if args.limit else "")
 
     print(f"source  {source_ref}")
@@ -148,23 +162,30 @@ def do_ingest(args) -> int:
 
     connection.execute(
         f"CREATE OR REPLACE TABLE {ALIAS}.{schema}.{args.table} AS "
-        f"SELECT row_number() OVER () AS line_no, * FROM ({bounded})")
-    rows = connection.execute(
-        f"SELECT count(*) FROM {ALIAS}.{schema}.{args.table}").fetchone()[0]
+        f"SELECT row_number() OVER () AS line_no, * FROM ({bounded})"
+    )
+    rows = connection.execute(f"SELECT count(*) FROM {ALIAS}.{schema}.{args.table}").fetchone()[0]
     print(f"loaded  {rows:,} records")
 
     # Lineage is looked up rather than asserted: the object's hash and version come from
     # the inventory, so the edge names the exact bytes this table was built from.
     provenance = connection.execute(
-        f"SELECT sha256, version_id FROM {ALIAS}.{schema}.source_objects "
-        "WHERE object_key = ?", [source_ref.split("/", 3)[-1] if remote else ""]
+        f"SELECT sha256, version_id FROM {ALIAS}.{schema}.source_objects WHERE object_key = ?",
+        [source_ref.split("/", 3)[-1] if remote else ""],
     ).fetchone() or ("", "")
-    record(connection, settings.schema,
-           target_schema=settings.schema, target_table=args.table, target_rows=rows,
-           source_kind="object" if remote else "file", source_ref=source_ref,
-           source_version=provenance[1], source_sha256=provenance[0],
-           transform="read_csv all_varchar, no filtering, no typing",
-           notes=f"columns: line_no + {', '.join(FILE_COLUMNS)}")
+    record(
+        connection,
+        settings.schema,
+        target_schema=settings.schema,
+        target_table=args.table,
+        target_rows=rows,
+        source_kind="object" if remote else "file",
+        source_ref=source_ref,
+        source_version=provenance[1],
+        source_sha256=provenance[0],
+        transform="read_csv all_varchar, no filtering, no typing",
+        notes=f"columns: line_no + {', '.join(FILE_COLUMNS)}",
+    )
     connection.close()
     print(f"lineage recorded in {settings.schema}.{LINEAGE_TABLE}")
     return 0

@@ -44,8 +44,10 @@ def rows(connection, sql: str, params: list | None = None) -> list[dict]:
     """Run one statement on an open connection and return JSON-safe dicts."""
     cursor = connection.execute(sql, params or [])
     columns = [description[0] for description in cursor.description or ()]
-    return [{column: jsonable(value) for column, value in zip(columns, row)}
-            for row in cursor.fetchall()]
+    return [
+        {column: jsonable(value) for column, value in zip(columns, row)}
+        for row in cursor.fetchall()
+    ]
 
 
 def fetch(settings: Postgres, sql: str, params: list | None = None) -> list[dict]:
@@ -64,9 +66,9 @@ def table(settings: Postgres, schema: str, name: str, order: str = "") -> list[d
 
 # ── genome ───────────────────────────────────────────────────────────────────────────
 
+
 def allele_balance(settings: Postgres) -> list[dict]:
-    return table(settings, "results", "allele_balance_flags",
-                 "ORDER BY abs(vaf_deviation) DESC")
+    return table(settings, "results", "allele_balance_flags", "ORDER BY abs(vaf_deviation) DESC")
 
 
 def contig_density(settings: Postgres) -> list[dict]:
@@ -76,10 +78,12 @@ def contig_density(settings: Postgres) -> list[dict]:
 def density_bins(settings: Postgres, chrom: str | None = None) -> list[dict]:
     """1 Mb bins, whole genome or one chromosome. Bare contig names, as delivered."""
     where = "WHERE chrom = ?" if chrom else ""
-    return fetch(settings,
-                 f"SELECT chrom, mb, n, pass_n, low_qual_n, mean_qual "
-                 f"FROM pg.results.variant_density_bins {where} ORDER BY chrom, mb",
-                 [to_vcf_contig(chrom)] if chrom else None)
+    return fetch(
+        settings,
+        f"SELECT chrom, mb, n, pass_n, low_qual_n, mean_qual "
+        f"FROM pg.results.variant_density_bins {where} ORDER BY chrom, mb",
+        [to_vcf_contig(chrom)] if chrom else None,
+    )
 
 
 def baf_bins(settings: Postgres, chrom: str | None = None) -> list[dict]:
@@ -91,23 +95,28 @@ def baf_bins(settings: Postgres, chrom: str | None = None) -> list[dict]:
     stretch is itself information.
     """
     where = "WHERE chrom = ?" if chrom else ""
-    return fetch(settings,
-                 f"SELECT chrom, mb, n_het, mean_vaf, median_vaf, sd_vaf, vaf_deviation, "
-                 f"pct_in_0_40_0_60, mean_dp, low_confidence "
-                 f"FROM pg.results.baf_bins {where} ORDER BY chrom, mb",
-                 [to_vcf_contig(chrom)] if chrom else None)
+    return fetch(
+        settings,
+        f"SELECT chrom, mb, n_het, mean_vaf, median_vaf, sd_vaf, vaf_deviation, "
+        f"pct_in_0_40_0_60, mean_dp, low_confidence "
+        f"FROM pg.results.baf_bins {where} ORDER BY chrom, mb",
+        [to_vcf_contig(chrom)] if chrom else None,
+    )
 
 
 # ── callset ──────────────────────────────────────────────────────────────────────────
+
 
 def filters(settings: Postgres) -> list[dict]:
     return table(settings, "results", "filter_impact", "ORDER BY impact_rank")
 
 
 def genotypes(settings: Postgres) -> list[dict]:
-    return fetch(settings,
-                 "SELECT label, count FROM pg.warehouse.filter_gt_counts "
-                 "WHERE section = 'genotype counts' ORDER BY count DESC")
+    return fetch(
+        settings,
+        "SELECT label, count FROM pg.warehouse.filter_gt_counts "
+        "WHERE section = 'genotype counts' ORDER BY count DESC",
+    )
 
 
 def depth_distribution(settings: Postgres) -> list[dict]:
@@ -161,13 +170,16 @@ def vcf_fields(settings: Postgres) -> list[dict]:
     The callset's schema documentation, written by the caller that produced it. Ordered
     so the three kinds stay grouped and stable across requests.
     """
-    return fetch(settings,
-                 "SELECT kind, id, description FROM pg.warehouse.vcf_fields "
-                 "ORDER BY CASE kind WHEN 'FILTER' THEN 0 WHEN 'INFO' THEN 1 ELSE 2 END, "
-                 "id")
+    return fetch(
+        settings,
+        "SELECT kind, id, description FROM pg.warehouse.vcf_fields "
+        "ORDER BY CASE kind WHEN 'FILTER' THEN 0 WHEN 'INFO' THEN 1 ELSE 2 END, "
+        "id",
+    )
 
 
 # ── reads ────────────────────────────────────────────────────────────────────────────
+
 
 def sequencing_yield(settings: Postgres) -> list[dict]:
     """What each flowcell lane contributed, estimated from the delivered FASTQ bytes.
@@ -182,6 +194,7 @@ def sequencing_yield(settings: Postgres) -> list[dict]:
 
 # ── panel ────────────────────────────────────────────────────────────────────────────
 
+
 def panel_genes(settings: Postgres, bed: Path | None = None) -> list[dict]:
     """The candidate panel with its density, coordinates and annotation.
 
@@ -193,13 +206,16 @@ def panel_genes(settings: Postgres, bed: Path | None = None) -> list[dict]:
     """
     from .panelbed import annotations
 
-    found = fetch(settings, """
+    found = fetch(
+        settings,
+        """
         SELECT d.gene, d.chrom, c.start, c."end", d.n_all, d.n_pass, d.n_filtered,
                d.span_bp, d.variants_per_mb, d.pct_pass
         FROM pg.results.panel_gene_density d
         JOIN pg.warehouse.panel_variant_counts c ON c.gene = d.gene
         ORDER BY d.variants_per_mb DESC
-    """)
+    """,
+    )
     extra = annotations(bed)
     for row in found:
         row.update(extra.get(row["gene"], {"ensembl_id": None, "note": None}))
@@ -215,8 +231,7 @@ def panel_constraint(settings: Postgres, bed: Path | None = None) -> list[dict]:
     """
     from .panelbed import annotations
 
-    found = table(settings, "results", "panel_gene_constraint",
-                  "ORDER BY loeuf NULLS LAST, gene")
+    found = table(settings, "results", "panel_gene_constraint", "ORDER BY loeuf NULLS LAST, gene")
     extra = annotations(bed)
     for row in found:
         row.update(extra.get(row["gene"], {"ensembl_id": None, "note": None}))
@@ -232,8 +247,9 @@ def panel_background(settings: Postgres) -> list[dict]:
     PASS-share z is a *callability* reading — mappability, repeats — not a pathogenicity
     one. ``chrom`` is ``chr``-prefixed, as the panel delivers it.
     """
-    return table(settings, "results", "panel_gene_background",
-                 "ORDER BY z_pass_vs_contig NULLS LAST, gene")
+    return table(
+        settings, "results", "panel_gene_background", "ORDER BY z_pass_vs_contig NULLS LAST, gene"
+    )
 
 
 def panel_candidates(settings: Postgres, gene: str | None = None) -> list[dict]:
@@ -245,13 +261,17 @@ def panel_candidates(settings: Postgres, gene: str | None = None) -> list[dict]:
     every gene the table knows has at least one row.
     """
     where = "WHERE gene = ?" if gene else ""
-    found = fetch(settings, f"""
+    found = fetch(
+        settings,
+        f"""
         SELECT chrom, pos, ref, alt, rsid, gene, consequence, impact,
                gnomad_af, gnomad_af_grpmax, clin_sig, qual, filter, gt, dp, vaf,
                is_rare_recessive, is_protein_altering
         FROM pg.results.panel_candidates {where}
         ORDER BY gene, pos, alt
-    """, [gene] if gene else None)
+    """,
+        [gene] if gene else None,
+    )
     if gene and not found:
         raise LookupError(gene)
     return found
@@ -266,13 +286,17 @@ def het_pairs(settings: Postgres, gene: str) -> list[dict]:
     the panel is consulted before answering, and only a name it does not know is a
     :class:`LookupError`.
     """
-    found = fetch(settings, """
+    found = fetch(
+        settings,
+        """
         SELECT gene, chrom, pos, ref, alt, allele_ix, gt, qual, dp, vaf, pgt, pid,
                rsid, consequence, impact, gnomad_af, gnomad_af_grpmax, clin_sig,
                annotated, is_rare_recessive, is_protein_altering
         FROM pg.results.panel_het_pairs WHERE gene = ?
         ORDER BY pos, allele_ix
-    """, [gene])
+    """,
+        [gene],
+    )
     if not found:
         gene_region(settings, gene)
     return found
@@ -302,7 +326,9 @@ def clinvar_presence(settings: Postgres, gene: str | None = None) -> dict:
     by_panel = "AND b.name = ?" if gene else ""
     by_site = "AND p.gene = ?" if gene else ""
     params = [gene] if gene else None
-    summary = fetch(settings, f"""
+    summary = fetch(
+        settings,
+        f"""
         SELECT b.name                                                AS gene,
                count(p.variation_id)                                 AS n_plp,
                count(*) FILTER (WHERE p.comparable)                  AS n_comparable,
@@ -317,17 +343,23 @@ def clinvar_presence(settings: Postgres, gene: str | None = None) -> dict:
         WHERE 1 = 1 {by_panel}
         GROUP BY b.name
         ORDER BY n_present DESC, n_plp DESC, b.name
-    """, params)
+    """,
+        params,
+    )
     if gene and not summary:
         raise LookupError(gene)
-    sites = fetch(settings, f"""
+    sites = fetch(
+        settings,
+        f"""
         SELECT gene, chrom, pos, ref, alt, rsid, variation_id, clnsig, clnrevstat,
                review_stars, condition, comparable, present, gt, filter, qual, dp,
                allele_ix, vaf, carries_alt, is_het
         FROM pg.results.clinvar_presence p
         WHERE (p.present OR p.present IS NULL) {by_site}
         ORDER BY gene, pos, alt
-    """, params)
+    """,
+        params,
+    )
     return {"summary": summary, "sites": sites}
 
 
@@ -338,8 +370,9 @@ def panel_filter_census(settings: Postgres) -> list[dict]:
     genes against each other. ``filter`` is verbatim, so a ``;``-joined value is one
     record that tripped two thresholds and the stack over a gene sums to ``n_gene_all``.
     """
-    return table(settings, "results", "panel_filter_census",
-                 "ORDER BY gene, is_pass DESC, n DESC, filter")
+    return table(
+        settings, "results", "panel_filter_census", "ORDER BY gene, is_pass DESC, n DESC, filter"
+    )
 
 
 def panel_suppressed(settings: Postgres, gene: str | None = None) -> list[dict]:
@@ -352,13 +385,17 @@ def panel_suppressed(settings: Postgres, gene: str | None = None) -> list[dict]:
     the caller validates the name against the census instead.
     """
     where = "WHERE gene = ?" if gene else ""
-    return fetch(settings, f"""
+    return fetch(
+        settings,
+        f"""
         SELECT gene, chrom, pos, ref, alt, qual, filter, gt, dp, gq, ad_ref, ad_alt, vaf,
                is_het, annotated_alt, rsid, consequence, impact, gnomad_af,
                gnomad_af_grpmax, clin_sig, annotated
         FROM pg.results.panel_suppressed {where}
         ORDER BY gene, pos, ref, alt
-    """, [gene] if gene else None)
+    """,
+        [gene] if gene else None,
+    )
 
 
 def gene_region(settings: Postgres, gene: str) -> tuple[str, int, int]:
@@ -369,9 +406,11 @@ def gene_region(settings: Postgres, gene: str) -> tuple[str, int, int]:
     bridge. Building the bare name with a ``removeprefix`` here would be a second
     normalizer, which is exactly the failure mode the chr-prefix rule forbids.
     """
-    found = fetch(settings,
-                  'SELECT chrom, start, "end" FROM pg.warehouse.mva_panel_grch38 '
-                  "WHERE name = ?", [gene])
+    found = fetch(
+        settings,
+        'SELECT chrom, start, "end" FROM pg.warehouse.mva_panel_grch38 WHERE name = ?',
+        [gene],
+    )
     if not found:
         raise LookupError(gene)
     row = found[0]
@@ -386,58 +425,77 @@ def locus(settings: Postgres, gene: str) -> list[dict]:
     because the column is text, where ``'999' > '1000'``.
     """
     chrom, start, end = gene_region(settings, gene)
-    found = fetch(settings, """
+    found = fetch(
+        settings,
+        """
         SELECT pos, ref, alt, qual, filter, format, sample_call
         FROM pg.warehouse.variants_raw
         WHERE chrom = ? AND CAST(pos AS BIGINT) BETWEEN ? AND ?
         ORDER BY CAST(pos AS BIGINT)
-    """, [chrom, start, end])
+    """,
+        [chrom, start, end],
+    )
 
     decoded = []
     for row in found:
         call = genotype.decode(row.pop("format"), row.pop("sample_call"))
-        decoded.append({
-            "pos": int(row["pos"]),
-            "ref": row["ref"],
-            # Multiallelic ALT stays comma-packed exactly as delivered: splitting it
-            # here would invent rows the callset does not have.
-            "alt": row["alt"],
-            "qual": _float(row["qual"]),
-            "filter": row["filter"],
-            **call.as_dict(),
-        })
+        decoded.append(
+            {
+                "pos": int(row["pos"]),
+                "ref": row["ref"],
+                # Multiallelic ALT stays comma-packed exactly as delivered: splitting it
+                # here would invent rows the callset does not have.
+                "alt": row["alt"],
+                "qual": _float(row["qual"]),
+                "filter": row["filter"],
+                **call.as_dict(),
+            }
+        )
     return decoded
 
 
 # ── provenance ───────────────────────────────────────────────────────────────────────
 
+
 def lineage(settings: Postgres) -> list[dict]:
-    return fetch(settings, """
+    return fetch(
+        settings,
+        """
         SELECT produced_at, target_schema, target_table, target_rows, source_kind,
                source_ref, source_version, source_sha256, transform, tool, notes
         FROM pg.warehouse.data_lineage ORDER BY produced_at DESC
-    """)
+    """,
+    )
 
 
 def derivations(settings: Postgres) -> list[dict]:
-    return fetch(settings, "SELECT run_at, derivation, question, n_rows "
-                           "FROM pg.results.derivation_runs ORDER BY run_at DESC")
+    return fetch(
+        settings,
+        "SELECT run_at, derivation, question, n_rows "
+        "FROM pg.results.derivation_runs ORDER BY run_at DESC",
+    )
 
 
 def sources(settings: Postgres) -> list[dict]:
-    return fetch(settings, """
+    return fetch(
+        settings,
+        """
         SELECT file_name, kind, role, size_bytes, hash_verified, sha256_source,
                version_id, lane, read_num
         FROM pg.warehouse.source_objects ORDER BY file_name
-    """)
+    """,
+    )
 
 
 def probe_ledger(settings: Postgres) -> list[dict]:
-    return fetch(settings, """
+    return fetch(
+        settings,
+        """
         SELECT probe_id, logged_at, track, probe_type, payload, n_rows, response,
                score, rationale
         FROM pg.warehouse.probe_ledger ORDER BY probe_id
-    """)
+    """,
+    )
 
 
 def _float(value) -> float | None:

@@ -20,10 +20,20 @@ from mva.viz.routes_warehouse import TABLES
 #: Rows as the live endpoints actually answered them, matched on a SQL fragment.
 ANSWERS = {
     "sequencing_yield": [
-        {"lane": "L001", "est_reads": 276180373.0, "est_gbases": 41.15,
-         "gigabytes": 21.5, "n_files": 2},
-        {"lane": "L002", "est_reads": 272700071.0, "est_gbases": 40.63,
-         "gigabytes": 21.29, "n_files": 2},
+        {
+            "lane": "L001",
+            "est_reads": 276180373.0,
+            "est_gbases": 41.15,
+            "gigabytes": 21.5,
+            "n_files": 2,
+        },
+        {
+            "lane": "L002",
+            "est_reads": 272700071.0,
+            "est_gbases": 40.63,
+            "gigabytes": 21.29,
+            "n_files": 2,
+        },
     ],
     "vcf_fields": [
         {"kind": "FILTER", "id": "PASS", "description": "All filters passed"},
@@ -31,12 +41,28 @@ ANSWERS = {
         {"kind": "FORMAT", "id": "GT", "description": "Genotype"},
     ],
     "stats_af": [
-        {"af_bin": 0.0, "zygosity": "heterozygous", "n_snps": 2536505,
-         "n_ts": 1665690, "n_tv": 870815, "n_indels": 644292, "n_alleles": 3180797,
-         "ts_tv": 1.913, "pct_of_alleles": 62.63},
-        {"af_bin": 0.99, "zygosity": "homozygous alternate", "n_snps": 1552121,
-         "n_ts": 1032666, "n_tv": 519455, "n_indels": 346146, "n_alleles": 1898267,
-         "ts_tv": 1.988, "pct_of_alleles": 37.37},
+        {
+            "af_bin": 0.0,
+            "zygosity": "heterozygous",
+            "n_snps": 2536505,
+            "n_ts": 1665690,
+            "n_tv": 870815,
+            "n_indels": 644292,
+            "n_alleles": 3180797,
+            "ts_tv": 1.913,
+            "pct_of_alleles": 62.63,
+        },
+        {
+            "af_bin": 0.99,
+            "zygosity": "homozygous alternate",
+            "n_snps": 1552121,
+            "n_ts": 1032666,
+            "n_tv": 519455,
+            "n_indels": 346146,
+            "n_alleles": 1898267,
+            "ts_tv": 1.988,
+            "pct_of_alleles": 37.37,
+        },
     ],
 }
 
@@ -63,8 +89,9 @@ def client(tmp_path, monkeypatch, seen):
         raise AssertionError(f"unexpected SQL: {sql}")
 
     monkeypatch.setattr(queries, "fetch", fetch)
-    with TestClient(create_app(settings=None, cache=Cache(tmp_path),
-                               origins=["http://localhost:5173"])) as running:
+    with TestClient(
+        create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
+    ) as running:
         yield running
 
 
@@ -76,6 +103,7 @@ def body(response) -> dict:
 
 
 # ── the contract ─────────────────────────────────────────────────────────────────────
+
 
 @pytest.mark.parametrize("path,source", sorted(ROUTES.items()))
 def test_each_route_answers_in_the_envelope_and_names_its_table(client, path, source):
@@ -93,6 +121,7 @@ def test_the_routes_are_registered_as_plain_table_reads(client):
 
 # ── the yield table ──────────────────────────────────────────────────────────────────
 
+
 def test_yield_is_ordered_by_lane_and_carries_the_estimate_columns(client):
     rows = body(client.get("/api/reads/yield"))["data"]
     assert [row["lane"] for row in rows] == ["L001", "L002"]
@@ -106,6 +135,7 @@ def test_yield_lanes_are_the_file_names_spelling_not_an_integer(client):
 
 
 # ── the header fields ────────────────────────────────────────────────────────────────
+
 
 def test_fields_are_grouped_filter_then_info_then_format(client, seen):
     """The order is the endpoint's job, so the table renders grouped without sorting."""
@@ -122,6 +152,7 @@ def test_fields_serves_the_three_header_namespaces_and_nothing_else(client):
 
 
 # ── the zygosity split ───────────────────────────────────────────────────────────────
+
 
 def test_the_split_carries_the_reading_beside_the_raw_bin(client):
     """`af_bin` alone invites the population-frequency misreading; `zygosity` is the fix."""

@@ -39,7 +39,8 @@ class Report:
 
     def expect(self, condition: bool, message: str) -> None:
         (self.notes if condition else self.failures).append(
-            ("ok: " if condition else "FAIL: ") + message)
+            ("ok: " if condition else "FAIL: ") + message
+        )
 
 
 def against_manifest(connection, root: str, report: Report) -> None:
@@ -57,8 +58,9 @@ def against_manifest(connection, root: str, report: Report) -> None:
     report.shards = len(rows)
     for key, recorded, actual in rows:
         if recorded != actual:
-            report.failures.append(f"FAIL: {key}: manifest says {recorded:,}, "
-                                   f"parquet holds {actual:,}")
+            report.failures.append(
+                f"FAIL: {key}: manifest says {recorded:,}, parquet holds {actual:,}"
+            )
     report.total_rows = sum(actual for _, _, actual in rows)
     report.notes.append(f"ok: {report.shards} shards, {report.total_rows:,} rows counted")
 
@@ -85,10 +87,10 @@ def round_trip(connection, root: str, fastq, report: Report) -> None:
         return connection.execute(
             f"SELECT tile, x, y, is_filtered, index_pair, sequence, quality "
             f"FROM read_parquet('{partition}') WHERE tile=? AND x=? AND y=?",
-            [tile, x, y]).fetchone()
+            [tile, x, y],
+        ).fetchone()
 
-    for label, record in (("first", _first_record(source)),
-                          ("last", _last_record(source))):
+    for label, record in (("first", _first_record(source)), ("last", _last_record(source))):
         name, sequence, quality = record
         head = name.split(" ")[0].split(":")
         row = stored(int(head[4]), int(head[5]), int(head[6]))
@@ -96,8 +98,10 @@ def round_trip(connection, root: str, fastq, report: Report) -> None:
             report.failures.append(f"FAIL: {source.name} {label} record not in store")
             continue
         rebuilt = facts.rebuild_name(row[0], row[1], row[2], row[3], row[4])
-        report.expect(rebuilt == name and row[5] == sequence and row[6] == quality,
-                      f"{source.name}: {label} record round-trips byte-identically")
+        report.expect(
+            rebuilt == name and row[5] == sequence and row[6] == quality,
+            f"{source.name}: {label} record round-trips byte-identically",
+        )
 
 
 def _first_record(source) -> tuple[str, str, str]:
@@ -117,12 +121,12 @@ def _last_record(source) -> tuple[str, str, str]:
     local = "" if source.path is None else f" {engines.shlex_quote(source.path)}"
     command = f"{engines.shlex_quote(decompressor)} -dc{local} | tail -n 4"
     if source.path is not None:
-        completed = subprocess.run(command, shell=True, check=True,
-                                   capture_output=True, text=True)
+        completed = subprocess.run(command, shell=True, check=True, capture_output=True, text=True)
         tail = completed.stdout.splitlines()
     else:
-        process = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE, text=False)
+        process = subprocess.Popen(
+            command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=False
+        )
         with source.open_stream() as stream:
             shutil.copyfileobj(stream, process.stdin, length=8 * 1024 * 1024)
             process.stdin.close()
@@ -131,8 +135,9 @@ def _last_record(source) -> tuple[str, str, str]:
     return tail[0], tail[1], tail[3]
 
 
-def run(root: str, sources: list, expected_total: int | None = None,
-        deep: bool = True, connection=None) -> Report:
+def run(
+    root: str, sources: list, expected_total: int | None = None, deep: bool = True, connection=None
+) -> Report:
     """All checks over one store root (a local staging dir or an ``s3://`` prefix).
 
     For an ``s3://`` root pass a connection already wired to the object store
@@ -145,8 +150,10 @@ def run(root: str, sources: list, expected_total: int | None = None,
     against_manifest(connection, root, report)
     pair_symmetry(connection, root, report)
     if expected_total is not None:
-        report.expect(report.total_rows == expected_total,
-                      f"grand total {report.total_rows:,} == expected {expected_total:,}")
+        report.expect(
+            report.total_rows == expected_total,
+            f"grand total {report.total_rows:,} == expected {expected_total:,}",
+        )
     if deep:
         for fastq in sources:
             round_trip(connection, root, fastq, report)

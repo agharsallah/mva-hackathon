@@ -17,39 +17,101 @@ from mva.viz.cache import Cache
 #: One row per (gene, FILTER value), PASS included — what `panel_filter_census` holds.
 #: CEP57 is the case that matters twice: a real panel gene with nothing suppressed.
 CENSUS = [
-    {"gene": "BUB1B", "chrom": "15", "filter": "PASS", "is_pass": True, "n": 76,
-     "n_gene_all": 80, "pct_of_gene": 95.0},
-    {"gene": "BUB1B", "chrom": "15", "filter": "MQ40", "is_pass": False, "n": 3,
-     "n_gene_all": 80, "pct_of_gene": 3.75},
-    {"gene": "BUB1B", "chrom": "15", "filter": "LowQual;QD2", "is_pass": False, "n": 1,
-     "n_gene_all": 80, "pct_of_gene": 1.25},
-    {"gene": "CEP57", "chrom": "11", "filter": "PASS", "is_pass": True, "n": 13,
-     "n_gene_all": 13, "pct_of_gene": 100.0},
-    {"gene": "TRIP13", "chrom": "5", "filter": "PASS", "is_pass": True, "n": 6,
-     "n_gene_all": 12, "pct_of_gene": 50.0},
-    {"gene": "TRIP13", "chrom": "5", "filter": "MQ40", "is_pass": False, "n": 5,
-     "n_gene_all": 12, "pct_of_gene": 41.67},
-    {"gene": "TRIP13", "chrom": "5", "filter": "QD2", "is_pass": False, "n": 1,
-     "n_gene_all": 12, "pct_of_gene": 8.33},
+    {
+        "gene": "BUB1B",
+        "chrom": "15",
+        "filter": "PASS",
+        "is_pass": True,
+        "n": 76,
+        "n_gene_all": 80,
+        "pct_of_gene": 95.0,
+    },
+    {
+        "gene": "BUB1B",
+        "chrom": "15",
+        "filter": "MQ40",
+        "is_pass": False,
+        "n": 3,
+        "n_gene_all": 80,
+        "pct_of_gene": 3.75,
+    },
+    {
+        "gene": "BUB1B",
+        "chrom": "15",
+        "filter": "LowQual;QD2",
+        "is_pass": False,
+        "n": 1,
+        "n_gene_all": 80,
+        "pct_of_gene": 1.25,
+    },
+    {
+        "gene": "CEP57",
+        "chrom": "11",
+        "filter": "PASS",
+        "is_pass": True,
+        "n": 13,
+        "n_gene_all": 13,
+        "pct_of_gene": 100.0,
+    },
+    {
+        "gene": "TRIP13",
+        "chrom": "5",
+        "filter": "PASS",
+        "is_pass": True,
+        "n": 6,
+        "n_gene_all": 12,
+        "pct_of_gene": 50.0,
+    },
+    {
+        "gene": "TRIP13",
+        "chrom": "5",
+        "filter": "MQ40",
+        "is_pass": False,
+        "n": 5,
+        "n_gene_all": 12,
+        "pct_of_gene": 41.67,
+    },
+    {
+        "gene": "TRIP13",
+        "chrom": "5",
+        "filter": "QD2",
+        "is_pass": False,
+        "n": 1,
+        "n_gene_all": 12,
+        "pct_of_gene": 8.33,
+    },
 ]
 
 
 def record(gene: str, pos: int, filter_value: str, *, annotated: bool = True) -> dict:
-    return {"gene": gene, "chrom": "5", "pos": pos, "ref": "A", "alt": "G",
-            "qual": 62.8, "filter": filter_value, "gt": "0/1", "dp": 24, "gq": 91,
-            "ad_ref": 18, "ad_alt": 6, "vaf": 0.25, "is_het": True,
-            "annotated_alt": "G" if annotated else None,
-            "rsid": None,
-            "consequence": "missense_variant" if annotated else None,
-            "impact": "MODERATE" if annotated else None,
-            "gnomad_af": 0.0001 if annotated else None,
-            "gnomad_af_grpmax": 0.0002 if annotated else None,
-            "clin_sig": None, "annotated": annotated}
+    return {
+        "gene": gene,
+        "chrom": "5",
+        "pos": pos,
+        "ref": "A",
+        "alt": "G",
+        "qual": 62.8,
+        "filter": filter_value,
+        "gt": "0/1",
+        "dp": 24,
+        "gq": 91,
+        "ad_ref": 18,
+        "ad_alt": 6,
+        "vaf": 0.25,
+        "is_het": True,
+        "annotated_alt": "G" if annotated else None,
+        "rsid": None,
+        "consequence": "missense_variant" if annotated else None,
+        "impact": "MODERATE" if annotated else None,
+        "gnomad_af": 0.0001 if annotated else None,
+        "gnomad_af_grpmax": 0.0002 if annotated else None,
+        "clin_sig": None,
+        "annotated": annotated,
+    }
 
 
 RECORDS = {
-    "TRIP13": [record("TRIP13", 300, "MQ40"),
-               record("TRIP13", 320, "QD2", annotated=False)],
+    "TRIP13": [record("TRIP13", 300, "MQ40"), record("TRIP13", 320, "QD2", annotated=False)],
     "BUB1B": [record("BUB1B", 500, "LowQual;QD2")],
     "CEP57": [],
 }
@@ -68,8 +130,9 @@ def client(tmp_path, monkeypatch):
         raise AssertionError(f"unexpected SQL: {sql}")
 
     monkeypatch.setattr(queries, "fetch", fetch)
-    with TestClient(create_app(settings=None, cache=Cache(tmp_path),
-                               origins=["http://localhost:5173"])) as running:
+    with TestClient(
+        create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
+    ) as running:
         yield running
 
 
@@ -81,8 +144,7 @@ class TestEnvelope:
 
     def test_the_source_names_both_tables_behind_the_payload(self, client):
         body = client.get("/api/panel/suppressed").json()
-        assert body["source"] == ("pg.results.panel_filter_census + "
-                                  "pg.results.panel_suppressed")
+        assert body["source"] == ("pg.results.panel_filter_census + pg.results.panel_suppressed")
 
     def test_the_payload_carries_the_census_and_the_records(self, client):
         data = client.get("/api/panel/suppressed").json()["data"]

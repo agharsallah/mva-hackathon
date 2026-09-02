@@ -76,8 +76,9 @@ def resolved(variants: list[dict]) -> list[dict]:
         phase = classify_phase(calls[i], calls[j])
         if phase is Phase.UNKNOWN:
             continue
-        out.append({"i": i, "j": j, "phase": phase.value,
-                    "auto": is_auto_trans(variants[i], variants[j])})
+        out.append(
+            {"i": i, "j": j, "phase": phase.value, "auto": is_auto_trans(variants[i], variants[j])}
+        )
     return out
 
 
@@ -99,5 +100,9 @@ def summarise(n_variants: int, pairs: list[dict]) -> dict:
 def matrix(gene: str, variants: list[dict]) -> dict:
     """The whole payload for one gene: the axis, the resolved cells, and the counts."""
     pairs = resolved(variants)
-    return {"gene": gene, "variants": variants, "pairs": pairs,
-            "summary": summarise(len(variants), pairs)}
+    return {
+        "gene": gene,
+        "variants": variants,
+        "pairs": pairs,
+        "summary": summarise(len(variants), pairs),
+    }

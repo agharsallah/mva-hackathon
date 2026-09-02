@@ -51,7 +51,8 @@ PANEL_HET_PAIRS = Derivation(
         "carry for them? One row per het ALT allele — the pair grid is this set crossed "
         "with itself, so a 1/2 record contributes two rows and the pair between those "
         "two is trans by construction. PGT/PID are carried raw so the pair classifier "
-        "and this table cannot disagree about phase."),
+        "and this table cannot disagree about phase."
+    ),
     depends_on=("mva_panel_grch38", "variants_raw", "panel_annotations"),
     sql=f"""
         WITH panel AS (

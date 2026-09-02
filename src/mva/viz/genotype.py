@@ -44,8 +44,9 @@ def decode(format_keys: str | None, sample_call: str | None) -> Genotype:
     depths = _depths(fields.get("AD"))
     # Two depths means one unambiguous ALT; anything else (a 1/2 site, a truncated AD)
     # leaves no single alternate allele to attribute reads to.
-    ad_ref, ad_alt = (depths + [None, None])[:2] if len(depths) == 2 else \
-        ((depths[0] if depths else None), None)
+    ad_ref, ad_alt = (
+        (depths + [None, None])[:2] if len(depths) == 2 else ((depths[0] if depths else None), None)
+    )
 
     total = (ad_ref or 0) + (ad_alt or 0)
     return Genotype(

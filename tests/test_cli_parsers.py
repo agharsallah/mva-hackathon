@@ -17,9 +17,11 @@ from mva.explore import cli as explore_cli
 from mva.science import cli as science_cli
 from mva.warehouse import cli as warehouse_cli
 
-PARSERS = {"mva-explore": explore_cli._parser(),
-           "mva-warehouse": warehouse_cli._parser(),
-           "mva-science": science_cli._parser()}
+PARSERS = {
+    "mva-explore": explore_cli._parser(),
+    "mva-warehouse": warehouse_cli._parser(),
+    "mva-science": science_cli._parser(),
+}
 
 
 def _verbs(parser: argparse.ArgumentParser) -> dict[str, argparse.ArgumentParser]:
@@ -79,8 +81,7 @@ def test_verb_parses_to_a_callable_handler(tool, verb):
 @pytest.mark.parametrize("tool", list(PARSERS))
 def test_verb_names_are_unique(tool):
     """argparse silently keeps the last registration of a repeated name."""
-    action = next(a for a in PARSERS[tool]._actions
-                  if isinstance(a, argparse._SubParsersAction))
+    action = next(a for a in PARSERS[tool]._actions if isinstance(a, argparse._SubParsersAction))
     names = [choice.dest for choice in action._choices_actions]
     assert len(names) == len(set(names)), f"{tool} registers a verb twice: {names}"
 

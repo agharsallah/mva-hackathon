@@ -25,6 +25,8 @@ def connection(root: str):
     """A DuckDB connection able to read ``root`` — with the store secret when remote."""
     if root.startswith("s3://"):
         from ..warehouse.objects import connect
+
         return connect(object_store())
     import duckdb
+
     return duckdb.connect()

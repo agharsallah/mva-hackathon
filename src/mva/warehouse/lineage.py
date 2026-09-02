@@ -41,7 +41,8 @@ RUN_REF = "derivation_runs.run_at="
 #: (``WGS_EX2312012``). Splitting from the left assigns the sample's own suffix to the
 #: flowcell and then matches nothing at all.
 FASTQ_NAME = re.compile(
-    r"^(?P<prefix>.+)_S(?P<snum>\d+)_L(?P<lane>\d+)_R(?P<read>\d)_\d+\.fastq\.gz$")
+    r"^(?P<prefix>.+)_S(?P<snum>\d+)_L(?P<lane>\d+)_R(?P<read>\d)_\d+\.fastq\.gz$"
+)
 
 #: ``<sample>_<flowcell>.vcf.gz`` and its index, same right-anchored reasoning.
 VCF_NAME = re.compile(r"^(?P<prefix>.+)\.vcf\.gz(?P<idx>\.tbi)?$")
@@ -80,14 +81,19 @@ def enrich(file_name: str) -> Enriched:
     match = FASTQ_NAME.match(file_name)
     if match:
         sample, flowcell = _split_prefix(match["prefix"])
-        return Enriched(sample=sample, flowcell=flowcell,
-                        lane=int(match["lane"]), read_num=int(match["read"]),
-                        role="reads")
+        return Enriched(
+            sample=sample,
+            flowcell=flowcell,
+            lane=int(match["lane"]),
+            read_num=int(match["read"]),
+            role="reads",
+        )
     match = VCF_NAME.match(file_name)
     if match:
         sample, flowcell = _split_prefix(match["prefix"])
-        return Enriched(sample=sample, flowcell=flowcell,
-                        role="variant_index" if match["idx"] else "variants")
+        return Enriched(
+            sample=sample, flowcell=flowcell, role="variant_index" if match["idx"] else "variants"
+        )
     if file_name.lower().endswith((".md", ".docx", ".txt", ".pdf")):
         return Enriched(role="document")
     return Enriched()
@@ -160,23 +166,33 @@ def survey(store, published: dict[str, str], ledger: dict[str, str]) -> list[dic
             stored = head.get("Metadata", {}).get("sha256", "")
             reference = published.get(name) or ledger.get(name) or ""
             facts = enrich(name)
-            rows.append({
-                "object_key": key, "file_name": name,
-                "kind": _kind(name), "role": facts.role,
-                "sample": facts.sample, "flowcell": facts.flowcell,
-                "lane": facts.lane, "read_num": facts.read_num,
-                "mate_key": facts.mate_key,
-                "size_bytes": int(entry["Size"]),
-                "etag": entry["ETag"].strip('"'),
-                "version_id": head.get("VersionId", ""),
-                "last_modified": entry["LastModified"].astimezone(
-                    UTC).replace(tzinfo=None),
-                "content_type": head.get("ContentType", ""),
-                "sha256": stored or reference,
-                "sha256_source": ("publisher" if name in published
-                                  else "upload" if stored or ledger.get(name) else ""),
-                "hash_verified": bool(reference) and bool(stored) and stored == reference,
-            })
+            rows.append(
+                {
+                    "object_key": key,
+                    "file_name": name,
+                    "kind": _kind(name),
+                    "role": facts.role,
+                    "sample": facts.sample,
+                    "flowcell": facts.flowcell,
+                    "lane": facts.lane,
+                    "read_num": facts.read_num,
+                    "mate_key": facts.mate_key,
+                    "size_bytes": int(entry["Size"]),
+                    "etag": entry["ETag"].strip('"'),
+                    "version_id": head.get("VersionId", ""),
+                    "last_modified": entry["LastModified"].astimezone(UTC).replace(tzinfo=None),
+                    "content_type": head.get("ContentType", ""),
+                    "sha256": stored or reference,
+                    "sha256_source": (
+                        "publisher"
+                        if name in published
+                        else "upload"
+                        if stored or ledger.get(name)
+                        else ""
+                    ),
+                    "hash_verified": bool(reference) and bool(stored) and stored == reference,
+                }
+            )
         if not page.get("IsTruncated"):
             break
         token = page.get("NextContinuationToken")
@@ -187,6 +203,7 @@ def _kind(name: str) -> str:
     from pathlib import Path
 
     from .source import SourceFile
+
     return SourceFile(Path(name), 0, datetime.now(UTC)).kind
 
 
@@ -206,26 +223,64 @@ def replace_objects(connection, schema: str, bucket: str, rows: list[dict]) -> N
         connection.execute(
             f"INSERT INTO {ALIAS}.{safe}.{OBJECTS_TABLE} VALUES "
             "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            [now, bucket, row["object_key"], row["file_name"], row["kind"], row["role"],
-             row["sample"], row["flowcell"], row["lane"], row["read_num"],
-             row["mate_key"], row["size_bytes"], row["etag"], row["version_id"],
-             row["last_modified"], row["content_type"], row["sha256"],
-             row["sha256_source"], row["hash_verified"]])
+            [
+                now,
+                bucket,
+                row["object_key"],
+                row["file_name"],
+                row["kind"],
+                row["role"],
+                row["sample"],
+                row["flowcell"],
+                row["lane"],
+                row["read_num"],
+                row["mate_key"],
+                row["size_bytes"],
+                row["etag"],
+                row["version_id"],
+                row["last_modified"],
+                row["content_type"],
+                row["sha256"],
+                row["sha256_source"],
+                row["hash_verified"],
+            ],
+        )
 
 
-def record(connection, schema: str, *, target_schema: str, target_table: str,
-           target_rows: int, source_kind: str, source_ref: str,
-           source_version: str = "", source_sha256: str = "",
-           transform: str = "", tool: str = "mva-warehouse", notes: str = "") -> None:
+def record(
+    connection,
+    schema: str,
+    *,
+    target_schema: str,
+    target_table: str,
+    target_rows: int,
+    source_kind: str,
+    source_ref: str,
+    source_version: str = "",
+    source_sha256: str = "",
+    transform: str = "",
+    tool: str = "mva-warehouse",
+    notes: str = "",
+) -> None:
     """Append one lineage edge: this table came from that input, this way."""
     from .postgres import ALIAS, safe_identifier
 
     safe = safe_identifier(schema)
     connection.execute(
-        f"INSERT INTO {ALIAS}.{safe}.{LINEAGE_TABLE} VALUES "
-        "(now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [target_schema, target_table, target_rows, source_kind, source_ref,
-         source_version, source_sha256, transform, tool, notes])
+        f"INSERT INTO {ALIAS}.{safe}.{LINEAGE_TABLE} VALUES (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+            target_schema,
+            target_table,
+            target_rows,
+            source_kind,
+            source_ref,
+            source_version,
+            source_sha256,
+            transform,
+            tool,
+            notes,
+        ],
+    )
 
 
 def edges(connection, schema: str) -> list[tuple]:
@@ -250,8 +305,10 @@ def edges(connection, schema: str) -> list[tuple]:
 
 def _fetch(connection, schema: str, sql: str, params: list | None = None) -> list[tuple]:
     from .postgres import ALIAS, safe_identifier
+
     return connection.execute(
-        sql.format(t=f"{ALIAS}.{safe_identifier(schema)}"), params or []).fetchall()
+        sql.format(t=f"{ALIAS}.{safe_identifier(schema)}"), params or []
+    ).fetchall()
 
 
 def repoint(connection, schema: str, bucket: str) -> list[dict]:
@@ -265,17 +322,40 @@ def repoint(connection, schema: str, bucket: str) -> list[dict]:
     Case-agnostic on purpose: it repairs whatever local-path edges exist, matching on the
     name, rather than knowing anything about this delivery's callset.
     """
-    stale = _fetch(connection, schema, """
+    stale = _fetch(
+        connection,
+        schema,
+        """
         SELECT produced_at, target_schema, target_table, target_rows, source_ref,
                transform, tool, notes
-        FROM {t}.""" + LINEAGE_TABLE + """
-        WHERE source_ref NOT LIKE 's3://%'""")
-    done = {(row[0], row[1]) for row in _fetch(connection, schema, """
-        SELECT target_schema, target_table FROM {t}.""" + LINEAGE_TABLE + """
-        WHERE source_ref LIKE 's3://%'""")}
-    objects = {row[0]: row for row in _fetch(connection, schema, """
+        FROM {t}."""
+        + LINEAGE_TABLE
+        + """
+        WHERE source_ref NOT LIKE 's3://%'""",
+    )
+    done = {
+        (row[0], row[1])
+        for row in _fetch(
+            connection,
+            schema,
+            """
+        SELECT target_schema, target_table FROM {t}."""
+            + LINEAGE_TABLE
+            + """
+        WHERE source_ref LIKE 's3://%'""",
+        )
+    }
+    objects = {
+        row[0]: row
+        for row in _fetch(
+            connection,
+            schema,
+            """
         SELECT file_name, object_key, sha256, version_id, hash_verified
-        FROM {t}.""" + OBJECTS_TABLE)}
+        FROM {t}."""
+            + OBJECTS_TABLE,
+        )
+    }
 
     appended: list[dict] = []
     for produced_at, tschema, table, rows, ref, transform, tool, notes in stale:
@@ -285,21 +365,40 @@ def repoint(connection, schema: str, bucket: str) -> list[dict]:
         if not found:
             continue
         _, key, sha, version, verified = found
-        note = (f"{SUPERSEDES}{produced_at:%Y-%m-%d %H:%M:%S}; the same bytes, now named "
-                f"by their object-store location, publisher-verified hash and version. "
-                f"hash_verified={bool(verified)}. {notes}").strip()
-        record(connection, schema, target_schema=tschema, target_table=table,
-               target_rows=rows, source_kind="object",
-               source_ref=f"s3://{bucket}/{key}", source_version=version or "",
-               source_sha256=sha or "", transform=transform, tool=tool, notes=note)
-        appended.append({"target": f"{tschema}.{table}", "was": ref,
-                         "now": f"s3://{bucket}/{key}", "sha256": sha,
-                         "version_id": version})
+        note = (
+            f"{SUPERSEDES}{produced_at:%Y-%m-%d %H:%M:%S}; the same bytes, now named "
+            f"by their object-store location, publisher-verified hash and version. "
+            f"hash_verified={bool(verified)}. {notes}"
+        ).strip()
+        record(
+            connection,
+            schema,
+            target_schema=tschema,
+            target_table=table,
+            target_rows=rows,
+            source_kind="object",
+            source_ref=f"s3://{bucket}/{key}",
+            source_version=version or "",
+            source_sha256=sha or "",
+            transform=transform,
+            tool=tool,
+            notes=note,
+        )
+        appended.append(
+            {
+                "target": f"{tschema}.{table}",
+                "was": ref,
+                "now": f"s3://{bucket}/{key}",
+                "sha256": sha,
+                "version_id": version,
+            }
+        )
     return appended
 
 
-def derivation_edge(connection, schema: str, *, result_schema: str, derivation,
-                    target_rows: int, run_ref: str) -> None:
+def derivation_edge(
+    connection, schema: str, *, result_schema: str, derivation, target_rows: int, run_ref: str
+) -> None:
     """Append the edge for one derivation: which ingest tables produced which result.
 
     The inputs are read off the derivation's declared ``depends_on`` rather than parsed out
@@ -307,11 +406,18 @@ def derivation_edge(connection, schema: str, *, result_schema: str, derivation,
     every declared dependency is actually selected from.
     """
     sources = ", ".join(f"{schema}.{table}" for table in derivation.depends_on)
-    record(connection, schema, target_schema=result_schema,
-           target_table=derivation.name, target_rows=target_rows,
-           source_kind="table", source_ref=sources,
-           transform=f"SQL derivation {derivation.name}: {derivation.question}",
-           tool="mva-warehouse pg-derive", notes=f"{RUN_REF}{run_ref}")
+    record(
+        connection,
+        schema,
+        target_schema=result_schema,
+        target_table=derivation.name,
+        target_rows=target_rows,
+        source_kind="table",
+        source_ref=sources,
+        transform=f"SQL derivation {derivation.name}: {derivation.question}",
+        tool="mva-warehouse pg-derive",
+        notes=f"{RUN_REF}{run_ref}",
+    )
 
 
 def backfill_derivations(connection, schema: str, result_schema: str) -> list[dict]:
@@ -322,12 +428,27 @@ def backfill_derivations(connection, schema: str, result_schema: str) -> list[di
     """
     from .analysis import DERIVATIONS, PROVENANCE_TABLE
 
-    runs = _fetch(connection, result_schema, """
+    runs = _fetch(
+        connection,
+        result_schema,
+        """
         SELECT derivation, max(run_at), max_by(n_rows, run_at)
-        FROM {t}.""" + PROVENANCE_TABLE + " GROUP BY derivation")
-    have = {(row[0], row[1]) for row in _fetch(connection, schema, """
-        SELECT target_table, notes FROM {t}.""" + LINEAGE_TABLE + """
-        WHERE source_kind = 'table'""")}
+        FROM {t}."""
+        + PROVENANCE_TABLE
+        + " GROUP BY derivation",
+    )
+    have = {
+        (row[0], row[1])
+        for row in _fetch(
+            connection,
+            schema,
+            """
+        SELECT target_table, notes FROM {t}."""
+            + LINEAGE_TABLE
+            + """
+        WHERE source_kind = 'table'""",
+        )
+    }
     known = {item.name: item for item in DERIVATIONS}
 
     appended: list[dict] = []
@@ -336,8 +457,20 @@ def backfill_derivations(connection, schema: str, result_schema: str) -> list[di
         run_ref = f"{run_at:%Y-%m-%d %H:%M:%S.%f}"
         if derivation is None or (name, f"{RUN_REF}{run_ref}") in have:
             continue
-        derivation_edge(connection, schema, result_schema=result_schema,
-                        derivation=derivation, target_rows=rows, run_ref=run_ref)
-        appended.append({"target": f"{result_schema}.{name}", "rows": rows,
-                         "sources": ", ".join(derivation.depends_on), "run": run_ref})
+        derivation_edge(
+            connection,
+            schema,
+            result_schema=result_schema,
+            derivation=derivation,
+            target_rows=rows,
+            run_ref=run_ref,
+        )
+        appended.append(
+            {
+                "target": f"{result_schema}.{name}",
+                "rows": rows,
+                "sources": ", ".join(derivation.depends_on),
+                "run": run_ref,
+            }
+        )
     return appended

@@ -69,7 +69,8 @@ CLINVAR_PRESENCE = Derivation(
         "exact (chrom, pos, ref) plus ALT list membership, with no left-alignment on "
         "either side, so `present` is a LOWER BOUND: an indel spelled differently in the "
         "two sources will read as absent. A row ClinVar gives no alternate allele for "
-        "(alt = '.') is `comparable = false` and its `present` is NULL, never false."),
+        "(alt = '.') is `comparable = false` and its `present` is NULL, never false."
+    ),
     depends_on=("mva_panel_grch38", "clinvar_panel", "variants_raw"),
     sql=f"""
         WITH panel AS (

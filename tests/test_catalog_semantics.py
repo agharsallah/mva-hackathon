@@ -18,12 +18,31 @@ from mva.warehouse.analysis import DERIVATIONS
 
 #: Columns that recur across tables and must be covered once, by the shared map, so that a
 #: new table carrying them is described without a new entry.
-RECURRING = ("chrom", "pos", "ref", "alt", "gene", "rsid", "qual", "filter",
-             "sha256", "object_key", "file_name", "size_bytes", "version_id",
-             "line_no", "line", "n_all", "n_pass", "start", "end")
+RECURRING = (
+    "chrom",
+    "pos",
+    "ref",
+    "alt",
+    "gene",
+    "rsid",
+    "qual",
+    "filter",
+    "sha256",
+    "object_key",
+    "file_name",
+    "size_bytes",
+    "version_id",
+    "line_no",
+    "line",
+    "n_all",
+    "n_pass",
+    "start",
+    "end",
+)
 
 
 # ── the enforcement gate ─────────────────────────────────────────────────────────────
+
 
 def test_every_declared_table_is_described():
     """Adding a table without describing it fails here, with the edit to make.
@@ -34,7 +53,8 @@ def test_every_declared_table_is_described():
     gaps = semantics.undescribed()
     if gaps:
         listed = "\n".join(
-            f"  - {table!r} (declared in {source})" for table, source in gaps.items())
+            f"  - {table!r} (declared in {source})" for table, source in gaps.items()
+        )
         pytest.fail(
             f"{len(gaps)} table(s) exist in code with no semantics:\n{listed}\n\n"
             "Add a TableFact for each in src/mva/viz/catalog_semantics.py:\n"
@@ -42,7 +62,8 @@ def test_every_declared_table_is_described():
             "A derivation needs no entry — its `why` is the question declared beside its "
             "SQL in src/mva/warehouse/analysis.py. Every other table needs one, and the "
             "columns need a sentence each in src/mva/viz/catalog_columns_ingest.py or "
-            "catalog_columns_results.py.")
+            "catalog_columns_results.py."
+        )
 
 
 def test_the_gate_would_actually_catch_a_new_table(monkeypatch):
@@ -64,12 +85,19 @@ def test_every_derivation_and_every_ledger_is_covered():
     declared = semantics.declared_tables()
     for item in DERIVATIONS:
         assert item.name in declared
-    for ledger in ("source_files", "data_lineage", "probe_ledger", "derivation_runs",
-                   "hypotheses", "evidence"):
+    for ledger in (
+        "source_files",
+        "data_lineage",
+        "probe_ledger",
+        "derivation_runs",
+        "hypotheses",
+        "evidence",
+    ):
         assert ledger in declared
 
 
 # ── how a table is created ───────────────────────────────────────────────────────────
+
 
 def test_a_derivations_why_is_its_declared_question_not_a_restatement():
     """Copying the question into the registry would create a second version to drift."""
@@ -98,6 +126,7 @@ def test_an_unknown_table_is_none_rather_than_a_guess():
 
 # ── what a column means ──────────────────────────────────────────────────────────────
 
+
 def test_the_shared_map_covers_the_columns_that_recur_across_tables():
     """One entry per recurring column, so a new table carrying them needs no new entry."""
     absent = [name for name in RECURRING if name not in SHARED]
@@ -105,8 +134,13 @@ def test_the_shared_map_covers_the_columns_that_recur_across_tables():
 
 
 def test_a_recurring_column_resolves_in_every_table_that_carries_it():
-    for table in ("variants_raw", "panel_annotations", "clinvar_panel",
-                  "panel_candidates", "variant_density_bins"):
+    for table in (
+        "variants_raw",
+        "panel_annotations",
+        "clinvar_panel",
+        "panel_candidates",
+        "variant_density_bins",
+    ):
         assert meaning(table, "chrom")
 
 

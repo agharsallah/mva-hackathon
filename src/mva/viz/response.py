@@ -22,7 +22,8 @@ class Envelope(BaseModel):
     data: Any = Field(description="the endpoint's payload — a list of rows or an object")
     cached_at: str | None = Field(
         default=None,
-        description="ISO-8601 instant the payload was built, or null when computed live")
+        description="ISO-8601 instant the payload was built, or null when computed live",
+    )
     source: str = Field(description="where the numbers came from")
 
 

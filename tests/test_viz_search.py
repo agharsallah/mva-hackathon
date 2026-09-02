@@ -28,16 +28,33 @@ RS_REPLY = {
     "mappings": [
         # dbSNP also places variants on patches; the resolver must skip the non-chromosome
         # placement and take the GRCh38 chromosome one.
-        {"seq_region_name": "CHR_HSCHR12_2_CTG2", "assembly_name": "GRCh38",
-         "coord_system": "scaffold", "start": 999, "end": 999},
-        {"seq_region_name": "12", "assembly_name": "GRCh38", "coord_system": "chromosome",
-         "start": 101764236, "end": 101764236, "strand": 1, "allele_string": "C/T"},
+        {
+            "seq_region_name": "CHR_HSCHR12_2_CTG2",
+            "assembly_name": "GRCh38",
+            "coord_system": "scaffold",
+            "start": 999,
+            "end": 999,
+        },
+        {
+            "seq_region_name": "12",
+            "assembly_name": "GRCh38",
+            "coord_system": "chromosome",
+            "start": 101764236,
+            "end": 101764236,
+            "strand": 1,
+            "allele_string": "C/T",
+        },
     ],
 }
 
 SYMBOL_REPLY = {
-    "id": "ENSG00000155657", "display_name": "TTN", "seq_region_name": "2",
-    "assembly_name": "GRCh38", "start": 178525989, "end": 178830802, "strand": -1,
+    "id": "ENSG00000155657",
+    "display_name": "TTN",
+    "seq_region_name": "2",
+    "assembly_name": "GRCh38",
+    "start": 178525989,
+    "end": 178830802,
+    "strand": -1,
     "biotype": "protein_coding",
 }
 
@@ -63,12 +80,23 @@ def replies(**by_fragment):
 
 # ── classification: shape alone, nothing looked up ───────────────────────────────────
 
+
 class TestClassify:
-    @pytest.mark.parametrize("query", [
-        "15:40100000-40200000", "chr15:40100000-40200000", "CHR15:40100000-40200000",
-        "15:40,100,000-40,200,000", "15:40100000..40200000", "15:40100000–40200000",
-        "X:1000-2000", "chrM:1-500", "MT:1-500", " 15:100-200 ",
-    ])
+    @pytest.mark.parametrize(
+        "query",
+        [
+            "15:40100000-40200000",
+            "chr15:40100000-40200000",
+            "CHR15:40100000-40200000",
+            "15:40,100,000-40,200,000",
+            "15:40100000..40200000",
+            "15:40100000–40200000",
+            "X:1000-2000",
+            "chrM:1-500",
+            "MT:1-500",
+            " 15:100-200 ",
+        ],
+    )
     def test_every_region_spelling_is_a_region(self, query):
         assert search.classify(query) == "region"
 
@@ -87,8 +115,9 @@ class TestClassify:
         # RSPH1 is a real gene. Requiring digits after `rs` is what keeps it one.
         assert search.classify("RSPH1") == "gene"
 
-    @pytest.mark.parametrize("query", ["", "   ", "15:", "-", "15:abc-def", "drop table",
-                                       "chr99:1-2", "??"])
+    @pytest.mark.parametrize(
+        "query", ["", "   ", "15:", "-", "15:abc-def", "drop table", "chr99:1-2", "??"]
+    )
     def test_anything_else_is_refused_by_name(self, query):
         with pytest.raises(Unparseable):
             search.classify(query)
@@ -142,6 +171,7 @@ class TestSpanCap:
 
 # ── the resolvers, with Ensembl mocked and the warehouse faked ───────────────────────
 
+
 def fake_fetch(monkeypatch, answers):
     """Replace ``queries.fetch`` with a fragment-matched lookup, recording every call."""
     calls = []
@@ -164,8 +194,7 @@ class TestResolveRegion:
         def refuse(*args, **kwargs):
             raise AssertionError("a region must not reach Ensembl")
 
-        found = search_resolve.resolve("chr15:100-200", settings=None,
-                                       client=client_for(refuse))
+        found = search_resolve.resolve("chr15:100-200", settings=None, client=client_for(refuse))
         assert (found.kind, found.chrom, found.start, found.end) == ("region", "15", 100, 200)
         assert found.source == search.SOURCE_QUERY
         assert found.note is None
@@ -174,14 +203,14 @@ class TestResolveRegion:
 
 class TestResolveGene:
     def test_the_panel_answers_first_and_ensembl_is_never_called(self, monkeypatch):
-        fake_fetch(monkeypatch, {"mva_panel_grch38": [
-            {"chrom": "chr15", "start": 1000, "end": 2000}]})
+        fake_fetch(
+            monkeypatch, {"mva_panel_grch38": [{"chrom": "chr15", "start": 1000, "end": 2000}]}
+        )
 
         def refuse(*args, **kwargs):
             raise AssertionError("a panel gene must not reach Ensembl")
 
-        found = search_resolve.resolve("BUB1B", settings=object(),
-                                       client=client_for(refuse))
+        found = search_resolve.resolve("BUB1B", settings=object(), client=client_for(refuse))
         assert (found.kind, found.chrom, found.start, found.end) == ("gene", "15", 1000, 2000)
         assert found.source == search_resolve.SOURCE_PANEL
         assert "20 kb" in (found.note or "")
@@ -189,8 +218,10 @@ class TestResolveGene:
     def test_an_off_panel_symbol_falls_through_to_ensembl(self, monkeypatch):
         fake_fetch(monkeypatch, {})  # the panel knows nothing
         found = search_resolve.resolve(
-            "TTN", settings=object(),
-            client=client_for(replies(**{"lookup/symbol": (200, SYMBOL_REPLY)})))
+            "TTN",
+            settings=object(),
+            client=client_for(replies(**{"lookup/symbol": (200, SYMBOL_REPLY)})),
+        )
         assert found.kind == "gene"
         assert found.chrom == "2"
         assert found.source == search_resolve.SOURCE_ENSEMBL_SYMBOL
@@ -200,9 +231,19 @@ class TestResolveGene:
         fake_fetch(monkeypatch, {})
         with pytest.raises(NotFound):
             search_resolve.resolve(
-                "NOTAGENE", settings=object(),
-                client=client_for(replies(**{"lookup/symbol": (
-                    400, {"error": "No valid lookup found for symbol NOTAGENE"})})))
+                "NOTAGENE",
+                settings=object(),
+                client=client_for(
+                    replies(
+                        **{
+                            "lookup/symbol": (
+                                400,
+                                {"error": "No valid lookup found for symbol NOTAGENE"},
+                            )
+                        }
+                    )
+                ),
+            )
 
     def test_ensembl_down_is_an_outage_not_a_missing_gene(self, monkeypatch):
         fake_fetch(monkeypatch, {})
@@ -217,8 +258,10 @@ class TestResolveGene:
         fake_fetch(monkeypatch, {})
         with pytest.raises(EnsemblError):
             search_resolve.resolve(
-                "TTN", settings=object(),
-                client=client_for(replies(**{"lookup/symbol": (500, {"error": "boom"})})))
+                "TTN",
+                settings=object(),
+                client=client_for(replies(**{"lookup/symbol": (500, {"error": "boom"})})),
+            )
 
 
 class TestResolveRsid:
@@ -228,32 +271,40 @@ class TestResolveRsid:
         def refuse(*args, **kwargs):
             raise AssertionError("an rsID in the callset must not reach Ensembl")
 
-        found = search_resolve.resolve("rs137852899", settings=object(),
-                                       client=client_for(refuse))
+        found = search_resolve.resolve("rs137852899", settings=object(), client=client_for(refuse))
         assert found.kind == "rsid"
         assert (found.chrom, found.start, found.end) == (
-            "15", 500000 - search.FLANK, 500000 + search.FLANK)
+            "15",
+            500000 - search.FLANK,
+            500000 + search.FLANK,
+        )
         assert found.source == search_resolve.SOURCE_CALLSET
 
     def test_the_scan_is_an_exact_match_because_no_id_is_semicolon_packed(self, monkeypatch):
         calls = fake_fetch(monkeypatch, {"variants_raw": [{"chrom": "1", "pos": "9"}]})
-        search_resolve.resolve("rs1", settings=object(),
-                               client=client_for(lambda r: httpx.Response(200, json={})))
+        search_resolve.resolve(
+            "rs1", settings=object(), client=client_for(lambda r: httpx.Response(200, json={}))
+        )
         sql, params = calls[0]
         assert "id = ?" in sql and "LIKE" not in sql
         assert params == ["rs1"]
 
     def test_the_query_is_lowercased_so_RS_and_rs_hit_the_same_row(self, monkeypatch):
         calls = fake_fetch(monkeypatch, {"variants_raw": [{"chrom": "1", "pos": "9"}]})
-        search_resolve.resolve("RS137852899", settings=object(),
-                               client=client_for(lambda r: httpx.Response(200, json={})))
+        search_resolve.resolve(
+            "RS137852899",
+            settings=object(),
+            client=client_for(lambda r: httpx.Response(200, json={})),
+        )
         assert calls[0][1] == ["rs137852899"]
 
     def test_absent_from_the_callset_falls_through_to_ensembl_and_says_so(self, monkeypatch):
         fake_fetch(monkeypatch, {})  # the scan finds nothing
         found = search_resolve.resolve(
-            "rs137852899", settings=object(),
-            client=client_for(replies(**{"variation/human": (200, RS_REPLY)})))
+            "rs137852899",
+            settings=object(),
+            client=client_for(replies(**{"variation/human": (200, RS_REPLY)})),
+        )
         assert found.source == search_resolve.SOURCE_ENSEMBL_RSID
         assert found.chrom == "12"
         # The distinction the whole two-stage design exists for.
@@ -262,35 +313,65 @@ class TestResolveRsid:
     def test_a_scaffold_placement_is_skipped_for_the_chromosome_one(self, monkeypatch):
         fake_fetch(monkeypatch, {})
         found = search_resolve.resolve(
-            "rs137852899", settings=object(),
-            client=client_for(replies(**{"variation/human": (200, RS_REPLY)})))
+            "rs137852899",
+            settings=object(),
+            client=client_for(replies(**{"variation/human": (200, RS_REPLY)})),
+        )
         assert found.start == 101764236 - search.FLANK
 
     def test_an_unknown_rsid_is_not_found_even_though_ensembl_says_400(self, monkeypatch):
         fake_fetch(monkeypatch, {})
         with pytest.raises(NotFound) as raised:
             search_resolve.resolve(
-                "rs99999999", settings=object(),
-                client=client_for(replies(**{"variation/human": (400, UNKNOWN_REPLY)})))
+                "rs99999999",
+                settings=object(),
+                client=client_for(replies(**{"variation/human": (400, UNKNOWN_REPLY)})),
+            )
         assert "not found for human" in str(raised.value)
 
     def test_a_reply_with_no_grch38_chromosome_is_not_found(self, monkeypatch):
         fake_fetch(monkeypatch, {})
-        stale = {"mappings": [{"seq_region_name": "12", "assembly_name": "GRCh37",
-                               "coord_system": "chromosome", "start": 1}]}
+        stale = {
+            "mappings": [
+                {
+                    "seq_region_name": "12",
+                    "assembly_name": "GRCh37",
+                    "coord_system": "chromosome",
+                    "start": 1,
+                }
+            ]
+        }
         with pytest.raises(NotFound):
             search_resolve.resolve(
-                "rs1", settings=object(),
-                client=client_for(replies(**{"variation/human": (200, stale)})))
+                "rs1",
+                settings=object(),
+                client=client_for(replies(**{"variation/human": (200, stale)})),
+            )
 
 
 # ── the region read ──────────────────────────────────────────────────────────────────
 
 RAW = [
-    {"pos": "1500", "id": "rs1", "ref": "T", "alt": "C", "qual": "812.5",
-     "filter": "PASS", "format": "GT:AD:DP:GQ", "sample_call": "0/1:20,18:38:99"},
-    {"pos": "1600", "id": ".", "ref": "G", "alt": "A,T", "qual": "44.0",
-     "filter": "LowQual", "format": "GT:AD:DP:GQ", "sample_call": "1/2:3,9,7:19:41"},
+    {
+        "pos": "1500",
+        "id": "rs1",
+        "ref": "T",
+        "alt": "C",
+        "qual": "812.5",
+        "filter": "PASS",
+        "format": "GT:AD:DP:GQ",
+        "sample_call": "0/1:20,18:38:99",
+    },
+    {
+        "pos": "1600",
+        "id": ".",
+        "ref": "G",
+        "alt": "A,T",
+        "qual": "44.0",
+        "filter": "LowQual",
+        "format": "GT:AD:DP:GQ",
+        "sample_call": "1/2:3,9,7:19:41",
+    },
 ]
 
 
@@ -305,8 +386,7 @@ class TestRegionRead:
     def test_the_echo_names_the_window_the_payload_is_for(self, monkeypatch):
         fake_fetch(monkeypatch, {"variants_raw": RAW})
         found = search.region(object(), "chr15", 1000, 2000)
-        assert (found["chrom"], found["start"], found["end"], found["n"]) == \
-               ("15", 1000, 2000, 2)
+        assert (found["chrom"], found["start"], found["end"], found["n"]) == ("15", 1000, 2000, 2)
 
     def test_a_dot_id_becomes_null_rather_than_a_literal_dot(self, monkeypatch):
         fake_fetch(monkeypatch, {"variants_raw": RAW})
@@ -317,15 +397,27 @@ class TestRegionRead:
     def test_a_multiallelic_site_reports_no_single_alt_depth(self, monkeypatch):
         fake_fetch(monkeypatch, {"variants_raw": RAW})
         rows = search.region(object(), "15", 1000, 2000)["variants"]
-        assert rows[1]["alt"] == "A,T"          # comma-packed, exactly as delivered
+        assert rows[1]["alt"] == "A,T"  # comma-packed, exactly as delivered
         assert rows[1]["ad_alt"] is None
         assert rows[1]["vaf"] is None
 
     def test_the_row_shape_is_the_documented_one(self, monkeypatch):
         fake_fetch(monkeypatch, {"variants_raw": RAW})
         rows = search.region(object(), "15", 1000, 2000)["variants"]
-        assert set(rows[0]) == {"pos", "id", "ref", "alt", "qual", "filter", "gt", "dp",
-                                "ad_ref", "ad_alt", "vaf", "gq"}
+        assert set(rows[0]) == {
+            "pos",
+            "id",
+            "ref",
+            "alt",
+            "qual",
+            "filter",
+            "gt",
+            "dp",
+            "ad_ref",
+            "ad_alt",
+            "vaf",
+            "gq",
+        }
 
     def test_an_unspellable_contig_is_refused_before_any_query(self, monkeypatch):
         calls = fake_fetch(monkeypatch, {"variants_raw": RAW})
@@ -342,6 +434,7 @@ class TestRegionRead:
 
 # ── the HTTP surface ─────────────────────────────────────────────────────────────────
 
+
 @pytest.fixture()
 def api(tmp_path, monkeypatch):
     """The whole app, with the warehouse faked and Ensembl genuinely unreachable.
@@ -352,8 +445,7 @@ def api(tmp_path, monkeypatch):
 
     def fetch(settings, sql, params=None):
         if "mva_panel_grch38" in sql:
-            return ([{"chrom": "chr15", "start": 1000, "end": 2000}]
-                    if params == ["BUB1B"] else [])
+            return [{"chrom": "chr15", "start": 1000, "end": 2000}] if params == ["BUB1B"] else []
         if "variants_raw" in sql:
             return [dict(row) for row in RAW]
         return []
@@ -361,8 +453,9 @@ def api(tmp_path, monkeypatch):
     monkeypatch.setattr(queries, "fetch", fetch)
     monkeypatch.setattr(routes_warehouse, "overview", lambda settings: {})
     monkeypatch.setattr(readstore, "root", lambda: "s3://test/reads")
-    with TestClient(create_app(settings=None, cache=Cache(tmp_path),
-                               origins=["http://localhost:5173"])) as running:
+    with TestClient(
+        create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
+    ) as running:
         yield running
 
 
@@ -425,8 +518,9 @@ class TestSearchEndpoint:
 
 class TestRegionEndpoint:
     def test_it_answers_the_window_and_caches_it(self, api):
-        body = envelope(api.get("/api/callset/region",
-                                params={"chrom": "chr15", "start": 1000, "end": 2000}))
+        body = envelope(
+            api.get("/api/callset/region", params={"chrom": "chr15", "start": 1000, "end": 2000})
+        )
         assert body["cached_at"] is not None
         assert body["data"]["n"] == 2
         assert body["source"] == search.REGION_SOURCE
@@ -438,19 +532,20 @@ class TestRegionEndpoint:
         assert keys == ["region-15-1-100.json", "region-15-200-300.json"]
 
     def test_a_bad_contig_is_422(self, api):
-        response = api.get("/api/callset/region",
-                           params={"chrom": "chr99", "start": 1, "end": 100})
+        response = api.get("/api/callset/region", params={"chrom": "chr99", "start": 1, "end": 100})
         assert response.status_code == 422
 
     def test_a_window_over_the_cap_is_422_with_the_cap_in_the_message(self, api):
-        response = api.get("/api/callset/region",
-                           params={"chrom": "15", "start": 1, "end": MAX_SPAN + 2})
+        response = api.get(
+            "/api/callset/region", params={"chrom": "15", "start": 1, "end": MAX_SPAN + 2}
+        )
         assert response.status_code == 422
         assert f"{MAX_SPAN:,}" in response.json()["detail"]
 
     def test_an_empty_window_is_a_finding_not_an_error(self, api, monkeypatch):
         fake_fetch(monkeypatch, {})  # nothing in the callset there
-        body = envelope(api.get("/api/callset/region",
-                                params={"chrom": "7", "start": 5000, "end": 6000}))
+        body = envelope(
+            api.get("/api/callset/region", params={"chrom": "7", "start": 5000, "end": 6000})
+        )
         assert body["data"]["n"] == 0
         assert body["data"]["variants"] == []

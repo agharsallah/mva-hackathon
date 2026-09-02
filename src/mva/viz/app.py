@@ -42,8 +42,12 @@ def cors_origins(configured: str | None = None) -> list[str]:
     return [origin.strip() for origin in raw.split(",") if origin.strip()]
 
 
-def create_app(settings: Postgres | None = None, cache: Cache | None = None,
-               origins: list[str] | None = None, upstream=None) -> FastAPI:
+def create_app(
+    settings: Postgres | None = None,
+    cache: Cache | None = None,
+    origins: list[str] | None = None,
+    upstream=None,
+) -> FastAPI:
     """Build the application. Tests inject settings, cache and a fake upstream."""
     settings = settings or Postgres.from_env()
     cache = cache or Cache(default_directory())

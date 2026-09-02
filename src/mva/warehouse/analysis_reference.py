@@ -62,9 +62,9 @@ PANEL_GENE_CONSTRAINT = Derivation(
         "'Conflicting' — so Pathogenic, Likely_pathogenic, Pathogenic/Likely_pathogenic "
         "and Pathogenic|… combinations count, while "
         "Conflicting_classifications_of_pathogenicity does not. A gene with no gnomAD row "
-        "(the constraint file is autosomes-only) gets NULL metrics, never zero."),
-    depends_on=("mva_panel_grch38", "panel_variant_counts",
-                "gnomad_constraint", "clinvar_panel"),
+        "(the constraint file is autosomes-only) gets NULL metrics, never zero."
+    ),
+    depends_on=("mva_panel_grch38", "panel_variant_counts", "gnomad_constraint", "clinvar_panel"),
     sql=f"""
         WITH panel AS (
             SELECT coalesce(b.name, c.gene)     AS gene,
@@ -129,7 +129,8 @@ PANEL_CANDIDATES = Derivation(
         "comma-packed (G -> A,C in one row) while the annotations are one row per ALT, so "
         "the join tests that the annotated allele is an element of the split list rather "
         "than a substring of the packed string, which would match A against AT. GT and DP "
-        "are located by reading the record's own FORMAT keys, never by position."),
+        "are located by reading the record's own FORMAT keys, never by position."
+    ),
     depends_on=("panel_annotations", "variants_raw"),
     sql=f"""
         WITH raw AS (
@@ -202,9 +203,9 @@ QC_OBSERVED_EXPECTED = Derivation(
         "observation are emitted — a metric with no measurable counterpart (a coding-only "
         "Ts/Tv, an SV count, a trio de-novo count, an AF threshold) is skipped rather than "
         "guessed. Observations are re-parsed from stats_summary here rather than read from "
-        "results.stats_*, because a derivation reads the ingest schema only."),
-    depends_on=("qc_norms", "stats_summary", "filter_gt_counts", "profile_scalars",
-                "variants_raw"),
+        "results.stats_*, because a derivation reads the ingest schema only."
+    ),
+    depends_on=("qc_norms", "stats_summary", "filter_gt_counts", "profile_scalars", "variants_raw"),
     sql=f"""
         WITH sn AS (
             SELECT rtrim(split_part(line, chr(9), 3), ':')      AS metric,

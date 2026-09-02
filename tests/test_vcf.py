@@ -1,4 +1,5 @@
 """The VCF-reading seam: turning records into calls the ranker can reason about."""
+
 from pathlib import Path
 
 from mva.pipeline import Variant, read_calls

@@ -25,14 +25,19 @@ from mva.warehouse.settings import Postgres
 
 #: The header the challenge template ships, transcribed from intel §10.1. Byte-for-byte:
 #: a submission whose header differs by one character is a submission the scorer rejects.
-TEMPLATE_HEADER = ("proband_id,chrom_1,pos_1,ref_1,alt_1,chrom_2,pos_2,ref_2,alt_2,"
-                   "epcr,finding_type,notes")
+TEMPLATE_HEADER = (
+    "proband_id,chrom_1,pos_1,ref_1,alt_1,chrom_2,pos_2,ref_2,alt_2,epcr,finding_type,notes"
+)
 
 #: The template as the challenge actually ships it. Transcription is not evidence, so the
 #: conformance test reads the file itself. It carries no patient data — its two example
 #: rows are the organisers' own placeholders (chr1:100000 and the like).
-TEMPLATE_FILE = (Path(__file__).resolve().parents[1] / "ressources" / "hackathon-rules"
-                 / "track1_submission_template.csv")
+TEMPLATE_FILE = (
+    Path(__file__).resolve().parents[1]
+    / "ressources"
+    / "hackathon-rules"
+    / "track1_submission_template.csv"
+)
 
 A = {"chrom": "15", "pos": 12345, "ref": "C", "alt": "T"}
 B = {"chrom": "15", "pos": 12399, "ref": "G", "alt": "A"}
@@ -40,8 +45,7 @@ C = {"chrom": "7", "pos": 54321, "ref": "A", "alt": "G"}
 
 
 def pair_row(epcr: float = 0.99, **overrides) -> dict:
-    row = {"variant_1": A, "variant_2": B, "epcr": epcr, "finding_type": "primary",
-           "notes": ""}
+    row = {"variant_1": A, "variant_2": B, "epcr": epcr, "finding_type": "primary", "notes": ""}
     return {**row, **overrides}
 
 
@@ -220,8 +224,12 @@ def test_two_different_rows_raise_no_repeat_warning(client):
 
 def test_a_valid_payload_self_tests_at_the_maximum_score(client):
     payload = built(client, [pair_row(), single_row()])
-    assert payload["self_test"] == {"rank_points": 100.0, "f_max": 1.0,
-                                    "full_match_rank": 1, "passed": True}
+    assert payload["self_test"] == {
+        "rank_points": 100.0,
+        "f_max": 1.0,
+        "full_match_rank": 1,
+        "passed": True,
+    }
 
 
 def test_the_self_test_scores_the_bytes_not_the_request(client):
@@ -249,14 +257,17 @@ def test_a_single_row_one_first_still_self_tests_at_the_maximum(client):
 # --- the request shape -------------------------------------------------------
 
 
-@pytest.mark.parametrize("rows", [
-    [{"variant_1": A}],                                        # no epcr
-    [{"epcr": 0.9}],                                           # no variant_1
-    [{"variant_1": {**A, "pos": 0}, "epcr": 0.9}],             # VCF positions are 1-based
-    [{"variant_1": {**A, "pos": "somewhere"}, "epcr": 0.9}],   # not a number
-    [{"variant_1": {**A, "ref": ""}, "epcr": 0.9}],            # empty allele
-    [{"variant_1": {**A, "chrom": ""}, "epcr": 0.9}],          # empty contig
-])
+@pytest.mark.parametrize(
+    "rows",
+    [
+        [{"variant_1": A}],  # no epcr
+        [{"epcr": 0.9}],  # no variant_1
+        [{"variant_1": {**A, "pos": 0}, "epcr": 0.9}],  # VCF positions are 1-based
+        [{"variant_1": {**A, "pos": "somewhere"}, "epcr": 0.9}],  # not a number
+        [{"variant_1": {**A, "ref": ""}, "epcr": 0.9}],  # empty allele
+        [{"variant_1": {**A, "chrom": ""}, "epcr": 0.9}],  # empty contig
+    ],
+)
 def test_a_malformed_body_is_a_422_and_never_reaches_the_rules(client, rows):
     assert post(client, rows).status_code == 422
 

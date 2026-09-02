@@ -1,4 +1,5 @@
 """The report shell: one runtime, every exhibit reachable, nothing silently blank."""
+
 from html.parser import HTMLParser
 from pathlib import Path
 

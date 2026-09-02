@@ -22,8 +22,11 @@ The quick path::
 
     from mva.render import Exhibit, Section, render
 
-    page = render([Section("s", "Title", "What this shows", [exhibit])],
-                  title="A report", subject="where it came from")
+    page = render(
+        [Section("s", "Title", "What this shows", [exhibit])],
+        title="A report",
+        subject="where it came from",
+    )
 
 Consumers: :mod:`mva.explore` (the data profile) and :mod:`mva.science` (the research
 record). Both draw on the same palette, so a reader moving between them does not have to

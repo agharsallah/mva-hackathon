@@ -29,24 +29,49 @@ TP53_MISSENSE = {
     "most_severe_consequence": "missense_variant",
     "assembly_name": "GRCh38",
     "transcript_consequences": [
-        {"gene_symbol": "AC087388.1", "impact": "MODIFIER", "biotype": "lncRNA",
-         "consequence_terms": ["downstream_gene_variant"]},
-        {"gene_symbol": "TP53", "impact": "MODERATE", "biotype": "protein_coding",
-         "canonical": 1, "consequence_terms": ["missense_variant"],
-         "transcript_id": "ENST00000269305"},
-        {"gene_symbol": "TP53", "impact": "MODERATE", "biotype": "protein_coding",
-         "consequence_terms": ["missense_variant"], "transcript_id": "ENST00000445888"},
+        {
+            "gene_symbol": "AC087388.1",
+            "impact": "MODIFIER",
+            "biotype": "lncRNA",
+            "consequence_terms": ["downstream_gene_variant"],
+        },
+        {
+            "gene_symbol": "TP53",
+            "impact": "MODERATE",
+            "biotype": "protein_coding",
+            "canonical": 1,
+            "consequence_terms": ["missense_variant"],
+            "transcript_id": "ENST00000269305",
+        },
+        {
+            "gene_symbol": "TP53",
+            "impact": "MODERATE",
+            "biotype": "protein_coding",
+            "consequence_terms": ["missense_variant"],
+            "transcript_id": "ENST00000445888",
+        },
     ],
     "colocated_variants": [
         {"id": "COSV52666208", "somatic": 1, "allele_string": "COSMIC_MUTATION"},
-        {"id": "rs1042522", "allele_string": "G/A/C/T",
-         "clin_sig": ["uncertain_significance", "benign", "likely_benign", "pathogenic"],
-         "clin_sig_allele": "C:benign;T:likely_benign;A:uncertain_significance",
-         "frequencies": {"C": {"gnomadg": 0.6268, "gnomadg_afr": 0.3866,
-                               "gnomadg_amr": 0.6995, "gnomadg_eas": 0.5756,
-                               "gnomadg_nfe": 0.745, "gnomadg_sas": 0.5231,
-                               "gnomadg_ami": 0.99, "gnomadg_remaining": 0.6521,
-                               "gnomade": 0.7163}}},
+        {
+            "id": "rs1042522",
+            "allele_string": "G/A/C/T",
+            "clin_sig": ["uncertain_significance", "benign", "likely_benign", "pathogenic"],
+            "clin_sig_allele": "C:benign;T:likely_benign;A:uncertain_significance",
+            "frequencies": {
+                "C": {
+                    "gnomadg": 0.6268,
+                    "gnomadg_afr": 0.3866,
+                    "gnomadg_amr": 0.6995,
+                    "gnomadg_eas": 0.5756,
+                    "gnomadg_nfe": 0.745,
+                    "gnomadg_sas": 0.5231,
+                    "gnomadg_ami": 0.99,
+                    "gnomadg_remaining": 0.6521,
+                    "gnomade": 0.7163,
+                }
+            },
+        },
     ],
 }
 
@@ -54,8 +79,13 @@ BUB1B_INTRON = {
     "input": "15 40161282 . C T . . .",
     "most_severe_consequence": "intron_variant",
     "transcript_consequences": [
-        {"gene_symbol": "BUB1B", "impact": "MODIFIER", "biotype": "protein_coding",
-         "canonical": 1, "consequence_terms": ["intron_variant"]},
+        {
+            "gene_symbol": "BUB1B",
+            "impact": "MODIFIER",
+            "biotype": "protein_coding",
+            "canonical": 1,
+            "consequence_terms": ["intron_variant"],
+        },
     ],
 }
 
@@ -63,30 +93,52 @@ INTERGENIC = {
     "input": "1 1 . A T . . .",
     "most_severe_consequence": "intergenic_variant",
     "intergenic_consequences": [
-        {"impact": "MODIFIER", "consequence_terms": ["intergenic_variant"]}],
+        {"impact": "MODIFIER", "consequence_terms": ["intergenic_variant"]}
+    ],
 }
 
 EXOME_ONLY = {
     "input": "17 7676154 . G A . . .",
     "most_severe_consequence": "missense_variant",
     "transcript_consequences": [
-        {"gene_symbol": "TP53", "impact": "MODERATE", "canonical": 1,
-         "biotype": "protein_coding", "consequence_terms": ["missense_variant"]}],
+        {
+            "gene_symbol": "TP53",
+            "impact": "MODERATE",
+            "canonical": 1,
+            "biotype": "protein_coding",
+            "consequence_terms": ["missense_variant"],
+        }
+    ],
     "colocated_variants": [
-        {"id": "rs1042522",
-         "frequencies": {"A": {"gnomade": 6.842e-07, "gnomade_nfe": 8.993e-07,
-                               "gnomade_afr": 0.0, "gnomade_eas": 0.0}}}],
+        {
+            "id": "rs1042522",
+            "frequencies": {
+                "A": {
+                    "gnomade": 6.842e-07,
+                    "gnomade_nfe": 8.993e-07,
+                    "gnomade_afr": 0.0,
+                    "gnomade_eas": 0.0,
+                }
+            },
+        }
+    ],
 }
 
 DELETION = {
     "input": "15 40161283 . CTT C . . .",
     "most_severe_consequence": "intron_variant",
     "transcript_consequences": [
-        {"gene_symbol": "BUB1B", "impact": "MODIFIER", "canonical": 1,
-         "biotype": "protein_coding", "consequence_terms": ["intron_variant"]}],
+        {
+            "gene_symbol": "BUB1B",
+            "impact": "MODIFIER",
+            "canonical": 1,
+            "biotype": "protein_coding",
+            "consequence_terms": ["intron_variant"],
+        }
+    ],
     "colocated_variants": [
-        {"id": "rs999999999",
-         "frequencies": {"-": {"gnomadg": 0.01, "gnomadg_nfe": 0.02}}}],
+        {"id": "rs999999999", "frequencies": {"-": {"gnomadg": 0.01, "gnomadg_nfe": 0.02}}}
+    ],
 }
 
 TP53 = Variant("chr17", 7676154, "G", "C")
@@ -97,8 +149,7 @@ def annotator(handler, **kwargs) -> VepRestAnnotator:
     """An annotator whose transport is a function and whose sleep is a no-op."""
     kwargs.setdefault("sleep", lambda seconds: None)
     kwargs.setdefault("genes", ["BUB1B", "TP53"])
-    return VepRestAnnotator(client=httpx.Client(transport=httpx.MockTransport(handler)),
-                            **kwargs)
+    return VepRestAnnotator(client=httpx.Client(transport=httpx.MockTransport(handler)), **kwargs)
 
 
 def json_ok(payload):
@@ -106,6 +157,7 @@ def json_ok(payload):
 
 
 # ── the query line, and the contig bridge it depends on ──────────────────────────────
+
 
 class TestQueryLine:
     def test_the_contig_is_emitted_bare(self):
@@ -142,6 +194,7 @@ class TestVepAllele:
 
 # ── batching ─────────────────────────────────────────────────────────────────────────
 
+
 class TestBatches:
     def test_an_exact_multiple_makes_no_short_batch(self):
         assert [len(chunk) for chunk in batches(list(range(400)), 200)] == [200, 200]
@@ -164,6 +217,7 @@ class TestBatches:
 
         def handler(request: httpx.Request) -> httpx.Response:
             import json
+
             seen.append(len(json.loads(request.content)["variants"]))
             return httpx.Response(200, json=[])
 
@@ -173,6 +227,7 @@ class TestBatches:
 
 
 # ── retries ──────────────────────────────────────────────────────────────────────────
+
 
 class TestRetries:
     def test_a_429_is_retried_after_the_header_says_so(self):
@@ -195,8 +250,7 @@ class TestRetries:
 
         def handler(request):
             calls.append(request)
-            return (httpx.Response(429, json={}) if len(calls) == 1
-                    else httpx.Response(200, json=[]))
+            return httpx.Response(429, json={}) if len(calls) == 1 else httpx.Response(200, json=[])
 
         annotator(handler, sleep=waits.append, backoff=1.0).annotate_many([BUB1B])
         assert waits == [1.0]
@@ -251,6 +305,7 @@ class TestRetries:
 
 # ── response parsing ─────────────────────────────────────────────────────────────────
 
+
 class TestParse:
     def test_the_panel_gene_wins_over_a_neighbouring_transcript(self):
         record = parse(TP53_MISSENSE, TP53, frozenset({"TP53"}))
@@ -279,18 +334,25 @@ class TestParse:
 
     def test_clin_sig_falls_back_to_the_site_when_the_allele_is_unlisted(self):
         unlisted = Variant("chr17", 7676154, "G", "T")
-        assert "likely_benign" in parse(
-            {**TP53_MISSENSE, "colocated_variants": [
-                {"id": "rs1042522", "clin_sig": ["likely_benign", "benign"]}]},
-            unlisted).clin_sig
+        assert (
+            "likely_benign"
+            in parse(
+                {
+                    **TP53_MISSENSE,
+                    "colocated_variants": [
+                        {"id": "rs1042522", "clin_sig": ["likely_benign", "benign"]}
+                    ],
+                },
+                unlisted,
+            ).clin_sig
+        )
 
     def test_the_rsid_is_picked_out_of_a_mixed_identifier_list(self):
         assert parse(TP53_MISSENSE, TP53).rsid == "rs1042522"
 
     def test_a_variant_absent_from_gnomad_reports_no_frequency(self):
         record = parse(BUB1B_INTRON, BUB1B)
-        assert (record.gnomad_af, record.gnomad_af_grpmax, record.clin_sig) == (
-            None, None, ())
+        assert (record.gnomad_af, record.gnomad_af_grpmax, record.clin_sig) == (None, None, ())
         assert record.rsid is None
 
     def test_a_deletion_finds_its_frequency_under_the_dash_key(self):
@@ -326,6 +388,7 @@ class TestAnnotateMany:
 
     def test_the_frequency_parameters_are_actually_requested(self):
         import json
+
         seen = {}
 
         def handler(request):
@@ -346,17 +409,26 @@ class TestAnnotateMany:
         def handler(request):
             if request.url.path == "/info/software":
                 return httpx.Response(200, json={"release": 116})
-            return httpx.Response(200, json={"default_coord_system_version": "GRCh38",
-                                             "assembly_accession": "GCA_000001405.29"})
+            return httpx.Response(
+                200,
+                json={
+                    "default_coord_system_version": "GRCh38",
+                    "assembly_accession": "GCA_000001405.29",
+                },
+            )
 
         assert annotator(handler).version() == {
-            "release": "116", "assembly": "GRCh38", "accession": "GCA_000001405.29"}
+            "release": "116",
+            "assembly": "GRCh38",
+            "accession": "GCA_000001405.29",
+        }
 
     def test_the_default_server_is_the_grch38_one(self):
         assert DEFAULT_BASE_URL == "https://rest.ensembl.org"
 
 
 # ── the warehouse half ───────────────────────────────────────────────────────────────
+
 
 class TestMultiallelicSplit:
     """``variants_raw`` keeps ALT comma-packed; the annotator must see one allele each."""
@@ -365,26 +437,32 @@ class TestMultiallelicSplit:
         from mva.warehouse import annotate as warehouse
 
         rows = [("15", 40208689, "G", "A,C"), ("15", 40200000, "A", "G")]
-        wanted = warehouse.alleles(_FakeConnection(rows), "warehouse",
-                                   [Interval("BUB1B", "15", 40140984, 40241137)])
-        assert wanted == [Variant("chr15", 40200000, "A", "G"),
-                          Variant("chr15", 40208689, "G", "A"),
-                          Variant("chr15", 40208689, "G", "C")]
+        wanted = warehouse.alleles(
+            _FakeConnection(rows), "warehouse", [Interval("BUB1B", "15", 40140984, 40241137)]
+        )
+        assert wanted == [
+            Variant("chr15", 40200000, "A", "G"),
+            Variant("chr15", 40208689, "G", "A"),
+            Variant("chr15", 40208689, "G", "C"),
+        ]
 
     def test_the_missing_alt_placeholder_is_dropped(self):
         from mva.warehouse import annotate as warehouse
 
-        wanted = warehouse.alleles(_FakeConnection([("15", 40200000, "A", ".")]),
-                                   "warehouse",
-                                   [Interval("BUB1B", "15", 40140984, 40241137)])
+        wanted = warehouse.alleles(
+            _FakeConnection([("15", 40200000, "A", ".")]),
+            "warehouse",
+            [Interval("BUB1B", "15", 40140984, 40241137)],
+        )
         assert wanted == []
 
     def test_duplicate_rows_collapse_to_one_query(self):
         from mva.warehouse import annotate as warehouse
 
         rows = [("15", 40200000, "A", "G")] * 3
-        wanted = warehouse.alleles(_FakeConnection(rows), "warehouse",
-                                   [Interval("BUB1B", "15", 40140984, 40241137)])
+        wanted = warehouse.alleles(
+            _FakeConnection(rows), "warehouse", [Interval("BUB1B", "15", 40140984, 40241137)]
+        )
         assert len(wanted) == 1
 
     def test_no_intervals_means_no_query_at_all(self):
@@ -398,8 +476,9 @@ class TestMultiallelicSplit:
         from mva.warehouse import annotate as warehouse
 
         connection = _FakeConnection([])
-        warehouse.alleles(connection, "warehouse",
-                          [Interval("BUB1B", "15", 1, 2), Interval("TP53", "17", 3, 4)])
+        warehouse.alleles(
+            connection, "warehouse", [Interval("BUB1B", "15", 1, 2), Interval("TP53", "17", 3, 4)]
+        )
         sql, params = connection.statements[0]
         assert sql.count("chrom = ?") == 2
         assert params == ["15", 1, 2, "17", 3, 4]
@@ -439,8 +518,14 @@ class TestSummarise:
             VepRecord(variant=Variant("chr5", 900000, "A", "T")),
         ]
         assert summarise(records) == {
-            "rows": 3, "annotated": 2, "with_gnomad_af": 1, "with_grpmax": 1,
-            "with_clin_sig": 1, "with_rsid": 1, "genes": ["BUB1B", "TP53"]}
+            "rows": 3,
+            "annotated": 2,
+            "with_gnomad_af": 1,
+            "with_grpmax": 1,
+            "with_clin_sig": 1,
+            "with_rsid": 1,
+            "genes": ["BUB1B", "TP53"],
+        }
 
 
 class _FakeConnection:

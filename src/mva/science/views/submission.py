@@ -31,14 +31,17 @@ def budget(record: Record) -> Exhibit:
         f'<div class="tile"><span class="tile-value">{spent}</span>'
         f'<span class="tile-label">spent</span>'
         f'<span class="tile-hint">each one is irreversible</span></div>'
-        f"</div>")
+        f"</div>"
+    )
 
     note = ""
     if spent == 0:
-        note = ('<div class="callout"><p>Nothing has been spent. The budget is intact, and '
-                "a probe fired before at least two independent paths agree on a candidate "
-                "is a coin flip that costs a fixed fraction of everything the team has."
-                "</p></div>")
+        note = (
+            '<div class="callout"><p>Nothing has been spent. The budget is intact, and '
+            "a probe fired before at least two independent paths agree on a candidate "
+            "is a coin flip that costs a fixed fraction of everything the team has."
+            "</p></div>"
+        )
 
     return Exhibit(
         slug="oracle-budget",
@@ -48,9 +51,9 @@ def budget(record: Record) -> Exhibit:
             "which row matched — which makes it an instrument, not just a grader. It is "
             "also finite. Each pip is one submission; red is spent and cannot be recovered."
         ),
-        legend=legend_line(GOOD, BAD,
-                           extra="green is a submission still available, red one already "
-                                 "spent"),
+        legend=legend_line(
+            GOOD, BAD, extra="green is a submission still available, red one already spent"
+        ),
         html=f'{tiles}<div style="margin-top:12px">{pips}</div>{note}',
     )
 
@@ -67,10 +70,12 @@ def trace(record: Record) -> Exhibit:
                 "recorded twice: once in the probe ledger as what happened, and once in "
                 "the evidence ledger as what it means."
             ),
-            legend=legend_line(MUTED, extra="empty because the budget is intact, not "
-                                            "because the section is unfinished"),
+            legend=legend_line(
+                MUTED,
+                extra="empty because the budget is intact, not because the section is unfinished",
+            ),
             html='<div class="callout"><p>No submissions spent. '
-                 "<code>mva-warehouse probe-log</code> records one.</p></div>",
+            "<code>mva-warehouse probe-log</code> records one.</p></div>",
         )
 
     rows = "".join(
@@ -85,10 +90,12 @@ def trace(record: Record) -> Exhibit:
     untied = sum(1 for p in record.probes if not p.hypothesis_ids)
     callout = ""
     if untied:
-        callout = (f'<div class="callout"><p>{untied} spent submission'
-                   f"{'s name' if untied > 1 else ' names'} no hypothesis. The spend is "
-                   f"still recorded — the ledger records what happened — but the reply "
-                   f"cannot be decoded against a belief.</p></div>")
+        callout = (
+            f'<div class="callout"><p>{untied} spent submission'
+            f"{'s name' if untied > 1 else ' names'} no hypothesis. The spend is "
+            f"still recorded — the ledger records what happened — but the reply "
+            f"cannot be decoded against a belief.</p></div>"
+        )
 
     return Exhibit(
         slug="probe-trace",
@@ -98,12 +105,13 @@ def trace(record: Record) -> Exhibit:
             "probe aimed at no hypothesis still costs a submission but buys no belief, "
             "which is the failure mode this table exists to make visible."
         ),
-        legend=legend_line(DECISION,
-                           extra="one row per irreversible spend, oldest first"),
-        html=(f'{callout}<div class="table-wrap"><table class="checks">'
-              "<thead><tr><th>#</th><th>Type</th><th>By</th><th>Rows</th><th>Score</th>"
-              "<th>Hypotheses</th><th>Reply</th></tr></thead>"
-              f"<tbody>{rows}</tbody></table></div>"),
+        legend=legend_line(DECISION, extra="one row per irreversible spend, oldest first"),
+        html=(
+            f'{callout}<div class="table-wrap"><table class="checks">'
+            "<thead><tr><th>#</th><th>Type</th><th>By</th><th>Rows</th><th>Score</th>"
+            "<th>Hypotheses</th><th>Reply</th></tr></thead>"
+            f"<tbody>{rows}</tbody></table></div>"
+        ),
     )
 
 

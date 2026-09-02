@@ -65,10 +65,12 @@ def intervals(connection, schema: str) -> list[Interval]:
     """
     safe = safe_identifier(schema)
     rows = connection.execute(
-        f'SELECT name, chrom, start, "end" FROM {ALIAS}.{safe}.{PANEL_TABLE} '
-        "ORDER BY name").fetchall()
-    return [Interval(name, to_vcf_contig(chrom), int(start) + 1, int(end))
-            for name, chrom, start, end in rows]
+        f'SELECT name, chrom, start, "end" FROM {ALIAS}.{safe}.{PANEL_TABLE} ORDER BY name'
+    ).fetchall()
+    return [
+        Interval(name, to_vcf_contig(chrom), int(start) + 1, int(end))
+        for name, chrom, start, end in rows
+    ]
 
 
 def alleles(connection, schema: str, spans: list[Interval]) -> list[Variant]:
@@ -87,12 +89,15 @@ def alleles(connection, schema: str, spans: list[Interval]) -> list[Variant]:
         params += [span.chrom, span.start, span.end]
     rows = connection.execute(
         f"SELECT DISTINCT chrom, CAST(pos AS BIGINT) AS pos, ref, alt "
-        f"FROM {ALIAS}.{safe}.{RAW_TABLE} WHERE {where}", params).fetchall()
+        f"FROM {ALIAS}.{safe}.{RAW_TABLE} WHERE {where}",
+        params,
+    ).fetchall()
 
     found = {
         Variant.from_vcf(chrom, pos, ref, one)
         for chrom, pos, ref, alt in rows
-        for one in str(alt).split(",") if one and one != "."
+        for one in str(alt).split(",")
+        if one and one != "."
     }
     return sorted(found)
 
@@ -131,17 +136,25 @@ def row_of(record: VepRecord, annotated_at: datetime, source: str) -> list:
     ``chr``-prefixed form is one :func:`~mva.pipeline.variant.to_submission_contig` away.
     """
     return [
-        to_vcf_contig(record.variant.chrom), record.variant.pos,
-        record.variant.ref, record.variant.alt,
-        record.rsid, record.gene, record.consequence, record.impact,
-        record.gnomad_af, record.gnomad_af_grpmax,
+        to_vcf_contig(record.variant.chrom),
+        record.variant.pos,
+        record.variant.ref,
+        record.variant.alt,
+        record.rsid,
+        record.gene,
+        record.consequence,
+        record.impact,
+        record.gnomad_af,
+        record.gnomad_af_grpmax,
         ";".join(record.clin_sig) or None,
-        annotated_at, source,
+        annotated_at,
+        source,
     ]
 
 
-def write(connection, schema: str, records: list[VepRecord], source: str,
-          annotated_at: datetime) -> int:
+def write(
+    connection, schema: str, records: list[VepRecord], source: str, annotated_at: datetime
+) -> int:
     """Replace the annotation table with ``records`` and return the row count."""
     safe = safe_identifier(schema)
     ensure_table(connection, schema)
@@ -149,7 +162,8 @@ def write(connection, schema: str, records: list[VepRecord], source: str,
     for record in records:
         connection.execute(
             f"INSERT INTO {ALIAS}.{safe}.{ANNOTATIONS_TABLE} VALUES ({placeholders})",
-            row_of(record, annotated_at, source))
+            row_of(record, annotated_at, source),
+        )
     return len(records)
 
 
@@ -179,8 +193,9 @@ def plan(settings: Postgres, batch_size: int) -> dict:
     }
 
 
-def run(settings: Postgres, *, batch_size: int = 200,
-        base_url: str = DEFAULT_BASE_URL, annotator=None) -> dict:
+def run(
+    settings: Postgres, *, batch_size: int = 200, base_url: str = DEFAULT_BASE_URL, annotator=None
+) -> dict:
     """Read the panel's alleles, annotate them, write the table, record the lineage.
 
     ``annotator`` is injectable so the whole path can be exercised against a fake; left
@@ -192,8 +207,9 @@ def run(settings: Postgres, *, batch_size: int = 200,
         genes = [span.gene for span in spans]
 
         owned = annotator is None
-        client = annotator or VepRestAnnotator(base_url=base_url, genes=genes,
-                                               batch_size=batch_size)
+        client = annotator or VepRestAnnotator(
+            base_url=base_url, genes=genes, batch_size=batch_size
+        )
         try:
             version = client.version()
             records = client.annotate_many(wanted)
@@ -201,23 +217,33 @@ def run(settings: Postgres, *, batch_size: int = 200,
             if owned:
                 client.close()
 
-        source = (f"ensembl-vep-rest release={version.get('release', '?')} "
-                  f"assembly={version.get('assembly', '?')}")
+        source = (
+            f"ensembl-vep-rest release={version.get('release', '?')} "
+            f"assembly={version.get('assembly', '?')}"
+        )
         annotated_at = datetime.now(UTC).replace(tzinfo=None)
         rows = write(connection, settings.schema, records, source, annotated_at)
 
         lineage.ensure_tables(connection, settings.schema)
         lineage.record(
-            connection, settings.schema,
-            target_schema=settings.schema, target_table=ANNOTATIONS_TABLE,
-            target_rows=rows, source_kind="api",
+            connection,
+            settings.schema,
+            target_schema=settings.schema,
+            target_table=ANNOTATIONS_TABLE,
+            target_rows=rows,
+            source_kind="api",
             source_ref=f"{base_url}/vep/homo_sapiens/region",
             source_version=source,
             transform=f"{TRANSFORM}: distinct ALT-split alleles inside the "
-                      f"{len(spans)} panel intervals, annotated by Ensembl VEP REST",
+            f"{len(spans)} panel intervals, annotated by Ensembl VEP REST",
             tool="mva-warehouse annotate-panel",
-            notes=f"genes: {', '.join(genes)}; "
-                  f"requests: {getattr(client, 'requests', 0)}")
+            notes=f"genes: {', '.join(genes)}; requests: {getattr(client, 'requests', 0)}",
+        )
 
-    return {"intervals": spans, "version": version, "source": source,
-            "records": records, **summarise(records)}
+    return {
+        "intervals": spans,
+        "version": version,
+        "source": source,
+        "records": records,
+        **summarise(records),
+    }

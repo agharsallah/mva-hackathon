@@ -101,13 +101,21 @@ class RunFacts:
     def from_header(cls, source: str, header: str, sequence: str) -> "RunFacts":
         head, _, tail = header.lstrip("@").partition(" ")
         h, t = head.split(":"), tail.split(":")
-        return cls(source=source, instrument=h[0], run=h[1], flowcell=h[2],
-                   lane=int(h[3]), read_num=int(t[0]), control=t[2],
-                   read_length=len(sequence))
+        return cls(
+            source=source,
+            instrument=h[0],
+            run=h[1],
+            flowcell=h[2],
+            lane=int(h[3]),
+            read_num=int(t[0]),
+            control=t[2],
+            read_length=len(sequence),
+        )
 
-    def rebuild_name(self, tile: int, x: int, y: int,
-                     is_filtered: bool, index_pair: str) -> str:
+    def rebuild_name(self, tile: int, x: int, y: int, is_filtered: bool, index_pair: str) -> str:
         """The exact FASTQ name line for one stored row — the round-trip check."""
         flag = "Y" if is_filtered else "N"
-        return (f"@{self.instrument}:{self.run}:{self.flowcell}:{self.lane}:"
-                f"{tile}:{x}:{y} {self.read_num}:{flag}:{self.control}:{index_pair}")
+        return (
+            f"@{self.instrument}:{self.run}:{self.flowcell}:{self.lane}:"
+            f"{tile}:{x}:{y} {self.read_num}:{flag}:{self.control}:{index_pair}"
+        )

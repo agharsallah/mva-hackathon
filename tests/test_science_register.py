@@ -25,9 +25,11 @@ class FakeConnection:
 
     def execute(self, sql, params=None):
         self.statements.append((" ".join(sql.split()), list(params or [])))
-        self._last = (self.answers.pop(0)
-                      if sql.lstrip().upper().startswith("SELECT") and self.answers
-                      else [])
+        self._last = (
+            self.answers.pop(0)
+            if sql.lstrip().upper().startswith("SELECT") and self.answers
+            else []
+        )
         return self
 
     def fetchall(self):
@@ -42,8 +44,9 @@ class FakeConnection:
         return " ".join(sql for sql, _ in self.statements)
 
     def inserts(self):
-        return [(sql, params) for sql, params in self.statements
-                if sql.upper().startswith("INSERT")]
+        return [
+            (sql, params) for sql, params in self.statements if sql.upper().startswith("INSERT")
+        ]
 
 
 CLAIM = dict(
@@ -55,6 +58,7 @@ CLAIM = dict(
 
 
 # --- the gates -------------------------------------------------------------------------
+
 
 @pytest.mark.parametrize("field", ["statement", "prediction", "refuted_by"])
 def test_a_claim_missing_a_required_sentence_is_rejected(field):
@@ -83,14 +87,22 @@ def test_confidence_outside_zero_to_one_is_rejected(confidence):
 def test_an_observation_with_no_source_is_rejected():
     """The load-bearing rule: an unverifiable observation is not evidence."""
     with pytest.raises(ValueError, match="source_ref"):
-        Evidence(hypothesis_id="H001", direction=Direction.SUPPORTS,
-                 claim="Looks right.", source_ref="  ")
+        Evidence(
+            hypothesis_id="H001",
+            direction=Direction.SUPPORTS,
+            claim="Looks right.",
+            source_ref="  ",
+        )
 
 
 def test_an_observation_with_no_claim_is_rejected():
     with pytest.raises(ValueError, match="claim"):
-        Evidence(hypothesis_id="H001", direction=Direction.SUPPORTS,
-                 claim="", source_ref="methodology/003")
+        Evidence(
+            hypothesis_id="H001",
+            direction=Direction.SUPPORTS,
+            claim="",
+            source_ref="methodology/003",
+        )
 
 
 def test_a_revision_with_no_reasoning_is_rejected():
@@ -103,15 +115,23 @@ def test_a_revision_with_no_reasoning_is_rejected():
 
 # --- append-only -----------------------------------------------------------------------
 
+
 def test_the_register_never_updates_or_deletes():
     """Both tables are append-only. A changed belief is a new row, never an edit."""
     connection = FakeConnection([[("",)], [(0,)]])
     ensure_hypotheses(connection, "warehouse")
     ensure_evidence(connection, "warehouse")
     propose(connection, "warehouse", Hypothesis(**CLAIM))
-    record(connection, "warehouse", Evidence(
-        hypothesis_id="H001", direction=Direction.SUPPORTS, claim="Observed.",
-        source_ref="methodology/003"))
+    record(
+        connection,
+        "warehouse",
+        Evidence(
+            hypothesis_id="H001",
+            direction=Direction.SUPPORTS,
+            claim="Observed.",
+            source_ref="methodology/003",
+        ),
+    )
     text = connection.sql_text.upper()
     for forbidden in ("UPDATE ", "DELETE ", "DROP "):
         assert forbidden not in text, f"the register emitted {forbidden.strip()}"
@@ -120,11 +140,34 @@ def test_the_register_never_updates_or_deletes():
 def test_a_verdict_is_a_new_revision_carrying_the_original_wording():
     """A verdict must not be able to silently reword the claim it is a verdict on."""
     stored = Hypothesis(**CLAIM, hypothesis_id="H001", revision=1)
-    connection = FakeConnection([[(
-        stored.hypothesis_id, stored.revision, stored.step, stored.statement,
-        stored.prediction, stored.refuted_by, "", "", stored.status.value, None, "", "")]])
-    revised = revise(connection, "warehouse", "H001", status=Status.SUPPORTED,
-                     confidence=0.8, reasoning="Two paths agreed.")
+    connection = FakeConnection(
+        [
+            [
+                (
+                    stored.hypothesis_id,
+                    stored.revision,
+                    stored.step,
+                    stored.statement,
+                    stored.prediction,
+                    stored.refuted_by,
+                    "",
+                    "",
+                    stored.status.value,
+                    None,
+                    "",
+                    "",
+                )
+            ]
+        ]
+    )
+    revised = revise(
+        connection,
+        "warehouse",
+        "H001",
+        status=Status.SUPPORTED,
+        confidence=0.8,
+        reasoning="Two paths agreed.",
+    )
     assert revised.revision == 2
     assert revised.statement == stored.statement
     assert revised.refuted_by == stored.refuted_by
@@ -138,8 +181,9 @@ def test_creation_is_idempotent(ensure):
     assert "CREATE TABLE IF NOT EXISTS" in connection.sql_text
 
 
-@pytest.mark.parametrize("ensure,table", [(ensure_hypotheses, "hypotheses"),
-                                          (ensure_evidence, "evidence")])
+@pytest.mark.parametrize(
+    "ensure,table", [(ensure_hypotheses, "hypotheses"), (ensure_evidence, "evidence")]
+)
 def test_tables_live_in_the_ingest_schema_they_are_given(ensure, table):
     connection = FakeConnection()
     ensure(connection, "warehouse")
@@ -150,11 +194,13 @@ def test_tables_live_in_the_ingest_schema_they_are_given(ensure, table):
 @pytest.mark.parametrize("ensure", [ensure_hypotheses, ensure_evidence])
 def test_rejects_an_unsafe_schema_name(ensure, schema):
     from mva.warehouse.postgres import InvalidIdentifier
+
     with pytest.raises(InvalidIdentifier):
         ensure(FakeConnection(), schema)
 
 
 # --- ids and reads ---------------------------------------------------------------------
+
 
 def test_the_first_hypothesis_is_h001_and_the_next_follows_it():
     assert next_id(FakeConnection([[("",)]]), "warehouse") == "H001"
@@ -177,9 +223,15 @@ def test_the_board_can_be_narrowed_to_one_step():
 
 # --- the weighing ----------------------------------------------------------------------
 
+
 def _observation(direction, strength=1.0):
-    return Evidence(hypothesis_id="H001", direction=direction, strength=strength,
-                    claim="Observed.", source_ref="methodology/003")
+    return Evidence(
+        hypothesis_id="H001",
+        direction=direction,
+        strength=strength,
+        claim="Observed.",
+        source_ref="methodology/003",
+    )
 
 
 def test_no_evidence_leaves_the_confidence_at_the_prior():
@@ -187,14 +239,13 @@ def test_no_evidence_leaves_the_confidence_at_the_prior():
 
 
 def test_supporting_and_refuting_evidence_of_equal_strength_cancel():
-    weighing = weigh([_observation(Direction.SUPPORTS),
-                      _observation(Direction.REFUTES)], "H001")
+    weighing = weigh([_observation(Direction.SUPPORTS), _observation(Direction.REFUTES)], "H001")
     assert weighing.confidence == pytest.approx(PRIOR)
     assert (weighing.supports, weighing.refutes) == (1, 1)
 
 
 def test_neutral_evidence_is_recorded_but_moves_nothing():
-    """"We looked and it told us nothing" is a finding, and it must not tip the balance."""
+    """ "We looked and it told us nothing" is a finding, and it must not tip the balance."""
     weighing = weigh([_observation(Direction.NEUTRAL)], "H001")
     assert weighing.confidence == pytest.approx(PRIOR)
     assert weighing.neutral == 1
@@ -226,6 +277,7 @@ def test_strength_outside_zero_to_one_is_rejected(strength):
 
 
 # --- the step map ----------------------------------------------------------------------
+
 
 def test_every_step_declares_a_goal():
     assert all(step.goal.strip() for step in steps.STEPS)

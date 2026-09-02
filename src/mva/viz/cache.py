@@ -99,8 +99,7 @@ class Cache:
             raise
         return entry
 
-    def get_or_build(self, key: str, build: Callable[[], Any],
-                     refresh: bool = False) -> Cached:
+    def get_or_build(self, key: str, build: Callable[[], Any], refresh: bool = False) -> Cached:
         """Return the cached payload, building and storing it when absent or refused."""
         if not refresh:
             hit = self.read(key)

@@ -24,16 +24,20 @@ SCIENCE_BLURB = (
 )
 
 
-def build_report(record: Record, title: str = "The research record",
-                 extra: list[Section] | None = None) -> str:
+def build_report(
+    record: Record, title: str = "The research record", extra: list[Section] | None = None
+) -> str:
     """Render the whole record into one HTML page."""
     sections = build_sections(record) + list(extra or [])
     return render(sections, title=title, subject=record.subject, blurb=SCIENCE_BLURB)
 
 
-def write_report(record: Record, destination: str | Path,
-                 title: str = "The research record",
-                 extra: list[Section] | None = None) -> Path:
+def write_report(
+    record: Record,
+    destination: str | Path,
+    title: str = "The research record",
+    extra: list[Section] | None = None,
+) -> Path:
     """Write the report to ``destination`` and return the path written."""
     path = Path(destination)
     path.parent.mkdir(parents=True, exist_ok=True)

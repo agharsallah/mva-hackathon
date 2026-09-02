@@ -49,8 +49,7 @@ def rank_rows(rows: list[Row]) -> list[RankedRow]:
     """Assign ranks by descending epcr, ties broken by file order — as the scorer does."""
     ordered = sorted(enumerate(rows), key=lambda pair: (-pair[1].epcr, pair[0]))
     return [
-        RankedRow(row.variants(), row.epcr, index + 1)
-        for index, (_, row) in enumerate(ordered)
+        RankedRow(row.variants(), row.epcr, index + 1) for index, (_, row) in enumerate(ordered)
     ]
 
 

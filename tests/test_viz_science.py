@@ -52,43 +52,118 @@ class FakePostgres:
 #: exercised where the register really carries them: an opening revision has no confidence,
 #: no reasoning and no path yet.
 HYPOTHESIS_ROWS = [
-    ("H001", 1, "2026-09-01T10:00:00", "step-2",
-     "A recessive loss-of-function pair in BUB1B explains the phenotype.",
-     "Two rare protein-altering alleles in BUB1B, both under 0.1% in gnomAD.",
-     "Neither allele is rare, or only one is present in the callset.",
-     None, "BUB1B", "proposed", None, None, "team"),
-    ("H001", 2, "2026-09-02T11:30:00", "step-2",
-     "A recessive loss-of-function pair in BUB1B explains the phenotype.",
-     "Two rare protein-altering alleles in BUB1B, both under 0.1% in gnomAD.",
-     "Neither allele is rare, or only one is present in the callset.",
-     "panel-first", "BUB1B", "supported", 0.69,
-     "One supporting constraint row, one refuting absence.", "team"),
-    ("H002", 1, "2026-09-01T10:05:00", "step-4",
-     "The second allele is hiding in a filtered call.",
-     "A non-PASS call in the same gene with balanced read support.",
-     "No filtered call in the gene has balanced support.",
-     None, None, "proposed", None, None, "team"),
-    ("H002", 2, "2026-09-03T09:00:00", "step-4",
-     "The second allele is hiding in a filtered call.",
-     "A non-PASS call in the same gene with balanced read support.",
-     "No filtered call in the gene has balanced support.",
-     "rescue", None, "refuted", 0.12,
-     "Every filtered call in the gene is strand-skewed.", "team"),
+    (
+        "H001",
+        1,
+        "2026-09-01T10:00:00",
+        "step-2",
+        "A recessive loss-of-function pair in BUB1B explains the phenotype.",
+        "Two rare protein-altering alleles in BUB1B, both under 0.1% in gnomAD.",
+        "Neither allele is rare, or only one is present in the callset.",
+        None,
+        "BUB1B",
+        "proposed",
+        None,
+        None,
+        "team",
+    ),
+    (
+        "H001",
+        2,
+        "2026-09-02T11:30:00",
+        "step-2",
+        "A recessive loss-of-function pair in BUB1B explains the phenotype.",
+        "Two rare protein-altering alleles in BUB1B, both under 0.1% in gnomAD.",
+        "Neither allele is rare, or only one is present in the callset.",
+        "panel-first",
+        "BUB1B",
+        "supported",
+        0.69,
+        "One supporting constraint row, one refuting absence.",
+        "team",
+    ),
+    (
+        "H002",
+        1,
+        "2026-09-01T10:05:00",
+        "step-4",
+        "The second allele is hiding in a filtered call.",
+        "A non-PASS call in the same gene with balanced read support.",
+        "No filtered call in the gene has balanced support.",
+        None,
+        None,
+        "proposed",
+        None,
+        None,
+        "team",
+    ),
+    (
+        "H002",
+        2,
+        "2026-09-03T09:00:00",
+        "step-4",
+        "The second allele is hiding in a filtered call.",
+        "A non-PASS call in the same gene with balanced read support.",
+        "No filtered call in the gene has balanced support.",
+        "rescue",
+        None,
+        "refuted",
+        0.12,
+        "Every filtered call in the gene is strand-skewed.",
+        "team",
+    ),
 ]
 
 #: Four observations, both directions plus a neutral, and one with no lineage edge.
 EVIDENCE_ROWS = [
-    (1, "2026-09-01T12:00:00", "H001", "constraint", "supports", 0.7,
-     "BUB1B is depleted of loss-of-function variants in gnomAD.",
-     "methodology/029", "lineage:panel_gene_constraint", "team"),
-    (2, "2026-09-01T12:10:00", "H001", "callset", "refutes", 0.3,
-     "Only one protein-altering allele in the gene passes the filters.",
-     "methodology/030", None, "team"),
-    (3, "2026-09-02T08:00:00", "H002", "callset", "neutral", 0.1,
-     "Three filtered calls exist in the gene.", "methodology/031", None, "team"),
-    (4, "2026-09-03T08:30:00", "H002", "reads", "refutes", 0.6,
-     "All three filtered calls are strand-skewed in the raw reads.",
-     "methodology/033", "lineage:read_probe", "team"),
+    (
+        1,
+        "2026-09-01T12:00:00",
+        "H001",
+        "constraint",
+        "supports",
+        0.7,
+        "BUB1B is depleted of loss-of-function variants in gnomAD.",
+        "methodology/029",
+        "lineage:panel_gene_constraint",
+        "team",
+    ),
+    (
+        2,
+        "2026-09-01T12:10:00",
+        "H001",
+        "callset",
+        "refutes",
+        0.3,
+        "Only one protein-altering allele in the gene passes the filters.",
+        "methodology/030",
+        None,
+        "team",
+    ),
+    (
+        3,
+        "2026-09-02T08:00:00",
+        "H002",
+        "callset",
+        "neutral",
+        0.1,
+        "Three filtered calls exist in the gene.",
+        "methodology/031",
+        None,
+        "team",
+    ),
+    (
+        4,
+        "2026-09-03T08:30:00",
+        "H002",
+        "reads",
+        "refutes",
+        0.6,
+        "All three filtered calls are strand-skewed in the raw reads.",
+        "methodology/033",
+        "lineage:read_probe",
+        "team",
+    ),
 ]
 
 EXISTS = ("information_schema.tables", ("table_name",), [("hypotheses",)])
@@ -132,12 +207,13 @@ def client_for(monkeypatch, tmp_path):
 
 # ── the shape every endpoint shares ──────────────────────────────────────────────────
 
+
 @pytest.mark.parametrize("path", ["/api/science/hypotheses", "/api/science/evidence"])
 def test_both_endpoints_answer_in_the_standard_envelope(populated, path):
     client, _ = populated
     body = client.get(path).json()
     assert set(body) == {"data", "cached_at", "source"}
-    assert body["cached_at"] is None                       # live, never cached
+    assert body["cached_at"] is None  # live, never cached
     assert body["source"].startswith("pg.warehouse.")
 
 
@@ -150,6 +226,7 @@ def test_the_payload_is_an_object_carrying_the_existence_flag(populated, path):
 
 
 # ── the missing table ────────────────────────────────────────────────────────────────
+
 
 @pytest.mark.parametrize("path", ["/api/science/hypotheses", "/api/science/evidence"])
 def test_a_register_that_was_never_written_is_a_flag_not_an_error(missing, path):
@@ -167,12 +244,13 @@ def test_a_missing_register_is_never_created_by_a_read(missing, path):
     assert not any("CREATE" in sql.upper() for sql, _ in fake.seen)
 
 
-@pytest.mark.parametrize("path,table", [("/api/science/hypotheses", "hypotheses"),
-                                        ("/api/science/evidence", "evidence")])
+@pytest.mark.parametrize(
+    "path,table", [("/api/science/hypotheses", "hypotheses"), ("/api/science/evidence", "evidence")]
+)
 def test_the_existence_check_runs_before_the_read(missing, path, table):
     client, fake = missing
     client.get(path)
-    assert len(fake.seen) == 1                      # nothing was read after the miss
+    assert len(fake.seen) == 1  # nothing was read after the miss
     sql, params = fake.seen[0]
     assert "information_schema.tables" in sql
     assert params == [SETTINGS.schema, table]
@@ -180,12 +258,17 @@ def test_the_existence_check_runs_before_the_read(missing, path, table):
 
 # ── the rows ─────────────────────────────────────────────────────────────────────────
 
+
 def test_every_revision_is_served_not_only_the_latest(populated):
     client, _ = populated
     rows = client.get("/api/science/hypotheses").json()["data"]["rows"]
     assert len(rows) == 4
     assert [(r["hypothesis_id"], r["revision"]) for r in rows] == [
-        ("H001", 1), ("H001", 2), ("H002", 1), ("H002", 2)]
+        ("H001", 1),
+        ("H001", 2),
+        ("H002", 1),
+        ("H002", 2),
+    ]
 
 
 def test_revisions_are_ordered_by_claim_then_revision(populated):
@@ -220,7 +303,7 @@ def test_evidence_carries_both_directions_and_a_null_lineage(populated):
     rows = client.get("/api/science/evidence").json()["data"]["rows"]
     assert {r["direction"] for r in rows} == {"supports", "refutes", "neutral"}
     assert any(r["lineage_ref"] is None for r in rows)
-    assert all(r["source_ref"] for r in rows)          # an unsourced row cannot exist
+    assert all(r["source_ref"] for r in rows)  # an unsourced row cannot exist
 
 
 def test_the_columns_are_named_rather_than_star_selected(populated):
@@ -238,8 +321,10 @@ def test_the_column_lists_match_the_register_ddl():
     from mva.science import evidence as evidence_module
     from mva.science import hypothesis as hypothesis_module
 
-    for module, columns in ((hypothesis_module, science.HYPOTHESIS_COLUMNS),
-                            (evidence_module, science.EVIDENCE_COLUMNS)):
+    for module, columns in (
+        (hypothesis_module, science.HYPOTHESIS_COLUMNS),
+        (evidence_module, science.EVIDENCE_COLUMNS),
+    ):
         recorded = []
 
         class Recorder:
@@ -249,16 +334,18 @@ def test_the_column_lists_match_the_register_ddl():
         module.ensure_table(Recorder(), "warehouse")
         ddl = recorded[0]
         body = ddl.split("(", 1)[1]
-        declared = tuple(line.split()[0] for line in
-                         (raw.strip() for raw in body.splitlines()) if line and
-                         line.split()[0].isidentifier())
+        declared = tuple(
+            line.split()[0]
+            for line in (raw.strip() for raw in body.splitlines())
+            if line and line.split()[0].isidentifier()
+        )
         assert declared == columns
 
 
 def test_no_genomic_position_reaches_the_register_payload(populated):
     """Statements and claims name a gene and a consequence, never a coordinate."""
     client, _ = populated
-    text = client.get("/api/science/hypotheses").text + \
-        client.get("/api/science/evidence").text
+    text = client.get("/api/science/hypotheses").text + client.get("/api/science/evidence").text
     import re
+
     assert not re.search(r"\bchr[0-9XYM]", text)

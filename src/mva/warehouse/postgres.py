@@ -72,15 +72,16 @@ def attached(settings: Postgres, read_only: bool = False):
 
     if settings.missing:
         raise RuntimeError(
-            "missing settings: " + ", ".join(settings.missing) +
-            " — add them to .env (see .env.example)")
+            "missing settings: "
+            + ", ".join(settings.missing)
+            + " — add them to .env (see .env.example)"
+        )
 
     connection = duckdb.connect()
     try:
         connection.execute("INSTALL postgres; LOAD postgres;")
         suffix = ", READ_ONLY" if read_only else ""
-        connection.execute(
-            f"ATTACH '{settings.dsn()}' AS {ALIAS} (TYPE postgres{suffix})")
+        connection.execute(f"ATTACH '{settings.dsn()}' AS {ALIAS} (TYPE postgres{suffix})")
         yield connection
     finally:
         connection.close()
@@ -114,8 +115,7 @@ def ensure_schemas(connection, settings: Postgres) -> None:
         connection.execute(f"CREATE SCHEMA IF NOT EXISTS {ALIAS}.{safe_identifier(schema)}")
 
 
-def ingest(settings: Postgres, stagedir: Path,
-           tables: list[str] | None = None) -> list[Ingested]:
+def ingest(settings: Postgres, stagedir: Path, tables: list[str] | None = None) -> list[Ingested]:
     """Load every staged Parquet file into the ingest schema, replacing what is there.
 
     ``CREATE OR REPLACE`` keeps the ingest schema a pure function of the Parquet beside it,
@@ -137,9 +137,12 @@ def ingest(settings: Postgres, stagedir: Path,
             table = safe_identifier(path.stem)
             connection.execute(
                 f"CREATE OR REPLACE TABLE {ALIAS}.{schema}.{table} AS "
-                f"SELECT * FROM read_parquet(?)", [str(path)])
-            count = connection.execute(
-                f"SELECT count(*) FROM {ALIAS}.{schema}.{table}").fetchone()[0]
+                f"SELECT * FROM read_parquet(?)",
+                [str(path)],
+            )
+            count = connection.execute(f"SELECT count(*) FROM {ALIAS}.{schema}.{table}").fetchone()[
+                0
+            ]
             landed.append(Ingested(table, count, schema))
     return landed
 
@@ -152,7 +155,9 @@ def list_tables(settings: Postgres) -> list[tuple[str, str, int]]:
             safe = safe_identifier(schema)
             names = connection.execute(
                 f"SELECT table_name FROM {ALIAS}.information_schema.tables "
-                f"WHERE table_schema = ? ORDER BY table_name", [safe]).fetchall()
+                f"WHERE table_schema = ? ORDER BY table_name",
+                [safe],
+            ).fetchall()
             for (name,) in names:
                 count = connection.execute(
                     f"SELECT count(*) FROM {ALIAS}.{safe}.{safe_identifier(name)}"
@@ -183,11 +188,16 @@ def render_table(columns: tuple[str, ...], rows: list[tuple]) -> str:
     if not columns:
         return "(no columns)"
     cells = [[("NULL" if value is None else str(value)) for value in row] for row in rows]
-    widths = [max(len(str(columns[i])), *(len(row[i]) for row in cells)) if cells
-              else len(str(columns[i])) for i in range(len(columns))]
+    widths = [
+        max(len(str(columns[i])), *(len(row[i]) for row in cells))
+        if cells
+        else len(str(columns[i]))
+        for i in range(len(columns))
+    ]
     line = lambda l, m, r: l + m.join("─" * (w + 2) for w in widths) + r
-    fmt = lambda values: "│ " + " │ ".join(
-        str(value).ljust(width) for value, width in zip(values, widths)) + " │"
+    fmt = lambda values: (
+        "│ " + " │ ".join(str(value).ljust(width) for value, width in zip(values, widths)) + " │"
+    )
     out = [line("┌", "┬", "┐"), fmt(columns), line("├", "┼", "┤")]
     out += [fmt(row) for row in cells]
     out.append(line("└", "┴", "┘"))
@@ -233,25 +243,30 @@ def derive(settings: Postgres, names: list[str] | None = None) -> list[Ingested]
         for derivation in chosen:
             table = safe_identifier(derivation.name)
             body = resolve(derivation.sql, source).strip()
-            connection.execute(
-                f"CREATE OR REPLACE TABLE {ALIAS}.{target}.{table} AS {body}")
-            count = connection.execute(
-                f"SELECT count(*) FROM {ALIAS}.{target}.{table}").fetchone()[0]
+            connection.execute(f"CREATE OR REPLACE TABLE {ALIAS}.{target}.{table} AS {body}")
+            count = connection.execute(f"SELECT count(*) FROM {ALIAS}.{target}.{table}").fetchone()[
+                0
+            ]
             produced.append(Ingested(table, count, target))
             stamps.append((derivation.name, derivation.question, count))
             # Recorded here rather than by a separate verb: a result whose lineage is a
             # second command someone has to remember is a result that will lack lineage.
             lineage.derivation_edge(
-                connection, settings.schema, result_schema=target,
-                derivation=derivation, target_rows=count,
-                run_ref=f"{run_at:%Y-%m-%d %H:%M:%S.%f}")
+                connection,
+                settings.schema,
+                result_schema=target,
+                derivation=derivation,
+                target_rows=count,
+                run_ref=f"{run_at:%Y-%m-%d %H:%M:%S.%f}",
+            )
 
         _stamp_provenance(connection, target, stamps, PROVENANCE_TABLE, run_at)
     return produced
 
 
-def _stamp_provenance(connection, schema: str, stamps: list[tuple[str, str, int]],
-                      table: str, run_at) -> None:
+def _stamp_provenance(
+    connection, schema: str, stamps: list[tuple[str, str, int]], table: str, run_at
+) -> None:
     """Record what was derived, when, and how many rows it produced.
 
     Appended rather than replaced: the point is the history. Someone asking "which run
@@ -260,8 +275,9 @@ def _stamp_provenance(connection, schema: str, stamps: list[tuple[str, str, int]
     qualified = f"{ALIAS}.{schema}.{safe_identifier(table)}"
     connection.execute(
         f"CREATE TABLE IF NOT EXISTS {qualified} ("
-        "  run_at TIMESTAMP, derivation VARCHAR, question VARCHAR, n_rows BIGINT)")
+        "  run_at TIMESTAMP, derivation VARCHAR, question VARCHAR, n_rows BIGINT)"
+    )
     for name, question, count in stamps:
         connection.execute(
-            f"INSERT INTO {qualified} VALUES (?, ?, ?, ?)",
-            [run_at, name, question, count])
+            f"INSERT INTO {qualified} VALUES (?, ?, ?, ?)", [run_at, name, question, count]
+        )

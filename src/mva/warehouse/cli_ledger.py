@@ -42,8 +42,10 @@ def do_lineage_repair(args) -> int:
         print(f"    now      {item['now']}")
         print(f"    sha256   {item['sha256']}")
         print(f"    version  {item['version_id']}")
-    print(f"\n{len(appended)} superseding edge(s) appended to "
-          f"{settings.schema}.{lineage.LINEAGE_TABLE}")
+    print(
+        f"\n{len(appended)} superseding edge(s) appended to "
+        f"{settings.schema}.{lineage.LINEAGE_TABLE}"
+    )
     return 0
 
 
@@ -52,22 +54,35 @@ def do_lineage_backfill(args) -> int:
     settings = _settings()
     with attached(settings) as connection:
         lineage.ensure_tables(connection, settings.schema)
-        appended = lineage.backfill_derivations(
-            connection, settings.schema, settings.result_schema)
+        appended = lineage.backfill_derivations(connection, settings.schema, settings.result_schema)
     if not appended:
         print("nothing to backfill — every logged derivation run already has an edge")
         return 0
     for item in appended:
-        print(f"  {item['target']:<28} {item['rows']:>5} rows  <- {item['sources']}"
-              f"   (run {item['run']})")
-    print(f"\n{len(appended)} derivation edge(s) appended to "
-          f"{settings.schema}.{lineage.LINEAGE_TABLE}")
+        print(
+            f"  {item['target']:<28} {item['rows']:>5} rows  <- {item['sources']}"
+            f"   (run {item['run']})"
+        )
+    print(
+        f"\n{len(appended)} derivation edge(s) appended to "
+        f"{settings.schema}.{lineage.LINEAGE_TABLE}"
+    )
     return 0
 
 
-LINEAGE_COLUMNS = ("produced_at", "target_schema", "target_table", "target_rows",
-                   "source_kind", "source_ref", "source_version", "source_sha256",
-                   "tool", "notes", "is_current")
+LINEAGE_COLUMNS = (
+    "produced_at",
+    "target_schema",
+    "target_table",
+    "target_rows",
+    "source_kind",
+    "source_ref",
+    "source_version",
+    "source_sha256",
+    "tool",
+    "notes",
+    "is_current",
+)
 
 
 def do_lineage_list(args) -> int:
@@ -77,8 +92,18 @@ def do_lineage_list(args) -> int:
         rows = lineage.edges(connection, settings.schema)
     if args.current:
         rows = [row for row in rows if row[-1]]
-    trimmed = [(*row[:5], row[5][:48], (row[6] or "")[:12], (row[7] or "")[:12],
-                row[8], (row[9] or "")[:40], row[10]) for row in rows]
+    trimmed = [
+        (
+            *row[:5],
+            row[5][:48],
+            (row[6] or "")[:12],
+            (row[7] or "")[:12],
+            row[8],
+            (row[9] or "")[:40],
+            row[10],
+        )
+        for row in rows
+    ]
     print(render_table(LINEAGE_COLUMNS, trimmed))
     return 0
 
@@ -94,10 +119,16 @@ def do_probe_log(args) -> int:
         if n_rows is None:
             n_rows = max(len(payload.strip().splitlines()) - 1, 0)
     probe = probes.Probe(
-        track=args.track, probe_type=args.type, submitted_by=args.by,
+        track=args.track,
+        probe_type=args.type,
+        submitted_by=args.by,
         submission_ref=args.ref or (str(args.payload_file) if args.payload_file else ""),
-        payload=payload, n_rows=n_rows or 0, response=args.response or "",
-        score=args.score, rationale=args.rationale or "")
+        payload=payload,
+        n_rows=n_rows or 0,
+        response=args.response or "",
+        score=args.score,
+        rationale=args.rationale or "",
+    )
     with attached(settings) as connection:
         probes.ensure_table(connection, settings.schema)
         probe_id = probes.log(connection, settings.schema, probe)
@@ -133,32 +164,43 @@ def do_probe_budget(args) -> int:
 def register(subparsers) -> None:
     """Attach the ``lineage-*`` and ``probe-*`` verbs to the top-level parser."""
     repair = subparsers.add_parser(
-        "lineage-repair",
-        help="append superseding edges for inputs still recorded as local paths")
+        "lineage-repair", help="append superseding edges for inputs still recorded as local paths"
+    )
     repair.add_argument("--bucket", help="object-store bucket (default: S3_BUCKET)")
     repair.set_defaults(handler=do_lineage_repair)
 
     backfill = subparsers.add_parser(
-        "lineage-backfill",
-        help="append a lineage edge for every already-logged derivation run")
+        "lineage-backfill", help="append a lineage edge for every already-logged derivation run"
+    )
     backfill.set_defaults(handler=do_lineage_backfill)
 
     listing = subparsers.add_parser(
-        "lineage-list", help="show the lineage edge list, superseded rows included")
-    listing.add_argument("--current", action="store_true",
-                         help="only the newest edge per target table")
+        "lineage-list", help="show the lineage edge list, superseded rows included"
+    )
+    listing.add_argument(
+        "--current", action="store_true", help="only the newest edge per target table"
+    )
     listing.set_defaults(handler=do_lineage_list)
 
     log = subparsers.add_parser(
-        "probe-log", help="record one spent oracle submission in the probe ledger")
+        "probe-log", help="record one spent oracle submission in the probe ledger"
+    )
     log.add_argument("--track", default="1", help="hackathon track (default: 1)")
-    log.add_argument("--type", default="other", choices=list(probes.PROBE_TYPES),
-                     help="probe kind from the oracle protocol")
+    log.add_argument(
+        "--type",
+        default="other",
+        choices=list(probes.PROBE_TYPES),
+        help="probe kind from the oracle protocol",
+    )
     log.add_argument("--by", required=True, help="who spent this submission")
     log.add_argument("--ref", help="where the submitted file lives (path or s3:// key)")
     log.add_argument("--payload", help="the submitted content, inline")
-    log.add_argument("--payload-file", dest="payload_file", type=Path,
-                     help="read the submitted content from this CSV")
+    log.add_argument(
+        "--payload-file",
+        dest="payload_file",
+        type=Path,
+        help="read the submitted content from this CSV",
+    )
     log.add_argument("--rows", type=int, help="rows submitted (default: counted from CSV)")
     log.add_argument("--response", help="what the scorer replied, verbatim")
     log.add_argument("--score", type=float, help="rank_points, if the reply carried one")
@@ -170,6 +212,7 @@ def register(subparsers) -> None:
     plist.set_defaults(handler=do_probe_list)
 
     pbudget = subparsers.add_parser(
-        "probe-budget", help=f"how many of the {probes.BUDGET} oracle submissions are left")
+        "probe-budget", help=f"how many of the {probes.BUDGET} oracle submissions are left"
+    )
     pbudget.add_argument("--track", help="count only this track")
     pbudget.set_defaults(handler=do_probe_budget)

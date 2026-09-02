@@ -46,8 +46,7 @@ def query_line(variant: Variant) -> str:
     that bridge — building the name here with a ``removeprefix`` would be a second
     normalizer, which is the failure mode the chr-prefix rule exists to prevent.
     """
-    return (f"{to_vcf_contig(variant.chrom)} {variant.pos} . "
-            f"{variant.ref} {variant.alt} . . .")
+    return f"{to_vcf_contig(variant.chrom)} {variant.pos} . {variant.ref} {variant.alt} . . ."
 
 
 def vep_allele(ref: str, alt: str) -> str:
@@ -69,7 +68,7 @@ def vep_allele(ref: str, alt: str) -> str:
     while tail < len(left) and tail < len(right) and left[-1 - tail] == right[-1 - tail]:
         tail += 1
     if tail:
-        left, right = left[:len(left) - tail], right[:len(right) - tail]
+        left, right = left[: len(left) - tail], right[: len(right) - tail]
     return right or "-"
 
 
@@ -95,8 +94,7 @@ class VepRecord:
     @property
     def annotation(self) -> Annotation:
         """The narrow record the :class:`~mva.pipeline.annotation.Annotator` port returns."""
-        return Annotation(gene=self.gene, consequence=self.consequence,
-                          gnomad_af=self.gnomad_af)
+        return Annotation(gene=self.gene, consequence=self.consequence, gnomad_af=self.gnomad_af)
 
 
 def parse(item: dict, variant: Variant, genes: frozenset[str] = frozenset()) -> VepRecord:
@@ -147,8 +145,11 @@ def _pick_consequence(item: dict, genes: frozenset[str]) -> tuple[str | None, st
     # Outside every transcript VEP still reports an impact, on a regulatory feature or on
     # the intergenic pseudo-consequence. There is no gene there, and inventing the nearest
     # one would be a guess the ranker cannot tell from a fact.
-    for key in ("regulatory_feature_consequences", "motif_feature_consequences",
-                "intergenic_consequences"):
+    for key in (
+        "regulatory_feature_consequences",
+        "motif_feature_consequences",
+        "intergenic_consequences",
+    ):
         entries = item.get(key) or []
         if entries:
             return None, entries[0].get("impact")
@@ -168,8 +169,11 @@ def _frequencies(item: dict, allele: str) -> tuple[float | None, float | None]:
         overall = table.get(source)
         if overall is None:
             continue
-        groups = [table[f"{source}_{name}"] for name in GRPMAX_GROUPS
-                  if table.get(f"{source}_{name}") is not None]
+        groups = [
+            table[f"{source}_{name}"]
+            for name in GRPMAX_GROUPS
+            if table.get(f"{source}_{name}") is not None
+        ]
         return float(overall), (max(groups) if groups else None)
     return None, None
 

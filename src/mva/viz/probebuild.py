@@ -47,8 +47,10 @@ WARNING = "warning"
 class VariantIn(BaseModel):
     """One allele as the panel endpoints serve it — **bare** contig, VCF spelling."""
 
-    chrom: str = Field(min_length=1, description='bare contig as the callset spells it, '
-                                                 'e.g. "15"; "chr15" is accepted too')
+    chrom: str = Field(
+        min_length=1,
+        description='bare contig as the callset spells it, e.g. "15"; "chr15" is accepted too',
+    )
     pos: int = Field(ge=1, description="1-based VCF position")
     ref: str = Field(min_length=1, description="reference allele")
     alt: str = Field(min_length=1, description="alternate allele")
@@ -63,7 +65,8 @@ class RowIn(BaseModel):
 
     variant_1: VariantIn
     variant_2: VariantIn | None = Field(
-        default=None, description="the second allele of a pair; omit for a single")
+        default=None, description="the second allele of a pair; omit for a single"
+    )
     epcr: float = Field(description="estimated probability the row is causal, in (0, 1]")
     finding_type: str = Field(default="primary", description="primary or secondary")
     notes: str = Field(default="", description="free text; free points on qualitative review")
@@ -78,8 +81,9 @@ class BuildRequest(BaseModel):
 def build(request: BuildRequest) -> dict:
     """Validate a payload, render it, and prove the rendering round-trips."""
     rows, warnings = _rows(request)
-    found = warnings + [_problem(ERROR, message)
-                        for message in submission.problems(rows, require_descending=True)]
+    found = warnings + [
+        _problem(ERROR, message) for message in submission.problems(rows, require_descending=True)
+    ]
     valid = not any(item["severity"] == ERROR for item in found)
     text = _csv(rows) if valid else ""
     return {
@@ -99,12 +103,24 @@ def _rows(request: BuildRequest) -> tuple[list[submission.Row], list[dict]]:
         first = incoming.variant_1.variant()
         second = incoming.variant_2.variant() if incoming.variant_2 else None
         if second == first:
-            warnings.append(_problem(WARNING, f"row {index}: variant 2 is the same allele as "
-                                              "variant 1, so the scorer sees a single-variant "
-                                              "row — it holds a set, not a list"))
+            warnings.append(
+                _problem(
+                    WARNING,
+                    f"row {index}: variant 2 is the same allele as "
+                    "variant 1, so the scorer sees a single-variant "
+                    "row — it holds a set, not a list",
+                )
+            )
             second = None
-        rows.append(submission.Row(variant=first, partner=second, epcr=incoming.epcr,
-                                   finding_type=incoming.finding_type, notes=incoming.notes))
+        rows.append(
+            submission.Row(
+                variant=first,
+                partner=second,
+                epcr=incoming.epcr,
+                finding_type=incoming.finding_type,
+                notes=incoming.notes,
+            )
+        )
 
     warnings.extend(_repeat_warnings(rows))
     return rows, warnings
@@ -118,9 +134,14 @@ def _repeat_warnings(rows: list[submission.Row]) -> list[dict]:
         claim = row.variants()
         first = seen.setdefault(claim, index)
         if first != index:
-            out.append(_problem(WARNING, f"row {index}: same allele set as row {first} — the "
-                                         "scorer reports the better rank only, so this row "
-                                         "spends one of ten slots on nothing"))
+            out.append(
+                _problem(
+                    WARNING,
+                    f"row {index}: same allele set as row {first} — the "
+                    "scorer reports the better rank only, so this row "
+                    "spends one of ten slots on nothing",
+                )
+            )
     return out
 
 
@@ -157,8 +178,12 @@ def router() -> APIRouter:
     """The one route. Registered in :mod:`mva.viz.app` beside the other routers."""
     api = APIRouter(prefix="/api")
 
-    @api.post("/probe/build", response_model=Envelope, tags=["probe"],
-              summary="validate and render a Track 1 submission CSV")
+    @api.post(
+        "/probe/build",
+        response_model=Envelope,
+        tags=["probe"],
+        summary="validate and render a Track 1 submission CSV",
+    )
     def probe_build(request: BuildRequest) -> dict:
         """Build the submission CSV for a set of candidate rows, and check it round-trips.
 

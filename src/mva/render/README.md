@@ -77,7 +77,8 @@ import plotly.graph_objects as go
 
 fig = go.Figure(go.Bar(x=["A", "B"], y=[3, 7], marker_color=GOOD.fill))
 exhibit = Exhibit(
-    slug="demo", title="Demo counts",
+    slug="demo",
+    title="Demo counts",
     caption="Counts per category.",
     legend=legend_line(GOOD),
     figure=fig,

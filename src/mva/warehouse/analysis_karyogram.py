@@ -58,7 +58,8 @@ BAF_BINS = Derivation(
         "and median BAF, its spread, the share sitting inside 0.40-0.60, and mean depth. "
         "GT and AD are located by reading each record's own FORMAT keys, never by "
         "position; a record whose AD is missing, multi-allelic or unparsable is skipped "
-        "rather than guessed at."),
+        "rather than guessed at."
+    ),
     depends_on=("variants_raw",),
     # `variants_raw` is five million all-text rows with no index, so this is a whole-genome
     # scan — the same cost `variant_density_bins` pays, and the same reason it is paid here

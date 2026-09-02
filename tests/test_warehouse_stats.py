@@ -37,8 +37,9 @@ def build(connection, lines):
     connection.execute("DROP TABLE IF EXISTS src.stats_summary")
     values = ", ".join("(?, ?)" for _ in lines)
     connection.execute(
-        f"CREATE TABLE src.stats_summary AS SELECT * FROM (VALUES {values}) "
-        f"AS t(line_no, line)", [item for row in lines for item in row])
+        f"CREATE TABLE src.stats_summary AS SELECT * FROM (VALUES {values}) AS t(line_no, line)",
+        [item for row in lines for item in row],
+    )
     return connection
 
 
@@ -56,6 +57,7 @@ def delivered():
 
 # ── the registry wiring ──────────────────────────────────────────────────────────────
 
+
 def test_the_derivation_is_in_the_one_registry_the_runner_reads():
     """A derivation nobody collected is a file, not an analysis."""
     assert STATS_DERIVATIONS
@@ -72,6 +74,7 @@ def test_it_reads_only_the_ingest_schema():
 
 # ── the parse ────────────────────────────────────────────────────────────────────────
 
+
 def test_the_delivered_af_section_parses_to_exactly_two_rows(delivered):
     rows = run(delivered)
     assert [row["af_bin"] for row in rows] == [0.0, 0.99]
@@ -81,9 +84,17 @@ def test_the_counters_are_read_out_of_the_right_columns(delivered):
     """Off-by-one on `split_part` is the failure mode this table has; pin every field."""
     het, hom = run(delivered)
     assert (het["n_snps"], het["n_ts"], het["n_tv"], het["n_indels"]) == (
-        2_536_505, 1_665_690, 870_815, 644_292)
+        2_536_505,
+        1_665_690,
+        870_815,
+        644_292,
+    )
     assert (hom["n_snps"], hom["n_ts"], hom["n_tv"], hom["n_indels"]) == (
-        1_552_121, 1_032_666, 519_455, 346_146)
+        1_552_121,
+        1_032_666,
+        519_455,
+        346_146,
+    )
 
 
 def test_transitions_and_transversions_account_for_every_snp(delivered):
@@ -107,6 +118,7 @@ def test_tstv_is_computed_per_bin_not_over_the_whole_callset(delivered):
 
 
 # ── the reading, and the assumption it rests on ──────────────────────────────────────
+
 
 def test_the_af_bins_are_the_genotype_counter_measured_a_second_way(delivered):
     """The whole zygosity reading stands on this identity, so it is asserted, not assumed.
@@ -149,6 +161,7 @@ def test_no_sn_line_at_all_also_leaves_zygosity_null():
 
 # ── what is deliberately not derived ─────────────────────────────────────────────────
 
+
 def test_sis_is_the_af_singleton_bin_and_therefore_gets_no_table_of_its_own():
     """Measured on the delivery: the two lines carry identical counters."""
     sis = DELIVERED[2][1].split("\t")
@@ -174,6 +187,7 @@ def test_the_repeat_columns_are_not_derived_because_the_flag_was_not_used():
 
 
 # ── the question is the catalogue entry, so it has to carry the warning ──────────────
+
 
 def test_the_question_warns_that_af_here_is_not_a_population_frequency():
     """`catalog_semantics` shows this string as the table's `why`; it is the only place a

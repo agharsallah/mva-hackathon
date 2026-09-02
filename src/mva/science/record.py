@@ -89,8 +89,7 @@ class Record:
     @property
     def supported(self) -> tuple[Dossier, ...]:
         """Claims the evidence supports — the ones eligible to become submission rows."""
-        return tuple(d for d in self.dossiers
-                     if d.hypothesis.status is Status.SUPPORTED)
+        return tuple(d for d in self.dossiers if d.hypothesis.status is Status.SUPPORTED)
 
 
 def from_register(data: dict, subject: str = "the committed register") -> Record:
@@ -109,32 +108,48 @@ def from_register(data: dict, subject: str = "the committed register") -> Record
     dossiers = []
     for entry in data.get("hypotheses", []):
         claim = Hypothesis(
-            step=entry["step"], statement=entry["statement"],
-            prediction=entry["prediction"], refuted_by=entry["refuted_by"],
-            hypothesis_id=entry["id"], gene=entry.get("gene", "") or "",
-            path=entry.get("path", "") or "", status=Status(entry["status"]),
-            confidence=entry.get("confidence"))
+            step=entry["step"],
+            statement=entry["statement"],
+            prediction=entry["prediction"],
+            refuted_by=entry["refuted_by"],
+            hypothesis_id=entry["id"],
+            gene=entry.get("gene", "") or "",
+            path=entry.get("path", "") or "",
+            status=Status(entry["status"]),
+            confidence=entry.get("confidence"),
+        )
         rows = [
-            Evidence(hypothesis_id=entry["id"], direction=Direction(row["direction"]),
-                     claim=row["claim"], source_ref=row["source_ref"],
-                     evidence_id=row["id"], kind=row["kind"], strength=row["strength"],
-                     lineage_ref=row.get("lineage_ref", "") or "")
+            Evidence(
+                hypothesis_id=entry["id"],
+                direction=Direction(row["direction"]),
+                claim=row["claim"],
+                source_ref=row["source_ref"],
+                evidence_id=row["id"],
+                kind=row["kind"],
+                strength=row["strength"],
+                lineage_ref=row.get("lineage_ref", "") or "",
+            )
             for row in entry.get("evidence", [])
         ]
-        dossiers.append(Dossier(hypothesis=claim, history=(claim,), evidence=tuple(rows),
-                                weighing=weigh(rows, entry["id"])))
+        dossiers.append(
+            Dossier(
+                hypothesis=claim,
+                history=(claim,),
+                evidence=tuple(rows),
+                weighing=weigh(rows, entry["id"]),
+            )
+        )
 
-    return Record(dossiers=tuple(dossiers), budget_total=_default_budget(),
-                  subject=subject)
+    return Record(dossiers=tuple(dossiers), budget_total=_default_budget(), subject=subject)
 
 
 def _default_budget() -> int:
     from ..warehouse.probes import BUDGET
+
     return BUDGET
 
 
-def read(connection, schema: str, budget_total: int = 0,
-         subject: str = "the warehouse") -> Record:
+def read(connection, schema: str, budget_total: int = 0, subject: str = "the warehouse") -> Record:
     """Read the whole record out of the warehouse in three queries."""
     from ..warehouse import probes as probe_module
     from .dossier import assemble_all
@@ -142,15 +157,23 @@ def read(connection, schema: str, budget_total: int = 0,
     dossiers = assemble_all(connection, schema)
     spent = tuple(
         SpentProbe(
-            probe_id=int(row[0]), probe_type=row[3], submitted_by=row[4],
+            probe_id=int(row[0]),
+            probe_type=row[3],
+            submitted_by=row[4],
             n_rows=int(row[6] or 0),
             score=None if row[7] is None else float(row[7]),
-            response=row[8] or "", rationale="",
-            hypothesis_ids=_split_ids(row[10] if len(row) > 10 else ""))
+            response=row[8] or "",
+            rationale="",
+            hypothesis_ids=_split_ids(row[10] if len(row) > 10 else ""),
+        )
         for row in probe_module.listing(connection, schema)
     )
-    return Record(dossiers=tuple(dossiers), probes=spent,
-                  budget_total=budget_total or probe_module.BUDGET, subject=subject)
+    return Record(
+        dossiers=tuple(dossiers),
+        probes=spent,
+        budget_total=budget_total or probe_module.BUDGET,
+        subject=subject,
+    )
 
 
 def _split_ids(value) -> tuple[str, ...]:

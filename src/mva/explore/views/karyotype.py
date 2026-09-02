@@ -48,25 +48,38 @@ def allele_balance(profile: CallsetProfile) -> Exhibit:
     tight = [r.pct_in_band for r in rows]
 
     figure = make_subplots(
-        rows=2, cols=1, shared_xaxes=True, vertical_spacing=0.09,
-        subplot_titles=("Mean alternate-allele fraction at heterozygous sites",
-                        "Share of those sites inside 0.40 – 0.60"),
+        rows=2,
+        cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.09,
+        subplot_titles=(
+            "Mean alternate-allele fraction at heterozygous sites",
+            "Share of those sites inside 0.40 – 0.60",
+        ),
     )
 
     # Bars grow from the diploid line rather than from zero. Anchored at zero they would
     # be twenty-four near-identical full-height bars with the interesting variation
     # compressed into their last two percent — and they would cover the expectation band
     # they are supposed to be compared against.
-    figure.add_trace(go.Bar(
-        x=names, y=[r.deviation for r in rows], base=DIPLOID_VAF,
-        name="mean allele balance",
-        marker=dict(color=[_fill(r) for r in rows],
-                    line=dict(color=[_outline(r) for r in rows], width=1)),
-        customdata=[(r.n_het, r.deviation, r.mean_vaf) for r in rows],
-        hovertemplate="<b>%{x}</b><br>mean balance %{customdata[2]:.4f}"
-                      "<br>deviation from diploid %{customdata[1]:+.4f}"
-                      "<br>%{customdata[0]:,} het sites<extra></extra>",
-    ), row=1, col=1)
+    figure.add_trace(
+        go.Bar(
+            x=names,
+            y=[r.deviation for r in rows],
+            base=DIPLOID_VAF,
+            name="mean allele balance",
+            marker=dict(
+                color=[_fill(r) for r in rows],
+                line=dict(color=[_outline(r) for r in rows], width=1),
+            ),
+            customdata=[(r.n_het, r.deviation, r.mean_vaf) for r in rows],
+            hovertemplate="<b>%{x}</b><br>mean balance %{customdata[2]:.4f}"
+            "<br>deviation from diploid %{customdata[1]:+.4f}"
+            "<br>%{customdata[0]:,} het sites<extra></extra>",
+        ),
+        row=1,
+        col=1,
+    )
 
     # Reference lines go on after the bars, not before: Plotly resolves `row`/`col` on a
     # shape against the axes the traces created, and silently drops a shape added to a
@@ -74,32 +87,53 @@ def allele_balance(profile: CallsetProfile) -> Exhibit:
     # bars are anchored at 0.5 and would hide a fill drawn behind them.
     figure.add_hline(y=DIPLOID_VAF, row=1, col=1, line=dict(color=GOOD.line, width=1.5))
     for edge in (DIPLOID_VAF - BAND, DIPLOID_VAF + BAND):
-        figure.add_hline(y=edge, row=1, col=1,
-                         line=dict(color=GOOD.line, width=1, dash="dot"))
+        figure.add_hline(y=edge, row=1, col=1, line=dict(color=GOOD.line, width=1, dash="dot"))
     figure.add_annotation(
-        row=1, col=1, x=1, xref="x domain", y=DIPLOID_VAF + BAND,
+        row=1,
+        col=1,
+        x=1,
+        xref="x domain",
+        y=DIPLOID_VAF + BAND,
         text=f"diploid band {DIPLOID_VAF - BAND:.2f}–{DIPLOID_VAF + BAND:.2f}",
-        showarrow=False, xanchor="right", yanchor="bottom",
-        font=dict(size=11, color=SUBTLE_INK))
+        showarrow=False,
+        xanchor="right",
+        yanchor="bottom",
+        font=dict(size=11, color=SUBTLE_INK),
+    )
 
-    figure.add_trace(go.Scatter(
-        x=names, y=tight, name="inside the diploid band", mode="lines+markers",
-        line=dict(color=MACHINE.line, width=2),
-        marker=dict(size=8, color=MACHINE.fill, line=dict(color=MACHINE.line, width=1.5)),
-        hovertemplate="<b>%{x}</b><br>%{y:.1f}% of het sites inside 0.40–0.60<extra></extra>",
-    ), row=2, col=1)
+    figure.add_trace(
+        go.Scatter(
+            x=names,
+            y=tight,
+            name="inside the diploid band",
+            mode="lines+markers",
+            line=dict(color=MACHINE.line, width=2),
+            marker=dict(size=8, color=MACHINE.fill, line=dict(color=MACHINE.line, width=1.5)),
+            hovertemplate="<b>%{x}</b><br>%{y:.1f}% of het sites inside 0.40–0.60<extra></extra>",
+        ),
+        row=2,
+        col=1,
+    )
 
     autosomes = [r.pct_in_band for r in rows if r.chrom.removeprefix("chr").isdigit()]
     if autosomes:
         median = sorted(autosomes)[len(autosomes) // 2]
-        figure.add_hline(y=median, row=2, col=1, line=dict(color=MUTED.line, width=1,
-                                                           dash="dash"),
-                         annotation_text=f"autosomal median {median:.1f}%",
-                         annotation_font=dict(size=11, color=SUBTLE_INK))
+        figure.add_hline(
+            y=median,
+            row=2,
+            col=1,
+            line=dict(color=MUTED.line, width=1, dash="dash"),
+            annotation_text=f"autosomal median {median:.1f}%",
+            annotation_font=dict(size=11, color=SUBTLE_INK),
+        )
 
     lo, hi = min(vafs), max(vafs)
-    figure.update_yaxes(range=[min(lo, 0.45) - 0.015, max(hi, 0.52) + 0.015],
-                        title_text="alt reads / all reads", row=1, col=1)
+    figure.update_yaxes(
+        range=[min(lo, 0.45) - 0.015, max(hi, 0.52) + 0.015],
+        title_text="alt reads / all reads",
+        row=1,
+        col=1,
+    )
     figure.update_yaxes(range=[0, 100], title_text="% of sites", row=2, col=1)
     figure.update_xaxes(title_text="chromosome", row=2, col=1)
     figure.update_layout(showlegend=False, bargap=0.35)
@@ -115,17 +149,24 @@ def allele_balance(profile: CallsetProfile) -> Exhibit:
             "before any copy-number tool is run. Read the top row for a shifted centre and "
             "the bottom row for a widened spread; mosaicism reaches the bottom row first."
         ),
-        legend=legend_line(GOOD, DECISION, BAD, MUTED,
-                           extra=f"bars grow from the diploid line, not from zero; the "
-                                 f"dotted lines bound the expectation "
-                                 f"{DIPLOID_VAF - BAND:.2f}–{DIPLOID_VAF + BAND:.2f}; "
-                                 "grey marks the sex chromosomes, which are not graded"),
+        legend=legend_line(
+            GOOD,
+            DECISION,
+            BAD,
+            MUTED,
+            extra=f"bars grow from the diploid line, not from zero; the "
+            f"dotted lines bound the expectation "
+            f"{DIPLOID_VAF - BAND:.2f}–{DIPLOID_VAF + BAND:.2f}; "
+            "grey marks the sex chromosomes, which are not graded",
+        ),
         figure=sized(figure, 620),
         height=620,
-        notes=["The sex chromosomes are drawn in grey and deliberately not graded. A male "
-               "sample carries one X and one Y, so a heterozygous call on either is either "
-               "in the small region the two chromosomes share or is an error — in both "
-               "cases the allele balance says nothing about aneuploidy."],
+        notes=[
+            "The sex chromosomes are drawn in grey and deliberately not graded. A male "
+            "sample carries one X and one Y, so a heterozygous call on either is either "
+            "in the small region the two chromosomes share or is an error — in both "
+            "cases the allele balance says nothing about aneuploidy."
+        ],
     )
 
 
@@ -143,20 +184,30 @@ def depth(profile: CallsetProfile) -> Exhibit:
     autosomal = [r.mean_depth for r in rows if r.chrom.removeprefix("chr").isdigit()]
     reference = sum(autosomal) / len(autosomal) if autosomal else 0.0
 
-    figure = go.Figure(go.Bar(
-        x=names, y=depths,
-        marker=dict(color=MACHINE.fill, line=dict(color=MACHINE.line, width=1)),
-        hovertemplate="<b>%{x}</b><br>%{y:.1f}× mean depth<extra></extra>",
-    ))
+    figure = go.Figure(
+        go.Bar(
+            x=names,
+            y=depths,
+            marker=dict(color=MACHINE.fill, line=dict(color=MACHINE.line, width=1)),
+            hovertemplate="<b>%{x}</b><br>%{y:.1f}× mean depth<extra></extra>",
+        )
+    )
     if reference:
-        figure.add_hline(y=reference, line=dict(color=GOOD.line, width=1.5, dash="dot"),
-                         annotation_text=f"autosomal mean {reference:.1f}×",
-                         annotation_font=dict(size=11, color=SUBTLE_INK))
-        figure.add_hline(y=reference / 2, line=dict(color=DECISION.line, width=1, dash="dash"),
-                         annotation_text="half — one copy",
-                         annotation_font=dict(size=11, color=SUBTLE_INK))
-    figure.update_layout(xaxis_title="chromosome", yaxis_title="mean read depth (×)",
-                         showlegend=False, bargap=0.35)
+        figure.add_hline(
+            y=reference,
+            line=dict(color=GOOD.line, width=1.5, dash="dot"),
+            annotation_text=f"autosomal mean {reference:.1f}×",
+            annotation_font=dict(size=11, color=SUBTLE_INK),
+        )
+        figure.add_hline(
+            y=reference / 2,
+            line=dict(color=DECISION.line, width=1, dash="dash"),
+            annotation_text="half — one copy",
+            annotation_font=dict(size=11, color=SUBTLE_INK),
+        )
+    figure.update_layout(
+        xaxis_title="chromosome", yaxis_title="mean read depth (×)", showlegend=False, bargap=0.35
+    )
 
     return Exhibit(
         slug="depth-by-chromosome",
@@ -168,9 +219,13 @@ def depth(profile: CallsetProfile) -> Exhibit:
             "balance asks from the genotype side. Agreement between the two is what "
             "turns a suspicion into a finding."
         ),
-        legend=legend_line(MACHINE, GOOD, DECISION,
-                           extra="bars are per-chromosome mean depth; the dotted line is "
-                                 "the autosomal mean and the dashed line is half of it"),
+        legend=legend_line(
+            MACHINE,
+            GOOD,
+            DECISION,
+            extra="bars are per-chromosome mean depth; the dotted line is "
+            "the autosomal mean and the dashed line is half of it",
+        ),
         figure=sized(figure, 420),
     )
 
@@ -186,22 +241,29 @@ def density(profile: CallsetProfile) -> Exhibit:
     names = [f"chr{c.name.removeprefix('chr')}" for c in contigs]
     values = [c.density_per_mb for c in contigs]
 
-    figure = go.Figure(go.Bar(
-        x=names, y=values,
-        marker=dict(color=MACHINE.fill, line=dict(color=MACHINE.line, width=1)),
-        customdata=[(c.records, c.length / 1e6) for c in contigs],
-        hovertemplate="<b>%{x}</b><br>%{y:,.0f} variants per Mb"
-                      "<br>%{customdata[0]:,} variants over %{customdata[1]:,.1f} Mb"
-                      "<extra></extra>",
-    ))
+    figure = go.Figure(
+        go.Bar(
+            x=names,
+            y=values,
+            marker=dict(color=MACHINE.fill, line=dict(color=MACHINE.line, width=1)),
+            customdata=[(c.records, c.length / 1e6) for c in contigs],
+            hovertemplate="<b>%{x}</b><br>%{y:,.0f} variants per Mb"
+            "<br>%{customdata[0]:,} variants over %{customdata[1]:,.1f} Mb"
+            "<extra></extra>",
+        )
+    )
     autosomal = [c.density_per_mb for c in contigs if c.name.removeprefix("chr").isdigit()]
     if autosomal:
         mean = sum(autosomal) / len(autosomal)
-        figure.add_hline(y=mean, line=dict(color=GOOD.line, width=1.5, dash="dot"),
-                         annotation_text=f"autosomal mean {mean:,.0f}/Mb",
-                         annotation_font=dict(size=11, color=SUBTLE_INK))
-    figure.update_layout(xaxis_title="chromosome", yaxis_title="variants per megabase",
-                         showlegend=False, bargap=0.35)
+        figure.add_hline(
+            y=mean,
+            line=dict(color=GOOD.line, width=1.5, dash="dot"),
+            annotation_text=f"autosomal mean {mean:,.0f}/Mb",
+            annotation_font=dict(size=11, color=SUBTLE_INK),
+        )
+    figure.update_layout(
+        xaxis_title="chromosome", yaxis_title="variants per megabase", showlegend=False, bargap=0.35
+    )
 
     scaffolds = profile.scaffold_records
     notes = []
@@ -222,8 +284,7 @@ def density(profile: CallsetProfile) -> Exhibit:
             "means no chromosome is contributing a suspicious excess of calls before any "
             "filtering is applied."
         ),
-        legend=legend_line(MACHINE, GOOD,
-                           extra="the dotted line is the autosomal mean density"),
+        legend=legend_line(MACHINE, GOOD, extra="the dotted line is the autosomal mean density"),
         figure=sized(figure, 400),
         notes=notes,
     )

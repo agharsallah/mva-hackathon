@@ -23,11 +23,13 @@ from mva.warehouse.vcfstage import (
     verify_roundtrip,
 )
 
-HEADER = "\n".join([
-    "##fileformat=VCFv4.2",
-    "##contig=<ID=1,length=248956422>",
-    "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE",
-])
+HEADER = "\n".join(
+    [
+        "##fileformat=VCFv4.2",
+        "##contig=<ID=1,length=248956422>",
+        "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE",
+    ]
+)
 RECORDS = [
     "1\t13273\t.\tG\tC\t385.77\tMQ40\tAC=2;AF=1\tGT:AD:DP\t1/1:0,13:13",
     "1\t14907\trs6\tA\tG\t.\tPASS\tAC=1;AF=0.5\tGT:AD:DP\t0/1:7,8:15",
@@ -96,14 +98,17 @@ class TestIterRaw:
 class TestRoundTrip:
     def test_source_digest_ignores_the_header(self, vcf: Path, tmp_path: Path):
         other = tmp_path / "other.vcf"
-        other.write_text("##different\n" + HEADER.split("\n", 1)[1] + "\n"
-                         + "\n".join(RECORDS) + "\n", encoding="utf-8")
+        other.write_text(
+            "##different\n" + HEADER.split("\n", 1)[1] + "\n" + "\n".join(RECORDS) + "\n",
+            encoding="utf-8",
+        )
         assert source_digest(vcf)[0] == source_digest(other)[0]
 
     def test_digest_changes_when_a_record_changes(self, vcf: Path, tmp_path: Path):
         other = tmp_path / "other.vcf"
-        other.write_text(HEADER + "\n" + "\n".join(RECORDS).replace("13273", "13274")
-                         + "\n", encoding="utf-8")
+        other.write_text(
+            HEADER + "\n" + "\n".join(RECORDS).replace("13273", "13274") + "\n", encoding="utf-8"
+        )
         assert source_digest(vcf)[0] != source_digest(other)[0]
 
     def test_live_read_reproduces_the_source_bytes(self, vcf: Path):
@@ -121,17 +126,20 @@ class TestRoundTrip:
         out, _ = stage_raw(vcf, tmp_path / "raw.parquet")
         types = dict(
             (row[0], row[1])
-            for row in duckdb.sql(f"DESCRIBE SELECT * FROM read_parquet('{out}')").fetchall())
+            for row in duckdb.sql(f"DESCRIBE SELECT * FROM read_parquet('{out}')").fetchall()
+        )
         assert [*types] == list(RAW_COLUMNS)
-        assert {types[name] for name in FILE_COLUMNS} == {"VARCHAR"}, \
+        assert {types[name] for name in FILE_COLUMNS} == {"VARCHAR"}, (
             "typing a VCF field here would risk silent loss"
+        )
         assert types["line_no"] == "BIGINT", "our own bookkeeping, not file data"
 
 
 class TestFingerprint:
     def _make(self, con, rows):
-        con.execute("CREATE OR REPLACE TABLE t AS SELECT * FROM (VALUES " +
-                    ", ".join(rows) + ") AS v(a, b)")
+        con.execute(
+            "CREATE OR REPLACE TABLE t AS SELECT * FROM (VALUES " + ", ".join(rows) + ") AS v(a, b)"
+        )
 
     def test_identical_data_has_no_discrepancies(self, con):
         self._make(con, ["('x', 1)", "('y', 2)"])
@@ -169,8 +177,9 @@ class TestFingerprint:
     def test_duplicates_do_not_cancel(self, con):
         con.execute("CREATE OR REPLACE TABLE t AS SELECT 'x' AS a UNION ALL SELECT 'x'")
         con.execute("CREATE OR REPLACE TABLE u AS SELECT 'y' AS a UNION ALL SELECT 'y'")
-        assert compare(fingerprint(con, "t", "t"), fingerprint(con, "u", "u")), \
+        assert compare(fingerprint(con, "t", "t"), fingerprint(con, "u", "u")), (
             "an XOR checksum would wrongly call these equal"
+        )
 
     def test_a_pure_retype_is_reported_separately_not_as_loss(self, con):
         con.execute("CREATE OR REPLACE TABLE t AS SELECT '1' AS a")

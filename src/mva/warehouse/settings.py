@@ -170,29 +170,43 @@ class Postgres:
             for key, default in DEFAULTS.items()
         }
         return cls(
-            host=resolved["PGHOST"], port=resolved["PGPORT"],
-            database=resolved["PGDATABASE"], user=resolved["PGUSER"],
-            password=resolved["PGPASSWORD"], schema=resolved["PGSCHEMA"],
+            host=resolved["PGHOST"],
+            port=resolved["PGPORT"],
+            database=resolved["PGDATABASE"],
+            user=resolved["PGUSER"],
+            password=resolved["PGPASSWORD"],
+            schema=resolved["PGSCHEMA"],
             result_schema=resolved["PGRESULTSCHEMA"],
         )
 
     @property
     def missing(self) -> list[str]:
         """Settings that must be supplied and were not. Empty means ready to connect."""
-        return [key for key, value in (("PGHOST", self.host), ("PGDATABASE", self.database),
-                                       ("PGUSER", self.user), ("PGPASSWORD", self.password))
-                if not value]
+        return [
+            key
+            for key, value in (
+                ("PGHOST", self.host),
+                ("PGDATABASE", self.database),
+                ("PGUSER", self.user),
+                ("PGPASSWORD", self.password),
+            )
+            if not value
+        ]
 
     def dsn(self) -> str:
         """A libpq connection string for DuckDB's ``ATTACH``. Contains the password."""
-        return (f"host={self.host} port={self.port} dbname={self.database} "
-                f"user={self.user} password={self.password}")
+        return (
+            f"host={self.host} port={self.port} dbname={self.database} "
+            f"user={self.user} password={self.password}"
+        )
 
     def describe(self) -> str:
         """A one-line summary safe to print: the password is redacted."""
         secret = "set" if self.password else "MISSING"
-        return (f"{self.user}@{self.host}:{self.port}/{self.database} "
-                f"(password: {secret}, schemas: {self.schema} + {self.result_schema})")
+        return (
+            f"{self.user}@{self.host}:{self.port}/{self.database} "
+            f"(password: {secret}, schemas: {self.schema} + {self.result_schema})"
+        )
 
     def __repr__(self) -> str:  # pragma: no cover - trivial
         return f"Postgres({self.describe()})"

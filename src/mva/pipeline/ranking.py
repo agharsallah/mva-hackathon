@@ -62,8 +62,9 @@ class PairEvidence:
     @property
     def both_loss_of_function(self) -> bool:
         """Whether both alleles break the protein — the strongest shape for a biallelic call."""
-        return (self.left_annotation.is_loss_of_function
-                and self.right_annotation.is_loss_of_function)
+        return (
+            self.left_annotation.is_loss_of_function and self.right_annotation.is_loss_of_function
+        )
 
     @property
     def both_rare(self) -> bool:
@@ -98,11 +99,23 @@ def rank_pairs(
 
         prior = gene_prior.get(a.gene, 1.0) if a.gene else 1.0
         score = (_variant_score(a) + _variant_score(b)) * prior
-        ranked.append(RankedPair(left, right, a.gene, score, PairEvidence(
-            left_annotation=a, right_annotation=b,
-            left_rarity=_rarity(a.gnomad_af), right_rarity=_rarity(b.gnomad_af),
-            left_severity=_severity(a), right_severity=_severity(b),
-            gene_prior=prior)))
+        ranked.append(
+            RankedPair(
+                left,
+                right,
+                a.gene,
+                score,
+                PairEvidence(
+                    left_annotation=a,
+                    right_annotation=b,
+                    left_rarity=_rarity(a.gnomad_af),
+                    right_rarity=_rarity(b.gnomad_af),
+                    left_severity=_severity(a),
+                    right_severity=_severity(b),
+                    gene_prior=prior,
+                ),
+            )
+        )
 
     return sorted(ranked, key=lambda p: p.score, reverse=True)
 

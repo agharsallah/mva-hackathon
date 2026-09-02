@@ -1,4 +1,5 @@
 """The views: a figure never travels without the words that make it readable."""
+
 from pathlib import Path
 
 import pytest

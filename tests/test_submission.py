@@ -4,6 +4,7 @@ Each team member gets six submissions and the team has eighteen in total. A row 
 fails to parse does not cost a row, it costs a whole submission, so every constraint the
 scorer enforces is asserted here rather than discovered on the leaderboard.
 """
+
 import csv
 import io
 
@@ -17,8 +18,18 @@ B = Variant("chr15", 40143500, "G", "T")
 C = Variant("chr5", 900000, "A", "AT")
 
 TEMPLATE_HEADER = [
-    "proband_id", "chrom_1", "pos_1", "ref_1", "alt_1",
-    "chrom_2", "pos_2", "ref_2", "alt_2", "epcr", "finding_type", "notes",
+    "proband_id",
+    "chrom_1",
+    "pos_1",
+    "ref_1",
+    "alt_1",
+    "chrom_2",
+    "pos_2",
+    "ref_2",
+    "alt_2",
+    "epcr",
+    "finding_type",
+    "notes",
 ]
 
 
@@ -97,8 +108,7 @@ def test_problems_lists_every_violation_rather_than_the_first():
 
 
 def test_problems_names_the_offending_row_by_file_position():
-    assert problems([Row(A, epcr=0.9), Row(B, epcr=0.8, finding_type="x")])[0].startswith(
-        "row 2:")
+    assert problems([Row(A, epcr=0.9), Row(B, epcr=0.8, finding_type="x")])[0].startswith("row 2:")
 
 
 def test_a_clean_submission_has_no_problems():
@@ -137,8 +147,10 @@ def roundtrip(rows):
 
 
 def test_a_written_submission_reads_back_identical():
-    rows = [Row(A, B, epcr=0.99, notes="a note, with a comma"),
-            Row(C, epcr=0.5, finding_type="secondary")]
+    rows = [
+        Row(A, B, epcr=0.99, notes="a note, with a comma"),
+        Row(C, epcr=0.5, finding_type="secondary"),
+    ]
     assert roundtrip(rows) == sorted(rows, key=lambda r: -r.epcr)
 
 

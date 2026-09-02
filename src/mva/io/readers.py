@@ -183,9 +183,9 @@ def read_bed(path: str | Path) -> list[Region]:
         start, end = as_int(cells[1]), as_int(cells[2])
         if start is None or end is None:
             continue
-        regions.append(Region(cells[0], start, end,
-                              cells[3] if len(cells) > 3 else "",
-                              tuple(cells[4:])))
+        regions.append(
+            Region(cells[0], start, end, cells[3] if len(cells) > 3 else "", tuple(cells[4:]))
+        )
     return regions
 
 

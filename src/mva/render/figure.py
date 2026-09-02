@@ -43,9 +43,12 @@ class Exhibit:
             body = self.figure.to_html(
                 full_html=False,
                 include_plotlyjs="cdn" if embed_runtime else False,
-                config={"displaylogo": False, "responsive": True,
-                        "toImageButtonOptions": {"scale": 2, "filename": self.slug},
-                        "modeBarButtonsToRemove": ["lasso2d", "select2d"]},
+                config={
+                    "displaylogo": False,
+                    "responsive": True,
+                    "toImageButtonOptions": {"scale": 2, "filename": self.slug},
+                    "modeBarButtonsToRemove": ["lasso2d", "select2d"],
+                },
                 div_id=f"fig-{self.slug}",
             )
         else:
@@ -68,8 +71,9 @@ class Exhibit:
         if self.figure is None:
             path.write_text(self.html, encoding="utf-8")
         else:
-            self.figure.write_html(path, include_plotlyjs="cdn",
-                                   config={"displaylogo": False, "responsive": True})
+            self.figure.write_html(
+                path, include_plotlyjs="cdn", config={"displaylogo": False, "responsive": True}
+            )
         return path
 
     def write_image(self, directory: str | Path, scale: int = 2) -> Path | None:

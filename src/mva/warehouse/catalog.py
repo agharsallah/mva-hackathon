@@ -172,10 +172,12 @@ def discover(root: Path) -> list[Dataset]:
             datasets.append(override)
             continue
         name = table_name(path.name)
-        datasets.append(Dataset(
-            table=name,
-            source=path.name,
-            shape=sniff(path),
-            description=NOTES.get(name, ""),
-        ))
+        datasets.append(
+            Dataset(
+                table=name,
+                source=path.name,
+                shape=sniff(path),
+                description=NOTES.get(name, ""),
+            )
+        )
     return sorted(datasets, key=lambda dataset: dataset.table)

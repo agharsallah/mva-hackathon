@@ -73,7 +73,7 @@ CALLSET_DERIVATIONS: tuple[Derivation, ...] = (
     Derivation(
         name="allele_balance_flags",
         question="Does any chromosome deviate from the 0.50 heterozygous balance a "
-                 "diploid genome should show?",
+        "diploid genome should show?",
         depends_on=("vcf_chrom_allele_balance",),
         sql=f"""
             SELECT chrom,
@@ -108,7 +108,7 @@ CALLSET_DERIVATIONS: tuple[Derivation, ...] = (
     Derivation(
         name="variant_density_bins",
         question="Where along each chromosome does variation and quality concentrate, "
-                 "at 1 Mb resolution?",
+        "at 1 Mb resolution?",
         depends_on=("variants_raw",),
         # `variants_raw` is five million all-text rows with no index, so a whole-genome
         # scan is ~60 s. Precomputing it here is what lets the viz API answer a
@@ -150,7 +150,7 @@ CALLSET_DERIVATIONS: tuple[Derivation, ...] = (
     Derivation(
         name="stats_tstv",
         question="What is the transition/transversion ratio — the callset's cheapest "
-                 "sanity check against a random error process?",
+        "sanity check against a random error process?",
         depends_on=("stats_summary",),
         sql=f"""
             SELECT CAST(split_part(line, chr(9), 3) AS BIGINT)         AS ts,
@@ -193,7 +193,7 @@ CALLSET_DERIVATIONS: tuple[Derivation, ...] = (
     Derivation(
         name="stats_idd",
         question="How long are the insertions and deletions, and is the length spectrum "
-                 "the expected exponential decay?",
+        "the expected exponential decay?",
         depends_on=("stats_summary",),
         # IDD layout: code, id, length, count, n_genotypes, mean_vaf. Negative length is
         # a deletion, positive an insertion.
@@ -223,12 +223,17 @@ CALLSET_DERIVATIONS: tuple[Derivation, ...] = (
 )
 
 #: Every derivation the runner knows about, in execution order.
-DERIVATIONS: tuple[Derivation, ...] = (CALLSET_DERIVATIONS + REFERENCE_DERIVATIONS
-                                       + KARYOGRAM_DERIVATIONS + PAIR_DERIVATIONS
-                                       + FUNNEL_DERIVATIONS + STATS_DERIVATIONS
-                                       + BACKGROUND_DERIVATIONS
-                                       + SUPPRESSED_DERIVATIONS
-                                       + CLINVAR_DERIVATIONS)
+DERIVATIONS: tuple[Derivation, ...] = (
+    CALLSET_DERIVATIONS
+    + REFERENCE_DERIVATIONS
+    + KARYOGRAM_DERIVATIONS
+    + PAIR_DERIVATIONS
+    + FUNNEL_DERIVATIONS
+    + STATS_DERIVATIONS
+    + BACKGROUND_DERIVATIONS
+    + SUPPRESSED_DERIVATIONS
+    + CLINVAR_DERIVATIONS
+)
 
 #: Written alongside the outputs so a result in the database can be traced to a run.
 PROVENANCE_TABLE = "derivation_runs"

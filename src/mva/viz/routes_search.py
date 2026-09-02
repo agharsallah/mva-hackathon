@@ -37,10 +37,13 @@ def add_routes(api: APIRouter, settings: Postgres, cache: Cache) -> None:
 
     @api.get("/search", response_model=Envelope, tags=["search"])
     def search_endpoint(
-            q: str = Query(description="a gene symbol (BUB1B), a region "
-                                       "(15:40100000-40200000, either chr spelling) "
-                                       "or an rsID (rs137852899)"),
-            refresh: bool = False) -> dict:
+        q: str = Query(
+            description="a gene symbol (BUB1B), a region "
+            "(15:40100000-40200000, either chr spelling) "
+            "or an rsID (rs137852899)"
+        ),
+        refresh: bool = False,
+    ) -> dict:
         """Resolve one typed query to a window of the callset, saying how it resolved.
 
         Answers ``{kind, chrom, start, end, label, source, note}``. ``kind`` is
@@ -61,10 +64,11 @@ def add_routes(api: APIRouter, settings: Postgres, cache: Cache) -> None:
 
     @api.get("/callset/region", response_model=Envelope, tags=["search"])
     def region_endpoint(
-            chrom: str = Query(description="contig, either spelling: \"15\" or \"chr15\""),
-            start: int = Query(ge=1, description="1-based inclusive start"),
-            end: int = Query(ge=1, description="1-based inclusive end"),
-            refresh: bool = False) -> dict:
+        chrom: str = Query(description='contig, either spelling: "15" or "chr15"'),
+        start: int = Query(ge=1, description="1-based inclusive start"),
+        end: int = Query(ge=1, description="1-based inclusive end"),
+        refresh: bool = False,
+    ) -> dict:
         """Every callset record in an arbitrary window, with its genotype evidence.
 
         The second route in the service that reads ``variants_raw``, and the only one a
@@ -90,6 +94,7 @@ def add_routes(api: APIRouter, settings: Postgres, cache: Cache) -> None:
 
 # ── the two bodies, kept out of the closures so they stay testable ───────────────────
 
+
 def _resolve(q: str, settings: Postgres, cache: Cache, refresh: bool) -> dict:
     """Resolve, caching only the paths that cost a lookup."""
     with _translated():
@@ -107,14 +112,14 @@ def _resolve(q: str, settings: Postgres, cache: Cache, refresh: bool) -> dict:
         return cached(entry, entry.data["source"])
 
 
-def _region(settings: Postgres, cache: Cache, chrom: str, start: int, end: int,
-            refresh: bool) -> dict:
+def _region(
+    settings: Postgres, cache: Cache, chrom: str, start: int, end: int, refresh: bool
+) -> dict:
     with _translated():
         bare = search.normalise_contig(chrom)
         search.check_span(start, end)
         key = safe_key("region", bare, start, end)
-        entry = cache.get_or_build(
-            key, lambda: search.region(settings, bare, start, end), refresh)
+        entry = cache.get_or_build(key, lambda: search.region(settings, bare, start, end), refresh)
         return cached(entry, search.REGION_SOURCE)
 
 

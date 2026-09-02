@@ -17,10 +17,12 @@ from mva.warehouse.stage import normalise, safe_column, safe_columns, stage
 def profile(tmp_path: Path) -> Path:
     """A miniature profile directory covering all four source shapes."""
     (tmp_path / "counts.tsv").write_text(
-        "gene\tn\tmean_dp\nBUB1B\t80\t44.2\nTP53\t120\t45.1\ntotal\t200\n")
+        "gene\tn\tmean_dp\nBUB1B\t80\t44.2\nTP53\t120\t45.1\ntotal\t200\n"
+    )
     (tmp_path / "vcf_contig_counts.tsv").write_text("1\t248956422\t383428\n2\t242193529\t388761\n")
     (tmp_path / "vcf_filter_gt_counts.tsv").write_text(
-        "## FILTER counts\nPASS\t10\nLowQual\t3\n## GT counts\n0/1\t7\n## total_records\t13\n")
+        "## FILTER counts\nPASS\t10\nLowQual\t3\n## GT counts\n0/1\t7\n## total_records\t13\n"
+    )
     (tmp_path / "panel.bed").write_text("chr15\t40161060\t40261214\tBUB1B\n")
     (tmp_path / "notes.md").write_text("not stageable\n")
     return tmp_path

@@ -157,17 +157,21 @@ def build_gnomad(scratch: Path, out: Path, panel: list[dict]) -> None:
                 continue
             if row["canonical"] != "true" or row["transcript_type"] != "protein_coding":
                 continue
-            writer.writerow([
-                _flags(row[c]) if c == "constraint_flags" else _num(row[c])
-                for c, _ in GNOMAD_COLUMNS
-            ])
+            writer.writerow(
+                [
+                    _flags(row[c]) if c == "constraint_flags" else _num(row[c])
+                    for c, _ in GNOMAD_COLUMNS
+                ]
+            )
             kept += 1
             if row["gene"] in keep_syms:
                 seen_syms.add(row["gene"])
     print(f"gnomad  {kept:,} rows -> {out}  ({out.stat().st_size:,} bytes)")
     absent = sorted(keep_syms - seen_syms)
-    print(f"gnomad  panel genes present: {len(seen_syms)}/{len(keep_syms)}"
-          + (f"  MISSING {absent}" if absent else ""))
+    print(
+        f"gnomad  panel genes present: {len(seen_syms)}/{len(keep_syms)}"
+        + (f"  MISSING {absent}" if absent else "")
+    )
 
 
 # ── ClinVar panel subset ─────────────────────────────────────────────────────
@@ -249,22 +253,36 @@ def build_clinvar(scratch: Path, out: Path, panel: list[dict]) -> None:
         writer.writerow(CLINVAR_HEADER)
         for (chrom, start, end), symbol in by_region.items():
             proc = subprocess.run(
-                [bcftools, "query", "-r", f"{chrom}:{start + 1}-{end}",
-                 "-f", CLINVAR_QUERY, str(vcf)],
-                capture_output=True, text=True, check=True,
+                [
+                    bcftools,
+                    "query",
+                    "-r",
+                    f"{chrom}:{start + 1}-{end}",
+                    "-f",
+                    CLINVAR_QUERY,
+                    str(vcf),
+                ],
+                capture_output=True,
+                text=True,
+                check=True,
             )
             for line in proc.stdout.splitlines():
                 f = line.split("\t")
                 rsid = _clean(f[5])
-                writer.writerow([
-                    f[0], f[1], f[2], f[3],
-                    f"rs{rsid}" if rsid else "",
-                    _gene_symbol(f[6], symbol),
-                    _clean(f[7]),
-                    _clean(f[8]),
-                    _clean(f[9]),
-                    f[4],
-                ])
+                writer.writerow(
+                    [
+                        f[0],
+                        f[1],
+                        f[2],
+                        f[3],
+                        f"rs{rsid}" if rsid else "",
+                        _gene_symbol(f[6], symbol),
+                        _clean(f[7]),
+                        _clean(f[8]),
+                        _clean(f[9]),
+                        f[4],
+                    ]
+                )
                 rows += 1
     print(f"clinvar {rows:,} rows -> {out}  ({out.stat().st_size:,} bytes)")
 
@@ -273,8 +291,9 @@ def build_clinvar(scratch: Path, out: Path, panel: list[dict]) -> None:
 
 
 def main(argv: list[str] | None = None) -> int:
-    p = argparse.ArgumentParser(description=__doc__,
-                                formatter_class=argparse.RawDescriptionHelpFormatter)
+    p = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
+    )
     sub = p.add_subparsers(dest="cmd", required=True)
     for name in ("gnomad", "clinvar"):
         s = sub.add_parser(name)

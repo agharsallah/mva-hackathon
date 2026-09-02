@@ -38,8 +38,18 @@ RAW = Hue("#e0d4f7", "#7a5cab", "the raw input")
 MUTED = Hue("#e6e6e6", "#888888", "context, not the subject")
 
 #: Ordered sweep for series that carry no semantics of their own (lanes, contigs, genes).
-SEQUENCE = ["#3d7ebd", "#7a5cab", "#3f8f47", "#c98f1e", "#c0392b",
-            "#4aa3a3", "#a3579b", "#6b8f3f", "#b5762e", "#8a8a8a"]
+SEQUENCE = [
+    "#3d7ebd",
+    "#7a5cab",
+    "#3f8f47",
+    "#c98f1e",
+    "#c0392b",
+    "#4aa3a3",
+    "#a3579b",
+    "#6b8f3f",
+    "#b5762e",
+    "#8a8a8a",
+]
 
 INK = "#333333"
 SUBTLE_INK = "#666666"
@@ -67,16 +77,34 @@ def install_template() -> None:
         plot_bgcolor=PAPER,
         colorway=SEQUENCE,
         margin=dict(l=64, r=28, t=56, b=52),
-        xaxis=dict(gridcolor=GRID, zerolinecolor=GRID, linecolor=GRID,
-                   ticks="outside", tickcolor=GRID, ticklen=4,
-                   title=dict(font=dict(size=12, color=SUBTLE_INK))),
-        yaxis=dict(gridcolor=GRID, zerolinecolor=GRID, linecolor=GRID,
-                   ticks="outside", tickcolor=GRID, ticklen=4,
-                   title=dict(font=dict(size=12, color=SUBTLE_INK))),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0,
-                    font=dict(size=12), bgcolor="rgba(0,0,0,0)"),
-        hoverlabel=dict(font=dict(family=MONO, size=12), bgcolor="#ffffff",
-                        bordercolor=GRID),
+        xaxis=dict(
+            gridcolor=GRID,
+            zerolinecolor=GRID,
+            linecolor=GRID,
+            ticks="outside",
+            tickcolor=GRID,
+            ticklen=4,
+            title=dict(font=dict(size=12, color=SUBTLE_INK)),
+        ),
+        yaxis=dict(
+            gridcolor=GRID,
+            zerolinecolor=GRID,
+            linecolor=GRID,
+            ticks="outside",
+            tickcolor=GRID,
+            ticklen=4,
+            title=dict(font=dict(size=12, color=SUBTLE_INK)),
+        ),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="left",
+            x=0,
+            font=dict(size=12),
+            bgcolor="rgba(0,0,0,0)",
+        ),
+        hoverlabel=dict(font=dict(family=MONO, size=12), bgcolor="#ffffff", bordercolor=GRID),
     )
     pio.templates[TEMPLATE_NAME] = template
     pio.templates.default = TEMPLATE_NAME

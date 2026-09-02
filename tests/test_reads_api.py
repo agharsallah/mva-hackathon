@@ -30,10 +30,8 @@ class FakeConnection:
 
 @pytest.fixture()
 def client(tmp_path, monkeypatch):
-    monkeypatch.setattr(runners.access, "resolve_root",
-                        lambda root=None: root or "s3://test/reads")
-    monkeypatch.setattr(runners.access, "connection",
-                        lambda root: FakeConnection())
+    monkeypatch.setattr(runners.access, "resolve_root", lambda root=None: root or "s3://test/reads")
+    monkeypatch.setattr(runners.access, "connection", lambda root: FakeConnection())
     manager = Manager(directory=tmp_path / "jobs", workers=1)
     with TestClient(create_app(manager, token="")) as running:
         yield running
@@ -47,27 +45,53 @@ def finished(client, response) -> dict:
 
 
 def test_scan_runs_as_a_job_and_returns_hits(client, monkeypatch):
-    hit = Hit(probe="brca", lane=1, read_num=1, tile=1101, x=5, y=7,
-              position=12, strand="+", sequence="ACGT")
-    monkeypatch.setattr(runners.scan, "kmers",
-                        lambda conn, root, probes, limit, names: [hit])
-    job = finished(client, client.post("/scan", json={
-        "probes": [{"sequence": "acgt", "name": "brca"}], "limit": 5}))
+    hit = Hit(
+        probe="brca",
+        lane=1,
+        read_num=1,
+        tile=1101,
+        x=5,
+        y=7,
+        position=12,
+        strand="+",
+        sequence="ACGT",
+    )
+    monkeypatch.setattr(runners.scan, "kmers", lambda conn, root, probes, limit, names: [hit])
+    job = finished(
+        client,
+        client.post("/scan", json={"probes": [{"sequence": "acgt", "name": "brca"}], "limit": 5}),
+    )
     assert job["state"] == DONE
     assert job["result"]["hits"][0]["probe"] == "brca"
     assert job["result"]["root"] == "s3://test/reads"
 
 
 def test_count_attaches_a_verdict_per_probe(client, monkeypatch):
-    monkeypatch.setattr(runners.scan, "counts",
-                        lambda conn, root, probes, names: [("real", 20, 15, 35, 4)])
-    job = finished(client, client.post("/count", json={
-        "probes": [{"sequence": "ACGT", "name": "real"},
-                   {"sequence": "TTTT", "name": "missing"}]}))
+    monkeypatch.setattr(
+        runners.scan, "counts", lambda conn, root, probes, names: [("real", 20, 15, 35, 4)]
+    )
+    job = finished(
+        client,
+        client.post(
+            "/count",
+            json={
+                "probes": [
+                    {"sequence": "ACGT", "name": "real"},
+                    {"sequence": "TTTT", "name": "missing"},
+                ]
+            },
+        ),
+    )
     by_name = {row["probe"]: row for row in job["result"]["counts"]}
     assert by_name["real"]["verdict"] == "present"
-    assert by_name["missing"] == {"probe": "missing", "forward": 0, "reverse": 0,
-                                  "total": 0, "lanes": 0, "verdict": "absent"}
+    assert by_name["missing"] == {
+        "probe": "missing",
+        "forward": 0,
+        "reverse": 0,
+        "total": 0,
+        "lanes": 0,
+        "verdict": "absent",
+    }
 
 
 def test_a_probe_that_is_not_dna_is_refused_before_any_job(client):
@@ -82,22 +106,27 @@ def test_sql_rejects_writes_and_multiple_statements(client):
 
 
 def test_sql_returns_columns_and_rows(client, monkeypatch):
-    monkeypatch.setattr(runners.scan, "sql",
-                        lambda conn, root, query: [(1, 2)])
-    job = finished(client, client.post("/sql", json={
-        "query": "SELECT lane, count(*) AS n FROM reads GROUP BY lane"}))
-    assert job["result"] == {"root": "s3://test/reads",
-                             "seconds": job["result"]["seconds"],
-                             "columns": ["lane", "n"], "row_count": 1,
-                             "truncated": False, "rows": [[1, 2]]}
+    monkeypatch.setattr(runners.scan, "sql", lambda conn, root, query: [(1, 2)])
+    job = finished(
+        client,
+        client.post("/sql", json={"query": "SELECT lane, count(*) AS n FROM reads GROUP BY lane"}),
+    )
+    assert job["result"] == {
+        "root": "s3://test/reads",
+        "seconds": job["result"]["seconds"],
+        "columns": ["lane", "n"],
+        "row_count": 1,
+        "truncated": False,
+        "rows": [[1, 2]],
+    }
 
 
 def test_a_failing_runner_becomes_a_failed_job_with_the_reason(client, monkeypatch):
     def boom(conn, root, probes, limit, names):
         raise RuntimeError("shard missing")
+
     monkeypatch.setattr(runners.scan, "kmers", boom)
-    job = finished(client, client.post("/scan",
-                                       json={"probes": [{"sequence": "ACGT"}]}))
+    job = finished(client, client.post("/scan", json={"probes": [{"sequence": "ACGT"}]}))
     assert job["state"] == "failed"
     assert "shard missing" in job["error"]
 
@@ -110,19 +139,16 @@ def test_cancel_interrupts_a_running_job(client, monkeypatch):
         raise RuntimeError("interrupted")
 
     monkeypatch.setattr(runners.scan, "kmers", slow)
-    job_id = client.post("/scan",
-                         json={"probes": [{"sequence": "ACGT"}]}).json()["id"]
+    job_id = client.post("/scan", json={"probes": [{"sequence": "ACGT"}]}).json()["id"]
     cancelled = client.post(f"/jobs/{job_id}/cancel")
     assert cancelled.status_code == 200
     release.set()
-    assert client.get(f"/jobs/{job_id}/wait",
-                      params={"timeout": 10}).json()["state"] == "cancelled"
+    assert client.get(f"/jobs/{job_id}/wait", params={"timeout": 10}).json()["state"] == "cancelled"
 
 
 def test_cancel_after_the_job_finished_is_a_conflict(client, monkeypatch):
     monkeypatch.setattr(runners.scan, "kmers", lambda *a, **k: [])
-    job = finished(client, client.post("/scan",
-                                       json={"probes": [{"sequence": "ACGT"}]}))
+    job = finished(client, client.post("/scan", json={"probes": [{"sequence": "ACGT"}]}))
     assert client.post(f"/jobs/{job['id']}/cancel").status_code == 409
 
 
@@ -152,8 +178,7 @@ def test_token_required_when_configured(tmp_path, monkeypatch):
         assert client.get("/health").status_code == 200  # liveness needs no secret
         assert client.get("/jobs").status_code == 401
         assert client.get("/jobs", headers={"X-API-Key": "wrong"}).status_code == 401
-        assert client.get("/jobs",
-                          headers={"X-API-Key": "sesame"}).status_code == 200
+        assert client.get("/jobs", headers={"X-API-Key": "sesame"}).status_code == 200
 
 
 def test_sql_cap_is_pushed_into_the_engine(client, monkeypatch):
@@ -165,8 +190,9 @@ def test_sql_cap_is_pushed_into_the_engine(client, monkeypatch):
         return [(i,) for i in range(4)]  # limit+1 rows back means truncation
 
     monkeypatch.setattr(runners.scan, "sql", spy)
-    job = finished(client, client.post("/sql", json={
-        "query": "SELECT lane FROM reads", "limit": 3}))
+    job = finished(
+        client, client.post("/sql", json={"query": "SELECT lane FROM reads", "limit": 3})
+    )
     assert "LIMIT 4" in seen["query"]
     assert job["result"]["truncated"] is True
     assert job["result"]["row_count"] == 3
@@ -180,6 +206,7 @@ def test_second_convert_is_refused_while_one_runs(client, monkeypatch):
         def run(job):
             release.wait(10)
             return {"rows": 0}
+
         return run
 
     monkeypatch.setattr(runners, "convert_runner", slow_convert)

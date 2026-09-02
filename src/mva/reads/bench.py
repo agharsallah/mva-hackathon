@@ -72,8 +72,10 @@ def cut_sample(fastq, reads: int, scratch: Path) -> Path:
     scratch.mkdir(parents=True, exist_ok=True)
     sample = scratch / source.name  # keep the name: lane/read parse must still work
     local = "" if source.path is None else f" {engines.shlex_quote(source.path)}"
-    command = (f"{engines.shlex_quote(decompressor)} -dc{local} "
-               f"| head -n {int(reads) * 4} | gzip -1 > {engines.shlex_quote(sample)}")
+    command = (
+        f"{engines.shlex_quote(decompressor)} -dc{local} "
+        f"| head -n {int(reads) * 4} | gzip -1 > {engines.shlex_quote(sample)}"
+    )
     if source.path is not None:
         subprocess.run(command, shell=True, check=True)
     else:
@@ -99,19 +101,38 @@ def _run_one(engine: str, sample: str, out_dir: str, memory_limit: str, queue) -
     baseline = peak_rss_bytes()
     started = time.perf_counter()
     try:
-        done = convert_file(Path(sample), Path(out_dir), engine=engine,
-                            memory_limit=memory_limit)
-        queue.put(Timing(engine, 0, done.rows, done.seconds, done.parquet_bytes,
-                         peak_rss=max(0, peak_rss_bytes() - baseline)))
+        done = convert_file(Path(sample), Path(out_dir), engine=engine, memory_limit=memory_limit)
+        queue.put(
+            Timing(
+                engine,
+                0,
+                done.rows,
+                done.seconds,
+                done.parquet_bytes,
+                peak_rss=max(0, peak_rss_bytes() - baseline),
+            )
+        )
     except Exception as error:  # a losing engine is a result, not a crash
-        queue.put(Timing(engine, 0, 0, time.perf_counter() - started, 0,
-                         error=f"{type(error).__name__}: {error}"))
+        queue.put(
+            Timing(
+                engine,
+                0,
+                0,
+                time.perf_counter() - started,
+                0,
+                error=f"{type(error).__name__}: {error}",
+            )
+        )
 
 
-def race(fastq, reads: int = 1_000_000,
-         contenders: tuple[str, ...] = (),
-         jobs: int = 1, memory_limit: str | None = None,
-         report=print) -> list[Timing]:
+def race(
+    fastq,
+    reads: int = 1_000_000,
+    contenders: tuple[str, ...] = (),
+    jobs: int = 1,
+    memory_limit: str | None = None,
+    report=print,
+) -> list[Timing]:
     """Run every available engine over the same sample; never fake a missing one.
 
     Each engine runs in a fresh spawned process: peak memory is then attributable to
@@ -127,14 +148,15 @@ def race(fastq, reads: int = 1_000_000,
 
     contenders = contenders or tuple(engines.ENGINES)
     memory_limit = memory_limit or machine_share(jobs)[1]
-    report(f"budget per engine: {memory_limit} DuckDB memory "
-           f"(the share of a {jobs}-job run)")
+    report(f"budget per engine: {memory_limit} DuckDB memory (the share of a {jobs}-job run)")
     context = multiprocessing.get_context("spawn")
     scratch = Path(tempfile.mkdtemp(prefix="mva-bench-"))
     timings: list[Timing] = []
     if reads < schema.ROW_GROUP_SIZE:
-        report(f"note: {reads:,} reads is under one {schema.ROW_GROUP_SIZE:,}-row "
-               f"row group — timings are valid, memory comparisons are not")
+        report(
+            f"note: {reads:,} reads is under one {schema.ROW_GROUP_SIZE:,}-row "
+            f"row group — timings are valid, memory comparisons are not"
+        )
     try:
         report(f"cutting {reads:,}-read sample from {as_source(fastq).name} …")
         sample = cut_sample(fastq, reads, scratch)
@@ -144,21 +166,36 @@ def race(fastq, reads: int = 1_000_000,
                 report(f"  {engine}: not installed, skipped")
                 continue
             queue = context.Queue()
-            worker = context.Process(target=_run_one, args=(
-                engine, str(sample), str(scratch / f"out-{engine}"), memory_limit, queue))
+            worker = context.Process(
+                target=_run_one,
+                args=(engine, str(sample), str(scratch / f"out-{engine}"), memory_limit, queue),
+            )
             worker.start()
             worker.join()
-            result = queue.get() if not queue.empty() else Timing(
-                engine, reads, 0, 0.0, 0,
-                error=f"worker died with exit code {worker.exitcode}")
-            timing = Timing(engine, reads, result.rows, result.seconds,
-                            result.parquet_bytes, result.peak_rss, result.error)
+            result = (
+                queue.get()
+                if not queue.empty()
+                else Timing(
+                    engine, reads, 0, 0.0, 0, error=f"worker died with exit code {worker.exitcode}"
+                )
+            )
+            timing = Timing(
+                engine,
+                reads,
+                result.rows,
+                result.seconds,
+                result.parquet_bytes,
+                result.peak_rss,
+                result.error,
+            )
             timings.append(timing)
             if timing.ok:
-                report(f"  {engine}: {timing.rows:,} reads in {timing.seconds:.1f}s "
-                       f"= {timing.reads_per_second:,.0f} reads/s, "
-                       f"{timing.parquet_bytes / 2**20:.1f} MiB parquet, "
-                       f"{timing.peak_rss / 2**20:.0f} MiB peak RSS")
+                report(
+                    f"  {engine}: {timing.rows:,} reads in {timing.seconds:.1f}s "
+                    f"= {timing.reads_per_second:,.0f} reads/s, "
+                    f"{timing.parquet_bytes / 2**20:.1f} MiB parquet, "
+                    f"{timing.peak_rss / 2**20:.0f} MiB peak RSS"
+                )
             else:
                 report(f"  {engine}: FAILED — {timing.error}")
     finally:

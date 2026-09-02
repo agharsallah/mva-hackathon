@@ -54,26 +54,38 @@ def composition(profile: CallsetProfile) -> Exhibit:
     multiallelic = summary.get("multiallelic sites", 0)
 
     figure = go.Figure()
-    for label, value, hue in (("substitutions (SNP)", snps, MACHINE),
-                              ("insertions & deletions (indel)", indels, RAW),
-                              ("other", others, MUTED)):
+    for label, value, hue in (
+        ("substitutions (SNP)", snps, MACHINE),
+        ("insertions & deletions (indel)", indels, RAW),
+        ("other", others, MUTED),
+    ):
         if not value:
             continue
-        figure.add_trace(go.Bar(
-            y=["callset"], x=[value], name=label, orientation="h",
-            marker=dict(color=hue.fill, line=dict(color=hue.line, width=1)),
-            hovertemplate=f"<b>{label}</b><br>%{{x:,}} records<extra></extra>",
-        ))
+        figure.add_trace(
+            go.Bar(
+                y=["callset"],
+                x=[value],
+                name=label,
+                orientation="h",
+                marker=dict(color=hue.fill, line=dict(color=hue.line, width=1)),
+                hovertemplate=f"<b>{label}</b><br>%{{x:,}} records<extra></extra>",
+            )
+        )
     if multiallelic:
-        figure.add_trace(go.Bar(
-            y=["needing normalization"], x=[multiallelic], name="multiallelic sites",
-            orientation="h",
-            marker=dict(color=BAD.fill, line=dict(color=BAD.line, width=1)),
-            hovertemplate="<b>multiallelic</b><br>%{x:,} records carry two alternate "
-                          "alleles on one row<extra></extra>",
-        ))
-    figure.update_layout(barmode="stack", xaxis_title="records",
-                         yaxis_title="", height=260, bargap=0.45)
+        figure.add_trace(
+            go.Bar(
+                y=["needing normalization"],
+                x=[multiallelic],
+                name="multiallelic sites",
+                orientation="h",
+                marker=dict(color=BAD.fill, line=dict(color=BAD.line, width=1)),
+                hovertemplate="<b>multiallelic</b><br>%{x:,} records carry two alternate "
+                "alleles on one row<extra></extra>",
+            )
+        )
+    figure.update_layout(
+        barmode="stack", xaxis_title="records", yaxis_title="", height=260, bargap=0.45
+    )
 
     total = profile.total_records or (snps + indels + others)
     return Exhibit(
@@ -86,9 +98,12 @@ def composition(profile: CallsetProfile) -> Exhibit:
             "class but a defect — records holding two alternate alleles at once, which "
             "must be split into one allele per record before any exact comparison works."
         ),
-        legend=legend_line(MACHINE, RAW, BAD,
-                           extra="blue is substitutions, purple is indels, red is the "
-                                 "multiallelic backlog"),
+        legend=legend_line(
+            MACHINE,
+            RAW,
+            BAD,
+            extra="blue is substitutions, purple is indels, red is the multiallelic backlog",
+        ),
         figure=figure,
         height=260,
     )
@@ -115,17 +130,28 @@ def substitution_spectrum(profile: CallsetProfile) -> Exhibit:
     values = [collapsed[k] for k in labels]
     total = sum(values) or 1
 
-    figure = go.Figure(go.Bar(
-        x=labels, y=values,
-        marker=dict(color=[GOOD.fill if k in TRANSITIONS else MACHINE.fill for k in labels],
-                    line=dict(color=[GOOD.line if k in TRANSITIONS else MACHINE.line
-                                     for k in labels], width=1)),
-        text=[f"{v / total:.1%}" for v in values], textposition="outside",
-        customdata=[["transition" if k in TRANSITIONS else "transversion"] for k in labels],
-        hovertemplate="<b>%{x}</b> (%{customdata[0]})<br>%{y:,} substitutions<extra></extra>",
-    ))
-    figure.update_layout(xaxis_title="substitution, collapsed onto the pyrimidine strand",
-                         yaxis_title="substitutions", showlegend=False, bargap=0.4)
+    figure = go.Figure(
+        go.Bar(
+            x=labels,
+            y=values,
+            marker=dict(
+                color=[GOOD.fill if k in TRANSITIONS else MACHINE.fill for k in labels],
+                line=dict(
+                    color=[GOOD.line if k in TRANSITIONS else MACHINE.line for k in labels], width=1
+                ),
+            ),
+            text=[f"{v / total:.1%}" for v in values],
+            textposition="outside",
+            customdata=[["transition" if k in TRANSITIONS else "transversion"] for k in labels],
+            hovertemplate="<b>%{x}</b> (%{customdata[0]})<br>%{y:,} substitutions<extra></extra>",
+        )
+    )
+    figure.update_layout(
+        xaxis_title="substitution, collapsed onto the pyrimidine strand",
+        yaxis_title="substitutions",
+        showlegend=False,
+        bargap=0.4,
+    )
 
     ratio = ts_tv(profile)
     notes = []
@@ -145,9 +171,12 @@ def substitution_spectrum(profile: CallsetProfile) -> Exhibit:
             "one strand is the same event as C>T on the other, so counting them separately "
             "splits one signal in half. The two green bars are transitions."
         ),
-        legend=legend_line(GOOD, MACHINE,
-                           extra="green marks transitions (purine↔purine, pyrimidine↔"
-                                 "pyrimidine), blue marks transversions"),
+        legend=legend_line(
+            GOOD,
+            MACHINE,
+            extra="green marks transitions (purine↔purine, pyrimidine↔"
+            "pyrimidine), blue marks transversions",
+        ),
         figure=sized(figure, 400),
         notes=notes,
     )
@@ -172,15 +201,18 @@ def indel_lengths(profile: CallsetProfile) -> Exhibit:
     insertions = [(l, c) for l, c in points if l > 0]
 
     figure = go.Figure()
-    for label, data, hue in (("deletions", deletions, BAD),
-                             ("insertions", insertions, MACHINE)):
+    for label, data, hue in (("deletions", deletions, BAD), ("insertions", insertions, MACHINE)):
         if not data:
             continue
-        figure.add_trace(go.Bar(
-            x=[l for l, _ in data], y=[c for _, c in data], name=label,
-            marker=dict(color=hue.fill, line=dict(color=hue.line, width=0.5)),
-            hovertemplate="<b>%{x} bp</b><br>%{y:,} records<extra></extra>",
-        ))
+        figure.add_trace(
+            go.Bar(
+                x=[l for l, _ in data],
+                y=[c for _, c in data],
+                name=label,
+                marker=dict(color=hue.fill, line=dict(color=hue.line, width=0.5)),
+                hovertemplate="<b>%{x} bp</b><br>%{y:,} records<extra></extra>",
+            )
+        )
     figure.update_yaxes(type="log", title_text="records (log scale)")
     figure.update_xaxes(title_text="length change in bases — negative deletes, positive inserts")
     figure.add_vline(x=0, line=dict(color=MUTED.line, width=1))
@@ -190,8 +222,9 @@ def indel_lengths(profile: CallsetProfile) -> Exhibit:
     del_count = sum(c for _, c in deletions)
     ins_count = sum(c for _, c in insertions)
     notes = [
-        f"{del_count:,} deletions against {ins_count:,} insertions "
-        f"({del_count / ins_count:.2f}:1)." if ins_count else "",
+        f"{del_count:,} deletions against {ins_count:,} insertions ({del_count / ins_count:.2f}:1)."
+        if ins_count
+        else "",
         _overflow_note(points),
         "Lengths not divisible by three shift the reading frame of a coding sequence and "
         "usually destroy the protein; lengths divisible by three remove or add whole amino "
@@ -208,9 +241,12 @@ def indel_lengths(profile: CallsetProfile) -> Exhibit:
             "in repetitive sequence — and the tail out to tens of bases is where "
             "gene-disrupting events live."
         ),
-        legend=legend_line(BAD, MACHINE,
-                           extra="red bars left of zero are deletions, blue bars right of "
-                                 "zero are insertions; the count axis is logarithmic"),
+        legend=legend_line(
+            BAD,
+            MACHINE,
+            extra="red bars left of zero are deletions, blue bars right of "
+            "zero are insertions; the count axis is logarithmic",
+        ),
         figure=sized(figure, 420),
         notes=[n for n in notes if n],
     )
@@ -231,22 +267,40 @@ def depth_distribution(profile: CallsetProfile) -> Exhibit:
             shares.append(share)
 
     peak = bins[shares.index(max(shares))] if shares else None
-    figure = go.Figure(go.Bar(
-        x=bins, y=shares,
-        marker=dict(color=[BAD.fill if b < 10 else MACHINE.fill for b in bins],
-                    line=dict(width=0)),
-        hovertemplate="<b>%{x}× depth</b><br>%{y:.2f}% of sites<extra></extra>",
-    ))
-    figure.add_vrect(x0=0, x1=10, fillcolor=BAD.fill, opacity=0.18, line_width=0,
-                     layer="below", annotation_text="under 10× — a copy can be missed",
-                     annotation_position="top left",
-                     annotation_font=dict(size=11, color=SUBTLE_INK))
+    figure = go.Figure(
+        go.Bar(
+            x=bins,
+            y=shares,
+            marker=dict(
+                color=[BAD.fill if b < 10 else MACHINE.fill for b in bins], line=dict(width=0)
+            ),
+            hovertemplate="<b>%{x}× depth</b><br>%{y:.2f}% of sites<extra></extra>",
+        )
+    )
+    figure.add_vrect(
+        x0=0,
+        x1=10,
+        fillcolor=BAD.fill,
+        opacity=0.18,
+        line_width=0,
+        layer="below",
+        annotation_text="under 10× — a copy can be missed",
+        annotation_position="top left",
+        annotation_font=dict(size=11, color=SUBTLE_INK),
+    )
     if peak is not None:
-        figure.add_vline(x=peak, line=dict(color=GOOD.line, width=1.5, dash="dot"),
-                         annotation_text=f"peak {peak}×",
-                         annotation_font=dict(size=11, color=SUBTLE_INK))
-    figure.update_layout(xaxis_title="read depth at the site (×)",
-                         yaxis_title="% of sites", showlegend=False, bargap=0.05)
+        figure.add_vline(
+            x=peak,
+            line=dict(color=GOOD.line, width=1.5, dash="dot"),
+            annotation_text=f"peak {peak}×",
+            annotation_font=dict(size=11, color=SUBTLE_INK),
+        )
+    figure.update_layout(
+        xaxis_title="read depth at the site (×)",
+        yaxis_title="% of sites",
+        showlegend=False,
+        bargap=0.05,
+    )
 
     low = sum(s for b, s in zip(bins, shares) if b < 10)
     return Exhibit(
@@ -258,9 +312,13 @@ def depth_distribution(profile: CallsetProfile) -> Exhibit:
             "reads, where a heterozygous site can lose one of its two alleles to sampling "
             "chance and be called homozygous."
         ),
-        legend=legend_line(MACHINE, BAD, GOOD,
-                           extra="the shaded strip below 10× is the unreliable region; the "
-                                 "dotted line marks the modal depth"),
+        legend=legend_line(
+            MACHINE,
+            BAD,
+            GOOD,
+            extra="the shaded strip below 10× is the unreliable region; the "
+            "dotted line marks the modal depth",
+        ),
         figure=sized(figure, 400),
     )
 
@@ -289,4 +347,3 @@ def _overflow_note(points: list[tuple[int, int]]) -> str:
                 "catch-alls holding the entire long tail."
             )
     return ""
-

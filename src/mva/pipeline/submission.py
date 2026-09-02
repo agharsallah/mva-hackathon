@@ -37,8 +37,18 @@ MAX_ROWS = 10
 FINDING_TYPES = ("primary", "secondary")
 
 HEADER = [
-    "proband_id", "chrom_1", "pos_1", "ref_1", "alt_1",
-    "chrom_2", "pos_2", "ref_2", "alt_2", "epcr", "finding_type", "notes",
+    "proband_id",
+    "chrom_1",
+    "pos_1",
+    "ref_1",
+    "alt_1",
+    "chrom_2",
+    "pos_2",
+    "ref_2",
+    "alt_2",
+    "epcr",
+    "finding_type",
+    "notes",
 ]
 
 
@@ -67,9 +77,17 @@ class Row:
         v, p = self.variant, self.partner
         return [
             PROBAND_ID,
-            v.chrom, str(v.pos), v.ref, v.alt,
-            p.chrom if p else "", str(p.pos) if p else "", p.ref if p else "", p.alt if p else "",
-            _format_epcr(self.epcr), self.finding_type, self.notes,
+            v.chrom,
+            str(v.pos),
+            v.ref,
+            v.alt,
+            p.chrom if p else "",
+            str(p.pos) if p else "",
+            p.ref if p else "",
+            p.alt if p else "",
+            _format_epcr(self.epcr),
+            self.finding_type,
+            self.notes,
         ]
 
 
@@ -109,8 +127,10 @@ def problems(rows: list[Row], require_descending: bool = False) -> list[str]:
         if not 0 < row.epcr <= 1:
             found.append(f"row {index}: epcr must lie in (0, 1], got {row.epcr}")
         if row.finding_type not in FINDING_TYPES:
-            found.append(f"row {index}: finding_type must be one of {FINDING_TYPES}, "
-                         f"got {row.finding_type!r}")
+            found.append(
+                f"row {index}: finding_type must be one of {FINDING_TYPES}, "
+                f"got {row.finding_type!r}"
+            )
 
     epcrs = [_format_epcr(r.epcr) for r in rows]
     if len(set(epcrs)) != len(epcrs):
@@ -150,13 +170,15 @@ def read_submission(source: TextIO) -> list[Row]:
         proband, notes = fields[0].strip(), fields[11]
         if proband != PROBAND_ID:
             raise ValueError(f"row {index}: proband_id must be {PROBAND_ID}, got {proband!r}")
-        rows.append(Row(
-            variant=_parse_variant(fields[1:5]),
-            partner=_parse_variant(fields[5:9]),
-            epcr=float(fields[9]),
-            finding_type=fields[10],
-            notes=notes,
-        ))
+        rows.append(
+            Row(
+                variant=_parse_variant(fields[1:5]),
+                partner=_parse_variant(fields[5:9]),
+                epcr=float(fields[9]),
+                finding_type=fields[10],
+                notes=notes,
+            )
+        )
     return rows
 
 
@@ -172,8 +194,10 @@ def _descending_problems(epcrs: list[str]) -> Iterable[str]:
     """Name each row that does not sit below the one before it."""
     for index in range(1, len(epcrs)):
         if float(epcrs[index]) >= float(epcrs[index - 1]):
-            yield (f"row {index + 1}: epcr {epcrs[index]} is not below row {index}'s "
-                   f"{epcrs[index - 1]} — file order must already be rank order")
+            yield (
+                f"row {index + 1}: epcr {epcrs[index]} is not below row {index}'s "
+                f"{epcrs[index - 1]} — file order must already be rank order"
+            )
 
 
 def _format_epcr(value: float) -> str:

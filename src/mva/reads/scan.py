@@ -63,8 +63,9 @@ def probe_table(probes: list[str], names: list[str] | None = None) -> str:
     :func:`clean`, and names are reduced to word characters here. Neither can carry a
     quote into the statement.
     """
-    return ", ".join(f"('{name}', '{seq}', '{strand}')"
-                     for name, seq, strand in expand(probes, names))
+    return ", ".join(
+        f"('{name}', '{seq}', '{strand}')" for name, seq, strand in expand(probes, names)
+    )
 
 
 def expand(probes: list[str], names: list[str] | None = None) -> list[tuple]:
@@ -97,8 +98,7 @@ def pattern(probes: list[str], names: list[str] | None = None) -> str:
     return "|".join(sorted({seq for _, seq, _ in expand(probes, names)}))
 
 
-def survivors(connection, root: str, probes: list[str],
-              names: list[str] | None = None) -> str:
+def survivors(connection, root: str, probes: list[str], names: list[str] | None = None) -> str:
     """Register the reads matching any probe; returns the relation name to query.
 
     The expensive stage of every probe verb is finding the needle-carrying reads among
@@ -135,11 +135,14 @@ def _polars_survivors(root: str, sequences: list[str]):
     """One streaming pass with the multi-literal matcher; returns a Polars frame."""
     import polars as pl
 
-    lazy = pl.scan_parquet(glob(root), hive_partitioning=True,
-                           storage_options=_polars_storage_options(root))
-    return (lazy.select("lane", "read", "tile", "x", "y", "sequence")
-                .filter(pl.col("sequence").str.contains_any(sequences))
-                .collect(engine="streaming"))
+    lazy = pl.scan_parquet(
+        glob(root), hive_partitioning=True, storage_options=_polars_storage_options(root)
+    )
+    return (
+        lazy.select("lane", "read", "tile", "x", "y", "sequence")
+        .filter(pl.col("sequence").str.contains_any(sequences))
+        .collect(engine="streaming")
+    )
 
 
 def _polars_storage_options(root: str) -> dict | None:
@@ -150,11 +153,13 @@ def _polars_storage_options(root: str) -> dict | None:
 
     store = object_store()
     scheme = "https" if store.use_ssl else "http"
-    return {"aws_access_key_id": store.access_key,
-            "aws_secret_access_key": store.secret_key,
-            "aws_endpoint_url": f"{scheme}://{store.endpoint}",
-            "aws_region": store.region,
-            "aws_allow_http": str(not store.use_ssl).lower()}
+    return {
+        "aws_access_key_id": store.access_key,
+        "aws_secret_access_key": store.secret_key,
+        "aws_endpoint_url": f"{scheme}://{store.endpoint}",
+        "aws_region": store.region,
+        "aws_allow_http": str(not store.use_ssl).lower(),
+    }
 
 
 def kmer(connection, root: str, probe: str, limit: int = 100) -> list[Hit]:
@@ -162,8 +167,9 @@ def kmer(connection, root: str, probe: str, limit: int = 100) -> list[Hit]:
     return kmers(connection, root, [probe], limit=limit)
 
 
-def kmers(connection, root: str, probes: list[str], limit: int = 100,
-          names: list[str] | None = None) -> list[Hit]:
+def kmers(
+    connection, root: str, probes: list[str], limit: int = 100, names: list[str] | None = None
+) -> list[Hit]:
     """The same strike for many probes, in **one pass** over the reads.
 
     Two stages, because they have wildly different costs. The scan itself matches every
@@ -186,13 +192,23 @@ def kmers(connection, root: str, probes: list[str], limit: int = 100,
         SELECT name, strand, lane, read, tile, x, y, found_at, sequence
         FROM matches WHERE rank <= {int(limit)}
     """).fetchall()
-    return [Hit(probe=r[0], strand=r[1], lane=r[2], read_num=r[3], tile=r[4],
-                x=r[5], y=r[6], position=r[7], sequence=r[8])
-            for r in found]
+    return [
+        Hit(
+            probe=r[0],
+            strand=r[1],
+            lane=r[2],
+            read_num=r[3],
+            tile=r[4],
+            x=r[5],
+            y=r[6],
+            position=r[7],
+            sequence=r[8],
+        )
+        for r in found
+    ]
 
 
-def counts(connection, root: str, probes: list[str],
-           names: list[str] | None = None) -> list[tuple]:
+def counts(connection, root: str, probes: list[str], names: list[str] | None = None) -> list[tuple]:
     """How many reads carry each probe — the number, without the reads.
 
     The count is what decides whether an allele is real: at ~44x depth a true

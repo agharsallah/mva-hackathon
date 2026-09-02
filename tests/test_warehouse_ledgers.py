@@ -29,8 +29,9 @@ class FakeConnection:
         self.statements.append((text, list(params or [])))
         # Only a SELECT consumes a canned answer, so a test's answer queue lines up with
         # the reads it cares about and does not have to count CREATE/INSERT statements.
-        self._last = (self.answers.pop(0)
-                      if self.answers and text.upper().startswith("SELECT") else [])
+        self._last = (
+            self.answers.pop(0) if self.answers and text.upper().startswith("SELECT") else []
+        )
         return self
 
     def fetchall(self) -> list[tuple]:
@@ -44,27 +45,40 @@ class FakeConnection:
         return "\n".join(sql for sql, _ in self.statements)
 
     def inserts(self) -> list[list]:
-        return [params for sql, params in self.statements
-                if sql.upper().startswith("INSERT")]
+        return [params for sql, params in self.statements if sql.upper().startswith("INSERT")]
 
 
 def test_ledgers_never_update_or_delete():
     """The whole claim of an append-only ledger, asserted rather than trusted."""
-    connection = FakeConnection([
-        [("/home/x/f.vcf.gz",)],  # placeholder, real shapes come from the tests below
-    ])
+    connection = FakeConnection(
+        [
+            [("/home/x/f.vcf.gz",)],  # placeholder, real shapes come from the tests below
+        ]
+    )
     lineage.ensure_tables(connection, "warehouse")
     probes.ensure_table(connection, "warehouse")
     text = connection.sql_text.upper()
     assert "UPDATE " not in text and "DELETE " not in text and "DROP " not in text
 
 
-STALE_EDGE = (datetime(2026, 8, 29, 16, 37, 29), "warehouse", "variants_raw", 5012204,
-              "/home/abdu/ubuntu/data/WGS_EX2312012_HGWCNDSX7.vcf.gz",
-              "read_csv all_varchar", "mva-warehouse", "columns: line_no + chrom")
+STALE_EDGE = (
+    datetime(2026, 8, 29, 16, 37, 29),
+    "warehouse",
+    "variants_raw",
+    5012204,
+    "/home/abdu/ubuntu/data/WGS_EX2312012_HGWCNDSX7.vcf.gz",
+    "read_csv all_varchar",
+    "mva-warehouse",
+    "columns: line_no + chrom",
+)
 
-OBJECT_ROW = ("WGS_EX2312012_HGWCNDSX7.vcf.gz", "source/WGS_EX2312012_HGWCNDSX7.vcf.gz",
-              "bec64c68", "3a79ea8b", True)
+OBJECT_ROW = (
+    "WGS_EX2312012_HGWCNDSX7.vcf.gz",
+    "source/WGS_EX2312012_HGWCNDSX7.vcf.gz",
+    "bec64c68",
+    "3a79ea8b",
+    True,
+)
 
 
 class TestRepoint:
@@ -85,8 +99,7 @@ class TestRepoint:
         assert lineage.SUPERSEDES in notes and "2026-08-29 16:37:29" in notes
 
     def test_is_idempotent_once_the_target_has_an_object_edge(self):
-        connection = FakeConnection(
-            [[STALE_EDGE], [("warehouse", "variants_raw")], [OBJECT_ROW]])
+        connection = FakeConnection([[STALE_EDGE], [("warehouse", "variants_raw")], [OBJECT_ROW]])
         assert lineage.repoint(connection, "warehouse", "mva") == []
         assert connection.inserts() == []
 
@@ -95,10 +108,19 @@ class TestRepoint:
         assert lineage.repoint(connection, "warehouse", "mva") == []
 
     def test_matches_by_file_name_not_by_a_hardcoded_delivery(self):
-        other = (datetime(2026, 1, 1), "warehouse", "reads_raw", 10, "/tmp/other.fastq.gz",
-                 "t", "mva-warehouse", "")
+        other = (
+            datetime(2026, 1, 1),
+            "warehouse",
+            "reads_raw",
+            10,
+            "/tmp/other.fastq.gz",
+            "t",
+            "mva-warehouse",
+            "",
+        )
         connection = FakeConnection(
-            [[other], [], [("other.fastq.gz", "source/other.fastq.gz", "aa", "bb", True)]])
+            [[other], [], [("other.fastq.gz", "source/other.fastq.gz", "aa", "bb", True)]]
+        )
         appended = lineage.repoint(connection, "warehouse", "mva")
         assert appended[0]["now"] == "s3://mva/source/other.fastq.gz"
 
@@ -118,19 +140,16 @@ class TestBackfillDerivations:
         lineage.backfill_derivations(connection, "warehouse", "results")
         first = connection.inserts()[0]
         assert first[0] == "results" and first[1] == DERIVATIONS[0].name
-        assert first[4] == ", ".join(
-            f"warehouse.{table}" for table in DERIVATIONS[0].depends_on)
+        assert first[4] == ", ".join(f"warehouse.{table}" for table in DERIVATIONS[0].depends_on)
         assert first[3] == "table"
 
     def test_edge_carries_the_run_reference(self):
         connection = FakeConnection([RUNS, []])
         lineage.backfill_derivations(connection, "warehouse", "results")
-        assert connection.inserts()[0][-1] == (
-            lineage.RUN_REF + "2026-08-29 12:49:49.377449")
+        assert connection.inserts()[0][-1] == (lineage.RUN_REF + "2026-08-29 12:49:49.377449")
 
     def test_skips_runs_that_already_have_an_edge(self):
-        have = [(name, lineage.RUN_REF + "2026-08-29 12:49:49.377449")
-                for name, _, _ in RUNS]
+        have = [(name, lineage.RUN_REF + "2026-08-29 12:49:49.377449") for name, _, _ in RUNS]
         connection = FakeConnection([RUNS, have])
         assert lineage.backfill_derivations(connection, "warehouse", "results") == []
 
@@ -168,10 +187,17 @@ class TestProbeLog:
 
     def test_stores_every_field_it_was_given(self):
         connection = FakeConnection([[(1,)]])
-        probe = probes.Probe(track="1", probe_type="S", submitted_by="abdu",
-                             submission_ref="build/probe_s1.csv", payload="a,b\n1,2",
-                             n_rows=10, response="rank_points=50", score=50.0,
-                             rationale="singles scan")
+        probe = probes.Probe(
+            track="1",
+            probe_type="S",
+            submitted_by="abdu",
+            submission_ref="build/probe_s1.csv",
+            payload="a,b\n1,2",
+            n_rows=10,
+            response="rank_points=50",
+            score=50.0,
+            rationale="singles scan",
+        )
         probes.log(connection, "warehouse", probe)
         params = connection.inserts()[0]
         for value in ("S", "abdu", "build/probe_s1.csv", "a,b\n1,2", "rank_points=50"):
@@ -191,6 +217,7 @@ class TestProbeLog:
     @pytest.mark.parametrize("schema", ["drop table x", "a-b", ""])
     def test_rejects_an_unsafe_schema_name(self, schema):
         from mva.warehouse.postgres import InvalidIdentifier
+
         with pytest.raises(InvalidIdentifier):
             probes.ensure_table(FakeConnection(), schema)
 
@@ -237,9 +264,13 @@ class TestLedgerCli:
             yield connection
 
         monkeypatch.setattr(cli_ledger, "attached", fake_attached)
-        monkeypatch.setattr(cli_ledger, "_settings",
-                            lambda: __import__("mva.warehouse.settings", fromlist=["x"])
-                            .Postgres(schema="warehouse", result_schema="results"))
+        monkeypatch.setattr(
+            cli_ledger,
+            "_settings",
+            lambda: __import__("mva.warehouse.settings", fromlist=["x"]).Postgres(
+                schema="warehouse", result_schema="results"
+            ),
+        )
         return cli_ledger
 
     def test_probe_log_counts_rows_from_the_submission_csv(self, monkeypatch, tmp_path):
@@ -247,14 +278,23 @@ class TestLedgerCli:
         cli = self._patch(monkeypatch, connection)
         csv = tmp_path / "probe.csv"
         csv.write_text("proband_id,chrom_1\nPROBAND01,chr1\nPROBAND01,chr2\n")
-        args = _Args(track="1", type="S", by="abdu", ref=None, payload=None,
-                     payload_file=csv, rows=None, response="rank_points=50",
-                     score=50.0, rationale="singles scan")
+        args = _Args(
+            track="1",
+            type="S",
+            by="abdu",
+            ref=None,
+            payload=None,
+            payload_file=csv,
+            rows=None,
+            response="rank_points=50",
+            score=50.0,
+            rationale="singles scan",
+        )
         assert cli.do_probe_log(args) == 0
         params = connection.inserts()[0]
-        assert params[6] == 2                      # n_rows, counted from the CSV
-        assert params[4] == str(csv)               # submission_ref defaults to the file
-        assert "PROBAND01,chr1" in params[5]       # payload is the file's content
+        assert params[6] == 2  # n_rows, counted from the CSV
+        assert params[4] == str(csv)  # submission_ref defaults to the file
+        assert "PROBAND01,chr1" in params[5]  # payload is the file's content
 
     def test_probe_list_prints_the_budget(self, monkeypatch, capsys):
         connection = FakeConnection([[], [(3,)]])

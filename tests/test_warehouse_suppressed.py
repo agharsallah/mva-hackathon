@@ -100,9 +100,11 @@ class TestRegistration:
 
     def test_each_declares_every_table_it_reads(self):
         assert set(PANEL_SUPPRESSED.depends_on) == {
-            "mva_panel_grch38", "variants_raw", "panel_annotations"}
-        assert set(PANEL_FILTER_CENSUS.depends_on) == {
-            "mva_panel_grch38", "variants_raw"}
+            "mva_panel_grch38",
+            "variants_raw",
+            "panel_annotations",
+        }
+        assert set(PANEL_FILTER_CENSUS.depends_on) == {"mva_panel_grch38", "variants_raw"}
 
 
 class TestMembership:
@@ -138,7 +140,12 @@ class TestFilterValue:
 
     def test_the_filter_string_is_never_normalised_into_reasons(self, rows):
         assert sorted(r["filter"] for r in rows) == [
-            "LowQual", "LowQual;QD2", "MQ40", "MQ40", "MQ40"]
+            "LowQual",
+            "LowQual;QD2",
+            "MQ40",
+            "MQ40",
+            "MQ40",
+        ]
 
 
 class TestGenotypeEvidence:
@@ -188,9 +195,13 @@ class TestAnnotationJoin:
 class TestCensus:
     def test_pass_is_a_row_like_any_other(self, census):
         assert [(r["gene"], r["filter"], r["n"]) for r in census] == [
-            ("BUB1B", "PASS", 1), ("BUB1B", "MQ40", 2), ("BUB1B", "LowQual", 1),
+            ("BUB1B", "PASS", 1),
+            ("BUB1B", "MQ40", 2),
+            ("BUB1B", "LowQual", 1),
             ("BUB1B", "LowQual;QD2", 1),
-            ("TRIP13", "PASS", 1), ("TRIP13", "MQ40", 1)]
+            ("TRIP13", "PASS", 1),
+            ("TRIP13", "MQ40", 1),
+        ]
 
     def test_a_genes_rows_stack_to_its_whole_record_count(self, census):
         for gene, total in (("BUB1B", 5), ("TRIP13", 2)):
@@ -207,11 +218,9 @@ class TestCensus:
         bub1b = [r for r in census if r["gene"] == "BUB1B"]
         assert bub1b[0]["is_pass"] is True
         assert all(r["is_pass"] is False for r in bub1b[1:])
-        assert [r["n"] for r in bub1b[1:]] == sorted(
-            (r["n"] for r in bub1b[1:]), reverse=True)
+        assert [r["n"] for r in bub1b[1:]] == sorted((r["n"] for r in bub1b[1:]), reverse=True)
 
-    def test_the_census_and_the_record_table_agree_on_what_is_suppressed(self, census,
-                                                                         rows):
+    def test_the_census_and_the_record_table_agree_on_what_is_suppressed(self, census, rows):
         counted = sum(r["n"] for r in census if not r["is_pass"])
         assert counted == len(rows)
 

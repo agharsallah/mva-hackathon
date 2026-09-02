@@ -103,7 +103,9 @@ def register(subparsers) -> None:
     ls = add("s3-ls", do_ls, "list objects in the bucket")
     ls.add_argument("prefix", nargs="?", default="")
 
-    query = add("s3-query", do_query, "run SQL against the store, downloading only the byte ranges needed")
+    query = add(
+        "s3-query", do_query, "run SQL against the store, downloading only the byte ranges needed"
+    )
     query.add_argument("sql", help="use s3://bucket/key.parquet in the FROM clause")
 
     sort = add("s3-sort", do_sort, "rewrite an object clustered for fast filtering")

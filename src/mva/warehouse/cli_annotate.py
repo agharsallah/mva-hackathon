@@ -22,17 +22,17 @@ def do_annotate_panel(args) -> int:
 
     result = annotate.run(settings, batch_size=args.batch_size, base_url=args.base_url)
     version = result["version"]
-    print(f"source   {result['source']}"
-          + (f" ({version['accession']})" if version.get("accession") else ""))
-    print(f"wrote    {result['rows']:,} rows into "
-          f"{settings.schema}.{annotate.ANNOTATIONS_TABLE}")
+    print(
+        f"source   {result['source']}"
+        + (f" ({version['accession']})" if version.get("accession") else "")
+    )
+    print(f"wrote    {result['rows']:,} rows into {settings.schema}.{annotate.ANNOTATIONS_TABLE}")
     print(f"  with a consequence   {result['annotated']:,}")
     print(f"  with a gnomAD AF     {result['with_gnomad_af']:,}")
     print(f"  with a grpmax AF     {result['with_grpmax']:,}")
     print(f"  with a ClinVar call  {result['with_clin_sig']:,}")
     print(f"  with an rsID         {result['with_rsid']:,}")
-    print(f"  distinct genes       {len(result['genes'])}"
-          f"  ({', '.join(result['genes'])})")
+    print(f"  distinct genes       {len(result['genes'])}  ({', '.join(result['genes'])})")
     print(f"\nlineage edge appended to {settings.schema}.data_lineage")
     return 0
 
@@ -44,10 +44,11 @@ def _print_plan(settings: Postgres, batch_size: int) -> int:
     print(f"panel    {len(spans)} intervals")
     width = max((len(span.gene) for span in spans), default=0)
     for span in spans:
-        print(f"  {span.gene:<{width}}  {span.chrom:>2}:"
-              f"{span.start:,}-{span.end:,}  ({span.end - span.start + 1:,} bp)")
-    print(f"\nalleles  {len(found['variants']):,} distinct, after splitting "
-          f"multi-allelic ALT")
+        print(
+            f"  {span.gene:<{width}}  {span.chrom:>2}:"
+            f"{span.start:,}-{span.end:,}  ({span.end - span.start + 1:,} bp)"
+        )
+    print(f"\nalleles  {len(found['variants']):,} distinct, after splitting multi-allelic ALT")
     print(f"batches  {found['batches']} request(s) of up to {batch_size}")
     print("\ndry run — no request was sent.")
     return 0
@@ -56,12 +57,22 @@ def _print_plan(settings: Postgres, batch_size: int) -> int:
 def register(subparsers) -> None:
     """Attach ``annotate-panel`` to the top-level parser."""
     parser = subparsers.add_parser(
-        "annotate-panel",
-        help="annotate every panel allele through Ensembl VEP REST")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="print the variant count and batch plan, send nothing")
-    parser.add_argument("--batch-size", type=int, default=200,
-                        help="alleles per request (the endpoint's ceiling is 200)")
-    parser.add_argument("--base-url", default=annotate.DEFAULT_BASE_URL,
-                        help="Ensembl REST server (GRCh37 lives on a different host)")
+        "annotate-panel", help="annotate every panel allele through Ensembl VEP REST"
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="print the variant count and batch plan, send nothing",
+    )
+    parser.add_argument(
+        "--batch-size",
+        type=int,
+        default=200,
+        help="alleles per request (the endpoint's ceiling is 200)",
+    )
+    parser.add_argument(
+        "--base-url",
+        default=annotate.DEFAULT_BASE_URL,
+        help="Ensembl REST server (GRCh37 lives on a different host)",
+    )
     parser.set_defaults(handler=do_annotate_panel)

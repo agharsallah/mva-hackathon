@@ -53,34 +53,45 @@ def _table(name: str) -> str:
 def runs() -> list[dict]:
     """The eight-row ``runs`` dimension: one row per delivered FASTQ."""
     with _connected() as connection:
-        return rows(connection, f"""
+        return rows(
+            connection,
+            f"""
             SELECT source, instrument, run, flowcell, lane, read_num, read_length,
                    reads, source_bytes, parquet_bytes, engine, seconds
-            FROM {_table('runs')} ORDER BY lane, read_num
-        """)
+            FROM {_table("runs")} ORDER BY lane, read_num
+        """,
+        )
 
 
 def totals() -> dict:
     """Total reads and the read length, for the overview object."""
     with _connected() as connection:
-        found = rows(connection, f"""
+        found = rows(
+            connection,
+            f"""
             SELECT sum(reads) AS total_reads, max(read_length) AS read_length
-            FROM {_table('runs')}
-        """)
+            FROM {_table("runs")}
+        """,
+        )
     row = found[0] if found else {}
-    return {"total_reads": _int(row.get("total_reads")),
-            "read_length": _int(row.get("read_length"))}
+    return {
+        "total_reads": _int(row.get("total_reads")),
+        "read_length": _int(row.get("read_length")),
+    }
 
 
 def partitions() -> list[dict]:
     """Shards, reads and gibibytes per ``(lane, read)`` partition."""
     with _connected() as connection:
-        return rows(connection, f"""
+        return rows(
+            connection,
+            f"""
             SELECT lane, read_num, count(*) AS shards, sum(rows) AS reads,
                    round(sum(bytes) / 1024.0 / 1024 / 1024, 2) AS gib
-            FROM {_table('manifest')}
+            FROM {_table("manifest")}
             GROUP BY lane, read_num ORDER BY lane, read_num
-        """)
+        """,
+        )
 
 
 def shard_keys(connection, lane: int, read_num: int) -> list[str]:
@@ -89,11 +100,15 @@ def shard_keys(connection, lane: int, read_num: int) -> list[str]:
     Ordered by the *number* in the name, not the name: lexical order puts ``part-10``
     before ``part-2``, which would silently reshuffle which shard index means what.
     """
-    found = rows(connection, f"""
-        SELECT key FROM {_table('manifest')}
+    found = rows(
+        connection,
+        f"""
+        SELECT key FROM {_table("manifest")}
         WHERE lane = ? AND read_num = ?
         ORDER BY CAST(regexp_extract(key, 'part-(\\d+)', 1) AS INTEGER)
-    """, [lane, read_num])
+    """,
+        [lane, read_num],
+    )
     return [row["key"] for row in found]
 
 
@@ -108,13 +123,17 @@ def flowcell(lane: int, read_num: int, shard: int = 0) -> list[dict]:
         if not keys:
             raise LookupError(f"no shards for lane {lane} read {read_num}")
         if not 0 <= shard < len(keys):
-            raise LookupError(f"shard {shard} out of range: lane {lane} read {read_num} "
-                              f"has {len(keys)}")
-        return rows(connection, f"""
+            raise LookupError(
+                f"shard {shard} out of range: lane {lane} read {read_num} has {len(keys)}"
+            )
+        return rows(
+            connection,
+            f"""
             SELECT tile, x // {TILE_BIN} AS xb, y // {TILE_BIN} AS yb, count(*) AS n
             FROM read_parquet('{url(keys[shard])}')
             GROUP BY ALL ORDER BY tile, xb, yb
-        """)
+        """,
+        )
 
 
 def cycle_quality(sample_rows: int = SAMPLE_ROWS) -> list[dict]:
@@ -130,14 +149,17 @@ def cycle_quality(sample_rows: int = SAMPLE_ROWS) -> list[dict]:
     split: it indexes the string directly, so there is no dependency on how a particular
     DuckDB version splits on an empty delimiter.
     """
-    return _per_partition("""
+    return _per_partition(
+        """
         SELECT cycle, round(avg(q), 2) AS mean_q FROM (
             SELECT unnest(range(1, length(quality) + 1)) AS cycle,
                    unnest(list_transform(range(1, length(quality) + 1),
                                          i -> ascii(quality[i]) - 33)) AS q
             FROM sample)
         GROUP BY cycle ORDER BY cycle
-    """, sample_rows)
+    """,
+        sample_rows,
+    )
 
 
 def quality_levels(sample_rows: int = SAMPLE_ROWS) -> list[dict]:
@@ -147,13 +169,16 @@ def quality_levels(sample_rows: int = SAMPLE_ROWS) -> list[dict]:
     quantises quality into four bins (about 2, 11, 25 and 37). Plotting it as a histogram
     of four bars is honest; plotting it as a continuous distribution is not.
     """
-    return _per_partition("""
+    return _per_partition(
+        """
         SELECT q AS phred, count(*) AS count FROM (
             SELECT unnest(list_transform(range(1, length(quality) + 1),
                                          i -> ascii(quality[i]) - 33)) AS q
             FROM sample)
         GROUP BY q ORDER BY q
-    """, sample_rows)
+    """,
+        sample_rows,
+    )
 
 
 def _per_partition(body: str, sample_rows: int) -> list[dict]:
@@ -166,18 +191,23 @@ def _per_partition(body: str, sample_rows: int) -> list[dict]:
     limit = int(sample_rows)
     out: list[dict] = []
     with _connected() as connection:
-        found = rows(connection, f"SELECT DISTINCT lane, read_num FROM "
-                                 f"{_table('manifest')} ORDER BY lane, read_num")
+        found = rows(
+            connection,
+            f"SELECT DISTINCT lane, read_num FROM {_table('manifest')} ORDER BY lane, read_num",
+        )
         for partition in found:
             lane, read_num = int(partition["lane"]), int(partition["read_num"])
             keys = shard_keys(connection, lane, read_num)
             if not keys:
                 continue
-            aggregated = rows(connection, f"""
+            aggregated = rows(
+                connection,
+                f"""
                 WITH sample AS (
                     SELECT quality FROM read_parquet('{url(keys[0])}') LIMIT {limit})
                 {body}
-            """)
+            """,
+            )
             for row in aggregated:
                 out.append({"lane": lane, "read_num": read_num, **row})
     return out

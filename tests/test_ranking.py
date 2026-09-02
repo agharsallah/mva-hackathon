@@ -8,21 +8,24 @@ The proband's own VCF cannot supply this: its INFO/AF is within-sample (0.5 or 1
 single sample) and carries no population frequency, no consequence and no pathogenicity
 prediction. Only the dbSNP membership flag is usable raw, and it is a weak novelty proxy.
 """
+
 import pytest
 
 from mva.pipeline import Annotation, DictAnnotator, Variant, rank_pairs
 
-A = Variant("chr15", 40143000, "T", "C")   # rare stop-gain
-B = Variant("chr15", 40143500, "G", "T")   # rare missense
+A = Variant("chr15", 40143000, "T", "C")  # rare stop-gain
+B = Variant("chr15", 40143500, "G", "T")  # rare missense
 COMMON = Variant("chr15", 40144000, "A", "C")
 BENIGN = Variant("chr15", 40144800, "C", "G")
 
-ANNOTATOR = DictAnnotator({
-    A: Annotation(gene="BUB1B", consequence="stop_gained", gnomad_af=0.0),
-    B: Annotation(gene="BUB1B", consequence="missense_variant", gnomad_af=1e-5),
-    COMMON: Annotation(gene="BUB1B", consequence="missense_variant", gnomad_af=0.21),
-    BENIGN: Annotation(gene="BUB1B", consequence="intron_variant", gnomad_af=1e-4),
-})
+ANNOTATOR = DictAnnotator(
+    {
+        A: Annotation(gene="BUB1B", consequence="stop_gained", gnomad_af=0.0),
+        B: Annotation(gene="BUB1B", consequence="missense_variant", gnomad_af=1e-5),
+        COMMON: Annotation(gene="BUB1B", consequence="missense_variant", gnomad_af=0.21),
+        BENIGN: Annotation(gene="BUB1B", consequence="intron_variant", gnomad_af=1e-4),
+    }
+)
 
 
 def score_of(left, right, **kw):
@@ -61,10 +64,12 @@ def test_pairs_spanning_two_genes_are_rejected():
     # Compound heterozygosity is a statement about ONE gene: one damaged copy each.
     # Two variants in different genes are two unrelated carriers, not a diagnosis.
     other = Variant("chr5", 900000, "A", "G")
-    annotator = DictAnnotator({
-        **ANNOTATOR.by_variant,
-        other: Annotation(gene="TRIP13", consequence="stop_gained", gnomad_af=0.0),
-    })
+    annotator = DictAnnotator(
+        {
+            **ANNOTATOR.by_variant,
+            other: Annotation(gene="TRIP13", consequence="stop_gained", gnomad_af=0.0),
+        }
+    )
     assert rank_pairs([(A, other)], annotator) == []
 
 

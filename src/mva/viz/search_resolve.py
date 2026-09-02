@@ -61,16 +61,20 @@ from .genestructure import ENSEMBL_BASE, EnsemblError
 from .search import CONTIG_RE, FLANK, NotFound, Resolved, check_span
 
 #: Provenance strings, one per resolver path, so the page can say *how* it resolved.
-SOURCE_PANEL = ("ressources/data-profile/mva_panel_grch38.bed "
-                "via pg.warehouse.mva_panel_grch38")
+SOURCE_PANEL = "ressources/data-profile/mva_panel_grch38.bed via pg.warehouse.mva_panel_grch38"
 SOURCE_CALLSET = "pg.warehouse.variants_raw (id scan)"
 SOURCE_ENSEMBL_SYMBOL = "ensembl rest /lookup/symbol/homo_sapiens"
 SOURCE_ENSEMBL_RSID = "ensembl rest /variation/human"
 
 
-def resolve(query: str, settings: Postgres | None = None, *,
-            client: httpx.Client | None = None, base_url: str | None = None,
-            timeout: float = 20.0) -> Resolved:
+def resolve(
+    query: str,
+    settings: Postgres | None = None,
+    *,
+    client: httpx.Client | None = None,
+    base_url: str | None = None,
+    timeout: float = 20.0,
+) -> Resolved:
     """Turn one search string into a window. Raises rather than guessing.
 
     A region never opens a connection of any kind — it is parsed and returned — so the
@@ -94,16 +98,22 @@ def resolve(query: str, settings: Postgres | None = None, *,
             client.close()
 
 
-def resolve_gene(symbol: str, settings: Postgres | None, client: httpx.Client,
-                 base_url: str) -> Resolved:
+def resolve_gene(
+    symbol: str, settings: Postgres | None, client: httpx.Client, base_url: str
+) -> Resolved:
     """A gene symbol's interval: the candidate panel first, then Ensembl."""
     panel = panel_gene(settings, symbol)
     if panel is not None:
         chrom, start, end = panel
-        return Resolved("gene", chrom, start, end,
-                        label=f"{symbol.upper()} — {chrom}:{start:,}-{end:,}",
-                        source=SOURCE_PANEL,
-                        note="candidate-panel interval, padded 20 kb each side")
+        return Resolved(
+            "gene",
+            chrom,
+            start,
+            end,
+            label=f"{symbol.upper()} — {chrom}:{start:,}-{end:,}",
+            source=SOURCE_PANEL,
+            note="candidate-panel interval, padded 20 kb each side",
+        )
 
     body = _get(client, base_url, f"/lookup/symbol/homo_sapiens/{symbol}", symbol)
     chrom = to_vcf_contig(str(body.get("seq_region_name") or ""))
@@ -111,12 +121,16 @@ def resolve_gene(symbol: str, settings: Postgres | None, client: httpx.Client,
     if not chrom or start is None or end is None:
         raise NotFound(f"Ensembl returned no interval for {symbol!r}")
     check_span(start, end)
-    return Resolved("gene", chrom, start, end,
-                    label=f"{body.get('display_name') or symbol} — "
-                          f"{chrom}:{start:,}-{end:,}",
-                    source=SOURCE_ENSEMBL_SYMBOL,
-                    note=f"Ensembl gene span for {body.get('id')}, unpadded — narrower "
-                         f"than the ±20 kb the candidate panel uses")
+    return Resolved(
+        "gene",
+        chrom,
+        start,
+        end,
+        label=f"{body.get('display_name') or symbol} — {chrom}:{start:,}-{end:,}",
+        source=SOURCE_ENSEMBL_SYMBOL,
+        note=f"Ensembl gene span for {body.get('id')}, unpadded — narrower "
+        f"than the ±20 kb the candidate panel uses",
+    )
 
 
 def panel_gene(settings: Postgres | None, symbol: str) -> tuple[str, int, int] | None:
@@ -134,8 +148,9 @@ def panel_gene(settings: Postgres | None, symbol: str) -> tuple[str, int, int] |
         return None
 
 
-def resolve_rsid(rsid: str, settings: Postgres | None, client: httpx.Client,
-                 base_url: str) -> Resolved:
+def resolve_rsid(
+    rsid: str, settings: Postgres | None, client: httpx.Client, base_url: str
+) -> Resolved:
     """An rsID's window: the callset's own ``id`` column first, then Ensembl.
 
     Both stages exist because they answer different questions — see the bake-off in the
@@ -146,23 +161,32 @@ def resolve_rsid(rsid: str, settings: Postgres | None, client: httpx.Client,
     hit = callset_rsid(settings, name) if settings is not None else None
     if hit is not None:
         chrom, at = hit
-        return Resolved("rsid", chrom, max(at - FLANK, 1), at + FLANK,
-                        label=f"{name} — {chrom}:{at:,}",
-                        source=SOURCE_CALLSET,
-                        note=f"the callset names this record itself; window is "
-                             f"±{FLANK:,} bp for context")
+        return Resolved(
+            "rsid",
+            chrom,
+            max(at - FLANK, 1),
+            at + FLANK,
+            label=f"{name} — {chrom}:{at:,}",
+            source=SOURCE_CALLSET,
+            note=f"the callset names this record itself; window is ±{FLANK:,} bp for context",
+        )
 
     body = _get(client, base_url, f"/variation/human/{name}", name)
     mapping = grch38_mapping(body)
     if mapping is None:
         raise NotFound(f"Ensembl knows {name} but places it on no GRCh38 chromosome")
     chrom, at = mapping
-    return Resolved("rsid", chrom, max(at - FLANK, 1), at + FLANK,
-                    label=f"{name} — {chrom}:{at:,}",
-                    source=SOURCE_ENSEMBL_RSID,
-                    note=f"no record in the callset carries this id — the position comes "
-                         f"from dbSNP, so an empty table below means the site was never "
-                         f"called, not that the id is wrong. Window is ±{FLANK:,} bp.")
+    return Resolved(
+        "rsid",
+        chrom,
+        max(at - FLANK, 1),
+        at + FLANK,
+        label=f"{name} — {chrom}:{at:,}",
+        source=SOURCE_ENSEMBL_RSID,
+        note=f"no record in the callset carries this id — the position comes "
+        f"from dbSNP, so an empty table below means the site was never "
+        f"called, not that the id is wrong. Window is ±{FLANK:,} bp.",
+    )
 
 
 def callset_rsid(settings: Postgres, rsid: str) -> tuple[str, int] | None:
@@ -170,9 +194,9 @@ def callset_rsid(settings: Postgres, rsid: str) -> tuple[str, int] | None:
 
     The first record wins: dbSNP names a *site*, and a multiallelic site is one row here.
     """
-    found = queries.fetch(settings,
-                          "SELECT chrom, pos FROM pg.warehouse.variants_raw "
-                          "WHERE id = ? LIMIT 1", [rsid])
+    found = queries.fetch(
+        settings, "SELECT chrom, pos FROM pg.warehouse.variants_raw WHERE id = ? LIMIT 1", [rsid]
+    )
     if not found:
         return None
     return str(found[0]["chrom"]), int(found[0]["pos"])
@@ -199,6 +223,7 @@ def grch38_mapping(body: Any) -> tuple[str, int] | None:
 
 # ── Ensembl, with "no such name" told apart from "the service is down" ───────────────
 
+
 def _get(client: httpx.Client, base_url: str, path: str, name: str) -> Any:
     """One Ensembl GET. A 400/404 naming the query is :class:`NotFound`, not an outage.
 
@@ -215,8 +240,9 @@ def _get(client: httpx.Client, base_url: str, path: str, name: str) -> Any:
     except httpx.HTTPError as error:
         raise EnsemblError(f"GET {url}: {type(error).__name__}: {error}") from error
     if response.status_code in (400, 404):
-        raise NotFound(f"Ensembl does not know {name!r}: "
-                       f"{_error_text(response) or response.status_code}")
+        raise NotFound(
+            f"Ensembl does not know {name!r}: {_error_text(response) or response.status_code}"
+        )
     if response.status_code != 200:
         raise EnsemblError(f"GET {url} -> {response.status_code}: {response.text[:200]}")
     try:

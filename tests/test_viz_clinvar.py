@@ -23,38 +23,112 @@ from mva.viz.cache import Cache
 #: hits, a gene with many P/LP records and none of them called, and a gene ClinVar has
 #: classified nothing in at all.
 SUMMARY = [
-    {"gene": "BUB1B", "n_plp": 84, "n_comparable": 83, "n_uncomparable": 1,
-     "n_present": 2, "n_present_pass": 1, "n_present_het": 1, "n_absent": 81},
-    {"gene": "TP53", "n_plp": 1147, "n_comparable": 1147, "n_uncomparable": 0,
-     "n_present": 0, "n_present_pass": 0, "n_present_het": 0, "n_absent": 1147},
-    {"gene": "CEP192", "n_plp": 0, "n_comparable": 0, "n_uncomparable": 0,
-     "n_present": 0, "n_present_pass": 0, "n_present_het": 0, "n_absent": 0},
+    {
+        "gene": "BUB1B",
+        "n_plp": 84,
+        "n_comparable": 83,
+        "n_uncomparable": 1,
+        "n_present": 2,
+        "n_present_pass": 1,
+        "n_present_het": 1,
+        "n_absent": 81,
+    },
+    {
+        "gene": "TP53",
+        "n_plp": 1147,
+        "n_comparable": 1147,
+        "n_uncomparable": 0,
+        "n_present": 0,
+        "n_present_pass": 0,
+        "n_present_het": 0,
+        "n_absent": 1147,
+    },
+    {
+        "gene": "CEP192",
+        "n_plp": 0,
+        "n_comparable": 0,
+        "n_uncomparable": 0,
+        "n_present": 0,
+        "n_present_pass": 0,
+        "n_present_het": 0,
+        "n_absent": 0,
+    },
 ]
 
 #: One row per shape the exhibit has to render differently.
 SITES = [
     # present, PASS, heterozygous — the direct-lead shape
-    {"gene": "BUB1B", "chrom": "15", "pos": 1000, "ref": "T", "alt": "G",
-     "rsid": "rs1", "variation_id": 533901, "clnsig": "Pathogenic/Likely_pathogenic",
-     "clnrevstat": "criteria_provided,_multiple_submitters,_no_conflicts",
-     "review_stars": 2, "condition": "Mosaic_variegated_aneuploidy_syndrome_1",
-     "comparable": True, "present": True, "gt": "0/1", "filter": "PASS",
-     "qual": 708.77, "dp": 46, "allele_ix": 1, "vaf": 0.5435,
-     "carries_alt": True, "is_het": True},
+    {
+        "gene": "BUB1B",
+        "chrom": "15",
+        "pos": 1000,
+        "ref": "T",
+        "alt": "G",
+        "rsid": "rs1",
+        "variation_id": 533901,
+        "clnsig": "Pathogenic/Likely_pathogenic",
+        "clnrevstat": "criteria_provided,_multiple_submitters,_no_conflicts",
+        "review_stars": 2,
+        "condition": "Mosaic_variegated_aneuploidy_syndrome_1",
+        "comparable": True,
+        "present": True,
+        "gt": "0/1",
+        "filter": "PASS",
+        "qual": 708.77,
+        "dp": 46,
+        "allele_ix": 1,
+        "vaf": 0.5435,
+        "carries_alt": True,
+        "is_het": True,
+    },
     # present but suppressed by the caller
-    {"gene": "BUB1B", "chrom": "15", "pos": 2000, "ref": "C", "alt": "T",
-     "rsid": None, "variation_id": 533902, "clnsig": "Pathogenic",
-     "clnrevstat": "criteria_provided,_single_submitter", "review_stars": 1,
-     "condition": "not_provided", "comparable": True, "present": True,
-     "gt": "1/1", "filter": "LowQual", "qual": 30.0, "dp": 8, "allele_ix": 1,
-     "vaf": 0.9, "carries_alt": True, "is_het": False},
+    {
+        "gene": "BUB1B",
+        "chrom": "15",
+        "pos": 2000,
+        "ref": "C",
+        "alt": "T",
+        "rsid": None,
+        "variation_id": 533902,
+        "clnsig": "Pathogenic",
+        "clnrevstat": "criteria_provided,_single_submitter",
+        "review_stars": 1,
+        "condition": "not_provided",
+        "comparable": True,
+        "present": True,
+        "gt": "1/1",
+        "filter": "LowQual",
+        "qual": 30.0,
+        "dp": 8,
+        "allele_ix": 1,
+        "vaf": 0.9,
+        "carries_alt": True,
+        "is_het": False,
+    },
     # uncomparable: ClinVar states no alternate allele
-    {"gene": "BUB1B", "chrom": "15", "pos": 3000, "ref": "A", "alt": ".",
-     "rsid": None, "variation_id": 533903, "clnsig": "Pathogenic",
-     "clnrevstat": None, "review_stars": None, "condition": "not_provided",
-     "comparable": False, "present": None, "gt": None, "filter": None,
-     "qual": None, "dp": None, "allele_ix": None, "vaf": None,
-     "carries_alt": None, "is_het": None},
+    {
+        "gene": "BUB1B",
+        "chrom": "15",
+        "pos": 3000,
+        "ref": "A",
+        "alt": ".",
+        "rsid": None,
+        "variation_id": 533903,
+        "clnsig": "Pathogenic",
+        "clnrevstat": None,
+        "review_stars": None,
+        "condition": "not_provided",
+        "comparable": False,
+        "present": None,
+        "gt": None,
+        "filter": None,
+        "qual": None,
+        "dp": None,
+        "allele_ix": None,
+        "vaf": None,
+        "carries_alt": None,
+        "is_het": None,
+    },
 ]
 
 #: Columns ``app/src/pages/compare/ClinvarPresence.tsx`` reads off a site row.
@@ -79,8 +153,9 @@ def client(tmp_path, monkeypatch):
 
     monkeypatch.setattr(queries, "fetch", fetch)
     monkeypatch.setattr(readstore, "root", lambda: "s3://test/reads")
-    with TestClient(create_app(settings=None, cache=Cache(tmp_path),
-                               origins=["http://localhost:5173"])) as running:
+    with TestClient(
+        create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
+    ) as running:
         running.seen = seen
         yield running
 
@@ -94,6 +169,7 @@ def body(client, query: str = "") -> dict:
 
 
 # ── the route ────────────────────────────────────────────────────────────────────────
+
 
 def test_the_endpoint_answers_in_the_shared_envelope(client):
     assert set(body(client)["data"]) == {"summary", "sites"}
@@ -112,28 +188,26 @@ def test_the_source_names_the_derived_table_and_the_panel_bed(client):
 
 
 def test_the_route_is_documented_under_the_panel_tag(client):
-    operation = client.get("/openapi.json").json()[
-        "paths"]["/api/panel/clinvar-presence"]["get"]
+    operation = client.get("/openapi.json").json()["paths"]["/api/panel/clinvar-presence"]["get"]
     assert operation["tags"] == ["panel"]
 
 
 def test_the_description_states_the_lower_bound_caveat(client):
     """The only place a JSON-only reader can learn that indels are under-counted."""
-    operation = client.get("/openapi.json").json()[
-        "paths"]["/api/panel/clinvar-presence"]["get"]
+    operation = client.get("/openapi.json").json()["paths"]["/api/panel/clinvar-presence"]["get"]
     text = operation["description"].lower()
     assert "lower bound" in text
     assert "left-alignment" in text or "left-align" in text
 
 
 def test_the_gene_parameter_is_optional(client):
-    operation = client.get("/openapi.json").json()[
-        "paths"]["/api/panel/clinvar-presence"]["get"]
+    operation = client.get("/openapi.json").json()["paths"]["/api/panel/clinvar-presence"]["get"]
     gene = next(p for p in operation["parameters"] if p["name"] == "gene")
     assert gene["required"] is False
 
 
 # ── the gene filter ──────────────────────────────────────────────────────────────────
+
 
 def test_a_gene_narrows_both_halves_not_only_the_list(client):
     data = body(client, "?gene=BUB1B")["data"]
@@ -157,6 +231,7 @@ def test_an_unknown_gene_is_a_404_rather_than_an_empty_success(client, monkeypat
 
 
 # ── what the payload must not round off ──────────────────────────────────────────────
+
 
 def test_a_gene_clinvar_has_classified_nothing_in_still_appears(client):
     """CEP192 is a candidate gene, not an established one. Absence of a prior there is

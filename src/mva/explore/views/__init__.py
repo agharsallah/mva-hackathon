@@ -30,28 +30,43 @@ class ViewSpec:
 
 #: Every profile-driven section, in the order a reader should meet them.
 SECTIONS: list[ViewSpec] = [
-    ViewSpec("overview", "Overview",
-             "What this dataset is, and whether anything about it should worry us.",
-             overview.exhibits),
-    ViewSpec("sequencing", "Sequencing",
-             "The raw reads: how much DNA was read, how accurately, and how redundantly.",
-             reads.exhibits),
-    ViewSpec("callset", "Callset",
-             "What the variant caller produced, and whether its shape looks like real "
-             "human variation.",
-             callset.exhibits),
-    ViewSpec("filters", "Filters & phase",
-             "What the caller held back, and how much of the callset can be placed onto a "
-             "specific copy of a chromosome.",
-             quality.exhibits),
-    ViewSpec("chromosomes", "Chromosomes",
-             "The genome one chromosome at a time — where an extra or missing copy would "
-             "show itself.",
-             karyotype.exhibits),
-    ViewSpec("panel", "Candidate genes",
-             "The genes already known to cause this condition, and the size of the search "
-             "inside them.",
-             panel.exhibits),
+    ViewSpec(
+        "overview",
+        "Overview",
+        "What this dataset is, and whether anything about it should worry us.",
+        overview.exhibits,
+    ),
+    ViewSpec(
+        "sequencing",
+        "Sequencing",
+        "The raw reads: how much DNA was read, how accurately, and how redundantly.",
+        reads.exhibits,
+    ),
+    ViewSpec(
+        "callset",
+        "Callset",
+        "What the variant caller produced, and whether its shape looks like real human variation.",
+        callset.exhibits,
+    ),
+    ViewSpec(
+        "filters",
+        "Filters & phase",
+        "What the caller held back, and how much of the callset can be placed onto a "
+        "specific copy of a chromosome.",
+        quality.exhibits,
+    ),
+    ViewSpec(
+        "chromosomes",
+        "Chromosomes",
+        "The genome one chromosome at a time — where an extra or missing copy would show itself.",
+        karyotype.exhibits,
+    ),
+    ViewSpec(
+        "panel",
+        "Candidate genes",
+        "The genes already known to cause this condition, and the size of the search inside them.",
+        panel.exhibits,
+    ),
 ]
 
 

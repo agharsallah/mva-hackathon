@@ -63,10 +63,13 @@ CONTIGS = [
 ]
 
 #: ``(gene, n_all, n_pass)`` and ``(chrom, start, end, name)`` — the panel side.
-GENES = [("ORDINARY", 1000, 985), ("FLAT", 500, 495), ("OUTLIER", 12, 6),
-         ("SMALLBIN", 1000, 980)]
-PANEL_BED = [("chr1", 0, 1_000_000, "ORDINARY"), ("chr5", 0, 1_000_000, "FLAT"),
-             ("chr7", 0, 100_000, "OUTLIER"), ("chr9", 0, 1_000_000, "SMALLBIN")]
+GENES = [("ORDINARY", 1000, 985), ("FLAT", 500, 495), ("OUTLIER", 12, 6), ("SMALLBIN", 1000, 980)]
+PANEL_BED = [
+    ("chr1", 0, 1_000_000, "ORDINARY"),
+    ("chr5", 0, 1_000_000, "FLAT"),
+    ("chr7", 0, 100_000, "OUTLIER"),
+    ("chr9", 0, 1_000_000, "SMALLBIN"),
+]
 
 
 def values(rows) -> str:
@@ -90,17 +93,19 @@ def warehouse():
         WHERE t.i < s.n
     """)
     # One record on a non-canonical contig, which must never reach a background.
-    connection.execute(
-        "INSERT INTO src.variants_raw VALUES (999999, 'GL000009.2', '100', 'PASS')")
+    connection.execute("INSERT INTO src.variants_raw VALUES (999999, 'GL000009.2', '100', 'PASS')")
     connection.execute(
         f"CREATE TABLE src.contig_counts AS SELECT * FROM (VALUES {values(CONTIGS)}) "
-        f"AS t(chrom, length, n_records)")
+        f"AS t(chrom, length, n_records)"
+    )
     connection.execute(
         f"CREATE TABLE src.panel_variant_counts AS SELECT * FROM (VALUES {values(GENES)}) "
-        f"AS t(gene, n_all, n_pass)")
+        f"AS t(gene, n_all, n_pass)"
+    )
     connection.execute(
-        f'CREATE TABLE src.mva_panel_grch38 AS SELECT * FROM (VALUES {values(PANEL_BED)}) '
-        f'AS t(chrom, start, "end", name)')
+        f"CREATE TABLE src.mva_panel_grch38 AS SELECT * FROM (VALUES {values(PANEL_BED)}) "
+        f'AS t(chrom, start, "end", name)'
+    )
     yield connection
     connection.close()
 
@@ -227,14 +232,21 @@ class TestRegistry:
         """The duplicated aggregate is only defensible while the two agree."""
         mine = by_name("panel_gene_background").sql
         theirs = by_name("variant_density_bins").sql
-        for fragment in (f"CAST(pos AS BIGINT) // {BIN_BP}", "length(chrom) <= 2",
-                         "count(*) FILTER (WHERE filter = 'PASS')"):
+        for fragment in (
+            f"CAST(pos AS BIGINT) // {BIN_BP}",
+            "length(chrom) <= 2",
+            "count(*) FILTER (WHERE filter = 'PASS')",
+        ):
             assert fragment in mine, fragment
             assert fragment.replace(str(BIN_BP), "1000000") in theirs, fragment
 
     def test_it_declares_what_it_depends_on(self):
         assert by_name("panel_gene_background").depends_on == (
-            "variants_raw", "contig_counts", "panel_variant_counts", "mva_panel_grch38")
+            "variants_raw",
+            "contig_counts",
+            "panel_variant_counts",
+            "mva_panel_grch38",
+        )
 
     def test_the_question_says_a_pass_z_is_about_callability_not_pathogenicity(self):
         """The caveat travels with the table, not only with the chart that draws it."""

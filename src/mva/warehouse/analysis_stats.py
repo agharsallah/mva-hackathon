@@ -81,7 +81,8 @@ STATS_AF = Derivation(
         "error data-findings 2.5 warns about. Ts/Tv per bin is the point of the table: "
         "heterozygous calls are where false positives concentrate, and a random error "
         "process drags Ts/Tv toward 0.5, so the two bins disagreeing is a signal the "
-        "callset-wide ratio hides."),
+        "callset-wide ratio hides."
+    ),
     depends_on=("stats_summary",),
     # Only the ingest schema is read, per the registry's rule — `stats_sn` is a result
     # table and may not be an input, so the sample count is re-parsed from the SN line

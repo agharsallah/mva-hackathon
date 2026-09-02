@@ -19,11 +19,13 @@ from mva.warehouse.settings import DEFAULTS
 
 #: What the fake `fetch` returns, matched on a fragment of the SQL.
 ANSWERS = {
-    "allele_balance_flags": [{"chrom": "8", "n_het": 100, "mean_vaf": 0.51,
-                              "balance_call": "flagged"}],
+    "allele_balance_flags": [
+        {"chrom": "8", "n_het": 100, "mean_vaf": 0.51, "balance_call": "flagged"}
+    ],
     "contig_density": [{"chrom": "1", "length": 248956422, "n_records": 383428}],
-    "variant_density_bins": [{"chrom": "15", "mb": 40, "n": 900, "pass_n": 870,
-                              "low_qual_n": 4, "mean_qual": 812.5}],
+    "variant_density_bins": [
+        {"chrom": "15", "mb": 40, "n": 900, "pass_n": 870, "low_qual_n": 4, "mean_qual": 812.5}
+    ],
     "filter_impact": [{"filter_value": "PASS", "count": 4740790, "impact_rank": 1}],
     "genotype counts": [{"label": "0/1", "count": 3047077}],
     "stats_dp": [{"bin": 44, "count": 100000, "pct": 2.0}],
@@ -34,28 +36,77 @@ ANSWERS = {
     "derivation_runs": [{"derivation": "variant_density_bins", "n_rows": 2961}],
     "source_objects": [{"file_name": "proband.vcf.gz", "hash_verified": True}],
     "probe_ledger": [],
-    "panel_gene_density": [{"gene": "BUB1B", "chrom": "chr15", "start": 1000,
-                            "end": 2000, "n_all": 200, "n_pass": 190,
-                            "n_filtered": 10, "span_bp": 1000,
-                            "variants_per_mb": 200.0, "pct_pass": 95.0}],
+    "panel_gene_density": [
+        {
+            "gene": "BUB1B",
+            "chrom": "chr15",
+            "start": 1000,
+            "end": 2000,
+            "n_all": 200,
+            "n_pass": 190,
+            "n_filtered": 10,
+            "span_bp": 1000,
+            "variants_per_mb": 200.0,
+            "pct_pass": 95.0,
+        }
+    ],
     "mva_panel_grch38": [{"chrom": "chr15", "start": 1000, "end": 2000}],
-    "panel_gene_constraint": [{"gene": "BUB1B", "chrom": "chr15", "n_all": 80,
-                               "n_pass": 76, "loeuf": 0.707, "pli": 2.6e-14,
-                               "clinvar_plp": 84, "clinvar_vus": 1486,
-                               "clinvar_benign": 844}],
-    "panel_candidates": [{"chrom": "15", "pos": 1500, "ref": "T", "alt": "C",
-                          "gene": "BUB1B", "consequence": "missense_variant",
-                          "impact": "MODERATE", "gnomad_af": None, "qual": 812.5,
-                          "filter": "PASS", "gt": "0/1", "dp": 38, "vaf": 0.4737,
-                          "is_rare_recessive": True, "is_protein_altering": True}],
-    "qc_observed_expected": [{"metric": "tstv_genome_wide", "label": "Ts/Tv",
-                              "observed": 1.94, "expected_low": 2.0,
-                              "expected_high": 2.1, "unit": "ratio",
-                              "verdict": "below", "source": "Betschart 2024",
-                              "observed_from": "stats_summary TSTV"}],
-    "variants_raw": [{"pos": "1500", "ref": "T", "alt": "C", "qual": "812.5",
-                      "filter": "PASS", "format": "GT:AD:DP:GQ",
-                      "sample_call": "0/1:20,18:38:99"}],
+    "panel_gene_constraint": [
+        {
+            "gene": "BUB1B",
+            "chrom": "chr15",
+            "n_all": 80,
+            "n_pass": 76,
+            "loeuf": 0.707,
+            "pli": 2.6e-14,
+            "clinvar_plp": 84,
+            "clinvar_vus": 1486,
+            "clinvar_benign": 844,
+        }
+    ],
+    "panel_candidates": [
+        {
+            "chrom": "15",
+            "pos": 1500,
+            "ref": "T",
+            "alt": "C",
+            "gene": "BUB1B",
+            "consequence": "missense_variant",
+            "impact": "MODERATE",
+            "gnomad_af": None,
+            "qual": 812.5,
+            "filter": "PASS",
+            "gt": "0/1",
+            "dp": 38,
+            "vaf": 0.4737,
+            "is_rare_recessive": True,
+            "is_protein_altering": True,
+        }
+    ],
+    "qc_observed_expected": [
+        {
+            "metric": "tstv_genome_wide",
+            "label": "Ts/Tv",
+            "observed": 1.94,
+            "expected_low": 2.0,
+            "expected_high": 2.1,
+            "unit": "ratio",
+            "verdict": "below",
+            "source": "Betschart 2024",
+            "observed_from": "stats_summary TSTV",
+        }
+    ],
+    "variants_raw": [
+        {
+            "pos": "1500",
+            "ref": "T",
+            "alt": "C",
+            "qual": "812.5",
+            "filter": "PASS",
+            "format": "GT:AD:DP:GQ",
+            "sample_call": "0/1:20,18:38:99",
+        }
+    ],
 }
 
 
@@ -68,16 +119,17 @@ def client(tmp_path, monkeypatch):
         raise AssertionError(f"unexpected SQL: {sql}")
 
     monkeypatch.setattr(queries, "fetch", fetch)
-    monkeypatch.setattr(routes_warehouse, "overview",
-                        lambda settings: {"total_variants": 5012204})
+    monkeypatch.setattr(routes_warehouse, "overview", lambda settings: {"total_variants": 5012204})
     monkeypatch.setattr(readstore, "root", lambda: "s3://test/reads")
-    monkeypatch.setattr(readstore, "runs",
-                        lambda: [{"lane": 1, "read_num": 1, "reads": 5}])
-    monkeypatch.setattr(readstore, "partitions",
-                        lambda: [{"lane": 1, "read_num": 1, "shards": 34,
-                                  "reads": 136586642, "gib": 7.6}])
-    with TestClient(create_app(settings=None, cache=Cache(tmp_path),
-                               origins=["http://localhost:5173"])) as running:
+    monkeypatch.setattr(readstore, "runs", lambda: [{"lane": 1, "read_num": 1, "reads": 5}])
+    monkeypatch.setattr(
+        readstore,
+        "partitions",
+        lambda: [{"lane": 1, "read_num": 1, "shards": 34, "reads": 136586642, "gib": 7.6}],
+    )
+    with TestClient(
+        create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
+    ) as running:
         yield running
 
 
@@ -91,21 +143,35 @@ def data(response) -> object:
 
 # ── the envelope ─────────────────────────────────────────────────────────────────────
 
+
 def test_health_is_the_one_route_without_an_envelope(client):
     assert client.get("/health").json() == {"ok": True, "service": "mva-viz-api"}
 
 
-@pytest.mark.parametrize("path", [
-    "/api/genome/allele-balance", "/api/genome/contig-density",
-    "/api/genome/density-bins", "/api/callset/filters", "/api/callset/genotypes",
-    "/api/callset/depth-distribution", "/api/callset/substitutions",
-    "/api/callset/tstv", "/api/callset/indel-lengths", "/api/panel/genes",
-    "/api/callset/observed-expected", "/api/panel/constraint",
-    "/api/panel/annotations",
-    "/api/provenance/lineage", "/api/provenance/derivations",
-    "/api/provenance/sources", "/api/probe/ledger",
-    "/api/reads/runs", "/api/reads/partitions",
-])
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/api/genome/allele-balance",
+        "/api/genome/contig-density",
+        "/api/genome/density-bins",
+        "/api/callset/filters",
+        "/api/callset/genotypes",
+        "/api/callset/depth-distribution",
+        "/api/callset/substitutions",
+        "/api/callset/tstv",
+        "/api/callset/indel-lengths",
+        "/api/panel/genes",
+        "/api/callset/observed-expected",
+        "/api/panel/constraint",
+        "/api/panel/annotations",
+        "/api/provenance/lineage",
+        "/api/provenance/derivations",
+        "/api/provenance/sources",
+        "/api/probe/ledger",
+        "/api/reads/runs",
+        "/api/reads/partitions",
+    ],
+)
 def test_every_endpoint_answers_in_the_same_envelope(client, path):
     assert data(client.get(path)) is not None
 
@@ -125,11 +191,11 @@ def test_an_empty_table_is_an_empty_list_not_an_error(client):
 
 
 def test_tstv_is_a_single_object_not_a_list(client):
-    assert data(client.get("/api/callset/tstv")) == {"ts": 2698356, "tv": 1390270,
-                                                     "ratio": 1.94}
+    assert data(client.get("/api/callset/tstv")) == {"ts": 2698356, "tv": 1390270, "ratio": 1.94}
 
 
 # ── query parameters ─────────────────────────────────────────────────────────────────
+
 
 def test_density_bins_pushes_the_chromosome_into_the_query(client, monkeypatch):
     seen = {}
@@ -216,6 +282,7 @@ def test_observed_expected_carries_both_the_measurement_and_the_range(client):
 
 # ── the locus route: the one that reads the callset ──────────────────────────────────
 
+
 def test_locus_decodes_the_packed_genotype_and_caches_the_result(client):
     body = client.get("/api/panel/locus", params={"gene": "BUB1B"}).json()
     row = body["data"][0]
@@ -244,8 +311,7 @@ def test_refresh_busts_the_cache(client, monkeypatch):
         return [] if "variants_raw" in sql else ANSWERS["mva_panel_grch38"]
 
     monkeypatch.setattr(queries, "fetch", emptied)
-    rebuilt = client.get("/api/panel/locus",
-                         params={"gene": "BUB1B", "refresh": "true"}).json()
+    rebuilt = client.get("/api/panel/locus", params={"gene": "BUB1B", "refresh": "true"}).json()
     assert rebuilt["data"] == []
 
 
@@ -257,11 +323,11 @@ def test_an_unknown_gene_is_a_404_not_an_empty_chart(client, monkeypatch):
 
 
 def test_a_gene_name_that_could_escape_the_cache_directory_is_refused(client):
-    assert client.get("/api/panel/locus",
-                      params={"gene": "../../etc/passwd"}).status_code == 422
+    assert client.get("/api/panel/locus", params={"gene": "../../etc/passwd"}).status_code == 422
 
 
 # ── the read store ───────────────────────────────────────────────────────────────────
+
 
 def test_flowcell_is_cached_and_names_its_shard(client, monkeypatch):
     calls = []
@@ -279,17 +345,16 @@ def test_flowcell_is_cached_and_names_its_shard(client, monkeypatch):
 
 
 def test_each_shard_gets_its_own_cache_entry(client, monkeypatch):
-    monkeypatch.setattr(readstore, "flowcell",
-                        lambda lane, read, shard: [{"shard": shard}])
+    monkeypatch.setattr(readstore, "flowcell", lambda lane, read, shard: [{"shard": shard}])
     for shard in (0, 1):
-        body = client.get("/api/reads/flowcell",
-                          params={"lane": 1, "read": 1, "shard": shard}).json()
+        body = client.get(
+            "/api/reads/flowcell", params={"lane": 1, "read": 1, "shard": shard}
+        ).json()
         assert body["data"] == [{"shard": shard}]
 
 
 def test_a_lane_outside_the_flowcell_is_rejected_before_any_query(client):
-    assert client.get("/api/reads/flowcell",
-                      params={"lane": 9, "read": 1}).status_code == 422
+    assert client.get("/api/reads/flowcell", params={"lane": 9, "read": 1}).status_code == 422
 
 
 def test_a_missing_shard_is_a_404(client, monkeypatch):
@@ -297,17 +362,16 @@ def test_a_missing_shard_is_a_404(client, monkeypatch):
         raise LookupError("shard 99 out of range")
 
     monkeypatch.setattr(readstore, "flowcell", missing)
-    response = client.get("/api/reads/flowcell",
-                          params={"lane": 1, "read": 1, "shard": 99})
+    response = client.get("/api/reads/flowcell", params={"lane": 1, "read": 1, "shard": 99})
     assert response.status_code == 404
 
 
 def test_the_slow_quality_endpoints_are_cached(client, monkeypatch):
     calls = []
-    monkeypatch.setattr(readstore, "cycle_quality",
-                        lambda: calls.append("q") or [{"cycle": 1, "mean_q": 36.2}])
-    monkeypatch.setattr(readstore, "quality_levels",
-                        lambda: [{"phred": 37, "count": 10}])
+    monkeypatch.setattr(
+        readstore, "cycle_quality", lambda: calls.append("q") or [{"cycle": 1, "mean_q": 36.2}]
+    )
+    monkeypatch.setattr(readstore, "quality_levels", lambda: [{"phred": 37, "count": 10}])
     assert client.get("/api/reads/cycle-quality").json()["cached_at"]
     client.get("/api/reads/cycle-quality")
     assert len(calls) == 1
@@ -315,6 +379,7 @@ def test_the_slow_quality_endpoints_are_cached(client, monkeypatch):
 
 
 # ── the proxy ────────────────────────────────────────────────────────────────────────
+
 
 class Down(Upstream):
     """An upstream that is not running — the current state of `mva-reads-api`."""
@@ -328,14 +393,16 @@ class Fake(Upstream):
         self.status, self.body, self.calls = status, body or {}, []
 
     async def request(self, method, path, *, params=None, json=None, timeout=30.0):
-        self.calls.append({"method": method, "path": path, "params": params,
-                           "json": json, "timeout": timeout})
+        self.calls.append(
+            {"method": method, "path": path, "params": params, "json": json, "timeout": timeout}
+        )
         return Reply(self.status, self.body)
 
 
 def proxied(tmp_path, upstream) -> TestClient:
-    return TestClient(create_app(settings=None, cache=Cache(tmp_path),
-                                 origins=[], upstream=upstream))
+    return TestClient(
+        create_app(settings=None, cache=Cache(tmp_path), origins=[], upstream=upstream)
+    )
 
 
 PROXY_ROUTES = [
@@ -351,19 +418,20 @@ PROXY_ROUTES = [
 @pytest.mark.parametrize("method,path,body", PROXY_ROUTES)
 def test_an_unreachable_reads_api_is_a_503_naming_the_url(tmp_path, method, path, body):
     with proxied(tmp_path, Down()) as client:
-        response = getattr(client, method)(path, json=body) if body else \
-            getattr(client, method)(path)
+        response = (
+            getattr(client, method)(path, json=body) if body else getattr(client, method)(path)
+        )
         assert response.status_code == 503
-        assert response.json() == {
-            "detail": "reads API unreachable at http://127.0.0.1:8765"}
+        assert response.json() == {"detail": "reads API unreachable at http://127.0.0.1:8765"}
 
 
 def test_a_job_comes_back_in_the_same_envelope_as_everything_else(tmp_path):
     job = {"id": "abc123", "verb": "count", "state": "queued", "result": None}
     upstream = Fake(202, job)
     with proxied(tmp_path, upstream) as client:
-        body = client.post("/api/probe/count",
-                           json={"probes": [{"sequence": "ACGT", "name": "a"}]}).json()
+        body = client.post(
+            "/api/probe/count", json={"probes": [{"sequence": "ACGT", "name": "a"}]}
+        ).json()
     assert body["data"] == job
     assert body["source"].endswith("/count")
     assert upstream.calls[0]["json"] == {"probes": [{"sequence": "ACGT", "name": "a"}]}
@@ -373,8 +441,7 @@ def test_the_scan_limit_is_forwarded_only_when_given(tmp_path):
     upstream = Fake(202, {"id": "x"})
     with proxied(tmp_path, upstream) as client:
         client.post("/api/probe/scan", json={"probes": [{"sequence": "ACGT"}]})
-        client.post("/api/probe/scan",
-                    json={"probes": [{"sequence": "ACGT"}], "limit": 5})
+        client.post("/api/probe/scan", json={"probes": [{"sequence": "ACGT"}], "limit": 5})
     assert "limit" not in upstream.calls[0]["json"]
     assert upstream.calls[1]["json"]["limit"] == 5
 
@@ -390,8 +457,7 @@ def test_the_long_poll_gets_a_longer_client_timeout_than_it_asks_for(tmp_path):
 
 def test_a_wait_beyond_the_upstream_cap_is_refused_here(tmp_path):
     with proxied(tmp_path, Fake()) as client:
-        assert client.get("/api/jobs/x/wait",
-                          params={"timeout": 900}).status_code == 422
+        assert client.get("/api/jobs/x/wait", params={"timeout": 900}).status_code == 422
 
 
 def test_an_upstream_error_keeps_its_status_and_its_reason(tmp_path):
@@ -409,6 +475,7 @@ def test_unset_job_filters_are_dropped_rather_than_sent_empty(tmp_path):
 
 
 # ── CORS ─────────────────────────────────────────────────────────────────────────────
+
 
 def test_the_dev_server_origin_is_allowed(client):
     response = client.get("/health", headers={"Origin": "http://localhost:5173"})

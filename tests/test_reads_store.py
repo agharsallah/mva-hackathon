@@ -32,10 +32,18 @@ def _write_fastq(path, read_num, rng):
         for i in range(READS):
             tile = 1101 + (i % 2)
             planted = PLANTED + "".join(rng.choice("ACGT") for _ in range(118))
-            handle.write(_record(
-                rng, lane=1, tile=tile, x=1000 + i, y=2000 + i, read_num=read_num,
-                index="GTGACGGAGC+NGGACCGCCA",
-                sequence=planted if (read_num == 1 and i == 123) else None))
+            handle.write(
+                _record(
+                    rng,
+                    lane=1,
+                    tile=tile,
+                    x=1000 + i,
+                    y=2000 + i,
+                    read_num=read_num,
+                    index="GTGACGGAGC+NGGACCGCCA",
+                    sequence=planted if (read_num == 1 and i == 123) else None,
+                )
+            )
 
 
 @pytest.fixture(scope="session")
@@ -43,8 +51,7 @@ def delivery(tmp_path_factory):
     directory = tmp_path_factory.mktemp("delivery")
     rng = random.Random(7)
     for read_num in (1, 2):
-        _write_fastq(directory / f"WGS_TEST_S16_L001_R{read_num}_001.fastq.gz",
-                     read_num, rng)
+        _write_fastq(directory / f"WGS_TEST_S16_L001_R{read_num}_001.fastq.gz", read_num, rng)
     return directory
 
 
@@ -52,15 +59,15 @@ def delivery(tmp_path_factory):
 def built(delivery, tmp_path_factory):
     """The store built once with the pipe engine; most tests read from it."""
     staging = tmp_path_factory.mktemp("staging")
-    results = store.convert_all(store.discover(delivery), staging,
-                                engine="pipe", jobs=2, report=lambda *_: None)
+    results = store.convert_all(
+        store.discover(delivery), staging, engine="pipe", jobs=2, report=lambda *_: None
+    )
     store.write_tables(staging, results)
     return staging / schema.PREFIX, results
 
 
 def test_lane_and_read_parses_delivered_names():
-    assert schema.lane_and_read(
-        "WGS_EX2312012_HGWCNDSX7_S16_L003_R2_001.fastq.gz") == (3, 2)
+    assert schema.lane_and_read("WGS_EX2312012_HGWCNDSX7_S16_L003_R2_001.fastq.gz") == (3, 2)
     with pytest.raises(ValueError):
         schema.lane_and_read("random.txt")
 
@@ -73,8 +80,7 @@ def test_peek_reads_the_run_constants(delivery):
 
 def test_pipe_engine_converts_and_shards(delivery, tmp_path):
     fastq = store.discover(delivery)[0]
-    done = convert_file(fastq, tmp_path, engine="pipe",
-                        row_group_size=2048, row_groups_per_file=1)
+    done = convert_file(fastq, tmp_path, engine="pipe", row_group_size=2048, row_groups_per_file=1)
     assert done.rows == READS
     assert len(done.shards) == 3  # ceil(5000 / 2048) row groups, one per file
     assert done.out_dir.name == "read=1" and done.out_dir.parent.name == "lane=1"
@@ -121,8 +127,7 @@ def test_streams_flags_memory_growth():
 
 def test_verify_passes_on_honest_store(delivery, built):
     root, _ = built
-    report = verify.run(str(root), store.discover(delivery),
-                        expected_total=2 * READS)
+    report = verify.run(str(root), store.discover(delivery), expected_total=2 * READS)
     assert report.ok, report.failures
     assert report.total_rows == 2 * READS
 
@@ -133,6 +138,7 @@ def test_verify_catches_missing_rows(delivery, built, tmp_path):
     shutil.copytree(root, broken)
     shard = next((broken / "lane=1" / "read=1").glob("part-*.parquet"))
     import duckdb
+
     duckdb.connect().execute(f"""
         COPY (SELECT * FROM read_parquet('{shard}') LIMIT 10)
         TO '{shard}' (FORMAT parquet)""")
@@ -157,8 +163,7 @@ def test_many_probes_in_one_pass_are_reported_separately(built):
 
     root, _ = built
     absent = "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGA"
-    hits = scan.kmers(duckdb.connect(), str(root), [PLANTED, absent],
-                      names=["real", "absent"])
+    hits = scan.kmers(duckdb.connect(), str(root), [PLANTED, absent], names=["real", "absent"])
     assert {hit.probe for hit in hits} == {"real"}
     assert len(hits) == 1
 
@@ -168,12 +173,11 @@ def test_counts_separate_real_from_absent(built):
 
     root, _ = built
     absent = "GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGA"
-    rows = scan.counts(duckdb.connect(), str(root), [PLANTED, absent],
-                       names=["real", "absent"])
+    rows = scan.counts(duckdb.connect(), str(root), [PLANTED, absent], names=["real", "absent"])
     by_name = {row[0]: row for row in rows}
-    assert by_name["real"][3] == 1        # total
-    assert by_name["real"][1] == 1        # forward strand
-    assert "absent" not in by_name        # no rows at all
+    assert by_name["real"][3] == 1  # total
+    assert by_name["real"][1] == 1  # forward strand
+    assert "absent" not in by_name  # no rows at all
 
 
 def test_probe_table_rejects_non_dna_and_neuters_names():
@@ -204,13 +208,11 @@ def test_round_trip_rebuilds_exact_name(delivery, built):
     facts = peek(fastq)
     with gzip.open(fastq.path, "rt") as handle:
         name = handle.readline().rstrip("\n")
-    assert facts.rebuild_name(1101, 1000, 2000, False,
-                              "GTGACGGAGC+NGGACCGCCA") == name
+    assert facts.rebuild_name(1101, 1000, 2000, False, "GTGACGGAGC+NGGACCGCCA") == name
 
 
 def test_bench_race_reports_all_engines(delivery):
-    timings = bench.race(store.discover(delivery)[0], reads=500,
-                         report=lambda *_: None)
+    timings = bench.race(store.discover(delivery)[0], reads=500, report=lambda *_: None)
     assert {t.engine for t in timings} == set(engines.ENGINES)
     finished = [t for t in timings if t.ok]
     assert finished, [t.error for t in timings]
@@ -223,11 +225,11 @@ def test_manifest_and_runs_tables(built):
 
     root, results = built
     connection = duckdb.connect()
-    runs = connection.execute(f"SELECT source, reads FROM '{root}/runs.parquet' "
-                              f"ORDER BY read_num").fetchall()
+    runs = connection.execute(
+        f"SELECT source, reads FROM '{root}/runs.parquet' ORDER BY read_num"
+    ).fetchall()
     assert [r[1] for r in runs] == [READS, READS]
-    total = connection.execute(
-        f"SELECT sum(rows) FROM '{root}/manifest.parquet'").fetchone()[0]
+    total = connection.execute(f"SELECT sum(rows) FROM '{root}/manifest.parquet'").fetchone()[0]
     assert total == 2 * READS
     assert all(len(r.shards) >= 1 for r in results)
 
@@ -299,8 +301,9 @@ def test_peek_rejects_an_unparseable_read_name(tmp_path):
 
 def _streamed(fastq):
     """The same reads, presented the way an object-store source is: no local path."""
-    return source_mod.Source(name=fastq.name, path=None, size=fastq.size,
-                             open_stream=fastq.open_stream)
+    return source_mod.Source(
+        name=fastq.name, path=None, size=fastq.size, open_stream=fastq.open_stream
+    )
 
 
 def test_pipe_engine_converts_a_stream_only_source(delivery, tmp_path):
@@ -309,8 +312,9 @@ def test_pipe_engine_converts_a_stream_only_source(delivery, tmp_path):
     assert done.rows == READS
 
 
-@pytest.mark.parametrize("engine,message", [("oxbow", "file path or a URL"),
-                                            ("polars_bio", "needs a local file")])
+@pytest.mark.parametrize(
+    "engine,message", [("oxbow", "file path or a URL"), ("polars_bio", "needs a local file")]
+)
 def test_seeking_engines_refuse_a_stream_clearly(engine, message, delivery, tmp_path):
     """A reader that must seek says so, and names the engine that can cope."""
     if not engines.available(engine):
@@ -340,13 +344,14 @@ def _range_server(directory):
                 start, _, end = requested[6:].partition("-")
                 first = int(start or 0)
                 last = int(end) if end else len(payload) - 1
-                status, body = 206, payload[first:last + 1]
+                status, body = 206, payload[first : last + 1]
             self.send_response(status)
             self.send_header("Content-Length", str(len(body)))
             self.send_header("Accept-Ranges", "bytes")
             if status == 206:
-                self.send_header("Content-Range",
-                                 f"bytes {first}-{first + len(body) - 1}/{len(payload)}")
+                self.send_header(
+                    "Content-Range", f"bytes {first}-{first + len(body) - 1}/{len(payload)}"
+                )
             self.end_headers()
             self.wfile.write(body)
 
@@ -369,10 +374,15 @@ def test_oxbow_converts_over_http_range_requests(delivery, tmp_path):
         # The query string is the point: a presigned link ends in its signature, not in
         # '.gz', so anything that infers compression from the name gets it wrong.
         remote = source_mod.Source(
-            name=fastq.name, path=None, size=fastq.size,
-            url=(f"http://127.0.0.1:{server.server_port}/{fastq.name}"
-                 f"?X-Amz-Signature=deadbeef&X-Amz-Expires=43200"),
-            open_stream=fastq.open_stream)
+            name=fastq.name,
+            path=None,
+            size=fastq.size,
+            url=(
+                f"http://127.0.0.1:{server.server_port}/{fastq.name}"
+                f"?X-Amz-Signature=deadbeef&X-Amz-Expires=43200"
+            ),
+            open_stream=fastq.open_stream,
+        )
         done = convert_file(remote, tmp_path, engine="oxbow")
         assert done.rows == READS
     finally:
@@ -410,8 +420,7 @@ def test_bench_cuts_a_sample_from_a_stream_only_source(delivery, tmp_path):
 
 
 def test_bench_race_runs_against_a_stream_only_source(delivery):
-    timings = bench.race(_streamed(store.discover(delivery)[0]), reads=200,
-                         report=lambda *_: None)
+    timings = bench.race(_streamed(store.discover(delivery)[0]), reads=200, report=lambda *_: None)
     finished = [timing for timing in timings if timing.ok]
     assert finished, [timing.error for timing in timings]
     assert all(timing.rows == 200 for timing in finished)
@@ -426,10 +435,12 @@ def test_row_group_size_is_a_memory_budget():
     """
     bytes_per_read = 300
     assert schema.ROW_GROUP_SIZE * bytes_per_read <= 100 * 2**20, (
-        "row group would buffer more than 100 MiB per writer thread")
+        "row group would buffer more than 100 MiB per writer thread"
+    )
     reads_per_shard = schema.ROW_GROUP_SIZE * schema.ROW_GROUPS_PER_FILE
     assert 2_000_000 <= reads_per_shard <= 8_000_000, (
-        f"shard of {reads_per_shard:,} reads is outside the ~250 MB target")
+        f"shard of {reads_per_shard:,} reads is outside the ~250 MB target"
+    )
 
 
 def test_bench_worker_passes_the_memory_limit_through(delivery, tmp_path, monkeypatch):
@@ -449,8 +460,7 @@ def test_bench_worker_passes_the_memory_limit_through(delivery, tmp_path, monkey
 
     monkeypatch.setattr(bench, "convert_file", spy)
     results = queue_module.Queue()
-    bench._run_one("pipe", str(store.discover(delivery)[0].path), str(tmp_path),
-                   "512MB", results)
+    bench._run_one("pipe", str(store.discover(delivery)[0].path), str(tmp_path), "512MB", results)
     assert seen["memory_limit"] == "512MB"
     assert results.get().ok
 
@@ -458,8 +468,9 @@ def test_bench_worker_passes_the_memory_limit_through(delivery, tmp_path, monkey
 def test_bench_defaults_its_budget_to_a_jobs_share(delivery):
     """Without an explicit limit, the budget is what one job of a real run would get."""
     lines = []
-    bench.race(store.discover(delivery)[0], reads=200, contenders=("pipe",),
-               jobs=4, report=lines.append)
+    bench.race(
+        store.discover(delivery)[0], reads=200, contenders=("pipe",), jobs=4, report=lines.append
+    )
     budget = next(line for line in lines if "budget per engine" in line)
     assert store.machine_share(4)[1] in budget
     assert "4-job run" in budget
@@ -475,8 +486,7 @@ def test_check_room_refuses_before_converting(delivery, tmp_path, monkeypatch):
     import collections
 
     usage = collections.namedtuple("usage", "total used free")
-    monkeypatch.setattr(store.shutil, "disk_usage",
-                        lambda _: usage(total=1, used=1, free=1))
+    monkeypatch.setattr(store.shutil, "disk_usage", lambda _: usage(total=1, used=1, free=1))
     with pytest.raises(store.NotEnoughRoom, match="not enough room"):
         store.check_room(tmp_path, store.discover(delivery))
 

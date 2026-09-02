@@ -23,8 +23,17 @@ from .readers import (
 )
 
 __all__ = [
-    "Region", "Row", "Sections", "Table", "VcfHeader",
-    "as_float", "as_int",
-    "read_bcftools_stats", "read_bed", "read_sections", "read_table",
-    "read_vcf_header", "summary_numbers",
+    "Region",
+    "Row",
+    "Sections",
+    "Table",
+    "VcfHeader",
+    "as_float",
+    "as_int",
+    "read_bcftools_stats",
+    "read_bed",
+    "read_sections",
+    "read_table",
+    "read_vcf_header",
+    "summary_numbers",
 ]

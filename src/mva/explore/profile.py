@@ -176,8 +176,9 @@ class CallsetProfile:
     manifest: Table | None = None
 
     @classmethod
-    def load(cls, directory: str | Path,
-             layout: ProfileLayout = ProfileLayout()) -> "CallsetProfile":
+    def load(
+        cls, directory: str | Path, layout: ProfileLayout = ProfileLayout()
+    ) -> "CallsetProfile":
         """Load every artifact present in ``directory``, skipping every one that is not."""
         root = Path(directory)
         profile = cls(source=root, layout=layout)
@@ -190,16 +191,23 @@ class CallsetProfile:
         # numbers. Joining them here means no view ever has to know they arrived apart.
         bed = root / layout.panel_bed
         if profile.panel and bed.exists():
-            profile = replace(profile, panel=annotate_panel(profile.panel,
-                                                            readers.read_bed(bed)))
+            profile = replace(profile, panel=annotate_panel(profile.panel, readers.read_bed(bed)))
         return profile
 
     @property
     def available(self) -> list[str]:
         """Names of the sections that actually loaded — what the report can show."""
         present = []
-        for name in ("header", "contigs", "stats", "filters_and_genotypes",
-                     "balance", "reads", "read_qc", "panel"):
+        for name in (
+            "header",
+            "contigs",
+            "stats",
+            "filters_and_genotypes",
+            "balance",
+            "reads",
+            "read_qc",
+            "panel",
+        ):
             if getattr(self, name):
                 present.append(name)
         return present
@@ -218,12 +226,18 @@ class CallsetProfile:
     @property
     def filter_counts(self) -> dict[str, int]:
         """Records per FILTER combination, exactly as the caller wrote them."""
-        return self.filters_and_genotypes.counts("FILTER counts") if self.filters_and_genotypes else {}
+        return (
+            self.filters_and_genotypes.counts("FILTER counts") if self.filters_and_genotypes else {}
+        )
 
     @property
     def genotype_counts(self) -> dict[str, int]:
         """Records per genotype string (``0/1``, ``1/1``, ``1/2``)."""
-        return self.filters_and_genotypes.counts("genotype counts") if self.filters_and_genotypes else {}
+        return (
+            self.filters_and_genotypes.counts("genotype counts")
+            if self.filters_and_genotypes
+            else {}
+        )
 
     @property
     def phased_records(self) -> int | None:
@@ -246,6 +260,7 @@ class CallsetProfile:
 # --- artifact loaders -------------------------------------------------------------
 # One per file. Each returns the keyword arguments to fold into the profile, so adding an
 # artifact is one function and one line in _LOADERS, with no change to CallsetProfile.load.
+
 
 def _load_header(path: Path) -> dict:
     return {"header": readers.read_vcf_header(path)}
@@ -280,13 +295,15 @@ def _load_balance(path: Path) -> dict:
         vaf = readers.as_float(row.get("mean_vaf"))
         if vaf is None:
             continue
-        rows.append(ChromBalance(
-            chrom=row.get("chrom", ""),
-            n_het=readers.as_int(row.get("n_het")) or 0,
-            mean_vaf=vaf,
-            mean_depth=readers.as_float(row.get("mean_dp")) or 0.0,
-            pct_in_band=readers.as_float(row.get("pct_in_0.40_0.60")) or 0.0,
-        ))
+        rows.append(
+            ChromBalance(
+                chrom=row.get("chrom", ""),
+                n_het=readers.as_int(row.get("n_het")) or 0,
+                mean_vaf=vaf,
+                mean_depth=readers.as_float(row.get("mean_dp")) or 0.0,
+                pct_in_band=readers.as_float(row.get("pct_in_0.40_0.60")) or 0.0,
+            )
+        )
     return {"balance": rows}
 
 
@@ -297,13 +314,15 @@ def _load_reads(path: Path) -> dict:
         reads = readers.as_int(row.get("est_reads"))
         if reads is None:
             continue
-        files.append(ReadFile(
-            name=row.get("file", ""),
-            size_bytes=readers.as_int(row.get("bytes")) or 0,
-            read_length=readers.as_int(row.get("read_len")) or 0,
-            reads=reads,
-            gigabases=readers.as_float(row.get("est_gbases")) or 0.0,
-        ))
+        files.append(
+            ReadFile(
+                name=row.get("file", ""),
+                size_bytes=readers.as_int(row.get("bytes")) or 0,
+                read_length=readers.as_int(row.get("read_len")) or 0,
+                reads=reads,
+                gigabases=readers.as_float(row.get("est_gbases")) or 0.0,
+            )
+        )
     return {"reads": files}
 
 
@@ -324,12 +343,16 @@ def _load_panel(path: Path) -> dict:
         start, end = readers.as_int(row.get("start")), readers.as_int(row.get("end"))
         if start is None or end is None:
             continue
-        genes.append(PanelGene(
-            symbol=row.get("gene", ""), chrom=row.get("chrom", ""),
-            start=start, end=end,
-            variants=readers.as_int(row.get("n_all")) or 0,
-            passing=readers.as_int(row.get("n_pass")) or 0,
-        ))
+        genes.append(
+            PanelGene(
+                symbol=row.get("gene", ""),
+                chrom=row.get("chrom", ""),
+                start=start,
+                end=end,
+                variants=readers.as_int(row.get("n_all")) or 0,
+                passing=readers.as_int(row.get("n_pass")) or 0,
+            )
+        )
     return {"panel": genes}
 
 

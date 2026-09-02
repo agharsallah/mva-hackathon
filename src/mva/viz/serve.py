@@ -17,12 +17,13 @@ DEFAULT_PORT = 8900
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         prog="mva-viz-api",
-        description="serve the warehouse and the read store as JSON for the viz app")
-    parser.add_argument("--host", default="127.0.0.1",
-                        help="bind address (default: %(default)s)")
+        description="serve the warehouse and the read store as JSON for the viz app",
+    )
+    parser.add_argument("--host", default="127.0.0.1", help="bind address (default: %(default)s)")
     parser.add_argument("--port", type=int, default=DEFAULT_PORT)
-    parser.add_argument("--reload", action="store_true",
-                        help="restart on source changes (development only)")
+    parser.add_argument(
+        "--reload", action="store_true", help="restart on source changes (development only)"
+    )
     args = parser.parse_args(argv)
 
     import uvicorn
@@ -31,15 +32,18 @@ def main(argv: list[str] | None = None) -> int:
     from .cache import default_directory
 
     if args.host not in ("127.0.0.1", "localhost"):
-        print(f"warning: binding {args.host} — /api/panel/locus serves real patient "
-              f"positions and this API has no authentication")
+        print(
+            f"warning: binding {args.host} — /api/panel/locus serves real patient "
+            f"positions and this API has no authentication"
+        )
     print(f"cache:   {default_directory()}")
     print(f"cors:    {', '.join(cors_origins()) or '(none — the browser will refuse)'}")
     print(f"upstream reads API: {setting('MVA_READS_API_URL')}")
 
     if args.reload:
-        uvicorn.run("mva.viz.app:create_app", factory=True, host=args.host,
-                    port=args.port, reload=True)
+        uvicorn.run(
+            "mva.viz.app:create_app", factory=True, host=args.host, port=args.port, reload=True
+        )
     else:
         uvicorn.run(create_app(), host=args.host, port=args.port)
     return 0

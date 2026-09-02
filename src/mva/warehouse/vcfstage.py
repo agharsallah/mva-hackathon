@@ -39,8 +39,19 @@ from pathlib import Path
 #: recording where the record sat in the file, and it is the one column that is typed
 #: (BIGINT). Everything that actually came out of the VCF stays text — see
 #: :data:`FILE_COLUMNS`.
-RAW_COLUMNS = ("line_no", "chrom", "pos", "id", "ref", "alt",
-               "qual", "filter", "info", "format", "sample_call")
+RAW_COLUMNS = (
+    "line_no",
+    "chrom",
+    "pos",
+    "id",
+    "ref",
+    "alt",
+    "qual",
+    "filter",
+    "info",
+    "format",
+    "sample_call",
+)
 
 #: The subset of :data:`RAW_COLUMNS` that came from the file. All VARCHAR, always.
 FILE_COLUMNS = RAW_COLUMNS[1:]
@@ -102,8 +113,8 @@ def iter_raw(path: str | Path, limit: int | None = None) -> Iterator[list[str]]:
             fields = line.rstrip("\n").split("\t")
             if len(fields) != EXPECTED_FIELDS:
                 raise ValueError(
-                    f"{path}: record {line_no} has {len(fields)} fields, "
-                    f"expected {EXPECTED_FIELDS}")
+                    f"{path}: record {line_no} has {len(fields)} fields, expected {EXPECTED_FIELDS}"
+                )
             yield [str(line_no), *fields]
             if limit is not None and line_no >= limit:
                 return
@@ -131,7 +142,7 @@ def source_digest(path: str | Path, limit: int | None = None) -> tuple[str, int]
 
 
 #: DuckDB column spec for the raw layer: every VCF field as text, nothing inferred.
-RAW_SPEC = ("{" + ", ".join(f"'{name}':'VARCHAR'" for name in FILE_COLUMNS) + "}")
+RAW_SPEC = "{" + ", ".join(f"'{name}':'VARCHAR'" for name in FILE_COLUMNS) + "}"
 
 
 def read_csv_sql(path: str | Path, shape: VcfShape) -> str:
@@ -149,9 +160,11 @@ def read_csv_sql(path: str | Path, shape: VcfShape) -> str:
       and the default cap would reject the record rather than truncate it, but rejecting
       is still a failure we do not want.
     """
-    return (f"read_csv('{path}', delim=chr(9), header=false, all_varchar=true, "
-            f"quote='', escape='', skip={shape.header_lines + 1}, "
-            f"columns={RAW_SPEC}, max_line_size=100000000)")
+    return (
+        f"read_csv('{path}', delim=chr(9), header=false, all_varchar=true, "
+        f"quote='', escape='', skip={shape.header_lines + 1}, "
+        f"columns={RAW_SPEC}, max_line_size=100000000)"
+    )
 
 
 def line_expression() -> str:
@@ -178,7 +191,8 @@ def stage_raw(path: str | Path, out: Path, limit: int | None = None) -> tuple[Pa
     if not shape.is_single_sample:
         raise ValueError(
             f"{path}: expected {EXPECTED_FIELDS} columns, header declares "
-            f"{len(shape.columns)} — this stager handles single-sample callsets")
+            f"{len(shape.columns)} — this stager handles single-sample callsets"
+        )
 
     connection = duckdb.connect()
     source = read_csv_sql(path, shape)
@@ -189,14 +203,14 @@ def stage_raw(path: str | Path, out: Path, limit: int | None = None) -> tuple[Pa
             FROM ({bounded})
         ) TO '{out}' (FORMAT parquet, COMPRESSION zstd)
     """)
-    written = connection.execute(
-        f"SELECT count(*) FROM read_parquet('{out}')").fetchone()[0]
+    written = connection.execute(f"SELECT count(*) FROM read_parquet('{out}')").fetchone()[0]
     connection.close()
     return out, written
 
 
-def verify_roundtrip(path: str | Path, limit: int | None = None,
-                     parquet: Path | None = None) -> dict[str, object]:
+def verify_roundtrip(
+    path: str | Path, limit: int | None = None, parquet: Path | None = None
+) -> dict[str, object]:
     """Rebuild the VCF's data lines through DuckDB and compare digests with the source.
 
     This is the strongest retention evidence available: it does not compare a summary of
@@ -221,8 +235,7 @@ def verify_roundtrip(path: str | Path, limit: int | None = None,
 
     rebuilt = hashlib.sha256()
     seen = 0
-    query = connection.execute(
-        f"SELECT {line_expression()} FROM {source}{order}{bound}")
+    query = connection.execute(f"SELECT {line_expression()} FROM {source}{order}{bound}")
     while True:
         chunk = query.fetchmany(50_000)
         if not chunk:

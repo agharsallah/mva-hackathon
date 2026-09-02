@@ -82,13 +82,15 @@ class Hypothesis:
             if not str(getattr(self, field_name)).strip():
                 raise ValueError(
                     f"{field_name} is required: a claim with no {field_name} cannot be "
-                    "tested, and an untestable claim does not belong in the record")
+                    "tested, and an untestable claim does not belong in the record"
+                )
         step = steps.by_slug(self.step)
         if not step.takes_hypotheses:
             raise ValueError(
                 f"{step.slug} is a {step.kind} step: it records decisions, not claims "
                 f"about the patient. File this under one of "
-                f"{', '.join(s.slug for s in steps.research_steps())}")
+                f"{', '.join(s.slug for s in steps.research_steps())}"
+            )
         if self.confidence is not None and not 0.0 <= self.confidence <= 1.0:
             raise ValueError(f"confidence must be in [0, 1], got {self.confidence}")
         if self.revision < 1:
@@ -101,8 +103,10 @@ class Hypothesis:
 
     def __str__(self) -> str:
         confidence = "—" if self.confidence is None else f"{self.confidence:.2f}"
-        return (f"{self.hypothesis_id}r{self.revision} [{self.status.value}] "
-                f"{confidence} — {self.statement}")
+        return (
+            f"{self.hypothesis_id}r{self.revision} [{self.status.value}] "
+            f"{confidence} — {self.statement}"
+        )
 
 
 def ensure_table(connection, schema: str) -> None:
@@ -130,18 +134,29 @@ def ensure_table(connection, schema: str) -> None:
 
 def _qualified(schema: str) -> str:
     from ..warehouse.postgres import ALIAS, safe_identifier
+
     return f"{ALIAS}.{safe_identifier(schema)}.{HYPOTHESIS_TABLE}"
 
 
 def _insert(connection, schema: str, hypothesis: Hypothesis) -> Hypothesis:
     """Append one revision. Column order matches the DDL, which is load-bearing."""
     connection.execute(
-        f"INSERT INTO {_qualified(schema)} "
-        f"VALUES (?, ?, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [hypothesis.hypothesis_id, hypothesis.revision, hypothesis.step,
-         hypothesis.statement, hypothesis.prediction, hypothesis.refuted_by,
-         hypothesis.path, hypothesis.gene, hypothesis.status.value,
-         hypothesis.confidence, hypothesis.reasoning, hypothesis.author])
+        f"INSERT INTO {_qualified(schema)} VALUES (?, ?, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+            hypothesis.hypothesis_id,
+            hypothesis.revision,
+            hypothesis.step,
+            hypothesis.statement,
+            hypothesis.prediction,
+            hypothesis.refuted_by,
+            hypothesis.path,
+            hypothesis.gene,
+            hypothesis.status.value,
+            hypothesis.confidence,
+            hypothesis.reasoning,
+            hypothesis.author,
+        ],
+    )
     return hypothesis
 
 
@@ -153,7 +168,8 @@ def next_id(connection, schema: str) -> str:
     attachment, which has no sequences in the DDL subset both sides speak.
     """
     highest = connection.execute(
-        f"SELECT coalesce(max(hypothesis_id), '') FROM {_qualified(schema)}").fetchone()
+        f"SELECT coalesce(max(hypothesis_id), '') FROM {_qualified(schema)}"
+    ).fetchone()
     current = (highest or [""])[0] or ""
     return ID_FORMAT.format(int(current[1:]) + 1 if current else 1)
 
@@ -164,9 +180,16 @@ def propose(connection, schema: str, hypothesis: Hypothesis) -> Hypothesis:
     return _insert(connection, schema, stamped)
 
 
-def revise(connection, schema: str, hypothesis_id: str, *, status: Status,
-           confidence: float | None = None, reasoning: str = "",
-           author: str = "") -> Hypothesis:
+def revise(
+    connection,
+    schema: str,
+    hypothesis_id: str,
+    *,
+    status: Status,
+    confidence: float | None = None,
+    reasoning: str = "",
+    author: str = "",
+) -> Hypothesis:
     """Append a new revision carrying a changed status or confidence.
 
     The unchanged fields are copied from the latest revision rather than re-typed, so a
@@ -175,18 +198,35 @@ def revise(connection, schema: str, hypothesis_id: str, *, status: Status,
     if not reasoning.strip():
         raise ValueError(
             "reasoning is required: a confidence with no stated basis is a number "
-            "nobody can check, which is exactly what this register exists to prevent")
+            "nobody can check, which is exactly what this register exists to prevent"
+        )
     current = latest(connection, schema, hypothesis_id)
     revised = replace(
-        current, revision=current.revision + 1, status=status,
+        current,
+        revision=current.revision + 1,
+        status=status,
         confidence=current.confidence if confidence is None else confidence,
-        reasoning=reasoning, author=author or current.author)
+        reasoning=reasoning,
+        author=author or current.author,
+    )
     return _insert(connection, schema, revised)
 
 
 #: Column order of the SELECT in :func:`_select`, so a row can be rebuilt into an object.
-_COLUMNS = ("hypothesis_id", "revision", "step", "statement", "prediction", "refuted_by",
-            "path", "gene", "status", "confidence", "reasoning", "author")
+_COLUMNS = (
+    "hypothesis_id",
+    "revision",
+    "step",
+    "statement",
+    "prediction",
+    "refuted_by",
+    "path",
+    "gene",
+    "status",
+    "confidence",
+    "reasoning",
+    "author",
+)
 
 _SELECT = f"SELECT {', '.join(_COLUMNS)} FROM {{table}}"
 
@@ -195,16 +235,17 @@ def _hydrate(row: tuple) -> Hypothesis:
     """Rebuild a :class:`Hypothesis` from a row in :data:`_COLUMNS` order."""
     fields = dict(zip(_COLUMNS, row))
     fields["status"] = Status(fields["status"])
-    fields["confidence"] = None if fields["confidence"] is None else float(
-        fields["confidence"])
+    fields["confidence"] = None if fields["confidence"] is None else float(fields["confidence"])
     fields["revision"] = int(fields["revision"])
     return Hypothesis(**fields)
 
 
 def latest(connection, schema: str, hypothesis_id: str) -> Hypothesis:
     """The most recent revision of one claim."""
-    sql = (_SELECT.format(table=_qualified(schema))
-           + " WHERE hypothesis_id = ? ORDER BY revision DESC LIMIT 1")
+    sql = (
+        _SELECT.format(table=_qualified(schema))
+        + " WHERE hypothesis_id = ? ORDER BY revision DESC LIMIT 1"
+    )
     row = connection.execute(sql, [hypothesis_id]).fetchone()
     if not row:
         raise KeyError(f"no hypothesis {hypothesis_id!r} in {schema}")
@@ -219,9 +260,11 @@ def board(connection, schema: str, step: str | None = None) -> list[Hypothesis]:
     both planners agree on.
     """
     table = _qualified(schema)
-    sql = (f"{_SELECT.format(table=table)} h WHERE h.revision = ("
-           f"SELECT max(revision) FROM {table} m "
-           f"WHERE m.hypothesis_id = h.hypothesis_id)")
+    sql = (
+        f"{_SELECT.format(table=table)} h WHERE h.revision = ("
+        f"SELECT max(revision) FROM {table} m "
+        f"WHERE m.hypothesis_id = h.hypothesis_id)"
+    )
     params: list = []
     if step is not None:
         sql += " AND h.step = ?"
@@ -248,10 +291,8 @@ def all_revisions(connection, schema: str, step: str | None = None) -> list[Hypo
 
 def history(connection, schema: str, hypothesis_id: str) -> list[Hypothesis]:
     """Every revision of one claim, oldest first — how the belief actually moved."""
-    sql = (_SELECT.format(table=_qualified(schema))
-           + " WHERE hypothesis_id = ? ORDER BY revision")
-    return [_hydrate(row)
-            for row in connection.execute(sql, [hypothesis_id]).fetchall()]
+    sql = _SELECT.format(table=_qualified(schema)) + " WHERE hypothesis_id = ? ORDER BY revision"
+    return [_hydrate(row) for row in connection.execute(sql, [hypothesis_id]).fetchall()]
 
 
 #: Headers matching :func:`board`, so the CLI does not restate them.
@@ -263,7 +304,12 @@ def as_row(hypothesis: Hypothesis, width: int = 60) -> tuple:
     statement = hypothesis.statement
     if len(statement) > width:
         statement = statement[: width - 1] + "…"
-    return (hypothesis.hypothesis_id, hypothesis.revision, hypothesis.step,
-            hypothesis.status.value,
-            "—" if hypothesis.confidence is None else f"{hypothesis.confidence:.2f}",
-            hypothesis.gene or "—", statement)
+    return (
+        hypothesis.hypothesis_id,
+        hypothesis.revision,
+        hypothesis.step,
+        hypothesis.status.value,
+        "—" if hypothesis.confidence is None else f"{hypothesis.confidence:.2f}",
+        hypothesis.gene or "—",
+        statement,
+    )

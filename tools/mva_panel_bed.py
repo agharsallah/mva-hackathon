@@ -39,7 +39,7 @@ def lookup(symbol: str, attempts: int = 4) -> dict:
         except (urllib.error.URLError, TimeoutError):
             if attempt == attempts - 1:
                 raise
-            time.sleep(2 ** attempt)
+            time.sleep(2**attempt)
     raise RuntimeError("unreachable")
 
 

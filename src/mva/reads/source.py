@@ -80,8 +80,7 @@ def _from_directory(directory: Path) -> list[Source]:
     if not directory.is_dir():
         raise NotADelivery(f"{directory} is not a directory")
 
-    candidates = sorted(path for path in directory.iterdir()
-                        if schema.FASTQ_NAME.search(path.name))
+    candidates = sorted(path for path in directory.iterdir() if schema.FASTQ_NAME.search(path.name))
     if candidates and all(path.is_dir() for path in candidates):
         raise NotADelivery(_minio_diagnosis(directory, candidates[0]))
 
@@ -89,10 +88,12 @@ def _from_directory(directory: Path) -> list[Source]:
     if not files:
         raise NotADelivery(
             f"no readable FASTQ files in {directory}\n"
-            f"  looked for names ending in _L00<n>_R<1|2>_001.fastq.gz")
-    return [Source(name=path.name, path=path, size=path.stat().st_size,
-                   open_stream=_local_opener(path))
-            for path in files]
+            f"  looked for names ending in _L00<n>_R<1|2>_001.fastq.gz"
+        )
+    return [
+        Source(name=path.name, path=path, size=path.stat().st_size, open_stream=_local_opener(path))
+        for path in files
+    ]
 
 
 def _minio_diagnosis(directory: Path, example: Path) -> str:
@@ -105,7 +106,8 @@ def _minio_diagnosis(directory: Path, example: Path) -> str:
         f"  Use the delivery as it was downloaded, or read the bucket over the S3 API:\n"
         f"    mva-reads convert --source s3\n"
         f"  Never read or write MinIO's data directory directly; it is the store's own "
-        f"bookkeeping.")
+        f"bookkeeping."
+    )
 
 
 def _local_opener(path: Path) -> Callable[[], IO[bytes]]:
@@ -129,9 +131,14 @@ def _from_object_store(match, store) -> list[Source]:
             key = item["Key"]
             name = key.rsplit("/", 1)[-1]
             if schema.FASTQ_NAME.search(name):
-                sources.append(Source(name=name, size=item["Size"],
-                                      url=presigned_url(s3, bucket, key),
-                                      open_stream=_s3_opener(store, bucket, key)))
+                sources.append(
+                    Source(
+                        name=name,
+                        size=item["Size"],
+                        url=presigned_url(s3, bucket, key),
+                        open_stream=_s3_opener(store, bucket, key),
+                    )
+                )
     if not sources:
         raise NotADelivery(f"no FASTQ objects under s3://{bucket}/{prefix}")
     return sorted(sources, key=lambda source: source.name)
@@ -148,8 +155,9 @@ def presigned_url(s3, bucket: str, key: str, expires: int = PRESIGN_SECONDS) -> 
     for a bounded time — but it *is* a bearer credential until it expires: never log it,
     never commit it, never paste it anywhere shared.
     """
-    return s3.generate_presigned_url("get_object", ExpiresIn=expires,
-                                     Params={"Bucket": bucket, "Key": key})
+    return s3.generate_presigned_url(
+        "get_object", ExpiresIn=expires, Params={"Bucket": bucket, "Key": key}
+    )
 
 
 def _s3_opener(store, bucket: str, key: str) -> Callable[[], IO[bytes]]:
@@ -181,7 +189,7 @@ class _StreamingBodyIO(io.RawIOBase):
         chunk = self._body.read(len(buffer))
         if not chunk:
             return 0
-        buffer[:len(chunk)] = chunk
+        buffer[: len(chunk)] = chunk
         return len(chunk)
 
     def close(self) -> None:

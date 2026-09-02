@@ -39,10 +39,15 @@ class ObjectStore:
     @property
     def missing(self) -> list[str]:
         """Settings that must be supplied and were not."""
-        return [name for name, value in (("S3_ENDPOINT", self.endpoint),
-                                         ("S3_ACCESS_KEY", self.access_key),
-                                         ("S3_SECRET_KEY", self.secret_key))
-                if not value]
+        return [
+            name
+            for name, value in (
+                ("S3_ENDPOINT", self.endpoint),
+                ("S3_ACCESS_KEY", self.access_key),
+                ("S3_SECRET_KEY", self.secret_key),
+            )
+            if not value
+        ]
 
     def url(self, key: str) -> str:
         """The ``s3://`` URL for one object."""
@@ -52,8 +57,10 @@ class ObjectStore:
         """A one-line summary safe to print: the secret key is redacted."""
         scheme = "https" if self.use_ssl else "http"
         secret = "set" if self.secret_key else "MISSING"
-        return (f"{scheme}://{self.endpoint}/{self.bucket} "
-                f"(key: {self.access_key or 'MISSING'}, secret: {secret})")
+        return (
+            f"{scheme}://{self.endpoint}/{self.bucket} "
+            f"(key: {self.access_key or 'MISSING'}, secret: {secret})"
+        )
 
     def __repr__(self) -> str:  # pragma: no cover - trivial
         return f"ObjectStore({self.describe()})"
@@ -70,8 +77,11 @@ def connect(store: ObjectStore):
     import duckdb
 
     if store.missing:
-        raise RuntimeError("missing settings: " + ", ".join(store.missing) +
-                           " — add them to .env (see .env.example)")
+        raise RuntimeError(
+            "missing settings: "
+            + ", ".join(store.missing)
+            + " — add them to .env (see .env.example)"
+        )
     connection = duckdb.connect()
     connection.execute("INSTALL httpfs; LOAD httpfs;")
     connection.execute(f"""
@@ -98,13 +108,19 @@ def put(store: ObjectStore, local: Path, key: str) -> str:
     url = store.url(key)
     with connect(store) as connection:
         connection.execute(
-            f"COPY (SELECT * FROM read_parquet(?)) TO '{url}' "
-            "(FORMAT parquet, COMPRESSION zstd)", [str(local)])
+            f"COPY (SELECT * FROM read_parquet(?)) TO '{url}' (FORMAT parquet, COMPRESSION zstd)",
+            [str(local)],
+        )
     return url
 
 
-def sorted_copy(store: ObjectStore, source_url: str, key: str,
-                order_by: list[str], row_group_size: int = 100_000) -> str:
+def sorted_copy(
+    store: ObjectStore,
+    source_url: str,
+    key: str,
+    order_by: list[str],
+    row_group_size: int = 100_000,
+) -> str:
     """Write a copy ordered by ``order_by``, so row-group pruning can work.
 
     This is the single highest-leverage thing you can do to a remote Parquet. Row-group
@@ -117,7 +133,8 @@ def sorted_copy(store: ObjectStore, source_url: str, key: str,
     with connect(store) as connection:
         connection.execute(
             f"COPY (SELECT * FROM '{source_url}' ORDER BY {columns}) TO '{url}' "
-            f"(FORMAT parquet, COMPRESSION zstd, ROW_GROUP_SIZE {row_group_size})")
+            f"(FORMAT parquet, COMPRESSION zstd, ROW_GROUP_SIZE {row_group_size})"
+        )
     return url
 
 
@@ -141,8 +158,7 @@ def diagnose(store: ObjectStore, error: Exception) -> str:
             "",
             f"  open the tunnel:  ssh -N -L {port or 9012}:localhost:{port or 9012} "
             f"<user>@<server>",
-            "  or point straight at the server:  S3_ENDPOINT=<server-hostname>:"
-            f"{port or 9012}",
+            f"  or point straight at the server:  S3_ENDPOINT=<server-hostname>:{port or 9012}",
             "",
         ]
     else:
@@ -160,8 +176,10 @@ def diagnose(store: ObjectStore, error: Exception) -> str:
         ]
 
     if store.use_ssl:
-        lines.append("S3_USE_SSL=true but MinIO serves plain HTTP unless you put TLS in "
-                     "front of it — try S3_USE_SSL=false over a tunnel.")
+        lines.append(
+            "S3_USE_SSL=true but MinIO serves plain HTTP unless you put TLS in "
+            "front of it — try S3_USE_SSL=false over a tunnel."
+        )
     lines.append(f"underlying error: {str(error).splitlines()[0][:160]}")
     return "\n".join(lines)
 

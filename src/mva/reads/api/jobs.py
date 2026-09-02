@@ -60,14 +60,18 @@ class Job:
 
     def snapshot(self) -> dict:
         """The job as a JSON-safe dict — the one shape the API and the disk share."""
-        elapsed = ((self.finished_at or time.time()) - self.started_at
-                   if self.started_at else None)
+        elapsed = (self.finished_at or time.time()) - self.started_at if self.started_at else None
         return {
-            "id": self.id, "verb": self.verb, "state": self.state,
-            "params": self.params, "submitted_at": self.submitted_at,
-            "started_at": self.started_at, "finished_at": self.finished_at,
+            "id": self.id,
+            "verb": self.verb,
+            "state": self.state,
+            "params": self.params,
+            "submitted_at": self.submitted_at,
+            "started_at": self.started_at,
+            "finished_at": self.finished_at,
             "elapsed_seconds": round(elapsed, 3) if elapsed is not None else None,
-            "result": self.result, "error": self.error,
+            "result": self.result,
+            "error": self.error,
         }
 
 
@@ -77,15 +81,13 @@ class Manager:
     def __init__(self, directory: Path | None = None, workers: int = 2):
         self._jobs: dict[str, Job] = {}
         self._lock = threading.Lock()
-        self._pool = ThreadPoolExecutor(max_workers=workers,
-                                        thread_name_prefix="reads-api")
+        self._pool = ThreadPoolExecutor(max_workers=workers, thread_name_prefix="reads-api")
         self._directory = directory
         if directory is not None:
             directory.mkdir(parents=True, exist_ok=True)
             self._load_history(directory)
 
-    def submit(self, verb: str, params: dict,
-               runner: Callable[[Job], Any]) -> Job:
+    def submit(self, verb: str, params: dict, runner: Callable[[Job], Any]) -> Job:
         """Register and enqueue one job; returns immediately with it still queued."""
         job = Job(id=uuid.uuid4().hex[:12], verb=verb, params=params)
         with self._lock:
@@ -103,9 +105,11 @@ class Manager:
         with self._lock:
             found = list(self._jobs.values())
         found.sort(key=lambda job: job.submitted_at, reverse=True)
-        return [job for job in found
-                if (state is None or job.state == state)
-                and (verb is None or job.verb == verb)]
+        return [
+            job
+            for job in found
+            if (state is None or job.state == state) and (verb is None or job.verb == verb)
+        ]
 
     def wait(self, job: Job, timeout: float) -> bool:
         """Block up to ``timeout`` seconds; True when the job reached a terminal state."""
@@ -153,8 +157,7 @@ class Manager:
         else:
             self._finish(job, DONE, result=result)
 
-    def _finish(self, job: Job, state: str,
-                result: Any = None, error: str | None = None) -> None:
+    def _finish(self, job: Job, state: str, result: Any = None, error: str | None = None) -> None:
         job.state, job.result, job.error = state, result, error
         job.finished_at = time.time()
         self._persist(job)
@@ -173,14 +176,17 @@ class Manager:
         for path in sorted(directory.glob("*.json")):
             try:
                 record = json.loads(path.read_text(encoding="utf-8"))
-                job = Job(id=record["id"], verb=record["verb"],
-                          params=record.get("params") or {},
-                          state=record.get("state", LOST),
-                          submitted_at=record.get("submitted_at") or 0.0,
-                          started_at=record.get("started_at"),
-                          finished_at=record.get("finished_at"),
-                          result=record.get("result"),
-                          error=record.get("error"))
+                job = Job(
+                    id=record["id"],
+                    verb=record["verb"],
+                    params=record.get("params") or {},
+                    state=record.get("state", LOST),
+                    submitted_at=record.get("submitted_at") or 0.0,
+                    started_at=record.get("started_at"),
+                    finished_at=record.get("finished_at"),
+                    result=record.get("result"),
+                    error=record.get("error"),
+                )
             except (json.JSONDecodeError, KeyError, TypeError):
                 continue  # a truncated record is history we can live without
             if job.state not in TERMINAL:

@@ -78,10 +78,20 @@ def funnel(connection) -> dict[int, dict]:
 
 #: Every genotype shape the predicate has to bucket, with whether it is a heterozygote.
 GT_CASES = [
-    ("0/1", True), ("1/0", True), ("1/2", True), ("0/2", True), ("2/3", True),
-    ("0|1", True),   # phased, after the caller normalises the separator
-    ("0/0", False), ("1/1", False), ("2/2", False),
-    ("./.", False), ("0/.", False), ("./1", False), ("1", False), ("", False),
+    ("0/1", True),
+    ("1/0", True),
+    ("1/2", True),
+    ("0/2", True),
+    ("2/3", True),
+    ("0|1", True),  # phased, after the caller normalises the separator
+    ("0/0", False),
+    ("1/1", False),
+    ("2/2", False),
+    ("./.", False),
+    ("0/.", False),
+    ("./1", False),
+    ("1", False),
+    ("", False),
 ]
 
 
@@ -90,8 +100,9 @@ def test_the_het_predicate_is_two_different_real_alleles(gt, expected):
     """Not `gt IN ('0/1','1/2')`: a callset emitting 0/2 or 2/3 must still be read right,
     and a homozygote can never be half of a compound heterozygote."""
     normalised = gt.replace("|", "/")
-    got = duckdb.sql(f"SELECT ({het('gt')}) FROM (SELECT ? AS gt)",
-                     params=[normalised]).fetchone()[0]
+    got = duckdb.sql(f"SELECT ({het('gt')}) FROM (SELECT ? AS gt)", params=[normalised]).fetchone()[
+        0
+    ]
     assert bool(got) is expected
 
 
@@ -100,15 +111,15 @@ def test_the_het_predicate_is_two_different_real_alleles(gt, expected):
 #: ``stage_no -> (n, of_previous_pct)`` for the fixture above. Every number is arithmetic
 #: over the rows in :func:`warehouse`, not a snapshot of a previous run.
 EXPECTED = {
-    1: (10, None),      # every record
-    2: (8, 80.0),       # LowQual and MQ40 drop out
-    3: (6, 75.0),       # the two homozygotes and the no-call drop out
-    4: (6, None),       # scope change: PASS records inside the two panel intervals
-    5: (6, 100.0),      # 8 annotated: 1 matches no record, 1 matches only a filtered one
-    6: (5, 83.3333),    # AF 0.4 is common
-    7: (4, 80.0),       # MODIFIER cannot change the protein
-    8: (3, 75.0),       # the homozygote leaves; the rest are all in GENE1
-    9: (3, None),       # 3 alleles in one gene = 3 within-gene pairings
+    1: (10, None),  # every record
+    2: (8, 80.0),  # LowQual and MQ40 drop out
+    3: (6, 75.0),  # the two homozygotes and the no-call drop out
+    4: (6, None),  # scope change: PASS records inside the two panel intervals
+    5: (6, 100.0),  # 8 annotated: 1 matches no record, 1 matches only a filtered one
+    6: (5, 83.3333),  # AF 0.4 is common
+    7: (4, 80.0),  # MODIFIER cannot change the protein
+    8: (3, 75.0),  # the homozygote leaves; the rest are all in GENE1
+    9: (3, None),  # 3 alleles in one gene = 3 within-gene pairings
 }
 
 
@@ -131,8 +142,7 @@ def test_the_funnel_has_one_row_per_stage_in_order(warehouse):
 
 def test_the_scope_column_names_where_the_boundary_is(warehouse):
     rows = funnel(warehouse)
-    assert [rows[i]["scope"] for i in sorted(rows)] == \
-           ["genome"] * 3 + ["panel"] * 6
+    assert [rows[i]["scope"] for i in sorted(rows)] == ["genome"] * 3 + ["panel"] * 6
 
 
 def test_the_first_panel_stage_reports_no_share_of_the_row_above(warehouse):
@@ -144,17 +154,21 @@ def test_the_first_panel_stage_reports_no_share_of_the_row_above(warehouse):
 
 def test_the_genome_stages_read_the_callset_not_a_summary_table(warehouse):
     """Stage 1 must be COUNT(*) over the records, so adding a record moves it."""
-    warehouse.execute("INSERT INTO src.variants_raw VALUES "
-                      "('15', '1200', 'A', 'G', 'PASS', 'GT:AD:DP', '0/1:5,5:10')")
+    warehouse.execute(
+        "INSERT INTO src.variants_raw VALUES "
+        "('15', '1200', 'A', 'G', 'PASS', 'GT:AD:DP', '0/1:5,5:10')"
+    )
     assert funnel(warehouse)[1]["n"] == 11
 
 
 def test_a_multiallelic_record_is_matched_by_membership_not_substring(warehouse):
     """`200` is `C -> T,G` in one record and two annotations ask about it separately.
     A substring test would also match an annotation the record does not carry."""
-    warehouse.execute("INSERT INTO src.panel_annotations VALUES "
-                      "('15', 200, 'C', 'TG', 'GENE1', 'missense_variant', "
-                      "'MODERATE', 0.001)")
+    warehouse.execute(
+        "INSERT INTO src.panel_annotations VALUES "
+        "('15', 200, 'C', 'TG', 'GENE1', 'missense_variant', "
+        "'MODERATE', 0.001)"
+    )
     assert funnel(warehouse)[5]["n"] == 6, "the invented TG allele must not join"
 
 
@@ -176,10 +190,14 @@ def test_the_notes_carry_the_numbers_they_claim(warehouse):
 def test_the_pair_count_is_every_within_gene_pairing(warehouse):
     """3 surviving alleles in one gene is 3 pairs, not 3 alleles carried forward — and a
     fourth would make 6, which is why the last stage is allowed to widen."""
-    warehouse.execute("INSERT INTO src.variants_raw VALUES "
-                      "('15', '150', 'A', 'G', 'PASS', 'GT:AD:DP', '0/1:5,5:10')")
-    warehouse.execute("INSERT INTO src.panel_annotations VALUES "
-                      "('15', 150, 'A', 'G', 'GENE1', 'stop_gained', 'HIGH', NULL)")
+    warehouse.execute(
+        "INSERT INTO src.variants_raw VALUES "
+        "('15', '150', 'A', 'G', 'PASS', 'GT:AD:DP', '0/1:5,5:10')"
+    )
+    warehouse.execute(
+        "INSERT INTO src.panel_annotations VALUES "
+        "('15', 150, 'A', 'G', 'GENE1', 'stop_gained', 'HIGH', NULL)"
+    )
     rows = funnel(warehouse)
     assert rows[8]["n"] == 4 and rows[9]["n"] == 6
 

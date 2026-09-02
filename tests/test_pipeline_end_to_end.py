@@ -4,6 +4,7 @@ This is the tracer that proves the seams connect. It runs entirely on the synthe
 fixture and a fabricated answer key, so it asserts the machinery works — never that we
 have found the real variant.
 """
+
 import io
 from pathlib import Path
 
@@ -28,14 +29,16 @@ TRANS_B = Variant("chr15", 40143500, "G", "T")
 # A pretend answer key. The trans pair the fixture encodes is the "causal" one.
 PRETEND_TRUTH = frozenset({TRANS_A, TRANS_B})
 
-ANNOTATOR = DictAnnotator({
-    TRANS_A: Annotation("BUB1B", "stop_gained", 0.0),
-    TRANS_B: Annotation("BUB1B", "frameshift_variant", 0.0),
-    Variant("chr15", 40142000, "C", "T"): Annotation("BUB1B", "missense_variant", 0.3),
-    Variant("chr15", 40142100, "A", "G"): Annotation("BUB1B", "intron_variant", 0.3),
-    Variant("chr15", 40144000, "A", "C"): Annotation("BUB1B", "missense_variant", 2e-4),
-    Variant("chr15", 40144800, "C", "G"): Annotation("BUB1B", "missense_variant", 2e-4),
-})
+ANNOTATOR = DictAnnotator(
+    {
+        TRANS_A: Annotation("BUB1B", "stop_gained", 0.0),
+        TRANS_B: Annotation("BUB1B", "frameshift_variant", 0.0),
+        Variant("chr15", 40142000, "C", "T"): Annotation("BUB1B", "missense_variant", 0.3),
+        Variant("chr15", 40142100, "A", "G"): Annotation("BUB1B", "intron_variant", 0.3),
+        Variant("chr15", 40144000, "A", "C"): Annotation("BUB1B", "missense_variant", 2e-4),
+        Variant("chr15", 40144800, "C", "G"): Annotation("BUB1B", "missense_variant", 2e-4),
+    }
+)
 
 
 def build_submission():

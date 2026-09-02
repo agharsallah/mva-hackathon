@@ -16,12 +16,30 @@ from mva.viz.cache import Cache
 
 #: One balanced bin and one deliberately shifted thin bin, so both branches are exercised.
 BAF_ROWS = [
-    {"chrom": "7", "mb": 12, "n_het": 1840, "mean_vaf": 0.4971, "median_vaf": 0.5,
-     "sd_vaf": 0.0919, "vaf_deviation": -0.0029, "pct_in_0_40_0_60": 77.3,
-     "mean_dp": 42.4, "low_confidence": False},
-    {"chrom": "7", "mb": 13, "n_het": 6, "mean_vaf": 0.31, "median_vaf": 0.29,
-     "sd_vaf": 0.17, "vaf_deviation": -0.19, "pct_in_0_40_0_60": 16.7,
-     "mean_dp": 91.0, "low_confidence": True},
+    {
+        "chrom": "7",
+        "mb": 12,
+        "n_het": 1840,
+        "mean_vaf": 0.4971,
+        "median_vaf": 0.5,
+        "sd_vaf": 0.0919,
+        "vaf_deviation": -0.0029,
+        "pct_in_0_40_0_60": 77.3,
+        "mean_dp": 42.4,
+        "low_confidence": False,
+    },
+    {
+        "chrom": "7",
+        "mb": 13,
+        "n_het": 6,
+        "mean_vaf": 0.31,
+        "median_vaf": 0.29,
+        "sd_vaf": 0.17,
+        "vaf_deviation": -0.19,
+        "pct_in_0_40_0_60": 16.7,
+        "mean_dp": 91.0,
+        "low_confidence": True,
+    },
 ]
 
 
@@ -39,8 +57,9 @@ def client(tmp_path, monkeypatch, seen):
         return [dict(row) for row in BAF_ROWS]
 
     monkeypatch.setattr(queries, "fetch", fetch)
-    with TestClient(create_app(settings=None, cache=Cache(tmp_path),
-                               origins=["http://localhost:5173"])) as running:
+    with TestClient(
+        create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
+    ) as running:
         yield running
 
 
@@ -60,8 +79,7 @@ class TestTheEnvelope:
         assert client.get("/api/genome/baf-bins").json()["cached_at"] is None
 
     def test_the_source_names_the_derived_table(self, client):
-        assert client.get("/api/genome/baf-bins").json()["source"] == \
-               "pg.results.baf_bins"
+        assert client.get("/api/genome/baf-bins").json()["source"] == "pg.results.baf_bins"
 
 
 class TestTheContigParameter:
@@ -89,9 +107,18 @@ class TestTheContract:
     def test_every_column_the_chart_reads_is_selected(self, client, seen):
         client.get("/api/genome/baf-bins")
         sql, _ = seen[-1]
-        for column in ("chrom", "mb", "n_het", "mean_vaf", "median_vaf", "sd_vaf",
-                       "vaf_deviation", "pct_in_0_40_0_60", "mean_dp",
-                       "low_confidence"):
+        for column in (
+            "chrom",
+            "mb",
+            "n_het",
+            "mean_vaf",
+            "median_vaf",
+            "sd_vaf",
+            "vaf_deviation",
+            "pct_in_0_40_0_60",
+            "mean_dp",
+            "low_confidence",
+        ):
             assert column in sql, column
 
     def test_a_thin_bin_is_served_flagged_rather_than_withheld(self, client):

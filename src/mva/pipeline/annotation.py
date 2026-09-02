@@ -16,13 +16,21 @@ from typing import Protocol
 from .variant import Variant
 
 # Sequence Ontology consequences that abolish the protein, in the order VEP ranks them.
-LOSS_OF_FUNCTION = frozenset({
-    "transcript_ablation", "splice_acceptor_variant", "splice_donor_variant",
-    "stop_gained", "frameshift_variant", "start_lost", "stop_lost",
-})
+LOSS_OF_FUNCTION = frozenset(
+    {
+        "transcript_ablation",
+        "splice_acceptor_variant",
+        "splice_donor_variant",
+        "stop_gained",
+        "frameshift_variant",
+        "start_lost",
+        "stop_lost",
+    }
+)
 
-MISSENSE = frozenset({"missense_variant", "inframe_deletion", "inframe_insertion",
-                      "protein_altering_variant"})
+MISSENSE = frozenset(
+    {"missense_variant", "inframe_deletion", "inframe_insertion", "protein_altering_variant"}
+)
 
 
 @dataclass(frozen=True)

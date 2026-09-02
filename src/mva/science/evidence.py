@@ -57,8 +57,7 @@ class Direction(Enum):
     @property
     def hue(self) -> Hue:
         """The colour this direction is drawn in, from the one palette."""
-        return {Direction.SUPPORTS: GOOD, Direction.REFUTES: BAD,
-                Direction.NEUTRAL: MUTED}[self]
+        return {Direction.SUPPORTS: GOOD, Direction.REFUTES: BAD, Direction.NEUTRAL: MUTED}[self]
 
 
 @dataclass(frozen=True)
@@ -81,7 +80,8 @@ class Evidence:
         if not self.source_ref.strip():
             raise ValueError(
                 "source_ref is required: an observation with no receipt cannot be "
-                "checked, and an unverifiable observation is not evidence")
+                "checked, and an unverifiable observation is not evidence"
+            )
         if not 0.0 <= self.strength <= 1.0:
             raise ValueError(f"strength must be in [0, 1], got {self.strength}")
 
@@ -115,9 +115,11 @@ class Weighing:
         for label, term in self.terms:
             running += term
             lines.append(f"  {term:+.3f}  {label}   -> {_sigmoid(running):.3f}")
-        lines.append(f"suggested confidence {self.confidence:.2f} "
-                     f"({self.supports} supporting, {self.refutes} refuting, "
-                     f"{self.neutral} neutral)")
+        lines.append(
+            f"suggested confidence {self.confidence:.2f} "
+            f"({self.supports} supporting, {self.refutes} refuting, "
+            f"{self.neutral} neutral)"
+        )
         return lines
 
 
@@ -130,8 +132,7 @@ def _sigmoid(log_odds: float) -> float:
     return 1.0 / (1.0 + math.exp(-log_odds))
 
 
-def weigh(rows: list[Evidence], hypothesis_id: str = "",
-          prior: float = PRIOR) -> Weighing:
+def weigh(rows: list[Evidence], hypothesis_id: str = "", prior: float = PRIOR) -> Weighing:
     """Accumulate evidence into a suggested confidence, keeping every term visible.
 
     Writes nothing. The caller decides whether the number is worth committing, and the
@@ -149,9 +150,13 @@ def weigh(rows: list[Evidence], hypothesis_id: str = "",
 
     return Weighing(
         hypothesis_id=hypothesis_id or (rows[0].hypothesis_id if rows else ""),
-        prior=prior, terms=tuple(terms), confidence=_sigmoid(log_odds),
-        supports=tally[Direction.SUPPORTS], refutes=tally[Direction.REFUTES],
-        neutral=tally[Direction.NEUTRAL])
+        prior=prior,
+        terms=tuple(terms),
+        confidence=_sigmoid(log_odds),
+        supports=tally[Direction.SUPPORTS],
+        refutes=tally[Direction.REFUTES],
+        neutral=tally[Direction.NEUTRAL],
+    )
 
 
 def ensure_table(connection, schema: str) -> None:
@@ -176,6 +181,7 @@ def ensure_table(connection, schema: str) -> None:
 
 def _qualified(schema: str) -> str:
     from ..warehouse.postgres import ALIAS, safe_identifier
+
     return f"{ALIAS}.{safe_identifier(schema)}.{EVIDENCE_TABLE}"
 
 
@@ -188,18 +194,38 @@ def record(connection, schema: str, evidence: Evidence) -> int:
     ledger runs.
     """
     qualified = _qualified(schema)
-    next_id = (connection.execute(
-        f"SELECT coalesce(max(evidence_id), 0) + 1 FROM {qualified}").fetchone() or [1])[0]
+    next_id = (
+        connection.execute(f"SELECT coalesce(max(evidence_id), 0) + 1 FROM {qualified}").fetchone()
+        or [1]
+    )[0]
     connection.execute(
         f"INSERT INTO {qualified} VALUES (?, now(), ?, ?, ?, ?, ?, ?, ?, ?)",
-        [next_id, evidence.hypothesis_id, evidence.kind, evidence.direction.value,
-         evidence.strength, evidence.claim, evidence.source_ref,
-         evidence.lineage_ref, evidence.author])
+        [
+            next_id,
+            evidence.hypothesis_id,
+            evidence.kind,
+            evidence.direction.value,
+            evidence.strength,
+            evidence.claim,
+            evidence.source_ref,
+            evidence.lineage_ref,
+            evidence.author,
+        ],
+    )
     return int(next_id)
 
 
-_COLUMNS = ("evidence_id", "hypothesis_id", "kind", "direction", "strength", "claim",
-            "source_ref", "lineage_ref", "author")
+_COLUMNS = (
+    "evidence_id",
+    "hypothesis_id",
+    "kind",
+    "direction",
+    "strength",
+    "claim",
+    "source_ref",
+    "lineage_ref",
+    "author",
+)
 
 _SELECT = f"SELECT {', '.join(_COLUMNS)} FROM {{table}}"
 
@@ -242,6 +268,12 @@ def as_row(evidence: Evidence, width: int = 50) -> tuple:
     claim = evidence.claim
     if len(claim) > width:
         claim = claim[: width - 1] + "…"
-    return (evidence.evidence_id, evidence.hypothesis_id, evidence.kind,
-            evidence.direction.value, f"{evidence.strength:.2f}", claim,
-            evidence.source_ref)
+    return (
+        evidence.evidence_id,
+        evidence.hypothesis_id,
+        evidence.kind,
+        evidence.direction.value,
+        f"{evidence.strength:.2f}",
+        claim,
+        evidence.source_ref,
+    )

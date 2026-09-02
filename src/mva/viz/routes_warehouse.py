@@ -28,8 +28,7 @@ TABLES = {
     "/callset/substitutions": (queries.substitutions, "pg.results.stats_st"),
     "/callset/indel-lengths": (queries.indel_lengths, "pg.results.stats_idd"),
     "/callset/tstv": (queries.tstv, "pg.results.stats_tstv"),
-    "/callset/observed-expected": (queries.observed_expected,
-                                   "pg.results.qc_observed_expected"),
+    "/callset/observed-expected": (queries.observed_expected, "pg.results.qc_observed_expected"),
     "/callset/funnel": (queries.candidate_funnel, "pg.results.candidate_funnel"),
     "/callset/zygosity-split": (queries.zygosity_split, "pg.results.stats_af"),
     "/callset/fields": (queries.vcf_fields, "pg.warehouse.vcf_fields"),
@@ -42,15 +41,19 @@ TABLES = {
 }
 
 #: Tag → the tables it reads, for the ``/docs`` grouping and the overview's source string.
-OVERVIEW_SOURCE = ("pg.results.stats_sn + stats_tstv + allele_balance_flags, "
-                   "pg.warehouse.filter_gt_counts + contig_counts + profile_scalars + "
-                   "source_objects + probe_ledger, s3 runs.parquet")
+OVERVIEW_SOURCE = (
+    "pg.results.stats_sn + stats_tstv + allele_balance_flags, "
+    "pg.warehouse.filter_gt_counts + contig_counts + profile_scalars + "
+    "source_objects + probe_ledger, s3 runs.parquet"
+)
 
 #: What the two catalogue endpoints read, for the envelope's ``source`` field.
 CATALOG_OBJECTS_SOURCE = "pg.warehouse.source_objects + source_files"
-CATALOG_TABLES_SOURCE = ("pg.information_schema.tables, pg.warehouse.warehouse_catalog + "
-                         "data_lineage, pg.results.derivation_runs, "
-                         "mva.viz.catalog_semantics")
+CATALOG_TABLES_SOURCE = (
+    "pg.information_schema.tables, pg.warehouse.warehouse_catalog + "
+    "data_lineage, pg.results.derivation_runs, "
+    "mva.viz.catalog_semantics"
+)
 CATALOG_COLUMNS_SOURCE = "pg.information_schema.columns + mva.viz.catalog_columns"
 
 #: Cache key for the table catalogue. Named, not derived, because it takes no parameters.
@@ -96,8 +99,7 @@ def router(settings, cache: Cache) -> APIRouter:
         the registry in ``mva.viz.catalog_semantics`` and are **null** for a table it does
         not know — a state a hermetic test refuses to let a *declared* table reach.
         """
-        entry = cache.get_or_build(CATALOG_TABLES_KEY,
-                                   lambda: catalog.tables(settings), refresh)
+        entry = cache.get_or_build(CATALOG_TABLES_KEY, lambda: catalog.tables(settings), refresh)
         return cached(entry, CATALOG_TABLES_SOURCE)
 
     @api.get("/catalog/columns", response_model=Envelope, tags=["catalog"])
@@ -116,23 +118,28 @@ def router(settings, cache: Cache) -> APIRouter:
         _add_table_route(api, path, function, source, settings)
 
     @api.get("/genome/density-bins", response_model=Envelope, tags=["genome"])
-    def density_bins(chrom: str | None = Query(
+    def density_bins(
+        chrom: str | None = Query(
             default=None,
-            description="bare contig name as the callset spells it, e.g. \"15\"; "
-                        "omit for the whole genome")) -> dict:
+            description='bare contig name as the callset spells it, e.g. "15"; '
+            "omit for the whole genome",
+        ),
+    ) -> dict:
         """Variant count, PASS count, low-quality count and mean QUAL per 1 Mb bin.
 
         Precomputed by the ``variant_density_bins`` derivation — the request never scans
         the callset. 2,961 bins cover all 25 canonical contigs.
         """
-        return live(queries.density_bins(settings, chrom),
-                    "pg.results.variant_density_bins")
+        return live(queries.density_bins(settings, chrom), "pg.results.variant_density_bins")
 
     @api.get("/genome/baf-bins", response_model=Envelope, tags=["genome"])
-    def baf_bins(chrom: str | None = Query(
+    def baf_bins(
+        chrom: str | None = Query(
             default=None,
-            description="bare contig name as the callset spells it, e.g. \"15\"; "
-                        "omit for the whole genome")) -> dict:
+            description='bare contig name as the callset spells it, e.g. "15"; '
+            "omit for the whole genome",
+        ),
+    ) -> dict:
         """B-allele fraction and read depth of heterozygous PASS calls per 1 Mb bin.
 
         The karyogram view of allele balance: ``/genome/allele-balance`` averages a whole
@@ -146,9 +153,11 @@ def router(settings, cache: Cache) -> APIRouter:
     @api.get("/panel/genes", response_model=Envelope, tags=["panel"])
     def panel_genes() -> dict:
         """The eight candidate genes: interval, density, PASS rate, and why each is here."""
-        return live(queries.panel_genes(settings),
-                    "pg.results.panel_gene_density + pg.warehouse.panel_variant_counts "
-                    "+ ressources/data-profile/mva_panel_grch38.bed")
+        return live(
+            queries.panel_genes(settings),
+            "pg.results.panel_gene_density + pg.warehouse.panel_variant_counts "
+            "+ ressources/data-profile/mva_panel_grch38.bed",
+        )
 
     @api.get("/panel/constraint", response_model=Envelope, tags=["panel"])
     def panel_constraint() -> dict:
@@ -157,15 +166,19 @@ def router(settings, cache: Cache) -> APIRouter:
         A missing gnomAD row leaves the constraint columns **null**, never zero — the
         constraint file covers autosomes only, and an absent gene is not a tolerant one.
         """
-        return live(queries.panel_constraint(settings),
-                    "pg.results.panel_gene_constraint "
-                    "+ ressources/data-profile/mva_panel_grch38.bed")
+        return live(
+            queries.panel_constraint(settings),
+            "pg.results.panel_gene_constraint + ressources/data-profile/mva_panel_grch38.bed",
+        )
 
     @api.get("/panel/annotations", response_model=Envelope, tags=["panel"])
-    def panel_annotations(gene: str | None = Query(
+    def panel_annotations(
+        gene: str | None = Query(
             default=None,
             description="panel gene symbol, e.g. BUB1B; omit for every annotated "
-                        "allele in the panel")) -> dict:
+            "allele in the panel",
+        ),
+    ) -> dict:
         """Every VEP-annotated panel allele with the callset's genotype evidence for it.
 
         Live: the join to the callset is already done by the ``panel_candidates``
@@ -174,13 +187,15 @@ def router(settings, cache: Cache) -> APIRouter:
         try:
             found = queries.panel_candidates(settings, gene)
         except LookupError as unknown:
-            raise HTTPException(status_code=404,
-                                detail=f"no panel gene {unknown.args[0]!r}") from unknown
+            raise HTTPException(
+                status_code=404, detail=f"no panel gene {unknown.args[0]!r}"
+            ) from unknown
         return live(found, "pg.results.panel_candidates")
 
     @api.get("/panel/locus", response_model=Envelope, tags=["panel"])
-    def panel_locus(gene: str = Query(description="panel gene symbol, e.g. BUB1B"),
-                    refresh: bool = False) -> dict:
+    def panel_locus(
+        gene: str = Query(description="panel gene symbol, e.g. BUB1B"), refresh: bool = False
+    ) -> dict:
         """Every variant inside one candidate gene, with its genotype evidence.
 
         The one route that reads ``variants_raw``. It constrains ``chrom`` so the server
@@ -191,17 +206,17 @@ def router(settings, cache: Cache) -> APIRouter:
         except ValueError as bad:
             raise HTTPException(status_code=422, detail=str(bad)) from bad
         try:
-            entry = cache.get_or_build(key, lambda: queries.locus(settings, gene),
-                                       refresh)
+            entry = cache.get_or_build(key, lambda: queries.locus(settings, gene), refresh)
         except LookupError as unknown:
-            raise HTTPException(status_code=404,
-                                detail=f"no panel gene {unknown.args[0]!r}") from unknown
+            raise HTTPException(
+                status_code=404, detail=f"no panel gene {unknown.args[0]!r}"
+            ) from unknown
         return cached(entry, "pg.warehouse.variants_raw (chrom pushdown)")
 
     @api.get("/panel/gene-structure", response_model=Envelope, tags=["panel"])
     def panel_gene_structure(
-            gene: str = Query(description="panel gene symbol, e.g. BUB1B"),
-            refresh: bool = False) -> dict:
+        gene: str = Query(description="panel gene symbol, e.g. BUB1B"), refresh: bool = False
+    ) -> dict:
         """One gene's exons, protein domains and protein-altering alleles.
 
         Three Ensembl REST calls behind a disk cache, because gene structure is static
@@ -215,17 +230,18 @@ def router(settings, cache: Cache) -> APIRouter:
             raise HTTPException(status_code=422, detail=str(bad)) from bad
         try:
             entry = cache.get_or_build(
-                key, lambda: genestructure.structure(gene, settings), refresh)
+                key, lambda: genestructure.structure(gene, settings), refresh
+            )
         except LookupError as unknown:
-            raise HTTPException(status_code=404,
-                                detail=f"no panel gene {unknown.args[0]!r}") from unknown
+            raise HTTPException(
+                status_code=404, detail=f"no panel gene {unknown.args[0]!r}"
+            ) from unknown
         except genestructure.EnsemblError as down:
             raise HTTPException(status_code=502, detail=str(down)) from down
         return cached(entry, genestructure.SOURCE)
 
     @api.get("/panel/het-pairs", response_model=Envelope, tags=["panel"])
-    def panel_het_pairs(gene: str = Query(
-            description="panel gene symbol, e.g. BUB1B")) -> dict:
+    def panel_het_pairs(gene: str = Query(description="panel gene symbol, e.g. BUB1B")) -> dict:
         """One gene's compound-heterozygous pair matrix: the axis, and what phase resolves.
 
         ``variants`` is one row per heterozygous PASS ALT allele, ordered by position —
@@ -238,14 +254,17 @@ def router(settings, cache: Cache) -> APIRouter:
         try:
             variants = queries.het_pairs(settings, gene)
         except LookupError as unknown:
-            raise HTTPException(status_code=404,
-                                detail=f"no panel gene {unknown.args[0]!r}") from unknown
+            raise HTTPException(
+                status_code=404, detail=f"no panel gene {unknown.args[0]!r}"
+            ) from unknown
         return live(phase.matrix(gene, variants), "pg.results.panel_het_pairs")
 
     @api.get("/panel/clinvar-presence", response_model=Envelope, tags=["panel"])
-    def panel_clinvar_presence(gene: str | None = Query(
-            default=None,
-            description="panel gene symbol, e.g. BUB1B; omit for all eight")) -> dict:
+    def panel_clinvar_presence(
+        gene: str | None = Query(
+            default=None, description="panel gene symbol, e.g. BUB1B; omit for all eight"
+        ),
+    ) -> dict:
         """Every ClinVar pathogenic / likely-pathogenic panel site, present here or not.
 
         The inward direction of the reference join: instead of asking what the world knows
@@ -263,15 +282,19 @@ def router(settings, cache: Cache) -> APIRouter:
         try:
             found = queries.clinvar_presence(settings, gene)
         except LookupError as unknown:
-            raise HTTPException(status_code=404,
-                                detail=f"no panel gene {unknown.args[0]!r}") from unknown
+            raise HTTPException(
+                status_code=404, detail=f"no panel gene {unknown.args[0]!r}"
+            ) from unknown
         return live(found, "pg.results.clinvar_presence + pg.warehouse.mva_panel_grch38")
 
     @api.get("/panel/suppressed", response_model=Envelope, tags=["panel"])
-    def panel_suppressed(gene: str | None = Query(
+    def panel_suppressed(
+        gene: str | None = Query(
             default=None,
             description="panel gene symbol, e.g. TRIP13; omit for every suppressed "
-                        "record in the panel")) -> dict:
+            "record in the panel",
+        ),
+    ) -> dict:
         """The calls the caller kept but flagged inside the candidate panel.
 
         Two grains in one payload, because the exhibit needs both at once. ``census`` is
@@ -287,10 +310,10 @@ def router(settings, cache: Cache) -> APIRouter:
         census = queries.panel_filter_census(settings)
         if gene is not None and gene not in {row["gene"] for row in census}:
             raise HTTPException(status_code=404, detail=f"no panel gene {gene!r}")
-        return live({"gene": gene,
-                     "census": census,
-                     "records": queries.panel_suppressed(settings, gene)},
-                    "pg.results.panel_filter_census + pg.results.panel_suppressed")
+        return live(
+            {"gene": gene, "census": census, "records": queries.panel_suppressed(settings, gene)},
+            "pg.results.panel_filter_census + pg.results.panel_suppressed",
+        )
 
     routes_search.add_routes(api, settings, cache)
     science.add_routes(api, settings)
@@ -301,7 +324,8 @@ def _add_table_route(api: APIRouter, path: str, function, source: str, settings)
     """Register one plain table read. A closure per route, so the loop variable is bound."""
     tag = path.strip("/").split("/")[0]
 
-    @api.get(path, response_model=Envelope, tags=[tag], name=path.strip("/"),
-             summary=f"read {source}")
+    @api.get(
+        path, response_model=Envelope, tags=[tag], name=path.strip("/"), summary=f"read {source}"
+    )
     def route() -> dict:
         return live(function(settings), source)

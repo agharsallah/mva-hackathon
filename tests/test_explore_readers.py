@@ -1,4 +1,5 @@
 """The parsing seam: real file shapes in, plain records out, never an exception."""
+
 from pathlib import Path
 
 import pytest

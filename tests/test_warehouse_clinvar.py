@@ -117,6 +117,7 @@ def sites(warehouse) -> dict[int, dict]:
 
 # ── which rows the table is about ────────────────────────────────────────────────────
 
+
 class TestScope:
     def test_only_pathogenic_and_likely_pathogenic_rows_appear(self, sites):
         """VUS and conflicting rows are not assertions of pathogenicity."""
@@ -141,6 +142,7 @@ class TestScope:
 
 
 # ── the join ─────────────────────────────────────────────────────────────────────────
+
 
 class TestPresence:
     def test_a_called_site_is_present_with_its_genotype_and_filter(self, sites):
@@ -192,8 +194,7 @@ class TestUncomparableRows:
         assert sites[16]["present"] is None
 
     def test_a_comparable_row_says_so(self, sites):
-        assert all(sites[key]["comparable"] is True
-                   for key in (11, 12, 13, 14, 15, 17, 21))
+        assert all(sites[key]["comparable"] is True for key in (11, 12, 13, 14, 15, 17, 21))
 
     def test_a_huge_reference_allele_does_not_crash_the_join(self, sites):
         """The committed extract's longest `ref` is 7,027 characters. The site IS called
@@ -224,23 +225,25 @@ class TestGenotypeReading:
 
 # ── the assertion-quality tier ───────────────────────────────────────────────────────
 
+
 class TestReviewStars:
-    @pytest.mark.parametrize("variation_id,stars", [
-        (15, 4),   # practice_guideline
-        (11, 3),   # reviewed_by_expert_panel
-        (13, 2),   # criteria_provided,_multiple_submitters,_no_conflicts
-        (12, 1),   # criteria_provided,_single_submitter
-        (14, 0),   # no_assertion_criteria_provided
-        (17, 0),   # no_classification_provided
-    ])
-    def test_each_review_status_maps_to_its_ncbi_gold_star_count(
-            self, sites, variation_id, stars):
+    @pytest.mark.parametrize(
+        "variation_id,stars",
+        [
+            (15, 4),  # practice_guideline
+            (11, 3),  # reviewed_by_expert_panel
+            (13, 2),  # criteria_provided,_multiple_submitters,_no_conflicts
+            (12, 1),  # criteria_provided,_single_submitter
+            (14, 0),  # no_assertion_criteria_provided
+            (17, 0),  # no_classification_provided
+        ],
+    )
+    def test_each_review_status_maps_to_its_ncbi_gold_star_count(self, sites, variation_id, stars):
         assert sites[variation_id]["review_stars"] == stars
 
     def test_an_unknown_review_status_is_null_rather_than_zero(self, warehouse):
         """Zero stars is an NCBI tier. "Not stated" is a different thing."""
-        got = warehouse.sql(
-            f"SELECT ({REVIEW_STARS}) FROM (SELECT '' AS clnrevstat)").fetchone()[0]
+        got = warehouse.sql(f"SELECT ({REVIEW_STARS}) FROM (SELECT '' AS clnrevstat)").fetchone()[0]
         assert got is None
 
     def test_the_raw_status_string_travels_with_the_stars(self, sites):
@@ -249,10 +252,10 @@ class TestReviewStars:
 
 # ── the registry ─────────────────────────────────────────────────────────────────────
 
+
 class TestRegistry:
     def test_the_derivation_is_in_the_one_registry(self):
-        assert {item.name for item in CLINVAR_DERIVATIONS} <= {
-            item.name for item in DERIVATIONS}
+        assert {item.name for item in CLINVAR_DERIVATIONS} <= {item.name for item in DERIVATIONS}
 
     def test_the_registry_has_no_duplicate_names(self):
         names = [item.name for item in DERIVATIONS]

@@ -30,31 +30,61 @@ EMPTY = Record(budget_total=18, subject="an empty register")
 
 
 def _dossier(status=Status.TESTING, confidence=None, rows=()):
-    claim = Hypothesis(**CLAIM, hypothesis_id="H001", gene="BUB1B", status=status,
-                       confidence=confidence, reasoning="Two paths agreed.")
-    return Dossier(hypothesis=claim, history=(claim,), evidence=tuple(rows),
-                   weighing=weigh(list(rows), "H001"))
+    claim = Hypothesis(
+        **CLAIM,
+        hypothesis_id="H001",
+        gene="BUB1B",
+        status=status,
+        confidence=confidence,
+        reasoning="Two paths agreed.",
+    )
+    return Dossier(
+        hypothesis=claim, history=(claim,), evidence=tuple(rows), weighing=weigh(list(rows), "H001")
+    )
 
 
 def _observation(direction=Direction.SUPPORTS, strength=0.7):
-    return Evidence(hypothesis_id="H001", direction=direction, strength=strength,
-                    claim="BUB1B is depleted of loss-of-function variants.",
-                    source_ref="methodology/003", lineage_ref="data_lineage:7")
+    return Evidence(
+        hypothesis_id="H001",
+        direction=direction,
+        strength=strength,
+        claim="BUB1B is depleted of loss-of-function variants.",
+        source_ref="methodology/003",
+        lineage_ref="data_lineage:7",
+    )
 
 
 POPULATED = Record(
-    dossiers=(_dossier(rows=(_observation(),
-                             _observation(Direction.REFUTES, 0.3),
-                             _observation(Direction.NEUTRAL, 0.0))),),
-    probes=(SpentProbe(probe_id=1, probe_type="S", submitted_by="a member", n_rows=10,
-                       score=50.0, response="partial_match_rank=2", rationale="",
-                       hypothesis_ids=("H001",)),),
-    budget_total=18, subject="a populated register")
+    dossiers=(
+        _dossier(
+            rows=(
+                _observation(),
+                _observation(Direction.REFUTES, 0.3),
+                _observation(Direction.NEUTRAL, 0.0),
+            )
+        ),
+    ),
+    probes=(
+        SpentProbe(
+            probe_id=1,
+            probe_type="S",
+            submitted_by="a member",
+            n_rows=10,
+            score=50.0,
+            response="partial_match_rank=2",
+            rationale="",
+            hypothesis_ids=("H001",),
+        ),
+    ),
+    budget_total=18,
+    subject="a populated register",
+)
 
 RECORDS = {"empty": EMPTY, "populated": POPULATED}
 
 
 # --- the exhibit contract ---------------------------------------------------------------
+
 
 @pytest.mark.parametrize("name", list(RECORDS))
 def test_every_exhibit_carries_a_title_a_caption_and_a_legend(name):
@@ -102,6 +132,7 @@ def test_the_sidebar_lists_every_exhibit_rendered():
 
 # --- what the page must say ---------------------------------------------------------------
 
+
 def test_the_method_section_comes_first():
     """A confidence met before the loop that produced it reads as an opinion."""
     assert build_sections(EMPTY)[0].slug == "method"
@@ -146,8 +177,7 @@ def test_an_intact_budget_warns_against_firing_early():
 
 
 def test_a_probe_tied_to_no_hypothesis_is_called_out():
-    untied = Record(probes=(SpentProbe(2, "S", "a member", 10, None, "", ""),),
-                    budget_total=18)
+    untied = Record(probes=(SpentProbe(2, "S", "a member", 10, None, "", ""),), budget_total=18)
     assert "no hypothesis" in build_report(untied)
 
 
@@ -165,12 +195,14 @@ def test_the_weighing_chart_appears_only_once_there_is_evidence():
 
 
 def test_a_gap_between_committed_and_suggested_confidence_is_shown_on_the_board():
-    discounted = Record(dossiers=(_dossier(confidence=0.1, rows=(_observation(),)),),
-                        budget_total=18)
+    discounted = Record(
+        dossiers=(_dossier(confidence=0.1, rows=(_observation(),)),), budget_total=18
+    )
     assert "suggested" in build_report(discounted)
 
 
 # --- the record object ---------------------------------------------------------------------
+
 
 def test_an_empty_record_knows_it_is_empty():
     assert EMPTY.is_empty

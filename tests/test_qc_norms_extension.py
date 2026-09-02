@@ -142,19 +142,23 @@ def rows(warehouse, norms_sql: str) -> dict[str, dict]:
 
 
 def norm(metric: str, low: float, high: float) -> str:
-    return (f"SELECT '{metric}' AS metric, {low} AS expected_low, {high} AS expected_high,"
-            f" 'unit' AS unit, 'WGS' AS applies_to, 'src PMID 12345678' AS source")
+    return (
+        f"SELECT '{metric}' AS metric, {low} AS expected_low, {high} AS expected_high,"
+        f" 'unit' AS unit, 'WGS' AS applies_to, 'src PMID 12345678' AS source"
+    )
 
 
-ALL_NEW = " UNION ALL ".join([
-    norm("snv_to_indel_ratio", 4.0, 4.5),
-    norm("het_count_per_genome", 100, 200),
-    norm("multiallelic_site_fraction", 1.0, 2.0),
-    norm("indel_length_1_2bp_share", 60.0, 70.0),
-    norm("dbsnp_membership_rate_pass_only", 99.0, 99.9),
-    norm("dbsnp_membership_rate_pass_snv", 89.89, 89.89),
-    norm("dbsnp_membership_rate_per_genome", 99.0, 99.9),
-])
+ALL_NEW = " UNION ALL ".join(
+    [
+        norm("snv_to_indel_ratio", 4.0, 4.5),
+        norm("het_count_per_genome", 100, 200),
+        norm("multiallelic_site_fraction", 1.0, 2.0),
+        norm("indel_length_1_2bp_share", 60.0, 70.0),
+        norm("dbsnp_membership_rate_pass_only", 99.0, 99.9),
+        norm("dbsnp_membership_rate_pass_snv", 89.89, 89.89),
+        norm("dbsnp_membership_rate_per_genome", 99.0, 99.9),
+    ]
+)
 
 
 @pytest.fixture(scope="module")
@@ -184,33 +188,44 @@ class TestTheNewObservations:
 
     def test_the_short_indel_share_counts_both_directions_of_the_histogram(self, warehouse):
         # An insertion-only reading would give (30 + 10) / 100 = 40%, not 65%.
-        assert rows(warehouse, norm("indel_length_1_2bp_share", 0, 100)
-                    )["indel_length_1_2bp_share"]["observed"] != pytest.approx(40.0)
+        assert rows(warehouse, norm("indel_length_1_2bp_share", 0, 100))[
+            "indel_length_1_2bp_share"
+        ]["observed"] != pytest.approx(40.0)
 
     def test_pass_only_dbsnp_membership_ignores_the_vetoed_records(self, found):
-        assert found["dbsnp_membership_rate_pass_only"]["observed"] == \
-            pytest.approx(62.5)             # 5 of 8 PASS records carry an rsID
-        assert found["dbsnp_membership_rate_per_genome"]["observed"] == \
-            pytest.approx(60.0)             # 6 of 10 records overall
+        assert found["dbsnp_membership_rate_pass_only"]["observed"] == pytest.approx(
+            62.5
+        )  # 5 of 8 PASS records carry an rsID
+        assert found["dbsnp_membership_rate_per_genome"]["observed"] == pytest.approx(
+            60.0
+        )  # 6 of 10 records overall
 
     def test_the_snv_rate_drops_the_indel_and_the_multiallelic_record(self, found):
         # 5 of 6 PASS biallelic SNVs. The 1 bp insertion and the comma-packed ALT are
         # both PASS and both rsID-less, so counting either would pull the rate down.
-        assert found["dbsnp_membership_rate_pass_snv"]["observed"] == \
-            pytest.approx(500 / 6)
+        assert found["dbsnp_membership_rate_pass_snv"]["observed"] == pytest.approx(500 / 6)
         assert found["dbsnp_membership_rate_pass_snv"]["verdict"] == "below"
 
     def test_the_three_dbsnp_rates_are_separate_measurements(self, found):
-        rates = {found[m]["observed"] for m in (
-            "dbsnp_membership_rate_per_genome", "dbsnp_membership_rate_pass_only",
-            "dbsnp_membership_rate_pass_snv")}
+        rates = {
+            found[m]["observed"]
+            for m in (
+                "dbsnp_membership_rate_per_genome",
+                "dbsnp_membership_rate_pass_only",
+                "dbsnp_membership_rate_pass_snv",
+            )
+        }
         assert len(rates) == 3
 
     def test_every_new_row_says_where_its_observation_came_from(self, found):
-        for metric in ("snv_to_indel_ratio", "het_count_per_genome",
-                       "multiallelic_site_fraction", "indel_length_1_2bp_share",
-                       "dbsnp_membership_rate_pass_only",
-                       "dbsnp_membership_rate_pass_snv"):
+        for metric in (
+            "snv_to_indel_ratio",
+            "het_count_per_genome",
+            "multiallelic_site_fraction",
+            "indel_length_1_2bp_share",
+            "dbsnp_membership_rate_pass_only",
+            "dbsnp_membership_rate_pass_snv",
+        ):
             assert found[metric]["observed_from"], metric
             assert found[metric]["label"], metric
 
@@ -223,15 +238,22 @@ class TestTheSqlAndTheTsvAgreeOnSpelling:
 
     def test_the_new_observations_are_the_ones_this_wave_declared(self):
         assert self.measured() == {
-            "snv_to_indel_ratio", "het_count_per_genome", "multiallelic_site_fraction",
-            "indel_length_1_2bp_share", "dbsnp_membership_rate_pass_only",
-            "dbsnp_membership_rate_pass_snv"}
+            "snv_to_indel_ratio",
+            "het_count_per_genome",
+            "multiallelic_site_fraction",
+            "indel_length_1_2bp_share",
+            "dbsnp_membership_rate_pass_only",
+            "dbsnp_membership_rate_pass_snv",
+        }
 
     def test_each_observation_meant_to_be_graded_has_a_row_in_the_committed_tsv(self, norms):
         committed = {row["metric"] for row in norms}
-        assert {"snv_to_indel_ratio", "het_count_per_genome",
-                "dbsnp_membership_rate_pass_only",
-                "dbsnp_membership_rate_pass_snv"} <= committed
+        assert {
+            "snv_to_indel_ratio",
+            "het_count_per_genome",
+            "dbsnp_membership_rate_pass_only",
+            "dbsnp_membership_rate_pass_snv",
+        } <= committed
 
     def test_the_deliberately_ungraded_observations_have_no_norm(self, norms):
         # Measurable, unnormed: no citable single-sample range was found for either, so
@@ -259,18 +281,27 @@ class TestMeasurableButUnnormed:
 
     def test_adding_only_the_norm_is_what_turns_a_measurement_into_a_row(self, warehouse):
         before = rows(warehouse, norm("snv_to_indel_ratio", 4.0, 4.5))
-        after = rows(warehouse, norm("snv_to_indel_ratio", 4.0, 4.5) + " UNION ALL "
-                     + norm("multiallelic_site_fraction", 1.0, 2.0))
+        after = rows(
+            warehouse,
+            norm("snv_to_indel_ratio", 4.0, 4.5)
+            + " UNION ALL "
+            + norm("multiallelic_site_fraction", 1.0, 2.0),
+        )
         assert set(after) - set(before) == {"multiallelic_site_fraction"}
 
 
 class TestTheOldObservationsStillWork:
     def test_splicing_the_new_fragments_did_not_disturb_the_original_rows(self, warehouse):
-        found = rows(warehouse, " UNION ALL ".join([
-            norm("tstv_genome_wide", 2.0, 2.1),
-            norm("mean_coverage_wgs", 35.0, 35.0),
-            norm("het_hom_ratio_eur", 1.5, 1.6),
-        ]))
+        found = rows(
+            warehouse,
+            " UNION ALL ".join(
+                [
+                    norm("tstv_genome_wide", 2.0, 2.1),
+                    norm("mean_coverage_wgs", 35.0, 35.0),
+                    norm("het_hom_ratio_eur", 1.5, 1.6),
+                ]
+            ),
+        )
         assert found["tstv_genome_wide"]["observed"] == pytest.approx(2.00)
         assert found["tstv_genome_wide"]["verdict"] == "within"
         assert found["mean_coverage_wgs"]["observed"] == pytest.approx(40.0)

@@ -53,15 +53,23 @@ class Reply:
 class Upstream:
     """The reads API as a callable. Swapped for a fake in tests."""
 
-    async def request(self, method: str, path: str, *, params: dict | None = None,
-                      json: Any | None = None, timeout: float = DEFAULT_TIMEOUT) -> Reply:
+    async def request(
+        self,
+        method: str,
+        path: str,
+        *,
+        params: dict | None = None,
+        json: Any | None = None,
+        timeout: float = DEFAULT_TIMEOUT,
+    ) -> Reply:
         import httpx
 
         url = f"{base_url()}{path}"
         try:
             async with httpx.AsyncClient(timeout=timeout) as client:
-                response = await client.request(method, url, params=_clean(params),
-                                                json=json, headers=headers())
+                response = await client.request(
+                    method, url, params=_clean(params), json=json, headers=headers()
+                )
         except Exception as failure:
             raise Unreachable(base_url()) from failure
         return Reply(response.status_code, _decode(response))
@@ -75,13 +83,18 @@ class Unreachable(RuntimeError):
         self.url = url
 
 
-async def forward(upstream: Upstream, method: str, path: str, *,
-                  params: dict | None = None, json: Any | None = None,
-                  timeout: float = DEFAULT_TIMEOUT) -> Any:
+async def forward(
+    upstream: Upstream,
+    method: str,
+    path: str,
+    *,
+    params: dict | None = None,
+    json: Any | None = None,
+    timeout: float = DEFAULT_TIMEOUT,
+) -> Any:
     """Forward one call and return the upstream body, or raise the right HTTP error."""
     try:
-        reply = await upstream.request(method, path, params=params, json=json,
-                                       timeout=timeout)
+        reply = await upstream.request(method, path, params=params, json=json, timeout=timeout)
     except Unreachable as down:
         raise HTTPException(status_code=503, detail=str(down)) from down
     if reply.status >= 400:

@@ -43,31 +43,45 @@ def gene_map(profile: CallsetProfile) -> Exhibit:
     lengths = {n: c.length / 1e6 for n, c in zip(names, contigs)}
 
     figure = go.Figure()
-    figure.add_trace(go.Bar(
-        y=names, x=[lengths[n] for n in names], orientation="h", name="chromosome",
-        marker=dict(color=MUTED.fill, line=dict(color=MUTED.line, width=0.5)),
-        hovertemplate="<b>%{y}</b><br>%{x:,.1f} Mb<extra></extra>",
-        showlegend=False, width=0.55,
-    ))
+    figure.add_trace(
+        go.Bar(
+            y=names,
+            x=[lengths[n] for n in names],
+            orientation="h",
+            name="chromosome",
+            marker=dict(color=MUTED.fill, line=dict(color=MUTED.line, width=0.5)),
+            hovertemplate="<b>%{y}</b><br>%{x:,.1f} Mb<extra></extra>",
+            showlegend=False,
+            width=0.55,
+        )
+    )
 
     genes = profile.panel
-    figure.add_trace(go.Scatter(
-        x=[(g.start + g.end) / 2e6 for g in genes],
-        y=[f"chr{g.chrom.removeprefix('chr')}" for g in genes],
-        mode="markers+text", name="candidate gene",
-        # Beside the marker, not above it: a label placed above sits at the height of the
-        # chromosome one row up and reads as belonging to that chromosome instead.
-        text=[f" {g.symbol}" for g in genes], textposition="middle right",
-        textfont=dict(size=11, color=RAW.line),
-        marker=dict(symbol="diamond", size=13, color=RAW.fill,
-                    line=dict(color=RAW.line, width=1.5)),
-        customdata=[(g.symbol, g.start, g.end, g.variants, g.note) for g in genes],
-        hovertemplate="<b>%{customdata[0]}</b><br>%{y}:%{customdata[1]:,}-%{customdata[2]:,}"
-                      "<br>%{customdata[3]:,} variants called<br>%{customdata[4]}<extra></extra>",
-    ))
-    figure.update_layout(xaxis_title="position along the chromosome (megabases)",
-                         yaxis=dict(autorange="reversed", title=""),
-                         bargap=0.35, showlegend=False)
+    figure.add_trace(
+        go.Scatter(
+            x=[(g.start + g.end) / 2e6 for g in genes],
+            y=[f"chr{g.chrom.removeprefix('chr')}" for g in genes],
+            mode="markers+text",
+            name="candidate gene",
+            # Beside the marker, not above it: a label placed above sits at the height of the
+            # chromosome one row up and reads as belonging to that chromosome instead.
+            text=[f" {g.symbol}" for g in genes],
+            textposition="middle right",
+            textfont=dict(size=11, color=RAW.line),
+            marker=dict(
+                symbol="diamond", size=13, color=RAW.fill, line=dict(color=RAW.line, width=1.5)
+            ),
+            customdata=[(g.symbol, g.start, g.end, g.variants, g.note) for g in genes],
+            hovertemplate="<b>%{customdata[0]}</b><br>%{y}:%{customdata[1]:,}-%{customdata[2]:,}"
+            "<br>%{customdata[3]:,} variants called<br>%{customdata[4]}<extra></extra>",
+        )
+    )
+    figure.update_layout(
+        xaxis_title="position along the chromosome (megabases)",
+        yaxis=dict(autorange="reversed", title=""),
+        bargap=0.35,
+        showlegend=False,
+    )
 
     panel_bases = sum(g.end - g.start for g in genes)
     genome_bases = sum(c.length for c in contigs)
@@ -80,9 +94,12 @@ def gene_map(profile: CallsetProfile) -> Exhibit:
             "size, which is why chromosome 1 is longest. Hover a diamond for why that gene "
             "is on the list."
         ),
-        legend=legend_line(MUTED, RAW,
-                           extra="grey bars are chromosomes at true scale, purple diamonds "
-                                 "are the candidate genes"),
+        legend=legend_line(
+            MUTED,
+            RAW,
+            extra="grey bars are chromosomes at true scale, purple diamonds "
+            "are the candidate genes",
+        ),
         figure=sized(figure, 560),
         height=560,
         notes=[
@@ -106,27 +123,51 @@ def gene_counts(profile: CallsetProfile) -> Exhibit:
     labels = [g.symbol for g in genes]
 
     figure = make_subplots(
-        rows=1, cols=2, horizontal_spacing=0.14, shared_yaxes=True,
+        rows=1,
+        cols=2,
+        horizontal_spacing=0.14,
+        shared_yaxes=True,
         subplot_titles=("Calls per gene", "Calls per kilobase of gene"),
     )
-    figure.add_trace(go.Bar(
-        y=labels, x=[g.passing for g in genes], orientation="h", name="PASS",
-        marker=dict(color=GOOD.fill, line=dict(color=GOOD.line, width=1)),
-        hovertemplate="<b>%{y}</b><br>%{x:,} passing calls<extra></extra>",
-    ), row=1, col=1)
-    figure.add_trace(go.Bar(
-        y=labels, x=[g.suppressed for g in genes], orientation="h", name="non-PASS",
-        marker=dict(color=DECISION.fill, line=dict(color=DECISION.line, width=1)),
-        hovertemplate="<b>%{y}</b><br>%{x:,} suppressed calls<extra></extra>",
-    ), row=1, col=1)
-    figure.add_trace(go.Bar(
-        y=labels, x=[g.variants_per_kb for g in genes], orientation="h",
-        name="per kilobase", showlegend=False,
-        marker=dict(color=MACHINE.fill, line=dict(color=MACHINE.line, width=1)),
-        customdata=[(g.kilobases, g.variants) for g in genes],
-        hovertemplate="<b>%{y}</b><br>%{x:.2f} calls per kb"
-                      "<br>%{customdata[1]:,} calls over %{customdata[0]:,.0f} kb<extra></extra>",
-    ), row=1, col=2)
+    figure.add_trace(
+        go.Bar(
+            y=labels,
+            x=[g.passing for g in genes],
+            orientation="h",
+            name="PASS",
+            marker=dict(color=GOOD.fill, line=dict(color=GOOD.line, width=1)),
+            hovertemplate="<b>%{y}</b><br>%{x:,} passing calls<extra></extra>",
+        ),
+        row=1,
+        col=1,
+    )
+    figure.add_trace(
+        go.Bar(
+            y=labels,
+            x=[g.suppressed for g in genes],
+            orientation="h",
+            name="non-PASS",
+            marker=dict(color=DECISION.fill, line=dict(color=DECISION.line, width=1)),
+            hovertemplate="<b>%{y}</b><br>%{x:,} suppressed calls<extra></extra>",
+        ),
+        row=1,
+        col=1,
+    )
+    figure.add_trace(
+        go.Bar(
+            y=labels,
+            x=[g.variants_per_kb for g in genes],
+            orientation="h",
+            name="per kilobase",
+            showlegend=False,
+            marker=dict(color=MACHINE.fill, line=dict(color=MACHINE.line, width=1)),
+            customdata=[(g.kilobases, g.variants) for g in genes],
+            hovertemplate="<b>%{y}</b><br>%{x:.2f} calls per kb"
+            "<br>%{customdata[1]:,} calls over %{customdata[0]:,.0f} kb<extra></extra>",
+        ),
+        row=1,
+        col=2,
+    )
     figure.update_layout(barmode="stack", bargap=0.35)
     figure.update_xaxes(title_text="calls", row=1, col=1)
     figure.update_xaxes(title_text="calls per kb", row=1, col=2)
@@ -150,9 +191,13 @@ def gene_counts(profile: CallsetProfile) -> Exhibit:
             "gene collects more variants for no interesting reason. Compare a gene against "
             "its neighbours on the right, not on the left."
         ),
-        legend=legend_line(GOOD, DECISION, MACHINE,
-                           extra="green is passing calls, yellow is suppressed ones, blue is "
-                                 "the length-normalised rate"),
+        legend=legend_line(
+            GOOD,
+            DECISION,
+            MACHINE,
+            extra="green is passing calls, yellow is suppressed ones, blue is "
+            "the length-normalised rate",
+        ),
         figure=sized(figure, 440),
         notes=notes,
     )
@@ -173,16 +218,25 @@ def search_space(profile: CallsetProfile) -> Exhibit:
     labels = [g.symbol for g in genes]
     bound = [_pairs(g.variants) for g in genes]
 
-    figure = go.Figure(go.Bar(
-        y=labels, x=bound, orientation="h",
-        marker=dict(color=BAD.fill, line=dict(color=BAD.line, width=1)),
-        text=[f"{b:,}" for b in bound], textposition="outside",
-        customdata=[(g.variants,) for g in genes],
-        hovertemplate="<b>%{y}</b><br>up to %{x:,} pairs from %{customdata[0]:,} calls"
-                      "<extra></extra>",
-    ))
-    figure.update_layout(xaxis_title="possible variant pairs (upper bound)", yaxis_title="",
-                         showlegend=False, bargap=0.35)
+    figure = go.Figure(
+        go.Bar(
+            y=labels,
+            x=bound,
+            orientation="h",
+            marker=dict(color=BAD.fill, line=dict(color=BAD.line, width=1)),
+            text=[f"{b:,}" for b in bound],
+            textposition="outside",
+            customdata=[(g.variants,) for g in genes],
+            hovertemplate="<b>%{y}</b><br>up to %{x:,} pairs from %{customdata[0]:,} calls"
+            "<extra></extra>",
+        )
+    )
+    figure.update_layout(
+        xaxis_title="possible variant pairs (upper bound)",
+        yaxis_title="",
+        showlegend=False,
+        bargap=0.35,
+    )
 
     total = sum(bound)
     return Exhibit(
@@ -195,9 +249,11 @@ def search_space(profile: CallsetProfile) -> Exhibit:
             "calls can actually pair, but the right order of magnitude. Ten submission rows "
             f"against roughly {total:,} candidate pairs is the whole problem in one number."
         ),
-        legend=legend_line(BAD,
-                           extra="each bar is one gene's pair count, an upper bound computed "
-                                 "from every two-call combination"),
+        legend=legend_line(
+            BAD,
+            extra="each bar is one gene's pair count, an upper bound computed "
+            "from every two-call combination",
+        ),
         figure=sized(figure, 400),
         notes=[
             "This is why annotation is the critical path rather than a refinement. Without "

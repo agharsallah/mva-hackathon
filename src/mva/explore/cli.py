@@ -30,8 +30,12 @@ from .views import build_sections
 from .views import locus as locus_views
 
 #: Terminal colours for the verdict column, and the plain fallback when piped to a file.
-ANSI = {Verdict.PASS: "\033[32m", Verdict.WARN: "\033[33m",
-        Verdict.FAIL: "\033[31m", Verdict.INFO: "\033[36m"}
+ANSI = {
+    Verdict.PASS: "\033[32m",
+    Verdict.WARN: "\033[33m",
+    Verdict.FAIL: "\033[31m",
+    Verdict.INFO: "\033[36m",
+}
 RESET = "\033[0m"
 
 
@@ -54,38 +58,61 @@ def _parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers()
 
     report = subparsers.add_parser(
-        "report", help="build the full interactive HTML report from a profile directory")
+        "report", help="build the full interactive HTML report from a profile directory"
+    )
     report.add_argument("directory", type=Path, help="a profile directory")
-    report.add_argument("-o", "--output", type=Path,
-                        default=Path("figures/explore-report.html"),
-                        help="where to write the page (default: %(default)s)")
-    report.add_argument("-t", "--title", default="Callset exploration",
-                        help="page title (default: %(default)s)")
+    report.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        default=Path("figures/explore-report.html"),
+        help="where to write the page (default: %(default)s)",
+    )
+    report.add_argument(
+        "-t", "--title", default="Callset exploration", help="page title (default: %(default)s)"
+    )
     report.set_defaults(handler=_report)
 
     checks = subparsers.add_parser(
-        "checks", help="print the graded quality metrics to the terminal")
+        "checks", help="print the graded quality metrics to the terminal"
+    )
     checks.add_argument("directory", type=Path, help="a profile directory")
-    checks.add_argument("--strict", action="store_true",
-                        help="exit non-zero when any check fails")
+    checks.add_argument("--strict", action="store_true", help="exit non-zero when any check fails")
     checks.set_defaults(handler=_checks)
 
     locus = subparsers.add_parser(
-        "locus", help="build the locus browser over a real VCF (reads patient records)")
+        "locus", help="build the locus browser over a real VCF (reads patient records)"
+    )
     locus.add_argument("vcf", type=Path, help="a VCF, optionally bgzip-compressed")
-    locus.add_argument("-o", "--output", type=Path, required=True,
-                       help="where to write the page — keep this outside the repository")
-    locus.add_argument("-l", "--label", default="locus",
-                       help="what to call the region in captions (default: %(default)s)")
+    locus.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        required=True,
+        help="where to write the page — keep this outside the repository",
+    )
+    locus.add_argument(
+        "-l",
+        "--label",
+        default="locus",
+        help="what to call the region in captions (default: %(default)s)",
+    )
     locus.set_defaults(handler=_locus)
 
-    export = subparsers.add_parser(
-        "export", help="write every exhibit as its own file")
+    export = subparsers.add_parser("export", help="write every exhibit as its own file")
     export.add_argument("directory", type=Path, help="a profile directory")
-    export.add_argument("-o", "--output", type=Path, default=Path("figures/exhibits"),
-                        help="destination directory (default: %(default)s)")
-    export.add_argument("--images", action="store_true",
-                        help="also write PNGs, if a static export engine is installed")
+    export.add_argument(
+        "-o",
+        "--output",
+        type=Path,
+        default=Path("figures/exhibits"),
+        help="destination directory (default: %(default)s)",
+    )
+    export.add_argument(
+        "--images",
+        action="store_true",
+        help="also write PNGs, if a static export engine is installed",
+    )
     export.set_defaults(handler=_export)
     return parser
 
@@ -97,8 +124,10 @@ def _report(args) -> int:
     path = write_report(profile, args.output, args.title, subject=str(args.directory))
     sections = build_sections(profile)
     count = sum(len(s.exhibits) for s in sections)
-    print(f"Wrote {path} — {count} exhibits across {len(sections)} sections "
-          f"({path.stat().st_size / 1024:.0f} KB).")
+    print(
+        f"Wrote {path} — {count} exhibits across {len(sections)} sections "
+        f"({path.stat().st_size / 1024:.0f} KB)."
+    )
     return 0
 
 
@@ -120,8 +149,9 @@ def _checks(args) -> int:
             verdict = f"{ANSI[check.verdict]}{verdict:<5}{RESET}"
         else:
             verdict = f"{verdict:<5}"
-        print(f"  {verdict}  {check.name:<{width}}  {check.display:>18}   "
-              f"expected {check.expected}")
+        print(
+            f"  {verdict}  {check.name:<{width}}  {check.display:>18}   expected {check.expected}"
+        )
 
     actionable = [c for c in results if c.is_actionable]
     if actionable:
@@ -144,14 +174,23 @@ def _locus(args) -> int:
         print(f"{args.vcf} holds no calls to plot.", file=sys.stderr)
         return 1
 
-    section = Section("locus", f"Locus — {args.label}",
-                      "Every call in the region, its support, and which pairs can be "
-                      "placed on opposite copies of the chromosome.", built)
+    section = Section(
+        "locus",
+        f"Locus — {args.label}",
+        "Every call in the region, its support, and which pairs can be "
+        "placed on opposite copies of the chromosome.",
+        built,
+    )
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(
-        render([section], title=f"Locus browser — {args.label}", subject=str(args.vcf),
-               blurb=LOCUS_BLURB),
-        encoding="utf-8")
+        render(
+            [section],
+            title=f"Locus browser — {args.label}",
+            subject=str(args.vcf),
+            blurb=LOCUS_BLURB,
+        ),
+        encoding="utf-8",
+    )
     print(f"Wrote {args.output} — {len(calls):,} calls, {len(built)} exhibits.")
     return 0
 

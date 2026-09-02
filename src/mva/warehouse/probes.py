@@ -87,6 +87,7 @@ def ensure_table(connection, schema: str) -> None:
 
 def _qualified(schema: str) -> str:
     from .postgres import ALIAS, safe_identifier
+
     return f"{ALIAS}.{safe_identifier(schema)}.{PROBE_TABLE}"
 
 
@@ -109,13 +110,26 @@ def log(connection, schema: str, probe: Probe) -> int:
     are minutes apart at best, so that is a cost worth not paying a sequence for.
     """
     qualified = _qualified(schema)
-    next_id = (connection.execute(
-        f"SELECT coalesce(max(probe_id), 0) + 1 FROM {qualified}").fetchone() or [1])[0]
+    next_id = (
+        connection.execute(f"SELECT coalesce(max(probe_id), 0) + 1 FROM {qualified}").fetchone()
+        or [1]
+    )[0]
     connection.execute(
         f"INSERT INTO {qualified} VALUES (?, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [next_id, probe.track, probe.probe_type, probe.submitted_by,
-         probe.submission_ref, probe.payload, probe.n_rows, probe.response,
-         probe.score, probe.rationale, probe.hypothesis_ids])
+        [
+            next_id,
+            probe.track,
+            probe.probe_type,
+            probe.submitted_by,
+            probe.submission_ref,
+            probe.payload,
+            probe.n_rows,
+            probe.response,
+            probe.score,
+            probe.rationale,
+            probe.hypothesis_ids,
+        ],
+    )
     return int(next_id)
 
 
@@ -125,18 +139,30 @@ def listing(connection, schema: str, limit: int = 0) -> list[tuple]:
     The full payload stays in the table; showing 60 characters of a ten-row CSV in a
     terminal listing is enough to recognise which probe a row is.
     """
-    sql = (f"SELECT probe_id, logged_at, track, probe_type, submitted_by, "
-           f"submission_ref, n_rows, score, "
-           f"left(coalesce(response, ''), 60) AS response, "
-           f"left(coalesce(payload, ''), 60) AS payload_head, "
-           f"coalesce(hypothesis_ids, '') AS hypothesis_ids "
-           f"FROM {_qualified(schema)} ORDER BY probe_id")
+    sql = (
+        f"SELECT probe_id, logged_at, track, probe_type, submitted_by, "
+        f"submission_ref, n_rows, score, "
+        f"left(coalesce(response, ''), 60) AS response, "
+        f"left(coalesce(payload, ''), 60) AS payload_head, "
+        f"coalesce(hypothesis_ids, '') AS hypothesis_ids "
+        f"FROM {_qualified(schema)} ORDER BY probe_id"
+    )
     if limit:
         sql += f" LIMIT {int(limit)}"
     return connection.execute(sql).fetchall()
 
 
 #: Column headers matching :func:`listing`, so the CLI does not restate them.
-LISTING_COLUMNS = ("probe_id", "logged_at", "track", "type", "submitted_by",
-                   "submission_ref", "n_rows", "score", "response", "payload_head",
-                   "hypotheses")
+LISTING_COLUMNS = (
+    "probe_id",
+    "logged_at",
+    "track",
+    "type",
+    "submitted_by",
+    "submission_ref",
+    "n_rows",
+    "score",
+    "response",
+    "payload_head",
+    "hypotheses",
+)

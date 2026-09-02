@@ -77,7 +77,9 @@ _CONTIG = r"(?:chr)?(?:[1-9]|1\d|2[0-2]|X|Y|MT|M)"
 #: ``..`` and an en-dash are accepted because both get pasted out of papers and browsers.
 REGION_RE = re.compile(
     rf"^(?P<chrom>{_CONTIG})"
-    r":(?P<start>\d+)(?:-|–|\.\.)(?P<end>\d+)$", re.IGNORECASE)
+    r":(?P<start>\d+)(?:-|–|\.\.)(?P<end>\d+)$",
+    re.IGNORECASE,
+)
 
 #: ``chr15:40100000`` — a single point, widened by :data:`FLANK`.
 POINT_RE = re.compile(rf"^(?P<chrom>{_CONTIG}):(?P<pos>\d+)$", re.IGNORECASE)
@@ -133,6 +135,7 @@ class Resolved:
 
 # ── classification ───────────────────────────────────────────────────────────────────
 
+
 def classify(query: str) -> str:
     """``'region'``, ``'rsid'`` or ``'gene'`` — by shape alone, with nothing looked up.
 
@@ -152,7 +155,8 @@ def classify(query: str) -> str:
         return "gene"
     raise Unparseable(
         f"{text!r} is not a gene symbol ({EXAMPLES[0]}), a region ({EXAMPLES[1]}) "
-        f"or an rsID ({EXAMPLES[2]})")
+        f"or an rsID ({EXAMPLES[2]})"
+    )
 
 
 def parse_region(query: str) -> tuple[str, int, int]:
@@ -182,18 +186,21 @@ def check_span(start: int, end: int) -> None:
         raise SpanTooLarge(
             f"{width:,} bp is wider than the {MAX_SPAN:,} bp cap. The raw callset layer "
             f"has no index, so a whole chromosome answers in the same ~2 s but weighs "
-            f"11 MB over 101,130 rows; narrow the region and search again.")
+            f"11 MB over 101,130 rows; narrow the region and search again."
+        )
 
 
 def region_query(query: str) -> Resolved:
     """A region query, resolved without touching anything. The cheap path."""
     chrom, start, end = parse_region(query)
     check_span(start, end)
-    return Resolved("region", chrom, start, end,
-                    label=f"{chrom}:{start:,}-{end:,}", source=SOURCE_QUERY)
+    return Resolved(
+        "region", chrom, start, end, label=f"{chrom}:{start:,}-{end:,}", source=SOURCE_QUERY
+    )
 
 
 # ── the region read ──────────────────────────────────────────────────────────────────
+
 
 def region(settings: Postgres, chrom: str, start: int, end: int) -> dict:
     """Every callset record in one window, with its genotype evidence decoded.
@@ -209,22 +216,33 @@ def region(settings: Postgres, chrom: str, start: int, end: int) -> dict:
         raise Unparseable(f"start {start:,} is past end {end:,}")
     check_span(start, end)
 
-    found = queries.fetch(settings, """
+    found = queries.fetch(
+        settings,
+        """
         SELECT pos, id, ref, alt, qual, filter, format, sample_call
         FROM pg.warehouse.variants_raw
         WHERE chrom = ? AND CAST(pos AS BIGINT) BETWEEN ? AND ?
         ORDER BY CAST(pos AS BIGINT)
-    """, [bare, start, end])
+    """,
+        [bare, start, end],
+    )
 
-    return {"chrom": bare, "start": start, "end": end, "n": len(found),
-            "variants": [_variant(row) for row in found]}
+    return {
+        "chrom": bare,
+        "start": start,
+        "end": end,
+        "n": len(found),
+        "variants": [_variant(row) for row in found],
+    }
 
 
 def normalise_contig(chrom: str) -> str:
     """A contig name in the callset's spelling, or :class:`Unparseable`."""
     if not CONTIG_RE.match((chrom or "").strip()):
-        raise Unparseable(f"{chrom!r} is not a contig this callset could spell "
-                          f"(1..22, X, Y, M/MT, with or without a chr prefix)")
+        raise Unparseable(
+            f"{chrom!r} is not a contig this callset could spell "
+            f"(1..22, X, Y, M/MT, with or without a chr prefix)"
+        )
     return to_vcf_contig(chrom.strip())
 
 

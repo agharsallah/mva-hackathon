@@ -6,6 +6,7 @@ wild-type and the gene is not knocked out. Sentieon emits physical phasing (PGT/
 variants close enough to share reads, and 770,458 records in the real callset carry it,
 so a meaningful fraction of pairs can be resolved without parental sequencing.
 """
+
 from pathlib import Path
 
 from mva.pipeline import Phase, candidate_pairs, read_calls
@@ -15,8 +16,7 @@ FIXTURE = Path(__file__).parent / "fixtures" / "mini.vcf"
 
 def pairs_by_position():
     return {
-        (p.left.variant.pos, p.right.variant.pos): p
-        for p in candidate_pairs(read_calls(FIXTURE))
+        (p.left.variant.pos, p.right.variant.pos): p for p in candidate_pairs(read_calls(FIXTURE))
     }
 
 

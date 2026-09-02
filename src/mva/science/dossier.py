@@ -95,8 +95,11 @@ def assemble(connection, schema: str, hypothesis_id: str) -> Dossier:
         raise KeyError(f"no hypothesis {hypothesis_id!r} in {schema}")
     rows = evidence_module.listing(connection, schema, hypothesis_id)
     return Dossier(
-        hypothesis=revisions[-1], history=tuple(revisions), evidence=tuple(rows),
-        weighing=weigh(rows, hypothesis_id))
+        hypothesis=revisions[-1],
+        history=tuple(revisions),
+        evidence=tuple(rows),
+        weighing=weigh(rows, hypothesis_id),
+    )
 
 
 def assemble_all(connection, schema: str, step: str | None = None) -> list[Dossier]:
@@ -112,13 +115,15 @@ def assemble_all(connection, schema: str, step: str | None = None) -> list[Dossi
     for revision in revisions:
         grouped.setdefault(revision.hypothesis_id, []).append(revision)
 
-    all_evidence = evidence_module.by_hypothesis(
-        evidence_module.listing(connection, schema))
+    all_evidence = evidence_module.by_hypothesis(evidence_module.listing(connection, schema))
 
     return [
-        Dossier(hypothesis=history[-1], history=tuple(history),
-                evidence=tuple(all_evidence.get(hypothesis_id, ())),
-                weighing=weigh(all_evidence.get(hypothesis_id, []), hypothesis_id))
+        Dossier(
+            hypothesis=history[-1],
+            history=tuple(history),
+            evidence=tuple(all_evidence.get(hypothesis_id, ())),
+            weighing=weigh(all_evidence.get(hypothesis_id, []), hypothesis_id),
+        )
         for hypothesis_id, history in grouped.items()
     ]
 
@@ -135,8 +140,10 @@ def tally(dossiers: list[Dossier]) -> dict[Status, int]:
 # The bridge to submission
 # --------------------------------------------------------------------------------------
 
-def to_row(pair: RankedPair, hypothesis_id: str, epcr: float,
-           finding_type: str = "primary", note: str = "") -> Row:
+
+def to_row(
+    pair: RankedPair, hypothesis_id: str, epcr: float, finding_type: str = "primary", note: str = ""
+) -> Row:
     """Turn a ranked pair into a submission row that names the claim behind it.
 
     ``notes`` is the only column that survives to the scorer carrying free text, and it is
@@ -149,8 +156,13 @@ def to_row(pair: RankedPair, hypothesis_id: str, epcr: float,
         parts.append(pair.gene)
     if note:
         parts.append(note)
-    return Row(variant=pair.left, partner=pair.right, epcr=epcr,
-               finding_type=finding_type, notes=" | ".join(parts))
+    return Row(
+        variant=pair.left,
+        partner=pair.right,
+        epcr=epcr,
+        finding_type=finding_type,
+        notes=" | ".join(parts),
+    )
 
 
 def hypothesis_of(row: Row) -> str:
@@ -160,11 +172,12 @@ def hypothesis_of(row: Row) -> str:
     reply naming a rank — can be tied back to the register without a side table.
     """
     head = row.notes.split("|", 1)[0].strip()
-    return head[len(NOTE_PREFIX):].strip() if head.startswith(NOTE_PREFIX) else ""
+    return head[len(NOTE_PREFIX) :].strip() if head.startswith(NOTE_PREFIX) else ""
 
 
-def evidence_from_pair(pair: RankedPair, hypothesis_id: str, source_ref: str,
-                       author: str = "") -> list[Evidence]:
+def evidence_from_pair(
+    pair: RankedPair, hypothesis_id: str, source_ref: str, author: str = ""
+) -> list[Evidence]:
     """Turn the ranking arithmetic into recorded observations.
 
     Emits at most three rows and only for terms that actually carry information:
@@ -185,29 +198,63 @@ def evidence_from_pair(pair: RankedPair, hypothesis_id: str, source_ref: str,
     gene = pair.gene or "the gene"
 
     if detail.both_rare:
-        rows.append(Evidence(
-            hypothesis_id=hypothesis_id, direction=Direction.SUPPORTS, strength=0.7,
-            kind="annotation", author=author, source_ref=source_ref,
-            claim=(f"Both alleles in {gene} are below the ultra-rare frequency "
-                   f"threshold used for ranking.")))
+        rows.append(
+            Evidence(
+                hypothesis_id=hypothesis_id,
+                direction=Direction.SUPPORTS,
+                strength=0.7,
+                kind="annotation",
+                author=author,
+                source_ref=source_ref,
+                claim=(
+                    f"Both alleles in {gene} are below the ultra-rare frequency "
+                    f"threshold used for ranking."
+                ),
+            )
+        )
     elif detail.left_rarity < 1.0 and detail.right_rarity < 1.0:
-        rows.append(Evidence(
-            hypothesis_id=hypothesis_id, direction=Direction.REFUTES, strength=0.6,
-            kind="annotation", author=author, source_ref=source_ref,
-            claim=(f"Neither allele in {gene} is rare enough for a disease with fewer "
-                   f"than 50 known patients.")))
+        rows.append(
+            Evidence(
+                hypothesis_id=hypothesis_id,
+                direction=Direction.REFUTES,
+                strength=0.6,
+                kind="annotation",
+                author=author,
+                source_ref=source_ref,
+                claim=(
+                    f"Neither allele in {gene} is rare enough for a disease with fewer "
+                    f"than 50 known patients."
+                ),
+            )
+        )
 
     if detail.both_loss_of_function:
-        rows.append(Evidence(
-            hypothesis_id=hypothesis_id, direction=Direction.SUPPORTS, strength=0.6,
-            kind="annotation", author=author, source_ref=source_ref,
-            claim=f"Both alleles in {gene} are predicted loss-of-function."))
+        rows.append(
+            Evidence(
+                hypothesis_id=hypothesis_id,
+                direction=Direction.SUPPORTS,
+                strength=0.6,
+                kind="annotation",
+                author=author,
+                source_ref=source_ref,
+                claim=f"Both alleles in {gene} are predicted loss-of-function.",
+            )
+        )
 
     if detail.gene_prior != 1.0:
-        rows.append(Evidence(
-            hypothesis_id=hypothesis_id, direction=Direction.NEUTRAL,
-            strength=0.0, kind="annotation", author=author, source_ref=source_ref,
-            claim=(f"A gene prior of {detail.gene_prior:g} was applied to {gene}; the "
-                   f"ranking reflects a stated assumption, not the data alone.")))
+        rows.append(
+            Evidence(
+                hypothesis_id=hypothesis_id,
+                direction=Direction.NEUTRAL,
+                strength=0.0,
+                kind="annotation",
+                author=author,
+                source_ref=source_ref,
+                claim=(
+                    f"A gene prior of {detail.gene_prior:g} was applied to {gene}; the "
+                    f"ranking reflects a stated assumption, not the data alone."
+                ),
+            )
+        )
 
     return rows

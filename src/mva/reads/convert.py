@@ -47,8 +47,9 @@ def as_source(fastq) -> Source:
     path = Path(fastq)
     if not path.is_file():
         raise ValueError(f"{path} is not a readable file")
-    return Source(name=path.name, path=path, size=path.stat().st_size,
-                  open_stream=_local_opener(path))
+    return Source(
+        name=path.name, path=path, size=path.stat().st_size, open_stream=_local_opener(path)
+    )
 
 
 def peek(fastq) -> schema.RunFacts:
@@ -67,20 +68,26 @@ def peek(fastq) -> schema.RunFacts:
             raise ValueError(f"{source.name}: not readable as gzip ({error})") from error
     if not header.startswith("@") or not sequence:
         raise ValueError(
-            f"{source.name}: does not start with a FASTQ record "
-            f"(first line: {header[:60]!r})")
+            f"{source.name}: does not start with a FASTQ record (first line: {header[:60]!r})"
+        )
     try:
         return schema.RunFacts.from_header(source.name, header, sequence)
     except (IndexError, ValueError) as error:
         raise ValueError(
             f"{source.name}: first read name is not the Illumina 8-field form this "
-            f"pipeline parses — {header[:80]!r}") from error
+            f"pipeline parses — {header[:80]!r}"
+        ) from error
 
 
-def convert_file(fastq, staging: Path, engine: str = "oxbow",
-                 threads: int | None = None, memory_limit: str | None = None,
-                 row_group_size: int = schema.ROW_GROUP_SIZE,
-                 row_groups_per_file: int = schema.ROW_GROUPS_PER_FILE) -> Converted:
+def convert_file(
+    fastq,
+    staging: Path,
+    engine: str = "oxbow",
+    threads: int | None = None,
+    memory_limit: str | None = None,
+    row_group_size: int = schema.ROW_GROUP_SIZE,
+    row_groups_per_file: int = schema.ROW_GROUPS_PER_FILE,
+) -> Converted:
     """One FASTQ → one partition directory of shards, on one DuckDB connection.
 
     ``memory_limit`` matters as soon as more than one file converts at a time: a DuckDB
@@ -95,8 +102,10 @@ def convert_file(fastq, staging: Path, engine: str = "oxbow",
     facts = peek(source)
     lane, read_num = source.lane_and_read
     if (lane, read_num) != (facts.lane, facts.read_num):
-        raise ValueError(f"{source.name}: filename says lane {lane} read {read_num}, "
-                         f"first record says lane {facts.lane} read {facts.read_num}")
+        raise ValueError(
+            f"{source.name}: filename says lane {lane} read {read_num}, "
+            f"first record says lane {facts.lane} read {facts.read_num}"
+        )
 
     out_dir = staging / schema.PREFIX / schema.shard_dir(lane, read_num)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -122,8 +131,12 @@ def convert_file(fastq, staging: Path, engine: str = "oxbow",
 
     shards = tuple(sorted(out_dir.glob("part-*.parquet")))
     return Converted(
-        facts=facts, out_dir=out_dir, shards=shards,
-        rows=int(result[0]), source_bytes=source.size,
+        facts=facts,
+        out_dir=out_dir,
+        shards=shards,
+        rows=int(result[0]),
+        source_bytes=source.size,
         parquet_bytes=sum(shard.stat().st_size for shard in shards),
-        engine=engine, seconds=seconds,
+        engine=engine,
+        seconds=seconds,
     )

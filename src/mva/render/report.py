@@ -78,8 +78,7 @@ DEFAULT_BLURB = (
 )
 
 
-def render(sections: list[Section], title: str, subject: str,
-           blurb: str = DEFAULT_BLURB) -> str:
+def render(sections: list[Section], title: str, subject: str, blurb: str = DEFAULT_BLURB) -> str:
     """Render arbitrary sections into the report shell."""
     generated = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     runtime = _RuntimeFlag()
@@ -130,7 +129,7 @@ def _sidebar(sections: list[Section], title: str, subject: str) -> str:
   <h1>{html.escape(title)}</h1>
   <p class="subject">{html.escape(subject)}</p>
   <input id="filter" type="search" placeholder="Filter exhibits  ( / )" autocomplete="off">
-  <ol>{''.join(items)}</ol>
+  <ol>{"".join(items)}</ol>
 </nav>"""
 
 
@@ -143,8 +142,9 @@ def _section_html(section: Section, runtime: "_RuntimeFlag") -> str:
 </section>"""
 
 
-def export_exhibits(sections: list[Section], directory: str | Path,
-                  images: bool = False) -> list[Path]:
+def export_exhibits(
+    sections: list[Section], directory: str | Path, images: bool = False
+) -> list[Path]:
     """Write each exhibit as its own file, for pasting one figure into a document.
 
     Returns the paths written. Image export is attempted only when asked for and is

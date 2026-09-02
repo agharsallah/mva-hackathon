@@ -48,7 +48,9 @@ class Staged:
     description: str = ""
 
 
-def normalise(dataset: Dataset, root: Path) -> tuple[tuple[str, ...], list[list[str]], dict[str, str]]:
+def normalise(
+    dataset: Dataset, root: Path
+) -> tuple[tuple[str, ...], list[list[str]], dict[str, str]]:
     """Read one source into ``(columns, rows, scalars)``, whatever shape it arrived in.
 
     Every branch returns rectangular rows of plain strings. Typing happens later, in
@@ -65,9 +67,11 @@ def normalise(dataset: Dataset, root: Path) -> tuple[tuple[str, ...], list[list[
     if dataset.shape == "sections":
         columns = dataset.columns or ("section", "label", "value")
         sections = readers.read_sections(path)
-        rows = [[name, label, value]
-                for name, pairs in sections.blocks.items()
-                for label, value in pairs]
+        rows = [
+            [name, label, value]
+            for name, pairs in sections.blocks.items()
+            for label, value in pairs
+        ]
         return columns, rows, dict(sections.scalars)
 
     if dataset.shape == "lines":
@@ -78,7 +82,9 @@ def normalise(dataset: Dataset, root: Path) -> tuple[tuple[str, ...], list[list[
     return _normalise_table(dataset, path)
 
 
-def _normalise_table(dataset: Dataset, path: Path) -> tuple[tuple[str, ...], list[list[str]], dict[str, str]]:
+def _normalise_table(
+    dataset: Dataset, path: Path
+) -> tuple[tuple[str, ...], list[list[str]], dict[str, str]]:
     """Read a plain TSV, supplying column names when the file itself has none.
 
     ``read_table`` treats the first non-comment line as the header. A headerless file
@@ -126,17 +132,24 @@ def stage(root: Path, outdir: Path, datasets: list[Dataset] | None = None) -> li
             all_scalars += [[dataset.source, key, value] for key, value in scalars.items()]
             if not rows:
                 continue
-            parquet, written = _write_parquet(connection, outdir, dataset.table,
-                                              columns, rows, dataset.transform)
-            staged.append(Staged(dataset.table, parquet, len(rows),
-                                 written, dataset.description))
+            parquet, written = _write_parquet(
+                connection, outdir, dataset.table, columns, rows, dataset.transform
+            )
+            staged.append(Staged(dataset.table, parquet, len(rows), written, dataset.description))
 
         if all_scalars:
-            parquet, _ = _write_parquet(connection, outdir, SCALARS_TABLE,
-                                        ("source", "key", "value"), all_scalars)
-            staged.append(Staged(SCALARS_TABLE, parquet, len(all_scalars),
-                                 ("source", "key", "value"),
-                                 "Rollup totals stated at the foot of a source file."))
+            parquet, _ = _write_parquet(
+                connection, outdir, SCALARS_TABLE, ("source", "key", "value"), all_scalars
+            )
+            staged.append(
+                Staged(
+                    SCALARS_TABLE,
+                    parquet,
+                    len(all_scalars),
+                    ("source", "key", "value"),
+                    "Rollup totals stated at the foot of a source file.",
+                )
+            )
 
         staged.append(_write_catalog(connection, outdir, staged))
     return staged
@@ -145,11 +158,18 @@ def stage(root: Path, outdir: Path, datasets: list[Dataset] | None = None) -> li
 def _write_catalog(connection, outdir: Path, staged: list[Staged]) -> Staged:
     """Write the self-describing catalogue table listing everything else in the warehouse."""
     columns = ("table_name", "n_rows", "n_columns", "columns", "description")
-    rows = [[s.table, str(s.rows), str(len(s.columns)), ",".join(s.columns), s.description]
-            for s in staged]
+    rows = [
+        [s.table, str(s.rows), str(len(s.columns)), ",".join(s.columns), s.description]
+        for s in staged
+    ]
     parquet, _ = _write_parquet(connection, outdir, CATALOG_TABLE, columns, rows)
-    return Staged(CATALOG_TABLE, parquet, len(rows), columns,
-                  "What every other table in this warehouse holds.")
+    return Staged(
+        CATALOG_TABLE,
+        parquet,
+        len(rows),
+        columns,
+        "What every other table in this warehouse holds.",
+    )
 
 
 def safe_column(name: str) -> str:
@@ -183,9 +203,14 @@ def safe_columns(names: tuple[str, ...]) -> tuple[str, ...]:
     return tuple(out)
 
 
-def _write_parquet(connection, outdir: Path, table: str,
-                   columns: tuple[str, ...], rows: list[list[str]],
-                   transform: str = "") -> tuple[Path, tuple[str, ...]]:
+def _write_parquet(
+    connection,
+    outdir: Path,
+    table: str,
+    columns: tuple[str, ...],
+    rows: list[list[str]],
+    transform: str = "",
+) -> tuple[Path, tuple[str, ...]]:
     """Write tidy rows to Parquet and report the path and the columns that landed.
 
     The intermediate TSV exists only so DuckDB can read the rows back; it is removed once
@@ -209,8 +234,9 @@ def _write_parquet(connection, outdir: Path, table: str,
     # `COPY ... TO` will not accept a bound parameter for its destination, and building
     # that path by string interpolation is how a filename with a quote in it becomes an
     # injection. The relation API takes both paths as values, so neither is ever parsed.
-    relation = connection.read_csv(str(tsv), delimiter="\t", header=True,
-                                   sample_size=-1, all_varchar=bool(transform))
+    relation = connection.read_csv(
+        str(tsv), delimiter="\t", header=True, sample_size=-1, all_varchar=bool(transform)
+    )
     if transform:
         relation = relation.query("src", f"SELECT {transform} FROM src")
     written = tuple(relation.columns)

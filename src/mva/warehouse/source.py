@@ -76,9 +76,11 @@ def scan(directory: Path) -> list[SourceFile]:
         if not path.is_file() or path.name in SKIP_NAMES:
             continue
         stat = path.stat()
-        found.append(SourceFile(
-            path=path, size=stat.st_size,
-            modified=datetime.fromtimestamp(stat.st_mtime, tz=UTC)))
+        found.append(
+            SourceFile(
+                path=path, size=stat.st_size, modified=datetime.fromtimestamp(stat.st_mtime, tz=UTC)
+            )
+        )
     return found
 
 
@@ -112,17 +114,18 @@ def client(store):
         aws_access_key_id=store.access_key,
         aws_secret_access_key=store.secret_key,
         region_name=store.region,
-        config=Config(signature_version="s3v4",
-                      s3={"addressing_style": "path"},
-                      retries={"max_attempts": 5, "mode": "standard"}),
+        config=Config(
+            signature_version="s3v4",
+            s3={"addressing_style": "path"},
+            retries={"max_attempts": 5, "mode": "standard"},
+        ),
     )
 
 
 def enable_versioning(store) -> str:
     """Turn on bucket versioning, so an overwrite can never destroy an earlier upload."""
     s3 = client(store)
-    s3.put_bucket_versioning(Bucket=store.bucket,
-                             VersioningConfiguration={"Status": "Enabled"})
+    s3.put_bucket_versioning(Bucket=store.bucket, VersioningConfiguration={"Status": "Enabled"})
     return s3.get_bucket_versioning(Bucket=store.bucket).get("Status", "Unknown")
 
 
@@ -151,21 +154,34 @@ def upload(store, item: SourceFile, progress=None) -> dict:
     from boto3.s3.transfer import TransferConfig
 
     s3 = client(store)
-    config = TransferConfig(multipart_threshold=64 * 1024 * 1024,
-                            multipart_chunksize=64 * 1024 * 1024,
-                            max_concurrency=4, use_threads=True)
+    config = TransferConfig(
+        multipart_threshold=64 * 1024 * 1024,
+        multipart_chunksize=64 * 1024 * 1024,
+        max_concurrency=4,
+        use_threads=True,
+    )
     s3.upload_file(
-        str(item.path), store.bucket, item.key,
-        ExtraArgs={"Metadata": {
-            "sha256": item.sha256,
-            "source-name": item.path.name,
-            "source-size": str(item.size),
-            "source-mtime": item.modified.isoformat(),
-        }},
-        Config=config, Callback=progress)
+        str(item.path),
+        store.bucket,
+        item.key,
+        ExtraArgs={
+            "Metadata": {
+                "sha256": item.sha256,
+                "source-name": item.path.name,
+                "source-size": str(item.size),
+                "source-mtime": item.modified.isoformat(),
+            }
+        },
+        Config=config,
+        Callback=progress,
+    )
     state = remote_state(store, item.key) or {}
-    return {"key": item.key, "version_id": state.get("version_id", ""),
-            "etag": state.get("etag", ""), "size": state.get("size", 0)}
+    return {
+        "key": item.key,
+        "version_id": state.get("version_id", ""),
+        "etag": state.get("etag", ""),
+        "size": state.get("size", 0),
+    }
 
 
 def ensure_ledger(connection, schema: str) -> None:
@@ -188,18 +204,25 @@ def ensure_ledger(connection, schema: str) -> None:
         )""")
 
 
-def record(connection, schema: str, item: SourceFile, result: dict,
-           verified: bool) -> None:
+def record(connection, schema: str, item: SourceFile, result: dict, verified: bool) -> None:
     """Append one upload to the ledger. Never updates an existing row."""
     from .postgres import ALIAS, safe_identifier
 
     safe = safe_identifier(schema)
     connection.execute(
-        f"INSERT INTO {ALIAS}.{safe}.{LEDGER_TABLE} VALUES "
-        "(now(), ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [item.path.name, item.kind, result["key"], result.get("version_id", ""),
-         item.size, item.sha256, result.get("etag", ""),
-         item.modified.replace(tzinfo=None), verified])
+        f"INSERT INTO {ALIAS}.{safe}.{LEDGER_TABLE} VALUES (now(), ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        [
+            item.path.name,
+            item.kind,
+            result["key"],
+            result.get("version_id", ""),
+            item.size,
+            item.sha256,
+            result.get("etag", ""),
+            item.modified.replace(tzinfo=None),
+            verified,
+        ],
+    )
 
 
 #: Committed record of the publisher's own SHA-256 for each Git-LFS file.
@@ -238,9 +261,11 @@ def fetch(repo: str, filename: str, into: Path, token: str | None = None) -> Pat
     from huggingface_hub import hf_hub_download
 
     into.mkdir(parents=True, exist_ok=True)
-    return Path(hf_hub_download(
-        repo_id=repo, filename=filename, repo_type="dataset",
-        local_dir=str(into), token=token))
+    return Path(
+        hf_hub_download(
+            repo_id=repo, filename=filename, repo_type="dataset", local_dir=str(into), token=token
+        )
+    )
 
 
 def hub_url(repo: str, filename: str) -> str:
@@ -266,7 +291,7 @@ class _StreamAdapter:
         self._iter = response.iter_content(chunk_size=CHUNK)
         self._buffer = b""
         self._callback = callback
-        self._sink = sink        # optional open file: every byte read is also written
+        self._sink = sink  # optional open file: every byte read is also written
 
     def read(self, size: int = -1) -> bytes:
         if size < 0:
@@ -291,9 +316,15 @@ class _StreamAdapter:
         return data
 
 
-def stream_to_bucket(store, repo: str, filename: str, key: str,
-                     token: str | None = None, progress=None,
-                     tee: Path | None = None) -> dict:
+def stream_to_bucket(
+    store,
+    repo: str,
+    filename: str,
+    key: str,
+    token: str | None = None,
+    progress=None,
+    tee: Path | None = None,
+) -> dict:
     """Pipe a file from the publisher straight into the bucket, never touching disk.
 
     One pass over the network in each direction, concurrently. Returns the same shape as
@@ -313,29 +344,40 @@ def stream_to_bucket(store, repo: str, filename: str, key: str,
     from boto3.s3.transfer import TransferConfig
 
     headers = {"Authorization": f"Bearer {token}"} if token else {}
-    response = requests.get(hub_url(repo, filename), headers=headers,
-                            stream=True, timeout=60, allow_redirects=True)
+    response = requests.get(
+        hub_url(repo, filename), headers=headers, stream=True, timeout=60, allow_redirects=True
+    )
     response.raise_for_status()
     declared = int(response.headers.get("Content-Length", 0))
 
     s3 = client(store)
-    config = TransferConfig(multipart_threshold=64 * 1024 * 1024,
-                            multipart_chunksize=64 * 1024 * 1024,
-                            max_concurrency=4, use_threads=True)
+    config = TransferConfig(
+        multipart_threshold=64 * 1024 * 1024,
+        multipart_chunksize=64 * 1024 * 1024,
+        max_concurrency=4,
+        use_threads=True,
+    )
     sink = None
     try:
         if tee is not None:
             tee.parent.mkdir(parents=True, exist_ok=True)
             sink = tee.open("wb")
         s3.upload_fileobj(
-            _StreamAdapter(response, progress, sink), store.bucket, key,
+            _StreamAdapter(response, progress, sink),
+            store.bucket,
+            key,
             ExtraArgs={"Metadata": {"source-repo": repo, "source-name": filename}},
-            Config=config)
+            Config=config,
+        )
     finally:
         if sink is not None:
             sink.close()
 
     state = remote_state(store, key) or {}
-    return {"key": key, "version_id": state.get("version_id", ""),
-            "etag": state.get("etag", ""), "size": state.get("size", 0),
-            "declared_size": declared}
+    return {
+        "key": key,
+        "version_id": state.get("version_id", ""),
+        "etag": state.get("etag", ""),
+        "size": state.get("size", 0),
+        "declared_size": declared,
+    }

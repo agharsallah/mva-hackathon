@@ -81,44 +81,56 @@ STEPS: tuple[Step, ...] = (
     Step(
         slug="step-1",
         title="Normalize the callset",
-        goal=("Does every variant in the callset have exactly one spelling, so that an "
-              "exact-string-matching scorer can be trusted with an indel?"),
+        goal=(
+            "Does every variant in the callset have exactly one spelling, so that an "
+            "exact-string-matching scorer can be trusted with an indel?"
+        ),
         status="open",
         unblocks=("step-2", "step-4"),
     ),
     Step(
         slug="step-2",
         title="Annotate the callset",
-        goal=("Which variants are rare enough and damaging enough to cause an ultra-rare "
-              "recessive disease, and in which gene?"),
+        goal=(
+            "Which variants are rare enough and damaging enough to cause an ultra-rare "
+            "recessive disease, and in which gene?"
+        ),
         unblocks=("step-3", "step-6"),
     ),
     Step(
         slug="step-3",
         title="Rank by phenotype",
-        goal=("Does an unbiased genome-wide ranking driven by the child's HPO terms agree "
-              "with the panel-first candidate list?"),
+        goal=(
+            "Does an unbiased genome-wide ranking driven by the child's HPO terms agree "
+            "with the panel-first candidate list?"
+        ),
         unblocks=("step-6",),
     ),
     Step(
         slug="step-4",
         title="Mine the suppressed calls",
-        goal=("Is one of the two alleles hiding in a call the quality filters discarded, "
-              "rather than absent from the sample?"),
+        goal=(
+            "Is one of the two alleles hiding in a call the quality filters discarded, "
+            "rather than absent from the sample?"
+        ),
         unblocks=("step-6",),
     ),
     Step(
         slug="step-5",
         title="Recover the second allele from the reads",
-        goal=("Is the missing allele a variant the caller could not emit at all — a "
-              "structural variant, a deep intronic call, or a low-fraction mosaic?"),
+        goal=(
+            "Is the missing allele a variant the caller could not emit at all — a "
+            "structural variant, a deep intronic call, or a low-fraction mosaic?"
+        ),
         unblocks=("step-6",),
     ),
     Step(
         slug="step-6",
         title="Spend the oracle budget",
-        goal=("Which candidate pair does the scorer confirm, and what does each reply "
-              "tell us that the next submission should exploit?"),
+        goal=(
+            "Which candidate pair does the scorer confirm, and what does each reply "
+            "tell us that the next submission should exploit?"
+        ),
     ),
 )
 
@@ -130,8 +142,7 @@ def by_slug(slug: str) -> Step:
     try:
         return _BY_SLUG[slug]
     except KeyError:
-        raise KeyError(
-            f"unknown step {slug!r}; known steps: {', '.join(_BY_SLUG)}") from None
+        raise KeyError(f"unknown step {slug!r}; known steps: {', '.join(_BY_SLUG)}") from None
 
 
 def research_steps() -> tuple[Step, ...]:

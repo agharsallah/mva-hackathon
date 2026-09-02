@@ -4,6 +4,7 @@ The scorer matches on exact (chrom, pos, ref, alt) equality with no normalizatio
 the chromosome field, so the representation we submit must be pinned down here rather
 than improvised at submission time.
 """
+
 import pytest
 
 from mva.pipeline import Variant

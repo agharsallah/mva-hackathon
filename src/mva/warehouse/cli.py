@@ -103,24 +103,29 @@ def _do_stage(args) -> int:
     """Normalise the profile and reference directories into Parquet, and report."""
     datasets = discover(args.profile) + reference.datasets(args.reference)
     staged = stage_profile(args.profile, args.stagedir, datasets)
-    print(f"staged {len(staged)} tables from {args.profile} and {args.reference} "
-          f"into {args.stagedir}")
+    print(
+        f"staged {len(staged)} tables from {args.profile} and {args.reference} into {args.stagedir}"
+    )
     width = max((len(s.table) for s in staged), default=0)
     for item in staged:
         size = item.parquet.stat().st_size
-        print(f"  {item.table:<{width}}  {item.rows:>7,} rows  "
-              f"{len(item.columns):>2} cols  {size:>8,} B")
+        print(
+            f"  {item.table:<{width}}  {item.rows:>7,} rows  "
+            f"{len(item.columns):>2} cols  {size:>8,} B"
+        )
     total = sum(s.parquet.stat().st_size for s in staged)
-    print(f"  {'total':<{width}}  {sum(s.rows for s in staged):>7,} rows"
-          f"{'':>10}{total:>10,} B")
+    print(f"  {'total':<{width}}  {sum(s.rows for s in staged):>7,} rows{'':>10}{total:>10,} B")
     return 0
 
 
 def _settings(args) -> Postgres:
     """Resolve connection settings, letting flags override the environment and .env."""
     settings = Postgres.from_env()
-    overrides = {key: getattr(args, key, None)
-                 for key in ("schema", "result_schema") if getattr(args, key, None)}
+    overrides = {
+        key: getattr(args, key, None)
+        for key in ("schema", "result_schema")
+        if getattr(args, key, None)
+    }
     return replace(settings, **overrides) if overrides else settings
 
 
@@ -146,15 +151,16 @@ def _do_pg_ingest(args) -> int:
     """Load the staged Parquet into the hosted database."""
     settings = _settings(args)
     landed = pg.ingest(settings, args.stagedir, args.tables or None)
-    print(f"ingested {len(landed)} tables into "
-          f"{settings.host}/{settings.database}, schema {settings.schema}")
+    print(
+        f"ingested {len(landed)} tables into "
+        f"{settings.host}/{settings.database}, schema {settings.schema}"
+    )
     width = max((len(item.table) for item in landed), default=0)
     for item in landed:
         print(f"  {item.table:<{width}}  {item.rows:>7,} rows")
     edged = reference.record_lineage(settings, landed)
     if edged:
-        print(f"\nlineage edges appended to {settings.schema}.data_lineage for "
-              + ", ".join(edged))
+        print(f"\nlineage edges appended to {settings.schema}.data_lineage for " + ", ".join(edged))
     return 0
 
 
@@ -165,10 +171,10 @@ def _do_pg_derive(args) -> int:
     print(f"wrote {len(produced)} result tables into schema {settings.result_schema}")
     width = max((len(item.table) for item in produced), default=0)
     for item in produced:
-        print(f"  {item.qualified:<{width + len(settings.result_schema) + 1}}"
-              f"  {item.rows:>5,} rows")
-    print("\nprovenance appended to "
-          f"{settings.result_schema}.derivation_runs")
+        print(
+            f"  {item.qualified:<{width + len(settings.result_schema) + 1}}  {item.rows:>5,} rows"
+        )
+    print(f"\nprovenance appended to {settings.result_schema}.derivation_runs")
     print(f"lineage edges appended to {settings.schema}.data_lineage")
     return 0
 
@@ -196,44 +202,65 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="mva-warehouse",
         description="Stage a profile directory as Parquet, load it into hosted "
-                    "PostgreSQL, and manage the object store.",
+        "PostgreSQL, and manage the object store.",
     )
     subparsers = parser.add_subparsers()
 
     stage_parser = subparsers.add_parser(
-        "stage", help="normalise a profile directory into typed Parquet")
-    stage_parser.add_argument("--profile", type=Path, default=DEFAULT_PROFILE,
-                              help="directory of source tables to stage")
-    stage_parser.add_argument("--reference", type=Path, default=DEFAULT_REFERENCE,
-                              help="directory of public reference tables to stage")
-    stage_parser.add_argument("--stagedir", type=Path, default=DEFAULT_STAGE,
-                              help="where the staged Parquet lives")
+        "stage", help="normalise a profile directory into typed Parquet"
+    )
+    stage_parser.add_argument(
+        "--profile", type=Path, default=DEFAULT_PROFILE, help="directory of source tables to stage"
+    )
+    stage_parser.add_argument(
+        "--reference",
+        type=Path,
+        default=DEFAULT_REFERENCE,
+        help="directory of public reference tables to stage",
+    )
+    stage_parser.add_argument(
+        "--stagedir", type=Path, default=DEFAULT_STAGE, help="where the staged Parquet lives"
+    )
     stage_parser.set_defaults(handler=_do_stage)
 
     def add_pg(name: str, handler, help_text: str, *, staged: bool = False):
         sub = subparsers.add_parser(name, help=help_text)
         if staged:
-            sub.add_argument("--stagedir", type=Path, default=DEFAULT_STAGE,
-                             help="where the staged Parquet lives")
+            sub.add_argument(
+                "--stagedir",
+                type=Path,
+                default=DEFAULT_STAGE,
+                help="where the staged Parquet lives",
+            )
         sub.add_argument("--schema", help="override PGSCHEMA (ingested source tables)")
-        sub.add_argument("--result-schema", dest="result_schema",
-                         help="override PGRESULTSCHEMA (derived outputs)")
+        sub.add_argument(
+            "--result-schema",
+            dest="result_schema",
+            help="override PGRESULTSCHEMA (derived outputs)",
+        )
         sub.set_defaults(handler=handler)
         return sub
 
     add_pg("pg-check", _do_pg_check, "show the resolved settings and probe the server")
-    ingest = add_pg("pg-ingest", _do_pg_ingest,
-                    "load the staged Parquet into the hosted database", staged=True)
-    ingest.add_argument("--tables", nargs="*",
-                        help="only these tables (default: everything staged)")
-    derive = add_pg("pg-derive", _do_pg_derive,
-                    "run the analyses and write results into the result schema")
-    derive.add_argument("--only", nargs="*",
-                        choices=[item.name for item in DERIVATIONS],
-                        help="only these derivations (default: all)")
+    ingest = add_pg(
+        "pg-ingest", _do_pg_ingest, "load the staged Parquet into the hosted database", staged=True
+    )
+    ingest.add_argument(
+        "--tables", nargs="*", help="only these tables (default: everything staged)"
+    )
+    derive = add_pg(
+        "pg-derive", _do_pg_derive, "run the analyses and write results into the result schema"
+    )
+    derive.add_argument(
+        "--only",
+        nargs="*",
+        choices=[item.name for item in DERIVATIONS],
+        help="only these derivations (default: all)",
+    )
     add_pg("pg-list", _do_pg_list, "list every table in both managed schemas")
-    pgquery = add_pg("pg-query", _do_pg_query,
-                     "run one read-only SQL statement against the hosted database")
+    pgquery = add_pg(
+        "pg-query", _do_pg_query, "run one read-only SQL statement against the hosted database"
+    )
     pgquery.add_argument("sql", help="the statement to run")
 
     cli_vcf.register(subparsers)

@@ -62,21 +62,36 @@ def filter_funnel(profile: CallsetProfile) -> Exhibit:
     suppressed = total - passing
 
     figure = go.Figure()
-    figure.add_trace(go.Bar(
-        y=["emitted by the caller"], x=[total], orientation="h", name="all records",
-        marker=dict(color=MUTED.fill, line=dict(color=MUTED.line, width=1)),
-        hovertemplate="<b>emitted</b><br>%{x:,} records<extra></extra>",
-    ))
-    figure.add_trace(go.Bar(
-        y=["after hard filters"], x=[passing], orientation="h", name="PASS",
-        marker=dict(color=GOOD.fill, line=dict(color=GOOD.line, width=1)),
-        hovertemplate="<b>PASS</b><br>%{x:,} records<extra></extra>",
-    ))
-    figure.add_trace(go.Bar(
-        y=["after hard filters"], x=[suppressed], orientation="h", name="non-PASS",
-        marker=dict(color=DECISION.fill, line=dict(color=DECISION.line, width=1)),
-        hovertemplate="<b>non-PASS</b><br>%{x:,} records held back<extra></extra>",
-    ))
+    figure.add_trace(
+        go.Bar(
+            y=["emitted by the caller"],
+            x=[total],
+            orientation="h",
+            name="all records",
+            marker=dict(color=MUTED.fill, line=dict(color=MUTED.line, width=1)),
+            hovertemplate="<b>emitted</b><br>%{x:,} records<extra></extra>",
+        )
+    )
+    figure.add_trace(
+        go.Bar(
+            y=["after hard filters"],
+            x=[passing],
+            orientation="h",
+            name="PASS",
+            marker=dict(color=GOOD.fill, line=dict(color=GOOD.line, width=1)),
+            hovertemplate="<b>PASS</b><br>%{x:,} records<extra></extra>",
+        )
+    )
+    figure.add_trace(
+        go.Bar(
+            y=["after hard filters"],
+            x=[suppressed],
+            orientation="h",
+            name="non-PASS",
+            marker=dict(color=DECISION.fill, line=dict(color=DECISION.line, width=1)),
+            hovertemplate="<b>non-PASS</b><br>%{x:,} records held back<extra></extra>",
+        )
+    )
     figure.update_layout(barmode="stack", xaxis_title="records", bargap=0.45)
 
     return Exhibit(
@@ -89,9 +104,13 @@ def filter_funnel(profile: CallsetProfile) -> Exhibit:
             "clean, and a rare variant in awkward sequence trips them for the same reasons "
             "an artefact does. Treat the yellow band as a place to look, not a bin."
         ),
-        legend=legend_line(MUTED, GOOD, DECISION,
-                           extra="grey is everything emitted, green is what survived the "
-                                 "filters, yellow is what they held back"),
+        legend=legend_line(
+            MUTED,
+            GOOD,
+            DECISION,
+            extra="grey is everything emitted, green is what survived the "
+            "filters, yellow is what they held back",
+        ),
         figure=sized(figure, 280),
         height=280,
     )
@@ -116,16 +135,24 @@ def suppression_reasons(profile: CallsetProfile) -> Exhibit:
     labels = [k for k, _ in ordered]
     values = [v for _, v in ordered]
 
-    figure = go.Figure(go.Bar(
-        x=values, y=labels, orientation="h",
-        marker=dict(color=DECISION.fill, line=dict(color=DECISION.line, width=1)),
-        customdata=[[FILTER_MEANINGS.get(k, "no description in the VCF header")]
-                    for k in labels],
-        hovertemplate="<b>%{y}</b><br>%{x:,} records<br>%{customdata[0]}<extra></extra>",
-    ))
-    figure.update_layout(xaxis_title="records carrying this flag (combinations counted once "
-                                    "per flag)",
-                         yaxis_title="", showlegend=False, bargap=0.35)
+    figure = go.Figure(
+        go.Bar(
+            x=values,
+            y=labels,
+            orientation="h",
+            marker=dict(color=DECISION.fill, line=dict(color=DECISION.line, width=1)),
+            customdata=[
+                [FILTER_MEANINGS.get(k, "no description in the VCF header")] for k in labels
+            ],
+            hovertemplate="<b>%{y}</b><br>%{x:,} records<br>%{customdata[0]}<extra></extra>",
+        )
+    )
+    figure.update_layout(
+        xaxis_title="records carrying this flag (combinations counted once per flag)",
+        yaxis_title="",
+        showlegend=False,
+        bargap=0.35,
+    )
 
     dominant = max(per_flag.items(), key=lambda kv: kv[1]) if per_flag else None
     notes = []
@@ -146,9 +173,11 @@ def suppression_reasons(profile: CallsetProfile) -> Exhibit:
             "to all three bars. Hover any bar for what that filter is actually testing. "
             "The totals here exceed the non-PASS record count for exactly that reason."
         ),
-        legend=legend_line(DECISION,
-                           extra="every bar is a suppressed set, sized by how many records "
-                                 "that one heuristic touched"),
+        legend=legend_line(
+            DECISION,
+            extra="every bar is a suppressed set, sized by how many records "
+            "that one heuristic touched",
+        ),
         figure=sized(figure, 380),
         notes=notes,
     )
@@ -165,19 +194,31 @@ def genotypes(profile: CallsetProfile) -> Exhibit:
     ordered = sorted(counts.items(), key=lambda kv: -kv[1])
     labels = [k for k, _ in ordered]
     values = [v for _, v in ordered]
-    hues = [GOOD if k.replace("|", "/") == "0/1" else
-            MACHINE if k.replace("|", "/") == "1/1" else DECISION for k in labels]
+    hues = [
+        GOOD
+        if k.replace("|", "/") == "0/1"
+        else MACHINE
+        if k.replace("|", "/") == "1/1"
+        else DECISION
+        for k in labels
+    ]
 
-    figure = go.Figure(go.Bar(
-        x=labels, y=values,
-        marker=dict(color=[h.fill for h in hues],
-                    line=dict(color=[h.line for h in hues], width=1)),
-        text=[f"{v:,}" for v in values], textposition="outside",
-        customdata=[[GENOTYPE_MEANINGS.get(k, "unrecognised genotype")] for k in labels],
-        hovertemplate="<b>%{x}</b><br>%{customdata[0]}<br>%{y:,} records<extra></extra>",
-    ))
-    figure.update_layout(xaxis_title="genotype", yaxis_title="records", showlegend=False,
-                         bargap=0.45)
+    figure = go.Figure(
+        go.Bar(
+            x=labels,
+            y=values,
+            marker=dict(
+                color=[h.fill for h in hues], line=dict(color=[h.line for h in hues], width=1)
+            ),
+            text=[f"{v:,}" for v in values],
+            textposition="outside",
+            customdata=[[GENOTYPE_MEANINGS.get(k, "unrecognised genotype")] for k in labels],
+            hovertemplate="<b>%{x}</b><br>%{customdata[0]}<br>%{y:,} records<extra></extra>",
+        )
+    )
+    figure.update_layout(
+        xaxis_title="genotype", yaxis_title="records", showlegend=False, bargap=0.45
+    )
 
     het = counts.get("0/1", 0)
     hom = counts.get("1/1", 0)
@@ -205,9 +246,13 @@ def genotypes(profile: CallsetProfile) -> Exhibit:
             "do; `1/2` means each copy carries a different variant. Only the first and "
             "third can contribute an allele to a compound heterozygote."
         ),
-        legend=legend_line(GOOD, MACHINE, DECISION,
-                           extra="green is heterozygous — the searchable set; blue is "
-                                 "homozygous; yellow is the multiallelic case"),
+        legend=legend_line(
+            GOOD,
+            MACHINE,
+            DECISION,
+            extra="green is heterozygous — the searchable set; blue is "
+            "homozygous; yellow is the multiallelic case",
+        ),
         figure=sized(figure, 380),
         notes=notes,
     )
@@ -225,17 +270,27 @@ def phasing(profile: CallsetProfile) -> Exhibit:
     unphased = max(total - phased, 0)
 
     figure = go.Figure()
-    figure.add_trace(go.Bar(
-        y=["records"], x=[phased], orientation="h", name="in a phasing group",
-        marker=dict(color=GOOD.fill, line=dict(color=GOOD.line, width=1)),
-        hovertemplate="<b>phased</b><br>%{x:,} records share a group with a neighbour"
-                      "<extra></extra>",
-    ))
-    figure.add_trace(go.Bar(
-        y=["records"], x=[unphased], orientation="h", name="unknown phase",
-        marker=dict(color=MUTED.fill, line=dict(color=MUTED.line, width=1)),
-        hovertemplate="<b>unknown phase</b><br>%{x:,} records<extra></extra>",
-    ))
+    figure.add_trace(
+        go.Bar(
+            y=["records"],
+            x=[phased],
+            orientation="h",
+            name="in a phasing group",
+            marker=dict(color=GOOD.fill, line=dict(color=GOOD.line, width=1)),
+            hovertemplate="<b>phased</b><br>%{x:,} records share a group with a neighbour"
+            "<extra></extra>",
+        )
+    )
+    figure.add_trace(
+        go.Bar(
+            y=["records"],
+            x=[unphased],
+            orientation="h",
+            name="unknown phase",
+            marker=dict(color=MUTED.fill, line=dict(color=MUTED.line, width=1)),
+            hovertemplate="<b>unknown phase</b><br>%{x:,} records<extra></extra>",
+        )
+    )
     figure.update_layout(barmode="stack", xaxis_title="records", bargap=0.5)
 
     insert = profile.read_qc.get("insert_size_peak")
@@ -256,8 +311,9 @@ def phasing(profile: CallsetProfile) -> Exhibit:
             "because a single sequenced fragment covered them together. Everything else is "
             "of unknown phase — which is a state of ignorance, never a rejection."
         ),
-        legend=legend_line(GOOD, MUTED,
-                           extra="green is resolved onto a copy, grey is unknown phase"),
+        legend=legend_line(
+            GOOD, MUTED, extra="green is resolved onto a copy, grey is unknown phase"
+        ),
         figure=sized(figure, 260),
         height=260,
         notes=notes,

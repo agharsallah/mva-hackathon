@@ -38,8 +38,7 @@ def find_decompressor() -> str:
     for name in DECOMPRESSORS:
         if shutil.which(name):
             return name
-    raise RuntimeError("no gzip decompressor found (looked for: "
-                       + ", ".join(DECOMPRESSORS) + ")")
+    raise RuntimeError("no gzip decompressor found (looked for: " + ", ".join(DECOMPRESSORS) + ")")
 
 
 @dataclass
@@ -81,8 +80,10 @@ def pipe(connection, source, view: str = "raw_reads") -> Raw:
     input_spec = "" if from_stdin else f" {shlex_quote(local)}"
     producer = subprocess.Popen(
         f"{decompressor} -dc{input_spec} | paste - - - - > {shlex_quote(fifo)}",
-        shell=True, stderr=subprocess.PIPE,
-        stdin=subprocess.PIPE if from_stdin else None)
+        shell=True,
+        stderr=subprocess.PIPE,
+        stdin=subprocess.PIPE if from_stdin else None,
+    )
     feeder = _feed(producer, source) if from_stdin else None
     connection.execute(f"""
         CREATE OR REPLACE VIEW {view} AS
@@ -127,8 +128,7 @@ def _feed(producer, source):
     return thread
 
 
-def oxbow(connection, source, view: str = "raw_reads",
-          batch_size: int = 131_072) -> Raw:
+def oxbow(connection, source, view: str = "raw_reads", batch_size: int = 131_072) -> Raw:
     """The ``noodles`` reader → PyArrow dataset → DuckDB path."""
     import oxbow as ox
 
@@ -140,13 +140,17 @@ def oxbow(connection, source, view: str = "raw_reads",
     if not target:
         raise RuntimeError(
             f"the oxbow engine needs a file path or a URL; {source.name} is a plain "
-            f"stream. Use --engine pipe for a stream-only source.")
+            f"stream. Use --engine pipe for a stream-only source."
+        )
     # Compression must be stated for a URL, never inferred: oxbow infers it from
     # `endswith('.gz')`, and a presigned link ends in its signature query string, not in
     # the filename. Left to infer, the reader would hand raw gzip bytes to the FASTQ
     # parser. Every source here is gzip by construction — the name pattern requires it.
-    handle = (ox.from_fastq(target, batch_size=batch_size) if local is not None
-              else ox.from_fastq(target, compression="gzip", batch_size=batch_size))
+    handle = (
+        ox.from_fastq(target, batch_size=batch_size)
+        if local is not None
+        else ox.from_fastq(target, compression="gzip", batch_size=batch_size)
+    )
     connection.register("oxbow_reads", handle.dataset())
     connection.execute(f"""
         CREATE OR REPLACE VIEW {view} AS
@@ -169,7 +173,8 @@ def polars_bio(connection, source, view: str = "raw_reads") -> Raw:
     if local is None:
         raise RuntimeError(
             f"the polars_bio engine needs a local file; {source.name} is a remote "
-            f"object. Use --engine oxbow (or pipe) for object-store sources.")
+            f"object. Use --engine oxbow (or pipe) for object-store sources."
+        )
     frame = pb.scan_fastq(str(local))
     connection.register("polars_reads", frame)
     connection.execute(f"""
@@ -199,4 +204,5 @@ ENGINES = {"pipe": pipe, "oxbow": oxbow, "polars_bio": polars_bio}
 
 def shlex_quote(value) -> str:
     import shlex
+
     return shlex.quote(str(value))

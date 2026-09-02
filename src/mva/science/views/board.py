@@ -29,15 +29,18 @@ def step_map(record: Record) -> Exhibit:
         elif total == 0:
             hint = "no hypotheses recorded yet"
         else:
-            hint = (f"{counts[Status.SUPPORTED]} supported · "
-                    f"{counts[Status.REFUTED]} refuted · "
-                    f"{total - counts[Status.SUPPORTED] - counts[Status.REFUTED]} open")
+            hint = (
+                f"{counts[Status.SUPPORTED]} supported · "
+                f"{counts[Status.REFUTED]} refuted · "
+                f"{total - counts[Status.SUPPORTED] - counts[Status.REFUTED]} open"
+            )
 
         cards.append(
             f'<div class="tile" style="border-left:4px solid {hue.line}">'
             f'<span class="tile-value" style="font-size:1.05rem">{step.title}</span>'
             f'<span class="tile-label">{step.goal}</span>'
-            f'<span class="tile-hint">{step.slug} · {step.status} · {hint}</span></div>')
+            f'<span class="tile-hint">{step.slug} · {step.status} · {hint}</span></div>'
+        )
 
     return Exhibit(
         slug="step-map",
@@ -48,9 +51,12 @@ def step_map(record: Record) -> Exhibit:
             "verdicts — not when its code runs. Step 0 is the exception: it is machinery, "
             "and machinery is judged by whether it works, not by whether it is true."
         ),
-        legend=legend_line(GOOD, DECISION, MUTED,
-                           extra="the stripe is the step's own status: finished, being "
-                                 "worked, or not yet opened"),
+        legend=legend_line(
+            GOOD,
+            DECISION,
+            MUTED,
+            extra="the stripe is the step's own status: finished, being worked, or not yet opened",
+        ),
         html=f'<div class="tiles">{"".join(cards)}</div>',
     )
 
@@ -63,8 +69,10 @@ def _confidence_cell(dossier) -> str:
         return f'<span style="color:#888888">— <small>({suggested:.2f} suggested)</small></span>'
     gap = dossier.confidence_gap
     if gap is not None and abs(gap) >= 0.15:
-        return (f"{committed:.2f} <small style=\"color:{DECISION.line}\">"
-                f"({suggested:.2f} suggested, {gap:+.2f})</small>")
+        return (
+            f'{committed:.2f} <small style="color:{DECISION.line}">'
+            f"({suggested:.2f} suggested, {gap:+.2f})</small>"
+        )
     return f"{committed:.2f}"
 
 
@@ -80,10 +88,13 @@ def hypothesis_board(record: Record) -> Exhibit:
                 "nothing to believe or disbelieve. Claims appear here the moment one is "
                 "proposed."
             ),
-            legend=legend_line(MUTED, extra="an empty register renders as empty, never as "
-                                            "a placeholder that implies work"),
+            legend=legend_line(
+                MUTED,
+                extra="an empty register renders as empty, never as "
+                "a placeholder that implies work",
+            ),
             html='<div class="callout"><p>The register is empty. '
-                 '<code>mva-science hypothesis-add</code> opens the first claim.</p></div>',
+            "<code>mva-science hypothesis-add</code> opens the first claim.</p></div>",
         )
 
     rows = []
@@ -102,16 +113,22 @@ def hypothesis_board(record: Record) -> Exhibit:
             f'<div class="reasoning"><p><strong>Prediction if true.</strong> '
             f"{h.prediction}</p>"
             f"<p><strong>What would refute it.</strong> {h.refuted_by}</p>"
-            + (f"<p><strong>Reasoning for the current verdict.</strong> {h.reasoning}</p>"
-               if h.reasoning else "")
-            + "</div></details></td></tr>")
+            + (
+                f"<p><strong>Reasoning for the current verdict.</strong> {h.reasoning}</p>"
+                if h.reasoning
+                else ""
+            )
+            + "</div></details></td></tr>"
+        )
 
     untested = len(record.untested_claims)
     callout = ""
     if untested:
-        callout = (f'<div class="callout"><p>{untested} of {len(record.dossiers)} claims '
-                   f"have no evidence recorded against them yet — they are proposed, not "
-                   f"tested.</p></div>")
+        callout = (
+            f'<div class="callout"><p>{untested} of {len(record.dossiers)} claims '
+            f"have no evidence recorded against them yet — they are proposed, not "
+            f"tested.</p></div>"
+        )
 
     return Exhibit(
         slug="hypothesis-board",
@@ -123,14 +140,21 @@ def hypothesis_board(record: Record) -> Exhibit:
             "— the gap is a judgment someone made, and it should be visible rather than "
             "reconstructed."
         ),
-        legend=legend_line(MACHINE, DECISION, GOOD, MUTED,
-                           extra="badge colours are the claim's status: proposed, being "
-                                 "tested, supported, refuted, or superseded (red is "
-                                 "refuted, grey superseded)"),
-        html=(f'{callout}<div class="table-wrap"><table class="checks">'
-              "<thead><tr><th>ID</th><th>Step</th><th>Status</th><th>Confidence</th>"
-              "<th>Evidence</th><th>Gene</th><th>Claim</th></tr></thead>"
-              f"<tbody>{''.join(rows)}</tbody></table></div>"),
+        legend=legend_line(
+            MACHINE,
+            DECISION,
+            GOOD,
+            MUTED,
+            extra="badge colours are the claim's status: proposed, being "
+            "tested, supported, refuted, or superseded (red is "
+            "refuted, grey superseded)",
+        ),
+        html=(
+            f'{callout}<div class="table-wrap"><table class="checks">'
+            "<thead><tr><th>ID</th><th>Step</th><th>Status</th><th>Confidence</th>"
+            "<th>Evidence</th><th>Gene</th><th>Claim</th></tr></thead>"
+            f"<tbody>{''.join(rows)}</tbody></table></div>"
+        ),
     )
 
 

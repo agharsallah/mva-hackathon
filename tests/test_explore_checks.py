@@ -1,4 +1,5 @@
 """The verdict engine: bands are stated, reasoning travels with the number."""
+
 from pathlib import Path
 
 from mva.explore import CallsetProfile, Verdict, run_checks

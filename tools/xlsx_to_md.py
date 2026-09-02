@@ -23,13 +23,9 @@ def main(src: str, dst: str) -> None:
 
     shared = [
         texts(si)
-        for si in re.findall(
-            r"<si>(.*?)</si>", z.read("xl/sharedStrings.xml").decode("utf8"), re.S
-        )
+        for si in re.findall(r"<si>(.*?)</si>", z.read("xl/sharedStrings.xml").decode("utf8"), re.S)
     ]
-    names = re.findall(
-        r'<sheet name="([^"]+)"', z.read("xl/workbook.xml").decode("utf8")
-    )
+    names = re.findall(r'<sheet name="([^"]+)"', z.read("xl/workbook.xml").decode("utf8"))
 
     lines = [
         "# Methods description form",

@@ -45,9 +45,13 @@ class ColumnFingerprint:
 
     def content_equals(self, other: "ColumnFingerprint") -> bool:
         """True when the *values* match, whatever the two columns' declared types are."""
-        return (self.non_null == other.non_null and self.nulls == other.nulls
-                and self.empties == other.empties and self.distinct == other.distinct
-                and self.checksum == other.checksum)
+        return (
+            self.non_null == other.non_null
+            and self.nulls == other.nulls
+            and self.empties == other.empties
+            and self.distinct == other.distinct
+            and self.checksum == other.checksum
+        )
 
 
 @dataclass(frozen=True)
@@ -74,8 +78,7 @@ class Discrepancy:
         return f"{self.scope}: {self.detail}"
 
 
-def fingerprint(connection, source: str, label: str,
-                distinct: bool = True) -> TableFingerprint:
+def fingerprint(connection, source: str, label: str, distinct: bool = True) -> TableFingerprint:
     """Fingerprint whatever ``source`` names — a table, or a ``read_parquet(...)`` call.
 
     Every column's statistics are gathered in **one** scan. The obvious implementation —
@@ -112,9 +115,12 @@ def fingerprint(connection, source: str, label: str,
     columns = []
     for index, (name, type_name) in enumerate(zip(names, types)):
         base = 1 + index * 4
-        non_null, empties, distinct_n, checksum = (int(v) for v in row[base:base + 4])
-        columns.append(ColumnFingerprint(
-            name, type_name, non_null, rows - non_null, empties, distinct_n, checksum))
+        non_null, empties, distinct_n, checksum = (int(v) for v in row[base : base + 4])
+        columns.append(
+            ColumnFingerprint(
+                name, type_name, non_null, rows - non_null, empties, distinct_n, checksum
+            )
+        )
     return TableFingerprint(label, rows, columns)
 
 
@@ -125,9 +131,9 @@ def compare(before: TableFingerprint, after: TableFingerprint) -> list[Discrepan
     if before.rows != after.rows:
         # Signed from the destination's point of view, so a loss reads as negative.
         delta = after.rows - before.rows
-        found.append(Discrepancy(
-            "row count",
-            f"{before.rows:,} -> {after.rows:,} ({delta:+,} rows)"))
+        found.append(
+            Discrepancy("row count", f"{before.rows:,} -> {after.rows:,} ({delta:+,} rows)")
+        )
 
     missing = [c.name for c in before.columns if c.name not in after.by_name]
     added = [c.name for c in after.columns if c.name not in before.by_name]
@@ -170,8 +176,9 @@ def retyped(before: TableFingerprint, after: TableFingerprint) -> list[tuple[str
     return changes
 
 
-def render(before: TableFingerprint, after: TableFingerprint,
-           discrepancies: list[Discrepancy]) -> str:
+def render(
+    before: TableFingerprint, after: TableFingerprint, discrepancies: list[Discrepancy]
+) -> str:
     """A human-readable verdict, for a terminal or a methodology note."""
     lines = [
         f"{'':<24}{before.label:>18}{after.label:>18}",
@@ -187,8 +194,7 @@ def render(before: TableFingerprint, after: TableFingerprint,
             lines.append(f"{column.name:<24}{column.type_name:>18}{'ABSENT':>18}   LOST")
             continue
         verdict = "identical" if column.content_equals(other) else "DIFFERS"
-        lines.append(
-            f"{column.name:<24}{column.type_name:>18}{other.type_name:>18}   {verdict}")
+        lines.append(f"{column.name:<24}{column.type_name:>18}{other.type_name:>18}   {verdict}")
     lines.append("-" * len(header))
     if discrepancies:
         lines.append(f"{len(discrepancies)} discrepancy(ies):")

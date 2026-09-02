@@ -35,14 +35,14 @@ from .queries import rows
 #: different naming convention still gets the right sentence — or the honest fallback.
 ROLES = {
     "variants": "The callset: every small variant (SNV or short indel) called for this "
-                "sample, as a bgzip-compressed VCF — one row per variant site, carrying "
-                "the quality filters and the sample's genotype.",
+    "sample, as a bgzip-compressed VCF — one row per variant site, carrying "
+    "the quality filters and the sample's genotype.",
     "variant_index": "Tabix index for the callset — the block offsets that let a reader "
-                     "jump to one region without decompressing the whole VCF.",
+    "jump to one region without decompressing the whole VCF.",
     "reads": "Raw sequencing reads as the instrument delivered them — gzipped FASTQ, four "
-             "lines per read: name, bases, separator, per-base quality.",
+    "lines per read: name, bases, separator, per-base quality.",
     "": "An object whose name matches no known convention, so nothing is claimed about "
-        "its contents.",
+    "its contents.",
 }
 
 #: Documents are told apart by extension rather than by role: the delivery ships prose in
@@ -60,24 +60,24 @@ DOCUMENTS = {
 #: schema names are configurable.
 UNCATALOGUED = {
     "variants_raw": "The callset as delivered, one row per VCF record with every column "
-                    "kept as text — the lossless raw layer every derivation reads.",
+    "kept as text — the lossless raw layer every derivation reads.",
     "panel_annotations": "Ensembl VEP's answer for every allele in the candidate panel: "
-                         "consequence, impact, gnomAD frequency and ClinVar "
-                         "significance, one row per allele, with the instant it was "
-                         "fetched.",
+    "consequence, impact, gnomAD frequency and ClinVar "
+    "significance, one row per allele, with the instant it was "
+    "fetched.",
     OBJECTS_TABLE: "Current contents of the object store's source prefix: one row per "
-                   "object with its size, hash, version and the lane/read facts parsed "
-                   "out of its name. Replaced wholesale on every survey.",
+    "object with its size, hash, version and the lane/read facts parsed "
+    "out of its name. Replaced wholesale on every survey.",
     LEDGER_TABLE: "Append-only upload ledger: one row per upload, carrying the SHA-256 "
-                  "computed locally before the bytes left the machine.",
+    "computed locally before the bytes left the machine.",
     LINEAGE_TABLE: "Append-only edge list: which input, at which version, through which "
-                   "transform, produced which table and how many rows.",
+    "transform, produced which table and how many rows.",
     CATALOG_TABLE: "The self-describing catalogue staging writes: what every staged "
-                   "table holds, its column list and its row count at staging time.",
+    "table holds, its column list and its row count at staging time.",
     "probe_ledger": "Append-only record of every oracle submission spent against the "
-                    "challenge budget, with the reply it returned.",
+    "challenge budget, with the reply it returned.",
     PROVENANCE_TABLE: "Append-only log of every derivation run: when it ran, the question "
-                      "it answers and how many rows it produced.",
+    "it answers and how many rows it produced.",
 }
 
 #: The object inventory joined to the earliest upload recorded for the same key. A LEFT
@@ -132,8 +132,7 @@ def objects(settings: Postgres) -> list[dict]:
     ``mva-warehouse source-check``, so a cache would only hide a fresh survey.
     """
     schema = safe_identifier(settings.schema)
-    sql = OBJECTS_SQL.format(alias=ALIAS, schema=schema,
-                             objects=OBJECTS_TABLE, ledger=LEDGER_TABLE)
+    sql = OBJECTS_SQL.format(alias=ALIAS, schema=schema, objects=OBJECTS_TABLE, ledger=LEDGER_TABLE)
     with attached(settings, read_only=True) as connection:
         found = rows(connection, sql)
     return [_object(row) for row in found]
@@ -177,21 +176,38 @@ def tables(settings: Postgres) -> list[dict]:
     schema = safe_identifier(settings.schema)
     results = safe_identifier(settings.result_schema)
     with attached(settings, read_only=True) as connection:
-        listed = [(row["schema"], row["table"]) for row in rows(connection, f"""
+        listed = [
+            (row["schema"], row["table"])
+            for row in rows(
+                connection,
+                f"""
             SELECT table_schema AS schema, table_name AS "table"
             FROM {ALIAS}.information_schema.tables
             WHERE table_schema IN (?, ?) ORDER BY table_schema, table_name
-        """, [schema, results])]
+        """,
+                [schema, results],
+            )
+        ]
         counts = _counts(connection, listed)
-        staged = {row["table_name"]: row["description"] for row in rows(
-            connection,
-            f"SELECT table_name, description FROM {ALIAS}.{schema}.{CATALOG_TABLE}")}
-        asked = {row["derivation"]: row["question"] for row in rows(
-            connection,
-            f"SELECT derivation, max_by(question, run_at) AS question "
-            f"FROM {ALIAS}.{results}.{PROVENANCE_TABLE} GROUP BY derivation")}
-        edges = {(row["target_schema"], row["target_table"]): row
-                 for row in rows(connection, f"""
+        staged = {
+            row["table_name"]: row["description"]
+            for row in rows(
+                connection, f"SELECT table_name, description FROM {ALIAS}.{schema}.{CATALOG_TABLE}"
+            )
+        }
+        asked = {
+            row["derivation"]: row["question"]
+            for row in rows(
+                connection,
+                f"SELECT derivation, max_by(question, run_at) AS question "
+                f"FROM {ALIAS}.{results}.{PROVENANCE_TABLE} GROUP BY derivation",
+            )
+        }
+        edges = {
+            (row["target_schema"], row["target_table"]): row
+            for row in rows(
+                connection,
+                f"""
             SELECT target_schema, target_table,
                    max(produced_at)                 AS produced_at,
                    max_by(source_kind, produced_at) AS source_kind,
@@ -199,13 +215,22 @@ def tables(settings: Postgres) -> list[dict]:
                    max_by(tool, produced_at)        AS tool
             FROM {ALIAS}.{schema}.{LINEAGE_TABLE}
             GROUP BY target_schema, target_table
-        """)}
-    return [_table(name, counts, staged if name[0] == schema else {},
-                   asked if name[0] == results else {}, edges) for name in listed]
+        """,
+            )
+        }
+    return [
+        _table(
+            name,
+            counts,
+            staged if name[0] == schema else {},
+            asked if name[0] == results else {},
+            edges,
+        )
+        for name in listed
+    ]
 
 
-def _table(name: tuple[str, str], counts: dict, staged: dict, asked: dict,
-           edges: dict) -> dict:
+def _table(name: tuple[str, str], counts: dict, staged: dict, asked: dict, edges: dict) -> dict:
     """One catalogue row. Three description sources, tried in order, then null.
 
     ``created_by`` and ``why`` come from :mod:`mva.viz.catalog_semantics`, which is a
@@ -220,8 +245,7 @@ def _table(name: tuple[str, str], counts: dict, staged: dict, asked: dict,
     return {
         "schema": schema,
         "table": table,
-        "description": (staged.get(table) or asked.get(table)
-                        or UNCATALOGUED.get(table)),
+        "description": (staged.get(table) or asked.get(table) or UNCATALOGUED.get(table)),
         "rows": counts.get(name),
         "produced_at": edge.get("produced_at"),
         "source_kind": edge.get("source_kind"),
@@ -261,14 +285,17 @@ def columns(settings: Postgres) -> list[dict]:
     results = safe_identifier(settings.result_schema)
     with attached(settings, read_only=True) as connection:
         found = rows(connection, COLUMNS_SQL, [schema, results])
-    return [{
-        "schema": row["schema"],
-        "table": row["table"],
-        "column": row["column"],
-        "data_type": row["data_type"],
-        "ordinal": int(row["ordinal"]),
-        "meaning": meaning(row["table"], row["column"]),
-    } for row in found]
+    return [
+        {
+            "schema": row["schema"],
+            "table": row["table"],
+            "column": row["column"],
+            "data_type": row["data_type"],
+            "ordinal": int(row["ordinal"]),
+            "meaning": meaning(row["table"], row["column"]),
+        }
+        for row in found
+    ]
 
 
 def _counts(connection, listed: list[tuple[str, str]]) -> dict[tuple[str, str], int]:
@@ -289,7 +316,10 @@ def _counts(connection, listed: list[tuple[str, str]]) -> dict[tuple[str, str], 
     # interpolated, so neither the table reference nor the quoted literal can be injected.
     union = " UNION ALL ".join(
         f"SELECT '{safe_identifier(schema)}' AS s, '{safe_identifier(table)}' AS t, "
-        f"count(*) AS n FROM {schema}.{table}" for schema, table in listed)
+        f"count(*) AS n FROM {schema}.{table}"
+        for schema, table in listed
+    )
     found = connection.execute(
-        f"SELECT s, t, n FROM postgres_query('{ALIAS}', $${union}$$)").fetchall()
+        f"SELECT s, t, n FROM postgres_query('{ALIAS}', $${union}$$)"
+    ).fetchall()
     return {(row[0], row[1]): int(row[2]) for row in found}

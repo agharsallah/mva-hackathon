@@ -73,9 +73,9 @@ PANEL_GENE_BACKGROUND = Derivation(
         "callability statement — mappability, repeats — never a pathogenicity one. Bins "
         f"under {MIN_BIN_N_FOR_PASS} records are excluded from the PASS-share background "
         "only, where a ratio of tiny counts would be noise. A contig with no usable "
-        "spread yields NULL, never zero."),
-    depends_on=("variants_raw", "contig_counts", "panel_variant_counts",
-                "mva_panel_grch38"),
+        "spread yields NULL, never zero."
+    ),
+    depends_on=("variants_raw", "contig_counts", "panel_variant_counts", "mva_panel_grch38"),
     # `variants_raw` is five million all-text rows with no index, so the bin aggregate is a
     # whole-genome scan — the same cost `variant_density_bins` and `baf_bins` already pay,
     # and the reason it is paid here at derive time rather than inside an HTTP request.

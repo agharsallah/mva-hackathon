@@ -17,28 +17,60 @@ from mva.viz.app import create_app
 from mva.viz.cache import Cache
 
 ROWS = [
-    {"gene": "OUTLIER", "chrom": "chr5", "n_all": 12, "n_pass": 6, "span_bp": 66509,
-     "gene_variants_per_mb": 180.4, "gene_pct_pass": 50.0,
-     "contig_variants_per_mb": 1596.4, "contig_pct_pass": 96.13,
-     "genome_variants_per_mb": 1585.3, "genome_pct_pass": 95.22,
-     "contig_n_bins": 181, "contig_bin_mean_density": 1601.2,
-     "contig_bin_sd_density": 463.0, "contig_bin_mean_pct_pass": 96.28,
-     "contig_bin_sd_pct_pass": 11.52, "genome_n_bins": 2961,
-     "genome_bin_mean_density": 1653.4, "genome_bin_sd_density": 774.1,
-     "genome_bin_mean_pct_pass": 95.47, "genome_bin_sd_pct_pass": 12.84,
-     "z_density_vs_contig": -3.07, "z_density_vs_genome": -1.9,
-     "z_pass_vs_contig": -4.02, "z_pass_vs_genome": -3.54},
-    {"gene": "ORDINARY", "chrom": "chr17", "n_all": 120, "n_pass": 118, "span_bp": 65768,
-     "gene_variants_per_mb": 1824.6, "gene_pct_pass": 98.33,
-     "contig_variants_per_mb": 1706.2, "contig_pct_pass": 95.1,
-     "genome_variants_per_mb": 1585.3, "genome_pct_pass": 95.22,
-     "contig_n_bins": 1, "contig_bin_mean_density": 1824.6,
-     "contig_bin_sd_density": None, "contig_bin_mean_pct_pass": None,
-     "contig_bin_sd_pct_pass": None, "genome_n_bins": 2961,
-     "genome_bin_mean_density": 1653.4, "genome_bin_sd_density": 774.1,
-     "genome_bin_mean_pct_pass": 95.47, "genome_bin_sd_pct_pass": 12.84,
-     "z_density_vs_contig": None, "z_density_vs_genome": 0.22,
-     "z_pass_vs_contig": None, "z_pass_vs_genome": 0.22},
+    {
+        "gene": "OUTLIER",
+        "chrom": "chr5",
+        "n_all": 12,
+        "n_pass": 6,
+        "span_bp": 66509,
+        "gene_variants_per_mb": 180.4,
+        "gene_pct_pass": 50.0,
+        "contig_variants_per_mb": 1596.4,
+        "contig_pct_pass": 96.13,
+        "genome_variants_per_mb": 1585.3,
+        "genome_pct_pass": 95.22,
+        "contig_n_bins": 181,
+        "contig_bin_mean_density": 1601.2,
+        "contig_bin_sd_density": 463.0,
+        "contig_bin_mean_pct_pass": 96.28,
+        "contig_bin_sd_pct_pass": 11.52,
+        "genome_n_bins": 2961,
+        "genome_bin_mean_density": 1653.4,
+        "genome_bin_sd_density": 774.1,
+        "genome_bin_mean_pct_pass": 95.47,
+        "genome_bin_sd_pct_pass": 12.84,
+        "z_density_vs_contig": -3.07,
+        "z_density_vs_genome": -1.9,
+        "z_pass_vs_contig": -4.02,
+        "z_pass_vs_genome": -3.54,
+    },
+    {
+        "gene": "ORDINARY",
+        "chrom": "chr17",
+        "n_all": 120,
+        "n_pass": 118,
+        "span_bp": 65768,
+        "gene_variants_per_mb": 1824.6,
+        "gene_pct_pass": 98.33,
+        "contig_variants_per_mb": 1706.2,
+        "contig_pct_pass": 95.1,
+        "genome_variants_per_mb": 1585.3,
+        "genome_pct_pass": 95.22,
+        "contig_n_bins": 1,
+        "contig_bin_mean_density": 1824.6,
+        "contig_bin_sd_density": None,
+        "contig_bin_mean_pct_pass": None,
+        "contig_bin_sd_pct_pass": None,
+        "genome_n_bins": 2961,
+        "genome_bin_mean_density": 1653.4,
+        "genome_bin_sd_density": 774.1,
+        "genome_bin_mean_pct_pass": 95.47,
+        "genome_bin_sd_pct_pass": 12.84,
+        "z_density_vs_contig": None,
+        "z_density_vs_genome": 0.22,
+        "z_pass_vs_contig": None,
+        "z_pass_vs_genome": 0.22,
+    },
 ]
 
 
@@ -55,8 +87,9 @@ def client(tmp_path, monkeypatch, seen):
         return [dict(row) for row in ROWS]
 
     monkeypatch.setattr(queries, "fetch", fetch)
-    with TestClient(create_app(settings=None, cache=Cache(tmp_path),
-                               origins=["http://localhost:5173"])) as running:
+    with TestClient(
+        create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
+    ) as running:
         yield running
 
 
@@ -76,8 +109,10 @@ class TestTheEnvelope:
         assert client.get("/api/panel/background").json()["cached_at"] is None
 
     def test_the_source_names_the_derived_table(self, client):
-        assert client.get("/api/panel/background").json()["source"] == \
-               "pg.results.panel_gene_background"
+        assert (
+            client.get("/api/panel/background").json()["source"]
+            == "pg.results.panel_gene_background"
+        )
 
 
 class TestTheRegistration:
@@ -100,12 +135,22 @@ class TestTheContract:
 
     def test_every_field_the_chart_needs_survives_the_round_trip(self, client):
         row = data(client.get("/api/panel/background"))[0]
-        for field in ("gene", "chrom", "gene_variants_per_mb", "gene_pct_pass",
-                      "contig_bin_mean_density", "contig_bin_sd_density",
-                      "contig_bin_mean_pct_pass", "contig_bin_sd_pct_pass",
-                      "genome_bin_mean_density", "genome_bin_sd_density",
-                      "z_density_vs_contig", "z_density_vs_genome",
-                      "z_pass_vs_contig", "z_pass_vs_genome"):
+        for field in (
+            "gene",
+            "chrom",
+            "gene_variants_per_mb",
+            "gene_pct_pass",
+            "contig_bin_mean_density",
+            "contig_bin_sd_density",
+            "contig_bin_mean_pct_pass",
+            "contig_bin_sd_pct_pass",
+            "genome_bin_mean_density",
+            "genome_bin_sd_density",
+            "z_density_vs_contig",
+            "z_density_vs_genome",
+            "z_pass_vs_contig",
+            "z_pass_vs_genome",
+        ):
             assert field in row, field
 
     def test_an_unmeasurable_z_stays_null_and_is_never_coerced_to_zero(self, client):
@@ -115,8 +160,9 @@ class TestTheContract:
         assert ordinary["z_pass_vs_contig"] is None
 
     def test_the_contig_is_served_chr_prefixed_as_the_panel_spells_it(self, client):
-        assert all(row["chrom"].startswith("chr")
-                   for row in data(client.get("/api/panel/background")))
+        assert all(
+            row["chrom"].startswith("chr") for row in data(client.get("/api/panel/background"))
+        )
 
     def test_the_raw_values_behind_each_z_travel_with_it(self, client):
         """The hover has to show what the z was computed from, so it cannot be a lone

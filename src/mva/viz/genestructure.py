@@ -47,14 +47,27 @@ ENSEMBL_BASE = "https://rest.ensembl.org"
 #: the protein. Matched case-insensitively because Ensembl spells them ``Smart``,
 #: ``SuperFamily``, ``Prosite_profiles``. Everything else the endpoint returns is a
 #: prediction or a cross-reference and is dropped; see the module docstring.
-DOMAIN_SOURCES = frozenset({
-    "pfam", "smart", "prosite_profiles", "prosite_patterns", "superfamily",
-    "gene3d", "cdd", "prints", "pirsf", "tigrfam", "hamap",
-})
+DOMAIN_SOURCES = frozenset(
+    {
+        "pfam",
+        "smart",
+        "prosite_profiles",
+        "prosite_patterns",
+        "superfamily",
+        "gene3d",
+        "cdd",
+        "prints",
+        "pirsf",
+        "tigrfam",
+        "hamap",
+    }
+)
 
 #: What the endpoint reports as its provenance.
-SOURCE = ("ensembl rest /lookup/id + /overlap/translation + /vep/homo_sapiens/region, "
-          "pg.results.panel_candidates, ressources/data-profile/mva_panel_grch38.bed")
+SOURCE = (
+    "ensembl rest /lookup/id + /overlap/translation + /vep/homo_sapiens/region, "
+    "pg.results.panel_candidates, ressources/data-profile/mva_panel_grch38.bed"
+)
 
 #: Consequence suffix stripped when building a short human label.
 _SUFFIX = "_variant"
@@ -64,8 +77,14 @@ class EnsemblError(RuntimeError):
     """Ensembl REST could not be reached or refused a request. Never faked around."""
 
 
-def structure(gene: str, settings: Any, *, client: httpx.Client | None = None,
-              base_url: str = ENSEMBL_BASE, timeout: float = 30.0) -> dict:
+def structure(
+    gene: str,
+    settings: Any,
+    *,
+    client: httpx.Client | None = None,
+    base_url: str = ENSEMBL_BASE,
+    timeout: float = 30.0,
+) -> dict:
     """Assemble one gene's exon/domain/candidate payload. ``LookupError`` if off-panel."""
     ensembl_id = panel_gene(gene)
     own = client is None
@@ -95,8 +114,7 @@ def structure(gene: str, settings: Any, *, client: httpx.Client | None = None,
         "protein_length": _int(translation.get("length")),
         "exons": exons(transcript, _int(lookup.get("strand")) or 1),
         "domains": domains,
-        "candidates": [candidate(row, placed, failure, transcript.get("id"))
-                       for row in rows],
+        "candidates": [candidate(row, placed, failure, transcript.get("id")) for row in rows],
     }
 
 
@@ -168,16 +186,18 @@ def fetch_domains(client: httpx.Client, base_url: str, protein_id: str) -> list[
         if start is None or end is None:
             continue
         accession = feature.get("id")
-        out.append({
-            "source": source,
-            "accession": accession,
-            # An empty description is common on structural sources (Gene3D), where the
-            # accession *is* the name people quote.
-            "name": (feature.get("description") or "").strip() or accession,
-            "start_aa": start,
-            "end_aa": end,
-            "interpro": feature.get("interpro") or None,
-        })
+        out.append(
+            {
+                "source": source,
+                "accession": accession,
+                # An empty description is common on structural sources (Gene3D), where the
+                # accession *is* the name people quote.
+                "name": (feature.get("description") or "").strip() or accession,
+                "start_aa": start,
+                "end_aa": end,
+                "interpro": feature.get("interpro") or None,
+            }
+        )
     out.sort(key=lambda d: (d["start_aa"], d["end_aa"], d["source"]))
     return out
 
@@ -195,13 +215,19 @@ def protein_altering(settings: Any, gene: str) -> list[dict]:
     marked in the plot instead of silently deciding what the reader may see.
     """
     rows = queries.panel_candidates(settings, gene)
-    return sorted((row for row in rows if row.get("is_protein_altering")),
-                  key=lambda row: (not row.get("is_rare_recessive"),
-                                   row.get("pos") or 0, row.get("alt") or ""))
+    return sorted(
+        (row for row in rows if row.get("is_protein_altering")),
+        key=lambda row: (
+            not row.get("is_rare_recessive"),
+            row.get("pos") or 0,
+            row.get("alt") or "",
+        ),
+    )
 
 
-def protein_positions(client: httpx.Client, base_url: str, rows: Iterable[dict],
-                      transcript_id: str | None) -> tuple[dict[str, int], str | None]:
+def protein_positions(
+    client: httpx.Client, base_url: str, rows: Iterable[dict], transcript_id: str | None
+) -> tuple[dict[str, int], str | None]:
     """Amino-acid offsets for ``rows``, keyed by VEP query line, plus a failure reason.
 
     One POST to VEP's region endpoint for the whole (single-digit) list. It is the only
@@ -213,13 +239,17 @@ def protein_positions(client: httpx.Client, base_url: str, rows: Iterable[dict],
     Never raises: a VEP outage leaves every candidate unplaced *with a stated reason*,
     which is a weaker exhibit but a true one.
     """
-    lines = [query_line(Variant.from_vcf(row["chrom"], row["pos"], row["ref"], row["alt"]))
-             for row in rows if _has_allele(row)]
+    lines = [
+        query_line(Variant.from_vcf(row["chrom"], row["pos"], row["ref"], row["alt"]))
+        for row in rows
+        if _has_allele(row)
+    ]
     if not lines:
         return {}, None
     try:
-        body = _post(client, base_url, "/vep/homo_sapiens/region",
-                     {"variants": lines, "canonical": 1})
+        body = _post(
+            client, base_url, "/vep/homo_sapiens/region", {"variants": lines, "canonical": 1}
+        )
     except EnsemblError as failed:
         return {}, str(failed)
     found: dict[str, int] = {}
@@ -231,16 +261,20 @@ def protein_positions(client: httpx.Client, base_url: str, rows: Iterable[dict],
     return found, None
 
 
-def candidate(row: dict, placed: dict[str, int], failure: str | None,
-              transcript_id: str | None) -> dict:
+def candidate(
+    row: dict, placed: dict[str, int], failure: str | None, transcript_id: str | None
+) -> dict:
     """One allele as the chart needs it: no genomic coordinate, ever.
 
     ``protein_pos`` is null whenever VEP put no amino-acid offset on the canonical
     transcript — a splice-region or UTR consequence has none — and ``reason`` says which
     of the two causes applies, so the frontend can list it rather than drop it.
     """
-    key = (query_line(Variant.from_vcf(row["chrom"], row["pos"], row["ref"], row["alt"]))
-           if _has_allele(row) else None)
+    key = (
+        query_line(Variant.from_vcf(row["chrom"], row["pos"], row["ref"], row["alt"]))
+        if _has_allele(row)
+        else None
+    )
     position = placed.get(key) if key else None
     consequence = row.get("consequence") or "unknown consequence"
     return {
@@ -253,8 +287,7 @@ def candidate(row: dict, placed: dict[str, int], failure: str | None,
         "filter": row.get("filter"),
         "label": label(consequence, row.get("rsid")),
         "protein_pos": position,
-        "reason": None if position is not None else _reason(failure, consequence,
-                                                            transcript_id),
+        "reason": None if position is not None else _reason(failure, consequence, transcript_id),
     }
 
 
@@ -270,8 +303,10 @@ def label(consequence: str, rsid: str | None) -> str:
 def _reason(failure: str | None, consequence: str, transcript_id: str | None) -> str:
     if failure:
         return f"protein position not resolved — VEP call failed: {failure}"
-    return (f"VEP reports no amino-acid position for a {consequence} on "
-            f"{transcript_id or 'the canonical transcript'}")
+    return (
+        f"VEP reports no amino-acid position for a {consequence} on "
+        f"{transcript_id or 'the canonical transcript'}"
+    )
 
 
 def _has_allele(row: dict) -> bool:
@@ -309,8 +344,7 @@ def _post(client: httpx.Client, base_url: str, path: str, payload: dict) -> Any:
     return _call(client, "POST", base_url, path, payload)
 
 
-def _call(client: httpx.Client, method: str, base_url: str, path: str,
-          payload: dict | None) -> Any:
+def _call(client: httpx.Client, method: str, base_url: str, path: str, payload: dict | None) -> Any:
     """One REST call, with every failure turned into :class:`EnsemblError`.
 
     No retry loop here on purpose: this is a request-scoped fetch behind a disk cache, so
@@ -319,13 +353,11 @@ def _call(client: httpx.Client, method: str, base_url: str, path: str,
     """
     url = f"{base_url.rstrip('/')}{path}"
     try:
-        response = client.request(method, url, json=payload,
-                                  headers={"Accept": "application/json"})
+        response = client.request(method, url, json=payload, headers={"Accept": "application/json"})
     except httpx.HTTPError as error:
         raise EnsemblError(f"{method} {url}: {type(error).__name__}: {error}") from error
     if response.status_code != 200:
-        raise EnsemblError(f"{method} {url} -> {response.status_code}: "
-                           f"{response.text[:200]}")
+        raise EnsemblError(f"{method} {url} -> {response.status_code}: {response.text[:200]}")
     try:
         return response.json()
     except ValueError as bad:

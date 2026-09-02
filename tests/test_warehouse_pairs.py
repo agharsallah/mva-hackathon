@@ -93,13 +93,22 @@ class TestRegistration:
 
     def test_it_declares_every_table_it_reads(self):
         assert set(PANEL_HET_PAIRS.depends_on) == {
-            "mva_panel_grch38", "variants_raw", "panel_annotations"}
+            "mva_panel_grch38",
+            "variants_raw",
+            "panel_annotations",
+        }
 
 
 class TestMembership:
     def test_only_heterozygous_pass_alleles_inside_a_panel_gene_survive(self, rows):
         assert sorted((r["pos"], r["alt"]) for r in rows) == [
-            (300, "G"), (500, "A"), (520, "T"), (700, "A"), (700, "C"), (760, "G")]
+            (300, "G"),
+            (500, "A"),
+            (520, "T"),
+            (700, "A"),
+            (700, "C"),
+            (760, "G"),
+        ]
 
     def test_a_suppressed_het_is_not_evidence(self, rows):
         assert not [r for r in rows if r["pos"] == 800]
@@ -150,8 +159,7 @@ class TestPhaseFields:
     def test_fields_are_located_by_name_not_by_position(self, rows):
         """The TRIP13 record spells FORMAT as DP:GT:AD:PID:PGT."""
         row = at(rows, 300, "G")
-        assert (row["gt"], row["dp"], row["pgt"], row["pid"]) == \
-               ("0/1", 26, "0|1", "300_A_G")
+        assert (row["gt"], row["dp"], row["pgt"], row["pid"]) == ("0/1", 26, "0|1", "300_A_G")
 
 
 class TestAnnotationJoin:

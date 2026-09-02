@@ -68,123 +68,149 @@ TABLE_FACTS: dict[str, TableFact] = {
     "contig_counts": TableFact(
         STAGED,
         "Gives every contig a denominator: without its length, a raw record count says "
-        "nothing about whether a chromosome is unusually variable."),
+        "nothing about whether a chromosome is unusually variable.",
+    ),
     "vcf_fields": TableFact(
         STAGED,
         "Records what the callset's own header declares, so a query against INFO or "
-        "FORMAT can be checked against the field list rather than guessed at."),
+        "FORMAT can be checked against the field list rather than guessed at.",
+    ),
     "filter_gt_counts": TableFact(
         STAGED,
         "Two counts the callset cannot be judged without: how much the caller suppressed, "
         "and how the genotypes split — the heterozygous/homozygous ratio is a standard "
-        "quality check."),
+        "quality check.",
+    ),
     "vcf_header_lines": TableFact(
         STAGED,
         "Keeps the callset's header verbatim, so the reference build, the caller and its "
-        "settings stay auditable after the records have been parsed away."),
+        "settings stay auditable after the records have been parsed away.",
+    ),
     "stats_summary": TableFact(
         STAGED,
         "Holds `bcftools stats` output unparsed, so every derived statistic can be traced "
-        "back to the exact line the tool printed."),
+        "back to the exact line the tool printed.",
+    ),
     "fastq_profile": TableFact(
         STAGED,
         "Says how much raw sequence was actually delivered, per file — the yield that "
-        "every coverage claim rests on."),
+        "every coverage claim rests on.",
+    ),
     "fastq_qc_l001": TableFact(
         STAGED,
         "One lane's fastp quality metrics, as the sample check on whether the raw reads "
-        "are worth trusting before any variant is looked at."),
+        "are worth trusting before any variant is looked at.",
+    ),
     "fastq_read_headers": TableFact(
         STAGED,
         "Identifies the instrument and run behind each FASTQ, with the index barcode "
         "redacted, so the delivery can be traced to a machine without carrying an "
-        "identifier."),
+        "identifier.",
+    ),
     "manifest": TableFact(
         STAGED,
         "The publisher's own file list and partial checksums — the external claim our own "
-        "digests are checked against."),
+        "digests are checked against.",
+    ),
     "panel_variant_counts": TableFact(
         STAGED,
         "Counts how much variation landed in each candidate gene, which is where a "
-        "gene-by-gene search starts."),
+        "gene-by-gene search starts.",
+    ),
     "vcf_chrom_allele_balance": TableFact(
         STAGED,
         "Per-contig allele balance, the measurement the whole case turns on: mosaic "
         "variegated aneuploidy is about chromosome copy number, and a copy-number change "
-        "pushes heterozygous allele fractions off 0.50."),
+        "pushes heterozygous allele fractions off 0.50.",
+    ),
     "mva_panel_grch38": TableFact(
         STAGED,
         "The candidate gene panel as coordinates, so 'inside a candidate gene' is a join "
-        "condition rather than a judgement call."),
+        "condition rather than a judgement call.",
+    ),
     SCALARS_TABLE: TableFact(
         STAGED,
         "Rescues the totals stated at the foot of a source file, which are not rows of "
-        "the table above them and would otherwise be dropped by the parser."),
+        "the table above them and would otherwise be dropped by the parser.",
+    ),
     CATALOG_TABLE: TableFact(
         STAGED,
         "Makes the database self-describing: someone opening it cold can read what every "
-        "staged table holds without going back to the repository."),
+        "staged table holds without going back to the repository.",
+    ),
     # ── the committed public reference tables ─────────────────────────────────────────
     "gnomad_constraint": TableFact(
         STAGED,
         "Supplies the comparison a raw variant count cannot make on its own: how much "
         "damage healthy people tolerate in each gene, so an observation can be called "
-        "unusual."),
+        "unusual.",
+    ),
     "clinvar_panel": TableFact(
         STAGED,
         "Says what clinical labs have already concluded about variants in the panel, so "
-        "the search does not re-derive a classification somebody has published."),
+        "the search does not re-derive a classification somebody has published.",
+    ),
     "qc_norms": TableFact(
         STAGED,
         "Gives every QC metric a cited healthy range, turning 'is this number normal?' "
-        "into a join instead of an opinion."),
+        "into a join instead of an opinion.",
+    ),
     # ── the callset ───────────────────────────────────────────────────────────────────
     RAW_TABLE: TableFact(
         "mva-warehouse vcf-ingest (replaces the table wholesale)",
         "The lossless landing layer: every VCF record, every field as text, nothing "
         "coerced. Because nothing is interpreted, the original file can be rebuilt from "
         "it and checked against the source digest — which is what makes 'we kept "
-        "everything' a testable claim."),
+        "everything' a testable claim.",
+    ),
     ANNOTATIONS_TABLE: TableFact(
         "mva-warehouse annotate-panel (replaces the table wholesale)",
         "The callset ships no usable annotation — its `INFO/AF` is within-sample, not a "
         "population frequency — so consequence and rarity have to come from Ensembl VEP, "
-        "and this is where those answers land."),
+        "and this is where those answers land.",
+    ),
     # ── the ledgers ───────────────────────────────────────────────────────────────────
     LEDGER_TABLE: TableFact(
         _ledger("mva-warehouse source-upload"),
         "Records every upload with a digest computed before the bytes left the machine, "
         "so 'has the delivery changed since we started?' is answerable from records "
-        "rather than memory."),
+        "rather than memory.",
+    ),
     OBJECTS_TABLE: TableFact(
         "mva-warehouse source-check (replaces the table wholesale each survey)",
         "The current contents of the bucket, hash-checked against the publisher's "
         "manifest. Current state is kept separate from the append-only upload history so "
-        "the two records cannot disagree."),
+        "the two records cannot disagree.",
+    ),
     LINEAGE_TABLE: TableFact(
         _ledger("mva-warehouse pg-ingest, pg-derive, annotate-panel and lineage-repair"),
         "A table with no recorded input cannot be re-derived or invalidated. This is the "
         "edge list that makes every other table's origin a fact instead of a "
-        "recollection."),
+        "recollection.",
+    ),
     PROBE_TABLE: TableFact(
         _ledger("mva-warehouse probe-log"),
         "Oracle submissions are a consumable resource with a hard budget, and a budget "
-        "tracked in chat messages is a budget that gets double-spent."),
+        "tracked in chat messages is a budget that gets double-spent.",
+    ),
     PROVENANCE_TABLE: TableFact(
         _ledger(DERIVED),
         "Answers 'which run produced this table, and how many rows did it write?' — kept "
         "as history rather than a current-state row, so a changed result stays visible "
-        "next to the one before it."),
+        "next to the one before it.",
+    ),
     # ── the research record ───────────────────────────────────────────────────────────
     HYPOTHESIS_TABLE: TableFact(
         _ledger("mva-science hypothesis-add and hypothesis-revise"),
         "Every claim is registered before it is tested, with its prediction and its "
         "refutation condition, so a belief cannot be quietly rewritten to match whatever "
-        "the data turned out to say."),
+        "the data turned out to say.",
+    ),
     EVIDENCE_TABLE: TableFact(
         _ledger("mva-science evidence-add"),
         "Every observation is bound to the claim it moves and to the source it came from; "
-        "an unsourced observation is refused rather than recorded."),
+        "an unsourced observation is refused rather than recorded.",
+    ),
 }
 
 
@@ -195,9 +221,13 @@ def _derived() -> dict[str, TableFact]:
     exactly the ``why``, so copying it into :data:`TABLE_FACTS` would create a second
     version of the sentence that could drift from the first.
     """
-    return {item.name: TableFact(
-        f"{DERIVED} (the output table is rebuilt from scratch, never appended to)",
-        item.question) for item in DERIVATIONS}
+    return {
+        item.name: TableFact(
+            f"{DERIVED} (the output table is rebuilt from scratch, never appended to)",
+            item.question,
+        )
+        for item in DERIVATIONS
+    }
 
 
 def facts(table: str) -> TableFact | None:
@@ -240,5 +270,6 @@ def undescribed() -> dict[str, str]:
     Empty is the passing state. The enforcement test renders whatever this returns into a
     message naming the entry to add and the file to add it to.
     """
-    return {name: source for name, source in sorted(declared_tables().items())
-            if facts(name) is None}
+    return {
+        name: source for name, source in sorted(declared_tables().items()) if facts(name) is None
+    }

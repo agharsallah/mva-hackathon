@@ -44,8 +44,7 @@ def types(parquet: Path) -> dict[str, str]:
 
 
 def one(parquet: Path, expression: str):
-    return duckdb.sql(
-        f"SELECT {expression} FROM read_parquet('{parquet}')").fetchone()[0]
+    return duckdb.sql(f"SELECT {expression} FROM read_parquet('{parquet}')").fetchone()[0]
 
 
 class TestSpecs:
@@ -71,8 +70,19 @@ class TestSpecs:
 class TestGnomadStaging:
     def test_the_committed_header_is_the_one_the_transform_names(self, staged):
         columns = set(types(staged["gnomad_constraint"]))
-        assert {"gene", "ensembl_gene_id", "transcript", "chrom", "loeuf", "pli",
-                "mis_z", "oe_lof", "lof_obs", "lof_exp", "constraint_flags"} <= columns
+        assert {
+            "gene",
+            "ensembl_gene_id",
+            "transcript",
+            "chrom",
+            "loeuf",
+            "pli",
+            "mis_z",
+            "oe_lof",
+            "lof_obs",
+            "lof_exp",
+            "constraint_flags",
+        } <= columns
 
     def test_numeric_columns_are_numbers_not_text(self, staged):
         found = types(staged["gnomad_constraint"])
@@ -92,8 +102,13 @@ class TestGnomadStaging:
 
     def test_the_panel_genes_are_all_present(self, staged):
         panel = "'BUB1B','CEP57','CENPE','CEP192','TRIP13','SMC5','TP53','DICER1'"
-        assert one(staged["gnomad_constraint"],
-                   f"count(DISTINCT gene) FILTER (WHERE gene IN ({panel}))") == 8
+        assert (
+            one(
+                staged["gnomad_constraint"],
+                f"count(DISTINCT gene) FILTER (WHERE gene IN ({panel}))",
+            )
+            == 8
+        )
 
 
 class TestClinvarStaging:
@@ -112,8 +127,7 @@ class TestClinvarStaging:
         assert one(parquet, "count(*) FILTER (WHERE clnsig IS NULL)") > 0
 
     def test_contigs_arrive_bare_and_stay_bare(self, staged):
-        assert one(staged["clinvar_panel"],
-                   "count(*) FILTER (WHERE chrom LIKE 'chr%')") == 0
+        assert one(staged["clinvar_panel"], "count(*) FILTER (WHERE chrom LIKE 'chr%')") == 0
 
 
 class TestQcNormsStaging:
@@ -124,9 +138,13 @@ class TestQcNormsStaging:
     def test_the_recessive_threshold_is_one_percent_not_one_per_mille(self, staged):
         """1e-3 is the *dominant* cutoff. Filtering a compound-het search at it drops
         real alleles — the derivation's threshold has to come from this row."""
-        assert one(staged["qc_norms"],
-                   "max(expected_high) FILTER "
-                   "(WHERE metric = 'rare_af_threshold_recessive')") == 0.01
+        assert (
+            one(
+                staged["qc_norms"],
+                "max(expected_high) FILTER (WHERE metric = 'rare_af_threshold_recessive')",
+            )
+            == 0.01
+        )
 
     def test_every_norm_carries_a_citation(self, staged):
         assert one(staged["qc_norms"], "count(*) FILTER (WHERE source IS NULL)") == 0
@@ -156,17 +174,21 @@ CLNSIG_CASES = [
 def test_the_clinvar_predicates_bucket_every_real_value(clnsig, expected):
     """`Pathogenic` and `Conflicting_classifications_of_pathogenicity` share a substring.
     Only the first is an assertion, so the exclusion is load-bearing."""
-    got = duckdb.sql(f"""
+    got = duckdb.sql(
+        f"""
         SELECT CASE WHEN {PLP_PREDICATE}    THEN 'plp'
                     WHEN {VUS_PREDICATE}    THEN 'vus'
                     WHEN {BENIGN_PREDICATE} THEN 'benign'
                     ELSE 'none' END
         FROM (SELECT ? AS clnsig)
-    """, params=[clnsig]).fetchone()[0]
+    """,
+        params=[clnsig],
+    ).fetchone()[0]
     assert got == expected
 
 
 # ── the derivations, against a miniature warehouse ───────────────────────────────────
+
 
 @pytest.fixture()
 def warehouse():
@@ -265,26 +287,22 @@ def run(connection, name: str) -> list[dict]:
 
 class TestPanelGeneConstraint:
     def test_the_mane_transcript_wins_when_a_symbol_has_two(self, warehouse):
-        row = next(r for r in run(warehouse, "panel_gene_constraint")
-                   if r["gene"] == "BUB1B")
+        row = next(r for r in run(warehouse, "panel_gene_constraint") if r["gene"] == "BUB1B")
         assert row["gnomad_transcript"] == "ENST00000287598"
         assert float(row["loeuf"]) == pytest.approx(0.707)
 
     def test_a_gene_absent_from_gnomad_gets_nulls_not_zeros(self, warehouse):
         """gnomAD constraint is autosomes-only. An X-linked gene must not read as
         unconstrained."""
-        row = next(r for r in run(warehouse, "panel_gene_constraint")
-                   if r["gene"] == "XGENE")
+        row = next(r for r in run(warehouse, "panel_gene_constraint") if r["gene"] == "XGENE")
         assert row["loeuf"] is None and row["pli"] is None and row["lof_obs"] is None
 
     def test_conflicting_is_excluded_from_the_pathogenic_count(self, warehouse):
-        row = next(r for r in run(warehouse, "panel_gene_constraint")
-                   if r["gene"] == "BUB1B")
+        row = next(r for r in run(warehouse, "panel_gene_constraint") if r["gene"] == "BUB1B")
         assert (row["clinvar_plp"], row["clinvar_vus"], row["clinvar_benign"]) == (2, 1, 1)
 
     def test_the_contig_stays_chr_prefixed_as_the_panel_delivers_it(self, warehouse):
-        assert all(r["chrom"].startswith("chr")
-                   for r in run(warehouse, "panel_gene_constraint"))
+        assert all(r["chrom"].startswith("chr") for r in run(warehouse, "panel_gene_constraint"))
 
 
 class TestPanelCandidates:
@@ -319,8 +337,7 @@ class TestPanelCandidates:
 
     def test_protein_altering_is_the_two_severe_impact_buckets(self, warehouse):
         found = self.rows(warehouse)
-        assert [found[p]["is_protein_altering"] for p in (500, 700, 800)] == \
-               [True, True, False]
+        assert [found[p]["is_protein_altering"] for p in (500, 700, 800)] == [True, True, False]
 
 
 class TestQcObservedExpected:
@@ -332,18 +349,18 @@ class TestQcObservedExpected:
 
     def test_the_verdict_names_which_side_of_the_range_the_value_falls(self, warehouse):
         found = self.rows(warehouse)
-        assert found["tstv_genome_wide"]["verdict"] == "within"       # 2.00 in 2.0-2.1
-        assert found["snv_per_genome"]["verdict"] == "below"          # 5 under 10
+        assert found["tstv_genome_wide"]["verdict"] == "within"  # 2.00 in 2.0-2.1
+        assert found["snv_per_genome"]["verdict"] == "below"  # 5 under 10
         assert found["insertion_deletion_ratio"]["verdict"] == "below"  # 9/10 = 0.9
-        assert found["mean_coverage_wgs"]["verdict"] == "above"       # 51.9 over 35
+        assert found["mean_coverage_wgs"]["verdict"] == "above"  # 51.9 over 35
 
     def test_the_het_hom_ratio_comes_from_the_genotype_section_only(self, warehouse):
-        assert self.rows(warehouse)["het_hom_ratio_eur"]["observed"] == \
-               pytest.approx(30 / 20)
+        assert self.rows(warehouse)["het_hom_ratio_eur"]["observed"] == pytest.approx(30 / 20)
 
     def test_dbsnp_membership_counts_records_with_an_rsid(self, warehouse):
-        assert self.rows(warehouse)["dbsnp_membership_rate_per_genome"]["observed"] == \
-               pytest.approx(25.0)
+        assert self.rows(warehouse)["dbsnp_membership_rate_per_genome"][
+            "observed"
+        ] == pytest.approx(25.0)
 
     def test_every_row_says_where_its_observation_came_from(self, warehouse):
         for row in self.rows(warehouse).values():

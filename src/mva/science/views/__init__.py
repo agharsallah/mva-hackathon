@@ -35,25 +35,38 @@ class ViewSpec:
 
 #: Every section, in the order a reader should meet them.
 SECTIONS: list[ViewSpec] = [
-    ViewSpec("method", "The method",
-             "How a research goal becomes a scored submission row, and what the register "
-             "refuses to store.",
-             loop.exhibits),
-    ViewSpec("questions", "The questions",
-             "What each step is trying to find out, and where every claim under it "
-             "currently stands.",
-             board.exhibits),
-    ViewSpec("evidence", "The evidence",
-             "Every observation on the record, which way it cut, and the receipt behind "
-             "it.",
-             ledger.exhibits),
-    ViewSpec("oracle", "The oracle",
-             "The finite submission budget, and what each irreversible spend bought.",
-             submission.exhibits),
-    ViewSpec("form", "The methods form",
-             "The challenge's own questions, answered from the record — and marked where "
-             "they cannot be.",
-             methods.exhibits),
+    ViewSpec(
+        "method",
+        "The method",
+        "How a research goal becomes a scored submission row, and what the register "
+        "refuses to store.",
+        loop.exhibits,
+    ),
+    ViewSpec(
+        "questions",
+        "The questions",
+        "What each step is trying to find out, and where every claim under it currently stands.",
+        board.exhibits,
+    ),
+    ViewSpec(
+        "evidence",
+        "The evidence",
+        "Every observation on the record, which way it cut, and the receipt behind it.",
+        ledger.exhibits,
+    ),
+    ViewSpec(
+        "oracle",
+        "The oracle",
+        "The finite submission budget, and what each irreversible spend bought.",
+        submission.exhibits,
+    ),
+    ViewSpec(
+        "form",
+        "The methods form",
+        "The challenge's own questions, answered from the record — and marked where "
+        "they cannot be.",
+        methods.exhibits,
+    ),
 ]
 
 

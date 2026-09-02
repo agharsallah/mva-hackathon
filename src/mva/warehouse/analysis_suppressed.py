@@ -55,8 +55,7 @@ PANEL_CTE = f"""
 
 #: VEP's severity buckets as a sort key. Used only to pick one annotation for a
 #: multi-allelic record; it is a tie-break, never a score.
-SEVERITY = ("CASE n.impact WHEN 'HIGH' THEN 1 WHEN 'MODERATE' THEN 2 "
-            "WHEN 'LOW' THEN 3 ELSE 4 END")
+SEVERITY = "CASE n.impact WHEN 'HIGH' THEN 1 WHEN 'MODERATE' THEN 2 WHEN 'LOW' THEN 3 ELSE 4 END"
 
 
 PANEL_SUPPRESSED = Derivation(
@@ -69,7 +68,8 @@ PANEL_SUPPRESSED = Derivation(
         "and joins to its most severe annotated allele, so the row count is the "
         "suppressed-record count and not an allele count. A suppressed heterozygous call "
         "in a candidate gene is where a second allele can hide, so the table exists to be "
-        "read, not to be filtered out."),
+        "read, not to be filtered out."
+    ),
     depends_on=("mva_panel_grch38", "variants_raw", "panel_annotations"),
     sql=f"""
         WITH {PANEL_CTE},
@@ -176,7 +176,8 @@ PANEL_FILTER_CENSUS = Derivation(
         "record count and the PASS share is read off the same table as the suppressed "
         "ones. The FILTER value is verbatim: GATK packs every threshold a record tripped "
         "into one ;-joined string, so `LowQual;QD2` is one record that failed two tests "
-        "and counting it once under each reason would over-count the panel."),
+        "and counting it once under each reason would over-count the panel."
+    ),
     depends_on=("mva_panel_grch38", "variants_raw"),
     sql=f"""
         WITH {PANEL_CTE},

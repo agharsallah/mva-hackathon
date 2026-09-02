@@ -1,4 +1,5 @@
 """Assembling a profile directory: optional everywhere, case-agnostic by construction."""
+
 from dataclasses import replace
 from pathlib import Path
 
@@ -15,8 +16,14 @@ def loaded():
 
 def test_every_section_present_in_the_directory_is_loaded():
     assert set(loaded().available) == {
-        "header", "contigs", "stats", "filters_and_genotypes",
-        "balance", "reads", "read_qc", "panel",
+        "header",
+        "contigs",
+        "stats",
+        "filters_and_genotypes",
+        "balance",
+        "reads",
+        "read_qc",
+        "panel",
     }
 
 

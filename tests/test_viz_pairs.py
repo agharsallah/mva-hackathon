@@ -20,21 +20,46 @@ from mva.viz.app import create_app
 from mva.viz.cache import Cache
 
 
-def variant(pos: int, alt: str = "A", *, gt: str = "0/1", pgt: str | None = None,
-            pid: str | None = None, allele_ix: int = 1, af: float | None = None,
-            impact: str | None = "MODERATE", annotated: bool = True) -> dict:
+def variant(
+    pos: int,
+    alt: str = "A",
+    *,
+    gt: str = "0/1",
+    pgt: str | None = None,
+    pid: str | None = None,
+    allele_ix: int = 1,
+    af: float | None = None,
+    impact: str | None = "MODERATE",
+    annotated: bool = True,
+) -> dict:
     """One ``panel_het_pairs`` row, with only the fields a test cares about set."""
-    return {"gene": "BUB1B", "chrom": "15", "pos": pos, "ref": "G", "alt": alt,
-            "allele_ix": allele_ix, "gt": gt, "qual": 800.0, "dp": 40, "vaf": 0.5,
-            "pgt": pgt, "pid": pid, "rsid": None, "consequence": "missense_variant",
-            "impact": impact, "gnomad_af": af, "gnomad_af_grpmax": af,
-            "clin_sig": None, "annotated": annotated,
-            "is_rare_recessive": None if not annotated else (af is None or af < 0.01),
-            "is_protein_altering": None if not annotated else impact in ("HIGH",
-                                                                         "MODERATE")}
+    return {
+        "gene": "BUB1B",
+        "chrom": "15",
+        "pos": pos,
+        "ref": "G",
+        "alt": alt,
+        "allele_ix": allele_ix,
+        "gt": gt,
+        "qual": 800.0,
+        "dp": 40,
+        "vaf": 0.5,
+        "pgt": pgt,
+        "pid": pid,
+        "rsid": None,
+        "consequence": "missense_variant",
+        "impact": impact,
+        "gnomad_af": af,
+        "gnomad_af_grpmax": af,
+        "clin_sig": None,
+        "annotated": annotated,
+        "is_rare_recessive": None if not annotated else (af is None or af < 0.01),
+        "is_protein_altering": None if not annotated else impact in ("HIGH", "MODERATE"),
+    }
 
 
 # ── the classifier: the four states ──────────────────────────────────────────────────
+
 
 class TestClassify:
     def test_one_phase_set_two_different_haplotypes_is_trans(self):
@@ -84,10 +109,10 @@ class TestClassify:
 # ── the matrix ───────────────────────────────────────────────────────────────────────
 
 FOUR = [
-    variant(500, "T", pgt="0|1", pid="500_G_A"),   # 0 ─┐ trans with 1
-    variant(520, "C", pgt="1|0", pid="500_G_A"),   # 1 ─┘
-    variant(700, "A", gt="1/2", allele_ix=1),      # 2 ─┐ auto-trans with 3
-    variant(700, "C", gt="1/2", allele_ix=2),      # 3 ─┘
+    variant(500, "T", pgt="0|1", pid="500_G_A"),  # 0 ─┐ trans with 1
+    variant(520, "C", pgt="1|0", pid="500_G_A"),  # 1 ─┘
+    variant(700, "A", gt="1/2", allele_ix=1),  # 2 ─┐ auto-trans with 3
+    variant(700, "C", gt="1/2", allele_ix=2),  # 3 ─┘
 ]
 
 
@@ -95,11 +120,12 @@ class TestMatrix:
     def test_only_the_resolved_cells_travel(self):
         pairs = phase.resolved(FOUR)
         assert [(p["i"], p["j"], p["phase"], p["auto"]) for p in pairs] == [
-            (0, 1, "trans", False), (2, 3, "trans", True)]
+            (0, 1, "trans", False),
+            (2, 3, "trans", True),
+        ]
 
     def test_a_cis_pair_is_reported_so_the_grid_can_exclude_it(self):
-        rows = [variant(500, "T", pgt="0|1", pid="P"), variant(520, "C", pgt="0|1",
-                                                               pid="P")]
+        rows = [variant(500, "T", pgt="0|1", pid="P"), variant(520, "C", pgt="0|1", pid="P")]
         assert phase.resolved(rows) == [{"i": 0, "j": 1, "phase": "cis", "auto": False}]
 
     def test_indices_address_the_variant_list_not_a_coordinate(self):
@@ -109,8 +135,15 @@ class TestMatrix:
 
     def test_the_summary_counts_the_whole_grid_including_what_is_unknown(self):
         found = phase.summarise(len(FOUR), phase.resolved(FOUR))
-        assert found == {"n_het": 4, "n_pairs": 6, "n_trans": 2, "n_auto_trans": 1,
-                         "n_cis": 0, "n_unknown": 4, "pct_unknown": 66.67}
+        assert found == {
+            "n_het": 4,
+            "n_pairs": 6,
+            "n_trans": 2,
+            "n_auto_trans": 1,
+            "n_cis": 0,
+            "n_unknown": 4,
+            "pct_unknown": 66.67,
+        }
 
     def test_a_gene_with_one_het_allele_has_no_pairs_and_no_percentage(self):
         """Zero pairs is not "0% unknown" — there is nothing to be unknown about."""
@@ -141,13 +174,13 @@ def client(tmp_path, monkeypatch):
         if "mva_panel_grch38" in sql:
             gene = (params or [None])[0]
             # TRIP13 is in the panel and simply has no het PASS allele; ZZZ is not.
-            return [{"chrom": "chr5", "start": 100, "end": 900}] \
-                if gene == "TRIP13" else []
+            return [{"chrom": "chr5", "start": 100, "end": 900}] if gene == "TRIP13" else []
         raise AssertionError(f"unexpected SQL: {sql}")
 
     monkeypatch.setattr(queries, "fetch", fetch)
-    with TestClient(create_app(settings=None, cache=Cache(tmp_path),
-                               origins=["http://localhost:5173"])) as running:
+    with TestClient(
+        create_app(settings=None, cache=Cache(tmp_path), origins=["http://localhost:5173"])
+    ) as running:
         yield running
 
 
@@ -162,7 +195,9 @@ def test_the_payload_is_the_axis_the_resolved_cells_and_the_counts(client):
     data = client.get("/api/panel/het-pairs?gene=BUB1B").json()["data"]
     assert len(data["variants"]) == 4
     assert [(p["i"], p["j"], p["phase"]) for p in data["pairs"]] == [
-        (0, 1, "trans"), (2, 3, "trans")]
+        (0, 1, "trans"),
+        (2, 3, "trans"),
+    ]
     assert data["summary"]["n_unknown"] == 4
 
 
@@ -175,10 +210,20 @@ def test_the_raw_phase_fields_reach_the_client(client):
 
 def test_a_panel_gene_with_no_het_allele_is_an_empty_matrix_not_a_404(client):
     data = client.get("/api/panel/het-pairs?gene=TRIP13").json()["data"]
-    assert data == {"gene": "TRIP13", "variants": [], "pairs": [],
-                    "summary": {"n_het": 0, "n_pairs": 0, "n_trans": 0,
-                                "n_auto_trans": 0, "n_cis": 0, "n_unknown": 0,
-                                "pct_unknown": None}}
+    assert data == {
+        "gene": "TRIP13",
+        "variants": [],
+        "pairs": [],
+        "summary": {
+            "n_het": 0,
+            "n_pairs": 0,
+            "n_trans": 0,
+            "n_auto_trans": 0,
+            "n_cis": 0,
+            "n_unknown": 0,
+            "pct_unknown": None,
+        },
+    }
 
 
 def test_an_unknown_gene_is_a_404_like_the_locus_route(client):

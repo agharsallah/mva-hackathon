@@ -34,8 +34,9 @@ from .models import (
     VerifyRequest,
 )
 
-_HEADER = APIKeyHeader(name="X-API-Key", auto_error=False,
-                       description="the value of MVA_API_TOKEN on the server")
+_HEADER = APIKeyHeader(
+    name="X-API-Key", auto_error=False, description="the value of MVA_API_TOKEN on the server"
+)
 
 
 def token_guard(expected: str) -> Callable[[str | None], None]:
@@ -127,8 +128,7 @@ def create_app(manager: Manager | None = None, token: str | None = None) -> Fast
     @api.post("/verify", response_model=JobOut, status_code=202, tags=["store"])
     def verify(request: VerifyRequest) -> JobOut:
         """Prove the store matches the delivery (deep checks need the source FASTQ)."""
-        return submitted("verify", request.model_dump(),
-                         runners.verify_runner(request))
+        return submitted("verify", request.model_dump(), runners.verify_runner(request))
 
     @api.post("/bench", response_model=JobOut, status_code=202, tags=["build"])
     def bench(request: BenchRequest) -> JobOut:
@@ -143,14 +143,13 @@ def create_app(manager: Manager | None = None, token: str | None = None) -> Fast
         directory and the same object keys, so a second submission while one is
         queued or running is refused with 409 rather than trusted to a docstring.
         """
-        running = [job for job in manager.jobs(verb="convert")
-                   if job.state not in TERMINAL]
+        running = [job for job in manager.jobs(verb="convert") if job.state not in TERMINAL]
         if running:
-            raise HTTPException(status_code=409,
-                                detail=f"convert {running[0].id} is already "
-                                       f"{running[0].state} — cancel it or wait")
-        return submitted("convert", request.model_dump(),
-                         runners.convert_runner(request))
+            raise HTTPException(
+                status_code=409,
+                detail=f"convert {running[0].id} is already {running[0].state} — cancel it or wait",
+            )
+        return submitted("convert", request.model_dump(), runners.convert_runner(request))
 
     @api.get("/jobs", response_model=list[JobOut], tags=["jobs"])
     def jobs(state: str | None = None, verb: str | None = None) -> list[JobOut]:
@@ -163,8 +162,7 @@ def create_app(manager: Manager | None = None, token: str | None = None) -> Fast
         return JobOut(**known(job_id).snapshot())
 
     @api.get("/jobs/{job_id}/wait", response_model=JobOut, tags=["jobs"])
-    def wait(job_id: str,
-             timeout: float = Query(default=30, ge=0, le=290)) -> JobOut:
+    def wait(job_id: str, timeout: float = Query(default=30, ge=0, le=290)) -> JobOut:
         """Long-poll: returns when the job finishes or after ``timeout`` seconds.
 
         The cap stays under common 300s proxy limits; on timeout you simply get the
@@ -181,8 +179,7 @@ def create_app(manager: Manager | None = None, token: str | None = None) -> Fast
         """Stop a queued or running job — interrupts the DuckDB query underneath."""
         found = known(job_id)
         if not manager.cancel(found):
-            raise HTTPException(status_code=409,
-                                detail=f"job {job_id} already {found.state}")
+            raise HTTPException(status_code=409, detail=f"job {job_id} already {found.state}")
         return JobOut(**found.snapshot())
 
     @api.delete("/jobs/{job_id}", status_code=204, tags=["jobs"])
@@ -190,8 +187,9 @@ def create_app(manager: Manager | None = None, token: str | None = None) -> Fast
         """Drop a finished job from the listing and the on-disk history."""
         found = known(job_id)
         if found.state not in TERMINAL:
-            raise HTTPException(status_code=409,
-                                detail="cancel it first — the job is still running")
+            raise HTTPException(
+                status_code=409, detail="cancel it first — the job is still running"
+            )
         manager.forget(job_id)
 
     app.include_router(api)

@@ -63,9 +63,11 @@ def _progress(label: str, total: int):
         eta = (total - state["done"]) / (rate * 1e6) if rate > 0 else 0
         _clear()
         sys.stdout.write(
-            f"    {label:<30} {pct:5.1f}%  {state['done']/1e9:5.2f}/{total/1e9:.2f} GB"
-            f"  {rate:5.1f} MB/s  eta {eta/60:4.1f}m")
+            f"    {label:<30} {pct:5.1f}%  {state['done'] / 1e9:5.2f}/{total / 1e9:.2f} GB"
+            f"  {rate:5.1f} MB/s  eta {eta / 60:4.1f}m"
+        )
         sys.stdout.flush()
+
     return report
 
 
@@ -116,27 +118,31 @@ def do_upload(args) -> int:
             print(f"    sha256   {digest}")
 
             if existing and existing.get("sha256") == digest and not args.force:
-                print("    skipped  identical copy already in the bucket "
-                      f"(version {existing.get('version_id', '')[:12] or 'n/a'})\n")
+                print(
+                    "    skipped  identical copy already in the bucket "
+                    f"(version {existing.get('version_id', '')[:12] or 'n/a'})\n"
+                )
                 continue
             if existing:
-                print("    note     an object already exists here with a DIFFERENT hash; "
-                      "versioning keeps the old one")
+                print(
+                    "    note     an object already exists here with a DIFFERENT hash; "
+                    "versioning keeps the old one"
+                )
 
             result = source.upload(store, item, _progress("uploading", item.size))
             _clear()
 
             after = source.remote_state(store, item.key) or {}
-            verified = (after.get("size") == item.size
-                        and after.get("sha256") == digest)
+            verified = after.get("size") == item.size and after.get("sha256") == digest
             elapsed = max(time.time() - started, 0.001)
-            print(f"    uploaded {item.size / 1e9:.2f} GB in {elapsed / 60:.1f} min "
-                  f"({item.size / elapsed / 1e6:.1f} MB/s)")
+            print(
+                f"    uploaded {item.size / 1e9:.2f} GB in {elapsed / 60:.1f} min "
+                f"({item.size / elapsed / 1e6:.1f} MB/s)"
+            )
             print(f"    version  {result.get('version_id', '') or 'n/a'}")
             print(f"    verified {'yes' if verified else 'NO — size or hash mismatch'}\n")
             source.record(connection, settings.schema, item, result, verified)
-    print("ledger updated: "
-          f"{settings.schema}.{source.LEDGER_TABLE}")
+    print(f"ledger updated: {settings.schema}.{source.LEDGER_TABLE}")
     return 0
 
 
@@ -150,7 +156,8 @@ def do_status(args) -> int:
             rows = connection.execute(
                 f"SELECT file_name, max(uploaded_at), count(*), any_value(size_bytes), "
                 f"bool_and(verified) FROM {ALIAS}.{safe}.{source.LEDGER_TABLE} "
-                "GROUP BY file_name").fetchall()
+                "GROUP BY file_name"
+            ).fetchall()
         except Exception:
             print("no ledger yet — run `source-upload` first")
             return 1
@@ -172,40 +179,63 @@ def do_status(args) -> int:
 
 def register(subparsers) -> None:
     """Attach the ``source-*`` verbs to the top-level parser."""
+
     def add(name, handler, help_text):
         sub = subparsers.add_parser(name, help=help_text)
-        sub.add_argument("--directory", type=Path, default=DEFAULT_SOURCE,
-                         help=f"the delivery directory (default: {DEFAULT_SOURCE})")
+        sub.add_argument(
+            "--directory",
+            type=Path,
+            default=DEFAULT_SOURCE,
+            help=f"the delivery directory (default: {DEFAULT_SOURCE})",
+        )
         sub.set_defaults(handler=handler)
         return sub
 
     add("source-scan", do_scan, "inventory the delivery without uploading")
-    upload = add("source-upload", do_upload,
-                 "hash, upload unchanged, verify, and record in the ledger")
-    upload.add_argument("--only", nargs="*",
-                        help="file names or kinds (fastq, vcf, index, document)")
-    upload.add_argument("--force", action="store_true",
-                        help="re-upload even when an identical copy is already there")
+    upload = add(
+        "source-upload", do_upload, "hash, upload unchanged, verify, and record in the ledger"
+    )
+    upload.add_argument(
+        "--only", nargs="*", help="file names or kinds (fastq, vcf, index, document)"
+    )
+    upload.add_argument(
+        "--force",
+        action="store_true",
+        help="re-upload even when an identical copy is already there",
+    )
     add("source-status", do_status, "compare the delivery on disk with the ledger")
-    add("source-check", do_check,
-        "survey the bucket, verify hashes, refresh the object inventory")
+    add("source-check", do_check, "survey the bucket, verify hashes, refresh the object inventory")
 
     fetch = subparsers.add_parser(
         "source-fetch",
-        help="RUN ON THE SERVER: download from the publisher straight into the bucket")
+        help="RUN ON THE SERVER: download from the publisher straight into the bucket",
+    )
     fetch.add_argument("--repo", default=DEFAULT_REPO, help="Hugging Face dataset repo")
     fetch.add_argument("--only", nargs="*", help="file names (default: all published)")
     fetch.add_argument("--token", help="Hugging Face token; else $HF_TOKEN")
-    fetch.add_argument("--staging", type=Path, default=DEFAULT_STAGING,
-                       help="scratch directory, used only with --verify")
-    fetch.add_argument("--keep", action="store_true",
-                       help="with --verify, keep the downloaded copy instead of deleting")
-    fetch.add_argument("--tee", type=Path,
-                       help="also write each streamed file here, so a failed upload does "
-                            "not throw the download away")
-    fetch.add_argument("--verify", action="store_true",
-                       help="download to disk and check the publisher's SHA-256 first "
-                            "(slower, needs disk for one file)")
+    fetch.add_argument(
+        "--staging",
+        type=Path,
+        default=DEFAULT_STAGING,
+        help="scratch directory, used only with --verify",
+    )
+    fetch.add_argument(
+        "--keep",
+        action="store_true",
+        help="with --verify, keep the downloaded copy instead of deleting",
+    )
+    fetch.add_argument(
+        "--tee",
+        type=Path,
+        help="also write each streamed file here, so a failed upload does "
+        "not throw the download away",
+    )
+    fetch.add_argument(
+        "--verify",
+        action="store_true",
+        help="download to disk and check the publisher's SHA-256 first "
+        "(slower, needs disk for one file)",
+    )
     fetch.set_defaults(handler=do_fetch)
 
 
@@ -230,12 +260,13 @@ def do_fetch(args) -> int:
     if store.missing:
         print("missing object-store settings: " + ", ".join(store.missing))
         return 1
-    token = args.token or os.environ.get("HF_TOKEN") or os.environ.get(
-        "HUGGING_FACE_HUB_TOKEN")
+    token = args.token or os.environ.get("HF_TOKEN") or os.environ.get("HUGGING_FACE_HUB_TOKEN")
     if not token:
-        print("no Hugging Face token. The dataset is gated, so one is required:\n"
-              "    export HF_TOKEN=hf_...            (or pass --token)\n"
-              "The token's account must have been granted access to the dataset.")
+        print(
+            "no Hugging Face token. The dataset is gated, so one is required:\n"
+            "    export HF_TOKEN=hf_...            (or pass --token)\n"
+            "The token's account must have been granted access to the dataset."
+        )
         return 1
 
     expected = source.published_hashes()
@@ -246,8 +277,11 @@ def do_fetch(args) -> int:
 
     settings = Postgres.from_env()
     print(f"repo       {args.repo}")
-    mode = "download, verify, upload" if args.verify else (
-        f"streamed, teed to {args.tee}" if args.tee else "streamed — no disk")
+    mode = (
+        "download, verify, upload"
+        if args.verify
+        else (f"streamed, teed to {args.tee}" if args.tee else "streamed — no disk")
+    )
     print(f"mode       {mode}")
     print(f"versioning on {store.bucket}: {source.enable_versioning(store)}\n")
 
@@ -258,11 +292,11 @@ def do_fetch(args) -> int:
             print(f"  {name}")
             try:
                 if args.verify:
-                    ok = _fetch_verified(args, store, connection, settings,
-                                         name, expected.get(name, ""))
+                    ok = _fetch_verified(
+                        args, store, connection, settings, name, expected.get(name, "")
+                    )
                 else:
-                    ok = _fetch_streamed(args, store, connection, settings,
-                                         name, token)
+                    ok = _fetch_streamed(args, store, connection, settings, name, token)
             except Exception as error:
                 print(f"    FAILED: {str(error).splitlines()[0][:140]}\n")
                 ok = False
@@ -280,18 +314,19 @@ def _fetch_streamed(args, store, connection, settings, name: str, token: str) ->
     tee = (args.tee / name) if args.tee else None
     try:
         result = source.stream_to_bucket(
-            store, args.repo, name, key, token, _progress("streaming", 0), tee)
+            store, args.repo, name, key, token, _progress("streaming", 0), tee
+        )
     except Exception as error:
         _clear()
         print(f"    UPLOAD FAILED: {str(error).splitlines()[0][:120]}")
         if tee and tee.exists():
             print(f"    kept     {tee} ({tee.stat().st_size / 1e9:.2f} GB downloaded)")
             print("             the download is not lost; finish it with:")
-            print(f"             mva-warehouse source-upload --directory {tee.parent} "
-                  f"--only {name}")
+            print(
+                f"             mva-warehouse source-upload --directory {tee.parent} --only {name}"
+            )
         else:
-            print("    the download was discarded with the failed upload. Re-run with "
-                  "--tee DIR")
+            print("    the download was discarded with the failed upload. Re-run with --tee DIR")
             print("    to keep the bytes on disk next time.")
         print()
         return False
@@ -301,11 +336,12 @@ def _fetch_streamed(args, store, connection, settings, name: str, token: str) ->
     # The only integrity check that costs nothing: the store must hold as many bytes as
     # the publisher said it was sending. A truncated stream shows up here.
     consistent = bool(landed) and (not declared or landed == declared)
-    print(f"    size     {landed / 1e9:.2f} GB"
-          + ("" if consistent else f"  MISMATCH — publisher declared {declared:,}"))
+    print(
+        f"    size     {landed / 1e9:.2f} GB"
+        + ("" if consistent else f"  MISMATCH — publisher declared {declared:,}")
+    )
     print(f"    version  {result.get('version_id', '') or 'n/a'}")
-    item = source.SourceFile(Path(name), landed,
-                             datetime.datetime.now(datetime.UTC), "")
+    item = source.SourceFile(Path(name), landed, datetime.datetime.now(datetime.UTC), "")
     source.record(connection, settings.schema, item, result, consistent)
     print()
     return consistent
@@ -315,8 +351,9 @@ def _fetch_verified(args, store, connection, settings, name: str, want: str) -> 
     """Download to disk, hash, compare with the publisher, upload, then delete."""
     import datetime
 
-    local = source.fetch(args.repo, name, args.staging,
-                         args.token or __import__("os").environ.get("HF_TOKEN"))
+    local = source.fetch(
+        args.repo, name, args.staging, args.token or __import__("os").environ.get("HF_TOKEN")
+    )
     size = local.stat().st_size
     digest = source.checksum(local, _progress("hashing", size))
     _clear()
@@ -331,9 +368,8 @@ def _fetch_verified(args, store, connection, settings, name: str, want: str) -> 
     print(f"    sha256   {digest}{'  (matches publisher)' if want else ''}")
 
     item = source.SourceFile(
-        local, size,
-        datetime.datetime.fromtimestamp(local.stat().st_mtime, tz=datetime.UTC),
-        digest)
+        local, size, datetime.datetime.fromtimestamp(local.stat().st_mtime, tz=datetime.UTC), digest
+    )
     result = source.upload(store, item, _progress("uploading", size))
     _clear()
     after = source.remote_state(store, item.key) or {}
@@ -349,8 +385,10 @@ def _fetch_verified(args, store, connection, settings, name: str, want: str) -> 
         print("    removed local copy")
     elif not verified:
         print(f"    kept     {local} — retry with:")
-        print(f"             mva-warehouse source-upload --directory {local.parent} "
-              f"--only {local.name}")
+        print(
+            f"             mva-warehouse source-upload --directory {local.parent} "
+            f"--only {local.name}"
+        )
     print()
     return verified
 
@@ -372,23 +410,27 @@ def do_check(args) -> int:
 
     with attached(settings) as connection:
         lineage.ensure_tables(connection, settings.schema)
-        recorded = dict(connection.execute(
-            f"SELECT DISTINCT file_name, sha256 FROM {ALIAS}."
-            f"{safe_identifier(settings.schema)}.{source.LEDGER_TABLE} "
-            "WHERE sha256 <> ''").fetchall())
+        recorded = dict(
+            connection.execute(
+                f"SELECT DISTINCT file_name, sha256 FROM {ALIAS}."
+                f"{safe_identifier(settings.schema)}.{source.LEDGER_TABLE} "
+                "WHERE sha256 <> ''"
+            ).fetchall()
+        )
         rows = lineage.survey(store, published, recorded)
         lineage.replace_objects(connection, settings.schema, store.bucket, rows)
 
     width = max(len(r["file_name"]) for r in rows)
     unverified = []
     for row in rows:
-        mark = "ok" if row["hash_verified"] else (
-            "no hash" if not row["sha256"] else "UNCHECKED")
+        mark = "ok" if row["hash_verified"] else ("no hash" if not row["sha256"] else "UNCHECKED")
         if not row["hash_verified"]:
             unverified.append(row["file_name"])
         lane = f"L{row['lane']} R{row['read_num']}" if row["lane"] else ""
-        print(f"  {row['file_name']:<{width}}  {row['role']:<14} "
-              f"{row['size_bytes'] / 1e9:>7.2f} GB  {lane:<6} {mark}")
+        print(
+            f"  {row['file_name']:<{width}}  {row['role']:<14} "
+            f"{row['size_bytes'] / 1e9:>7.2f} GB  {lane:<6} {mark}"
+        )
 
     total = sum(r["size_bytes"] for r in rows)
     print(f"\n  {len(rows)} objects, {total / 1e9:.2f} GB")

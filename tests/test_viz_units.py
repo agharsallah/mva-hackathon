@@ -15,6 +15,7 @@ from mva.viz.cache import Cache, InvalidKey, safe_key
 
 # ── the disk cache ───────────────────────────────────────────────────────────────────
 
+
 def test_a_hit_returns_the_payload_and_when_it_was_built(tmp_path):
     cache = Cache(tmp_path)
     written = cache.write("thing", [{"n": 1}])
@@ -74,6 +75,7 @@ def test_a_failed_build_leaves_no_partial_entry(tmp_path):
 
 # ── the genotype decoder ─────────────────────────────────────────────────────────────
 
+
 def test_a_biallelic_het_yields_a_variant_allele_fraction():
     call = genotype.decode("GT:AD:DP:GQ:PL", "0/1:30,18:22:99:400,0,600")
     assert (call.gt, call.ad_ref, call.ad_alt, call.dp, call.gq) == ("0/1", 30, 18, 22, 99)
@@ -109,14 +111,16 @@ def test_the_decoder_reads_the_keys_rather_than_assuming_positions():
 
 # ── the panel BED annotation ─────────────────────────────────────────────────────────
 
+
 def test_the_bed_supplies_the_two_columns_staging_drops(tmp_path):
     bed = tmp_path / "panel.bed"
-    bed.write_text("# comment\tignored\n"
-                   "chr15\t100\t200\tBUB1B\tENSG00000156970\tMVA1, checkpoint\n"
-                   "chr17\t300\t400\tTP53\tENSG00000141510\tdifferential\n")
+    bed.write_text(
+        "# comment\tignored\n"
+        "chr15\t100\t200\tBUB1B\tENSG00000156970\tMVA1, checkpoint\n"
+        "chr17\t300\t400\tTP53\tENSG00000141510\tdifferential\n"
+    )
     found = panelbed.annotations(bed)
-    assert found["BUB1B"] == {"ensembl_id": "ENSG00000156970",
-                              "note": "MVA1, checkpoint"}
+    assert found["BUB1B"] == {"ensembl_id": "ENSG00000156970", "note": "MVA1, checkpoint"}
     assert found["TP53"]["ensembl_id"] == "ENSG00000141510"
 
 
@@ -131,6 +135,7 @@ def test_a_missing_bed_is_empty_not_fatal(tmp_path):
 
 
 # ── the overview assembly ────────────────────────────────────────────────────────────
+
 
 class FakeCursor:
     def __init__(self, columns, rows):
@@ -157,17 +162,27 @@ class FakePostgres:
 
 
 OVERVIEW_ANSWERS = [
-    ("stats_sn", ("metric", "value"),
-     [("number of records", 5012204), ("number of SNPs", 4086641),
-      ("number of indels", 930181), ("number of multiallelic sites", 66860),
-      ("number of samples", 1)]),
+    (
+        "stats_sn",
+        ("metric", "value"),
+        [
+            ("number of records", 5012204),
+            ("number of SNPs", 4086641),
+            ("number of indels", 930181),
+            ("number of multiallelic sites", 66860),
+            ("number of samples", 1),
+        ],
+    ),
     ("stats_tstv", ("ratio",), [(1.94,)]),
     ("contig_counts", ("all_contigs", "canonical_contigs"), [(1690, 25)]),
     ("filter_gt_counts", ("pass_variants",), [(4740790,)]),
     ("profile_scalars", ("est_coverage_x",), [(51.9,)]),
     ("allele_balance_flags", ("mean_depth_x",), [(44.3,)]),
-    ("source_objects", ("delivery_objects", "delivery_bytes", "all_hashes_verified"),
-     [(12, 84668433664, True)]),
+    (
+        "source_objects",
+        ("delivery_objects", "delivery_bytes", "all_hashes_verified"),
+        [(12, 84668433664, True)],
+    ),
     ("probe_ledger", ("probe_budget_spent",), [(0,)]),
 ]
 
@@ -187,8 +202,9 @@ def fake_warehouse(monkeypatch):
 def test_the_overview_reads_every_field_from_a_table(fake_warehouse, monkeypatch):
     from mva.viz import readstore
 
-    monkeypatch.setattr(readstore, "totals",
-                        lambda: {"total_reads": 1071835104, "read_length": 149})
+    monkeypatch.setattr(
+        readstore, "totals", lambda: {"total_reads": 1071835104, "read_length": 149}
+    )
     found = overview_module.overview(settings=None)
     assert found["total_variants"] == 5012204
     assert found["pass_variants"] == 4740790
@@ -209,8 +225,7 @@ def test_one_attach_serves_the_whole_overview(fake_warehouse, monkeypatch):
     assert len(fake_warehouse.seen) == len(OVERVIEW_ANSWERS)
 
 
-def test_an_unreachable_object_store_leaves_the_callset_readable(fake_warehouse,
-                                                                 monkeypatch):
+def test_an_unreachable_object_store_leaves_the_callset_readable(fake_warehouse, monkeypatch):
     from mva.viz import readstore
 
     def down():

@@ -45,16 +45,23 @@ LOCUS_BLURB = (
 )
 
 
-def build_report(profile: CallsetProfile, title: str, subject: str = "",
-                 extra: list[Section] | None = None) -> str:
+def build_report(
+    profile: CallsetProfile, title: str, subject: str = "", extra: list[Section] | None = None
+) -> str:
     """Render a complete HTML page for one profile, plus any extra sections."""
     sections = build_sections(profile) + list(extra or [])
-    return render(sections, title=title, subject=subject or str(profile.source),
-                  blurb=PROFILE_BLURB)
+    return render(
+        sections, title=title, subject=subject or str(profile.source), blurb=PROFILE_BLURB
+    )
 
 
-def write_report(profile: CallsetProfile, destination: str | Path, title: str,
-                 subject: str = "", extra: list[Section] | None = None) -> Path:
+def write_report(
+    profile: CallsetProfile,
+    destination: str | Path,
+    title: str,
+    subject: str = "",
+    extra: list[Section] | None = None,
+) -> Path:
     """Write the report to ``destination`` and return the path written."""
     path = Path(destination)
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -49,8 +49,12 @@ def router(cache: Cache, upstream: Upstream | None = None) -> APIRouter:
         return live(readstore.partitions(), f"{readstore.root()}/manifest.parquet")
 
     @api.get("/reads/flowcell", response_model=Envelope, tags=["reads"])
-    def flowcell(lane: int = Query(ge=1, le=4), read: int = Query(ge=1, le=2),
-                 shard: int = Query(default=0, ge=0), refresh: bool = False) -> dict:
+    def flowcell(
+        lane: int = Query(ge=1, le=4),
+        read: int = Query(ge=1, le=2),
+        shard: int = Query(default=0, ge=0),
+        refresh: bool = False,
+    ) -> dict:
         """Read density across one shard's flowcell surface, binned 1000×1000.
 
         A column-pruned scan of ~4 M reads: three narrow integer columns out of a 240 MB
@@ -58,8 +62,7 @@ def router(cache: Cache, upstream: Upstream | None = None) -> APIRouter:
         """
         key = safe_key("flowcell", lane, read, shard)
         try:
-            entry = cache.get_or_build(
-                key, lambda: readstore.flowcell(lane, read, shard), refresh)
+            entry = cache.get_or_build(key, lambda: readstore.flowcell(lane, read, shard), refresh)
         except LookupError as missing:
             raise HTTPException(status_code=404, detail=str(missing)) from missing
         return cached(entry, f"{readstore.root()}/lane={lane}/read={read} shard {shard}")
@@ -72,23 +75,24 @@ def router(cache: Cache, upstream: Upstream | None = None) -> APIRouter:
         column eight times and is slow; every later request is a cache hit.
         """
         entry = cache.get_or_build("cycle-quality", readstore.cycle_quality, refresh)
-        return cached(entry, f"{readstore.root()} (sampled "
-                             f"{readstore.SAMPLE_ROWS} reads per partition)")
+        return cached(
+            entry, f"{readstore.root()} (sampled {readstore.SAMPLE_ROWS} reads per partition)"
+        )
 
     @api.get("/reads/quality-levels", response_model=Envelope, tags=["reads"])
     def quality_levels(refresh: bool = False) -> dict:
         """Base counts per Phred value — four levels, because the NovaSeq quantises."""
         entry = cache.get_or_build("quality-levels", readstore.quality_levels, refresh)
-        return cached(entry, f"{readstore.root()} (sampled "
-                             f"{readstore.SAMPLE_ROWS} reads per partition)")
+        return cached(
+            entry, f"{readstore.root()} (sampled {readstore.SAMPLE_ROWS} reads per partition)"
+        )
 
     # ── proxy to mva-reads-api ───────────────────────────────────────────────────────
 
     @api.post("/probe/count", response_model=Envelope, tags=["probe"])
     async def probe_count(request: ProbeRequest) -> dict:
         """Reads per probe with a triage verdict. Returns a job — poll ``/api/jobs``."""
-        return await _proxied(reads, "POST", "/count",
-                              json={"probes": _probes(request)})
+        return await _proxied(reads, "POST", "/count", json={"probes": _probes(request)})
 
     @api.post("/probe/scan", response_model=Envelope, tags=["probe"])
     async def probe_scan(request: ProbeRequest) -> dict:
@@ -101,8 +105,7 @@ def router(cache: Cache, upstream: Upstream | None = None) -> APIRouter:
     @api.get("/jobs", response_model=Envelope, tags=["probe"])
     async def jobs(state: str | None = None, verb: str | None = None) -> dict:
         """Every job the reads API knows, newest first."""
-        return await _proxied(reads, "GET", "/jobs",
-                              params={"state": state, "verb": verb})
+        return await _proxied(reads, "GET", "/jobs", params={"state": state, "verb": verb})
 
     @api.get("/jobs/{job_id}", response_model=Envelope, tags=["probe"])
     async def job(job_id: str) -> dict:
@@ -110,16 +113,19 @@ def router(cache: Cache, upstream: Upstream | None = None) -> APIRouter:
         return await _proxied(reads, "GET", f"/jobs/{job_id}")
 
     @api.get("/jobs/{job_id}/wait", response_model=Envelope, tags=["probe"])
-    async def job_wait(job_id: str,
-                       timeout: int = Query(default=30, ge=0, le=290)) -> dict:
+    async def job_wait(job_id: str, timeout: int = Query(default=30, ge=0, le=290)) -> dict:
         """Long-poll until the job is terminal or ``timeout`` seconds pass.
 
         Capped at 290 s upstream to stay under common 300 s proxy limits; on timeout the
         job comes back still ``running`` and the caller asks again.
         """
-        return await _proxied(reads, "GET", f"/jobs/{job_id}/wait",
-                              params={"timeout": timeout},
-                              timeout=LONG_POLL_TIMEOUT)
+        return await _proxied(
+            reads,
+            "GET",
+            f"/jobs/{job_id}/wait",
+            params={"timeout": timeout},
+            timeout=LONG_POLL_TIMEOUT,
+        )
 
     @api.post("/jobs/{job_id}/cancel", response_model=Envelope, tags=["probe"])
     async def job_cancel(job_id: str) -> dict:
