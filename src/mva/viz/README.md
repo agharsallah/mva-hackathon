@@ -172,7 +172,7 @@ uv run mva-viz-api --port 8901 --reload  # dev: restart on source change
 Frontend dev server (separate process, `app/`):
 
 ```bash
-cd app && npm install && npm run dev     # http://127.0.0.1:5173, VITE_API_URL points here
+cd app && pnpm install && pnpm run dev     # http://127.0.0.1:5173, VITE_API_URL points here
 ```
 
 ## Where it is used

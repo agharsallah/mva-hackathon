@@ -39,7 +39,7 @@ Single sample `PROBAND01`. **No trio** — the app never renders a parent column
 
 ```bash
 uv run mva-viz-api            # from the repo root, serves 127.0.0.1:8900
-cd app && npm install && npm run dev    # http://127.0.0.1:5173
+cd app && pnpm install && pnpm run dev    # http://127.0.0.1:5173
 ```
 
 | Env var | Default | Meaning |

@@ -7,7 +7,7 @@ meaning)` pattern, and every chart carries a `Legend` line decoding its own colo
 
 There is **no trio** in this dataset — one sample only. The app never renders a parent column.
 
-**Verified:** 2026-09-01 — `npm run check` green (typecheck, lint, format, 59 tests).
+**Verified:** 2026-09-02 — `pnpm run check` green (typecheck, lint, format, 88 tests).
 
 ## Quickstart
 
@@ -15,8 +15,8 @@ Fixture mode (no backend, no credentials — just the UI on committed sample dat
 
 ```bash
 cd app
-npm install
-npm run dev      # http://127.0.0.1:5173
+pnpm install
+pnpm run dev      # http://127.0.0.1:5173
 ```
 
 The app runs with **no backend**: when the viz API is unreachable it serves committed fixture
@@ -27,8 +27,8 @@ are marked PLACEHOLDER/SYNTHETIC in that mode.
 
 | Dependency       | Needed for          | Check                                             |
 | ---------------- | ------------------- | ------------------------------------------------- |
-| Node 20+         | the app itself      | `node -v`                                         |
-| npm 10+          | installing app deps | `npm -v`                                          |
+| Node 22+         | the app itself      | `node -v` — pinned by `engines` in `package.json` |
+| pnpm 11+         | installing app deps | `pnpm -v` — pinned by `packageManager`            |
 | `uv`             | both Python APIs    | `uv --version` — see repo root README for install |
 | Python 3.11–3.14 | both Python APIs    | pinned by `uv`, no manual install needed          |
 
@@ -49,8 +49,8 @@ uv run mva-viz-api            # http://127.0.0.1:8900
 
 # 3. the app
 cd app
-npm install
-npm run dev                   # http://127.0.0.1:5173
+pnpm install
+pnpm run dev                   # http://127.0.0.1:5173
 ```
 
 Both APIs read their settings (`MVA_READS_API_URL`, `MVA_API_TOKEN`, `S3_*`, `PG*`, CORS origins)
@@ -62,15 +62,15 @@ edges. Skip step 1 if you only need everything except the Probes/Reads pages —
 `mva-viz-api` has **no auth** and warns if bound off loopback (`/api/panel/locus` serves real
 patient positions) — never pass `--host 0.0.0.0` outside a trusted tunnel.
 
-| Script                            | Does                                                                            |
-| --------------------------------- | ------------------------------------------------------------------------------- |
-| `npm run dev`                     | Vite dev server, port 5173, strict (a busy port is an error, not a silent 5174) |
-| `npm run build`                   | `tsc -b && vite build` — must pass clean                                        |
-| `npm run typecheck`               | `tsc -b` alone                                                                  |
-| `npm run lint` / `lint:fix`       | ESLint 9 flat config                                                            |
-| `npm run format` / `format:check` | Prettier                                                                        |
-| `npm run test` / `test:watch`     | Vitest (jsdom + testing-library)                                                |
-| `npm run check`                   | all four gates, in order — run this before committing                           |
+| Script                             | Does                                                                            |
+| ---------------------------------- | ------------------------------------------------------------------------------- |
+| `pnpm run dev`                     | Vite dev server, port 5173, strict (a busy port is an error, not a silent 5174) |
+| `pnpm run build`                   | `tsc -b && vite build` — must pass clean                                        |
+| `pnpm run typecheck`               | `tsc -b` alone                                                                  |
+| `pnpm run lint` / `lint:fix`       | ESLint 9 flat config                                                            |
+| `pnpm run format` / `format:check` | Prettier                                                                        |
+| `pnpm run test` / `test:watch`     | Vitest (jsdom + testing-library)                                                |
+| `pnpm run check`                   | all four gates, in order — run this before committing                           |
 
 ### Environment
 
