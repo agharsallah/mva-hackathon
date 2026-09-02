@@ -3,7 +3,7 @@
 # resolves core.hooksPath from the repo top level, and this hook needs to see
 # every ref being pushed, not just app/'s subtree).
 #
-# Runs the full app/ gate (`npm run check` + build) once for the whole push,
+# Runs the full app/ gate (`pnpm run check` + build) once for the whole push,
 # but only when the range being pushed actually touches app/ — a Python-only
 # or docs-only push is not slowed down by npm/node at all. git passes one
 # "<local ref> <local sha1> <remote ref> <remote sha1>" line per pushed ref on
@@ -60,10 +60,10 @@ else
 fi
 
 if [ "$run_gate" = "1" ]; then
-  echo "pre-push: app/ changes detected — running npm run check + build"
+  echo "pre-push: app/ changes detected — running pnpm run check + build"
   cd app
   npm run check
   npm run build
 else
-  echo "pre-push: no app/ changes in the pushed range — skipping npm run check + build"
+  echo "pre-push: no app/ changes in the pushed range — skipping pnpm run check + build"
 fi

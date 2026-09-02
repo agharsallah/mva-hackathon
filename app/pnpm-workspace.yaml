@@ -1,0 +1,7 @@
+# pnpm 11 reads its settings from here, not from a "pnpm" field in package.json.
+#
+# esbuild ships a platform-specific binary and needs its postinstall script to run. pnpm
+# blocks dependency install scripts by default — a supply-chain guard worth keeping — so
+# each package that genuinely needs one is allowed by name, and nothing else is.
+allowBuilds:
+  esbuild: true

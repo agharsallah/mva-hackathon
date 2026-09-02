@@ -2,7 +2,7 @@ name: CI
 
 # Two independent projects share this repo: the app/ React app (npm) and the
 # root Python package (uv). Each gets its own job so a Python-only change
-# does not wait on `npm ci`, and vice versa. Both jobs run on every push and
+# does not wait on `pnpm install`, and vice versa. Both jobs run on every push and
 # every pull request, mirroring the local pre-push gate exactly.
 on:
   push:
@@ -25,33 +25,40 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # app/package.json carries no "engines" field today; 22 is the current
-      # Node LTS and what this workflow pins. If an engines field is added
-      # later, point this at it instead of hand-editing the version here.
-      - name: Set up Node 22
+      # pnpm is pinned by app/package.json's "packageManager" field, so the
+      # action installs exactly the version developers run locally. Node comes
+      # from "engines".
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          package_json_file: app/package.json
+
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: npm
-          cache-dependency-path: app/package-lock.json
+          node-version-file: app/package.json
+          cache: pnpm
+          cache-dependency-path: app/pnpm-lock.yaml
 
-      - name: Install dependencies (npm ci)
-        run: npm ci
+      # --frozen-lockfile refuses to update pnpm-lock.yaml: the lockfile in the
+      # repo is exactly what gets installed, or the step fails loudly.
+      - name: Install dependencies (pnpm install --frozen-lockfile)
+        run: pnpm install --frozen-lockfile
 
       - name: Typecheck (tsc -b)
-        run: npm run typecheck
+        run: pnpm run typecheck
 
       - name: Lint (eslint)
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Format check (prettier --check)
-        run: npm run format:check
+        run: pnpm run format:check
 
       - name: Test (vitest run)
-        run: npm run test
+        run: pnpm run test
 
       - name: Build (tsc -b && vite build)
-        run: npm run build
+        run: pnpm run build
 
       # tools/bundle-budget.mjs is owned by a different in-flight change; the
       # step still runs by path so it activates the moment that file lands,
@@ -69,7 +76,7 @@ jobs:
       # are triaged.
       - name: Dead code report (knip)
         if: always()
-        run: npx knip --reporter compact || true
+        run: pnpm exec knip --reporter compact || true
 
   python:
     name: python (uv)

@@ -36,7 +36,7 @@ if [ -z "$staged_app" ]; then
 fi
 
 echo "pre-commit: staged app/ changes — running lint-staged"
-# Run from inside app/ so lint-staged resolves the local eslint/prettier binaries
-# (a bare `prettier` is not on PATH when the hook is spawned from the repo root).
+# Run from inside app/ so pnpm resolves the local eslint/prettier binaries (a bare
+# `prettier` is not on PATH when the hook is spawned from the repo root).
 cd app
-./node_modules/.bin/lint-staged --config .lintstagedrc.json
+pnpm exec lint-staged --config .lintstagedrc.json

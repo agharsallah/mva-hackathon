@@ -12,7 +12,7 @@
  * again — by any change, not just a fixture one.
  *
  * WHAT THIS SCRIPT DOES
- *   1. Runs `npm run build` (skip with `--skip-build` if the caller already has a fresh
+ *   1. Runs `pnpm run build` (skip with `--skip-build` if the caller already has a fresh
  *      `dist/`), producing the exact artifact a real deploy would ship.
  *   2. Reads the entry chunk's filename out of `dist/index.html`'s `<script type="module">`
  *      tag — not guessed from a naming convention, so a build-config change that renames
@@ -25,7 +25,7 @@
  *
  * RE-BLESSING THE BUDGETS
  * Run `node tools/bundle-budget.mjs`, read the reported entry raw/gzip numbers from a build
- * you trust (clean tree, `npm ci`-equivalent deps), and update BUDGETS below with a comment
+ * you trust (clean tree, `pnpm install --frozen-lockfile` deps), and update BUDGETS below with a comment
  * recording the date and why the new number is acceptable. Never move a budget to make a
  * regression pass without that explicit, dated justification — the whole point of this gate
  * is that "the bundle grew" should be a conversation, not a silent fact.
@@ -44,7 +44,7 @@ const FIXTURE_DATA_DIR = path.join(APP_ROOT, 'src/fixtures/data');
 
 // --- the budget, in one clearly-marked block ---------------------------------------------
 //
-// Measured 2026-09-02 against a clean `npm run build` on this commit: entry chunk was
+// Measured 2026-09-02 against a clean `pnpm run build` on this commit: entry chunk was
 // 236.44 kB raw / 77.19 kB gzip (see `src/fixtures/README.md`'s own before/after table,
 // which independently confirms the same raw figure). Budgets below give ~3.5 kB raw and
 // ~3 kB gzip of headroom over that measurement — enough to absorb incidental churn, not
@@ -61,8 +61,8 @@ function buildIfNeeded() {
     console.log('--skip-build passed: using whatever is already in dist/');
     return;
   }
-  console.log('> npm run build');
-  execSync('npm run build', { cwd: APP_ROOT, stdio: 'inherit' });
+  console.log('> pnpm run build');
+  execSync('pnpm run build', { cwd: APP_ROOT, stdio: 'inherit' });
 }
 
 function findEntryFile() {
