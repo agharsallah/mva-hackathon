@@ -17,8 +17,8 @@ changing behavior — this file is only about the mechanics of getting a change 
 
 ## Commit convention
 
-Read from `git log`, not invented — recent history (`feat`/`docs`/`refactor`/`fix`/`chore`/`style`,
-122+ commits) consistently follows:
+Read from `git log`, not invented — the newest 63 commits all pass the gate below (measured
+2026-09-02, `tools/check-commit-msg.sh --range 9295687..HEAD`) and follow:
 
 ```
 <type>(<scope>): <imperative summary, lowercase, no period>
@@ -27,22 +27,41 @@ Read from `git log`, not invented — recent history (`feat`/`docs`/`refactor`/`
 where the commit produced one, e.g. "296.89 kB -> 236.44 kB raw".>
 ```
 
-- `type`: `feat`, `fix`, `docs`, `refactor`, `chore`, `style`, `test`. No hard enforcement (no
-  commitlint) — this is observed convention, kept by review.
+- `type`: one of `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`,
+  `chore`, `revert`. **Enforced** by the `commit-msg` hook and the CI `commit messages` job,
+  both running [`tools/check-commit-msg.sh`](tools/check-commit-msg.sh) — one script, so local
+  and CI can never disagree.
 - `scope`: the package or app area touched — `app`, `viz`, `compare`, `panel`, `search`,
   `probes`, `callset`, `fixtures`, `src`, `step-0`, etc. Omit it for a repo-wide change
   (`docs: replace ~/ubuntu/work references with the warehouse DB and reads/viz API`).
 - Body explains _why_ and states any number the change produced or changed — per the repo's
   [Results integrity](CLAUDE.md#results-integrity) rule, a number in a commit message must come
   from a real run.
+- **Subject**: imperative, lowercase after the colon, no trailing period, blank line before the
+  body. Warns over 72 characters (the width `git log --oneline` shows unwrapped), fails over 90.
+- **No genomic position** — `chr15:40142000`, `15-40142000`, `g.40142000A>G` — in any part of a
+  message. Name the gene and the consequence instead. A message is permanent: the same
+  data-transfer-agreement rule `mva-science export` enforces on exported files applies here, with
+  the same regex (`mva.science.export.COORDINATE`). See
+  [`docs/notes/no-patient-data-in-the-repository.md`](docs/notes/no-patient-data-in-the-repository.md).
 - No AI-attribution trailers (`Generated with Claude Code`, `Co-Authored-By: Claude ...`) in new
   commits from this tooling wave — a project-level policy, not a repo-wide ban on any trailer
-  that already exists in older history.
+  that already exists in older history. Enforced by the same gate.
+- `Merge …`, `Revert "…"`, `fixup!`, `squash!` and `amend!` subjects are exempt: git writes them.
+
+Check a message before you write it, or an existing one after the fact:
+
+```sh
+sh tools/check-commit-msg.sh --rev HEAD          # the last commit
+sh tools/check-commit-msg.sh --range main..HEAD  # everything a branch adds
+sh tools/check-commit-msg.sh --self-test         # the gate's own 13 cases
+```
 
 ## What enforces what
 
 | Rule                                                                                           | Enforced by                                                                               | Run it locally                                  |
 | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Commit message convention, subject length, no genomic position, no AI trailer                  | `commit-msg` hook, CI `commit messages` job                                               | `sh tools/check-commit-msg.sh --rev HEAD`       |
 | TypeScript compiles (`tsc -b`, strict, `noUnusedLocals`/`noUnusedParameters`)                  | pre-push hook, CI `app` job                                                               | `cd app && pnpm run typecheck`                  |
 | ESLint (react-hooks, jsx-a11y, import order, repo-local rules)                                 | pre-commit hook (staged files only, `--fix`), pre-push hook, CI `app` job                 | `cd app && pnpm run lint:strict` (or `lint:fix` to autofix)       |
 | Prettier formatting                                                                            | pre-commit hook (staged files only, `--write`), pre-push hook, CI `app` job               | `cd app && pnpm run format` (or `format:check`) |
@@ -69,6 +88,9 @@ Hooks live at the **repo root** `.husky/` (not `app/.husky/`) because git resolv
 `core.hooksPath` from the top of the working tree, and one hook has to see staged/pushed files
 across both projects to decide whether it needs to run at all.
 
+- **commit-msg** — runs [`tools/check-commit-msg.sh`](tools/check-commit-msg.sh) on the message
+  being recorded. POSIX `sh`, no node and no uv: a contributor with only one of the two
+  toolchains installed still gets the gate. Cheap enough (a few `grep`s) to be unnoticeable.
 - **pre-commit** — runs `ruff format` + `ruff check --fix` on staged `.py` files and
   re-stages them, then `lint-staged` (`app/.lintstagedrc.json`: `eslint --fix` + `prettier
 --write` on staged `.ts`/`.tsx`/`.js`/`.mjs`, `prettier --write` on staged `.json`/`.md`, all
@@ -80,10 +102,20 @@ across both projects to decide whether it needs to run at all.
   ref's old and new SHA (falls back to running the gate, never to skipping it, when that diff is
   ambiguous — e.g. a brand-new branch with no shared history).
 
-**One-time setup after cloning:** hooks only fire once git's `core.hooksPath` points at
-`.husky/`. Today that means running `git config core.hooksPath .husky` once per clone (the
-lasting fix — adding `"prepare": "husky"` to `app/package.json` so `pnpm install` wires it
-automatically — is tracked separately; see the note in the hooks themselves).
+**One-time setup after cloning:** `sh tools/setup-git.sh`. It is idempotent, repo-local
+(`.git/config` only, never your global config) and prints what it changed. It wires:
+
+| Setting                 | Value                     | Why                                                              |
+| ----------------------- | ------------------------- | ---------------------------------------------------------------- |
+| `core.hooksPath`        | `.husky/_`                | hooks fire at all (falls back to `.husky` before husky has run)  |
+| `commit.template`       | `.gitmessage`             | the convention is in the editor, not in your memory              |
+| `blame.ignoreRevsFile`  | `.git-blame-ignore-revs`  | `git blame` skips the two formatting-only commits                |
+| `pull.rebase`           | `true`                    | a `git pull` rebases; history stays linear                       |
+| `fetch.prune`           | `true`                    | deleted remote branches stop haunting `git branch -a`            |
+
+`app/package.json`'s `prepare` script runs `husky` and then this script, so `pnpm install` in
+`app/` wires a fresh clone automatically. A Python-only contributor who never runs `pnpm install`
+runs `sh tools/setup-git.sh` once instead.
 
 ## When a gate fails
 
@@ -96,6 +128,62 @@ automatically — is tracked separately; see the note in the hooks themselves).
 5. If a hook is wrong for your change (e.g. it ran when it shouldn't have, or vice versa),
    that's a bug in `.husky/pre-commit` / `.husky/pre-push` — fix the skip logic, don't bypass the
    hook with `--no-verify`.
+
+## History hygiene
+
+The history is **linear — zero merge commits in 152 commits** — and stays that way by rebasing,
+not merging:
+
+```sh
+git fetch origin
+git rebase origin/main        # or just `git pull`, which rebases after tools/setup-git.sh
+```
+
+- **One commit, one concern.** A commit that renames a module *and* changes its behavior cannot be
+  reverted, bisected, or reviewed as one idea. Split it: `git add -p`.
+- **Rewrite your own branch freely, never `main`.** `git rebase -i` and `git commit --amend`
+  before pushing a branch is good practice; force-pushing `main` is not, and would break every
+  other clone.
+- **Formatting-only commits go in [`.git-blame-ignore-revs`](.git-blame-ignore-revs)** so
+  `git blame` keeps attributing lines to the change that wrote them. Add a commit there only if it
+  changed zero behavior. GitHub reads the file by name; locally, `tools/setup-git.sh` wires it.
+- **The convention starts at `9295687`.** Measured 2026-09-02 with
+  `sh tools/check-commit-msg.sh --range <sha>..HEAD`: the newest 63 commits pass the gate; the 89
+  before them (the ideation and bootstrap phase) do not. They are left alone on purpose:
+  rewriting published history to tidy subject lines would invalidate every clone and every SHA
+  cited in `docs/*/methodology/`, which is a worse loss than an untidy prologue.
+
+### Branch protection (GitHub side)
+
+The local gates cannot stop a push made with `--no-verify`; CI can, but only if the branch
+requires it.
+
+**Not currently active, and not currently possible.** Checked 2026-09-02:
+`gh api repos/agharsallah/mva-hackathon/branches/main/protection` answers
+`403 — Upgrade to GitHub Pro or make this repository public to enable this feature`. Branch
+protection needs the repo to be public or on a paid plan; this one is private on the free tier.
+Until that changes, the `commit-msg` and `pre-push` hooks are the enforcement and CI is the
+visible-but-not-blocking backstop — a red `commit messages` job on `main` means a commit got in
+around the hook.
+
+When the repo becomes public or upgrades, require the three CI jobs (`app (node)`,
+`python (uv)`, `commit messages`), require linear history, and disallow force-pushes:
+
+```sh
+gh api -X PUT repos/:owner/:repo/branches/main/protection \
+  -F required_status_checks.strict=true \
+  -f 'required_status_checks.contexts[]=app (node)' \
+  -f 'required_status_checks.contexts[]=python (uv)' \
+  -f 'required_status_checks.contexts[]=commit messages' \
+  -F enforce_admins=true \
+  -F required_linear_history=true \
+  -F allow_force_pushes=false \
+  -F required_pull_request_reviews=null \
+  -F restrictions=null
+```
+
+Set the repository's merge button to **squash or rebase only** (Settings → General → Pull
+Requests) so a merge commit cannot be introduced from the web UI.
 
 ## More
 

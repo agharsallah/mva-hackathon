@@ -1,0 +1,14 @@
+# <type>(<scope>): <imperative summary, lowercase, no period, <=72 chars>
+#
+# Why this change — not what the diff already shows. Cite any number the change
+# measured, from a real run (CLAUDE.md, Results integrity). Wrap at 100.
+#
+# type:  feat fix docs style refactor perf test build ci chore revert
+# scope: app viz compare panel search probes callset fixtures src step-0 ...
+#        omit for a repo-wide change
+#
+# Never: a genomic position (chr15:40142000, 15-40142000, g.40142000A>G) —
+#        name the gene and the consequence instead.
+# Never: an AI attribution trailer.
+#
+# Checked by .husky/commit-msg -> tools/check-commit-msg.sh

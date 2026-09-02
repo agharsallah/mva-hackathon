@@ -119,3 +119,38 @@ jobs:
 
       - name: Test (pytest)
         run: uv run pytest
+
+  # The history gate. Runs the same script the .husky/commit-msg hook runs, so a
+  # commit written with --no-verify (or on a machine whose hooks were never
+  # wired) still cannot reach main with a broken message — or with a genomic
+  # position in it, which no later cleanup can remove from history.
+  commits:
+    name: commit messages
+    runs-on: ubuntu-latest
+    steps:
+      # fetch-depth: 0 — the gate walks a commit range, which needs real history.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Self-test the gate
+        run: sh tools/check-commit-msg.sh --self-test
+
+      # Pull request: every commit the branch adds on top of its base.
+      - name: Check the pull request's commits
+        if: github.event_name == 'pull_request'
+        run: sh tools/check-commit-msg.sh --range "${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}"
+
+      # Push to main: only the commits this push added. `github.event.before` is
+      # all-zeroes for a branch's first push and after a force-push; there is no
+      # range to check in that case, so the step says so instead of failing.
+      - name: Check the pushed commits
+        if: github.event_name == 'push'
+        run: |
+          before='${{ github.event.before }}'
+          if [ "$before" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$before^{commit}" 2>/dev/null; then
+            echo "::notice title=no range::no usable 'before' SHA for this push — skipping the range check"
+            exit 0
+          fi
+          sh tools/check-commit-msg.sh --range "$before..${{ github.sha }}"

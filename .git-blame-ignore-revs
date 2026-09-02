@@ -1,0 +1,12 @@
+# Commits that changed formatting only, so `git blame` attributes each line to
+# the change that wrote it rather than to the reformat that touched every file.
+#
+# Wired by tools/setup-git.sh (git config blame.ignoreRevsFile
+# .git-blame-ignore-revs); GitHub reads this file by name with no setup.
+# Only add a commit here if it changed zero behavior.
+
+# style(python): adopt ruff format across src, tests and tools
+8702c4f033aec5e98fd09528b50d1531de9b523b
+
+# style: run the repo through eslint --fix and prettier
+14cc703ddd645599a6b60119119cd92e1469fa48

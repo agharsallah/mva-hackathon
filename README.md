@@ -39,9 +39,13 @@ to the organisers.
 
 ```bash
 tools/setup-env.sh            # uv + micromamba (bcftools, samtools, seqkit, fastp)
+sh tools/setup-git.sh         # hooks, commit template, rebase-pull — idempotent, repo-local
 source tools/activate.sh      # puts the bio binaries on PATH
 uv run pytest                 # hermetic: synthetic fixtures, no dataset, no services
 ```
+
+How to get a change in — the two toolchains, the quality gates, the commit convention and the
+history rules: [`CONTRIBUTING.md`](CONTRIBUTING.md).
 
 Look at the data profile (needs no dataset — the profile is committed):
 

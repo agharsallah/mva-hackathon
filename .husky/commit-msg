@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+# Husky commit-msg hook. Validates the message the repo is about to record
+# against the convention CONTRIBUTING.md documents, using the same script CI
+# runs over a pull request's commits — one implementation, so local and CI can
+# never disagree.
+#
+# Bypassing this is not a workflow: a bad subject can be fixed with
+# `git commit --amend`, and a genomic position in a message is a data-transfer-
+# agreement breach that survives every later cleanup.
+tools/check-commit-msg.sh "$1"
