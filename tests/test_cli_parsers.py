@@ -13,7 +13,6 @@ from pathlib import Path
 import pytest
 
 import mva
-
 from mva.explore import cli as explore_cli
 from mva.science import cli as science_cli
 from mva.warehouse import cli as warehouse_cli

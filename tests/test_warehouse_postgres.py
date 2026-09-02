@@ -16,11 +16,9 @@ from mva.warehouse.analysis import DERIVATIONS, SOURCE, by_name, resolve
 from mva.warehouse.annotate import ANNOTATIONS_TABLE
 from mva.warehouse.catalog import NOTES, OVERRIDES, table_name
 from mva.warehouse.cli_vcf import RAW_TABLE
+from mva.warehouse.postgres import InvalidIdentifier, Result, render_table, safe_identifier
+from mva.warehouse.settings import ENV_FILE_OVERRIDE, Postgres, find_env, parse_env
 from mva.warehouse.stage import SCALARS_TABLE
-from mva.warehouse.postgres import (InvalidIdentifier, Result, render_table,
-                                    safe_identifier)
-from mva.warehouse.settings import (ENV_FILE_OVERRIDE, Postgres, find_env,
-                                    parse_env)
 
 
 class TestParseEnv:

@@ -286,7 +286,7 @@ def _fetch_streamed(args, store, connection, settings, name: str, token: str) ->
         print(f"    UPLOAD FAILED: {str(error).splitlines()[0][:120]}")
         if tee and tee.exists():
             print(f"    kept     {tee} ({tee.stat().st_size / 1e9:.2f} GB downloaded)")
-            print(f"             the download is not lost; finish it with:")
+            print("             the download is not lost; finish it with:")
             print(f"             mva-warehouse source-upload --directory {tee.parent} "
                   f"--only {name}")
         else:
@@ -305,7 +305,7 @@ def _fetch_streamed(args, store, connection, settings, name: str, token: str) ->
           + ("" if consistent else f"  MISMATCH — publisher declared {declared:,}"))
     print(f"    version  {result.get('version_id', '') or 'n/a'}")
     item = source.SourceFile(Path(name), landed,
-                             datetime.datetime.now(datetime.timezone.utc), "")
+                             datetime.datetime.now(datetime.UTC), "")
     source.record(connection, settings.schema, item, result, consistent)
     print()
     return consistent
@@ -332,7 +332,7 @@ def _fetch_verified(args, store, connection, settings, name: str, want: str) -> 
 
     item = source.SourceFile(
         local, size,
-        datetime.datetime.fromtimestamp(local.stat().st_mtime, tz=datetime.timezone.utc),
+        datetime.datetime.fromtimestamp(local.stat().st_mtime, tz=datetime.UTC),
         digest)
     result = source.upload(store, item, _progress("uploading", size))
     _clear()

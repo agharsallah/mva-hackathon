@@ -73,13 +73,8 @@ import sys
 from dataclasses import replace
 from pathlib import Path
 
-from . import cli_annotate
-from . import cli_ledger
-from . import cli_objects
-from . import cli_source
-from . import cli_vcf
+from . import cli_annotate, cli_ledger, cli_objects, cli_source, cli_vcf, reference
 from . import postgres as pg
-from . import reference
 from .analysis import DERIVATIONS
 from .catalog import discover
 from .settings import Postgres, find_env
@@ -140,7 +135,7 @@ def _do_pg_check(args) -> int:
         print("Fill these in .env, then run this again.")
         return 1
     info = pg.server_info(settings)
-    print(f"\nconnected.")
+    print("\nconnected.")
     print(f"  server:  {info['version'].split(' on ')[0]}")
     print(f"  size:    {info['size']}")
     print(f"  schemas: {info['schemas']}")

@@ -28,9 +28,9 @@ Two details of the raw layer are deliberate and easy to get wrong:
 
 import gzip
 import hashlib
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator
 
 #: The eight fixed VCF columns, plus FORMAT and one sample. Lower-cased and with `#CHROM`
 #: reduced to `chrom`, because `#CHROM` is not a usable SQL identifier.

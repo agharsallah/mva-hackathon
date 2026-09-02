@@ -9,10 +9,10 @@ convention worth preserving: it is what keeps the suite runnable with no Postgre
 import pytest
 
 from mva.science import steps
-from mva.science.evidence import (Direction, Evidence, PRIOR, WEIGHT, ensure_table as
-                                  ensure_evidence, record, weigh)
-from mva.science.hypothesis import (Hypothesis, Status, board, ensure_table as
-                                    ensure_hypotheses, next_id, propose, revise)
+from mva.science.evidence import PRIOR, WEIGHT, Direction, Evidence, record, weigh
+from mva.science.evidence import ensure_table as ensure_evidence
+from mva.science.hypothesis import Hypothesis, Status, board, next_id, propose, revise
+from mva.science.hypothesis import ensure_table as ensure_hypotheses
 
 
 class FakeConnection:

@@ -19,9 +19,9 @@ from collections import Counter
 
 import plotly.graph_objects as go
 
+from ...pipeline import Call, Phase, candidate_pairs
 from ..figure import Exhibit, sized
 from ..theme import BAD, DECISION, GOOD, MACHINE, MUTED, RAW, SUBTLE_INK, legend_line
-from ...pipeline import Call, Phase, candidate_pairs
 
 #: The allele balance a true heterozygous site is expected to show.
 DIPLOID_VAF = 0.5

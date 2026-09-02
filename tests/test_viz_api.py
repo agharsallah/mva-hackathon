@@ -12,10 +12,10 @@ import pytest
 from fastapi.testclient import TestClient
 
 from mva.viz import queries, readstore, routes_warehouse
-from mva.viz.app import create_app, cors_origins
-from mva.warehouse.settings import DEFAULTS
+from mva.viz.app import cors_origins, create_app
 from mva.viz.cache import Cache
 from mva.viz.proxy import Reply, Unreachable, Upstream
+from mva.warehouse.settings import DEFAULTS
 
 #: What the fake `fetch` returns, matched on a fragment of the SQL.
 ANSWERS = {

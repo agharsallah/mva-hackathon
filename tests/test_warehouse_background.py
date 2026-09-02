@@ -22,8 +22,12 @@ import duckdb
 import pytest
 
 from mva.warehouse.analysis import DERIVATIONS, by_name
-from mva.warehouse.analysis_background import (BACKGROUND_DERIVATIONS, BIN_BP,
-                                               MIN_BIN_N_FOR_PASS, Z_NOTABLE)
+from mva.warehouse.analysis_background import (
+    BACKGROUND_DERIVATIONS,
+    BIN_BP,
+    MIN_BIN_N_FOR_PASS,
+    Z_NOTABLE,
+)
 from mva.warehouse.derivation import resolve
 
 #: ``(chrom, mb, n, pass_n)`` — the window distribution the whole test rests on.

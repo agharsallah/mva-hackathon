@@ -26,8 +26,9 @@ round trip through the CSV is a real check on the spelling that goes over the wi
 """
 
 import csv
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable, TextIO
+from typing import TextIO
 
 from .variant import Variant
 

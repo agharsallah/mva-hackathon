@@ -18,6 +18,7 @@ already a plain identifier instead of trying to quote its way out of trouble.
 import re
 from contextlib import contextmanager
 from dataclasses import dataclass
+from datetime import UTC
 from pathlib import Path
 
 from .settings import Postgres
@@ -211,7 +212,7 @@ def derive(settings: Postgres, names: list[str] | None = None) -> list[Ingested]
     stamps :data:`~mva.warehouse.analysis.PROVENANCE_TABLE` so a result sitting in the
     database can be traced to when it was produced and by which statement.
     """
-    from datetime import datetime, timezone
+    from datetime import datetime
 
     from . import lineage
     from .analysis import DERIVATIONS, PROVENANCE_TABLE, by_name, resolve
@@ -220,7 +221,7 @@ def derive(settings: Postgres, names: list[str] | None = None) -> list[Ingested]
     produced: list[Ingested] = []
     # One timestamp for the whole run, so the provenance stamp and the lineage edge that
     # references it name the *same* instant. Per-statement ``now()`` would not.
-    run_at = datetime.now(timezone.utc).replace(tzinfo=None)
+    run_at = datetime.now(UTC).replace(tzinfo=None)
 
     with attached(settings) as connection:
         ensure_schemas(connection, settings)

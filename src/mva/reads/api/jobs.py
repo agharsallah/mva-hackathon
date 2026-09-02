@@ -18,10 +18,11 @@ import json
 import threading
 import time
 import uuid
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 #: Every state a job can be in. Terminal states are the last four.
 QUEUED, RUNNING = "queued", "running"

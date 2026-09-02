@@ -15,9 +15,9 @@ is a gap in the report, never a traceback, because the most common time to want 
 is while the pipeline that builds it is still being debugged.
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field, replace
 from pathlib import Path
-from typing import Callable
 
 from ..io import readers
 from ..io.readers import Region, Sections, Table, VcfHeader

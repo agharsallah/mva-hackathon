@@ -19,7 +19,6 @@ import gzip
 import shutil
 import subprocess
 from dataclasses import dataclass, field
-from pathlib import Path
 
 from . import engines, schema
 from .convert import as_source, peek

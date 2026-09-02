@@ -46,7 +46,18 @@ from .views import SECTIONS, build_sections
 install_template()
 
 __all__ = [
-    "CallsetProfile", "ProfileLayout", "Check", "Verdict", "run_checks",
-    "Exhibit", "Section", "SECTIONS", "build_sections",
-    "build_report", "write_report", "render", "export_exhibits", "install_template",
+    "SECTIONS",
+    "CallsetProfile",
+    "Check",
+    "Exhibit",
+    "ProfileLayout",
+    "Section",
+    "Verdict",
+    "build_report",
+    "build_sections",
+    "export_exhibits",
+    "install_template",
+    "render",
+    "run_checks",
+    "write_report",
 ]

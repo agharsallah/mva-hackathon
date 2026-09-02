@@ -16,7 +16,6 @@ import pytest
 from mva.science import cli
 from mva.science.hypothesis import Hypothesis, Status
 from mva.warehouse.settings import Postgres
-
 from test_science_register import FakeConnection
 
 CLAIM = Hypothesis(

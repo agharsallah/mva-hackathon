@@ -15,7 +15,7 @@ lets one shell serve every report in the repository.
 """
 
 import html
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from .figure import Exhibit, Section
@@ -81,7 +81,7 @@ DEFAULT_BLURB = (
 def render(sections: list[Section], title: str, subject: str,
            blurb: str = DEFAULT_BLURB) -> str:
     """Render arbitrary sections into the report shell."""
-    generated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    generated = datetime.now(UTC).strftime("%Y-%m-%d %H:%M UTC")
     runtime = _RuntimeFlag()
     body = "\n".join(_section_html(section, runtime) for section in sections)
     total = sum(len(section.exhibits) for section in sections)

@@ -8,7 +8,6 @@ against it: engines, conversion, the describing tables, verification, and the sc
 import gzip
 import random
 import shutil
-import subprocess
 
 import pytest
 

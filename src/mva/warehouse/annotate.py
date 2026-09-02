@@ -23,7 +23,7 @@ Three decisions are worth knowing before reading the SQL.
 """
 
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from ..pipeline.annotate_vep import DEFAULT_BASE_URL, VepRestAnnotator, batches
 from ..pipeline.variant import Variant, to_vcf_contig
@@ -203,7 +203,7 @@ def run(settings: Postgres, *, batch_size: int = 200,
 
         source = (f"ensembl-vep-rest release={version.get('release', '?')} "
                   f"assembly={version.get('assembly', '?')}")
-        annotated_at = datetime.now(timezone.utc).replace(tzinfo=None)
+        annotated_at = datetime.now(UTC).replace(tzinfo=None)
         rows = write(connection, settings.schema, records, source, annotated_at)
 
         lineage.ensure_tables(connection, settings.schema)

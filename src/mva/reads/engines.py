@@ -28,7 +28,6 @@ import shutil
 import subprocess
 import tempfile
 from dataclasses import dataclass, field
-from pathlib import Path
 
 #: Decompressors in preference order; each is invoked as ``<name> -dc <file>``.
 DECOMPRESSORS = ("igzip", "pigz", "gzip")

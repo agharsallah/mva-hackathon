@@ -13,10 +13,10 @@ instead of spread across twelve bars.
 
 import plotly.graph_objects as go
 
+from ...io.readers import as_float, as_int
 from ..checks import ts_tv
 from ..figure import Exhibit, sized
 from ..profile import CallsetProfile
-from ...io.readers import as_float, as_int
 from ..theme import BAD, GOOD, MACHINE, MUTED, RAW, SUBTLE_INK, legend_line
 
 #: Pyrimidine-centric collapse: each substitution and its reverse complement are one event.

@@ -25,7 +25,6 @@ from __future__ import annotations
 import argparse
 import csv
 import gzip
-import os
 import shutil
 import subprocess
 import sys

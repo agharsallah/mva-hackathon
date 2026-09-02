@@ -130,7 +130,7 @@ def cycle_quality(sample_rows: int = SAMPLE_ROWS) -> list[dict]:
     split: it indexes the string directly, so there is no dependency on how a particular
     DuckDB version splits on an empty delimiter.
     """
-    return _per_partition(f"""
+    return _per_partition("""
         SELECT cycle, round(avg(q), 2) AS mean_q FROM (
             SELECT unnest(range(1, length(quality) + 1)) AS cycle,
                    unnest(list_transform(range(1, length(quality) + 1),
@@ -147,7 +147,7 @@ def quality_levels(sample_rows: int = SAMPLE_ROWS) -> list[dict]:
     quantises quality into four bins (about 2, 11, 25 and 37). Plotting it as a histogram
     of four bars is honest; plotting it as a continuous distribution is not.
     """
-    return _per_partition(f"""
+    return _per_partition("""
         SELECT q AS phred, count(*) AS count FROM (
             SELECT unnest(list_transform(range(1, length(quality) + 1),
                                          i -> ascii(quality[i]) - 33)) AS q

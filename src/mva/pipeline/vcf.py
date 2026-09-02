@@ -15,9 +15,9 @@ Two decisions are load-bearing:
 """
 
 import gzip
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator
 
 from .variant import Variant
 
@@ -78,7 +78,7 @@ def _open(path: str | Path):
     path = Path(path)
     if path.suffix == ".gz":
         return gzip.open(path, "rt")
-    return open(path, "rt")
+    return open(path)
 
 
 def _iter_records(path: str | Path) -> Iterator[list[str]]:

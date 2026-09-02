@@ -12,10 +12,16 @@ from pathlib import Path
 import duckdb
 import pytest
 
-from mva.warehouse.integrity import (NULL_SENTINEL, compare, fingerprint, render,
-                                     retyped)
-from mva.warehouse.vcfstage import (EXPECTED_FIELDS, FILE_COLUMNS, RAW_COLUMNS, iter_raw, read_shape,
-                                    source_digest, stage_raw, verify_roundtrip)
+from mva.warehouse.integrity import compare, fingerprint, render, retyped
+from mva.warehouse.vcfstage import (
+    FILE_COLUMNS,
+    RAW_COLUMNS,
+    iter_raw,
+    read_shape,
+    source_digest,
+    stage_raw,
+    verify_roundtrip,
+)
 
 HEADER = "\n".join([
     "##fileformat=VCFv4.2",

@@ -119,8 +119,8 @@ def test_a_generated_caption_agrees_with_its_own_count():
 def test_the_locus_page_does_not_claim_to_be_built_from_summaries():
     # The profile report reads aggregates; the locus report reads patient records. Saying
     # the wrong one on the page that carries real coordinates is the dangerous direction.
-    from mva.explore.report import LOCUS_BLURB, render
     from mva.explore.figure import Section
+    from mva.explore.report import LOCUS_BLURB, render
 
     section = Section("locus", "Locus", "…", locus.exhibits(read_calls(MINI_VCF), "fixture"))
     page = render([section], title="t", subject="s", blurb=LOCUS_BLURB)

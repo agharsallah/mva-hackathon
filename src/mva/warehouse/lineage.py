@@ -18,7 +18,7 @@ not evidence.
 
 import re
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 #: Current state of the bucket: one row per object, replaced wholesale on each check.
 OBJECTS_TABLE = "source_objects"
@@ -170,7 +170,7 @@ def survey(store, published: dict[str, str], ledger: dict[str, str]) -> list[dic
                 "etag": entry["ETag"].strip('"'),
                 "version_id": head.get("VersionId", ""),
                 "last_modified": entry["LastModified"].astimezone(
-                    timezone.utc).replace(tzinfo=None),
+                    UTC).replace(tzinfo=None),
                 "content_type": head.get("ContentType", ""),
                 "sha256": stored or reference,
                 "sha256_source": ("publisher" if name in published
@@ -184,9 +184,10 @@ def survey(store, published: dict[str, str], ledger: dict[str, str]) -> list[dic
 
 
 def _kind(name: str) -> str:
-    from .source import SourceFile
     from pathlib import Path
-    return SourceFile(Path(name), 0, datetime.now(timezone.utc)).kind
+
+    from .source import SourceFile
+    return SourceFile(Path(name), 0, datetime.now(UTC)).kind
 
 
 def replace_objects(connection, schema: str, bucket: str, rows: list[dict]) -> None:
@@ -200,7 +201,7 @@ def replace_objects(connection, schema: str, bucket: str, rows: list[dict]) -> N
 
     safe = safe_identifier(schema)
     connection.execute(f"DELETE FROM {ALIAS}.{safe}.{OBJECTS_TABLE}")
-    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    now = datetime.now(UTC).replace(tzinfo=None)
     for row in rows:
         connection.execute(
             f"INSERT INTO {ALIAS}.{safe}.{OBJECTS_TABLE} VALUES "

@@ -10,8 +10,8 @@ can be trusted, what was sequenced, what was called, how the genome looks chromo
 chromosome, and finally the candidate genes the search starts from.
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
 
 from ..figure import Exhibit, Section
 from ..profile import CallsetProfile

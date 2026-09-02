@@ -9,9 +9,9 @@ from contextlib import contextmanager
 
 import pytest
 
-from mva.viz import genotype, overview as overview_module, panelbed
+from mva.viz import genotype, panelbed
+from mva.viz import overview as overview_module
 from mva.viz.cache import Cache, InvalidKey, safe_key
-
 
 # ── the disk cache ───────────────────────────────────────────────────────────────────
 

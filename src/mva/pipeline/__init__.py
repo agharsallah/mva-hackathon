@@ -29,23 +29,43 @@ The quick path::
     pairs = candidate_pairs(calls)
 """
 
-from .annotation import (LOSS_OF_FUNCTION, MISSENSE, UNKNOWN, Annotation,
-                         Annotator, DictAnnotator)
+from .annotation import LOSS_OF_FUNCTION, MISSENSE, UNKNOWN, Annotation, Annotator, DictAnnotator
 from .compound_het import Phase, VariantPair, candidate_pairs, classify_phase
 from .ranking import RARE_AF, PairEvidence, RankedPair, rank_pairs
 from .scorer import RankedRow, ScoreResult, rank_rows, score
-from .submission import (FINDING_TYPES, HEADER, MAX_ROWS, PROBAND_ID, Row,
-                         validate, write_submission)
+from .submission import FINDING_TYPES, HEADER, MAX_ROWS, PROBAND_ID, Row, validate, write_submission
 from .variant import Variant, to_submission_contig
 from .vcf import Call, iter_calls, read_calls
 
 __all__ = [
-    "Annotation", "Annotator", "DictAnnotator", "LOSS_OF_FUNCTION", "MISSENSE", "UNKNOWN",
-    "Phase", "VariantPair", "candidate_pairs", "classify_phase",
-    "RARE_AF", "PairEvidence", "RankedPair", "rank_pairs",
-    "RankedRow", "ScoreResult", "rank_rows", "score",
-    "FINDING_TYPES", "HEADER", "MAX_ROWS", "PROBAND_ID", "Row", "validate",
-    "write_submission",
-    "Variant", "to_submission_contig",
-    "Call", "iter_calls", "read_calls",
+                         "FINDING_TYPES",
+                         "HEADER",
+                         "LOSS_OF_FUNCTION",
+                         "MAX_ROWS",
+                         "MISSENSE",
+                         "PROBAND_ID",
+                         "RARE_AF",
+                         "UNKNOWN",
+                         "Annotation",
+                         "Annotator",
+                         "Call",
+                         "DictAnnotator",
+                         "PairEvidence",
+                         "Phase",
+                         "RankedPair",
+                         "RankedRow",
+                         "Row",
+                         "ScoreResult",
+                         "Variant",
+                         "VariantPair",
+                         "candidate_pairs",
+                         "classify_phase",
+                         "iter_calls",
+                         "rank_pairs",
+                         "rank_rows",
+                         "read_calls",
+                         "score",
+                         "to_submission_contig",
+                         "validate",
+                         "write_submission",
 ]

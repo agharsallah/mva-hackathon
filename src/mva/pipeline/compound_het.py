@@ -17,10 +17,10 @@ from the 266 bp insert size), so UNKNOWN is the common verdict across a whole ge
 must never be treated as a rejection.
 """
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import Enum
 from itertools import combinations
-from typing import Iterable
 
 from .vcf import Call
 

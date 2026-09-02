@@ -86,7 +86,7 @@ def _reads() -> dict:
 
     try:
         return totals()
-    except Exception:  # noqa: BLE001 - any store failure is the same answer here
+    except Exception:
         return {"total_reads": None, "read_length": None}
 
 

@@ -31,7 +31,8 @@ patient genomic coordinate is emitted, which is why this cache entry, unlike the
 one, holds nothing that could not be published.
 """
 
-from typing import Any, Iterable
+from collections.abc import Iterable
+from typing import Any
 
 import httpx
 

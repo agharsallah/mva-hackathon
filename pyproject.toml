@@ -31,7 +31,11 @@ bench = [
 ]
 dev = [
     "httpx>=0.27",
+    "import-linter>=2.14",
+    "mypy>=2.3.1",
     "pytest>=8",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.16.5",
 ]
 
 [build-system]
@@ -44,3 +48,98 @@ packages = ["src/mva"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+
+# ---------------------------------------------------------------------------------------
+# Ruff — linter and formatter. See docs/notes/python-quality-gates.md for why each block
+# is set the way it is; the short version is in the comments here.
+# ---------------------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "tools"]
+# archive/ is provenance and never edited; build/ and figures/ are generated.
+extend-exclude = ["archive", "build", "figures", "ressources"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",      # pycodestyle: whitespace, line length
+    "F",           # pyflakes: undefined names, unused imports, f-string mistakes
+    "I",           # isort: one import order, enforced
+    "N",           # pep8-naming
+    "UP",          # pyupgrade: no syntax older than the floor in requires-python
+    "B",           # bugbear: mutable defaults, loop-variable capture, zip without strict
+    "A",           # builtin shadowing
+    "C4",          # comprehension rewrites
+    "SIM",         # simplifiable constructs
+    "RET",         # return-path hygiene
+    "PERF",        # obvious algorithmic waste
+    "PTH",         # pathlib over os.path
+    "RUF",         # ruff's own rules
+    "DTZ",         # naive datetimes — every timestamp this repo writes must be tz-aware
+    "ISC",         # implicit string concatenation (a missing comma in a list, mainly)
+    "LOG", "G",    # logging call hygiene
+    "PIE",         # small correctness/readability wins
+    "SLF",         # private-member access across object boundaries
+    "T10",         # no leftover debugger breakpoints
+    "ASYNC",       # blocking calls inside async def
+    "FA",          # future annotations where the syntax needs them
+    "EXE",         # shebang/executable-bit agreement
+    "YTT",         # sys.version_info misuse
+    "PLE",         # pylint errors
+    "PLW",         # pylint warnings
+    "PLC",         # pylint conventions
+    "PLR0912",     # too many branches
+    "PLR0915",     # too many statements
+    "PLR1714",     # repeated equality comparison
+    "TRY",         # exception-handling anti-patterns
+]
+ignore = [
+    # Every rule below is off for a stated reason, not because it was noisy.
+    "TID252",   # relative imports: intra-package imports here are relative on purpose,
+                # so a package can be moved without rewriting its own internals.
+    "ARG",      # unused arguments: CLI handlers (`do_x(args)`) and job runners
+                # (`run(job)`) conform to a signature their dispatcher calls. The unused
+                # parameter *is* the interface; renaming it to `_args` hides that.
+    "C408",     # dict(...) calls: plotly's own API and docs are written in the
+                # dict(color=..., line=dict(...)) style, and quoted keys read worse in
+                # the figure code where nearly all of these live.
+    "TRY003",   # long messages outside an exception class: the message at the raise site
+                # is usually the only place the caller's context is known.
+    "PLC0415",  # imports inside functions: deliberate here, and load-bearing — heavy or
+                # optional dependencies (uvicorn, httpx, duckdb, plotly) stay out of
+                # import time, and `mva.science` reaches `mva.warehouse` lazily so the
+                # register works with no database driver installed.
+    "RUF001", "RUF002", "RUF003",  # "ambiguous" unicode: the docs and docstrings use
+                # real en dashes and arrows deliberately.
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests assert, use magic numbers as fixtures, and reach into internals on purpose.
+"tests/**" = ["SLF001", "PLR2004"]
+# One-shot data-prep scripts print to stdout; that is their interface.
+"tools/**" = ["T201"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["mva"]
+
+[tool.ruff.format]
+# Adopted deliberately in one pass rather than left to per-author wrapping; the
+# reformat commit is the only place style appears in git blame.
+quote-style = "double"
+docstring-code-format = true
+
+# ---------------------------------------------------------------------------------------
+# mypy — type checking. Strict where the code is already annotated, permissive elsewhere,
+# and the permissive list is a ratchet: entries come off it, never onto it.
+# ---------------------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.11"
+files = ["src/mva", "tools"]
+namespace_packages = true
+explicit_package_bases = true
+mypy_path = "src"
+strict = true
+# Third-party genomics/plotting libraries ship no stubs; that is theirs to fix, not ours.
+ignore_missing_imports = true
+warn_unused_configs = true
+pretty = true

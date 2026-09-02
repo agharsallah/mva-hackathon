@@ -11,8 +11,7 @@ import duckdb
 import pytest
 
 from mva.warehouse.analysis import DERIVATIONS, by_name
-from mva.warehouse.analysis_karyogram import (BIN_BP, KARYOGRAM_DERIVATIONS,
-                                              LOW_CONFIDENCE_N_HET)
+from mva.warehouse.analysis_karyogram import BIN_BP, KARYOGRAM_DERIVATIONS, LOW_CONFIDENCE_N_HET
 from mva.warehouse.derivation import resolve
 
 

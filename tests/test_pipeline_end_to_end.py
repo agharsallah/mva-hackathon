@@ -7,9 +7,18 @@ have found the real variant.
 import io
 from pathlib import Path
 
-from mva.pipeline import (Annotation, DictAnnotator, Phase, Row, Variant,
-                          candidate_pairs, rank_pairs, read_calls, score,
-                          write_submission)
+from mva.pipeline import (
+    Annotation,
+    DictAnnotator,
+    Phase,
+    Row,
+    Variant,
+    candidate_pairs,
+    rank_pairs,
+    read_calls,
+    score,
+    write_submission,
+)
 
 FIXTURE = Path(__file__).parent / "fixtures" / "mini.vcf"
 

@@ -23,9 +23,8 @@ Three rules the implementation follows.
 """
 
 import hashlib
-import os
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 #: Where the delivered files land inside the bucket.
@@ -79,7 +78,7 @@ def scan(directory: Path) -> list[SourceFile]:
         stat = path.stat()
         found.append(SourceFile(
             path=path, size=stat.st_size,
-            modified=datetime.fromtimestamp(stat.st_mtime, tz=timezone.utc)))
+            modified=datetime.fromtimestamp(stat.st_mtime, tz=UTC)))
     return found
 
 

@@ -8,9 +8,9 @@ return — the measuring code underneath (:mod:`..scan`, :mod:`..verify`,
 """
 
 import time
+from collections.abc import Callable
 from dataclasses import asdict
 from pathlib import Path
-from typing import Callable
 
 from ...warehouse.settings import object_store, setting
 from .. import access, bench, scan, store, triage, verify

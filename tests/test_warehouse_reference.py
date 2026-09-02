@@ -17,8 +17,12 @@ import pytest
 
 from mva.warehouse import reference
 from mva.warehouse.analysis import DERIVATIONS, by_name
-from mva.warehouse.analysis_reference import (BENIGN_PREDICATE, PLP_PREDICATE,
-                                              REFERENCE_DERIVATIONS, VUS_PREDICATE)
+from mva.warehouse.analysis_reference import (
+    BENIGN_PREDICATE,
+    PLP_PREDICATE,
+    REFERENCE_DERIVATIONS,
+    VUS_PREDICATE,
+)
 from mva.warehouse.derivation import resolve
 from mva.warehouse.stage import stage
 

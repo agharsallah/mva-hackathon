@@ -148,7 +148,7 @@ def diagnose(store: ObjectStore, error: Exception) -> str:
     else:
         lines += [
             "Check, on the server:",
-            f"  <podman|docker> ps --filter name=minio        # is it running?",
+            "  <podman|docker> ps --filter name=minio        # is it running?",
             f"  <podman|docker> port <container>              # is {port or 9012} published?",
             f"  curl -sf http://localhost:{port or 9012}/minio/health/live && echo OK",
             "",

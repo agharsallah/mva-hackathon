@@ -16,11 +16,11 @@ reachable the supported way — over the S3 API, which is what ``s3://`` sources
 """
 
 import io
-import os
 import re
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import IO, Callable
+from typing import IO
 
 from . import schema
 

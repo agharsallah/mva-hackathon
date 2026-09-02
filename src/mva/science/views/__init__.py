@@ -15,8 +15,8 @@ the statement — "no hypothesis has been recorded" is a true and important thin
 page to say, and a blank page that silently omits it reads like a bug.
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Callable
 
 from ...render.figure import Exhibit, Section
 from ..record import Record

@@ -62,7 +62,7 @@ class Upstream:
             async with httpx.AsyncClient(timeout=timeout) as client:
                 response = await client.request(method, url, params=_clean(params),
                                                 json=json, headers=headers())
-        except Exception as failure:  # noqa: BLE001 - transport failures are one answer
+        except Exception as failure:
             raise Unreachable(base_url()) from failure
         return Reply(response.status_code, _decode(response))
 

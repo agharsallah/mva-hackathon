@@ -13,8 +13,7 @@ import duckdb
 import pytest
 
 from mva.warehouse.analysis import DERIVATIONS, by_name
-from mva.warehouse.analysis_clinvar import (CLINVAR_DERIVATIONS, COMPARABLE,
-                                            REVIEW_STARS)
+from mva.warehouse.analysis_clinvar import CLINVAR_DERIVATIONS, COMPARABLE, REVIEW_STARS
 from mva.warehouse.analysis_reference import PLP_PREDICATE
 from mva.warehouse.derivation import resolve
 

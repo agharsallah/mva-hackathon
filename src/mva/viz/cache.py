@@ -20,10 +20,11 @@ the locus cache holds **real patient positions**, which must never enter the rep
 import json
 import os
 import tempfile
+from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 #: Characters allowed in a cache key. Keys are built from query parameters, so they are
 #: caller-influenced; rejecting anything else keeps a key from escaping the directory.
@@ -49,7 +50,7 @@ def safe_key(*parts: object) -> str:
 
 def now() -> str:
     """The current instant, as the ISO-8601 string that goes into ``cached_at``."""
-    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+    return datetime.now(UTC).isoformat(timespec="seconds")
 
 
 @dataclass(frozen=True)

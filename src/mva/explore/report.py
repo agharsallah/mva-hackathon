@@ -17,8 +17,16 @@ from .profile import CallsetProfile
 from .views import build_sections
 
 __all__ = [
-    "build_report", "write_report", "render", "export_exhibits",
-    "PROFILE_BLURB", "LOCUS_BLURB", "STYLE", "SCRIPT", "Exhibit", "Section",
+    "LOCUS_BLURB",
+    "PROFILE_BLURB",
+    "SCRIPT",
+    "STYLE",
+    "Exhibit",
+    "Section",
+    "build_report",
+    "export_exhibits",
+    "render",
+    "write_report",
 ]
 
 #: What the profile-driven report is built from. The locus report is built from records

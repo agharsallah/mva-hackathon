@@ -386,7 +386,7 @@ def locus(settings: Postgres, gene: str) -> list[dict]:
     because the column is text, where ``'999' > '1000'``.
     """
     chrom, start, end = gene_region(settings, gene)
-    found = fetch(settings, f"""
+    found = fetch(settings, """
         SELECT pos, ref, alt, qual, filter, format, sample_call
         FROM pg.warehouse.variants_raw
         WHERE chrom = ? AND CAST(pos AS BIGINT) BETWEEN ? AND ?

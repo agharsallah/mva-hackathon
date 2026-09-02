@@ -139,7 +139,7 @@ def weigh(rows: list[Evidence], hypothesis_id: str = "",
     """
     log_odds = _logit(prior)
     terms: list[tuple[str, float]] = []
-    tally = {direction: 0 for direction in Direction}
+    tally = dict.fromkeys(Direction, 0)
 
     for row in rows:
         tally[row.direction] += 1

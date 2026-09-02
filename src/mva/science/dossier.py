@@ -125,7 +125,7 @@ def assemble_all(connection, schema: str, step: str | None = None) -> list[Dossi
 
 def tally(dossiers: list[Dossier]) -> dict[Status, int]:
     """How many claims sit at each status — the step cards' headline number."""
-    counts = {status: 0 for status in Status}
+    counts = dict.fromkeys(Status, 0)
     for dossier in dossiers:
         counts[dossier.hypothesis.status] += 1
     return counts

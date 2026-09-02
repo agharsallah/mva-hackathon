@@ -23,9 +23,16 @@ from fastapi.security import APIKeyHeader
 
 from ...warehouse.settings import setting
 from . import runners
-from .jobs import Manager, TERMINAL
-from .models import (BenchRequest, ConvertRequest, JobOut, ProbeRequest,
-                     ScanRequest, SqlRequest, VerifyRequest)
+from .jobs import TERMINAL, Manager
+from .models import (
+    BenchRequest,
+    ConvertRequest,
+    JobOut,
+    ProbeRequest,
+    ScanRequest,
+    SqlRequest,
+    VerifyRequest,
+)
 
 _HEADER = APIKeyHeader(name="X-API-Key", auto_error=False,
                        description="the value of MVA_API_TOKEN on the server")

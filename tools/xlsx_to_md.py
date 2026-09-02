@@ -9,7 +9,6 @@ import re
 import sys
 import zipfile
 
-
 # `<t ...>` only — the space/`>` guard stops this matching `<text>`, which wraps
 # comment bodies and would otherwise swallow the run-property markup with it.
 _T = re.compile(r"<t(?:\s[^>]*)?>(.*?)</t>", re.S)

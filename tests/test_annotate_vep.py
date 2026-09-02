@@ -10,8 +10,13 @@ are public reference sites, not the proband's.
 import httpx
 import pytest
 
-from mva.pipeline.annotate_vep import (DEFAULT_BASE_URL, MAX_BATCH, VepError,
-                                       VepRestAnnotator, batches)
+from mva.pipeline.annotate_vep import (
+    DEFAULT_BASE_URL,
+    MAX_BATCH,
+    VepError,
+    VepRestAnnotator,
+    batches,
+)
 from mva.pipeline.annotation import UNKNOWN
 from mva.pipeline.variant import Variant
 from mva.pipeline.vep_response import VepRecord, parse, query_line, vep_allele
