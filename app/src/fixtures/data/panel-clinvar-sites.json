@@ -2,7 +2,7 @@
   {
     "gene": "BUB1B",
     "chrom": "15",
-    "pos": 40200001,
+    "pos": 1010000,
     "ref": "T",
     "alt": "G",
     "rsid": "rs000000001",
@@ -25,7 +25,7 @@
   {
     "gene": "BUB1B",
     "chrom": "15",
-    "pos": 40210002,
+    "pos": 1020000,
     "ref": "C",
     "alt": "CT",
     "rsid": null,
@@ -48,7 +48,7 @@
   {
     "gene": "BUB1B",
     "chrom": "15",
-    "pos": 40220003,
+    "pos": 1030000,
     "ref": "A",
     "alt": ".",
     "rsid": null,
@@ -71,7 +71,7 @@
   {
     "gene": "CEP57",
     "chrom": "11",
-    "pos": 95800004,
+    "pos": 2010000,
     "ref": "G",
     "alt": "A",
     "rsid": "rs000000004",

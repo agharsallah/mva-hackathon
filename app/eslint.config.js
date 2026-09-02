@@ -322,6 +322,11 @@ export default [
     },
   },
   {
+    // app-local gate scripts run in node, not the browser: `process`, `console`, `URL`.
+    files: ['tools/**/*.mjs'],
+    languageOptions: { globals: globals.node },
+  },
+  {
     files: ['vite.config.ts', 'vitest.config.ts'],
     languageOptions: {
       globals: globals.node,

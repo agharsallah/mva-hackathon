@@ -7,7 +7,9 @@ import { rows } from '../loader';
  * The **per-gene P/LP counts are measured** — `data/panel-clinvar.json`'s `plpPerGene`
  * comes from the committed ClinVar extract and reproduces the per-gene table in
  * `ressources/reference/README.md`. Everything about the *callset side* is SHAPED, not
- * measured: `shaped` and `data/panel-clinvar-sites.json`'s positions are invented, and the
+ * measured: `shaped` is invented, and `data/panel-clinvar-sites.json`'s positions sit on the
+ * documented synthetic ladder (exact multiples of 1,000, anchored per gene the way
+ * `search-lookups.json` anchors them), which is what the patient-data guard checks. The
  * hit counts are chosen so the exhibit has one of each state to render — present + PASS +
  * het, present but suppressed, absent, and a row ClinVar gives no alternate allele for.
  *
