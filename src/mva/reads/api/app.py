@@ -23,7 +23,7 @@ from fastapi.security import APIKeyHeader
 
 from ...warehouse.settings import setting
 from . import runners
-from .jobs import TERMINAL, Manager
+from .jobs import TERMINAL, Job, Manager
 from .models import (
     BenchRequest,
     ConvertRequest,
@@ -85,12 +85,6 @@ def create_app(manager: Manager | None = None, token: str | None = None) -> Fast
     def submitted(verb: str, params: dict, runner) -> JobOut:
         return JobOut(**manager.submit(verb, params, runner).snapshot())
 
-    def known(job_id: str):
-        job = manager.get(job_id)
-        if job is None:
-            raise HTTPException(status_code=404, detail=f"no job {job_id}")
-        return job
-
     @app.get("/health", tags=["service"])
     def health() -> dict:
         """Liveness only — it does not touch the store."""
@@ -151,6 +145,26 @@ def create_app(manager: Manager | None = None, token: str | None = None) -> Fast
             )
         return submitted("convert", request.model_dump(), runners.convert_runner(request))
 
+    _job_routes(api, manager)
+
+    app.include_router(api)
+    return app
+
+
+def _job_routes(api: APIRouter, manager: Manager) -> None:
+    """The job lifecycle: list, poll, long-poll, cancel, forget.
+
+    Its own function because it is a different concern from the verbs above — those
+    submit work, these observe and control work already submitted — and because
+    create_app was 55 statements, which is more than one function should hold.
+    """
+
+    def known(job_id: str) -> Job:
+        job = manager.get(job_id)
+        if job is None:
+            raise HTTPException(status_code=404, detail=f"no job {job_id}")
+        return job
+
     @api.get("/jobs", response_model=list[JobOut], tags=["jobs"])
     def jobs(state: str | None = None, verb: str | None = None) -> list[JobOut]:
         """Every known job, newest first — including history from before a restart."""
@@ -191,6 +205,3 @@ def create_app(manager: Manager | None = None, token: str | None = None) -> Fast
                 status_code=409, detail="cancel it first — the job is still running"
             )
         manager.forget(job_id)
-
-    app.include_router(api)
-    return app
