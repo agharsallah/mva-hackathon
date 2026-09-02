@@ -87,6 +87,27 @@ function isUnreachable(err: unknown): boolean {
   return err instanceof TypeError;
 }
 
+/**
+ * True when this build of the app knows a path this server does not.
+ *
+ * A long-running API process predates the app that talks to it: a newly added endpoint
+ * gets a 404 from the old process, and treating that as "the API answered no" left every
+ * new page showing "Request failed / Not Found" until someone restarted the server. That
+ * happened to /api/health/dependencies against an API started the day before.
+ *
+ * The distinction is narrow on purpose. FastAPI answers an unrouted path with exactly
+ * `{"detail": "Not Found"}`; an endpoint that looked and found nothing answers with its
+ * own sentence ("no such gene", "shard 9 out of range"). Only the framework's default
+ * text — and only when a fixture exists for the path — counts as "route missing". A real
+ * 404 from a real endpoint still reaches the user, which is what /api/search and
+ * /api/callset/region rely on.
+ */
+function isRouteMissing(err: unknown): boolean {
+  if (!(err instanceof ApiError)) return false;
+  if (err.status === 501) return true;
+  return err.status === 404 && err.message.trim() === 'Not Found';
+}
+
 async function raw<T>(path: string, params?: Params, signal?: AbortSignal): Promise<Result<T>> {
   const res = await fetch(buildUrl(path, params), {
     signal,
@@ -114,11 +135,11 @@ export async function get<T>(
   try {
     return await raw<T>(path, params, signal);
   } catch (err) {
-    // Only "no server there" falls back. A 404 (unknown gene, unknown shard) or a 422
-    // (bad lane) is the live API answering correctly and must reach the user as an error,
-    // not be papered over with fixture rows.
-    const notImplemented = err instanceof ApiError && err.status === 501;
-    if (!FIXTURES_ENABLED || !(isUnreachable(err) || notImplemented)) throw err;
+    // Only "no server there" or "this server has no such route" falls back. A 404 the
+    // endpoint itself raised (unknown gene, unknown shard) or a 422 (bad lane) is the live
+    // API answering correctly and must reach the user as an error, not be papered over
+    // with fixture rows.
+    if (!FIXTURES_ENABLED || !(isUnreachable(err) || isRouteMissing(err))) throw err;
     const fixture = await fixtureFor(path, params);
     if (!fixture) throw err;
     markFixtureMode();

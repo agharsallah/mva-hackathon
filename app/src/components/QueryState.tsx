@@ -20,15 +20,36 @@ export function Skeleton({ height = 360 }: { height?: number }) {
   );
 }
 
+/**
+ * Three failures, three different fixes — so the card names which one happened.
+ *
+ * "Start the viz API" is actively misleading when the API is running: an endpoint added
+ * after that process started answers 404, and the fix is to restart it, not to start it.
+ * `get()` normally serves the fixture in that case; this branch is what a reader sees when
+ * fixtures are switched off.
+ */
 export function ErrorCard({ error }: { error: Error }) {
-  const upstream = error instanceof ApiError && error.isUpstreamDown;
+  const api = error instanceof ApiError ? error : null;
+  const upstream = api?.isUpstreamDown ?? false;
+  const routeMissing = api !== null && (api.status === 501 || error.message.trim() === 'Not Found');
+
+  const title = upstream
+    ? 'Upstream reads API unreachable'
+    : routeMissing
+      ? 'This endpoint is missing from the running API'
+      : 'Request failed';
+
   return (
     <div className="rounded-lg border border-red-900/60 bg-red-950/25 p-4 text-sm">
-      <div className="font-semibold text-red-300">
-        {upstream ? 'Upstream reads API unreachable' : 'Request failed'}
-      </div>
+      <div className="font-semibold text-red-300">{title}</div>
       <p className="mt-1 font-mono text-xs text-red-400/80">{error.message}</p>
-      {!upstream && (
+      {routeMissing && (
+        <p className="mt-2 text-xs text-zinc-400">
+          The API process is older than this app. Restart it:{' '}
+          <code className="text-zinc-300">uv run mva-viz-api</code>
+        </p>
+      )}
+      {!upstream && !routeMissing && (
         <p className="mt-2 text-xs text-zinc-400">
           Start the viz API, or leave <code className="text-zinc-300">VITE_USE_FIXTURES</code> unset
           to browse committed fixtures.
