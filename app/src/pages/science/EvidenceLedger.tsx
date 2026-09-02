@@ -8,7 +8,8 @@ import { Chip, Exhibit } from '../../components/Exhibit';
 import { Loaded } from '../../components/QueryState';
 import { dec, iso } from '../../lib/format';
 import { C } from '../../lib/palette';
-import { directionColor, EmptyRegister } from './register';
+import { directionColor } from './hypothesis';
+import { EmptyRegister } from './register';
 
 /**
  * The evidence ledger: one row per sourced observation, tagged with the claim it moves.

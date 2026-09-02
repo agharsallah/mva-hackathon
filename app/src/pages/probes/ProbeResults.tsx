@@ -1,7 +1,8 @@
 import type { ProbeCount, ProbeCountResult } from '../../api/types';
 import { type Column, DataTable } from '../../components/DataTable';
 import { Chip, Exhibit } from '../../components/Exhibit';
-import { baseLayout, Plot } from '../../components/Plot';
+import { Plot } from '../../components/Plot';
+import { baseLayout } from '../../components/plotLayout';
 import { dec, int } from '../../lib/format';
 import { C, verdictColor } from '../../lib/palette';
 

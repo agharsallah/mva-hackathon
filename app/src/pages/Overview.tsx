@@ -1,7 +1,8 @@
 import { useObservedExpected, useOverview } from '../api/hooks';
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
-import { NormChip, pickNorm } from '../components/NormChip';
+import { NormChip } from '../components/NormChip';
+import { pickNorm } from '../components/pickNorm';
 import { ErrorCard, Skeleton } from '../components/QueryState';
 import { StatTile } from '../components/StatTile';
 import { compact, dec, int, pct } from '../lib/format';

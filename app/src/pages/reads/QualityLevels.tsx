@@ -1,14 +1,15 @@
 import { useQualityLevels } from '../../api/hooks';
 import { Chip, Exhibit } from '../../components/Exhibit';
-import { baseLayout, Plot } from '../../components/Plot';
+import { Plot } from '../../components/Plot';
+import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { dec } from '../../lib/format';
-import { C } from '../../lib/palette';
+import { C, SEVERITY_ORANGE } from '../../lib/palette';
 
 /** Q-score bin → colour: the repo's red-to-green quality ramp. */
 const LEVEL_COLOR: Record<number, string> = {
   2: C.broken,
-  11: '#f97316',
+  11: SEVERITY_ORANGE,
   25: C.decision,
   37: C.good,
 };

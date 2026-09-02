@@ -1,7 +1,8 @@
 import { useReadPartitions } from '../../api/hooks';
 import { Select } from '../../components/Controls';
 import { Chip, Exhibit } from '../../components/Exhibit';
-import { baseLayout, Plot } from '../../components/Plot';
+import { Plot } from '../../components/Plot';
+import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
 import { C } from '../../lib/palette';
@@ -70,7 +71,7 @@ export function StoreShape() {
                       line: { color: C.paper, width: 2 },
                     },
                     textinfo: 'label+value',
-                    textfont: { color: '#f5f5f5', size: 12 },
+                    textfont: { color: C.onFill, size: 12 },
                     customdata: rows.map((r) => [r.shards, r.reads, r.gib]),
                     hovertemplate:
                       '%{label}<br>%{customdata[0]} shards<br>%{customdata[1]:,} reads<br>' +

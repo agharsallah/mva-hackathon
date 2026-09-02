@@ -6,14 +6,8 @@ import { Chip, Exhibit } from '../../components/Exhibit';
 import { Loaded } from '../../components/QueryState';
 import { iso } from '../../lib/format';
 import { C } from '../../lib/palette';
-import {
-  type Claim,
-  claims,
-  Confidence,
-  EmptyRegister,
-  STATUS_ORDER,
-  statusColor,
-} from './register';
+import { type Claim, claims, STATUS_ORDER, statusColor } from './hypothesis';
+import { Confidence, EmptyRegister } from './register';
 
 /**
  * The hypothesis board: one card per registered claim, showing the current belief and

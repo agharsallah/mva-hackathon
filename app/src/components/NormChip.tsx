@@ -12,9 +12,9 @@ import { BADGE, cx } from '../lib/ui';
  * verdict is mirrored onto the tile and the chip links back to the full comparison — the
  * band, the citation, and the dumbbell — rather than restating any of it here.
  *
- * A tile whose metric has no published norm gets **nothing**: `pickNorm` returns
- * `undefined`, `NormChip` renders `null`, and the tile is byte-identical to before. No
- * caller is obliged to pass a chip.
+ * A tile whose metric has no published norm gets **nothing**: `pickNorm` (in `./pickNorm`)
+ * returns `undefined`, `NormChip` renders `null`, and the tile is byte-identical to before.
+ * No caller is obliged to pass a chip.
  */
 
 const TEXT: Record<string, string> = {
@@ -32,26 +32,6 @@ const STYLE: Record<string, string> = {
   below: BADGE.broken,
   unknown: BADGE.neutral,
 };
-
-/**
- * Find the row a tile should be graded against.
- *
- * `ids` is a *preference list*, not a single key: the live warehouse names the Ts/Tv norm
- * `tstv_genome_wide` while the offline fixture names it `tstv`, and a tile should chip in
- * both worlds. The first id present wins, so the live name is always listed first and the
- * fixture alias behind it.
- */
-export function pickNorm(
-  rows: ObservedExpectedRow[] | undefined,
-  ids: readonly string[],
-): ObservedExpectedRow | undefined {
-  if (!rows) return undefined;
-  for (const id of ids) {
-    const hit = rows.find((r) => r.metric === id);
-    if (hit) return hit;
-  }
-  return undefined;
-}
 
 export function NormChip({ row }: { row?: ObservedExpectedRow }) {
   if (!row) return null;

@@ -8,12 +8,14 @@
 
 // Charts and their scaffolding
 export { Chip, Exhibit, type ExhibitProps } from './Exhibit';
-export { baseLayout, type Layout, Plot, type PlotProps, scene3d, type Trace } from './Plot';
+export { type Layout, Plot, type PlotProps, type Trace } from './Plot';
+export { baseLayout, scene3d } from './plotLayout';
 
 // Data display
 export { type Column, DataTable, type SortValue } from './DataTable';
 export { type Field, FieldList, type FieldListProps } from './FieldList';
-export { NormChip, pickNorm } from './NormChip';
+export { NormChip } from './NormChip';
+export { pickNorm } from './pickNorm';
 export { StatTile, type StatTileProps } from './StatTile';
 
 // Layout and structure

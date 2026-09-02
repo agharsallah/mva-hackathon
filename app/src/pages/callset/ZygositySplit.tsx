@@ -1,6 +1,7 @@
 import { useZygositySplit } from '../../api/hooks';
 import { Chip, Exhibit } from '../../components/Exhibit';
-import { baseLayout, Plot } from '../../components/Plot';
+import { Plot } from '../../components/Plot';
+import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { dec, int, pct } from '../../lib/format';
 import { C } from '../../lib/palette';

@@ -1,10 +1,11 @@
 import { useCycleQuality } from '../../api/hooks';
 import { Toggle } from '../../components/Controls';
 import { Exhibit } from '../../components/Exhibit';
-import { baseLayout, Plot, scene3d } from '../../components/Plot';
+import { Plot } from '../../components/Plot';
+import { baseLayout, scene3d } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { dec } from '../../lib/format';
-import { C, QUALITY_SCALE } from '../../lib/palette';
+import { C, QUALITY_SCALE, SERIES } from '../../lib/palette';
 import { useUrlToggle } from '../../lib/urlstate';
 
 /**
@@ -31,8 +32,8 @@ export function CycleQuality() {
       legend={
         <>
           x = sequencing cycle (letter 1 to 149 of the read), y = mean phred quality at that cycle.
-          Solid lines are <span style={{ color: '#60a5fa' }}>R1</span> partitions, dashed lines are{' '}
-          <span style={{ color: '#a78bfa' }}>R2</span>; one line per lane. The dashed{' '}
+          Solid lines are <span style={{ color: SERIES[0] }}>R1</span> partitions, dashed lines are{' '}
+          <span style={{ color: SERIES[4] }}>R2</span>; one line per lane. The dashed{' '}
           <span style={{ color: C.good }}>green</span> line at Q30 is the 1-error-in-1000 level. In
           3D: x = cycle, y = partition, z = mean quality, on a{' '}
           <span style={{ color: C.broken }}>red (low)</span> →{' '}
@@ -126,7 +127,7 @@ export function CycleQuality() {
                   x: s.pts.map((p) => p.cycle),
                   y: s.pts.map((p) => p.mean_q),
                   line: {
-                    color: s.readNum === 1 ? shade('#60a5fa', i) : shade('#a78bfa', i),
+                    color: s.readNum === 1 ? shade(SERIES[0], i) : shade(SERIES[4], i),
                     width: 1.8,
                     dash: s.readNum === 1 ? 'solid' : 'dot',
                   },

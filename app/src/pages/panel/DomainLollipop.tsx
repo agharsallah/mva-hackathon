@@ -1,7 +1,8 @@
 import { useGeneStructure } from '../../api/hooks';
 import type { GeneCandidate, GeneStructure, ProteinDomain } from '../../api/types';
 import { Chip, Exhibit } from '../../components/Exhibit';
-import { baseLayout, Plot, type Trace } from '../../components/Plot';
+import { Plot, type Trace } from '../../components/Plot';
+import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { int } from '../../lib/format';
 import { C, impactColor } from '../../lib/palette';

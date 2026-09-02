@@ -4,7 +4,8 @@ import { useDensityBins } from '../../api/hooks';
 import type { DensityBinRow } from '../../api/types';
 import { Select, Toggle } from '../../components/Controls';
 import { Exhibit } from '../../components/Exhibit';
-import { baseLayout, Plot, scene3d } from '../../components/Plot';
+import { Plot } from '../../components/Plot';
+import { baseLayout, scene3d } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { int } from '../../lib/format';
 import { C, DENSITY_SCALE, QUALITY_SCALE } from '../../lib/palette';
@@ -94,9 +95,9 @@ export function DensityBins() {
           ) : (
             <>
               Colour follows {metric === 'n' ? 'the call count' : 'the PASS share'} on a dark →{' '}
-              <span style={{ color: '#1d4ed8' }}>blue</span> →{' '}
-              <span style={{ color: '#a855f7' }}>purple</span> ramp (purple = highest). Blank cells
-              are past the end of that chromosome.
+              <span style={{ color: C.densityBlue }}>blue</span> →{' '}
+              <span style={{ color: C.raw }}>purple</span> ramp (purple = highest). Blank cells are
+              past the end of that chromosome.
             </>
           )}{' '}
           In 3D the same matrix becomes a surface: x = megabase, y = chromosome, z = the metric.

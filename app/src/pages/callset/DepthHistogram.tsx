@@ -1,6 +1,7 @@
 import { useDepthDistribution } from '../../api/hooks';
 import { Exhibit } from '../../components/Exhibit';
-import { baseLayout, Plot } from '../../components/Plot';
+import { Plot } from '../../components/Plot';
+import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { int } from '../../lib/format';
 import { C } from '../../lib/palette';

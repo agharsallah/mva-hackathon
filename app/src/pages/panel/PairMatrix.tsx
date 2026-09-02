@@ -5,11 +5,12 @@ import type { PanelHetPair, PanelHetPairs, PanelHetVariant } from '../../api/typ
 import { Select, Toggle } from '../../components/Controls';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Callout } from '../../components/Explainer';
-import { baseLayout, Plot } from '../../components/Plot';
+import { Plot } from '../../components/Plot';
+import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { StatTile } from '../../components/StatTile';
 import { int, pct } from '../../lib/format';
-import { C } from '../../lib/palette';
+import { C, RARITY_SCALE } from '../../lib/palette';
 import { known, useUrlState, useUrlToggle } from '../../lib/urlstate';
 import { DEFAULT_GENE } from './LocusExplorer';
 
@@ -34,14 +35,6 @@ import { DEFAULT_GENE } from './LocusExplorer';
 /** Floor for the log rarity scale: 1e-6 is below gnomAD's resolution at v4 sample size. */
 const AF_FLOOR = 1e-6;
 const AF_DECADES = 6;
-
-/** Unknown-pair shading: dark neutral (common) → machinery blue → pale (rare × rare). */
-const RARITY_SCALE: [number, string][] = [
-  [0, '#161b22'],
-  [0.45, '#1e3a8a'],
-  [0.75, '#3b82f6'],
-  [1, '#bfdbfe'],
-];
 
 /** How rare one allele is, as decades below 1. Novel (looked up, absent) is the top. */
 function rarityScore(v: PanelHetVariant): number | null {
@@ -120,9 +113,10 @@ export function PairMatrix() {
           copy remains and the pair is excluded. <Chip color={C.decision}>yellow = auto-trans</Chip>{' '}
           — the two ALT alleles of one <span className="font-mono">1/2</span> record: one copy of
           each, so the genotype proves trans with no phasing involved.{' '}
-          <Chip color="#3b82f6">blue = unknown</Chip>, shaded by pair rarity — pale is rare × rare,
-          dark is common, and a blank cell means one of the two alleles has no frequency to rank on.
-          Axis ticks are the rsID or the consequence; genomic positions appear in hover only.{' '}
+          <Chip color={C.machinery}>blue = unknown</Chip>, shaded by pair rarity — pale is rare ×
+          rare, dark is common, and a blank cell means one of the two alleles has no frequency to
+          rank on. Axis ticks are the rsID or the consequence; genomic positions appear in hover
+          only.{' '}
           <strong>
             On BUB1B, 99.7 % of pairs are unresolved by short-read phasing (the tile below gives the
             figure for the gene on screen) — the grid shows how little phase the data carries, and

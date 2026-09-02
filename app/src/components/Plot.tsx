@@ -3,13 +3,13 @@
  *
  * Plotly is loaded with a dynamic import, so the ~4 MB bundle lands in its own chunk and
  * first paint does not wait for it. Plotly.react() diffs on update, so re-renders are cheap.
- * A shared dark template lives here, which keeps the visual language identical to the
- * repo's existing Plotly figures.
+ * The shared dark template lives in `./plotLayout` (`baseLayout`, `scene3d`), which keeps
+ * the visual language identical to the repo's existing Plotly figures.
  */
 
 import { useEffect, useRef, useState } from 'react';
 
-import { C } from '../lib/palette';
+import { baseLayout } from './plotLayout';
 
 export type Trace = Record<string, unknown>;
 export type Layout = Record<string, unknown>;
@@ -29,42 +29,6 @@ function loadPlotly(): Promise<PlotlyApi> {
     });
   }
   return plotlyPromise;
-}
-
-const AXIS = {
-  gridcolor: C.grid,
-  zerolinecolor: C.grid,
-  linecolor: C.grid,
-  tickfont: { color: C.inkDim, size: 11 },
-  titlefont: { color: C.inkDim, size: 12 },
-};
-
-/** Dark template shared by every exhibit. */
-export function baseLayout(over: Layout = {}): Layout {
-  return {
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    plot_bgcolor: 'rgba(0,0,0,0)',
-    font: { color: C.ink, family: 'ui-sans-serif, system-ui, sans-serif', size: 12 },
-    margin: { l: 60, r: 20, t: 12, b: 48 },
-    xaxis: AXIS,
-    yaxis: AXIS,
-    legend: { font: { color: C.inkDim, size: 11 }, bgcolor: 'rgba(0,0,0,0)' },
-    hoverlabel: { bgcolor: C.panel, bordercolor: C.grid, font: { color: C.ink } },
-    ...over,
-  };
-}
-
-/** Dark template for the 3D views: same idea, but scenes carry their own axis objects. */
-export function scene3d(over: Record<string, unknown> = {}): Record<string, unknown> {
-  const ax = {
-    gridcolor: C.grid,
-    zerolinecolor: C.grid,
-    showbackground: true,
-    backgroundcolor: 'rgba(255,255,255,0.015)',
-    tickfont: { color: C.inkDim, size: 10 },
-    titlefont: { color: C.inkDim, size: 11 },
-  };
-  return { xaxis: { ...ax }, yaxis: { ...ax }, zaxis: { ...ax }, ...over };
 }
 
 export interface PlotProps {

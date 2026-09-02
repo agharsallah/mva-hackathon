@@ -1,6 +1,7 @@
 import { useContigDensity } from '../../api/hooks';
 import { Exhibit } from '../../components/Exhibit';
-import { baseLayout, Plot } from '../../components/Plot';
+import { Plot } from '../../components/Plot';
+import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
 import { C, DENSITY_SCALE } from '../../lib/palette';
@@ -19,10 +20,11 @@ export function Karyotype() {
       legend={
         <>
           One horizontal bar per canonical chromosome, length = its real GRCh38 length in megabases.
-          Fill follows variants per Mb on a dark → <span style={{ color: '#1d4ed8' }}>blue</span> →{' '}
-          <span style={{ color: '#a855f7' }}>purple</span> ramp (purple = densest, the raw-input end
-          of the repo's scale). Bar length is a property of the reference; colour is a property of
-          this sample.
+          Fill follows variants per Mb on a dark →{' '}
+          <span style={{ color: C.densityBlue }}>blue</span> →{' '}
+          <span style={{ color: C.raw }}>purple</span> ramp (purple = densest, the raw-input end of
+          the repo's scale). Bar length is a property of the reference; colour is a property of this
+          sample.
         </>
       }
       reading="Lengths differ by 5× but densities only by about 1.25× across the autosomes — the callset is spread evenly. X and Y are the exception: a single copy yields far fewer heterozygous calls per Mb."

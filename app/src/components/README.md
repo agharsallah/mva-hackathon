@@ -5,20 +5,22 @@ a file directly, so a page never needs to know where a primitive lives.
 
 ## Charts
 
-| Name      | Purpose                                                                                      | Usage                                                      |
-| --------- | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `Exhibit` | The only way a chart enters the app; enforces a `legend` and registers itself for AI export. | `<Exhibit title="…" legend={<>…</>}><Plot .../></Exhibit>` |
-| `Chip`    | Colour dot + label, for use inside an `Exhibit`'s legend.                                    | `<Chip color={C.good}>balanced</Chip>`                     |
-| `Plot`    | Thin wrapper over Plotly with the app's dark template.                                       | `<Plot data={traces} layout={baseLayout({...})} />`        |
+| Name                     | Purpose                                                                                                                                                    | Usage                                                      |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `Exhibit`                | The only way a chart enters the app; enforces a `legend` and registers itself for AI export.                                                               | `<Exhibit title="…" legend={<>…</>}><Plot .../></Exhibit>` |
+| `Chip`                   | Colour dot + label, for use inside an `Exhibit`'s legend.                                                                                                  | `<Chip color={C.good}>balanced</Chip>`                     |
+| `Plot`                   | Thin wrapper over Plotly with the app's dark template.                                                                                                     | `<Plot data={traces} layout={baseLayout({...})} />`        |
+| `baseLayout` / `scene3d` | The dark Plotly template (`src/components/plotLayout.ts`) — split from `Plot.tsx` so the two function exports don't sit next to `Plot`'s component export. | `layout={baseLayout({ title: '...' })}`                    |
 
 ## Data display
 
-| Name        | Purpose                                                                                                                              | Usage                                                               |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
-| `DataTable` | Sortable, filterable, paginated table. Additive: pass only `rows`/`columns`/`rowKey` for a plain table.                              | `<DataTable rows={r} columns={cols} rowKey={(r) => r.id} />`        |
-| `StatTile`  | One number, a label, an optional sub-line and tone.                                                                                  | `<StatTile label="Ts/Tv" value={dec(x)} tone="good" />`             |
-| `NormChip`  | Verdict badge for a `results.qc_observed_expected` row; links to `/compare`.                                                         | `<NormChip row={pickNorm(norms, ['tstv'])} />`                      |
-| `FieldList` | A key/value list as `<dl>`. `layout="columns"` for fixed-width labels beside facts; `layout="inline"` for a label-and-sentence pair. | `<FieldList fields={[{key:'sha', label:'sha256', value: hash}]} />` |
+| Name        | Purpose                                                                                                                                                                        | Usage                                                               |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| `DataTable` | Sortable, filterable, paginated table. Additive: pass only `rows`/`columns`/`rowKey` for a plain table.                                                                        | `<DataTable rows={r} columns={cols} rowKey={(r) => r.id} />`        |
+| `StatTile`  | One number, a label, an optional sub-line and tone.                                                                                                                            | `<StatTile label="Ts/Tv" value={dec(x)} tone="good" />`             |
+| `NormChip`  | Verdict badge for a `results.qc_observed_expected` row; links to `/compare`.                                                                                                   | `<NormChip row={pickNorm(norms, ['tstv'])} />`                      |
+| `pickNorm`  | Finds the observed/expected row a tile should be graded against (`src/components/pickNorm.ts` — split out of `NormChip.tsx` for the same fast-refresh reason as `baseLayout`). | `pickNorm(norms, ['tstv_genome_wide', 'tstv'])`                     |
+| `FieldList` | A key/value list as `<dl>`. `layout="columns"` for fixed-width labels beside facts; `layout="inline"` for a label-and-sentence pair.                                           | `<FieldList fields={[{key:'sha', label:'sha256', value: hash}]} />` |
 
 ## Layout and structure
 

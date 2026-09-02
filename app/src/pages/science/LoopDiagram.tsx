@@ -23,26 +23,32 @@ const Y = 34;
 const GAP = 42;
 
 const STATIONS: Station[] = [
-  { x: 8, label: 'Claim', sub: 'falsifiable, registered', fill: '#1e3a8a55', stroke: C.machinery },
+  {
+    x: 8,
+    label: 'Claim',
+    sub: 'falsifiable, registered',
+    fill: C.machineryFill,
+    stroke: C.machinery,
+  },
   {
     x: 8 + (W + GAP),
     label: 'Predict',
     sub: 'what we should see',
-    fill: '#1e3a8a55',
+    fill: C.machineryFill,
     stroke: C.machinery,
   },
   {
     x: 8 + 2 * (W + GAP),
     label: 'Test',
     sub: 'an executed run',
-    fill: '#1e3a8a55',
+    fill: C.machineryFill,
     stroke: C.machinery,
   },
   {
     x: 8 + 3 * (W + GAP),
     label: 'Verdict',
     sub: 'the evidence weighed',
-    fill: '#78350f55',
+    fill: C.decisionFill,
     stroke: C.decision,
   },
 ];

@@ -1,4 +1,4 @@
-/* eslint-disable max-lines -- 2026-09-02: at 429 lines, over the CLAUDE.md 400-line cap.
+/* eslint-disable max-lines -- 2026-09-02: at 423 lines, over the CLAUDE.md 400-line cap.
    Known debt, tracked for a later wave to split (not this one — see the eslint
    architecture-rules wave). Do not add new eslint-disable lines elsewhere for this rule;
    this is the one documented exception. */
@@ -10,21 +10,11 @@ import { Select } from '../../components/Controls';
 import { type Column, DataTable } from '../../components/DataTable';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Callout } from '../../components/Explainer';
-import { baseLayout, Plot, type Trace } from '../../components/Plot';
+import { Plot, type Trace } from '../../components/Plot';
+import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
-import { C, impactColor } from '../../lib/palette';
-
-/**
- * Reds and yellows for suppression reasons, heaviest reason first.
- *
- * Deliberately assigned by *rank*, not by reason name: the exhibit is meant to transfer to
- * another callset whose caller writes different FILTER labels, and a hard-coded
- * `MQ40 → red` map would silently render an unknown label as grey. Red = the record was
- * thrown out of every downstream analysis; yellow = it was, too, but on a softer test.
- * PASS is the one green.
- */
-const REASON_RAMP = [C.broken, '#f97316', C.decision, '#b91c1c', '#fbbf24', C.brokenDim];
+import { C, impactColor, REASON_RAMP } from '../../lib/palette';
 
 /** What the caller's own FILTER labels mean, in plain words. Unknown labels fall through. */
 const REASON_MEANING: Record<string, string> = {

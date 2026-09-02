@@ -26,7 +26,27 @@ export const C = {
   grid: '#27272a',
   paper: '#0a0a0a',
   panel: '#18181b',
+  /** A bin/cell that was measured but sits below the confidence floor — distinct from
+   * `absent`, which marks a value that was never computed at all. Flat grey, on purpose:
+   * it must not be mistakable for a point on any of this file's colour scales. */
+  unmeasured: '#3f3f46',
+  /** The blue stop inside `DENSITY_SCALE` — reused verbatim wherever legend prose spells out
+   * the "dark → blue → purple" ramp inline (BAF karyogram, density bins, karyotype, flowcell). */
+  densityBlue: '#1d4ed8',
+  /** Off-white label text drawn directly on a coloured mark (e.g. a treemap tile fill), where
+   * `ink`'s grey doesn't read against a saturated background. */
+  onFill: '#f5f5f5',
+  /** `machineryDim`'s RGB at ~33% alpha — a translucent blue fill behind a "neutral machinery"
+   * station box, as opposed to `machineryDim`'s own opaque use as a stroke/line colour. */
+  machineryFill: '#1e3a8a55',
+  /** Tailwind amber-900 at ~33% alpha — a translucent fill behind a "decision point" station
+   * box, matching `BOX.decision`'s amber theme at the same opacity family. */
+  decisionFill: '#78350f55',
 } as const;
+
+/** Extra severity tone between `C.broken` and `C.decision`: orange, used where a ramp needs
+ * more steps than the three core colours (suppression-reason ranking, base-quality bins). */
+export const SEVERITY_ORANGE = '#f97316';
 
 /** Categorical ramp for "one line per lane/read" style series. Blue family = machinery. */
 export const SERIES = [
@@ -44,7 +64,7 @@ export const SERIES = [
 export const DENSITY_SCALE: [number, string][] = [
   [0, '#0a0a0a'],
   [0.15, '#12263f'],
-  [0.4, '#1d4ed8'],
+  [0.4, C.densityBlue],
   [0.7, '#7c3aed'],
   [1, '#e9d5ff'],
 ];
@@ -81,6 +101,31 @@ export const DEPTH_SCALE: [number, string][] = [
   [0.3, '#1e3a8a'],
   [0.65, '#3b82f6'],
   [1, '#dbeafe'],
+];
+
+/**
+ * Suppression-reason ramp for `SuppressedCalls`: reds and yellows, heaviest reason first
+ * (`PASS` is drawn separately, in `C.good`). Assigned by rank rather than by reason name so
+ * the ordering stays stable if the caller's FILTER vocabulary changes.
+ */
+export const REASON_RAMP = [
+  C.broken,
+  SEVERITY_ORANGE,
+  C.decision,
+  '#b91c1c',
+  '#fbbf24',
+  C.brokenDim,
+];
+
+/**
+ * Unknown-pair shading for `PairMatrix`'s compound-het grid: dark neutral (common pair) →
+ * machinery blue → pale (rare × rare — the region a causal pair has to live in).
+ */
+export const RARITY_SCALE: [number, string][] = [
+  [0, '#161b22'],
+  [0.45, C.machineryDim],
+  [0.75, C.machinery],
+  [1, '#bfdbfe'],
 ];
 
 export function balanceColor(call: string): string {

@@ -4,7 +4,8 @@ import { useFlowcell } from '../../api/hooks';
 import type { FlowcellBinRow } from '../../api/types';
 import { Select, Toggle } from '../../components/Controls';
 import { Exhibit } from '../../components/Exhibit';
-import { baseLayout, Plot, scene3d } from '../../components/Plot';
+import { Plot } from '../../components/Plot';
+import { baseLayout, scene3d } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { int } from '../../lib/format';
 import { C, DENSITY_SCALE } from '../../lib/palette';
@@ -51,11 +52,10 @@ export function Flowcell() {
       <>
         Each cell is a 1000 × 1000 pixel patch of the flowcell surface. Colour follows the number of
         reads whose cluster centre falls in that patch, on a dark →{' '}
-        <span style={{ color: '#1d4ed8' }}>blue</span> →{' '}
-        <span style={{ color: '#a855f7' }}>purple</span> ramp (purple = densest). In 3D the tile
-        axis is kept: x and y are surface coordinates, z is the tile number, and marker size and
-        colour are the read count — so a bad tile shows up as one horizontal plane, a bad edge as a
-        wall.
+        <span style={{ color: C.densityBlue }}>blue</span> →{' '}
+        <span style={{ color: C.raw }}>purple</span> ramp (purple = densest). In 3D the tile axis is
+        kept: x and y are surface coordinates, z is the tile number, and marker size and colour are
+        the read count — so a bad tile shows up as one horizontal plane, a bad edge as a wall.
       </>
     ),
     [],

@@ -14,7 +14,8 @@ import { Chip, Exhibit } from '../../components/Exhibit';
 import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
 import { C } from '../../lib/palette';
-import { bin, DensityLegend, DensityStrip } from './DensityStrip';
+import { bin } from './bins';
+import { DensityLegend, DensityStrip } from './DensityStrip';
 
 const KIND_LABEL: Record<SearchResolution['kind'], string> = {
   region: 'region',

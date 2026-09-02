@@ -4,7 +4,8 @@ import { useBafBins } from '../../api/hooks';
 import type { BafBinRow } from '../../api/types';
 import { Select } from '../../components/Controls';
 import { Chip, Exhibit } from '../../components/Exhibit';
-import { baseLayout, Plot } from '../../components/Plot';
+import { Plot } from '../../components/Plot';
+import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
 import { C, DENSITY_SCALE, DEPTH_SCALE, DIVERGING_SCALE } from '../../lib/palette';
@@ -132,18 +133,18 @@ export function BafKaryogram() {
             </>
           ) : metric === 'dp' ? (
             <>
-              Colour is mean read depth on a dark → <span style={{ color: '#3b82f6' }}>blue</span> →
-              white ramp. A lost copy halves depth; a gained one raises it ~1.5×.
+              Colour is mean read depth on a dark → <span style={{ color: C.machinery }}>blue</span>{' '}
+              → white ramp. A lost copy halves depth; a gained one raises it ~1.5×.
             </>
           ) : (
             <>
               Colour is the number of heterozygous calls in the bin, dark →{' '}
-              <span style={{ color: '#1d4ed8' }}>blue</span> →{' '}
-              <span style={{ color: '#a855f7' }}>purple</span>.
+              <span style={{ color: C.densityBlue }}>blue</span> →{' '}
+              <span style={{ color: C.raw }}>purple</span>.
             </>
           )}{' '}
-          <Chip color="#3f3f46">flat grey</Chip> = fewer than {THIN} heterozygous calls, so the bin
-          is <em>unmeasured</em>, not balanced — mostly centromeres, acrocentric arms, and the
+          <Chip color={C.unmeasured}>flat grey</Chip> = fewer than {THIN} heterozygous calls, so the
+          bin is <em>unmeasured</em>, not balanced — mostly centromeres, acrocentric arms, and the
           single-copy X and Y. Blank cells are past the end of that chromosome.
         </>
       }
@@ -215,8 +216,8 @@ export function BafKaryogram() {
                     y: chroms,
                     text,
                     colorscale: [
-                      [0, '#3f3f46'],
-                      [1, '#3f3f46'],
+                      [0, C.unmeasured],
+                      [1, C.unmeasured],
                     ],
                     showscale: false,
                     hoverongaps: false,
