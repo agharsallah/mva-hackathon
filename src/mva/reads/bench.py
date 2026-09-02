@@ -81,6 +81,8 @@ def cut_sample(fastq, reads: int, scratch: Path) -> Path:
         subprocess.run(command, shell=True, check=True)
     else:
         process = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE)
+        # stdin is never None: it was requested above via subprocess.PIPE.
+        assert process.stdin is not None
         with source.open_stream() as stream:
             try:
                 shutil.copyfileobj(stream, process.stdin, length=8 * 1024 * 1024)

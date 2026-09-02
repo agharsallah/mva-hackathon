@@ -8,6 +8,7 @@ instructions that are invisible in a flat grid dump).
 import re
 import sys
 import zipfile
+from pathlib import Path
 
 # `<t ...>` only — the space/`>` guard stops this matching `<text>`, which wraps
 # comment bodies and would otherwise swallow the run-property markup with it.
@@ -30,8 +31,10 @@ def main(src: str, dst: str) -> None:
     lines = [
         "# Methods description form",
         "",
-        "Extracted from `methods_description_form.xlsx`. "
-        "Column A is the question, column B is our answer slot.",
+        (
+            "Extracted from `methods_description_form.xlsx`. "
+            "Column A is the question, column B is our answer slot."
+        ),
         "",
     ]
 
@@ -70,7 +73,7 @@ def main(src: str, dst: str) -> None:
 
         lines.append("")
 
-    with open(dst, "w") as fh:
+    with Path(dst).open("w") as fh:
         fh.write("\n".join(lines) + "\n")
     print(f"wrote {dst}")
 

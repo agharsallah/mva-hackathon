@@ -143,6 +143,12 @@ def variant_track(calls: list[Call], label: str = "locus") -> Exhibit:
     )
 
 
+def _group_index(index: dict[str, int], call: Call) -> int:
+    """A phased call's group position. ``phase_set`` is set — ``phased`` filtered on it."""
+    assert call.phase_set is not None, "caller must pre-filter to calls with a phase_set"
+    return index[call.phase_set]
+
+
 def phase_map(calls: list[Call], label: str = "locus") -> Exhibit:
     """Which calls the caller could place on which copy of the chromosome.
 
@@ -153,7 +159,7 @@ def phase_map(calls: list[Call], label: str = "locus") -> Exhibit:
     up unresolved.
     """
     phased = [c for c in calls if c.phase_set and c.phase_gt]
-    groups = sorted({c.phase_set for c in phased})
+    groups = sorted({c.phase_set for c in phased if c.phase_set is not None})
     index = {g: i for i, g in enumerate(groups)}
 
     figure = go.Figure()
@@ -164,7 +170,7 @@ def phase_map(calls: list[Call], label: str = "locus") -> Exhibit:
         figure.add_trace(
             go.Scatter(
                 x=[c.variant.pos for c in subset],
-                y=[index[c.phase_set] for c in subset],
+                y=[_group_index(index, c) for c in subset],
                 mode="markers",
                 name=f"copy {'A' if haplotype == '0|1' else 'B'} ({haplotype})",
                 marker=dict(
@@ -247,7 +253,7 @@ def pair_phase_matrix(calls: list[Call], label: str = "locus") -> Exhibit:
     index = {p: i for i, p in enumerate(positions)}
 
     #: 0 unknown, 1 trans, -1 cis, None for the untested diagonal and mirror.
-    grid = [[None] * len(positions) for _ in positions]
+    grid: list[list[int | None]] = [[None] * len(positions) for _ in positions]
     for pair in pairs:
         i, j = index[pair.left.variant.pos], index[pair.right.variant.pos]
         value = {Phase.TRANS: 1, Phase.CIS: -1, Phase.UNKNOWN: 0}[pair.phase]
@@ -317,11 +323,13 @@ def _agree(count: int, singular: str, plural: str) -> str:
 
 
 def _phase_word(value: int | None) -> str:
+    if value is None:
+        return "not a pair"
     return {
         1: "opposite copies — trans",
         -1: "same copy — cis, refuted",
         0: "no phase evidence",
-    }.get(value, "not a pair")
+    }[value]
 
 
 def _marker_size(depth: int | None) -> float:

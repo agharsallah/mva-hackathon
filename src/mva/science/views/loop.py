@@ -88,7 +88,8 @@ def _station_svg() -> str:
 
 def _wrap(text: str, width: int) -> tuple[str, str]:
     """Split a short label across exactly two lines, so the SVG boxes stay uniform."""
-    words, first = text.split(), []
+    words = text.split()
+    first: list[str] = []
     while words and len(" ".join(first + words[:1])) <= width:
         first.append(words.pop(0))
     return " ".join(first), " ".join(words)

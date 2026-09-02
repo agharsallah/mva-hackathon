@@ -12,6 +12,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from pathlib import Path
 
 # MVA1/2/3 plus the atypical/candidate genes reported in case series.
 PANEL = [
@@ -59,7 +60,7 @@ def main(out_path: str, pad: int) -> None:
         rows.append((f"chr{g['seq_region_name']}", start, end, symbol, g["id"], note))
 
     rows.sort(key=lambda r: (r[0], r[1]))
-    with open(out_path, "w") as fh:
+    with Path(out_path).open("w") as fh:
         fh.write(f"# MVA candidate panel, GRCh38, {pad} bp padding, source: Ensembl REST\n")
         fh.write("# chrom\tstart\tend\tsymbol\tensembl_id\tnote\n")
         for chrom, start, end, symbol, gid, note in rows:

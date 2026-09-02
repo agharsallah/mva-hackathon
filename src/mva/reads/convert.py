@@ -129,6 +129,8 @@ def convert_file(
     seconds = time.perf_counter() - started
     connection.close()
 
+    if result is None:
+        raise RuntimeError(f"{out_dir}: COPY returned no row count — the write did not complete")
     shards = tuple(sorted(out_dir.glob("part-*.parquet")))
     return Converted(
         facts=facts,

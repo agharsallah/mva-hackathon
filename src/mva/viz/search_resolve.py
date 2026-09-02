@@ -118,16 +118,16 @@ def resolve_gene(
 
     body = _get(client, base_url, f"/lookup/symbol/homo_sapiens/{symbol}", symbol)
     chrom = to_vcf_contig(str(body.get("seq_region_name") or ""))
-    start, end = _int(body.get("start")), _int(body.get("end"))
-    if not chrom or start is None or end is None:
+    gene_start, gene_end = _int(body.get("start")), _int(body.get("end"))
+    if not chrom or gene_start is None or gene_end is None:
         raise NotFoundError(f"Ensembl returned no interval for {symbol!r}")
-    check_span(start, end)
+    check_span(gene_start, gene_end)
     return Resolved(
         "gene",
         chrom,
-        start,
-        end,
-        label=f"{body.get('display_name') or symbol} — {chrom}:{start:,}-{end:,}",
+        gene_start,
+        gene_end,
+        label=f"{body.get('display_name') or symbol} — {chrom}:{gene_start:,}-{gene_end:,}",
         source=SOURCE_ENSEMBL_SYMBOL,
         note=f"Ensembl gene span for {body.get('id')}, unpadded — narrower "
         f"than the ±20 kb the candidate panel uses",

@@ -66,9 +66,7 @@ def do_report(args) -> int:
     else:
         settings = context.settings()
         with context.attached(settings, read_only=True) as connection:
-            record = record_module.read(
-                connection, settings.schema, subject=settings.describe().get("database", "mva")
-            )
+            record = record_module.read(connection, settings.schema, subject=settings.database)
     path = write_report(record, args.out)
     print(
         f"wrote {path} ({path.stat().st_size // 1024} KB) — "

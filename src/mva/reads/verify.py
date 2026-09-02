@@ -127,6 +127,9 @@ def _last_record(source) -> tuple[str, str, str]:
         process = subprocess.Popen(
             command, shell=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=False
         )
+        # stdin/stdout are never None: both were requested above via subprocess.PIPE.
+        assert process.stdin is not None
+        assert process.stdout is not None
         with source.open_stream() as stream:
             shutil.copyfileobj(stream, process.stdin, length=8 * 1024 * 1024)
             process.stdin.close()

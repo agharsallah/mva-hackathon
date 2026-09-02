@@ -123,8 +123,10 @@ class VepRestAnnotator:
                     found[key] = item
         records = []
         for variant in variants:
-            item = found.get(query_line(variant))
-            records.append(parse(item, variant, self.genes) if item else VepRecord(variant=variant))
+            match = found.get(query_line(variant))
+            records.append(
+                parse(match, variant, self.genes) if match else VepRecord(variant=variant)
+            )
         return records
 
     # ── transport ────────────────────────────────────────────────────────────────────

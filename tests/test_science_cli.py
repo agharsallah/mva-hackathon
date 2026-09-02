@@ -338,6 +338,22 @@ def test_export_writes_the_mirror_when_the_register_is_clean(wired, tmp_path):
     assert (tmp_path / "science-register.json").exists()
 
 
+# --- report ---------------------------------------------------------------------------
+
+
+def test_report_from_the_database_uses_the_database_name_as_subject(wired, tmp_path):
+    """Regression: reading live (no --source) used to crash with AttributeError.
+
+    ``settings.describe()`` is a pre-formatted, human-readable string (for printing), not a
+    dict — calling ``.get("database", ...)`` on it always raised. The fix reads
+    ``settings.database`` directly.
+    """
+    wired([[], []])
+    out_path = tmp_path / "report.html"
+    assert cli.publish.do_report(Args(source=None, out=str(out_path))) == 0
+    assert "mva" in out_path.read_text(encoding="utf-8")
+
+
 # --- steps ----------------------------------------------------------------------------
 
 

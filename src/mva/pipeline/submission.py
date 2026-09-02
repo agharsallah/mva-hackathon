@@ -170,9 +170,12 @@ def read_submission(source: TextIO) -> list[Row]:
         proband, notes = fields[0].strip(), fields[11]
         if proband != PROBAND_ID:
             raise ValueError(f"row {index}: proband_id must be {PROBAND_ID}, got {proband!r}")
+        variant = _parse_variant(fields[1:5])
+        if variant is None:
+            raise ValueError(f"row {index}: primary variant columns (chrom/pos) must not be blank")
         rows.append(
             Row(
-                variant=_parse_variant(fields[1:5]),
+                variant=variant,
                 partner=_parse_variant(fields[5:9]),
                 epcr=float(fields[9]),
                 finding_type=fields[10],

@@ -162,6 +162,8 @@ def provenance(profile: CallsetProfile) -> Exhibit:
     no error.
     """
     header = profile.header
+    if header is None:
+        raise ValueError("provenance() requires profile.header — caller must check it first")
     contig_names = [name for name, _ in header.contigs]
     prefixed = sum(1 for n in contig_names if n.startswith("chr"))
     convention = (
