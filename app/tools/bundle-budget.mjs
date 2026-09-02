@@ -2,7 +2,7 @@
 /**
  * Gate 4 — bundle budget.
  *
- * Nothing today stops a change from quietly growing the *entry* chunk — the JS the browser
+ * Nothing today stops a change from quietly growing the *initial payload* — the JS the browser
  * has to download and run before the app can paint anything, as opposed to a page's own
  * chunk (fetched only when that page is visited) or Plotly's chunk (fetched only when a
  * chart actually mounts). This repo already lived through exactly that regression once:
@@ -44,14 +44,23 @@ const FIXTURE_DATA_DIR = path.join(APP_ROOT, 'src/fixtures/data');
 
 // --- the budget, in one clearly-marked block ---------------------------------------------
 //
-// Measured 2026-09-02 against a clean `pnpm run build` on this commit: entry chunk was
-// 236.44 kB raw / 77.19 kB gzip (see `src/fixtures/README.md`'s own before/after table,
-// which independently confirms the same raw figure). Budgets below give ~3.5 kB raw and
-// ~3 kB gzip of headroom over that measurement — enough to absorb incidental churn, not
-// enough to hide a real regression.
+// WHY THIS MEASURES MORE THAN THE ENTRY CHUNK
+// The first version budgeted the entry chunk alone. That is not what a browser downloads
+// before it can paint: dist/index.html also carries <link rel="modulepreload"> tags, and
+// the bundler is free to move code out of the entry into those. It did exactly that on
+// 2026-09-02 — the entry "shrank" from 236 kB to 160 kB while a preloaded QueryState
+// chunk appeared at 87 kB, so the entry-only gate reported an improvement for a payload
+// that had actually grown. The budget is therefore the SUM of the entry chunk and every
+// chunk index.html preloads: the number that survives a chunking change.
+//
+// Measured 2026-09-02 against a clean `pnpm run build`: 244.50 kB raw / 78.91 kB gzip
+// across 2 initial files. The commit before the footer landed measured 237.02 / 76.63 in
+// a clean worktree; the footer's live dependency-status query is the +7.5 kB raw.
+// Budgets give ~6% headroom — enough for incidental churn, not enough to hide a real
+// regression.
 const BUDGETS = Object.freeze({
-  ENTRY_RAW_BYTES: 245_000,
-  ENTRY_GZIP_BYTES: 80_000,
+  INITIAL_RAW_BYTES: 260_000,
+  INITIAL_GZIP_BYTES: 84_000,
 });
 
 const KB = (bytes) => `${(bytes / 1000).toFixed(2)} kB`;
@@ -63,6 +72,25 @@ function buildIfNeeded() {
   }
   console.log('> pnpm run build');
   execSync('pnpm run build', { cwd: APP_ROOT, stdio: 'inherit' });
+}
+
+/**
+ * Every JS file dist/index.html makes the browser fetch before first paint: the module
+ * entry plus each modulepreload. Read out of the HTML rather than guessed from filenames,
+ * so a chunking or naming change cannot point this gate at the wrong set.
+ */
+function findInitialFiles() {
+  const htmlPath = path.join(DIST, 'index.html');
+  if (!existsSync(htmlPath)) {
+    console.error(`No dist/index.html — did the build run? (looked in ${DIST})`);
+    process.exit(1);
+  }
+  const html = readFileSync(htmlPath, 'utf-8');
+  const entry = findEntryFile();
+  const preloads = [...html.matchAll(/rel="modulepreload"[^>]+href="[^"]*\/assets\/([^"]+\.js)"/g)]
+    .map((m) => m[1])
+    .filter((f) => f !== entry);
+  return { entry, initial: [entry, ...preloads] };
 }
 
 function findEntryFile() {
@@ -140,26 +168,37 @@ function main() {
     process.exit(1);
   }
 
-  const entryFile = findEntryFile();
+  const { entry: entryFile, initial } = findInitialFiles();
   const rows = measureAssets();
   const entry = rows.find((r) => r.file === entryFile);
   const problems = [];
 
+  const initialRows = initial.map((file) => {
+    const row = rows.find((r) => r.file === file);
+    if (!row)
+      problems.push(`initial chunk "${file}" (from dist/index.html) not found in dist/assets`);
+    return row;
+  });
+  const initialRaw = initialRows.reduce((sum, r) => sum + (r?.raw ?? 0), 0);
+  const initialGzip = initialRows.reduce((sum, r) => sum + (r?.gzip ?? 0), 0);
+
   if (!entry) {
     problems.push(`entry chunk "${entryFile}" (from dist/index.html) not found in dist/assets`);
-  } else {
-    if (entry.raw > BUDGETS.ENTRY_RAW_BYTES) {
-      problems.push(
-        `entry chunk raw ${KB(entry.raw)} exceeds the ${KB(BUDGETS.ENTRY_RAW_BYTES)} budget ` +
-          `(over by ${KB(entry.raw - BUDGETS.ENTRY_RAW_BYTES)})`,
-      );
-    }
-    if (entry.gzip > BUDGETS.ENTRY_GZIP_BYTES) {
-      problems.push(
-        `entry chunk gzip ${KB(entry.gzip)} exceeds the ${KB(BUDGETS.ENTRY_GZIP_BYTES)} budget ` +
-          `(over by ${KB(entry.gzip - BUDGETS.ENTRY_GZIP_BYTES)})`,
-      );
-    }
+  }
+  if (initialRaw > BUDGETS.INITIAL_RAW_BYTES) {
+    problems.push(
+      `initial payload raw ${KB(initialRaw)} exceeds the ${KB(BUDGETS.INITIAL_RAW_BYTES)} budget ` +
+        `(over by ${KB(initialRaw - BUDGETS.INITIAL_RAW_BYTES)})`,
+    );
+  }
+  if (initialGzip > BUDGETS.INITIAL_GZIP_BYTES) {
+    problems.push(
+      `initial payload gzip ${KB(initialGzip)} exceeds the ${KB(BUDGETS.INITIAL_GZIP_BYTES)} budget ` +
+        `(over by ${KB(initialGzip - BUDGETS.INITIAL_GZIP_BYTES)})`,
+    );
+  }
+  for (const file of initial) {
+    if (/plotly/i.test(file)) problems.push(`initial chunk "${file}" matches /plotly/i`);
   }
 
   if (/plotly/i.test(entryFile)) {
@@ -172,16 +211,19 @@ function main() {
     );
   }
 
-  if (entry) {
-    const entryText = readFileSync(path.join(ASSETS, entryFile), 'utf-8');
-    if (/plotly\.js/i.test(entryText)) {
-      problems.push(
-        'entry chunk text contains a "plotly.js" signature string — Plotly code may be inlined',
-      );
+  // Both content checks run over every initial chunk: code the bundler moved out of the
+  // entry into a preloaded sibling is still downloaded before first paint.
+  for (const file of initial) {
+    const chunkPath = path.join(ASSETS, file);
+    if (!existsSync(chunkPath)) continue;
+    const text = readFileSync(chunkPath, 'utf-8');
+    if (/plotly\.js/i.test(text)) {
+      problems.push(`initial chunk "${file}" contains a "plotly.js" signature string`);
     }
-    const inlined = findInlinedFixturePayloads(entryText);
-    for (const file of inlined) {
-      problems.push(`entry chunk contains the full serialized payload of fixtures/data/${file}`);
+    for (const fixture of findInlinedFixturePayloads(text)) {
+      problems.push(
+        `initial chunk "${file}" contains the full payload of fixtures/data/${fixture}`,
+      );
     }
   }
 
@@ -194,8 +236,11 @@ function main() {
   }
 
   console.log(
-    `\nBundle budget OK. Entry: ${KB(entry.raw)} raw / ${KB(entry.gzip)} gzip ` +
-      `(budget ${KB(BUDGETS.ENTRY_RAW_BYTES)} / ${KB(BUDGETS.ENTRY_GZIP_BYTES)}).`,
+    `\nBundle budget OK. First paint downloads ${initial.length} JS file(s): ` +
+      `${KB(initialRaw)} raw / ${KB(initialGzip)} gzip ` +
+      `(budget ${KB(BUDGETS.INITIAL_RAW_BYTES)} / ${KB(BUDGETS.INITIAL_GZIP_BYTES)}).\n` +
+      `  entry ${entryFile}: ${KB(entry.raw)} raw / ${KB(entry.gzip)} gzip` +
+      (initial.length > 1 ? `\n  preloaded: ${initial.slice(1).join(', ')}` : ''),
   );
 }
 
