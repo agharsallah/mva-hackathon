@@ -59,6 +59,7 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   ['/api/search', { q: 'rs1042522' }],
   ['/api/search', { q: 'nonsense query' }],
   ['/api/callset/region', { chrom: '15', start: 1000000, end: 1002000 }],
+  ['/api/health/dependencies', undefined],
 ];
 
 export const key = (path: string, params?: Record<string, string | number>): string =>

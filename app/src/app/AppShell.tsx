@@ -1,12 +1,17 @@
 /**
  * The shell: renders Header + routes from the module manifest instead of a
  * hand-written <Route> list, so nav and routing read from one array and cannot
- * drift. Layout, footer text and the catch-all redirect are unchanged from the
- * previous App.tsx.
+ * drift. Layout and the catch-all redirect are unchanged from the previous App.tsx;
+ * the footer is now the `Footer` component instead of an inline paragraph.
  */
 
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+// Imported by its own path, not through the components barrel: the shell is in the entry
+// chunk, and the barrel's single module pulls DataTable, Plot and every other primitive
+// into first paint with it (+23 kB raw, measured). Pages are lazy chunks, so they can
+// keep using the barrel.
+import { Footer } from '../components/Footer';
 import { Header } from '../components/Header';
 import { ModuleBoundary } from './ModuleBoundary';
 import { modules } from './modules';
@@ -27,11 +32,7 @@ export function AppShell() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
-      <footer className="mx-auto max-w-[1600px] px-5 pb-8 text-[11px] leading-relaxed text-zinc-600">
-        Understanding tool for one whole-genome case. No genomic coordinate is committed to this
-        repository: the locus explorer shows real positions only when served by the live API, and
-        its fixture uses a synthetic counter.
-      </footer>
+      <Footer />
     </div>
   );
 }

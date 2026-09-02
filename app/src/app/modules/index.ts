@@ -87,4 +87,11 @@ export const modules: FeatureModule[] = [
     description: 'Cross-dataset search with a density strip.',
     load: () => import('../../pages/Search'),
   },
+  {
+    id: 'status',
+    path: '/status',
+    navLabel: 'Status',
+    description: 'Dependency health board: what is working, what is not, and how to fix it.',
+    load: () => import('../../pages/Status'),
+  },
 ];

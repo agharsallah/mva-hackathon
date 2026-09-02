@@ -27,6 +27,7 @@ import type {
   FunnelStageRow,
   GeneStructure,
   GenotypeRow,
+  HealthDependencies,
   HypothesisRegister,
   IndelLengthRow,
   Job,
@@ -157,6 +158,20 @@ export const useProbeLedger = () => useEndpoint<ProbeLedgerRow[]>('/api/probe/le
 // a bare list — see `api/types/science.ts`.
 export const useHypotheses = () => useEndpoint<HypothesisRegister>('/api/science/hypotheses');
 export const useEvidence = () => useEndpoint<EvidenceRegister>('/api/science/evidence');
+
+/**
+ * Dependency health board (`Status` page). Every other hook above wants the 5-minute
+ * default `staleTime` — the underlying facts barely change between visits. This one is
+ * the opposite: it exists to answer "is anything broken *right now*", so a stale "up"
+ * card would be actively misleading. Short `staleTime` plus a ~15s poll keeps the board
+ * honest without hammering the probes — the server already caches its own probe result
+ * for ~10s, so this poll cadence just tracks that.
+ */
+export const useHealthDependencies = () =>
+  useEndpoint<HealthDependencies>('/api/health/dependencies', undefined, {
+    staleTime: 5_000,
+    refetchInterval: 15_000,
+  });
 
 const LIVE_STATES = new Set(['queued', 'running']);
 

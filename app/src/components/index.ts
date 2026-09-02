@@ -23,6 +23,7 @@ export { Card, type CardProps } from './Card';
 export { Section, Select, TextFilter, Toggle } from './Controls';
 export { EmptyState, type EmptyStateProps } from './EmptyState';
 export { Callout, Explainer, type ExplainerProps, type Term } from './Explainer';
+export { Footer } from './Footer';
 
 // Small marks
 export { Badge, type BadgeProps, Flag } from './Badge';

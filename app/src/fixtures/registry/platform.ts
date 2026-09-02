@@ -1,4 +1,6 @@
+import type { HealthDependencies } from '../../api/types';
 import type { Entry } from '../loader';
+import { rows } from '../loader';
 import { catalogObjectsFixture } from '../shape/catalog-objects';
 import { catalogColumnsFixture } from '../shape/catalog-semantics';
 import { catalogTablesFixture } from '../shape/catalog-tables';
@@ -50,4 +52,13 @@ export const platformEntries: Record<string, Entry> = {
   // resolve honestly, so the client re-raises the real error instead of faking a 404.
   '/api/search': { envelope: async (p) => searchEnvelope(p) },
   '/api/callset/region': { envelope: async (p) => regionEnvelope(p) },
+  // SHAPED, not measured: the live endpoint does not exist yet (a Python agent is
+  // building it against the same contract this was transcribed from — see
+  // scratchpad/health-contract.md). Every status value and remedy string is illustrative
+  // so the Status page's every state is reviewable offline before there is anything real
+  // to probe.
+  '/api/health/dependencies': {
+    source: 'SHAPED — illustrative dependency states, not measured (endpoint not live yet)',
+    load: () => rows<HealthDependencies>('health-dependencies'),
+  },
 };

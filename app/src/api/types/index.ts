@@ -16,6 +16,7 @@ export type * from './catalog';
 export type * from './clinvar';
 export type * from './envelope';
 export type * from './genome';
+export type * from './health';
 export type * from './jobs';
 export type * from './overview';
 export type * from './panel';
