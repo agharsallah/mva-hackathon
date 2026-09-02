@@ -15,6 +15,7 @@ Interactive documentation is generated from this module: ``/docs`` (Swagger UI, 
 requests in the browser), ``/redoc``, and ``/openapi.json`` for client generation.
 """
 
+from collections.abc import Callable
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, FastAPI, HTTPException, Query
@@ -30,22 +31,38 @@ _HEADER = APIKeyHeader(name="X-API-Key", auto_error=False,
                        description="the value of MVA_API_TOKEN on the server")
 
 
-def require_token(provided: str | None = Depends(_HEADER)) -> None:
-    """Reject the request unless it carries the shared token (when one is set)."""
-    expected = setting("MVA_API_TOKEN")
-    if expected and provided != expected:
-        raise HTTPException(status_code=401, detail="missing or wrong X-API-Key")
+def token_guard(expected: str) -> Callable[[str | None], None]:
+    """Build the auth dependency for one resolved token. Empty token means open.
+
+    The expected value is bound here, at application construction, rather than read
+    inside the request: resolving it per request meant a ``.env`` parse per HTTP call,
+    and it made the API's behaviour depend on whichever ``.env`` happened to sit above
+    the working directory — including a developer's own, in tests.
+    """
+
+    def require_token(provided: str | None = Depends(_HEADER)) -> None:
+        if expected and provided != expected:
+            raise HTTPException(status_code=401, detail="missing or wrong X-API-Key")
+
+    return require_token
 
 
 def default_jobs_dir() -> Path:
     return Path(setting("MVA_STAGING_DIR")).expanduser() / "api-jobs"
 
 
-def create_app(manager: Manager | None = None) -> FastAPI:
-    """Build the application; tests inject their own :class:`Manager`."""
+def create_app(manager: Manager | None = None, token: str | None = None) -> FastAPI:
+    """Build the application.
+
+    Both arguments are seams for tests: they inject their own :class:`Manager`, and pass
+    ``token=""`` to get an open API regardless of what the surrounding environment holds.
+    Left as ``None``, each is resolved from the settings loader once, here.
+    """
     if manager is None:
         workers = int(setting("MVA_API_JOB_WORKERS") or "2")
         manager = Manager(directory=default_jobs_dir(), workers=workers)
+    if token is None:
+        token = setting("MVA_API_TOKEN")
 
     app = FastAPI(
         title="mva-reads API",
@@ -55,7 +72,7 @@ def create_app(manager: Manager | None = None) -> FastAPI:
     )
     app.state.manager = manager
     # everything but /health requires the token; liveness probes carry no secrets
-    api = APIRouter(dependencies=[Depends(require_token)])
+    api = APIRouter(dependencies=[Depends(token_guard(token))])
 
     def submitted(verb: str, params: dict, runner) -> JobOut:
         return JobOut(**manager.submit(verb, params, runner).snapshot())

@@ -19,6 +19,7 @@ handed to DuckDB and is never printed.
 
 import os
 from dataclasses import dataclass, field
+from functools import lru_cache
 from pathlib import Path
 
 #: Keys read from the environment, with their defaults. ``PGPASSWORD`` has no default
@@ -49,6 +50,11 @@ DEFAULTS = {
 #: Looked for upward from the working directory, so the CLI works from a subdirectory.
 ENV_FILENAME = ".env"
 
+#: Names one env file explicitly instead of searching for it. Set it to a path to pin
+#: that file; set it to the empty string to use no file at all. The test suite sets it
+#: empty so a developer's own ``.env`` can never decide what a test observes.
+ENV_FILE_OVERRIDE = "MVA_ENV_FILE"
+
 
 def setting(key: str, start: Path | None = None) -> str:
     """One setting, resolved by the same precedence as everything else here.
@@ -57,13 +63,54 @@ def setting(key: str, start: Path | None = None) -> str:
     the plain-string knobs — a directory, a repository name — that do not belong to the
     Postgres or object-store settings objects.
     """
+    return os.environ.get(key) or env_file_values(start).get(key) or DEFAULTS.get(key, "")
+
+
+def env_file_values(start: Path | None = None) -> dict[str, str]:
+    """The nearest ``.env`` as a mapping — ``{}`` when there is no file.
+
+    The parse is cached per (path, size, modification time), because the settings
+    readers here sit on request paths: :func:`setting` used to re-open and re-parse the
+    file on every call, which meant a disk read per HTTP request. Edit the file and the
+    fingerprint changes, so the next call re-reads it; :func:`clear_env_cache` exists for
+    tests that write a ``.env`` twice inside one filesystem timestamp tick.
+    """
     env_path = find_env(start)
-    from_file = parse_env(env_path.read_text(encoding="utf-8")) if env_path else {}
-    return os.environ.get(key) or from_file.get(key) or DEFAULTS.get(key, "")
+    if env_path is None:
+        return {}
+    stat = env_path.stat()
+    return dict(_parsed_env(str(env_path), stat.st_size, stat.st_mtime_ns))
+
+
+@lru_cache(maxsize=8)
+def _parsed_env(path: str, size: int, mtime_ns: int) -> tuple[tuple[str, str], ...]:
+    """Parse one ``.env``, keyed by its fingerprint. Returns pairs so the cache is immutable."""
+    del size, mtime_ns  # cache key only; the path is what gets read
+    return tuple(parse_env(Path(path).read_text(encoding="utf-8")).items())
+
+
+def clear_env_cache() -> None:
+    """Forget every parsed ``.env``. For tests that rewrite the file under a live process."""
+    _parsed_env.cache_clear()
 
 
 def find_env(start: Path | None = None) -> Path | None:
-    """Locate the nearest ``.env``, walking upward from ``start`` to the filesystem root."""
+    """Locate the env file: the pinned one if :data:`ENV_FILE_OVERRIDE` is set, else the search.
+
+    Without the override, the nearest ``.env`` walking upward from ``start`` to the
+    filesystem root. With it, exactly that path — and a missing one raises rather than
+    falling back to a search, because a pinned file that silently does not exist is how a
+    process ends up reading credentials nobody meant it to read. The empty string means
+    "no file", which is how the test suite stays hermetic.
+    """
+    pinned = os.environ.get(ENV_FILE_OVERRIDE)
+    if pinned is not None:
+        if not pinned:
+            return None
+        candidate = Path(pinned).expanduser()
+        if not candidate.is_file():
+            raise FileNotFoundError(f"{ENV_FILE_OVERRIDE}={pinned} is not a file")
+        return candidate
     current = (start or Path.cwd()).resolve()
     for directory in (current, *current.parents):
         candidate = directory / ENV_FILENAME
@@ -117,8 +164,7 @@ class Postgres:
     @classmethod
     def from_env(cls, start: Path | None = None) -> "Postgres":
         """Build settings from the nearest ``.env``, with the real environment winning."""
-        env_path = find_env(start)
-        from_file = parse_env(env_path.read_text(encoding="utf-8")) if env_path else {}
+        from_file = env_file_values(start)
         resolved = {
             key: os.environ.get(key) or from_file.get(key) or default
             for key, default in DEFAULTS.items()
@@ -161,8 +207,7 @@ def object_store(start: Path | None = None):
     """
     from .objects import ObjectStore
 
-    env_path = find_env(start)
-    from_file = parse_env(env_path.read_text(encoding="utf-8")) if env_path else {}
+    from_file = env_file_values(start)
     value = lambda key: os.environ.get(key) or from_file.get(key) or DEFAULTS[key]
     return ObjectStore(
         endpoint=value("S3_ENDPOINT"),

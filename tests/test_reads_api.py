@@ -30,13 +30,12 @@ class FakeConnection:
 
 @pytest.fixture()
 def client(tmp_path, monkeypatch):
-    monkeypatch.delenv("MVA_API_TOKEN", raising=False)
     monkeypatch.setattr(runners.access, "resolve_root",
                         lambda root=None: root or "s3://test/reads")
     monkeypatch.setattr(runners.access, "connection",
                         lambda root: FakeConnection())
     manager = Manager(directory=tmp_path / "jobs", workers=1)
-    with TestClient(create_app(manager)) as running:
+    with TestClient(create_app(manager, token="")) as running:
         yield running
 
 

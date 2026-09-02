@@ -19,7 +19,8 @@ from mva.warehouse.cli_vcf import RAW_TABLE
 from mva.warehouse.stage import SCALARS_TABLE
 from mva.warehouse.postgres import (InvalidIdentifier, Result, render_table,
                                     safe_identifier)
-from mva.warehouse.settings import Postgres, find_env, parse_env
+from mva.warehouse.settings import (ENV_FILE_OVERRIDE, Postgres, find_env,
+                                    parse_env)
 
 
 class TestParseEnv:
@@ -44,11 +45,41 @@ class TestParseEnv:
 
 
 class TestSettings:
+    """These are the tests that exercise env-file discovery itself.
+
+    ``conftest.hermetic_settings`` pins the env file away for the whole suite; discovery
+    cannot be tested with discovery disabled, so each test here lifts the pin and then
+    supplies its own file under ``tmp_path``.
+    """
+
+    @pytest.fixture(autouse=True)
+    def discoverable(self, monkeypatch):
+        monkeypatch.delenv(ENV_FILE_OVERRIDE, raising=False)
+
     def test_real_environment_beats_the_file(self, tmp_path: Path, monkeypatch):
         (tmp_path / ".env").write_text("PGHOST=from-file\nPGPASSWORD=x\n")
         monkeypatch.chdir(tmp_path)
         monkeypatch.setenv("PGHOST", "from-environment")
         assert Postgres.from_env().host == "from-environment"
+
+    def test_the_override_pins_one_file(self, tmp_path: Path, monkeypatch):
+        pinned = tmp_path / "pinned.env"
+        pinned.write_text("PGHOST=pinned\n")
+        (tmp_path / ".env").write_text("PGHOST=discovered\n")
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv(ENV_FILE_OVERRIDE, str(pinned))
+        assert find_env() == pinned
+
+    def test_an_empty_override_means_no_file(self, tmp_path: Path, monkeypatch):
+        (tmp_path / ".env").write_text("PGHOST=discovered\n")
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setenv(ENV_FILE_OVERRIDE, "")
+        assert find_env() is None
+
+    def test_a_pinned_file_that_is_missing_raises(self, tmp_path: Path, monkeypatch):
+        monkeypatch.setenv(ENV_FILE_OVERRIDE, str(tmp_path / "absent.env"))
+        with pytest.raises(FileNotFoundError):
+            find_env()
 
     def test_env_is_found_from_a_subdirectory(self, tmp_path: Path, monkeypatch):
         (tmp_path / ".env").write_text("PGHOST=box\n")
