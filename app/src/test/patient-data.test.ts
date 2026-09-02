@@ -27,8 +27,10 @@
  *      leaked call.
  *
  * MUST FAIL, from the mission brief:
- *   - `chr15:48,4xx,xxx`-style strings — a chromosome name followed by a colon and a
- *     position, with or without a `-end`, comma-grouped or not.
+ *   - `chr<N>:<8-digit position>` strings — a chromosome name followed by a colon and a
+ *     position, with or without a `-end`, comma-grouped or not. (Written schematically
+ *     rather than as a literal: this file is itself scanned, and an illustration that
+ *     parsed as a coordinate would fail its own gate.)
  *   - a `chrom`/`pos` (or `contig`/`position`, or a `chrom` + `start`/`end` interval) pair
  *     whose position is not on the ladder above.
  *   - any large position that is neither a ladder value nor a known chromosome length —
