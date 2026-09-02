@@ -22,9 +22,23 @@
 - Use `uv` for all Python work: `uv run`, `uv add`, `uv sync`. Do not use `pip`, `python -m venv`, or bare `python`.
 
 ## Code structure
-- No script or module longer than 400 lines. When a file approaches that limit, split it into
-  domain-driven modules (one bounded concern per module) instead of growing the file.
+- No script or module longer than 400 lines (600 for a test module). When a file approaches
+  that limit, split it into domain-driven modules (one bounded concern per module) instead of
+  growing the file. Enforced: `uv run python tools/check_module_size.py`.
 - Favor reusability: extract shared logic into reusable functions/modules rather than duplicating it.
+- Respect the package layering in [`src/mva/README.md`](src/mva/README.md): `io`, `pipeline` and
+  `render` are leaves and import no sibling package; nothing outside `mva.viz` may import it.
+  Enforced: `uv run lint-imports`.
+
+## Quality gates
+Before pushing Python, run `tools/check-python.sh` (add `--fix` to format and autofix first).
+It runs the six gates CI runs: ruff format, ruff lint, module size, import layering, mypy,
+pytest. Why each rule is set where it is — and what to do when one fails — is owned by
+[`docs/notes/python-quality-gates.md`](docs/notes/python-quality-gates.md). Two standing rules:
+- A gate that is wrong for a change gets fixed, and the reason recorded in that note. Never
+  `--no-verify`, never a bare `# noqa` — a suppression states its reason inline.
+- mypy's per-package strict list in `pyproject.toml` is a ratchet: packages come off the
+  permissive list as they are annotated, never back onto it.
 
 ## Documentation rules
 - One doc index: `docs/README.md`. The root `README.md` is the front door (what this is, data

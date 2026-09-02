@@ -75,6 +75,7 @@ provisional, what would prompt a rethink. Full register with results:
 
 | Note | Where | Standing |
 |---|---|---|
+| [The Python quality gates](notes/python-quality-gates.md) | cross-step | firm — six gates wired into CI and both hooks |
 | [No patient data in the repository](notes/no-patient-data-in-the-repository.md) | cross-step | firm — follows from the DTA |
 | [Synthetic fixtures](notes/synthetic-fixtures.md) | cross-step | firm — follows from the above |
 | [Delivery is immutable](step-0/notes/delivery-is-immutable.md) | step 0 | firm — verified 12/12 hashes |

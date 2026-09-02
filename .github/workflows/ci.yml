@@ -89,5 +89,24 @@ jobs:
       - name: Sync dependencies (uv sync --frozen)
         run: uv sync --frozen
 
+      # Order matters: the cheap, deterministic gates run before the 20-second test
+      # suite so a formatting or import-layering mistake fails in seconds.
+      - name: Format check (ruff format --check)
+        run: uv run ruff format --check src tests tools
+
+      - name: Lint (ruff check)
+        run: uv run ruff check src tests tools
+
+      - name: Module size (400 lines in src, 600 in tests)
+        run: uv run python tools/check_module_size.py
+
+      # The package layering documented in src/mva/README.md. Without this the
+      # dependency diagram is a picture nothing checks.
+      - name: Import layering (lint-imports)
+        run: uv run lint-imports
+
+      - name: Typecheck (mypy)
+        run: uv run mypy
+
       - name: Test (pytest)
         run: uv run pytest

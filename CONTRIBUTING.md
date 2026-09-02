@@ -50,10 +50,18 @@ where the commit produced one, e.g. "296.89 kB -> 236.44 kB raw".>
 | Production build (`tsc -b && vite build`) | pre-push hook, CI `app` job | `cd app && npm run build` |
 | Bundle size budget | CI `app` job (`app/tools/bundle-budget.mjs`) | `cd app && node tools/bundle-budget.mjs` |
 | Dead code (unused files/exports/deps) | CI `app` job, **report-only** — see `app/knip.json` | `cd app && npx knip` |
-| `uv.lock` matches `pyproject.toml`, pytest suite | CI `python` job only — no local git hook | `uv sync --frozen && uv run pytest` |
+| Ruff format (`ruff format`) | pre-commit hook (staged `.py` only, rewrites + re-stages), pre-push hook, CI `python` job | `uv run ruff format src tests tools` |
+| Ruff lint (30 rule families, line length 100) | pre-commit hook (staged `.py` only, `--fix`), pre-push hook, CI `python` job | `uv run ruff check src tests tools` |
+| Module size (400 lines in `src`/`tools`, 600 in `tests`) | pre-push hook, CI `python` job | `uv run python tools/check_module_size.py` |
+| Import layering (no cycles; the leaf packages import no sibling; nothing depends on `mva.viz`) | pre-push hook, CI `python` job | `uv run lint-imports` |
+| mypy (strict, with a per-package ratchet) | pre-push hook, CI `python` job | `uv run mypy` |
+| `uv.lock` matches `pyproject.toml`, pytest suite | pre-push hook, CI `python` job | `uv sync --frozen && uv run pytest` |
 
 `npm run check` in `app/` runs typecheck + lint + format:check + test in one command — the same
-four gates the pre-push hook and CI both run.
+four gates the pre-push hook and CI both run. `tools/check-python.sh` is its counterpart for
+the root package: the same six gates, in CI's order, with `--fix` to format and autofix first.
+Why each Python rule is set where it is:
+[`docs/notes/python-quality-gates.md`](docs/notes/python-quality-gates.md).
 
 ## Git hooks (husky)
 
@@ -61,12 +69,14 @@ Hooks live at the **repo root** `.husky/` (not `app/.husky/`) because git resolv
 `core.hooksPath` from the top of the working tree, and one hook has to see staged/pushed files
 across both projects to decide whether it needs to run at all.
 
-- **pre-commit** — runs `lint-staged` (`app/.lintstagedrc.json`: `eslint --fix` + `prettier
+- **pre-commit** — runs `ruff format` + `ruff check --fix` on staged `.py` files and
+  re-stages them, then `lint-staged` (`app/.lintstagedrc.json`: `eslint --fix` + `prettier
   --write` on staged `.ts`/`.tsx`/`.js`/`.mjs`, `prettier --write` on staged `.json`/`.md`, all
   under `app/`) — but only if the commit actually stages a file under `app/`. A Python-only or
   docs-only commit skips it entirely; no node process even starts.
-- **pre-push** — runs the full `npm run check` + `npm run build` in `app/` — but only if the
-  range being pushed touches `app/`. Same skip logic, applied to the diff between each pushed
+- **pre-push** — runs `tools/check-python.sh` if the pushed range touches `src/`, `tests/`,
+  `tools/`, `pyproject.toml` or `uv.lock`, and the full `npm run check` + `npm run build` in
+  `app/` if it touches `app/`. Each half is skipped when untouched. Same skip logic, applied to the diff between each pushed
   ref's old and new SHA (falls back to running the gate, never to skipping it, when that diff is
   ambiguous — e.g. a brand-new branch with no shared history).
 

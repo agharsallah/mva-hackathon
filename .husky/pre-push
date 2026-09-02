@@ -13,6 +13,7 @@ set -e
 
 zero=0000000000000000000000000000000000000000
 run_gate=0
+run_python=0
 
 while read -r local_ref local_sha remote_ref remote_sha; do
   [ -z "${local_sha:-}" ] && continue
@@ -38,14 +39,31 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   if printf '%s\n' "$changed" | grep -q '^app/'; then
     run_gate=1
   fi
+  # The Python half: the package, its tests, its tooling, and the dependency pins.
+  if printf '%s\n' "$changed" | grep -qE '^(src/|tests/|tools/|pyproject\.toml|uv\.lock)'; then
+    run_python=1
+  fi
 done
 
-if [ "$run_gate" = "0" ]; then
-  echo "pre-push: no app/ changes in the pushed range — skipping npm run check + build"
+if [ "$run_gate" = "0" ] && [ "${run_python:-0}" = "0" ]; then
+  echo "pre-push: pushed range touches neither app/ nor the Python package — skipping both gates"
   exit 0
 fi
 
-echo "pre-push: app/ changes detected — running npm run check + build"
-cd app
-npm run check
-npm run build
+# Python before app/ because the app/ gate ends inside app/, and because the Python
+# gate is the faster of the two to fail.
+if [ "${run_python:-0}" = "1" ]; then
+  echo "pre-push: Python changes detected — running tools/check-python.sh"
+  tools/check-python.sh
+else
+  echo "pre-push: no Python changes in the pushed range — skipping the Python gate"
+fi
+
+if [ "$run_gate" = "1" ]; then
+  echo "pre-push: app/ changes detected — running npm run check + build"
+  cd app
+  npm run check
+  npm run build
+else
+  echo "pre-push: no app/ changes in the pushed range — skipping npm run check + build"
+fi

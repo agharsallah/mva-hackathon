@@ -3,15 +3,32 @@
 # resolves `core.hooksPath` from the repository top level, and this one repo
 # holds two projects: the Python package at the root and the app/ React app.
 #
-# Only the app/ half has a commit-time gate (lint-staged: eslint --fix +
-# prettier --write on TS/TSX/JS/MJS, prettier on JSON/MD, see
-# app/.lintstagedrc.json). A commit that touches only Python or docs must not
-# pay for node/lint-staged startup at all, so check the staged path list
-# before touching anything under app/.
+# Each half has its own commit-time gate and each is skipped entirely when the
+# commit does not touch it: lint-staged (eslint --fix + prettier --write, see
+# app/.lintstagedrc.json) for app/, and ruff (format + check --fix) for Python.
+# A docs-only commit runs neither, and a Python-only commit never starts node.
 set -e
 
 staged=$(git diff --cached --name-only --diff-filter=ACMR)
 staged_app=$(printf '%s\n' "$staged" | grep -E '^app/' || true)
+
+staged_py=$(printf '%s\n' "$staged" | grep -E '\.py$' || true)
+
+# Python first: it needs the repo root as the working directory, and the app/ gate
+# below ends with `cd app`.
+if [ -n "$staged_py" ]; then
+  echo "pre-commit: staged Python changes — running ruff format + check --fix"
+  # shellcheck disable=SC2086 # deliberate word splitting: one argument per file
+  uv run ruff format $staged_py
+  # shellcheck disable=SC2086
+  uv run ruff check --fix $staged_py
+  # Re-stage what ruff rewrote, so the commit contains the fixed file and not the
+  # version that was staged before the hook ran.
+  # shellcheck disable=SC2086
+  git add $staged_py
+else
+  echo "pre-commit: no staged Python files — skipping ruff"
+fi
 
 if [ -z "$staged_app" ]; then
   echo "pre-commit: no staged files under app/ — skipping lint-staged"

@@ -133,7 +133,10 @@ docstring-code-format = true
 # and the permissive list is a ratchet: entries come off it, never onto it.
 # ---------------------------------------------------------------------------------------
 [tool.mypy]
-python_version = "3.11"
+# No `python_version` pin: numpy's bundled stubs use `type` statements, which are 3.12+
+# syntax, so pinning 3.11 makes mypy fail inside numpy before it reaches our code. The
+# 3.11 floor from requires-python is enforced instead by ruff's `target-version = py311`,
+# which rejects any syntax or stdlib API newer than that.
 files = ["src/mva", "tools"]
 namespace_packages = true
 explicit_package_bases = true
@@ -143,3 +146,72 @@ strict = true
 ignore_missing_imports = true
 warn_unused_configs = true
 pretty = true
+# --- The ratchet ---------------------------------------------------------------------
+# Full `strict` over 30k lines that predate it is 522 errors, 496 of which are missing
+# annotations rather than type mistakes. So the four annotation-completeness flags are
+# off by default and turned back ON per package once that package is annotated. Entries
+# come off this list, never onto it: a package that is strict stays strict.
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+disallow_untyped_calls = false
+disallow_any_generics = false
+warn_return_any = false
+
+# Packages already clean under the full ruleset. Add the next one here when it is.
+[[tool.mypy.overrides]]
+module = ["mva.io.*", "mva.render.*"]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_calls = true
+disallow_any_generics = true
+warn_return_any = true
+
+# ---------------------------------------------------------------------------------------
+# import-linter — the package layering from src/mva/README.md, enforced. Without this the
+# dependency graph is a diagram in a README that nothing checks.
+# ---------------------------------------------------------------------------------------
+[tool.importlinter]
+root_package = "mva"
+include_external_packages = false
+
+[[tool.importlinter.contracts]]
+name = "No import cycles between packages"
+type = "layers"
+layers = [
+    "mva.viz",
+    "mva.explore",
+    "mva.science",
+    "mva.reads",
+    "mva.warehouse",
+    "mva.pipeline | mva.io | mva.render",
+]
+# A layer may import anything below it and nothing above it. mva.pipeline, mva.io and
+# mva.render sit on the bottom row together because none of them imports either of the
+# others; they are the leaves.
+exhaustive = false
+
+[[tool.importlinter.contracts]]
+name = "The leaf packages import no sibling package"
+type = "forbidden"
+source_modules = ["mva.io", "mva.pipeline", "mva.render"]
+forbidden_modules = [
+    "mva.explore",
+    "mva.reads",
+    "mva.science",
+    "mva.viz",
+    "mva.warehouse",
+]
+
+[[tool.importlinter.contracts]]
+name = "Nothing depends on the web layer"
+type = "forbidden"
+source_modules = [
+    "mva.explore",
+    "mva.io",
+    "mva.pipeline",
+    "mva.reads",
+    "mva.render",
+    "mva.science",
+    "mva.warehouse",
+]
+forbidden_modules = ["mva.viz"]
