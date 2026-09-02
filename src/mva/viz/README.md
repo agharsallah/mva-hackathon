@@ -63,6 +63,9 @@ flowchart LR
 | Module | Responsibility | Key exports |
 |---|---|---|
 | `app.py` | Assembles the FastAPI app: CORS, cache, routers, `/health` | `create_app`, `cors_origins` |
+| `health.py` | `/api/health/dependencies`: runs the probes concurrently, caches ~10 s, never raises | `router`, `probe_all`, `overall` |
+| `health_probes.py` | One probe per dependency — what it touches and what it advises when it fails | `probe_warehouse`, `probe_object_store`, `probe_parquet`, `probe_reads_api`, `probe_ensembl` |
+| `health_results.py` | The check registry (name, kind, pages powered) and the result vocabulary | `REGISTRY`, `up`, `degraded`, `down`, `skipped`, `failed` |
 | `serve.py` | `mva-viz-api` CLI entry point, uvicorn runner | `main` |
 | `cache.py` | Disk cache: JSON entries under `build/`, atomic write | `Cache`, `safe_key`, `default_directory` |
 | `response.py` | The one envelope shape every route returns | `Envelope`, `live`, `cached` |
@@ -112,7 +115,8 @@ All paths are prefixed `/api` except `/health`. `refresh=true` on a cached route
 
 | Method | Path | Returns |
 |---|---|---|
-| GET | `/health` | Liveness only (`{ok, service}`) |
+| GET | `/health` | Liveness only (`{ok, service}`) — touches nothing |
+| GET | `/api/health/dependencies` | Seven dependency probes: warehouse, object store, parquet read path, reads API, Ensembl, reference snapshots (cached ~10 s) |
 | GET | `/api/overview` | Landing-page headline numbers (cached) |
 | GET | `/api/catalog/objects` | Delivered objects: kind, role, size, hash, upload time |
 | GET | `/api/catalog/tables` | Every warehouse/results table: description, row count, lineage (cached) |

@@ -23,8 +23,9 @@ Two things are configured here rather than hard-coded, because a browser is invo
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from ..warehouse.settings import Postgres, setting
-from . import probebuild, routes_reads, routes_warehouse
+from ..warehouse.objects import ObjectStore
+from ..warehouse.settings import Postgres, object_store, setting
+from . import health, probebuild, routes_reads, routes_warehouse
 from .cache import Cache, default_directory
 
 SERVICE = "mva-viz-api"
@@ -47,10 +48,12 @@ def create_app(
     cache: Cache | None = None,
     origins: list[str] | None = None,
     upstream=None,
+    store: ObjectStore | None = None,
 ) -> FastAPI:
-    """Build the application. Tests inject settings, cache and a fake upstream."""
+    """Build the application. Tests inject settings, cache, a fake upstream and store."""
     settings = settings or Postgres.from_env()
     cache = cache or Cache(default_directory())
+    store = store or object_store()
 
     app = FastAPI(
         title=SERVICE,
@@ -68,14 +71,20 @@ def create_app(
     )
     app.state.settings = settings
     app.state.cache = cache
+    app.state.store = store
 
     @app.get("/health", tags=["service"])
-    def health() -> dict:
-        """Liveness only — it touches neither the database nor the object store."""
+    def liveness() -> dict:
+        """Liveness only — it touches neither the database nor the object store.
+
+        For "are the backends actually working", see ``GET /api/health/dependencies``
+        (:mod:`mva.viz.health`).
+        """
         return {"ok": True, "service": SERVICE}
 
     app.include_router(routes_warehouse.router(settings, cache))
     app.include_router(routes_reads.router(cache, upstream))
+    app.include_router(health.router(settings, store, upstream))
     # Reads nothing: the payload is the request, put through the pipeline's own rules.
     app.include_router(probebuild.router())
     return app
