@@ -162,11 +162,13 @@ export function TableExplainer() {
     return grouped;
   }, [columns.data]);
 
-  const rows = tables.data?.data ?? [];
+  // Memoised because `?? []` mints a fresh array on every render while a query is
+  // pending, which would make the export payload below recompute forever.
+  const rows = useMemo(() => tables.data?.data ?? [], [tables.data]);
   const needle = filter.trim().toLowerCase();
   const shown = rows.filter((r) => matches(r, byTable.get(`${r.schema}.${r.table}`) ?? [], needle));
   const schemas = [...new Set(rows.map((r) => r.schema))].sort();
-  const allColumns = columns.data?.data ?? [];
+  const allColumns = useMemo(() => columns.data?.data ?? [], [columns.data]);
   // Both payloads: the card only makes sense with its columns, so the export carries both.
   const exportData = useMemo(() => ({ tables: rows, columns: allColumns }), [rows, allColumns]);
   const unexplained = allColumns.filter((c) => c.meaning === null).length;

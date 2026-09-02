@@ -27,7 +27,13 @@ function failed(said: string): boolean {
 export function AiExport() {
   const pathname = useLocation().pathname;
   const version = useSyncExternalStore(exhibitRegistry.subscribe, exhibitRegistry.version);
-  const onPage = useMemo(() => exhibitRegistry.getByPage(pathname), [pathname, version]);
+  const onPage = useMemo(() => {
+    // `version` is read, not just listed: the registry is a mutable store, so a bumped
+    // version is the only signal that its contents changed. Dropping the dependency
+    // would freeze this list at whatever was mounted when the route last changed.
+    void version;
+    return exhibitRegistry.getByPage(pathname);
+  }, [pathname, version]);
 
   const [said, setSaid] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
