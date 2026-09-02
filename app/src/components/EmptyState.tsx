@@ -10,10 +10,11 @@
  */
 import type { ReactNode } from 'react';
 
-import { cx, EMPTY_DASHED } from '../lib/ui';
+import type { Tone } from '../lib/palette';
+import { cx, EMPTY_DASHED, TEXT } from '../lib/ui';
 
 export interface EmptyStateProps {
-  tone?: 'neutral' | 'good';
+  tone?: Tone;
   title?: ReactNode;
   children?: ReactNode;
   className?: string;
@@ -23,16 +24,12 @@ export function EmptyState({ tone = 'neutral', title, children, className }: Emp
   return (
     <div className={cx('rounded-lg border p-6 text-center', EMPTY_DASHED[tone], className)}>
       {title && (
-        <div
-          className={cx('text-sm font-medium', tone === 'good' ? 'text-emerald-400' : undefined)}
-        >
-          {title}
-        </div>
+        <div className={cx('text-sm font-medium', tone !== 'neutral' && TEXT[tone])}>{title}</div>
       )}
       {children && (
         <div
           className={cx(
-            title ? 'mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-zinc-400' : 'text-sm',
+            title ? 'mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-chrome-400' : 'text-sm',
           )}
         >
           {children}

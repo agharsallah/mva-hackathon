@@ -62,7 +62,7 @@ export function GeneBackground() {
   /** `null` is unmeasurable background, so it renders as the word, never as a number. */
   const orGap = (z: number | null) =>
     z === null ? (
-      <span className="text-zinc-600" title="the background had no usable spread">
+      <span className="text-chrome-600" title="the background had no usable spread">
         no spread
       </span>
     ) : (
@@ -73,12 +73,12 @@ export function GeneBackground() {
     {
       key: 'gene',
       header: 'gene',
-      render: (r) => <span className="font-mono text-zinc-100">{r.gene}</span>,
+      render: (r) => <span className="font-mono text-chrome-100">{r.gene}</span>,
     },
     {
       key: 'chrom',
       header: 'contig',
-      render: (r) => <span className="text-zinc-400">{r.chrom}</span>,
+      render: (r) => <span className="text-chrome-400">{r.chrom}</span>,
     },
     {
       key: 'gene_variants_per_mb',
@@ -92,7 +92,7 @@ export function GeneBackground() {
       align: 'right',
       sortValue: (r) => meanDensity(r),
       render: (r) => (
-        <span className="text-zinc-400">
+        <span className="text-chrome-400">
           {dec(meanDensity(r), 0)} ± {sdDensity(r) === null ? '—' : dec(sdDensity(r), 0)}
         </span>
       ),
@@ -116,7 +116,7 @@ export function GeneBackground() {
       align: 'right',
       sortValue: (r) => meanPass(r),
       render: (r) => (
-        <span className="text-zinc-400">
+        <span className="text-chrome-400">
           {meanPass(r) === null ? '—' : dec(meanPass(r), 1)} ±{' '}
           {sdPass(r) === null ? '—' : dec(sdPass(r), 1)}
         </span>
@@ -135,7 +135,7 @@ export function GeneBackground() {
       align: 'right',
       sortValue: (r) => r.n_all,
       render: (r) => (
-        <span className="text-zinc-400">
+        <span className="text-chrome-400">
           {int(r.n_pass)} / {int(r.n_all)}
         </span>
       ),
@@ -163,9 +163,9 @@ export function GeneBackground() {
           is one megabase, so a window&rsquo;s record count is itself a density in variants/Mb).{' '}
           <Chip color={C.machinery}>circles</Chip> are variant density,{' '}
           <Chip color={C.machinery}>diamonds</Chip> are PASS share. The{' '}
-          <span className="text-zinc-500">grey band</span> is |z| &lt; {Z_BAND} — ordinary for this
-          background. Outside it a point turns <Chip color={C.decision}>yellow</Chip> (2–{Z_STRONG}{' '}
-          σ) and then <Chip color={C.broken}>red</Chip> (past {Z_STRONG} σ). A{' '}
+          <span className="text-chrome-500">grey band</span> is |z| &lt; {Z_BAND} — ordinary for
+          this background. Outside it a point turns <Chip color={C.decision}>yellow</Chip> (2–
+          {Z_STRONG} σ) and then <Chip color={C.broken}>red</Chip> (past {Z_STRONG} σ). A{' '}
           <Chip color={C.absent}>grey point</Chip> would mean the background had no usable spread,
           so no z exists — never a z of zero. Hover carries the raw numbers behind each point.{' '}
           <strong>

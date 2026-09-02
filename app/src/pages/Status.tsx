@@ -69,19 +69,19 @@ export default function StatusPage() {
         caveat="This page reads a health endpoint like any other — the states shown are whatever it reports at the moment you loaded the page, then re-checked every 10 minutes. Probing costs real round trips to Postgres, MinIO and Ensembl, so it is deliberately quiet; use Re-probe now when you have just restarted something. In fixture mode (no backend running) every state below is illustrative, not measured — the fixture's source string says so."
       />
 
-      <div className="flex flex-wrap items-baseline justify-between gap-2 text-[11px] text-zinc-500">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 text-[11px] text-chrome-500">
         <span>
           Probed on load, then every 10 minutes. The API caches one probe round for ~10 s.
         </span>
         {forced ? (
-          <span className="text-amber-400">
+          <span className="text-decision-400">
             forced re-probe — the API&apos;s cache is bypassed ·{' '}
-            <Link to="/status" className="underline hover:text-zinc-200">
+            <Link to="/status" className="underline hover:text-chrome-200">
               back to the normal cadence
             </Link>
           </span>
         ) : (
-          <Link to="/status?refresh" className="underline hover:text-zinc-200">
+          <Link to="/status?refresh" className="underline hover:text-chrome-200">
             Re-probe now
           </Link>
         )}

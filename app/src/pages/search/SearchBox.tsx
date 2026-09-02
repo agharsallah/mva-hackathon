@@ -62,14 +62,14 @@ export function SearchBox({
             placeholder={PLACEHOLDER}
             spellCheck={false}
             aria-label="search the callset by gene, region or rsID"
-            className="w-full rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2.5 font-mono text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-blue-700 focus:outline-none"
+            className="w-full rounded-lg border border-chrome-700 bg-chrome-900 px-3 py-2.5 font-mono text-sm text-chrome-100 placeholder:text-chrome-600 focus:border-machinery-700 focus:outline-none"
           />
           {draft && (
             <button
               type="button"
               onClick={() => setDraft('')}
               aria-label="clear the query"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-chrome-500 hover:text-chrome-300"
             >
               ×
             </button>
@@ -78,12 +78,12 @@ export function SearchBox({
         <button
           type="submit"
           disabled={!draft.trim() || busy}
-          className="rounded-lg border border-blue-700 bg-blue-950/60 px-4 py-2.5 text-sm text-blue-300 transition hover:bg-blue-900/60 disabled:cursor-not-allowed disabled:border-zinc-800 disabled:bg-zinc-900 disabled:text-zinc-600"
+          className="rounded-lg border border-machinery-700 bg-machinery-950/60 px-4 py-2.5 text-sm text-machinery-300 transition hover:bg-machinery-900/60 disabled:cursor-not-allowed disabled:border-chrome-800 disabled:bg-chrome-900 disabled:text-chrome-600"
         >
           {busy ? 'searching…' : 'Search'}
         </button>
       </div>
-      <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-zinc-600">
+      <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-chrome-600">
         <span>try</span>
         {EXAMPLES.map((e) => (
           <button
@@ -91,7 +91,7 @@ export function SearchBox({
             type="button"
             onClick={() => onSubmit(e.q)}
             title={e.what}
-            className="rounded-md border border-zinc-800 bg-zinc-900 px-2 py-0.5 font-mono text-zinc-400 transition hover:border-zinc-700 hover:text-zinc-200"
+            className="rounded-md border border-chrome-800 bg-chrome-900 px-2 py-0.5 font-mono text-chrome-400 transition hover:border-chrome-700 hover:text-chrome-200"
           >
             {e.q}
           </button>

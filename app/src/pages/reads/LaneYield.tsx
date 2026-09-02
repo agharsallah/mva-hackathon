@@ -73,18 +73,19 @@ export function LaneYield() {
                   legend: { orientation: 'h', y: 1.12, x: 0, font: { color: C.inkDim, size: 11 } },
                 })}
               />
-              <div className="mt-2 grid gap-2 text-[11px] text-zinc-500 sm:grid-cols-4">
+              <div className="mt-2 grid gap-2 text-[11px] text-chrome-500 sm:grid-cols-4">
                 <span>
-                  total reads <span className="font-mono text-zinc-300">{int(total)}</span> (
+                  total reads <span className="font-mono text-chrome-300">{int(total)}</span> (
                   {compact(total)})
                 </span>
                 <span>
-                  gzip source <span className="font-mono text-purple-400">{bytes(srcBytes)}</span>
+                  gzip source <span className="font-mono text-raw-400">{bytes(srcBytes)}</span>
                 </span>
                 <span>
-                  parquet store <span className="font-mono text-blue-400">{bytes(pqBytes)}</span>
+                  parquet store{' '}
+                  <span className="font-mono text-machinery-400">{bytes(pqBytes)}</span>
                 </span>
-                <span className={imbalanced.length ? 'text-red-400' : 'text-emerald-400'}>
+                <span className={imbalanced.length ? 'text-broken-400' : 'text-good-400'}>
                   {imbalanced.length
                     ? `R1/R2 mismatch on lane ${imbalanced.join(', ')}`
                     : 'R1/R2 balanced on every lane'}

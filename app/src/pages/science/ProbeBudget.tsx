@@ -29,13 +29,13 @@ export function ProbeBudget() {
     {
       key: 'id',
       header: 'probe',
-      render: (r) => <span className="font-mono text-zinc-100">{r.probe_id}</span>,
+      render: (r) => <span className="font-mono text-chrome-100">{r.probe_id}</span>,
     },
     {
       key: 'at',
       header: 'logged',
       render: (r) => (
-        <span className="font-mono text-[11px] text-zinc-500">{iso(r.logged_at)}</span>
+        <span className="font-mono text-[11px] text-chrome-500">{iso(r.logged_at)}</span>
       ),
     },
     {
@@ -53,7 +53,7 @@ export function ProbeBudget() {
     {
       key: 'why',
       header: 'what belief it was meant to move',
-      render: (r) => <span className="text-zinc-400">{r.rationale ?? '—'}</span>,
+      render: (r) => <span className="text-chrome-400">{r.rationale ?? '—'}</span>,
     },
   ];
 
@@ -77,14 +77,14 @@ export function ProbeBudget() {
       <div className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+            <div className="text-[11px] font-medium uppercase tracking-wider text-chrome-500">
               probes remaining
             </div>
-            <div className="mt-1 font-mono text-3xl leading-none text-emerald-400">
+            <div className="mt-1 font-mono text-3xl leading-none text-good-400">
               {remaining}
-              <span className="text-lg text-zinc-500"> / {total}</span>
+              <span className="text-lg text-chrome-500"> / {total}</span>
             </div>
-            <div className="mt-1 text-[11px] text-zinc-500">{spent} spent · irreversible</div>
+            <div className="mt-1 text-[11px] text-chrome-500">{spent} spent · irreversible</div>
           </div>
           <div className="flex flex-wrap gap-1">
             {Array.from({ length: total }, (_, i) => (
@@ -93,8 +93,8 @@ export function ProbeBudget() {
                 title={i < spent ? `probe ${i + 1} — spent` : `probe ${i + 1} — unspent`}
                 className={`h-5 w-5 rounded-sm border ${
                   i < spent
-                    ? 'border-red-800 bg-red-900/50'
-                    : 'border-emerald-900/60 bg-emerald-950/30'
+                    ? 'border-broken-800 bg-broken-900/50'
+                    : 'border-good-900/60 bg-good-950/30'
                 }`}
               />
             ))}
@@ -104,11 +104,11 @@ export function ProbeBudget() {
         <Loaded query={ledger} height={120}>
           {(rows) =>
             rows.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-emerald-900/50 bg-emerald-950/10 p-5 text-center">
-                <div className="text-sm font-medium text-emerald-400">
+              <div className="rounded-lg border border-dashed border-good-900/50 bg-good-950/10 p-5 text-center">
+                <div className="text-sm font-medium text-good-400">
                   Budget untouched — 0 of {total} spent
                 </div>
-                <p className="mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-zinc-400">
+                <p className="mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-chrome-400">
                   Nothing has been asked of the oracle, which is consistent with an empty hypothesis
                   board: there is no claim yet whose confidence a reply could move. The first spend
                   should be the one that changes a belief the most, and the rationale column is

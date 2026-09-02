@@ -36,8 +36,10 @@ export function FieldList({
       <dl className={className ?? 'space-y-1.5 text-xs leading-relaxed'}>
         {fields.map((f) => (
           <div key={f.key}>
-            <dt className={f.labelClassName ?? 'inline font-semibold text-zinc-400'}>{f.label}</dt>
-            <dd className="inline text-zinc-400"> — {f.value}</dd>
+            <dt className={f.labelClassName ?? 'inline font-semibold text-chrome-400'}>
+              {f.label}
+            </dt>
+            <dd className="inline text-chrome-400"> — {f.value}</dd>
           </div>
         ))}
       </dl>
@@ -47,10 +49,10 @@ export function FieldList({
     <dl className={className ?? 'space-y-1 text-[10px]'}>
       {fields.map((f) => (
         <div key={f.key} className="flex gap-2">
-          <dt className="shrink-0 text-zinc-600" style={{ width: labelWidth }}>
+          <dt className="shrink-0 text-chrome-600" style={{ width: labelWidth }}>
             {f.label}
           </dt>
-          <dd className="min-w-0 break-words font-mono text-zinc-400">{f.value}</dd>
+          <dd className="min-w-0 break-words font-mono text-chrome-400">{f.value}</dd>
         </div>
       ))}
     </dl>

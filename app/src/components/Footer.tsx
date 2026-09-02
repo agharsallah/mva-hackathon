@@ -63,10 +63,10 @@ const REPO_DOCS = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-zinc-800">
-      <div className="mx-auto flex max-w-[1600px] flex-col gap-6 px-5 py-6 text-[11px] leading-relaxed text-zinc-500 sm:flex-row sm:flex-wrap sm:justify-between">
+    <footer className="border-t border-chrome-800">
+      <div className="mx-auto flex max-w-[1600px] flex-col gap-6 px-5 py-6 text-[11px] leading-relaxed text-chrome-500 sm:flex-row sm:flex-wrap sm:justify-between">
         <div className="max-w-sm space-y-2">
-          <p className="font-medium text-zinc-400">MVA Case Explorer</p>
+          <p className="font-medium text-chrome-400">MVA Case Explorer</p>
           <p>
             Understanding tool for one whole-genome case. No genomic coordinate is committed to this
             repository: the locus explorer shows real positions only when served by the live API,
@@ -75,16 +75,16 @@ export function Footer() {
         </div>
 
         <div className="space-y-2">
-          <p className="uppercase tracking-wide text-zinc-600">Dependency status</p>
+          <p className="uppercase tracking-wide text-chrome-600">Dependency status</p>
           <DependencyStatusLink />
         </div>
 
         <nav aria-label="More pages" className="space-y-2">
-          <p className="uppercase tracking-wide text-zinc-600">Explore</p>
+          <p className="uppercase tracking-wide text-chrome-600">Explore</p>
           <ul className="space-y-1">
             {IN_APP_LINKS.map((item) => (
               <li key={item.to}>
-                <Link to={item.to} className="hover:text-zinc-300">
+                <Link to={item.to} className="hover:text-chrome-300">
                   {item.label}
                 </Link>
               </li>
@@ -93,11 +93,11 @@ export function Footer() {
         </nav>
 
         <nav aria-label="Repository documentation" className="space-y-2">
-          <p className="uppercase tracking-wide text-zinc-600">Repo docs</p>
+          <p className="uppercase tracking-wide text-chrome-600">Repo docs</p>
           <ul className="space-y-1">
             {REPO_DOCS.map((doc) => (
               <li key={doc.href}>
-                <a href={doc.href} className="hover:text-zinc-300">
+                <a href={doc.href} className="hover:text-chrome-300">
                   {doc.label}
                 </a>
               </li>

@@ -104,23 +104,21 @@ export function Substitutions() {
                   showlegend: false,
                 })}
               />
-              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-zinc-500">
+              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-chrome-500">
                 <span>
                   Ts/Tv{' '}
-                  <span className="font-mono text-emerald-400">
-                    {dec(t.data?.data.ratio ?? 0, 2)}
-                  </span>{' '}
+                  <span className="font-mono text-good-400">{dec(t.data?.data.ratio ?? 0, 2)}</span>{' '}
                   (expected ≈2.0)
                 </span>
                 {t.data && (
                   <>
                     <span>
                       transitions{' '}
-                      <span className="font-mono text-zinc-300">{int(t.data.data.ts)}</span>
+                      <span className="font-mono text-chrome-300">{int(t.data.data.ts)}</span>
                     </span>
                     <span>
                       transversions{' '}
-                      <span className="font-mono text-zinc-300">{int(t.data.data.tv)}</span>
+                      <span className="font-mono text-chrome-300">{int(t.data.data.tv)}</span>
                     </span>
                   </>
                 )}

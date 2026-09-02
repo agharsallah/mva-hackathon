@@ -39,12 +39,12 @@ export function CandidateFunnel() {
       key: 'no',
       header: '#',
       align: 'right',
-      render: (r) => <span className="text-zinc-500">{r.stage_no}</span>,
+      render: (r) => <span className="text-chrome-500">{r.stage_no}</span>,
     },
     {
       key: 'stage',
       header: 'stage',
-      render: (r) => <span className="font-medium text-zinc-100">{r.stage}</span>,
+      render: (r) => <span className="font-medium text-chrome-100">{r.stage}</span>,
     },
     {
       key: 'scope',
@@ -59,7 +59,7 @@ export function CandidateFunnel() {
       key: 'n',
       header: 'n',
       align: 'right',
-      render: (r) => <span className="text-zinc-100">{int(r.n)}</span>,
+      render: (r) => <span className="text-chrome-100">{int(r.n)}</span>,
     },
     {
       key: 'prev',
@@ -68,7 +68,7 @@ export function CandidateFunnel() {
       render: (r) =>
         r.of_previous_pct === null ? (
           <span
-            className="text-zinc-600"
+            className="text-chrome-600"
             title="not a subset of the row above — no ratio is meaningful"
           >
             n/a
@@ -80,7 +80,7 @@ export function CandidateFunnel() {
     {
       key: 'note',
       header: 'why the filter is justified',
-      render: (r) => <span className="text-zinc-400">{r.note}</span>,
+      render: (r) => <span className="text-chrome-400">{r.note}</span>,
     },
   ];
 
@@ -101,8 +101,8 @@ export function CandidateFunnel() {
           is the value — and a stage nothing survives has no position on a log axis, so it is
           written in as <em>0 — nothing survives this stage</em> rather than drawn. Hover a bar for
           its count, its share of the stage above, and why that filter is justified.{' '}
-          <span className="text-zinc-500">n/a</span> under &ldquo;% of previous&rdquo; means the row
-          is not a subset of the one above it.
+          <span className="text-chrome-500">n/a</span> under &ldquo;% of previous&rdquo; means the
+          row is not a subset of the one above it.
         </>
       }
       reading="Each row is a claim the report has to defend: this filter is justified, and this is what it cost. The cliffs are the argument — rarity removes 96% of what the annotation covers, and protein-altering removes 94% of what survives that."
@@ -115,7 +115,7 @@ export function CandidateFunnel() {
         {(rows) => {
           if (rows.length === 0) {
             return (
-              <p className="p-6 text-center text-sm text-zinc-500">the funnel table is empty</p>
+              <p className="p-6 text-center text-sm text-chrome-500">the funnel table is empty</p>
             );
           }
           const ordered = [...rows].sort((a, b) => a.stage_no - b.stage_no);
@@ -126,10 +126,11 @@ export function CandidateFunnel() {
           return (
             <div className="space-y-3">
               <Waterfall rows={ordered} boundary={boundary} />
-              <p className="text-[11px] text-zinc-500">
-                {int(first.n)} {first.stage} → <span className="text-zinc-200">{int(last.n)}</span>{' '}
-                {last.stage} · {ordered.filter((r) => r.scope === 'genome').length} genome-scoped
-                stages, {ordered.filter((r) => r.scope === 'panel').length} panel-scoped
+              <p className="text-[11px] text-chrome-500">
+                {int(first.n)} {first.stage} →{' '}
+                <span className="text-chrome-200">{int(last.n)}</span> {last.stage} ·{' '}
+                {ordered.filter((r) => r.scope === 'genome').length} genome-scoped stages,{' '}
+                {ordered.filter((r) => r.scope === 'panel').length} panel-scoped
               </p>
               <DataTable rows={ordered} columns={columns} rowKey={(r) => String(r.stage_no)} />
               <Callout tone="decision" title="What the funnel does not claim">

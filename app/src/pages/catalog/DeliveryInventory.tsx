@@ -75,16 +75,16 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
   return (
     <div
       className={`rounded-lg border p-3 ${
-        v.ok ? 'border-emerald-900/50 bg-emerald-950/10' : 'border-red-900/60 bg-red-950/20'
+        v.ok ? 'border-good-900/50 bg-good-950/10' : 'border-broken-900/60 bg-broken-950/20'
       }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <span className="truncate font-mono text-[12px] text-zinc-100" title={r.file_name}>
+        <span className="truncate font-mono text-[12px] text-chrome-100" title={r.file_name}>
           {r.file_name}
         </span>
         <span
           className={`shrink-0 rounded px-1.5 py-px text-[10px] font-medium ${
-            v.ok ? 'bg-emerald-500/15 text-emerald-400' : 'bg-red-500/15 text-red-400'
+            v.ok ? 'bg-good-500/15 text-good-400' : 'bg-broken-500/15 text-broken-400'
           }`}
           title={v.title}
         >
@@ -92,7 +92,7 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
         </span>
       </div>
 
-      <p className="mt-1.5 text-[11px] leading-relaxed text-zinc-400">{r.description}</p>
+      <p className="mt-1.5 text-[11px] leading-relaxed text-chrome-400">{r.description}</p>
 
       <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px]">
         <span
@@ -104,41 +104,41 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
         >
           {r.role}
         </span>
-        <span className="rounded bg-zinc-800 px-1 py-px font-mono text-zinc-400">{r.kind}</span>
+        <span className="rounded bg-chrome-800 px-1 py-px font-mono text-chrome-400">{r.kind}</span>
         {r.lane !== null && (
-          <span className="rounded bg-purple-500/15 px-1 py-px font-mono text-purple-300">
+          <span className="rounded bg-raw-500/15 px-1 py-px font-mono text-raw-300">
             L{r.lane} R{r.read_num}
           </span>
         )}
         {r.flowcell && (
-          <span className="rounded bg-zinc-800 px-1 py-px font-mono text-zinc-500">
+          <span className="rounded bg-chrome-800 px-1 py-px font-mono text-chrome-500">
             {r.flowcell}
           </span>
         )}
-        <span className="ml-auto font-mono text-zinc-300">{bytes(r.size_bytes)}</span>
+        <span className="ml-auto font-mono text-chrome-300">{bytes(r.size_bytes)}</span>
       </div>
 
-      <dl className="mt-2 space-y-1 border-t border-zinc-800/80 pt-2 text-[10px]">
+      <dl className="mt-2 space-y-1 border-t border-chrome-800/80 pt-2 text-[10px]">
         <div className="flex gap-2">
-          <dt className="w-16 shrink-0 text-zinc-600">location</dt>
-          <dd className="break-all font-mono text-zinc-400">{r.location}</dd>
+          <dt className="w-16 shrink-0 text-chrome-600">location</dt>
+          <dd className="break-all font-mono text-chrome-400">{r.location}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="w-16 shrink-0 text-zinc-600">sha256</dt>
-          <dd className="font-mono text-zinc-400" title={r.sha256 ?? 'no digest recorded'}>
-            {r.sha256 ? `${r.sha256.slice(0, 12)}…` : <span className="text-zinc-600">none</span>}
-            {r.sha256_source && <span className="ml-1.5 text-zinc-600">({r.sha256_source})</span>}
+          <dt className="w-16 shrink-0 text-chrome-600">sha256</dt>
+          <dd className="font-mono text-chrome-400" title={r.sha256 ?? 'no digest recorded'}>
+            {r.sha256 ? `${r.sha256.slice(0, 12)}…` : <span className="text-chrome-600">none</span>}
+            {r.sha256_source && <span className="ml-1.5 text-chrome-600">({r.sha256_source})</span>}
           </dd>
         </div>
         <div className="flex gap-2">
-          <dt className="w-16 shrink-0 text-zinc-600">added</dt>
-          <dd className="font-mono text-zinc-400">
+          <dt className="w-16 shrink-0 text-chrome-600">added</dt>
+          <dd className="font-mono text-chrome-400">
             {iso(added)}
             {fromLedger ? (
-              <span className="ml-1.5 text-zinc-600">(first upload)</span>
+              <span className="ml-1.5 text-chrome-600">(first upload)</span>
             ) : (
               <span
-                className="ml-1.5 rounded bg-amber-500/15 px-1 py-px text-amber-400"
+                className="ml-1.5 rounded bg-decision-500/15 px-1 py-px text-decision-400"
                 title="No ingest-ledger row for this object — it predates the ledger. This is the store's last-modified time, which is an upper bound on arrival, not the arrival itself."
               >
                 last modified — predates the ledger
@@ -186,19 +186,21 @@ export function DeliveryInventory() {
 
           return (
             <div className="space-y-4">
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-zinc-400">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-chrome-400">
                 <span>
-                  <span className="font-mono text-zinc-100">{int(rows.length)}</span> objects
+                  <span className="font-mono text-chrome-100">{int(rows.length)}</span> objects
                 </span>
                 <span>
-                  total <span className="font-mono text-zinc-100">{bytes(totalBytes)}</span>
+                  total <span className="font-mono text-chrome-100">{bytes(totalBytes)}</span>
                 </span>
                 <span>
-                  <span className="font-mono text-emerald-400">{verified}</span> hash-verified (
+                  <span className="font-mono text-good-400">{verified}</span> hash-verified (
                   {publisher} against the publisher)
                 </span>
                 {ledgerless > 0 && (
-                  <span className="text-amber-400">{ledgerless} with no first-upload record</span>
+                  <span className="text-decision-400">
+                    {ledgerless} with no first-upload record
+                  </span>
                 )}
               </div>
 
@@ -208,10 +210,10 @@ export function DeliveryInventory() {
                 return (
                   <div key={g.key}>
                     <div className="mb-2 flex items-baseline gap-2">
-                      <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                      <h4 className="text-xs font-semibold uppercase tracking-wider text-chrome-300">
                         {g.title}
                       </h4>
-                      <span className="text-[11px] text-zinc-600">
+                      <span className="text-[11px] text-chrome-600">
                         {g.note} · {group.length} object{group.length === 1 ? '' : 's'} ·{' '}
                         {bytes(group.reduce((a, r) => a + r.size_bytes, 0))}
                       </span>

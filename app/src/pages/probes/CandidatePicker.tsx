@@ -19,7 +19,8 @@ import type { VariantRef } from '../../api/types/probebuild';
 import { Toggle } from '../../components/Controls';
 import { type Column, DataTable } from '../../components/DataTable';
 import { Loaded } from '../../components/QueryState';
-import { impactColor } from '../../lib/palette';
+import { impactTone } from '../../lib/palette';
+import { TEXT } from '../../lib/ui';
 import { parseLines, variantLabel } from './probePayload';
 
 const FREE_PLACEHOLDER = `# one row per line. " + " joins a pair into ONE row:
@@ -67,13 +68,13 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
     {
       key: 'gene',
       header: 'gene',
-      render: (r) => <span className="text-zinc-200">{r.gene ?? '—'}</span>,
+      render: (r) => <span className="text-chrome-200">{r.gene ?? '—'}</span>,
     },
     {
       key: 'consequence',
       header: 'consequence',
       render: (r) => (
-        <span style={{ color: impactColor(r.impact) }} title={r.impact}>
+        <span className={TEXT[impactTone(r.impact)]} title={r.impact}>
           {r.consequence}
         </span>
       ),
@@ -95,7 +96,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
             type="button"
             disabled={!canAdd}
             onClick={() => onAdd(toRef(r), null, r.gene ?? 'intergenic')}
-            className="rounded border border-zinc-700 px-1.5 py-0.5 text-[10px] text-zinc-300 hover:bg-zinc-800 disabled:opacity-30"
+            className="rounded border border-chrome-700 px-1.5 py-0.5 text-[10px] text-chrome-300 hover:bg-chrome-800 disabled:opacity-30"
           >
             + single
           </button>
@@ -103,7 +104,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
             type="button"
             disabled={!canAdd}
             onClick={() => pair(r)}
-            className="rounded border border-blue-800 px-1.5 py-0.5 text-[10px] text-blue-300 hover:bg-blue-950/60 disabled:opacity-30"
+            className="rounded border border-machinery-800 px-1.5 py-0.5 text-[10px] text-machinery-300 hover:bg-machinery-950/60 disabled:opacity-30"
           >
             {pending ? '+ close pair' : '+ pair'}
           </button>
@@ -113,16 +114,16 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
   ];
 
   return (
-    <div className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
+    <div className="space-y-3 rounded-xl border border-chrome-800 bg-chrome-900/40 p-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <div className="text-xs font-medium text-zinc-300">Candidates</div>
+        <div className="text-xs font-medium text-chrome-300">Candidates</div>
         <Toggle on={wide} onChange={setWide}>
           {wide ? 'every annotated panel allele' : 'rare + protein-altering only'}
         </Toggle>
       </div>
 
       {pending && (
-        <div className="flex items-center justify-between gap-2 rounded-lg border border-amber-800/60 bg-amber-950/25 px-3 py-1.5 text-[11px] text-amber-300">
+        <div className="flex items-center justify-between gap-2 rounded-lg border border-decision-800/60 bg-decision-950/25 px-3 py-1.5 text-[11px] text-decision-300">
           <span>
             pairing with <span className="font-mono">{variantLabel(pending.ref)}</span> — pick the
             second allele
@@ -130,7 +131,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
           <button
             type="button"
             onClick={() => setPending(null)}
-            className="text-amber-400 underline"
+            className="text-decision-400 underline"
           >
             cancel
           </button>
@@ -159,7 +160,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
       </Loaded>
 
       <div>
-        <label className="text-[11px] font-medium text-zinc-400">
+        <label className="text-[11px] font-medium text-chrome-400">
           From elsewhere
           <textarea
             value={text}
@@ -167,7 +168,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
             placeholder={FREE_PLACEHOLDER}
             spellCheck={false}
             rows={5}
-            className="mt-1 w-full resize-y rounded-lg border border-zinc-700 bg-zinc-950 p-2.5 font-mono text-[11px] text-zinc-100 placeholder:text-zinc-600 focus:border-blue-700 focus:outline-none"
+            className="mt-1 w-full resize-y rounded-lg border border-chrome-700 bg-chrome-950 p-2.5 font-mono text-[11px] text-chrome-100 placeholder:text-chrome-600 focus:border-machinery-700 focus:outline-none"
           />
         </label>
         <div className="mt-1.5 flex flex-wrap items-center gap-3">
@@ -178,16 +179,16 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
               good.forEach((p) => onAdd(p.variant1!, p.variant2 ?? null, 'typed'));
               setText('');
             }}
-            className="rounded-md border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:bg-zinc-800 disabled:opacity-30"
+            className="rounded-md border border-chrome-700 px-2 py-1 text-[11px] text-chrome-300 hover:bg-chrome-800 disabled:opacity-30"
           >
             add {good.length || ''} row{good.length === 1 ? '' : 's'}
           </button>
           {bad.length > 0 && (
-            <span className="text-[11px] text-red-400">{bad.length} line(s) rejected</span>
+            <span className="text-[11px] text-broken-400">{bad.length} line(s) rejected</span>
           )}
         </div>
         {bad.length > 0 && (
-          <ul className="mt-1 space-y-0.5 text-[11px] text-red-400">
+          <ul className="mt-1 space-y-0.5 text-[11px] text-broken-400">
             {bad.map((p) => (
               <li key={p.line}>
                 line {p.line}: {p.problem}

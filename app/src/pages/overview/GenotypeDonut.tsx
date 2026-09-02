@@ -82,7 +82,7 @@ export function GenotypeDonut() {
                 {rows.map((r) => (
                   <div
                     key={r.label}
-                    className="rounded-lg border border-zinc-800 bg-zinc-900/40 p-2.5"
+                    className="rounded-lg border border-chrome-800 bg-chrome-900/40 p-2.5"
                   >
                     <div className="flex items-center justify-between">
                       <span
@@ -91,15 +91,15 @@ export function GenotypeDonut() {
                       >
                         {r.label}
                       </span>
-                      <span className="font-mono text-xs text-zinc-400">
+                      <span className="font-mono text-xs text-chrome-400">
                         {pct((r.count / total) * 100)}
                       </span>
                     </div>
-                    <div className="mt-0.5 font-mono text-xs text-zinc-300">{int(r.count)}</div>
+                    <div className="mt-0.5 font-mono text-xs text-chrome-300">{int(r.count)}</div>
                   </div>
                 ))}
                 {multi && (
-                  <p className="text-[11px] leading-relaxed text-emerald-400/90">
+                  <p className="text-[11px] leading-relaxed text-good-400/90">
                     1/2 = compound het by genotype. {int(multi.count)} sites need no parental data
                     to establish that both copies are altered.
                   </p>

@@ -29,7 +29,7 @@ function shortRef(ref: string): string {
 function NoEdge() {
   return (
     <span
-      className="rounded bg-amber-500/10 px-1.5 py-px text-[10px] text-amber-400/90"
+      className="rounded bg-decision-500/10 px-1.5 py-px text-[10px] text-decision-400/90"
       title="No row in meta.lineage names an input for this table. It exists, but nothing records where it came from."
     >
       no lineage edge
@@ -48,22 +48,22 @@ export function TableCatalog() {
       {
         key: 'schema',
         header: 'schema',
-        render: (r) => <span className="font-mono text-zinc-500">{r.schema}</span>,
+        render: (r) => <span className="font-mono text-chrome-500">{r.schema}</span>,
       },
       {
         key: 'table',
         header: 'table',
-        render: (r) => <span className="font-mono font-semibold text-zinc-100">{r.table}</span>,
+        render: (r) => <span className="font-mono font-semibold text-chrome-100">{r.table}</span>,
       },
       {
         key: 'description',
         header: 'what it contains',
         render: (r) =>
           r.description ? (
-            <span className="text-zinc-300">{r.description}</span>
+            <span className="text-chrome-300">{r.description}</span>
           ) : (
             <span
-              className="rounded bg-amber-500/10 px-1.5 py-px text-[10px] text-amber-400/90"
+              className="rounded bg-decision-500/10 px-1.5 py-px text-[10px] text-decision-400/90"
               title="Nothing describes this table — no catalogue entry, and no derivation records the question it answers."
             >
               undescribed
@@ -78,7 +78,7 @@ export function TableCatalog() {
         sortValue: (r) => r.produced_at,
         render: (r) =>
           r.produced_at ? (
-            <span className="font-mono text-zinc-500">{iso(r.produced_at)}</span>
+            <span className="font-mono text-chrome-500">{iso(r.produced_at)}</span>
           ) : (
             <NoEdge />
           ),
@@ -88,12 +88,12 @@ export function TableCatalog() {
         header: 'from',
         render: (r) =>
           r.source_ref ? (
-            <span className="font-mono text-zinc-400" title={r.source_ref}>
-              <span className="text-zinc-600">{r.source_kind ?? '?'} </span>
+            <span className="font-mono text-chrome-400" title={r.source_ref}>
+              <span className="text-chrome-600">{r.source_kind ?? '?'} </span>
               {shortRef(r.source_ref)}
             </span>
           ) : (
-            <span className="text-zinc-600">—</span>
+            <span className="text-chrome-600">—</span>
           ),
       },
       {
@@ -101,9 +101,9 @@ export function TableCatalog() {
         header: 'tool',
         render: (r) =>
           r.tool ? (
-            <span className="font-mono text-zinc-500">{r.tool}</span>
+            <span className="font-mono text-chrome-500">{r.tool}</span>
           ) : (
-            <span className="text-zinc-600">—</span>
+            <span className="text-chrome-600">—</span>
           ),
       },
     ],
@@ -157,18 +157,18 @@ export function TableCatalog() {
 
           return (
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] text-zinc-500">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] text-chrome-500">
                 <span>
-                  showing <span className="font-mono text-zinc-200">{int(shown.length)}</span> of{' '}
+                  showing <span className="font-mono text-chrome-200">{int(shown.length)}</span> of{' '}
                   {int(rows.length)} tables
                 </span>
                 {schemas.map((s) => (
                   <span key={s}>
-                    <span className="font-mono text-zinc-400">{s}</span>{' '}
+                    <span className="font-mono text-chrome-400">{s}</span>{' '}
                     {rows.filter((r) => r.schema === s).length}
                   </span>
                 ))}
-                <span className={orphans ? 'text-amber-400' : 'text-emerald-400'}>
+                <span className={orphans ? 'text-decision-400' : 'text-good-400'}>
                   {orphans ? `${orphans} with no lineage edge` : 'every table has a lineage edge'}
                 </span>
               </div>

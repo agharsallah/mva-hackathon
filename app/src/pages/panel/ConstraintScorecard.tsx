@@ -30,7 +30,7 @@ export function ConstraintScorecard() {
   /** null is missing data, so it renders as the word, never as a number. */
   const orUnknown = (v: number | null, render: (n: number) => string) =>
     v === null ? (
-      <span className="text-zinc-600" title="no row in the constraint source">
+      <span className="text-chrome-600" title="no row in the constraint source">
         unknown
       </span>
     ) : (
@@ -41,7 +41,7 @@ export function ConstraintScorecard() {
     {
       key: 'gene',
       header: 'gene',
-      render: (r) => <span className="font-mono text-zinc-100">{r.gene}</span>,
+      render: (r) => <span className="font-mono text-chrome-100">{r.gene}</span>,
     },
     {
       key: 'loeuf',
@@ -49,7 +49,7 @@ export function ConstraintScorecard() {
       align: 'right',
       render: (r) =>
         r.loeuf === null ? (
-          <span className="text-zinc-600" title="no row in the constraint source">
+          <span className="text-chrome-600" title="no row in the constraint source">
             unknown
           </span>
         ) : (
@@ -82,7 +82,7 @@ export function ConstraintScorecard() {
       align: 'right',
       render: (r) =>
         r.lof_obs === null || r.lof_exp === null ? (
-          <span className="text-zinc-600">unknown</span>
+          <span className="text-chrome-600">unknown</span>
         ) : (
           `${int(r.lof_obs)} / ${dec(r.lof_exp, 1)}`
         ),
@@ -91,24 +91,24 @@ export function ConstraintScorecard() {
       key: 'plp',
       header: 'ClinVar P/LP',
       align: 'right',
-      render: (r) => <span className="text-red-400">{int(r.clinvar_plp)}</span>,
+      render: (r) => <span className="text-broken-400">{int(r.clinvar_plp)}</span>,
     },
     {
       key: 'vus',
       header: 'VUS',
       align: 'right',
-      render: (r) => <span className="text-amber-400">{int(r.clinvar_vus)}</span>,
+      render: (r) => <span className="text-decision-400">{int(r.clinvar_vus)}</span>,
     },
     {
       key: 'ben',
       header: 'benign',
       align: 'right',
-      render: (r) => <span className="text-emerald-400">{int(r.clinvar_benign)}</span>,
+      render: (r) => <span className="text-good-400">{int(r.clinvar_benign)}</span>,
     },
     {
       key: 'note',
       header: 'how to read this gene',
-      render: (r) => <span className="text-zinc-400">{r.note}</span>,
+      render: (r) => <span className="text-chrome-400">{r.note}</span>,
     },
   ];
 
@@ -123,8 +123,8 @@ export function ConstraintScorecard() {
           is the conventional cut-off for calling a gene loss-of-function constrained. Right axis,{' '}
           <Chip color={C.broken}>red bars</Chip>: how many variants ClinVar already classes
           Pathogenic or Likely-pathogenic in that gene. A gene with{' '}
-          <span className="text-zinc-500">no bar and an &ldquo;unknown&rdquo; tag</span> has no row
-          in the constraint source — that is missing data, never a score of zero and never
+          <span className="text-chrome-500">no bar and an &ldquo;unknown&rdquo; tag</span> has no
+          row in the constraint source — that is missing data, never a score of zero and never
           &ldquo;unconstrained&rdquo;.
         </>
       }

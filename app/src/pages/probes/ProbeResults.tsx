@@ -4,7 +4,8 @@ import { Chip, Exhibit } from '../../components/Exhibit';
 import { Plot } from '../../components/Plot';
 import { baseLayout } from '../../components/plotLayout';
 import { dec, int } from '../../lib/format';
-import { C, verdictColor } from '../../lib/palette';
+import { C, verdictColor, verdictTone } from '../../lib/palette';
+import { cx, TEXT } from '../../lib/ui';
 
 /**
  * Pull the numeric expectation out of the server's `expected` field. Live, that field is a
@@ -30,7 +31,7 @@ export function ProbeResults({ result }: { result: ProbeCountResult }) {
     {
       key: 'probe',
       header: 'probe',
-      render: (r) => <span className="font-mono text-zinc-100">{r.probe}</span>,
+      render: (r) => <span className="font-mono text-chrome-100">{r.probe}</span>,
     },
     { key: 'fwd', header: 'forward', align: 'right', render: (r) => int(r.forward) },
     { key: 'rev', header: 'reverse', align: 'right', render: (r) => int(r.reverse) },
@@ -45,9 +46,7 @@ export function ProbeResults({ result }: { result: ProbeCountResult }) {
       key: 'verdict',
       header: 'verdict',
       render: (r) => (
-        <span className="font-medium" style={{ color: verdictColor(r.verdict) }}>
-          {r.verdict}
-        </span>
+        <span className={cx('font-medium', TEXT[verdictTone(r.verdict)])}>{r.verdict}</span>
       ),
     },
   ];
@@ -157,10 +156,10 @@ export function ProbeResults({ result }: { result: ProbeCountResult }) {
       <div className="mt-3">
         <DataTable rows={counts} columns={columns} rowKey={(r) => r.probe} maxHeight={320} />
       </div>
-      <p className="mt-2 text-[11px] text-zinc-500">
+      <p className="mt-2 text-[11px] text-chrome-500">
         {counts.length} probes in one pass over the full store · {dec(result.seconds, 1)} s ·{' '}
         expectation from the server:{' '}
-        <span className="font-mono text-zinc-300">{result.expected}</span>
+        <span className="font-mono text-chrome-300">{result.expected}</span>
       </p>
     </Exhibit>
   );

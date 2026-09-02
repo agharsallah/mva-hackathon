@@ -35,13 +35,13 @@ export function DeliveryBoard() {
           const totalBytes = rows.reduce((a, r) => a + r.size_bytes, 0);
           return (
             <>
-              <div className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-zinc-400">
+              <div className="mb-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-chrome-400">
                 <span>
-                  <span className="font-mono text-emerald-400">{verified}</span> / {rows.length}{' '}
+                  <span className="font-mono text-good-400">{verified}</span> / {rows.length}{' '}
                   objects verified
                 </span>
                 <span>
-                  total <span className="font-mono text-zinc-200">{bytes(totalBytes)}</span>
+                  total <span className="font-mono text-chrome-200">{bytes(totalBytes)}</span>
                 </span>
               </div>
               <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -52,18 +52,18 @@ export function DeliveryBoard() {
                       key={r.file_name}
                       className={`rounded-lg border p-2.5 ${
                         r.hash_verified
-                          ? 'border-emerald-900/50 bg-emerald-950/15'
-                          : 'border-red-900/60 bg-red-950/25'
+                          ? 'border-good-900/50 bg-good-950/15'
+                          : 'border-broken-900/60 bg-broken-950/25'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-2">
                         <span
-                          className="truncate font-mono text-[11px] text-zinc-300"
+                          className="truncate font-mono text-[11px] text-chrome-300"
                           title={r.file_name}
                         >
                           {r.file_name}
                         </span>
-                        <span className={r.hash_verified ? 'text-emerald-400' : 'text-red-400'}>
+                        <span className={r.hash_verified ? 'text-good-400' : 'text-broken-400'}>
                           {r.hash_verified ? '✓' : '✗'}
                         </span>
                       </div>
@@ -78,13 +78,13 @@ export function DeliveryBoard() {
                           {r.role}
                           {r.lane !== null ? ` L${r.lane} R${r.read_num}` : ''}
                         </span>
-                        <span className="font-mono text-zinc-500">{bytes(r.size_bytes)}</span>
+                        <span className="font-mono text-chrome-500">{bytes(r.size_bytes)}</span>
                       </div>
                     </div>
                   );
                 })}
               </div>
-              <p className="mt-3 text-[11px] text-zinc-500">
+              <p className="mt-3 text-[11px] text-chrome-500">
                 {int(rows.filter((r) => r.role === 'reads').length)} FASTQ objects ·{' '}
                 {int(rows.filter((r) => r.role !== 'reads').length)} callset and sidecar objects
               </p>

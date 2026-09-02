@@ -18,7 +18,7 @@ import { modules } from './modules';
 
 export function AppShell() {
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-chrome-950">
       <Header items={modules.map((m) => ({ to: m.path, label: m.navLabel, preload: m.load }))} />
       <main className="mx-auto max-w-[1600px] space-y-6 px-5 py-6">
         <Routes>

@@ -11,7 +11,8 @@
 import type { ReactNode } from 'react';
 
 import type { PanelHetVariant } from '../../api/types';
-import { C, impactColor } from '../../lib/palette';
+import { C, impactTone } from '../../lib/palette';
+import { TEXT } from '../../lib/ui';
 import { coordinate, variantLabel } from './comparator';
 import { af } from './rarity';
 
@@ -23,7 +24,7 @@ interface Field {
   render: (v: PanelHetVariant) => ReactNode;
 }
 
-const dim = (text: string) => <span className="text-zinc-500">{text}</span>;
+const dim = (text: string) => <span className="text-chrome-500">{text}</span>;
 
 const FIELDS: Field[] = [
   {
@@ -31,8 +32,8 @@ const FIELDS: Field[] = [
     hint: "VEP's prediction of what the allele does to the gene product, and its severity bucket.",
     render: (v) =>
       v.annotated ? (
-        <span style={{ color: impactColor(v.impact ?? '') }}>
-          {variantLabel(v)} <span className="text-zinc-500">· {v.impact}</span>
+        <span className={TEXT[impactTone(v.impact ?? '')]}>
+          {variantLabel(v)} <span className="text-chrome-500">· {v.impact}</span>
         </span>
       ) : (
         dim('VEP never saw this allele — every annotation field below is unknown, not false')
@@ -42,7 +43,7 @@ const FIELDS: Field[] = [
     label: 'ClinVar',
     hint: 'Clinical-lab assertions about this variant. Absent means nobody has submitted one.',
     render: (v) =>
-      v.clin_sig ? <span className="text-amber-300">{v.clin_sig}</span> : dim('no assertion'),
+      v.clin_sig ? <span className="text-decision-300">{v.clin_sig}</span> : dim('no assertion'),
   },
   {
     label: 'gnomAD AF',
@@ -51,7 +52,7 @@ const FIELDS: Field[] = [
       !v.annotated ? (
         dim('unknown')
       ) : (
-        <span className={v.gnomad_af === null ? 'text-emerald-400' : 'text-zinc-200'}>
+        <span className={v.gnomad_af === null ? 'text-good-400' : 'text-chrome-200'}>
           {af(v.gnomad_af)}
         </span>
       ),
@@ -78,7 +79,7 @@ const FIELDS: Field[] = [
   {
     label: 'position',
     hint: 'The patient coordinate. Shown here, never in the primary label, and never committed to the repo.',
-    render: (v) => <span className="font-mono text-zinc-400">{coordinate(v)}</span>,
+    render: (v) => <span className="font-mono text-chrome-400">{coordinate(v)}</span>,
   },
   {
     label: 'GT',
@@ -86,7 +87,7 @@ const FIELDS: Field[] = [
     render: (v) => (
       <span className="font-mono">
         {v.gt}
-        {v.gt === '1/2' && <span className="text-zinc-500"> · allele {v.allele_ix}</span>}
+        {v.gt === '1/2' && <span className="text-chrome-500"> · allele {v.allele_ix}</span>}
       </span>
     ),
   },
@@ -95,7 +96,7 @@ const FIELDS: Field[] = [
     hint: 'This endpoint serves heterozygous PASS alleles only, so FILTER is PASS by construction — it is not read off the row.',
     render: () => (
       <span>
-        <span className="font-mono text-emerald-400">PASS</span> {dim('(by construction)')}
+        <span className="font-mono text-good-400">PASS</span> {dim('(by construction)')}
       </span>
     ),
   },
@@ -121,7 +122,7 @@ const FIELDS: Field[] = [
     render: (v) =>
       v.pgt || v.pid ? (
         <span className="font-mono">
-          {v.pgt ?? '—'} <span className="text-zinc-500">/ {v.pid ?? '—'}</span>
+          {v.pgt ?? '—'} <span className="text-chrome-500">/ {v.pid ?? '—'}</span>
         </span>
       ) : (
         dim('unphased — no read pair spanned this allele and a neighbour')
@@ -132,12 +133,14 @@ const FIELDS: Field[] = [
 export function Flag({ on, yes, no }: { on: boolean | null; yes: string; no: string }) {
   if (on === null)
     return (
-      <span className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] text-zinc-400">unknown</span>
+      <span className="rounded bg-chrome-800 px-1.5 py-0.5 text-[10px] text-chrome-400">
+        unknown
+      </span>
     );
   return (
     <span
       className={`rounded px-1.5 py-0.5 text-[10px] ${
-        on ? 'bg-emerald-950/60 text-emerald-400' : 'bg-zinc-800 text-zinc-500'
+        on ? 'bg-good-950/60 text-good-400' : 'bg-chrome-800 text-chrome-500'
       }`}
     >
       {on ? yes : no}
@@ -154,8 +157,8 @@ function Vaf({ vaf }: { vaf: number | null }) {
       <span className="font-mono" style={{ color: clean ? C.good : C.decision }}>
         {vaf.toFixed(3)}
       </span>
-      <span className="relative mt-1 block h-1.5 w-[160px] rounded-sm bg-zinc-800">
-        <span className="absolute inset-y-[-2px] left-1/2 w-px bg-zinc-500" />
+      <span className="relative mt-1 block h-1.5 w-[160px] rounded-sm bg-chrome-800">
+        <span className="absolute inset-y-[-2px] left-1/2 w-px bg-chrome-500" />
         <span
           className="absolute inset-y-[-3px] w-[3px] rounded-sm"
           style={{
@@ -164,7 +167,7 @@ function Vaf({ vaf }: { vaf: number | null }) {
           }}
         />
       </span>
-      <span className="mt-0.5 block text-[10px] text-zinc-600">
+      <span className="mt-0.5 block text-[10px] text-chrome-600">
         0 — 0.5 (one of two copies) — 1
       </span>
     </span>
@@ -173,32 +176,34 @@ function Vaf({ vaf }: { vaf: number | null }) {
 
 export function Comparison({ a, b }: { a: PanelHetVariant; b: PanelHetVariant }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-zinc-800">
+    <div className="overflow-x-auto rounded-lg border border-chrome-800">
       <table className="w-full border-collapse text-xs">
-        <thead className="bg-zinc-900 text-zinc-400">
+        <thead className="bg-chrome-900 text-chrome-400">
           <tr>
-            <th className="w-40 border-b border-zinc-800 px-2 py-2 text-left font-medium">field</th>
-            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium text-blue-300">
+            <th className="w-40 border-b border-chrome-800 px-2 py-2 text-left font-medium">
+              field
+            </th>
+            <th className="border-b border-chrome-800 px-2 py-2 text-left font-medium text-machinery-300">
               A
             </th>
-            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium text-purple-300">
+            <th className="border-b border-chrome-800 px-2 py-2 text-left font-medium text-raw-300">
               B
             </th>
           </tr>
         </thead>
         <tbody>
           {FIELDS.map((f) => (
-            <tr key={f.label} className="odd:bg-zinc-900/30">
+            <tr key={f.label} className="odd:bg-chrome-900/30">
               <td
-                className="border-b border-zinc-900 px-2 py-1.5 align-top text-zinc-500"
+                className="border-b border-chrome-900 px-2 py-1.5 align-top text-chrome-500"
                 title={f.hint}
               >
                 {f.label}
               </td>
-              <td className="border-b border-zinc-900 px-2 py-1.5 align-top text-zinc-300">
+              <td className="border-b border-chrome-900 px-2 py-1.5 align-top text-chrome-300">
                 {f.render(a)}
               </td>
-              <td className="border-b border-zinc-900 px-2 py-1.5 align-top text-zinc-300">
+              <td className="border-b border-chrome-900 px-2 py-1.5 align-top text-chrome-300">
                 {f.render(b)}
               </td>
             </tr>

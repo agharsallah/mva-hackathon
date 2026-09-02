@@ -47,12 +47,12 @@ class ModuleErrorBoundary extends Component<BoundaryProps, BoundaryState> {
     const { error } = this.state;
     if (!error) return this.props.children;
     return (
-      <div className="rounded-lg border border-red-900/60 bg-red-950/25 p-4 text-sm">
-        <div className="font-semibold text-red-300">
+      <div className="rounded-lg border border-broken-900/60 bg-broken-950/25 p-4 text-sm">
+        <div className="font-semibold text-broken-300">
           Module &ldquo;{this.props.moduleId}&rdquo; failed to load
         </div>
-        <p className="mt-1 font-mono text-xs text-red-400/80">{error.message}</p>
-        <p className="mt-2 text-xs text-zinc-400">
+        <p className="mt-1 font-mono text-xs text-broken-400/80">{error.message}</p>
+        <p className="mt-2 text-xs text-chrome-400">
           The rest of the app is unaffected. Retry re-fetches this module only.
         </p>
         <button
@@ -61,7 +61,7 @@ class ModuleErrorBoundary extends Component<BoundaryProps, BoundaryState> {
             this.setState({ error: null });
             this.props.onRetry();
           }}
-          className="mt-3 rounded-md border border-red-800/60 px-2.5 py-1 text-xs text-red-300 transition hover:bg-red-900/30"
+          className="mt-3 rounded-md border border-broken-800/60 px-2.5 py-1 text-xs text-broken-300 transition hover:bg-broken-900/30"
         >
           Retry
         </button>

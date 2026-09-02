@@ -46,10 +46,10 @@ function DependencyCard({ check, origin }: { check: DependencyCheck; origin: 'ap
         <FieldList fields={fields} labelWidth={64} />
         {check.remedy && (
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-zinc-200">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-chrome-200">
               {check.status === 'skipped' ? 'How to enable it (optional)' : 'Remedy'}
             </div>
-            <pre className="mt-1 max-w-full overflow-x-auto whitespace-pre-wrap break-words rounded-md border border-zinc-700/60 bg-black/25 p-3 font-mono text-[11px] leading-relaxed text-zinc-100">
+            <pre className="mt-1 max-w-full overflow-x-auto whitespace-pre-wrap break-words rounded-md border border-chrome-700/60 bg-black/25 p-3 font-mono text-[11px] leading-relaxed text-chrome-100">
               {check.remedy}
             </pre>
           </div>
@@ -91,10 +91,10 @@ export function DependencyBoard() {
               return (
                 <div key={g.key}>
                   <div className="mb-2 flex items-baseline gap-2">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-zinc-300">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-chrome-300">
                       {g.title}
                     </h4>
-                    <span className="text-[11px] text-zinc-600">{g.note}</span>
+                    <span className="text-[11px] text-chrome-600">{g.note}</span>
                     <Badge tone="neutral" className="ml-auto">
                       {checks.length} check{checks.length === 1 ? '' : 's'}
                     </Badge>

@@ -92,15 +92,15 @@ function totals(summary: ClinvarPresenceSummary[]) {
 
 function Totals({ total }: { total: Totals }) {
   return (
-    <p className="text-[11px] text-zinc-500">
-      <span className="text-zinc-200">{int(total.n_plp)}</span> ClinVar P/LP sites checked across
-      the panel → <span className="text-emerald-400">{int(total.n_present)} present</span> (
+    <p className="text-[11px] text-chrome-500">
+      <span className="text-chrome-200">{int(total.n_plp)}</span> ClinVar P/LP sites checked across
+      the panel → <span className="text-good-400">{int(total.n_present)} present</span> (
       {int(total.n_present_pass)} PASS, {int(total.n_present_het)} heterozygous) ·{' '}
-      <span className="text-zinc-400">{int(total.n_absent)} absent</span>
+      <span className="text-chrome-400">{int(total.n_absent)} absent</span>
       {total.n_uncomparable > 0 ? (
         <>
           {' '}
-          · <span className="text-blue-400">{int(total.n_uncomparable)} not comparable</span>
+          · <span className="text-machinery-400">{int(total.n_uncomparable)} not comparable</span>
         </>
       ) : null}
     </p>
@@ -145,12 +145,12 @@ function PresenceBars({ summary }: { summary: ClinvarPresenceSummary[] }) {
     <div className="space-y-1.5">
       {summary.map((row) => (
         <div key={row.gene} className="flex items-center gap-3 text-[11px]">
-          <span className="w-16 shrink-0 text-right font-mono font-semibold text-zinc-200">
+          <span className="w-16 shrink-0 text-right font-mono font-semibold text-chrome-200">
             {row.gene}
           </span>
-          <div className="flex h-4 min-w-0 flex-1 items-stretch overflow-hidden rounded-sm bg-zinc-900">
+          <div className="flex h-4 min-w-0 flex-1 items-stretch overflow-hidden rounded-sm bg-chrome-900">
             {row.n_plp === 0 ? (
-              <span className="self-center pl-2 text-zinc-600">
+              <span className="self-center pl-2 text-chrome-600">
                 ClinVar has classified nothing in this gene
               </span>
             ) : (
@@ -163,10 +163,8 @@ function PresenceBars({ summary }: { summary: ClinvarPresenceSummary[] }) {
               ))
             )}
           </div>
-          <span className="w-28 shrink-0 tabular-nums text-zinc-500">
-            <span
-              className={row.n_present > 0 ? 'font-semibold text-emerald-400' : 'text-zinc-400'}
-            >
+          <span className="w-28 shrink-0 tabular-nums text-chrome-500">
+            <span className={row.n_present > 0 ? 'font-semibold text-good-400' : 'text-chrome-400'}>
               {int(row.n_present)}
             </span>
             {' / '}
@@ -198,12 +196,12 @@ function SiteTable({ sites }: { sites: ClinvarPresenceSite[] }) {
     {
       key: 'gene',
       header: 'gene',
-      render: (r) => <span className="font-mono font-semibold text-zinc-100">{r.gene}</span>,
+      render: (r) => <span className="font-mono font-semibold text-chrome-100">{r.gene}</span>,
     },
     {
       key: 'clnsig',
       header: 'ClinVar classification',
-      render: (r) => <span className="font-semibold text-red-400">{r.clnsig}</span>,
+      render: (r) => <span className="font-semibold text-broken-400">{r.clnsig}</span>,
     },
     {
       key: 'review_stars',
@@ -211,7 +209,7 @@ function SiteTable({ sites }: { sites: ClinvarPresenceSite[] }) {
       sortValue: (r) => r.review_stars,
       render: (r) => (
         <span
-          className="font-mono text-amber-300"
+          className="font-mono text-decision-300"
           title={r.clnrevstat ?? 'no review status stated'}
         >
           {stars(r.review_stars)}
@@ -241,13 +239,13 @@ function SiteTable({ sites }: { sites: ClinvarPresenceSite[] }) {
       key: 'vaf',
       header: 'VAF',
       align: 'right',
-      render: (r) => (r.vaf === null ? <span className="text-zinc-600">—</span> : dec(r.vaf, 3)),
+      render: (r) => (r.vaf === null ? <span className="text-chrome-600">—</span> : dec(r.vaf, 3)),
     },
     {
       key: 'dp',
       header: 'DP',
       align: 'right',
-      render: (r) => (r.dp === null ? <span className="text-zinc-600">—</span> : int(r.dp)),
+      render: (r) => (r.dp === null ? <span className="text-chrome-600">—</span> : int(r.dp)),
     },
     {
       key: 'is_het',
@@ -255,9 +253,9 @@ function SiteTable({ sites }: { sites: ClinvarPresenceSite[] }) {
       sortValue: (r) => r.is_het,
       render: (r) =>
         r.is_het === null ? (
-          <span className="text-zinc-600">—</span>
+          <span className="text-chrome-600">—</span>
         ) : (
-          <span className={r.is_het ? 'text-emerald-400' : 'text-zinc-400'}>
+          <span className={r.is_het ? 'text-good-400' : 'text-chrome-400'}>
             {r.is_het ? 'het' : 'hom'}
           </span>
         ),
@@ -268,7 +266,7 @@ function SiteTable({ sites }: { sites: ClinvarPresenceSite[] }) {
       align: 'right',
       render: (r) => (
         <a
-          className="font-mono text-blue-400 hover:underline"
+          className="font-mono text-machinery-400 hover:underline"
           href={`https://www.ncbi.nlm.nih.gov/clinvar/variation/${r.variation_id}/`}
           target="_blank"
           rel="noreferrer"
@@ -281,7 +279,7 @@ function SiteTable({ sites }: { sites: ClinvarPresenceSite[] }) {
       key: 'condition',
       header: 'condition asserted',
       render: (r) => (
-        <span className="text-zinc-400">{(r.condition ?? '—').split('|').join(' · ')}</span>
+        <span className="text-chrome-400">{(r.condition ?? '—').split('|').join(' · ')}</span>
       ),
     },
   ];
@@ -333,19 +331,19 @@ function LeadCallout({ leads, checked }: { leads: ClinvarPresenceSite[]; checked
 
 function Caveat({ uncomparable }: { uncomparable: number }) {
   return (
-    <div className="rounded-md border border-zinc-800 bg-zinc-900/40 p-3 text-[11px] leading-relaxed text-zinc-400">
+    <div className="rounded-md border border-chrome-800 bg-chrome-900/40 p-3 text-[11px] leading-relaxed text-chrome-400">
       <p>
-        <strong className="text-zinc-300">Presence is a lower bound, not a count.</strong> A site
+        <strong className="text-chrome-300">Presence is a lower bound, not a count.</strong> A site
         matches only when the contig, the position and the reference allele are identical strings
         and the ClinVar alternate allele is one of the callset record&apos;s alternates. Neither
         side is <em>left-aligned</em> (rewritten to the left-most equivalent spelling), so the same
-        one-base insertion written <code className="text-zinc-300">T → TA</code> by ClinVar and{' '}
-        <code className="text-zinc-300">TA → TAA</code> by the caller does not join and reads as
+        one-base insertion written <code className="text-chrome-300">T → TA</code> by ClinVar and{' '}
+        <code className="text-chrome-300">TA → TAA</code> by the caller does not join and reads as
         absent. For single-base substitutions the comparison is exact; for insertions and deletions
         the true presence count can only be <em>higher</em> than what is shown.
       </p>
       <p className="mt-2">
-        <strong className="text-zinc-300">
+        <strong className="text-chrome-300">
           Review status is assertion quality, not confidence.
         </strong>{' '}
         ClinVar&apos;s gold stars record <em>how</em> a classification was reached, not how strong
@@ -356,7 +354,7 @@ function Caveat({ uncomparable }: { uncomparable: number }) {
           <>
             {' '}
             {int(uncomparable)} record{uncomparable === 1 ? '' : 's'} in this set state no alternate
-            allele at all (ClinVar writes <code className="text-zinc-300">.</code>), so they are
+            allele at all (ClinVar writes <code className="text-chrome-300">.</code>), so they are
             marked <em>not comparable</em> and counted as neither present nor absent.
           </>
         ) : null}

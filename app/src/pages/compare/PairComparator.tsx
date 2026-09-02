@@ -115,7 +115,7 @@ function Card({ payload, origin }: { payload: PanelHetPairs; origin: Origin }) {
 
   if (variants.length < 2) {
     return (
-      <p className="p-8 text-center text-sm text-zinc-500">
+      <p className="p-8 text-center text-sm text-chrome-500">
         {gene} has {variants.length === 0 ? 'no' : 'one'} heterozygous PASS allele, and a pair needs
         two.
       </p>
@@ -137,19 +137,19 @@ function Card({ payload, origin }: { payload: PanelHetPairs; origin: Origin }) {
           value={String(i)}
           options={options}
           onChange={setA}
-          accent="text-blue-300"
+          accent="text-machinery-300"
         />
         <Picker
           label="variant B"
           value={String(j)}
           options={options}
           onChange={setB}
-          accent="text-purple-300"
+          accent="text-raw-300"
         />
       </div>
 
       {!distinct && (
-        <p className="rounded-lg border border-amber-800/60 bg-amber-950/25 p-2.5 text-[11px] text-amber-300">
+        <p className="rounded-lg border border-decision-800/60 bg-decision-950/25 p-2.5 text-[11px] text-decision-300">
           Both columns point at the same allele. A pair is two different alleles — the scorer holds
           a row as a <em>set</em>, so a row whose two halves are identical is read as a
           single-variant row.
@@ -178,14 +178,14 @@ function Picker({
   accent: string;
 }) {
   return (
-    <label className="flex flex-col gap-1 rounded-lg border border-zinc-800 bg-zinc-950/40 p-2.5">
+    <label className="flex flex-col gap-1 rounded-lg border border-chrome-800 bg-chrome-950/40 p-2.5">
       <span className={`text-[11px] font-semibold uppercase tracking-wider ${accent}`}>
         {label}
       </span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md border border-zinc-700 bg-zinc-900 px-2 py-1 text-[11px] text-zinc-200"
+        className="w-full rounded-md border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-200"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -223,7 +223,7 @@ function VerdictBar({
           {verdict.headline}
         </span>
       </div>
-      <p className="mt-1.5 text-xs leading-relaxed text-zinc-300">{verdict.meaning}</p>
+      <p className="mt-1.5 text-xs leading-relaxed text-chrome-300">{verdict.meaning}</p>
       <div className="mt-2 flex flex-wrap gap-1.5">
         <Flag on={check.bothRare} yes="both rare" no="one half is too common" />
         <Flag
@@ -289,13 +289,13 @@ function HandOff({
   const dataRow = result?.valid ? (result.csv.trim().split('\n')[1] ?? '') : '';
 
   return (
-    <div className="space-y-2 rounded-lg border border-zinc-800 bg-zinc-950/40 p-3">
+    <div className="space-y-2 rounded-lg border border-chrome-800 bg-chrome-950/40 p-3">
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           disabled={!live}
           onClick={() => navigate(probesPairHref(toRef(a), toRef(b)))}
-          className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
+          className="rounded-md bg-machinery-600 px-3 py-1.5 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-500"
         >
           add pair to probe builder
         </button>
@@ -317,11 +317,11 @@ function HandOff({
               ],
             });
           }}
-          className="rounded-md border border-zinc-700 px-3 py-1.5 text-xs text-zinc-300 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded-md border border-chrome-700 px-3 py-1.5 text-xs text-chrome-300 hover:bg-chrome-800 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {building ? 'validating…' : copied ? 'copied the row' : 'copy CSV row'}
         </button>
-        <span className="text-[11px] text-zinc-500">
+        <span className="text-[11px] text-chrome-500">
           building spends nothing — the row is rendered by{' '}
           <span className="font-mono">mva.pipeline.submission</span> at epcr 0.99, never assembled
           here
@@ -329,7 +329,7 @@ function HandOff({
       </div>
 
       {!live && (
-        <p className="rounded-md border border-amber-800/60 bg-amber-950/25 p-2.5 text-[11px] leading-relaxed text-amber-300">
+        <p className="rounded-md border border-decision-800/60 bg-decision-950/25 p-2.5 text-[11px] leading-relaxed text-decision-300">
           {origin === 'fixture'
             ? FIXTURE_NOTE
             : 'Pick two different alleles before handing a pair over.'}
@@ -337,7 +337,7 @@ function HandOff({
       )}
 
       {error && (
-        <p className="rounded-md border border-red-900/60 bg-red-950/30 p-2.5 text-[11px] leading-relaxed text-red-300">
+        <p className="rounded-md border border-broken-900/60 bg-broken-950/30 p-2.5 text-[11px] leading-relaxed text-broken-300">
           The API did not answer: <span className="font-mono">{error.message}</span>. Nothing was
           validated, and no CSV is shown — a hand-built row is exactly the mistake this button
           exists to prevent.
@@ -345,21 +345,21 @@ function HandOff({
       )}
 
       {errors.length > 0 && (
-        <ul className="rounded-md border border-red-900/60 bg-red-950/25 p-2.5 text-[11px] text-red-300">
+        <ul className="rounded-md border border-broken-900/60 bg-broken-950/25 p-2.5 text-[11px] text-broken-300">
           {errors.map((p) => (
             <li key={p.message}>{p.message}</li>
           ))}
         </ul>
       )}
       {warnings.length > 0 && (
-        <ul className="rounded-md border border-amber-800/60 bg-amber-950/25 p-2.5 text-[11px] text-amber-300">
+        <ul className="rounded-md border border-decision-800/60 bg-decision-950/25 p-2.5 text-[11px] text-decision-300">
           {warnings.map((p) => (
             <li key={p.message}>{p.message}</li>
           ))}
         </ul>
       )}
       {dataRow && (
-        <pre className="overflow-x-auto rounded-md border border-zinc-800 bg-zinc-950 p-2 font-mono text-[11px] text-zinc-200">
+        <pre className="overflow-x-auto rounded-md border border-chrome-800 bg-chrome-950 p-2 font-mono text-[11px] text-chrome-200">
           {dataRow}
         </pre>
       )}

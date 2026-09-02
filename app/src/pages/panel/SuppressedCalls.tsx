@@ -14,7 +14,8 @@ import { Plot, type Trace } from '../../components/Plot';
 import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
-import { C, impactColor, REASON_RAMP } from '../../lib/palette';
+import { C, impactTone, REASON_RAMP } from '../../lib/palette';
+import { TEXT } from '../../lib/ui';
 
 /** What the caller's own FILTER labels mean, in plain words. Unknown labels fall through. */
 const REASON_MEANING: Record<string, string> = {
@@ -272,7 +273,7 @@ function RecordTable({
   const rows = payload.records.filter((r) => r.gene === chosen);
 
   const absent = (why: string) => (
-    <span className="text-zinc-600" title={why}>
+    <span className="text-chrome-600" title={why}>
       not annotated
     </span>
   );
@@ -283,8 +284,8 @@ function RecordTable({
       key: 'allele',
       header: 'ref → alt',
       render: (r) => (
-        <span className="font-mono text-zinc-200">
-          {r.ref} <span className="text-zinc-600">→</span> {r.alt}
+        <span className="font-mono text-chrome-200">
+          {r.ref} <span className="text-chrome-600">→</span> {r.alt}
         </span>
       ),
       sortValue: (r) => `${r.ref}>${r.alt}`,
@@ -334,7 +335,7 @@ function RecordTable({
       render: (r) =>
         r.vaf === null ? (
           <span
-            className="text-zinc-600"
+            className="text-chrome-600"
             title="multi-allelic record: no single alternate owns the reads"
           >
             n/a
@@ -350,7 +351,7 @@ function RecordTable({
         r.consequence === null ? (
           absent('VEP was never asked about this allele')
         ) : (
-          <span style={{ color: impactColor(r.impact ?? '') }}>{r.consequence}</span>
+          <span className={TEXT[impactTone(r.impact ?? '')]}>{r.consequence}</span>
         ),
     },
     {
@@ -399,7 +400,7 @@ function RecordTable({
           Consequence is coloured by VEP severity: <Chip color={C.broken}>HIGH</Chip> truncates the
           protein, <Chip color={C.decision}>MODERATE</Chip> swaps an amino acid,{' '}
           <Chip color={C.machinery}>LOW / MODIFIER</Chip> is silent or non-coding.{' '}
-          <span className="text-zinc-600">Grey &ldquo;not annotated&rdquo;</span> means VEP was
+          <span className="text-chrome-600">Grey &ldquo;not annotated&rdquo;</span> means VEP was
           never asked about the allele — absent, never &ldquo;looked up and harmless&rdquo;. Sort
           any column; the filter box matches across every visible cell.
         </>

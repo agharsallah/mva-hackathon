@@ -14,7 +14,7 @@ import { ApiError } from '../api/client';
 export function Skeleton({ height = 360 }: { height?: number }) {
   return (
     <div
-      className="animate-pulse rounded-lg border border-zinc-800 bg-zinc-900/60"
+      className="animate-pulse rounded-lg border border-chrome-800 bg-chrome-900/60"
       style={{ height }}
     />
   );
@@ -40,19 +40,19 @@ export function ErrorCard({ error }: { error: Error }) {
       : 'Request failed';
 
   return (
-    <div className="rounded-lg border border-red-900/60 bg-red-950/25 p-4 text-sm">
-      <div className="font-semibold text-red-300">{title}</div>
-      <p className="mt-1 font-mono text-xs text-red-400/80">{error.message}</p>
+    <div className="rounded-lg border border-broken-900/60 bg-broken-950/25 p-4 text-sm">
+      <div className="font-semibold text-broken-300">{title}</div>
+      <p className="mt-1 font-mono text-xs text-broken-400/80">{error.message}</p>
       {routeMissing && (
-        <p className="mt-2 text-xs text-zinc-400">
+        <p className="mt-2 text-xs text-chrome-400">
           The API process is older than this app. Restart it:{' '}
-          <code className="text-zinc-300">uv run mva-viz-api</code>
+          <code className="text-chrome-300">uv run mva-viz-api</code>
         </p>
       )}
       {!upstream && !routeMissing && (
-        <p className="mt-2 text-xs text-zinc-400">
-          Start the viz API, or leave <code className="text-zinc-300">VITE_USE_FIXTURES</code> unset
-          to browse committed fixtures.
+        <p className="mt-2 text-xs text-chrome-400">
+          Start the viz API, or leave <code className="text-chrome-300">VITE_USE_FIXTURES</code>{' '}
+          unset to browse committed fixtures.
         </p>
       )}
     </div>

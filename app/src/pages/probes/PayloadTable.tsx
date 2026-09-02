@@ -19,14 +19,14 @@ export interface PayloadTableProps {
   onPatch: (id: string, patch: Partial<DraftRow>) => void;
 }
 
-const cell = 'border-b border-zinc-900 px-2 py-1.5 align-top text-zinc-300';
+const cell = 'border-b border-chrome-900 px-2 py-1.5 align-top text-chrome-300';
 const iconButton =
-  'rounded border border-zinc-700 px-1 text-[10px] leading-4 text-zinc-400 hover:bg-zinc-800 disabled:opacity-25';
+  'rounded border border-chrome-700 px-1 text-[10px] leading-4 text-chrome-400 hover:bg-chrome-800 disabled:opacity-25';
 
 export function PayloadTable({ rows, onMove, onRemove, onPatch }: PayloadTableProps) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-zinc-800 p-6 text-center text-sm text-zinc-500">
+      <div className="rounded-lg border border-dashed border-chrome-800 p-6 text-center text-sm text-chrome-500">
         Nothing staged. Add a pair row for each compound-het hypothesis, or single rows to fish for
         a partial match.
       </div>
@@ -34,25 +34,29 @@ export function PayloadTable({ rows, onMove, onRemove, onPatch }: PayloadTablePr
   }
 
   return (
-    <div className="overflow-auto rounded-lg border border-zinc-800">
+    <div className="overflow-auto rounded-lg border border-chrome-800">
       <table className="w-full border-collapse text-xs">
-        <thead className="bg-zinc-900 text-zinc-400">
+        <thead className="bg-chrome-900 text-chrome-400">
           <tr>
-            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium">rank</th>
-            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium">variant 1</th>
-            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium">variant 2</th>
-            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium">epcr</th>
-            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium">finding</th>
-            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium">notes</th>
-            <th className="border-b border-zinc-800 px-2 py-2 text-left font-medium" />
+            <th className="border-b border-chrome-800 px-2 py-2 text-left font-medium">rank</th>
+            <th className="border-b border-chrome-800 px-2 py-2 text-left font-medium">
+              variant 1
+            </th>
+            <th className="border-b border-chrome-800 px-2 py-2 text-left font-medium">
+              variant 2
+            </th>
+            <th className="border-b border-chrome-800 px-2 py-2 text-left font-medium">epcr</th>
+            <th className="border-b border-chrome-800 px-2 py-2 text-left font-medium">finding</th>
+            <th className="border-b border-chrome-800 px-2 py-2 text-left font-medium">notes</th>
+            <th className="border-b border-chrome-800 px-2 py-2 text-left font-medium" />
           </tr>
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr key={row.id} className="odd:bg-zinc-900/30">
-              <td className={`${cell} font-mono text-zinc-500`}>
+            <tr key={row.id} className="odd:bg-chrome-900/30">
+              <td className={`${cell} font-mono text-chrome-500`}>
                 <div className="flex items-center gap-1">
-                  <span className={i === 0 ? 'text-emerald-400' : ''}>{i + 1}</span>
+                  <span className={i === 0 ? 'text-good-400' : ''}>{i + 1}</span>
                   <span className="flex flex-col gap-0.5">
                     <button
                       type="button"
@@ -77,13 +81,13 @@ export function PayloadTable({ rows, onMove, onRemove, onPatch }: PayloadTablePr
               </td>
               <td className={`${cell} font-mono`}>
                 {variantLabel(row.variant1)}
-                {row.label && <div className="text-[10px] text-zinc-600">{row.label}</div>}
+                {row.label && <div className="text-[10px] text-chrome-600">{row.label}</div>}
               </td>
               <td className={`${cell} font-mono`}>
                 {row.variant2 ? (
                   variantLabel(row.variant2)
                 ) : (
-                  <span className="text-zinc-600">— single</span>
+                  <span className="text-chrome-600">— single</span>
                 )}
               </td>
               <td className={cell}>
@@ -94,14 +98,14 @@ export function PayloadTable({ rows, onMove, onRemove, onPatch }: PayloadTablePr
                   max="1"
                   value={row.epcr}
                   onChange={(e) => onPatch(row.id, { epcr: Number(e.target.value) })}
-                  className="w-16 rounded border border-zinc-700 bg-zinc-950 px-1 py-0.5 font-mono text-[11px] text-zinc-100"
+                  className="w-16 rounded border border-chrome-700 bg-chrome-950 px-1 py-0.5 font-mono text-[11px] text-chrome-100"
                 />
               </td>
               <td className={cell}>
                 <select
                   value={row.findingType}
                   onChange={(e) => onPatch(row.id, { findingType: e.target.value as FindingType })}
-                  className="rounded border border-zinc-700 bg-zinc-900 px-1 py-0.5 text-[11px] text-zinc-200"
+                  className="rounded border border-chrome-700 bg-chrome-900 px-1 py-0.5 text-[11px] text-chrome-200"
                 >
                   <option value="primary">primary</option>
                   <option value="secondary">secondary</option>
@@ -113,7 +117,7 @@ export function PayloadTable({ rows, onMove, onRemove, onPatch }: PayloadTablePr
                   value={row.notes}
                   placeholder="why this row"
                   onChange={(e) => onPatch(row.id, { notes: e.target.value })}
-                  className="w-full min-w-[10rem] rounded border border-zinc-700 bg-zinc-950 px-1.5 py-0.5 text-[11px] text-zinc-100 placeholder:text-zinc-600"
+                  className="w-full min-w-[10rem] rounded border border-chrome-700 bg-chrome-950 px-1.5 py-0.5 text-[11px] text-chrome-100 placeholder:text-chrome-600"
                 />
               </td>
               <td className={cell}>
@@ -121,7 +125,7 @@ export function PayloadTable({ rows, onMove, onRemove, onPatch }: PayloadTablePr
                   type="button"
                   onClick={() => onRemove(row.id)}
                   aria-label="remove row"
-                  className="rounded border border-red-900/60 px-1.5 py-0.5 text-[10px] text-red-400 hover:bg-red-950/40"
+                  className="rounded border border-broken-900/60 px-1.5 py-0.5 text-[10px] text-broken-400 hover:bg-broken-950/40"
                 >
                   ×
                 </button>
@@ -131,7 +135,7 @@ export function PayloadTable({ rows, onMove, onRemove, onPatch }: PayloadTablePr
         </tbody>
       </table>
       {rows.length >= MAX_ROWS && (
-        <div className="border-t border-zinc-800 px-2 py-1.5 text-[11px] text-amber-400">
+        <div className="border-t border-chrome-800 px-2 py-1.5 text-[11px] text-decision-400">
           {MAX_ROWS} rows — the scorer's cap. Remove one before adding another.
         </div>
       )}

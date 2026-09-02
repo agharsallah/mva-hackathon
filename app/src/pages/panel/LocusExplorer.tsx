@@ -71,7 +71,7 @@ export function LocusExplorer() {
               onChange={setGene}
               label="gene"
             />
-            <span className="text-[11px] text-zinc-600">live query ≈5 s, then cached</span>
+            <span className="text-[11px] text-chrome-600">live query ≈5 s, then cached</span>
           </>
         }
         legend={
@@ -94,7 +94,7 @@ export function LocusExplorer() {
         origin={q.data?.origin}
       >
         {!gene ? (
-          <p className="p-6 text-center text-sm text-zinc-500">pick a gene</p>
+          <p className="p-6 text-center text-sm text-chrome-500">pick a gene</p>
         ) : (
           <>
             <Loaded query={q} height={560}>
@@ -121,15 +121,15 @@ function GeneTrackNote({
 }) {
   if (failed) {
     return (
-      <p className="mt-2 text-[11px] text-red-400">
+      <p className="mt-2 text-[11px] text-broken-400">
         gene track unavailable — {failed.message}. Nothing is drawn rather than a guessed structure.
       </p>
     );
   }
   if (!structure) return null;
   return (
-    <p className="mt-2 text-[11px] text-zinc-500">
-      gene track: <span className="font-mono text-zinc-300">{structure.transcript}</span>, the
+    <p className="mt-2 text-[11px] text-chrome-500">
+      gene track: <span className="font-mono text-chrome-300">{structure.transcript}</span>, the
       canonical transcript of {gene} — {int(structure.exons.length)} exons on the{' '}
       {structure.strand >= 0 ? 'forward (+)' : 'reverse (−)'} strand,{' '}
       {int(structure.protein_length ?? 0)} amino acids. Exon 1 is the first one <em>transcribed</em>
@@ -148,7 +148,9 @@ function Tracks({
   structure?: GeneStructure;
 }) {
   if (rows.length === 0) {
-    return <p className="p-6 text-center text-sm text-zinc-500">no records returned for {gene}</p>;
+    return (
+      <p className="p-6 text-center text-sm text-chrome-500">no records returned for {gene}</p>
+    );
   }
   const maxDp = Math.max(...rows.map((r) => r.dp ?? 1));
   const size = (r: LocusVariant) => 7 + 11 * Math.sqrt((r.dp ?? 1) / maxDp);
@@ -267,22 +269,22 @@ function Tracks({
           legend: { orientation: 'h', y: 1.08, x: 0, font: { color: C.inkDim, size: 11 } },
         })}
       />
-      <div className="mt-2 grid gap-2 text-[11px] text-zinc-500 sm:grid-cols-4">
+      <div className="mt-2 grid gap-2 text-[11px] text-chrome-500 sm:grid-cols-4">
         <span>
-          records <span className="font-mono text-zinc-300">{int(rows.length)}</span>
+          records <span className="font-mono text-chrome-300">{int(rows.length)}</span>
         </span>
         <span>
-          suppressed <span className="font-mono text-red-400">{int(suppressed.length)}</span>
+          suppressed <span className="font-mono text-broken-400">{int(suppressed.length)}</span>
         </span>
         <span>
-          1/2 sites <span className="font-mono text-amber-400">{int(multi.length)}</span>
+          1/2 sites <span className="font-mono text-decision-400">{int(multi.length)}</span>
           {suppressedMulti.length > 0 && (
-            <span className="text-red-400"> ({suppressedMulti.length} of them suppressed)</span>
+            <span className="text-broken-400"> ({suppressedMulti.length} of them suppressed)</span>
           )}
         </span>
         <span>
           median depth{' '}
-          <span className="font-mono text-zinc-300">
+          <span className="font-mono text-chrome-300">
             {dec(median(rows.map((r) => r.dp ?? 0)), 0)}×
           </span>
         </span>

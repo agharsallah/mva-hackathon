@@ -8,7 +8,8 @@ import { Callout } from '../../components/Explainer';
 import { Loaded } from '../../components/QueryState';
 import { withoutCoordinates } from '../../lib/aiExport/redact';
 import { dec, int } from '../../lib/format';
-import { C, impactColor } from '../../lib/palette';
+import { C, impactTone } from '../../lib/palette';
+import { cx, TEXT } from '../../lib/ui';
 import { af, candidates, isPathogenic } from './rarity';
 
 /**
@@ -31,7 +32,9 @@ export function CandidateTable() {
     {
       key: 'gene',
       header: 'gene',
-      render: (r) => <span className="font-mono font-semibold text-zinc-100">{r.gene ?? '—'}</span>,
+      render: (r) => (
+        <span className="font-mono font-semibold text-chrome-100">{r.gene ?? '—'}</span>
+      ),
     },
     {
       key: 'csq',
@@ -42,7 +45,7 @@ export function CandidateTable() {
       key: 'impact',
       header: 'impact',
       render: (r) => (
-        <span className="font-mono font-semibold" style={{ color: impactColor(r.impact) }}>
+        <span className={cx('font-mono font-semibold', TEXT[impactTone(r.impact)])}>
           {r.impact}
         </span>
       ),
@@ -54,7 +57,7 @@ export function CandidateTable() {
       render: (r) =>
         r.gnomad_af === null ? (
           <span
-            className="font-semibold text-purple-400"
+            className="font-semibold text-raw-400"
             title="absent from gnomAD — not frequency zero"
           >
             novel
@@ -69,7 +72,7 @@ export function CandidateTable() {
       align: 'right',
       render: (r) =>
         r.gnomad_af_grpmax === null ? (
-          <span className="text-zinc-600">—</span>
+          <span className="text-chrome-600">—</span>
         ) : (
           af(r.gnomad_af_grpmax)
         ),
@@ -79,10 +82,12 @@ export function CandidateTable() {
       header: 'ClinVar',
       render: (r) =>
         r.clin_sig === null ? (
-          <span className="text-zinc-600">no record</span>
+          <span className="text-chrome-600">no record</span>
         ) : (
           <span
-            className={isPathogenic(r.clin_sig) ? 'font-semibold text-red-400' : 'text-zinc-400'}
+            className={
+              isPathogenic(r.clin_sig) ? 'font-semibold text-broken-400' : 'text-chrome-400'
+            }
           >
             {r.clin_sig}
           </span>
@@ -93,7 +98,8 @@ export function CandidateTable() {
       key: 'vaf',
       header: 'VAF',
       align: 'right',
-      render: (r) => (r.vaf === null ? <span className="text-zinc-600">n/a</span> : dec(r.vaf, 3)),
+      render: (r) =>
+        r.vaf === null ? <span className="text-chrome-600">n/a</span> : dec(r.vaf, 3),
     },
     { key: 'qual', header: 'QUAL', align: 'right', render: (r) => dec(r.qual, 1) },
     {
@@ -101,7 +107,7 @@ export function CandidateTable() {
       header: 'FILTER',
       align: 'right',
       render: (r) => (
-        <span className={r.filter === 'PASS' ? 'text-emerald-400' : 'text-red-400'}>
+        <span className={r.filter === 'PASS' ? 'text-good-400' : 'text-broken-400'}>
           {r.filter}
         </span>
       ),
@@ -118,11 +124,11 @@ export function CandidateTable() {
           <span className="font-mono">is_protein_altering</span> (the consequence changes the
           protein sequence). Impact colour: <Chip color={C.broken}>HIGH</Chip> ·{' '}
           <Chip color={C.decision}>MODERATE</Chip>. A{' '}
-          <span className="text-purple-400">purple &ldquo;novel&rdquo;</span> is absent from gnomAD,
+          <span className="text-raw-400">purple &ldquo;novel&rdquo;</span> is absent from gnomAD,
           sorted ahead of every measured frequency because absent is rarer than rare.{' '}
-          <span className="text-red-400">Red ClinVar text</span> = an asserted pathogenic
-          classification; <span className="text-emerald-400">green FILTER</span> = the caller kept
-          the record.
+          <span className="text-broken-400">Red ClinVar text</span> = an asserted pathogenic
+          classification; <span className="text-good-400">green FILTER</span> = the caller kept the
+          record.
         </>
       }
       reading="A short list is the intended outcome. Sorted most-damaging first, then rarest first."
@@ -144,9 +150,9 @@ export function CandidateTable() {
 
           return (
             <div className="space-y-3">
-              <p className="text-[11px] text-zinc-500">
+              <p className="text-[11px] text-chrome-500">
                 {int(rows.length)} annotated records in →{' '}
-                <span className="text-zinc-200">{int(hits.length)}</span> survive both filters, in{' '}
+                <span className="text-chrome-200">{int(hits.length)}</span> survive both filters, in{' '}
                 {byGene.size} gene{byGene.size === 1 ? '' : 's'}
               </p>
               <DataTable

@@ -30,7 +30,7 @@ import { useUrlText } from '../../lib/urlstate';
 function Gap({ children, title }: { children: string; title: string }) {
   return (
     <span
-      className="rounded bg-amber-500/10 px-1.5 py-px text-[10px] whitespace-nowrap text-amber-400/90"
+      className="rounded bg-decision-500/10 px-1.5 py-px text-[10px] whitespace-nowrap text-decision-400/90"
       title={title}
     >
       {children}
@@ -65,13 +65,13 @@ function lineageLine(row: CatalogTableRow): string | null {
 function ColumnTable({ columns }: { columns: CatalogColumnRow[] }) {
   if (columns.length === 0) {
     return (
-      <p className="text-[11px] text-zinc-500">No column metadata was returned for this table.</p>
+      <p className="text-[11px] text-chrome-500">No column metadata was returned for this table.</p>
     );
   }
   return (
     <table className="w-full border-collapse text-left text-[11px]">
       <thead>
-        <tr className="border-b border-zinc-800 text-zinc-500">
+        <tr className="border-b border-chrome-800 text-chrome-500">
           <th className="py-1 pr-3 font-normal">column</th>
           <th className="py-1 pr-3 font-normal">type</th>
           <th className="py-1 font-normal">what it means</th>
@@ -79,10 +79,10 @@ function ColumnTable({ columns }: { columns: CatalogColumnRow[] }) {
       </thead>
       <tbody>
         {columns.map((c) => (
-          <tr key={c.column} className="border-b border-zinc-900 align-top">
-            <td className="py-1 pr-3 font-mono whitespace-nowrap text-zinc-200">{c.column}</td>
-            <td className="py-1 pr-3 font-mono whitespace-nowrap text-zinc-500">{c.data_type}</td>
-            <td className="py-1 text-zinc-300">
+          <tr key={c.column} className="border-b border-chrome-900 align-top">
+            <td className="py-1 pr-3 font-mono whitespace-nowrap text-chrome-200">{c.column}</td>
+            <td className="py-1 pr-3 font-mono whitespace-nowrap text-chrome-500">{c.data_type}</td>
+            <td className="py-1 text-chrome-300">
               {c.meaning ?? <Gap title={NO_MEANING}>no recorded meaning</Gap>}
             </td>
           </tr>
@@ -97,15 +97,15 @@ function TableCard({ row, columns }: { row: CatalogTableRow; columns: CatalogCol
   const undocumented = columns.filter((c) => c.meaning === null).length;
 
   return (
-    <details className="group rounded-lg border border-zinc-800 bg-zinc-900/40">
-      <summary className="flex cursor-pointer flex-wrap items-baseline gap-x-3 gap-y-1 px-3 py-2 hover:bg-zinc-900/70">
-        <span className="font-mono text-xs text-zinc-100">
-          <span className="text-zinc-500">{row.schema}.</span>
+    <details className="group rounded-lg border border-chrome-800 bg-chrome-900/40">
+      <summary className="flex cursor-pointer flex-wrap items-baseline gap-x-3 gap-y-1 px-3 py-2 hover:bg-chrome-900/70">
+        <span className="font-mono text-xs text-chrome-100">
+          <span className="text-chrome-500">{row.schema}.</span>
           <span className="font-semibold">{row.table}</span>
         </span>
         {row.created_by ? (
           <span
-            className="rounded bg-blue-500/10 px-1.5 py-px text-[10px] whitespace-nowrap text-blue-300"
+            className="rounded bg-machinery-500/10 px-1.5 py-px text-[10px] whitespace-nowrap text-machinery-300"
             title="The command that writes this table, and whether it replaces it or appends to it."
           >
             {row.created_by}
@@ -113,29 +113,31 @@ function TableCard({ row, columns }: { row: CatalogTableRow; columns: CatalogCol
         ) : (
           <Gap title={NO_CREATOR}>undocumented — no created_by</Gap>
         )}
-        <span className="text-[11px] text-zinc-500">
+        <span className="text-[11px] text-chrome-500">
           {int(row.rows)} rows · {columns.length} columns
         </span>
         {undocumented > 0 && (
           <Gap title={NO_MEANING}>{`${undocumented} column(s) unexplained`}</Gap>
         )}
-        <span className="ml-auto text-[11px] text-zinc-600 group-open:hidden">show columns ▸</span>
+        <span className="ml-auto text-[11px] text-chrome-600 group-open:hidden">
+          show columns ▸
+        </span>
       </summary>
 
-      <div className="space-y-2 border-t border-zinc-800 px-3 py-2">
-        <p className="text-xs text-zinc-300">
-          <span className="text-zinc-500">what it holds — </span>
+      <div className="space-y-2 border-t border-chrome-800 px-3 py-2">
+        <p className="text-xs text-chrome-300">
+          <span className="text-chrome-500">what it holds — </span>
           {row.description ?? <Gap title="Nothing describes this table.">undescribed</Gap>}
         </p>
-        <p className="text-xs text-zinc-300">
-          <span className="text-zinc-500">why it exists — </span>
+        <p className="text-xs text-chrome-300">
+          <span className="text-chrome-500">why it exists — </span>
           {row.why ?? <Gap title={NO_REASON}>undocumented — no reason recorded</Gap>}
         </p>
-        <p className="text-xs text-zinc-300">
-          <span className="text-zinc-500">how it is created — </span>
+        <p className="text-xs text-chrome-300">
+          <span className="text-chrome-500">how it is created — </span>
           {row.created_by ?? <Gap title={NO_CREATOR}>undocumented</Gap>}
-          {lineage && <span className="text-zinc-500">; last run: {lineage}</span>}
-          {!lineage && <span className="text-zinc-500">; no lineage edge records a run</span>}
+          {lineage && <span className="text-chrome-500">; last run: {lineage}</span>}
+          {!lineage && <span className="text-chrome-500">; no lineage edge records a run</span>}
         </p>
         <ColumnTable columns={columns} />
       </div>
@@ -216,21 +218,21 @@ export function TableExplainer() {
         <Skeleton height={320} />
       ) : (
         <div className="space-y-3">
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] text-zinc-500">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] text-chrome-500">
             <span>
-              showing <span className="font-mono text-zinc-200">{int(shown.length)}</span> of{' '}
+              showing <span className="font-mono text-chrome-200">{int(shown.length)}</span> of{' '}
               {int(rows.length)} tables
             </span>
             <span>
-              <span className="font-mono text-zinc-400">{int(allColumns.length)}</span> columns
+              <span className="font-mono text-chrome-400">{int(allColumns.length)}</span> columns
               {columns.isPending && ' (loading)'}
             </span>
-            <span className={undescribed ? 'text-amber-400' : 'text-emerald-400'}>
+            <span className={undescribed ? 'text-decision-400' : 'text-good-400'}>
               {undescribed
                 ? `${undescribed} table(s) with no recorded reason`
                 : 'every table states why it exists'}
             </span>
-            <span className={unexplained ? 'text-amber-400' : 'text-emerald-400'}>
+            <span className={unexplained ? 'text-decision-400' : 'text-good-400'}>
               {unexplained
                 ? `${unexplained} column(s) with no recorded meaning`
                 : 'every column has a recorded meaning'}
@@ -244,9 +246,9 @@ export function TableExplainer() {
             if (inSchema.length === 0) return null;
             return (
               <div key={schema} className="space-y-1.5">
-                <h4 className="font-mono text-xs text-zinc-400">
+                <h4 className="font-mono text-xs text-chrome-400">
                   {schema}
-                  <span className="ml-2 font-sans text-[11px] text-zinc-600">
+                  <span className="ml-2 font-sans text-[11px] text-chrome-600">
                     {schema === 'results'
                       ? 'derived — rebuilt from the ingest schema, never edited in place'
                       : 'ingested data and the append-only ledgers'}
@@ -264,7 +266,7 @@ export function TableExplainer() {
           })}
 
           {shown.length === 0 && (
-            <p className="py-6 text-center text-xs text-zinc-500">no table matches “{filter}”</p>
+            <p className="py-6 text-center text-xs text-chrome-500">no table matches “{filter}”</p>
           )}
         </div>
       )}

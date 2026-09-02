@@ -9,6 +9,7 @@
 
 import { type ReactNode, useState } from 'react';
 
+import type { Tone } from '../lib/palette';
 import { BOX, cx } from '../lib/ui';
 
 export interface Term {
@@ -28,28 +29,28 @@ export interface ExplainerProps {
 export function Explainer({ intro, terms, caveat }: ExplainerProps) {
   const [open, setOpen] = useState(true);
   return (
-    <section className="rounded-xl border border-blue-900/40 bg-blue-950/20 p-4">
+    <section className="rounded-xl border border-machinery-900/40 bg-machinery-950/20 p-4">
       <div className="flex items-start justify-between gap-4">
-        <p className="max-w-4xl text-sm leading-relaxed text-zinc-300">{intro}</p>
+        <p className="max-w-4xl text-sm leading-relaxed text-chrome-300">{intro}</p>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="shrink-0 rounded-md border border-zinc-700 px-2 py-1 text-[11px] text-zinc-400 hover:bg-zinc-800"
+          className="shrink-0 rounded-md border border-chrome-700 px-2 py-1 text-[11px] text-chrome-400 hover:bg-chrome-800"
         >
           {open ? 'hide terms' : `show ${terms.length} terms`}
         </button>
       </div>
       {open && (
-        <dl className="mt-3 grid gap-x-6 gap-y-2 border-t border-blue-900/40 pt-3 sm:grid-cols-2 xl:grid-cols-3">
+        <dl className="mt-3 grid gap-x-6 gap-y-2 border-t border-machinery-900/40 pt-3 sm:grid-cols-2 xl:grid-cols-3">
           {terms.map((t) => (
             <div key={t.term} className="text-xs leading-relaxed">
-              <dt className="inline font-semibold text-zinc-200">{t.term}</dt>
-              <dd className="inline text-zinc-400"> — {t.plain}</dd>
+              <dt className="inline font-semibold text-chrome-200">{t.term}</dt>
+              <dd className="inline text-chrome-400"> — {t.plain}</dd>
             </div>
           ))}
         </dl>
       )}
       {caveat && (
-        <p className="mt-3 border-t border-blue-900/40 pt-3 text-xs leading-relaxed text-amber-400/90">
+        <p className="mt-3 border-t border-machinery-900/40 pt-3 text-xs leading-relaxed text-decision-400/90">
           {caveat}
         </p>
       )}
@@ -63,14 +64,14 @@ export function Callout({
   title,
   children,
 }: {
-  tone?: 'good' | 'broken' | 'decision' | 'neutral';
+  tone?: Tone;
   title: string;
   children: ReactNode;
 }) {
   return (
     <div className={cx('rounded-xl border p-4', BOX[tone])}>
       <div className="text-xs font-semibold uppercase tracking-wider">{title}</div>
-      <div className="mt-1.5 text-sm leading-relaxed text-zinc-300">{children}</div>
+      <div className="mt-1.5 text-sm leading-relaxed text-chrome-300">{children}</div>
     </div>
   );
 }

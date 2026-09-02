@@ -91,12 +91,12 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
     {
       key: 'id',
       header: 'id',
-      render: (r) => <span className="font-mono text-zinc-500">{r.evidence_id}</span>,
+      render: (r) => <span className="font-mono text-chrome-500">{r.evidence_id}</span>,
     },
     {
       key: 'hyp',
       header: 'claim',
-      render: (r) => <span className="font-mono text-zinc-100">{r.hypothesis_id}</span>,
+      render: (r) => <span className="font-mono text-chrome-100">{r.hypothesis_id}</span>,
     },
     {
       key: 'direction',
@@ -119,8 +119,8 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
       header: 'strength',
       render: (r) => (
         <span className="inline-flex items-center gap-2">
-          <span className="font-mono text-zinc-300">{dec(r.strength, 2)}</span>
-          <span className="inline-block h-1.5 w-14 rounded-sm bg-zinc-800">
+          <span className="font-mono text-chrome-300">{dec(r.strength, 2)}</span>
+          <span className="inline-block h-1.5 w-14 rounded-sm bg-chrome-800">
             <span
               className="block h-full rounded-sm"
               style={{
@@ -135,30 +135,32 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
     {
       key: 'kind',
       header: 'kind',
-      render: (r) => <span className="font-mono text-zinc-400">{r.kind}</span>,
+      render: (r) => <span className="font-mono text-chrome-400">{r.kind}</span>,
     },
     {
       key: 'claim',
       header: 'observation',
-      render: (r) => <span className="text-zinc-300">{r.claim}</span>,
+      render: (r) => <span className="text-chrome-300">{r.claim}</span>,
     },
     {
       key: 'source',
       header: 'source',
-      render: (r) => <span className="font-mono text-[11px] text-blue-300">{r.source_ref}</span>,
+      render: (r) => (
+        <span className="font-mono text-[11px] text-machinery-300">{r.source_ref}</span>
+      ),
     },
     {
       key: 'lineage',
       header: 'lineage',
       render: (r) => (
-        <span className="font-mono text-[11px] text-zinc-500">{r.lineage_ref ?? '—'}</span>
+        <span className="font-mono text-[11px] text-chrome-500">{r.lineage_ref ?? '—'}</span>
       ),
     },
     {
       key: 'at',
       header: 'recorded',
       render: (r) => (
-        <span className="font-mono text-[11px] text-zinc-600">{iso(r.recorded_at)}</span>
+        <span className="font-mono text-[11px] text-chrome-600">{iso(r.recorded_at)}</span>
       ),
     },
   ];
@@ -172,7 +174,7 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
         maxHeight={420}
         empty={`no evidence row matches "${filter}"`}
       />
-      <p className="font-mono text-[11px] text-zinc-600">
+      <p className="font-mono text-[11px] text-chrome-600">
         {shown.length} of {rows.length} rows
       </p>
     </div>

@@ -4,7 +4,7 @@ import { Plot } from '../../components/Plot';
 import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
-import { C } from '../../lib/palette';
+import { balanceColor, C } from '../../lib/palette';
 import { chromOrder } from './order';
 
 /**
@@ -58,9 +58,7 @@ export function AlleleBalance() {
                     y: ordered.map((r) => r.mean_vaf),
                     marker: {
                       size: ordered.map((r) => 10 + 34 * Math.sqrt(r.n_het / maxHet)),
-                      color: ordered.map((r) =>
-                        r.balance_call === 'balanced' ? C.good : C.broken,
-                      ),
+                      color: ordered.map((r) => balanceColor(r.balance_call)),
                       line: { color: C.paper, width: 1.5 },
                       opacity: 0.88,
                     },
@@ -131,17 +129,15 @@ export function AlleleBalance() {
                   showlegend: false,
                 })}
               />
-              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-zinc-500">
+              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-chrome-500">
                 <span>
                   contigs balanced:{' '}
-                  <span className="font-mono text-emerald-400">
-                    {ordered.length - flagged.length}
-                  </span>{' '}
+                  <span className="font-mono text-good-400">{ordered.length - flagged.length}</span>{' '}
                   / {ordered.length}
                 </span>
                 {flagged.map((f) => (
                   <span key={f.chrom}>
-                    flagged <span className="font-mono text-red-400">chr{f.chrom}</span> — VAF{' '}
+                    flagged <span className="font-mono text-broken-400">chr{f.chrom}</span> — VAF{' '}
                     {dec(f.mean_vaf, 4)} ({dec(f.vaf_deviation, 4)}), {int(f.n_het)} het sites,
                     depth {dec(f.dp_vs_autosomal, 3)}× the autosomal mean
                   </span>

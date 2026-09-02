@@ -1,0 +1,92 @@
+/**
+ * GENERATED FILE — do not edit. Run `pnpm theme` to regenerate.
+ *
+ * Source: tailwindcss@4.3.3 default theme (oklch), converted to sRGB hex by
+ * tools/gen-theme.mjs. The DOM half: the Tailwind v4 @theme utilities.
+ */
+
+@theme {
+  --color-chrome-50: #fafafa;
+  --color-chrome-100: #f4f4f5;
+  --color-chrome-200: #e4e4e7;
+  --color-chrome-300: #d4d4d8;
+  --color-chrome-400: #9f9fa9;
+  --color-chrome-500: #71717b;
+  --color-chrome-600: #52525c;
+  --color-chrome-700: #3f3f46;
+  --color-chrome-800: #27272a;
+  --color-chrome-900: #18181b;
+  --color-chrome-950: #09090b;
+
+  --color-good-50: #f0fdf4;
+  --color-good-100: #dcfce7;
+  --color-good-200: #b9f8cf;
+  --color-good-300: #7bf1a8;
+  --color-good-400: #05df72;
+  --color-good-500: #00c950;
+  --color-good-600: #00a63e;
+  --color-good-700: #008236;
+  --color-good-800: #016630;
+  --color-good-900: #0d542b;
+  --color-good-950: #032e15;
+
+  --color-broken-50: #fef2f2;
+  --color-broken-100: #ffe2e2;
+  --color-broken-200: #ffc9c9;
+  --color-broken-300: #ffa2a2;
+  --color-broken-400: #ff6467;
+  --color-broken-500: #fb2c36;
+  --color-broken-600: #e7000b;
+  --color-broken-700: #c10007;
+  --color-broken-800: #9f0712;
+  --color-broken-900: #82181a;
+  --color-broken-950: #460809;
+
+  --color-decision-50: #fefce8;
+  --color-decision-100: #fef9c2;
+  --color-decision-200: #fff085;
+  --color-decision-300: #ffdf20;
+  --color-decision-400: #fdc700;
+  --color-decision-500: #f0b100;
+  --color-decision-600: #d08700;
+  --color-decision-700: #a65f00;
+  --color-decision-800: #894b00;
+  --color-decision-900: #733e0a;
+  --color-decision-950: #432004;
+
+  --color-machinery-50: #eff6ff;
+  --color-machinery-100: #dbeafe;
+  --color-machinery-200: #bedbff;
+  --color-machinery-300: #8ec5ff;
+  --color-machinery-400: #51a2ff;
+  --color-machinery-500: #2b7fff;
+  --color-machinery-600: #155dfc;
+  --color-machinery-700: #1447e6;
+  --color-machinery-800: #193cb8;
+  --color-machinery-900: #1c398e;
+  --color-machinery-950: #162456;
+
+  --color-raw-50: #faf5ff;
+  --color-raw-100: #f3e8ff;
+  --color-raw-200: #e9d4ff;
+  --color-raw-300: #dab2ff;
+  --color-raw-400: #c27aff;
+  --color-raw-500: #ad46ff;
+  --color-raw-600: #9810fa;
+  --color-raw-700: #8200db;
+  --color-raw-800: #6e11b0;
+  --color-raw-900: #59168b;
+  --color-raw-950: #3c0366;
+
+  --color-severity-50: #fff7ed;
+  --color-severity-100: #ffedd4;
+  --color-severity-200: #ffd6a7;
+  --color-severity-300: #ffb86a;
+  --color-severity-400: #ff8904;
+  --color-severity-500: #ff6900;
+  --color-severity-600: #f54900;
+  --color-severity-700: #ca3500;
+  --color-severity-800: #9f2d00;
+  --color-severity-900: #7e2a0c;
+  --color-severity-950: #441306;
+}

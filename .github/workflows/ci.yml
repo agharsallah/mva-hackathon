@@ -56,6 +56,13 @@ jobs:
       - name: Format check (prettier --check)
         run: pnpm run format:check
 
+      # The colour system has two generated halves (src/lib/palette/ramps.generated.ts
+      # and src/theme.generated.css). This re-derives both from the installed
+      # tailwindcss theme and fails if either committed file has drifted, so a chart
+      # colour and a Tailwind class can never stop being the same number.
+      - name: Theme tokens in sync (pnpm theme:check)
+        run: pnpm run theme:check
+
       - name: Test (vitest run)
         run: pnpm run test
 

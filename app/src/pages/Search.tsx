@@ -127,7 +127,7 @@ export default function SearchPage() {
 
 function Idle() {
   return (
-    <div className="rounded-lg border border-dashed border-zinc-800 p-8 text-center text-sm text-zinc-500">
+    <div className="rounded-lg border border-dashed border-chrome-800 p-8 text-center text-sm text-chrome-500">
       Nothing searched yet. Pick one of the examples above, or type a gene, a region or an rsID.
     </div>
   );
@@ -144,10 +144,10 @@ function SearchError({ error, q }: { error: Error; q: string }) {
   const status = error instanceof ApiError ? error.status : 0;
   const skin =
     status === 502
-      ? 'border-red-900/60 bg-red-950/25'
+      ? 'border-broken-900/60 bg-broken-950/25'
       : status === 404
-        ? 'border-zinc-700 bg-zinc-900/60'
-        : 'border-amber-800/60 bg-amber-950/25';
+        ? 'border-chrome-700 bg-chrome-900/60'
+        : 'border-decision-800/60 bg-decision-950/25';
 
   const title =
     status === 422
@@ -160,12 +160,12 @@ function SearchError({ error, q }: { error: Error; q: string }) {
 
   return (
     <div className={`rounded-xl border p-5 ${skin}`}>
-      <div className="text-xs font-semibold uppercase tracking-wider text-zinc-300">{title}</div>
-      <p className="mt-2 font-mono text-xs leading-relaxed text-zinc-400">{error.message}</p>
-      <p className="mt-2 max-w-3xl text-xs leading-relaxed text-zinc-500">
+      <div className="text-xs font-semibold uppercase tracking-wider text-chrome-300">{title}</div>
+      <p className="mt-2 font-mono text-xs leading-relaxed text-chrome-400">{error.message}</p>
+      <p className="mt-2 max-w-3xl text-xs leading-relaxed text-chrome-500">
         {status === 422 && (
           <>
-            <span className="font-mono text-zinc-300">{q}</span> was refused before anything was
+            <span className="font-mono text-chrome-300">{q}</span> was refused before anything was
             looked up. The three accepted forms are a gene symbol, a{' '}
             <span className="font-mono">contig:start-end</span> region, and an{' '}
             <span className="font-mono">rs</span>-number. A region wider than the span cap is

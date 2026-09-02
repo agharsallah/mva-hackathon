@@ -6,7 +6,8 @@ import { Plot } from '../../components/Plot';
 import { baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { int } from '../../lib/format';
-import { C, oeVerdictColor } from '../../lib/palette';
+import { C, oeVerdictColor, oeVerdictTone } from '../../lib/palette';
+import { cx, TEXT } from '../../lib/ui';
 
 /**
  * Observed against published healthy-genome expectations.
@@ -24,14 +25,14 @@ export function ObservedExpected() {
     {
       key: 'label',
       header: 'metric',
-      render: (r) => <span className="text-zinc-200">{r.label}</span>,
+      render: (r) => <span className="text-chrome-200">{r.label}</span>,
     },
     {
       key: 'observed',
       header: 'observed',
       align: 'right',
       render: (r) => (
-        <span style={{ color: oeVerdictColor(r.verdict) }}>
+        <span className={TEXT[oeVerdictTone(r.verdict)]}>
           {num(r.observed)} {r.unit}
         </span>
       ),
@@ -51,7 +52,7 @@ export function ObservedExpected() {
       key: 'verdict',
       header: 'verdict',
       render: (r) => (
-        <span className="font-mono font-semibold" style={{ color: oeVerdictColor(r.verdict) }}>
+        <span className={cx('font-mono font-semibold', TEXT[oeVerdictTone(r.verdict)])}>
           {r.verdict}
         </span>
       ),
@@ -59,7 +60,7 @@ export function ObservedExpected() {
     {
       key: 'source',
       header: 'where the expectation comes from',
-      render: (r) => <span className="text-zinc-400">{r.source}</span>,
+      render: (r) => <span className="text-chrome-400">{r.source}</span>,
     },
   ];
 
@@ -88,7 +89,7 @@ export function ObservedExpected() {
         {(rows) => {
           if (rows.length === 0) {
             return (
-              <p className="p-6 text-center text-sm text-zinc-500">
+              <p className="p-6 text-center text-sm text-chrome-500">
                 no comparable metrics returned
               </p>
             );
@@ -97,12 +98,12 @@ export function ObservedExpected() {
           return (
             <div className="space-y-3">
               <Dumbbell rows={rows} />
-              <p className="text-[11px] text-zinc-500">
-                <span className="text-emerald-400">{int(counts('within'))} within</span> ·{' '}
-                <span className="text-red-400">
+              <p className="text-[11px] text-chrome-500">
+                <span className="text-good-400">{int(counts('within'))} within</span> ·{' '}
+                <span className="text-broken-400">
                   {int(counts('above') + counts('below'))} outside
                 </span>{' '}
-                · <span className="text-zinc-400">{int(counts('unknown'))} not measured</span>
+                · <span className="text-chrome-400">{int(counts('unknown'))} not measured</span>
               </p>
               <DataTable rows={rows} columns={columns} rowKey={(r) => r.metric} />
             </div>

@@ -71,7 +71,7 @@ export function Flowcell() {
           <Toggle on={threeD} onChange={setThreeD}>
             {threeD ? '3D by tile' : '2D map'}
           </Toggle>
-          <span className="text-[11px] text-zinc-600">one shard · live ≈2.5 s</span>
+          <span className="text-[11px] text-chrome-600">one shard · live ≈2.5 s</span>
         </>
       }
       legend={legend}
@@ -84,7 +84,7 @@ export function Flowcell() {
       <Loaded query={q} height={threeD ? 560 : 440}>
         {(rows) => {
           if (rows.length === 0)
-            return <p className="p-6 text-center text-sm text-zinc-500">no bins returned</p>;
+            return <p className="p-6 text-center text-sm text-chrome-500">no bins returned</p>;
           const tiles = new Set(rows.map((r) => r.tile));
           const totalReads = rows.reduce((a, r) => a + r.n, 0);
           if (threeD) {
@@ -142,7 +142,7 @@ export function Flowcell() {
                     }),
                   })}
                 />
-                <p className="mt-1 text-[11px] text-zinc-500">
+                <p className="mt-1 text-[11px] text-chrome-500">
                   drag to rotate · {int(sample.length)} of {int(rows.length)} bins plotted,{' '}
                   {tiles.size} tiles
                 </p>
@@ -189,7 +189,7 @@ export function Flowcell() {
                   },
                 })}
               />
-              <p className="mt-1 text-[11px] text-zinc-500">
+              <p className="mt-1 text-[11px] text-chrome-500">
                 lane {lane} R{read}, shard 0 · {tiles.size} tiles · {int(rows.length)} bins ·{' '}
                 {int(totalReads)} reads placed
               </p>

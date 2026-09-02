@@ -84,43 +84,43 @@ export function Funnel() {
                 })}
               />
               <div className="mt-2 grid gap-2 sm:grid-cols-3">
-                <div className="rounded-lg border border-purple-900/40 bg-purple-950/20 p-2.5">
-                  <div className="text-[10px] uppercase tracking-wider text-purple-400">
-                    delivered
-                  </div>
-                  <div className="font-mono text-sm text-zinc-200">{int(total)}</div>
+                <div className="rounded-lg border border-raw-900/40 bg-raw-950/20 p-2.5">
+                  <div className="text-[10px] uppercase tracking-wider text-raw-400">delivered</div>
+                  <div className="font-mono text-sm text-chrome-200">{int(total)}</div>
                 </div>
-                <div className="rounded-lg border border-emerald-900/40 bg-emerald-950/20 p-2.5">
-                  <div className="text-[10px] uppercase tracking-wider text-emerald-400">PASS</div>
-                  <div className="font-mono text-sm text-zinc-200">
+                <div className="rounded-lg border border-good-900/40 bg-good-950/20 p-2.5">
+                  <div className="text-[10px] uppercase tracking-wider text-good-400">PASS</div>
+                  <div className="font-mono text-sm text-chrome-200">
                     {int(passRow?.count ?? 0)}{' '}
-                    <span className="text-zinc-500">
+                    <span className="text-chrome-500">
                       ({pct(((passRow?.count ?? 0) / total) * 100)})
                     </span>
                   </div>
                 </div>
-                <div className="rounded-lg border border-red-900/50 bg-red-950/20 p-2.5">
-                  <div className="text-[10px] uppercase tracking-wider text-red-400">
+                <div className="rounded-lg border border-broken-900/50 bg-broken-950/20 p-2.5">
+                  <div className="text-[10px] uppercase tracking-wider text-broken-400">
                     suppressed
                   </div>
-                  <div className="font-mono text-sm text-zinc-200">
+                  <div className="font-mono text-sm text-chrome-200">
                     {int(suppressedTotal)}{' '}
-                    <span className="text-zinc-500">({pct((suppressedTotal / total) * 100)})</span>
+                    <span className="text-chrome-500">
+                      ({pct((suppressedTotal / total) * 100)})
+                    </span>
                   </div>
                 </div>
               </div>
-              <ul className="mt-2 space-y-0.5 text-[11px] text-zinc-500">
+              <ul className="mt-2 space-y-0.5 text-[11px] text-chrome-500">
                 <li>
-                  <span className="font-mono text-zinc-300">MQ40</span> — mapping quality below 40:
-                  the aligner was unsure the reads belong here at all
+                  <span className="font-mono text-chrome-300">MQ40</span> — mapping quality below
+                  40: the aligner was unsure the reads belong here at all
                 </li>
                 <li>
-                  <span className="font-mono text-zinc-300">QD2</span> — quality normalised by depth
-                  below 2: the confidence is not backed by enough reads
+                  <span className="font-mono text-chrome-300">QD2</span> — quality normalised by
+                  depth below 2: the confidence is not backed by enough reads
                 </li>
                 <li>
-                  <span className="font-mono text-zinc-300">LowQual</span> — the raw site confidence
-                  itself was low
+                  <span className="font-mono text-chrome-300">LowQual</span> — the raw site
+                  confidence itself was low
                 </li>
               </ul>
             </>

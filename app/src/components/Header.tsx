@@ -54,19 +54,19 @@ export function Header({ items }: { items: HeaderNavItem[] }) {
   const state = h.isPending ? 'checking' : h.data?.ok ? 'up' : 'down';
   const dot =
     state === 'up'
-      ? 'bg-emerald-500'
+      ? 'bg-good-500'
       : state === 'down'
-        ? 'bg-red-500'
-        : 'bg-zinc-500 animate-pulse';
+        ? 'bg-broken-500'
+        : 'bg-chrome-500 animate-pulse';
 
   return (
-    <header className="sticky top-0 z-20 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-chrome-800 bg-chrome-950/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-6 gap-y-2 px-5 py-2.5">
         <div className="flex items-baseline gap-2">
-          <span className="text-sm font-semibold tracking-tight text-zinc-100">
+          <span className="text-sm font-semibold tracking-tight text-chrome-100">
             MVA Case Explorer
           </span>
-          <span className="font-mono text-[11px] text-zinc-500">
+          <span className="font-mono text-[11px] text-chrome-500">
             PROBAND01 · single sample, no trio
           </span>
         </div>
@@ -84,8 +84,8 @@ export function Header({ items }: { items: HeaderNavItem[] }) {
               className={({ isActive }) =>
                 `rounded-md px-2.5 py-1 text-xs transition ${
                   isActive
-                    ? 'bg-zinc-800 text-zinc-100'
-                    : 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200'
+                    ? 'bg-chrome-800 text-chrome-100'
+                    : 'text-chrome-400 hover:bg-chrome-900 hover:text-chrome-200'
                 }`
               }
             >
@@ -98,7 +98,7 @@ export function Header({ items }: { items: HeaderNavItem[] }) {
           <AiExport />
           {onFixtures && (
             <span
-              className="rounded-md bg-amber-500/15 px-2 py-1 text-[11px] font-medium text-amber-400"
+              className="rounded-md bg-decision-500/15 px-2 py-1 text-[11px] font-medium text-decision-400"
               title="At least one panel on this session was served from a committed fixture, not the live API."
             >
               fixture data
@@ -106,14 +106,14 @@ export function Header({ items }: { items: HeaderNavItem[] }) {
           )}
           {!FIXTURES_ENABLED && (
             <span
-              className="rounded-md bg-zinc-800 px-2 py-1 text-[11px] text-zinc-400"
+              className="rounded-md bg-chrome-800 px-2 py-1 text-[11px] text-chrome-400"
               title="VITE_USE_FIXTURES=false"
             >
               fixtures off
             </span>
           )}
           <span
-            className="flex items-center gap-1.5 font-mono text-[11px] text-zinc-500"
+            className="flex items-center gap-1.5 font-mono text-[11px] text-chrome-500"
             title={statusTitle(state)}
           >
             <span className={`h-2 w-2 rounded-full ${dot}`} />

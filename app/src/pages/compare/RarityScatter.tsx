@@ -80,7 +80,7 @@ function Scatter({ rows }: { rows: PanelAnnotationRow[] }) {
   const view = useMemo(() => build(rows), [rows]);
   if (rows.length === 0) {
     return (
-      <p className="p-6 text-center text-sm text-zinc-500">no annotated records for this gene</p>
+      <p className="p-6 text-center text-sm text-chrome-500">no annotated records for this gene</p>
     );
   }
   const { traces, novelX, divider, novels, noVaf } = view;
@@ -172,10 +172,10 @@ function Scatter({ rows }: { rows: PanelAnnotationRow[] }) {
           legend: { orientation: 'h', y: 1.12, x: 0, font: { color: C.inkDim, size: 11 } },
         })}
       />
-      <p className="mt-2 text-[11px] text-zinc-500">
-        {int(rows.length)} records · <span className="text-purple-400">{int(novels)}</span> absent
-        from gnomAD ·{' '}
-        <span className="text-zinc-300">
+      <p className="mt-2 text-[11px] text-chrome-500">
+        {int(rows.length)} records · <span className="text-raw-400">{int(novels)}</span> absent from
+        gnomAD ·{' '}
+        <span className="text-chrome-300">
           {int(rows.filter((r) => isPathogenic(r.clin_sig)).length)}
         </span>{' '}
         with a ClinVar pathogenic assertion

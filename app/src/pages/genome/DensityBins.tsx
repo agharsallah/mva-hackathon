@@ -159,7 +159,7 @@ export function DensityBins() {
                     }),
                   })}
                 />
-                <p className="mt-1 text-[11px] text-zinc-500">
+                <p className="mt-1 text-[11px] text-chrome-500">
                   drag to rotate · {int(rows.length)} bins across {chroms.length} contigs
                 </p>
               </>
@@ -203,7 +203,7 @@ export function DensityBins() {
                   },
                 })}
               />
-              <p className="mt-1 text-[11px] text-zinc-500">
+              <p className="mt-1 text-[11px] text-chrome-500">
                 {int(rows.length)} bins across {chroms.length} contigs
               </p>
             </>

@@ -68,9 +68,9 @@ function Pager({
   onPage: (p: number) => void;
 }) {
   const btn =
-    'rounded border border-zinc-700 bg-zinc-900 px-1.5 py-0.5 text-zinc-400 transition enabled:hover:bg-zinc-800 enabled:hover:text-zinc-200 disabled:opacity-30 focus:outline-none focus-visible:border-blue-700';
+    'rounded border border-chrome-700 bg-chrome-900 px-1.5 py-0.5 text-chrome-400 transition enabled:hover:bg-chrome-800 enabled:hover:text-chrome-200 disabled:opacity-30 focus:outline-none focus-visible:border-machinery-700';
   return (
-    <div className="flex items-center justify-end gap-2 text-[11px] text-zinc-500">
+    <div className="flex items-center justify-end gap-2 text-[11px] text-chrome-500">
       <button
         type="button"
         className={btn}
@@ -81,10 +81,10 @@ function Pager({
         ‹
       </button>
       <span>
-        <span className="font-mono text-zinc-300">
+        <span className="font-mono text-chrome-300">
           {from}–{to}
         </span>{' '}
-        of <span className="font-mono text-zinc-400">{total}</span>
+        of <span className="font-mono text-chrome-400">{total}</span>
       </span>
       <button
         type="button"
@@ -178,7 +178,7 @@ export function DataTable<R>({
   // Genuinely empty: unchanged from before this component could filter.
   if (rows.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed border-zinc-800 p-6 text-center text-sm text-zinc-500">
+      <div className="rounded-lg border border-dashed border-chrome-800 p-6 text-center text-sm text-chrome-500">
         {empty}
       </div>
     );
@@ -193,8 +193,9 @@ export function DataTable<R>({
         placeholder={filterPlaceholder}
       />
       {needle && filtered.length > 0 && (
-        <span className="text-[11px] text-zinc-500">
-          <span className="font-mono text-zinc-300">{filtered.length}</span> of {rows.length} match
+        <span className="text-[11px] text-chrome-500">
+          <span className="font-mono text-chrome-300">{filtered.length}</span> of {rows.length}{' '}
+          match
         </span>
       )}
     </div>
@@ -205,7 +206,7 @@ export function DataTable<R>({
     return (
       <div className="space-y-2">
         {controls}
-        <div className="rounded-lg border border-dashed border-zinc-800 p-6 text-center text-sm text-zinc-500">
+        <div className="rounded-lg border border-dashed border-chrome-800 p-6 text-center text-sm text-chrome-500">
           0 of {rows.length} match
         </div>
       </div>
@@ -213,9 +214,9 @@ export function DataTable<R>({
   }
 
   const table = (
-    <div className="overflow-auto rounded-lg border border-zinc-800" style={{ maxHeight }}>
+    <div className="overflow-auto rounded-lg border border-chrome-800" style={{ maxHeight }}>
       <table className="w-full min-w-full border-collapse text-xs">
-        <thead className="sticky top-0 bg-zinc-900 text-zinc-400">
+        <thead className="sticky top-0 bg-chrome-900 text-chrome-400">
           <tr>
             {columns.map((c) => {
               const on = c.sortable !== false;
@@ -224,7 +225,7 @@ export function DataTable<R>({
                 <th
                   key={c.key}
                   aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : undefined}
-                  className={`border-b border-zinc-800 px-3 py-2 font-medium ${
+                  className={`border-b border-chrome-800 px-3 py-2 font-medium ${
                     c.align === 'right' ? 'text-right' : 'text-left'
                   }`}
                 >
@@ -233,13 +234,13 @@ export function DataTable<R>({
                       type="button"
                       onClick={() => toggle(c.key)}
                       title={active && sort.dir === 'desc' ? 'clear sort' : 'sort'}
-                      className={`inline-flex w-full cursor-pointer items-center gap-1 text-left font-medium text-inherit transition hover:text-zinc-200 focus:outline-none focus-visible:text-blue-300 ${
+                      className={`inline-flex w-full cursor-pointer items-center gap-1 text-left font-medium text-inherit transition hover:text-chrome-200 focus:outline-none focus-visible:text-machinery-300 ${
                         c.align === 'right' ? 'justify-end text-right' : ''
                       }`}
                     >
                       {c.header}
                       {active && (
-                        <span aria-hidden className="text-[9px] leading-none text-zinc-300">
+                        <span aria-hidden className="text-[9px] leading-none text-chrome-300">
                           {sort.dir === 'asc' ? '▲' : '▼'}
                         </span>
                       )}
@@ -254,11 +255,11 @@ export function DataTable<R>({
         </thead>
         <tbody>
           {visible.map((row, i) => (
-            <tr key={rowKey(row, i)} className="odd:bg-zinc-900/30 hover:bg-zinc-800/50">
+            <tr key={rowKey(row, i)} className="odd:bg-chrome-900/30 hover:bg-chrome-800/50">
               {columns.map((c) => (
                 <td
                   key={c.key}
-                  className={`border-b border-zinc-900 px-3 py-1.5 text-zinc-300 ${
+                  className={`border-b border-chrome-900 px-3 py-1.5 text-chrome-300 ${
                     c.align === 'right' ? 'text-right font-mono' : ''
                   } ${c.className ?? ''}`}
                 >

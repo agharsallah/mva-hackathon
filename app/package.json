@@ -17,9 +17,11 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "theme": "node tools/gen-theme.mjs",
+    "theme:check": "node tools/gen-theme.mjs --check",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run test",
+    "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run theme:check && pnpm run test",
     "prepare": "cd .. && husky && sh tools/setup-git.sh",
     "bundle-budget": "node tools/bundle-budget.mjs"
   },

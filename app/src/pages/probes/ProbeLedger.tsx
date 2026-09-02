@@ -21,12 +21,12 @@ export function ProbeLedger() {
     {
       key: 'id',
       header: 'probe',
-      render: (r) => <span className="font-mono text-zinc-100">{r.probe_id}</span>,
+      render: (r) => <span className="font-mono text-chrome-100">{r.probe_id}</span>,
     },
     {
       key: 'at',
       header: 'logged',
-      render: (r) => <span className="font-mono text-zinc-500">{iso(r.logged_at)}</span>,
+      render: (r) => <span className="font-mono text-chrome-500">{iso(r.logged_at)}</span>,
     },
     { key: 'track', header: 'track', render: (r) => r.track },
     {
@@ -44,22 +44,22 @@ export function ProbeLedger() {
     {
       key: 'rationale',
       header: 'why it was worth a probe',
-      render: (r) => <span className="text-zinc-400">{r.rationale ?? '—'}</span>,
+      render: (r) => <span className="text-chrome-400">{r.rationale ?? '—'}</span>,
     },
   ];
 
   return (
-    <div className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
+    <div className="space-y-3 rounded-xl border border-chrome-800 bg-chrome-900/40 p-4">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <div className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+          <div className="text-[11px] font-medium uppercase tracking-wider text-chrome-500">
             oracle budget
           </div>
-          <div className="mt-1 font-mono text-3xl leading-none text-emerald-400">
+          <div className="mt-1 font-mono text-3xl leading-none text-good-400">
             {remaining}
-            <span className="text-lg text-zinc-500"> / {total}</span>
+            <span className="text-lg text-chrome-500"> / {total}</span>
           </div>
-          <div className="mt-1 text-[11px] text-zinc-500">probes remaining · {spent} spent</div>
+          <div className="mt-1 text-[11px] text-chrome-500">probes remaining · {spent} spent</div>
         </div>
         {/* 18 slots, one square each: the budget as a resource bar, not a number. */}
         <div className="flex flex-wrap gap-1">
@@ -69,8 +69,8 @@ export function ProbeLedger() {
               title={i < spent ? `probe ${i + 1} — spent` : `probe ${i + 1} — unspent`}
               className={`h-5 w-5 rounded-sm border ${
                 i < spent
-                  ? 'border-red-800 bg-red-900/50'
-                  : 'border-emerald-900/60 bg-emerald-950/30'
+                  ? 'border-broken-800 bg-broken-900/50'
+                  : 'border-good-900/60 bg-good-950/30'
               }`}
             />
           ))}
@@ -80,11 +80,11 @@ export function ProbeLedger() {
       <Loaded query={ledger} height={140}>
         {(rows) =>
           rows.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-emerald-900/50 bg-emerald-950/10 p-6 text-center">
-              <div className="text-sm font-medium text-emerald-400">
+            <div className="rounded-lg border border-dashed border-good-900/50 bg-good-950/10 p-6 text-center">
+              <div className="text-sm font-medium text-good-400">
                 Budget untouched — 0 of {total} spent
               </div>
-              <p className="mx-auto mt-1 max-w-xl text-xs leading-relaxed text-zinc-400">
+              <p className="mx-auto mt-1 max-w-xl text-xs leading-relaxed text-chrome-400">
                 Nothing has been asked of the oracle yet. Every entry that lands here must carry the
                 question it answered and why that question was worth one of eighteen irreversible
                 spends — the ledger is the record of judgement, not just of calls.
@@ -95,7 +95,7 @@ export function ProbeLedger() {
           )
         }
       </Loaded>
-      <p className="text-[11px] text-zinc-600">
+      <p className="text-[11px] text-chrome-600">
         Local k-mer counts against our own read store are <strong>free</strong> and do not touch
         this budget. Only queries to the challenge oracle do.
       </p>

@@ -84,26 +84,26 @@ export function Exhibit({
   return (
     <figure className={cx(CARD, className)}>
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
-        <h3 className="text-sm font-semibold tracking-tight text-zinc-100">{title}</h3>
+        <h3 className="text-sm font-semibold tracking-tight text-chrome-100">{title}</h3>
         <div className="flex flex-wrap items-center gap-2">
           {controls}
           <CopyForAi record={record} />
         </div>
       </div>
       {children}
-      <figcaption className="mt-3 space-y-1.5 border-t border-zinc-800 pt-3">
-        <p className="text-xs leading-relaxed text-zinc-400">
-          <span className="font-semibold text-zinc-300">Legend</span> — {legend}
+      <figcaption className="mt-3 space-y-1.5 border-t border-chrome-800 pt-3">
+        <p className="text-xs leading-relaxed text-chrome-400">
+          <span className="font-semibold text-chrome-300">Legend</span> — {legend}
         </p>
         {reading && (
-          <p className="text-xs leading-relaxed text-zinc-400">
-            <span className="font-semibold text-zinc-300">Reading</span> — {reading}
+          <p className="text-xs leading-relaxed text-chrome-400">
+            <span className="font-semibold text-chrome-300">Reading</span> — {reading}
           </p>
         )}
         {(source || origin) && (
-          <p className="font-mono text-[11px] text-zinc-600">
+          <p className="font-mono text-[11px] text-chrome-600">
             {origin === 'fixture' && (
-              <span className="mr-1.5 rounded bg-amber-500/15 px-1 py-px text-amber-400">
+              <span className="mr-1.5 rounded bg-decision-500/15 px-1 py-px text-decision-400">
                 fixture
               </span>
             )}
@@ -138,10 +138,10 @@ function CopyForAi({ record }: { record: ExhibitRecord }) {
       type="button"
       onClick={run}
       title={AI_HINT}
-      className={`rounded-md border px-2 py-0.5 text-[11px] transition focus:outline-none focus-visible:border-blue-700 ${
+      className={`rounded-md border px-2 py-0.5 text-[11px] transition focus:outline-none focus-visible:border-machinery-700 ${
         said
-          ? 'border-emerald-800 bg-emerald-950/40 text-emerald-400'
-          : 'border-zinc-800 bg-zinc-900 text-zinc-500 hover:border-zinc-700 hover:text-zinc-300'
+          ? 'border-good-800 bg-good-950/40 text-good-400'
+          : 'border-chrome-800 bg-chrome-900 text-chrome-500 hover:border-chrome-700 hover:text-chrome-300'
       }`}
     >
       {said ?? 'copy for AI'}

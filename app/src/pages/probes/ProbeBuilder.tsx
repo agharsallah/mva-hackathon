@@ -84,7 +84,7 @@ export function ProbeBuilder() {
         can rebuild as often as you like. The spend happens when the CSV is uploaded to the
         challenge Space — and that spend is only recoverable as knowledge if it is written down.
         After any real submission:
-        <pre className="mt-2 overflow-x-auto rounded-md border border-amber-900/50 bg-zinc-950 p-2 font-mono text-[11px] leading-relaxed text-amber-200">
+        <pre className="mt-2 overflow-x-auto rounded-md border border-decision-900/50 bg-chrome-950 p-2 font-mono text-[11px] leading-relaxed text-decision-200">
           {LOG_COMMAND}
         </pre>
       </Callout>
@@ -95,11 +95,11 @@ export function ProbeBuilder() {
           onAdd={(first, second, label) => edit(addRow(rows, first, second, label))}
         />
 
-        <div className="space-y-3 rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
+        <div className="space-y-3 rounded-xl border border-chrome-800 bg-chrome-900/40 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="text-xs font-medium text-zinc-300">
+            <div className="text-xs font-medium text-chrome-300">
               Payload{' '}
-              <span className="text-zinc-500">
+              <span className="text-chrome-500">
                 · {rows.length} of {MAX_ROWS} rows
               </span>
             </div>
@@ -107,7 +107,7 @@ export function ProbeBuilder() {
               <button
                 type="button"
                 onClick={() => edit([])}
-                className="rounded-md border border-zinc-700 px-2 py-1 text-[11px] text-zinc-400 hover:bg-zinc-800"
+                className="rounded-md border border-chrome-700 px-2 py-1 text-[11px] text-chrome-400 hover:bg-chrome-800"
               >
                 clear
               </button>
@@ -126,18 +126,18 @@ export function ProbeBuilder() {
               type="button"
               disabled={rows.length === 0 || building}
               onClick={() => build(toRequest(rows))}
-              className="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
+              className="rounded-md bg-machinery-600 px-3 py-1.5 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-500"
             >
               {building ? 'validating…' : 'Validate & build'}
             </button>
-            <span className="text-[11px] text-zinc-500">
+            <span className="text-[11px] text-chrome-500">
               checked against <span className="font-mono">mva.pipeline.submission</span> — the same
               rules the offline pipeline writes with
             </span>
           </div>
 
           {error && (
-            <p className="rounded-md border border-red-900/60 bg-red-950/30 p-2.5 text-[11px] leading-relaxed text-red-300">
+            <p className="rounded-md border border-broken-900/60 bg-broken-950/30 p-2.5 text-[11px] leading-relaxed text-broken-300">
               The API did not answer: <span className="font-mono">{error.message}</span>. Nothing
               was validated — there is no offline fallback here on purpose, because a builder that
               pretends to check a file is worse than one that refuses. Start the API (
@@ -150,11 +150,11 @@ export function ProbeBuilder() {
       </div>
 
       {result?.valid && result.csv && (
-        <div className="space-y-2 rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
+        <div className="space-y-2 rounded-xl border border-chrome-800 bg-chrome-900/40 p-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="text-xs font-medium text-zinc-300">
+            <div className="text-xs font-medium text-chrome-300">
               {FILENAME}{' '}
-              <span className="text-zinc-500">· contigs are chr-prefixed on the way out</span>
+              <span className="text-chrome-500">· contigs are chr-prefixed on the way out</span>
             </div>
             <div className="flex gap-2">
               <button
@@ -162,20 +162,20 @@ export function ProbeBuilder() {
                 onClick={() => {
                   void navigator.clipboard.writeText(result.csv).then(() => setCopied(true));
                 }}
-                className="rounded-md border border-zinc-700 px-2 py-1 text-[11px] text-zinc-300 hover:bg-zinc-800"
+                className="rounded-md border border-chrome-700 px-2 py-1 text-[11px] text-chrome-300 hover:bg-chrome-800"
               >
                 {copied ? 'copied' : 'copy'}
               </button>
               <button
                 type="button"
                 onClick={() => downloadCsv(result.csv, FILENAME)}
-                className="rounded-md border border-emerald-800 px-2 py-1 text-[11px] text-emerald-300 hover:bg-emerald-950/40"
+                className="rounded-md border border-good-800 px-2 py-1 text-[11px] text-good-300 hover:bg-good-950/40"
               >
                 download
               </button>
             </div>
           </div>
-          <pre className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950 p-3 font-mono text-[11px] leading-relaxed text-zinc-200">
+          <pre className="overflow-x-auto rounded-lg border border-chrome-800 bg-chrome-950 p-3 font-mono text-[11px] leading-relaxed text-chrome-200">
             {result.csv}
           </pre>
         </div>
@@ -198,11 +198,11 @@ function Verdict({
   return (
     <div className="space-y-2">
       {errors.length > 0 && (
-        <div className="rounded-lg border border-red-900/60 bg-red-950/25 p-3">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-red-400">
+        <div className="rounded-lg border border-broken-900/60 bg-broken-950/25 p-3">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-broken-400">
             {errors.length} problem{errors.length === 1 ? '' : 's'} — no file written
           </div>
-          <ul className="mt-1 space-y-0.5 text-[11px] text-red-300">
+          <ul className="mt-1 space-y-0.5 text-[11px] text-broken-300">
             {errors.map((p) => (
               <li key={p.message}>{p.message}</li>
             ))}
@@ -211,12 +211,12 @@ function Verdict({
       )}
 
       {warnings.length > 0 && (
-        <div className="rounded-lg border border-amber-800/60 bg-amber-950/25 p-3">
-          <div className="text-[11px] font-semibold uppercase tracking-wider text-amber-400">
+        <div className="rounded-lg border border-decision-800/60 bg-decision-950/25 p-3">
+          <div className="text-[11px] font-semibold uppercase tracking-wider text-decision-400">
             {warnings.length} warning{warnings.length === 1 ? '' : 's'} — the file is legal, the
             payload may not be what you meant
           </div>
-          <ul className="mt-1 space-y-0.5 text-[11px] text-amber-300">
+          <ul className="mt-1 space-y-0.5 text-[11px] text-decision-300">
             {warnings.map((p) => (
               <li key={p.message}>{p.message}</li>
             ))}
@@ -228,22 +228,22 @@ function Verdict({
         <div
           className={`rounded-lg border p-3 ${
             result.self_test.passed
-              ? 'border-emerald-800/60 bg-emerald-950/25'
-              : 'border-red-900/60 bg-red-950/25'
+              ? 'border-good-800/60 bg-good-950/25'
+              : 'border-broken-900/60 bg-broken-950/25'
           }`}
         >
           <div
             className={`text-[11px] font-semibold uppercase tracking-wider ${
-              result.self_test.passed ? 'text-emerald-400' : 'text-red-400'
+              result.self_test.passed ? 'text-good-400' : 'text-broken-400'
             }`}
           >
             self-test {result.self_test.passed ? 'passed' : 'FAILED'}
           </div>
-          <div className="mt-1 font-mono text-[11px] text-zinc-300">
+          <div className="mt-1 font-mono text-[11px] text-chrome-300">
             rank_points {result.self_test.rank_points} · f_max {result.self_test.f_max} ·
             full_match_rank {result.self_test.full_match_rank ?? '—'}
           </div>
-          <p className="mt-1 text-[11px] leading-relaxed text-zinc-400">
+          <p className="mt-1 text-[11px] leading-relaxed text-chrome-400">
             The emitted bytes were parsed back the way the scorer parses them and scored against a
             synthetic answer key equal to row 1's own alleles. It proves the file <em>encodes</em>{' '}
             what you staged — the chr prefix, the pair-in-one-row shape, the rank order. It says
@@ -257,26 +257,27 @@ function Verdict({
 
 function Legend() {
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-4 text-[11px] leading-relaxed text-zinc-400">
-      <div className="font-semibold uppercase tracking-wider text-zinc-500">Legend</div>
+    <div className="rounded-xl border border-chrome-800 bg-chrome-900/30 p-4 text-[11px] leading-relaxed text-chrome-400">
+      <div className="font-semibold uppercase tracking-wider text-chrome-500">Legend</div>
       <ul className="mt-1.5 grid gap-1 sm:grid-cols-2">
         <li>
-          <span className="text-emerald-400">green</span> — the file is safe to upload, or rank 1,
-          the only rank that scores the maximum.
+          <span className="text-good-400">green</span> — the file is safe to upload, or rank 1, the
+          only rank that scores the maximum.
         </li>
         <li>
-          <span className="text-amber-400">yellow</span> — a decision point: an irreversible spend,
-          or a payload the scorer will read differently than it looks.
+          <span className="text-decision-400">yellow</span> — a decision point: an irreversible
+          spend, or a payload the scorer will read differently than it looks.
         </li>
         <li>
-          <span className="text-red-400">red</span> — a rule violation. No CSV is rendered at all.
+          <span className="text-broken-400">red</span> — a rule violation. No CSV is rendered at
+          all.
         </li>
         <li>
-          <span className="text-blue-400">blue</span> — machinery: staged alleles, the validate
+          <span className="text-machinery-400">blue</span> — machinery: staged alleles, the validate
           action.
         </li>
       </ul>
-      <div className="mt-3 font-semibold uppercase tracking-wider text-zinc-500">
+      <div className="mt-3 font-semibold uppercase tracking-wider text-chrome-500">
         How the file is read
       </div>
       <ul className="mt-1.5 space-y-1">

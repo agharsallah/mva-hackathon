@@ -102,19 +102,19 @@ export function QualityLevels() {
                   legend: { orientation: 'h', y: 1.14, x: 0, font: { color: C.inkDim, size: 11 } },
                 })}
               />
-              <div className="mt-2 space-y-1 text-[11px] text-zinc-500">
+              <div className="mt-2 space-y-1 text-[11px] text-chrome-500">
                 <div className="flex flex-wrap gap-x-5">
                   <span>
                     Q30+ share R1{' '}
-                    <span className="font-mono text-emerald-400">{dec(q30Share(1), 1)}%</span>
+                    <span className="font-mono text-good-400">{dec(q30Share(1), 1)}%</span>
                   </span>
                   <span>
                     Q30+ share R2{' '}
-                    <span className="font-mono text-amber-400">{dec(q30Share(2), 1)}%</span>
+                    <span className="font-mono text-decision-400">{dec(q30Share(2), 1)}%</span>
                   </span>
                   <span>
                     distinct phred values present{' '}
-                    <span className="font-mono text-zinc-300">{levels.length}</span> (
+                    <span className="font-mono text-chrome-300">{levels.length}</span> (
                     {levels.join(', ')})
                   </span>
                 </div>

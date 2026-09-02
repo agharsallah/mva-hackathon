@@ -80,7 +80,7 @@ function GraphSvg({
 
   return (
     <>
-      <div className="overflow-x-auto rounded-lg border border-zinc-800 bg-zinc-950/60">
+      <div className="overflow-x-auto rounded-lg border border-chrome-800 bg-chrome-950/60">
         <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} className="block">
           <defs>
             <marker
@@ -179,17 +179,17 @@ function GraphSvg({
           })}
         </svg>
       </div>
-      <div className="mt-2 min-h-[34px] rounded-lg border border-zinc-800 bg-zinc-900/40 p-2 text-[11px]">
+      <div className="mt-2 min-h-[34px] rounded-lg border border-chrome-800 bg-chrome-900/40 p-2 text-[11px]">
         {hovered ? (
           <>
-            <span className="font-mono text-amber-400">{hovered.from.split('/').pop()}</span>
-            <span className="text-zinc-500"> → </span>
-            <span className="font-mono text-amber-400">{hovered.to}</span>
-            <span className="text-zinc-400"> — {hovered.transform}</span>
-            <span className="text-zinc-600"> [{hovered.tool}]</span>
+            <span className="font-mono text-decision-400">{hovered.from.split('/').pop()}</span>
+            <span className="text-chrome-500"> → </span>
+            <span className="font-mono text-decision-400">{hovered.to}</span>
+            <span className="text-chrome-400"> — {hovered.transform}</span>
+            <span className="text-chrome-600"> [{hovered.tool}]</span>
           </>
         ) : (
-          <span className="text-zinc-600">
+          <span className="text-chrome-600">
             hover an arrow to read its transform · {nodes.length} nodes, {edges.length} edges,{' '}
             {levels} levels
           </span>

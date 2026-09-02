@@ -85,22 +85,22 @@ export function IndelLengths() {
                   legend: { orientation: 'h', y: 1.1, x: 0, font: { color: C.inkDim, size: 11 } },
                 })}
               />
-              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-zinc-500">
+              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-chrome-500">
                 <span>
                   deletions{' '}
-                  <span className="font-mono text-red-400">
+                  <span className="font-mono text-broken-400">
                     {int(dels.reduce((a, r) => a + r.count, 0))}
                   </span>
                 </span>
                 <span>
                   insertions{' '}
-                  <span className="font-mono text-blue-400">
+                  <span className="font-mono text-machinery-400">
                     {int(ins.reduce((a, r) => a + r.count, 0))}
                   </span>
                 </span>
                 <span>
                   frame-preserving (length divisible by 3){' '}
-                  <span className="font-mono text-amber-400">
+                  <span className="font-mono text-decision-400">
                     {((inFrameCount / total) * 100).toFixed(1)}%
                   </span>{' '}
                   — the other {(100 - (inFrameCount / total) * 100).toFixed(1)}% shift the reading

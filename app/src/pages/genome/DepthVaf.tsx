@@ -120,9 +120,9 @@ export function DepthVaf() {
                   legend: { orientation: 'h', y: 1.08, x: 0, font: { color: C.inkDim, size: 11 } },
                 })}
               />
-              <p className="mt-2 text-[11px] text-zinc-500">
+              <p className="mt-2 text-[11px] text-chrome-500">
                 autosomal mean depth{' '}
-                <span className="font-mono text-zinc-300">{dec(meanDp, 1)}×</span> over{' '}
+                <span className="font-mono text-chrome-300">{dec(meanDp, 1)}×</span> over{' '}
                 {autosomes.length} contigs
               </p>
             </>

@@ -25,23 +25,23 @@ const KIND_LABEL: Record<SearchResolution['kind'], string> = {
 
 /** Colour a resolver by what it cost: the panel and the callset are ours, Ensembl is not. */
 function sourceTone(source: string): string {
-  if (source.startsWith('ensembl')) return 'text-purple-300';
-  if (source.startsWith('pg.') || source.startsWith('ressources')) return 'text-emerald-300';
-  return 'text-zinc-300';
+  if (source.startsWith('ensembl')) return 'text-raw-300';
+  if (source.startsWith('pg.') || source.startsWith('ressources')) return 'text-good-300';
+  return 'text-chrome-300';
 }
 
 export function Resolution({ found }: { found: SearchResolution }) {
   const span = found.end - found.start + 1;
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-4">
+    <div className="rounded-xl border border-chrome-800 bg-chrome-900/40 p-4">
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="rounded-md bg-zinc-800 px-2 py-0.5 text-[11px] uppercase tracking-wider text-zinc-400">
+        <span className="rounded-md bg-chrome-800 px-2 py-0.5 text-[11px] uppercase tracking-wider text-chrome-400">
           {KIND_LABEL[found.kind]}
         </span>
-        <span className="font-mono text-sm text-zinc-100">{found.label}</span>
-        <span className="text-xs text-zinc-500">{int(span)} bp window</span>
+        <span className="font-mono text-sm text-chrome-100">{found.label}</span>
+        <span className="text-xs text-chrome-500">{int(span)} bp window</span>
       </div>
-      <p className="mt-2 text-xs leading-relaxed text-zinc-400">
+      <p className="mt-2 text-xs leading-relaxed text-chrome-400">
         resolved by <span className={`font-mono ${sourceTone(found.source)}`}>{found.source}</span>
         {found.note && <> — {found.note}</>}
       </p>
@@ -97,19 +97,19 @@ function Window({
         origin={origin}
       >
         <DensityStrip variants={window.variants} start={window.start} end={window.end} />
-        <div className="mt-2 grid gap-2 text-[11px] text-zinc-500 sm:grid-cols-4">
+        <div className="mt-2 grid gap-2 text-[11px] text-chrome-500 sm:grid-cols-4">
           <span>
-            records <span className="font-mono text-zinc-300">{int(window.n)}</span>
+            records <span className="font-mono text-chrome-300">{int(window.n)}</span>
           </span>
           <span>
-            PASS <span className="font-mono text-emerald-400">{int(pass)}</span> ·{' '}
-            <span className="font-mono text-red-400">{int(window.n - pass)}</span> suppressed
+            PASS <span className="font-mono text-good-400">{int(pass)}</span> ·{' '}
+            <span className="font-mono text-broken-400">{int(window.n - pass)}</span> suppressed
           </span>
           <span>
-            1/2 sites <span className="font-mono text-amber-400">{int(multi)}</span>
+            1/2 sites <span className="font-mono text-decision-400">{int(multi)}</span>
           </span>
           <span>
-            carry an rsID <span className="font-mono text-zinc-300">{int(named)}</span>
+            carry an rsID <span className="font-mono text-chrome-300">{int(named)}</span>
           </span>
         </div>
       </Exhibit>
@@ -159,12 +159,12 @@ function EmptyWindow({
 }) {
   const dbsnp = found.source.startsWith('ensembl');
   return (
-    <div className="rounded-xl border border-amber-800/60 bg-amber-950/25 p-5">
-      <div className="text-xs font-semibold uppercase tracking-wider text-amber-300">
+    <div className="rounded-xl border border-decision-800/60 bg-decision-950/25 p-5">
+      <div className="text-xs font-semibold uppercase tracking-wider text-decision-300">
         resolved, and the callset has no record here
       </div>
-      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-300">
-        <span className="font-mono text-zinc-100">{found.label}</span> is a real place —{' '}
+      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-chrome-300">
+        <span className="font-mono text-chrome-100">{found.label}</span> is a real place —{' '}
         {dbsnp
           ? 'dbSNP placed it via Ensembl, and this callset never called a variant at it.'
           : 'the window resolved, and this callset carries no record inside it.'}{' '}
@@ -172,9 +172,11 @@ function EmptyWindow({
         site was never covered well enough to call. It is a different fact from an unknown name,
         which would have been a 404 before this panel was reached.
       </p>
-      <p className="mt-2 font-mono text-[11px] text-zinc-600">
+      <p className="mt-2 font-mono text-[11px] text-chrome-600">
         {origin === 'fixture' && (
-          <span className="mr-1.5 rounded bg-amber-500/15 px-1 py-px text-amber-400">fixture</span>
+          <span className="mr-1.5 rounded bg-decision-500/15 px-1 py-px text-decision-400">
+            fixture
+          </span>
         )}
         {source}
       </p>
@@ -189,9 +191,9 @@ const COLUMNS: Column<RegionVariant>[] = [
     header: 'rsID',
     render: (r) =>
       r.id ? (
-        <span className="font-mono text-zinc-300">{r.id}</span>
+        <span className="font-mono text-chrome-300">{r.id}</span>
       ) : (
-        <span className="text-zinc-700">—</span>
+        <span className="text-chrome-700">—</span>
       ),
   },
   {
@@ -199,9 +201,9 @@ const COLUMNS: Column<RegionVariant>[] = [
     header: 'ref → alt',
     render: (r) => (
       <span className="font-mono">
-        <span className="text-zinc-500">{r.ref}</span>
-        <span className="text-zinc-600"> → </span>
-        <span className="text-zinc-200">{r.alt}</span>
+        <span className="text-chrome-500">{r.ref}</span>
+        <span className="text-chrome-600"> → </span>
+        <span className="text-chrome-200">{r.alt}</span>
       </span>
     ),
   },
@@ -210,14 +212,16 @@ const COLUMNS: Column<RegionVariant>[] = [
     key: 'filter',
     header: 'FILTER',
     render: (r) => (
-      <span className={r.filter === 'PASS' ? 'text-emerald-400' : 'text-red-400'}>{r.filter}</span>
+      <span className={r.filter === 'PASS' ? 'text-good-400' : 'text-broken-400'}>{r.filter}</span>
     ),
   },
   {
     key: 'gt',
     header: 'GT',
     render: (r) => (
-      <span className={r.gt === '1/2' ? 'font-mono text-amber-400' : 'font-mono text-zinc-300'}>
+      <span
+        className={r.gt === '1/2' ? 'font-mono text-decision-400' : 'font-mono text-chrome-300'}
+      >
         {r.gt ?? '—'}
       </span>
     ),

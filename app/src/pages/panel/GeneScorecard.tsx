@@ -21,7 +21,7 @@ export function GeneScorecard() {
     {
       key: 'gene',
       header: 'gene',
-      render: (r) => <span className="font-mono text-zinc-100">{r.gene}</span>,
+      render: (r) => <span className="font-mono text-chrome-100">{r.gene}</span>,
     },
     { key: 'chrom', header: 'contig', render: (r) => <span className="font-mono">{r.chrom}</span> },
     { key: 'n_all', header: 'records', align: 'right', render: (r) => int(r.n_all) },
@@ -29,14 +29,14 @@ export function GeneScorecard() {
       key: 'n_pass',
       header: 'PASS',
       align: 'right',
-      render: (r) => <span className="text-emerald-400">{int(r.n_pass)}</span>,
+      render: (r) => <span className="text-good-400">{int(r.n_pass)}</span>,
     },
     {
       key: 'n_filtered',
       header: 'suppressed',
       align: 'right',
       render: (r) => (
-        <span className={r.n_filtered > 0 ? 'text-red-400' : 'text-zinc-600'}>
+        <span className={r.n_filtered > 0 ? 'text-broken-400' : 'text-chrome-600'}>
           {int(r.n_filtered)}
         </span>
       ),
@@ -46,7 +46,7 @@ export function GeneScorecard() {
       header: 'PASS %',
       align: 'right',
       render: (r) => (
-        <span className={r.pct_pass < 96 ? 'text-red-400' : 'text-zinc-300'}>
+        <span className={r.pct_pass < 96 ? 'text-broken-400' : 'text-chrome-300'}>
           {pct(r.pct_pass, 1)}
         </span>
       ),
@@ -55,7 +55,7 @@ export function GeneScorecard() {
     {
       key: 'note',
       header: 'why it is on the panel',
-      render: (r) => <span className="text-zinc-400">{r.note}</span>,
+      render: (r) => <span className="text-chrome-400">{r.note}</span>,
     },
   ];
 
@@ -156,9 +156,9 @@ export function GeneScorecard() {
                 })}
               />
               {worst && (
-                <p className="mb-3 text-[11px] text-zinc-500">
-                  lowest PASS share: <span className="font-mono text-red-400">{worst.gene}</span> at{' '}
-                  {pct(worst.pct_pass, 1)} ({int(worst.n_filtered)} of {int(worst.n_all)} records
+                <p className="mb-3 text-[11px] text-chrome-500">
+                  lowest PASS share: <span className="font-mono text-broken-400">{worst.gene}</span>{' '}
+                  at {pct(worst.pct_pass, 1)} ({int(worst.n_filtered)} of {int(worst.n_all)} records
                   suppressed)
                 </p>
               )}

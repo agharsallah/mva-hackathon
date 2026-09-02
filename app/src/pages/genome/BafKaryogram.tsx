@@ -241,18 +241,18 @@ export function BafKaryogram() {
                   },
                 })}
               />
-              <div className="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-zinc-500">
+              <div className="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-chrome-500">
                 <span>
                   {int(rows.length)} bins across {chroms.length} contigs
                 </span>
                 <span>
-                  <span className="font-mono text-zinc-400">{int(thinCount)}</span> under {THIN} het
-                  calls (rendered unmeasured)
+                  <span className="font-mono text-chrome-400">{int(thinCount)}</span> under {THIN}{' '}
+                  het calls (rendered unmeasured)
                 </span>
                 {worst && (
                   <span>
                     largest measured deviation:{' '}
-                    <span className="font-mono text-zinc-400">
+                    <span className="font-mono text-chrome-400">
                       chr{worst.chrom} {worst.vaf_deviation >= 0 ? '+' : ''}
                       {dec(worst.vaf_deviation, 4)}
                     </span>{' '}

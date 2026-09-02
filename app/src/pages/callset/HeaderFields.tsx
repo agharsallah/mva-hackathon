@@ -84,12 +84,12 @@ export function HeaderFields() {
       {
         key: 'id',
         header: 'field',
-        render: (r) => <span className="font-mono font-semibold text-zinc-100">{r.id}</span>,
+        render: (r) => <span className="font-mono font-semibold text-chrome-100">{r.id}</span>,
       },
       {
         key: 'description',
         header: 'what the header says it is',
-        render: (r) => <span className="text-zinc-300">{r.description}</span>,
+        render: (r) => <span className="text-chrome-300">{r.description}</span>,
       },
       {
         key: 'used',
@@ -98,9 +98,9 @@ export function HeaderFields() {
         render: (r) => {
           const where = usage(r);
           return where ? (
-            <span className="text-emerald-400/90">{where}</span>
+            <span className="text-good-400/90">{where}</span>
           ) : (
-            <span className="text-zinc-600">—</span>
+            <span className="text-chrome-600">—</span>
           );
         },
       },
@@ -118,8 +118,8 @@ export function HeaderFields() {
           <Chip color={C.machinery}>INFO — one value per site</Chip> ·{' '}
           <Chip color={C.raw}>FORMAT — one value per sample</Chip>. Descriptions are the
           caller&apos;s own text, verbatim. The last column is green where something in this repo
-          actually reads the field and <span className="text-zinc-500">—</span> where nothing does.
-          Sortable; the filter box matches any cell.
+          actually reads the field and <span className="text-chrome-500">—</span> where nothing
+          does. Sortable; the filter box matches any cell.
         </>
       }
       reading={
@@ -128,7 +128,7 @@ export function HeaderFields() {
           <strong>the delivery ships no annotation worth ranking on</strong>. Every INFO field is a
           caller statistic — depth, strand bias, rank-sum tests — with no VEP consequence, no gnomAD
           frequency, no ClinVar verdict and no CADD score among them. The one exception is{' '}
-          <code className="text-zinc-300">DB</code>, a bare dbSNP-membership flag. Everything the
+          <code className="text-chrome-300">DB</code>, a bare dbSNP-membership flag. Everything the
           Panel page ranks on had to be fetched and joined by us.
         </>
       }
@@ -154,7 +154,7 @@ export function HeaderFields() {
                 filterLabel="find a field"
                 filterPlaceholder="e.g. depth, phasing, MQ"
               />
-              <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-zinc-500">
+              <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-chrome-500">
                 {(['FILTER', 'INFO', 'FORMAT'] as FieldKind[]).map((kind) => (
                   <span key={kind}>
                     <span className="font-mono" style={{ color: KIND_COLOR[kind] }}>

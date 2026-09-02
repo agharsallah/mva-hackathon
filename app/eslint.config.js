@@ -8,6 +8,8 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import globals from 'globals';
 
+import { localRules } from './eslint-rules/index.js';
+
 // NOTE on the parser choice: `typescript-eslint` (all published 8.x releases, checked up
 // to 8.69.0) hard-fails at import time against TypeScript 7.x — this repo pins
 // `typescript@^7.0.2`, the new Go-ported native compiler. It is not a version-range
@@ -33,40 +35,9 @@ import globals from 'globals';
 // names the one correct place for the thing it bans.
 // ---------------------------------------------------------------------------------
 
-// `no-restricted-syntax` can only carry one severity per rule *instance*, and a raw
-// hex colour literal is a `warn` (existing debt) while `fetch(` and `useQuery(` are
-// `error` (already clean). Rather than fighting flat-config's "later block replaces
-// the whole rule for files matched by both" merge behaviour, the hex check gets its
-// own tiny local rule so its severity never has to share a key with the others.
-const HEX_COLOR_RE = /#[0-9a-fA-F]{3,8}\b/;
-const localRules = {
-  rules: {
-    'no-raw-hex-color': {
-      meta: {
-        type: 'problem',
-        docs: {
-          description:
-            'disallow raw hex colour literals outside lib/palette.ts (CLAUDE.md: colour lives in one place)',
-        },
-        schema: [],
-      },
-      create(context) {
-        return {
-          Literal(node) {
-            if (typeof node.value === 'string' && HEX_COLOR_RE.test(node.value)) {
-              context.report({
-                node,
-                message:
-                  'Raw hex colour literal — colour lives in src/lib/palette.ts. Add or reuse a named constant there instead. (TODO: existing debt, ~30 call sites — this rule is `warn` until a later wave migrates them.)',
-              });
-            }
-          },
-        };
-      },
-    },
-  },
-};
-
+// The repo's own rules live in eslint-rules/ (one file each, with a RuleTester test in
+// eslint-rules/rules.test.js) rather than inline here: a rule that encodes an architecture
+// decision deserves the same negative-test treatment as the code it guards.
 const FETCH_RESTRICTION = {
   selector: "CallExpression[callee.name='fetch']",
   message:
@@ -306,16 +277,36 @@ export default [
     },
   },
 
-  // Raw hex colour literals in pages/components — CLAUDE.md: "Colour lives in one
-  // place" (lib/palette.ts). The 30 pre-existing call sites were migrated on
-  // 2026-09-02, so this is now an `error`: a new literal has to be given a name in
-  // lib/palette.ts before it can be used.
+  // ---------------------------------------------------------------------------
+  // Colour: one source, two halves (src/lib/palette/index.ts explains the split).
+  //
+  //   local/no-raw-hex-color          a hex literal may only appear in the generated ramps
+  //   local/no-builtin-tailwind-color a class may only name a semantic family, never a
+  //                                   Tailwind hue (`bg-emerald-400` renders a colour that
+  //                                   exists in the DOM and nowhere in the palette)
+  //
+  // Scoped to all of src/** — not just pages/components — because app/**, lib/** and the
+  // tests paint too. The two generated artifacts are the only exemption: they are written
+  // by tools/gen-theme.mjs, which is the one place a number is allowed to be typed.
+  // Both rules run over template literals as well as plain strings, so `bg-[${hex}]` and a
+  // built-in hue interpolated into a className are caught; eslint-rules/rules.test.js pins
+  // that.
+  // ---------------------------------------------------------------------------
   {
-    files: ['src/pages/**/*.{ts,tsx}', 'src/components/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/lib/palette/ramps.generated.ts'],
     plugins: { local: localRules },
     rules: {
       'local/no-raw-hex-color': 'error',
+      'local/no-builtin-tailwind-color': 'error',
     },
+  },
+
+  {
+    // eslint-rules/**: node scripts, and the RuleTester test needs vitest globals. Both
+    // colour rules are off here — a rule that bans a hex has to contain one to test it.
+    files: ['eslint-rules/**/*.js'],
+    languageOptions: { globals: { ...globals.node, ...globals.vitest } },
   },
 
   {

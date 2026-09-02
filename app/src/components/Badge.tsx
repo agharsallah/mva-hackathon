@@ -4,15 +4,17 @@
  * `NormChip` already does exactly this for one specific verdict shape (`within/above/below`);
  * this is the general version, for the other places the same recipe was being hand-typed: the
  * amber "gap" tags on the Catalog tables, the boolean rare/protein-altering flags in the pair
- * comparator, ClinVar assertion tags. Five tones match `StatTile`'s tone vocabulary so a badge
- * and the tile it sits on never disagree about what a colour means.
+ * comparator, ClinVar assertion tags. The tone vocabulary is `lib/palette`'s `Tone`, shared with
+ * `StatTile` and `Callout`, so a badge and the tile it sits on cannot disagree about what a
+ * colour means.
  */
 import type { ReactNode } from 'react';
 
+import type { Tone } from '../lib/palette';
 import { BADGE, cx } from '../lib/ui';
 
 export interface BadgeProps {
-  tone?: keyof typeof BADGE;
+  tone?: Tone;
   children: ReactNode;
   className?: string;
   title?: string;

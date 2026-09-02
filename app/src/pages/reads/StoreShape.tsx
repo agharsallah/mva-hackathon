@@ -80,17 +80,17 @@ export function StoreShape() {
                 ]}
                 layout={baseLayout({ margin: { l: 4, r: 4, t: 4, b: 4 } })}
               />
-              <div className="mt-2 grid gap-2 text-[11px] text-zinc-500 sm:grid-cols-3">
+              <div className="mt-2 grid gap-2 text-[11px] text-chrome-500 sm:grid-cols-3">
                 <span>
                   {rows.length} partitions ·{' '}
-                  <span className="font-mono text-zinc-300">{int(totalShards)}</span> shards
+                  <span className="font-mono text-chrome-300">{int(totalShards)}</span> shards
                 </span>
                 <span>
-                  <span className="font-mono text-zinc-300">{int(totalReads)}</span> reads stored
+                  <span className="font-mono text-chrome-300">{int(totalReads)}</span> reads stored
                 </span>
                 <span>
-                  <span className="font-mono text-blue-400">{dec(totalGib, 2)} GiB</span> parquet vs
-                  78.90 GiB gzip source
+                  <span className="font-mono text-machinery-400">{dec(totalGib, 2)} GiB</span>{' '}
+                  parquet vs 78.90 GiB gzip source
                 </span>
               </div>
             </>

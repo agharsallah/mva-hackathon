@@ -1,8 +1,9 @@
 @import 'tailwindcss';
 
-@theme {
-  --color-ink: #e5e7eb;
-}
+/* The semantic colour families (chrome/good/broken/decision/machinery/raw/severity), written
+   by `pnpm theme` from the same numbers lib/palette hands to Plotly. Never edit it by hand;
+   see src/lib/palette/index.ts for why the system has two halves. */
+@import './theme.generated.css';
 
 html {
   color-scheme: dark;
@@ -10,8 +11,8 @@ html {
 
 body {
   margin: 0;
-  background: #0a0a0a;
-  color: #e5e7eb;
+  background: var(--color-chrome-950);
+  color: var(--color-chrome-200);
   font-family:
     ui-sans-serif,
     system-ui,
@@ -31,7 +32,7 @@ body {
   height: 10px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: var(--color-chrome-800);
   border-radius: 6px;
 }
 ::-webkit-scrollbar-track {

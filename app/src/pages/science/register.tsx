@@ -34,16 +34,16 @@ export function EmptyRegister({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-dashed border-emerald-900/50 bg-emerald-950/10 p-6 text-center">
-      <div className="text-sm font-medium text-emerald-400">{title}</div>
-      <p className="mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-zinc-400">{children}</p>
-      <p className="mx-auto mt-2 max-w-2xl text-[11px] leading-relaxed text-zinc-500">
+    <div className="rounded-lg border border-dashed border-good-900/50 bg-good-950/10 p-6 text-center">
+      <div className="text-sm font-medium text-good-400">{title}</div>
+      <p className="mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-chrome-400">{children}</p>
+      <p className="mx-auto mt-2 max-w-2xl text-[11px] leading-relaxed text-chrome-500">
         An empty register is discipline, not absence of work. The method is written down in{' '}
-        <span className="font-mono text-zinc-400">docs/method.md</span>, and the register opens the
-        moment the first claim is filed with <span className="font-mono text-zinc-400">{verb}</span>
-        .
+        <span className="font-mono text-chrome-400">docs/method.md</span>, and the register opens
+        the moment the first claim is filed with{' '}
+        <span className="font-mono text-chrome-400">{verb}</span>.
       </p>
-      <p className="mt-2 font-mono text-[11px] text-zinc-600">
+      <p className="mt-2 font-mono text-[11px] text-chrome-600">
         {tableExists
           ? 'table exists · 0 rows'
           : 'table not created yet — written on first record, never by a page load'}
@@ -56,15 +56,15 @@ export function EmptyRegister({
 export function Confidence({ value, inline = false }: { value: number | null; inline?: boolean }) {
   if (value === null || value === undefined) {
     return (
-      <span className="font-mono text-zinc-600" title="no verdict committed yet">
+      <span className="font-mono text-chrome-600" title="no verdict committed yet">
         —
       </span>
     );
   }
   return (
     <span className={inline ? 'inline-flex items-baseline gap-1.5' : 'flex items-baseline gap-1.5'}>
-      <span className="font-mono text-amber-400">{value.toFixed(2)}</span>
-      <span className="text-[10px] leading-tight text-zinc-500">{CONFIDENCE_CAVEAT}</span>
+      <span className="font-mono text-decision-400">{value.toFixed(2)}</span>
+      <span className="text-[10px] leading-tight text-chrome-500">{CONFIDENCE_CAVEAT}</span>
     </span>
   );
 }
