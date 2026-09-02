@@ -107,7 +107,10 @@ export default [
     rules: {
       ...reactHooks.configs.recommended.rules,
       ...jsxA11y.configs.recommended.rules,
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      // error since 2026-09-02, when the last 12 sites were split: a module that
+      // exports both a component and a plain value cannot be hot-swapped, so Vite
+      // full-reloads it and silently drops component state.
+      'react-refresh/only-export-components': ['error', { allowConstantExport: true }],
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
 
@@ -119,7 +122,7 @@ export default [
       // TS syntax the base JS parser config doesn't need to gate.
       'no-unused-expressions': 'off',
 
-      'jsx-a11y/no-autofocus': 'warn',
+      'jsx-a11y/no-autofocus': 'error',
       'jsx-a11y/click-events-have-key-events': 'warn',
       'jsx-a11y/no-static-element-interactions': 'warn',
 
@@ -304,14 +307,14 @@ export default [
   },
 
   // Raw hex colour literals in pages/components — CLAUDE.md: "Colour lives in one
-  // place" (lib/palette.ts). NOTE: ~30 existing call sites, so this stays `warn` (not
-  // `error`) until a later wave migrates them to lib/palette.ts; `npm run lint:strict`
-  // (max-warnings 0) is how CI will eventually demand that migration is done.
+  // place" (lib/palette.ts). The 30 pre-existing call sites were migrated on
+  // 2026-09-02, so this is now an `error`: a new literal has to be given a name in
+  // lib/palette.ts before it can be used.
   {
     files: ['src/pages/**/*.{ts,tsx}', 'src/components/**/*.{ts,tsx}'],
     plugins: { local: localRules },
     rules: {
-      'local/no-raw-hex-color': 'warn',
+      'local/no-raw-hex-color': 'error',
     },
   },
 

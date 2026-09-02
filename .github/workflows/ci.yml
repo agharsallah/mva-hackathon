@@ -48,8 +48,10 @@ jobs:
       - name: Typecheck (tsc -b)
         run: pnpm run typecheck
 
-      - name: Lint (eslint)
-        run: pnpm run lint
+      # lint:strict is `eslint . --max-warnings 0`: the repo is at zero warnings as of
+      # 2026-09-02, so a new warning fails the build instead of accumulating.
+      - name: Lint (eslint, zero warnings)
+        run: pnpm run lint:strict
 
       - name: Format check (prettier --check)
         run: pnpm run format:check
