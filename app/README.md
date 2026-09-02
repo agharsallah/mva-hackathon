@@ -91,7 +91,7 @@ the viz API answers `503` and the page shows the start command instead of an err
 | data fetching      | `@tanstack/react-query` v5 — retries off, 5 min `staleTime`  |
 | routing            | `react-router-dom` v7                                        |
 | charts (2D and 3D) | `plotly.js-dist-min`, lazily `import()`ed into its own chunk |
-| styling            | Tailwind CSS v4 via `@tailwindcss/vite`                      |
+| styling            | Tailwind CSS v4 via `@tailwindcss/vite`, CSS-first `@theme`  |
 | tests              | Vitest + `@testing-library/react` + jsdom                    |
 | lint / format      | ESLint 9 (flat) + Prettier                                   |
 
@@ -115,7 +115,8 @@ src/
   components/ shared primitives — Exhibit, Plot, DataTable, Card, Badge, …    → components/README.md
   fixtures/   the offline data layer — JSON rows + lazy loaders               → fixtures/README.md
   api/        types.ts (transcribed from the contract) · client.ts (one fetch wrapper) · hooks.ts
-  lib/        palette.ts (colours) · ui.ts (class recipes) · format.ts · hooks/ · aiExport/
+  lib/        palette/ (generated colour ramps, tones, scales) · ui.ts (class recipes)
+              · format.ts · hooks/ · aiExport/
   pages/      one folder per page, one file per exhibit
   test/       fixture request matrix, blessed payload hashes, setup
 ```
@@ -131,9 +132,30 @@ repo's "every figure carries a legend" rule enforced by the type checker rather 
 and it is the single hook the AI export uses: each exhibit registers its narrative, provenance and
 payload while mounted, so page-level and case-level exports need nothing from the call sites.
 
-**Colour lives in one place.** `lib/palette.ts` owns the hex values; `lib/ui.ts` owns the Tailwind
-class recipes built on them (`CARD`, `BOX`, `BADGE`, `EMPTY_DASHED`, plus a `cx()` joiner). A
-component never re-types a class string that three files already share.
+**Colour lives in one place, and it is generated.** A colour is needed in two places that cannot
+share a mechanism — the DOM (a Tailwind class) and a canvas (a hex handed to Plotly or an SVG
+attribute) — so they share a _source_: `pnpm theme` runs
+[`tools/gen-theme.mjs`](tools/gen-theme.mjs), which reads the installed Tailwind theme, converts
+its oklch values to sRGB hex once, and writes both halves:
+
+| Artifact                             | Read by                                         |
+| ------------------------------------ | ----------------------------------------------- |
+| `src/lib/palette/ramps.generated.ts` | `RAMP.good[500]` — Plotly, SVG, inline style    |
+| `src/theme.generated.css`            | `--color-good-500` — `bg-good-500`, `lib/ui.ts` |
+
+Seven semantic families carry the repo's colour legend: `good` (green), `broken` (red),
+`decision` (yellow), `machinery` (blue), `raw` (purple), `chrome` (grey furniture) and
+`severity` (the one orange step between broken and decision, charts only). `lib/palette` names
+the six **tones** components speak in (`neutral · good · broken · decision · machinery · raw`)
+plus the chart scales; `lib/ui.ts` owns the Tailwind recipes (`CARD`, `BOX`, `BADGE`,
+`EMPTY_DASHED`, `TEXT`, plus a `cx()` joiner), each a `Record<Tone, string>` so a new tone is a
+compile error at every site rather than a silent gap.
+
+Four gates hold it together: `pnpm theme:check` (drift between the two halves),
+`src/test/theme-tokens.test.ts` (tone coverage, family per recipe, every scale stop on a ramp),
+`local/no-raw-hex-color` and `local/no-builtin-tailwind-color` (both in
+[`eslint-rules/`](eslint-rules/), with their own `RuleTester` tests). The whole system renders
+itself at **`/style-guide`** — every ramp, tone, recipe, scale and primitive, live.
 
 ## Pages
 
@@ -176,11 +198,12 @@ the matrix against blessed values.
 
 ## Where to look first
 
-| You want to                                  | Start at                                                      |
-| -------------------------------------------- | ------------------------------------------------------------- |
-| add a page                                   | [`src/app/README.md`](src/app/README.md) — one manifest entry |
-| add a chart                                  | `src/components/Exhibit.tsx`, then the page's folder          |
-| reuse a UI piece                             | [`src/components/README.md`](src/components/README.md)        |
-| make the app work offline for a new endpoint | [`src/fixtures/README.md`](src/fixtures/README.md)            |
-| understand a domain word                     | [`docs/dictionary.md`](../docs/dictionary.md)                 |
-| know how a number was produced               | [`docs/step-0/methodology/`](../docs/step-0/methodology/)     |
+| You want to                                  | Start at                                                                                       |
+| -------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| add a page                                   | [`src/app/README.md`](src/app/README.md) — one manifest entry                                  |
+| add a chart                                  | `src/components/Exhibit.tsx`, then the page's folder                                           |
+| reuse a UI piece                             | `/style-guide` in the running app, then [`src/components/README.md`](src/components/README.md) |
+| change or add a colour                       | [`tools/gen-theme.mjs`](tools/gen-theme.mjs) — never a hex at a call site                      |
+| make the app work offline for a new endpoint | [`src/fixtures/README.md`](src/fixtures/README.md)                                             |
+| understand a domain word                     | [`docs/dictionary.md`](../docs/dictionary.md)                                                  |
+| know how a number was produced               | [`docs/step-0/methodology/`](../docs/step-0/methodology/)                                      |

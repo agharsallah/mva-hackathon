@@ -36,10 +36,10 @@ a file directly, so a page never needs to know where a primitive lives.
 
 ## Small marks
 
-| Name    | Purpose                                                                                        | Usage                                                |
-| ------- | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `Badge` | A small coloured pill — five tones matching `StatTile`'s (`neutral/good/broken/decision/raw`). | `<Badge tone="decision">gap</Badge>`                 |
-| `Flag`  | A boolean rendered as a `Badge`: green when true, grey when false, a third state for `null`.   | `<Flag on={v.is_rare} yes="rare" no="too common" />` |
+| Name    | Purpose                                                                                                    | Usage                                                |
+| ------- | ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| `Badge` | A small coloured pill. Takes a `Tone` (see Tokens below), the same vocabulary as `StatTile` and `Callout`. | `<Badge tone="decision">gap</Badge>`                 |
+| `Flag`  | A boolean rendered as a `Badge`: green when true, grey when false, a third state for `null`.               | `<Flag on={v.is_rare} yes="rare" no="too common" />` |
 
 ## Async / query state
 
@@ -56,10 +56,31 @@ a file directly, so a page never needs to know where a primitive lives.
 
 ## Tokens (`src/lib/ui.ts`)
 
-Not components — the Tailwind class strings the primitives above are built from, plus `cx()`,
-a class-joiner that drops falsy arguments. `CARD`, `BOX` (4-tone alert box), `BADGE` (5-tone
-pill), `EMPTY_DASHED` (2-tone dashed box). Colours themselves stay owned by `lib/palette.ts` —
-`ui.ts` only names Tailwind recipes built on top of it, never a raw hex value.
+Not components — the Tailwind class recipes the primitives above are built from, plus `cx()`,
+a class-joiner that drops falsy arguments.
+
+| Recipe         | What it is                                             |
+| -------------- | ------------------------------------------------------ |
+| `CARD`         | the bordered panel (`Card`, `Exhibit`)                 |
+| `BOX`          | the tinted alert region (`Callout`)                    |
+| `BADGE`        | the pill (`Badge`, `NormChip`)                         |
+| `EMPTY_DASHED` | the dashed nothing-here box (`EmptyState`)             |
+| `TEXT`         | just the text colour for a tone (`StatTile`, verdicts) |
+
+The four tone-keyed maps are `Record<Tone, string>` over the **one** `Tone` union exported by
+`lib/palette` (`neutral · good · broken · decision · machinery · raw`), so adding a meaning
+breaks compilation at every recipe until each answers for it, and
+`src/test/theme-tokens.test.ts` fails if a recipe tints a tone in the wrong hue family.
+
+Colour itself is owned by [`lib/palette/`](../lib/palette/index.ts) and generated: `pnpm theme`
+writes the hex ramps (`ramps.generated.ts`, for Plotly and SVG) and the matching `--color-*`
+custom properties (`src/theme.generated.css`, for the classes here) from one conversion of
+Tailwind's own theme. A recipe therefore names a **semantic family** (`bg-good-950`,
+`text-chrome-300`) and never a Tailwind hue or a hex — both are eslint errors
+(`local/no-builtin-tailwind-color`, `local/no-raw-hex-color`).
+
+**Every primitive on this page, every tone and every ramp is rendered live at `/style-guide`.**
+Read that before adding a new box, tint or pill: the thing you want probably exists.
 
 ## Hooks (`src/lib/hooks/`)
 

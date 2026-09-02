@@ -34,9 +34,9 @@ Full index and what "step 0" covers: [`step-0/README.md`](step-0/README.md).
 | [`step-0/reads-storage.md`](step-0/reads-storage.md) | Where do the raw reads go, and what can you ask of them? Built — 1,071,835,104 reads as queryable Parquet. |
 | [`step-0/reads-api.md`](step-0/reads-api.md) | How do I query the store without a shell on the server? Every `mva-reads` verb over HTTP, long jobs handled. |
 | [`step-0/viz-api.md`](step-0/viz-api.md) | How does the browser read the warehouse? Every table and read-store aggregate as JSON — `mva-viz-api`. |
-| [`step-0/viz-app.md`](step-0/viz-app.md) | How do I *see* the data? The React app — 7 pages, 23 exhibits, 2D + 3D. |
+| [`step-0/viz-app.md`](step-0/viz-app.md) | How do I *see* the data? The React app — 7 pages, 23 exhibits, 2D + 3D, and a `/style-guide` that renders its own design system. |
 | [`step-0/methodology/`](step-0/methodology/) | How was each step-0 result reached? One append-only entry per executed run, 001–029. |
-| [`step-0/notes/`](step-0/notes/) | Why the platform looks like this. Four decisions, one file each. |
+| [`step-0/notes/`](step-0/notes/) | Why the platform looks like this. Five decisions, one file each. |
 
 ## Step 1 — Normalize the callset (open)
 
@@ -81,6 +81,7 @@ provisional, what would prompt a rethink. Full register with results:
 | [Delivery is immutable](step-0/notes/delivery-is-immutable.md) | step 0 | firm — verified 12/12 hashes |
 | [Postgres for shared state](step-0/notes/postgres-for-shared-state.md) | step 0 | firm; Path A deleted 2026-08-29 |
 | [The chr-prefix bridge](step-0/notes/chr-prefix-bridge.md) | step 0 | firm — one function, enforced by test |
+| [Colour is generated](step-0/notes/colour-is-generated.md) | step 0 | firm — one generator, four gates |
 | [Toolchain choice](step-0/notes/toolchain-choice.md) | step 0 | provisional |
 | [A hand-rolled VCF reader](notes/hand-rolled-vcf-reader.md) | pipeline | provisional |
 | [A local replica of the scorer](notes/local-scorer-replica.md) | pipeline | settled for the challenge |

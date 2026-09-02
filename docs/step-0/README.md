@@ -104,6 +104,7 @@ every methodology entry is a test bound to a claim. That loop is
 | [Postgres for shared state](notes/postgres-for-shared-state.md) | firm; Path A deleted 2026-08-29 |
 | [The chr-prefix bridge](notes/chr-prefix-bridge.md) | firm — one function, enforced by test |
 | [Toolchain choice](notes/toolchain-choice.md) | provisional |
+| [Colour is generated](notes/colour-is-generated.md) | firm — one generator, four gates |
 
 Cross-step decisions — [no patient data](../notes/no-patient-data-in-the-repository.md),
 [synthetic fixtures](../notes/synthetic-fixtures.md) — stay in

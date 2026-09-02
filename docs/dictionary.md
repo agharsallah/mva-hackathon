@@ -840,6 +840,31 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 **Plotly** — a charting library whose figures are interactive in a plain HTML file: zoom, hover for exact values, toggle a series off. No server and no build step, which is why `MultiQC` and this repository's exploration report both use it.
 *Example: `uv run mva-explore report ressources/data-profile` writes one such page — see [the exploration toolkit](step-0/exploration.md).*
 
+**CSS** — the language that says how a web page *looks*: one rule per selector, each setting properties like `color` or `padding`. The browser applies every matching rule and the most specific one wins.
+
+**Tailwind CSS** — a styling library where you never write a CSS rule; you put pre-made single-purpose class names on the element instead (`p-4` = padding 4, `text-sm` = small text). The build step scans your source **text** for class names and emits only the rules you actually used. That scan is the catch worth knowing: a class name assembled at runtime (`` `bg-${colour}` ``) is never seen, so its rule is never generated and the style silently does nothing.
+*Example: `<div className="rounded-xl border border-chrome-800 p-4">` — four utility classes instead of one hand-written CSS rule.*
+
+**Utility class** — one of those single-purpose class names. A **recipe** in this repository is a named string of them (`CARD = 'rounded-xl border border-chrome-800 bg-chrome-900/40 p-4'`) so eleven files stop retyping the same eight words. *Example:* `app/src/lib/ui.ts`.
+
+**CSS custom property** (also **CSS variable**) — a value declared once under a name starting with `--` and read anywhere with `var(--name)`. It lives in the browser, so it can be swapped at runtime; a value baked into a JavaScript file cannot. *Example:* `--color-good-500: #00c950;` then `color: var(--color-good-500)`.
+
+**Design token** — a named design value used instead of a literal one: a colour, a spacing, a radius. Software analogy: a constant, except it has to be readable from both CSS and code, which is why it usually exists twice. *Example:* `--color-broken-400` and `RAMP.broken[400]` are the same token in this repository's two halves.
+
+**Hex colour** — a colour written as `#RRGGBB`, two hex digits per red/green/blue channel, in the **sRGB** space every screen understands. Eight digits add an alpha (opacity) channel. *Example:* `#00c950` = the app's "good" green; `#1c398e55` = a blue at ~33 % opacity.
+
+**oklch** — a newer way to write a colour, as *lightness, chroma (how vivid), hue (which colour)* in a space built so equal numeric steps look like equal steps to the eye — unlike [hex](#8-command-line-tools-youll-see), where lightening a colour by hand shifts its hue. Tailwind v4 ships its palette in oklch. Converting it to hex is lossy at the edges (some oklch colours are outside sRGB and get clipped) but necessary for anything that parses colours itself, such as [Plotly](#8-command-line-tools-youll-see).
+*Example: `oklch(72.3% 0.219 149.579)` is Tailwind's `green-500`, which converts to `#00c950`.*
+
+**Semantic colour family** — a hue ramp named for what it *means* rather than what it *is*: this repository paints with `good` (green), `broken` (red), `decision` (yellow), `machinery` (blue), `raw` (purple), `chrome` (grey furniture) and `severity` (orange). The Tailwind hue each is cut from appears in one generator script and nowhere else, so renaming the meaning never means editing 900 call sites. *Example:* `bg-good-950` rather than `bg-emerald-950`.
+
+**Shade** — one step on a family, numbered 50 (palest) to 950 (deepest). This repository uses 300/400 for text, 800/900 for borders and 950 for a tinted background, so a new family has an obvious answer for every role. *Example:* `text-broken-400` on `bg-broken-950`.
+
+**Tone** — the six meanings a component is allowed to be tinted with: `neutral`, `good`, `broken`, `decision`, `machinery`, `raw`. A component takes a tone, never a **semantic colour family** and never a [hex](#8-command-line-tools-youll-see) — which is what stops a badge and the number above it from disagreeing about what green means. *Example:* `<Badge tone="decision">gap</Badge>`.
+
+**Colourscale** — a list of `[position, colour]` stops between 0 and 1 that a chart interpolates to colour a continuous range. Sequential runs dark → hot; **diverging** puts a distinct colour at each end and a neutral one in the middle, for a value whose *direction* of deviation matters. *Example:* this repository's allele-balance scale puts green at 0.5 — the middle is the goal — with red below and purple above.
+
+
 **pysam / cyvcf2** — Python libraries to read these files in code.
 
 **DuckDB** — a database that runs *inside* your program, as a library, with the whole database in a single file. There is no server process, no port and no database accounts — the same arrangement as SQLite, but column-oriented and built for analytics. This is the single most commonly misunderstood thing about it: you cannot "expose DuckDB on a server", because there is nothing listening. Putting it on a shared machine means putting *the file* there and reaching it the way you already reach that machine.

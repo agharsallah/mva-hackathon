@@ -6,6 +6,8 @@ landed ([036](methodology/036-table-semantics-registry.md)); that exhibit is the
 verified against the **live** API rather than fixtures — all three catalogue endpoints
 answered 200. Measured dataset numbers are owned by
 [`ideation/data-findings.md`](../../ideation/data-findings.md); this page never restates them.
+The design-system section and the **Style** page row were added 2026-09-02 and verified against
+the running app on that date ([055](methodology/055-design-tokens.md)).
 
 > The **Compare** page and the Panel page's constraint scorecard were added on 2026-08-31 and
 > are verified **against fixtures only** — their three endpoints
@@ -61,6 +63,7 @@ cd app && pnpm install && pnpm run dev    # http://127.0.0.1:5173
 | Science | What do we believe, how strongly, and on what basis? | method loop diagram (claim → predict → test → verdict → revise); hypothesis board (one card per claim, latest revision, expandable revision history); evidence ledger (direction-coloured, filterable by hypothesis id); oracle budget read as research narrative. **Empty today by design** — the register tables do not exist until the first claim, and the page renders that as a designed state |
 | Provenance | Where did every number come from? | lineage graph (SVG, hover an edge for its transform); derivations with their questions; flat lineage table |
 | Catalog | What data do we hold, what is in it, when did it arrive, where does it live? | delivery inventory (one card per raw object: description, size, sha256 short-form + who verified it, arrival time); table catalogue (every warehouse/results table with its lineage edge, free-text filter); **table explainer** (one expandable card per table: why it exists, the verb that writes it, and every column's type and meaning); read-store card |
+| Style | What is the design system, and is it still one system? | the token pipeline (source → generator → two artifacts → four gates); the generated ramps (7 families × 11 shades, each swatch labelled with its hex); the six tones with every live recipe; every Plotly colourscale as its gradient with each stop named `family-shade`; every shared primitive rendered with throwaway data. Nothing hand-listed — the grids iterate the palette's own exports ([`055`](methodology/055-design-tokens.md)) |
 | Search | What is at *this* locus — one I chose, not one the server pre-selected? | one box taking a gene symbol, a region in either `chr` spelling, or an rsID, with one-click examples; **resolution line** naming the window *and the resolver that placed it* (query string / candidate panel / the callset's own rsID column / Ensembl) plus its caveat; **density strip** (PASS stacked under suppressed, per adaptive bin so the strip stays ~120 bars at any span); the full record table. The query lives in the URL, so a result is a shareable link. Four states are drawn distinctly: unparseable-or-too-wide, unknown name, Ensembl down, and **resolved-with-zero-rows** — for an rsID placed by dbSNP that means *the site was never called*, which is a finding, not a failure. Verified **live** against the hosted database and Ensembl, [`methodology/042`](methodology/042-universal-search.md) |
 
 Exactly three views are 3D, each with a real third axis: density bins (chromosome × position ×
@@ -135,5 +138,17 @@ enforced in the rendering rather than left to the reader:
   push, exhibit keys are namespaced (`bins.chrom` vs `baf.chrom`), and an invalid value falls back
   silently. So one link is one complete figure reference for the report; the full key table is in
   [044](methodology/044-url-state.md).
-- Colours come from `lib/palette.ts` only: green = good, red = broken/suppressed, yellow = a decision,
-  blue = neutral machinery, purple = the raw input.
+- **Colour is generated, and lint enforces it.** One script (`app/tools/gen-theme.mjs`) converts the
+  installed Tailwind theme once and writes both halves the app needs: hex ramps for Plotly, SVG and
+  inline style, and the matching `--color-*` custom properties for every Tailwind class. Seven
+  semantic families carry the legend — green = good, red = broken/suppressed, yellow = a decision,
+  blue = neutral machinery, purple = the raw input, grey (`chrome`) = furniture, orange
+  (`severity`) = the one extra severity step in a chart ramp. Components take one of six `Tone`s
+  and never a hue; a raw hex or a bare `emerald-400` is an eslint error, and `pnpm theme:check`
+  fails if the two halves stop agreeing. Owned by
+  [colour is generated](notes/colour-is-generated.md), measured in
+  [`055`](methodology/055-design-tokens.md).
+- **The design system renders itself** at `/style-guide`: every generated ramp, every tone with its
+  live recipes, every chart colourscale as the gradient it paints, and every shared primitive. It is
+  built from the same exports the app uses, so a new tone or a changed number appears with no edit —
+  which makes it the screenshot to diff after a styling change.
