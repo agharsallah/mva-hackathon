@@ -1,3 +1,7 @@
+/* eslint-disable max-lines -- 2026-09-02: at 429 lines, over the CLAUDE.md 400-line cap.
+   Known debt, tracked for a later wave to split (not this one — see the eslint
+   architecture-rules wave). Do not add new eslint-disable lines elsewhere for this rule;
+   this is the one documented exception. */
 import { useState } from 'react';
 
 import { usePanelSuppressed } from '../../api/hooks';
