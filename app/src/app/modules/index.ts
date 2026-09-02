@@ -94,4 +94,11 @@ export const modules: FeatureModule[] = [
     description: 'Dependency health board: what is working, what is not, and how to fix it.',
     load: () => import('../../pages/Status'),
   },
+  {
+    id: 'style-guide',
+    path: '/style-guide',
+    navLabel: 'Style',
+    description: 'The design system itself: generated colour tokens, tones, scales, primitives.',
+    load: () => import('../../pages/StyleGuide'),
+  },
 ];
