@@ -54,5 +54,5 @@
   "/api/search?q=rs1042522": "5a98d3ff5f6f7af1",
   "/api/search?q=nonsense+query": "74234e98afe7498f",
   "/api/callset/region?chrom=15&start=1000000&end=1002000": "3f6e73aaa45ba5b1",
-  "/api/health/dependencies": "02712da287cab33b"
+  "/api/health/dependencies": "6d03c14e9a664775"
 }

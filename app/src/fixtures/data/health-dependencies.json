@@ -1,5 +1,5 @@
 {
-  "checked_at": "2026-09-02T10:34:00Z",
+  "checked_at": "2026-09-02T19:44:58+00:00",
   "overall": "down",
   "checks": [
     {
@@ -7,8 +7,8 @@
       "name": "Viz API",
       "kind": "internal",
       "status": "up",
-      "latency_ms": 1,
-      "detail": "process responding, uptime 3h42m",
+      "latency_ms": 3,
+      "detail": "mva-viz-api v1.0.0 answered this request",
       "remedy": null,
       "powers": [
         "Overview",
@@ -21,76 +21,86 @@
         "Science",
         "Provenance",
         "Catalog",
-        "Search",
-        "Status"
+        "Search"
       ],
-      "endpoint": "127.0.0.1:8900/health"
+      "endpoint": null
     },
     {
       "id": "warehouse",
       "name": "Postgres warehouse",
       "kind": "internal",
       "status": "up",
-      "latency_ms": 12,
+      "latency_ms": 891,
       "detail": "SELECT 1 answered; schemas warehouse + results present",
       "remedy": null,
-      "powers": ["Overview", "Callset", "Panel", "Compare", "Catalog", "Provenance"],
-      "endpoint": "db.internal:5432/mva"
+      "powers": [
+        "Overview",
+        "Genome",
+        "Callset",
+        "Panel",
+        "Compare",
+        "Catalog",
+        "Provenance",
+        "Science",
+        "Search",
+        "Probes"
+      ],
+      "endpoint": "mva@127.0.0.1:5432/mva (password: set, schemas: warehouse + results)"
     },
     {
       "id": "object-store",
-      "name": "MinIO object store",
+      "name": "Object store (MinIO/S3)",
       "kind": "internal",
       "status": "down",
-      "latency_ms": null,
-      "detail": "HeadBucket failed: connection refused to the configured S3 endpoint",
-      "remedy": "MinIO is not reachable at the configured S3_ENDPOINT_URL.\n\n  1. Check it's running:   docker ps | grep minio\n  2. Start it:             tools/setup-warehouse-server.sh (or your usual compose up)\n  3. Confirm the endpoint: grep S3_ENDPOINT_URL .env\n  4. Retry the probe:     curl -sf \"$S3_ENDPOINT_URL/minio/health/live\"\n\nUntil this is fixed, the raw-delivery inventory on Catalog and Overview cannot verify\nany checksum — it will show every object as unverified, not just the ones affected.",
-      "powers": ["Overview", "Catalog"],
-      "endpoint": "minio.internal:9000/mva"
+      "latency_ms": 12,
+      "detail": "cannot reach the object store at 127.0.0.1:9012",
+      "remedy": "cannot reach the object store at 127.0.0.1:9012\n\nS3_ENDPOINT points at localhost — that is THIS machine, not the server.\nThat value is only correct while an SSH tunnel is open. Either:\n\n  open the tunnel:  ssh -N -L 9012:localhost:9012 <user>@<server>\n  or point straight at the server:  S3_ENDPOINT=<server-hostname>:9012\n\nunderlying error: IO Error: Could not connect to server",
+      "powers": ["Reads"],
+      "endpoint": "http://127.0.0.1:9012/mva"
     },
     {
       "id": "parquet",
-      "name": "Parquet read-store",
+      "name": "Parquet read path",
       "kind": "internal",
-      "status": "degraded",
-      "latency_ms": 340,
-      "detail": "opened 2/4 shard files; lane 3 R1 and lane 4 R2 failed to parse",
-      "remedy": "Two of four read-store shards did not open cleanly.\n\n  1. Rebuild the missing shards: uv run mva-reads-api rebuild-store --lane 3,4\n  2. Check disk space first:    df -h $(dirname \"$READ_STORE_PATH\")\n  3. Inspect a bad shard directly: parquet-tools inspect <path-to-shard>\n\nThe Reads page will render with the 2 healthy shards and flag which lanes are missing\nfrom the flowcell heatmap and per-cycle quality curves.",
+      "status": "skipped",
+      "latency_ms": null,
+      "detail": "S3 credentials not configured (S3_ENDPOINT, S3_ACCESS_KEY, S3_SECRET_KEY)",
+      "remedy": "Set S3_ENDPOINT, S3_ACCESS_KEY and S3_SECRET_KEY in .env to enable the Parquet read-path check.",
       "powers": ["Reads"],
-      "endpoint": "read-store/*.parquet (local disk)"
+      "endpoint": null
     },
     {
       "id": "reads-api",
-      "name": "Raw-reads API",
+      "name": "Reads API (mva-reads-api)",
       "kind": "upstream",
       "status": "down",
-      "latency_ms": null,
-      "detail": "connection refused at 127.0.0.1:8765/health",
-      "remedy": "The raw-reads API is not running.\n\n  1. Start it, from the repo root: uv run mva-reads-api\n  2. Verify it answers:            curl -sf http://127.0.0.1:8765/health\n  3. The viz API proxies to it — no restart needed once it is back.\n\nUntil this is fixed, Probes returns 503 and Reads shows a start-command card instead\nof an error for the routes that need it.",
-      "powers": ["Probes", "Reads"],
-      "endpoint": "127.0.0.1:8765/health"
+      "latency_ms": 2,
+      "detail": "reads API unreachable at http://127.0.0.1:8765",
+      "remedy": "Start `mva-reads-api` or check MVA_READS_API_URL.",
+      "powers": ["Probes"],
+      "endpoint": "http://127.0.0.1:8765/health"
     },
     {
       "id": "ensembl",
       "name": "Ensembl REST",
       "kind": "third-party",
-      "status": "degraded",
-      "latency_ms": 1850,
-      "detail": "GET /lookup/symbol/BUB1B answered in 1850ms (budget 1000ms), after 1 retry",
-      "remedy": "Ensembl's public REST API is slow or rate-limiting us right now.\n\n  1. Check their status page: https://rest.ensembl.org (or status.ensembl.org)\n  2. Gene-structure lookups are disk-cached after the first fetch, so this only slows\n     down genes nobody has opened yet this session.\n  3. If it persists past a few minutes, wait — there is no local mirror to fail over to.",
+      "status": "up",
+      "latency_ms": 190,
+      "detail": "GET /info/ping -> 200 {\"ping\":1}",
+      "remedy": null,
       "powers": ["Panel"],
-      "endpoint": "rest.ensembl.org/lookup"
+      "endpoint": "https://rest.ensembl.org/info/ping?content-type=application/json"
     },
     {
       "id": "reference-snapshots",
-      "name": "ClinVar local snapshot",
+      "name": "Reference snapshots (gnomAD, ClinVar)",
       "kind": "snapshot",
-      "status": "skipped",
-      "latency_ms": null,
-      "detail": "CLINVAR_SNAPSHOT_PATH not set — not configured, this is optional",
-      "remedy": "Optional performance path, not required for correctness.\n\n  1. To enable it: set CLINVAR_SNAPSHOT_PATH in the repo-root .env to a local VCF mirror.\n  2. Without it, /api/panel/clinvar-presence joins against the live ClinVar table on\n     every request instead of a pre-loaded snapshot — slower, not wrong.",
+      "status": "degraded",
+      "latency_ms": 1489,
+      "detail": "table(s) not ingested: clinvar_panel",
+      "remedy": "Run `tools/build_reference_data.py` then `mva-warehouse stage`/`ingest` — see ressources/reference/README.md.",
       "powers": ["Panel", "Compare"],
-      "endpoint": null
+      "endpoint": "pg.warehouse.gnomad_constraint + pg.warehouse.clinvar_panel"
     }
   ]
 }

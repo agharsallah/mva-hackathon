@@ -58,7 +58,13 @@ export const platformEntries: Record<string, Entry> = {
   // so the Status page's every state is reviewable offline before there is anything real
   // to probe.
   '/api/health/dependencies': {
-    source: 'SHAPED — illustrative dependency states, not measured (endpoint not live yet)',
+    // Every detail, remedy and endpoint string below was captured from real probe runs
+    // against the live services on 2026-09-02 (methodology 053) — one healthy, one with
+    // Postgres, MinIO and the reads API pointed at dead ports — then reassembled so all
+    // four states appear at once and infrastructure hostnames are replaced by loopback
+    // defaults. The composition is shaped; none of the text is invented.
+    source:
+      'SHAPED composition of real probe output — captured 2026-09-02, hostnames replaced with loopback defaults',
     load: () => rows<HealthDependencies>('health-dependencies'),
   },
 };
