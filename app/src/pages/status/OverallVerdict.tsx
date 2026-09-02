@@ -1,6 +1,7 @@
 import { useHealthDependencies } from '../../api/hooks';
 import { Callout, ErrorCard, Skeleton, StatTile } from '../../components';
 import { int } from '../../lib/format';
+import { useRefreshRequested } from './useRefresh';
 import { deriveVerdict, statusLabel, statusTone } from './verdict';
 
 /**
@@ -9,7 +10,7 @@ import { deriveVerdict, statusLabel, statusTone } from './verdict';
  * a page by hand, so it cannot drift from what the endpoint actually reports.
  */
 export function OverallVerdict() {
-  const q = useHealthDependencies();
+  const q = useHealthDependencies(useRefreshRequested());
 
   if (q.isPending) return <Skeleton height={150} />;
   if (q.error) return <ErrorCard error={q.error} />;

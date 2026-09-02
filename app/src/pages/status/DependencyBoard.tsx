@@ -4,6 +4,7 @@ import { Badge, Callout, Chip, Exhibit, FieldList, Loaded } from '../../componen
 import { int } from '../../lib/format';
 import { C } from '../../lib/palette';
 import { endpointFor } from './configured';
+import { useRefreshRequested } from './useRefresh';
 import { groupChecks, statusLabel, statusTone } from './verdict';
 
 /**
@@ -59,7 +60,7 @@ function DependencyCard({ check, origin }: { check: DependencyCheck; origin: 'ap
 }
 
 export function DependencyBoard() {
-  const q = useHealthDependencies();
+  const q = useHealthDependencies(useRefreshRequested());
 
   return (
     <Exhibit

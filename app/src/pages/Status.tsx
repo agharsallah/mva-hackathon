@@ -1,6 +1,9 @@
+import { Link } from 'react-router-dom';
+
 import { Explainer, Section } from '../components';
 import { DependencyBoard } from './status/DependencyBoard';
 import { OverallVerdict } from './status/OverallVerdict';
+import { useRefreshRequested } from './status/useRefresh';
 
 /**
  * Status — is anything broken, and if so, what do I run to fix it?
@@ -13,6 +16,7 @@ import { OverallVerdict } from './status/OverallVerdict';
  * *what* to run next, inline, on the card itself.
  */
 export default function StatusPage() {
+  const forced = useRefreshRequested();
   return (
     <div className="space-y-6">
       <Explainer
@@ -62,8 +66,26 @@ export default function StatusPage() {
             plain: 'how long the probe itself took to answer, in milliseconds',
           },
         ]}
-        caveat="This page reads a health endpoint like any other — the states shown are whatever it reports at the moment you loaded the page, refreshed every ~15 seconds. In fixture mode (no backend running) every state below is illustrative, not measured — the fixture's source string says so."
+        caveat="This page reads a health endpoint like any other — the states shown are whatever it reports at the moment you loaded the page, then re-checked every 10 minutes. Probing costs real round trips to Postgres, MinIO and Ensembl, so it is deliberately quiet; use Re-probe now when you have just restarted something. In fixture mode (no backend running) every state below is illustrative, not measured — the fixture's source string says so."
       />
+
+      <div className="flex flex-wrap items-baseline justify-between gap-2 text-[11px] text-zinc-500">
+        <span>
+          Probed on load, then every 10 minutes. The API caches one probe round for ~10 s.
+        </span>
+        {forced ? (
+          <span className="text-amber-400">
+            forced re-probe — the API&apos;s cache is bypassed ·{' '}
+            <Link to="/status" className="underline hover:text-zinc-200">
+              back to the normal cadence
+            </Link>
+          </span>
+        ) : (
+          <Link to="/status?refresh" className="underline hover:text-zinc-200">
+            Re-probe now
+          </Link>
+        )}
+      </div>
 
       <Section
         title="What works right now"

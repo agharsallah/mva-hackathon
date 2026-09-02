@@ -159,19 +159,28 @@ export const useProbeLedger = () => useEndpoint<ProbeLedgerRow[]>('/api/probe/le
 export const useHypotheses = () => useEndpoint<HypothesisRegister>('/api/science/hypotheses');
 export const useEvidence = () => useEndpoint<EvidenceRegister>('/api/science/evidence');
 
+/** Background poll for the Status board: quiet, because probing costs real round trips
+ * to Postgres, MinIO and Ensembl on every pass. */
+export const HEALTH_POLL_MS = 600_000;
+
 /**
- * Dependency health board (`Status` page). Every other hook above wants the 5-minute
- * default `staleTime` — the underlying facts barely change between visits. This one is
- * the opposite: it exists to answer "is anything broken *right now*", so a stale "up"
- * card would be actively misleading. Short `staleTime` plus a ~15s poll keeps the board
- * honest without hammering the probes — the server already caches its own probe result
- * for ~10s, so this poll cadence just tracks that.
+ * Dependency health board (`Status` page).
+ *
+ * Two cadences, on purpose. `staleTime` stays short so *opening* the page always probes
+ * rather than rendering a cached "up" from ten minutes ago — a stale health card is worse
+ * than no card. `refetchInterval` is long because each pass costs real round trips to
+ * Postgres, MinIO and a third party; an open tab should not generate traffic all day.
+ *
+ * `refresh` also bypasses the API's own ~10s probe cache, so `/status?refresh` re-probes
+ * for real instead of being served whatever the server measured last. It changes the
+ * query key too, which is what makes navigating to that URL fetch immediately.
  */
-export const useHealthDependencies = () =>
-  useEndpoint<HealthDependencies>('/api/health/dependencies', undefined, {
-    staleTime: 5_000,
-    refetchInterval: 15_000,
-  });
+export const useHealthDependencies = (refresh = false) =>
+  useEndpoint<HealthDependencies>(
+    '/api/health/dependencies',
+    refresh ? { refresh: true } : undefined,
+    { staleTime: 5_000, refetchInterval: HEALTH_POLL_MS },
+  );
 
 const LIVE_STATES = new Set(['queued', 'running']);
 
