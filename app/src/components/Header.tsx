@@ -71,7 +71,9 @@ export function Header({ items }: { items: HeaderNavItem[] }) {
           </span>
         </div>
 
-        <nav className="flex flex-1 flex-wrap items-center gap-1">
+        {/* Labelled because the footer carries a second nav: two unnamed navigation
+            landmarks are indistinguishable to a screen reader. */}
+        <nav aria-label="Pages" className="flex flex-1 flex-wrap items-center gap-1">
           {items.map((p) => (
             <NavLink
               key={p.to}

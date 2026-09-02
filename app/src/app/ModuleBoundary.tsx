@@ -78,10 +78,24 @@ export function ModuleBoundary({
   load: FeatureModule['load'];
 }) {
   const [attempt, setAttempt] = useState(0);
-  // Re-creating lazy(load) on retry issues a fresh import() call — a memoized
-  // rejected promise from the first failed fetch is never reused.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const Page = useMemo<ComponentType>(() => lazy(load), [attempt]);
+  /**
+   * `load` is a real dependency, not decoration.
+   *
+   * Every route's element is this same component at the same position in the tree, so
+   * React reconciles a navigation as a props update on the existing instance rather than a
+   * fresh mount. Memoising on `[attempt]` alone therefore handed back the PREVIOUS module's
+   * lazy component and the old page stayed on screen — clicking a nav link changed the URL
+   * and nothing else, while a hard reload looked fine because it mounted from scratch.
+   *
+   * `attempt` stays in the list for the retry path: re-creating `lazy(load)` issues a fresh
+   * `import()` instead of reusing a memoised rejected promise from a failed fetch.
+   */
+  const Page = useMemo<ComponentType>(() => {
+    // Read, not merely listed: a bumped attempt is the retry signal, and the linter is
+    // right that a dependency nothing reads is decoration.
+    void attempt;
+    return lazy(load);
+  }, [load, attempt]);
 
   return (
     <ModuleErrorBoundary moduleId={moduleId} onRetry={() => setAttempt((n) => n + 1)}>

@@ -26,7 +26,10 @@ export function AppShell() {
             <Route
               key={m.id}
               path={m.path}
-              element={<ModuleBoundary moduleId={m.id} load={m.load} />}
+              // Keyed by module id so a navigation remounts the boundary rather than
+              // updating it in place: without it, one module's caught error would keep
+              // showing on the next module's route.
+              element={<ModuleBoundary key={m.id} moduleId={m.id} load={m.load} />}
             />
           ))}
           <Route path="*" element={<Navigate to="/" replace />} />
