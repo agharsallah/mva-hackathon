@@ -1,7 +1,7 @@
 """The CLI's promises: what it refuses, and what it declines to write.
 
 Hermetic by the same mechanism the warehouse ledger CLI tests use — ``attached`` and
-``_settings`` are imported into the module namespace, so a test replaces them and no
+``settings`` live in ``cli.context``, so a test replaces them there and no
 database is touched.
 
 The load-bearing test in here is that ``verdict`` writes nothing without ``--commit``. A
@@ -64,9 +64,11 @@ def wired(monkeypatch):
         def fake_attached(settings, read_only=False):
             yield connection
 
-        monkeypatch.setattr(cli, "attached", fake_attached)
+        monkeypatch.setattr(cli.context, "attached", fake_attached)
         monkeypatch.setattr(
-            cli, "_settings", lambda: Postgres(schema="warehouse", result_schema="results")
+            cli.context,
+            "settings",
+            lambda: Postgres(schema="warehouse", result_schema="results"),
         )
         return connection
 
@@ -80,7 +82,7 @@ def test_verdict_writes_nothing_without_commit(wired, capsys):
     """The tool suggests a number; a human commits it. Otherwise it is the tool's opinion."""
     connection = wired([[_row()], []])
     assert (
-        cli.do_verdict(
+        cli.read.do_verdict(
             Args(
                 hypothesis="H001",
                 commit=False,
@@ -98,7 +100,7 @@ def test_verdict_writes_nothing_without_commit(wired, capsys):
 
 def test_verdict_prints_the_arithmetic(wired, capsys):
     wired([[_row()], []])
-    cli.do_verdict(
+    cli.read.do_verdict(
         Args(
             hypothesis="H001",
             commit=False,
@@ -116,7 +118,7 @@ def test_verdict_prints_the_arithmetic(wired, capsys):
 def test_verdict_refuses_to_commit_without_a_reason(wired, capsys):
     connection = wired([[_row()], []])
     assert (
-        cli.do_verdict(
+        cli.read.do_verdict(
             Args(
                 hypothesis="H001",
                 commit=True,
@@ -135,7 +137,7 @@ def test_verdict_refuses_to_commit_without_a_reason(wired, capsys):
 def test_verdict_with_commit_appends_one_revision(wired):
     connection = wired([[_row()], [], [_row()]])
     assert (
-        cli.do_verdict(
+        cli.read.do_verdict(
             Args(
                 hypothesis="H001",
                 commit=True,
@@ -158,7 +160,7 @@ def test_verdict_with_commit_appends_one_revision(wired):
 def test_hypothesis_add_refuses_a_claim_with_no_refutation_condition(wired, capsys):
     connection = wired()
     assert (
-        cli.do_hypothesis_add(
+        cli.write.do_hypothesis_add(
             Args(
                 step="step-1",
                 statement="BUB1B is causal.",
@@ -178,7 +180,7 @@ def test_hypothesis_add_refuses_a_claim_with_no_refutation_condition(wired, caps
 def test_hypothesis_add_refuses_a_platform_step(wired, capsys):
     connection = wired()
     assert (
-        cli.do_hypothesis_add(
+        cli.write.do_hypothesis_add(
             Args(
                 step="step-0",
                 statement="BUB1B is causal.",
@@ -198,7 +200,7 @@ def test_hypothesis_add_refuses_a_platform_step(wired, capsys):
 def test_hypothesis_add_appends_at_revision_one(wired):
     connection = wired([[("",)]])
     assert (
-        cli.do_hypothesis_add(
+        cli.write.do_hypothesis_add(
             Args(
                 step="step-1",
                 statement="BUB1B is causal.",
@@ -222,7 +224,7 @@ def test_hypothesis_add_appends_at_revision_one(wired):
 def test_evidence_add_refuses_an_observation_with_no_source(wired, capsys):
     connection = wired()
     assert (
-        cli.do_evidence_add(
+        cli.write.do_evidence_add(
             Args(
                 hypothesis="H001",
                 direction="supports",
@@ -243,7 +245,7 @@ def test_evidence_add_refuses_an_observation_with_no_source(wired, capsys):
 def test_evidence_add_appends_one_sourced_row(wired):
     connection = wired([[(0,)]])
     assert (
-        cli.do_evidence_add(
+        cli.write.do_evidence_add(
             Args(
                 hypothesis="H001",
                 direction="supports",
@@ -267,7 +269,7 @@ def test_probe_link_records_the_reply_as_sourced_evidence(wired):
     """The ledger is append-only, so what a reply *means* goes in the evidence ledger."""
     connection = wired([[(0,)], [(1,)]])
     assert (
-        cli.do_probe_link(
+        cli.write.do_probe_link(
             Args(
                 probe="4",
                 hypothesis=["H001", "H002"],
@@ -289,7 +291,7 @@ def test_probe_link_records_the_reply_as_sourced_evidence(wired):
 
 def test_check_passes_on_an_empty_register(wired, capsys):
     wired([[], []])
-    assert cli.do_check(Args()) == 0
+    assert cli.publish.do_check(Args()) == 0
     assert "check passed" in capsys.readouterr().out
 
 
@@ -304,7 +306,7 @@ def test_check_fails_a_verdict_reached_with_no_evidence(wired, capsys):
         }
     )
     wired([[_row(settled)], []])
-    assert cli.do_check(Args()) == 1
+    assert cli.publish.do_check(Args()) == 1
     assert "no evidence recorded" in capsys.readouterr().out
 
 
@@ -313,7 +315,7 @@ def test_check_fails_when_a_coordinate_would_reach_the_repository(wired, capsys)
         **{**CLAIM.__dict__, "statement": "chr15:40142000 A>G is one of the alleles"}
     )
     wired([[_row(leaking)], []])
-    assert cli.do_check(Args()) == 1
+    assert cli.publish.do_check(Args()) == 1
     assert "statement" in capsys.readouterr().out
 
 
@@ -325,14 +327,14 @@ def test_export_refuses_and_writes_nothing_when_a_coordinate_is_present(wired, t
         **{**CLAIM.__dict__, "statement": "chr15:40142000 A>G is one of the alleles"}
     )
     wired([[_row(leaking)], []])
-    assert cli.do_export(Args(root=str(tmp_path))) == 1
+    assert cli.publish.do_export(Args(root=str(tmp_path))) == 1
     assert "refusing to export" in capsys.readouterr().err
     assert not list(tmp_path.rglob("*.md"))
 
 
 def test_export_writes_the_mirror_when_the_register_is_clean(wired, tmp_path):
     wired([[_row()], []])
-    assert cli.do_export(Args(root=str(tmp_path))) == 0
+    assert cli.publish.do_export(Args(root=str(tmp_path))) == 0
     assert (tmp_path / "science-register.json").exists()
 
 
@@ -340,7 +342,7 @@ def test_export_writes_the_mirror_when_the_register_is_clean(wired, tmp_path):
 
 
 def test_steps_prints_every_goal(capsys):
-    assert cli.do_steps(Args()) == 0
+    assert cli.read.do_steps(Args()) == 0
     out = capsys.readouterr().out
     assert out.count("goal:") == 7
     assert "step-0" in out and "step-6" in out
