@@ -26,7 +26,7 @@ template:
 | A hypothesis (claim) needs a prediction and a refutation condition (what observation would disprove it) before it is filed | `Hypothesis.__post_init__` in [`hypothesis.py`](hypothesis.py) — raises `ValueError` if `statement`, `prediction`, or `refuted_by` is blank |
 | A hypothesis must belong to a research step, never the platform step (`step-0`) | `Hypothesis.__post_init__`, checking `Step.takes_hypotheses` from [`steps.py`](steps.py) |
 | An evidence row (one observation) needs a `source_ref` (a methodology entry, warehouse table, PMID, ClinVar id, or probe reply) | `Evidence.__post_init__` in [`evidence.py`](evidence.py) — raises `ValueError` if `claim` or `source_ref` is blank |
-| A confidence needs a stated reason before it can be written | `hypothesis.revise()` in [`hypothesis.py`](hypothesis.py) — raises `ValueError` if `reasoning` is blank; the CLI's `verdict --commit` refuses without `--reasoning` too (`cli.py:do_verdict`) |
+| A confidence needs a stated reason before it can be written | `hypothesis.revise()` in [`hypothesis.py`](hypothesis.py) — raises `ValueError` if `reasoning` is blank; the CLI's `verdict --commit` refuses without `--reasoning` too (`cli/read.py:do_verdict`) |
 | No genomic coordinate (chromosome position) may reach a committed file | `export.scan()` in [`export.py`](export.py) — regex-scans every free-text field and `export.write()` raises `ValueError` on any match |
 | Both register tables are append-only — a changed belief is a new revision, never an `UPDATE` | `hypothesis.propose()` / `revise()` always `INSERT`; `evidence.record()` always `INSERT` — no update/delete path exists in either module |
 | Confidence is never asserted, only suggested | `evidence.weigh()` computes a `Weighing` and writes nothing; only `hypothesis.revise()` (called from `verdict --commit`) persists a confidence, and only with human-supplied `reasoning` |
@@ -43,7 +43,7 @@ template:
 | [`export.py`](export.py) | Writes the committed mirror (`docs/<step>/hypotheses/*.md`, `docs/science-register.json`); refuses to leak a coordinate | `scan`, `Leak`, `write`, `register`, `dossier_markdown`, `board_markdown` |
 | [`report.py`](report.py) | Renders a `Record` into the self-contained HTML research report, reusing the shell from `mva.render` | `build_report`, `write_report` |
 | [`views/`](views) | One module per report section (below) | `SECTIONS`, `build_sections` |
-| [`cli.py`](cli.py) | The `mva-science` argparse CLI | `main` |
+| [`cli/`](cli/) | The `mva-science` argparse CLI, split by verb group: `read.py` (no writes), `write.py` (append-only), `publish.py` (`check`/`export`/`report`), `parser.py` (the command-line surface), `context.py` (the connection — and the seam tests replace: `cli.context.attached`, `cli.context.settings`) | `main` |
 | [`__init__.py`](__init__.py) | Re-exports the package's public surface | (all of the above) |
 
 `views/` sections, in report reading order:
@@ -58,7 +58,7 @@ template:
 
 ## CLI surface
 
-`mva-science <verb>`, from [`cli.py`](cli.py):
+`mva-science <verb>`, wired in [`cli/parser.py`](cli/parser.py):
 
 | Verb | Does |
 |---|---|

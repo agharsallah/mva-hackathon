@@ -32,9 +32,9 @@ flowchart LR
     Browser["Browser\n(React app)"]:::purple
 
     subgraph API["mva-viz-api (FastAPI)"]
-        Routes["routes_warehouse / routes_reads\nroutes_search / probebuild"]:::blue
+        Routes["routes_warehouse / routes_panel\nroutes_reads / routes_search / probebuild"]:::blue
         Cache["cache.py\ndisk cache under build/"]:::blue
-        Queries["queries.py / overview.py / catalog*.py\ngenestructure.py / phase.py / search*.py"]:::blue
+        Queries["queries/ (access, callset, panel, ledger)\noverview.py / catalog*.py\ngenestructure.py / phase.py / search*.py"]:::blue
         Proxy["proxy.py"]:::blue
     end
 
@@ -72,7 +72,8 @@ flowchart LR
 
 | Module | Responsibility | Key exports |
 |---|---|---|
-| `routes_warehouse.py` | Every PostgreSQL-backed route: overview, catalog, genome, callset, panel; also mounts search and science routers | `router` |
+| `routes_warehouse.py` | The PostgreSQL-backed routes: overview, catalog, genome, callset, and the plain table reads; mounts the panel, search and science routers | `router`, `TABLES` |
+| `routes_panel.py` | Every `/api/panel/*` route. Split in two inside the module: the whole panel (no gene parameter) and one gene in detail. Owns the rule that `/api/panel/locus` responses carry real patient positions | `add_routes` |
 | `routes_reads.py` | Read-store aggregates + proxy to `mva-reads-api` for probe/job verbs | `router` |
 | `routes_search.py` | `GET /api/search` and `GET /api/callset/region` | `add_routes` |
 | `probebuild.py` | `POST /api/probe/build` — turn candidates into a Track 1 submission CSV | `router`, `build` |
@@ -81,7 +82,7 @@ flowchart LR
 
 | Module | Responsibility | Key exports |
 |---|---|---|
-| `queries.py` | Every warehouse (PostgreSQL) read, one function per endpoint | `fetch`, `table`, `locus`, `het_pairs`, `panel_genes`, … |
+| [`queries/`](queries/) | Every warehouse (PostgreSQL) read, one function per endpoint. A package: `access.py` (attach, execute, convert — no SQL of its own), `callset.py`, `panel.py`, `ledger.py`. `__init__.py` re-exports the endpoint functions but **not** the plumbing: `queries.access.fetch` is the one seam tests replace. | `locus`, `het_pairs`, `panel_genes`, …; `queries.access.fetch`/`rows`/`table` |
 | `readstore.py` | Read-level aggregates straight from Parquet in the object store | `runs`, `partitions`, `flowcell`, `cycle_quality`, `quality_levels` |
 | `overview.py` | Assembles the landing-page headline object from nine tables in one connection | `overview` |
 | `genotype.py` | Decodes the VCF `FORMAT`/sample-call genotype pair into typed fields | `decode`, `Genotype` |
@@ -214,7 +215,7 @@ cd app && npm install && npm run dev     # http://127.0.0.1:5173, VITE_API_URL p
 - **Null vs. zero.** Decoded genotype fields (`genotype.py`) are `null`, never a fabricated
   value, at a `1/2` multiallelic site (two ALT depths, no single "the" alt depth) — a blank is a
   question, a silently halved VAF is a wrong answer. The same discipline holds throughout
-  `queries.py`: a missing gnomAD constraint row is `null`, never zero.
+  `queries/panel.py`: a missing gnomAD constraint row is `null`, never zero.
 - **Callset reads are pushed down.** `variants_raw` (5,012,204 rows, no index) is only ever
   queried with `chrom` constrained first (`queries.locus`, `search.region`) — unconstrained,
   the same query is ~3x slower.
