@@ -10,7 +10,9 @@ import { type Chapter, chapterOfAnchor, type Dictionary } from '../lib/dictionar
 import { Blocks } from './learn/Blocks';
 import { ChapterRail } from './learn/ChapterRail';
 import { useProgress } from './learn/progress';
+import { SeeItLinks } from './learn/SeeItLinks';
 import { TermSearch } from './learn/TermSearch';
+import { TrackList } from './learn/TrackList';
 import { useDictionary } from './learn/useDictionary';
 
 /**
@@ -20,8 +22,9 @@ import { useDictionary } from './learn/useDictionary';
  * fifteen chapters are ordered so every word uses only words defined before it. This page
  * does not restate it — the markdown is generated into the app at build time — it gives it
  * what a file cannot have: one chapter at a time, a search over every term, progress that
- * survives a reload, an anchor per word that the other pages can link to, and the diagrams
- * drawn rather than shown as code.
+ * survives a reload, an anchor per word that the other pages can link to, the diagrams
+ * drawn rather than shown as code, and under a word the app can show, a link to the exhibit
+ * that shows it (`learn/seeIt.ts`) and to the methodology entry that measured it.
  *
  * The URL hash is the whole state: `#allele` opens the chapter that defines allele and
  * scrolls to it; `#4-inheritance--how-the-answer-is-shaped` opens chapter 4. Those are the
@@ -128,6 +131,9 @@ function Course({ dictionary }: { dictionary: Dictionary }) {
               onToggleRead={toggle}
             />
           </Card>
+          <Card padding="sm">
+            <TrackList dictionary={dictionary} />
+          </Card>
           <details className="text-xs text-chrome-500">
             <summary className="cursor-pointer hover:text-chrome-300">
               About this dictionary
@@ -164,7 +170,7 @@ function Course({ dictionary }: { dictionary: Dictionary }) {
             </Callout>
           )}
 
-          <Blocks blocks={chapter.blocks} />
+          <Blocks blocks={chapter.blocks} aside={(e) => <SeeItLinks entry={e} />} />
 
           <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
             {prev ? (

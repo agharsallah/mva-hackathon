@@ -39,6 +39,22 @@ export interface ExhibitProps {
   /** Controls (toggles, selects) rendered on the title row. */
   controls?: ReactNode;
   className?: string;
+  /**
+   * The DOM id, so another page can deep-link to this figure with `#id` — the Learn page's
+   * "see it in the app" links do. Defaults to a slug of the title; pass one when the title
+   * carries a variable (a gene symbol) and the link must survive the user changing it.
+   */
+  id?: string;
+}
+
+/** "Allele balance — the aneuploidy screen" → "allele-balance-the-aneuploidy-screen". */
+function exhibitAnchor(title: string): string {
+  return title
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^\p{Letter}\p{Number}]+/gu, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 80);
 }
 
 export function Exhibit({
@@ -52,8 +68,11 @@ export function Exhibit({
   data,
   controls,
   className = '',
+  id,
 }: ExhibitProps) {
-  const page = useLocation().pathname;
+  const { pathname: page, hash } = useLocation();
+  const anchor = id ?? exhibitAnchor(title);
+  const figureRef = useRef<HTMLElement>(null);
   const legendText = nodeText(legend);
   const readingText = reading === undefined ? undefined : nodeText(reading);
   const record: ExhibitRecord = {
@@ -81,8 +100,14 @@ export function Exhibit({
     return () => exhibitRegistry.unregister(page, title);
   }, [page, title, legendText, readingText, source, cachedAt, origin, data]);
 
+  // A deep link lands here: the page is a lazy chunk, so the browser's own hash scroll ran
+  // before this figure existed. Once it mounts under the URL's hash, it puts itself on screen.
+  useEffect(() => {
+    if (hash === `#${anchor}`) figureRef.current?.scrollIntoView({ block: 'start' });
+  }, [hash, anchor]);
+
   return (
-    <figure className={cx(CARD, className)}>
+    <figure ref={figureRef} id={anchor} className={cx(CARD, 'scroll-mt-28', className)}>
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
         <h3 className="text-sm font-semibold tracking-tight text-chrome-100">{title}</h3>
         <div className="flex flex-wrap items-center gap-2">

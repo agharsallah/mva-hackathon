@@ -11,6 +11,9 @@
  * Explainer links a term by its `slug` (`/learn#allele`).
  */
 
+/** Where a relative `docs/...` path opens — the same base the generator rewrites links to. */
+export const REPO_BLOB = 'https://github.com/agharsallah/mva-hackathon/blob/main/';
+
 /** `**term** — definition`, the unit of the dictionary. */
 export interface EntryBlock {
   kind: 'entry';
