@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { DepthHistogram } from './callset/DepthHistogram';
@@ -10,6 +12,20 @@ import { ZygositySplit } from './callset/ZygositySplit';
 export default function CallsetPage() {
   return (
     <div className="space-y-6">
+      <Callout tone="decision" title="Why the suppressed set matters here">
+        94.58 % of records are PASS, which is normal. The remaining <strong>271,414</strong> failed
+        a heuristic built for population-scale studies where a false positive is expensive and a
+        false negative is cheap. For one child with an undiagnosed condition that trade is inverted.
+        Any candidate gene must therefore be checked in the suppressed set too — the{' '}
+        <Link
+          to="/panel"
+          className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+        >
+          Panel
+        </Link>{' '}
+        page does exactly that, and TRIP13 is the case in point (half its records are non-PASS).
+      </Callout>
+
       <Explainer
         intro={
           <>
@@ -63,20 +79,12 @@ export default function CallsetPage() {
         caveat="Suppressed records stay in scope for this case. In an N-of-1 search, discarding 271,414 records because a general-purpose heuristic disliked them is a decision, not a given."
       />
 
-      <Callout tone="decision" title="Why the suppressed set matters here">
-        94.58 % of records are PASS, which is normal. The remaining <strong>271,414</strong> failed
-        a heuristic built for population-scale studies where a false positive is expensive and a
-        false negative is cheap. For one child with an undiagnosed condition that trade is inverted.
-        Any candidate gene must therefore be checked in the suppressed set too — the Panel page does
-        exactly that, and TRIP13 is the case in point (half its records are non-PASS).
-      </Callout>
-
       <Section title="What survived the caller's filters">
         <Funnel />
       </Section>
 
       <Section title="Is this a normal, healthy callset?">
-        <div className="grid gap-4 xl:grid-cols-2">
+        <div className="grid gap-4 lg:grid-cols-2">
           <DepthHistogram />
           <Substitutions />
           <IndelLengths />

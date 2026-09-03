@@ -8,6 +8,14 @@ import { ProbeLedger } from './probes/ProbeLedger';
 export default function ProbesPage() {
   return (
     <div className="space-y-6">
+      <Callout tone="decision" title="Two budgets, do not confuse them">
+        A <strong>local k-mer count</strong> over our own read store costs about 5.6 minutes of
+        compute for 20 probes and nothing else — run as many as you like. An{' '}
+        <strong>oracle probe</strong> is one of eighteen irreversible questions to the challenge
+        organisers. The console below spends the first kind. The ledger at the bottom tracks the
+        second, and it currently stands at 0 of 18.
+      </Callout>
+
       <Explainer
         intro={
           <>
@@ -62,14 +70,6 @@ export default function ProbesPage() {
         ]}
         caveat="An exact-match count is a strong negative test and a weak positive one. Zero reads is close to proof of absence; a healthy count proves the sequence exists somewhere in the sample, not that it exists at the locus you had in mind."
       />
-
-      <Callout tone="decision" title="Two budgets, do not confuse them">
-        A <strong>local k-mer count</strong> over our own read store costs about 5.6 minutes of
-        compute for 20 probes and nothing else — run as many as you like. An{' '}
-        <strong>oracle probe</strong> is one of eighteen irreversible questions to the challenge
-        organisers. The console below spends the first kind. The ledger at the bottom tracks the
-        second, and it currently stands at 0 of 18.
-      </Callout>
 
       <Section
         title="Probe console"

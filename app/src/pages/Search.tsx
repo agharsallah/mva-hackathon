@@ -14,9 +14,12 @@ import { useSearchParams } from 'react-router-dom';
 
 import { ApiError } from '../api/client';
 import { useSearch } from '../api/hooks';
+import { EmptyState } from '../components';
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { Skeleton } from '../components/QueryState';
+import type { Tone } from '../lib/palette';
+import { BOX, cx } from '../lib/ui';
 import { RegionResult, Resolution } from './search/Results';
 import { SearchBox } from './search/SearchBox';
 
@@ -32,6 +35,18 @@ export default function SearchPage() {
 
   return (
     <div className="space-y-6">
+      <Callout tone="decision" title="Why this page costs a cap and the other pages do not">
+        Every chart in this app reads a <em>derived</em> table — a few thousand precomputed rows.
+        This page is one of only two things in the service that touch{' '}
+        <span className="font-mono">warehouse.variants_raw</span>, the 5,012,204-row all-text layer
+        with <strong>no index of any kind</strong>. Measured, that layer answers a 1 kb window and a
+        whole chromosome in the same ~2 s — PostgreSQL holds it in memory, so the scan is not the
+        cost. What differs is the answer: 6 records and under a kilobyte against 101,130 records and
+        11 MB. The 5 Mb cap is therefore a payload and render guard, and it comfortably contains any
+        human gene. The reasoning behind serving derived tables everywhere else is the one design
+        decision in <span className="font-mono">docs/step-0/viz-api.md</span>.
+      </Callout>
+
       <Explainer
         intro={
           <>
@@ -109,27 +124,15 @@ export default function SearchPage() {
           )}
         </div>
       </Section>
-
-      <Callout tone="decision" title="Why this page costs a cap and the other pages do not">
-        Every chart in this app reads a <em>derived</em> table — a few thousand precomputed rows.
-        This page is one of only two things in the service that touch{' '}
-        <span className="font-mono">warehouse.variants_raw</span>, the 5,012,204-row all-text layer
-        with <strong>no index of any kind</strong>. Measured, that layer answers a 1 kb window and a
-        whole chromosome in the same ~2 s — PostgreSQL holds it in memory, so the scan is not the
-        cost. What differs is the answer: 6 records and under a kilobyte against 101,130 records and
-        11 MB. The 5 Mb cap is therefore a payload and render guard, and it comfortably contains any
-        human gene. The reasoning behind serving derived tables everywhere else is the one design
-        decision in <span className="font-mono">docs/step-0/viz-api.md</span>.
-      </Callout>
     </div>
   );
 }
 
 function Idle() {
   return (
-    <div className="rounded-lg border border-dashed border-chrome-800 p-8 text-center text-sm text-chrome-500">
+    <EmptyState>
       Nothing searched yet. Pick one of the examples above, or type a gene, a region or an rsID.
-    </div>
+    </EmptyState>
   );
 }
 
@@ -142,12 +145,7 @@ function Idle() {
  */
 function SearchError({ error, q }: { error: Error; q: string }) {
   const status = error instanceof ApiError ? error.status : 0;
-  const skin =
-    status === 502
-      ? 'border-broken-900/60 bg-broken-950/25'
-      : status === 404
-        ? 'border-chrome-700 bg-chrome-900/60'
-        : 'border-decision-800/60 bg-decision-950/25';
+  const tone: Tone = status === 502 ? 'broken' : status === 404 ? 'neutral' : 'decision';
 
   const title =
     status === 422
@@ -159,8 +157,8 @@ function SearchError({ error, q }: { error: Error; q: string }) {
           : 'The search API did not answer';
 
   return (
-    <div className={`rounded-xl border p-5 ${skin}`}>
-      <div className="text-xs font-semibold uppercase tracking-wider text-chrome-300">{title}</div>
+    <div className={cx('rounded-card border p-4', BOX[tone])}>
+      <div className="text-xs font-semibold text-chrome-300">{title}</div>
       <p className="mt-2 font-mono text-xs leading-relaxed text-chrome-400">{error.message}</p>
       <p className="mt-2 max-w-3xl text-xs leading-relaxed text-chrome-500">
         {status === 422 && (

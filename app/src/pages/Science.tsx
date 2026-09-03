@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { EvidenceLedger } from './science/EvidenceLedger';
@@ -16,15 +18,29 @@ import { CONFIDENCE_CAVEAT } from './science/register';
 export default function SciencePage() {
   return (
     <div className="space-y-6">
+      <Callout tone="good" title="The register is empty on purpose">
+        No hypothesis has been proposed and no probe has been spent. That is the honest state of a
+        project that has finished its platform step and not yet made a claim about the child — and
+        it is exactly what this page is built to show. The two register tables are created on first
+        write by <span className="font-mono">mva-science</span>, so until then they do not exist in
+        the database at all; the endpoints report that as a flag rather than inventing an empty
+        table. Nothing on this page writes; the report and the submission rows are generated from
+        these two tables, never transcribed by hand.
+      </Callout>
+
       <Explainer
         intro={
           <>
-            Provenance says where a byte came from. It says nothing about{' '}
-            <strong>what we believe</strong>. The research register is the other half: a
-            machine-readable record of every claim, the observation that would kill it, the evidence
-            for and against, and the verdict — kept in two append-only tables so a belief cannot be
-            quietly rewritten to match whatever the data turned out to say. The report and the
-            submission rows are generated from it, not transcribed by hand.
+            <Link
+              to="/provenance"
+              className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+            >
+              Provenance
+            </Link>{' '}
+            says where a byte came from, not <strong>what we believe</strong>. The research register
+            is the other half: a machine-readable record of every claim, the observation that would
+            kill it, the evidence for and against, and the verdict — kept in two append-only tables,
+            so a belief cannot be quietly rewritten to match what the data turned out to say.
           </>
         }
         terms={[
@@ -82,15 +98,6 @@ export default function SciencePage() {
         caveat={`Every confidence number on this page is ${CONFIDENCE_CAVEAT}. Strengths are human judgements, and rows drawn from the same underlying data are not independent the way the sum treats them. It exists so a suggested number can be argued with — never quote it as a probability.`}
       />
 
-      <Callout tone="good" title="The register is empty on purpose">
-        No hypothesis has been proposed and no probe has been spent. That is the honest state of a
-        project that has finished its platform step and not yet made a claim about the child — and
-        it is exactly what this page is built to show. The two register tables are created on first
-        write by <span className="font-mono">mva-science</span>, so until then they do not exist in
-        the database at all; the endpoints report that as a flag rather than inventing an empty
-        table. Nothing on this page writes.
-      </Callout>
-
       <LoopDiagram />
 
       <Section
@@ -109,12 +116,23 @@ export default function SciencePage() {
 
       <Section
         title="What have we spent to find out?"
-        subtitle="the same ledger the Probes page operates, read here as part of the research narrative"
+        subtitle={
+          <>
+            the same ledger the{' '}
+            <Link
+              to="/probes"
+              className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+            >
+              Probes
+            </Link>{' '}
+            page operates, read here as part of the research narrative
+          </>
+        }
       >
         <ProbeBudget />
       </Section>
 
-      <p className="text-[11px] leading-relaxed text-chrome-600">
+      <p className="text-micro leading-relaxed text-chrome-600">
         The method this page renders is owned by{' '}
         <span className="font-mono text-chrome-500">docs/method.md</span>; the steps are declared in{' '}
         <span className="font-mono text-chrome-500">src/mva/science/steps.py</span>; the register

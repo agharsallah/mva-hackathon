@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { CandidateFunnel } from './compare/CandidateFunnel';
@@ -18,26 +20,30 @@ import { RarityScatter } from './compare/RarityScatter';
 export default function ComparePage() {
   return (
     <div className="space-y-6">
+      <Callout tone="decision" title="What to look for on this page">
+        Two things have to be true at once for a variant to survive here: it must be{' '}
+        <strong>rare or absent in gnomAD</strong> — a causal rare-disease variant has to be — and it
+        must be able to <strong>change the protein</strong>. Almost everything fails one of the two
+        — that is the point of the funnel. Then check the third exhibit before believing any of it:
+        if the callset&apos;s own QC numbers do not sit where a healthy genome&apos;s sit, the
+        biology above is resting on a shaky measurement.
+      </Callout>
+
       <Explainer
         intro={
           <>
             Nothing about a variant is remarkable on its own — five million records is what a normal
-            genome looks like. What makes one interesting is being <em>rare</em>. So this page holds
-            the case up against two baselines. The first is <strong>gnomAD</strong>, an aggregate
-            database of roughly 800,000 mostly-healthy people&apos;s genomes: think of it as a
-            read-only index of how often each variant shows up in the general population. If a
-            variant is common there, healthy people carry it, so it cannot by itself cause a severe
-            childhood disease — a causal rare-disease variant has to be rare in gnomAD or absent
-            from it entirely. The second baseline is a set of published{' '}
-            <strong>quality-control norms</strong> for healthy genomes: if this callset&apos;s own
-            engineering numbers sit where a normal genome&apos;s do, its biology is worth believing.
+            genome looks like; what makes one interesting is being <em>rare</em>. So the case is
+            held against two baselines: <strong>gnomAD</strong> for how often a variant turns up in
+            the general population, and published <strong>quality-control norms</strong> for what a
+            healthy genome&apos;s own engineering numbers look like.
           </>
         }
         terms={[
           {
             term: 'gnomAD',
             plain:
-              'the Genome Aggregation Database — ~800k mostly-healthy exomes and genomes pooled into per-variant frequency counts. The population baseline for "is this normal?"',
+              'the Genome Aggregation Database — ~800k mostly-healthy people’s exomes and genomes pooled into per-variant frequency counts, a read-only index of how often each variant shows up. Common there means healthy people carry it, so it cannot by itself cause a severe childhood disease. The population baseline for "is this normal?"',
           },
           {
             term: 'allele frequency (AF)',
@@ -83,18 +89,20 @@ export default function ComparePage() {
         caveat="gnomAD is a frequency baseline, not a health baseline. It contains people with undiagnosed conditions and is unevenly sampled across ancestries — a variant absent from gnomAD may be genuinely novel or may simply belong to an under-represented population. Rarity narrows the list; it never proves causality."
       />
 
-      <Callout tone="decision" title="What to look for on this page">
-        Two things have to be true at once for a variant to survive here: it must be{' '}
-        <strong>rare or absent in gnomAD</strong>, and it must be able to{' '}
-        <strong>change the protein</strong>. Almost everything fails one of the two — that is the
-        point of the funnel. Then check the third exhibit before believing any of it: if the
-        callset&apos;s own QC numbers do not sit where a healthy genome&apos;s sit, the biology
-        above is resting on a shaky measurement.
-      </Callout>
-
       <Section
         title="How rare is each panel variant in healthy people?"
-        subtitle="log-frequency against the patient's own read evidence — the novel lane at the far left is the interesting one"
+        subtitle={
+          <>
+            log-frequency against the patient&apos;s own read evidence, for every variant in the{' '}
+            <Link
+              to="/panel"
+              className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+            >
+              candidate panel
+            </Link>{' '}
+            — the novel lane at the far left is the interesting one
+          </>
+        }
       >
         <RarityScatter />
       </Section>
@@ -122,7 +130,18 @@ export default function ComparePage() {
 
       <Section
         title="Are these two the pair?"
-        subtitle="any two heterozygous alleles of one gene, side by side — and one click to stage them as a submission row"
+        subtitle={
+          <>
+            any two heterozygous alleles of one gene, side by side — and one click to stage them as
+            a submission row on{' '}
+            <Link
+              to="/probes"
+              className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+            >
+              Probes
+            </Link>
+          </>
+        }
       >
         <PairComparator />
       </Section>

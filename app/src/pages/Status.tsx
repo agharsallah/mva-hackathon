@@ -27,21 +27,60 @@ export default function StatusPage() {
       <Explainer
         intro={
           <>
-            This app is a thin read layer over five things that can each fail on their own. A{' '}
-            <strong>Postgres warehouse</strong> (a relational database — the same kind of thing as
-            MySQL) holds the ingested VCF rows and every computed table. A{' '}
-            <strong>MinIO object store</strong> (a key→bytes store speaking the S3 protocol — think
-            an on-prem stand-in for Amazon S3) holds the raw delivered files. A{' '}
-            <strong>parquet read-store</strong> (a columnar file format — rows rewritten as columns
-            on disk, the way a spreadsheet column scan beats a row scan) backs the Reads page's
-            flowcell and quality charts. A separate <strong>raw-reads API</strong> process serves
-            the k-mer probe console. And <strong>Ensembl REST</strong> is a public, third-party HTTP
-            API this app calls for gene coordinates — the only dependency this app does not own or
-            run. If any of these is down, this page names which one, what it costs, and the exact
-            command to run.
+            This app is a thin read layer over five dependencies that can each fail on their own: a{' '}
+            <strong>Postgres warehouse</strong>, a <strong>MinIO object store</strong>, a{' '}
+            <strong>parquet read-store</strong>, a <strong>raw-reads API</strong> and{' '}
+            <strong>Ensembl REST</strong>. When one is down, this page names it, what it costs, and
+            the exact command to fix it.
           </>
         }
         terms={[
+          {
+            term: 'Postgres warehouse',
+            plain:
+              'a relational database — the same kind of thing as MySQL — holding the ingested VCF rows and every computed table',
+          },
+          {
+            term: 'MinIO object store',
+            plain:
+              'a key→bytes store speaking the S3 protocol, an on-prem stand-in for Amazon S3. It holds the raw delivered files',
+          },
+          {
+            term: 'parquet read-store',
+            plain: (
+              <>
+                a columnar file format — rows rewritten as columns on disk, the way a spreadsheet
+                column scan beats a row scan. It backs the{' '}
+                <Link
+                  to="/reads"
+                  className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+                >
+                  Reads
+                </Link>{' '}
+                page&apos;s flowcell and quality charts
+              </>
+            ),
+          },
+          {
+            term: 'raw-reads API',
+            plain: (
+              <>
+                a separate process serving the k-mer probe console on the{' '}
+                <Link
+                  to="/probes"
+                  className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+                >
+                  Probes
+                </Link>{' '}
+                page
+              </>
+            ),
+          },
+          {
+            term: 'Ensembl REST',
+            plain:
+              'a public, third-party HTTP API this app calls for gene coordinates — the only dependency this app does not own or run',
+          },
           {
             term: 'liveness check / probe',
             plain:
@@ -84,7 +123,7 @@ export default function StatusPage() {
         caveat={`This page reads a health endpoint like any other — the states shown are whatever it reports at the moment you loaded the page, then re-checked every ${POLL_MINUTES} minutes. Probing costs real round trips to Postgres, MinIO and Ensembl, so it is deliberately quiet: after restarting one service use that card's own re-probe, which measures only that dependency and leaves the other six as last measured (each card says how old its own answer is). Re-probe now re-measures all seven. In fixture mode (no backend running) every state below is illustrative, not measured — the fixture's source string says so, and the per-card re-probe is disabled because there is nothing to probe.`}
       />
 
-      <div className="flex flex-wrap items-baseline justify-between gap-2 text-[11px] text-chrome-500">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 text-micro text-chrome-500">
         <span>
           Probed on load, then every {POLL_MINUTES} minutes. The API caches each check&apos;s result
           for ~10 s.

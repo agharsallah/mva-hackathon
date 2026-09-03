@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { useReferenceProvenance } from '../api/hooks';
 import { Section } from '../components/Controls';
@@ -36,6 +36,19 @@ export default function ProvenancePage() {
   useHashScroll(!reference.isLoading);
   return (
     <div className="space-y-6">
+      <Callout tone="good" title="What this page guarantees">
+        Every figure in this app resolves to a{' '}
+        <Link
+          to="/catalog"
+          className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+        >
+          delivered object
+        </Link>{' '}
+        whose sha256 was recomputed locally and matched. No chart reads a hand-edited file, and no
+        derived table exists without a recorded question. The graph below is the proof, and it is
+        short by design — two hops from bytes to chart.
+      </Callout>
+
       <Explainer
         intro={
           <>
@@ -82,15 +95,21 @@ export default function ProvenancePage() {
               'raw holds the delivered records verbatim; results holds only things computed from raw, so the two can never be confused',
           },
         ]}
-        caveat="A verified hash proves the bytes we hold are the bytes that were sent. It says nothing about whether the vendor's pipeline that produced them was correct — that is what the Callset page's sanity checks are for."
+        caveat={
+          <>
+            A verified hash proves the bytes we hold are the bytes that were sent. It says nothing
+            about whether the vendor&apos;s pipeline that produced them was correct — that is what
+            the{' '}
+            <Link
+              to="/callset"
+              className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+            >
+              Callset
+            </Link>{' '}
+            page&apos;s sanity checks are for.
+          </>
+        }
       />
-
-      <Callout tone="good" title="What this page guarantees">
-        Every figure in this app resolves to a delivered object whose sha256 was recomputed locally
-        and matched. No chart reads a hand-edited file, and no derived table exists without a
-        recorded question. The graph below is the proof, and it is short by design — two hops from
-        bytes to chart.
-      </Callout>
 
       <Section title="The data flow">
         <LineageGraph />

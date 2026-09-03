@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { DeliveryInventory } from './catalog/DeliveryInventory';
@@ -15,19 +17,30 @@ import { TableExplainer } from './catalog/TableExplainer';
 export default function CatalogPage() {
   return (
     <div className="space-y-6">
+      <Callout tone="decision" title="What to look for on this page">
+        Two colours carry the whole reading. <strong>Green</strong> in the first exhibit means a
+        checksum matched, which is the precondition for every number in the app being about the
+        right patient&apos;s data. <strong>Yellow</strong> anywhere is an honest gap — an object
+        with no recorded arrival time, or a table that cannot name its{' '}
+        <Link
+          to="/provenance"
+          className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+        >
+          lineage edge
+        </Link>{' '}
+        and so cannot be re-derived or invalidated. Neither is fatal; both are things a reviewer is
+        entitled to ask about, so they are shown rather than smoothed over.
+      </Callout>
+
       <Explainer
         intro={
           <>
             A data catalogue answers four questions about every piece of data in the platform:{' '}
             <strong>what is it</strong>, <strong>what does it contain</strong>,{' '}
-            <strong>when did it arrive</strong>, and <strong>where does it live</strong>. There are
-            only two kinds of answer here. The <strong>raw delivery</strong> is what the publisher
-            gave us: immutable — written once, never rewritten — and hash-verified, so we can prove
-            our copy is byte-for-byte theirs. Everything else is <strong>derived</strong>: produced
-            by a transform over some input, and carrying a <strong>lineage edge</strong> recording
-            which input, which transform, which tool. If a derived table cannot name its edge, it
-            cannot be re-derived or invalidated, and this page says so in yellow rather than leaving
-            the cell blank.
+            <strong>when did it arrive</strong>, and <strong>where does it live</strong>. Only two
+            kinds of answer exist here — the immutable, hash-verified <strong>raw delivery</strong>{' '}
+            the publisher gave us, and everything else, <strong>derived</strong> by a transform that
+            has to name its <strong>lineage edge</strong>.
           </>
         }
         terms={[
@@ -94,14 +107,6 @@ export default function CatalogPage() {
         ]}
         caveat="A catalogue records what we hold and where it came from. It does not certify that a derived table is correct — only that it is traceable. A green hash and a lineage edge together mean a number can be audited back to bytes the publisher signed; they say nothing about whether the transform in between was the right one."
       />
-
-      <Callout tone="decision" title="What to look for on this page">
-        Two colours carry the whole reading. <strong>Green</strong> in the first exhibit means a
-        checksum matched, which is the precondition for every number in the app being about the
-        right patient&apos;s data. <strong>Yellow</strong> anywhere is an honest gap — an object
-        with no recorded arrival time, or a table with no lineage edge. Neither is fatal; both are
-        things a reviewer is entitled to ask about, so they are shown rather than smoothed over.
-      </Callout>
 
       <Section
         title="What were we given?"

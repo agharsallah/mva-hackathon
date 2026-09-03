@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { GeneRanking } from './phenotype/GeneRanking';
@@ -23,15 +25,32 @@ import { TermSet } from './phenotype/TermSet';
 export default function PhenotypePage() {
   return (
     <div className="space-y-6">
+      <Callout tone="machinery" title="This is not Exomiser, and the difference is deliberate">
+        Exomiser is the standard tool for this and it is a Java application whose data ships as H2
+        database files — 31.5 GB unpacked, with no Python reader. Its <em>phenotype</em> inputs,
+        though, are plain text, and the published optimisation study (Genome Medicine vol 17 art
+        127, 2025) measures its <strong>human-only</strong> configuration at 82.8% top-10 against
+        66.6% for the cross-species default. So the two components that are genuinely hard to
+        reproduce — the protein-interaction random walk and the mouse and zebrafish models — are the
+        ones the evidence says to switch off. What is left is a graph walk and a logarithm, which is
+        what runs here: no JVM, under 100 MB of reference data. Nothing on this page may be reported
+        as Exomiser output.
+      </Callout>
+
       <Explainer
         intro={
           <>
             The child arrived with <strong>eight symptoms</strong>, written as ontology codes rather
             than prose. This page turns them into a ranking over every gene medicine has curated —
             roughly five thousand — <strong>without reading a single variant</strong>. It is the
-            independent check on everything else in this app: the candidate list came from a panel
-            of eight genes chosen because of what this disease is, and a prior cannot be its own
-            evidence.
+            independent check on everything else in this app: the candidate list came from a{' '}
+            <Link
+              to="/panel"
+              className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+            >
+              panel of eight genes
+            </Link>{' '}
+            chosen because of what this disease is, and a prior cannot be its own evidence.
           </>
         }
         terms={[
@@ -78,18 +97,6 @@ export default function PhenotypePage() {
           },
         ]}
       />
-
-      <Callout tone="machinery" title="This is not Exomiser, and the difference is deliberate">
-        Exomiser is the standard tool for this and it is a Java application whose data ships as H2
-        database files — 31.5 GB unpacked, with no Python reader. Its <em>phenotype</em> inputs,
-        though, are plain text, and the published optimisation study (Genome Medicine vol 17 art
-        127, 2025) measures its <strong>human-only</strong> configuration at 82.8% top-10 against
-        66.6% for the cross-species default. So the two components that are genuinely hard to
-        reproduce — the protein-interaction random walk and the mouse and zebrafish models — are the
-        ones the evidence says to switch off. What is left is a graph walk and a logarithm, which is
-        what runs here: no JVM, under 100 MB of reference data. Nothing on this page may be reported
-        as Exomiser output.
-      </Callout>
 
       <Section title="The input">
         <TermSet />

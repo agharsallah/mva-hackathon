@@ -1,5 +1,6 @@
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
+import { DesignTokens } from './styleguide/DesignTokens';
 import { PrimitiveGallery } from './styleguide/PrimitiveGallery';
 import { RampGrid } from './styleguide/RampGrid';
 import { ScaleStrips } from './styleguide/ScaleStrips';
@@ -19,6 +20,13 @@ import { Viz3dDemo } from './styleguide/Viz3dDemo';
 export default function StyleGuidePage() {
   return (
     <div className="space-y-6">
+      <Callout tone="good" title="What this page guarantees">
+        There is no second colour system. A hex literal outside{' '}
+        <code>lib/palette/ramps.generated.ts</code> is an eslint error, a bare Tailwind hue like{' '}
+        <code>bg-emerald-400</code> is an eslint error, and <code>pnpm theme:check</code> fails if
+        the hex the charts read ever stops matching the custom property the classes read.
+      </Callout>
+
       <Explainer
         intro={
           <>
@@ -51,6 +59,26 @@ export default function StyleGuidePage() {
               'a step on a family, 50 (palest) to 950 (deepest). This app uses 300/400 for text, 800/900 for borders, 950 for a tinted background',
           },
           {
+            term: 'light theme',
+            plain:
+              'the same tokens with each family’s shades mirrored, 50↔950; data marks unchanged. The toggle sits in the header and the choice is remembered in the browser',
+          },
+          {
+            term: 'type role',
+            plain:
+              'a named text size used instead of a pixel value — `text-heading` rather than 17px, so every h2 in the app moves together',
+          },
+          {
+            term: 'hairline',
+            plain:
+              'the 1px border between two regions. Three weights (`border-line-soft`, `border-line`, `border-line-strong`), never a hand-picked grey',
+          },
+          {
+            term: 'surface',
+            plain:
+              'the background a region sits on. The page, a panel and a well are three steps of lift, so a nested box stays readable in either theme',
+          },
+          {
             term: 'colourscale',
             plain:
               'a list of `[position, colour]` stops handed to Plotly; it interpolates between them to colour a continuous range',
@@ -64,18 +92,18 @@ export default function StyleGuidePage() {
         caveat="Colours here are the sRGB hex the generator emits. On a wide-gamut display Tailwind's own oklch values would render slightly more vivid — we deliberately trade that for the DOM and the charts being byte-identical."
       />
 
-      <Callout tone="good" title="What this page guarantees">
-        There is no second colour system. A hex literal outside{' '}
-        <code>lib/palette/ramps.generated.ts</code> is an eslint error, a bare Tailwind hue like{' '}
-        <code>bg-emerald-400</code> is an eslint error, and <code>pnpm theme:check</code> fails if
-        the hex the charts read ever stops matching the custom property the classes read.
-      </Callout>
-
       <Section
         title="The token pipeline"
         subtitle="One dependency, one generator, two artifacts, four gates."
       >
         <TokenPipeline />
+      </Section>
+
+      <Section
+        title="The tokens"
+        subtitle="Type, radius, hairline, surface and spacing — every one a named role, rendered by itself."
+      >
+        <DesignTokens />
       </Section>
 
       <Section

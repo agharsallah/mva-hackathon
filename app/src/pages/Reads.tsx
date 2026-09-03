@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { CycleQuality } from './reads/CycleQuality';
@@ -10,15 +12,28 @@ import { StoreShape } from './reads/StoreShape';
 export default function ReadsPage() {
   return (
     <div className="space-y-6">
+      <Callout tone="decision" title="The one real finding on this page">
+        <strong>R2 degrades measurably more than R1.</strong> Q30 share is 92.9 % for R1 against
+        90.0 % for R2, and the per-cycle curves show where it happens — the back half of the read.
+        It is normal instrument behaviour, not a defect, but it matters for interpretation: a
+        variant supported mainly by the tail of R2 reads has weaker evidence behind it than the read
+        count alone suggests.
+      </Callout>
+
       <Explainer
         intro={
           <>
-            Underneath the callset sit 1.07 billion raw reads — the actual measurement. Everything
-            on the other pages is a summary somebody else computed from these. Having them locally,
-            in a queryable columnar store, is what makes it possible to go back and ask a question
-            the caller never answered: does this exact 30-letter sequence appear in the raw data,
-            and how many times? That is the k-mer probe on the Probes page, and this page is the
-            ground it stands on.
+            Underneath the callset sit 1.07 billion raw reads — the actual measurement; every other
+            page shows a summary somebody else computed from them. Holding them locally in a
+            queryable columnar store is what lets the{' '}
+            <Link
+              to="/probes"
+              className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+            >
+              Probes
+            </Link>{' '}
+            page ask a question the caller never answered: does this exact 30-letter sequence appear
+            in the raw data, and how many times?
           </>
         }
         terms={[
@@ -75,16 +90,8 @@ export default function ReadsPage() {
         caveat="Every read-level figure here is sampled, not exhaustive: flowcell maps come from one shard, quality curves from a 100k-row sample per partition. They characterise the run; they are not a census."
       />
 
-      <Callout tone="decision" title="The one real finding on this page">
-        <strong>R2 degrades measurably more than R1.</strong> Q30 share is 92.9 % for R1 against
-        90.0 % for R2, and the per-cycle curves show where it happens — the back half of the read.
-        It is normal instrument behaviour, not a defect, but it matters for interpretation: a
-        variant supported mainly by the tail of R2 reads has weaker evidence behind it than the read
-        count alone suggests.
-      </Callout>
-
       <Section title="What was delivered">
-        <div className="grid gap-4 xl:grid-cols-2">
+        <div className="grid gap-4 lg:grid-cols-2">
           <LaneYield />
           <StoreShape />
         </div>

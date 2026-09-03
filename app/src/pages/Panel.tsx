@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { ConstraintScorecard } from './panel/ConstraintScorecard';
@@ -12,6 +14,15 @@ import { SuppressedCalls } from './panel/SuppressedCalls';
 export default function PanelPage() {
   return (
     <div className="space-y-6">
+      <Callout tone="decision" title="What to look for on this page">
+        The compound-heterozygous pair has to be{' '}
+        <em>two different damaging variants in one gene</em>. That means a gene needs at least two
+        candidate records, and it means suppressed records count: if half a gene's evidence is
+        behind a FILTER, the pair may be half-hidden. <strong>TRIP13</strong> is the standout — an
+        established MVA gene with 12 records of which 6 are suppressed. <strong>BUB1B</strong>, the
+        canonical MVA gene, has the lowest PASS share among the well-covered genes at 95.0 %.
+      </Callout>
+
       <Explainer
         intro={
           <>
@@ -76,15 +87,6 @@ export default function PanelPage() {
         ]}
         caveat="Density per gene is a coverage and evidence measure, not a pathogenicity measure. A gene with more records is not more likely to be causal — it is only better observed."
       />
-
-      <Callout tone="decision" title="What to look for on this page">
-        The compound-heterozygous pair has to be{' '}
-        <em>two different damaging variants in one gene</em>. That means a gene needs at least two
-        candidate records, and it means suppressed records count: if half a gene's evidence is
-        behind a FILTER, the pair may be half-hidden. <strong>TRIP13</strong> is the standout — an
-        established MVA gene with 12 records of which 6 are suppressed. <strong>BUB1B</strong>, the
-        canonical MVA gene, has the lowest PASS share among the well-covered genes at 95.0 %.
-      </Callout>
 
       <Section title="Which candidate genes have evidence, and how much of it is suppressed?">
         <GeneScorecard />
@@ -188,9 +190,16 @@ export default function PanelPage() {
             copy (<strong>cis</strong>) leave one working copy and are not a diagnosis. The only
             phase evidence in this data is physical phasing — variants seen together on one read
             pair — which reaches about 300 bp, so it settles a handful of pairs and leaves the rest
-            open. That matters for the scorer directly: submitting a cis pair is a wrong answer that
-            looks well-formed, and a proven-trans pair is the strongest configuration evidence
-            available without parental samples.
+            open. That matters for the{' '}
+            <Link
+              to="/probes"
+              className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+            >
+              scorer
+            </Link>{' '}
+            directly: submitting a cis pair is a wrong answer that looks well-formed, and a
+            proven-trans pair is the strongest configuration evidence available without parental
+            samples.
           </>
         }
       >

@@ -1,4 +1,7 @@
+import { Link } from 'react-router-dom';
+
 import { useObservedExpected, useOverview } from '../api/hooks';
+import { JourneyMap } from '../components';
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { NormChip } from '../components/NormChip';
@@ -6,7 +9,6 @@ import { pickNorm } from '../components/pickNorm';
 import { ErrorCard, Skeleton } from '../components/QueryState';
 import { StatTile } from '../components/StatTile';
 import { compact, dec, int, pct } from '../lib/format';
-import { DeliveryBoard } from './overview/DeliveryBoard';
 import { GenotypeDonut } from './overview/GenotypeDonut';
 
 export default function OverviewPage() {
@@ -18,70 +20,6 @@ export default function OverviewPage() {
 
   return (
     <div className="space-y-6">
-      <Explainer
-        intro={
-          <>
-            One child, one whole genome. The clinical question is Mosaic Variegated Aneuploidy (MVA)
-            — a condition where cells end up with the wrong number of chromosomes — and the task is
-            to find the causal <strong>compound heterozygous</strong> pair: two different broken
-            copies of one gene, one inherited from each parent. There is only{' '}
-            <strong>one sample</strong> in this dataset. No parents were sequenced, so nothing here
-            can be phased by inheritance; the app never shows a parent column.
-          </>
-        }
-        terms={[
-          {
-            term: 'variant',
-            plain:
-              'one row in the callset: a position where this genome differs from the reference',
-          },
-          {
-            term: 'VCF (Variant Call Format)',
-            plain:
-              'the row-oriented text format the variants were delivered in, one record per line',
-          },
-          {
-            term: 'SNP (single nucleotide polymorphism)',
-            plain: 'a one-letter substitution, e.g. C changed to T',
-          },
-          {
-            term: 'indel (insertion or deletion)',
-            plain: 'letters added or removed rather than swapped',
-          },
-          {
-            term: 'FILTER / PASS',
-            plain:
-              'the caller’s heuristic veto; non-PASS records are suppressed, not deleted — they are still a search space',
-          },
-          {
-            term: 'multiallelic site (genotype 1/2)',
-            plain:
-              'the two copies carry two different variants — a compound heterozygote established by the genotype field alone',
-          },
-          {
-            term: 'Ts/Tv (transition / transversion ratio)',
-            plain:
-              'a sanity check on the callset; ~2.0 is normal for human whole genomes, far off means artefacts',
-          },
-          {
-            term: 'coverage / depth (×)',
-            plain:
-              'how many sequencing reads stack over an average base; more depth means more confident calls',
-          },
-          {
-            term: 'read',
-            plain:
-              'one short sequenced fragment (149 letters here); a genome is reconstructed by piling up a billion of them',
-          },
-          {
-            term: 'probe budget',
-            plain:
-              'this challenge allows 18 oracle queries in total — a hard, non-renewable resource',
-          },
-        ]}
-        caveat="Every figure in this app is an aggregate. No individual genomic coordinate is stored in this repository."
-      />
-
       <Section
         title="The case in numbers"
         subtitle="all figures from executed runs over the delivered objects"
@@ -156,7 +94,9 @@ export default function OverviewPage() {
                 A compound heterozygote is normally proven by showing one variant came from each
                 parent. With no trio, the only genotype-level proof available is the{' '}
                 <strong>1/2</strong> call: {int(q.data.data.multiallelic_sites)} sites where the
-                caller itself recorded two different alternate alleles on the two copies.
+                caller itself recorded two different alternate alleles on the two copies. No parents
+                were sequenced, so nothing here can be <strong>phased by inheritance</strong>{' '}
+                (assigned to the copy it came from) — the app never shows a parent column.
               </Callout>
               <Callout tone="neutral" title="Contigs">
                 {q.data.data.canonical_contigs} canonical chromosomes out of{' '}
@@ -173,16 +113,87 @@ export default function OverviewPage() {
                 {q.data.data.all_hashes_verified
                   ? 'every sha256 verified'
                   : 'HASH VERIFICATION INCOMPLETE'}
-                . Board below.
+                .{' '}
+                <Link
+                  to="/catalog"
+                  className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
+                >
+                  inventory on the Catalog page
+                </Link>
               </Callout>
             </div>
           </>
         )}
       </Section>
 
-      <Section title="Where the data came from">
-        <DeliveryBoard />
+      <Section
+        title="Four questions, in reading order"
+        subtitle="each page serves one question; the header shows which"
+      >
+        <JourneyMap />
       </Section>
+
+      <Explainer
+        intro={
+          <>
+            The clinical question is Mosaic Variegated Aneuploidy (MVA) — cells ending up with the
+            wrong number of chromosomes. The task: find the causal{' '}
+            <strong>compound heterozygous</strong> pair — two different broken copies of one gene,
+            one inherited from each parent. This dataset holds <strong>one sample</strong> only.
+          </>
+        }
+        terms={[
+          {
+            term: 'variant',
+            plain:
+              'one row in the callset: a position where this genome differs from the reference',
+          },
+          {
+            term: 'VCF (Variant Call Format)',
+            plain:
+              'the row-oriented text format the variants were delivered in, one record per line',
+          },
+          {
+            term: 'SNP (single nucleotide polymorphism)',
+            plain: 'a one-letter substitution, e.g. C changed to T',
+          },
+          {
+            term: 'indel (insertion or deletion)',
+            plain: 'letters added or removed rather than swapped',
+          },
+          {
+            term: 'FILTER / PASS',
+            plain:
+              'the caller’s heuristic veto; non-PASS records are suppressed, not deleted — they are still a search space',
+          },
+          {
+            term: 'multiallelic site (genotype 1/2)',
+            plain:
+              'the two copies carry two different variants — a compound heterozygote established by the genotype field alone',
+          },
+          {
+            term: 'Ts/Tv (transition / transversion ratio)',
+            plain:
+              'a sanity check on the callset; ~2.0 is normal for human whole genomes, far off means artefacts',
+          },
+          {
+            term: 'coverage / depth (×)',
+            plain:
+              'how many sequencing reads stack over an average base; more depth means more confident calls',
+          },
+          {
+            term: 'read',
+            plain:
+              'one short sequenced fragment (149 letters here); a genome is reconstructed by piling up a billion of them',
+          },
+          {
+            term: 'probe budget',
+            plain:
+              'this challenge allows 18 oracle queries in total — a hard, non-renewable resource',
+          },
+        ]}
+        caveat="Every figure in this app is an aggregate. No individual genomic coordinate is stored in this repository."
+      />
 
       <Section title="What the genotypes already tell us">
         <GenotypeDonut />
