@@ -9,14 +9,24 @@
  * `import.meta.glob` is Vite's static-analysis-friendly directory import: it expands at
  * build time into a map of path → `() => import(path)`, so every JSON file is a known
  * chunk rather than a runtime string the bundler cannot follow.
+ *
+ * Two patterns, because the structure explorer's payloads are **one file per gene** under
+ * `data/protein/` and `data/gene-structure/` — a reader who opens BUB1B should download
+ * BUB1B's fold and no other gene's. `./data/*.json` alone would not see them, and a lone
+ * `./data/**\/*.json` is the safer-looking option that silently depends on whether the
+ * glob implementation counts zero directories as a match. Listing both is unambiguous;
+ * a path matched by both patterns simply appears once in the merged map.
  */
 
 import type { Params } from '../api/client';
 
-const files = import.meta.glob<{ default: unknown }>('./data/*.json');
+const files = import.meta.glob<{ default: unknown }>(['./data/*.json', './data/**/*.json']);
 
 /**
  * Load one `data/<name>.json` payload, cast to its row type.
+ *
+ * `name` may carry a subdirectory — `rows('protein/BUB1B')` reads
+ * `data/protein/BUB1B.json` — which is how the per-gene structure fixtures are addressed.
  *
  * The cast is the single unchecked seam in the fixture layer: JSON has no types, so the
  * shape is asserted here once per file instead of at every call site. `fixtures.test.ts`

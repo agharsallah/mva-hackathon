@@ -11,7 +11,7 @@
  */
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import { Component, lazy, type ReactNode, Suspense } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { expect, vi } from 'vitest';
@@ -102,10 +102,25 @@ export async function mountModule(mod: FeatureModule): Promise<Mounted> {
 
   const noneInFlight = () => expect(queryClient.isFetching()).toBe(0);
   if (!caught) {
-    await waitFor(noneInFlight, { timeout: 8000 });
-    // One settle-then-recheck pass: a one-step waterfall (a chip firing its own query once
-    // its parent's data lands) resumes fetching a tick after the first `isFetching()` dip.
-    await new Promise((resolve) => setTimeout(resolve, 30));
+    // Settle-then-recheck, in a loop rather than once. A one-step waterfall (a chip firing
+    // its own query when its parent's data lands) needed one recheck; `/panel` now has a
+    // two-step one — `/api/panel/structure-genes` arrives, and only then does the cross-gene
+    // metrics table fan out one `useQueries` pair per gene — so a single recheck returned
+    // control while those were still resolving, and React updated the tree outside `act()`.
+    // The loop exits on the first pass that finds the client idle *and still idle* after a
+    // gap, which is the general form of the same check.
+    for (let round = 0; round < 10; round++) {
+      await waitFor(noneInFlight, { timeout: 8000 });
+      // The gap is spent **inside `act`**, which is the part a bare `setTimeout` got wrong:
+      // react-query commits through its own notify batch, so the render caused by the last
+      // query to settle lands a tick *after* `isFetching()` reaches 0 — outside the window
+      // `waitFor` covers, which is exactly the "not wrapped in act(...)" warning. Spending
+      // the gap in `act` makes those commits part of the harness's own flush.
+      await act(async () => {
+        await new Promise((resolve) => setTimeout(resolve, 60));
+      });
+      if (queryClient.isFetching() === 0) break;
+    }
     await waitFor(noneInFlight, { timeout: 8000 });
   }
 

@@ -161,6 +161,11 @@ export interface GeneStructure {
   protein_length: number | null;
   exons: Exon[];
   domains: ProteinDomain[];
+  /**
+   * Whether this gene is in the annotated panel. False means `candidates` is empty because
+   * no annotation was ever run for it — not because the proband has no alleles there.
+   */
+  in_panel: boolean;
   candidates: GeneCandidate[];
 }
 

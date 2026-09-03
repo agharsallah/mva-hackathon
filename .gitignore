@@ -32,9 +32,13 @@ tests/fixtures/*.vcf.gz.tbi
 # profile and contains no patient record. The per-exhibit copies are regenerable noise, and
 # a locus page IS patient coordinates: `mva-explore locus` writes wherever it is told, so
 # anything but the synthetic-fixture page stays out of the tree.
-figures/exhibits/
+figures/exhibits/*
 figures/locus-*.html
 !figures/locus-fixture.html
+# ...but the app's 3D exhibit screenshots living in the same folder ARE committed: they are
+# report and video material, they are not regenerable without a browser, and they hold only
+# public reference data (an AlphaFold model) plus synthetic alleles. See figures/README.md.
+!figures/exhibits/*.png
 
 .DS_Store
 __pycache__/

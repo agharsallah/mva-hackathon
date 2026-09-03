@@ -24,33 +24,78 @@ export function Toggle({
   );
 }
 
+/** One `<option>`. */
+export interface SelectOption<T extends string | number> {
+  value: T;
+  label: string;
+}
+
+/** One `<optgroup>`: a heading over a subset of the options. */
+export interface SelectGroup<T extends string | number> {
+  label: string;
+  options: readonly SelectOption<T>[];
+}
+
+/**
+ * `groups` is additive: a call site that passes only `options` renders exactly what it
+ * always did. Passing `groups` renders `<optgroup>` headings instead — the browser's own
+ * grouping affordance, which is what a picker over a set that splits into meaningful
+ * classes (an annotated panel vs. fold-only reference genes) needs, and which a flat list
+ * of 20 symbols cannot express. Both may be passed; `options` then renders ungrouped
+ * *above* the groups.
+ */
 export function Select<T extends string | number>({
   value,
-  options,
+  options = [],
+  groups = [],
   onChange,
   label,
+  disabled = false,
 }: {
   value: T;
-  options: { value: T; label: string }[];
+  options?: readonly SelectOption<T>[];
+  groups?: readonly SelectGroup<T>[];
   onChange: (v: T) => void;
   label?: string;
+  /**
+   * For the one honest use of a dead picker: the vocabulary is still in flight, the caller is
+   * showing the URL-held value as a single placeholder option, and a change event could not
+   * be resolved against anything yet.
+   */
+  disabled?: boolean;
 }) {
+  const all = [...options, ...groups.flatMap((g) => g.options)];
   return (
     <label className="inline-flex items-center gap-1.5 text-[11px] text-chrome-500">
       {label}
       <select
         value={String(value)}
+        // Explicit, even though the wrapping `<label>` already names it: a label that *wraps*
+        // its control has the control's own text inside it, so the computed accessible name
+        // came out as the label plus every option ("A CEP57 DICER1 BUB1B …"). That is what a
+        // screen reader announces, and what a browser-driver locator matches on.
+        aria-label={label}
+        disabled={disabled}
         onChange={(e) => {
           const raw = e.target.value;
-          const found = options.find((o) => String(o.value) === raw);
+          const found = all.find((o) => String(o.value) === raw);
           if (found) onChange(found.value);
         }}
-        className="rounded-md border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-200"
+        className="rounded-md border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-200 disabled:opacity-60"
       >
         {options.map((o) => (
           <option key={String(o.value)} value={String(o.value)}>
             {o.label}
           </option>
+        ))}
+        {groups.map((g) => (
+          <optgroup key={g.label} label={g.label}>
+            {g.options.map((o) => (
+              <option key={String(o.value)} value={String(o.value)}>
+                {o.label}
+              </option>
+            ))}
+          </optgroup>
         ))}
       </select>
     </label>
@@ -102,13 +147,16 @@ export function Section({
   title,
   children,
   subtitle,
+  id,
 }: {
   title: string;
   subtitle?: ReactNode;
   children: ReactNode;
+  /** Anchor target, so another page can deep-link to this section with `#id`. */
+  id?: string;
 }) {
   return (
-    <section className="space-y-3">
+    <section id={id} className="scroll-mt-20 space-y-3">
       <div>
         <h2 className="text-base font-semibold tracking-tight text-chrome-100">{title}</h2>
         {subtitle && <p className="mt-0.5 text-xs text-chrome-500">{subtitle}</p>}

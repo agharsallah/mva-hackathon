@@ -4,3 +4,12 @@ coverage
 
 # generated lockfile — pnpm owns its formatting
 pnpm-lock.yaml
+
+# Generated structure fixtures — `tools/build_protein_fixture.py` owns their formatting.
+# They are machine-written reference data (one real AlphaFold trace and one real Ensembl
+# exon/domain track per gene) and are never hand-edited. Prettier puts one key per line,
+# which inflates a 1,050-residue trace by ~30 % and turns every regeneration into a
+# thousands-of-lines diff nobody can read. Same reason pnpm owns its lockfile above.
+src/fixtures/data/protein
+src/fixtures/data/gene-structure
+src/fixtures/data/panel-structure-genes.json

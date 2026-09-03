@@ -52,7 +52,9 @@ const OWNERS: Record<string, readonly string[]> = {
     '/api/panel/het-pairs',
     '/api/panel/clinvar-presence',
     '/api/panel/suppressed',
+    '/api/panel/structure-genes',
     '/api/panel/gene-structure',
+    '/api/panel/protein-structure',
   ],
   phenotype: [
     '/api/phenotype/terms',
@@ -67,6 +69,7 @@ const OWNERS: Record<string, readonly string[]> = {
     '/api/provenance/lineage',
     '/api/provenance/derivations',
     '/api/provenance/sources',
+    '/api/provenance/reference',
     '/api/probe/ledger',
     '/api/science/hypotheses',
     '/api/science/evidence',

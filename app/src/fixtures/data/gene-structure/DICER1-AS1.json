@@ -1,0 +1,1 @@
+{"gene":"DICER1-AS1","ensembl_id":"ENSG00000235706","chrom":"14","start":95157645,"end":95181475,"strand":1,"biotype":"lncRNA","transcript":"ENST00000671073","protein":null,"protein_length":null,"exons":[{"start":95157649,"end":95159035,"id":"ENSE00003985674","n":1},{"start":95179499,"end":95181475,"id":"ENSE00003985673","n":2}],"domains":[],"in_panel":false,"candidates":[]}

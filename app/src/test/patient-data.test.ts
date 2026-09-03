@@ -65,7 +65,7 @@
  */
 
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
 import { describe, expect, it } from 'vitest';
@@ -240,7 +240,13 @@ function walk(node: unknown, keypath: string, file: string, violations: Violatio
 
 function committedSrcFiles(): string[] {
   const out = execSync('git ls-files src', { cwd: APP_ROOT, encoding: 'utf-8' });
-  return out.split('\n').filter(Boolean);
+  // `git ls-files` still lists a tracked file that has been deleted in the working tree, and
+  // the next commit will not contain it — so a deletion in progress must not crash the guard.
+  // Existence is checked rather than trusted; the scan is over what a commit would carry.
+  return out
+    .split('\n')
+    .filter(Boolean)
+    .filter((rel) => existsSync(path.join(APP_ROOT, rel)));
 }
 
 function scanAll(): Violation[] {

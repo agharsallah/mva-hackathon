@@ -101,7 +101,10 @@ export function Exhibit({
           </p>
         )}
         {(source || origin) && (
-          <p className="font-mono text-[11px] text-chrome-600">
+          // The per-reply `source` strings now carry URLs and cache keys, so they must wrap
+          // rather than run off the card: `break-words` breaks a long token only when it
+          // cannot fit, leaving normal prose alone.
+          <p className="font-mono text-[11px] break-words text-chrome-600">
             {origin === 'fixture' && (
               <span className="mr-1.5 rounded bg-decision-500/15 px-1 py-px text-decision-400">
                 fixture

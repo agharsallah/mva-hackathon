@@ -24,15 +24,15 @@ a file directly, so a page never needs to know where a primitive lives.
 
 ## Layout and structure
 
-| Name                               | Purpose                                                                                                                                               | Usage                                                             |
-| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `Card`                             | The bordered panel every non-chart section sits in.                                                                                                   | `<Card className="space-y-3">…</Card>`                            |
-| `Section`                          | Page-level heading + optional subtitle over a block of content.                                                                                       | `<Section title="…" subtitle="…">…</Section>`                     |
-| `Explainer`                        | The page's intro panel: plain-English intro, a term glossary, an optional caveat.                                                                     | `<Explainer intro={…} terms={[{term, plain}]} />`                 |
-| `Callout`                          | A tone-coloured box for one thing the reader must not miss.                                                                                           | `<Callout tone="decision" title="…">…</Callout>`                  |
-| `EmptyState`                       | The dashed "nothing here" box. `tone="good"` for a register/ledger that is empty _by design_.                                                         | `<EmptyState tone="good" title="Budget untouched">…</EmptyState>` |
-| `Toggle` / `Select` / `TextFilter` | Small controls for an `Exhibit`'s title-row `controls` slot.                                                                                          | `<Toggle on={v} onChange={setV}>3D</Toggle>`                      |
-| `Footer`                           | App-wide footer: what this app is, the live dependency-status link (`/status`), in-app and repo-doc links. Mounted once by `AppShell`, like `Header`. | `<Footer />`                                                      |
+| Name                               | Purpose                                                                                                                                                          | Usage                                                             |
+| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `Card`                             | The bordered panel every non-chart section sits in.                                                                                                              | `<Card className="space-y-3">…</Card>`                            |
+| `Section`                          | Page-level heading + optional subtitle over a block of content. `id` makes it an anchor target (`/provenance#reference`) with the scroll offset already applied. | `<Section title="…" subtitle="…">…</Section>`                     |
+| `Explainer`                        | The page's intro panel: plain-English intro, a term glossary, an optional caveat.                                                                                | `<Explainer intro={…} terms={[{term, plain}]} />`                 |
+| `Callout`                          | A tone-coloured box for one thing the reader must not miss.                                                                                                      | `<Callout tone="decision" title="…">…</Callout>`                  |
+| `EmptyState`                       | The dashed "nothing here" box. `tone="good"` for a register/ledger that is empty _by design_.                                                                    | `<EmptyState tone="good" title="Budget untouched">…</EmptyState>` |
+| `Toggle` / `Select` / `TextFilter` | Small controls for an `Exhibit`'s title-row `controls` slot.                                                                                                     | `<Toggle on={v} onChange={setV}>3D</Toggle>`                      |
+| `Footer`                           | App-wide footer: what this app is, the live dependency-status link (`/status`), in-app and repo-doc links. Mounted once by `AppShell`, like `Header`.            | `<Footer />`                                                      |
 
 ## Small marks
 

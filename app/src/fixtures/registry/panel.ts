@@ -5,6 +5,13 @@
  * straight off `data/panel-background.json`. Every other path is param-driven and its
  * synthesis lives in `../shape/*`; see those modules for what is measured, placeholder,
  * or synthetic in each.
+ *
+ * The three structure paths carry **real** upstream data committed into the repository,
+ * so their `source` strings name the manifest that says which upstream, at which release,
+ * with which digest — `_provenance.json` beside the per-gene files, and
+ * `structure_genes.provenance.json` beside the gene-set TSV. Those manifests are written
+ * by `tools/build_protein_fixture.py` and `tools/build_gene_set.py` on every run and are
+ * listed, normalised, by `/api/provenance/reference`.
  */
 import type { PanelBackgroundRow } from '../../api/types';
 import type { Entry } from '../loader';
@@ -17,6 +24,8 @@ import { panelGenesFixture } from '../shape/panel-genes';
 import { panelHetPairsFixture } from '../shape/panel-het-pairs';
 import { locusFixture } from '../shape/panel-locus';
 import { panelSuppressedFixture } from '../shape/panel-suppressed';
+import { proteinStructureFixture } from '../shape/protein-structure';
+import { structureGenesFixture } from '../shape/structure-genes';
 
 export const panelEntries: Record<string, Entry> = {
   '/api/panel/genes': {
@@ -57,8 +66,26 @@ export const panelEntries: Record<string, Entry> = {
     source: 'measured per-gene FILTER census, SYNTHETIC record positions',
     load: (p) => panelSuppressedFixture(p?.gene as string | undefined),
   },
+  // The curated gene set the structure explorer is addressed by. REAL: written straight
+  // out of the committed TSV, whose every id and biotype came from a live Ensembl reply.
+  '/api/panel/structure-genes': {
+    source:
+      'ressources/reference/structure_genes.tsv + panel BED — provenance: ressources/reference/structure_genes.provenance.json',
+    load: () => structureGenesFixture(),
+  },
+  // REAL Ensembl exons and domains, one measured file per gene. The only synthesised part
+  // is `candidates`, and only for the eight annotated panel genes — the proband's alleles
+  // are never committed. See `../shape/gene-structure.ts` for the field-by-field split.
   '/api/panel/gene-structure': {
-    source: 'BUB1B-SHAPED structure — synthetic coordinates, domains not measured',
-    load: (p) => geneStructureFixture((p?.gene as string | undefined) ?? 'BUB1B'),
+    source:
+      'REAL Ensembl exons + domains; SYNTHETIC candidates, panel genes only — per-gene provenance: app/src/fixtures/data/gene-structure/_provenance.json',
+    load: (p) => geneStructureFixture(p?.gene as string | undefined),
+  },
+  // Wholly REAL data: each coding gene's own AlphaFold alpha-carbon trace, public
+  // reference data identical for every human. A non-coding gene answers 422, as live does.
+  '/api/panel/protein-structure': {
+    source:
+      'REAL per-gene AlphaFold models — public reference data; per-gene model url, version and digest: app/src/fixtures/data/protein/_provenance.json',
+    load: (p) => proteinStructureFixture(p?.gene as string | undefined),
   },
 };

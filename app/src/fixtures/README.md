@@ -47,6 +47,19 @@ flowchart LR
 | `loader.ts`     | `rows<T>(name)` over `import.meta.glob('./data/*.json')` | the one unchecked seam: JSON has no types, so each file is cast once           |
 | `prng.ts`       | seeded xorshift32                                        | shared; fills the _shape_ of generated tables deterministically                |
 
+One file under `data/` is **not** a payload: `data/protein/_provenance.json` and
+`data/gene-structure/_provenance.json` are provenance manifests, not rows. Those two
+directories hold **real** upstream data committed into the repository — one AlphaFold
+alpha-carbon trace and one Ensembl exon/domain track per gene — and the manifest is the only
+place "where did this come from" can be answered, because an AlphaFold coordinate and an
+invented amino-acid position are both just numbers. Per gene it records the model URL, its
+version and creation date, the Ensembl release, the file's own sha256, and a
+**REAL-vs-SYNTHETIC map for every top-level field**. Written by
+`tools/build_protein_fixture.py` on every run; listed, normalised, by
+`GET /api/provenance/reference`, whose own offline payload is `data/provenance-reference.json`
+— transcribed from a real run of that route, because a fabricated provenance row is the one
+kind of fixture that would be actively misleading.
+
 Nothing is eager. `index.ts` carries only the path table; the fragment, its shape modules
 and its JSON arrive by `import()` on the first request that actually falls back.
 

@@ -6,7 +6,8 @@
  * fixtures on its own), and a 503 from the reads proxy is a state to render, not to retry.
  */
 
-import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import { useQueries, useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 import { get, getBare, type Params, type Result } from './client';
 import type {
@@ -46,13 +47,16 @@ import type {
   PhenotypeRanking,
   PhenotypeTerms,
   ProbeLedgerRow,
+  ProteinStructure,
   QualityLevelRow,
   ReadPartitionRow,
   ReadRunRow,
+  ReferenceProvenanceRow,
   RegionWindow,
   SearchResolution,
   SequencingYieldRow,
   SourceObjectRow,
+  StructureGene,
   SubstitutionRow,
   TsTv,
   VcfFieldRow,
@@ -114,6 +118,69 @@ export const useGeneStructure = (gene: string | null) =>
   useEndpoint<GeneStructure>('/api/panel/gene-structure', gene ? { gene } : undefined, {
     enabled: !!gene,
   });
+/**
+ * The curated gene set the structure explorer may show, in display order.
+ *
+ * Reads a committed reference TSV server-side, so it answers on a checkout where nothing has
+ * been ingested. `in_panel` is the one flag that decides whether a gene can carry the
+ * proband's alleles at all: the callset was annotated over the 8-gene panel BED, so every
+ * other gene in this set is fold-only — its structure is public reference data and nothing
+ * patient-derived is painted on it.
+ */
+export const useStructureGenes = () => useEndpoint<StructureGene[]>('/api/panel/structure-genes');
+
+/** ~5–15 s cold (two Ensembl calls, the AlphaFold API, then a ~1 MB mmCIF), then disk-cached. */
+export const useProteinStructure = (gene: string | null) =>
+  useEndpoint<ProteinStructure>('/api/panel/protein-structure', gene ? { gene } : undefined, {
+    enabled: !!gene,
+  });
+/**
+ * The same two endpoints as above, for **many genes at once**, one query each.
+ *
+ * `useQueries` rather than a loop of `useGeneStructure` calls because the gene list is
+ * dynamic (it comes from `/api/panel/structure-genes`), and React's hook order may not
+ * depend on data. The per-gene results come back in the order the symbols were passed, so a
+ * table can render one row per gene with its **own** loading and error state — a gene whose
+ * fold is missing does not blank the other rows.
+ *
+ * Cost: 2 × N requests. Both endpoints are disk-cached server-side and served from a
+ * committed fixture offline, so a warm call is cheap; a cold live call is not, which is why
+ * the cross-gene table is the only caller — and why it passes `enabled: false` until the
+ * table is actually in the reader's viewport.
+ *
+ * The symbol list is **deduped** before the fan-out. Two identical symbols would otherwise
+ * produce two queries under one key — React Query serves both from one request, but the
+ * caller gets two result slots and renders the gene twice.
+ *
+ * `combine` narrows each result to the two fields a row cares about, and — the reason it is
+ * here rather than in the caller — makes the returned array **referentially stable**: a raw
+ * `useQueries` return is a fresh array of fresh objects on every render, so a consumer's
+ * `useMemo` over it never hits. The cross-gene table's rows each build a full protein scene,
+ * so that miss cost ~44 chain walks on every unrelated re-render of the page.
+ */
+function useEndpointEach<T>(path: string, genes: readonly string[], enabled = true) {
+  const unique = useMemo(() => [...new Set(genes)], [genes]);
+  return useQueries({
+    queries: unique.map((gene) => ({
+      queryKey: [path, { gene }],
+      queryFn: ({ signal }: { signal: AbortSignal }) => get<T>(path, { gene }, signal),
+      enabled,
+      retry: false,
+      staleTime: FIVE_MIN,
+      gcTime: 30 * FIVE_MIN,
+      refetchOnWindowFocus: false,
+    })),
+    combine: (results) =>
+      results.map((result) => ({ data: result.data, error: result.error ?? null })),
+  });
+}
+
+export const useGeneStructures = (genes: readonly string[], enabled = true) =>
+  useEndpointEach<GeneStructure>('/api/panel/gene-structure', genes, enabled);
+
+export const useProteinStructures = (genes: readonly string[], enabled = true) =>
+  useEndpointEach<ProteinStructure>('/api/panel/protein-structure', genes, enabled);
+
 /** ~0.5–1 s live: a derived table, so no cross product happens inside the request. */
 export const useHetPairs = (gene: string | null) =>
   useEndpoint<PanelHetPairs>('/api/panel/het-pairs', gene ? { gene } : undefined, {
@@ -156,6 +223,17 @@ export const useCatalogColumns = () => useEndpoint<CatalogColumnRow[]>('/api/cat
 export const useLineage = () => useEndpoint<LineageRow[]>('/api/provenance/lineage');
 export const useDerivations = () => useEndpoint<DerivationRow[]>('/api/provenance/derivations');
 export const useSources = () => useEndpoint<SourceObjectRow[]>('/api/provenance/sources');
+/**
+ * Reference data provenance: one row per committed reference table or offline fixture
+ * directory, read off the `*provenance.json` manifest committed beside the bytes.
+ *
+ * Not lineage. The three hooks above read `warehouse.data_lineage`, which records a
+ * *derivation* (table X was computed from object Y). Reference data is **fetched**, so it
+ * has no upstream table and no transform — a manifest (URL + version + hash) is what it
+ * has instead.
+ */
+export const useReferenceProvenance = () =>
+  useEndpoint<ReferenceProvenanceRow[]>('/api/provenance/reference');
 export const useProbeLedger = () => useEndpoint<ProbeLedgerRow[]>('/api/probe/ledger');
 
 // The register may not exist yet, so both payloads are `{table_exists, rows}` rather than

@@ -1,72 +1,44 @@
-import type { Exon, GeneCandidate, GeneStructure, ProteinDomain } from '../../api/types';
+import type { GeneStructure } from '../../api/types';
 import { rows } from '../loader';
+import { resolveSymbol } from './structure-genes';
+
+const PATH = '/api/panel/gene-structure';
 
 /**
  * FIXTURE — `/api/panel/gene-structure`. Default gene when none is given: BUB1B.
  *
- * ***SHAPE ONLY — not a measurement.*** The live endpoint assembles this from three
- * Ensembl REST calls. Nothing in `data/panel-gene-structure.json` or below was read from
- * Ensembl:
+ * ***MOSTLY REAL DATA NOW.*** This module used to synthesise everything: 23 exons on an
+ * arithmetic ladder, BUB1B's domain *names* at invented offsets, and one placeholder
+ * `ENSP00000000000` for every gene. That was defensible while one gene was on screen. It
+ * stopped being defensible the moment the explorer could put two genes side by side — a
+ * generated exon pattern makes every gene look like the same gene, which is a claim, and
+ * a false one.
  *
- * - **Coordinates are synthetic.** They ride the same arithmetic ladder as
- *   `locusFixture` (1000, 2000, 3000 …) so the gene track lines up with the QUAL/VAF
- *   tracks offline. They are not genomic coordinates and must never be quoted as such.
- * - **Exon count and protein length are BUB1B-*shaped*, not BUB1B.** 23 exons and a
- *   ~1050 aa protein is the right order of magnitude for the real gene; the individual
- *   exon spans (`buildExons` below) are a generated pattern.
- * - **Domain names are real domain *names* at invented offsets.** BUBR1 genuinely
- *   carries a KEN box, a TPR (tetratricopeptide-repeat) region and a C-terminal kinase
- *   domain — the *positions* in the JSON are placed to make a readable figure, not
- *   measured.
- * - **Candidates are invented alleles.** The proband's are never committed.
+ * So `data/gene-structure/<SYMBOL>.json` is one file per gene, and in each file:
  *
- * The app badges every one of these `fixture`, and the offline exhibit says so.
+ * - **`exons` are Ensembl's real exon boundaries** on the real canonical transcript, in
+ *   transcript order (exon 1 is the *rightmost* box on a minus-strand gene). Real GRCh38
+ *   coordinates — public reference data, and the same numbers the live route returns.
+ * - **`domains` are the real Pfam / SMART / PROSITE / Gene3D / SUPERFAMILY / CDD calls**
+ *   at their real amino-acid offsets, filtered exactly as the server filters them.
+ * - **`ensembl_id`, `transcript`, `protein`, `protein_length`, `biotype`, `chrom`,
+ *   `start`, `end`, `strand` are all measured**, from a live `/lookup/id?expand=1` reply.
+ * - **`candidates` are the one synthetic part, and only for the eight panel genes.**
+ *   Three invented alleles per gene — one truncating, one missense, one splice-region with
+ *   no amino-acid position — scaled to that protein's length so the lollipop is readable
+ *   at 393 residues and at 2,537. Every `rsid` is `rs00000000n`, which is not a real dbSNP
+ *   accession. The proband's alleles are never committed, and that is why these exist.
+ * - **An off-panel gene has `candidates: []` and `in_panel: false`**, matching the live
+ *   route: no annotation was ever run there, so there is nothing to show rather than
+ *   nothing to find.
+ * - **A non-coding gene has `protein: null` and `domains: []`** with its real exon track
+ *   intact — the whole exhibit for a gene that makes no protein.
+ *
+ * Built by `tools/build_protein_fixture.py`; the run is recorded in
+ * `docs/step-0/methodology/060`. The app still badges every payload `fixture:`, because
+ * the *candidate* half is not a measurement even though the anatomy is.
  */
-interface Template {
-  ensembl_id: string;
-  chrom: string;
-  start: number;
-  end: number;
-  strand: number;
-  biotype: string | null;
-  transcript: string | null;
-  protein: string | null;
-  protein_length: number | null;
-  domains: ProteinDomain[];
-  candidates: GeneCandidate[];
-}
-
-/** `n` evenly spaced exon boxes across `[from, to]`, widening toward the middle. */
-function buildExons(n: number, from: number, to: number): Exon[] {
-  const step = (to - from) / n;
-  return Array.from({ length: n }, (_, i) => {
-    const anchor = from + i * step;
-    const width = Math.round(step * (0.12 + 0.18 * Math.sin((i / n) * Math.PI)));
-    return {
-      n: i + 1,
-      start: Math.round(anchor),
-      end: Math.round(anchor) + width,
-      id: `ENSE0000000${i + 1}`,
-    };
-  });
-}
-
-export async function geneStructureFixture(gene: string): Promise<GeneStructure> {
-  const t = await rows<Template>('panel-gene-structure');
-  const exons = buildExons(23, 1000, 121_000);
-  return {
-    gene,
-    ensembl_id: t.ensembl_id,
-    chrom: t.chrom,
-    start: t.start,
-    end: t.end,
-    strand: t.strand,
-    biotype: t.biotype,
-    transcript: t.transcript,
-    protein: t.protein,
-    protein_length: t.protein_length,
-    exons,
-    domains: t.domains,
-    candidates: t.candidates,
-  };
+export async function geneStructureFixture(gene?: string): Promise<GeneStructure> {
+  const entry = await resolveSymbol(gene, PATH);
+  return rows<GeneStructure>(`gene-structure/${entry.symbol}`);
 }

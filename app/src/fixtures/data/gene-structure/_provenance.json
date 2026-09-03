@@ -1,0 +1,978 @@
+{
+  "name": "gene-structure fixtures",
+  "kind": "fixture",
+  "built_at": "2026-09-03T13:46:57+00:00",
+  "built_by": "tools/build_protein_fixture.py",
+  "code_version": "cb066b8",
+  "code_version_note": "the commit at build time, which precedes the commit that lands these files",
+  "note": "One file per gene: real Ensembl exons and protein domains. The only invented field is candidates[], present for the eight annotated panel genes and empty for every other gene, because no annotation was ever run there.",
+  "patient_data": "none. Reference coordinates and amino-acid indices only. The one invented part is gene-structure candidates[], which exists precisely because the proband's alleles are never committed.",
+  "inputs": [
+    {
+      "name": "Ensembl REST",
+      "url": "https://rest.ensembl.org",
+      "release": "116",
+      "endpoints": [
+        "/lookup/id/{ensembl_id}?expand=1",
+        "/overlap/translation/{ensp}"
+      ],
+      "sha256": null,
+      "bytes": null
+    },
+    {
+      "name": "ressources/reference/structure_genes.tsv",
+      "url": "file://ressources/reference/structure_genes.tsv",
+      "release": null,
+      "sha256": "7461a74cf8a6ce06457bbc50a7f342301ab2e14753b81f0e34089053658605b7",
+      "bytes": 2726,
+      "role": "the curated gene set: which symbols exist and which code"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "app/src/fixtures/data/gene-structure/ATP1B2.json",
+      "sha256": "916db674f49917adb3810071c8a8bcee657e6695e528ade801467c00eddd4e4a",
+      "bytes": 1436,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/BDH2.json",
+      "sha256": "1dc52f1a6abe16285654564da56efd533ff4c3049d916c3ba9300ec21adeffec",
+      "bytes": 2848,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/BRD9.json",
+      "sha256": "4d880419cca82ae7d801829ba5207681a12723d29a17202eff58d7c164fd90c2",
+      "bytes": 2419,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/BUB1.json",
+      "sha256": "5b18937e1382d99eda9471a41df479b0a0fed96d7c5c6a490a9f741535065a7c",
+      "bytes": 3602,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/BUB1B.json",
+      "sha256": "560f3262817b500ba6abf934133ae6039649c3467829a327e74c6db4168f559c",
+      "bytes": 3312,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/CENATAC.json",
+      "sha256": "fbca61c006f23e819ba3e0a002fa5f03b0222a06d9eb07e4c823ab4bf1cad1ab",
+      "bytes": 1097,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/CENPE.json",
+      "sha256": "9e177fd0b830417753214cd78a4a8d7f8b5ba52c700cef25bc35f25f47120ec9",
+      "bytes": 5699,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/CEP192.json",
+      "sha256": "b52c68538daade3f5014f04be3f13700da12c0686b0fd2e003819761a5c4de74",
+      "bytes": 5600,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/CEP57.json",
+      "sha256": "af90b833e7c6014e9fb2d8000b5bf3a1af53d6e8d73d1377e3f2a99905693c7b",
+      "bytes": 2031,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/DICER1.json",
+      "sha256": "eb929e1e0a4df9477a404d1a6cb0ca2b9e471d356f0073c8793fda896099ac43",
+      "bytes": 8312,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/DICER1-AS1.json",
+      "sha256": "a4d14600f31e4d562100e5faa03ccdbc2c13105df4c0437e067ba5dbcd3f3715",
+      "bytes": 378,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/FAM76B.json",
+      "sha256": "ae35730e0ffa7a1df2876c2b86d1debe169138a1461f4773cfa8a8bcfa894907",
+      "bytes": 1011,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/MAD1L1.json",
+      "sha256": "36d803a812b08a6330441b91b63b7201e0a2f7c17309cc96327b344372b4d2c6",
+      "bytes": 2046,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/MAD2L1BP.json",
+      "sha256": "0aa66c1fc50ee5ef6718153db1b0c0609b59cea261844fd9caa76fe0b8758fbd",
+      "bytes": 740,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/MAMDC2-AS1.json",
+      "sha256": "557c0240c63f3efbdda674b3771446be5a5fe762d4f2b0d0e2dcca634138d3f6",
+      "bytes": 630,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/MTMR2.json",
+      "sha256": "5cb49d9e3da80b28b7791c2326d6baf48c4de61eeca6df20bba91a1313008a62",
+      "bytes": 2672,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/PAK6.json",
+      "sha256": "fff7fd4187c21d08571afe927fbc6adeec1f8a4398f65b09a081f7e017f29238",
+      "bytes": 2536,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/SEH1L.json",
+      "sha256": "3e3e5b478ab6b49ff289d50c1a5a1b58f0ed9bca1024f0bbf2c22125a9255f83",
+      "bytes": 3019,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/SLF2.json",
+      "sha256": "3844cebb1c76c5fff3ad75acc67f2167cdbc433e376fcb71e8c0de8fe40aaf1f",
+      "bytes": 1733,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/SMC5.json",
+      "sha256": "3dcd36db51d4adb2b84c600b04921a0b2f21e9e5c62476fd1cec08c00d77cade",
+      "bytes": 3140,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/TP53.json",
+      "sha256": "fcee91d41045f6bc423dc872bd3b986a02d6f68e224326d5d0212d4f99115883",
+      "bytes": 3945,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/TRIP13.json",
+      "sha256": "e03b4469c2c11837e903a31f5377ee51c882719e64409841b87ee5e89b335c20",
+      "bytes": 2975,
+      "rows": null
+    },
+    {
+      "path": "app/src/fixtures/data/gene-structure/WRAP53.json",
+      "sha256": "cda714d486b3d0174657a57aa50cd60989132744f2bedaa036a5d29318b3ec31",
+      "bytes": 2507,
+      "rows": null
+    }
+  ],
+  "genes": {
+    "ATP1B2": {
+      "symbol": "ATP1B2",
+      "ensembl_id": "ENSG00000129244",
+      "ensembl_release": "116",
+      "transcript": "ENST00000250111",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:25:47+00:00",
+      "path": "app/src/fixtures/data/gene-structure/ATP1B2.json",
+      "sha256": "916db674f49917adb3810071c8a8bcee657e6695e528ade801467c00eddd4e4a",
+      "bytes": 1436,
+      "counts": {
+        "exons": 7,
+        "domains": 5,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "BDH2": {
+      "symbol": "BDH2",
+      "ensembl_id": "ENSG00000164039",
+      "ensembl_release": "116",
+      "transcript": "ENST00000296424",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:26:24+00:00",
+      "path": "app/src/fixtures/data/gene-structure/BDH2.json",
+      "sha256": "1dc52f1a6abe16285654564da56efd533ff4c3049d916c3ba9300ec21adeffec",
+      "bytes": 2848,
+      "counts": {
+        "exons": 10,
+        "domains": 14,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "BRD9": {
+      "symbol": "BRD9",
+      "ensembl_id": "ENSG00000028310",
+      "ensembl_release": "116",
+      "transcript": "ENST00000467963",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:25:26+00:00",
+      "path": "app/src/fixtures/data/gene-structure/BRD9.json",
+      "sha256": "4d880419cca82ae7d801829ba5207681a12723d29a17202eff58d7c164fd90c2",
+      "bytes": 2419,
+      "counts": {
+        "exons": 16,
+        "domains": 10,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "BUB1": {
+      "symbol": "BUB1",
+      "ensembl_id": "ENSG00000169679",
+      "ensembl_release": "116",
+      "transcript": "ENST00000302759",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:22:45+00:00",
+      "path": "app/src/fixtures/data/gene-structure/BUB1.json",
+      "sha256": "5b18937e1382d99eda9471a41df479b0a0fed96d7c5c6a490a9f741535065a7c",
+      "bytes": 3602,
+      "counts": {
+        "exons": 25,
+        "domains": 13,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "BUB1B": {
+      "symbol": "BUB1B",
+      "ensembl_id": "ENSG00000156970",
+      "ensembl_release": "116",
+      "transcript": "ENST00000287598",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T13:44:08+00:00",
+      "path": "app/src/fixtures/data/gene-structure/BUB1B.json",
+      "sha256": "560f3262817b500ba6abf934133ae6039649c3467829a327e74c6db4168f559c",
+      "bytes": 3312,
+      "counts": {
+        "exons": 23,
+        "domains": 7,
+        "candidates": 3
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "SYNTHETIC \u2014 three invented alleles scaled to this protein's length, rsid synthetic-n, which is not the shape of a dbSNP accession and renders inside the label as its own disclaimer. NEVER the proband's alleles"
+      }
+    },
+    "CENATAC": {
+      "symbol": "CENATAC",
+      "ensembl_id": "ENSG00000186166",
+      "ensembl_release": "116",
+      "transcript": "ENST00000334418",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:20:51+00:00",
+      "path": "app/src/fixtures/data/gene-structure/CENATAC.json",
+      "sha256": "fbca61c006f23e819ba3e0a002fa5f03b0222a06d9eb07e4c823ab4bf1cad1ab",
+      "bytes": 1097,
+      "counts": {
+        "exons": 11,
+        "domains": 1,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "CENPE": {
+      "symbol": "CENPE",
+      "ensembl_id": "ENSG00000138778",
+      "ensembl_release": "116",
+      "transcript": "ENST00000265148",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T13:45:35+00:00",
+      "path": "app/src/fixtures/data/gene-structure/CENPE.json",
+      "sha256": "9e177fd0b830417753214cd78a4a8d7f8b5ba52c700cef25bc35f25f47120ec9",
+      "bytes": 5699,
+      "counts": {
+        "exons": 49,
+        "domains": 12,
+        "candidates": 3
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "SYNTHETIC \u2014 three invented alleles scaled to this protein's length, rsid synthetic-n, which is not the shape of a dbSNP accession and renders inside the label as its own disclaimer. NEVER the proband's alleles"
+      }
+    },
+    "CEP192": {
+      "symbol": "CEP192",
+      "ensembl_id": "ENSG00000101639",
+      "ensembl_release": "116",
+      "transcript": "ENST00000506447",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T13:45:09+00:00",
+      "path": "app/src/fixtures/data/gene-structure/CEP192.json",
+      "sha256": "b52c68538daade3f5014f04be3f13700da12c0686b0fd2e003819761a5c4de74",
+      "bytes": 5600,
+      "counts": {
+        "exons": 45,
+        "domains": 14,
+        "candidates": 3
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "SYNTHETIC \u2014 three invented alleles scaled to this protein's length, rsid synthetic-n, which is not the shape of a dbSNP accession and renders inside the label as its own disclaimer. NEVER the proband's alleles"
+      }
+    },
+    "CEP57": {
+      "symbol": "CEP57",
+      "ensembl_id": "ENSG00000166037",
+      "ensembl_release": "116",
+      "transcript": "ENST00000325542",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T13:43:16+00:00",
+      "path": "app/src/fixtures/data/gene-structure/CEP57.json",
+      "sha256": "af90b833e7c6014e9fb2d8000b5bf3a1af53d6e8d73d1377e3f2a99905693c7b",
+      "bytes": 2031,
+      "counts": {
+        "exons": 11,
+        "domains": 3,
+        "candidates": 3
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "SYNTHETIC \u2014 three invented alleles scaled to this protein's length, rsid synthetic-n, which is not the shape of a dbSNP accession and renders inside the label as its own disclaimer. NEVER the proband's alleles"
+      }
+    },
+    "DICER1": {
+      "symbol": "DICER1",
+      "ensembl_id": "ENSG00000100697",
+      "ensembl_release": "116",
+      "transcript": "ENST00000343455",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T13:43:40+00:00",
+      "path": "app/src/fixtures/data/gene-structure/DICER1.json",
+      "sha256": "eb929e1e0a4df9477a404d1a6cb0ca2b9e471d356f0073c8793fda896099ac43",
+      "bytes": 8312,
+      "counts": {
+        "exons": 27,
+        "domains": 42,
+        "candidates": 3
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "SYNTHETIC \u2014 three invented alleles scaled to this protein's length, rsid synthetic-n, which is not the shape of a dbSNP accession and renders inside the label as its own disclaimer. NEVER the proband's alleles"
+      }
+    },
+    "DICER1-AS1": {
+      "symbol": "DICER1-AS1",
+      "ensembl_id": "ENSG00000235706",
+      "ensembl_release": "116",
+      "transcript": "ENST00000671073",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:27:02+00:00",
+      "path": "app/src/fixtures/data/gene-structure/DICER1-AS1.json",
+      "sha256": "a4d14600f31e4d562100e5faa03ccdbc2c13105df4c0437e067ba5dbcd3f3715",
+      "bytes": 378,
+      "counts": {
+        "exons": 2,
+        "domains": 0,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "FAM76B": {
+      "symbol": "FAM76B",
+      "ensembl_id": "ENSG00000077458",
+      "ensembl_release": "116",
+      "transcript": "ENST00000358780",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:26:29+00:00",
+      "path": "app/src/fixtures/data/gene-structure/FAM76B.json",
+      "sha256": "ae35730e0ffa7a1df2876c2b86d1debe169138a1461f4773cfa8a8bcfa894907",
+      "bytes": 1011,
+      "counts": {
+        "exons": 10,
+        "domains": 1,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "MAD1L1": {
+      "symbol": "MAD1L1",
+      "ensembl_id": "ENSG00000002822",
+      "ensembl_release": "116",
+      "transcript": "ENST00000265854",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:21:21+00:00",
+      "path": "app/src/fixtures/data/gene-structure/MAD1L1.json",
+      "sha256": "36d803a812b08a6330441b91b63b7201e0a2f7c17309cc96327b344372b4d2c6",
+      "bytes": 2046,
+      "counts": {
+        "exons": 19,
+        "domains": 5,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "MAD2L1BP": {
+      "symbol": "MAD2L1BP",
+      "ensembl_id": "ENSG00000124688",
+      "ensembl_release": "116",
+      "transcript": "ENST00000372171",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:22:09+00:00",
+      "path": "app/src/fixtures/data/gene-structure/MAD2L1BP.json",
+      "sha256": "0aa66c1fc50ee5ef6718153db1b0c0609b59cea261844fd9caa76fe0b8758fbd",
+      "bytes": 740,
+      "counts": {
+        "exons": 3,
+        "domains": 2,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "MAMDC2-AS1": {
+      "symbol": "MAMDC2-AS1",
+      "ensembl_id": "ENSG00000204706",
+      "ensembl_release": "116",
+      "transcript": "ENST00000715771",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:27:11+00:00",
+      "path": "app/src/fixtures/data/gene-structure/MAMDC2-AS1.json",
+      "sha256": "557c0240c63f3efbdda674b3771446be5a5fe762d4f2b0d0e2dcca634138d3f6",
+      "bytes": 630,
+      "counts": {
+        "exons": 6,
+        "domains": 0,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "MTMR2": {
+      "symbol": "MTMR2",
+      "ensembl_id": "ENSG00000087053",
+      "ensembl_release": "116",
+      "transcript": "ENST00000346299",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:23:41+00:00",
+      "path": "app/src/fixtures/data/gene-structure/MTMR2.json",
+      "sha256": "5cb49d9e3da80b28b7791c2326d6baf48c4de61eeca6df20bba91a1313008a62",
+      "bytes": 2672,
+      "counts": {
+        "exons": 15,
+        "domains": 11,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "PAK6": {
+      "symbol": "PAK6",
+      "ensembl_id": "ENSG00000137843",
+      "ensembl_release": "116",
+      "transcript": "ENST00000560346",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:23:10+00:00",
+      "path": "app/src/fixtures/data/gene-structure/PAK6.json",
+      "sha256": "fff7fd4187c21d08571afe927fbc6adeec1f8a4398f65b09a081f7e017f29238",
+      "bytes": 2536,
+      "counts": {
+        "exons": 11,
+        "domains": 12,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "SEH1L": {
+      "symbol": "SEH1L",
+      "ensembl_id": "ENSG00000085415",
+      "ensembl_release": "116",
+      "transcript": "ENST00000399892",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:24:17+00:00",
+      "path": "app/src/fixtures/data/gene-structure/SEH1L.json",
+      "sha256": "3e3e5b478ab6b49ff289d50c1a5a1b58f0ed9bca1024f0bbf2c22125a9255f83",
+      "bytes": 3019,
+      "counts": {
+        "exons": 9,
+        "domains": 18,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "SLF2": {
+      "symbol": "SLF2",
+      "ensembl_id": "ENSG00000119906",
+      "ensembl_release": "116",
+      "transcript": "ENST00000238961",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:21:27+00:00",
+      "path": "app/src/fixtures/data/gene-structure/SLF2.json",
+      "sha256": "3844cebb1c76c5fff3ad75acc67f2167cdbc433e376fcb71e8c0de8fe40aaf1f",
+      "bytes": 1733,
+      "counts": {
+        "exons": 20,
+        "domains": 1,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    },
+    "SMC5": {
+      "symbol": "SMC5",
+      "ensembl_id": "ENSG00000198887",
+      "ensembl_release": "116",
+      "transcript": "ENST00000361138",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T13:46:33+00:00",
+      "path": "app/src/fixtures/data/gene-structure/SMC5.json",
+      "sha256": "3dcd36db51d4adb2b84c600b04921a0b2f21e9e5c62476fd1cec08c00d77cade",
+      "bytes": 3140,
+      "counts": {
+        "exons": 25,
+        "domains": 4,
+        "candidates": 3
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "SYNTHETIC \u2014 three invented alleles scaled to this protein's length, rsid synthetic-n, which is not the shape of a dbSNP accession and renders inside the label as its own disclaimer. NEVER the proband's alleles"
+      }
+    },
+    "TP53": {
+      "symbol": "TP53",
+      "ensembl_id": "ENSG00000141510",
+      "ensembl_release": "116",
+      "transcript": "ENST00000269305",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T13:44:46+00:00",
+      "path": "app/src/fixtures/data/gene-structure/TP53.json",
+      "sha256": "fcee91d41045f6bc423dc872bd3b986a02d6f68e224326d5d0212d4f99115883",
+      "bytes": 3945,
+      "counts": {
+        "exons": 11,
+        "domains": 17,
+        "candidates": 3
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "SYNTHETIC \u2014 three invented alleles scaled to this protein's length, rsid synthetic-n, which is not the shape of a dbSNP accession and renders inside the label as its own disclaimer. NEVER the proband's alleles"
+      }
+    },
+    "TRIP13": {
+      "symbol": "TRIP13",
+      "ensembl_id": "ENSG00000071539",
+      "ensembl_release": "116",
+      "transcript": "ENST00000166345",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T13:46:20+00:00",
+      "path": "app/src/fixtures/data/gene-structure/TRIP13.json",
+      "sha256": "e03b4469c2c11837e903a31f5377ee51c882719e64409841b87ee5e89b335c20",
+      "bytes": 2975,
+      "counts": {
+        "exons": 13,
+        "domains": 10,
+        "candidates": 3
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "SYNTHETIC \u2014 three invented alleles scaled to this protein's length, rsid synthetic-n, which is not the shape of a dbSNP accession and renders inside the label as its own disclaimer. NEVER the proband's alleles"
+      }
+    },
+    "WRAP53": {
+      "symbol": "WRAP53",
+      "ensembl_id": "ENSG00000141499",
+      "ensembl_release": "116",
+      "transcript": "ENST00000396463",
+      "uniprot": null,
+      "model_url": null,
+      "latest_version": null,
+      "model_created_date": null,
+      "retrieved_at": "2026-09-03T12:24:05+00:00",
+      "path": "app/src/fixtures/data/gene-structure/WRAP53.json",
+      "sha256": "cda714d486b3d0174657a57aa50cd60989132744f2bedaa036a5d29318b3ec31",
+      "bytes": 2507,
+      "counts": {
+        "exons": 11,
+        "domains": 13,
+        "candidates": 0
+      },
+      "fields": {
+        "gene": "REAL \u2014 the gene set's own spelling of the symbol",
+        "ensembl_id": "REAL \u2014 Ensembl stable gene id",
+        "chrom": "REAL \u2014 Ensembl seq_region_name",
+        "start": "REAL \u2014 Ensembl gene start, GRCh38 reference coordinate (not a patient call)",
+        "end": "REAL \u2014 Ensembl gene end, GRCh38 reference coordinate (not a patient call)",
+        "strand": "REAL \u2014 Ensembl strand",
+        "biotype": "REAL \u2014 Ensembl biotype",
+        "transcript": "REAL \u2014 the canonical transcript id",
+        "protein": "REAL \u2014 the canonical translation id, null for a non-coding gene",
+        "protein_length": "REAL \u2014 Ensembl translation length",
+        "exons": "REAL \u2014 Ensembl exon boundaries, renumbered in transcription order",
+        "domains": "REAL \u2014 Ensembl /overlap/translation features, Pfam/SMART/etc only",
+        "in_panel": "REAL \u2014 derived from ressources/data-profile/mva_panel_grch38.bed",
+        "candidates": "EMPTY \u2014 no annotation was ever run outside the panel, so there are none"
+      }
+    }
+  }
+}

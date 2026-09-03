@@ -21,6 +21,7 @@ export type * from './jobs';
 export type * from './overview';
 export type * from './panel';
 export type * from './phenotype';
+export type * from './protein';
 export type * from './provenance';
 export type * from './reads';
 export type * from './science';

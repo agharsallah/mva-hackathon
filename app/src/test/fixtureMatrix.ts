@@ -36,8 +36,21 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   ['/api/panel/clinvar-presence', { gene: 'BUB1B' }],
   ['/api/panel/suppressed', undefined],
   ['/api/panel/suppressed', { gene: 'BUB1B' }],
+  // The curated gene set the structure exhibits read their vocabulary from: three groups,
+  // and the `in_panel` / `coding` flags that decide whether an allele can be painted and
+  // whether a protein exists at all.
+  ['/api/panel/structure-genes', undefined],
   ['/api/panel/gene-structure', undefined],
   ['/api/panel/gene-structure', { gene: 'TP53' }],
+  // One row per gene that has its own committed AlphaFold trace, because the point of the
+  // per-gene fixtures is that they are *different* models: one hash for all of them would
+  // pass while every gene silently served BUB1B's backbone, which is what they replaced.
+  ['/api/panel/protein-structure', undefined],
+  ['/api/panel/protein-structure', { gene: 'TP53' }],
+  ['/api/panel/protein-structure', { gene: 'CEP57' }],
+  ['/api/panel/protein-structure', { gene: 'DICER1' }],
+  ['/api/panel/gene-structure', { gene: 'CEP57' }],
+  ['/api/panel/gene-structure', { gene: 'DICER1' }],
   ['/api/reads/runs', undefined],
   ['/api/reads/partitions', undefined],
   ['/api/reads/flowcell', undefined],
@@ -51,6 +64,7 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   ['/api/provenance/lineage', undefined],
   ['/api/provenance/derivations', undefined],
   ['/api/provenance/sources', undefined],
+  ['/api/provenance/reference', undefined],
   ['/api/probe/ledger', undefined],
   ['/api/science/hypotheses', undefined],
   ['/api/science/evidence', undefined],

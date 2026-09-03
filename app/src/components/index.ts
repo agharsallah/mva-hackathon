@@ -20,7 +20,14 @@ export { StatTile, type StatTileProps } from './StatTile';
 
 // Layout and structure
 export { Card, type CardProps } from './Card';
-export { Section, Select, TextFilter, Toggle } from './Controls';
+export {
+  Section,
+  Select,
+  type SelectGroup,
+  type SelectOption,
+  TextFilter,
+  Toggle,
+} from './Controls';
 export { EmptyState, type EmptyStateProps } from './EmptyState';
 export { Callout, Explainer, type ExplainerProps, type Term } from './Explainer';
 export { Footer } from './Footer';
