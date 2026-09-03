@@ -379,4 +379,4 @@ a rank is quoted against.
 **These are not Exomiser output.** They come from a human-only reimplementation of its
 hiPHIVE phenotype path — no mouse, no zebrafish, no protein-interaction random walk —
 chosen on the published finding that human-only scores better
-([Genome Medicine 17:127, 2025](https://europepmc.org/articles/PMC12539062), PMID 41121346).
+([Genome Medicine vol 17 art 127, 2025](https://europepmc.org/articles/PMC12539062), PMID 41121346).

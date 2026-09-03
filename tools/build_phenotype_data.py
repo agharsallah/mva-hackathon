@@ -137,7 +137,7 @@ def write_provenance(path: Path, inputs: list[dict], outputs: dict[str, int], re
             "protein-interaction random walk. This is a reimplementation of hiPHIVE's "
             "human-only path and is not Exomiser output."
         ),
-        "method_citation": "Genome Medicine 17:127 (2025), PMID 41121346",
+        "method_citation": "Genome Medicine vol 17 art 127 (2025), PMID 41121346",
         "inputs": inputs,
         "outputs": outputs,
         "licence": "HPO is CC BY 4.0; cite PMID 33264411",

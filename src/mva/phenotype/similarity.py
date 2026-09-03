@@ -36,7 +36,7 @@ query set achieves against *itself* - the best any gene could possibly do - puts
 **What this is not.** Exomiser's published hiPHIVE additionally walks mouse and zebrafish
 models and a STRING protein-interaction matrix. Those are switched off deliberately: on
 the UDN cohort, ``prioritiser-params=human`` scores 82.8% top-10 against 66.6% for the
-all-species default (Genome Medicine 17:127, 2025). This module is the human-only path,
+all-species default (Genome Medicine vol 17 art 127, 2025). This module is the human-only path,
 and every result it produces must be described that way.
 """
 

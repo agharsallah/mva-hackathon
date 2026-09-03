@@ -1,11 +1,11 @@
 {
   "release": "hp/releases/2026-06-23",
-  "built_at": "2026-09-03T07:42:52+00:00",
+  "built_at": "2026-09-03T08:09:03+00:00",
   "built_by": "tools/build_phenotype_data.py",
-  "code_version": "f486d66",
+  "code_version": "796b213",
   "code_version_note": "the commit at build time, which precedes the commit that lands these files",
   "method": "Resnik similarity over the most informative common ancestor, rolled up best-match-average in both directions and normalised by the query set's self-score. Human associations only - no mouse, no zebrafish, no protein-interaction random walk. This is a reimplementation of hiPHIVE's human-only path and is not Exomiser output.",
-  "method_citation": "Genome Medicine 17:127 (2025), PMID 41121346",
+  "method_citation": "Genome Medicine vol 17 art 127 (2025), PMID 41121346",
   "inputs": [
     {
       "name": "hp.obo",

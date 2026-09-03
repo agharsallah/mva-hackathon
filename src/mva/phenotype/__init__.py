@@ -9,7 +9,7 @@ the disease is cannot also be evidence about which gene it is.
 Why it is a reimplementation rather than a wrapper: Exomiser is a Java application whose
 data ships as H2 MVStore databases and Java-serialised objects, with no Python reader and
 a 31.5 GB unpacked footprint. Its **phenotype** inputs, though, are plain text. And the
-published optimisation study (Genome Medicine 17:127, 2025) measures the human-only
+published optimisation study (Genome Medicine vol 17 art 127, 2025) measures the human-only
 configuration at 82.8% top-10 against 66.6% for the cross-species default - so the two
 components that are genuinely hard to reproduce, the protein-interaction random walk and
 the mouse and zebrafish models, are the ones the evidence says to leave out.

@@ -41,7 +41,7 @@ Exomiser is the standard tool for this and it is a Java application. Measured, n
 Two further facts settle it independently of the language: `2402_hg38.zip` is 23.2 GB
 compressed, and this machine has 20 GB free.
 
-**The finding that makes a reimplementation viable.** Genome Medicine 17:127 (2025), PMID
+**The finding that makes a reimplementation viable.** Genome Medicine vol 17 art 127 (2025), PMID
 41121346 — the Exomiser optimisation study — measures hiPHIVE configurations on the UDN
 cohort:
 

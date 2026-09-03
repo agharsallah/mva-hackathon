@@ -20,7 +20,7 @@ Exomiser ships its data as H2 MVStore databases and Java-serialised Jannovar obj
 Python reader exists, and the hg38 bundle is 31.5 GB unpacked against 20 GB of free disk.
 Its *phenotype* inputs, though, are plain text.
 
-And the published optimisation study (Genome Medicine 17:127, 2025, PMID 41121346)
+And the published optimisation study (Genome Medicine vol 17 art 127, 2025, PMID 41121346)
 measures `prioritiser-params=human` at **82.8%** top-10 against **66.6%** for the
 all-species default. The two components that are genuinely hard to reproduce — the STRING
 protein-interaction random walk and the mouse and zebrafish models — are the ones the

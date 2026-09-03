@@ -82,13 +82,13 @@ export default function PhenotypePage() {
       <Callout tone="machinery" title="This is not Exomiser, and the difference is deliberate">
         Exomiser is the standard tool for this and it is a Java application whose data ships as H2
         database files — 31.5 GB unpacked, with no Python reader. Its <em>phenotype</em> inputs,
-        though, are plain text, and the published optimisation study (Genome Medicine 17:127, 2025)
-        measures its <strong>human-only</strong> configuration at 82.8% top-10 against 66.6% for the
-        cross-species default. So the two components that are genuinely hard to reproduce — the
-        protein-interaction random walk and the mouse and zebrafish models — are the ones the
-        evidence says to switch off. What is left is a graph walk and a logarithm, which is what
-        runs here: no JVM, under 100 MB of reference data. Nothing on this page may be reported as
-        Exomiser output.
+        though, are plain text, and the published optimisation study (Genome Medicine vol 17 art
+        127, 2025) measures its <strong>human-only</strong> configuration at 82.8% top-10 against
+        66.6% for the cross-species default. So the two components that are genuinely hard to
+        reproduce — the protein-interaction random walk and the mouse and zebrafish models — are the
+        ones the evidence says to switch off. What is left is a graph walk and a logarithm, which is
+        what runs here: no JVM, under 100 MB of reference data. Nothing on this page may be reported
+        as Exomiser output.
       </Callout>
 
       <Section title="The input">
