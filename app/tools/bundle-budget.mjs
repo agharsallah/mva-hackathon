@@ -59,9 +59,16 @@ const PAGES_DIR = path.join(APP_ROOT, 'src/pages');
 // a clean worktree; the footer's live dependency-status query is the +7.5 kB raw.
 // Budgets give ~6% headroom — enough for incidental churn, not enough to hide a real
 // regression.
+//
+// Re-blessed 2026-09-03: 267.65 kB raw / 85.06 kB gzip across 3 initial files. HEAD before
+// the change measured 259.58 / 83.11 in a clean worktree; the +8 kB raw is the information
+// architecture that now lives in the entry chunk — the two-tier header (section tabs + the
+// active section's pages), the manifest-driven page header and journey footer, and the
+// footer sitemap (`src/app/PageFrame.tsx`, `src/components/{Header,PageHeader,journey}.tsx`).
+// That is shell, so it belongs in first paint; no page code moved into the entry.
 const BUDGETS = Object.freeze({
-  INITIAL_RAW_BYTES: 260_000,
-  INITIAL_GZIP_BYTES: 84_000,
+  INITIAL_RAW_BYTES: 280_000,
+  INITIAL_GZIP_BYTES: 89_000,
 });
 
 const KB = (bytes) => `${(bytes / 1000).toFixed(2)} kB`;
