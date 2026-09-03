@@ -45,6 +45,13 @@ Page order on a screen follows the same rule everywhere: h1 and description (fro
 manifest), the headline `Callout` (the finding), the `Explainer` (background, terms as
 chips), then the sections, then the journey hand-off. Answer first, background second.
 
+Within a page, `PageFrame` lays out two columns at `xl` and up: the content column, and a
+sticky rail beside it holding `OnThisPage`. Below `xl` the rail is replaced by the compact
+`JumpToSection` select under the page header. Neither is wired by a page — both read the
+section registry (`lib/sections.ts`), which every mounted `Section` announces itself to, as
+does the ⌘K palette in the header. So a page gets in-page navigation by rendering `Section`s,
+and the shell needs to know nothing about what any page contains.
+
 `modules/journey.ts` holds the pure lookups (`moduleAt`, `groupOf`, `pagesIn`, `neighbours`,
 `positionInGroup`); nothing else scans `modules` by hand. Pages may not import `app/`
 (`eslint-plugin-boundaries`), which is why the groups reach `JourneyMap` through

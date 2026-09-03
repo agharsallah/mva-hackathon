@@ -65,6 +65,14 @@ links from the same manifest; below it, the hand-off to the next page.
 | Decide   | What do we believe, and what has it cost to find out? | Science → Probes                      |
 | Platform | What exists, where did it come from, and is it up?    | Catalog → Provenance → Status → Style |
 
+Inside a page there are three more ways to move, all fed by one registry that every `Section`
+announces itself to — no page wires any of them. **On this page**: a sticky rail beside the
+content on a wide screen, listing that page's sections in reading order and marking the one in
+view; below `xl` the same list is a compact **Jump to section** select under the page header.
+**⌘K** (Ctrl+K) opens a jump palette over anything — the sections on this page first, then every
+page in the app by title, then the app-wide actions (overview, switch theme, back to top). Type
+to filter, arrows to move, Enter to go, Esc to close.
+
 On a page the order is fixed: the finding (`Callout`), the background (`Explainer` — intro of at
 most two sentences, terms as click-to-define chips, "all definitions" remembered across pages),
 the exhibits, the hand-off.
