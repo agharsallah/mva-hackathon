@@ -243,13 +243,13 @@ export const useEvidence = () => useEndpoint<EvidenceRegister>('/api/science/evi
 
 /** Background poll for the Status board: quiet, because probing costs real round trips
  * to Postgres, MinIO and Ensembl on every pass. */
-export const HEALTH_POLL_MS = 600_000;
+export const HEALTH_POLL_MS = 1_800_000;
 
 /**
  * Dependency health board (`Status` page).
  *
  * Two cadences, on purpose. `staleTime` stays short so *opening* the page always probes
- * rather than rendering a cached "up" from ten minutes ago — a stale health card is worse
+ * rather than rendering a cached "up" from half an hour ago — a stale health card is worse
  * than no card. `refetchInterval` is long because each pass costs real round trips to
  * Postgres, MinIO and a third party; an open tab should not generate traffic all day.
  *
