@@ -151,6 +151,20 @@ enforced in the rendering rather than left to the reader:
   Python and fails until it has a `created_by` (which command writes it, and whether that
   replaces, rebuilds or appends) and a `why`. Adding a table without describing it breaks
   `pytest`, and the failure names the entry to add and the file to add it to.
+- **Loading and failure are designed states.** A page hands its query to `Loaded` and never
+  writes an `isLoading ? … : error ? … : …` ladder. The waiting state is a `Skeleton` shaped
+  like the thing it replaces — the exhibit's axes and bars, the table's rows, the four-up tile
+  row — so the layout does not jump when data lands; it paints nothing for its first 150 ms
+  (a fast answer never flashes grey) and after 6 s says so, with a link to `/status`. A failure
+  is one of six named kinds, not a spinner that stopped: no API answering, an endpoint the
+  running API does not have, the reads service down, a rejected query, a server fault, a
+  cancelled request — each with its own sentence, its own remedy and, where one exists, the
+  command that fixes it, plus Retry, Open Status and a Details block for a bug report
+  (`app/src/components/failure.ts`). When a **refetch** fails over a warm cache the last answer
+  stays on screen under a strip saying so, instead of a chart being replaced by an error. Only
+  a network failure or a 5xx is retried (twice, backed off); a 4xx is the API saying no to this
+  request and reaches the reader immediately (`app/src/lib/queryClient.ts`). All of it is
+  rendered live under "Loading and failure" on `/style-guide`, from constructed errors.
 - **A gap is rendered, never blanked.** A derived table with no lineage edge and a delivered
   object with no ingest-ledger row both draw a yellow chip saying which record is missing, in
   place of an empty cell. Same rule as "null is not zero" above, applied to provenance.

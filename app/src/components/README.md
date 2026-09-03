@@ -45,10 +45,42 @@ a file directly, so a page never needs to know where a primitive lives.
 
 ## Async / query state
 
-| Name                     | Purpose                                                                                                   | Usage                                                   |
-| ------------------------ | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `Loaded`                 | Render-prop gate over a react-query result — one loading skeleton, one error card, everywhere.            | `<Loaded query={q}>{(data) => <Exhibit .../>}</Loaded>` |
-| `Skeleton` / `ErrorCard` | The two states `Loaded` renders; used directly where a page can't wait on `Loaded`'s data-callback shape. | `{q.error && <ErrorCard error={q.error} />}`            |
+Loading and failure are designed states, not fallbacks. A page never writes
+`isLoading ? … : error ? … : …`: it hands its query to `Loaded` and gets all four states.
+All three are rendered live under "Loading and failure" on `/style-guide` — four skeletons
+and one card per failure kind, built from constructed errors.
+
+| Name            | Purpose                                                                                                                                                                                                                                                                                                                                                                                         | Usage                                                   |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `Loaded`        | Render-prop gate over a react-query result. Pending → `Skeleton`; failed with nothing cached → `ErrorCard` wired to `refetch`; succeeded → the children; **failed with a cached answer → the children _plus_ a stale strip**, so a failed refresh never replaces a chart with an error.                                                                                                         | `<Loaded query={q}>{(data) => <Exhibit .../>}</Loaded>` |
+| `Skeleton`      | The waiting state, shaped like the thing it stands in for: `variant` `exhibit` (default — axes, bars, caption) · `table` (header rule + `rows` body rows) · `tiles` (the four-up `StatTile` row) · `block` (a plain box holding `height`). `role="status"`, `aria-busy`, and an sr-only `label`.                                                                                                | `<Skeleton variant="table" rows={12} height={420} />`   |
+| `ErrorCard`     | The failure state. `role="alert"`, the classified title and explanation, and always three controls: **Retry** (`onRetry`, omitted where nothing can be retried), **Open Status** (`/status`) and **Details** (a `<dl>`: endpoint + status for an `ApiError`, message + timestamp for anything else). `title` overrides the heading (a module boundary names the module); children add guidance. | `<ErrorCard error={q.error} onRetry={q.refetch} />`     |
+| `classifyError` | The data half of `ErrorCard`, in `failure.ts` so that file exports only components. Returns a `Failure` — `kind`, `title`, `explain`, and where one exists a `remedy` and a fix `command`.                                                                                                                                                                                                      | `classifyError(err).kind === 'route-missing'`           |
+| `FetchBar`      | The 2px machinery-coloured bar under the header while anything is in flight — react-query's `useIsFetching`, so no page wires it. Lives in `Header.tsx`, **not** the barrel: the shell mounts it once.                                                                                                                                                                                          | mounted by `Header`; nothing to call                    |
+
+**Two timings, both in `Skeleton`.** It paints nothing for the first **150 ms** (`opacity-0`),
+so an answer that arrives fast never flashes grey; then it fades in and pulses. At **6 s** it
+grows a "Still loading" note linking to `/status`, because by then the honest message is that
+something is wrong and here is where to look.
+
+**Six named failures plus a fallback**, each with its own sentence and remedy, because each has
+a different fix:
+
+| `kind`          | What happened                                                         | What the card offers                        |
+| --------------- | --------------------------------------------------------------------- | ------------------------------------------- |
+| `unreachable`   | A `TypeError` from `fetch` — no API answered (or CORS refused).       | Names the URL tried; `uv run mva-viz-api`.  |
+| `route-missing` | 404/501, or FastAPI's bare `Not Found` — the API predates this build. | Restart the API; `uv run mva-viz-api`.      |
+| `upstream-down` | 503 — the viz API is up, the reads service behind it is not.          | The Status page card names the remedy.      |
+| `bad-request`   | Any other 4xx — the API refused these parameters.                     | Change the selection, or reset to defaults. |
+| `server-fault`  | 5xx — the API accepted the request then failed.                       | The API log has the traceback.              |
+| `aborted`       | `error.name === 'AbortError'` — the page moved on first.              | Retry.                                      |
+| `unknown`       | The honest fallback; nothing is guessed.                              | Retry, and report the Details block.        |
+
+**Retries are policy, not per-call** ([`lib/queryClient.ts`](../lib/queryClient.ts)):
+`shouldRetry` retries a network failure or a 5xx twice with a short back-off (the API may be
+restarting), and never retries a 4xx — that is the API saying no to _this_ request, and asking
+again gets the same answer. So an `ErrorCard` for a `bad-request` appears immediately, and one
+for a `server-fault` only after the retries are spent.
 
 ## Export tooling
 
