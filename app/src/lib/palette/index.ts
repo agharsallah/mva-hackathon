@@ -51,9 +51,15 @@ export {
   SERIES,
   SEVERITY_ORANGE,
 } from './scales';
+export { LIGHT_RAMP, mirrorRamp, mirrorShade, type Ramp, rampFor } from './theme';
 export { type Tone, TONE_FAMILY, TONE_MARK, TONES } from './tones';
 
+import { themeStore } from '../theme';
 import { RAMP } from './ramps.generated';
+import { rampFor } from './theme';
+
+/** The live ramp: dark as generated, or its shade mirror when the light theme is on. */
+const live = () => rampFor(themeStore.get());
 
 /**
  * The named single colours, for chart code that wants a meaning rather than a shade number.
@@ -61,44 +67,95 @@ import { RAMP } from './ramps.generated';
  * Every value is a stop on a generated ramp — this object renames, it never invents. Where a
  * chart wants the tone vocabulary instead (`good`/`broken`/...), `TONE_MARK` is the same
  * numbers keyed by tone.
+ *
+ * ## Why half of these are getters
+ *
+ * Two kinds of colour live here. A **data mark** (`good`, `broken`, `decision`, `machinery`,
+ * `raw` — the 500 stops) means the same thing in both themes and is the same number in both:
+ * the mirror in `./theme.ts` maps 500 to itself precisely so a legend stays true across a
+ * theme switch. Everything **structural** — ink, grid, paper, panel, and the dim/fill tints
+ * drawn as backgrounds behind a mark — has to invert, or the light page is grey text on grey.
+ *
+ * Those are getters rather than constants because `C` is a module-level object read at render
+ * time by ~40 files that take no hook. Reading through `live()` means the theme is resolved
+ * when the colour is *used*, not when this module was first imported, so nothing has to be
+ * rebuilt or re-imported when the reader flips the switch — `AppShell` re-keys the page frame
+ * and every exhibit reads the new value on its way back up.
  */
 export const C = {
   good: RAMP.good[500],
-  goodDim: RAMP.good[800],
   broken: RAMP.broken[500],
-  brokenDim: RAMP.broken[900],
   decision: RAMP.decision[500],
   machinery: RAMP.machinery[500],
-  machineryDim: RAMP.machinery[900],
   raw: RAMP.raw[500],
-  /** A value that was never computed at all. Same grey as the app's chrome, on purpose. */
-  absent: RAMP.chrome[500],
+  /** A dark-green fill behind a `good` mark in dark; a pale one in light. */
+  get goodDim(): string {
+    return live().good[800];
+  },
+  /** The `broken` twin of `goodDim`. */
+  get brokenDim(): string {
+    return live().broken[900];
+  },
+  /** The `machinery` twin of `goodDim`; also drawn as an opaque stroke. */
+  get machineryDim(): string {
+    return live().machinery[900];
+  },
+  /** A value that was never computed at all. Same grey as the app's chrome, on purpose.
+   * Shade 500 mirrors to itself, so this grey is identical in both themes. */
+  get absent(): string {
+    return live().chrome[500];
+  },
   /** Body text, and any label drawn on the page background. */
-  ink: RAMP.chrome[200],
+  get ink(): string {
+    return live().chrome[200];
+  },
   /** Secondary text: axis ticks, legends, captions. */
-  inkDim: RAMP.chrome[400],
+  get inkDim(): string {
+    return live().chrome[400];
+  },
   /** Chart gridlines and every border in the app. */
-  grid: RAMP.chrome[800],
+  get grid(): string {
+    return live().chrome[800];
+  },
   /** The page background. */
-  paper: RAMP.chrome[950],
+  get paper(): string {
+    return live().chrome[950];
+  },
   /** A panel/card background, one step up from `paper`. */
-  panel: RAMP.chrome[900],
+  get panel(): string {
+    return live().chrome[900];
+  },
   /**
    * A bin/cell that was measured but sits below the confidence floor — distinct from
    * `absent`, which marks a value that was never computed at all. Flat grey on purpose: it
    * must not be mistakable for a point on any of the colour scales in `./scales`.
    */
-  unmeasured: RAMP.chrome[700],
+  get unmeasured(): string {
+    return live().chrome[700];
+  },
   /** The blue stop inside `DENSITY_SCALE` — reused verbatim wherever legend prose spells out
    * the "dark → blue → purple" ramp inline (BAF karyogram, density bins, karyotype, flowcell). */
-  densityBlue: RAMP.machinery[700],
-  /** Off-white label text drawn directly on a coloured mark (e.g. a treemap tile fill), where
-   * `ink`'s grey doesn't read against a saturated background. */
-  onFill: RAMP.chrome[100],
+  get densityBlue(): string {
+    return live().machinery[700];
+  },
+  /** Label text drawn directly on a coloured mark (e.g. a treemap tile fill), where `ink`'s
+   * grey doesn't read against a saturated background: off-white in dark, near-black in light. */
+  get onFill(): string {
+    return live().chrome[100];
+  },
   /** `machineryDim` at ~33% alpha — a translucent blue fill behind a "neutral machinery"
    * station box, as opposed to `machineryDim`'s own opaque use as a stroke/line colour. */
-  machineryFill: `${RAMP.machinery[900]}55`,
+  get machineryFill(): string {
+    return alpha(live().machinery[900]);
+  },
   /** The same 33% alpha in the decision family — a translucent fill behind a "decision point"
    * station box, matching `BOX.decision`'s tint at the same opacity family. */
-  decisionFill: `${RAMP.decision[900]}55`,
-} as const;
+  get decisionFill(): string {
+    return alpha(live().decision[900]);
+  },
+};
+
+/** ~33% alpha, as the 8-digit hex form every consumer of these two fills already expects. */
+function alpha(hex: string): string {
+  return `${hex}55`;
+}

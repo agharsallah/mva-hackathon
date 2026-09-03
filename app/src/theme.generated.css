@@ -90,3 +90,105 @@
   --color-severity-900: #7e2a0c;
   --color-severity-950: #441306;
 }
+
+/*
+ * The light theme, as a shade mirror of the dark one: shade N takes the value of shade
+ * (1000 - N), so 50<->950, 100<->900, 200<->800, 300<->700, 400<->600 and 500 is unchanged.
+ *
+ * Nothing else in the app knows about this. The shade roles are fixed (950 = page/panel
+ * background, 800/900 = borders, 300/400 = text, 500 = the data mark), so re-pointing the
+ * values under those same names flips every `bg-chrome-950`, `border-good-800` and
+ * `text-broken-300` already written, with no class name changed and no second palette to
+ * keep in sync. The 500 marks are identical in both themes on purpose: a legend that says
+ * "green means good" must keep pointing at the same green.
+ *
+ * Selector, not a media query: `themeStore` (src/lib/theme.ts) writes
+ * `document.documentElement.dataset.theme`, so the switch is a runtime toggle, and the
+ * system preference only seeds its initial value. Unlayered, so it outranks the `@theme`
+ * declarations above whatever cascade layer Tailwind emits them into.
+ */
+:root[data-theme='light'] {
+  --color-chrome-50: #09090b;
+  --color-chrome-100: #18181b;
+  --color-chrome-200: #27272a;
+  --color-chrome-300: #3f3f46;
+  --color-chrome-400: #52525c;
+  --color-chrome-500: #71717b;
+  --color-chrome-600: #9f9fa9;
+  --color-chrome-700: #d4d4d8;
+  --color-chrome-800: #e4e4e7;
+  --color-chrome-900: #f4f4f5;
+  --color-chrome-950: #fafafa;
+
+  --color-good-50: #032e15;
+  --color-good-100: #0d542b;
+  --color-good-200: #016630;
+  --color-good-300: #008236;
+  --color-good-400: #00a63e;
+  --color-good-500: #00c950;
+  --color-good-600: #05df72;
+  --color-good-700: #7bf1a8;
+  --color-good-800: #b9f8cf;
+  --color-good-900: #dcfce7;
+  --color-good-950: #f0fdf4;
+
+  --color-broken-50: #460809;
+  --color-broken-100: #82181a;
+  --color-broken-200: #9f0712;
+  --color-broken-300: #c10007;
+  --color-broken-400: #e7000b;
+  --color-broken-500: #fb2c36;
+  --color-broken-600: #ff6467;
+  --color-broken-700: #ffa2a2;
+  --color-broken-800: #ffc9c9;
+  --color-broken-900: #ffe2e2;
+  --color-broken-950: #fef2f2;
+
+  --color-decision-50: #432004;
+  --color-decision-100: #733e0a;
+  --color-decision-200: #894b00;
+  --color-decision-300: #a65f00;
+  --color-decision-400: #d08700;
+  --color-decision-500: #f0b100;
+  --color-decision-600: #fdc700;
+  --color-decision-700: #ffdf20;
+  --color-decision-800: #fff085;
+  --color-decision-900: #fef9c2;
+  --color-decision-950: #fefce8;
+
+  --color-machinery-50: #162456;
+  --color-machinery-100: #1c398e;
+  --color-machinery-200: #193cb8;
+  --color-machinery-300: #1447e6;
+  --color-machinery-400: #155dfc;
+  --color-machinery-500: #2b7fff;
+  --color-machinery-600: #51a2ff;
+  --color-machinery-700: #8ec5ff;
+  --color-machinery-800: #bedbff;
+  --color-machinery-900: #dbeafe;
+  --color-machinery-950: #eff6ff;
+
+  --color-raw-50: #3c0366;
+  --color-raw-100: #59168b;
+  --color-raw-200: #6e11b0;
+  --color-raw-300: #8200db;
+  --color-raw-400: #9810fa;
+  --color-raw-500: #ad46ff;
+  --color-raw-600: #c27aff;
+  --color-raw-700: #dab2ff;
+  --color-raw-800: #e9d4ff;
+  --color-raw-900: #f3e8ff;
+  --color-raw-950: #faf5ff;
+
+  --color-severity-50: #441306;
+  --color-severity-100: #7e2a0c;
+  --color-severity-200: #9f2d00;
+  --color-severity-300: #ca3500;
+  --color-severity-400: #f54900;
+  --color-severity-500: #ff6900;
+  --color-severity-600: #ff8904;
+  --color-severity-700: #ffb86a;
+  --color-severity-800: #ffd6a7;
+  --color-severity-900: #ffedd4;
+  --color-severity-950: #fff7ed;
+}

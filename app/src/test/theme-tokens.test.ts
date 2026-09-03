@@ -6,7 +6,9 @@
  * the same generator. Nothing in the type system can state that, so it is stated here:
  *
  *  1. the committed artifacts still match what `tools/gen-theme.mjs` would write;
- *  2. every CSS custom property equals its `RAMP` twin, value for value;
+ *  2. every CSS custom property equals its `RAMP` twin, value for value — and the light
+ *     theme's block is exactly the shade mirror of it (shade N takes shade 1000 − N), which
+ *     is the whole of the light theme's definition;
  *  3. every tone-keyed map covers exactly `TONES` — the cross-file gap a `Record<Tone, …>`
  *     cannot catch, because each map could be typed against its own union;
  *  4. every class recipe names a family and shade that actually exist (Tailwind drops an
@@ -25,6 +27,7 @@ import {
   DEPTH_SCALE,
   DIVERGING_SCALE,
   type Family,
+  mirrorShade,
   QUALITY_SCALE,
   RAMP,
   RARITY_SCALE,
@@ -43,6 +46,28 @@ import { BADGE, BOX, CARD, EMPTY_DASHED, TEXT } from '../lib/ui';
 // generator's own --check invocation below uses. `import.meta.url` is not usable here —
 // under jsdom it resolves to an http:// URL, not a file one.
 const THEME_CSS = readFileSync('src/theme.generated.css', 'utf8');
+
+/** The selector the generator writes the mirrored (light) values under. */
+const LIGHT_SELECTOR = ":root[data-theme='light']";
+
+/**
+ * The `--color-*` declarations of one block, as `{ 'good-500': '#00c950' }`.
+ *
+ * Scoped to a block rather than swept over the whole file, because the file now declares
+ * every property twice — once dark, once mirrored — and a whole-file regex would silently
+ * report only whichever came last.
+ */
+function declaredIn(marker: string): Record<string, string> {
+  const start = THEME_CSS.indexOf(marker);
+  expect(start, `${marker} block is present`).toBeGreaterThanOrEqual(0);
+  const open = THEME_CSS.indexOf('{', start);
+  const body = THEME_CSS.slice(open, THEME_CSS.indexOf('}', open));
+  return Object.fromEntries(
+    [...body.matchAll(/--color-([a-z]+)-(\d{2,3}):\s*(#[0-9a-f]{6})/g)].map(
+      ([, family, shade, hex]) => [`${family}-${shade}`, hex],
+    ),
+  );
+}
 
 /** Every hex the ramps contain, for "is this colour from the palette at all" checks. */
 const RAMP_VALUES = new Set(Object.values(RAMP).flatMap((ramp) => Object.values(ramp)));
@@ -94,17 +119,27 @@ describe('generated artifacts', () => {
   });
 
   it('define one CSS custom property per ramp entry, with the same value', () => {
-    const declared = new Map(
-      [...THEME_CSS.matchAll(/--color-([a-z]+)-(\d{2,3}):\s*(#[0-9a-f]{6})/g)].map(
-        ([, family, shade, hex]) => [`${family}-${shade}`, hex],
+    const expected = FAMILIES.flatMap((family) =>
+      SHADES.map((shade: Shade) => [`${family}-${shade}`, RAMP[family][shade]] as const),
+    );
+    expect(declaredIn('@theme')).toEqual(Object.fromEntries(expected));
+  });
+
+  it('mirror every shade in the light block: shade N takes the value of shade 1000 - N', () => {
+    const expected = FAMILIES.flatMap((family) =>
+      SHADES.map(
+        (shade: Shade) => [`${family}-${shade}`, RAMP[family][mirrorShade(shade)]] as const,
       ),
     );
-    const expected = new Map(
-      FAMILIES.flatMap((family) =>
-        SHADES.map((shade: Shade) => [`${family}-${shade}`, RAMP[family][shade]] as const),
-      ),
-    );
-    expect(Object.fromEntries(declared)).toEqual(Object.fromEntries(expected));
+    expect(declaredIn(LIGHT_SELECTOR)).toEqual(Object.fromEntries(expected));
+  });
+
+  it('leave the 500 data marks identical in both themes', () => {
+    const dark = declaredIn('@theme');
+    const light = declaredIn(LIGHT_SELECTOR);
+    for (const family of FAMILIES) {
+      expect(light[`${family}-500`], `${family}-500`).toBe(dark[`${family}-500`]);
+    }
   });
 });
 

@@ -54,6 +54,20 @@ const FAMILIES = {
 
 const SHADES = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
 
+/**
+ * The light theme is a **shade mirror**, not a second palette.
+ *
+ * Under `:root[data-theme="light"]` every family's shade N is re-pointed at the hex of shade
+ * (1000 − N): 50<->950, 100<->900, 200<->800, 300<->700, 400<->600, and 500 maps to itself.
+ * The shade roles are fixed app-wide (950 = page/panel tint, 800/900 = borders, 300/400 =
+ * text, 500 = data marks), so mirroring the *values* under a fixed set of *names* flips the
+ * page from dark-on-light to light-on-dark without a single class name changing — and leaves
+ * the 500 data marks byte-identical in both themes, which is what keeps a chart legend true
+ * whichever theme it is read in. `src/lib/palette/theme.ts` applies the same rule to `RAMP`
+ * so the canvas half mirrors with the DOM half.
+ */
+const mirror = (shade) => 1000 - shade;
+
 /** oklch -> sRGB hex (Björn Ottosson's Oklab matrices, then the sRGB transfer function). */
 export function oklchToHex(lightness, chroma, hueDeg) {
   const h = (hueDeg * Math.PI) / 180;
@@ -150,13 +164,36 @@ export type Family = keyof typeof RAMP;
 }
 
 function renderCss(ramps) {
-  const vars = Object.entries(ramps)
-    .map(([family, ramp]) => SHADES.map((s) => `  --color-${family}-${s}: ${ramp[s]};`).join('\n'))
-    .join('\n\n');
+  const block = (pick) =>
+    Object.entries(ramps)
+      .map(([family, ramp]) =>
+        SHADES.map((s) => `  --color-${family}-${s}: ${ramp[pick(s)]};`).join('\n'),
+      )
+      .join('\n\n');
   return `${BANNER('The DOM half: the Tailwind v4 @theme utilities.')}
 
 @theme {
-${vars}
+${block((s) => s)}
+}
+
+/*
+ * The light theme, as a shade mirror of the dark one: shade N takes the value of shade
+ * (1000 - N), so 50<->950, 100<->900, 200<->800, 300<->700, 400<->600 and 500 is unchanged.
+ *
+ * Nothing else in the app knows about this. The shade roles are fixed (950 = page/panel
+ * background, 800/900 = borders, 300/400 = text, 500 = the data mark), so re-pointing the
+ * values under those same names flips every \`bg-chrome-950\`, \`border-good-800\` and
+ * \`text-broken-300\` already written, with no class name changed and no second palette to
+ * keep in sync. The 500 marks are identical in both themes on purpose: a legend that says
+ * "green means good" must keep pointing at the same green.
+ *
+ * Selector, not a media query: \`themeStore\` (src/lib/theme.ts) writes
+ * \`document.documentElement.dataset.theme\`, so the switch is a runtime toggle, and the
+ * system preference only seeds its initial value. Unlayered, so it outranks the \`@theme\`
+ * declarations above whatever cascade layer Tailwind emits them into.
+ */
+:root[data-theme='light'] {
+${block(mirror)}
 }
 `;
 }
