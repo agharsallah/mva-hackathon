@@ -30,7 +30,7 @@ function share(value: number | null | undefined, absent: string): ReactNode {
 }
 
 const SLOT_BUTTON =
-  'rounded border border-chrome-700 bg-chrome-900 px-1.5 py-0.5 font-mono text-[10px] ' +
+  'rounded-pill border border-line-strong bg-chrome-900 px-2 py-0.5 font-mono text-micro ' +
   'text-chrome-400 transition hover:bg-chrome-800 hover:text-chrome-200';
 
 export function buildColumns(

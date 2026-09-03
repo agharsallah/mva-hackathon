@@ -71,10 +71,10 @@ export function SceneFallback({
                 aria-pressed={on}
                 onClick={() => onSelect?.(on ? null : { id: datum.id, label: datum.label, datum })}
                 className={cx(
-                  'w-full truncate rounded border px-2 py-1 text-left font-mono text-[11px] transition',
+                  'w-full truncate rounded-pill border px-2 py-1 text-left font-mono text-micro transition',
                   on
                     ? 'border-decision-700 bg-decision-950/50 text-decision-300'
-                    : 'border-chrome-800 bg-chrome-900 text-chrome-400 hover:border-chrome-700 hover:text-chrome-200',
+                    : 'border-line bg-chrome-900 text-chrome-400 hover:border-line-strong hover:text-chrome-200',
                 )}
               >
                 {describeDatumLine(datum, field)}
@@ -88,24 +88,24 @@ export function SceneFallback({
           <button
             type="button"
             onClick={() => setPages((n) => n + 1)}
-            className="rounded border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-300 transition hover:border-chrome-600 hover:text-chrome-100"
+            className="rounded-pill border border-line-strong bg-chrome-900 px-2 py-1 text-micro text-chrome-300 transition hover:border-chrome-600 hover:text-chrome-100"
           >
             show next {Math.min(PAGE, remaining)}
           </button>
           <button
             type="button"
             onClick={() => setPages(Math.ceil(datums.length / PAGE))}
-            className="rounded border border-chrome-800 px-2 py-1 text-[11px] text-chrome-500 transition hover:border-chrome-700 hover:text-chrome-300"
+            className="rounded-pill border border-line px-2 py-1 text-micro text-chrome-500 transition hover:border-line-strong hover:text-chrome-300"
           >
             show all {datums.length}
           </button>
-          <p className="text-[11px] text-chrome-600">
+          <p className="text-micro text-chrome-600">
             {remaining} more object(s) below — highlighted and candidate objects are listed first.
           </p>
         </div>
       )}
       {remaining === 0 && datums.length > PAGE && (
-        <p className="text-[11px] text-chrome-600">
+        <p className="text-micro text-chrome-600">
           all {datums.length} object(s) listed — highlighted and candidate objects first.
         </p>
       )}

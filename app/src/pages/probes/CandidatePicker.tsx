@@ -16,6 +16,7 @@ import { useMemo, useState } from 'react';
 import { usePanelAnnotations } from '../../api/hooks';
 import type { PanelAnnotationRow } from '../../api/types';
 import type { VariantRef } from '../../api/types/probebuild';
+import { Card } from '../../components/Card';
 import { Toggle } from '../../components/Controls';
 import { type Column, DataTable } from '../../components/DataTable';
 import { Loaded } from '../../components/QueryState';
@@ -96,7 +97,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
             type="button"
             disabled={!canAdd}
             onClick={() => onAdd(toRef(r), null, r.gene ?? 'intergenic')}
-            className="rounded border border-chrome-700 px-1.5 py-0.5 text-[10px] text-chrome-300 hover:bg-chrome-800 disabled:opacity-30"
+            className="rounded-pill border border-line-strong px-2 py-0.5 text-micro text-chrome-300 hover:bg-chrome-800 disabled:opacity-30"
           >
             + single
           </button>
@@ -104,7 +105,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
             type="button"
             disabled={!canAdd}
             onClick={() => pair(r)}
-            className="rounded border border-machinery-800 px-1.5 py-0.5 text-[10px] text-machinery-300 hover:bg-machinery-950/60 disabled:opacity-30"
+            className="rounded-pill border border-machinery-800 px-2 py-0.5 text-micro text-machinery-300 hover:bg-machinery-950/60 disabled:opacity-30"
           >
             {pending ? '+ close pair' : '+ pair'}
           </button>
@@ -114,7 +115,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
   ];
 
   return (
-    <div className="space-y-3 rounded-xl border border-chrome-800 bg-chrome-900/40 p-4">
+    <Card className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="text-xs font-medium text-chrome-300">Candidates</div>
         <Toggle on={wide} onChange={setWide}>
@@ -123,7 +124,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
       </div>
 
       {pending && (
-        <div className="flex items-center justify-between gap-2 rounded-lg border border-decision-800/60 bg-decision-950/25 px-3 py-1.5 text-[11px] text-decision-300">
+        <div className="flex items-center justify-between gap-2 rounded-card border border-decision-800/60 bg-decision-950/25 px-3 py-2 text-micro text-decision-300">
           <span>
             pairing with <span className="font-mono">{variantLabel(pending.ref)}</span> — pick the
             second allele
@@ -160,7 +161,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
       </Loaded>
 
       <div>
-        <label className="text-[11px] font-medium text-chrome-400">
+        <label className="text-micro font-medium text-chrome-400">
           From elsewhere
           <textarea
             value={text}
@@ -168,10 +169,10 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
             placeholder={FREE_PLACEHOLDER}
             spellCheck={false}
             rows={5}
-            className="mt-1 w-full resize-y rounded-lg border border-chrome-700 bg-chrome-950 p-2.5 font-mono text-[11px] text-chrome-100 placeholder:text-chrome-600 focus:border-machinery-700 focus:outline-none"
+            className="mt-1 w-full resize-y rounded-card border border-line-strong bg-chrome-950 p-3 font-mono text-micro text-chrome-100 placeholder:text-chrome-600 focus:border-machinery-700 focus:outline-none"
           />
         </label>
-        <div className="mt-1.5 flex flex-wrap items-center gap-3">
+        <div className="mt-2 flex flex-wrap items-center gap-3">
           <button
             type="button"
             disabled={good.length === 0 || !canAdd}
@@ -179,16 +180,16 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
               good.forEach((p) => onAdd(p.variant1!, p.variant2 ?? null, 'typed'));
               setText('');
             }}
-            className="rounded-md border border-chrome-700 px-2 py-1 text-[11px] text-chrome-300 hover:bg-chrome-800 disabled:opacity-30"
+            className="rounded-control border border-line-strong px-2 py-1 text-micro text-chrome-300 hover:bg-chrome-800 disabled:opacity-30"
           >
             add {good.length || ''} row{good.length === 1 ? '' : 's'}
           </button>
           {bad.length > 0 && (
-            <span className="text-[11px] text-broken-400">{bad.length} line(s) rejected</span>
+            <span className="text-micro text-broken-400">{bad.length} line(s) rejected</span>
           )}
         </div>
         {bad.length > 0 && (
-          <ul className="mt-1 space-y-0.5 text-[11px] text-broken-400">
+          <ul className="mt-1 space-y-0.5 text-micro text-broken-400">
             {bad.map((p) => (
               <li key={p.line}>
                 line {p.line}: {p.problem}
@@ -197,6 +198,6 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
           </ul>
         )}
       </div>
-    </div>
+    </Card>
   );
 }

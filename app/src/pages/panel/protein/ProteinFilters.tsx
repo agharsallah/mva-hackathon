@@ -13,9 +13,9 @@ import { cx } from '../../../lib/ui';
 import { IMPACTS, type ProteinFilters as Filters } from './filters';
 
 const NUMBER =
-  'w-20 rounded-md border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-200';
+  'w-20 rounded-control border border-line-strong bg-chrome-900 px-2 py-1 text-micro text-chrome-200';
 const BUTTON =
-  'rounded-md border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-400 transition enabled:hover:bg-chrome-800 enabled:hover:text-chrome-200 disabled:opacity-40';
+  'rounded-control border border-line-strong bg-chrome-900 px-2 py-1 text-micro text-chrome-400 transition enabled:hover:bg-chrome-800 enabled:hover:text-chrome-200 disabled:opacity-40';
 
 export function ProteinFilters({
   filters,
@@ -46,7 +46,7 @@ export function ProteinFilters({
         hide non-candidates
       </Toggle>
 
-      <span className="inline-flex items-center gap-1 text-[11px] text-chrome-500">
+      <span className="inline-flex items-center gap-1 text-micro text-chrome-500">
         impact
         {IMPACTS.map((impact) => {
           const on = !filters.hiddenImpacts.includes(impact);
@@ -57,10 +57,10 @@ export function ProteinFilters({
               aria-pressed={on}
               onClick={() => filters.toggleImpact(impact)}
               className={cx(
-                'rounded border px-1.5 py-0.5 text-[11px] transition',
+                'rounded-pill border px-2 py-0.5 text-micro transition',
                 on
                   ? 'border-chrome-600 bg-chrome-800 text-chrome-200'
-                  : 'border-chrome-800 bg-chrome-950 text-chrome-600',
+                  : 'border-line bg-chrome-950 text-chrome-600',
               )}
             >
               {impact}
@@ -69,7 +69,7 @@ export function ProteinFilters({
         })}
       </span>
 
-      <span className="inline-flex items-center gap-1 text-[11px] text-chrome-500">
+      <span className="inline-flex items-center gap-1 text-micro text-chrome-500">
         residues
         <input
           type="number"

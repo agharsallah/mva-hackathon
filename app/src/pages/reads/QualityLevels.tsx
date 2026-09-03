@@ -102,7 +102,7 @@ export function QualityLevels() {
                   legend: { orientation: 'h', y: 1.14, x: 0, font: { color: C.inkDim, size: 11 } },
                 })}
               />
-              <div className="mt-2 space-y-1 text-[11px] text-chrome-500">
+              <div className="mt-2 space-y-1 text-micro text-chrome-500">
                 <div className="flex flex-wrap gap-x-5">
                   <span>
                     Q30+ share R1{' '}

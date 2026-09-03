@@ -84,12 +84,12 @@ export function Funnel() {
                 })}
               />
               <div className="mt-2 grid gap-2 sm:grid-cols-3">
-                <div className="rounded-lg border border-raw-900/40 bg-raw-950/20 p-2.5">
-                  <div className="text-[10px] uppercase tracking-wider text-raw-400">delivered</div>
+                <div className="rounded-card border border-raw-900/40 bg-raw-950/20 p-3">
+                  <div className="text-xs text-raw-400">delivered</div>
                   <div className="font-mono text-sm text-chrome-200">{int(total)}</div>
                 </div>
-                <div className="rounded-lg border border-good-900/40 bg-good-950/20 p-2.5">
-                  <div className="text-[10px] uppercase tracking-wider text-good-400">PASS</div>
+                <div className="rounded-card border border-good-900/40 bg-good-950/20 p-3">
+                  <div className="text-xs text-good-400">PASS</div>
                   <div className="font-mono text-sm text-chrome-200">
                     {int(passRow?.count ?? 0)}{' '}
                     <span className="text-chrome-500">
@@ -97,10 +97,8 @@ export function Funnel() {
                     </span>
                   </div>
                 </div>
-                <div className="rounded-lg border border-broken-900/50 bg-broken-950/20 p-2.5">
-                  <div className="text-[10px] uppercase tracking-wider text-broken-400">
-                    suppressed
-                  </div>
+                <div className="rounded-card border border-broken-900/50 bg-broken-950/20 p-3">
+                  <div className="text-xs text-broken-400">suppressed</div>
                   <div className="font-mono text-sm text-chrome-200">
                     {int(suppressedTotal)}{' '}
                     <span className="text-chrome-500">
@@ -109,7 +107,7 @@ export function Funnel() {
                   </div>
                 </div>
               </div>
-              <ul className="mt-2 space-y-0.5 text-[11px] text-chrome-500">
+              <ul className="mt-2 space-y-0.5 text-micro text-chrome-500">
                 <li>
                   <span className="font-mono text-chrome-300">MQ40</span> — mapping quality below
                   40: the aligner was unsure the reads belong here at all

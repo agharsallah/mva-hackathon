@@ -106,7 +106,7 @@ function GraphSvg({
 
   return (
     <>
-      <div className="overflow-x-auto rounded-lg border border-chrome-800 bg-chrome-950/60">
+      <div className="overflow-x-auto rounded-card border border-line bg-chrome-950/60">
         <svg viewBox={`0 0 ${width} ${height}`} width={width} height={height} className="block">
           <defs>
             <marker
@@ -215,7 +215,7 @@ function GraphSvg({
           })}
         </svg>
       </div>
-      <div className="mt-2 min-h-[34px] rounded-lg border border-chrome-800 bg-chrome-900/40 p-2 text-[11px]">
+      <div className="mt-2 min-h-[34px] rounded-card border border-line bg-panel p-2 text-micro">
         {hovered ? (
           <>
             <span className="font-mono text-decision-400">{hovered.from.split('/').pop()}</span>
@@ -223,7 +223,9 @@ function GraphSvg({
             <span className="font-mono text-decision-400">{hovered.to}</span>
             <span className="text-chrome-400"> — {hovered.transform}</span>
             {hovered.kind === 'manifest' && (
-              <span className="ml-1 rounded bg-raw-500/15 px-1 py-px text-raw-300">manifest</span>
+              <span className="ml-1 rounded-pill bg-raw-500/15 px-1 py-px text-raw-300">
+                manifest
+              </span>
             )}
             <span className="text-chrome-600"> [{hovered.tool}]</span>
           </>

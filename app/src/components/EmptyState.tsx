@@ -22,14 +22,14 @@ export interface EmptyStateProps {
 
 export function EmptyState({ tone = 'neutral', title, children, className }: EmptyStateProps) {
   return (
-    <div className={cx('rounded-lg border p-6 text-center', EMPTY_DASHED[tone], className)}>
+    <div className={cx('rounded-card border p-6 text-center', EMPTY_DASHED[tone], className)}>
       {title && (
         <div className={cx('text-sm font-medium', tone !== 'neutral' && TEXT[tone])}>{title}</div>
       )}
       {children && (
         <div
           className={cx(
-            title ? 'mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-chrome-400' : 'text-sm',
+            title ? 'mx-auto mt-2 max-w-2xl text-xs leading-relaxed text-chrome-400' : 'text-sm',
           )}
         >
           {children}

@@ -40,7 +40,7 @@ function ReprobeButton({
       disabled={running || disabled}
       aria-label={`re-probe ${name}`}
       title={disabled ? 'fixture mode — no API to probe' : `probe ${name} again, and only ${name}`}
-      className="rounded-md border border-chrome-700 bg-chrome-900/70 px-2 py-0.5 text-[11px] text-chrome-300 transition hover:bg-chrome-800 disabled:cursor-not-allowed disabled:opacity-50"
+      className="rounded-control border border-line-strong bg-chrome-900/70 px-2 py-0.5 text-micro text-chrome-300 transition hover:bg-chrome-800 disabled:cursor-not-allowed disabled:opacity-50"
     >
       {running ? 'probing…' : 're-probe'}
     </button>
@@ -106,7 +106,7 @@ export function DependencyCard({
             <button
               onClick={() => setRevealed((v) => !v)}
               aria-label={`${revealed ? 'hide' : 'show'} the address for ${check.name}`}
-              className="rounded border border-chrome-700 px-1 font-sans text-[10px] text-chrome-500 hover:text-chrome-200"
+              className="rounded-pill border border-line-strong px-1 font-sans text-micro text-chrome-500 hover:text-chrome-200"
             >
               {revealed ? 'hide' : 'show'}
             </button>
@@ -139,14 +139,14 @@ export function DependencyCard({
         <FieldList fields={fields} labelWidth={64} />
         {check.remedy && (
           <div>
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-chrome-200">
+            <div className="text-xs font-semibold text-chrome-200">
               {check.status === 'skipped' ? 'How to enable it (optional)' : 'Remedy'}
             </div>
-            <pre className="mt-1 max-w-full overflow-x-auto whitespace-pre-wrap break-words rounded-md border border-chrome-700/60 bg-black/25 p-3 font-mono text-[11px] leading-relaxed text-chrome-100">
+            <pre className="mt-1 max-w-full overflow-x-auto whitespace-pre-wrap break-words rounded-control border border-line-strong bg-black/25 p-3 font-mono text-micro leading-relaxed text-chrome-100">
               {maskOptional(check.remedy, masked)}
             </pre>
             {masked && /[•]/.test(maskOptional(check.remedy, masked) ?? '') && (
-              <p className="mt-1 text-[10px] text-chrome-600">
+              <p className="mt-1 text-micro text-chrome-600">
                 Addresses in this remedy are hidden — reveal them to copy the commands.
               </p>
             )}

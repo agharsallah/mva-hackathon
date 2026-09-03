@@ -1,7 +1,7 @@
 import { useAlleleBalance } from '../../api/hooks';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Plot } from '../../components/Plot';
-import { baseLayout } from '../../components/plotLayout';
+import { bandTint, baseLayout } from '../../components/plotLayout';
 import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
 import { balanceColor, C } from '../../lib/palette';
@@ -100,7 +100,7 @@ export function AlleleBalance() {
                       x1: 1,
                       y0: 0.47,
                       y1: 0.53,
-                      fillcolor: 'rgba(255,255,255,0.045)',
+                      fillcolor: bandTint(),
                       line: { width: 0 },
                       layer: 'below',
                     },
@@ -129,7 +129,7 @@ export function AlleleBalance() {
                   showlegend: false,
                 })}
               />
-              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-chrome-500">
+              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-micro text-chrome-500">
                 <span>
                   contigs balanced:{' '}
                   <span className="font-mono text-good-400">{ordered.length - flagged.length}</span>{' '}

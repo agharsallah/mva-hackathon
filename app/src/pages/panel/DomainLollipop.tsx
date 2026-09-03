@@ -229,7 +229,7 @@ function Unplaceable({
   transcript: string | null;
 }) {
   return (
-    <aside className="rounded-lg border border-chrome-800 bg-chrome-900/40 p-3 text-[11px] leading-relaxed">
+    <aside className="rounded-card border border-line bg-panel p-3 text-micro leading-relaxed">
       <p className="mb-2 font-semibold text-chrome-300">
         {int(placed)} placed · {int(rows.length)} not placeable
       </p>

@@ -156,7 +156,7 @@ export function ProbeResults({ result }: { result: ProbeCountResult }) {
       <div className="mt-3">
         <DataTable rows={counts} columns={columns} rowKey={(r) => r.probe} maxHeight={320} />
       </div>
-      <p className="mt-2 text-[11px] text-chrome-500">
+      <p className="mt-2 text-micro text-chrome-500">
         {counts.length} probes in one pass over the full store · {dec(result.seconds, 1)} s ·{' '}
         expectation from the server:{' '}
         <span className="font-mono text-chrome-300">{result.expected}</span>

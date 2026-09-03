@@ -156,7 +156,7 @@ export function GeneScorecard() {
                 })}
               />
               {worst && (
-                <p className="mb-3 text-[11px] text-chrome-500">
+                <p className="mb-3 text-micro text-chrome-500">
                   lowest PASS share: <span className="font-mono text-broken-400">{worst.gene}</span>{' '}
                   at {pct(worst.pct_pass, 1)} ({int(worst.n_filtered)} of {int(worst.n_all)} records
                   suppressed)

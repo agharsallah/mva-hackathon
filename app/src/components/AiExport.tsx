@@ -16,8 +16,8 @@ import { exhibitRegistry } from '../lib/aiExport/registry';
 import { buildWholeCaseBundle } from '../lib/aiExport/wholeCase';
 
 const BTN =
-  'rounded-md border border-chrome-800 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-400 transition ' +
-  'enabled:hover:border-chrome-700 enabled:hover:text-chrome-200 disabled:opacity-40 focus:outline-none ' +
+  'rounded-control border border-line bg-chrome-900 px-2 py-1 text-micro text-chrome-400 transition ' +
+  'enabled:hover:border-line-strong enabled:hover:text-chrome-200 disabled:opacity-40 focus:outline-none ' +
   'focus-visible:border-machinery-700';
 
 function failed(said: string): boolean {
@@ -72,7 +72,7 @@ export function AiExport() {
   return (
     <div className="flex items-center gap-2">
       {said && (
-        <span className={`text-[11px] ${failed(said) ? 'text-broken-400' : 'text-good-400'}`}>
+        <span className={`text-micro ${failed(said) ? 'text-broken-400' : 'text-good-400'}`}>
           {said}
         </span>
       )}

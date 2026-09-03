@@ -91,7 +91,7 @@ export function Karyotype() {
                 })}
               />
               {densest && (
-                <p className="mt-2 text-[11px] text-chrome-500">
+                <p className="mt-2 text-micro text-chrome-500">
                   densest contig <span className="font-mono text-raw-400">chr{densest.chrom}</span>{' '}
                   at {dec(densest.variants_per_mb, 1)} var/Mb over {int(densest.n_records)} records
                 </p>

@@ -150,7 +150,7 @@ export function CandidateTable() {
 
           return (
             <div className="space-y-3">
-              <p className="text-[11px] text-chrome-500">
+              <p className="text-micro text-chrome-500">
                 {int(rows.length)} annotated records in →{' '}
                 <span className="text-chrome-200">{int(hits.length)}</span> survive both filters, in{' '}
                 {byGene.size} gene{byGene.size === 1 ? '' : 's'}

@@ -25,7 +25,7 @@ export function Badge({ tone = 'neutral', children, className, title }: BadgePro
     <span
       title={title}
       className={cx(
-        'inline-flex shrink-0 items-center rounded border px-1.5 py-0.5 text-[10px] font-medium',
+        'inline-flex shrink-0 items-center rounded-pill border px-2 py-0.5 text-micro font-medium',
         BADGE[tone],
         className,
       )}

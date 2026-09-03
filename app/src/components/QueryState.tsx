@@ -14,7 +14,7 @@ import { ApiError } from '../api/client';
 export function Skeleton({ height = 360 }: { height?: number }) {
   return (
     <div
-      className="animate-pulse rounded-lg border border-chrome-800 bg-chrome-900/60"
+      className="animate-pulse rounded-card border border-line bg-chrome-900/60"
       style={{ height }}
     />
   );
@@ -40,7 +40,7 @@ export function ErrorCard({ error }: { error: Error }) {
       : 'Request failed';
 
   return (
-    <div className="rounded-lg border border-broken-900/60 bg-broken-950/25 p-4 text-sm">
+    <div className="rounded-card border border-broken-900/60 bg-broken-950/25 p-4 text-sm">
       <div className="font-semibold text-broken-300">{title}</div>
       <p className="mt-1 font-mono text-xs text-broken-400/80">{error.message}</p>
       {routeMissing && (

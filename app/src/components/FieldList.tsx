@@ -33,7 +33,7 @@ export function FieldList({
 }: FieldListProps) {
   if (layout === 'inline') {
     return (
-      <dl className={className ?? 'space-y-1.5 text-xs leading-relaxed'}>
+      <dl className={className ?? 'space-y-2 text-xs leading-relaxed'}>
         {fields.map((f) => (
           <div key={f.key}>
             <dt className={f.labelClassName ?? 'inline font-semibold text-chrome-400'}>
@@ -46,7 +46,7 @@ export function FieldList({
     );
   }
   return (
-    <dl className={className ?? 'space-y-1 text-[10px]'}>
+    <dl className={className ?? 'space-y-1 text-micro'}>
       {fields.map((f) => (
         <div key={f.key} className="flex gap-2">
           <dt className="shrink-0 text-chrome-600" style={{ width: labelWidth }}>

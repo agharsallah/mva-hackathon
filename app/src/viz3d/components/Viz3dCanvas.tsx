@@ -229,7 +229,7 @@ export function Viz3dCanvas({
         <div
           ref={tooltipRef}
           hidden={!hovered}
-          className="pointer-events-none absolute top-0 left-0 z-10 max-w-[18rem] rounded border border-chrome-700 bg-chrome-950/95 px-2 py-1 font-mono text-[11px] text-chrome-200 shadow-lg"
+          className="pointer-events-none absolute top-0 left-0 z-10 max-w-[18rem] rounded-pill border border-line-strong bg-chrome-950/95 px-2 py-1 font-mono text-micro text-chrome-200 shadow-lg"
         >
           {hovered && describeDatumLine(hovered, description.color.field)}
         </div>

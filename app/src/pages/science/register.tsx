@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { EmptyState } from '../../components/EmptyState';
+
 /**
  * The bits both register widgets share: the confidence caveat and the two designed states
  * (`EmptyRegister`, `Confidence`) every table on this page renders through.
@@ -34,21 +36,20 @@ export function EmptyRegister({
   children: ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-dashed border-good-900/50 bg-good-950/10 p-6 text-center">
-      <div className="text-sm font-medium text-good-400">{title}</div>
-      <p className="mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-chrome-400">{children}</p>
-      <p className="mx-auto mt-2 max-w-2xl text-[11px] leading-relaxed text-chrome-500">
+    <EmptyState tone="good" title={title}>
+      <p>{children}</p>
+      <p className="mx-auto mt-2 max-w-2xl text-micro leading-relaxed text-chrome-500">
         An empty register is discipline, not absence of work. The method is written down in{' '}
         <span className="font-mono text-chrome-400">docs/method.md</span>, and the register opens
         the moment the first claim is filed with{' '}
         <span className="font-mono text-chrome-400">{verb}</span>.
       </p>
-      <p className="mt-2 font-mono text-[11px] text-chrome-600">
+      <p className="mt-2 font-mono text-micro text-chrome-600">
         {tableExists
           ? 'table exists · 0 rows'
           : 'table not created yet — written on first record, never by a page load'}
       </p>
-    </div>
+    </EmptyState>
   );
 }
 
@@ -62,9 +63,9 @@ export function Confidence({ value, inline = false }: { value: number | null; in
     );
   }
   return (
-    <span className={inline ? 'inline-flex items-baseline gap-1.5' : 'flex items-baseline gap-1.5'}>
+    <span className={inline ? 'inline-flex items-baseline gap-2' : 'flex items-baseline gap-2'}>
       <span className="font-mono text-decision-400">{value.toFixed(2)}</span>
-      <span className="text-[10px] leading-tight text-chrome-500">{CONFIDENCE_CAVEAT}</span>
+      <span className="text-micro leading-tight text-chrome-500">{CONFIDENCE_CAVEAT}</span>
     </span>
   );
 }

@@ -149,7 +149,7 @@ function Card({ payload, origin }: { payload: PanelHetPairs; origin: Origin }) {
       </div>
 
       {!distinct && (
-        <p className="rounded-lg border border-decision-800/60 bg-decision-950/25 p-2.5 text-[11px] text-decision-300">
+        <p className="rounded-card border border-decision-800/60 bg-decision-950/25 p-3 text-micro text-decision-300">
           Both columns point at the same allele. A pair is two different alleles — the scorer holds
           a row as a <em>set</em>, so a row whose two halves are identical is read as a
           single-variant row.
@@ -178,14 +178,12 @@ function Picker({
   accent: string;
 }) {
   return (
-    <label className="flex flex-col gap-1 rounded-lg border border-chrome-800 bg-chrome-950/40 p-2.5">
-      <span className={`text-[11px] font-semibold uppercase tracking-wider ${accent}`}>
-        {label}
-      </span>
+    <label className="flex flex-col gap-1 rounded-card border border-line bg-chrome-950/40 p-3">
+      <span className={`text-xs font-medium ${accent}`}>{label}</span>
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-md border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-200"
+        className="w-full rounded-control border border-line-strong bg-chrome-900 px-2 py-1 text-micro text-chrome-200"
       >
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -208,7 +206,7 @@ function VerdictBar({
 }) {
   return (
     <div
-      className="rounded-lg border p-3"
+      className="rounded-card border p-3"
       style={{ borderColor: `${verdict.color}66`, background: `${verdict.color}12` }}
     >
       <div className="flex flex-wrap items-center gap-2">
@@ -216,15 +214,12 @@ function VerdictBar({
           className="inline-block h-2.5 w-2.5 rounded-sm"
           style={{ background: verdict.color }}
         />
-        <span
-          className="text-xs font-semibold uppercase tracking-wider"
-          style={{ color: verdict.color }}
-        >
+        <span className="text-xs font-semibold" style={{ color: verdict.color }}>
           {verdict.headline}
         </span>
       </div>
-      <p className="mt-1.5 text-xs leading-relaxed text-chrome-300">{verdict.meaning}</p>
-      <div className="mt-2 flex flex-wrap gap-1.5">
+      <p className="mt-2 text-xs leading-relaxed text-chrome-300">{verdict.meaning}</p>
+      <div className="mt-2 flex flex-wrap gap-2">
         <Flag on={check.bothRare} yes="both rare" no="one half is too common" />
         <Flag
           on={check.bothProteinAltering}
@@ -289,13 +284,13 @@ function HandOff({
   const dataRow = result?.valid ? (result.csv.trim().split('\n')[1] ?? '') : '';
 
   return (
-    <div className="space-y-2 rounded-lg border border-chrome-800 bg-chrome-950/40 p-3">
+    <div className="space-y-2 rounded-card border border-line bg-chrome-950/40 p-3">
       <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           disabled={!live}
           onClick={() => navigate(probesPairHref(toRef(a), toRef(b)))}
-          className="rounded-md bg-machinery-600 px-3 py-1.5 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-500"
+          className="rounded-control bg-machinery-600 px-3 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-500"
         >
           add pair to probe builder
         </button>
@@ -317,11 +312,11 @@ function HandOff({
               ],
             });
           }}
-          className="rounded-md border border-chrome-700 px-3 py-1.5 text-xs text-chrome-300 hover:bg-chrome-800 disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded-control border border-line-strong px-3 py-2 text-xs text-chrome-300 hover:bg-chrome-800 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {building ? 'validating…' : copied ? 'copied the row' : 'copy CSV row'}
         </button>
-        <span className="text-[11px] text-chrome-500">
+        <span className="text-micro text-chrome-500">
           building spends nothing — the row is rendered by{' '}
           <span className="font-mono">mva.pipeline.submission</span> at epcr 0.99, never assembled
           here
@@ -329,7 +324,7 @@ function HandOff({
       </div>
 
       {!live && (
-        <p className="rounded-md border border-decision-800/60 bg-decision-950/25 p-2.5 text-[11px] leading-relaxed text-decision-300">
+        <p className="rounded-control border border-decision-800/60 bg-decision-950/25 p-3 text-micro leading-relaxed text-decision-300">
           {origin === 'fixture'
             ? FIXTURE_NOTE
             : 'Pick two different alleles before handing a pair over.'}
@@ -337,7 +332,7 @@ function HandOff({
       )}
 
       {error && (
-        <p className="rounded-md border border-broken-900/60 bg-broken-950/30 p-2.5 text-[11px] leading-relaxed text-broken-300">
+        <p className="rounded-control border border-broken-900/60 bg-broken-950/30 p-3 text-micro leading-relaxed text-broken-300">
           The API did not answer: <span className="font-mono">{error.message}</span>. Nothing was
           validated, and no CSV is shown — a hand-built row is exactly the mistake this button
           exists to prevent.
@@ -345,21 +340,21 @@ function HandOff({
       )}
 
       {errors.length > 0 && (
-        <ul className="rounded-md border border-broken-900/60 bg-broken-950/25 p-2.5 text-[11px] text-broken-300">
+        <ul className="rounded-control border border-broken-900/60 bg-broken-950/25 p-3 text-micro text-broken-300">
           {errors.map((p) => (
             <li key={p.message}>{p.message}</li>
           ))}
         </ul>
       )}
       {warnings.length > 0 && (
-        <ul className="rounded-md border border-decision-800/60 bg-decision-950/25 p-2.5 text-[11px] text-decision-300">
+        <ul className="rounded-control border border-decision-800/60 bg-decision-950/25 p-3 text-micro text-decision-300">
           {warnings.map((p) => (
             <li key={p.message}>{p.message}</li>
           ))}
         </ul>
       )}
       {dataRow && (
-        <pre className="overflow-x-auto rounded-md border border-chrome-800 bg-chrome-950 p-2 font-mono text-[11px] text-chrome-200">
+        <pre className="overflow-x-auto rounded-control border border-line bg-chrome-950 p-2 font-mono text-micro text-chrome-200">
           {dataRow}
         </pre>
       )}

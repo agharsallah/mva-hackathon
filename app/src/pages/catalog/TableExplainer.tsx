@@ -30,7 +30,7 @@ import { useUrlText } from '../../lib/urlstate';
 function Gap({ children, title }: { children: string; title: string }) {
   return (
     <span
-      className="rounded bg-decision-500/10 px-1.5 py-px text-[10px] whitespace-nowrap text-decision-400/90"
+      className="rounded-pill bg-decision-500/10 px-2 py-px text-micro whitespace-nowrap text-decision-400/90"
       title={title}
     >
       {children}
@@ -65,13 +65,13 @@ function lineageLine(row: CatalogTableRow): string | null {
 function ColumnTable({ columns }: { columns: CatalogColumnRow[] }) {
   if (columns.length === 0) {
     return (
-      <p className="text-[11px] text-chrome-500">No column metadata was returned for this table.</p>
+      <p className="text-micro text-chrome-500">No column metadata was returned for this table.</p>
     );
   }
   return (
-    <table className="w-full border-collapse text-left text-[11px]">
+    <table className="w-full border-collapse text-left text-micro">
       <thead>
-        <tr className="border-b border-chrome-800 text-chrome-500">
+        <tr className="border-b border-line text-chrome-500">
           <th className="py-1 pr-3 font-normal">column</th>
           <th className="py-1 pr-3 font-normal">type</th>
           <th className="py-1 font-normal">what it means</th>
@@ -79,7 +79,7 @@ function ColumnTable({ columns }: { columns: CatalogColumnRow[] }) {
       </thead>
       <tbody>
         {columns.map((c) => (
-          <tr key={c.column} className="border-b border-chrome-900 align-top">
+          <tr key={c.column} className="border-b border-line-soft align-top">
             <td className="py-1 pr-3 font-mono whitespace-nowrap text-chrome-200">{c.column}</td>
             <td className="py-1 pr-3 font-mono whitespace-nowrap text-chrome-500">{c.data_type}</td>
             <td className="py-1 text-chrome-300">
@@ -97,7 +97,7 @@ function TableCard({ row, columns }: { row: CatalogTableRow; columns: CatalogCol
   const undocumented = columns.filter((c) => c.meaning === null).length;
 
   return (
-    <details className="group rounded-lg border border-chrome-800 bg-chrome-900/40">
+    <details className="group rounded-card border border-line bg-panel">
       <summary className="flex cursor-pointer flex-wrap items-baseline gap-x-3 gap-y-1 px-3 py-2 hover:bg-chrome-900/70">
         <span className="font-mono text-xs text-chrome-100">
           <span className="text-chrome-500">{row.schema}.</span>
@@ -105,7 +105,7 @@ function TableCard({ row, columns }: { row: CatalogTableRow; columns: CatalogCol
         </span>
         {row.created_by ? (
           <span
-            className="rounded bg-machinery-500/10 px-1.5 py-px text-[10px] whitespace-nowrap text-machinery-300"
+            className="rounded-pill bg-machinery-500/10 px-2 py-px text-micro whitespace-nowrap text-machinery-300"
             title="The command that writes this table, and whether it replaces it or appends to it."
           >
             {row.created_by}
@@ -113,18 +113,16 @@ function TableCard({ row, columns }: { row: CatalogTableRow; columns: CatalogCol
         ) : (
           <Gap title={NO_CREATOR}>undocumented — no created_by</Gap>
         )}
-        <span className="text-[11px] text-chrome-500">
+        <span className="text-micro text-chrome-500">
           {int(row.rows)} rows · {columns.length} columns
         </span>
         {undocumented > 0 && (
           <Gap title={NO_MEANING}>{`${undocumented} column(s) unexplained`}</Gap>
         )}
-        <span className="ml-auto text-[11px] text-chrome-600 group-open:hidden">
-          show columns ▸
-        </span>
+        <span className="ml-auto text-micro text-chrome-600 group-open:hidden">show columns ▸</span>
       </summary>
 
-      <div className="space-y-2 border-t border-chrome-800 px-3 py-2">
+      <div className="space-y-2 border-t border-line px-3 py-2">
         <p className="text-xs text-chrome-300">
           <span className="text-chrome-500">what it holds — </span>
           {row.description ?? <Gap title="Nothing describes this table.">undescribed</Gap>}
@@ -218,7 +216,7 @@ export function TableExplainer() {
         <Skeleton height={320} />
       ) : (
         <div className="space-y-3">
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] text-chrome-500">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-micro text-chrome-500">
             <span>
               showing <span className="font-mono text-chrome-200">{int(shown.length)}</span> of{' '}
               {int(rows.length)} tables
@@ -245,10 +243,10 @@ export function TableExplainer() {
             const inSchema = shown.filter((r) => r.schema === schema);
             if (inSchema.length === 0) return null;
             return (
-              <div key={schema} className="space-y-1.5">
-                <h4 className="font-mono text-xs text-chrome-400">
+              <div key={schema} className="space-y-2">
+                <h4 className="font-mono text-xs font-semibold text-chrome-300">
                   {schema}
-                  <span className="ml-2 font-sans text-[11px] text-chrome-600">
+                  <span className="ml-2 font-sans text-micro text-chrome-600">
                     {schema === 'results'
                       ? 'derived — rebuilt from the ingest schema, never edited in place'
                       : 'ingested data and the append-only ledgers'}

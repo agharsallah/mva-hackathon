@@ -80,7 +80,7 @@ export function StoreShape() {
                 ]}
                 layout={baseLayout({ margin: { l: 4, r: 4, t: 4, b: 4 } })}
               />
-              <div className="mt-2 grid gap-2 text-[11px] text-chrome-500 sm:grid-cols-3">
+              <div className="mt-2 grid gap-2 text-micro text-chrome-500 sm:grid-cols-3">
                 <span>
                   {rows.length} partitions ·{' '}
                   <span className="font-mono text-chrome-300">{int(totalShards)}</span> shards

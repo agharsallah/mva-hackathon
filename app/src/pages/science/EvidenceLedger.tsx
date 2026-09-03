@@ -103,7 +103,7 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
       header: 'direction',
       render: (r) => (
         <span
-          className="inline-flex items-center gap-1.5 font-medium"
+          className="inline-flex items-center gap-2 font-medium"
           style={{ color: directionColor(r.direction) }}
         >
           <span
@@ -146,21 +146,21 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
       key: 'source',
       header: 'source',
       render: (r) => (
-        <span className="font-mono text-[11px] text-machinery-300">{r.source_ref}</span>
+        <span className="font-mono text-micro text-machinery-300">{r.source_ref}</span>
       ),
     },
     {
       key: 'lineage',
       header: 'lineage',
       render: (r) => (
-        <span className="font-mono text-[11px] text-chrome-500">{r.lineage_ref ?? '—'}</span>
+        <span className="font-mono text-micro text-chrome-500">{r.lineage_ref ?? '—'}</span>
       ),
     },
     {
       key: 'at',
       header: 'recorded',
       render: (r) => (
-        <span className="font-mono text-[11px] text-chrome-600">{iso(r.recorded_at)}</span>
+        <span className="font-mono text-micro text-chrome-600">{iso(r.recorded_at)}</span>
       ),
     },
   ];
@@ -174,7 +174,7 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
         maxHeight={420}
         empty={`no evidence row matches "${filter}"`}
       />
-      <p className="font-mono text-[11px] text-chrome-600">
+      <p className="font-mono text-micro text-chrome-600">
         {shown.length} of {rows.length} rows
       </p>
     </div>

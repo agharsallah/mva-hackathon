@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { Badge } from '../../components/Badge';
+import { Card } from '../../components/Card';
 import { dec } from '../../lib/format';
 import { jobStateTone } from '../../lib/palette';
 import { ProbeResults } from './ProbeResults';
@@ -31,7 +32,7 @@ export function ProbeConsole() {
   return (
     <div className="space-y-4">
       <div className="grid gap-4 lg:grid-cols-[1fr_320px]">
-        <div className="rounded-xl border border-chrome-800 bg-chrome-900/40 p-4">
+        <Card>
           <label className="text-xs font-medium text-chrome-300">
             Probes
             <textarea
@@ -40,14 +41,14 @@ export function ProbeConsole() {
               placeholder={PLACEHOLDER}
               spellCheck={false}
               rows={9}
-              className="mt-1.5 w-full resize-y rounded-lg border border-chrome-700 bg-chrome-950 p-3 font-mono text-xs text-chrome-100 placeholder:text-chrome-600 focus:border-machinery-700 focus:outline-none"
+              className="mt-2 w-full resize-y rounded-card border border-line-strong bg-chrome-950 p-3 font-mono text-xs text-chrome-100 placeholder:text-chrome-600 focus:border-machinery-700 focus:outline-none"
             />
           </label>
           <div className="mt-2 flex flex-wrap items-center gap-3">
             <button
               disabled={valid.length === 0 || submitting || running}
               onClick={() => submit(valid.map((p) => ({ name: p.name, sequence: p.sequence })))}
-              className="rounded-md bg-machinery-600 px-3 py-1.5 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-500"
+              className="rounded-control bg-machinery-600 px-3 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-500"
             >
               {submitting
                 ? 'submitting…'
@@ -58,7 +59,7 @@ export function ProbeConsole() {
             {running && (
               <button
                 onClick={cancel}
-                className="rounded-md border border-broken-800 px-3 py-1.5 text-xs text-broken-300 hover:bg-broken-950/40"
+                className="rounded-control border border-broken-800 px-3 py-2 text-xs text-broken-300 hover:bg-broken-950/40"
               >
                 cancel job
               </button>
@@ -66,12 +67,12 @@ export function ProbeConsole() {
             {job && !running && (
               <button
                 onClick={reset}
-                className="rounded-md border border-chrome-700 px-3 py-1.5 text-xs text-chrome-400 hover:bg-chrome-800"
+                className="rounded-control border border-line-strong px-3 py-2 text-xs text-chrome-400 hover:bg-chrome-800"
               >
                 clear result
               </button>
             )}
-            <span className="text-[11px] text-chrome-500">
+            <span className="text-micro text-chrome-500">
               {valid.length} valid
               {invalid.length > 0 && (
                 <span className="text-broken-400"> · {invalid.length} rejected</span>
@@ -79,7 +80,7 @@ export function ProbeConsole() {
             </span>
           </div>
           {invalid.length > 0 && (
-            <ul className="mt-2 space-y-0.5 text-[11px] text-broken-400">
+            <ul className="mt-2 space-y-0.5 text-micro text-broken-400">
               {invalid.map((p) => (
                 <li key={p.line}>
                   line {p.line}: {p.problem}
@@ -87,19 +88,19 @@ export function ProbeConsole() {
               ))}
             </ul>
           )}
-        </div>
+        </Card>
 
-        <div className="space-y-2 rounded-xl border border-chrome-800 bg-chrome-900/40 p-4">
+        <Card className="space-y-2">
           <div className="text-xs font-medium text-chrome-300">Job</div>
           {!job && !error && (
-            <p className="text-[11px] leading-relaxed text-chrome-500">
+            <p className="text-micro leading-relaxed text-chrome-500">
               No job submitted. A count runs one pass over the full store — about 5.6 minutes for 20
               probes on the server, so the browser follows it with a 60 s server-side long-poll
               rather than polling.
             </p>
           )}
           {job && (
-            <div className="space-y-1.5 font-mono text-[11px]">
+            <div className="space-y-2 font-mono text-micro">
               <div className="flex items-center gap-2">
                 <Badge tone={jobStateTone(job.state)} className="font-semibold uppercase">
                   {job.state}
@@ -121,11 +122,11 @@ export function ProbeConsole() {
             </div>
           )}
           {error && !isUpstreamDown(error) && (
-            <p className="rounded-md border border-broken-900/60 bg-broken-950/30 p-2 font-mono text-[11px] text-broken-300">
+            <p className="rounded-control border border-broken-900/60 bg-broken-950/30 p-2 font-mono text-micro text-broken-300">
               {error.message}
             </p>
           )}
-        </div>
+        </Card>
       </div>
 
       {isUpstreamDown(error) && <UpstreamDownBanner detail={error!.message} />}

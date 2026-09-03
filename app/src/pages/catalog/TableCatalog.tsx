@@ -29,7 +29,7 @@ function shortRef(ref: string): string {
 function NoEdge() {
   return (
     <span
-      className="rounded bg-decision-500/10 px-1.5 py-px text-[10px] text-decision-400/90"
+      className="rounded-pill bg-decision-500/10 px-2 py-px text-micro text-decision-400/90"
       title="No row in meta.lineage names an input for this table. It exists, but nothing records where it came from."
     >
       no lineage edge
@@ -63,7 +63,7 @@ export function TableCatalog() {
             <span className="text-chrome-300">{r.description}</span>
           ) : (
             <span
-              className="rounded bg-decision-500/10 px-1.5 py-px text-[10px] text-decision-400/90"
+              className="rounded-pill bg-decision-500/10 px-2 py-px text-micro text-decision-400/90"
               title="Nothing describes this table — no catalogue entry, and no derivation records the question it answers."
             >
               undescribed
@@ -157,7 +157,7 @@ export function TableCatalog() {
 
           return (
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[11px] text-chrome-500">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-micro text-chrome-500">
                 <span>
                   showing <span className="font-mono text-chrome-200">{int(shown.length)}</span> of{' '}
                   {int(rows.length)} tables

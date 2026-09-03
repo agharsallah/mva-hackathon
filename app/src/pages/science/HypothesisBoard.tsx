@@ -6,6 +6,7 @@ import { Chip, Exhibit } from '../../components/Exhibit';
 import { Loaded } from '../../components/QueryState';
 import { iso } from '../../lib/format';
 import { C } from '../../lib/palette';
+import { CARD, cx } from '../../lib/ui';
 import { type Claim, claims, STATUS_ORDER, statusColor } from './hypothesis';
 import { Confidence, EmptyRegister } from './register';
 
@@ -66,7 +67,7 @@ function Board({ rows }: { rows: HypothesisRow[] }) {
   const other = grouped.filter((c) => !STATUS_ORDER.includes(c.latest.status));
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-4">
       {present.map((status) => (
         <Group
           key={status}
@@ -84,10 +85,8 @@ function Group({ status, items }: { status: string; items: Claim[] }) {
     <div className="space-y-2">
       <div className="flex items-center gap-2">
         <span className="h-2 w-2 rounded-sm" style={{ background: statusColor(status) }} />
-        <span className="text-[11px] font-medium uppercase tracking-wider text-chrome-400">
-          {status}
-        </span>
-        <span className="font-mono text-[11px] text-chrome-600">{items.length}</span>
+        <span className="text-xs font-medium text-chrome-400">{status}</span>
+        <span className="font-mono text-micro text-chrome-600">{items.length}</span>
       </div>
       <div className="grid gap-3 lg:grid-cols-2">
         {items.map((claim) => (
@@ -104,24 +103,21 @@ function Card({ claim }: { claim: Claim }) {
   const color = statusColor(row.status);
 
   return (
-    <article
-      className="space-y-2.5 rounded-xl border bg-chrome-900/50 p-3.5"
-      style={{ borderColor: `${color}55` }}
-    >
+    <article className={cx(CARD, 'space-y-2')} style={{ borderColor: `${color}55` }}>
       <header className="flex flex-wrap items-center gap-2">
         <span className="font-mono text-xs font-semibold text-chrome-100">{row.hypothesis_id}</span>
         <span
-          className="rounded px-1.5 py-px text-[10px] font-medium uppercase tracking-wider"
+          className="rounded-pill px-2 py-px text-xs font-medium"
           style={{ background: `${color}22`, color }}
         >
           {row.status}
         </span>
-        <span className="rounded bg-chrome-800 px-1.5 py-px font-mono text-[10px] text-chrome-400">
+        <span className="rounded-pill bg-chrome-800 px-2 py-px font-mono text-micro text-chrome-400">
           {row.step}
         </span>
         {row.gene && (
           <span
-            className="rounded bg-raw-500/15 px-1.5 py-px font-mono text-[10px] text-raw-300"
+            className="rounded-pill bg-raw-500/15 px-2 py-px font-mono text-micro text-raw-300"
             title="the gene this claim is about"
           >
             {row.gene}
@@ -129,7 +125,7 @@ function Card({ claim }: { claim: Claim }) {
         )}
         {row.path && (
           <span
-            className="rounded bg-chrome-800 px-1.5 py-px font-mono text-[10px] text-chrome-500"
+            className="rounded-pill bg-chrome-800 px-2 py-px font-mono text-micro text-chrome-500"
             title="which line of attack this claim belongs to"
           >
             {row.path}
@@ -139,7 +135,7 @@ function Card({ claim }: { claim: Claim }) {
 
       <p className="text-sm leading-relaxed text-chrome-200">{row.statement}</p>
 
-      <dl className="space-y-1.5 text-xs leading-relaxed">
+      <dl className="space-y-2 text-xs leading-relaxed">
         <div>
           <dt className="inline font-semibold text-chrome-400">Prediction</dt>
           <dd className="inline text-chrome-400"> — {row.prediction}</dd>
@@ -150,16 +146,14 @@ function Card({ claim }: { claim: Claim }) {
         </div>
       </dl>
 
-      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t border-chrome-800 pt-2">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t border-line pt-2">
         <div className="flex items-baseline gap-2">
-          <span className="text-[10px] font-medium uppercase tracking-wider text-chrome-500">
-            confidence
-          </span>
+          <span className="text-xs font-medium text-chrome-500">confidence</span>
           <Confidence value={row.confidence} inline />
         </div>
         <button
           onClick={() => setOpen((v) => !v)}
-          className="rounded-md border border-chrome-700 px-2 py-0.5 text-[10px] text-chrome-400 hover:bg-chrome-800"
+          className="rounded-control border border-line-strong px-2 py-0.5 text-micro text-chrome-400 hover:bg-chrome-800"
         >
           {open
             ? 'hide history'
@@ -168,7 +162,7 @@ function Card({ claim }: { claim: Claim }) {
       </div>
 
       {row.reasoning && (
-        <p className="text-[11px] leading-relaxed text-chrome-500">{row.reasoning}</p>
+        <p className="text-micro leading-relaxed text-chrome-500">{row.reasoning}</p>
       )}
 
       {open && <History history={claim.history} />}
@@ -179,9 +173,9 @@ function Card({ claim }: { claim: Claim }) {
 /** Every revision, oldest first. Nothing here was ever edited; each line is its own row. */
 function History({ history }: { history: HypothesisRow[] }) {
   return (
-    <ol className="space-y-1.5 rounded-lg border border-chrome-800 bg-chrome-950/60 p-2.5">
+    <ol className="space-y-2 rounded-card border border-line bg-chrome-950/60 p-3">
       {history.map((r) => (
-        <li key={r.revision} className="flex flex-wrap items-baseline gap-2 text-[11px]">
+        <li key={r.revision} className="flex flex-wrap items-baseline gap-2 text-micro">
           <span className="font-mono text-chrome-500">r{r.revision}</span>
           <span className="font-mono text-chrome-600">{iso(r.recorded_at)}</span>
           <span className="font-medium" style={{ color: statusColor(r.status) }}>
@@ -191,7 +185,7 @@ function History({ history }: { history: HypothesisRow[] }) {
           {r.reasoning && <span className="basis-full text-chrome-500">{r.reasoning}</span>}
         </li>
       ))}
-      <li className="border-t border-chrome-800 pt-1.5 text-[10px] leading-relaxed text-chrome-600">
+      <li className="border-t border-line pt-2 text-micro leading-relaxed text-chrome-600">
         Append-only: a changed belief is a new revision row, never an edit to the one above it.
       </li>
     </ol>

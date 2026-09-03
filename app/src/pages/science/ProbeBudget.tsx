@@ -1,8 +1,10 @@
 import { useOverview, useProbeLedger } from '../../api/hooks';
 import type { ProbeLedgerRow } from '../../api/types';
 import { type Column, DataTable } from '../../components/DataTable';
+import { EmptyState } from '../../components/EmptyState';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Loaded } from '../../components/QueryState';
+import { StatTile } from '../../components/StatTile';
 import { int, iso } from '../../lib/format';
 import { C } from '../../lib/palette';
 
@@ -35,7 +37,7 @@ export function ProbeBudget() {
       key: 'at',
       header: 'logged',
       render: (r) => (
-        <span className="font-mono text-[11px] text-chrome-500">{iso(r.logged_at)}</span>
+        <span className="font-mono text-micro text-chrome-500">{iso(r.logged_at)}</span>
       ),
     },
     {
@@ -76,16 +78,17 @@ export function ProbeBudget() {
     >
       <div className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div className="text-[11px] font-medium uppercase tracking-wider text-chrome-500">
-              probes remaining
-            </div>
-            <div className="mt-1 font-mono text-3xl leading-none text-good-400">
-              {remaining}
-              <span className="text-lg text-chrome-500"> / {total}</span>
-            </div>
-            <div className="mt-1 text-[11px] text-chrome-500">{spent} spent · irreversible</div>
-          </div>
+          <StatTile
+            label="probes remaining"
+            tone="good"
+            value={
+              <>
+                {remaining}
+                <span className="text-lg text-chrome-500"> / {total}</span>
+              </>
+            }
+            sub={`${spent} spent · irreversible`}
+          />
           <div className="flex flex-wrap gap-1">
             {Array.from({ length: total }, (_, i) => (
               <span
@@ -104,17 +107,12 @@ export function ProbeBudget() {
         <Loaded query={ledger} height={120}>
           {(rows) =>
             rows.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-good-900/50 bg-good-950/10 p-5 text-center">
-                <div className="text-sm font-medium text-good-400">
-                  Budget untouched — 0 of {total} spent
-                </div>
-                <p className="mx-auto mt-1.5 max-w-2xl text-xs leading-relaxed text-chrome-400">
-                  Nothing has been asked of the oracle, which is consistent with an empty hypothesis
-                  board: there is no claim yet whose confidence a reply could move. The first spend
-                  should be the one that changes a belief the most, and the rationale column is
-                  where that argument gets written down.
-                </p>
-              </div>
+              <EmptyState tone="good" title={`Budget untouched — 0 of ${total} spent`}>
+                Nothing has been asked of the oracle, which is consistent with an empty hypothesis
+                board: there is no claim yet whose confidence a reply could move. The first spend
+                should be the one that changes a belief the most, and the rationale column is where
+                that argument gets written down.
+              </EmptyState>
             ) : (
               <DataTable rows={rows} columns={columns} rowKey={(r) => r.probe_id} maxHeight={280} />
             )

@@ -73,7 +73,7 @@ export function LaneYield() {
                   legend: { orientation: 'h', y: 1.12, x: 0, font: { color: C.inkDim, size: 11 } },
                 })}
               />
-              <div className="mt-2 grid gap-2 text-[11px] text-chrome-500 sm:grid-cols-4">
+              <div className="mt-2 grid gap-2 text-micro text-chrome-500 sm:grid-cols-4">
                 <span>
                   total reads <span className="font-mono text-chrome-300">{int(total)}</span> (
                   {compact(total)})

@@ -85,7 +85,7 @@ export function IndelLengths() {
                   legend: { orientation: 'h', y: 1.1, x: 0, font: { color: C.inkDim, size: 11 } },
                 })}
               />
-              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-chrome-500">
+              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-micro text-chrome-500">
                 <span>
                   deletions{' '}
                   <span className="font-mono text-broken-400">

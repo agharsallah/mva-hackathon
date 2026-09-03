@@ -377,7 +377,7 @@ function rebuildLabels(
   for (const label of buffers.links?.labels ?? []) {
     const node = document.createElement('span');
     node.textContent = label.text;
-    node.className = 'pointer-events-none absolute top-0 left-0 whitespace-nowrap text-[10px]';
+    node.className = 'pointer-events-none absolute top-0 left-0 whitespace-nowrap text-micro';
     node.style.color = C.inkDim;
     overlay.appendChild(node);
     labels.push(node);

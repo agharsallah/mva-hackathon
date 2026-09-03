@@ -381,7 +381,7 @@ function Explorer({
         />
       </div>
 
-      <p className="text-[11px] text-chrome-600">
+      <p className="text-micro text-chrome-600">
         {drawn} of {build.modelled} modelled residues drawn (window {filters.from}–{filters.to} of{' '}
         {filters.length} amino acids; {build.unmodelled} carry no coordinates). One URL cites this
         figure: <code>?gene={structure.gene}</code>, <code>prot.pick</code>, <code>prot.a</code>/

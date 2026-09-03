@@ -113,7 +113,7 @@ export function StructureMetricsTable({
           <Skeleton height={320} />
         ) : !inView ? (
           <div className="space-y-2">
-            <p className="text-[11px] text-chrome-500">
+            <p className="text-micro text-chrome-500">
               loading {int(genes.length)} genes — two requests each ({int(symbols.length)} folds,{' '}
               {int(coding.length)} models). Scroll here and the table fills in; it is not requested
               before that, because a cold call reaches Ensembl and AlphaFold once per gene.

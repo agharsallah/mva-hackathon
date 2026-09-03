@@ -114,7 +114,7 @@ export function ReadStoreCard() {
               k: 'converted at',
               v: (
                 <span
-                  className="rounded bg-decision-500/10 px-1.5 py-px text-[11px] text-decision-400/90"
+                  className="rounded-pill bg-decision-500/10 px-2 py-px text-micro text-decision-400/90"
                   title="runs.parquet records the engine and the wall-clock seconds per file, but no timestamp. The conversion date is not recoverable from this table."
                 >
                   not carried by the runs table

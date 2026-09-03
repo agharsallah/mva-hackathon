@@ -2,6 +2,7 @@ import { type ReactNode, useMemo, useState } from 'react';
 
 import { nodeText } from '../lib/nodeText';
 import { TextFilter } from './Controls';
+import { EmptyState } from './EmptyState';
 
 /**
  * The shared table. Sorting, filtering and pagination are additive: a call site that passes
@@ -68,9 +69,9 @@ function Pager({
   onPage: (p: number) => void;
 }) {
   const btn =
-    'rounded border border-chrome-700 bg-chrome-900 px-1.5 py-0.5 text-chrome-400 transition enabled:hover:bg-chrome-800 enabled:hover:text-chrome-200 disabled:opacity-30 focus:outline-none focus-visible:border-machinery-700';
+    'rounded-pill border border-line-strong bg-chrome-900 px-2 py-0.5 text-chrome-400 transition enabled:hover:bg-chrome-800 enabled:hover:text-chrome-200 disabled:opacity-30 focus:outline-none focus-visible:border-machinery-700';
   return (
-    <div className="flex items-center justify-end gap-2 text-[11px] text-chrome-500">
+    <div className="flex items-center justify-end gap-2 text-micro text-chrome-500">
       <button
         type="button"
         className={btn}
@@ -177,11 +178,7 @@ export function DataTable<R>({
 
   // Genuinely empty: unchanged from before this component could filter.
   if (rows.length === 0) {
-    return (
-      <div className="rounded-lg border border-dashed border-chrome-800 p-6 text-center text-sm text-chrome-500">
-        {empty}
-      </div>
-    );
+    return <EmptyState>{empty}</EmptyState>;
   }
 
   const controls = filterable ? (
@@ -193,7 +190,7 @@ export function DataTable<R>({
         placeholder={filterPlaceholder}
       />
       {needle && filtered.length > 0 && (
-        <span className="text-[11px] text-chrome-500">
+        <span className="text-micro text-chrome-500">
           <span className="font-mono text-chrome-300">{filtered.length}</span> of {rows.length}{' '}
           match
         </span>
@@ -206,15 +203,13 @@ export function DataTable<R>({
     return (
       <div className="space-y-2">
         {controls}
-        <div className="rounded-lg border border-dashed border-chrome-800 p-6 text-center text-sm text-chrome-500">
-          0 of {rows.length} match
-        </div>
+        <EmptyState>0 of {rows.length} match</EmptyState>
       </div>
     );
   }
 
   const table = (
-    <div className="overflow-auto rounded-lg border border-chrome-800" style={{ maxHeight }}>
+    <div className="overflow-auto rounded-card border border-line" style={{ maxHeight }}>
       <table className="w-full min-w-full border-collapse text-xs">
         <thead className="sticky top-0 bg-chrome-900 text-chrome-400">
           <tr>
@@ -225,7 +220,7 @@ export function DataTable<R>({
                 <th
                   key={c.key}
                   aria-sort={active ? (sort.dir === 'asc' ? 'ascending' : 'descending') : undefined}
-                  className={`border-b border-chrome-800 px-3 py-2 font-medium ${
+                  className={`border-b border-line px-3 py-2 font-medium ${
                     c.align === 'right' ? 'text-right' : 'text-left'
                   }`}
                 >
@@ -240,7 +235,7 @@ export function DataTable<R>({
                     >
                       {c.header}
                       {active && (
-                        <span aria-hidden className="text-[9px] leading-none text-chrome-300">
+                        <span aria-hidden className="text-micro leading-none text-chrome-300">
                           {sort.dir === 'asc' ? '▲' : '▼'}
                         </span>
                       )}
@@ -259,7 +254,7 @@ export function DataTable<R>({
               {columns.map((c) => (
                 <td
                   key={c.key}
-                  className={`border-b border-chrome-900 px-3 py-1.5 text-chrome-300 ${
+                  className={`border-b border-line-soft px-3 py-2 text-chrome-300 ${
                     c.align === 'right' ? 'text-right font-mono' : ''
                   } ${c.className ?? ''}`}
                 >

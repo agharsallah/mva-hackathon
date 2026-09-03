@@ -5,6 +5,7 @@ import { ApiError, post } from '../../api/client';
 import { useJobs } from '../../api/hooks';
 import type { Job } from '../../api/types';
 import { Badge } from '../../components/Badge';
+import { Card } from '../../components/Card';
 import { type Column, DataTable } from '../../components/DataTable';
 import { dec, iso } from '../../lib/format';
 import { jobStateTone } from '../../lib/palette';
@@ -84,7 +85,7 @@ export function JobsMonitor() {
                   qc.invalidateQueries({ queryKey: ['/api/jobs'] }),
                 )
               }
-              className="rounded border border-broken-800 px-1.5 py-0.5 text-[10px] text-broken-300 hover:bg-broken-950/40"
+              className="rounded-pill border border-broken-800 px-2 py-0.5 text-micro text-broken-300 hover:bg-broken-950/40"
             >
               cancel
             </button>
@@ -98,17 +99,17 @@ export function JobsMonitor() {
     return jobs.error instanceof ApiError && jobs.error.isUpstreamDown ? (
       <UpstreamDownBanner detail={jobs.error.message} />
     ) : (
-      <div className="rounded-xl border border-chrome-800 bg-chrome-900/40 p-4 text-xs text-chrome-500">
+      <Card className="text-xs text-chrome-500">
         Job list unavailable — the viz API is not reachable. This table has no fixture: a job queue
         only exists on a live server.
-        <p className="mt-1 font-mono text-[11px] text-chrome-600">{jobs.error.message}</p>
-      </div>
+        <p className="mt-1 font-mono text-micro text-chrome-600">{jobs.error.message}</p>
+      </Card>
     );
   }
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap items-center gap-x-4 text-[11px] text-chrome-500">
+      <div className="flex flex-wrap items-center gap-x-4 text-micro text-chrome-500">
         <span>
           <span className="font-mono text-chrome-300">{data.length}</span> jobs known to the reads
           API
@@ -125,7 +126,7 @@ export function JobsMonitor() {
         maxHeight={340}
         empty="No jobs yet. Submit a probe count above and it will appear here."
       />
-      <ul className="space-y-0.5 text-[11px] text-chrome-500">
+      <ul className="space-y-0.5 text-micro text-chrome-500">
         <li>
           <span className="font-mono text-machinery-400">queued / running</span> — accepted,
           machinery working

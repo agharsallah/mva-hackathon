@@ -164,7 +164,7 @@ export function ProteinProvenance({
 }) {
   const pct = build.confidentFraction === null ? null : build.confidentFraction * 100;
   return (
-    <div className="mt-2 space-y-1 text-[11px] leading-relaxed text-chrome-500">
+    <div className="mt-2 space-y-1 text-micro leading-relaxed text-chrome-500">
       <p>
         model:{' '}
         <span className="font-mono text-chrome-300">
@@ -256,7 +256,7 @@ export function ProteinError({ error }: { error: Error }) {
       translation and the UniProt accession it is fetched by), so there are no coordinates to draw.
       Nothing is rendered on purpose: a guessed fold would be indistinguishable from a measured one
       on screen.
-      <p className="mt-1.5 font-mono text-[11px] text-broken-400/80">{error.message}</p>
+      <p className="mt-2 font-mono text-micro text-broken-400/80">{error.message}</p>
     </Callout>
   );
 }
@@ -265,7 +265,7 @@ export function ProteinError({ error }: { error: Error }) {
 export function UnplacedList({ rows }: { rows: readonly UnplacedCandidate[] }) {
   if (rows.length === 0) return null;
   return (
-    <ul className="mt-2 space-y-1 text-[11px] text-chrome-500">
+    <ul className="mt-2 space-y-1 text-micro text-chrome-500">
       {rows.map((row) => (
         <li
           key={row.label}

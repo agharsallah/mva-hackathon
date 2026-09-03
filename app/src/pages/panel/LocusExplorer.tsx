@@ -71,7 +71,7 @@ export function LocusExplorer() {
               onChange={setGene}
               label="gene"
             />
-            <span className="text-[11px] text-chrome-600">live query ≈5 s, then cached</span>
+            <span className="text-micro text-chrome-600">live query ≈5 s, then cached</span>
           </>
         }
         legend={
@@ -121,14 +121,14 @@ function GeneTrackNote({
 }) {
   if (failed) {
     return (
-      <p className="mt-2 text-[11px] text-broken-400">
+      <p className="mt-2 text-micro text-broken-400">
         gene track unavailable — {failed.message}. Nothing is drawn rather than a guessed structure.
       </p>
     );
   }
   if (!structure) return null;
   return (
-    <p className="mt-2 text-[11px] text-chrome-500">
+    <p className="mt-2 text-micro text-chrome-500">
       gene track: <span className="font-mono text-chrome-300">{structure.transcript}</span>, the
       canonical transcript of {gene} — {int(structure.exons.length)} exons on the{' '}
       {structure.strand >= 0 ? 'forward (+)' : 'reverse (−)'} strand,{' '}
@@ -269,7 +269,7 @@ function Tracks({
           legend: { orientation: 'h', y: 1.08, x: 0, font: { color: C.inkDim, size: 11 } },
         })}
       />
-      <div className="mt-2 grid gap-2 text-[11px] text-chrome-500 sm:grid-cols-4">
+      <div className="mt-2 grid gap-2 text-micro text-chrome-500 sm:grid-cols-4">
         <span>
           records <span className="font-mono text-chrome-300">{int(rows.length)}</span>
         </span>

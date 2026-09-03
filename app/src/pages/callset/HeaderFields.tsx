@@ -73,7 +73,7 @@ export function HeaderFields() {
         header: 'namespace',
         render: (r) => (
           <span
-            className="rounded px-1.5 py-px font-mono text-[10px]"
+            className="rounded-pill px-2 py-px font-mono text-micro"
             style={{ color: KIND_COLOR[r.kind], background: `${KIND_COLOR[r.kind]}1a` }}
             title={KIND_SCOPE[r.kind]}
           >
@@ -154,7 +154,7 @@ export function HeaderFields() {
                 filterLabel="find a field"
                 filterPlaceholder="e.g. depth, phasing, MQ"
               />
-              <div className="mt-2 flex flex-wrap gap-3 text-[11px] text-chrome-500">
+              <div className="mt-2 flex flex-wrap gap-3 text-micro text-chrome-500">
                 {(['FILTER', 'INFO', 'FORMAT'] as FieldKind[]).map((kind) => (
                   <span key={kind}>
                     <span className="font-mono" style={{ color: KIND_COLOR[kind] }}>

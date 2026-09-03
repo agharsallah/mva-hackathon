@@ -161,7 +161,7 @@ export function StructureCompare() {
               type="button"
               onClick={resetCameras}
               title="drop the shared orbit and re-fit both canvases to the camera preset above"
-              className="rounded-md border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-400 transition hover:bg-chrome-800 hover:text-chrome-200"
+              className="rounded-control border border-line-strong bg-chrome-900 px-2 py-1 text-micro text-chrome-400 transition hover:bg-chrome-800 hover:text-chrome-200"
             >
               reset both cameras
             </button>
@@ -170,7 +170,7 @@ export function StructureCompare() {
           <div className="grid gap-3 lg:grid-cols-2">
             {[foldA, foldB].map((state, index) => (
               <div key={index === 0 ? `A-${a}` : `B-${b}`} className="space-y-2">
-                <p className="text-[11px] font-semibold text-chrome-300">
+                <p className="text-micro font-semibold text-chrome-300">
                   {index === 0 ? 'A' : 'B'} — {index === 0 ? a : b}
                 </p>
                 <FoldPanel
@@ -185,14 +185,14 @@ export function StructureCompare() {
             ))}
           </div>
 
-          <div className="grid gap-x-6 gap-y-3 border-t border-chrome-800 pt-3 md:grid-cols-2">
+          <div className="grid gap-x-6 gap-y-3 border-t border-line pt-3 md:grid-cols-2">
             {[foldA, foldB].map((state, index) => (
-              <div key={index === 0 ? `fs-A-${a}` : `fs-B-${b}`} className="space-y-1.5">
-                <p className="text-[11px] font-semibold text-chrome-300">{index === 0 ? a : b}</p>
+              <div key={index === 0 ? `fs-A-${a}` : `fs-B-${b}`} className="space-y-2">
+                <p className="text-micro font-semibold text-chrome-300">{index === 0 ? a : b}</p>
                 {state.kind === 'ready' ? (
                   <FactSheet metrics={state.metrics} />
                 ) : (
-                  <p className="text-[11px] text-chrome-600">
+                  <p className="text-micro text-chrome-600">
                     no fact sheet —{' '}
                     {state.kind === 'loading'
                       ? 'still loading'
@@ -207,7 +207,7 @@ export function StructureCompare() {
             ))}
           </div>
 
-          <p className="text-[11px] text-chrome-600">
+          <p className="text-micro text-chrome-600">
             One URL cites this comparison: <code>?{KEY_A}=</code>
             {a}, <code>{KEY_B}=</code>
             {b}, <code>{KEY_BY}=</code>

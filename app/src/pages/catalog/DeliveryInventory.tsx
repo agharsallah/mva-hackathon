@@ -74,16 +74,16 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
 
   return (
     <div
-      className={`rounded-lg border p-3 ${
+      className={`rounded-card border p-3 ${
         v.ok ? 'border-good-900/50 bg-good-950/10' : 'border-broken-900/60 bg-broken-950/20'
       }`}
     >
       <div className="flex items-start justify-between gap-2">
-        <span className="truncate font-mono text-[12px] text-chrome-100" title={r.file_name}>
+        <span className="truncate font-mono text-xs text-chrome-100" title={r.file_name}>
           {r.file_name}
         </span>
         <span
-          className={`shrink-0 rounded px-1.5 py-px text-[10px] font-medium ${
+          className={`shrink-0 rounded-pill px-2 py-px text-micro font-medium ${
             v.ok ? 'bg-good-500/15 text-good-400' : 'bg-broken-500/15 text-broken-400'
           }`}
           title={v.title}
@@ -92,11 +92,11 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
         </span>
       </div>
 
-      <p className="mt-1.5 text-[11px] leading-relaxed text-chrome-400">{r.description}</p>
+      <p className="mt-2 text-micro leading-relaxed text-chrome-400">{r.description}</p>
 
-      <div className="mt-2 flex flex-wrap items-center gap-1.5 text-[10px]">
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-micro">
         <span
-          className="rounded px-1 py-px font-medium"
+          className="rounded-pill px-1 py-px font-medium"
           style={{
             background: isReads ? 'rgba(168,85,247,0.15)' : 'rgba(59,130,246,0.15)',
             color: isReads ? C.raw : C.machinery,
@@ -104,21 +104,23 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
         >
           {r.role}
         </span>
-        <span className="rounded bg-chrome-800 px-1 py-px font-mono text-chrome-400">{r.kind}</span>
+        <span className="rounded-pill bg-chrome-800 px-1 py-px font-mono text-chrome-400">
+          {r.kind}
+        </span>
         {r.lane !== null && (
-          <span className="rounded bg-raw-500/15 px-1 py-px font-mono text-raw-300">
+          <span className="rounded-pill bg-raw-500/15 px-1 py-px font-mono text-raw-300">
             L{r.lane} R{r.read_num}
           </span>
         )}
         {r.flowcell && (
-          <span className="rounded bg-chrome-800 px-1 py-px font-mono text-chrome-500">
+          <span className="rounded-pill bg-chrome-800 px-1 py-px font-mono text-chrome-500">
             {r.flowcell}
           </span>
         )}
         <span className="ml-auto font-mono text-chrome-300">{bytes(r.size_bytes)}</span>
       </div>
 
-      <dl className="mt-2 space-y-1 border-t border-chrome-800/80 pt-2 text-[10px]">
+      <dl className="mt-2 space-y-1 border-t border-line pt-2 text-micro">
         <div className="flex gap-2">
           <dt className="w-16 shrink-0 text-chrome-600">location</dt>
           <dd className="break-all font-mono text-chrome-400">{r.location}</dd>
@@ -127,7 +129,7 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
           <dt className="w-16 shrink-0 text-chrome-600">sha256</dt>
           <dd className="font-mono text-chrome-400" title={r.sha256 ?? 'no digest recorded'}>
             {r.sha256 ? `${r.sha256.slice(0, 12)}…` : <span className="text-chrome-600">none</span>}
-            {r.sha256_source && <span className="ml-1.5 text-chrome-600">({r.sha256_source})</span>}
+            {r.sha256_source && <span className="ml-2 text-chrome-600">({r.sha256_source})</span>}
           </dd>
         </div>
         <div className="flex gap-2">
@@ -135,10 +137,10 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
           <dd className="font-mono text-chrome-400">
             {iso(added)}
             {fromLedger ? (
-              <span className="ml-1.5 text-chrome-600">(first upload)</span>
+              <span className="ml-2 text-chrome-600">(first upload)</span>
             ) : (
               <span
-                className="ml-1.5 rounded bg-decision-500/15 px-1 py-px text-decision-400"
+                className="ml-2 rounded-pill bg-decision-500/15 px-1 py-px text-decision-400"
                 title="No ingest-ledger row for this object — it predates the ledger. This is the store's last-modified time, which is an upper bound on arrival, not the arrival itself."
               >
                 last modified — predates the ledger
@@ -210,10 +212,8 @@ export function DeliveryInventory() {
                 return (
                   <div key={g.key}>
                     <div className="mb-2 flex items-baseline gap-2">
-                      <h4 className="text-xs font-semibold uppercase tracking-wider text-chrome-300">
-                        {g.title}
-                      </h4>
-                      <span className="text-[11px] text-chrome-600">
+                      <h3 className="text-xs font-semibold text-chrome-400">{g.title}</h3>
+                      <span className="text-micro text-chrome-600">
                         {g.note} · {group.length} object{group.length === 1 ? '' : 's'} ·{' '}
                         {bytes(group.reduce((a, r) => a + r.size_bytes, 0))}
                       </span>

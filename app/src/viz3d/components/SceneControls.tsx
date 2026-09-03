@@ -20,9 +20,9 @@ import type { SceneExplorer } from '../hooks/useSceneExplorer';
 import { num } from '../spec/describe';
 import { CAMERA_PRESETS, type CameraPreset } from '../spec/types';
 
-const LABEL = 'inline-flex items-center gap-1.5 text-[11px] text-chrome-500';
+const LABEL = 'inline-flex items-center gap-2 text-micro text-chrome-500';
 const INPUT =
-  'rounded-md border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-200';
+  'rounded-control border border-line-strong bg-chrome-900 px-2 py-1 text-micro text-chrome-200';
 
 export function SceneControls({
   explorer,
@@ -84,17 +84,17 @@ export function SceneControls({
           aria-pressed={layer.on}
           onClick={() => explorer.toggleLayer(layer.id)}
           className={cx(
-            'rounded-md border px-2 py-1 text-[11px] transition',
+            'rounded-control border px-2 py-1 text-micro transition',
             layer.on
               ? 'border-machinery-700 bg-machinery-950/60 text-machinery-300'
-              : 'border-chrome-700 bg-chrome-900 text-chrome-500 hover:bg-chrome-800',
+              : 'border-line-strong bg-chrome-900 text-chrome-500 hover:bg-chrome-800',
           )}
         >
           {layer.label}
         </button>
       ))}
 
-      <span className="text-[11px] text-chrome-600">
+      <span className="text-micro text-chrome-600">
         {num(explorer.visible)} / {num(explorer.total)} shown
       </span>
 
@@ -118,11 +118,11 @@ export function SceneControls({
       </button>
 
       {open && filters && (
-        <div className="w-full space-y-2 rounded-md border border-chrome-800 bg-chrome-950/60 p-2">
+        <div className="w-full space-y-2 rounded-control border border-line bg-chrome-950/60 p-2">
           {filterable.map((field) =>
             field.kind === 'numeric' ? (
               <div key={field.name} className="flex flex-wrap items-center gap-2">
-                <span className="w-28 truncate font-mono text-[11px] text-chrome-400">
+                <span className="w-28 truncate font-mono text-micro text-chrome-400">
                   {field.name}
                 </span>
                 <input
@@ -149,13 +149,13 @@ export function SceneControls({
                     ])
                   }
                 />
-                <span className="text-[11px] text-chrome-600">
+                <span className="text-micro text-chrome-600">
                   data {num(field.min)} … {num(field.max)}
                 </span>
               </div>
             ) : (
-              <div key={field.name} className="flex flex-wrap items-center gap-1.5">
-                <span className="w-28 truncate font-mono text-[11px] text-chrome-400">
+              <div key={field.name} className="flex flex-wrap items-center gap-2">
+                <span className="w-28 truncate font-mono text-micro text-chrome-400">
                   {field.name}
                 </span>
                 {field.values.map((value) => {
@@ -167,10 +167,10 @@ export function SceneControls({
                       aria-pressed={on}
                       onClick={() => explorer.toggleValue(field.name, value)}
                       className={cx(
-                        'rounded border px-1.5 py-0.5 text-[11px] transition',
+                        'rounded-pill border px-2 py-0.5 text-micro transition',
                         on
                           ? 'border-chrome-600 bg-chrome-800 text-chrome-200'
-                          : 'border-chrome-800 bg-chrome-950 text-chrome-600',
+                          : 'border-line bg-chrome-950 text-chrome-600',
                       )}
                     >
                       {value}

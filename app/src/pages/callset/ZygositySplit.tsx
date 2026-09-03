@@ -174,28 +174,26 @@ export function ZygositySplit() {
                 />
               </div>
               <div className="mt-3 overflow-x-auto">
-                <table className="w-full border-collapse text-[11px]">
+                <table className="w-full border-collapse text-micro">
                   <thead className="text-chrome-500">
                     <tr>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-left font-medium">
-                        bin
-                      </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-left font-medium">
+                      <th className="border-b border-line px-2 py-1 text-left font-medium">bin</th>
+                      <th className="border-b border-line px-2 py-1 text-left font-medium">
                         reading
                       </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-right font-medium">
+                      <th className="border-b border-line px-2 py-1 text-right font-medium">
                         SNPs
                       </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-right font-medium">
+                      <th className="border-b border-line px-2 py-1 text-right font-medium">
                         indels
                       </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-right font-medium">
+                      <th className="border-b border-line px-2 py-1 text-right font-medium">
                         alleles
                       </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-right font-medium">
+                      <th className="border-b border-line px-2 py-1 text-right font-medium">
                         share
                       </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-right font-medium">
+                      <th className="border-b border-line px-2 py-1 text-right font-medium">
                         Ts/Tv
                       </th>
                     </tr>
@@ -203,27 +201,27 @@ export function ZygositySplit() {
                   <tbody>
                     {rows.map((r) => (
                       <tr key={r.af_bin}>
-                        <td className="border-b border-chrome-900 px-2 py-1 font-mono text-chrome-500">
+                        <td className="border-b border-line-soft px-2 py-1 font-mono text-chrome-500">
                           {dec(r.af_bin, 2)}
                         </td>
-                        <td className="border-b border-chrome-900 px-2 py-1">
+                        <td className="border-b border-line-soft px-2 py-1">
                           <span style={{ color: COLOR[r.zygosity ?? ''] ?? C.absent }}>
                             {r.zygosity ?? 'not a single-sample callset — no zygosity reading'}
                           </span>
                         </td>
-                        <td className="border-b border-chrome-900 px-2 py-1 text-right font-mono text-chrome-300">
+                        <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-chrome-300">
                           {int(r.n_snps)}
                         </td>
-                        <td className="border-b border-chrome-900 px-2 py-1 text-right font-mono text-chrome-300">
+                        <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-chrome-300">
                           {int(r.n_indels)}
                         </td>
-                        <td className="border-b border-chrome-900 px-2 py-1 text-right font-mono text-chrome-300">
+                        <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-chrome-300">
                           {int(r.n_alleles)}
                         </td>
-                        <td className="border-b border-chrome-900 px-2 py-1 text-right font-mono text-chrome-400">
+                        <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-chrome-400">
                           {pct(r.pct_of_alleles, 2)}
                         </td>
-                        <td className="border-b border-chrome-900 px-2 py-1 text-right font-mono text-chrome-300">
+                        <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-chrome-300">
                           {dec(r.ts_tv, 3)}
                         </td>
                       </tr>
@@ -231,7 +229,7 @@ export function ZygositySplit() {
                   </tbody>
                 </table>
               </div>
-              <p className="mt-2 text-[11px] text-chrome-500">
+              <p className="mt-2 text-micro text-chrome-500">
                 <span className="font-mono text-chrome-300">{int(total)}</span> alleles counted in
                 total. Counted per <em>allele</em>, so a multi-allelic record contributes more than
                 one — which is why this exceeds the 5,012,204 record count.

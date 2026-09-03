@@ -126,7 +126,7 @@ export function CandidateFunnel() {
           return (
             <div className="space-y-3">
               <Waterfall rows={ordered} boundary={boundary} />
-              <p className="text-[11px] text-chrome-500">
+              <p className="text-micro text-chrome-500">
                 {int(first.n)} {first.stage} →{' '}
                 <span className="text-chrome-200">{int(last.n)}</span> {last.stage} ·{' '}
                 {ordered.filter((r) => r.scope === 'genome').length} genome-scoped stages,{' '}

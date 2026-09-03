@@ -91,7 +91,7 @@ function Manifest({ row }: { row: ReferenceProvenanceRow }) {
   const [open, setOpen] = useState(false);
   const outBytes = row.outputs.reduce((n, o) => n + (o.bytes ?? 0), 0);
   return (
-    <div className="rounded-lg border border-chrome-800 bg-chrome-950/60">
+    <div className="rounded-card border border-line bg-chrome-950/60">
       <button
         type="button"
         onClick={() => setOpen(!open)}
@@ -101,19 +101,19 @@ function Manifest({ row }: { row: ReferenceProvenanceRow }) {
         <span className="text-chrome-500">{open ? '▾' : '▸'}</span>
         <Badge tone={row.kind === 'reference' ? 'raw' : 'decision'}>{row.kind}</Badge>
         <span className="font-mono text-sm text-chrome-100">{row.name}</span>
-        <span className="text-[11px] text-chrome-500">
+        <span className="text-micro text-chrome-500">
           {row.inputs.length} input{row.inputs.length === 1 ? '' : 's'} → {row.outputs.length} file
           {row.outputs.length === 1 ? '' : 's'}, {bytes(outBytes)}
         </span>
-        <span className="ml-auto font-mono text-[11px] text-chrome-600">
+        <span className="ml-auto font-mono text-micro text-chrome-600">
           {iso(row.built_at)} · {row.built_by} · {row.code_version}
         </span>
       </button>
       {open && (
-        <div className="space-y-3 border-t border-chrome-800 p-3">
-          <p className="text-[11px] text-chrome-400">{row.note}</p>
+        <div className="space-y-3 border-t border-line p-3">
+          <p className="text-micro text-chrome-400">{row.note}</p>
           <div className="space-y-1">
-            <h4 className="text-[11px] font-semibold text-chrome-300">
+            <h4 className="text-xs font-semibold text-chrome-400">
               inputs — what was fetched or read
             </h4>
             <DataTable
@@ -124,7 +124,7 @@ function Manifest({ row }: { row: ReferenceProvenanceRow }) {
             />
           </div>
           <div className="space-y-1">
-            <h4 className="text-[11px] font-semibold text-chrome-300">
+            <h4 className="text-xs font-semibold text-chrome-400">
               outputs — what was written, and its digest
             </h4>
             <DataTable
@@ -135,7 +135,7 @@ function Manifest({ row }: { row: ReferenceProvenanceRow }) {
               empty="No outputs recorded."
             />
           </div>
-          <p className="font-mono text-[11px] text-chrome-600">
+          <p className="font-mono text-micro text-chrome-600">
             manifest: {row.path} · written by {row.built_by}, never by hand
           </p>
         </div>

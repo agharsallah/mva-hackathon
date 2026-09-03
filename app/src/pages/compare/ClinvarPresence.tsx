@@ -92,7 +92,7 @@ function totals(summary: ClinvarPresenceSummary[]) {
 
 function Totals({ total }: { total: Totals }) {
   return (
-    <p className="text-[11px] text-chrome-500">
+    <p className="text-micro text-chrome-500">
       <span className="text-chrome-200">{int(total.n_plp)}</span> ClinVar P/LP sites checked across
       the panel → <span className="text-good-400">{int(total.n_present)} present</span> (
       {int(total.n_present_pass)} PASS, {int(total.n_present_het)} heterozygous) ·{' '}
@@ -142,9 +142,9 @@ function PresenceBars({ summary }: { summary: ClinvarPresenceSummary[] }) {
   const scale = TRACK / widest;
 
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-2">
       {summary.map((row) => (
-        <div key={row.gene} className="flex items-center gap-3 text-[11px]">
+        <div key={row.gene} className="flex items-center gap-3 text-micro">
           <span className="w-16 shrink-0 text-right font-mono font-semibold text-chrome-200">
             {row.gene}
           </span>
@@ -331,7 +331,7 @@ function LeadCallout({ leads, checked }: { leads: ClinvarPresenceSite[]; checked
 
 function Caveat({ uncomparable }: { uncomparable: number }) {
   return (
-    <div className="rounded-md border border-chrome-800 bg-chrome-900/40 p-3 text-[11px] leading-relaxed text-chrome-400">
+    <div className="rounded-control border border-line bg-panel p-3 text-micro leading-relaxed text-chrome-400">
       <p>
         <strong className="text-chrome-300">Presence is a lower bound, not a count.</strong> A site
         matches only when the contig, the position and the reference allele are identical strings

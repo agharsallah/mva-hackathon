@@ -51,7 +51,7 @@ export function DependencyBoard() {
         <Toggle on={revealAll} onChange={setRevealAll}>
           {revealAll ? 'addresses shown' : 'reveal addresses'}
         </Toggle>
-        <span className="text-[11px] text-chrome-600">
+        <span className="text-micro text-chrome-600">
           hosts and ports are hidden by default — this page is all infrastructure addresses and gets
           screenshotted
         </span>
@@ -60,16 +60,14 @@ export function DependencyBoard() {
 
       <Loaded query={q} height={420}>
         {(data) => (
-          <div className="space-y-5">
+          <div className="space-y-4">
             {groupChecks(data.checks).map((g) => {
               const checks = g.checks;
               return (
                 <div key={g.key}>
                   <div className="mb-2 flex items-baseline gap-2">
-                    <h4 className="text-xs font-semibold uppercase tracking-wider text-chrome-300">
-                      {g.title}
-                    </h4>
-                    <span className="text-[11px] text-chrome-600">{g.note}</span>
+                    <h3 className="text-xs font-semibold text-chrome-400">{g.title}</h3>
+                    <span className="text-micro text-chrome-600">{g.note}</span>
                     <Badge tone="neutral" className="ml-auto">
                       {checks.length} check{checks.length === 1 ? '' : 's'}
                     </Badge>

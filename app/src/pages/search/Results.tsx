@@ -9,11 +9,13 @@
 
 import { useRegion } from '../../api/hooks';
 import type { RegionVariant, RegionWindow, SearchResolution } from '../../api/types';
+import { Card } from '../../components/Card';
 import { type Column, DataTable } from '../../components/DataTable';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Loaded } from '../../components/QueryState';
 import { dec, int } from '../../lib/format';
 import { C } from '../../lib/palette';
+import { BOX, cx } from '../../lib/ui';
 import { bin } from './bins';
 import { DensityLegend, DensityStrip } from './DensityStrip';
 
@@ -33,9 +35,9 @@ function sourceTone(source: string): string {
 export function Resolution({ found }: { found: SearchResolution }) {
   const span = found.end - found.start + 1;
   return (
-    <div className="rounded-xl border border-chrome-800 bg-chrome-900/40 p-4">
+    <Card>
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <span className="rounded-md bg-chrome-800 px-2 py-0.5 text-[11px] uppercase tracking-wider text-chrome-400">
+        <span className="rounded-control bg-chrome-800 px-2 py-0.5 text-xs text-chrome-400">
           {KIND_LABEL[found.kind]}
         </span>
         <span className="font-mono text-sm text-chrome-100">{found.label}</span>
@@ -45,7 +47,7 @@ export function Resolution({ found }: { found: SearchResolution }) {
         resolved by <span className={`font-mono ${sourceTone(found.source)}`}>{found.source}</span>
         {found.note && <> — {found.note}</>}
       </p>
-    </div>
+    </Card>
   );
 }
 
@@ -97,7 +99,7 @@ function Window({
         origin={origin}
       >
         <DensityStrip variants={window.variants} start={window.start} end={window.end} />
-        <div className="mt-2 grid gap-2 text-[11px] text-chrome-500 sm:grid-cols-4">
+        <div className="mt-2 grid gap-2 text-micro text-chrome-500 sm:grid-cols-4">
           <span>
             records <span className="font-mono text-chrome-300">{int(window.n)}</span>
           </span>
@@ -159,8 +161,8 @@ function EmptyWindow({
 }) {
   const dbsnp = found.source.startsWith('ensembl');
   return (
-    <div className="rounded-xl border border-decision-800/60 bg-decision-950/25 p-5">
-      <div className="text-xs font-semibold uppercase tracking-wider text-decision-300">
+    <div className={cx('rounded-card border p-4', BOX.decision)}>
+      <div className="text-xs font-semibold text-decision-300">
         resolved, and the callset has no record here
       </div>
       <p className="mt-2 max-w-3xl text-sm leading-relaxed text-chrome-300">
@@ -172,9 +174,9 @@ function EmptyWindow({
         site was never covered well enough to call. It is a different fact from an unknown name,
         which would have been a 404 before this panel was reached.
       </p>
-      <p className="mt-2 font-mono text-[11px] text-chrome-600">
+      <p className="mt-2 font-mono text-micro text-chrome-600">
         {origin === 'fixture' && (
-          <span className="mr-1.5 rounded bg-decision-500/15 px-1 py-px text-decision-400">
+          <span className="mr-2 rounded-pill bg-decision-500/15 px-1 py-px text-decision-400">
             fixture
           </span>
         )}

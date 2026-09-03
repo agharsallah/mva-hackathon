@@ -43,7 +43,7 @@ export function Derivations() {
           />
         )}
       </Loaded>
-      <p className="text-[11px] text-chrome-600">
+      <p className="text-micro text-chrome-600">
         Each row is a table this app reads from. If a derivation cannot state its question, it
         should not exist.
       </p>

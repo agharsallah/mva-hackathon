@@ -193,12 +193,12 @@ function Matrix({ payload, narrow }: { payload: PanelHetPairs; narrow: boolean }
           )}
         </Callout>
       ) : null}
-      <p className="mt-3 text-[11px] text-chrome-600">
+      <p className="mt-3 text-micro text-chrome-600">
         {narrow
           ? `counts below are for the whole ${gene} grid, not the filtered view above`
           : `the whole ${gene} grid`}
       </p>
-      <div className="mt-1.5 grid grid-cols-2 gap-2 sm:grid-cols-5">
+      <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-5">
         <StatTile
           label="het alleles"
           value={int(summary.n_het)}

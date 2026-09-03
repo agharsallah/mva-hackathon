@@ -79,7 +79,7 @@ export function DistanceTable({
             {r.b.aa}
             {r.b.n}
           </span>
-          <span className="ml-1.5 text-chrome-500">
+          <span className="ml-2 text-chrome-500">
             {r.a.label} / {r.b.label}
           </span>
         </button>
@@ -139,11 +139,11 @@ export function DistanceTable({
           <button
             type="button"
             onClick={compareWith.onCompare}
-            className="rounded-md border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-400 transition hover:bg-chrome-800 hover:text-chrome-200"
+            className="rounded-control border border-line-strong bg-chrome-900 px-2 py-1 text-micro text-chrome-400 transition hover:bg-chrome-800 hover:text-chrome-200"
           >
             compare {compareWith.gene} with…
           </button>
-          <span className="text-[11px] text-chrome-600">
+          <span className="text-micro text-chrome-600">
             puts {compareWith.gene} on side A of the side-by-side comparison below; pick side B
             there. A distance only means something next to the same distance on another fold.
           </span>

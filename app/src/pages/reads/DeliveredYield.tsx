@@ -118,28 +118,26 @@ export function DeliveredYield() {
                 })}
               />
               <div className="mt-3 overflow-x-auto">
-                <table className="w-full border-collapse text-[11px]">
+                <table className="w-full border-collapse text-micro">
                   <thead className="text-chrome-500">
                     <tr>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-left font-medium">
-                        lane
-                      </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-right font-medium">
+                      <th className="border-b border-line px-2 py-1 text-left font-medium">lane</th>
+                      <th className="border-b border-line px-2 py-1 text-right font-medium">
                         files
                       </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-right font-medium">
+                      <th className="border-b border-line px-2 py-1 text-right font-medium">
                         delivered GB
                       </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-right font-medium">
+                      <th className="border-b border-line px-2 py-1 text-right font-medium">
                         est. Gbases
                       </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-right font-medium">
+                      <th className="border-b border-line px-2 py-1 text-right font-medium">
                         est. reads
                       </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-right font-medium">
+                      <th className="border-b border-line px-2 py-1 text-right font-medium">
                         counted reads
                       </th>
-                      <th className="border-b border-chrome-800 px-2 py-1 text-right font-medium">
+                      <th className="border-b border-line px-2 py-1 text-right font-medium">
                         error
                       </th>
                     </tr>
@@ -150,22 +148,22 @@ export function DeliveredYield() {
                       const truth = real(r.lane);
                       return (
                         <tr key={r.lane}>
-                          <td className="border-b border-chrome-900 px-2 py-1 font-mono text-chrome-300">
+                          <td className="border-b border-line-soft px-2 py-1 font-mono text-chrome-300">
                             {r.lane}
                           </td>
-                          <td className="border-b border-chrome-900 px-2 py-1 text-right font-mono text-chrome-400">
+                          <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-chrome-400">
                             {r.n_files}
                           </td>
-                          <td className="border-b border-chrome-900 px-2 py-1 text-right font-mono text-chrome-300">
+                          <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-chrome-300">
                             {dec(r.gigabytes, 2)}
                           </td>
-                          <td className="border-b border-chrome-900 px-2 py-1 text-right font-mono text-chrome-300">
+                          <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-chrome-300">
                             {dec(r.est_gbases, 2)}
                           </td>
-                          <td className="border-b border-chrome-900 px-2 py-1 text-right font-mono text-raw-400">
+                          <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-raw-400">
                             {int(r.est_reads)}
                           </td>
-                          <td className="border-b border-chrome-900 px-2 py-1 text-right font-mono text-machinery-400">
+                          <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-machinery-400">
                             {truth === undefined ? (
                               <span className="text-chrome-600">—</span>
                             ) : (
@@ -173,7 +171,7 @@ export function DeliveredYield() {
                             )}
                           </td>
                           <td
-                            className="border-b border-chrome-900 px-2 py-1 text-right font-mono"
+                            className="border-b border-line-soft px-2 py-1 text-right font-mono"
                             style={{
                               color:
                                 err === null ? C.absent : Math.abs(err) <= 2 ? C.good : C.decision,
@@ -187,7 +185,7 @@ export function DeliveredYield() {
                   </tbody>
                 </table>
               </div>
-              <div className="mt-2 grid gap-2 text-[11px] text-chrome-500 sm:grid-cols-4">
+              <div className="mt-2 grid gap-2 text-micro text-chrome-500 sm:grid-cols-4">
                 <span>
                   {totalFiles} FASTQ files ·{' '}
                   <span className="font-mono text-chrome-300">{dec(totalGb, 2)} GB</span> gzipped

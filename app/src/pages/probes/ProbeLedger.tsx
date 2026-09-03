@@ -1,7 +1,10 @@
 import { useOverview, useProbeLedger } from '../../api/hooks';
 import type { ProbeLedgerRow } from '../../api/types';
+import { Card } from '../../components/Card';
 import { type Column, DataTable } from '../../components/DataTable';
+import { EmptyState } from '../../components/EmptyState';
 import { Loaded } from '../../components/QueryState';
+import { StatTile } from '../../components/StatTile';
 import { int, iso } from '../../lib/format';
 
 /**
@@ -49,18 +52,19 @@ export function ProbeLedger() {
   ];
 
   return (
-    <div className="space-y-3 rounded-xl border border-chrome-800 bg-chrome-900/40 p-4">
+    <Card className="space-y-3">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <div className="text-[11px] font-medium uppercase tracking-wider text-chrome-500">
-            oracle budget
-          </div>
-          <div className="mt-1 font-mono text-3xl leading-none text-good-400">
-            {remaining}
-            <span className="text-lg text-chrome-500"> / {total}</span>
-          </div>
-          <div className="mt-1 text-[11px] text-chrome-500">probes remaining · {spent} spent</div>
-        </div>
+        <StatTile
+          label="oracle budget"
+          tone="good"
+          value={
+            <>
+              {remaining}
+              <span className="text-lg text-chrome-500"> / {total}</span>
+            </>
+          }
+          sub={`probes remaining · ${spent} spent`}
+        />
         {/* 18 slots, one square each: the budget as a resource bar, not a number. */}
         <div className="flex flex-wrap gap-1">
           {Array.from({ length: total }, (_, i) => (
@@ -80,25 +84,20 @@ export function ProbeLedger() {
       <Loaded query={ledger} height={140}>
         {(rows) =>
           rows.length === 0 ? (
-            <div className="rounded-lg border border-dashed border-good-900/50 bg-good-950/10 p-6 text-center">
-              <div className="text-sm font-medium text-good-400">
-                Budget untouched — 0 of {total} spent
-              </div>
-              <p className="mx-auto mt-1 max-w-xl text-xs leading-relaxed text-chrome-400">
-                Nothing has been asked of the oracle yet. Every entry that lands here must carry the
-                question it answered and why that question was worth one of eighteen irreversible
-                spends — the ledger is the record of judgement, not just of calls.
-              </p>
-            </div>
+            <EmptyState tone="good" title={`Budget untouched — 0 of ${total} spent`}>
+              Nothing has been asked of the oracle yet. Every entry that lands here must carry the
+              question it answered and why that question was worth one of eighteen irreversible
+              spends — the ledger is the record of judgement, not just of calls.
+            </EmptyState>
           ) : (
             <DataTable rows={rows} columns={columns} rowKey={(r) => r.probe_id} maxHeight={300} />
           )
         }
       </Loaded>
-      <p className="text-[11px] text-chrome-600">
+      <p className="text-micro text-chrome-600">
         Local k-mer counts against our own read store are <strong>free</strong> and do not touch
         this budget. Only queries to the challenge oracle do.
       </p>
-    </div>
+    </Card>
   );
 }

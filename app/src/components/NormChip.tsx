@@ -44,7 +44,7 @@ export function NormChip({ row }: { row?: ObservedExpectedRow }) {
       to="/compare"
       title={`published expectation ${band} — ${row.source}. Full comparison on the Compare page.`}
       className={cx(
-        'inline-flex shrink-0 items-center rounded border px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wider transition-opacity hover:opacity-75',
+        'inline-flex shrink-0 items-center rounded-pill border px-2 py-0.5 text-micro font-medium transition-opacity hover:opacity-75',
         STYLE[row.verdict] ?? STYLE.unknown,
       )}
     >

@@ -66,7 +66,7 @@ const FIELDS: Field[] = [
     label: 'recessive filters',
     hint: 'The two server-side booleans: rare enough for a recessive model, and able to change the protein.',
     render: (v) => (
-      <span className="flex flex-wrap gap-1.5">
+      <span className="flex flex-wrap gap-2">
         <Flag on={v.is_rare_recessive} yes="rare" no="too common" />
         <Flag on={v.is_protein_altering} yes="protein-altering" no="not protein-altering" />
       </span>
@@ -133,13 +133,13 @@ const FIELDS: Field[] = [
 export function Flag({ on, yes, no }: { on: boolean | null; yes: string; no: string }) {
   if (on === null)
     return (
-      <span className="rounded bg-chrome-800 px-1.5 py-0.5 text-[10px] text-chrome-400">
+      <span className="rounded-pill bg-chrome-800 px-2 py-0.5 text-micro text-chrome-400">
         unknown
       </span>
     );
   return (
     <span
-      className={`rounded px-1.5 py-0.5 text-[10px] ${
+      className={`rounded-pill px-2 py-0.5 text-micro ${
         on ? 'bg-good-950/60 text-good-400' : 'bg-chrome-800 text-chrome-500'
       }`}
     >
@@ -167,7 +167,7 @@ function Vaf({ vaf }: { vaf: number | null }) {
           }}
         />
       </span>
-      <span className="mt-0.5 block text-[10px] text-chrome-600">
+      <span className="mt-0.5 block text-micro text-chrome-600">
         0 — 0.5 (one of two copies) — 1
       </span>
     </span>
@@ -176,34 +176,30 @@ function Vaf({ vaf }: { vaf: number | null }) {
 
 export function Comparison({ a, b }: { a: PanelHetVariant; b: PanelHetVariant }) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-chrome-800">
+    <div className="overflow-x-auto rounded-card border border-line">
       <table className="w-full border-collapse text-xs">
         <thead className="bg-chrome-900 text-chrome-400">
           <tr>
-            <th className="w-40 border-b border-chrome-800 px-2 py-2 text-left font-medium">
-              field
-            </th>
-            <th className="border-b border-chrome-800 px-2 py-2 text-left font-medium text-machinery-300">
+            <th className="w-40 border-b border-line px-2 py-2 text-left font-medium">field</th>
+            <th className="border-b border-line px-2 py-2 text-left font-medium text-machinery-300">
               A
             </th>
-            <th className="border-b border-chrome-800 px-2 py-2 text-left font-medium text-raw-300">
-              B
-            </th>
+            <th className="border-b border-line px-2 py-2 text-left font-medium text-raw-300">B</th>
           </tr>
         </thead>
         <tbody>
           {FIELDS.map((f) => (
             <tr key={f.label} className="odd:bg-chrome-900/30">
               <td
-                className="border-b border-chrome-900 px-2 py-1.5 align-top text-chrome-500"
+                className="border-b border-line-soft px-2 py-2 align-top text-chrome-500"
                 title={f.hint}
               >
                 {f.label}
               </td>
-              <td className="border-b border-chrome-900 px-2 py-1.5 align-top text-chrome-300">
+              <td className="border-b border-line-soft px-2 py-2 align-top text-chrome-300">
                 {f.render(a)}
               </td>
-              <td className="border-b border-chrome-900 px-2 py-1.5 align-top text-chrome-300">
+              <td className="border-b border-line-soft px-2 py-2 align-top text-chrome-300">
                 {f.render(b)}
               </td>
             </tr>

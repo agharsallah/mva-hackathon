@@ -104,7 +104,7 @@ export function Substitutions() {
                   showlegend: false,
                 })}
               />
-              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-chrome-500">
+              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-micro text-chrome-500">
                 <span>
                   Ts/Tv{' '}
                   <span className="font-mono text-good-400">{dec(t.data?.data.ratio ?? 0, 2)}</span>{' '}

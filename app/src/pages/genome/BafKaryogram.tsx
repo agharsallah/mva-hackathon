@@ -241,7 +241,7 @@ export function BafKaryogram() {
                   },
                 })}
               />
-              <div className="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-[11px] text-chrome-500">
+              <div className="mt-1 flex flex-wrap gap-x-5 gap-y-1 text-micro text-chrome-500">
                 <span>
                   {int(rows.length)} bins across {chroms.length} contigs
                 </span>

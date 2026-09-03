@@ -98,7 +98,7 @@ export function ObservedExpected() {
           return (
             <div className="space-y-3">
               <Dumbbell rows={rows} />
-              <p className="text-[11px] text-chrome-500">
+              <p className="text-micro text-chrome-500">
                 <span className="text-good-400">{int(counts('within'))} within</span> ·{' '}
                 <span className="text-broken-400">
                   {int(counts('above') + counts('below'))} outside
