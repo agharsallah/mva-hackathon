@@ -60,6 +60,17 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   ['/api/search', { q: 'nonsense query' }],
   ['/api/callset/region', { chrom: '15', start: 1000000, end: 1002000 }],
   ['/api/health/dependencies', undefined],
+  // Phenotype: both term sets, because the delta between them is a result rather than a
+  // display option, and a gene inside the panel plus one outside the captured set, which
+  // exercises the fallback in the registry.
+  ['/api/phenotype/terms', undefined],
+  ['/api/phenotype/genes', undefined],
+  ['/api/phenotype/genes', { term_set: 'with-parental' }],
+  ['/api/phenotype/genes', { term_set: 'proband-only' }],
+  ['/api/phenotype/delta', undefined],
+  ['/api/phenotype/gene', { symbol: 'BUB1B' }],
+  ['/api/phenotype/gene', { symbol: 'TRIP13' }],
+  ['/api/phenotype/gene', { symbol: 'NOT_CAPTURED' }],
 ];
 
 export const key = (path: string, params?: Record<string, string | number>): string =>

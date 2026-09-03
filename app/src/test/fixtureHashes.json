@@ -54,5 +54,13 @@
   "/api/search?q=rs1042522": "5a98d3ff5f6f7af1",
   "/api/search?q=nonsense+query": "74234e98afe7498f",
   "/api/callset/region?chrom=15&start=1000000&end=1002000": "3f6e73aaa45ba5b1",
-  "/api/health/dependencies": "6d03c14e9a664775"
+  "/api/health/dependencies": "6d03c14e9a664775",
+  "/api/phenotype/terms": "6653cd1d55474f38",
+  "/api/phenotype/genes": "ba64b6ffccf28c8e",
+  "/api/phenotype/genes?term_set=with-parental": "6f6e98eb0a12897a",
+  "/api/phenotype/genes?term_set=proband-only": "ba64b6ffccf28c8e",
+  "/api/phenotype/delta": "4cf7b6b59864f831",
+  "/api/phenotype/gene?symbol=BUB1B": "fe388aee75fc18a8",
+  "/api/phenotype/gene?symbol=TRIP13": "21a3f3cd55b4f2e4",
+  "/api/phenotype/gene?symbol=NOT_CAPTURED": "fe388aee75fc18a8"
 }

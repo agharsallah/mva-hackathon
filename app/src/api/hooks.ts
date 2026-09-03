@@ -41,6 +41,10 @@ import type {
   PanelGeneRow,
   PanelHetPairs,
   PanelSuppressed,
+  PhenotypeDelta,
+  PhenotypeGeneDetail,
+  PhenotypeRanking,
+  PhenotypeTerms,
   ProbeLedgerRow,
   QualityLevelRow,
   ReadPartitionRow,
@@ -181,6 +185,24 @@ export const useHealthDependencies = (refresh = false) =>
     refresh ? { refresh: true } : undefined,
     { staleTime: 5_000, refetchInterval: HEALTH_POLL_MS },
   );
+
+/**
+ * The phenotype ranking (`Phenotype` page).
+ *
+ * These four read committed reference tables rather than the warehouse, so they answer on
+ * a checkout where nobody has run an ingest. They are also the only endpoints in this app
+ * whose rows were produced without reading the callset — which is exactly why they are
+ * worth having next to everything that did.
+ */
+export const usePhenotypeTerms = () => useEndpoint<PhenotypeTerms>('/api/phenotype/terms');
+
+export const usePhenotypeGenes = (termSet: string, limit = 50) =>
+  useEndpoint<PhenotypeRanking>('/api/phenotype/genes', { term_set: termSet, limit });
+
+export const usePhenotypeGene = (symbol: string, termSet: string) =>
+  useEndpoint<PhenotypeGeneDetail>('/api/phenotype/gene', { symbol, term_set: termSet });
+
+export const usePhenotypeDelta = () => useEndpoint<PhenotypeDelta>('/api/phenotype/delta');
 
 const LIVE_STATES = new Set(['queued', 'running']);
 

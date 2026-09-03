@@ -1,0 +1,63 @@
+{
+  "parental_term": "HP:0200067",
+  "parental_label": "Recurrent spontaneous abortion",
+  "considered": 5267,
+  "rows": [
+    {
+      "gene": "BUB1B",
+      "with_parental": 14,
+      "proband_only": 6,
+      "moved": 8,
+      "curated": true
+    },
+    {
+      "gene": "CENPE",
+      "with_parental": 1065,
+      "proband_only": 1010,
+      "moved": 55,
+      "curated": true
+    },
+    {
+      "gene": "CEP192",
+      "with_parental": null,
+      "proband_only": null,
+      "moved": null,
+      "curated": false
+    },
+    {
+      "gene": "CEP57",
+      "with_parental": 27,
+      "proband_only": 17,
+      "moved": 10,
+      "curated": true
+    },
+    {
+      "gene": "DICER1",
+      "with_parental": 13,
+      "proband_only": 8,
+      "moved": 5,
+      "curated": true
+    },
+    {
+      "gene": "SMC5",
+      "with_parental": 4490,
+      "proband_only": 4485,
+      "moved": 5,
+      "curated": true
+    },
+    {
+      "gene": "TP53",
+      "with_parental": 23,
+      "proband_only": 11,
+      "moved": 12,
+      "curated": true
+    },
+    {
+      "gene": "TRIP13",
+      "with_parental": 45,
+      "proband_only": 26,
+      "moved": 19,
+      "curated": true
+    }
+  ]
+}

@@ -54,6 +54,12 @@ const OWNERS: Record<string, readonly string[]> = {
     '/api/panel/suppressed',
     '/api/panel/gene-structure',
   ],
+  phenotype: [
+    '/api/phenotype/terms',
+    '/api/phenotype/genes',
+    '/api/phenotype/delta',
+    '/api/phenotype/gene',
+  ],
   platform: [
     '/api/catalog/objects',
     '/api/catalog/tables',
@@ -74,6 +80,7 @@ const FRAGMENTS: Record<string, () => Promise<Record<string, Entry>>> = {
   callset: () => import('./registry/callset').then((m) => m.callsetEntries),
   genome: () => import('./registry/genome').then((m) => m.genomeEntries),
   panel: () => import('./registry/panel').then((m) => m.panelEntries),
+  phenotype: () => import('./registry/phenotype').then((m) => m.phenotypeEntries),
   platform: () => import('./registry/platform').then((m) => m.platformEntries),
 };
 

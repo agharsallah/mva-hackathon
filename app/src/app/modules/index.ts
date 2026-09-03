@@ -60,6 +60,14 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/Probes'),
   },
   {
+    id: 'phenotype',
+    path: '/phenotype',
+    navLabel: 'Phenotype',
+    description:
+      "The child's symptoms ranked against every curated gene, without reading a variant.",
+    load: () => import('../../pages/Phenotype'),
+  },
+  {
     id: 'science',
     path: '/science',
     navLabel: 'Science',
