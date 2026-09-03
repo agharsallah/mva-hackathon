@@ -155,6 +155,20 @@ TABLE_FACTS: dict[str, TableFact] = {
         "Gives every QC metric a cited healthy range, turning 'is this number normal?' "
         "into a join instead of an opinion.",
     ),
+    "hpo_term_ic": TableFact(
+        STAGED,
+        "Prices every clinical feature. A symptom shared by thousands of genes proves "
+        "nothing and one seen in a handful proves a great deal, and this table is the "
+        "measured difference between them — which is what stops the phenotype ranking "
+        "rewarding a vague match.",
+    ),
+    "hpo_gene_scores": TableFact(
+        STAGED,
+        "Where every curated gene placed against the child's symptoms, ranked by a scorer "
+        "that never saw the candidate panel or a single variant. That independence is the "
+        "point: the panel-first candidate list cannot corroborate itself, and this is the "
+        "column that can.",
+    ),
     # ── the callset ───────────────────────────────────────────────────────────────────
     RAW_TABLE: TableFact(
         "mva-warehouse vcf-ingest (replaces the table wholesale)",

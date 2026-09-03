@@ -57,14 +57,104 @@ class TestSpecs:
             assert dataset.path(Path("ignored")) == tmp_path / dataset.source
 
     def test_every_reference_table_declares_its_lineage(self):
+        """No table reaches the warehouse without saying what produced it."""
         for dataset in reference.datasets():
-            assert dataset.table in reference.LINEAGE, dataset.table
+            assert reference.lineage_for(dataset.table) is not None, dataset.table
 
     def test_each_lineage_note_cites_its_upstream(self):
-        for table, spec in reference.LINEAGE.items():
-            assert spec["source_version"] and spec["transform"], table
+        for dataset in reference.datasets():
+            spec = reference.lineage_for(dataset.table)
+            assert spec is not None
+            assert spec["source_version"] and spec["transform"] and spec["notes"], dataset.table
         assert "gnomad" in reference.LINEAGE["gnomad_constraint"]["notes"]
         assert "clinvar" in reference.LINEAGE["clinvar_panel"]["notes"]
+
+    def test_any_declared_digest_is_a_whole_sha256(self):
+        """A truncated or placeholder digest is worse than none: it looks like evidence.
+
+        Not every spec has one. ``qc_norms`` is hand-curated with no upstream file to
+        digest, and ``clinvar_panel`` predates this rule — a **known gap**, recorded here
+        rather than papered over, because the scratch VCF still on disk cannot be shown to
+        be the one that produced the committed extract, and a digest that might name
+        different bytes is a false receipt.
+        """
+        for dataset in reference.datasets():
+            spec = reference.lineage_for(dataset.table)
+            assert spec is not None
+            digest = spec.get("source_sha256", "")
+            if digest:
+                assert len(digest) == 64, dataset.table
+                assert set(digest) <= set("0123456789abcdef"), dataset.table
+
+    def test_the_tables_added_with_this_rule_all_carry_a_digest(self):
+        """Everything staged from here on identifies its bytes, not just its release."""
+        for table in ("gnomad_constraint", "hpo_term_ic", "hpo_gene_scores"):
+            spec = reference.lineage_for(table)
+            assert spec is not None
+            assert len(spec["source_sha256"]) == 64, table
+
+
+class TestHpoProvenance:
+    """The HPO tables derive their lineage from a manifest instead of hard-coding it.
+
+    gnomAD and ClinVar come from versioned URLs whose content is fixed, so a literal
+    digest stays true. HPO's PURLs always serve the *current* monthly release, so a literal
+    one would silently become a lie the first time anyone re-ran the builder. These tests
+    pin the mechanism that prevents it.
+    """
+
+    def test_the_committed_manifest_matches_the_committed_tables(self):
+        manifest = reference.read_provenance()
+        assert manifest, "ressources/reference/hpo_provenance.json is missing"
+        rows = sum(1 for _ in (reference.DEFAULT_ROOT / "hpo_term_ic.tsv").open()) - 1
+        assert manifest["outputs"]["hpo_term_ic.tsv"] == rows
+
+    def test_the_digest_in_the_lineage_is_the_one_in_the_manifest(self):
+        """The whole point: the edge cannot disagree with the run that produced the file."""
+        manifest = reference.read_provenance()
+        by_name = {item["name"]: item for item in manifest["inputs"]}
+        spec = reference.lineage_for("hpo_gene_scores")
+        assert spec is not None
+        assert spec["source_sha256"] == by_name["genes_to_phenotype.txt"]["sha256"]
+        ontology = reference.lineage_for("hpo_term_ic")
+        assert ontology is not None
+        assert ontology["source_sha256"] == by_name["hp.obo"]["sha256"]
+
+    def test_the_gene_scores_version_names_both_inputs(self):
+        """A score is a function of both files; disagreeing on either invalidates it."""
+        spec = reference.lineage_for("hpo_gene_scores")
+        assert spec is not None
+        obo = reference.read_provenance()["inputs"][0]["sha256"]
+        assert obo[:12] in spec["source_version"]
+
+    def test_the_release_and_the_code_version_travel_with_the_edge(self):
+        for table in ("hpo_term_ic", "hpo_gene_scores"):
+            spec = reference.lineage_for(table)
+            assert spec is not None
+            assert reference.read_provenance()["release"] in spec["source_version"], table
+            assert reference.read_provenance()["code_version"] in spec["transform"], table
+
+    def test_the_edge_refuses_to_call_itself_exomiser(self):
+        """Results integrity: this is a human-only reimplementation and must say so."""
+        spec = reference.lineage_for("hpo_gene_scores")
+        assert spec is not None
+        assert "NOT Exomiser" in spec["notes"]
+
+    def test_the_known_upstream_defect_is_recorded_in_the_transform(self):
+        spec = reference.lineage_for("hpo_gene_scores")
+        assert spec is not None
+        assert "placeholder" in spec["transform"]
+
+    def test_a_missing_manifest_yields_no_hpo_lineage_rather_than_raising(
+        self, tmp_path: Path
+    ) -> None:
+        """A checkout that never ran the builder has no HPO tables to stage either."""
+        assert reference.read_provenance(tmp_path) == {}
+        assert reference.lineage_for("hpo_term_ic", tmp_path) is None
+
+    def test_a_corrupt_manifest_is_treated_as_absent(self, tmp_path: Path) -> None:
+        (tmp_path / reference.PROVENANCE_FILE).write_text("{not json", encoding="utf-8")
+        assert reference.read_provenance(tmp_path) == {}
 
 
 class TestGnomadStaging:

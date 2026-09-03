@@ -120,6 +120,55 @@ INGEST_COLUMNS: dict[tuple[str, str], str] = {
     ("qc_norms", "basis"): "A paraphrase of the sentence in the publication the range was "
     "taken from, so the number can be checked without refetching "
     "the paper.",
+    ("hpo_term_ic", "hpo_id"): "The HPO term this row prices, e.g. `HP:0002859`.",
+    ("hpo_term_ic", "name"): "The term's human-readable label.",
+    ("hpo_term_ic", "depth"): "Longest path from the ontology root — a readable proxy for "
+    "how specific the term is. Never used for scoring; "
+    "information content is the real measure and the two "
+    "disagree wherever curation is uneven.",
+    ("hpo_term_ic", "gene_count"): "How many distinct genes carry this term anywhere in "
+    "their ancestor closure. Counted over genes, never "
+    "summed up the graph, so a gene annotated to both a "
+    "term and its parent contributes once.",
+    ("hpo_term_ic", "information_content"): "-log(gene_count / annotated genes), in nats. "
+    "Higher means rarer and therefore more "
+    "informative. 0.0 means no gene carries the "
+    "term at all — an absence of curation, not a "
+    "measurement that it is common.",
+    ("hpo_gene_scores", "term_set"): "Which set of the child's terms produced this row: "
+    "`with-parental` (all eight delivered) or "
+    "`proband-only` (the seven describing the child).",
+    ("hpo_gene_scores", "genes_considered"): "How many curated genes were scored for this "
+    "term set - the denominator a rank is quoted "
+    "against. Larger than the row count, because "
+    "genes that scored zero carry no signal and are "
+    "not written.",
+    ("hpo_gene_scores", "gene_symbol"): "HGNC gene symbol, uppercased. The join key — "
+    "everything upstream speaks symbols.",
+    ("hpo_gene_scores", "entrez_id"): "NCBI gene id, kept only because the hosted "
+    "cross-check services key on it.",
+    ("hpo_gene_scores", "rank"): "Position in this term set's ranking, 1 = best match.",
+    ("hpo_gene_scores", "score"): "The symmetric similarity divided by the best score the "
+    "child's own term set could achieve, so 1.0 is a perfect "
+    "match and the number is readable as a share.",
+    ("hpo_gene_scores", "forward"): "Mean best-match similarity asking 'is each of the "
+    "child's features explained by this gene?'. Ignores "
+    "everything else the gene does.",
+    ("hpo_gene_scores", "reverse"): "The same measure in the other direction, asking 'is "
+    "each of the gene's features present in the child?'. "
+    "Penalises heavily curated genes, which is why both "
+    "directions are stored rather than only their mean.",
+    ("hpo_gene_scores", "curated_terms"): "How many phenotype terms HPO curates for this "
+    "gene. Context for `reverse`: a long list is "
+    "charged for the features the child lacks.",
+    ("hpo_gene_scores", "best_term"): "Which of the child's features matched most strongly.",
+    ("hpo_gene_scores", "best_common_ancestor"): "The most informative term that feature "
+    "and the gene's feature both descend "
+    "from — where the match actually "
+    "happened. Equal to `best_term` when the "
+    "gene is curated to the feature itself.",
+    ("hpo_gene_scores", "best_ic"): "The information content of that shared ancestor: how "
+    "much the strongest single match is worth.",
     # ── warehouse: the ledgers ────────────────────────────────────────────────────────
     ("source_files", "uploaded_at"): "When this upload happened, in UTC. One row per "
     "upload, so a file uploaded twice has two rows.",
