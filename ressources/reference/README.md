@@ -1,6 +1,8 @@
 # Population reference — what "normal" looks like
 
-**Standing:** three public reference tables, downloaded and derived 2026-08-31.
+**Standing:** five public reference tables. The first three downloaded and derived
+2026-08-31; the two HPO tables added 2026-09-03 from release `hp/releases/2026-06-23`
+([methodology 056](../../docs/step-3/methodology/056-phenotype-ranking-without-java.md)).
 Row counts and per-gene breakdowns verified against the files in this directory on the
 same date. Method and observed output:
 [`docs/step-0/methodology/030-population-reference-data.md`](../../docs/step-0/methodology/030-population-reference-data.md).
@@ -19,6 +21,13 @@ count into a judgement.
 | `gnomad_constraint.tsv` | *Do healthy people tolerate damage to this gene?* | 18,314 | 3.2 MB |
 | `clinvar_panel.tsv` | *Has a clinical lab already classified this exact variant?* | 17,832 | 2.6 MB |
 | `qc_norms.tsv` | *Is this callset's shape normal for a human genome?* | 27 | 14 KB |
+| `hpo_term_ic.tsv` | *How rare, and therefore how diagnostic, is each clinical feature?* | 19,836 | 1.1 MB |
+| `hpo_gene_scores.tsv` | *Which genes do this child's symptoms point at, ignoring the DNA entirely?* | 10,520 | 988 KB |
+
+Plus one sidecar that is **not** a staged table: `hpo_provenance.json` records what produced
+the two HPO tables — both upstream URLs, the release, a SHA-256 per input, byte and row
+counts, the build timestamp and the code commit. `mva.warehouse.reference` reads it to build
+the lineage edges, so the edge cannot disagree with the run that wrote the file.
 
 Nothing here is patient-derived. The two large upstream files (95 MB and 193 MB) are
 downloaded to gitignored scratch and never enter the tree.
@@ -302,3 +311,72 @@ compound-het shortlist should land on.
    with `COPY … FORMAT text` without a CSV parser.
 10. **`variation_id` is the ClinVar stable key**, not the rsid. 4,442 rows have no rsid at
     all. Link out with `https://www.ncbi.nlm.nih.gov/clinvar/variation/<variation_id>/`.
+
+
+---
+
+## The two HPO tables
+
+Added 2026-09-03. Same shape as everything above: the upstream files (11.2 MB `hp.obo`
+and 20.7 MB `genes_to_phenotype.txt`) download to gitignored scratch and never enter the
+tree; only the small derivatives are committed.
+
+```bash
+uv run tools/build_phenotype_data.py --top 25
+```
+
+| | |
+|---|---|
+| Upstream | `https://purl.obolibrary.org/obo/hp.obo` and `.../hp/hpoa/genes_to_phenotype.txt` |
+| Release | `hp/releases/2026-06-23` — read from the file's own `data-version`, because the PURL always serves the current month |
+| Licence | HPO is CC BY 4.0; cite PMID 33264411 |
+| Corpus | 20,413 terms, 19,836 non-obsolete written; **5,267 annotated genes** |
+
+Three things about these files that are easy to get wrong:
+
+- **The gene counts are over distinct genes, propagated up the graph.** A gene annotated
+  to both a term and its parent must count **once** toward the parent. Summing per-term
+  counts upward double-counts it and makes internal nodes look rarer, and therefore more
+  diagnostic, than they are.
+- **375 upstream rows carry `-` as the gene symbol**, spanning seven different NCBI gene
+  ids. Loading them fuses those seven into one fabricated gene whose feature list is the
+  union of all of them — which then matches almost any query. It ranked 22nd before being
+  dropped at parse time.
+- **`information_content = 0.0` means no gene carries the term**, not that the term is
+  common. It is an absence of curation, and it cannot inflate a score.
+
+### Provenance, and why it is derived rather than written down
+
+gnomAD and ClinVar come from **versioned** URLs whose content is fixed for a release, so the
+literal digests in `warehouse/reference.py` stay true. HPO is different: it publishes
+monthly and its PURLs always serve the *current* release. A hard-coded release and digest
+would therefore become a lie the first time anyone re-ran the builder — while still reading
+like provenance.
+
+So the builder writes `hpo_provenance.json`, and the lineage spec for these two tables is
+**derived from it** at import time (`reference._hpo_lineage`). Re-running the builder
+updates the recorded provenance in the same step that changes the data; the two cannot
+drift. `tests/test_warehouse_reference.py::TestHpoProvenance` pins that.
+
+`hpo_gene_scores`'s recorded version folds in **both** input digests, because a score is a
+function of the ontology *and* the annotation corpus.
+
+The edges are live in `warehouse.data_lineage` — `uv run mva-warehouse lineage-list
+--current` — with row counts, upstream URLs and digests. Details and the transfer
+cross-check: [methodology 056](../../docs/step-3/methodology/056-phenotype-ranking-without-java.md) §7b.
+
+**Known gap, stated rather than hidden:** `clinvar_panel` carries no `source_sha256`. It
+names a release but does not identify the bytes, and the scratch VCF cannot be shown to be
+the download that produced the committed extract — so it is left empty rather than filled
+with a digest that might name different bytes. `qc_norms` has none legitimately: it is
+hand-curated with no upstream file.
+
+`hpo_gene_scores.tsv` holds **both** term sets, so the with/without-parental delta is a
+join rather than a second run. `genes_considered` is repeated on every row because genes
+scoring zero are not written, and the row count would otherwise understate the population
+a rank is quoted against.
+
+**These are not Exomiser output.** They come from a human-only reimplementation of its
+hiPHIVE phenotype path — no mouse, no zebrafish, no protein-interaction random walk —
+chosen on the published finding that human-only scores better
+([Genome Medicine 17:127, 2025](https://europepmc.org/articles/PMC12539062), PMID 41121346).
