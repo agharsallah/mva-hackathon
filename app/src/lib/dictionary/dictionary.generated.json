@@ -710,7 +710,7 @@
             "Variant tuple",
             "chrom, pos, ref, alt"
           ],
-          "html": "<p>the 4 things that uniquely name a variant. <em><code>(\"chr15\", 40162526, \"C\", \"T\")</code>.</em></p>",
+          "html": "<p>the 4 things that uniquely name a variant. <em><code>(\"chr15\", 40000000, \"C\", \"T\")</code>.</em></p>",
           "exampleHtml": ""
         },
         {
@@ -1873,7 +1873,7 @@
           "slug": "annotation",
           "term": "Annotation",
           "aliases": [],
-          "html": "<p>attaching meaning to a raw variant. <em>\"chr15:40162526 C>T\" → \"in BUB1B, exon 9, changes an amino acid, seen in 0 healthy people, predicted damaging\".</em></p>",
+          "html": "<p>attaching meaning to a raw variant. <em>\"chr15:40000000 C>T\" → \"in BUB1B, exon 9, changes an amino acid, seen in 0 healthy people, predicted damaging\".</em></p>",
           "exampleHtml": ""
         },
         {

@@ -4,7 +4,7 @@
  * <Route>s, Header into the two-tier nav, PageFrame into the h1 and journey links.
  *
  * Order here is journey order: within a group, the order a reader should walk the
- * pages; groups follow `NAV_GROUPS` (data → case → decide → platform). Overview is
+ * pages; groups follow `NAV_GROUPS` (learn → data → case → decide → platform). Overview is
  * first and belongs to no group.
  */
 
@@ -16,8 +16,20 @@ export const modules: FeatureModule[] = [
     path: '/',
     navLabel: 'Overview',
     title: 'One child, one whole genome',
-    description: 'The case in numbers, and the map of the four questions this app answers.',
+    description: 'The case in numbers, and the map of the five questions this app answers.',
     load: () => import('../../pages/Overview'),
+  },
+
+  // ── Learn: what do the words mean? ───────────────────────────────────────────
+  {
+    id: 'learn',
+    path: '/learn',
+    navLabel: 'Learn',
+    title: 'The dictionary, as a course',
+    group: 'learn',
+    description:
+      'Every domain word in the repository, in fifteen chapters ordered so each one only uses words defined before it — with its diagrams, and a link to where the app shows it.',
+    load: () => import('../../pages/Learn'),
   },
 
   // ── Data: is the measurement trustworthy? ────────────────────────────────────

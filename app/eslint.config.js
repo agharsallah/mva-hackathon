@@ -62,6 +62,13 @@ const THREE_IMPORT = {
     'so it lands in its own chunk. Pages use the viz3d barrel — see src/viz3d/README.md.',
 };
 
+const MERMAID_IMPORT = {
+  name: 'mermaid',
+  message:
+    'mermaid may only be imported by src/pages/learn/Mermaid.tsx, which import()s it dynamically ' +
+    'so the ~2.5 MB renderer lands in its own chunk and is fetched only on the Learn page.',
+};
+
 export default [
   {
     ignores: ['dist/**', 'node_modules/**', 'coverage/**'],
@@ -291,7 +298,8 @@ export default [
   },
 
   // A heavy rendering library may only be imported by the one in-repo wrapper that owns it:
-  // `plotly.js-dist-min` by src/components/Plot.tsx, `three` by src/viz3d/core/loadThree.ts.
+  // `plotly.js-dist-min` by src/components/Plot.tsx, `three` by src/viz3d/core/loadThree.ts,
+  // `mermaid` by src/pages/learn/Mermaid.tsx.
   // Both wrappers `import()` their library dynamically, which is what keeps the ~4 MB Plotly
   // chunk and the ~530 kB three chunk out of the initial payload — a static import anywhere
   // else silently undoes that, and `tools/bundle-budget.mjs` is the second line of defence.
@@ -304,18 +312,26 @@ export default [
   // three.
   {
     files: ['src/**/*.{ts,tsx}'],
-    ignores: ['src/components/Plot.tsx', 'src/viz3d/core/loadThree.ts'],
+    ignores: [
+      'src/components/Plot.tsx',
+      'src/viz3d/core/loadThree.ts',
+      'src/pages/learn/Mermaid.tsx',
+    ],
     rules: {
-      'no-restricted-imports': ['error', { paths: [PLOTLY_IMPORT, THREE_IMPORT] }],
+      'no-restricted-imports': ['error', { paths: [PLOTLY_IMPORT, THREE_IMPORT, MERMAID_IMPORT] }],
     },
   },
   {
     files: ['src/components/Plot.tsx'],
-    rules: { 'no-restricted-imports': ['error', { paths: [THREE_IMPORT] }] },
+    rules: { 'no-restricted-imports': ['error', { paths: [THREE_IMPORT, MERMAID_IMPORT] }] },
   },
   {
     files: ['src/viz3d/core/loadThree.ts'],
-    rules: { 'no-restricted-imports': ['error', { paths: [PLOTLY_IMPORT] }] },
+    rules: { 'no-restricted-imports': ['error', { paths: [PLOTLY_IMPORT, MERMAID_IMPORT] }] },
+  },
+  {
+    files: ['src/pages/learn/Mermaid.tsx'],
+    rules: { 'no-restricted-imports': ['error', { paths: [PLOTLY_IMPORT, THREE_IMPORT] }] },
   },
 
   // ---------------------------------------------------------------------------

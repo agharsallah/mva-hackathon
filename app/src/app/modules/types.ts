@@ -8,10 +8,11 @@
 import type { ComponentType } from 'react';
 
 /**
- * The four questions the app answers, in the order a reader should ask them. A page
- * belongs to exactly one; Overview belongs to none because it is the map of all four.
+ * The five questions the app answers, in the order a reader should ask them. A page
+ * belongs to exactly one; Overview belongs to none because it is the map of all five.
+ * `learn` comes first because the other four are written in its words.
  */
-export type NavGroupId = 'data' | 'case' | 'decide' | 'platform';
+export type NavGroupId = 'learn' | 'data' | 'case' | 'decide' | 'platform';
 
 export interface NavGroup {
   id: NavGroupId;
@@ -22,6 +23,7 @@ export interface NavGroup {
 }
 
 export const NAV_GROUPS: readonly NavGroup[] = [
+  { id: 'learn', label: 'Learn', question: 'What do the words mean?' },
   { id: 'data', label: 'Data', question: 'Is the measurement trustworthy?' },
   { id: 'case', label: 'Case', question: 'Which gene, and which pair inside it, is causal?' },
   {
@@ -45,7 +47,7 @@ export interface FeatureModule {
   navLabel: string;
   /** The page's h1 — a full phrase, where `navLabel` is one word. */
   title: string;
-  /** Which of the four questions this page serves. Omitted only for Overview, the map. */
+  /** Which of the five questions this page serves. Omitted only for Overview, the map. */
   group?: NavGroupId;
   /** One line under the h1 saying what the page shows. Also the Overview map's blurb. */
   description: string;

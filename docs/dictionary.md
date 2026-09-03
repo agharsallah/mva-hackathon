@@ -278,7 +278,7 @@ flowchart LR
 
 **POS** — the position number on the chromosome.
 
-**Variant tuple `(chrom, pos, ref, alt)`** — the 4 things that uniquely name a variant. *`("chr15", 40162526, "C", "T")`.*
+**Variant tuple `(chrom, pos, ref, alt)`** — the 4 things that uniquely name a variant. *`("chr15", 40000000, "C", "T")`.*
 
 **Normalization / left-alignment (`bcftools norm`)** — the SAME deletion can be written several ways. Normalization forces one standard spelling.
 *Example: deleting a T from `AAAT` can be written as position 1 `AAAT>AAA` or position 4 `AT>A`. Same biology, different text. If you spell it differently than the answer key, the computer says WRONG.*
@@ -773,7 +773,7 @@ and its phenotype is worded mosaic variegated **hyperploidy**, not aneuploidy.*
 
 ## 7. Databases and annotation
 
-**Annotation** — attaching meaning to a raw variant. *"chr15:40162526 C>T" → "in BUB1B, exon 9, changes an amino acid, seen in 0 healthy people, predicted damaging".*
+**Annotation** — attaching meaning to a raw variant. *"chr15:40000000 C>T" → "in BUB1B, exon 9, changes an amino acid, seen in 0 healthy people, predicted damaging".*
 
 **VEP (Variant Effect Predictor)** — the standard tool that does that attaching. Two ways to run it: offline from a downloaded **cache** (~25 GB, genome-scale), or the **REST API** at `rest.ensembl.org` (no download, rate-limited to 55,000 requests/hour, batches of 200 variants — right size for a gene panel).
 *Example: `mva-warehouse annotate-panel` sent the 874 panel alleles through the REST API in 5 requests ([methodology 031](step-0/methodology/031-vep-rest-panel-annotation.md)).*

@@ -19,8 +19,9 @@ export function JourneyProvider({
   return <JourneyContext.Provider value={groups}>{children}</JourneyContext.Provider>;
 }
 
-/** Group index → the tone the map paints it with: purple raw input → blue → yellow → grey. */
+/** Group index → the tone the map paints it with: green start → purple raw input → blue → yellow → grey. */
 const GROUP_ACCENT = [
+  'border-l-good-500',
   'border-l-raw-500',
   'border-l-machinery-500',
   'border-l-decision-500',
@@ -28,14 +29,14 @@ const GROUP_ACCENT = [
 ];
 
 /**
- * The four questions as four cards, each a numbered reading list. Renders nothing when
+ * The five questions as five cards, each a numbered reading list. Renders nothing when
  * mounted outside the shell (tests that mount a page alone), so it never throws.
  */
 export function JourneyMap() {
   const groups = useJourney();
   if (groups.length === 0) return null;
   return (
-    <ol className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <ol className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
       {groups.map((g, i) => (
         <li
           key={g.id}
