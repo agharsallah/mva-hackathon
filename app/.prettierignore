@@ -13,3 +13,8 @@ pnpm-lock.yaml
 src/fixtures/data/protein
 src/fixtures/data/gene-structure
 src/fixtures/data/panel-structure-genes.json
+
+# Generated from docs/dictionary.md by `tools/gen-dictionary.mjs` — the markdown is the source,
+# `pnpm dictionary:check` compares these byte-for-byte, so prettier must not rewrite them.
+src/lib/dictionary/dictionary.generated.json
+src/lib/dictionary/assets
