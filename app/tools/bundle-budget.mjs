@@ -41,6 +41,7 @@ const APP_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..'
 const DIST = path.join(APP_ROOT, 'dist');
 const ASSETS = path.join(DIST, 'assets');
 const FIXTURE_DATA_DIR = path.join(APP_ROOT, 'src/fixtures/data');
+const PAGES_DIR = path.join(APP_ROOT, 'src/pages');
 
 // --- the budget, in one clearly-marked block ---------------------------------------------
 //
@@ -111,6 +112,27 @@ function findEntryFile() {
   return match[1];
 }
 
+/**
+ * Does any page actually import the 3D module? Source-level check (a plain string scan of
+ * src/pages/**), because "three must have its own chunk" is only a meaningful assertion once
+ * something renders a 3D exhibit.
+ */
+function importsViz3d() {
+  const stack = [PAGES_DIR];
+  while (stack.length > 0) {
+    const dir = stack.pop();
+    if (!existsSync(dir)) continue;
+    for (const item of readdirSync(dir, { withFileTypes: true })) {
+      const full = path.join(dir, item.name);
+      if (item.isDirectory()) stack.push(full);
+      else if (/\.tsx?$/.test(item.name) && /from '.*viz3d/.test(readFileSync(full, 'utf-8'))) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 function measureAssets() {
   const files = readdirSync(ASSETS).filter((f) => f.endsWith('.js') || f.endsWith('.css'));
   return files
@@ -152,7 +174,14 @@ function printTable(rows, entryFile) {
   const nameWidth = Math.max(...top.map((r) => r.file.length), 20) + 2;
   console.log('file'.padEnd(nameWidth) + 'raw'.padStart(12) + 'gzip'.padStart(12) + '  role');
   for (const r of top) {
-    const role = r.file === entryFile ? 'entry' : /plotly/i.test(r.file) ? 'plotly' : '';
+    const role =
+      r.file === entryFile
+        ? 'entry'
+        : /plotly/i.test(r.file)
+          ? 'plotly'
+          : /three/i.test(r.file)
+            ? 'three'
+            : '';
     console.log(
       r.file.padEnd(nameWidth) + KB(r.raw).padStart(12) + KB(r.gzip).padStart(12) + `  ${role}`,
     );
@@ -199,6 +228,14 @@ function main() {
   }
   for (const file of initial) {
     if (/plotly/i.test(file)) problems.push(`initial chunk "${file}" matches /plotly/i`);
+    // three is loaded by exactly one module (src/viz3d/core/loadThree.ts) with a dynamic
+    // import, so it must never appear in the set the browser fetches before first paint.
+    // What it costs when it *is* fetched, measured on this checkout (three 0.185.1,
+    // 2026-09-03): the emitted `three.module-*.js` chunk is 529.85 kB raw / 131.78 kB gzip
+    // — the number this script prints in the table above. (The 365.55 kB raw / 87.12 kB gzip
+    // often quoted for three is its prebuilt `three.module.min.js`, which this app never
+    // fetches; rolldown bundles and minifies three's ESM sources itself.)
+    if (/three/i.test(file)) problems.push(`initial chunk "${file}" matches /three/i`);
   }
 
   if (/plotly/i.test(entryFile)) {
@@ -208,6 +245,17 @@ function main() {
   if (plotlyChunks.length === 0) {
     problems.push(
       'no emitted chunk matches /plotly/i — Plotly may have been inlined elsewhere or removed',
+    );
+  }
+
+  // The mirror guard for three: if any page reaches src/viz3d, a `three` chunk must exist —
+  // its absence would mean the library got inlined into a page chunk (which the initial-set
+  // check above cannot see) or dropped. Conditioned on a real consumer so the gate stays
+  // honest if viz3d is ever removed, rather than asserting a chunk for code nobody imports.
+  if (importsViz3d() && rows.filter((r) => /three/i.test(r.file)).length === 0) {
+    problems.push(
+      'a page imports src/viz3d but no emitted chunk matches /three/i — three may have been ' +
+        'inlined into a page chunk instead of dynamically imported by viz3d/core/loadThree.ts',
     );
   }
 

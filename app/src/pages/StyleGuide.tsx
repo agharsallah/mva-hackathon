@@ -5,6 +5,7 @@ import { RampGrid } from './styleguide/RampGrid';
 import { ScaleStrips } from './styleguide/ScaleStrips';
 import { TokenPipeline } from './styleguide/TokenPipeline';
 import { ToneCatalog } from './styleguide/ToneCatalog';
+import { Viz3dDemo } from './styleguide/Viz3dDemo';
 
 /**
  * The design system, rendered as a page — living documentation, and the visual regression
@@ -86,6 +87,13 @@ export default function StyleGuidePage() {
           <ToneCatalog />
           <ScaleStrips />
         </div>
+      </Section>
+
+      <Section
+        title="The third dimension"
+        subtitle="src/viz3d, the case-agnostic 3D module, rendering the palette itself."
+      >
+        <Viz3dDemo />
       </Section>
 
       <PrimitiveGallery />

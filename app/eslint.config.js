@@ -50,6 +50,18 @@ const USE_QUERY_RESTRICTION = {
     'Pages do not call useQuery() directly — add or reuse a hook in src/api/hooks.ts and call that instead. (components/** may still call useQuery directly, e.g. Header.tsx.)',
 };
 
+const PLOTLY_IMPORT = {
+  name: 'plotly.js-dist-min',
+  message: 'plotly.js-dist-min may only be imported by src/components/Plot.tsx.',
+};
+
+const THREE_IMPORT = {
+  name: 'three',
+  message:
+    'three may only be imported by src/viz3d/core/loadThree.ts, which import()s it dynamically ' +
+    'so it lands in its own chunk. Pages use the viz3d barrel — see src/viz3d/README.md.',
+};
+
 export default [
   {
     ignores: ['dist/**', 'node_modules/**', 'coverage/**'],
@@ -142,6 +154,7 @@ export default [
         { type: 'api', pattern: 'src/api/**' },
         { type: 'fixtures', pattern: 'src/fixtures/**' },
         { type: 'lib', pattern: 'src/lib/**' },
+        { type: 'viz3d', pattern: 'src/viz3d/**' },
       ],
       'boundaries/files': [{ category: 'api-client', pattern: 'src/api/client.ts' }],
     },
@@ -163,13 +176,17 @@ export default [
             },
             {
               from: { element: { type: 'pages' } },
-              allow: { to: { element: { types: { anyOf: ['components', 'lib', 'api'] } } } },
+              allow: {
+                to: { element: { types: { anyOf: ['components', 'lib', 'api', 'viz3d'] } } },
+              },
               message:
                 'pages/** may import components, lib and api — never fixtures directly (go through src/api/hooks.ts) and never another page. See app/README.md.',
             },
             {
               from: { element: { type: 'components' } },
-              allow: { to: { element: { types: { anyOf: ['components', 'lib', 'api'] } } } },
+              allow: {
+                to: { element: { types: { anyOf: ['components', 'lib', 'api', 'viz3d'] } } },
+              },
               message:
                 'components/** may import components, lib and api — never pages, never fixtures. See src/components/README.md.',
             },
@@ -198,12 +215,29 @@ export default [
                 'lib/** is (almost) the bottom layer: lib and api only (src/lib/aiExport reaches src/api/client.ts for the shared fetch helper). Never components, pages or fixtures.',
             },
             {
+              from: { element: { type: 'viz3d' } },
+              allow: { to: { element: { types: { anyOf: ['viz3d', 'lib'] } } } },
+              message:
+                'viz3d/** is case-agnostic: lib only (palette, urlstate, format, ui). Never api, ' +
+                'never components — a page maps API rows into a Scene3D and hands that in. See ' +
+                'src/viz3d/README.md.',
+            },
+            {
               from: { element: { type: 'test' } },
               allow: {
                 to: {
                   element: {
                     types: {
-                      anyOf: ['app', 'pages', 'components', 'api', 'fixtures', 'lib', 'test'],
+                      anyOf: [
+                        'app',
+                        'pages',
+                        'components',
+                        'api',
+                        'fixtures',
+                        'lib',
+                        'test',
+                        'viz3d',
+                      ],
                     },
                   },
                 },
@@ -256,25 +290,32 @@ export default [
     },
   },
 
-  // "`plotly.js-dist-min` may only be imported by src/components/Plot.tsx" — the one
-  // in-repo wrapper (app/README.md: "Plotly is wrapped by a small in-repo component
-  // ... rather than react-plotly.js, so the ~4 MB bundle is loaded on demand").
+  // A heavy rendering library may only be imported by the one in-repo wrapper that owns it:
+  // `plotly.js-dist-min` by src/components/Plot.tsx, `three` by src/viz3d/core/loadThree.ts.
+  // Both wrappers `import()` their library dynamically, which is what keeps the ~4 MB Plotly
+  // chunk and the ~530 kB three chunk out of the initial payload — a static import anywhere
+  // else silently undoes that, and `tools/bundle-budget.mjs` is the second line of defence.
+  // Both sizes are the *emitted chunks* measured by that script on 2026-09-03:
+  // plotly.min-*.js 4,066.61 kB raw / 1,234.12 kB gzip, three.module-*.js 529.85 kB raw / 131.78 kB gzip.
+  //
+  // Three blocks, not one with two `ignores`: flat config replaces a rule wholesale for the
+  // files a later block matches, so each wrapper needs its own block restating the ban on the
+  // *other* library. Without that, exempting Plot.tsx from this rule would also let it import
+  // three.
   {
     files: ['src/**/*.{ts,tsx}'],
-    ignores: ['src/components/Plot.tsx'],
+    ignores: ['src/components/Plot.tsx', 'src/viz3d/core/loadThree.ts'],
     rules: {
-      'no-restricted-imports': [
-        'error',
-        {
-          paths: [
-            {
-              name: 'plotly.js-dist-min',
-              message: 'plotly.js-dist-min may only be imported by src/components/Plot.tsx.',
-            },
-          ],
-        },
-      ],
+      'no-restricted-imports': ['error', { paths: [PLOTLY_IMPORT, THREE_IMPORT] }],
     },
+  },
+  {
+    files: ['src/components/Plot.tsx'],
+    rules: { 'no-restricted-imports': ['error', { paths: [THREE_IMPORT] }] },
+  },
+  {
+    files: ['src/viz3d/core/loadThree.ts'],
+    rules: { 'no-restricted-imports': ['error', { paths: [PLOTLY_IMPORT] }] },
   },
 
   // ---------------------------------------------------------------------------
