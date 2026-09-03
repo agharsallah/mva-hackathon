@@ -3,9 +3,9 @@
     "name": "clinvar_panel",
     "kind": "reference",
     "path": "ressources/reference/clinvar_panel.provenance.json",
-    "built_at": "2026-09-03T12:51:27+00:00",
+    "built_at": "2026-09-03T14:11:39+00:00",
     "built_by": "tools/build_reference_data.py clinvar",
-    "code_version": "cb066b8",
+    "code_version": "b96d94f",
     "inputs": [
       {
         "name": "ClinVar GRCh38 VCF",
@@ -43,9 +43,9 @@
     "name": "gnomad_constraint",
     "kind": "reference",
     "path": "ressources/reference/gnomad_constraint.provenance.json",
-    "built_at": "2026-09-03T12:51:27+00:00",
+    "built_at": "2026-09-03T14:11:38+00:00",
     "built_by": "tools/build_reference_data.py gnomad",
-    "code_version": "cb066b8",
+    "code_version": "b96d94f",
     "inputs": [
       {
         "name": "gnomAD v4.1 constraint metrics",
@@ -115,9 +115,9 @@
     "name": "qc_norms",
     "kind": "reference",
     "path": "ressources/reference/qc_norms.provenance.json",
-    "built_at": "2026-09-03T12:51:27+00:00",
+    "built_at": "2026-09-03T14:11:39+00:00",
     "built_by": "tools/build_reference_data.py qc-norms",
-    "code_version": "cb066b8",
+    "code_version": "b96d94f",
     "inputs": [
       {
         "name": "Betschart 2024, Biometrical Journal, PMID 38988195, DOI 10.1002/bimj.202300278",
@@ -155,7 +155,7 @@
         "bytes": null
       },
       {
-        "name": "Supernat 2018, Scientific Reports 8:17851, PMID 30552369, DOI 10.1038/s41598-018-36177-7",
+        "name": "Supernat 2018, Scientific Reports vol 8 art 17851, PMID 30552369, DOI 10.1038/s41598-018-36177-7",
         "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6294778/",
         "release": null,
         "sha256": null,
@@ -172,8 +172,8 @@
     "outputs": [
       {
         "path": "ressources/reference/qc_norms.tsv",
-        "sha256": "9f36652400d808c9bd6d55228c64b30e2030bd99f8926c35092cadce760a3277",
-        "bytes": 13819,
+        "sha256": "e1da2cd8ed1fef2d29e94c10397047d99459224d8f681e838546ce546db633e8",
+        "bytes": 13835,
         "rows": 27
       }
     ],

@@ -65,6 +65,7 @@
  */
 
 import { execSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
@@ -112,6 +113,15 @@ function isKnownChromLength(n: number): boolean {
  * 2. FORMAT ILLUSTRATIONS. Deliberately toy values (five-digit positions, far below any
  *    panel gene) used in UI copy and payload docs to show the shape of a coordinate string.
  *    They are listed exactly, so a real position can never hide among them.
+ * 3. MANIFESTED GENE-STRUCTURE FIXTURES. `src/fixtures/data/gene-structure/<SYMBOL>.json` is
+ *    one real Ensembl gene record per gene in the structure set — the same public span
+ *    category as (1), for 23 genes instead of one — written by
+ *    `tools/build_protein_fixture.py`, never by hand, with its sha256 recorded in the
+ *    directory's `_provenance.json`. The top-level `start`/`end` of such a file is exempt
+ *    **only while the file's bytes still match the manifest**: a hand edit, or a file the
+ *    tool did not write, loses the exemption and is scanned like anything else. The
+ *    proband's alleles never enter these files — candidates carry amino-acid offsets only
+ *    (see `fields` in that manifest).
  *
  * A new entry here needs a reason in this comment. Anything not listed is still a failure.
  */
@@ -180,12 +190,38 @@ function scanText(file: string, text: string, violations: Violation[]): void {
 const CHROM_KEYS = ['chrom', 'contig', 'chromosome'];
 const POS_KEYS = ['pos', 'position'];
 
+const GENE_STRUCTURE_DIR = 'src/fixtures/data/gene-structure/';
+
+/** sha256 per manifested gene-structure fixture, read once from the directory's manifest. */
+function manifestedGeneStructureDigests(): Map<string, string> {
+  const manifestPath = path.join(APP_ROOT, GENE_STRUCTURE_DIR, '_provenance.json');
+  if (!existsSync(manifestPath)) return new Map();
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8')) as {
+    outputs?: { path: string; sha256: string }[];
+  };
+  return new Map((manifest.outputs ?? []).map((o) => [path.basename(o.path), o.sha256]));
+}
+
+const MANIFESTED_GENE_STRUCTURES = manifestedGeneStructureDigests();
+
+/** Exception 3: a gene-structure fixture whose bytes still match its manifest entry. */
+function isManifestedGeneStructure(file: string, text: string): boolean {
+  if (!file.startsWith(GENE_STRUCTURE_DIR) || path.basename(file).startsWith('_')) return false;
+  const recorded = MANIFESTED_GENE_STRUCTURES.get(path.basename(file));
+  return recorded !== undefined && createHash('sha256').update(text).digest('hex') === recorded;
+}
+
 function scanJson(file: string, text: string, violations: Violation[]): void {
   let data: unknown;
   try {
     data = JSON.parse(text);
   } catch {
     return; // not JSON despite the extension — nothing to structurally walk
+  }
+  if (isManifestedGeneStructure(file, text) && data !== null && typeof data === 'object') {
+    // Only the gene's own span is exempt; every nested record is still walked.
+    const { start: _start, end: _end, ...rest } = data as Record<string, unknown>;
+    data = rest;
   }
   walk(data, '$', file, violations);
 }
