@@ -54,11 +54,29 @@ def now() -> str:
 
 
 @dataclass(frozen=True)
+class Built:
+    """A payload plus the concrete provenance of *this* build.
+
+    Returned by a builder that knows something about its own reply the payload itself
+    cannot carry — the AlphaFold model URL and version behind a fold, the Ensembl release
+    a gene record came from. Those facts belong in the envelope's ``source`` line, but the
+    client contracts in ``app/src/api/types/`` are frozen and have no field for them, so
+    they are stored **beside** the payload in the cache entry and rendered into ``source``
+    by :func:`mva.viz.response.cached`. A cache hit therefore reports the provenance of
+    the reply it is actually serving, not of a request that never happened.
+    """
+
+    data: Any
+    provenance: dict
+
+
+@dataclass(frozen=True)
 class Cached:
-    """A payload and the instant it was built."""
+    """A payload, the instant it was built, and what it was built from."""
 
     data: Any
     cached_at: str
+    provenance: dict | None = None
 
 
 @dataclass(frozen=True)
@@ -83,16 +101,36 @@ class Cache:
             return None
         if not isinstance(stored, dict) or "data" not in stored:
             return None
-        return Cached(stored["data"], stored.get("cached_at") or now())
+        provenance = stored.get("provenance")
+        return Cached(
+            stored["data"],
+            stored.get("cached_at") or now(),
+            provenance if isinstance(provenance, dict) else None,
+        )
 
     def write(self, key: str, data: Any) -> Cached:
-        """Store ``data`` under ``key`` and return it with its build instant."""
-        entry = Cached(data, now())
+        """Store ``data`` under ``key`` and return it with its build instant.
+
+        A :class:`Built` is unwrapped: its payload is stored under ``data`` and its
+        provenance beside it, so an entry written before this existed still reads back
+        (``provenance`` simply absent) and no cache directory needs clearing.
+        """
+        if isinstance(data, Built):
+            entry = Cached(data.data, now(), data.provenance)
+        else:
+            entry = Cached(data, now())
         self.directory.mkdir(parents=True, exist_ok=True)
         handle, temporary = tempfile.mkstemp(dir=self.directory, suffix=".tmp")
         try:
             with os.fdopen(handle, "w", encoding="utf-8") as stream:
-                json.dump({"cached_at": entry.cached_at, "data": entry.data}, stream)
+                json.dump(
+                    {
+                        "cached_at": entry.cached_at,
+                        "provenance": entry.provenance,
+                        "data": entry.data,
+                    },
+                    stream,
+                )
             Path(temporary).replace(self.path(key))
         except BaseException:
             Path(temporary).unlink(missing_ok=True)

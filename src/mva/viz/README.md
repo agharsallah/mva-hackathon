@@ -67,8 +67,8 @@ flowchart LR
 | `health_probes.py` | One probe per dependency — what it touches and what it advises when it fails | `probe_warehouse`, `probe_object_store`, `probe_parquet`, `probe_reads_api`, `probe_ensembl` |
 | `health_results.py` | The check registry (name, kind, pages powered) and the result vocabulary | `REGISTRY`, `up`, `degraded`, `down`, `skipped`, `failed` |
 | `serve.py` | `mva-viz-api` CLI entry point, uvicorn runner | `main` |
-| `cache.py` | Disk cache: JSON entries under `build/`, atomic write | `Cache`, `safe_key`, `default_directory` |
-| `response.py` | The one envelope shape every route returns | `Envelope`, `live`, `cached` |
+| `cache.py` | Disk cache: JSON entries under `build/`, atomic write. An entry can carry a provenance dict beside its payload (`Built`), so a cache **hit** reports what built the reply it serves | `Cache`, `Built`, `Cached`, `safe_key`, `default_directory` |
+| `response.py` | The one envelope shape every route returns; `describe` appends this reply's own provenance to `source` | `Envelope`, `live`, `cached`, `describe` |
 | `proxy.py` | Forwards requests to `mva-reads-api`; 503 on unreachable | `Upstream`, `forward`, `UnreachableError` |
 
 ### Routes (route registration only)
@@ -91,7 +91,9 @@ flowchart LR
 | `genotype.py` | Decodes the VCF `FORMAT`/sample-call genotype pair into typed fields | `decode`, `Genotype` |
 | `panelbed.py` | Reads the two extra columns (Ensembl id, note) out of the committed panel BED file | `annotations` |
 | `phase.py` | Turns one gene's heterozygous alleles into the compound-het pair matrix | `matrix`, `resolved`, `classify` |
-| `genestructure.py` | Fetches one gene's exons/domains from Ensembl REST, behind the disk cache | `structure`, `EnsemblError` |
+| `ensembl.py` | One Ensembl REST call, every failure stated. No retry loop — the reason is in the module docstring. `release` asks `/info/data` once per process, for the build tools | `get`, `post`, `call`, `release`, `EnsemblError`, `ENSEMBL_BASE` |
+| `geneset.py` | The curated gene set the structure explorer may draw (`ressources/reference/structure_genes.tsv`), and symbol → id resolution. Panel BED first, then the TSV; derives `in_panel` rather than storing it twice. `provenance` reads the release and digest out of the manifest beside the TSV | `genes`, `lookup`, `resolve`, `provenance` |
+| `genestructure.py` | Fetches one gene's exons/domains from Ensembl REST, behind the disk cache. `anatomy` is the half that reads no warehouse table; `structure` adds the proband's alleles on top | `structure`, `anatomy`, `EnsemblError` |
 | `search.py` | Search query grammar (region / gene / rsID), span cap, the region read | `classify`, `region`, `Resolved` |
 | `search_resolve.py` | Resolves a gene symbol or rsID to a window (panel BED / callset / Ensembl) | `resolve`, `resolve_gene`, `resolve_rsid` |
 | `science.py` | Reads the hypothesis/evidence research register, tolerating absent tables | `hypotheses`, `evidence`, `add_routes` |
@@ -105,9 +107,20 @@ flowchart LR
 | `catalog_columns_ingest.py` | Column meanings for the ingest schema (delivery, reference, ledgers) | `INGEST_COLUMNS` |
 | `catalog_columns_results.py` | Column meanings for the result schema (derived tables) | `RESULT_COLUMNS` |
 | `catalog_semantics.py` | Which command writes each table (`created_by`) and why it exists (`why`) | `facts`, `TableFact`, `TABLE_FACTS` |
+| `refprovenance.py` | Reads every `*provenance.json` manifest — committed reference tables and fixture directories — and normalises the two families onto one row shape. Also owns the file digest and the current commit, so a writer and a reader cannot disagree about how a sha256 is computed | `rows`, `digest`, `code_version`, `now` |
+| `genesetmanifest.py` | Writes `ressources/reference/structure_genes.provenance.json`: the Ensembl release, the endpoints, every input and output digest, and the OMIM/PMID citations extracted from the curated notes | `manifest`, `literature`, `METHOD`, `ENDPOINTS` |
+| `referencemanifest.py` | Writes the three population-reference manifests — `gnomad_constraint`, `clinvar_panel`, `qc_norms`. A digest is measured or `null` with a `known_gap`; a release comes from the payload (gnomAD's versioned URL, ClinVar's `##fileDate`); `qc_norms`' inputs are the citations extracted from its own columns | `gnomad`, `clinvar`, `qc_norms`, `write`, `citations`, `repo_relative` |
+| `fixturemanifest.py` | Writes `app/src/fixtures/data/*/_provenance.json`: per gene the model, its version and creation date, the file digest, and a REAL-vs-SYNTHETIC map for every top-level field. Merges onto what earlier runs recorded | `write_manifest`, `protein_entry`, `structure_entry`, `existing_genes` |
 
 `catalog_columns_ingest.py` and `catalog_columns_results.py` are a size split of one registry
 (the 400-line-per-file rule), not a schema-driven design choice.
+
+The three provenance modules are a **concern** split, not a size one: one reader, two
+writers. Reference data is *fetched*, not derived, so it gets no `warehouse.data_lineage`
+edge — an edge naming a transform that never ran would be a fabricated row in the one table
+the project treats as evidence. It gets a manifest beside the bytes instead, written by the
+build tool on every run and never by hand
+([`docs/step-0/methodology/061`](../../../docs/step-0/methodology/061-reference-data-provenance.md)).
 
 ## HTTP surface
 
@@ -142,6 +155,7 @@ All paths are prefixed `/api` except `/health`. `refresh=true` on a cached route
 | GET | `/api/panel/annotations` | VEP-annotated panel alleles with genotype evidence |
 | GET | `/api/panel/locus` | Every variant in one gene, with genotype evidence (real positions, cached) |
 | GET | `/api/panel/gene-structure` | One gene's exons, domains, protein-altering alleles (cached) |
+| GET | `/api/panel/protein-structure` | One gene's folded protein as an alpha-carbon trace, from AlphaFold DB (cached) |
 | GET | `/api/panel/het-pairs` | One gene's compound-het pair matrix |
 | GET | `/api/panel/clinvar-presence` | ClinVar P/LP panel sites: present or not |
 | GET | `/api/panel/suppressed` | Non-PASS records inside the panel + per-gene FILTER census |
@@ -161,6 +175,7 @@ All paths are prefixed `/api` except `/health`. `refresh=true` on a cached route
 | GET | `/api/provenance/lineage` | Data lineage edges |
 | GET | `/api/provenance/derivations` | Derivation run log |
 | GET | `/api/provenance/sources` | Source object ledger |
+| GET | `/api/provenance/reference` | Every committed reference table and offline fixture directory, from its `*provenance.json` manifest. Reads **no database** |
 | GET | `/api/probe/ledger` | Oracle submission ledger |
 | GET | `/api/search` | Resolve a gene/region/rsID query to a window (cached where safe) |
 | GET | `/api/science/hypotheses` | Research register: every hypothesis revision (or `table_exists: false`) |
@@ -200,6 +215,7 @@ cd app && pnpm install && pnpm run dev     # http://127.0.0.1:5173, VITE_API_URL
   gitignored). A cache hit returns the stored payload plus its build instant (`cached_at`); a
   miss writes to a temp file and renames into place, so a killed process never leaves a partial
   entry. Cached routes: `overview`, `catalog/tables`, `panel/locus`, `panel/gene-structure`,
+  `panel/protein-structure`,
   `reads/flowcell`, `reads/cycle-quality`, `reads/quality-levels`, `callset/region`, `search`
   (per resolved kind).
 - **Real patient positions.** `panel/locus`, `callset/region`, and cached search results contain

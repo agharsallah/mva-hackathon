@@ -13,15 +13,16 @@ Registered by :func:`add_routes`, the idiom :mod:`mva.viz.routes_search` and
 
 from fastapi import APIRouter, HTTPException, Query
 
-from . import genestructure, phase, queries
-from .cache import Cache, safe_key
-from .response import Envelope, cached, live
+from . import geneset, genestructure, phase, proteinstructure, queries
+from .cache import Built, Cache, safe_key
+from .response import Envelope, cached, describe, live
 
 
 def add_routes(api: APIRouter, settings, cache: Cache) -> None:
     """Register every warehouse-backed ``/panel/*`` route onto ``api``."""
     _whole_panel_routes(api, settings)
     _one_gene_routes(api, settings, cache)
+    _reference_structure_routes(api, settings, cache)
 
 
 def _whole_panel_routes(api: APIRouter, settings) -> None:
@@ -71,7 +72,7 @@ def _whole_panel_routes(api: APIRouter, settings) -> None:
 
 
 def _one_gene_routes(api: APIRouter, settings, cache: Cache) -> None:
-    """One gene in detail. Two of these are cached; ``locus`` is the callset reader."""
+    """One gene in detail, off the warehouse. ``locus`` is the callset reader."""
 
     @api.get("/panel/locus", response_model=Envelope, tags=["panel"])
     def panel_locus(
@@ -93,33 +94,6 @@ def _one_gene_routes(api: APIRouter, settings, cache: Cache) -> None:
                 status_code=404, detail=f"no panel gene {unknown.args[0]!r}"
             ) from unknown
         return cached(entry, "pg.warehouse.variants_raw (chrom pushdown)")
-
-    @api.get("/panel/gene-structure", response_model=Envelope, tags=["panel"])
-    def panel_gene_structure(
-        gene: str = Query(description="panel gene symbol, e.g. BUB1B"), refresh: bool = False
-    ) -> dict:
-        """One gene's exons, protein domains and protein-altering alleles.
-
-        Three Ensembl REST calls behind a disk cache, because gene structure is static
-        reference data. A ``502`` means Ensembl was unreachable or refused — never a
-        fixture-shaped stand-in. Unlike ``/panel/locus`` this payload carries **no**
-        patient genomic coordinate: alleles are placed in amino-acid space.
-        """
-        try:
-            key = safe_key("gene-structure", gene)
-        except ValueError as bad:
-            raise HTTPException(status_code=422, detail=str(bad)) from bad
-        try:
-            entry = cache.get_or_build(
-                key, lambda: genestructure.structure(gene, settings), refresh
-            )
-        except LookupError as unknown:
-            raise HTTPException(
-                status_code=404, detail=f"no panel gene {unknown.args[0]!r}"
-            ) from unknown
-        except genestructure.EnsemblError as down:
-            raise HTTPException(status_code=502, detail=str(down)) from down
-        return cached(entry, genestructure.SOURCE)
 
     @api.get("/panel/het-pairs", response_model=Envelope, tags=["panel"])
     def panel_het_pairs(gene: str = Query(description="panel gene symbol, e.g. BUB1B")) -> dict:
@@ -195,3 +169,165 @@ def _one_gene_routes(api: APIRouter, settings, cache: Cache) -> None:
             {"gene": gene, "census": census, "records": queries.panel_suppressed(settings, gene)},
             "pg.results.panel_filter_census + pg.results.panel_suppressed",
         )
+
+
+def _reference_structure_routes(api: APIRouter, settings, cache: Cache) -> None:
+    """The two routes that read no warehouse table at all.
+
+    Both assemble one gene's anatomy from public reference APIs — Ensembl for the exons and
+    domains, AlphaFold DB for the fold — behind the same disk cache, because reference data
+    is static. Neither payload carries a patient genomic coordinate: alleles are placed in
+    amino-acid space, so a screenshot of either exhibit is publishable as-is. They are
+    grouped apart from ``_one_gene_routes`` for that reason, and because they are the only
+    panel routes whose failure mode is an upstream outage rather than a missing table.
+
+    ``/panel/structure-genes`` is the index the other two are addressed by: it reads one
+    committed TSV, so it is ``live`` rather than cached, and it is the route the frontend
+    calls first to learn which symbols exist and which of them carry patient alleles.
+    """
+
+    @api.get("/panel/structure-genes", response_model=Envelope, tags=["panel"])
+    def panel_structure_genes() -> dict:
+        """The curated gene set the structure explorer can show, in display order.
+
+        Three groups (``panel``, ``mva-sac``, ``extended``) and two flags that decide what
+        an exhibit may claim: ``in_panel`` — derived from the panel BED, not stored twice —
+        says whether the proband's annotated alleles exist for this gene at all, and
+        ``coding`` says whether ``/panel/protein-structure`` can answer for it or will
+        return 422. Public reference facts only: symbol, stable id, biotype.
+        """
+        return live(geneset.genes(), describe(geneset.SOURCE, geneset.provenance()))
+
+    @api.get("/panel/gene-structure", response_model=Envelope, tags=["panel"])
+    def panel_gene_structure(
+        gene: str = Query(description="panel gene symbol, e.g. BUB1B"), refresh: bool = False
+    ) -> dict:
+        """One gene's exons, protein domains and protein-altering alleles.
+
+        Accepts any symbol in the curated set (``/panel/structure-genes``), not only the
+        annotated eight: ``in_panel`` in the payload says which, and an off-panel gene
+        comes back with ``candidates: []`` because no annotation was ever run there. A
+        non-coding gene comes back with real exons, ``protein: null`` and no domains.
+
+        Three Ensembl REST calls behind a disk cache, because gene structure is static
+        reference data. A ``502`` means Ensembl was unreachable or refused — never a
+        fixture-shaped stand-in. Unlike ``/panel/locus`` this payload carries **no**
+        patient genomic coordinate: alleles are placed in amino-acid space.
+        """
+        try:
+            key = safe_key("gene-structure", gene)
+        except ValueError as bad:
+            raise HTTPException(status_code=422, detail=str(bad)) from bad
+        try:
+            entry = cache.get_or_build(key, lambda: _gene_structure(gene, settings), refresh)
+        except LookupError as unknown:
+            raise HTTPException(status_code=404, detail=_unknown(unknown)) from unknown
+        except genestructure.EnsemblError as down:
+            raise HTTPException(status_code=502, detail=str(down)) from down
+        return cached(entry, genestructure.SOURCE, cache_key=key)
+
+    @api.get("/panel/protein-structure", response_model=Envelope, tags=["panel"])
+    def panel_protein_structure(
+        gene: str = Query(description="panel gene symbol, e.g. BUB1B"), refresh: bool = False
+    ) -> dict:
+        """One gene's folded protein as an alpha-carbon (Cα) trace, from AlphaFold DB.
+
+        A ``422`` means the gene makes no protein — a lncRNA in the set has no translation
+        to fold, which will never resolve, so it is not a 502 to retry. Use
+        ``/panel/gene-structure``, which still returns that gene's real exons.
+
+        The 3D counterpart to ``/panel/gene-structure``, and it deliberately shares that
+        route's residue axis: ``protein`` here **must** equal the gene-structure payload's
+        ``protein``, or every allele painted from ``candidates[].protein_pos`` lands on a
+        different sequence. Four upstream calls (two Ensembl, one AlphaFold API, one
+        coordinate file of ~1 MB) behind the same disk cache, because a folded model is
+        static reference data. A ``502`` means an upstream was unreachable — never a
+        fixture-shaped stand-in. Carries **no** patient data of any kind: it is the same
+        model for every human, so this payload is publishable as-is.
+        """
+        try:
+            key = safe_key("protein-structure", gene)
+        except ValueError as bad:
+            raise HTTPException(status_code=422, detail=str(bad)) from bad
+        try:
+            entry = cache.get_or_build(key, lambda: _protein_structure(gene, settings), refresh)
+        except LookupError as unknown:
+            raise HTTPException(status_code=404, detail=_unknown(unknown)) from unknown
+        except proteinstructure.NoProteinError as none:
+            raise HTTPException(status_code=422, detail=str(none)) from none
+        except proteinstructure.UPSTREAM_ERRORS as down:
+            raise HTTPException(status_code=502, detail=str(down)) from down
+        return cached(entry, proteinstructure.SOURCE, cache_key=key)
+
+
+# ── per-reply provenance ─────────────────────────────────────────────────────────────
+#
+# The module ``SOURCE`` constants say which upstreams a route *may* call. That is not
+# enough to trace a figure back to its bytes: the same route answers from Ensembl release
+# 115 and 116, and from AlphaFold model v4 and v6, with no visible difference. So each
+# build wraps its payload in a :class:`mva.viz.cache.Built`, whose provenance dict is
+# stored beside the payload in the cache entry and rendered into ``source`` on every
+# reply — a cache hit included, which is the case that matters, because that is the reply
+# a reader actually screenshots.
+#
+# It goes beside the payload rather than inside it because the client contracts in
+# ``app/src/api/types/`` are frozen: ``ProteinStructure`` has a ``provenance`` field, but
+# it is the string ``"alphafold"``, not a manifest, and widening it would break the type.
+#
+# **Why the Ensembl release is the one recorded at gene-set build time** and not asked
+# live. Ensembl REST publishes the release only at ``/info/data``; no reply header carries
+# it. Asking it inside a request handler would put an extra round trip and an extra
+# failure surface on the one route whose value is that its answer is already on disk, and
+# would make the hermetic test suite reach the network. So the release named here is the
+# one ``tools/build_gene_set.py`` recorded when it resolved these gene ids — the release
+# the committed set *is* — and the key says so rather than implying it was asked now.
+# ``tools/build_gene_set.py`` and ``tools/build_protein_fixture.py`` do ask live, through
+# :func:`mva.viz.ensembl.release`, because there the round trip is one per build.
+
+
+def _release() -> str | None:
+    """The Ensembl release the committed gene set was resolved against, or ``None``."""
+    return geneset.provenance().get("ensembl_release")
+
+
+def _gene_structure(gene: str, settings) -> Built:
+    """One gene's anatomy, plus which Ensembl release and gene record produced it."""
+    payload = genestructure.structure(gene, settings)
+    return Built(
+        payload,
+        {
+            "ensembl_release_at_gene_set_build": _release(),
+            "ensembl_gene": payload.get("ensembl_id"),
+            "ensembl_transcript": payload.get("transcript"),
+        },
+    )
+
+
+def _protein_structure(gene: str, settings) -> Built:
+    """One gene's fold, plus the exact model file and version the trace was parsed from.
+
+    ``model_url`` already carries the version in its filename
+    (``AF-O60566-F1-model_v6.cif``), and ``alphafold_version`` states it separately anyway:
+    the URL is the *location* and the version is the *fact*, and AlphaFold has changed a
+    file's contents at a fixed URL before.
+    """
+    payload = proteinstructure.structure(gene, settings)
+    return Built(
+        payload,
+        {
+            "ensembl_release_at_gene_set_build": _release(),
+            "uniprot": payload.get("uniprot"),
+            "alphafold_model": payload.get("model_url"),
+            "alphafold_version": payload.get("version"),
+        },
+    )
+
+
+def _unknown(unknown: LookupError) -> str:
+    """The 404 detail for a symbol the structure explorer does not carry.
+
+    Names both sources, because "no panel gene X" stopped being the whole truth once the
+    explorer accepted a curated superset: a reader who typed a real gene symbol needs to
+    know it is missing from the *set*, not that the gene does not exist.
+    """
+    return f"no structure gene {unknown.args[0]!r}: not in {geneset.SOURCE}"

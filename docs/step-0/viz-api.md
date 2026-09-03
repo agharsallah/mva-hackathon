@@ -22,7 +22,11 @@ added and measured live against the hosted database and Ensembl REST
 ([`methodology/042`](methodology/042-universal-search.md), covered by
 `tests/test_viz_search.py`). The reads-API
 proxy routes were verified only on their **503** path, because
-[`mva-reads-api`](reads-api.md) is not running anywhere yet.
+[`mva-reads-api`](reads-api.md) is not running anywhere yet. Re-verified 2026-09-03 when
+`/api/provenance/reference` was added and the three structure routes' `source` lines
+became per-reply — both exercised by `tests/test_viz_refprovenance.py` and by a live
+`GET /info/data` and a full fixture rebuild
+([`methodology/061`](methodology/061-reference-data-provenance.md)).
 
 One HTTP origin for the React app. Code: `src/mva/viz/`. Entry point: `mva-viz-api`.
 
@@ -122,6 +126,7 @@ came from; `cached_at` is non-null exactly when the payload came off disk.
 | `GET /api/panel/constraint` | `pg.results.panel_gene_constraint` + the panel BED | live, 0.54 s, 8 rows |
 | `GET /api/panel/annotations?gene=` | `pg.results.panel_candidates` | live, 0.57 s, 874 rows |
 | `GET /api/panel/locus?gene=` | `pg.warehouse.variants_raw` | 8.4 s → cached |
+| `GET /api/panel/structure-genes` | `ressources/reference/structure_genes.tsv` + the panel BED | live, 23 rows |
 | `GET /api/panel/gene-structure?gene=` | Ensembl REST ×3 + `pg.results.panel_candidates` | 5.2–9.5 s → cached (0.002 s warm) |
 | `GET /api/panel/het-pairs?gene=` | `pg.results.panel_het_pairs` | live, 0.47–0.99 s, 5–163 alleles |
 | `GET /api/panel/background` | `pg.results.panel_gene_background` | live, 0.75–0.87 s, 8 rows |
@@ -136,6 +141,7 @@ came from; `cached_at` is non-null exactly when the payload came off disk.
 | `GET /api/provenance/lineage` | `pg.warehouse.data_lineage` | live |
 | `GET /api/provenance/derivations` | `pg.results.derivation_runs` | live |
 | `GET /api/provenance/sources` | `pg.warehouse.source_objects` | live |
+| `GET /api/provenance/reference` | `ressources/reference/*provenance.json` + `app/src/fixtures/data/**/_provenance.json` | live, off disk — **no database**, 7 rows |
 | `GET /api/probe/ledger` | `pg.warehouse.probe_ledger` | live (0 rows today) |
 | `GET /api/science/hypotheses` | `pg.warehouse.hypotheses` | live, 0.7–1.4 s (**table absent today**) |
 | `GET /api/science/evidence` | `pg.warehouse.evidence` | live, 0.7–2.0 s (**table absent today**) |
@@ -294,10 +300,48 @@ Four contract facts:
   call failed — in which case the structure and domains still render. A null candidate is
   **listed with its reason**, never dropped.
 - **Ensembl unreachable is a `502` with the upstream detail**, never a fixture-shaped
-  stand-in. An unknown gene is a `404`, validated against the committed panel BED.
-  `domains` is filtered to real domain sources: PDB cross-references, AlphaFold models,
-  disorder/coiled-coil/low-complexity predictions and whole-protein PANTHER family calls
-  are excluded (4 of 28 features on BUB1B's translation survive).
+  stand-in. An unknown gene is a `404`, validated against the committed panel BED **and**
+  the curated gene set below. `domains` is filtered to real domain sources: PDB
+  cross-references, AlphaFold models, disorder/coiled-coil/low-complexity predictions and
+  whole-protein PANTHER family calls are excluded (4 of 28 features on BUB1B's translation
+  survive).
+- **It serves more than the eight annotated genes.** `/api/panel/structure-genes` is the
+  index it is addressed by; `in_panel` in the payload says whether the gene carries the
+  proband's alleles at all, and an off-panel gene comes back with `candidates: []` having
+  **read no warehouse table** — no `panel_candidates` query and no VEP POST, so no patient
+  coordinate leaves the process. A non-coding gene comes back with real exons,
+  `protein: null` and `domains: []`, and `/api/panel/protein-structure` answers it with a
+  **422** rather than a 502: it has no protein to fold and never will.
+  [`methodology/060`](methodology/060-structure-gene-set.md) has the replies and the table.
+- **Every reply names its own upstreams, not just its route's.** The envelope's `source`
+  carries the module's endpoint list *plus* `name=value` for what this reply was actually
+  built from — the AlphaFold model URL and version, the UniProt accession, the Ensembl
+  gene and transcript, the Ensembl release the committed gene set was resolved at, and the
+  disk-cache key. Stored beside the payload in the cache entry
+  (`mva.viz.cache.Built`), so a cache **hit** reports the provenance of the reply it is
+  serving — which is the reply a reader screenshots. The release is the one
+  `tools/build_gene_set.py` recorded, not one asked live: Ensembl publishes it only at
+  `/info/data` and no reply header carries it, so asking per request would add a round
+  trip and a failure surface to a route whose value is that its answer is already on disk.
+
+### `/api/provenance/reference`
+
+The fourth provenance route, and the only one that reads **no database**. The other three
+read `warehouse.data_lineage`, which records *derivations*: table X computed from object Y
+by transform Z. Reference data has none of that — a gnomAD table, an HPO release, an
+Ensembl gene record and an AlphaFold model are **fetched**, so an edge claiming a
+transform produced them would be fabricated. What they have instead is a
+`*provenance.json` manifest committed beside the bytes, written by the build tool on every
+run, and this route lists them normalised onto one row shape (`ReferenceProvenanceRow`).
+A directory that does not exist contributes **no rows rather than an error**: a checkout
+whose reference tables were never built has nothing to declare.
+
+**7 rows** as of 2026-09-03 — five reference manifests (`gnomad_constraint`,
+`clinvar_panel`, `qc_norms`, `hpo`, `structure_genes`) and two fixture ones. The three
+population-reference manifests were added in
+[`methodology/062`](methodology/062-reference-manifests-and-bed-notes.md) and needed **no
+change here**: the manifest is matched on the `provenance.json` suffix, so a new file is
+picked up by existing code.
 
 ### The two catalogue endpoints
 
