@@ -1,26 +1,39 @@
 /**
- * Persistent header: what this is, where the data comes from, and whether the API is up.
+ * Persistent two-tier header.
+ *
+ * Row 1 — identity and the four questions: brand, case id, one tab per section
+ * (`Sections` landmark), then the chrome that must stay visible on every page: export,
+ * fixture badge, API health. Row 2 — the pages inside the active section (`Pages`
+ * landmark) with the section's question at the far end, so the reader always knows which
+ * question the page in front of them is serving. Row 2 is absent on Overview, which is
+ * the map rather than a stop on the journey.
+ *
  * The fixture badge is not decoration — it is the difference between a live measurement
  * and a committed placeholder, so it stays visible on every page.
  */
 
 import { useQuery } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 
 import { API_URL, fixtureModeStore, FIXTURES_ENABLED, health } from '../api/client';
+import { cx } from '../lib/ui';
 import { AiExport } from './AiExport';
+import { ThemeToggle } from './ThemeToggle';
 
-/**
- * Nav items are supplied by the caller (the module manifest in src/app), not
- * hard-coded here, so the nav bar and the router read from one source and can
- * never list different pages. `preload` is optional so Header stays usable
- * without the app-shell's lazy-loading wiring.
- */
 export interface HeaderNavItem {
   to: string;
   label: string;
   preload?: () => void;
+}
+
+/** One section tab: where it lands, and the pages row 2 shows while it is active. */
+export interface HeaderSection {
+  id: string;
+  label: string;
+  /** The question this section answers; shown at the end of row 2. */
+  question: string;
+  pages: HeaderNavItem[];
 }
 
 function useApiHealth() {
@@ -48,8 +61,12 @@ function statusTitle(state: 'checking' | 'up' | 'down'): string {
   );
 }
 
-export function Header({ items }: { items: HeaderNavItem[] }) {
-  const onFixtures = useSyncExternalStore(fixtureModeStore.subscribe, fixtureModeStore.get);
+const TAB =
+  'rounded-control px-3 py-1 text-xs font-medium transition focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-600';
+const TAB_ON = 'bg-chrome-800 text-chrome-50';
+const TAB_OFF = 'text-chrome-400 hover:bg-chrome-900 hover:text-chrome-200';
+
+function ApiHealth() {
   const h = useApiHealth();
   const state = h.isPending ? 'checking' : h.data?.ok ? 'up' : 'down';
   const dot =
@@ -58,47 +75,76 @@ export function Header({ items }: { items: HeaderNavItem[] }) {
       : state === 'down'
         ? 'bg-broken-500'
         : 'bg-chrome-500 animate-pulse';
+  return (
+    <span className="flex items-center gap-2 text-xs text-chrome-500" title={statusTitle(state)}>
+      <span className={`h-2 w-2 rounded-full ${dot}`} />
+      API {state}
+    </span>
+  );
+}
+
+export function Header({ home, sections }: { home: HeaderNavItem; sections: HeaderSection[] }) {
+  const onFixtures = useSyncExternalStore(fixtureModeStore.subscribe, fixtureModeStore.get);
+  const { pathname } = useLocation();
+  const active = sections.find((s) => s.pages.some((p) => p.to === pathname));
 
   return (
-    <header className="sticky top-0 z-20 border-b border-chrome-800 bg-chrome-950/95 backdrop-blur">
-      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-6 gap-y-2 px-5 py-2.5">
-        <div className="flex items-baseline gap-2">
-          <span className="text-sm font-semibold tracking-tight text-chrome-100">
+    <header className="sticky top-0 z-20 border-b border-line bg-chrome-950/95 backdrop-blur">
+      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-5 gap-y-1 px-5 py-2">
+        <Link
+          to={home.to}
+          onPointerEnter={home.preload}
+          onFocus={home.preload}
+          className="flex items-baseline gap-2 rounded-control focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-600"
+        >
+          <span className="text-sm font-semibold tracking-tight text-chrome-50">
             MVA Case Explorer
           </span>
-          <span className="font-mono text-[11px] text-chrome-500">
-            PROBAND01 · single sample, no trio
+          <span className="hidden items-baseline gap-2 text-xs text-chrome-500 md:inline-flex">
+            <span className="rounded-pill border border-line px-2 py-px text-micro text-chrome-400">
+              PROBAND01
+            </span>
+            single sample, no trio
           </span>
-        </div>
+        </Link>
 
-        {/* Labelled because the footer carries a second nav: two unnamed navigation
-            landmarks are indistinguishable to a screen reader. */}
-        <nav aria-label="Pages" className="flex flex-1 flex-wrap items-center gap-1">
-          {items.map((p) => (
-            <NavLink
-              key={p.to}
-              to={p.to}
-              end={p.to === '/'}
-              onPointerEnter={p.preload}
-              onFocus={p.preload}
-              className={({ isActive }) =>
-                `rounded-md px-2.5 py-1 text-xs transition ${
-                  isActive
-                    ? 'bg-chrome-800 text-chrome-100'
-                    : 'text-chrome-400 hover:bg-chrome-900 hover:text-chrome-200'
-                }`
-              }
-            >
-              {p.label}
-            </NavLink>
-          ))}
+        {/* Labelled because row 2 and the footer carry further navs: three unnamed
+            navigation landmarks are indistinguishable to a screen reader. */}
+        <nav aria-label="Sections" className="flex flex-1 flex-wrap items-center gap-1">
+          <NavLink
+            to={home.to}
+            end
+            onPointerEnter={home.preload}
+            onFocus={home.preload}
+            className={({ isActive }) => cx(TAB, isActive ? TAB_ON : TAB_OFF)}
+          >
+            {home.label}
+          </NavLink>
+          <span aria-hidden="true" className="mx-1 h-4 w-px bg-chrome-800" />
+          {sections.map((s) => {
+            const entry = s.pages[0];
+            const isActive = active?.id === s.id;
+            return (
+              <Link
+                key={s.id}
+                to={entry.to}
+                onPointerEnter={entry.preload}
+                onFocus={entry.preload}
+                aria-current={isActive ? 'true' : undefined}
+                title={s.question}
+                className={cx(TAB, isActive ? TAB_ON : TAB_OFF)}
+              >
+                {s.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-3">
           <AiExport />
           {onFixtures && (
             <span
-              className="rounded-md bg-decision-500/15 px-2 py-1 text-[11px] font-medium text-decision-400"
+              className="rounded-control bg-decision-500/15 px-2 py-1 text-micro font-medium text-decision-400"
               title="At least one panel on this session was served from a committed fixture, not the live API."
             >
               fixture data
@@ -106,21 +152,47 @@ export function Header({ items }: { items: HeaderNavItem[] }) {
           )}
           {!FIXTURES_ENABLED && (
             <span
-              className="rounded-md bg-chrome-800 px-2 py-1 text-[11px] text-chrome-400"
+              className="rounded-control bg-chrome-800 px-2 py-1 text-micro text-chrome-400"
               title="VITE_USE_FIXTURES=false"
             >
               fixtures off
             </span>
           )}
-          <span
-            className="flex items-center gap-1.5 font-mono text-[11px] text-chrome-500"
-            title={statusTitle(state)}
-          >
-            <span className={`h-2 w-2 rounded-full ${dot}`} />
-            api {state}
-          </span>
+          <ThemeToggle />
+          <ApiHealth />
         </div>
       </div>
+
+      {active && (
+        <div className="border-t border-line-soft bg-chrome-950/60">
+          <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-4 gap-y-1 px-5">
+            <nav aria-label="Pages" className="-mb-px flex flex-wrap items-center">
+              {active.pages.map((p) => (
+                <NavLink
+                  key={p.to}
+                  to={p.to}
+                  end
+                  onPointerEnter={p.preload}
+                  onFocus={p.preload}
+                  className={({ isActive }) =>
+                    cx(
+                      'border-b-2 px-3 py-2 text-xs transition focus:outline-none focus-visible:bg-chrome-900',
+                      isActive
+                        ? 'border-machinery-500 text-chrome-50'
+                        : 'border-transparent text-chrome-400 hover:border-line-strong hover:text-chrome-200',
+                    )
+                  }
+                >
+                  {p.label}
+                </NavLink>
+              ))}
+            </nav>
+            <p className="ml-auto hidden py-2 font-serif text-note text-chrome-500 italic sm:block">
+              {active.question}
+            </p>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

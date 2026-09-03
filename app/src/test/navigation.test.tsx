@@ -40,10 +40,16 @@ function renderApp(at = '/') {
 }
 
 /**
- * The header nav's link, by its accessible name — the same thing a user clicks. Scoped to
- * the "Pages" landmark because the footer links to some of the same pages.
+ * The header's links, by accessible name — the same thing a user clicks. The nav is
+ * two-tier: a "Sections" landmark (row 1) whose tabs land on a section's first page, and a
+ * "Pages" landmark (row 2) listing the pages inside the active section. Both are scoped to
+ * their landmark because the footer links to some of the same pages.
  */
-const navLink = (label: string) =>
+const sectionLink = (label: string) =>
+  within(screen.getByRole('navigation', { name: 'Sections' })).getByRole('link', {
+    name: label,
+  });
+const pageLink = (label: string) =>
   within(screen.getByRole('navigation', { name: 'Pages' })).getByRole('link', { name: label });
 
 describe('navigating with the nav bar', () => {
@@ -56,7 +62,8 @@ describe('navigating with the nav bar', () => {
     renderApp('/');
     await waitFor(() => expect(screen.getAllByRole('heading').length).toBeGreaterThan(0));
 
-    await user.click(navLink('Catalog'));
+    // The Platform tab lands on its first page, Catalog.
+    await user.click(sectionLink('Platform'));
 
     // A Catalog heading, which Overview never renders.
     await waitFor(
@@ -70,22 +77,44 @@ describe('navigating with the nav bar', () => {
     renderApp('/');
     await waitFor(() => expect(screen.getAllByRole('heading').length).toBeGreaterThan(0));
 
-    await user.click(navLink('Provenance'));
+    await user.click(sectionLink('Platform'));
+    await user.click(pageLink('Provenance'));
     await waitFor(
       () => expect(screen.getByRole('heading', { name: /the data flow/i })).toBeTruthy(),
       { timeout: 15_000 },
     );
 
-    await user.click(navLink('Catalog'));
+    await user.click(pageLink('Catalog'));
     await waitFor(
       () => expect(screen.getByRole('heading', { name: /what were we given\?/i })).toBeTruthy(),
       { timeout: 15_000 },
     );
 
-    await user.click(navLink('Provenance'));
+    await user.click(pageLink('Provenance'));
     await waitFor(
       () => expect(screen.getByRole('heading', { name: /the data flow/i })).toBeTruthy(),
       { timeout: 15_000 },
     );
   }, 30_000);
+
+  it('shows the page h1 and the section question from the manifest', async () => {
+    renderApp('/callset');
+    await waitFor(() =>
+      expect(screen.getByRole('heading', { level: 1, name: 'The callset' })).toBeTruthy(),
+    );
+    // Row 2 lists the Data section's pages, Callset marked current.
+    expect(pageLink('Callset').getAttribute('aria-current')).toBe('page');
+    expect(pageLink('Reads')).toBeTruthy();
+    expect(pageLink('Genome')).toBeTruthy();
+    // The journey hand-off points at the neighbours in manifest order.
+    const journey = screen.getByRole('navigation', { name: 'Journey' });
+    expect(within(journey).getByRole('link', { name: /Reads/ }).getAttribute('href')).toBe(
+      '/reads',
+    );
+    expect(
+      within(journey)
+        .getByRole('link', { name: /Genome/ })
+        .getAttribute('href'),
+    ).toBe('/genome');
+  });
 });

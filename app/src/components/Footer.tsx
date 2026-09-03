@@ -14,6 +14,7 @@ import { useHealthDependencies } from '../api/hooks';
 import { C } from '../lib/palette';
 import { BADGE, cx } from '../lib/ui';
 import { type HealthTone, summarizeHealth } from './footerHealth';
+import { useJourney } from './journeyContext';
 
 const DOT_COLOR: Record<HealthTone, string> = {
   good: C.good,
@@ -32,7 +33,7 @@ function DependencyStatusLink() {
       to="/status"
       aria-label={`Dependency status: ${phrase}. Open the Status page.`}
       className={cx(
-        'inline-flex w-fit items-center gap-1.5 rounded border px-2 py-1 text-[11px] font-medium transition-opacity hover:opacity-80',
+        'inline-flex w-fit items-center gap-2 rounded-pill border px-2 py-1 text-micro font-medium transition-opacity hover:opacity-80',
         BADGE[tone],
       )}
     >
@@ -46,13 +47,6 @@ function DependencyStatusLink() {
   );
 }
 
-const IN_APP_LINKS = [
-  { to: '/status', label: 'Status' },
-  { to: '/catalog', label: 'Catalog' },
-  { to: '/provenance', label: 'Provenance' },
-  { to: '/science', label: 'Science' },
-];
-
 // Repo-relative filesystem paths, not app routes — this SPA has no route for them.
 // They are a pointer to the source-controlled docs a reader would open next, resolved
 // relative to `app/` (this app's own directory) up to the repo-root `docs/` folder.
@@ -61,10 +55,39 @@ const REPO_DOCS = [
   { href: '../docs/dictionary.md', label: 'Dictionary' },
 ];
 
+/**
+ * The four questions with their pages — the same manifest the header reads, so the footer
+ * is a sitemap rather than a second, hand-picked nav. Empty outside the shell.
+ */
+function SectionIndex() {
+  const groups = useJourney();
+  if (groups.length === 0) return null;
+  return (
+    <nav aria-label="All pages" className="flex flex-wrap gap-8">
+      {groups.map((g) => (
+        <div key={g.id} className="space-y-2">
+          <p className="font-medium text-chrome-400" title={g.question}>
+            {g.label}
+          </p>
+          <ul className="space-y-1">
+            {g.pages.map((p) => (
+              <li key={p.to}>
+                <Link to={p.to} onPointerEnter={p.preload} className="hover:text-chrome-300">
+                  {p.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </nav>
+  );
+}
+
 export function Footer() {
   return (
-    <footer className="border-t border-chrome-800">
-      <div className="mx-auto flex max-w-[1600px] flex-col gap-6 px-5 py-6 text-[11px] leading-relaxed text-chrome-500 sm:flex-row sm:flex-wrap sm:justify-between">
+    <footer className="border-t border-line">
+      <div className="mx-auto flex max-w-[1600px] flex-col gap-6 px-5 py-6 text-micro leading-relaxed text-chrome-500 sm:flex-row sm:flex-wrap sm:justify-between">
         <div className="max-w-sm space-y-2">
           <p className="font-medium text-chrome-400">MVA Case Explorer</p>
           <p>
@@ -75,25 +98,14 @@ export function Footer() {
         </div>
 
         <div className="space-y-2">
-          <p className="uppercase tracking-wide text-chrome-600">Dependency status</p>
+          <p className="font-medium text-chrome-400">Dependency status</p>
           <DependencyStatusLink />
         </div>
 
-        <nav aria-label="More pages" className="space-y-2">
-          <p className="uppercase tracking-wide text-chrome-600">Explore</p>
-          <ul className="space-y-1">
-            {IN_APP_LINKS.map((item) => (
-              <li key={item.to}>
-                <Link to={item.to} className="hover:text-chrome-300">
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <SectionIndex />
 
         <nav aria-label="Repository documentation" className="space-y-2">
-          <p className="uppercase tracking-wide text-chrome-600">Repo docs</p>
+          <p className="font-medium text-chrome-400">Repo docs</p>
           <ul className="space-y-1">
             {REPO_DOCS.map((doc) => (
               <li key={doc.href}>

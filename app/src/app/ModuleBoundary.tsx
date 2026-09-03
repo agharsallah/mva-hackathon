@@ -47,7 +47,7 @@ class ModuleErrorBoundary extends Component<BoundaryProps, BoundaryState> {
     const { error } = this.state;
     if (!error) return this.props.children;
     return (
-      <div className="rounded-lg border border-broken-900/60 bg-broken-950/25 p-4 text-sm">
+      <div className="rounded-card border border-broken-900/60 bg-broken-950/25 p-4 text-sm">
         <div className="font-semibold text-broken-300">
           Module &ldquo;{this.props.moduleId}&rdquo; failed to load
         </div>
@@ -61,7 +61,7 @@ class ModuleErrorBoundary extends Component<BoundaryProps, BoundaryState> {
             this.setState({ error: null });
             this.props.onRetry();
           }}
-          className="mt-3 rounded-md border border-broken-800/60 px-2.5 py-1 text-xs text-broken-300 transition hover:bg-broken-900/30"
+          className="mt-3 rounded-control border border-broken-800/60 px-3 py-1 text-xs text-broken-300 transition hover:bg-broken-900/30"
         >
           Retry
         </button>

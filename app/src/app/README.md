@@ -1,6 +1,6 @@
 # App shell
 
-**Standing:** current as of 2026-09-01.
+**Standing:** current as of 2026-09-03.
 
 Micro-frontend-style shell for one deployable SPA — no Module Federation, no separate
 deploys. "Modules" are lazily-loaded chunks, each isolated by its own error/Suspense boundary.
@@ -10,11 +10,45 @@ deploys. "Modules" are lazily-loaded chunks, each isolated by its own error/Susp
 A page registers itself once, in `modules/index.ts`, as a `FeatureModule` (`modules/types.ts`):
 
 ```ts
-{ id: 'genome', path: '/genome', navLabel: 'Genome', load: () => import('../../pages/Genome') }
+{
+  id: 'genome', path: '/genome', navLabel: 'Genome', title: 'Genome-wide view',
+  group: 'data', description: 'Allele balance, depth against VAF and the karyogram …',
+  load: () => import('../../pages/Genome'),
+}
 ```
 
-`AppShell.tsx` reads that array twice, into `<Route>`s and (via `Header`) into nav
-links — one source, so nav and routing can't disagree.
+`AppShell.tsx` reads that array once and derives everything a reader sees about the app's
+shape from it — one source, so none of these can disagree:
+
+| Reader                        | What it draws from the manifest                                                           |
+| ----------------------------- | ----------------------------------------------------------------------------------------- |
+| `<Routes>`                    | one `<Route>` per entry                                                                   |
+| `Header` row 1 (Sections)     | one tab per `NAV_GROUPS` entry, landing on the group's first page                         |
+| `Header` row 2 (Pages)        | the active group's pages, with the group's `question`                                     |
+| `PageFrame` → `PageHeader`    | eyebrow (group · question), "n of m", `title` as the h1, `description`, prev/next         |
+| `PageFrame` → `JourneyFooter` | the previous and next page with their descriptions                                        |
+| `JourneyProvider`             | the same groups, as context, so `JourneyMap` (Overview) and `Footer` can draw the sitemap |
+
+## Information architecture
+
+Every page serves exactly one of four questions, declared as its `group`; manifest order
+inside a group is reading order. Overview has no group — it is the map.
+
+| Group      | Question                                              | Pages                                 |
+| ---------- | ----------------------------------------------------- | ------------------------------------- |
+| `data`     | Is the measurement trustworthy?                       | Reads → Callset → Genome              |
+| `case`     | Which gene, and which pair inside it, is causal?      | Panel → Compare → Phenotype → Search  |
+| `decide`   | What do we believe, and what has it cost to find out? | Science → Probes                      |
+| `platform` | What exists, where did it come from, and is it up?    | Catalog → Provenance → Status → Style |
+
+Page order on a screen follows the same rule everywhere: h1 and description (from the
+manifest), the headline `Callout` (the finding), the `Explainer` (background, terms as
+chips), then the sections, then the journey hand-off. Answer first, background second.
+
+`modules/journey.ts` holds the pure lookups (`moduleAt`, `groupOf`, `pagesIn`, `neighbours`,
+`positionInGroup`); nothing else scans `modules` by hand. Pages may not import `app/`
+(`eslint-plugin-boundaries`), which is why the groups reach `JourneyMap` through
+`components/journeyContext.ts` rather than a direct import.
 
 ## Isolation
 
@@ -50,10 +84,12 @@ flowchart LR
 
 ## Files
 
-| File                 | Role                                             |
-| -------------------- | ------------------------------------------------ |
-| `modules/types.ts`   | `FeatureModule` shape                            |
-| `modules/index.ts`   | manifest, one entry per page                     |
-| `AppShell.tsx`       | Header + routes from the manifest                |
-| `ModuleBoundary.tsx` | error boundary + Suspense + retry, per module    |
-| `providers.tsx`      | StrictMode + QueryClientProvider + BrowserRouter |
+| File                 | Role                                                     |
+| -------------------- | -------------------------------------------------------- |
+| `modules/types.ts`   | `FeatureModule` shape, `NAV_GROUPS`                      |
+| `modules/index.ts`   | manifest, one entry per page, in journey order           |
+| `modules/journey.ts` | pure lookups over the manifest                           |
+| `AppShell.tsx`       | Header + routes + journey context from the manifest      |
+| `PageFrame.tsx`      | h1/description above and prev/next below the routed page |
+| `ModuleBoundary.tsx` | error boundary + Suspense + retry, per module            |
+| `providers.tsx`      | StrictMode + QueryClientProvider + BrowserRouter         |

@@ -31,9 +31,13 @@ export {
 export { EmptyState, type EmptyStateProps } from './EmptyState';
 export { Callout, Explainer, type ExplainerProps, type Term } from './Explainer';
 export { Footer } from './Footer';
+export { JourneyMap, JourneyProvider } from './journey';
+export { type JourneyGroup, type JourneyPage, useJourney } from './journeyContext';
+export { JourneyFooter, PageHeader } from './PageHeader';
 
 // Small marks
 export { Badge, type BadgeProps, Flag } from './Badge';
+export { ThemeToggle } from './ThemeToggle';
 
 // Async / query state
 export { ErrorCard, Loaded, Skeleton } from './QueryState';
