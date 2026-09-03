@@ -81,7 +81,9 @@ MVA is caused by biallelic variants in a handful of spindle-assembly-checkpoint 
 | **BUB1B** (BubR1) | chr15q15.1 | MVA1 | Most common; microcephaly, ID, **cancer predisposition** (Wilms, rhabdomyosarcoma, leukemia) |
 | **CEP57** | chr11q21 | MVA2 | Rhizomelic limb shortening, typically NO malignancy |
 | **TRIP13** | chr5p15.33 | MVA3 | Wilms tumor predisposition |
-| CEP192, SMC5, CENPE | — | candidate/atypical | case reports |
+| **SMC5** | chr9q21.12 | **MVA6** / Atelis syndrome 2 (OMIM 620185) | Segmented chromosomes with mosaic variegated hyperploidy; poor growth, microcephaly, cardiac defects (PMID 36333305) |
+| **CEP192** | chr18p11.21 | no OMIM phenotype entry; one published family | MVA **with tetraploidy**: microcephaly, short stature, limb-extremity dysplasia; heterozygotes show male-infertility predisposition (PMID 37981762) |
+| CENPE | chr4q24 | candidate/atypical | case reports |
 
 The story page says care today means "managing symptoms and **fighting cancer cells**" → child has active malignancy → strongly favors **BUB1B** (classic) or **TRIP13**. CEP57 unlikely.
 

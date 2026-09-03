@@ -20,8 +20,21 @@ PANEL = [
     ("CEP57", "MVA2, rhizomelic shortening, usually no malignancy"),
     ("TRIP13", "MVA3, Wilms tumour predisposition"),
     ("CENPE", "atypical MVA, case reports"),
-    ("CEP192", "candidate, centrosome"),
-    ("SMC5", "candidate, chromosome maintenance"),
+    # Both were "candidate" until the citations below were checked live (methodology 062).
+    (
+        "CEP192",
+        (
+            "biallelic MVA with tetraploidy, male-infertility predisposition; "
+            "PMID 37981762, no OMIM phenotype yet"
+        ),
+    ),
+    (
+        "SMC5",
+        (
+            "MVA6 / Atelis syndrome 2 (OMIM 620185), segmented chromosomes and mosaic "
+            "variegated hyperploidy; PMID 36333305"
+        ),
+    ),
     # Rhabdomyosarcoma predisposition differential — rules out the obvious mimics.
     ("TP53", "Li-Fraumeni differential for rhabdomyosarcoma"),
     ("DICER1", "DICER1 tumour predisposition differential"),
