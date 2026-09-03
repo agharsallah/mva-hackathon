@@ -18,7 +18,7 @@
  * runs unmodified.
  */
 
-import { cleanup } from '@testing-library/react';
+import { act, cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
 
@@ -59,7 +59,12 @@ describe('accessibility — every module, axe-core, offline fixtures', () => {
       const { caught, container } = await mountModule(mod);
       expect(caught, `module "${mod.id}" threw while rendering`).toBeNull();
 
-      const results = await axe(container, AXE_OPTIONS);
+      // axe takes ~600 ms; a Skeleton's 150 ms reveal timer would otherwise fire outside
+      // act() and log a warning that gate 2 counts as a console.error.
+      let results!: Awaited<ReturnType<typeof axe>>;
+      await act(async () => {
+        results = await axe(container, AXE_OPTIONS);
+      });
       const summary = results.violations
         .map((v) => `  [${v.impact}] ${v.id} (${v.nodes.length} node(s)) — ${v.help}`)
         .join('\n');
