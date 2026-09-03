@@ -12,7 +12,7 @@ must never be written anywhere the repository can pick up.
 
 from fastapi import APIRouter, Query
 
-from . import catalog, phenotype, queries, routes_panel, routes_search, science
+from . import catalog, phenotype, queries, refprovenance, routes_panel, routes_search, science
 from .cache import Cache
 from .overview import overview
 from .response import Envelope, cached, live
@@ -58,6 +58,11 @@ CATALOG_COLUMNS_SOURCE = "pg.information_schema.columns + mva.viz.catalog_column
 
 #: Cache key for the table catalogue. Named, not derived, because it takes no parameters.
 CATALOG_TABLES_KEY = "catalog-tables"
+
+#: What ``/provenance/reference`` reads: manifests on disk, no database at all.
+REFERENCE_PROVENANCE_SOURCE = (
+    "ressources/reference/*provenance.json + app/src/fixtures/data/**/_provenance.json"
+)
 
 
 def router(settings, cache: Cache) -> APIRouter:
@@ -149,6 +154,24 @@ def router(settings, cache: Cache) -> APIRouter:
         unmeasured, not as signal.
         """
         return live(queries.baf_bins(settings, chrom), "pg.results.baf_bins")
+
+    @api.get("/provenance/reference", response_model=Envelope, tags=["provenance"])
+    def provenance_reference() -> dict:
+        """Every committed reference table and offline fixture, and where it came from.
+
+        The other three ``/provenance/*`` routes read ``warehouse.data_lineage``, which
+        records *derivations*: which table was computed from which object, by which
+        transform. Reference data has none of that — a gnomAD table, an HPO release, an
+        Ensembl gene record and an AlphaFold model are **fetched**, so an edge claiming
+        a transform produced them would be fabricated. What they have instead is a
+        manifest committed beside the bytes, and this route is the list of those.
+
+        Read off disk, so it needs no database and answers on a bare checkout. A
+        directory that does not exist contributes no rows rather than an error: a
+        checkout whose reference tables were never built has nothing to declare, which
+        is a true statement about it.
+        """
+        return live(refprovenance.rows(), REFERENCE_PROVENANCE_SOURCE)
 
     routes_panel.add_routes(api, settings, cache)
     routes_search.add_routes(api, settings, cache)

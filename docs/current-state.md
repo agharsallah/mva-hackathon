@@ -4,6 +4,26 @@
 counts). Recorded in
 [`methodology/015`](step-0/methodology/015-step-1-consolidation.md) and
 [`methodology/016`](step-0/methodology/016-lineage-backfill-and-probe-ledger.md).
+**§1's reference-data half re-verified 2026-09-03** by executed runs, and the sequence
+matters because an earlier version of this banner got it wrong:
+
+- live `GET https://rest.ensembl.org/info/data` — release **116**;
+- `tools/build_gene_set.py` rerun. The gene-set TSV came back byte-identical *at that
+  point* ([`061`](step-0/methodology/061-reference-data-provenance.md)); a later rerun the
+  same day corrected its `note` column and moved it 2,569 → **2,726 B**
+  ([`062`](step-0/methodology/062-reference-manifests-and-bed-notes.md)). It is 2,726 B
+  now.
+- `tools/build_protein_fixture.py --force` rerun **after** that TSV rebuild, manifests
+  written `2026-09-03T13:46:57Z`. Every protein fixture and every non-panel gene-structure
+  fixture came back byte-identical; the eight panel gene-structure files changed only
+  because the synthetic allele labels did, and both `_provenance.json` name the committed
+  TSV's current digest again. The staleness that sat between 062's TSV rebuild and this
+  rerun, and the blind test that hid it, are recorded in
+  [`063`](step-0/methodology/063-manifest-staleness-fix.md).
+- `tools/check-python.sh` — **1,562 tests**.
+
+The Postgres, MinIO and row-count numbers in §2 were **not** re-checked on that date and
+still carry the 2026-08-29 / 2026-09-03 dates stated in their own rows.
 
 This page owns **repository and infrastructure numbers** — test counts, table counts,
 object counts, what is provisioned. **Dataset measurements** (variant counts, coverage,
@@ -19,7 +39,11 @@ flowchart TB
   PUB[/"the publisher<br/>SageBio/mva-hackathon-2026-data (gated)"/]:::raw
   PUB -->|"source-fetch — streamed on the server,<br/>SHA-256 checked against the publisher"| S3[("<b>MinIO bucket <code>mva</code></b><br/>source/ · 12 objects · 84.99 GB<br/>versioning Enabled · 12/12 hash_verified")]:::good
   S3 -->|"vcf-ingest"| RAW[("<b>warehouse.variants_raw</b><br/>row count = bcftools record count")]:::good
-  PROF[/"ressources/data-profile/ + ressources/reference/<br/>committable aggregates and public reference,<br/>HPO tables provenance-manifested"/]:::raw
+  PROF[/"ressources/data-profile/ + ressources/reference/<br/>committable aggregates and public reference,<br/>every reference build provenance-manifested"/]:::raw
+  REF[/"public reference services<br/>gnomAD · ClinVar · HPO (purl.obolibrary.org)<br/>Ensembl REST · AlphaFold DB"/]:::raw
+  REF -->|"download / build tools — each writes a<br/>*provenance.json manifest beside the bytes"| PROF
+  REF -.->|"request-scoped fetch,<br/>Ensembl + AlphaFold only"| VCACHE[("<b>build/viz-cache/</b><br/>the API disk cache · gitignored<br/>each entry stores the model url,<br/>version and release it was built from")]:::neutral
+  PROF -->|"build_protein_fixture.py — committed,<br/>one real file per gene"| FIX["app/src/fixtures/data/<br/>protein/ + gene-structure/<br/><i>real upstream data, one _provenance.json each</i>"]:::neutral
   PROF -->|"stage → typed Parquet"| BUILD["build/warehouse/*.parquet<br/><i>gitignored, regenerable</i>"]:::neutral
   BUILD -->|"pg-ingest"| WH[("<b>schema warehouse</b><br/>19 tables")]:::good
   RAW --- WH
@@ -34,10 +58,23 @@ flowchart TB
   classDef neutral fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
 ```
 
-> **Legend** — **purple = raw input** as delivered; **green = verified and live** (a live
-> probe or a row count was run today); **blue = neutral, regenerable machinery** that
-> holds no unique state. Solid arrows are executed pipelines;
-> dotted arrows are side relationships, not steps.
+> **Legend** — **purple = raw input** as delivered or as fetched from a public service;
+> **green = verified and live** (a live probe or a row count was run today); **blue =
+> neutral, regenerable machinery** that holds no unique state. Solid arrows are executed
+> pipelines; dotted arrows are side relationships, not steps.
+
+**Where the reference sources' provenance lives.** The purple public services on the right
+are *fetched*, not derived, so they get no `data_lineage` edge — an edge naming a transform
+that never ran would be fabricated. Each build writes a manifest beside the bytes instead:
+five under `ressources/reference/` (`gnomad_constraint`, `clinvar_panel`, `qc_norms`,
+`hpo`, `structure_genes`) and one `app/src/fixtures/data/*/_provenance.json` per fixture
+directory. They record the upstream URL, the release, the digests and the commit that
+built them, they are written by the tool on every run and never by hand, and
+`GET /api/provenance/reference` lists all **7** normalised onto one row shape. Method and
+observed output: [`step-0/methodology/061`](step-0/methodology/061-reference-data-provenance.md)
+and [`062`](step-0/methodology/062-reference-manifests-and-bed-notes.md), which added the
+three population-reference manifests and measured both upstreams to confirm the committed
+tables are still the current release.
 
 ### The source-of-truth chain
 

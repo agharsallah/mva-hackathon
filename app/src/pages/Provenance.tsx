@@ -1,9 +1,39 @@
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+
+import { useReferenceProvenance } from '../api/hooks';
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { Derivations, LineageTable } from './provenance/Derivations';
 import { LineageGraph } from './provenance/LineageGraph';
+import { ReferenceData } from './provenance/ReferenceData';
+
+/**
+ * Scroll to `#reference` when another page deep-links here.
+ *
+ * The router does not restore a hash on its own, and this page is a lazy chunk, so the
+ * target does not exist at navigation time — hence the effect rather than a plain anchor.
+ *
+ * Two things the deps carry beyond `hash`, both of them bugs that were visible:
+ *
+ * - **`key`** — the router's per-navigation id. Following `/provenance#reference` while
+ *   *already* on `/provenance#reference` leaves `hash` unchanged, so the effect never re-ran
+ *   and the link did nothing.
+ * - **`settled`** — the reference table's rows arrive after this effect's first pass, so the
+ *   section still had its collapsed height and the scroll landed short. Re-running once the
+ *   rows are in puts the heading at the top of the viewport.
+ */
+function useHashScroll(settled: boolean) {
+  const { hash, key } = useLocation();
+  useEffect(() => {
+    if (!hash) return;
+    document.getElementById(hash.slice(1))?.scrollIntoView({ block: 'start' });
+  }, [hash, key, settled]);
+}
 
 export default function ProvenancePage() {
+  const reference = useReferenceProvenance();
+  useHashScroll(!reference.isLoading);
   return (
     <div className="space-y-6">
       <Explainer
@@ -42,6 +72,11 @@ export default function ProvenancePage() {
               'records are added, never edited. A changed belief becomes a new row, so the old reasoning stays visible',
           },
           {
+            term: 'provenance manifest',
+            plain:
+              'a lockfile for data: URL + version + hash, committed beside the file, so the same bytes can be re-fetched and checked',
+          },
+          {
             term: 'raw vs results schema',
             plain:
               'raw holds the delivered records verbatim; results holds only things computed from raw, so the two can never be confused',
@@ -59,6 +94,14 @@ export default function ProvenancePage() {
 
       <Section title="The data flow">
         <LineageGraph />
+      </Section>
+
+      <Section
+        id="reference"
+        title="The public inputs"
+        subtitle="reference tables and offline fixtures — fetched, not computed, so each carries a manifest instead of a lineage edge"
+      >
+        <ReferenceData />
       </Section>
 
       <Section title="Why each table exists">

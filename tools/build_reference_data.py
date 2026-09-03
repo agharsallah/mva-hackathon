@@ -11,11 +11,19 @@ gitignored) and write only the small derived TSV into the repository. The scratc
 inputs are 95 MB and 193 MB and are deliberately never committed.
 
 The third table, `qc_norms.tsv`, is a hand-curated literature table and is not
-generated here — it has no machine-readable upstream.
+generated here — it has no machine-readable upstream. It still gets a manifest, whose
+inputs are the citations its own rows carry.
+
+Every subcommand writes a `*.provenance.json` beside the table it touches, and
+`manifests` writes all three for the committed tables without regenerating anything —
+which is the case that matters when an upstream has moved on since the commit: the
+manifest must describe the bytes in the repository, not the bytes on the server today.
 
 Usage:
-  uv run tools/build_reference_data.py gnomad  [--scratch DIR] [--out FILE]
-  uv run tools/build_reference_data.py clinvar [--scratch DIR] [--out FILE] [--bed FILE]
+  uv run tools/build_reference_data.py gnomad    [--scratch DIR] [--out FILE]
+  uv run tools/build_reference_data.py clinvar   [--scratch DIR] [--out FILE] [--bed FILE]
+  uv run tools/build_reference_data.py qc-norms  [--out FILE]
+  uv run tools/build_reference_data.py manifests [--scratch DIR] [--bed FILE]
 
 `clinvar` needs `bcftools` (>=1.10) and `tabix` on PATH.
 """
@@ -31,16 +39,25 @@ import sys
 import urllib.request
 from pathlib import Path
 
+from mva.viz import referencemanifest
+
 REPO = Path(__file__).resolve().parent.parent
 DEFAULT_SCRATCH = REPO / "build" / "reference-scratch"
 DEFAULT_BED = REPO / "ressources" / "data-profile" / "mva_panel_grch38.bed"
 REFERENCE = REPO / "ressources" / "reference"
 
-GNOMAD_URL = (
-    "https://storage.googleapis.com/gcp-public-data--gnomad/"
-    "release/4.1/constraint/gnomad.v4.1.constraint_metrics.tsv"
-)
-CLINVAR_URL = "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz"
+# The two upstream URLs have one owner, `mva.viz.referencemanifest`, because the manifest
+# and the fetch must name the same object: a manifest recording a URL the build did not
+# use would be worse than none.
+GNOMAD_URL = referencemanifest.GNOMAD_URL
+CLINVAR_URL = referencemanifest.CLINVAR_URL
+
+GNOMAD_SCRATCH = "gnomad.v4.1.constraint_metrics.tsv"
+CLINVAR_SCRATCH = "clinvar_GRCh38.vcf.gz"
+
+GNOMAD_OUT = REFERENCE / "gnomad_constraint.tsv"
+CLINVAR_OUT = REFERENCE / "clinvar_panel.tsv"
+QC_NORMS_OUT = REFERENCE / "qc_norms.tsv"
 
 
 # ── shared ───────────────────────────────────────────────────────────────────
@@ -59,6 +76,18 @@ def fetch(url: str, dest: Path) -> Path:
     tmp.replace(dest)
     print(f"wrote   {dest}  ({dest.stat().st_size:,} bytes)", file=sys.stderr)
     return dest
+
+
+def manifest(built: dict, out: Path) -> Path:
+    """Write `built` beside `out` as `<name>.provenance.json` and say so.
+
+    Written on every run, never by hand: a manifest a human edits is a claim, and a claim
+    about provenance is exactly the thing that must not be one.
+    """
+    path = referencemanifest.write(built, out.with_suffix(".provenance.json"))
+    sha = built["outputs"][0]["sha256"]
+    print(f"manifest {path}  (describes {out.name} sha256 {sha[:8]}…)")
+    return path
 
 
 def read_panel(bed: Path) -> list[dict]:
@@ -295,7 +324,7 @@ def main(argv: list[str] | None = None) -> int:
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
     )
     sub = p.add_subparsers(dest="cmd", required=True)
-    for name in ("gnomad", "clinvar"):
+    for name in ("gnomad", "clinvar", "qc-norms", "manifests"):
         s = sub.add_parser(name)
         s.add_argument("--scratch", type=Path, default=DEFAULT_SCRATCH)
         s.add_argument("--bed", type=Path, default=DEFAULT_BED)
@@ -307,10 +336,30 @@ def main(argv: list[str] | None = None) -> int:
         sys.exit(f"no panel rows parsed from {args.bed}")
     print(f"panel   {len(panel)} genes from {args.bed}", file=sys.stderr)
 
+    vcf = args.scratch / CLINVAR_SCRATCH
     if args.cmd == "gnomad":
-        build_gnomad(args.scratch, args.out or REFERENCE / "gnomad_constraint.tsv", panel)
+        out = args.out or GNOMAD_OUT
+        build_gnomad(args.scratch, out, panel)
+        manifest(referencemanifest.gnomad(out, args.scratch / GNOMAD_SCRATCH, args.bed), out)
+    elif args.cmd == "clinvar":
+        out = args.out or CLINVAR_OUT
+        build_clinvar(args.scratch, out, panel)
+        manifest(referencemanifest.clinvar(out, vcf, vcf.with_suffix(".gz.tbi"), args.bed), out)
+    elif args.cmd == "qc-norms":
+        out = args.out or QC_NORMS_OUT
+        manifest(referencemanifest.qc_norms(out), out)
     else:
-        build_clinvar(args.scratch, args.out or REFERENCE / "clinvar_panel.tsv", panel)
+        # Manifests for the committed tables, regenerating nothing. The honest move when
+        # an upstream has published a newer release than the one the repository holds.
+        manifest(
+            referencemanifest.gnomad(GNOMAD_OUT, args.scratch / GNOMAD_SCRATCH, args.bed),
+            GNOMAD_OUT,
+        )
+        manifest(
+            referencemanifest.clinvar(CLINVAR_OUT, vcf, vcf.with_suffix(".gz.tbi"), args.bed),
+            CLINVAR_OUT,
+        )
+        manifest(referencemanifest.qc_norms(QC_NORMS_OUT), QC_NORMS_OUT)
     return 0
 
 

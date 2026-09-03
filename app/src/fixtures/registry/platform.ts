@@ -1,4 +1,4 @@
-import type { HealthDependencies } from '../../api/types';
+import type { HealthDependencies, ReferenceProvenanceRow } from '../../api/types';
 import type { Entry } from '../loader';
 import { rows } from '../loader';
 import { catalogObjectsFixture } from '../shape/catalog-objects';
@@ -34,6 +34,14 @@ export const platformEntries: Record<string, Entry> = {
   '/api/provenance/lineage': { source: 'meta.lineage', load: () => lineageFixture() },
   '/api/provenance/derivations': { source: 'meta.derivations', load: () => derivationsFixture() },
   '/api/provenance/sources': { source: 'delivery manifest', load: () => sourcesFixture() },
+  // TRANSCRIBED from the live endpoint's own reply: `/api/provenance/reference` reads
+  // `*provenance.json` off disk, so its offline payload is the real rows, captured from a
+  // run of the route. Not synthesised — a fabricated provenance row is the one kind of
+  // fixture that would be actively misleading.
+  '/api/provenance/reference': {
+    source: 'transcribed reference + fixture manifests',
+    load: () => rows<ReferenceProvenanceRow[]>('provenance-reference'),
+  },
   '/api/probe/ledger': {
     source: 'probe ledger (empty: 0/18 spent)',
     load: () => probeLedgerFixture(),

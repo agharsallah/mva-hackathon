@@ -1,0 +1,37 @@
+{
+  "name": "gnomad_constraint",
+  "built_at": "2026-09-03T12:51:27+00:00",
+  "built_by": "tools/build_reference_data.py gnomad",
+  "code_version": "cb066b8",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "One row per gene: the upstream file's Ensembl rows are kept where canonical == true and transcript_type == protein_coding, and 26 of its 55 columns are renamed onto a flat schema. The RefSeq (NM_/XM_) mirror rows are dropped because they carry neither a contig nor a transcript type, so the subset rule cannot be applied to them. constraint_flags is flattened from a quoted JSON array to a comma-separated string, because a TSV field containing a double quote is not readable by COPY ... FORMAT text. Scientific notation is rendered as a plain decimal and gnomAD's NA is passed through unchanged rather than becoming an empty field, so a missing metric stays distinguishable from a zero one. The panel BED is read only to report how many panel genes were found; it does not subset the output, which is genome-wide.",
+  "inputs": [
+    {
+      "name": "gnomAD v4.1 constraint metrics",
+      "url": "https://storage.googleapis.com/gcp-public-data--gnomad/release/4.1/constraint/gnomad.v4.1.constraint_metrics.tsv",
+      "release": "4.1",
+      "sha256": "68d8abdb7fc48f570869b02dfaa74b9fecaece7fcc5f301ddca40ec1ce12da00",
+      "bytes": 95546041,
+      "role": "observed-vs-expected damage counts per transcript"
+    },
+    {
+      "name": "ressources/data-profile/mva_panel_grch38.bed",
+      "url": "file://ressources/data-profile/mva_panel_grch38.bed",
+      "release": null,
+      "sha256": "4873acfed8f4ebc0f027f47b3c5b0b6204c4cb06443d0add7d59f7c204aa2b68",
+      "bytes": 943,
+      "role": "the gene panel: the intervals queried, and the symbols coverage is reported against"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/reference/gnomad_constraint.tsv",
+      "sha256": "7d64f3b4c508d9eec233c9f490aabc34b4eb48ac20a45666acc44177dee90b5b",
+      "bytes": 3250168,
+      "rows": 18314
+    }
+  ],
+  "licence": "gnomAD's primary data are released under the Creative Commons Zero Public Domain Dedication (CC0); attribution is requested, not required. This repository includes data from the gnomAD v4.1 release.",
+  "patient_data": "none. Public reference data only - a gene, a transcript, a published classification or a literature range. This manifest records URLs, releases, digests and counts.",
+  "note": "18,314 genes from gnomAD v4.1, one canonical protein-coding Ensembl transcript each. Autosomes only upstream: the file carries no sex-chromosome row at all, so a gene absent from it is not unconstrained."
+}

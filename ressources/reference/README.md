@@ -1,6 +1,9 @@
 # Population reference — what "normal" looks like
 
-**Standing:** five public reference tables. The first three downloaded and derived
+**Standing:** six public reference tables, **every one of them carrying a provenance
+manifest** as of 2026-09-03
+([methodology 062](../../docs/step-0/methodology/062-reference-manifests-and-bed-notes.md)).
+The first three downloaded and derived
 2026-08-31; the two HPO tables added 2026-09-03 from release `hp/releases/2026-06-23`
 ([methodology 056](../../docs/step-3/methodology/056-phenotype-ranking-without-java.md)).
 Row counts and per-gene breakdowns verified against the files in this directory on the
@@ -23,11 +26,60 @@ count into a judgement.
 | `qc_norms.tsv` | *Is this callset's shape normal for a human genome?* | 27 | 14 KB |
 | `hpo_term_ic.tsv` | *How rare, and therefore how diagnostic, is each clinical feature?* | 19,836 | 1.1 MB |
 | `hpo_gene_scores.tsv` | *Which genes do this child's symptoms point at, ignoring the DNA entirely?* | 10,520 | 988 KB |
+| `structure_genes.tsv` | *Which genes may the structure explorer draw, and which of them make a protein?* | 23 | 2.6 KB |
 
-Plus one sidecar that is **not** a staged table: `hpo_provenance.json` records what produced
-the two HPO tables — both upstream URLs, the release, a SHA-256 per input, byte and row
-counts, the build timestamp and the code commit. `mva.warehouse.reference` reads it to build
-the lineage edges, so the edge cannot disagree with the run that wrote the file.
+`structure_genes.tsv` has an editable input beside it, `structure_genes.spec.tsv`: three
+columns (symbol, group, note) that a human maintains, and from which
+`tools/build_gene_set.py` produces the resolved table. Neither is a staged warehouse table
+— `mva.viz.geneset` reads the TSV directly, because 23 rows of gene metadata behind a
+database round trip would buy nothing. See
+[the section below](#structure_genestsv--which-genes-the-explorer-may-draw).
+
+## Every file, and the manifest that says where it came from
+
+One manifest per table, written by the build tool on every run and never by hand — a
+manifest a human can edit is a claim, and a claim is the thing provenance replaces. All
+five reference manifests are listed normalised by `GET /api/provenance/reference`, which reads them off disk
+and needs no database ([viz-api](../../docs/step-0/viz-api.md)).
+
+| File | Manifest | Written by | Upstream digest recorded? |
+|---|---|---|---|
+| `gnomad_constraint.tsv` | `gnomad_constraint.provenance.json` | `build_reference_data.py gnomad` | yes — the 95 MB v4.1 object, `68d8abdb…` |
+| `clinvar_panel.tsv` | `clinvar_panel.provenance.json` | `build_reference_data.py clinvar` | yes — the 193 MB VCF, `e72f5619…`, release `2026-08-29` |
+| `qc_norms.tsv` | `qc_norms.provenance.json` | `build_reference_data.py qc-norms` | no, legitimately: the inputs are 7 papers, not downloads |
+| `hpo_term_ic.tsv` | `hpo_provenance.json` | `build_phenotype_data.py` | yes — both HPO files |
+| `hpo_gene_scores.tsv` | `hpo_provenance.json` | `build_phenotype_data.py` | yes — both HPO files |
+| `structure_genes.tsv` | `structure_genes.provenance.json` | `build_gene_set.py` | n/a — Ensembl REST answers, recorded as a release |
+| `structure_genes.spec.tsv` | — | hand-maintained input, digested *by* the manifest above | — |
+
+Three shape rules hold across all five, because the alternative is a fabrication:
+
+- **A fact is measured or it is `null`.** No digest is ever copied out of this README
+  into a manifest. When the gitignored upstream is not on disk, `sha256` is `null` and a
+  `known_gap` field says which fact is missing and how to record it.
+- **A release comes from the payload, not the filename.** gnomAD's URL is versioned, so
+  there the release is the path segment. ClinVar's URL is not, so its release is the
+  VCF's own `##fileDate`. HPO's PURL always serves the current month, so its release is
+  the file's `data-version`.
+- **`qc_norms`' inputs are its own `source`/`url` columns, extracted from the table.** A
+  hand-kept second citation list beside it would drift, and a drifted citation is worse
+  than none because it looks checked.
+
+Two tests guard the set: one asserts every committed table has a manifest, and one
+re-digests every file a manifest claims and fails if a table was edited without its
+manifest being rewritten (`tests/test_viz_referencemanifest.py`).
+
+`hpo_provenance.json` records what
+produced the two HPO tables — both upstream URLs, the release, a SHA-256 per input, byte and
+row counts, the build timestamp and the code commit. `mva.warehouse.reference` reads it to
+build the lineage edges, so the edge cannot disagree with the run that wrote the file.
+`structure_genes.provenance.json` does the same for `structure_genes.tsv`: the Ensembl
+release the ids were resolved at (read live from `GET /info/data`), the endpoints called, the
+digest of both committed inputs and of the output, and every OMIM number and PMID the curated
+notes cite — extracted from the notes, not retyped beside them.
+
+The two fixture manifests under `app/src/fixtures/data/` are listed by the same endpoint,
+so it answers with **7 rows** today: five reference manifests and two fixture ones.
 
 Nothing here is patient-derived. The two large upstream files (95 MB and 193 MB) are
 downloaded to gitignored scratch and never enter the tree.
@@ -49,15 +101,24 @@ flowchart LR
   B --> O2["clinvar_panel.tsv<br/>17,832 rows"]:::good
   L -->|"hand-curated, cited"| O3["qc_norms.tsv"]:::good
 
+  O1 -.->|"digest + release"| M1["gnomad_constraint<br/>.provenance.json"]:::machine
+  O2 -.->|"digest + ##fileDate"| M2["clinvar_panel<br/>.provenance.json"]:::machine
+  O3 -.->|"its own citations"| M3["qc_norms<br/>.provenance.json"]:::machine
+  M1 --> API["GET /api/provenance/reference<br/>7 rows"]:::good
+  M2 --> API
+  M3 --> API
+
   classDef raw fill:#ede7f6,stroke:#5e35b1,color:#000
   classDef machine fill:#e3f2fd,stroke:#1565c0,color:#000
   classDef decide fill:#fff8e1,stroke:#f9a825,color:#000
   classDef good fill:#e8f5e9,stroke:#2e7d32,color:#000
 ```
 
-> **Legend** — purple = raw public input (never committed); blue = neutral machinery;
-> yellow = the decision point where the chr-prefix mismatch is bridged; green = the
-> committed output.
+> **Legend** — purple = raw public input (never committed); blue = neutral machinery
+> (the builder, and the manifest each table gets); yellow = the decision point where the
+> contig-prefix mismatch is bridged; green = the committed output, and the endpoint that
+> lists every manifest. A dotted arrow means "is described by", not "is derived from" —
+> a manifest carries no data, only the digest, release and counts of the file beside it.
 
 ## Regeneration
 
@@ -67,9 +128,18 @@ uv run tools/build_reference_data.py gnomad        # ~2 s once the 95 MB TSV is 
 uv run tools/build_reference_data.py clinvar       # ~0.5 s once the 193 MB VCF is cached
 ```
 
-Both subcommands download into `build/reference-scratch/` (gitignored) and skip the
+```bash
+uv run tools/build_reference_data.py qc-norms      # manifest only; the table is curated
+uv run tools/build_reference_data.py manifests     # all three, regenerating no table
+```
+
+Both build subcommands download into `build/reference-scratch/` (gitignored) and skip the
 download when the file is already there. `qc_norms.tsv` is hand-curated from the
-literature and has no generator — it is edited by hand and every row carries its source.
+literature and has no generator — it is edited by hand and every row carries its source;
+`qc-norms` writes only its manifest. Each subcommand writes the manifest for the table it
+touches, and `manifests` writes all three for the **committed** tables without
+regenerating anything — the case that matters when an upstream has published a newer
+release than the one in the repository, since the manifest must describe the bytes here.
 
 ---
 
@@ -141,7 +211,10 @@ available; if it is there as *Benign* with 30 submitters, the candidate is dead.
 
 - **Source:** <https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz> (+ `.tbi`)
 - **Release:** VCF header `##fileDate=2026-08-29`, `##reference=GRCh38`, 193,427,450 bytes,
-  **4,468,152 records** genome-wide
+  SHA-256 `e72f5619f003c80cb3051afcb0c1f11c4409741054b48bbfd0ced03046ec91f9`,
+  **4,468,152 records** genome-wide. The digest was measured 2026-09-03 from the scratch
+  download **and** from a full re-hash of the live upstream stream — the two agree, so
+  the release names bytes and not only a date.
 - **Downloaded:** 2026-08-31
 - **Subset rule:** the 8 regions of
   [`ressources/data-profile/mva_panel_grch38.bed`](../data-profile/mva_panel_grch38.bed)
@@ -170,9 +243,10 @@ deliberate — but filter on `gene` before quoting a per-gene number.
 | *flanking genes* | *1,285* | *52* | | | | |
 
 *P / LP* counts `Pathogenic`, `Likely_pathogenic`, `Pathogenic/Likely_pathogenic` and
-`Pathogenic|…` combinations. **CEP192 has zero pathogenic entries in ClinVar** — it is a
-candidate gene, not an established disease gene, so absence of evidence there is expected
-and is not evidence of absence.
+`Pathogenic|…` combinations. **CEP192 has zero pathogenic entries in ClinVar** — one
+published biallelic MVA-with-tetraploidy family (PMID 37981762) and no OMIM phenotype
+entry is not the same as a submitted clinical classification, so absence of evidence
+there is expected and is not evidence of absence.
 
 Review status (`clnrevstat`, the "star rating"): 373 rows are `reviewed_by_expert_panel`
 (3 stars), 5,174 `criteria_provided,_multiple_submitters,_no_conflicts` (2 stars), 10,691
@@ -365,11 +439,15 @@ The edges are live in `warehouse.data_lineage` — `uv run mva-warehouse lineage
 --current` — with row counts, upstream URLs and digests. Details and the transfer
 cross-check: [methodology 056](../../docs/step-3/methodology/056-phenotype-ranking-without-java.md) §7b.
 
-**Known gap, stated rather than hidden:** `clinvar_panel` carries no `source_sha256`. It
-names a release but does not identify the bytes, and the scratch VCF cannot be shown to be
-the download that produced the committed extract — so it is left empty rather than filled
-with a digest that might name different bytes. `qc_norms` has none legitimately: it is
-hand-curated with no upstream file.
+**Known gap, narrowed 2026-09-03 and still stated rather than hidden:** the *warehouse
+lineage row* for `clinvar_panel` still carries no `source_sha256`. The **manifest** now
+does — `e72f5619…`, measured from the scratch VCF, and confirmed equal to a full re-hash
+of the live upstream stream on 2026-09-03, so the release the extract came from is
+identified by bytes and not only by a date. Copying that digest into
+`warehouse/reference.py` is a warehouse change
+([methodology 062](../../docs/step-0/methodology/062-reference-manifests-and-bed-notes.md)
+records it as open). `qc_norms` has no upstream digest legitimately: it is hand-curated
+from papers, and its manifest's `known_gap` says exactly that.
 
 `hpo_gene_scores.tsv` holds **both** term sets, so the with/without-parental delta is a
 join rather than a second run. `genes_considered` is repeated on every row because genes
@@ -380,3 +458,112 @@ a rank is quoted against.
 hiPHIVE phenotype path — no mouse, no zebrafish, no protein-interaction random walk —
 chosen on the published finding that human-only scores better
 ([Genome Medicine vol 17 art 127, 2025](https://europepmc.org/articles/PMC12539062), PMID 41121346).
+
+
+---
+
+## `structure_genes.tsv` — which genes the explorer may draw
+
+**Verified:** 2026-09-03, against three live Ensembl REST runs — release **116** on all
+three. The first two produced a byte-identical TSV (2,569 B, sha256 `1124e6c0…`); the
+third followed the panel BED's corrected SMC5 and CEP192 notes and is the committed one
+(**2,726 B, sha256 `7461a74c…`**, ids and biotypes unchanged, only the two note cells
+differ —
+[methodology 062](../../docs/step-0/methodology/062-reference-manifests-and-bed-notes.md)).
+Method, every reply and the size of each generated fixture:
+[`docs/step-0/methodology/060-structure-gene-set.md`](../../docs/step-0/methodology/060-structure-gene-set.md);
+the manifest and the endpoint that lists it:
+[`061-reference-data-provenance.md`](../../docs/step-0/methodology/061-reference-data-provenance.md).
+
+The panel BED answers *which eight genes was the callset annotated against*. It is the only
+authority on that, because those intervals are what VEP actually ran over. It cannot answer
+the different question the structure explorer needs — *which genes may I draw a fold for* —
+and the two sets are not the same. A reader comparing BUBR1's kinase domain against BUB1's
+wants both on screen, and BUB1 carries no patient allele at all.
+
+| Column | Source | Meaning |
+|---|---|---|
+| `symbol` | the spec | HGNC symbol, and the display spelling |
+| `ensembl_id` | **live Ensembl reply** | stable gene id (`ENSG…`); asserted equal to the BED's for every `panel` gene |
+| `group` | the spec | `panel`, `mva-sac` or `extended` — display grouping, *not* evidence strength |
+| `biotype` | **live Ensembl reply** | `protein_coding`, `lncRNA`, … |
+| `coding` | **live Ensembl reply** | whether the *canonical transcript* carries a Translation |
+| `note` | the spec, or the BED | one line on why the gene is here; blank in the spec for a panel gene means "borrow the BED's sixth column" |
+
+Beside it, `structure_genes.provenance.json` — written by the same run, never by hand.
+`inputs` names the Ensembl server with the release `GET /info/data` reported and the two
+endpoints called, plus the spec TSV and the panel BED with a SHA-256 each; `outputs` carries
+the TSV's own digest, byte count and row count; `literature` lists, per gene, every OMIM
+phenotype number and PubMed id its curated note cites. `mva.viz.geneset.provenance` reads
+the release and the digest back out, so `GET /api/panel/structure-genes` says in its
+envelope's `source` **which release these 23 records are**, not merely which file they came
+from.
+
+Two rules worth stating, because both were mistakes waiting to happen:
+
+* **`coding` is not `biotype == "protein_coding"`.** It is "the canonical transcript has a
+  Translation". A gene can be annotated protein-coding while the transcript the rest of the
+  pipeline indexes into does not translate, and a protein exhibit built on the biotype
+  string would then 502 instead of honestly saying *no protein*.
+* **`in_panel` is not a column here.** The server derives it from the BED
+  (`mva.viz.geneset`). Two files that both claim to say what is in the panel can disagree;
+  one cannot. `in_panel` is the flag that decides whether the proband's alleles exist for a
+  gene, so it is the last place a stale copy would be acceptable.
+
+```mermaid
+flowchart LR
+  SPEC[("structure_genes.spec.tsv<br/>symbol · group · note<br/>hand-maintained")]:::raw
+  BED["mva_panel_grch38.bed<br/>the annotated 8 + notes"]:::decide
+  E[("Ensembl REST<br/>/lookup/symbol?expand=1<br/>/xrefs/symbol")]:::raw
+  B["tools/build_gene_set.py"]:::machine
+  T["structure_genes.tsv<br/>23 rows"]:::good
+  G["mva.viz.geneset<br/>derives in_panel"]:::machine
+  R1["GET /api/panel/structure-genes"]:::good
+  R2["GET /api/panel/gene-structure"]:::good
+  R3["GET /api/panel/protein-structure"]:::good
+
+  SPEC --> B
+  E -->|"id · biotype · canonical transcript"| B
+  BED -->|"blank note borrows the BED's"| B
+  B -->|"assert panel ids equal the BED's"| T
+  B -->|"digests · release · commit · citations"| M["structure_genes.provenance.json"]:::good
+  M -->|"release + digest into the envelope's source"| G
+  M -.->|"normalised, one row shape"| R4["GET /api/provenance/reference"]:::good
+  T --> G
+  BED --> G
+  G --> R1
+  G --> R2
+  G --> R3
+  R3 -.->|"422 when coding = false"| X["no protein to fold"]:::bad
+
+  classDef raw fill:#ede7f6,stroke:#5e35b1,color:#000
+  classDef machine fill:#e3f2fd,stroke:#1565c0,color:#000
+  classDef decide fill:#fff8e1,stroke:#f9a825,color:#000
+  classDef good fill:#e8f5e9,stroke:#2e7d32,color:#000
+  classDef bad fill:#ffebee,stroke:#c62828,color:#000
+```
+
+> **Legend** — purple = raw input (a hand-maintained spec, a live public API); yellow = the
+> decision point where the panel BED overrides and lends its notes; blue = neutral
+> machinery; green = the committed table and the routes it serves; red = the refusal path a
+> non-coding gene takes, stated rather than faked.
+
+### The three groups
+
+| Group | Genes | What the group asserts |
+|---|---|---|
+| `panel` | CEP57, DICER1, BUB1B, TP53, CEP192, CENPE, TRIP13, SMC5 | the annotated eight; **the only genes with candidate alleles** |
+| `mva-sac` | CENATAC, MAD1L1, SLF2, MAD2L1BP, BUB1 | a documented MVA / spindle-assembly-checkpoint link, cited per row |
+| `extended` | PAK6, MTMR2, WRAP53, SEH1L, BRD9, ATP1B2, BDH2, FAM76B, DICER1-AS1, MAMDC2-AS1 | requested for comparison; the note states what is **not** known |
+
+The `mva-sac` notes are deliberately unequal, because the evidence is: CENATAC is MVA4 and
+MAD1L1 is MVA7 with OMIM phenotype numbers; SLF2 is Atelis syndrome 1, which OMIM files
+*MVA5* as a synonym of; MAD2L1BP has published biallelic MVA cases and no OMIM phenotype
+number yet; and BUB1's only assigned phenotype is MCPH30 — aneuploidy, but not an
+MVA-numbered entry. Two of the `extended` genes carry a "Mosaic Variegated Aneuploidy" tag
+on aggregator sites that is an artefact, not a finding: PAK6's overlaps BUB1B on 15q15, and
+FAM76B's has no primary source. Both notes say so.
+
+Nothing in either file is patient-derived: a gene symbol, a stable id and a biotype are
+public facts, and the one column about the proband (`in_panel`, derived at read time) is a
+boolean about *which genes were annotated*, never an allele.

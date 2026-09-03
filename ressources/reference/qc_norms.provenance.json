@@ -1,0 +1,119 @@
+{
+  "name": "qc_norms",
+  "built_at": "2026-09-03T12:51:27+00:00",
+  "built_by": "tools/build_reference_data.py qc-norms",
+  "code_version": "cb066b8",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "Hand-curated from primary literature; there is no generator and no upstream file. Every row carries the PMID/DOI it came from and a paraphrase of the sentence the number was taken from, and a metric with no citable range is absent rather than guessed. This manifest's inputs are the table's own distinct source/url pairs, extracted from the file, so a citation has exactly one owner and cannot drift.",
+  "inputs": [
+    {
+      "name": "Betschart 2024, Biometrical Journal, PMID 38988195, DOI 10.1002/bimj.202300278",
+      "url": "https://onlinelibrary.wiley.com/doi/10.1002/bimj.202300278",
+      "release": null,
+      "sha256": null,
+      "bytes": null,
+      "role": "cited expected range",
+      "metrics": [
+        "tstv_genome_wide",
+        "tstv_coding",
+        "het_hom_ratio_eur",
+        "het_hom_ratio_afr",
+        "het_hom_ratio_amr",
+        "dbsnp_concordance_across_publications",
+        "mean_coverage_wgs"
+      ]
+    },
+    {
+      "name": "1000 Genomes Project Consortium (Auton) 2015, Nature, PMID 26432245, DOI 10.1038/nature15393",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4750478/",
+      "release": null,
+      "sha256": null,
+      "bytes": null,
+      "role": "cited expected range",
+      "metrics": [
+        "variant_sites_per_genome",
+        "snv_per_genome",
+        "indel_per_genome",
+        "structural_variants_per_genome"
+      ]
+    },
+    {
+      "name": "Taliun 2021, Nature 590:290-299, PMID 33568819, DOI 10.1038/s41586-021-03205-y (TOPMed)",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC7875770/fullTextXML",
+      "release": null,
+      "sha256": null,
+      "bytes": null,
+      "role": "cited expected range",
+      "metrics": [
+        "dbsnp_membership_rate_per_genome",
+        "dbsnp_membership_rate_pass_only"
+      ]
+    },
+    {
+      "name": "Byrska-Bishop 2022, Cell 185:3426-3440.e19, PMID 36055201, DOI 10.1016/j.cell.2022.08.004",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9439720/",
+      "release": null,
+      "sha256": null,
+      "bytes": null,
+      "role": "cited expected range",
+      "metrics": [
+        "insertion_deletion_ratio",
+        "snv_per_genome_30x",
+        "indel_per_genome_30x",
+        "snv_to_indel_ratio",
+        "multiallelic_locus_fraction_cohort",
+        "dbsnp_novel_allele_rate_cohort_b155"
+      ]
+    },
+    {
+      "name": "Pedersen 2021, npj Genomic Medicine, PMID 34267211, DOI 10.1038/s41525-021-00227-3",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8282602/",
+      "release": null,
+      "sha256": null,
+      "bytes": null,
+      "role": "cited expected range",
+      "metrics": [
+        "de_novo_snv_indel_per_genome",
+        "rare_af_threshold_recessive",
+        "rare_af_threshold_dominant",
+        "candidate_variants_per_wgs_trio",
+        "candidate_comp_het_per_wgs_trio"
+      ]
+    },
+    {
+      "name": "Supernat 2018, Scientific Reports 8:17851, PMID 30552369, DOI 10.1038/s41598-018-36177-7",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6294778/",
+      "release": null,
+      "sha256": null,
+      "bytes": null,
+      "role": "cited expected range",
+      "metrics": [
+        "snv_to_indel_ratio_across_callers",
+        "het_count_per_genome"
+      ]
+    },
+    {
+      "name": "DePristo 2011, Nature Genetics 43:491-498, PMID 21478889, DOI 10.1038/ng.806",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3083463/",
+      "release": null,
+      "sha256": null,
+      "bytes": null,
+      "role": "cited expected range",
+      "metrics": [
+        "dbsnp_membership_rate_pass_snv"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/reference/qc_norms.tsv",
+      "sha256": "9f36652400d808c9bd6d55228c64b30e2030bd99f8926c35092cadce760a3277",
+      "bytes": 13819,
+      "rows": 27
+    }
+  ],
+  "licence": "No data are redistributed: every row is a number quoted from a published paper, cited by PMID and DOI. The paraphrases are this repository's own text.",
+  "patient_data": "none. Public reference data only - a gene, a transcript, a published classification or a literature range. This manifest records URLs, releases, digests and counts.",
+  "known_gap": "no input carries a digest, legitimately: each is a published paper, not a download. There is nothing to hash and no release to name.",
+  "note": "27 literature-derived expected ranges from 7 primary sources, hand-curated with no generator. This manifest is written from the table's own source and url columns; the numbers are not."
+}

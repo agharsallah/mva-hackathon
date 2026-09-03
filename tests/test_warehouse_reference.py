@@ -47,10 +47,21 @@ def one(parquet: Path, expression: str):
     return duckdb.sql(f"SELECT {expression} FROM read_parquet('{parquet}')").fetchone()[0]
 
 
+#: Reference TSVs the API reads **directly** and the warehouse therefore does not stage.
+#:
+#: ``structure_genes.tsv`` is 23 rows of gene metadata read by :mod:`mva.viz.geneset` on
+#: every ``/api/panel/structure-genes`` request; putting it behind a Parquet stage and a
+#: database round trip would buy nothing and add a lineage edge to maintain. Its
+#: ``.spec.tsv`` is the hand-maintained *input* to ``tools/build_gene_set.py``, not a table
+#: at all. Both are named here rather than pattern-matched, so a genuinely undeclared new
+#: reference table still fails the guard below. Reason: ``docs/step-0/methodology/060``.
+NOT_STAGED = frozenset({"structure_genes.tsv", "structure_genes.spec.tsv"})
+
+
 class TestSpecs:
     def test_every_reference_file_is_declared(self):
         declared = {dataset.source for dataset in reference.datasets()}
-        assert declared == {path.name for path in ROOT.glob("*.tsv")}
+        assert declared == {path.name for path in ROOT.glob("*.tsv")} - NOT_STAGED
 
     def test_each_spec_pins_its_own_root(self, tmp_path: Path):
         for dataset in reference.datasets(tmp_path):
