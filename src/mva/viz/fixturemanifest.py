@@ -29,7 +29,7 @@ import json
 from collections.abc import Iterable
 from pathlib import Path
 
-from . import geneset, genestructure, proteinstructure, refprovenance
+from . import geneset, genestructure, panelbed, proteinstructure, refprovenance
 
 #: Which top-level field of ``gene-structure/<SYMBOL>.json`` is measured and which is
 #: invented. The map is committed *in the manifest*, per gene, because "this fixture is
@@ -50,7 +50,9 @@ STRUCTURE_FIELDS = {
     "protein_length": "REAL — Ensembl translation length",
     "exons": "REAL — Ensembl exon boundaries, renumbered in transcription order",
     "domains": "REAL — Ensembl /overlap/translation features, Pfam/SMART/etc only",
-    "in_panel": "REAL — derived from ressources/data-profile/mva_panel_grch38.bed",
+    # Named from the constant rather than typed, so a project pointing `panelbed` at its
+    # own BED gets a manifest that says which file the flag was actually derived from.
+    "in_panel": f"REAL — derived from {panelbed.DEFAULT_BED.as_posix()}",
     "candidates": "SYNTHETIC",
 }
 

@@ -2,37 +2,46 @@
 #
 # Input to `tools/build_gene_set.py`, which resolves every symbol against Ensembl REST
 # and writes `structure_genes.tsv` next to this file. This is the *editable* half: a
-# symbol, a display group, and one line of provenance. The ids, biotypes and the
-# `coding` flag are never hand-written — they come from the live reply.
+# symbol, a display group, the group's label and rank, and one line of provenance. The
+# ids, biotypes and the `coding` flag are never hand-written — they come from the live
+# reply.
+#
+# Columns are read by *name*, and only `symbol` and `group` are required. `group` is a
+# free-form id: no code anywhere knows the three used below. `group_label` is the sentence
+# the picker, the legend and the table headings show; `group_order` is the group's rank,
+# which also picks its colour tone. Omit either and the id becomes the label and
+# first-appearance becomes the rank. Every row of one group must state the same label and
+# the same order, or the build refuses.
 #
 # A blank note for a panel gene borrows the panel BED's sixth column, so the reason a
 # gene is on the candidate list has exactly one owner.
 #
-# Groups: panel = the annotated eight (the only genes with the proband's alleles);
-# mva-sac = documented MVA / spindle-assembly-checkpoint genes outside the panel;
-# extended = requested for comparison, with the note saying what is and is not known.
+# The one *semantic* flag is `in_panel`, and it is not a column here at all: the server
+# derives it from the panel BED, and it means "this gene carries the proband's annotated
+# alleles". Group ids are display grouping and carry no such claim.
+#
 # Evidence for every mva-sac and extended note: docs/step-0/methodology/060.
-symbol	group	note
-CEP57	panel	
-DICER1	panel	
-BUB1B	panel	
-TP53	panel	
-CEP192	panel	
-CENPE	panel	
-TRIP13	panel	
-SMC5	panel	
-CENATAC	mva-sac	MVA4 (OMIM 620153), minor spliceosome; alias CCDC84; PMID 34009673
-MAD1L1	mva-sac	MVA7 (OMIM 620189), SAC loss with inflammation; PMID 36322655
-SLF2	mva-sac	Atelis syndrome 1 (OMIM 620184), filed as MVA5 synonym; PMID 36333305
-MAD2L1BP	mva-sac	biallelic MVA + juvenile granulosa tumour, no OMIM phenotype yet; PMID 37796616
-BUB1	mva-sac	biallelic BUB1 = MCPH30 (OMIM 620183): aneuploidy, but not an MVA-numbered entry; PMID 35044816
-PAK6	extended	user-requested; no documented MVA link found — PAK6 only overlaps BUB1B on 15q15
-MTMR2	extended	user-requested; biallelic MTMR2 = CMT4B1 neuropathy (OMIM 601382), not MVA
-WRAP53	extended	user-requested; biallelic WRAP53 = DKCB3 telomere disease (OMIM 613988), not MVA
-SEH1L	extended	user-requested; Nup107-160 kinetochore role only, no MVA disease link found
-BRD9	extended	user-requested; no documented MVA link found
-ATP1B2	extended	user-requested; no documented MVA link found
-BDH2	extended	user-requested; no documented MVA link found
-FAM76B	extended	user-requested; no documented MVA link found — the MalaCards MVA tag is text-mining noise
-DICER1-AS1	extended	user-requested; lncRNA antisense to DICER1, no protein and no documented MVA link
-MAMDC2-AS1	extended	user-requested; lncRNA, no protein and no documented MVA link found
+symbol	group	group_label	group_order	note
+CEP57	panel	annotated panel (alleles painted)	0	
+DICER1	panel	annotated panel (alleles painted)	0	
+BUB1B	panel	annotated panel (alleles painted)	0	
+TP53	panel	annotated panel (alleles painted)	0	
+CEP192	panel	annotated panel (alleles painted)	0	
+CENPE	panel	annotated panel (alleles painted)	0	
+TRIP13	panel	annotated panel (alleles painted)	0	
+SMC5	panel	annotated panel (alleles painted)	0	
+CENATAC	mva-sac	MVA / SAC genes (fold only)	1	MVA4 (OMIM 620153), minor spliceosome; alias CCDC84; PMID 34009673
+MAD1L1	mva-sac	MVA / SAC genes (fold only)	1	MVA7 (OMIM 620189), SAC loss with inflammation; PMID 36322655
+SLF2	mva-sac	MVA / SAC genes (fold only)	1	Atelis syndrome 1 (OMIM 620184), filed as MVA5 synonym; PMID 36333305
+MAD2L1BP	mva-sac	MVA / SAC genes (fold only)	1	biallelic MVA + juvenile granulosa tumour, no OMIM phenotype yet; PMID 37796616
+BUB1	mva-sac	MVA / SAC genes (fold only)	1	biallelic BUB1 = MCPH30 (OMIM 620183): aneuploidy, but not an MVA-numbered entry; PMID 35044816
+PAK6	extended	extended reference (fold only)	2	user-requested; no documented MVA link found — PAK6 only overlaps BUB1B on 15q15
+MTMR2	extended	extended reference (fold only)	2	user-requested; biallelic MTMR2 = CMT4B1 neuropathy (OMIM 601382), not MVA
+WRAP53	extended	extended reference (fold only)	2	user-requested; biallelic WRAP53 = DKCB3 telomere disease (OMIM 613988), not MVA
+SEH1L	extended	extended reference (fold only)	2	user-requested; Nup107-160 kinetochore role only, no MVA disease link found
+BRD9	extended	extended reference (fold only)	2	user-requested; no documented MVA link found
+ATP1B2	extended	extended reference (fold only)	2	user-requested; no documented MVA link found
+BDH2	extended	extended reference (fold only)	2	user-requested; no documented MVA link found
+FAM76B	extended	extended reference (fold only)	2	user-requested; no documented MVA link found — the MalaCards MVA tag is text-mining noise
+DICER1-AS1	extended	extended reference (fold only)	2	user-requested; lncRNA antisense to DICER1, no protein and no documented MVA link
+MAMDC2-AS1	extended	extended reference (fold only)	2	user-requested; lncRNA, no protein and no documented MVA link found

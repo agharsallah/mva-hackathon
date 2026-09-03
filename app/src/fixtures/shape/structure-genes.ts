@@ -29,8 +29,18 @@ const DATA = 'panel-structure-genes';
  */
 const ALIASES: Record<string, string> = { CCDC84: 'CENATAC' };
 
-/** The default gene when a request names none — the case's primary candidate. */
-const DEFAULT_GENE = 'BUB1B';
+/**
+ * The gene a request that names none resolves to: the set's **first `in_panel` row**.
+ *
+ * Read off the fixture rather than written as a symbol, so a foreign
+ * `panel-structure-genes.json` needs no edit here. `in_panel` and not "the first row",
+ * because that flag is the one that says the proband's alleles exist for the gene, which is
+ * what makes it the honest thing to open on.
+ */
+async function defaultGene(): Promise<string | undefined> {
+  const set = await structureGenesFixture();
+  return (set.find((entry) => entry.in_panel) ?? set[0])?.symbol;
+}
 
 /** The gene set, in display order. */
 export async function structureGenesFixture(): Promise<StructureGene[]> {
@@ -49,7 +59,7 @@ export async function resolveSymbol(
   gene: string | undefined,
   path: string,
 ): Promise<StructureGene> {
-  const wanted = (gene ?? DEFAULT_GENE).trim().toUpperCase();
+  const wanted = (gene ?? (await defaultGene()) ?? '').trim().toUpperCase();
   const symbol = ALIASES[wanted] ?? wanted;
   const found = (await structureGenesFixture()).find(
     (entry) => entry.symbol.toUpperCase() === symbol,

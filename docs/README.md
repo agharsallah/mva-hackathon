@@ -86,6 +86,7 @@ provisional, what would prompt a rethink. Full register with results:
 | [The Python quality gates](notes/python-quality-gates.md) | cross-step | firm — six gates wired into CI and both hooks |
 | [No patient data in the repository](notes/no-patient-data-in-the-repository.md) | cross-step | firm — follows from the DTA |
 | [Synthetic fixtures](notes/synthetic-fixtures.md) | cross-step | firm — follows from the above |
+| [The structure toolkit, reused on another case](notes/reusable-structure-toolkit.md) | cross-step | firm — the reuse claim is under test, not prose |
 | [Delivery is immutable](step-0/notes/delivery-is-immutable.md) | step 0 | firm — verified 12/12 hashes |
 | [Postgres for shared state](step-0/notes/postgres-for-shared-state.md) | step 0 | firm; Path A deleted 2026-08-29 |
 | [The chr-prefix bridge](step-0/notes/chr-prefix-bridge.md) | step 0 | firm — one function, enforced by test |

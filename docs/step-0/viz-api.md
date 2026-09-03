@@ -307,7 +307,12 @@ Four contract facts:
   survive).
 - **It serves more than the eight annotated genes.** `/api/panel/structure-genes` is the
   index it is addressed by; `in_panel` in the payload says whether the gene carries the
-  proband's alleles at all, and an off-panel gene comes back with `candidates: []` having
+  proband's alleles at all — the one semantic flag, and the only field an exhibit may
+  branch on to decide what it claims about the patient. Display grouping is data beside it:
+  `group` is a free-form id and each row carries its own `group_label` and `group_order`,
+  so the picker, the badges, the legend and the bar colours are built from the payload and
+  no code names a group ([`docs/notes/reusable-structure-toolkit.md`](../notes/reusable-structure-toolkit.md)).
+  An off-panel gene comes back with `candidates: []` having
   **read no warehouse table** — no `panel_candidates` query and no VEP POST, so no patient
   coordinate leaves the process. A non-coding gene comes back with real exons,
   `protein: null` and `domains: []`, and `/api/panel/protein-structure` answers it with a

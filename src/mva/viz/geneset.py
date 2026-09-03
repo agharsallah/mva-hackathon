@@ -8,20 +8,28 @@ comparing BUBR1's kinase domain against BUB1's wants both on screen, and BUB1 ca
 patient allele at all.
 
 So the set lives in ``ressources/reference/structure_genes.tsv``, generated live from
-Ensembl by ``tools/build_gene_set.py`` and committed. Six columns, one row per gene::
+Ensembl by ``tools/build_gene_set.py`` and committed. Eight columns, one row per gene::
 
-    symbol  ensembl_id  group  biotype  coding  note
+    symbol  ensembl_id  group  group_label  group_order  biotype  coding  note
 
 The one field this module *derives* rather than reads is ``in_panel``, and it derives it
 from the BED rather than trusting a seventh column: two files that both claim to say what
 is in the panel can disagree, one cannot. ``in_panel`` is the flag that decides whether the
 proband's alleles exist for a gene, so it is the last place a stale copy is acceptable.
 
-**Groups** are display grouping, not evidence strength:
+**Groups are display grouping, not evidence strength, and this module reads no meaning
+into one.** ``group`` is a free-form id the spec invents; ``group_label`` is the sentence a
+reader sees and ``group_order`` is where the group sits in the display, both carried on
+every row so the frontend groups, labels, orders and colours from data instead of from a
+hardcoded table. A row with no label is labelled by its own id; a row with no order sorts
+where its group first appears. This case happens to use ``panel`` / ``mva-sac`` /
+``extended``, and nothing in the code knows those three strings.
 
-* ``panel`` — the annotated eight. The only genes with candidate alleles.
-* ``mva-sac`` — documented MVA / spindle-assembly-checkpoint genes outside the panel.
-* ``extended`` — requested for comparison; the ``note`` says what is and is not known.
+``in_panel`` is the one **semantic** flag: *this gene carries the proband's annotated
+alleles*. It is derived from the BED, never read from a column, and it is the only field
+here that a downstream exhibit is allowed to branch on when deciding what it may claim
+about the patient. A group id must never be used for that decision — a new case renames
+the groups and keeps ``in_panel``.
 
 **Symbols are matched case-insensitively**, and one alias is accepted: ``CCDC84`` →
 ``CENATAC``. That alias is not assumed — ``tools/build_gene_set.py --alias CCDC84=CENATAC``
@@ -33,6 +41,7 @@ Nothing here is patient-derived: a gene symbol, a stable id and a biotype are pu
 reference facts.
 """
 
+import contextlib
 import json
 from functools import lru_cache
 from pathlib import Path
@@ -54,27 +63,45 @@ SOURCE = f"{DEFAULT_TSV} + {panelbed.DEFAULT_BED}"
 #: Alias → current symbol, **each one confirmed against Ensembl** (see the docstring).
 ALIASES = {"CCDC84": "CENATAC"}
 
-#: The columns ``tools/build_gene_set.py`` writes, in order.
-COLUMNS = ("symbol", "ensembl_id", "group", "biotype", "coding", "note")
+#: The columns ``tools/build_gene_set.py`` writes, in order. Read by *name* below, so this
+#: is documentation of the file's shape rather than a positional contract.
+COLUMNS = (
+    "symbol",
+    "ensembl_id",
+    "group",
+    "group_label",
+    "group_order",
+    "biotype",
+    "coding",
+    "note",
+)
 
 
-def genes(path: Path | None = None) -> list[dict]:
+def genes(path: Path | None = None, bed: Path | None = None) -> list[dict]:
     """Every gene in the set as a ``StructureGene`` dict, in the TSV's own order.
 
-    The TSV's order *is* the display order — the panel first, then the documented MVA
-    genes, then the comparison set — so it is preserved rather than sorted here.
+    The TSV's order *is* the display order — the spec file is written in it — so it is
+    preserved rather than sorted here. ``group_order`` is the *group's* rank, which a
+    client uses to build headings and pick tones; it does not re-sort the rows.
+
+    ``bed`` is the panel BED ``in_panel`` is derived from, defaulting to
+    :data:`mva.viz.panelbed.DEFAULT_BED`. A checkout with no BED yields ``in_panel``
+    ``False`` everywhere, which reads as "no annotated panel here" — true, and the
+    conservative answer.
 
     A missing TSV yields an empty list. That is deliberate: the panel routes must keep
     working on a checkout where the reference table has not been built, and an empty set
     reads as "the explorer has nothing curated", which is true.
     """
-    return [dict(entry) for entry in _load(str(path or DEFAULT_TSV))]
+    return [
+        dict(entry) for entry in _load(str(path or DEFAULT_TSV), str(bed or panelbed.DEFAULT_BED))
+    ]
 
 
-def lookup(symbol: str, path: Path | None = None) -> dict:
+def lookup(symbol: str, path: Path | None = None, bed: Path | None = None) -> dict:
     """One gene by symbol or verified alias, case-insensitively. ``LookupError`` if absent."""
     wanted = canonical_symbol(symbol)
-    for entry in _load(str(path or DEFAULT_TSV)):
+    for entry in _load(str(path or DEFAULT_TSV), str(bed or panelbed.DEFAULT_BED)):
         if entry["symbol"].upper() == wanted:
             return dict(entry)
     raise LookupError(symbol)
@@ -86,7 +113,7 @@ def canonical_symbol(symbol: str) -> str:
     return ALIASES.get(upper, upper)
 
 
-def resolve(gene: str, path: Path | None = None) -> tuple[str, str, bool]:
+def resolve(gene: str, path: Path | None = None, bed: Path | None = None) -> tuple[str, str, bool]:
     """``(symbol, ensembl_id, in_panel)`` for ``gene``. ``LookupError`` if in neither source.
 
     **The panel BED wins.** Its id is the one the callset was annotated against, so if
@@ -98,10 +125,10 @@ def resolve(gene: str, path: Path | None = None) -> tuple[str, str, bool]:
     into titles and cache keys, and ``bub1b`` and ``BUB1B`` must not become two entries.
     """
     wanted = canonical_symbol(gene)
-    for symbol, entry in (panelbed.annotations() or {}).items():
+    for symbol, entry in (panelbed.annotations(bed) or {}).items():
         if symbol.upper() == wanted and entry.get("ensembl_id"):
             return symbol, str(entry["ensembl_id"]), True
-    found = lookup(gene, path)
+    found = lookup(gene, path, bed)
     return str(found["symbol"]), str(found["ensembl_id"]), bool(found["in_panel"])
 
 
@@ -132,8 +159,8 @@ def provenance(path: Path | None = None) -> dict:
 
 
 @lru_cache(maxsize=8)
-def _load(path: str) -> tuple[dict, ...]:
-    """Parse the TSV once per path. A tuple so the cached value cannot be mutated."""
+def _load(path: str, bed: str) -> tuple[dict, ...]:
+    """Parse the TSV once per (path, BED). A tuple so the cached value cannot be mutated."""
     try:
         text = Path(path).read_text(encoding="utf-8")
     except OSError:
@@ -141,19 +168,26 @@ def _load(path: str) -> tuple[dict, ...]:
     lines = [line for line in text.splitlines() if line.strip() and not line.startswith("#")]
     if not lines:
         return ()
-    header = lines[0].split("\t")
-    in_panel = {symbol.upper() for symbol in (panelbed.annotations() or {})}
+    header = [cell.strip() for cell in lines[0].split("\t")]
+    in_panel = {symbol.upper() for symbol in (panelbed.annotations(Path(bed)) or {})}
+    ranks = _group_ranks(header, lines[1:])
     out = []
     for line in lines[1:]:
         row = dict(zip(header, line.split("\t"), strict=False))
         symbol = row.get("symbol", "").strip()
         if not symbol:
             continue
+        group = row.get("group", "").strip()
         out.append(
             {
                 "symbol": symbol,
                 "ensembl_id": row.get("ensembl_id", "").strip(),
-                "group": row.get("group", "extended").strip(),
+                "group": group,
+                # A group with no label is labelled by its own id, and one with no order
+                # sorts where it first appears. Both are the file's own statement, so a
+                # two-column table built by hand still renders a correct picker.
+                "group_label": row.get("group_label", "").strip() or group,
+                "group_order": ranks[group],
                 "in_panel": symbol.upper() in in_panel,
                 # An empty cell is `null`, not `""`: the client's type says `string | null`
                 # and "unknown biotype" is a different statement from "biotype is blank".
@@ -163,6 +197,30 @@ def _load(path: str) -> tuple[dict, ...]:
             }
         )
     return tuple(out)
+
+
+def _group_ranks(header: list[str], body: list[str]) -> dict[str, int]:
+    """``group -> group_order``: the column when it carries one, else first appearance.
+
+    Read once for the whole file rather than per row, because the fallback is a property
+    of the *file* (which group appeared first) and a per-row answer could disagree with
+    itself. A ``group_order`` cell that is not an integer is ignored rather than fatal:
+    the route must keep serving a hand-edited table, and first-appearance order is a
+    defensible reading of one.
+    """
+    ranks: dict[str, int] = {}
+    stated: dict[str, int] = {}
+    for line in body:
+        row = dict(zip(header, line.split("\t"), strict=False))
+        group = row.get("group", "").strip()
+        if not row.get("symbol", "").strip():
+            continue
+        ranks.setdefault(group, len(ranks))
+        cell = row.get("group_order", "").strip()
+        if cell and group not in stated:
+            with contextlib.suppress(ValueError):
+                stated[group] = int(cell)
+    return {**ranks, **stated}
 
 
 @lru_cache(maxsize=4)

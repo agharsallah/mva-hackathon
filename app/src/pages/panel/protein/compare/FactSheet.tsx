@@ -13,7 +13,6 @@ import { Badge } from '../../../../components/Badge';
 import { FieldList } from '../../../../components/FieldList';
 import { dec, int } from '../../../../lib/format';
 import { angstromLabel } from '../distances';
-import { GROUP_SHORT } from '../geneSet';
 import type { StructureMetrics } from './metrics';
 
 /** A fraction as a percentage, or the reason there is no number. */
@@ -34,8 +33,11 @@ export function FactSheet({ metrics }: { metrics: StructureMetrics }) {
           key: 'group',
           label: 'group',
           value: (
-            <Badge tone={metrics.inPanel ? 'good' : 'machinery'}>
-              {GROUP_SHORT[metrics.group]}
+            // The badge shows the set's own group id and the label as its tooltip, so a
+            // foreign reference table reads correctly here without a mapping. The words
+            // after the dot come from `in_panel`, which is the flag that carries the claim.
+            <Badge tone={metrics.inPanel ? 'good' : 'machinery'} title={metrics.groupLabel}>
+              {metrics.group || '—'}
               {metrics.inPanel ? ' · alleles painted' : ' · fold only'}
             </Badge>
           ),

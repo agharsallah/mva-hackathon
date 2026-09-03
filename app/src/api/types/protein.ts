@@ -82,15 +82,32 @@ export interface ProteinPartner {
  * show, in display order. Owned by `ressources/reference/structure_genes.tsv`; the server
  * only reads it.
  *
- * Three groups. `panel` genes carry the proband's annotated alleles (the 8-gene BED the
- * callset was annotated against); the other two carry **no patient data at all** — their
- * fold can be explored and compared, but no allele is painted, and the exhibit says so.
+ * **Groups are data, not a union.** `group` is a free-form id the reference table invents,
+ * and it arrives with the words and the rank it should be displayed by, so a picker, a
+ * legend, a badge and a bar colour are all built from the payload — nothing in the app
+ * knows which groups this case happens to use. `in_panel` is the one *semantic* field:
+ * it says the gene carries the proband's annotated alleles (the BED the callset was
+ * annotated against). Every other gene carries **no patient data at all** — its fold can
+ * be explored and compared, but no allele is painted, and the exhibit says so. Branch on
+ * `in_panel` for that; never on a group id.
  */
 export interface StructureGene {
   symbol: string;
   ensembl_id: string;
-  group: 'panel' | 'mva-sac' | 'extended';
-  /** True only for the annotated panel; the one flag that decides whether alleles exist. */
+  /** Free-form display-group id (`panel`, `kinases`, …). Short enough to use as a badge. */
+  group: string;
+  /** The sentence a heading or legend shows for {@link group}; the id when none was given. */
+  group_label: string;
+  /**
+   * The group's rank in the display, and what its colour tone is picked by — rank, never
+   * id, so a renamed group keeps its place and its colour. Rows of one group share it.
+   */
+  group_order: number;
+  /**
+   * True when the gene carries the proband's annotated alleles — the one flag an exhibit
+   * may branch on to decide what it claims about the patient. Derived server-side from the
+   * panel BED, never stored in the reference table, so it cannot go stale against it.
+   */
   in_panel: boolean;
   /** Ensembl biotype (`protein_coding`, `lncRNA`, …). */
   biotype: string | null;

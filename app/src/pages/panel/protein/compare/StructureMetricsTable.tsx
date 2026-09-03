@@ -13,53 +13,38 @@
  *   column is a score and nothing here is a pathogenicity statement. A high modelled share is
  *   a statement about AlphaFold, not about the gene.
  * - **It never fills an off-panel allele cell.** Those two columns read `n/a — fold only`,
- *   because the callset was annotated over the eight-gene panel BED: a zero there would be a
- *   claim about the patient that no measurement supports.
+ *   because the callset was annotated over the panel BED: a zero there would be a claim
+ *   about the patient that no measurement supports. That test is `in_panel`, never a group
+ *   id — group ids, labels, order and colours all come from the payload (see `geneSet.ts`),
+ *   so a foreign reference table renames every group and this table still reads correctly.
  *
  * Each row owns its own request pair (`useGeneStructures` / `useProteinStructures` fan out one
  * query per gene), so one gene whose fold is unreachable shows its error in its own row and
  * leaves the rest of the table standing.
  *
- * That fan-out is **23 + 21 = 44 requests**, and this exhibit sits far below the fold on
+ * That fan-out is **one gene-structure + one protein request per gene** (23 + 21 = 44 for
+ * this case's table), and this exhibit sits far below the fold on
  * `/panel`. So it is gated on `useInView`: nothing is requested until the section is within
  * 300 px of the viewport, and while it is not, the table says how many genes it is about to
- * ask for rather than pretending to be empty. Spending 44 cold Ensembl/AlphaFold round-trips
- * on a reader who never scrolls this far is the cost the gate exists to refuse.
+ * ask for rather than pretending to be empty. Spending that many cold Ensembl/AlphaFold
+ * round-trips on a reader who never scrolls this far is the cost the gate exists to refuse.
  */
 
 import { useMemo } from 'react';
 
 import { useGeneStructures, useProteinStructures, useStructureGenes } from '../../../../api/hooks';
 import type { StructureGene } from '../../../../api/types';
-import { Badge } from '../../../../components/Badge';
-import { type Column, DataTable } from '../../../../components/DataTable';
+import { DataTable } from '../../../../components/DataTable';
 import { Exhibit } from '../../../../components/Exhibit';
 import { Plot } from '../../../../components/Plot';
 import { baseLayout } from '../../../../components/plotLayout';
 import { Skeleton } from '../../../../components/QueryState';
-import { dec, int } from '../../../../lib/format';
+import { int } from '../../../../lib/format';
 import { useInView } from '../../../../lib/hooks';
-import { C, TONE_MARK } from '../../../../lib/palette';
-import { angstromLabel } from '../distances';
-import { GROUP_SHORT } from '../geneSet';
+import { C, type Tone, TONE_MARK } from '../../../../lib/palette';
+import { type GeneGroup, geneGroupings, groupTones } from '../geneSet';
 import { type StructureRow, structureRow } from './metrics';
-
-/** Group → the tone its bar and badge are drawn in. Panel = green, because it is the goal. */
-const GROUP_TONE = {
-  panel: TONE_MARK.good,
-  'mva-sac': TONE_MARK.machinery,
-  extended: TONE_MARK.neutral,
-} as const;
-
-const NA = <span className="text-chrome-700">·</span>;
-
-/** A fraction as a percentage cell, or the word that says why there is no number. */
-function share(value: number | null | undefined, absent: string) {
-  if (value === null || value === undefined) {
-    return <span className="text-chrome-600">{absent}</span>;
-  }
-  return <span className="font-mono text-chrome-200">{dec(value * 100, 1)}</span>;
-}
+import { buildColumns } from './metricsColumns';
 
 export function StructureMetricsTable({
   onPickGene,
@@ -105,12 +90,18 @@ export function StructureMetricsTable({
     [genes, coding, models, anatomies],
   );
 
-  const columns = useMemo(() => buildColumns(onPickGene, onCompare), [onPickGene, onCompare]);
+  // Group id -> tone, assigned by the group's rank in the set. Nothing here names a group.
+  const tones = useMemo(() => groupTones(genes), [genes]);
+  const groups = useMemo(() => geneGroupings(genes), [genes]);
+  const columns = useMemo(
+    () => buildColumns(tones, onPickGene, onCompare),
+    [tones, onPickGene, onCompare],
+  );
 
   return (
     <Exhibit
       title="Every gene in the set, as numbers"
-      legend={<Legend />}
+      legend={<Legend groups={groups} tones={tones} />}
       reading="Sort by pLDDT ≥ 70 % and read the panel genes against the rest: a fold that is mostly low-confidence supports no spatial argument about any allele on it, however damaging the allele looks."
       source={set.data?.source}
       cachedAt={set.data?.cachedAt}
@@ -131,7 +122,7 @@ export function StructureMetricsTable({
           </div>
         ) : (
           <div className="space-y-3">
-            <ConfidenceBars rows={rows} />
+            <ConfidenceBars rows={rows} tones={tones} />
             <DataTable
               rows={rows}
               columns={columns}
@@ -159,7 +150,13 @@ function uniqueBySymbol(genes: readonly StructureGene[]): StructureGene[] {
 }
 
 /** The one chart worth drawing off this table: confidence per gene, coloured by group. */
-function ConfidenceBars({ rows }: { rows: readonly StructureRow[] }) {
+function ConfidenceBars({
+  rows,
+  tones,
+}: {
+  rows: readonly StructureRow[];
+  tones: ReadonlyMap<string, Tone>;
+}) {
   const ready = rows.filter((row) => row.metrics?.confidentFraction != null);
   if (ready.length < 2) return null;
   const sorted = [...ready].sort(
@@ -173,7 +170,9 @@ function ConfidenceBars({ rows }: { rows: readonly StructureRow[] }) {
           type: 'bar',
           x: sorted.map((row) => row.gene),
           y: sorted.map((row) => (row.metrics?.confidentFraction ?? 0) * 100),
-          marker: { color: sorted.map((row) => GROUP_TONE[row.group]) },
+          marker: {
+            color: sorted.map((row) => TONE_MARK[tones.get(row.group) ?? 'neutral']),
+          },
           hovertemplate: '%{x}: %{y:.1f} % of modelled residues at pLDDT ≥ 70<extra></extra>',
         },
       ]}
@@ -189,196 +188,35 @@ function ConfidenceBars({ rows }: { rows: readonly StructureRow[] }) {
   );
 }
 
-const SLOT_BUTTON =
-  'rounded border border-chrome-700 bg-chrome-900 px-1.5 py-0.5 font-mono text-[10px] ' +
-  'text-chrome-400 transition hover:bg-chrome-800 hover:text-chrome-200';
-
-function buildColumns(
-  onPickGene?: (gene: string) => void,
-  onCompare?: (gene: string, slot: 'A' | 'B') => void,
-): Column<StructureRow>[] {
-  const compare: Column<StructureRow>[] = onCompare
-    ? [
-        {
-          key: 'compare',
-          header: 'compare',
-          sortable: false,
-          render: (row) => (
-            <span className="inline-flex gap-1">
-              {(['A', 'B'] as const).map((slot) => (
-                <button
-                  key={slot}
-                  type="button"
-                  onClick={() => onCompare(row.gene, slot)}
-                  // The visible label is one glyph, so the accessible name has to be written
-                  // out: "→B" tells a screen reader nothing about which gene it stages.
-                  aria-label={`put ${row.gene} on side ${slot} of the side-by-side comparison`}
-                  className={SLOT_BUTTON}
-                >
-                  →{slot}
-                </button>
-              ))}
-            </span>
-          ),
-        },
-      ]
-    : [];
-  return [
-    {
-      key: 'gene',
-      header: 'gene',
-      sortValue: (row) => row.gene,
-      render: (row) =>
-        onPickGene ? (
-          <button
-            type="button"
-            onClick={() => onPickGene(row.gene)}
-            title={`open ${row.gene} in the 3D explorer above`}
-            className="font-mono text-chrome-200 transition hover:text-machinery-300"
-          >
-            {row.gene}
-          </button>
-        ) : (
-          <span className="font-mono text-chrome-200">{row.gene}</span>
-        ),
-    },
-    {
-      key: 'group',
-      header: 'group',
-      sortValue: (row) => row.group,
-      render: (row) => (
-        <Badge tone={row.inPanel ? 'good' : row.group === 'mva-sac' ? 'machinery' : 'neutral'}>
-          {GROUP_SHORT[row.group]}
-        </Badge>
-      ),
-    },
-    {
-      key: 'state',
-      header: 'state',
-      sortValue: (row) => row.kind,
-      render: (row) =>
-        row.kind === 'ready' ? (
-          <span className="text-good-400">ok</span>
-        ) : (
-          <span
-            className={row.kind === 'loading' ? 'text-chrome-500' : 'text-decision-400'}
-            title={row.note}
-          >
-            {row.kind === 'loading' ? 'loading…' : row.note}
-          </span>
-        ),
-    },
-    {
-      key: 'length',
-      header: 'length (aa)',
-      align: 'right',
-      sortValue: (row) => row.metrics?.length ?? null,
-      render: (row) =>
-        row.metrics ? (
-          <span className="font-mono text-chrome-300">{int(row.metrics.length)}</span>
-        ) : (
-          NA
-        ),
-    },
-    {
-      key: 'modelled',
-      header: 'modelled %',
-      align: 'right',
-      sortValue: (row) => row.metrics?.modelledFraction ?? null,
-      render: (row) => (row.metrics ? share(row.metrics.modelledFraction, 'unknown') : NA),
-    },
-    {
-      key: 'confident',
-      header: 'pLDDT ≥ 70 %',
-      align: 'right',
-      sortValue: (row) => row.metrics?.confidentFraction ?? null,
-      render: (row) => (row.metrics ? share(row.metrics.confidentFraction, 'not reported') : NA),
-    },
-    {
-      key: 'helix',
-      header: 'helix %',
-      align: 'right',
-      sortValue: (row) => row.metrics?.helixFraction ?? null,
-      render: (row) => (row.metrics ? share(row.metrics.helixFraction, 'not annotated') : NA),
-    },
-    {
-      key: 'strand',
-      header: 'strand %',
-      align: 'right',
-      sortValue: (row) => row.metrics?.strandFraction ?? null,
-      render: (row) => (row.metrics ? share(row.metrics.strandFraction, 'not annotated') : NA),
-    },
-    {
-      key: 'domains',
-      header: 'domains',
-      align: 'right',
-      sortValue: (row) => row.metrics?.domains.length ?? null,
-      render: (row) =>
-        row.metrics ? (
-          <span className="font-mono text-chrome-400" title={row.metrics.domains.join(' · ')}>
-            {int(row.metrics.domains.length)}
-          </span>
-        ) : (
-          NA
-        ),
-    },
-    {
-      key: 'alleles',
-      header: 'alleles placed',
-      align: 'right',
-      sortValue: (row) => row.metrics?.allelesPlaced ?? null,
-      render: (row) =>
-        row.metrics?.allelesPlaced === null || row.metrics === null ? (
-          <span className="text-chrome-600">{row.metrics ? 'n/a — fold only' : '·'}</span>
-        ) : (
-          <span className="font-mono text-chrome-200">{int(row.metrics.allelesPlaced)}</span>
-        ),
-    },
-    {
-      key: 'closest',
-      header: 'closest pair',
-      align: 'right',
-      sortValue: (row) => row.metrics?.closestPairAngstrom ?? null,
-      render: (row) =>
-        row.metrics?.closestPairAngstrom == null ? (
-          <span className="text-chrome-600">{row.metrics?.inPanel ? 'under two' : NA}</span>
-        ) : (
-          <span
-            className={
-              row.metrics.closestPairConfident
-                ? 'font-mono text-chrome-200'
-                : 'font-mono text-chrome-500'
-            }
-            title={row.metrics.closestPairConfident ? '' : 'one end below pLDDT 70 — not quotable'}
-          >
-            {angstromLabel(row.metrics.closestPairAngstrom)}
-          </span>
-        ),
-    },
-    ...compare,
-  ];
-}
-
-function Legend() {
+function Legend({
+  groups,
+  tones,
+}: {
+  groups: readonly GeneGroup[];
+  tones: ReadonlyMap<string, Tone>;
+}) {
   return (
     <>
       One row per gene in the curated structure set. The bar chart above is the{' '}
-      <strong>pLDDT ≥ 70 %</strong> column, sorted, coloured by group:{' '}
-      <span style={{ color: GROUP_TONE.panel }}>green = the annotated panel</span> (the eight genes
-      the callset was annotated over, the only ones that can carry an allele),{' '}
-      <span style={{ color: GROUP_TONE['mva-sac'] }}>
-        blue = other MVA / spindle-checkpoint genes
-      </span>{' '}
-      and <span style={{ color: GROUP_TONE.extended }}>grey = the extended reference set</span>; the
-      last two are <strong>fold only</strong>. Percentages: <strong>modelled %</strong> is residues
-      with coordinates over the translation length — the complement is unmeasured, not
-      &quot;fine&quot;. <strong>pLDDT ≥ 70 %</strong> is over the residues that carry a confidence
-      at all, so an experimental structure reads <em>not reported</em> rather than 0 %.{' '}
-      <strong>helix / strand %</strong> are over the translation length and read{' '}
-      <em>not annotated</em> when the coordinate file carries no secondary-structure records — never
-      &quot;all coil&quot;. The two allele columns read <em>n/a — fold only</em> outside the panel,
-      because nothing was annotated there. Click a gene name to open it in the 3D explorer above.
-      Nothing in this table is a ranking or a pathogenicity statement.
+      <strong>pLDDT ≥ 70 %</strong> column, sorted, coloured by group — the groups, their wording
+      and their order all come from the reference table, not from this component:{' '}
+      {groups.map((group, index) => (
+        <span key={group.id}>
+          {index > 0 ? (index === groups.length - 1 ? ' and ' : ', ') : ''}
+          <span style={{ color: TONE_MARK[tones.get(group.id) ?? 'neutral'] }}>{group.label}</span>
+        </span>
+      ))}
+      . Only the genes flagged <strong>in_panel</strong> carry the proband&apos;s annotated alleles;
+      every other row is <strong>fold only</strong>, whatever its group is called. Percentages:{' '}
+      <strong>modelled %</strong> is residues with coordinates over the translation length — the
+      complement is unmeasured, not &quot;fine&quot;. <strong>pLDDT ≥ 70 %</strong> is over the
+      residues that carry a confidence at all, so an experimental structure reads{' '}
+      <em>not reported</em> rather than 0 %. <strong>helix / strand %</strong> are over the
+      translation length and read <em>not annotated</em> when the coordinate file carries no
+      secondary-structure records — never &quot;all coil&quot;. The two allele columns read{' '}
+      <em>n/a — fold only</em> outside the panel, because nothing was annotated there. Click a gene
+      name to open it in the 3D explorer above. Nothing in this table is a ranking or a
+      pathogenicity statement.
     </>
   );
 }

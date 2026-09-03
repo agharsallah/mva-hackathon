@@ -841,6 +841,12 @@ and its phenotype is worded mosaic variegated **hyperploidy**, not aneuploidy.*
 **Provenance** — the paper trail behind one number or one file: which tool, at which version, with which settings, reading which inputs, produced it. It is what makes a result *checkable* by someone who was not there. The rule this project holds itself to is that provenance is **recorded by the tool that did the work**, never typed in afterwards — a paper trail a human can edit is a claim about the past, and a claim is exactly the thing provenance is supposed to replace.
 *Example: `ressources/reference/structure_genes.tsv` is 23 gene records; beside it, `structure_genes.provenance.json` says they were resolved by `tools/build_gene_set.py` at commit `cb066b8` against `rest.ensembl.org` release `116` on 2026-09-03.*
 
+**Structure gene set** — the table of genes a 3D protein exhibit is *allowed to draw a fold for*. Deliberately a **superset** of the genes the patient's variants were annotated against: reading one protein's shape against a related gene's needs that related gene on screen, and it carries no patient variant at all. One row per gene, resolved live against **Ensembl** by `tools/build_gene_set.py` and committed, so the offline app and the live server read the same list. Compare the **panel**, which is the smaller, annotation-defined set.
+*Example: `ressources/reference/structure_genes.tsv` — 23 genes, of which 8 are the annotated panel, 5 are other documented MVA / spindle-checkpoint genes and 10 are comparison requests.*
+
+**Display group** (`group`, `group_label`, `group_order`) — how a reference table tells the app to *arrange* its rows, as opposed to what it claims about them. Three fields on every row: an opaque short id (`panel`), the sentence a heading shows (`annotated panel (alleles painted)`), and the group's rank, which also decides its colour. The point is that the id is **free-form** — no code anywhere lists the groups — so another project renames and re-ranks every group by editing one TSV. A display group carries **no** claim about evidence or about the patient; the flag that does is `in_panel`.
+*Example: rank 0 is drawn in the "goal" green and rank 1 in blue, so renaming `mva-sac` to `spindle-checkpoint` changes every heading and keeps every colour.*
+
 ---
 
 ## 8. Command-line tools you'll see

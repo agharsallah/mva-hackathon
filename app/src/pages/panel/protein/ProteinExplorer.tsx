@@ -54,7 +54,14 @@ import { useComparePair } from './compareBridge';
 import { type CandidateDistance, candidateDistances, findPair, pairLink } from './distances';
 import { DistanceTable } from './DistanceTable';
 import { useProteinFilters } from './filters';
-import { canonicalGene, COMPARE_A, geneEntry, geneGroups, geneSymbols } from './geneSet';
+import {
+  canonicalGene,
+  COMPARE_A,
+  defaultGene,
+  geneEntry,
+  geneGroups,
+  geneSymbols,
+} from './geneSet';
 import { ProteinFilters } from './ProteinFilters';
 import {
   EncodingLegend,
@@ -78,9 +85,12 @@ export function ProteinExplorer() {
   // `canonicalGene` runs before the vocabulary check, so `?gene=bub1b` and `?gene=CCDC84`
   // resolve to the set's own spelling instead of spending a second request pair under their
   // own cache key and titling the exhibit in the reader's casing.
+  // The page's `DEFAULT_GENE` is the *preference*, not the answer: `defaultGene` keeps it
+  // when the set holds it and otherwise falls back to the set's first `in_panel` row, so a
+  // foreign reference table opens on one of its own genes instead of on a 404.
   const [gene, setGene] = useUrlKnownOption(
     'gene',
-    DEFAULT_GENE,
+    defaultGene(genes, DEFAULT_GENE),
     geneSymbols(genes),
     canonicalGene,
   );

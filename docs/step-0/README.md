@@ -108,7 +108,8 @@ every methodology entry is a test bound to a claim. That loop is
 | [three.js behind one wrapper](notes/three-js-behind-one-wrapper.md) | provisional — designed 2026-09-03, not built |
 
 Cross-step decisions — [no patient data](../notes/no-patient-data-in-the-repository.md),
-[synthetic fixtures](../notes/synthetic-fixtures.md) — stay in
+[synthetic fixtures](../notes/synthetic-fixtures.md), [the structure toolkit's reuse
+seams](../notes/reusable-structure-toolkit.md) — stay in
 [`../notes/`](../notes/); they govern every step, not this one.
 
 ## Evidence

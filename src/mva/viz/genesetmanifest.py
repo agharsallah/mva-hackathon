@@ -1,10 +1,10 @@
 """The build manifest for ``ressources/reference/structure_genes.tsv``.
 
-``tools/build_gene_set.py`` resolves a curated list of gene symbols against Ensembl REST
-and writes the TSV. This module owns the JSON manifest it writes beside it: what was
-fetched, from which server at which release, which committed files were read and what they
-hashed to, what the output hashed to, and every OMIM phenotype number and PubMed id the
-curated notes cite.
+``tools/build_gene_set.py`` (over :mod:`mva.viz.genesetbuild`) resolves a curated list of
+gene symbols against Ensembl REST and writes the TSV. This module owns the JSON manifest
+it writes beside it: what was fetched, from which server at which release, which committed
+files were read and what they hashed to, what the output hashed to, and every OMIM
+phenotype number and PubMed id the curated notes cite.
 
 Written by the tool on every run, never maintained by hand — which is the whole point. A
 manifest a human edits is a claim, and a claim about provenance is exactly the thing that
@@ -83,6 +83,7 @@ def literature(genes: Sequence[dict]) -> list[dict]:
             {
                 "gene": entry["symbol"],
                 "group": entry.get("group", ""),
+                "group_label": entry.get("group_label", ""),
                 "omim": cited["omim"],
                 "pmid": cited["pmid"],
                 "claim": note,
@@ -98,12 +99,15 @@ def manifest(
     bed: Path,
     base_url: str,
     release: str | None,
+    *,
+    fetched: bool = True,
 ) -> dict:
     """The build manifest: what was fetched, from where, at which release, into what.
 
-    ``genes`` is one dict per resolved row, carrying at least ``symbol``, ``group`` and
-    ``note`` — plain data rather than the tool's own dataclass, so the shape of this file
-    is owned here and the tool cannot change it by refactoring a class.
+    ``genes`` is one dict per resolved row, carrying at least ``symbol``, ``group``,
+    ``group_label`` and ``note`` — plain data rather than the tool's own dataclass, so the
+    shape of this file is owned here and the tool cannot change it by refactoring a class.
+    :func:`mva.viz.genesetbuild.manifest_rows` builds it.
 
     Written by the tool on every run rather than maintained by hand, for the reason the
     whole file exists: a manifest a human edits is a claim, and a claim about provenance
@@ -112,17 +116,30 @@ def manifest(
 
     ``code_version`` is the commit at *build* time, which precedes the commit that lands
     the built file — the same caveat ``hpo_provenance.json`` states.
+
+    ``fetched=False`` is the ``--reuse`` build: the curation columns were rewritten and no
+    upstream was called. The Ensembl input row then says so in its own ``role``, and the
+    release it names is the one the *previous* manifest recorded — carried, not observed.
+    Stated in the file rather than left to a reader to infer, because "release 116" and
+    "release 116 according to a build we did not run" are different claims.
     """
     sha, size = refprovenance.digest(out)
+    ensembl_role = "the gene id, the biotype and whether the canonical transcript translates"
     inputs: list[dict] = [
         {
             "name": "Ensembl REST",
             "url": base_url,
             "release": release,
-            "endpoints": list(ENDPOINTS),
+            "endpoints": list(ENDPOINTS) if fetched else [],
             "sha256": None,
             "bytes": None,
-            "role": "the gene id, the biotype and whether the canonical transcript translates",
+            "role": ensembl_role
+            if fetched
+            else (
+                f"{ensembl_role} — NOT called by this run: carried over verbatim from the previous "
+                "build of this file, whose release is the one named here. This run rewrote "
+                "only the curation columns (group id, label, rank, note)."
+            ),
         }
     ]
     for path, role in (
@@ -165,6 +182,10 @@ def manifest(
         "note": (
             f"{len(genes)} curated genes resolved live against Ensembl REST "
             f"release {release or 'unknown'}; ids, biotypes and the coding flag come from "
-            "the reply, groups and notes are curation."
+            "the reply, group ids, labels, ranks and notes are curation."
+            if fetched
+            else f"{len(genes)} curated genes; the curation columns were rewritten from the "
+            "spec and every Ensembl-derived column was carried over from the previous build "
+            f"of this file (release {release or 'unknown'}). Nothing was fetched."
         ),
     }

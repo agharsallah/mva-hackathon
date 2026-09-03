@@ -50,7 +50,14 @@ from typing import Any, TypeVar
 
 import httpx
 
-from mva.viz import ensembl, fixturemanifest, geneset, genestructure, proteinstructure
+from mva.viz import (
+    ensembl,
+    fixturemanifest,
+    fixturesynthetic,
+    geneset,
+    genestructure,
+    proteinstructure,
+)
 
 PROTEIN_DIR = Path("app/src/fixtures/data/protein")
 STRUCTURE_DIR = Path("app/src/fixtures/data/gene-structure")
@@ -73,66 +80,6 @@ COMPACT_ABOVE = 60_000
 ATTEMPTS, PAUSE = 6, 8.0
 
 T = TypeVar("T")
-
-#: The three synthetic alleles, as *fractions* of the protein's length rather than fixed
-#: offsets, so a 393-residue protein and a 2,537-residue one both get a readable lollipop
-#: instead of three marks crowded into the first sixth of the axis.
-#:
-#: One HIGH truncating, one MODERATE missense, one LOW splice-region with no amino-acid
-#: position at all — the last exists so the offline exhibit has to render the "placed
-#: nowhere, and here is why" state, which is the state a real callset produces most often.
-SYNTHETIC = (
-    ("stop_gained", "HIGH", 0.70, True),
-    ("missense_variant", "MODERATE", 0.95, True),
-    ("splice_region_variant", "LOW", 0.0, False),
-)
-
-
-#: The identifier written into every synthetic allele's ``rsid``, ``n`` being its 1-based
-#: index in :data:`SYNTHETIC`.
-#:
-#: Deliberately **not** ``rs``-shaped. The previous convention was ``rs00000000n``, which
-#: is not an issued dbSNP accession but reads as one everywhere the label is rendered
-#: verbatim — the lollipop tooltip, the distance table, the unplaced list — and only the
-#: exhibit's ``source`` chip said otherwise. ``synthetic-n`` cannot be mistaken for a
-#: dbSNP rsID by a reader or by a grep. See ``docs/step-0/methodology/063``.
-SYNTHETIC_ID = "synthetic-{index}"
-
-
-def synthetic_candidates(protein_length: int | None, transcript: str | None) -> list[dict]:
-    """Three invented alleles, scaled to this protein. **Never the proband's.**
-
-    Marked unmistakably: every ``rsid`` is :data:`SYNTHETIC_ID` — ``synthetic-1`` and up,
-    which is not the shape of a dbSNP accession at all — so the rendered label reads
-    ``stop gained · synthetic-1`` and carries its own disclaimer. The registry's ``source``
-    line also says SYNTHETIC. The consequences and the impact ladder are real vocabulary
-    (VEP's terms) so the offline exhibit exercises the same colour and sort rules the live
-    payload will.
-    """
-    out = []
-    for index, (consequence, impact, fraction, placed) in enumerate(SYNTHETIC, start=1):
-        position = max(1, round(protein_length * fraction)) if placed and protein_length else None
-        identifier = SYNTHETIC_ID.format(index=index)
-        out.append(
-            {
-                "consequence": consequence,
-                "impact": impact,
-                "rsid": identifier,
-                "rare": placed,
-                "clin_sig": None,
-                "gt": "0/1",
-                "filter": "PASS",
-                "label": genestructure.label(consequence, identifier),
-                "protein_pos": position,
-                "reason": None
-                if position is not None
-                else (
-                    f"VEP reports no amino-acid position for a {consequence} on "
-                    f"{transcript or 'the canonical transcript'}"
-                ),
-            }
-        )
-    return out
 
 
 def compact(payload: dict) -> dict:
@@ -177,7 +124,9 @@ def build_structure(client: httpx.Client, entry: dict) -> dict:
     symbol, ensembl_id, in_panel = geneset.resolve(entry["symbol"])
     payload = genestructure.anatomy(client, symbol, ensembl_id, in_panel)
     payload["candidates"] = (
-        synthetic_candidates(payload["protein_length"], payload["transcript"]) if in_panel else []
+        fixturesynthetic.candidates(payload["protein_length"], payload["transcript"])
+        if in_panel
+        else []
     )
     return payload
 
@@ -243,6 +192,20 @@ def write_manifests(args, release: str | None, manifests: dict[Path, dict[str, d
         print(f"{written} — {len(manifests[directory])} genes")
 
 
+def rewrite_index(args) -> None:
+    """``--index-only``: rewrite the gene-set index fixture from the committed TSV.
+
+    The offline half of a curation-only gene-set rebuild. Renaming or re-ranking a display
+    group changes the index fixture and nothing else — no per-gene fold moves — so it must
+    not require the ~70 upstream calls a full build spends.
+    """
+    catalogue = geneset.genes(args.tsv)
+    if not catalogue:
+        raise SystemExit(f"no gene set at {args.tsv or geneset.DEFAULT_TSV}")
+    wrote = write_json(args.index, catalogue)
+    print(f"{args.index} — {len(catalogue)} genes, {wrote:,} bytes")
+
+
 def rewrite_manifests(args) -> None:
     """``--manifest-only``: re-digest the committed fixtures and rewrite both manifests.
 
@@ -274,6 +237,12 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument("--dry-run", action="store_true", help="fetch and report, write nothing")
     parser.add_argument(
+        "--index-only",
+        action="store_true",
+        help="rewrite the gene-set index fixture from the committed TSV; no network. Use it "
+        "after a curation-only gene-set rebuild, which changes no per-gene fixture.",
+    )
+    parser.add_argument(
         "--manifest-only",
         action="store_true",
         help="rewrite both _provenance.json from the committed files; no network",
@@ -283,6 +252,10 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+
+    if args.index_only:
+        rewrite_index(args)
+        return
 
     if args.manifest_only:
         rewrite_manifests(args)

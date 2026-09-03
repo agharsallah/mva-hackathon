@@ -1,9 +1,9 @@
 {
   "name": "gene-structure fixtures",
   "kind": "fixture",
-  "built_at": "2026-09-03T13:46:57+00:00",
+  "built_at": "2026-09-03T14:29:52+00:00",
   "built_by": "tools/build_protein_fixture.py",
-  "code_version": "cb066b8",
+  "code_version": "5236c53",
   "code_version_note": "the commit at build time, which precedes the commit that lands these files",
   "note": "One file per gene: real Ensembl exons and protein domains. The only invented field is candidates[], present for the eight annotated panel genes and empty for every other gene, because no annotation was ever run there.",
   "patient_data": "none. Reference coordinates and amino-acid indices only. The one invented part is gene-structure candidates[], which exists precisely because the proband's alleles are never committed.",
@@ -23,8 +23,8 @@
       "name": "ressources/reference/structure_genes.tsv",
       "url": "file://ressources/reference/structure_genes.tsv",
       "release": null,
-      "sha256": "7461a74cf8a6ce06457bbc50a7f342301ab2e14753b81f0e34089053658605b7",
-      "bytes": 2726,
+      "sha256": "2e31d1e136e53152e817a54e70a6e362bc2318a1f664256d10bac3153932774e",
+      "bytes": 3518,
       "role": "the curated gene set: which symbols exist and which code"
     }
   ],

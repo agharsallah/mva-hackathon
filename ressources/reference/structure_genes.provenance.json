@@ -1,8 +1,8 @@
 {
   "name": "structure_genes",
-  "built_at": "2026-09-03T12:51:13+00:00",
+  "built_at": "2026-09-03T14:29:21+00:00",
   "built_by": "tools/build_gene_set.py",
-  "code_version": "cb066b8",
+  "code_version": "5236c53",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "method": "Every symbol in the editable spec TSV is resolved against the live Ensembl REST server: /lookup/symbol for the gene record, and /xrefs/symbol to confirm an alias names the same gene id (membership in the xref list, not a single match, because a gene present on a patch scaffold legitimately matches twice). The stable gene id, the biotype and the coding flag are read from the reply and never hand-written; coding means the canonical transcript carries a Translation, not that the biotype string says protein_coding, because those two disagree and only the first decides whether a protein exhibit can be drawn. The canonical transcript is matched on the unversioned id, the same rule mva.viz.genestructure.pick_transcript applies, so the flag written here cannot disagree with what the live route finds. Every gene in the panel group is asserted to carry the panel BED's own gene id, and the build fails rather than preferring one side, because the BED's intervals are what the proband's callset was actually annotated against. The group and the note are curation, not measurement: a blank note for a panel gene is borrowed from the BED's sixth column so that fact keeps one owner.",
   "inputs": [
@@ -10,21 +10,17 @@
       "name": "Ensembl REST",
       "url": "https://rest.ensembl.org",
       "release": "116",
-      "endpoints": [
-        "/info/data",
-        "/lookup/symbol/homo_sapiens/{symbol}?expand=1",
-        "/xrefs/symbol/homo_sapiens/{symbol}"
-      ],
+      "endpoints": [],
       "sha256": null,
       "bytes": null,
-      "role": "the gene id, the biotype and whether the canonical transcript translates"
+      "role": "the gene id, the biotype and whether the canonical transcript translates \u2014 NOT called by this run: carried over verbatim from the previous build of this file, whose release is the one named here. This run rewrote only the curation columns (group id, label, rank, note)."
     },
     {
       "name": "ressources/reference/structure_genes.spec.tsv",
       "url": "file://ressources/reference/structure_genes.spec.tsv",
       "release": null,
-      "sha256": "b6acc58133bdfa2eec78974053a68beb50830fc1ed048b8c50d4f9eeeadebddd",
-      "bytes": 2311,
+      "sha256": "a689a0ed58526fa2e5c427e17948d8431780a997bedc69d7f4ddb0391e35cc53",
+      "bytes": 3609,
       "role": "the editable input: symbol, display group, curated note"
     },
     {
@@ -39,8 +35,8 @@
   "outputs": [
     {
       "path": "ressources/reference/structure_genes.tsv",
-      "sha256": "7461a74cf8a6ce06457bbc50a7f342301ab2e14753b81f0e34089053658605b7",
-      "bytes": 2726,
+      "sha256": "2e31d1e136e53152e817a54e70a6e362bc2318a1f664256d10bac3153932774e",
+      "bytes": 3518,
       "rows": 23
     }
   ],
@@ -48,6 +44,7 @@
     {
       "gene": "CEP192",
       "group": "panel",
+      "group_label": "annotated panel (alleles painted)",
       "omim": [],
       "pmid": [
         "37981762"
@@ -57,6 +54,7 @@
     {
       "gene": "SMC5",
       "group": "panel",
+      "group_label": "annotated panel (alleles painted)",
       "omim": [
         "620185"
       ],
@@ -68,6 +66,7 @@
     {
       "gene": "CENATAC",
       "group": "mva-sac",
+      "group_label": "MVA / SAC genes (fold only)",
       "omim": [
         "620153"
       ],
@@ -79,6 +78,7 @@
     {
       "gene": "MAD1L1",
       "group": "mva-sac",
+      "group_label": "MVA / SAC genes (fold only)",
       "omim": [
         "620189"
       ],
@@ -90,6 +90,7 @@
     {
       "gene": "SLF2",
       "group": "mva-sac",
+      "group_label": "MVA / SAC genes (fold only)",
       "omim": [
         "620184"
       ],
@@ -101,6 +102,7 @@
     {
       "gene": "MAD2L1BP",
       "group": "mva-sac",
+      "group_label": "MVA / SAC genes (fold only)",
       "omim": [],
       "pmid": [
         "37796616"
@@ -110,6 +112,7 @@
     {
       "gene": "BUB1",
       "group": "mva-sac",
+      "group_label": "MVA / SAC genes (fold only)",
       "omim": [
         "620183"
       ],
@@ -121,6 +124,7 @@
     {
       "gene": "MTMR2",
       "group": "extended",
+      "group_label": "extended reference (fold only)",
       "omim": [
         "601382"
       ],
@@ -130,6 +134,7 @@
     {
       "gene": "WRAP53",
       "group": "extended",
+      "group_label": "extended reference (fold only)",
       "omim": [
         "613988"
       ],
@@ -139,5 +144,5 @@
   ],
   "licence": "Ensembl is Apache 2.0 / no-restriction for the annotation; OMIM numbers and PubMed ids are citations, not redistributed content",
   "patient_data": "none. A gene symbol, a stable gene id and a biotype are public reference facts. No genomic position of any kind is written to this file or the TSV.",
-  "note": "23 curated genes resolved live against Ensembl REST release 116; ids, biotypes and the coding flag come from the reply, groups and notes are curation."
+  "note": "23 curated genes; the curation columns were rewritten from the spec and every Ensembl-derived column was carried over from the previous build of this file (release 116). Nothing was fetched."
 }

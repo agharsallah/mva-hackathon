@@ -131,10 +131,24 @@ function anatomyOf(gene: string, inPanel: boolean): GeneStructure {
   };
 }
 
+/**
+ * One set row. `group_label` and `group_order` default to *made-up* words and ranks keyed
+ * off the group id, because the picker must take both off the payload — a component that
+ * still knew this case's three group names would pass with the real labels and fail here.
+ */
+const GROUPS: Record<string, [string, number]> = {
+  panel: ['group zero — alleles painted', 0],
+  'mva-sac': ['group one — fold only', 1],
+  extended: ['group two — fold only', 2],
+};
+
 function gene(over: Partial<StructureGene> & { symbol: string }): StructureGene {
+  const [label, order] = GROUPS[over.group ?? 'panel'] ?? ['unnamed', 9];
   return {
     ensembl_id: `ENSG-${over.symbol}`,
     group: 'panel',
+    group_label: label,
+    group_order: order,
     in_panel: true,
     biotype: 'protein_coding',
     coding: true,
@@ -190,19 +204,20 @@ beforeEach(() => {
 });
 
 describe('the gene picker', () => {
-  it('groups the set and names what each group can show', () => {
+  it('groups the set by the words and the order the payload states, not its own', () => {
     mount(<StructureCompare />);
     const groups = screen
       .getAllByRole('group')
       .map((node) => node.getAttribute('label'))
       .filter((label): label is string => label !== null);
-    expect(new Set(groups)).toEqual(
-      new Set([
-        'annotated panel (alleles painted)',
-        'MVA / SAC genes (fold only)',
-        'extended (fold only)',
-      ]),
-    );
+    // Two pickers (side A and side B), so each label appears twice; the first pass is the
+    // assertion. In `group_order`, and in the payload's own wording — nothing in the app
+    // names these.
+    expect(groups.slice(0, 3)).toEqual([
+      'group zero — alleles painted',
+      'group one — fold only',
+      'group two — fold only',
+    ]);
   });
 
   it('labels a non-coding gene as having no protein rather than hiding it', () => {
@@ -316,6 +331,26 @@ describe('the cross-gene metrics table', () => {
     // Two off-panel genes have a metrics row (the non-coding one has none), plus the one
     // occurrence in the exhibit's own legend, which decodes the phrase.
     expect(count('n/a — fold only')).toBe(3);
+  });
+
+  it("shows each row its group id and the payload's own words for it", () => {
+    mount(<StructureMetricsTable />);
+    // The badge is the set's id — short enough for a cell — and `group_label` is its title,
+    // so the reader gets the sentence on hover. Both come from the payload; the component
+    // holds no table of group names.
+    const badges = screen.getAllByTitle('group one — fold only');
+    expect(badges.length).toBe(1);
+    expect(badges[0]?.textContent).toBe('mva-sac');
+    expect(screen.getAllByTitle('group zero — alleles painted').length).toBe(2);
+  });
+
+  it('names the groups in the legend in group_order, from the data', () => {
+    mount(<StructureMetricsTable />);
+    const legend = text();
+    const at = (needle: string) => legend.indexOf(needle);
+    expect(at('group zero — alleles painted')).toBeGreaterThan(-1);
+    expect(at('group zero — alleles painted')).toBeLessThan(at('group one — fold only'));
+    expect(at('group one — fold only')).toBeLessThan(at('group two — fold only'));
   });
 
   it('hands a gene to the explorer and to either side of the comparison', async () => {

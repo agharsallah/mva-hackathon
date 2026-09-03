@@ -36,7 +36,10 @@ import { candidateDistances } from '../distances';
 
 export interface StructureMetrics {
   gene: string;
-  group: StructureGene['group'];
+  /** The set's free-form group id — short, so it renders as a badge. Carries no claim. */
+  group: string;
+  /** The words for {@link group}, from the payload; a fact sheet shows these, not the id. */
+  groupLabel: string;
   /** True only for the annotated panel — the flag that decides whether alleles exist at all. */
   inPanel: boolean;
   /** Residues on the canonical translation: the axis every count below indexes into. */
@@ -105,8 +108,10 @@ function domainNames(anatomy: GeneStructure): string[] {
  * Reduce one gene's two payloads to one row.
  *
  * `entry` supplies the group and `in_panel`; when the caller has no set entry (an API older
- * than `/api/panel/structure-genes`) it falls back to `GeneStructure.in_panel` and the
- * `extended` group, which is the conservative reading: fold only, no alleles claimed.
+ * than `/api/panel/structure-genes`) it falls back to `GeneStructure.in_panel` and an
+ * *unnamed* group. Unnamed rather than a guessed id, because no group id is known to this
+ * module: the conservative reading is carried by `in_panel` alone — fold only, no alleles
+ * claimed — and inventing a group name here would put a word on screen the set never said.
  */
 export function structureMetrics(
   structure: ProteinStructure,
@@ -132,7 +137,8 @@ export function structureMetrics(
 
   return {
     gene: structure.gene,
-    group: entry?.group ?? 'extended',
+    group: entry?.group ?? '',
+    groupLabel: entry?.group_label || entry?.group || 'group not stated',
     inPanel,
     length: axis,
     modelled: structure.residues.length,
@@ -177,7 +183,12 @@ export type RowKind = 'loading' | 'non-coding' | 'error' | 'mismatch' | 'ready';
 
 export interface StructureRow {
   gene: string;
-  group: StructureGene['group'];
+  /** The set's free-form group id. Short, so it renders as a badge. Carries no claim. */
+  group: string;
+  /** The words for {@link group}, for a tooltip or a heading. */
+  groupLabel: string;
+  /** The group's rank in the set — what the group column sorts by and the tone is picked by. */
+  groupOrder: number;
   inPanel: boolean;
   coding: boolean;
   kind: RowKind;
@@ -201,6 +212,8 @@ export function structureRow(
   const base = {
     gene: entry.symbol,
     group: entry.group,
+    groupLabel: entry.group_label || entry.group,
+    groupOrder: entry.group_order,
     inPanel: entry.in_panel,
     coding: entry.coding,
     metrics: null,

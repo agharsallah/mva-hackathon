@@ -87,6 +87,8 @@ function entry(over: Partial<StructureGene> = {}): StructureGene {
     symbol: 'GENE1',
     ensembl_id: 'ENSG00000000001',
     group: 'panel',
+    group_label: 'the annotated panel',
+    group_order: 0,
     in_panel: true,
     biotype: 'protein_coding',
     coding: true,
@@ -226,10 +228,13 @@ describe('structureMetrics — alleles and the panel boundary', () => {
     expect(m.closestPairAngstrom).toBeNull();
   });
 
-  it('falls back to GeneStructure.in_panel and the fold-only group with no set entry', () => {
+  it('falls back to GeneStructure.in_panel and names no group with no set entry', () => {
     const m = structureMetrics(structure(), anatomy({ in_panel: false }));
     expect(m.inPanel).toBe(false);
-    expect(m.group).toBe('extended');
+    // No group id is invented: only the set may name a group, and `in_panel` alone carries
+    // the conservative reading (fold only, no alleles claimed).
+    expect(m.group).toBe('');
+    expect(m.groupLabel).toBe('group not stated');
   });
 
   it('reports a translation mismatch and still reports the structural columns', () => {

@@ -41,14 +41,7 @@ import {
   type CameraPreset,
   type ColorEncoding,
 } from '../../../../viz3d';
-import {
-  canonicalGene,
-  COMPARE_A,
-  COMPARE_B,
-  geneEntry,
-  geneGroups,
-  geneSymbols,
-} from '../geneSet';
+import { canonicalGene, compareDefaults, geneEntry, geneGroups, geneSymbols } from '../geneSet';
 import { FactSheet } from './FactSheet';
 import { FoldPanel } from './FoldPanel';
 import { type FoldState, useFold } from './useFold';
@@ -74,9 +67,12 @@ export function StructureCompare() {
   const genes = useMemo(() => set.data?.data ?? [], [set.data]);
   const symbols = useMemo(() => geneSymbols(genes), [genes]);
 
+  // The two sides the comparison opens on. Derived from the set rather than named here, so
+  // a foreign reference table still opens on two of its own genes — see `compareDefaults`.
+  const [openA, openB] = useMemo(() => compareDefaults(genes), [genes]);
   // Canonicalised before the vocabulary check — see `canonicalGene`.
-  const [a, setA] = useUrlKnownOption(KEY_A, COMPARE_A, symbols, canonicalGene);
-  const [b, setB] = useUrlKnownOption(KEY_B, COMPARE_B, symbols, canonicalGene);
+  const [a, setA] = useUrlKnownOption(KEY_A, openA, symbols, canonicalGene);
+  const [b, setB] = useUrlKnownOption(KEY_B, openB, symbols, canonicalGene);
   const [view, setView] = useUrlEnum<CameraPreset>(KEY_VIEW, 'iso', CAMERA_PRESETS);
   const [dim, setDim] = useState(true);
   const [sync, setSync] = useState(true);

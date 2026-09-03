@@ -11,8 +11,10 @@ matters because an earlier version of this banner got it wrong:
 - `tools/build_gene_set.py` rerun. The gene-set TSV came back byte-identical *at that
   point* ([`061`](step-0/methodology/061-reference-data-provenance.md)); a later rerun the
   same day corrected its `note` column and moved it 2,569 → **2,726 B**
-  ([`062`](step-0/methodology/062-reference-manifests-and-bed-notes.md)). It is 2,726 B
-  now.
+  ([`062`](step-0/methodology/062-reference-manifests-and-bed-notes.md)). A third rerun,
+  `--reuse` (no network), added the `group_label` and `group_order` columns and moved it
+  2,726 → **3,518 B**, every Ensembl-derived column asserted byte-identical
+  ([`064`](step-0/methodology/064-reusable-structure-toolkit.md)). It is 3,518 B now.
 - `tools/build_protein_fixture.py --force` rerun **after** that TSV rebuild, manifests
   written `2026-09-03T13:46:57Z`. Every protein fixture and every non-panel gene-structure
   fixture came back byte-identical; the eight panel gene-structure files changed only
@@ -20,7 +22,8 @@ matters because an earlier version of this banner got it wrong:
   TSV's current digest again. The staleness that sat between 062's TSV rebuild and this
   rerun, and the blind test that hid it, are recorded in
   [`063`](step-0/methodology/063-manifest-staleness-fix.md).
-- `tools/check-python.sh` — **1,562 tests**.
+- `tools/check-python.sh` — **1,580 tests** (re-run 2026-09-03 after
+  [`064`](step-0/methodology/064-reusable-structure-toolkit.md), which added 14).
 
 The Postgres, MinIO and row-count numbers in §2 were **not** re-checked on that date and
 still carry the 2026-08-29 / 2026-09-03 dates stated in their own rows.

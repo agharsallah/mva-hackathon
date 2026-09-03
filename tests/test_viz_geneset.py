@@ -25,15 +25,19 @@ from mva.viz.app import create_app
 from mva.viz.cache import Cache
 
 #: A stand-in gene set: one panel gene, one off-panel coding gene, one lncRNA, and one
-#: whose spelling exercises the case-insensitive match.
+#: whose spelling exercises the case-insensitive match. Eight columns — the group carries
+#: its own display label and rank, so nothing downstream needs a table of group names.
 TSV = (
     "\t".join(geneset.COLUMNS)
     + "\n"
     + "\n".join(
         [
-            "BUB1B\tENSG00000156970\tpanel\tprotein_coding\ttrue\tMVA1",
-            "CENATAC\tENSG00000186166\tmva-sac\tprotein_coding\ttrue\tMVA4",
-            "DICER1-AS1\tENSG00000235706\textended\tlncRNA\tfalse\tlncRNA, no protein",
+            "BUB1B\tENSG00000156970\tpanel\tthe annotated panel\t0\tprotein_coding\ttrue\tMVA1",
+            "CENATAC\tENSG00000186166\tmva-sac\tMVA / SAC genes\t1\tprotein_coding\ttrue\tMVA4",
+            (
+                "DICER1-AS1\tENSG00000235706\textended\textended set\t2\tlncRNA\tfalse"
+                "\tlncRNA, no protein"
+            ),
         ]
     )
 )
@@ -123,6 +127,21 @@ def test_the_set_is_read_in_the_tsv_s_own_order(tsv):
 def test_in_panel_is_derived_from_the_bed_not_from_the_tsv(tsv):
     found = {entry["symbol"]: entry["in_panel"] for entry in geneset.genes(tsv)}
     assert found == {"BUB1B": True, "CENATAC": False, "DICER1-AS1": False}
+
+
+def test_group_label_and_order_come_off_the_table(tsv):
+    """The route hands the client the words and the rank; it never invents either.
+
+    This is the reuse contract for the frontend: `geneSet.ts` builds its `<optgroup>`s,
+    its badges, its legend and its bar colours from these two fields, so a foreign
+    reference table renames and re-ranks every group with no code change.
+    """
+    rows = geneset.genes(tsv)
+    assert [(r["group"], r["group_label"], r["group_order"]) for r in rows] == [
+        ("panel", "the annotated panel", 0),
+        ("mva-sac", "MVA / SAC genes", 1),
+        ("extended", "extended set", 2),
+    ]
 
 
 def test_coding_is_a_boolean_and_a_blank_biotype_is_null(tsv):
