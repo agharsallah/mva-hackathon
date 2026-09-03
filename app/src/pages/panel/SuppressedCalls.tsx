@@ -116,7 +116,7 @@ export function SuppressedCalls() {
         </p>
       </Callout>
 
-      <Loaded query={q} height={260}>
+      <Loaded query={q} height={260} variant="table" rows={5}>
         {(payload, meta) => (
           <RecordTable
             payload={payload}

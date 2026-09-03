@@ -137,7 +137,7 @@ export function HeaderFields() {
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}
     >
-      <Loaded query={q} height={420}>
+      <Loaded query={q} height={420} variant="table" rows={8}>
         {(rows) => {
           const counts = rows.reduce<Record<string, number>>((a, r) => {
             a[r.kind] = (a[r.kind] ?? 0) + 1;

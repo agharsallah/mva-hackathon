@@ -33,7 +33,7 @@ export function Derivations() {
   ];
   return (
     <div className="space-y-2">
-      <Loaded query={q} height={220}>
+      <Loaded query={q} height={220} variant="table" rows={4}>
         {(rows) => (
           <DataTable
             rows={rows}
@@ -101,7 +101,7 @@ export function LineageTable() {
     },
   ];
   return (
-    <Loaded query={q} height={260}>
+    <Loaded query={q} height={260} variant="table" rows={5}>
       {(rows) => (
         <DataTable
           rows={rows}

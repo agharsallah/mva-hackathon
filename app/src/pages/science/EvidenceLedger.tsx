@@ -50,7 +50,7 @@ export function EvidenceLedger() {
       cachedAt={query.data?.cachedAt}
       origin={query.data?.origin}
     >
-      <Loaded query={query} height={200}>
+      <Loaded query={query} height={200} variant="table" rows={4}>
         {(register) =>
           register.rows.length === 0 ? (
             <EmptyRegister

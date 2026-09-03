@@ -93,6 +93,19 @@ table {
   background: transparent;
 }
 
+/* The header's fetch bar: one third of the width sliding across, on a loop. */
+@keyframes fetch-bar {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+.fetch-bar {
+  animation: fetch-bar 1.2s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,

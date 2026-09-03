@@ -18,7 +18,7 @@ import {
   useState,
 } from 'react';
 
-import { Skeleton } from '../components/QueryState';
+import { ErrorCard, Skeleton } from '../components/QueryState';
 import type { FeatureModule } from './modules/types';
 
 interface BoundaryProps {
@@ -31,7 +31,6 @@ interface BoundaryState {
   error: Error | null;
 }
 
-/** Mirrors QueryState's ErrorCard tone/classes without importing it (that file is out of scope). */
 class ModuleErrorBoundary extends Component<BoundaryProps, BoundaryState> {
   state: BoundaryState = { error: null };
 
@@ -47,25 +46,18 @@ class ModuleErrorBoundary extends Component<BoundaryProps, BoundaryState> {
     const { error } = this.state;
     if (!error) return this.props.children;
     return (
-      <div className="rounded-card border border-broken-900/60 bg-broken-950/25 p-4 text-sm">
-        <div className="font-semibold text-broken-300">
-          Module &ldquo;{this.props.moduleId}&rdquo; failed to load
-        </div>
-        <p className="mt-1 font-mono text-xs text-broken-400/80">{error.message}</p>
-        <p className="mt-2 text-xs text-chrome-400">
-          The rest of the app is unaffected. Retry re-fetches this module only.
+      <ErrorCard
+        error={error}
+        title={`The ${this.props.moduleId} page failed to load`}
+        onRetry={() => {
+          this.setState({ error: null });
+          this.props.onRetry();
+        }}
+      >
+        <p className="mt-1 text-xs text-chrome-400">
+          The rest of the app is unaffected. Retry fetches this page&rsquo;s code again.
         </p>
-        <button
-          type="button"
-          onClick={() => {
-            this.setState({ error: null });
-            this.props.onRetry();
-          }}
-          className="mt-3 rounded-control border border-broken-800/60 px-3 py-1 text-xs text-broken-300 transition hover:bg-broken-900/30"
-        >
-          Retry
-        </button>
-      </div>
+      </ErrorCard>
     );
   }
 }
@@ -99,7 +91,7 @@ export function ModuleBoundary({
 
   return (
     <ModuleErrorBoundary moduleId={moduleId} onRetry={() => setAttempt((n) => n + 1)}>
-      <Suspense key={attempt} fallback={<Skeleton height={480} />}>
+      <Suspense key={attempt} fallback={<Skeleton height={480} framed label="Loading the page" />}>
         <Page />
       </Suspense>
     </ModuleErrorBoundary>

@@ -137,7 +137,7 @@ export function CandidateTable() {
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}
     >
-      <Loaded query={q} height={220}>
+      <Loaded query={q} height={220} variant="table" rows={4}>
         {(rows) => {
           const hits = candidates(rows);
           const byGene = new Map<string, number>();

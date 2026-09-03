@@ -141,7 +141,7 @@ export function TableCatalog() {
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}
     >
-      <Loaded query={q} height={320}>
+      <Loaded query={q} height={320} variant="table" rows={6}>
         {(rows) => {
           const needle = filter.trim().toLowerCase();
           const shown = needle

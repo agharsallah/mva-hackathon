@@ -12,7 +12,7 @@
  * and a committed placeholder, so it stays visible on every page.
  */
 
-import { useQuery } from '@tanstack/react-query';
+import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
@@ -83,13 +83,33 @@ function ApiHealth() {
   );
 }
 
+/**
+ * A 2 px bar along the header's bottom edge while any query is in flight. One signal for
+ * "the page is still fetching", so a refetch of an exhibit already on screen does not need
+ * its own spinner.
+ */
+function FetchBar() {
+  const fetching = useIsFetching();
+  if (fetching === 0) return null;
+  return (
+    <div
+      role="progressbar"
+      aria-label="Loading data"
+      aria-valuetext="loading"
+      className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden"
+    >
+      <div className="fetch-bar h-full w-1/3 bg-machinery-500" />
+    </div>
+  );
+}
+
 export function Header({ home, sections }: { home: HeaderNavItem; sections: HeaderSection[] }) {
   const onFixtures = useSyncExternalStore(fixtureModeStore.subscribe, fixtureModeStore.get);
   const { pathname } = useLocation();
   const active = sections.find((s) => s.pages.some((p) => p.to === pathname));
 
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-chrome-950/95 backdrop-blur">
+    <header className="relative sticky top-0 z-20 border-b border-line bg-chrome-950/95 backdrop-blur">
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-5 gap-y-1 px-5 py-2">
         <Link
           to={home.to}
@@ -193,6 +213,7 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
           </div>
         </div>
       )}
+      <FetchBar />
     </header>
   );
 }

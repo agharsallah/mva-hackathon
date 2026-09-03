@@ -24,7 +24,9 @@ export default function OverviewPage() {
         title="The case in numbers"
         subtitle="all figures from executed runs over the delivered objects"
       >
-        {q.isPending && <Skeleton height={220} />}
+        {q.isPending && (
+          <Skeleton height={220} variant="tiles" framed label="Loading the case numbers" />
+        )}
         {q.error && <ErrorCard error={q.error} />}
         {q.data && (
           <>

@@ -40,7 +40,8 @@ export { Badge, type BadgeProps, Flag } from './Badge';
 export { ThemeToggle } from './ThemeToggle';
 
 // Async / query state
-export { ErrorCard, Loaded, Skeleton } from './QueryState';
+export { classifyError, type Failure, type FailureKind } from './failure';
+export { ErrorCard, Loaded, Skeleton, type SkeletonVariant } from './QueryState';
 
 // Export tooling
 export { AiExport } from './AiExport';

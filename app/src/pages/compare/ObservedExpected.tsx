@@ -85,7 +85,7 @@ export function ObservedExpected() {
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}
     >
-      <Loaded query={q} height={420}>
+      <Loaded query={q} height={420} variant="table" rows={8}>
         {(rows) => {
           if (rows.length === 0) {
             return (

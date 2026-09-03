@@ -139,7 +139,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
         </div>
       )}
 
-      <Loaded query={annotations} height={220}>
+      <Loaded query={annotations} height={220} variant="table" rows={4}>
         {(rows) => {
           const shown = wide
             ? rows

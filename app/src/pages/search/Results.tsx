@@ -54,7 +54,7 @@ export function Resolution({ found }: { found: SearchResolution }) {
 export function RegionResult({ found }: { found: SearchResolution }) {
   const q = useRegion({ chrom: found.chrom, start: found.start, end: found.end });
   return (
-    <Loaded query={q} height={420}>
+    <Loaded query={q} height={420} variant="table" rows={8}>
       {(window, meta) => (
         <Window
           window={window}
