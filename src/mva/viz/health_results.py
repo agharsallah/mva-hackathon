@@ -20,6 +20,7 @@ PAGES = (
     "Genome",
     "Callset",
     "Panel",
+    "Phenotype",
     "Compare",
     "Reads",
     "Probes",
