@@ -4,8 +4,8 @@ Each function here answers one question — "is this backend actually usable rig
 by doing the cheapest real thing that proves it (a `SELECT 1`, a capped listing, one
 Parquet row, a `/health` ping) and never raises: a failure becomes a `down` (or
 `skipped`) result, not an exception. That is what lets :mod:`mva.viz.health` run all
-seven concurrently under one timeout without a single misbehaving probe taking the whole
-response down with it.
+seven concurrently, each under its own timeout budget (:mod:`mva.viz.health_budget`),
+without a single misbehaving probe taking the whole response down with it.
 
 The result vocabulary (:func:`~mva.viz.health_results.up` and friends), the per-check
 metadata (:data:`~mva.viz.health_results.REGISTRY`) and the app's page names live in
@@ -177,15 +177,20 @@ def probe_parquet(store: ObjectStore) -> dict:
 # ── 5. reads-api ─────────────────────────────────────────────────────────────────────
 
 
-async def probe_reads_api(upstream: Upstream) -> dict:
+async def probe_reads_api(upstream: Upstream, timeout: float = 2.0) -> dict:  # noqa: ASYNC109
     """``GET /health`` on ``mva-reads-api``, through the same client the real proxy uses.
 
     No token: its ``/health`` needs none. Down here is never fatal to the rest of the
     app — only the Probes page's job monitor and ledger depend on it.
+
+    ``timeout`` is this check's own budget, passed in by :mod:`mva.viz.health` so raising
+    it in the environment actually gives the request longer. The caller's own
+    ``asyncio.wait_for`` is the outer net; this is the client-level one, which is the only
+    one that can come back with a *specific* remedy instead of "timed out".
     """
     endpoint = f"{base_url()}/health"
     try:
-        reply = await upstream.request("GET", "/health", timeout=2.0)
+        reply = await upstream.request("GET", "/health", timeout=timeout)
     except UpstreamUnreachableError as error:
         return down(str(error), "Start `mva-reads-api` or check MVA_READS_API_URL.", endpoint)
     except Exception as error:
@@ -203,10 +208,12 @@ async def probe_reads_api(upstream: Upstream) -> dict:
 
 
 def probe_ensembl(timeout: float = 2.0) -> dict:
-    """Ensembl's own liveness ping.
+    """Ensembl's own liveness ping, under this check's own budget.
 
     Down here costs only the gene-structure track and any new VEP annotation — nothing
     already resolved and stored in the warehouse depends on Ensembl being up right now.
+    Ensembl is also the one dependency whose latency this project cannot tune, which is
+    why its default budget is looser than a probe against our own machinery.
     """
     try:
         response = httpx.get(ENSEMBL_PING, timeout=timeout)

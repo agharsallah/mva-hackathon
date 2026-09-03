@@ -390,19 +390,36 @@ def test_a_probe_that_raises_something_unexpected_still_becomes_down(tmp_path, m
 # ── a timeout still says where it was probing ────────────────────────────────────────
 
 
+#: Short enough that the timeout test does not slow the suite; the budget under test is
+#: passed in explicitly, so the production numbers stay out of this.
+TEST_BUDGET = 0.05
+
+
 async def _never_returns():
-    await asyncio.sleep(health.CHECK_TIMEOUT + 5)
+    await asyncio.sleep(TEST_BUDGET + 5)
     return health_probes.up("should never get here")  # pragma: no cover
 
 
 def test_a_timeout_still_reports_the_endpoint_it_was_probing():
     """`run_check`'s own safety net never reaches the probe's code that sets `endpoint`."""
     result = asyncio.run(
-        health.run_check("warehouse", _never_returns(), "db.example:5432/mva (password: set)")
+        health.run_check(
+            "warehouse",
+            _never_returns(),
+            "db.example:5432/mva (password: set)",
+            budget=TEST_BUDGET,
+        )
     )
     assert result["status"] == "down"
-    assert result["detail"] == f"timed out after {health.CHECK_TIMEOUT:.0f}s"
+    assert result["detail"] == f"timed out after {TEST_BUDGET:.0f}s"
     assert result["endpoint"] == "db.example:5432/mva (password: set)"
+    assert result["timeout_ms"] == round(TEST_BUDGET * 1000)
+
+
+def test_a_timeouts_remedy_names_the_knob_that_raises_the_budget():
+    """A slow-but-alive dependency must not send a developer hunting a phantom outage."""
+    result = asyncio.run(health.run_check("warehouse", _never_returns(), None, TEST_BUDGET))
+    assert "MVA_HEALTH_TIMEOUTS=warehouse=" in result["remedy"]
 
 
 def test_static_endpoint_is_null_only_for_this_process_itself():

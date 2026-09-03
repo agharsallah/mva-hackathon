@@ -45,6 +45,8 @@ DEFAULTS = {
     "MVA_READS_API_URL": "http://127.0.0.1:8765",
     "MVA_VIZ_CORS": "http://localhost:5173,http://127.0.0.1:5173",
     "MVA_VIZ_CACHE": "build/viz-cache",
+    "MVA_HEALTH_TIMEOUT": "",
+    "MVA_HEALTH_TIMEOUTS": "",
 }
 
 #: Looked for upward from the working directory, so the CLI works from a subdirectory.
