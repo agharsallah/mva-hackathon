@@ -26,7 +26,7 @@ genomic positions, and [`mva-science export`](../docs/method.md) refuses to writ
 
 PNGs, captured from a real browser (Chromium headless with software WebGL) against
 [`app/`](../app/README.md) in **fixture mode**, so they are safe to commit and safe to put in
-the report. Regenerate by starting the app with its API pointed at a dead port
+the report. One row below states its own exception and why it is still safe. Regenerate by starting the app with its API pointed at a dead port
 (`cd app && VITE_API_URL=http://127.0.0.1:8901 pnpm dev`) and driving the page; the run that
 produced these, and every number visible in them, is recorded in
 [methodology 057](../docs/step-0/methodology/057-protein-explorer-exhibit.md).
@@ -51,6 +51,7 @@ produced these, and every number visible in them, is recorded in
 | `protein-metrics.png` | the cross-gene metrics table over the whole structure set, plus the pLDDT ≥ 70 % bar chart coloured by group — the two allele columns read `n/a — fold only` outside the annotated panel |
 | `viz3d-style-guide.png` | the `viz3d` module's own demo on `/style-guide` (the palette as a point cloud) |
 | `provenance-reference.png` | `/provenance` § *The public inputs* — one row per provenance manifest (a lockfile for data: URL + version + hash), expanded to its inputs and outputs tables. Not a 3D exhibit; captured the same way |
+| `status-board-masked.png` | `/status` — the whole dependency board, **captured live** (not in fixture mode) with addresses masked, which is the default state: every host and port renders `••••`, and each card carries its own `re-probe`, `latency · budget` and `probed … ago`. Safe to commit for the same reason it is the default: the mask is what the page shows unless a reader presses `show`. Recorded in [methodology 065](../docs/step-0/methodology/065-health-controls.md) |
 
 `.gitignore` excludes `figures/exhibits/*` — the per-page HTML copies are regenerable noise —
 with one negation, `!figures/exhibits/*.png`, for exactly these screenshots: a browser is needed

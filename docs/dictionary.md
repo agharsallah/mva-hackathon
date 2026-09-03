@@ -1008,6 +1008,18 @@ and its phenotype is worded mosaic variegated **hyperploidy**, not aneuploidy.*
 
 **Container / digest** — a frozen box holding your exact software versions, so it runs the same everywhere.
 
+**Liveness probe** — a request a service answers about *itself*: "am I running?" It touches nothing, so it answers in microseconds. What a container orchestrator asks before deciding to restart a process.
+*Example: `GET /health` on this project's API → `{"ok": true, "service": "mva-viz-api"}` — true even if the database behind it is dead.*
+
+**Dependency health check** — the harder question the [liveness probe](#8-command-line-tools-youll-see) cannot answer: "is everything I *need* working?" One check per backend, each doing the cheapest real thing that proves it — a `SELECT 1` on the database, one capped listing on the object store, one row read through the Parquet path. A dead backend becomes a `down` row in the answer, never an error, so the page reporting it can never itself be the thing that broke.
+*Example: `GET /api/health/dependencies` → seven rows; the [Status page](step-0/methodology/053-dependency-health.md) draws one card each.*
+
+**Timeout budget** — how long one check may take before it is declared `down`. It has to match what that check actually does: a database greet over the network is not a ping to the local process. Too short and a slow-but-alive service is reported as an outage, which sends a developer to fix something that was never broken.
+*Example: `reference-snapshots` counts rows in two ingested reference tables and measured 1,934 ms, then 2,134 ms, then 3.1 s on the same healthy database — so its budget is 15 s, while the API's self-check keeps 2 s ([methodology 065](step-0/methodology/065-health-controls.md)).*
+
+**Redaction (masking)** — replacing a value with a marker (`[redacted]`, `••••`) instead of showing it. Two different uses in this project, worth keeping apart: the API *always* scrubs credentials out of any text it returns, which is a hard rule; the Status page additionally *hides hosts and ports until asked*, which is presentation hygiene for a screenshot — the values are still in the response, so it prevents an accidental display, not access.
+*Example: `mva@db.example:5432/mva` renders as `••••@••••:••••/mva` until you press `show`.*
+
 **Modal** — a cloud service to rent CPUs/GPUs for the heavy steps.
 
 **Hail / Spark** — big-data machinery, useful for thousands of patients, pointless for one.
