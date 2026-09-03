@@ -19,6 +19,7 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { API_URL, fixtureModeStore, FIXTURES_ENABLED, health } from '../api/client';
 import { cx } from '../lib/ui';
 import { AiExport } from './AiExport';
+import { CommandPalette } from './CommandPalette';
 import { ThemeToggle } from './ThemeToggle';
 
 export interface HeaderNavItem {
@@ -161,6 +162,7 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
         </nav>
 
         <div className="flex items-center gap-3">
+          <CommandPalette />
           <AiExport />
           {onFixtures && (
             <span

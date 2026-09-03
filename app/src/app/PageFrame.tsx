@@ -7,6 +7,7 @@
 import type { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import { JumpToSection, OnThisPage } from '../components/OnThisPage';
 import { JourneyFooter, type JourneyLink, PageHeader } from '../components/PageHeader';
 import { groupOf, moduleAt, neighbours, positionInGroup } from './modules/journey';
 import type { FeatureModule } from './modules/types';
@@ -43,8 +44,16 @@ export function PageFrame({ children }: { children: ReactNode }) {
         prev={prev && { to: prev.path, label: prev.navLabel, preload: () => void prev.load() }}
         next={next && { to: next.path, label: next.navLabel, preload: () => void next.load() }}
       />
-      {children}
-      <JourneyFooter prev={link(prev)} next={link(next)} />
+      <JumpToSection />
+      <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_12rem] xl:items-start xl:gap-10">
+        <div className="min-w-0 space-y-6">
+          {children}
+          <JourneyFooter prev={link(prev)} next={link(next)} />
+        </div>
+        <div className="sticky top-28 hidden xl:block">
+          <OnThisPage />
+        </div>
+      </div>
     </>
   );
 }

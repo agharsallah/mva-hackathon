@@ -66,9 +66,14 @@ const PAGES_DIR = path.join(APP_ROOT, 'src/pages');
 // active section's pages), the manifest-driven page header and journey footer, and the
 // footer sitemap (`src/app/PageFrame.tsx`, `src/components/{Header,PageHeader,journey}.tsx`).
 // That is shell, so it belongs in first paint; no page code moved into the entry.
+//
+// Re-blessed 2026-09-03 (later the same day): 280.52 kB raw / 89.92 kB gzip. The in-page
+// navigation joined the shell — the section registry, the "On this page" rail, the jump
+// select and the ⌘K button. The palette's dialog body is a lazy chunk (PaletteDialog, ~3.7 kB)
+// fetched on first open, so only the hotkey and the button ride in first paint.
 const BUDGETS = Object.freeze({
-  INITIAL_RAW_BYTES: 280_000,
-  INITIAL_GZIP_BYTES: 89_000,
+  INITIAL_RAW_BYTES: 290_000,
+  INITIAL_GZIP_BYTES: 92_000,
 });
 
 const KB = (bytes) => `${(bytes / 1000).toFixed(2)} kB`;

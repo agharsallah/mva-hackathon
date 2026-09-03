@@ -1,4 +1,6 @@
-import type { ReactNode } from 'react';
+import { type ReactNode, useEffect, useRef } from 'react';
+
+import { sectionRegistry, slugify } from '../lib/sections';
 
 export function Toggle({
   on,
@@ -152,15 +154,26 @@ export function Section({
   title: string;
   subtitle?: ReactNode;
   children: ReactNode;
-  /** Anchor target, so another page can deep-link to this section with `#id`. */
+  /**
+   * Anchor target, so another page can deep-link to this section with `#id`. Defaults to a
+   * slug of the title; either way the section registers itself for the "On this page" rail.
+   */
   id?: string;
 }) {
+  const ref = useRef<HTMLElement>(null);
+  const sid = id ?? slugify(title);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    sectionRegistry.register({ id: sid, title, el });
+    return () => sectionRegistry.unregister(sid);
+  }, [sid, title]);
   return (
-    <section id={id} className="scroll-mt-20 space-y-3">
+    <section ref={ref} id={sid} className="scroll-mt-28 space-y-3">
       <div>
         <h2 className="text-heading font-semibold tracking-tight text-chrome-100">{title}</h2>
         {subtitle && (
-          <p className="mt-0.5 max-w-[80ch] font-serif text-sm italic text-chrome-400">
+          <p className="mt-0.5 max-w-[80ch] font-serif text-sm text-chrome-400 italic">
             {subtitle}
           </p>
         )}

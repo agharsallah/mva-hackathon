@@ -117,4 +117,22 @@ describe('navigating with the nav bar', () => {
         .getAttribute('href'),
     ).toBe('/genome');
   });
+
+  /**
+   * The rail is drawn by `PageFrame` from the section registry, which only fills once the
+   * page's lazy chunk has mounted and its `Section` effects have run — so this is the one
+   * assertion that the whole chain (module chunk → `Section` → registry → rail) closes on a
+   * real route. The per-component behaviour lives in `section-nav.test.tsx`.
+   */
+  it('builds the "On this page" rail from the sections the routed page mounted', async () => {
+    renderApp('/callset');
+    const rail = await screen.findByRole(
+      'navigation',
+      { name: 'On this page' },
+      { timeout: 15_000 },
+    );
+    expect(
+      within(rail).getByRole('link', { name: "What survived the caller's filters" }),
+    ).toBeTruthy();
+  }, 20_000);
 });

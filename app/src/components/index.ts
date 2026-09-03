@@ -20,6 +20,7 @@ export { StatTile, type StatTileProps } from './StatTile';
 
 // Layout and structure
 export { Card, type CardProps } from './Card';
+export { CommandPalette } from './CommandPalette';
 export {
   Section,
   Select,
@@ -33,6 +34,7 @@ export { Callout, Explainer, type ExplainerProps, type Term } from './Explainer'
 export { Footer } from './Footer';
 export { JourneyMap, JourneyProvider } from './journey';
 export { type JourneyGroup, type JourneyPage, useJourney } from './journeyContext';
+export { JumpToSection, OnThisPage } from './OnThisPage';
 export { JourneyFooter, PageHeader } from './PageHeader';
 
 // Small marks
