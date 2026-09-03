@@ -15,10 +15,18 @@ export function TrackList({ dictionary }: { dictionary: Dictionary }) {
       <h3 className="text-micro font-semibold text-chrome-500">Short paths</h3>
       {TRACKS.map((t) => (
         <details key={t.id} className="group">
-          <summary className="flex cursor-pointer items-baseline justify-between gap-2 rounded-control px-2 py-1 text-xs text-chrome-300 transition hover:bg-chrome-900 hover:text-chrome-100">
-            <span>{t.title}</span>
-            <span className="shrink-0 text-micro text-chrome-600">
-              {t.slugs.length} terms · {t.forPages}
+          <summary className="flex cursor-pointer list-none items-baseline gap-2 rounded-control px-2 py-1 text-xs text-chrome-300 transition hover:bg-chrome-900 hover:text-chrome-100 [&::-webkit-details-marker]:hidden">
+            <span
+              aria-hidden="true"
+              className="inline-block text-chrome-600 transition group-open:rotate-90"
+            >
+              ›
+            </span>
+            <span className="min-w-0">
+              <span className="block">{t.title}</span>
+              <span className="block text-micro text-chrome-600">
+                {t.slugs.length} terms · before {t.forPages}
+              </span>
             </span>
           </summary>
           <ol className="mt-1 space-y-0.5 pl-2">

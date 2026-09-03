@@ -9,8 +9,9 @@ import { ErrorCard, Skeleton } from '../components/QueryState';
 import { type Chapter, chapterOfAnchor, type Dictionary } from '../lib/dictionary';
 import { Blocks } from './learn/Blocks';
 import { ChapterRail } from './learn/ChapterRail';
-import { useProgress } from './learn/progress';
+import { useProgress, useStars } from './learn/progress';
 import { SeeItLinks } from './learn/SeeItLinks';
+import { Starred } from './learn/Starred';
 import { TermSearch } from './learn/TermSearch';
 import { TrackList } from './learn/TrackList';
 import { useDictionary } from './learn/useDictionary';
@@ -22,7 +23,8 @@ import { useDictionary } from './learn/useDictionary';
  * fifteen chapters are ordered so every word uses only words defined before it. This page
  * does not restate it — the markdown is generated into the app at build time — it gives it
  * what a file cannot have: one chapter at a time, a search over every term, progress that
- * survives a reload, an anchor per word that the other pages can link to, the diagrams
+ * survives a reload, a star on any definition to come back to it, an anchor per word that
+ * the other pages can link to, the diagrams
  * drawn rather than shown as code, and under a word the app can show, a link to the exhibit
  * that shows it (`learn/seeIt.ts`) and to the methodology entry that measured it.
  *
@@ -53,6 +55,7 @@ function Course({ dictionary }: { dictionary: Dictionary }) {
   const { hash } = useLocation();
   const navigate = useNavigate();
   const { read, markRead, toggle } = useProgress();
+  const stars = useStars();
 
   const anchor = decodeURIComponent(hash.replace(/^#/, ''));
   const chapter =
@@ -132,6 +135,9 @@ function Course({ dictionary }: { dictionary: Dictionary }) {
             />
           </Card>
           <Card padding="sm">
+            <Starred dictionary={dictionary} stars={stars} />
+          </Card>
+          <Card padding="sm">
             <TrackList dictionary={dictionary} />
           </Card>
           <details className="text-xs text-chrome-500">
@@ -170,7 +176,7 @@ function Course({ dictionary }: { dictionary: Dictionary }) {
             </Callout>
           )}
 
-          <Blocks blocks={chapter.blocks} aside={(e) => <SeeItLinks entry={e} />} />
+          <Blocks blocks={chapter.blocks} aside={(e) => <SeeItLinks entry={e} />} stars={stars} />
 
           <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
             {prev ? (

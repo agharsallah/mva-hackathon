@@ -11,6 +11,8 @@ import type { ReactNode } from 'react';
 
 import { type Block, type EntryBlock, figureUrl } from '../../lib/dictionary';
 import { Mermaid } from './Mermaid';
+import { Star } from './Starred';
+import type { StoredSet } from './storedSet';
 
 /** Aliases worth a chip: short alternate names, not a bracketed list of seven databases. */
 function chipAliases(entry: EntryBlock): string[] {
@@ -33,7 +35,17 @@ function Legend({ html }: { html?: string }) {
   );
 }
 
-export function EntryCard({ entry, aside }: { entry: EntryBlock; aside?: ReactNode }) {
+export function EntryCard({
+  entry,
+  aside,
+  stars,
+}: {
+  entry: EntryBlock;
+  aside?: ReactNode;
+  /** The reader's starred set; the card shows a star to add or remove itself. */
+  stars?: StoredSet;
+}) {
+  const starred = stars?.has(entry.slug) ?? false;
   return (
     <article
       id={entry.slug}
@@ -62,6 +74,18 @@ export function EntryCard({ entry, aside }: { entry: EntryBlock; aside?: ReactNo
         >
           #
         </a>
+        {stars && (
+          <button
+            type="button"
+            onClick={() => stars.toggle(entry.slug)}
+            aria-pressed={starred}
+            aria-label={`${starred ? 'Unstar' : 'Star'} ${entry.term}`}
+            title={starred ? 'Remove from starred' : 'Star this definition to come back to it'}
+            className="rounded-pill px-1 text-sm leading-none transition hover:bg-chrome-900 focus:outline-none focus-visible:ring-1 focus-visible:ring-focus"
+          >
+            <Star on={starred} />
+          </button>
+        )}
       </div>
       <div className="learn-prose mt-1" dangerouslySetInnerHTML={{ __html: entry.html }} />
       {entry.exampleHtml && (
@@ -78,13 +102,15 @@ export function EntryCard({ entry, aside }: { entry: EntryBlock; aside?: ReactNo
 export function BlockView({
   block,
   aside,
+  stars,
 }: {
   block: Block;
   aside?: (e: EntryBlock) => ReactNode;
+  stars?: StoredSet;
 }) {
   switch (block.kind) {
     case 'entry':
-      return <EntryCard entry={block} aside={aside?.(block)} />;
+      return <EntryCard entry={block} aside={aside?.(block)} stars={stars} />;
     case 'subheading':
       return (
         <h3
@@ -131,14 +157,21 @@ export function BlockView({
 export function Blocks({
   blocks,
   aside,
+  stars,
 }: {
   blocks: Block[];
   aside?: (e: EntryBlock) => ReactNode;
+  stars?: StoredSet;
 }) {
   return (
     <div className="space-y-5">
       {blocks.map((b, i) => (
-        <BlockView key={b.kind === 'entry' ? b.slug : `${b.kind}-${i}`} block={b} aside={aside} />
+        <BlockView
+          key={b.kind === 'entry' ? b.slug : `${b.kind}-${i}`}
+          block={b}
+          aside={aside}
+          stars={stars}
+        />
       ))}
     </div>
   );
