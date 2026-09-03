@@ -104,6 +104,10 @@ STEPS: tuple[Step, ...] = (
             "Does an unbiased genome-wide ranking driven by the child's HPO terms agree "
             "with the panel-first candidate list?"
         ),
+        # Open, not planned: the ranking is built and has run. It needed neither step 1 nor
+        # step 2 - ranking genes by symptoms reads no callset - so the dependency the
+        # roadmap assumed turned out not to exist. See docs/step-3/methodology/056.
+        status="open",
         unblocks=("step-6",),
     ),
     Step(
