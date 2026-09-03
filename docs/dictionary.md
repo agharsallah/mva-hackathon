@@ -89,6 +89,14 @@ flowchart LR
 
 **Canonical transcript** — the one version Ensembl nominates as the gene's representative, and the one every tool reports against by default. It matters that everybody uses the *same* one: an exon number, a domain boundary and a variant's amino-acid position are only comparable if they are all measured on the same transcript. *Example:* `ENST00000287598` for BUB1B; Ensembl writes the pointer with a version suffix (`.11`) that the transcript's own id lacks.
 
+**Biotype** — Ensembl's label for *what kind of thing* a gene or transcript is. It is a classification, not a measurement, and the one that matters most is whether the thing makes a protein. Software analogy: a type tag on a record — you branch on it before deciding which fields are even meaningful. *Example:* `protein_coding` for BUB1B, `lncRNA` for DICER1-AS1, `protein_coding_CDS_not_defined` for a BUB1B transcript that is annotated but has no reading frame.
+
+**lncRNA (long non-coding RNA)** — a gene that is copied into RNA and then *stops there*: the RNA is the product, and no protein is ever built from it. "Long" just means over ~200 [bases](#1-the-absolute-basics-what-is-dna); "non-coding" is the load-bearing half. It still has real [exons](#1-the-absolute-basics-what-is-dna) and is still spliced, so an exon track for one is honest — but it has no [amino acids](#1-the-absolute-basics-what-is-dna), no protein domains and no fold, so *every* protein-level question about it is not "unknown", it is "not applicable". Many lncRNAs sit head-to-head with a protein-coding gene and are named after it with an `-AS1` suffix, meaning **antisense** — read from the opposite [strand](#1-the-absolute-basics-what-is-dna) at the same locus. *Example:* `DICER1-AS1` (`ENSG00000235706`) overlaps DICER1's far end on chr14 and makes no protein; asking this project's `/api/panel/protein-structure` for it answers **422**, not an empty fold.
+
+**Gene symbol** — the short human name of a gene, assigned by **HGNC** (the committee that owns human gene naming). It is the label everyone actually says out loud, and it is *not* a stable identifier: HGNC renames genes, and the old name becomes a **previous symbol**. A gene also collects **aliases** — informal names from papers and older nomenclature — which are not authoritative either. Software analogy: the symbol is a mutable display name, the [Ensembl](#1-the-absolute-basics-what-is-dna) `ENSG…` id is the primary key; join on the key, show the name. *Example:* `CENATAC` was renamed from `CCDC84` in 2020 (HGNC:30460), and `p31comet` is an alias for `MAD2L1BP` that no database is obliged to resolve.
+
+**Ensembl symbol lookup** — the REST call that turns a gene symbol into a stable id: `GET rest.ensembl.org/lookup/symbol/homo_sapiens/<symbol>?expand=1`, which answers with the gene record and, with `expand=1`, every transcript. Two traps, both verified live in this project: it resolves the **current** symbol only — `CCDC84` gets a flat `400 {"error":"No valid lookup found for symbol CCDC84"}` — and the sibling endpoint `GET /xrefs/symbol/homo_sapiens/<symbol>`, which searches cross-references instead, *does* resolve a retired symbol but answers with a **list** of matches. So an alias is confirmed by the target id appearing in that list, never by the list having one entry: `CCDC84` returns two ids, both of which are CENATAC (one on the primary assembly, one on a patch scaffold). *Example:* `/lookup/symbol/homo_sapiens/BUB1B?expand=1` → `ENSG00000156970`, `biotype: protein_coding`, `canonical_transcript: ENST00000287598.11`.
+
 **Strand** — which of the DNA's two mirrored strands a gene is read from. **Forward / plus (`+1`)** reads left-to-right along the coordinate axis, **reverse / minus (`-1`)** reads right-to-left. Consequence: on a minus-strand gene, exon 1 is the *rightmost* box on a chart. *Example:* TP53 is `-1`, BUB1B is `+1`.
 
 **TSS (transcription start site)** — the first base actually copied into the transcript, i.e. where reading begins. On the minus strand it is the gene's *high* coordinate.
@@ -748,6 +756,19 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 
 **MIM number** — an ID in OMIM. *MVA1 = MIM 257300.*
 
+**MedGen** — NCBI's index of genetic conditions, which mirrors each OMIM entry's
+**preferred title and its synonyms** under the OMIM id, and lists the gene. Readable by
+program (`esummary db=medgen`), unlike omim.org, which answers a script with `403`. Useful
+because a disease often has two names and only one of them is the official one.
+*Example: MedGen concept 1824055 carries `MIM 620185`, preferred title `Atelis syndrome 2`,
+synonyms `MVA6` and `MOSAIC VARIEGATED ANEUPLOIDY SYNDROME 6`, gene `SMC5`.*
+
+**Preferred title vs synonym** — a disease catalogue names one string the *title* and files
+the rest as synonyms. Quoting a synonym as if it were the title is a small but real
+overclaim: it hides that the entry describes something slightly different.
+*Example: writing "SMC5 = MVA6" is true, but OMIM 620185's title is **Atelis syndrome 2**
+and its phenotype is worded mosaic variegated **hyperploidy**, not aneuploidy.*
+
 ---
 
 ## 7. Databases and annotation
@@ -762,7 +783,7 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 **Impact** — VEP's four-bucket severity rollup of the consequence: **HIGH** (protein destroyed), **MODERATE** (protein changed), **LOW** (protein grazed), **MODIFIER** (outside the protein — the overwhelming majority). A coarse first filter, not a verdict.
 *Example: of the 874 panel alleles, 850 are MODIFIER and only 2 are HIGH+rare or MODERATE+rare.*
 
-**rsID** — a variant's public catalogue number in **dbSNP** (NCBI's registry of every variant ever reported), like `rs1801516`. The VCF's `ID` column carries it when the caller recognised the site; `.` means unregistered. Known rsID ≠ harmless — it only means "seen before".
+**rsID** — a variant's public catalogue number in **dbSNP** (NCBI's registry of every variant ever reported), like `rs1801516`. The VCF's `ID` column carries it when the caller recognised the site; `.` means unregistered. Known rsID ≠ harmless — it only means "seen before". The committed offline fixtures' invented alleles are labelled `synthetic-1`…`synthetic-3` on purpose, so nothing that reads as an rsID can be an invented one.
 
 **dbSNP membership rate** — of all the records in a callset, the share that already carry an [rsID](#7-databases-and-annotation). A QC metric, not a biological one: a healthy modern human genome is almost entirely made of variants somebody has already seen, so a low rate means novelty, and novelty in bulk usually means artefacts — or an old dbSNP build behind the `ID` column. Read it only alongside the population it was measured over: filtering, dropping decoy contigs and restricting to SNVs each move it. *Example: this callset reads 87.96% over every delivered record and 93.89% over PASS biallelic SNVs, against a published 99.2% per genome.*
 
@@ -809,7 +830,7 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 
 **Reactome / STRING / Open Targets / PrimeKG** — databases of which proteins talk to which, and which drugs hit which target.
 
-**AlphaFold DB / PDB / UniProt** — 3D shapes and facts about proteins. Lets you see where in the protein your variant lands.
+**AlphaFold DB / PDB / UniProt** — 3D shapes and facts about proteins. Lets you see where in the protein your variant lands. Each is defined properly in §9: **AlphaFold**, **pLDDT**, **mmCIF**, **UniProt accession**.
 
 **DrugBank / ChEMBL / ClinicalTrials.gov / DGIdb / PubChem** — drug databases. Needed for Track 2.
 
@@ -817,7 +838,8 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 
 **Pinning a version** — writing down exactly which release of each database you used, so results can be reproduced later.
 
-**Provenance** — the paper trail: which tool, which version, which settings produced this number.
+**Provenance** — the paper trail behind one number or one file: which tool, at which version, with which settings, reading which inputs, produced it. It is what makes a result *checkable* by someone who was not there. The rule this project holds itself to is that provenance is **recorded by the tool that did the work**, never typed in afterwards — a paper trail a human can edit is a claim about the past, and a claim is exactly the thing provenance is supposed to replace.
+*Example: `ressources/reference/structure_genes.tsv` is 23 gene records; beside it, `structure_genes.provenance.json` says they were resolved by `tools/build_gene_set.py` at commit `cb066b8` against `rest.ensembl.org` release `116` on 2026-09-03.*
 
 ---
 
@@ -956,6 +978,12 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 **Lineage edge** — one row of that record: one output table, one input, one transformation. A derived table with no edge is a table nobody can vouch for. Read the edges with `mva-warehouse lineage-list`.
 *Example: `results.panel_gene_density` ← `warehouse.panel_variant_counts, warehouse.mva_panel_grch38`, tool `mva-warehouse pg-derive`.*
 
+**Provenance manifest** — a small file committed *beside* a data file, saying where that file came from. It is what you write when there is nothing to derive: a public reference table, an ontology release, a gene record, a predicted protein structure are all **fetched**, not computed, so there is no input table and no transformation and a lineage edge for them would be invented. The manifest names the upstream URL and its release instead, the checksum of every input read and every output written, the tool, and the commit it ran at. Written by that tool on every run.
+*Example: `ressources/reference/hpo_provenance.json` and `app/src/fixtures/data/protein/_provenance.json`; `GET /api/provenance/reference` lists every one of them in a single row shape.*
+
+**Provenance vs lineage** — the same question at two grains, and the words are not interchangeable. **Lineage** is an edge in a graph: *this table came from that object by that transform*, and it only exists where something was derived. **Provenance** is the whole paper trail for one artefact, derived or not — which is why fetched reference data has a provenance manifest and no lineage edge. Every lineage edge is provenance; not all provenance is lineage.
+*Example: `warehouse.hpo_gene_scores` has both — a `data_lineage` edge saying the staged Parquet produced it, and `hpo_provenance.json` saying which HPO release the Parquet was computed from. The AlphaFold trace behind a protein exhibit has only the second.*
+
 **Superseding record** — how an append-only table is corrected: you append a *newer* row and say in its `notes` which earlier row it replaces. The wrong row stays, because the fact that the claim changed is itself evidence. Updating in place would destroy that.
 *Example: the first `variants_raw` edge named a laptop path with no checksum; the superseding edge names the verified object in the bucket and carries `supersedes the edge produced at 2026-08-29 16:37:29`.*
 
@@ -1072,6 +1100,36 @@ flowchart LR
 **Lollipop plot** — the standard way to draw variants against a protein: the x axis is amino-acid position, domains are bars along it, and each variant is a stem with a coloured head at its position. It answers "does this change hit a working part?" — the question a genomic coordinate cannot.
 
 **Protein position (`protein_start`)** — which bead in the chain a variant changes, counted from 1. VEP reports it per transcript, and it is **absent** for anything outside the coding sequence — an intronic or splice-region change has no amino acid to name. *Example:* a `missense_variant` at `protein_start: 349` swaps bead 349.
+
+**UniProt accession** — the stable ID of a *protein sequence* in UniProt, the reference catalogue of proteins. Same idea as an Ensembl gene ID, one level down the chain: a gene ID names the recipe, a translation ID (`ENSP…`) names one gene's protein in Ensembl's own numbering, and a UniProt accession names that protein in the numbering the rest of the protein world uses. Six or ten characters, letters and digits. Structure databases are keyed by it, so it is the join key you need before you can ask for a shape. *Example:* BUB1B's protein is `ENSP00000287598` to Ensembl and `O60566` to UniProt — the same 1050 beads, two id systems. Ensembl translates between them at `/xrefs/id/<ENSP>?external_db=Uniprot/SWISSPROT`, whose `primary_id` is the accession. Watch out: the neighbouring `display_id` is `O60566.231`, an accession plus a *sequence version*, and it 404s against a structure database.
+
+**Alpha carbon (Cα)** — the one carbon atom every amino acid has in the same place, in the middle of the bead. Chain them and you get the **backbone**: the protein's spine, as a path through space. A full protein is ~8,000 atoms; its alpha carbons are ~1,000 points, one per bead. That is a ~90 % saving for no loss of the thing you actually want to see, which is the overall fold and how far apart two beads are. *Example:* BUBR1's Cα trace is 1,050 points; residue 1's is at `(27.21, 69.68, 11.46)` **ångström** (Å, a ten-billionth of a metre — the unit atoms are measured in). Two Cα atoms within ~8 Å are touching in space, however far apart they are along the sequence.
+
+**Ångström (Å)** — the unit every atomic coordinate in a structure file is written in: 10⁻¹⁰ m, a ten-billionth of a metre. It exists because metres and nanometres are the wrong size for atoms — in ångström the numbers a reader cares about are single- and double-digit. The three scales worth memorising: a chemical bond is ~1.5 Å, two consecutive **alpha carbons** are ~3.8 Å apart, and a whole protein **domain** is ~30–40 Å across. *Example:* BUBR1's Cα for residue 1 sits at `(27.21, 69.68, 11.46)` Å in the model's own frame — an arbitrary origin, so only *differences* between two points mean anything, never a single coordinate.
+
+**Cα distance** — the straight-line distance between two residues' **alpha carbons**, in **ångström**. It is the one number that answers "are these two changes hitting the same place?", and it is the reason a 3D view earns its place over a **lollipop plot**: a protein folds, so distance along the sequence is a poor proxy for distance in space. Two residues 300 amino acids apart on the chain can pack into one pocket, and two neighbours on the chain can point at opposite faces. Read it as a geometric band, not a verdict: under ~10 Å the two residues could share one binding pocket, 10–25 Å puts them in the same lobe of the fold, and beyond ~25 Å they are separate sites. Two caveats ride with every number: on an **AlphaFold** model a distance is only as good as the **pLDDT** at *both* ends (below 70 it is not quotable), and a short distance is a mechanism *hypothesis*, never a demonstration that either change breaks the other's function. *Example:* in the app's protein exhibit the picked pair is drawn as a line labelled `12.3 Å`.
+
+**Secondary structure** — the two local shapes a stretch of backbone repeatedly folds into: an **alpha helix** (a corkscrew) and a **beta strand** (a flat extended piece; several side by side make a **sheet**). Everything else is **coil** or **loop**. It is the layer between the bare sequence (primary structure) and the whole 3D fold (tertiary structure) — think of it as the paragraph structure of the protein. Useful because a variant in the middle of a helix and one in a floppy loop are different risks. *Example:* residues 4–23 of BUBR1 are a helix; 1–2 are a strand. Absence of an annotation means **not annotated**, never "all coil" — a file that carries no secondary-structure table is silent, not flat.
+
+**AlphaFold** — DeepMind's neural network that **predicts** a protein's 3D shape from its amino-acid sequence alone, and **AlphaFold DB** (`alphafold.ebi.ac.uk`) the free database of its predictions for essentially every known protein. It exists because measuring a real structure in a lab takes months per protein, and most proteins have never been measured. The word to keep in front of you is *prediction*: an AlphaFold model is a hypothesis about shape, and quoting one as if it were a measurement is a claim you have not earned — which is what **pLDDT** below is for. Keyed by **UniProt accession**, returns one entry per isoform, and every model has a **version** you must read from the reply rather than compose. *Example:* `GET https://alphafold.ebi.ac.uk/api/prediction/O60566` answers with three isoform models — `AF-O60566-F1` (1050 beads), `-2-F1` (933), `-3-F1` (1064) — each at `latestVersion: 6`. Picking the wrong one paints bead 349 of your variant onto bead 349 of a different protein. Contrast the **PDB** (Protein Data Bank), which holds *experimentally measured* structures — far fewer, usually partial, but measured.
+
+**pLDDT** — AlphaFold's own confidence in **each individual bead's** position, 0–100 (the name is "predicted local distance difference test"). It is the honesty channel of a predicted structure, and the numbers have conventional meanings: **above 90** the bead's position is reliable to atomic detail; **70–90** the backbone is about right; **50–70** treat with caution; **below 50** the region is probably **intrinsically disordered** — floppy, with no single shape to predict, so the coordinates are close to meaningless. A prediction with low pLDDT is not a broken prediction; it is a correct statement that the answer is unknown, and drawing it in the same colour as a confident region is the mistake. *Example:* BUBR1's model scores 63.59 overall with **37.3 %** of its beads at very-low pLDDT, so more than a third of that protein supports no spatial claim at all. Any exhibit painting it has to show pLDDT, or it is asserting shape it does not have.
+
+**mmCIF (macromolecular Crystallographic Information File)** — the standard text format for 3D structures, and the modern replacement for the old fixed-column PDB format. In software terms: a bundle of CSVs in one file, with named headers. A **category** is a table; a table with many rows is written as `loop_`, then one `_category.column` line per column, then whitespace-separated data rows. The table you want is `_atom_site`, one row per atom. *Example* — the first two atoms of BUBR1, with the columns lined up above them:
+
+```
+loop_
+_atom_site.group_PDB   _atom_site.id            _atom_site.type_symbol
+_atom_site.label_atom_id  _atom_site.label_alt_id  _atom_site.label_comp_id
+_atom_site.label_asym_id  _atom_site.label_entity_id  _atom_site.label_seq_id
+_atom_site.pdbx_PDB_ins_code  _atom_site.Cartn_x  _atom_site.Cartn_y
+_atom_site.Cartn_z  _atom_site.occupancy  _atom_site.B_iso_or_equiv  …
+
+ATOM 1 N N  . MET A 1 1 ? 26.584 70.797 10.710 1.00 42.81 ?   ← the nitrogen of bead 1
+ATOM 2 C CA . MET A 1 1 ? 27.212 69.682 11.463 1.00 42.81 ?   ← the alpha carbon of bead 1
+```
+
+Read it as: keep rows where `label_atom_id` is `CA`, and each gives you one bead — its number (`label_seq_id`), its three-letter name (`label_comp_id`, `MET` = methionine = `M`), its position (`Cartn_x/y/z`), and its confidence. The confidence column is the trap: `B_iso_or_equiv` is a crystallographic *B-factor* in an experimental PDB entry, but AlphaFold reuses the same column for **pLDDT**, so the same number means two different things depending on which file you opened. Secondary structure, when present, lives in `_struct_conf` (helices as `conf_type_id` starting `HELX`; AlphaFold also writes strands here as `STRN`) and, in experimental entries, `_struct_sheet_range`.
 
 ---
 

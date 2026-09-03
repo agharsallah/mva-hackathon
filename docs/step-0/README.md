@@ -105,6 +105,7 @@ every methodology entry is a test bound to a claim. That loop is
 | [The chr-prefix bridge](notes/chr-prefix-bridge.md) | firm — one function, enforced by test |
 | [Toolchain choice](notes/toolchain-choice.md) | provisional |
 | [Colour is generated](notes/colour-is-generated.md) | firm — one generator, four gates |
+| [three.js behind one wrapper](notes/three-js-behind-one-wrapper.md) | provisional — designed 2026-09-03, not built |
 
 Cross-step decisions — [no patient data](../notes/no-patient-data-in-the-repository.md),
 [synthetic fixtures](../notes/synthetic-fixtures.md) — stay in

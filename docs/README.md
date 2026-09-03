@@ -91,6 +91,7 @@ provisional, what would prompt a rethink. Full register with results:
 | [The chr-prefix bridge](step-0/notes/chr-prefix-bridge.md) | step 0 | firm — one function, enforced by test |
 | [Colour is generated](step-0/notes/colour-is-generated.md) | step 0 | firm — one generator, four gates |
 | [Toolchain choice](step-0/notes/toolchain-choice.md) | step 0 | provisional |
+| [three.js behind one wrapper](step-0/notes/three-js-behind-one-wrapper.md) | step 0 | provisional — designed 2026-09-03, not built |
 | [A hand-rolled VCF reader](notes/hand-rolled-vcf-reader.md) | pipeline | provisional |
 | [A local replica of the scorer](notes/local-scorer-replica.md) | pipeline | settled for the challenge |
 | [Annotation enters through a port](notes/annotation-as-a-port.md) | pipeline | port settled, backend open |
