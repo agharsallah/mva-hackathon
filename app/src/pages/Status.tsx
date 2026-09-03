@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 
+import { HEALTH_POLL_MS } from '../api/hooks';
 import { Explainer, Section } from '../components';
 import { DependencyBoard } from './status/DependencyBoard';
 import { OverallVerdict } from './status/OverallVerdict';
@@ -15,6 +16,10 @@ import { useRefreshRequested } from './status/useRefresh';
  * only tells a developer *that* something is broken; this page's job is to also say
  * *what* to run next, inline, on the card itself.
  */
+/** Derived from the constant the hook actually polls on, so the sentence cannot drift
+ * from the cadence again — it already had, after the interval was raised. */
+const POLL_MINUTES = Math.round(HEALTH_POLL_MS / 60_000);
+
 export default function StatusPage() {
   const forced = useRefreshRequested();
   return (
@@ -65,13 +70,24 @@ export default function StatusPage() {
             term: 'latency',
             plain: 'how long the probe itself took to answer, in milliseconds',
           },
+          {
+            term: 'budget (timeout)',
+            plain:
+              'how long that check is allowed to take before it is reported down — per check, because a Postgres greet over the network is not a ping to this process. Raise one with MVA_HEALTH_TIMEOUTS=<check>=<seconds>, or raise the floor for all of them with MVA_HEALTH_TIMEOUT',
+          },
+          {
+            term: 'masked address',
+            plain:
+              'hosts and ports render as •••• until you reveal them, per card or for the whole board. Presentation hygiene for a screenshot, not a secret: the values are in the response either way',
+          },
         ]}
-        caveat="This page reads a health endpoint like any other — the states shown are whatever it reports at the moment you loaded the page, then re-checked every 10 minutes. Probing costs real round trips to Postgres, MinIO and Ensembl, so it is deliberately quiet; use Re-probe now when you have just restarted something. In fixture mode (no backend running) every state below is illustrative, not measured — the fixture's source string says so."
+        caveat={`This page reads a health endpoint like any other — the states shown are whatever it reports at the moment you loaded the page, then re-checked every ${POLL_MINUTES} minutes. Probing costs real round trips to Postgres, MinIO and Ensembl, so it is deliberately quiet: after restarting one service use that card's own re-probe, which measures only that dependency and leaves the other six as last measured (each card says how old its own answer is). Re-probe now re-measures all seven. In fixture mode (no backend running) every state below is illustrative, not measured — the fixture's source string says so, and the per-card re-probe is disabled because there is nothing to probe.`}
       />
 
       <div className="flex flex-wrap items-baseline justify-between gap-2 text-[11px] text-chrome-500">
         <span>
-          Probed on load, then every 10 minutes. The API caches one probe round for ~10 s.
+          Probed on load, then every {POLL_MINUTES} minutes. The API caches each check&apos;s result
+          for ~10 s.
         </span>
         {forced ? (
           <span className="text-decision-400">

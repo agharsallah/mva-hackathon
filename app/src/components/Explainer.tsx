@@ -62,15 +62,26 @@ export function Explainer({ intro, terms, caveat }: ExplainerProps) {
 export function Callout({
   tone = 'decision',
   title,
+  action,
   children,
 }: {
   tone?: Tone;
   title: string;
+  /**
+   * A control that acts on *this* callout, pinned to the title row — the Status page's
+   * per-dependency "re-probe" button. Optional, so every existing call site is unchanged;
+   * it exists because a card that reports one service's state is also the only sensible
+   * place to put the button that re-measures that service.
+   */
+  action?: ReactNode;
   children: ReactNode;
 }) {
   return (
     <div className={cx('rounded-xl border p-4', BOX[tone])}>
-      <div className="text-xs font-semibold uppercase tracking-wider">{title}</div>
+      <div className="flex items-start justify-between gap-3">
+        <div className="text-xs font-semibold uppercase tracking-wider">{title}</div>
+        {action && <div className="shrink-0">{action}</div>}
+      </div>
       <div className="mt-1.5 text-sm leading-relaxed text-chrome-300">{children}</div>
     </div>
   );

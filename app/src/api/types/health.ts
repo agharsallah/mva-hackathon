@@ -25,6 +25,14 @@ export interface DependencyCheck {
   status: HealthStatus;
   /** Integer milliseconds; `null` when skipped. */
   latency_ms: number | null;
+  /** This check's own timeout budget in ms — the number a `timed out after Ns` blew
+   * through, and the one `MVA_HEALTH_TIMEOUTS` changes. Per check, because the probes
+   * cost wildly different amounts (a WAN Postgres greet vs. pinging this process). */
+  timeout_ms: number;
+  /** When *this row* was measured. Per check rather than per payload, because
+   * `?only=<id>` re-probes one service and serves the rest as last measured — the board
+   * must be able to say which cards are older than the page. */
+  checked_at: string;
   /** One line, what was actually observed. Never a secret. */
   detail: string;
   /** Actionable text, may be multi-line shell advice; `null` when status is `up`. */
@@ -36,6 +44,8 @@ export interface DependencyCheck {
 }
 
 export interface HealthDependencies {
+  /** When this payload was assembled. Individual rows may be older — see
+   * `DependencyCheck.checked_at`. */
   checked_at: string;
   /** `down` if any `internal` check is down; else `degraded` if any check is down or
    * degraded; else `up`. `skipped` never degrades this. */

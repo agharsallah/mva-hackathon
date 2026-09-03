@@ -1,66 +1,30 @@
-import { useHealthDependencies } from '../../api/hooks';
-import type { DependencyCheck } from '../../api/types';
-import { Badge, Callout, Chip, Exhibit, FieldList, Loaded } from '../../components';
-import { int } from '../../lib/format';
+import { useState } from 'react';
+
+import { useHealthDependencies, useReprobeCheck } from '../../api/hooks';
+import { Badge, Chip, ErrorCard, Exhibit, Loaded, Toggle } from '../../components';
 import { C } from '../../lib/palette';
-import { endpointFor } from './configured';
+import { DependencyCard } from './DependencyCard';
 import { useRefreshRequested } from './useRefresh';
-import { groupChecks, statusLabel, statusTone } from './verdict';
+import { groupChecks } from './verdict';
 
 /**
- * One card per check, grouped by `kind`. This is the point of the page: a broken
- * dependency has to leave behind a message a developer can act on, not a red dot. So the
- * card's `remedy` — multi-line shell advice from the endpoint — is rendered as
- * preformatted, wrapping text inside the card itself, not tucked behind a hover or a link.
+ * The board: one card per check, grouped by `kind`, plus the two controls that act on the
+ * board as a whole.
+ *
+ * `reveal addresses` flips every card's host and port from masked to plain in one click —
+ * the per-card toggle is for looking at one thing, this is for working. Masked is the
+ * default because this page is all infrastructure addresses and it gets screenshotted; see
+ * `redact.ts` for what that does and does not protect.
+ *
+ * Re-probing is per card (`useReprobeCheck`), so restarting one service costs one probe
+ * instead of a round trip to Postgres, MinIO, the reads API and Ensembl at once.
  */
-function DependencyCard({ check, origin }: { check: DependencyCheck; origin: 'api' | 'fixture' }) {
-  const tone = statusTone(check.status);
-  // Offline, the committed fixture cannot know this checkout's hosts, so the address comes
-  // from the repo-root .env instead and says so — a loopback placeholder would be a lie
-  // for anyone whose services run on a server.
-  const endpoint = endpointFor(check.id, check.endpoint, origin);
-  const fields = [
-    {
-      key: 'latency',
-      label: 'latency',
-      value: check.latency_ms === null ? '—' : `${int(check.latency_ms)} ms`,
-    },
-    {
-      key: 'endpoint',
-      label: 'endpoint',
-      value: endpoint
-        ? `${endpoint.value}${endpoint.fromEnv ? '  (configured in .env)' : ''}`
-        : '—',
-    },
-    {
-      key: 'powers',
-      label: 'powers',
-      value: check.powers.length > 0 ? check.powers.join(', ') : '— (no page depends on this)',
-    },
-  ];
-
-  return (
-    <Callout tone={tone} title={`${check.name} — ${statusLabel(check.status)}`}>
-      <div className="space-y-3">
-        <p>{check.detail}</p>
-        <FieldList fields={fields} labelWidth={64} />
-        {check.remedy && (
-          <div>
-            <div className="text-[11px] font-semibold uppercase tracking-wider text-chrome-200">
-              {check.status === 'skipped' ? 'How to enable it (optional)' : 'Remedy'}
-            </div>
-            <pre className="mt-1 max-w-full overflow-x-auto whitespace-pre-wrap break-words rounded-md border border-chrome-700/60 bg-black/25 p-3 font-mono text-[11px] leading-relaxed text-chrome-100">
-              {check.remedy}
-            </pre>
-          </div>
-        )}
-      </div>
-    </Callout>
-  );
-}
-
 export function DependencyBoard() {
-  const q = useHealthDependencies(useRefreshRequested());
+  const forced = useRefreshRequested();
+  const q = useHealthDependencies(forced);
+  const { reprobe, pendingId, error } = useReprobeCheck(forced);
+  const [revealAll, setRevealAll] = useState(false);
+  const origin = q.data?.origin ?? 'api';
 
   return (
     <Exhibit
@@ -77,12 +41,23 @@ export function DependencyBoard() {
           service).
         </>
       }
-      reading="A red or yellow card carries its Remedy inline — the shell commands a developer would actually run — rather than a status dot. `powers` names the pages that stop working while it stays that way."
+      reading="A red or yellow card carries its Remedy inline — the shell commands a developer would actually run — rather than a status dot. `powers` names the pages that stop working while it stays that way. Each card says when it was last probed and against what timeout budget, and re-probes on its own without touching the other six."
       data={q.data?.data}
       source={q.data?.source}
       cachedAt={q.data?.cachedAt}
       origin={q.data?.origin}
     >
+      <div className="mb-3 flex flex-wrap items-center gap-3">
+        <Toggle on={revealAll} onChange={setRevealAll}>
+          {revealAll ? 'addresses shown' : 'reveal addresses'}
+        </Toggle>
+        <span className="text-[11px] text-chrome-600">
+          hosts and ports are hidden by default — this page is all infrastructure addresses and gets
+          screenshotted
+        </span>
+      </div>
+      {error && <ErrorCard error={error} />}
+
       <Loaded query={q} height={420}>
         {(data) => (
           <div className="space-y-5">
@@ -101,7 +76,14 @@ export function DependencyBoard() {
                   </div>
                   <div className="grid gap-3 lg:grid-cols-2">
                     {checks.map((c) => (
-                      <DependencyCard key={c.id} check={c} origin={q.data?.origin ?? 'api'} />
+                      <DependencyCard
+                        key={c.id}
+                        check={c}
+                        origin={origin}
+                        revealAll={revealAll}
+                        reprobing={pendingId === c.id}
+                        onReprobe={reprobe}
+                      />
                     ))}
                   </div>
                 </div>

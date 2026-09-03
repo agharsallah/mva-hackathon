@@ -67,6 +67,27 @@ export function statusLabel(status: HealthStatus): string {
   return status === 'skipped' ? 'not configured' : status;
 }
 
+/** Seconds between a check's own `checked_at` and now — how old that one card is. */
+export function probeAge(checkedAt: string, now: number = Date.now()): number {
+  const measured = Date.parse(checkedAt);
+  if (Number.isNaN(measured)) return 0;
+  return Math.max(0, Math.round((now - measured) / 1000));
+}
+
+/**
+ * "just now" / "3 m ago" / "2 h ago" — the age of one row, in the coarsest useful unit.
+ *
+ * Needed because rows on this board no longer share one timestamp: re-probing a single
+ * service leaves the other six as last measured, and a card claiming `up` has to say how
+ * long ago that was true.
+ */
+export function agoLabel(seconds: number): string {
+  if (seconds < 10) return 'just now';
+  if (seconds < 90) return `${seconds} s ago`;
+  if (seconds < 5400) return `${Math.round(seconds / 60)} m ago`;
+  return `${Math.round(seconds / 3600)} h ago`;
+}
+
 export interface Verdict {
   overall: HealthStatus;
   working: DependencyCheck[];
