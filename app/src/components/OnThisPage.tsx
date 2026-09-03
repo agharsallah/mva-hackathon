@@ -9,17 +9,11 @@
  * remembered (`lib/rail.ts`).
  */
 
-import { useEffect, useId, useState, useSyncExternalStore } from 'react';
+import { useEffect, useId, useState } from 'react';
 
 import { railStore, useRailOpen } from '../lib/rail';
-import { type SectionEntry, sectionRegistry } from '../lib/sections';
+import { type SectionEntry, useSections } from '../lib/sections';
 import { CONTROL, cx } from '../lib/ui';
-
-function useSections(): SectionEntry[] {
-  const version = useSyncExternalStore(sectionRegistry.subscribe, sectionRegistry.version);
-  void version; // read, so a registry change re-runs the list
-  return sectionRegistry.list();
-}
 
 /** The id of the section currently under the header, tracked with an IntersectionObserver. */
 function useActiveSection(sections: SectionEntry[]): string | null {

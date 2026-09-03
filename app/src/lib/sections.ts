@@ -5,6 +5,8 @@
  * `useSyncExternalStore`.
  */
 
+import { useSyncExternalStore } from 'react';
+
 export interface SectionEntry {
   /** The DOM id, also the `#anchor`. */
   id: string;
@@ -54,3 +56,19 @@ export const sectionRegistry = {
     );
   },
 };
+
+/** Mounted sections, re-read whenever one registers or leaves. */
+export function useSections(): SectionEntry[] {
+  const version = useSyncExternalStore(sectionRegistry.subscribe, sectionRegistry.version);
+  void version; // read, so a registry change re-runs the list
+  return sectionRegistry.list();
+}
+
+/**
+ * Whether the page has enough sections for a rail. Below two there is nothing to navigate,
+ * so `OnThisPage` renders nothing — and `PageFrame` must not reserve its column either, or a
+ * page that brings its own left rail (Learn) is pushed right by an empty gutter.
+ */
+export function useHasSectionRail(): boolean {
+  return useSections().length >= 2;
+}

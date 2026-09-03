@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { JumpToSection, OnThisPage } from '../components/OnThisPage';
 import { JourneyFooter, type JourneyLink, PageHeader } from '../components/PageHeader';
 import { useRailOpen } from '../lib/rail';
+import { useHasSectionRail } from '../lib/sections';
 import { groupOf, moduleAt, neighbours, positionInGroup } from './modules/journey';
 import type { FeatureModule } from './modules/types';
 
@@ -29,6 +30,7 @@ function link(
 export function PageFrame({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
   const railOpen = useRailOpen();
+  const hasRail = useHasSectionRail();
   const m = moduleAt(pathname);
   if (!m) return <>{children}</>;
 
@@ -47,16 +49,22 @@ export function PageFrame({ children }: { children: ReactNode }) {
         next={next && { to: next.path, label: next.navLabel, preload: () => void next.load() }}
       />
       <JumpToSection />
+      {/* The rail column exists only when the page has sections to list: a page that
+          brings its own left rail (Learn) takes the full width. */}
       <div
         className={
-          railOpen
-            ? 'xl:grid xl:grid-cols-[11rem_minmax(0,1fr)] xl:items-start xl:gap-10'
-            : 'xl:grid xl:grid-cols-[auto_minmax(0,1fr)] xl:items-start xl:gap-6'
+          !hasRail
+            ? undefined
+            : railOpen
+              ? 'xl:grid xl:grid-cols-[11rem_minmax(0,1fr)] xl:items-start xl:gap-10'
+              : 'xl:grid xl:grid-cols-[auto_minmax(0,1fr)] xl:items-start xl:gap-6'
         }
       >
-        <div className="sticky top-28 hidden xl:block">
-          <OnThisPage />
-        </div>
+        {hasRail && (
+          <div className="sticky top-28 hidden xl:block">
+            <OnThisPage />
+          </div>
+        )}
         <div className="min-w-0 space-y-6">
           {children}
           <JourneyFooter prev={link(prev)} next={link(next)} />
