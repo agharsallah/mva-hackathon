@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom';
 
 import { JumpToSection, OnThisPage } from '../components/OnThisPage';
 import { JourneyFooter, type JourneyLink, PageHeader } from '../components/PageHeader';
+import { useRailOpen } from '../lib/rail';
 import { groupOf, moduleAt, neighbours, positionInGroup } from './modules/journey';
 import type { FeatureModule } from './modules/types';
 
@@ -27,6 +28,7 @@ function link(
 
 export function PageFrame({ children }: { children: ReactNode }) {
   const { pathname } = useLocation();
+  const railOpen = useRailOpen();
   const m = moduleAt(pathname);
   if (!m) return <>{children}</>;
 
@@ -45,13 +47,19 @@ export function PageFrame({ children }: { children: ReactNode }) {
         next={next && { to: next.path, label: next.navLabel, preload: () => void next.load() }}
       />
       <JumpToSection />
-      <div className="xl:grid xl:grid-cols-[minmax(0,1fr)_12rem] xl:items-start xl:gap-10">
+      <div
+        className={
+          railOpen
+            ? 'xl:grid xl:grid-cols-[11rem_minmax(0,1fr)] xl:items-start xl:gap-10'
+            : 'xl:grid xl:grid-cols-[auto_minmax(0,1fr)] xl:items-start xl:gap-6'
+        }
+      >
+        <div className="sticky top-28 hidden xl:block">
+          <OnThisPage />
+        </div>
         <div className="min-w-0 space-y-6">
           {children}
           <JourneyFooter prev={link(prev)} next={link(next)} />
-        </div>
-        <div className="sticky top-28 hidden xl:block">
-          <OnThisPage />
         </div>
       </div>
     </>

@@ -6,6 +6,7 @@
 import { type KeyboardEvent, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { railStore, useRailOpen } from '../lib/rail';
 import { sectionRegistry } from '../lib/sections';
 import { themeStore, useTheme } from '../lib/theme';
 import { cx } from '../lib/ui';
@@ -24,6 +25,7 @@ function useItems(close: () => void): Item[] {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const theme = useTheme();
+  const railOpen = useRailOpen();
   return useMemo(() => {
     const pages: Item[] = groups.flatMap((g) =>
       g.pages.map((p) => ({
@@ -67,6 +69,15 @@ function useItems(close: () => void): Item[] {
         },
       },
       {
+        id: 'action:rail',
+        group: 'Actions',
+        label: railOpen ? 'Hide the section rail' : 'Show the section rail',
+        run: () => {
+          railStore.toggle();
+          close();
+        },
+      },
+      {
         id: 'action:top',
         group: 'Actions',
         label: 'Back to top',
@@ -79,7 +90,7 @@ function useItems(close: () => void): Item[] {
     return [...sections, ...pages, ...actions];
     // pathname is a dependency on purpose: the section list changes with the page.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groups, navigate, theme, close, pathname]);
+  }, [groups, navigate, theme, railOpen, close, pathname]);
 }
 
 function matches(item: Item, q: string): boolean {

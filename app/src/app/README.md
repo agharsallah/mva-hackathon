@@ -47,7 +47,7 @@ manifest), the headline `Callout` (the finding), the `Explainer` (background, te
 chips), then the sections, then the journey hand-off. Answer first, background second.
 
 Within a page, `PageFrame` lays out two columns at `xl` and up: the content column, and a
-sticky rail beside it holding `OnThisPage`. Below `xl` the rail is replaced by the compact
+sticky rail to its left holding `OnThisPage` (collapsible to a "Contents" button; the grid's first column shrinks to fit, see `lib/rail.ts`). Below `xl` the rail is replaced by the compact
 `JumpToSection` select under the page header. Neither is wired by a page — both read the
 section registry (`lib/sections.ts`), which every mounted `Section` announces itself to, as
 does the ⌘K palette in the header. So a page gets in-page navigation by rendering `Section`s,

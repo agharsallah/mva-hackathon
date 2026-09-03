@@ -3,10 +3,15 @@
  * registry) in document order and marks the one in view, so a long page such as Panel is
  * navigable without scrolling blind. At `xl` and up it is a sticky rail beside the content;
  * below that the same list is a compact "Jump to" select under the page header.
+ *
+ * The rail can be hidden. Hidden, it leaves a slim "Contents" button in its place so the
+ * content column gets the width back and the way to reopen stays visible; the choice is
+ * remembered (`lib/rail.ts`).
  */
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useId, useState, useSyncExternalStore } from 'react';
 
+import { railStore, useRailOpen } from '../lib/rail';
 import { type SectionEntry, sectionRegistry } from '../lib/sections';
 import { CONTROL, cx } from '../lib/ui';
 
@@ -53,11 +58,39 @@ function jump(entry: SectionEntry) {
 export function OnThisPage() {
   const sections = useSections();
   const active = useActiveSection(sections);
+  const open = useRailOpen();
+  const listId = useId();
   if (sections.length < 2) return null;
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => railStore.set(true)}
+        aria-expanded={false}
+        aria-controls={listId}
+        title="Show the list of sections on this page"
+        className={cx(CONTROL, 'hidden text-chrome-400 xl:block')}
+      >
+        Contents
+      </button>
+    );
+  }
   return (
     <nav aria-label="On this page" className="hidden xl:block">
-      <p className="text-xs font-medium text-chrome-400">On this page</p>
-      <ol className="mt-2 border-l border-line">
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-xs font-medium text-chrome-400">On this page</p>
+        <button
+          type="button"
+          onClick={() => railStore.set(false)}
+          aria-expanded={true}
+          aria-controls={listId}
+          title="Hide the list of sections"
+          className="rounded-pill px-1.5 py-0.5 text-micro text-chrome-500 transition hover:bg-panel-raised hover:text-chrome-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-focus"
+        >
+          Hide
+        </button>
+      </div>
+      <ol id={listId} className="mt-2 border-l border-line">
         {sections.map((s) => {
           const on = s.id === active;
           return (

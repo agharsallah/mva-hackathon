@@ -73,7 +73,7 @@ describe('the ⌘K palette', () => {
     // Then the journey's pages, by title, hinted with their group and nav label.
     expect(options[3]?.textContent).toBe('The callsetData · Callset');
     expect(options[4]?.textContent).toBe('The readsData · Reads');
-    expect(options).toHaveLength(8); // 3 sections + 2 pages + 3 actions
+    expect(options).toHaveLength(9); // 3 sections + 2 pages + 4 actions
   });
 
   it('filters the listbox to what was typed', async () => {

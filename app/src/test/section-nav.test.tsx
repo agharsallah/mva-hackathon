@@ -19,6 +19,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { Section } from '../components/Controls';
 import { JourneyProvider } from '../components/journey';
 import { JumpToSection, OnThisPage } from '../components/OnThisPage';
+import { railStore } from '../lib/rail';
 import {
   expectNoAxeViolations,
   GROUPS,
@@ -88,6 +89,23 @@ describe('the "On this page" rail', () => {
     expect(scrollIntoView).toHaveBeenCalledTimes(1);
     expect(jumpedTo(scrollIntoView).id).toBe('zygosity-split');
     expect(window.location.hash).toBe('#zygosity-split');
+  });
+
+  it('hides to a "Contents" button and comes back, remembering the choice', async () => {
+    const user = userEvent.setup();
+    mount(rail);
+    const nav = await screen.findByRole('navigation', { name: 'On this page' });
+
+    await user.click(within(nav).getByRole('button', { name: 'Hide' }));
+    expect(screen.queryByRole('navigation', { name: 'On this page' })).toBeNull();
+    const show = screen.getByRole('button', { name: 'Contents' });
+    expect(show.getAttribute('aria-expanded')).toBe('false');
+    expect(window.localStorage.getItem('mva.rail')).toBe('closed');
+
+    await user.click(show);
+    expect(await screen.findByRole('navigation', { name: 'On this page' })).toBeTruthy();
+    expect(window.localStorage.getItem('mva.rail')).toBe('open');
+    railStore.set(true);
   });
 
   it('renders nothing with a single section — a one-item rail is noise', () => {
