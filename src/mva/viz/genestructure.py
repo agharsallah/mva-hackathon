@@ -38,10 +38,11 @@ import httpx
 
 from ..pipeline.variant import Variant
 from ..pipeline.vep_response import query_line
-from . import panelbed, queries
-
-#: The public Ensembl REST server. Same host the panel annotation ran against.
-ENSEMBL_BASE = "https://rest.ensembl.org"
+from . import geneset, panelbed, queries
+from .ensembl import ENSEMBL_BASE, EnsemblError
+from .ensembl import as_int as _int
+from .ensembl import get as _get
+from .ensembl import post as _post
 
 #: Feature sources that describe a *domain* — a conserved, independently folding part of
 #: the protein. Matched case-insensitively because Ensembl spells them ``Smart``,
@@ -66,15 +67,19 @@ DOMAIN_SOURCES = frozenset(
 #: What the endpoint reports as its provenance.
 SOURCE = (
     "ensembl rest /lookup/id + /overlap/translation + /vep/homo_sapiens/region, "
-    "pg.results.panel_candidates, ressources/data-profile/mva_panel_grch38.bed"
+    "pg.results.panel_candidates, ressources/data-profile/mva_panel_grch38.bed, "
+    "ressources/reference/structure_genes.tsv"
 )
 
 #: Consequence suffix stripped when building a short human label.
 _SUFFIX = "_variant"
 
-
-class EnsemblError(RuntimeError):
-    """Ensembl REST could not be reached or refused a request. Never faked around."""
+#: Re-exported: the HTTP layer moved to :mod:`mva.viz.ensembl` when this module hit the
+#: 400-line limit, but ``ENSEMBL_BASE`` and ``EnsemblError`` are what every caller and
+#: every test already imports from here, and renaming those at 20 call sites would be
+#: churn for nothing. ``_get`` / ``_post`` / ``_int`` are aliased at import for the same
+#: reason. See ``docs/step-0/methodology/060``.
+__all__ = ["ENSEMBL_BASE", "EnsemblError", "anatomy", "structure"]
 
 
 def structure(
@@ -85,36 +90,77 @@ def structure(
     base_url: str = ENSEMBL_BASE,
     timeout: float = 30.0,
 ) -> dict:
-    """Assemble one gene's exon/domain/candidate payload. ``LookupError`` if off-panel."""
-    ensembl_id = panel_gene(gene)
+    """Assemble one gene's exon/domain/candidate payload.
+
+    ``LookupError`` if the symbol is in neither the panel BED nor the curated gene set.
+
+    Three branches, and the payload states which one it took rather than making them look
+    alike:
+
+    * **in the panel** — the annotated eight. ``in_panel`` is true and ``candidates``
+      carries the proband's protein-altering alleles.
+    * **off-panel** — a gene from ``ressources/reference/structure_genes.tsv``. The
+      warehouse is not read *at all* (no ``panel_candidates`` query, no VEP POST, so no
+      patient coordinate leaves the process) and ``candidates`` is empty because no
+      annotation was ever run there — not because nothing was found.
+    * **non-coding** — a lncRNA has no translation, so ``protein`` is null and ``domains``
+      is empty. The exon track is still the real thing, which is the whole exhibit for a
+      gene that makes no protein.
+    """
+    gene, ensembl_id, in_panel = geneset.resolve(gene)
     own = client is None
     client = client or httpx.Client(timeout=timeout)
     try:
-        lookup = _get(client, base_url, f"/lookup/id/{ensembl_id}?expand=1")
-        transcript = pick_transcript(lookup)
-        translation = transcript.get("Translation") or {}
-        protein_id = translation.get("id")
-        domains = fetch_domains(client, base_url, protein_id) if protein_id else []
-        rows = protein_altering(settings, gene)
-        placed, failure = protein_positions(client, base_url, rows, transcript.get("id"))
+        payload = anatomy(client, gene, ensembl_id, in_panel, base_url=base_url)
+        rows = protein_altering(settings, gene) if in_panel else []
+        placed, failure = protein_positions(client, base_url, rows, payload["transcript"])
     finally:
         if own:
             client.close()
 
+    payload["candidates"] = [candidate(row, placed, failure, payload["transcript"]) for row in rows]
+    return payload
+
+
+def anatomy(
+    client: httpx.Client,
+    gene: str,
+    ensembl_id: str,
+    in_panel: bool,
+    *,
+    base_url: str = ENSEMBL_BASE,
+) -> dict:
+    """The whole payload **except** ``candidates``, which is left empty.
+
+    Split out of :func:`structure` because this half is the part that reads nothing but
+    public reference APIs: two GETs, no warehouse table, no VEP POST, so no patient
+    coordinate is transmitted or returned. That makes it the half an off-panel gene needs
+    (there are no candidates to add) *and* the half ``tools/build_protein_fixture.py``
+    needs, which builds committed fixtures on a checkout with no database at all.
+
+    ``protein`` is null and ``domains`` empty for a transcript with no translation — a
+    lncRNA's real exon track, which is the entire exhibit for a gene that makes no protein.
+    """
+    lookup = _get(client, base_url, f"/lookup/id/{ensembl_id}?expand=1")
+    transcript = pick_transcript(lookup)
+    translation = transcript.get("Translation") or {}
+    protein_id = translation.get("id")
+    strand = _int(lookup.get("strand")) or 1
     return {
         "gene": gene,
         "ensembl_id": ensembl_id,
         "chrom": str(lookup.get("seq_region_name") or ""),
         "start": _int(lookup.get("start")),
         "end": _int(lookup.get("end")),
-        "strand": _int(lookup.get("strand")) or 1,
+        "strand": strand,
         "biotype": lookup.get("biotype"),
         "transcript": transcript.get("id"),
         "protein": protein_id,
         "protein_length": _int(translation.get("length")),
-        "exons": exons(transcript, _int(lookup.get("strand")) or 1),
-        "domains": domains,
-        "candidates": [candidate(row, placed, failure, transcript.get("id")) for row in rows],
+        "exons": exons(transcript, strand),
+        "domains": fetch_domains(client, base_url, protein_id) if protein_id else [],
+        "in_panel": in_panel,
+        "candidates": [],
     }
 
 
@@ -327,38 +373,3 @@ def _protein_start(item: dict, transcript_id: str | None) -> int | None:
         if start is not None:
             return start
     return None
-
-
-def _int(value: Any) -> int | None:
-    try:
-        return int(value)
-    except (TypeError, ValueError):
-        return None
-
-
-def _get(client: httpx.Client, base_url: str, path: str) -> Any:
-    return _call(client, "GET", base_url, path, None)
-
-
-def _post(client: httpx.Client, base_url: str, path: str, payload: dict) -> Any:
-    return _call(client, "POST", base_url, path, payload)
-
-
-def _call(client: httpx.Client, method: str, base_url: str, path: str, payload: dict | None) -> Any:
-    """One REST call, with every failure turned into :class:`EnsemblError`.
-
-    No retry loop here on purpose: this is a request-scoped fetch behind a disk cache, so
-    the cheap recovery is the caller pressing refresh, and a retry would only lengthen the
-    time the browser spends waiting on an outage it should be told about.
-    """
-    url = f"{base_url.rstrip('/')}{path}"
-    try:
-        response = client.request(method, url, json=payload, headers={"Accept": "application/json"})
-    except httpx.HTTPError as error:
-        raise EnsemblError(f"{method} {url}: {type(error).__name__}: {error}") from error
-    if response.status_code != 200:
-        raise EnsemblError(f"{method} {url} -> {response.status_code}: {response.text[:200]}")
-    try:
-        return response.json()
-    except ValueError as bad:
-        raise EnsemblError(f"{method} {url}: reply was not JSON") from bad

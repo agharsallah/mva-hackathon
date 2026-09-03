@@ -1,0 +1,24 @@
+symbol	ensembl_id	group	biotype	coding	note
+CEP57	ENSG00000166037	panel	protein_coding	true	MVA2, rhizomelic shortening, usually no malignancy
+DICER1	ENSG00000100697	panel	protein_coding	true	DICER1 tumour predisposition differential
+BUB1B	ENSG00000156970	panel	protein_coding	true	MVA1, spindle assembly checkpoint, cancer predisposition
+TP53	ENSG00000141510	panel	protein_coding	true	Li-Fraumeni differential for rhabdomyosarcoma
+CEP192	ENSG00000101639	panel	protein_coding	true	biallelic MVA with tetraploidy, male-infertility predisposition; PMID 37981762, no OMIM phenotype yet
+CENPE	ENSG00000138778	panel	protein_coding	true	atypical MVA, case reports
+TRIP13	ENSG00000071539	panel	protein_coding	true	MVA3, Wilms tumour predisposition
+SMC5	ENSG00000198887	panel	protein_coding	true	MVA6 / Atelis syndrome 2 (OMIM 620185), segmented chromosomes and mosaic variegated hyperploidy; PMID 36333305
+CENATAC	ENSG00000186166	mva-sac	protein_coding	true	MVA4 (OMIM 620153), minor spliceosome; alias CCDC84; PMID 34009673
+MAD1L1	ENSG00000002822	mva-sac	protein_coding	true	MVA7 (OMIM 620189), SAC loss with inflammation; PMID 36322655
+SLF2	ENSG00000119906	mva-sac	protein_coding	true	Atelis syndrome 1 (OMIM 620184), filed as MVA5 synonym; PMID 36333305
+MAD2L1BP	ENSG00000124688	mva-sac	protein_coding	true	biallelic MVA + juvenile granulosa tumour, no OMIM phenotype yet; PMID 37796616
+BUB1	ENSG00000169679	mva-sac	protein_coding	true	biallelic BUB1 = MCPH30 (OMIM 620183): aneuploidy, but not an MVA-numbered entry; PMID 35044816
+PAK6	ENSG00000137843	extended	protein_coding	true	user-requested; no documented MVA link found — PAK6 only overlaps BUB1B on 15q15
+MTMR2	ENSG00000087053	extended	protein_coding	true	user-requested; biallelic MTMR2 = CMT4B1 neuropathy (OMIM 601382), not MVA
+WRAP53	ENSG00000141499	extended	protein_coding	true	user-requested; biallelic WRAP53 = DKCB3 telomere disease (OMIM 613988), not MVA
+SEH1L	ENSG00000085415	extended	protein_coding	true	user-requested; Nup107-160 kinetochore role only, no MVA disease link found
+BRD9	ENSG00000028310	extended	protein_coding	true	user-requested; no documented MVA link found
+ATP1B2	ENSG00000129244	extended	protein_coding	true	user-requested; no documented MVA link found
+BDH2	ENSG00000164039	extended	protein_coding	true	user-requested; no documented MVA link found
+FAM76B	ENSG00000077458	extended	protein_coding	true	user-requested; no documented MVA link found — the MalaCards MVA tag is text-mining noise
+DICER1-AS1	ENSG00000235706	extended	lncRNA	false	user-requested; lncRNA antisense to DICER1, no protein and no documented MVA link
+MAMDC2-AS1	ENSG00000204706	extended	lncRNA	false	user-requested; lncRNA, no protein and no documented MVA link found

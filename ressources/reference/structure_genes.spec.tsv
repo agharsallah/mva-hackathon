@@ -1,0 +1,38 @@
+# Which genes the structure explorer offers, in display order, and why each is here.
+#
+# Input to `tools/build_gene_set.py`, which resolves every symbol against Ensembl REST
+# and writes `structure_genes.tsv` next to this file. This is the *editable* half: a
+# symbol, a display group, and one line of provenance. The ids, biotypes and the
+# `coding` flag are never hand-written — they come from the live reply.
+#
+# A blank note for a panel gene borrows the panel BED's sixth column, so the reason a
+# gene is on the candidate list has exactly one owner.
+#
+# Groups: panel = the annotated eight (the only genes with the proband's alleles);
+# mva-sac = documented MVA / spindle-assembly-checkpoint genes outside the panel;
+# extended = requested for comparison, with the note saying what is and is not known.
+# Evidence for every mva-sac and extended note: docs/step-0/methodology/060.
+symbol	group	note
+CEP57	panel	
+DICER1	panel	
+BUB1B	panel	
+TP53	panel	
+CEP192	panel	
+CENPE	panel	
+TRIP13	panel	
+SMC5	panel	
+CENATAC	mva-sac	MVA4 (OMIM 620153), minor spliceosome; alias CCDC84; PMID 34009673
+MAD1L1	mva-sac	MVA7 (OMIM 620189), SAC loss with inflammation; PMID 36322655
+SLF2	mva-sac	Atelis syndrome 1 (OMIM 620184), filed as MVA5 synonym; PMID 36333305
+MAD2L1BP	mva-sac	biallelic MVA + juvenile granulosa tumour, no OMIM phenotype yet; PMID 37796616
+BUB1	mva-sac	biallelic BUB1 = MCPH30 (OMIM 620183): aneuploidy, but not an MVA-numbered entry; PMID 35044816
+PAK6	extended	user-requested; no documented MVA link found — PAK6 only overlaps BUB1B on 15q15
+MTMR2	extended	user-requested; biallelic MTMR2 = CMT4B1 neuropathy (OMIM 601382), not MVA
+WRAP53	extended	user-requested; biallelic WRAP53 = DKCB3 telomere disease (OMIM 613988), not MVA
+SEH1L	extended	user-requested; Nup107-160 kinetochore role only, no MVA disease link found
+BRD9	extended	user-requested; no documented MVA link found
+ATP1B2	extended	user-requested; no documented MVA link found
+BDH2	extended	user-requested; no documented MVA link found
+FAM76B	extended	user-requested; no documented MVA link found — the MalaCards MVA tag is text-mining noise
+DICER1-AS1	extended	user-requested; lncRNA antisense to DICER1, no protein and no documented MVA link
+MAMDC2-AS1	extended	user-requested; lncRNA, no protein and no documented MVA link found

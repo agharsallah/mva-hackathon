@@ -387,7 +387,11 @@ def built(settings, **kwargs) -> dict:
 
 def test_the_payload_carries_the_contract_s_fields(settings):
     payload = built(settings)
+    # `in_panel` joined the contract when the explorer took a curated superset of the
+    # panel: false means `candidates` is empty because nothing was ever annotated for that
+    # gene, not because nothing was found. See `tests/test_viz_geneset.py`.
     assert set(payload) == {
+        "in_panel",
         "gene",
         "ensembl_id",
         "chrom",
