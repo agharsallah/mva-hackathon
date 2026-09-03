@@ -42,11 +42,13 @@ export default function ComparePage() {
         terms={[
           {
             term: 'gnomAD',
+            dict: 'gnomad',
             plain:
               'the Genome Aggregation Database — ~800k mostly-healthy people’s exomes and genomes pooled into per-variant frequency counts, a read-only index of how often each variant shows up. Common there means healthy people carry it, so it cannot by itself cause a severe childhood disease. The population baseline for "is this normal?"',
           },
           {
             term: 'allele frequency (AF)',
+            dict: 'af-allele-frequency',
             plain:
               'the share of chromosomes in that population carrying the variant. 0.30 = common; 1e-5 = one in a hundred thousand; absent = it has never been seen',
           },
@@ -62,16 +64,19 @@ export default function ComparePage() {
           },
           {
             term: 'VAF (variant allele fraction)',
+            dict: 'vaf-variant-allele-fraction',
             plain:
               'the share of this patient’s own sequencing reads at that site carrying the variant. ≈0.5 = one of two copies (heterozygous); ≈1.0 = both copies',
           },
           {
             term: 'consequence / IMPACT',
+            dict: 'consequence',
             plain:
               'what the variant does to the gene product, as predicted by VEP, bucketed HIGH (truncates the protein) → MODERATE (swaps an amino acid) → LOW (silent) → MODIFIER (non-coding)',
           },
           {
             term: 'ClinVar',
+            dict: 'clinvar',
             plain:
               'a public registry of variant–disease assertions submitted by clinical labs. "Pathogenic" there means somebody has already argued this variant causes disease',
           },

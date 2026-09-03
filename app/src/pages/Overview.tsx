@@ -147,11 +147,13 @@ export default function OverviewPage() {
         terms={[
           {
             term: 'variant',
+            dict: 'variant',
             plain:
               'one row in the callset: a position where this genome differs from the reference',
           },
           {
             term: 'VCF (Variant Call Format)',
+            dict: 'vcf-variant-call-format',
             plain:
               'the row-oriented text format the variants were delivered in, one record per line',
           },
@@ -161,35 +163,42 @@ export default function OverviewPage() {
           },
           {
             term: 'indel (insertion or deletion)',
+            dict: 'indel',
             plain: 'letters added or removed rather than swapped',
           },
           {
             term: 'FILTER / PASS',
+            dict: 'filter-pass',
             plain:
               'the caller’s heuristic veto; non-PASS records are suppressed, not deleted — they are still a search space',
           },
           {
             term: 'multiallelic site (genotype 1/2)',
+            dict: '1-2-genotype-multiallelic-site',
             plain:
               'the two copies carry two different variants — a compound heterozygote established by the genotype field alone',
           },
           {
             term: 'Ts/Tv (transition / transversion ratio)',
+            dict: 'ti-tv-ratio',
             plain:
               'a sanity check on the callset; ~2.0 is normal for human whole genomes, far off means artefacts',
           },
           {
             term: 'coverage / depth (×)',
+            dict: 'coverage-depth-e-g-30',
             plain:
               'how many sequencing reads stack over an average base; more depth means more confident calls',
           },
           {
             term: 'read',
+            dict: 'read',
             plain:
               'one short sequenced fragment (149 letters here); a genome is reconstructed by piling up a billion of them',
           },
           {
             term: 'probe budget',
+            dict: 'probe-ledger',
             plain:
               'this challenge allows 18 oracle queries in total — a hard, non-renewable resource',
           },

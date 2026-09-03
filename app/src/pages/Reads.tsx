@@ -39,21 +39,25 @@ export default function ReadsPage() {
         terms={[
           {
             term: 'read',
+            dict: 'read',
             plain:
               'one sequenced fragment of DNA, 149 letters here. A genome is reconstructed by piling up a billion of them',
           },
           {
             term: 'paired-end (R1 / R2)',
+            dict: 'paired-end',
             plain:
               'each fragment is read from both ends. R1 and R2 therefore come in exactly equal counts',
           },
           {
             term: 'FASTQ',
+            dict: 'fastq',
             plain:
               'the raw read format: four lines per read — id, sequence, separator, one quality letter per base',
           },
           {
             term: 'lane',
+            dict: 'lane-flowcell-instrument',
             plain: 'a physical channel on the sequencer’s flowcell. This sample ran across 4 lanes',
           },
           {
@@ -68,21 +72,25 @@ export default function ReadsPage() {
           },
           {
             term: 'phred quality',
+            dict: 'base-quality-phred-score-q30',
             plain:
               'log-scale error probability per base. Q30 = 1 error in 1000, Q37 = about 1 in 5000',
           },
           {
             term: 'parquet',
+            dict: 'parquet',
             plain:
               'a columnar file format. Unlike gzipped FASTQ, a query can read one column of one shard instead of the whole stream',
           },
           {
             term: 'shard / partition',
+            dict: 'shard-partition',
             plain:
               'the store is split into 8 partitions (lane × read) of 34 files each, so scans parallelise and prune',
           },
           {
             term: 'k-mer',
+            dict: 'k-mer',
             plain:
               'a short fixed-length sequence used as a literal search string against the reads',
           },

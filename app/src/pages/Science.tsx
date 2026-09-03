@@ -46,6 +46,7 @@ export default function SciencePage() {
         terms={[
           {
             term: 'hypothesis',
+            dict: 'hypothesis',
             plain: (
               <>
                 a falsifiable claim with its prediction <em>and</em> its refutation condition, both
@@ -56,26 +57,31 @@ export default function SciencePage() {
           },
           {
             term: 'refuted_by',
+            dict: 'refutation-condition',
             plain:
               'the observation that would kill the claim. A claim nothing could disprove is refused at the constructor, not flagged in review',
           },
           {
             term: 'evidence',
+            dict: 'evidence',
             plain:
               'one observation, tagged supports / refutes / neutral, weighted, and carrying its source. An unsourced observation is refused',
           },
           {
             term: 'source_ref',
+            dict: 'source-reference',
             plain:
               'where the observation can be checked: a methodology entry, a table, a PMID, a ClinVar id, or an oracle reply',
           },
           {
             term: 'revision',
+            dict: 'revision',
             plain:
               'both tables are append-only. A changed belief appends a new revision row of the same hypothesis id — never an edit, so the record of the belief moving survives',
           },
           {
             term: 'verdict',
+            dict: 'verdict',
             plain:
               'the evidence accumulated in log-odds into a status and a confidence, with every term printed and a stated reason',
           },
@@ -91,6 +97,7 @@ export default function SciencePage() {
           },
           {
             term: 'oracle probe',
+            dict: 'oracle',
             plain:
               'one of 18 irreversible submissions to the challenge scorer. A reply is recorded twice: in the probe ledger as what happened, in the evidence ledger as what it means',
           },

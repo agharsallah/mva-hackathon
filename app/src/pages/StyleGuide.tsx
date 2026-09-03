@@ -40,11 +40,13 @@ export default function StyleGuidePage() {
         terms={[
           {
             term: 'design token',
+            dict: 'design-token',
             plain:
               'a named value used instead of a literal one — `--color-good-500` rather than a hex typed at the call site. Same idea as a constant, but readable by CSS',
           },
           {
             term: 'tone',
+            dict: 'tone',
             plain:
               'what a colour means here (good, broken, a decision, machinery, raw input, or nothing). Components take a tone, never a hue',
           },
@@ -55,6 +57,7 @@ export default function StyleGuidePage() {
           },
           {
             term: 'shade',
+            dict: 'shade',
             plain:
               'a step on a family, 50 (palest) to 950 (deepest). This app uses 300/400 for text, 800/900 for borders, 950 for a tinted background',
           },
@@ -80,11 +83,13 @@ export default function StyleGuidePage() {
           },
           {
             term: 'colourscale',
+            dict: 'colourscale',
             plain:
               'a list of `[position, colour]` stops handed to Plotly; it interpolates between them to colour a continuous range',
           },
           {
             term: 'oklch',
+            dict: 'oklch',
             plain:
               "a perceptual colour space: lightness, chroma, hue. Tailwind v4 ships its palette in it; the generator converts to hex because Plotly's colour parser cannot read it",
           },

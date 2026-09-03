@@ -41,41 +41,49 @@ export default function PanelPage() {
           },
           {
             term: 'BED file',
+            dict: 'bed-file',
             plain:
               'the interval format the panel is stored in: contig, start, end, name — one row per region',
           },
           {
             term: 'spindle assembly checkpoint (SAC)',
+            dict: 'sac-spindle-assembly-checkpoint',
             plain:
               'the cell’s pre-division gate: it halts division until every chromosome is correctly attached. Break it and chromosomes get miscounted — that is MVA',
           },
           {
             term: 'BUB1B',
+            dict: 'bub1b-protein-name-bubr1',
             plain:
               'encodes BUBR1, the core SAC protein; biallelic variants in it are the canonical cause of MVA (MVA type 1)',
           },
           {
             term: 'CEP57 / TRIP13',
+            dict: 'cep57',
             plain:
               'the two other established MVA genes (types 2 and 3) — centrosome anchoring and checkpoint silencing',
           },
           {
             term: 'compound heterozygote',
+            dict: 'compound-heterozygous-comp-het',
             plain:
               'two different broken copies of one gene, one from each parent. Each alone is harmless; together the gene has no working copy',
           },
           {
             term: 'biallelic',
+            dict: 'biallelic',
             plain:
               'both copies of the gene are affected — either the same variant twice (homozygous) or two different ones (compound het)',
           },
           {
             term: 'constraint (LOEUF / pLI)',
+            dict: 'constraint-pli-loeuf-missense-z-score',
             plain:
               'how strongly the healthy population avoids losing a copy of a gene. LOEUF low (<0.35) or pLI near 1 = intolerant. It is a dominant-disease prior and inverts on recessive genes — see the constraint exhibit',
           },
           {
             term: 'ClinVar P/LP',
+            dict: 'clinvar',
             plain:
               'the count of variants in a gene that clinical labs have already classified Pathogenic or Likely-pathogenic in the public ClinVar registry',
           },

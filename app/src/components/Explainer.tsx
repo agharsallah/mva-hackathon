@@ -13,6 +13,7 @@
  */
 
 import { type ReactNode, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import type { Tone } from '../lib/palette';
 import { cx, RULE, TEXT, TINT } from '../lib/ui';
@@ -21,6 +22,25 @@ export interface Term {
   term: string;
   /** The plain-English half. Keep it one sentence. */
   plain: ReactNode;
+  /**
+   * The dictionary entry's slug (`/learn#<slug>`), when the word has one. The chip's one
+   * sentence stays; this adds "full definition" under it, so the page never restates the
+   * dictionary and the dictionary stays the one glossary. `src/test/explainer-dict.test.ts`
+   * requires it whenever the term matches an entry by name.
+   */
+  dict?: string;
+}
+
+function FullDefinition({ slug }: { slug?: string }) {
+  if (!slug) return null;
+  return (
+    <Link
+      to={`/learn#${slug}`}
+      className="ml-2 font-sans text-micro whitespace-nowrap text-machinery-400 hover:text-machinery-200"
+    >
+      full definition <span aria-hidden="true">→</span>
+    </Link>
+  );
 }
 
 export interface ExplainerProps {
@@ -108,7 +128,11 @@ export function Explainer({ intro, terms, caveat }: ExplainerProps) {
       {shown && !allOpen && (
         <dl className="mt-2 max-w-[80ch] border-l-2 border-machinery-600 pl-3 text-note leading-relaxed">
           <dt className="inline font-semibold text-chrome-100">{shown.term}</dt>
-          <dd className="inline font-serif text-chrome-300"> {shown.plain}</dd>
+          <dd className="inline font-serif text-chrome-300">
+            {' '}
+            {shown.plain}
+            <FullDefinition slug={shown.dict} />
+          </dd>
         </dl>
       )}
 
@@ -117,7 +141,11 @@ export function Explainer({ intro, terms, caveat }: ExplainerProps) {
           {terms.map((t) => (
             <div key={t.term} className="text-note leading-relaxed">
               <dt className="inline font-semibold text-chrome-200">{t.term}</dt>
-              <dd className="inline font-serif text-chrome-400"> {t.plain}</dd>
+              <dd className="inline font-serif text-chrome-400">
+                {' '}
+                {t.plain}
+                <FullDefinition slug={t.dict} />
+              </dd>
             </div>
           ))}
         </dl>

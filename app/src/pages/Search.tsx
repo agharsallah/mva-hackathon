@@ -60,26 +60,31 @@ export default function SearchPage() {
         terms={[
           {
             term: 'gene symbol',
+            dict: 'gene-symbol',
             plain:
               'the short human-readable name of a gene (BUB1B, TP53). Not a coordinate — it has to be looked up in a gene catalogue before anything can be read',
           },
           {
             term: 'region (contig:start-end)',
+            dict: 'region-contig-start-end',
             plain:
               'a coordinate range on one chromosome, 1-based and inclusive at both ends. 15:40100000-40200000 is a 100,001 bp window on chromosome 15',
           },
           {
             term: 'contig / chr prefix',
+            dict: 'chr-prefix-contig-naming',
             plain:
               'the chromosome’s name. This callset spells it "15" and the candidate panel spells it "chr15"; both are accepted here and normalised through the repo’s single bridge',
           },
           {
             term: 'rsID (dbSNP)',
+            dict: 'rsid',
             plain:
               'a stable public name for one variant *site*, issued by dbSNP — the NCBI registry of known human variation. rs137852899 names a place in the genome plus the change seen there, and stays valid across genome builds where a raw coordinate does not',
           },
           {
             term: 'VCF record',
+            dict: 'vcf-variant-call-format',
             plain:
               'one row of the callset: contig, position, reference base(s), alternate base(s), a quality score, a FILTER verdict and the sample’s genotype. The table below is exactly these rows',
           },
@@ -90,11 +95,13 @@ export default function SearchPage() {
           },
           {
             term: 'GT (genotype)',
+            dict: 'genotype',
             plain:
               '0/1 = one of the two copies carries the change, 1/1 = both do, 1/2 = the two copies carry two *different* changes — compound heterozygosity proven by the genotype alone',
           },
           {
             term: 'VAF (variant allele fraction)',
+            dict: 'vaf-variant-allele-fraction',
             plain:
               'the share of reads at a site that carry the alternate allele. ~0.5 for a healthy heterozygous site, ~1.0 for homozygous; far off either is a mosaic event or an artefact',
           },

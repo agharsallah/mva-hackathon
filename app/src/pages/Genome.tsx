@@ -31,26 +31,31 @@ export default function GenomePage() {
         terms={[
           {
             term: 'VAF (variant allele fraction)',
+            dict: 'vaf-variant-allele-fraction',
             plain:
               'the share of reads at a site that show the variant — about 0.5 is expected for a heterozygous site on two intact copies',
           },
           {
             term: 'heterozygous',
+            dict: 'zygosity',
             plain:
               'the two copies of a chromosome differ at this position: one reference, one variant',
           },
           {
             term: 'aneuploidy',
+            dict: 'aneuploidy',
             plain:
               'a cell has an extra or missing whole chromosome; "mosaic" means only some cells do',
           },
           {
             term: 'depth (×)',
+            dict: 'coverage-depth-e-g-30',
             plain:
               'reads stacked over a position; a lost chromosome copy halves it, a gained one raises it ~1.5×',
           },
           {
             term: 'contig',
+            dict: 'contig',
             plain:
               'a named sequence in the reference. 25 are the real chromosomes; the other 1,665 are alternate haplotypes and unplaced scaffolds',
           },

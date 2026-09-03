@@ -43,6 +43,7 @@ export default function CallsetPage() {
           },
           {
             term: 'FILTER',
+            dict: 'filter-pass',
             plain:
               'the caller’s heuristic vetoes on a record. PASS means no veto fired; a non-PASS record is suppressed, not deleted',
           },
@@ -52,26 +53,31 @@ export default function CallsetPage() {
           },
           {
             term: 'phred quality',
+            dict: 'base-quality-phred-score-q30',
             plain:
               'a log-scale error probability. Q10 = 1 in 10 wrong, Q20 = 1 in 100, Q30 = 1 in 1000',
           },
           {
             term: 'MQ (mapping quality)',
+            dict: 'mapping-quality-mapq',
             plain:
               'the aligner’s confidence that the reads belong at this locus at all. MQ40 filter = below 40, so possibly mismapped',
           },
           {
             term: 'QD (quality by depth)',
+            dict: 'quality-by-depth-qd',
             plain:
               'QUAL divided by depth — catches sites that look confident only because they are deeply covered',
           },
           {
             term: 'transition / transversion',
+            dict: 'ti-tv-ratio',
             plain:
               'A↔G and C↔T are transitions (chemically easy); the other eight swaps are transversions. Their ratio is a callset sanity check',
           },
           {
             term: 'frameshift',
+            dict: 'frameshift',
             plain:
               'an insertion or deletion whose length is not a multiple of three; it garbles every amino acid downstream and usually kills the protein',
           },

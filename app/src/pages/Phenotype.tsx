@@ -56,6 +56,7 @@ export default function PhenotypePage() {
         terms={[
           {
             term: 'HPO',
+            dict: 'hpo-human-phenotype-ontology',
             plain: (
               <>
                 the Human Phenotype Ontology — a controlled vocabulary of clinical features where
@@ -66,6 +67,7 @@ export default function PhenotypePage() {
           },
           {
             term: 'information content',
+            dict: 'information-content-ic-t-log-p-t',
             plain: (
               <>
                 how surprising a feature is, as <code>−log(share of genes that cause it)</code>. A
@@ -87,6 +89,7 @@ export default function PhenotypePage() {
           },
           {
             term: 'best-match-average',
+            dict: 'best-match-average-bma',
             plain: (
               <>
                 each feature takes its single strongest partner on the other side, and those bests

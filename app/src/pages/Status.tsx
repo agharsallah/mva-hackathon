@@ -83,6 +83,7 @@ export default function StatusPage() {
           },
           {
             term: 'liveness check / probe',
+            dict: 'liveness-probe',
             plain:
               'a request the server makes to a dependency right before answering — "can I actually reach Postgres right now", not "did it work once at startup"',
           },
@@ -111,6 +112,7 @@ export default function StatusPage() {
           },
           {
             term: 'budget (timeout)',
+            dict: 'timeout-budget',
             plain:
               'how long that check is allowed to take before it is reported down — per check, because a Postgres greet over the network is not a ping to this process. Raise one with MVA_HEALTH_TIMEOUTS=<check>=<seconds>, or raise the floor for all of them with MVA_HEALTH_TIMEOUT',
           },

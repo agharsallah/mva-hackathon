@@ -56,6 +56,7 @@ export default function CatalogPage() {
           },
           {
             term: 'SHA-256 (checksum, digest)',
+            dict: 'checksum-sha-256',
             plain:
               'a 64-hex-character fingerprint of a file’s bytes. Recompute it on your copy, compare it to the one the publisher published: equal means not one bit differs. It is the byte-level equivalent of a git commit hash',
           },
@@ -71,6 +72,7 @@ export default function CatalogPage() {
           },
           {
             term: 'lineage edge',
+            dict: 'lineage-edge',
             plain:
               'one recorded arrow: this output table came from that input, by that transform, with that tool, at that time. A directed graph of these is what makes a number re-derivable',
           },
@@ -91,6 +93,7 @@ export default function CatalogPage() {
           },
           {
             term: 'schema (namespace)',
+            dict: 'schema-namespace',
             plain:
               'a named group of tables inside one database, the way a package groups modules. Two schemas here: `warehouse` for ingested data and the hand-written ledgers, `results` for everything computed from them',
           },
@@ -101,6 +104,7 @@ export default function CatalogPage() {
           },
           {
             term: 'partition / shard',
+            dict: 'shard-partition',
             plain:
               'a partition is a slice of a dataset addressable on its own (here: one lane × read direction); a shard is one physical file inside it. Sharding is what lets a query read part of a store instead of all of it',
           },

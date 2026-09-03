@@ -29,6 +29,7 @@ export default function ProbesPage() {
         terms={[
           {
             term: 'k-mer',
+            dict: 'k-mer',
             plain:
               'a short fixed-length DNA sequence used as an exact search string (k = its length)',
           },
@@ -64,6 +65,7 @@ export default function ProbesPage() {
           },
           {
             term: 'oracle probe',
+            dict: 'oracle',
             plain:
               'a different thing entirely: one of 18 allowed questions to the challenge organisers. Irreversible, and tracked in the ledger below',
           },

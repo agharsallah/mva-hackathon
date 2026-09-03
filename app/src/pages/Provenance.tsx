@@ -62,15 +62,18 @@ export default function ProvenancePage() {
         terms={[
           {
             term: 'provenance',
+            dict: 'provenance',
             plain: 'the record of where a number came from and every step that shaped it',
           },
           {
             term: 'lineage',
+            dict: 'data-lineage',
             plain:
               'the edges of that record: this table was produced from that source by this transform',
           },
           {
             term: 'sha256',
+            dict: 'checksum-sha-256',
             plain:
               'a content hash. Recompute it on the received bytes and compare — if it matches, nothing was lost or altered in transit',
           },
@@ -81,11 +84,13 @@ export default function ProvenancePage() {
           },
           {
             term: 'append-only',
+            dict: 'append-only',
             plain:
               'records are added, never edited. A changed belief becomes a new row, so the old reasoning stays visible',
           },
           {
             term: 'provenance manifest',
+            dict: 'provenance-manifest',
             plain:
               'a lockfile for data: URL + version + hash, committed beside the file, so the same bytes can be re-fetched and checked',
           },
