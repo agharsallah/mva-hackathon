@@ -68,13 +68,13 @@ export function ScaleStrips() {
           <div key={name}>
             <div className="mb-1 flex flex-wrap items-baseline gap-2">
               <span className="font-mono text-xs font-semibold text-chrome-200">{name}</span>
-              <span className="text-[11px] text-chrome-500">{use}</span>
+              <span className="text-micro text-chrome-500">{use}</span>
             </div>
             <div
-              className="h-7 rounded border border-chrome-800"
+              className="h-7 rounded-pill border border-line"
               style={{ background: gradient(scale) }}
             />
-            <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-mono text-[10px] text-chrome-600">
+            <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1 font-mono text-micro text-chrome-600">
               {scale.map(([position, hex]) => (
                 <span key={`${position}-${hex}`}>
                   {position} · {NAME_OF.get(hex) ?? hex}
@@ -88,13 +88,13 @@ export function ScaleStrips() {
           <div key={name}>
             <div className="mb-1 flex flex-wrap items-baseline gap-2">
               <span className="font-mono text-xs font-semibold text-chrome-200">{name}</span>
-              <span className="text-[11px] text-chrome-500">{use}</span>
+              <span className="text-micro text-chrome-500">{use}</span>
             </div>
             <div className="flex gap-1">
               {colors.map((hex, index) => (
                 <div
                   key={`${name}-${index}`}
-                  className="h-7 flex-1 rounded border border-chrome-800"
+                  className="h-7 flex-1 rounded-pill border border-line"
                   style={{ background: hex }}
                   title={`${name}[${index}] · ${NAME_OF.get(hex) ?? hex}`}
                 />

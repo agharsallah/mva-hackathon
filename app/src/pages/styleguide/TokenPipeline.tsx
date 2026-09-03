@@ -72,7 +72,7 @@ export function TokenPipeline() {
           Arrows read top to bottom.
         </>
       }
-      reading="The DOM and a canvas cannot share a mechanism, so they share a source instead — that is the whole design."
+      reading="The DOM and a canvas cannot share a mechanism, so they share a source instead — that is the whole design. The light theme adds no second palette: the generator emits the same families a second time as a shade mirror (shade N takes the value of shade 1000 − N, so 50↔950 and 500 is unchanged), which flips every background, border and text shade already written while leaving the data marks identical."
       source="src/lib/palette/index.ts"
     >
       <div className="space-y-2">
@@ -85,14 +85,12 @@ export function TokenPipeline() {
             )}
             <div className={row.length > 1 ? 'grid gap-2 sm:grid-cols-2' : ''}>
               {row.map((stage) => (
-                <div key={stage.title} className={cx('rounded-lg border p-3', BOX[stage.tint])}>
-                  <div className="text-[11px] font-semibold uppercase tracking-wider">
-                    {stage.title}
-                  </div>
-                  <div className="mt-1 break-all font-mono text-[11px] text-chrome-200">
+                <div key={stage.title} className={cx('rounded-card border p-3', BOX[stage.tint])}>
+                  <div className="text-micro font-semibold">{stage.title}</div>
+                  <div className="mt-1 break-all font-mono text-micro text-chrome-200">
                     {stage.path}
                   </div>
-                  <div className="mt-1 text-[11px] leading-snug text-chrome-400">{stage.note}</div>
+                  <div className="mt-1 text-micro leading-snug text-chrome-400">{stage.note}</div>
                 </div>
               ))}
             </div>

@@ -13,10 +13,10 @@ export function Toggle({
     <button
       onClick={() => onChange(!on)}
       aria-pressed={on}
-      className={`rounded-md border px-2 py-1 text-[11px] transition ${
+      className={`rounded-control border px-2 py-1 text-micro transition ${
         on
           ? 'border-machinery-700 bg-machinery-950/60 text-machinery-300'
-          : 'border-chrome-700 bg-chrome-900 text-chrome-400 hover:bg-chrome-800'
+          : 'border-line-strong bg-chrome-900 text-chrome-400 hover:bg-chrome-800'
       }`}
     >
       {children}
@@ -66,7 +66,7 @@ export function Select<T extends string | number>({
 }) {
   const all = [...options, ...groups.flatMap((g) => g.options)];
   return (
-    <label className="inline-flex items-center gap-1.5 text-[11px] text-chrome-500">
+    <label className="inline-flex items-center gap-2 text-micro text-chrome-500">
       {label}
       <select
         value={String(value)}
@@ -81,7 +81,7 @@ export function Select<T extends string | number>({
           const found = all.find((o) => String(o.value) === raw);
           if (found) onChange(found.value);
         }}
-        className="rounded-md border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-200 disabled:opacity-60"
+        className="rounded-control border border-line-strong bg-chrome-900 px-2 py-1 text-micro text-chrome-200 disabled:opacity-60"
       >
         {options.map((o) => (
           <option key={String(o.value)} value={String(o.value)}>
@@ -117,7 +117,7 @@ export function TextFilter({
   width?: number;
 }) {
   return (
-    <label className="inline-flex items-center gap-1.5 text-[11px] text-chrome-500">
+    <label className="inline-flex items-center gap-2 text-micro text-chrome-500">
       {label}
       <span className="relative inline-flex items-center">
         <input
@@ -127,7 +127,7 @@ export function TextFilter({
           placeholder={placeholder}
           spellCheck={false}
           style={{ width }}
-          className="rounded-md border border-chrome-700 bg-chrome-900 px-2 py-1 text-[11px] text-chrome-200 placeholder:text-chrome-600 focus:border-machinery-700 focus:outline-none"
+          className="rounded-control border border-line-strong bg-chrome-900 px-2 py-1 text-micro text-chrome-200 placeholder:text-chrome-600 focus:border-machinery-700 focus:outline-none"
         />
         {value && (
           <button
@@ -158,8 +158,12 @@ export function Section({
   return (
     <section id={id} className="scroll-mt-20 space-y-3">
       <div>
-        <h2 className="text-base font-semibold tracking-tight text-chrome-100">{title}</h2>
-        {subtitle && <p className="mt-0.5 text-xs text-chrome-500">{subtitle}</p>}
+        <h2 className="text-heading font-semibold tracking-tight text-chrome-100">{title}</h2>
+        {subtitle && (
+          <p className="mt-0.5 max-w-[80ch] font-serif text-sm italic text-chrome-400">
+            {subtitle}
+          </p>
+        )}
       </div>
       {children}
     </section>

@@ -1,6 +1,6 @@
 # Components
 
-**Verified:** 2026-09-01. Import from `src/components` (the barrel) — never reach past it into
+**Verified:** 2026-09-03. Import from `src/components` (the barrel) — never reach past it into
 a file directly, so a page never needs to know where a primitive lives.
 
 ## Charts
@@ -24,15 +24,17 @@ a file directly, so a page never needs to know where a primitive lives.
 
 ## Layout and structure
 
-| Name                               | Purpose                                                                                                                                                          | Usage                                                             |
-| ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `Card`                             | The bordered panel every non-chart section sits in.                                                                                                              | `<Card className="space-y-3">…</Card>`                            |
-| `Section`                          | Page-level heading + optional subtitle over a block of content. `id` makes it an anchor target (`/provenance#reference`) with the scroll offset already applied. | `<Section title="…" subtitle="…">…</Section>`                     |
-| `Explainer`                        | The page's intro panel: plain-English intro, a term glossary, an optional caveat.                                                                                | `<Explainer intro={…} terms={[{term, plain}]} />`                 |
-| `Callout`                          | A tone-coloured box for one thing the reader must not miss.                                                                                                      | `<Callout tone="decision" title="…">…</Callout>`                  |
-| `EmptyState`                       | The dashed "nothing here" box. `tone="good"` for a register/ledger that is empty _by design_.                                                                    | `<EmptyState tone="good" title="Budget untouched">…</EmptyState>` |
-| `Toggle` / `Select` / `TextFilter` | Small controls for an `Exhibit`'s title-row `controls` slot.                                                                                                     | `<Toggle on={v} onChange={setV}>3D</Toggle>`                      |
-| `Footer`                           | App-wide footer: what this app is, the live dependency-status link (`/status`), in-app and repo-doc links. Mounted once by `AppShell`, like `Header`.            | `<Footer />`                                                      |
+| Name                                            | Purpose                                                                                                                                                                                                                                                                           | Usage                                                             |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| `Card`                                          | The bordered panel every non-chart section sits in. `variant`: `panel` (default, the bordered card) · `well` (recessed, for a block inside a card) · `plain` (the padding rhythm, no border). `padding`: `md` (16px, default) · `sm` (12px) · `none` (a table flush to the edge). | `<Card variant="well" padding="sm">…</Card>`                      |
+| `Section`                                       | Page-level heading + optional subtitle over a block of content. `id` makes it an anchor target (`/provenance#reference`) with the scroll offset already applied.                                                                                                                  | `<Section title="…" subtitle="…">…</Section>`                     |
+| `PageHeader` / `JourneyFooter`                  | The page's one h1 with its section question, position and prev/next; and the bottom-of-page hand-off. Rendered by the shell (`app/PageFrame.tsx`), never by a page.                                                                                                               | `<PageHeader title="…" eyebrow="Data · …" next={{to, label}} />`  |
+| `Explainer`                                     | The page's background panel: a ≤ 2-sentence intro, terms as chips (click one for its definition; "all definitions" opens the glossary and is remembered), optional caveat. Sits _below_ the headline `Callout`.                                                                   | `<Explainer intro={…} terms={[{term, plain}]} />`                 |
+| `JourneyProvider` / `JourneyMap` / `useJourney` | The manifest's four groups handed down as context; `JourneyMap` draws them as the Overview's reading-order map. Null outside the shell.                                                                                                                                           | `<JourneyMap />`                                                  |
+| `Callout`                                       | A tone-coloured box for one thing the reader must not miss.                                                                                                                                                                                                                       | `<Callout tone="decision" title="…">…</Callout>`                  |
+| `EmptyState`                                    | The dashed "nothing here" box. `tone="good"` for a register/ledger that is empty _by design_.                                                                                                                                                                                     | `<EmptyState tone="good" title="Budget untouched">…</EmptyState>` |
+| `Toggle` / `Select` / `TextFilter`              | Small controls for an `Exhibit`'s title-row `controls` slot.                                                                                                                                                                                                                      | `<Toggle on={v} onChange={setV}>3D</Toggle>`                      |
+| `Footer`                                        | App-wide footer: what this app is, the live dependency-status link (`/status`), the four-section sitemap (from `useJourney`) and repo-doc links. Mounted once by `AppShell`, like `Header`.                                                                                       | `<Footer />`                                                      |
 
 ## Small marks
 
@@ -54,23 +56,62 @@ a file directly, so a page never needs to know where a primitive lives.
 | ---------- | ------------------------------------------------------------------------------- |
 | `AiExport` | Header-mounted "export page" / "export case" buttons over the exhibit registry. |
 
-## Tokens (`src/lib/ui.ts`)
+## Type (`src/index.css`)
 
-Not components — the Tailwind class recipes the primitives above are built from, plus `cx()`,
-a class-joiner that drops falsy arguments.
+Two voices, both self-hosted from fontsource (latin subsets, ~144 kB woff2):
 
-| Recipe         | What it is                                             |
-| -------------- | ------------------------------------------------------ |
-| `CARD`         | the bordered panel (`Card`, `Exhibit`)                 |
-| `BOX`          | the tinted alert region (`Callout`)                    |
-| `BADGE`        | the pill (`Badge`, `NormChip`)                         |
-| `EMPTY_DASHED` | the dashed nothing-here box (`EmptyState`)             |
-| `TEXT`         | just the text colour for a tone (`StatTile`, verdicts) |
+| Voice     | Face                                       | Used for                                                                                               |
+| --------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| reading   | Literata (variable serif)                  | page h1, `Section` subtitle, `Explainer` intro and definitions, `Callout` body, `Exhibit` reading line |
+| operating | Atkinson Hyperlegible Next (variable sans) | everything else: nav, labels, tables, controls, `StatTile` values (`tabular-nums`)                     |
+| mono      | system monospace                           | identifiers only: hashes, table names, commands, ids                                                   |
 
-The four tone-keyed maps are `Record<Tone, string>` over the **one** `Tone` union exported by
-`lib/palette` (`neutral · good · broken · decision · machinery · raw`), so adding a meaning
-breaks compilation at every recipe until each answers for it, and
-`src/test/theme-tokens.test.ts` fails if a recipe tints a tone in the wrong hue family.
+Rules: sentence case everywhere, no tracked-out capitals for labels; prose measures capped
+around 70–90 characters (`max-w-[70ch]`); numbers set `tabular-nums`; arrows and middle-dot
+chains are not used as punctuation.
+
+## Tokens (`src/index.css` + `src/lib/ui.ts`)
+
+Two layers, both named by **role**. A page never types a pixel size, a radius, a grey or a
+class string: it names the role, or it composes the recipe.
+
+### Role tokens (`@theme` in `src/index.css`)
+
+Written as ordinary Tailwind utilities, so `text-heading` and `rounded-card` are as cheap to
+type as the literal they replace — and changing the role in one place moves every user of it.
+
+| Group         | Token                                                                                                                                       | Role                                                                                                                                                                                                |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **type**      | `text-micro` 11 · `text-xs` 12 · `text-note` 13 · `text-sm` 14 · `text-reading` 15 · `text-heading` 17 · `text-figure` 26 · `text-title` 30 | chip/provenance · label · serif footnote · body · serif prose · `Section` h2 · a `StatTile` number · the page h1. `text-note` and `text-reading` are the reading voice and are set in `font-serif`. |
+| **radii**     | `rounded-pill` 4 · `rounded-control` 6 · `rounded-card` 8                                                                                   | a badge/chip/tag · a button/select/input · a card/exhibit/callout                                                                                                                                   |
+| **hairlines** | `border-line-soft` · `border-line` · `border-line-strong` · `ring-focus`                                                                    | chrome-900 (a well's edge) · chrome-800 (the default card and table rule) · chrome-700 (a hover or emphasised edge) · machinery-600 (the keyboard focus ring)                                       |
+| **surfaces**  | `bg-panel` · `bg-panel-raised` · `bg-well`                                                                                                  | the card lift off the page · a control sitting on a card · the recessed block inside one. Translucent steps, so a nested panel stays distinguishable in both themes.                                |
+| **spacing**   | `2` (8) · `3` (12) · `4` (16) · `6` (24)                                                                                                    | a strict 4px grid: tight (two chips on a row) · inner rhythm (rows inside a card) · card padding · between sections. Half steps are out except `0.5` (2px) for a chip's vertical padding.           |
+| **fonts**     | `font-sans` · `font-serif` · `font-mono`                                                                                                    | Atkinson Hyperlegible Next (the operating voice) · Literata (the reading voice) · identifiers only                                                                                                  |
+
+### Recipes (`src/lib/ui.ts`)
+
+Not components — the Tailwind class strings the primitives above are built from, written once
+because they were being hand-typed identically in three or more page files. Plus `cx()`, a
+class-joiner that drops falsy arguments.
+
+| Recipe         | What it is                                                                              |
+| -------------- | --------------------------------------------------------------------------------------- |
+| `CARD`         | the bordered panel — `rounded-card border border-line bg-panel p-4` (`Card`, `Exhibit`) |
+| `WELL`         | the recessed panel inside a card — a code block, a legend well, a nested list           |
+| `CONTROL`      | a button/select/input: radius, hairline, `text-micro`, hover and focus ring; no colour  |
+| `BOX`          | the tinted, bordered alert region (legacy; `Callout` now uses `RULE` + `TINT`)          |
+| `BADGE`        | the pill (`Badge`, `NormChip`)                                                          |
+| `EMPTY_DASHED` | the dashed nothing-here box (`EmptyState`)                                              |
+| `RULE`         | the 2px left rule in a tone's colour (`StatTile`, `Callout`) — a verdict without a box  |
+| `TINT`         | the faint background behind a `Callout`, no border of its own                           |
+| `TEXT`         | just the text colour for a tone (`StatTile`, verdicts)                                  |
+
+The tone-keyed maps (`BOX`, `BADGE`, `EMPTY_DASHED`, `RULE`, `TINT`, `TEXT`) are
+`Record<Tone, string>` over the **one** `Tone` union exported by `lib/palette`
+(`neutral · good · broken · decision · machinery · raw`), so adding a meaning breaks compilation
+at every recipe until each answers for it, and `src/test/theme-tokens.test.ts` fails if a recipe
+tints a tone in the wrong hue family.
 
 Colour itself is owned by [`lib/palette/`](../lib/palette/index.ts) and generated: `pnpm theme`
 writes the hex ramps (`ramps.generated.ts`, for Plotly and SVG) and the matching `--color-*`
@@ -79,8 +120,10 @@ Tailwind's own theme. A recipe therefore names a **semantic family** (`bg-good-9
 `text-chrome-300`) and never a Tailwind hue or a hex — both are eslint errors
 (`local/no-builtin-tailwind-color`, `local/no-raw-hex-color`).
 
-**Every primitive on this page, every tone and every ramp is rendered live at `/style-guide`.**
-Read that before adding a new box, tint or pill: the thing you want probably exists.
+**Every role token, every recipe, every primitive, every tone and every ramp is rendered live at
+`/style-guide`** — the type scale, the radii, the hairlines, the nested surfaces and the spacing
+grid under "The tokens", measured off the DOM rather than restated. Read it before adding a new
+size, box, tint or pill: the thing you want probably exists.
 
 ## Hooks (`src/lib/hooks/`)
 

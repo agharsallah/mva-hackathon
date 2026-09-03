@@ -53,14 +53,15 @@ export function PrimitiveGallery() {
             Live components, not screenshots: <code>StatTile</code> (a figure with a tone),{' '}
             <code>Badge</code>/<code>Flag</code> (a mark), <code>Callout</code> (the one thing that
             changes the conclusion), <code>EmptyState</code> (nothing here — grey for a gap, green
-            when nothing recorded is the expected state), <code>Card</code>, <code>FieldList</code>,{' '}
-            <code>DataTable</code>, and the control row.
+            when nothing recorded is the expected state), <code>Card</code> (its <code>panel</code>{' '}
+            and <code>well</code> variants nested), <code>FieldList</code>, <code>DataTable</code>,
+            and the control row.
           </>
         }
         reading="A page composes these; it never types the class strings behind them."
         source="src/components/index.ts"
       >
-        <div className="space-y-5">
+        <div className="space-y-4">
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <StatTile label="records" value="5.2M" sub="delivered" hint="StatTile, neutral tone" />
             <StatTile label="pass rate" value="98.4%" sub="of all calls" tone="good" />
@@ -91,9 +92,7 @@ export function PrimitiveGallery() {
 
           <div className="grid gap-3 lg:grid-cols-2">
             <Card className="space-y-2">
-              <div className="text-xs font-semibold uppercase tracking-wider text-chrome-400">
-                Card
-              </div>
+              <div className="text-xs font-semibold text-chrome-400">Card, panel variant</div>
               <FieldList
                 fields={[
                   { key: 'assembly', label: 'assembly', value: 'GRCh38' },
@@ -101,6 +100,13 @@ export function PrimitiveGallery() {
                   { key: 'samples', label: 'samples', value: '1 (proband)' },
                 ]}
               />
+              <Card variant="well" padding="sm">
+                <p className="text-micro text-chrome-500">
+                  Card, well variant — the recessed panel a card nests inside itself. The third,{' '}
+                  <code>plain</code>, keeps the padding rhythm and drops the border; all three are
+                  laid out side by side under &ldquo;The tokens&rdquo; above.
+                </p>
+              </Card>
             </Card>
             <div className="grid gap-3">
               <EmptyState title="No matches">

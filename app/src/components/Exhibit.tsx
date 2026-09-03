@@ -91,27 +91,29 @@ export function Exhibit({
         </div>
       </div>
       {children}
-      <figcaption className="mt-3 space-y-1.5 border-t border-chrome-800 pt-3">
+      <figcaption className="mt-3 space-y-2 border-t border-line pt-3">
         <p className="text-xs leading-relaxed text-chrome-400">
-          <span className="font-semibold text-chrome-300">Legend</span> — {legend}
+          <span className="mr-2 font-semibold text-chrome-300">Legend</span>
+          {legend}
         </p>
         {reading && (
-          <p className="text-xs leading-relaxed text-chrome-400">
-            <span className="font-semibold text-chrome-300">Reading</span> — {reading}
+          <p className="max-w-[90ch] font-serif text-note leading-relaxed text-chrome-300">
+            <span className="mr-2 font-sans text-xs font-semibold text-chrome-300">Reading</span>
+            {reading}
           </p>
         )}
         {(source || origin) && (
           // The per-reply `source` strings now carry URLs and cache keys, so they must wrap
           // rather than run off the card: `break-words` breaks a long token only when it
           // cannot fit, leaving normal prose alone.
-          <p className="font-mono text-[11px] break-words text-chrome-600">
+          <p className="font-mono text-micro break-words text-chrome-600">
             {origin === 'fixture' && (
-              <span className="mr-1.5 rounded bg-decision-500/15 px-1 py-px text-decision-400">
+              <span className="mr-2 rounded-pill bg-decision-500/15 px-1 py-px text-decision-400">
                 fixture
               </span>
             )}
             {source}
-            {cachedAt ? ` · cached ${cachedAt.replace('T', ' ').slice(0, 19)}` : ''}
+            {cachedAt ? `, cached ${cachedAt.replace('T', ' ').slice(0, 19)}` : ''}
           </p>
         )}
       </figcaption>
@@ -141,10 +143,10 @@ function CopyForAi({ record }: { record: ExhibitRecord }) {
       type="button"
       onClick={run}
       title={AI_HINT}
-      className={`rounded-md border px-2 py-0.5 text-[11px] transition focus:outline-none focus-visible:border-machinery-700 ${
+      className={`rounded-control border px-2 py-0.5 text-micro transition focus:outline-none focus-visible:border-machinery-700 ${
         said
           ? 'border-good-800 bg-good-950/40 text-good-400'
-          : 'border-chrome-800 bg-chrome-900 text-chrome-500 hover:border-chrome-700 hover:text-chrome-300'
+          : 'border-line bg-chrome-900 text-chrome-500 hover:border-line-strong hover:text-chrome-300'
       }`}
     >
       {said ?? 'copy for AI'}

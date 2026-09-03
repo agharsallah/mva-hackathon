@@ -7,7 +7,7 @@ meaning)` pattern, and every chart carries a `Legend` line decoding its own colo
 
 There is **no trio** in this dataset — one sample only. The app never renders a parent column.
 
-**Verified:** 2026-09-02 — `pnpm run check` green (typecheck, lint, format, 88 tests).
+**Verified:** 2026-09-03 — `pnpm run check` green (typecheck, lint, format, theme, 388 tests); bundle budget re-blessed the same day (see `tools/bundle-budget.mjs`).
 
 ## Quickstart
 
@@ -136,15 +136,30 @@ src/
 ```
 
 **Pages are feature modules.** [`src/app/modules`](src/app/README.md) declares each page once —
-route, nav label, lazy `import()` — and the shell derives both the router and the nav bar from that
-one array, so they cannot drift. Each module mounts inside its own error boundary and Suspense
-boundary: a module that fails to load renders a contained card with a Retry that re-issues the
-import, instead of blanking the app. Hovering a nav link preloads that module's chunk.
+route, nav label, title, group, description, lazy `import()` — and the shell derives the router,
+the two-tier nav, every page's h1 and the prev/next journey links from that one array, so none of
+them can drift. Each module mounts inside its own error boundary and Suspense boundary: a module
+that fails to load renders a contained card with a Retry that re-issues the import, instead of
+blanking the app. Hovering a nav link preloads that module's chunk.
+
+**Every page serves one of four questions**, and the nav is those four questions: **Data** (is the
+measurement trustworthy? — Reads, Callset, Genome), **Case** (which gene and pair is causal? —
+Panel, Compare, Phenotype, Search), **Decide** (what do we believe, and what has it cost? —
+Science, Probes), **Platform** (what exists, where from, is it up? — Catalog, Provenance, Status,
+Style). Overview is the map. On every page the order is the same: the finding (`Callout`), then
+the background (`Explainer`, terms as click-to-define chips), then the exhibits, then the hand-off
+to the next page.
 
 **`Exhibit` is the only way a chart enters the app.** It makes `legend` a **required** prop — the
 repo's "every figure carries a legend" rule enforced by the type checker rather than by review —
 and it is the single hook the AI export uses: each exhibit registers its narrative, provenance and
 payload while mounted, so page-level and case-level exports need nothing from the call sites.
+
+**Two typographic voices.** Literata, a serif drawn for reading on screens, carries everything
+that teaches — page titles, explainer prose, callout bodies, an exhibit's reading line. Atkinson
+Hyperlegible Next, a sans built for legibility at small sizes, carries everything that operates —
+navigation, labels, tables, numbers. Both are self-hosted (`@fontsource-variable/*`), so the app
+works offline. Labels are sentence case; nothing is set in tracked-out capitals.
 
 **Colour lives in one place, and it is generated.** A colour is needed in two places that cannot
 share a mechanism — the DOM (a Tailwind class) and a canvas (a hex handed to Plotly or an SVG
@@ -175,7 +190,7 @@ itself at **`/style-guide`** — every ramp, tone, recipe, scale and primitive, 
 
 | Page           | Question it answers                                              | Exhibits                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | -------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Overview**   | What is this case, in numbers?                                   | stat tiles (variants, PASS %, reads, coverage, Ts/Tv, samples, probe budget); delivery-integrity board (one card per object, green per verified sha256); genotype donut with the `1/2` slice called out                                                                                                                                                                                                                                                                          |
+| **Overview**   | What is this case, in numbers — and where do I start?            | stat tiles (variants, PASS %, reads, coverage, Ts/Tv, samples, probe budget); the four-question journey map, one card per section listing its pages in reading order; genotype donut with the `1/2` slice called out                                                                                                                                                                                                                                                             |
 | **Genome**     | Is any chromosome present in the wrong number of copies?         | allele-balance dot plot on the 0.5 line (**the headline**); depth-vs-VAF scatter with crosshair; karyotype ideogram to real chromosome length; 1 Mb density heat strips **+ 3D surface toggle**; BAF karyogram                                                                                                                                                                                                                                                                   |
 | **Callset**    | Is the delivered callset healthy, and what did it suppress?      | filtering funnel (log axis, suppressed broken out by reason); depth histogram (log-y, mode annotated); substitution spectrum with Ts/Tv; indel length spectrum; zygosity split; VCF header fields                                                                                                                                                                                                                                                                                |
 | **Panel**      | Which MVA candidate genes have evidence, and how much is hidden? | gene scorecard (PASS/suppressed stacked + PASS % axis); constraint scorecard; domain lollipop; locus explorer — pick a gene, get a QUAL track and a VAF track; **protein explorer — the fold in 3D, alleles painted on residues, Cα distances between them**; **two folds side by side under one camera, plus a cross-gene structure metrics table over the whole curated gene set (fold-only outside the annotated panel)**; het-pair matrix; suppressed calls; gene background |

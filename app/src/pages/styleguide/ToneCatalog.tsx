@@ -40,7 +40,7 @@ export function ToneCatalog() {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[56rem] border-collapse text-xs">
           <thead>
-            <tr className="text-left text-[11px] uppercase tracking-wider text-chrome-500">
+            <tr className="text-left text-xs text-chrome-500">
               <th className="pb-2 pr-3 font-medium">tone</th>
               <th className="pb-2 pr-3 font-medium">family</th>
               <th className="pb-2 pr-3 font-medium">mark</th>
@@ -52,32 +52,29 @@ export function ToneCatalog() {
           </thead>
           <tbody>
             {TONES.map((tone) => (
-              <tr key={tone} className="border-t border-chrome-800 align-middle">
-                <td className="py-2.5 pr-3">
+              <tr key={tone} className="border-t border-line align-middle">
+                <td className="py-2 pr-3">
                   <div className="font-mono text-chrome-200">{tone}</div>
-                  <div className="mt-0.5 max-w-[13rem] text-[11px] leading-snug text-chrome-500">
+                  <div className="mt-0.5 max-w-[13rem] text-micro leading-snug text-chrome-500">
                     {MEANING[tone]}
                   </div>
                 </td>
-                <td className="py-2.5 pr-3 font-mono text-chrome-400">{TONE_FAMILY[tone]}</td>
-                <td className="py-2.5 pr-3 font-mono text-[11px] text-chrome-400">
+                <td className="py-2 pr-3 font-mono text-chrome-400">{TONE_FAMILY[tone]}</td>
+                <td className="py-2 pr-3 font-mono text-micro text-chrome-400">
                   <Chip color={TONE_MARK[tone]}>{TONE_MARK[tone]}</Chip>
                 </td>
-                <td className={cx('py-2.5 pr-3 font-mono', TEXT[tone])}>1.42</td>
-                <td className="py-2.5 pr-3">
+                <td className={cx('py-2 pr-3 font-mono', TEXT[tone])}>1.42</td>
+                <td className="py-2 pr-3">
                   <Badge tone={tone} title={BADGE[tone]}>
                     {tone}
                   </Badge>
                 </td>
-                <td className="py-2.5 pr-3">
-                  <div
-                    title={BOX[tone]}
-                    className={cx('rounded-lg border px-2.5 py-1.5', BOX[tone])}
-                  >
+                <td className="py-2 pr-3">
+                  <div title={BOX[tone]} className={cx('rounded-card border px-3 py-2', BOX[tone])}>
                     callout
                   </div>
                 </td>
-                <td className="py-2.5">
+                <td className="py-2">
                   <EmptyState tone={tone}>nothing here</EmptyState>
                 </td>
               </tr>
@@ -85,7 +82,7 @@ export function ToneCatalog() {
           </tbody>
         </table>
       </div>
-      <p className="mt-3 text-[11px] leading-relaxed text-chrome-600">
+      <p className="mt-3 text-micro leading-relaxed text-chrome-600">
         Hover any recipe cell to read the class string it renders — e.g.{' '}
         <code className="font-mono">{BADGE.good}</code>.
       </p>
