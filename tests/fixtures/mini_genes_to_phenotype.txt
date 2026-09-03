@@ -1,0 +1,12 @@
+ncbi_gene_id	gene_symbol	hpo_id	hpo_name	frequency	disease_id
+701	BUB1B	HP:0002859	Rhabdomyosarcoma		OMIM:257300
+701	BUB1B	HP:0004322	Short stature		OMIM:257300
+701	BUB1B	HP:0001518	Small for gestational age		OMIM:257300
+701	BUB1B	HP:0200067	Recurrent spontaneous abortion		OMIM:257300
+9319	TRIP13	HP:0002667	Nephroblastoma		OMIM:617598
+9319	TRIP13	HP:0001518	Small for gestational age		OMIM:617598
+9702	CEP57	HP:0004322	Short stature		OMIM:614114
+7157	TP53	HP:0002664	Neoplasm		OMIM:151623
+1000	WIDEGENE	HP:0000118	Phenotypic abnormality		OMIM:000001
+1001	RETIRED	HP:9999996	A retired term		OMIM:000002
+1002	NOWHERE	HP:9999995	A retired term with nowhere to go		OMIM:000003
