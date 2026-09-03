@@ -19,7 +19,7 @@ flowchart TB
   PUB[/"the publisher<br/>SageBio/mva-hackathon-2026-data (gated)"/]:::raw
   PUB -->|"source-fetch — streamed on the server,<br/>SHA-256 checked against the publisher"| S3[("<b>MinIO bucket <code>mva</code></b><br/>source/ · 12 objects · 84.99 GB<br/>versioning Enabled · 12/12 hash_verified")]:::good
   S3 -->|"vcf-ingest"| RAW[("<b>warehouse.variants_raw</b><br/>row count = bcftools record count")]:::good
-  PROF[/"ressources/data-profile/<br/>committable aggregates"/]:::raw
+  PROF[/"ressources/data-profile/ + ressources/reference/<br/>committable aggregates and public reference,<br/>HPO tables provenance-manifested"/]:::raw
   PROF -->|"stage → typed Parquet"| BUILD["build/warehouse/*.parquet<br/><i>gitignored, regenerable</i>"]:::neutral
   BUILD -->|"pg-ingest"| WH[("<b>schema warehouse</b><br/>19 tables")]:::good
   RAW --- WH
@@ -62,16 +62,16 @@ Postgres and MinIO both run on a **remote VPS**, not locally.
 | | Value |
 |---|---|
 | PostgreSQL | 18.4, database `mva`, 1330 MB |
-| schema `warehouse` | 19 tables |
+| schema `warehouse` | **27 tables**, counted live 2026-09-03 (was 19 on 2026-08-29). Two of the additions are `hpo_term_ic` and `hpo_gene_scores`, ingested 2026-09-03; the rest — including `hypotheses` and `evidence`, which the row below expected to be absent — arrived from work not recorded on this page |
 | `warehouse.variants_raw` | 5,012,204 rows — **exactly** the bcftools record count in `ressources/data-profile/vcf_stats_summary.txt` ([owned by data-findings](../ideation/data-findings.md)) |
 | schema `results` | 6 derived tables, 5 runs logged in `derivation_runs` |
 | MinIO bucket `mva` | versioning **Enabled** |
 | bucket `source/` | 12 objects, 84,985,953,378 bytes (84.99 GB) |
 | hash verification | 12/12 `hash_verified=true` — 10 against the publisher's SHA-256, 2 own-upload — **0 mismatches** |
 | `warehouse.source_files` | append-only ledger, 14 rows (VCF + `.tbi` uploaded twice, same hash — correct, not drift) |
-| `warehouse.data_lineage` | append-only edge list, **7 rows**: 2 for `variants_raw` (the original local-path edge and the superseding `s3://mva/source/…` edge carrying the verified sha256 and version) + 1 per derivation |
+| `warehouse.data_lineage` | append-only edge list, **37 rows over 29 distinct target tables** as of 2026-09-03 (a re-derived table gets a new edge, never an edit, so rows exceed targets): 2 for `variants_raw` (the original local-path edge and the superseding `s3://mva/source/…` edge carrying the verified sha256 and version), 1 per derivation, 1 per staged reference table, and 1 for the VEP annotation call. The two newest are the HPO tables, each carrying its upstream URL, release and input digest ([step-3/methodology/056](step-3/methodology/056-phenotype-ranking-without-java.md) §7b) |
 | `warehouse.probe_ledger` | oracle submissions spent: **0 of 18** — the table exists and is empty because no probe has been spent. Widened in entry 017 with a `hypothesis_ids` column; the widening has **not** been applied to the live table, which is empty |
-| `warehouse.hypotheses`, `warehouse.evidence` | the research register — **defined in code, not yet created in the database**. Created on first write, like every other ledger |
+| `warehouse.hypotheses`, `warehouse.evidence` | **created 2026-09-03** on the first write: 2 hypotheses and 6 evidence rows under step-3 ([step-3/methodology/056](step-3/methodology/056-phenotype-ranking-without-java.md)). No verdict has been committed |
 
 Both probes connect: `uv run mva-warehouse pg-check`, `uv run mva-warehouse s3-check`.
 
@@ -149,4 +149,5 @@ Stated here so they are not discovered later. Sequencing is in [`roadmap.md`](ro
 | **Layer 2 not built** | `variants` / `genotypes` / `variant_info` are designed only | see [`data-layers.md`](step-0/data-layers.md) |
 | **No real annotator** | `annotation.py` is a port with a lookup fake behind it | the critical path for ranking — see [the note](notes/annotation-as-a-port.md) |
 | **The research register is empty** | no hypothesis proposed, no evidence recorded, no probe spent | not a defect — step 1 has not run. The machinery is built and tested; nothing has been claimed. See [`method.md`](method.md) |
+| **`clinvar_panel` has no source digest** | its lineage edge names a ClinVar release but does not identify the bytes; the scratch VCF cannot be shown to be the download that produced the committed extract | the extract is reproducible from the release but not *provably* the same bytes. Left empty rather than guessed — see [step-3/methodology/056](step-3/methodology/056-phenotype-ranking-without-java.md) §7b |
 | **The register tables are not in the database** | `warehouse.hypotheses` and `warehouse.evidence` are defined in code and covered by tests, but no connection has been made since | they appear on first write, like every other ledger. Until then `mva-science board` against a live database will create them |

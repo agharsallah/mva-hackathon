@@ -166,6 +166,21 @@ sites split one allele per record. Mandatory before any comparison, because the 
 matches strings exactly.
 _Avoid_: canonicalisation, standardisation, cleaning
 
+**Term set**:
+The child's HPO terms as one named object. Two exist — every delivered term, and only the
+ones describing the child rather than the parents. A ranking always names which it used.
+_Avoid_: phenotype list, symptoms, HPO codes, the terms
+
+**Phenotype score**:
+How well a gene's known clinical features match the child's, measured on the ontology
+graph and normalised to 0–1. A property of a **gene**, never of a variant.
+_Avoid_: phenotype match, HPO score, similarity, Exomiser score
+
+**Gene prior**:
+The multiplier a phenotype score contributes to a candidate pair's rank. Derived, never
+asserted — a hand-typed prior is an assumption and is recorded as one.
+_Avoid_: gene weight, boost, prior probability
+
 ### The research record
 
 **Step**:

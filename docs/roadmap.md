@@ -60,11 +60,21 @@ Required fields: gene symbol, consequence, gnomAD popmax AF. Valuable additions:
 REVEL, AlphaMissense, SpliceAI (the last matters — a deep intronic splice variant is a
 strong candidate for a "missing" second allele), and ClinVar significance.
 
-### Step 3 — Phenotype-driven ranking (days, parallel with step 2)
+### Step 3 — Phenotype-driven ranking — **ranking built and run**
 
-Run Exomiser and LIRICAL on the normalized VCF with the eight HPO terms. This is the
-unbiased genome-wide ranking, and it is also the backbone the methods form asks about.
-Cross-check against our panel-first result: agreement is evidence, disagreement is a lead.
+**Superseded by what happened.** This step assumed Exomiser and LIRICAL on the normalized
+VCF, and therefore that it had to wait for steps 1 and 2. Neither holds:
+
+- Ranking **genes** by symptoms reads no callset, so it ran first rather than last.
+- Exomiser is a JVM application whose data is Java-only H2 at 31.5 GB unpacked. The
+  phenotype half was reimplemented in Python instead — human-only, which the published
+  optimisation study measures 16.2 points *ahead* of the cross-species default.
+
+The result and its limits are owned by [`step-3/README.md`](step-3/README.md) and
+[`step-3/methodology/056`](step-3/methodology/056-phenotype-ranking-without-java.md).
+What remains of this step is the cross-check it was written for: join the ranking to the
+callset's rare protein-altering alleles and see whether the top-ranked genes carrying a
+candidate pair are the ones the panel-first route produced.
 
 ### Step 4 — Mine the non-PASS calls (hours, high value per hour)
 
@@ -123,7 +133,7 @@ re-checked 2026-08-29. None of these has been resolved.
 | Whether an SV is one of the two alleles | align, then Manta / Delly / smoove 2-of-3 consensus + GATK-gCNV | the single largest blind spot: an SV allele *cannot* be in the delivered VCF |
 | Whether either candidate allele is already in ClinVar | ClinVar join — public data, runnable today | circularity disclosure; near-instant confirmation if yes |
 | Whether the aneuploid fraction is simply below the allele-balance floor | binned-depth + BAF karyogram from aligned reads — a lower floor than the VCF-only pass | strength of the diagnostic corroboration paragraph |
-| Whether `HP:0200067` (a parental feature) should enter the proband's term set | run Exomiser / LIRICAL with and without, report the delta | phenotype LR calibration |
+| ~~Whether `HP:0200067` (a parental feature) should enter the proband's term set~~ **Answered 2026-09-03: no.** Every curated panel gene ranks better without it; the leading candidate rises 8 places. [`step-3/methodology/056`](step-3/methodology/056-phenotype-ranking-without-java.md) §5 | — | — |
 | Whether nephrocalcinosis is part of the MVA picture or independent | literature check against reported MVA cases | whether it is a differential lead or a footnote |
 
 ## 3. Handling the whole 80 GB

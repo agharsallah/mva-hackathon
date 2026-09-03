@@ -11,6 +11,7 @@ gotchas and CLI/HTTP surface; this page only says what lives where.
 | [`pipeline/`](pipeline/README.md) | The deterministic core: read a VCF (variant call format — one row per difference from the reference genome), build candidate variant pairs, classify phase (which parent each copy came from), rank them, write the submission CSV. Includes a local replica of the official scorer. | library only |
 | [`warehouse/`](warehouse/README.md) | Ingest and lineage: delivered files → Parquet → PostgreSQL, plus ~20 named SQL derivations into a `results` schema, and the append-only ledgers (source uploads, lineage edges, integrity fingerprints, oracle probe budget). | `mva-warehouse` |
 | [`reads/`](reads/README.md) | Raw sequencer output (FASTQ) turned into sharded Parquet so k-mer and QC questions run in seconds; three swappable conversion engines, plus a scan/triage path. | `mva-reads`, `mva-reads-api` |
+| [`phenotype/`](phenotype/README.md) | The child's HPO terms ranked against every gene the Human Phenotype Ontology curates, by a scorer that reads two public text files and never the callset, the panel, or a variant. A human-only reimplementation of Exomiser's hiPHIVE path — no JVM, no 31.5 GB bundle. | `mva-phenotype` |
 | [`science/`](science/README.md) | The research record: append-only hypothesis and evidence registers. Enforces in code that a claim carries a prediction and a refutation condition, that an observation names a source, and that no genomic coordinate reaches an exported file. | `mva-science` |
 | [`viz/`](viz/README.md) | FastAPI service putting one HTTP origin in front of PostgreSQL, the Parquet object store and `mva-reads-api`, with a uniform `{data, cached_at, source}` envelope and a self-describing catalog. Serves the React app in [`app/`](../../app). | `mva-viz-api` |
 | [`render/`](render/README.md) | The shared visual language — exhibit/section primitives, report shell, and the one palette (`GOOD` green, `BAD` red, `DECISION` yellow, `MACHINE` blue, `RAW` purple, `MUTED` grey). Subject-agnostic. | library only |
@@ -36,6 +37,10 @@ graph TD
     pipeline --> science
     pipeline --> explore
     pipeline --> viz
+    phenotype[phenotype<br/>symptom-driven ranking]:::goal
+    pipeline --> phenotype
+    io --> phenotype
+    phenotype --> viz
     render --> science
     render --> explore
     warehouse --> science

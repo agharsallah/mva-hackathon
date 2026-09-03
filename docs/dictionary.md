@@ -832,6 +832,30 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 **samplot** — draws pictures of structural variants.
 
 **Exomiser / LIRICAL / AMELIE / Phen2Gene / GADO / Phenolyzer** — programs that take the symptom list + the VCF and rank which gene is guilty.
+*Exomiser and LIRICAL are Java; Phen2Gene is Python and also answers over HTTP; Phenolyzer is Perl. We reimplemented the phenotype half in Python — see the four entries below.*
+
+**Semantic similarity** — measuring how alike two symptom lists are by walking the [ontology](#6-describing-symptoms--hpo), never by comparing the words. "Rhabdomyosarcoma" and "nephroblastoma" share no letters and are one step apart in the graph.
+
+**Most informative common ancestor (MICA)** — of all the terms two symptoms both descend from, the rarest one. That term's [information content](#6-describing-symptoms--hpo) *is* their similarity score. This is **Resnik similarity**.
+*Example: Rhabdomyosarcoma and Nephroblastoma meet at "Neoplasm", which is informative. Rhabdomyosarcoma and Premature birth meet near the root, which is worth nothing.*
+
+**Best-match-average (BMA)** — how you go from comparing two *terms* to comparing two *lists*. Each term takes its single strongest partner on the other side; those bests are averaged. Taking the best lets a real match survive six unrelated symptoms; averaging stops one lucky pairing carrying the whole score.
+*Software analogy: a fuzzy join where every left row keeps only its best right match, then you average the match qualities.*
+
+**Forward vs reverse direction** — BMA is not symmetric, and both halves are misleading alone. *Forward* asks "is each of the **child's** features explained by this gene?" and ignores everything else the gene does. *Reverse* asks "is each of the **gene's** features present in the child?" and punishes well-studied genes for the symptoms the child lacks. Report both; their gap says how heavily the gene is curated, not anything about the patient.
+*Example: BUB1B has 112 curated features against this child's 7 — forward 2.11, reverse 0.55.*
+
+**PhenoDigm** — the published scoring scheme built from MICA + BMA, normalised so a perfect match is 1.0. What Exomiser's phenotype scoring is made of.
+
+**PHIVE / PhenIX / hiPHIVE** — Exomiser's phenotype scorers. **PHIVE** uses mouse models, **PhenIX** human disease annotations only, **hiPHIVE** combines human + mouse + zebrafish + a protein-interaction network. Counter-intuitively, hiPHIVE restricted to **human only** beats the full cross-species version: 82.8% vs 66.6% top-10 (Genome Medicine 17:127, 2025). That finding is why a Python reimplementation is practical at all — the parts that are hard to rebuild are the parts to leave out.
+
+**MVStore / H2** — the embedded Java database format Exomiser ships its data in. No Python reader exists, which is what makes Exomiser's *variant* half genuinely Java-only. Its *phenotype* inputs (`hp.obo`, `genes_to_phenotype.txt`) are plain text and readable by anything.
+
+**Entrez / NCBI gene ID** — a numeric gene identifier, e.g. `701` for BUB1B. An alternative to the [HGNC](#7-databases-and-annotation) symbol. Ours joins on symbols because that is what VEP returns; the numeric id is kept only because some services key on it.
+*Gotcha: 375 rows of HPO's gene file carry `-` as the symbol, covering seven different genes. Loading them creates one fake gene that outranks real ones.*
+
+**Gene prior** — a per-gene multiplier applied to a candidate pair's score. A **hand-set** prior ("BUB1B matters, multiply by 2") is an assumption and our register logs it as evidence of strength *zero*. A prior **derived** from a phenotype ranking over 5,267 genes is a measurement, and can carry real weight.
+*Example: BUB1B ranks 6 of 5,267 on this child's symptoms, giving a prior of 1.455.*
 
 **slivar / GEMINI / vembrane** — filter VCFs with written rules, including compound-het logic.
 
