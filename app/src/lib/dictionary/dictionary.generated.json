@@ -4,10 +4,6 @@
   "intro": [
     {
       "kind": "prose",
-      "html": "<p><strong>Standing:</strong> the one glossary. Never duplicated elsewhere; enriched whenever a new domain\nterm, gene, file format or tool appears in the work. Last checked 2026-08-29.</p>"
-    },
-    {
-      "kind": "prose",
       "html": "<p>Explained like you're 12. Ordered so each word only uses words defined above it.\nFormat: <strong>term</strong> — what it means. <em>Example.</em></p>"
     },
     {
@@ -21,7 +17,7 @@
   ],
   "counts": {
     "chapters": 15,
-    "entries": 439,
+    "entries": 440,
     "figures": 20,
     "diagrams": 19
   },
@@ -2383,6 +2379,14 @@
             "CSS variable"
           ],
           "html": "<p>a value declared once under a name starting with <code>--</code> and read anywhere with <code>var(--name)</code>. It lives in the browser, so it can be swapped at runtime; a value baked into a JavaScript file cannot. <em>Example:</em> <code>--color-good-500: #00c950;</code> then <code>color: var(--color-good-500)</code>.</p>",
+          "exampleHtml": ""
+        },
+        {
+          "kind": "entry",
+          "slug": "mermaid",
+          "term": "Mermaid",
+          "aliases": [],
+          "html": "<p>a text-to-diagram language: you write the boxes and arrows as words in a fenced <code>```mermaid</code> block and a renderer draws them. GitHub, VS Code and this project's <code>/learn</code> page draw them; a plain text editor shows the source, which is why every diagram here also has a <code>> **Legend**</code> line that reads without the picture. <em>Example:</em> <code>flowchart LR; A --> B</code> draws two boxes with an arrow.</p>",
           "exampleHtml": ""
         },
         {

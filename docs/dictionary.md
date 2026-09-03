@@ -1,7 +1,9 @@
 # Dictionary — every unclear word in this repository
 
 **Standing:** the one glossary. Never duplicated elsewhere; enriched whenever a new domain
-term, gene, file format or tool appears in the work. Last checked 2026-08-29.
+term, gene, file format or tool appears in the work. Rendered as a course at `/learn` in the
+app — generated from this file by `app/tools/gen-dictionary.mjs`, never copied; a cross-link
+here that names a missing heading fails that build. Last checked 2026-09-03.
 
 Explained like you're 12. Ordered so each word only uses words defined above it.
 Format: **term** — what it means. *Example.*
@@ -900,6 +902,8 @@ and its phenotype is worded mosaic variegated **hyperploidy**, not aneuploidy.*
 **Utility class** — one of those single-purpose class names. A **recipe** in this repository is a named string of them (`CARD = 'rounded-xl border border-chrome-800 bg-chrome-900/40 p-4'`) so eleven files stop retyping the same eight words. *Example:* `app/src/lib/ui.ts`.
 
 **CSS custom property** (also **CSS variable**) — a value declared once under a name starting with `--` and read anywhere with `var(--name)`. It lives in the browser, so it can be swapped at runtime; a value baked into a JavaScript file cannot. *Example:* `--color-good-500: #00c950;` then `color: var(--color-good-500)`.
+
+**Mermaid** — a text-to-diagram language: you write the boxes and arrows as words in a fenced ```` ```mermaid ```` block and a renderer draws them. GitHub, VS Code and this project's `/learn` page draw them; a plain text editor shows the source, which is why every diagram here also has a `> **Legend**` line that reads without the picture. *Example:* `flowchart LR; A --> B` draws two boxes with an arrow.
 
 **Design token** — a named design value used instead of a literal one: a colour, a spacing, a radius. Software analogy: a constant, except it has to be readable from both CSS and code, which is why it usually exists twice. *Example:* `--color-broken-400` and `RAMP.broken[400]` are the same token in this repository's two halves.
 

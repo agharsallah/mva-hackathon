@@ -70,7 +70,9 @@ patient positions) — never pass `--host 0.0.0.0` outside a trusted tunnel.
 | `pnpm run lint` / `lint:fix`       | ESLint 9 flat config                                                            |
 | `pnpm run format` / `format:check` | Prettier                                                                        |
 | `pnpm run test` / `test:watch`     | Vitest (jsdom + testing-library)                                                |
-| `pnpm run check`                   | all four gates, in order — run this before committing                           |
+| `pnpm run dictionary`              | regenerate `src/lib/dictionary/` from `docs/dictionary.md` (JSON + copied SVGs) |
+| `pnpm run dictionary:check`        | fail on drift from the markdown, or on a dead cross-link inside it              |
+| `pnpm run check`                   | every gate, in order — run this before committing                               |
 
 ### Environment
 
@@ -142,12 +144,14 @@ them can drift. Each module mounts inside its own error boundary and Suspense bo
 that fails to load renders a contained card with a Retry that re-issues the import, instead of
 blanking the app. Hovering a nav link preloads that module's chunk.
 
-**Every page serves one of four questions**, and the nav is those four questions: **Data** (is the
+**Every page serves one of five questions**, and the nav is those five questions: **Learn** (what do
+the words mean? — the dictionary as a course, first because the rest is written in its words), **Data** (is the
 measurement trustworthy? — Reads, Callset, Genome), **Case** (which gene and pair is causal? —
 Panel, Compare, Phenotype, Search), **Decide** (what do we believe, and what has it cost? —
 Science, Probes), **Platform** (what exists, where from, is it up? — Catalog, Provenance, Status,
 Style). Overview is the map. On every page the order is the same: the finding (`Callout`), then
-the background (`Explainer`, terms as click-to-define chips), then the exhibits, then the hand-off
+the background (`Explainer`, terms as click-to-define chips, each linking to its dictionary entry),
+then the exhibits, then the hand-off
 to the next page.
 
 **`Exhibit` is the only way a chart enters the app.** It makes `legend` a **required** prop — the
@@ -191,6 +195,7 @@ itself at **`/style-guide`** — every ramp, tone, recipe, scale and primitive, 
 | Page           | Question it answers                                              | Exhibits                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | -------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Overview**   | What is this case, in numbers — and where do I start?            | stat tiles (variants, PASS %, reads, coverage, Ts/Tv, samples, probe budget); the four-question journey map, one card per section listing its pages in reading order; genotype donut with the `1/2` slice called out                                                                                                                                                                                                                                                             |
+| **Learn**      | What do the words mean?                                          | `docs/dictionary.md` generated into the app (`pnpm dictionary`, checked by `pnpm dictionary:check`): chapter rail with progress, term search, entry cards with anchors, SVG figures and mermaid diagrams (lazy, drawn on scroll), "See it in the app" links to the exhibit and methodology entry behind a word, three short paths                                                                                                                                                |
 | **Genome**     | Is any chromosome present in the wrong number of copies?         | allele-balance dot plot on the 0.5 line (**the headline**); depth-vs-VAF scatter with crosshair; karyotype ideogram to real chromosome length; 1 Mb density heat strips **+ 3D surface toggle**; BAF karyogram                                                                                                                                                                                                                                                                   |
 | **Callset**    | Is the delivered callset healthy, and what did it suppress?      | filtering funnel (log axis, suppressed broken out by reason); depth histogram (log-y, mode annotated); substitution spectrum with Ts/Tv; indel length spectrum; zygosity split; VCF header fields                                                                                                                                                                                                                                                                                |
 | **Panel**      | Which MVA candidate genes have evidence, and how much is hidden? | gene scorecard (PASS/suppressed stacked + PASS % axis); constraint scorecard; domain lollipop; locus explorer — pick a gene, get a QUAL track and a VAF track; **protein explorer — the fold in 3D, alleles painted on residues, Cα distances between them**; **two folds side by side under one camera, plus a cross-gene structure metrics table over the whole curated gene set (fold-only outside the annotated panel)**; het-pair matrix; suppressed calls; gene background |
@@ -235,5 +240,6 @@ the matrix against blessed values.
 | reuse a UI piece                             | `/style-guide` in the running app, then [`src/components/README.md`](src/components/README.md) |
 | change or add a colour                       | [`tools/gen-theme.mjs`](tools/gen-theme.mjs) — never a hex at a call site                      |
 | make the app work offline for a new endpoint | [`src/fixtures/README.md`](src/fixtures/README.md)                                             |
-| understand a domain word                     | [`docs/dictionary.md`](../docs/dictionary.md)                                                  |
+| understand a domain word                     | `/learn` in the running app, generated from [`docs/dictionary.md`](../docs/dictionary.md)      |
+| link a page's term to the dictionary         | `dict: '<slug>'` on the `Explainer` chip — `src/test/explainer-dict.test.ts` requires it       |
 | know how a number was produced               | [`docs/step-0/methodology/`](../docs/step-0/methodology/)                                      |

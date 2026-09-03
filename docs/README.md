@@ -18,7 +18,7 @@ cross-step — they describe the whole project, not one phase of it.
 |---|---|
 | [`current-state.md`](current-state.md) | What exists right now? Provisioned infrastructure, what runs, repo layout, known gaps. Owns repo and infra numbers. |
 | [`method.md`](method.md) | How does a question become a scored answer? The loop — goal, hypothesis, test, evidence, verdict — and what the register refuses to store. **Owns the scientific method.** |
-| [`dictionary.md`](dictionary.md) | I have no genetics background — what *is* any of this? Every domain term from scratch, with diagrams. |
+| [`dictionary.md`](dictionary.md) | I have no genetics background — what *is* any of this? Every domain term from scratch, with diagrams. Rendered as a course at `/learn` in the app — generated from this file, never copied. |
 | [`../CONTEXT.md`](../CONTEXT.md) | Which word do we use for it? Naming discipline for code and write-ups, plus what to avoid. |
 
 ## Step 0 — the platform (built)
@@ -36,7 +36,7 @@ Full index and what "step 0" covers: [`step-0/README.md`](step-0/README.md).
 | [`step-0/viz-api.md`](step-0/viz-api.md) | How does the browser read the warehouse? Every table and read-store aggregate as JSON — `mva-viz-api`. |
 | [`step-0/viz-app.md`](step-0/viz-app.md) | How do I *see* the data? The React app — 7 pages, 23 exhibits, 2D + 3D, and a `/style-guide` that renders its own design system. |
 | [`step-0/methodology/`](step-0/methodology/) | How was each step-0 result reached? One append-only entry per executed run, 001–029. |
-| [`step-0/notes/`](step-0/notes/) | Why the platform looks like this. Five decisions, one file each. |
+| [`step-0/notes/`](step-0/notes/) | Why the platform looks like this. Seven decisions, one file each. |
 
 ## Step 1 — Normalize the callset (open)
 
@@ -93,6 +93,7 @@ provisional, what would prompt a rethink. Full register with results:
 | [Colour is generated](step-0/notes/colour-is-generated.md) | step 0 | firm — one generator, four gates |
 | [Toolchain choice](step-0/notes/toolchain-choice.md) | step 0 | provisional |
 | [three.js behind one wrapper](step-0/notes/three-js-behind-one-wrapper.md) | step 0 | provisional — designed 2026-09-03, not built |
+| [The dictionary is generated into the app](step-0/notes/dictionary-is-generated-into-the-app.md) | step 0 | firm — one generator, `dictionary:check` in the gate, three test files |
 | [A hand-rolled VCF reader](notes/hand-rolled-vcf-reader.md) | pipeline | provisional |
 | [A local replica of the scorer](notes/local-scorer-replica.md) | pipeline | settled for the challenge |
 | [Annotation enters through a port](notes/annotation-as-a-port.md) | pipeline | port settled, backend open |
