@@ -3,7 +3,7 @@
 **Standing:** open, not started. No hypothesis has been recorded and no test has run.
 Everything below is the plan for the step, not a result. The method this step follows is
 [`../method.md`](../method.md); the sequencing argument is [`../roadmap.md`](../roadmap.md)
-§1. Last checked 2026-08-29.
+§1. Last checked 2026-09-04.
 
 ---
 
@@ -51,7 +51,7 @@ run. It should become a tested seam so the answer is in code.
 | | |
 |---|---|
 | Hypotheses | none recorded yet — [`hypotheses/`](hypotheses/) once `mva-science export` has run |
-| Tests | none run yet — entries land in [`methodology/`](methodology/), numbered from 017 |
+| Tests | none run yet — entries land in [`methodology/`](methodology/), numbered from 069 |
 | Rendered | `figures/science-report.html` |
 
 Opening the first claim:

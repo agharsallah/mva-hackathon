@@ -2,7 +2,7 @@
 
 **Standing:** open. The ranking is built and has run; the claim it supports is registered
 but not yet confirmed against the callset. Method: [`../method.md`](../method.md).
-Evidence: [`methodology/056`](methodology/056-phenotype-ranking-without-java.md).
+Evidence: [`methodology/067`](methodology/067-phenotype-ranking-without-java.md).
 Last checked 2026-09-03.
 
 ---
@@ -47,7 +47,7 @@ The package is [`src/mva/phenotype/`](../../src/mva/phenotype/README.md). Nothin
 BUB1B ranks **6th of 5,267 genes** on the child's own seven features, from a scorer that
 never saw the candidate panel — and **26th of 18,882** in Phen2Gene, an unrelated method.
 The full table, including where the other seven panel genes landed and why, is in
-[`methodology/056`](methodology/056-phenotype-ranking-without-java.md) §5.
+[`methodology/067`](methodology/067-phenotype-ranking-without-java.md) §5.
 
 Two questions the roadmap had open are now answered with numbers:
 
@@ -68,5 +68,5 @@ could still refute the corroboration.
 
 | Path | Holds |
 |---|---|
-| [`methodology/`](methodology/) | Executed runs, from entry 056 |
+| [`methodology/`](methodology/) | Executed runs, from entry 067 (filed as 056, renumbered) |
 | [`notes/`](notes/) | Decisions belonging to this step |

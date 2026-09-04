@@ -5,7 +5,7 @@ manifest** as of 2026-09-03
 ([methodology 062](../../docs/step-0/methodology/062-reference-manifests-and-bed-notes.md)).
 The first three downloaded and derived
 2026-08-31; the two HPO tables added 2026-09-03 from release `hp/releases/2026-06-23`
-([methodology 056](../../docs/step-3/methodology/056-phenotype-ranking-without-java.md)).
+([methodology 067](../../docs/step-3/methodology/067-phenotype-ranking-without-java.md)).
 Row counts and per-gene breakdowns verified against the files in this directory on the
 same date. Method and observed output:
 [`docs/step-0/methodology/030-population-reference-data.md`](../../docs/step-0/methodology/030-population-reference-data.md).
@@ -437,7 +437,7 @@ function of the ontology *and* the annotation corpus.
 
 The edges are live in `warehouse.data_lineage` — `uv run mva-warehouse lineage-list
 --current` — with row counts, upstream URLs and digests. Details and the transfer
-cross-check: [methodology 056](../../docs/step-3/methodology/056-phenotype-ranking-without-java.md) §7b.
+cross-check: [methodology 067](../../docs/step-3/methodology/067-phenotype-ranking-without-java.md) §7b.
 
 **Known gap, narrowed 2026-09-03 and still stated rather than hidden:** the *warehouse
 lineage row* for `clinvar_panel` still carries no `source_sha256`. The **manifest** now

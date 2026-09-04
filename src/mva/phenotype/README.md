@@ -3,7 +3,7 @@
 Phenotype-driven gene ranking, in Python, with no JVM.
 
 **Standing:** 2026-09-03 — written from source, verified by an executed run recorded in
-[`docs/step-3/methodology/056`](../../../docs/step-3/methodology/056-phenotype-ranking-without-java.md).
+[`docs/step-3/methodology/067`](../../../docs/step-3/methodology/067-phenotype-ranking-without-java.md).
 
 ## What it is
 

@@ -1,8 +1,8 @@
 # Methodology log — step 1
 
 **Standing:** open, empty. No test has run under this step. Entries appear here numbered
-from **018**, continuing the global sequence that
-[`../../step-0/methodology/`](../../step-0/methodology/) started. Last checked 2026-08-29.
+from **069**, continuing the global sequence that
+[`../../step-0/methodology/`](../../step-0/methodology/) closed at 068. Last checked 2026-09-04.
 
 One entry per test actually executed. **Nothing here is estimated or assumed** — every
 number is copied from a run whose output was seen.
