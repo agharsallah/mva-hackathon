@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-08-29T21:27:36+00:00",
+  "generated_at": "2026-09-04T13:37:27+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -28,7 +28,7 @@
       "title": "Annotate the callset",
       "goal": "Which variants are rare enough and damaging enough to cause an ultra-rare recessive disease, and in which gene?",
       "kind": "research",
-      "status": "planned",
+      "status": "open",
       "unblocks": [
         "step-3",
         "step-6"
@@ -39,7 +39,7 @@
       "title": "Rank by phenotype",
       "goal": "Does an unbiased genome-wide ranking driven by the child's HPO terms agree with the panel-first candidate list?",
       "kind": "research",
-      "status": "planned",
+      "status": "open",
       "unblocks": [
         "step-6"
       ]
@@ -49,7 +49,7 @@
       "title": "Mine the suppressed calls",
       "goal": "Is one of the two alleles hiding in a call the quality filters discarded, rather than absent from the sample?",
       "kind": "research",
-      "status": "planned",
+      "status": "open",
       "unblocks": [
         "step-6"
       ]
@@ -71,7 +71,110 @@
       "kind": "research",
       "status": "planned",
       "unblocks": []
+    },
+    {
+      "slug": "step-7",
+      "title": "Knowledge and literature",
+      "goal": "Does public knowledge - published MVA cases, ClinVar, protein-model scores - name an allele or a pair the data-driven steps missed, or independently corroborate the one they found?",
+      "kind": "research",
+      "status": "planned",
+      "unblocks": [
+        "step-6"
+      ]
+    },
+    {
+      "slug": "step-8",
+      "title": "Track 2 - drug repurposing",
+      "goal": "Which market-approved drugs act on the mechanism the confirmed alleles imply, and how strong is the evidence for each?",
+      "kind": "research",
+      "status": "planned",
+      "unblocks": []
     }
   ],
-  "hypotheses": []
+  "hypotheses": [
+    {
+      "id": "H001",
+      "step": "step-3",
+      "statement": "The gene carrying the causal compound-heterozygous pair ranks in the top 30 of a phenotype-driven ranking that never reads the callset, the candidate panel, or any variant.",
+      "prediction": "When the causal gene is confirmed by the oracle, its rank in the proband-only ranking over 5,267 curated genes is 30 or better. BUB1B, the current leading candidate, currently ranks 6.",
+      "refuted_by": "The oracle confirms a pair in a gene the phenotype ranking places outside the top 200, or in a gene HPO does not curate at all. Either would show the phenotype signal did not carry the answer and that the panel prior was doing the work.",
+      "gene": "BUB1B",
+      "path": "phenotype-only ranking, human-only hiPHIVE reimplementation",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.9526,
+      "revisions": 1,
+      "evidence": [
+        {
+          "id": 1,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "BUB1B ranks 6 of 5,267 curated genes on the child's seven own HPO terms, scored by a ranker that reads only public ontology files and never the callset or the candidate panel.",
+          "source_ref": "methodology/056",
+          "lineage_ref": ""
+        },
+        {
+          "id": 2,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Phen2Gene, an independent algorithm on an independent knowledge base, ranks BUB1B 26 of 18,882 genes on the same terms - the top 0.14 percent.",
+          "source_ref": "methodology/056",
+          "lineage_ref": ""
+        },
+        {
+          "id": 3,
+          "direction": "supports",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "The phenotype ranking reproduces the candidate panel's own confidence ordering without being shown it: the five genes the panel annotates as established rank 6 to 26, while the two it labels case-reports and candidate rank 1,010 and 4,485.",
+          "source_ref": "methodology/056",
+          "lineage_ref": ""
+        },
+        {
+          "id": 4,
+          "direction": "neutral",
+          "strength": 0.0,
+          "kind": "absence",
+          "claim": "Rhabdomyosarcoma is the rarest of the child's features and drives the top of the ranking; genes matching only nephrocalcinosis also reach the top 20, so a high rank on a seven-term query is not by itself specific.",
+          "source_ref": "methodology/056",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H002",
+      "step": "step-3",
+      "statement": "The parental term HP:0200067 (recurrent spontaneous abortion) degrades the phenotype ranking of the causal gene and should be excluded from the proband's term set.",
+      "prediction": "Once the causal gene is known, its rank is strictly better in the proband-only ranking than in the with-parental ranking. Measured so far on the candidate panel: every one of the seven curated panel genes rises without the term, BUB1B by 8 places.",
+      "refuted_by": "The causal gene ranks worse, or unchanged, when the parental term is removed - which would mean the parents' reproductive history carried signal about the child's gene that the child's own features did not.",
+      "gene": "",
+      "path": "phenotype-only ranking, term-set ablation",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.8581,
+      "revisions": 1,
+      "evidence": [
+        {
+          "id": 5,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Removing the parental term HP:0200067 raises every one of the seven curated candidate-panel genes; BUB1B moves from rank 14 to rank 6.",
+          "source_ref": "methodology/056",
+          "lineage_ref": ""
+        },
+        {
+          "id": 6,
+          "direction": "supports",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "With the parental term included, four recurrent-miscarriage genes - TOP6BL, ANXA5, ENPP1 and ABCC6 - outrank every candidate-panel gene, showing the term competes with the features that describe the child.",
+          "source_ref": "methodology/056",
+          "lineage_ref": ""
+        }
+      ]
+    }
+  ]
 }
