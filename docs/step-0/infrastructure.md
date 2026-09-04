@@ -206,7 +206,7 @@ local copy and `--verify` checks each object against the publisher's SHA-256. Ev
 ### The two append-only ledgers
 
 `warehouse.data_lineage` answers "which bytes produced this table"; `warehouse.probe_ledger`
-answers "which of our 18 oracle submissions is spent, by whom, with what content and what
+answers "which of our 6 oracle submissions is spent, by whom, with what content and what
 reply". Neither is ever updated or deleted — a correction is a newer row saying what it
 supersedes.
 
@@ -214,7 +214,7 @@ supersedes.
 uv run mva-warehouse lineage-list --current    # newest edge per target table
 uv run mva-warehouse lineage-repair            # repoint local-path edges at the verified object
 uv run mva-warehouse lineage-backfill          # one edge per already-logged derivation run
-uv run mva-warehouse probe-budget              # "n/18 spent, m remaining"
+uv run mva-warehouse probe-budget              # "n/6 spent, m remaining"
 uv run mva-warehouse probe-log --by <member> --type S --payload-file <submission.csv> \
     --response '<scorer reply>' --rationale '<what this probe decides>'
 uv run mva-warehouse probe-list

@@ -7,7 +7,7 @@ links here, never restates.
 
 Data constraints every method must fit: **one sample** (no parents, no matched normal),
 **no BAM** (reads are alignment-free, k-mer-presence queryable only), VCF with caller
-statistics only (no population/consequence annotations), 44x depth, 18-probe oracle budget.
+statistics only (no population/consequence annotations), 44x depth, 6-probe oracle budget.
 
 The strongest untapped signal: `AD` (allele depths) at heterozygous sites — a clean
 per-site binomial observation. `DP` exists only at variant records, so it is a sparse,
@@ -24,10 +24,11 @@ het-biased coverage track; every depth method inherits that bias.
    (DANFIP, Markello 2012, PMID 22300746: shift the theoretical CDF, minimize L1
    residuals; mosaic fraction from the band position, `f̂ = (2·BAF−1)/(1−BAF)`).
    Monosomy bands: `(1−f)/(2−f)` and `1/(2−f)`.
-2. **The 18-probe budget is generous in bits, tight in noise.** 18 noiseless binary
-   answers distinguish 2^18 = 262,144 hypotheses; naming 1 pair among ~200 candidates
-   needs ⌈log₂ 200⌉ ≈ 8 perfect bits. Noise handling and query expressiveness are the
-   binding constraints, not the count.
+2. **The 6-probe budget is tight in bits and in noise.** 6 noiseless binary answers
+   distinguish only 2^6 = 64 hypotheses, while naming 1 pair among ~200 candidates needs
+   ⌈log₂ 200⌉ ≈ 8 perfect bits. Each probe carries 10 rows rather than one bit, which is
+   what closes the gap — so query expressiveness and a short candidate list, not the raw
+   count, are the binding constraints.
 3. **Plain binomial VAF p-values are anticonservative.** Sequencing VAF is overdispersed
    (GC bias, PCR duplication); fit a beta-binomial with overdispersion estimated from our
    own genome-wide het sites.

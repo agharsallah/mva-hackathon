@@ -62,7 +62,7 @@ So each submission = an adaptive query against the ground truth:
 - Any full match anywhere in ranks 1–10 → final submission puts that pair at rank 1 with epcr 1.0 → **100 pts + F-max 1.0** (perfect score).
 
 ### 2.4 Team quota multiplication
-"Each member receives their own submission quota" — a team of N members = **6N oracle queries**, all under the same team display name; best score counts. Recruiting even 1–2 teammates doubles/triples search budget. Each member must individually register + accept rules.
+"Each member receives their own submission quota" — a team of N members = **6N oracle queries** (N = 1 here), all under the same team display name; best score counts. Recruiting even 1–2 teammates doubles/triples search budget. Each member must individually register + accept rules.
 
 ### 2.5 Groundtruth file structure hints
 Loader skips keys starting with `_` and reads `entry["primary_variants"]` — GT file likely also holds secondary/incidental findings metadata that is NOT auto-scored (qualitative review only).
@@ -147,9 +147,11 @@ Deliverables: report (PDF/md), public GitHub, 3-min YouTube/Vimeo pitch. One des
 
 ## 7. Confirmed team parameters
 
+**Correction 2026-09-04:** the brief assumed 3 members and 18 queries; only one member is registered, so the budget is 6. Arithmetic below is recomputed for 6.
+
 | Parameter | Value | Consequence |
 |---|---|---|
-| Team | 3 members (user + 2 teammates) | **18 Track 1 oracle queries** (6 each). All register individually, EXACT same team name |
+| Team | 1 registered member | **6 Track 1 oracle queries** (6 per registered member). Any further member must register individually, under the EXACT same team name |
 | Data | Access granted, stored locally | No download bottleneck; start Phase 1 immediately |
 | Tracks | Both | Track 2 submitted late, grounded in oracle-confirmed variant |
 | Compute | Local + Modal free credits | VCF-first strike local; FASTQ re-calling / SV calling on Modal GPU/CPU |
@@ -186,9 +188,9 @@ Full match anywhere takes precedence over any partial match: a full match at ran
 
 ---
 
-## 9. THE ORACLE PROTOCOL — solving the enigma in ≤ 4 submissions (18 available)
+## 9. THE ORACLE PROTOCOL — solving the enigma in ≤ 4 submissions (6 available)
 
-Every submission returns: `rank_points`, `f_max`, `f_max_threshold`, `full_match_rank`, `partial_match_rank`. This turns 18 submissions into an adaptive group-testing scheme. Decode math below **verified by simulating the leaked scorer**.
+Every submission returns: `rank_points`, `f_max`, `f_max_threshold`, `full_match_rank`, `partial_match_rank`. This turns 6 submissions into an adaptive group-testing scheme. Decode math below **verified by simulating the leaked scorer**.
 
 ### 9.1 Probe type S — "singles scan" (identify alleles)
 Submit 10 single-variant rows = candidates c₁…c₁₀ (ranked by pipeline conviction), distinct epcrs 0.99, 0.98, … 0.90.
@@ -216,10 +218,11 @@ Once one allele A is confirmed: submit 10 PAIR rows (A, candidate_k), k = 1…10
 Confirmed pair {A, B} → submit: rank 1 = exact pair, epcr 1.0, finding_type primary; ranks 2+ = curated secondary findings with `notes` (free, feeds qualitative review). Result: **rank_points 100, F-max 1.0 — the maximum possible score.**
 
 ### 9.4 Budget arithmetic
-18 submissions, 3 members. Expected spend if pipeline candidate list contains both alleles in top 10: S → (decode both) → F = **2 submissions**. Realistic worst cases:
-- Both alleles in top ~50 pipeline candidates: ≤ 5×S + 1×P + F ≈ 8 submissions.
+6 submissions, 1 registered member. Expected spend if the pipeline candidate list contains both alleles in the top 10: S → (decode both) → F = **2 submissions**. Realistic worst cases:
+- Both alleles in the top ~30 pipeline candidates: ≤ 3×S + 1×P + F ≈ 5 submissions.
+- With only 6 submissions the singles-scan budget is tight: each S covers 10 candidates, so the candidate list has to be short — roughly the top 30 — *before* the first probe is fired. Trimming the list is cheaper than buying another scan.
 - One allele found, second NOT in VCF: P-scans exhaust → pivot: found allele localizes the GENE → targeted raw-read hunt (SV / deep-intronic / low-VAF) in that gene on Modal → new second-allele candidates → P-probes. This is the designed trap (why FASTQ ships with the VCF) and where teams without a raw-data pipeline die.
-- Keep ≥ 2 submissions in reserve until the Oct 24 freeze (indel-representation retries, leaderboard defense).
+- Keep ≥ 1 submission in reserve until the Oct 24 freeze (indel-representation retries, leaderboard defense).
 - Ledger discipline: shared spreadsheet — who spent which submission, probe content, decoded result. Every probe needs a CSV + report (PDF/md) + public GitHub URL → keep a templated auto-generated report ready.
 
 ### 9.5 Legitimacy & the methods form
@@ -261,7 +264,7 @@ Track 2 sheet — expected sources name-dropped: **DrugBank, ChEMBL, ClinicalTri
 ### Week 1 (now): Foundation + VCF strike
 | # | Step | Owner/where | Output |
 |---|---|---|---|
-| 1 | All 3 members register, accept rules, agree exact team name; create submission ledger | all | 18-query budget live |
+| 1 | Registered member accepts rules, fixes the exact team name; create submission ledger | all | 6-query budget live |
 | 2 | Two repos: private (data work, never push data) + public GitHub (code only, no data slices — resharing = disqualification risk) | member 1 | compliance-safe infra |
 | 3 | `bcftools norm -m -both -f GRCh38` the VCF; index; QC (bcftools stats) | local | normalized callset |
 | 4 | Extract + annotate ALL variants in MVA genes: **BUB1B, TRIP13, CEP57**, then CENPE, CEP192, SMC5, and SAC/mitosis panel (BUB1, BUB3, MAD1L1, MAD2L1, CDC20, KNL1, TTK/MPS1, PLK4) — VEP + gnomAD AF, ClinVar, SpliceAI, CADD, REVEL, AlphaMissense | local | candidate table |
@@ -307,7 +310,7 @@ Track 2 sheet — expected sources name-dropped: **DrugBank, ChEMBL, ClinicalTri
 ---
 
 ### Success criteria
-1. **Enigma solved**: pair identified + oracle-confirmed (expected ≤ 8 of 18 submissions).
+1. **Enigma solved**: pair identified + oracle-confirmed (expected ≤ 4 of 6 submissions).
 2. **Leaderboard ceiling**: 100 rank points, F-max 1.0.
 3. **Tiebreak dominance**: reproducible automated pipeline + methods forms + secondary findings + cost figures.
 4. **Track 2**: only team whose mechanism section rests on a *confirmed* variant → Scientific Rigor (35%) edge.

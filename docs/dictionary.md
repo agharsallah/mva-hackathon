@@ -1371,10 +1371,10 @@ one answer, half the universe deleted -- with certainty, not probability.
 
 **Priority queue** — a list that always hands you the highest-scoring item first.
 
-**Append-only ledger** — a log you only ever add to, never edit. Keeps an honest record of all 18 submissions.
+**Append-only ledger** — a log you only ever add to, never edit. Keeps an honest record of all 6 submissions.
 
 **Probe ledger** — the concrete table that does that: `warehouse.probe_ledger`, one row per spent [submission / probe](#13-hackathon-scoring-words), holding who spent it, its probe type ([S](#13-hackathon-scoring-words) / [P](#13-hackathon-scoring-words) / [F](#13-hackathon-scoring-words)), the exact payload uploaded, the [oracle](#13-hackathon-scoring-words)'s reply, and the rationale. A shared submission budget tracked in chat messages is a budget that gets double-spent.
-*Example: `mva-warehouse probe-budget` → `all tracks: 0/18 spent, 18 remaining`.*
+*Example: `mva-warehouse probe-budget` → `all tracks: 0/6 spent, 6 remaining`.*
 
 ---
 
@@ -1513,11 +1513,11 @@ Each submission is not a guess. **It is a question, and the answer narrows the n
 
 **Ground truth (GT) / answer key** — the real answer, held by the organizers.
 
-**Submission / probe** — one guess. You get 6 each; a 3-person team gets 18 total.
+**Submission / probe** — one guess. You get 6 per registered member; this team has one, so 6 total.
 
-![18 submissions: 3 members times 6, with 2 held in reserve](assets/team-quota.svg)
+![6 submissions: one registered member times 6, with 2 held in reserve](assets/team-quota.svg)
 
-> **Legend** — blue: a submission you can spend now · red: one to hold back until the freeze · one row per team member.
+> **Legend** — blue: a submission you can spend now · red: one to hold back until the freeze · one row per registered team member.
 
 **Row** — one line in your submission CSV. Up to 10 rows per submission. A row holds either one variant or a pair.
 
@@ -1582,7 +1582,7 @@ So rows 2 and 3 **could not** lower your score. Secondary findings are genuinely
 
 ```mermaid
 flowchart TB
-    ST["18 submissions available<br/>3 members x 6"] --> S1["PROBE S<br/>10 best single candidates"]
+    ST["6 submissions available<br/>1 member x 6"] --> S1["PROBE S<br/>10 best single candidates"]
     S1 --> D{"what came back?"}
     D -->|"f_max decodes BOTH alleles"| FIN
     D -->|"partial match only<br/>= 1 allele found"| P1["PROBE P<br/>that allele + 10 new partners"]
