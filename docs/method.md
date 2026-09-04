@@ -3,7 +3,7 @@
 **Standing:** the scientific method for this project. It owns the loop, the five stations,
 and the rules the register enforces. What is *currently* believed lives in the step folders
 and in `figures/science-report.html`; this page owns the *shape*, not the content.
-Last checked 2026-08-29.
+Last checked 2026-09-04.
 
 ---
 
@@ -92,12 +92,14 @@ uv run mva-science steps
 | `step-4` | research | Is one allele hiding in a call the quality filters discarded? |
 | `step-5` | research | Is the missing allele one the caller could not emit at all? |
 | `step-6` | research | Which pair does the scorer confirm, and what does each reply tell us next? |
+| `step-7` | research | Does public knowledge name an allele or pair the data-driven steps missed, or corroborate the one they found? |
+| `step-8` | research | Which market-approved drugs act on the mechanism the confirmed alleles imply, and how strong is the evidence? |
 
 **Step 0 is different, and the difference is the point.** It is *machinery*. "PostgreSQL is
 the right database" is a decision with alternatives, judged by whether it works — not a
 claim about the patient that evidence can refute. So step 0 takes no hypotheses; its
 reasoning lives in [`step-0/notes/`](step-0/notes/) as decisions, and its
-[`methodology/001–016`](step-0/methodology/) are platform records. The register refuses a
+[`methodology/001–068`](step-0/methodology/) are platform records — step 0 closed at 068 on 2026-09-04. The register refuses a
 hypothesis filed under it.
 
 From step 1 on, every methodology entry is a **test bound to a hypothesis under a goal**.
@@ -116,6 +118,7 @@ is a gate.
 | A confidence with no stated reason | A number nobody can check is exactly what this register exists to prevent. |
 | A genomic position in an exported file | `mva-science export` scans and refuses. Name the gene and the consequence, never the position — see [no patient data](notes/no-patient-data-in-the-repository.md). |
 | An edit to anything recorded | Both tables are append-only. A changed belief is a **new revision**, so the record of the belief moving survives. |
+| A pre-registration claim on a test that already ran | Some step-0 exploration answered research questions before the register existed (panel annotation, entry 031; non-PASS mining, 049; ClinVar join, 051). Filing those now is allowed, but the statement must begin with `retrospective:` and the evidence must cite the entry that ran. A retrospective claim never counts as a pre-registered prediction, and the verdict reasoning says so. |
 
 ---
 
@@ -142,7 +145,7 @@ is a judgment someone made, and it should be visible rather than reconstructed.
 
 ## The entry template, step 1 onward
 
-The existing `001–016` keep their shape: they are append-only and were written before this
+The existing step-0 entries keep their shape: they are append-only and were written before this
 framework existed, and retro-fitting them would mean inventing hypotheses nobody stated.
 New entries add three sections the old ones lack.
 

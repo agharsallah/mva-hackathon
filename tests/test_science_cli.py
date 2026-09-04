@@ -13,7 +13,7 @@ import contextlib
 
 import pytest
 
-from mva.science import cli
+from mva.science import cli, steps
 from mva.science.hypothesis import Hypothesis, Status
 from mva.warehouse.settings import Postgres
 from test_science_register import FakeConnection
@@ -360,5 +360,5 @@ def test_report_from_the_database_uses_the_database_name_as_subject(wired, tmp_p
 def test_steps_prints_every_goal(capsys):
     assert cli.read.do_steps(Args()) == 0
     out = capsys.readouterr().out
-    assert out.count("goal:") == 7
-    assert "step-0" in out and "step-6" in out
+    assert out.count("goal:") == len(steps.STEPS)
+    assert "step-0" in out and "step-6" in out and "step-8" in out
