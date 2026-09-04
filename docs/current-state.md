@@ -1,6 +1,7 @@
 # Current state — what exists, right now
 
-**Verified:** 2026-08-29, by executed runs (`pg-check`, `s3-check`, `pytest`, live SQL
+**Verified:** 2026-09-04 for §2's register, ledger and table counts (live SQL through
+`pg-check` / `pg-query`, `mva-science check`); 2026-08-29 for the object-store rows, by executed runs (`pg-check`, `s3-check`, `pytest`, live SQL
 counts). Recorded in
 [`methodology/015`](step-0/methodology/015-step-1-consolidation.md) and
 [`methodology/016`](step-0/methodology/016-lineage-backfill-and-probe-ledger.md).
@@ -54,8 +55,8 @@ flowchart TB
   S3 -.->|"byte-identical convenience mirror"| MIR["~/ubuntu/data/ · 85 GB<br/><i>local, outside git</i>"]:::neutral
   RAW -.-> LIN[("<b>warehouse.data_lineage</b><br/>7 edges · variants_raw ← s3:// + sha256 + version<br/>1 edge per derivation, appended by pg-derive")]:::good
   RES -.-> LIN
-  ORACLE[/"the Track 1 oracle<br/>18 submissions, 6 per member"/]:::raw
-  ORACLE -.->|"probe-log"| PROBE[("<b>warehouse.probe_ledger</b><br/>0 of 18 spent — budget intact")]:::good
+  ORACLE[/"the Track 1 oracle<br/>6 submissions, one registered member"/]:::raw
+  ORACLE -.->|"probe-log"| PROBE[("<b>warehouse.probe_ledger</b><br/>0 of 6 spent — budget intact")]:::good
   classDef raw fill:#f3e8ff,stroke:#7e22ce,color:#581c87
   classDef good fill:#dcfce7,stroke:#15803d,color:#14532d
   classDef neutral fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
@@ -104,14 +105,14 @@ Postgres and MinIO both run on a **remote VPS**, not locally.
 | PostgreSQL | 18.4, database `mva`, 1330 MB |
 | schema `warehouse` | **27 tables**, counted live 2026-09-03 (was 19 on 2026-08-29). Two of the additions are `hpo_term_ic` and `hpo_gene_scores`, ingested 2026-09-03; the rest — including `hypotheses` and `evidence`, which the row below expected to be absent — arrived from work not recorded on this page |
 | `warehouse.variants_raw` | 5,012,204 rows — **exactly** the bcftools record count in `ressources/data-profile/vcf_stats_summary.txt` ([owned by data-findings](../ideation/data-findings.md)) |
-| schema `results` | 6 derived tables, 5 runs logged in `derivation_runs` |
+| schema `results` | **23 tables**, counted live 2026-09-04 (was 6 on 2026-08-29); runs logged in `derivation_runs` |
 | MinIO bucket `mva` | versioning **Enabled** |
 | bucket `source/` | 12 objects, 84,985,953,378 bytes (84.99 GB) |
 | hash verification | 12/12 `hash_verified=true` — 10 against the publisher's SHA-256, 2 own-upload — **0 mismatches** |
 | `warehouse.source_files` | append-only ledger, 14 rows (VCF + `.tbi` uploaded twice, same hash — correct, not drift) |
-| `warehouse.data_lineage` | append-only edge list, **37 rows over 29 distinct target tables** as of 2026-09-03 (a re-derived table gets a new edge, never an edit, so rows exceed targets): 2 for `variants_raw` (the original local-path edge and the superseding `s3://mva/source/…` edge carrying the verified sha256 and version), 1 per derivation, 1 per staged reference table, and 1 for the VEP annotation call. The two newest are the HPO tables, each carrying its upstream URL, release and input digest ([step-3/methodology/056](step-3/methodology/056-phenotype-ranking-without-java.md) §7b) |
-| `warehouse.probe_ledger` | oracle submissions spent: **0 of 18** — the table exists and is empty because no probe has been spent. Widened in entry 017 with a `hypothesis_ids` column; the widening has **not** been applied to the live table, which is empty |
-| `warehouse.hypotheses`, `warehouse.evidence` | **created 2026-09-03** on the first write: 2 hypotheses and 6 evidence rows under step-3 ([step-3/methodology/056](step-3/methodology/056-phenotype-ranking-without-java.md)). No verdict has been committed |
+| `warehouse.data_lineage` | append-only edge list, **39 rows** counted live 2026-09-04 (37 over 29 distinct target tables on 2026-09-03 (a re-derived table gets a new edge, never an edit, so rows exceed targets): 2 for `variants_raw` (the original local-path edge and the superseding `s3://mva/source/…` edge carrying the verified sha256 and version), 1 per derivation, 1 per staged reference table, and 1 for the VEP annotation call. The two newest are the HPO tables, each carrying its upstream URL, release and input digest ([step-3/methodology/067](step-3/methodology/067-phenotype-ranking-without-java.md) §7b) |
+| `warehouse.probe_ledger` | oracle submissions spent: **0 of 6** (one registered member; `MVA_TEAM_MEMBERS` scales it). The `hypothesis_ids` widening from entry 017 was **applied 2026-09-04** to the live table (12 columns, counted live) |
+| `warehouse.hypotheses`, `warehouse.evidence` | **2 hypotheses, 6 evidence rows**, all under step-3 ([step-3/methodology/067](step-3/methodology/067-phenotype-ranking-without-java.md)), counted live 2026-09-04. No verdict committed. The committed mirror `science-register.json` and `figures/science-report.html` were re-exported the same day and agree |
 
 Both probes connect: `uv run mva-warehouse pg-check`, `uv run mva-warehouse s3-check`.
 
@@ -131,7 +132,7 @@ same bytes.
 ## 3. What runs today
 
 ```bash
-uv run pytest -q                            # 448 passed, no services needed
+uv run pytest -q                            # 1,580 passed (2026-09-03), no services needed
 uv run mva-explore report ressources/data-profile
 uv run mva-science steps                    # the research goals, needs no database
 uv run mva-science report --from docs/science-register.json
@@ -145,15 +146,15 @@ uv run mva-warehouse pg-check
 | `mva-warehouse` | 26 — `stage`, `pg-*` (5), `vcf-*` (4), `s3-*` (5), `source-*` (5), `lineage-*` (3), `probe-*` (3) | measured from `mva-warehouse --help` |
 | `mva-science` | 12 — `steps`, `board`, `show`, `hypothesis-*` (2), `evidence-*` (2), `verdict`, `probe-link`, `check`, `export`, `report` | measured from `mva-science --help`; `steps` and `report --from` need no database |
 
-The **448 tests are hermetic**: synthetic fixtures only, no dataset, no Postgres, no MinIO.
+The **tests are hermetic**: synthetic fixtures only, no dataset, no Postgres, no MinIO.
 A green suite says nothing about whether the infrastructure is up — that is what `pg-check`
-and `s3-check` are for. 21 test files.
+and `s3-check` are for. 60 test files.
 
 ---
 
 ## 4. Repository layout
 
-`src/mva/` is six subpackages:
+`src/mva/` is nine subpackages (`phenotype/`, `reads/`, `viz/` joined after this table was first written; full map in [`../src/mva/README.md`](../src/mva/README.md) and [`toolset.md`](toolset.md)):
 
 | Package | Concern | Modules |
 |---|---|---|
@@ -187,7 +188,6 @@ Stated here so they are not discovered later. Sequencing is in [`roadmap.md`](ro
 |---|---|---|
 | **Staged Parquet is single-homed** | `build/warehouse/` exists only on one laptop | regenerable, so not data loss — but it is an undeclared dependency of `pg-ingest` |
 | **Layer 2 not built** | `variants` / `genotypes` / `variant_info` are designed only | see [`data-layers.md`](step-0/data-layers.md) |
-| **No real annotator** | `annotation.py` is a port with a lookup fake behind it | the critical path for ranking — see [the note](notes/annotation-as-a-port.md) |
-| **The research register is empty** | no hypothesis proposed, no evidence recorded, no probe spent | not a defect — step 1 has not run. The machinery is built and tested; nothing has been claimed. See [`method.md`](method.md) |
-| **`clinvar_panel` has no source digest** | its lineage edge names a ClinVar release but does not identify the bytes; the scratch VCF cannot be shown to be the download that produced the committed extract | the extract is reproducible from the release but not *provably* the same bytes. Left empty rather than guessed — see [step-3/methodology/056](step-3/methodology/056-phenotype-ranking-without-java.md) §7b |
-| **The register tables are not in the database** | `warehouse.hypotheses` and `warehouse.evidence` are defined in code and covered by tests, but no connection has been made since | they appear on first write, like every other ledger. Until then `mva-science board` against a live database will create them |
+| **No genome-wide annotator** | the `Annotator` port has a real Ensembl VEP REST backend for the panel (`mva-warehouse annotate-panel`, entry 031); genome-wide needs an offline cache | step 2's remaining half — see [the note](notes/annotation-as-a-port.md) |
+| **`clinvar_panel` has no source digest** | its lineage edge names a ClinVar release but does not identify the bytes; the scratch VCF cannot be shown to be the download that produced the committed extract | the extract is reproducible from the release but not *provably* the same bytes. Left empty rather than guessed — see [step-3/methodology/067](step-3/methodology/067-phenotype-ranking-without-java.md) §7b |
+| **No verdict in the register** | two step-3 hypotheses are filed, none weighed | step 3's remaining test — the join to the callset — decides them. See [`method.md`](method.md) |

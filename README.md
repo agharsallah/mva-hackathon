@@ -2,7 +2,7 @@
 
 **Standing:** the front door. What this is, where the data may live, how to start. Every
 other topic is one link away in [`docs/README.md`](docs/README.md), which is the only
-documentation index. Last checked 2026-08-29.
+documentation index. Last checked 2026-09-04.
 
 An N-of-1 causal-variant pipeline for the
 [Rare Disease, Real Kid: MVA Hackathon 2026](https://sagebio-rare-disease-real-kid-mva-hackathon-2026.hf.space/).
@@ -82,7 +82,9 @@ uv run mva-science steps                                   # the goals, no datab
 uv run mva-science report --from docs/science-register.json  # the record, as a page
 ```
 
-The register is currently **empty** — step 1 has not run, so nothing has been claimed.
+The register holds two step-3 claims (the phenotype ranking's), no verdict yet; the
+mirror is `docs/science-register.json`. Step 0 closed on 2026-09-04; the solving phase
+starts at [`docs/toolset.md`](docs/toolset.md) and [`docs/roadmap.md`](docs/roadmap.md).
 
 ## Where the work stands
 

@@ -1,7 +1,9 @@
 # Six solution paths — the Challenge 1 portfolio
 
-**Standing:** strategy, written 2026-08-29. No path has been executed; nothing here is a
-result. Scoring mechanics and biology priors are owned by
+**Standing:** strategy, written 2026-08-29, re-checked 2026-09-04. Partly executed: Path 1
+and Path 2 have both run **over the eight-gene panel only**, and Path 1's phenotype half has
+run genome-wide ([results](data-findings.md) §6). Paths 3–6 are unexecuted. Scoring
+mechanics and biology priors are owned by
 [`hackathon-intel.md`](hackathon-intel.md); measured dataset numbers by
 [`data-findings.md`](data-findings.md); execution order by
 [`../docs/roadmap.md`](../docs/roadmap.md). This page owns the *portfolio*: six independent
@@ -207,5 +209,5 @@ around it. Model the puzzle-setter, not just the genome.
 - Every path names its report artifact up front — the figures are produced as the path
   runs, not reconstructed afterwards.
 - Relation to the [roadmap](../docs/roadmap.md): the paths group its steps, they do not
-  replace them (roadmap steps 1–3 ≈ Path 1, step 4 ≈ Path 2, step 5 ≈ Path 3,
-  step 6 ≈ Path 4).
+  replace them — roadmap steps 1–3 ≈ Path 1, step 4 ≈ Path 2, step 5 ≈ Path 3,
+  step 6 ≈ Path 4, **step 7 ≈ Paths 5 and 6**, and step 8 is Track 2, which no path covers.
