@@ -1,9 +1,10 @@
 # Step 0 — the platform
 
-**Standing:** the index for step 0. Every page here describes machinery that **exists and
-runs**; nothing in this folder is a plan. Direction lives in
-[`../roadmap.md`](../roadmap.md), current numbers in
-[`../current-state.md`](../current-state.md). Last checked 2026-08-31.
+**Standing:** **closed 2026-09-04 at methodology entry [068](methodology/068-step-0-close-out.md).**
+Every page here describes machinery that **exists and runs**; nothing in this folder is a
+plan. Direction lives in [`../roadmap.md`](../roadmap.md), the tool map in
+[`../toolset.md`](../toolset.md), current numbers in
+[`../current-state.md`](../current-state.md). Last checked 2026-09-04.
 
 ## What step 0 is
 
@@ -16,8 +17,9 @@ the platform the causal-variant search runs on top of:
 - the raw reads converted to a queryable Parquet store, served over HTTP,
 - an exploration toolkit that renders the committed data profile.
 
-It contains **no candidate variants and no ranking**. Step 0 answers "can we trust and
-query the bytes?", not "which pair is causal?".
+Step 0 answers "can we trust and query the bytes?", not "which pair is causal?". Its
+exploration nonetheless ran ahead of the research steps — see *What step 0 already answered*
+below.
 
 ```mermaid
 flowchart LR
@@ -41,6 +43,29 @@ flowchart LR
 > **blue = neutral machinery** that holds no unique state; **yellow = the decision point**
 > where step 0 hands off.
 
+## What step 0 already answered about the case
+
+Exploration inside step 0 executed tests that belong to research steps, before the register
+existed. They are platform entries in shape (no pre-registered hypothesis), and they enter
+the register as `retrospective:` claims under the step they answer
+([`../method.md`](../method.md)). Numbers live in
+[`data-findings.md` §6](../../ideation/data-findings.md).
+
+| Question | Entry | Now belongs to |
+|---|---|---|
+| Which panel alleles are rare and protein-altering? | [031](methodology/031-vep-rest-panel-annotation.md) | step 2 |
+| Is the sample mosaic-aneuploid at the allele-balance floor? | [037](methodology/037-baf-karyogram.md) | step 5 |
+| Do the panel's non-PASS calls hide a rare damaging allele? | [049](methodology/049-suppressed-calls.md) | step 4 |
+| Is either candidate allele already in ClinVar? | [051](methodology/051-clinvar-presence.md) | step 2 / step 7 |
+| Does a panel-blind phenotype ranking agree? | [step-3/067](../step-3/methodology/067-phenotype-ranking-without-java.md) | step 3 |
+
+## Tooling after the close
+
+A tool built because a research step needs it — an app page, an API route, a module — is
+recorded in **that step's** `methodology/`, not here. Only a cross-step platform fix still
+lands in this folder, and its entry names the step that needed it. Numbering stays global:
+the next entry is **069**.
+
 ## What was built
 
 One row per component. Numbers live in [`../current-state.md`](../current-state.md) and
@@ -57,7 +82,7 @@ the pieces.
 | Read store | All FASTQ reads converted to Parquet shards at `s3://mva/reads/lane=<n>/read=<1|2>/`, verified against the source; k-mer probe scans answered in minutes via Aho-Corasick | `src/mva/reads/` (`convert.py`, `engines.py`, `scan.py`, `verify.py`) | `mva-reads convert`, `verify`, `scan`, `count`, `qc`, `sql`, `status`, `bench` |
 | HTTP API | Every `mva-reads` verb over HTTP; long verbs return `202` + a job id, jobs persisted and cancellable; `X-API-Key` auth | `src/mva/reads/api/` (`app.py`, `jobs.py`, `models.py`, `runners.py`) | `mva-reads-api --host 0.0.0.0 --port 8765` |
 | Viz API | Warehouse + results tables, parsed `bcftools stats`, read-store aggregates and a reads-API proxy served as JSON for the browser; CORS, disk cache, `{data, cached_at, source}` envelope | `src/mva/viz/` | `mva-viz-api` (port 8900) |
-| Viz app | React app rendering the whole data profile — 7 pages, 23 exhibits, honest 3D only where the data is spatial; falls back to labelled fixtures when the API is down | `app/` | `cd app && npm run dev` (port 5173) |
+| Viz app | React app over the warehouse — 16 routes in five groups (learn, data, case, decide, platform), honest 3D only where the data is spatial; falls back to labelled fixtures when the API is down | `app/` | `cd app && pnpm run dev` (port 5173) |
 
 Three ways to read the data, one contract:
 
@@ -74,7 +99,7 @@ Step 0 is *machinery*, and that makes it a different kind of step from every one
 works — not a claim about the patient that evidence could refute. So:
 
 * its reasoning lives in [`notes/`](notes/) as **decisions**, not as hypotheses;
-* its [`methodology/001–032`](methodology/) are **platform records** — what was built and
+* its [`methodology/001–068`](methodology/) are **platform records** — what was built and
   what was measured, ending in *Conclusions*;
 * the register in `mva-science` **refuses** a hypothesis filed under `step-0`.
 
@@ -94,7 +119,7 @@ every methodology entry is a test bound to a claim. That loop is
 | [`reads-storage.md`](reads-storage.md) | Where do the raw reads go, and what can you ask of them? **Built** — 1,071,835,104 reads as queryable Parquet. |
 | [`reads-api.md`](reads-api.md) | How do I query the store without a shell on the server? Every `mva-reads` verb over HTTP, long jobs handled. |
 | [`viz-api.md`](viz-api.md) | How does the browser read the warehouse? Every table and read-store aggregate as JSON — `mva-viz-api`, one origin, disk-cached. |
-| [`viz-app.md`](viz-app.md) | How do I *see* the data? The React app — 7 pages, 23 exhibits, 2D + 3D, runs on fixtures when the API is down. |
+| [`viz-app.md`](viz-app.md) | How do I *see* the data? The React app — 16 routes, 2D + 3D, runs on fixtures when the API is down. |
 
 ## Decisions
 
@@ -105,7 +130,7 @@ every methodology entry is a test bound to a claim. That loop is
 | [The chr-prefix bridge](notes/chr-prefix-bridge.md) | firm — one function, enforced by test |
 | [Toolchain choice](notes/toolchain-choice.md) | provisional |
 | [Colour is generated](notes/colour-is-generated.md) | firm — one generator, four gates |
-| [three.js behind one wrapper](notes/three-js-behind-one-wrapper.md) | provisional — designed 2026-09-03, not built |
+| [three.js behind one wrapper](notes/three-js-behind-one-wrapper.md) | built 2026-09-03 — one module, one exhibit |
 | [The dictionary is generated into the app](notes/dictionary-is-generated-into-the-app.md) | firm — one generator, `dictionary:check` in the gate |
 
 Cross-step decisions — [no patient data](../notes/no-patient-data-in-the-repository.md),
@@ -115,7 +140,11 @@ seams](../notes/reusable-structure-toolkit.md) — stay in
 
 ## Evidence
 
-[`methodology/`](methodology/) — entries 001–032, append-only, one per executed run. 001–006
-are first contact with the delivery; 007–017 are the warehouse platform; 018–027 are the
-read store and its API; 028–029 are the viz API and the React app; 030–032 are the public
-reference data, the VEP annotator and the comparison tables they produce.
+[`methodology/`](methodology/) — entries 001–068, append-only, one per executed run. 001–006
+first contact with the delivery; 007–017 the warehouse platform and the research record;
+018–027 the read store, k-mer strike and its API; 028–029 the viz API and the React app;
+030–032 public reference data, the VEP annotator and comparison tables; 033–051 app exhibits
+(catalog, karyogram, pair matrix, funnel, suppressed calls, ClinVar presence); 052–055
+quality gates and design tokens; 056–060 protein structure and 3D; 061–064 reference
+provenance and the reusable structure toolkit; 065–066 health controls and the Learn page;
+067 is filed under step 3; 068 is the close-out.

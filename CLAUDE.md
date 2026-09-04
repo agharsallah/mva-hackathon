@@ -18,6 +18,22 @@
   afterthought. Qualitative review of the report and repo is the tiebreaker — treat report
   quality as a first-class output, following the Visualizations rules below.
 
+## Solving phase (opened 2026-09-04)
+- Step 0 (the platform) is **closed** at methodology entry 068. Read, in order:
+  [`docs/toolset.md`](docs/toolset.md) → [`docs/roadmap.md`](docs/roadmap.md) →
+  [`ideation/data-findings.md` §6](ideation/data-findings.md) → the README of the step you work.
+  Do not re-explore the platform; the toolset page names the verb, route, page and module.
+- A tool a research step needs (app page, API route, module) is recorded in **that step's**
+  `methodology/`; only a cross-step platform fix still lands in step-0 and names the step.
+- Methodology numbers are global; the next is **069**. Never reuse a number.
+- Oracle budget is **6** uploads (one registered member). No upload before step 6's gate:
+  callset normalized, hypotheses filed, CSV rehearsed on the scorer replica, two independent
+  methods agree. Timing is the user's call when step 6 opens.
+- A claim whose test already ran in step 0 is filed prefixed `retrospective:` and cites the
+  entry; it is never a pre-registered prediction.
+- Priority: analysis of the genomic and clinical data and a well-elaborated report outrank
+  oracle tactics. Every step produces its report artifact as it runs.
+
 ## Python
 - Use `uv` for all Python work: `uv run`, `uv add`, `uv sync`. Do not use `pip`, `python -m venv`, or bare `python`.
 
