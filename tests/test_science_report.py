@@ -26,7 +26,7 @@ CLAIM = dict(
     refuted_by="Both alleles turn out common in gnomAD.",
 )
 
-EMPTY = Record(budget_total=18, subject="an empty register")
+EMPTY = Record(budget_total=6, subject="an empty register")
 
 
 def _dossier(status=Status.TESTING, confidence=None, rows=()):
@@ -76,7 +76,7 @@ POPULATED = Record(
             hypothesis_ids=("H001",),
         ),
     ),
-    budget_total=18,
+    budget_total=6,
     subject="a populated register",
 )
 
@@ -169,7 +169,7 @@ def test_the_evidence_ledger_shows_the_source_of_every_observation():
 def test_the_budget_shows_what_is_left_of_a_finite_allowance():
     page = build_report(POPULATED)
     assert "submissions left" in page
-    assert POPULATED.budget_left == 17
+    assert POPULATED.budget_left == 5
 
 
 def test_an_intact_budget_warns_against_firing_early():
@@ -177,7 +177,7 @@ def test_an_intact_budget_warns_against_firing_early():
 
 
 def test_a_probe_tied_to_no_hypothesis_is_called_out():
-    untied = Record(probes=(SpentProbe(2, "S", "a member", 10, None, "", ""),), budget_total=18)
+    untied = Record(probes=(SpentProbe(2, "S", "a member", 10, None, "", ""),), budget_total=6)
     assert "no hypothesis" in build_report(untied)
 
 
@@ -196,7 +196,7 @@ def test_the_weighing_chart_appears_only_once_there_is_evidence():
 
 def test_a_gap_between_committed_and_suggested_confidence_is_shown_on_the_board():
     discounted = Record(
-        dossiers=(_dossier(confidence=0.1, rows=(_observation(),)),), budget_total=18
+        dossiers=(_dossier(confidence=0.1, rows=(_observation(),)),), budget_total=6
     )
     assert "suggested" in build_report(discounted)
 
@@ -220,6 +220,6 @@ def test_the_tally_counts_statuses_for_one_step():
 
 
 def test_an_untested_claim_is_reported_as_untested():
-    record = Record(dossiers=(_dossier(),), budget_total=18)
+    record = Record(dossiers=(_dossier(),), budget_total=6)
     assert len(record.untested_claims) == 1
     assert record.dossiers[0].is_untested

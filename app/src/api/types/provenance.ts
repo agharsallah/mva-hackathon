@@ -34,7 +34,7 @@ export interface SourceObjectRow {
   read_num: number | null;
 }
 
-/** GET /api/probe/ledger — the 18-probe oracle budget, spend by spend. */
+/** GET /api/probe/ledger — the 6-probe oracle budget, spend by spend. */
 export interface ProbeLedgerRow {
   probe_id: string;
   logged_at: string;

@@ -144,7 +144,7 @@ export const SEE_IT_PLATFORM: Record<string, SeeIt> = {
     ],
   },
   'probe-ledger': {
-    app: [{ to: '/science#oracle-budget-the-research-view', label: 'the ledger, 0 of 18 spent' }],
+    app: [{ to: '/science#oracle-budget-the-research-view', label: 'the ledger, 0 of 6 spent' }],
     docs: [method('016-lineage-backfill-and-probe-ledger', 'the probe ledger')],
   },
   oracle: { app: [{ to: '/probes', label: 'the probe console' }] },

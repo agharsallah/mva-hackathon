@@ -8,7 +8,7 @@ import { StatTile } from '../../components/StatTile';
 import { int, iso } from '../../lib/format';
 
 /**
- * The oracle budget. 18 probes for the whole challenge, non-renewable — closer to an API
+ * The oracle budget. 6 probes for the whole challenge, non-renewable — closer to an API
  * rate limit you cannot buy your way out of than to a query cost. The widget's job is to
  * make the remaining balance impossible to overlook, and to make the empty state read as
  * "nothing spent yet" rather than "nothing here".
@@ -16,7 +16,7 @@ import { int, iso } from '../../lib/format';
 export function ProbeLedger() {
   const ledger = useProbeLedger();
   const overview = useOverview();
-  const total = overview.data?.data.probe_budget_total ?? 18;
+  const total = overview.data?.data.probe_budget_total ?? 6;
   const spent = overview.data?.data.probe_budget_spent ?? 0;
   const remaining = total - spent;
 
@@ -65,7 +65,7 @@ export function ProbeLedger() {
           }
           sub={`probes remaining · ${spent} spent`}
         />
-        {/* 18 slots, one square each: the budget as a resource bar, not a number. */}
+        {/* 6 slots, one square each: the budget as a resource bar, not a number. */}
         <div className="flex flex-wrap gap-1">
           {Array.from({ length: total }, (_, i) => (
             <span

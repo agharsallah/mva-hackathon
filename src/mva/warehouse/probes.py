@@ -1,9 +1,10 @@
 """The probe ledger: who spent which oracle submission, on what, and what came back.
 
 The Track 1 scorer is an oracle — every submission returns `rank_points`, `f_max`,
-`full_match_rank` and friends — and the team has exactly **18** of them (6 per registered
-member, 3 members). That makes a submission a *consumable resource*, and a consumable
-resource tracked in chat messages is a resource that gets double-spent.
+`full_match_rank` and friends — and the team gets exactly **6 per
+registered member** (one member is registered, so six in total). That makes a submission a
+*consumable resource*, and a consumable resource tracked in chat messages is a resource
+that gets double-spent.
 
 This module is the ledger for it: one append-only row per submission, carrying the payload
 that was uploaded, the reply that came back, and who spent it.
@@ -15,14 +16,33 @@ schema is reserved for tables that are a pure function of their inputs, and this
 record of irreversible actions taken in the outside world.
 """
 
+import os
 from dataclasses import dataclass
 
 #: Append-only record of oracle submissions spent.
 PROBE_TABLE = "probe_ledger"
 
+#: Track 1 oracle submissions granted per registered team member.
+PER_MEMBER = 6
+
+
+def _registered_members() -> int:
+    """How many team members are registered, from ``MVA_TEAM_MEMBERS`` (default one).
+
+    The budget is a property of the team roster, not of the code, so it is configuration
+    rather than a constant. A roster of fewer than one member cannot exist, and silently
+    treating it as one would hide a misconfigured environment, so it raises instead.
+    """
+    raw = os.environ.get("MVA_TEAM_MEMBERS", "1")
+    members = int(raw)
+    if members < 1:
+        raise ValueError(f"MVA_TEAM_MEMBERS must be at least 1, got {members!r}")
+    return members
+
+
 #: Total Track 1 oracle submissions available to the team: 6 per registered member.
 #: See ``ideation/hackathon-intel.md`` §9 for how they are meant to be spent.
-BUDGET = 18
+BUDGET = PER_MEMBER * _registered_members()
 
 #: Probe kinds from the oracle protocol, plus the catch-all. Not enforced by the schema —
 #: a mislabelled probe should still be recorded rather than rejected.
@@ -92,7 +112,7 @@ def _qualified(schema: str) -> str:
 
 
 def budget(connection, schema: str, track: str | None = None) -> Budget:
-    """How many submissions are gone — the "how many of 18 are left" query, as one call."""
+    """How many submissions are gone — the "how many of the budget are left" query, as one call."""
     sql = f"SELECT count(*) FROM {_qualified(schema)}"
     params: list = []
     if track:

@@ -99,7 +99,7 @@ export default function SciencePage() {
             term: 'oracle probe',
             dict: 'oracle',
             plain:
-              'one of 18 irreversible submissions to the challenge scorer. A reply is recorded twice: in the probe ledger as what happened, in the evidence ledger as what it means',
+              'one of 6 irreversible submissions to the challenge scorer. A reply is recorded twice: in the probe ledger as what happened, in the evidence ledger as what it means',
           },
         ]}
         caveat={`Every confidence number on this page is ${CONFIDENCE_CAVEAT}. Strengths are human judgements, and rows drawn from the same underlying data are not independent the way the sum treats them. It exists so a suggested number can be argued with — never quote it as a probability.`}

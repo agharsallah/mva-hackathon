@@ -12,6 +12,7 @@ import pytest
 from mva.viz import genotype, panelbed
 from mva.viz import overview as overview_module
 from mva.viz.cache import Cache, InvalidKeyError, safe_key
+from mva.warehouse import probes
 
 # ── the disk cache ───────────────────────────────────────────────────────────────────
 
@@ -213,7 +214,7 @@ def test_the_overview_reads_every_field_from_a_table(fake_warehouse, monkeypatch
     assert found["total_reads"] == 1071835104
     assert found["all_hashes_verified"] is True
     # the budget is imported from the module that owns it, never restated
-    assert found["probe_budget_total"] == 18 and found["probe_budget_spent"] == 0
+    assert found["probe_budget_total"] == probes.BUDGET and found["probe_budget_spent"] == 0
 
 
 def test_one_attach_serves_the_whole_overview(fake_warehouse, monkeypatch):

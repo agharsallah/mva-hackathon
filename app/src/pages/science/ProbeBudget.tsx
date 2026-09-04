@@ -23,7 +23,7 @@ import { C } from '../../lib/palette';
 export function ProbeBudget() {
   const ledger = useProbeLedger();
   const overview = useOverview();
-  const total = overview.data?.data.probe_budget_total ?? 18;
+  const total = overview.data?.data.probe_budget_total ?? 6;
   const spent = overview.data?.data.probe_budget_spent ?? 0;
   const remaining = total - spent;
 

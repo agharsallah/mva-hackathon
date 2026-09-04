@@ -270,7 +270,7 @@
     },
     {
       "table": "probe_ledger",
-      "description": "The 18-probe oracle budget, one row per probe spent. Currently empty.",
+      "description": "The 6-probe oracle budget, one row per probe spent. Currently empty.",
       "rows": 0,
       "produced_at": "2026-08-31T07:00:00Z",
       "source_kind": "table",

@@ -3732,7 +3732,7 @@
           "slug": "append-only-ledger",
           "term": "Append-only ledger",
           "aliases": [],
-          "html": "<p>a log you only ever add to, never edit. Keeps an honest record of all 18 submissions.</p>",
+          "html": "<p>a log you only ever add to, never edit. Keeps an honest record of all 6 submissions.</p>",
           "exampleHtml": ""
         },
         {
@@ -3741,7 +3741,7 @@
           "term": "Probe ledger",
           "aliases": [],
           "html": "<p>the concrete table that does that: <code>warehouse.probe_ledger</code>, one row per spent <a href=\"#13-hackathon-scoring-words\">submission / probe</a>, holding who spent it, its probe type (<a href=\"#13-hackathon-scoring-words\">S</a> / <a href=\"#13-hackathon-scoring-words\">P</a> / <a href=\"#13-hackathon-scoring-words\">F</a>), the exact payload uploaded, the <a href=\"#13-hackathon-scoring-words\">oracle</a>'s reply, and the rationale. A shared submission budget tracked in chat messages is a budget that gets double-spent.</p>",
-          "exampleHtml": "<p><em>Example: <code>mva-warehouse probe-budget</code> → <code>all tracks: 0/18 spent, 18 remaining</code>.</em></p>"
+          "exampleHtml": "<p><em>Example: <code>mva-warehouse probe-budget</code> → <code>all tracks: 0/6 spent, 6 remaining</code>.</em></p>"
         }
       ]
     },
@@ -4135,14 +4135,14 @@
             "Submission",
             "probe"
           ],
-          "html": "<p>one guess. You get 6 each; a 3-person team gets 18 total.</p>",
+          "html": "<p>one guess. You get 6 per registered member; this team has one, so 6 total.</p>",
           "exampleHtml": ""
         },
         {
           "kind": "figure",
           "file": "team-quota.svg",
-          "alt": "18 submissions: 3 members times 6, with 2 held in reserve",
-          "legendHtml": "<p>blue: a submission you can spend now · red: one to hold back until the freeze · one row per team member.</p>"
+          "alt": "6 submissions: one registered member times 6, with 2 held in reserve",
+          "legendHtml": "<p>blue: a submission you can spend now · red: one to hold back until the freeze · one row per registered team member.</p>"
         },
         {
           "kind": "entry",
@@ -4267,7 +4267,7 @@
         },
         {
           "kind": "mermaid",
-          "source": "flowchart TB\n    ST[\"18 submissions available<br/>3 members x 6\"] --> S1[\"PROBE S<br/>10 best single candidates\"]\n    S1 --> D{\"what came back?\"}\n    D -->|\"f_max decodes BOTH alleles\"| FIN\n    D -->|\"partial match only<br/>= 1 allele found\"| P1[\"PROBE P<br/>that allele + 10 new partners\"]\n    D -->|\"nothing at all\"| S2[\"PROBE S again<br/>candidates 11-20\"]\n    S2 --> D\n    P1 --> D2{\"full match?\"}\n    D2 -->|\"yes\"| FIN[\"PROBE F<br/>pair at rank 1, epcr 1.0<br/>+ free secondary rows\"]\n    D2 -->|\"no\"| P1\n    FIN --> WIN[\"100 points, F-max 1.0<br/>keep 2 submissions in reserve\"]\n    style S1 fill:#cfe8ff,stroke:#333,color:#000\n    style S2 fill:#cfe8ff,stroke:#333,color:#000\n    style P1 fill:#ffe9b3,stroke:#333,color:#000\n    style FIN fill:#ccebc5,stroke:#333,color:#000\n    style WIN fill:#8fd18f,stroke:#333,color:#000",
+          "source": "flowchart TB\n    ST[\"6 submissions available<br/>1 member x 6\"] --> S1[\"PROBE S<br/>10 best single candidates\"]\n    S1 --> D{\"what came back?\"}\n    D -->|\"f_max decodes BOTH alleles\"| FIN\n    D -->|\"partial match only<br/>= 1 allele found\"| P1[\"PROBE P<br/>that allele + 10 new partners\"]\n    D -->|\"nothing at all\"| S2[\"PROBE S again<br/>candidates 11-20\"]\n    S2 --> D\n    P1 --> D2{\"full match?\"}\n    D2 -->|\"yes\"| FIN[\"PROBE F<br/>pair at rank 1, epcr 1.0<br/>+ free secondary rows\"]\n    D2 -->|\"no\"| P1\n    FIN --> WIN[\"100 points, F-max 1.0<br/>keep 2 submissions in reserve\"]\n    style S1 fill:#cfe8ff,stroke:#333,color:#000\n    style S2 fill:#cfe8ff,stroke:#333,color:#000\n    style P1 fill:#ffe9b3,stroke:#333,color:#000\n    style FIN fill:#ccebc5,stroke:#333,color:#000\n    style WIN fill:#8fd18f,stroke:#333,color:#000",
           "legendHtml": "<p>blue: scanning probes that look for a signal · yellow: the follow-up probe that confirms · green: the final strike and the score it locks in.</p>"
         },
         {

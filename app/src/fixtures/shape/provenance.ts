@@ -48,7 +48,7 @@ export async function derivationsFixture(): Promise<DerivationRow[]> {
   return rows<DerivationRow[]>('provenance-derivations');
 }
 
-/** FIXTURE — MEASURED: the oracle ledger is empty. 0 of 18 probes spent. */
+/** FIXTURE — MEASURED: the oracle ledger is empty. 0 of 6 probes spent. */
 export async function probeLedgerFixture(): Promise<ProbeLedgerRow[]> {
   return [];
 }

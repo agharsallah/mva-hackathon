@@ -200,7 +200,7 @@ export default function OverviewPage() {
             term: 'probe budget',
             dict: 'probe-ledger',
             plain:
-              'this challenge allows 18 oracle queries in total — a hard, non-renewable resource',
+              'this challenge allows 6 oracle queries in total — a hard, non-renewable resource',
           },
         ]}
         caveat="Every figure in this app is an aggregate. No individual genomic coordinate is stored in this repository."

@@ -87,7 +87,7 @@ flowchart TB
 | `integrity.py` | Order-independent content fingerprints for ingest verification | `fingerprint()`, `compare()`, `retyped()`, `TableFingerprint` |
 | `reference.py` | Staging specs + lineage for the 3 committed public reference tables | `datasets()`, `LINEAGE`, `record_lineage()` |
 | `source.py` | Landing-zone ledger: hash, upload, verify, or stream from Hugging Face | `SourceFile`, `scan()`, `checksum()`, `upload()`, `stream_to_bucket()` |
-| `probes.py` | Ledger of spent Track-1 oracle submissions (budget = 18) | `Probe`, `Budget`, `log()`, `budget()`, `BUDGET` |
+| `probes.py` | Ledger of spent Track-1 oracle submissions (budget = 6 = 6 per registered member x 1 member) | `Probe`, `Budget`, `log()`, `budget()`, `BUDGET` |
 | `annotate.py` | Reads panel alleles, calls Ensembl VEP REST, writes `panel_annotations` | `intervals()`, `alleles()`, `run()`, `plan()` |
 
 ### Analysis surfaces (`analysis*.py` — SQL derivations, registered as data)
@@ -142,7 +142,7 @@ Entry point: `mva-warehouse` (registered in `pyproject.toml`).
 | `source-scan` / `source-upload` / `source-status` / `source-check` | Inventory, hash-upload-verify, and reconcile the delivery against the ledger |
 | `source-fetch` | **Run on the server**: stream a file from the Hugging Face dataset repo straight into the bucket |
 | `lineage-repair` / `lineage-backfill` / `lineage-list` | Fix local-path lineage edges, backfill pre-automation runs, list the edge history |
-| `probe-log` / `probe-list` / `probe-budget` | Record, list, and count remaining oracle submissions (of 18) |
+| `probe-log` / `probe-list` / `probe-budget` | Record, list, and count remaining oracle submissions (of the budget) |
 
 ## Where it is used
 
@@ -187,8 +187,9 @@ Entry point: `mva-warehouse` (registered in `pyproject.toml`).
 - **External dependencies**: DuckDB (`httpfs`, `postgres` extensions) does virtually all
   computation; `boto3` for opaque-byte uploads/downloads; `huggingface_hub`/`requests` for
   `source-fetch`; the Ensembl VEP REST API for annotation (network, third party).
-- **Oracle budget**: 18 total Track-1 submissions, tracked in `probe_ledger` — a
-  consumable resource, not just a log.
+- **Oracle budget**: 6 total Track-1 submissions (6 per registered member; one member is
+  registered), tracked in `probe_ledger` — a consumable resource, not just a log. Set
+  `MVA_TEAM_MEMBERS` if the roster grows.
 - **Never a genomic position**: consistent with the repo-wide rule, no module in this
   package writes a chromosome coordinate into an exported hypothesis/evidence artifact
   (that constraint lives in `mva.science`, which this package feeds).

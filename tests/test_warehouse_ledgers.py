@@ -161,19 +161,21 @@ class TestBackfillDerivations:
 
 
 class TestBudget:
-    def test_remaining_counts_down_from_eighteen(self):
-        assert probes.Budget(spent=0).remaining == probes.BUDGET == 18
-        assert probes.Budget(spent=4).remaining == 14
+    def test_remaining_counts_down_from_the_budget(self):
+        assert probes.Budget(spent=0).remaining == probes.BUDGET
+        assert probes.Budget(spent=4).remaining == probes.BUDGET - 4
 
     def test_never_goes_negative(self):
         assert probes.Budget(spent=25).remaining == 0
 
     def test_renders_both_halves(self):
-        assert str(probes.Budget(spent=3)) == "3/18 spent, 15 remaining"
+        assert (
+            str(probes.Budget(spent=3)) == f"3/{probes.BUDGET} spent, {probes.BUDGET - 3} remaining"
+        )
 
     def test_reads_a_count_off_the_connection(self):
         connection = FakeConnection([[(2,)]])
-        assert probes.budget(connection, "warehouse").remaining == 16
+        assert probes.budget(connection, "warehouse").remaining == probes.BUDGET - 2
 
     def test_can_be_scoped_to_one_track(self):
         connection = FakeConnection([[(1,)]])
@@ -302,7 +304,7 @@ class TestLedgerCli:
         connection = FakeConnection([[], [(3,)]])
         cli = self._patch(monkeypatch, connection)
         cli.do_probe_list(_Args(limit=None))
-        assert "3/18 spent, 15 remaining" in capsys.readouterr().out
+        assert f"3/{probes.BUDGET} spent, {probes.BUDGET - 3} remaining" in capsys.readouterr().out
 
     def test_lineage_repair_reports_when_there_is_nothing_to_do(self, monkeypatch, capsys):
         connection = FakeConnection([[], [], []])

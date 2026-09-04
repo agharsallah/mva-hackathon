@@ -372,7 +372,7 @@ function Worth() {
       <strong>Trans or unknown, never cis</strong> — cis puts both hits on one copy and leaves an
       intact one, which is the only verdict that excludes a pair outright. On the cost: building a
       row and copying it spends nothing at all, and you can do it as many times as you like.
-      Uploading a file to the challenge Space spends <strong>1 of 18</strong> submissions, and that
+      Uploading a file to the challenge Space spends <strong>1 of 6</strong> submissions, and that
       is the only irreversible action in the whole workflow.
     </Callout>
   );

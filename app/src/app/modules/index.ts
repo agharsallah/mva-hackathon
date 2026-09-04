@@ -121,7 +121,7 @@ export const modules: FeatureModule[] = [
     navLabel: 'Probes',
     title: 'Oracle probes',
     group: 'decide',
-    description: 'Build and submit probes, watch jobs, and account for the 18-query budget.',
+    description: 'Build and submit probes, watch jobs, and account for the 6-query budget.',
     load: () => import('../../pages/Probes'),
   },
 

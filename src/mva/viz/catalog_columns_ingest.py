@@ -231,7 +231,7 @@ INGEST_COLUMNS: dict[tuple[str, str], str] = {
     ("probe_ledger", "n_rows"): "How many rows that payload carried.",
     ("probe_ledger", "response"): "What the oracle returned, verbatim.",
     ("probe_ledger", "score"): "The headline number from that reply.",
-    ("probe_ledger", "rationale"): "Why this submission was worth one of the 18.",
+    ("probe_ledger", "rationale"): "Why this submission was worth one of the few.",
     ("probe_ledger", "hypothesis_ids"): "Comma-separated claims the probe was fired to "
     "test. Empty means it was not tied to the "
     "register.",

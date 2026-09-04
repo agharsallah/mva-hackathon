@@ -15,6 +15,6 @@
   "delivery_objects": 12,
   "delivery_bytes": 84703196774,
   "all_hashes_verified": true,
-  "probe_budget_total": 18,
+  "probe_budget_total": 6,
   "probe_budget_spent": 0
 }

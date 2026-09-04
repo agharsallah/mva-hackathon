@@ -43,7 +43,7 @@ export const platformEntries: Record<string, Entry> = {
     load: () => rows<ReferenceProvenanceRow[]>('provenance-reference'),
   },
   '/api/probe/ledger': {
-    source: 'probe ledger (empty: 0/18 spent)',
+    source: 'probe ledger (empty: 0/6 spent)',
     load: () => probeLedgerFixture(),
   },
   // INVENTED claims. The live register is empty and its tables do not exist yet; these
