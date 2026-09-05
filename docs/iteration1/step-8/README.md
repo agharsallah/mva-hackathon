@@ -1,7 +1,7 @@
 # Step 8 — Track 2, drug repurposing
 
 **Standing:** open for desk research, nothing executed. **Zero code exists for this step.**
-Verdicts wait on step 6. Method: [`../method.md`](../method.md).
+Verdicts wait on step 6. Method: [`../method.md`](../../method.md).
 Last checked 2026-09-04.
 
 ---

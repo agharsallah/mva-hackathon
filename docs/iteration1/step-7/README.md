@@ -2,7 +2,7 @@
 
 **Standing:** open, nothing executed. No hypothesis is filed and no test has run under this
 step. Desk and API work with no shared bottleneck — it runs beside steps 1–5.
-Method: [`../method.md`](../method.md). Last checked 2026-09-04.
+Method: [`../method.md`](../../method.md). Last checked 2026-09-04.
 
 ---
 

@@ -2,7 +2,7 @@
 
 **Standing:** open, not started as a research step. The read store and the k-mer strike
 exist and are timed; no allele recovery has been attempted. Conditional on steps 2–4
-leaving a gap. Method: [`../method.md`](../method.md). Last checked 2026-09-04.
+leaving a gap. Method: [`../method.md`](../../method.md). Last checked 2026-09-04.
 
 ---
 
@@ -24,15 +24,15 @@ leaving a gap. Method: [`../method.md`](../method.md). Last checked 2026-09-04.
 ## Already done
 
 - The queryable read store, its provenance and its cost model — step-0 methodology
-  [019](../step-0/methodology/019-where-the-read-bytes-come-from.md)–[023](../step-0/methodology/023-the-exact-read-census.md).
+  [019](../../step-0/methodology/019-where-the-read-bytes-come-from.md)–[023](../../step-0/methodology/023-the-exact-read-census.md).
 - The **k-mer strike** (find a subsequence on either strand in one pass) works, is timed,
   and scales to many probes at once —
-  [024](../step-0/methodology/024-the-kmer-strike-works.md),
-  [025](../step-0/methodology/025-many-probes-one-pass.md),
-  [026](../step-0/methodology/026-multi-literal-matching-needs-aho-corasick.md),
-  [027](../step-0/methodology/027-aho-corasick-confirmed.md).
+  [024](../../step-0/methodology/024-the-kmer-strike-works.md),
+  [025](../../step-0/methodology/025-many-probes-one-pass.md),
+  [026](../../step-0/methodology/026-multi-literal-matching-needs-aho-corasick.md),
+  [027](../../step-0/methodology/027-aho-corasick-confirmed.md).
 - The BAF karyogram bounds mosaicism at VCF level only —
-  [037](../step-0/methodology/037-baf-karyogram.md).
+  [037](../../step-0/methodology/037-baf-karyogram.md).
 
 ## Remaining
 

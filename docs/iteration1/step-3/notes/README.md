@@ -4,4 +4,4 @@
 
 No decision belongs to this step yet; the phenotype-ranking decision is argued in
 [`../methodology/067-phenotype-ranking-without-java.md`](../methodology/067-phenotype-ranking-without-java.md)
-and indexed in [`../../decisions.md`](../../decisions.md).
+and indexed in [`../../decisions.md`](../../../decisions.md).
