@@ -1,14 +1,12 @@
 # Methodology log — step 1
 
-**Standing:** open, empty. No test has run under this step. Entries appear here numbered
-from **069**, continuing the global sequence that
-[`../../step-0/methodology/`](../../step-0/methodology/) closed at 068. Last checked 2026-09-04.
+**Standing:** open. Entries below, numbered in the global sequence. Last checked 2026-09-05.
 
 One entry per test actually executed. **Nothing here is estimated or assumed** — every
 number is copied from a run whose output was seen.
 
 **No patient variant coordinates appear here**, per
-[no patient data in the repository](../../notes/no-patient-data-in-the-repository.md).
+[no patient data in the repository](../../../notes/no-patient-data-in-the-repository.md).
 Entries record counts, distributions and classifications; positions stay in the warehouse
 database, queried through the reads/viz API.
 
@@ -68,15 +66,17 @@ Writing the refutation condition before the run is what stops a result from bein
 reinterpreted afterwards to fit. The register enforces it: a claim with no `refuted_by` is
 rejected at construction.
 
-The loop this serves is [`../../method.md`](../../method.md). The claims themselves are in
+The loop this serves is [`../../method.md`](../../../method.md). The claims themselves are in
 [`../hypotheses/`](../hypotheses/).
 
 ## Environment
 
 Unless an entry states otherwise, the environment is the one recorded in
-[`../../step-0/methodology/README.md`](../../step-0/methodology/README.md). Reproduce it
+[`../../step-0/methodology/README.md`](../../../step-0/methodology/README.md). Reproduce it
 with `tools/setup-env.sh`, then `source tools/activate.sh`.
 
 ## Entries
 
-None yet.
+| # | Question |
+|---|---|
+| [073](073-normalization-of-the-candidates.md) | Are the two candidate alleles spelled the way the scorer will see them, and does `bcftools norm` change the callset at all? **Both are SNVs at bi-allelic sites; the genome-wide normalization run is quoted in the entry.** _(H008.)_ |

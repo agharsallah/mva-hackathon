@@ -1,8 +1,8 @@
 # Step 1 — Normalize the callset
 
-**Standing:** open, not started. No hypothesis has been recorded and no test has run.
+**Standing:** open. H008 filed and tested 2026-09-05 ([073](methodology/073-normalization-of-the-candidates.md)); the normalization seam is still not a pipeline stage.
 Everything below is the plan for the step, not a result. The method this step follows is
-[`../method.md`](../method.md); the sequencing argument is [`../roadmap.md`](../roadmap.md)
+[`../method.md`](../../method.md); the sequencing argument is [`../roadmap.md`](../../roadmap.md)
 §1. Last checked 2026-09-04.
 
 ---
@@ -27,7 +27,7 @@ can score zero.
 The delivered VCF also carries multiallelic sites (one record holding several alternate
 alleles). A submission row names one alternate allele, so a multiallelic record has to be
 split before it can be submitted at all. Counts for both are in
-[`../../ideation/data-findings.md`](../../ideation/data-findings.md).
+[`../../ideation/data-findings.md`](../../../ideation/data-findings.md).
 
 ## What it will take
 
@@ -50,8 +50,8 @@ run. It should become a tested seam so the answer is in code.
 
 | | |
 |---|---|
-| Hypotheses | none recorded yet — [`hypotheses/`](hypotheses/) once `mva-science export` has run |
-| Tests | none run yet — entries land in [`methodology/`](methodology/), numbered from 069 |
+| Hypotheses | H008 — [`hypotheses/`](hypotheses/), written by `mva-science export` |
+| Tests | [073](methodology/073-normalization-of-the-candidates.md) |
 | Rendered | `figures/science-report.html` |
 
 Opening the first claim:
@@ -68,6 +68,6 @@ writing it down.
 ## What this step unblocks
 
 Step 2 (annotate the callset) and step 4 (mine the suppressed calls) — the goals for both
-are in [`../method.md`](../method.md), the sequencing in [`../roadmap.md`](../roadmap.md).
+are in [`../method.md`](../../method.md), the sequencing in [`../roadmap.md`](../../roadmap.md).
 Both join against variant coordinates, and a join against two spellings of the same variant
 silently loses rows.
