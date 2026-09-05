@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 15,
-    "entries": 454,
+    "chapters": 16,
+    "entries": 470,
     "figures": 20,
     "diagrams": 19,
-    "contexts": 22
+    "contexts": 41
   },
   "chapters": [
     {
@@ -1720,8 +1720,16 @@
             "MCC",
             "mitotic checkpoint complex"
           ],
-          "html": "<p>the actual \"STOP\" signal molecule. Built from BUBR1 + BUB3 + MAD2 + CDC20.</p>",
-          "exampleHtml": "",
+          "html": "<p>the actual \"STOP\" signal molecule. Built from BUBR1 + BUB3 + MAD2 + CDC20. Software analogy: a lock object one thread must hold before a shared resource (anaphase) can proceed — BubR1 is one of the proteins that assembles the lock.</p>",
+          "exampleHtml": "<p><em>Example: this case's mechanism card names the pathway break exactly this way — \"spindle assembly checkpoint (SAC) - mitotic checkpoint complex (MCC) formation and APC/C-CDC20 inhibition\" — because reduced BubR1 means fewer MCC locks get assembled.</em></p>",
+          "context": "<p>the molecular target Track 2's checkpoint-reinforcement direction aims at</p>",
+          "source": "docs/iteration1/step-8/mechanism.md",
+          "related": [
+            "sac-spindle-assembly-checkpoint",
+            "apc-c",
+            "bub1b-protein-name-bubr1",
+            "repurposing-direction"
+          ],
           "firstSeen": "2026-08-27"
         },
         {
@@ -1732,8 +1740,15 @@
             "APC",
             "C"
           ],
-          "html": "<p>the machine that starts the split. MCC blocks it. No MCC = split happens too soon.</p>",
-          "exampleHtml": "",
+          "html": "<p>the machine that starts the split, formally <strong>APC/C–CDC20</strong>: the anaphase-promoting complex only fires once its activator subunit CDC20 is loaded onto it, and MCC blocks exactly that loading step. No MCC = split happens too soon. Software analogy: a gate that opens only once a specific adapter (CDC20) is plugged in — the lock (MCC) works by holding that adapter hostage.</p>",
+          "exampleHtml": "<p><em>Example: the mechanism card's immediate-effect line for this case reads \"reduced BubR1 abundance and checkpoint signalling; weakened kinetochore-microtubule attachment error correction\" — less MCC means less APC/C–CDC20 held back, hence premature anaphase.</em></p>",
+          "context": "<p>the checkpoint step a repurposed drug would have to reinforce, not inhibit</p>",
+          "source": "docs/iteration1/step-8/mechanism.md",
+          "related": [
+            "mcc-mitotic-checkpoint-complex",
+            "anaphase",
+            "bub1b-protein-name-bubr1"
+          ],
           "firstSeen": "2026-08-27"
         },
         {
@@ -4990,15 +5005,6 @@
         },
         {
           "kind": "entry",
-          "slug": "drug-repurposing",
-          "term": "Drug repurposing",
-          "aliases": [],
-          "html": "<p>taking a drug already approved for something else and using it for this disease. Faster and safer than inventing a new one. <em>That's Track 2.</em></p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
-        },
-        {
-          "kind": "entry",
           "slug": "aneuploidy-selective-compound",
           "term": "Aneuploidy-selective compound",
           "aliases": [],
@@ -5046,7 +5052,314 @@
     },
     {
       "number": 14,
-      "id": "14-rules-and-privacy-words",
+      "id": "14-drug-repurposing--words-for-track-2",
+      "title": "Drug repurposing — words for Track 2",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>The words above this chapter describe finding the causal variant. These describe the second,\nseparately scored half of the hackathon: given that finding, which already-approved drug's\nmechanism plausibly helps. Most of these names are public databases, queried through a small\npiece of tooling — <a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/ressources/track2/mechanism.json\"><code>ressources/track2/mechanism.json</code></a>\nis the file that ties the two halves together, and everything below reads from it.</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "drug-repurposing",
+          "term": "Drug repurposing",
+          "aliases": [],
+          "html": "<p>taking a drug already approved for one disease and using it for a\ndifferent one, because its target or pathway overlaps. Faster and safer than inventing a new\ndrug: the safety profile, dosing and manufacturing are already known and public.</p>",
+          "exampleHtml": "<p><em>Example: BUB1B itself has no approved drug; this project instead searches for drugs against\nthe pathway it breaks — the spindle assembly checkpoint — and against the downstream stress\naneuploid cells suffer.</em></p>",
+          "context": "<p>what the hackathon's Track 2 asks for</p>",
+          "source": "docs/iteration1/step-8/README.md",
+          "related": [
+            "mechanism-of-action-moa",
+            "repurposing-direction",
+            "mechanism-card"
+          ],
+          "firstSeen": "2026-08-27"
+        },
+        {
+          "kind": "entry",
+          "slug": "track-2-drug-repurposing",
+          "term": "Track 2 (drug repurposing)",
+          "aliases": [
+            "Track 2",
+            "drug repurposing"
+          ],
+          "html": "<p>the hackathon's second scored deliverable, alongside Track 1's\nvariant call. Desk research runs in parallel with Track 1 from week 2; ranking and verdicts\nwait until Track 1's pair is confirmed, because a mechanism argued from an unconfirmed allele\nis a guess dressed as rigour.</p>",
+          "exampleHtml": "<p><em>Example: this project's Track 2 goal, verbatim — \"Which market-approved drugs act on the\nmechanism the confirmed alleles imply, and how strong is the evidence for each?\"</em></p>",
+          "context": "<p>the deliverable this chapter's words belong to</p>",
+          "source": "docs/iteration1/step-8/README.md",
+          "related": [
+            "drug-repurposing",
+            "mechanism-card",
+            "n-of-1"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "mechanism-card",
+          "term": "Mechanism card",
+          "aliases": [],
+          "html": "<p>the one structured file that hands Track 1's finding to Track 2's drug\nsearch: which gene, which two alleles, loss- or gain-of-function, the pathway broken, the\ndownstream consequences, and the repurposing directions to search under. Coordinate-free like\nevery other exported file, and versioned — a changed belief is a new version with a history\nentry, never a silent edit.</p>",
+          "exampleHtml": "<p><em>Example: <code>ressources/track2/mechanism.json</code> version 1 — BUB1B, one <code>stop_gained</code> (ClinVar\nVCV000533901) plus one <code>missense_variant</code> (AlphaMissense 0.92, CADD 24.5), four repurposing\ndirections D1–D4.</em></p>",
+          "context": "<p>the input every drug-source query and the target-set builder reads; never hand-edited, only revised</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "mechanism-characterization",
+            "compound-heterozygous-comp-het",
+            "hypomorph-hypomorphic",
+            "repurposing-direction"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "mechanism-of-action-moa",
+          "term": "Mechanism of action (MoA)",
+          "aliases": [
+            "Mechanism of action",
+            "MoA"
+          ],
+          "html": "<p>how a drug actually works at the molecular level: which protein\nit binds, and what that binding does (blocks it, activates it, marks it for destruction). The\nstandard field name in every drug database below, and the one sentence a candidate needs before\nit counts as evidence rather than a name.</p>",
+          "exampleHtml": "<p><em>Example: <code>mechanism_of_action</code> is a field this project's tooling is meant to read from both the\nOpen Targets and ChEMBL queries below.</em></p>",
+          "context": "<p>the fact every repurposing candidate must carry a citation for</p>",
+          "source": "docs/iteration1/step-8/mechanism.md",
+          "related": [
+            "drug-repurposing",
+            "drugbank-chembl-clinicaltrials-gov-dgidb-pubchem",
+            "open-targets-platform"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "open-targets-platform",
+          "term": "Open Targets Platform",
+          "aliases": [],
+          "html": "<p>a public knowledge graph joining genes, diseases and drugs, built by\nEMBL-EBI and industry partners. Answers two questions this project needs: which known drugs\nalready hit a given gene, and at what trial phase. Software analogy: a search index over the\nsame kind of gene-disease-drug graph you'd build yourself from ClinVar, ChEMBL and clinical\ntrials, already joined and queryable.</p>",
+          "exampleHtml": "<p><em>Example: a <code>known_drugs</code> query for <code>ENSG00000156970</code> (BUB1B) is one of the sources this\nproject's candidate table is meant to gather from, alongside ChEMBL and DGIdb.</em></p>",
+          "context": "<p>one of the constraint list's named public sources</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "drugbank-chembl-clinicaltrials-gov-dgidb-pubchem",
+            "drugbank-chembl-clinicaltrials-gov-dgidb-pubchem",
+            "mechanism-of-action-moa",
+            "market-approved-max-phase-4"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "chembl",
+          "term": "ChEMBL",
+          "aliases": [],
+          "html": "<p>a public database of drug-like molecules and the biological targets they are known\nto act on, maintained by EMBL-EBI. Software analogy: a curated package registry, except the\npackages are molecules and the \"dependencies\" it records are the proteins they bind. Its\n<code>max_phase</code> field is one of the two facts this project treats as evidence of regulatory\napproval: <code>4</code> means approved for human use somewhere, not merely tested.</p>",
+          "exampleHtml": "<p><em>Example: the mechanism card's eligibility rule, verbatim — \"ChEMBL max_phase 4 or an FDA label\nis the evidence of approval.\"</em></p>",
+          "context": "<p>one of two ways a candidate drug counts as market-approved</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "market-approved-max-phase-4",
+            "mechanism-of-action-moa",
+            "open-targets-platform"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "dgidb-drug-gene-interaction-database",
+          "term": "DGIdb (Drug Gene Interaction Database)",
+          "aliases": [
+            "DGIdb",
+            "Drug Gene Interaction Database"
+          ],
+          "html": "<p>a public aggregator that pools gene-drug interaction\nclaims from dozens of other sources (ChEMBL among them) behind one query. Software analogy: a\nmeta-search that re-exports other registries' listings, so the same drug-target pair can turn\nup here with a different source citation than it has in ChEMBL directly.</p>",
+          "exampleHtml": "<p><em>Example: this project's candidate table is meant to call a drug market-approved if DGIdb marks\nit <code>approved</code> OR ChEMBL's <code>max_phase</code> is 4 OR Open Targets reports phase 4 — three independent\nvotes, not one.</em></p>",
+          "context": "<p>the third public source in the target → candidate-drug search</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "drugbank-chembl-clinicaltrials-gov-dgidb-pubchem",
+            "open-targets-platform",
+            "market-approved-max-phase-4"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "reactome",
+          "term": "Reactome",
+          "aliases": [],
+          "html": "<p>a public, hand-curated map of human biological pathways: which proteins take part\nin which process, and how they connect. Software analogy: a call graph for biology — instead of\n\"function A calls function B,\" an edge says \"protein A acts on protein B in this pathway.\"</p>",
+          "exampleHtml": "<p><em>Example: BUB1B's UniProt id <code>O60566</code> is the seed this project's pathway step is meant to look\nup in Reactome, to find every pathway it belongs to.</em></p>",
+          "context": "<p>the source of the pathway expansion the seed target list is widened through</p>",
+          "source": "docs/iteration1/step-8/mechanism.md",
+          "related": [
+            "pathway-expansion-reactome",
+            "seed-target-target-set",
+            "mcc-mitotic-checkpoint-complex"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "clinicaltrials-gov",
+          "term": "ClinicalTrials.gov",
+          "aliases": [],
+          "html": "<p>the US registry of clinical trials, public and free to query. Tells you\nwhether a candidate drug has ever been tried against a disease like this one, and at what stage,\nwithout needing a trial to have succeeded.</p>",
+          "exampleHtml": "<p><em>Example: this project's tooling is meant to search it for the exact terms the mechanism card\nnames — the condition <code>\"mosaic variegated aneuploidy\"</code>, and the proband's tumour context,\n<code>\"rhabdomyosarcoma\"</code>.</em></p>",
+          "context": "<p>evidence that a candidate has already been tried in a relevant disease, not just on-target</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "market-approved-max-phase-4",
+            "mechanism-card"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "pubmed-e-utilities",
+          "term": "PubMed E-utilities",
+          "aliases": [],
+          "html": "<p>the free programmatic interface to PubMed, the US National Library of\nMedicine's index of biomedical papers. <code>esearch</code> turns a search term into a list of paper ids\n(PMIDs); <code>esummary</code> turns those ids into title, journal and year. Software analogy: a search API\nwith pagination, in two calls instead of one.</p>",
+          "exampleHtml": "<p><em>Example: the mechanism card's own literature list already cites four PMIDs this way — 15475955\n(Hanks 2004, biallelic BUB1B causes MVA), 20516114 (Suijkerbuijk 2010, reduced BubR1 and a weak\ncheckpoint), 31184400 (rhabdomyosarcoma in BUB1B-MVA), 18548531 (BubR1-insufficient mouse).</em></p>",
+          "context": "<p>how a repurposing candidate earns a literature citation rather than just a database row</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "pmid-doi",
+            "mechanism-card"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "openfda-drug-labels",
+          "term": "openFDA (drug labels)",
+          "aliases": [
+            "openFDA",
+            "drug labels"
+          ],
+          "html": "<p>the FDA's public API over its own drug label database. A <code>404</code> means\nno label exists for that generic name — itself useful evidence, not an error, because a drug\nwith an approval claim from ChEMBL or DGIdb but no FDA label at all is a weaker approval claim\nthan one with a label to point at.</p>",
+          "exampleHtml": "<p><em>Example: the query shape this project's tooling is meant to use —\n<code>drug/label.json?search=openfda.generic_name:\"&#x3C;name>\"&#x26;limit=1</code> — checked only for candidates\nalready judged approved, to avoid spending the check on every drug in a candidate list.</em></p>",
+          "context": "<p>the second, independent check on a market-approved claim</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "market-approved-max-phase-4",
+            "drugbank-chembl-clinicaltrials-gov-dgidb-pubchem",
+            "drugbank-chembl-clinicaltrials-gov-dgidb-pubchem"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "drugbank",
+          "term": "DrugBank",
+          "aliases": [],
+          "html": "<p>a widely cited public-facing drug database, but its programmatic API sits behind\na paid licence. This project's constraints state that explicitly rather than silently skip it:\nnamed as a source by the methods form, but not one this project's tooling actually queries.</p>",
+          "exampleHtml": "<p><em>Example: <code>ressources/track2/mechanism.json</code>'s own words — <code>\"DrugBank\": \"licence required for programmatic access; name-dropped by the form but not queried\"</code>.</em></p>",
+          "context": "<p>the one named source this project deliberately does not call</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "drugbank-chembl-clinicaltrials-gov-dgidb-pubchem",
+            "drugbank-chembl-clinicaltrials-gov-dgidb-pubchem",
+            "market-approved-max-phase-4"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "market-approved-max-phase-4",
+          "term": "Market-approved (max phase 4)",
+          "aliases": [
+            "Market-approved",
+            "max phase 4"
+          ],
+          "html": "<p>the challenge's eligibility bar for Track 2: only drugs\nalready approved for human use somewhere count, never an experimental compound however good its\nrationale. Operationalised as \"ChEMBL's <code>max_phase</code> field reads 4\" or \"an FDA label exists\" — a\n<code>max_phase</code> of 3 means it reached late trials and stopped there, evidence of promise, not\napproval.</p>",
+          "exampleHtml": "<p><em>Example: the mechanism card's constraint, verbatim — \"market-approved drugs only (challenge\nrules, Track 2 definition); ChEMBL max_phase 4 or an FDA label is the evidence of approval.\"</em></p>",
+          "context": "<p>the filter every candidate-drug row must pass before it is reportable</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "drugbank-chembl-clinicaltrials-gov-dgidb-pubchem",
+            "openfda-drug-labels",
+            "drugbank-chembl-clinicaltrials-gov-dgidb-pubchem"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "repurposing-direction",
+          "term": "Repurposing direction",
+          "aliases": [],
+          "html": "<p>one named hypothesis about <em>why</em> a class of drugs might help: a\nshort id (<code>D1</code>, <code>D2</code>, ...), a rationale sentence, and the list of genes to search drugs against\n(its seed targets). A mechanism card states several, because a single mechanism usually opens\nmore than one plausible line of attack.</p>",
+          "exampleHtml": "<p><em>Example: this case's four — D1 reinforce the checkpoint, D2 exploit aneuploidy stress, D3\nstabilise the hypomorph protein, D4 prevent the tumour the child already has (rhabdomyosarcoma).</em></p>",
+          "context": "<p>the unit a candidate-drug search is organised around, one direction at a time</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "mechanism-card",
+            "seed-target-target-set",
+            "aneuploidy-stress-proteotoxic-metabolic"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "seed-target-target-set",
+          "term": "Seed target / target set",
+          "aliases": [
+            "Seed target",
+            "target set"
+          ],
+          "html": "<p>a seed target is one gene a repurposing direction names by hand,\nbecause the literature already ties it to that direction's rationale. The target set is the\nwider list a direction actually searches drugs against: every seed target, plus every gene\npathway expansion adds. Software analogy: a seed set of nodes you walk outward from in a graph,\none hop, along edges that mean \"same pathway.\"</p>",
+          "exampleHtml": "<p><em>Example: direction D1's seed targets in this case's card — <code>BUB1B, BUB1, MAD2L1, MAD1L1, BUB3, TTK, CDC20, AURKB, KIF11, PLK1, TRIP13, CENPE</code> — twelve genes named before any pathway expansion\nruns.</em></p>",
+          "context": "<p>what a candidate-drug search is actually run against, not the mechanism card's directions themselves</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "repurposing-direction",
+            "pathway-expansion-reactome"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "pathway-expansion-reactome",
+          "term": "Pathway expansion (Reactome)",
+          "aliases": [
+            "Pathway expansion",
+            "Reactome"
+          ],
+          "html": "<p>widening a direction's seed targets by asking Reactome which\nother genes share a pathway with the mechanism card's gene, then keeping only the pathways whose\nname plausibly matches the mechanism (this project's rule: the pathway's name contains\n\"checkpoint,\" \"kinetochore\" or \"mitotic\"). Turns a hand-picked gene list into a target set a\ndrug search can cover more completely.</p>",
+          "exampleHtml": "<p><em>Example: BUB1B's UniProt id feeds the Reactome pathway lookup; every gene in a returned pathway\nnamed, say, \"Resolution of Sister Chromatid Cohesion,\" is meant to join the target set as a\npathway-role member rather than a seed-role one.</em></p>",
+          "context": "<p>the step between a mechanism card's seed targets and the full target set a drug source is queried against</p>",
+          "source": "docs/iteration1/step-8/mechanism.md",
+          "related": [
+            "reactome-string-open-targets-primekg",
+            "seed-target-target-set",
+            "mechanism-card"
+          ],
+          "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "aneuploidy-stress-proteotoxic-metabolic",
+          "term": "Aneuploidy stress (proteotoxic / metabolic)",
+          "aliases": [
+            "Aneuploidy stress (proteotoxic",
+            "metabolic)",
+            "proteotoxic / metabolic"
+          ],
+          "html": "<p>the burden a cell carries simply from having\nthe wrong chromosome count, independent of which gene broke the checkpoint: too much of some\nproteins and too little of others (proteotoxic stress), plus the extra energy an aneuploid cell\nburns keeping itself alive (metabolic / energy stress). Published work kills aneuploid cells\nselectively by adding to exactly this burden — energy stress (the AICAR class), autophagy\nstress (the chloroquine class), or chaperone stress (the HSP90/HSF1 axis) — while sparing\neuploid cells that were never this stressed to begin with.</p>",
+          "exampleHtml": "<p><em>Example: this case's D2 repurposing direction lists <code>PRKAA1, PRKAA2, HSP90AA1, HSF1, ATG5, MTOR</code> as its seed targets — the energy-sensing, chaperone and autophagy genes behind those three\npublished drug classes.</em></p>",
+          "context": "<p>the rationale for the one repurposing direction that does not touch the checkpoint at all</p>",
+          "source": "ressources/track2/mechanism.json",
+          "related": [
+            "proteotoxic-stress",
+            "repurposing-direction",
+            "aneuploidy-selective-compound"
+          ],
+          "firstSeen": "2026-09-05"
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "id": "15-rules-and-privacy-words",
       "title": "Rules and privacy words",
       "blocks": [
         {
@@ -5154,8 +5467,8 @@
       ]
     },
     {
-      "number": 15,
-      "id": "15-the-research-record--words-for-what-you-believe",
+      "number": 16,
+      "id": "16-the-research-record--words-for-what-you-believe",
       "title": "The research record — words for what you believe",
       "blocks": [
         {
