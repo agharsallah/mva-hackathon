@@ -26,6 +26,26 @@ export interface EntryBlock {
   html: string;
   /** The `*Example: …*` lines, as HTML; empty when the entry has none. */
   exampleHtml: string;
+  /**
+   * The free-text half of the entry's `*Context: …*` line, as HTML — where the term is used.
+   * The four fields below are the structured half of the same line; see the micro-format in
+   * `tools/dictionary-context.mjs`.
+   */
+  context?: string;
+  /** Repo-relative path (or citation) of the file that owns the term. */
+  source?: string;
+  /** Slugs of the entries this one leans on. Every one resolves — the generator checks. */
+  related?: string[];
+  /** What to look at: a `#anchor` on this page, a repo URL, or an external URL. */
+  see?: string[];
+  /**
+   * `YYYY-MM-DD`, the day the term entered the dictionary: the author date of the earliest
+   * commit that added its `**term**` marker to `docs/dictionary.md`, or an explicit
+   * `first seen` in the Context line. Never empty.
+   */
+  firstSeen: string;
+  /** The date is today's, not git's — the entry is not committed yet. */
+  firstSeenProvisional?: boolean;
 }
 
 /** An SVG from `docs/assets/`, copied into `assets/`. */
@@ -79,14 +99,36 @@ export interface Dictionary {
   source: string;
   generator: string;
   intro: ProseBlock[];
-  counts: { chapters: number; entries: number; figures: number; diagrams: number };
+  counts: {
+    chapters: number;
+    entries: number;
+    figures: number;
+    diagrams: number;
+    contexts: number;
+  };
   chapters: Chapter[];
+}
+
+/**
+ * slug → term, filled the first time the dictionary loads.
+ *
+ * An entry's `related` list is slugs, because a slug is the thing that stays valid when a
+ * term is reworded. A card still has to *say* the word, and it cannot await the dictionary
+ * mid-render — so the loader leaves this behind and `termOfSlug` reads it synchronously.
+ */
+const TERMS = new Map<string, string>();
+
+/** The term behind a slug, once the dictionary has been loaded at least once. */
+export function termOfSlug(slug: string): string | undefined {
+  return TERMS.get(slug);
 }
 
 /** The generated JSON, loaded on demand. */
 export async function loadDictionary(): Promise<Dictionary> {
   const mod = await import('./dictionary.generated.json');
-  return mod.default as Dictionary;
+  const dictionary = mod.default as Dictionary;
+  for (const entry of entriesOf(dictionary)) TERMS.set(entry.slug, entry.term);
+  return dictionary;
 }
 
 /**

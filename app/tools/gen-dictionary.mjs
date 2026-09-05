@@ -19,8 +19,14 @@
  * exists — so the source document gets a link check it never had.
  *
  * What counts as an entry: a paragraph that opens with `**term**` followed by an em dash.
- * Italic lines under it (`*Example: …*`) are the example. Anything else — a bold sentence, a
- * table, a list, a blockquote that is not a Legend — is prose and rendered as it stands.
+ * Italic lines under it (`*Example: …*`) are the example, and an italic line starting
+ * `*Context:` is the entry's metadata — parsed by `dictionary-context.mjs`, whose header
+ * documents the micro-format. Anything else — a bold sentence, a table, a list, a blockquote
+ * that is not a Legend — is prose and rendered as it stands.
+ *
+ * Every entry also carries a `firstSeen` date — explicit in the Context line, else the date
+ * already committed in the JSON, else git's answer, else today. `dictionary-context.mjs` owns
+ * that rule; `pnpm dictionary --rederive-dates` drops the carried dates and re-asks git.
  */
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -34,6 +40,25 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
 
+import {
+  asEntry,
+  FIGURE_KINDS,
+  githubSlug,
+  isLegend,
+  sourceOf,
+  stripHead,
+  visit,
+} from './dictionary-blocks.mjs';
+import {
+  committedDates,
+  dateEntries,
+  gitFirstSeen,
+  isContextLine,
+  parseContextLine,
+  resolveContextMeta,
+  today,
+} from './dictionary-context.mjs';
+
 const APP = dirname(fileURLToPath(new URL('.', import.meta.url)));
 const REPO = resolve(APP, '..');
 const SOURCE = 'docs/dictionary.md';
@@ -45,30 +70,8 @@ const ASSETS_OUT = join(OUT_DIR, 'assets');
 const REPO_BLOB = 'https://github.com/agharsallah/mva-hackathon/blob/main/';
 
 const check = process.argv.includes('--check');
-
-// --- slugs ------------------------------------------------------------------------------
-
-/**
- * GitHub's heading anchor: lowercase, punctuation removed, spaces to hyphens. The dictionary's
- * own cross-links were written against GitHub's rendering, so chapter ids must match it —
- * `## 4. Inheritance — how the answer is shaped` → `4-inheritance--how-the-answer-is-shaped`.
- */
-function githubSlug(text) {
-  return text
-    .toLowerCase()
-    .replace(/[^\p{Letter}\p{Number} -]/gu, '')
-    .replace(/ /g, '-');
-}
-
-/** Term slug, same rule as `src/lib/sections.ts` so anchors look alike app-wide. */
-function termSlug(text) {
-  return text
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[^\p{Letter}\p{Number}]+/gu, '-')
-    .replace(/^-+|-+$/g, '')
-    .slice(0, 80);
-}
+/** Ignore the dates already committed and re-derive every one of them from git. */
+const rederiveDates = process.argv.includes('--rederive-dates');
 
 // --- markdown → html ----------------------------------------------------------------------
 
@@ -79,17 +82,6 @@ const renderer = unified().use(remarkRehype).use(rehypeStringify);
 function html(nodes) {
   const root = { type: 'root', children: Array.isArray(nodes) ? nodes : [nodes] };
   return String(renderer.stringify(renderer.runSync(root))).trim();
-}
-
-/** The raw source text a node came from. */
-function sourceOf(node, source) {
-  return source.slice(node.position.start.offset, node.position.end.offset);
-}
-
-/** Walk a tree, calling `fn` on every node. */
-function visit(node, fn) {
-  fn(node);
-  for (const child of node.children ?? []) visit(child, fn);
 }
 
 /**
@@ -111,88 +103,14 @@ function rewriteLinks(tree, chapterIds, problems, where) {
   });
 }
 
-// --- block classification ------------------------------------------------------------------
-
-/** `**term** — definition`, possibly with `**alias**` before the dash. */
-function asEntry(paragraph, source, usedSlugs) {
-  const [first] = paragraph.children;
-  if (!first || first.type !== 'strong') return null;
-  const text = mdToString(paragraph);
-  const dash = text.indexOf(' — ');
-  if (dash < 0) return null;
-  const head = text.slice(0, dash);
-  const term = mdToString(first);
-  if (!head.startsWith(term)) return null;
-
-  // Aliases: every other bold run before the dash, plus the slash-separated names.
-  const aliases = new Set();
-  for (const child of paragraph.children) {
-    if (child === first) continue;
-    if (child.type === 'strong') aliases.add(mdToString(child));
-    if (child.type === 'text' && child.value.includes(' — ')) break;
-  }
-  for (const part of term.split(/\s*\/\s*/)) {
-    const clean = part.replace(/\s*\(.*\)\s*$/, '').trim();
-    if (clean && clean !== term) aliases.add(clean);
-  }
-  const paren = term.match(/\(([^)]+)\)/);
-  if (paren) aliases.add(paren[1].trim());
-
-  // The definition is every line until the first line that is a bare italic; the example is
-  // that line and everything after it.
-  const lines = sourceOf(paragraph, source).split('\n');
-  const split = lines.findIndex((l, i) => i > 0 && /^\*(?!\*)/.test(l));
-  const definition = (split < 0 ? lines : lines.slice(0, split)).join('\n');
-  const example = split < 0 ? '' : lines.slice(split).join('\n');
-
-  let slug = termSlug(term);
-  let n = 2;
-  while (usedSlugs.has(slug)) slug = `${termSlug(term)}-${n++}`;
-  usedSlugs.add(slug);
-
-  return {
-    kind: 'entry',
-    slug,
-    term,
-    aliases: [...aliases].filter((a) => a !== term),
-    definition,
-    example,
-  };
-}
-
-/**
- * Remove `**term** (aliases) — ` from the front of a definition: the app renders the term as
- * the card's heading, so the body starts at the definition proper.
- */
-function stripHead(paragraph) {
-  const kids = paragraph.children;
-  while (kids.length) {
-    const k = kids[0];
-    if (k.type === 'text' && k.value.includes(' — ')) {
-      k.value = k.value.slice(k.value.indexOf(' — ') + 3);
-      if (!k.value) kids.shift();
-      return;
-    }
-    kids.shift();
-  }
-}
-
-function isLegend(node) {
-  if (node.type !== 'blockquote') return false;
-  const p = node.children[0];
-  const s = p?.children?.[0];
-  return s?.type === 'strong' && mdToString(s).trim() === 'Legend';
-}
-
-/** Blocks a Legend can attach to. */
-const FIGURE_KINDS = new Set(['figure', 'mermaid', 'code']);
-
 // --- the walk ------------------------------------------------------------------------------
 
 function build() {
   const source = readFileSync(SOURCE_PATH, 'utf8');
   const tree = parser.parse(source);
   const problems = [];
+  /** slug → an explicit `first seen` from a Context line, and the raw `related`/`see` items. */
+  const meta = new Map();
 
   const chapterIds = new Set();
   for (const node of tree.children) {
@@ -204,6 +122,24 @@ function build() {
   const usedSlugs = new Set();
   const assets = new Set();
   let chapter = null;
+
+  /**
+   * Attach one `*Context: …*` line to an entry block. The free-text lead renders through the
+   * same remark pipeline as a definition, so its links get the same check; `related` and `see`
+   * are kept raw here and resolved once every slug is known.
+   */
+  function attachContext(block, raw, where) {
+    const ctx = parseContextLine(raw);
+    if (ctx.lead) {
+      const leadTree = parser.parse(ctx.lead);
+      rewriteLinks(leadTree, chapterIds, problems, where);
+      block.context = html(leadTree.children);
+    }
+    if (ctx.source) block.source = ctx.source;
+    if (ctx.related.length) block.related = [];
+    if (ctx.see.length) block.see = [];
+    meta.set(block.slug, { ...ctx, where });
+  }
 
   for (const node of tree.children) {
     const line = node.position.start.line;
@@ -279,21 +215,28 @@ function build() {
         const exampleTree = entry.example ? parser.parse(entry.example) : null;
         rewriteLinks(definitionTree, chapterIds, problems, where);
         if (exampleTree) rewriteLinks(exampleTree, chapterIds, problems, where);
-        blocks.push({
+        const block = {
           kind: 'entry',
           slug: entry.slug,
           term: entry.term,
           aliases: entry.aliases,
           html: html(definitionTree.children),
           exampleHtml: exampleTree ? html(exampleTree.children) : '',
-        });
+        };
+        if (entry.context) attachContext(block, entry.context, where);
+        blocks.push(block);
         continue;
       }
-      // A bare italic paragraph straight after an entry continues its example.
+      // A bare italic paragraph straight after an entry continues its example — unless it
+      // opens `*Context:`, in which case it is that entry's metadata line.
       const only = node.children.length === 1 && node.children[0].type === 'emphasis';
       if (only && last?.kind === 'entry') {
-        rewriteLinks(node, chapterIds, problems, where);
-        last.exampleHtml = [last.exampleHtml, html(node)].filter(Boolean).join('\n');
+        const raw = sourceOf(node, source);
+        if (isContextLine(raw)) attachContext(last, raw, where);
+        else {
+          rewriteLinks(node, chapterIds, problems, where);
+          last.exampleHtml = [last.exampleHtml, html(node)].filter(Boolean).join('\n');
+        }
         continue;
       }
     }
@@ -304,6 +247,23 @@ function build() {
   }
 
   const entries = dictionary.chapters.flatMap((c) => c.blocks.filter((b) => b.kind === 'entry'));
+
+  resolveContextMeta({
+    entries,
+    chapters: dictionary.chapters,
+    meta,
+    problems,
+    repo: REPO,
+    repoBlob: REPO_BLOB,
+  });
+  dateEntries({
+    entries,
+    meta,
+    previous: rederiveDates ? new Map() : committedDates(JSON_OUT),
+    fromGit: gitFirstSeen(REPO, SOURCE),
+    now: today(),
+  });
+
   const out = {
     source: SOURCE,
     generator: 'app/tools/gen-dictionary.mjs',
@@ -315,6 +275,8 @@ function build() {
         .length,
       diagrams: dictionary.chapters.flatMap((c) => c.blocks).filter((b) => b.kind === 'mermaid')
         .length,
+      /** Entries carrying a `*Context:*` line — the metadata footer the Learn page renders. */
+      contexts: entries.filter((e) => meta.has(e.slug)).length,
     },
     chapters: dictionary.chapters,
   };
@@ -364,9 +326,13 @@ function main() {
 
   mkdirSync(ASSETS_OUT, { recursive: true });
   for (const [path, content] of wanted) writeFileSync(path, content);
+  const provisional = out.chapters
+    .flatMap((c) => c.blocks)
+    .filter((b) => b.kind === 'entry' && b.firstSeenProvisional).length;
   console.log(
     `gen-dictionary: wrote ${out.counts.chapters} chapters, ${out.counts.entries} entries, ` +
-      `${assets.length} figures, ${out.counts.diagrams} diagrams`,
+      `${assets.length} figures, ${out.counts.diagrams} diagrams, ` +
+      `${out.counts.contexts} context lines (${provisional} dates not yet in git)`,
   );
 }
 

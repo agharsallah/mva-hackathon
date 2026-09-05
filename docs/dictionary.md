@@ -3,10 +3,26 @@
 **Standing:** the one glossary. Never duplicated elsewhere; enriched whenever a new domain
 term, gene, file format or tool appears in the work. Rendered as a course at `/learn` in the
 app — generated from this file by `app/tools/gen-dictionary.mjs`, never copied; a cross-link
-here that names a missing heading fails that build. Last checked 2026-09-03.
+here that names a missing heading fails that build, and so does a `*Context:*` line naming a
+file or an entry that does not exist. Last checked 2026-09-05.
 
 Explained like you're 12. Ordered so each word only uses words defined above it.
-Format: **term** — what it means. *Example.*
+
+**How an entry is written.** One definition line and two optional italic lines under it:
+
+- `**term** — what it means.` The definition, written for someone who has read only the
+  entries above this one.
+- `*Example: one concrete value.*` A real value from the work, never an invented one.
+- `*Context: where it is used · source: path/to/owner.md · related: [term](#slug), [other](#slug) · see: [label](#anchor) · first seen 2026-09-05*`
+  The metadata. Segments are separated by ` · ` (or `; ` before a key); every segment is
+  optional. `source:` names the one repo-relative file that owns the term, `related:` the
+  entries this one leans on, `see:` a figure, exhibit or page worth opening. `first seen` is normally left
+  out — `app/tools/gen-dictionary.mjs` derives it from git, taking the author date of the
+  earliest commit that added the term's bold marker to this file, and you only write it by
+  hand for a term that existed in the work before it reached this page.
+
+The Learn page renders those as the definition, the example beneath it, and a quiet metadata
+footer carrying the date, the source, the related entries as links, and the exhibits.
 
 Concrete values in `*Example:*` lines are illustrations, not the source of truth for a
 measurement. Dataset numbers are owned by
@@ -217,6 +233,7 @@ A hole in the stack is why "we found nothing in that exon" can be a lie.
 
 **VCF (Variant Call Format)** — the list of differences. One line per difference. Much smaller than FASTQ.
 *This is the main hunting ground.*
+*Context: the primary input of this project — every warehouse table is derived from the one delivered VCF · source: docs/step-0/methodology/001-vcf-provenance-and-structure.md · related: Variant, Genotype, Variant calling, Checksum · see: [the delivery numbers](../ideation/data-findings.md)*
 
 ```mermaid
 flowchart LR
@@ -425,6 +442,7 @@ Every standard caller assumes only 0% / 50% / 100% exist. **MVA is a mosaicism d
 
 **Compound heterozygous ("comp het")** — both copies broken, but by TWO DIFFERENT variants — one inherited from mom, one from dad.
 *Example: from mom you get `BUB1B` with a stop-too-early mistake; from dad you get `BUB1B` with a splice mistake. Neither parent is sick. You are. **This is the shape of the answer in this hackathon.***
+*Context: the shape of the answer this challenge asks for — the pair finder enumerates exactly this · source: src/mva/pipeline/compound_het.py · related: Zygosity, Phasing, Allele, Variant*
 
 **Homozygous variant** — both copies broken by the SAME variant (usually when parents are related). Ruled out here.
 
@@ -634,6 +652,7 @@ flowchart LR
 > **Legend** — blue: the four proteins that build the signal · yellow: the assembled STOP signal · purple: the enzymes · green: the outcome · the bar-ended line means blocks, not activates.
 
 **BUB1B (protein name BUBR1)** — the main MVA gene, at `chr15q15.1`. Core part of the STOP signal. Its patients get cancer. **The prime suspect.**
+*Context: the gene every iteration-1 hypothesis is about · source: docs/step-0/methodology/006-phasing-power-on-bub1b.md · related: MVA, Aneuploidy, Spindle assembly checkpoint, Compound heterozygous · see: [BUBR1 domains](assets/bubr1-domains.svg)*
 
 **CEP57** — MVA gene 2, at `11q21`. Centrosome part. Patients have short upper limbs, usually NO cancer.
 
@@ -702,6 +721,7 @@ Track 2 asks you to write exactly this chain, then find a drug that cuts one of 
 
 **HPO (Human Phenotype Ontology)** — a standard vocabulary of symptoms, each with a code. Stops people writing "small head" 10 different ways.
 *Example: `HP:0000252` = Microcephaly. `HP:0002664` = Neoplasm.*
+*Context: the vocabulary this child's symptoms are written in, and the graph every phenotype ranking walks · source: src/mva/phenotype/ontology.py · related: Phenotype, Ontology, DAG, Ancestor closure*
 
 **Ontology** — an organized vocabulary where terms are linked parent-to-child.
 
@@ -758,6 +778,10 @@ Straight from the challenge's phenotype document. Note what is *missing*: microc
 **IUGR (intrauterine growth restriction)** — the process behind [SGA](#6-describing-symptoms--hpo): the baby grew too slowly *in the womb*. SGA is the measurement at birth; IUGR is the cause.
 
 **Why the parental term matters.** Miscarriage is often caused by an embryo having the wrong number of chromosomes. Repeated miscarriages in the parents are therefore a read-out of the *same* chromosome-instability mechanism the child is being tested for — the challenge document says explicitly to treat it as evidence, not background. The catch: gene-ranking tools assume every term describes the patient, so feeding them a parental term is a modelling choice. Run it both ways and report the difference.
+
+**Clinical dataset** — the second machine-readable input, beside the [VCF](#2-reading-dna-sequencing-and-the-files-it-makes): this child's symptoms as eight HPO terms and nothing else — no narrative, no phenopacket. Seven describe the child; the eighth, recurrent spontaneous abortion, describes the parents. What is *absent* matters too: microcephaly and intellectual disability, the two features textbooks tie to MVA, are not ticked, and HPO has no way to say "looked for and not found" — so the absence is recorded as a note, never scored.
+*Example: `HP:0002859` Rhabdomyosarcoma is the event that triggered the whole investigation. The eight ids are written once, in `src/mva/phenotype/terms.py`, as `WITH_PARENTAL` (8 terms) and `PROBAND_ONLY` (7); every run reports both so the modelling choice about the parental term is visible.*
+*Context: the input half that is not DNA — every gene ranking in this project starts from these eight ids · source: ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md · related: HPO, Phenotype, Ancestor closure, Information content IC · see: [the phenotype join](iteration1/step-3/methodology/071-phenotype-callset-join.md) · first seen 2026-09-05*
 
 **OMIM / Orphanet / GeneReviews / ClinGen / GenCC** — catalogues of genetic diseases: which gene causes what, and how well proven.
 
@@ -847,6 +871,7 @@ and its phenotype is worded mosaic variegated **hyperploidy**, not aneuploidy.*
 
 **Provenance** — the paper trail behind one number or one file: which tool, at which version, with which settings, reading which inputs, produced it. It is what makes a result *checkable* by someone who was not there. The rule this project holds itself to is that provenance is **recorded by the tool that did the work**, never typed in afterwards — a paper trail a human can edit is a claim about the past, and a claim is exactly the thing provenance is supposed to replace.
 *Example: `ressources/reference/structure_genes.tsv` is 23 gene records; beside it, `structure_genes.provenance.json` says they were resolved by `tools/build_gene_set.py` at commit `cb066b8` against `rest.ensembl.org` release `116` on 2026-09-03.*
+*Context: recorded by the tool that did the work, on every run · source: docs/step-0/methodology/061-reference-data-provenance.md · related: Checksum, Source of truth, Reproducible*
 
 **Structure gene set** — the table of genes a 3D protein exhibit is *allowed to draw a fold for*. Deliberately a **superset** of the genes the patient's variants were annotated against: reading one protein's shape against a related gene's needs that related gene on screen, and it carries no patient variant at all. One row per gene, resolved live against **Ensembl** by `tools/build_gene_set.py` and committed, so the offline app and the live server read the same list. Compare the **panel**, which is the smaller, annotation-defined set.
 *Example: `ressources/reference/structure_genes.tsv` — 23 genes, of which 8 are the annotated panel, 5 are other documented MVA / spindle-checkpoint genes and 10 are comparison requests.*
@@ -989,9 +1014,11 @@ and its phenotype is worded mosaic variegated **hyperploidy**, not aneuploidy.*
 
 **Data lineage** — the record of which inputs produced which table, by which transformation. Not "it came from a VCF", but *which object, at which version, with which checksum, producing how many rows*. Without it, a disputed result cannot be traced back. Stored as an [append-only](#8-command-line-tools-youll-see) edge list: one row per (input → output) pair.
 *Example: `warehouse.data_lineage` links `variants_raw` to `s3://mva/source/WGS_EX2312012_HGWCNDSX7.vcf.gz`, sha256 `bec64c68…`, version `3a79ea8b…`, 5,012,204 rows.*
+*Context: the graph behind every derived table in the warehouse · source: src/mva/warehouse/lineage_edges.py · related: Provenance, Append-only, Checksum, Source of truth*
 
 **Lineage edge** — one row of that record: one output table, one input, one transformation. A derived table with no edge is a table nobody can vouch for. Read the edges with `mva-warehouse lineage-list`.
 *Example: `results.panel_gene_density` ← `warehouse.panel_variant_counts, warehouse.mva_panel_grch38`, tool `mva-warehouse pg-derive`.*
+*Context: eleven stored columns — `produced_at`, `target_schema`, `target_table`, `target_rows`, `source_kind`, `source_ref`, `source_version`, `source_sha256`, `transform`, `tool`, `notes` — plus `is_current`, computed on read and never stored, because a stored flag would mean updating a table whose whole value is that it is never updated · source: src/mva/warehouse/lineage_edges.py · related: Data lineage, Append-only, Superseding record, Provenance manifest*
 
 **Provenance manifest** — a small file committed *beside* a data file, saying where that file came from. It is what you write when there is nothing to derive: a public reference table, an ontology release, a gene record, a predicted protein structure are all **fetched**, not computed, so there is no input table and no transformation and a lineage edge for them would be invented. The manifest names the upstream URL and its release instead, the checksum of every input read and every output written, the tool, and the commit it ran at. Written by that tool on every run.
 *Example: `ressources/reference/hpo_provenance.json` and `app/src/fixtures/data/protein/_provenance.json`; `GET /api/provenance/reference` lists every one of them in a single row shape.*
@@ -1534,10 +1561,12 @@ Each submission is not a guess. **It is a question, and the answer narrows the n
 > **Legend** — gray: the header row · each column is coloured to match its callout underneath · the faded second row is a secondary-finding row.
 
 **epcr** — the confidence number you attach to each row, between 0 and 1. It sets the ordering.
+*Context: the one number you choose per row, and the only thing that decides which rung of the ladder a row lands on · source: ressources/hackathon-rules/track1_submission_template.csv · related: Rank, Row, Rank points, Threshold sweep*
 
 **Rank** — position after sorting by epcr, highest first. Rank 1 = your top guess.
 
 **Rank points** — rank 1 → 100 pts, ranks 2–3 → 50, ranks 4–5 → 25, ranks 6–10 → 10.
+*Context: the automated half of the score; the qualitative review is the other half · source: src/mva/pipeline/scorer.py · related: Rank, epcr, Full match, F-max*
 
 ```mermaid
 flowchart TB
@@ -1556,6 +1585,7 @@ A **partial** match scores half of its rung. A **full** match anywhere beats any
 **Full match** — one row contains EXACTLY the true pair. **Partial match** — a row contains one of the two true variants. Partial scores half.
 
 **F-max** — the best F-score achievable by sweeping every epcr cut-off present in your file. Maxes at 1.0 only when your top row is exactly the true pair.
+*Context: the field in the oracle's reply that carries the most information — the decode table is a lookup on it · source: src/mva/pipeline/scorer.py · related: Threshold sweep, Precision, Full match, Decode table*
 
 **Threshold sweep** — trying each epcr value as a cut-off and keeping the best result. Consequence: rows below the best cut-off can never hurt you — extra low-confidence rows are FREE.
 
@@ -1609,13 +1639,36 @@ flowchart TB
 
 > **Legend** — blue: scanning probes that look for a signal · yellow: the follow-up probe that confirms · green: the final strike and the score it locks in.
 
-**Decode table** — the lookup that translates the returned F-max number back into "which rows held the true alleles".
+**Decode table** — the lookup that translates the reply the oracle sends back into "which rows held the true alleles". Built *before* the upload by simulating the scorer against every answer key still thought possible, so the reply is read off a committed table instead of argued about afterwards. Two keys that would produce the same reply share a row: the table also states what this upload cannot tell apart.
+*Example: iteration 1's layout produces 7 distinguishable replies over 8 keys — `f_max = 0.667` with `partial_match_rank = 1` means the pair row holds exactly one true allele.*
+*Context: committed as `decode-table.md` inside the iteration folder — labels only, never positions · source: docs/iteration1/step-6/methodology/074-submission-v1-design.md · related: Oracle, F-max, Hypothesis space, Expected information gain · see: [the decode table](../figures/track1/track1-decode-table.png)*
 
 **Hypothesis space** — the explicit list of answer keys you still consider possible before an upload, each with a prior weight. The [probe designer](#13-hackathon-scoring-words) simulates the scorer's reply for every member; two members that would produce the same reply are *indistinguishable* by that upload, and the reply you actually get deletes every member that would have produced a different one.
 *Example: `{stop+missense, stop+intronic-A, missense+intronic-A, stop+unknown, missense+unknown}` — five keys; a pair row at rank 1 followed by two partner singles tells the five apart except `stop+intronic-A` vs `missense+intronic-A` ([`mva.pipeline.probe_design`](../src/mva/pipeline/probe_design.py)).*
 
 **Expected information gain** — how many [bits](#11-math-probability-and-statistics-words) of uncertainty an upload is expected to remove, averaged over the hypothesis space with its priors. The number to compare two candidate row layouts on *before* spending a submission. Ceiling: the [entropy](#11-math-probability-and-statistics-words) of the prior — an upload that tells every member apart reaches it.
 *Example: five equiprobable keys = 2.32 bits of prior entropy; a layout that leaves one pair of keys confused 40 % of the time gains 1.92 bits.*
+*Context: computed for each candidate row layout before a submission is spent, and compared against the entropy ceiling · source: src/mva/pipeline/probe_design.py · related: Entropy H, Information gain, Hypothesis space, Decode table · see: [entropy bits](assets/entropy-bits.svg)*
+
+**Submission iteration** — one upload, one folder. `submissions/<track>/iteration-<n>/` holds everything the organisers receive and everything a judge needs to check it: the report and its PDF, the methods form, the coordinate-free selector spec, and the decode table. The predictions CSV is *not* in it — it holds real positions, so it is built into `build/submission/` and only its sha256 is recorded. Research steps contribute evidence to an iteration; they never own a deliverable.
+*Example: `submissions/track1/iteration-1/` — built and rehearsed on 2026-09-05, not uploaded, 0 of 6 submissions spent; the folder README records the CSV's sha256 `fbc9e750…` and the command that rebuilds it.*
+*Context: the unit of delivery for both tracks; one oracle reply opens the next one · source: submissions/README.md · related: Submission, Probe ledger, Reproducible, Derived dataset · see: [iteration tooling](iteration1/step-6/methodology/076-iteration-tooling.md) · first seen 2026-09-05*
+
+**Selector (submission)** — how an allele is written down in a file that *can* be committed: a predicate over one warehouse result table that must match exactly one row. It names the reasons a variant is in the submission — gene, consequence, population frequency, ClinVar status — and a resolver turns them into coordinates at build time. Zero or several matches is an error that names the count and the selector, never a position.
+*Example: `{"table": "results.coding_candidates", "where": [["rsid", "=", "rs6025"]]}`. Operators are whitelisted (`=`, `!=`, `<`, `<=`, `>`, `>=`, `like`, plus `is` / `is not` for null only), table and column names are validated, and values are bound as parameters — so a selector is data, not SQL a reviewer has to audit.*
+*Context: the file that lets a report say *why* a row is there without saying *where* · source: src/mva/warehouse/submission_spec.py · related: SQL, ClinVar, gnomAD, Row · first seen 2026-09-05*
+
+**Folder gate** — the checker that fails when an iteration folder is not what its own README says it is. It reads the folder's state — draft, ready or frozen — from that README, then checks the deliverables that state requires, that each rendered file is newer than the source it came from, that every methods-form row is answered and the abstract is under 500 words, that the selectors are internally consistent (no positions anywhere, at most 10 rows, epcr strictly descending), that the recorded sha256 matches the built CSV, and that nothing says TODO.
+*Example: `uv run python tools/check_iteration.py` → `submissions/track1/iteration-1: ready — ok` — after it had correctly failed the folder for a PDF older than the `report.md` it was rendered from.*
+*Context: a step of `tools/check-python.sh`, which the pre-push hook runs · source: tools/check_iteration.py · related: Submission iteration, epcr, Row, Idempotent · first seen 2026-09-05*
+
+**Frozen iteration** — an iteration that has been uploaded, and is therefore read-only. Freezing stamps a dated banner on the folder's README and on the matching `docs/iteration<n>/` index; from then on the folder gate fails on any uncommitted change under it. The same command opens the next iteration beside it — the docs tree, the report skeleton, the methods form with its model number bumped, the selector spec copied as a starting point — and refuses to overwrite anything that already exists.
+*Example: `uv run python tools/new_iteration.py --track track1 --reply '…' --dry-run` planned 8 step READMEs, 8 methodology indexes, one docs index and four submission files, and wrote nothing. The real run waits for a real reply.*
+*Context: the loop that turns one oracle reply into the next iteration · source: tools/new_iteration.py · related: Submission iteration, Folder gate, Append-only · first seen 2026-09-05*
+
+**Scorer cross-check** — grading the same submission bytes twice: once with our own transcription of the scoring rules, once by importing the organisers' `evaluation.py`, and failing the build on any disagreement. A transcription tested only against itself proves nothing — it agrees with itself by construction.
+*Example: all 8 answer keys agree on all five compared fields (`full_match_rank`, `partial_match_rank`, `rank_points`, `f_max`, `f_max_threshold`) for the iteration-1 file. One hand-written expectation was wrong and the organisers' code corrected it: a key whose partner sits in a secondary row peaks at F-max 0.667, not 0.5.*
+*Context: runs after every submission build and exits non-zero on a disagreement, so the decode table is a property of the published scorer rather than of our reading of it · source: src/mva/pipeline/scorer_reference.py · related: F-max, Rank points, Decode table, Reproducible · first seen 2026-09-05*
 
 **Leaderboard freeze** — the deadline after which no more submissions count (Oct 24, 23:59 UTC).
 
@@ -1679,6 +1732,10 @@ flowchart TB
 
 **Pre-commit hook** — a script that blocks a git commit if it spots a forbidden file. Cheap insurance.
 
+**Coordinate gate** — the scan that fails the build when a patient genomic position appears in a file this repository could publish. Three rules: a submission CSV data row carrying a seven-digit-or-longer position; any `pos` from the resolved (and gitignored) submission spec, searched as a bare number; and any eight-digit number falling strictly inside the public candidate-gene span. Public gene-model coordinates and synthetic examples are exempt, each with a stated reason in an allowlist.
+*Example: `uv run python tools/check_coordinates.py`. The first run found 11 hits, one a real leak — two positions written verbatim into a methodology entry and already pushed. They were redacted to `<pos-1>` / `<pos-2>`: the append-only rule yields to the no-coordinates rule, and the redaction says so. Second run: `coordinate gate: clean`.*
+*Context: a step of `tools/check-python.sh` before the tests; the commit-message gate carries the same patterns, so a position cannot enter history either · source: tools/check_coordinates.py · related: Resharing, Derived dataset, Pre-commit hook, Redaction, Selector (submission) · first seen 2026-09-05*
+
 **Embargo** — a period where you must not publish a paper about it. Code is fine; the journal article waits.
 
 **Acknowledgement text** — the exact wording the organizers require you to include in anything public.
@@ -1717,6 +1774,7 @@ flowchart LR
 **Research goal** — the single question a step exists to answer. Not a task ("normalize the VCF") but a question ("does every variant have exactly one spelling?"). A task is done when it runs; a goal is done when it is answered. *Example:* step 1's goal is whether an exact-match scorer can be trusted with an indel.
 
 **Hypothesis** — a claim that could turn out to be wrong, stated before you test it. In software terms it is an assertion you write before the code that makes it pass. *Example:* "the causal pair sits in BUB1B."
+*Context: filed in the register before it is tested — `mva-science hypothesis-add` refuses a claim with no prediction and no refutation condition · source: src/mva/science/hypothesis.py · related: Falsifiable, Prediction, Refutation condition, Register*
 
 **Falsifiable** — able to be proven wrong by some observation you could actually make. A claim nothing could disprove is not a hypothesis, it is an opinion. *Example:* "BUB1B is involved somehow" is not falsifiable; "both BUB1B alleles are rare and damaging" is.
 
@@ -1725,6 +1783,10 @@ flowchart LR
 **Refutation condition** (`refuted_by`) — the observation that would kill the claim. The most valuable sentence in the whole record, and the one people skip. *Example:* "both BUB1B alleles turn out common in gnomAD, or phasing puts them on the same copy."
 
 **Test** — a run you actually executed. Here, a methodology entry is the test: it carries the exact commands, the inputs, and the raw output, so someone else can repeat it. Not the same as a software unit test.
+
+**Methodology entry** — the file a test is written down in: the question, the inputs with their versions and parameters, the exact commands, the observed output, and the conclusion drawn — enough for someone else to reproduce it. Numbered globally across every step, never reused, and never edited: a correction is a new entry that says which one it supersedes. From step 1 on it also carries the hypothesis, the prediction and the refutation condition, all written *before* the run, and the verdict after it.
+*Example: `docs/iteration1/step-6/methodology/074-submission-v1-design.md`. Because the numbers are global, two steps working in parallel cannot claim the same one.*
+*Context: the receipt an evidence row points at, and the reason a result can be re-derived a month later · source: docs/method.md · related: Test, Source reference, Append-only, Hypothesis · first seen 2026-09-05*
 
 **Evidence** — one observation bearing on one claim. Not a conclusion — a single fact, tagged with which way it cuts. *Example:* "BUB1B is depleted of loss-of-function variants in gnomAD."
 
@@ -1751,3 +1813,7 @@ flowchart LR
 **Dossier** — one claim plus everything recorded about it: every revision, every evidence row, and the weighing over them. What gets exported as a Markdown file and rendered as a report section. *Example:* `docs/iteration1/step-1/hypotheses/h001-bub1b.md`.
 
 **Provenance vs belief** — two different questions, often confused. **Provenance** is *where did this byte come from* — answered by lineage and hashes. **Belief** is *what do we think is true and why* — answered by the register. A perfect provenance chain tells you nothing about whether a conclusion is right. *Example:* `data_lineage` says which VCF produced a table; `warehouse.evidence` says what that table made us believe.
+
+**Audit trail** — the two append-only ledgers nobody could reconstruct after the fact: what we *spent* and what we *believed*. The probe ledger records every oracle upload — who sent it, the payload, the reply, the rationale, which hypotheses it bears on — against a hard budget of 6. The register records every hypothesis revision and every evidence row. Lineage answers *what was computed*; the audit trail answers *what was done in the outside world, and what it made us think*. Both live in the ingest schema rather than the results schema, because they are hand-written operational state, not a derived table.
+*Example: `uv run mva-warehouse probe-budget` → 0 of 6 spent, 6 remaining. `uv run mva-science probe-link <probe_id> --hypothesis H009 --direction supports` files the reply as `kind=oracle` evidence with `source_ref` `probe:<n>`, which is what ties an irreversible action to the belief it moved.*
+*Context: the half of the record that no rerun can rebuild · source: src/mva/warehouse/probes.py · related: Probe ledger, Register, Revision, Append-only, Provenance vs belief · first seen 2026-09-05*

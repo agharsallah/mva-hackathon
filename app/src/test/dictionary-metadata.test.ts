@@ -1,0 +1,96 @@
+/**
+ * Every entry knows when it arrived, and its `*Context:*` metadata points somewhere real.
+ *
+ * `dictionary.test.ts` proves the generated JSON has the shape the Learn page renders.
+ * This file proves the *metadata* half of an entry holds: a `firstSeen` date on all of them
+ * (git's answer, or an explicit one in the markdown), `related` slugs that resolve to entries
+ * that exist, `see` targets that are anchors or absolute URLs, and — for the terms this
+ * iteration introduced — a named source file.
+ *
+ * The generator refuses an unresolvable `related` or a missing `source:` file, so a failure
+ * here means the committed JSON is stale: run `pnpm dictionary`.
+ */
+
+import { describe, expect, it } from 'vitest';
+
+import { type Dictionary, entriesOf, loadDictionary } from '../lib/dictionary';
+
+const dictionary: Dictionary = await loadDictionary();
+const entries = entriesOf(dictionary);
+const slugs = new Set(entries.map((e) => e.slug));
+const bySlug = new Map(entries.map((e) => [e.slug, e]));
+
+/** The terms added when the submission iteration became a first-class thing. */
+const ITERATION_TERMS = [
+  'clinical-dataset',
+  'submission-iteration',
+  'selector-submission',
+  'folder-gate',
+  'coordinate-gate',
+  'frozen-iteration',
+  'scorer-cross-check',
+  'audit-trail',
+  'methodology-entry',
+];
+
+describe('entry metadata', () => {
+  it('dates every entry as YYYY-MM-DD', () => {
+    const undated = entries.filter((e) => !/^\d{4}-\d{2}-\d{2}$/.test(e.firstSeen ?? ''));
+    expect(undated.map((e) => e.term)).toEqual([]);
+  });
+
+  it('dates nothing in the future', () => {
+    const today = new Date().toISOString().slice(0, 10);
+    expect(entries.filter((e) => e.firstSeen > today).map((e) => e.term)).toEqual([]);
+  });
+
+  it('counts the context lines it shipped', () => {
+    const withContext = entries.filter(
+      (e) => e.context || e.source || e.related?.length || e.see?.length,
+    );
+    expect(withContext.length).toBe(dictionary.counts.contexts);
+    expect(withContext.length).toBeGreaterThanOrEqual(20);
+  });
+
+  it('resolves every related slug to an entry, and never to itself', () => {
+    const broken = entries.flatMap((e) =>
+      (e.related ?? [])
+        .filter((slug) => !slugs.has(slug) || slug === e.slug)
+        .map((slug) => `${e.slug} → ${slug}`),
+    );
+    expect(broken).toEqual([]);
+  });
+
+  it('points every see target at an anchor on this page or an absolute URL', () => {
+    const bad = entries.flatMap((e) =>
+      (e.see ?? [])
+        .filter((t) => !(t.startsWith('#') ? slugs.has(t.slice(1)) : /^https?:\/\//.test(t)))
+        .map((t) => `${e.slug} → ${t}`),
+    );
+    expect(bad).toEqual([]);
+  });
+
+  it('names a repo-relative source path wherever an entry declares one', () => {
+    const bad = entries.filter((e) => e.source && !/^[\w.@-]+\/\S+$/.test(e.source));
+    expect(bad.map((e) => `${e.slug}: ${e.source}`)).toEqual([]);
+  });
+
+  it('gives the iteration terms a definition, an example, a source and related entries', () => {
+    for (const slug of ITERATION_TERMS) {
+      const entry = bySlug.get(slug);
+      expect(entry, `missing entry ${slug}`).toBeDefined();
+      expect(entry!.html.length, slug).toBeGreaterThan(80);
+      expect(entry!.exampleHtml, slug).toContain('<em>');
+      expect(entry!.source, slug).toBeTruthy();
+      expect(entry!.related?.length ?? 0, slug).toBeGreaterThan(2);
+      expect(entry!.firstSeen, slug).toBe('2026-09-05');
+    }
+  });
+
+  it('leans the new scoring terms on the words that were already there', () => {
+    expect(bySlug.get('scorer-cross-check')?.related).toContain('f-max');
+    expect(bySlug.get('selector-submission')?.source).toBe('src/mva/warehouse/submission_spec.py');
+    expect(bySlug.get('coordinate-gate')?.related).toContain('selector-submission');
+    expect(bySlug.get('clinical-dataset')?.related).toContain('hpo-human-phenotype-ontology');
+  });
+});

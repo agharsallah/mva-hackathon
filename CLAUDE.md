@@ -194,9 +194,14 @@ The method is owned by [`docs/method.md`](docs/method.md). Read it before record
   glossary file anywhere. Enrich this one.
 - It is written for a beginner and ordered so each entry only uses words already defined above it.
   Keep that property when inserting: put a new term after everything it depends on.
-- Every time a new domain term, gene name, file format, tool, or concept comes up in the work, add it:
-  the technical term in bold, a one-line plain-English definition, and an `*Example:*` line with a
-  concrete value. Link related terms already in the dictionary.
+- Every time a new domain term, concept, methodology, abbreviation, metric, biological entity,
+  clinical term or technical artifact comes up in the work, add it: the technical term in bold, a
+  one-line plain-English definition, an `*Example:*` line with a concrete value, and a
+  `*Context:*` line saying where it is used, where it came from (the methodology entry, paper,
+  file or tool that introduced it — its source), the related terms (linked), and the date it was
+  first introduced (`first seen YYYY-MM-DD`). Where a figure or exhibit shows the concept, link
+  it. Entries written before 2026-09-05 gain these fields as they are touched; the generator
+  derives `first seen` from git history for every entry.
 - If a term is already there but poorly explained, improve the existing entry — never append a
   duplicate.
 - Diagram assets for the dictionary live in `docs/assets/` and are referenced relatively as

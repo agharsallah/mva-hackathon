@@ -9,7 +9,13 @@
 
 import type { ReactNode } from 'react';
 
-import { type Block, type EntryBlock, figureUrl } from '../../lib/dictionary';
+import {
+  type Block,
+  type EntryBlock,
+  figureUrl,
+  REPO_BLOB,
+  termOfSlug,
+} from '../../lib/dictionary';
 import { Mermaid } from './Mermaid';
 import { Star } from './Starred';
 import type { StoredSet } from './storedSet';
@@ -23,6 +29,87 @@ function chipAliases(entry: EntryBlock): string[] {
 function diagramLabel(legendHtml?: string): string {
   const plain = legendHtml?.replace(/<[^>]+>/g, '').trim();
   return plain ? `Diagram — ${plain}` : 'Diagram';
+}
+
+/** A `source:` that names a file in this repository opens on GitHub; anything else is text. */
+function sourceHref(source: string): string | undefined {
+  return /^[\w.@-]+\/\S+$/.test(source) ? REPO_BLOB + source : undefined;
+}
+
+/** What to call a `see:` target: the term behind an anchor, else the file at the end of a URL. */
+function seeLabel(href: string): string {
+  if (href.startsWith('#')) return termOfSlug(href.slice(1)) ?? href.slice(1).replace(/-/g, ' ');
+  const tail = href.split('#')[0].replace(/\/+$/, '').split('/').pop();
+  return tail || href;
+}
+
+/**
+ * The metadata half of an entry's `*Context:*` line — where the term is used, the file that
+ * owns it, the entries it leans on, what to look at, and the day it entered the dictionary.
+ *
+ * Deliberately quiet: one small row under the definition, so a reader chasing provenance
+ * finds it and a reader learning the word never has to step over it.
+ */
+function Meta({ entry }: { entry: EntryBlock }) {
+  const { context, source, related, see, firstSeen } = entry;
+  if (!context && !source && !related?.length && !see?.length && !firstSeen) return null;
+  const href = source ? sourceHref(source) : undefined;
+  return (
+    <footer className="mt-1.5 text-micro leading-relaxed text-chrome-500">
+      {context && (
+        <div
+          className="mb-0.5 italic [&_a]:underline [&_p]:inline"
+          dangerouslySetInnerHTML={{ __html: context }}
+        />
+      )}
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        {firstSeen && (
+          <span>
+            first seen <time dateTime={firstSeen}>{firstSeen}</time>
+            {entry.firstSeenProvisional && (
+              <span title="written today; not committed yet"> (new)</span>
+            )}
+          </span>
+        )}
+        {source && (
+          <span>
+            source:{' '}
+            {href ? (
+              <a href={href} className="font-mono hover:text-chrome-300" rel="noreferrer">
+                {source}
+              </a>
+            ) : (
+              <span className="font-mono">{source}</span>
+            )}
+          </span>
+        )}
+        {related?.length ? (
+          <span className="flex flex-wrap items-baseline gap-1">
+            related:
+            {related.map((slug) => (
+              <a
+                key={slug}
+                href={`#${slug}`}
+                className="rounded-pill border border-line px-1.5 transition hover:border-chrome-600 hover:text-chrome-300"
+              >
+                {termOfSlug(slug) ?? slug}
+              </a>
+            ))}
+          </span>
+        ) : null}
+        {see?.length ? (
+          <span className="flex flex-wrap items-baseline gap-x-2">
+            see:
+            {see.map((target) => (
+              <a key={target} href={target} className="underline hover:text-chrome-300">
+                {seeLabel(target)}
+              </a>
+            ))}
+          </span>
+        ) : null}
+      </div>
+    </footer>
+  );
 }
 
 function Legend({ html }: { html?: string }) {
@@ -94,6 +181,7 @@ export function EntryCard({
           dangerouslySetInnerHTML={{ __html: entry.exampleHtml }}
         />
       )}
+      <Meta entry={entry} />
       {aside}
     </article>
   );
