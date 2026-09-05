@@ -114,7 +114,7 @@ flowchart LR
 - [`src/mva/pipeline/ranking.py`](../pipeline/ranking.py) — `PairEvidence` is the object `dossier.evidence_from_pair()` converts into recorded evidence rows.
 - [`src/mva/render/__init__.py`](../render/__init__.py) and [`src/mva/explore/figure.py`](../explore/figure.py) — share the `Exhibit`/`Section` rendering primitives that `science/views/*` and `science/report.py` build on.
 - Tests: `tests/test_science_cli.py`, `tests/test_science_export.py`, `tests/test_science_register.py`, `tests/test_science_report.py`, `tests/test_viz_science.py`, `tests/test_cli_parsers.py`.
-- Docs: [`docs/method.md`](../../../docs/method.md) owns the method this package implements; [`docs/step-0/methodology/017-the-research-record.md`](../../../docs/step-0/methodology/017-the-research-record.md) and [`041-science-page.md`](../../../docs/step-0/methodology/041-science-page.md) record how it was built; `docs/step-1/hypotheses/` and `docs/science-register.json` are its exported mirror.
+- Docs: [`docs/method.md`](../../../docs/method.md) owns the method this package implements; [`docs/step-0/methodology/017-the-research-record.md`](../../../docs/step-0/methodology/017-the-research-record.md) and [`041-science-page.md`](../../../docs/step-0/methodology/041-science-page.md) record how it was built; `docs/iteration1/step-1/hypotheses/` and `docs/science-register.json` are its exported mirror.
 
 ## Key facts / gotchas
 

@@ -29,6 +29,10 @@ from dataclasses import dataclass
 PLATFORM = "platform"
 RESEARCH = "research"
 
+#: The submission iteration the research steps currently contribute to: steps 1-8 are filed
+#: under ``docs/<ITERATION>/step-<n>/``; a new iteration starts a new folder.
+ITERATION = "iteration1"
+
 #: A step that has been finished, is being worked, or has not been opened.
 STATUSES = ("done", "open", "planned")
 
@@ -53,9 +57,15 @@ class Step:
             raise ValueError(f"{self.slug}: a step without a goal is a folder, not a step")
 
     @property
+    def folder(self) -> str:
+        """The step's folder under ``docs/``: the platform stands alone, research steps are
+        grouped under the submission iteration they contribute to."""
+        return self.slug if self.kind == PLATFORM else f"{ITERATION}/{self.slug}"
+
+    @property
     def docs(self) -> str:
         """Where this step's pages, notes and methodology entries live."""
-        return f"docs/{self.slug}"
+        return f"docs/{self.folder}"
 
     @property
     def takes_hypotheses(self) -> bool:
@@ -109,7 +119,7 @@ STEPS: tuple[Step, ...] = (
         ),
         # Open, not planned: the ranking is built and has run. It needed neither step 1 nor
         # step 2 - ranking genes by symptoms reads no callset - so the dependency the
-        # roadmap assumed turned out not to exist. See docs/step-3/methodology/067.
+        # roadmap assumed turned out not to exist. See docs/iteration1/step-3/methodology/067.
         status="open",
         unblocks=("step-6",),
     ),

@@ -256,9 +256,9 @@ def write(dossiers: list[Dossier], root: str | Path = "docs") -> list[Path]:
 
     for step in steps.research_steps():
         group = by_step.get(step.slug, [])
-        if not group and not (base / step.slug).exists():
+        if not group and not (base / step.folder).exists():
             continue
-        folder = base / step.slug / "hypotheses"
+        folder = base / step.folder / "hypotheses"
         folder.mkdir(parents=True, exist_ok=True)
 
         index = folder / "README.md"
