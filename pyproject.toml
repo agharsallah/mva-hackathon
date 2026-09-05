@@ -33,7 +33,10 @@ bench = [
 dev = [
     "httpx>=0.27",
     "import-linter>=2.14",
+    "kaleido>=1.4.0",
+    "markdown>=3.10.3",
     "mypy>=2.3.1",
+    "openpyxl>=3.1.5",
     "pytest>=8",
     "pytest-cov>=7.1.0",
     "ruff>=0.16.5",
@@ -184,7 +187,7 @@ name = "No import cycles between packages"
 type = "layers"
 layers = [
     "mva.viz",
-    "mva.explore",
+    "mva.explore | mva.report",
     "mva.science",
     "mva.reads",
     "mva.warehouse",
