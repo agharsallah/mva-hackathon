@@ -1,0 +1,13 @@
+# Positions inside the candidate-gene span that are NOT the proband's. One per line, with the
+# reason. tools/check_coordinates.py reads this file; add a line only after verifying the
+# position is absent from warehouse.variants_raw.
+40161230  # synthetic VEP REST example in docs/step-0/methodology/040; 0 rows in variants_raw (checked 2026-09-05)
+40194393  # synthetic VEP REST example in docs/step-0/methodology/040; 0 rows in variants_raw (checked 2026-09-05)
+40142000  # made-up example position used in CONTRIBUTING.md and docs/step-0/methodology/017 to show what NOT to write
+40160984  # BUB1B gene start (Ensembl 116, public gene model) quoted in docs/step-0/methodology/060
+40221137  # BUB1B gene end (Ensembl 116, public gene model) quoted in docs/step-0/methodology/060
+40217428  # PAK6 gene start (Ensembl 116, public gene model) quoted in docs/step-0/methodology/060
+40141000  # synthetic record in tests/fixtures/profile/vcf_header.txt; 0 rows in variants_raw (checked 2026-09-05)
+40161282  # synthetic VEP fixture in tests/test_annotate_vep.py; 0 rows in variants_raw (checked 2026-09-05)
+40161283  # synthetic VEP fixture in tests/test_annotate_vep.py; 0 rows in variants_raw (checked 2026-09-05)
+40143000  # synthetic position in tests/test_submission.py and tests/test_science_export.py; 0 rows in variants_raw (checked 2026-09-05)
