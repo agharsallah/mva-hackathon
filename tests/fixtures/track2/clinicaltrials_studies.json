@@ -1,0 +1,42 @@
+{
+ "studies": [
+  {
+   "protocolSection": {
+    "identificationModule": {
+     "nctId": "NCT00000001",
+     "briefTitle": "A study of WIDGETONE"
+    },
+    "statusModule": {
+     "overallStatus": "RECRUITING",
+     "startDateStruct": {
+      "date": "2024-01"
+     }
+    },
+    "designModule": {
+     "phases": [
+      "PHASE2"
+     ],
+     "studyType": "INTERVENTIONAL"
+    },
+    "conditionsModule": {
+     "conditions": [
+      "Testoma"
+     ]
+    },
+    "armsInterventionsModule": {
+     "interventions": [
+      {
+       "name": "WIDGETONE"
+      },
+      {
+       "type": "OTHER"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "noProtocolSection": true
+  }
+ ]
+}

@@ -1,0 +1,50 @@
+{
+ "page_meta": {
+  "limit": 50,
+  "total_count": 4
+ },
+ "molecules": [
+  {
+   "molecule_chembl_id": "CHEMBL0001",
+   "pref_name": "WIDGETONE",
+   "max_phase": "4.0",
+   "first_approval": 1999,
+   "molecule_type": "Small molecule",
+   "atc_classifications": [
+    "L01EG04"
+   ],
+   "black_box_warning": 1,
+   "withdrawn_flag": false
+  },
+  {
+   "molecule_chembl_id": "CHEMBL0002",
+   "pref_name": "WOBBLIB",
+   "max_phase": "3.0",
+   "first_approval": null,
+   "molecule_type": "Small molecule",
+   "atc_classifications": [],
+   "black_box_warning": 0,
+   "withdrawn_flag": false
+  },
+  {
+   "molecule_chembl_id": "CHEMBL0003",
+   "pref_name": "GADGETIB",
+   "max_phase": null,
+   "first_approval": null,
+   "molecule_type": "Small molecule",
+   "atc_classifications": [],
+   "black_box_warning": 0,
+   "withdrawn_flag": false
+  },
+  {
+   "molecule_chembl_id": "CHEMBL0004",
+   "pref_name": "COMPOUND 4B [PMID: 90000555]",
+   "max_phase": null,
+   "first_approval": null,
+   "molecule_type": "Small molecule",
+   "atc_classifications": [],
+   "black_box_warning": 0,
+   "withdrawn_flag": false
+  }
+ ]
+}

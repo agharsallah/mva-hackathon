@@ -1,0 +1,18 @@
+{
+ "data": {
+  "search": {
+   "hits": [
+    {
+     "id": "ENSG00000000009",
+     "name": "GENEA-PAKX",
+     "entity": "target"
+    },
+    {
+     "id": "ENSG00000000001",
+     "name": "GENEA",
+     "entity": "target"
+    }
+   ]
+  }
+ }
+}

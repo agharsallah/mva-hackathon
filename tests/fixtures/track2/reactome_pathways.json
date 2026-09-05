@@ -1,0 +1,20 @@
+[
+ {
+  "stId": "R-HSA-000001",
+  "displayName": "Widget assembly checkpoint signalling",
+  "speciesName": "Homo sapiens",
+  "schemaClass": "Pathway"
+ },
+ {
+  "stId": "R-HSA-000002",
+  "displayName": "Unrelated metabolism of sprockets",
+  "speciesName": "Homo sapiens",
+  "schemaClass": "Pathway"
+ },
+ {
+  "stId": "R-HSA-000003",
+  "displayName": "Kinetochore attachment of widgets",
+  "speciesName": "Homo sapiens",
+  "schemaClass": "Pathway"
+ }
+]

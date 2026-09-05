@@ -1,0 +1,59 @@
+{
+ "data": {
+  "genes": {
+   "nodes": [
+    {
+     "name": "GENEB",
+     "interactions": [
+      {
+       "drug": {
+        "name": "GADGETIB",
+        "conceptId": "chembl:CHEMBL0003",
+        "approved": false
+       },
+       "interactionScore": 0.42,
+       "interactionTypes": [
+        {
+         "type": "inhibitor",
+         "directionality": "INHIBITORY"
+        }
+       ],
+       "publications": [
+        {
+         "pmid": "90000444"
+        }
+       ],
+       "sources": [
+        {
+         "sourceDbName": "ChEMBL"
+        },
+        {
+         "sourceDbName": "TTD"
+        }
+       ]
+      },
+      {
+       "drug": {
+        "name": "SPROCKETOL",
+        "conceptId": "ncit:C00001",
+        "approved": true
+       },
+       "interactionScore": 0.11,
+       "interactionTypes": [],
+       "publications": [],
+       "sources": [
+        {
+         "sourceDbName": "TTD"
+        }
+       ]
+      }
+     ]
+    },
+    {
+     "name": "GENEC",
+     "interactions": []
+    }
+   ]
+  }
+ }
+}

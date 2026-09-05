@@ -1,0 +1,46 @@
+{
+ "page_meta": {
+  "limit": 20,
+  "total_count": 2
+ },
+ "targets": [
+  {
+   "organism": "Homo sapiens",
+   "pref_name": "Widget kinase",
+   "target_type": "SINGLE PROTEIN",
+   "target_chembl_id": "CHEMBL_T1",
+   "target_components": [
+    {
+     "accession": "P00001",
+     "target_component_synonyms": [
+      {
+       "component_synonym": "GENEA",
+       "syn_type": "GENE_SYMBOL"
+      },
+      {
+       "component_synonym": "2.7.11.1",
+       "syn_type": "EC_NUMBER"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "organism": "Mus musculus",
+   "pref_name": "Widget kinase (mouse)",
+   "target_type": "SINGLE PROTEIN",
+   "target_chembl_id": "CHEMBL_T2",
+   "target_components": [
+    {
+     "accession": "Q00001",
+     "target_component_synonyms": [
+      {
+       "component_synonym": "GENEA",
+       "syn_type": "GENE_SYMBOL"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

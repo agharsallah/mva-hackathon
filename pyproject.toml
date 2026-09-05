@@ -19,6 +19,7 @@ dependencies = [
 mva-explore = "mva.explore.cli:main"
 mva-warehouse = "mva.warehouse.cli:main"
 mva-phenotype = "mva.phenotype.cli:main"
+mva-drugs = "mva.drugs.cli:main"
 mva-science = "mva.science.cli:main"
 mva-reads = "mva.reads.cli:main"
 mva-reads-api = "mva.reads.api.serve:main"
@@ -167,7 +168,7 @@ warn_return_any = false
 
 # Packages already clean under the full ruleset. Add the next one here when it is.
 [[tool.mypy.overrides]]
-module = ["mva.io.*", "mva.phenotype.*", "mva.render.*"]
+module = ["mva.drugs.*", "mva.io.*", "mva.phenotype.*", "mva.render.*"]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
 disallow_untyped_calls = true
@@ -191,14 +192,16 @@ layers = [
     "mva.science",
     "mva.reads",
     "mva.warehouse",
-    "mva.phenotype",
+    "mva.phenotype | mva.drugs",
     "mva.pipeline | mva.io | mva.render",
 ]
 # A layer may import anything below it and nothing above it. mva.pipeline, mva.io and
 # mva.render sit on the bottom row together because none of them imports either of the
 # others; they are the leaves. mva.phenotype sits one row above them: it parses public
 # ontology files (mva.io) and hands a gene prior to the pair ranker (mva.pipeline), and
-# nothing in either of those may reach back up to it.
+# nothing in either of those may reach back up to it. mva.drugs shares that row: it reads
+# seven public drug and pathway APIs and imports no sibling package at all, so it neither
+# depends on mva.phenotype nor may be imported by it.
 exhaustive = false
 
 [[tool.importlinter.contracts]]
@@ -217,6 +220,7 @@ forbidden_modules = [
 name = "Nothing depends on the web layer"
 type = "forbidden"
 source_modules = [
+    "mva.drugs",
     "mva.explore",
     "mva.io",
     "mva.phenotype",
