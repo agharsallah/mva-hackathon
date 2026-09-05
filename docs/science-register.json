@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-04T13:37:27+00:00",
+  "generated_at": "2026-09-05T20:45:44+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -151,10 +151,10 @@
       "refuted_by": "The causal gene ranks worse, or unchanged, when the parental term is removed - which would mean the parents' reproductive history carried signal about the child's gene that the child's own features did not.",
       "gene": "",
       "path": "phenotype-only ranking, term-set ablation",
-      "status": "proposed",
-      "confidence": null,
+      "status": "supported",
+      "confidence": 0.8581489350995123,
       "suggested_confidence": 0.8581,
-      "revisions": 1,
+      "revisions": 2,
       "evidence": [
         {
           "id": 5,
@@ -172,6 +172,318 @@
           "kind": "measurement",
           "claim": "With the parental term included, four recurrent-miscarriage genes - TOP6BL, ANXA5, ENPP1 and ABCC6 - outrank every candidate-panel gene, showing the term competes with the features that describe the child.",
           "source_ref": "methodology/056",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H003",
+      "step": "step-2",
+      "statement": "retrospective: filtering the annotated eight-gene MVA panel to alleles that are both rare (gnomAD AF absent or below the recessive cutoff) and protein-altering (VEP impact HIGH or MODERATE) leaves exactly one candidate biallelic set, and it is in BUB1B: one stop_gained allele (ClinVar pathogenic) and one missense allele (absent from gnomAD), both heterozygous, both PASS.",
+      "prediction": "Re-running the panel filter (methodology 031, table results.panel_candidates) returns exactly two rows flagged rare and protein-altering, both gene BUB1B, both het, both PASS; the ClinVar site-first join (051) finds the stop_gained and nothing else.",
+      "refuted_by": "A third rare protein-altering PASS allele in any panel gene, a second panel gene with two such alleles, or either BUB1B allele turning out common in gnomAD or homozygous.",
+      "gene": "BUB1B",
+      "path": "path 1 \u2014 textbook clinic",
+      "status": "supported",
+      "confidence": 0.9308615796566531,
+      "suggested_confidence": 0.9309,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 7,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "annotation",
+          "claim": "VEP REST over the eight-gene panel annotated 874 of 874 ALT-split alleles; filtering to impact HIGH or MODERATE and gnomAD AF absent or below 0.01 leaves exactly two alleles, both BUB1B, both heterozygous, both PASS: one stop_gained (HIGH, gnomAD AF 3.29e-05, ClinVar pathogenic/likely_pathogenic) and one missense_variant (MODERATE, absent from gnomAD, no ClinVar record).",
+          "source_ref": "methodology/031",
+          "lineage_ref": ""
+        },
+        {
+          "id": 8,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "annotation",
+          "claim": "Site-first ClinVar join: of 2,129 pathogenic/likely-pathogenic ClinVar sites across the panel genes, exactly one is present in the callset - the BUB1B stop_gained, het, PASS, ClinVar condition Mosaic variegated aneuploidy syndrome 1, two-star review; an independent path from the VEP route (site-first rather than call-first).",
+          "source_ref": "methodology/051",
+          "lineage_ref": ""
+        },
+        {
+          "id": 9,
+          "direction": "neutral",
+          "strength": 0.0,
+          "kind": "absence",
+          "claim": "Phase is not established by the callset: both alleles are 0/1 calls without shared physical phasing, which is equally consistent with cis and trans; the panel filter therefore identifies a candidate set, not a proven compound heterozygote.",
+          "source_ref": "methodology/031",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H004",
+      "step": "step-2",
+      "statement": "No protein-coding gene outside the eight-gene panel carries a candidate biallelic set of rare protein-altering PASS alleles that outranks the BUB1B pair: BUB1B is the only gene that is biallelic on PASS calls AND carries a ClinVar pathogenic allele AND sits in the top 30 of the panel-blind phenotype ranking.",
+      "prediction": "In results.gene_biallelic (every coding allele genome-wide annotated by VEP REST), BUB1B is flagged biallelic_pass with n_plp_pass >= 1 and phenotype_rank <= 30, and no other gene satisfies all three conditions at once. Other genes with biallelic_pass true will exist (recessive carriers of two rare missense alleles are common in any genome) but none will combine a pathogenic ClinVar allele with a phenotype rank in the top 30.",
+      "refuted_by": "Another gene with biallelic_pass true, at least one ClinVar pathogenic or LoF allele, and a phenotype rank of 30 or better; or BUB1B failing to appear as biallelic_pass in the genome-wide table (which would mean the coding-region join or the annotation lost one of its alleles).",
+      "gene": "BUB1B",
+      "path": "path 1 \u2014 textbook clinic, genome-wide",
+      "status": "supported",
+      "confidence": 0.9308615796566533,
+      "suggested_confidence": 0.9309,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 12,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "Genome-wide coding scan (38,087 distinct coding alleles, all annotated by VEP REST release 116): 667 genes carry at least one rare protein-altering allele, 65 are biallelic on PASS calls, and exactly one of the 65 carries a ClinVar pathogenic allele - BUB1B, which is also the only biallelic gene with a phenotype rank of 30 or better (rank 6).",
+          "source_ref": "methodology/070",
+          "lineage_ref": ""
+        },
+        {
+          "id": 13,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Of the 15 biallelic genes carrying a loss-of-function allele, none other than BUB1B has a ClinVar pathogenic allele, and their phenotype ranks are 220 or worse or absent; the biallelic set outside BUB1B is dominated by HLA genes, SERPINA1 and other hypervariable or paralogous loci - the shape of mapping noise and common recessive carrier states, not of a second diagnosis.",
+          "source_ref": "methodology/070",
+          "lineage_ref": ""
+        },
+        {
+          "id": 14,
+          "direction": "neutral",
+          "strength": 0.0,
+          "kind": "absence",
+          "claim": "The scan covers coding intervals plus an 8 bp splice flank only (1.4 percent of the genome); a deep-intronic, UTR or structural second allele in another gene is outside what this test can see, so the verdict is a statement about the coding fraction.",
+          "source_ref": "methodology/070",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H005",
+      "step": "step-3",
+      "statement": "Among all genes that carry a candidate biallelic set of rare protein-altering PASS alleles genome-wide, BUB1B is the best-ranked gene in the panel-blind phenotype ranking \u2014 the two independent signals (DNA-derived biallelic set, symptom-derived gene rank) converge on one gene.",
+      "prediction": "Ordering results.gene_biallelic rows with biallelic_pass true by phenotype_rank ascending puts BUB1B first; the second-ranked biallelic gene has a phenotype rank worse than BUB1B's.",
+      "refuted_by": "A different biallelic_pass gene with a better (smaller) phenotype rank than BUB1B.",
+      "gene": "BUB1B",
+      "path": "path 1 \u00d7 phenotype",
+      "status": "supported",
+      "confidence": 0.8021838885585817,
+      "suggested_confidence": 0.8022,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 15,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "Ordering the 65 biallelic-on-PASS genes by the panel-blind phenotype rank puts BUB1B first at rank 6; the next curated biallelic gene is HSPG2 at rank 150, then PEX5 at 220. Forty-one of the 65 have no HPO curation at all.",
+          "source_ref": "methodology/071",
+          "lineage_ref": ""
+        },
+        {
+          "id": 16,
+          "direction": "neutral",
+          "strength": 0.0,
+          "kind": "absence",
+          "claim": "The two instruments share no data (the ranking reads ontology files, the scan reads the callset) but the panel that motivated the scan was chosen from the same literature the HPO annotations summarise, so convergence is strong corroboration, not fully independent confirmation.",
+          "source_ref": "methodology/071",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H006",
+      "step": "step-4",
+      "statement": "retrospective: none of the non-PASS calls inside the eight-gene panel is a credible hidden second allele \u2014 after VEP annotation, zero are both rare and protein-altering; TRIP13's cluster of filtered calls is a paralogous-read pileup (low allele fraction, all gnomAD-common).",
+      "prediction": "Re-running methodology 049 over results.panel_suppressed returns 20 non-PASS records, all annotated, 0 flagged rare and protein-altering.",
+      "refuted_by": "Any panel non-PASS allele that is rare and protein-altering.",
+      "gene": "BUB1B",
+      "path": "path 2 \u2014 suppressed-evidence archaeology",
+      "status": "supported",
+      "confidence": 0.7685247834990175,
+      "suggested_confidence": 0.7685,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 10,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "annotation",
+          "claim": "All 20 non-PASS records across the eight panel genes were VEP-annotated; zero are both rare and protein-altering. TRIP13's six filtered calls have allele fractions 0.12-0.28 and are all gnomAD-common, the signature of a paralogous-read pileup rather than a suppressed real allele.",
+          "source_ref": "methodology/049",
+          "lineage_ref": ""
+        },
+        {
+          "id": 11,
+          "direction": "neutral",
+          "strength": 0.0,
+          "kind": "absence",
+          "claim": "TRIP13 is the panel's sole PASS-share outlier (z -4.02 versus chr5), a callability statement: a real TRIP13 allele in low-mappability sequence could be missing from the VCF at every FILTER level, which this test cannot see.",
+          "source_ref": "methodology/048",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H007",
+      "step": "step-4",
+      "statement": "Genome-wide, no gene reaches a biallelic set only by rescuing a suppressed (non-PASS) coding call while also carrying a ClinVar pathogenic or LoF allele and a top-30 phenotype rank; in particular BUB1B carries no rare protein-altering non-PASS coding allele, so the BUB1B pair does not depend on a filter rescue and no rescued call adds a third BUB1B candidate.",
+      "prediction": "In results.gene_biallelic, BUB1B has n_nonpass = 0; every gene with biallelic_with_rescue true and biallelic_pass false either lacks a ClinVar pathogenic/LoF allele or has a phenotype rank worse than 30 (or no curation at all).",
+      "refuted_by": "A rare protein-altering non-PASS coding allele in BUB1B, or a rescue-only biallelic gene with a pathogenic/LoF allele and a phenotype rank of 30 or better.",
+      "gene": "",
+      "path": "path 2 \u2014 suppressed-evidence archaeology, genome-wide",
+      "status": "supported",
+      "confidence": 0.8021838885585817,
+      "suggested_confidence": 0.8022,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 17,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "BUB1B carries zero rare protein-altering non-PASS coding alleles (n_nonpass = 0); genome-wide, 26 genes become biallelic only if a filtered call is rescued, and none of the 26 carries a ClinVar pathogenic or loss-of-function allele or a phenotype rank of 30 or better.",
+          "source_ref": "methodology/072",
+          "lineage_ref": ""
+        },
+        {
+          "id": 18,
+          "direction": "neutral",
+          "strength": 0.0,
+          "kind": "absence",
+          "claim": "1,594 of the 38,437 coding rows are non-PASS (MQ40 1,048, QD2 245, LowQual combinations the rest); a real allele the caller never emitted at all - the structural or deep-intronic case - is not a non-PASS call and stays outside this test.",
+          "source_ref": "methodology/072",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H008",
+      "step": "step-1",
+      "statement": "Both BUB1B candidate alleles are single-nucleotide substitutions at bi-allelic sites, so their submission spelling (chromosome, position, REF, ALT) is invariant under bcftools norm (left-alignment and multi-allelic splitting) and an exact-string scorer will match them as the callset spells them.",
+      "prediction": "For both alleles len(REF) = len(ALT) = 1 and the record carries a single ALT; running bcftools norm -m -both -f <GRCh38 no-chr FASTA> over the BUB1B locus leaves both records byte-identical in CHROM, POS, REF and ALT.",
+      "refuted_by": "Either allele is an indel or sits in a multi-allelic record, or bcftools norm changes its POS, REF or ALT.",
+      "gene": "BUB1B",
+      "path": "scorer mechanics",
+      "status": "supported",
+      "confidence": 0.8320183851339245,
+      "suggested_confidence": 0.832,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 27,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "Both BUB1B candidate records are single-base substitutions with a single ALT, and bcftools norm against the GRCh38 analysis set leaves both identical in CHROM, POS, REF and ALT; genome-wide, normalization changed the spelling of zero bi-allelic records - it only split 66,639 multi-allelic sites (each with two ALTs) and trimmed 39,913 of the alleles that split produced, with zero reference mismatches.",
+          "source_ref": "methodology/073",
+          "lineage_ref": ""
+        },
+        {
+          "id": 28,
+          "direction": "neutral",
+          "strength": 0.0,
+          "kind": "absence",
+          "claim": "The 43,667 records on hs38d1 decoy contigs have no sequence in the reference used and were excluded; normalization is still a recorded run, not a tested pipeline stage.",
+          "source_ref": "methodology/073",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H009",
+      "step": "step-6",
+      "statement": "The causal compound-heterozygous pair is the BUB1B stop_gained allele (ClinVar pathogenic for MVA syndrome 1) together with the BUB1B missense allele absent from gnomAD, in trans.",
+      "prediction": "A submission whose rank-1 row holds exactly these two alleles returns full_match_rank = 1, rank_points = 100 and f_max = 1.0 from the challenge scorer.",
+      "refuted_by": "The scorer returns no full match for that row. A partial match (partial_match_rank = 1) would mean exactly one of the two alleles is causal and the other is not; no match at all would mean neither is.",
+      "gene": "BUB1B",
+      "path": "path 4 \u2014 the oracle as a measurement instrument",
+      "status": "testing",
+      "confidence": null,
+      "suggested_confidence": 0.9963,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 19,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "The pair is the only candidate biallelic set the genome-wide coding scan leaves standing under the three conditions (biallelic on PASS calls, a ClinVar pathogenic allele, phenotype rank 30 or better): one gene of 65, BUB1B, with these two alleles and no third.",
+          "source_ref": "methodology/070",
+          "lineage_ref": ""
+        },
+        {
+          "id": 20,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "annotation",
+          "claim": "The stop_gained allele is classified pathogenic/likely pathogenic by multiple ClinVar submitters with no conflicts, condition Mosaic variegated aneuploidy syndrome 1; it truncates BUBR1 in exon 17 of 23, upstream of the C-terminal kinase domain (gnomAD genomes 3.3e-5, exomes 7.9e-5, no homozygote).",
+          "source_ref": "ClinVar:VCV000533901",
+          "lineage_ref": ""
+        },
+        {
+          "id": 21,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "annotation",
+          "claim": "The missense allele is absent from gnomAD v4 genomes and exomes, lies in the last exon inside the C-terminal kinase domain (CDD cd14029), and is called likely pathogenic by AlphaMissense (0.92) with CADD 24.5; SpliceAI predicts no splice effect for it, and none for the two rare intronic BUB1B alleles that would be its only in-callset alternatives.",
+          "source_ref": "methodology/074",
+          "lineage_ref": ""
+        },
+        {
+          "id": 22,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "literature",
+          "claim": "Hanks et al. 2004 established biallelic BUB1B mutations as the cause of MVA with cancer predisposition (Wilms tumour, rhabdomyosarcoma); the reported genotypes combine a truncating allele with a missense allele that leaves residual BubR1, the same shape as this pair - complete loss of BUB1B is embryonic lethal.",
+          "source_ref": "PMID:15475955",
+          "lineage_ref": ""
+        },
+        {
+          "id": 23,
+          "direction": "supports",
+          "strength": 0.3,
+          "kind": "literature",
+          "claim": "Suijkerbuijk et al. 2010 showed MVA patient cells carry strongly reduced BUBR1 protein and a weakened spindle assembly checkpoint, with missense alleles acting as hypomorphs - consistent with a kinase-domain missense partnering a null allele.",
+          "source_ref": "PMID:20516114",
+          "lineage_ref": ""
+        },
+        {
+          "id": 24,
+          "direction": "supports",
+          "strength": 0.3,
+          "kind": "literature",
+          "claim": "Rhabdomyosarcoma, the proband's presenting tumour, is a reported malignancy of BUB1B-related MVA (premature chromatid separation syndrome), matching the phenotype prior that favours BUB1B over CEP57.",
+          "source_ref": "PMID:31184400",
+          "lineage_ref": ""
+        },
+        {
+          "id": 25,
+          "direction": "neutral",
+          "strength": 0.0,
+          "kind": "absence",
+          "claim": "Phase is not established: the two alleles are 9 exons apart, far beyond the read-backed phasing reach, and no parental samples exist; two heterozygous calls are equally consistent with cis. The trans claim rests on the recessive model and on the absence of any other BUB1B candidate, and is what the oracle will test.",
+          "source_ref": "methodology/074",
+          "lineage_ref": ""
+        },
+        {
+          "id": 26,
+          "direction": "neutral",
+          "strength": 0.0,
+          "kind": "absence",
+          "claim": "Bulk blood WGS shows no allele-balance or depth signature of mosaic aneuploidy on any autosome; a bulk sample cannot detect an aneuploid fraction below roughly 10-15 percent, so this neither supports nor refutes the diagnosis.",
+          "source_ref": "methodology/037",
+          "lineage_ref": ""
+        },
+        {
+          "id": 29,
+          "direction": "neutral",
+          "strength": 0.0,
+          "kind": "annotation",
+          "claim": "Correction to row 25: the two alleles lie in exons 17 and 23 of the 23-exon MANE transcript (VEP), six exons apart, not nine; the phasing conclusion is unchanged because the distance is tens of kilobases either way.",
+          "source_ref": "methodology/075",
           "lineage_ref": ""
         }
       ]
