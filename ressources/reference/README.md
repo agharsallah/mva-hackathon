@@ -1,11 +1,11 @@
 # Population reference — what "normal" looks like
 
-**Standing:** six public reference tables, **every one of them carrying a provenance
-manifest** as of 2026-09-03
+**Standing:** seven public reference tables, **every one of them carrying a provenance
+manifest**; `coding_regions.tsv` added 2026-09-05 ([iteration1/step-2/069](../../docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md)); the first six as of 2026-09-03
 ([methodology 062](../../docs/step-0/methodology/062-reference-manifests-and-bed-notes.md)).
 The first three downloaded and derived
 2026-08-31; the two HPO tables added 2026-09-03 from release `hp/releases/2026-06-23`
-([methodology 067](../../docs/step-3/methodology/067-phenotype-ranking-without-java.md)).
+([methodology 067](../../docs/iteration1/step-3/methodology/067-phenotype-ranking-without-java.md)).
 Row counts and per-gene breakdowns verified against the files in this directory on the
 same date. Method and observed output:
 [`docs/step-0/methodology/030-population-reference-data.md`](../../docs/step-0/methodology/030-population-reference-data.md).
@@ -27,6 +27,7 @@ count into a judgement.
 | `hpo_term_ic.tsv` | *How rare, and therefore how diagnostic, is each clinical feature?* | 19,836 | 1.1 MB |
 | `hpo_gene_scores.tsv` | *Which genes do this child's symptoms point at, ignoring the DNA entirely?* | 10,520 | 988 KB |
 | `structure_genes.tsv` | *Which genes may the structure explorer draw, and which of them make a protein?* | 23 | 2.6 KB |
+| `coding_regions.tsv` | *Where can a variant change a protein?* — every CDS + stop codon of every protein-coding transcript, ±8 bp, merged per gene (Ensembl 116 GTF) | 223,048 | 10.8 MB |
 
 `structure_genes.tsv` has an editable input beside it, `structure_genes.spec.tsv`: three
 columns (symbol, group, note) that a human maintains, and from which
@@ -46,6 +47,7 @@ and needs no database ([viz-api](../../docs/step-0/viz-api.md)).
 |---|---|---|---|
 | `gnomad_constraint.tsv` | `gnomad_constraint.provenance.json` | `build_reference_data.py gnomad` | yes — the 95 MB v4.1 object, `68d8abdb…` |
 | `clinvar_panel.tsv` | `clinvar_panel.provenance.json` | `build_reference_data.py clinvar` | yes — the 193 MB VCF, `e72f5619…`, release `2026-08-29` |
+| `coding_regions.tsv` | `coding_regions.provenance.json` | `build_coding_regions.py --gtf <scratch>/Homo_sapiens.GRCh38.116.gtf.gz` | yes — the 141 MB Ensembl 116 GTF, digest in the manifest; lineage edge written by `pg-ingest` from the same manifest ([iteration1/step-2/069](../../docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md)) |
 | `qc_norms.tsv` | `qc_norms.provenance.json` | `build_reference_data.py qc-norms` | no, legitimately: the inputs are 7 papers, not downloads |
 | `hpo_term_ic.tsv` | `hpo_provenance.json` | `build_phenotype_data.py` | yes — both HPO files |
 | `hpo_gene_scores.tsv` | `hpo_provenance.json` | `build_phenotype_data.py` | yes — both HPO files |
@@ -437,7 +439,7 @@ function of the ontology *and* the annotation corpus.
 
 The edges are live in `warehouse.data_lineage` — `uv run mva-warehouse lineage-list
 --current` — with row counts, upstream URLs and digests. Details and the transfer
-cross-check: [methodology 067](../../docs/step-3/methodology/067-phenotype-ranking-without-java.md) §7b.
+cross-check: [methodology 067](../../docs/iteration1/step-3/methodology/067-phenotype-ranking-without-java.md) §7b.
 
 **Known gap, narrowed 2026-09-03 and still stated rather than hidden:** the *warehouse
 lineage row* for `clinvar_panel` still carries no `source_sha256`. The **manifest** now

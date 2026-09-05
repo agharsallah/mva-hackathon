@@ -26,6 +26,7 @@ compares the delivery against the committed **public reference** tables. Both pr
 
 from .analysis_background import BACKGROUND_DERIVATIONS
 from .analysis_clinvar import CLINVAR_DERIVATIONS
+from .analysis_coding import CODING_DERIVATIONS
 from .analysis_funnel import FUNNEL_DERIVATIONS
 from .analysis_karyogram import KARYOGRAM_DERIVATIONS
 from .analysis_pairs import PAIR_DERIVATIONS
@@ -243,6 +244,7 @@ DERIVATIONS: tuple[Derivation, ...] = (
     + BACKGROUND_DERIVATIONS
     + SUPPRESSED_DERIVATIONS
     + CLINVAR_DERIVATIONS
+    + CODING_DERIVATIONS
 )
 
 #: Written alongside the outputs so a result in the database can be traced to a run.

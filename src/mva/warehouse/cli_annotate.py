@@ -6,7 +6,9 @@ outside this repository and outside the delivery. ``--dry-run`` exists so the qu
 "what would we send?" can be answered without spending a request.
 """
 
-from . import annotate
+from pathlib import Path
+
+from . import annotate, annotate_coding
 from .settings import Postgres
 
 
@@ -54,11 +56,47 @@ def _print_plan(settings: Postgres, batch_size: int) -> int:
     return 0
 
 
-def register(subparsers) -> None:
-    """Attach ``annotate-panel`` to the top-level parser."""
-    parser = subparsers.add_parser(
-        "annotate-panel", help="annotate every panel allele through Ensembl VEP REST"
+def do_annotate_coding(args) -> int:
+    """Annotate every coding allele genome-wide (layer 2) and land ``coding_annotations``."""
+    settings = Postgres.from_env()
+    if settings.missing:
+        print("missing settings: " + ", ".join(settings.missing))
+        return 1
+
+    if args.dry_run:
+        found = annotate_coding.plan(settings, args.batch_size, args.checkpoint)
+        print(
+            f"alleles      {found['alleles']:,} distinct in {settings.result_schema}."
+            f"{annotate_coding.ALLELES_TABLE}"
+        )
+        print(f"checkpointed {found['checkpointed']:,} already answered under {args.checkpoint}")
+        print(
+            f"to ask       {found['todo']:,} in {found['batches']} request(s) of up to "
+            f"{args.batch_size}"
+        )
+        print("\ndry run — no request was sent.")
+        return 0
+
+    result = annotate_coding.run(
+        settings,
+        batch_size=args.batch_size,
+        base_url=args.base_url,
+        checkpoint=args.checkpoint,
+        progress=print,
+        workers=args.workers,
     )
+    print(f"source   {result['source']}")
+    print(f"wrote    {result['rows']:,} rows into {settings.schema}.{annotate_coding.CODING_TABLE}")
+    print(f"  asked this run       {result['asked']:,}")
+    print(f"  with a consequence   {result['annotated']:,}")
+    print(f"  with a gnomAD AF     {result['with_gnomad_af']:,}")
+    print(f"  with a ClinVar call  {result['with_clin_sig']:,}")
+    print(f"  distinct genes       {result['genes']:,}")
+    print(f"\nlineage edge appended to {settings.schema}.data_lineage")
+    return 0
+
+
+def _shared_flags(parser) -> None:
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -75,4 +113,31 @@ def register(subparsers) -> None:
         default=annotate.DEFAULT_BASE_URL,
         help="Ensembl REST server (GRCh37 lives on a different host)",
     )
+
+
+def register(subparsers) -> None:
+    """Attach ``annotate-panel`` and ``annotate-coding`` to the top-level parser."""
+    coding = subparsers.add_parser(
+        "annotate-coding",
+        help="annotate every coding allele genome-wide (results.coding_alleles) through VEP REST",
+    )
+    _shared_flags(coding)
+    coding.add_argument(
+        "--checkpoint",
+        type=Path,
+        default=annotate_coding.DEFAULT_CHECKPOINT,
+        help="gitignored directory holding answered batches; a re-run resumes from it",
+    )
+    coding.add_argument(
+        "--workers",
+        type=int,
+        default=1,
+        help="requests in flight at once (each is ~30 s of server time; 4 is conservative)",
+    )
+    coding.set_defaults(handler=do_annotate_coding)
+
+    parser = subparsers.add_parser(
+        "annotate-panel", help="annotate every panel allele through Ensembl VEP REST"
+    )
+    _shared_flags(parser)
     parser.set_defaults(handler=do_annotate_panel)

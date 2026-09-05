@@ -35,6 +35,7 @@ from ..science.hypothesis import HYPOTHESIS_TABLE
 from ..warehouse import reference
 from ..warehouse.analysis import DERIVATIONS, PROVENANCE_TABLE
 from ..warehouse.annotate import ANNOTATIONS_TABLE, RAW_TABLE
+from ..warehouse.annotate_coding import CODING_TABLE
 from ..warehouse.catalog import NOTES, OVERRIDES
 from ..warehouse.lineage import LINEAGE_TABLE, OBJECTS_TABLE
 from ..warehouse.probes import PROBE_TABLE
@@ -183,6 +184,19 @@ TABLE_FACTS: dict[str, TableFact] = {
         "population frequency — so consequence and rarity have to come from Ensembl VEP, "
         "and this is where those answers land.",
     ),
+    CODING_TABLE: TableFact(
+        "mva-warehouse annotate-coding (replaces the table wholesale; resumes from a "
+        "gitignored checkpoint)",
+        "The genome-wide half of the annotation: every allele the proband carries inside a "
+        "coding interval, answered by Ensembl VEP in the same shape as the panel table, so "
+        "every join written for the panel runs genome-wide unchanged.",
+    ),
+    "coding_regions": TableFact(
+        STAGED,
+        "Where a variant can change a protein: every CDS plus stop codon of every "
+        "protein-coding transcript, widened by an 8 bp splice flank and merged per gene, "
+        "from the Ensembl GTF. The 1.4 % of the genome the coding scan reads.",
+    ),
     # ── the ledgers ───────────────────────────────────────────────────────────────────
     LEDGER_TABLE: TableFact(
         _ledger("mva-warehouse source-upload"),
@@ -268,6 +282,7 @@ def declared_tables() -> dict[str, str]:
     where[CATALOG_TABLE] = "mva.warehouse.stage.CATALOG_TABLE"
     where[RAW_TABLE] = "mva.warehouse.annotate.RAW_TABLE"
     where[ANNOTATIONS_TABLE] = "mva.warehouse.annotate.ANNOTATIONS_TABLE"
+    where[CODING_TABLE] = "mva.warehouse.annotate_coding.CODING_TABLE"
     where[LEDGER_TABLE] = "mva.warehouse.source.LEDGER_TABLE"
     where[OBJECTS_TABLE] = "mva.warehouse.lineage.OBJECTS_TABLE"
     where[LINEAGE_TABLE] = "mva.warehouse.lineage.LINEAGE_TABLE"

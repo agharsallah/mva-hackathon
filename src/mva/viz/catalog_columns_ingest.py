@@ -67,6 +67,17 @@ INGEST_COLUMNS: dict[tuple[str, str], str] = {
     ("panel_annotations", "source"): "Which Ensembl VEP release and assembly answered, "
     "recorded on every row so a re-annotation is "
     "distinguishable from the previous one.",
+    ("coding_annotations", "annotated_at"): "When VEP was asked, in UTC. Batches are "
+    "checkpointed as they arrive, so one table can carry several instants.",
+    ("coding_annotations", "source"): "Which Ensembl VEP release and assembly answered.",
+    ("coding_regions", "start"): "First base of the merged coding interval, 1-based "
+    "inclusive, already widened by the splice flank.",
+    ("coding_regions", "end"): "Last base of the interval, inclusive.",
+    ("coding_regions", "gene_id"): "Ensembl stable gene id the interval belongs to; the "
+    "merge key, because a symbol can be reused.",
+    ("coding_regions", "n_cds"): "How many CDS or stop-codon rows of the GTF were merged "
+    "into this interval.",
+    ("coding_regions", "n_transcripts"): "How many distinct transcripts contributed to it.",
     # ── warehouse: the public reference tables ────────────────────────────────────────
     ("gnomad_constraint", "ensembl_gene_id"): "Ensembl's stable gene identifier "
     "(`ENSG…`) — the key a symbol is not.",

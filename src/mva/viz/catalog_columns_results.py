@@ -15,6 +15,37 @@ RESULT_COLUMNS: dict[tuple[str, str], str] = {
     "the table it wrote.",
     ("derivation_runs", "question"): "The one question the derivation exists to answer, "
     "declared beside its SQL.",
+    # ── results: layer 2, the coding scan ─────────────────────────────────────────────
+    ("coding_alleles", "allele_ix"): "Which alternate allele of the record this row is: 1 "
+    "for the first ALT, 2 for the second at a multi-allelic site.",
+    ("coding_alleles", "zygosity"): "`het` for one copy, `hom` for two copies of the same "
+    "ALT, `multi` for a `1/2` genotype — one copy each of two different ALTs, which is "
+    "compound heterozygosity proven by the genotype itself.",
+    ("coding_alleles", "vaf"): "Fraction of the record's reads carrying *this* allele.",
+    ("coding_candidates", "is_novel"): "Whether gnomAD has never seen the allele. NULL "
+    "where VEP was not asked.",
+    ("coding_candidates", "is_clinvar_plp"): "Whether ClinVar classifies the allele "
+    "pathogenic or likely pathogenic, conflicting records excluded.",
+    ("gene_biallelic", "n_het_pass"): "Rare protein-altering alleles in heterozygous PASS calls.",
+    ("gene_biallelic", "n_multi_pass"): "Rare protein-altering alleles at `1/2` PASS sites.",
+    ("gene_biallelic", "n_hom_pass"): "Rare protein-altering alleles in homozygous PASS calls.",
+    ("gene_biallelic", "n_nonpass"): "Rare protein-altering alleles the caller filtered.",
+    ("gene_biallelic", "n_lof_pass"): "Of the PASS alleles, how many are HIGH impact "
+    "(loss of function).",
+    ("gene_biallelic", "n_plp_pass"): "Of the PASS alleles, how many ClinVar calls "
+    "pathogenic or likely pathogenic.",
+    ("gene_biallelic", "n_novel_pass"): "Of the PASS alleles, how many gnomAD has never seen.",
+    ("gene_biallelic", "min_gnomad_af"): "The rarest frequency among the gene's candidate "
+    "alleles; NULL when every one is absent from gnomAD.",
+    ("gene_biallelic", "consequences"): "The candidate alleles' VEP consequences in "
+    "position order; a filtered call carries its FILTER in brackets.",
+    ("gene_biallelic", "biallelic_pass"): "Two rare protein-altering PASS alleles (het or "
+    "`1/2`), or one homozygous — the recessive shape, on trusted calls only.",
+    ("gene_biallelic", "biallelic_with_rescue"): "The same test with the filtered alleles "
+    "counted in — a gene one suppressed call short of biallelic.",
+    ("gene_biallelic", "phenotype_rank"): "Where the gene ranks in the panel-blind phenotype "
+    "ranking on the child's seven own HPO terms; NULL when HPO curates no gene of that name.",
+    ("gene_biallelic", "phenotype_score"): "That ranking's score for the gene.",
     # ── results: the derived tables ───────────────────────────────────────────────────
     ("panel_gene_density", "n_filtered"): "Records the caller suppressed inside the gene "
     "— `n_all` minus `n_pass`.",

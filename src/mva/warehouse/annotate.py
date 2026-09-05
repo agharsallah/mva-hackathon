@@ -119,16 +119,18 @@ def alleles(connection, schema: str, spans: list[Interval]) -> list[Variant]:
     return sorted(found)
 
 
-def ensure_table(connection, schema: str) -> None:
+def ensure_table(connection, schema: str, table: str = ANNOTATIONS_TABLE) -> None:
     """Create the annotation table, replacing whatever shape was there before.
 
     ``CREATE OR REPLACE`` matches every other ingest in this warehouse: the table is a pure
     function of the callset plus one VEP release, so a re-run should leave no residue of
     the previous one. The history that matters is the lineage edge, which is append-only.
+    ``table`` lets the genome-wide scan (:mod:`mva.warehouse.annotate_coding`) land in its
+    own table with the identical shape, so every join written against one works on both.
     """
     safe = safe_identifier(schema)
     connection.execute(f"""
-        CREATE OR REPLACE TABLE {ALIAS}.{safe}.{ANNOTATIONS_TABLE} (
+        CREATE OR REPLACE TABLE {ALIAS}.{safe}.{safe_identifier(table)} (
             chrom             VARCHAR,
             pos               BIGINT,
             ref               VARCHAR,
@@ -170,17 +172,35 @@ def row_of(record: VepRecord, annotated_at: datetime, source: str) -> list:
 
 
 def write(
-    connection, schema: str, records: list[VepRecord], source: str, annotated_at: datetime
+    connection,
+    schema: str,
+    records: list[VepRecord],
+    source: str,
+    annotated_at: datetime,
+    table: str = ANNOTATIONS_TABLE,
 ) -> int:
-    """Replace the annotation table with ``records`` and return the row count."""
+    """Replace the annotation table with ``records`` and return the row count.
+
+    Rows are staged in a local DuckDB table and copied across in one statement. Row-by-row
+    ``INSERT`` over the attached connection is one network round trip per row — fine for
+    the panel's 874 alleles, an hour for a genome-wide scan.
+    """
     safe = safe_identifier(schema)
-    ensure_table(connection, schema)
+    ensure_table(connection, schema, table)
+    connection.execute(
+        "CREATE OR REPLACE TEMP TABLE _annotation_rows AS "
+        f"SELECT * FROM {ALIAS}.{safe}.{safe_identifier(table)} LIMIT 0"
+    )
     placeholders = ", ".join(["?"] * 13)
-    for record in records:
-        connection.execute(
-            f"INSERT INTO {ALIAS}.{safe}.{ANNOTATIONS_TABLE} VALUES ({placeholders})",
-            row_of(record, annotated_at, source),
+    if records:
+        connection.executemany(
+            f"INSERT INTO _annotation_rows VALUES ({placeholders})",
+            [row_of(record, annotated_at, source) for record in records],
         )
+    connection.execute(
+        f"INSERT INTO {ALIAS}.{safe}.{safe_identifier(table)} SELECT * FROM _annotation_rows"
+    )
+    connection.execute("DROP TABLE _annotation_rows")
     return len(records)
 
 

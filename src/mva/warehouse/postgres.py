@@ -246,7 +246,7 @@ def derive(settings: Postgres, names: list[str] | None = None) -> list[Ingested]
 
         for derivation in chosen:
             table = safe_identifier(derivation.name)
-            body = resolve(derivation.sql, source).strip()
+            body = resolve(derivation.sql, source, f"{ALIAS}.{target}").strip()
             connection.execute(f"CREATE OR REPLACE TABLE {ALIAS}.{target}.{table} AS {body}")
             count = connection.execute(f"SELECT count(*) FROM {ALIAS}.{target}.{table}").fetchone()[
                 0
