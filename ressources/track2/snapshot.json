@@ -1,0 +1,2174 @@
+{
+  "built_at": "2026-09-05T23:16:58+00:00",
+  "built_by": "mva-drugs snapshot",
+  "code_version": "5c9a61d",
+  "card": {
+    "path": "ressources/track2/mechanism.json",
+    "version": 2,
+    "gene": "BUB1B",
+    "uniprot": "O60566",
+    "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)",
+    "tumour_context": "rhabdomyosarcoma",
+    "pathway": "spindle assembly checkpoint",
+    "directions": [
+      {
+        "id": "D1",
+        "name": "SAC reinforcement / chromosomal-instability reduction",
+        "seed_targets": 12
+      },
+      {
+        "id": "D2",
+        "name": "aneuploidy-selective stress exploitation",
+        "seed_targets": 6
+      },
+      {
+        "id": "D3",
+        "name": "proteostasis / BubR1 stabilisation for a hypomorph",
+        "seed_targets": 7
+      },
+      {
+        "id": "D4",
+        "name": "cancer prevention in the MVA1 tumour context",
+        "seed_targets": 5
+      }
+    ]
+  },
+  "retrieved_at": {
+    "from": "2026-09-05T23:01:24+00:00",
+    "to": "2026-09-05T23:11:09+00:00"
+  },
+  "rows": {
+    "targets": 273,
+    "drug_candidates": 3766,
+    "trials": 747,
+    "literature": 157,
+    "pathways": 10
+  },
+  "targets": {
+    "seed": 27,
+    "pathway": 246,
+    "total": 273
+  },
+  "pathways": {
+    "walked": 10,
+    "matched": 4,
+    "pattern": "checkpoint|kinetochore|mitotic"
+  },
+  "candidates": {
+    "total": 3766,
+    "approved": 1067,
+    "with_fda_label": 808,
+    "by_source": {
+      "chembl": 1659,
+      "dgidb": 3702,
+      "opentargets": 1732
+    },
+    "distinct_drugs": 1513,
+    "distinct_approved_drugs": 336
+  },
+  "requests": {
+    "chembl": {
+      "replies": 736,
+      "live": 0
+    },
+    "clinicaltrials": {
+      "replies": 337,
+      "live": 0
+    },
+    "dgidb": {
+      "replies": 1,
+      "live": 0
+    },
+    "openfda": {
+      "replies": 336,
+      "live": 0
+    },
+    "opentargets": {
+      "replies": 545,
+      "live": 0
+    },
+    "pubmed": {
+      "replies": 17,
+      "live": 0
+    },
+    "reactome": {
+      "replies": 5,
+      "live": 0
+    }
+  },
+  "trial_queries": [
+    {
+      "family": "disease",
+      "label": "Mosaic variegated aneuploidy syndrome 1",
+      "query": "cond=Mosaic variegated aneuploidy syndrome 1",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "4-PHENYLBUTYRIC ACID",
+      "query": "cond=rhabdomyosarcoma intr=4-PHENYLBUTYRIC ACID",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ABEMACICLIB",
+      "query": "cond=rhabdomyosarcoma intr=ABEMACICLIB",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "ABIRATERONE ACETATE",
+      "query": "cond=rhabdomyosarcoma intr=ABIRATERONE ACETATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ACADESINE",
+      "query": "cond=rhabdomyosarcoma intr=ACADESINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ACALABRUTINIB",
+      "query": "cond=rhabdomyosarcoma intr=ACALABRUTINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ACETYLCYSTEINE",
+      "query": "cond=rhabdomyosarcoma intr=ACETYLCYSTEINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ACITRETIN",
+      "query": "cond=rhabdomyosarcoma intr=ACITRETIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ADALIMUMAB",
+      "query": "cond=rhabdomyosarcoma intr=ADALIMUMAB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ADO-TRASTUZUMAB EMTANSINE",
+      "query": "cond=rhabdomyosarcoma intr=ADO-TRASTUZUMAB EMTANSINE",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "AFATINIB",
+      "query": "cond=rhabdomyosarcoma intr=AFATINIB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "ALBENDAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=ALBENDAZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ALECTINIB",
+      "query": "cond=rhabdomyosarcoma intr=ALECTINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ALECTINIB HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=ALECTINIB HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ALEMTUZUMAB",
+      "query": "cond=rhabdomyosarcoma intr=ALEMTUZUMAB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "ALPELISIB",
+      "query": "cond=rhabdomyosarcoma intr=ALPELISIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "AMIODARONE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=AMIODARONE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "AMLEXANOX",
+      "query": "cond=rhabdomyosarcoma intr=AMLEXANOX",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "AMOXAPINE",
+      "query": "cond=rhabdomyosarcoma intr=AMOXAPINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "AMSACRINE",
+      "query": "cond=rhabdomyosarcoma intr=AMSACRINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ANASTROZOLE",
+      "query": "cond=rhabdomyosarcoma intr=ANASTROZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ANISINDIONE",
+      "query": "cond=rhabdomyosarcoma intr=ANISINDIONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "APOMORPHINE",
+      "query": "cond=rhabdomyosarcoma intr=APOMORPHINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "APOMORPHINE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=APOMORPHINE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "APREMILAST",
+      "query": "cond=rhabdomyosarcoma intr=APREMILAST",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ARSENIC TRIOXIDE",
+      "query": "cond=rhabdomyosarcoma intr=ARSENIC TRIOXIDE",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "ASCORBIC ACID",
+      "query": "cond=rhabdomyosarcoma intr=ASCORBIC ACID",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ASTEMIZOLE",
+      "query": "cond=rhabdomyosarcoma intr=ASTEMIZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ATALUREN",
+      "query": "cond=rhabdomyosarcoma intr=ATALUREN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "AXITINIB",
+      "query": "cond=rhabdomyosarcoma intr=AXITINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "AZACITIDINE",
+      "query": "cond=rhabdomyosarcoma intr=AZACITIDINE",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "AZATHIOPRINE",
+      "query": "cond=rhabdomyosarcoma intr=AZATHIOPRINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BELANTAMAB MAFODOTIN",
+      "query": "cond=rhabdomyosarcoma intr=BELANTAMAB MAFODOTIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BELINOSTAT",
+      "query": "cond=rhabdomyosarcoma intr=BELINOSTAT",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BELUMOSUDIL",
+      "query": "cond=rhabdomyosarcoma intr=BELUMOSUDIL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BENDAMUSTINE",
+      "query": "cond=rhabdomyosarcoma intr=BENDAMUSTINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BENZBROMARONE",
+      "query": "cond=rhabdomyosarcoma intr=BENZBROMARONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BEVACIZUMAB",
+      "query": "cond=rhabdomyosarcoma intr=BEVACIZUMAB",
+      "hits": 3
+    },
+    {
+      "family": "candidate",
+      "label": "BIFONAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=BIFONAZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BITHIONOL",
+      "query": "cond=rhabdomyosarcoma intr=BITHIONOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BORTEZOMIB",
+      "query": "cond=rhabdomyosarcoma intr=BORTEZOMIB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "BORTEZOMIB D-MANNITOL",
+      "query": "cond=rhabdomyosarcoma intr=BORTEZOMIB D-MANNITOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BRENTUXIMAB VEDOTIN",
+      "query": "cond=rhabdomyosarcoma intr=BRENTUXIMAB VEDOTIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BRIGATINIB",
+      "query": "cond=rhabdomyosarcoma intr=BRIGATINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BROXYQUINOLINE",
+      "query": "cond=rhabdomyosarcoma intr=BROXYQUINOLINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BUTOCONAZOLE NITRATE",
+      "query": "cond=rhabdomyosarcoma intr=BUTOCONAZOLE NITRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CABAZITAXEL",
+      "query": "cond=rhabdomyosarcoma intr=CABAZITAXEL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CABOZANTINIB S-MALATE",
+      "query": "cond=rhabdomyosarcoma intr=CABOZANTINIB S-MALATE",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "CAMPTOTHECIN",
+      "query": "cond=rhabdomyosarcoma intr=CAMPTOTHECIN",
+      "hits": 32
+    },
+    {
+      "family": "candidate",
+      "label": "CANTHARIDIN",
+      "query": "cond=rhabdomyosarcoma intr=CANTHARIDIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CAPECITABINE",
+      "query": "cond=rhabdomyosarcoma intr=CAPECITABINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CAPIVASERTIB",
+      "query": "cond=rhabdomyosarcoma intr=CAPIVASERTIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CARBOPLATIN",
+      "query": "cond=rhabdomyosarcoma intr=CARBOPLATIN",
+      "hits": 16
+    },
+    {
+      "family": "candidate",
+      "label": "CARFILZOMIB",
+      "query": "cond=rhabdomyosarcoma intr=CARFILZOMIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CEFACLOR ANHYDROUS",
+      "query": "cond=rhabdomyosarcoma intr=CEFACLOR ANHYDROUS",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CERITINIB",
+      "query": "cond=rhabdomyosarcoma intr=CERITINIB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "CETUXIMAB",
+      "query": "cond=rhabdomyosarcoma intr=CETUXIMAB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "CHLORAMBUCIL",
+      "query": "cond=rhabdomyosarcoma intr=CHLORAMBUCIL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CHLOROXINE",
+      "query": "cond=rhabdomyosarcoma intr=CHLOROXINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CHLORPROMAZINE",
+      "query": "cond=rhabdomyosarcoma intr=CHLORPROMAZINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CINNARIZINE",
+      "query": "cond=rhabdomyosarcoma intr=CINNARIZINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CISPLATIN",
+      "query": "cond=rhabdomyosarcoma intr=CISPLATIN",
+      "hits": 8
+    },
+    {
+      "family": "candidate",
+      "label": "CLADRIBINE",
+      "query": "cond=rhabdomyosarcoma intr=CLADRIBINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CLEMASTINE",
+      "query": "cond=rhabdomyosarcoma intr=CLEMASTINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CLIOQUINOL",
+      "query": "cond=rhabdomyosarcoma intr=CLIOQUINOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CLOFIBRATE",
+      "query": "cond=rhabdomyosarcoma intr=CLOFIBRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CLOMIPRAMINE",
+      "query": "cond=rhabdomyosarcoma intr=CLOMIPRAMINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CLOTRIMAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=CLOTRIMAZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CLOZAPINE",
+      "query": "cond=rhabdomyosarcoma intr=CLOZAPINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "COLCHICINE",
+      "query": "cond=rhabdomyosarcoma intr=COLCHICINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "COPANLISIB",
+      "query": "cond=rhabdomyosarcoma intr=COPANLISIB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "CRIZOTINIB",
+      "query": "cond=rhabdomyosarcoma intr=CRIZOTINIB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "CURCUMIN",
+      "query": "cond=rhabdomyosarcoma intr=CURCUMIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CYCLOPHOSPHAMIDE ANHYDROUS",
+      "query": "cond=rhabdomyosarcoma intr=CYCLOPHOSPHAMIDE ANHYDROUS",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CYTARABINE",
+      "query": "cond=rhabdomyosarcoma intr=CYTARABINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DABRAFENIB",
+      "query": "cond=rhabdomyosarcoma intr=DABRAFENIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DACTINOMYCIN",
+      "query": "cond=rhabdomyosarcoma intr=DACTINOMYCIN",
+      "hits": 24
+    },
+    {
+      "family": "candidate",
+      "label": "DASATINIB ANHYDROUS",
+      "query": "cond=rhabdomyosarcoma intr=DASATINIB ANHYDROUS",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DAUNORUBICIN HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=DAUNORUBICIN HYDROCHLORIDE",
+      "hits": 32
+    },
+    {
+      "family": "candidate",
+      "label": "DAUNORUBICIN LIPOSOMAL",
+      "query": "cond=rhabdomyosarcoma intr=DAUNORUBICIN LIPOSOMAL",
+      "hits": 32
+    },
+    {
+      "family": "candidate",
+      "label": "DECITABINE",
+      "query": "cond=rhabdomyosarcoma intr=DECITABINE",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "DEFEROXAMINE",
+      "query": "cond=rhabdomyosarcoma intr=DEFEROXAMINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DEQUALINIUM",
+      "query": "cond=rhabdomyosarcoma intr=DEQUALINIUM",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DEXAMETHASONE",
+      "query": "cond=rhabdomyosarcoma intr=DEXAMETHASONE",
+      "hits": 3
+    },
+    {
+      "family": "candidate",
+      "label": "DIETHYLSTILBESTROL",
+      "query": "cond=rhabdomyosarcoma intr=DIETHYLSTILBESTROL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DIPYRIDAMOLE",
+      "query": "cond=rhabdomyosarcoma intr=DIPYRIDAMOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DISULFIRAM",
+      "query": "cond=rhabdomyosarcoma intr=DISULFIRAM",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "DOCETAXEL",
+      "query": "cond=rhabdomyosarcoma intr=DOCETAXEL",
+      "hits": 4
+    },
+    {
+      "family": "candidate",
+      "label": "DOCETAXEL ANHYDROUS",
+      "query": "cond=rhabdomyosarcoma intr=DOCETAXEL ANHYDROUS",
+      "hits": 4
+    },
+    {
+      "family": "candidate",
+      "label": "DOPAMINE",
+      "query": "cond=rhabdomyosarcoma intr=DOPAMINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DORDAVIPRONE",
+      "query": "cond=rhabdomyosarcoma intr=DORDAVIPRONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DOXAZOSIN MESYLATE",
+      "query": "cond=rhabdomyosarcoma intr=DOXAZOSIN MESYLATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DOXORUBICIN HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=DOXORUBICIN HYDROCHLORIDE",
+      "hits": 45
+    },
+    {
+      "family": "candidate",
+      "label": "DOXORUBICIN LIPOSOME",
+      "query": "cond=rhabdomyosarcoma intr=DOXORUBICIN LIPOSOME",
+      "hits": 45
+    },
+    {
+      "family": "candidate",
+      "label": "DUVELISIB",
+      "query": "cond=rhabdomyosarcoma intr=DUVELISIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "EBASTINE",
+      "query": "cond=rhabdomyosarcoma intr=EBASTINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ECONAZOLE NITRATE",
+      "query": "cond=rhabdomyosarcoma intr=ECONAZOLE NITRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ENALAPRIL MALEATE",
+      "query": "cond=rhabdomyosarcoma intr=ENALAPRIL MALEATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ENCORAFENIB",
+      "query": "cond=rhabdomyosarcoma intr=ENCORAFENIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ENFORTUMAB VEDOTIN",
+      "query": "cond=rhabdomyosarcoma intr=ENFORTUMAB VEDOTIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ENSARTINIB",
+      "query": "cond=rhabdomyosarcoma intr=ENSARTINIB",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "ENTINOSTAT",
+      "query": "cond=rhabdomyosarcoma intr=ENTINOSTAT",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ENTRECTINIB",
+      "query": "cond=rhabdomyosarcoma intr=ENTRECTINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ENZALUTAMIDE",
+      "query": "cond=rhabdomyosarcoma intr=ENZALUTAMIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "EPIGALLOCATECHIN GALLATE",
+      "query": "cond=rhabdomyosarcoma intr=EPIGALLOCATECHIN GALLATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "EPINEPHRINE",
+      "query": "cond=rhabdomyosarcoma intr=EPINEPHRINE",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "EPIRUBICIN",
+      "query": "cond=rhabdomyosarcoma intr=EPIRUBICIN",
+      "hits": 5
+    },
+    {
+      "family": "candidate",
+      "label": "EPIRUBICIN HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=EPIRUBICIN HYDROCHLORIDE",
+      "hits": 5
+    },
+    {
+      "family": "candidate",
+      "label": "EPOETIN ALFA",
+      "query": "cond=rhabdomyosarcoma intr=EPOETIN ALFA",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "EPOTHILONE D",
+      "query": "cond=rhabdomyosarcoma intr=EPOTHILONE D",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ERIBULIN",
+      "query": "cond=rhabdomyosarcoma intr=ERIBULIN",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "ERIBULIN MESYLATE",
+      "query": "cond=rhabdomyosarcoma intr=ERIBULIN MESYLATE",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "ERLOTINIB",
+      "query": "cond=rhabdomyosarcoma intr=ERLOTINIB",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "ERLOTINIB HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=ERLOTINIB HYDROCHLORIDE",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "ERYTHROMYCIN",
+      "query": "cond=rhabdomyosarcoma intr=ERYTHROMYCIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ETANERCEPT",
+      "query": "cond=rhabdomyosarcoma intr=ETANERCEPT",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "ETHINYL ESTRADIOL",
+      "query": "cond=rhabdomyosarcoma intr=ETHINYL ESTRADIOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ETHOPROPAZINE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=ETHOPROPAZINE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ETOPOSIDE",
+      "query": "cond=rhabdomyosarcoma intr=ETOPOSIDE",
+      "hits": 27
+    },
+    {
+      "family": "candidate",
+      "label": "EVEROLIMUS",
+      "query": "cond=rhabdomyosarcoma intr=EVEROLIMUS",
+      "hits": 3
+    },
+    {
+      "family": "candidate",
+      "label": "EXEMESTANE",
+      "query": "cond=rhabdomyosarcoma intr=EXEMESTANE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FENOFIBRATE MICRONIZED",
+      "query": "cond=rhabdomyosarcoma intr=FENOFIBRATE MICRONIZED",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FENRETINIDE",
+      "query": "cond=rhabdomyosarcoma intr=FENRETINIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FILGOTINIB",
+      "query": "cond=rhabdomyosarcoma intr=FILGOTINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FLUCONAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=FLUCONAZOLE",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "FLUOROURACIL",
+      "query": "cond=rhabdomyosarcoma intr=FLUOROURACIL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FLUPHENAZINE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=FLUPHENAZINE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FLUTAMIDE",
+      "query": "cond=rhabdomyosarcoma intr=FLUTAMIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FULVESTRANT",
+      "query": "cond=rhabdomyosarcoma intr=FULVESTRANT",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FURAZOLIDONE",
+      "query": "cond=rhabdomyosarcoma intr=FURAZOLIDONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "GEFITINIB",
+      "query": "cond=rhabdomyosarcoma intr=GEFITINIB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "GEMCITABINE",
+      "query": "cond=rhabdomyosarcoma intr=GEMCITABINE",
+      "hits": 8
+    },
+    {
+      "family": "candidate",
+      "label": "GENISTEIN",
+      "query": "cond=rhabdomyosarcoma intr=GENISTEIN",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "GILTERITINIB",
+      "query": "cond=rhabdomyosarcoma intr=GILTERITINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "GIVINOSTAT",
+      "query": "cond=rhabdomyosarcoma intr=GIVINOSTAT",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "GIVINOSTAT HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=GIVINOSTAT HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "GLASDEGIB",
+      "query": "cond=rhabdomyosarcoma intr=GLASDEGIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "GLEMBATUMUMAB VEDOTIN",
+      "query": "cond=rhabdomyosarcoma intr=GLEMBATUMUMAB VEDOTIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "GRANISETRON",
+      "query": "cond=rhabdomyosarcoma intr=GRANISETRON",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "HALOFANTRINE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=HALOFANTRINE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "HALOPERIDOL DECANOATE",
+      "query": "cond=rhabdomyosarcoma intr=HALOPERIDOL DECANOATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "HEXACHLOROPHENE",
+      "query": "cond=rhabdomyosarcoma intr=HEXACHLOROPHENE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "HYDRALAZINE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=HYDRALAZINE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "HYDROXYZINE PAMOATE",
+      "query": "cond=rhabdomyosarcoma intr=HYDROXYZINE PAMOATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "IBRUTINIB",
+      "query": "cond=rhabdomyosarcoma intr=IBRUTINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "IDARUBICIN",
+      "query": "cond=rhabdomyosarcoma intr=IDARUBICIN",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "IDARUBICIN HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=IDARUBICIN HYDROCHLORIDE",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "IDELALISIB",
+      "query": "cond=rhabdomyosarcoma intr=IDELALISIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "IFOSFAMIDE",
+      "query": "cond=rhabdomyosarcoma intr=IFOSFAMIDE",
+      "hits": 39
+    },
+    {
+      "family": "candidate",
+      "label": "IMATINIB",
+      "query": "cond=rhabdomyosarcoma intr=IMATINIB",
+      "hits": 3
+    },
+    {
+      "family": "candidate",
+      "label": "INAMRINONE",
+      "query": "cond=rhabdomyosarcoma intr=INAMRINONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "INDOMETHACIN",
+      "query": "cond=rhabdomyosarcoma intr=INDOMETHACIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "INDOPROFEN",
+      "query": "cond=rhabdomyosarcoma intr=INDOPROFEN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "INFIGRATINIB",
+      "query": "cond=rhabdomyosarcoma intr=INFIGRATINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "INOSITOL",
+      "query": "cond=rhabdomyosarcoma intr=INOSITOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "INSULIN, REGULAR, HUMAN",
+      "query": "cond=rhabdomyosarcoma intr=INSULIN, REGULAR, HUMAN",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "INTERFERON ALFA-2B",
+      "query": "cond=rhabdomyosarcoma intr=INTERFERON ALFA-2B",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "INTERFERON BETA-1A",
+      "query": "cond=rhabdomyosarcoma intr=INTERFERON BETA-1A",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "INTERLEUKIN-11",
+      "query": "cond=rhabdomyosarcoma intr=INTERLEUKIN-11",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "IODOQUINOL",
+      "query": "cond=rhabdomyosarcoma intr=IODOQUINOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "IPILIMUMAB",
+      "query": "cond=rhabdomyosarcoma intr=IPILIMUMAB",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "IRINOTECAN HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=IRINOTECAN HYDROCHLORIDE",
+      "hits": 35
+    },
+    {
+      "family": "candidate",
+      "label": "ISOPROTERENOL",
+      "query": "cond=rhabdomyosarcoma intr=ISOPROTERENOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ITRACONAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=ITRACONAZOLE",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "IXABEPILONE",
+      "query": "cond=rhabdomyosarcoma intr=IXABEPILONE",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "IXAZOMIB",
+      "query": "cond=rhabdomyosarcoma intr=IXAZOMIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "IXAZOMIB CITRATE",
+      "query": "cond=rhabdomyosarcoma intr=IXAZOMIB CITRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LANSOPRAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=LANSOPRAZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LAPATINIB",
+      "query": "cond=rhabdomyosarcoma intr=LAPATINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LENALIDOMIDE",
+      "query": "cond=rhabdomyosarcoma intr=LENALIDOMIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LEVOKETOCONAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=LEVOKETOCONAZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LEVONORGESTREL",
+      "query": "cond=rhabdomyosarcoma intr=LEVONORGESTREL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LEVOTHYROXINE SODIUM",
+      "query": "cond=rhabdomyosarcoma intr=LEVOTHYROXINE SODIUM",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LONAFARNIB",
+      "query": "cond=rhabdomyosarcoma intr=LONAFARNIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LOPERAMIDE",
+      "query": "cond=rhabdomyosarcoma intr=LOPERAMIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LORLATINIB",
+      "query": "cond=rhabdomyosarcoma intr=LORLATINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MAPROTILINE",
+      "query": "cond=rhabdomyosarcoma intr=MAPROTILINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MASOPROCOL",
+      "query": "cond=rhabdomyosarcoma intr=MASOPROCOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MEBENDAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=MEBENDAZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MECASERMIN",
+      "query": "cond=rhabdomyosarcoma intr=MECASERMIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MECASERMIN RINFABATE",
+      "query": "cond=rhabdomyosarcoma intr=MECASERMIN RINFABATE",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "MECHLORETHAMINE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=MECHLORETHAMINE HYDROCHLORIDE",
+      "hits": 27
+    },
+    {
+      "family": "candidate",
+      "label": "MEDROXYPROGESTERONE ACETATE",
+      "query": "cond=rhabdomyosarcoma intr=MEDROXYPROGESTERONE ACETATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MELPHALAN",
+      "query": "cond=rhabdomyosarcoma intr=MELPHALAN",
+      "hits": 14
+    },
+    {
+      "family": "candidate",
+      "label": "MERCAPTOPURINE",
+      "query": "cond=rhabdomyosarcoma intr=MERCAPTOPURINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "METFORMIN",
+      "query": "cond=rhabdomyosarcoma intr=METFORMIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "METFORMIN HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=METFORMIN HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "METHIMAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=METHIMAZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "METHOTREXATE",
+      "query": "cond=rhabdomyosarcoma intr=METHOTREXATE",
+      "hits": 4
+    },
+    {
+      "family": "candidate",
+      "label": "METHYLENE BLUE",
+      "query": "cond=rhabdomyosarcoma intr=METHYLENE BLUE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "METHYLPREDNISOLONE",
+      "query": "cond=rhabdomyosarcoma intr=METHYLPREDNISOLONE",
+      "hits": 4
+    },
+    {
+      "family": "candidate",
+      "label": "MICONAZOLE NITRATE",
+      "query": "cond=rhabdomyosarcoma intr=MICONAZOLE NITRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MIDOSTAURIN",
+      "query": "cond=rhabdomyosarcoma intr=MIDOSTAURIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MIFEPRISTONE",
+      "query": "cond=rhabdomyosarcoma intr=MIFEPRISTONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MIRDAMETINIB",
+      "query": "cond=rhabdomyosarcoma intr=MIRDAMETINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MIRVETUXIMAB SORAVTANSINE",
+      "query": "cond=rhabdomyosarcoma intr=MIRVETUXIMAB SORAVTANSINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MITOMYCIN",
+      "query": "cond=rhabdomyosarcoma intr=MITOMYCIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MITOXANTRONE",
+      "query": "cond=rhabdomyosarcoma intr=MITOXANTRONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MITOXANTRONE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=MITOXANTRONE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MYCOPHENOLATE",
+      "query": "cond=rhabdomyosarcoma intr=MYCOPHENOLATE",
+      "hits": 3
+    },
+    {
+      "family": "candidate",
+      "label": "NICARDIPINE",
+      "query": "cond=rhabdomyosarcoma intr=NICARDIPINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "NICLOSAMIDE",
+      "query": "cond=rhabdomyosarcoma intr=NICLOSAMIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "NICOTINE POLACRILEX",
+      "query": "cond=rhabdomyosarcoma intr=NICOTINE POLACRILEX",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "NITAZOXANIDE",
+      "query": "cond=rhabdomyosarcoma intr=NITAZOXANIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "NIVOLUMAB",
+      "query": "cond=rhabdomyosarcoma intr=NIVOLUMAB",
+      "hits": 5
+    },
+    {
+      "family": "candidate",
+      "label": "NORTRIPTYLINE",
+      "query": "cond=rhabdomyosarcoma intr=NORTRIPTYLINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "O-PHENANTHROLINE",
+      "query": "cond=rhabdomyosarcoma intr=O-PHENANTHROLINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "OBINUTUZUMAB",
+      "query": "cond=rhabdomyosarcoma intr=OBINUTUZUMAB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "OLANZAPINE",
+      "query": "cond=rhabdomyosarcoma intr=OLANZAPINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "OLAPARIB",
+      "query": "cond=rhabdomyosarcoma intr=OLAPARIB",
+      "hits": 3
+    },
+    {
+      "family": "candidate",
+      "label": "OLEIC ACID",
+      "query": "cond=rhabdomyosarcoma intr=OLEIC ACID",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "OMACETAXINE MEPESUCCINATE",
+      "query": "cond=rhabdomyosarcoma intr=OMACETAXINE MEPESUCCINATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "OMEPRAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=OMEPRAZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "OSIMERTINIB",
+      "query": "cond=rhabdomyosarcoma intr=OSIMERTINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "OXALIPLATIN",
+      "query": "cond=rhabdomyosarcoma intr=OXALIPLATIN",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "OXYTETRACYCLINE ANHYDROUS",
+      "query": "cond=rhabdomyosarcoma intr=OXYTETRACYCLINE ANHYDROUS",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PACLITAXEL",
+      "query": "cond=rhabdomyosarcoma intr=PACLITAXEL",
+      "hits": 8
+    },
+    {
+      "family": "candidate",
+      "label": "PACLITAXEL POLIGLUMEX",
+      "query": "cond=rhabdomyosarcoma intr=PACLITAXEL POLIGLUMEX",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PACLITAXEL PROTEIN-BOUND",
+      "query": "cond=rhabdomyosarcoma intr=PACLITAXEL PROTEIN-BOUND",
+      "hits": 8
+    },
+    {
+      "family": "candidate",
+      "label": "PALBOCICLIB",
+      "query": "cond=rhabdomyosarcoma intr=PALBOCICLIB",
+      "hits": 3
+    },
+    {
+      "family": "candidate",
+      "label": "PANITUMUMAB",
+      "query": "cond=rhabdomyosarcoma intr=PANITUMUMAB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PANOBINOSTAT",
+      "query": "cond=rhabdomyosarcoma intr=PANOBINOSTAT",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PANOBINOSTAT LACTATE",
+      "query": "cond=rhabdomyosarcoma intr=PANOBINOSTAT LACTATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PAROXETINE HYDROCHLORIDE, HEMIHYDRATE",
+      "query": "cond=rhabdomyosarcoma intr=PAROXETINE HYDROCHLORIDE, HEMIHYDRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PAZOPANIB",
+      "query": "cond=rhabdomyosarcoma intr=PAZOPANIB",
+      "hits": 4
+    },
+    {
+      "family": "candidate",
+      "label": "PEMBROLIZUMAB",
+      "query": "cond=rhabdomyosarcoma intr=PEMBROLIZUMAB",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "PENTAMIDINE ISETHIONATE",
+      "query": "cond=rhabdomyosarcoma intr=PENTAMIDINE ISETHIONATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PENTOSTATIN",
+      "query": "cond=rhabdomyosarcoma intr=PENTOSTATIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PERHEXILINE",
+      "query": "cond=rhabdomyosarcoma intr=PERHEXILINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PERHEXILINE MALEATE",
+      "query": "cond=rhabdomyosarcoma intr=PERHEXILINE MALEATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PERPHENAZINE",
+      "query": "cond=rhabdomyosarcoma intr=PERPHENAZINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PHENFORMIN",
+      "query": "cond=rhabdomyosarcoma intr=PHENFORMIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PIMECROLIMUS",
+      "query": "cond=rhabdomyosarcoma intr=PIMECROLIMUS",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PIMOZIDE",
+      "query": "cond=rhabdomyosarcoma intr=PIMOZIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PIRTOBRUTINIB",
+      "query": "cond=rhabdomyosarcoma intr=PIRTOBRUTINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PLICAMYCIN",
+      "query": "cond=rhabdomyosarcoma intr=PLICAMYCIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PODOFILOX",
+      "query": "cond=rhabdomyosarcoma intr=PODOFILOX",
+      "hits": 23
+    },
+    {
+      "family": "candidate",
+      "label": "POLATUZUMAB VEDOTIN",
+      "query": "cond=rhabdomyosarcoma intr=POLATUZUMAB VEDOTIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PONATINIB",
+      "query": "cond=rhabdomyosarcoma intr=PONATINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PRALSETINIB",
+      "query": "cond=rhabdomyosarcoma intr=PRALSETINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PRAMLINTIDE",
+      "query": "cond=rhabdomyosarcoma intr=PRAMLINTIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PRASTERONE",
+      "query": "cond=rhabdomyosarcoma intr=PRASTERONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PROCHLORPERAZINE",
+      "query": "cond=rhabdomyosarcoma intr=PROCHLORPERAZINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PROCHLORPERAZINE EDISYLATE",
+      "query": "cond=rhabdomyosarcoma intr=PROCHLORPERAZINE EDISYLATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PROGESTERONE",
+      "query": "cond=rhabdomyosarcoma intr=PROGESTERONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PROPAFENONE",
+      "query": "cond=rhabdomyosarcoma intr=PROPAFENONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PROPYLTHIOURACIL",
+      "query": "cond=rhabdomyosarcoma intr=PROPYLTHIOURACIL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PYRITHIONE",
+      "query": "cond=rhabdomyosarcoma intr=PYRITHIONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PYRITHIONE ZINC",
+      "query": "cond=rhabdomyosarcoma intr=PYRITHIONE ZINC",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "QUERCETIN",
+      "query": "cond=rhabdomyosarcoma intr=QUERCETIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "RALOXIFENE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=RALOXIFENE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "REPOTRECTINIB",
+      "query": "cond=rhabdomyosarcoma intr=REPOTRECTINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "RESVERATROL",
+      "query": "cond=rhabdomyosarcoma intr=RESVERATROL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "RIBAVIRIN",
+      "query": "cond=rhabdomyosarcoma intr=RIBAVIRIN",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "RIBOCICLIB",
+      "query": "cond=rhabdomyosarcoma intr=RIBOCICLIB",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "RIBOCICLIB SUCCINATE",
+      "query": "cond=rhabdomyosarcoma intr=RIBOCICLIB SUCCINATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "RIDAFOROLIMUS",
+      "query": "cond=rhabdomyosarcoma intr=RIDAFOROLIMUS",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "RIFAMPIN",
+      "query": "cond=rhabdomyosarcoma intr=RIFAMPIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "RISPERIDONE",
+      "query": "cond=rhabdomyosarcoma intr=RISPERIDONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "RITUXIMAB",
+      "query": "cond=rhabdomyosarcoma intr=RITUXIMAB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "ROFECOXIB",
+      "query": "cond=rhabdomyosarcoma intr=ROFECOXIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ROMIDEPSIN",
+      "query": "cond=rhabdomyosarcoma intr=ROMIDEPSIN",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "RUCAPARIB",
+      "query": "cond=rhabdomyosarcoma intr=RUCAPARIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "RUXOLITINIB",
+      "query": "cond=rhabdomyosarcoma intr=RUXOLITINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SALMETEROL XINAFOATE",
+      "query": "cond=rhabdomyosarcoma intr=SALMETEROL XINAFOATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SALMON CALCITONIN",
+      "query": "cond=rhabdomyosarcoma intr=SALMON CALCITONIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SAPANISERTIB",
+      "query": "cond=rhabdomyosarcoma intr=SAPANISERTIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SELINEXOR",
+      "query": "cond=rhabdomyosarcoma intr=SELINEXOR",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "SELUMETINIB",
+      "query": "cond=rhabdomyosarcoma intr=SELUMETINIB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "SEPOFARSEN",
+      "query": "cond=rhabdomyosarcoma intr=SEPOFARSEN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SERTACONAZOLE NITRATE",
+      "query": "cond=rhabdomyosarcoma intr=SERTACONAZOLE NITRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SERTRALINE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=SERTRALINE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SIMVASTATIN",
+      "query": "cond=rhabdomyosarcoma intr=SIMVASTATIN",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "SIROLIMUS",
+      "query": "cond=rhabdomyosarcoma intr=SIROLIMUS",
+      "hits": 14
+    },
+    {
+      "family": "candidate",
+      "label": "SOMATROPIN (RECOMBINANT DNA ORIGIN)",
+      "query": "cond=rhabdomyosarcoma intr=SOMATROPIN (RECOMBINANT DNA ORIGIN)",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SORAFENIB",
+      "query": "cond=rhabdomyosarcoma intr=SORAFENIB",
+      "hits": 4
+    },
+    {
+      "family": "candidate",
+      "label": "STAVUDINE",
+      "query": "cond=rhabdomyosarcoma intr=STAVUDINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "STREPTOZOCIN",
+      "query": "cond=rhabdomyosarcoma intr=STREPTOZOCIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SUCCIMER",
+      "query": "cond=rhabdomyosarcoma intr=SUCCIMER",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SULCONAZOLE NITRATE",
+      "query": "cond=rhabdomyosarcoma intr=SULCONAZOLE NITRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SULINDAC",
+      "query": "cond=rhabdomyosarcoma intr=SULINDAC",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SUNITINIB",
+      "query": "cond=rhabdomyosarcoma intr=SUNITINIB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "TALETRECTINIB",
+      "query": "cond=rhabdomyosarcoma intr=TALETRECTINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TAMOXIFEN",
+      "query": "cond=rhabdomyosarcoma intr=TAMOXIFEN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TAMOXIFEN CITRATE",
+      "query": "cond=rhabdomyosarcoma intr=TAMOXIFEN CITRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TEMOZOLOMIDE",
+      "query": "cond=rhabdomyosarcoma intr=TEMOZOLOMIDE",
+      "hits": 27
+    },
+    {
+      "family": "candidate",
+      "label": "TEMSIROLIMUS",
+      "query": "cond=rhabdomyosarcoma intr=TEMSIROLIMUS",
+      "hits": 11
+    },
+    {
+      "family": "candidate",
+      "label": "TEPROTUMUMAB",
+      "query": "cond=rhabdomyosarcoma intr=TEPROTUMUMAB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TERCONAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=TERCONAZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TERFENADINE",
+      "query": "cond=rhabdomyosarcoma intr=TERFENADINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TETRACYCLINE",
+      "query": "cond=rhabdomyosarcoma intr=TETRACYCLINE",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "THEOPHYLLINE",
+      "query": "cond=rhabdomyosarcoma intr=THEOPHYLLINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "THIORIDAZINE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=THIORIDAZINE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "THIOTEPA",
+      "query": "cond=rhabdomyosarcoma intr=THIOTEPA",
+      "hits": 9
+    },
+    {
+      "family": "candidate",
+      "label": "THONZONIUM BROMIDE",
+      "query": "cond=rhabdomyosarcoma intr=THONZONIUM BROMIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "THROMBIN ALFA",
+      "query": "cond=rhabdomyosarcoma intr=THROMBIN ALFA",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TILDRAKIZUMAB",
+      "query": "cond=rhabdomyosarcoma intr=TILDRAKIZUMAB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TISOTUMAB VEDOTIN",
+      "query": "cond=rhabdomyosarcoma intr=TISOTUMAB VEDOTIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TOPOTECAN HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=TOPOTECAN HYDROCHLORIDE",
+      "hits": 10
+    },
+    {
+      "family": "candidate",
+      "label": "TRABECTEDIN",
+      "query": "cond=rhabdomyosarcoma intr=TRABECTEDIN",
+      "hits": 5
+    },
+    {
+      "family": "candidate",
+      "label": "TRAMETINIB DIMETHYL SULFOXIDE",
+      "query": "cond=rhabdomyosarcoma intr=TRAMETINIB DIMETHYL SULFOXIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TRASTUZUMAB",
+      "query": "cond=rhabdomyosarcoma intr=TRASTUZUMAB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "TRASTUZUMAB EMTANSINE",
+      "query": "cond=rhabdomyosarcoma intr=TRASTUZUMAB EMTANSINE",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "TRETINOIN",
+      "query": "cond=rhabdomyosarcoma intr=TRETINOIN",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "TRIAMTERENE",
+      "query": "cond=rhabdomyosarcoma intr=TRIAMTERENE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TRIAZOLAM",
+      "query": "cond=rhabdomyosarcoma intr=TRIAZOLAM",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TRICLABENDAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=TRICLABENDAZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TRICLOSAN",
+      "query": "cond=rhabdomyosarcoma intr=TRICLOSAN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TRIFLUOPERAZINE",
+      "query": "cond=rhabdomyosarcoma intr=TRIFLUOPERAZINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TRIFLUOPERAZINE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=TRIFLUOPERAZINE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TRIFLUPERIDOL",
+      "query": "cond=rhabdomyosarcoma intr=TRIFLUPERIDOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TRIFLUPROMAZINE",
+      "query": "cond=rhabdomyosarcoma intr=TRIFLUPROMAZINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TRIFLURIDINE",
+      "query": "cond=rhabdomyosarcoma intr=TRIFLURIDINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TRILACICLIB",
+      "query": "cond=rhabdomyosarcoma intr=TRILACICLIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TRILACICLIB DIHYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=TRILACICLIB DIHYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "UMBRALISIB",
+      "query": "cond=rhabdomyosarcoma intr=UMBRALISIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "UMBRALISIB TOSYLATE",
+      "query": "cond=rhabdomyosarcoma intr=UMBRALISIB TOSYLATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "URSODIOL",
+      "query": "cond=rhabdomyosarcoma intr=URSODIOL",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "VALDECOXIB",
+      "query": "cond=rhabdomyosarcoma intr=VALDECOXIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "VALPROIC ACID",
+      "query": "cond=rhabdomyosarcoma intr=VALPROIC ACID",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "VANDETANIB",
+      "query": "cond=rhabdomyosarcoma intr=VANDETANIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "VEMURAFENIB",
+      "query": "cond=rhabdomyosarcoma intr=VEMURAFENIB",
+      "hits": 2
+    },
+    {
+      "family": "candidate",
+      "label": "VENETOCLAX",
+      "query": "cond=rhabdomyosarcoma intr=VENETOCLAX",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "VINBLASTINE",
+      "query": "cond=rhabdomyosarcoma intr=VINBLASTINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "VINBLASTINE SULFATE",
+      "query": "cond=rhabdomyosarcoma intr=VINBLASTINE SULFATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "VINCRISTINE",
+      "query": "cond=rhabdomyosarcoma intr=VINCRISTINE",
+      "hits": 47
+    },
+    {
+      "family": "candidate",
+      "label": "VINCRISTINE SULFATE",
+      "query": "cond=rhabdomyosarcoma intr=VINCRISTINE SULFATE",
+      "hits": 47
+    },
+    {
+      "family": "candidate",
+      "label": "VINFLUNINE",
+      "query": "cond=rhabdomyosarcoma intr=VINFLUNINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "VINFLUNINE DITARTRATE",
+      "query": "cond=rhabdomyosarcoma intr=VINFLUNINE DITARTRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "VINORELBINE",
+      "query": "cond=rhabdomyosarcoma intr=VINORELBINE",
+      "hits": 14
+    },
+    {
+      "family": "candidate",
+      "label": "VINORELBINE TARTRATE",
+      "query": "cond=rhabdomyosarcoma intr=VINORELBINE TARTRATE",
+      "hits": 14
+    },
+    {
+      "family": "candidate",
+      "label": "VITAMIN K3",
+      "query": "cond=rhabdomyosarcoma intr=VITAMIN K3",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "VORINOSTAT",
+      "query": "cond=rhabdomyosarcoma intr=VORINOSTAT",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "WARFARIN",
+      "query": "cond=rhabdomyosarcoma intr=WARFARIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ZANUBRUTINIB",
+      "query": "cond=rhabdomyosarcoma intr=ZANUBRUTINIB",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ZINC CHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=ZINC CHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ZOLEDRONIC ACID ANHYDROUS",
+      "query": "cond=rhabdomyosarcoma intr=ZOLEDRONIC ACID ANHYDROUS",
+      "hits": 2
+    }
+  ],
+  "literature_queries": [
+    {
+      "family": "gene",
+      "label": "BUB1B",
+      "query": "BUB1B AND (repurposing OR inhibitor OR aneuploidy)",
+      "hits": 165,
+      "kept": 40
+    },
+    {
+      "family": "pathway",
+      "label": "spindle assembly checkpoint",
+      "query": "spindle assembly checkpoint AND drug",
+      "hits": 1385,
+      "kept": 40
+    },
+    {
+      "family": "direction",
+      "label": "D1",
+      "query": "(SAC reinforcement OR chromosomal-instability reduction) AND aneuploidy",
+      "hits": 64,
+      "kept": 40
+    },
+    {
+      "family": "direction",
+      "label": "D2",
+      "query": "(aneuploidy-selective stress exploitation) AND aneuploidy",
+      "hits": 0,
+      "kept": 0
+    },
+    {
+      "family": "direction",
+      "label": "D3",
+      "query": "(proteostasis OR BubR1 stabilisation for a hypomorph) AND aneuploidy",
+      "hits": 33,
+      "kept": 33
+    },
+    {
+      "family": "direction",
+      "label": "D4",
+      "query": "(cancer prevention in the MVA1 tumour context) AND aneuploidy",
+      "hits": 0,
+      "kept": 0
+    },
+    {
+      "family": "card",
+      "label": "cited by the mechanism card",
+      "query": "card citation",
+      "hits": 4,
+      "kept": 4
+    }
+  ]
+}

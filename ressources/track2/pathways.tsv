@@ -1,0 +1,11 @@
+st_id	display_name	matched	n_participants
+R-HSA-141430	Inactivation of APC/C via direct inhibition of the APC/C complex	false	0
+R-HSA-141444	Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal	true	92
+R-HSA-174184	Cdc20:Phospho-APC/C mediated degradation of Cyclin A	false	0
+R-HSA-176409	APC/C:Cdc20 mediated degradation of mitotic proteins	true	63
+R-HSA-179409	APC-Cdc20 mediated degradation of Nek2A	false	0
+R-HSA-2467813	Separation of Sister Chromatids	false	0
+R-HSA-2500257	Resolution of Sister Chromatid Cohesion	false	0
+R-HSA-5663220	RHO GTPases Activate Formins	false	0
+R-HSA-68877	Mitotic Prometaphase	true	200
+R-HSA-9648025	EML4 and NUDC in mitotic spindle formation	true	115

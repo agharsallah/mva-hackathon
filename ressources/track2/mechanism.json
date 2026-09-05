@@ -1,0 +1,169 @@
+{
+  "_standing": "The Track 1 -> Track 2 hand-off. Written 2026-09-06 from the research record (H003-H009, methodology 070-074) and public literature. Coordinate-free by rule: it names the gene, the protein and the variant classes, never a position. Revised, never edited: bump `version` and append to `history`.",
+  "version": 2,
+  "case": {
+    "proband_id": "PROBAND01",
+    "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)",
+    "omim_phenotype": "257300",
+    "orphanet": "ORPHA:1052",
+    "mondo": "MONDO:0009759",
+    "clinical_terms_source": "ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md",
+    "hpo_terms": [
+      "HP:0002859",
+      "HP:0000121",
+      "HP:0004322",
+      "HP:0001508",
+      "HP:0003202",
+      "HP:0001622",
+      "HP:0001518"
+    ],
+    "tumour_context": "rhabdomyosarcoma (HP:0002859), a reported MVA1 malignancy (PMID:31184400)",
+    "_mondo_note": "Open Targets resolves MVA1 to MONDO_0009759 (verified live 2026-09-06 through disease_search on the disease name); the earlier MONDO:0009551 was wrong"
+  },
+  "gene": {
+    "symbol": "BUB1B",
+    "ensembl_gene_id": "ENSG00000156970",
+    "canonical_transcript": "ENST00000287598",
+    "uniprot": "O60566",
+    "protein": "BubR1 (mitotic checkpoint serine/threonine-protein kinase BUB1 beta)",
+    "hgnc_id": "HGNC:1149"
+  },
+  "alleles": [
+    {
+      "label": "stop",
+      "consequence": "stop_gained",
+      "exon": "17 of 23",
+      "clinvar": "VCV000533901",
+      "classification": "pathogenic / likely pathogenic for MVA1",
+      "reading": "null allele: truncates BubR1 upstream of the C-terminal kinase domain"
+    },
+    {
+      "label": "missense",
+      "consequence": "missense_variant",
+      "exon": "23 of 23",
+      "clinvar": null,
+      "classification": "gnomAD-absent; AlphaMissense 0.92 likely pathogenic; CADD 24.5",
+      "reading": "presumed hypomorph: a partly working copy inside the C-terminal kinase domain (CDD cd14029)"
+    }
+  ],
+  "mechanism": {
+    "class": "loss-of-function, hypomorphic (compound heterozygote: one null allele + one partly functional allele)",
+    "status": "inferred from Track 1; the trans configuration is what the oracle tests (H009, testing)",
+    "pathway": "spindle assembly checkpoint (SAC) - mitotic checkpoint complex (MCC) formation and APC/C-CDC20 inhibition",
+    "immediate_effect": "reduced BubR1 abundance and checkpoint signalling; weakened kinetochore-microtubule attachment error correction",
+    "downstream": [
+      "premature anaphase and chromosome missegregation",
+      "mosaic aneuploidy in dividing tissues (variegated: different chromosomes in different cells)",
+      "aneuploidy-associated proteotoxic and metabolic stress in surviving cells",
+      "cancer predisposition: rhabdomyosarcoma, Wilms tumour, leukaemia (MVA1 spectrum)",
+      "growth restriction (short stature, failure to thrive, IUGR), nephrocalcinosis"
+    ],
+    "complete_loss": "embryonic lethal in mouse and human - full inhibition of BubR1 is not a therapeutic direction",
+    "literature": [
+      {
+        "pmid": "15475955",
+        "role": "Hanks 2004: biallelic BUB1B mutations cause MVA with cancer predisposition; truncating + missense genotypes"
+      },
+      {
+        "pmid": "20516114",
+        "role": "Suijkerbuijk 2010: MVA patient cells have strongly reduced BUBR1 and a weakened SAC; missense alleles act as hypomorphs"
+      },
+      {
+        "pmid": "31184400",
+        "role": "rhabdomyosarcoma in BUB1B-related MVA"
+      },
+      {
+        "pmid": "18548531",
+        "role": "BubR1 insufficiency, aneuploidy and premature ageing in the mouse hypomorph"
+      }
+    ]
+  },
+  "repurposing_directions": [
+    {
+      "id": "D1",
+      "name": "SAC reinforcement / chromosomal-instability reduction",
+      "rationale": "compensate for reduced BubR1 signalling; agents that prolong mitotic checkpoint arrest or stabilise kinetochore-microtubule attachments",
+      "seed_targets": [
+        "BUB1B",
+        "BUB1",
+        "MAD2L1",
+        "MAD1L1",
+        "BUB3",
+        "TTK",
+        "CDC20",
+        "AURKB",
+        "KIF11",
+        "PLK1",
+        "TRIP13",
+        "CENPE"
+      ]
+    },
+    {
+      "id": "D2",
+      "name": "aneuploidy-selective stress exploitation",
+      "rationale": "aneuploid cells carry proteotoxic and energy stress; published aneuploidy-selective killing (AICAR-class energy stress, chloroquine-class autophagy stress, HSP90/HSF1 axis)",
+      "seed_targets": [
+        "PRKAA1",
+        "PRKAA2",
+        "HSP90AA1",
+        "HSF1",
+        "ATG5",
+        "MTOR"
+      ]
+    },
+    {
+      "id": "D3",
+      "name": "proteostasis / BubR1 stabilisation for a hypomorph",
+      "rationale": "a partly working protein can be stabilised or its turnover slowed; explore APC/C, deacetylase and chaperone routes; note BubR1 acetylation regulates its stability",
+      "seed_targets": [
+        "BUB1B",
+        "HDAC1",
+        "HDAC2",
+        "HDAC3",
+        "PCAF",
+        "KAT2B",
+        "HSP90AA1"
+      ]
+    },
+    {
+      "id": "D4",
+      "name": "cancer prevention in the MVA1 tumour context",
+      "rationale": "the child's presenting tumour is rhabdomyosarcoma; approved agents with a chemoprevention or surveillance rationale in aneuploidy-driven tumours",
+      "seed_targets": [
+        "TP53",
+        "IGF1R",
+        "CDK4",
+        "CDK6",
+        "MTOR"
+      ]
+    }
+  ],
+  "constraints": {
+    "eligibility": "market-approved drugs only (challenge rules, Track 2 definition); ChEMBL max_phase 4 or an FDA label is the evidence of approval",
+    "public_sources_only": true,
+    "sources": [
+      "Open Targets Platform",
+      "ChEMBL",
+      "DGIdb",
+      "Reactome",
+      "ClinicalTrials.gov",
+      "PubMed",
+      "openFDA"
+    ],
+    "not_used": {
+      "DrugBank": "licence required for programmatic access; name-dropped by the form but not queried"
+    }
+  },
+  "history": [
+    {
+      "version": 1,
+      "date": "2026-09-06",
+      "change": "first card, from the iteration-1 record"
+    },
+    {
+      "version": 2,
+      "date": "2026-09-06",
+      "change": "correct the MONDO id after the first snapshot resolved the disease by name"
+    }
+  ]
+}
