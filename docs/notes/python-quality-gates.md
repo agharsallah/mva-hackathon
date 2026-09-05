@@ -73,6 +73,15 @@ caller's context is known, function-level imports keep uvicorn/httpx/duckdb/plot
 import time, and the "ambiguous" unicode is real en dashes in prose. See
 `[tool.ruff.lint]` in `pyproject.toml` — the reasons live next to the switches.
 
+**`.claude/skills/` is excluded from ruff.** Skill scripts (e.g.
+`.claude/skills/paper-analyst/scripts/`) are third-party-authored assets bundled with a skill,
+not this repo's own Python — holding them to the same style/lint bar as `src`/`tests`/`tools`
+would mean rewriting vendored scripts for no functional gain. `extend-exclude` treats them like
+`archive`/`build`: present, but not ours to format. The pre-commit hook passes staged files
+explicitly (it matches any staged `.py`, not just `src`/`tests`/`tools`), and ruff's
+`extend-exclude` is ignored for explicitly-passed paths unless `force-exclude = true` is also
+set — so both are needed together.
+
 **Test modules get 600 lines, production code 400.** A test file is the executable
 description of one module's behaviour; cutting it in half to satisfy a line count splits
 one story across two files without making either easier to read. The cap still exists so

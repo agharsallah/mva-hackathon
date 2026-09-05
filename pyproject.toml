@@ -59,7 +59,11 @@ line-length = 100
 target-version = "py311"
 src = ["src", "tests", "tools"]
 # archive/ is provenance and never edited; build/ and figures/ are generated.
-extend-exclude = ["archive", "build", "figures", "ressources"]
+# .claude/skills/ ships third-party skill scripts, outside this repo's own style.
+extend-exclude = ["archive", "build", "figures", "ressources", ".claude"]
+# The pre-commit hook passes staged files explicitly; force-exclude makes
+# extend-exclude apply to those too, not just directory-walk discovery.
+force-exclude = true
 
 [tool.ruff.lint]
 select = [
