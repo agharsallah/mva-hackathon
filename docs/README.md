@@ -80,7 +80,7 @@ The next submission opens `iteration2/` with its own step folders; this one is t
 | [`iteration1/step-5/README.md`](iteration1/step-5/README.md) | Is the missing allele one the caller could not emit — SV, deep intronic, low-fraction mosaic? The k-mer strike is the funded route. |
 | [`iteration1/step-6/README.md`](iteration1/step-6/README.md) | Which pair does the scorer confirm? Owns the probe gate; 0 of 6 uploads spent. |
 | [`iteration1/step-7/README.md`](iteration1/step-7/README.md) | Does public knowledge name or corroborate an allele? Solution paths 5 and 6. |
-| [`iteration1/step-8/README.md`](iteration1/step-8/README.md) | Track 2 — which market-approved drugs act on the confirmed mechanism? |
+| [`iteration1/step-8/README.md`](iteration1/step-8/README.md) | Track 2 — which market-approved drugs act on the confirmed mechanism? Hand-off from Track 1: [`mechanism.md`](iteration1/step-8/mechanism.md) (Q15: loss- vs gain-of-function, pathway, downstream) and its structured twin `ressources/track2/mechanism.json`. |
 
 ## The submission
 

@@ -39,6 +39,10 @@ coordinates); the test suite grew by 77 tests to 1,687 (`tools/check-python.sh`,
 Later the same day ([077](step-0/methodology/077-submissions-in-the-dashboard.md)): `GET /api/submissions` and the
 `/submissions` page; `data_lineage` gained 4 `submissions` edges for iteration 1 (50 rows in all, counted live);
 the Python suite is 1,730 tests, the app suite 511; the dictionary 454 entries.
+2026-09-06 ([078](iteration1/step-8/methodology/078-track2-data-layer.md)): Track 2's data layer `mva.drugs` (7 public
+sources, cached, manifests) took its first snapshot into `ressources/track2/`; the register holds 11 hypotheses and 31
+evidence rows; the Python suite is 1,870 tests; the dictionary 470 entries. Then ([079](step-0/methodology/079-track2-in-the-dashboard.md)):
+21 `track2` lineage edges (71 rows in all), `GET /api/track2`, the `/track2` page; 1,898 Python and 535 app tests.
 The counts in §2 below were not re-measured on that date.
 
 This page owns **repository and infrastructure numbers** — test counts, table counts,

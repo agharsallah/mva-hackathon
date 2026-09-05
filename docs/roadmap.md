@@ -270,7 +270,11 @@ they found?* Step page: [`iteration1/step-7/README.md`](iteration1/step-7/README
 **Goal:** *Which market-approved drugs act on the mechanism the confirmed alleles imply,
 and how strong is the evidence for each?* Step page: [`iteration1/step-8/README.md`](iteration1/step-8/README.md).
 
-- **Status:** planned. **Nothing executed.**
+- **Status:** open (2026-09-06) — mechanism hand-off written
+  ([`iteration1/step-8/mechanism.md`](iteration1/step-8/mechanism.md)), H010/H011 pre-registered,
+  `mva.drugs` data layer built and its first public-API snapshot taken
+  ([078](iteration1/step-8/methodology/078-track2-data-layer.md)). Ranking and verdicts wait
+  for the oracle.
 - **Timing:** desk research and case-agnostic drug-source tooling start **week 2**.
   Ranking and verdicts wait for the pair step 6 confirms — a mechanism argued from an
   unconfirmed allele is a guess dressed as rigour. Submit **~2026-10-20**, one shot.

@@ -4,7 +4,7 @@
 term, gene, file format or tool appears in the work. Rendered as a course at `/learn` in the
 app — generated from this file by `app/tools/gen-dictionary.mjs`, never copied; a cross-link
 here that names a missing heading fails that build, and so does a `*Context:*` line naming a
-file or an entry that does not exist. Last checked 2026-09-05.
+file or an entry that does not exist. Last checked 2026-09-06.
 
 Explained like you're 12. Ordered so each word only uses words defined above it.
 
@@ -641,9 +641,13 @@ flowchart LR
 
 **PCS (premature chromatid separation)** — chromosomes fall apart before they're supposed to. A hallmark seen in BUB1B patients.
 
-**MCC (mitotic checkpoint complex)** — the actual "STOP" signal molecule. Built from BUBR1 + BUB3 + MAD2 + CDC20.
+**MCC (mitotic checkpoint complex)** — the actual "STOP" signal molecule. Built from BUBR1 + BUB3 + MAD2 + CDC20. Software analogy: a lock object one thread must hold before a shared resource (anaphase) can proceed — BubR1 is one of the proteins that assembles the lock.
+*Example: this case's mechanism card names the pathway break exactly this way — "spindle assembly checkpoint (SAC) - mitotic checkpoint complex (MCC) formation and APC/C-CDC20 inhibition" — because reduced BubR1 means fewer MCC locks get assembled.*
+*Context: the molecular target Track 2's checkpoint-reinforcement direction aims at · source: docs/iteration1/step-8/mechanism.md · related: Spindle assembly checkpoint, APC/C, BUB1B, Repurposing direction*
 
-**APC/C** — the machine that starts the split. MCC blocks it. No MCC = split happens too soon.
+**APC/C** — the machine that starts the split, formally **APC/C–CDC20**: the anaphase-promoting complex only fires once its activator subunit CDC20 is loaded onto it, and MCC blocks exactly that loading step. No MCC = split happens too soon. Software analogy: a gate that opens only once a specific adapter (CDC20) is plugged in — the lock (MCC) works by holding that adapter hostage.
+*Example: the mechanism card's immediate-effect line for this case reads "reduced BubR1 abundance and checkpoint signalling; weakened kinetochore-microtubule attachment error correction" — less MCC means less APC/C–CDC20 held back, hence premature anaphase.*
+*Context: the checkpoint step a repurposed drug would have to reinforce, not inhibit · source: docs/iteration1/step-8/mechanism.md · related: MCC, Anaphase, BUB1B*
 
 **Ubiquitin ligase** — a protein that tags other proteins for destruction. APC/C is one.
 
@@ -1678,8 +1682,6 @@ flowchart TB
 
 **Qualitative evaluation** — human judges reading your report. The tiebreaker when many teams hit the maximum automated score.
 
-**Drug repurposing** — taking a drug already approved for something else and using it for this disease. Faster and safer than inventing a new one. *That's Track 2.*
-
 **Aneuploidy-selective compound** — a drug that kills cells with wrong chromosome counts while sparing normal ones. *Examples from the literature: AICAR, 17-AAG, chloroquine.*
 
 **Mechanism characterization** — explaining the full chain: which variant → what it does to the protein → what breaks in the cell → what happens to the patient.
@@ -1692,7 +1694,167 @@ flowchart TB
 
 ---
 
-## 14. Rules and privacy words
+## 14. Drug repurposing — words for Track 2
+
+The words above this chapter describe finding the causal variant. These describe the second,
+separately scored half of the hackathon: given that finding, which already-approved drug's
+mechanism plausibly helps. Most of these names are public databases, queried through a small
+piece of tooling — [`ressources/track2/mechanism.json`](../ressources/track2/mechanism.json)
+is the file that ties the two halves together, and everything below reads from it.
+
+**Drug repurposing** — taking a drug already approved for one disease and using it for a
+different one, because its target or pathway overlaps. Faster and safer than inventing a new
+drug: the safety profile, dosing and manufacturing are already known and public.
+*Example: BUB1B itself has no approved drug; this project instead searches for drugs against
+the pathway it breaks — the spindle assembly checkpoint — and against the downstream stress
+aneuploid cells suffer.*
+*Context: what the hackathon's Track 2 asks for · source: docs/iteration1/step-8/README.md · related: Mechanism of action (MoA), Repurposing direction, Mechanism card*
+
+**Track 2 (drug repurposing)** — the hackathon's second scored deliverable, alongside Track 1's
+variant call. Desk research runs in parallel with Track 1 from week 2; ranking and verdicts
+wait until Track 1's pair is confirmed, because a mechanism argued from an unconfirmed allele
+is a guess dressed as rigour.
+*Example: this project's Track 2 goal, verbatim — "Which market-approved drugs act on the
+mechanism the confirmed alleles imply, and how strong is the evidence for each?"*
+*Context: the deliverable this chapter's words belong to · source: docs/iteration1/step-8/README.md · related: Drug repurposing, Mechanism card, N-of-1 · first seen 2026-09-05*
+
+**Mechanism card** — the one structured file that hands Track 1's finding to Track 2's drug
+search: which gene, which two alleles, loss- or gain-of-function, the pathway broken, the
+downstream consequences, and the repurposing directions to search under. Coordinate-free like
+every other exported file, and versioned — a changed belief is a new version with a history
+entry, never a silent edit.
+*Example: `ressources/track2/mechanism.json` version 1 — BUB1B, one `stop_gained` (ClinVar
+VCV000533901) plus one `missense_variant` (AlphaMissense 0.92, CADD 24.5), four repurposing
+directions D1–D4.*
+*Context: the input every drug-source query and the target-set builder reads; never hand-edited, only revised · source: ressources/track2/mechanism.json · related: Mechanism characterization, Compound heterozygous, Hypomorph, Repurposing direction · first seen 2026-09-05*
+
+**Mechanism of action (MoA)** — how a drug actually works at the molecular level: which protein
+it binds, and what that binding does (blocks it, activates it, marks it for destruction). The
+standard field name in every drug database below, and the one sentence a candidate needs before
+it counts as evidence rather than a name.
+*Example: `mechanism_of_action` is a field this project's tooling is meant to read from both the
+Open Targets and ChEMBL queries below.*
+*Context: the fact every repurposing candidate must carry a citation for · source: docs/iteration1/step-8/mechanism.md · related: Drug repurposing, ChEMBL, Open Targets Platform · first seen 2026-09-05*
+
+**Open Targets Platform** — a public knowledge graph joining genes, diseases and drugs, built by
+EMBL-EBI and industry partners. Answers two questions this project needs: which known drugs
+already hit a given gene, and at what trial phase. Software analogy: a search index over the
+same kind of gene-disease-drug graph you'd build yourself from ClinVar, ChEMBL and clinical
+trials, already joined and queryable.
+*Example: a `known_drugs` query for `ENSG00000156970` (BUB1B) is one of the sources this
+project's candidate table is meant to gather from, alongside ChEMBL and DGIdb.*
+*Context: one of the constraint list's named public sources · source: ressources/track2/mechanism.json · related: ChEMBL, DGIdb, Mechanism of action (MoA), Market-approved (max phase 4) · first seen 2026-09-05*
+
+**ChEMBL** — a public database of drug-like molecules and the biological targets they are known
+to act on, maintained by EMBL-EBI. Software analogy: a curated package registry, except the
+packages are molecules and the "dependencies" it records are the proteins they bind. Its
+`max_phase` field is one of the two facts this project treats as evidence of regulatory
+approval: `4` means approved for human use somewhere, not merely tested.
+*Example: the mechanism card's eligibility rule, verbatim — "ChEMBL max_phase 4 or an FDA label
+is the evidence of approval."*
+*Context: one of two ways a candidate drug counts as market-approved · source: ressources/track2/mechanism.json · related: Market-approved (max phase 4), Mechanism of action (MoA), Open Targets Platform · first seen 2026-09-05*
+
+**DGIdb (Drug Gene Interaction Database)** — a public aggregator that pools gene-drug interaction
+claims from dozens of other sources (ChEMBL among them) behind one query. Software analogy: a
+meta-search that re-exports other registries' listings, so the same drug-target pair can turn
+up here with a different source citation than it has in ChEMBL directly.
+*Example: this project's candidate table is meant to call a drug market-approved if DGIdb marks
+it `approved` OR ChEMBL's `max_phase` is 4 OR Open Targets reports phase 4 — three independent
+votes, not one.*
+*Context: the third public source in the target → candidate-drug search · source: ressources/track2/mechanism.json · related: ChEMBL, Open Targets Platform, Market-approved (max phase 4) · first seen 2026-09-05*
+
+**Reactome** — a public, hand-curated map of human biological pathways: which proteins take part
+in which process, and how they connect. Software analogy: a call graph for biology — instead of
+"function A calls function B," an edge says "protein A acts on protein B in this pathway."
+*Example: BUB1B's UniProt id `O60566` is the seed this project's pathway step is meant to look
+up in Reactome, to find every pathway it belongs to.*
+*Context: the source of the pathway expansion the seed target list is widened through · source: docs/iteration1/step-8/mechanism.md · related: Pathway expansion (Reactome), Seed target / target set, MCC · first seen 2026-09-05*
+
+**ClinicalTrials.gov** — the US registry of clinical trials, public and free to query. Tells you
+whether a candidate drug has ever been tried against a disease like this one, and at what stage,
+without needing a trial to have succeeded.
+*Example: this project's tooling is meant to search it for the exact terms the mechanism card
+names — the condition `"mosaic variegated aneuploidy"`, and the proband's tumour context,
+`"rhabdomyosarcoma"`.*
+*Context: evidence that a candidate has already been tried in a relevant disease, not just on-target · source: ressources/track2/mechanism.json · related: Market-approved (max phase 4), Mechanism card · first seen 2026-09-05*
+
+**PubMed E-utilities** — the free programmatic interface to PubMed, the US National Library of
+Medicine's index of biomedical papers. `esearch` turns a search term into a list of paper ids
+(PMIDs); `esummary` turns those ids into title, journal and year. Software analogy: a search API
+with pagination, in two calls instead of one.
+*Example: the mechanism card's own literature list already cites four PMIDs this way — 15475955
+(Hanks 2004, biallelic BUB1B causes MVA), 20516114 (Suijkerbuijk 2010, reduced BubR1 and a weak
+checkpoint), 31184400 (rhabdomyosarcoma in BUB1B-MVA), 18548531 (BubR1-insufficient mouse).*
+*Context: how a repurposing candidate earns a literature citation rather than just a database row · source: ressources/track2/mechanism.json · related: PMID / DOI, Mechanism card · first seen 2026-09-05*
+
+**openFDA (drug labels)** — the FDA's public API over its own drug label database. A `404` means
+no label exists for that generic name — itself useful evidence, not an error, because a drug
+with an approval claim from ChEMBL or DGIdb but no FDA label at all is a weaker approval claim
+than one with a label to point at.
+*Example: the query shape this project's tooling is meant to use —
+`drug/label.json?search=openfda.generic_name:"<name>"&limit=1` — checked only for candidates
+already judged approved, to avoid spending the check on every drug in a candidate list.*
+*Context: the second, independent check on a market-approved claim · source: ressources/track2/mechanism.json · related: Market-approved (max phase 4), ChEMBL, DGIdb · first seen 2026-09-05*
+
+**DrugBank** — a widely cited public-facing drug database, but its programmatic API sits behind
+a paid licence. This project's constraints state that explicitly rather than silently skip it:
+named as a source by the methods form, but not one this project's tooling actually queries.
+*Example: `ressources/track2/mechanism.json`'s own words — `"DrugBank": "licence required for
+programmatic access; name-dropped by the form but not queried"`.*
+*Context: the one named source this project deliberately does not call · source: ressources/track2/mechanism.json · related: ChEMBL, DGIdb, Market-approved (max phase 4) · first seen 2026-09-05*
+
+**Market-approved (max phase 4)** — the challenge's eligibility bar for Track 2: only drugs
+already approved for human use somewhere count, never an experimental compound however good its
+rationale. Operationalised as "ChEMBL's `max_phase` field reads 4" or "an FDA label exists" — a
+`max_phase` of 3 means it reached late trials and stopped there, evidence of promise, not
+approval.
+*Example: the mechanism card's constraint, verbatim — "market-approved drugs only (challenge
+rules, Track 2 definition); ChEMBL max_phase 4 or an FDA label is the evidence of approval."*
+*Context: the filter every candidate-drug row must pass before it is reportable · source: ressources/track2/mechanism.json · related: ChEMBL, openFDA (drug labels), DrugBank · first seen 2026-09-05*
+
+**Repurposing direction** — one named hypothesis about *why* a class of drugs might help: a
+short id (`D1`, `D2`, ...), a rationale sentence, and the list of genes to search drugs against
+(its seed targets). A mechanism card states several, because a single mechanism usually opens
+more than one plausible line of attack.
+*Example: this case's four — D1 reinforce the checkpoint, D2 exploit aneuploidy stress, D3
+stabilise the hypomorph protein, D4 prevent the tumour the child already has (rhabdomyosarcoma).*
+*Context: the unit a candidate-drug search is organised around, one direction at a time · source: ressources/track2/mechanism.json · related: Mechanism card, Seed target / target set, Aneuploidy stress (proteotoxic / metabolic) · first seen 2026-09-05*
+
+**Seed target / target set** — a seed target is one gene a repurposing direction names by hand,
+because the literature already ties it to that direction's rationale. The target set is the
+wider list a direction actually searches drugs against: every seed target, plus every gene
+pathway expansion adds. Software analogy: a seed set of nodes you walk outward from in a graph,
+one hop, along edges that mean "same pathway."
+*Example: direction D1's seed targets in this case's card — `BUB1B, BUB1, MAD2L1, MAD1L1, BUB3,
+TTK, CDC20, AURKB, KIF11, PLK1, TRIP13, CENPE` — twelve genes named before any pathway expansion
+runs.*
+*Context: what a candidate-drug search is actually run against, not the mechanism card's directions themselves · source: ressources/track2/mechanism.json · related: Repurposing direction, Pathway expansion (Reactome) · first seen 2026-09-05*
+
+**Pathway expansion (Reactome)** — widening a direction's seed targets by asking Reactome which
+other genes share a pathway with the mechanism card's gene, then keeping only the pathways whose
+name plausibly matches the mechanism (this project's rule: the pathway's name contains
+"checkpoint," "kinetochore" or "mitotic"). Turns a hand-picked gene list into a target set a
+drug search can cover more completely.
+*Example: BUB1B's UniProt id feeds the Reactome pathway lookup; every gene in a returned pathway
+named, say, "Resolution of Sister Chromatid Cohesion," is meant to join the target set as a
+pathway-role member rather than a seed-role one.*
+*Context: the step between a mechanism card's seed targets and the full target set a drug source is queried against · source: docs/iteration1/step-8/mechanism.md · related: Reactome, Seed target / target set, Mechanism card · first seen 2026-09-05*
+
+**Aneuploidy stress (proteotoxic / metabolic)** — the burden a cell carries simply from having
+the wrong chromosome count, independent of which gene broke the checkpoint: too much of some
+proteins and too little of others (proteotoxic stress), plus the extra energy an aneuploid cell
+burns keeping itself alive (metabolic / energy stress). Published work kills aneuploid cells
+selectively by adding to exactly this burden — energy stress (the AICAR class), autophagy
+stress (the chloroquine class), or chaperone stress (the HSP90/HSF1 axis) — while sparing
+euploid cells that were never this stressed to begin with.
+*Example: this case's D2 repurposing direction lists `PRKAA1, PRKAA2, HSP90AA1, HSF1, ATG5,
+MTOR` as its seed targets — the energy-sensing, chaperone and autophagy genes behind those three
+published drug classes.*
+*Context: the rationale for the one repurposing direction that does not touch the checkpoint at all · source: ressources/track2/mechanism.json · related: Proteotoxic stress, Repurposing direction, Aneuploidy-selective compound · first seen 2026-09-05*
+
+---
+
+## 15. Rules and privacy words
 
 **Gated dataset** — you must apply and be approved before downloading.
 
@@ -1744,7 +1906,7 @@ flowchart TB
 
 ---
 
-## 15. The research record — words for what you believe
+## 16. The research record — words for what you believe
 
 Everything above this section is about the *data*. This section is about the *investigation*:
 how a question becomes a claim, a claim becomes a test, and a test becomes something you can

@@ -111,6 +111,20 @@ Budget is **6 submissions**; `probe-budget` is the authority on what is left.
 
 > The offline replica and its ambiguous zone: [`notes/local-scorer-replica.md`](notes/local-scorer-replica.md).
 
+## Track 2 — which approved drugs act on the mechanism?
+
+Case-agnostic: everything reads the mechanism card, nothing hard-codes a gene.
+
+| Question | CLI | API route / app page | Module |
+|---|---|---|---|
+| What did Track 1 hand over? (gene, protein, allele classes, mechanism, directions, seed targets) | `mva-drugs card` | `/api/track2` → `card` | `drugs/mechanism.py` · `ressources/track2/mechanism.json` |
+| Which genes make up the target set? (seeds + Reactome pathway members matching `checkpoint|kinetochore|mitotic`) | `mva-drugs targets` | `/api/track2` → `targets`, `pathways` | `drugs/pathway.py`, `drugs/sources/reactome.py` |
+| Which molecules touch those targets, and which are market-approved? (Open Targets, ChEMBL, DGIdb; openFDA label check) | `mva-drugs drugs` | `/api/track2` → `candidates` (`approved` bool) | `drugs/candidates.py`, `drugs/sources/{opentargets,chembl,dgidb,openfda}.py` |
+| Which trials exist for the disease and for each approved drug in the tumour context? | `mva-drugs trials` | `/api/track2` → `trials` | `drugs/sources/clinicaltrials.py` |
+| What does PubMed say about the gene, the pathway and each direction? | `mva-drugs literature` | `/api/track2` → `literature` | `drugs/sources/pubmed.py` |
+| Everything above into `ressources/track2/*.tsv` with a provenance manifest each, from cache when possible | `mva-drugs snapshot [--refresh]` | `/api/track2` → `catalog`, `summary` | `drugs/snapshot.py`, `drugs/provenance.py`, cache under `build/track2-cache/` |
+| Where did each Track 2 table come from? (card version, API hosts by roll-up digest, the Track 1 iteration, the target set) | `uv run python tools/record_track2_lineage.py` | `/api/track2` → `lineage`, `register`, `linked_iterations`, `strategy` | `warehouse/track2_lineage.py`, `viz/track2*.py` |
+
 ## The research record — what do we believe, and why?
 
 | Question | CLI | API route / app page | Module |
@@ -154,7 +168,7 @@ Budget is **6 submissions**; `probe-budget` is the authority on what is left.
 | **No normalization seam** — `bcftools norm` runs by hand, outside the pipeline | "was this normalized?" is answered by memory, and indel spellings can miss the scorer | [`iteration1/step-1/`](iteration1/step-1/) |
 | **Annotator covers coding alleles, not the whole callset** — `mva-warehouse annotate-coding` annotates every coding allele genome-wide through VEP REST, checkpointed ([069](iteration1/step-2/methodology/069-layer-2-coding-scan.md)); deep-intronic and UTR alleles are still unannotated | a non-coding second allele is invisible to the rarity/consequence filter | [`iteration1/step-2/`](iteration1/step-2/) |
 | **No alignment, no SV calling** — no BAM path, no structural-variant or deep-intronic caller | a second allele the caller could not emit is unreachable | [`iteration1/step-5/`](iteration1/step-5/) |
-| **Track 2 has zero code** — no drug, target or trial source wired | drug repurposing is desk research until a module exists | [`iteration1/step-8/`](iteration1/step-8/) |
+| **Track 2 has its data layer, not its ranking** — `mva-drugs snapshot` gathers targets, approved candidates, trials and literature from seven public APIs into `ressources/track2/` with manifests; no scoring or evidence-table renderer yet | candidates exist as rows, not as argued hypotheses | [`iteration1/step-8/`](iteration1/step-8/) |
 
 ## How to add a tool
 
