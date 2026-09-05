@@ -1,6 +1,6 @@
 # Methodology log — step 8
 
-**Standing:** open, empty. No test has run under this step. Entries appear here numbered
+**Standing:** open — first entry 078 (2026-09-06). No test has run under this step. Entries appear here numbered
 from **069**, continuing the global sequence that
 [`../../step-0/methodology/`](../../../step-0/methodology/) started and
 [`../../step-3/methodology/`](../../step-3/methodology/) last extended. Entry numbers are
@@ -32,4 +32,6 @@ The environment is the one recorded in
 
 ## Entries
 
-None yet.
+| # | Question |
+|---|---|
+| [078](078-track2-data-layer.md) | From the mechanism card to a first public-API snapshot. **273 targets (27 seed + 246 Reactome pathway members), 3,766 candidate rows from Open Targets/ChEMBL/DGIdb, 336 distinct approved drugs, 747 trial rows, 157 literature rows; zero molecules for BUB1B itself — H011 supported 0.80. Case-agnostic tooling `mva-drugs`, 122 tests, every table with a provenance manifest.** |
