@@ -34,6 +34,12 @@ uv run lint-imports
 echo "==> mypy"
 uv run mypy
 
+echo "==> coordinate gate"
+uv run python tools/check_coordinates.py --quiet
+
+echo "==> iteration folders"
+uv run python tools/check_iteration.py --quiet
+
 echo "==> pytest"
 uv run pytest -q
 
