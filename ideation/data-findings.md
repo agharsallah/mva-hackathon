@@ -2,7 +2,7 @@
 
 **Standing:** the **single owner of every measured number about the dataset**. Other
 documents link here; none restate a value. Measured 2026-08-28, re-checked 2026-08-29
-against the object-store inventory; §6.1 (panel annotation) added 2026-08-31. Evidence for how each number was produced is in the
+against the object-store inventory; §6.1 (panel annotation) added 2026-08-31; §6.3–6.5 (genome-wide coding scan, the candidate alleles, secondary findings) added 2026-09-05. Evidence for how each number was produced is in the
 [`methodology/`](../docs/step-0/methodology/) entry cited beside it.
 
 Empirical companion to `data-inventory.md` (written before the files were opened, now in
@@ -151,6 +151,24 @@ mostly `MQ40`, with alt depths of 2–6 reads. TRIP13 sits at chr5:872,848–939
 to the telomere in difficult sequence. Low confidence there is a *coverage and mappability*
 statement, not evidence of absence.
 
+### 3.1 Normalization (2026-09-05)
+
+`bcftools norm -m -both` against the GRCh38 analysis set (195 shared contigs; the 43,667
+records on hs38d1 decoy contigs excluded), [methodology 073](../docs/iteration1/step-1/methodology/073-normalization-of-the-candidates.md):
+
+| Measured | Value |
+|---|---|
+| records normalized | 4,968,537 |
+| multi-allelic records split | 66,639 — every one with exactly two ALTs → 133,278 rows |
+| alleles realigned | 39,913, all of them split-off alleles |
+| bi-allelic records whose spelling changed | **0** |
+| reference mismatches | 0 |
+| records after | 5,035,176, no multi-allelic site left |
+| the two BUB1B candidates | single-base substitutions, single ALT, unchanged |
+
+The callset's bi-allelic records were already left-aligned; normalization matters only for
+an indel candidate drawn from a multi-allelic site.
+
 ---
 
 ## 4. Raw reads
@@ -298,13 +316,94 @@ Four independent checks ran against the same candidate space
 |---|---|
 | ClinVar presence | 2,129 P/LP panel sites vs the callset: **exactly 1 present** — the BUB1B `stop_gained`, het, PASS, ClinVar condition `Mosaic_variegated_aneuploidy_syndrome_1`, ★★ review. Independent path from the VEP route in §6.1 (site-first vs call-first). Exact-string join, so a lower bound: 1,306 of the 2,129 are indel-shaped and unmatched without normalization |
 | Suppressed calls | 20 non-PASS records across the panel, all VEP-annotated, **0 rare + protein-altering**. TRIP13's 6 = paralogous-read pileup (VAF 0.12–0.28, all gnomAD-common) — roadmap step 4 closed for the panel: nothing hides behind a FILTER in these 8 genes |
-| Phenotype, panel-blind | A ranking driven by the child's 7 own HPO terms, reading no callset and no panel, places **BUB1B 6th of 5,267** curated genes — and reconstructs the panel's own confidence ordering: DICER1 8, TP53 11, CEP57 17, TRIP13 26, while the two genes the panel labels *case reports* and *candidate* fall to 1,010 and 4,485 and CEP192 has no HPO curation at all. Phen2Gene, an unrelated method, puts BUB1B 26th of 18,882. Fourth independent path, and the only one with no access to the DNA ([step-3/methodology/067](../docs/step-3/methodology/067-phenotype-ranking-without-java.md)) |
+| Phenotype, panel-blind | A ranking driven by the child's 7 own HPO terms, reading no callset and no panel, places **BUB1B 6th of 5,267** curated genes — and reconstructs the panel's own confidence ordering: DICER1 8, TP53 11, CEP57 17, TRIP13 26, while the two genes the panel labels *case reports* and *candidate* fall to 1,010 and 4,485 and CEP192 has no HPO curation at all. Phen2Gene, an unrelated method, puts BUB1B 26th of 18,882. Fourth independent path, and the only one with no access to the DNA ([iteration1/step-3/methodology/067](../docs/iteration1/step-3/methodology/067-phenotype-ranking-without-java.md)) |
 | Gene vs genome | TRIP13 is the sole PASS-share outlier (z −4.02 vs chr5, −3.54 vs genome) — a callability statement. Density z is direction-only honest (gene bodies vs mostly-intergenic Mb windows) |
 | BAF per Mb | all 22 autosomes flat (median bin BAF 0.4954–0.4984, depth 42.2–43.4×); every deviant bin pulls one-sided down with piled depth = reference bias, not mosaicism. VCF-level upper bound only — sub-threshold clones stay invisible |
 
 Consequence: if a second allele exists outside the §6.1 pair, it is structural,
 deep-intronic, or sub-threshold mosaic — reachable only through the FASTQ path.
 
+
+### 6.3 The genome-wide coding scan (2026-09-05)
+
+The panel result of §6.1 was tested against the whole genome — every allele the proband
+carries where a protein is encoded (methodologies
+[069](../docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md),
+[070](../docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md),
+[071](../docs/iteration1/step-3/methodology/071-phenotype-callset-join.md),
+[072](../docs/iteration1/step-4/methodology/072-genome-wide-suppressed-calls.md)). Coding intervals
+are the CDS plus stop codon of every protein-coding transcript, ±8 bp, merged per gene,
+from the Ensembl 116 GTF: **223,048 intervals over 19,750 genes, 44.6 Mb** (1.4 % of the
+genome).
+
+| Measured | Value |
+|---|---|
+| (gene, allele) rows inside a coding interval | **38,437** — 36,843 PASS, 1,594 non-PASS (`MQ40` 1,048 · `QD2` 245 · `LowQual` combinations 301) |
+| distinct coding alleles | **38,087**, all annotated by VEP REST release 116 (191 requests, ~33 min) |
+| zygosity | het 23,909 · hom-alt 14,130 · `1/2` 398 |
+| impact | MODERATE 15,694 · LOW 15,037 · MODIFIER 6,120 · HIGH 1,236 |
+| absent from gnomAD | 183 |
+| rare (AF absent or < 0.01) | 1,524 |
+| rare **and** protein-altering | **875** (746 on PASS calls) |
+| ClinVar P/LP, conflicts and benign-tagged excluded | 10 |
+| genes carrying ≥ 1 rare protein-altering allele | **667** |
+| genes biallelic on PASS calls (≥ 2 het / `1/2`, or 1 hom) | **65** — 41 of them with no HPO curation |
+| … carrying a ClinVar pathogenic allele | **1 — BUB1B** |
+| … with phenotype rank ≤ 30 | **1 — BUB1B** (rank 6; next curated biallelic gene HSPG2 at 150, PEX5 at 220) |
+| genes biallelic only if a non-PASS call is rescued | 26 — none with a P/LP or LoF allele or a rank ≤ 30 |
+| BUB1B non-PASS coding alleles | 0 |
+| panel genes' coding alleles | BUB1B 2 · CENPE 6 · CEP192 7 · SMC5 1 · TP53 1 · **CEP57, TRIP13, DICER1: 0** |
+
+The two BUB1B alleles are the only two coding alleles in the gene, and the genome-wide
+table reproduces §6.1 without a panel: the funnel is
+[`figures/track1/track1-funnel.png`](../figures/track1/track1-funnel.png), the gene table
+[`figures/track1/track1-gene-scatter.png`](../figures/track1/track1-gene-scatter.png).
+
+What the biallelic set outside BUB1B looks like: HLA genes (11–18 rare alleles each),
+SERPINA1 (16), other hypervariable or paralogous loci, and two-missense carrier shapes with
+phenotype ranks in the hundreds or none — the expected background of any genome, not a
+competing diagnosis.
+
+**Scope.** Coding plus an 8 bp splice flank. A deep-intronic, UTR or structural second
+allele in another gene is outside this scan.
+
+### 6.4 The two candidate alleles, characterised (2026-09-05)
+
+Public annotation of the two BUB1B alleles through Ensembl VEP REST with the SpliceAI,
+AlphaMissense and CADD plugins ([074](../docs/iteration1/step-6/methodology/074-submission-v1-design.md)).
+Coordinates and the missense spelling stay out of the repository; the stop_gained is a
+public ClinVar record.
+
+| | stop_gained | missense |
+|---|---|---|
+| exon (MANE Select, 23 exons) | 17 | 23 (last) |
+| protein region | upstream of the C-terminal kinase domain | inside the kinase domain (CDD cd14029) |
+| gnomAD v4 genomes / exomes AF | 3.29e-5 / 7.87e-5, no homozygote | absent / absent |
+| ClinVar | VCV000533901, pathogenic/likely pathogenic, multiple submitters, no conflicts, *Mosaic variegated aneuploidy syndrome 1* | none |
+| CADD phred | 36 | 24.5 |
+| AlphaMissense | — | 0.92, likely pathogenic |
+| SpliceAI (max delta) | 0.03 | 0.00 |
+| genotype, depth, allele fraction | 0/1, 46×, 0.54 | 0/1, 28×, 0.46 |
+| FILTER, QUAL | PASS, 709 | PASS, 345 |
+| physical phasing (`PGT`/`PID`) | none | none |
+
+The two other rare BUB1B alleles in the callset — the only in-callset alternative partners
+— are both intronic with SpliceAI 0.00 on every delta (one gnomAD-absent, one at AF 0.002
+with a ClinVar VUS).
+
+### 6.5 Secondary findings (2026-09-05)
+
+Of the 10 ClinVar P/LP coding alleles the proband carries, the rare ones outside BUB1B:
+
+| gene | allele | zygosity | gnomAD AF | reading |
+|---|---|---|---|---|
+| LZTR1 | stop_gained | het | 1.4e-6 | dominant schwannomatosis predisposition; unrelated to MVA; clinical follow-up |
+| F5 | Factor V Leiden (rs6025) | het | 0.017 | low-penetrance thrombosis risk factor |
+| FLG | stop_gained | het | 0.003 | semi-dominant ichthyosis vulgaris / atopy |
+| GNRHR, CIAO1, ZFYVE26 | missense | het | 2e-4 – 1e-3 | recessive carrier states, no second allele |
+
+The remaining three P/LP records are common (AF 0.08–0.68) synonymous or missense sites —
+ClinVar noise, not findings.
 
 ---
 

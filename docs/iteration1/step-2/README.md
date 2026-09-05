@@ -1,8 +1,8 @@
 # Step 2 — Annotate the callset
 
-**Standing:** open. The eight-gene panel is annotated and reduces to one BUB1B pair; the
+**Standing:** exit criterion met 2026-09-05 — the genome-wide coding set exists and H004 (*no coding gene outranks the BUB1B pair*) is supported ([069](methodology/069-layer-2-coding-scan.md), [070](methodology/070-genome-wide-annotation-and-verdict.md)); non-coding annotation remains open. Earlier standing: the eight-gene panel is annotated and reduces to one BUB1B pair; the
 genome-wide pass has not run, and no hypothesis is filed. Method:
-[`../method.md`](../method.md). Sequencing: [`../roadmap.md`](../roadmap.md) §1.
+[`../method.md`](../../method.md). Sequencing: [`../roadmap.md`](../../roadmap.md) §1.
 Last checked 2026-09-04.
 
 ---
@@ -25,11 +25,11 @@ Last checked 2026-09-04.
 ## Already done
 
 - Ensembl VEP REST over the eight-gene panel — step-0 methodology
-  [031](../step-0/methodology/031-vep-rest-panel-annotation.md). Filtering to rare **and**
+  [031](../../step-0/methodology/031-vep-rest-panel-annotation.md). Filtering to rare **and**
   protein-altering leaves one BUB1B pair. Counts:
-  [`../../ideation/data-findings.md`](../../ideation/data-findings.md) §6.1.
+  [`../../ideation/data-findings.md`](../../../ideation/data-findings.md) §6.1.
 - ClinVar presence measured site-first, an independent path —
-  [051](../step-0/methodology/051-clinvar-presence.md).
+  [051](../../step-0/methodology/051-clinvar-presence.md).
 - This ran inside step 0 because the machinery was being built at the same time. That is
   why the step opens with results and no hypotheses.
 
@@ -37,9 +37,9 @@ Last checked 2026-09-04.
 
 - File the panel result as a `retrospective` hypothesis — the test ran before the claim.
 - Build **layer 2** (`variants`, `genotypes`, `variant_info`) so the annotation join has
-  somewhere to land — [`../step-0/data-layers.md`](../step-0/data-layers.md).
-- A genome-wide backend behind the [annotation port](../notes/annotation-as-a-port.md):
-  offline VEP cache plus gnomAD. Backend choice open in [`../decisions.md`](../decisions.md).
+  somewhere to land — [`../step-0/data-layers.md`](../../step-0/data-layers.md).
+- A genome-wide backend behind the [annotation port](../../notes/annotation-as-a-port.md):
+  offline VEP cache plus gnomAD. Backend choice open in [`../decisions.md`](../../decisions.md).
 - Required fields: gene symbol, consequence, gnomAD popmax AF. Valuable: CADD, REVEL,
   AlphaMissense, SpliceAI, ClinVar significance.
 
@@ -61,6 +61,6 @@ recorded in this step's methodology, not in a step of its own.
 
 | | |
 |---|---|
-| Hypotheses | none recorded yet — [`hypotheses/`](hypotheses/), written by `mva-science export` |
-| Tests | none run under this step — entries land in [`methodology/`](methodology/), numbered from 069 |
+| Hypotheses | H003 (retrospective), H004 — [`hypotheses/`](hypotheses/), written by `mva-science export` |
+| Tests | [069](methodology/069-layer-2-coding-scan.md), [070](methodology/070-genome-wide-annotation-and-verdict.md) |
 | Rendered | `figures/science-report.html` |
