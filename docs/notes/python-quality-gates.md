@@ -24,6 +24,8 @@ tools/check-python.sh --fix    # format and autofix first, then check
 | Module size | `uv run python tools/check_module_size.py` | a file growing past what a reader can hold — CLAUDE.md's 400-line rule, finally enforced |
 | Import layering | `uv run lint-imports` | cycles, and any package importing one it must not |
 | Types | `uv run mypy` | the ~27 latent `None`-dereferences strict mode found, and every new one |
+| Coordinates | `uv run python tools/check_coordinates.py` | a patient genomic position in any tracked text file — a Data Transfer Agreement breach the register's own check cannot see (added 2026-09-05, [075](../step-0/methodology/075-coordinate-gate-and-redaction.md)) |
+| Iteration folders | `uv run python tools/check_iteration.py` | a submission folder that is not what its README says: a stale PDF, an unanswered methods-form row, a row naming an undeclared allele, a frozen folder edited (added 2026-09-05, [076](../iteration1/step-6/methodology/076-iteration-tooling.md)) |
 | Tests | `uv run pytest` | behaviour |
 
 Order is deliberate: the cheap deterministic gates run before the 20-second suite, so a
@@ -35,7 +37,7 @@ flowchart LR
     commit -->|"staged .py only"| fix[ruff format<br/>ruff check --fix<br/>re-stage]:::machine
     fix --> push{pre-push}:::decision
     push -->|"src/ tests/ tools/<br/>pyproject uv.lock"| gate[tools/check-python.sh]:::machine
-    gate --> ci[CI python job<br/>the same six gates]:::machine
+    gate --> ci[CI python job<br/>the same eight gates]:::machine
     ci --> merged[merged]:::goal
     gate -.->|any gate fails| blocked[push blocked]:::bad
     ci -.->|any gate fails| blocked
@@ -54,6 +56,17 @@ flowchart LR
 > starts node.
 
 ## The decisions behind the numbers
+
+**The coordinate gate scans text, not the register.** `mva-science check` already refuses a
+position in a hypothesis or an evidence row; the first leak was a pasted CSV row in a
+methodology entry, which no register check reads. The gate therefore walks every tracked
+and untracked-but-not-ignored text file. Three rules keep it honest and quiet: a submission
+row needs a 7-digit position (synthetic docs rows use short ones), the gitignored spec's real
+positions are searched only on a machine that holds the spec, and the candidate gene's public
+span flags an 8-digit number only beside its chromosome, with the span's own endpoints exempt.
+Public reference tables (`ressources/`) and `archive/` are skipped by construction; anything
+else that is a false positive goes into `tools/coordinate_allowlist.txt` **with the reason and
+the callset check that proved it synthetic** — never by widening the skip list.
 
 **Line length is 100, not 88.** The code was already written to ~90 columns (p99 = 93);
 at 88 there were 1,918 violations, at 100 there were 8. `app/.prettierrc.json` already

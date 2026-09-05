@@ -1,5 +1,9 @@
 # 050 — The pair comparator and the probe hand-off
 
+> **Redacted 2026-09-05** ([075](075-coordinate-gate-and-redaction.md)): this entry originally quoted the two
+> candidate positions verbatim in the CSV row and the staged-pair line below. They are replaced by
+> `<pos-1>` / `<pos-2>`. Nothing else in the entry was changed.
+
 **A step-0 platform entry, so it carries no hypothesis.** It records what was added to `app/`
 on top of [038](038-pair-matrix.md) (the pair matrix) and [046](046-probe-builder.md) (the
 submission builder), and how it was verified against both fixtures and the live API.
@@ -139,13 +143,13 @@ verdict        UNKNOWN PHASE — NEITHER PROVEN NOR EXCLUDED
 *copy CSV row* returned, from the server:
 
 ```
-PROBAND01,chr15,40209701,T,G,chr15,40220612,T,G,0.99,primary,"BUB1B compound-het candidate, phase unknown"
+PROBAND01,chr15,<pos-1>,T,G,chr15,<pos-2>,T,G,0.99,primary,"BUB1B compound-het candidate, phase unknown"
 ```
 
 — chr-prefixed on the way out, bare on the way in, exactly as `mva.viz.probebuild` documents.
 
 *add pair to probe builder* navigated to `/probes`, staged **one** row
-(`15:40209701 T>G` + `15:40220612 T>G`, labelled `from the pair comparator`), and the `pair`
+(`15:<pos-1> T>G` + `15:<pos-2> T>G`, labelled `from the pair comparator`), and the `pair`
 parameter was gone from the address bar. Console clean, zero errors.
 
 **`uv run pytest -q`:** 12 failed, 1191 passed. Eleven are the pre-existing
