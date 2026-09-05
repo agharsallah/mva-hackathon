@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-05T20:45:44+00:00",
+  "generated_at": "2026-09-05T23:17:32+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -484,6 +484,54 @@
           "kind": "annotation",
           "claim": "Correction to row 25: the two alleles lie in exons 17 and 23 of the 23-exon MANE transcript (VEP), six exons apart, not nine; the phasing conclusion is unchanged because the distance is tens of kilobases either way.",
           "source_ref": "methodology/075",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H010",
+      "step": "step-8",
+      "statement": "The disease mechanism in this proband is hypomorphic loss of BUB1B function: one null allele (stop_gained, exon 17 of 23) plus one partly functional allele (kinase-domain missense), leaving reduced BubR1 and a leaky spindle assembly checkpoint; there is no gain-of-function or dominant-negative component.",
+      "prediction": "Public sources agree with the shape: ClinVar and the literature classify BUB1B MVA1 as autosomal recessive loss of function; every reported MVA1 genotype combines a null with a hypomorph or two hypomorphs; no BUB1B variant is annotated dominant or gain-of-function in ClinVar/OMIM; Reactome places BUB1B in the mitotic spindle checkpoint pathway.",
+      "refuted_by": "Any ClinVar or OMIM record of a dominant or gain-of-function BUB1B mechanism, functional evidence that kinase-domain missense alleles act as dominant negatives, or the oracle returning no match for the BUB1B pair (which would make the mechanism argument moot).",
+      "gene": "BUB1B",
+      "path": "track 2 - mechanism first",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.6457,
+      "revisions": 1,
+      "evidence": [
+        {
+          "id": 31,
+          "direction": "supports",
+          "strength": 0.3,
+          "kind": "annotation",
+          "claim": "Reactome maps BUB1B (UniProt O60566) to ten pathways, four of them matching the checkpoint/kinetochore/mitotic rule - 'Amplification of signal from unattached kinetochores via a MAD2 inhibitory signal' (R-HSA-141444), 'APC/C:Cdc20 mediated degradation of mitotic proteins' (R-HSA-176409), 'Mitotic Prometaphase' (R-HSA-68877), 'EML4 and NUDC in mitotic spindle formation' (R-HSA-9648025) - placing the gene in the spindle assembly checkpoint as the mechanism claims; the loss-of-function class itself is not tested by this snapshot.",
+          "source_ref": "methodology/078",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H011",
+      "step": "step-8",
+      "statement": "No market-approved drug acts directly on BubR1; approved candidates for this case will come only from pathway neighbours (spindle assembly checkpoint members) and from aneuploidy-stress, proteostasis or tumour-context directions.",
+      "prediction": "Open Targets knownDrugs for BUB1B, ChEMBL mechanisms for human BUB1B targets and DGIdb interactions for BUB1B return zero molecules with max_phase 4 (approved); approved molecules appear only for other targets in the expanded set (for example AURKB, KIF11, PLK1, TTK, HDAC1-3, HSP90AA1, MTOR, PRKAA1).",
+      "refuted_by": "Any molecule with an approved status (ChEMBL max_phase 4 or an FDA label) whose recorded mechanism of action names BUB1B/BubR1 as the target.",
+      "gene": "BUB1B",
+      "path": "track 2 - target search",
+      "status": "supported",
+      "confidence": 0.8021838885585817,
+      "suggested_confidence": 0.8022,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 30,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "In the first mva-drugs snapshot (Open Targets drugAndClinicalCandidates, ChEMBL mechanisms for human BUB1B targets, DGIdb interactions), BUB1B returns zero candidate molecules at any phase, so zero market-approved drugs act directly on BubR1; the 336 distinct approved drugs in the table all attach to other members of the expanded target set (273 targets: 27 seed, 246 Reactome pathway members).",
+          "source_ref": "methodology/078",
           "lineage_ref": ""
         }
       ]
