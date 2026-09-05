@@ -21,6 +21,7 @@ from . import (
     routes_search,
     science,
     submissions,
+    track2,
 )
 from .cache import Cache
 from .overview import overview
@@ -187,6 +188,7 @@ def router(settings, cache: Cache) -> APIRouter:
     science.add_routes(api, settings)
     phenotype.add_routes(api)
     submissions.add_routes(api, settings, cache)
+    track2.add_routes(api, settings, cache)
     return api
 
 
