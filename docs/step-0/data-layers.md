@@ -51,7 +51,12 @@ be provably identical to the source. Fidelity evidence and the one real DuckDB l
 
 ## Layer 2 — typed and queryable, derived from layer 1
 
-**Not built.** The design:
+**Partially built, 2026-09-05 — for the coding fraction only.** `results.coding_alleles`
+(one row per gene × ALT allele inside a coding interval, genotype fields parsed, every
+FILTER kept), `results.coding_candidates` (annotation joined) and `results.gene_biallelic`
+(one row per gene) implement the `variants` + `genotypes` grain below for the 1.4 % of the
+genome that can change a protein: [step-2 methodology 069](../iteration1/step-2/methodology/069-layer-2-coding-scan.md).
+The genome-wide typed layer and the INFO explosion remain unbuilt. The original design:
 
 | Table | Grain | Why separate |
 |---|---|---|
@@ -90,7 +95,7 @@ Each runs before the next step and fails loudly:
 | 2 | `mva-warehouse vcf-verify` — SHA-256 round trip over all records | passed |
 | 3 | `vcf-stage` writes the raw layer, then re-verifies against the Parquet | passed at full scale — `variants_raw` is loaded |
 | 4 | `fingerprint` + `compare` at every hop — row counts, per-column checksums, NULL and empty-string accounting | demonstrated over 1,000,000 records |
-| 5 | Layer 2 reconciliation | **not built** |
+| 5 | Layer 2 reconciliation | **not built** genome-wide; the coding layer's allele count is asserted against the panel result in [069](../iteration1/step-2/methodology/069-layer-2-coding-scan.md) (BUB1B: 2 alleles, as entry 031 found) |
 
 Evidence: [`methodology/011`](methodology/011-duckdb-fidelity-and-ingestion-gates.md)
 and [`methodology/014`](methodology/014-source-of-truth-and-lineage.md).

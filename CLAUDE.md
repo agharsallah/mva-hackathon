@@ -25,14 +25,37 @@
   Do not re-explore the platform; the toolset page names the verb, route, page and module.
 - A tool a research step needs (app page, API route, module) is recorded in **that step's**
   `methodology/`; only a cross-step platform fix still lands in step-0 and names the step.
-- Methodology numbers are global; the next is **069**. Never reuse a number.
+- Methodology numbers are global; the next is **077**. Never reuse a number.
 - Oracle budget is **6** uploads (one registered member). No upload before step 6's gate:
-  callset normalized, hypotheses filed, CSV rehearsed on the scorer replica, two independent
-  methods agree. Timing is the user's call when step 6 opens.
+  callset normalized, hypotheses filed, CSV rehearsed on the scorer replica **and** cross-checked
+  with the organisers' published `evaluation.py` (`tools/design_submission.py` does both), two
+  independent methods agree. Timing is the user's call when step 6 opens.
 - A claim whose test already ran in step 0 is filed prefixed `retrospective:` and cites the
   entry; it is never a pre-registered prediction.
 - Priority: analysis of the genomic and clinical data and a well-elaborated report outrank
   oracle tactics. Every step produces its report artifact as it runs.
+
+## Submissions — one iteration, one folder
+- Every upload-ready iteration lives in `submissions/<track>/iteration-<n>/`: the report
+  (`report.md` + the rendered `<user>_<track>_report.pdf`), the filled methods form
+  (`methods-form.json` → `<user>_<track>_methods_form.xlsx`), the coordinate-free decode
+  table, and a `README.md` that says what to upload, how to read the folder, which steps
+  contributed (with links to their methodology entries), and what to do after the reply.
+- Steps 1–8 **contribute** to an iteration; they do not own deliverables. Their evidence
+  stays in `docs/<iteration>/step-<n>/`; the iteration folder links to it. Figures stay in `figures/`.
+- The predictions CSV holds real coordinates and is **never committed**: it lives under
+  `build/submission/` and the folder README records its sha256 and rebuild command.
+- An iteration folder is frozen once uploaded. The reply starts `iteration-<n+1>/` —
+  `tools/new_iteration.py` does the freezing and the scaffolding; its README lifecycle page
+  is `submissions/README.md`.
+- Tooling, in order: `tools/resolve_submission_spec.py` (committed coordinate-free
+  `spec.selectors.json` → gitignored spec), `tools/design_submission.py` (CSV + rehearsal +
+  cross-check against the organisers' scorer + decode table), `tools/check_iteration.py` (the
+  folder gate: deliverables present and fresh, form complete, selectors consistent, sha256,
+  frozen folders untouched), `tools/new_iteration.py` (freeze n, open n+1, bump `ITERATION`),
+  `tools/check_coordinates.py` (no coordinate leaves `build/`),
+  `tools/render_track1_figures.py`, `tools/md_to_html.py` + `tools/md_to_pdf.mjs` (PDF),
+  `tools/fill_methods_form.py` (xlsx). Track 2 follows the same layout.
 
 ## Python
 - Use `uv` for all Python work: `uv run`, `uv add`, `uv sync`. Do not use `pip`, `python -m venv`, or bare `python`.
@@ -48,8 +71,11 @@
 
 ## Quality gates
 Before pushing Python, run `tools/check-python.sh` (add `--fix` to format and autofix first).
-It runs the six gates CI runs: ruff format, ruff lint, module size, import layering, mypy,
-pytest. Why each rule is set where it is — and what to do when one fails — is owned by
+It runs the eight gates CI runs: ruff format, ruff lint, module size, import layering, mypy,
+the coordinate gate (`tools/check_coordinates.py` — no patient position in any tracked file;
+synthetic examples go in `tools/coordinate_allowlist.txt` with a reason), the iteration-folder
+gate (`tools/check_iteration.py` — every `submissions/*/iteration-*` honours its declared
+state), pytest. Why each rule is set where it is — and what to do when one fails — is owned by
 [`docs/notes/python-quality-gates.md`](docs/notes/python-quality-gates.md). Two standing rules:
 - A gate that is wrong for a change gets fixed, and the reason recorded in that note. Never
   `--no-verify`, never a bare `# noqa` — a suppression states its reason inline.
@@ -59,16 +85,17 @@ pytest. Why each rule is set where it is — and what to do when one fails — i
 ## Documentation rules
 - One doc index: `docs/README.md`. The root `README.md` is the front door (what this is, data
   perimeter, quickstart) and links to the index; it never duplicates it.
-- Docs are grouped by roadmap step: `docs/step-<n>/` holds the pages, notes and methodology
-  entries for work that belongs to that step. `docs/step-0/` is the built platform (delivery,
-  object store, warehouse, exploration toolkit). Cross-step pages — `current-state.md`,
+- Docs are grouped by roadmap step. `docs/step-0/` is the built platform (delivery, object
+  store, warehouse, exploration toolkit). Research steps live under
+  `docs/<iteration>/step-<n>/` (`iteration1/` today; `mva.science.steps.ITERATION` names the
+  current one) — one folder per submission iteration, frozen once that iteration is uploaded. Cross-step pages — `current-state.md`,
   `roadmap.md`, `decisions.md`, `dictionary.md` — stay at `docs/` root. Each step folder carries
   its own `README.md` index, linked from `docs/README.md`.
 - Every measured number about the dataset has exactly one owner: `ideation/data-findings.md`.
   Other docs link to it; they never restate the number. Evidence for how a number was measured
-  lives in the `docs/step-<n>/methodology/` entry that produced it.
+  lives in the `methodology/` entry that produced it (`docs/step-0/` or `docs/<iteration>/step-<n>/`).
 - One decision, one note: design decisions live in `docs/notes/` when they govern every step, or
-  in `docs/step-<n>/notes/` when they belong to one step — one file each, with a
+  in the step's own `notes/` folder when they belong to one step — one file each, with a
   `**Standing:**` line saying whether it still holds. Other docs state the *result* in one
   sentence and link the note; they never re-argue it.
 - Every doc outside `methodology/` and `archive/` carries a `Standing:` or `Verified:` line near
@@ -87,7 +114,8 @@ pytest. Why each rule is set where it is — and what to do when one fails — i
 
 ## Methodology tracking
 - Track the methodology and how each result was reached in the `methodology/` folder of the step
-  it belongs to — `docs/step-0/methodology/` for the platform, `docs/step-<n>/methodology/` after.
+  it belongs to — `docs/step-0/methodology/` for the platform,
+  `docs/<iteration>/step-<n>/methodology/` after.
 - After any analysis or pipeline run, record in `methodology/` the question, inputs (files, versions,
   parameters), the exact commands run, the observed output, and the conclusion drawn — enough for
   someone else to reproduce it.

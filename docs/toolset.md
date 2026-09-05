@@ -1,6 +1,6 @@
 # Toolset — what answers what
 
-**Standing:** current as of 2026-09-04, written from executed `--help` output, the route
+**Standing:** current as of 2026-09-05 (layer-2 coding scan, `annotate-coding`, probe designer added), written from executed `--help` output, the route
 tables in `src/mva/viz/`, the module manifest in `app/src/app/modules/index.ts`, and
 `pyproject.toml` `[project.scripts]`. Every name below was verified to exist.
 
@@ -60,6 +60,7 @@ Layer 1 is the lossless all-text raw table; derivations are named SQL over it.
 | Question | CLI | API route / app page | Module |
 |---|---|---|---|
 | Annotate panel alleles through Ensembl VEP REST | `mva-warehouse annotate-panel` | `/api/panel/annotations` · `/panel` | `pipeline/annotate_vep.py`, `vep_response.py`, `warehouse/annotate.py` |
+| Annotate every coding allele genome-wide (layer 2, resumable) | `mva-warehouse annotate-coding` | — | `warehouse/annotate_coding.py`, `analysis_coding.py`, `reference_coding.py`; `tools/build_coding_regions.py` |
 | gnomAD frequency and constraint | — | `/api/panel/constraint` · `/compare` | `analysis_reference.py` |
 | Is this site in ClinVar as pathogenic? | — | `/api/panel/clinvar-presence` · `/compare` | `analysis_clinvar.py` |
 | Gene structure / protein structure for one gene | — | `/api/panel/gene-structure`, `/api/panel/protein-structure`, `/api/panel/structure-genes`, `/api/prediction/{accession}` | `viz/genestructure.py`, `proteinstructure.py`, `mmcif.py` |
@@ -97,6 +98,12 @@ Budget is **6 submissions**; `probe-budget` is the authority on what is left.
 |---|---|---|---|
 | Build a candidate submission CSV | — | `/api/probe/build` · `/probes` | `pipeline/submission.py`, `viz/probebuild.py` |
 | Grade it offline before spending a probe | — | — | `pipeline/scorer.py` |
+| Read a submission as a measurement: decode table + expected information gain over a hypothesis space | `tools/design_submission.py` | — | `pipeline/probe_design.py` |
+| Cross-check the replica against the organisers' published `evaluation.py`, key by key | inside `tools/design_submission.py` (`--reference-scorer`) | — | `pipeline/scorer_reference.py` |
+| Is a patient coordinate anywhere in the tree? (quality gate) | `tools/check_coordinates.py` | — | `tools/coordinate_allowlist.txt` |
+| Turn the committed, coordinate-free `spec.selectors.json` into the gitignored spec (exactly one warehouse row per allele) | `tools/resolve_submission_spec.py` | — | `warehouse/submission_spec.py` |
+| Is an iteration folder complete, fresh, consistent and — if frozen — untouched? (quality gate) | `tools/check_iteration.py` | — | — |
+| Freeze iteration n, open iteration n+1 (docs + submission folders), bump `ITERATION` | `tools/new_iteration.py` | — | `science/steps.py` |
 | How many probes are left? | `mva-warehouse probe-budget` | `/api/probe/ledger` · `/probes` | `warehouse/probes.py` |
 | Record a spent submission and its reply | `mva-warehouse probe-log`, `probe-list` | `/api/probe/ledger` | `warehouse/probes.py`, `cli_ledger.py` |
 | Bind an oracle reply to the claims it tested | `mva-science probe-link` | `/science` | `science/evidence.py` |
@@ -142,11 +149,11 @@ Budget is **6 submissions**; `probe-budget` is the authority on what is left.
 
 | Gap | Consequence | Owner |
 |---|---|---|
-| **Layer 2 unbuilt** — no typed `variants` / `genotypes` / `variant_info` tables | every query re-parses layer 1 text | [`step-0/data-layers.md`](step-0/data-layers.md) |
-| **No normalization seam** — `bcftools norm` runs by hand, outside the pipeline | "was this normalized?" is answered by memory, and indel spellings can miss the scorer | [`step-1/`](step-1/) |
-| **No genome-wide annotator** — VEP REST is wired for the 8-gene panel only | rarity and consequence exist for the panel, not the ~5M callset | [`step-2/`](step-2/) |
-| **No alignment, no SV calling** — no BAM path, no structural-variant or deep-intronic caller | a second allele the caller could not emit is unreachable | [`step-5/`](step-5/) |
-| **Track 2 has zero code** — no drug, target or trial source wired | drug repurposing is desk research until a module exists | [`step-8/`](step-8/) |
+| **Layer 2 built for the coding fraction only** — `results.coding_alleles` / `coding_candidates` / `gene_biallelic` ([069](iteration1/step-2/methodology/069-layer-2-coding-scan.md)); no genome-wide typed `variants` / `genotypes` / `variant_info` | non-coding queries still re-parse layer 1 text | [`step-0/data-layers.md`](step-0/data-layers.md) |
+| **No normalization seam** — `bcftools norm` runs by hand, outside the pipeline | "was this normalized?" is answered by memory, and indel spellings can miss the scorer | [`iteration1/step-1/`](iteration1/step-1/) |
+| **Annotator covers coding alleles, not the whole callset** — `mva-warehouse annotate-coding` annotates every coding allele genome-wide through VEP REST, checkpointed ([069](iteration1/step-2/methodology/069-layer-2-coding-scan.md)); deep-intronic and UTR alleles are still unannotated | a non-coding second allele is invisible to the rarity/consequence filter | [`iteration1/step-2/`](iteration1/step-2/) |
+| **No alignment, no SV calling** — no BAM path, no structural-variant or deep-intronic caller | a second allele the caller could not emit is unreachable | [`iteration1/step-5/`](iteration1/step-5/) |
+| **Track 2 has zero code** — no drug, target or trial source wired | drug repurposing is desk research until a module exists | [`iteration1/step-8/`](iteration1/step-8/) |
 
 ## How to add a tool
 

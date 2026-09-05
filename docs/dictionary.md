@@ -61,6 +61,11 @@ have to guess what a shape means.
 
 **Intron** — the parts cut out and thrown away before the recipe is used (like commercials cut from a recorded show).
 
+**CDS (coding sequence)** — the part of the [exons](#1-dna-basics-read-this-first-everything-else-needs-it) that is actually translated into protein. Exons also carry untranslated ends (UTRs); the CDS is the recipe proper. About 1 % of the genome, plus the [stop codon](#1-dna-basics-read-this-first-everything-else-needs-it) that ends it. Nearly every variant that breaks a protein sits in the CDS or within a few bases of its edges.
+*Example: `ressources/reference/coding_regions.tsv` — every CDS of every protein-coding transcript, widened by 8 bases on each side and merged per gene: 223,048 intervals, 44.6 Mb ([methodology 069](iteration1/step-2/methodology/069-layer-2-coding-scan.md)).*
+
+**Splice flank** — the few intronic bases on each side of an exon that the splicing machinery reads. A change there can wreck splicing without touching the CDS itself. The ±2 bases are the **canonical splice sites** (almost always damaging); VEP's `splice_region_variant` reaches ±8. That is why the coding intervals above are widened by 8, not 0.
+
 **Splicing** — the cutting-out step. Cell removes introns, glues exons together.
 *If splicing goes wrong, the recipe is garbled and the protein is broken.*
 
@@ -1043,6 +1048,9 @@ and its phenotype is worded mosaic variegated **hyperploidy**, not aneuploidy.*
 
 ---
 
+**GTF (Gene Transfer Format)** — Ensembl's gene-model file: one tab-separated line per gene, transcript, exon, [CDS](#1-dna-basics-read-this-first-everything-else-needs-it) or stop codon, with a semicolon-packed attribute column (`gene_id "…"; gene_name "…"; transcript_biotype "…";`). It is the coordinate source for "which bases are coding". Like a BED with a type column and a bag of key–value tags.
+*Example: `Homo_sapiens.GRCh38.116.gtf.gz`, 141 MB, ~11 million lines, 2,977,130 of them CDS or stop-codon rows of protein-coding transcripts — the input to `tools/build_coding_regions.py`.*
+
 ## 9. Prediction scores (guessing if a variant is harmful)
 
 **In-silico prediction** — a computer's guess, no lab experiment. ("in silico" = in the chip.)
@@ -1603,6 +1611,12 @@ flowchart TB
 
 **Decode table** — the lookup that translates the returned F-max number back into "which rows held the true alleles".
 
+**Hypothesis space** — the explicit list of answer keys you still consider possible before an upload, each with a prior weight. The [probe designer](#13-hackathon-scoring-words) simulates the scorer's reply for every member; two members that would produce the same reply are *indistinguishable* by that upload, and the reply you actually get deletes every member that would have produced a different one.
+*Example: `{stop+missense, stop+intronic-A, missense+intronic-A, stop+unknown, missense+unknown}` — five keys; a pair row at rank 1 followed by two partner singles tells the five apart except `stop+intronic-A` vs `missense+intronic-A` ([`mva.pipeline.probe_design`](../src/mva/pipeline/probe_design.py)).*
+
+**Expected information gain** — how many [bits](#11-math-probability-and-statistics-words) of uncertainty an upload is expected to remove, averaged over the hypothesis space with its priors. The number to compare two candidate row layouts on *before* spending a submission. Ceiling: the [entropy](#11-math-probability-and-statistics-words) of the prior — an upload that tells every member apart reaches it.
+*Example: five equiprobable keys = 2.32 bits of prior entropy; a layout that leaves one pair of keys confused 40 % of the time gains 1.92 bits.*
+
 **Leaderboard freeze** — the deadline after which no more submissions count (Oct 24, 23:59 UTC).
 
 ![Timeline from today to the freeze, judging and deletion deadline](assets/timeline.svg)
@@ -1734,6 +1748,6 @@ flowchart LR
 
 **Register** — the collection of all hypotheses and their revisions. *Example:* `warehouse.hypotheses`.
 
-**Dossier** — one claim plus everything recorded about it: every revision, every evidence row, and the weighing over them. What gets exported as a Markdown file and rendered as a report section. *Example:* `docs/step-1/hypotheses/h001-bub1b.md`.
+**Dossier** — one claim plus everything recorded about it: every revision, every evidence row, and the weighing over them. What gets exported as a Markdown file and rendered as a report section. *Example:* `docs/iteration1/step-1/hypotheses/h001-bub1b.md`.
 
 **Provenance vs belief** — two different questions, often confused. **Provenance** is *where did this byte come from* — answered by lineage and hashes. **Belief** is *what do we think is true and why* — answered by the register. A perfect provenance chain tells you nothing about whether a conclusion is right. *Example:* `data_lineage` says which VCF produced a table; `warehouse.evidence` says what that table made us believe.

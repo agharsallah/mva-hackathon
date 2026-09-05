@@ -57,7 +57,7 @@ the register as `retrospective:` claims under the step they answer
 | Is the sample mosaic-aneuploid at the allele-balance floor? | [037](methodology/037-baf-karyogram.md) | step 5 |
 | Do the panel's non-PASS calls hide a rare damaging allele? | [049](methodology/049-suppressed-calls.md) | step 4 |
 | Is either candidate allele already in ClinVar? | [051](methodology/051-clinvar-presence.md) | step 2 / step 7 |
-| Does a panel-blind phenotype ranking agree? | [step-3/067](../step-3/methodology/067-phenotype-ranking-without-java.md) | step 3 |
+| Does a panel-blind phenotype ranking agree? | [iteration1/step-3/067](../iteration1/step-3/methodology/067-phenotype-ranking-without-java.md) | step 3 |
 
 ## Tooling after the close
 
@@ -103,7 +103,7 @@ works — not a claim about the patient that evidence could refute. So:
   what was measured, ending in *Conclusions*;
 * the register in `mva-science` **refuses** a hypothesis filed under `step-0`.
 
-From [step 1](../step-1/README.md) on it is the other way round: each step declares one
+From [step 1](../iteration1/step-1/README.md) on it is the other way round: each step declares one
 research goal, every claim under it states what would refute it before it is tested, and
 every methodology entry is a test bound to a claim. That loop is
 [`../method.md`](../method.md).

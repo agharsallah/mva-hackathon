@@ -29,6 +29,15 @@ matters because an earlier version of this banner got it wrong:
 The Postgres, MinIO and row-count numbers in §2 were **not** re-checked on that date and
 still carry the 2026-08-29 / 2026-09-03 dates stated in their own rows.
 
+**2026-09-05 addendum (not a full re-verification):** two ingest tables (`coding_regions`,
+`coding_annotations`) and three result tables (`coding_alleles`, `coding_candidates`,
+`gene_biallelic`) were added by [step-2 methodology 069–070](iteration1/step-2/methodology/069-layer-2-coding-scan.md);
+the register holds 9 hypotheses and 29 evidence rows (`mva-science check` passed, no
+coordinates); the test suite grew by 77 tests to 1,687 (`tools/check-python.sh`, green);
+`tools/check_coordinates.py` and `tools/check_iteration.py` joined the gate
+([075](step-0/methodology/075-coordinate-gate-and-redaction.md), [076](iteration1/step-6/methodology/076-iteration-tooling.md)).
+The counts in §2 below were not re-measured on that date.
+
 This page owns **repository and infrastructure numbers** — test counts, table counts,
 object counts, what is provisioned. **Dataset measurements** (variant counts, coverage,
 read counts, panel tallies) are owned by
@@ -110,9 +119,9 @@ Postgres and MinIO both run on a **remote VPS**, not locally.
 | bucket `source/` | 12 objects, 84,985,953,378 bytes (84.99 GB) |
 | hash verification | 12/12 `hash_verified=true` — 10 against the publisher's SHA-256, 2 own-upload — **0 mismatches** |
 | `warehouse.source_files` | append-only ledger, 14 rows (VCF + `.tbi` uploaded twice, same hash — correct, not drift) |
-| `warehouse.data_lineage` | append-only edge list, **39 rows** counted live 2026-09-04 (37 over 29 distinct target tables on 2026-09-03 (a re-derived table gets a new edge, never an edit, so rows exceed targets): 2 for `variants_raw` (the original local-path edge and the superseding `s3://mva/source/…` edge carrying the verified sha256 and version), 1 per derivation, 1 per staged reference table, and 1 for the VEP annotation call. The two newest are the HPO tables, each carrying its upstream URL, release and input digest ([step-3/methodology/067](step-3/methodology/067-phenotype-ranking-without-java.md) §7b) |
+| `warehouse.data_lineage` | append-only edge list, **39 rows** counted live 2026-09-04 (37 over 29 distinct target tables on 2026-09-03 (a re-derived table gets a new edge, never an edit, so rows exceed targets): 2 for `variants_raw` (the original local-path edge and the superseding `s3://mva/source/…` edge carrying the verified sha256 and version), 1 per derivation, 1 per staged reference table, and 1 for the VEP annotation call. The two newest are the HPO tables, each carrying its upstream URL, release and input digest ([iteration1/step-3/methodology/067](iteration1/step-3/methodology/067-phenotype-ranking-without-java.md) §7b) |
 | `warehouse.probe_ledger` | oracle submissions spent: **0 of 6** (one registered member; `MVA_TEAM_MEMBERS` scales it). The `hypothesis_ids` widening from entry 017 was **applied 2026-09-04** to the live table (12 columns, counted live) |
-| `warehouse.hypotheses`, `warehouse.evidence` | **2 hypotheses, 6 evidence rows**, all under step-3 ([step-3/methodology/067](step-3/methodology/067-phenotype-ranking-without-java.md)), counted live 2026-09-04. No verdict committed. The committed mirror `science-register.json` and `figures/science-report.html` were re-exported the same day and agree |
+| `warehouse.hypotheses`, `warehouse.evidence` | **2 hypotheses, 6 evidence rows**, all under step-3 ([iteration1/step-3/methodology/067](iteration1/step-3/methodology/067-phenotype-ranking-without-java.md)), counted live 2026-09-04. No verdict committed. The committed mirror `science-register.json` and `figures/science-report.html` were re-exported the same day and agree |
 
 Both probes connect: `uv run mva-warehouse pg-check`, `uv run mva-warehouse s3-check`.
 
@@ -187,7 +196,7 @@ Stated here so they are not discovered later. Sequencing is in [`roadmap.md`](ro
 | Gap | What is actually wrong | Consequence |
 |---|---|---|
 | **Staged Parquet is single-homed** | `build/warehouse/` exists only on one laptop | regenerable, so not data loss — but it is an undeclared dependency of `pg-ingest` |
-| **Layer 2 not built** | `variants` / `genotypes` / `variant_info` are designed only | see [`data-layers.md`](step-0/data-layers.md) |
-| **No genome-wide annotator** | the `Annotator` port has a real Ensembl VEP REST backend for the panel (`mva-warehouse annotate-panel`, entry 031); genome-wide needs an offline cache | step 2's remaining half — see [the note](notes/annotation-as-a-port.md) |
-| **`clinvar_panel` has no source digest** | its lineage edge names a ClinVar release but does not identify the bytes; the scratch VCF cannot be shown to be the download that produced the committed extract | the extract is reproducible from the release but not *provably* the same bytes. Left empty rather than guessed — see [step-3/methodology/067](step-3/methodology/067-phenotype-ranking-without-java.md) §7b |
-| **No verdict in the register** | two step-3 hypotheses are filed, none weighed | step 3's remaining test — the join to the callset — decides them. See [`method.md`](method.md) |
+| **Layer 2 built for the coding fraction only** (2026-09-05) | `results.coding_alleles` / `coding_candidates` / `gene_biallelic` exist ([069](iteration1/step-2/methodology/069-layer-2-coding-scan.md)); no genome-wide typed `variants` / `genotypes` | see [`data-layers.md`](step-0/data-layers.md) |
+| **Annotator covers coding alleles, not the whole callset** (2026-09-05) | `mva-warehouse annotate-coding` annotates every coding allele through VEP REST, checkpointed ([070](iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md)); deep-intronic and UTR alleles stay unannotated | step 2's remaining half — see [the note](notes/annotation-as-a-port.md) |
+| **`clinvar_panel` has no source digest** | its lineage edge names a ClinVar release but does not identify the bytes; the scratch VCF cannot be shown to be the download that produced the committed extract | the extract is reproducible from the release but not *provably* the same bytes. Left empty rather than guessed — see [iteration1/step-3/methodology/067](iteration1/step-3/methodology/067-phenotype-ranking-without-java.md) §7b |
+| **H009 carries no committed confidence** (by design, 2026-09-05) | seven verdicts are committed (H002–H008); the submission claim H009 is `testing` and its six evidence rows describe the same two alleles, so the heuristic would saturate | the oracle decides it — [074](iteration1/step-6/methodology/074-submission-v1-design.md). See [`method.md`](method.md) |

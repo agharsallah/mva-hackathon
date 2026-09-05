@@ -71,7 +71,7 @@ Two things the run itself surfaced:
 | Does the sample show whole-chromosome mosaic aneuploidy above the allele-balance floor? | [037](037-baf-karyogram.md) | no, all autosomes flat | step 5 |
 | Do the panel's non-PASS calls hide a rare damaging allele? | [049](049-suppressed-calls.md) | no, 0 of 20 | step 4 |
 | Is either candidate allele already in ClinVar? | [051](051-clinvar-presence.md) | one, the `stop_gained`, for MVA syndrome 1 | step 2 / 7 |
-| Does a panel-blind phenotype ranking agree? | [step-3/067](../../step-3/methodology/067-phenotype-ranking-without-java.md) | BUB1B 6th of 5,267 | step 3 (already filed) |
+| Does a panel-blind phenotype ranking agree? | [step-3/067](../../iteration1/step-3/methodology/067-phenotype-ranking-without-java.md) | BUB1B 6th of 5,267 | step 3 (already filed) |
 
 These enter the register as `retrospective:` claims under those steps — the rule added to
 [`method.md`](../../method.md) today — never as pre-registered predictions. Phase of the pair

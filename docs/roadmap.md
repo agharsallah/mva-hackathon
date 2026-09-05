@@ -1,6 +1,6 @@
 # Roadmap — the solving phase
 
-**Standing:** the sequencing plan for steps 1–8, re-checked 2026-09-04.
+**Standing:** the sequencing plan for steps 1–8, re-checked 2026-09-05 (steps 2, 3, 4 reached their exit criteria for the coding fraction; step 6 has a rehearsed v1).
 
 This page owns the order the steps run in and what each step must finish, produce and
 build. It owns nothing else: what exists today is [`current-state.md`](current-state.md);
@@ -24,13 +24,16 @@ when its code runs. Three rules fixed 2026-09-04:
 
 ## Where we stand
 
-- **Leading candidate:** a BUB1B pair — one `stop_gained`, one `missense_variant`, both
-  het, both PASS ([§6.1](../ideation/data-findings.md)). **Phase is unknown**: two `0/1`
-  calls are equally consistent with *cis*, so this is an observation, not a verdict.
-- **Four independent checks converge** on it: VEP rarity, ClinVar site-first, suppressed
-  calls, phenotype ranking ([§6.2](../ideation/data-findings.md)).
-- **Unbuilt:** the normalization seam (1); layer 2 and a genome-wide annotator (2);
-  alignment and SV calling (5, funded only as the k-mer strike); all Track 2 code (8).
+- **Candidate pair, now a registered verdict:** the BUB1B `stop_gained` + `missense_variant`
+  pair is the only biallelic set the **genome-wide coding scan** leaves standing under
+  three conditions (H004, supported 0.93; [§6.3](../ideation/data-findings.md)), and the
+  best-ranked biallelic gene by symptoms (H005, 0.80). **Phase is still unknown** — the
+  trans claim (H009) is what the oracle tests.
+- **Report written:** [`submissions/track1/iteration-1/report.md`](../submissions/track1/iteration-1/report.md), 2026-09-05. **Submission v1
+  designed and rehearsed, not uploaded** ([iteration1/step-6/074](iteration1/step-6/methodology/074-submission-v1-design.md)).
+- **Built this week:** layer 2 for the coding fraction, `annotate-coding`, the probe designer
+  (steps 2, 3, 4, 6). **Still unbuilt:** the normalization seam as a pipeline stage (1, the
+  run itself is in 073); non-coding annotation (2); alignment and SV calling (5); Track 2 (8).
 - **Oracle budget: 0 of 6 spent.** One registered member, so 6 is the ceiling; ≥ 1 is held
   in reserve to the freeze.
 
@@ -71,10 +74,13 @@ flowchart TB
 
 **Goal:** *Does every variant in the callset have exactly one spelling, so that an
 exact-string-matching scorer can be trusted with an indel?*
-Step page: [`step-1/README.md`](step-1/README.md).
+Step page: [`iteration1/step-1/README.md`](iteration1/step-1/README.md).
 
-- **Status:** open, nothing run.
-- **Already done:** nothing. No hypothesis filed.
+- **Status:** open — the run happened, the seam did not. H008 supported 0.83
+  ([073](iteration1/step-1/methodology/073-normalization-of-the-candidates.md)): both candidate
+  alleles are SNVs at bi-allelic sites, and `bcftools norm` changed **zero** bi-allelic records
+  genome-wide ([§3.1](../ideation/data-findings.md)). Still not a pipeline stage.
+- **Already done:** the normalization run and its arithmetic (073).
 - **Remaining:** fetch the no-chr GRCh38 analysis-set FASTA (~3 GB, local, fine); run the
   command below; make normalization a **tested pipeline seam**, so "was this normalized?"
   is answerable in code rather than by remembering a shell command; re-run the ClinVar
@@ -99,9 +105,13 @@ bcftools index -t <scratch>/proband.norm.vcf.gz
 ## Step 2 — Annotate the callset
 
 **Goal:** *Which variants are rare enough and damaging enough to cause an ultra-rare
-recessive disease, and in which gene?* Step page: [`step-2/README.md`](step-2/README.md).
+recessive disease, and in which gene?* Step page: [`iteration1/step-2/README.md`](iteration1/step-2/README.md).
 
-- **Status:** open — the panel is annotated, the genome is not.
+- **Status:** exit criterion met for the coding fraction (2026-09-05) — layer 2 built, every
+  coding allele annotated, H004 supported 0.93
+  ([069](iteration1/step-2/methodology/069-layer-2-coding-scan.md),
+  [070](iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md)). Non-coding
+  annotation is the remaining half.
 - **Already done:** VEP REST over the eight-gene panel
   ([031](step-0/methodology/031-vep-rest-panel-annotation.md)) collapses it to the two
   BUB1B alleles ([§6.1](../ideation/data-findings.md)); ClinVar presence measured
@@ -124,12 +134,13 @@ recessive disease, and in which gene?* Step page: [`step-2/README.md`](step-2/RE
 
 **Goal:** *Does an unbiased genome-wide ranking driven by the child's HPO terms agree with
 the panel-first candidate list?*
-Step page: [`step-3/README.md`](step-3/README.md).
+Step page: [`iteration1/step-3/README.md`](iteration1/step-3/README.md).
 
-- **Status:** open — the ranking is built and has run; the confirmatory join has not.
+- **Status:** exit criterion met (2026-09-05) — the join ran, H005 supported 0.80
+  ([071](iteration1/step-3/methodology/071-phenotype-callset-join.md)); H001 waits for the oracle.
 - **Already done:** Exomiser's human-only phenotype path reimplemented in Python
   ([`src/mva/phenotype/`](../src/mva/phenotype/README.md),
-  [067](step-3/methodology/067-phenotype-ranking-without-java.md); results and limits in
+  [067](iteration1/step-3/methodology/067-phenotype-ranking-without-java.md); results and limits in
   [§6.2](../ideation/data-findings.md)). It needed neither step 1 nor step 2 — ranking
   genes by symptoms reads no callset — so the dependency this page assumed did not exist.
 - **Remaining:** the cross-check the step was written for — **join the ranking to the
@@ -143,9 +154,10 @@ Step page: [`step-3/README.md`](step-3/README.md).
 ## Step 4 — Mine the suppressed calls
 
 **Goal:** *Is one of the two alleles hiding in a call the quality filters discarded, rather
-than absent from the sample?* Step page: [`step-4/README.md`](step-4/README.md).
+than absent from the sample?* Step page: [`iteration1/step-4/README.md`](iteration1/step-4/README.md).
 
-- **Status:** open. Closed for the panel, untested genome-wide.
+- **Status:** exit criterion met for coding calls (2026-09-05) — H007 supported 0.80, H006
+  (retrospective) 0.77 ([072](iteration1/step-4/methodology/072-genome-wide-suppressed-calls.md)).
 - **Already done:** the panel's non-PASS records annotated and screened — **none rare and
   protein-altering**; TRIP13's cluster is a paralogous-read pileup
   ([049](step-0/methodology/049-suppressed-calls.md), [§6.2](../ideation/data-findings.md)).
@@ -163,7 +175,7 @@ than absent from the sample?* Step page: [`step-4/README.md`](step-4/README.md).
 
 **Goal:** *Is the missing allele a variant the caller could not emit at all — a structural
 variant, a deep intronic call, or a low-fraction mosaic?*
-Step page: [`step-5/README.md`](step-5/README.md).
+Step page: [`iteration1/step-5/README.md`](iteration1/step-5/README.md).
 
 - **Status:** planned, conditional on steps 2–4 leaving a gap.
 - **Already done:** the k-mer strike over the Parquet read store works and is timed
@@ -191,9 +203,12 @@ Step page: [`step-5/README.md`](step-5/README.md).
 ## Step 6 — Spend the oracle budget
 
 **Goal:** *Which candidate pair does the scorer confirm, and what does each reply tell us
-that the next submission should exploit?* Step page: [`step-6/README.md`](step-6/README.md).
+that the next submission should exploit?* Step page: [`iteration1/step-6/README.md`](iteration1/step-6/README.md).
 
-- **Status:** planned, gated. **0 of 6 submissions spent.**
+- **Status:** open — v1 designed, rehearsed on the replica and re-graded with the organisers'
+  published scorer, all eight keys agreeing
+  ([074](iteration1/step-6/methodology/074-submission-v1-design.md), [075](step-0/methodology/075-coordinate-gate-and-redaction.md)).
+  **0 of 6 submissions spent**; the upload date is the user's call.
 - **Already done:** the [local scorer replica](notes/local-scorer-replica.md)
   (`src/mva/pipeline/scorer.py`), the payload builder
   ([046](step-0/methodology/046-probe-builder.md), `src/mva/viz/probebuild.py`), the ledger.
@@ -223,7 +238,7 @@ uv run mva-warehouse probe-log --by <member> --type S --payload-file build/probe
 
 **Goal:** *Does public knowledge — published MVA cases, ClinVar, protein-model scores —
 name an allele or a pair the data-driven steps missed, or independently corroborate the one
-they found?* Step page: [`step-7/README.md`](step-7/README.md).
+they found?* Step page: [`iteration1/step-7/README.md`](iteration1/step-7/README.md).
 
 - **Status:** planned. This step is
   [solution paths 5 and 6](../ideation/solution-paths.md) — desk and API work with no
@@ -253,7 +268,7 @@ they found?* Step page: [`step-7/README.md`](step-7/README.md).
 ## Step 8 — Track 2, drug repurposing
 
 **Goal:** *Which market-approved drugs act on the mechanism the confirmed alleles imply,
-and how strong is the evidence for each?* Step page: [`step-8/README.md`](step-8/README.md).
+and how strong is the evidence for each?* Step page: [`iteration1/step-8/README.md`](iteration1/step-8/README.md).
 
 - **Status:** planned. **Nothing executed.**
 - **Timing:** desk research and case-agnostic drug-source tooling start **week 2**.
@@ -282,7 +297,7 @@ and how strong is the evidence for each?* Step page: [`step-8/README.md`](step-8
 
 Re-checked 2026-09-04. Three former rows are gone because they were **answered** (all in
 [§6.2](../ideation/data-findings.md)): `HP:0200067` should be excluded
-([067](step-3/methodology/067-phenotype-ranking-without-java.md) §5); the candidate is
+([067](iteration1/step-3/methodology/067-phenotype-ranking-without-java.md) §5); the candidate is
 already in ClinVar ([051](step-0/methodology/051-clinvar-presence.md)); the aneuploid
 fraction sits below the VCF-level floor, every autosome flat
 ([037](step-0/methodology/037-baf-karyogram.md)).
