@@ -4,7 +4,7 @@
 **Numbering:** filed as 056 on 2026-09-03; renumbered 067 on 2026-09-04 because step-0 already held a 056. Content unchanged.
 **Verified:** 2026-09-03, against HPO release `hp/releases/2026-06-23`.
 
-**On pre-registration, stated plainly.** [`method.md`](../../method.md) requires a research
+**On pre-registration, stated plainly.** [`method.md`](../../../method.md) requires a research
 entry to carry its hypothesis and refutation condition *written before the run*. This entry
 does not, because the first execution was **building and validating the instrument** — the
 numbers below are observations produced while checking that the machinery works, not a
@@ -14,13 +14,13 @@ a result nobody can trust.
 
 ## 1. Question
 
-[`roadmap.md`](../../roadmap.md) step 3 and `src/mva/science/steps.py` declare the goal:
+[`roadmap.md`](../../../roadmap.md) step 3 and `src/mva/science/steps.py` declare the goal:
 
 > Does an unbiased genome-wide ranking driven by the child's HPO terms agree with the
 > panel-first candidate list?
 
 The reason it matters is a bias in everything before it. The current lead — two rare
-protein-altering alleles in one gene ([data-findings](../../../ideation/data-findings.md)
+protein-altering alleles in one gene ([data-findings](../../../../ideation/data-findings.md)
 §6.1) — was found by filtering an **eight-gene panel chosen by hand** from what is known
 about the disease. That prior is circular: the search found MVA genes because it only
 looked at MVA genes. `analysis_funnel.py` says so outright, that no genome-wide ranking
@@ -147,7 +147,7 @@ Before the fix that phantom ranked **22nd**. Dropped at parse time.
 | Failure to thrive | Decreased body weight | 1.14 |
 | Skeletal muscle atrophy | Abnormal skeletal muscle morphology | 0.96 |
 
-**The parental-term question, answered.** [`roadmap.md`](../../roadmap.md) §2b lists as
+**The parental-term question, answered.** [`roadmap.md`](../../../roadmap.md) §2b lists as
 unresolved whether `HP:0200067` (recurrent spontaneous abortion — a *parental* feature)
 belongs in the proband's term set. Every panel gene rises when it is removed:
 

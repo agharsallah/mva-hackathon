@@ -1,7 +1,7 @@
 # Step 3 — Rank by phenotype
 
-**Standing:** open. The ranking is built and has run; the claim it supports is registered
-but not yet confirmed against the callset. Method: [`../method.md`](../method.md).
+**Standing:** exit criterion met 2026-09-05 — the ranking is joined to the genome-wide callset and H005 is supported ([071](methodology/071-phenotype-callset-join.md)); H001 waits for the oracle. Earlier: the ranking is built and has run; the claim it supports is registered
+but not yet confirmed against the callset. Method: [`../method.md`](../../method.md).
 Evidence: [`methodology/067`](methodology/067-phenotype-ranking-without-java.md).
 Last checked 2026-09-03.
 
@@ -26,7 +26,7 @@ kind.
 
 ## Why it did not wait for steps 1 and 2
 
-[`roadmap.md`](../roadmap.md) sequences this after normalisation and annotation. That
+[`roadmap.md`](../../roadmap.md) sequences this after normalisation and annotation. That
 turned out to be unnecessary: ranking **genes** by symptoms needs no callset at all, so it
 runs against nothing but two public files. The dependency was assumed, not real.
 
@@ -39,7 +39,7 @@ and Java-serialised objects — 31.5 GB unpacked, unreadable from Python — but
 top-10 against 66.6% for the cross-species default. The components that are hard to
 reproduce are the ones the evidence says to leave out.
 
-The package is [`src/mva/phenotype/`](../../src/mva/phenotype/README.md). Nothing in
+The package is [`src/mva/phenotype/`](../../../src/mva/phenotype/README.md). Nothing in
 `mva.pipeline` changed to accommodate it.
 
 ## Headline result
