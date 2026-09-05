@@ -1,8 +1,8 @@
 # Step 4 — Mine the suppressed calls
 
-**Standing:** open. Closed for the eight-gene panel, untested genome-wide. No hypothesis is
-filed. Method: [`../method.md`](../method.md). Sequencing:
-[`../roadmap.md`](../roadmap.md) §1. Last checked 2026-09-04.
+**Standing:** exit criterion met for coding calls 2026-09-05 — H006 (panel, retrospective) and H007 (genome-wide coding) supported ([072](methodology/072-genome-wide-suppressed-calls.md)). Earlier standing: closed for the eight-gene panel, untested genome-wide. No hypothesis was
+filed. Method: [`../method.md`](../../method.md). Sequencing:
+[`../roadmap.md`](../../roadmap.md) §1. Last checked 2026-09-04.
 
 ---
 
@@ -23,9 +23,9 @@ filed. Method: [`../method.md`](../method.md). Sequencing:
 ## Already done
 
 - The panel's 20 non-PASS records were annotated and screened in step-0 methodology
-  [049](../step-0/methodology/049-suppressed-calls.md): **0 rare protein-altering**.
+  [049](../../step-0/methodology/049-suppressed-calls.md): **0 rare protein-altering**.
   TRIP13's cluster is a paralogous-read pileup. Numbers:
-  [`../../ideation/data-findings.md`](../../ideation/data-findings.md) §6.2.
+  [`../../ideation/data-findings.md`](../../../ideation/data-findings.md) §6.2.
 - The derivations that did it — `panel_suppressed`, `panel_filter_census` — live in
   `src/mva/warehouse/analysis_suppressed.py` and are reusable genome-wide.
 
@@ -53,6 +53,6 @@ exhibit for the heat map. Recorded in this step's methodology.
 
 | | |
 |---|---|
-| Hypotheses | none recorded yet — [`hypotheses/`](hypotheses/), written by `mva-science export` |
-| Tests | none run under this step — entries land in [`methodology/`](methodology/), numbered from 069 |
+| Hypotheses | H006 (retrospective), H007 — [`hypotheses/`](hypotheses/) |
+| Tests | [072](methodology/072-genome-wide-suppressed-calls.md) |
 | Rendered | `figures/science-report.html` |
