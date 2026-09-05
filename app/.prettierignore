@@ -18,3 +18,8 @@ src/fixtures/data/panel-structure-genes.json
 # `pnpm dictionary:check` compares these byte-for-byte, so prettier must not rewrite them.
 src/lib/dictionary/dictionary.generated.json
 src/lib/dictionary/assets
+
+# The captured /api/track2 reply: 3,766 drug-target rows plus 747 trials and 273 targets.
+# Prettier's one-key-per-line would triple the file and turn every recapture into an
+# unreadable diff. Machine-written, never hand-edited — same reason as the structure fixtures.
+src/fixtures/data/track2.json

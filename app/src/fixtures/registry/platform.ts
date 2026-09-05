@@ -1,4 +1,9 @@
-import type { HealthDependencies, ReferenceProvenanceRow, Submissions } from '../../api/types';
+import type {
+  HealthDependencies,
+  ReferenceProvenanceRow,
+  Submissions,
+  Track2,
+} from '../../api/types';
 import type { Entry } from '../loader';
 import { rows } from '../loader';
 import { catalogObjectsFixture } from '../shape/catalog-objects';
@@ -61,6 +66,19 @@ export const platformEntries: Record<string, Entry> = {
     source:
       'CAPTURED /api/submissions reply, warehouse reachable (submissions/*/iteration-*/ on disk + warehouse.data_lineage + warehouse.probe_ledger + docs/science-register.json)',
     load: () => rows<Submissions>('submissions'),
+  },
+  // CAPTURED from the live endpoint's own reply (2026-09-06), warehouse reachable. The route
+  // reads `ressources/track2/*.tsv` and their five provenance manifests, `mechanism.json`,
+  // `snapshot.json`, `warehouse.data_lineage`, `docs/science-register.json` and the submission
+  // folders, and joins them; this is that answer, saved verbatim. Every count, checksum, drug
+  // name, trial id and citation is the snapshot's own — nothing is synthesised, which matters
+  // more here than elsewhere because a fabricated drug row would read as a clinical claim.
+  // No genomic position exists anywhere in it: the mechanism card is coordinate-free by rule
+  // and every other table is public gene, drug, trial and citation data.
+  '/api/track2': {
+    source:
+      'CAPTURED /api/track2 reply, warehouse reachable (ressources/track2/*.tsv + *.provenance.json + mechanism.json + snapshot.json, warehouse.data_lineage, docs/science-register.json, submissions/*/iteration-*/)',
+    load: () => rows<Track2>('track2'),
   },
   // INVENTED claims. The live register is empty and its tables do not exist yet; these
   // exist so the populated layout can be reviewed before there is anything real to show.

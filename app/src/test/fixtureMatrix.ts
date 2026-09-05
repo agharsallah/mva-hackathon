@@ -89,6 +89,8 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   // `submissions/<track>/iteration-<n>/` folder at once so a page can never render a
   // half-joined submission.
   ['/api/submissions', undefined],
+  // The Track 2 report: one payload holding the mechanism card and all five snapshot tables.
+  ['/api/track2', undefined],
 ];
 
 export const key = (path: string, params?: Record<string, string | number>): string =>

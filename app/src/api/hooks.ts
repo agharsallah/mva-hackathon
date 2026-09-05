@@ -65,6 +65,7 @@ import type {
   StructureGene,
   Submissions,
   SubstitutionRow,
+  Track2,
   TsTv,
   VcfFieldRow,
   ZygosityRow,
@@ -256,6 +257,16 @@ export const useEvidence = () => useEndpoint<EvidenceRegister>('/api/science/evi
  * server, so the page never has to fan out and can never show a half-joined dossier.
  */
 export const useSubmissions = () => useEndpoint<Submissions>('/api/submissions');
+
+/**
+ * The whole Track 2 report in one request: the mechanism card, the snapshot tables and
+ * their manifests, the lineage, the step-8 register and the linked Track 1 iterations.
+ *
+ * One endpoint rather than one per table, for the same reason `/api/submissions` is one:
+ * the join (card → targets → candidates → trials) is what the page is *about*, so a
+ * half-arrived join would render a report that says something the record does not.
+ */
+export const useTrack2 = () => useEndpoint<Track2>('/api/track2');
 
 /** Background poll for the Status board: quiet, because probing costs real round trips
  * to Postgres, MinIO and Ensembl on every pass. */

@@ -134,6 +134,16 @@ export const modules: FeatureModule[] = [
       'Every upload-ready iteration: what would be sent, the decode table it was designed against, the coordinate-free rows behind it, and what it has cost.',
     load: () => import('../../pages/Submissions'),
   },
+  {
+    id: 'track2',
+    path: '/track2',
+    navLabel: 'Track 2',
+    title: 'Track 2 — drug repurposing',
+    group: 'decide',
+    description:
+      'The mechanism hand-off from Track 1, the market-approved candidates it implies, the trials and literature behind them, and the strategy that ends in one final suggestion.',
+    load: () => import('../../pages/Track2'),
+  },
 
   // ── Platform: what exists, where did it come from, and is it up? ─────────────
   {
