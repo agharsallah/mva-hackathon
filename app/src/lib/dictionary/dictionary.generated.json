@@ -17,7 +17,7 @@
   ],
   "counts": {
     "chapters": 15,
-    "entries": 440,
+    "entries": 445,
     "figures": 20,
     "diagrams": 19
   },
@@ -132,6 +132,25 @@
           "term": "Intron",
           "aliases": [],
           "html": "<p>the parts cut out and thrown away before the recipe is used (like commercials cut from a recorded show).</p>",
+          "exampleHtml": ""
+        },
+        {
+          "kind": "entry",
+          "slug": "cds-coding-sequence",
+          "term": "CDS (coding sequence)",
+          "aliases": [
+            "CDS",
+            "coding sequence"
+          ],
+          "html": "<p>the part of the <a href=\"#1-dna-basics-read-this-first-everything-else-needs-it\">exons</a> that is actually translated into protein. Exons also carry untranslated ends (UTRs); the CDS is the recipe proper. About 1 % of the genome, plus the <a href=\"#1-dna-basics-read-this-first-everything-else-needs-it\">stop codon</a> that ends it. Nearly every variant that breaks a protein sits in the CDS or within a few bases of its edges.</p>",
+          "exampleHtml": "<p><em>Example: <code>ressources/reference/coding_regions.tsv</code> — every CDS of every protein-coding transcript, widened by 8 bases on each side and merged per gene: 223,048 intervals, 44.6 Mb (<a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md\">methodology 069</a>).</em></p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "splice-flank",
+          "term": "Splice flank",
+          "aliases": [],
+          "html": "<p>the few intronic bases on each side of an exon that the splicing machinery reads. A change there can wreck splicing without touching the CDS itself. The ±2 bases are the <strong>canonical splice sites</strong> (almost always damaging); VEP's <code>splice_region_variant</code> reaches ±8. That is why the coding intervals above are widened by 8, not 0.</p>",
           "exampleHtml": ""
         },
         {
@@ -2884,6 +2903,17 @@
           "aliases": [],
           "html": "<p>a plain list of genome regions (chromosome, start, end). Used to say \"only look here\".</p>",
           "exampleHtml": ""
+        },
+        {
+          "kind": "entry",
+          "slug": "gtf-gene-transfer-format",
+          "term": "GTF (Gene Transfer Format)",
+          "aliases": [
+            "GTF",
+            "Gene Transfer Format"
+          ],
+          "html": "<p>Ensembl's gene-model file: one tab-separated line per gene, transcript, exon, <a href=\"#1-dna-basics-read-this-first-everything-else-needs-it\">CDS</a> or stop codon, with a semicolon-packed attribute column (<code>gene_id \"…\"; gene_name \"…\"; transcript_biotype \"…\";</code>). It is the coordinate source for \"which bases are coding\". Like a BED with a type column and a bag of key–value tags.</p>",
+          "exampleHtml": "<p><em>Example: <code>Homo_sapiens.GRCh38.116.gtf.gz</code>, 141 MB, ~11 million lines, 2,977,130 of them CDS or stop-codon rows of protein-coding transcripts — the input to <code>tools/build_coding_regions.py</code>.</em></p>"
         }
       ]
     },
@@ -4280,6 +4310,22 @@
         },
         {
           "kind": "entry",
+          "slug": "hypothesis-space",
+          "term": "Hypothesis space",
+          "aliases": [],
+          "html": "<p>the explicit list of answer keys you still consider possible before an upload, each with a prior weight. The <a href=\"#13-hackathon-scoring-words\">probe designer</a> simulates the scorer's reply for every member; two members that would produce the same reply are <em>indistinguishable</em> by that upload, and the reply you actually get deletes every member that would have produced a different one.</p>",
+          "exampleHtml": "<p><em>Example: <code>{stop+missense, stop+intronic-A, missense+intronic-A, stop+unknown, missense+unknown}</code> — five keys; a pair row at rank 1 followed by two partner singles tells the five apart except <code>stop+intronic-A</code> vs <code>missense+intronic-A</code> (<a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/src/mva/pipeline/probe_design.py\"><code>mva.pipeline.probe_design</code></a>).</em></p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "expected-information-gain",
+          "term": "Expected information gain",
+          "aliases": [],
+          "html": "<p>how many <a href=\"#11-math-probability-and-statistics-words\">bits</a> of uncertainty an upload is expected to remove, averaged over the hypothesis space with its priors. The number to compare two candidate row layouts on <em>before</em> spending a submission. Ceiling: the <a href=\"#11-math-probability-and-statistics-words\">entropy</a> of the prior — an upload that tells every member apart reaches it.</p>",
+          "exampleHtml": "<p><em>Example: five equiprobable keys = 2.32 bits of prior entropy; a layout that leaves one pair of keys confused 40 % of the time gains 1.92 bits.</em></p>"
+        },
+        {
+          "kind": "entry",
           "slug": "leaderboard-freeze",
           "term": "Leaderboard freeze",
           "aliases": [],
@@ -4592,7 +4638,7 @@
           "slug": "dossier",
           "term": "Dossier",
           "aliases": [],
-          "html": "<p>one claim plus everything recorded about it: every revision, every evidence row, and the weighing over them. What gets exported as a Markdown file and rendered as a report section. <em>Example:</em> <code>docs/step-1/hypotheses/h001-bub1b.md</code>.</p>",
+          "html": "<p>one claim plus everything recorded about it: every revision, every evidence row, and the weighing over them. What gets exported as a Markdown file and rendered as a report section. <em>Example:</em> <code>docs/iteration1/step-1/hypotheses/h001-bub1b.md</code>.</p>",
           "exampleHtml": ""
         },
         {

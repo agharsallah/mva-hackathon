@@ -237,7 +237,7 @@ export const SEE_IT_MEASURE: Record<string, SeeIt> = {
     ],
     docs: [
       {
-        path: 'docs/step-3/methodology/067-phenotype-ranking-without-java.md',
+        path: 'docs/iteration1/step-3/methodology/067-phenotype-ranking-without-java.md',
         label: 'phenotype ranking without Java',
       },
     ],
