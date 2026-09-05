@@ -1,0 +1,12 @@
+{
+  "variant records in the VCF": 5012204,
+  "inside a coding interval (gene \u00d7 allele)": 38437,
+  "distinct coding alleles annotated by VEP": 38087,
+  "rare (gnomAD AF absent or < 0.01)": 1524,
+  "rare and protein-altering": 875,
+  "\u2026 on PASS calls": 746,
+  "genes carrying any such allele": 667,
+  "genes biallelic on PASS calls": 65,
+  "\u2026 with a ClinVar pathogenic allele": 1,
+  "\u2026 and phenotype rank \u2264 30": 1
+}
