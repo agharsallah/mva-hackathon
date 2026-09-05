@@ -1,8 +1,8 @@
 # Step 6 — Spend the oracle budget
 
-**Standing:** open, gated. **0 of 6 submissions spent** (`mva-warehouse probe-budget`,
+**Standing:** submission v1 designed and rehearsed 2026-09-05 ([074](methodology/074-submission-v1-design.md)); H009 `testing`. **0 of 6 submissions spent** (`mva-warehouse probe-budget`,
 2026-09-04). The builder and the offline replica exist; nothing has been uploaded.
-Method: [`../method.md`](../method.md). Last checked 2026-09-04.
+Method: [`../method.md`](../../method.md). Last checked 2026-09-04.
 
 ---
 
@@ -24,9 +24,9 @@ Method: [`../method.md`](../method.md). Last checked 2026-09-04.
 ## Already done
 
 - The probe payload builder — step-0 methodology
-  [046](../step-0/methodology/046-probe-builder.md), `src/mva/viz/probebuild.py`, surfaced
+  [046](../../step-0/methodology/046-probe-builder.md), `src/mva/viz/probebuild.py`, surfaced
   at `/probes` and `/api/probe/build`.
-- The **local scorer replica** — [`../notes/local-scorer-replica.md`](../notes/local-scorer-replica.md),
+- The **local scorer replica** — [`../notes/local-scorer-replica.md`](../../notes/local-scorer-replica.md),
   `src/mva/pipeline/scorer.py` — so a CSV can be graded offline first.
 - The probe ledger: `mva-warehouse probe-log`, `probe-list`, `probe-budget`. Currently 0/6.
 
@@ -73,6 +73,6 @@ methodology.
 
 | | |
 |---|---|
-| Hypotheses | none recorded yet — [`hypotheses/`](hypotheses/), written by `mva-science export` |
-| Tests | none run under this step — entries land in [`methodology/`](methodology/), numbered from 069 |
+| Hypotheses | H009 (`testing`) — [`hypotheses/`](hypotheses/) |
+| Tests | [074](methodology/074-submission-v1-design.md) — design and rehearsal; the upload is the next test |
 | Rendered | `figures/science-report.html` |
