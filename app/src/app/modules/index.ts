@@ -124,6 +124,16 @@ export const modules: FeatureModule[] = [
     description: 'Build and submit probes, watch jobs, and account for the 6-query budget.',
     load: () => import('../../pages/Probes'),
   },
+  {
+    id: 'submissions',
+    path: '/submissions',
+    navLabel: 'Submissions',
+    title: 'The submission dossier',
+    group: 'decide',
+    description:
+      'Every upload-ready iteration: what would be sent, the decode table it was designed against, the coordinate-free rows behind it, and what it has cost.',
+    load: () => import('../../pages/Submissions'),
+  },
 
   // ── Platform: what exists, where did it come from, and is it up? ─────────────
   {

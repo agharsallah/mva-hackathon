@@ -65,6 +65,20 @@ uv run mva-science probe-link <probe_id> --hypothesis H009 --direction <supports
 uv run python tools/new_iteration.py --track track1 --reply '<reply as the decode table names it>'
 ```
 
+## Where it shows in the dashboard
+
+The app's `/submissions` page (API `GET /api/submissions`) lists every iteration folder,
+cumulatively: state, deliverables, decode table, the coordinate-free selectors, which steps
+contributed, a lineage view (the raw VCF object, the clinical HPO terms, the warehouse tables
+and every `data_lineage` edge between them), and the audit trail (probe ledger, register).
+Recipe for the next iteration: steps 1–5 above, then re-capture `app/src/fixtures/data/submissions.json`
+from the live API and re-bless its hash in `app/src/test/fixtureHashes.json` — the page needs no other
+change. Each iteration gets a generated beginner walkthrough with dictionary links; figures open in a
+shareable lightbox (`?figure=<slug>`).
+`tools/resolve_submission_spec.py --record-lineage` appends the iteration's own lineage edges
+(`target_schema = submissions`): one per selector table, one for `spec.selectors.json`
+(sha256), one for the clinical dataset (sha256). Rerunning is a no-op.
+
 ## Rules that the tools enforce
 
 - **No coordinate in the tree** — `tools/check_coordinates.py` (quality gate).

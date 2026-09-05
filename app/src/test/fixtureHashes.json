@@ -70,5 +70,6 @@
   "/api/phenotype/delta": "4cf7b6b59864f831",
   "/api/phenotype/gene?symbol=BUB1B": "fe388aee75fc18a8",
   "/api/phenotype/gene?symbol=TRIP13": "21a3f3cd55b4f2e4",
-  "/api/phenotype/gene?symbol=NOT_CAPTURED": "fe388aee75fc18a8"
+  "/api/phenotype/gene?symbol=NOT_CAPTURED": "fe388aee75fc18a8",
+  "/api/submissions": "d06f1e13ee2e23da"
 }

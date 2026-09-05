@@ -36,6 +36,9 @@ the register holds 9 hypotheses and 29 evidence rows (`mva-science check` passed
 coordinates); the test suite grew by 77 tests to 1,687 (`tools/check-python.sh`, green);
 `tools/check_coordinates.py` and `tools/check_iteration.py` joined the gate
 ([075](step-0/methodology/075-coordinate-gate-and-redaction.md), [076](iteration1/step-6/methodology/076-iteration-tooling.md)).
+Later the same day ([077](step-0/methodology/077-submissions-in-the-dashboard.md)): `GET /api/submissions` and the
+`/submissions` page; `data_lineage` gained 4 `submissions` edges for iteration 1 (50 rows in all, counted live);
+the Python suite is 1,730 tests, the app suite 511; the dictionary 454 entries.
 The counts in §2 below were not re-measured on that date.
 
 This page owns **repository and infrastructure numbers** — test counts, table counts,

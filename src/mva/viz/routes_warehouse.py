@@ -12,7 +12,16 @@ must never be written anywhere the repository can pick up.
 
 from fastapi import APIRouter, Query
 
-from . import catalog, phenotype, queries, refprovenance, routes_panel, routes_search, science
+from . import (
+    catalog,
+    phenotype,
+    queries,
+    refprovenance,
+    routes_panel,
+    routes_search,
+    science,
+    submissions,
+)
 from .cache import Cache
 from .overview import overview
 from .response import Envelope, cached, live
@@ -177,6 +186,7 @@ def router(settings, cache: Cache) -> APIRouter:
     routes_search.add_routes(api, settings, cache)
     science.add_routes(api, settings)
     phenotype.add_routes(api)
+    submissions.add_routes(api, settings, cache)
     return api
 
 

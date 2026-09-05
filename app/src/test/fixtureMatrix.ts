@@ -85,6 +85,10 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   ['/api/phenotype/gene', { symbol: 'BUB1B' }],
   ['/api/phenotype/gene', { symbol: 'TRIP13' }],
   ['/api/phenotype/gene', { symbol: 'NOT_CAPTURED' }],
+  // One iteration dossier, unparameterised: the endpoint answers with every
+  // `submissions/<track>/iteration-<n>/` folder at once so a page can never render a
+  // half-joined submission.
+  ['/api/submissions', undefined],
 ];
 
 export const key = (path: string, params?: Record<string, string | number>): string =>

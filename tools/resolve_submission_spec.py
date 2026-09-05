@@ -12,6 +12,13 @@ replaced by coordinates. Prints one line per allele **without** the position —
 the only place a coordinate lands. With ``--check`` it compares against an existing spec
 and reports whether every allele resolved to the same coordinates (again without printing
 them), so a rebuilt spec can be proven identical to the one a submission was built from.
+
+With ``--record-lineage`` it also appends this iteration's edges to
+``warehouse.data_lineage`` (:mod:`mva.warehouse.submission_lineage`): one per selector
+table, one for the committed selector file by digest, one for the delivered phenotype
+document by digest. That is the last hop of the provenance chain — the result tables to the
+rows an organiser scores — and it is the hop a judge most wants to check. Appending is
+idempotent, so resolving twice does not double the edges.
 """
 
 from __future__ import annotations
@@ -22,6 +29,7 @@ import sys
 from pathlib import Path
 
 from mva.warehouse.settings import Postgres
+from mva.warehouse.submission_lineage import record_iteration
 from mva.warehouse.submission_spec import SelectorError, resolve_all
 
 
@@ -33,6 +41,17 @@ def parse_args() -> argparse.Namespace:
         "--check",
         type=Path,
         help="an existing spec; report whether every allele resolves to the same coordinates",
+    )
+    parser.add_argument(
+        "--record-lineage",
+        action="store_true",
+        help="append this iteration's edges to warehouse.data_lineage (idempotent)",
+    )
+    parser.add_argument(
+        "--root",
+        type=Path,
+        default=Path(__file__).resolve().parents[1],
+        help="repository root, so the recorded paths are repository-relative",
     )
     return parser.parse_args()
 
@@ -70,6 +89,11 @@ def main() -> int:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(spec, indent=2) + "\n", encoding="utf-8")
     print(f"wrote {args.out}  ({len(alleles)} alleles, {len(raw['rows'])} rows)")
+    if args.record_lineage:
+        recorded = record_iteration(
+            Postgres.from_env(), args.selectors.parent.resolve(), args.root.resolve()
+        )
+        print(recorded.describe())
     return 0
 
 

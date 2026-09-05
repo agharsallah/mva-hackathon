@@ -76,6 +76,7 @@ const OWNERS: Record<string, readonly string[]> = {
     '/api/search',
     '/api/callset/region',
     '/api/health/dependencies',
+    '/api/submissions',
   ],
 };
 

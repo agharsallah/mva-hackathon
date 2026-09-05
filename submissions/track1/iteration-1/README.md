@@ -21,6 +21,10 @@ material a judge needs to check it, is here or linked from here.
 3. Figures: [`figures/track1/`](../../../figures/track1/) (funnel, gene scatter, decode table; regenerate with `tools/render_track1_figures.py`) and the interactive page [`figures/track1-report.html`](../../../figures/track1-report.html).
 4. The research record: [`docs/science-register.json`](../../../docs/science-register.json) → [`figures/science-report.html`](../../../figures/science-report.html); hypotheses H001–H009.
 
+**In the app:** `/submissions` (API `GET /api/submissions`) shows this folder with its lineage
+graph, both inputs (callset object + clinical HPO terms) and audit trail —
+[077](../../../docs/step-0/methodology/077-submissions-in-the-dashboard.md).
+
 ## Which steps contributed, and where their evidence lives
 
 | Step | Contribution | Methodology |

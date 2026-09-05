@@ -63,6 +63,7 @@ import type {
   SequencingYieldRow,
   SourceObjectRow,
   StructureGene,
+  Submissions,
   SubstitutionRow,
   TsTv,
   VcfFieldRow,
@@ -246,6 +247,15 @@ export const useProbeLedger = () => useEndpoint<ProbeLedgerRow[]>('/api/probe/le
 // a bare list — see `api/types/science.ts`.
 export const useHypotheses = () => useEndpoint<HypothesisRegister>('/api/science/hypotheses');
 export const useEvidence = () => useEndpoint<EvidenceRegister>('/api/science/evidence');
+
+/**
+ * Every upload-ready iteration under `submissions/<track>/iteration-<n>/`, newest first.
+ *
+ * One request rather than one per iteration: the endpoint reads the folders off disk and
+ * joins them to the lineage edges, the probe ledger and the research register in the
+ * server, so the page never has to fan out and can never show a half-joined dossier.
+ */
+export const useSubmissions = () => useEndpoint<Submissions>('/api/submissions');
 
 /** Background poll for the Status board: quiet, because probing costs real round trips
  * to Postgres, MinIO and Ensembl on every pass. */

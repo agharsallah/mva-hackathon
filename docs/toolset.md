@@ -104,6 +104,7 @@ Budget is **6 submissions**; `probe-budget` is the authority on what is left.
 | Turn the committed, coordinate-free `spec.selectors.json` into the gitignored spec (exactly one warehouse row per allele) | `tools/resolve_submission_spec.py` | — | `warehouse/submission_spec.py` |
 | Is an iteration folder complete, fresh, consistent and — if frozen — untouched? (quality gate) | `tools/check_iteration.py` | — | — |
 | Freeze iteration n, open iteration n+1 (docs + submission folders), bump `ITERATION` | `tools/new_iteration.py` | — | `science/steps.py` |
+| Every submission iteration in the app: state, deliverables, decode table, coordinate-free selectors, contributions, lineage per submission (raw VCF + clinical terms + tables + edges), audit trail (probe ledger, register) | `tools/resolve_submission_spec.py --record-lineage` (writes the edges) | `/api/submissions`, `/api/submissions/{track}/{n}/report`, `/api/submissions/{track}/{n}/figure/{slug}` · `/submissions` | `viz/submissions*.py`, `warehouse/submission_lineage.py` |
 | How many probes are left? | `mva-warehouse probe-budget` | `/api/probe/ledger` · `/probes` | `warehouse/probes.py` |
 | Record a spent submission and its reply | `mva-warehouse probe-log`, `probe-list` | `/api/probe/ledger` | `warehouse/probes.py`, `cli_ledger.py` |
 | Bind an oracle reply to the claims it tested | `mva-science probe-link` | `/science` | `science/evidence.py` |

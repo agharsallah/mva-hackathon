@@ -1,4 +1,4 @@
-import type { HealthDependencies, ReferenceProvenanceRow } from '../../api/types';
+import type { HealthDependencies, ReferenceProvenanceRow, Submissions } from '../../api/types';
 import type { Entry } from '../loader';
 import { rows } from '../loader';
 import { catalogObjectsFixture } from '../shape/catalog-objects';
@@ -45,6 +45,22 @@ export const platformEntries: Record<string, Entry> = {
   '/api/probe/ledger': {
     source: 'probe ledger (empty: 0/6 spent)',
     load: () => probeLedgerFixture(),
+  },
+  // CAPTURED from the live endpoint's own reply, then completed in two documented places.
+  // CAPTURED: the real `/api/submissions` answer for this repository, taken with the
+  // warehouse reachable (2026-09-05), so the lineage half is the ledger's own rows — 12
+  // data_lineage edges walked from the selector tables plus the four edges
+  // `resolve_submission_spec.py --record-lineage` appended for this iteration — and the
+  // roots (the s3 callset object, the clinical document, the HPO and VEP inputs) carry the
+  // versions and digests the ledger holds. Nothing here is completed by hand. No coordinate
+  // is present: the iteration folder is coordinate-free by construction (an allele is a
+  // WHERE clause over a warehouse table) and the predictions CSV, which does carry
+  // positions, is named only by its digest. The `available: false` branch is covered by
+  // `src/test/submissions-page.test.tsx`.
+  '/api/submissions': {
+    source:
+      'CAPTURED /api/submissions reply, warehouse reachable (submissions/*/iteration-*/ on disk + warehouse.data_lineage + warehouse.probe_ledger + docs/science-register.json)',
+    load: () => rows<Submissions>('submissions'),
   },
   // INVENTED claims. The live register is empty and its tables do not exist yet; these
   // exist so the populated layout can be reviewed before there is anything real to show.

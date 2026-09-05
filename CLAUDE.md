@@ -25,7 +25,7 @@
   Do not re-explore the platform; the toolset page names the verb, route, page and module.
 - A tool a research step needs (app page, API route, module) is recorded in **that step's**
   `methodology/`; only a cross-step platform fix still lands in step-0 and names the step.
-- Methodology numbers are global; the next is **077**. Never reuse a number.
+- Methodology numbers are global; the next is **078**. Never reuse a number. (077 = submissions in the dashboard.)
 - Oracle budget is **6** uploads (one registered member). No upload before step 6's gate:
   callset normalized, hypotheses filed, CSV rehearsed on the scorer replica **and** cross-checked
   with the organisers' published `evaluation.py` (`tools/design_submission.py` does both), two
@@ -48,6 +48,11 @@
 - An iteration folder is frozen once uploaded. The reply starts `iteration-<n+1>/` —
   `tools/new_iteration.py` does the freezing and the scaffolding; its README lifecycle page
   is `submissions/README.md`.
+- The dashboard's `/submissions` page picks up every iteration folder automatically from
+  `GET /api/submissions`; after adding one, re-capture `app/src/fixtures/data/submissions.json`
+  from the live API and re-bless its hash (`app/src/test/fixtureHashes.json`). Every iteration
+  shown there carries a beginner walkthrough (plain words, each term linked to `/learn`) built
+  from its own payload — a new iteration must not need hand-written prose to be understood.
 - Tooling, in order: `tools/resolve_submission_spec.py` (committed coordinate-free
   `spec.selectors.json` → gitignored spec), `tools/design_submission.py` (CSV + rehearsal +
   cross-check against the organisers' scorer + decode table), `tools/check_iteration.py` (the
@@ -56,6 +61,33 @@
   `tools/check_coordinates.py` (no coordinate leaves `build/`),
   `tools/render_track1_figures.py`, `tools/md_to_html.py` + `tools/md_to_pdf.mjs` (PDF),
   `tools/fill_methods_form.py` (xlsx). Track 2 follows the same layout.
+
+## Two data sources, one lineage (standing directive, 2026-09-05)
+- The case has **two inputs**: the 85 GB raw dataset (VCF + FASTQ, `ideation/data-findings.md`)
+  and the **clinical dataset** — the proband's 8 HPO terms
+  (`ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md`). Every analysis, derived
+  table, ranking, figure and submission row cross-references both wherever relevant: a
+  genomic result states what the clinical terms say about it (and vice versa), and a result
+  that uses only one source says so.
+- **Complete lineage, always.** Every dataset, table, feature, metric, figure and deliverable
+  names its sources and its transformation: raw and clinical inputs, intermediate tables,
+  parameters, tool and version. Tables record it in `warehouse.data_lineage` (append-only);
+  files carry a provenance manifest or a `Standing:`/`Verified:` line naming the entry that
+  produced them; submissions carry `spec.selectors.json` + the README's sha256 and rebuild
+  commands. Nothing is produced without its source and generation process documented.
+- **Every artifact states assumptions, limitations, validation steps and quality checks**
+  next to its result, with the parameters and versions needed to reproduce it.
+
+## The dashboard is the single source of truth
+- The React app (`app/`) is cumulative: it shows raw-data findings, the clinical terms, derived
+  tables, the research record, **every submission iteration** (deliverables, decode table,
+  coordinate-free selectors, which steps and methodology entries contributed, figures), a
+  **lineage view per submission**, the processing workflows, and audit trails (probe ledger,
+  register revisions). New results and new iterations are added to the app as they are made,
+  never only to the docs. What was created, how, and from which source data must be readable
+  on the page itself.
+- The dictionary is served in the app (`/learn`) from `docs/dictionary.md` through
+  `tools/gen-dictionary.mjs`; an update to the dictionary is an update to the dashboard.
 
 ## Python
 - Use `uv` for all Python work: `uv run`, `uv add`, `uv sync`. Do not use `pip`, `python -m venv`, or bare `python`.

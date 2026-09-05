@@ -26,3 +26,4 @@ export type * from './provenance';
 export type * from './reads';
 export type * from './science';
 export type * from './search';
+export type * from './submissions';
