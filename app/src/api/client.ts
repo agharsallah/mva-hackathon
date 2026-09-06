@@ -8,12 +8,45 @@
  * cannot reach the server at all (or the endpoint is not implemented yet), and fixtures
  * are enabled, we serve the committed fixture for that path and mark the app as running
  * on fixture data. Endpoints with no fixture (the reads-API job proxy) still raise.
+ *
+ * ## Two deployments, one code path
+ *
+ * `VITE_API_URL` decides where a request goes, and it takes two shapes:
+ *
+ * | Value | Where a request goes | Used by |
+ * |---|---|---|
+ * | unset | `http://127.0.0.1:8900` | local development, `uv run mva-viz-api` on the same machine |
+ * | `/` or `` | this page's own origin | the hosted dashboard, where Vercel's proxy forwards `/api/*` |
+ *
+ * The hosted build is the reason the second shape exists: an absolute URL in the bundle
+ * would tell every visitor the backend's hostname and port. Same-origin paths mean the
+ * only address the browser ever holds is the one it is already on — `app/api/[...path].ts`
+ * on Vercel is what knows the real one, and it runs on the server.
  */
 
 import { fixtureFor } from '../fixtures';
 import type { Envelope, Health } from './types';
 
-export const API_URL: string = import.meta.env.VITE_API_URL ?? 'http://127.0.0.1:8900';
+/**
+ * The prefix put in front of every API path. Empty means "this origin".
+ *
+ * A trailing slash is stripped so `VITE_API_URL=/` (an empty string is awkward to set in
+ * a Vercel project, `/` is not) and `VITE_API_URL=https://host/` both behave.
+ */
+function apiBase(configured: string | undefined): string {
+  if (configured === undefined) return 'http://127.0.0.1:8900';
+  return configured.replace(/\/+$/, '');
+}
+
+export const API_URL: string = apiBase(import.meta.env.VITE_API_URL);
+
+/**
+ * The same thing, in words, for a message or a tooltip. `API_URL` is empty in the hosted
+ * build, and "No API answered at " reads as a bug rather than as same-origin.
+ */
+export const API_LABEL: string =
+  API_URL || `${globalThis.location?.origin ?? 'this origin'} (proxied)`;
+
 export const FIXTURES_ENABLED: boolean = import.meta.env.VITE_USE_FIXTURES !== 'false';
 
 /** Where a given payload actually came from — surfaced next to every exhibit. */
@@ -67,7 +100,9 @@ export const fixtureModeStore = {
 export type Params = Record<string, string | number | boolean | undefined>;
 
 function buildUrl(path: string, params?: Params): string {
-  const url = new URL(path, API_URL);
+  // Base + path, resolved against this page. `API_URL` absolute wins over the origin;
+  // `API_URL` empty leaves a same-origin path. One expression covers both deployments.
+  const url = new URL(`${API_URL}${path}`, globalThis.location?.origin ?? 'http://localhost');
   if (params) {
     for (const [k, v] of Object.entries(params)) {
       if (v !== undefined) url.searchParams.set(k, String(v));
@@ -84,7 +119,14 @@ function buildUrl(path: string, params?: Params): string {
  * flip the whole app into fixture mode on a perfectly healthy server.
  */
 function isUnreachable(err: unknown): boolean {
-  return err instanceof TypeError;
+  if (err instanceof TypeError) return true;
+  // The hosted deployment never gets a TypeError for a dead backend: the browser reaches
+  // Vercel fine, and Vercel's proxy reports the failure as a status. 502 is "no server
+  // there", 504 "it did not answer in time" — both mean the same thing here, and both are
+  // codes only that proxy emits (`app/server/upstream.ts`). 503 is deliberately excluded:
+  // the reads-API job routes use it for "the upstream read store is down", which the
+  // Probes page shows on purpose rather than papering over with fixtures.
+  return err instanceof ApiError && (err.status === 502 || err.status === 504);
 }
 
 /**

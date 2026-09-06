@@ -11,7 +11,7 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { API_URL, ApiError } from '../api/client';
+import { API_LABEL, ApiError } from '../api/client';
 import { classifyError } from '../components/failure';
 import { shouldRetry } from '../lib/queryClient';
 
@@ -69,7 +69,7 @@ describe('classifyError', () => {
   it("reads a fetch TypeError as 'no API answered', and names the URL it tried", () => {
     const f = classifyError(new TypeError('Failed to fetch'));
     expect(f.kind).toBe('unreachable');
-    expect(f.title).toContain(API_URL);
+    expect(f.title).toContain(API_LABEL);
     expect(f.command).toBe('uv run mva-viz-api');
   });
 

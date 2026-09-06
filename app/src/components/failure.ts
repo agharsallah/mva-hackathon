@@ -4,7 +4,7 @@
  * with its own explanation and remedy; `unknown` is the honest fallback.
  */
 
-import { API_URL, ApiError } from '../api/client';
+import { API_LABEL, ApiError } from '../api/client';
 
 export type FailureKind =
   | 'unreachable'
@@ -76,7 +76,7 @@ export function classifyError(error: Error): Failure {
   if (error instanceof TypeError) {
     return {
       kind: 'unreachable',
-      title: `No API answered at ${API_URL}`,
+      title: `No API answered at ${API_LABEL}`,
       explain:
         'Either the viz API is not running, or the browser blocked the request (a CORS refusal looks identical from here; the console has the reason).',
       remedy: 'Start the API, or leave VITE_USE_FIXTURES unset to browse the committed fixtures.',

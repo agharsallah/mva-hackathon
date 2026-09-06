@@ -16,7 +16,7 @@ import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
-import { API_URL, fixtureModeStore, FIXTURES_ENABLED, health } from '../api/client';
+import { API_LABEL, API_URL, fixtureModeStore, FIXTURES_ENABLED, health } from '../api/client';
 import { cx } from '../lib/ui';
 import { AiExport } from './AiExport';
 import { CommandPalette } from './CommandPalette';
@@ -49,14 +49,25 @@ function useApiHealth() {
 }
 
 /**
- * A blocked fetch and a dead server look identical from JavaScript — both are a bare
- * `TypeError`. The browser only prints the CORS reason to the console, so the dot names
- * both causes and both origins, which is what tells them apart.
+ * In development a blocked fetch and a dead server look identical from JavaScript — both
+ * are a bare `TypeError`, and the browser prints the CORS reason only to the console. So
+ * the dot names both causes and both origins, which is what tells them apart.
+ *
+ * The hosted deployment cannot have the CORS half of that problem: the browser talks to
+ * its own origin and Vercel's proxy talks to the API server-to-server, where CORS does not
+ * apply. There, "down" means the proxy could not reach `mva-viz-api`.
  */
 function statusTitle(state: 'checking' | 'up' | 'down'): string {
-  if (state !== 'down') return API_URL;
+  if (state !== 'down') return API_LABEL;
+  if (!API_URL) {
+    return (
+      `${API_LABEL} did not answer.\n` +
+      `Vercel's proxy could not reach mva-viz-api — check MVA_VIZ_API_URL and ` +
+      `MVA_VIZ_API_TOKEN in the project, and that the service is up on the server.`
+    );
+  }
   return (
-    `${API_URL} did not answer.\n` +
+    `${API_LABEL} did not answer.\n` +
     `Either mva-viz-api is not running, or this page's origin (${window.location.origin}) ` +
     `is blocked by the API's CORS policy — check the browser console for the CORS message.`
   );

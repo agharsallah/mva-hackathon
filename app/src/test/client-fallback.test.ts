@@ -72,6 +72,28 @@ describe('fixture fallback', () => {
     await expect(get(FIXTURED_PATH)).rejects.toThrow('lane 9 out of range');
   });
 
+  it("serves the fixture on the hosted proxy's 502 and 504", async () => {
+    // The hosted deployment never sees a TypeError for a dead backend: the browser reaches
+    // Vercel fine, and `app/server/upstream.ts` reports the failure as a status instead.
+    for (const status of [502, 504]) {
+      vi.stubGlobal(
+        'fetch',
+        vi.fn().mockResolvedValue(jsonResponse(status, { detail: 'the viz API is unreachable' })),
+      );
+      const result = await get(FIXTURED_PATH);
+      expect(result.origin).toBe('fixture');
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('raises a 503 — "the read store is down" is a state the Probes page shows', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(jsonResponse(503, { detail: 'reads API unreachable' })),
+    );
+    await expect(get(FIXTURED_PATH)).rejects.toThrow('reads API unreachable');
+  });
+
   it('raises when the path has no fixture, whatever the failure', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(jsonResponse(404, { detail: 'Not Found' })));
     await expect(get('/api/not-a-real-endpoint')).rejects.toThrow();
