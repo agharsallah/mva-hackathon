@@ -62,12 +62,13 @@ flowchart LR
 
 | Module | Responsibility | Key exports |
 |---|---|---|
-| `app.py` | Assembles the FastAPI app: CORS, cache, routers, `/health` | `create_app`, `cors_origins` |
+| `app.py` | Assembles the FastAPI app: CORS, the token guard, cache, routers, `/health` | `create_app`, `cors_origins` |
+| `auth.py` | The `MVA_VIZ_TOKEN` guard on every `/api/*` route (`X-API-Key`, constant-time). Empty token = open, which is correct on loopback and nowhere else | `resolve_token`, `token_guard`, `guard_dependencies` |
 | `health.py` | `/api/health/dependencies`: runs the probes concurrently, caches each row ~10 s, never raises | `router`, `assemble`, `probe_all`, `overall`, `resolve_targets` |
 | `health_budget.py` | Per-check timeout budgets and the two env knobs that change them | `budgets`, `parse_overrides`, `inner_timeout` |
 | `health_probes.py` | One probe per dependency — what it touches and what it advises when it fails | `probe_warehouse`, `probe_object_store`, `probe_parquet`, `probe_reads_api`, `probe_ensembl` |
 | `health_results.py` | The check registry (name, kind, pages powered) and the result vocabulary | `REGISTRY`, `up`, `degraded`, `down`, `skipped`, `failed` |
-| `serve.py` | `mva-viz-api` CLI entry point, uvicorn runner | `main` |
+| `serve.py` | `mva-viz-api` CLI entry point, uvicorn runner. **Refuses** a non-loopback bind while `MVA_VIZ_TOKEN` is empty (`--insecure` overrides) | `main` |
 | `cache.py` | Disk cache: JSON entries under `build/`, atomic write. An entry can carry a provenance dict beside its payload (`Built`), so a cache **hit** reports what built the reply it serves | `Cache`, `Built`, `Cached`, `safe_key`, `default_directory` |
 | `response.py` | The one envelope shape every route returns; `describe` appends this reply's own provenance to `source` | `Envelope`, `live`, `cached`, `describe` |
 | `proxy.py` | Forwards requests to `mva-reads-api`; 503 on unreachable | `Upstream`, `forward`, `UnreachableError` |

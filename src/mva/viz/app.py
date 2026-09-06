@@ -1,4 +1,4 @@
-"""The viz application: CORS, the cache, the routers, and one liveness probe.
+"""The viz application: CORS, auth, the cache, the routers, and one liveness probe.
 
 Assembly only. Every route lives in :mod:`~mva.viz.routes_warehouse` or
 :mod:`~mva.viz.routes_reads`; every query lives below those. That keeps this module the
@@ -18,6 +18,10 @@ Two things are configured here rather than hard-coded, because a browser is invo
 * **The cache directory.** ``MVA_VIZ_CACHE``, under gitignored ``build/`` by default. The
   locus cache holds real patient positions, so this must never point inside the tree git
   tracks.
+* **The shared token.** ``MVA_VIZ_TOKEN``, empty by default, which leaves the API open —
+  the only correct setting while it is bound to loopback. Set it and every ``/api/*``
+  route requires it as ``X-API-Key``; ``/health`` stays open for uptime probes. See
+  :mod:`mva.viz.auth`. Set it whenever the service binds anything but loopback.
 """
 
 from fastapi import FastAPI
@@ -26,6 +30,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from ..warehouse.objects import ObjectStore
 from ..warehouse.settings import Postgres, object_store, setting
 from . import health, probebuild, routes_reads, routes_warehouse
+from .auth import guard_dependencies, resolve_token
 from .cache import Cache, default_directory
 
 SERVICE = "mva-viz-api"
@@ -49,11 +54,17 @@ def create_app(
     origins: list[str] | None = None,
     upstream=None,
     store: ObjectStore | None = None,
+    token: str | None = None,
 ) -> FastAPI:
-    """Build the application. Tests inject settings, cache, a fake upstream and store."""
+    """Build the application. Tests inject settings, cache, a fake upstream and store.
+
+    ``token=""`` forces an open API regardless of what the surrounding ``.env`` holds;
+    ``token=None`` resolves ``MVA_VIZ_TOKEN`` once, here, so no request parses a file.
+    """
     settings = settings or Postgres.from_env()
     cache = cache or Cache(default_directory())
     store = store or object_store()
+    guarded = guard_dependencies(resolve_token(token))
 
     app = FastAPI(
         title=SERVICE,
@@ -82,9 +93,10 @@ def create_app(
         """
         return {"ok": True, "service": SERVICE}
 
-    app.include_router(routes_warehouse.router(settings, cache))
-    app.include_router(routes_reads.router(cache, upstream))
-    app.include_router(health.router(settings, store, upstream))
+    # Every /api/* router carries the token guard; /health above stays open on purpose.
+    app.include_router(routes_warehouse.router(settings, cache), dependencies=guarded)
+    app.include_router(routes_reads.router(cache, upstream), dependencies=guarded)
+    app.include_router(health.router(settings, store, upstream), dependencies=guarded)
     # Reads nothing: the payload is the request, put through the pipeline's own rules.
-    app.include_router(probebuild.router())
+    app.include_router(probebuild.router(), dependencies=guarded)
     return app

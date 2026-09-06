@@ -1,10 +1,15 @@
 """``mva-viz-api`` — run the viz API under uvicorn.
 
 Defaults to ``127.0.0.1:8900``: the only client is a React dev server on the same
-machine, and this API has **no authentication** because it holds no write verb and no
-secret the browser could not already reach. That is only true while it is bound to
-loopback — ``--host 0.0.0.0`` publishes patient positions from ``/api/panel/locus`` to
-anyone who can reach the port, so it warns.
+machine, and with ``MVA_VIZ_TOKEN`` empty this API has **no authentication** because it
+holds no write verb and no secret the browser could not already reach. That is only true
+while it is bound to loopback — ``--host 0.0.0.0`` publishes patient positions from
+``/api/panel/locus`` to anyone who can reach the port.
+
+So binding a non-loopback address is gated: it needs ``MVA_VIZ_TOKEN`` set, or an
+explicit ``--insecure`` that says the operator knows the port is open. The hosted
+deployment sets the token and puts a TLS reverse proxy in front — see
+``docs/step-0/infrastructure.md``.
 """
 
 import argparse
@@ -24,18 +29,32 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--reload", action="store_true", help="restart on source changes (development only)"
     )
+    parser.add_argument(
+        "--insecure",
+        action="store_true",
+        help="allow a non-loopback bind with no MVA_VIZ_TOKEN (publishes patient positions)",
+    )
     args = parser.parse_args(argv)
 
     import uvicorn
 
     from .app import cors_origins, create_app
+    from .auth import resolve_token
     from .cache import default_directory
 
+    token = resolve_token()
     if args.host not in ("127.0.0.1", "localhost"):
-        print(
-            f"warning: binding {args.host} — /api/panel/locus serves real patient "
-            f"positions and this API has no authentication"
-        )
+        if not token and not args.insecure:
+            print(
+                f"refusing to bind {args.host} with no MVA_VIZ_TOKEN: /api/panel/locus "
+                f"serves real patient positions to anyone who can reach the port.\n"
+                f"Set MVA_VIZ_TOKEN in .env (the Vercel proxy sends it as X-API-Key), "
+                f"or pass --insecure if the port is genuinely private."
+            )
+            return 2
+        if not token:
+            print(f"warning: --insecure — {args.host} is open, patient positions included")
+    print(f"auth:    {'X-API-Key required' if token else 'open (MVA_VIZ_TOKEN empty)'}")
     print(f"cache:   {default_directory()}")
     print(f"cors:    {', '.join(cors_origins()) or '(none — the browser will refuse)'}")
     print(f"upstream reads API: {setting('MVA_READS_API_URL')}")
