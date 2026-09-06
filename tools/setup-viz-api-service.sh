@@ -80,6 +80,13 @@ say "smoke-testing the API in-process"
 uv run python -c "from mva.viz.app import create_app; create_app()" >/dev/null
 ok "create_app() builds"
 
+# The unit below names $REPO/build in ReadWritePaths, and systemd refuses to start a unit
+# whose ReadWritePaths does not exist — a fresh clone has no build/ until something writes
+# the response cache, so the service would fail on first start with a mount-namespace error
+# that says nothing about the real cause.
+mkdir -p "$REPO/build"
+ok "$REPO/build exists (the response cache, and the only path the unit may write)"
+
 # --- 3. the unit ------------------------------------------------------------------
 UNIT="/etc/systemd/system/${NAME}.service"
 say "writing $UNIT"
