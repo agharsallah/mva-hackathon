@@ -59,6 +59,30 @@ export function upstreamUrl(base: string, path: string, search = ''): string {
 }
 
 /**
+ * True when `base` names a bare IP address rather than a hostname.
+ *
+ * The Edge runtime refuses to fetch one, and it does not do so as a catchable error: the
+ * platform answers the request itself with
+ * `403 Direct IP access is not allowed in Vercel's Edge environment`, in plain text, past
+ * the try/catch below. That reaches the dashboard as an unexplained 403 on every panel.
+ *
+ * Checked up front so the reply says what to change instead. A server reachable only by
+ * IP still works — give it any name that resolves to it (a hosting provider's default
+ * reverse-DNS name is enough) and put that in `MVA_VIZ_API_URL`.
+ */
+export function isBareIpHost(base: string): boolean {
+  let host: string;
+  try {
+    host = new URL(base).hostname;
+  } catch {
+    return false; // not a URL at all — `forward` reports that through the fetch failure
+  }
+  // IPv6 arrives bracketed, so it is the one shape that cannot be a hostname either.
+  if (host.startsWith('[')) return true;
+  return /^\d{1,3}(\.\d{1,3}){3}$/.test(host);
+}
+
+/**
  * Forward one request upstream and return the reply, or a `{detail}` problem.
  *
  * Distinguishes the two failures that look identical from the browser: 502 "there is no
@@ -75,6 +99,13 @@ export async function forward(
   const base = env.MVA_VIZ_API_URL ?? '';
   if (!base) {
     return problem(503, 'MVA_VIZ_API_URL is not set in this Vercel project — see app/README.md');
+  }
+  if (isBareIpHost(base)) {
+    return problem(
+      503,
+      'MVA_VIZ_API_URL is a bare IP address, which the Edge runtime refuses to fetch. ' +
+        'Use a hostname that resolves to the server instead.',
+    );
   }
 
   const headers: Record<string, string> = {

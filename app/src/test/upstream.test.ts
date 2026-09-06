@@ -14,7 +14,7 @@
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { forward } from '../../server/upstream';
+import { forward, isBareIpHost } from '../../server/upstream';
 
 const ENV = {
   MVA_VIZ_API_URL: 'https://viz.example.org',
@@ -157,5 +157,35 @@ describe('forward', () => {
 
     expect(reply.status).toBe(404);
     expect(await reply.json()).toEqual({ detail: 'unknown gene BRCA9' });
+  });
+});
+
+describe('isBareIpHost', () => {
+  it('spots the shape the Edge runtime refuses to fetch', () => {
+    expect(isBareIpHost('http://38.242.217.131:8900')).toBe(true);
+    expect(isBareIpHost('https://10.0.0.1')).toBe(true);
+    expect(isBareIpHost('http://[2001:db8::1]:8900')).toBe(true);
+  });
+
+  it('leaves a hostname alone, including one that merely contains digits', () => {
+    expect(isBareIpHost('http://vmi2938918.contaboserver.net:8900')).toBe(false);
+    expect(isBareIpHost('https://viz.example.org')).toBe(false);
+    expect(isBareIpHost('http://localhost:8900')).toBe(false);
+  });
+
+  it('does not throw on a value that is not a URL', () => {
+    expect(isBareIpHost('not a url')).toBe(false);
+    expect(isBareIpHost('')).toBe(false);
+  });
+
+  it('is refused before the fetch, with a reply that says what to change', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+
+    const reply = await forward(request(), { MVA_VIZ_API_URL: 'http://1.2.3.4:8900' }, '/api/x');
+
+    expect(reply.status).toBe(503);
+    expect(((await reply.json()) as { detail: string }).detail).toContain('bare IP');
+    expect(fetchMock).not.toHaveBeenCalled();
   });
 });

@@ -101,7 +101,7 @@ flowchart LR
     M["middleware.ts<br/>password gate"]:::decision
     L["api/login.ts<br/>signed cookie"]:::machinery
     S["dist/<br/>the SPA"]:::machinery
-    P["api/[...path].ts<br/>the proxy"]:::machinery
+    P["api/proxy.ts<br/>the proxy"]:::machinery
   end
   subgraph VPS["the VPS (private)"]
     R["reverse proxy<br/>TLS"]:::machinery
@@ -136,36 +136,52 @@ Two properties this buys, and they are the point:
 
 ### The files
 
-| Path                            | Runs                            | Does                                                                                    |
-| ------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------- |
-| `middleware.ts`                 | Vercel Routing Middleware, edge | the gate: valid session → through; document → the password page; anything else → 401    |
-| `server/session.ts`             | edge                            | the signed cookie — HMAC-SHA256 over the expiry, keyed by secret **+** password         |
-| `server/loginPage.ts`           | edge                            | the self-contained password page (no bundle, no font file)                              |
-| `server/upstream.ts`            | edge                            | the one forwarder to `mva-viz-api`: token, timeout, header allowlist, `no-store`        |
-| `api/[...path].ts`              | Edge Function                   | every `/api/*` request, forwarded. Re-checks the session                                |
-| `api/liveness.ts`               | Edge Function                   | `/health` (rewritten in `vercel.json`), because that path is outside `/api` upstream    |
-| `api/login.ts`, `api/logout.ts` | Edge Function                   | issue and expire the cookie; the only routes the gate lets through                      |
-| `vercel.json`                   | build                           | the `/health` rewrite, the SPA fallback, and the security headers                       |
-| `tsconfig.vercel.json`          | `tsc -b`                        | typechecks all of the above — it is outside the Vite build, so it needs its own project |
+| Path                            | Runs                            | Does                                                                                                         |
+| ------------------------------- | ------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `middleware.ts`                 | Vercel Routing Middleware, edge | the gate: valid session → through; document → the password page; anything else → 401                         |
+| `server/session.ts`             | edge                            | the signed cookie — HMAC-SHA256 over the expiry, keyed by secret **+** password                              |
+| `server/loginPage.ts`           | edge                            | the self-contained password page (no bundle, no font file)                                                   |
+| `server/upstream.ts`            | edge                            | the one forwarder to `mva-viz-api`: token, timeout, header allowlist, `no-store`                             |
+| `api/proxy.ts`                  | Edge Function                   | every `/api/*` request, forwarded (`vercel.json` rewrites the path into `?upstream=`). Re-checks the session |
+| `api/liveness.ts`               | Edge Function                   | `/health` (rewritten in `vercel.json`), because that path is outside `/api` upstream                         |
+| `api/login.ts`, `api/logout.ts` | Edge Function                   | issue and expire the cookie; the only routes the gate lets through                                           |
+| `vercel.json`                   | build                           | the `/health` and `/api/:path*` rewrites, the SPA fallback, and the security headers                         |
+| `tsconfig.vercel.json`          | `tsc -b`                        | typechecks all of the above — it is outside the Vite build, so it needs its own project                      |
 
 ### Vercel project settings
 
 Root Directory **`app`**. Framework preset Vite (`vercel.json` states it). Then four
 environment variables, none of them `VITE_`-prefixed except the last:
 
-| Variable                   | Example                   | Meaning                                                             |
-| -------------------------- | ------------------------- | ------------------------------------------------------------------- |
-| `MVA_VIZ_API_URL`          | `https://viz.example.org` | where `mva-viz-api` is reachable from Vercel. Server-side only      |
-| `MVA_VIZ_API_TOKEN`        | (32 random characters)    | must equal `MVA_VIZ_TOKEN` in the server's `.env`. Server-side only |
-| `DASHBOARD_PASSWORD`       | (generated, not chosen)   | the one shared password. Rotating it invalidates every session      |
-| `DASHBOARD_SESSION_SECRET` | (32 random characters)    | signs the cookie. Rotating it also invalidates every session        |
-| `VITE_API_URL`             | `/`                       | build-time: makes every request same-origin so the proxy sees it    |
+| Variable                   | Example                   | Meaning                                                                                                             |
+| -------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `MVA_VIZ_API_URL`          | `https://viz.example.org` | where `mva-viz-api` is reachable from Vercel. Server-side only. **Must be a hostname, never a bare IP** — see below |
+| `MVA_VIZ_API_TOKEN`        | (32 random characters)    | must equal `MVA_VIZ_TOKEN` in the server's `.env`. Server-side only                                                 |
+| `DASHBOARD_PASSWORD`       | (generated, not chosen)   | the one shared password. Rotating it invalidates every session                                                      |
+| `DASHBOARD_SESSION_SECRET` | (32 random characters)    | signs the cookie. Rotating it also invalidates every session                                                        |
+| `VITE_API_URL`             | `/`                       | build-time: makes every request same-origin so the proxy sees it                                                    |
 
 Generate the three secrets the same way:
 
 ```bash
 uv run python -c "import secrets; print(secrets.token_urlsafe(32))"
 ```
+
+Two constraints that are not obvious until a deployment fails on them, both measured
+against a live one rather than assumed:
+
+- **`MVA_VIZ_API_URL` must be a hostname.** The Edge runtime answers a fetch to a bare IP
+  itself, with `403 Direct IP access is not allowed in Vercel's Edge environment` — past
+  any try/catch, so it reaches the dashboard as an unexplained 403 on every panel. A server
+  reachable only by address still works: give it any name that resolves to it, such as the
+  hosting provider's default reverse-DNS name. `server/upstream.ts` now checks for this and
+  answers 503 with that sentence rather than letting the platform's 403 through.
+- **The `/api/:path*` rewrite is load-bearing.** Vercel's catch-all route
+  (`api/[...path].ts`) expands like a single `[path]` on a deployed Vite project, so
+  `/api/overview` reached the function and `/api/health/dependencies` came back
+  `x-vercel-error: NOT_FOUND`. The rewrite in `vercel.json` routes every depth explicitly;
+  the filesystem check that runs before rewrites is what keeps `/api/proxy`, `/api/login`,
+  `/api/logout` and `/api/liveness` on their own functions.
 
 ### Deploy
 

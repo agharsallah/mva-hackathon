@@ -5,6 +5,7 @@
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/health", "destination": "/api/liveness" },
+    { "source": "/api/:path*", "destination": "/api/proxy?upstream=/api/:path*" },
     { "source": "/((?!api/).*)", "destination": "/index.html" }
   ],
   "headers": [
