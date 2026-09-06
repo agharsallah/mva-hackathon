@@ -21,18 +21,28 @@ import '@testing-library/jest-dom/vitest';
 // yet; other ids are delegated to jsdom's own implementation. That implementation is the one
 // that throws/logs in jsdom, so the delegation is wrapped — a `'2d'` caller gets the same
 // `null` it would have got, without this file being the reason.
+//
+// Guarded on `HTMLCanvasElement` existing: `src/test/hosting.test.ts` runs in the **node**
+// environment (`// @vitest-environment node`), because the session cookie is signed with
+// WebCrypto rather than rendered — and there is no DOM there to patch. Vitest applies this
+// setup file to every environment, so an unguarded reference throws before that file's
+// first test.
 const WEBGL_IDS = new Set(['webgl', 'webgl2', 'experimental-webgl']);
-const original = HTMLCanvasElement.prototype.getContext;
+const original = globalThis.HTMLCanvasElement?.prototype.getContext;
 
-HTMLCanvasElement.prototype.getContext = function getContext(
-  this: HTMLCanvasElement,
-  id: string,
-  ...rest: unknown[]
-) {
-  if (WEBGL_IDS.has(id)) return null;
-  try {
-    return (original as unknown as (...args: unknown[]) => unknown).call(this, id, ...rest) ?? null;
-  } catch {
-    return null;
-  }
-} as HTMLCanvasElement['getContext'];
+if (original) {
+  HTMLCanvasElement.prototype.getContext = function getContext(
+    this: HTMLCanvasElement,
+    id: string,
+    ...rest: unknown[]
+  ) {
+    if (WEBGL_IDS.has(id)) return null;
+    try {
+      return (
+        (original as unknown as (...args: unknown[]) => unknown).call(this, id, ...rest) ?? null
+      );
+    } catch {
+      return null;
+    }
+  } as HTMLCanvasElement['getContext'];
+}

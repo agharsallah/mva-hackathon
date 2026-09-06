@@ -61,6 +61,14 @@ build/
 # Live database credentials. `.env.example` is the committed template; `.env` never is.
 .env
 
+# `vercel env pull` writes the hosted dashboard's secrets here for `vercel dev`:
+# MVA_VIZ_API_TOKEN, DASHBOARD_PASSWORD, DASHBOARD_SESSION_SECRET. Never committed.
+.env.local
+.env.*.local
+
+# Vercel CLI project link (holds the project and org ids).
+.vercel/
+
 # Node / frontend build artifacts. `app/` is a Vite app: the lockfile and sources are
 # committed, the installed tree and the build output are not.
 node_modules/

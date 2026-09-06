@@ -1,0 +1,26 @@
+{
+  // The hosting layer: Vercel Routing Middleware (`middleware.ts`), the Edge Functions in
+  // `api/`, and the modules they share in `server/`. None of it is part of the Vite build —
+  // Vite compiles `src/` and nothing else — so it needs its own project, or `tsc -b` would
+  // never see it and a typo would only surface as a 500 in production.
+  //
+  // Web APIs (`Request`, `crypto.subtle`, `fetch`) plus node types, because the Edge runtime
+  // exposes `process.env` on top of the Web platform.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.vercel.tsbuildinfo"
+  },
+  "include": ["middleware.ts", "api/**/*.ts", "server/**/*.ts"]
+}
