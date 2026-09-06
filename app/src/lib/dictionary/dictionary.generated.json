@@ -29,10 +29,10 @@
   ],
   "counts": {
     "chapters": 16,
-    "entries": 470,
+    "entries": 486,
     "figures": 20,
-    "diagrams": 19,
-    "contexts": 41
+    "diagrams": 20,
+    "contexts": 57
   },
   "chapters": [
     {
@@ -5463,6 +5463,285 @@
           "html": "<p>names removed. Note this is NOT the same as impossible to identify — genomes are inherently identifying, which is why the rules are strict.</p>",
           "exampleHtml": "",
           "firstSeen": "2026-08-27"
+        },
+        {
+          "kind": "subheading",
+          "id": "hosting-the-dashboard",
+          "text": "Hosting the dashboard"
+        },
+        {
+          "kind": "prose",
+          "html": "<p>These words all come from putting the app on the public internet (methodology 080). They are web-infrastructure terms, not biology — but they decide who can read this child's data, so they belong in the privacy chapter.</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "origin",
+          "term": "Origin",
+          "aliases": [],
+          "html": "<p>a web address reduced to the three things a browser uses to decide \"is this the same place?\": the scheme, the host and the port. Two addresses are the same origin only if all three match.</p>",
+          "exampleHtml": "<p><em>Example: <code>http://localhost:5173</code> and <code>http://127.0.0.1:5173</code> are DIFFERENT origins to a browser, even though they are the same machine — which is why the API's allowed-origins list names both.</em></p>",
+          "context": "<p>the unit CORS and the session cookie are both defined in terms of</p>",
+          "source": "src/mva/viz/app.py",
+          "related": [
+            "cors-cross-origin-resource-sharing",
+            "same-origin-request",
+            "reverse-proxy"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "same-origin-request",
+          "term": "Same-origin request",
+          "aliases": [],
+          "html": "<p>a request a page makes to its own origin, written as a path (<code>/api/overview</code>) with no host in it. The browser sends it without asking anyone's permission, and the page never has to know where the server actually is.</p>",
+          "exampleHtml": "<p><em>Example: the hosted dashboard is built with <code>VITE_API_URL=/</code>, so every call becomes <code>/api/…</code> and the real backend address appears nowhere in the downloaded JavaScript.</em></p>",
+          "context": "<p>the mechanism that hides the backend from visitors</p>",
+          "source": "app/src/api/client.ts",
+          "related": [
+            "origin",
+            "api-proxy-server-side",
+            "environment-variable-prefix-vite"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "cors-cross-origin-resource-sharing",
+          "term": "CORS (Cross-Origin Resource Sharing)",
+          "aliases": [
+            "CORS",
+            "Cross-Origin Resource Sharing"
+          ],
+          "html": "<p>the browser rule that a page may only read a reply from a <em>different</em> origin if that server explicitly says the page's origin is allowed. The server says it in a response header; the browser enforces it. Server-to-server calls are unaffected — CORS is a browser rule, not a network one.</p>",
+          "exampleHtml": "<p><em>Example: <code>MVA_VIZ_CORS=http://localhost:5173,http://127.0.0.1:5173</code> — the two dev-server origins. The hosted dashboard needs no entry, because its browser only talks to its own origin and the proxy behind it is not a browser.</em></p>",
+          "context": "<p>a blocked fetch and a dead server look identical from JavaScript (both a bare <code>TypeError</code>), which is why the app's status dot names both causes</p>",
+          "source": "src/mva/viz/app.py",
+          "related": [
+            "origin",
+            "same-origin-request"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "reverse-proxy",
+          "term": "Reverse proxy",
+          "aliases": [],
+          "html": "<p>a server that sits in front of another server, takes the public requests, and passes them on. It is where the certificate and the public hostname live, so the real service can stay bound to <code>127.0.0.1</code> and be unreachable from outside.</p>",
+          "exampleHtml": "<p><em>Example: Caddy on the VPS holds <code>https://viz.example.org</code>; <code>mva-viz-api</code> itself listens only on <code>127.0.0.1:8900</code> and would refuse to bind anything else without a token.</em></p>",
+          "context": "<p>installed by <code>tools/setup-viz-api-service.sh</code>, which prints the Caddy and nginx blocks</p>",
+          "source": "docs/step-0/infrastructure.md",
+          "related": [
+            "origin",
+            "shared-token",
+            "systemd-unit"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "api-proxy-server-side",
+          "term": "API proxy (server-side)",
+          "aliases": [
+            "API proxy",
+            "server-side"
+          ],
+          "html": "<p>a small program on the server that receives the browser's same-origin request and re-sends it to the real API, adding the secret the browser is not allowed to hold. The browser sees only the proxy; the proxy sees both sides.</p>",
+          "exampleHtml": "<p><em>Example: <code>app/api/[...path].ts</code> on Vercel takes <code>/api/panel/genes</code> and re-sends it to <code>$MVA_VIZ_API_URL/api/panel/genes</code> with <code>X-API-Key: $MVA_VIZ_API_TOKEN</code>.</em></p>",
+          "context": "<p>chosen over React Server Components because the app is a Vite single-page app — rewriting 340 files to hide the same fact was not worth it</p>",
+          "source": "docs/step-0/methodology/080-hosted-dashboard.md",
+          "related": [
+            "same-origin-request",
+            "shared-token",
+            "edge-function"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "shared-token",
+          "term": "Shared token",
+          "aliases": [],
+          "html": "<p>one long random string that stands for \"you are allowed to call this API\". Every caller sends the same one, in a header; the server compares it to the value it was configured with. No usernames, no accounts.</p>",
+          "exampleHtml": "<p><em>Example: <code>MVA_VIZ_TOKEN</code> in the server's <code>.env</code>, sent by the proxy as the header <code>X-API-Key</code>. Generate it (<code>secrets.token_urlsafe(32)</code>), never choose it.</em></p>",
+          "context": "<p>two different tokens exist on two different hops — <code>MVA_API_TOKEN</code> guards the read-store API, <code>MVA_VIZ_TOKEN</code> guards the viz API. Neither is ever in a browser</p>",
+          "source": "src/mva/viz/auth.py",
+          "related": [
+            "api-proxy-server-side",
+            "constant-time-comparison",
+            "environment-variable-prefix-vite"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "constant-time-comparison",
+          "term": "Constant-time comparison",
+          "aliases": [],
+          "html": "<p>comparing two secrets in a way that always takes the same amount of time, whether they differ at the first character or the last. Ordinary <code>==</code> stops at the first difference, and that timing tells an attacker how much of a guess was right — enough, over many tries, to recover the secret one character at a time.</p>",
+          "exampleHtml": "<p><em>Example: <code>secrets.compare_digest(provided, expected)</code> in Python; a fixed-length XOR loop in the app's <code>timingSafeEqual</code>.</em></p>",
+          "context": "<p>used for both the API token and the dashboard password</p>",
+          "source": "src/mva/viz/auth.py",
+          "related": [
+            "shared-token",
+            "hmac-hash-based-message-authentication-code"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "hmac-hash-based-message-authentication-code",
+          "term": "HMAC (hash-based message authentication code)",
+          "aliases": [
+            "HMAC",
+            "hash-based message authentication code"
+          ],
+          "html": "<p>a fingerprint of a message computed with a secret key. Anyone holding the key can check the fingerprint; nobody without it can produce one. It proves a message was written by the server and not edited since.</p>",
+          "exampleHtml": "<p><em>Example: <code>HMAC-SHA256(\"v1:1757260800\")</code> under the key <code>DASHBOARD_SESSION_SECRET + \":\" + DASHBOARD_PASSWORD</code>, which is what makes the dashboard's session cookie unforgeable.</em></p>",
+          "context": "<p>it is what lets the session be the cookie itself, with no session database behind it</p>",
+          "source": "app/server/session.ts",
+          "related": [
+            "signed-session-cookie",
+            "constant-time-comparison"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "signed-session-cookie",
+          "term": "Signed session cookie",
+          "aliases": [],
+          "html": "<p>a cookie holding an expiry plus an HMAC of that expiry. The server does not remember who is logged in; it re-checks the fingerprint on every request. Editing the expiry breaks the fingerprint, so the cookie cannot be extended by its holder.</p>",
+          "exampleHtml": "<p><em>Example: <code>mva_dash=1757260800.k7Qf…T4</code> — expiry, dot, signature. Valid for 12 hours.</em></p>",
+          "context": "<p>because the password is part of the signing key, changing <code>DASHBOARD_PASSWORD</code> in the Vercel project invalidates every cookie already issued — a rotation is a logout for everyone</p>",
+          "source": "app/server/session.ts",
+          "related": [
+            "hmac-hash-based-message-authentication-code",
+            "httponly-secure-samesite",
+            "fail-closed"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "httponly-secure-samesite",
+          "term": "HttpOnly / Secure / SameSite",
+          "aliases": [
+            "HttpOnly",
+            "Secure",
+            "SameSite"
+          ],
+          "html": "<p>three flags on a cookie. <code>HttpOnly</code> hides it from JavaScript, so a script injected into the page cannot read it. <code>Secure</code> stops it travelling over plain HTTP. <code>SameSite=Lax</code> stops another website's form post from carrying it along.</p>",
+          "exampleHtml": "<p><em>Example: <code>mva_dash=…; Path=/; Max-Age=43200; HttpOnly; Secure; SameSite=Lax</code>.</em></p>",
+          "context": "<p>pinned by a test, because all three are silent when missing — nothing breaks, the cookie is just weaker</p>",
+          "source": "app/server/session.ts",
+          "related": [
+            "signed-session-cookie"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "edge-function",
+          "term": "Edge Function",
+          "aliases": [],
+          "html": "<p>a small server-side program that runs on the hosting provider's own network, close to the visitor, without anyone running a server. It gets a request and returns a response, and it holds the secrets the browser must not.</p>",
+          "exampleHtml": "<p><em>Example: the four functions in <code>app/api/</code> — the catch-all proxy, the liveness probe, login and logout.</em></p>",
+          "context": "<p>called \"serverless\" because you do not operate the machine; there is still a server</p>",
+          "source": "app/api/",
+          "related": [
+            "api-proxy-server-side",
+            "routing-middleware"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "routing-middleware",
+          "term": "Routing Middleware",
+          "aliases": [],
+          "html": "<p>code that runs on <em>every</em> request before the hosting provider's cache and before any file is served. It can let the request through, rewrite it, or answer it itself. It is the only place a gate can sit if nothing at all may be served without a password.</p>",
+          "exampleHtml": "<p><em>Example: <code>app/middleware.ts</code> returns the password page for a visitor with no valid session, so an unauthenticated request never receives <code>index.html</code> or a single JavaScript chunk.</em></p>",
+          "context": "<p>a login screen written as a page inside the app would already have shipped the app before it could refuse</p>",
+          "source": "app/middleware.ts",
+          "related": [
+            "edge-function",
+            "signed-session-cookie",
+            "fail-closed"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "fail-closed",
+          "term": "Fail closed",
+          "aliases": [],
+          "html": "<p>when a system is misconfigured, it refuses rather than allows. The opposite (\"fail open\") is what turns a missing setting into a public dashboard.</p>",
+          "exampleHtml": "<p><em>Example: with <code>DASHBOARD_PASSWORD</code> unset the deployment answers <code>503</code> naming the missing variable; and <code>mva-viz-api --host 0.0.0.0</code> with no token exits <code>2</code> instead of printing a warning nobody reads.</em></p>",
+          "context": "<p>the reason both checks are refusals and not warnings</p>",
+          "source": "app/middleware.ts",
+          "related": [
+            "routing-middleware",
+            "shared-token",
+            "coordinate-gate"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "cache-control-no-store",
+          "term": "Cache-Control: no-store",
+          "aliases": [],
+          "html": "<p>a header telling every cache along the way, including the provider's shared CDN cache, to keep no copy of this reply. Without it a reply computed for one visitor can be handed to the next.</p>",
+          "exampleHtml": "<p><em>Example: every reply the dashboard's proxy returns carries <code>no-store, private</code>, whatever the API said — <code>/api/panel/locus</code> returns real patient positions and no cache may retain them.</em></p>",
+          "context": "<p>the reply is still delivered to the authorised browser; this only stops it being stored in between</p>",
+          "source": "app/server/upstream.ts",
+          "related": [
+            "api-proxy-server-side",
+            "reverse-proxy",
+            "resharing"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "environment-variable-prefix-vite",
+          "term": "Environment-variable prefix (VITE_)",
+          "aliases": [
+            "Environment-variable prefix",
+            "VITE_"
+          ],
+          "html": "<p>the build tool copies a variable's value into the JavaScript it produces <em>only</em> if its name starts with <code>VITE_</code>. Everything else stays on the server. It is a mechanical rule, which is what makes it trustworthy: a secret without the prefix cannot leak into the bundle by accident.</p>",
+          "exampleHtml": "<p><em>Example: <code>VITE_API_URL=/</code> is inlined into the app; <code>MVA_VIZ_API_TOKEN</code> and <code>DASHBOARD_PASSWORD</code> are not, and are readable only by the Edge Functions.</em></p>",
+          "context": "<p>the whole hiding strategy rests on this one naming rule</p>",
+          "source": "app/README.md",
+          "related": [
+            "same-origin-request",
+            "shared-token",
+            "edge-function"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "entry",
+          "slug": "systemd-unit",
+          "term": "systemd unit",
+          "aliases": [],
+          "html": "<p>a small text file telling a Linux server how to start a program, keep it running, and restart it if it dies. It is how <code>mva-viz-api</code> survives a reboot instead of living in someone's terminal.</p>",
+          "exampleHtml": "<p><em>Example: <code>/etc/systemd/system/mva-viz-api.service</code>, written by <code>tools/setup-viz-api-service.sh</code>; <code>sudo journalctl -u mva-viz-api -f</code> reads its log.</em></p>",
+          "context": "<p>the unit binds <code>127.0.0.1</code> deliberately — the public port belongs to the reverse proxy</p>",
+          "source": "tools/setup-viz-api-service.sh",
+          "related": [
+            "reverse-proxy",
+            "fail-closed"
+          ],
+          "firstSeen": "2026-09-06"
+        },
+        {
+          "kind": "mermaid",
+          "source": "flowchart LR\n  V[\"visitor's browser\"]:::raw\n  M[\"Routing Middleware<br/>valid session?\"]:::decision\n  L[\"password page<br/>+ signed cookie\"]:::machinery\n  S[\"the app<br/>(JavaScript)\"]:::machinery\n  P[\"API proxy<br/>adds X-API-Key\"]:::machinery\n  R[\"reverse proxy<br/>holds the certificate\"]:::machinery\n  A[\"mva-viz-api<br/>127.0.0.1 only\"]:::good\n  V --> M\n  M -->|\"no\"| L\n  L -.->|\"cookie\"| V\n  M -->|\"yes\"| S\n  M -->|\"yes\"| P\n  P --> R --> A\n  classDef raw fill:#3b0764,stroke:#a855f7,color:#fafafa\n  classDef decision fill:#422006,stroke:#f0b100,color:#fafafa\n  classDef machinery fill:#162456,stroke:#2b7fff,color:#fafafa\n  classDef good fill:#0d542b,stroke:#00c950,color:#fafafa",
+          "legendHtml": "<p>purple: the untrusted visitor · yellow: the decision point (is there a valid session?) · blue: neutral machinery on the public side · green: the private service holding patient-derived data. Solid arrow: a request. Dashed arrow: a response header.</p>"
         }
       ]
     },
