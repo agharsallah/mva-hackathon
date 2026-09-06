@@ -24,7 +24,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run theme:check && pnpm run dictionary:check && pnpm run test",
-    "prepare": "cd .. && husky && sh tools/setup-git.sh",
+    "prepare": "sh -c 'test -d ../.git || exit 0; cd .. && husky && sh tools/setup-git.sh'",
     "bundle-budget": "node tools/bundle-budget.mjs"
   },
   "dependencies": {
