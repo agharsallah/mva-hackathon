@@ -4,6 +4,7 @@ import { useHealthDependencies, useReprobeCheck } from '../../api/hooks';
 import { Badge, Chip, ErrorCard, Exhibit, Loaded, Toggle } from '../../components';
 import { C } from '../../lib/palette';
 import { DependencyCard } from './DependencyCard';
+import { useCanRevealAddresses } from './statusDebug';
 import { useRefreshRequested } from './useRefresh';
 import { groupChecks } from './verdict';
 
@@ -24,6 +25,7 @@ export function DependencyBoard() {
   const q = useHealthDependencies(forced);
   const { reprobe, pendingId, error } = useReprobeCheck(forced);
   const [revealAll, setRevealAll] = useState(false);
+  const canReveal = useCanRevealAddresses();
   const origin = q.data?.origin ?? 'api';
 
   return (
@@ -48,13 +50,21 @@ export function DependencyBoard() {
       origin={q.data?.origin}
     >
       <div className="mb-3 flex flex-wrap items-center gap-3">
-        <Toggle on={revealAll} onChange={setRevealAll}>
-          {revealAll ? 'addresses shown' : 'reveal addresses'}
-        </Toggle>
-        <span className="text-micro text-chrome-600">
-          hosts and ports are hidden by default — this page is all infrastructure addresses and gets
-          screenshotted
-        </span>
+        {canReveal ? (
+          <>
+            <Toggle on={revealAll} onChange={setRevealAll}>
+              {revealAll ? 'addresses shown' : 'reveal addresses'}
+            </Toggle>
+            <span className="text-micro text-chrome-600">
+              hosts and ports are hidden by default — this page is all infrastructure addresses and
+              gets screenshotted
+            </span>
+          </>
+        ) : (
+          <span className="text-micro text-chrome-600">
+            hosts and ports stay hidden here — unlock the advanced diagnostics panel to reveal them
+          </span>
+        )}
       </div>
       {error && <ErrorCard error={error} />}
 
@@ -78,7 +88,8 @@ export function DependencyBoard() {
                         key={c.id}
                         check={c}
                         origin={origin}
-                        revealAll={revealAll}
+                        canReveal={canReveal}
+                        revealAll={canReveal && revealAll}
                         reprobing={pendingId === c.id}
                         onReprobe={reprobe}
                       />

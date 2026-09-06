@@ -52,6 +52,10 @@ export interface DependencyCardProps {
   origin: 'api' | 'fixture';
   /** Board-level "reveal addresses". When on, the card's own toggle is not offered. */
   revealAll: boolean;
+  /** Whether reveal controls exist at all here (dev always; prod only once the advanced
+   * panel is unlocked — see `statusDebug.ts`). False forces this card masked regardless of
+   * `revealAll` or the card's own toggle, and hides the per-card show/hide button. */
+  canReveal: boolean;
   reprobing: boolean;
   onReprobe: (id: string) => void;
 }
@@ -60,11 +64,12 @@ export function DependencyCard({
   check,
   origin,
   revealAll,
+  canReveal,
   reprobing,
   onReprobe,
 }: DependencyCardProps) {
   const [revealed, setRevealed] = useState(false);
-  const masked = !(revealAll || revealed);
+  const masked = !canReveal || !(revealAll || revealed);
   const tone = statusTone(check.status);
   // Offline, the committed fixture cannot know this checkout's hosts, so the address comes
   // from the repo-root .env instead and says so — a loopback placeholder would be a lie
@@ -102,7 +107,7 @@ export function DependencyCard({
       value: (
         <span className="inline-flex flex-wrap items-baseline gap-2">
           <span>{address}</span>
-          {endpoint && !revealAll && (
+          {endpoint && canReveal && !revealAll && (
             <button
               onClick={() => setRevealed((v) => !v)}
               aria-label={`${revealed ? 'hide' : 'show'} the address for ${check.name}`}

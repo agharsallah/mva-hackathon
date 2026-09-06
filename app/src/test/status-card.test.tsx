@@ -32,6 +32,7 @@ function mount(overrides: Partial<Parameters<typeof DependencyCard>[0]> = {}) {
       check={CHECK}
       origin="api"
       revealAll={false}
+      canReveal={true}
       reprobing={false}
       onReprobe={onReprobe}
       {...overrides}
@@ -66,6 +67,14 @@ describe('DependencyCard', () => {
     const { view } = mount({ revealAll: true });
     expect(screen.queryByRole('button', { name: /the address/i })).toBeNull();
     expect(view.container.textContent).toContain('store.example:9012');
+  });
+
+  it('stays masked with no reveal control when the page cannot reveal at all', () => {
+    const { view } = mount({ canReveal: false, revealAll: true });
+    const text = view.container.textContent ?? '';
+    expect(screen.queryByRole('button', { name: /the address/i })).toBeNull();
+    expect(text).not.toContain('store.example');
+    expect(text).toContain('••••');
   });
 
   it('re-probes exactly this check', async () => {

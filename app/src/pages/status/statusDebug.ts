@@ -34,3 +34,17 @@ export function useStatusDebugUnlocked(): boolean {
     () => false,
   );
 }
+
+/**
+ * Whether this page may reveal real endpoint addresses at all.
+ *
+ * A dev server already shows a developer their own hosts, so the toggle stays free there.
+ * In a prod build the addresses are real infrastructure — masked by default is presentation
+ * hygiene (`redact.ts`), but the "show" controls themselves must not be public, or masking
+ * is theatre: anyone can click it. So in prod the controls are gone entirely unless the
+ * same debug flag that unlocks the advanced panel is set.
+ */
+export function useCanRevealAddresses(): boolean {
+  const debugUnlocked = useStatusDebugUnlocked();
+  return !import.meta.env.PROD || debugUnlocked;
+}
