@@ -92,15 +92,15 @@ function totals(summary: ClinvarPresenceSummary[]) {
 
 function Totals({ total }: { total: Totals }) {
   return (
-    <p className="text-micro text-chrome-500">
+    <p className="text-micro text-chrome-400">
       <span className="text-chrome-200">{int(total.n_plp)}</span> ClinVar P/LP sites checked across
-      the panel → <span className="text-good-400">{int(total.n_present)} present</span> (
+      the panel → <span className="text-good-300">{int(total.n_present)} present</span> (
       {int(total.n_present_pass)} PASS, {int(total.n_present_het)} heterozygous) ·{' '}
       <span className="text-chrome-400">{int(total.n_absent)} absent</span>
       {total.n_uncomparable > 0 ? (
         <>
           {' '}
-          · <span className="text-machinery-400">{int(total.n_uncomparable)} not comparable</span>
+          · <span className="text-machinery-300">{int(total.n_uncomparable)} not comparable</span>
         </>
       ) : null}
     </p>
@@ -163,8 +163,8 @@ function PresenceBars({ summary }: { summary: ClinvarPresenceSummary[] }) {
               ))
             )}
           </div>
-          <span className="w-28 shrink-0 tabular-nums text-chrome-500">
-            <span className={row.n_present > 0 ? 'font-semibold text-good-400' : 'text-chrome-400'}>
+          <span className="w-28 shrink-0 tabular-nums text-chrome-400">
+            <span className={row.n_present > 0 ? 'font-semibold text-good-300' : 'text-chrome-400'}>
               {int(row.n_present)}
             </span>
             {' / '}
@@ -201,7 +201,7 @@ function SiteTable({ sites }: { sites: ClinvarPresenceSite[] }) {
     {
       key: 'clnsig',
       header: 'ClinVar classification',
-      render: (r) => <span className="font-semibold text-broken-400">{r.clnsig}</span>,
+      render: (r) => <span className="font-semibold text-broken-300">{r.clnsig}</span>,
     },
     {
       key: 'review_stars',
@@ -255,7 +255,7 @@ function SiteTable({ sites }: { sites: ClinvarPresenceSite[] }) {
         r.is_het === null ? (
           <span className="text-chrome-600">—</span>
         ) : (
-          <span className={r.is_het ? 'text-good-400' : 'text-chrome-400'}>
+          <span className={r.is_het ? 'text-good-300' : 'text-chrome-400'}>
             {r.is_het ? 'het' : 'hom'}
           </span>
         ),
@@ -266,7 +266,7 @@ function SiteTable({ sites }: { sites: ClinvarPresenceSite[] }) {
       align: 'right',
       render: (r) => (
         <a
-          className="font-mono text-machinery-400 hover:underline"
+          className="font-mono text-machinery-300 hover:underline"
           href={`https://www.ncbi.nlm.nih.gov/clinvar/variation/${r.variation_id}/`}
           target="_blank"
           rel="noreferrer"

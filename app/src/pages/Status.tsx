@@ -2,8 +2,10 @@ import { Link } from 'react-router-dom';
 
 import { HEALTH_POLL_MS } from '../api/hooks';
 import { Explainer, Section } from '../components';
+import { AdvancedPanel } from './status/AdvancedPanel';
 import { DependencyBoard } from './status/DependencyBoard';
 import { OverallVerdict } from './status/OverallVerdict';
+import { useStatusDebugUnlocked } from './status/statusDebug';
 import { useRefreshRequested } from './status/useRefresh';
 
 /**
@@ -22,6 +24,7 @@ const POLL_MINUTES = Math.round(HEALTH_POLL_MS / 60_000);
 
 export default function StatusPage() {
   const forced = useRefreshRequested();
+  const debugUnlocked = useStatusDebugUnlocked();
   return (
     <div className="space-y-6">
       <Explainer
@@ -125,13 +128,13 @@ export default function StatusPage() {
         caveat={`This page reads a health endpoint like any other — the states shown are whatever it reports at the moment you loaded the page, then re-checked every ${POLL_MINUTES} minutes. Probing costs real round trips to Postgres, MinIO and Ensembl, so it is deliberately quiet: after restarting one service use that card's own re-probe, which measures only that dependency and leaves the other six as last measured (each card says how old its own answer is). Re-probe now re-measures all seven. In fixture mode (no backend running) every state below is illustrative, not measured — the fixture's source string says so, and the per-card re-probe is disabled because there is nothing to probe.`}
       />
 
-      <div className="flex flex-wrap items-baseline justify-between gap-2 text-micro text-chrome-500">
+      <div className="flex flex-wrap items-baseline justify-between gap-2 text-micro text-chrome-400">
         <span>
           Probed on load, then every {POLL_MINUTES} minutes. The API caches each check&apos;s result
           for ~10 s.
         </span>
         {forced ? (
-          <span className="text-decision-400">
+          <span className="text-decision-300">
             forced re-probe — the API&apos;s cache is bypassed ·{' '}
             <Link to="/status" className="underline hover:text-chrome-200">
               back to the normal cadence
@@ -157,6 +160,8 @@ export default function StatusPage() {
       >
         <DependencyBoard />
       </Section>
+
+      {debugUnlocked && <AdvancedPanel />}
     </div>
   );
 }

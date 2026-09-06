@@ -24,7 +24,7 @@ export interface PageHeaderProps {
 }
 
 const STEP =
-  'flex flex-col rounded-control border border-line px-3 py-2 leading-tight transition hover:border-line-strong hover:bg-chrome-900/60 focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-600';
+  'flex flex-col rounded-control border border-line px-3 py-2 leading-tight transition hover:border-line-strong hover:bg-chrome-900/60 focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-500';
 
 export function PageHeader({ eyebrow, position, title, description, prev, next }: PageHeaderProps) {
   return (
@@ -34,7 +34,7 @@ export function PageHeader({ eyebrow, position, title, description, prev, next }
           <p className="flex flex-wrap items-baseline gap-x-3 font-serif text-reading text-chrome-400 italic">
             {eyebrow && <span>{eyebrow}</span>}
             {position && (
-              <span className="font-sans text-xs text-chrome-500 not-italic">page {position}</span>
+              <span className="font-sans text-xs text-chrome-400 not-italic">page {position}</span>
             )}
           </p>
         )}
@@ -54,7 +54,7 @@ export function PageHeader({ eyebrow, position, title, description, prev, next }
               onFocus={prev.preload}
               className={STEP}
             >
-              <span className="text-micro text-chrome-500">Previous</span>
+              <span className="text-micro text-chrome-400">Previous</span>
               <span className="text-sm text-chrome-200">{prev.label}</span>
             </Link>
           )}
@@ -65,7 +65,7 @@ export function PageHeader({ eyebrow, position, title, description, prev, next }
               onFocus={next.preload}
               className={STEP + ' text-right'}
             >
-              <span className="text-micro text-chrome-500">Next</span>
+              <span className="text-micro text-chrome-400">Next</span>
               <span className="text-sm text-chrome-200">{next.label}</span>
             </Link>
           )}
@@ -112,11 +112,11 @@ function JourneyCard({
       onPointerEnter={preload}
       onFocus={preload}
       className={
-        'group rounded-card border border-line bg-panel p-4 transition hover:border-line-strong hover:bg-chrome-900/70 focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-600 ' +
+        'group rounded-card border border-line bg-panel p-4 transition hover:border-line-strong hover:bg-chrome-900/70 focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-500 ' +
         (dir === 'next' ? 'text-right' : '')
       }
     >
-      <div className="text-xs text-chrome-500">
+      <div className="text-xs text-chrome-400">
         {dir === 'prev' ? 'Previous' : 'Next'}
         {eyebrow && <span className="text-chrome-600">, in {eyebrow}</span>}
       </div>
@@ -124,7 +124,7 @@ function JourneyCard({
         {label}
       </div>
       {description && (
-        <p className="mt-1 max-w-[60ch] text-xs leading-relaxed text-chrome-500">{description}</p>
+        <p className="mt-1 max-w-[60ch] text-xs leading-relaxed text-chrome-400">{description}</p>
       )}
     </Link>
   );

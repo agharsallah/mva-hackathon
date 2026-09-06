@@ -20,6 +20,7 @@ import { modules } from './modules';
 import { pagesIn } from './modules/journey';
 import { NAV_GROUPS } from './modules/types';
 import { PageFrame } from './PageFrame';
+import { ScrollToTop } from './ScrollToTop';
 
 const home = modules[0];
 const groups: JourneyGroup[] = NAV_GROUPS.map((g) => ({
@@ -48,6 +49,7 @@ export function AppShell() {
   const theme = useTheme();
   return (
     <JourneyProvider groups={groups}>
+      <ScrollToTop />
       <div className="min-h-screen bg-chrome-950">
         <Header
           home={{ to: home.path, label: home.navLabel, preload: home.load }}

@@ -20,7 +20,7 @@ import type { SceneExplorer } from '../hooks/useSceneExplorer';
 import { num } from '../spec/describe';
 import { CAMERA_PRESETS, type CameraPreset } from '../spec/types';
 
-const LABEL = 'inline-flex items-center gap-2 text-micro text-chrome-500';
+const LABEL = 'inline-flex items-center gap-2 text-micro text-chrome-400';
 const INPUT =
   'rounded-control border border-line-strong bg-chrome-900 px-2 py-1 text-micro text-chrome-200';
 
@@ -87,7 +87,7 @@ export function SceneControls({
             'rounded-control border px-2 py-1 text-micro transition',
             layer.on
               ? 'border-machinery-700 bg-machinery-950/60 text-machinery-300'
-              : 'border-line-strong bg-chrome-900 text-chrome-500 hover:bg-chrome-800',
+              : 'border-line-strong bg-chrome-900 text-chrome-400 hover:bg-chrome-800',
           )}
         >
           {layer.label}

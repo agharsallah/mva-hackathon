@@ -89,7 +89,7 @@ export function ObservedExpected() {
         {(rows) => {
           if (rows.length === 0) {
             return (
-              <p className="p-6 text-center text-sm text-chrome-500">
+              <p className="p-6 text-center text-sm text-chrome-400">
                 no comparable metrics returned
               </p>
             );
@@ -98,9 +98,9 @@ export function ObservedExpected() {
           return (
             <div className="space-y-3">
               <Dumbbell rows={rows} />
-              <p className="text-micro text-chrome-500">
-                <span className="text-good-400">{int(counts('within'))} within</span> ·{' '}
-                <span className="text-broken-400">
+              <p className="text-micro text-chrome-400">
+                <span className="text-good-300">{int(counts('within'))} within</span> ·{' '}
+                <span className="text-broken-300">
                   {int(counts('above') + counts('below'))} outside
                 </span>{' '}
                 · <span className="text-chrome-400">{int(counts('unknown'))} not measured</span>

@@ -46,7 +46,7 @@ export function Contributions({
                 key={m.path}
                 href={blobUrl(m.path)}
                 title={m.path}
-                className="rounded-pill border border-machinery-900 bg-machinery-950/60 px-2 py-0.5 font-mono text-micro text-machinery-400 hover:text-machinery-200"
+                className="rounded-pill border border-machinery-900 bg-machinery-950/60 px-2 py-0.5 font-mono text-micro text-machinery-300 hover:text-machinery-200"
               >
                 {m.label}
               </a>
@@ -80,7 +80,7 @@ export function Contributions({
           empty="no step contribution table in this iteration's README"
         />
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs text-chrome-500">Claims referenced</span>
+          <span className="text-xs text-chrome-400">Claims referenced</span>
           {iteration.hypotheses.length === 0 ? (
             <span className="text-xs text-chrome-600">none named in this folder</span>
           ) : (

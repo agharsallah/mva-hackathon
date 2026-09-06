@@ -68,7 +68,7 @@ export function Select<T extends string | number>({
 }) {
   const all = [...options, ...groups.flatMap((g) => g.options)];
   return (
-    <label className="inline-flex items-center gap-2 text-micro text-chrome-500">
+    <label className="inline-flex items-center gap-2 text-micro text-chrome-400">
       {label}
       <select
         value={String(value)}
@@ -119,7 +119,7 @@ export function TextFilter({
   width?: number;
 }) {
   return (
-    <label className="inline-flex items-center gap-2 text-micro text-chrome-500">
+    <label className="inline-flex items-center gap-2 text-micro text-chrome-400">
       {label}
       <span className="relative inline-flex items-center">
         <input
@@ -135,7 +135,7 @@ export function TextFilter({
           <button
             onClick={() => onChange('')}
             aria-label="clear filter"
-            className="absolute right-1.5 text-chrome-500 hover:text-chrome-300"
+            className="absolute right-1.5 text-chrome-400 hover:text-chrome-300"
           >
             ×
           </button>

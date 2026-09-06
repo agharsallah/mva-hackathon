@@ -72,7 +72,7 @@ export function AiExport() {
   return (
     <div className="flex items-center gap-2">
       {said && (
-        <span className={`text-micro ${failed(said) ? 'text-broken-400' : 'text-good-400'}`}>
+        <span className={`text-micro ${failed(said) ? 'text-broken-300' : 'text-good-300'}`}>
           {said}
         </span>
       )}

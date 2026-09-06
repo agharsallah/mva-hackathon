@@ -218,9 +218,9 @@ function GraphSvg({
       <div className="mt-2 min-h-[34px] rounded-card border border-line bg-panel p-2 text-micro">
         {hovered ? (
           <>
-            <span className="font-mono text-decision-400">{hovered.from.split('/').pop()}</span>
-            <span className="text-chrome-500"> → </span>
-            <span className="font-mono text-decision-400">{hovered.to}</span>
+            <span className="font-mono text-decision-300">{hovered.from.split('/').pop()}</span>
+            <span className="text-chrome-400"> → </span>
+            <span className="font-mono text-decision-300">{hovered.to}</span>
             <span className="text-chrome-400"> — {hovered.transform}</span>
             {hovered.kind === 'manifest' && (
               <span className="ml-1 rounded-pill bg-raw-500/15 px-1 py-px text-raw-300">

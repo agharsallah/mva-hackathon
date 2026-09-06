@@ -35,7 +35,7 @@ export function GeneRanking() {
       header: 'gene',
       render: (r) => (
         <span className="flex items-center gap-2">
-          <span className={r.in_panel ? 'text-good-400' : undefined}>{r.gene}</span>
+          <span className={r.in_panel ? 'text-good-300' : undefined}>{r.gene}</span>
           {r.in_panel && <span className={cx(BADGE.good, 'text-micro')}>panel</span>}
         </span>
       ),
@@ -60,7 +60,7 @@ export function GeneRanking() {
             )}
           </span>
         ) : (
-          <span className="text-chrome-500">no informative match</span>
+          <span className="text-chrome-400">no informative match</span>
         ),
     },
     {

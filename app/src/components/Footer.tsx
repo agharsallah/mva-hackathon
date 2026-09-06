@@ -87,7 +87,7 @@ function SectionIndex() {
 export function Footer() {
   return (
     <footer className="border-t border-line">
-      <div className="mx-auto flex max-w-[1600px] flex-col gap-6 px-5 py-6 text-micro leading-relaxed text-chrome-500 sm:flex-row sm:flex-wrap sm:justify-between">
+      <div className="mx-auto flex max-w-[1600px] flex-col gap-6 px-5 py-6 text-micro leading-relaxed text-chrome-400 sm:flex-row sm:flex-wrap sm:justify-between">
         <div className="max-w-sm space-y-2">
           <p className="font-medium text-chrome-400">MVA Case Explorer</p>
           <p>

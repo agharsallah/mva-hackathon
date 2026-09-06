@@ -100,7 +100,7 @@ export function ProbeBuilder() {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="text-xs font-medium text-chrome-300">
               Payload{' '}
-              <span className="text-chrome-500">
+              <span className="text-chrome-400">
                 · {rows.length} of {MAX_ROWS} rows
               </span>
             </div>
@@ -127,11 +127,11 @@ export function ProbeBuilder() {
               type="button"
               disabled={rows.length === 0 || building}
               onClick={() => build(toRequest(rows))}
-              className="rounded-control bg-machinery-600 px-3 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-500"
+              className="rounded-control bg-machinery-600 px-3 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-400"
             >
               {building ? 'validating…' : 'Validate & build'}
             </button>
-            <span className="text-micro text-chrome-500">
+            <span className="text-micro text-chrome-400">
               checked against <span className="font-mono">mva.pipeline.submission</span> — the same
               rules the offline pipeline writes with
             </span>
@@ -155,7 +155,7 @@ export function ProbeBuilder() {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="text-xs font-medium text-chrome-300">
               {FILENAME}{' '}
-              <span className="text-chrome-500">· contigs are chr-prefixed on the way out</span>
+              <span className="text-chrome-400">· contigs are chr-prefixed on the way out</span>
             </div>
             <div className="flex gap-2">
               <button
@@ -200,7 +200,7 @@ function Verdict({
     <div className="space-y-2">
       {errors.length > 0 && (
         <div className="rounded-card border border-broken-900/60 bg-broken-950/25 p-3">
-          <div className="text-xs font-semibold text-broken-400">
+          <div className="text-xs font-semibold text-broken-300">
             {errors.length} problem{errors.length === 1 ? '' : 's'} — no file written
           </div>
           <ul className="mt-1 space-y-0.5 text-micro text-broken-300">
@@ -213,7 +213,7 @@ function Verdict({
 
       {warnings.length > 0 && (
         <div className="rounded-card border border-decision-800/60 bg-decision-950/25 p-3">
-          <div className="text-xs font-semibold text-decision-400">
+          <div className="text-xs font-semibold text-decision-300">
             {warnings.length} warning{warnings.length === 1 ? '' : 's'} — the file is legal, the
             payload may not be what you meant
           </div>
@@ -235,7 +235,7 @@ function Verdict({
         >
           <div
             className={`text-xs font-semibold ${
-              result.self_test.passed ? 'text-good-400' : 'text-broken-400'
+              result.self_test.passed ? 'text-good-300' : 'text-broken-300'
             }`}
           >
             self-test {result.self_test.passed ? 'passed' : 'FAILED'}
@@ -259,26 +259,26 @@ function Verdict({
 function Legend() {
   return (
     <Card className="text-micro leading-relaxed text-chrome-400">
-      <div className="font-semibold text-chrome-500">Legend</div>
+      <div className="font-semibold text-chrome-400">Legend</div>
       <ul className="mt-2 grid gap-1 sm:grid-cols-2">
         <li>
-          <span className="text-good-400">green</span> — the file is safe to upload, or rank 1, the
+          <span className="text-good-300">green</span> — the file is safe to upload, or rank 1, the
           only rank that scores the maximum.
         </li>
         <li>
-          <span className="text-decision-400">yellow</span> — a decision point: an irreversible
+          <span className="text-decision-300">yellow</span> — a decision point: an irreversible
           spend, or a payload the scorer will read differently than it looks.
         </li>
         <li>
-          <span className="text-broken-400">red</span> — a rule violation. No CSV is rendered at
+          <span className="text-broken-300">red</span> — a rule violation. No CSV is rendered at
           all.
         </li>
         <li>
-          <span className="text-machinery-400">blue</span> — machinery: staged alleles, the validate
+          <span className="text-machinery-300">blue</span> — machinery: staged alleles, the validate
           action.
         </li>
       </ul>
-      <div className="mt-3 font-semibold text-chrome-500">How the file is read</div>
+      <div className="mt-3 font-semibold text-chrome-400">How the file is read</div>
       <ul className="mt-2 space-y-1">
         <li>
           <strong>epcr</strong> (estimated probability the row is causal) decides rank, descending.

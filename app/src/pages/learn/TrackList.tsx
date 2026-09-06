@@ -12,7 +12,7 @@ export function TrackList({ dictionary }: { dictionary: Dictionary }) {
   const byslug = new Map(entriesOf(dictionary).map((e) => [e.slug, e]));
   return (
     <section aria-label="Short paths" className="space-y-2">
-      <h3 className="text-micro font-semibold text-chrome-500">Short paths</h3>
+      <h3 className="text-micro font-semibold text-chrome-400">Short paths</h3>
       {TRACKS.map((t) => (
         <details key={t.id} className="group">
           <summary className="flex cursor-pointer list-none items-baseline gap-2 rounded-control px-2 py-1 text-xs text-chrome-300 transition hover:bg-chrome-900 hover:text-chrome-100 [&::-webkit-details-marker]:hidden">

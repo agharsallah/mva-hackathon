@@ -80,7 +80,7 @@ export function Artifacts({
       key: 'modified',
       header: 'modified',
       render: (d) => (
-        <span className="font-mono text-micro text-chrome-500">{iso(d.modified)}</span>
+        <span className="font-mono text-micro text-chrome-400">{iso(d.modified)}</span>
       ),
     },
   ];
@@ -129,7 +129,7 @@ export function Artifacts({
                     className="w-full rounded-control border border-line-soft"
                   />
                 </button>
-                <div className="font-mono text-micro break-all text-chrome-500">{f.path}</div>
+                <div className="font-mono text-micro break-all text-chrome-400">{f.path}</div>
               </li>
             ))}
           </ul>

@@ -100,7 +100,7 @@ function LoadingAndFailure() {
             <div key={variant} className="space-y-2">
               <div className="text-xs font-semibold text-chrome-400">{variant}</div>
               <Skeleton variant={variant} height={160} rows={4} label={`Loading the ${variant}`} />
-              <p className="text-micro text-chrome-500">{note}</p>
+              <p className="text-micro text-chrome-400">{note}</p>
             </div>
           ))}
         </div>
@@ -124,7 +124,7 @@ function LoadingAndFailure() {
         <div className="grid gap-3 lg:grid-cols-2">
           {FAILURES.map(({ kind, error }) => (
             <div key={kind} className="space-y-1">
-              <div className="font-mono text-micro text-chrome-500">{kind}</div>
+              <div className="font-mono text-micro text-chrome-400">{kind}</div>
               <ErrorCard error={error} onRetry={() => undefined} />
             </div>
           ))}
@@ -205,7 +205,7 @@ export function PrimitiveGallery() {
                   ]}
                 />
                 <Card variant="well" padding="sm">
-                  <p className="text-micro text-chrome-500">
+                  <p className="text-micro text-chrome-400">
                     Card, well variant — the recessed panel a card nests inside itself. The third,{' '}
                     <code>plain</code>, keeps the padding rhythm and drops the border; all three are
                     laid out side by side under &ldquo;The tokens&rdquo; above.

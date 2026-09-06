@@ -162,7 +162,7 @@ export default function PaletteDialog({ close }: { close: () => void }) {
           onKeyDown={onKeyDown}
           placeholder="Type a page, a section or an action"
           spellCheck={false}
-          className="w-full border-b border-line bg-transparent px-4 py-3 text-sm text-chrome-100 placeholder:text-chrome-500 focus:outline-none"
+          className="w-full border-b border-line bg-transparent px-4 py-3 text-sm text-chrome-100 placeholder:text-chrome-400 focus:outline-none"
         />
         <ul
           id={listId}
@@ -171,7 +171,7 @@ export default function PaletteDialog({ close }: { close: () => void }) {
           className="max-h-[50vh] overflow-y-auto py-2"
         >
           {shown.length === 0 && (
-            <li className="px-4 py-3 text-sm text-chrome-500">
+            <li className="px-4 py-3 text-sm text-chrome-400">
               Nothing matches. Try a page name or a word from a section title.
             </li>
           )}
@@ -182,7 +182,7 @@ export default function PaletteDialog({ close }: { close: () => void }) {
             return (
               <li key={item.id} role="presentation">
                 {heading && (
-                  <div className="px-4 pt-2 pb-1 text-micro font-medium text-chrome-500">
+                  <div className="px-4 pt-2 pb-1 text-micro font-medium text-chrome-400">
                     {heading}
                   </div>
                 )}
@@ -204,14 +204,14 @@ export default function PaletteDialog({ close }: { close: () => void }) {
                 >
                   <span>{item.label}</span>
                   {item.hint && (
-                    <span className="shrink-0 text-xs text-chrome-500">{item.hint}</span>
+                    <span className="shrink-0 text-xs text-chrome-400">{item.hint}</span>
                   )}
                 </div>
               </li>
             );
           })}
         </ul>
-        <div className="flex gap-4 border-t border-line px-4 py-2 text-micro text-chrome-500">
+        <div className="flex gap-4 border-t border-line px-4 py-2 text-micro text-chrome-400">
           <span>Up and down to move</span>
           <span>Enter to go</span>
           <span>Esc to close</span>

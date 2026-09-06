@@ -167,7 +167,7 @@ function SearchError({ error, q }: { error: Error; q: string }) {
     <div className={cx('rounded-card border p-4', BOX[tone])}>
       <div className="text-xs font-semibold text-chrome-300">{title}</div>
       <p className="mt-2 font-mono text-xs leading-relaxed text-chrome-400">{error.message}</p>
-      <p className="mt-2 max-w-3xl text-xs leading-relaxed text-chrome-500">
+      <p className="mt-2 max-w-3xl text-xs leading-relaxed text-chrome-400">
         {status === 422 && (
           <>
             <span className="font-mono text-chrome-300">{q}</span> was refused before anything was

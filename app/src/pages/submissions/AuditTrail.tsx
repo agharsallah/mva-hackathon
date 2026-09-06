@@ -36,7 +36,7 @@ export function AuditTrail({ audit, source }: { audit: SubmissionAudit; source?:
       key: 'logged_at',
       header: 'logged',
       render: (r) => (
-        <span className="font-mono text-micro text-chrome-500">{iso(r.logged_at)}</span>
+        <span className="font-mono text-micro text-chrome-400">{iso(r.logged_at)}</span>
       ),
     },
     {
@@ -90,7 +90,7 @@ export function AuditTrail({ audit, source }: { audit: SubmissionAudit; source?:
       key: 'recorded_at',
       header: 'recorded',
       render: (r) => (
-        <span className="font-mono text-micro text-chrome-500">{iso(r.recorded_at)}</span>
+        <span className="font-mono text-micro text-chrome-400">{iso(r.recorded_at)}</span>
       ),
     },
   ];

@@ -46,7 +46,7 @@ export function JourneyMap() {
           }
         >
           <div className="flex items-baseline gap-2">
-            <span className="text-xs text-chrome-500">{i + 1}</span>
+            <span className="text-xs text-chrome-400">{i + 1}</span>
             <h3 className="text-sm font-semibold tracking-tight text-chrome-100">{g.label}</h3>
           </div>
           <p className="mt-1 font-serif text-note leading-relaxed italic text-chrome-400">
@@ -65,7 +65,7 @@ export function JourneyMap() {
                   <span className="shrink-0 font-medium text-chrome-100 group-hover:text-chrome-50">
                     {p.label}
                   </span>
-                  <span className="truncate text-chrome-500 group-hover:text-chrome-300">
+                  <span className="truncate text-chrome-400 group-hover:text-chrome-300">
                     {p.title}
                   </span>
                 </Link>

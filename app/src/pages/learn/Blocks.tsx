@@ -55,7 +55,7 @@ function Meta({ entry }: { entry: EntryBlock }) {
   if (!context && !source && !related?.length && !see?.length && !firstSeen) return null;
   const href = source ? sourceHref(source) : undefined;
   return (
-    <footer className="mt-1.5 text-micro leading-relaxed text-chrome-500">
+    <footer className="mt-1.5 text-micro leading-relaxed text-chrome-400">
       {context && (
         <div
           className="mb-0.5 italic [&_a]:underline [&_p]:inline"
@@ -149,7 +149,7 @@ export function EntryCard({
         {chipAliases(entry).map((a) => (
           <span
             key={a}
-            className="rounded-pill border border-line px-1.5 font-mono text-micro text-chrome-500"
+            className="rounded-pill border border-line px-1.5 font-mono text-micro text-chrome-400"
           >
             {a}
           </span>
@@ -218,7 +218,7 @@ export function BlockView({
             {src ? (
               <img src={src} alt={block.alt} loading="lazy" className="mx-auto block" />
             ) : (
-              <span className="text-micro text-chrome-500">missing figure {block.file}</span>
+              <span className="text-micro text-chrome-400">missing figure {block.file}</span>
             )}
           </div>
           <Legend html={block.legendHtml} />

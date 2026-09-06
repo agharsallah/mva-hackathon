@@ -26,7 +26,7 @@ function T({ slug, term, plain }: { slug: string; term: string; plain: ReactNode
     <span>
       <Link
         to={`/learn#${slug}`}
-        className="font-medium text-machinery-400 underline decoration-machinery-800 underline-offset-2 hover:text-machinery-200"
+        className="font-medium text-machinery-300 underline decoration-machinery-800 underline-offset-2 hover:text-machinery-200"
       >
         {term}
       </Link>{' '}
@@ -50,7 +50,7 @@ function gainPhrase(summary: string): string | null {
 function Step({ n, title, children }: { n: number; title: string; children: ReactNode }) {
   return (
     <li className="grid grid-cols-[1.75rem_1fr] gap-x-2">
-      <span className="font-mono text-micro text-chrome-500">{n}.</span>
+      <span className="font-mono text-micro text-chrome-400">{n}.</span>
       <p className="max-w-[95ch] text-sm leading-relaxed text-chrome-300">
         <span className="mr-1 font-semibold text-chrome-100">{title}</span>
         {children}

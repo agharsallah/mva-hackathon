@@ -39,7 +39,7 @@ export function CandidateFunnel() {
       key: 'no',
       header: '#',
       align: 'right',
-      render: (r) => <span className="text-chrome-500">{r.stage_no}</span>,
+      render: (r) => <span className="text-chrome-400">{r.stage_no}</span>,
     },
     {
       key: 'stage',
@@ -101,7 +101,7 @@ export function CandidateFunnel() {
           is the value — and a stage nothing survives has no position on a log axis, so it is
           written in as <em>0 — nothing survives this stage</em> rather than drawn. Hover a bar for
           its count, its share of the stage above, and why that filter is justified.{' '}
-          <span className="text-chrome-500">n/a</span> under &ldquo;% of previous&rdquo; means the
+          <span className="text-chrome-400">n/a</span> under &ldquo;% of previous&rdquo; means the
           row is not a subset of the one above it.
         </>
       }
@@ -115,7 +115,7 @@ export function CandidateFunnel() {
         {(rows) => {
           if (rows.length === 0) {
             return (
-              <p className="p-6 text-center text-sm text-chrome-500">the funnel table is empty</p>
+              <p className="p-6 text-center text-sm text-chrome-400">the funnel table is empty</p>
             );
           }
           const ordered = [...rows].sort((a, b) => a.stage_no - b.stage_no);
@@ -126,7 +126,7 @@ export function CandidateFunnel() {
           return (
             <div className="space-y-3">
               <Waterfall rows={ordered} boundary={boundary} />
-              <p className="text-micro text-chrome-500">
+              <p className="text-micro text-chrome-400">
                 {int(first.n)} {first.stage} →{' '}
                 <span className="text-chrome-200">{int(last.n)}</span> {last.stage} ·{' '}
                 {ordered.filter((r) => r.scope === 'genome').length} genome-scoped stages,{' '}

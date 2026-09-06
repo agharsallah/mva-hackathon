@@ -13,7 +13,7 @@ export function T({ slug, term, plain }: { slug: string; term: string; plain: Re
     <span>
       <Link
         to={`/learn#${slug}`}
-        className="font-medium text-machinery-400 underline decoration-machinery-800 underline-offset-2 hover:text-machinery-200"
+        className="font-medium text-machinery-300 underline decoration-machinery-800 underline-offset-2 hover:text-machinery-200"
       >
         {term}
       </Link>{' '}

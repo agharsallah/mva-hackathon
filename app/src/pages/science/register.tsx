@@ -38,7 +38,7 @@ export function EmptyRegister({
   return (
     <EmptyState tone="good" title={title}>
       <p>{children}</p>
-      <p className="mx-auto mt-2 max-w-2xl text-micro leading-relaxed text-chrome-500">
+      <p className="mx-auto mt-2 max-w-2xl text-micro leading-relaxed text-chrome-400">
         An empty register is discipline, not absence of work. The method is written down in{' '}
         <span className="font-mono text-chrome-400">docs/method.md</span>, and the register opens
         the moment the first claim is filed with{' '}
@@ -64,8 +64,8 @@ export function Confidence({ value, inline = false }: { value: number | null; in
   }
   return (
     <span className={inline ? 'inline-flex items-baseline gap-2' : 'flex items-baseline gap-2'}>
-      <span className="font-mono text-decision-400">{value.toFixed(2)}</span>
-      <span className="text-micro leading-tight text-chrome-500">{CONFIDENCE_CAVEAT}</span>
+      <span className="font-mono text-decision-300">{value.toFixed(2)}</span>
+      <span className="text-micro leading-tight text-chrome-400">{CONFIDENCE_CAVEAT}</span>
     </span>
   );
 }

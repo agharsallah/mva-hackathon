@@ -106,7 +106,7 @@ export function DependencyCard({
             <button
               onClick={() => setRevealed((v) => !v)}
               aria-label={`${revealed ? 'hide' : 'show'} the address for ${check.name}`}
-              className="rounded-pill border border-line-strong px-1 font-sans text-micro text-chrome-500 hover:text-chrome-200"
+              className="rounded-pill border border-line-strong px-1 font-sans text-micro text-chrome-400 hover:text-chrome-200"
             >
               {revealed ? 'hide' : 'show'}
             </button>

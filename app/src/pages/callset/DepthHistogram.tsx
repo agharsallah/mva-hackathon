@@ -86,7 +86,7 @@ export function DepthHistogram() {
                   showlegend: false,
                 })}
               />
-              <p className="mt-1 text-micro text-chrome-500">
+              <p className="mt-1 text-micro text-chrome-400">
                 {rows.length} depth bins · mode {mode.bin}× holding {int(mode.count)} sites
               </p>
             </>

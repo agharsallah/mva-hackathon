@@ -175,7 +175,7 @@ export function ZygositySplit() {
               </div>
               <div className="mt-3 overflow-x-auto">
                 <table className="w-full border-collapse text-micro">
-                  <thead className="text-chrome-500">
+                  <thead className="text-chrome-400">
                     <tr>
                       <th className="border-b border-line px-2 py-1 text-left font-medium">bin</th>
                       <th className="border-b border-line px-2 py-1 text-left font-medium">
@@ -201,7 +201,7 @@ export function ZygositySplit() {
                   <tbody>
                     {rows.map((r) => (
                       <tr key={r.af_bin}>
-                        <td className="border-b border-line-soft px-2 py-1 font-mono text-chrome-500">
+                        <td className="border-b border-line-soft px-2 py-1 font-mono text-chrome-400">
                           {dec(r.af_bin, 2)}
                         </td>
                         <td className="border-b border-line-soft px-2 py-1">
@@ -229,7 +229,7 @@ export function ZygositySplit() {
                   </tbody>
                 </table>
               </div>
-              <p className="mt-2 text-micro text-chrome-500">
+              <p className="mt-2 text-micro text-chrome-400">
                 <span className="font-mono text-chrome-300">{int(total)}</span> alleles counted in
                 total. Counted per <em>allele</em>, so a multi-allelic record contributes more than
                 one — which is why this exceeds the 5,012,204 record count.

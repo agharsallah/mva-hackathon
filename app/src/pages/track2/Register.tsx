@@ -78,7 +78,7 @@ export function Register({
                   <dd className="inline text-chrome-400">{h.prediction}</dd>
                 </div>
                 <div>
-                  <dt className="inline font-semibold text-broken-400">Refuted by: </dt>
+                  <dt className="inline font-semibold text-broken-300">Refuted by: </dt>
                   <dd className="inline text-chrome-400">{h.refuted_by}</dd>
                 </div>
               </dl>
@@ -86,7 +86,7 @@ export function Register({
           );
         })}
       </ul>
-      <p className="mt-3 max-w-[95ch] text-micro leading-relaxed text-chrome-500">
+      <p className="mt-3 max-w-[95ch] text-micro leading-relaxed text-chrome-400">
         A{' '}
         <T
           slug="hypothesis"

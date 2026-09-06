@@ -119,7 +119,7 @@ export function DeliveredYield() {
               />
               <div className="mt-3 overflow-x-auto">
                 <table className="w-full border-collapse text-micro">
-                  <thead className="text-chrome-500">
+                  <thead className="text-chrome-400">
                     <tr>
                       <th className="border-b border-line px-2 py-1 text-left font-medium">lane</th>
                       <th className="border-b border-line px-2 py-1 text-right font-medium">
@@ -160,10 +160,10 @@ export function DeliveredYield() {
                           <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-chrome-300">
                             {dec(r.est_gbases, 2)}
                           </td>
-                          <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-raw-400">
+                          <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-raw-300">
                             {int(r.est_reads)}
                           </td>
-                          <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-machinery-400">
+                          <td className="border-b border-line-soft px-2 py-1 text-right font-mono text-machinery-300">
                             {truth === undefined ? (
                               <span className="text-chrome-600">—</span>
                             ) : (
@@ -185,7 +185,7 @@ export function DeliveredYield() {
                   </tbody>
                 </table>
               </div>
-              <div className="mt-2 grid gap-2 text-micro text-chrome-500 sm:grid-cols-4">
+              <div className="mt-2 grid gap-2 text-micro text-chrome-400 sm:grid-cols-4">
                 <span>
                   {totalFiles} FASTQ files ·{' '}
                   <span className="font-mono text-chrome-300">{dec(totalGb, 2)} GB</span> gzipped
@@ -195,13 +195,13 @@ export function DeliveredYield() {
                   estimated
                 </span>
                 <span>
-                  <span className="font-mono text-raw-400">{compact(totalEst)}</span> reads
+                  <span className="font-mono text-raw-300">{compact(totalEst)}</span> reads
                   estimated
                 </span>
                 <span>
                   {totalCounted > 0 ? (
                     <>
-                      <span className="font-mono text-machinery-400">{compact(totalCounted)}</span>{' '}
+                      <span className="font-mono text-machinery-300">{compact(totalCounted)}</span>{' '}
                       reads counted
                     </>
                   ) : (

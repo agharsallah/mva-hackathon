@@ -29,7 +29,7 @@ function shortRef(ref: string): string {
 function NoEdge() {
   return (
     <span
-      className="rounded-pill bg-decision-500/10 px-2 py-px text-micro text-decision-400/90"
+      className="rounded-pill bg-decision-500/10 px-2 py-px text-micro text-decision-300/90"
       title="No row in meta.lineage names an input for this table. It exists, but nothing records where it came from."
     >
       no lineage edge
@@ -48,7 +48,7 @@ export function TableCatalog() {
       {
         key: 'schema',
         header: 'schema',
-        render: (r) => <span className="font-mono text-chrome-500">{r.schema}</span>,
+        render: (r) => <span className="font-mono text-chrome-400">{r.schema}</span>,
       },
       {
         key: 'table',
@@ -63,7 +63,7 @@ export function TableCatalog() {
             <span className="text-chrome-300">{r.description}</span>
           ) : (
             <span
-              className="rounded-pill bg-decision-500/10 px-2 py-px text-micro text-decision-400/90"
+              className="rounded-pill bg-decision-500/10 px-2 py-px text-micro text-decision-300/90"
               title="Nothing describes this table — no catalogue entry, and no derivation records the question it answers."
             >
               undescribed
@@ -78,7 +78,7 @@ export function TableCatalog() {
         sortValue: (r) => r.produced_at,
         render: (r) =>
           r.produced_at ? (
-            <span className="font-mono text-chrome-500">{iso(r.produced_at)}</span>
+            <span className="font-mono text-chrome-400">{iso(r.produced_at)}</span>
           ) : (
             <NoEdge />
           ),
@@ -101,7 +101,7 @@ export function TableCatalog() {
         header: 'tool',
         render: (r) =>
           r.tool ? (
-            <span className="font-mono text-chrome-500">{r.tool}</span>
+            <span className="font-mono text-chrome-400">{r.tool}</span>
           ) : (
             <span className="text-chrome-600">—</span>
           ),
@@ -157,7 +157,7 @@ export function TableCatalog() {
 
           return (
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-micro text-chrome-500">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-micro text-chrome-400">
                 <span>
                   showing <span className="font-mono text-chrome-200">{int(shown.length)}</span> of{' '}
                   {int(rows.length)} tables
@@ -168,7 +168,7 @@ export function TableCatalog() {
                     {rows.filter((r) => r.schema === s).length}
                   </span>
                 ))}
-                <span className={orphans ? 'text-decision-400' : 'text-good-400'}>
+                <span className={orphans ? 'text-decision-300' : 'text-good-300'}>
                   {orphans ? `${orphans} with no lineage edge` : 'every table has a lineage edge'}
                 </span>
               </div>

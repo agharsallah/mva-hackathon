@@ -132,7 +132,7 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
           <button
             type="button"
             onClick={() => setPending(null)}
-            className="text-decision-400 underline"
+            className="text-decision-300 underline"
           >
             cancel
           </button>
@@ -185,11 +185,11 @@ export function CandidatePicker({ onAdd, canAdd }: PickerProps) {
             add {good.length || ''} row{good.length === 1 ? '' : 's'}
           </button>
           {bad.length > 0 && (
-            <span className="text-micro text-broken-400">{bad.length} line(s) rejected</span>
+            <span className="text-micro text-broken-300">{bad.length} line(s) rejected</span>
           )}
         </div>
         {bad.length > 0 && (
-          <ul className="mt-1 space-y-0.5 text-micro text-broken-400">
+          <ul className="mt-1 space-y-0.5 text-micro text-broken-300">
             {bad.map((p) => (
               <li key={p.line}>
                 line {p.line}: {p.problem}

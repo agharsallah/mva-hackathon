@@ -41,7 +41,7 @@ export function Resolution({ found }: { found: SearchResolution }) {
           {KIND_LABEL[found.kind]}
         </span>
         <span className="font-mono text-sm text-chrome-100">{found.label}</span>
-        <span className="text-xs text-chrome-500">{int(span)} bp window</span>
+        <span className="text-xs text-chrome-400">{int(span)} bp window</span>
       </div>
       <p className="mt-2 text-xs leading-relaxed text-chrome-400">
         resolved by <span className={`font-mono ${sourceTone(found.source)}`}>{found.source}</span>
@@ -99,16 +99,16 @@ function Window({
         origin={origin}
       >
         <DensityStrip variants={window.variants} start={window.start} end={window.end} />
-        <div className="mt-2 grid gap-2 text-micro text-chrome-500 sm:grid-cols-4">
+        <div className="mt-2 grid gap-2 text-micro text-chrome-400 sm:grid-cols-4">
           <span>
             records <span className="font-mono text-chrome-300">{int(window.n)}</span>
           </span>
           <span>
-            PASS <span className="font-mono text-good-400">{int(pass)}</span> ·{' '}
-            <span className="font-mono text-broken-400">{int(window.n - pass)}</span> suppressed
+            PASS <span className="font-mono text-good-300">{int(pass)}</span> ·{' '}
+            <span className="font-mono text-broken-300">{int(window.n - pass)}</span> suppressed
           </span>
           <span>
-            1/2 sites <span className="font-mono text-decision-400">{int(multi)}</span>
+            1/2 sites <span className="font-mono text-decision-300">{int(multi)}</span>
           </span>
           <span>
             carry an rsID <span className="font-mono text-chrome-300">{int(named)}</span>
@@ -176,7 +176,7 @@ function EmptyWindow({
       </p>
       <p className="mt-2 font-mono text-micro text-chrome-600">
         {origin === 'fixture' && (
-          <span className="mr-2 rounded-pill bg-decision-500/15 px-1 py-px text-decision-400">
+          <span className="mr-2 rounded-pill bg-decision-500/15 px-1 py-px text-decision-300">
             fixture
           </span>
         )}
@@ -203,7 +203,7 @@ const COLUMNS: Column<RegionVariant>[] = [
     header: 'ref → alt',
     render: (r) => (
       <span className="font-mono">
-        <span className="text-chrome-500">{r.ref}</span>
+        <span className="text-chrome-400">{r.ref}</span>
         <span className="text-chrome-600"> → </span>
         <span className="text-chrome-200">{r.alt}</span>
       </span>
@@ -214,7 +214,7 @@ const COLUMNS: Column<RegionVariant>[] = [
     key: 'filter',
     header: 'FILTER',
     render: (r) => (
-      <span className={r.filter === 'PASS' ? 'text-good-400' : 'text-broken-400'}>{r.filter}</span>
+      <span className={r.filter === 'PASS' ? 'text-good-300' : 'text-broken-300'}>{r.filter}</span>
     ),
   },
   {
@@ -222,7 +222,7 @@ const COLUMNS: Column<RegionVariant>[] = [
     header: 'GT',
     render: (r) => (
       <span
-        className={r.gt === '1/2' ? 'font-mono text-decision-400' : 'font-mono text-chrome-300'}
+        className={r.gt === '1/2' ? 'font-mono text-decision-300' : 'font-mono text-chrome-300'}
       >
         {r.gt ?? '—'}
       </span>

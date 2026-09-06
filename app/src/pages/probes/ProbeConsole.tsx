@@ -48,7 +48,7 @@ export function ProbeConsole() {
             <button
               disabled={valid.length === 0 || submitting || running}
               onClick={() => submit(valid.map((p) => ({ name: p.name, sequence: p.sequence })))}
-              className="rounded-control bg-machinery-600 px-3 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-500"
+              className="rounded-control bg-machinery-600 px-3 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-400"
             >
               {submitting
                 ? 'submitting…'
@@ -72,15 +72,15 @@ export function ProbeConsole() {
                 clear result
               </button>
             )}
-            <span className="text-micro text-chrome-500">
+            <span className="text-micro text-chrome-400">
               {valid.length} valid
               {invalid.length > 0 && (
-                <span className="text-broken-400"> · {invalid.length} rejected</span>
+                <span className="text-broken-300"> · {invalid.length} rejected</span>
               )}
             </span>
           </div>
           {invalid.length > 0 && (
-            <ul className="mt-2 space-y-0.5 text-micro text-broken-400">
+            <ul className="mt-2 space-y-0.5 text-micro text-broken-300">
               {invalid.map((p) => (
                 <li key={p.line}>
                   line {p.line}: {p.problem}
@@ -93,7 +93,7 @@ export function ProbeConsole() {
         <Card className="space-y-2">
           <div className="text-xs font-medium text-chrome-300">Job</div>
           {!job && !error && (
-            <p className="text-micro leading-relaxed text-chrome-500">
+            <p className="text-micro leading-relaxed text-chrome-400">
               No job submitted. A count runs one pass over the full store — about 5.6 minutes for 20
               probes on the server, so the browser follows it with a 60 s server-side long-poll
               rather than polling.
@@ -105,20 +105,20 @@ export function ProbeConsole() {
                 <Badge tone={jobStateTone(job.state)} className="font-semibold uppercase">
                   {job.state}
                 </Badge>
-                {waiting && <span className="text-chrome-500">long-polling…</span>}
+                {waiting && <span className="text-chrome-400">long-polling…</span>}
               </div>
-              <div className="text-chrome-500">
+              <div className="text-chrome-400">
                 id <span className="text-chrome-300">{job.id}</span>
               </div>
-              <div className="text-chrome-500">
+              <div className="text-chrome-400">
                 verb <span className="text-chrome-300">{job.verb}</span>
               </div>
               {job.elapsed_seconds !== null && (
-                <div className="text-chrome-500">
+                <div className="text-chrome-400">
                   elapsed <span className="text-chrome-300">{dec(job.elapsed_seconds, 1)} s</span>
                 </div>
               )}
-              {job.error && <div className="text-broken-400">{job.error}</div>}
+              {job.error && <div className="text-broken-300">{job.error}</div>}
             </div>
           )}
           {error && !isUpstreamDown(error) && (

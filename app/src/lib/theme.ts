@@ -4,7 +4,7 @@
  *
  * The app ships one palette in two directions. `src/theme.generated.css` carries the dark
  * values under `@theme` and the light ones under `:root[data-theme="light"]`, so the DOM half
- * (`bg-chrome-950`, `text-good-400`) follows an attribute on `<html>` with no JavaScript at
+ * (`bg-chrome-950`, `text-good-300`) follows an attribute on `<html>` with no JavaScript at
  * all. The canvas half (Plotly, SVG, three.js) cannot: it is handed concrete hex strings, so
  * `lib/palette` has to *ask* which theme is current. That is what this store is for.
  *

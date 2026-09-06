@@ -42,14 +42,14 @@ export function SelectorsExhibit({ selectors, source }: { selectors: Selectors; 
     {
       key: 'variant',
       header: 'variant',
-      render: (r) => <span className="font-mono text-machinery-400">{r.variant}</span>,
+      render: (r) => <span className="font-mono text-machinery-300">{r.variant}</span>,
     },
     {
       key: 'partner',
       header: 'partner',
       render: (r) =>
         r.partner ? (
-          <span className="font-mono text-machinery-400">{r.partner}</span>
+          <span className="font-mono text-machinery-300">{r.partner}</span>
         ) : (
           <span className="text-chrome-600">— single</span>
         ),

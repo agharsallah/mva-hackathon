@@ -28,7 +28,7 @@ type Output = ReferenceProvenanceRow['outputs'][number];
 function Sha({ value }: { value: string | null }) {
   if (!value) return <span className="text-chrome-600">— live API, no digest</span>;
   return (
-    <span className="cursor-help font-mono text-good-400" title={value}>
+    <span className="cursor-help font-mono text-good-300" title={value}>
       {value.slice(0, 12)}…
     </span>
   );
@@ -45,13 +45,13 @@ const INPUT_COLUMNS: Column<Input>[] = [
     header: 'fetched from',
     render: (r) =>
       r.url.startsWith('file://') ? (
-        <span className="font-mono text-chrome-500">{r.url}</span>
+        <span className="font-mono text-chrome-400">{r.url}</span>
       ) : (
         <a
           href={r.url}
           target="_blank"
           rel="noreferrer"
-          className="font-mono break-all text-machinery-400 underline decoration-dotted hover:text-machinery-300"
+          className="font-mono break-all text-machinery-300 underline decoration-dotted hover:text-machinery-300"
         >
           {r.url}
         </a>
@@ -62,7 +62,7 @@ const INPUT_COLUMNS: Column<Input>[] = [
     header: 'release / version',
     render: (r) =>
       r.release ? (
-        <span className="font-mono text-raw-400">{r.release}</span>
+        <span className="font-mono text-raw-300">{r.release}</span>
       ) : (
         <span className="text-chrome-600">—</span>
       ),
@@ -98,10 +98,10 @@ function Manifest({ row }: { row: ReferenceProvenanceRow }) {
         aria-expanded={open}
         className="flex w-full flex-wrap items-baseline gap-x-3 gap-y-1 p-3 text-left transition hover:bg-chrome-900/60 focus:outline-none focus-visible:border-machinery-700"
       >
-        <span className="text-chrome-500">{open ? '▾' : '▸'}</span>
+        <span className="text-chrome-400">{open ? '▾' : '▸'}</span>
         <Badge tone={row.kind === 'reference' ? 'raw' : 'decision'}>{row.kind}</Badge>
         <span className="font-mono text-sm text-chrome-100">{row.name}</span>
-        <span className="text-micro text-chrome-500">
+        <span className="text-micro text-chrome-400">
           {row.inputs.length} input{row.inputs.length === 1 ? '' : 's'} → {row.outputs.length} file
           {row.outputs.length === 1 ? '' : 's'}, {bytes(outBytes)}
         </span>
@@ -156,13 +156,13 @@ export function ReferenceData() {
           <Chip color={C.decision}>
             fixture = an offline payload directory the app reads with no API
           </Chip>
-          . Click a row to open its manifest: <span className="text-machinery-400">inputs</span>{' '}
+          . Click a row to open its manifest: <span className="text-machinery-300">inputs</span>{' '}
           (what was fetched, from where, at which release) and{' '}
           <span className="text-chrome-300">outputs</span> (what was written, with a{' '}
-          <span className="text-good-400">sha256</span> over the bytes — hover a truncated digest to
+          <span className="text-good-300">sha256</span> over the bytes — hover a truncated digest to
           see it whole). A digest of <span className="text-chrome-600">— live API</span> means the
           input was an HTTP service, which has no fixed bytes to hash; its{' '}
-          <span className="text-raw-400">release</span> is the pin instead.
+          <span className="text-raw-300">release</span> is the pin instead.
         </>
       }
       reading="A provenance manifest is a lockfile for data: URL + version + hash, so the file can be re-fetched and checked. These are the public inputs — no patient bytes — and they carry no lineage edge on purpose: they were fetched, not computed, so there is no upstream table and no transform to record. The manifest is the honest substitute, and the build tool writes it on every run."

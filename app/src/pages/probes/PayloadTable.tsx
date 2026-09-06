@@ -51,9 +51,9 @@ export function PayloadTable({ rows, onMove, onRemove, onPatch }: PayloadTablePr
         <tbody>
           {rows.map((row, i) => (
             <tr key={row.id} className="odd:bg-chrome-900/30">
-              <td className={`${cell} font-mono text-chrome-500`}>
+              <td className={`${cell} font-mono text-chrome-400`}>
                 <div className="flex items-center gap-1">
-                  <span className={i === 0 ? 'text-good-400' : ''}>{i + 1}</span>
+                  <span className={i === 0 ? 'text-good-300' : ''}>{i + 1}</span>
                   <span className="flex flex-col gap-0.5">
                     <button
                       type="button"
@@ -122,7 +122,7 @@ export function PayloadTable({ rows, onMove, onRemove, onPatch }: PayloadTablePr
                   type="button"
                   onClick={() => onRemove(row.id)}
                   aria-label="remove row"
-                  className="rounded-pill border border-broken-900/60 px-2 py-0.5 text-micro text-broken-400 hover:bg-broken-950/40"
+                  className="rounded-pill border border-broken-900/60 px-2 py-0.5 text-micro text-broken-300 hover:bg-broken-950/40"
                 >
                   ×
                 </button>
@@ -132,7 +132,7 @@ export function PayloadTable({ rows, onMove, onRemove, onPatch }: PayloadTablePr
         </tbody>
       </table>
       {rows.length >= MAX_ROWS && (
-        <div className="border-t border-line px-2 py-2 text-micro text-decision-400">
+        <div className="border-t border-line px-2 py-2 text-micro text-decision-300">
           {MAX_ROWS} rows — the scorer's cap. Remove one before adding another.
         </div>
       )}

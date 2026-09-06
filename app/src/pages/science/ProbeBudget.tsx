@@ -37,7 +37,7 @@ export function ProbeBudget() {
       key: 'at',
       header: 'logged',
       render: (r) => (
-        <span className="font-mono text-micro text-chrome-500">{iso(r.logged_at)}</span>
+        <span className="font-mono text-micro text-chrome-400">{iso(r.logged_at)}</span>
       ),
     },
     {
@@ -84,7 +84,7 @@ export function ProbeBudget() {
             value={
               <>
                 {remaining}
-                <span className="text-lg text-chrome-500"> / {total}</span>
+                <span className="text-lg text-chrome-400"> / {total}</span>
               </>
             }
             sub={`${spent} spent · irreversible`}

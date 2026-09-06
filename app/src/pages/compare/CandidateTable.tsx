@@ -57,7 +57,7 @@ export function CandidateTable() {
       render: (r) =>
         r.gnomad_af === null ? (
           <span
-            className="font-semibold text-raw-400"
+            className="font-semibold text-raw-300"
             title="absent from gnomAD — not frequency zero"
           >
             novel
@@ -86,7 +86,7 @@ export function CandidateTable() {
         ) : (
           <span
             className={
-              isPathogenic(r.clin_sig) ? 'font-semibold text-broken-400' : 'text-chrome-400'
+              isPathogenic(r.clin_sig) ? 'font-semibold text-broken-300' : 'text-chrome-400'
             }
           >
             {r.clin_sig}
@@ -107,7 +107,7 @@ export function CandidateTable() {
       header: 'FILTER',
       align: 'right',
       render: (r) => (
-        <span className={r.filter === 'PASS' ? 'text-good-400' : 'text-broken-400'}>
+        <span className={r.filter === 'PASS' ? 'text-good-300' : 'text-broken-300'}>
           {r.filter}
         </span>
       ),
@@ -124,10 +124,10 @@ export function CandidateTable() {
           <span className="font-mono">is_protein_altering</span> (the consequence changes the
           protein sequence). Impact colour: <Chip color={C.broken}>HIGH</Chip> ·{' '}
           <Chip color={C.decision}>MODERATE</Chip>. A{' '}
-          <span className="text-raw-400">purple &ldquo;novel&rdquo;</span> is absent from gnomAD,
+          <span className="text-raw-300">purple &ldquo;novel&rdquo;</span> is absent from gnomAD,
           sorted ahead of every measured frequency because absent is rarer than rare.{' '}
-          <span className="text-broken-400">Red ClinVar text</span> = an asserted pathogenic
-          classification; <span className="text-good-400">green FILTER</span> = the caller kept the
+          <span className="text-broken-300">Red ClinVar text</span> = an asserted pathogenic
+          classification; <span className="text-good-300">green FILTER</span> = the caller kept the
           record.
         </>
       }
@@ -150,7 +150,7 @@ export function CandidateTable() {
 
           return (
             <div className="space-y-3">
-              <p className="text-micro text-chrome-500">
+              <p className="text-micro text-chrome-400">
                 {int(rows.length)} annotated records in →{' '}
                 <span className="text-chrome-200">{int(hits.length)}</span> survive both filters, in{' '}
                 {byGene.size} gene{byGene.size === 1 ? '' : 's'}

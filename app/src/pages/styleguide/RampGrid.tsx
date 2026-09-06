@@ -60,7 +60,7 @@ export function RampGrid() {
           <div key={family} className="min-w-[52rem]">
             <div className="mb-1 flex items-baseline gap-2">
               <span className="font-mono text-xs font-semibold text-chrome-200">{family}</span>
-              <span className="text-micro text-chrome-500">{MEANING[family]}</span>
+              <span className="text-micro text-chrome-400">{MEANING[family]}</span>
             </div>
             <div className="grid grid-cols-11 gap-1">
               {SHADES.map((shade) => (

@@ -80,7 +80,7 @@ export function Directions({
             align: 'right',
             sortValue: (r) => seedCount(r.id),
             render: (r) => (
-              <span className="tabular-nums font-mono text-xs text-machinery-400">
+              <span className="tabular-nums font-mono text-xs text-machinery-300">
                 {seedCount(r.id)}
               </span>
             ),
@@ -105,7 +105,7 @@ export function Directions({
             align: 'right',
             sortValue: (r) => candidatesPerDirection[r.id] ?? 0,
             render: (r) => (
-              <span className="tabular-nums font-mono text-xs text-good-400">
+              <span className="tabular-nums font-mono text-xs text-good-300">
                 {candidatesPerDirection[r.id] ?? 0}
               </span>
             ),

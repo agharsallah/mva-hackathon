@@ -39,7 +39,7 @@ function Group({ title, note, children }: { title: string; note: string; childre
     <section className="space-y-2">
       <div className="flex flex-wrap items-baseline gap-2">
         <h4 className="text-sm font-semibold text-chrome-100">{title}</h4>
-        <span className="text-micro text-chrome-500">{note}</span>
+        <span className="text-micro text-chrome-400">{note}</span>
       </div>
       {children}
     </section>
@@ -107,7 +107,7 @@ function TypeRow({ role }: { role: TypeRole }) {
         <p ref={ref} className={cx(role.cls, role.serif ? 'font-serif' : 'font-sans')}>
           {SPECIMEN}
         </p>
-        <p className="mt-2 text-micro text-chrome-500">{role.use}</p>
+        <p className="mt-2 text-micro text-chrome-400">{role.use}</p>
       </td>
     </tr>
   );
@@ -136,7 +136,7 @@ function RadiusSwatch({ cls, declared, use }: (typeof RADII)[number]) {
           {radius ?? declared}
         </span>
       </div>
-      <p className="text-micro text-chrome-500">{use}</p>
+      <p className="text-micro text-chrome-400">{use}</p>
     </Card>
   );
 }
@@ -155,9 +155,9 @@ function LineSwatch({ cls, behind, use }: (typeof LINES)[number]) {
       <div className={cx('h-14 rounded-control border bg-panel', cls)} aria-hidden />
       <div className="flex flex-wrap items-center gap-2">
         <Token>{cls}</Token>
-        <span className="font-mono text-micro text-chrome-500">{behind}</span>
+        <span className="font-mono text-micro text-chrome-400">{behind}</span>
       </div>
-      <p className="text-micro text-chrome-500">{use}</p>
+      <p className="text-micro text-chrome-400">{use}</p>
     </Card>
   );
 }
@@ -168,9 +168,9 @@ function FocusSwatch() {
       <div className="h-14 rounded-control bg-panel ring-2 ring-focus" aria-hidden />
       <div className="flex flex-wrap items-center gap-2">
         <Token>ring-focus</Token>
-        <span className="font-mono text-micro text-chrome-500">machinery-600</span>
+        <span className="font-mono text-micro text-chrome-400">machinery-600</span>
       </div>
-      <p className="text-micro text-chrome-500">
+      <p className="text-micro text-chrome-400">
         the keyboard focus ring — never removed, only recoloured
       </p>
     </Card>
@@ -199,7 +199,7 @@ function SpacingBar({ cls, step, declared, use }: (typeof STEPS)[number]) {
       <span className="w-14 shrink-0 font-mono text-micro tabular-nums text-chrome-400">
         {width ?? declared}
       </span>
-      <span className="text-micro text-chrome-500">{use}</span>
+      <span className="text-micro text-chrome-400">{use}</span>
     </div>
   );
 }
@@ -222,7 +222,7 @@ export function DesignTokens() {
         <>
           Every specimen carries the real utility class and the size beside it is read back off that
           element with <code>getComputedStyle</code>, so nothing here is a number typed twice.{' '}
-          <span className="text-machinery-400">blue</span> = machinery (the class names, the spacing
+          <span className="text-machinery-300">blue</span> = machinery (the class names, the spacing
           bars), grey = app furniture (the <code>chrome</code> family every hairline and surface is
           drawn from). Serif specimens are the reading voice, sans the operating voice.
         </>
@@ -234,7 +234,7 @@ export function DesignTokens() {
         <Group title="Type" note="eight roles, two voices">
           <table className="w-full border-collapse text-left">
             <thead>
-              <tr className="text-xs text-chrome-500">
+              <tr className="text-xs text-chrome-400">
                 <th className="pb-2 pr-3 font-medium">role</th>
                 <th className="pb-2 pr-3 font-medium">class</th>
                 <th className="pb-2 pr-3 text-right font-medium">size</th>
@@ -269,12 +269,12 @@ export function DesignTokens() {
         <Group title="Surfaces" note="each one lifts off the one behind it">
           <div className="rounded-card bg-chrome-950 p-4">
             <div className="mb-2 flex flex-wrap items-center gap-2">
-              <span className="text-micro text-chrome-500">the page</span>
+              <span className="text-micro text-chrome-400">the page</span>
               <Token>bg-chrome-950</Token>
             </div>
             <div className="rounded-card border border-line bg-panel p-4">
               <div className="mb-2 flex flex-wrap items-center gap-2">
-                <span className="text-micro text-chrome-500">a card or an exhibit</span>
+                <span className="text-micro text-chrome-400">a card or an exhibit</span>
                 <Token>bg-panel</Token>
                 <span className="rounded-control border border-line bg-panel-raised px-2 py-0.5 font-mono text-micro text-chrome-400">
                   bg-panel-raised — a control on it
@@ -282,7 +282,7 @@ export function DesignTokens() {
               </div>
               <div className="rounded-control border border-line-soft bg-well p-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-micro text-chrome-500">a well inside the card</span>
+                  <span className="text-micro text-chrome-400">a well inside the card</span>
                   <Token>bg-well</Token>
                 </div>
               </div>
@@ -305,11 +305,11 @@ export function DesignTokens() {
                 <div className="flex flex-wrap items-center gap-2">
                   <Token>variant=&quot;{variant}&quot;</Token>
                 </div>
-                <p className="text-micro text-chrome-500">{use}</p>
+                <p className="text-micro text-chrome-400">{use}</p>
               </Card>
             ))}
           </div>
-          <p className="text-micro text-chrome-500">
+          <p className="text-micro text-chrome-400">
             Padding is a second prop on the same three: <code>md</code> is the card step,{' '}
             <code>sm</code> the dense one, <code>none</code> for a table flush to the edge.
           </p>

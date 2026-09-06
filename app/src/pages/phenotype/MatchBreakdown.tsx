@@ -108,7 +108,7 @@ export function MatchBreakdown() {
               {data.delta.moved !== null && (
                 <p className="text-xs text-chrome-400">
                   {data.gene} moves{' '}
-                  <strong className={data.delta.moved > 0 ? 'text-good-400' : 'text-broken-400'}>
+                  <strong className={data.delta.moved > 0 ? 'text-good-300' : 'text-broken-300'}>
                     {data.delta.moved > 0 ? '+' : ''}
                     {data.delta.moved} places
                   </strong>{' '}

@@ -74,7 +74,7 @@ export function TermSearch({ dictionary }: { dictionary: Dictionary }) {
 
   return (
     <div className="relative">
-      <label className="flex items-center gap-2 text-micro text-chrome-500">
+      <label className="flex items-center gap-2 text-micro text-chrome-400">
         <span className="sr-only">Search the dictionary</span>
         <input
           type="search"
@@ -98,7 +98,7 @@ export function TermSearch({ dictionary }: { dictionary: Dictionary }) {
           className="absolute z-20 mt-1 max-h-[60vh] w-full overflow-y-auto rounded-card border border-line bg-chrome-950 p-1 shadow-lg"
         >
           {hits.length === 0 && (
-            <li className="px-3 py-2 text-xs text-chrome-500">No term matches “{query}”.</li>
+            <li className="px-3 py-2 text-xs text-chrome-400">No term matches “{query}”.</li>
           )}
           {hits.map(({ row }) => (
             <li key={row.entry.slug}>
@@ -109,7 +109,7 @@ export function TermSearch({ dictionary }: { dictionary: Dictionary }) {
               >
                 <span className="flex items-baseline gap-2">
                   <span className="text-sm font-medium text-chrome-100">{row.entry.term}</span>
-                  <span className="text-micro text-chrome-500">chapter {row.chapter}</span>
+                  <span className="text-micro text-chrome-400">chapter {row.chapter}</span>
                 </span>
                 <span className="line-clamp-1 font-serif text-note text-chrome-400">
                   {strip(row.entry.html).slice(0, 120)}

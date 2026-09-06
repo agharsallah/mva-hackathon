@@ -46,7 +46,7 @@ export function ProteinFilters({
         hide non-candidates
       </Toggle>
 
-      <span className="inline-flex items-center gap-1 text-micro text-chrome-500">
+      <span className="inline-flex items-center gap-1 text-micro text-chrome-400">
         impact
         {IMPACTS.map((impact) => {
           const on = !filters.hiddenImpacts.includes(impact);
@@ -69,7 +69,7 @@ export function ProteinFilters({
         })}
       </span>
 
-      <span className="inline-flex items-center gap-1 text-micro text-chrome-500">
+      <span className="inline-flex items-center gap-1 text-micro text-chrome-400">
         residues
         <input
           type="number"

@@ -24,7 +24,7 @@ interface Field {
   render: (v: PanelHetVariant) => ReactNode;
 }
 
-const dim = (text: string) => <span className="text-chrome-500">{text}</span>;
+const dim = (text: string) => <span className="text-chrome-400">{text}</span>;
 
 const FIELDS: Field[] = [
   {
@@ -33,7 +33,7 @@ const FIELDS: Field[] = [
     render: (v) =>
       v.annotated ? (
         <span className={TEXT[impactTone(v.impact ?? '')]}>
-          {variantLabel(v)} <span className="text-chrome-500">· {v.impact}</span>
+          {variantLabel(v)} <span className="text-chrome-400">· {v.impact}</span>
         </span>
       ) : (
         dim('VEP never saw this allele — every annotation field below is unknown, not false')
@@ -52,7 +52,7 @@ const FIELDS: Field[] = [
       !v.annotated ? (
         dim('unknown')
       ) : (
-        <span className={v.gnomad_af === null ? 'text-good-400' : 'text-chrome-200'}>
+        <span className={v.gnomad_af === null ? 'text-good-300' : 'text-chrome-200'}>
           {af(v.gnomad_af)}
         </span>
       ),
@@ -87,7 +87,7 @@ const FIELDS: Field[] = [
     render: (v) => (
       <span className="font-mono">
         {v.gt}
-        {v.gt === '1/2' && <span className="text-chrome-500"> · allele {v.allele_ix}</span>}
+        {v.gt === '1/2' && <span className="text-chrome-400"> · allele {v.allele_ix}</span>}
       </span>
     ),
   },
@@ -96,7 +96,7 @@ const FIELDS: Field[] = [
     hint: 'This endpoint serves heterozygous PASS alleles only, so FILTER is PASS by construction — it is not read off the row.',
     render: () => (
       <span>
-        <span className="font-mono text-good-400">PASS</span> {dim('(by construction)')}
+        <span className="font-mono text-good-300">PASS</span> {dim('(by construction)')}
       </span>
     ),
   },
@@ -122,7 +122,7 @@ const FIELDS: Field[] = [
     render: (v) =>
       v.pgt || v.pid ? (
         <span className="font-mono">
-          {v.pgt ?? '—'} <span className="text-chrome-500">/ {v.pid ?? '—'}</span>
+          {v.pgt ?? '—'} <span className="text-chrome-400">/ {v.pid ?? '—'}</span>
         </span>
       ) : (
         dim('unphased — no read pair spanned this allele and a neighbour')
@@ -140,7 +140,7 @@ export function Flag({ on, yes, no }: { on: boolean | null; yes: string; no: str
   return (
     <span
       className={`rounded-pill px-2 py-0.5 text-micro ${
-        on ? 'bg-good-950/60 text-good-400' : 'bg-chrome-800 text-chrome-500'
+        on ? 'bg-good-950/60 text-good-300' : 'bg-chrome-800 text-chrome-400'
       }`}
     >
       {on ? yes : no}
@@ -191,7 +191,7 @@ export function Comparison({ a, b }: { a: PanelHetVariant; b: PanelHetVariant })
           {FIELDS.map((f) => (
             <tr key={f.label} className="odd:bg-chrome-900/30">
               <td
-                className="border-b border-line-soft px-2 py-2 align-top text-chrome-500"
+                className="border-b border-line-soft px-2 py-2 align-top text-chrome-400"
                 title={f.hint}
               >
                 {f.label}

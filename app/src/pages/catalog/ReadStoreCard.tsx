@@ -81,15 +81,15 @@ export function ReadStoreCard() {
             },
             {
               k: 'size',
-              v: <span className="font-mono text-machinery-400">{dec(gib, 2)} GiB</span>,
+              v: <span className="font-mono text-machinery-300">{dec(gib, 2)} GiB</span>,
             },
             {
               k: 'derived from',
               v: (
                 <span className="text-chrome-300">
-                  <span className="font-mono text-raw-400">s3://mva/source/*.fastq.gz</span>
+                  <span className="font-mono text-raw-300">s3://mva/source/*.fastq.gz</span>
                   {instruments.length > 0 && (
-                    <span className="text-chrome-500"> · {instruments.join(', ')}</span>
+                    <span className="text-chrome-400"> · {instruments.join(', ')}</span>
                   )}
                 </span>
               ),
@@ -100,7 +100,7 @@ export function ReadStoreCard() {
                 <span className="text-chrome-300">
                   <span className="font-mono text-chrome-100">{engines.join(', ')}</span>
                   {seconds > 0 && (
-                    <span className="text-chrome-500">
+                    <span className="text-chrome-400">
                       {' '}
                       · {int(Math.round(seconds / 60))} min of conversion
                     </span>
@@ -114,7 +114,7 @@ export function ReadStoreCard() {
               k: 'converted at',
               v: (
                 <span
-                  className="rounded-pill bg-decision-500/10 px-2 py-px text-micro text-decision-400/90"
+                  className="rounded-pill bg-decision-500/10 px-2 py-px text-micro text-decision-300/90"
                   title="runs.parquet records the engine and the wall-clock seconds per file, but no timestamp. The conversion date is not recoverable from this table."
                 >
                   not carried by the runs table

@@ -101,10 +101,10 @@ export function buildColumns(
       sortValue: (row) => row.kind,
       render: (row) =>
         row.kind === 'ready' ? (
-          <span className="text-good-400">ok</span>
+          <span className="text-good-300">ok</span>
         ) : (
           <span
-            className={row.kind === 'loading' ? 'text-chrome-500' : 'text-decision-400'}
+            className={row.kind === 'loading' ? 'text-chrome-400' : 'text-decision-300'}
             title={row.note}
           >
             {row.kind === 'loading' ? 'loading…' : row.note}
@@ -190,7 +190,7 @@ export function buildColumns(
             className={
               row.metrics.closestPairConfident
                 ? 'font-mono text-chrome-200'
-                : 'font-mono text-chrome-500'
+                : 'font-mono text-chrome-400'
             }
             title={row.metrics.closestPairConfident ? '' : 'one end below pLDDT 70 — not quotable'}
           >

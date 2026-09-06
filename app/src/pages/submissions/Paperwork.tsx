@@ -44,7 +44,7 @@ export function Paperwork({
           <dl className="mt-3 space-y-3">
             {iteration.methods_form.map((a: MethodsFormAnswer) => (
               <div key={a.row} className="grid gap-1 sm:grid-cols-[4rem_1fr]">
-                <dt className="font-mono text-micro text-chrome-500">row {a.row}</dt>
+                <dt className="font-mono text-micro text-chrome-400">row {a.row}</dt>
                 <dd className="max-w-[100ch] text-xs leading-relaxed text-chrome-300">
                   {a.answer}
                 </dd>
@@ -57,11 +57,11 @@ export function Paperwork({
           <summary className="cursor-pointer text-xs font-semibold text-chrome-200 hover:text-chrome-50">
             Report source — <span className="font-mono">{iteration.report.path}</span>
           </summary>
-          <p className="mt-2 text-micro text-chrome-500">
+          <p className="mt-2 text-micro text-chrome-400">
             The Markdown the uploaded PDF was rendered from.{' '}
             <a
               href={blobUrl(iteration.report.path)}
-              className="text-machinery-400 underline decoration-machinery-700 underline-offset-2 hover:text-machinery-200"
+              className="text-machinery-300 underline decoration-machinery-700 underline-offset-2 hover:text-machinery-200"
             >
               open on GitHub
             </a>

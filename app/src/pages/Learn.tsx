@@ -140,7 +140,7 @@ function Course({ dictionary }: { dictionary: Dictionary }) {
           <Card padding="sm">
             <TrackList dictionary={dictionary} />
           </Card>
-          <details className="text-xs text-chrome-500">
+          <details className="text-xs text-chrome-400">
             <summary className="cursor-pointer hover:text-chrome-300">
               About this dictionary
             </summary>
@@ -156,7 +156,7 @@ function Course({ dictionary }: { dictionary: Dictionary }) {
           <header id={chapter.id} className="scroll-mt-28 border-b border-line pb-4">
             <p className="font-serif text-reading text-chrome-400 italic">
               Chapter {chapter.number} of {dictionary.chapters.length}
-              <span className="ml-3 font-sans text-xs not-italic text-chrome-500">
+              <span className="ml-3 font-sans text-xs not-italic text-chrome-400">
                 {terms} terms
               </span>
             </p>
@@ -185,7 +185,7 @@ function Course({ dictionary }: { dictionary: Dictionary }) {
                 onClick={() => goTo(prev)}
                 className="rounded-control border border-line px-3 py-2 text-left text-sm text-chrome-300 transition hover:border-line-strong hover:text-chrome-50"
               >
-                <span className="block text-micro text-chrome-500">Previous chapter</span>
+                <span className="block text-micro text-chrome-400">Previous chapter</span>
                 {prev.number}. {prev.title}
               </button>
             ) : (

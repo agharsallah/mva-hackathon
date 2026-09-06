@@ -63,7 +63,7 @@ function Lollipop({ structure }: { structure: GeneStructure }) {
 
   if (!length) {
     return (
-      <p className="p-6 text-center text-sm text-chrome-500">
+      <p className="p-6 text-center text-sm text-chrome-400">
         {structure.gene} has no protein on its canonical transcript (
         {structure.transcript ?? 'unknown'}), so there is no amino-acid axis to draw.
       </p>
@@ -233,12 +233,12 @@ function Unplaceable({
       <p className="mb-2 font-semibold text-chrome-300">
         {int(placed)} placed · {int(rows.length)} not placeable
       </p>
-      <p className="mb-2 text-chrome-500">
+      <p className="mb-2 text-chrome-400">
         Domains and positions are both on{' '}
         <span className="font-mono">{transcript ?? 'the canonical transcript'}</span>.
       </p>
       {rows.length === 0 ? (
-        <p className="text-chrome-500">
+        <p className="text-chrome-400">
           {placed === 0
             ? 'This gene has no protein-altering allele in the callset, so there is nothing to place.'
             : 'Every protein-altering allele resolved to an amino-acid position.'}
@@ -252,8 +252,8 @@ function Unplaceable({
               style={{ borderColor: impactColor(c.impact ?? '') }}
             >
               <span className="font-mono text-chrome-300">{c.label}</span>
-              <span className="ml-1 text-chrome-500">({c.impact ?? 'unknown impact'})</span>
-              <p className="text-chrome-500">{c.reason}</p>
+              <span className="ml-1 text-chrome-400">({c.impact ?? 'unknown impact'})</span>
+              <p className="text-chrome-400">{c.reason}</p>
             </li>
           ))}
         </ul>

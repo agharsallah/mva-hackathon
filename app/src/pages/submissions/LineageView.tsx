@@ -117,7 +117,7 @@ function SourceItem({ source }: { source: LineageSource }) {
   return (
     <li className="space-y-0.5">
       <div className="font-mono text-xs break-all text-chrome-100">{source.ref}</div>
-      <div className="flex flex-wrap items-center gap-2 text-micro text-chrome-500">
+      <div className="flex flex-wrap items-center gap-2 text-micro text-chrome-400">
         {source.version && <span className="font-mono">{source.version}</span>}
         {source.sha256 && (
           <Badge tone="good" title={source.sha256}>
@@ -246,9 +246,9 @@ function GraphSvg({
       <div className="min-h-[34px] rounded-card border border-line bg-panel p-2 text-micro">
         {hovered ? (
           <>
-            <span className="font-mono text-decision-400">{hovered.from}</span>
-            <span className="text-chrome-500"> → </span>
-            <span className="font-mono text-decision-400">{hovered.to}</span>
+            <span className="font-mono text-decision-300">{hovered.from}</span>
+            <span className="text-chrome-400"> → </span>
+            <span className="font-mono text-decision-300">{hovered.to}</span>
             <span className="text-chrome-400"> — {hovered.transform}</span>
             <span className="text-chrome-600"> [{hovered.tool}]</span>
           </>

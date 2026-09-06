@@ -115,7 +115,7 @@ function Card({ payload, origin }: { payload: PanelHetPairs; origin: Origin }) {
 
   if (variants.length < 2) {
     return (
-      <p className="p-8 text-center text-sm text-chrome-500">
+      <p className="p-8 text-center text-sm text-chrome-400">
         {gene} has {variants.length === 0 ? 'no' : 'one'} heterozygous PASS allele, and a pair needs
         two.
       </p>
@@ -290,7 +290,7 @@ function HandOff({
           type="button"
           disabled={!live}
           onClick={() => navigate(probesPairHref(toRef(a), toRef(b)))}
-          className="rounded-control bg-machinery-600 px-3 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-500"
+          className="rounded-control bg-machinery-600 px-3 py-2 text-xs font-medium text-white disabled:cursor-not-allowed disabled:bg-chrome-800 disabled:text-chrome-400"
         >
           add pair to probe builder
         </button>
@@ -316,7 +316,7 @@ function HandOff({
         >
           {building ? 'validating…' : copied ? 'copied the row' : 'copy CSV row'}
         </button>
-        <span className="text-micro text-chrome-500">
+        <span className="text-micro text-chrome-400">
           building spends nothing — the row is rendered by{' '}
           <span className="font-mono">mva.pipeline.submission</span> at epcr 0.99, never assembled
           here

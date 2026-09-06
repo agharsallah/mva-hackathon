@@ -59,12 +59,12 @@ export function MechanismCardExhibit({ card, source }: { card: MechanismCard; so
           <ol className="space-y-1">
             {m.downstream.map((d, i) => (
               <li key={d} className="grid grid-cols-[1.5rem_1fr] gap-x-2 text-sm text-chrome-300">
-                <span className="font-mono text-micro text-broken-400">{i + 1} →</span>
+                <span className="font-mono text-micro text-broken-300">{i + 1} →</span>
                 <span className="leading-relaxed">{d}</span>
               </li>
             ))}
           </ol>
-          <p className="text-micro text-chrome-500">
+          <p className="text-micro text-chrome-400">
             Read as a chain: each line is caused by the one above it. The last two are what the
             child presents with, which is how the chain is checked against the clinical document.
           </p>
@@ -91,7 +91,7 @@ export function MechanismCardExhibit({ card, source }: { card: MechanismCard; so
                 render: (r) =>
                   r.clinvar ? (
                     <a
-                      className="font-mono text-xs text-machinery-400 underline underline-offset-2"
+                      className="font-mono text-xs text-machinery-300 underline underline-offset-2"
                       href={`https://www.ncbi.nlm.nih.gov/clinvar/variation/${r.clinvar.replace(/^VCV0*/, '')}/`}
                       target="_blank"
                       rel="noreferrer"
@@ -110,7 +110,7 @@ export function MechanismCardExhibit({ card, source }: { card: MechanismCard; so
               },
             ]}
           />
-          <p className="max-w-[95ch] text-micro leading-relaxed text-chrome-500">
+          <p className="max-w-[95ch] text-micro leading-relaxed text-chrome-400">
             The two together are a{' '}
             <T
               slug="compound-heterozygous-comp-het"
@@ -135,7 +135,7 @@ export function MechanismCardExhibit({ card, source }: { card: MechanismCard; so
             {m.literature.map((lit) => (
               <li key={lit.pmid} className="flex gap-2 text-sm">
                 <a
-                  className="shrink-0 font-mono text-xs text-machinery-400 underline underline-offset-2 hover:text-machinery-200"
+                  className="shrink-0 font-mono text-xs text-machinery-300 underline underline-offset-2 hover:text-machinery-200"
                   href={pubmed(lit.pmid)}
                   target="_blank"
                   rel="noreferrer"
@@ -170,9 +170,9 @@ function Field({
   }[tone];
   return (
     <div className={cx('rounded-card border-l-2 bg-panel p-3', rule)}>
-      <div className="text-xs text-chrome-500">{label}</div>
+      <div className="text-xs text-chrome-400">{label}</div>
       <p className="mt-1 text-sm leading-relaxed text-chrome-100">{value}</p>
-      <p className="mt-1.5 text-micro leading-relaxed text-chrome-500">{note}</p>
+      <p className="mt-1.5 text-micro leading-relaxed text-chrome-400">{note}</p>
     </div>
   );
 }

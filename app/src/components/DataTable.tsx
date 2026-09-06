@@ -71,7 +71,7 @@ function Pager({
   const btn =
     'rounded-pill border border-line-strong bg-chrome-900 px-2 py-0.5 text-chrome-400 transition enabled:hover:bg-chrome-800 enabled:hover:text-chrome-200 disabled:opacity-30 focus:outline-none focus-visible:border-machinery-700';
   return (
-    <div className="flex items-center justify-end gap-2 text-micro text-chrome-500">
+    <div className="flex items-center justify-end gap-2 text-micro text-chrome-400">
       <button
         type="button"
         className={btn}
@@ -190,7 +190,7 @@ export function DataTable<R>({
         placeholder={filterPlaceholder}
       />
       {needle && filtered.length > 0 && (
-        <span className="text-micro text-chrome-500">
+        <span className="text-micro text-chrome-400">
           <span className="font-mono text-chrome-300">{filtered.length}</span> of {rows.length}{' '}
           match
         </span>

@@ -84,7 +84,7 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
         </span>
         <span
           className={`shrink-0 rounded-pill px-2 py-px text-micro font-medium ${
-            v.ok ? 'bg-good-500/15 text-good-400' : 'bg-broken-500/15 text-broken-400'
+            v.ok ? 'bg-good-500/15 text-good-300' : 'bg-broken-500/15 text-broken-300'
           }`}
           title={v.title}
         >
@@ -113,7 +113,7 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
           </span>
         )}
         {r.flowcell && (
-          <span className="rounded-pill bg-chrome-800 px-1 py-px font-mono text-chrome-500">
+          <span className="rounded-pill bg-chrome-800 px-1 py-px font-mono text-chrome-400">
             {r.flowcell}
           </span>
         )}
@@ -140,7 +140,7 @@ function ObjectCard({ r }: { r: CatalogObjectRow }) {
               <span className="ml-2 text-chrome-600">(first upload)</span>
             ) : (
               <span
-                className="ml-2 rounded-pill bg-decision-500/15 px-1 py-px text-decision-400"
+                className="ml-2 rounded-pill bg-decision-500/15 px-1 py-px text-decision-300"
                 title="No ingest-ledger row for this object — it predates the ledger. This is the store's last-modified time, which is an upper bound on arrival, not the arrival itself."
               >
                 last modified — predates the ledger
@@ -196,11 +196,11 @@ export function DeliveryInventory() {
                   total <span className="font-mono text-chrome-100">{bytes(totalBytes)}</span>
                 </span>
                 <span>
-                  <span className="font-mono text-good-400">{verified}</span> hash-verified (
+                  <span className="font-mono text-good-300">{verified}</span> hash-verified (
                   {publisher} against the publisher)
                 </span>
                 {ledgerless > 0 && (
-                  <span className="text-decision-400">
+                  <span className="text-decision-300">
                     {ledgerless} with no first-upload record
                   </span>
                 )}

@@ -97,7 +97,7 @@ function statusTitle(state: 'checking' | 'up' | 'down' | 'refused'): string {
 }
 
 const TAB =
-  'rounded-control px-3 py-1 text-xs font-medium transition focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-600';
+  'rounded-control px-3 py-1 text-xs font-medium transition focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-500';
 const TAB_ON = 'bg-chrome-800 text-chrome-50';
 const TAB_OFF = 'text-chrome-400 hover:bg-chrome-900 hover:text-chrome-200';
 
@@ -117,7 +117,7 @@ function ApiHealth() {
           ? 'bg-broken-500'
           : 'bg-chrome-500 animate-pulse';
   return (
-    <span className="flex items-center gap-2 text-xs text-chrome-500" title={statusTitle(state)}>
+    <span className="flex items-center gap-2 text-xs text-chrome-400" title={statusTitle(state)}>
       <span className={`h-2 w-2 rounded-full ${dot}`} />
       API {state === 'refused' ? 'unauthorized' : state}
     </span>
@@ -156,12 +156,12 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
           to={home.to}
           onPointerEnter={home.preload}
           onFocus={home.preload}
-          className="flex items-baseline gap-2 rounded-control focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-600"
+          className="flex items-baseline gap-2 rounded-control focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-500"
         >
           <span className="text-sm font-semibold tracking-tight text-chrome-50">
             MVA Case Explorer
           </span>
-          <span className="hidden items-baseline gap-2 text-xs text-chrome-500 md:inline-flex">
+          <span className="hidden items-baseline gap-2 text-xs text-chrome-400 md:inline-flex">
             <span className="rounded-pill border border-line px-2 py-px text-micro text-chrome-400">
               PROBAND01
             </span>
@@ -206,7 +206,7 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
           <AiExport />
           {onFixtures && (
             <span
-              className="rounded-control bg-decision-500/15 px-2 py-1 text-micro font-medium text-decision-400"
+              className="rounded-control bg-decision-500/15 px-2 py-1 text-micro font-medium text-decision-300"
               title="At least one panel on this session was served from a committed fixture, not the live API."
             >
               fixture data
@@ -249,7 +249,7 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
                 </NavLink>
               ))}
             </nav>
-            <p className="ml-auto hidden py-2 font-serif text-note text-chrome-500 italic sm:block">
+            <p className="ml-auto hidden py-2 font-serif text-note text-chrome-400 italic sm:block">
               {active.question}
             </p>
           </div>

@@ -19,7 +19,7 @@ export function SeeItLinks({ entry }: { entry: EntryBlock }) {
   if (!links) return null;
   return (
     <div className="mt-2 flex flex-wrap items-center gap-1.5">
-      <span className="mr-1 text-micro text-chrome-500">See it in the app</span>
+      <span className="mr-1 text-micro text-chrome-400">See it in the app</span>
       {links.app.map((l) => (
         <Link key={l.to} to={l.to} className={LINK}>
           {l.label} <span aria-hidden="true">→</span>

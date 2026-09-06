@@ -29,7 +29,7 @@ export function ProbeLedger() {
     {
       key: 'at',
       header: 'logged',
-      render: (r) => <span className="font-mono text-chrome-500">{iso(r.logged_at)}</span>,
+      render: (r) => <span className="font-mono text-chrome-400">{iso(r.logged_at)}</span>,
     },
     { key: 'track', header: 'track', render: (r) => r.track },
     {
@@ -60,7 +60,7 @@ export function ProbeLedger() {
           value={
             <>
               {remaining}
-              <span className="text-lg text-chrome-500"> / {total}</span>
+              <span className="text-lg text-chrome-400"> / {total}</span>
             </>
           }
           sub={`probes remaining · ${spent} spent`}

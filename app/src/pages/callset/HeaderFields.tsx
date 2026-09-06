@@ -98,7 +98,7 @@ export function HeaderFields() {
         render: (r) => {
           const where = usage(r);
           return where ? (
-            <span className="text-good-400/90">{where}</span>
+            <span className="text-good-300/90">{where}</span>
           ) : (
             <span className="text-chrome-600">—</span>
           );
@@ -118,7 +118,7 @@ export function HeaderFields() {
           <Chip color={C.machinery}>INFO — one value per site</Chip> ·{' '}
           <Chip color={C.raw}>FORMAT — one value per sample</Chip>. Descriptions are the
           caller&apos;s own text, verbatim. The last column is green where something in this repo
-          actually reads the field and <span className="text-chrome-500">—</span> where nothing
+          actually reads the field and <span className="text-chrome-400">—</span> where nothing
           does. Sortable; the filter box matches any cell.
         </>
       }
@@ -154,7 +154,7 @@ export function HeaderFields() {
                 filterLabel="find a field"
                 filterPlaceholder="e.g. depth, phasing, MQ"
               />
-              <div className="mt-2 flex flex-wrap gap-3 text-micro text-chrome-500">
+              <div className="mt-2 flex flex-wrap gap-3 text-micro text-chrome-400">
                 {(['FILTER', 'INFO', 'FORMAT'] as FieldKind[]).map((kind) => (
                   <span key={kind}>
                     <span className="font-mono" style={{ color: KIND_COLOR[kind] }}>

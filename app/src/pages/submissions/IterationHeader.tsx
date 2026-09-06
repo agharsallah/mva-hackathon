@@ -30,7 +30,7 @@ export function IterationHeader({ iteration }: { iteration: SubmissionIteration 
         </Badge>
         <a
           href={blobUrl(iteration.folder)}
-          className="font-mono text-micro text-machinery-400 underline decoration-machinery-700 underline-offset-2 hover:text-machinery-200"
+          className="font-mono text-micro text-machinery-300 underline decoration-machinery-700 underline-offset-2 hover:text-machinery-200"
         >
           {iterationKey(iteration)}
         </a>
@@ -52,7 +52,7 @@ export function IterationHeader({ iteration }: { iteration: SubmissionIteration 
           sub={
             <>
               sha256 · {csv.rows ?? '—'} rows ·{' '}
-              <span className="text-raw-400">never committed</span> — it holds real coordinates, so
+              <span className="text-raw-300">never committed</span> — it holds real coordinates, so
               it lives at <span className="font-mono">{csv.path ?? 'build/submission/'}</span>,
               outside the repository
             </>
@@ -64,7 +64,7 @@ export function IterationHeader({ iteration }: { iteration: SubmissionIteration 
           value={
             <>
               {6 - spent}
-              <span className="text-lg text-chrome-500"> / 6</span>
+              <span className="text-lg text-chrome-400"> / 6</span>
             </>
           }
           sub={

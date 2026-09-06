@@ -20,7 +20,7 @@ const NO = '·';
 function flag(on: boolean, tone: 'good' | 'chrome' = 'good') {
   return (
     <span
-      className={on ? (tone === 'good' ? 'text-good-400' : 'text-chrome-300') : 'text-chrome-600'}
+      className={on ? (tone === 'good' ? 'text-good-300' : 'text-chrome-300') : 'text-chrome-600'}
     >
       {on ? YES : NO}
     </span>
@@ -28,10 +28,10 @@ function flag(on: boolean, tone: 'good' | 'chrome' = 'good') {
 }
 
 const PHASE_CLASS: Record<CandidateDistance['phase'], string> = {
-  trans: 'text-good-400',
-  'auto-trans': 'text-decision-400',
-  cis: 'text-broken-400',
-  unknown: 'text-chrome-500',
+  trans: 'text-good-300',
+  'auto-trans': 'text-decision-300',
+  cis: 'text-broken-300',
+  unknown: 'text-chrome-400',
 };
 
 /**
@@ -79,7 +79,7 @@ export function DistanceTable({
             {r.b.aa}
             {r.b.n}
           </span>
-          <span className="ml-2 text-chrome-500">
+          <span className="ml-2 text-chrome-400">
             {r.a.label} / {r.b.label}
           </span>
         </button>
@@ -102,7 +102,7 @@ export function DistanceTable({
       header: 'aa apart on the chain',
       align: 'right',
       sortValue: (r) => r.sequenceGap,
-      render: (r) => <span className="font-mono text-chrome-500">{r.sequenceGap}</span>,
+      render: (r) => <span className="font-mono text-chrome-400">{r.sequenceGap}</span>,
     },
     {
       key: 'bothRare',

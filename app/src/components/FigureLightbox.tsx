@@ -181,7 +181,7 @@ export function FigureLightbox({ figures, slug, onSelect, linkFor }: FigureLight
           />
         </div>
 
-        <p className="font-mono text-micro break-all text-chrome-500">
+        <p className="font-mono text-micro break-all text-chrome-400">
           {figure.path} · <span className="text-chrome-400">?figure={figure.slug}</span>
         </p>
       </div>

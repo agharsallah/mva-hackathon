@@ -65,10 +65,10 @@ export function TokenPipeline() {
       title="How one number reaches both a chart and a class"
       legend={
         <>
-          <span className="text-raw-400">purple</span> = the raw input (the dependency),{' '}
-          <span className="text-machinery-400">blue</span> = machinery (the generator),{' '}
-          <span className="text-good-400">green</span> = the two generated artifacts,{' '}
-          <span className="text-decision-400">yellow</span> = the checks that fail if they disagree.
+          <span className="text-raw-300">purple</span> = the raw input (the dependency),{' '}
+          <span className="text-machinery-300">blue</span> = machinery (the generator),{' '}
+          <span className="text-good-300">green</span> = the two generated artifacts,{' '}
+          <span className="text-decision-300">yellow</span> = the checks that fail if they disagree.
           Arrows read top to bottom.
         </>
       }

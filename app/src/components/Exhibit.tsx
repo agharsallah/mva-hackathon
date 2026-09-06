@@ -133,7 +133,7 @@ export function Exhibit({
           // cannot fit, leaving normal prose alone.
           <p className="font-mono text-micro break-words text-chrome-600">
             {origin === 'fixture' && (
-              <span className="mr-2 rounded-pill bg-decision-500/15 px-1 py-px text-decision-400">
+              <span className="mr-2 rounded-pill bg-decision-500/15 px-1 py-px text-decision-300">
                 fixture
               </span>
             )}
@@ -170,8 +170,8 @@ function CopyForAi({ record }: { record: ExhibitRecord }) {
       title={AI_HINT}
       className={`rounded-control border px-2 py-0.5 text-micro transition focus:outline-none focus-visible:border-machinery-700 ${
         said
-          ? 'border-good-800 bg-good-950/40 text-good-400'
-          : 'border-line bg-chrome-900 text-chrome-500 hover:border-line-strong hover:text-chrome-300'
+          ? 'border-good-800 bg-good-950/40 text-good-300'
+          : 'border-line bg-chrome-900 text-chrome-400 hover:border-line-strong hover:text-chrome-300'
       }`}
     >
       {said ?? 'copy for AI'}

@@ -141,11 +141,11 @@ export default function SciencePage() {
 
       <p className="text-micro leading-relaxed text-chrome-600">
         The method this page renders is owned by{' '}
-        <span className="font-mono text-chrome-500">docs/method.md</span>; the steps are declared in{' '}
-        <span className="font-mono text-chrome-500">src/mva/science/steps.py</span>; the register
-        lives in <span className="font-mono text-chrome-500">warehouse.hypotheses</span> and{' '}
-        <span className="font-mono text-chrome-500">warehouse.evidence</span>. This page is
-        read-only — only the <span className="font-mono text-chrome-500">mva-science</span> verbs
+        <span className="font-mono text-chrome-400">docs/method.md</span>; the steps are declared in{' '}
+        <span className="font-mono text-chrome-400">src/mva/science/steps.py</span>; the register
+        lives in <span className="font-mono text-chrome-400">warehouse.hypotheses</span> and{' '}
+        <span className="font-mono text-chrome-400">warehouse.evidence</span>. This page is
+        read-only — only the <span className="font-mono text-chrome-400">mva-science</span> verbs
         write. No genomic position appears in a statement or a claim; the register refuses one on
         the way in.
       </p>

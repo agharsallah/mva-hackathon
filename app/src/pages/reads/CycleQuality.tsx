@@ -103,7 +103,7 @@ export function CycleQuality() {
                     }),
                   })}
                 />
-                <p className="mt-1 text-micro text-chrome-500">
+                <p className="mt-1 text-micro text-chrome-400">
                   drag to rotate · the R2 half of the y axis sits visibly lower at high cycle
                   numbers
                 </p>
@@ -174,10 +174,10 @@ export function CycleQuality() {
                   legend: { orientation: 'h', y: 1.14, x: 0, font: { color: C.inkDim, size: 10 } },
                 })}
               />
-              <p className="mt-1 text-micro text-chrome-500">
+              <p className="mt-1 text-micro text-chrome-400">
                 last cycle mean: R1{' '}
-                <span className="font-mono text-machinery-400">{dec(lastR1, 2)}</span> · R2{' '}
-                <span className="font-mono text-raw-400">{dec(lastR2, 2)}</span> — a{' '}
+                <span className="font-mono text-machinery-300">{dec(lastR1, 2)}</span> · R2{' '}
+                <span className="font-mono text-raw-300">{dec(lastR2, 2)}</span> — a{' '}
                 {dec(lastR1 - lastR2, 2)} phred gap by the end of the read
               </p>
             </>

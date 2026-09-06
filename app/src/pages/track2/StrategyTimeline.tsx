@@ -84,7 +84,7 @@ function Phase({ phase, index }: { phase: StrategyPhase; index: number }) {
       className={cx('rounded-card border-l-2 p-3', RULE[tone], TINT[tone])}
     >
       <div className="flex items-baseline justify-between gap-2">
-        <span className="font-mono text-micro text-chrome-500">{index + 1}</span>
+        <span className="font-mono text-micro text-chrome-400">{index + 1}</span>
         <Badge tone={tone}>{phase.status}</Badge>
       </div>
       <h4 className="mt-1 text-sm font-semibold text-chrome-100">{phase.title}</h4>

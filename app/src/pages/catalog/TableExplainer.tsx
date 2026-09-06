@@ -30,7 +30,7 @@ import { useUrlText } from '../../lib/urlstate';
 function Gap({ children, title }: { children: string; title: string }) {
   return (
     <span
-      className="rounded-pill bg-decision-500/10 px-2 py-px text-micro whitespace-nowrap text-decision-400/90"
+      className="rounded-pill bg-decision-500/10 px-2 py-px text-micro whitespace-nowrap text-decision-300/90"
       title={title}
     >
       {children}
@@ -65,13 +65,13 @@ function lineageLine(row: CatalogTableRow): string | null {
 function ColumnTable({ columns }: { columns: CatalogColumnRow[] }) {
   if (columns.length === 0) {
     return (
-      <p className="text-micro text-chrome-500">No column metadata was returned for this table.</p>
+      <p className="text-micro text-chrome-400">No column metadata was returned for this table.</p>
     );
   }
   return (
     <table className="w-full border-collapse text-left text-micro">
       <thead>
-        <tr className="border-b border-line text-chrome-500">
+        <tr className="border-b border-line text-chrome-400">
           <th className="py-1 pr-3 font-normal">column</th>
           <th className="py-1 pr-3 font-normal">type</th>
           <th className="py-1 font-normal">what it means</th>
@@ -81,7 +81,7 @@ function ColumnTable({ columns }: { columns: CatalogColumnRow[] }) {
         {columns.map((c) => (
           <tr key={c.column} className="border-b border-line-soft align-top">
             <td className="py-1 pr-3 font-mono whitespace-nowrap text-chrome-200">{c.column}</td>
-            <td className="py-1 pr-3 font-mono whitespace-nowrap text-chrome-500">{c.data_type}</td>
+            <td className="py-1 pr-3 font-mono whitespace-nowrap text-chrome-400">{c.data_type}</td>
             <td className="py-1 text-chrome-300">
               {c.meaning ?? <Gap title={NO_MEANING}>no recorded meaning</Gap>}
             </td>
@@ -100,7 +100,7 @@ function TableCard({ row, columns }: { row: CatalogTableRow; columns: CatalogCol
     <details className="group rounded-card border border-line bg-panel">
       <summary className="flex cursor-pointer flex-wrap items-baseline gap-x-3 gap-y-1 px-3 py-2 hover:bg-chrome-900/70">
         <span className="font-mono text-xs text-chrome-100">
-          <span className="text-chrome-500">{row.schema}.</span>
+          <span className="text-chrome-400">{row.schema}.</span>
           <span className="font-semibold">{row.table}</span>
         </span>
         {row.created_by ? (
@@ -113,7 +113,7 @@ function TableCard({ row, columns }: { row: CatalogTableRow; columns: CatalogCol
         ) : (
           <Gap title={NO_CREATOR}>undocumented — no created_by</Gap>
         )}
-        <span className="text-micro text-chrome-500">
+        <span className="text-micro text-chrome-400">
           {int(row.rows)} rows · {columns.length} columns
         </span>
         {undocumented > 0 && (
@@ -124,18 +124,18 @@ function TableCard({ row, columns }: { row: CatalogTableRow; columns: CatalogCol
 
       <div className="space-y-2 border-t border-line px-3 py-2">
         <p className="text-xs text-chrome-300">
-          <span className="text-chrome-500">what it holds — </span>
+          <span className="text-chrome-400">what it holds — </span>
           {row.description ?? <Gap title="Nothing describes this table.">undescribed</Gap>}
         </p>
         <p className="text-xs text-chrome-300">
-          <span className="text-chrome-500">why it exists — </span>
+          <span className="text-chrome-400">why it exists — </span>
           {row.why ?? <Gap title={NO_REASON}>undocumented — no reason recorded</Gap>}
         </p>
         <p className="text-xs text-chrome-300">
-          <span className="text-chrome-500">how it is created — </span>
+          <span className="text-chrome-400">how it is created — </span>
           {row.created_by ?? <Gap title={NO_CREATOR}>undocumented</Gap>}
-          {lineage && <span className="text-chrome-500">; last run: {lineage}</span>}
-          {!lineage && <span className="text-chrome-500">; no lineage edge records a run</span>}
+          {lineage && <span className="text-chrome-400">; last run: {lineage}</span>}
+          {!lineage && <span className="text-chrome-400">; no lineage edge records a run</span>}
         </p>
         <ColumnTable columns={columns} />
       </div>
@@ -216,7 +216,7 @@ export function TableExplainer() {
         <Skeleton height={320} />
       ) : (
         <div className="space-y-3">
-          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-micro text-chrome-500">
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-micro text-chrome-400">
             <span>
               showing <span className="font-mono text-chrome-200">{int(shown.length)}</span> of{' '}
               {int(rows.length)} tables
@@ -225,12 +225,12 @@ export function TableExplainer() {
               <span className="font-mono text-chrome-400">{int(allColumns.length)}</span> columns
               {columns.isPending && ' (loading)'}
             </span>
-            <span className={undescribed ? 'text-decision-400' : 'text-good-400'}>
+            <span className={undescribed ? 'text-decision-300' : 'text-good-300'}>
               {undescribed
                 ? `${undescribed} table(s) with no recorded reason`
                 : 'every table states why it exists'}
             </span>
-            <span className={unexplained ? 'text-decision-400' : 'text-good-400'}>
+            <span className={unexplained ? 'text-decision-300' : 'text-good-300'}>
               {unexplained
                 ? `${unexplained} column(s) with no recorded meaning`
                 : 'every column has a recorded meaning'}
@@ -264,7 +264,7 @@ export function TableExplainer() {
           })}
 
           {shown.length === 0 && (
-            <p className="py-6 text-center text-xs text-chrome-500">no table matches “{filter}”</p>
+            <p className="py-6 text-center text-xs text-chrome-400">no table matches “{filter}”</p>
           )}
         </div>
       )}

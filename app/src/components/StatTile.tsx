@@ -22,7 +22,7 @@ export function StatTile({ label, value, sub, tone = 'neutral', hint, chip }: St
   return (
     <div className={cx('border-l-2 py-0.5 pl-3', RULE[tone])} title={hint}>
       <div className="flex items-start justify-between gap-2">
-        <div className="text-xs text-chrome-500">{label}</div>
+        <div className="text-xs text-chrome-400">{label}</div>
         {chip}
       </div>
       <div
@@ -33,7 +33,7 @@ export function StatTile({ label, value, sub, tone = 'neutral', hint, chip }: St
       >
         {value}
       </div>
-      {sub && <div className="tabular-nums mt-2 text-xs text-chrome-500">{sub}</div>}
+      {sub && <div className="tabular-nums mt-2 text-xs text-chrome-400">{sub}</div>}
     </div>
   );
 }

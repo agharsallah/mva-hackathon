@@ -57,7 +57,7 @@ export function ParentalDelta() {
                     return (
                       <div key={row.gene} className="flex items-center gap-3 text-xs">
                         <span className="w-20 shrink-0">{row.gene}</span>
-                        <span className="text-chrome-500">not curated in this HPO release</span>
+                        <span className="text-chrome-400">not curated in this HPO release</span>
                       </div>
                     );
                   }
@@ -82,7 +82,7 @@ export function ParentalDelta() {
                       <span className="w-32 shrink-0 text-right tabular-nums text-chrome-400">
                         {int(row.with_parental)} → {int(row.proband_only)}
                         {row.moved !== null && (
-                          <span className={rose ? 'text-good-400' : 'text-broken-400'}>
+                          <span className={rose ? 'text-good-300' : 'text-broken-300'}>
                             {' '}
                             ({row.moved > 0 ? '+' : ''}
                             {row.moved})

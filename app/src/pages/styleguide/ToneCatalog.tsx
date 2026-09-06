@@ -40,7 +40,7 @@ export function ToneCatalog() {
       <div className="overflow-x-auto">
         <table className="w-full min-w-[56rem] border-collapse text-xs">
           <thead>
-            <tr className="text-left text-xs text-chrome-500">
+            <tr className="text-left text-xs text-chrome-400">
               <th className="pb-2 pr-3 font-medium">tone</th>
               <th className="pb-2 pr-3 font-medium">family</th>
               <th className="pb-2 pr-3 font-medium">mark</th>
@@ -55,7 +55,7 @@ export function ToneCatalog() {
               <tr key={tone} className="border-t border-line align-middle">
                 <td className="py-2 pr-3">
                   <div className="font-mono text-chrome-200">{tone}</div>
-                  <div className="mt-0.5 max-w-[13rem] text-micro leading-snug text-chrome-500">
+                  <div className="mt-0.5 max-w-[13rem] text-micro leading-snug text-chrome-400">
                     {MEANING[tone]}
                   </div>
                 </td>

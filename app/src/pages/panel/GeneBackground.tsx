@@ -163,7 +163,7 @@ export function GeneBackground() {
           is one megabase, so a window&rsquo;s record count is itself a density in variants/Mb).{' '}
           <Chip color={C.machinery}>circles</Chip> are variant density,{' '}
           <Chip color={C.machinery}>diamonds</Chip> are PASS share. The{' '}
-          <span className="text-chrome-500">grey band</span> is |z| &lt; {Z_BAND} — ordinary for
+          <span className="text-chrome-400">grey band</span> is |z| &lt; {Z_BAND} — ordinary for
           this background. Outside it a point turns <Chip color={C.decision}>yellow</Chip> (2–
           {Z_STRONG} σ) and then <Chip color={C.broken}>red</Chip> (past {Z_STRONG} σ). A{' '}
           <Chip color={C.absent}>grey point</Chip> would mean the background had no usable spread,

@@ -222,7 +222,7 @@ export function Viz3dCanvas({
         />
         <div ref={overlayRef} className="pointer-events-none absolute inset-0 overflow-hidden" />
         {status !== 'ready' && (
-          <div className="absolute inset-0 grid place-items-center text-xs text-chrome-500">
+          <div className="absolute inset-0 grid place-items-center text-xs text-chrome-400">
             loading 3D engine…
           </div>
         )}
@@ -235,7 +235,7 @@ export function Viz3dCanvas({
         </div>
       </div>
       <details className="text-xs">
-        <summary className="cursor-pointer text-chrome-500 hover:text-chrome-300">
+        <summary className="cursor-pointer text-chrome-400 hover:text-chrome-300">
           {description.count} object(s), as a keyboard-reachable list
         </summary>
         <div className="mt-2">

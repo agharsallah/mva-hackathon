@@ -28,7 +28,7 @@ export function Derivations() {
     {
       key: 'at',
       header: 'run at',
-      render: (r) => <span className="font-mono text-chrome-500">{iso(r.run_at)}</span>,
+      render: (r) => <span className="font-mono text-chrome-400">{iso(r.run_at)}</span>,
     },
   ];
   return (
@@ -79,7 +79,7 @@ export function LineageTable() {
       header: 'source hash',
       render: (r) =>
         r.source_sha256 ? (
-          <span className="text-good-400">✓ {r.source_sha256}</span>
+          <span className="text-good-300">✓ {r.source_sha256}</span>
         ) : (
           <span className="text-chrome-600">inherited</span>
         ),
@@ -92,12 +92,12 @@ export function LineageTable() {
     {
       key: 'tool',
       header: 'tool',
-      render: (r) => <span className="font-mono text-chrome-500">{r.tool}</span>,
+      render: (r) => <span className="font-mono text-chrome-400">{r.tool}</span>,
     },
     {
       key: 'at',
       header: 'produced at',
-      render: (r) => <span className="font-mono text-chrome-500">{iso(r.produced_at)}</span>,
+      render: (r) => <span className="font-mono text-chrome-400">{iso(r.produced_at)}</span>,
     },
   ];
   return (

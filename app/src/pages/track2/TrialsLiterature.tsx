@@ -86,7 +86,7 @@ export function Trials({
               header: 'registry id',
               render: (r) => (
                 <a
-                  className="font-mono text-xs text-machinery-400 underline underline-offset-2 hover:text-machinery-200"
+                  className="font-mono text-xs text-machinery-300 underline underline-offset-2 hover:text-machinery-200"
                   href={`https://clinicaltrials.gov/study/${r.nct_id}`}
                   target="_blank"
                   rel="noreferrer"
@@ -197,7 +197,7 @@ export function Literature({
               header: 'kept',
               align: 'right',
               render: (r) => (
-                <span className="tabular-nums font-mono text-xs text-good-400">
+                <span className="tabular-nums font-mono text-xs text-good-300">
                   {r.kept === undefined ? '—' : int(r.kept)}
                 </span>
               ),
@@ -217,7 +217,7 @@ export function Literature({
               header: 'PubMed',
               render: (r) => (
                 <a
-                  className="font-mono text-xs text-machinery-400 underline underline-offset-2 hover:text-machinery-200"
+                  className="font-mono text-xs text-machinery-300 underline underline-offset-2 hover:text-machinery-200"
                   href={`https://pubmed.ncbi.nlm.nih.gov/${r.pmid}/`}
                   target="_blank"
                   rel="noreferrer"
@@ -239,7 +239,7 @@ export function Literature({
           ]}
         />
 
-        <p className="max-w-[95ch] text-micro leading-relaxed text-chrome-500">
+        <p className="max-w-[95ch] text-micro leading-relaxed text-chrome-400">
           Searched through{' '}
           <T
             slug="pubmed-e-utilities"

@@ -19,7 +19,7 @@ const SHOWN = 6;
 
 export function Star({ on }: { on: boolean }) {
   return (
-    <span aria-hidden="true" className={on ? 'text-decision-400' : 'text-chrome-600'}>
+    <span aria-hidden="true" className={on ? 'text-decision-300' : 'text-chrome-600'}>
       {on ? '★' : '☆'}
     </span>
   );
@@ -39,7 +39,7 @@ export function Starred({ dictionary, stars }: { dictionary: Dictionary; stars: 
   return (
     <details open aria-label="Starred definitions" className="group space-y-2">
       <summary className="flex cursor-pointer list-none items-baseline justify-between rounded-control px-1 transition hover:bg-chrome-900 [&::-webkit-details-marker]:hidden">
-        <h3 className="text-micro font-semibold text-chrome-500">
+        <h3 className="text-micro font-semibold text-chrome-400">
           <Star on={items.length > 0} /> Starred
         </h3>
         <span className="tabular-nums text-micro text-chrome-600">
@@ -50,7 +50,7 @@ export function Starred({ dictionary, stars }: { dictionary: Dictionary; stars: 
         </span>
       </summary>
       {items.length === 0 ? (
-        <p className="font-serif text-note leading-relaxed text-chrome-500">
+        <p className="font-serif text-note leading-relaxed text-chrome-400">
           Star a definition to keep it here. Starred words stay across reloads, in this browser.
         </p>
       ) : (
@@ -87,7 +87,7 @@ export function Starred({ dictionary, stars }: { dictionary: Dictionary; stars: 
           type="button"
           onClick={() => setAll((v) => !v)}
           aria-expanded={all}
-          className="w-full rounded-control px-2 py-1 text-left text-micro text-chrome-500 transition hover:bg-chrome-900 hover:text-chrome-300"
+          className="w-full rounded-control px-2 py-1 text-left text-micro text-chrome-400 transition hover:bg-chrome-900 hover:text-chrome-300"
         >
           {all ? 'Show fewer' : `Show all ${items.length} (${hidden} more)`}
         </button>

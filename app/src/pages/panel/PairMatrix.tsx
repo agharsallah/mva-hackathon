@@ -158,7 +158,7 @@ function Matrix({ payload, narrow }: { payload: PanelHetPairs; narrow: boolean }
   const n = view.variants.length;
   if (n < 2) {
     return (
-      <p className="p-8 text-center text-sm text-chrome-500">
+      <p className="p-8 text-center text-sm text-chrome-400">
         {n === 0
           ? `no heterozygous PASS allele in ${gene} matches this filter — there is no pair to draw`
           : `only one heterozygous PASS allele in ${gene} matches this filter, and one allele is not a pair`}

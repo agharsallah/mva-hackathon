@@ -29,14 +29,14 @@ export function GeneScorecard() {
       key: 'n_pass',
       header: 'PASS',
       align: 'right',
-      render: (r) => <span className="text-good-400">{int(r.n_pass)}</span>,
+      render: (r) => <span className="text-good-300">{int(r.n_pass)}</span>,
     },
     {
       key: 'n_filtered',
       header: 'suppressed',
       align: 'right',
       render: (r) => (
-        <span className={r.n_filtered > 0 ? 'text-broken-400' : 'text-chrome-600'}>
+        <span className={r.n_filtered > 0 ? 'text-broken-300' : 'text-chrome-600'}>
           {int(r.n_filtered)}
         </span>
       ),
@@ -46,7 +46,7 @@ export function GeneScorecard() {
       header: 'PASS %',
       align: 'right',
       render: (r) => (
-        <span className={r.pct_pass < 96 ? 'text-broken-400' : 'text-chrome-300'}>
+        <span className={r.pct_pass < 96 ? 'text-broken-300' : 'text-chrome-300'}>
           {pct(r.pct_pass, 1)}
         </span>
       ),
@@ -156,8 +156,8 @@ export function GeneScorecard() {
                 })}
               />
               {worst && (
-                <p className="mb-3 text-micro text-chrome-500">
-                  lowest PASS share: <span className="font-mono text-broken-400">{worst.gene}</span>{' '}
+                <p className="mb-3 text-micro text-chrome-400">
+                  lowest PASS share: <span className="font-mono text-broken-300">{worst.gene}</span>{' '}
                   at {pct(worst.pct_pass, 1)} ({int(worst.n_filtered)} of {int(worst.n_all)} records
                   suppressed)
                 </p>

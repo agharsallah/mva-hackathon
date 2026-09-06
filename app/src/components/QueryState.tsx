@@ -195,7 +195,7 @@ export function ErrorCard({
         <Link to="/status" className={cx(CONTROL, 'text-chrome-400')}>
           Open Status
         </Link>
-        <details className="group text-micro text-chrome-500">
+        <details className="group text-micro text-chrome-400">
           <summary className="cursor-pointer select-none px-1 hover:text-chrome-300">
             Details
           </summary>

@@ -125,7 +125,7 @@ function Card({ claim }: { claim: Claim }) {
         )}
         {row.path && (
           <span
-            className="rounded-pill bg-chrome-800 px-2 py-px font-mono text-micro text-chrome-500"
+            className="rounded-pill bg-chrome-800 px-2 py-px font-mono text-micro text-chrome-400"
             title="which line of attack this claim belongs to"
           >
             {row.path}
@@ -141,14 +141,14 @@ function Card({ claim }: { claim: Claim }) {
           <dd className="inline text-chrome-400"> — {row.prediction}</dd>
         </div>
         <div>
-          <dt className="inline font-semibold text-broken-400/80">Refuted by</dt>
+          <dt className="inline font-semibold text-broken-300/80">Refuted by</dt>
           <dd className="inline text-chrome-400"> — {row.refuted_by}</dd>
         </div>
       </dl>
 
       <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-t border-line pt-2">
         <div className="flex items-baseline gap-2">
-          <span className="text-xs font-medium text-chrome-500">confidence</span>
+          <span className="text-xs font-medium text-chrome-400">confidence</span>
           <Confidence value={row.confidence} inline />
         </div>
         <button
@@ -162,7 +162,7 @@ function Card({ claim }: { claim: Claim }) {
       </div>
 
       {row.reasoning && (
-        <p className="text-micro leading-relaxed text-chrome-500">{row.reasoning}</p>
+        <p className="text-micro leading-relaxed text-chrome-400">{row.reasoning}</p>
       )}
 
       {open && <History history={claim.history} />}
@@ -176,13 +176,13 @@ function History({ history }: { history: HypothesisRow[] }) {
     <ol className="space-y-2 rounded-card border border-line bg-chrome-950/60 p-3">
       {history.map((r) => (
         <li key={r.revision} className="flex flex-wrap items-baseline gap-2 text-micro">
-          <span className="font-mono text-chrome-500">r{r.revision}</span>
+          <span className="font-mono text-chrome-400">r{r.revision}</span>
           <span className="font-mono text-chrome-600">{iso(r.recorded_at)}</span>
           <span className="font-medium" style={{ color: statusColor(r.status) }}>
             {r.status}
           </span>
           <Confidence value={r.confidence} inline />
-          {r.reasoning && <span className="basis-full text-chrome-500">{r.reasoning}</span>}
+          {r.reasoning && <span className="basis-full text-chrome-400">{r.reasoning}</span>}
         </li>
       ))}
       <li className="border-t border-line pt-2 text-micro leading-relaxed text-chrome-600">

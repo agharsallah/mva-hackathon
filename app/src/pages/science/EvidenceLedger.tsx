@@ -91,7 +91,7 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
     {
       key: 'id',
       header: 'id',
-      render: (r) => <span className="font-mono text-chrome-500">{r.evidence_id}</span>,
+      render: (r) => <span className="font-mono text-chrome-400">{r.evidence_id}</span>,
     },
     {
       key: 'hyp',
@@ -153,7 +153,7 @@ function Ledger({ rows, filter }: { rows: EvidenceRow[]; filter: string }) {
       key: 'lineage',
       header: 'lineage',
       render: (r) => (
-        <span className="font-mono text-micro text-chrome-500">{r.lineage_ref ?? '—'}</span>
+        <span className="font-mono text-micro text-chrome-400">{r.lineage_ref ?? '—'}</span>
       ),
     },
     {

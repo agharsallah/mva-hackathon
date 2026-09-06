@@ -36,7 +36,7 @@ function FullDefinition({ slug }: { slug?: string }) {
   return (
     <Link
       to={`/learn#${slug}`}
-      className="ml-2 font-sans text-micro whitespace-nowrap text-machinery-400 hover:text-machinery-200"
+      className="ml-2 font-sans text-micro whitespace-nowrap text-machinery-300 hover:text-machinery-200"
     >
       full definition <span aria-hidden="true">→</span>
     </Link>
@@ -102,7 +102,7 @@ export function Explainer({ intro, terms, caveat }: ExplainerProps) {
 
       {terms.length > 0 && !allOpen && (
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <span className="mr-1 text-xs text-chrome-500">Terms</span>
+          <span className="mr-1 text-xs text-chrome-400">Terms</span>
           {terms.map((t) => {
             const on = picked === t.term;
             return (

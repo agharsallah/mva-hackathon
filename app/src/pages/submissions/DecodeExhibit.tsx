@@ -97,7 +97,7 @@ export function DecodeExhibit({ table, source }: { table: DecodeTable; source?: 
           {table.summary}
         </p>
         <p className="max-w-[90ch] text-xs leading-relaxed text-chrome-400">
-          <span className="mr-2 font-semibold text-chrome-500">Row order</span>
+          <span className="mr-2 font-semibold text-chrome-400">Row order</span>
           {table.row_order}
         </p>
       </div>

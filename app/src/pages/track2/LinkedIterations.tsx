@@ -35,7 +35,7 @@ export function LinkedIterations({ iterations }: { iterations: LinkedIteration[]
             <div className="flex flex-wrap items-center justify-between gap-2">
               <Link
                 to={`/submissions?it=${key}`}
-                className="font-mono text-sm text-machinery-400 underline decoration-machinery-800 underline-offset-2 hover:text-machinery-200"
+                className="font-mono text-sm text-machinery-300 underline decoration-machinery-800 underline-offset-2 hover:text-machinery-200"
               >
                 {key}
               </Link>
@@ -43,7 +43,7 @@ export function LinkedIterations({ iterations }: { iterations: LinkedIteration[]
             </div>
             <p className="text-micro leading-relaxed text-chrome-400">{it.standing}</p>
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-micro text-chrome-500">shared claims</span>
+              <span className="text-micro text-chrome-400">shared claims</span>
               {it.hypotheses.map((h) => (
                 <Link key={h} to={`/science?hypothesis=${h}`}>
                   <Badge tone="machinery">{h}</Badge>

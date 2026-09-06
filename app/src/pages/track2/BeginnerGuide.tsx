@@ -17,7 +17,7 @@ import { T } from './Term';
 function Step({ n, title, children }: { n: number; title: string; children: ReactNode }) {
   return (
     <li className="grid grid-cols-[1.75rem_1fr] gap-x-2">
-      <span className="font-mono text-micro text-chrome-500">{n}.</span>
+      <span className="font-mono text-micro text-chrome-400">{n}.</span>
       <p className="max-w-[95ch] text-sm leading-relaxed text-chrome-300">
         <span className="mr-1 font-semibold text-chrome-100">{title}</span>
         {children}

@@ -39,12 +39,12 @@ export function JobsMonitor() {
       {
         key: 'id',
         header: 'id',
-        render: (j) => <span className="font-mono text-chrome-500">{j.id.slice(0, 12)}</span>,
+        render: (j) => <span className="font-mono text-chrome-400">{j.id.slice(0, 12)}</span>,
       },
       {
         key: 'submitted',
         header: 'submitted',
-        render: (j) => <span className="font-mono text-chrome-500">{iso(j.submitted_at)}</span>,
+        render: (j) => <span className="font-mono text-chrome-400">{iso(j.submitted_at)}</span>,
       },
       {
         key: 'elapsed',
@@ -66,7 +66,7 @@ export function JobsMonitor() {
         header: 'error',
         render: (j) =>
           j.error ? (
-            <span className="font-mono text-broken-400" title={j.error}>
+            <span className="font-mono text-broken-300" title={j.error}>
               {j.error.split('\n')[0].slice(0, 60)}
               {j.error.length > 60 ? '…' : ''}
             </span>
@@ -99,7 +99,7 @@ export function JobsMonitor() {
     return jobs.error instanceof ApiError && jobs.error.isUpstreamDown ? (
       <UpstreamDownBanner detail={jobs.error.message} />
     ) : (
-      <Card className="text-xs text-chrome-500">
+      <Card className="text-xs text-chrome-400">
         Job list unavailable — the viz API is not reachable. This table has no fixture: a job queue
         only exists on a live server.
         <p className="mt-1 font-mono text-micro text-chrome-600">{jobs.error.message}</p>
@@ -109,13 +109,13 @@ export function JobsMonitor() {
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-wrap items-center gap-x-4 text-micro text-chrome-500">
+      <div className="flex flex-wrap items-center gap-x-4 text-micro text-chrome-400">
         <span>
           <span className="font-mono text-chrome-300">{data.length}</span> jobs known to the reads
           API
         </span>
         {anyLive && (
-          <span className="text-machinery-400">polling every 4 s while a job is live</span>
+          <span className="text-machinery-300">polling every 4 s while a job is live</span>
         )}
         {jobs.isPending && <span>loading…</span>}
       </div>
@@ -126,16 +126,16 @@ export function JobsMonitor() {
         maxHeight={340}
         empty="No jobs yet. Submit a probe count above and it will appear here."
       />
-      <ul className="space-y-0.5 text-micro text-chrome-500">
+      <ul className="space-y-0.5 text-micro text-chrome-400">
         <li>
-          <span className="font-mono text-machinery-400">queued / running</span> — accepted,
+          <span className="font-mono text-machinery-300">queued / running</span> — accepted,
           machinery working
         </li>
         <li>
-          <span className="font-mono text-good-400">done</span> — result available
+          <span className="font-mono text-good-300">done</span> — result available
         </li>
         <li>
-          <span className="font-mono text-broken-400">failed / lost</span> — errored, or the worker
+          <span className="font-mono text-broken-300">failed / lost</span> — errored, or the worker
           vanished mid-run
         </li>
         <li>

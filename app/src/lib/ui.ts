@@ -6,7 +6,7 @@
  * This module never invents a colour. Every utility below names a **semantic family**
  * (`good`, `broken`, `decision`, `machinery`, `raw`, `chrome`) whose `--color-*` custom
  * properties are generated into `src/theme.generated.css` from the same numbers
- * `lib/palette`'s `RAMP` hands to Plotly — so `text-good-400` and `RAMP.good[400]` are one
+ * `lib/palette`'s `RAMP` hands to Plotly — so `text-good-300` and `RAMP.good[300]` are one
  * value, checked by `pnpm theme:check`. What lives here is the *recipe* built on that
  * language: "a card is this border, this background, this padding", spelled once by name
  * instead of retyped with a one-character drift between copies.
@@ -62,11 +62,11 @@ export const BOX: Record<Tone, string> = {
  */
 export const BADGE: Record<Tone, string> = {
   neutral: 'border-line-strong bg-chrome-900 text-chrome-400',
-  good: 'border-good-800 bg-good-950/60 text-good-400',
-  broken: 'border-broken-900 bg-broken-950/60 text-broken-400',
-  decision: 'border-decision-800 bg-decision-950/60 text-decision-400',
-  machinery: 'border-machinery-900 bg-machinery-950/60 text-machinery-400',
-  raw: 'border-raw-800 bg-raw-950/60 text-raw-400',
+  good: 'border-good-800 bg-good-950/60 text-good-300',
+  broken: 'border-broken-900 bg-broken-950/60 text-broken-300',
+  decision: 'border-decision-800 bg-decision-950/60 text-decision-300',
+  machinery: 'border-machinery-900 bg-machinery-950/60 text-machinery-300',
+  raw: 'border-raw-800 bg-raw-950/60 text-raw-300',
 };
 
 /**
@@ -76,7 +76,7 @@ export const BADGE: Record<Tone, string> = {
  * and an empty state can say "nothing here, and that is a problem" if one ever needs to.
  */
 export const EMPTY_DASHED: Record<Tone, string> = {
-  neutral: 'border-dashed border-line text-chrome-500',
+  neutral: 'border-dashed border-line text-chrome-400',
   good: 'border-dashed border-good-900/50 bg-good-950/10',
   broken: 'border-dashed border-broken-900/50 bg-broken-950/10',
   decision: 'border-dashed border-decision-900/50 bg-decision-950/10',
@@ -111,9 +111,9 @@ export const TINT: Record<Tone, string> = {
 /** Just the text colour for a tone — a tinted number on an untinted card (`StatTile`). */
 export const TEXT: Record<Tone, string> = {
   neutral: 'text-chrome-100',
-  good: 'text-good-400',
-  broken: 'text-broken-400',
-  decision: 'text-decision-400',
-  machinery: 'text-machinery-400',
-  raw: 'text-raw-400',
+  good: 'text-good-300',
+  broken: 'text-broken-300',
+  decision: 'text-decision-300',
+  machinery: 'text-machinery-300',
+  raw: 'text-raw-300',
 };

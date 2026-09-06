@@ -59,7 +59,7 @@ export function SceneFallback({
 
   return (
     <div className="space-y-2">
-      {note && <p className="text-xs text-decision-400">{note}</p>}
+      {note && <p className="text-xs text-decision-300">{note}</p>}
       <p className="text-xs leading-relaxed text-chrome-400">{description.text}</p>
       <ul className="grid gap-1 sm:grid-cols-2">
         {shown.map((datum) => {
@@ -95,7 +95,7 @@ export function SceneFallback({
           <button
             type="button"
             onClick={() => setPages(Math.ceil(datums.length / PAGE))}
-            className="rounded-pill border border-line px-2 py-1 text-micro text-chrome-500 transition hover:border-line-strong hover:text-chrome-300"
+            className="rounded-pill border border-line px-2 py-1 text-micro text-chrome-400 transition hover:border-line-strong hover:text-chrome-300"
           >
             show all {datums.length}
           </button>

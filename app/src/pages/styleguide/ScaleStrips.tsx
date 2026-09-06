@@ -68,7 +68,7 @@ export function ScaleStrips() {
           <div key={name}>
             <div className="mb-1 flex flex-wrap items-baseline gap-2">
               <span className="font-mono text-xs font-semibold text-chrome-200">{name}</span>
-              <span className="text-micro text-chrome-500">{use}</span>
+              <span className="text-micro text-chrome-400">{use}</span>
             </div>
             <div
               className="h-7 rounded-pill border border-line"
@@ -88,7 +88,7 @@ export function ScaleStrips() {
           <div key={name}>
             <div className="mb-1 flex flex-wrap items-baseline gap-2">
               <span className="font-mono text-xs font-semibold text-chrome-200">{name}</span>
-              <span className="text-micro text-chrome-500">{use}</span>
+              <span className="text-micro text-chrome-400">{use}</span>
             </div>
             <div className="flex gap-1">
               {colors.map((hex, index) => (

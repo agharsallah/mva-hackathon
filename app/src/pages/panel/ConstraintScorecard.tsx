@@ -91,19 +91,19 @@ export function ConstraintScorecard() {
       key: 'plp',
       header: 'ClinVar P/LP',
       align: 'right',
-      render: (r) => <span className="text-broken-400">{int(r.clinvar_plp)}</span>,
+      render: (r) => <span className="text-broken-300">{int(r.clinvar_plp)}</span>,
     },
     {
       key: 'vus',
       header: 'VUS',
       align: 'right',
-      render: (r) => <span className="text-decision-400">{int(r.clinvar_vus)}</span>,
+      render: (r) => <span className="text-decision-300">{int(r.clinvar_vus)}</span>,
     },
     {
       key: 'ben',
       header: 'benign',
       align: 'right',
-      render: (r) => <span className="text-good-400">{int(r.clinvar_benign)}</span>,
+      render: (r) => <span className="text-good-300">{int(r.clinvar_benign)}</span>,
     },
     {
       key: 'note',
@@ -123,7 +123,7 @@ export function ConstraintScorecard() {
           is the conventional cut-off for calling a gene loss-of-function constrained. Right axis,{' '}
           <Chip color={C.broken}>red bars</Chip>: how many variants ClinVar already classes
           Pathogenic or Likely-pathogenic in that gene. A gene with{' '}
-          <span className="text-chrome-500">no bar and an &ldquo;unknown&rdquo; tag</span> has no
+          <span className="text-chrome-400">no bar and an &ldquo;unknown&rdquo; tag</span> has no
           row in the constraint source — that is missing data, never a score of zero and never
           &ldquo;unconstrained&rdquo;.
         </>

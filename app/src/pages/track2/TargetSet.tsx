@@ -73,7 +73,7 @@ export function TargetSet({
           />
         </div>
 
-        <p className="max-w-[95ch] text-micro leading-relaxed text-chrome-500">
+        <p className="max-w-[95ch] text-micro leading-relaxed text-chrome-400">
           The expansion is a{' '}
           <T
             slug="pathway-expansion-reactome"
@@ -93,7 +93,7 @@ export function TargetSet({
               header: 'Reactome id',
               render: (r) => (
                 <a
-                  className="font-mono text-xs text-machinery-400 underline underline-offset-2 hover:text-machinery-200"
+                  className="font-mono text-xs text-machinery-300 underline underline-offset-2 hover:text-machinery-200"
                   href={`https://reactome.org/content/detail/${r.st_id}`}
                   target="_blank"
                   rel="noreferrer"

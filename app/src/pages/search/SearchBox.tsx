@@ -69,7 +69,7 @@ export function SearchBox({
               type="button"
               onClick={() => setDraft('')}
               aria-label="clear the query"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-chrome-500 hover:text-chrome-300"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-chrome-400 hover:text-chrome-300"
             >
               ×
             </button>

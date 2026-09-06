@@ -46,7 +46,7 @@
   --color-line-soft: var(--color-chrome-900);
   --color-line: var(--color-chrome-800);
   --color-line-strong: var(--color-chrome-700);
-  --color-focus: var(--color-machinery-600);
+  --color-focus: var(--color-machinery-500);
 
   /* Surfaces: the page is chrome-950; a panel lifts off it by a translucent step so nested
      panels stay distinguishable in both themes. */

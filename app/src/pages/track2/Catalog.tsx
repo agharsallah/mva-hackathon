@@ -127,7 +127,7 @@ export function Catalog({ catalog, source }: { catalog: Track2CatalogTable[]; so
           ]}
         />
 
-        <p className="max-w-[95ch] text-micro leading-relaxed text-chrome-500">
+        <p className="max-w-[95ch] text-micro leading-relaxed text-chrome-400">
           Each digest is a roll-up over every cached reply this build read from that API — a public
           endpoint has no single byte stream to hash, so the{' '}
           <T

@@ -73,7 +73,7 @@ export function Mermaid({ source, label }: { source: string; label: string }) {
       // repository — no user input reaches it.
       dangerouslySetInnerHTML={svg ? { __html: svg } : undefined}
     >
-      {svg ? undefined : <span className="text-micro text-chrome-500">drawing diagram…</span>}
+      {svg ? undefined : <span className="text-micro text-chrome-400">drawing diagram…</span>}
     </div>
   );
 }

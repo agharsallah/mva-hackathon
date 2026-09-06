@@ -96,7 +96,7 @@ export function GenotypeDonut() {
                   </div>
                 ))}
                 {multi && (
-                  <p className="text-micro leading-relaxed text-good-400/90">
+                  <p className="text-micro leading-relaxed text-good-300/90">
                     1/2 = compound het by genotype. {int(multi.count)} sites need no parental data
                     to establish that both copies are altered.
                   </p>

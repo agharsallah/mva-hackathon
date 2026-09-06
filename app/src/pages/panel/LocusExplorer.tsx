@@ -94,7 +94,7 @@ export function LocusExplorer() {
         origin={q.data?.origin}
       >
         {!gene ? (
-          <p className="p-6 text-center text-sm text-chrome-500">pick a gene</p>
+          <p className="p-6 text-center text-sm text-chrome-400">pick a gene</p>
         ) : (
           <>
             <Loaded query={q} height={560}>
@@ -121,14 +121,14 @@ function GeneTrackNote({
 }) {
   if (failed) {
     return (
-      <p className="mt-2 text-micro text-broken-400">
+      <p className="mt-2 text-micro text-broken-300">
         gene track unavailable — {failed.message}. Nothing is drawn rather than a guessed structure.
       </p>
     );
   }
   if (!structure) return null;
   return (
-    <p className="mt-2 text-micro text-chrome-500">
+    <p className="mt-2 text-micro text-chrome-400">
       gene track: <span className="font-mono text-chrome-300">{structure.transcript}</span>, the
       canonical transcript of {gene} — {int(structure.exons.length)} exons on the{' '}
       {structure.strand >= 0 ? 'forward (+)' : 'reverse (−)'} strand,{' '}
@@ -149,7 +149,7 @@ function Tracks({
 }) {
   if (rows.length === 0) {
     return (
-      <p className="p-6 text-center text-sm text-chrome-500">no records returned for {gene}</p>
+      <p className="p-6 text-center text-sm text-chrome-400">no records returned for {gene}</p>
     );
   }
   const maxDp = Math.max(...rows.map((r) => r.dp ?? 1));
@@ -269,17 +269,17 @@ function Tracks({
           legend: { orientation: 'h', y: 1.08, x: 0, font: { color: C.inkDim, size: 11 } },
         })}
       />
-      <div className="mt-2 grid gap-2 text-micro text-chrome-500 sm:grid-cols-4">
+      <div className="mt-2 grid gap-2 text-micro text-chrome-400 sm:grid-cols-4">
         <span>
           records <span className="font-mono text-chrome-300">{int(rows.length)}</span>
         </span>
         <span>
-          suppressed <span className="font-mono text-broken-400">{int(suppressed.length)}</span>
+          suppressed <span className="font-mono text-broken-300">{int(suppressed.length)}</span>
         </span>
         <span>
-          1/2 sites <span className="font-mono text-decision-400">{int(multi.length)}</span>
+          1/2 sites <span className="font-mono text-decision-300">{int(multi.length)}</span>
           {suppressedMulti.length > 0 && (
-            <span className="text-broken-400"> ({suppressedMulti.length} of them suppressed)</span>
+            <span className="text-broken-300"> ({suppressedMulti.length} of them suppressed)</span>
           )}
         </span>
         <span>

@@ -164,7 +164,7 @@ export function ProteinProvenance({
 }) {
   const pct = build.confidentFraction === null ? null : build.confidentFraction * 100;
   return (
-    <div className="mt-2 space-y-1 text-micro leading-relaxed text-chrome-500">
+    <div className="mt-2 space-y-1 text-micro leading-relaxed text-chrome-400">
       <p>
         model:{' '}
         <span className="font-mono text-chrome-300">
@@ -182,14 +182,14 @@ export function ProteinProvenance({
           href={model.model_url}
           target="_blank"
           rel="noreferrer"
-          className="text-machinery-400 underline decoration-dotted hover:text-machinery-300"
+          className="text-machinery-300 underline decoration-dotted hover:text-machinery-300"
         >
           coordinate file
         </a>{' '}
         ·{' '}
         <Link
           to="/provenance#reference"
-          className="text-machinery-400 underline decoration-dotted hover:text-machinery-300"
+          className="text-machinery-300 underline decoration-dotted hover:text-machinery-300"
         >
           provenance manifest
         </Link>
@@ -199,7 +199,7 @@ export function ProteinProvenance({
         modelled
         {build.unmodelled > 0 && (
           <>
-            , <span className="font-mono text-decision-400">{int(build.unmodelled)}</span> not
+            , <span className="font-mono text-decision-300">{int(build.unmodelled)}</span> not
             covered by the model and therefore unmeasured
           </>
         )}
@@ -218,14 +218,14 @@ export function ProteinProvenance({
         // on a canvas that shows none both misleads and weakens the warning on the eight
         // genes where it is the point.
         (build.placed.length + build.unplaced.length > 0 ? (
-          <p className="text-decision-400/90">
+          <p className="text-decision-300/90">
             fixture: <strong>real AlphaFold backbone</strong> (public reference data, identical for
             every human) + <strong>synthetic candidate alleles</strong> from the gene-structure
             fixture. The fold is true; the alleles painted on it are invented, so no distance below
             means anything clinically.
           </p>
         ) : (
-          <p className="text-decision-400/90">
+          <p className="text-decision-300/90">
             fixture: <strong>real AlphaFold backbone</strong> (public reference data, identical for
             every human), and <strong>no allele is painted</strong> — this gene carries no candidate
             in the fixture, so nothing on the canvas is patient-derived or invented.
@@ -256,7 +256,7 @@ export function ProteinError({ error }: { error: Error }) {
       translation and the UniProt accession it is fetched by), so there are no coordinates to draw.
       Nothing is rendered on purpose: a guessed fold would be indistinguishable from a measured one
       on screen.
-      <p className="mt-2 font-mono text-micro text-broken-400/80">{error.message}</p>
+      <p className="mt-2 font-mono text-micro text-broken-300/80">{error.message}</p>
     </Callout>
   );
 }
@@ -265,7 +265,7 @@ export function ProteinError({ error }: { error: Error }) {
 export function UnplacedList({ rows }: { rows: readonly UnplacedCandidate[] }) {
   if (rows.length === 0) return null;
   return (
-    <ul className="mt-2 space-y-1 text-micro text-chrome-500">
+    <ul className="mt-2 space-y-1 text-micro text-chrome-400">
       {rows.map((row) => (
         <li
           key={row.label}

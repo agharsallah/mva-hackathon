@@ -49,7 +49,7 @@ export function CommandPalette() {
         className={cx(CONTROL, 'flex items-center gap-2 text-chrome-400')}
       >
         Jump to
-        <kbd className="rounded-pill border border-line px-1 font-sans text-[10px] text-chrome-500">
+        <kbd className="rounded-pill border border-line px-1 font-sans text-[10px] text-chrome-400">
           {IS_MAC ? '⌘K' : 'Ctrl K'}
         </kbd>
       </button>

@@ -55,13 +55,13 @@ export function Dossier({ result }: { result: Result<Submissions> }) {
           }))}
           onChange={setPicked}
         />
-        <span className="text-micro text-chrome-500">
+        <span className="text-micro text-chrome-400">
           {iterations.length} of 6 oracle uploads planned or spent · newest first · a frozen folder
           is never edited
         </span>
       </div>
 
-      <p className="text-micro text-chrome-500">
+      <p className="text-micro text-chrome-400">
         New iterations appear here automatically once their folder exists — recipe in{' '}
         <span className="font-mono">submissions/README.md</span>.
       </p>

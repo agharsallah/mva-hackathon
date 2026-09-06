@@ -137,7 +137,7 @@ export function Candidates({
               color={C.good}
               label={`distinct market-approved drugs for each of the top ${perSeed.length} seed targets`}
             />
-            <p className="text-micro text-chrome-500">
+            <p className="text-micro text-chrome-400">
               Distinct molecules, not rows. The gene the child&rsquo;s variants sit in does not
               appear at all — no approved drug acts on it.
             </p>
@@ -152,14 +152,14 @@ export function Candidates({
               totalColor={C.machinery}
               label="approved and total candidate rows reported by each public source"
             />
-            <p className="text-micro text-chrome-500">
+            <p className="text-micro text-chrome-400">
               Solid = approved, pale = all rows. A row can carry several sources, so these sum to
               more than the table.
             </p>
           </figure>
         </div>
 
-        <p className="max-w-[95ch] text-micro leading-relaxed text-chrome-500">
+        <p className="max-w-[95ch] text-micro leading-relaxed text-chrome-400">
           The mechanism text in each row is the source&rsquo;s own{' '}
           <T
             slug="mechanism-of-action-moa"
@@ -252,7 +252,7 @@ export function Candidates({
               header: 'reported by',
               sortValue: (r) => r.source.join(','),
               render: (r) => (
-                <span className="font-mono text-micro text-machinery-400">
+                <span className="font-mono text-micro text-machinery-300">
                   {r.source.join(' · ')}
                 </span>
               ),

@@ -58,7 +58,7 @@ export function TwoInputs({
               <ul className="space-y-1">
                 {data.terms.map((t) => (
                   <li key={t.hpo_id} className="flex flex-wrap items-baseline gap-2 text-xs">
-                    <span className="font-mono text-chrome-500">{t.hpo_id}</span>
+                    <span className="font-mono text-chrome-400">{t.hpo_id}</span>
                     <span className="text-chrome-200">{t.label}</span>
                     {!t.proband && <Badge tone="decision">parental — not the child</Badge>}
                   </li>
@@ -86,7 +86,7 @@ export function TwoInputs({
             raw.map((s) => (
               <div key={s.ref} className="space-y-1">
                 <div className="font-mono text-xs break-all text-chrome-100">{s.ref}</div>
-                <div className="flex flex-wrap items-center gap-2 text-micro text-chrome-500">
+                <div className="flex flex-wrap items-center gap-2 text-micro text-chrome-400">
                   <span className="font-mono">version {s.version || '—'}</span>
                   <Badge tone={s.sha256 ? 'good' : 'neutral'}>
                     sha256 {s.sha256 ? `${shortSha(s.sha256)} ✓` : 'not recorded'}
@@ -104,7 +104,7 @@ export function TwoInputs({
 
 function SourceLine({ source }: { source: LineageSource }) {
   return (
-    <div className="border-t border-line-soft pt-2 text-micro text-chrome-500">
+    <div className="border-t border-line-soft pt-2 text-micro text-chrome-400">
       <span className="font-mono break-all text-chrome-400">{source.ref}</span>
       <span className="mx-1">·</span>
       <span className="font-mono">{source.version}</span>

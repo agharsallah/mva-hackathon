@@ -79,7 +79,7 @@ export function OnThisPage() {
           aria-expanded={true}
           aria-controls={listId}
           title="Hide the list of sections"
-          className="rounded-pill px-1.5 py-0.5 text-micro text-chrome-500 transition hover:bg-panel-raised hover:text-chrome-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-focus"
+          className="rounded-pill px-1.5 py-0.5 text-micro text-chrome-400 transition hover:bg-panel-raised hover:text-chrome-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-focus"
         >
           Hide
         </button>
@@ -115,7 +115,7 @@ export function OnThisPage() {
           e.preventDefault();
           window.scrollTo({ top: 0 });
         }}
-        className="mt-3 block text-xs text-chrome-500 hover:text-chrome-300"
+        className="mt-3 block text-xs text-chrome-400 hover:text-chrome-300"
       >
         Back to top
       </a>
@@ -128,7 +128,7 @@ export function JumpToSection() {
   const sections = useSections();
   if (sections.length < 2) return null;
   return (
-    <label className="flex items-center gap-2 text-xs text-chrome-500 xl:hidden">
+    <label className="flex items-center gap-2 text-xs text-chrome-400 xl:hidden">
       Jump to
       <select
         aria-label="Jump to section"

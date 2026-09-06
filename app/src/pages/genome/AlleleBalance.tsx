@@ -129,15 +129,15 @@ export function AlleleBalance() {
                   showlegend: false,
                 })}
               />
-              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-micro text-chrome-500">
+              <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-micro text-chrome-400">
                 <span>
                   contigs balanced:{' '}
-                  <span className="font-mono text-good-400">{ordered.length - flagged.length}</span>{' '}
+                  <span className="font-mono text-good-300">{ordered.length - flagged.length}</span>{' '}
                   / {ordered.length}
                 </span>
                 {flagged.map((f) => (
                   <span key={f.chrom}>
-                    flagged <span className="font-mono text-broken-400">chr{f.chrom}</span> — VAF{' '}
+                    flagged <span className="font-mono text-broken-300">chr{f.chrom}</span> — VAF{' '}
                     {dec(f.mean_vaf, 4)} ({dec(f.vaf_deviation, 4)}), {int(f.n_het)} het sites,
                     depth {dec(f.dp_vs_autosomal, 3)}× the autosomal mean
                   </span>

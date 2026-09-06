@@ -81,12 +81,12 @@ export function Plot({ data, layout, height = 360, config }: PlotProps) {
     <div className="relative w-full" style={{ height }}>
       <div ref={ref} className="h-full w-full" />
       {!ready && !failed && (
-        <div className="absolute inset-0 grid place-items-center text-xs text-chrome-500">
+        <div className="absolute inset-0 grid place-items-center text-xs text-chrome-400">
           loading plot engine…
         </div>
       )}
       {failed && (
-        <div className="absolute inset-0 grid place-items-center text-xs text-broken-400">
+        <div className="absolute inset-0 grid place-items-center text-xs text-broken-300">
           plot engine failed to load
         </div>
       )}

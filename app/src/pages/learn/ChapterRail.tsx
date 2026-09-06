@@ -25,7 +25,7 @@ export function ChapterRail({
   return (
     <nav aria-label="Chapters" className="space-y-3">
       <div>
-        <div className="flex items-baseline justify-between text-micro text-chrome-500">
+        <div className="flex items-baseline justify-between text-micro text-chrome-400">
           <span>Course progress</span>
           <span className="tabular-nums">
             {done} of {chapters.length}
@@ -57,7 +57,7 @@ export function ChapterRail({
                 className={cx(
                   'w-5 shrink-0 self-center rounded-pill text-center text-micro leading-5 transition',
                   isRead
-                    ? 'bg-good-950/60 text-good-400'
+                    ? 'bg-good-950/60 text-good-300'
                     : 'text-chrome-700 hover:bg-chrome-900 hover:text-chrome-400',
                 )}
               >

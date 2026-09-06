@@ -105,7 +105,7 @@ export function FactSheet({ metrics }: { metrics: StructureMetrics }) {
               ·{' '}
               <Link
                 to="/provenance#reference"
-                className="text-machinery-400 underline decoration-dotted hover:text-machinery-300"
+                className="text-machinery-300 underline decoration-dotted hover:text-machinery-300"
               >
                 provenance manifest
               </Link>

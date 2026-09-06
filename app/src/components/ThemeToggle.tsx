@@ -21,7 +21,7 @@ export function ThemeToggle() {
       onClick={themeStore.toggle}
       aria-pressed={light}
       title={`Theme: ${light ? 'light' : 'dark'}. Switch to the ${light ? 'dark' : 'light'} theme.`}
-      className="rounded-control border border-line bg-chrome-900 px-2 py-1 text-micro text-chrome-400 transition hover:text-chrome-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-600"
+      className="rounded-control border border-line bg-chrome-900 px-2 py-1 text-micro text-chrome-400 transition hover:text-chrome-200 focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-500"
     >
       {light ? 'Light' : 'Dark'}
     </button>
