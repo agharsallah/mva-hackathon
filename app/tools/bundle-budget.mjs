@@ -71,9 +71,19 @@ const PAGES_DIR = path.join(APP_ROOT, 'src/pages');
 // navigation joined the shell — the section registry, the "On this page" rail, the jump
 // select and the ⌘K button. The palette's dialog body is a lazy chunk (PaletteDialog, ~3.7 kB)
 // fetched on first open, so only the hotkey and the button ride in first paint.
+//
+// Re-blessed 2026-09-06: 290.84 kB raw / 93.29 kB gzip. Measured against the same tree with
+// only `src/app/providers.tsx` reverted (284.90 / 91.39), so the delta is exactly the two
+// persistence packages: +5.94 kB raw / +1.90 kB gzip for
+// `@tanstack/query-sync-storage-persister` + `@tanstack/react-query-persist-client`.
+// Bought with it: the query cache survives a reload, so a returning visitor re-renders
+// every coordinate-free panel from localStorage instead of re-asking the API — on Vercel,
+// two Edge invocations plus a WAN round trip per panel that no longer happen
+// (`app/src/lib/queryPersistence.ts`, methodology 081). One-time bytes against per-visit
+// requests, on a deployment whose free-tier budget is invocations.
 const BUDGETS = Object.freeze({
-  INITIAL_RAW_BYTES: 290_000,
-  INITIAL_GZIP_BYTES: 92_000,
+  INITIAL_RAW_BYTES: 293_000,
+  INITIAL_GZIP_BYTES: 94_000,
 });
 
 const KB = (bytes) => `${(bytes / 1000).toFixed(2)} kB`;

@@ -241,19 +241,38 @@ work — the header will show a yellow `API unauthorized` dot saying exactly tha
   leave the VPS. That was a deliberate call — see
   [methodology 080](../docs/step-0/methodology/080-hosted-dashboard.md).
 
+### What the browser keeps
+
+The query cache is persisted to `localStorage`, so a reload re-renders from what the browser
+already has instead of re-asking the API — on Vercel every avoided request is two Edge
+invocations (the password gate, then the proxy) plus a WAN round trip, and the free plan's
+budget is invocations. Three rules bound it, all in
+[`src/lib/queryPersistence.ts`](src/lib/queryPersistence.ts):
+
+- **An allowlist, never a denylist.** Only coordinate-free aggregates are written. `/api/panel/locus`,
+  `/api/callset/region`, `/api/search`, `/api/panel/het-pairs` and `/api/panel/clinvar-presence` carry
+  real patient positions and are never persisted; liveness (`/health`, `/api/health/dependencies`,
+  `/api/jobs`) is never persisted either, because a stale "up" is a wrong answer.
+- **A deployment never reads another deployment's cache.** The buster is the build's commit.
+- **A day, at most.** Older than `PERSIST_MAX_AGE` and the store is dropped rather than shown.
+
+Nothing here changes what the _server_ sends: every proxied reply is still `no-store, private`,
+so no shared cache holds any of it. See
+[methodology 081](../docs/step-0/methodology/081-cached-dashboard-requests.md).
+
 ## Stack
 
-| Concern            | Choice                                                                          |
-| ------------------ | ------------------------------------------------------------------------------- |
-| build / dev server | Vite 8                                                                          |
-| UI                 | React 18 + TypeScript 7 (strict)                                                |
-| data fetching      | `@tanstack/react-query` v5 — retries off, 5 min `staleTime`                     |
-| routing            | `react-router-dom` v7                                                           |
-| charts, 2D         | `plotly.js-dist-min`, lazily `import()`ed into its own chunk                    |
-| charts, 3D         | raw `three` + the `OrbitControls` addon, lazily `import()`ed — see `src/viz3d/` |
-| styling            | Tailwind CSS v4 via `@tailwindcss/vite`, CSS-first `@theme`                     |
-| tests              | Vitest + `@testing-library/react` + jsdom                                       |
-| lint / format      | ESLint 9 (flat) + Prettier                                                      |
+| Concern            | Choice                                                                             |
+| ------------------ | ---------------------------------------------------------------------------------- |
+| build / dev server | Vite 8                                                                             |
+| UI                 | React 18 + TypeScript 7 (strict)                                                   |
+| data fetching      | `@tanstack/react-query` v5 — 30 min `staleTime`, cache persisted to `localStorage` |
+| routing            | `react-router-dom` v7                                                              |
+| charts, 2D         | `plotly.js-dist-min`, lazily `import()`ed into its own chunk                       |
+| charts, 3D         | raw `three` + the `OrbitControls` addon, lazily `import()`ed — see `src/viz3d/`    |
+| styling            | Tailwind CSS v4 via `@tailwindcss/vite`, CSS-first `@theme`                        |
+| tests              | Vitest + `@testing-library/react` + jsdom                                          |
+| lint / format      | ESLint 9 (flat) + Prettier                                                         |
 
 Charts are Plotly because the repo's existing figures are Plotly — same visual language. Plotly is
 wrapped by a small in-repo component (`src/components/Plot.tsx`) rather than `react-plotly.js`, so

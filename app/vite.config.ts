@@ -38,6 +38,13 @@ export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss()],
   define: {
     __CONFIGURED_ENDPOINTS__: JSON.stringify(configuredEndpoints(mode)),
+    // The fence on the persisted query cache: a deployment never reads the cache a
+    // previous one wrote, so a changed payload shape can never be restored into a build
+    // that does not understand it. Constant in dev, or every restart would throw the
+    // local cache away.
+    __BUILD_ID__: JSON.stringify(
+      mode === 'production' ? (process.env.VERCEL_GIT_COMMIT_SHA ?? String(Date.now())) : 'dev',
+    ),
   },
   resolve: {
     alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) },

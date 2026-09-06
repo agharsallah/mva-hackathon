@@ -44,14 +44,23 @@ export interface HeaderSection {
   pages: HeaderNavItem[];
 }
 
+/** How often the header's status dot re-checks liveness while the tab is in front. */
+const HEALTH_DOT_POLL_MS = 60_000;
+
 function useApiHealth() {
   return useQuery({
     queryKey: ['health'],
     queryFn: health,
     retry: false,
-    refetchInterval: 15_000,
+    // A minute, not fifteen seconds. The dot answers "is the API alive"; at 15 s an open
+    // tab spent 240 requests an hour on that question, each one two Vercel invocations
+    // plus a WAN round trip. react-query does not run the timer while the tab is hidden
+    // (`refetchIntervalInBackground` defaults false), so this is the cost of a tab being
+    // *looked at*, and a minute is well inside how fast anyone reacts to a red dot.
+    refetchInterval: HEALTH_DOT_POLL_MS,
     refetchOnWindowFocus: true,
-    staleTime: 0,
+    // Matched to the interval so returning to a page does not re-ask on top of the poll.
+    staleTime: HEALTH_DOT_POLL_MS,
   });
 }
 

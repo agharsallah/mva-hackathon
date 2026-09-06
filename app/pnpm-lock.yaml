@@ -14,9 +14,15 @@ importers:
       '@fontsource-variable/literata':
         specifier: ^5.3.0
         version: 5.3.0
+      '@tanstack/query-sync-storage-persister':
+        specifier: ^5.102.8
+        version: 5.102.8
       '@tanstack/react-query':
         specifier: ^5.102.8
         version: 5.102.8(react@18.3.1)
+      '@tanstack/react-query-persist-client':
+        specifier: ^5.102.8
+        version: 5.102.8(@tanstack/react-query@5.102.8(react@18.3.1))(react@18.3.1)
       '@vercel/functions':
         specifier: ^3.9.5
         version: 3.9.5(ws@8.21.3)
@@ -1243,6 +1249,18 @@ packages:
 
   '@tanstack/query-core@5.102.8':
     resolution: {integrity: sha512-ZNjkJ33CqvPNec/6lZBnHqLc3EVGPZ9ySLhYahU9TcuRFdmwXewuj0c4hwSWcGHqEUwcSrKeZ+oGcvPBqXcQcg==}
+
+  '@tanstack/query-persist-client-core@5.102.8':
+    resolution: {integrity: sha512-t3v4/D6ejo/BrPzM5gm/AT3c4CWPCxFa+0cIjAeHAeanGPG6rCjFS1hZnPZH/rf55qe3qYYgx5U6iBZMY1PQjA==}
+
+  '@tanstack/query-sync-storage-persister@5.102.8':
+    resolution: {integrity: sha512-UvIpYl6jipKJHfITAieQaXMvVPoJh2IkQkWDYZNRPycoGbNYdqB+UdRVoXkZagB3EdeKnlC7sA61grsEC87Wfw==}
+
+  '@tanstack/react-query-persist-client@5.102.8':
+    resolution: {integrity: sha512-WOZReC+m9klekPtG7eeZ3txJeMA9lg2R0RytSG3yXcZgJItQAVIyoobJdbdIQtlpgcU2tSzsOEBtJacs2vlCOA==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.102.8
+      react: ^18 || ^19
 
   '@tanstack/react-query@5.102.8':
     resolution: {integrity: sha512-TYBea4OuXWD7MhaSHq069TWbFe7rcwWN6kzT7JF0OKi1K6c1gTv2IzD6A6ExJsCMozdkqBWeuIUZmu4KQg0O5A==}
@@ -4832,6 +4850,21 @@ snapshots:
       vite: 8.2.2(@types/node@26.4.0)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)
 
   '@tanstack/query-core@5.102.8': {}
+
+  '@tanstack/query-persist-client-core@5.102.8':
+    dependencies:
+      '@tanstack/query-core': 5.102.8
+
+  '@tanstack/query-sync-storage-persister@5.102.8':
+    dependencies:
+      '@tanstack/query-core': 5.102.8
+      '@tanstack/query-persist-client-core': 5.102.8
+
+  '@tanstack/react-query-persist-client@5.102.8(@tanstack/react-query@5.102.8(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-persist-client-core': 5.102.8
+      '@tanstack/react-query': 5.102.8(react@18.3.1)
+      react: 18.3.1
 
   '@tanstack/react-query@5.102.8(react@18.3.1)':
     dependencies:

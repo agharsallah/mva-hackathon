@@ -15,6 +15,7 @@ import {
 } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
+import { STALE_TIME } from '../lib/queryClient';
 import { get, getBare, type Params, type Result } from './client';
 import type {
   AlleleBalanceRow,
@@ -71,7 +72,8 @@ import type {
   ZygosityRow,
 } from './types';
 
-const FIVE_MIN = 5 * 60 * 1000;
+/** Long enough that a reload, or a walk back through the section, costs no request. */
+const GC_TIME = 24 * 60 * 60 * 1000;
 
 type Opts<T> = Omit<UseQueryOptions<Result<T>, Error>, 'queryKey' | 'queryFn'>;
 
@@ -80,8 +82,8 @@ function useEndpoint<T>(path: string, params?: Params, opts?: Opts<T>) {
     queryKey: [path, params ?? null],
     queryFn: ({ signal }) => get<T>(path, params, signal),
     retry: false,
-    staleTime: FIVE_MIN,
-    gcTime: 30 * FIVE_MIN,
+    staleTime: STALE_TIME,
+    gcTime: GC_TIME,
     refetchOnWindowFocus: false,
     ...opts,
   });
@@ -174,8 +176,8 @@ function useEndpointEach<T>(path: string, genes: readonly string[], enabled = tr
       queryFn: ({ signal }: { signal: AbortSignal }) => get<T>(path, { gene }, signal),
       enabled,
       retry: false,
-      staleTime: FIVE_MIN,
-      gcTime: 30 * FIVE_MIN,
+      staleTime: STALE_TIME,
+      gcTime: GC_TIME,
       refetchOnWindowFocus: false,
     })),
     combine: (results) =>
@@ -364,7 +366,7 @@ export function useJobs() {
     queryFn: () => getBare<Job[]>('/api/jobs'),
     retry: false,
     refetchInterval: (query) =>
-      query.state.data?.some((j) => LIVE_STATES.has(j.state)) ? 4000 : 20_000,
+      query.state.data?.some((j) => LIVE_STATES.has(j.state)) ? 4000 : 60_000,
     refetchOnWindowFocus: false,
     staleTime: 0,
   });
