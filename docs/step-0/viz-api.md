@@ -39,6 +39,11 @@ uv run mva-viz-api --reload        # development
 Interactive docs are generated from the code: **`/docs`** (Swagger UI), `/redoc`,
 `/openapi.json`.
 
+Amended 2026-09-06 (not re-measured): the service gained an opt-in shared token and now
+refuses a non-loopback bind without one ([`methodology/080`](methodology/080-hosted-dashboard.md)).
+Every route and every measurement below is unchanged — an open deployment behaves exactly as
+it did.
+
 ## Why a service and not a static export
 
 Three back ends, two of which hold a credential the browser must never see, and one of
@@ -455,7 +460,8 @@ alternate. A blank in a chart is a question; a halved VAF is a wrong answer.
 | `MVA_VIZ_CORS` | browser origins allowed, comma-separated | `http://localhost:5173,http://127.0.0.1:5173` |
 | `MVA_VIZ_CACHE` | where response JSON is cached | `build/viz-cache` |
 | `MVA_READS_API_URL` | upstream reads API | `http://127.0.0.1:8765` |
-| `MVA_API_TOKEN` | forwarded upstream as `X-API-Key` | empty |
+| `MVA_API_TOKEN` | forwarded upstream to `mva-reads-api` as `X-API-Key` | empty |
+| `MVA_VIZ_TOKEN` | guards **this** API: every `/api/*` route requires it as `X-API-Key` | empty (= open) |
 | `PG*`, `S3_*` | database and object store | see `.env.example` |
 | `--host` / `--port` | bind address | `127.0.0.1:8900` |
 
@@ -467,8 +473,15 @@ in the CORS default.
 
 **The cache holds patient data.** `build/viz-cache/locus-*.json` contains real positions.
 `build/` is gitignored and `MVA_VIZ_CACHE` must never be pointed inside the tracked tree.
-There is no authentication, so `--host 0.0.0.0` publishes those positions to anyone who can
-reach the port; it warns, and it should not be used.
+
+**Authentication is opt-in, and binding a public interface without it is refused.**
+`MVA_VIZ_TOKEN` empty leaves the API open, which is correct on loopback and nowhere else —
+`/api/panel/locus` publishes those positions to anyone who can reach the port. Set the token
+and every `/api/*` route requires it as `X-API-Key` (`/health` stays open, so an uptime probe
+carries no secret); the comparison is constant-time. `mva-viz-api --host 0.0.0.0` with an
+empty token **exits 2** rather than warning — `--insecure` is the deliberate override. The
+deployment runbook is [`infrastructure.md` §3](infrastructure.md); the reasoning is
+[`methodology/080`](methodology/080-hosted-dashboard.md).
 
 ## Extending it
 
@@ -482,7 +495,8 @@ One new chart = one line, when the table already exists:
 
 | Module | Concern |
 |---|---|
-| `app.py` | CORS, cache, router assembly, `/health` |
+| `app.py` | CORS, the token guard, cache, router assembly, `/health` |
+| `auth.py` | `MVA_VIZ_TOKEN` as `X-API-Key`, constant-time; empty token = open |
 | `routes_warehouse.py` | callset, panel, provenance routes |
 | `routes_reads.py` | read-store routes and the proxy routes |
 | `queries.py` | every warehouse SQL statement |

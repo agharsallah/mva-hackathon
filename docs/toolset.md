@@ -146,6 +146,8 @@ Case-agnostic: everything reads the mechanism card, nothing hard-codes a gene.
 | Render the research record as HTML | `mva-science report` | — | `science/report.py`, `science/dossier.py` |
 | Shared report shell, palette, figure unit | — | `/style-guide` | `render/theme.py`, `figure.py`, `report.py` |
 | Serve the JSON API / read service | `mva-viz-api`, `mva-reads-api` | `/api/health`, `/api/health/dependencies` · `/status` | `viz/serve.py`, `viz/health.py`, `reads/api/` |
+| Host the API for the deployed dashboard | `tools/setup-viz-api-service.sh` | — | `viz/auth.py`, `docs/step-0/infrastructure.md` §3 |
+| Host the dashboard behind a password | `vercel --prod` (root dir `app`) | the whole app | `app/middleware.ts`, `app/api/`, `app/server/`, `app/README.md` § Hosting |
 | The browser app | `pnpm --dir app dev` | every page in `app/src/app/modules/index.ts` | `app/src/pages/` |
 
 ## Quality gates

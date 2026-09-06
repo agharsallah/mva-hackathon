@@ -1,15 +1,20 @@
 # Infrastructure — the live runbook
 
-**Verified:** 2026-08-29. `pg-check` and `s3-check` both connect; what is provisioned and
-how much is in it is in [`current-state.md`](../current-state.md). This page is *how to
-operate it*, not what it currently holds.
+**Verified:** 2026-08-29 for sections 1–2 and 4–5; section 3 (the hosted dashboard) was
+written 2026-09-06 alongside methodology 080 and its code paths are tested, but **no
+deployment has been made from it yet** — it is a runbook, not a report. `pg-check` and
+`s3-check` both connect; what is provisioned and how much is in it is in
+[`current-state.md`](../current-state.md). This page is *how to operate it*, not what it
+currently holds.
 
-Two services on one remote VPS:
+Three services on one remote VPS, plus one hosted front end:
 
 | | What | Holds |
 |---|---|---|
 | **PostgreSQL** | client–server database, reached over the network | tables people query and edit — ingested source tables, derived results, the source-file ledger |
 | **MinIO** | S3-compatible object store | bulk immutable files — the delivery itself, staged Parquet, anything measured in gigabytes |
+| **`mva-viz-api`** | FastAPI service, loopback + TLS reverse proxy | nothing of its own — it reads the two above and answers JSON |
+| **the dashboard** | the React app on Vercel, behind a password | nothing of its own — it proxies to `mva-viz-api` |
 
 DuckDB is the **engine** in both cases and runs inside your own process on your laptop.
 Nothing is installed on the server beyond the two services. Why this split rather than a
@@ -236,11 +241,103 @@ uv run mva-warehouse s3-sort raw/variants.parquet --key raw/variants_by_gene.par
 
 ---
 
-## 3. Credentials and exposure
+## 3. `mva-viz-api` and the hosted dashboard
+
+**Standing:** written 2026-09-06 (methodology 080). Untested against a live deployment.
+
+The dashboard is on Vercel; the API stays here, next to the data it reads. The browser
+never learns where the API is, and no page loads before a password.
+
+```mermaid
+flowchart LR
+  V["visitor's browser"]:::raw
+  subgraph EDGE["Vercel (public)"]
+    M["middleware.ts<br/>password gate"]:::decision
+    P["api/[...path].ts<br/>the proxy"]:::machinery
+    S["dist/ — the SPA"]:::machinery
+  end
+  subgraph VPS["this VPS (private)"]
+    R["reverse proxy, TLS<br/>Caddy or nginx"]:::machinery
+    A["mva-viz-api<br/>127.0.0.1:8900"]:::good
+    PG[("PostgreSQL")]:::good
+    S3[("MinIO")]:::good
+  end
+  V -->|"any path"| M
+  M -->|"valid session"| S
+  M -->|"valid session"| P
+  P -->|"X-API-Key: MVA_VIZ_TOKEN"| R --> A
+  A --> PG
+  A --> S3
+  classDef raw fill:#3b0764,stroke:#a855f7,color:#fafafa
+  classDef decision fill:#422006,stroke:#f0b100,color:#fafafa
+  classDef machinery fill:#162456,stroke:#2b7fff,color:#fafafa
+  classDef good fill:#0d542b,stroke:#00c950,color:#fafafa
+```
+
+> **Legend** — purple = the untrusted visitor; yellow = the decision point (valid session?);
+> blue = neutral machinery; green = the private services holding patient-derived data.
+
+### On the server, once
+
+```bash
+# 1. a token. The API refuses a non-loopback bind without one, and this is also the
+#    value Vercel sends as X-API-Key.
+uv run python -c "import secrets; print(secrets.token_urlsafe(32))"   # -> .env MVA_VIZ_TOKEN
+
+# 2. the service
+./tools/setup-viz-api-service.sh --domain viz.example.org
+```
+
+The script syncs dependencies, writes `/etc/systemd/system/mva-viz-api.service`, starts it,
+checks `/health`, and prints the Caddy and nginx blocks to put in front. It reads
+`MVA_VIZ_TOKEN` from the environment or `.env` and **refuses to install without one**.
+
+The unit binds `127.0.0.1` deliberately. TLS, the public hostname and the certificate belong
+to the reverse proxy; the API process should never hold a public port itself.
+
+```bash
+sudo systemctl status mva-viz-api      # is it up
+sudo journalctl -u mva-viz-api -f      # what is it doing
+sudo systemctl restart mva-viz-api     # after editing .env — settings are read at start
+```
+
+### The two tokens are different secrets
+
+| Token | Guards | Sent by |
+|---|---|---|
+| `MVA_API_TOKEN` | `mva-reads-api` (the read store) | `mva-viz-api`, on its `/api/probe/*` and `/api/jobs/*` proxy routes |
+| `MVA_VIZ_TOKEN` | `mva-viz-api` (everything else) | Vercel's proxy function, as `MVA_VIZ_API_TOKEN` |
+
+Both travel as `X-API-Key`, on different hops. Neither is ever in the browser.
+
+### On Vercel
+
+Root Directory `app`, then five environment variables and a deploy. The table, the
+generator commands and `vercel dev` are in [`app/README.md` § Hosting](../../app/README.md#hosting);
+this page does not restate them.
+
+### Verify it end to end
+
+From a laptop, not from the server — the point is what an outsider can reach:
+
+```bash
+curl -fsS https://viz.example.org/health                                   # {"ok":true,...}
+curl -so /dev/null -w '%{http_code}\n' https://viz.example.org/api/overview   # 401
+curl -so /dev/null -w '%{http_code}\n' https://<the-dashboard>/            # 401 + password page
+curl -so /dev/null -w '%{http_code}\n' https://<the-dashboard>/api/overview  # 401, no data
+```
+
+Four `401`s and one `{"ok":true}` is the correct result. Anything that returns rows without a
+password is a misconfiguration — stop and fix it before sharing the link.
+
+---
+
+## 4. Credentials and exposure
 
 `.env` is gitignored; `.env.example` is the committed template, and it declares
 `PGHOST PGPORT PGDATABASE PGUSER PGPASSWORD PGSCHEMA PGRESULTSCHEMA MVA_SOURCE_DIR
-MVA_STAGING_DIR MVA_HF_REPO` plus the `S3_*` block. Anything exported in the real
+MVA_STAGING_DIR MVA_HF_REPO` plus the `S3_*` block and the two service tokens
+(`MVA_API_TOKEN`, `MVA_VIZ_TOKEN`). Anything exported in the real
 environment beats the file, so CI can inject `PGPASSWORD` without a stale `.env`
 overriding it. Settings print redacted — `password: set`, never the value — so a settings
 object is safe in a log or a traceback.
@@ -257,7 +354,19 @@ ssh -N -L 5432:localhost:5432 <user>@<server>    # Postgres, if it should not li
 > `s3-check` warns whenever `S3_USE_SSL=false`. For encrypted transport, use the SSH
 > tunnel above or put a TLS reverse proxy in front and set `S3_USE_SSL=true`.
 
-## 4. Data handling
+### What Vercel holds
+
+Four secrets live in the Vercel project and nowhere else in this repository:
+`MVA_VIZ_API_URL`, `MVA_VIZ_API_TOKEN`, `DASHBOARD_PASSWORD`, `DASHBOARD_SESSION_SECRET`.
+None is `VITE_`-prefixed, so Vite cannot inline any of them into the bundle — that prefix
+rule is the mechanism, not a convention. `vercel env pull` writes them to `app/.env.local`
+for `vercel dev`; that file is gitignored and must stay so.
+
+The dashboard's password is not a credential for anything else: it buys a session, and the
+session buys proxied reads. Rotating it in the Vercel project signs everyone out
+immediately, because the cookie is signed with a key that includes the password itself.
+
+## 5. Data handling
 
 Everything on this infrastructure is derived from, or is, the gated delivery. The rule and
 its reasoning are in

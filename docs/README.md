@@ -33,7 +33,7 @@ Full index and what "step 0" covers: [`step-0/README.md`](step-0/README.md).
 | Document | Answers |
 |---|---|
 | [`step-0/architecture.md`](step-0/architecture.md) | How do the pieces fit? Data flow, seams, sharp edges, extension points. |
-| [`step-0/infrastructure.md`](step-0/infrastructure.md) | How do I operate Postgres and the object store? Setup, verbs, tunnels, credentials. |
+| [`step-0/infrastructure.md`](step-0/infrastructure.md) | How do I operate Postgres, the object store and the hosted `mva-viz-api`? Setup, verbs, tunnels, credentials, and the deployment runbook for the Vercel dashboard. |
 | [`step-0/data-layers.md`](step-0/data-layers.md) | What shape does the data take on the way in? Layer 0 bytes → layer 1 anchor → layer 2 typed tables. |
 | [`step-0/exploration.md`](step-0/exploration.md) | How do I actually *look* at the data? The exploration toolkit — exhibits, graded checks, one interactive page. |
 | [`step-0/reads-storage.md`](step-0/reads-storage.md) | Where do the raw reads go, and what can you ask of them? Built — 1,071,835,104 reads as queryable Parquet. |

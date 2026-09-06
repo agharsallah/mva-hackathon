@@ -1904,6 +1904,97 @@ flowchart TB
 
 **De-identified** — names removed. Note this is NOT the same as impossible to identify — genomes are inherently identifying, which is why the rules are strict.
 
+### Hosting the dashboard
+
+These words all come from putting the app on the public internet (methodology 080). They are web-infrastructure terms, not biology — but they decide who can read this child's data, so they belong in the privacy chapter.
+
+**Origin** — a web address reduced to the three things a browser uses to decide "is this the same place?": the scheme, the host and the port. Two addresses are the same origin only if all three match.
+*Example: `http://localhost:5173` and `http://127.0.0.1:5173` are DIFFERENT origins to a browser, even though they are the same machine — which is why the API's allowed-origins list names both.*
+*Context: the unit CORS and the session cookie are both defined in terms of · source: src/mva/viz/app.py · related: CORS, Same-origin request, Reverse proxy · first seen 2026-09-06*
+
+**Same-origin request** — a request a page makes to its own origin, written as a path (`/api/overview`) with no host in it. The browser sends it without asking anyone's permission, and the page never has to know where the server actually is.
+*Example: the hosted dashboard is built with `VITE_API_URL=/`, so every call becomes `/api/…` and the real backend address appears nowhere in the downloaded JavaScript.*
+*Context: the mechanism that hides the backend from visitors · source: app/src/api/client.ts · related: Origin, API proxy, Environment-variable prefix · first seen 2026-09-06*
+
+**CORS (Cross-Origin Resource Sharing)** — the browser rule that a page may only read a reply from a *different* origin if that server explicitly says the page's origin is allowed. The server says it in a response header; the browser enforces it. Server-to-server calls are unaffected — CORS is a browser rule, not a network one.
+*Example: `MVA_VIZ_CORS=http://localhost:5173,http://127.0.0.1:5173` — the two dev-server origins. The hosted dashboard needs no entry, because its browser only talks to its own origin and the proxy behind it is not a browser.*
+*Context: a blocked fetch and a dead server look identical from JavaScript (both a bare `TypeError`), which is why the app's status dot names both causes · source: src/mva/viz/app.py · related: Origin, Same-origin request · first seen 2026-09-06*
+
+**Reverse proxy** — a server that sits in front of another server, takes the public requests, and passes them on. It is where the certificate and the public hostname live, so the real service can stay bound to `127.0.0.1` and be unreachable from outside.
+*Example: Caddy on the VPS holds `https://viz.example.org`; `mva-viz-api` itself listens only on `127.0.0.1:8900` and would refuse to bind anything else without a token.*
+*Context: installed by `tools/setup-viz-api-service.sh`, which prints the Caddy and nginx blocks · source: docs/step-0/infrastructure.md · related: Origin, Shared token, systemd unit · first seen 2026-09-06*
+
+**API proxy (server-side)** — a small program on the server that receives the browser's same-origin request and re-sends it to the real API, adding the secret the browser is not allowed to hold. The browser sees only the proxy; the proxy sees both sides.
+*Example: `app/api/[...path].ts` on Vercel takes `/api/panel/genes` and re-sends it to `$MVA_VIZ_API_URL/api/panel/genes` with `X-API-Key: $MVA_VIZ_API_TOKEN`.*
+*Context: chosen over React Server Components because the app is a Vite single-page app — rewriting 340 files to hide the same fact was not worth it · source: docs/step-0/methodology/080-hosted-dashboard.md · related: Same-origin request, Shared token, Edge Function · first seen 2026-09-06*
+
+**Shared token** — one long random string that stands for "you are allowed to call this API". Every caller sends the same one, in a header; the server compares it to the value it was configured with. No usernames, no accounts.
+*Example: `MVA_VIZ_TOKEN` in the server's `.env`, sent by the proxy as the header `X-API-Key`. Generate it (`secrets.token_urlsafe(32)`), never choose it.*
+*Context: two different tokens exist on two different hops — `MVA_API_TOKEN` guards the read-store API, `MVA_VIZ_TOKEN` guards the viz API. Neither is ever in a browser · source: src/mva/viz/auth.py · related: API proxy, Constant-time comparison, Environment-variable prefix · first seen 2026-09-06*
+
+**Constant-time comparison** — comparing two secrets in a way that always takes the same amount of time, whether they differ at the first character or the last. Ordinary `==` stops at the first difference, and that timing tells an attacker how much of a guess was right — enough, over many tries, to recover the secret one character at a time.
+*Example: `secrets.compare_digest(provided, expected)` in Python; a fixed-length XOR loop in the app's `timingSafeEqual`.*
+*Context: used for both the API token and the dashboard password · source: src/mva/viz/auth.py · related: Shared token, HMAC · first seen 2026-09-06*
+
+**HMAC (hash-based message authentication code)** — a fingerprint of a message computed with a secret key. Anyone holding the key can check the fingerprint; nobody without it can produce one. It proves a message was written by the server and not edited since.
+*Example: `HMAC-SHA256("v1:1757260800")` under the key `DASHBOARD_SESSION_SECRET + ":" + DASHBOARD_PASSWORD`, which is what makes the dashboard's session cookie unforgeable.*
+*Context: it is what lets the session be the cookie itself, with no session database behind it · source: app/server/session.ts · related: Signed session cookie, Constant-time comparison · first seen 2026-09-06*
+
+**Signed session cookie** — a cookie holding an expiry plus an HMAC of that expiry. The server does not remember who is logged in; it re-checks the fingerprint on every request. Editing the expiry breaks the fingerprint, so the cookie cannot be extended by its holder.
+*Example: `mva_dash=1757260800.k7Qf…T4` — expiry, dot, signature. Valid for 12 hours.*
+*Context: because the password is part of the signing key, changing `DASHBOARD_PASSWORD` in the Vercel project invalidates every cookie already issued — a rotation is a logout for everyone · source: app/server/session.ts · related: HMAC, HttpOnly, Fail closed · first seen 2026-09-06*
+
+**HttpOnly / Secure / SameSite** — three flags on a cookie. `HttpOnly` hides it from JavaScript, so a script injected into the page cannot read it. `Secure` stops it travelling over plain HTTP. `SameSite=Lax` stops another website's form post from carrying it along.
+*Example: `mva_dash=…; Path=/; Max-Age=43200; HttpOnly; Secure; SameSite=Lax`.*
+*Context: pinned by a test, because all three are silent when missing — nothing breaks, the cookie is just weaker · source: app/server/session.ts · related: Signed session cookie · first seen 2026-09-06*
+
+**Edge Function** — a small server-side program that runs on the hosting provider's own network, close to the visitor, without anyone running a server. It gets a request and returns a response, and it holds the secrets the browser must not.
+*Example: the four functions in `app/api/` — the catch-all proxy, the liveness probe, login and logout.*
+*Context: called "serverless" because you do not operate the machine; there is still a server · source: app/api/ · related: API proxy, Routing Middleware · first seen 2026-09-06*
+
+**Routing Middleware** — code that runs on *every* request before the hosting provider's cache and before any file is served. It can let the request through, rewrite it, or answer it itself. It is the only place a gate can sit if nothing at all may be served without a password.
+*Example: `app/middleware.ts` returns the password page for a visitor with no valid session, so an unauthenticated request never receives `index.html` or a single JavaScript chunk.*
+*Context: a login screen written as a page inside the app would already have shipped the app before it could refuse · source: app/middleware.ts · related: Edge Function, Signed session cookie, Fail closed · first seen 2026-09-06*
+
+**Fail closed** — when a system is misconfigured, it refuses rather than allows. The opposite ("fail open") is what turns a missing setting into a public dashboard.
+*Example: with `DASHBOARD_PASSWORD` unset the deployment answers `503` naming the missing variable; and `mva-viz-api --host 0.0.0.0` with no token exits `2` instead of printing a warning nobody reads.*
+*Context: the reason both checks are refusals and not warnings · source: app/middleware.ts · related: Routing Middleware, Shared token, Coordinate gate · first seen 2026-09-06*
+
+**`Cache-Control: no-store`** — a header telling every cache along the way, including the provider's shared CDN cache, to keep no copy of this reply. Without it a reply computed for one visitor can be handed to the next.
+*Example: every reply the dashboard's proxy returns carries `no-store, private`, whatever the API said — `/api/panel/locus` returns real patient positions and no cache may retain them.*
+*Context: the reply is still delivered to the authorised browser; this only stops it being stored in between · source: app/server/upstream.ts · related: API proxy, Reverse proxy, Resharing · first seen 2026-09-06*
+
+**Environment-variable prefix (`VITE_`)** — the build tool copies a variable's value into the JavaScript it produces *only* if its name starts with `VITE_`. Everything else stays on the server. It is a mechanical rule, which is what makes it trustworthy: a secret without the prefix cannot leak into the bundle by accident.
+*Example: `VITE_API_URL=/` is inlined into the app; `MVA_VIZ_API_TOKEN` and `DASHBOARD_PASSWORD` are not, and are readable only by the Edge Functions.*
+*Context: the whole hiding strategy rests on this one naming rule · source: app/README.md · related: Same-origin request, Shared token, Edge Function · first seen 2026-09-06*
+
+**systemd unit** — a small text file telling a Linux server how to start a program, keep it running, and restart it if it dies. It is how `mva-viz-api` survives a reboot instead of living in someone's terminal.
+*Example: `/etc/systemd/system/mva-viz-api.service`, written by `tools/setup-viz-api-service.sh`; `sudo journalctl -u mva-viz-api -f` reads its log.*
+*Context: the unit binds `127.0.0.1` deliberately — the public port belongs to the reverse proxy · source: tools/setup-viz-api-service.sh · related: Reverse proxy, Fail closed · first seen 2026-09-06*
+
+```mermaid
+flowchart LR
+  V["visitor's browser"]:::raw
+  M["Routing Middleware<br/>valid session?"]:::decision
+  L["password page<br/>+ signed cookie"]:::machinery
+  S["the app<br/>(JavaScript)"]:::machinery
+  P["API proxy<br/>adds X-API-Key"]:::machinery
+  R["reverse proxy<br/>holds the certificate"]:::machinery
+  A["mva-viz-api<br/>127.0.0.1 only"]:::good
+  V --> M
+  M -->|"no"| L
+  L -.->|"cookie"| V
+  M -->|"yes"| S
+  M -->|"yes"| P
+  P --> R --> A
+  classDef raw fill:#3b0764,stroke:#a855f7,color:#fafafa
+  classDef decision fill:#422006,stroke:#f0b100,color:#fafafa
+  classDef machinery fill:#162456,stroke:#2b7fff,color:#fafafa
+  classDef good fill:#0d542b,stroke:#00c950,color:#fafafa
+```
+
+> **Legend** — purple: the untrusted visitor · yellow: the decision point (is there a valid session?) · blue: neutral machinery on the public side · green: the private service holding patient-derived data. Solid arrow: a request. Dashed arrow: a response header.
+
 ---
 
 ## 16. The research record — words for what you believe

@@ -70,6 +70,20 @@ uv run mva-warehouse s3-check
 
 Setup, ports, credentials and the sharp edges: [`docs/step-0/infrastructure.md`](docs/step-0/infrastructure.md).
 
+Read it all in a browser — the dashboard is the single source of truth for findings, tables,
+figures and every submission iteration:
+
+```bash
+uv run mva-viz-api            # the JSON API, http://127.0.0.1:8900
+cd app && pnpm install && pnpm run dev    # http://127.0.0.1:5173
+```
+
+It also runs with **no backend at all**, on committed fixtures, and says so in the header.
+Hosting it for other people — on Vercel, behind a password, with every API call proxied
+server-side so the backend's address never reaches the browser — is
+[`app/README.md` § Hosting](app/README.md#hosting) and
+[`docs/step-0/infrastructure.md` §3](docs/step-0/infrastructure.md).
+
 ## How a question becomes an answer
 
 Work is grouped by **step**, and every research step declares one goal. A claim under it

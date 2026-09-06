@@ -7,7 +7,7 @@ meaning)` pattern, and every chart carries a `Legend` line decoding its own colo
 
 There is **no trio** in this dataset — one sample only. The app never renders a parent column.
 
-**Verified:** 2026-09-03 — `pnpm run check` green (typecheck, lint, format, theme, 388 tests); bundle budget re-blessed the same day (see `tools/bundle-budget.mjs`).
+**Verified:** 2026-09-06 — `pnpm run check` green (typecheck, lint, format, theme, dictionary, 556 tests) and `pnpm run build` clean, after the hosting layer landed (methodology 080). Bundle budget last re-blessed 2026-09-03 (see `tools/bundle-budget.mjs`).
 
 ## Quickstart
 
@@ -59,8 +59,10 @@ from the repo-root `.env` — see `.env.example` for every variable and
 edges. Skip step 1 if you only need everything except the Probes/Reads pages — the viz API answers
 `503` for those routes and the app shows a start-command card instead of erroring.
 
-`mva-viz-api` has **no auth** and warns if bound off loopback (`/api/panel/locus` serves real
-patient positions) — never pass `--host 0.0.0.0` outside a trusted tunnel.
+`mva-viz-api` is **open when `MVA_VIZ_TOKEN` is empty**, which is the right setting on loopback
+and nowhere else: `/api/panel/locus` serves real patient positions. Set the token and every
+`/api/*` route requires it as `X-API-Key` (`/health` stays open for uptime probes). The service
+_refuses_ a non-loopback bind while the token is empty — see [Hosting](#hosting) below.
 
 | Script                             | Does                                                                            |
 | ---------------------------------- | ------------------------------------------------------------------------------- |
@@ -76,13 +78,126 @@ patient positions) — never pass `--host 0.0.0.0` outside a trusted tunnel.
 
 ### Environment
 
-| Variable            | Default                 | Meaning                                                                                |
-| ------------------- | ----------------------- | -------------------------------------------------------------------------------------- |
-| `VITE_API_URL`      | `http://127.0.0.1:8900` | base URL of `mva-viz-api`                                                              |
-| `VITE_USE_FIXTURES` | unset (= on)            | `false` disables the fixture fallback, so an unreachable API surfaces as an error card |
+Build-time, read by Vite and inlined into the bundle. Only `VITE_`-prefixed names are exposed —
+that is the mechanism that keeps the hosting secrets below out of the browser.
+
+| Variable            | Default                 | Meaning                                                                                                                             |
+| ------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_API_URL`      | `http://127.0.0.1:8900` | where API requests go. Set it to `/` for the hosted build, which makes every request same-origin and lets Vercel's proxy forward it |
+| `VITE_USE_FIXTURES` | unset (= on)            | `false` disables the fixture fallback, so an unreachable API surfaces as an error card                                              |
 
 The Probes page additionally needs the reads API behind the viz API; when that upstream is down
 the viz API answers `503` and the page shows the start command instead of an error.
+
+## Hosting
+
+The dashboard is deployed on **Vercel**; `mva-viz-api` stays on the project's own VPS, next to
+the warehouse and the object store it reads. Nothing about the backend is in the bundle.
+
+```mermaid
+flowchart LR
+  V["visitor's browser"]:::raw
+  subgraph EDGE["Vercel (public)"]
+    M["middleware.ts<br/>password gate"]:::decision
+    L["api/login.ts<br/>signed cookie"]:::machinery
+    S["dist/<br/>the SPA"]:::machinery
+    P["api/[...path].ts<br/>the proxy"]:::machinery
+  end
+  subgraph VPS["the VPS (private)"]
+    R["reverse proxy<br/>TLS"]:::machinery
+    A["mva-viz-api<br/>127.0.0.1:8900"]:::good
+    D[("Postgres + MinIO")]:::good
+  end
+  V -->|"any request"| M
+  M -->|"no session"| L
+  M -->|"valid session"| S
+  M -->|"valid session"| P
+  L -.->|"Set-Cookie"| V
+  P -->|"X-API-Key"| R --> A --> D
+  classDef raw fill:#3b0764,stroke:#a855f7,color:#fafafa
+  classDef decision fill:#422006,stroke:#f0b100,color:#fafafa
+  classDef machinery fill:#162456,stroke:#2b7fff,color:#fafafa
+  classDef good fill:#0d542b,stroke:#00c950,color:#fafafa
+```
+
+> **Legend** — purple = the untrusted visitor; yellow = the decision point (is there a valid
+> session?); blue = neutral machinery on the public edge; green = the private services holding
+> patient data. A solid arrow is a request, a dashed arrow a response header.
+
+Two properties this buys, and they are the point:
+
+- **The backend's address is not in the bundle.** The browser only ever names its own origin.
+  `MVA_VIZ_API_URL` and `MVA_VIZ_API_TOKEN` are plain (not `VITE_`-prefixed) Vercel variables, so
+  Vite cannot inline them — `import.meta.env` exposes `VITE_*` and nothing else.
+- **Nothing loads before the password.** The gate runs before the CDN cache on every path, so an
+  unauthenticated visitor gets the password page instead of `index.html`, the JavaScript chunks
+  or a figure PNG. A login route _inside_ the SPA would have shipped the app before it could
+  refuse.
+
+### The files
+
+| Path                            | Runs                            | Does                                                                                    |
+| ------------------------------- | ------------------------------- | --------------------------------------------------------------------------------------- |
+| `middleware.ts`                 | Vercel Routing Middleware, edge | the gate: valid session → through; document → the password page; anything else → 401    |
+| `server/session.ts`             | edge                            | the signed cookie — HMAC-SHA256 over the expiry, keyed by secret **+** password         |
+| `server/loginPage.ts`           | edge                            | the self-contained password page (no bundle, no font file)                              |
+| `server/upstream.ts`            | edge                            | the one forwarder to `mva-viz-api`: token, timeout, header allowlist, `no-store`        |
+| `api/[...path].ts`              | Edge Function                   | every `/api/*` request, forwarded. Re-checks the session                                |
+| `api/liveness.ts`               | Edge Function                   | `/health` (rewritten in `vercel.json`), because that path is outside `/api` upstream    |
+| `api/login.ts`, `api/logout.ts` | Edge Function                   | issue and expire the cookie; the only routes the gate lets through                      |
+| `vercel.json`                   | build                           | the `/health` rewrite, the SPA fallback, and the security headers                       |
+| `tsconfig.vercel.json`          | `tsc -b`                        | typechecks all of the above — it is outside the Vite build, so it needs its own project |
+
+### Vercel project settings
+
+Root Directory **`app`**. Framework preset Vite (`vercel.json` states it). Then four
+environment variables, none of them `VITE_`-prefixed except the last:
+
+| Variable                   | Example                   | Meaning                                                             |
+| -------------------------- | ------------------------- | ------------------------------------------------------------------- |
+| `MVA_VIZ_API_URL`          | `https://viz.example.org` | where `mva-viz-api` is reachable from Vercel. Server-side only      |
+| `MVA_VIZ_API_TOKEN`        | (32 random characters)    | must equal `MVA_VIZ_TOKEN` in the server's `.env`. Server-side only |
+| `DASHBOARD_PASSWORD`       | (generated, not chosen)   | the one shared password. Rotating it invalidates every session      |
+| `DASHBOARD_SESSION_SECRET` | (32 random characters)    | signs the cookie. Rotating it also invalidates every session        |
+| `VITE_API_URL`             | `/`                       | build-time: makes every request same-origin so the proxy sees it    |
+
+Generate the three secrets the same way:
+
+```bash
+uv run python -c "import secrets; print(secrets.token_urlsafe(32))"
+```
+
+### Deploy
+
+```bash
+# 1. on the VPS, once: put MVA_VIZ_TOKEN in .env, then
+./tools/setup-viz-api-service.sh --domain viz.example.org
+#    it installs the systemd unit, binds loopback, and prints the reverse-proxy block
+
+# 2. from this machine
+cd app
+vercel link            # once, choose Root Directory = app
+vercel env pull        # optional: .env.local for `vercel dev`
+vercel --prod
+```
+
+`vercel dev` runs the middleware and the functions locally, so the gate and the proxy can be
+exercised before deploying. Without `vercel env pull` it answers `503` and names the variable it
+is missing — that is the fail-closed path working, not a bug.
+
+### What this is not
+
+- **One shared password, so a session identifies "someone who knew it", never a person.** There is
+  no user, no role, and no record of who read what. Right for a hackathon dashboard shown to
+  judges; wrong for anything clinical.
+- **No rate limiting.** Vercel Functions are stateless, so a per-instance counter is defeated by
+  concurrency. A wrong password costs a fixed ~400 ms, and the password's own entropy does the
+  rest — generate it, do not choose it. `vercel firewall` rate-limiting rules are the upgrade.
+- **Patient positions transit Vercel.** `/api/panel/locus` returns real coordinates, and this
+  deployment carries them through Vercel's edge to the browser. Every proxied reply is
+  `Cache-Control: no-store, private` so nothing is retained by a shared cache, but the data does
+  leave the VPS. That was a deliberate call — see
+  [methodology 080](../docs/step-0/methodology/080-hosted-dashboard.md).
 
 ## Stack
 
