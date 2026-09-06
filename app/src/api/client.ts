@@ -20,7 +20,7 @@
  *
  * The hosted build is the reason the second shape exists: an absolute URL in the bundle
  * would tell every visitor the backend's hostname and port. Same-origin paths mean the
- * only address the browser ever holds is the one it is already on — `app/api/[...path].ts`
+ * only address the browser ever holds is the one it is already on — `app/api/proxy.ts`
  * on Vercel is what knows the real one, and it runs on the server.
  */
 
@@ -76,24 +76,42 @@ export class ApiError extends Error {
   }
 }
 
-// --- fixture-mode flag, observable so the header can show a badge ------------
+// --- session-wide flags, observable so the header can show a badge -----------
 
-let fixtureMode = false;
-const listeners = new Set<() => void>();
-
-function markFixtureMode(): void {
-  if (fixtureMode) return;
-  fixtureMode = true;
-  listeners.forEach((fn) => fn());
+/**
+ * A one-way latch the header can subscribe to: false until something trips it, then true
+ * for the rest of the session. Shaped for `useSyncExternalStore`, which needs a stable
+ * `subscribe` and a `get` that returns the same value until it actually changes.
+ */
+function flagStore() {
+  let raised = false;
+  const listeners = new Set<() => void>();
+  return {
+    raise(): void {
+      if (raised) return;
+      raised = true;
+      listeners.forEach((fn) => fn());
+    },
+    subscribe(fn: () => void): () => void {
+      listeners.add(fn);
+      return () => listeners.delete(fn);
+    },
+    get: (): boolean => raised,
+  };
 }
 
-export const fixtureModeStore = {
-  subscribe(fn: () => void): () => void {
-    listeners.add(fn);
-    return () => listeners.delete(fn);
-  },
-  get: (): boolean => fixtureMode,
-};
+/** At least one exhibit on this session was served from a committed fixture. */
+export const fixtureModeStore = flagStore();
+
+/**
+ * The API answered, and refused for want of a token.
+ *
+ * Worth its own signal because `/health` is deliberately unauthenticated, so the status dot
+ * says "up" — correctly, the service is alive — while every panel is empty. Seen for real:
+ * a dev build pointed straight at the deployed API. Liveness and usability are not the same
+ * question, and the header has to be able to say which one failed.
+ */
+export const unauthorizedStore = flagStore();
 
 // --- the request ------------------------------------------------------------
 
@@ -163,6 +181,7 @@ async function raw<T>(path: string, params?: Params, signal?: AbortSignal): Prom
     } catch {
       /* non-JSON error body — keep the status line */
     }
+    if (res.status === 401 || res.status === 403) unauthorizedStore.raise();
     throw new ApiError(detail, res.status, path);
   }
   const body = (await res.json()) as Envelope<T>;
@@ -184,7 +203,7 @@ export async function get<T>(
     if (!FIXTURES_ENABLED || !(isUnreachable(err) || isRouteMissing(err))) throw err;
     const fixture = await fixtureFor(path, params);
     if (!fixture) throw err;
-    markFixtureMode();
+    fixtureModeStore.raise();
     return {
       data: fixture.data as T,
       cachedAt: fixture.cached_at,
@@ -207,6 +226,7 @@ async function assertOk(res: Response, path: string): Promise<void> {
   } catch {
     /* non-JSON error body — keep the status line */
   }
+  if (res.status === 401 || res.status === 403) unauthorizedStore.raise();
   throw new ApiError(detail, res.status, path);
 }
 

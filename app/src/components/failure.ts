@@ -10,6 +10,7 @@ export type FailureKind =
   | 'unreachable'
   | 'route-missing'
   | 'upstream-down'
+  | 'unauthorized'
   | 'bad-request'
   | 'server-fault'
   | 'aborted'
@@ -45,6 +46,23 @@ export function classifyError(error: Error): Failure {
       explain:
         'The API process is older than this app: this page asks for a route that was added after it started.',
       remedy: 'Restart the API so it picks up the new routes.',
+      command: 'uv run mva-viz-api',
+    };
+  }
+  // Before the generic 4xx: a 401 is not a bad parameter, and reading it as one sent the
+  // reader off to change a selection that was never the problem. It means this build is
+  // talking to an API that requires `MVA_VIZ_TOKEN`, and a browser has no way to hold that
+  // token — only the server-side proxy does. Seen for real: a dev build pointed straight at
+  // the deployed API answered 401 on every panel while the header still said "API up",
+  // because `/health` is deliberately unauthenticated.
+  if (api && (api.status === 401 || api.status === 403)) {
+    return {
+      kind: 'unauthorized',
+      title: 'This API needs a token, and a browser cannot hold one',
+      explain:
+        'The API answered, but refused without a valid X-API-Key. Only the hosted deployment can send it — the token lives in the Vercel proxy, never in the bundle, which is the whole point of it.',
+      remedy:
+        'Point this build at a local API instead (leave VITE_API_URL unset), or run the proxy locally with `vercel dev`. Never put the token in VITE_API_URL or any VITE_ variable — Vite inlines those into the bundle.',
       command: 'uv run mva-viz-api',
     };
   }

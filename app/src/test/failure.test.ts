@@ -125,3 +125,27 @@ describe('shouldRetry', () => {
     expect(shouldRetry(1, new TypeError('Failed to fetch'))).toBe(true);
   });
 });
+
+describe('classifyError — the API answered but refused', () => {
+  it('reads a 401 as authorisation, not as a bad parameter', () => {
+    const f = classifyError(new ApiError('missing or wrong X-API-Key', 401, '/api/overview'));
+    expect(f.kind).toBe('unauthorized');
+    // The old classifier fell through to the generic 4xx and told the reader to change a
+    // selection that was never the problem. Observed on a dev build pointed at the
+    // deployed API: 401 on every panel, "Usually a selection in the URL no longer matches".
+    expect(f.explain).not.toMatch(/parameters were refused/);
+    expect(f.remedy).toMatch(/VITE_/);
+  });
+
+  it('reads a 403 the same way', () => {
+    expect(classifyError(new ApiError('Forbidden', 403, '/api/overview')).kind).toBe(
+      'unauthorized',
+    );
+  });
+
+  it('still reads a 422 as a bad request', () => {
+    expect(classifyError(new ApiError('lane must be one of …', 422, '/api/x')).kind).toBe(
+      'bad-request',
+    );
+  });
+});

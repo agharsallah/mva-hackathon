@@ -16,7 +16,14 @@ import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
-import { API_LABEL, API_URL, fixtureModeStore, FIXTURES_ENABLED, health } from '../api/client';
+import {
+  API_LABEL,
+  API_URL,
+  fixtureModeStore,
+  FIXTURES_ENABLED,
+  health,
+  unauthorizedStore,
+} from '../api/client';
 import { cx } from '../lib/ui';
 import { AiExport } from './AiExport';
 import { CommandPalette } from './CommandPalette';
@@ -57,7 +64,14 @@ function useApiHealth() {
  * its own origin and Vercel's proxy talks to the API server-to-server, where CORS does not
  * apply. There, "down" means the proxy could not reach `mva-viz-api`.
  */
-function statusTitle(state: 'checking' | 'up' | 'down'): string {
+function statusTitle(state: 'checking' | 'up' | 'down' | 'refused'): string {
+  if (state === 'refused') {
+    return (
+      `${API_LABEL} answered, then refused: it requires an X-API-Key and a browser has ` +
+      `none.\nPoint this build at a local API (leave VITE_API_URL unset) or run the proxy ` +
+      `with \`vercel dev\`. The token must never go in a VITE_ variable — Vite inlines those.`
+    );
+  }
   if (state !== 'down') return API_LABEL;
   if (!API_URL) {
     return (
@@ -80,17 +94,23 @@ const TAB_OFF = 'text-chrome-400 hover:bg-chrome-900 hover:text-chrome-200';
 
 function ApiHealth() {
   const h = useApiHealth();
-  const state = h.isPending ? 'checking' : h.data?.ok ? 'up' : 'down';
+  const refused = useSyncExternalStore(unauthorizedStore.subscribe, unauthorizedStore.get);
+  // "up" is about liveness, and /health is deliberately unauthenticated — so the service can
+  // be answering while every exhibit is empty. When that happens the dot must not read
+  // green: the reader's problem is authorisation, not availability.
+  const state = refused ? 'refused' : h.isPending ? 'checking' : h.data?.ok ? 'up' : 'down';
   const dot =
     state === 'up'
       ? 'bg-good-500'
-      : state === 'down'
-        ? 'bg-broken-500'
-        : 'bg-chrome-500 animate-pulse';
+      : state === 'refused'
+        ? 'bg-decision-500'
+        : state === 'down'
+          ? 'bg-broken-500'
+          : 'bg-chrome-500 animate-pulse';
   return (
     <span className="flex items-center gap-2 text-xs text-chrome-500" title={statusTitle(state)}>
       <span className={`h-2 w-2 rounded-full ${dot}`} />
-      API {state}
+      API {state === 'refused' ? 'unauthorized' : state}
     </span>
   );
 }

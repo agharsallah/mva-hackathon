@@ -201,6 +201,32 @@ vercel --prod
 exercised before deploying. Without `vercel env pull` it answers `503` and names the variable it
 is missing — that is the fail-closed path working, not a bug.
 
+### Running the hosted setup locally
+
+`vercel dev` runs the middleware, the proxy and the Vite dev server together, which is the
+only way to exercise the gate and the proxy before deploying — and the way to develop
+against a remote API that requires a token, since a browser cannot hold one.
+
+```bash
+cd app
+DASHBOARD_PASSWORD=... DASHBOARD_SESSION_SECRET=... \
+MVA_VIZ_API_URL=http://your-host:8900 MVA_VIZ_API_TOKEN=... \
+  vercel dev --listen 3000
+```
+
+Two things cost an hour the first time, both verified here rather than assumed:
+
+- **`vercel env pull` cannot decrypt Secret-type variables.** `DASHBOARD_PASSWORD` and
+  `DASHBOARD_SESSION_SECRET` come back empty, and the deployment then answers `503` naming
+  them — the fail-closed path working, not a bug. Export them as above.
+- **Export the variables into the shell**, rather than relying on `.env.local`. With the
+  values only in that file the middleware still reported them missing.
+
+Plain `pnpm run dev` remains the fastest loop when the API is on the same machine: leave
+`VITE_API_URL` unset, run `uv run mva-viz-api` with `MVA_VIZ_TOKEN` empty, and the browser
+talks to it directly. Pointing a plain `pnpm run dev` at a _token-protected_ API cannot
+work — the header will show a yellow `API unauthorized` dot saying exactly that.
+
 ### What this is not
 
 - **One shared password, so a session identifies "someone who knew it", never a person.** There is
