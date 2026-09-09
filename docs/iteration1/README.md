@@ -1,5 +1,8 @@
 # Iteration 1 — the research steps behind submission 1
 
+> **Frozen:** 2026-09-09 — this index belongs to iteration 1, whose upload was answered:
+> *full match at rank 1: stop+missense (100 rank points, F-max 1.0, threshold 0.9963)*. Do not edit; iteration 2 continues in `docs/iteration2/`.
+
 **Standing:** 2026-09-05. Steps 1–8 as they contributed to
 [`submissions/track1/iteration-1/`](../../submissions/track1/iteration-1/README.md). Step 0
 (the platform) is not an iteration and stays at [`../step-0/`](../step-0/README.md).
