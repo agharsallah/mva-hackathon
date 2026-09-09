@@ -4,9 +4,9 @@
       "track": "track1",
       "number": 1,
       "folder": "submissions/track1/iteration-1",
-      "state": "ready",
-      "standing": "built and rehearsed 2026-09-05; rows re-derived from the warehouse and the register 2026-09-09 (082); not uploaded (0 of 6 submissions spent).",
-      "uploaded": false,
+      "state": "frozen",
+      "standing": "2026-09-09 \u2014 this folder belongs to iteration 1, whose upload was answered:",
+      "uploaded": true,
       "csv": {
         "path": "submissions/track1/iteration-1/agharsallah_bub1b-comphet-derived.csv",
         "sha256": "54854a6ef7a2cb6ae67e54ccbf092c5c7d1459993379626c4e59f601f4ad8227",
@@ -16,8 +16,8 @@
         {
           "name": "README.md",
           "kind": "readme",
-          "bytes": 9456,
-          "modified": "2026-09-09T19:29:22+00:00"
+          "bytes": 9910,
+          "modified": "2026-09-09T20:32:45+00:00"
         },
         {
           "name": "agharsallah_bub1b-comphet-derived.csv",
@@ -870,7 +870,21 @@
         ]
       },
       "audit": {
-        "probes": [],
+        "probes": [
+          {
+            "probe_id": 1,
+            "logged_at": "2026-09-09T22:30:50.871848",
+            "track": "1",
+            "probe_type": "F",
+            "submitted_by": "agharsallah",
+            "submission_ref": "submissions/track1/iteration-1/agharsallah_bub1b-comphet-derived.csv (gitignored; sha256 54854a6ef7a2cb6ae67e54ccbf092c5c7d1459993379626c4e59f601f4ad8227)",
+            "payload_sha256": "54854a6ef7a2cb6ae67e54ccbf092c5c7d1459993379626c4e59f601f4ad8227",
+            "n_rows": 8,
+            "response": "Submission 1 | Rank points 100.0/100 | F-max 1.000 | F-max EPCR threshold 0.9963 | Full match at rank 1",
+            "score": 100.0,
+            "rationale": "iteration 1, see submissions/track1/iteration-1: pair at rank 1 tests H009, every other row a decodable alternative (074, 082)"
+          }
+        ],
         "register": [
           {
             "hypothesis_id": "H001",
@@ -954,9 +968,520 @@
           },
           {
             "hypothesis_id": "H009",
-            "revision": 2,
-            "status": "testing",
-            "confidence": null,
+            "revision": 3,
+            "status": "supported",
+            "confidence": 0.9992539711661633,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-6",
+            "statement": "The causal compound-heterozygous pair is the BUB1B stop_gained allele (ClinVar pathogenic for MVA syndrome 1) together with the BUB1B missense allele absent from gnomAD, in trans."
+          }
+        ]
+      }
+    },
+    {
+      "track": "track1",
+      "number": 2,
+      "folder": "submissions/track1/iteration-2",
+      "state": "draft",
+      "standing": "draft \u2014 opened 2026-09-09, nothing built. Iteration 1 is frozen at",
+      "uploaded": false,
+      "csv": {
+        "path": "build/submission/track1_submission_v2.csv",
+        "sha256": null,
+        "rows": 8
+      },
+      "deliverables": [
+        {
+          "name": "README.md",
+          "kind": "readme",
+          "bytes": 3388,
+          "modified": "2026-09-09T20:32:45+00:00"
+        },
+        {
+          "name": "methods-form.json",
+          "kind": "methods-json",
+          "bytes": 6815,
+          "modified": "2026-09-09T20:31:48+00:00"
+        },
+        {
+          "name": "report.md",
+          "kind": "report-md",
+          "bytes": 538,
+          "modified": "2026-09-09T20:31:48+00:00"
+        },
+        {
+          "name": "spec.selectors.json",
+          "kind": "selectors",
+          "bytes": 5706,
+          "modified": "2026-09-09T20:31:48+00:00"
+        }
+      ],
+      "decode_table": {
+        "columns": [],
+        "rows": [],
+        "summary": "",
+        "row_order": ""
+      },
+      "selectors": {
+        "alleles": {
+          "stop": {
+            "table": "results.coding_candidates",
+            "where": [
+              ["gene", "=", "BUB1B"],
+              ["consequence", "like", "%stop_gained%"]
+            ]
+          },
+          "missense": {
+            "table": "results.coding_candidates",
+            "where": [
+              ["gene", "=", "BUB1B"],
+              ["consequence", "like", "%missense_variant%"]
+            ]
+          },
+          "intronA": {
+            "table": "results.panel_candidates",
+            "where": [
+              ["gene", "=", "BUB1B"],
+              ["consequence", "like", "%intron_variant%"],
+              ["is_rare_recessive", "=", true],
+              ["gnomad_af", "is", null]
+            ]
+          },
+          "intronB": {
+            "table": "results.panel_candidates",
+            "where": [
+              ["gene", "=", "BUB1B"],
+              ["consequence", "like", "%intron_variant%"],
+              ["is_rare_recessive", "=", true],
+              ["gnomad_af", "is not", null]
+            ]
+          },
+          "lztr1_stop": {
+            "table": "results.coding_candidates",
+            "where": [
+              ["gene", "=", "LZTR1"],
+              ["consequence", "like", "%stop_gained%"],
+              ["is_clinvar_plp", "=", true]
+            ]
+          },
+          "f5_leiden": {
+            "table": "results.coding_candidates",
+            "where": [["rsid", "=", "rs6025"]]
+          },
+          "flg_stop": {
+            "table": "results.coding_candidates",
+            "where": [
+              ["gene", "=", "FLG"],
+              ["consequence", "like", "%stop_gained%"],
+              ["is_clinvar_plp", "=", true]
+            ]
+          }
+        },
+        "rows": [
+          {
+            "rank": 1,
+            "variant": "stop",
+            "partner": "missense",
+            "epcr": 0.0,
+            "finding_type": "primary",
+            "label": "stop+missense",
+            "notes": "",
+            "score": null,
+            "hypothesis": "H009"
+          },
+          {
+            "rank": 2,
+            "variant": "stop",
+            "partner": "intronA",
+            "epcr": 0.0,
+            "finding_type": "primary",
+            "label": "stop+intronA",
+            "notes": "",
+            "score": null,
+            "hypothesis": null
+          },
+          {
+            "rank": 3,
+            "variant": "missense",
+            "partner": "intronA",
+            "epcr": 0.0,
+            "finding_type": "primary",
+            "label": "missense+intronA",
+            "notes": "",
+            "score": null,
+            "hypothesis": null
+          },
+          {
+            "rank": 4,
+            "variant": "stop",
+            "partner": "intronB",
+            "epcr": 0.0,
+            "finding_type": "primary",
+            "label": "stop+intronB",
+            "notes": "",
+            "score": null,
+            "hypothesis": null
+          },
+          {
+            "rank": 5,
+            "variant": "missense",
+            "partner": "intronB",
+            "epcr": 0.0,
+            "finding_type": "primary",
+            "label": "missense+intronB",
+            "notes": "",
+            "score": null,
+            "hypothesis": null
+          },
+          {
+            "rank": 6,
+            "variant": "lztr1_stop",
+            "partner": null,
+            "epcr": 0.0,
+            "finding_type": "secondary",
+            "label": "LZTR1 stop_gained (secondary)",
+            "notes": "",
+            "score": null,
+            "hypothesis": null
+          },
+          {
+            "rank": 7,
+            "variant": "f5_leiden",
+            "partner": null,
+            "epcr": 0.0,
+            "finding_type": "secondary",
+            "label": "F5 Leiden (secondary)",
+            "notes": "",
+            "score": null,
+            "hypothesis": null
+          },
+          {
+            "rank": 8,
+            "variant": "flg_stop",
+            "partner": null,
+            "epcr": 0.0,
+            "finding_type": "secondary",
+            "label": "FLG stop_gained (secondary)",
+            "notes": "",
+            "score": null,
+            "hypothesis": null
+          }
+        ],
+        "hypotheses": [
+          {
+            "label": "stop+missense",
+            "alleles": ["stop", "missense"]
+          },
+          {
+            "label": "stop+intronA",
+            "alleles": ["stop", "intronA"]
+          },
+          {
+            "label": "stop+intronB",
+            "alleles": ["stop", "intronB"]
+          },
+          {
+            "label": "missense+intronA",
+            "alleles": ["missense", "intronA"]
+          },
+          {
+            "label": "missense+intronB",
+            "alleles": ["missense", "intronB"]
+          },
+          {
+            "label": "stop+unseen",
+            "alleles": ["stop", "_unknown_1"],
+            "prior": 0.12
+          },
+          {
+            "label": "missense+unseen",
+            "alleles": ["missense", "_unknown_1"],
+            "prior": 0.05
+          },
+          {
+            "label": "neither (other gene)",
+            "alleles": ["_unknown_1", "_unknown_2"],
+            "prior": 0.05
+          }
+        ],
+        "derivation": null
+      },
+      "methods_form": [
+        {
+          "row": "7",
+          "answer": "agharsallah"
+        },
+        {
+          "row": "8",
+          "answer": "2"
+        },
+        {
+          "row": "9",
+          "answer": "Panel-first, then genome-wide, then a designed submission. (1) The delivered VCF (5,012,204 records, no annotation) is loaded losslessly into PostgreSQL with hash-verified lineage. (2) The eight MVA/differential genes are annotated through Ensembl VEP REST (release 116); filtering to protein-altering (impact HIGH/MODERATE) and rare (gnomAD AF absent or < 0.01) leaves exactly two alleles, both in BUB1B, both heterozygous PASS. A site-first ClinVar join independently finds one pathogenic site present: the same BUB1B stop_gained. (3) Genome-wide: every CDS + stop codon of every protein-coding transcript (Ensembl 116 GTF, \u00b18 bp, merged per gene; 223,048 intervals, 44.6 Mb) is range-joined to the callset \u2192 38,087 distinct coding alleles, all VEP-annotated (191 requests, checkpointed) \u2192 875 rare protein-altering \u2192 65 genes biallelic on PASS calls \u2192 exactly 1 with a ClinVar-pathogenic allele and a top-30 phenotype rank: BUB1B. (4) A panel-blind phenotype ranker (Exomiser's human-phenotype path re-implemented in Python over HPO release 2026-06-23, reading no DNA) ranks BUB1B 6/5,267 on the child's seven own terms; joined to the 65 biallelic genes it is first by a wide margin. (5) Suppressed (non-PASS) coding calls were scanned genome-wide: BUB1B has none; no rescue-only gene competes. (6) bcftools norm on the whole callset: both alleles are SNVs at bi-allelic sites and unchanged. (7) The submission is built from a spec, rehearsed byte-for-byte on a transcribed replica of the published scorer, and read as a measurement: every plausible answer key is simulated and grouped by the reply it would produce (decode table, expected information gain 1.46 bits). Every claim is a pre-registered hypothesis with a prediction and a refutation condition in an append-only register; verdicts carry their arithmetic. Full report and code: https://github.com/agharsallah/mva-hackathon (submissions/track1/iteration-1/)."
+        },
+        {
+          "row": "10",
+          "answer": "Automated to the ranked gene table and the candidate pair (results.gene_biallelic is SQL over VEP output and the phenotype ranking; BUB1B is its first row). The submission LAYOUT \u2014 which alternative pairings occupy ranks 2\u20135 and which secondary findings ranks 6\u20138 \u2014 is a designed measurement chosen by a stated rule and simulated against the scorer replica, not curated from belief."
+        },
+        {
+          "row": "11",
+          "answer": "None on the candidate itself. Manual steps: choosing the rarity cutoff (0.01, recessive) and the impact classes before any run; writing the hypothesis space and priors for the decode table (stated in the report); selecting secondary-finding rows by a fixed rule (ClinVar P/LP after excluding conflicting and benign-tagged records, gnomAD AF < 0.02, dominant or risk-factor genes). LLM assistance (Anthropic API, Claude) was used to write code and documentation; no LLM judged a variant."
+        },
+        {
+          "row": "12",
+          "answer": "Public data only."
+        },
+        {
+          "row": "13",
+          "answer": "Ensembl release 116 gene models (GTF) and VEP REST (GRCh38) with gnomAD v4 genome/exome frequencies, ClinVar classifications, and the SpliceAI, AlphaMissense and CADD plugins for the two candidate alleles; ClinVar GRCh38 VCF (fileDate 2026-08-29) for the site-first join; gnomAD v4.1 constraint metrics; HPO release 2026-06-23 (hp.obo, genes_to_phenotype) for the phenotype ranking; UCSC hg38 analysis-set FASTA (chr prefix stripped) for normalization; PubMed (PMID 15475955, 20516114, 31184400, 18548531). Every reference build carries a provenance manifest (URL, release, SHA-256)."
+        },
+        {
+          "row": "14",
+          "answer": "None."
+        },
+        {
+          "row": "15",
+          "answer": "Pairs. Every primary row is a compound-heterozygous pair in one row (chrom_1/pos_1 + chrom_2/pos_2). The pipeline ranks genes by biallelic sets and the submission is built pair-first; single-variant rows are used only as secondary findings."
+        },
+        {
+          "row": "16",
+          "answer": "Rows 6\u20138 are marked finding_type=secondary: a heterozygous LZTR1 stop_gained (ClinVar P/LP, gnomAD 1.4e-6; dominant schwannomatosis predisposition, unrelated to MVA), Factor V Leiden (F5, heterozygous, low-penetrance risk factor) and a heterozygous FLG stop_gained (ichthyosis vulgaris). Rule: ClinVar pathogenic/likely pathogenic after excluding conflicting and benign-tagged records, gnomAD AF < 0.02, dominant or risk-factor genes; recessive carrier states (GNRHR, CIAO1, ZFYVE26) are reported in the report but not submitted. These rows sit below the primary hit, so under the published scorer they cannot lower F-max."
+        },
+        {
+          "row": "17",
+          "answer": "About one hour of wall clock on one laptop: coding-interval build 5 s; coding layer derivation ~17 min (pulling 5 M rows over the network); genome-wide VEP annotation ~33 min at 4 concurrent requests (free Ensembl REST); gene table 24 s; normalization 15 s; figures and submission build < 2 min. Cost: none beyond a small hosted PostgreSQL (~5 \u20ac/month). No alignment of the 160 Gb of reads was needed."
+        },
+        {
+          "row": "18",
+          "answer": "We identify the causal compound-heterozygous pair for a child with mosaic variegated aneuploidy as two BUB1B alleles: a stop_gained already classified pathogenic for MVA syndrome 1 in ClinVar (exon 17 of 23, gnomAD 3.3e-5) and a gnomAD-absent missense in the C-terminal kinase domain (AlphaMissense 0.92, CADD 24.5). Four instruments converge: a panel filter (VEP rarity \u00d7 consequence leaves exactly these two alleles), a site-first ClinVar join (one pathogenic site present in the callset \u2014 the same stop), a genome-wide coding scan (38,087 annotated alleles, 65 biallelic genes, exactly one with a pathogenic allele and a top-30 phenotype rank), and a symptom-only ranking that never read the DNA (BUB1B 6th of 5,267). Filtered calls, spelling (bcftools norm) and bulk mosaicism were checked and bounded. The genotype matches the established MVA1 mechanism (one null allele plus one hypomorph leaving reduced BubR1; Hanks 2004, Suijkerbuijk 2010), and rhabdomyosarcoma is a reported MVA malignancy. Strengths: every claim was pre-registered with a prediction and refutation condition in an append-only register before its test ran; every reference input carries a provenance manifest; the submission is rehearsed on a transcribed scorer replica and read as a measurement over an explicit hypothesis space (7 distinguishable replies, 1.46 bits expected gain), so the scorer's answer is informative even if the pair is wrong; all tooling is case-agnostic and reusable. Limitations: the genome-wide scan is coding-only (CDS \u00b1 8 bp, 1.4 % of the genome), so a deep-intronic or structural second allele in another gene is outside it; phase is inferred, not read (no parents, alleles beyond phasing reach); bulk blood WGS cannot measure the aneuploid fraction below ~10\u201315 %; microcephaly, usual in MVA1, is not among the delivered terms; confidence numbers in the register are a transparent heuristic, not a calibrated posterior. Runtime ~1 h on a laptop with free public APIs."
+        }
+      ],
+      "contributions": [
+        {
+          "step": "6 oracle",
+          "contribution": "reply decoded, H009 supported, budget 1 of 6",
+          "methodology": [
+            {
+              "label": "083",
+              "path": "docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md"
+            }
+          ]
+        }
+      ],
+      "hypotheses": ["H009"],
+      "figures": [
+        {
+          "slug": "track1-decode-table",
+          "path": "figures/track1/track1-decode-table.png",
+          "url": "/api/submissions/track1/2/figure/track1-decode-table"
+        },
+        {
+          "slug": "track1-funnel",
+          "path": "figures/track1/track1-funnel.png",
+          "url": "/api/submissions/track1/2/figure/track1-funnel"
+        },
+        {
+          "slug": "track1-gene-scatter",
+          "path": "figures/track1/track1-gene-scatter.png",
+          "url": "/api/submissions/track1/2/figure/track1-gene-scatter"
+        }
+      ],
+      "report": {
+        "path": "submissions/track1/iteration-2/report.md",
+        "markdown": "# Track1 report \u2014 iteration 2\n\n**Standing:** draft, opened 2026-09-09. Iteration 1's report is frozen at\n[`../iteration-1/report.md`](../iteration-1/report.md); this one states what the oracle's\nreply (*full match at rank 1: stop+missense (100 rank points, F-max 1.0, threshold 0.9963)*) changed and carries the rest forward by link, not by copy.\n\n## 1. What the reply said, and what it rules out\n\n## 2. What changed in the analysis\n\n## 3. The submission, read as a measurement\n\n## 4. Limitations, stated\n\n## 5. Where every claim lives\n"
+      },
+      "lineage": {
+        "available": true,
+        "note": "8 edge(s) reached from 4 table(s)",
+        "sources": [
+          {
+            "kind": "raw",
+            "ref": "s3://mva/source/WGS_EX2312012_HGWCNDSX7.vcf.gz",
+            "version": "3a79ea8b-6221-4b8c-b217-94d4344db81f",
+            "sha256": "bec64c68d3ad10d05b8071d07cdf87d217013d66d3ba02e24b505035c9d42175",
+            "note": "the delivered callset, verified on ingest (named from the ledger; the recorded edges do not chain back to it)"
+          },
+          {
+            "kind": "clinical",
+            "ref": "ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md",
+            "version": "8 HPO terms",
+            "sha256": "7d410bb063951c1315a0af27f066a04703468e6021b69e66e99471af84dbf483",
+            "note": "the delivered phenotype; it named no variant but decided which gene was believed"
+          },
+          {
+            "kind": "file",
+            "ref": "submissions/track1/iteration-2/spec.selectors.json",
+            "version": "",
+            "sha256": "266764e642adfc9e93b149b6b7526b81a99d5251e035eadf2482d7e8b6a65ef2",
+            "note": "the committed, coordinate-free selectors the predictions CSV was resolved from"
+          },
+          {
+            "kind": "table",
+            "ref": "results.coding_candidates",
+            "version": "",
+            "sha256": "",
+            "note": "a selector resolves an allele against this table"
+          },
+          {
+            "kind": "table",
+            "ref": "results.gene_biallelic",
+            "version": "",
+            "sha256": "",
+            "note": "the biallelic gene set the verdict was drawn from"
+          },
+          {
+            "kind": "table",
+            "ref": "results.panel_candidates",
+            "version": "",
+            "sha256": "",
+            "note": "a selector resolves an allele against this table"
+          },
+          {
+            "kind": "table",
+            "ref": "warehouse.hpo_gene_scores",
+            "version": "",
+            "sha256": "",
+            "note": "the phenotype ranking that ordered the candidates"
+          },
+          {
+            "kind": "reference",
+            "ref": "ressources/reference/hpo_gene_scores.tsv",
+            "version": "HPO release hp/releases/2026-06-23, genes_to_phenotype.txt 20,732,778 bytes, 5267 annotated genes, built 2026-09-03T07:42:52+00:00; ontology sha256 a5092cbdf605",
+            "sha256": "26cb7ee00c73b5777f6e5ad43323c941e1fcef1d191592f332d7929f3ea1ab3f",
+            "note": "input to warehouse.hpo_gene_scores"
+          },
+          {
+            "kind": "reference",
+            "ref": "https://rest.ensembl.org/vep/homo_sapiens/region",
+            "version": "ensembl-vep-rest release=116 assembly=GRCh38",
+            "sha256": "",
+            "note": "input to warehouse.coding_annotations"
+          }
+        ],
+        "edges": [
+          {
+            "produced_at": "2026-09-03T09:57:43.305534",
+            "target_schema": "warehouse",
+            "target_table": "hpo_gene_scores",
+            "target_rows": 10520,
+            "source_kind": "file",
+            "source_ref": "ressources/reference/hpo_gene_scores.tsv",
+            "source_version": "HPO release hp/releases/2026-06-23, genes_to_phenotype.txt 20,732,778 bytes, 5267 annotated genes, built 2026-09-03T07:42:52+00:00; ontology sha256 a5092cbdf605",
+            "source_sha256": "26cb7ee00c73b5777f6e5ad43323c941e1fcef1d191592f332d7929f3ea1ab3f",
+            "transform": "tools/build_phenotype_data.py at f486d66: Resnik similarity over the most informative common ancestor, rolled up best-match-average in both directions and normalised by the query set's self-score. Human associations only - no mouse, no zebrafish, no protein-interaction random walk. This is a reimplementation of hiPHIVE's human-only path and is not Exomiser output. Known defect handled: rows whose gene symbol is a placeholder are dropped at parse time; in this release that is 375 rows spanning 7 distinct NCBI gene ids, which would otherwise fuse into one fabricated gene",
+            "tool": "mva-warehouse pg-ingest",
+            "notes": "upstream https://purl.obolibrary.org/obo/hp.obo and https://purl.obolibrary.org/obo/hp/hpoa/genes_to_phenotype.txt; HPO is CC BY 4.0; cite PMID 33264411. NOT Exomiser output: this is a reimplementation of hiPHIVE's human-only phenotype path. Genome Medicine 17:127 (2025), PMID 41121346 Query terms are owned by src/mva/phenotype/terms.py; both term sets are in the table, distinguished by term_set. No patient data of any kind is an input",
+            "is_current": true
+          },
+          {
+            "produced_at": "2026-09-03T09:44:57.784202",
+            "target_schema": "warehouse",
+            "target_table": "hpo_gene_scores",
+            "target_rows": 10520,
+            "source_kind": "file",
+            "source_ref": "ressources/reference/hpo_gene_scores.tsv",
+            "source_version": "HPO release hp/releases/2026-06-23, genes_to_phenotype.txt 20,732,778 bytes, 5267 annotated genes, built 2026-09-03T07:42:52+00:00; ontology sha256 a5092cbdf605",
+            "source_sha256": "26cb7ee00c73b5777f6e5ad43323c941e1fcef1d191592f332d7929f3ea1ab3f",
+            "transform": "tools/build_phenotype_data.py at f486d66: Resnik similarity over the most informative common ancestor, rolled up best-match-average in both directions and normalised by the query set's self-score. Human associations only - no mouse, no zebrafish, no protein-interaction random walk. This is a reimplementation of hiPHIVE's human-only path and is not Exomiser output. Known defect handled: rows whose gene symbol is a placeholder are dropped at parse time; in this release that is 375 rows spanning 7 distinct NCBI gene ids, which would otherwise fuse into one fabricated gene",
+            "tool": "mva-warehouse pg-ingest",
+            "notes": "upstream https://purl.obolibrary.org/obo/hp.obo and https://purl.obolibrary.org/obo/hp/hpoa/genes_to_phenotype.txt; HPO is CC BY 4.0; cite PMID 33264411. NOT Exomiser output: this is a reimplementation of hiPHIVE's human-only phenotype path. Genome Medicine 17:127 (2025), PMID 41121346 Query terms are owned by src/mva/phenotype/terms.py; both term sets are in the table, distinguished by term_set. No patient data of any kind is an input",
+            "is_current": false
+          },
+          {
+            "produced_at": "2026-08-31T20:49:14.035828",
+            "target_schema": "results",
+            "target_table": "panel_candidates",
+            "target_rows": 874,
+            "source_kind": "table",
+            "source_ref": "warehouse.panel_annotations, warehouse.variants_raw",
+            "source_version": "",
+            "source_sha256": "",
+            "transform": "SQL derivation panel_candidates: For every annotated allele in the candidate panel: the VEP consequence and population frequency next to the genotype evidence the callset carries. ALT is matched by list membership \u2014 variants_raw keeps a multi-allelic site comma-packed (G -> A,C in one row) while the annotations are one row per ALT, so the join tests that the annotated allele is an element of the split list rather than a substring of the packed string, which would match A against AT. GT and DP are located by reading the record's own FORMAT keys, never by position.",
+            "tool": "mva-warehouse pg-derive",
+            "notes": "derivation_runs.run_at=2026-08-31 18:45:22.928456",
+            "is_current": true
+          },
+          {
+            "produced_at": "2026-09-05T15:21:13.845060",
+            "target_schema": "results",
+            "target_table": "gene_biallelic",
+            "target_rows": 667,
+            "source_kind": "table",
+            "source_ref": "warehouse.hpo_gene_scores",
+            "source_version": "",
+            "source_sha256": "",
+            "transform": "SQL derivation gene_biallelic: Which genes carry a candidate biallelic set \u2014 at least two rare protein-altering alleles in heterozygous PASS calls (or two ALTs at one multi-allelic site), or one in a homozygous PASS call \u2014 and where does each such gene rank in the phenotype ranking that never read the callset? Non-PASS alleles are counted separately so a gene one suppressed call short of biallelic is visible rather than dropped.",
+            "tool": "mva-warehouse pg-derive",
+            "notes": "derivation_runs.run_at=2026-09-05 13:20:32.465431",
+            "is_current": true
+          },
+          {
+            "produced_at": "2026-09-05T15:16:13.114167",
+            "target_schema": "results",
+            "target_table": "gene_biallelic",
+            "target_rows": 667,
+            "source_kind": "table",
+            "source_ref": "warehouse.hpo_gene_scores",
+            "source_version": "",
+            "source_sha256": "",
+            "transform": "SQL derivation gene_biallelic: Which genes carry a candidate biallelic set \u2014 at least two rare protein-altering alleles in heterozygous PASS calls (or two ALTs at one multi-allelic site), or one in a homozygous PASS call \u2014 and where does each such gene rank in the phenotype ranking that never read the callset? Non-PASS alleles are counted separately so a gene one suppressed call short of biallelic is visible rather than dropped.",
+            "tool": "mva-warehouse pg-derive",
+            "notes": "derivation_runs.run_at=2026-09-05 13:15:51.013919",
+            "is_current": false
+          },
+          {
+            "produced_at": "2026-09-05T15:21:08.161759",
+            "target_schema": "results",
+            "target_table": "coding_candidates",
+            "target_rows": 38437,
+            "source_kind": "table",
+            "source_ref": "warehouse.coding_annotations",
+            "source_version": "",
+            "source_sha256": "",
+            "transform": "SQL derivation coding_candidates: For every coding allele the proband carries: its VEP consequence, impact, gnomAD frequency and ClinVar significance beside the genotype evidence, and the three flags the ranking uses \u2014 rare (gnomAD AF absent or below the recessive cutoff), protein-altering (HIGH or MODERATE impact), ClinVar pathogenic or likely pathogenic. NULL flags mean VEP never saw the allele, not that it failed.",
+            "tool": "mva-warehouse pg-derive",
+            "notes": "derivation_runs.run_at=2026-09-05 13:20:32.465431",
+            "is_current": true
+          },
+          {
+            "produced_at": "2026-09-05T15:16:07.311213",
+            "target_schema": "results",
+            "target_table": "coding_candidates",
+            "target_rows": 38437,
+            "source_kind": "table",
+            "source_ref": "warehouse.coding_annotations",
+            "source_version": "",
+            "source_sha256": "",
+            "transform": "SQL derivation coding_candidates: For every coding allele the proband carries: its VEP consequence, impact, gnomAD frequency and ClinVar significance beside the genotype evidence, and the three flags the ranking uses \u2014 rare (gnomAD AF absent or below the recessive cutoff), protein-altering (HIGH or MODERATE impact), ClinVar pathogenic or likely pathogenic. NULL flags mean VEP never saw the allele, not that it failed.",
+            "tool": "mva-warehouse pg-derive",
+            "notes": "derivation_runs.run_at=2026-09-05 13:15:51.013919",
+            "is_current": false
+          },
+          {
+            "produced_at": "2026-09-05T15:15:17.690342",
+            "target_schema": "warehouse",
+            "target_table": "coding_annotations",
+            "target_rows": 38087,
+            "source_kind": "api",
+            "source_ref": "https://rest.ensembl.org/vep/homo_sapiens/region",
+            "source_version": "ensembl-vep-rest release=116 assembly=GRCh38",
+            "source_sha256": "",
+            "transform": "annotate-coding: every distinct allele of results.coding_alleles (the proband's ALT alleles inside coding_regions), annotated by Ensembl VEP REST in batches of 200; resumed from 2,200 checkpointed alleles",
+            "tool": "mva-warehouse annotate-coding",
+            "notes": "requests this run: 183; checkpoint build/coding-annotations",
+            "is_current": true
+          }
+        ]
+      },
+      "audit": {
+        "probes": [],
+        "register": [
+          {
+            "hypothesis_id": "H009",
+            "revision": 3,
+            "status": "supported",
+            "confidence": 0.9992539711661633,
             "reasoning": "",
             "recorded_at": "",
             "step": "step-6",

@@ -72,7 +72,7 @@ flowchart TB
   RAW -.-> LIN[("<b>warehouse.data_lineage</b><br/>7 edges · variants_raw ← s3:// + sha256 + version<br/>1 edge per derivation, appended by pg-derive")]:::good
   RES -.-> LIN
   ORACLE[/"the Track 1 oracle<br/>6 submissions, one registered member"/]:::raw
-  ORACLE -.->|"probe-log"| PROBE[("<b>warehouse.probe_ledger</b><br/>0 of 6 spent — budget intact")]:::good
+  ORACLE -.->|"probe-log"| PROBE[("<b>warehouse.probe_ledger</b><br/>1 of 6 spent — submission 1: full match at rank 1")]:::good
   classDef raw fill:#f3e8ff,stroke:#7e22ce,color:#581c87
   classDef good fill:#dcfce7,stroke:#15803d,color:#14532d
   classDef neutral fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
@@ -127,7 +127,7 @@ Postgres and MinIO both run on a **remote VPS**, not locally.
 | hash verification | 12/12 `hash_verified=true` — 10 against the publisher's SHA-256, 2 own-upload — **0 mismatches** |
 | `warehouse.source_files` | append-only ledger, 14 rows (VCF + `.tbi` uploaded twice, same hash — correct, not drift) |
 | `warehouse.data_lineage` | append-only edge list, **39 rows** counted live 2026-09-04 (37 over 29 distinct target tables on 2026-09-03 (a re-derived table gets a new edge, never an edit, so rows exceed targets): 2 for `variants_raw` (the original local-path edge and the superseding `s3://mva/source/…` edge carrying the verified sha256 and version), 1 per derivation, 1 per staged reference table, and 1 for the VEP annotation call. The two newest are the HPO tables, each carrying its upstream URL, release and input digest ([iteration1/step-3/methodology/067](iteration1/step-3/methodology/067-phenotype-ranking-without-java.md) §7b) |
-| `warehouse.probe_ledger` | oracle submissions spent: **0 of 6** (one registered member; `MVA_TEAM_MEMBERS` scales it). The `hypothesis_ids` widening from entry 017 was **applied 2026-09-04** to the live table (12 columns, counted live) |
+| `warehouse.probe_ledger` | oracle submissions spent: **1 of 6** (submission 1, 2026-09-09: rank points 100, F-max 1.0, full match at rank 1 — [083](iteration1/step-6/methodology/083-oracle-reply-submission-1.md); one registered member; `MVA_TEAM_MEMBERS` scales it). The `hypothesis_ids` widening from entry 017 was **applied 2026-09-04** to the live table (12 columns, counted live) |
 | `warehouse.hypotheses`, `warehouse.evidence` | **2 hypotheses, 6 evidence rows**, all under step-3 ([iteration1/step-3/methodology/067](iteration1/step-3/methodology/067-phenotype-ranking-without-java.md)), counted live 2026-09-04. No verdict committed. The committed mirror `science-register.json` and `figures/science-report.html` were re-exported the same day and agree |
 
 Both probes connect: `uv run mva-warehouse pg-check`, `uv run mva-warehouse s3-check`.
@@ -212,4 +212,4 @@ Stated here so they are not discovered later. Sequencing is in [`roadmap.md`](ro
 | **Layer 2 built for the coding fraction only** (2026-09-05) | `results.coding_alleles` / `coding_candidates` / `gene_biallelic` exist ([069](iteration1/step-2/methodology/069-layer-2-coding-scan.md)); no genome-wide typed `variants` / `genotypes` | see [`data-layers.md`](step-0/data-layers.md) |
 | **Annotator covers coding alleles, not the whole callset** (2026-09-05) | `mva-warehouse annotate-coding` annotates every coding allele through VEP REST, checkpointed ([070](iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md)); deep-intronic and UTR alleles stay unannotated | step 2's remaining half — see [the note](notes/annotation-as-a-port.md) |
 | **`clinvar_panel` has no source digest** | its lineage edge names a ClinVar release but does not identify the bytes; the scratch VCF cannot be shown to be the download that produced the committed extract | the extract is reproducible from the release but not *provably* the same bytes. Left empty rather than guessed — see [iteration1/step-3/methodology/067](iteration1/step-3/methodology/067-phenotype-ranking-without-java.md) §7b |
-| **H009 carries no committed confidence** (by design, 2026-09-05) | seven verdicts are committed (H002–H008); the submission claim H009 is `testing` and its six evidence rows describe the same two alleles, so the heuristic would saturate | the oracle decides it — [074](iteration1/step-6/methodology/074-submission-v1-design.md). See [`method.md`](method.md) |
+| **H009 decided by the oracle** (2026-09-09) | it was held at `testing` with no committed confidence so the heuristic could not saturate on six rows about the same two alleles; submission 1 returned a full match at rank 1 and H009 is now `supported` at 1.00 (revision 3, probe 1) | [083](iteration1/step-6/methodology/083-oracle-reply-submission-1.md). See [`method.md`](method.md) |

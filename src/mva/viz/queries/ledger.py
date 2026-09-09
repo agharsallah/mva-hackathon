@@ -42,8 +42,10 @@ def probe_ledger(settings: Postgres) -> list[dict]:
     return access.fetch(
         settings,
         """
-        SELECT probe_id, logged_at, track, probe_type, payload, n_rows, response,
-               score, rationale
+        -- The payload is the submitted CSV: real coordinates. Only its digest leaves the
+        -- warehouse; the digest is what a README and the folder gate identify the file by.
+        SELECT probe_id, logged_at, track, probe_type, submitted_by, submission_ref,
+               sha256(payload) AS payload_sha256, n_rows, response, score, rationale
         FROM pg.warehouse.probe_ledger ORDER BY probe_id
     """,
     )

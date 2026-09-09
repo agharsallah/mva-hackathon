@@ -25,11 +25,11 @@
   Do not re-explore the platform; the toolset page names the verb, route, page and module.
 - A tool a research step needs (app page, API route, module) is recorded in **that step's**
   `methodology/`; only a cross-step platform fix still lands in step-0 and names the step.
-- Methodology numbers are global; the next is **083**. Never reuse a number. (079 = Track 2 in the
+- Methodology numbers are global; the next is **084**. Never reuse a number. (079 = Track 2 in the
   ledger and the dashboard; 080 = hosting the dashboard — the same-origin proxy, the API token and
   the password gate; 081 = fewer requests from the hosted dashboard — the persisted query cache,
   its coordinate-free allowlist, and quieter polls; 082 = derived submission rows — epcr, notes
-  and priors from the warehouse and the register, never typed.)
+  and priors from the warehouse and the register, never typed; 083 = the oracle's reply to submission 1.)
 - Oracle budget is **6** uploads (one registered member). No upload before step 6's gate:
   callset normalized, hypotheses filed, CSV rehearsed on the scorer replica **and** cross-checked
   with the organisers' published `evaluation.py` (`tools/design_submission.py` does both), two
@@ -45,7 +45,9 @@
   (`methods-form.json` → `<user>_<track>_methods_form.xlsx`), the coordinate-free decode
   table, and a `README.md` that says what to upload, how to read the folder, which steps
   contributed (with links to their methodology entries), and what to do after the reply.
-- Steps 1–8 **contribute** to an iteration; they do not own deliverables. Their evidence
+- An iteration's steps **contribute** to it; they do not own deliverables. **Each iteration declares
+  its own plan, methodology and steps** (`src/mva/science/steps.py`, per iteration) — iteration 2
+  does not replay iteration 1's steps 1–8. Plan first, then steps, then a submission. Their evidence
   stays in `docs/<iteration>/step-<n>/`; the iteration folder links to it. Figures stay in `figures/`.
 - The predictions CSV holds real coordinates and is **never committed**: it lives under
   `build/submission/` and the folder README records its sha256 and rebuild command.

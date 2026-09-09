@@ -44,6 +44,13 @@ export function AuditTrail({ audit, source }: { audit: SubmissionAudit; source?:
       header: 'type',
       render: (r) => <span className="font-mono">{r.probe_type}</span>,
     },
+    {
+      key: 'payload_sha256',
+      header: 'csv sha256',
+      render: (r) => (
+        <span className="font-mono text-chrome-400">{r.payload_sha256.slice(0, 12)}…</span>
+      ),
+    },
     { key: 'n_rows', header: 'rows', align: 'right', render: (r) => int(r.n_rows) },
     { key: 'score', header: 'score', align: 'right', render: (r) => dec(r.score, 3) },
     {

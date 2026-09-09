@@ -40,7 +40,10 @@ export interface ProbeLedgerRow {
   logged_at: string;
   track: string;
   probe_type: string;
-  payload: string;
+  submitted_by?: string | null;
+  submission_ref?: string | null;
+  /** sha256 of the submitted CSV. The CSV itself holds coordinates and never leaves the warehouse. */
+  payload_sha256: string;
   n_rows: number | null;
   response: string | null;
   score: number | null;

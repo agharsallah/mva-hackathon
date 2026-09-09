@@ -38,6 +38,9 @@ const submissions = modules.find((m) => m.id === 'submissions')!;
  * coordinate. Requiring the run to be bounded by non-alphanumerics keeps the assertion
  * about positions rather than about digits.
  */
+/** The page opens on the newest iteration (2, an empty draft); the dossier tests read iteration 1. */
+const ITERATION_1 = '?it=track1%2Fiteration-1';
+
 const STANDALONE_LONG_NUMBER = /(?<![A-Za-z0-9])\d{7,}(?![A-Za-z0-9])/;
 
 afterEach(cleanup);
@@ -47,18 +50,18 @@ beforeEach(() => {
 
 describe('the submission dossier', () => {
   it('identifies the iteration by state and the prefix of its CSV sha256', async () => {
-    const { caught } = await mountModule(submissions);
+    const { caught } = await mountModule(submissions, ITERATION_1);
     expect(caught).toBeNull();
 
-    // 'ready' is said twice now — the header badge and the beginner guide's last step.
-    expect(screen.getAllByText('ready').length).toBeGreaterThan(0);
-    expect(screen.getByText(/^54854a6ef7a2/)).toBeTruthy();
+    // Iteration 1 was uploaded and answered, so its state badge says frozen.
+    expect(screen.getAllByText('frozen').length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/^54854a6ef7a2/).length).toBeGreaterThan(0);
     // Said in the header tile and again in the page's own copy, so both are asserted at once.
     expect(screen.getAllByText(/never committed/).length).toBeGreaterThan(0);
   }, 20000);
 
   it('paints the full-match-at-rank-1 row of the decode table green', async () => {
-    await mountModule(submissions);
+    await mountModule(submissions, ITERATION_1);
 
     const toned = [...document.querySelectorAll('tr[data-tone]')];
     expect(toned.length).toBeGreaterThan(0);
@@ -78,7 +81,7 @@ describe('the submission dossier', () => {
   }, 20000);
 
   it('renders the selectors with no genomic position anywhere in them', async () => {
-    await mountModule(submissions);
+    await mountModule(submissions, ITERATION_1);
 
     const body = screen.getByTestId('selectors-body');
     const text = body.textContent ?? '';
@@ -90,7 +93,7 @@ describe('the submission dossier', () => {
   }, 20000);
 
   it('draws the lineage graph and names both delivered inputs', async () => {
-    await mountModule(submissions);
+    await mountModule(submissions, ITERATION_1);
 
     // The clinical document and the delivered callset object are roots side by side — the form of
     // the rule that both delivered data sources are cross-referenced.
@@ -106,9 +109,10 @@ describe('the submission dossier', () => {
     expect(svg!.getAttribute('aria-label')).toMatch(/recorded derivations/);
   }, 20000);
 
-  it('says the oracle budget is untouched instead of showing an empty table', async () => {
-    await mountModule(submissions);
-    expect(screen.getByText('no upload yet — 0 of 6 spent')).toBeTruthy();
+  it('lists the spent probe by its CSV digest, never by its payload', async () => {
+    await mountModule(submissions, ITERATION_1);
+    expect(screen.getByText(/^54854a6ef7a2…$/)).toBeTruthy();
+    expect(document.body.textContent).not.toMatch(/PROBAND01,chr/);
   }, 20000);
 });
 
@@ -145,7 +149,7 @@ describe('lineage when the warehouse is unreachable', () => {
 
 describe('the beginner guide', () => {
   it('walks the iteration in six steps, every one of them read off the payload', async () => {
-    await mountModule(submissions);
+    await mountModule(submissions, ITERATION_1);
 
     const guide = screen.getByTestId('beginner-guide');
     const text = guide.textContent ?? '';
@@ -163,7 +167,7 @@ describe('the beginner guide', () => {
   }, 20000);
 
   it('links every technical term to an entry that exists in the one dictionary', async () => {
-    await mountModule(submissions);
+    await mountModule(submissions, ITERATION_1);
 
     const guide = screen.getByTestId('beginner-guide');
     const slugs = [...guide.querySelectorAll('a[href]')]
@@ -179,13 +183,13 @@ describe('the beginner guide', () => {
   }, 30000);
 
   it('carries no genomic position — the guide quotes notes, so this is not free', async () => {
-    await mountModule(submissions);
+    await mountModule(submissions, ITERATION_1);
     const text = screen.getByTestId('beginner-guide').textContent ?? '';
     expect(text.match(STANDALONE_LONG_NUMBER)?.[0] ?? null).toBeNull();
   }, 20000);
 
   it('replaced the recipe disclosure with one line under the picker', async () => {
-    await mountModule(submissions);
+    await mountModule(submissions, ITERATION_1);
     expect(screen.queryByText('How the next iteration appears here')).toBeNull();
     expect(screen.getByText(/New iterations appear here automatically/)).toBeTruthy();
   }, 20000);
@@ -193,7 +197,7 @@ describe('the beginner guide', () => {
 
 describe('the two submission figures', () => {
   it('draws the rank ladder with one bar per submitted row, over the point tiers', async () => {
-    await mountModule(submissions);
+    await mountModule(submissions, ITERATION_1);
 
     const svg = document.querySelector('svg[aria-label*="rank-point tiers"]') as SVGElement | null;
     expect(svg, 'no rank ladder rendered').toBeTruthy();
@@ -207,7 +211,7 @@ describe('the two submission figures', () => {
   }, 20000);
 
   it('splits the prior mass across the possible replies and prints the bits beside it', async () => {
-    await mountModule(submissions);
+    await mountModule(submissions, ITERATION_1);
 
     const svg = document.querySelector('svg[aria-label*="prior mass"]');
     expect(svg, 'no reply-odds bar rendered').toBeTruthy();

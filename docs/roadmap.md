@@ -1,6 +1,6 @@
 # Roadmap — the solving phase
 
-**Standing:** the sequencing plan for steps 1–8, re-checked 2026-09-05 (steps 2, 3, 4 reached their exit criteria for the coding fraction; step 6 has a rehearsed v1).
+**Standing:** the sequencing plan for steps 1–8, re-checked 2026-09-09 (steps 2, 3, 4 reached their exit criteria for the coding fraction; step 6 spent submission 1 and the oracle confirmed the pair — [083](iteration1/step-6/methodology/083-oracle-reply-submission-1.md)).
 
 This page owns the order the steps run in and what each step must finish, produce and
 build. It owns nothing else: what exists today is [`current-state.md`](current-state.md);
@@ -29,13 +29,15 @@ when its code runs. Three rules fixed 2026-09-04:
   three conditions (H004, supported 0.93; [§6.3](../ideation/data-findings.md)), and the
   best-ranked biallelic gene by symptoms (H005, 0.80). **Phase is still unknown** — the
   trans claim (H009) is what the oracle tests.
-- **Report written:** [`submissions/track1/iteration-1/report.md`](../submissions/track1/iteration-1/report.md), 2026-09-05. **Submission v1
-  designed and rehearsed, not uploaded** ([iteration1/step-6/074](iteration1/step-6/methodology/074-submission-v1-design.md)).
+- **Report written:** [`submissions/track1/iteration-1/report.md`](../submissions/track1/iteration-1/report.md), 2026-09-05. **Submission 1
+  uploaded 2026-09-09: full match at rank 1, 100 rank points, F-max 1.0** — H009 `supported`
+  ([iteration1/step-6/083](iteration1/step-6/methodology/083-oracle-reply-submission-1.md)). Phase is settled by the answer key, not by reads.
 - **Built this week:** layer 2 for the coding fraction, `annotate-coding`, the probe designer
   (steps 2, 3, 4, 6). **Still unbuilt:** the normalization seam as a pipeline stage (1, the
   run itself is in 073); non-coding annotation (2); alignment and SV calling (5); Track 2 (8).
-- **Oracle budget: 0 of 6 spent.** One registered member, so 6 is the ceiling; ≥ 1 is held
-  in reserve to the freeze.
+- **Oracle budget: 1 of 6 spent.** One registered member, so 6 is the ceiling. The 5 that
+  remain belong to iteration 2 and later — each iteration with **its own plan, methodology
+  and steps** ([`iteration2/README.md`](iteration2/README.md)); this page is iteration 1's plan.
 
 ## The dependency graph
 
@@ -208,7 +210,8 @@ that the next submission should exploit?* Step page: [`iteration1/step-6/README.
 - **Status:** open — v1 designed, rehearsed on the replica and re-graded with the organisers'
   published scorer, all eight keys agreeing
   ([074](iteration1/step-6/methodology/074-submission-v1-design.md), [075](step-0/methodology/075-coordinate-gate-and-redaction.md)).
-  **0 of 6 submissions spent**; the upload date is the user's call.
+  **Submission 1 uploaded 2026-09-09 — full match at rank 1, 100 / 100, F-max 1.0**
+  ([083](iteration1/step-6/methodology/083-oracle-reply-submission-1.md)); 1 of 6 spent. What iteration 2 measures is its own plan.
 - **Already done:** the [local scorer replica](notes/local-scorer-replica.md)
   (`src/mva/pipeline/scorer.py`), the payload builder
   ([046](step-0/methodology/046-probe-builder.md), `src/mva/viz/probebuild.py`), the ledger.

@@ -73,14 +73,14 @@ export interface Mounted {
  * prints when it happens. Step 2 closes that gap so a caller's post-mount assertions (gate
  * 2's console.error check, gate 3's axe pass) run against a page that is actually finished.
  */
-export async function mountModule(mod: FeatureModule): Promise<Mounted> {
+export async function mountModule(mod: FeatureModule, search = ''): Promise<Mounted> {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   const Page = lazy(mod.load);
   let caught: unknown = null;
 
   const { container } = render(
     <QueryClientProvider client={queryClient}>
-      <MemoryRouter initialEntries={[mod.path]}>
+      <MemoryRouter initialEntries={[mod.path + search]}>
         <Catch onError={(e) => (caught = e)}>
           <Suspense fallback={<div>loading…</div>}>
             <Routes>

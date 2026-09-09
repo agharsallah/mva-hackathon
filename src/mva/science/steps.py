@@ -31,7 +31,7 @@ RESEARCH = "research"
 
 #: The submission iteration the research steps currently contribute to: steps 1-8 are filed
 #: under ``docs/<ITERATION>/step-<n>/``; a new iteration starts a new folder.
-ITERATION = "iteration1"
+ITERATION = "iteration2"
 
 #: A step that has been finished, is being worked, or has not been opened.
 STATUSES = ("done", "open", "planned")

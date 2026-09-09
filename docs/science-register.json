@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-05T23:17:32+00:00",
+  "generated_at": "2026-09-09T20:31:26+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -400,10 +400,10 @@
       "refuted_by": "The scorer returns no full match for that row. A partial match (partial_match_rank = 1) would mean exactly one of the two alleles is causal and the other is not; no match at all would mean neither is.",
       "gene": "BUB1B",
       "path": "path 4 \u2014 the oracle as a measurement instrument",
-      "status": "testing",
-      "confidence": null,
-      "suggested_confidence": 0.9963,
-      "revisions": 2,
+      "status": "supported",
+      "confidence": 0.9992539711661633,
+      "suggested_confidence": 0.9993,
+      "revisions": 3,
       "evidence": [
         {
           "id": 19,
@@ -484,6 +484,15 @@
           "kind": "annotation",
           "claim": "Correction to row 25: the two alleles lie in exons 17 and 23 of the 23-exon MANE transcript (VEP), six exons apart, not nine; the phasing conclusion is unchanged because the distance is tens of kilobases either way.",
           "source_ref": "methodology/075",
+          "lineage_ref": ""
+        },
+        {
+          "id": 32,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "oracle",
+          "claim": "Oracle reply to submission 1: full match at rank 1, 100 rank points, F-max 1.0 at epcr threshold 0.9963 \u2014 the rank-1 row (BUB1B stop_gained + BUB1B missense, compound heterozygous) equals the clinically confirmed answer key exactly; decode table row 1, survivors: stop+missense only",
+          "source_ref": "probe:1",
           "lineage_ref": ""
         }
       ]

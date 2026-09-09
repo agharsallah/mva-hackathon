@@ -188,7 +188,11 @@ def check_derived(folder: Path, spec: dict, alleles: set[str], report: Report) -
             )
     derived = folder / "derivation.json"
     if not derived.is_file():
-        report.fail("derivation.json missing — run tools/resolve_submission_spec.py")
+        message = "derivation.json missing — run tools/resolve_submission_spec.py"
+        if report.state == "draft":
+            report.warn(message)  # a draft has not been resolved yet; that is what draft means
+        else:
+            report.fail(message)
         return
     if not newer(derived, folder / "spec.selectors.json"):
         report.fail("derivation.json is older than spec.selectors.json")

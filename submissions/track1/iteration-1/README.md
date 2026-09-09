@@ -1,6 +1,9 @@
 # Track 1 — iteration 1 (2026-09-05)
 
-**Standing:** built and rehearsed 2026-09-05; rows re-derived from the warehouse and the register 2026-09-09 ([082](../../../docs/iteration1/step-6/methodology/082-derived-submission-rows.md)); **not uploaded** (0 of 6 submissions spent).
+> **Frozen:** 2026-09-09 — this folder belongs to iteration 1, whose upload was answered:
+> *full match at rank 1: stop+missense (100 rank points, F-max 1.0, threshold 0.9963)*. Do not edit; iteration 2 continues in `submissions/track1/iteration-2/`.
+
+**Standing:** built and rehearsed 2026-09-05; rows re-derived from the warehouse and the register 2026-09-09 ([082](../../../docs/iteration1/step-6/methodology/082-derived-submission-rows.md)); **uploaded 2026-09-09 as submission 1** — reply: rank points 100.0 / 100, F-max 1.000, threshold 0.9963, **full match at rank 1** ([083](../../../docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md)); 1 of 6 submissions spent.
 One folder = one upload-ready iteration. Everything the organisers receive, plus the
 material a judge needs to check it, is here or linked from here.
 
