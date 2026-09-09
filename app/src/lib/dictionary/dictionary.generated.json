@@ -29,10 +29,10 @@
   ],
   "counts": {
     "chapters": 16,
-    "entries": 486,
+    "entries": 488,
     "figures": 20,
     "diagrams": 20,
-    "contexts": 57
+    "contexts": 59
   },
   "chapters": [
     {
@@ -4895,7 +4895,7 @@
           "term": "Submission iteration",
           "aliases": [],
           "html": "<p>one upload, one folder. <code>submissions/&#x3C;track>/iteration-&#x3C;n>/</code> holds everything the organisers receive and everything a judge needs to check it: the report and its PDF, the methods form, the coordinate-free selector spec, and the decode table. The predictions CSV is <em>not</em> in it — it holds real positions, so it is built into <code>build/submission/</code> and only its sha256 is recorded. Research steps contribute evidence to an iteration; they never own a deliverable.</p>",
-          "exampleHtml": "<p><em>Example: <code>submissions/track1/iteration-1/</code> — built and rehearsed on 2026-09-05, not uploaded, 0 of 6 submissions spent; the folder README records the CSV's sha256 <code>fbc9e750…</code> and the command that rebuilds it.</em></p>",
+          "exampleHtml": "<p><em>Example: <code>submissions/track1/iteration-1/</code> — built and rehearsed on 2026-09-05, not uploaded, 0 of 6 submissions spent; the folder README records the CSV's sha256 <code>54854a6e…</code> and the two commands that rebuild it (resolve the selectors, then design the file).</em></p>",
           "context": "<p>the unit of delivery for both tracks; one oracle reply opens the next one</p>",
           "source": "submissions/README.md",
           "related": [
@@ -4928,6 +4928,50 @@
             "row"
           ],
           "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "derived-submission-row",
+          "term": "Derived submission row",
+          "aliases": [],
+          "html": "<p>a row of the predictions file whose every non-coordinate field was computed, not typed: the note quotes only columns of the result table the allele was selected from (zygosity, filter, depth, allele fraction, gnomAD frequency, ClinVar significance, dbSNP id); the epcr comes from the ladder below; a free-text <em>rationale</em> is allowed but may contain no number, so a figure can only reach the organisers from a table. The resolver refuses a selector file that carries an <code>epcr</code>, a <code>notes</code>, a numbered rationale, or an in-callset prior.</p>",
+          "exampleHtml": "<p><em>Example: <code>H:H009 | primary | BUB1B stop_gained, het PASS DP 44 VAF 0.48, gnomAD 3.29e-05, ClinVar Pathogenic + BUB1B missense_variant, het PASS DP 44 VAF 0.49, gnomAD absent, ClinVar not listed | phase unresolved by reads; … | epcr = register weighing 0.9963 (triage heuristic, not a calibrated posterior)</code> — the iteration-1 rank-1 note, every value a table column.</em></p>",
+          "context": "<p>how iteration 1's CSV is built since 2026-09-09; the arithmetic is committed as <code>derivation.md</code> beside the selectors and shown on <code>/submissions</code></p>",
+          "source": "src/mva/warehouse/submission_facts.py",
+          "related": [
+            "selector-submission",
+            "epcr",
+            "epcr-anchor",
+            "row",
+            "data-lineage"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/docs/iteration1/step-6/methodology/082-derived-submission-rows.md"
+          ],
+          "firstSeen": "2026-09-09"
+        },
+        {
+          "kind": "entry",
+          "slug": "epcr-anchor",
+          "term": "epcr anchor",
+          "aliases": [],
+          "html": "<p>the one epcr that is <em>read</em> rather than shared out: the rank-1 row names the hypothesis it tests, and takes the research register's suggested confidence for that claim. Every other primary row then receives a share of what is left (1 − anchor) in proportion to its pair score (the ranker's rarity × severity per allele, summed); secondary rows sit below the lowest primary, ordered by allele score; and a hypothesis whose alleles are all in the callset takes the mass of the row that names them, so only a hypothesis naming an <em>unseen</em> allele declares a prior. The resolver checks that the anchor row is also the pair the ranker itself puts first — a register that says one thing and a heuristic that says another is an error, not a tie-break. The register's weighing is a transparent triage heuristic, not a calibrated posterior; the anchor inherits that caveat and the note says so.</p>",
+          "exampleHtml": "<p><em>Example: iteration 1 — anchor H009 at 0.9963; the four alternative pairs share 0.0037 (0.0014, 0.0014, 0.00048, 0.00041); the three secondaries sit at 0.00021 and below; the anchor pair's prior is 0.78 once the three declared \"unseen\" priors (0.22) are taken out.</em></p>",
+          "context": "<p>replaces the hand-set epcr and priors of entry 074; changes the decode table's prior entropy (1.60 → 1.11 bits) and expected gain (1.46 → 0.96 bits) because the derived priors are more concentrated</p>",
+          "source": "src/mva/warehouse/submission_rows.py",
+          "related": [
+            "epcr",
+            "derived-submission-row",
+            "hypothesis-space",
+            "prior",
+            "confidence",
+            "verdict",
+            "decode-table"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/docs/iteration1/step-6/methodology/082-derived-submission-rows.md"
+          ],
+          "firstSeen": "2026-09-09"
         },
         {
           "kind": "entry",

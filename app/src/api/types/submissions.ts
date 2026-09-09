@@ -77,6 +77,10 @@ export interface SelectorRow {
   finding_type: 'primary' | 'secondary';
   label: string;
   notes: string;
+  /** The ranker's pair (or single-allele) score the epcr was derived from; null when typed. */
+  score?: number | null;
+  /** The register claim this row tests, when it is the anchor row. */
+  hypothesis?: string | null;
 }
 
 /** One entry in the hypothesis space the decode table was computed over. */
@@ -84,12 +88,46 @@ export interface SelectorHypothesis {
   label: string;
   alleles: string[];
   prior: number;
+  /** `declared` for an unseen-allele hypothesis, `row <label>` when derived from a row. */
+  prior_source?: string;
+}
+
+/** What one result table says about a selected allele — never its position. */
+export interface AlleleFacts {
+  name: string;
+  table: string;
+  gene: string | null;
+  consequence: string | null;
+  impact: string | null;
+  zygosity: string | null;
+  filter: string | null;
+  dp: number | null;
+  vaf: number | null;
+  gnomad_af: number | null;
+  clin_sig: string | null;
+  rsid: string | null;
+  is_clinvar_plp: boolean | null;
+  /** rarity × severity, the ranker's single-allele term. */
+  score: number;
+}
+
+/**
+ * How every non-coordinate field was derived (`derivation.json`): the anchor hypothesis
+ * and its register confidence, the facts per allele, and the arithmetic line by line.
+ */
+export interface Derivation {
+  anchor: { row?: string; hypothesis?: string; confidence?: number };
+  parameters: Record<string, number>;
+  alleles: Record<string, AlleleFacts>;
+  arithmetic: string[];
 }
 
 export interface Selectors {
   alleles: Record<string, SelectorSpec>;
   rows: SelectorRow[];
   hypotheses: SelectorHypothesis[];
+  /** Null for an iteration whose rows were typed by hand. */
+  derivation?: Derivation | null;
 }
 
 /** One answer in the organisers' methods form; `row` is the template's row number. */

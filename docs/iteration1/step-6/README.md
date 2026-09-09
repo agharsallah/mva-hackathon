@@ -1,6 +1,6 @@
 # Step 6 — Spend the oracle budget
 
-**Standing:** submission v1 designed and rehearsed 2026-09-05 ([074](methodology/074-submission-v1-design.md)); H009 `testing`. **0 of 6 submissions spent** (`mva-warehouse probe-budget`,
+**Standing:** submission v1 designed and rehearsed 2026-09-05 ([074](methodology/074-submission-v1-design.md)), its rows re-derived from data 2026-09-09 ([082](methodology/082-derived-submission-rows.md)); H009 `testing`. **0 of 6 submissions spent** (`mva-warehouse probe-budget`,
 2026-09-04). The builder and the offline replica exist; nothing has been uploaded.
 Method: [`../method.md`](../../method.md). Last checked 2026-09-04.
 

@@ -52,7 +52,7 @@ describe('the submission dossier', () => {
 
     // 'ready' is said twice now — the header badge and the beginner guide's last step.
     expect(screen.getAllByText('ready').length).toBeGreaterThan(0);
-    expect(screen.getByText(/^fbc9e750dea5/)).toBeTruthy();
+    expect(screen.getByText(/^54854a6ef7a2/)).toBeTruthy();
     // Said in the header tile and again in the page's own copy, so both are asserted at once.
     expect(screen.getAllByText(/never committed/).length).toBeGreaterThan(0);
   }, 20000);
@@ -212,12 +212,13 @@ describe('the two submission figures', () => {
     const svg = document.querySelector('svg[aria-label*="prior mass"]');
     expect(svg, 'no reply-odds bar rendered').toBeTruthy();
     const segments = [...svg!.querySelectorAll('rect[data-reply]')];
-    expect(segments.length).toBe(7);
+    // Only replies with prior mass are drawn: three of the seven under the derived priors.
+    expect(segments.length).toBe(3);
     // Widest segment first: the expected reply is the one the design is betting on.
     expect(segments[0]!.getAttribute('data-reply')).toBe('stop+missense');
 
     expect(screen.getByTestId('reply-odds-summary').textContent).toContain(
-      'expected information gain 1.455 bits',
+      'expected information gain 0.963 bits',
     );
   }, 20000);
 });

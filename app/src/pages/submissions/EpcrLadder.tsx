@@ -15,7 +15,7 @@
 import type { SelectorRow, Selectors } from '../../api/types';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { C } from '../../lib/palette';
-import { RANK_TIERS, rankPoints } from './iteration';
+import { fmtEpcr, RANK_TIERS, rankPoints } from './iteration';
 
 const ROW_H = 26;
 const TOP = 22;
@@ -112,7 +112,7 @@ export function EpcrLadder({ selectors, source }: { selectors: Selectors; source
               fill={toneOf(row)}
             >
               <title>
-                rank {row.rank} · epcr {row.epcr.toFixed(2)} · worth {rankPoints(row.rank)} rank
+                rank {row.rank} · epcr {fmtEpcr(row.epcr)} · worth {rankPoints(row.rank)} rank
                 points if this row is the answer
               </title>
             </rect>
@@ -123,7 +123,7 @@ export function EpcrLadder({ selectors, source }: { selectors: Selectors; source
               fill={C.inkDim}
               fontFamily="monospace"
             >
-              {row.epcr.toFixed(2)}
+              {fmtEpcr(row.epcr)}
             </text>
           </g>
         ))}

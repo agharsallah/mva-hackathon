@@ -49,7 +49,8 @@ FROZEN_MARKER = re.compile(r"\*\*Frozen:\*\*\s*(.*)")
 STANDING_MARKER = re.compile(r"\*\*Standing:\*\*\s*(.*)")
 
 SHA256 = re.compile(r"\b([0-9a-f]{64})\b")
-CSV_PATH = re.compile(r"`(build/submission/[\w.-]+\.csv)`")
+#: The CSV lives under gitignored ``build/`` or, gitignored too, inside its own iteration folder.
+CSV_PATH = re.compile(r"`((?:build/submission|submissions/[\w-]+/iteration-\d+)/[\w.-]+\.csv)`")
 HYPOTHESIS_ID = re.compile(r"\bH\d{3}\b")
 ITERATION_NAME = re.compile(r"^iteration-(\d+)$")
 
@@ -182,8 +183,11 @@ def selectors(folder: Path) -> dict[str, Any]:
     """
     path = folder / "spec.selectors.json"
     if not path.is_file():
-        return {"alleles": {}, "rows": [], "hypotheses": []}
+        return {"alleles": {}, "rows": [], "hypotheses": [], "derivation": None}
     spec = json.loads(path.read_text(encoding="utf-8"))
+    derived = derivation(folder)
+    if derived:
+        spec = {**spec, "rows": derived["rows"], "hypotheses": derived["hypotheses"]}
     alleles = spec.get("alleles", {})
     for name, allele in alleles.items():
         if "pos" in allele:
@@ -199,10 +203,36 @@ def selectors(folder: Path) -> dict[str, Any]:
             "finding_type": row.get("finding_type", "primary"),
             "label": row.get("label", ""),
             "notes": row.get("notes", ""),
+            "score": row.get("score"),
+            "hypothesis": row.get("hypothesis"),
         }
         for rank, row in enumerate(spec.get("rows", []), 1)
     ]
-    return {"alleles": alleles, "rows": rows, "hypotheses": spec.get("hypotheses", [])}
+    return {
+        "alleles": alleles,
+        "rows": rows,
+        "hypotheses": spec.get("hypotheses", []),
+        "derivation": derived
+        and {
+            "anchor": derived.get("anchor", {}),
+            "parameters": derived.get("parameters", {}),
+            "alleles": derived.get("alleles", {}),
+            "arithmetic": derived.get("arithmetic", []),
+        },
+    }
+
+
+def derivation(folder: Path) -> dict[str, Any] | None:
+    """``derivation.json`` — the epcr ladder, notes, priors and facts the data decided.
+
+    Written coordinate-free by ``tools/resolve_submission_spec.py`` when the selectors carry
+    a ``derivation`` block; ``None`` for an iteration that still types its rows by hand.
+    """
+    path = folder / "derivation.json"
+    if not path.is_file():
+        return None
+    found: dict[str, Any] = json.loads(path.read_text(encoding="utf-8"))
+    return found
 
 
 def selector_text(folder: Path) -> str:

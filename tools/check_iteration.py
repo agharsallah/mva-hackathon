@@ -7,7 +7,8 @@ read. Its README declares a state — **draft**, **ready** (built, not uploaded)
 
 - every deliverable is present: ``README.md``, ``report.md``, the rendered
   ``<user>_<track>_report.pdf``, ``methods-form.json`` and its ``.xlsx``, ``decode-table.md``,
-  ``spec.selectors.json`` (draft: only README, report and selectors are required);
+  ``spec.selectors.json`` (draft: only README, report and selectors are required); a spec
+  with a ``derivation`` block also needs a fresh ``derivation.json``;
 - rendered files are **newer** than their sources (a stale PDF is the classic last-minute
   mistake);
 - the methods form answers every question the template asks (rows 7–18) and keeps the
@@ -42,7 +43,7 @@ ABSTRACT_ROW = "18"
 MODEL_ROW = "8"
 ABSTRACT_WORDS = 500
 SHA256 = re.compile(r"\b([0-9a-f]{64})\b")
-CSV_PATH = re.compile(r"`(build/submission/[\w.-]+\.csv)`")
+CSV_PATH = re.compile(r"`((?:build/submission|submissions/[\w-]+/iteration-\d+)/[\w.-]+\.csv)`")
 PLACEHOLDER = re.compile(r"\b(TODO|TBD|FIXME)\b")
 UNKNOWN_PREFIX = "_unknown"
 
@@ -150,7 +151,10 @@ def check_selectors(folder: Path, report: Report) -> None:
     for name, raw in spec.get("alleles", {}).items():
         if "pos" in raw:
             report.fail(f"spec.selectors.json: allele {name!r} carries a position — selectors only")
-    check_rows(spec.get("rows", []), alleles, report)
+    if "derivation" in spec:
+        check_derived(folder, spec, alleles, report)
+    else:
+        check_rows(spec.get("rows", []), alleles, report)
     for hypothesis in spec.get("hypotheses", []):
         for name in hypothesis.get("alleles", []):
             if name not in alleles and not name.startswith(UNKNOWN_PREFIX):
@@ -160,21 +164,59 @@ def check_selectors(folder: Path, report: Report) -> None:
                 )
 
 
-def check_rows(rows: list[dict], alleles: set[str], report: Report) -> None:
-    if not rows:
-        report.fail("spec.selectors.json: no rows")
-    if len(rows) > 10:
-        report.fail(f"spec.selectors.json: {len(rows)} rows, the scorer accepts 10")
-    for i, row in enumerate(rows, 1):
+def check_derived(folder: Path, spec: dict, alleles: set[str], report: Report) -> None:
+    """A derived spec types nothing the data decides; the derivation file carries the ladder.
+
+    Rows may not carry ``epcr`` or ``notes``, a hypothesis whose alleles are all in the
+    callset may not declare a ``prior``, and ``derivation.json`` must exist, be newer than
+    the selectors, and hold a strictly descending epcr ladder in (0, 1].
+    """
+    for i, row in enumerate(spec.get("rows", []), 1):
+        for key in ("epcr", "notes"):
+            if key in row:
+                report.fail(f"spec.selectors.json: row {i} carries {key!r}; it is derived")
         for key in ("variant", "partner"):
             name = row.get(key)
             if name and name not in alleles:
                 report.fail(f"spec.selectors.json: row {i} {key} {name!r} is not a declared allele")
+    for hypothesis in spec.get("hypotheses", []):
+        names = hypothesis.get("alleles", [])
+        if "prior" in hypothesis and not any(str(n).startswith(UNKNOWN_PREFIX) for n in names):
+            report.fail(
+                f"spec.selectors.json: hypothesis {hypothesis.get('label')!r} declares a prior "
+                "its row derives"
+            )
+    derived = folder / "derivation.json"
+    if not derived.is_file():
+        report.fail("derivation.json missing — run tools/resolve_submission_spec.py")
+        return
+    if not newer(derived, folder / "spec.selectors.json"):
+        report.fail("derivation.json is older than spec.selectors.json")
+    try:
+        rows = json.loads(derived.read_text(encoding="utf-8")).get("rows", [])
+    except json.JSONDecodeError as error:
+        report.fail(f"derivation.json: not valid JSON ({error})")
+        return
+    check_rows(rows, alleles, report, source="derivation.json")
+
+
+def check_rows(
+    rows: list[dict], alleles: set[str], report: Report, source: str = "spec.selectors.json"
+) -> None:
+    if not rows:
+        report.fail(f"{source}: no rows")
+    if len(rows) > 10:
+        report.fail(f"{source}: {len(rows)} rows, the scorer accepts 10")
+    for i, row in enumerate(rows, 1):
+        for key in ("variant", "partner"):
+            name = row.get(key)
+            if name and name not in alleles:
+                report.fail(f"{source}: row {i} {key} {name!r} is not a declared allele")
         if not 0 < float(row.get("epcr", 0)) <= 1:
-            report.fail(f"spec.selectors.json: row {i} epcr must be in (0, 1]")
+            report.fail(f"{source}: row {i} epcr must be in (0, 1]")
     epcrs = [float(r.get("epcr", 0)) for r in rows]
     if any(a <= b for a, b in itertools.pairwise(epcrs)):
-        report.fail("spec.selectors.json: epcr values must be strictly descending")
+        report.fail(f"{source}: epcr values must be strictly descending")
 
 
 def check_digest(folder: Path, root: Path, readme: str, report: Report) -> None:
@@ -186,7 +228,7 @@ def check_digest(folder: Path, root: Path, readme: str, report: Report) -> None:
         return
     named = CSV_PATH.search(readme)
     if not named:
-        report.warn("README.md names no build/submission/*.csv path")
+        report.warn("README.md names no predictions-CSV path (build/submission/ or the folder)")
         return
     csv = root / named.group(1)
     if not csv.is_file():

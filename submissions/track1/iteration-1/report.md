@@ -274,12 +274,22 @@ earns 50 or 25 points instead of 10. So ranks 2–5 hold pairs.
 
 | rank | epcr | type | row |
 |---|---|---|---|
-| 1 | 0.95 | primary | **BUB1B stop_gained + missense** (H009) |
-| 2–3 | 0.30 · 0.29 | primary | stop / missense + the gnomAD-absent intronic BUB1B allele (SpliceAI 0.00) |
-| 4–5 | 0.20 · 0.19 | primary | stop / missense + the rare intronic BUB1B allele (ClinVar VUS, SpliceAI 0.00) |
-| 6 | 0.05 | secondary | **LZTR1** heterozygous stop_gained, ClinVar P/LP, gnomAD 1.4e-6 — dominant schwannomatosis predisposition, unrelated to MVA |
-| 7 | 0.04 | secondary | **F5** Factor V Leiden, heterozygous — low-penetrance thrombosis risk |
-| 8 | 0.03 | secondary | **FLG** heterozygous stop_gained, ClinVar P — ichthyosis vulgaris / atopy |
+| 1 | 0.9963 | primary | **BUB1B stop_gained + missense** (H009) |
+| 2–3 | 0.0014 · 0.0014 | primary | stop + the gnomAD-absent intronic BUB1B allele; stop + the rare intronic allele (ClinVar VUS) |
+| 4–5 | 0.00048 · 0.00041 | primary | missense + the gnomAD-absent intronic allele; missense + the rare intronic allele |
+| 6 | 0.00021 | secondary | **LZTR1** heterozygous stop_gained, ClinVar P/LP — dominant schwannomatosis predisposition, unrelated to MVA |
+| 7 | 0.00001 | secondary | **FLG** heterozygous stop_gained, ClinVar P — ichthyosis vulgaris / atopy |
+| 8 | 0.000006 | secondary | **F5** Factor V Leiden, heterozygous — low-penetrance thrombosis risk |
+
+**No number in this table was typed.** The rank-1 epcr is the register's suggested
+confidence for H009 (a transparent triage heuristic, not a calibrated posterior — §8). Every
+other primary row takes a share of the remaining mass in proportion to its pair score
+(rarity × severity per allele, `mva.pipeline.ranking`, summed), secondary rows sit below the
+lowest primary ordered by allele score, and the notes the organisers receive quote only
+columns of the warehouse result table each allele was selected from. The arithmetic, line by
+line, is [`derivation.md`](derivation.md); the tool refuses a hand-typed epcr, a note, a
+number inside a rationale, or an anchor row the ranker would not itself put first
+([082](../../../docs/iteration1/step-6/methodology/082-derived-submission-rows.md)).
 
 ![What each possible reply would tell us](../../../figures/track1/track1-decode-table.png)
 
@@ -289,8 +299,9 @@ earns 50 or 25 points instead of 10. So ranks 2–5 hold pairs.
 Rehearsed byte-for-byte on the replica **and re-graded with the organisers' published
 `evaluation.py`** — the two scorers agree on every one of the eight keys
 ([075](../../../docs/step-0/methodology/075-coordinate-gate-and-redaction.md)). If the pair is right, **100 points, F-max 1.0**.
-Seven distinguishable replies over eight keys; prior entropy 1.60 bits, **expected gain
-1.46 bits**. The one residual ambiguity is structural — "one allele right, partner not in
+Seven distinguishable replies over eight keys; prior entropy 1.11 bits, **expected gain
+0.96 bits** (the derived priors put 0.78 of the mass on the anchor pair, so there is less to
+learn than the hand-set priors of entry 074 pretended). The one residual ambiguity is structural — "one allele right, partner not in
 the callset" cannot say *which* allele — and it is the exact trigger for the raw-read
 route (step 5) and a two-row singles probe. Rows 6–8 are secondary findings: free under
 the scoring rules (rows below the hit cannot lower F-max), reviewed qualitatively, chosen by
@@ -301,7 +312,7 @@ reported here, not submitted).
 **Not uploaded.** The four gate conditions of [step 6](../../../docs/iteration1/step-6/README.md) hold — normalized
 spellings, hypotheses with predictions and refutations, a byte-level rehearsal, four
 agreeing methods — and the timing is the team's decision. File:
-`build/submission/track1_submission_v1.csv` (gitignored; sha256 `fbc9e750…`).
+`submissions/track1/iteration-1/agharsallah_bub1b-comphet-derived.csv` (in the iteration folder, gitignored; sha256 `54854a6e…`; the filename carries the username and the approach, as the submission page asks).
 
 ---
 
@@ -316,7 +327,7 @@ uv run mva-warehouse annotate-coding --workers 4                                
 uv run mva-warehouse pg-derive --only coding_candidates gene_biallelic                 # 24 s
 uv run python tools/render_track1_figures.py
 uv run python tools/resolve_submission_spec.py --selectors submissions/track1/iteration-1/spec.selectors.json --out build/submission/spec.json   # selectors → coordinates
-uv run python tools/design_submission.py --spec build/submission/spec.json --out build/submission/track1_submission_v1.csv        # CSV + rehearsal + cross-check
+uv run python tools/design_submission.py --spec build/submission/spec.json --out submissions/track1/iteration-1/agharsallah_bub1b-comphet-derived.csv        # CSV + rehearsal + cross-check
 ```
 
 The submission itself is reproducible without a single committed coordinate: every allele

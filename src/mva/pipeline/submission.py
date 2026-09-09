@@ -204,5 +204,6 @@ def _descending_problems(epcrs: list[str]) -> Iterable[str]:
 
 
 def _format_epcr(value: float) -> str:
-    """Render without trailing zeros so 0.95 stays 0.95 rather than 0.9500000000000001."""
-    return f"{value:.10g}"
+    """Render as a plain decimal without trailing zeros: 0.95 stays 0.95, and a small
+    share stays 0.0000062 rather than 6.2e-06 — the scorer parses either, a reader only one."""
+    return f"{value:.10f}".rstrip("0").rstrip(".")

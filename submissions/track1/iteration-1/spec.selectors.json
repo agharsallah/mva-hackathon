@@ -1,5 +1,11 @@
 {
-  "_comment": "Coordinate-free source of build/submission/spec.json. Each allele is a selector that must match exactly one row of a warehouse result table; tools/resolve_submission_spec.py resolves it to (chrom, pos, ref, alt) on a machine with database access and writes the gitignored spec. Rows and hypotheses are copied through unchanged.",
+  "_comment": "Coordinate-free source of build/submission/spec.json. Each allele is a selector that must match exactly one row of a warehouse result table; tools/resolve_submission_spec.py resolves it to (chrom, pos, ref, alt) on a machine with database access and writes the gitignored spec. Rows carry no epcr and no notes: both are derived (mva.warehouse.submission_rows) from the selector's table, the ranker's allele score and the register's confidence for the anchor hypothesis \u2014 see derivation.md. A rationale may contain no digit. Only a hypothesis naming an _unknown allele declares a prior.",
+  "derivation": {
+    "anchor": {
+      "row": "stop+missense",
+      "hypothesis": "H009"
+    }
+  },
   "alleles": {
     "stop": {
       "table": "results.coding_candidates",
@@ -136,63 +142,56 @@
     {
       "variant": "stop",
       "partner": "missense",
-      "epcr": 0.95,
       "finding_type": "primary",
       "label": "stop+missense",
-      "notes": "H:H009 | BUB1B | compound heterozygote: ClinVar-pathogenic stop_gained (VCV000533901, MVA syndrome 1) + gnomAD-absent missense in the C-terminal kinase domain (AlphaMissense likely pathogenic 0.92, CADD 24.5); both het PASS at 44x; phase unresolved by reads; genome-wide scan finds no competing biallelic gene; phenotype ranking places BUB1B 6th of 5,267"
+      "rationale": "phase unresolved by reads; genome-wide scan finds no competing biallelic gene; phenotype ranking places BUB1B first among biallelic genes",
+      "hypothesis": "H009"
     },
     {
       "variant": "stop",
       "partner": "intronA",
-      "epcr": 0.3,
       "finding_type": "primary",
       "label": "stop+intronA",
-      "notes": "H:H009 alternative partner | BUB1B | stop_gained + gnomAD-absent intronic allele (SpliceAI 0.00); a full match here decodes the pairing directly"
+      "rationale": "alternative partner; a full match here decodes the pairing directly"
     },
     {
       "variant": "missense",
       "partner": "intronA",
-      "epcr": 0.29,
       "finding_type": "primary",
       "label": "missense+intronA",
-      "notes": "H:H009 alternative partner | BUB1B | missense + gnomAD-absent intronic allele"
+      "rationale": "alternative partner"
     },
     {
       "variant": "stop",
       "partner": "intronB",
-      "epcr": 0.2,
       "finding_type": "primary",
       "label": "stop+intronB",
-      "notes": "H:H009 alternative partner | BUB1B | stop_gained + rare intronic allele (gnomAD 0.002, ClinVar VUS, SpliceAI 0.00)"
+      "rationale": "alternative partner; SpliceAI predicts no splice effect"
     },
     {
       "variant": "missense",
       "partner": "intronB",
-      "epcr": 0.19,
       "finding_type": "primary",
       "label": "missense+intronB",
-      "notes": "H:H009 alternative partner | BUB1B | missense + rare intronic allele"
+      "rationale": "alternative partner"
     },
     {
       "variant": "lztr1_stop",
-      "epcr": 0.05,
       "finding_type": "secondary",
       "label": "LZTR1 stop_gained (secondary)",
-      "notes": "secondary | LZTR1 | heterozygous stop_gained, ClinVar pathogenic/likely pathogenic, gnomAD 1.4e-6; dominant schwannomatosis predisposition (unrelated to MVA); reported for clinical follow-up, not scored"
+      "rationale": "dominant schwannomatosis predisposition, unrelated to MVA; reported for clinical follow-up"
     },
     {
       "variant": "f5_leiden",
-      "epcr": 0.04,
       "finding_type": "secondary",
       "label": "F5 Leiden (secondary)",
-      "notes": "secondary | F5 | heterozygous Factor V Leiden (rs6025), ClinVar pathogenic low-penetrance risk factor for venous thrombosis; common carrier state, relevant to peri-operative and oncology care"
+      "rationale": "Factor V Leiden, low-penetrance venous thrombosis risk factor; relevant to peri-operative and oncology care"
     },
     {
       "variant": "flg_stop",
-      "epcr": 0.03,
       "finding_type": "secondary",
       "label": "FLG stop_gained (secondary)",
-      "notes": "secondary | FLG | heterozygous stop_gained, ClinVar pathogenic, gnomAD 0.003; semi-dominant ichthyosis vulgaris / atopy risk allele; low clinical priority"
+      "rationale": "semi-dominant ichthyosis vulgaris / atopy risk allele; low clinical priority"
     }
   ],
   "hypotheses": [
@@ -201,40 +200,35 @@
       "alleles": [
         "stop",
         "missense"
-      ],
-      "prior": 0.7
+      ]
     },
     {
       "label": "stop+intronA",
       "alleles": [
         "stop",
         "intronA"
-      ],
-      "prior": 0.03
+      ]
     },
     {
       "label": "stop+intronB",
       "alleles": [
         "stop",
         "intronB"
-      ],
-      "prior": 0.02
+      ]
     },
     {
       "label": "missense+intronA",
       "alleles": [
         "missense",
         "intronA"
-      ],
-      "prior": 0.02
+      ]
     },
     {
       "label": "missense+intronB",
       "alleles": [
         "missense",
         "intronB"
-      ],
-      "prior": 0.01
+      ]
     },
     {
       "label": "stop+unseen",

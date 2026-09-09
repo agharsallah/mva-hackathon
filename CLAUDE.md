@@ -25,10 +25,11 @@
   Do not re-explore the platform; the toolset page names the verb, route, page and module.
 - A tool a research step needs (app page, API route, module) is recorded in **that step's**
   `methodology/`; only a cross-step platform fix still lands in step-0 and names the step.
-- Methodology numbers are global; the next is **082**. Never reuse a number. (079 = Track 2 in the
+- Methodology numbers are global; the next is **083**. Never reuse a number. (079 = Track 2 in the
   ledger and the dashboard; 080 = hosting the dashboard — the same-origin proxy, the API token and
   the password gate; 081 = fewer requests from the hosted dashboard — the persisted query cache,
-  its coordinate-free allowlist, and quieter polls.)
+  its coordinate-free allowlist, and quieter polls; 082 = derived submission rows — epcr, notes
+  and priors from the warehouse and the register, never typed.)
 - Oracle budget is **6** uploads (one registered member). No upload before step 6's gate:
   callset normalized, hypotheses filed, CSV rehearsed on the scorer replica **and** cross-checked
   with the organisers' published `evaluation.py` (`tools/design_submission.py` does both), two

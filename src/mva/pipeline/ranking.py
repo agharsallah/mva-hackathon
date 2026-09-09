@@ -120,9 +120,17 @@ def rank_pairs(
     return sorted(ranked, key=lambda p: p.score, reverse=True)
 
 
-def _variant_score(annotation) -> float:
-    """Rarity times severity for a single allele."""
+def allele_score(annotation: Annotation) -> float:
+    """Rarity times severity for a single allele — the term a pair score sums.
+
+    Public because the submission derivation (:mod:`mva.warehouse.submission_rows`)
+    orders rows by exactly this number; one heuristic, one place.
+    """
     return _rarity(annotation.gnomad_af) * _severity(annotation)
+
+
+def _variant_score(annotation: Annotation) -> float:
+    return allele_score(annotation)
 
 
 def _rarity(af: float | None) -> float:

@@ -4,7 +4,7 @@ import { type Column, DataTable } from '../../components/DataTable';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Callout } from '../../components/Explainer';
 import { C } from '../../lib/palette';
-import { whereClause } from './iteration';
+import { fmtEpcr, whereClause } from './iteration';
 
 /**
  * The submitted rows, and the alleles they are made of — without a single coordinate.
@@ -54,7 +54,7 @@ export function SelectorsExhibit({ selectors, source }: { selectors: Selectors; 
           <span className="text-chrome-600">— single</span>
         ),
     },
-    { key: 'epcr', header: 'epcr', align: 'right', render: (r) => r.epcr.toFixed(2) },
+    { key: 'epcr', header: 'epcr', align: 'right', render: (r) => fmtEpcr(r.epcr) },
     {
       key: 'finding_type',
       header: 'finding',

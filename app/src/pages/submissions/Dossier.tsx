@@ -8,6 +8,7 @@ import { AuditTrail } from './AuditTrail';
 import { BeginnerGuide } from './BeginnerGuide';
 import { Contributions } from './Contributions';
 import { DecodeExhibit } from './DecodeExhibit';
+import { DerivationExhibit } from './DerivationExhibit';
 import { EpcrLadder } from './EpcrLadder';
 import { iterationKey, newestFirst } from './iteration';
 import { IterationHeader } from './IterationHeader';
@@ -94,6 +95,7 @@ export function Dossier({ result }: { result: Result<Submissions> }) {
         <div className="space-y-6">
           <EpcrLadder selectors={iteration.selectors} source={source} />
           <SelectorsExhibit selectors={iteration.selectors} source={source} />
+          <DerivationExhibit selectors={iteration.selectors} source={source} />
         </div>
       </Section>
 

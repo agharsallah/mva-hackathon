@@ -176,3 +176,11 @@ export function primaryGene(selectors: Selectors): string | null {
   }
   return null;
 }
+
+/**
+ * An epcr for the eye: two decimals when it carries them, significant digits when the
+ * value is a small derived share (0.0004758 must not read as 0.00).
+ */
+export function fmtEpcr(value: number): string {
+  return value >= 0.01 ? value.toFixed(value >= 0.1 ? 2 : 3) : value.toPrecision(3);
+}

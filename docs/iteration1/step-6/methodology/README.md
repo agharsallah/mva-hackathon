@@ -1,6 +1,6 @@
 # Methodology log — step 6
 
-**Standing:** open. Entries below, numbered in the global sequence. Last checked 2026-09-05.
+**Standing:** open. Entries below, numbered in the global sequence. Last checked 2026-09-09.
 
 One entry per test actually executed. **Nothing here is estimated or assumed** — every
 number is copied from a run whose output was seen.
@@ -32,3 +32,4 @@ The environment is the one recorded in
 |---|---|
 | [074](074-submission-v1-design.md) | Submission v1: the pair at rank 1, every other row a question. **8 rows rehearsed on the replica: 100 / 1.0 if the pair is right; 7 distinguishable replies over 8 answer keys, 1.455 bits expected gain. Not uploaded — 0 of 6 spent.** _(H009 → testing.)_ |
 | [076](076-iteration-tooling.md) | Can iteration 1 be rebuilt from the repository alone, and can iteration 2 be opened without hand-work? **Coordinate-free selectors (`spec.selectors.json`) resolve to the same 7 coordinates the CSV was built from — same sha256, all 8 keys still agree with the organisers' scorer; a folder gate (`check_iteration.py`) and a scaffolder (`new_iteration.py`) join the tooling; the decode-table PNG is sized to its rows.** _(tooling for step 6, no hypothesis.)_ |
+| [082](082-derived-submission-rows.md) | Can every non-coordinate field of the submission CSV be derived from the warehouse and the register instead of typed? **Yes: notes quote only result-table columns, epcr is anchored on the register's confidence for H009 and shared by pair score, priors follow the rows; the tool refuses a typed epcr, note, number or a mis-ranked anchor. Same 7 coordinates, 8 of 8 keys agree with the organisers' scorer; sha256 changes; expected gain 0.963 bits under the derived priors.** _(tooling for step 6; H009 unchanged.)_ |
