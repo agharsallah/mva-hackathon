@@ -94,17 +94,24 @@ table {
   background: transparent;
 }
 
-/* The header's fetch bar: one third of the width sliding across, on a loop. */
+/* The header's fetch bar: one third of the width sliding across, on a loop.
+   translate3d (not translateX) forces its own GPU compositing layer; without it,
+   Windows Chrome's rasterizer recomputes subpixel rounding for this element on every
+   frame alongside the sticky+backdrop-blur header behind it, which reads as a visible
+   shake. linear timing avoids the accel/decel mismatch ease-in-out has at the loop
+   restart, which read as a jerk even once the layer was promoted. */
 @keyframes fetch-bar {
   from {
-    transform: translateX(-100%);
+    transform: translate3d(-100%, 0, 0);
   }
   to {
-    transform: translateX(300%);
+    transform: translate3d(300%, 0, 0);
   }
 }
 .fetch-bar {
-  animation: fetch-bar 1.2s ease-in-out infinite;
+  animation: fetch-bar 1.2s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 @media (prefers-reduced-motion: reduce) {

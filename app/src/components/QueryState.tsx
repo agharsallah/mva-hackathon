@@ -123,15 +123,19 @@ export function Skeleton({
 }) {
   const show = useElapsed(150);
   const slow = useElapsed(6000);
+  // Mounted only once `show` flips, instead of always-mounted with an opacity-0/100
+  // toggle: that toggle ran a CSS transition and Tailwind's animate-pulse keyframe on
+  // the same `opacity` property at once, which stacked into a visible flicker at mount
+  // (worst on Windows Chrome). A held-back mount has nothing to fade from.
+  if (!show) return null;
   return (
     <div
       role="status"
       aria-live="polite"
       aria-busy="true"
       className={cx(
-        'overflow-hidden rounded-card transition-opacity duration-300',
+        'animate-pulse overflow-hidden rounded-card',
         framed && 'border border-line bg-panel',
-        show ? 'animate-pulse opacity-100' : 'opacity-0',
       )}
       style={{ minHeight: height }}
     >

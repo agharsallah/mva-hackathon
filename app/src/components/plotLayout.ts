@@ -18,6 +18,16 @@ import { C } from '../lib/palette';
 import { themeStore } from '../lib/theme';
 import type { Layout } from './Plot';
 
+/**
+ * Must match `--font-sans` in `index.css` and the family that
+ * `.js-plotly-plot .plotly text { font-family: ... !important; }` forces onto every Plotly
+ * text node. Plotly measures line-height/`dy` offsets for hover labels using this string
+ * *before* the CSS override repaints the glyphs in a different font; if the two disagree,
+ * the box Plotly draws is sized for one font while the text renders in another, so
+ * multi-line hover text sits shifted (typically upward) out of its label. Keep both in sync.
+ */
+const FONT_SANS = "'Atkinson Hyperlegible Next Variable', ui-sans-serif, system-ui, sans-serif";
+
 /** Built per call, not once: `C.grid` and `C.inkDim` differ between the two themes. */
 const axis = () => ({
   gridcolor: C.grid,
@@ -32,12 +42,16 @@ export function baseLayout(over: Layout = {}): Layout {
   return {
     paper_bgcolor: 'rgba(0,0,0,0)',
     plot_bgcolor: 'rgba(0,0,0,0)',
-    font: { color: C.ink, family: 'ui-sans-serif, system-ui, sans-serif', size: 12 },
+    font: { color: C.ink, family: FONT_SANS, size: 12 },
     margin: { l: 60, r: 20, t: 12, b: 48 },
     xaxis: axis(),
     yaxis: axis(),
     legend: { font: { color: C.inkDim, size: 11 }, bgcolor: 'rgba(0,0,0,0)' },
-    hoverlabel: { bgcolor: C.panel, bordercolor: C.grid, font: { color: C.ink } },
+    hoverlabel: {
+      bgcolor: C.panel,
+      bordercolor: C.grid,
+      font: { color: C.ink, family: FONT_SANS },
+    },
     ...over,
   };
 }
