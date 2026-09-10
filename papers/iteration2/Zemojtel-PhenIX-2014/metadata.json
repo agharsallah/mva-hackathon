@@ -1,0 +1,653 @@
+{
+  "query": {
+    "doi": "10.1126/scitranslmed.3009262"
+  },
+  "sources": {
+    "openalex": {
+      "id": "https://openalex.org/W2059313072",
+      "title": "Effective diagnosis of genetic disease by computational phenotype analysis of the disease-associated genome",
+      "publication_year": 2014,
+      "publication_date": "2014-09-03",
+      "type": "article",
+      "venue": "Science Translational Medicine",
+      "venue_type": "journal",
+      "issn": "1946-6234",
+      "publisher": "American Association for the Advancement of Science",
+      "volume": "6",
+      "issue": "252",
+      "first_page": "252ra123",
+      "last_page": "252ra123",
+      "cited_by_count": 271,
+      "counts_by_year": [
+        {
+          "year": 2026,
+          "cited_by_count": 4
+        },
+        {
+          "year": 2025,
+          "cited_by_count": 10
+        },
+        {
+          "year": 2024,
+          "cited_by_count": 22
+        },
+        {
+          "year": 2023,
+          "cited_by_count": 14
+        },
+        {
+          "year": 2022,
+          "cited_by_count": 17
+        },
+        {
+          "year": 2021,
+          "cited_by_count": 19
+        },
+        {
+          "year": 2020,
+          "cited_by_count": 29
+        },
+        {
+          "year": 2019,
+          "cited_by_count": 25
+        },
+        {
+          "year": 2018,
+          "cited_by_count": 43
+        },
+        {
+          "year": 2017,
+          "cited_by_count": 26
+        },
+        {
+          "year": 2016,
+          "cited_by_count": 29
+        },
+        {
+          "year": 2015,
+          "cited_by_count": 31
+        },
+        {
+          "year": 2014,
+          "cited_by_count": 2
+        }
+      ],
+      "is_oa": true,
+      "oa_url": "https://lirias.kuleuven.be/bitstream/123456789/463486/2/CP_14-131.pdf",
+      "is_retracted": false,
+      "topics": [
+        {
+          "name": "Genomics and Rare Diseases",
+          "field": "Biochemistry, Genetics and Molecular Biology",
+          "subfield": "Genetics",
+          "score": 0.9993000030517578
+        },
+        {
+          "name": "Biomedical Text Mining and Ontologies",
+          "field": "Biochemistry, Genetics and Molecular Biology",
+          "subfield": "Molecular Biology",
+          "score": 0.9897000193595886
+        },
+        {
+          "name": "Genomics and Phylogenetic Studies",
+          "field": "Biochemistry, Genetics and Molecular Biology",
+          "subfield": "Molecular Biology",
+          "score": 0.9868999719619751
+        }
+      ],
+      "concepts": [
+        "Computational biology",
+        "Phenotype",
+        "Mendelian inheritance",
+        "Disease",
+        "Gene",
+        "Exome",
+        "Exome sequencing",
+        "Genetics",
+        "Bioinformatics",
+        "Biology",
+        "Medicine"
+      ],
+      "keywords": [
+        "Computational biology",
+        "Phenotype",
+        "Mendelian inheritance",
+        "Disease",
+        "Gene",
+        "Exome",
+        "Exome sequencing",
+        "Genetics",
+        "Bioinformatics",
+        "Biology",
+        "Medicine",
+        "Pathology"
+      ],
+      "authorships": [
+        {
+          "name": "Tomasz Żemojtel",
+          "institutions": [
+            "Vivantes Klinikum",
+            "Institute of Bioorganic Chemistry, Polish Academy of Sciences",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": true
+        },
+        {
+          "name": "Sebastian Köhler",
+          "institutions": [
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": true
+        },
+        {
+          "name": "Luisa Mackenroth",
+          "institutions": [
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": true
+        },
+        {
+          "name": "Marten Jäger",
+          "institutions": [
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Jochen Hecht",
+          "institutions": [
+            "Berlin-Brandenburger Centrum für Regenerative Therapien",
+            "Max Planck Institute for Molecular Genetics",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Peter Krawitz",
+          "institutions": [
+            "Max Planck Institute for Molecular Genetics",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Luitgard Graul‐Neumann",
+          "institutions": [
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Sandra C. Doelken",
+          "institutions": [
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Nadja Ehmke",
+          "institutions": [
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Malte Spielmann",
+          "institutions": [
+            "Max Planck Institute for Molecular Genetics",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Nancy Christine Øien",
+          "institutions": [
+            "Max Delbrück Center",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Michal R. Schweiger",
+          "institutions": [
+            "University of Cologne",
+            "Max Planck Institute for Molecular Genetics",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Ulrike Krüger",
+          "institutions": [
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Götz Frommer",
+          "institutions": [
+            "Agilent Technologies (Germany)",
+            "Hewlett-Packard (Germany)"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Björn Fischer‐Zirnsak",
+          "institutions": [
+            "Max Planck Institute for Molecular Genetics",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Uwe Kornak",
+          "institutions": [
+            "Max Planck Institute for Molecular Genetics",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Ricarda Flöttmann",
+          "institutions": [
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Amin Ardeshirdavani",
+          "institutions": [
+            "KU Leuven"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Yves Moreau",
+          "institutions": [
+            "KU Leuven"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Suzanna Lewis",
+          "institutions": [
+            "Lawrence Berkeley National Laboratory"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Melissa Haendel",
+          "institutions": [
+            "Oregon Health & Science University"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Damian Smedley",
+          "institutions": [
+            "Wellcome Sanger Institute"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Denise Horn",
+          "institutions": [
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Stefan Mundlos",
+          "institutions": [
+            "Berlin-Brandenburger Centrum für Regenerative Therapien",
+            "Max Planck Institute for Molecular Genetics",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Peter N. Robinson",
+          "institutions": [
+            "Berlin-Brandenburger Centrum für Regenerative Therapien",
+            "Max Planck Institute for Molecular Genetics",
+            "Freie Universität Berlin",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": true
+        }
+      ],
+      "funders": [],
+      "referenced_works_count": 73,
+      "related_works": [
+        "https://openalex.org/W2093932542",
+        "https://openalex.org/W2043256480",
+        "https://openalex.org/W2106924416",
+        "https://openalex.org/W2772505697",
+        "https://openalex.org/W3083501552",
+        "https://openalex.org/W2400191746",
+        "https://openalex.org/W1983406990",
+        "https://openalex.org/W2484239316",
+        "https://openalex.org/W2172139908",
+        "https://openalex.org/W566554456"
+      ]
+    },
+    "crossref": {
+      "type": "journal-article",
+      "title": "Effective diagnosis of genetic disease by computational phenotype analysis of the disease-associated genome",
+      "container_title": "Science Translational Medicine",
+      "short_container_title": "Sci. Transl. Med.",
+      "publisher": "American Association for the Advancement of Science (AAAS)",
+      "volume": "6",
+      "issue": "252",
+      "page": null,
+      "issued": [
+        2014,
+        9,
+        3
+      ],
+      "authors": [
+        {
+          "given": "Tomasz",
+          "family": "Zemojtel",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany.",
+            "Institute of Bioorganic Chemistry, Polish Academy of Sciences, 61-704 Poznan, Poland.",
+            "Labor Berlin–Charité Vivantes GmbH, Humangenetik, Föhrer Straße 15, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Sebastian",
+          "family": "Köhler",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Luisa",
+          "family": "Mackenroth",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Marten",
+          "family": "Jäger",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Jochen",
+          "family": "Hecht",
+          "orcid": null,
+          "affiliation": [
+            "Max Planck Institute for Molecular Genetics, Ihnestr. 63-73, 14195 Berlin, Germany.",
+            "Berlin-Brandenburg Center for Regenerative Therapies, Charité Universitätsmedizin Berlin, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Peter",
+          "family": "Krawitz",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany.",
+            "Max Planck Institute for Molecular Genetics, Ihnestr. 63-73, 14195 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Luitgard",
+          "family": "Graul-Neumann",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Sandra",
+          "family": "Doelken",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Nadja",
+          "family": "Ehmke",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Malte",
+          "family": "Spielmann",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany.",
+            "Max Planck Institute for Molecular Genetics, Ihnestr. 63-73, 14195 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Nancy Christine",
+          "family": "Øien",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany.",
+            "Max Delbrück Center for Molecular Medicine, Robert-Rössle-Str. 10, 13125 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Michal R.",
+          "family": "Schweiger",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany.",
+            "Max Planck Institute for Molecular Genetics, Ihnestr. 63-73, 14195 Berlin, Germany.",
+            "Cologne Center for Genomics, University of Cologne, D-50931 Cologne, Germany."
+          ]
+        },
+        {
+          "given": "Ulrike",
+          "family": "Krüger",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Götz",
+          "family": "Frommer",
+          "orcid": null,
+          "affiliation": [
+            "Agilent Technologies, Hewlett-Packard-Straße 8, 76337 Waldbronn, Germany."
+          ]
+        },
+        {
+          "given": "Björn",
+          "family": "Fischer",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany.",
+            "Max Planck Institute for Molecular Genetics, Ihnestr. 63-73, 14195 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Uwe",
+          "family": "Kornak",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany.",
+            "Max Planck Institute for Molecular Genetics, Ihnestr. 63-73, 14195 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Ricarda",
+          "family": "Flöttmann",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Amin",
+          "family": "Ardeshirdavani",
+          "orcid": null,
+          "affiliation": [
+            "Department of Electrical Engineering, STADIUS Center for Dynamical Systems, Signal Processing and Data Analytics, KU Leuven, 3001 Leuven, Belgium."
+          ]
+        },
+        {
+          "given": "Yves",
+          "family": "Moreau",
+          "orcid": null,
+          "affiliation": [
+            "Department of Electrical Engineering, STADIUS Center for Dynamical Systems, Signal Processing and Data Analytics, KU Leuven, 3001 Leuven, Belgium."
+          ]
+        },
+        {
+          "given": "Suzanna E.",
+          "family": "Lewis",
+          "orcid": null,
+          "affiliation": [
+            "Genomics Division, Lawrence Berkeley National Laboratory, Berkeley, CA 94720, USA."
+          ]
+        },
+        {
+          "given": "Melissa",
+          "family": "Haendel",
+          "orcid": null,
+          "affiliation": [
+            "University Library and Department of Medical Informatics and Clinical Epidemiology, Oregon Health &amp; Sciences University, Portland, OR 97327, USA."
+          ]
+        },
+        {
+          "given": "Damian",
+          "family": "Smedley",
+          "orcid": null,
+          "affiliation": [
+            "Mouse Informatics Group, Wellcome Trust Sanger Institute, CB10 1SA Hinxton, UK."
+          ]
+        },
+        {
+          "given": "Denise",
+          "family": "Horn",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Stefan",
+          "family": "Mundlos",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany.",
+            "Max Planck Institute for Molecular Genetics, Ihnestr. 63-73, 14195 Berlin, Germany.",
+            "Berlin-Brandenburg Center for Regenerative Therapies, Charité Universitätsmedizin Berlin, 13353 Berlin, Germany."
+          ]
+        },
+        {
+          "given": "Peter N.",
+          "family": "Robinson",
+          "orcid": null,
+          "affiliation": [
+            "Institute for Medical Genetics and Human Genetics, Charité Universitätsmedizin Berlin, Augustenburger Platz 1, 13353 Berlin, Germany.",
+            "Max Planck Institute for Molecular Genetics, Ihnestr. 63-73, 14195 Berlin, Germany.",
+            "Berlin-Brandenburg Center for Regenerative Therapies, Charité Universitätsmedizin Berlin, 13353 Berlin, Germany.",
+            "Institute for Bioinformatics, Department of Mathematics and Computer Science, Freie Universität Berlin, Takustr. 9, 14195 Berlin, Germany."
+          ]
+        }
+      ],
+      "license": [],
+      "issn": [
+        "1946-6234",
+        "1946-6242"
+      ],
+      "is_referenced_by_count": 229,
+      "references_count": 70,
+      "update_to": null,
+      "relation": {
+        "has-review": [
+          {
+            "id-type": "doi",
+            "id": "10.3410/f.718632624.793500623",
+            "asserted-by": "object"
+          },
+          {
+            "id-type": "doi",
+            "id": "10.3410/f.718632624.793515874",
+            "asserted-by": "object"
+          }
+        ]
+      }
+    }
+  },
+  "errors": [
+    "HTTP 429 for https://api.semanticscholar.org/graph/v1/paper/DOI:10.1126%2Fscitranslmed.3009262?fields=paperId,externalIds,title,abstract,venue,publicationVenue,year,publicationDate,authors,citationCount,influentialCitationCount,referenceCount,fieldsOfStudy,s2FieldsOfStudy,publicationTypes,journal,openAccessPdf,tldr,isOpenAccess {\"message\": \"Too Many Requests. Please wait and try again or apply for a key for higher rate limits. https://www.semanticscholar.org/product/api#api-key-form\", \"code\": \"429\"}"
+  ],
+  "fallback_urls": [
+    "https://api.semanticscholar.org/graph/v1/paper/DOI:10.1126%2Fscitranslmed.3009262?fields=paperId,externalIds,title,abstract,venue,publicationVenue,year,publicationDate,authors,citationCount,influentialCitationCount,referenceCount,fieldsOfStudy,s2FieldsOfStudy,publicationTypes,journal,openAccessPdf,tldr,isOpenAccess"
+  ],
+  "code_links_from_metadata": [],
+  "merged": {
+    "title": "Effective diagnosis of genetic disease by computational phenotype analysis of the disease-associated genome",
+    "authors": [
+      "Tomasz Żemojtel",
+      "Sebastian Köhler",
+      "Luisa Mackenroth",
+      "Marten Jäger",
+      "Jochen Hecht",
+      "Peter Krawitz",
+      "Luitgard Graul‐Neumann",
+      "Sandra C. Doelken",
+      "Nadja Ehmke",
+      "Malte Spielmann",
+      "Nancy Christine Øien",
+      "Michal R. Schweiger",
+      "Ulrike Krüger",
+      "Götz Frommer",
+      "Björn Fischer‐Zirnsak",
+      "Uwe Kornak",
+      "Ricarda Flöttmann",
+      "Amin Ardeshirdavani",
+      "Yves Moreau",
+      "Suzanna Lewis",
+      "Melissa Haendel",
+      "Damian Smedley",
+      "Denise Horn",
+      "Stefan Mundlos",
+      "Peter N. Robinson"
+    ],
+    "year": 2014,
+    "venue": "Science Translational Medicine",
+    "venue_type": "journal",
+    "publisher": "American Association for the Advancement of Science",
+    "volume": "6",
+    "issue": "252",
+    "pages": "252ra123-252ra123",
+    "doi": "10.1126/scitranslmed.3009262",
+    "arxiv": null,
+    "abstract": null,
+    "tldr": null,
+    "fields": [
+      "Biomedical Text Mining and Ontologies",
+      "Genomics and Phylogenetic Studies",
+      "Genomics and Rare Diseases"
+    ],
+    "arxiv_categories": null,
+    "citation_count": {
+      "semantic_scholar": null,
+      "openalex": 271,
+      "crossref": 229
+    },
+    "influential_citation_count": null,
+    "is_retracted": false,
+    "open_access_pdf": "https://lirias.kuleuven.be/bitstream/123456789/463486/2/CP_14-131.pdf",
+    "checked_on": "2026-09-10"
+  },
+  "status": "PARTIAL - some sources failed; see errors and fallback_urls."
+}

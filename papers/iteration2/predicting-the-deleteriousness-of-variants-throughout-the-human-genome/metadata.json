@@ -1,0 +1,3387 @@
+{
+  "query": {
+    "doi": "10.1093/nar/gky1016"
+  },
+  "sources": {
+    "semantic_scholar": {
+      "paperId": "9f970c93549a1e69cdb9ba0f28b8ad1b25ba2f3a",
+      "title": "CADD: predicting the deleteriousness of variants throughout the human genome",
+      "abstract": "Abstract Combined Annotation-Dependent Depletion (CADD) is a widely used measure of variant deleteriousness that can effectively prioritize causal variants in genetic analyses, particularly highly penetrant contributors to severe Mendelian disorders. CADD is an integrative annotation built from more than 60 genomic features, and can score human single nucleotide variants and short insertion and deletions anywhere in the reference assembly. CADD uses a machine learning model trained on a binary distinction between simulated de novo variants and variants that have arisen and become fixed in human populations since the split between humans and chimpanzees; the former are free of selective pressure and may thus include both neutral and deleterious alleles, while the latter are overwhelmingly neutral (or, at most, weakly deleterious) by virtue of having survived millions of years of purifying selection. Here we review the latest updates to CADD, including the most recent version, 1.4, which supports the human genome build GRCh38. We also present updates to our website that include simplified variant lookup, extended documentation, an Application Program Interface and improved mechanisms for integrating CADD scores into other tools or applications. CADD scores, software and documentation are available at https://cadd.gs.washington.edu.",
+      "tldr": "The latest updates to CADD are reviewed, including the most recent version, 1.4, which supports the human genome build GRCh38, and also present updates to the website that include simplified variant lookup, extended documentation, an Application Program Interface and improved mechanisms for integrating CADD scores into other tools or applications.",
+      "year": 2018,
+      "publicationDate": "2018-10-29",
+      "venue": "Nucleic Acids Res.",
+      "publicationVenue": null,
+      "journal": {
+        "name": "Nucleic Acids Research",
+        "pages": "D886 - D894",
+        "volume": "47"
+      },
+      "publicationTypes": [
+        "JournalArticle",
+        "Review"
+      ],
+      "authors": [
+        {
+          "name": "Philipp Rentzsch",
+          "authorId": "80243122"
+        },
+        {
+          "name": "Daniela M. Witten",
+          "authorId": "2113693105"
+        },
+        {
+          "name": "G. Cooper",
+          "authorId": "31273465"
+        },
+        {
+          "name": "J. Shendure",
+          "authorId": "2431330"
+        },
+        {
+          "name": "M. Kircher",
+          "authorId": "6534571"
+        }
+      ],
+      "fieldsOfStudy": [
+        "Biology",
+        "Computer Science",
+        "Medicine"
+      ],
+      "s2FieldsOfStudy": [
+        "Biology",
+        "Computer Science",
+        "Medicine"
+      ],
+      "citationCount": 3292,
+      "influentialCitationCount": 314,
+      "referenceCount": 90,
+      "externalIds": {
+        "MAG": "2905452503",
+        "PubMedCentral": "6323892",
+        "DBLP": "journals/nar/RentzschWCSK19",
+        "DOI": "10.1093/nar/gky1016",
+        "CorpusId": 53095139,
+        "PubMed": "30371827"
+      },
+      "openAccessPdf": "https://academic.oup.com/nar/article-pdf/47/D1/D886/27436395/gky1016.pdf",
+      "isOpenAccess": true
+    },
+    "openalex": {
+      "id": "https://openalex.org/W2905452503",
+      "title": "CADD: predicting the deleteriousness of variants throughout the human genome",
+      "publication_year": 2018,
+      "publication_date": "2018-10-11",
+      "type": "article",
+      "venue": "Nucleic Acids Research",
+      "venue_type": "journal",
+      "issn": "0305-1048",
+      "publisher": "Oxford University Press",
+      "volume": "47",
+      "issue": "D1",
+      "first_page": "D886",
+      "last_page": "D894",
+      "cited_by_count": 3985,
+      "counts_by_year": [
+        {
+          "year": 2026,
+          "cited_by_count": 336
+        },
+        {
+          "year": 2025,
+          "cited_by_count": 497
+        },
+        {
+          "year": 2024,
+          "cited_by_count": 614
+        },
+        {
+          "year": 2023,
+          "cited_by_count": 549
+        },
+        {
+          "year": 2022,
+          "cited_by_count": 624
+        },
+        {
+          "year": 2021,
+          "cited_by_count": 659
+        },
+        {
+          "year": 2020,
+          "cited_by_count": 502
+        },
+        {
+          "year": 2019,
+          "cited_by_count": 194
+        },
+        {
+          "year": 2018,
+          "cited_by_count": 7
+        },
+        {
+          "year": 2017,
+          "cited_by_count": 1
+        }
+      ],
+      "is_oa": true,
+      "oa_url": "https://academic.oup.com/nar/article-pdf/47/D1/D886/27436395/gky1016.pdf",
+      "is_retracted": false,
+      "topics": [
+        {
+          "name": "Genomics and Rare Diseases",
+          "field": "Biochemistry, Genetics and Molecular Biology",
+          "subfield": "Genetics",
+          "score": 0.9994000196456909
+        },
+        {
+          "name": "Genomics and Phylogenetic Studies",
+          "field": "Biochemistry, Genetics and Molecular Biology",
+          "subfield": "Molecular Biology",
+          "score": 0.9983999729156494
+        },
+        {
+          "name": "RNA modifications and cancer",
+          "field": "Biochemistry, Genetics and Molecular Biology",
+          "subfield": "Molecular Biology",
+          "score": 0.9916999936103821
+        }
+      ],
+      "concepts": [
+        "Documentation",
+        "Biology",
+        "Annotation",
+        "Computational biology",
+        "Software",
+        "Genome",
+        "Human genome",
+        "Genomics",
+        "Mendelian inheritance",
+        "Genetics"
+      ],
+      "keywords": [
+        "Documentation",
+        "Biology",
+        "Annotation",
+        "Computational biology",
+        "Software",
+        "Genome",
+        "Human genome",
+        "Genomics",
+        "Mendelian inheritance",
+        "Genetics",
+        "Computer science",
+        "Gene"
+      ],
+      "authorships": [
+        {
+          "name": "Philipp Rentzsch",
+          "institutions": [
+            "Berlin Institute of Health at Charité - Universitätsmedizin Berlin",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Daniela Witten",
+          "institutions": [
+            "University of Washington"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Gregory M. Cooper",
+          "institutions": [
+            "HudsonAlpha Institute for Biotechnology"
+          ],
+          "corresponding": false
+        },
+        {
+          "name": "Jay Shendure",
+          "institutions": [
+            "University of Washington",
+            "Brotman Baty Institute"
+          ],
+          "corresponding": true
+        },
+        {
+          "name": "Martin Kircher",
+          "institutions": [
+            "University of Washington",
+            "Berlin Institute of Health at Charité - Universitätsmedizin Berlin",
+            "Charité - Universitätsmedizin Berlin"
+          ],
+          "corresponding": true
+        }
+      ],
+      "funders": [],
+      "referenced_works_count": 71,
+      "related_works": [
+        "https://openalex.org/W2361861616",
+        "https://openalex.org/W2263699433",
+        "https://openalex.org/W2377979023",
+        "https://openalex.org/W2218034408",
+        "https://openalex.org/W2392921965",
+        "https://openalex.org/W2618286804",
+        "https://openalex.org/W3126826795",
+        "https://openalex.org/W2012254260",
+        "https://openalex.org/W2364503270",
+        "https://openalex.org/W2409743480"
+      ]
+    },
+    "crossref": {
+      "type": "journal-article",
+      "title": "CADD: predicting the deleteriousness of variants throughout the human genome",
+      "container_title": "Nucleic Acids Research",
+      "short_container_title": null,
+      "publisher": "Oxford University Press (OUP)",
+      "volume": "47",
+      "issue": "D1",
+      "page": "D886-D894",
+      "issued": [
+        2018,
+        10,
+        29
+      ],
+      "authors": [
+        {
+          "given": "Philipp",
+          "family": "Rentzsch",
+          "orcid": "https://orcid.org/0000-0002-0413-7974",
+          "affiliation": [
+            "Berlin Institute of Health (BIH), 10178 Berlin, Germany",
+            "Charité - Universitätsmedizin Berlin, 10117 Berlin, Germany"
+          ]
+        },
+        {
+          "given": "Daniela",
+          "family": "Witten",
+          "orcid": null,
+          "affiliation": [
+            "Department of Statistics and Biostatistics, University of Washington, Seattle, WA 98195, USA"
+          ]
+        },
+        {
+          "given": "Gregory M",
+          "family": "Cooper",
+          "orcid": "https://orcid.org/0000-0001-5509-9923",
+          "affiliation": [
+            "HudsonAlpha Institute for Biotechnology, Huntsville, AL 35806, USA"
+          ]
+        },
+        {
+          "given": "Jay",
+          "family": "Shendure",
+          "orcid": "https://orcid.org/0000-0002-1516-1865",
+          "affiliation": [
+            "Department of Genome Sciences, University of Washington, Seattle, WA 98195, USA",
+            "Brotman Baty Institute for Precision Medicine, Seattle, WA 98195, USA"
+          ]
+        },
+        {
+          "given": "Martin",
+          "family": "Kircher",
+          "orcid": "https://orcid.org/0000-0001-9278-5471",
+          "affiliation": [
+            "Berlin Institute of Health (BIH), 10178 Berlin, Germany",
+            "Charité - Universitätsmedizin Berlin, 10117 Berlin, Germany",
+            "Department of Genome Sciences, University of Washington, Seattle, WA 98195, USA"
+          ]
+        }
+      ],
+      "license": [
+        "http://creativecommons.org/licenses/by/4.0/"
+      ],
+      "issn": [
+        "0305-1048",
+        "1362-4962"
+      ],
+      "is_referenced_by_count": 3591,
+      "references_count": 61,
+      "update_to": null,
+      "relation": {}
+    }
+  },
+  "errors": [],
+  "fallback_urls": [],
+  "references": [
+    {
+      "title": "GAVIN",
+      "authors": [
+        "A. A. Khan",
+        "Joshua Newn",
+        "Ryan M. Kelly",
+        "Namrata Srivastava",
+        "J. Bailey",
+        "Eduardo Velloso"
+      ],
+      "year": 2021,
+      "venue": "ACM Trans. Comput. Hum. Interact.",
+      "citationCount": 27,
+      "doi": "10.1145/3453988",
+      "arxiv": "2104.00870",
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "However, for an alternative view on this topic, we refer the reader to recent methods that use CADD scores in conjunction with hard cutoffs; see GAVIN (23) and MSC (24)."
+    },
+    {
+      "title": "Moyamoya disease factor RNF213 is a giant E3 ligase with a dynein-like core and a distinct ubiquitin-transfer mechanism",
+      "authors": [
+        "J. Ahel",
+        "Anita Lehner",
+        "Antonia Vogel",
+        "A. Schleiffer",
+        "A. Meinhart",
+        "D. Haselbach",
+        "T. Clausen"
+      ],
+      "year": 2020,
+      "venue": "eLife",
+      "citationCount": 121,
+      "doi": "10.7554/eLife.56185",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Results of targeted next-generation sequencing in children with cystic kidney diseases often change the clinical diagnosis",
+      "authors": [
+        "L. Obeidová",
+        "T. Seeman",
+        "F. Fencl",
+        "K. Bláhová",
+        "J. Hojný",
+        "Veronika Elišáková",
+        "J. Reiterová",
+        "J. Štekrová"
+      ],
+      "year": 2020,
+      "venue": "PLoS ONE",
+      "citationCount": 16,
+      "doi": "10.1371/journal.pone.0235071",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Analysis of transcript-deleterious variants in Mendelian disorders: implications for RNA-based diagnostics",
+      "authors": [
+        "Sateesh Maddirevula",
+        "Hiroyuki Kuwahara",
+        "Nour Ewida",
+        "H. Shamseldin",
+        "N. Patel",
+        "F. Alzahrani",
+        "Tarfa H. Alsheddi",
+        "Eman Alobeid",
+        "Mona M. Alenazi",
+        "H. Alsaif",
+        "Maha Al-Qahtani",
+        "Maha AlAli",
+        "Hatoon Al Ali",
+        "Rana Helaby",
+        "N. Ibrahim",
+        "F. Abdulwahab",
+        "M. Hashem",
+        "N. Hanna",
+        "D. Monies",
+        "Nada Derar",
+        "A. Alsagheir",
+        "Amal M Alhashem",
+        "B. Alsaleem",
+        "Hamoud Alhebbi",
+        "S. Wali",
+        "Ramzan Umarov",
+        "Xin Gao",
+        "F. Alkuraya"
+      ],
+      "year": 2020,
+      "venue": "Genome Biology",
+      "citationCount": 79,
+      "doi": "10.1186/s13059-020-02053-9",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Estimated birth prevalence of Menkes disease and ATP7A-related disorders based on the Genome Aggregation Database (gnomAD)",
+      "authors": [
+        "S. Kaler",
+        "C. Ferreira",
+        "Lung S. Yam"
+      ],
+      "year": 2020,
+      "venue": "Molecular Genetics and Metabolism Reports",
+      "citationCount": 37,
+      "doi": "10.1016/j.ymgmr.2020.100602",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Cerebral autosomal dominant arteriopathy with subcortical infarcts and leukoencephalopathy revisited",
+      "authors": [
+        "G. Xiromerisiou",
+        "C. Marogianni",
+        "K. Dadouli",
+        "C. Zompola",
+        "Despoina Georgouli",
+        "Antonios Provatas",
+        "Aikaterini Theodorou",
+        "Paschalis Zervas",
+        "C. Nikolaidou",
+        "S. Stergiou",
+        "P. Ntellas",
+        "Maria Sokratous",
+        "P. Stathis",
+        "G. Paraskevas",
+        "A. Bonakis",
+        "K. Voumvourakis",
+        "C. Hadjichristodoulou",
+        "G. Hadjigeorgiou",
+        "G. Tsivgoulis"
+      ],
+      "year": 2020,
+      "venue": "Neurology: Genetics",
+      "citationCount": 21,
+      "doi": "10.1212/NXG.0000000000000434",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Predicting variant deleteriousness in non-human species: applying the CADD approach in mouse",
+      "authors": [
+        "C. Groß",
+        "D. de Ridder",
+        "M. Reinders"
+      ],
+      "year": 2018,
+      "venue": "BMC Bioinformatics",
+      "citationCount": 17,
+      "doi": "10.1186/s12859-018-2337-5",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "For instance, the feature set from CADD has been used to train Deep Neural Networks (e.g. DANN (34)), and CADD’s underlying approach and training set definition methodology has been adapted for other "
+    },
+    {
+      "title": "Accurate classification of BRCA1 variants with saturation genome editing",
+      "authors": [
+        "Gregory M. Findlay",
+        "R. Daza",
+        "B. Martin",
+        "Melissa D. Zhang",
+        "Anh P. Leith",
+        "Molly Gasperini",
+        "Joseph D. Janizek",
+        "Xingfan Huang",
+        "Lea M. Starita",
+        "J. Shendure"
+      ],
+      "year": 2018,
+      "venue": "Nature",
+      "citationCount": 772,
+      "doi": "10.1038/s41586-018-0461-z",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Predicting the clinical impact of human mutation with deep neural networks",
+      "authors": [
+        "Laksshman Sundaram",
+        "Hongchang Gao",
+        "S. Padigepati",
+        "Jeremy F. McRae",
+        "Yanjun Li",
+        "Jack A. Kosmicki",
+        "Nondas Fritzilas",
+        "J. Hakenberg",
+        "Anindita Dutta",
+        "John Shon",
+        "Jinbo Xu",
+        "S. Batzoglou",
+        "Xiaolin Li",
+        "K. Farh"
+      ],
+      "year": 2018,
+      "venue": "Nature Genetics",
+      "citationCount": 58,
+      "doi": "10.1038/s41588-018-0167-z",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "A similar approach based on ape-lineage-derived variants has been used to score non-synonymous variants (36)."
+    },
+    {
+      "title": "Deep learning sequence-based ab initio prediction of variant effects on expression and disease risk",
+      "authors": [
+        "Jian Zhou",
+        "Chandra L. Theesfeld",
+        "K. Yao",
+        "Kathleen M. Chen",
+        "A. Wong",
+        "O. Troyanskaya"
+      ],
+      "year": 2018,
+      "venue": "Nature Genetics",
+      "citationCount": 571,
+      "doi": "10.1038/s41588-018-0160-6",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Of special interest are regulatory variants in promoters, enhancers and near splice sites, as a number of other recent variant classifiers (26,52–55) have shown the potential of predicting regulatory "
+    },
+    {
+      "title": "PopViz: a webserver for visualizing minor allele frequencies and damage prediction scores of human genetic variations",
+      "authors": [
+        "Peng Zhang",
+        "Benedetta Bigio",
+        "Franck Rapaport",
+        "Shen-Ying Zhang",
+        "J. Casanova",
+        "L. Abel",
+        "B. Boisson",
+        "Y. Itan"
+      ],
+      "year": 2018,
+      "venue": "Bioinform.",
+      "citationCount": 61,
+      "doi": "10.1093/bioinformatics/bty536",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "methodology"
+      ],
+      "context_example": "In addition, our SNV scores are available through a number of third-party sources, such as dbNSFP (48), as a plugin for Ensembl VEP, ANNOVAR (49), SeattleSeq (50), ExAC/gnomAD (8) and PopViz (51)."
+    },
+    {
+      "title": "Demographic History and Genetic Adaptation in the Himalayan Region Inferred from Genome-Wide SNP Genotypes of 49 Populations",
+      "authors": [
+        "Elena Arciero",
+        "T. Kraaijenbrink",
+        "Asan",
+        "Marc Haber",
+        "M. Mezzavilla",
+        "Q. Ayub",
+        "Wei Wang",
+        "Zhaxi Pingcuo",
+        "Huanming Yang",
+        "Jian Wang",
+        "M. Jobling",
+        "George van Driem",
+        "Yali Xue",
+        "P. de Knijff",
+        "C. Tyler-Smith"
+      ],
+      "year": 2018,
+      "venue": "Molecular biology and evolution",
+      "citationCount": 53,
+      "doi": "10.1093/molbev/msy094",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Furthermore, CADD has also seen applications in evolutionary studies, ranging from the interpretation of evolutionary changes (30–32) to the theoretical investigation of variant fitness effects in hum"
+    },
+    {
+      "title": "The human noncoding genome defined by genetic diversity",
+      "authors": [
+        "J. di Iulio",
+        "I. Bartha",
+        "E. Wong",
+        "Hung-Chun Yu",
+        "V. Lavrenko",
+        "Dongchan Yang",
+        "Inkyung Jung",
+        "Michael A Hicks",
+        "N. Shah",
+        "E. Kirkness",
+        "Martin M. Fabani",
+        "W. Biggs",
+        "B. Ren",
+        "J. Venter",
+        "A. Telenti"
+      ],
+      "year": 2018,
+      "venue": "Nature Genetics",
+      "citationCount": 143,
+      "doi": "10.1038/s41588-018-0062-7",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "CADD shares this strength with only a few other scores, such as Eigen (59), LINSIGHT (60) and CDTS (61)."
+    },
+    {
+      "title": "Quantitative missense variant effect prediction using large-scale mutagenesis data",
+      "authors": [
+        "Vanessa E. Gray",
+        "Ronald J. Hause",
+        "J. Luebeck",
+        "J. Shendure",
+        "D. Fowler"
+      ],
+      "year": 2017,
+      "venue": "Cell Systems",
+      "citationCount": 205,
+      "doi": "10.1016/j.cels.2017.11.003",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Functional mapping and annotation of genetic associations with FUMA",
+      "authors": [
+        "Kyoko Watanabe",
+        "E. Taskesen",
+        "Arjen van Bochoven",
+        "D. Posthuma"
+      ],
+      "year": 2017,
+      "venue": "Nature Communications",
+      "citationCount": 3795,
+      "doi": "10.1038/s41467-017-01261-5",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "ReMap 2018: an updated atlas of regulatory regions from an integrative analysis of DNA-binding ChIP-seq experiments",
+      "authors": [
+        "Jeanne Chèneby",
+        "Marius Gheorghe",
+        "Marie Artufel",
+        "Anthony Mathelier",
+        "B. Ballester"
+      ],
+      "year": 2017,
+      "venue": "Nucleic Acids Res.",
+      "citationCount": 209,
+      "doi": "10.1093/nar/gkx1092",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "methodology"
+      ],
+      "context_example": "Gene annotations: same processing as for GRCh37 via VEP\nGrantham: not specific to genome build\nphastCons, phyloP, GERP++: novel score generated based on multiz100way alignment of hg38 from UCSC genome"
+    },
+    {
+      "title": "The UCSC Genome Browser database: 2018 update",
+      "authors": [
+        "J. Casper",
+        "A. Zweig",
+        "C. Villarreal",
+        "Cath Tyner",
+        "M. Speir",
+        "K. Rosenbloom",
+        "B. Raney",
+        "Christopher M. Lee",
+        "Brian T. Lee",
+        "D. Karolchik",
+        "A. Hinrichs",
+        "M. Haeussler",
+        "L. Guruvadoo",
+        "Jairo Navarro Gonzalez",
+        "David Gibson",
+        "Ian T. Fiddes",
+        "Christopher Eisenhart",
+        "M. Diekhans",
+        "H. Clawson",
+        "G. Barber",
+        "J. Armstrong",
+        "D. Haussler",
+        "R. Kuhn",
+        "W. Kent"
+      ],
+      "year": 2017,
+      "venue": "Nucleic Acids Res.",
+      "citationCount": 454,
+      "doi": "10.1093/nar/gkx1020",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Annotations are obtained using Ensembl Variant Effect Predictor (VEP (15)), conservation and selection scores (e.g. PhyloP (16), PhastCons (17), GERP++ (18)), different tracks from the UCSC genome bro"
+    },
+    {
+      "title": "Chromatin state discovery and genome annotation with ChromHMM",
+      "authors": [
+        "J. Ernst",
+        "Manolis Kellis"
+      ],
+      "year": 2017,
+      "venue": "Nature Protocols",
+      "citationCount": 805,
+      "doi": "10.1038/nprot.2017.124",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "methodology"
+      ],
+      "context_example": "chromHMM (15): uses chromHMM 25 state model, ENCODE/Roadmap cell types only"
+    },
+    {
+      "title": "DNA sequencing at 40: past, present and future",
+      "authors": [
+        "J. Shendure",
+        "S. Balasubramanian",
+        "G. Church",
+        "W. Gilbert",
+        "J. Rogers",
+        "J. Schloss",
+        "R. Waterston"
+      ],
+      "year": 2017,
+      "venue": "Nature",
+      "citationCount": 953,
+      "doi": "10.1038/nature24286",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Human genome sequencing is now routine, and facilitates the ascertainment of millions of genetic variants within individuals, and hundreds of millions of variants across populations (1)."
+    },
+    {
+      "title": "Variant Interpretation: Functional Assays to the Rescue.",
+      "authors": [
+        "Lea M. Starita",
+        "N. Ahituv",
+        "Maitreya J. Dunham",
+        "J. Kitzman",
+        "Frederick P. Roth",
+        "Georg Seelig",
+        "J. Shendure",
+        "D. Fowler"
+      ],
+      "year": 2017,
+      "venue": "American Journal of Human Genetics",
+      "citationCount": 362,
+      "doi": "10.1016/j.ajhg.2017.07.014",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Specialized scores derived from functionally testing large numbers of variants via multiplex assays (56,57) may also be integrated into CADD in the near future."
+    },
+    {
+      "title": "FATHMM-XF: accurate prediction of pathogenic point mutations via extended features",
+      "authors": [
+        "Mark F. Rogers",
+        "Hashem A. Shihab",
+        "M. Mort",
+        "D. Cooper",
+        "Tom R. Gaunt",
+        "C. Campbell"
+      ],
+      "year": 2017,
+      "venue": "Bioinform.",
+      "citationCount": 429,
+      "doi": "10.1093/bioinformatics/btx536",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Using the Neandertal genome to study the evolution of small insertions and deletions in modern humans",
+      "authors": [
+        "Manjusha Chintalapati",
+        "M. Dannemann",
+        "Kay Prüfer"
+      ],
+      "year": 2017,
+      "venue": "BMC Evolutionary Biology",
+      "citationCount": 18,
+      "doi": "10.1186/s12862-017-1018-8",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Furthermore, CADD has also seen applications in evolutionary studies, ranging from the interpretation of evolutionary changes (30–32) to the theoretical investigation of variant fitness effects in hum"
+    },
+    {
+      "title": "Evaluation of in silico algorithms for use with ACMG/AMP clinical variant interpretation guidelines",
+      "authors": [
+        "R. Ghosh",
+        "Ninad Oak",
+        "S. Plon"
+      ],
+      "year": 2017,
+      "venue": "Genome Biology",
+      "citationCount": 214,
+      "doi": "10.1186/s13059-017-1353-5",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Characterization of pathogenic SORL1 genetic variants for association with Alzheimer’s disease: a clinical interpretation strategy",
+      "authors": [
+        "Henne Holstege",
+        "Sven J. van der Lee",
+        "Marc Hulsman",
+        "Tsz-Hang Wong",
+        "Jeroen Gj van Rooij",
+        "M. Weiss",
+        "E. Louwersheimer",
+        "F. Wolters",
+        "N. Amin",
+        "A. Uitterlinden",
+        "Albert Hofman",
+        "M. Ikram",
+        "John C. van Swieten",
+        "H. Meijers-Heijboer",
+        "Wiesje M. van der Flier",
+        "M. Reinders",
+        "Cornelia M. van Duijn",
+        "P. Scheltens"
+      ],
+      "year": 2017,
+      "venue": "European Journal of Human Genetics",
+      "citationCount": 123,
+      "doi": "10.1038/ejhg.2017.87",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "This includes variants from clinical studies, like de novo , dominant and recessive variants discovered in family-based sequencing (e.g. 23,25– 28), as well as variants identified in population-based "
+    },
+    {
+      "title": "Deep learning of the regulatory grammar of yeast 5′ untranslated regions from 500,000 random sequences",
+      "authors": [
+        "J. Cuperus",
+        "Benjamin Groves",
+        "A. Kuchina",
+        "Alexander B. Rosenberg",
+        "N. Jojic",
+        "S. Fields",
+        "Georg Seelig"
+      ],
+      "year": 2017,
+      "venue": "bioRxiv",
+      "citationCount": 196,
+      "doi": "10.1101/gr.224964.117",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Specialized scores derived from functionally testing large numbers of variants via multiplex assays (56,57) may also be integrated into CADD in the near future."
+    },
+    {
+      "title": "Impacts of Neanderthal-introgressed sequences on the landscape of human gene expression",
+      "authors": [
+        "R. McCoy",
+        "J. Wakefield",
+        "J. Akey"
+      ],
+      "year": 2017,
+      "venue": "Cell",
+      "citationCount": 160,
+      "doi": "10.1016/j.cell.2017.01.038",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "GAVIN: Gene-Aware Variant INterpretation for medical sequencing",
+      "authors": [
+        "K. Joeri van der Velde",
+        "E. D. de Boer",
+        "Cleo C. van Diemen",
+        "B. Sikkema‐Raddatz",
+        "K. Abbott",
+        "A. Knopperts",
+        "L. Franke",
+        "R. Sijmons",
+        "Tom J. de Koning",
+        "C. Wijmenga",
+        "R. Sinke",
+        "M. Swertz"
+      ],
+      "year": 2017,
+      "venue": "Genome Biology",
+      "citationCount": 60,
+      "doi": "10.1186/s13059-016-1141-7",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "However, for an alternative view on this topic, we refer the reader to recent methods that use CADD scores in conjunction with hard cutoffs; see GAVIN (23) and MSC (24)."
+    },
+    {
+      "title": "Ensembl core software resources: storage and programmatic access for DNA sequence and genome annotation",
+      "authors": [
+        "Magali Ruffier",
+        "A. Kähäri",
+        "M. Komorowska",
+        "S. Keenan",
+        "M. Laird",
+        "I. Longden",
+        "G. Proctor",
+        "S. Searle",
+        "D. Staines",
+        "K. Taylor",
+        "Alessandro Vullo",
+        "Andrew D. Yates",
+        "D. Zerbino",
+        "P. Flicek"
+      ],
+      "year": 2016,
+      "venue": "bioRxiv",
+      "citationCount": 63,
+      "doi": "10.1093/database/bax020",
+      "arxiv": null,
+      "isInfluential": true,
+      "intents": [],
+      "context_example": "The proxy-neutral variants have an allele frequency of 95–100% in humans but are absent in the inferred genome sequence of the human-ape ancestor (i.e. human-derived and fixed or nearly fixed; identif"
+    },
+    {
+      "title": "Genomic diagnosis for children with intellectual disability and/or developmental delay",
+      "authors": [
+        "Kevin M. Bowling",
+        "Michelle L. Thompson",
+        "Michelle D. Amaral",
+        "Candice R. Finnila",
+        "Susan M. Hiatt",
+        "Krysta L. Engel",
+        "J. Nicholas Cochran",
+        "Kyle B. Brothers",
+        "Kelly M. East",
+        "David E. Gray",
+        "Whitley V. Kelley",
+        "Neil E. Lamb",
+        "Edward J. Lose",
+        "Carla A. Rich",
+        "Shirley Simmons",
+        "Jana S. Whittle",
+        "Benjamin T. Weaver",
+        "Amy S. Nesmith",
+        "Richard M. Myers",
+        "Gregory S. Barsh",
+        "E. Martina Bebin",
+        "Gregory M. Cooper"
+      ],
+      "year": 2016,
+      "venue": "bioRxiv",
+      "citationCount": 269,
+      "doi": "10.1186/s13073-017-0433-1",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "M-CAP eliminates a majority of variants of uncertain significance in clinical exomes at high sensitivity",
+      "authors": [
+        "K. Jagadeesh",
+        "A. Wenger",
+        "Mark J. Berger",
+        "H. Guturu",
+        "P. Stenson",
+        "D. Cooper",
+        "J. Bernstein",
+        "G. Bejerano"
+      ],
+      "year": 2016,
+      "venue": "Nature Genetics",
+      "citationCount": 804,
+      "doi": "10.1038/ng.3703",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "REVEL: An Ensemble Method for Predicting the Pathogenicity of Rare Missense Variants.",
+      "authors": [
+        "Nilah M. Ioannidis",
+        "J. Rothstein",
+        "V. Pejaver",
+        "S. Middha",
+        "S. McDonnell",
+        "S. Baheti",
+        "Anthony M. Musolf",
+        "Qing Li",
+        "E. Holzinger",
+        "D. Karyadi",
+        "L. Cannon-Albright",
+        "C. Teerlink",
+        "J. Stanford",
+        "W. Isaacs",
+        "Jianfeng Xu",
+        "K. Cooney",
+        "E. Lange",
+        "J. Schleutker",
+        "J. Carpten",
+        "I. Powell",
+        "O. Cussenot",
+        "G. Cancel-Tassin",
+        "G. Giles",
+        "R. MacInnis",
+        "C. Maier",
+        "C. Hsieh",
+        "F. Wiklund",
+        "W. Catalona",
+        "W. Foulkes",
+        "Diptasri Mandal",
+        "R. Eeles",
+        "Z. Kote-Jarai",
+        "C. Bustamante",
+        "D. Schaid",
+        "T. Hastie",
+        "E. Ostrander",
+        "J. Bailey-Wilson",
+        "P. Radivojac",
+        "S. Thibodeau",
+        "A. Whittemore",
+        "W. Sieh"
+      ],
+      "year": 2016,
+      "venue": "American Journal of Human Genetics",
+      "citationCount": 2538,
+      "doi": "10.1016/j.ajhg.2016.08.016",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "SVScore: an impact prediction tool for structural variation",
+      "authors": [
+        "Liron Ganel",
+        "H. Abel",
+        "Ira M. Hall"
+      ],
+      "year": 2016,
+      "venue": "bioRxiv",
+      "citationCount": 52,
+      "doi": "10.1101/073833",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "CADD has also been used to develop tools for complex variants, like scoring the effect of larger structural variants (e.g. SVScore (37))."
+    },
+    {
+      "title": "A Whole-Genome Analysis Framework for Effective Identification of Pathogenic Regulatory Variants in Mendelian Disease.",
+      "authors": [
+        "D. Smedley",
+        "M. Schubach",
+        "Julius O. B. Jacobsen",
+        "Sebastian Köhler",
+        "T. Żemojtel",
+        "M. Spielmann",
+        "Marten Jäger",
+        "H. Hochheiser",
+        "N. Washington",
+        "J. McMurry",
+        "M. Haendel",
+        "C. Mungall",
+        "S. Lewis",
+        "T. Groza",
+        "G. Valentini",
+        "Peter N. Robinson"
+      ],
+      "year": 2016,
+      "venue": "American Journal of Human Genetics",
+      "citationCount": 255,
+      "doi": "10.1016/j.ajhg.2016.07.005",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "TP53 Variations in Human Cancers: New Lessons from the IARC TP53 Database and Genomics Data",
+      "authors": [
+        "L. Bouaoun",
+        "D. Sonkin",
+        "M. Ardin",
+        "M. Hollstein",
+        "G. Byrnes",
+        "J. Zavadil",
+        "M. Olivier"
+      ],
+      "year": 2016,
+      "venue": "Human Mutation",
+      "citationCount": 695,
+      "doi": "10.1002/humu.23035",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Examples include the task of discriminating ClinVar pathogenic (7) versus common human genetic variants (8); correlation with experimentally measured functional effects in regulatory elements (9–12); "
+    },
+    {
+      "title": "Fast, scalable prediction of deleterious noncoding variants from functional and population genomic data",
+      "authors": [
+        "Yi-Fei Huang",
+        "Brad Gulko",
+        "A. Siepel"
+      ],
+      "year": 2016,
+      "venue": "Nature Genetics",
+      "citationCount": 321,
+      "doi": "10.1038/ng.3810",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "CADD shares this strength with only a few other scores, such as Eigen (59), LINSIGHT (60) and CDTS (61)."
+    },
+    {
+      "title": "Ensembl comparative genomics resources",
+      "authors": [
+        "J. Herrero",
+        "Matthieu Muffato",
+        "K. Beal",
+        "S. Fitzgerald",
+        "Leo Gordon",
+        "M. Pignatelli",
+        "A. Vilella",
+        "S. Searle",
+        "R. Amode",
+        "Simon Brent",
+        "W. Spooner",
+        "E. Kulesha",
+        "Andrew D. Yates",
+        "P. Flicek"
+      ],
+      "year": 2016,
+      "venue": "Database: The Journal of Biological Databases and Curation",
+      "citationCount": 50,
+      "doi": "10.1093/database/baw053",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "The Ensembl Variant Effect Predictor",
+      "authors": [
+        "William M. McLaren",
+        "Laurent Gil",
+        "S. Hunt",
+        "H. Riat",
+        "G. Ritchie",
+        "A. Thormann",
+        "P. Flicek",
+        "F. Cunningham"
+      ],
+      "year": 2016,
+      "venue": "Genome Biology",
+      "citationCount": 7325,
+      "doi": "10.1186/s13059-016-0974-4",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Annotations are obtained using Ensembl Variant Effect Predictor (VEP (15)), conservation and selection scores (e."
+    },
+    {
+      "title": "Ensembl comparative genomics resources",
+      "authors": [
+        "J. Herrero",
+        "Matthieu Muffato",
+        "K. Beal",
+        "S. Fitzgerald",
+        "Leo Gordon",
+        "M. Pignatelli",
+        "A. Vilella",
+        "S. Searle",
+        "R. Amode",
+        "Simon Brent",
+        "W. Spooner",
+        "E. Kulesha",
+        "Andrew D. Yates",
+        "P. Flicek"
+      ],
+      "year": 2016,
+      "venue": "Database J. Biol. Databases Curation",
+      "citationCount": 440,
+      "doi": "10.1093/database/bav096",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Ensembl regulation resources",
+      "authors": [
+        "D. Zerbino",
+        "N. Johnson",
+        "Thomas Juetteman",
+        "Daniel Sheppard",
+        "S. Wilder",
+        "Ilias Lavidas",
+        "M. Nuhn",
+        "Emily Perry",
+        "Quentin Raffaillac-Desfosses",
+        "D. Sobral",
+        "D. Keefe",
+        "S. Gräf",
+        "Ikhlak Ahmed",
+        "R. Kinsella",
+        "Bethan Pritchard",
+        "Simon Brent",
+        "R. Amode",
+        "A. Parker",
+        "S. Trevanion",
+        "E. Birney",
+        "I. Dunham",
+        "P. Flicek"
+      ],
+      "year": 2016,
+      "venue": "Database J. Biol. Databases Curation",
+      "citationCount": 64,
+      "doi": "10.1093/database/bav119",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Estimation statistics should replace significance testing",
+      "authors": [
+        "Adam Claridge‐Chang",
+        "P. Assam"
+      ],
+      "year": 2016,
+      "venue": "Nature Methods",
+      "citationCount": 316,
+      "doi": "10.1038/nmeth.3729",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "dbNSFP v3.0: A One-Stop Database of Functional Predictions and Annotations for Human Non-synonymous and Splice Site SNVs",
+      "authors": [
+        "Xiaoming Liu",
+        "Chunlei Wu",
+        "Chang Li",
+        "E. Boerwinkle"
+      ],
+      "year": 2016,
+      "venue": "Human Mutation",
+      "citationCount": 932,
+      "doi": "10.1002/humu.22932",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "In addition, our SNV scores are available through a number of third-party sources, such as dbNSFP (48), as a plug-in for Ensembl VEP, ANNOVAR (49), SeattleSeq (50), ExAC / gnomAD (8) and PopViz (51)."
+    },
+    {
+      "title": "A SPECTRAL APPROACH INTEGRATING FUNCTIONAL GENOMIC ANNOTATIONS FOR CODING AND NONCODING VARIANTS",
+      "authors": [
+        "I. Ionita-Laza",
+        "K. McCallum",
+        "Bin Xu",
+        "J. Buxbaum"
+      ],
+      "year": 2016,
+      "venue": "Nature Genetics",
+      "citationCount": 580,
+      "doi": "10.1038/ng.3477",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "background"
+      ],
+      "context_example": "Non-coding variants in Figure S1A were selected from all variants in the two set that were available in the Eigen, FunSeq2 (2) and LINSIGHT wholegenome files."
+    },
+    {
+      "title": "Analysis of protein-coding genetic variation in 60,706 humans",
+      "authors": [
+        "Monkol Lek",
+        "Konrad J. Karczewski",
+        "Eric V. Minikel",
+        "Kaitlin E. Samocha",
+        "Eric Banks",
+        "Timothy Fennell",
+        "Anne H. O'Donnell-Luria",
+        "James S. Ware",
+        "Andrew J. Hill",
+        "Beryl B. Cummings",
+        "Taru Tukiainen",
+        "Daniel P. Birnbaum",
+        "Jack A. Kosmicki",
+        "Laramie E. Duncan",
+        "Karol Estrada",
+        "Feng-Mei Zhao",
+        "J. Zou",
+        "Emma Pierce-Hoffman",
+        "Joanne Berghout",
+        "David N. Cooper",
+        "Nicole Deflaux",
+        "Mark DePristo",
+        "Ron Do",
+        "Jason Flannick",
+        "Menachem Fromer",
+        "Laura Gauthier",
+        "Jackie Goldstein",
+        "Namrata Gupta",
+        "Daniel Howrigan",
+        "Adam Kiezun",
+        "Mitja I. Kurki",
+        "Ami Levy Moonshine",
+        "Pradeep Natarajan",
+        "Lorena Orozco",
+        "Gina M. Peloso",
+        "Ryan Poplin",
+        "Manuel A. Rivas",
+        "Valentin Ruano-Rubio",
+        "Samuel A. Rose",
+        "Douglas M. Ruderfer",
+        "Khalid Shakir",
+        "Peter D. Stenson",
+        "Christine Stevens",
+        "Brett P. Thomas",
+        "Grace Tiao",
+        "Maria T. Tusie-Luna",
+        "Ben Weisburd",
+        "Hong-Hee Won",
+        "Dong-Mei Yu",
+        "David M. Altshuler",
+        "Diego Ardissino",
+        "Michael Boehnke",
+        "John Danesh",
+        "Stacey Donnelly",
+        "Roberto Elosua",
+        "Jose C. Florez",
+        "Stacey B. Gabriel",
+        "Gad Getz",
+        "Stephen J. Glatt",
+        "Christina M. Hultman",
+        "Sekar Kathiresan",
+        "Markku Laakso",
+        "Steven McCarroll",
+        "Mark I. McCarthy",
+        "Dermot McGovern",
+        "Ruth McPherson",
+        "Benjamin M. Neale",
+        "Aarno Palotie",
+        "Shaun M. Purcell",
+        "Danish Saleheen",
+        "Jeremiah M. Scharf",
+        "Pamela Sklar",
+        "Patrick F. Sullivan",
+        "Jaakko Tuomilehto",
+        "Ming T. Tsuang",
+        "Hugh C. Watkins",
+        "James G. Wilson",
+        "Mark J. Daly",
+        "Daniel G. MacArthur"
+      ],
+      "year": 2015,
+      "venue": "Nature",
+      "citationCount": 9663,
+      "doi": "10.1038/nature19057",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "background",
+        "methodology"
+      ],
+      "context_example": "05) in the ExAC database (8), including a comparison matching missense variants in the same genes (see Supplementary Materials for more details)."
+    },
+    {
+      "title": "Assessing the Pathogenicity of Insertion and Deletion Variants with the Variant Effect Scoring Tool (VEST‐Indel)",
+      "authors": [
+        "C. Douville",
+        "David L. Masica",
+        "P. Stenson",
+        "D. Cooper",
+        "Derek M. Gygax",
+        "Rick Kim",
+        "Michael Ryan",
+        "R. Karchin"
+      ],
+      "year": 2015,
+      "venue": "Human Mutation",
+      "citationCount": 142,
+      "doi": "10.1002/humu.22911",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "methodology"
+      ],
+      "context_example": "Non-coding variants and more missense scores: AUROC performances of different scores on (A) non-coding variants and (B) the same missense variants from Figure 2B. Scores from VEST and REVEL are not in"
+    },
+    {
+      "title": "Predicting effects of noncoding variants with deep learning–based sequence model",
+      "authors": [
+        "Jian Zhou",
+        "O. Troyanskaya"
+      ],
+      "year": 2015,
+      "venue": "Nature Methods",
+      "citationCount": 2236,
+      "doi": "10.1038/nmeth.3547",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Predicting effective microRNA target sites in mammalian mRNAs",
+      "authors": [
+        "Vikram Agarwal",
+        "G. Bell",
+        "Jin-Wu Nam",
+        "D. Bartel"
+      ],
+      "year": 2015,
+      "venue": "eLife",
+      "citationCount": 6608,
+      "doi": "10.7554/eLife.05005",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "A method to predict the impact of regulatory variants from DNA sequence",
+      "authors": [
+        "Dongwon Lee",
+        "David U. Gorkin",
+        "Maggie Baker",
+        "B. Strober",
+        "Alessandro L. Asoni",
+        "A. McCallion",
+        "Michael A. Beer"
+      ],
+      "year": 2015,
+      "venue": "Nature Genetics",
+      "citationCount": 455,
+      "doi": "10.1038/ng.3331",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Evaluation of CADD Scores in Curated Mismatch Repair Gene Variants Yields a Model for Clinical Validation and Prioritization",
+      "authors": [
+        "K. J. Velde",
+        "J. Kuiper",
+        "Bryony A. Thompson",
+        "J. Plazzer",
+        "G. Valkenhoef",
+        "M. Haan",
+        "J. Jongbloed",
+        "C. Wijmenga",
+        "T. J. Koning",
+        "K. Abbott",
+        "R. Sinke",
+        "A. Spurdle",
+        "F. Macrae",
+        "M. Genuardi",
+        "Rolf H. Sijmons",
+        "M. Swertz"
+      ],
+      "year": 2015,
+      "venue": "Human Mutation",
+      "citationCount": 43,
+      "doi": "10.1002/humu.22798",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "This includes variants from clinical studies, like de novo , dominant and recessive variants discovered in family-based sequencing (e.g. 23,25– 28), as well as variants identified in population-based "
+    },
+    {
+      "title": "DANN: a deep learning approach for annotating the pathogenicity of genetic variants",
+      "authors": [
+        "Daniel Quang",
+        "Yifei Chen",
+        "Xiaohui Xie"
+      ],
+      "year": 2015,
+      "venue": "Bioinform.",
+      "citationCount": 985,
+      "doi": "10.1093/bioinformatics/btu703",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "The human splicing code reveals new insights into the genetic determinants of disease",
+      "authors": [
+        "Hui-Yuan Xiong",
+        "Babak Alipanahi",
+        "Leo J. Lee",
+        "Hannes Bretschneider",
+        "D. Merico",
+        "R. Yuen",
+        "Y. Hua",
+        "Serge Gueroussov",
+        "H. Najafabadi",
+        "T. Hughes",
+        "Q. Morris",
+        "Yoseph Barash",
+        "A. Krainer",
+        "N. Jojic",
+        "S. Scherer",
+        "B. Blencowe",
+        "B. Frey"
+      ],
+      "year": 2014,
+      "venue": "Science",
+      "citationCount": 1221,
+      "doi": "10.1126/science.1254806",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "In silico prediction of splice-altering single nucleotide variants in the human genome",
+      "authors": [
+        "X. Jian",
+        "E. Boerwinkle",
+        "Xiaoming Liu"
+      ],
+      "year": 2014,
+      "venue": "Nucleic Acids Research",
+      "citationCount": 486,
+      "doi": "10.1093/nar/gku1206",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "FunSeq2: a framework for prioritizing noncoding regulatory variants in cancer",
+      "authors": [
+        "Yao Fu",
+        "Zhu Liu",
+        "S. Lou",
+        "Jason Bedford",
+        "X. Mu",
+        "Kevin Y. Yip",
+        "Ekta Khurana",
+        "M. Gerstein"
+      ],
+      "year": 2014,
+      "venue": "Genome Biology",
+      "citationCount": 339,
+      "doi": "10.1186/s13059-014-0480-5",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "methodology"
+      ],
+      "context_example": "Non-coding variants in Figure S1A were selected from all variants in the two set that were available in the Eigen, FunSeq2 (2) and LINSIGHT wholegenome files."
+    },
+    {
+      "title": "Integrating Functional Data to Prioritize Causal Variants in Statistical Fine-Mapping Studies",
+      "authors": [
+        "Gleb Kichaev",
+        "Wen-Yun Yang",
+        "S. Lindstrom",
+        "F. Hormozdiari",
+        "E. Eskin",
+        "Alkes L. Price",
+        "Peter Kraft",
+        "B. Pasaniuc"
+      ],
+      "year": 2014,
+      "venue": "PLoS Genetics",
+      "citationCount": 496,
+      "doi": "10.1371/journal.pgen.1004722",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "…prioritize variants based on functional or evolutionary properties such as sequence conservation, genic effects and regulatory element annotations can serve to improve power and ultimately the succes"
+    },
+    {
+      "title": "Ranking non-synonymous single nucleotide polymorphisms based on disease concepts",
+      "authors": [
+        "Hashem A. Shihab",
+        "J. Gough",
+        "M. Mort",
+        "D. Cooper",
+        "I. Day",
+        "Tom R. Gaunt"
+      ],
+      "year": 2014,
+      "venue": "Human Genomics",
+      "citationCount": 209,
+      "doi": "10.1186/1479-7364-8-11",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Approximation to the Distribution of Fitness Effects across Functional Categories in Human Segregating Polymorphisms",
+      "authors": [
+        "Fernando Racimo",
+        "J. Schraiber"
+      ],
+      "year": 2014,
+      "venue": "bioRxiv",
+      "citationCount": 56,
+      "doi": "10.1101/002345",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Furthermore, CADD has also seen applications in evolutionary studies, ranging from the interpretation of evolutionary changes (30–32) to the theoretical investigation of variant fitness effects in hum"
+    },
+    {
+      "title": "CrossMap: a versatile tool for coordinate conversion between genome assemblies",
+      "authors": [
+        "Hao Zhao",
+        "Zhi-fu Sun",
+        "Jing Wang",
+        "Haojie Huang",
+        "J. Kocher",
+        "Liguo Wang"
+      ],
+      "year": 2014,
+      "venue": "Bioinform.",
+      "citationCount": 722,
+      "doi": "10.1093/bioinformatics/btt730",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "MutationTaster2: mutation prediction for the deep-sequencing age",
+      "authors": [
+        "J. M. Schwarz",
+        "D. Cooper",
+        "M. Schuelke",
+        "Dominik Seelow"
+      ],
+      "year": 2014,
+      "venue": "Nature Methods",
+      "citationCount": 3536,
+      "doi": "10.1038/nmeth.2890",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "methodology"
+      ],
+      "context_example": "All other scores (i.e. FATHMM (4), LRT(5), MutationAssessor (6), MutationTaster (7), Polyphen2, PROVEAN (8), REVEL, SIFT, SiPhy(9), VEST (10)) were annotated via dbNSFP."
+    },
+    {
+      "title": "A general framework for estimating the relative pathogenicity of human genetic variants",
+      "authors": [
+        "M. Kircher",
+        "Daniela M. Witten",
+        "Preti Jain",
+        "B. O’Roak",
+        "G. Cooper",
+        "J. Shendure"
+      ],
+      "year": 2014,
+      "venue": "Nature Genetics",
+      "citationCount": 6021,
+      "doi": "10.1038/ng.2892",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "We previously described ‘Combined Annotation-Dependent Depletion’ or CADD, a score that ranks genetic variants, including single nucleotide variants (SNVs) and short inserts and deletions (InDels), th"
+    },
+    {
+      "title": "ClinVar: public archive of relationships among sequence variation and human phenotype",
+      "authors": [
+        "M. Landrum",
+        "Jennifer M. Lee",
+        "George R. Riley",
+        "W. Jang",
+        "W. Rubinstein",
+        "D. Church",
+        "D. Maglott"
+      ],
+      "year": 2013,
+      "venue": "Nucleic Acids Res.",
+      "citationCount": 3313,
+      "doi": "10.1093/nar/gkt1113",
+      "arxiv": null,
+      "isInfluential": true,
+      "intents": [],
+      "context_example": "Akeystrength of CADD is that the model is trained on a very large training set that does not suffer from ascertainment bias inherent to curated sets of pathogenic and benign variants such as ClinVar ("
+    },
+    {
+      "title": "DNAshape: a method for the high-throughput prediction of DNA structural features on a genomic scale",
+      "authors": [
+        "Tianyin Zhou",
+        "L. Yang",
+        "Yan Lu",
+        "I. Dror",
+        "A. C. Machado",
+        "T. Ghane",
+        "R. Felice",
+        "R. Rohs"
+      ],
+      "year": 2013,
+      "venue": "Nucleic Acids Res.",
+      "citationCount": 324,
+      "doi": "10.1093/nar/gkt437",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "background"
+      ],
+      "context_example": "1 (19), Led to overfitting and has unclear definition for InDels, therefore removed in v1."
+    },
+    {
+      "title": "Whole Genome Sequencing in Autism Identifies Hotspots for De Novo Germline Mutation",
+      "authors": [
+        "J. Michaelson",
+        "Yujian Shi",
+        "Madhusudan Gujral",
+        "Han-Cheng Zheng",
+        "Dheeraj Malhotra",
+        "Xin Jin",
+        "Min Jian",
+        "Guangming Liu",
+        "Douglas S. Greer",
+        "A. Bhandari",
+        "Wenting Wu",
+        "R. Corominas",
+        "Á. Peoples",
+        "A. Koren",
+        "A. Gore",
+        "Shuli Kang",
+        "G. Lin",
+        "Jasper A. Estabillo",
+        "T. Gadomski",
+        "Balvindar Singh",
+        "Kun Zhang",
+        "N. Akshoomoff",
+        "C. Corsello",
+        "S. Mccarroll",
+        "L. Iakoucheva",
+        "Yingrui Li",
+        "Jun Wang",
+        "J. Sebat"
+      ],
+      "year": 2012,
+      "venue": "Cell",
+      "citationCount": 551,
+      "doi": "10.1016/j.cell.2012.11.019",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Predicting the Functional Effect of Amino Acid Substitutions and Indels",
+      "authors": [
+        "Yongwook Choi",
+        "Gregory E. Sims",
+        "S. Murphy",
+        "J. Miller",
+        "A. Chan"
+      ],
+      "year": 2012,
+      "venue": "PLoS ONE",
+      "citationCount": 2831,
+      "doi": "10.1371/journal.pone.0046688",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "methodology"
+      ],
+      "context_example": "All other scores (i.e. FATHMM (4), LRT(5), MutationAssessor (6), MutationTaster (7), Polyphen2, PROVEAN (8), REVEL, SIFT, SiPhy(9), VEST (10)) were annotated via dbNSFP."
+    },
+    {
+      "title": "Distributed GraphLab: A Framework for Machine Learning in the Cloud",
+      "authors": [
+        "Yucheng Low",
+        "Joseph Gonzalez",
+        "Aapo Kyrola",
+        "Danny Bickson",
+        "Carlos Guestrin",
+        "Joseph M Hellerstein"
+      ],
+      "year": 2012,
+      "venue": "Proceedings of the VLDB Endowment",
+      "citationCount": 1089,
+      "doi": "10.14778/2212351.2212354",
+      "arxiv": "1204.6078",
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "0 used a linear support vector machine implemented in the LIBOCAS library (42), later models used L 2 -regularized logistic regression implemented in GraphLab Create (43)."
+    },
+    {
+      "title": "Unsupervised pattern discovery in human chromatin structure through genomic segmentation",
+      "authors": [
+        "M. M. Hoffman",
+        "Orion J. Buske",
+        "Jie Wang",
+        "Z. Weng",
+        "J. Bilmes",
+        "William Stafford Noble"
+      ],
+      "year": 2012,
+      "venue": "Nature Methods",
+      "citationCount": 624,
+      "doi": "10.1038/nmeth.1937",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "methodology"
+      ],
+      "context_example": "Segway (16): replaced with Ensembl regulatory build (which is based on a Segway model)"
+    },
+    {
+      "title": "Massively parallel functional dissection of mammalian enhancers in vivo",
+      "authors": [
+        "Rupali Patwardhan",
+        "J. Hiatt",
+        "Daniela M. Witten",
+        "Mee J. Kim",
+        "Robin P. Smith",
+        "Dalit May",
+        "Choli Lee",
+        "Jennifer M Andrie",
+        "Su-In Lee",
+        "G. Cooper",
+        "N. Ahituv",
+        "L. Pennacchio",
+        "J. Shendure"
+      ],
+      "year": 2012,
+      "venue": "Nature Biotechnology",
+      "citationCount": 555,
+      "doi": "10.1038/nbt.2136",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Needles in stacks of needles: finding disease-causal variants in a wealth of genomic data",
+      "authors": [
+        "G. Cooper",
+        "J. Shendure"
+      ],
+      "year": 2011,
+      "venue": "Nature reviews genetics",
+      "citationCount": 612,
+      "doi": "10.1038/nrg3046",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "However, the resolution of purely genetic strategies is limited by statistical power and other factors (2)."
+    },
+    {
+      "title": "Predicting the functional impact of protein mutations: application to cancer genomics",
+      "authors": [
+        "B. Reva",
+        "Y. Antipin",
+        "C. Sander"
+      ],
+      "year": 2011,
+      "venue": "Nucleic Acids Research",
+      "citationCount": 1998,
+      "doi": "10.1093/nar/gkr407",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "methodology"
+      ],
+      "context_example": "FATHMM (4), LRT(5), MutationAssessor (6), MutationTaster (7), Polyphen2, PROVEAN (8), REVEL, SIFT, SiPhy(9), VEST (10)) were annotated via dbNSFP."
+    },
+    {
+      "title": "Scikit-learn: Machine Learning in Python",
+      "authors": [
+        "Fabian Pedregosa",
+        "G. Varoquaux",
+        "Alexandre Gramfort",
+        "V. Michel",
+        "B. Thirion",
+        "O. Grisel",
+        "Mathieu Blondel",
+        "Gilles Louppe",
+        "P. Prettenhofer",
+        "Ron Weiss",
+        "Ron J. Weiss",
+        "J. VanderPlas",
+        "Alexandre Passos",
+        "D. Cournapeau",
+        "M. Brucher",
+        "M. Perrot",
+        "E. Duchesnay"
+      ],
+      "year": 2011,
+      "venue": "Journal of machine learning research",
+      "citationCount": 93989,
+      "doi": "10.5555/1953048.2078195",
+      "arxiv": "1201.0490",
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "4, a logistic regression model was fit using a fully open source pipeline based on SciPy (44) and scikit-learn (45)."
+    },
+    {
+      "title": "Identifying a High Fraction of the Human Genome to be under Selective Constraint Using GERP++",
+      "authors": [
+        "Eugene Davydov",
+        "D. Goode",
+        "M. Sirota",
+        "G. Cooper",
+        "A. Sidow",
+        "S. Batzoglou"
+      ],
+      "year": 2010,
+      "venue": "PLoS Comput. Biol.",
+      "citationCount": 1734,
+      "doi": "10.1371/journal.pcbi.1001025",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "ANNOVAR: functional annotation of genetic variants from high-throughput sequencing data",
+      "authors": [
+        "Kai Wang",
+        "Mingyao Li",
+        "H. Hakonarson"
+      ],
+      "year": 2010,
+      "venue": "Nucleic Acids Research",
+      "citationCount": 13707,
+      "doi": "10.1093/nar/gkq603",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "In addition, our SNV scores are available through a number of third-party sources, such as dbNSFP (48), as a plug-in for Ensembl VEP, ANNOVAR (49), SeattleSeq (50), ExAC / gnomAD (8) and PopViz (51)."
+    },
+    {
+      "title": "Single-nucleotide evolutionary constraint scores highlight disease-causing mutations",
+      "authors": [
+        "G. Cooper",
+        "D. Goode",
+        "Sarah B. H. Ng",
+        "A. Sidow",
+        "M. Bamshad",
+        "J. Shendure",
+        "D. Nickerson"
+      ],
+      "year": 2010,
+      "venue": "Nature Methods",
+      "citationCount": 209,
+      "doi": "10.1038/nmeth0410-250",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "…prioritize variants based on functional or evolutionary properties such as sequence conservation, genic effects and regulatory element annotations can serve to improve power and ultimately the succes"
+    },
+    {
+      "title": "A method and server for predicting damaging missense mutations",
+      "authors": [
+        "I. Adzhubei",
+        "S. Schmidt",
+        "L. Peshkin",
+        "V. Ramensky",
+        "A. Gerasimova",
+        "P. Bork",
+        "A. Kondrashov",
+        "S. Sunyaev"
+      ],
+      "year": 2010,
+      "venue": "Nature Methods",
+      "citationCount": 13219,
+      "doi": "10.1038/nmeth0410-248",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Examples of annotations include transcript information like distance to exon-intron boundaries, DNase hypersensitivity, transcription factor binding, expression levels in commonly studied cell lines a"
+    },
+    {
+      "title": "High-resolution analysis of DNA regulatory elements by synthetic saturation mutagenesis",
+      "authors": [
+        "Rupali Patwardhan",
+        "Choli Lee",
+        "O. Litvin",
+        "David L. Young",
+        "D. Pe’er",
+        "J. Shendure"
+      ],
+      "year": 2009,
+      "venue": "Nature Biotechnology",
+      "citationCount": 373,
+      "doi": "10.1038/nbt.1589",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Examples include the task of discriminating ClinVar pathogenic (7) versus common human genetic variants (8); correlation with experimentally measured functional effects in regulatory elements (9–12); "
+    },
+    {
+      "title": "Optimized Cutting Plane Algorithm for Large-Scale Risk Minimization",
+      "authors": [
+        "Vojtech Franc",
+        "S. Sonnenburg"
+      ],
+      "year": 2009,
+      "venue": "Journal of machine learning research",
+      "citationCount": 86,
+      "doi": "10.5555/1577069.1755859",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "0 used a linear support vector machine implemented in the LIBOCAS library (42), later models used L 2 -regularized logistic regression implemented in GraphLab Create (43)."
+    },
+    {
+      "title": "Targeted Capture and Massively Parallel Sequencing of Twelve Human Exomes",
+      "authors": [
+        "Sarah B. H. Ng",
+        "Emily H. Turner",
+        "P. Robertson",
+        "Steven Flygare",
+        "Abigail W. Bigham",
+        "Choli Lee",
+        "Tristan Shaffer",
+        "Michelle Wong",
+        "A. Bhattacharjee",
+        "Evan E. Eichler",
+        "M. Bamshad",
+        "Deborah A. Nickerson",
+        "J. Shendure"
+      ],
+      "year": 2009,
+      "venue": "Nature",
+      "citationCount": 1827,
+      "doi": "10.1038/nature08250",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "In addition, our SNV scores are available through a number of third-party sources, such as dbNSFP (48), as a plug-in for Ensembl VEP, ANNOVAR (49), SeattleSeq (50), ExAC / gnomAD (8) and PopViz (51)."
+    },
+    {
+      "title": "Identifying novel constrained elements by exploiting biased substitution patterns",
+      "authors": [
+        "Manuel Garber",
+        "M. Guttman",
+        "M. Clamp",
+        "M. Zody",
+        "Nir Friedman",
+        "Xiaohui Xie"
+      ],
+      "year": 2009,
+      "venue": "Bioinform.",
+      "citationCount": 385,
+      "doi": "10.1093/bioinformatics/btp190",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "methodology"
+      ],
+      "context_example": "All other scores (i.e. FATHMM (4), LRT(5), MutationAssessor (6), MutationTaster (7), Polyphen2, PROVEAN (8), REVEL, SIFT, SiPhy(9), VEST (10)) were annotated via dbNSFP."
+    },
+    {
+      "title": "Widespread Genomic Signatures of Natural Selection in Hominid Evolution",
+      "authors": [
+        "Graham P. McVicker",
+        "D. Gordon",
+        "Colleen Davis",
+        "P. Green"
+      ],
+      "year": 2009,
+      "venue": "PLoS Genetics",
+      "citationCount": 453,
+      "doi": "10.1371/journal.pgen.1000471",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Python for Scientific Computing",
+      "authors": [
+        "T. Oliphant"
+      ],
+      "year": 2007,
+      "venue": "Computing in science & engineering (Print)",
+      "citationCount": 3009,
+      "doi": "10.1109/MCSE.2007.58",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "4, a logistic regression model was fit using a fully open source pipeline based on SciPy (44) and scikit-learn (45)."
+    },
+    {
+      "title": "Evolutionarily conserved elements in vertebrate, insect, worm, and yeast genomes.",
+      "authors": [
+        "A. Siepel",
+        "G. Bejerano",
+        "J. S. Pedersen",
+        "A. Hinrichs",
+        "Minmei Hou",
+        "K. Rosenbloom",
+        "H. Clawson",
+        "J. Spieth",
+        "L. Hillier",
+        "S. Richards",
+        "G. Weinstock",
+        "R. Wilson",
+        "R. Gibbs",
+        "W. Kent",
+        "W. Miller",
+        "D. Haussler"
+      ],
+      "year": 2005,
+      "venue": "Genome Research",
+      "citationCount": 4080,
+      "doi": "10.1101/GR.3715005",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "PhyloP (16), PhastCons (17), GERP++ (18)), different tracks from the UCSC genome browser (19) as well as flat files of epigenetic information from the ENCODE and NIH RoadMap projects."
+    },
+    {
+      "title": "Conserved seed pairing, often flanked by adenosines, indicates that thousands of human genes are microRNA targets.",
+      "authors": [
+        "Benjamin P. Lewis",
+        "C. Burge",
+        "D. Bartel"
+      ],
+      "year": 2005,
+      "venue": "Cell",
+      "citationCount": 12374,
+      "doi": "10.1016/J.CELL.2004.12.035",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "SIFT: predicting amino acid changes that affect protein function",
+      "authors": [
+        "P. Ng",
+        "S. Henikoff"
+      ],
+      "year": 2003,
+      "venue": "Nucleic Acids Res.",
+      "citationCount": 6582,
+      "doi": "10.1093/NAR/GKG509",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Examples of annotations include transcript information like distance to exon-intron boundaries, DNase hypersensitivity, transcription factor binding, expression levels in commonly studied cell lines a"
+    },
+    {
+      "title": "Human Gene Mutation Database (HGMD®): 2003 update",
+      "authors": [
+        "P. Stenson",
+        "E. Ball",
+        "M. Mort",
+        "A. Phillips",
+        "Jacqueline A. Shiel",
+        "Nick S. T. Thomas",
+        "S. Abeysinghe",
+        "M. Krawczak",
+        "D. Cooper"
+      ],
+      "year": 2003,
+      "venue": "Human Mutation",
+      "citationCount": 1865,
+      "doi": "10.1002/humu.10212",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Akeystrength of CADD is that the model is trained on a very large training set that does not suffer from ascertainment bias inherent to curated sets of pathogenic and benign variants such as ClinVar ("
+    },
+    {
+      "title": "Base-calling of automated sequencer traces using phred. II. Error probabilities.",
+      "authors": [
+        "Brent Ewing",
+        "P. Green"
+      ],
+      "year": 1998,
+      "venue": "Genome Research",
+      "citationCount": 5741,
+      "doi": "10.1101/GR.8.3.186",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Base-calling of automated sequencer traces using phred. I. Accuracy assessment.",
+      "authors": [
+        "Brent Ewing",
+        "L. Hillier",
+        "M. Wendl",
+        "P. Green"
+      ],
+      "year": 1998,
+      "venue": "Genome Research",
+      "citationCount": 7936,
+      "doi": "10.1101/GR.8.3.175",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "background"
+      ],
+      "context_example": "log10-derived, (6)) rank score based on the genome-wide distribution of scores for all ∼9 billion potential SNVs, the set of all three non-reference alleles at each position of the reference assembly."
+    },
+    {
+      "title": "Amino Acid Difference Formula to Help Explain Protein Evolution",
+      "authors": [
+        "R. Grantham"
+      ],
+      "year": 1974,
+      "venue": "Science",
+      "citationCount": 2369,
+      "doi": "10.1126/science.185.4154.862",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "IMHOTEP-a composite score integrating popular tools for predicting the functional consequences of non-synonymous sequence variants.",
+      "authors": [
+        "Carolin Knecht",
+        "M. Mort",
+        "O. Junge",
+        "D. Cooper",
+        "M. Krawczak",
+        "A. Caliebe"
+      ],
+      "year": 2016,
+      "venue": "Nucleic Acids Research",
+      "citationCount": 14,
+      "doi": null,
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "Some recently developed predictors are ensemble learners, which combine CADD and other scores (38–41)."
+    },
+    {
+      "title": "Supplementary data: Comprehensive modeling of microRNA targets predicts functional non-conserved and non-canonical sites",
+      "authors": [
+        "D. Betel",
+        "Anjali J. Koppal",
+        "P. Agius",
+        "C. Sander",
+        "C. Leslie"
+      ],
+      "year": 2010,
+      "venue": "",
+      "citationCount": 1350,
+      "doi": null,
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": null
+    },
+    {
+      "title": "Detection of nonneutral substitution rates on mammalian phylogenies.",
+      "authors": [
+        "K. Pollard",
+        "M. Hubisz",
+        "K. Rosenbloom",
+        "A. Siepel"
+      ],
+      "year": 2010,
+      "venue": "Genome Research",
+      "citationCount": 2330,
+      "doi": "10.1101/gr.097857.109",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "PhyloP (16), PhastCons (17), GERP++ (18)), different tracks from the UCSC genome browser (19) as well as flat files of epigenetic information from the ENCODE and NIH RoadMap projects."
+    },
+    {
+      "title": "Supplemental Material References",
+      "authors": [],
+      "year": 2007,
+      "venue": "",
+      "citationCount": 1006,
+      "doi": null,
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [
+        "methodology"
+      ],
+      "context_example": "All other scores (i.e. FATHMM (4), LRT(5), MutationAssessor (6), MutationTaster (7), Polyphen2, PROVEAN (8), REVEL, SIFT, SiPhy(9), VEST (10)) were annotated via dbNSFP."
+    },
+    {
+      "title": "Bioinformatics Applications Note Sequence Analysis Tabix: Fast Retrieval of Sequence Features from Generic Tab-delimited Files",
+      "authors": [
+        "Heng Li"
+      ],
+      "year": null,
+      "venue": "",
+      "citationCount": 556,
+      "doi": null,
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": [],
+      "context_example": "For users only interested in a small number of SNVs, the score lookup process can now be simplified and accelerated by either retrieving pre-scored SNVs via tabix (46), or through a new interface that"
+    }
+  ],
+  "references_note": "intents: background | methodology | result. isInfluential marks references S2 judges central.",
+  "citing_papers": [
+    {
+      "title": "MNV-aware molecular characterization of a rare homozygous TTPA complex allele in ataxia with vitamin E deficiency",
+      "authors": [],
+      "year": 2026,
+      "venue": "Zeitschrift für Induktive Abstammungs- und Vererbungslehre",
+      "citationCount": 0,
+      "doi": "10.1007/s00438-026-02512-1",
+      "arxiv": null,
+      "isInfluential": true,
+      "intents": []
+    },
+    {
+      "title": "A truncated COL10A1 protein causes Schmid metaphyseal chondrodysplasia via protein downregulation and impairing α1 trimer formation and secretion",
+      "authors": [],
+      "year": 2026,
+      "venue": "Functional & Integrative Genomics",
+      "citationCount": 0,
+      "doi": "10.1007/s10142-026-02044-2",
+      "arxiv": null,
+      "isInfluential": true,
+      "intents": []
+    },
+    {
+      "title": "OtoVCE: a mechanism-aware language-model evidence layer for hereditary hearing-loss variant interpretation",
+      "authors": [
+        "Shao-Pei Ye",
+        "Lan Wang",
+        "Peng Chen"
+      ],
+      "year": 2026,
+      "venue": "Frontiers in Genetics",
+      "citationCount": 0,
+      "doi": "10.3389/fgene.2026.1880490",
+      "arxiv": null,
+      "isInfluential": true,
+      "intents": []
+    },
+    {
+      "title": "TTC14 dysfunction contributing to microcephaly and lissencephaly spectrum features through protein mislocalization and impaired RNA processing",
+      "authors": [
+        "S. R. Ahmad",
+        "M. Zeyaullah",
+        "Mohammad Suhail Khan",
+        "Abdelrhman A G Altijani",
+        "Ali Mohieldin",
+        "K. Muzammil"
+      ],
+      "year": 2026,
+      "venue": "Human Genetics",
+      "citationCount": 0,
+      "doi": "10.1007/s00439-026-02862-1",
+      "arxiv": null,
+      "isInfluential": true,
+      "intents": []
+    },
+    {
+      "title": "A machine learning framework for predictive interpretation of variants of uncertain significance in hereditary cancer",
+      "authors": [
+        "Nayeema Nizamuddin",
+        "Soham Biswas",
+        "Akshaykumar Zawar",
+        "Poonam Deshpande",
+        "Layal Yasin",
+        "P. Suravajhala"
+      ],
+      "year": 2026,
+      "venue": "Frontiers in Systems Biology",
+      "citationCount": 0,
+      "doi": "10.3389/fsysb.2026.1828263",
+      "arxiv": null,
+      "isInfluential": true,
+      "intents": []
+    },
+    {
+      "title": "SIMLINK enables accurate variant pathogenicity prediction through modeling the gene-variant-feature association structure",
+      "authors": [
+        "Hong-Dong Li",
+        "Chen-Lu Wang",
+        "Dongfang Yan",
+        "Wen Huang",
+        "Zong-Xuan Li",
+        "Shaokai Wang"
+      ],
+      "year": 2026,
+      "venue": "Bioinformatics",
+      "citationCount": 0,
+      "doi": "10.1093/bioinformatics/btag601",
+      "arxiv": null,
+      "isInfluential": true,
+      "intents": []
+    },
+    {
+      "title": "An autoinflammatory CDC42 variant M45L demonstrates the mechanism of pyrin inflammasome activation.",
+      "authors": [
+        "Shouya Feng",
+        "Thomas Reygaerts",
+        "K. Kong",
+        "Matthew C Wierzbowski",
+        "D. Narayanan",
+        "Paul J. Baker",
+        "Imogen Bishop",
+        "Maria Zyulina",
+        "Katherine Rosevear",
+        "Madeline L. Cleveland",
+        "Tim C. Hewitt",
+        "T. D. Andrews",
+        "D. Randazzo",
+        "P. Steinbach",
+        "J. Chae",
+        "Hyeonji Kim",
+        "Daniel L Kastner",
+        "W. Renton",
+        "S. Ojaimi",
+        "Wonyong Lee",
+        "Seth L. Masters"
+      ],
+      "year": 2026,
+      "venue": "Science immunology",
+      "citationCount": 4,
+      "doi": "10.1126/sciimmunol.adz8733",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Familial, neuropathological and cellular analysis identify ARPP21 as a major amyotrophic lateral sclerosis associated gene in French cohorts",
+      "authors": [],
+      "year": 2026,
+      "venue": "Acta Neuropathologica",
+      "citationCount": 0,
+      "doi": "10.1007/s00401-026-03075-6",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Identification of novel and known variants in GAA, MYH6, NEXN, ATA3A, RHBDF1, and ACTA1 genes in coronary artery disease patients by Whole-exome sequencing",
+      "authors": [],
+      "year": 2026,
+      "venue": "Frontiers in Cardiovascular Medicine",
+      "citationCount": 0,
+      "doi": "10.3389/fcvm.2026.1853197",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Assessing the pathogenic potential of PIK3CA gene variants in human cancer using a computational approach.",
+      "authors": [],
+      "year": 2026,
+      "venue": "Journal of Biomolecular Structure and Dynamics",
+      "citationCount": 0,
+      "doi": "10.1080/07391102.2026.2726980",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Exome Sequencing Uncovers Phenotypic and Genotypic Heterogeneity in 196 Indian Families Evaluated for Autoinflammatory Disorders.",
+      "authors": [
+        "Vaishnavi Ashok Badiger",
+        "Periyasamy Radhakrishnan",
+        "Suma Balan",
+        "Anand P. Rao",
+        "Prajna Udupa",
+        "Karthik Vijay Nair",
+        "Bhagesh Hunakunti",
+        "Adarsh Pooradan Prasannakumar",
+        "Sanket Limaye",
+        "Huzail Gani Shaikh",
+        "Rohit Naik",
+        "Mahesh Janarthanan",
+        "Sudharshan Sridharan",
+        "Vishal Sondhi",
+        "Sheela Nampoothiri",
+        "Hitesh Shah",
+        "Sabrinath Mahadevan",
+        "Mahabaleshwar Mamadapur",
+        "Devang Pandya",
+        "Katta Mohan Girisha",
+        "Abhay Shivpuri",
+        "Amita Moirangthem",
+        "Jyothi Raghuram",
+        "Gandham Sri Lakshmi Bhavani",
+        "Sachin Jeevanagi",
+        "Girish Subramaniam",
+        "A. Aggarwal",
+        "Anju Shukla",
+        "Dhanya Lakshmi Narayanan"
+      ],
+      "year": 2026,
+      "venue": "American Journal of Medical Genetics. Part A",
+      "citationCount": 0,
+      "doi": "10.1002/ajmg.a.70275",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Dissecting the shared genetic architecture and biological mechanisms linking sleep traits and suicide attempts: from variants to genes.",
+      "authors": [
+        "Yan' E Lu",
+        "Ya-Jing Xu",
+        "Yaoyao Sun",
+        "Yuying Li",
+        "Su-Hua Chang",
+        "Jianyu Que",
+        "Xi-Kun Han",
+        "Y. Wei",
+        "C. Lavebratt",
+        "Jiajia Liu"
+      ],
+      "year": 2026,
+      "venue": "Molecular Psychiatry",
+      "citationCount": 0,
+      "doi": "10.1038/s41380-026-03858-z",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Genetic Screening of Colombian Patients With Early-Onset Parkinson Disease",
+      "authors": [
+        "Tobias Franz",
+        "Marios Gavrielatos",
+        "Ysabella Wijaya",
+        "A. Beasley",
+        "Sarah Kim-Hellmuth",
+        "A. Strongosky",
+        "C. Moreno-López",
+        "Owen A. Ross",
+        "Z. Wszolek",
+        "C. Cerquera-Cleves"
+      ],
+      "year": 2026,
+      "venue": "Neurology: Genetics",
+      "citationCount": 0,
+      "doi": "10.1212/NXG.0000000000200427",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "A recurrent CCDC82 frameshift variant associated with syndromic neurodevelopmental disorder in a consanguineous Pakistani family",
+      "authors": [
+        "Tehmeena Akhter",
+        "Sami Khan",
+        "Ahmed Abdul Mumeen",
+        "M. Naeem",
+        "S. Riazuddin",
+        "S. Riazuddin"
+      ],
+      "year": 2026,
+      "venue": "Biochemistry and Biophysics Reports",
+      "citationCount": 0,
+      "doi": "10.1016/j.bbrep.2026.102764",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Artificial Intelligence in Neuromuscular Diseases: Opportunities for a Data-Scarce Field.",
+      "authors": [
+        "Shang-Kui Ma",
+        "Sushan Luo",
+        "Huahua Zhong"
+      ],
+      "year": 2026,
+      "venue": "Neurological Therapeutics",
+      "citationCount": 0,
+      "doi": "10.1007/s40120-026-01017-8",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "aiDIVA – hybrid AI for rare disease diagnostics using evidence-based, machine learning and language models",
+      "authors": [
+        "D. Boceck",
+        "L. Laugwitz",
+        "Marc Sturm",
+        "D. Bezdan",
+        "Axel Gschwind",
+        "T. Haack",
+        "S. Ossowski"
+      ],
+      "year": 2026,
+      "venue": "npj Genomic Medicine",
+      "citationCount": 0,
+      "doi": "10.1038/s41525-026-00611-x",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "DBP-CanPred: a machine learning model for predicting cancer-causing mutations in DNA-binding proteins",
+      "authors": [
+        "A. Phogat",
+        "Sowmya Ramaswamy Krishnan",
+        "Medha Pandey",
+        "M. Gromiha"
+      ],
+      "year": 2026,
+      "venue": "Frontiers in Bioinformatics",
+      "citationCount": 0,
+      "doi": "10.3389/fbinf.2026.1920228",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "AI-Guided Systems Neurogenomics in Neurodevelopmental Disorders",
+      "authors": [
+        "Himanshu Goel",
+        "Tracy Dudding-Byth",
+        "B. Kamien"
+      ],
+      "year": 2026,
+      "venue": "Genes",
+      "citationCount": 0,
+      "doi": "10.3390/genes17091026",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "AWTI-Net Enables Accurate and Interpretable Functional Assessment of Disease-Associated LncRNA Mutations.",
+      "authors": [
+        "Haipeng Zhu",
+        "Douyue Li",
+        "Zehang Jiang",
+        "Minglei Yang",
+        "Guoying Wang",
+        "Wenliang Zhang"
+      ],
+      "year": 2026,
+      "venue": "Interdisciplinary Sciences Computational Life Sciences",
+      "citationCount": 0,
+      "doi": "10.1007/s12539-026-00869-w",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "A Comprehensive Integrated Pipeline for Detection and Annotation of Variants in Whole Exome Sequencing Data.",
+      "authors": [
+        "Karthikasri Karuppusamy",
+        "Shobana Sundar"
+      ],
+      "year": 2026,
+      "venue": "Molecular Biotechnology",
+      "citationCount": 0,
+      "doi": "10.1007/s12033-026-01599-6",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "A Practical Workflow for Correcting Kit-Specific Effects in Whole-Exome Sequencing Data",
+      "authors": [
+        "Laura Jarosz",
+        "M. Ochocki",
+        "Julia Merta",
+        "L. Pusztai",
+        "M. Marczyk"
+      ],
+      "year": 2026,
+      "venue": "Methods and Protocols",
+      "citationCount": 0,
+      "doi": "10.3390/mps9050125",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "A Novel Dominantly Segregating PSMB10 Splice-Site Variant in Familial Autoinflammatory Disease with Immunoproteasome and Interferon-Related Dysregulation",
+      "authors": [
+        "U. I. Onat",
+        "Alper Bülbül",
+        "Dora Sigli",
+        "E. Sever",
+        "S. Uğurlu",
+        "Ayse Huri Ozdogan",
+        "E. Tahir Turanlı"
+      ],
+      "year": 2026,
+      "venue": "Genes",
+      "citationCount": 0,
+      "doi": "10.3390/genes17090997",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Genetic and Behavioral Variation Underlying an Integrated Temporal Phenotype in an Admixed South American Population",
+      "authors": [
+        "Mariana Marchesano",
+        "Lucía Spangenberg",
+        "C. Casaravilla",
+        "Julieta Castillo",
+        "Ana Silva",
+        "Betina Tassino"
+      ],
+      "year": 2026,
+      "venue": "bioRxiv",
+      "citationCount": 0,
+      "doi": "10.64898/2026.08.18.745563",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Biallelic loss of RB1 in hepatocellular carcinoma as synthetic lethal target for artificial intelligence-guided therapy",
+      "authors": [
+        "Jihyun An",
+        "Wonkyung Kim",
+        "Xiumei Zhang",
+        "Philip Chikontwe",
+        "Jin‐Sung Ju",
+        "B. Oh",
+        "Ji-Hye Oh",
+        "E. Yang",
+        "Hyun Namgung",
+        "Dakeun Lee",
+        "Yue Pu",
+        "Li-Jie Chen",
+        "Sang Hyun Park",
+        "J. Shim",
+        "C. Sung",
+        "J. Shim"
+      ],
+      "year": 2026,
+      "venue": "Signal Transduction and Targeted Therapy",
+      "citationCount": 0,
+      "doi": "10.1038/s41392-026-02815-0",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Association between Alzheimer’s disease-related genes and neurodegenerative blood-based biomarkers in Indian adults",
+      "authors": [
+        "Hasan Abu-Amara",
+        "Wei Zhao",
+        "Zheng Li",
+        "Yuk-Yee Leung",
+        "G. Schellenberg",
+        "Li-San Wang",
+        "E. Crimmins",
+        "B. Thyagarajan",
+        "M. Anwar",
+        "Perry Hu",
+        "Sharmistha Dey",
+        "A. Dey",
+        "Xiang Zhou",
+        "K. Thangaraj",
+        "Jinkook Lee",
+        "Sharon L. R. Kardia",
+        "Jennifer A Smith"
+      ],
+      "year": 2026,
+      "venue": "Frontiers in Aging Neuroscience",
+      "citationCount": 0,
+      "doi": "10.3389/fnagi.2026.1832155",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "A de novoNR2F1 c.330 C > A variant in Bosch-Boonstra-Schaaf optic atrophy syndrome presenting with early-onset developmental and epileptic encephalopathy",
+      "authors": [
+        "Sina Babaei",
+        "Haneieh Honarmand",
+        "Mortaza Bonyadi",
+        "Baharak Maddahi",
+        "Zakiyeh Ebadi",
+        "M. Barzegar"
+      ],
+      "year": 2026,
+      "venue": "Molecular Biology Reports",
+      "citationCount": 0,
+      "doi": "10.1007/s11033-026-12609-w",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Noncoding regulatory mutations contribute to the aberrant gene expression in neuroblastoma",
+      "authors": [
+        "Brianna A Jones",
+        "Gaurav Seth",
+        "A. Robertson",
+        "Arko Sen"
+      ],
+      "year": 2026,
+      "venue": "bioRxiv",
+      "citationCount": 0,
+      "doi": "10.64898/2026.08.10.743941",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Genome-wide machine learning analysis of anosmia and ageusia with COVID-19",
+      "authors": [
+        "Lucas Pietan",
+        "Elizabeth Phillippi",
+        "Marcelo Melo",
+        "Hatem El-Shanti",
+        "Brian J. Smith",
+        "Benjamin Darbro",
+        "Terry Braun",
+        "Thomas Casavant"
+      ],
+      "year": 2026,
+      "venue": "PLoS ONE",
+      "citationCount": 0,
+      "doi": "10.1371/journal.pone.0355832",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Correlations between causal effect sizes of proximal SNPs vary with functional annotations and implicate stabilizing selection",
+      "authors": [
+        "M. Zhang",
+        "Arun Durvasula",
+        "Colby Chiang",
+        "E. Koch",
+        "B. Strober",
+        "Huwenbo Shi",
+        "Alison R. Barton",
+        "Samuel S. Kim",
+        "O. Weissbrod",
+        "Po-Ru Loh",
+        "Steven Gazal",
+        "S. Sunyaev",
+        "Alkes L. Price"
+      ],
+      "year": 2026,
+      "venue": "Nature Genetics",
+      "citationCount": 0,
+      "doi": "10.1038/s41588-026-02712-w",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Genome-wide meta-analysis with 1,590,596 individuals identifies 12 novel risk loci for systemic lupus erythematosus",
+      "authors": [
+        "G. Zhu",
+        "Wenting Su",
+        "Jiahui Deng",
+        "Bin Zhai",
+        "Ran Gao",
+        "Jinming Qiu",
+        "Keqi Gu",
+        "Ziqing Bian",
+        "He Xiao",
+        "G. Luan",
+        "Renxi Wang"
+      ],
+      "year": 2026,
+      "venue": "Mammalian Genome",
+      "citationCount": 0,
+      "doi": "10.1007/s00335-026-10266-9",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "The pseudouridine synthase PUSL1 modifies U39 of mitochondrial tRNAs and is linked to human neurological phenotypes",
+      "authors": [
+        "Pedro Rebelo-Guiomar",
+        "Nadav Kra-Oz",
+        "Christopher A. Powell",
+        "Guillaume Jouret",
+        "M. Plutino",
+        "V. Paquis-Flucklinger",
+        "S. Schwartz",
+        "A. Sas-Chen",
+        "M. Minczuk"
+      ],
+      "year": 2026,
+      "venue": "Nucleic Acids Research",
+      "citationCount": 0,
+      "doi": "10.1093/nar/gkag805",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Compound Heterozygous Variants in the PAICS Gene Integrate the Previously Described Divergent Phenotypes.",
+      "authors": [
+        "L. Monti",
+        "Federica Isidori",
+        "E. Capriotti",
+        "Andreina Minicucci",
+        "Baldazzi Michelangelo",
+        "Marco Di Mitri",
+        "E. Scarano",
+        "Mario Lima",
+        "T. Pippucci",
+        "Giulia Severi"
+      ],
+      "year": 2026,
+      "venue": "American Journal of Medical Genetics. Part A",
+      "citationCount": 0,
+      "doi": "10.1002/ajmg.a.70242",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "MUGO: Differentiable Combinatorial Optimization for Causal Variant Discovery in the Non-coding Genome",
+      "authors": [
+        "Si-Ying Sun",
+        "Junhao Liu",
+        "Pengcheng Xu",
+        "Ya-Qi Hu",
+        "M. Zhang",
+        "Jing Zhang"
+      ],
+      "year": 2026,
+      "venue": "Proceedings of the 32nd ACM SIGKDD Conference on Knowledge Discovery and Data Mining V.2",
+      "citationCount": 0,
+      "doi": "10.1145/3770855.3818971",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "A TBK1 mutation disrupting IRF3 activation is associated with familial recurrent myopericarditis",
+      "authors": [
+        "C. Peet",
+        "Thomas Orchard",
+        "Carlos H. B. Cruz",
+        "Ariana Hernández-Cordero",
+        "E. Omoyinmi",
+        "S. Mahil",
+        "H. Lachmann",
+        "F. Fraternali",
+        "F. Capon"
+      ],
+      "year": 2026,
+      "venue": "Frontiers in Immunology",
+      "citationCount": 0,
+      "doi": "10.3389/fimmu.2026.1906965",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Vitamin D receptor rs2228570 (FokI) variant is associated with chronic tinnitus susceptibility",
+      "authors": [
+        "H. Akalın",
+        "Nuriye Gokce",
+        "Servet Akyuz",
+        "Olcay Boyacıoğlu",
+        "Seda Orenay-Boyacioglu"
+      ],
+      "year": 2026,
+      "venue": "Molecular Biology Reports",
+      "citationCount": 0,
+      "doi": "10.1007/s11033-026-12523-1",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Expanding the ocular and genetic spectrum of FLVCR1-associated disease in a Chinese cohort.",
+      "authors": [
+        "Xing Wei",
+        "Wuyi Li",
+        "Yunyu Zhou",
+        "Yamei Li",
+        "Yue Liu",
+        "R. Sui"
+      ],
+      "year": 2026,
+      "venue": "Documenta ophthalmologica. Advances in ophthalmology",
+      "citationCount": 0,
+      "doi": "10.1007/s10633-026-10137-3",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Whole-exome characterization of host genetic variation in HIV-associated genes across the high-prevalence Mizo population, Northeast India.",
+      "authors": [
+        "Saurav Roy",
+        "K. Lalrintluanga",
+        "Lalengkimi Ralte",
+        "J. Ralte",
+        "R. Chawngthu",
+        "S. Aggarwal",
+        "Swagnik Roy",
+        "N. Kumar"
+      ],
+      "year": 2026,
+      "venue": "Gene",
+      "citationCount": 0,
+      "doi": "10.1016/j.gene.2026.150334",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Tabular implicit deep neural networks ensembles for the prediction of pathogenic genetic variants in Mendelian diseases",
+      "authors": [
+        "F. Stacchietti",
+        "M. Nicolini",
+        "L. Chimirri",
+        "P. Robinson",
+        "E. Casiraghi",
+        "G. Valentini"
+      ],
+      "year": 2026,
+      "venue": "Neurocomputing",
+      "citationCount": 0,
+      "doi": "10.1016/j.neucom.2026.134682",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Identification and Computational Analysis of BRCA1 Variants in Mexican Women from Jalisco, Mexico, with Breast and Ovarian Cancer",
+      "authors": [
+        "M. Gallegos-Arreola",
+        "A. F. Garibaldi-Ríos",
+        "I. P. Dávalos-Rodríguez",
+        "M. T. Magaña-Torres",
+        "L. E. Figuera",
+        "G. M. Zúñiga-González",
+        "B. C. Gómez-Meda",
+        "B. Torres-Mendoza",
+        "R. Villegas-Pacheco",
+        "René Gómez-Cerda",
+        "J. C. Cárdenas-Valdez",
+        "S. Meza-Chavolla",
+        "Mónica Alejandra Rosales-Reynoso",
+        "W. Ángeles-Bueno",
+        "María José Gómez-Villegas",
+        "Daniela Del Rocío Panduro Espinoza",
+        "J. E. García-Ortíz"
+      ],
+      "year": 2026,
+      "venue": "Medical Science",
+      "citationCount": 0,
+      "doi": "10.3390/medsci14040450",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Exploring the protective potential of remote ischemic conditioning-induced miRNAs in stroke.",
+      "authors": [
+        "L. Marziani",
+        "K. T. Stenz",
+        "Hao Zhang",
+        "Wei-Xiang Zhao",
+        "B. Mumm",
+        "Dong-fang Xie",
+        "Minxian Wang",
+        "Xiujie Wang",
+        "K. Drasbek"
+      ],
+      "year": 2026,
+      "venue": "Neuroscience",
+      "citationCount": 0,
+      "doi": "10.1016/j.neuroscience.2026.08.025",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Genome-Wide Association of Genetic Variants with Intestinal Cholesterol Absorption Markers in a European Population",
+      "authors": [
+        "F. A. Mokhtar",
+        "Dina Nuwaylati",
+        "J. Plat",
+        "S. Coort",
+        "H. Popeijus",
+        "M. Kleber",
+        "D. Lutjohann",
+        "Ronald P. Mensink"
+      ],
+      "year": 2026,
+      "venue": "Nutrients",
+      "citationCount": 0,
+      "doi": "10.3390/nu18162679",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "In silico analysis of missense variants in functional domains of PWWP2A and PWWP2B proteins.",
+      "authors": [
+        "M. Selvamani",
+        "Bazeer Asbar Banu",
+        "Mahesh Samantaray",
+        "M. N. Meenu",
+        "Jawahar Ramasamy",
+        "S. Srinivasan",
+        "Sambandam Ravikumar",
+        "Irisappan Ganesh"
+      ],
+      "year": 2026,
+      "venue": "Mutation research",
+      "citationCount": 0,
+      "doi": "10.1016/j.mrfmmm.2026.111947",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Proteo-genomics-guided interpretation of somatic mutations in cancer genomes.",
+      "authors": [
+        "D. Hyeon",
+        "Yu-Xiang Zhou",
+        "Wendy K. Chung",
+        "Felix Dietlein"
+      ],
+      "year": 2026,
+      "venue": "Cancer Cell",
+      "citationCount": 0,
+      "doi": "10.1016/j.ccell.2026.07.017",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Structure-Based Network Analysis of AlphaFold Structure Predictions Identifies Putative Causative Variants of Inherited Retinal Disease",
+      "authors": [
+        "Blake Hauser",
+        "E. Place",
+        "Yuyang Luo",
+        "Jason Comander",
+        "Anusha Nathan",
+        "Eric A. Pierce",
+        "K. Bujakowska",
+        "Gaurav D. Gaiha",
+        "E. Rossin"
+      ],
+      "year": 2026,
+      "venue": "Investigative Ophthalmology and Visual Science",
+      "citationCount": 0,
+      "doi": "10.1167/iovs.67.10.60",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Discovery of functional variants regulating lipid metabolism in an East Asian population.",
+      "authors": [
+        "Sungji Moon",
+        "Young Jun Park",
+        "Jaeyong Choi",
+        "Jeong Mi Kim",
+        "Su Hyeon Yi",
+        "Minji Kim",
+        "Juyoung Lee",
+        "Juhyun Kim",
+        "Ho-Young Son",
+        "Jong-Il Kim",
+        "Sun-Wha Im"
+      ],
+      "year": 2026,
+      "venue": "Metabolism: Clinical and Experimental",
+      "citationCount": 0,
+      "doi": "10.1016/j.metabol.2026.156751",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "The AP5B1 p.Leu785Pro variant is a frequent cause of late-onset macular dystrophy with variable extraocular manifestations",
+      "authors": [
+        "Petra Liskova",
+        "L. Dudakova",
+        "Karolina Kaminska",
+        "Laura Kühlewein",
+        "Stefanida Shliaga",
+        "R. Leibu",
+        "Miriam Ehrenberg",
+        "Dinah Zur",
+        "J. Zernant",
+        "M. Bauwens",
+        "Gavin Arno",
+        "Isabelle Müller",
+        "F. Ziemssen",
+        "V. Bothe",
+        "Francesca Cancellieri",
+        "J. de Zaeytijd",
+        "P. Mazzola",
+        "Winston Lee",
+        "B. Kousal",
+        "M. Vajter",
+        "L. Ingeborgh van den Born",
+        "Anton Sonntag",
+        "Y. van Leeuwen",
+        "D. Smailhodzic",
+        "C. Klaver",
+        "Tobias B. Haack",
+        "B. Wissinger",
+        "Andrew R Webster",
+        "L. Haer-Wigman",
+        "Siying Lin",
+        "M. Menghini",
+        "Konrad Platzer",
+        "E. De Baere",
+        "R. Allikmets",
+        "Carlo Rivolta",
+        "S. Roosing",
+        "Susanne Kohl",
+        "T. Ben-Yosef",
+        "M. Quinodoz"
+      ],
+      "year": 2026,
+      "venue": "HGG advances",
+      "citationCount": 0,
+      "doi": "10.1016/j.xhgg.2026.100659",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Risk Beyond the Variant: A Composite Metric for Autism Gene Pathogenicity",
+      "authors": [
+        "Beloslava Malakova",
+        "Simeon Karpuzov",
+        "Dobromir Tsolyov",
+        "George Petkov",
+        "M. Zamfirov"
+      ],
+      "year": 2026,
+      "venue": "Genes",
+      "citationCount": 0,
+      "doi": "10.3390/genes17080892",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Association Study Between NOTCH2 Gene and Idiopathic Central Precocious Puberty in Korean Girls",
+      "authors": [
+        "Y. Shim",
+        "K. Kim",
+        "Min Hyung Cho",
+        "J. Oh",
+        "Hae-sang Lee"
+      ],
+      "year": 2026,
+      "venue": "International Journal of Molecular Sciences",
+      "citationCount": 0,
+      "doi": "10.3390/ijms27156686",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "Genomic correlates of clinical CAR T cell activity.",
+      "authors": [
+        "M. Leick",
+        "Baihe Sun",
+        "F. Birocchi",
+        "K. Gallagher",
+        "A. Bratt",
+        "Seunghun Han",
+        "G. Martin",
+        "Harrison J. Silva",
+        "R. Larson",
+        "T. Chinsky",
+        "Hoyin Chu",
+        "Christopher R. Reilly",
+        "M. Kann",
+        "B. Choi",
+        "S. Camp",
+        "R. Gillani",
+        "M. Phillips",
+        "T. Kienka",
+        "Stefanie R. Bailey",
+        "C. Graham",
+        "M. Jan",
+        "Nicholas S. Moore",
+        "N. Horick",
+        "J. Budka",
+        "S. Filosto",
+        "Chad M. Williams",
+        "Ali Hosseini Rad",
+        "Rhine R. Shen",
+        "E. V. Van Allen",
+        "S. AlDubayan",
+        "Marcela V. Maus"
+      ],
+      "year": 2026,
+      "venue": "Science immunology",
+      "citationCount": 0,
+      "doi": "10.1126/sciimmunol.aef4134",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    },
+    {
+      "title": "TrioNsight: Building a meta-predictor to evaluate the clinical impact of TrioN-like Dbl-homology domain variants",
+      "authors": [
+        "Alperen Taciroğlu",
+        "Yeşim AYDIN SON",
+        "Andrew C. R. Martin",
+        "C. Orengo"
+      ],
+      "year": 2026,
+      "venue": "bioRxiv",
+      "citationCount": 0,
+      "doi": "10.64898/2026.07.17.739111",
+      "arxiv": null,
+      "isInfluential": false,
+      "intents": []
+    }
+  ],
+  "citing_papers_note": "Sorted: influential first, then by citation count. Use for Impact & follow-ups.",
+  "code_links_from_metadata": [],
+  "merged": {
+    "title": "CADD: predicting the deleteriousness of variants throughout the human genome",
+    "authors": [
+      "Philipp Rentzsch",
+      "Daniela M. Witten",
+      "G. Cooper",
+      "J. Shendure",
+      "M. Kircher"
+    ],
+    "year": 2018,
+    "venue": "Nucleic Acids Res.",
+    "venue_type": "journal",
+    "publisher": "Oxford University Press",
+    "volume": "47",
+    "issue": "D1",
+    "pages": "D886-D894",
+    "doi": "10.1093/nar/gky1016",
+    "arxiv": null,
+    "abstract": "Abstract Combined Annotation-Dependent Depletion (CADD) is a widely used measure of variant deleteriousness that can effectively prioritize causal variants in genetic analyses, particularly highly penetrant contributors to severe Mendelian disorders. CADD is an integrative annotation built from more than 60 genomic features, and can score human single nucleotide variants and short insertion and deletions anywhere in the reference assembly. CADD uses a machine learning model trained on a binary distinction between simulated de novo variants and variants that have arisen and become fixed in human populations since the split between humans and chimpanzees; the former are free of selective pressure and may thus include both neutral and deleterious alleles, while the latter are overwhelmingly neutral (or, at most, weakly deleterious) by virtue of having survived millions of years of purifying selection. Here we review the latest updates to CADD, including the most recent version, 1.4, which supports the human genome build GRCh38. We also present updates to our website that include simplified variant lookup, extended documentation, an Application Program Interface and improved mechanisms for integrating CADD scores into other tools or applications. CADD scores, software and documentation are available at https://cadd.gs.washington.edu.",
+    "tldr": "The latest updates to CADD are reviewed, including the most recent version, 1.4, which supports the human genome build GRCh38, and also present updates to the website that include simplified variant lookup, extended documentation, an Application Program Interface and improved mechanisms for integrating CADD scores into other tools or applications.",
+    "fields": [
+      "Biology",
+      "Computer Science",
+      "Genomics and Phylogenetic Studies",
+      "Genomics and Rare Diseases",
+      "Medicine",
+      "RNA modifications and cancer"
+    ],
+    "arxiv_categories": null,
+    "citation_count": {
+      "semantic_scholar": 3292,
+      "openalex": 3985,
+      "crossref": 3591
+    },
+    "influential_citation_count": 314,
+    "is_retracted": false,
+    "open_access_pdf": "https://academic.oup.com/nar/article-pdf/47/D1/D886/27436395/gky1016.pdf",
+    "checked_on": "2026-09-09"
+  },
+  "status": "OK"
+}
