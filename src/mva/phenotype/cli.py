@@ -6,6 +6,7 @@ Four verbs, each answering one question:
 ``gene``       why did one gene place there - which feature, through which ancestor?
 ``delta``      what changes when the parental term is dropped?
 ``agreement``  do two independent hosted services put the same genes on top?
+``benchmark``  how often does the ranker find the causal gene of a held-out disease?
 
 The reference tables are read from ``ressources/reference/`` by default, so ``rank`` and
 ``gene`` need no network and no database. ``agreement`` is the only verb that reaches
@@ -16,6 +17,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from . import benchmark as benchmark_module
 from . import prior, terms
 from .associations import Corpus, parse_genes_to_phenotype
 from .ontology import Ontology, parse_obo
@@ -155,6 +157,32 @@ def _report_unresolved(ranking: Ranking) -> None:
         )
 
 
+def cmd_benchmark(args: argparse.Namespace) -> int:
+    """Held-out recall: the number that makes the target-set cutoff defensible."""
+    graph, corpus = load(args.scratch)
+    diseases = benchmark_module.population(
+        benchmark_module.read_diseases(args.scratch / "genes_to_phenotype.txt"),
+        recessive_only=not args.all_inheritance,
+    )
+    if not diseases:
+        raise SystemExit("no disease in the corpus is large enough to subsample")
+    result = benchmark_module.run(diseases, corpus, graph, seed=args.seed, sample=args.sample)
+    print(
+        f"held-out recall over {len(result.outcomes)} of {len(diseases)} diseases "
+        f"(seed {args.seed}) — an internal consistency check, not an external validation:"
+    )
+    print(f"{'N':>6}  {'recall':>7}  95% interval")
+    for n, recall in result.curve():
+        low, high = result.interval(n)
+        print(f"{n:>6}  {recall:>7.3f}  [{low:.3f}, {high:.3f}]")
+    print(
+        f"\nmedian rank {result.median_rank}; "
+        f"{result.unrankable} of {len(result.outcomes)} genes unrankable — described by "
+        "the held-out disease alone, so a curation-driven ranker cannot place them"
+    )
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="mva-phenotype", description=__doc__)
     parser.add_argument("--scratch", type=Path, default=DEFAULT_SCRATCH)
@@ -181,6 +209,23 @@ def build_parser() -> argparse.ArgumentParser:
     agree.add_argument("--term-set", choices=names, default=terms.PROBAND_ONLY.name)
     agree.add_argument("--limit", type=int, default=15)
     agree.set_defaults(func=cmd_agreement)
+
+    bench = sub.add_parser(
+        "benchmark", help="held-out recall@N of the ranker, with bootstrap intervals"
+    )
+    bench.add_argument("--seed", type=int, default=20260910)
+    bench.add_argument(
+        "--sample",
+        type=int,
+        default=200,
+        help="how many held-out diseases to run; each one is a full ranking pass",
+    )
+    bench.add_argument(
+        "--all-inheritance",
+        action="store_true",
+        help="do not restrict the population to recessive diseases",
+    )
+    bench.set_defaults(func=cmd_benchmark)
     return parser
 
 
