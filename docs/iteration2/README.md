@@ -1,6 +1,9 @@
 # Iteration 2 — the research steps behind submission 2
 
-**Standing:** opened 2026-09-09; **plan not yet defined**. Iteration 1 is frozen at
+**Standing:** opened 2026-09-09; **plan drafted** in [`plan.md`](plan.md) (eight steps, blind protocol,
+`step-1` … `step-8`; steps not yet declared in `steps.py`), **gap-reviewed 2026-09-10** against the
+five papers in [`papers/iteration2/`](../../papers/iteration2/README.md) — `plan.md` §9 lists every
+gap and its fix, §8 G the citations it added. Iteration 1 is frozen at
 [`../iteration1/`](../iteration1/README.md); step 0 (the platform) stays at
 [`../step-0/`](../step-0/README.md).
 

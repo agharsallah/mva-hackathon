@@ -85,3 +85,4 @@ coverage/
 # The predictions CSV holds real patient coordinates. An iteration folder may keep a local copy
 # for the upload (tools/design_submission.py --out); the copy is never committed.
 submissions/**/*.csv
+papers/**/*.pdf

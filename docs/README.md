@@ -47,7 +47,7 @@ Full index and what "step 0" covers: [`step-0/README.md`](step-0/README.md).
 
 Steps 1–8 live under [`iteration1/`](iteration1/README.md), one folder per step, because
 they are the work that produced [`submissions/track1/iteration-1/`](../submissions/track1/iteration-1/README.md).
-The next submission opens `iteration2/` with its own step folders; this one is then frozen.
+Iteration 1 is **frozen** (submission 1 uploaded 2026-09-09, full match at rank 1 — entry 083).
 
 ### Step 1 — Normalize the callset (open)
 
@@ -81,6 +81,13 @@ The next submission opens `iteration2/` with its own step folders; this one is t
 | [`iteration1/step-6/README.md`](iteration1/step-6/README.md) | Which pair does the scorer confirm? Owns the probe gate; 0 of 6 uploads spent. |
 | [`iteration1/step-7/README.md`](iteration1/step-7/README.md) | Does public knowledge name or corroborate an allele? Solution paths 5 and 6. |
 | [`iteration1/step-8/README.md`](iteration1/step-8/README.md) | Track 2 — which market-approved drugs act on the confirmed mechanism? Hand-off from Track 1: [`mechanism.md`](iteration1/step-8/mechanism.md) (Q15: loss- vs gain-of-function, pathway, downstream) and its structured twin `ressources/track2/mechanism.json`. |
+
+## Iteration 2 — replicate by independent means, feed Track 2
+
+| Document | Answers |
+|---|---|
+| [`iteration2/README.md`](iteration2/README.md) | Why a second iteration when the pair is confirmed, and how the folder fills in. |
+| [`iteration2/plan.md`](iteration2/plan.md) | The plan: a blind rediscovery in seven steps (symptom-only target set; allele discovery from the raw reads with a second caller and SV consensus; alignment-free k-mer genotyping and copy number; likelihood-ratio ranking over the VCF; knowledge engine; fusion and unblinding; Track 2 enrichment), order and cost, and the PubMed-verified bibliography. |
 
 ## The submission
 
