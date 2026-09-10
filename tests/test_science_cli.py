@@ -43,6 +43,7 @@ def _row(claim: Hypothesis = CLAIM) -> tuple:
         claim.confidence,
         claim.reasoning,
         claim.author,
+        claim.iteration,
     )
 
 

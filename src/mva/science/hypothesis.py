@@ -76,6 +76,12 @@ class Hypothesis:
     confidence: float | None = None
     reasoning: str = ""
     author: str = ""
+    #: The submission iteration whose step map this claim's ``step`` slug belongs to.
+    #: Slugs restart at ``step-1`` each iteration, so without this an iteration-1 claim
+    #: would render an iteration-2 goal. Empty means the current iteration; a row written
+    #: before the column existed is hydrated as iteration 1, the only iteration that had
+    #: filed claims then.
+    iteration: str = ""
 
     def __post_init__(self) -> None:
         for field_name in ("statement", "prediction", "refuted_by"):
@@ -84,7 +90,7 @@ class Hypothesis:
                     f"{field_name} is required: a claim with no {field_name} cannot be "
                     "tested, and an untestable claim does not belong in the record"
                 )
-        step = steps.by_slug(self.step)
+        step = self.step_record
         if not step.takes_hypotheses:
             raise ValueError(
                 f"{step.slug} is a {step.kind} step: it records decisions, not claims "
@@ -97,9 +103,19 @@ class Hypothesis:
             raise ValueError(f"revision starts at 1, got {self.revision}")
 
     @property
+    def filed_under(self) -> str:
+        """The iteration this claim belongs to; unset means the one being worked now."""
+        return self.iteration or steps.ITERATION
+
+    @property
+    def step_record(self) -> steps.Step:
+        """The step this claim serves, read from *its own* iteration's map."""
+        return steps.by_slug(self.step, iteration=self.filed_under)
+
+    @property
     def goal(self) -> str:
         """The research goal this claim serves."""
-        return steps.by_slug(self.step).goal
+        return self.step_record.goal
 
     def __str__(self) -> str:
         confidence = "—" if self.confidence is None else f"{self.confidence:.2f}"
@@ -130,6 +146,11 @@ def ensure_table(connection, schema: str) -> None:
             reasoning     VARCHAR,
             author        VARCHAR
         )""")
+    # Added after the first claims were filed; those rows read back empty, which
+    # :attr:`Hypothesis.filed_under` reads as iteration 1.
+    connection.execute(
+        f"ALTER TABLE {ALIAS}.{safe}.{HYPOTHESIS_TABLE} ADD COLUMN IF NOT EXISTS iteration VARCHAR"
+    )
 
 
 def _qualified(schema: str) -> str:
@@ -141,7 +162,7 @@ def _qualified(schema: str) -> str:
 def _insert(connection, schema: str, hypothesis: Hypothesis) -> Hypothesis:
     """Append one revision. Column order matches the DDL, which is load-bearing."""
     connection.execute(
-        f"INSERT INTO {_qualified(schema)} VALUES (?, ?, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        f"INSERT INTO {_qualified(schema)} VALUES (?, ?, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         [
             hypothesis.hypothesis_id,
             hypothesis.revision,
@@ -155,6 +176,7 @@ def _insert(connection, schema: str, hypothesis: Hypothesis) -> Hypothesis:
             hypothesis.confidence,
             hypothesis.reasoning,
             hypothesis.author,
+            hypothesis.filed_under,
         ],
     )
     return hypothesis
@@ -226,6 +248,7 @@ _COLUMNS = (
     "confidence",
     "reasoning",
     "author",
+    "iteration",
 )
 
 _SELECT = f"SELECT {', '.join(_COLUMNS)} FROM {{table}}"
@@ -237,6 +260,9 @@ def _hydrate(row: tuple) -> Hypothesis:
     fields["status"] = Status(fields["status"])
     fields["confidence"] = None if fields["confidence"] is None else float(fields["confidence"])
     fields["revision"] = int(fields["revision"])
+    # A row from before the column existed belongs to iteration 1 — made explicit here so
+    # nothing downstream re-reads it as the current iteration.
+    fields["iteration"] = fields["iteration"] or steps.FIRST_ITERATION
     return Hypothesis(**fields)
 
 

@@ -156,6 +156,7 @@ def test_a_verdict_is_a_new_revision_carrying_the_original_wording():
                     None,
                     "",
                     "",
+                    stored.filed_under,
                 )
             ]
         ]
