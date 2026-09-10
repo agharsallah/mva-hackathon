@@ -3,9 +3,12 @@
 **Standing:** plan, written 2026-09-09, revised 2026-09-10 (blind protocol) after the oracle
 confirmed submission 1
 ([083](../iteration1/step-6/methodology/083-oracle-reply-submission-1.md)), and revised again
-2026-09-10 by the **gap review** of §9, fed by the five papers read in
-[`papers/iteration2/`](../../papers/iteration2/README.md) (every correction names its paper and
-page there). Nothing in this
+2026-09-10 by the **gap review** of §9, fed by the first five papers read in
+[`papers/iteration2/`](../../papers/iteration2/README.md), and a third time the same day by the
+**bias and gap review** of §10, fed by the three papers §9 had only cited (Zemojtel 2014,
+Kong 2018, Kosugi 2019 — now read) and by a re-read of the clinical document (every correction
+names its paper and page there). The tools, reuse and dashboard map for executing it is
+[`execution.md`](execution.md). Nothing in this
 page is a result; every step below files its hypotheses before it runs and records its runs in
 its own `methodology/` (next global number: **084**). Portfolio owner:
 [`ideation/solution-paths.md`](../../ideation/solution-paths.md); statistical backing:
@@ -131,6 +134,29 @@ the HPO terms — never the callset. The panel of iteration 1 is **not** an inpu
   terms**; the eight-term ranking runs beside it as the sensitivity case (`mva-phenotype
   delta` exists for exactly this), and the two target sets are **unioned**, so neither choice
   can hide a gene. Every later step that says "the HPO terms" means this union.
+- **The organisers' reading of the family-history term (§10, gap B2).** The clinical document
+  says in its own notes that the recurrent-miscarriage history "should be treated as part of the
+  phenotypic input, not merely as background". Demoting it to a sensitivity case (as the
+  paragraph above still does for the *proband* ranking) would quietly override the data
+  provider. It is therefore used in a **second channel where it carries real information**: as a
+  **mode-of-inheritance prior**. Recurrent loss in the parents of an affected child raises the
+  weight of recessive genes whose biallelic genotype is embryonic-lethal or causes early loss
+  (a fact the HPO-to-gene annotation of HP:0200067 encodes, and OMIM inheritance fields
+  confirm). Step 4's genotype LR therefore carries a pre-registered inheritance factor:
+  recessive gene with a recorded prenatal-lethal or miscarriage association ×1.5, plain
+  recessive ×1.0, dominant-only ×0.5 — chosen now, small on purpose, and reported with the
+  ranking recomputed without it. The proband ranking (7 terms) and the eight-term ranking stay
+  **co-primary** in the union, and the report shows both.
+- **Term-driven core rows are a mechanism prior, not a blind finding (§10, gap B1).** "Every gene
+  the ontology annotates with a chromosome-instability or aneuploidy term, whatever its rank"
+  pre-loads exactly the gene class the disease name points at: the term set for *mosaic
+  variegated aneuploidy* resolves to a handful of genes, so this rule alone guarantees the
+  answer a seat in the core tier and would let a "rediscovery" be claimed that the symptom
+  ranker did not earn. The rule stays — a clinician would use the disease name — but its rows
+  are tagged `tier = mechanism-term`, every core gene's **pure symptom-score rank** is printed
+  beside it, and the rediscovery claim of step 6 is made **only on the pure-score ranking**;
+  the mechanism-term rows count as prior knowledge, not evidence. If the confirmed gene enters
+  the target set through this rule alone, the report says so in its first paragraph.
 - **Recall measured before N is trusted.** A cutoff without a recall number is a guess. Build
   a held-out benchmark from public data only: for each of ≥ 200 recessive diseases in the HPO
   annotation corpus, take its curated term list, subsample 7 terms (the child's proband term
@@ -161,6 +187,22 @@ the HPO terms — never the callset. The panel of iteration 1 is **not** an inpu
   case-report reading) starts with core. **No tier is pre-filtered on VCF presence**: a gene
   with zero VCF signal is exactly what an SV or a caller dropout looks like, and is the case
   step 2 exists to find.
+- **What the benchmark can and cannot say (Zemojtel 2014, read — §10, gaps Z1–Z3).** PhenIX's
+  86.5 % top-1 (Fig. 1, 8,504 simulation runs) carries no confidence interval, and its ground
+  truth comes from the same HPO/OMIM corpus that builds the scoring database — the benchmark
+  above inherits that circularity (the held-out gene's *disease* row is dropped, but every
+  other disease was annotated by the same curators), and Yuan 2022's cohorts inherit part of
+  it too. The recall curve is therefore labelled an **internal consistency check**, and the
+  spike-in harness of step 4 is the number quoted as recall. PhenIX ranks a gene by its single
+  most pathogenic variant and, by its authors' statement, cannot find a gene outside its
+  2,741-gene panel; step 1's `uncurated` tier and step 4's pair-aware LR are the two places
+  this plan goes past it, and the report says so instead of claiming a "mirror". Zemojtel's
+  prospective arm left 29 of 40 patients unsolved and never triaged why; **failure categories
+  are pre-registered here** for step 6's trace: (i) causal gene outside the curated tier,
+  (ii) causal allele non-coding, synonymous or deep-intronic — the paper's own disclosed miss
+  was a synonymous splice-disrupting SLC39A4 allele, (iii) a term coded at the wrong depth or
+  a term absent from the gene's annotation, (iv) a caller dropout. Every candidate that step 6
+  finds "lost" is assigned one of these four, or a new fifth that is then added.
 - **Second opinion**: Phen2Gene (Zhao 2020, §8 G — a different algorithm, different knowledge
   base) on the same terms; the overlap of the two top-300 lists is reported. Yuan 2022 (§8 G)
   quantifies how much two good rankers are *expected* to disagree, which is what H030's 50 %
@@ -240,13 +282,50 @@ code with the one that produced the delivered VCF.
    population estimate of step 4 (gnomAD P(trans), poorly calibrated for ultra-rare pairs);
    an open chain is reported as such, with both numbers side by side.
 
+- **Structural variants, made concrete by Kosugi 2019 (read — §10, gaps V1–V4).** The
+  benchmark's own finding is that pairing callers of *different* method classes (read-pair,
+  read-depth, split-read, assembly) buys more precision than pairing two of the same class
+  (1.82× vs 1.63×, at 0.33× vs 0.5× of the recall retained; Fig. 6–7). Manta, Delly and LUMPY
+  are all read-pair/split-read tools, so **GRIDSS** (assembly-based, top tier for DEL and DUP
+  in Table 1; Cameron 2017, §8 G) joins the set, and the ≥ 2-caller rule requires **two
+  method classes**, not two names. Precision is **type-specific**: on real data the best DUP
+  caller reaches 57.1 % precision and Manta 40.4 %; INV caps at 49.1 % (Table 1), and
+  simulation-to-real rank correlation is weak for DUP (ρ = 0.48) and INV (0.57) but strong for
+  DEL (0.72). So H016 is stated per type below, a DUP or INV consensus is reported as
+  *coin-flip-precision evidence* that needs an orthogonal confirmation (exon coverage in step
+  2, k-mer CN in step 3), and no translocation is claimed at all (Kosugi did not evaluate
+  them). The benchmark ran on **GRCh37 with 2019 tool versions**; its numbers enter the report
+  as a **prior**, and the HG002 positive-control run above — on GRCh38, our versions, *through
+  the bait chain* — is the number printed beside each call. **Bait-edge artefact control,
+  new:** a baited alignment has a coverage cliff at every ±50 kb boundary and unpaired mates
+  wherever a fragment straddles it — exactly the signature a read-pair or read-depth caller
+  reads as a deletion or breakpoint. Every SV call within one insert-size of a bait edge is
+  flagged, and the HG002 control reports how many false calls the edges alone produce.
+- **Decoy target set — the read route's own null (§10, gap N1).** Steps 2–3 have no analogue of
+  step 4's permutation null: nothing says how often a *random* 300-gene set would yield a
+  "biallelic candidate" by chance. So the same bait pass carries a **decoy set** of 300
+  protein-coding genes drawn at random, matched to the target set on coding length and exon
+  count, with no HPO annotation for any of the eight terms. Every rule of steps 2–3 (calling,
+  rare-allele filter, pair enumeration, k-mer genotype, CN) runs on the decoys identically, and
+  the count of decoy genes that produce a biallelic candidate is the **empirical false-lead
+  rate** of the read route — printed beside H014 and used as the step-6 weight of this route.
+  The decoy list is drawn with a recorded seed before step 1 finishes and never edited.
+- **Synonymous and near-splice alleles are not benign by default (Zemojtel 2014, §10, gap
+  Z2).** Every synonymous allele within 50 bp of an exon boundary and every intronic allele
+  inside SpliceAI's window is kept in `results.it2_read_alleles` with its SpliceAI Δ-score,
+  and enters pair enumeration when Δ ≥ 0.2 (the published "recall" cut, pre-registered), not
+  only the 0.5 "precision" cut.
 - **Hypotheses (filed before the run):** H014 at least one target gene carries a biallelic
   candidate set in the read-derived calls (refutation: none); H015 for every target gene the
   DeepVariant calls at PASS agree with the delivered VCF at ≥ 99 % of sites where both call
   (a concordance check, not an input — computed after the calls exist; refutation: < 99 %);
-  H016 no SV with ≥ 2 callers agreeing overlaps a coding exon of a gene that also carries a
-  rare heterozygous protein-altering allele (refutation: one does — that gene becomes the
-  lead pair); H031 for the top candidate pair, WhatsHap either closes a phase chain between
+  H016 no SV called by ≥ 2 callers of different method classes, outside the bait-edge zone,
+  overlaps a coding exon of a gene that also carries a rare heterozygous protein-altering
+  allele (refutation: a DEL or INS does — that gene becomes the lead pair; a DUP or INV does —
+  the gene becomes a lead *only* when exon coverage or k-mer CN confirms the dosage change,
+  else it is reported as an unconfirmed low-precision call); H036 the decoy set yields fewer
+  biallelic candidates than the target set per gene (refutation: as many or more — the read
+  route has no discriminating power on its own and enters step 6 at reduced weight); H031 for the top candidate pair, WhatsHap either closes a phase chain between
   the two alleles or reports the exact gap that prevents it (refutation: neither — a tooling
   failure, re-run before any conclusion).
 - **Cost:** one streaming pass over the Parquet read store (hours, local); alignment and
@@ -441,9 +520,13 @@ causal gene the symptom ranking missed.
   target gene → joined to step 2's read-derived alleles and step 3's k-mer genotypes.
 - **Case-report hunt:** the literature of the target set's diseases against the child's
   phenotype vector (male, rhabdomyosarcoma, nephrocalcinosis, growth restriction, no
-  microcephaly listed). Anchors are the disease papers of whatever genes the target set holds;
-  for chromosome-instability syndromes: Hanks 2004, Suijkerbuijk 2010, Snape 2011, Yost 2017,
-  Mirzaa 2014 (§8 D).
+  microcephaly listed). **Anchors are derived, not typed (§10, gap B3):** the first draft listed
+  five chromosome-instability papers by name, and those are the discovery papers of the genes
+  iteration 1 found — a hand-written anchor list is a leak through the blind. The anchor set
+  is now generated by script from the target set: for every core-tier gene, its OMIM disease
+  entries and the PubMed records they cite, plus the PubTator hits for gene + each HPO term
+  label. The §8 D papers are still in the bibliography, but they enter step 5 only if the
+  script produces them, and the entry prints which anchors came from which target gene.
 - **Protein model:** ESM1b zero-shot score and domain mapping for every missense in a step-4
   top-20 pair; second opinion vs AlphaMissense.
 - **LLM evidence tournament:** pairwise judged matches among the step-4 top-20 pairs; every
@@ -455,6 +538,11 @@ causal gene the symptom ranking missed.
   judgment cites is resolved against PubMed by script, and a judgment with an unresolvable
   citation is void. The tournament is one route among four in step 6, never the sole basis
   of a rank.
+- **Does the tournament add information (§10, gap N2)?** Reproducibility (κ, the double run) is
+  not discriminating power. The bracket's ranking is compared with two trivial baselines fixed
+  now — PubMed hit count per gene, and the step-4 posterior alone — by Spearman correlation and
+  by top-5 overlap; if the tournament reorders nothing beyond citation volume, it is dropped
+  from the step-6 fusion and reported as a negative result.
 - **Hypotheses:** H023 the catalogue holds at least one published allele present in this
   child (refutation: none); H024 at least one published case matches ≥ 5 of the child's 7 proband terms
   and names a gene in the step-4 top 20 (refutation: none); H025 ESM1b and AlphaMissense
@@ -479,6 +567,15 @@ causal gene the symptom ranking missed.
   (step 1) or its calibration band (steps 3–4). No weight is tuned after unblinding.
 - **Unblind:** compare against iteration 1's confirmed pair and against the oracle reply.
   The comparison is the first place an iteration-1 candidate table is read.
+- **The routes are not independent votes (§10, gap F1).** Step 3 genotypes the alleles step 2
+  discovered; step 4's genotype LR ranks pairs from the same annotator; step 5's tournament is
+  seeded with step 4's top 20. RRF treats four correlated lists as four witnesses. So the
+  fusion figure carries a **route-dependency graph** (which route consumed which other's
+  output) and, beside the RRF score, an **independent-evidence count**: how many *disjoint
+  inputs* (reads, VCF, HPO, literature) speak for the pair. A pair with one input behind four
+  routes is labelled as such. Route weights in the second sensitivity analysis are the routes'
+  own measured error rates — the step-1 recall, the step-2/3 decoy false-lead rate (H036), the
+  step-4 permutation null — not step-level bands guessed now.
 - **Decision table**, fixed now:
 
 | Outcome | Meaning | Action |
@@ -488,6 +585,10 @@ causal gene the symptom ranking missed.
 | confirmed pair absent from iteration-2's top 20 | a blind spot in the mirror method (target set too small, bait missed, LR mis-weighted) | trace which step lost it; that trace is the report's most valuable section; no upload |
 | iteration 2 nominates a *second* biallelic pair with comparable posterior | a possible dual diagnosis or an artefact | pre-registered decode table; upload only if expected information gain > 0 |
 
+- **A miss is classified, not just traced.** The third outcome row's "trace which step lost it"
+  uses the four pre-registered failure categories of step 1 (curated-tier, allele class, term
+  coding, caller dropout) so that the miss is reported as a category with a fix, in the same
+  words a reviewer of any later case would use.
 - **Hypothesis:** H026 the fused ranking places the confirmed pair first, and no single route
   places it below rank 3. Refutation: any route with the pair outside its top 3.
 - **Report artifact:** the agreement matrix (routes × candidate pairs) — the iteration's
@@ -544,6 +645,14 @@ after step 6 has unblinded them.
   Cross-cutting: Subramanian 2017 (CMap/L1000 signature reversal against the Sheltzer 2012/2013
   aneuploidy signature), Steiert 2024 (NLP-assisted repurposing evidence — precedent for the
   PMID-grounded tournament), Pushpakom 2019 (framework for the rigor section).
+- **A control for the repurposing pipeline itself (§10, gap N3).** Track 2's rigor rests on
+  qualitative rungs while Track 1 gets permutation nulls — an inconsistency in how "confidence
+  is never asserted" is honoured. So the same `mva-drugs` adapters, CMap query and evidence
+  ladder run on **two decoy mechanism cards**: a random recessive gene from the step-2 decoy
+  set, and a deliberately unrelated well-drugged pathway (a metabolic enzyme). If a drug
+  direction earns rung ≥ 2 for the decoys as readily as for BubR1, the pipeline nominates it
+  for everything and the direction is reported as non-specific. The decoy tables ship in the
+  Track 2 report's limitations section.
 - **Hypotheses:** H027 no approved drug targets BubR1 directly (already H011 — re-tested on
   the refreshed snapshot); H028 at least one approved compound per direction has a cited
   cellular-model result in aneuploid or SAC-deficient cells; H029 for each shortlisted drug,
@@ -597,8 +706,31 @@ never equated with it. Step 8 names no candidate and is not blind.
 - **Joint model:** **MAD-seq** (Kong 2018, §8 G) — a hierarchical Bayesian model over allele
   balance *and* relative depth from ordinary WGS that detects mosaic aneuploidy and copy-neutral
   loss of heterozygosity and discriminates the mitotic mechanism (nondisjunction vs anaphase
-  lag). Run on the delivered VCF's `AD`/`DP` and on the reads-route dosage; its mechanism call is
-  a Track 2 fact (step 7). Published code pinned by commit in the entry.
+  lag). Kong 2018, read (§10, gaps M2–M4): five per-chromosome models (normal, monosomy,
+  mitotic trisomy, meiotic trisomy, copy-neutral LOH) — a beta-binomial mixture on allele
+  fraction times a negative binomial on depth — compared by BIC, with **ΔBIC < 10 declared
+  low-confidence** by the authors; that threshold is adopted as is. Its > 99 % sensitivity and
+  < 2 % FDR at 5 % fraction are **simulation figures** (2,000 het sites, 100×), and the real
+  validation mostly re-detected known abnormalities; the plan quotes them as such and relies on
+  its own mixing simulation below. The R/JAGS package has been **removed from Bioconductor** and
+  its repository is stale, so the model is **re-implemented in Python** from the paper's
+  equations (which the review confirmed match the released source line for line), with
+  `scipy` maximum-likelihood fits per model rather than MCMC — a stated simplification, checked
+  against the paper's simulation table before use. Run on the delivered VCF's `AD`/`DP` and on
+  the reads-route dosage; its mechanism call is a Track 2 fact (step 7).
+- **The baseline problem is this disease's defining feature (Kong 2018, Discussion — §10, gap
+  M2).** MAD-seq assumes a genome-wide diploid baseline and its authors say the model degrades
+  when several chromosomes are abnormal at once. *Variegated* aneuploidy is exactly that —
+  different chromosomes in different cells — and the Bdev null and the k-mer dosage null above
+  both divide by an autosome-wide median, so all three routes share the failure mode. Three
+  pre-registered defences: (a) the baseline is the **median of per-chromosome estimates with
+  each chromosome left out in turn**, and a chromosome whose exclusion shifts the baseline by
+  more than the bootstrap interval is flagged; (b) the mixing simulation injects **two and
+  three simultaneously affected chromosomes** at 5, 10 and 20 % and reports whether each is
+  still recovered; (c) the reads-route dosage uses the k-mer counts' own sum as an absolute
+  scale (total 31-mer mass ÷ genome size), which does not depend on any chromosome being
+  normal. Chromosome **X is included** — the proband is male, one X, so a gain shows as a
+  dosage shift with no allele-fraction signal, and the report says which route can see it.
 - **Detection limit, stated:** per chromosome, the smallest *f* the Bdev test detects at 80 %
   power given its het-site count and depth, simulated by mixing site-level `AD` (survey
   baseline: EM-mosaic). "Nothing detected" is quoted with that limit, never alone.
@@ -607,8 +739,10 @@ never equated with it. Step 8 names no candidate and is not blind.
   MAD-seq mechanism; 037 is superseded by a new entry, never edited); H034 the detection limit
   is ≤ 10 % cell fraction for every autosome (refutation: a chromosome with a worse limit is
   named as a blind spot).
-- **Cost:** SQL over layer 1 plus one Python fit (desk, hours); the reads half rides the
-  step-2/3 pass.
+- **Cost, revised (§10, gap M4):** SQL over layer 1 is hours; the five-model fit ×
+  24 chromosomes × the mixing simulation (three fractions × three multi-chromosome designs ×
+  200 replicates) is a day of desk compute, not "one fit"; the reads half rides the step-2/3
+  pass.
 - **Report artifact:** per-chromosome panel — Bdev distribution, dosage with interval,
   detection-limit curve — beside iteration 1's flat karyogram, with the power argument written
   under it; the mechanism card gains "aneuploidy burden in the sequenced sample" and its limit.
@@ -630,6 +764,16 @@ never equated with it. Step 8 names no candidate and is not blind.
 | 3 | decision per §3 step 6; upload only if informative; Track 2 report drafting continues | step 6 | 0–1 upload |
 
 Total ≈ 2–3 weeks wall clock beside Track 2 writing; cloud cost limited to the Exomiser box.
+
+**If time runs short — the cut order, fixed now (§10, gap P6).** Track 2 is due ~2026-10-20 and
+the plan above is generous. The load-bearing spine is: step 1 → the single read pass (steps 2–3
+small variants, k-mer genotypes, step 8 dosage) → step 4 → step 6 fusion → the report. Cut in
+this order, each cut recorded as a limitation, never silently: (1) the LLM tournament of step 5;
+(2) the Exomiser cloud reference run (the 067 reimplementation stands, labelled as such);
+(3) GRIDSS and the HG002 control (SV consensus then drops to "reported, unvalidated");
+(4) the exon-scale CN of step 3 (gene scale stays); (5) the MAD-seq mechanism call (Bdev and
+dosage stay). Nothing in the spine is cut; a spine step that cannot run ends the iteration with
+a report that says so.
 Route 5B (full-genome re-alignment and re-call, ~1.5 days local) stays closed.
 
 ---
@@ -651,7 +795,7 @@ gate fails does not feed the next one; the failure is the finding.
 | 5 | catalogue size per gene, PMIDs resolved / unresolved, tournament κ | unresolved citations = 0 in any retained judgment; κ reported |
 | 6 | routes fused, pairs per route, leave-one-out table, unblinding timestamp | fused ranking exported before the comparison, hash recorded |
 | 7 | card version, snapshot manifests, approved-only filter counts, paediatric-data counts, evidence-ladder rung per drug | every submitted drug: approved = yes, mechanism citation ≥ 1, rung ≥ 2 |
-| 8 | het sites and depth per chromosome; over-dispersion estimate; detection limit per chromosome; MAD-seq run manifest | every "nothing detected" carries its detection limit (H034) |
+| 8 | het sites and depth per chromosome (autosomes + X); over-dispersion estimate; detection limit per chromosome; leave-one-chromosome-out baseline shift; multi-chromosome simulation recovery; ΔBIC per model per chromosome | every "nothing detected" carries its detection limit (H034); no ΔBIC < 10 call is reported as a mechanism |
 
 Cross-cutting: every `results.it2_*` table gets a `warehouse.data_lineage` row naming the
 reads or the VCF **and** the HPO terms where both were used; every figure carries the entry
@@ -707,7 +851,7 @@ is a reserve, and saying so is part of the report.
 | Replication report (Track 1, iteration 2) | `submissions/track1/iteration-2/report.md` → PDF; methods form model 2 |
 | Target-set ranking with recall-at-N curve, read-recovery funnel, phase-block diagram per candidate gene, permutation-null histogram, agreement matrix, k-mer scatter, exon-CN strips, posterior chart, coverage heat map, SV table, catalogue table | `figures/track1/iteration2/`, scripts in `tools/` |
 | Track 2 card v3 + refreshed snapshot + drug hypotheses | `ressources/track2/`, `docs/iteration2/step-7/` |
-| Reusable tools: reference-k-mer read bait + targeted caller (case-agnostic), negative-binomial k-mer genotyper + local-flank k-mer CN, LR pair ranker with per-lane calibration, RRF fuser, catalogue fetcher, spike-in harness, mosaic-fraction bound (Bdev / dosage / MAD-seq wrapper), blind gate (`mva-science check --blind`), per-iteration step map | `src/mva/…`, each with tests and a provenance manifest |
+| Reusable tools: reference-k-mer read bait + targeted caller (case-agnostic), negative-binomial k-mer genotyper + local-flank k-mer CN, LR pair ranker with per-lane calibration, RRF fuser, catalogue fetcher, spike-in harness, matched decoy-set generator, mosaic-fraction bound (Bdev / dosage / MAD-seq re-implementation, leave-one-chromosome-out baseline), blind gate (`mva-science check --blind`), per-iteration step map | `src/mva/…`, each with tests and a provenance manifest |
 | Track 2 **3-minute video pitch** — script from the evidence table and pathway diagram, link recorded | `submissions/track2/iteration-1/` |
 | Dictionary entries: k-mer, k-mer bait, blind protocol, likelihood ratio, posterior, reciprocal rank fusion, copy number, structural variant consensus, hypomorph (extend), P(trans), negative binomial / over-dispersion, B-deviation (Bdev), mosaic fraction, k-mer dosage, phase block, Truvari merge, LOFTEE, spike-in, evidence ladder | `docs/dictionary.md` |
 
@@ -794,6 +938,7 @@ list for a later iteration: the papers README.
 | Edge P, Bafna V, Bansal V 2017. HapCUT2: robust and accurate haplotype assembly for diverse sequencing technologies. *Genome Res* | 27940952 | step 2 | the second read-backed phaser; per-block phred quality |
 | English AC et al. 2022. Truvari: refined structural variant comparison preserves allelic diversity. *Genome Biol* | 36575487 | step 2 | a defined SV merge in place of "≥ 2 overlap" |
 | Kosugi S et al. 2019. Comprehensive evaluation of structural variation detection algorithms for whole genome sequencing. *Genome Biol* | 31159850 | step 2 | per-caller precision / recall by SV type and size — the FDR printed beside each SV call |
+| Cameron DL et al. 2017. GRIDSS: sensitive and specific genomic rearrangement detection using positional de Bruijn graph assembly. *Genome Res* | 29097403 | step 2 | the assembly-class SV caller Kosugi 2019 ranks top-tier for DEL/DUP — the second method class the consensus rule needs |
 | Zook JM et al. 2020. A robust benchmark for detection of germline large deletions and insertions. *Nat Biotechnol* | 32541955 | step 2 | GIAB HG002 SV truth set — the positive control |
 | Kaplinski L, Lepamets M, Remm M 2015. GenomeTester4: a toolkit for performing basic set operations on k-mer lists. *GigaScience* | 26640690 | step 3 | `glistmaker` / `glistquery` / `glistcompare`; FastGT and GeneToCN are built on it |
 | Deorowicz S et al. 2015. KMC 2: fast and resource-frugal k-mer counting. *Bioinformatics* | 25609798 | step 2, 3 | the low-RAM genome-wide k-mer table for bait and probe uniqueness |
@@ -950,3 +1095,42 @@ What the review did **not** change: the blind protocol, the step order, the no-u
 (§6), the RRF constant k = 60, the 300-gene N (pending H012), and the Track 2 directions.
 Everything in this section is still a plan; the numbers quoted from papers are theirs, not ours,
 and every one of ours will come from an executed run in this iteration's `methodology/`.
+
+---
+
+## 10. Bias and gap review — second pass, 2026-09-10
+
+Method: the three papers §9 had cited from their abstracts (Zemojtel 2014, Kong 2018, Kosugi
+2019) were read in full (one Sonnet-class `paper-analyst` report each, in
+[`papers/iteration2/`](../../papers/iteration2/README.md)); the plan was then re-read once for
+**bias** — places where the design, while formally blind, already knows the answer — and once
+for **missing controls**, against the clinical document's own notes. IDs: B = bias, Z =
+Zemojtel, V = structural variants (Kosugi), M = mosaicism (Kong), N = missing null or control,
+F = fusion, P = process. Every fix names where it landed.
+
+| ID | Gap or bias | Evidence | Fix, and where |
+|---|---|---|---|
+| B1 | the term-driven core rule ("every gene annotated with a chromosome-instability / aneuploidy term, whatever its rank") guarantees the answer's gene a core seat — a rediscovery it did not earn from the symptoms | step 1 first draft; HPO annotation of the MVA terms resolves to a handful of genes | rows tagged `mechanism-term`; pure symptom-score rank printed; step 6's rediscovery claim made on the pure ranking only (§3 step 1) |
+| B2 | the parental miscarriage term demoted to a sensitivity case, though the clinical document's notes say it "should be treated as part of the phenotypic input, not merely as background" | `Challenge_Clinical_Phenotype_1.md`, "Family History as a Signal" | second channel: a small, pre-registered mode-of-inheritance factor in step 4's LR; 7- and 8-term rankings co-primary (§3 step 1) |
+| B3 | step 5's case-report anchors were five named papers — the discovery papers of iteration 1's gene — inside a step that is supposed to be blind | §3 step 5 first draft vs §8 D | anchors generated by script from the target set's OMIM and PubTator records (§3 step 5) |
+| Z1 | PhenIX's 86.5 % top-1 has no interval and its truth set is the corpus that built the scorer; step 1's benchmark inherits the circularity | Zemojtel 2014 Fig. 1, Methods | recall curve labelled an internal consistency check; spike-in harness is the quoted recall (§3 step 1) |
+| Z2 | the paper's one disclosed miss is a synonymous splice-disrupting allele; the plan's allele filters were "protein-altering or splice-affecting" with no stated synonymous rule | Zemojtel 2014, SLC39A4 case | synonymous / near-splice alleles kept with SpliceAI Δ ≥ 0.2 (§3 step 2) |
+| Z3 | 29 of 40 prospective failures never triaged; step 6's "trace which step lost it" had no categories either | Zemojtel 2014 prospective arm | four pre-registered failure categories (§3 steps 1, 6) |
+| V1 | Manta + Delly + LUMPY are one method class; Kosugi's own result is that cross-class pairs gain more precision | Kosugi 2019 Fig. 6–7 (1.82× vs 1.63×) | GRIDSS added; consensus = two method classes (§3 step 2, §8 G) |
+| V2 | "≥ 2 callers agree" treated every SV type alike; real-data DUP precision ≤ 57 %, INV ≤ 49 %, sim-to-real correlation weak for both | Kosugi 2019 Table 1 | H016 restated per type; DUP/INV need dosage confirmation (§3 step 2) |
+| V3 | Kosugi's numbers are GRCh37, 2019 versions, whole-genome alignments; the plan aligns a *baited* subset on GRCh38 | Kosugi 2019 Methods; §3 step 2 | benchmark numbers are a prior; HG002 through our chain is the printed number (§3 step 2) |
+| V4 | a baited alignment has coverage cliffs and orphaned mates at every bait edge — a false-deletion generator no SV caller was benchmarked against | geometry of the bait; Kosugi (no such setting evaluated) | bait-edge flag; edge-only false-call count from HG002 (§3 step 2) |
+| M2 | MAD-seq, Bdev and k-mer dosage all assume a genome-wide diploid baseline; Kong's authors say the model degrades with several abnormal chromosomes — which is what *variegated* means | Kong 2018 Discussion | leave-one-chromosome-out baseline, multi-chromosome simulation, absolute k-mer-mass scale (§3 step 8, §4b) |
+| M3 | MAD-seq's > 99 % / < 2 % figures are simulation-only; its package is gone from Bioconductor and the repository is stale; "published code pinned by commit" promised a dependency that no longer installs | Kong 2018 Table 1 (9 of 14 rows previously known); Bioconductor removal | Python re-implementation from the equations, checked against the paper's simulation table; ΔBIC < 10 = low confidence (§3 step 8) |
+| M4 | step 8 cost "one Python fit, hours" against 5 models × 24 chromosomes × a simulation grid | Kong 2018 Methods (2 chains × 20 k steps per model per chromosome) | cost revised to a day; MAD-seq mechanism call is cut (5) in the cut order (§3 step 8, §4) |
+| M5 | "every autosome" — the proband is male; a mosaic X gain has no allele-fraction signal and was invisible to the plan | clinical document (male); step 8 first draft | X included through the dosage route (§3 step 8, §4b) |
+| N1 | steps 2–3 had no null: nothing said how often a random gene set yields a "biallelic candidate" | §3 steps 2–3 first draft | 300-gene matched decoy set in the same pass; H036; false-lead rate weights the route in step 6 (§3 steps 2, 6) |
+| N2 | the tournament had reproducibility checks but no test that it adds information beyond citation volume | §3 step 5 first draft | PubMed-count and posterior-only baselines; dropped from fusion if it reorders nothing (§3 step 5) |
+| N3 | Track 2 rigor was qualitative rungs while Track 1 got permutation nulls | §3 step 7 vs step 4 | two decoy mechanism cards through the same pipeline (§3 step 7) |
+| F1 | RRF treated four correlated routes as independent witnesses; weights "proportional to recall" used step-level bands, not measured error rates | §3 step 6 first draft; Cormack 2009 assumes independent systems | route-dependency graph, independent-evidence count, error-rate weights (§3 step 6) |
+| P6 | no cut order; the plan cannot finish before Track 2's deadline if everything runs | §4; intel §5 (Track 2 ~2026-10-20) | spine + five ordered cuts (§4) |
+| — | `docs/README.md` still described the plan as "seven steps" | index line for `iteration2/plan.md` | corrected to eight |
+
+Not changed by this pass: the blind protocol (strengthened, not replaced), the no-upload
+default (§6), the step order, k = 60, N = 300 pending H012. Numbers quoted from the three
+papers are theirs, with page or table; none is ours until a methodology entry produces it.

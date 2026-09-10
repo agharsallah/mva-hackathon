@@ -1,9 +1,13 @@
 # Iteration 2 — the research steps behind submission 2
 
 **Standing:** opened 2026-09-09; **plan drafted** in [`plan.md`](plan.md) (eight steps, blind protocol,
-`step-1` … `step-8`; steps not yet declared in `steps.py`), **gap-reviewed 2026-09-10** against the
-five papers in [`papers/iteration2/`](../../papers/iteration2/README.md) — `plan.md` §9 lists every
-gap and its fix, §8 G the citations it added. Iteration 1 is frozen at
+`step-1` … `step-8`; steps not yet declared in `steps.py`), **gap-reviewed twice on 2026-09-10** against the
+eight papers in [`papers/iteration2/`](../../papers/iteration2/README.md) — `plan.md` §9 (five papers)
+and §10 (three more, plus a bias pass: term-driven target rows, the family-history term, hand-typed
+anchors, missing nulls for the read route, the fusion and Track 2) list every gap and its fix,
+§8 G the citations they added. [`execution.md`](execution.md) is the plan's companion: per step,
+which published tools to adopt, what `src/mva/` already provides, what to build, and what the
+dashboard shows (a `/steps` page for every iteration). Iteration 1 is frozen at
 [`../iteration1/`](../iteration1/README.md); step 0 (the platform) stays at
 [`../step-0/`](../step-0/README.md).
 
