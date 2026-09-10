@@ -8,6 +8,7 @@ all-or-nothing, not best-effort per file.
 import sys
 from pathlib import Path
 
+from .. import blind as blind_module
 from .. import export as export_module
 from .. import record as record_module
 from ..dossier import assemble_all
@@ -29,6 +30,11 @@ def do_check(args) -> int:
         if dossier.hypothesis.status.is_settled and not dossier.evidence
     )
 
+    blind_report = None
+    if getattr(args, "blind", ""):
+        blind_report = blind_module.check(Path(args.root), args.blind)
+        problems.extend(blind_report.problems)
+
     if problems:
         print("check failed:")
         for problem in problems:
@@ -38,6 +44,12 @@ def do_check(args) -> int:
         f"check passed: {len(dossiers)} hypotheses, "
         f"{sum(len(d.evidence) for d in dossiers)} evidence rows, no coordinates"
     )
+    if blind_report is not None:
+        state = "still blind" if blind_report.blind else f"unblinded by {blind_report.unblinded_by}"
+        print(
+            f"blind gate passed: {len(blind_report.entries)} {blind_report.iteration} "
+            f"entries, every one declaring its inputs — {state}"
+        )
     return 0
 
 

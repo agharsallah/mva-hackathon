@@ -124,6 +124,17 @@ def _publish_verbs(subparsers: argparse._SubParsersAction) -> None:
     check = subparsers.add_parser(
         "check", help="the publish gate: coordinates, and verdicts with no evidence"
     )
+    check.add_argument(
+        "--blind",
+        metavar="ITERATION",
+        default="",
+        help=(
+            "also run the blind gate over docs/<ITERATION>/step-*/methodology/: every "
+            "entry must declare its inputs and name no iteration-1 candidate table "
+            "before the unblinding entry"
+        ),
+    )
+    check.add_argument("--root", default="docs", help="where the step folders live")
     check.set_defaults(handler=publish.do_check)
 
     export = subparsers.add_parser("export", help="write the committed mirror")
