@@ -145,6 +145,25 @@ def cmd_agreement(args: argparse.Namespace) -> int:
         "\nA dash is 'this service did not return that gene', which is not disagreement.\n"
         "Every column is a different method; agreement across them is the claim worth making."
     )
+    print()
+    mine = {score.symbol.upper() for score in ours}
+    for reply in hosted:
+        if not reply.ok:
+            print(f"{reply.source:16s} no overlap figure — {reply.error}")
+            continue
+        # Their top-``limit``, not their whole list: an overlap of two top-N sets is the
+        # comparable figure, and scoring our N against their thousands would inflate it.
+        # A service that returned fewer than ``limit`` rows is compared over what it
+        # actually returned — dividing by a window it never filled would print truncation
+        # as disagreement, which is the one reading this table exists to prevent.
+        window = min(args.limit, len(reply.genes))
+        theirs = {gene.symbol.upper() for gene in reply.genes[:window]}
+        shared = mine & theirs
+        note = "" if window == args.limit else f" (it returned only {window} genes)"
+        print(
+            f"{reply.source:16s} {len(shared)}/{window} shared "
+            f"({len(shared) / window:.1%}) in the top {window}{note}"
+        )
     return 0
 
 
