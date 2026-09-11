@@ -193,6 +193,100 @@ def near_bait_edge(
     return False
 
 
+@dataclass(frozen=True)
+class SvCall:
+    """One structural-variant record, with the fields a consensus needs to compare two."""
+
+    caller: str
+    method_class: str
+    contig: str
+    position: int
+    end: int
+    sv_type: str
+    length: int
+    filters: str
+    genotype: str
+
+    @property
+    def precision_prior(self) -> float:
+        return precision_prior(self.sv_type)
+
+    def overlaps(self, other: SvCall, *, slop: int = 500, reciprocal: float = 0.5) -> bool:
+        """Whether two calls describe the same event, by Truvari's own criteria.
+
+        Same type, breakpoints within ``slop``, and — for calls with real extent —
+        reciprocal overlap of at least ``reciprocal``. Written out rather than left to an
+        ad-hoc distance test because "the callers agree" is the whole basis of the
+        consensus, and an undefined agreement rule can be tuned after seeing the answer.
+        """
+        if self.sv_type != other.sv_type or self.contig != other.contig:
+            return False
+        if abs(self.position - other.position) > slop or abs(self.end - other.end) > slop:
+            return False
+        span, theirs = self.end - self.position, other.end - other.position
+        if span <= 0 or theirs <= 0:
+            return True
+        shared = min(self.end, other.end) - max(self.position, other.position)
+        return shared > 0 and shared / max(span, theirs) >= reciprocal
+
+
+def read_calls(vcf: Path, *, caller: str, method_class: str) -> tuple[SvCall, ...]:
+    """Parse an SV VCF into rows. ``SVTYPE``, ``END`` and ``SVLEN`` live in INFO, which
+    the small-variant reader does not touch, so they are pulled out here."""
+    import gzip
+
+    opener = gzip.open if vcf.suffix == ".gz" else open
+    found: list[SvCall] = []
+    with opener(vcf, "rt", encoding="utf-8", errors="replace") as handle:
+        for line in handle:
+            if line.startswith("#"):
+                continue
+            fields = line.rstrip("\n").split("\t")
+            if len(fields) < 8:
+                continue
+            info = _info(fields[7])
+            position = int(fields[1])
+            length = int(info.get("SVLEN", "0") or 0)
+            end = int(info.get("END", position + abs(length)) or position)
+            found.append(
+                SvCall(
+                    caller=caller,
+                    method_class=method_class,
+                    contig=fields[0],
+                    position=position,
+                    end=end,
+                    sv_type=info.get("SVTYPE", "UNKNOWN"),
+                    length=length or (end - position),
+                    filters=fields[6],
+                    genotype=fields[9].split(":")[0] if len(fields) > 9 else "",
+                )
+            )
+    return tuple(found)
+
+
+def _info(field: str) -> dict[str, str]:
+    """VCF INFO as a dict; a flag with no value maps to an empty string."""
+    parsed: dict[str, str] = {}
+    for item in field.split(";"):
+        key, _, value = item.partition("=")
+        if key:
+            parsed[key] = value
+    return parsed
+
+
+def consensus(
+    left: tuple[SvCall, ...], right: tuple[SvCall, ...], *, slop: int = 500
+) -> list[tuple[SvCall, SvCall]]:
+    """Calls supported by both method classes — the only SVs H023 is about.
+
+    Quadratic on purpose: two short-read callers over 42 Mb produce hundreds of calls, not
+    millions, and an index here would be machinery with nothing to do.
+    """
+    return [
+        (first, second) for first in left for second in right if first.overlaps(second, slop=slop)
+    ]
+
+
 def precision_prior(sv_type: str) -> float:
     """Kosugi 2019's best observed short-read precision for this type, or 0 if unmeasured.
 

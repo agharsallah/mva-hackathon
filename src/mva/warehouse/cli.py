@@ -197,6 +197,28 @@ def _do_pg_load_it2(args) -> int:
     return 0
 
 
+def _do_pg_load_it2_step2(args) -> int:
+    """Load iteration 2's step-2 read-derived tables from a build directory."""
+    from . import it2_step2_tables
+
+    settings = _settings(args)
+    with pg.attached(settings) as connection:
+        loaded = it2_step2_tables.load(
+            connection,
+            schema=settings.schema,
+            result_schema=settings.result_schema,
+            out_dir=args.out,
+        )
+    if not loaded:
+        print(f"nothing to load: no TSVs under {args.out}/tables")
+        print("run `uv run python tools/export_it2_step2_tables.py` first")
+        return 1
+    for item in loaded:
+        print(f"  {settings.result_schema}.{item.table:<20} {item.rows:>9,} rows  <- {item.source}")
+    print(f"\nlineage edges appended to {settings.schema}.data_lineage")
+    return 0
+
+
 def _do_pg_list(args) -> int:
     """List everything in both managed schemas."""
     settings = _settings(args)
@@ -285,6 +307,18 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("build/it2/step-1"),
         help="the directory tools/build_it2_targets.py wrote",
+    )
+
+    load_step2 = add_pg(
+        "pg-load-it2-step2",
+        _do_pg_load_it2_step2,
+        "load iteration 2's step-2 read-derived tables from a build directory",
+    )
+    load_step2.add_argument(
+        "--out",
+        type=Path,
+        default=Path("build/it2/step-2"),
+        help="the directory tools/export_it2_step2_tables.py wrote its tables under",
     )
 
     add_pg("pg-list", _do_pg_list, "list every table in both managed schemas")
