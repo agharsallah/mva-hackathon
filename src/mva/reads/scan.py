@@ -146,20 +146,11 @@ def _polars_survivors(root: str, sequences: list[str]):
 
 
 def _polars_storage_options(root: str) -> dict | None:
-    """Credentials for an ``s3://`` root, from the same settings everything uses."""
-    if not root.startswith("s3://"):
-        return None
-    from ..warehouse.settings import object_store
+    """Credentials for an ``s3://`` root — see :func:`mva.reads.access.storage_options`,
+    which owns them, so a rotated key reaches this reader and the bait sweep alike."""
+    from .access import storage_options
 
-    store = object_store()
-    scheme = "https" if store.use_ssl else "http"
-    return {
-        "aws_access_key_id": store.access_key,
-        "aws_secret_access_key": store.secret_key,
-        "aws_endpoint_url": f"{scheme}://{store.endpoint}",
-        "aws_region": store.region,
-        "aws_allow_http": str(not store.use_ssl).lower(),
-    }
+    return storage_options(root)
 
 
 def kmer(connection, root: str, probe: str, limit: int = 100) -> list[Hit]:

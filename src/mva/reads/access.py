@@ -21,6 +21,26 @@ def resolve_root(root: str | None = None) -> str:
     return root or s3_root()
 
 
+def storage_options(root: str) -> dict[str, str] | None:
+    """Object-store credentials in the spelling Polars/object_store expects.
+
+    DuckDB takes the secret through a `CREATE SECRET` in :func:`connection`; Polars takes
+    it as a dict on every scan. Same credentials, two dialects — written once here so a
+    rotated key cannot reach one reader and miss the other. ``None`` for a local root.
+    """
+    if not root.startswith("s3://"):
+        return None
+    store = object_store()
+    scheme = "https" if store.use_ssl else "http"
+    return {
+        "aws_access_key_id": store.access_key,
+        "aws_secret_access_key": store.secret_key,
+        "aws_endpoint_url": f"{scheme}://{store.endpoint}",
+        "aws_region": store.region,
+        "aws_allow_http": str(not store.use_ssl).lower(),
+    }
+
+
 def connection(root: str):
     """A DuckDB connection able to read ``root`` — with the store secret when remote."""
     if root.startswith("s3://"):
