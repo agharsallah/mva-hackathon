@@ -100,6 +100,7 @@ values, and a window containing an uncalled base has no k-mer.
 ```
 uv run python tools/build_reference_genome.py
 uv run python tools/build_it2_bait.py
+uv run python tools/profile_it2_bait.py
 uv run python tools/build_it2_witness.py --sample 120 --seed 20260912
 ```
 
@@ -134,9 +135,85 @@ The bait is **1.36 % of the genome**. At the delivery's 44× and 150 bp that pre
 **≈ 12,378,000 recovered reads**, and the pass is judged against 0.5–2× of it
 (6,189,000–24,756,000). **39,508,982 canonical 31-mers** were cut in 51 s.
 
-### The uniqueness gate
+### The uniqueness gate — **failed, at 8.79 % against a < 5 % rule**
 
-*(to be filled from the run — the pass is executing)*
+2,934,842,387 genome windows scanned in 542 s. **3,470,945 of 39,508,982 bait k-mers
+(8.79 %) occur more than once in GRCh38** and were dropped, leaving **36,038,037**.
+**0 were never found**, which is the consistency check between the bait and the reference
+it was cut from, and it passes exactly.
+
+The gate is pre-registered and it fails. Per the plan's own rule the failure is the
+finding, so it is reported as one — and the first thing to say about it is what it does
+**not** mean. The repeated k-mers are *dropped*; the bait that goes into the pass is clean
+by construction. What 8.79 % measures is how repetitive the chosen regions are, and the
+risk the gate stands in for is different from the number it reports: the risk is not that
+9 % of k-mers are repetitive, it is that **some particular gene** is so repetitive that
+the bait cannot reach it, and a later "no second allele in this gene" would then be a
+statement about the reference rather than about the child. An average cannot answer that.
+
+### What the gate was proxying for, measured per gene
+
+`tools/profile_it2_bait.py` re-cuts every gene's intervals and asks how many of its
+windows survived the filter. One reference pass, per gene and per tier:
+
+| Tier | Genes | Bases | Windows | Surviving | Lost |
+|---|---|---|---|---|---|
+| `core` | 59 | 9,606,064 | 9,604,204 | 8,155,048 | 15.09 % |
+| `mechanism-term` | 69 | 9,789,131 | 9,787,061 | 8,076,345 | 17.48 % |
+| `net` | 268 | 9,097,805 | 9,065,615 | 7,842,394 | 13.49 % |
+| `decoy` | 396 | 14,104,047 | 14,049,536 | 12,315,806 | 12.34 % |
+
+These per-tier losses are larger than the global 8.79 % because they count windows **with
+multiplicity** while the global figure counts distinct k-mers: one repeated k-mer occupies
+many windows. The wide-padded tiers lose most, as expected — ±50 kb reaches into introns
+and intergenic sequence, which is far more repetitive than exons.
+
+Per-gene density (surviving k-mers per base), median over all 792 genes = **0.888**:
+
+| Tier | n | Median density | Minimum |
+|---|---|---|---|
+| `core` | 59 | 0.847 | **0.532** |
+| `mechanism-term` | 69 | 0.842 | **0.449** |
+| `net` | 268 | 0.891 | 0.048 |
+| `decoy` | 396 | 0.905 | 0.002 |
+
+**21 of 792 genes** fall below half the median. **16 are decoys and 5 are `net`; none is
+`core` or `mechanism-term`.** They are the classic segmental-duplication families —
+TBC1D3, GOLGA6, NBPF, POTE, HNRNPCL, SPDYE, FRG2B, LIMS4 — where a gene has near-identical
+copies elsewhere and almost no k-mer of it is unique.
+
+**So the gate fails on the average and the risk it guards against is absent from the genes
+step 2 reasons about.** Every core and mechanism-term gene retains at least 45 % of the
+median bait density. Recorded decision: the pass proceeds on the filtered bait, the
+failure is reported as a limitation rather than waved away, and **every per-gene claim
+step 2 makes carries that gene's bait density beside it** — which is strictly more
+informative than the gate would have been had it passed.
+
+### A correction the profiling forces on H020
+
+H020 predicts the decoy set yields fewer biallelic candidates per gene than the target
+set. The decoys were drawn (entry 084) matched on **coding length and exon count** — not
+on repetitiveness, which nobody had measured yet. They are now known to differ from the
+targets in a way that touches exactly what H020 counts: the decoy set carries 16 of the 21
+bait-starved genes, against 5 in the target set. A gene the bait cannot reach yields no
+candidates for a reason that has nothing to do with whether symptoms nominated it, so
+H020 could be "supported" by bait reachability alone.
+
+**Pre-registered now, before the pass returns:** H020 is reported **twice** — over all
+genes, and restricted to genes above half the median bait density (776 of 792). The
+restricted comparison is the primary one; if the two disagree, the disagreement is the
+result. This is a limitation of the step-1 decoy design discovered by step 2, and it is
+filed here rather than corrected silently in the draw.
+
+### Genes the bait cannot reach at all
+
+8 of the 800 are absent from the gene model and were never baited: **H19, HELLPAR, HYMAI,
+KCNQ1OT1, MEG3, RMRP, RNU4ATAC, RNU5B-1**. All eight are non-coding RNA genes, and their
+absence is structural rather than accidental: `coding_regions.tsv` is built from coding
+sequence, so a gene that encodes no protein has no interval to pad. This is a **named
+blind spot**, not a rounding error — **RNU4ATAC** is itself a recessive disease gene
+(Roifman and MOPD1 syndromes), which is precisely the kind of gene this design would miss.
+Step 4's genome-wide ranking over the callset is the safety net, and the report says so.
 
 ## Assumptions and limitations
 
@@ -172,7 +249,18 @@ The bait is **1.36 % of the genome**. At the delivery's 44× and 150 bp that pre
 - H021 is the external check, and it is the one that matters: the old strike finds the
   reads carrying a known alternate allele, and the bait must have kept them.
 
+## Verdict on the gates
+
+| Gate | Rule | Observed | |
+|---|---|---|---|
+| reference agrees with the callset | contig count matches entry 073 | 195 = 195 | **pass** |
+| bait cut | printed before the pass | 42,197,689 bases, 39,508,982 k-mers | **pass** |
+| `unseen` k-mers | must be 0 | 0 | **pass** |
+| off-target | < 5 % | **8.79 %** | **fail — reported, and re-measured per gene** |
+| no core gene bait-starved | (added after the failure) | 0 of 128 core + mechanism-term | **pass** |
+
 ## What this hands to the next entry
 
-`build/it2/step-2/bait.npy` (uniqueness-filtered), `witness-probes.tsv`, and the funnel
-gate to judge the pass against: **12.4 M reads expected, 6.2–24.8 M accepted.**
+`build/it2/step-2/bait.npy` (36,038,037 uniqueness-filtered k-mers), `bait-profile.tsv`
+(per-gene density, to be carried beside every per-gene claim), `witness-probes.tsv`, and
+the funnel gate to judge the pass against: **12.4 M reads expected, 6.2–24.8 M accepted.**
