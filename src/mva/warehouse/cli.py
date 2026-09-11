@@ -179,6 +179,24 @@ def _do_pg_derive(args) -> int:
     return 0
 
 
+def _do_pg_load_it2(args) -> int:
+    """Load iteration 2's step-1 target and decoy tables from a build directory."""
+    from . import it2_tables
+
+    settings = _settings(args)
+    with pg.attached(settings) as connection:
+        loaded = it2_tables.load(
+            connection,
+            schema=settings.schema,
+            result_schema=settings.result_schema,
+            out_dir=args.out,
+        )
+    for item in loaded:
+        print(f"  {settings.result_schema}.{item.table:<12} {item.rows:>5,} rows  <- {item.source}")
+    print(f"\nlineage edges appended to {settings.schema}.data_lineage")
+    return 0
+
+
 def _do_pg_list(args) -> int:
     """List everything in both managed schemas."""
     settings = _settings(args)
@@ -257,6 +275,18 @@ def _parser() -> argparse.ArgumentParser:
         choices=[item.name for item in DERIVATIONS],
         help="only these derivations (default: all)",
     )
+    load_it2 = add_pg(
+        "pg-load-it2",
+        _do_pg_load_it2,
+        "load iteration 2's step-1 target and decoy tables from a build directory",
+    )
+    load_it2.add_argument(
+        "--out",
+        type=Path,
+        default=Path("build/it2/step-1"),
+        help="the directory tools/build_it2_targets.py wrote",
+    )
+
     add_pg("pg-list", _do_pg_list, "list every table in both managed schemas")
     pgquery = add_pg(
         "pg-query", _do_pg_query, "run one read-only SQL statement against the hosted database"
