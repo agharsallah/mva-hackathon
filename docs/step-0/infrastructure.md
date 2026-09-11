@@ -332,6 +332,36 @@ password is a misconfiguration — stop and fix it before sharing the link.
 
 ---
 
+## 3b. `mva-reads-api` — redeploying it when a verb is added
+
+**Named to `step-2` (iteration 2):** the bait pass is a step-2 tool, recorded in
+[entry 085](../iteration2/step-2/methodology/085-the-bait-and-where-it-runs.md); the
+redeploy procedure is platform machinery and lives here, where every other service's does.
+
+The read store, PostgreSQL and `mva-reads-api` all resolve to the same host. That is not a
+detail — it is the reason a full-store pass takes minutes there and **4.2 hours** from a
+laptop over the object-store link (measured 2026-09-11: 55.8 s per shard, whether one
+shard streams or eight in parallel; the link saturates and parallelism buys nothing). Any
+verb that must touch all 1.07 billion reads belongs on this box.
+
+```bash
+ssh -p 3333 <user>@<server>
+cd <repo> && git pull && uv sync --all-groups
+sudo systemctl restart mva-reads-api
+curl -s localhost:8765/health                     # {"status":"ok"} — no auth on this route
+curl -s localhost:8765/openapi.json | grep -o '"/bait"'   # the new verb is registered
+```
+
+Settings are read at start, so a `.env` edit needs the same restart. The job registry
+lives in memory and its history on disk: jobs that were running when the process stopped
+come back as `lost`, never silently re-run — so a restart during a pass means resubmitting
+it, not wondering whether it finished.
+
+`/bait` is the first verb here that **writes**. It publishes the reads it recovered as one
+Parquet object at the key the caller names, because ~12 million reads are not an HTTP
+response. It touches nothing under `reads/`, and its keys are validated at the edge: no
+`s3://`, no `..`, no empty string.
+
 ## 4. Credentials and exposure
 
 `.env` is gitignored; `.env.example` is the committed template, and it declares
