@@ -195,6 +195,57 @@ def test_two_alleles_in_different_blocks_are_not_claimed_to_be_phased(tmp_path):
     assert not found.same_block("1", 100, 9000)
 
 
+def test_a_workflow_stage_whose_tool_is_missing_is_skipped_not_fatal(tmp_path):
+    """Five hours of alignment must not be thrown away because a phaser is absent."""
+    from mva.calling import workflow as workflow_module
+
+    flow = workflow_module.Workflow(out_dir=tmp_path)
+
+    def absent():
+        raise tools.ToolMissingError("not on PATH: nonesuch")
+
+    assert workflow_module._timed(flow, "phase", absent) is None
+    assert flow.stages[0].status == "skipped"
+    assert "nonesuch" in flow.stages[0].note
+    assert not flow.stages[0].ok
+
+
+def test_a_workflow_stage_that_fails_records_the_first_line_of_why(tmp_path):
+    from mva.calling import workflow as workflow_module
+
+    flow = workflow_module.Workflow(out_dir=tmp_path)
+
+    def broken():
+        raise RuntimeError("delly exited 1\n  argv: delly call")
+
+    assert workflow_module._timed(flow, "sv:delly", broken) is None
+    assert flow.stages[0].status == "failed"
+    assert flow.stages[0].note == "delly exited 1"
+
+
+def test_a_workflow_stage_that_runs_records_its_detail(tmp_path):
+    from mva.calling import workflow as workflow_module
+
+    flow = workflow_module.Workflow(out_dir=tmp_path)
+    result = workflow_module._timed(
+        flow, "call:freebayes", lambda: 42, detail=lambda value: {"records": value}
+    )
+    assert result == 42
+    assert flow.stages[0].ok and flow.stages[0].detail == {"records": 42}
+
+
+def test_the_workflow_summary_is_json_and_names_every_stage(tmp_path):
+    from mva.calling import workflow as workflow_module
+
+    flow = workflow_module.Workflow(out_dir=tmp_path)
+    flow.record(workflow_module.Stage(name="align", status="ran", seconds=1.25))
+    flow.record(workflow_module.Stage(name="phase", status="skipped", note="absent"))
+    written = json.loads(flow.write(tmp_path / "report.json").read_text())
+    assert [stage["name"] for stage in written["stages"]] == ["align", "phase"]
+    assert written["stages"][0]["seconds"] == 1.2
+    assert written["alignment"] is None and written["callsets"] == {}
+
+
 def test_fragment_support_reads_cis_trans_and_silence():
     assert phase.FragmentSupport(both_alt=8).verdict == "cis"
     assert phase.FragmentSupport(alt_ref=5, ref_alt=6).verdict == "trans"
