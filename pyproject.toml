@@ -9,6 +9,7 @@ dependencies = [
     "fastapi>=0.115",
     "httpx>=0.28.1",
     "huggingface-hub>=1.29.0",
+    "numpy>=2.0",
     "plotly>=7.0.0",
     "polars>=1.44.1",
     "requests>=2.34.2",
@@ -168,7 +169,7 @@ warn_return_any = false
 
 # Packages already clean under the full ruleset. Add the next one here when it is.
 [[tool.mypy.overrides]]
-module = ["mva.drugs.*", "mva.io.*", "mva.phenotype.*", "mva.render.*"]
+module = ["mva.drugs.*", "mva.io.*", "mva.kmer.*", "mva.phenotype.*", "mva.render.*"]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
 disallow_untyped_calls = true
@@ -193,11 +194,12 @@ layers = [
     "mva.reads",
     "mva.warehouse",
     "mva.phenotype | mva.drugs",
-    "mva.pipeline | mva.io | mva.render",
+    "mva.pipeline | mva.io | mva.kmer | mva.render",
 ]
-# A layer may import anything below it and nothing above it. mva.pipeline, mva.io and
-# mva.render sit on the bottom row together because none of them imports either of the
-# others; they are the leaves. mva.phenotype sits one row above them: it parses public
+# A layer may import anything below it and nothing above it. mva.pipeline, mva.io,
+# mva.kmer and mva.render sit on the bottom row together because none of them imports any
+# of the others; they are the leaves. mva.kmer is pure NumPy arithmetic over reference
+# sequence and is imported by mva.reads one row above it. mva.phenotype sits one row above them: it parses public
 # ontology files (mva.io) and hands a gene prior to the pair ranker (mva.pipeline), and
 # nothing in either of those may reach back up to it. mva.drugs shares that row: it reads
 # seven public drug and pathway APIs and imports no sibling package at all, so it neither
@@ -207,7 +209,7 @@ exhaustive = false
 [[tool.importlinter.contracts]]
 name = "The leaf packages import no sibling package"
 type = "forbidden"
-source_modules = ["mva.io", "mva.pipeline", "mva.render"]
+source_modules = ["mva.io", "mva.kmer", "mva.pipeline", "mva.render"]
 forbidden_modules = [
     "mva.explore",
     "mva.reads",
