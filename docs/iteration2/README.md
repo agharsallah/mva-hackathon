@@ -1,7 +1,7 @@
 # Iteration 2 — the research steps behind submission 2
 
-**Standing:** opened 2026-09-09; **plan drafted** in [`plan.md`](plan.md) (eight steps, blind protocol,
-`step-1` … `step-8`; steps not yet declared in `steps.py`), **gap-reviewed twice on 2026-09-10** against the
+**Standing:** opened 2026-09-09; steps declared in `steps.py` and **step 1 run** on 2026-09-11.
+**Plan** in [`plan.md`](plan.md) (eight steps, blind protocol, `step-1` … `step-8`), **gap-reviewed twice on 2026-09-10** against the
 eight papers in [`papers/iteration2/`](../../papers/iteration2/README.md) — `plan.md` §9 (five papers)
 and §10 (three more, plus a bias pass: term-driven target rows, the family-history term, hand-typed
 anchors, missing nulls for the read route, the fusion and Track 2) list every gap and its fix,
@@ -29,4 +29,19 @@ once the plan is agreed, and its output is again a submission
 
 | Step | Goal | Status for submission 2 |
 |---|---|---|
-| — | to be declared with the plan | — |
+| [1](step-1/README.md) | Which genes do the child's symptoms alone nominate — a target set chosen with the DNA never read? | **run 2026-09-11** — 404-row tiered target set + 396 decoys; H013 supported, H012/H014/H015 refuted ([084](step-1/methodology/084-the-blind-target-set.md)) |
+| [2](step-2/README.md) | Which alleles do the raw reads carry in the target set, discovered without the vendor caller? | open — claims H016–H020 filed, nothing run |
+| 3 | Alignment-free genotype and copy number | planned |
+| 4 | Likelihood-ratio ranking over the VCF | planned |
+| 5 | Knowledge engine | planned |
+| 6 | Fusion and unblinding | planned |
+| 7 | Track 2 enrichment | planned |
+| 8 | The mosaic aneuploidy bound | planned |
+
+**The finding that already changes the plan.** Step 1 measured the phenotype-only ranker
+instead of trusting it: held-out recall@300 is **0.36**, not the 0.90 H012 predicted, and
+raising N does not fix it (recall@1000 = 0.565; a quarter of held-out genes are unrankable
+at any N). The target set is therefore an **enrichment, never coverage**, and step 4's
+genome-wide ranking is the safety net. 73.6 % of protein-coding genes have no HPO curation
+at all, which makes the `uncurated` tier the iteration's largest blind spot rather than a
+footnote.
