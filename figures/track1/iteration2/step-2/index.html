@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iteration 2, step 2 — the alleles the reads carry</title>
+<style>/* Report styling. Light only, deliberately: the Plotly figures are drawn on a white
+   canvas and a dark shell around them would read as a rendering bug rather than a theme.
+   Print rules keep the same page usable as a PDF for the write-up. */
+
+:root {
+  --ink: #333333;
+  --subtle: #666666;
+  --faint: #8a8a8a;
+  --rule: #e6e6e6;
+  --surface: #ffffff;
+  --ground: #fafafa;
+  --good: #8fd18f;
+  --good-line: #3f8f47;
+  --bad: #ff9999;
+  --bad-line: #c0392b;
+  --decision: #ffe9b3;
+  --decision-line: #c98f1e;
+  --machine: #cfe8ff;
+  --machine-line: #3d7ebd;
+  --raw: #e0d4f7;
+  --raw-line: #7a5cab;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --nav: 250px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--machine-line); }
+
+/* --- shell ---------------------------------------------------------------- */
+
+.layout { display: flex; align-items: flex-start; }
+
+nav.sidebar {
+  position: sticky;
+  top: 0;
+  width: var(--nav);
+  flex: 0 0 var(--nav);
+  height: 100vh;
+  overflow-y: auto;
+  padding: 28px 20px;
+  border-right: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+nav.sidebar h1 { font-size: 16px; margin: 0 0 4px; letter-spacing: -0.01em; }
+nav.sidebar .subject { font-size: 12px; color: var(--faint); margin: 0 0 20px; font-family: var(--mono); word-break: break-all; }
+nav.sidebar ol { list-style: none; margin: 0; padding: 0; }
+nav.sidebar > ol > li { margin-bottom: 14px; }
+nav.sidebar .section-link { display: block; font-weight: 600; font-size: 13px; color: var(--ink); text-decoration: none; padding: 3px 0; }
+nav.sidebar .exhibit-link { display: block; font-size: 12.5px; color: var(--subtle); text-decoration: none; padding: 2px 0 2px 12px; border-left: 2px solid var(--rule); }
+nav.sidebar .exhibit-link:hover, nav.sidebar .section-link:hover { color: var(--machine-line); }
+nav.sidebar .exhibit-link.active { border-left-color: var(--machine-line); color: var(--machine-line); }
+
+#filter {
+  width: 100%;
+  padding: 7px 10px;
+  margin-bottom: 18px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+}
+#filter:focus { outline: 2px solid var(--machine); outline-offset: -1px; }
+
+main { flex: 1 1 auto; min-width: 0; padding: 32px 40px 120px; max-width: 1180px; }
+
+header.masthead { margin-bottom: 32px; }
+header.masthead h1 { font-size: 30px; margin: 0 0 6px; letter-spacing: -0.02em; }
+header.masthead p { margin: 0; color: var(--subtle); max-width: 70ch; }
+header.masthead .meta { font-family: var(--mono); font-size: 12px; color: var(--faint); margin-top: 10px; }
+
+section.report-section { margin-bottom: 44px; }
+section.report-section > h2 {
+  font-size: 21px;
+  margin: 0 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--rule);
+  letter-spacing: -0.01em;
+}
+section.report-section > .blurb { margin: 0 0 22px; color: var(--subtle); max-width: 75ch; }
+
+/* --- exhibits --------------------------------------------------------------- */
+
+figure.exhibit {
+  margin: 0 0 24px;
+  padding: 22px 24px 18px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+figure.exhibit h3 { font-size: 17px; margin: 0 0 8px; letter-spacing: -0.01em; }
+figure.exhibit .caption { margin: 0 0 16px; color: var(--subtle); max-width: 78ch; }
+figure.exhibit .legend {
+  margin: 14px 0 0;
+  padding: 9px 12px;
+  background: var(--ground);
+  border-left: 3px solid var(--machine-line);
+  border-radius: 0 5px 5px 0;
+  font-size: 13px;
+  color: var(--subtle);
+}
+figure.exhibit .note {
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  color: var(--subtle);
+  max-width: 78ch;
+}
+figure.exhibit .note strong { color: var(--ink); }
+figure.exhibit.hidden { display: none; }
+
+/* --- tiles ---------------------------------------------------------------- */
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+.tile { padding: 16px 18px; background: var(--ground); border: 1px solid var(--rule); border-radius: 8px; }
+.tile-value { display: block; font-size: 27px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.15; }
+.tile-label { display: block; font-size: 13px; font-weight: 600; margin-top: 4px; }
+.tile-hint { display: block; font-size: 12px; color: var(--faint); margin-top: 3px; line-height: 1.45; }
+
+/* --- tables --------------------------------------------------------------- */
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+table th, table td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+table thead th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--faint); border-bottom-width: 2px; }
+table.facts th { width: 200px; color: var(--subtle); font-weight: 600; }
+td.numeric { font-family: var(--mono); white-space: nowrap; }
+table summary { cursor: pointer; font-weight: 600; }
+table summary::marker { color: var(--faint); }
+.reasoning { margin: 8px 0 4px; font-size: 13px; color: var(--subtle); max-width: 68ch; }
+.reasoning em { color: var(--ink); font-style: normal; display: block; margin-top: 6px; }
+
+.badge {
+  display: inline-block;
+  padding: 1px 9px;
+  border: 1px solid;
+  border-radius: 11px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.callout {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: #fff9ec;
+  border: 1px solid var(--decision);
+  border-left: 3px solid var(--decision-line);
+  border-radius: 0 7px 7px 0;
+}
+.callout p { margin: 0 0 6px; font-weight: 600; }
+.callout ul { margin: 0; padding-left: 20px; }
+.callout li { margin-bottom: 4px; color: var(--subtle); }
+.callout strong { color: var(--ink); }
+
+code { font-family: var(--mono); font-size: 0.9em; background: var(--ground); padding: 1px 5px; border-radius: 4px; }
+
+.empty { color: var(--faint); font-style: italic; }
+
+/* --- responsive & print --------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  nav.sidebar { position: static; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--rule); }
+  main { padding: 24px 18px 80px; }
+}
+
+@media print {
+  nav.sidebar { display: none; }
+  body { background: #fff; }
+  main { max-width: none; padding: 0; }
+  figure.exhibit { break-inside: avoid; border-color: #ddd; }
+  section.report-section { break-before: page; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar">
+  <h1>Iteration 2, step 2 — the alleles the reads carry</h1>
+  <p class="subject">PROBAND01 — recovered from the raw reads, without the vendor caller</p>
+  <input id="filter" type="search" placeholder="Filter exhibits  ( / )" autocomplete="off">
+  <ol><li><a class="section-link" href="#section-it2-step-2">Step 2 — the alleles the reads carry</a><ol><li><a class="exhibit-link" href="#bait-uniqueness" data-target="bait-uniqueness">The off-target gate, and everything it was compared against</a></li><li><a class="exhibit-link" href="#bait-density" data-target="bait-density">What the gate was proxying for: can the bait reach each gene?</a></li></ol></li></ol>
+</nav>
+<main>
+<header class="masthead">
+  <h1>Iteration 2, step 2 — the alleles the reads carry</h1>
+  <p>Every exhibit states how to read it and decodes its own colours; every graded number states the band it was judged against and why that band is the right one.</p>
+  <p class="meta">2 exhibits across 1 sections &middot; source
+  PROBAND01 — recovered from the raw reads, without the vendor caller &middot; generated 2026-09-11 23:32 UTC &middot; press <code>/</code> to
+  filter</p>
+</header>
+<section class="report-section" id="section-it2-step-2">
+  <h2>Step 2 — the alleles the reads carry</h2>
+  <p class="blurb">Recovering the reads that came from the target genes without the vendor&#x27;s caller, and measuring how much of those genes the recovery can actually see. Every figure is drawn from the run&#x27;s own output files.</p>
+  <figure class="exhibit" id="bait-uniqueness"><h3>The off-target gate, and everything it was compared against</h3><p class="caption">3,470,945 of 39,508,982 bait k-mers (8.79%) occur more than once in GRCh38 and were dropped. The pre-registered gate was 5%. It was not moved: the other bars are what the number was measured against, not attempts to pass it.</p><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-4.0.0.min.js" integrity="sha256-FEYfO0yRyLtZCpnW0Dw/0DHKQO7Afrq3ml4+rBB818o=" crossorigin="anonymous"></script>                <div id="fig-bait-uniqueness" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("fig-bait-uniqueness")) {                    Plotly.newPlot(                        "fig-bait-uniqueness",                        [{"hovertemplate":"%{y}: %{x:.4f}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#ff9999"],"line":{"color":["#c0392b"],"width":1.5}},"orientation":"h","text":["8.79%"],"textposition":"outside","x":[0.08785204842787395],"y":["bait as built (k=31)"],"type":"bar"}],                        {"template":{"layout":{"colorway":["#3d7ebd","#7a5cab","#3f8f47","#c98f1e","#c0392b","#4aa3a3","#a3579b","#6b8f3f","#b5762e","#8a8a8a"],"font":{"color":"#333333","family":"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif","size":13},"hoverlabel":{"bgcolor":"#ffffff","bordercolor":"#e6e6e6","font":{"family":"'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"size":12},"orientation":"h","x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":52,"l":64,"r":28,"t":56},"paper_bgcolor":"#ffffff","plot_bgcolor":"#ffffff","title":{"font":{"color":"#333333","size":17},"pad":{"b":12},"x":0,"xanchor":"left"},"xaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"},"yaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"}}},"shapes":[{"line":{"color":"#c98f1e","dash":"dash"},"type":"line","x0":0.05,"x1":0.05,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"showarrow":false,"text":"gate: \u003c 5%","x":0.05,"xanchor":"center","xref":"x","y":1,"yanchor":"bottom","yref":"y domain"}],"xaxis":{"title":{"text":"bait k-mers occurring more than once in GRCh38"},"tickformat":".1%"},"yaxis":{"autorange":"reversed"},"margin":{"l":230},"showlegend":false},                        {"displaylogo": false, "responsive": true, "toImageButtonOptions": {"scale": 2, "filename": "bait-uniqueness"}, "modeBarButtonsToRemove": ["lasso2d", "select2d"]}                    )                };            </script>        </div><figcaption class="legend"><strong>red</strong> = above the gate, <strong>green</strong> = below it, <strong>yellow dashed</strong> = the gate itself. Zones are measured independently against the whole genome, so they do not partition the bait and their counts do not sum to it.</figcaption><p class="note">The k and zone sweep has not run.</p><p class="note">0 bait k-mers were never found in the genome pass, which must be zero: every one was cut from the same reference.</p></figure>
+<figure class="exhibit" id="bait-density"><h3>What the gate was proxying for: can the bait reach each gene?</h3><p class="caption">Surviving unique k-mers per base, per gene, after the filter. 21 of 792 genes fall below half the median — and none of them is core or mechanism-term. The genes step 2 reasons about are all reachable; the sparse ones are segmental-duplication families, mostly in the decoy set.</p><div style="height:100%; width:100%;">                            <div id="fig-bait-density" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("fig-bait-density")) {                    Plotly.newPlot(                        "fig-bait-density",                        [{"boxpoints":"outliers","fillcolor":"#8fd18f","hovertemplate":"%{x:.3f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#3f8f47"},"marker":{"color":"#3f8f47","size":4},"name":"core (n=59)","orientation":"h","x":[0.531604,0.879255,0.879788,0.834315,0.819063,0.876554,0.613066,0.85007,0.893076,0.941001,0.897311,0.890285,0.657975,0.798918,0.780592,0.897713,0.938969,0.887022,0.926384,0.877265,0.764792,0.947992,0.837489,0.932073,0.836748,0.769796,0.804118,0.950615,0.813448,0.962994,0.670176,0.8587,0.858582,0.813622,0.89141,0.803093,0.842924,0.836804,0.89874,0.656339,0.899317,0.933217,0.780285,0.770891,0.908247,0.945126,0.805104,0.837064,0.864908,0.835769,0.81304,0.947229,0.922887,0.920676,0.827523,0.822953,0.74112,0.847172,0.827627],"type":"box"},{"boxpoints":"outliers","fillcolor":"#8fd18f","hovertemplate":"%{x:.3f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#3f8f47"},"marker":{"color":"#3f8f47","size":4},"name":"mechanism-term (n=69)","orientation":"h","x":[0.87102,0.796136,0.943976,0.79229,0.720303,0.870018,0.844426,0.84787,0.850687,0.881279,0.736561,0.867259,0.854896,0.877392,0.79966,0.855098,0.892425,0.722427,0.835389,0.770679,0.884059,0.896405,0.693187,0.843852,0.858533,0.839717,0.861195,0.862814,0.866201,0.8539,0.801491,0.781185,0.870136,0.882989,0.834414,0.766362,0.805742,0.907255,0.81938,0.866468,0.800449,0.859872,0.830931,0.893969,0.841625,0.729709,0.728428,0.930114,0.763584,0.724473,0.796566,0.791616,0.951792,0.833857,0.798519,0.876761,0.823436,0.91129,0.803515,0.873638,0.448508,0.810111,0.748129,0.887044,0.828907,0.703604,0.700493,0.897411,0.901077],"type":"box"},{"boxpoints":"outliers","fillcolor":"#cfe8ff","hovertemplate":"%{x:.3f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#3d7ebd"},"marker":{"color":"#3d7ebd","size":4},"name":"net (n=268)","orientation":"h","x":[0.94563,0.943624,0.947596,0.949396,0.851195,0.747607,0.872241,0.974375,0.841411,0.767183,0.853508,0.24572,0.930164,0.972539,0.932836,0.983496,0.771669,0.964864,0.718898,0.848912,0.798176,0.919439,0.781247,0.807955,0.792994,0.972382,0.97444,0.880843,0.899201,0.996467,0.994718,0.959181,0.919471,0.92488,0.933727,0.956479,0.916413,0.720164,0.956389,0.991162,0.984469,0.928678,0.945413,0.814529,0.922766,0.970119,0.917988,0.884561,0.831873,0.715461,0.938708,0.956714,0.840469,0.918557,0.675989,0.750506,0.935247,0.974809,0.713614,0.892257,0.943327,0.994593,0.754298,0.793576,0.898066,0.823803,0.831045,0.7554,0.863297,0.838611,0.815458,0.952482,0.96539,0.842976,0.9609,0.858305,0.940353,0.907421,0.930527,0.974724,0.894751,0.836378,0.94416,0.993637,0.994683,0.969247,0.89218,0.738365,0.867121,0.972805,0.938422,0.908204,0.887289,0.994063,0.94717,0.979009,0.778646,0.869309,0.963681,0.974865,0.897588,0.918214,0.93698,0.426743,0.688245,0.047922,0.880788,0.586157,0.440943,0.844624,0.954067,0.876161,0.990094,0.947265,0.894249,0.989023,0.901243,0.886088,0.942015,0.875372,0.752426,0.934188,0.939283,0.983025,0.823611,0.832296,0.882942,0.818968,0.732601,0.848409,0.945108,0.845993,0.968399,0.910734,0.680277,0.848343,0.833138,0.883585,0.847492,0.901209,0.920909,0.887931,0.822132,0.896466,0.941099,0.978297,0.811749,0.964583,0.849306,0.670351,0.862413,0.817596,0.889298,0.887001,0.892105,0.830812,0.882169,0.893021,0.910341,0.908175,0.882189,0.98508,0.947064,0.935689,0.862367,0.966988,0.928036,0.92123,0.877034,0.846583,0.994427,0.818583,0.974843,0.971662,0.96017,0.897256,0.435636,0.871254,0.826542,0.821385,0.896063,0.869163,0.936314,0.848565,0.884726,0.768288,0.977499,0.948763,0.997107,0.826224,0.970819,0.72501,0.939653,0.856296,0.809334,0.943624,0.849692,0.780705,0.822355,0.904245,0.83948,0.899608,0.975556,0.864004,0.745566,0.552537,0.83148,0.901046,0.797039,0.662771,0.860379,0.841695,0.879114,0.800256,0.783461,0.463569,0.555094,0.855625,0.747796,0.760952,0.899314,0.991306,0.972004,0.930459,0.833165,0.933772,0.908877,0.89656,0.96649,0.825396,0.920569,0.97585,0.899596,0.925489,0.990871,0.979965,0.832999,0.774868,0.759086,0.834152,0.890618,0.853808,0.915616,0.767623,0.929448,0.967757,0.872891,0.958556,0.731654,0.813441,0.946804,0.811605,0.770296,0.884119,0.917731,0.910822,0.959708,0.854579,0.886796,0.844135,0.828106,0.904419,0.941713,0.879544,0.840239,0.820492,0.991877,0.821042],"type":"box"},{"boxpoints":"outliers","fillcolor":"#e6e6e6","hovertemplate":"%{x:.3f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#888888"},"marker":{"color":"#888888","size":4},"name":"decoy (n=396)","orientation":"h","x":[0.912016,0.931498,0.925798,0.994035,0.920734,0.945613,0.75183,0.874714,0.658056,0.917692,0.945336,0.790686,0.921354,0.927609,0.940939,0.957876,0.814305,0.943106,0.869611,0.925649,0.847681,0.984679,0.695823,0.893324,0.920334,0.956499,0.896211,0.915603,0.973992,0.913065,0.935155,0.822424,0.964732,0.993141,0.867369,0.946825,0.680591,0.809408,0.96122,0.935787,0.850385,0.912359,0.676406,0.836291,0.870345,0.903911,0.842935,0.959131,0.953292,0.885742,0.970359,0.882578,0.756187,0.836242,0.942709,0.96824,0.980028,0.802514,0.976089,0.878794,0.915633,0.840245,0.813283,0.833005,0.976406,0.947726,0.933154,0.989871,0.94612,0.189829,0.913569,0.939719,0.736785,0.912973,0.495717,0.885181,0.854527,0.864282,0.995023,0.857968,0.78677,0.965122,0.831088,0.393372,0.922769,0.877873,0.867821,0.993731,0.640776,0.949566,0.78456,0.862266,0.941235,0.916765,0.967397,0.903949,0.797425,0.951547,0.869925,0.918553,0.974927,0.847993,0.93396,0.734205,0.974334,0.876171,0.931312,0.030234,0.846505,0.194624,0.747487,0.909566,0.927032,0.832633,0.947258,0.895362,0.977907,0.93977,0.89394,0.821567,0.900076,0.907644,0.857599,0.883295,0.93002,0.790305,0.810953,0.714616,0.917154,0.993612,0.927938,0.104789,0.941755,0.930512,0.779778,0.772214,0.839701,0.730331,0.975071,0.035863,0.021928,0.907192,0.994545,0.972437,0.918477,0.915614,0.960839,0.923796,0.012661,0.905849,0.925256,0.538293,0.936243,0.870928,0.796251,0.918701,0.883802,0.951688,0.975102,0.807005,0.957262,0.901311,0.916537,0.986101,0.850762,0.921282,0.861878,0.932735,0.89903,0.618985,0.002458,0.876444,0.919382,0.963807,0.957201,0.996128,0.754332,0.909028,0.923753,0.926043,0.99156,0.777094,0.76293,0.962565,0.967687,0.973008,0.863614,0.849655,0.891899,0.952922,0.936848,0.79557,0.867083,0.804115,0.895991,0.90886,0.832827,0.947216,0.949474,0.918221,0.792168,0.99514,0.960942,0.915796,0.876967,0.966099,0.104692,0.950461,0.9361,0.916575,0.981174,0.812817,0.936501,0.722268,0.981931,0.916555,0.955555,0.965827,0.779977,0.714738,0.767059,0.952552,0.969895,0.984832,0.824471,0.897471,0.938491,0.90074,0.922827,0.833549,0.931898,0.931231,0.903323,0.886718,0.924717,0.42221,0.994292,0.965137,0.997799,0.938253,0.916863,0.924943,0.746782,0.961262,0.89516,0.953529,0.907848,0.890014,0.92387,0.955213,0.046256,0.877184,0.767625,0.882612,0.88591,0.836476,0.995753,0.901325,0.878335,0.87034,0.805532,0.77981,0.908662,0.976156,0.830136,0.901213,0.993463,0.04529,0.872896,0.894905,0.920419,0.940234,0.923047,0.938464,0.745997,0.935499,0.952506,0.969237,0.819614,0.82216,0.859368,0.916603,0.846841,0.933701,0.938575,0.795288,0.849125,0.847754,0.916814,0.84262,0.907755,0.918604,0.895494,0.858127,0.912057,0.68779,0.814937,0.744164,0.919966,0.892329,0.903194,0.914025,0.918643,0.92317,0.800913,0.866575,0.653569,0.955525,0.883623,0.976446,0.897846,0.916323,0.746758,0.840918,0.956068,0.788468,0.0171,0.929776,0.937815,0.87965,0.842702,0.732761,0.861785,0.894979,0.908693,0.641308,0.985657,0.009102,0.021891,0.915825,0.788411,0.964281,0.91955,0.894821,0.818449,0.954828,0.887504,0.891615,0.828338,0.993855,0.8742,0.811729,0.778112,0.918348,0.952215,0.827688,0.994216,0.884847,0.99043,0.923992,0.854843,0.919218,0.884496,0.905151,0.943657,0.953476,0.616918,0.931173,0.913253,0.927893,0.910994,0.868022,0.800182,0.95484,0.919658,0.710823,0.984348,0.901997,0.854752,0.94048,0.956838,0.966994,0.908141,0.917019,0.858732,0.875375,0.865057,0.67312,0.902679,0.786124,0.863361,0.945331,0.90967,0.916348,0.888237,0.861139,0.76219,0.728291,0.993301,0.9691,0.860157,0.8765,0.902688,0.87495,0.876522,0.910101],"type":"box"}],                        {"template":{"layout":{"colorway":["#3d7ebd","#7a5cab","#3f8f47","#c98f1e","#c0392b","#4aa3a3","#a3579b","#6b8f3f","#b5762e","#8a8a8a"],"font":{"color":"#333333","family":"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif","size":13},"hoverlabel":{"bgcolor":"#ffffff","bordercolor":"#e6e6e6","font":{"family":"'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"size":12},"orientation":"h","x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":52,"l":64,"r":28,"t":56},"paper_bgcolor":"#ffffff","plot_bgcolor":"#ffffff","title":{"font":{"color":"#333333","size":17},"pad":{"b":12},"x":0,"xanchor":"left"},"xaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"},"yaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"}}},"shapes":[{"line":{"color":"#c0392b","dash":"dash"},"type":"line","x0":0.44385874999999997,"x1":0.44385874999999997,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"showarrow":false,"text":"half the median (0.44) — 21 below","x":0.44385874999999997,"xanchor":"left","xref":"x","y":0,"yanchor":"bottom","yref":"y domain"}],"xaxis":{"title":{"text":"surviving unique k-mers per base"},"range":[0,1.05]},"margin":{"l":230}},                        {"displaylogo": false, "responsive": true, "toImageButtonOptions": {"scale": 2, "filename": "bait-density"}, "modeBarButtonsToRemove": ["lasso2d", "select2d"]}                    )                };            </script>        </div><figcaption class="legend"><strong>Legend</strong> — good / safe / the goal; neutral machinery; context, not the subject; <strong>green</strong> = the tiers step 2 draws conclusions from, <strong>blue</strong> = screened but not core, <strong>grey</strong> = the decoy null; <strong>red dashed</strong> = the reachability threshold..</figcaption><p class="note">The decoy set carries 16 of the 21 sparse genes against the targets&#x27; 5, which is why H020 is reported twice — over all genes and restricted to reachable ones (entry 085).</p></figure>
+</section>
+</main>
+</div>
+<script>
+const filter = document.getElementById('filter');
+const exhibits = Array.from(document.querySelectorAll('figure.exhibit'));
+const navLinks = Array.from(document.querySelectorAll('.exhibit-link'));
+
+/* Type to narrow the page to the exhibits whose title, caption or legend mentions the
+   term. Everything is already in the DOM, so this is a display toggle, not a search. */
+filter?.addEventListener('input', () => {
+  const term = filter.value.trim().toLowerCase();
+  exhibits.forEach(exhibit => {
+    const hit = !term || exhibit.innerText.toLowerCase().includes(term);
+    exhibit.classList.toggle('hidden', !hit);
+  });
+  document.querySelectorAll('section.report-section').forEach(section => {
+    const visible = section.querySelectorAll('figure.exhibit:not(.hidden)').length;
+    section.style.display = visible ? '' : 'none';
+  });
+  navLinks.forEach(link => {
+    const target = document.getElementById(link.dataset.target);
+    link.style.display = target && target.classList.contains('hidden') ? 'none' : '';
+  });
+});
+
+/* Highlight the exhibit currently in view, so the sidebar tracks the scroll position. */
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const link = navLinks.find(l => l.dataset.target === entry.target.id);
+    if (link) link.classList.toggle('active', entry.isIntersecting);
+  });
+}, {rootMargin: '-45% 0px -45% 0px'});
+exhibits.forEach(exhibit => spy.observe(exhibit));
+
+/* "/" focuses the filter, the way every tool with a search box behaves. */
+document.addEventListener('keydown', event => {
+  if (event.key === '/' && document.activeElement !== filter) {
+    event.preventDefault();
+    filter?.focus();
+  }
+  if (event.key === 'Escape' && document.activeElement === filter) {
+    filter.value = '';
+    filter.dispatchEvent(new Event('input'));
+    filter.blur();
+  }
+});
+</script>
+</body>
+</html>

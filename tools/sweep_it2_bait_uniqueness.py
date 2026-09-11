@@ -43,6 +43,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 from mva.kmer import regions as regions_module
 from mva.kmer import uniqueness
 from mva.kmer.bait import Interval, cut, plan
+from mva.kmer.encode import MAX_K
 
 DEFAULT_STEP1 = Path("build/it2/step-1")
 DEFAULT_OUT = Path("build/it2/step-2")
@@ -107,12 +108,23 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
     parser.add_argument("--coding", type=Path, default=DEFAULT_CODING)
     parser.add_argument("--reference", type=Path, default=DEFAULT_REFERENCE)
-    parser.add_argument("--k", type=int, nargs="+", default=[31, 41, 51])
+    parser.add_argument("--k", type=int, nargs="+", default=[25, 28, 31, 32])
     parser.add_argument("--wide-pad", type=int, default=50_000)
     parser.add_argument("--narrow-pad", type=int, default=2_000)
     parser.add_argument("--zones-only", action="store_true", help="skip the k sweep")
     args = parser.parse_args(argv)
     args.out.mkdir(parents=True, exist_ok=True)
+
+    too_long = [k for k in args.k if k > MAX_K]
+    if too_long:
+        print(
+            f"k must be <= {MAX_K}: a k-mer is packed two bits per base into one uint64, "
+            f"so {MAX_K} bases is the ceiling of this representation. "
+            f"Refusing {too_long}; measuring the rest."
+        )
+        args.k = [k for k in args.k if k <= MAX_K]
+    if not args.k and not args.zones_only:
+        return 1
 
     padded, zones = intervals_for(args.step1, args.coding, args.wide_pad, args.narrow_pad)
     print(f"full bait: {plan(padded).bases:,} bases")
@@ -151,6 +163,10 @@ def main(argv: list[str] | None = None) -> int:
     payload = {
         "question": "how much of the 8.79% off-target load is k, and how much is the regions",
         "gate": {"rule": "off_target < 0.05", "observed_at_k31": 0.0879, "verdict": "fail"},
+        "representation_ceiling": (
+            f"k <= {MAX_K}: two bits per base in one uint64. Reaching further would need a "
+            "different packing, which is a change to the engine rather than a parameter."
+        ),
         "parameters_unchanged": (
             "k stays 31: it is shared with step 3's k-mer genotyping, where the probe "
             "design and FastGT's retention band depend on it. This sweep characterises "
