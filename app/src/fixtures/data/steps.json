@@ -97,7 +97,13 @@
           "iteration": "iteration2"
         }
       ],
-      "figures": [],
+      "figures": [
+        "curation-coverage.png",
+        "index.html",
+        "ranker-overlap.png",
+        "recall-at-n.png",
+        "target-tiers.png"
+      ],
       "entries": [
         {
           "entry": "084-the-blind-target-set.md",

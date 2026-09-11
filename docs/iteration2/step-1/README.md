@@ -29,6 +29,7 @@ follows are in [084](methodology/084-the-blind-target-set.md).
 | matched decoy set, 396 rows | `results.it2_decoys` |
 | gate numbers, tier counts, blind-spot size | `build/it2/step-1/summary.json` |
 | inputs, sha256, release, seed, parameters | `build/it2/step-1/provenance.json` |
+| four report figures + an interactive page | `figures/track1/iteration2/step-1/` |
 
 The tables are derived and stay under `build/`; the warehouse copies carry
 `data_lineage` rows naming **both** the public HPO release and the clinical phenotype
@@ -50,8 +51,9 @@ document.
 
 ```
 uv run python tools/build_it2_targets.py
-uv run mva-phenotype benchmark --sample 200 --seed 20260910
-uv run mva-phenotype agreement --limit 300
+uv run mva-phenotype benchmark --sample 200 --seed 20260910 --out build/it2/step-1/benchmark.json
+uv run mva-phenotype agreement --limit 300 --out build/it2/step-1/agreement.json
+uv run python tools/render_it2_step1_figures.py
 uv run mva-warehouse pg-load-it2
 uv run mva-science check --blind iteration2
 ```

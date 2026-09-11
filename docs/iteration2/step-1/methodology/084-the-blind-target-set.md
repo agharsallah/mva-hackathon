@@ -106,6 +106,20 @@ never filled prints it as disagreement.
 
 **14,523 of 19,723 protein-coding genes (73.6 %) have no HPO curation at all.**
 
+## Figures
+
+Drawn by `uv run python tools/render_it2_step1_figures.py` from the files this run wrote —
+no number on a figure is typed. Under `figures/track1/iteration2/step-1/`:
+
+| Figure | Shows |
+|---|---|
+| `recall-at-n.png` | the curve H012 was tested against, with N = 300 marked and the 0.90 prediction it missed |
+| `target-tiers.png` | what the 404 rows are made of, and how many earned their place by score |
+| `ranker-overlap.png` | the 32.3 % agreement of H014, against the predicted 50 % |
+| `curation-coverage.png` | the 73.6 % of protein-coding genes this ranker cannot see at all |
+
+`index.html` in the same folder is the interactive version of all four.
+
 ## Verdict
 
 | Claim | Verdict | Confidence |

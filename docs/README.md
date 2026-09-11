@@ -89,6 +89,9 @@ Iteration 1 is **frozen** (submission 1 uploaded 2026-09-09, full match at rank 
 | [`iteration2/README.md`](iteration2/README.md) | Why a second iteration when the pair is confirmed, and how the folder fills in. |
 | [`iteration2/plan.md`](iteration2/plan.md) | The plan: a blind rediscovery in eight steps (symptom-only target set; allele discovery from the raw reads with a second caller and SV consensus; alignment-free k-mer genotyping and copy number; likelihood-ratio ranking over the VCF; knowledge engine; fusion and unblinding; Track 2 enrichment), order and cost, and the PubMed-verified bibliography. |
 | [`iteration2/execution.md`](iteration2/execution.md) | The plan's companion: per step, which published tools to adopt, what `src/mva/` already provides, which modules to build, and what the dashboard shows (`/api/steps`, `/steps`). |
+| [`iteration2/step-1/README.md`](iteration2/step-1/README.md) | **Run 2026-09-11.** Which genes the child's symptoms alone nominate, with the DNA never read: a 404-gene tiered target set and its 396 matched decoys. H013 supported; H012, H014 and H015 refuted. |
+| [`iteration2/step-1/methodology/`](iteration2/step-1/methodology/) | Entry 084: the run, its four verdicts, and the decision the refuted recall claim forced — the target set is an enrichment, never coverage. |
+| [`iteration2/step-2/README.md`](iteration2/step-2/README.md) | What step 1 handed over, the five claims filed before anything runs, and the two tools step 2 needs first. Nothing has run. |
 
 ## The submission
 
