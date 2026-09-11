@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 16,
-    "entries": 488,
+    "chapters": 17,
+    "entries": 499,
     "figures": 20,
-    "diagrams": 20,
-    "contexts": 59
+    "diagrams": 21,
+    "contexts": 70
   },
   "chapters": [
     {
@@ -6020,6 +6020,189 @@
             "provenance-vs-belief"
           ],
           "firstSeen": "2026-09-05"
+        }
+      ]
+    },
+    {
+      "number": 17,
+      "id": "17-working-blind--words-for-iteration-2",
+      "title": "Working blind — words for iteration 2",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>Iteration 1 found the answer and the oracle confirmed it. Iteration 2 goes looking for it\n<strong>again</strong>, from the raw reads and the symptoms, as if nobody knew — because a result found\ntwice by two routes that share no code is the strongest replication a single sample allows,\nand because a method that only works when you already know the answer transfers to nothing.\nThese are the words that discipline makes necessary.</p>"
+        },
+        {
+          "kind": "mermaid",
+          "source": "flowchart LR\n  S[/\"8 HPO terms<br/>(symptoms only)\"/]:::raw\n  R[\"SYMPTOM RANKING<br/>every curated gene,<br/>scored — no DNA read\"]:::machine\n  T{\"TIERS<br/>core · net ·<br/>mechanism-term\"}:::decide\n  G[\"TARGET SET<br/>the genes later<br/>steps read DNA for\"]:::good\n  D[\"DECOY SET<br/>matched genes that<br/>should find nothing\"]:::machine\n  B[\"BENCHMARK<br/>recall@N on<br/>held-out diseases\"]:::machine\n  S --> R --> T --> G\n  G -.->|\"matched on gene shape\"| D\n  R --> B\n  B -->|\"0.36, not 0.90\"| G\n  classDef raw fill:#e0d4f7,stroke:#7a5cab,color:#000\n  classDef machine fill:#cfe8ff,stroke:#333,color:#000\n  classDef decide fill:#ffe9b3,stroke:#333,color:#000\n  classDef good fill:#8fd18f,stroke:#333,color:#000",
+          "legendHtml": "<p>purple: the raw input, here the clinic's words rather than any DNA · blue: neutral machinery · yellow: the decision point, where a gene is assigned a tier · green: the output later steps consume. The arrow returning from the benchmark is the one that mattered: the measured recall changed what the target set is allowed to claim.</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "blind-protocol",
+          "term": "Blind protocol",
+          "aliases": [],
+          "html": "<p>a rule that this iteration may not read the earlier one's answer until the one step whose job is to compare them. The gene is written all over the repository, so it cannot be a secret; what makes it checkable is that every <a href=\"#16-the-research-record--words-for-what-you-believe\">methodology entry</a> declares what it read and a gate refuses one that names an iteration-1 candidate table too early. Software analogy: not a sandbox, but a code review that rejects a forbidden import.</p>",
+          "exampleHtml": "<p><em>Example: <code>uv run mva-science check --blind iteration2</code> → \"1 iteration2 entries, every one declaring its inputs — still blind\".</em></p>",
+          "context": "<p>what makes iteration 2's rediscovery worth anything</p>",
+          "source": "src/mva/science/blind.py",
+          "related": [
+            "hypothesis",
+            "methodology-entry",
+            "unblinding"
+          ],
+          "firstSeen": "2026-09-11"
+        },
+        {
+          "kind": "entry",
+          "slug": "unblinding",
+          "term": "Unblinding",
+          "aliases": [],
+          "html": "<p>the single moment the comparison is allowed: one entry, marked as such, that reads iteration 1's tables and says whether the blind route found the same pair. Everything after it may read them too; nothing before it may. <em>Example:</em> step 6's entry, not yet written.</p>",
+          "exampleHtml": "",
+          "context": "<p>the gate's own switch, so \"when did we look\" is a recorded fact rather than a memory</p>",
+          "source": "src/mva/science/blind.py",
+          "related": [
+            "blind-protocol"
+          ],
+          "firstSeen": "2026-09-11"
+        },
+        {
+          "kind": "entry",
+          "slug": "target-set",
+          "term": "Target set",
+          "aliases": [],
+          "html": "<p>the genes later steps will actually read DNA for, chosen from the symptoms alone. <em>Example:</em> 404 genes, chosen from the child's 8 HPO terms with the callset never opened.</p>",
+          "exampleHtml": "",
+          "context": "<p>the input to the k-mer bait of step 2</p>",
+          "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md",
+          "related": [
+            "tier",
+            "recall-n",
+            "enrichment-vs-coverage"
+          ],
+          "firstSeen": "2026-09-11"
+        },
+        {
+          "kind": "entry",
+          "slug": "tier",
+          "term": "Tier",
+          "aliases": [],
+          "html": "<p>which band of the target set a gene is in, and therefore where human attention starts: <strong>core</strong> (top 50 by symptom score), <strong>net</strong> (ranks 51–300), <strong>mechanism-term</strong> (admitted by the disease-mechanism rule whatever its rank), <strong>uncurated</strong> (no HPO annotation at all, so unscorable). Every tier is read by the machinery; the tier ranks the humans' time, not the computer's. <em>Example:</em> 62 core, 272 net, 70 mechanism-term.</p>",
+          "exampleHtml": "",
+          "context": "<p>which band of the target set a gene sits in, as <code>results.it2_targets.tier</code></p>",
+          "source": "src/mva/phenotype/targets.py",
+          "related": [
+            "seed-target-target-set",
+            "mechanism-term-rule"
+          ],
+          "firstSeen": "2026-09-11"
+        },
+        {
+          "kind": "entry",
+          "slug": "mechanism-term-rule",
+          "term": "Mechanism-term rule",
+          "aliases": [],
+          "html": "<p>admitting every gene the ontology annotates under a chromosome-instability term, whatever its symptom score, because a clinician would use the disease name. It is <strong>prior knowledge, not evidence</strong>: such a row is tagged, its pure symptom-score rank is printed beside it, and a rediscovery claim may only be made on that pure ranking. Otherwise the rule would hand the answer a seat and the seat would be mistaken for a finding. <em>Example:</em> 51 of 404 target genes entered this way and earned no claim by doing so.</p>",
+          "exampleHtml": "",
+          "context": "<p>the plan's own bias fix (gap B1)</p>",
+          "source": "docs/iteration2/plan.md",
+          "related": [
+            "tier",
+            "seed-target-target-set"
+          ],
+          "firstSeen": "2026-09-11"
+        },
+        {
+          "kind": "entry",
+          "slug": "decoy-set",
+          "term": "Decoy set",
+          "aliases": [],
+          "html": "<p>genes that look like the targets and should find nothing: matched on coding length and exon count, carrying none of the child's symptoms, drawn once from a recorded seed and never edited. Running the whole pipeline over them measures how often it nominates a gene by chance. Software analogy: a negative control fixture — the test that fails if your matcher matches anything. <em>Example:</em> 396 decoys for 404 targets.</p>",
+          "exampleHtml": "",
+          "context": "<p>the read route's null, which it otherwise lacks</p>",
+          "source": "src/mva/phenotype/targets.py",
+          "related": [
+            "null-hypothesis-h0",
+            "seed-target-target-set"
+          ],
+          "firstSeen": "2026-09-11"
+        },
+        {
+          "kind": "entry",
+          "slug": "recall-n",
+          "term": "Recall@N",
+          "aliases": [],
+          "html": "<p>out of many test cases, the share whose right answer appears in the top <em>N</em> of a ranking. The number that says whether a cutoff is defensible. <em>Example:</em> recall@300 = 0.36 — of 200 held-out diseases, 72 had their causal gene inside the top 300.</p>",
+          "exampleHtml": "",
+          "context": "<p>how H012 was tested</p>",
+          "source": "src/mva/phenotype/benchmark.py",
+          "related": [
+            "held-out",
+            "enrichment-vs-coverage",
+            "seed-target-target-set"
+          ],
+          "firstSeen": "2026-09-11"
+        },
+        {
+          "kind": "entry",
+          "slug": "held-out",
+          "term": "Held-out",
+          "aliases": [],
+          "html": "<p>hiding the answer from the method before asking it to find the answer. Here, a disease's own curated description of its gene is removed before that disease is ranked; the gene keeps what its <em>other</em> diseases say. Without this the benchmark measures a lookup and scores near 1.0. Software analogy: not testing a cache against the values you just wrote into it. <em>Example:</em> 49 of 200 genes turned out to be described by the withheld disease alone, so removing it removed the gene — recorded as a miss, not hidden.</p>",
+          "exampleHtml": "",
+          "context": "<p>the rule that makes the recall curve worth reading</p>",
+          "source": "src/mva/phenotype/benchmark.py",
+          "related": [
+            "recall-n",
+            "overfitting"
+          ],
+          "firstSeen": "2026-09-11"
+        },
+        {
+          "kind": "entry",
+          "slug": "enrichment-vs-coverage",
+          "term": "Enrichment vs coverage",
+          "aliases": [],
+          "html": "<p>two different promises a gene list can make. <strong>Coverage</strong> says \"the answer is in here\"; <strong>enrichment</strong> says \"the answer is likelier in here than outside\". A measured recall of 0.36 permits only the second. Saying \"coverage\" when you have enrichment turns a gene's absence into a false exoneration. <em>Example:</em> iteration 2's target set is an enrichment, so step 2 not finding a gene means nothing about that gene, and step 4 reads all of them.</p>",
+          "exampleHtml": "",
+          "context": "<p>the decision recorded when H012 was refuted</p>",
+          "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md",
+          "related": [
+            "seed-target-target-set",
+            "recall-n"
+          ],
+          "firstSeen": "2026-09-11"
+        },
+        {
+          "kind": "entry",
+          "slug": "mode-of-inheritance-prior",
+          "term": "Mode-of-inheritance prior",
+          "aliases": [],
+          "html": "<p>using how a disease is passed down as a weight rather than as a filter. The parents' recurrent miscarriages say little about which symptom the child has, but a lot about which <em>kind</em> of gene to expect: recessive, and lethal in a fetus carrying two broken copies. So recessive genes with a curated prenatal-loss term are up-weighted ×1.5, dominant-only genes ×0.5, and every ranking using the prior is reported again with it switched off. <em>Example:</em> a family-history term that would have distorted the symptom ranking becomes evidence in the one place it genuinely carries information.</p>",
+          "exampleHtml": "",
+          "context": "<p>the plan's fix for the family-history term (gap B2)</p>",
+          "source": "src/mva/pipeline/inheritance.py",
+          "related": [
+            "recessive",
+            "compound-heterozygous-comp-het"
+          ],
+          "firstSeen": "2026-09-11"
+        },
+        {
+          "kind": "entry",
+          "slug": "network-proximity",
+          "term": "Network proximity",
+          "aliases": [],
+          "html": "<p>scoring a gene that has no recorded symptoms by the company it keeps: its high-confidence protein-interaction partners among the top-ranked genes. It is the weak, last-resort tier, because a neighbour's phenotype is not the gene's own. <em>Example:</em> the <code>uncurated</code> tier, which matters because 73.6% of protein-coding genes have no HPO curation at all.</p>",
+          "exampleHtml": "",
+          "context": "<p>the small version of Exomiser's hiPHIVE random walk, whose 741 MB matrix was declined</p>",
+          "source": "src/mva/phenotype/network.py",
+          "related": [
+            "tier",
+            "seed-target-target-set"
+          ],
+          "firstSeen": "2026-09-11"
         }
       ]
     }

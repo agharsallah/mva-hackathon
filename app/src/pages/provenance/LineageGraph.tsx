@@ -4,6 +4,7 @@ import { useLineage, useReferenceProvenance } from '../../api/hooks';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Loaded } from '../../components/QueryState';
 import { bytes as fmtBytes, int } from '../../lib/format';
+import { edgePath, type Geometry, layout } from '../../lib/graphLayout';
 import { C } from '../../lib/palette';
 import {
   buildGraph,
@@ -14,11 +15,9 @@ import {
   withReferenceServices,
 } from './graph';
 
-const NODE_W = 210;
-const NODE_H = 62;
-const GAP_X = 120;
-const GAP_Y = 26;
-const PAD = 16;
+/** Taller rows than the other two views: a warehouse node carries a third text line. */
+const GEOMETRY: Geometry = { nodeWidth: 210, nodeHeight: 62, gapX: 120, gapY: 26, pad: 16 };
+const { nodeWidth: NODE_W, nodeHeight: NODE_H } = GEOMETRY;
 
 /**
  * Lineage as a drawn graph, not a table.
@@ -87,22 +86,10 @@ function GraphSvg({
     [rows, join],
   );
   const byId = useMemo(() => new Map(nodes.map((n) => [n.id, n])), [nodes]);
-  const perLevel = useMemo(() => {
-    const m = new Map<number, number>();
-    for (const n of nodes) m.set(n.level, (m.get(n.level) ?? 0) + 1);
-    return m;
-  }, [nodes]);
-
-  const maxSlots = Math.max(...[...perLevel.values()]);
-  const width = PAD * 2 + levels * NODE_W + (levels - 1) * GAP_X;
-  const height = PAD * 2 + maxSlots * NODE_H + (maxSlots - 1) * GAP_Y;
-
-  const x = (n: Node) => PAD + n.level * (NODE_W + GAP_X);
-  const y = (n: Node) => {
-    const count = perLevel.get(n.level) ?? 1;
-    const blockH = count * NODE_H + (count - 1) * GAP_Y;
-    return PAD + (height - PAD * 2 - blockH) / 2 + n.slot * (NODE_H + GAP_Y);
-  };
+  const place = useMemo(() => layout(nodes, levels, GEOMETRY), [nodes, levels]);
+  const { width, height } = place;
+  const x = (n: Node) => place.x(n);
+  const y = (n: Node) => place.y(n);
 
   return (
     <>
@@ -137,17 +124,16 @@ function GraphSvg({
             const a = byId.get(e.from);
             const b = byId.get(e.to);
             if (!a || !b) return null;
-            const x1 = x(a) + NODE_W;
-            const y1 = y(a) + NODE_H / 2;
-            const x2 = x(b);
-            const y2 = y(b) + NODE_H / 2;
-            const mid = (x1 + x2) / 2;
             const hot = hovered === e;
             const manifest = e.kind === 'manifest';
+            // The manifest label sits at the curve's midpoint, which the layout's own
+            // coordinates give directly.
+            const midX = (x(a) + NODE_W + x(b)) / 2;
+            const midY = (y(a) + y(b)) / 2 + NODE_H / 2;
             return (
               <g key={i} onMouseEnter={() => setHovered(e)} onMouseLeave={() => setHovered(null)}>
                 <path
-                  d={`M${x1},${y1} C${mid},${y1} ${mid},${y2} ${x2},${y2}`}
+                  d={edgePath(a, b, place, GEOMETRY)}
                   fill="none"
                   stroke={hot ? C.decision : manifest ? C.raw : C.inkDim}
                   strokeWidth={hot ? 2.2 : 1.2}
@@ -156,13 +142,13 @@ function GraphSvg({
                   markerEnd={hot ? 'url(#arrowHot)' : 'url(#arrow)'}
                 />
                 {manifest && (
-                  <text x={mid} y={(y1 + y2) / 2 - 4} fill={C.raw} fontSize="9" textAnchor="middle">
+                  <text x={midX} y={midY - 4} fill={C.raw} fontSize="9" textAnchor="middle">
                     manifest
                   </text>
                 )}
                 {/* Fat invisible hit area so the thin curve is easy to hover. */}
                 <path
-                  d={`M${x1},${y1} C${mid},${y1} ${mid},${y2} ${x2},${y2}`}
+                  d={edgePath(a, b, place, GEOMETRY)}
                   fill="none"
                   stroke="transparent"
                   strokeWidth={14}

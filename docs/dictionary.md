@@ -2078,3 +2078,67 @@ flowchart LR
 **Audit trail** — the two append-only ledgers nobody could reconstruct after the fact: what we *spent* and what we *believed*. The probe ledger records every oracle upload — who sent it, the payload, the reply, the rationale, which hypotheses it bears on — against a hard budget of 6. The register records every hypothesis revision and every evidence row. Lineage answers *what was computed*; the audit trail answers *what was done in the outside world, and what it made us think*. Both live in the ingest schema rather than the results schema, because they are hand-written operational state, not a derived table.
 *Example: `uv run mva-warehouse probe-budget` → 0 of 6 spent, 6 remaining. `uv run mva-science probe-link <probe_id> --hypothesis H009 --direction supports` files the reply as `kind=oracle` evidence with `source_ref` `probe:<n>`, which is what ties an irreversible action to the belief it moved.*
 *Context: the half of the record that no rerun can rebuild · source: src/mva/warehouse/probes.py · related: Probe ledger, Register, Revision, Append-only, Provenance vs belief · first seen 2026-09-05*
+
+---
+
+## 17. Working blind — words for iteration 2
+
+Iteration 1 found the answer and the oracle confirmed it. Iteration 2 goes looking for it
+**again**, from the raw reads and the symptoms, as if nobody knew — because a result found
+twice by two routes that share no code is the strongest replication a single sample allows,
+and because a method that only works when you already know the answer transfers to nothing.
+These are the words that discipline makes necessary.
+
+```mermaid
+flowchart LR
+  S[/"8 HPO terms<br/>(symptoms only)"/]:::raw
+  R["SYMPTOM RANKING<br/>every curated gene,<br/>scored — no DNA read"]:::machine
+  T{"TIERS<br/>core · net ·<br/>mechanism-term"}:::decide
+  G["TARGET SET<br/>the genes later<br/>steps read DNA for"]:::good
+  D["DECOY SET<br/>matched genes that<br/>should find nothing"]:::machine
+  B["BENCHMARK<br/>recall@N on<br/>held-out diseases"]:::machine
+  S --> R --> T --> G
+  G -.->|"matched on gene shape"| D
+  R --> B
+  B -->|"0.36, not 0.90"| G
+  classDef raw fill:#e0d4f7,stroke:#7a5cab,color:#000
+  classDef machine fill:#cfe8ff,stroke:#333,color:#000
+  classDef decide fill:#ffe9b3,stroke:#333,color:#000
+  classDef good fill:#8fd18f,stroke:#333,color:#000
+```
+
+> **Legend** — purple: the raw input, here the clinic's words rather than any DNA · blue: neutral machinery · yellow: the decision point, where a gene is assigned a tier · green: the output later steps consume. The arrow returning from the benchmark is the one that mattered: the measured recall changed what the target set is allowed to claim.
+
+**Blind protocol** — a rule that this iteration may not read the earlier one's answer until the one step whose job is to compare them. The gene is written all over the repository, so it cannot be a secret; what makes it checkable is that every [methodology entry](#16-the-research-record--words-for-what-you-believe) declares what it read and a gate refuses one that names an iteration-1 candidate table too early. Software analogy: not a sandbox, but a code review that rejects a forbidden import.
+*Example: `uv run mva-science check --blind iteration2` → "1 iteration2 entries, every one declaring its inputs — still blind".*
+*Context: what makes iteration 2's rediscovery worth anything · source: src/mva/science/blind.py · related: Hypothesis, Methodology entry, Unblinding · first seen 2026-09-11*
+
+**Unblinding** — the single moment the comparison is allowed: one entry, marked as such, that reads iteration 1's tables and says whether the blind route found the same pair. Everything after it may read them too; nothing before it may. *Example:* step 6's entry, not yet written.
+*Context: the gate's own switch, so "when did we look" is a recorded fact rather than a memory · source: src/mva/science/blind.py · related: Blind protocol · first seen 2026-09-11*
+
+**Target set** — the genes later steps will actually read DNA for, chosen from the symptoms alone. *Example:* 404 genes, chosen from the child's 8 HPO terms with the callset never opened.
+*Context: the input to the k-mer bait of step 2 · source: docs/iteration2/step-1/methodology/084-the-blind-target-set.md · related: Tier, Recall@N, Enrichment vs coverage · first seen 2026-09-11*
+
+**Tier** — which band of the target set a gene is in, and therefore where human attention starts: **core** (top 50 by symptom score), **net** (ranks 51–300), **mechanism-term** (admitted by the disease-mechanism rule whatever its rank), **uncurated** (no HPO annotation at all, so unscorable). Every tier is read by the machinery; the tier ranks the humans' time, not the computer's. *Example:* 62 core, 272 net, 70 mechanism-term.
+*Context: which band of the target set a gene sits in, as `results.it2_targets.tier` · source: src/mva/phenotype/targets.py · related: Target set, Mechanism-term rule · first seen 2026-09-11*
+
+**Mechanism-term rule** — admitting every gene the ontology annotates under a chromosome-instability term, whatever its symptom score, because a clinician would use the disease name. It is **prior knowledge, not evidence**: such a row is tagged, its pure symptom-score rank is printed beside it, and a rediscovery claim may only be made on that pure ranking. Otherwise the rule would hand the answer a seat and the seat would be mistaken for a finding. *Example:* 51 of 404 target genes entered this way and earned no claim by doing so.
+*Context: the plan's own bias fix (gap B1) · source: docs/iteration2/plan.md · related: Tier, Target set · first seen 2026-09-11*
+
+**Decoy set** — genes that look like the targets and should find nothing: matched on coding length and exon count, carrying none of the child's symptoms, drawn once from a recorded seed and never edited. Running the whole pipeline over them measures how often it nominates a gene by chance. Software analogy: a negative control fixture — the test that fails if your matcher matches anything. *Example:* 396 decoys for 404 targets.
+*Context: the read route's null, which it otherwise lacks · source: src/mva/phenotype/targets.py · related: Null hypothesis (H₀), Target set · first seen 2026-09-11*
+
+**Recall@N** — out of many test cases, the share whose right answer appears in the top *N* of a ranking. The number that says whether a cutoff is defensible. *Example:* recall@300 = 0.36 — of 200 held-out diseases, 72 had their causal gene inside the top 300.
+*Context: how H012 was tested · source: src/mva/phenotype/benchmark.py · related: Held-out, Enrichment vs coverage, Target set · first seen 2026-09-11*
+
+**Held-out** — hiding the answer from the method before asking it to find the answer. Here, a disease's own curated description of its gene is removed before that disease is ranked; the gene keeps what its *other* diseases say. Without this the benchmark measures a lookup and scores near 1.0. Software analogy: not testing a cache against the values you just wrote into it. *Example:* 49 of 200 genes turned out to be described by the withheld disease alone, so removing it removed the gene — recorded as a miss, not hidden.
+*Context: the rule that makes the recall curve worth reading · source: src/mva/phenotype/benchmark.py · related: Recall@N, Overfitting · first seen 2026-09-11*
+
+**Enrichment vs coverage** — two different promises a gene list can make. **Coverage** says "the answer is in here"; **enrichment** says "the answer is likelier in here than outside". A measured recall of 0.36 permits only the second. Saying "coverage" when you have enrichment turns a gene's absence into a false exoneration. *Example:* iteration 2's target set is an enrichment, so step 2 not finding a gene means nothing about that gene, and step 4 reads all of them.
+*Context: the decision recorded when H012 was refuted · source: docs/iteration2/step-1/methodology/084-the-blind-target-set.md · related: Target set, Recall@N · first seen 2026-09-11*
+
+**Mode-of-inheritance prior** — using how a disease is passed down as a weight rather than as a filter. The parents' recurrent miscarriages say little about which symptom the child has, but a lot about which *kind* of gene to expect: recessive, and lethal in a fetus carrying two broken copies. So recessive genes with a curated prenatal-loss term are up-weighted ×1.5, dominant-only genes ×0.5, and every ranking using the prior is reported again with it switched off. *Example:* a family-history term that would have distorted the symptom ranking becomes evidence in the one place it genuinely carries information.
+*Context: the plan's fix for the family-history term (gap B2) · source: src/mva/pipeline/inheritance.py · related: Recessive, Compound heterozygous ("comp het") · first seen 2026-09-11*
+
+**Network proximity** — scoring a gene that has no recorded symptoms by the company it keeps: its high-confidence protein-interaction partners among the top-ranked genes. It is the weak, last-resort tier, because a neighbour's phenotype is not the gene's own. *Example:* the `uncurated` tier, which matters because 73.6% of protein-coding genes have no HPO curation at all.
+*Context: the small version of Exomiser's hiPHIVE random walk, whose 741 MB matrix was declined · source: src/mva/phenotype/network.py · related: Tier, Target set · first seen 2026-09-11*

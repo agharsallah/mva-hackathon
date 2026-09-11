@@ -49,11 +49,13 @@ export default function StepsPage() {
           },
           {
             term: 'blind protocol',
+            dict: 'blind-protocol',
             plain:
               'A rule that this iteration may not read the earlier one\u2019s answer until the step that exists to compare them.',
           },
           {
             term: 'recall@N',
+            dict: 'recall-n',
             plain:
               'Out of many test cases, the share whose right answer appears in the top N of a ranking.',
           },

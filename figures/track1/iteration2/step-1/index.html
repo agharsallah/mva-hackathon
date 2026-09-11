@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iteration 2, step 1 — the blind target set</title>
+<style>/* Report styling. Light only, deliberately: the Plotly figures are drawn on a white
+   canvas and a dark shell around them would read as a rendering bug rather than a theme.
+   Print rules keep the same page usable as a PDF for the write-up. */
+
+:root {
+  --ink: #333333;
+  --subtle: #666666;
+  --faint: #8a8a8a;
+  --rule: #e6e6e6;
+  --surface: #ffffff;
+  --ground: #fafafa;
+  --good: #8fd18f;
+  --good-line: #3f8f47;
+  --bad: #ff9999;
+  --bad-line: #c0392b;
+  --decision: #ffe9b3;
+  --decision-line: #c98f1e;
+  --machine: #cfe8ff;
+  --machine-line: #3d7ebd;
+  --raw: #e0d4f7;
+  --raw-line: #7a5cab;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --nav: 250px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--machine-line); }
+
+/* --- shell ---------------------------------------------------------------- */
+
+.layout { display: flex; align-items: flex-start; }
+
+nav.sidebar {
+  position: sticky;
+  top: 0;
+  width: var(--nav);
+  flex: 0 0 var(--nav);
+  height: 100vh;
+  overflow-y: auto;
+  padding: 28px 20px;
+  border-right: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+nav.sidebar h1 { font-size: 16px; margin: 0 0 4px; letter-spacing: -0.01em; }
+nav.sidebar .subject { font-size: 12px; color: var(--faint); margin: 0 0 20px; font-family: var(--mono); word-break: break-all; }
+nav.sidebar ol { list-style: none; margin: 0; padding: 0; }
+nav.sidebar > ol > li { margin-bottom: 14px; }
+nav.sidebar .section-link { display: block; font-weight: 600; font-size: 13px; color: var(--ink); text-decoration: none; padding: 3px 0; }
+nav.sidebar .exhibit-link { display: block; font-size: 12.5px; color: var(--subtle); text-decoration: none; padding: 2px 0 2px 12px; border-left: 2px solid var(--rule); }
+nav.sidebar .exhibit-link:hover, nav.sidebar .section-link:hover { color: var(--machine-line); }
+nav.sidebar .exhibit-link.active { border-left-color: var(--machine-line); color: var(--machine-line); }
+
+#filter {
+  width: 100%;
+  padding: 7px 10px;
+  margin-bottom: 18px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+}
+#filter:focus { outline: 2px solid var(--machine); outline-offset: -1px; }
+
+main { flex: 1 1 auto; min-width: 0; padding: 32px 40px 120px; max-width: 1180px; }
+
+header.masthead { margin-bottom: 32px; }
+header.masthead h1 { font-size: 30px; margin: 0 0 6px; letter-spacing: -0.02em; }
+header.masthead p { margin: 0; color: var(--subtle); max-width: 70ch; }
+header.masthead .meta { font-family: var(--mono); font-size: 12px; color: var(--faint); margin-top: 10px; }
+
+section.report-section { margin-bottom: 44px; }
+section.report-section > h2 {
+  font-size: 21px;
+  margin: 0 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--rule);
+  letter-spacing: -0.01em;
+}
+section.report-section > .blurb { margin: 0 0 22px; color: var(--subtle); max-width: 75ch; }
+
+/* --- exhibits --------------------------------------------------------------- */
+
+figure.exhibit {
+  margin: 0 0 24px;
+  padding: 22px 24px 18px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+figure.exhibit h3 { font-size: 17px; margin: 0 0 8px; letter-spacing: -0.01em; }
+figure.exhibit .caption { margin: 0 0 16px; color: var(--subtle); max-width: 78ch; }
+figure.exhibit .legend {
+  margin: 14px 0 0;
+  padding: 9px 12px;
+  background: var(--ground);
+  border-left: 3px solid var(--machine-line);
+  border-radius: 0 5px 5px 0;
+  font-size: 13px;
+  color: var(--subtle);
+}
+figure.exhibit .note {
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  color: var(--subtle);
+  max-width: 78ch;
+}
+figure.exhibit .note strong { color: var(--ink); }
+figure.exhibit.hidden { display: none; }
+
+/* --- tiles ---------------------------------------------------------------- */
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+.tile { padding: 16px 18px; background: var(--ground); border: 1px solid var(--rule); border-radius: 8px; }
+.tile-value { display: block; font-size: 27px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.15; }
+.tile-label { display: block; font-size: 13px; font-weight: 600; margin-top: 4px; }
+.tile-hint { display: block; font-size: 12px; color: var(--faint); margin-top: 3px; line-height: 1.45; }
+
+/* --- tables --------------------------------------------------------------- */
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+table th, table td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+table thead th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--faint); border-bottom-width: 2px; }
+table.facts th { width: 200px; color: var(--subtle); font-weight: 600; }
+td.numeric { font-family: var(--mono); white-space: nowrap; }
+table summary { cursor: pointer; font-weight: 600; }
+table summary::marker { color: var(--faint); }
+.reasoning { margin: 8px 0 4px; font-size: 13px; color: var(--subtle); max-width: 68ch; }
+.reasoning em { color: var(--ink); font-style: normal; display: block; margin-top: 6px; }
+
+.badge {
+  display: inline-block;
+  padding: 1px 9px;
+  border: 1px solid;
+  border-radius: 11px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.callout {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: #fff9ec;
+  border: 1px solid var(--decision);
+  border-left: 3px solid var(--decision-line);
+  border-radius: 0 7px 7px 0;
+}
+.callout p { margin: 0 0 6px; font-weight: 600; }
+.callout ul { margin: 0; padding-left: 20px; }
+.callout li { margin-bottom: 4px; color: var(--subtle); }
+.callout strong { color: var(--ink); }
+
+code { font-family: var(--mono); font-size: 0.9em; background: var(--ground); padding: 1px 5px; border-radius: 4px; }
+
+.empty { color: var(--faint); font-style: italic; }
+
+/* --- responsive & print --------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  nav.sidebar { position: static; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--rule); }
+  main { padding: 24px 18px 80px; }
+}
+
+@media print {
+  nav.sidebar { display: none; }
+  body { background: #fff; }
+  main { max-width: none; padding: 0; }
+  figure.exhibit { break-inside: avoid; border-color: #ddd; }
+  section.report-section { break-before: page; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar">
+  <h1>Iteration 2, step 1 — the blind target set</h1>
+  <p class="subject">PROBAND01 — symptoms only, no genomic data read</p>
+  <input id="filter" type="search" placeholder="Filter exhibits  ( / )" autocomplete="off">
+  <ol><li><a class="section-link" href="#section-it2-step-1">Step 1 — the blind target set</a><ol><li><a class="exhibit-link" href="#recall-at-n" data-target="recall-at-n">How often the symptom ranker finds the causal gene</a></li><li><a class="exhibit-link" href="#target-tiers" data-target="target-tiers">What the target set is made of</a></li><li><a class="exhibit-link" href="#ranker-overlap" data-target="ranker-overlap">How much two independent rankers agree</a></li><li><a class="exhibit-link" href="#curation-coverage" data-target="curation-coverage">How much of the genome this ranker can see at all</a></li></ol></li></ol>
+</nav>
+<main>
+<header class="masthead">
+  <h1>Iteration 2, step 1 — the blind target set</h1>
+  <p>Every exhibit states how to read it and decodes its own colours; every graded number states the band it was judged against and why that band is the right one.</p>
+  <p class="meta">4 exhibits across 1 sections &middot; source
+  PROBAND01 — symptoms only, no genomic data read &middot; generated 2026-09-11 11:26 UTC &middot; press <code>/</code> to
+  filter</p>
+</header>
+<section class="report-section" id="section-it2-step-1">
+  <h2>Step 1 — the blind target set</h2>
+  <p class="blurb">Which genes the child&#x27;s symptoms alone nominate, and how much of the answer that can be expected to contain. Every figure is drawn from the run&#x27;s own output files.</p>
+  <figure class="exhibit" id="recall-at-n"><h3>How often the symptom ranker finds the causal gene</h3><p class="caption">Held-out recall over 200 recessive diseases of 3240 eligible, degraded the way Exomiser&#x27;s own benchmark degraded its queries. The cutoff the target set was fixed at is marked: recall there is 0.36, not the 0.90 H012 predicted.</p><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-4.0.0.min.js" integrity="sha256-FEYfO0yRyLtZCpnW0Dw/0DHKQO7Afrq3ml4+rBB818o=" crossorigin="anonymous"></script>                <div id="fig-recall-at-n" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("fig-recall-at-n")) {                    Plotly.newPlot(                        "fig-recall-at-n",                        [{"fill":"toself","fillcolor":"rgba(61,126,189,0.18)","hoverinfo":"skip","line":{"width":0},"mode":"lines","name":"95% bootstrap interval","x":[1,10,50,300,1000,1000,300,50,10,1],"y":[0.0,0.055,0.175,0.42,0.63,0.495,0.295,0.08,0.01,0.0],"type":"scatter"},{"hovertemplate":"top %{x}: %{y:.3f}\u003cextra\u003e\u003c\u002fextra\u003e","line":{"color":"#3d7ebd","width":2},"marker":{"size":8},"mode":"lines+markers","name":"measured recall","x":[1,10,50,300,1000],"y":[0.0,0.03,0.125,0.36,0.565],"type":"scatter"},{"marker":{"color":"#c0392b","size":14,"symbol":"x"},"mode":"markers+text","name":"the chosen cutoff","text":["  N = 300: 0.36"],"textposition":"middle right","x":[300],"y":[0.36],"type":"scatter"}],                        {"template":{"layout":{"colorway":["#3d7ebd","#7a5cab","#3f8f47","#c98f1e","#c0392b","#4aa3a3","#a3579b","#6b8f3f","#b5762e","#8a8a8a"],"font":{"color":"#333333","family":"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif","size":13},"hoverlabel":{"bgcolor":"#ffffff","bordercolor":"#e6e6e6","font":{"family":"'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"size":12},"orientation":"h","x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":52,"l":64,"r":28,"t":56},"paper_bgcolor":"#ffffff","plot_bgcolor":"#ffffff","title":{"font":{"color":"#333333","size":17},"pad":{"b":12},"x":0,"xanchor":"left"},"xaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"},"yaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"}}},"shapes":[{"line":{"color":"#3f8f47","dash":"dash"},"type":"line","x0":0,"x1":1,"xref":"x domain","y0":0.9,"y1":0.9,"yref":"y"}],"annotations":[{"showarrow":false,"text":"H012 predicted ≥ 0.90","x":0,"xanchor":"left","xref":"x domain","y":0.9,"yanchor":"bottom","yref":"y"}],"xaxis":{"type":"log","title":{"text":"top N of the ranking"}},"yaxis":{"title":{"text":"share of held-out genes found"},"range":[0,1]}},                        {"displaylogo": false, "responsive": true, "toImageButtonOptions": {"scale": 2, "filename": "recall-at-n"}, "modeBarButtonsToRemove": ["lasso2d", "select2d"]}                    )                };            </script>        </div><figcaption class="legend"><strong>blue line</strong> = measured recall, <strong>blue band</strong> = its 95% bootstrap interval; <strong>green dashed</strong> = the prediction; <strong>red cross</strong> = the chosen N. An internal consistency check, not an external validation: ground truth and scoring database share curators, and there is no genomic background.</figcaption><p class="note">Median rank 326; 49 of 200 genes were unrankable at any N, because the withheld disease is the only one curating them.</p><p class="note">Raising N does not rescue the claim, which is why the recorded decision was to keep N = 300 and describe the target set as an enrichment rather than coverage.</p></figure>
+<figure class="exhibit" id="target-tiers"><h3>What the target set is made of</h3><p class="caption">404 genes in three tiers. Steps 2-3 read every tier; the tier says where human review starts, not what is looked at.</p><div style="height:100%; width:100%;">                            <div id="fig-target-tiers" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("fig-target-tiers")) {                    Plotly.newPlot(                        "fig-target-tiers",                        [{"marker":{"color":["#8fd18f","#cfe8ff","#ffe9b3"],"line":{"color":"#333333","width":1}},"orientation":"h","text":["62","272","70"],"textposition":"outside","x":[62,272,70],"y":["core","net","mechanism-term"],"type":"bar"}],                        {"template":{"layout":{"colorway":["#3d7ebd","#7a5cab","#3f8f47","#c98f1e","#c0392b","#4aa3a3","#a3579b","#6b8f3f","#b5762e","#8a8a8a"],"font":{"color":"#333333","family":"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif","size":13},"hoverlabel":{"bgcolor":"#ffffff","bordercolor":"#e6e6e6","font":{"family":"'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"size":12},"orientation":"h","x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":52,"l":64,"r":28,"t":56},"paper_bgcolor":"#ffffff","plot_bgcolor":"#ffffff","title":{"font":{"color":"#333333","size":17},"pad":{"b":12},"x":0,"xanchor":"left"},"xaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"},"yaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"}}},"annotations":[{"showarrow":false,"text":"353 of 404 rows earned their place by symptom score; 51 entered by the mechanism-term rule alone","x":0,"xanchor":"left","xref":"x","y":-0.6,"yref":"y"}],"xaxis":{"title":{"text":"genes"}}},                        {"displaylogo": false, "responsive": true, "toImageButtonOptions": {"scale": 2, "filename": "target-tiers"}, "modeBarButtonsToRemove": ["lasso2d", "select2d"]}                    )                };            </script>        </div><figcaption class="legend"><strong>green</strong> = core, the top 50 by symptom score · <strong>blue</strong> = net, ranks 51-300 · <strong>amber</strong> = mechanism-term, admitted by the chromosome-instability rule regardless of rank. An amber row is prior knowledge, not evidence, and a rediscovery claim may only be made on the pure symptom-score ranking.</figcaption></figure>
+<figure class="exhibit" id="ranker-overlap"><h3>How much two independent rankers agree</h3><p class="caption">Phen2Gene and the local Resnik ranker share 97 of their top 300 genes on the same terms (32%), against the 50% H014 predicted.</p><div style="height:100%; width:100%;">                            <div id="fig-ranker-overlap" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("fig-ranker-overlap")) {                    Plotly.newPlot(                        "fig-ranker-overlap",                        [{"marker":{"color":"#8fd18f","line":{"color":"#333333","width":1}},"name":"both rankers","orientation":"h","text":["97 shared (32%)"],"textposition":"inside","x":[97],"y":["top 300"],"type":"bar"},{"marker":{"color":"#e6e6e6","line":{"color":"#333333","width":1}},"name":"one ranker only","orientation":"h","text":["203 unique"],"textposition":"inside","x":[203],"y":["top 300"],"type":"bar"}],                        {"template":{"layout":{"colorway":["#3d7ebd","#7a5cab","#3f8f47","#c98f1e","#c0392b","#4aa3a3","#a3579b","#6b8f3f","#b5762e","#8a8a8a"],"font":{"color":"#333333","family":"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif","size":13},"hoverlabel":{"bgcolor":"#ffffff","bordercolor":"#e6e6e6","font":{"family":"'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"size":12},"orientation":"h","x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":52,"l":64,"r":28,"t":56},"paper_bgcolor":"#ffffff","plot_bgcolor":"#ffffff","title":{"font":{"color":"#333333","size":17},"pad":{"b":12},"x":0,"xanchor":"left"},"xaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"},"yaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"}}},"shapes":[{"line":{"color":"#c0392b","dash":"dash"},"type":"line","x0":150.0,"x1":150.0,"xref":"x","y0":0,"y1":1,"yref":"y domain"}],"annotations":[{"showarrow":false,"text":"H014 predicted ≥ 50%","x":150.0,"xanchor":"left","xref":"x","y":1,"yanchor":"top","yref":"y domain"}],"barmode":"stack","yaxis":{"showticklabels":false},"xaxis":{"title":{"text":"genes in the top 300"}}},                        {"displaylogo": false, "responsive": true, "toImageButtonOptions": {"scale": 2, "filename": "ranker-overlap"}, "modeBarButtonsToRemove": ["lasso2d", "select2d"]}                    )                };            </script>        </div><figcaption class="legend"><strong>green</strong> = nominated by both methods · <strong>grey</strong> = nominated by one. <strong>red dashed</strong> = the prediction. Two good rankers are expected to disagree substantially (Yuan 2022), so this refutes the threshold rather than either ranker — but it does mean the target set is one ranker&#x27;s opinion, not a converged nomination.</figcaption></figure>
+<figure class="exhibit" id="curation-coverage"><h3>How much of the genome this ranker can see at all</h3><p class="caption">14,523 of 19,723 protein-coding genes (73.6%) have no HPO curation, so the symptom ranker cannot score them at any N.</p><div style="height:100%; width:100%;">                            <div id="fig-curation-coverage" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("fig-curation-coverage")) {                    Plotly.newPlot(                        "fig-curation-coverage",                        [{"marker":{"color":"#8fd18f","line":{"color":"#333333","width":1}},"name":"curated in HPO — rankable","orientation":"h","text":["5,200 rankable"],"textposition":"inside","x":[5200],"y":["protein-coding genes"],"type":"bar"},{"marker":{"color":"#ff9999","line":{"color":"#333333","width":1}},"name":"no HPO curation — invisible to this ranker","orientation":"h","text":["14,523 invisible (74%)"],"textposition":"inside","x":[14523],"y":["protein-coding genes"],"type":"bar"}],                        {"template":{"layout":{"colorway":["#3d7ebd","#7a5cab","#3f8f47","#c98f1e","#c0392b","#4aa3a3","#a3579b","#6b8f3f","#b5762e","#8a8a8a"],"font":{"color":"#333333","family":"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif","size":13},"hoverlabel":{"bgcolor":"#ffffff","bordercolor":"#e6e6e6","font":{"family":"'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"size":12},"orientation":"h","x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":52,"l":64,"r":28,"t":56},"paper_bgcolor":"#ffffff","plot_bgcolor":"#ffffff","title":{"font":{"color":"#333333","size":17},"pad":{"b":12},"x":0,"xanchor":"left"},"xaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"},"yaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"}}},"barmode":"stack","yaxis":{"showticklabels":false},"xaxis":{"title":{"text":"protein-coding genes"}}},                        {"displaylogo": false, "responsive": true, "toImageButtonOptions": {"scale": 2, "filename": "curation-coverage"}, "modeBarButtonsToRemove": ["lasso2d", "select2d"]}                    )                };            </script>        </div><figcaption class="legend"><strong>green</strong> = curated, and therefore rankable · <strong>red</strong> = invisible to a curation-driven ranker. H015 predicted under 20% red. This is the iteration&#x27;s largest blind spot, and the reason the <code>uncurated</code> tier and step 4&#x27;s genome-wide ranking exist.</figcaption></figure>
+</section>
+</main>
+</div>
+<script>
+const filter = document.getElementById('filter');
+const exhibits = Array.from(document.querySelectorAll('figure.exhibit'));
+const navLinks = Array.from(document.querySelectorAll('.exhibit-link'));
+
+/* Type to narrow the page to the exhibits whose title, caption or legend mentions the
+   term. Everything is already in the DOM, so this is a display toggle, not a search. */
+filter?.addEventListener('input', () => {
+  const term = filter.value.trim().toLowerCase();
+  exhibits.forEach(exhibit => {
+    const hit = !term || exhibit.innerText.toLowerCase().includes(term);
+    exhibit.classList.toggle('hidden', !hit);
+  });
+  document.querySelectorAll('section.report-section').forEach(section => {
+    const visible = section.querySelectorAll('figure.exhibit:not(.hidden)').length;
+    section.style.display = visible ? '' : 'none';
+  });
+  navLinks.forEach(link => {
+    const target = document.getElementById(link.dataset.target);
+    link.style.display = target && target.classList.contains('hidden') ? 'none' : '';
+  });
+});
+
+/* Highlight the exhibit currently in view, so the sidebar tracks the scroll position. */
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const link = navLinks.find(l => l.dataset.target === entry.target.id);
+    if (link) link.classList.toggle('active', entry.isIntersecting);
+  });
+}, {rootMargin: '-45% 0px -45% 0px'});
+exhibits.forEach(exhibit => spy.observe(exhibit));
+
+/* "/" focuses the filter, the way every tool with a search box behaves. */
+document.addEventListener('keydown', event => {
+  if (event.key === '/' && document.activeElement !== filter) {
+    event.preventDefault();
+    filter?.focus();
+  }
+  if (event.key === 'Escape' && document.activeElement === filter) {
+    filter.value = '';
+    filter.dispatchEvent(new Event('input'));
+    filter.blur();
+  }
+});
+</script>
+</body>
+</html>

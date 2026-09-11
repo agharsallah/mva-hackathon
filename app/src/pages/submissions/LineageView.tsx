@@ -5,6 +5,7 @@ import { Badge } from '../../components/Badge';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Callout } from '../../components/Explainer';
 import { int } from '../../lib/format';
+import { edgePath, type Geometry, layout } from '../../lib/graphLayout';
 import { C } from '../../lib/palette';
 import { cx, WELL } from '../../lib/ui';
 import { shortSha } from './iteration';
@@ -19,11 +20,9 @@ import { buildSubmissionGraph, type GraphEdge, type GraphNode, KIND_ORDER } from
  * same one: every claim must be walkable back to bytes whose checksum was confirmed.
  */
 
-const NODE_W = 250;
-const NODE_H = 58;
-const GAP_X = 130;
-const GAP_Y = 18;
-const PAD = 14;
+/** Wider boxes than the warehouse view: a submission node shows a file path, not a table. */
+const GEOMETRY: Geometry = { nodeWidth: 250, nodeHeight: 58, gapX: 130, gapY: 18, pad: 14 };
+const { nodeWidth: NODE_W, nodeHeight: NODE_H } = GEOMETRY;
 
 /** The repo's colour convention, applied to the five source kinds plus the sink. */
 function strokeOf(kind: string): string {
@@ -140,18 +139,10 @@ function GraphSvg({
   setHovered: (e: GraphEdge | null) => void;
 }) {
   const byId = new Map(graph.nodes.map((n) => [n.id, n]));
-  const perLevel = new Map<number, number>();
-  for (const n of graph.nodes) perLevel.set(n.level, (perLevel.get(n.level) ?? 0) + 1);
-  const maxSlots = Math.max(...perLevel.values());
-  const width = PAD * 2 + graph.levels * NODE_W + (graph.levels - 1) * GAP_X;
-  const height = PAD * 2 + maxSlots * NODE_H + (maxSlots - 1) * GAP_Y;
-
-  const x = (n: GraphNode) => PAD + n.level * (NODE_W + GAP_X);
-  const y = (n: GraphNode) => {
-    const count = perLevel.get(n.level) ?? 1;
-    const block = count * NODE_H + (count - 1) * GAP_Y;
-    return PAD + (height - PAD * 2 - block) / 2 + n.slot * (NODE_H + GAP_Y);
-  };
+  const place = layout(graph.nodes, graph.levels, GEOMETRY);
+  const { width, height } = place;
+  const x = (n: GraphNode) => place.x(n);
+  const y = (n: GraphNode) => place.y(n);
 
   return (
     <>
@@ -182,13 +173,8 @@ function GraphSvg({
             const a = byId.get(e.from);
             const b = byId.get(e.to);
             if (!a || !b) return null;
-            const x1 = x(a) + NODE_W;
-            const y1 = y(a) + NODE_H / 2;
-            const x2 = x(b);
-            const y2 = y(b) + NODE_H / 2;
-            const mid = (x1 + x2) / 2;
             const hot = hovered === e;
-            const d = `M${x1},${y1} C${mid},${y1} ${mid},${y2} ${x2},${y2}`;
+            const d = edgePath(a, b, place, GEOMETRY);
             return (
               <g key={i} onMouseEnter={() => setHovered(e)} onMouseLeave={() => setHovered(null)}>
                 <path

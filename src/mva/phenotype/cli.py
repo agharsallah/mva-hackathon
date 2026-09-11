@@ -15,6 +15,7 @@ outside, and it degrades to a printed reason rather than failing the run.
 
 import argparse
 import sys
+from datetime import UTC, datetime
 from pathlib import Path
 
 from . import benchmark as benchmark_module
@@ -147,6 +148,7 @@ def cmd_agreement(args: argparse.Namespace) -> int:
     )
     print()
     mine = {score.symbol.upper() for score in ours}
+    overlaps: list[dict[str, object]] = []
     for reply in hosted:
         if not reply.ok:
             print(f"{reply.source:16s} no overlap figure — {reply.error}")
@@ -164,6 +166,29 @@ def cmd_agreement(args: argparse.Namespace) -> int:
             f"{reply.source:16s} {len(shared)}/{window} shared "
             f"({len(shared) / window:.1%}) in the top {window}{note}"
         )
+        overlaps.append(
+            {
+                "source": reply.source,
+                "shared": len(shared),
+                "window": window,
+                "returned": len(reply),
+            }
+        )
+    if args.out and overlaps:
+        # The primary comparator is the first hosted ranker that answered; the rest travel
+        # with it so a figure cannot quote one service while the entry quotes another.
+        import json
+
+        primary = overlaps[0]
+        payload = primary | {
+            "term_set": ranking.term_set.name,
+            "limit": args.limit,
+            "retrieved_on": datetime.now(UTC).date().isoformat(),
+            "all": overlaps,
+        }
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        print(f"wrote {args.out}")
     return 0
 
 
@@ -199,6 +224,26 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
         f"{result.unrankable} of {len(result.outcomes)} genes unrankable — described by "
         "the held-out disease alone, so a curation-driven ranker cannot place them"
     )
+    if args.out:
+        # The curve is a figure's input as well as a printed table; writing it once here
+        # keeps the plot and the entry quoting the same numbers from the same run.
+        import json
+
+        payload = {
+            "seed": args.seed,
+            "diseases_run": len(result.outcomes),
+            "diseases_eligible": len(diseases),
+            "recessive_only": not args.all_inheritance,
+            "median_rank": result.median_rank,
+            "unrankable": result.unrankable,
+            "curve": [
+                {"n": n, "recall": recall, "interval": list(result.interval(n))}
+                for n, recall in result.curve()
+            ],
+        }
+        args.out.parent.mkdir(parents=True, exist_ok=True)
+        args.out.write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
+        print(f"wrote {args.out}")
     return 0
 
 
@@ -227,6 +272,12 @@ def build_parser() -> argparse.ArgumentParser:
     agree = sub.add_parser("agreement", help="compare against two hosted rankers")
     agree.add_argument("--term-set", choices=names, default=terms.PROBAND_ONLY.name)
     agree.add_argument("--limit", type=int, default=15)
+    agree.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help="also write the overlap as JSON, so a figure and the entry quote one run",
+    )
     agree.set_defaults(func=cmd_agreement)
 
     bench = sub.add_parser(
@@ -238,6 +289,12 @@ def build_parser() -> argparse.ArgumentParser:
         type=int,
         default=200,
         help="how many held-out diseases to run; each one is a full ranking pass",
+    )
+    bench.add_argument(
+        "--out",
+        type=Path,
+        default=None,
+        help="also write the curve as JSON, so a figure and the entry quote one run",
     )
     bench.add_argument(
         "--all-inheritance",
