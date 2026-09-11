@@ -135,19 +135,21 @@ def run_bait(
             progress=progress,
         )
         missing = recover.orphans(survivors)
-        parts = list(survivors.parts)
         filled_rows = 0
         if collect_mates and missing.height:
-            filled = recover.collect_mates(root, missing, shards)
-            filled_rows = filled.height
-            if filled_rows and spill_dir is not None:
-                part = spill_dir / "survivors-mates.parquet"
-                filled.write_parquet(part, compression="zstd")
-                parts.append(part)
-                survivors = Survivors(parts=parts)
-            elif filled_rows:
+            filled = recover.collect_mates(
+                root,
+                missing,
+                shards,
+                spill_dir=spill_dir / "mates" if spill_dir else None,
+                workers=workers,
+            )
+            filled_rows = pair_keys(filled.lazy()).height if filled.parts or filled.frame else 0
+            if spill_dir is not None:
+                survivors = Survivors(parts=[*survivors.parts, *filled.parts])
+            elif filled.frame is not None and filled.frame.height:
                 survivors = Survivors(
-                    frame=pl.concat([survivors.collect(), filled], how="diagonal")
+                    frame=pl.concat([survivors.collect(), filled.frame], how="diagonal")
                 )
         result = BaitResult(
             funnel=funnel,

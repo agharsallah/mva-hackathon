@@ -21,8 +21,10 @@ read-pair SV caller see a deletion where the bait simply stopped.
 
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from pathlib import Path
+from threading import Lock
 
 import polars as pl
 
@@ -88,30 +90,50 @@ def collect_mates(
     wanted: pl.DataFrame,
     shards: list[Shard],
     *,
-    batch_rows: int = 1_000_000,
-) -> pl.DataFrame:
+    spill_dir: Path | None = None,
+    workers: int = 1,
+) -> Survivors:
     """Read the missing mates out of the store by key, without re-testing the bait.
 
-    Only the shards of the partitions the orphans are in are opened, and each is filtered
-    by a semi-join against the key set, so the cost is a read of those partitions and no
-    k-mer work at all.
+    Only the partitions the orphans are in are opened, and each shard is filtered by a
+    semi-join against the key set, so the cost is a read of those partitions and no k-mer
+    work at all.
+
+    **This is close to a second full pass and is priced accordingly.** A fragment can lose
+    its mate to either lane, so in practice every partition is needed and every shard is
+    read. It takes the same ``workers`` and ``spill_dir`` as the sweep for the same
+    reasons: one core reading 272 shards serially is the slowest stage of the step, and
+    holding every orphan mate in memory is the failure the sweep already learned to avoid.
     """
     if wanted.height == 0:
-        return pl.DataFrame(schema={})
+        return Survivors(frame=pl.DataFrame(schema={}))
     needed = {(int(lane), int(read)) for lane, read in wanted.select("lane", "read").rows()}
-    frames: list[pl.DataFrame] = []
-    for shard in shards:
-        if (shard.lane, shard.read_num) not in needed:
-            continue
-        keys = wanted.filter(
-            (pl.col("lane") == shard.lane) & (pl.col("read") == shard.read_num)
-        ).select("tile", "x", "y")
+    todo = [
+        (index, shard)
+        for index, shard in enumerate(shards)
+        if (shard.lane, shard.read_num) in needed
+    ]
+    if spill_dir is not None:
+        spill_dir.mkdir(parents=True, exist_ok=True)
+    keys_by_partition = {
+        (lane, read): wanted.filter((pl.col("lane") == lane) & (pl.col("read") == read)).select(
+            "tile", "x", "y"
+        )
+        for lane, read in needed
+    }
+    lock = Lock()
+    kept: dict[int, pl.DataFrame] = {}
+    parts: dict[int, Path] = {}
+
+    def one(item: tuple[int, Shard]) -> None:
+        index, shard = item
         frame = pl.read_parquet(
             shard.url(root), columns=list(COLUMNS), storage_options=storage_options(root)
         ).with_columns(
             pl.lit(shard.lane, dtype=pl.Int64).alias("lane"),
             pl.lit(shard.read_num, dtype=pl.Int64).alias("read"),
         )
+        keys = keys_by_partition[(shard.lane, shard.read_num)]
         found = frame.join(
             keys.with_columns(
                 pl.col("tile").cast(frame.schema["tile"]),
@@ -121,10 +143,29 @@ def collect_mates(
             on=["tile", "x", "y"],
             how="semi",
         )
-        if found.height:
-            frames.append(found)
         del frame
-    return pl.concat(frames) if frames else pl.DataFrame(schema={})
+        if not found.height:
+            return
+        if spill_dir is not None:
+            part = spill_dir / f"mates-{index:04d}.parquet"
+            found.write_parquet(part, compression="zstd")
+            with lock:
+                parts[index] = part
+            return
+        with lock:
+            kept[index] = found
+
+    if workers > 1:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            list(pool.map(one, todo))
+    else:
+        for item in todo:
+            one(item)
+
+    if spill_dir is not None:
+        return Survivors(parts=[parts[key] for key in sorted(parts)])
+    ordered = [kept[key] for key in sorted(kept)]
+    return Survivors(frame=pl.concat(ordered) if ordered else pl.DataFrame(schema={}))
 
 
 def runs(root: str) -> dict[tuple[int, int], RunFacts]:

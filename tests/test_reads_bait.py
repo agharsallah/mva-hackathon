@@ -186,7 +186,7 @@ def test_collect_mates_fetches_the_missing_half_by_key(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION], (1, 2): [NOISE]})
     swept, _ = sweep(root, _bait(), stride=1, shards=shards)
     survivors = swept.collect()
-    filled = recover.collect_mates(root, recover.orphans(survivors), shards)
+    filled = recover.collect_mates(root, recover.orphans(survivors), shards).collect()
     assert filled.height == 1
     assert filled["sequence"][0] == NOISE
 
@@ -194,14 +194,14 @@ def test_collect_mates_fetches_the_missing_half_by_key(tmp_path):
 def test_collect_mates_of_nothing_reads_nothing(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION]})
     empty = recover.orphans(pl.DataFrame(schema={}).clear())
-    assert recover.collect_mates(root, empty, shards).height == 0
+    assert recover.collect_mates(root, empty, shards).collect().height == 0
 
 
 def test_to_fastq_writes_aligned_pairs(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION], (1, 2): [NOISE]})
     swept, _ = sweep(root, _bait(), stride=1, shards=shards)
     survivors = swept.collect()
-    filled = recover.collect_mates(root, recover.orphans(survivors), shards)
+    filled = recover.collect_mates(root, recover.orphans(survivors), shards).collect()
     written = recover.to_fastq(
         pl.concat([survivors, filled], how="diagonal"), recover.runs(root), tmp_path / "out"
     )
@@ -293,13 +293,34 @@ def test_orphans_and_fastq_read_a_spilled_sweep_without_materialising_it(tmp_pat
     spilled, _ = sweep(root, _bait(), stride=1, shards=shards, spill_dir=tmp_path / "spill")
     missing = recover.orphans(spilled)
     assert missing.height == 1 and int(missing["read"][0]) == 2
-    filled = recover.collect_mates(root, missing, shards)
+    filled = recover.collect_mates(
+        root, missing, shards, spill_dir=tmp_path / "mates", workers=2
+    ).collect()
+    assert filled.height == 1
     written = recover.to_fastq(
         pl.concat([spilled.collect(), filled], how="diagonal"),
         recover.runs(root),
         tmp_path / "out",
     )
     assert written.fragments == 1 and written.dropped == 0
+
+
+def test_mates_are_fetched_in_parallel_without_changing_the_answer(tmp_path):
+    """The orphan pass is close to a second full store read; it takes the same workers and
+    the same spill as the sweep, and must return the same rows however it is run."""
+    root, shards = _store(
+        tmp_path,
+        {(1, 1): [REGION, REGION], (1, 2): [NOISE, NOISE], (2, 1): [REGION], (2, 2): [NOISE]},
+    )
+    swept, _ = sweep(root, _bait(), stride=1, shards=shards)
+    missing = recover.orphans(swept)
+    assert missing.height == 3
+    serial = recover.collect_mates(root, missing, shards).collect()
+    parallel = recover.collect_mates(
+        root, missing, shards, spill_dir=tmp_path / "m", workers=4
+    ).collect()
+    assert serial.height == parallel.height == 3
+    assert sorted(serial["sequence"].to_list()) == sorted(parallel["sequence"].to_list())
 
 
 def test_bait_of_an_empty_kmer_set_matches_no_read(tmp_path):
