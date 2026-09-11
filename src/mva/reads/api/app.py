@@ -25,6 +25,7 @@ from ...warehouse.settings import setting
 from . import runners
 from .jobs import TERMINAL, Job, Manager
 from .models import (
+    BaitRequest,
     BenchRequest,
     ConvertRequest,
     JobOut,
@@ -113,6 +114,20 @@ def create_app(manager: Manager | None = None, token: str | None = None) -> Fast
     def count(request: ProbeRequest) -> JobOut:
         """Reads per probe with a triage verdict — decides whether an allele is real."""
         return submitted("count", request.model_dump(), runners.count_runner(request))
+
+    @api.post("/bait", response_model=JobOut, status_code=202, tags=["query"])
+    def bait(request: BaitRequest) -> JobOut:
+        """Recover every read that came from a baited region — the step-2 pass.
+
+        `/scan` answers "does this designed k-mer appear"; this answers "which reads came
+        from these regions", for a bait of tens of millions of k-mers and tens of millions
+        of matching reads. The bait is named by object key, not posted, and the recovered
+        reads are published as one Parquet object at `out_key` rather than returned.
+
+        Run it where the store is: the pass is bound by bytes moved, and from a remote
+        client that is hours rather than minutes.
+        """
+        return submitted("bait", request.model_dump(), runners.bait_runner(request))
 
     @api.post("/sql", response_model=JobOut, status_code=202, tags=["query"])
     def sql(request: SqlRequest) -> JobOut:

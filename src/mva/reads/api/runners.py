@@ -13,7 +13,7 @@ from dataclasses import asdict
 from pathlib import Path
 
 from ...warehouse.settings import object_store, setting
-from .. import access, bench, scan, store, triage, verify
+from .. import access, baitjob, bench, scan, store, triage, verify
 from .jobs import Job
 
 
@@ -71,6 +71,40 @@ def count_runner(request) -> Callable[[Job], dict]:
             "expected": triage.EXPECTED_HINT,
             "counts": counts,
         }
+
+    return run
+
+
+def bait_runner(request) -> Callable[[Job], dict]:
+    """Sweep the store against a whole baited region and publish what it recovered.
+
+    Unlike every other verb here this one *writes* — one Parquet object at the key the
+    caller named — because its result is ~15 million reads and an HTTP response is not the
+    place for them. It is still read-only with respect to the store itself: nothing under
+    ``reads/`` is touched.
+
+    The bait is fetched from the object store rather than posted, so the request stays a
+    few hundred bytes for a 40-million-k-mer bait. There is no interrupt to attach: the
+    pass is NumPy over Arrow batches, not one long DuckDB statement, so cancelling means
+    letting the current shard finish.
+    """
+
+    def run(job: Job) -> dict:
+        root = access.resolve_root(request.root)
+        staging = Path(setting("MVA_STAGING_DIR") or ".").expanduser() / "bait"
+        bait = baitjob.fetch_bait(
+            request.bait_key, staging / Path(request.bait_key).name, k=request.k
+        )
+        _, result = baitjob.run_bait(
+            root,
+            bait,
+            stride=request.stride,
+            out_key=request.out_key,
+            shard_limit=request.shard_limit,
+            collect_mates=request.collect_mates,
+            staging=staging,
+        )
+        return {"root": root, "bait_key": request.bait_key, **result.as_dict()}
 
     return run
 

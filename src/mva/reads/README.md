@@ -73,6 +73,10 @@ flowchart LR
 | `store.py` | Convert every file in parallel, size the machine, publish to the object store | `discover`, `convert_all`, `machine_share`, `check_room`, `write_tables`, `upload` |
 | `verify.py` | Prove the store matches the delivery (3 independent checks) | `run`, `against_manifest`, `pair_symmetry`, `round_trip`, `Report` |
 | `scan.py` | Query the built store: k-mer strike, per-lane QC, raw SQL | `kmer`, `kmers`, `counts`, `qc`, `sql`, `reverse_complement`, `Hit` |
+| `bait.py` | The opposite-shaped query: which reads came from a whole baited region | `manifest`, `Shard`, `Funnel`, `code_matrix`, `sweep`, `sweep_shard`, `pair_keys` |
+| `recover.py` | Survivors back to paired FASTQ, including the mates the sweep missed | `orphans`, `collect_mates`, `runs`, `write_fastq`, `to_fastq`, `Recovered` |
+| `baitjob.py` | One bait pass end to end, runnable either side of the object-store link | `run_bait`, `fetch_bait`, `publish`, `load_bait`, `write_report`, `BaitResult` |
+| `cli_bait.py` | The `mva-reads bait` verb (its own module; `cli.py` was at the size ceiling) | `do_bait`, `register` |
 | `triage.py` | Turn a probe count into a verdict word | `verdict`, `EXPECTED_HINT` |
 | `bench.py` | Race the engines on a shared sample; catch buffering vs. streaming | `race`, `winner`, `streams`, `cut_sample`, `Timing` |
 | `access.py` | Resolve store root + open a DuckDB connection (shared by CLI and API) | `s3_root`, `resolve_root`, `connection` |
@@ -98,6 +102,7 @@ flowchart LR
 | `bench` | Race the conversion engines on a sample; `--scale` checks memory stays flat as input grows |
 | `convert` | Convert every FASTQ to sharded Parquet and upload to the object store |
 | `verify` | Prove the store matches the delivery (manifest, pair symmetry, round-trip) |
+| `bait` | recover every read that came from a baited region — the step-2 pass |
 | `scan` | k-mer strike: find probe subsequences on either strand, one pass, list hits |
 | `count` | Same strike, but counts per probe with a verdict instead of listing reads |
 | `qc` | Per-lane read counts, filter rate, quality profile |
@@ -114,6 +119,7 @@ flowchart LR
 | `GET /health` | Liveness only, no store access, no auth |
 | `GET /store/status` | Shards/reads/GiB per partition — job |
 | `GET /store/qc` | Per-lane QC — job (full scan, minutes) |
+| `POST /bait` | recover every read from a baited region of tens of millions of k-mers — job |
 | `POST /scan` | k-mer strike, up to 500 probes in one pass — job |
 | `POST /count` | Per-probe counts + verdict — job |
 | `POST /sql` | Read-only SQL over the `reads` view — job |
@@ -177,6 +183,26 @@ a `CallsetProfile`'s precomputed metrics — it does not import this package.
   row counts vs. Parquet footers, R1/R2 pair symmetry per lane, and byte-identical
   round-trip of the first/last record of each source file (the last record requires a
   full decompression — that cost is the proof).
+- **Two k-mer verbs, two different questions.** `scan`/`count` ask *"is this designed
+  31-mer present"* for up to 500 probes and expect dozens of survivors; `bait` asks
+  *"which reads came from these 42 Mb of reference"* for ~40 million k-mers and expects
+  ~15 million survivors. They are not the same query at different sizes: the first is a
+  multi-literal string matcher over a text column, the second is a sorted-`uint64` lookup
+  (:mod:`mva.kmer`) over the sequence column reshaped out of its Arrow buffer. Step 2 uses
+  the first to validate the second (H021).
+- **Run `bait` beside the data.** Measured 2026-09-11 from the laptop: 55.8 s per shard,
+  whether one shard streams or eight in parallel — the object-store link saturates and
+  parallelism buys nothing, so a full pass is ~4.2 h remote against minutes local. Same
+  code either side; which side it ran on is recorded with the result.
+- **The bait pass publishes Parquet, not FASTQ.** 15 million reads are not an HTTP
+  response, and the store's quality strings are NovaSeq four-level binned — a columnar
+  format compresses them far harder than gzipped text. FASTQ is written by `recover` on
+  the machine that holds the aligner.
+- **Both mates cost a second pass.** R1 and R2 share `(lane, tile, x, y)`. A fragment
+  inside the baited region matches on both for free; one straddling the edge matches on
+  one, and `recover.collect_mates` fetches the other by key. The orphan count is kept as a
+  measurement — it is the empirical size of the bait-edge zone, the same edge a read-pair
+  SV caller misreads as a deletion.
 - **The k-mer strike is one pass regardless of probe count.** All probes (plus their
   reverse complements) compile into one regex/multi-literal match, so 50 probes cost the
   same as 1; a per-probe loop was measured ~9x slower (`docs/step-0/methodology/025`).

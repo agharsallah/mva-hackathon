@@ -55,6 +55,55 @@ class ScanRequest(ProbeRequest):
     )
 
 
+class BaitRequest(BaseModel):
+    """Sweep the whole store against a k-mer bait and publish the reads it recovered.
+
+    The bait is ~40 million 31-mers — far past what :class:`ProbeRequest` can carry, and
+    not something to put in a request body at all. It is uploaded to the object store
+    first (a ``.npy`` of sorted ``uint64``) and named here by key, so the request stays a
+    few hundred bytes however large the bait is.
+
+    The job publishes its survivors as one Parquet object rather than returning them:
+    ~15 million reads is not an HTTP response. The caller pulls that key and turns it into
+    FASTQ where its aligner lives.
+    """
+
+    bait_key: str = Field(
+        min_length=1,
+        description="object key of the bait array, e.g. derived/it2/step-2/bait.npy",
+    )
+    out_key: str = Field(
+        min_length=1,
+        description="object key to publish the recovered reads under, as Parquet",
+    )
+    stride: int = Field(
+        default=16,
+        ge=1,
+        le=120,
+        description="test every stride-th k-mer of each read; 1 is exhaustive and ~15x "
+        "the work. The chosen value and its measured recall are pre-registered.",
+    )
+    k: int = Field(default=31, ge=1, le=32, description="k the bait was cut at")
+    shard_limit: int | None = Field(
+        default=None,
+        ge=1,
+        description="stop after this many shards — the scaling test, never a full run",
+    )
+    collect_mates: bool = Field(
+        default=True,
+        description="second pass for fragments matched on one mate only; off for timing runs",
+    )
+    root: str | None = None
+
+    @field_validator("bait_key", "out_key")
+    @classmethod
+    def _plain_key(cls, value: str) -> str:
+        key = value.strip().lstrip("/")
+        if not key or ".." in key or key.startswith("s3://"):
+            raise ValueError(f"not a plain object key: {value!r}")
+        return key
+
+
 class SqlRequest(BaseModel):
     """Arbitrary read-only SQL with the store bound as the ``reads`` view."""
 

@@ -94,6 +94,51 @@ def test_count_attaches_a_verdict_per_probe(client, monkeypatch):
     }
 
 
+def test_bait_runs_as_a_job_and_reports_the_funnel(client, monkeypatch):
+    from mva.reads.bait import Funnel
+    from mva.reads.baitjob import BaitResult
+
+    result = BaitResult(
+        funnel=Funnel(shards=2, reads_scanned=1000, reads_matched=40, seconds=3.0),
+        fragments=25,
+        orphans=5,
+        orphans_filled=5,
+        published="s3://test/derived/baited.parquet",
+        published_rows=45,
+        stride=16,
+        bait_kmers=40_000_000,
+        shards_swept=2,
+    )
+    monkeypatch.setattr(runners.baitjob, "fetch_bait", lambda key, into, k: object())
+    monkeypatch.setattr(runners.baitjob, "run_bait", lambda *a, **kw: (None, result))
+    job = finished(
+        client,
+        client.post(
+            "/bait",
+            json={"bait_key": "derived/it2/step-2/bait.npy", "out_key": "derived/baited.parquet"},
+        ),
+    )
+    assert job["state"] == DONE
+    assert job["result"]["reads_matched"] == 40
+    assert job["result"]["fragments"] == 25
+    assert job["result"]["orphan_fraction"] == 0.2
+    assert job["result"]["published"].endswith("baited.parquet")
+
+
+def test_bait_refuses_a_key_that_is_not_a_plain_object_key(client):
+    for bad in ("s3://mva/bait.npy", "../secrets/bait.npy", "  "):
+        refused = client.post("/bait", json={"bait_key": bad, "out_key": "derived/out.parquet"})
+        assert refused.status_code == 422, bad
+
+
+def test_bait_refuses_a_stride_outside_the_read(client):
+    refused = client.post(
+        "/bait",
+        json={"bait_key": "a/b.npy", "out_key": "c/d.parquet", "stride": 0},
+    )
+    assert refused.status_code == 422
+
+
 def test_a_probe_that_is_not_dna_is_refused_before_any_job(client):
     response = client.post("/scan", json={"probes": [{"sequence": "HELLO"}]})
     assert response.status_code == 422

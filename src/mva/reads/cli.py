@@ -11,7 +11,7 @@ import time
 from pathlib import Path
 
 from ..warehouse.settings import object_store, setting
-from . import bench, scan, store, triage, verify
+from . import bench, cli_bait, scan, store, triage, verify
 from .access import connection as _connection
 from .access import s3_root as _s3_root
 from .engines import ENGINES
@@ -306,6 +306,8 @@ def _parser() -> argparse.ArgumentParser:
     add_probes(
         add("count", do_count, "count reads carrying each probe — one pass, no read listing")
     )
+
+    cli_bait.register(add)
 
     add("qc", do_qc, "per-lane read counts, filter rate, quality profile")
 
