@@ -6,6 +6,7 @@ requires-python = ">=3.11,<3.15"
 dependencies = [
     "boto3>=1.43.83",
     "duckdb>=1.5.5",
+    "dysgu>=1.9.0",
     "fastapi>=0.115",
     "httpx>=0.28.1",
     "huggingface-hub>=1.29.0",
@@ -13,7 +14,9 @@ dependencies = [
     "plotly>=7.0.0",
     "polars>=1.44.1",
     "requests>=2.34.2",
+    "truvari>=5.4.0",
     "uvicorn>=0.30",
+    "whatshap>=2.8",
 ]
 
 [project.scripts]
@@ -169,7 +172,14 @@ warn_return_any = false
 
 # Packages already clean under the full ruleset. Add the next one here when it is.
 [[tool.mypy.overrides]]
-module = ["mva.drugs.*", "mva.io.*", "mva.kmer.*", "mva.phenotype.*", "mva.render.*"]
+module = [
+    "mva.calling.*",
+    "mva.drugs.*",
+    "mva.io.*",
+    "mva.kmer.*",
+    "mva.phenotype.*",
+    "mva.render.*",
+]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
 disallow_untyped_calls = true
@@ -194,7 +204,7 @@ layers = [
     "mva.reads",
     "mva.warehouse",
     "mva.phenotype | mva.drugs",
-    "mva.pipeline | mva.io | mva.kmer | mva.render",
+    "mva.pipeline | mva.io | mva.calling | mva.kmer | mva.render",
 ]
 # A layer may import anything below it and nothing above it. mva.pipeline, mva.io,
 # mva.kmer and mva.render sit on the bottom row together because none of them imports any
@@ -209,7 +219,7 @@ exhaustive = false
 [[tool.importlinter.contracts]]
 name = "The leaf packages import no sibling package"
 type = "forbidden"
-source_modules = ["mva.io", "mva.kmer", "mva.pipeline", "mva.render"]
+source_modules = ["mva.calling", "mva.io", "mva.kmer", "mva.pipeline", "mva.render"]
 forbidden_modules = [
     "mva.explore",
     "mva.reads",
