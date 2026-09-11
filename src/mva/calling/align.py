@@ -31,7 +31,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
-from .tools import capture, run, sha256, started_now, version_of
+from .tools import capture, pipe, run, sha256, started_now
 
 #: minimap2's short-read preset. `-a` asks for SAM, `-x sr` sets the seeding and scoring
 #: for ~150 bp paired reads.
@@ -73,10 +73,8 @@ def align(
 ) -> Alignment:
     """Align a recovered pair of FASTQ files to the whole reference and index the result.
 
-    The chain is minimap2 -> `samtools fixmate` -> `sort` -> `markdup` -> `index`.
-    ``fixmate`` before sorting is not optional: ``markdup`` decides what a duplicate is
-    from the mate coordinates and the template length, and both are only filled in once
-    ``fixmate`` has seen the pair together.
+    The chain is minimap2 -> `samtools fixmate` -> `sort` -> `markdup` -> `index`, with
+    the first three as one pipeline so no intermediate alignment file is ever written.
     """
     out_dir.mkdir(parents=True, exist_ok=True)
     provenance = started_now("align")
@@ -94,43 +92,39 @@ def align(
         "r2": str(r2),
     }
 
-    raw = out_dir / f"{stem}.unsorted.bam"
-    fixed = out_dir / f"{stem}.fixmate.bam"
     sorted_bam = out_dir / f"{stem}.sorted.bam"
     final = out_dir / f"{stem}.bam"
 
-    sam = out_dir / f"{stem}.sam"
-    provenance.invocations.append(
-        run(
+    # One pipeline, three tools, no intermediate SAM. A SAM of 15.7 million reads is ~8 GB
+    # of text written only to be read back and deleted, and on a machine with 13 GB free
+    # that is not a tidiness question — it is the difference between a run and a full disk.
+    # `fixmate` must sit between the aligner and the sort: `markdup` decides what a
+    # duplicate is from the mate coordinates and the template length, and both are only
+    # filled in once `fixmate` has seen the pair together, which it can only do while the
+    # records are still in name order.
+    provenance.invocations.extend(
+        pipe(
             [
-                "minimap2",
-                *PRESET,
-                "-t",
-                str(threads),
-                "-I",
-                index_batch,
-                "-R",
-                read_group,
-                str(reference),
-                str(r1),
-                str(r2),
+                [
+                    "minimap2",
+                    *PRESET,
+                    "-t",
+                    str(threads),
+                    "-I",
+                    index_batch,
+                    "-R",
+                    read_group,
+                    str(reference),
+                    str(r1),
+                    str(r2),
+                ],
+                ["samtools", "fixmate", "-@", str(threads), "-u", "-m", "-", "-"],
+                ["samtools", "sort", "-@", str(threads), "-o", str(sorted_bam), "-"],
             ],
-            stdout=sam,
-            version=version_of("minimap2"),
+            stdout=out_dir / f"{stem}.pipe.log",
         )
     )
-    provenance.invocations.append(
-        run(["samtools", "view", "-@", str(threads), "-b", "-o", str(raw), str(sam)])
-    )
-    sam.unlink(missing_ok=True)
-    provenance.invocations.append(
-        run(["samtools", "fixmate", "-@", str(threads), "-m", str(raw), str(fixed)])
-    )
-    raw.unlink(missing_ok=True)
-    provenance.invocations.append(
-        run(["samtools", "sort", "-@", str(threads), "-o", str(sorted_bam), str(fixed)])
-    )
-    fixed.unlink(missing_ok=True)
+    (out_dir / f"{stem}.pipe.log").unlink(missing_ok=True)
     provenance.invocations.append(
         run(["samtools", "markdup", "-@", str(threads), str(sorted_bam), str(final)])
     )

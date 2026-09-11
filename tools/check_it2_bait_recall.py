@@ -45,56 +45,110 @@ DEFAULT_OUT = Path("build/it2/step-2")
 #: Reads reported per probe. A true single-copy 31-mer is expected in ~35 reads at 44x
 #: (mva.reads.triage), so 1000 is far above any honest count and the cap never binds.
 SCAN_LIMIT = 1000
-#: How long to let the strike run. It is one pass over 1.07 billion reads.
-WAIT_SECONDS = 280
-POLL_ROUNDS = 12
+#: Seconds per long-poll. Deliberately short: a 280 s held connection to the job service
+#: is long enough for an idle timeout somewhere between here and the server to close it,
+#: and the job keeps running while the client believes it failed. Many short polls cost
+#: nothing and cannot be cut.
+WAIT_SECONDS = 25
+#: Total polling budget — the strike is one pass over 1.07 billion reads.
+POLL_ROUNDS = 160
 
 
-def submit_scan(probes: list[tuple[str, str]], base: str, token: str) -> dict:
-    """Run the 500-probe strike as a job and wait for it, long-polling."""
+def submit_scan(probes: list[tuple[str, str]], base: str, token: str, job_id: str = "") -> dict:
+    """Run the 500-probe strike as a job and wait for it.
+
+    ``job_id`` attaches to a strike that is already running instead of starting another —
+    a full pass over the store is an hour of someone's machine, and a dropped connection
+    on this side is no reason to spend it twice.
+    """
     headers = {"X-API-Key": token}
     body = {
         "probes": [{"name": name, "sequence": sequence} for name, sequence in probes],
         "limit": SCAN_LIMIT,
     }
     with httpx.Client(base_url=base, timeout=60.0, headers=headers) as client:
-        started = client.post("/scan", json=body)
-        started.raise_for_status()
-        job_id = started.json()["id"]
-        print(f"strike job {job_id}: {len(probes)} probes, one pass over the store")
-        for _ in range(POLL_ROUNDS):
-            reply = client.get(
-                f"/jobs/{job_id}/wait", params={"timeout": WAIT_SECONDS}, timeout=None
-            )
-            reply.raise_for_status()
-            job = reply.json()
+        if not job_id:
+            started = client.post("/scan", json=body)
+            started.raise_for_status()
+            job_id = started.json()["id"]
+            print(f"strike job {job_id}: {len(probes)} probes, one pass over the store")
+        else:
+            print(f"attaching to strike job {job_id}")
+        for round_number in range(POLL_ROUNDS):
+            try:
+                reply = client.get(
+                    f"/jobs/{job_id}/wait", params={"timeout": WAIT_SECONDS}, timeout=60.0
+                )
+                reply.raise_for_status()
+                job = reply.json()
+            except (httpx.HTTPError, httpx.RemoteProtocolError) as dropped:
+                # The job does not care that our connection did. Say so and poll again.
+                print(f"  … poll {round_number} dropped ({type(dropped).__name__}); retrying")
+                time.sleep(5)
+                continue
             if job["state"] in {"done", "failed", "cancelled", "lost"}:
                 if job["state"] != "done":
                     raise SystemExit(f"strike {job['state']}: {job.get('error')}")
                 return job["result"]
-            print(f"  … still running ({int(job.get('elapsed_seconds') or 0)}s)")
-    raise SystemExit("strike did not finish within the polling budget")
+            if round_number % 4 == 0:
+                print(f"  … still running ({int(job.get('elapsed_seconds') or 0)}s)")
+    raise SystemExit(f"strike {job_id} did not finish within the polling budget")
 
 
-def read_probes(path: Path) -> list[tuple[str, str]]:
-    with path.open(encoding="ascii") as handle:
-        return [
-            (fields[0], fields[1])
-            for fields in (line.rstrip("\n").split("\t") for line in handle)
-            if len(fields) == 2
-        ]
+def reachable(witness: dict, bait_path: Path, k: int = 31) -> tuple[list[dict], list[dict]]:
+    """Split the witness alleles by whether the bait ever claimed to reach them.
+
+    A witness allele is only a fair test of the **stride** if the bait contains the
+    sequence around it. Where the reference k-mer at that position was dropped by the
+    uniqueness filter as occurring elsewhere in the genome (entry 085), the bait
+    deliberately does not cover that allele, and including it would test a design decision
+    rather than the engine.
+
+    It is also what makes the strike survivable. A k-mer that occurs in many places matches
+    an enormous number of reads, and `scan.kmers` joins every survivor against every probe
+    before applying its per-probe limit — which is what restarted the job service twice
+    before this split existed. Both numbers are reported: the honest denominator for H021
+    is the reachable set, and the excluded count is stated beside it.
+    """
+    import numpy as np
+
+    from mva.kmer.encode import codes_of, window_kmers
+    from mva.kmer.membership import Bait
+
+    bait = Bait.load(bait_path, k=k)
+    alleles = witness["alleles"]
+    packed = np.array(
+        [window_kmers(codes_of(allele["reference_kmer"]), k)[0][0] for allele in alleles],
+        dtype=np.uint64,
+    )
+    covered = bait.contains(packed)
+    inside = [allele for allele, keep in zip(alleles, covered, strict=True) if keep]
+    outside = [allele for allele, keep in zip(alleles, covered, strict=True) if not keep]
+    return inside, outside
 
 
-def main(argv: list[str] | None = None) -> int:
+def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
     parser.add_argument("--reads", type=Path, default=None, help="the recovered-reads Parquet")
     parser.add_argument("--api", default=None, help="reads API base URL")
     parser.add_argument("--threshold", type=float, default=0.90, help="H021's refutation line")
     parser.add_argument("--skip-scan", action="store_true", help="reuse a saved strike result")
-    args = parser.parse_args(argv)
+    parser.add_argument("--job", default="", help="attach to a strike already running")
+    return parser.parse_args(argv)
 
-    probes = read_probes(args.out / "witness-probes.tsv")
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    witness_json = json.loads((args.out / "witness.json").read_text(encoding="utf-8"))
+    inside, outside = reachable(witness_json, args.out / "bait.npy")
+    probes = [(allele["probe"], allele["alternate_kmer"]) for allele in inside]
+    print(f"witness alleles drawn: {len(witness_json['alleles'])}")
+    print(f"  inside the bait (reference k-mer survived the uniqueness filter): {len(inside)}")
+    print(f"  excluded, the bait never covered them: {len(outside)}")
+    if len(probes) > 500:
+        print(f"  capping at the API's 500-probe limit (from {len(probes)})")
+        probes = probes[:500]
     reads_path = args.reads or (args.out / "baited-reads.parquet")
     if not reads_path.exists():
         print(f"missing {reads_path} — the bait pass has not been downloaded yet")
@@ -107,7 +161,7 @@ def main(argv: list[str] | None = None) -> int:
         base = args.api or setting("MVA_READS_API_URL") or "http://127.0.0.1:8765"
         token = setting("MVA_API_TOKEN") or ""
         started = time.perf_counter()
-        result = submit_scan(probes, base.rstrip("/"), token)
+        result = submit_scan(probes, base.rstrip("/"), token, job_id=args.job)
         print(f"strike returned in {time.perf_counter() - started:.0f}s")
         hits_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
 
@@ -165,7 +219,9 @@ def main(argv: list[str] | None = None) -> int:
     payload = {
         "hypothesis": "H021",
         "threshold": args.threshold,
-        "witness_probes": len(probes),
+        "witness_alleles_drawn": len(witness_json["alleles"]),
+        "witness_probes_used": len(probes),
+        "excluded_not_covered_by_bait": len(outside),
         "witness_reads": witness.height,
         "kept": kept.height,
         "recall": round(recall, 6),
@@ -174,7 +230,10 @@ def main(argv: list[str] | None = None) -> int:
         "method": (
             "reads found by mva.reads.scan for 31-mers centred on heterozygous alleles the "
             "delivered callset reports inside the baited region, joined to the bait sweep's "
-            "survivors on the flowcell coordinate (lane, tile, x, y)"
+            "survivors on the flowcell coordinate (lane, tile, x, y). Alleles whose "
+            "reference k-mer the uniqueness filter dropped as repeated are excluded and "
+            "counted: the bait does not cover them, so they would test a design decision "
+            "rather than the stride."
         ),
         "per_probe": per_probe.sort("probe").to_dicts(),
     }

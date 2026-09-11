@@ -94,6 +94,18 @@ def write_regions_bed(
     return path
 
 
+def _existing_reads(fastq_dir: Path) -> tuple[Path | None, Path | None]:
+    """The recovered FASTQ pair already on disk, compressed for preference."""
+    for suffix in (".fastq.gz", ".fastq"):
+        first, second = (
+            fastq_dir / f"baited_R1{suffix}",
+            fastq_dir / f"baited_R2{suffix}",
+        )
+        if first.exists() and second.exists():
+            return first, second
+    return None, None
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
@@ -121,8 +133,11 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     fastq_dir = args.out / "reads"
-    r1, r2 = fastq_dir / "baited_R1.fastq", fastq_dir / "baited_R2.fastq"
-    if not args.skip_fastq or not (r1.exists() and r2.exists()):
+    # bgzip-compressed reads are preferred when present: the store's NovaSeq quality
+    # strings are four-level binned and compress ~6x, which on a machine this close to
+    # full is the difference between a run and a full disk. minimap2 reads either.
+    r1, r2 = _existing_reads(fastq_dir)
+    if not (r1 and r2):
         frame = pl.read_parquet(reads_parquet)
         print(f"recovered reads: {frame.height:,} rows")
         facts = recover.runs(args.root or s3_root())
@@ -135,6 +150,7 @@ def main(argv: list[str] | None = None) -> int:
             json.dumps(written.as_dict(), indent=2), encoding="utf-8"
         )
         r1, r2 = written.files[1], written.files[2]
+    print(f"reads: {r1}, {r2}")
 
     bed = write_regions_bed(
         args.step1,
