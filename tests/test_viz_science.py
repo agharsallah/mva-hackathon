@@ -66,6 +66,7 @@ HYPOTHESIS_ROWS = [
         None,
         None,
         "team",
+        "iteration1",
     ),
     (
         "H001",
@@ -81,6 +82,7 @@ HYPOTHESIS_ROWS = [
         0.69,
         "One supporting constraint row, one refuting absence.",
         "team",
+        "iteration1",
     ),
     (
         "H002",
@@ -96,6 +98,7 @@ HYPOTHESIS_ROWS = [
         None,
         None,
         "team",
+        "iteration1",
     ),
     (
         "H002",
@@ -111,6 +114,7 @@ HYPOTHESIS_ROWS = [
         0.12,
         "Every filtered call in the gene is strand-skewed.",
         "team",
+        "iteration1",
     ),
 ]
 

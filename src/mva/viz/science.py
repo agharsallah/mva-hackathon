@@ -58,6 +58,9 @@ HYPOTHESIS_COLUMNS = (
     "confidence",
     "reasoning",
     "author",
+    # Which iteration's step map this claim's ``step`` slug belongs to. Slugs restart at
+    # ``step-1`` each iteration, so a row without it cannot be resolved to a goal.
+    "iteration",
 )
 
 #: Columns of ``warehouse.evidence`` (:func:`mva.science.evidence.ensure_table`).

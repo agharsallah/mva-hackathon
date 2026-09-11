@@ -144,9 +144,11 @@ def ensure_table(connection, schema: str) -> None:
             status        VARCHAR,
             confidence    DOUBLE,
             reasoning     VARCHAR,
-            author        VARCHAR
+            author        VARCHAR,
+            iteration     VARCHAR
         )""")
-    # Added after the first claims were filed; those rows read back empty, which
+    # The column above was added after the first claims were filed, so a table created
+    # before that needs it too; those rows read back empty, which
     # :attr:`Hypothesis.filed_under` reads as iteration 1.
     connection.execute(
         f"ALTER TABLE {ALIAS}.{safe}.{HYPOTHESIS_TABLE} ADD COLUMN IF NOT EXISTS iteration VARCHAR"

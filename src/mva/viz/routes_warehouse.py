@@ -20,6 +20,7 @@ from . import (
     routes_panel,
     routes_search,
     science,
+    steps,
     submissions,
     track2,
 )
@@ -186,6 +187,7 @@ def router(settings, cache: Cache) -> APIRouter:
     routes_panel.add_routes(api, settings, cache)
     routes_search.add_routes(api, settings, cache)
     science.add_routes(api, settings)
+    steps.add_routes(api, settings)
     phenotype.add_routes(api)
     submissions.add_routes(api, settings, cache)
     track2.add_routes(api, settings, cache)

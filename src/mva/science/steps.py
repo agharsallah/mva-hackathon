@@ -227,6 +227,9 @@ ITERATION2: tuple[Step, ...] = (
             "the vendor caller — small variants, structural variants, per-exon coverage, "
             "and read-backed phase?"
         ),
+        # Open, not planned: step 1 handed over its target and decoy sets and the five
+        # claims below are filed. Nothing has run yet (entry 084's handover section).
+        status="open",
         unblocks=("step-3", "step-6", "step-7"),
         iteration="iteration2",
     ),
