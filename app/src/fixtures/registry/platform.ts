@@ -1,6 +1,7 @@
 import type {
   HealthDependencies,
   ReferenceProvenanceRow,
+  StepsPayload,
   Submissions,
   Track2,
 } from '../../api/types';
@@ -82,6 +83,15 @@ export const platformEntries: Record<string, Entry> = {
   },
   // INVENTED claims. The live register is empty and its tables do not exist yet; these
   // exist so the populated layout can be reviewed before there is anything real to show.
+  // CAPTURED from the live endpoint's own reply. Every field of it is assembled from
+  // committed sources — the step map, the register and the methodology entries — so a
+  // synthesised version would be a second, divergent copy of facts the repository already
+  // states. Re-capture after declaring a step or filing a claim.
+  '/api/steps': {
+    source:
+      'CAPTURED /api/steps reply (src/mva/science/steps.py + warehouse.hypotheses + docs/iteration2/*/methodology)',
+    load: () => rows<StepsPayload>('steps'),
+  },
   '/api/science/hypotheses': {
     source: 'INVENTED research register',
     load: () => hypothesisRegisterFixture(),

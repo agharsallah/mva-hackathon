@@ -36,6 +36,12 @@ export interface HypothesisRow {
   confidence: number | null;
   reasoning: string | null;
   author: string | null;
+  /**
+   * Which iteration's step map this claim's `step` belongs to. Slugs restart at `step-1`
+   * every iteration, so a row without this cannot be resolved to a goal. Rows written
+   * before the column existed read back null and mean `iteration1`.
+   */
+  iteration: string | null;
 }
 
 /** One sourced observation, bound to the claim it moves. */

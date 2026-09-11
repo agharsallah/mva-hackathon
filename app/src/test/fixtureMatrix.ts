@@ -66,6 +66,7 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   ['/api/provenance/sources', undefined],
   ['/api/provenance/reference', undefined],
   ['/api/probe/ledger', undefined],
+  ['/api/steps', undefined],
   ['/api/science/hypotheses', undefined],
   ['/api/science/evidence', undefined],
   ['/api/search', { q: '15:1000000-1002000' }],

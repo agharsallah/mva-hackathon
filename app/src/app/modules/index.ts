@@ -106,6 +106,16 @@ export const modules: FeatureModule[] = [
 
   // ── Decide: what do we believe, and what has it cost to find out? ───────────
   {
+    id: 'steps',
+    path: '/steps',
+    navLabel: 'Steps',
+    title: 'The research journey',
+    group: 'decide',
+    description:
+      'Every step of this iteration: its one question, the claims filed before the run, and what became of them.',
+    load: () => import('../../pages/Steps'),
+  },
+  {
     id: 'science',
     path: '/science',
     navLabel: 'Science',

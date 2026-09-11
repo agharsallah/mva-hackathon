@@ -63,6 +63,7 @@ import type {
   SearchResolution,
   SequencingYieldRow,
   SourceObjectRow,
+  StepsPayload,
   StructureGene,
   Submissions,
   SubstitutionRow,
@@ -352,6 +353,13 @@ export const usePhenotypeGene = (symbol: string, termSet: string) =>
   useEndpoint<PhenotypeGeneDetail>('/api/phenotype/gene', { symbol, term_set: termSet });
 
 export const usePhenotypeDelta = () => useEndpoint<PhenotypeDelta>('/api/phenotype/delta');
+
+/**
+ * The research journey of one iteration. Omitting `iteration` asks for the current one,
+ * which is what every page but the iteration switcher wants.
+ */
+export const useSteps = (iteration?: string) =>
+  useEndpoint<StepsPayload>('/api/steps', iteration ? { iteration } : undefined);
 
 const LIVE_STATES = new Set(['queued', 'running']);
 
