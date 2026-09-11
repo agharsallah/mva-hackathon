@@ -105,7 +105,8 @@ def test_manifest_lists_every_shard_with_its_partition(tmp_path):
 
 def test_sweep_keeps_only_reads_that_touch_the_bait(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION, NOISE, REGION]})
-    survivors, funnel = sweep(root, _bait(), stride=1, shards=shards)
+    swept, funnel = sweep(root, _bait(), stride=1, shards=shards)
+    survivors = swept.collect()
     assert survivors.height == 2
     assert funnel.reads_scanned == 3 and funnel.reads_matched == 2
     assert funnel.by_partition == {"lane=1/read=1": 2}
@@ -115,7 +116,8 @@ def test_sweep_keeps_only_reads_that_touch_the_bait(tmp_path):
 def test_sweep_finds_a_read_sequenced_off_the_other_strand(tmp_path):
     revcomp = REGION[::-1].translate(str.maketrans("ACGT", "TGCA"))
     root, shards = _store(tmp_path, {(1, 1): [revcomp]})
-    survivors, _ = sweep(root, _bait(), stride=1, shards=shards)
+    swept, _ = sweep(root, _bait(), stride=1, shards=shards)
+    survivors = swept.collect()
     assert survivors.height == 1
 
 
@@ -123,7 +125,8 @@ def test_sweep_still_finds_a_read_carrying_a_substitution(tmp_path):
     middle = len(REGION) // 2
     mutated = REGION[:middle] + ("A" if REGION[middle] != "A" else "C") + REGION[middle + 1 :]
     root, shards = _store(tmp_path, {(1, 1): [mutated]})
-    survivors, _ = sweep(root, _bait(), stride=1, shards=shards)
+    swept, _ = sweep(root, _bait(), stride=1, shards=shards)
+    survivors = swept.collect()
     assert survivors.height == 1
 
 
@@ -131,7 +134,7 @@ def test_sweep_batches_do_not_change_the_answer(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION, NOISE] * 5})
     whole, _ = sweep(root, _bait(), stride=1, shards=shards, batch_rows=1000)
     split, _ = sweep(root, _bait(), stride=1, shards=shards, batch_rows=3)
-    assert whole.height == split.height == 5
+    assert whole.collect().height == split.collect().height == 5
 
 
 def test_sweep_reports_progress_per_shard(tmp_path):
@@ -143,7 +146,8 @@ def test_sweep_reports_progress_per_shard(tmp_path):
 
 def test_a_bait_nothing_matches_yields_an_empty_frame_not_an_error(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [NOISE]})
-    survivors, funnel = sweep(root, _bait(), stride=1, shards=shards)
+    swept, funnel = sweep(root, _bait(), stride=1, shards=shards)
+    survivors = swept.collect()
     assert survivors.height == 0 and funnel.reads_matched == 0
     assert pair_keys(survivors).height == 0
 
@@ -156,14 +160,16 @@ def test_funnel_serialises_the_numbers_the_gate_reads():
 
 def test_pair_keys_collapse_the_two_mates_of_one_fragment(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION], (1, 2): [REGION]})
-    survivors, _ = sweep(root, _bait(), stride=1, shards=shards)
+    swept, _ = sweep(root, _bait(), stride=1, shards=shards)
+    survivors = swept.collect()
     assert survivors.height == 2
     assert pair_keys(survivors).height == 1
 
 
 def test_orphans_name_the_missing_mate(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION], (1, 2): [NOISE]})
-    survivors, _ = sweep(root, _bait(), stride=1, shards=shards)
+    swept, _ = sweep(root, _bait(), stride=1, shards=shards)
+    survivors = swept.collect()
     missing = recover.orphans(survivors)
     assert missing.height == 1
     assert int(missing["read"][0]) == 2
@@ -171,13 +177,15 @@ def test_orphans_name_the_missing_mate(tmp_path):
 
 def test_no_orphans_when_both_mates_matched(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION], (1, 2): [REGION]})
-    survivors, _ = sweep(root, _bait(), stride=1, shards=shards)
+    swept, _ = sweep(root, _bait(), stride=1, shards=shards)
+    survivors = swept.collect()
     assert recover.orphans(survivors).height == 0
 
 
 def test_collect_mates_fetches_the_missing_half_by_key(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION], (1, 2): [NOISE]})
-    survivors, _ = sweep(root, _bait(), stride=1, shards=shards)
+    swept, _ = sweep(root, _bait(), stride=1, shards=shards)
+    survivors = swept.collect()
     filled = recover.collect_mates(root, recover.orphans(survivors), shards)
     assert filled.height == 1
     assert filled["sequence"][0] == NOISE
@@ -191,11 +199,13 @@ def test_collect_mates_of_nothing_reads_nothing(tmp_path):
 
 def test_to_fastq_writes_aligned_pairs(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION], (1, 2): [NOISE]})
-    survivors, _ = sweep(root, _bait(), stride=1, shards=shards)
+    swept, _ = sweep(root, _bait(), stride=1, shards=shards)
+    survivors = swept.collect()
     filled = recover.collect_mates(root, recover.orphans(survivors), shards)
     written = recover.to_fastq(
         pl.concat([survivors, filled], how="diagonal"), recover.runs(root), tmp_path / "out"
     )
+    survivors = swept.collect()
     assert written.fragments == 1 and written.dropped == 0
     first = written.files[1].read_text().splitlines()
     second = written.files[2].read_text().splitlines()
@@ -206,14 +216,16 @@ def test_to_fastq_writes_aligned_pairs(tmp_path):
 
 def test_to_fastq_drops_a_fragment_that_never_found_its_mate(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION], (1, 2): [NOISE]})
-    survivors, _ = sweep(root, _bait(), stride=1, shards=shards)
+    swept, _ = sweep(root, _bait(), stride=1, shards=shards)
+    survivors = swept.collect()
     written = recover.to_fastq(survivors, recover.runs(root), tmp_path / "out")
     assert written.fragments == 0 and written.dropped == 1
 
 
 def test_rebuilt_name_matches_the_store_codec(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION], (1, 2): [REGION]})
-    survivors, _ = sweep(root, _bait(), stride=1, shards=shards)
+    swept, _ = sweep(root, _bait(), stride=1, shards=shards)
+    survivors = swept.collect()
     written = recover.to_fastq(survivors, recover.runs(root), tmp_path / "out")
     line = written.files[1].read_text().splitlines()[0]
     facts = RunFacts(
@@ -226,6 +238,7 @@ def test_rebuilt_name_matches_the_store_codec(tmp_path):
         control="0",
         read_length=len(REGION),
     )
+    survivors = swept.collect()
     assert line == facts.rebuild_name(1, 100, 200, False, "AACCGGTT+TTGGCCAA")
 
 
@@ -236,15 +249,60 @@ def test_stride_skips_a_read_that_only_grazes_the_bait(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [graze]})
     close, _ = sweep(root, _bait(), stride=1, shards=shards)
     coarse, _ = sweep(root, _bait(), stride=len(REGION), shards=shards)
-    assert close.height == 1
-    assert coarse.height == 1  # offset 0 is always sampled
+    assert close.collect().height == 1
+    assert coarse.collect().height == 1  # offset 0 is always sampled
     shifted = NOISE[:5] + REGION[:K] + NOISE[: len(REGION) - K - 5]
     root2, shards2 = _store(tmp_path / "two", {(1, 1): [shifted]})
-    assert sweep(root2, _bait(), stride=1, shards=shards2)[0].height == 1
-    assert sweep(root2, _bait(), stride=20, shards=shards2)[0].height == 0
+    assert sweep(root2, _bait(), stride=1, shards=shards2)[0].collect().height == 1
+    assert sweep(root2, _bait(), stride=20, shards=shards2)[0].collect().height == 0
+
+
+def test_spilling_gives_the_same_reads_as_holding_them(tmp_path):
+    """The spill exists so a three-hour pass cannot die at the last shard. It must not
+    change a single row, or the safe path and the tested path are different programs."""
+    root, shards = _store(tmp_path, {(1, 1): [REGION, NOISE] * 4, (1, 2): [REGION] * 4})
+    memory, _ = sweep(root, _bait(), stride=1, shards=shards)
+    spilled, funnel = sweep(root, _bait(), stride=1, shards=shards, spill_dir=tmp_path / "spill")
+    assert spilled.spilled and not memory.spilled
+    assert len(spilled.parts) == 2
+    assert (
+        spilled.collect()
+        .sort("lane", "read", "tile")
+        .equals(memory.collect().sort("lane", "read", "tile"))
+    )
+    assert funnel.reads_matched == memory.collect().height
+
+
+def test_workers_do_not_change_the_answer_or_the_counts(tmp_path):
+    root, shards = _store(
+        tmp_path, {(1, 1): [REGION, NOISE], (1, 2): [REGION], (2, 1): [NOISE, REGION]}
+    )
+    serial, one = sweep(root, _bait(), stride=1, shards=shards)
+    parallel, many = sweep(root, _bait(), stride=1, shards=shards, workers=4)
+    assert one.reads_matched == many.reads_matched == 3
+    assert one.by_partition == many.by_partition
+    assert (
+        parallel.collect()
+        .sort("lane", "read", "tile")
+        .equals(serial.collect().sort("lane", "read", "tile"))
+    )
+
+
+def test_orphans_and_fastq_read_a_spilled_sweep_without_materialising_it(tmp_path):
+    root, shards = _store(tmp_path, {(1, 1): [REGION], (1, 2): [NOISE]})
+    spilled, _ = sweep(root, _bait(), stride=1, shards=shards, spill_dir=tmp_path / "spill")
+    missing = recover.orphans(spilled)
+    assert missing.height == 1 and int(missing["read"][0]) == 2
+    filled = recover.collect_mates(root, missing, shards)
+    written = recover.to_fastq(
+        pl.concat([spilled.collect(), filled], how="diagonal"),
+        recover.runs(root),
+        tmp_path / "out",
+    )
+    assert written.fragments == 1 and written.dropped == 0
 
 
 def test_bait_of_an_empty_kmer_set_matches_no_read(tmp_path):
     root, shards = _store(tmp_path, {(1, 1): [REGION]})
     empty = Bait.of(np.empty(0, dtype=np.uint64), k=K, bits=None)
-    assert sweep(root, empty, stride=1, shards=shards)[0].height == 0
+    assert sweep(root, empty, stride=1, shards=shards)[0].collect().height == 0

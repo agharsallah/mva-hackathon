@@ -102,6 +102,8 @@ def bait_runner(request) -> Callable[[Job], dict]:
             out_key=request.out_key,
             shard_limit=request.shard_limit,
             collect_mates=request.collect_mates,
+            workers=request.workers,
+            spill=request.spill,
             staging=staging,
         )
         return {"root": root, "bait_key": request.bait_key, **result.as_dict()}

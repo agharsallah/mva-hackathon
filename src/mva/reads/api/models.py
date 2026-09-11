@@ -93,6 +93,18 @@ class BaitRequest(BaseModel):
         default=True,
         description="second pass for fragments matched on one mate only; off for timing runs",
     )
+    workers: int = Field(
+        default=1,
+        ge=1,
+        le=16,
+        description="shards swept at once. Each worker holds one shard's batches, so this "
+        "is bounded by the server's RAM rather than by its cores.",
+    )
+    spill: bool = Field(
+        default=True,
+        description="write each shard's survivors to disk as they are found instead of "
+        "holding ~15 M reads until the last of 272 shards",
+    )
     root: str | None = None
 
     @field_validator("bait_key", "out_key")

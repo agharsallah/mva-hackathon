@@ -30,7 +30,10 @@ from __future__ import annotations
 
 import time
 from collections.abc import Callable, Iterator
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
+from pathlib import Path
+from threading import Lock
 
 import numpy as np
 import polars as pl
@@ -51,6 +54,33 @@ COLUMNS = ("tile", "x", "y", "sequence", "quality", "is_filtered", "index_pair")
 
 #: What the pair key is, stated once. R1 and R2 of one fragment share it.
 PAIR_KEY = ("lane", "tile", "x", "y")
+
+
+@dataclass(frozen=True)
+class Survivors:
+    """The reads a sweep kept — in memory, or spilled to Parquet parts on disk.
+
+    One type for both so nothing downstream has to ask which mode the pass ran in. The
+    lazy view is the only access every consumer needs; :meth:`collect` exists for tests
+    and for the small frames (orphan keys) where materialising is the point.
+    """
+
+    frame: pl.DataFrame | None = None
+    parts: tuple[Path, ...] | list[Path] = ()
+
+    def lazy(self) -> pl.LazyFrame:
+        if self.frame is not None:
+            return self.frame.lazy()
+        if not self.parts:
+            return _empty().lazy()
+        return pl.scan_parquet([str(part) for part in self.parts])
+
+    def collect(self) -> pl.DataFrame:
+        return self.frame if self.frame is not None else self.lazy().collect(engine="streaming")
+
+    @property
+    def spilled(self) -> bool:
+        return self.frame is None
 
 
 @dataclass(frozen=True)
@@ -201,33 +231,75 @@ def sweep(
     stride: int,
     shards: list[Shard] | None = None,
     batch_rows: int = BATCH_ROWS,
+    spill_dir: Path | None = None,
+    workers: int = 1,
     progress: Callable[[Shard, int, int], None] | None = None,
-) -> tuple[pl.DataFrame, Funnel]:
+) -> tuple[Survivors, Funnel]:
     """One pass over the store; returns the matching reads and the funnel that counts it.
 
     ``shards`` narrows the pass — the scaling test and every unit test use it, and the
     full run leaves it ``None``. ``progress`` is called after each shard with the shard,
     the rows it held and the rows it kept, so a long pass can report without this module
     owning an opinion about logging.
+
+    ``spill_dir`` is what makes the full pass safe on a machine whose memory we do not
+    control. ~15 million recovered reads carrying their sequence and quality strings is
+    several gigabytes, and holding them until the last of 272 shards is the shape of
+    failure that wastes three hours and produces nothing. With a spill directory each
+    shard's survivors are written as they are found and everything after reads them
+    lazily; without one they are kept in memory, which is what the tests want.
+
+    ``workers`` sweeps that many shards at once. Shards are independent — separate files,
+    separate output parts, no shared state but the counters — and the per-shard cost is
+    NumPy and Arrow work that releases the interpreter lock, so threads are the right
+    shape here rather than processes that would each need their own copy of the bait.
+    Memory scales with it: each worker holds one shard's batches, so ``workers`` is
+    bounded by RAM, not by cores.
     """
     every = shards if shards is not None else manifest(root)
     funnel = Funnel()
-    started = time.perf_counter()
-    kept: list[pl.DataFrame] = []
-    for shard in every:
+    lock = Lock()
+    kept: dict[int, pl.DataFrame] = {}
+    parts: dict[int, Path] = {}
+    if spill_dir is not None:
+        spill_dir.mkdir(parents=True, exist_ok=True)
+
+    def one(item: tuple[int, Shard]) -> None:
+        index, shard = item
         matched = sweep_shard(shard, root, bait, stride=stride, batch_rows=batch_rows)
-        partition = f"lane={shard.lane}/read={shard.read_num}"
-        funnel.shards += 1
-        funnel.reads_scanned += shard.rows
-        funnel.reads_matched += matched.height
-        funnel.by_partition[partition] = funnel.by_partition.get(partition, 0) + matched.height
-        if matched.height:
-            kept.append(matched)
-        if progress is not None:
-            progress(shard, shard.rows, matched.height)
+        height = matched.height
+        if height and spill_dir is not None:
+            part = spill_dir / f"survivors-{index:04d}.parquet"
+            matched.write_parquet(part, compression="zstd")
+            matched = matched.clear()
+        with lock:
+            partition = f"lane={shard.lane}/read={shard.read_num}"
+            funnel.shards += 1
+            funnel.reads_scanned += shard.rows
+            funnel.reads_matched += height
+            funnel.by_partition[partition] = funnel.by_partition.get(partition, 0) + height
+            if height:
+                if spill_dir is None:
+                    kept[index] = matched
+                else:
+                    parts[index] = spill_dir / f"survivors-{index:04d}.parquet"
+            if progress is not None:
+                progress(shard, shard.rows, height)
+
+    started = time.perf_counter()
+    work = list(enumerate(every))
+    if workers > 1:
+        with ThreadPoolExecutor(max_workers=workers) as pool:
+            list(pool.map(one, work))
+    else:
+        for item in work:
+            one(item)
     funnel.seconds = time.perf_counter() - started
-    survivors = pl.concat(kept) if kept else _empty()
-    return survivors, funnel
+
+    if spill_dir is not None:
+        return Survivors(parts=[parts[key] for key in sorted(parts)]), funnel
+    ordered = [kept[key] for key in sorted(kept)]
+    return Survivors(frame=pl.concat(ordered) if ordered else _empty()), funnel
 
 
 def _empty() -> pl.DataFrame:
@@ -246,10 +318,13 @@ def _empty() -> pl.DataFrame:
     )
 
 
-def pair_keys(survivors: pl.DataFrame) -> pl.DataFrame:
+def pair_keys(survivors: pl.LazyFrame | pl.DataFrame) -> pl.DataFrame:
     """The distinct fragments the sweep found, whichever mate matched."""
-    if survivors.height == 0:
+    lazy = survivors.lazy() if isinstance(survivors, pl.DataFrame) else survivors
+    if not lazy.collect_schema().names():
         return pl.DataFrame(schema=dict.fromkeys(PAIR_KEY, pl.Int64))
-    return survivors.select([pl.col(name).cast(pl.Int64) for name in PAIR_KEY]).unique(
-        maintain_order=False
+    return (
+        lazy.select([pl.col(name).cast(pl.Int64) for name in PAIR_KEY])
+        .unique(maintain_order=False)
+        .collect(engine="streaming")
     )

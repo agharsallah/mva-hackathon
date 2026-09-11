@@ -27,7 +27,7 @@ from pathlib import Path
 import polars as pl
 
 from .access import storage_options
-from .bait import COLUMNS, PAIR_KEY, Shard
+from .bait import COLUMNS, PAIR_KEY, Shard, Survivors
 from .schema import RunFacts
 
 #: Both mates of a fragment, in the order an aligner expects them.
@@ -52,22 +52,35 @@ class Recovered:
         }
 
 
-def orphans(survivors: pl.DataFrame) -> pl.DataFrame:
+def orphans(survivors: Survivors | pl.DataFrame) -> pl.DataFrame:
     """Fragments the sweep matched on one mate only, with the mate that is missing.
 
     Returns the pair key plus a ``read`` column naming the mate still to fetch, which is
-    what :func:`collect_mates` filters on.
+    what :func:`collect_mates` filters on. Reads the sweep lazily, so a spilled pass never
+    materialises its survivors to answer this — only the orphan keys, which are small.
     """
-    if survivors.height == 0:
+    lazy = _lazy(survivors)
+    if not lazy.collect_schema().names():
         return pl.DataFrame(schema=dict.fromkeys((*PAIR_KEY, "read"), pl.Int64))
-    present = survivors.select(
-        [pl.col(name).cast(pl.Int64) for name in (*PAIR_KEY, "read")]
-    ).unique()
-    both = present.group_by(list(PAIR_KEY)).agg(pl.col("read").sum().alias("seen"))
-    missing = both.filter(pl.col("seen") < sum(MATES)).with_columns(
-        (pl.lit(sum(MATES)) - pl.col("seen")).alias("read")
+    seen = sum(MATES)
+    return (
+        lazy.select([pl.col(name).cast(pl.Int64) for name in (*PAIR_KEY, "read")])
+        .unique()
+        .group_by(list(PAIR_KEY))
+        .agg(pl.col("read").sum().alias("seen"))
+        .filter(pl.col("seen") < seen)
+        .with_columns((pl.lit(seen) - pl.col("seen")).alias("read"))
+        .select([*PAIR_KEY, "read"])
+        .collect(engine="streaming")
     )
-    return missing.select([*PAIR_KEY, "read"])
+
+
+def _lazy(survivors: Survivors | pl.DataFrame | pl.LazyFrame) -> pl.LazyFrame:
+    if isinstance(survivors, Survivors):
+        return survivors.lazy()
+    if isinstance(survivors, pl.DataFrame):
+        return survivors.lazy()
+    return survivors
 
 
 def collect_mates(
@@ -155,7 +168,7 @@ def write_fastq(rows: pl.DataFrame, facts: dict[tuple[int, int], RunFacts], path
 
 
 def to_fastq(
-    survivors: pl.DataFrame,
+    survivors: Survivors | pl.DataFrame,
     facts: dict[tuple[int, int], RunFacts],
     out_dir: Path,
     *,
@@ -168,16 +181,27 @@ def to_fastq(
     every read after it. The dropped count is reported so the loss is visible rather than
     silent.
     """
-    if survivors.height == 0:
+    lazy = _lazy(survivors)
+    if not lazy.collect_schema().names():
         return Recovered(files={}, fragments=0, orphans_filled=0, dropped=0)
-    keyed = survivors.with_columns([pl.col(name).cast(pl.Int64) for name in (*PAIR_KEY, "read")])
-    counts = keyed.group_by(list(PAIR_KEY)).agg(pl.col("read").n_unique().alias("mates"))
+    keyed = lazy.with_columns([pl.col(name).cast(pl.Int64) for name in (*PAIR_KEY, "read")])
+    counts = (
+        keyed.group_by(list(PAIR_KEY))
+        .agg(pl.col("read").n_unique().alias("mates"))
+        .collect(engine="streaming")
+    )
     complete = counts.filter(pl.col("mates") == len(MATES)).select(list(PAIR_KEY))
     dropped = counts.height - complete.height
-    paired = keyed.join(complete, on=list(PAIR_KEY), how="semi")
+    if complete.height == 0:
+        return Recovered(files={}, fragments=0, orphans_filled=0, dropped=dropped)
     files: dict[int, Path] = {}
     for mate in MATES:
         path = out_dir / f"{stem}_R{mate}.fastq"
-        write_fastq(paired.filter(pl.col("read") == mate), facts, path)
+        mine = (
+            keyed.filter(pl.col("read") == mate)
+            .join(complete.lazy(), on=list(PAIR_KEY), how="semi")
+            .collect(engine="streaming")
+        )
+        write_fastq(mine, facts, path)
         files[mate] = path
     return Recovered(files=files, fragments=complete.height, orphans_filled=0, dropped=dropped)

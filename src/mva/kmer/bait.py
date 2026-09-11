@@ -134,6 +134,69 @@ def cut(
     return Bait.of(joined, k=k, bits=bits), laid_out
 
 
+@dataclass(frozen=True)
+class Coverage:
+    """How much usable bait one labelled set of intervals actually has.
+
+    The headline off-target percentage is a genome-wide average and can hide the thing it
+    is a proxy for: a region whose k-mers are *all* repetitive contributes no bait at all,
+    and reads from it are then missing for a reason that has nothing to do with the
+    sample. This is that number per label — per gene, per tier, per exon — so a later
+    absence can be read against the bait density where it was observed.
+    """
+
+    label: str
+    bases: int
+    windows: int
+    surviving: int
+
+    @property
+    def density(self) -> float:
+        """Surviving k-mers per base. ~1.0 where every window is unique, 0 where none is."""
+        return self.surviving / self.bases if self.bases else 0.0
+
+    @property
+    def lost(self) -> float:
+        return 1.0 - (self.surviving / self.windows) if self.windows else 0.0
+
+
+def profile(
+    reference: Path,
+    kept: Bait,
+    by_label: dict[str, list[Interval]],
+    *,
+    k: int = K,
+) -> dict[str, Coverage]:
+    """Per-label bait density after the uniqueness filter, in one reference pass.
+
+    ``by_label`` maps any label — a gene symbol, a tier, an exon id — to its intervals.
+    Windows are counted with their multiplicity within the label, because what matters
+    downstream is how much of the region is *reachable*, not how many distinct integers it
+    contributed to the global set.
+    """
+    per_contig: dict[str, list[tuple[str, Interval]]] = {}
+    tally: dict[str, list[int]] = {label: [0, 0, 0] for label in by_label}
+    for label, intervals in by_label.items():
+        for interval in merge(intervals):
+            per_contig.setdefault(interval.contig, []).append((label, interval))
+    for contig in fasta.contigs(reference, wanted=set(per_contig)):
+        codes = codes_of(contig.bases)
+        for label, interval in per_contig[contig.name]:
+            window = codes[interval.start : min(interval.end, codes.size)]
+            counts = tally[label]
+            counts[0] += int(window.size)
+            if window.size < k:
+                continue
+            kmers, valid = window_kmers(window, k)
+            usable = kmers[valid]
+            counts[1] += int(usable.size)
+            counts[2] += int(kept.contains(usable).sum())
+    return {
+        label: Coverage(label=label, bases=counts[0], windows=counts[1], surviving=counts[2])
+        for label, counts in tally.items()
+    }
+
+
 def from_regions(
     rows: Sequence[tuple[str, int, int, str]],
     padding_by_tier: dict[str, int],

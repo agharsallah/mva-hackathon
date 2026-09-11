@@ -39,6 +39,8 @@ def do_bait(args) -> int:
         out_key=args.out_key,
         shard_limit=args.shards,
         collect_mates=not args.no_mates,
+        workers=args.workers,
+        staging=Path(args.staging) if args.staging else None,
         progress=progress if args.verbose else None,
     )
     summary = result.as_dict()
@@ -49,7 +51,7 @@ def do_bait(args) -> int:
     if args.report:
         print(f"report -> {baitjob.write_report(result, Path(args.report))}")
     if args.out:
-        rows.write_parquet(Path(args.out), compression="zstd")
+        rows.lazy().sink_parquet(Path(args.out), compression="zstd")
         print(f"reads  -> {args.out}")
     if result.published:
         print(f"published -> {result.published} ({result.published_rows:,} rows)")
@@ -74,4 +76,14 @@ def register(add: Callable) -> None:
     b.add_argument("--out", help="write the recovered reads here as Parquet")
     b.add_argument("--out-key", help="also publish them to the object store under this key")
     b.add_argument("--report", help="write the funnel as JSON here")
+    b.add_argument(
+        "--workers",
+        type=int,
+        default=1,
+        help="shards swept at once; memory scales with it, so it is bounded by RAM",
+    )
+    b.add_argument(
+        "--staging",
+        help="keep the spilled survivor parts here instead of a temporary directory",
+    )
     b.add_argument("--verbose", action="store_true", help="one line per shard")

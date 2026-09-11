@@ -35,13 +35,11 @@ Usage::
 from __future__ import annotations
 
 import argparse
-import csv
 import hashlib
 import json
 import subprocess
 import sys
 import time
-from collections import defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -49,8 +47,8 @@ import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from mva.kmer import uniqueness
-from mva.kmer.bait import Interval, cut, expected_reads, plan
+from mva.kmer import regions, uniqueness
+from mva.kmer.bait import cut, expected_reads, plan
 from mva.kmer.membership import Bait
 
 DEFAULT_STEP1 = Path("build/it2/step-1")
@@ -86,47 +84,6 @@ def code_version() -> str:
         return "unknown"
 
 
-def read_tsv(path: Path) -> list[dict[str, str]]:
-    with path.open(encoding="utf-8") as handle:
-        return list(csv.DictReader(handle, delimiter="\t"))
-
-
-def gene_intervals(coding: Path) -> dict[str, list[Interval]]:
-    """Merged coding intervals per gene symbol, from the Ensembl-derived gene model."""
-    by_gene: dict[str, list[Interval]] = defaultdict(list)
-    for row in read_tsv(coding):
-        by_gene[row["gene"]].append(Interval(row["chrom"], int(row["start"]), int(row["end"])))
-    return by_gene
-
-
-def tiers_of(step1: Path) -> dict[str, str]:
-    """Gene symbol -> tier, with every decoy tiered ``decoy``."""
-    tier = {row["symbol"]: row["tier"] for row in read_tsv(step1 / "targets.tsv")}
-    for row in read_tsv(step1 / "decoys.tsv"):
-        tier.setdefault(row["symbol"], "decoy")
-    return tier
-
-
-def build_intervals(
-    tier_of: dict[str, str], by_gene: dict[str, list[Interval]], core_pad: int, net_pad: int
-) -> tuple[list[Interval], dict[str, dict[str, int]], list[str]]:
-    """Padded intervals for every gene, plus per-tier counts and the genes not in the model."""
-    padded: list[Interval] = []
-    per_tier: dict[str, dict[str, int]] = defaultdict(lambda: {"genes": 0, "bases": 0})
-    missing: list[str] = []
-    for symbol, tier in sorted(tier_of.items()):
-        intervals = by_gene.get(symbol)
-        if not intervals:
-            missing.append(symbol)
-            continue
-        pad = core_pad if tier in WIDE_TIERS else net_pad
-        widened = [interval.padded(pad) for interval in intervals]
-        per_tier[tier]["genes"] += 1
-        per_tier[tier]["bases"] += plan(widened).bases
-        padded.extend(widened)
-    return padded, dict(per_tier), missing
-
-
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--step1", type=Path, default=DEFAULT_STEP1)
@@ -144,9 +101,17 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     args.out.mkdir(parents=True, exist_ok=True)
 
-    tier_of = tiers_of(args.step1)
-    by_gene = gene_intervals(args.coding)
-    padded, per_tier, missing = build_intervals(tier_of, by_gene, args.core_pad, args.net_pad)
+    tier_of = regions.read_tiers(
+        [(args.step1 / "targets.tsv", None), (args.step1 / "decoys.tsv", "decoy")]
+    )
+    by_gene = regions.read_gene_model(args.coding)
+    padded, per_tier, missing = regions.pad_by_tier(
+        tier_of,
+        by_gene,
+        wide_tiers=WIDE_TIERS,
+        wide_pad=args.core_pad,
+        narrow_pad=args.net_pad,
+    )
     laid = plan(padded)
 
     print(f"{len(tier_of):,} genes ({len(missing)} absent from the gene model)")
@@ -169,7 +134,15 @@ def main(argv: list[str] | None = None) -> int:
 
     report: dict[str, int] = {}
     kept: Bait = raw
-    if not args.skip_uniqueness:
+    if args.skip_uniqueness:
+        # bait.npy is the *filtered* bait and nothing else. Writing the unfiltered set
+        # there would leave a file whose name promises a gate that never ran — the kind
+        # of quiet substitution a later pass has no way to notice.
+        print(
+            "\n--skip-uniqueness: wrote bait-raw.npy only; bait.npy left as it was.\n"
+            "  Re-run without the flag to produce the filtered bait."
+        )
+    else:
         started = time.perf_counter()
         occurrence = uniqueness.count_in_genome(args.reference, raw)
         kept, report = uniqueness.drop_repeats(raw, occurrence)
@@ -182,7 +155,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(f"  {report['unseen']:,} never found (must be 0)")
         print(f"  gate: off-target < 5% -> {'PASS' if off_target < 0.05 else 'FAIL'}")
-    np.save(args.out / "bait.npy", kept.kmers)
+        np.save(args.out / "bait.npy", kept.kmers)
 
     summary = {
         "k": args.k,

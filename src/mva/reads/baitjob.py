@@ -22,6 +22,7 @@ from __future__ import annotations
 import json
 import time
 from collections.abc import Callable
+from contextlib import ExitStack
 from dataclasses import dataclass, field
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -33,7 +34,7 @@ from ..kmer.membership import Bait
 from ..warehouse.settings import object_store
 from ..warehouse.source import client
 from . import recover
-from .bait import Funnel, Shard, manifest, sweep
+from .bait import Funnel, Shard, Survivors, manifest, pair_keys, sweep
 
 #: Where a job stages bytes it is about to upload, when the caller names nothing.
 STAGING = "mva-bait"
@@ -52,6 +53,7 @@ class BaitResult:
     stride: int = 1
     bait_kmers: int = 0
     shards_swept: int = 0
+    workers: int = 1
     seconds: float = 0.0
     notes: list[str] = field(default_factory=list)
 
@@ -60,6 +62,7 @@ class BaitResult:
             "stride": self.stride,
             "bait_kmers": self.bait_kmers,
             "shards_swept": self.shards_swept,
+            "workers": self.workers,
             "fragments": self.fragments,
             "orphans": self.orphans,
             "orphans_filled": self.orphans_filled,
@@ -80,15 +83,21 @@ def fetch_bait(key: str, into: Path, *, k: int = 31) -> Bait:
     return Bait.load(into, k=k)
 
 
-def publish(frame: pl.DataFrame, key: str, staging: Path) -> tuple[str, int]:
-    """Write the recovered reads as one zstd Parquet object and upload it."""
+def publish(rows: pl.LazyFrame, key: str, staging: Path) -> tuple[str, int]:
+    """Write the recovered reads as one zstd Parquet object and upload it.
+
+    Streamed to disk rather than collected: the whole point of spilling the sweep is that
+    the full survivor set never has to exist in memory at once, and materialising it here
+    to write it would give that back at the last step.
+    """
     store = object_store()
     staging.mkdir(parents=True, exist_ok=True)
     local = staging / Path(key).name
-    frame.write_parquet(local, compression="zstd")
+    rows.sink_parquet(local, compression="zstd")
+    written = pl.scan_parquet(local).select(pl.len()).collect().item()
     client(store).upload_file(str(local), store.bucket, key)
     local.unlink(missing_ok=True)
-    return f"s3://{store.bucket}/{key}", frame.height
+    return f"s3://{store.bucket}/{key}", int(written)
 
 
 def run_bait(
@@ -99,50 +108,75 @@ def run_bait(
     out_key: str | None = None,
     shard_limit: int | None = None,
     collect_mates: bool = True,
+    workers: int = 1,
     staging: Path | None = None,
+    spill: bool = True,
     progress: Callable[[Shard, int, int], None] | None = None,
-) -> tuple[pl.DataFrame, BaitResult]:
+) -> tuple[Survivors, BaitResult]:
     """Sweep, fill the orphaned mates, and (when ``out_key`` is given) publish.
 
-    Returns the recovered rows as well as the result, so a caller on the same machine
-    skips the object store entirely — which is what the tests and the laptop route do.
+    Returns the survivors as well as the result, so a caller on the same machine skips the
+    object store entirely — which is what the tests and the laptop route do.
     """
     started = time.perf_counter()
     every = manifest(root)
     shards = every[:shard_limit] if shard_limit is not None else every
-    survivors, funnel = sweep(root, bait, stride=stride, shards=shards, progress=progress)
-    missing = recover.orphans(survivors)
-    filled = pl.DataFrame(schema={})
-    if collect_mates and missing.height:
-        filled = recover.collect_mates(root, missing, shards)
-    rows = pl.concat([survivors, filled], how="diagonal") if filled.height else survivors
-    result = BaitResult(
-        funnel=funnel,
-        fragments=_fragments(rows),
-        orphans=missing.height,
-        orphans_filled=filled.height,
-        stride=stride,
-        bait_kmers=len(bait),
-        shards_swept=len(shards),
-    )
-    if shard_limit is not None:
-        result.notes.append(f"partial pass: {len(shards)} of {len(every)} shards")
-    if not collect_mates:
-        result.notes.append("mates not collected: orphaned fragments are still half-present")
-    if out_key:
-        if staging is not None:
-            result.published, result.published_rows = publish(rows, out_key, staging)
-        else:
-            with TemporaryDirectory(prefix=STAGING) as scratch:
-                result.published, result.published_rows = publish(rows, out_key, Path(scratch))
-    result.seconds = time.perf_counter() - started
-    return rows, result
+    with ExitStack() as stack:
+        scratch = staging or Path(stack.enter_context(TemporaryDirectory(prefix=STAGING)))
+        scratch.mkdir(parents=True, exist_ok=True)
+        spill_dir = scratch / "survivors" if spill else None
+        survivors, funnel = sweep(
+            root,
+            bait,
+            stride=stride,
+            shards=shards,
+            spill_dir=spill_dir,
+            workers=workers,
+            progress=progress,
+        )
+        missing = recover.orphans(survivors)
+        parts = list(survivors.parts)
+        filled_rows = 0
+        if collect_mates and missing.height:
+            filled = recover.collect_mates(root, missing, shards)
+            filled_rows = filled.height
+            if filled_rows and spill_dir is not None:
+                part = spill_dir / "survivors-mates.parquet"
+                filled.write_parquet(part, compression="zstd")
+                parts.append(part)
+                survivors = Survivors(parts=parts)
+            elif filled_rows:
+                survivors = Survivors(
+                    frame=pl.concat([survivors.collect(), filled], how="diagonal")
+                )
+        result = BaitResult(
+            funnel=funnel,
+            fragments=pair_keys(survivors.lazy()).height,
+            orphans=missing.height,
+            orphans_filled=filled_rows,
+            stride=stride,
+            bait_kmers=len(bait),
+            shards_swept=len(shards),
+            workers=workers,
+        )
+        if shard_limit is not None:
+            result.notes.append(f"partial pass: {len(shards)} of {len(every)} shards")
+        if not collect_mates:
+            result.notes.append("mates not collected: orphaned fragments are still half-present")
+        if out_key:
+            result.published, result.published_rows = publish(survivors.lazy(), out_key, scratch)
+        result.seconds = time.perf_counter() - started
+        if spill_dir is not None and staging is None:
+            # The scratch directory is about to be removed with the parts in it, so the
+            # handle we hand back must not still point at them.
+            survivors = Survivors(frame=_empty_like(survivors))
+        return survivors, result
 
 
-def _fragments(rows: pl.DataFrame) -> int:
-    from .bait import pair_keys
-
-    return pair_keys(rows).height
+def _empty_like(survivors: Survivors) -> pl.DataFrame:
+    """An empty frame with the survivors' schema — what a caller gets when the parts the
+    handle referred to lived in a temporary directory that has now gone."""
+    return survivors.lazy().limit(0).collect()
 
 
 def write_report(result: BaitResult, path: Path) -> Path:
