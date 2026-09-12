@@ -27,3 +27,4 @@ ACGTTGCAGGCCAATTCCGGATCGTTAACCGGTTAA  # synthetic test vector, tests/test_kmer.p
 ACGTTGCAGGCCAATTCCGGATCGTTAACCGGTTAAGGCCTTAACCGGTTAACCGGTTAACC  # synthetic test read, tests/test_reads_bait.py
 TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT  # synthetic poly-T test read (a homopolymer, not a locus), tests/test_reads_bait.py
 GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGA  # synthetic poly-G test read (the NovaSeq no-signal pattern), tests/test_reads_store.py
+ACGTTGCAAGGTCCATGACTTAGCGGATCCTTAGGACTTGCAAGTCGATCAGGTTACCGA  # synthetic toy contig, tests/test_kmer_probes.py — typed by hand to be 60 bases with no repeat longer than k=7, so every window of it is unique in the toy genome the probe tests build. Not drawn from any read or from GRCh38; a BLAT of it would be a coincidence, not a locus.
