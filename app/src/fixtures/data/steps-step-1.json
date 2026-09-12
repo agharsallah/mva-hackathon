@@ -1,0 +1,201 @@
+{
+  "target_n": 300,
+  "tiers": [
+    {
+      "tier": "core",
+      "genes": 62
+    },
+    {
+      "tier": "mechanism-term",
+      "genes": 70
+    },
+    {
+      "tier": "net",
+      "genes": 272
+    }
+  ],
+  "set_sizes": {
+    "targets": 404,
+    "decoys": 396,
+    "earned_by_score": 353,
+    "by_mechanism_rule": 51
+  },
+  "decoys": {
+    "genes": 396,
+    "excluded_by_annotation": 2502,
+    "matched_on": ["coding length", "exon count"],
+    "seed": 20260910
+  },
+  "curation": {
+    "uncurated": 14523,
+    "protein_coding": 19723,
+    "fraction": 0.7363,
+    "genes_scored": {
+      "proband-only": 5259,
+      "with-parental": 5261
+    }
+  },
+  "mechanism_term_genes": 73,
+  "benchmark": {
+    "seed": 20260910,
+    "diseases_run": 200,
+    "diseases_eligible": 3240,
+    "recessive_only": true,
+    "median_rank": 326,
+    "unrankable": 49,
+    "curve": [
+      {
+        "n": 1,
+        "recall": 0.0,
+        "interval": [0.0, 0.0]
+      },
+      {
+        "n": 10,
+        "recall": 0.03,
+        "interval": [0.01, 0.055]
+      },
+      {
+        "n": 50,
+        "recall": 0.125,
+        "interval": [0.08, 0.175]
+      },
+      {
+        "n": 300,
+        "recall": 0.36,
+        "interval": [0.295, 0.42]
+      },
+      {
+        "n": 1000,
+        "recall": 0.565,
+        "interval": [0.495, 0.63]
+      }
+    ]
+  },
+  "benchmark_full": {
+    "seed": 20260910,
+    "diseases_run": 3240,
+    "diseases_eligible": 3240,
+    "recessive_only": true,
+    "median_rank": 363,
+    "unrankable": 901,
+    "curve": [
+      {
+        "n": 1,
+        "recall": 0.0033950617283950617,
+        "interval": [0.0015432098765432098, 0.005555555555555556]
+      },
+      {
+        "n": 10,
+        "recall": 0.027160493827160494,
+        "interval": [0.021604938271604937, 0.03302469135802469]
+      },
+      {
+        "n": 50,
+        "recall": 0.10586419753086419,
+        "interval": [0.09506172839506173, 0.11666666666666667]
+      },
+      {
+        "n": 300,
+        "recall": 0.3345679012345679,
+        "interval": [0.31820987654320987, 0.35]
+      },
+      {
+        "n": 1000,
+        "recall": 0.5080246913580246,
+        "interval": [0.49074074074074076, 0.5243827160493827]
+      }
+    ]
+  },
+  "overlap": [
+    {
+      "source": "phen2gene",
+      "window": 300,
+      "shared": 97,
+      "unique": 203,
+      "returned": 18882,
+      "share": 0.3233333333333333
+    },
+    {
+      "source": "monarch-semsim",
+      "window": 50,
+      "shared": 13,
+      "unique": 37,
+      "returned": 50,
+      "share": 0.26
+    }
+  ],
+  "agreement_retrieved_on": "2026-09-11",
+  "gates": [
+    {
+      "claim": "H012",
+      "question": "does the symptom-only ranker find the causal gene inside the cutoff?",
+      "predicted": 0.9,
+      "unit": "held-out recall@300",
+      "metric": "recall_at_target",
+      "observed": 0.3345679012345679,
+      "held": false
+    },
+    {
+      "claim": "H013",
+      "question": "is a recessive chromosome-instability gene in the set at all?",
+      "predicted": 1,
+      "unit": "such genes present",
+      "metric": "mechanism_term_genes",
+      "observed": 73.0,
+      "held": true
+    },
+    {
+      "claim": "H014",
+      "question": "do two independent rankers agree on their top 300?",
+      "predicted": 0.5,
+      "unit": "share of the top 300 shared",
+      "metric": "ranker_overlap",
+      "observed": 0.3233333333333333,
+      "held": false
+    },
+    {
+      "claim": "H015",
+      "question": "how much of the protein-coding genome can this ranker not see?",
+      "predicted": 0.2,
+      "unit": "fraction of protein-coding genes with no HPO curation",
+      "metric": "uncurated_fraction",
+      "lower_is_better": true,
+      "observed": 0.7363,
+      "held": false
+    }
+  ],
+  "provenance": {
+    "built_at": "2026-09-10T21:18:15+00:00",
+    "built_by": "tools/build_it2_targets.py",
+    "code_version": "097c332",
+    "hpo_release": "hp/releases/2026-06-23",
+    "parameters": {
+      "core_n": 50,
+      "target_n": 300,
+      "seed": 20260910
+    },
+    "clinical_source": "ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md",
+    "clinical_term_counts": {
+      "proband-only": 7,
+      "with-parental": 8
+    },
+    "inputs": [
+      {
+        "name": "hp.obo",
+        "sha256": "a5092cbdf605f568403cf7380d9173014015692433b2cc631bc5c1b053876b1b",
+        "role": "the ontology graph: ancestor closure and term labels"
+      },
+      {
+        "name": "genes_to_phenotype.txt",
+        "sha256": "26cb7ee00c73b5777f6e5ad43323c941e1fcef1d191592f332d7929f3ea1ab3f",
+        "role": "gene-to-phenotype curation: the corpus that is ranked"
+      },
+      {
+        "name": "coding_regions.tsv",
+        "sha256": "393f2573de1087f63d40099ee2f56d210f33132c27b96a6c18389e507246ae8d",
+        "role": "gene shape: coding length and exon count for matching"
+      }
+    ],
+    "genomic_data_read": "none. Step 1 chooses the target set with the DNA never read; the only genomic file touched is the reference gene model, which is public and carries no patient information."
+  }
+}

@@ -1,6 +1,7 @@
 import type {
   HealthDependencies,
   ReferenceProvenanceRow,
+  Step1Payload,
   Step2Payload,
   StepsPayload,
   Submissions,
@@ -92,6 +93,12 @@ export const platformEntries: Record<string, Entry> = {
     source:
       'CAPTURED /api/steps reply (src/mva/science/steps.py + warehouse.hypotheses + docs/iteration2/*/methodology)',
     load: () => rows<StepsPayload>('steps'),
+  },
+  // CAPTURED from the live endpoint. Counts, fractions and curves: step 1 never read the
+  // DNA, and gene symbols are withheld because it ran blind against iteration 1.
+  '/api/steps/step-1': {
+    source: 'CAPTURED /api/steps/step-1 reply (build/it2/step-1/*.json)',
+    load: () => rows<Step1Payload>('steps-step-1'),
   },
   // CAPTURED from the live endpoint. Aggregates only by design: the four tables behind it
   // carry real proband positions and none of their rows is served, so this file is safe to

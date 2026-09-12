@@ -160,4 +160,37 @@ export const SEE_IT_PLATFORM: Record<string, SeeIt> = {
   'refutation-condition': {
     app: [{ to: '/science#hypothesis-board', label: 'each claim’s refuted_by' }],
   },
+  // ── chapter 17: iteration 2's blind step 1 ───────────────────────────────
+  'zemojtel-style-degradation': {
+    app: [
+      {
+        to: '/steps/step-1#held-out-recall-against-the-cutoff-with-the-promise-it-missed',
+        label: 'the recall curve the degraded queries produced',
+      },
+    ],
+    docs: [
+      {
+        path: 'docs/iteration2/step-1/methodology/091-recall-at-the-full-population.md',
+        label: 'the same degradation at the full population',
+      },
+    ],
+  },
+  'bootstrap-interval': {
+    app: [
+      {
+        to: '/steps/step-1#held-out-recall-against-the-cutoff-with-the-promise-it-missed',
+        label: 'the shaded band around each recall curve',
+      },
+      {
+        to: '/steps/step-1#the-pre-registered-gates-including-the-three-that-failed',
+        label: 'the gates those intervals were judged against',
+      },
+    ],
+    docs: [
+      {
+        path: 'docs/iteration2/step-1/methodology/091-recall-at-the-full-population.md',
+        label: 'the interval the full-population re-test was judged against',
+      },
+    ],
+  },
 };

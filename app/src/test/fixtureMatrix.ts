@@ -67,6 +67,7 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   ['/api/provenance/reference', undefined],
   ['/api/probe/ledger', undefined],
   ['/api/steps', undefined],
+  ['/api/steps/step-1', undefined],
   ['/api/steps/step-2', undefined],
   ['/api/science/hypotheses', undefined],
   ['/api/science/evidence', undefined],

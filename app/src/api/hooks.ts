@@ -63,6 +63,7 @@ import type {
   SearchResolution,
   SequencingYieldRow,
   SourceObjectRow,
+  Step1Payload,
   Step2Payload,
   StepsPayload,
   StructureGene,
@@ -367,6 +368,12 @@ export const useSteps = (iteration?: string) =>
  * real genomic positions and none of their rows crosses this boundary.
  */
 export const useStep2 = () => useEndpoint<Step2Payload>('/api/steps/step-2');
+
+/**
+ * Iteration 2 step 1's measurements: the recall curve, the tiers, the two-ranker overlap,
+ * the decoy null and the four pre-registered gates. No coordinate, no gene symbol.
+ */
+export const useStep1 = () => useEndpoint<Step1Payload>('/api/steps/step-1');
 
 const LIVE_STATES = new Set(['queued', 'running']);
 

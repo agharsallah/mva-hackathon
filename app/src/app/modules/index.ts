@@ -116,6 +116,16 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/Steps'),
   },
   {
+    id: 'step1',
+    path: '/steps/step-1',
+    navLabel: 'Step 1',
+    title: 'Step 1 — the blind target set',
+    group: 'decide',
+    description:
+      'Which genes the symptoms alone nominate, with the DNA never opened — and the measured recall that turns the list into an enrichment rather than coverage.',
+    load: () => import('../../pages/Step1'),
+  },
+  {
     id: 'step2',
     path: '/steps/step-2',
     navLabel: 'Step 2',

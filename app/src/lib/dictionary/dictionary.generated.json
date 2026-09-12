@@ -29,10 +29,10 @@
   ],
   "counts": {
     "chapters": 18,
-    "entries": 514,
+    "entries": 516,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 85
+    "contexts": 87
   },
   "chapters": [
     {
@@ -6158,6 +6158,39 @@
             "overfitting"
           ],
           "firstSeen": "2026-09-11"
+        },
+        {
+          "kind": "entry",
+          "slug": "zemojtel-style-degradation",
+          "term": "Zemojtel-style degradation",
+          "aliases": [],
+          "html": "<p>deliberately worsening a test query before ranking it, so the benchmark measures the ranker under clinic conditions rather than textbook ones. Two operations, both from the benchmark Exomiser was published with (Zemojtel 2014): <strong>imprecision</strong> replaces one or two terms by their ontology parent (a real record says \"seizure\" where the curation says the exact subtype), and <strong>noise</strong> adds one or two unrelated terms (the child has features the disease does not explain). Without it a benchmark scores the ranker on inputs no clinic produces. <em>Example:</em> every held-out query is subsampled to 7 terms, 1–2 of them blurred to a parent and 1–2 unrelated terms added, drawn per query from the run's seed.</p>",
+          "exampleHtml": "",
+          "context": "<p>applied to every query of every recall run of step 1 — method from Zemojtel 2014, parameters untuned to this corpus and recorded as a limitation; measured in <a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/docs/iteration2/step-1/methodology/084-the-blind-target-set.md\">methodology 084</a> and re-tested at the full population in <a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/docs/iteration2/step-1/methodology/091-recall-at-the-full-population.md\">091</a></p>",
+          "source": "src/mva/phenotype/benchmark.py",
+          "related": [
+            "held-out",
+            "recall-n",
+            "hpo-human-phenotype-ontology",
+            "bootstrap-interval"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "bootstrap-interval",
+          "term": "Bootstrap interval",
+          "aliases": [],
+          "html": "<p>an uncertainty range built by re-running the arithmetic on resamples of your own results instead of assuming a distribution. Draw <em>n</em> outcomes <strong>with replacement</strong> from the <em>n</em> you have, recompute the number, repeat a thousand times, and report the middle 95% of the answers. It says how much of a measurement is the method and how much is the particular cases that happened to be drawn. Software analogy: property-based testing for a statistic — re-roll the inputs and see how far the output moves. <em>Example:</em> recall@300 = 0.360 with a 95% bootstrap interval of [0.295, 0.420] over 200 held-out diseases; the interval is seeded, so it reproduces exactly.</p>",
+          "exampleHtml": "",
+          "context": "<p>printed by <code>Result.interval</code> beside every recall number step 1 reports, because a recall with no interval is a guess; first quoted in <a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/docs/iteration2/step-1/methodology/084-the-blind-target-set.md\">methodology 084</a>, and the interval the full-population re-test of <a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/docs/iteration2/step-1/methodology/091-recall-at-the-full-population.md\">091</a> was judged against</p>",
+          "source": "src/mva/phenotype/benchmark.py",
+          "related": [
+            "recall-n",
+            "held-out",
+            "zemojtel-style-degradation"
+          ],
+          "firstSeen": "2026-09-12"
         },
         {
           "kind": "entry",

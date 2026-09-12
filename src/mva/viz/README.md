@@ -103,6 +103,7 @@ flowchart LR
 | `science.py` | Reads the hypothesis/evidence research register, tolerating absent tables | `hypotheses`, `evidence`, `add_routes` |
 | `steps.py` | One iteration's step map, its claims and the blind gate's checklist per step | `payload`, `add_routes` |
 | `steps_it2.py` | Iteration 2 step 2's six result tables, **aggregated in SQL** so no proband position reaches the API | `payload`, `BLOCKS`, `add_routes` |
+| `steps_it2_step1.py` | Iteration 2 step 1's measurements, read from the run's own files under `build/it2/step-1/`: recall curves with intervals, tiers, two-ranker overlap, the decoy null and the pre-registered gates. Counts and fractions only — no coordinate, and no gene symbol, because step 1 ran blind | `payload`, `GATES`, `add_routes` |
 
 ### Catalog / semantics (what data exists, and what it means)
 

@@ -72,6 +72,7 @@
   "/api/search?q=nonsense+query": "74234e98afe7498f",
   "/api/search?q=rs1042522": "5a98d3ff5f6f7af1",
   "/api/steps": "2e127f07d6645a0f",
+  "/api/steps/step-1": "7fc5e6b9371ea8ed",
   "/api/steps/step-2": "743bdb4f7089f69b",
   "/api/submissions": "711da976ff83b394",
   "/api/track2": "a2b108a3966b0b4b"

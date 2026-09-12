@@ -5,6 +5,7 @@ import { Callout, Explainer } from '../components/Explainer';
 import { GeneRanking } from './phenotype/GeneRanking';
 import { MatchBreakdown } from './phenotype/MatchBreakdown';
 import { ParentalDelta } from './phenotype/ParentalDelta';
+import { Reach } from './phenotype/Reach';
 import { TermSet } from './phenotype/TermSet';
 
 /**
@@ -112,6 +113,10 @@ export default function PhenotypePage() {
 
       <Section title="The modelling choice inside the term set">
         <ParentalDelta />
+      </Section>
+
+      <Section title="How far this ranking reaches">
+        <Reach />
       </Section>
 
       <Callout tone="decision" title="What a rank here is, and what it is not">

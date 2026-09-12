@@ -215,7 +215,9 @@ ITERATION2: tuple[Step, ...] = (
             "Which genes do the child's symptoms alone nominate — a target set chosen "
             "with the DNA never read?"
         ),
-        status="open",
+        # Done: all four claims (H012-H015) carry committed verdicts in entry 084, and
+        # the full-population re-test of H012 is entry 091.
+        status="done",
         unblocks=("step-2", "step-3", "step-4"),
         iteration="iteration2",
     ),
@@ -227,9 +229,9 @@ ITERATION2: tuple[Step, ...] = (
             "the vendor caller — small variants, structural variants, per-exon coverage, "
             "and read-backed phase?"
         ),
-        # Open, not planned: step 1 handed over its target and decoy sets and the five
-        # claims below are filed. Nothing has run yet (entry 084's handover section).
-        status="open",
+        # Done: the five claims filed for this step carry committed verdicts and the
+        # step README records the completion audit.
+        status="done",
         unblocks=("step-3", "step-6", "step-7"),
         iteration="iteration2",
     ),
