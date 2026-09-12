@@ -63,7 +63,51 @@ trades a capability for four tenths of a percentage point.**
 
 ### k, within the representation
 
-*(pending — the k sweep is running)*
+A longer k-mer is more unique, so k is the only lever left once padding is ruled out. It is
+also bounded: a k-mer is packed two bits per base into one `uint64`, so **32 is the ceiling
+of this representation**, and reaching past it is a change to the engine rather than a
+change to a parameter.
+
+| k | bait k-mers | repeated | off-target | gate |
+|---|---|---|---|---|
+| 25 | 38,307,240 | 3,926,649 | **10.25 %** | fail |
+| 31 (as built) | 39,508,982 | 3,470,945 | **8.79 %** | fail |
+| 32 | 39,672,612 | 3,398,048 | **8.57 %** | fail |
+
+**Within the representation, no value of k passes.** The curve is shallow and close to
+linear over the measured range — 0.243 percentage points per base from 25 to 31, 0.220 from
+31 to 32 — so a straight-line extrapolation puts 5 % at **k ≈ 48**, sixteen bases beyond
+what a single `uint64` can hold.
+
+**And the extrapolation is optimistic, for a reason the data already showed.** Entry 085's
+per-gene profile named the genes carrying the off-target load: TBC1D3, GOLGA6, NBPF, POTE,
+HNRNPCL, SPDYE, FRG2B, LIMS4 — segmental-duplication families, where a gene has
+near-identical copies spanning tens to hundreds of kilobases. A k-mer inside a 100 kb
+duplicated block has an exact second copy at k = 31, at k = 48 and at k = 1000; **no k
+escapes a repeat longer than k.** The measured slope is therefore the easy part of the
+curve — the short and diverged repeats — and there is a floor beneath it that lengthening
+k cannot reach. Whether that floor is above or below 5 % is not measured here, and the
+honest statement is that the linear extrapolation is an upper bound on how well raising k
+would do, not an estimate of it.
+
+The zone split reproduces at k = 25 (exon-proximal 9.68 %, wide-tier reach 12.68 %, against
+8.38 % and 10.65 % at k = 31), so the two levers are independent, both move the number by
+about the same small amount, and neither rescues the other. Every figure labels the k each
+bar was measured at, because two of these numbers are not comparable without it.
+
+### Both levers, together
+
+| Lever | Best reachable value | Off-target | Cost of taking it |
+|---|---|---|---|
+| padding | drop the ±50 kb entirely | 8.38 % | the only reach step 2 has for an exon-scale deletion |
+| k | 32, the representation ceiling | 8.57 % | breaks the parameter step 3's genotyping is specified in |
+| neither | as built | 8.79 % | — |
+
+**No combination of the available parameters reaches 5 %**, and the two that move the number
+at all move it by fractions of a point while costing a capability each. The gate did not
+fail because the bait was built carelessly; it failed because the genes the child's
+symptoms nominated sit in repetitive neighbourhoods, which is a fact about the genome and
+about step 1's output, not about step 2's engine.
 
 ## What this does not change
 

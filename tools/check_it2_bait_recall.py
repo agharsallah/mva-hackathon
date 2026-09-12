@@ -54,6 +54,29 @@ WAIT_SECONDS = 25
 POLL_ROUNDS = 160
 
 
+def submit_all(probes: list[tuple[str, str]], base: str, token: str, *, chunk: int) -> dict:
+    """Run the strike in batches of ``chunk`` probes and merge the hits.
+
+    One pass over 1.07 billion reads costs the same for 1 probe or 500 — that is the
+    strike's whole design — so batching is normally wrong. It is right here for a reason
+    that has nothing to do with speed: at ~200 probes the survivor scan repeatedly took
+    the shared job service down mid-pass, three times, while the batch size step-0 entry
+    027 measured and proved (20) has never failed. Correctness is identical either way;
+    what changes is whether the run finishes.
+
+    The cost is real and is stated: N/chunk full passes instead of one.
+    """
+    merged: list[dict] = []
+    batches = [probes[start : start + chunk] for start in range(0, len(probes), chunk)]
+    print(f"{len(probes)} probes in {len(batches)} batches of up to {chunk}")
+    for index, batch in enumerate(batches, start=1):
+        print(f"batch {index}/{len(batches)} …")
+        result = submit_scan(batch, base, token)
+        merged.extend(result.get("hits", []))
+        print(f"  {len(result.get('hits', [])):,} hits ({result.get('seconds')}s)")
+    return {"hits": merged, "batches": len(batches)}
+
+
 def submit_scan(probes: list[tuple[str, str]], base: str, token: str, job_id: str = "") -> dict:
     """Run the 500-probe strike as a job and wait for it.
 
@@ -135,6 +158,13 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--threshold", type=float, default=0.90, help="H021's refutation line")
     parser.add_argument("--skip-scan", action="store_true", help="reuse a saved strike result")
     parser.add_argument("--job", default="", help="attach to a strike already running")
+    parser.add_argument(
+        "--chunk",
+        type=int,
+        default=20,
+        help="probes per strike. 20 is the size step-0 entry 027 measured; larger batches "
+        "took the job service down three times.",
+    )
     return parser.parse_args(argv)
 
 
@@ -161,7 +191,10 @@ def main(argv: list[str] | None = None) -> int:
         base = args.api or setting("MVA_READS_API_URL") or "http://127.0.0.1:8765"
         token = setting("MVA_API_TOKEN") or ""
         started = time.perf_counter()
-        result = submit_scan(probes, base.rstrip("/"), token, job_id=args.job)
+        if args.job:
+            result = submit_scan(probes, base.rstrip("/"), token, job_id=args.job)
+        else:
+            result = submit_all(probes, base.rstrip("/"), token, chunk=args.chunk)
         print(f"strike returned in {time.perf_counter() - started:.0f}s")
         hits_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
 

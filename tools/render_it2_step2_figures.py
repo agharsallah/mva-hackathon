@@ -101,8 +101,11 @@ def uniqueness_figure(summary: dict, sweep: dict | None) -> go.Figure:
         ("bait as built (k=31)", unique["repeated"] / unique["bait_kmers"])
     ]
     if sweep:
+        # Every bar carries the k it was measured at. The zones and the whole bait were
+        # not necessarily measured at the same k, and a bar that does not say so invites
+        # the reader to compare two numbers that are not comparable.
         rows.extend(
-            (f"zone: {name}", zone["off_target"])
+            (f"zone: {name} (k={zone['k']})", zone["off_target"])
             for name, zone in (sweep.get("by_zone") or {}).items()
         )
         rows.extend(
