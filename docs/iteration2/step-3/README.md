@@ -1,7 +1,8 @@
 # Step 3 — alignment-free genotype and copy number
 
-**Standing:** opened 2026-09-12 by step 2's handover; **nothing has run.** Iteration 2,
-`step-3`.
+**Standing:** opened 2026-09-12 by step 2's handover; **nothing has run.** Revised the same
+day, after step 2's completion audit changed two of the things this page hands over — see
+§3.9 and §4. Iteration 2, `step-3`.
 
 **Goal** (from `src/mva/science/steps.py`):
 
@@ -42,7 +43,8 @@ instrument; where they disagree, the disagreement is the finding.
 | Table | Rows | What step 3 uses it for |
 |---|---|---|
 | `it2_read_alleles` | 131,530 | the alleles to design k-mer probes for |
-| `it2_scored_pairs` | 792 | which genes have a rare protein-altering candidate, with bait density and depth |
+| `it2_scored_pairs` | 792 | which genes have a rare protein-altering candidate, with bait density, depth and `novel_qualifying` |
+| `warehouse.it2_read_annotations` | 1,199 | VEP for the alleles **only the read route saw** — the set step 3 validates (§3.9) |
 | `it2_read_pairs` | 792 | the same per gene, unfiltered — the contrast that matters (§4) |
 | `it2_exon_depth` | 3,020 | the per-exon depth any copy-number claim is read against |
 | `it2_bait_density` | 792 | surviving unique k-mers per base per gene — **carry this beside every per-gene claim** |
@@ -110,6 +112,20 @@ Each of these is measured, not assumed, and each has a number.
    consensus contained a 13 Mb deletion and a 40 Mb inversion in a living child. Any step-3
    copy-number claim that contradicts an SV call must check which side of those controls the
    call sits on.
+9. **1,199 read-derived alleles are annotated but unvalidated, and they now carry the
+   candidate counts.** They are calls two read-derived callers made on a baited alignment
+   that the vendor's pipeline never reported — 49 of them HIGH impact, 411 missense, 3 with
+   a ClinVar pathogenic assertion (entry 090). Six of the ten target genes and eight of the
+   ten decoy genes in the lead set reach biallelic **only** because of them, so **every
+   biallelic count in step 2 is an upper bound until step 3 checks them.** This is the
+   single most valuable thing step 3 can do with its instrument: a k-mer genotype needs
+   neither the aligner nor the caller that produced these, so agreement is genuinely
+   independent corroboration and disagreement retires the allele.
+10. **The read route has no measured discriminating power of its own.** H020 is refuted:
+    with every allele scored, targets and decoys carry a biallelic candidate at exactly the
+    same rate, 10 of 396 each (p = 0.589). Step 6 weights the read route down accordingly,
+    and step 3 must not quietly re-import the assumption that a target-gene finding is worth
+    more than a decoy-gene one — **it is not, before the filter.**
 
 ---
 
@@ -119,17 +135,24 @@ Enumerating biallelic genes **without** a rarity and consequence filter makes th
 
 | tier | any two variants | rare + protein-altering |
 |---|---|---|
-| core | 50.8 % | **1.69 %** |
+| core | 50.8 % | **5.08 %** |
 | mechanism-term | 42.0 % | 1.45 % |
-| net | 53.4 % | 0.75 % |
-| **decoy** | **57.3 %** | **0.51 %** |
+| net | 53.4 % | 2.24 % |
+| **decoy** | **57.3 %** | **2.53 %** |
+| **targets, all tiers** | 51.0 % | **2.53 %** |
 
 Every person carries roughly two heterozygous differences per gene, so "two variants in one
 gene" describes a genome, not a patient. **The discriminating power is in the filter, not in
-the symptom-derived gene list.** Step 3 genotypes alleles rather than enumerating them, so
-the same trap takes a different shape: *a het call is not evidence of anything by itself.*
-Any step-3 count compared between targets and decoys must say which filter it used, and the
-decoy set must pass through the identical rules.
+the symptom-derived gene list** — and once the alleles the vendor never reported are scored
+too, the filtered target and decoy rates are **identical**, so the filter is where *all* of
+it is. Step 3 genotypes alleles rather than enumerating them, so the same trap takes a
+different shape: *a het call is not evidence of anything by itself.* Any step-3 count
+compared between targets and decoys must say which filter it used, whether the novel alleles
+were included, and must pass the decoy set through the identical rules.
+
+Two of the twenty lead genes, `PWWP4` (4.6× mean depth) and `GTF2IRD2` (5.3×), sit far below
+the 44× median and were already flagged as k-mer-repetitive. Step 3 should expect to retire
+them, and if it does not, that is itself a result.
 
 ---
 
@@ -150,6 +173,7 @@ Two additions step 2's results argue for, not in the plan:
 |---|---|---|
 | new | both alleles of the lead pair are at **one-copy** multiplicity (posterior ≥ 0.95), not two | phasing failed (§1); single-copy dosage on both is the strongest statement left about the pair, and a caller artefact would not produce it |
 | new | genes below half the median bait density yield **no** confident k-mer genotype | it makes the reachability limit falsifiable rather than a caveat; the 21 genes are named in `it2_bait_density` |
+| new | **at least 80 % of the 1,199 alleles the delivered callset never reported are confirmed at the same multiplicity by k-mer genotype** | refuted by fewer, in which case every biallelic count step 2 reported is revised downward and the read route's own false-positive rate becomes a number rather than a caveat (§3.9). This is the claim with the most leverage in the whole step |
 
 ---
 

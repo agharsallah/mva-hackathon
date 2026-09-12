@@ -1,7 +1,11 @@
 # Step 2 — discover the alleles from the reads
 
-**Standing:** **complete, 2026-09-12.** The pass ran, the alleles were called and loaded,
-and all five claims have verdicts. Hands over to
+**Standing:** **complete, 2026-09-12** — after a completion audit found it was not.
+The step was declared closed with four pre-registered items unrun and the iteration's own
+blind gate red; [`notes/completion-audit.md`](notes/completion-audit.md) is the tracker that
+recorded the gap and closed it, and entries [089](methodology/089-the-instruments-and-the-gate-that-was-skipped.md)
+and [090](methodology/090-the-alleles-the-vendor-never-reported.md) are what running the
+missing stages produced. One of them **flipped a verdict**. Hands over to
 [step 3](../step-3/README.md). Iteration 2, `step-2`.
 
 **Goal** (from `src/mva/science/steps.py`):
@@ -34,6 +38,7 @@ step 2; it is simply not baited. The genome-wide safety net is step 4.
 | aligned | 15,829,813 records, **98.87 % mapped** |
 | depth | **median 44.08×** over 3,020 baited intervals; 29 below 10× |
 | alleles called | **131,530** rows, two callers of disjoint model class |
+| alleles the callset never reported | **1,199** in or beside a coding exon, all annotated ([090](methodology/090-the-alleles-the-vendor-never-reported.md)) |
 | structural variants | 18,186 raw; **164 credible two-method-class consensus calls** |
 | phase blocks | 6,823 |
 
@@ -41,26 +46,36 @@ step 2; it is simply not baited. The genome-wide safety net is step 4.
 
 | Id | Verdict | Conf. | Claim |
 |---|---|---|---|
-| H016 | **supported** | 0.85 | at least one target gene carries a biallelic candidate |
+| H016 | **supported** | 0.88 | at least one target gene carries a biallelic candidate — ten do, three core tier |
 | H019 | **supported** | 0.70 | phasing closes the chain, or names the gap — it named the gap |
-| H020 | **supported, weakly** | 0.45 | decoys yield fewer candidates per gene (Fisher p = 0.343) |
+| H020 | **refuted** | 0.07 | decoys yield fewer candidates per gene — **they yield exactly as many** |
 | H021 | **supported** | 0.65 | the bait recovers ≥ 90 % of reads carrying a known allele (0.9052) |
 | H022 | **supported** | 0.88 | ≥ 99 % concordance with the delivered callset (0.9957 / 0.9927) |
 | H023 | **refuted** | 0.25 | a two-class deletion does overlap an exon of a rare-allele gene — in two genes, one a decoy |
-| ~~H017~~ | superseded by H022 | | named DeepVariant, which has no arm64 build |
-| ~~H018~~ | superseded by H023 | | named Manta/LUMPY/GRIDSS, none of which have one |
+| ~~H017~~ | **superseded** by H022 | | named DeepVariant, which has no arm64 build ([089](methodology/089-the-instruments-and-the-gate-that-was-skipped.md)) |
+| ~~H018~~ | **superseded** by H023 | | named Manta/LUMPY/GRIDSS, none of which have one ([089](methodology/089-the-instruments-and-the-gate-that-was-skipped.md)) |
 
-**Gates:** recovery within 0.5–2× of prediction (1.18×) **pass**; every fragment paired
-**pass**; `unseen` bait k-mers = 0 **pass**; off-target < 5 % **fail at 8.79 %**, and
-[086](methodology/086-can-the-off-target-gate-be-reached.md) shows no available parameter
-reaches it.
-| ~~H017~~ | **superseded** by H022 | named DeepVariant, which has no arm64 build |
-| ~~H018~~ | **superseded** by H023 | named Manta/LUMPY/GRIDSS, none of which have one |
+**H020 changed verdict after the step was first declared closed**, and the reason is the
+point of the audit. The scoring query judged an allele by joining an annotation table built
+from the delivered callset, so an allele only the read-derived callers saw could not be
+scored at all — a route built to find what the vendor missed could only rediscover what the
+vendor found. Annotating those 1,199 alleles (plan stage 11, skipped) made targets and
+decoys **exactly equal** at 10/396. The earlier twofold difference was the artefact. The
+consequence was pre-registered and stands: the read route enters the step-6 fusion at
+reduced weight.
 
 The two supersessions change the **instrument**, never the claim: H022 still asks for
 ≥ 99 % concordance against a caller sharing no code with the vendor's, and H023 still
 requires two *method classes*, which is what Kosugi 2019 Fig. 6–7 actually supports.
-Both are recorded as new register revisions with their reasoning, never as edits.
+Both are recorded as new register revisions with their reasoning and now with the
+platform survey as an evidence row, never as edits.
+
+**Gates:** recovery within 0.5–2× of prediction (1.18×) **pass**; every fragment paired
+**pass**; `unseen` bait k-mers = 0 **pass**; scaling, projected kernel-only pass 45.9 min
+against 60 min **pass, run late** ([089](methodology/089-the-instruments-and-the-gate-that-was-skipped.md));
+off-target < 5 % **fail at 8.79 %**, and
+[086](methodology/086-can-the-off-target-gate-be-reached.md) shows no available parameter
+reaches it.
 
 ## Where it runs — corrected from `execution.md` §2
 
@@ -113,12 +128,31 @@ Built here because a research step's tools are filed under that step (CLAUDE.md)
 | `tools/build_it2_bait.py` | the bait and its gate numbers |
 | `tools/build_it2_witness.py` | H021's probe set, drawn by script from the callset |
 
-Still to build: `src/mva/calling/` (the adapters), `warehouse/it2_step2_tables.py` and
-`analysis_it2.py` (the tables and the pair SQL), `tools/render_it2_step2_figures.py`, the
-`/steps/step-2` page, and the DNA-literal rule in `tools/check_coordinates.py`.
+| `src/mva/calling/` | the adapters: minimap2, mosdepth, freebayes, bcftools, delly, dysgu, whatshap |
+| `src/mva/kmer/scaling.py`, `tools/scale_it2_bait.py` | the stage-4 scaling gate |
+| `warehouse/it2_step2_tables.py`, `analysis_it2.py`, `analysis_it2_sv.py` | the six tables and the pair SQL |
+| `warehouse/annotate_reads.py` + `mva-warehouse annotate-it2-reads` | VEP for the alleles the callset never reported |
+| `mva.pipeline.stats.fisher_exact_greater` | the exact test behind every target-vs-decoy p |
+| `tools/export_it2_step2_analysis.py` | the figures' one source of numbers |
+| `tools/render_it2_step2_figures.py`, `render_it2_step2_results.py` | the eight exhibits |
+| `tools/check_blind.py` | the blind gate, as a gate CI runs |
+| the DNA-literal rule in `tools/check_coordinates.py` | patient *sequence*, not just position |
+
+Still to build: the `/steps/step-2` deep page and its fixtures.
 
 ## Methodology
 
 | Entry | Question |
 |---|---|
 | [085](methodology/085-the-bait-and-where-it-runs.md) | Can 42 Mb of reference be turned into a k-mer bait, and where must the pass run? |
+| [086](methodology/086-can-the-off-target-gate-be-reached.md) | Could any parameter have passed the off-target gate, and at what cost? |
+| [087](methodology/087-the-pass-and-what-it-recovered.md) | What did one pass over 1.07 billion reads actually recover? |
+| [088](methodology/088-the-alleles-the-reads-carry.md) | What do the recovered reads say — concordance, pairs, phase, structural variants? |
+| [089](methodology/089-the-instruments-and-the-gate-that-was-skipped.md) | Which instruments were available, and does the kernel scale as the plan assumed? |
+| [090](methodology/090-the-alleles-the-vendor-never-reported.md) | What happens to H016 and H020 once the alleles only our callers saw are scored? |
+
+## Notes
+
+| Note | What it owns |
+|---|---|
+| [`notes/completion-audit.md`](notes/completion-audit.md) | what ran, what did not, and what the step's findings change for later steps |
