@@ -23,6 +23,7 @@ This package does four things and knows nothing else:
 | `membership.py` | "Do these reads share a k-mer with that set?" |
 | `count.py` | "How many reads carry each of these k-mers?" |
 | `probes.py` | "Spell this allele both ways, in windows that discriminate" |
+| `genotype.py` | "Given the two counts, how many copies carry the allele?" |
 
 It is a **leaf**: it imports no other `mva` package, takes no database connection, and
 never sees patient sequence — the bait is cut from the public reference.
