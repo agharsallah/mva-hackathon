@@ -10,7 +10,7 @@ import gzip
 import numpy as np
 import pytest
 
-from mva.kmer import encode, fasta, uniqueness
+from mva.kmer import encode, fasta, scaling, uniqueness
 from mva.kmer.bait import Interval, cut, expected_reads, merge, plan
 from mva.kmer.membership import Bait, hits
 
@@ -216,3 +216,51 @@ def test_chunking_does_not_lose_a_window_on_the_boundary(tmp_path):
     whole = uniqueness.count_in_genome(reference, bait, chunk_bases=10_000)
     split = uniqueness.count_in_genome(reference, bait, chunk_bases=9)
     assert list(whole.counts) == list(split.counts)
+
+
+# --- the scaling gate (plan stage 4) ---------------------------------------------------
+
+
+def _pool(size: int) -> np.ndarray:
+    return np.unique(np.random.default_rng(7).integers(0, 2**62, size=size, dtype=np.uint64))
+
+
+def test_sample_bait_draws_the_asked_for_size():
+    bait = scaling.sample_bait(_pool(10_000), 500)
+    assert len(bait) == 500
+
+
+def test_sample_bait_caps_at_the_pool_when_asked_for_more():
+    pool = _pool(200)
+    assert len(scaling.sample_bait(pool, 10_000)) == pool.size
+
+
+def test_sample_bait_does_not_take_the_sorted_prefix():
+    # taking bait[:n] would make every drawn k-mer share a leading prefix and flatter both
+    # the binary search and the bitmap; a draw must not be ordered like its pool
+    pool = _pool(10_000)
+    drawn = np.asarray(scaling.sample_bait(pool, 100).kmers)
+    assert drawn.max() > pool[500]
+
+
+def test_measure_returns_one_point_per_size_over_the_same_reads():
+    codes = encode.codes_of(np.frombuffer(("ACGT" * 40).encode(), dtype=np.uint8))
+    matrix = np.tile(codes, (32, 1))
+    points = scaling.measure(matrix, _pool(5_000), (100, 1_000), stride=4, k=31)
+    assert [p.bait_kmers for p in points] == [100, 1_000]
+    assert {p.reads for p in points} == {32}
+    assert all(p.seconds > 0 and p.bait_bytes > 0 for p in points)
+
+
+def test_project_scales_the_measured_rate_to_the_whole_store():
+    point = scaling.Point(
+        bait_kmers=1, reads=1_000, seconds=2.0, hit_rate=0.0, bait_bytes=8, peak_rss_bytes=1
+    )
+    assert scaling.project(point, 10_000) == pytest.approx(20.0)
+
+
+def test_project_is_infinite_when_nothing_was_measured():
+    point = scaling.Point(
+        bait_kmers=1, reads=0, seconds=0.0, hit_rate=0.0, bait_bytes=8, peak_rss_bytes=1
+    )
+    assert scaling.project(point, 10_000) == float("inf")
