@@ -2142,3 +2142,98 @@ flowchart LR
 
 **Network proximity** — scoring a gene that has no recorded symptoms by the company it keeps: its high-confidence protein-interaction partners among the top-ranked genes. It is the weak, last-resort tier, because a neighbour's phenotype is not the gene's own. *Example:* the `uncurated` tier, which matters because 73.6% of protein-coding genes have no HPO curation at all.
 *Context: the small version of Exomiser's hiPHIVE random walk, whose 741 MB matrix was declined · source: src/mva/phenotype/network.py · related: Tier, Target set · first seen 2026-09-11*
+
+---
+
+## 18. Reading the raw reads — words for iteration 2's step 2
+
+Step 1 chose genes without opening any DNA. Step 2 goes to the 1.07 billion raw reads and
+asks what alleles they carry **in those genes only**, using callers that share no code with
+the vendor's. Doing that without aligning the whole genome needed a new instrument, and
+these are its words. Everything here builds on k-mer,
+[insert size](#2-reading-dna-sequencing-and-the-files-it-makes) and
+[phase block](#4-inheritance--how-the-answer-is-shaped) above.
+
+```mermaid
+flowchart LR
+  G[/"reference genome<br/>GRCh38"/]:::raw
+  T["target + decoy genes<br/>from step 1"]:::machine
+  C["CUT<br/>every 31-mer of those<br/>genes, canonical form"]:::machine
+  U{"UNIQUENESS FILTER<br/>occurs once in<br/>the genome?"}:::decide
+  B["k-mer BAIT<br/>36,038,037 k-mers"]:::good
+  R[/"1,071,835,104<br/>raw reads"/]:::raw
+  S["SWEEP<br/>every 16th offset<br/>of every read"]:::machine
+  K["14,657,560 reads kept<br/>1.37% of the store"]:::good
+  X["dropped as repeated<br/>8.79% — the gate that failed"]:::bad
+  G --> C
+  T --> C --> U
+  U -->|"yes"| B
+  U -->|"no, it lies"| X
+  B --> S
+  R --> S --> K
+  classDef raw fill:#e0d4f7,stroke:#7a5cab,color:#000
+  classDef machine fill:#cfe8ff,stroke:#333,color:#000
+  classDef decide fill:#ffe9b3,stroke:#333,color:#000
+  classDef good fill:#8fd18f,stroke:#333,color:#000
+  classDef bad fill:#f4a3a3,stroke:#333,color:#000
+```
+
+> **Legend** — purple: the raw inputs, the public reference and the child's reads · blue: neutral machinery · yellow: the decision point, kept or dropped · green: what survives and is used · red: what was thrown away, and the pre-registered gate it failed.
+
+**Reverse complement** — the same stretch of DNA read from the other strand: flip the order and swap each letter for its partner (A↔T, C↔G). The molecule is double-stranded, so a sequencer reports a fragment from whichever strand it happened to read, and the two spellings mean the same place.
+*Example:* `AGGT` and `ACCT` are reverse complements of each other.
+*Context: why every k-mer search has to look twice, or normalise once · source: src/mva/kmer/encode.py · related: k-mer, Canonical k-mer · first seen 2026-09-12*
+
+**Canonical k-mer** — of a k-mer and its reverse complement, whichever sorts smaller, used as the single name for both. Storing only the canonical form halves the table and removes the need to search both strands. Software analogy: normalising a key before you put it in the map, like lower-casing an email address.
+*Example:* `AGGT` and `ACCT` both store as `ACCT`.
+*Context: the representation the whole step-2 engine is built on · source: src/mva/kmer/encode.py · related: Reverse complement, k-mer bait · first seen 2026-09-12*
+
+**2-bit packing** — writing each base as two bits (A=00, C=01, G=10, T=11) so a 31-letter k-mer fits in one 64-bit integer and comparing two k-mers is comparing two numbers. 32 is the ceiling: a 33-mer needs 66 bits.
+*Example:* 36 million 31-mers occupy 288 MB rather than 1.1 GB of text.
+*Context: why the bait fits in memory on a laptop · source: src/mva/kmer/encode.py · related: Canonical k-mer, k-mer bait · first seen 2026-09-12*
+
+**k-mer bait** — the set of every canonical k-mer belonging to the regions you care about, used as a filter: a read sharing any k-mer with the bait probably came from one of those regions, and everything else is discarded unread. It replaces aligning the whole genome when you only want part of it. Software analogy: a hash-set membership test standing in for a full join.
+*Example:* 404 target genes + 396 decoys, padded, = 42 Mb of reference = 36,038,037 k-mers after filtering, which recovered 1.37% of the read store.
+*Context: step 2's instrument and its innovation claim; the cost is set by bytes of sequence, not by bait size — 36,000× more k-mers costs 1.05× per read · source: docs/iteration2/step-2/methodology/085-the-bait-and-where-it-runs.md · related: Canonical k-mer, Uniqueness filter, Stride, Decoy set · first seen 2026-09-12*
+
+**Uniqueness filter (off-target k-mer)** — dropping bait k-mers that also occur somewhere else in the genome, because they would pull in reads from that other place and invent variants there. About half the human genome is repetitive, so this is not a corner case. The share dropped is the honest measure of how repetitive your chosen genes are.
+*Example:* 8.79% of the bait was dropped as repeated — against a pre-registered gate of "under 5%", which **failed**, and no available padding or k reaches it (8.38% to 10.25%).
+*Context: a gate this step failed and reported as failed rather than retuned · source: docs/iteration2/step-2/methodology/086-can-the-off-target-gate-be-reached.md · related: k-mer bait, Segmental duplication · first seen 2026-09-12*
+
+**Stride** — testing only every *s*-th position of a read instead of all of them, to do less work. A read overlapping the bait by at least `k + s − 1` letters still hits, so the saving costs a little sensitivity at the very edges rather than in the middle.
+*Example:* stride 16 tests ~8 windows of a 150 bp read instead of 120 — 15× less work — and measured recall was 0.905 against a pre-registered 0.90.
+*Context: fixed before the run and its recall cost measured, not assumed (H021) · source: src/mva/kmer/membership.py · related: k-mer bait, Bait recall · first seen 2026-09-12*
+
+**Bait recall** — the share of reads that really do carry an allele of interest which the bait actually kept. Measured by an independent instrument, not asserted: take variants the delivered callset already reports, search for them with the old exact-match strike, and ask how many of those reads the new bait retained. *Example:* 0.9052, with a wide interval [0.815, 0.974].
+*Context: the new instrument validated by the old one, before any biological conclusion was drawn from it · source: docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md · related: Stride, k-mer bait · first seen 2026-09-12*
+
+**On-target rate** — of the reads that survived selection and were aligned, the share that landed where they were supposed to. The direct check that the selection worked. *Example:* 98.87% of 15,829,813 alignment records mapped, at a median depth of 44× over the baited intervals.
+*Context: the gate between selection and calling · source: src/mva/calling/align.py · related: k-mer bait, Coverage / depth (e.g. 30×) · first seen 2026-09-12*
+
+**Mark duplicates** — flagging reads that are copies of the same original fragment (same start, same end) so a caller counts them once. Without it, one lucky fragment amplified ten times looks like ten independent votes for a variant. See also duplicate reads above.
+*Example:* `samtools markdup` after coordinate sorting, before any caller runs.
+*Context: a standard step named here because skipping it inflates confidence rather than coverage · source: src/mva/calling/align.py · related: Insert size (fragment length), On-target rate · first seen 2026-09-12*
+
+**Pileup caller vs haplotype caller** — two ways to decide what a position says. A **pileup** caller stacks the letters every read shows at that one position and does statistics on the column (`bcftools mpileup | call -m`). A **haplotype** caller instead reconstructs the two local sequences the reads are most consistent with and reads the variants off those (freebayes over observed haplotypes; the vendor's Sentieon Haplotyper by local reassembly). The second is better around indels; the first has fewer assumptions to be wrong about.
+*Example:* step 2 ran one of each and they agreed with the delivered callset at 99.57% and 99.27%.
+*Context: why "two callers" here is not two copies of the same idea · source: src/mva/calling/smallvars.py · related: Method class, Concordance · first seen 2026-09-12*
+
+**Method class** — the *kind* of evidence a caller uses, as opposed to its name. For structural variants the classes are read-pair/split-read (delly, Manta) and local assembly (dysgu, GRIDSS). Agreement between two names of the same class mostly means they share a blind spot; agreement across classes is real corroboration.
+*Example:* Kosugi 2019 measured precision by class, which is why step 2's SV rule says "two method classes" and survived having to swap every caller it originally named.
+*Context: what H018 and H023 are actually written about; it let the tools change without the claim changing · source: src/mva/calling/sv.py · related: Pileup caller vs haplotype caller, Bait-edge artefact, SV (structural variant) · first seen 2026-09-12*
+
+**Bait-edge artefact** — a fake structural variant created by the selection itself. A baited alignment is islands of coverage with emptiness between them, and a read-pair caller reads the emptiness as one enormous deletion. Two controls stop it: a call must be at least 50 bp (below that it is an indel the small-variant callers already counted), and over half its span must be territory the bait actually covered.
+*Example:* the first consensus run reported a 13 Mb deletion and a 40 Mb inversion in a living child; with the controls, 164 credible calls remain and the median deletion is 302 bp.
+*Context: a property of any baited SV call, inherited by every later step, not a step-2 bug · source: src/mva/warehouse/analysis_it2_sv.py · related: Method class, k-mer bait · first seen 2026-09-12*
+
+**Cis / trans** — whether two variants sit on the **same** inherited copy of a gene (*cis*) or on **different** copies (*trans*). A compound heterozygote needs *trans*: one broken copy from each parent leaves no working copy. Two damaging variants in *cis* leave one copy intact and usually explain nothing.
+*Example:* step 2's two lead alleles are 10,911 bp apart with no read or fragment spanning both, so neither *cis* nor *trans* could be shown.
+*Context: the question read-backed phasing exists to answer, and the gap step 3 inherits · source: src/mva/calling/phase.py · related: Phase block / PS tag, Compound heterozygous ("comp het") · first seen 2026-09-12*
+
+**Concordance** — the share of positions where two independent methods give the same genotype, counted only where **both** actually reported one. It is a check on the instrument, never a way of discovering anything: a site only one caller saw is invisible to it by construction.
+*Example:* 0.9957 (bcftools) and 0.9927 (freebayes) against the delivered callset at single-base substitutions, over ~45,500 co-called sites.
+*Context: H022, the check that licenses the rest of step 2 · source: src/mva/warehouse/analysis_it2.py · related: Pileup caller vs haplotype caller, Ascertainment circularity · first seen 2026-09-12*
+
+**Ascertainment circularity** — scoring your discoveries with a resource that was itself built from what you were trying to improve on, so the new route can only rediscover the old one's findings. It does not announce itself; it shows up as a smaller number, not an error.
+*Example:* step 2's scoring query annotated alleles by joining a table built from the vendor's callset, so the 1,199 alleles only the new callers found had no consequence, failed the "protein-altering" test for want of one, and vanished. Annotating them separately made the target and decoy sets come out **exactly equal** and refuted H020.
+*Context: the defect a completion audit found after the step had been declared closed · source: docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md · related: Decoy set, Concordance, Null hypothesis (H₀) · first seen 2026-09-12*

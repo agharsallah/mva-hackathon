@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 17,
-    "entries": 499,
+    "chapters": 18,
+    "entries": 514,
     "figures": 20,
-    "diagrams": 21,
-    "contexts": 70
+    "diagrams": 22,
+    "contexts": 85
   },
   "chapters": [
     {
@@ -6203,6 +6203,257 @@
             "seed-target-target-set"
           ],
           "firstSeen": "2026-09-11"
+        }
+      ]
+    },
+    {
+      "number": 18,
+      "id": "18-reading-the-raw-reads--words-for-iteration-2s-step-2",
+      "title": "Reading the raw reads — words for iteration 2's step 2",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>Step 1 chose genes without opening any DNA. Step 2 goes to the 1.07 billion raw reads and\nasks what alleles they carry <strong>in those genes only</strong>, using callers that share no code with\nthe vendor's. Doing that without aligning the whole genome needed a new instrument, and\nthese are its words. Everything here builds on k-mer,\n<a href=\"#2-reading-dna-sequencing-and-the-files-it-makes\">insert size</a> and\n<a href=\"#4-inheritance--how-the-answer-is-shaped\">phase block</a> above.</p>"
+        },
+        {
+          "kind": "mermaid",
+          "source": "flowchart LR\n  G[/\"reference genome<br/>GRCh38\"/]:::raw\n  T[\"target + decoy genes<br/>from step 1\"]:::machine\n  C[\"CUT<br/>every 31-mer of those<br/>genes, canonical form\"]:::machine\n  U{\"UNIQUENESS FILTER<br/>occurs once in<br/>the genome?\"}:::decide\n  B[\"k-mer BAIT<br/>36,038,037 k-mers\"]:::good\n  R[/\"1,071,835,104<br/>raw reads\"/]:::raw\n  S[\"SWEEP<br/>every 16th offset<br/>of every read\"]:::machine\n  K[\"14,657,560 reads kept<br/>1.37% of the store\"]:::good\n  X[\"dropped as repeated<br/>8.79% — the gate that failed\"]:::bad\n  G --> C\n  T --> C --> U\n  U -->|\"yes\"| B\n  U -->|\"no, it lies\"| X\n  B --> S\n  R --> S --> K\n  classDef raw fill:#e0d4f7,stroke:#7a5cab,color:#000\n  classDef machine fill:#cfe8ff,stroke:#333,color:#000\n  classDef decide fill:#ffe9b3,stroke:#333,color:#000\n  classDef good fill:#8fd18f,stroke:#333,color:#000\n  classDef bad fill:#f4a3a3,stroke:#333,color:#000",
+          "legendHtml": "<p>purple: the raw inputs, the public reference and the child's reads · blue: neutral machinery · yellow: the decision point, kept or dropped · green: what survives and is used · red: what was thrown away, and the pre-registered gate it failed.</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "reverse-complement",
+          "term": "Reverse complement",
+          "aliases": [],
+          "html": "<p>the same stretch of DNA read from the other strand: flip the order and swap each letter for its partner (A↔T, C↔G). The molecule is double-stranded, so a sequencer reports a fragment from whichever strand it happened to read, and the two spellings mean the same place.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>AGGT</code> and <code>ACCT</code> are reverse complements of each other.</p>",
+          "context": "<p>why every k-mer search has to look twice, or normalise once</p>",
+          "source": "src/mva/kmer/encode.py",
+          "related": [
+            "k-mer",
+            "canonical-k-mer"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "canonical-k-mer",
+          "term": "Canonical k-mer",
+          "aliases": [],
+          "html": "<p>of a k-mer and its reverse complement, whichever sorts smaller, used as the single name for both. Storing only the canonical form halves the table and removes the need to search both strands. Software analogy: normalising a key before you put it in the map, like lower-casing an email address.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>AGGT</code> and <code>ACCT</code> both store as <code>ACCT</code>.</p>",
+          "context": "<p>the representation the whole step-2 engine is built on</p>",
+          "source": "src/mva/kmer/encode.py",
+          "related": [
+            "reverse-complement",
+            "k-mer-bait"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "2-bit-packing",
+          "term": "2-bit packing",
+          "aliases": [],
+          "html": "<p>writing each base as two bits (A=00, C=01, G=10, T=11) so a 31-letter k-mer fits in one 64-bit integer and comparing two k-mers is comparing two numbers. 32 is the ceiling: a 33-mer needs 66 bits.</p>",
+          "exampleHtml": "<p><em>Example:</em> 36 million 31-mers occupy 288 MB rather than 1.1 GB of text.</p>",
+          "context": "<p>why the bait fits in memory on a laptop</p>",
+          "source": "src/mva/kmer/encode.py",
+          "related": [
+            "canonical-k-mer",
+            "k-mer-bait"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "k-mer-bait",
+          "term": "k-mer bait",
+          "aliases": [],
+          "html": "<p>the set of every canonical k-mer belonging to the regions you care about, used as a filter: a read sharing any k-mer with the bait probably came from one of those regions, and everything else is discarded unread. It replaces aligning the whole genome when you only want part of it. Software analogy: a hash-set membership test standing in for a full join.</p>",
+          "exampleHtml": "<p><em>Example:</em> 404 target genes + 396 decoys, padded, = 42 Mb of reference = 36,038,037 k-mers after filtering, which recovered 1.37% of the read store.</p>",
+          "context": "<p>step 2's instrument and its innovation claim; the cost is set by bytes of sequence, not by bait size — 36,000× more k-mers costs 1.05× per read</p>",
+          "source": "docs/iteration2/step-2/methodology/085-the-bait-and-where-it-runs.md",
+          "related": [
+            "canonical-k-mer",
+            "uniqueness-filter-off-target-k-mer",
+            "stride",
+            "decoy-set"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "uniqueness-filter-off-target-k-mer",
+          "term": "Uniqueness filter (off-target k-mer)",
+          "aliases": [
+            "Uniqueness filter",
+            "off-target k-mer"
+          ],
+          "html": "<p>dropping bait k-mers that also occur somewhere else in the genome, because they would pull in reads from that other place and invent variants there. About half the human genome is repetitive, so this is not a corner case. The share dropped is the honest measure of how repetitive your chosen genes are.</p>",
+          "exampleHtml": "<p><em>Example:</em> 8.79% of the bait was dropped as repeated — against a pre-registered gate of \"under 5%\", which <strong>failed</strong>, and no available padding or k reaches it (8.38% to 10.25%).</p>",
+          "context": "<p>a gate this step failed and reported as failed rather than retuned</p>",
+          "source": "docs/iteration2/step-2/methodology/086-can-the-off-target-gate-be-reached.md",
+          "related": [
+            "k-mer-bait",
+            "segmental-duplication-repeat-region-mappability"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "stride",
+          "term": "Stride",
+          "aliases": [],
+          "html": "<p>testing only every <em>s</em>-th position of a read instead of all of them, to do less work. A read overlapping the bait by at least <code>k + s − 1</code> letters still hits, so the saving costs a little sensitivity at the very edges rather than in the middle.</p>",
+          "exampleHtml": "<p><em>Example:</em> stride 16 tests ~8 windows of a 150 bp read instead of 120 — 15× less work — and measured recall was 0.905 against a pre-registered 0.90.</p>",
+          "context": "<p>fixed before the run and its recall cost measured, not assumed (H021)</p>",
+          "source": "src/mva/kmer/membership.py",
+          "related": [
+            "k-mer-bait",
+            "bait-recall"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "bait-recall",
+          "term": "Bait recall",
+          "aliases": [],
+          "html": "<p>the share of reads that really do carry an allele of interest which the bait actually kept. Measured by an independent instrument, not asserted: take variants the delivered callset already reports, search for them with the old exact-match strike, and ask how many of those reads the new bait retained. <em>Example:</em> 0.9052, with a wide interval [0.815, 0.974].</p>",
+          "exampleHtml": "",
+          "context": "<p>the new instrument validated by the old one, before any biological conclusion was drawn from it</p>",
+          "source": "docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md",
+          "related": [
+            "stride",
+            "k-mer-bait"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "on-target-rate",
+          "term": "On-target rate",
+          "aliases": [],
+          "html": "<p>of the reads that survived selection and were aligned, the share that landed where they were supposed to. The direct check that the selection worked. <em>Example:</em> 98.87% of 15,829,813 alignment records mapped, at a median depth of 44× over the baited intervals.</p>",
+          "exampleHtml": "",
+          "context": "<p>the gate between selection and calling</p>",
+          "source": "src/mva/calling/align.py",
+          "related": [
+            "k-mer-bait",
+            "coverage-depth-e-g-30"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "mark-duplicates",
+          "term": "Mark duplicates",
+          "aliases": [],
+          "html": "<p>flagging reads that are copies of the same original fragment (same start, same end) so a caller counts them once. Without it, one lucky fragment amplified ten times looks like ten independent votes for a variant. See also duplicate reads above.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>samtools markdup</code> after coordinate sorting, before any caller runs.</p>",
+          "context": "<p>a standard step named here because skipping it inflates confidence rather than coverage</p>",
+          "source": "src/mva/calling/align.py",
+          "related": [
+            "insert-size-fragment-length",
+            "on-target-rate"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "pileup-caller-vs-haplotype-caller",
+          "term": "Pileup caller vs haplotype caller",
+          "aliases": [],
+          "html": "<p>two ways to decide what a position says. A <strong>pileup</strong> caller stacks the letters every read shows at that one position and does statistics on the column (<code>bcftools mpileup | call -m</code>). A <strong>haplotype</strong> caller instead reconstructs the two local sequences the reads are most consistent with and reads the variants off those (freebayes over observed haplotypes; the vendor's Sentieon Haplotyper by local reassembly). The second is better around indels; the first has fewer assumptions to be wrong about.</p>",
+          "exampleHtml": "<p><em>Example:</em> step 2 ran one of each and they agreed with the delivered callset at 99.57% and 99.27%.</p>",
+          "context": "<p>why \"two callers\" here is not two copies of the same idea</p>",
+          "source": "src/mva/calling/smallvars.py",
+          "related": [
+            "method-class",
+            "concordance"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "method-class",
+          "term": "Method class",
+          "aliases": [],
+          "html": "<p>the <em>kind</em> of evidence a caller uses, as opposed to its name. For structural variants the classes are read-pair/split-read (delly, Manta) and local assembly (dysgu, GRIDSS). Agreement between two names of the same class mostly means they share a blind spot; agreement across classes is real corroboration.</p>",
+          "exampleHtml": "<p><em>Example:</em> Kosugi 2019 measured precision by class, which is why step 2's SV rule says \"two method classes\" and survived having to swap every caller it originally named.</p>",
+          "context": "<p>what H018 and H023 are actually written about; it let the tools change without the claim changing</p>",
+          "source": "src/mva/calling/sv.py",
+          "related": [
+            "pileup-caller-vs-haplotype-caller",
+            "bait-edge-artefact",
+            "sv-structural-variant"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "bait-edge-artefact",
+          "term": "Bait-edge artefact",
+          "aliases": [],
+          "html": "<p>a fake structural variant created by the selection itself. A baited alignment is islands of coverage with emptiness between them, and a read-pair caller reads the emptiness as one enormous deletion. Two controls stop it: a call must be at least 50 bp (below that it is an indel the small-variant callers already counted), and over half its span must be territory the bait actually covered.</p>",
+          "exampleHtml": "<p><em>Example:</em> the first consensus run reported a 13 Mb deletion and a 40 Mb inversion in a living child; with the controls, 164 credible calls remain and the median deletion is 302 bp.</p>",
+          "context": "<p>a property of any baited SV call, inherited by every later step, not a step-2 bug</p>",
+          "source": "src/mva/warehouse/analysis_it2_sv.py",
+          "related": [
+            "method-class",
+            "k-mer-bait"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "cis-trans",
+          "term": "Cis / trans",
+          "aliases": [
+            "Cis",
+            "trans"
+          ],
+          "html": "<p>whether two variants sit on the <strong>same</strong> inherited copy of a gene (<em>cis</em>) or on <strong>different</strong> copies (<em>trans</em>). A compound heterozygote needs <em>trans</em>: one broken copy from each parent leaves no working copy. Two damaging variants in <em>cis</em> leave one copy intact and usually explain nothing.</p>",
+          "exampleHtml": "<p><em>Example:</em> step 2's two lead alleles are 10,911 bp apart with no read or fragment spanning both, so neither <em>cis</em> nor <em>trans</em> could be shown.</p>",
+          "context": "<p>the question read-backed phasing exists to answer, and the gap step 3 inherits</p>",
+          "source": "src/mva/calling/phase.py",
+          "related": [
+            "phase-block-ps-tag",
+            "compound-heterozygous-comp-het"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "concordance",
+          "term": "Concordance",
+          "aliases": [],
+          "html": "<p>the share of positions where two independent methods give the same genotype, counted only where <strong>both</strong> actually reported one. It is a check on the instrument, never a way of discovering anything: a site only one caller saw is invisible to it by construction.</p>",
+          "exampleHtml": "<p><em>Example:</em> 0.9957 (bcftools) and 0.9927 (freebayes) against the delivered callset at single-base substitutions, over ~45,500 co-called sites.</p>",
+          "context": "<p>H022, the check that licenses the rest of step 2</p>",
+          "source": "src/mva/warehouse/analysis_it2.py",
+          "related": [
+            "pileup-caller-vs-haplotype-caller",
+            "ascertainment-circularity"
+          ],
+          "firstSeen": "2026-09-12"
+        },
+        {
+          "kind": "entry",
+          "slug": "ascertainment-circularity",
+          "term": "Ascertainment circularity",
+          "aliases": [],
+          "html": "<p>scoring your discoveries with a resource that was itself built from what you were trying to improve on, so the new route can only rediscover the old one's findings. It does not announce itself; it shows up as a smaller number, not an error.</p>",
+          "exampleHtml": "<p><em>Example:</em> step 2's scoring query annotated alleles by joining a table built from the vendor's callset, so the 1,199 alleles only the new callers found had no consequence, failed the \"protein-altering\" test for want of one, and vanished. Annotating them separately made the target and decoy sets come out <strong>exactly equal</strong> and refuted H020.</p>",
+          "context": "<p>the defect a completion audit found after the step had been declared closed</p>",
+          "source": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md",
+          "related": [
+            "decoy-set",
+            "concordance",
+            "null-hypothesis-h0"
+          ],
+          "firstSeen": "2026-09-12"
         }
       ]
     }

@@ -35,6 +35,7 @@ export default function ProbesPage() {
           },
           {
             term: 'reverse complement',
+            dict: 'reverse-complement',
             plain:
               'DNA is double-stranded, so the same sequence can appear reversed and letter-swapped. A real match shows up on both strands',
           },
