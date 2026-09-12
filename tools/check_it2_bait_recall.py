@@ -30,8 +30,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import random
 import sys
 import time
+from dataclasses import dataclass
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
@@ -42,6 +44,14 @@ import polars as pl
 from mva.warehouse.settings import setting
 
 DEFAULT_OUT = Path("build/it2/step-2")
+#: Reads a single-copy heterozygous 31-mer is expected in: depth x (L - k + 1)/L / 2.
+#: A probe found in many times this many reads is matching more than one place in the
+#: genome, which is a statement about the probe, not about the bait.
+EXPECTED_READS = 44 * (150 - 31 + 1) / 150 / 2
+
+#: Above this multiple of :data:`EXPECTED_READS`, a probe is reported separately.
+MULTI_LOCUS_MULTIPLE = 2.0
+
 #: Reads reported per probe. A true single-copy 31-mer is expected in ~35 reads at 44x
 #: (mva.reads.triage), so 1000 is far above any honest count and the cap never binds.
 SCAN_LIMIT = 1000
@@ -118,6 +128,11 @@ def submit_scan(probes: list[tuple[str, str]], base: str, token: str, job_id: st
     raise SystemExit(f"strike {job_id} did not finish within the polling budget")
 
 
+def _recall(rows: list[dict]) -> float:
+    total = sum(row["reads"] for row in rows)
+    return sum(row["kept"] for row in rows) / total if total else 0.0
+
+
 def reachable(witness: dict, bait_path: Path, k: int = 31) -> tuple[list[dict], list[dict]]:
     """Split the witness alleles by whether the bait ever claimed to reach them.
 
@@ -156,6 +171,8 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
     parser.add_argument("--reads", type=Path, default=None, help="the recovered-reads Parquet")
     parser.add_argument("--api", default=None, help="reads API base URL")
     parser.add_argument("--threshold", type=float, default=0.90, help="H021's refutation line")
+    parser.add_argument("--bootstrap", type=int, default=2000, help="per-probe replicates")
+    parser.add_argument("--seed", type=int, default=20260912)
     parser.add_argument("--skip-scan", action="store_true", help="reuse a saved strike result")
     parser.add_argument("--job", default="", help="attach to a strike already running")
     parser.add_argument(
@@ -166,6 +183,159 @@ def parse_args(argv: list[str] | None) -> argparse.Namespace:
         "took the job service down three times.",
     )
     return parser.parse_args(argv)
+
+
+@dataclass(frozen=True)
+class Diagnostics:
+    """What the headline recall is made of — computed after it, never able to move it."""
+
+    low: float
+    high: float
+    above: float
+    cut: float
+    single: int
+    single_recall: float
+    many: int
+    many_recall: float
+
+
+def diagnose(rows: list[dict], args: argparse.Namespace) -> Diagnostics:
+    """A per-probe interval and a split by read count.
+
+    Both are **post-hoc** and reported beside the pre-registered number, never in place of
+    it: a threshold reinterpreted after seeing which side of it the data fell is not a
+    threshold.
+
+    The unit of correlation is the probe, not the read — reads of one allele share its
+    locus, its depth and its k-mer's uniqueness — so the interval is bootstrapped over
+    probes. Resampling reads would give a far tighter interval that means nothing.
+    """
+    rng = random.Random(args.seed)
+    replicates = []
+    for _ in range(args.bootstrap):
+        drawn = [rows[rng.randrange(len(rows))] for _ in rows]
+        replicates.append(_recall(drawn))
+    replicates.sort()
+    cut = EXPECTED_READS * MULTI_LOCUS_MULTIPLE
+    single = [row for row in rows if row["reads"] <= cut]
+    many = [row for row in rows if row["reads"] > cut]
+    return Diagnostics(
+        low=replicates[int(0.025 * len(replicates))],
+        high=replicates[int(0.975 * len(replicates)) - 1],
+        above=sum(value >= args.threshold for value in replicates) / len(replicates),
+        cut=cut,
+        single=len(single),
+        single_recall=_recall(single),
+        many=len(many),
+        many_recall=_recall(many),
+    )
+
+
+def report(found: Diagnostics, threshold: float) -> None:
+    print(f"\nper-probe bootstrap 95% interval: [{found.low:.4f}, {found.high:.4f}]")
+    print(f"  replicates at or above {threshold:.2f}: {found.above:.1%}")
+    print(
+        f"\nprobes at a single-copy read count (<= {found.cut:.0f}, expected "
+        f"{EXPECTED_READS:.1f}): {found.single} — recall {found.single_recall:.4f}"
+    )
+    print(
+        f"probes found in more reads than one locus can supply: {found.many} — "
+        f"recall {found.many_recall:.4f}"
+    )
+
+
+def summarise(
+    args: argparse.Namespace,
+    witness_json: dict,
+    probes: list,
+    outside: list,
+    witness_height: int,
+    kept_height: int,
+    recall: float,
+    missed_height: int,
+    diagnostics: Diagnostics,
+    verdict: str,
+    per_probe_rows: list[dict],
+) -> dict:
+    """The result as JSON — one place, so the entry and the figure read the same numbers."""
+    return {
+        "hypothesis": "H021",
+        "threshold": args.threshold,
+        "witness_alleles_drawn": len(witness_json["alleles"]),
+        "witness_probes_used": len(probes),
+        "excluded_not_covered_by_bait": len(outside),
+        "witness_reads": witness_height,
+        "kept": kept_height,
+        "recall": round(recall, 6),
+        "probes_with_a_lost_read": missed_height,
+        "verdict": verdict,
+        "method": (
+            "reads found by mva.reads.scan for 31-mers centred on heterozygous alleles the "
+            "delivered callset reports inside the baited region, joined to the bait sweep's "
+            "survivors on the flowcell coordinate (lane, tile, x, y). Alleles whose "
+            "reference k-mer the uniqueness filter dropped as repeated are excluded and "
+            "counted: the bait does not cover them, so they would test a design decision "
+            "rather than the stride."
+        ),
+        "bootstrap": {
+            "unit": "probe — reads of one allele share its locus, depth and k-mer uniqueness",
+            "replicates": args.bootstrap,
+            "interval_95": [round(diagnostics.low, 6), round(diagnostics.high, 6)],
+            "share_at_or_above_threshold": round(diagnostics.above, 4),
+        },
+        "by_read_count": {
+            "expected_reads_single_copy": round(EXPECTED_READS, 2),
+            "cut": round(diagnostics.cut, 1),
+            "single_copy_probes": diagnostics.single,
+            "single_copy_recall": round(diagnostics.single_recall, 6),
+            "multi_locus_probes": diagnostics.many,
+            "multi_locus_recall": round(diagnostics.many_recall, 6),
+            "note": (
+                "post-hoc stratification, reported beside the pre-registered number and "
+                "never in place of it. A probe found in many times the reads one locus can "
+                "supply is matching several places; the strike has no positions and counts "
+                "those reads, while the bait correctly did not recover them."
+            ),
+        },
+        "per_probe": per_probe_rows,
+    }
+
+
+#: The flowcell coordinate: the only identity the read store keeps, and the key R1 and R2
+#: of one fragment share.
+JOIN_KEYS = ["lane", "read", "tile", "x", "y"]
+
+
+def join_to_survivors(result: dict, reads_path: Path):
+    """Which of the strike's reads the bait also kept, overall and per probe."""
+    hits = pl.DataFrame(result["hits"]) if result.get("hits") else pl.DataFrame()
+    if hits.height == 0:
+        return None, None, None
+    witness = hits.select(
+        pl.col("lane").cast(pl.Int64),
+        pl.col("read_num").cast(pl.Int64).alias("read"),
+        pl.col("tile").cast(pl.Int64),
+        pl.col("x").cast(pl.Int64),
+        pl.col("y").cast(pl.Int64),
+        pl.col("probe"),
+    ).unique()
+    recovered = (
+        pl.scan_parquet(reads_path)
+        .select([pl.col(name).cast(pl.Int64) for name in JOIN_KEYS])
+        .unique()
+        .collect(engine="streaming")
+    )
+    kept = witness.join(recovered, on=JOIN_KEYS, how="semi")
+    per_probe = (
+        witness.join(
+            kept.with_columns(pl.lit(True).alias("kept")),
+            on=[*JOIN_KEYS, "probe"],
+            how="left",
+        )
+        .group_by("probe")
+        .agg(pl.len().alias("reads"), pl.col("kept").fill_null(False).sum().alias("kept"))
+    )
+    return witness, kept, per_probe
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -198,78 +368,40 @@ def main(argv: list[str] | None = None) -> int:
         print(f"strike returned in {time.perf_counter() - started:.0f}s")
         hits_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
 
-    hits = pl.DataFrame(result["hits"]) if result.get("hits") else pl.DataFrame()
-    if hits.height == 0:
+    witness, kept, per_probe_frame = join_to_survivors(result, reads_path)
+    if witness is None:
         print("the strike found no reads for any witness probe — nothing to test against")
         return 1
-
-    witness = hits.select(
-        pl.col("lane").cast(pl.Int64),
-        pl.col("read_num").cast(pl.Int64).alias("read"),
-        pl.col("tile").cast(pl.Int64),
-        pl.col("x").cast(pl.Int64),
-        pl.col("y").cast(pl.Int64),
-        pl.col("probe"),
-    ).unique()
-
-    recovered = (
-        pl.scan_parquet(reads_path)
-        .select(
-            pl.col("lane").cast(pl.Int64),
-            pl.col("read").cast(pl.Int64),
-            pl.col("tile").cast(pl.Int64),
-            pl.col("x").cast(pl.Int64),
-            pl.col("y").cast(pl.Int64),
-        )
-        .unique()
-        .collect(engine="streaming")
-    )
-
-    keys = ["lane", "read", "tile", "x", "y"]
-    kept = witness.join(recovered, on=keys, how="semi")
     recall = kept.height / witness.height
-
-    per_probe = (
-        witness.join(kept.with_columns(pl.lit(True).alias("kept")), on=[*keys, "probe"], how="left")
-        .group_by("probe")
-        .agg(
-            pl.len().alias("reads"),
-            pl.col("kept").fill_null(False).sum().alias("kept"),
-        )
-    )
-    missed = per_probe.filter(pl.col("kept") < pl.col("reads"))
+    per_probe_rows = per_probe_frame.sort("probe").to_dicts()
+    missed = per_probe_frame.filter(pl.col("kept") < pl.col("reads"))
 
     print(f"\nwitness reads found by the strike: {witness.height:,}")
     print(f"  also present in the bait survivors: {kept.height:,}")
     print(f"  recall: {recall:.4f}")
-    print(f"  probes with at least one read lost: {missed.height} of {per_probe.height}")
+    print(f"  probes with at least one read lost: {missed.height} of {per_probe_frame.height}")
+    diagnostics = diagnose(per_probe_rows, args)
+    report(diagnostics, args.threshold)
+
     verdict = "supported" if recall >= args.threshold else "refuted"
     print(f"\nH021 (recall >= {args.threshold:.2f}): {verdict.upper()}")
     if verdict == "refuted":
         print("  pre-registered response: lower the stride and repeat the pass before")
         print("  interpreting any allele the bait produced.")
 
-    payload = {
-        "hypothesis": "H021",
-        "threshold": args.threshold,
-        "witness_alleles_drawn": len(witness_json["alleles"]),
-        "witness_probes_used": len(probes),
-        "excluded_not_covered_by_bait": len(outside),
-        "witness_reads": witness.height,
-        "kept": kept.height,
-        "recall": round(recall, 6),
-        "probes_with_a_lost_read": missed.height,
-        "verdict": verdict,
-        "method": (
-            "reads found by mva.reads.scan for 31-mers centred on heterozygous alleles the "
-            "delivered callset reports inside the baited region, joined to the bait sweep's "
-            "survivors on the flowcell coordinate (lane, tile, x, y). Alleles whose "
-            "reference k-mer the uniqueness filter dropped as repeated are excluded and "
-            "counted: the bait does not cover them, so they would test a design decision "
-            "rather than the stride."
-        ),
-        "per_probe": per_probe.sort("probe").to_dicts(),
-    }
+    payload = summarise(
+        args,
+        witness_json,
+        probes,
+        outside,
+        witness.height,
+        kept.height,
+        recall,
+        missed.height,
+        diagnostics,
+        verdict,
+        per_probe_rows,
+    )
     path = args.out / "bait-recall.json"
     path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     print(f"\nwrote {path}")

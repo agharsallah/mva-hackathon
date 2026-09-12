@@ -87,7 +87,58 @@ half-present.
 
 ### H021 — the bait's recall
 
-*(pending — the witness strike is running)*
+250 witness alleles were drawn; **213 sit inside the bait** (their reference 31-mer survived
+the uniqueness filter) and 37 were excluded because the bait never covered them — including
+those would test entry 085's uniqueness decision rather than the stride. The strike returned
+reads for **195** of the 213.
+
+| | |
+|---|---|
+| witness reads found by the strike | **4,451** |
+| also present in the bait's survivors | **4,029** |
+| **recall** | **0.9052** |
+| probes losing at least one read | 15 of 195 |
+
+**H021 is supported, and only just.** Twenty-four more lost reads would have refuted it.
+
+**The interval says the margin is not real precision.** The correlated unit is the probe —
+reads of one allele share its locus, its depth and its k-mer's uniqueness — so the interval
+is bootstrapped over probes, not reads: **[0.815, 0.974]**, with **59 %** of replicates
+clearing 0.90. The measurement cannot separate 0.85 from 0.95, and resampling reads instead
+would have produced a tight interval that meant nothing.
+
+**Where the lost reads are, computed after the verdict and reported beside it.** A
+single-copy heterozygous 31-mer is expected in depth × (L − k + 1)/L ÷ 2 = **17.6** reads at
+44×; the median witness probe was found in **20**, which is the arithmetic working. Splitting
+on twice that expectation:
+
+| Probes | n | Reads | Recall |
+|---|---|---|---|
+| read count consistent with one locus (≤ 35) | 184 | 3,683 | **0.9832** |
+| found in more reads than one locus can supply | 11 | 768 | **0.5312** |
+
+One probe alone was found in 171 reads — ten times what a single-copy allele can produce —
+and **none** of them is in the survivor set. That is the signature of an alternate k-mer
+matching several places in the genome: the strike has no positions and counts every read
+containing the sequence, while the bait was right not to recover reads that came from
+somewhere else.
+
+**This is a gap in the witness design, and it is mine.** The witness filter checked each
+allele's **reference** k-mer against the bait, because that is what `bait.npy` contains —
+but the strike searches for the **alternate** k-mer, whose uniqueness was never checked. An
+alternate k-mer can match several loci when its reference counterpart does not. A later run
+should filter witnesses on the alternate k-mer's genome-wide count, and the stratification
+above is the diagnostic, not a restatement of the result: **the pre-registered number stays
+0.9052.**
+
+### Verdict on H021
+
+**Supported at confidence 0.65**, recorded as register revision 2. The transparent heuristic
+suggested 0.86 and was overridden down, with the reason stated in the register: the point
+estimate clears the line, the interval does not exclude values well below it, and what lifts
+the number above the bootstrap's own 0.59 is a post-hoc split that points at the witness
+design rather than at the stride. Confidence here is a triage heuristic, not a calibrated
+posterior.
 
 ## Assumptions and limitations
 
@@ -116,7 +167,7 @@ half-present.
 | recovery | within 0.5–2× of 12,377,989 | 14,657,560 (1.18×) | **pass** |
 | every fragment paired | published rows = 2 × fragments | 15,773,226 = 2 × 7,886,613 | **pass** |
 | orphans filled | all, or the shortfall named | 1,115,666 of 1,115,666 | **pass** |
-| H021 recall | ≥ 0.90 | *pending* | |
+| H021 recall | ≥ 0.90 | 0.9052, interval [0.815, 0.974] | **pass, narrowly** |
 
 ## What this hands to the next entry
 
