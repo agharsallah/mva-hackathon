@@ -106,8 +106,8 @@ def _tally(
     by_contig: dict[str, tuple[np.ndarray, np.ndarray, np.ndarray]] = {}
     claimed: dict[str, np.ndarray] = {}
     offset = 0
-    for contig, part in frame.group_by("contig", maintain_order=True):
-        name = str(contig[0])
+    for key, part in frame.group_by("contig", maintain_order=True):
+        name = str(key[0])
         pos = part["pos"].to_numpy()
         mapq = part["mapq"].to_numpy()
         by_contig[name] = (pos, mapq, np.arange(offset, offset + pos.size))
