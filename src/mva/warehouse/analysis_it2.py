@@ -20,9 +20,10 @@ callers said, not about what survived a filter of ours.
 in another table is what stops an absence being quoted without it.
 """
 
+from .analysis_reference import PROTEIN_ALTERING, RARE_RECESSIVE_AF
 from .derivation import RESULT, SOURCE, Derivation
 
-__all__ = ["IT2_CONCORDANCE", "IT2_DERIVATIONS", "IT2_READ_PAIRS", "IT2_SV_CONSENSUS"]
+__all__ = ["IT2_CONCORDANCE", "IT2_DERIVATIONS", "IT2_READ_PAIRS", "IT2_SCORED_PAIRS"]
 
 #: Bin width for the interval join, as :mod:`mva.warehouse.analysis_coding` uses.
 BIN = 100_000
@@ -32,12 +33,6 @@ HET = "('0/1', '1/0', '0|1', '1|0')"
 
 #: Homozygous-ALT genotypes.
 HOM_ALT = "('1/1', '1|1')"
-
-#: A call within this many bases of a baited interval's boundary is a bait-edge call: the
-#: coverage cliff and unpaired mates there are what a read-pair caller reads as a deletion.
-#: Measured rather than assumed — 14.1 % of recovered fragments matched on one mate only
-#: (entry 087), which is the empirical size of this zone.
-BAIT_EDGE_BP = 1_000
 
 
 IT2_CONCORDANCE = Derivation(
@@ -124,8 +119,8 @@ IT2_READ_PAIRS = Derivation(
         FROM {SOURCE}.coding_regions
     ),
     exon_bins AS (
-        SELECT chrom, start, "end", gene, lo + offset AS bin
-        FROM exons, LATERAL (SELECT unnest(range(0, hi - lo + 1)) AS offset)
+        SELECT chrom, start, "end", gene, lo + step AS bin
+        FROM exons, LATERAL (SELECT unnest(range(0, hi - lo + 1)) AS step)
     ),
     called AS (
         SELECT caller, chrom, pos, ref, alt, genotype, filters,
@@ -171,53 +166,83 @@ IT2_READ_PAIRS = Derivation(
 )
 
 
-IT2_SV_CONSENSUS = Derivation(
-    name="it2_sv_consensus",
+IT2_SCORED_PAIRS = Derivation(
+    name="it2_scored_pairs",
     question=(
-        "Which structural variants are supported by two different method classes, away from "
-        "the bait's edges, and how much does short-read precision allow us to trust each "
-        "type? (H023)"
+        "Which genes carry two rare protein-altering heterozygous alleles, or one such "
+        "allele homozygous — the claim H016 and H020 were actually written about?"
     ),
-    reads_loaded=("it2_sv_calls",),
+    depends_on=("coding_annotations",),
+    reads_loaded=("it2_read_alleles", "it2_bait_density", "it2_exon_depth"),
     sql=f"""
-    WITH calls AS (
-        SELECT * FROM {RESULT}.it2_sv_calls WHERE sv_type <> 'BND'
+    WITH ours AS (
+        SELECT DISTINCT chrom, pos, ref, alt, genotype
+        FROM {RESULT}.it2_read_alleles
     ),
-    -- Truvari's criteria, written out: same type and contig, both breakpoints within a
-    -- slop window, and reciprocal overlap of at least half. An ad hoc distance test could
-    -- be tuned after seeing the answer; this cannot.
-    paired AS (
-        SELECT a.caller AS caller_a, b.caller AS caller_b,
-               a.method_class AS class_a, b.method_class AS class_b,
-               a.chrom, a.pos, a.end_pos, a.sv_type, a.sv_len,
-               a.bait_edge OR b.bait_edge AS bait_edge,
-               a.precision_prior,
-               a.genotype
-        FROM calls a
-        JOIN calls b
-          ON a.chrom = b.chrom
-         AND a.sv_type = b.sv_type
-         AND a.method_class <> b.method_class
-         AND abs(a.pos - b.pos) <= {BAIT_EDGE_BP}
-         AND abs(a.end_pos - b.end_pos) <= {BAIT_EDGE_BP}
-         AND (
-              least(a.end_pos, b.end_pos) - greatest(a.pos, b.pos)
-             ) * 1.0
-             / nullif(greatest(a.end_pos - a.pos, b.end_pos - b.pos), 0) >= 0.5
+    -- The annotation is the platform's, keyed by allele, and the blind protocol allows it:
+    -- it says what a variant *is*, not what iteration 1 concluded about this child.
+    --
+    -- An allele the delivered callset never reported has no row here, so it cannot be
+    -- judged rare or protein-altering and is **not** counted. That is a floor on this
+    -- table, not a ceiling: the read-derived alleles absent from the callset are exactly
+    -- the ones a second caller exists to find, and they are counted separately below so
+    -- the blind spot has a size.
+    scored AS (
+        SELECT o.chrom, o.pos, o.ref, o.alt, o.genotype,
+               a.gene, a.consequence, a.impact, a.gnomad_af, a.clin_sig
+        FROM ours o
+        JOIN {SOURCE}.coding_annotations a
+          ON o.chrom = a.chrom AND o.pos = a.pos AND o.ref = a.ref AND o.alt = a.alt
+    ),
+    qualifying AS (
+        SELECT *
+        FROM scored
+        WHERE impact IN {PROTEIN_ALTERING}
+          AND (gnomad_af IS NULL OR gnomad_af < {RARE_RECESSIVE_AF})
+    ),
+    per_gene AS (
+        SELECT gene,
+               count(*) AS qualifying_alleles,
+               count(*) FILTER (genotype IN {HET}) AS rare_het,
+               count(*) FILTER (genotype IN {HOM_ALT}) AS rare_hom_alt,
+               count(*) FILTER (impact = 'HIGH') AS truncating,
+               count(*) FILTER (clin_sig LIKE '%pathogenic%') AS clinvar_flagged
+        FROM qualifying
+        GROUP BY gene
+    ),
+    unannotated AS (
+        SELECT a.gene, count(*) AS alleles_without_annotation
+        FROM ours o
+        JOIN {SOURCE}.coding_regions a
+          ON o.chrom = a.chrom AND o.pos BETWEEN a.start AND a."end"
+        LEFT JOIN {SOURCE}.coding_annotations ann
+          ON o.chrom = ann.chrom AND o.pos = ann.pos AND o.ref = ann.ref AND o.alt = ann.alt
+        WHERE ann.chrom IS NULL
+        GROUP BY a.gene
     )
-    SELECT sv_type,
-           bait_edge,
-           count(*) AS consensus_calls,
-           count(DISTINCT (chrom, pos, end_pos)) AS distinct_events,
-           round(min(precision_prior), 3) AS precision_prior,
-           round(median(sv_len), 0) AS median_length
-    FROM paired
-    GROUP BY sv_type, bait_edge
-    ORDER BY bait_edge, consensus_calls DESC
+    SELECT d.symbol,
+           d.tier,
+           coalesce(p.rare_het, 0) AS rare_het,
+           coalesce(p.rare_hom_alt, 0) AS rare_hom_alt,
+           coalesce(p.truncating, 0) AS truncating,
+           coalesce(p.clinvar_flagged, 0) AS clinvar_flagged,
+           (coalesce(p.rare_het, 0) >= 2 OR coalesce(p.rare_hom_alt, 0) >= 1) AS biallelic,
+           coalesce(u.alleles_without_annotation, 0) AS unannotated_alleles,
+           d.density AS bait_density,
+           round(dep.mean_depth, 2) AS mean_depth
+    FROM {RESULT}.it2_bait_density d
+    LEFT JOIN per_gene p ON p.gene = d.symbol
+    LEFT JOIN unannotated u ON u.gene = d.symbol
+    LEFT JOIN (
+        SELECT symbol, avg(mean_depth) AS mean_depth
+        FROM {RESULT}.it2_exon_depth
+        GROUP BY symbol
+    ) dep ON dep.symbol = d.symbol
+    ORDER BY biallelic DESC, truncating DESC, clinvar_flagged DESC, rare_het DESC, d.symbol
     """,
 )
 
 
 #: Registered in :data:`mva.warehouse.analysis.DERIVATIONS` so the runner, the CLI's
 #: ``--only`` choices and the provenance page all pick them up without a second list.
-IT2_DERIVATIONS = (IT2_CONCORDANCE, IT2_READ_PAIRS, IT2_SV_CONSENSUS)
+IT2_DERIVATIONS = (IT2_CONCORDANCE, IT2_READ_PAIRS, IT2_SCORED_PAIRS)

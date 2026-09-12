@@ -29,6 +29,7 @@ from .analysis_clinvar import CLINVAR_DERIVATIONS
 from .analysis_coding import CODING_DERIVATIONS
 from .analysis_funnel import FUNNEL_DERIVATIONS
 from .analysis_it2 import IT2_DERIVATIONS
+from .analysis_it2_sv import IT2_SV_DERIVATIONS
 from .analysis_karyogram import KARYOGRAM_DERIVATIONS
 from .analysis_pairs import PAIR_DERIVATIONS
 from .analysis_reference import REFERENCE_DERIVATIONS
@@ -247,6 +248,7 @@ DERIVATIONS: tuple[Derivation, ...] = (
     + CLINVAR_DERIVATIONS
     + CODING_DERIVATIONS
     + IT2_DERIVATIONS
+    + IT2_SV_DERIVATIONS
 )
 
 #: Written alongside the outputs so a result in the database can be traced to a run.
