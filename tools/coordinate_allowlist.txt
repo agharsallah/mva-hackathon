@@ -11,3 +11,19 @@
 40161282  # synthetic VEP fixture in tests/test_annotate_vep.py; 0 rows in variants_raw (checked 2026-09-05)
 40161283  # synthetic VEP fixture in tests/test_annotate_vep.py; 0 rows in variants_raw (checked 2026-09-05)
 40143000  # synthetic position in tests/test_submission.py and tests/test_science_export.py; 0 rows in variants_raw (checked 2026-09-05)
+
+# --- DNA literals (rule 4) -------------------------------------------------------------
+# A run of >= 25 bases in a tracked file. A position names a place in a public coordinate
+# system; a sequence is the genome itself. Add a line only after establishing that the
+# sequence carries no proband-specific information, and say how that was established.
+AGAGATAGGAAGCGGGACGAGGAAAGGAACA  # the store's probe k-mer, quoted in docs/step-0/methodology/012 and 024, docs/step-0/reads-storage.md and tests/test_reads_store.py. Drawn from a read, but verified reference-identical: exactly 1 occurrence in GRCh38 no-alt+hs38d1 over 2,934,842,387 windows (mva.kmer.uniqueness.count_in_genome, 2026-09-12), so every human's read at that locus spells it the same and it states nothing about this child. A future probe should be cut from the reference instead.
+ACGTACGTACGTACGTACGTACGTACGTAC  # synthetic placeholder in app/src/pages/probes/ProbeConsole.tsx — a repeating ACGT motif, not sequence
+ACGTACGTACGTACGTTCGTACGTACGTAC  # synthetic placeholder in app/src/pages/probes/ProbeConsole.tsx — the same motif with one deliberate mismatch
+AACCGGTTACGTACGTACGTACGTACGTACG  # synthetic test vector, tests/test_kmer.py
+CGTACGTACGTACGTACGTACGTAACCGGTT  # synthetic test vector (the reverse complement of the line above), tests/test_kmer.py
+ACGTTGCAACGTACGTGGCCAATTCCGGATCG  # synthetic test vector, tests/test_kmer.py
+ACGTTGCAGGCCAATTCCGGATCGTTAA  # synthetic test vector, tests/test_kmer.py
+ACGTTGCAGGCCAATTCCGGATCGTTAACCGGTTAA  # synthetic test vector, tests/test_kmer.py
+ACGTTGCAGGCCAATTCCGGATCGTTAACCGGTTAAGGCCTTAACCGGTTAACCGGTTAACC  # synthetic test read, tests/test_reads_bait.py
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT  # synthetic poly-T test read (a homopolymer, not a locus), tests/test_reads_bait.py
+GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGA  # synthetic poly-G test read (the NovaSeq no-signal pattern), tests/test_reads_store.py

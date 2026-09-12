@@ -79,6 +79,36 @@ def test_spec_positions_are_read_from_the_spec(gate, tmp_path):
     assert gate.spec_positions(tmp_path / "missing.json") == set()
 
 
+# The sequences below are assembled at runtime rather than written out, so this test
+# module does not itself contain a DNA literal the gate would (correctly) flag.
+def _seq(unit: str, times: int) -> str:
+    return unit * times
+
+
+def test_a_long_dna_run_is_a_leak(gate):
+    found = scan(gate, f"probe {_seq('ACGT', 8)} was searched")
+    assert [f.rule for f in found] == ["DNA literal (32 bp)"]
+
+
+def test_a_run_shorter_than_the_floor_passes(gate):
+    assert scan(gate, f"motif {_seq('ACGT', 6)} only") == []
+
+
+def test_an_allowlisted_dna_run_passes(gate):
+    run = _seq("ACGT", 8)
+    assert scan(gate, f"probe {run}", allowed=[run]) == []
+
+
+def test_the_dna_allowlist_is_case_insensitive(gate):
+    run = _seq("ACGT", 8)
+    assert scan(gate, f"probe {run.lower()}", allowed=[run]) == []
+
+
+def test_a_base_run_inside_a_longer_token_is_not_sequence(gate):
+    # a hash or an identifier can contain 25 ACGT characters by chance; sequence stands alone
+    assert scan(gate, f"sha256:9f{_seq('ACGT', 8)}7e") == []
+
+
 def test_the_repository_itself_is_clean(gate):
     """The gate CI runs, run here too: the tree must hold no patient coordinate."""
     findings = gate.scan(

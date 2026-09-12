@@ -7,7 +7,7 @@ position of the proband into a hypothesis, an evidence claim, a doc, or any expo
 methodology entry pasted a submission row with both candidate coordinates in it. This is
 the gate that would have caught it.
 
-Three rules, each cheap and explicit:
+Four rules, each cheap and explicit:
 
 1. **Submission rows.** A line shaped like a Track-1 CSV data row
    (``PROBAND01,chr<x>,<pos>,...``) is a leak wherever it stands.
@@ -20,6 +20,13 @@ Three rules, each cheap and explicit:
    ``,chr15,``). The span is public knowledge and its two endpoints are exempt; a number
    inside it is a variant position by construction. Synthetic examples are listed, with
    their reason, in ``tools/coordinate_allowlist.txt``.
+4. **DNA literals.** A run of ``MIN_DNA_RUN`` or more ``[ACGTN]`` characters. A position
+   names a place in a public coordinate system; a *sequence* is the patient's genome
+   itself, and rules 1-3 cannot see it. Iteration 2 turned 42 Mb of reference into 31-mers
+   and swept a billion reads with them, so this is the first step where patient sequence
+   can plausibly reach a tracked file. Reference sequence is not exempt by being
+   reference: it is exempt by being **verified** absent of patient information, one entry
+   at a time, in the same allowlist.
 
 Scans every tracked and untracked-but-not-ignored text file, except the trees named in
 ``SKIP_PREFIXES`` (public reference tables and the organisers' template are coordinates by
@@ -60,6 +67,16 @@ DEFAULT_SPAN = ("15", 40140984, 40241137)
 #: A Track-1 CSV data row whose first position has 7 or more digits. Synthetic rows in the
 #: docs use short positions (``12345``, ``100000``) precisely so they can never be real.
 SUBMISSION_ROW = re.compile(r"^\s*PROBAND\d+,chr\w+,\d{7,},")
+
+#: Shortest run of bases treated as a DNA literal. 25 is below the k=31 the bait uses, so a
+#: single bait k-mer cannot slip through, and far above the longest DNA-alphabet token that
+#: occurs by accident (``CAG``, ``ATAC``, a ``TATA`` box, a column named ``cat``). Runs are
+#: matched case-insensitively: a soft-masked reference writes them lowercase.
+MIN_DNA_RUN = 25
+
+#: A bare run of bases, not embedded in a longer alphanumeric token (which would make it an
+#: identifier, a hash or a base64 blob rather than sequence).
+DNA_RUN = re.compile(rf"(?<![A-Za-z0-9])[ACGTNacgtn]{{{MIN_DNA_RUN},}}(?![A-Za-z0-9])")
 
 
 @dataclass(frozen=True)
@@ -103,14 +120,19 @@ def spec_positions(spec_path: Path) -> set[str]:
 
 
 def load_allowlist(path: Path) -> set[str]:
-    """Positions known not to be the proband's: one per line, ``<pos>  # reason``."""
+    """Things known not to be the proband's: one per line, ``<token>  # reason``.
+
+    A token is a position (rule 3) or a DNA literal (rule 4); both are compared as exact
+    strings, so one file stays the single owner of "verified not patient data". DNA
+    literals are stored uppercase and compared uppercased.
+    """
     if not path.is_file():
         return set()
     allowed = set()
     for line in path.read_text(encoding="utf-8").splitlines():
         token = line.split("#", 1)[0].strip()
         if token:
-            allowed.add(token)
+            allowed.add(token.upper() if token[:1].isalpha() else token)
     return allowed
 
 
@@ -135,6 +157,12 @@ def scan_text(
         if SUBMISSION_ROW.match(line):
             findings.append(Finding(rel, number, "submission row", excerpt))
             continue
+        for run in DNA_RUN.finditer(line):
+            if run.group().upper() not in allowed:
+                findings.append(
+                    Finding(rel, number, f"DNA literal ({len(run.group())} bp)", excerpt)
+                )
+                break
         for pos in positions:
             if re.search(rf"(?<!\d){pos}(?!\d)", line):
                 findings.append(Finding(rel, number, "spec position", excerpt))
