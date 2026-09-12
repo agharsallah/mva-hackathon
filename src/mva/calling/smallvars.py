@@ -54,13 +54,21 @@ class Callset:
 
 
 def _index(vcf: Path) -> tuple[Path, list[Invocation]]:
-    """bgzip-compress and tabix-index, which every downstream tool assumes."""
+    """Sort, compress and index — the three things every downstream tool assumes.
+
+    The sort is not defensive tidiness. A caller given a target list walks it in the order
+    it was handed, and baited intervals of two overlapping genes are not in coordinate
+    order globally however carefully the list is sorted by start: a long interval emits
+    calls past the start of the next one. tabix then refuses the file with "Unsorted
+    positions on sequence", after the calling has already been paid for.
+    """
     invocations = []
-    if vcf.suffix != ".gz":
-        invocations.append(run(["bgzip", "-f", str(vcf)]))
-        vcf = vcf.with_suffix(vcf.suffix + ".gz")
-    invocations.append(run(["tabix", "-f", "-p", "vcf", str(vcf)]))
-    return vcf, invocations
+    sorted_vcf = vcf.with_suffix("") if vcf.suffix == ".gz" else vcf
+    sorted_vcf = sorted_vcf.with_name(f"{sorted_vcf.stem}.sorted.vcf.gz")
+    invocations.append(run(["bcftools", "sort", "-Oz", "-o", str(sorted_vcf), str(vcf)]))
+    vcf.unlink(missing_ok=True)
+    invocations.append(run(["tabix", "-f", "-p", "vcf", str(sorted_vcf)]))
+    return sorted_vcf, invocations
 
 
 def _count(vcf: Path) -> int:

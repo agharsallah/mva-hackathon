@@ -33,6 +33,7 @@ calls the edges alone produce.
 
 from __future__ import annotations
 
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -82,11 +83,14 @@ def delly(
     provenance = started_now("delly")
     provenance.inputs = {"reference": str(reference), "bam": str(bam)}
     provenance.parameters = {
-        "caller": "delly call",
+        "caller": "delly sr",
         "method_class": METHOD_CLASS["delly"],
         "excluded_regions": str(exclude) if exclude else "none",
     }
-    argv = ["delly", "call", "-g", str(reference), "-o", str(target)]
+    # Delly 2.x renamed the short-read caller from `call` to `sr`; 1.x's spelling exits 1
+    # with "Unrecognized command", which is the kind of failure that looks like a broken
+    # BAM until you read the stderr.
+    argv = ["delly", "sr", "-g", str(reference), "-o", str(target)]
     if exclude is not None:
         argv += ["-x", str(exclude)]
     argv.append(str(bam))
@@ -117,8 +121,11 @@ def dysgu(
     working state where it can be looked at.
     """
     out_dir.mkdir(parents=True, exist_ok=True)
+    # dysgu creates its own working directory and refuses one that already exists, so it
+    # is named here and not made here.
     scratch = out_dir / f"{stem}.dysgu.tmp"
-    scratch.mkdir(parents=True, exist_ok=True)
+    if scratch.exists():
+        shutil.rmtree(scratch)
     target = out_dir / f"{stem}.dysgu.vcf"
     provenance = started_now("dysgu")
     provenance.inputs = {"reference": str(reference), "bam": str(bam)}

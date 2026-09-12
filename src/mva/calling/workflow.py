@@ -149,6 +149,7 @@ def run_all(
     regions: Path,
     out_dir: Path,
     *,
+    coverage_regions: Path | None = None,
     stem: str = "baited",
     threads: int = 4,
     depth_floor: float = 10.0,
@@ -157,9 +158,11 @@ def run_all(
 ) -> Workflow:
     """Align the recovered reads and take them to normalised, phased calls.
 
-    ``regions`` is the BED of baited intervals: the aligner sees the whole genome so a
-    read that belongs elsewhere goes elsewhere, and then every measurement and every
-    caller is restricted to where the bait actually was.
+    ``regions`` is the BED the callers are restricted to — globally merged, so their output
+    is in coordinate order. ``coverage_regions`` is the same territory named per gene, which
+    is what a depth table has to be keyed by; it defaults to ``regions`` when the caller has
+    only one shape. The aligner sees the whole genome either way, so a read that belongs
+    elsewhere goes elsewhere and is then excluded by position.
     """
     out_dir.mkdir(parents=True, exist_ok=True)
     workflow = Workflow(out_dir=out_dir)
@@ -181,7 +184,9 @@ def run_all(
     workflow.depth = _timed(
         workflow,
         "coverage",
-        lambda: coverage_module.per_region(bam, regions, out_dir, stem=stem, threads=threads),
+        lambda: coverage_module.per_region(
+            bam, coverage_regions or regions, out_dir, stem=stem, threads=threads
+        ),
         detail=lambda result: {
             "regions": len(result.regions),
             "below_floor": len(result.below(depth_floor)),

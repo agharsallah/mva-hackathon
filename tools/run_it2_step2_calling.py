@@ -68,11 +68,20 @@ def download(key: str, target: Path) -> Path:
 
 def write_regions_bed(
     step1: Path, coding: Path, out: Path, *, wide_pad: int, narrow_pad: int
-) -> Path:
-    """The baited intervals as BED, named by gene, merged so no base is measured twice.
+) -> tuple[Path, Path]:
+    """The baited intervals as BED — twice, because two consumers need different shapes.
 
     These are the same intervals the bait was cut from, built by the same code path, so
     "where the bait was" and "where we called" cannot drift apart.
+
+    **Per gene**, for coverage: each interval keeps its gene's name, and overlapping genes
+    keep their own rows, because "how deep is this gene" is the question being asked.
+
+    **Globally merged**, for the callers: overlapping genes produce overlapping intervals,
+    and a caller walks its target list in order — so a long interval emits calls past the
+    start of the next one and the output is not in coordinate order, which tabix refuses
+    after the calling has already been paid for. Merging also stops the same site being
+    called twice under two gene names.
     """
     from mva.calling.coverage import write_bed
     from mva.kmer.bait import merge
@@ -89,9 +98,16 @@ def write_regions_bed(
         rows.extend(
             (interval.contig, interval.start, interval.end, gene) for interval in merge(intervals)
         )
-    path = write_bed(rows, out)
-    print(f"regions -> {path} ({len(rows):,} merged intervals)")
-    return path
+    per_gene = write_bed(rows, out)
+    everything = [interval for intervals in labelled.values() for interval in intervals]
+    merged_rows = [
+        (interval.contig, interval.start, interval.end, f"{interval.contig}_{interval.start}")
+        for interval in merge(everything)
+    ]
+    for_calling = write_bed(merged_rows, out.with_name(out.name.replace(".bed", "-merged.bed")))
+    print(f"regions -> {per_gene} ({len(rows):,} per-gene intervals)")
+    print(f"        -> {for_calling} ({len(merged_rows):,} merged, for the callers)")
+    return per_gene, for_calling
 
 
 def _existing_reads(fastq_dir: Path) -> tuple[Path | None, Path | None]:
@@ -158,7 +174,7 @@ def main(argv: list[str] | None = None) -> int:
         r1, r2 = written.files[1], written.files[2]
     print(f"reads: {r1}, {r2}")
 
-    bed = write_regions_bed(
+    per_gene_bed, calling_bed = write_regions_bed(
         args.step1,
         args.coding,
         args.out / "baited-regions.bed",
@@ -170,8 +186,9 @@ def main(argv: list[str] | None = None) -> int:
         args.reference,
         r1,
         r2,
-        bed,
+        calling_bed,
         args.out / "calls",
+        coverage_regions=per_gene_bed,
         threads=args.threads,
         depth_floor=args.depth_floor,
         with_sv=not args.no_sv,
