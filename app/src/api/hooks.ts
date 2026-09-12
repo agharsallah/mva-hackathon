@@ -63,6 +63,7 @@ import type {
   SearchResolution,
   SequencingYieldRow,
   SourceObjectRow,
+  Step2Payload,
   StepsPayload,
   StructureGene,
   Submissions,
@@ -360,6 +361,12 @@ export const usePhenotypeDelta = () => useEndpoint<PhenotypeDelta>('/api/phenoty
  */
 export const useSteps = (iteration?: string) =>
   useEndpoint<StepsPayload>('/api/steps', iteration ? { iteration } : undefined);
+
+/**
+ * Iteration 2 step 2's result tables. Aggregates only — the four tables behind it carry
+ * real genomic positions and none of their rows crosses this boundary.
+ */
+export const useStep2 = () => useEndpoint<Step2Payload>('/api/steps/step-2');
 
 const LIVE_STATES = new Set(['queued', 'running']);
 

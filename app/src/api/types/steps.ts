@@ -67,3 +67,123 @@ export interface StepsPayload {
   blind: BlindState;
   steps: StepRow[];
 }
+
+/**
+ * Iteration 2 step 2's result tables: `GET /api/steps/step-2`.
+ *
+ * **Aggregates only.** Four of the six tables behind this carry real genomic positions of
+ * the proband; none of their rows is served. Every block is grouped in SQL before it
+ * leaves the database, so there is no coordinate on this surface to withhold.
+ */
+
+/** One row of the bait pass funnel, as the loader wrote it. */
+export interface Step2Funnel {
+  stage: string;
+  metric: string;
+  value: number;
+  note: string | null;
+}
+
+/** One tier, counted both ways — the step's central finding is that they disagree. */
+export interface Step2Tier {
+  tier: string;
+  genes: number;
+  /** Genes with two rare protein-altering alleles, or one homozygous. */
+  biallelic_filtered: number;
+  /** The same enumeration with no rarity or consequence filter at all. */
+  biallelic_unfiltered: number;
+  truncating: number;
+  clinvar_flagged: number;
+  /** Qualifying alleles the delivered callset never reported. */
+  novel_qualifying: number;
+  unannotated: number;
+}
+
+/** One gene the filter leaves standing, target or decoy. */
+export interface Step2Lead {
+  symbol: string;
+  tier: string;
+  rare_het: number;
+  rare_hom_alt: number;
+  truncating: number;
+  clinvar_flagged: number;
+  novel_qualifying: number;
+  /** Surviving unique k-mers per base: how reachable this gene was. */
+  bait_density: number;
+  mean_depth: number;
+}
+
+/** One caller against the delivered callset, where both emit a genotype. */
+export interface Step2Concordance {
+  caller: string;
+  co_called: number;
+  agreed: number;
+  concordance: number;
+  delivered_pass: number;
+  concordance_at_pass: number;
+}
+
+/** Structural-variant consensus by type, split by the two artefact controls. */
+export interface Step2Sv {
+  sv_type: string;
+  bait_edge: boolean;
+  /** True when the call spans the unbaited gaps the bait itself created. */
+  spans_unbaited: boolean;
+  consensus_calls: number;
+  distinct_events: number;
+  /** Kosugi 2019's short-read precision for this type. A prior, not our measurement. */
+  precision_prior: number | null;
+  median_length: number | null;
+  shortest: number | null;
+  longest: number | null;
+}
+
+/** Depth per gene, never per interval — the interval rows carry coordinates. */
+export interface Step2Depth {
+  symbol: string;
+  tier: string;
+  intervals: number;
+  mean_depth: number;
+  below_floor: number;
+}
+
+/** Read-backed phasing as a size distribution. */
+export interface Step2Phase {
+  blocks: number;
+  phased_variants: number;
+  median_span: number;
+  longest_span: number;
+  blocks_with_two_or_more: number;
+}
+
+/** A gene the bait could not reach. Carry this beside any "nothing found here". */
+export interface Step2Unreachable {
+  symbol: string;
+  tier: string;
+  density: number;
+  lost: number;
+}
+
+/** Targets against decoys, under one filter. */
+export interface Step2Contrast {
+  filter: string;
+  target_genes: number;
+  target_biallelic: number;
+  target_rate: number;
+  decoy_genes: number;
+  decoy_biallelic: number;
+  decoy_rate: number;
+}
+
+/** GET /api/steps/step-2 */
+export interface Step2Payload {
+  funnel: Step2Funnel[];
+  by_tier: Step2Tier[];
+  leads: Step2Lead[];
+  concordance: Step2Concordance[];
+  sv_consensus: Step2Sv[];
+  depth: Step2Depth[];
+  phase: Step2Phase[];
+  unreachable: Step2Unreachable[];
+  contrast: Step2Contrast[];
+}

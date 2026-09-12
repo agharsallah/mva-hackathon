@@ -1,6 +1,7 @@
 import type {
   HealthDependencies,
   ReferenceProvenanceRow,
+  Step2Payload,
   StepsPayload,
   Submissions,
   Track2,
@@ -91,6 +92,13 @@ export const platformEntries: Record<string, Entry> = {
     source:
       'CAPTURED /api/steps reply (src/mva/science/steps.py + warehouse.hypotheses + docs/iteration2/*/methodology)',
     load: () => rows<StepsPayload>('steps'),
+  },
+  // CAPTURED from the live endpoint. Aggregates only by design: the four tables behind it
+  // carry real proband positions and none of their rows is served, so this file is safe to
+  // commit for the same reason the endpoint is safe to serve.
+  '/api/steps/step-2': {
+    source: 'CAPTURED /api/steps/step-2 reply (pg.results.it2_*, aggregated in SQL)',
+    load: () => rows<Step2Payload>('steps-step-2'),
   },
   '/api/science/hypotheses': {
     source: 'INVENTED research register',

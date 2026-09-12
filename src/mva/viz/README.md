@@ -101,6 +101,8 @@ flowchart LR
 | `search.py` | Search query grammar (region / gene / rsID), span cap, the region read | `classify`, `region`, `Resolved` |
 | `search_resolve.py` | Resolves a gene symbol or rsID to a window (panel BED / callset / Ensembl) | `resolve`, `resolve_gene`, `resolve_rsid` |
 | `science.py` | Reads the hypothesis/evidence research register, tolerating absent tables | `hypotheses`, `evidence`, `add_routes` |
+| `steps.py` | One iteration's step map, its claims and the blind gate's checklist per step | `payload`, `add_routes` |
+| `steps_it2.py` | Iteration 2 step 2's six result tables, **aggregated in SQL** so no proband position reaches the API | `payload`, `BLOCKS`, `add_routes` |
 
 ### Catalog / semantics (what data exists, and what it means)
 
@@ -185,6 +187,8 @@ All paths are prefixed `/api` except `/health`. `refresh=true` on a cached route
 | GET | `/api/search` | Resolve a gene/region/rsID query to a window (cached where safe) |
 | GET | `/api/science/hypotheses` | Research register: every hypothesis revision (or `table_exists: false`) |
 | GET | `/api/science/evidence` | Research register: every evidence row (or `table_exists: false`) |
+| GET | `/api/steps` | One iteration's research steps, with claims, figures and the blind-gate checklist |
+| GET | `/api/steps/step-2` | Iteration 2 step 2's tables as aggregates — funnel, tiers, leads, concordance, SV consensus, depth, phase, reachability (no positions) |
 
 ## How to run it
 

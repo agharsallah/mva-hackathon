@@ -116,6 +116,16 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/Steps'),
   },
   {
+    id: 'step2',
+    path: '/steps/step-2',
+    navLabel: 'Step 2',
+    title: 'Step 2 — what the raw reads say',
+    group: 'decide',
+    description:
+      'The second, independent read of the case: 1.07 billion raw reads filtered by a k-mer bait and called without the vendor pipeline — with the gate that failed and the decoy set that matched.',
+    load: () => import('../../pages/Step2'),
+  },
+  {
     id: 'science',
     path: '/science',
     navLabel: 'Science',
