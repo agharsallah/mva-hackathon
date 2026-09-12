@@ -37,6 +37,9 @@ uv run mypy
 echo "==> coordinate gate"
 uv run python tools/check_coordinates.py --quiet
 
+echo "==> blind gate"
+uv run python tools/check_blind.py --quiet
+
 echo "==> iteration folders"
 uv run python tools/check_iteration.py --quiet
 

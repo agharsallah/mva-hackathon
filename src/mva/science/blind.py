@@ -42,6 +42,38 @@ FORBIDDEN_INPUTS: dict[str, str] = {
 #: Entry filenames that are records *about* the gate rather than analyses under it.
 _SKIP = ("README.md",)
 
+#: Passages that **name** a forbidden input in order to declare it was *not* read.
+#:
+#: The gate matches identifiers, so a sentence saying "we did not read X" trips the same
+#: rule as one saying "we read X" — and ``methodology/`` is append-only, so the sentence
+#: cannot be rewritten once filed. This is the same escape hatch
+#: ``tools/coordinate_allowlist.txt`` gives the coordinate gate, built the same way: an
+#: exact quotation plus a reason, so a reviewer can check the claim instead of trusting
+#: it, and any later edit to the entry invalidates the exemption rather than widening it.
+#:
+#: Keyed by ``(entry filename, exact passage)``. A forbidden name is still a violation
+#: wherever it appears **outside** these passages.
+_O88_DISCLAIMER = (
+    "**No iteration-1 candidate table was read.** `results.gene_biallelic`,\n"
+    "`results.coding_candidates` and the decode table are untouched; the comparison "
+    "they exist\nfor is step 6's."
+)
+
+NOT_READ_DECLARATIONS: dict[tuple[str, str], str] = {
+    ("088-the-alleles-the-reads-carry.md", _O88_DISCLAIMER): (
+        "the entry's own statement that it read neither table — the disclaimer, not a dependency"
+    ),
+}
+
+
+def _uncovered(text: str, entry: str, named: str) -> bool:
+    """Whether ``named`` appears anywhere outside this entry's non-read declarations."""
+    remaining = text
+    for filename, passage in NOT_READ_DECLARATIONS:
+        if filename == entry and passage in remaining:
+            remaining = remaining.replace(passage, "")
+    return named in remaining
+
 
 @dataclass(frozen=True)
 class Violation:
@@ -116,7 +148,7 @@ def read_entry(path: Path, step: str) -> Entry:
     violations = tuple(
         Violation(path, named, reason)
         for named, reason in FORBIDDEN_INPUTS.items()
-        if named in text
+        if _uncovered(text, path.name, named)
     )
     return Entry(
         path=path,
