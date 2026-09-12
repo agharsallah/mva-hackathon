@@ -119,10 +119,26 @@ def _from_json(data: dict) -> VepRecord:
     return VepRecord(variant=variant, **data)
 
 
-def plan(settings: Postgres, batch_size: int, checkpoint: Path = DEFAULT_CHECKPOINT) -> dict:
+#: How a run finds the alleles to ask about: ``(connection, settings) -> [Variant]``.
+#: Defaulted to :func:`alleles`, which reads the genome-wide table. Iteration 2's
+#: read-derived alleles come from a different table and land in a different one, and the
+#: loop below is the same in both cases — so the source is an argument, not a fork.
+Source = Callable[[object, Postgres], list[Variant]]
+
+
+def _default_source(connection, settings: Postgres) -> list[Variant]:
+    return alleles(connection, settings.result_schema)
+
+
+def plan(
+    settings: Postgres,
+    batch_size: int,
+    checkpoint: Path = DEFAULT_CHECKPOINT,
+    source: Source | None = None,
+) -> dict:
     """What a run would ask for, without asking. Backs ``--dry-run``."""
     with attached(settings, read_only=True) as connection:
-        wanted = alleles(connection, settings.result_schema)
+        wanted = (source or _default_source)(connection, settings)
     done = Checkpoint(checkpoint).load()
     todo = [variant for variant in wanted if variant not in done]
     return {
@@ -143,6 +159,10 @@ def run(
     annotator=None,
     progress: Callable[[str], None] | None = None,
     workers: int = 1,
+    source: Source | None = None,
+    table: str = CODING_TABLE,
+    transform: str = TRANSFORM,
+    source_note: str = "the proband's ALT alleles inside coding_regions",
 ) -> dict:
     """Read the coding alleles, annotate the ones not yet checkpointed, land the table.
 
@@ -154,7 +174,7 @@ def run(
     say = progress or (lambda _line: None)
     store = Checkpoint(checkpoint)
     with attached(settings) as connection:
-        wanted = alleles(connection, settings.result_schema)
+        wanted = (source or _default_source)(connection, settings)
         records = store.load()
         todo = [variant for variant in wanted if variant not in records]
         say(f"alleles {len(wanted):,}  checkpointed {len(records):,}  to ask {len(todo):,}")
@@ -190,35 +210,33 @@ def run(
                 client.close()
 
         ordered = [records[variant] for variant in wanted if variant in records]
-        source = (
+        source_label = (
             f"ensembl-vep-rest release={version.get('release', '?')} "
             f"assembly={version.get('assembly', '?')}"
         )
         annotated_at = datetime.now(UTC).replace(tzinfo=None)
-        rows = write(connection, settings.schema, ordered, source, annotated_at, CODING_TABLE)
+        rows = write(connection, settings.schema, ordered, source_label, annotated_at, table)
 
         lineage.ensure_tables(connection, settings.schema)
         lineage.record(
             connection,
             settings.schema,
             target_schema=settings.schema,
-            target_table=CODING_TABLE,
+            target_table=table,
             target_rows=rows,
             source_kind="api",
             source_ref=f"{base_url}/vep/homo_sapiens/region",
-            source_version=source,
-            transform=f"{TRANSFORM}: every distinct allele of "
-            f"{settings.result_schema}.{ALLELES_TABLE} (the proband's ALT alleles inside "
-            "coding_regions), annotated by Ensembl VEP REST in batches of "
-            f"{min(batch_size, 200)}; resumed from {len(wanted) - len(todo):,} "
-            "checkpointed alleles",
-            tool="mva-warehouse annotate-coding",
+            source_version=source_label,
+            transform=f"{transform}: {source_note}, annotated by Ensembl VEP REST in "
+            f"batches of {min(batch_size, 200)}; resumed from "
+            f"{len(wanted) - len(todo):,} checkpointed alleles",
+            tool=f"mva-warehouse {transform}",
             notes=f"requests this run: {getattr(client, 'requests', 0)}; checkpoint {checkpoint}",
         )
 
     return {
         "version": version,
-        "source": source,
+        "source": source_label,
         "rows": rows,
         "asked": len(todo),
         "annotated": sum(1 for r in ordered if r.consequence),

@@ -130,6 +130,21 @@ def sv_figure(rows: list[dict]) -> go.Figure:
     return figure
 
 
+def _h020_note(row: dict) -> str:
+    """H020's verdict, stated from the table rather than typed beside it.
+
+    The claim is one-sided — *fewer* candidates per decoy gene — so the sentence names the
+    direction as well as the p, and a p above 0.5 means the decoys did at least as well.
+    """
+    verdict = "refuted" if row["decoy_rate"] >= row["target_rate"] else "supported in direction"
+    return (
+        f"H020, {row['view']}: targets {row['target_biallelic']}/{row['target_genes']} = "
+        f"{row['target_rate']:.4f} against decoys {row['decoy_biallelic']}/"
+        f"{row['decoy_genes']} = {row['decoy_rate']:.4f}, Fisher one-sided "
+        f"p = {row['fisher_one_sided_p']:.3f} — {verdict}."
+    )
+
+
 def build(source: Path) -> Section:
     data = json.loads((source / "analysis.json").read_text(encoding="utf-8"))
     leads = data["leads"]
@@ -181,13 +196,7 @@ def build(source: Path) -> Section:
                     "Same genes, same reads, same enumeration — only the filter differs."
                 ),
                 figure=filter_figure(data["by_tier"], data["unfiltered_by_tier"]),
-                notes=[
-                    (
-                        "H020 is supported in direction only: four events against two is "
-                        "Fisher one-sided p = 0.343, which cannot separate a twofold "
-                        "difference from none."
-                    ),
-                ],
+                notes=[_h020_note(row) for row in data["target_vs_decoy"]],
             ),
             Exhibit(
                 slug="sv-artefacts",

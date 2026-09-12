@@ -21,6 +21,7 @@ in another table is what stops an absence being quoted without it.
 """
 
 from .analysis_reference import PROTEIN_ALTERING, RARE_RECESSIVE_AF
+from .annotate_reads import EXON_PAD, READ_TABLE
 from .derivation import RESULT, SOURCE, Derivation
 
 __all__ = ["IT2_CONCORDANCE", "IT2_DERIVATIONS", "IT2_READ_PAIRS", "IT2_SCORED_PAIRS"]
@@ -172,26 +173,37 @@ IT2_SCORED_PAIRS = Derivation(
         "Which genes carry two rare protein-altering heterozygous alleles, or one such "
         "allele homozygous — the claim H016 and H020 were actually written about?"
     ),
-    depends_on=("coding_annotations",),
+    depends_on=("coding_annotations", READ_TABLE, "coding_regions"),
     reads_loaded=("it2_read_alleles", "it2_bait_density", "it2_exon_depth"),
     sql=f"""
     WITH ours AS (
         SELECT DISTINCT chrom, pos, ref, alt, genotype
         FROM {RESULT}.it2_read_alleles
     ),
-    -- The annotation is the platform's, keyed by allele, and the blind protocol allows it:
-    -- it says what a variant *is*, not what iteration 1 concluded about this child.
+    -- Annotation is the platform's, keyed by allele, and the blind protocol allows it: it
+    -- says what a variant *is*, not what iteration 1 concluded about this child.
     --
-    -- An allele the delivered callset never reported has no row here, so it cannot be
-    -- judged rare or protein-altering and is **not** counted. That is a floor on this
-    -- table, not a ceiling: the read-derived alleles absent from the callset are exactly
-    -- the ones a second caller exists to find, and they are counted separately below so
-    -- the blind spot has a size.
+    -- **Both** annotation tables, and the distinction between them is kept.
+    -- ``coding_annotations`` is built from the delivered callset, so joining only it made
+    -- this query a circle: a route built to find what the vendor missed could score only
+    -- what the vendor found. ``it2_read_annotations`` holds the alleles the read callers
+    -- found and the callset never reported, annotated by the same VEP release — and
+    -- ``novel`` carries which is which, because "our caller alone saw this" is evidence,
+    -- not a footnote.
+    annotations AS (
+        SELECT chrom, pos, ref, alt, gene, consequence, impact, gnomad_af, clin_sig,
+               FALSE AS novel
+        FROM {SOURCE}.coding_annotations
+        UNION ALL
+        SELECT chrom, pos, ref, alt, gene, consequence, impact, gnomad_af, clin_sig,
+               TRUE AS novel
+        FROM {SOURCE}.{READ_TABLE}
+    ),
     scored AS (
         SELECT o.chrom, o.pos, o.ref, o.alt, o.genotype,
-               a.gene, a.consequence, a.impact, a.gnomad_af, a.clin_sig
+               a.gene, a.consequence, a.impact, a.gnomad_af, a.clin_sig, a.novel
         FROM ours o
-        JOIN {SOURCE}.coding_annotations a
+        JOIN annotations a
           ON o.chrom = a.chrom AND o.pos = a.pos AND o.ref = a.ref AND o.alt = a.alt
     ),
     qualifying AS (
@@ -206,17 +218,23 @@ IT2_SCORED_PAIRS = Derivation(
                count(*) FILTER (genotype IN {HET}) AS rare_het,
                count(*) FILTER (genotype IN {HOM_ALT}) AS rare_hom_alt,
                count(*) FILTER (impact = 'HIGH') AS truncating,
-               count(*) FILTER (clin_sig LIKE '%pathogenic%') AS clinvar_flagged
+               count(*) FILTER (clin_sig LIKE '%pathogenic%') AS clinvar_flagged,
+               count(*) FILTER (novel) AS novel_qualifying
         FROM qualifying
         GROUP BY gene
     ),
+    -- What is still unscoreable. Measured over the same exon window the annotation run
+    -- used ({EXON_PAD} bp), so this column means "asked and unanswered", not "never
+    -- asked" — those are different failures and only the first is VEP's.
     unannotated AS (
         SELECT a.gene, count(*) AS alleles_without_annotation
         FROM ours o
         JOIN {SOURCE}.coding_regions a
-          ON o.chrom = a.chrom AND o.pos BETWEEN a.start AND a."end"
-        LEFT JOIN {SOURCE}.coding_annotations ann
-          ON o.chrom = ann.chrom AND o.pos = ann.pos AND o.ref = ann.ref AND o.alt = ann.alt
+          ON o.chrom = a.chrom
+         AND o.pos BETWEEN a.start - {EXON_PAD} AND a."end" + {EXON_PAD}
+        LEFT JOIN annotations ann
+          ON o.chrom = ann.chrom AND o.pos = ann.pos
+         AND o.ref = ann.ref AND o.alt = ann.alt
         WHERE ann.chrom IS NULL
         GROUP BY a.gene
     )
@@ -226,6 +244,7 @@ IT2_SCORED_PAIRS = Derivation(
            coalesce(p.rare_hom_alt, 0) AS rare_hom_alt,
            coalesce(p.truncating, 0) AS truncating,
            coalesce(p.clinvar_flagged, 0) AS clinvar_flagged,
+           coalesce(p.novel_qualifying, 0) AS novel_qualifying,
            (coalesce(p.rare_het, 0) >= 2 OR coalesce(p.rare_hom_alt, 0) >= 1) AS biallelic,
            coalesce(u.alleles_without_annotation, 0) AS unannotated_alleles,
            d.density AS bait_density,

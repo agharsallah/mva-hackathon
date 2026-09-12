@@ -15,6 +15,7 @@ from mva.warehouse import reference
 from mva.warehouse.analysis import DERIVATIONS, SOURCE, by_name, resolve
 from mva.warehouse.annotate import ANNOTATIONS_TABLE
 from mva.warehouse.annotate_coding import CODING_TABLE
+from mva.warehouse.annotate_reads import READ_TABLE
 from mva.warehouse.catalog import NOTES, OVERRIDES, table_name
 from mva.warehouse.cli_vcf import RAW_TABLE
 from mva.warehouse.derivation import RESULT
@@ -157,16 +158,17 @@ class TestDerivations:
                 )
 
     def test_dependencies_are_tables_that_staging_produces(self):
-        # Five producers land tables in the ingest schema: `stage` + `pg-ingest` for the
+        # Six producers land tables in the ingest schema: `stage` + `pg-ingest` for the
         # profile-derived tables the catalogue describes and for the committed public
         # reference tables, `vcf-stage` + `vcf-ingest` for the callset's raw layer,
-        # `annotate-panel` for the panel's VEP answers and `annotate-coding` for the
-        # genome-wide ones. A derivation may read any of them.
+        # `annotate-panel` for the panel's VEP answers, `annotate-coding` for the
+        # genome-wide ones and `annotate-it2-reads` for the read-derived alleles the
+        # delivered callset never reported. A derivation may read any of them.
         produced = (
             {dataset.table for dataset in OVERRIDES.values()}
             | set(NOTES)
             | {dataset.table for dataset in reference.datasets()}
-            | {RAW_TABLE, ANNOTATIONS_TABLE, CODING_TABLE, SCALARS_TABLE}
+            | {RAW_TABLE, ANNOTATIONS_TABLE, CODING_TABLE, READ_TABLE, SCALARS_TABLE}
         )
         for item in DERIVATIONS:
             for table in item.depends_on:
