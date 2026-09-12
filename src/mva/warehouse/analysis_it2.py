@@ -46,7 +46,8 @@ IT2_CONCORDANCE = Derivation(
         "Where both a read-derived caller and the delivered callset emit a genotype at the "
         "same substitution, how often do they agree? (H022)"
     ),
-    depends_on=("it2_read_alleles", "variants_raw"),
+    depends_on=("variants_raw",),
+    reads_loaded=("it2_read_alleles",),
     sql=f"""
     WITH delivered AS (
         SELECT chrom,
@@ -113,7 +114,8 @@ IT2_READ_PAIRS = Derivation(
         "Which genes carry two heterozygous or one homozygous read-derived allele, and does "
         "the decoy set carry as many per gene? (H016, H020)"
     ),
-    depends_on=("it2_read_alleles", "it2_exon_depth", "it2_bait_density", "coding_regions"),
+    depends_on=("coding_regions",),
+    reads_loaded=("it2_read_alleles", "it2_exon_depth", "it2_bait_density"),
     sql=f"""
     WITH exons AS (
         SELECT chrom, start, "end", gene,
@@ -176,7 +178,7 @@ IT2_SV_CONSENSUS = Derivation(
         "the bait's edges, and how much does short-read precision allow us to trust each "
         "type? (H023)"
     ),
-    depends_on=("it2_sv_calls",),
+    reads_loaded=("it2_sv_calls",),
     sql=f"""
     WITH calls AS (
         SELECT * FROM {RESULT}.it2_sv_calls WHERE sv_type <> 'BND'

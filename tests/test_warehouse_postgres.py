@@ -135,15 +135,25 @@ class TestDerivations:
         for item in DERIVATIONS:
             assert safe_identifier(item.name) == item.name
 
-    def test_every_derivation_reads_the_source_schema(self):
+    def test_every_derivation_reads_a_table_it_declared(self):
+        # Originally "every derivation reads the ingest schema", which held while every
+        # input was ingested. A derivation over tables a *loader* wrote — an aligner's
+        # depths, a caller's alleles — reads only the result schema and is not thereby
+        # untethered: what matters is that it declares what it reads, either way.
         for item in DERIVATIONS:
-            assert SOURCE in item.sql, f"{item.name} never references the ingest schema"
+            assert SOURCE in item.sql or item.reads_loaded, (
+                f"{item.name} reads neither the ingest schema nor a declared loaded table"
+            )
 
     def test_declared_dependencies_are_actually_referenced(self):
         for item in DERIVATIONS:
             for table in item.depends_on:
                 assert f"{SOURCE}.{table}" in item.sql, (
                     f"{item.name} declares {table} but does not select from it"
+                )
+            for table in item.reads_loaded:
+                assert f"{RESULT}.{table}" in item.sql, (
+                    f"{item.name} declares loaded {table} but does not select from it"
                 )
 
     def test_dependencies_are_tables_that_staging_produces(self):
@@ -161,6 +171,21 @@ class TestDerivations:
         for item in DERIVATIONS:
             for table in item.depends_on:
                 assert table in produced, f"{item.name} depends on unproduced {table}"
+
+    def test_loaded_dependencies_are_tables_a_loader_writes(self):
+        # The other producer of result-schema tables: `pg-load-it2` and
+        # `pg-load-it2-step2`, which put rows from a non-SQL pipeline where SQL can read
+        # them. A name here that no loader writes is the same mistake as an unproduced
+        # ingest dependency, and is caught the same way.
+        from mva.warehouse import it2_step2_tables, it2_tables
+
+        loadable = set(it2_step2_tables.SCHEMAS) | {
+            it2_tables.TARGETS_TABLE,
+            it2_tables.DECOYS_TABLE,
+        }
+        for item in DERIVATIONS:
+            for table in item.reads_loaded:
+                assert table in loadable, f"{item.name} reads {table}, which no loader writes"
 
     def test_resolve_replaces_every_placeholder(self):
         for item in DERIVATIONS:

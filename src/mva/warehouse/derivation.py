@@ -27,6 +27,13 @@ class Derivation:
     question: str
     sql: str
     depends_on: tuple[str, ...] = ()
+    #: Result-schema tables this derivation reads that were **loaded** rather than
+    #: ingested or derived — written by a loader from files a pipeline outside SQL
+    #: produced (an aligner, a caller, a k-mer sweep). They are dependencies exactly like
+    #: :attr:`depends_on`, but they live in ``{res}`` and no staging verb makes them, so
+    #: the registry's invariants have to be able to tell the two apart rather than
+    #: treating an unrecognised name as a mistake.
+    reads_loaded: tuple[str, ...] = ()
 
 
 def resolve(sql: str, source_schema: str, result_schema: str | None = None) -> str:

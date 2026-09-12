@@ -177,9 +177,38 @@ class TestPlaceholders:
     def test_res_falls_back_to_src_when_one_schema_is_given(self):
         assert resolve(f"{SOURCE}.a {RESULT}.b", "S") == "S.a S.b"
 
-    def test_coding_derivations_are_registered_last_and_in_order(self):
+    def test_coding_derivations_run_in_dependency_order(self):
+        # The three build on each other through `{res}`, which only resolves if the runner
+        # reaches them in this order. They were once the last thing registered and the
+        # test said so; iteration 2 added a group after them, so what is asserted now is
+        # the property that actually matters — contiguous, and in dependency order.
         names = [d.name for d in DERIVATIONS]
-        assert names[-3:] == ["coding_alleles", "coding_candidates", "gene_biallelic"]
+        first = names.index("coding_alleles")
+        assert names[first : first + 3] == [
+            "coding_alleles",
+            "coding_candidates",
+            "gene_biallelic",
+        ]
+
+    def test_nothing_reads_a_result_table_before_it_is_built(self):
+        # The general form of the rule above, over the whole registry: a derivation may
+        # reference `{res}.x` only if x is declared earlier or is written by a loader.
+        from mva.warehouse import it2_step2_tables, it2_tables
+
+        loaded = set(it2_step2_tables.SCHEMAS) | {
+            it2_tables.TARGETS_TABLE,
+            it2_tables.DECOYS_TABLE,
+        }
+        built: set[str] = set()
+        for item in DERIVATIONS:
+            for other in DERIVATIONS:
+                if f"{RESULT}.{other.name}" in item.sql:
+                    assert other.name in built or other.name == item.name, (
+                        f"{item.name} reads {other.name} before it is built"
+                    )
+            for table in item.reads_loaded:
+                assert table in loaded, f"{item.name} reads unloaded {table}"
+            built.add(item.name)
 
 
 class TestCodingAlleles:

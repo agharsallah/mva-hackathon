@@ -38,9 +38,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-import httpx
 import polars as pl
 
+from mva.reads import client as reads_client
 from mva.warehouse.settings import setting
 
 DEFAULT_OUT = Path("build/it2/step-2")
@@ -62,70 +62,6 @@ SCAN_LIMIT = 1000
 WAIT_SECONDS = 25
 #: Total polling budget — the strike is one pass over 1.07 billion reads.
 POLL_ROUNDS = 160
-
-
-def submit_all(probes: list[tuple[str, str]], base: str, token: str, *, chunk: int) -> dict:
-    """Run the strike in batches of ``chunk`` probes and merge the hits.
-
-    One pass over 1.07 billion reads costs the same for 1 probe or 500 — that is the
-    strike's whole design — so batching is normally wrong. It is right here for a reason
-    that has nothing to do with speed: at ~200 probes the survivor scan repeatedly took
-    the shared job service down mid-pass, three times, while the batch size step-0 entry
-    027 measured and proved (20) has never failed. Correctness is identical either way;
-    what changes is whether the run finishes.
-
-    The cost is real and is stated: N/chunk full passes instead of one.
-    """
-    merged: list[dict] = []
-    batches = [probes[start : start + chunk] for start in range(0, len(probes), chunk)]
-    print(f"{len(probes)} probes in {len(batches)} batches of up to {chunk}")
-    for index, batch in enumerate(batches, start=1):
-        print(f"batch {index}/{len(batches)} …")
-        result = submit_scan(batch, base, token)
-        merged.extend(result.get("hits", []))
-        print(f"  {len(result.get('hits', [])):,} hits ({result.get('seconds')}s)")
-    return {"hits": merged, "batches": len(batches)}
-
-
-def submit_scan(probes: list[tuple[str, str]], base: str, token: str, job_id: str = "") -> dict:
-    """Run the 500-probe strike as a job and wait for it.
-
-    ``job_id`` attaches to a strike that is already running instead of starting another —
-    a full pass over the store is an hour of someone's machine, and a dropped connection
-    on this side is no reason to spend it twice.
-    """
-    headers = {"X-API-Key": token}
-    body = {
-        "probes": [{"name": name, "sequence": sequence} for name, sequence in probes],
-        "limit": SCAN_LIMIT,
-    }
-    with httpx.Client(base_url=base, timeout=60.0, headers=headers) as client:
-        if not job_id:
-            started = client.post("/scan", json=body)
-            started.raise_for_status()
-            job_id = started.json()["id"]
-            print(f"strike job {job_id}: {len(probes)} probes, one pass over the store")
-        else:
-            print(f"attaching to strike job {job_id}")
-        for round_number in range(POLL_ROUNDS):
-            try:
-                reply = client.get(
-                    f"/jobs/{job_id}/wait", params={"timeout": WAIT_SECONDS}, timeout=60.0
-                )
-                reply.raise_for_status()
-                job = reply.json()
-            except (httpx.HTTPError, httpx.RemoteProtocolError) as dropped:
-                # The job does not care that our connection did. Say so and poll again.
-                print(f"  … poll {round_number} dropped ({type(dropped).__name__}); retrying")
-                time.sleep(5)
-                continue
-            if job["state"] in {"done", "failed", "cancelled", "lost"}:
-                if job["state"] != "done":
-                    raise SystemExit(f"strike {job['state']}: {job.get('error')}")
-                return job["result"]
-            if round_number % 4 == 0:
-                print(f"  … still running ({int(job.get('elapsed_seconds') or 0)}s)")
-    raise SystemExit(f"strike {job_id} did not finish within the polling budget")
 
 
 def _recall(rows: list[dict]) -> float:
@@ -362,9 +298,11 @@ def main(argv: list[str] | None = None) -> int:
         token = setting("MVA_API_TOKEN") or ""
         started = time.perf_counter()
         if args.job:
-            result = submit_scan(probes, base.rstrip("/"), token, job_id=args.job)
+            result = reads_client.wait_for(args.job, base, token)
         else:
-            result = submit_all(probes, base.rstrip("/"), token, chunk=args.chunk)
+            result = reads_client.scan_batched(
+                probes, base, token, chunk=args.chunk, limit=SCAN_LIMIT
+            )
         print(f"strike returned in {time.perf_counter() - started:.0f}s")
         hits_path.write_text(json.dumps(result, indent=2), encoding="utf-8")
 
