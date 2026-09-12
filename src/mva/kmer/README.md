@@ -21,6 +21,7 @@ This package does four things and knows nothing else:
 | `bait.py` | "Cut these reference intervals into a k-mer set, and tell me how big the job is" |
 | `uniqueness.py` | "How many times does each of my k-mers occur in the whole genome?" |
 | `membership.py` | "Do these reads share a k-mer with that set?" |
+| `count.py` | "How many reads carry each of these k-mers?" |
 
 It is a **leaf**: it imports no other `mva` package, takes no database connection, and
 never sees patient sequence — the bait is cut from the public reference.
@@ -78,6 +79,15 @@ flowchart LR
   k-mers, so ~96 % of misses are rejected with one memory access instead of ~25. Turning
   it off (`bits=None`) changes the runtime and not one bit of the result — there is a test
   that asserts exactly that.
+- **Membership is not count, and the difference is a stride.** `hits()` samples every
+  16th window and is still exact, because a read overlapping the bait by ≥ 46 bases hits
+  *some* sampled window. `count.tally()` has no stride at all: a probe occurring once in a
+  read is seen by exactly one window, and sampling would miss it fifteen times in sixteen.
+  Selecting reads and counting them are different questions on the same bytes.
+- **A read pair is one molecule.** `count.hits_per_read()` returns which read carried which
+  probe so a caller can collapse R1 and R2 of a fragment before counting; at a ~266 bp
+  fragment against 2 × 150 bp of read the two overlap, and a probe in the overlap is one
+  observation of one piece of DNA, not two.
 - **Uniqueness reverses the usual direction.** KMC and Jellyfish build a table of *every*
   k-mer in the genome. We only need the occurrence count of the 40 M we already hold, so
   the reference streams past the bait instead of into a new table. That is why this stage
