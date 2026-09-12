@@ -30,13 +30,23 @@ once the plan is agreed, and its output is again a submission
 | Step | Goal | Status for submission 2 |
 |---|---|---|
 | [1](step-1/README.md) | Which genes do the child's symptoms alone nominate — a target set chosen with the DNA never read? | **run 2026-09-11** — 404-row tiered target set + 396 decoys; H013 supported, H012/H014/H015 refuted ([084](step-1/methodology/084-the-blind-target-set.md)) |
-| [2](step-2/README.md) | Which alleles do the raw reads carry in the target set, discovered without the vendor caller? | open — claims H016–H020 filed, nothing run |
-| 3 | Alignment-free genotype and copy number | planned |
+| [2](step-2/README.md) | Which alleles do the raw reads carry in the target set, discovered without the vendor caller? | **run 2026-09-12** — 14.7 M reads recovered from 1.07 B, 131,530 alleles, 98.87 % mapped; H016/H019/H020/H021/H022 supported, H023 refuted ([085](step-2/methodology/085-the-bait-and-where-it-runs.md)–[088](step-2/methodology/088-the-alleles-the-reads-carry.md)) |
+| [3](step-3/README.md) | Alignment-free genotype and copy number | open — [handover written](step-3/README.md), claims not yet filed |
 | 4 | Likelihood-ratio ranking over the VCF | planned |
 | 5 | Knowledge engine | planned |
 | 6 | Fusion and unblinding | planned |
 | 7 | Track 2 enrichment | planned |
 | 8 | The mosaic aneuploidy bound | planned |
+
+**What step 2 added, and the finding that changes how every later step reports a rate.**
+A reference k-mer bait recovered 1.36752 % of 1.07 billion reads against a bait covering
+1.361 % of the genome, and two callers sharing no code with the vendor's reproduced its
+genotypes at 99.57 % and 99.27 %. But enumerating biallelic genes *without* a rarity and
+consequence filter makes the **decoys win** — 57.3 % against core's 50.8 % — because
+everyone carries about two heterozygous differences per gene. With the filter the ordering
+inverts (core 1.69 %, decoy 0.51 %). **The discriminating power is in the filter, not in
+the symptom-derived gene list**, and any step quoting a target-versus-decoy rate has to say
+which version it means.
 
 **The finding that already changes the plan.** Step 1 measured the phenotype-only ranker
 instead of trusting it: held-out recall@300 is **0.36**, not the 0.90 H012 predicted, and

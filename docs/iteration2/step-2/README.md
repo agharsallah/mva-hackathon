@@ -1,8 +1,8 @@
 # Step 2 — discover the alleles from the reads
 
-**Standing:** opened 2026-09-11 by step 1's handover; the instrument is built and the bait
-is cut (entry [085](methodology/085-the-bait-and-where-it-runs.md)); **the pass has not
-run**. Iteration 2, `step-2`.
+**Standing:** **complete, 2026-09-12.** The pass ran, the alleles were called and loaded,
+and all five claims have verdicts. Hands over to
+[step 3](../step-3/README.md). Iteration 2, `step-2`.
 
 **Goal** (from `src/mva/science/steps.py`):
 
@@ -25,16 +25,35 @@ step to a Linux server or a cloud VM, and everything but one stage now runs here
 That last row is load-bearing. A gene absent from the target set is **not** excluded by
 step 2; it is simply not baited. The genome-wide safety net is step 4.
 
-## Claims
+## Results
 
-| Id | Status | Claim |
-|---|---|---|
-| H016 | proposed | at least one target gene carries a biallelic candidate in the read-derived calls |
-| H019 | proposed | for the top candidate pair, read-backed phasing closes the chain or names the gap that prevents it |
-| H020 | proposed | the decoy set yields fewer biallelic candidates per gene than the target set |
-| **H021** | proposed | the reference k-mer bait at its chosen stride recovers ≥ 90 % of the reads carrying a known alternate allele inside the baited region |
-| **H022** | proposed | the read-derived calls agree with the delivered callset at ≥ 99 % of sites where both call |
-| **H023** | proposed | no SV supported by two callers of different method classes, outside the bait-edge zone, removes or duplicates a coding exon of a gene that also carries a rare heterozygous protein-altering allele |
+| | |
+|---|---|
+| reads swept | 1,071,835,104 → **14,657,560 matched (1.36752 %**, against a bait covering 1.361 % of the genome) |
+| fragments recovered | 7,886,613, **every one complete** |
+| aligned | 15,829,813 records, **98.87 % mapped** |
+| depth | **median 44.08×** over 3,020 baited intervals; 29 below 10× |
+| alleles called | **131,530** rows, two callers of disjoint model class |
+| structural variants | 18,186 raw; **164 credible two-method-class consensus calls** |
+| phase blocks | 6,823 |
+
+## Claims — all resolved
+
+| Id | Verdict | Conf. | Claim |
+|---|---|---|---|
+| H016 | **supported** | 0.85 | at least one target gene carries a biallelic candidate |
+| H019 | **supported** | 0.70 | phasing closes the chain, or names the gap — it named the gap |
+| H020 | **supported, weakly** | 0.45 | decoys yield fewer candidates per gene (Fisher p = 0.343) |
+| H021 | **supported** | 0.65 | the bait recovers ≥ 90 % of reads carrying a known allele (0.9052) |
+| H022 | **supported** | 0.88 | ≥ 99 % concordance with the delivered callset (0.9957 / 0.9927) |
+| H023 | **refuted** | 0.25 | a two-class deletion does overlap an exon of a rare-allele gene — in two genes, one a decoy |
+| ~~H017~~ | superseded by H022 | | named DeepVariant, which has no arm64 build |
+| ~~H018~~ | superseded by H023 | | named Manta/LUMPY/GRIDSS, none of which have one |
+
+**Gates:** recovery within 0.5–2× of prediction (1.18×) **pass**; every fragment paired
+**pass**; `unseen` bait k-mers = 0 **pass**; off-target < 5 % **fail at 8.79 %**, and
+[086](methodology/086-can-the-off-target-gate-be-reached.md) shows no available parameter
+reaches it.
 | ~~H017~~ | **superseded** by H022 | named DeepVariant, which has no arm64 build |
 | ~~H018~~ | **superseded** by H023 | named Manta/LUMPY/GRIDSS, none of which have one |
 
