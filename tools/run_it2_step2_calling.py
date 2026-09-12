@@ -114,7 +114,13 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--reference", type=Path, default=DEFAULT_REFERENCE)
     parser.add_argument("--key", default=DEFAULT_KEY, help="object key the bait job wrote")
     parser.add_argument("--root", default=None, help="read-store root (for the runs table)")
-    parser.add_argument("--threads", type=int, default=4)
+    parser.add_argument(
+        "--threads",
+        type=int,
+        default=4,
+        help="threads per tool. Saturating every core is what made the shared job service "
+        "fall over and what put this machine into swap; 4 of 8 leaves the box usable.",
+    )
     parser.add_argument("--wide-pad", type=int, default=50_000)
     parser.add_argument("--narrow-pad", type=int, default=2_000)
     parser.add_argument("--depth-floor", type=float, default=10.0)

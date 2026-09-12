@@ -37,10 +37,20 @@ from .tools import capture, pipe, run, sha256, started_now
 #: for ~150 bp paired reads.
 PRESET = ("-ax", "sr")
 
-#: Index batch size. minimap2 splits the reference into batches of this many bases and
-#: holds one at a time, so this is the knob that keeps peak memory near 6 GB instead of
-#: near 12 on a human genome.
-INDEX_BATCH = "4G"
+#: Index batch size. minimap2 loads this many reference bases at a time, so it is the knob
+#: that sets peak memory. A whole human genome in one batch is ~8 GB resident, which this
+#: machine does not have spare — measured 2026-09-12, minimap2 paged out to 0.3 GB with
+#: swap at 24.9 of 26.6 GB and made almost no progress. 1G indexes in four batches at
+#: ~2 GB each.
+INDEX_BATCH = "1G"
+
+#: **Required whenever the index is split.** With more than one batch minimap2 computes
+#: mapping quality per batch, so a read mapping in two batches gets two records each
+#: claiming high confidence — silently wrong MAPQ, which every downstream filter trusts.
+#: `--split-prefix` makes it stage per-batch results and merge them, restoring the
+#: single-index result at the cost of temporary files. Splitting without it would trade a
+#: memory problem for a correctness one.
+SPLIT_PREFIX = "mm2-split"
 
 
 @dataclass(frozen=True)
@@ -69,6 +79,7 @@ def align(
     threads: int = 4,
     stem: str = "baited",
     index_batch: str = INDEX_BATCH,
+    sort_memory: str = "512M",
     read_group: str = "@RG\\tID:baited\\tSM:proband\\tPL:ILLUMINA",
 ) -> Alignment:
     """Align a recovered pair of FASTQ files to the whole reference and index the result.
@@ -82,7 +93,9 @@ def align(
         "aligner": "minimap2",
         "preset": " ".join(PRESET),
         "index_batch": index_batch,
+        "split_prefix": SPLIT_PREFIX,
         "threads": threads,
+        "sort_memory_per_thread": sort_memory,
         "read_group": read_group,
         "duplicates": "marked, not removed",
     }
@@ -112,6 +125,8 @@ def align(
                     str(threads),
                     "-I",
                     index_batch,
+                    "--split-prefix",
+                    str(out_dir / SPLIT_PREFIX),
                     "-R",
                     read_group,
                     str(reference),
@@ -119,7 +134,19 @@ def align(
                     str(r2),
                 ],
                 ["samtools", "fixmate", "-@", str(threads), "-u", "-m", "-", "-"],
-                ["samtools", "sort", "-@", str(threads), "-o", str(sorted_bam), "-"],
+                [
+                    "samtools",
+                    "sort",
+                    "-@",
+                    str(threads),
+                    "-m",
+                    sort_memory,
+                    "-T",
+                    str(out_dir / "sort-tmp"),
+                    "-o",
+                    str(sorted_bam),
+                    "-",
+                ],
             ],
             stdout=out_dir / f"{stem}.pipe.log",
         )
