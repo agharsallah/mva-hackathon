@@ -5,7 +5,9 @@ The step was declared closed with four pre-registered items unrun and the iterat
 blind gate red; [`notes/completion-audit.md`](notes/completion-audit.md) is the tracker that
 recorded the gap and closed it, and entries [089](methodology/089-the-instruments-and-the-gate-that-was-skipped.md)
 and [090](methodology/090-the-alleles-the-vendor-never-reported.md) are what running the
-missing stages produced. One of them **flipped a verdict**. Hands over to
+missing stages produced. One of them **flipped a verdict**. The audit's section D then
+closed the report artifacts the flip had left stale ([092](methodology/092-depth-per-exon-and-the-phasing-drawn.md)),
+and names the two that remain open. Hands over to
 [step 3](../step-3/README.md). Iteration 2, `step-2`.
 
 **Goal** (from `src/mva/science/steps.py`):
@@ -40,7 +42,8 @@ step 2; it is simply not baited. The genome-wide safety net is step 4.
 | alleles called | **131,530** rows, two callers of disjoint model class |
 | alleles the callset never reported | **1,199** in or beside a coding exon, all annotated ([090](methodology/090-the-alleles-the-vendor-never-reported.md)) |
 | structural variants | 18,186 raw; **164 credible two-method-class consensus calls** |
-| phase blocks | 6,823 |
+| phase blocks | 6,823 — **none of them reaching `BUB1B`'s coding span** ([092](methodology/092-depth-per-exon-and-the-phasing-drawn.md)) |
+| coding exons measured per exon | **6,693**, median 44.96x; **68 below 10x**, 61 of them in four paralogue-rich `net`-tier genes ([092](methodology/092-depth-per-exon-and-the-phasing-drawn.md)) |
 
 ## Claims — all resolved
 
@@ -133,13 +136,19 @@ Built here because a research step's tools are filed under that step (CLAUDE.md)
 | `warehouse/it2_step2_tables.py`, `analysis_it2.py`, `analysis_it2_sv.py` | the six tables and the pair SQL |
 | `warehouse/annotate_reads.py` + `mva-warehouse annotate-it2-reads` | VEP for the alleles the callset never reported |
 | `mva.pipeline.stats.fisher_exact_greater` | the exact test behind every target-vs-decoy p |
-| `tools/export_it2_step2_analysis.py` | the figures' one source of numbers |
-| `tools/render_it2_step2_figures.py`, `render_it2_step2_results.py` | the eight exhibits |
+| `tools/export_it2_step2_analysis.py` | the figures' one source of numbers, including the coordinate-free `phase_track` block |
+| `tools/measure_it2_exon_depth.py` | mosdepth over the coding exons themselves, as gene + ordinal + depth (092) |
+| `tools/render_it2_step2_figures.py`, `render_it2_step2_results.py`, `render_it2_phase_block.py` | the ten exhibits |
+| `tools/check_figures_fresh.py` | a figure older than the analysis it is drawn from, as a gate CI runs |
+| `tests/test_warehouse_analysis_it2.py` | the biallelic rule, target/decoy filter symmetry and the two SV boundaries, in an in-memory DuckDB |
 | `tools/check_blind.py` | the blind gate, as a gate CI runs |
 | the DNA-literal rule in `tools/check_coordinates.py` | patient *sequence*, not just position |
 | `src/mva/viz/steps_it2.py` + `app/src/pages/Step2.tsx` | `GET /api/steps/step-2` and the deep page, aggregates only |
 
-Nothing is outstanding. The audit note tracks what each of these closed.
+The audit note tracks what each of these closed. Two things are outstanding and named
+there (D7, D8): the per-exon depth grid and the `BUB1B` phase track are in the report
+figures and not yet on `/steps/step-2`, because neither has a warehouse table the route
+could aggregate.
 
 ## Methodology
 
@@ -151,6 +160,7 @@ Nothing is outstanding. The audit note tracks what each of these closed.
 | [088](methodology/088-the-alleles-the-reads-carry.md) | What do the recovered reads say — concordance, pairs, phase, structural variants? |
 | [089](methodology/089-the-instruments-and-the-gate-that-was-skipped.md) | Which instruments were available, and does the kernel scale as the plan assumed? |
 | [090](methodology/090-the-alleles-the-vendor-never-reported.md) | What happens to H016 and H020 once the alleles only our callers saw are scored? |
+| [092](methodology/092-depth-per-exon-and-the-phasing-drawn.md) | How deep is each *exon*, and what does the lead gene's phasing actually look like? |
 
 ## Notes
 

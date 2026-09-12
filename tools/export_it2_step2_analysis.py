@@ -31,6 +31,17 @@ from mva.warehouse.settings import Postgres
 
 DEFAULT_OUT = Path("build/it2/step-2/analysis.json")
 
+#: The gene the phase-block track is drawn for. Core tier, the only lead carrying a ClinVar
+#: pathogenic assertion, and the gene the disease is named after in the literature — so it
+#: is the one gene whose phasing gap is worth drawing rather than tabulating.
+DEFAULT_PHASE_GENE = "BUB1B"
+
+#: Heterozygous genotypes, in every spelling the two callers use. Duplicated from
+#: :mod:`mva.warehouse.analysis_it2` deliberately: this file must read the same as the SQL
+#: it summarises, and importing a private SQL fragment to build a figure would couple the
+#: figure to the derivation registry's internals.
+HET = "('0/1', '1/0', '0|1', '1|0')"
+
 #: Each block is ``name -> SQL``. Written out rather than derived from the ``Derivation``
 #: registry because these are *summaries over* the result tables, not new result tables:
 #: they belong to the figure, and putting them in ``results.`` would create a table nothing
@@ -106,7 +117,75 @@ def _contrast(connection, where: str) -> dict[str, object]:
     }
 
 
-def export(settings: Postgres) -> dict[str, list[dict]]:
+def _phase_track(connection, gene: str) -> dict[str, object]:
+    """One gene's window, exons, heterozygous sites and phase blocks, as **offsets**.
+
+    The rule the track is drawn on is the *baited* window — the interval depth was actually
+    measured over, coding span plus the padding step 1 fixed in advance — because that is
+    what the run could see. Coding exons are drawn inside it.
+
+    Every number leaving this function is a distance in bases from that window's first base,
+    never a position in GRCh38. That is what lets the resulting figure be committed: the
+    shape of the phasing survives the translation and the coordinate does not.
+    """
+    window = connection.execute(
+        f"""
+        SELECT chrom, min(start) AS lo, max("end") AS hi
+        FROM {ALIAS}.results.it2_exon_depth WHERE symbol = ? GROUP BY chrom
+        ORDER BY max("end") - min(start) DESC LIMIT 1
+        """,
+        [gene],
+    ).fetchone()
+    coding = connection.execute(
+        f"""
+        SELECT chrom, min(start) AS lo, max("end") AS hi
+        FROM {ALIAS}.warehouse.coding_regions WHERE gene = ? GROUP BY chrom
+        ORDER BY count(*) DESC LIMIT 1
+        """,
+        [gene],
+    ).fetchone()
+    if coding is None:
+        return {"gene": gene, "found": False}
+    chrom = coding[0]
+    lo, hi = (int(window[1]), int(window[2])) if window else (int(coding[1]), int(coding[2]))
+
+    exons = connection.execute(
+        f"""
+        SELECT start - {lo} AS at, "end" - start AS width
+        FROM {ALIAS}.warehouse.coding_regions
+        WHERE gene = ? AND chrom = ? ORDER BY start
+        """,
+        [gene, chrom],
+    ).fetchall()
+    blocks = connection.execute(
+        f"""
+        SELECT start - {lo} AS at, "end" - start AS width, variants
+        FROM {ALIAS}.results.it2_phase_blocks
+        WHERE chrom = ? AND start < {hi} AND "end" > {lo} ORDER BY start
+        """,
+        [chrom],
+    ).fetchall()
+    hets = connection.execute(
+        f"""
+        SELECT DISTINCT pos - {lo} AS at
+        FROM {ALIAS}.results.it2_read_alleles
+        WHERE chrom = ? AND pos BETWEEN {lo} AND {hi} AND genotype IN {HET}
+        ORDER BY 1
+        """,
+        [chrom],
+    ).fetchall()
+    return {
+        "gene": gene,
+        "found": True,
+        "span": hi - lo,
+        "coding": {"at": int(coding[1]) - lo, "width": int(coding[2]) - int(coding[1])},
+        "exons": [{"at": int(a), "width": int(w)} for a, w in exons],
+        "blocks": [{"at": int(a), "width": int(w), "variants": int(v)} for a, w, v in blocks],
+        "het_sites": [int(row[0]) for row in hets],
+    }
+
+
+def export(settings: Postgres, phase_gene: str = DEFAULT_PHASE_GENE) -> dict[str, list[dict]]:
     out: dict[str, list[dict]] = {}
     with attached(settings, read_only=True) as connection:
         for name, sql in QUERIES.items():
@@ -120,19 +199,25 @@ def export(settings: Postgres) -> dict[str, list[dict]]:
                 **_contrast(connection, REACHABLE.format(alias=ALIAS)),
             },
         ]
+        out["phase_track"] = [_phase_track(connection, phase_gene)]
     return out
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    parser.add_argument(
+        "--phase-gene",
+        default=DEFAULT_PHASE_GENE,
+        help="gene whose phase-block track is exported, as offsets from its own start",
+    )
     args = parser.parse_args(argv)
 
     settings = Postgres.from_env()
     if settings.missing:
         print("missing settings: " + ", ".join(settings.missing))
         return 1
-    data = export(settings)
+    data = export(settings, phase_gene=args.phase_gene)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(data, indent=2, default=float), encoding="utf-8")
     for name, rows in data.items():

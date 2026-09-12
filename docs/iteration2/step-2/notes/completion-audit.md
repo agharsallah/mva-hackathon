@@ -1,7 +1,8 @@
 # Step 2 — what actually ran, what did not, and what to change
 
-**Standing:** opened and closed 2026-09-12. Every row of table B is done and
-`uv run mva-science check --blind iteration2` passes. This note supersedes the
+**Standing:** opened and closed 2026-09-12; **section D appended the same day** for the
+report artifacts, with two rows (D7, D8) left open and named. Every row of table B is done
+and `uv run mva-science check --blind iteration2` passes. This note supersedes the
 `Standing: complete` line the step README carried earlier that day, which was wrong: four
 pre-registered items had not run and the iteration's own blind gate was red.
 
@@ -67,3 +68,31 @@ These change how **later** steps must be written. They are findings, not chores.
 | C4 | The off-target gate is **unreachable at any available parameter** (8.38 %–10.25 % across padding and k) | The `< 5 %` threshold was set without measuring the surface. A later step that reuses a bait must set its gate from [086](../methodology/086-can-the-off-target-gate-be-reached.md), not from the plan |
 | C5 | The target set is an enrichment at recall ≈ 0.36 | Already inherited from step 1; restated because step 2's *absence* results are not exclusions |
 | C6 | Contig spelling silently returned zero rows once | `check_contigs()` now refuses a mixed load. Any new table joining the callset must pass through it |
+
+---
+
+## D — the report artifacts, closed 2026-09-12 (after B)
+
+Table B closed the *science* the step had skipped. This pass closed the *reporting* it left
+behind, plus the one gate that would have caught the failure. Section C's findings are
+unchanged; nothing here moves a verdict.
+
+| | What | Why it was not optional | State |
+|---|---|---|---|
+| **D1** | **Four exhibits were nine hours stale.** `bait-density`, `bait-uniqueness`, `recovery-funnel` and `index.html` were stamped 02:10 while `analysis.json` was 11:43 — i.e. they were the render from *before* B3 flipped H020 | A figure is a rendering of a table and must not disagree with it. A stale PNG under a caption that now quotes a different number is the one way that promise breaks in practice | **done** — everything re-exported and re-rendered from the post-flip `analysis.json` |
+| **D2** | **`exon-coverage` was coded and had no PNG**, and was a histogram of *merged baited intervals* — 126 of the 128 core and mechanism-term genes are a single interval there, so it could not answer "is this **exon** deep enough" | The gene-level mean is what an absence gets read against today, and a 44x mean hides an exon at 0x completely | **done** — mosdepth re-run over the coding exons themselves (`tools/measure_it2_exon_depth.py`), and the exhibit is now a gene x exon depth heatmap. 68 exons below 10x, 61 of them in four paralogue-rich `net`-tier genes ([092](../methodology/092-depth-per-exon-and-the-phasing-drawn.md)) |
+| **D3** | **H019's result was a count, not a picture** — block spans, with no statement of where the gap falls relative to the lead gene's exons | "It named the gap" is the step's own wording; a gap that is never drawn is named only in prose | **done** — `phase-bub1b.svg`: exons on a rule, heterozygous sites as ticks, phase blocks as bars, the unphased stretch in red. **Not one block reaches `BUB1B`'s coding span**; the whole 59,554 bp is unphased. Offsets from the baited window only, never a position |
+| **D4** | **Nothing tested the SQL the verdicts rest on** | `it2_scored_pairs` is the query B3 found a circular join in. It had no unit test at all, so the defect was found by reading, not by a gate | **done** — `tests/test_warehouse_analysis_it2.py`, 34 hermetic tests in an in-memory DuckDB over the real derivation SQL: the biallelic rule, the rarity and consequence boundaries, **target/decoy filter symmetry** (identical alleles in a target and a decoy must score identically — H020's null is only a null if they meet the same SQL), and the `MIN_SV_LENGTH` / `MIN_BAITED_SPAN` boundaries including the exact point where `it2_sv_consensus` and `it2_sv_leads` must agree |
+| **D5** | **D1 was invisible to every gate.** `tools/check-python.sh` was green with four stale figures committed | The same class of failure as B4: an integrity problem that nothing mechanical objected to | **done** — `tools/check_figures_fresh.py` fails any rendered artifact older than its step's `analysis.json`, skipping (and saying so) when the analysis is absent because `build/` is gitignored. Wired into `tools/check-python.sh`; the reason is recorded in [`docs/notes/python-quality-gates.md`](../../../notes/python-quality-gates.md) |
+| **D6** | `analysis.json` had no phase data, so the phase exhibit had no committed source | C7's rule: a diagram commits its source | **done** — `tools/export_it2_step2_analysis.py` gained a `phase_track` block that computes exons, heterozygous sites and phase blocks as **offsets inside the database**, so no coordinate reaches the renderer |
+
+**One entry, [092](../methodology/092-depth-per-exon-and-the-phasing-drawn.md), because D2
+ran a new measurement** (mosdepth over 6,693 coding exons). D1, D3–D6 are tooling and
+re-renders and file no entry of their own. Entry 091 belongs to another thread.
+
+### Still open, and named rather than quietly dropped
+
+| | What | Why it is not closed here |
+|---|---|---|
+| **D7** | The per-exon depth grid is **not on the dashboard**. `/steps/step-2` still serves per-gene depth from `results.it2_exon_depth` | The measurement lives in `build/it2/step-2/exon-depth.tsv` and has no warehouse table, so `GET /api/steps/step-2` has nothing to aggregate. Loading it is a table + loader + lineage rows + fixture re-capture, which is its own change. The directive that new results reach the app stands; this is the outstanding half of it |
+| **D8** | The `BUB1B` phase track is in the report page, not in the app | Same reason: it would need a coordinate-free block on the step-2 route. The SVG is committed and reproducible in the meantime |

@@ -25,6 +25,7 @@ tools/check-python.sh --fix    # format and autofix first, then check
 | Import layering | `uv run lint-imports` | cycles, and any package importing one it must not |
 | Types | `uv run mypy` | the ~27 latent `None`-dereferences strict mode found, and every new one |
 | Coordinates | `uv run python tools/check_coordinates.py` | a patient genomic position in any tracked text file — a Data Transfer Agreement breach the register's own check cannot see (added 2026-09-05, [075](../step-0/methodology/075-coordinate-gate-and-redaction.md)) |
+| Figure freshness | `uv run python tools/check_figures_fresh.py` | a committed figure older than the analysis it is drawn from — a stale PNG under a caption that now quotes a different number (added 2026-09-12) |
 | Iteration folders | `uv run python tools/check_iteration.py` | a submission folder that is not what its README says: a stale PDF, an unanswered methods-form row, a row naming an undeclared allele, a frozen folder edited (added 2026-09-05, [076](../iteration1/step-6/methodology/076-iteration-tooling.md)) |
 | Tests | `uv run pytest` | behaviour |
 
@@ -100,6 +101,18 @@ description of one module's behaviour; cutting it in half to satisfy a line coun
 one story across two files without making either easier to read. The cap still exists so
 a test file cannot grow unbounded. Production code takes CLAUDE.md's rule as written.
 
+**Figure freshness is a timestamp comparison, and it skips rather than guesses.** The rule
+the repository runs on is that a figure is a *rendering of a table* and cannot disagree with
+it. The one way that breaks in practice is re-exporting the analysis and not re-running the
+renderer — which happened: entry 090 re-scored every allele the delivered callset never
+reported and flipped H020, and four of step 2's exhibits were still the pre-flip render nine
+hours later. So every rendered artifact under `figures/track1/<iteration>/step-<n>/` must be
+at least as new as `build/<it>/step-<n>/analysis.json`, with a one-minute slack for clock
+noise. When that analysis is **absent** the directory is skipped and said to be skipped:
+`build/` is gitignored, so CI and a fresh clone cannot see the input, and a gate with no
+input has nothing to compare against. It therefore binds on the machine that renders — which
+is the only machine that can get it wrong.
+
 **mypy is a ratchet, not a wall.** Full `strict` over code that predates it is 522
 errors — but 496 of those are missing annotations, not type mistakes. So the four
 annotation-completeness flags are off globally and turned back **on per package** as each
@@ -135,7 +148,10 @@ Not a clean-up exercise — the gates paid for themselves before they were wired
    before editing the contract.
 4. A **mypy** failure in a package on the strict list is not to be solved by taking the
    package off the list.
-5. If a gate is wrong for a change, fix the gate and say so here. Do not push with
+5. A **figure-freshness** failure is fixed by re-running the step's exporter and then its
+   renderers, and committing both — never by touching the file's timestamp. The failure
+   message prints the exact commands for the step it failed on.
+6. If a gate is wrong for a change, fix the gate and say so here. Do not push with
    `--no-verify`.
 
 ## Related

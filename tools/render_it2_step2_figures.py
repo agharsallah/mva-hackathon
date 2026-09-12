@@ -29,6 +29,8 @@ import plotly.graph_objects as go
 from mva.render import theme
 from mva.render.figure import Exhibit, Section
 from mva.render.report import render
+from render_it2_coverage_grid import coverage_exhibit
+from render_it2_phase_block import load_track, phase_exhibit
 
 DEFAULT_IN = Path("build/it2/step-2")
 DEFAULT_OUT = Path("figures/track1/iteration2/step-2")
@@ -179,28 +181,6 @@ def density_figure(profile: list[dict[str, str]], sparse: list[str]) -> go.Figur
     return figure
 
 
-def depth_figure(rows: list[dict[str, str]]) -> go.Figure:
-    """Distribution of per-interval depth, with the floor every absence is read against."""
-    depths = [float(row["mean_depth"]) for row in rows]
-    figure = go.Figure(
-        go.Histogram(
-            x=depths,
-            nbinsx=80,
-            marker={"color": theme.MACHINE.fill, "line": {"color": theme.MACHINE.line, "width": 1}},
-            hovertemplate="depth %{x}: %{y} intervals<extra></extra>",
-        )
-    )
-    figure.add_vline(
-        x=10,
-        line={"color": theme.BAD.line, "dash": "dash"},
-        annotation_text="10x floor",
-        annotation_position="top right",
-    )
-    figure.update_xaxes(title="mean depth over a baited interval")
-    figure.update_yaxes(title="intervals")
-    return figure
-
-
 def build(source: Path) -> Section:
     summary = read_json(source / "summary.json")
     pass_report = read_json(source / "bait-pass.json")
@@ -208,7 +188,8 @@ def build(source: Path) -> Section:
     sweep = read_json(source / "uniqueness-sweep.json")
     profile = read_tsv(source / "bait-profile.tsv")
     profile_summary = read_json(source / "bait-profile.json") or {}
-    depths = read_tsv(source / "tables" / "it2_exon_depth.tsv")
+    exon_depths = read_tsv(source / "exon-depth.tsv")
+    track = load_track(source / "analysis.json")
 
     if summary is None:
         raise SystemExit(f"no summary.json under {source} — run tools/build_it2_bait.py first")
@@ -313,24 +294,11 @@ def build(source: Path) -> Section:
             )
         )
 
-    if depths:
-        thin = [row for row in depths if float(row["mean_depth"]) < 10]
-        exhibits.append(
-            Exhibit(
-                slug="exon-coverage",
-                title="How much evidence there is behind every absence",
-                caption=(
-                    f"Mean depth over {len(depths):,} baited intervals. {len(thin):,} sit "
-                    "below 10x, where 'no second allele here' is a gap in the data rather "
-                    "than a finding about the child."
-                ),
-                legend=(
-                    "**blue** = intervals at that depth; **red dashed** = the 10x floor "
-                    "below which an absence is not interpreted."
-                ),
-                figure=depth_figure(depths),
-            )
-        )
+    if exon_depths:
+        exhibits.append(coverage_exhibit(exon_depths))
+
+    if track:
+        exhibits.append(phase_exhibit(track))
 
     return Section(
         slug="it2-step-2",
