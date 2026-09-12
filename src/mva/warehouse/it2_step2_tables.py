@@ -152,6 +152,33 @@ def _load_tsv(
     return int((counted or [0])[0])
 
 
+#: Tables carrying a contig column, which must all be in the callset's bare spelling.
+CONTIG_TABLES = ("it2_exon_depth", "it2_read_alleles", "it2_sv_calls", "it2_phase_blocks")
+
+
+def check_contigs(connection, result_schema: str, tables: list[str]) -> list[str]:
+    """Refuse a load where one table's contigs are spelled differently from the others.
+
+    The callset is bare (``1``), the submission representation is prefixed (``chr1``), and
+    `mva.pipeline.variant` owns the conversion in both directions
+    (``docs/step-0/notes/chr-prefix-bridge.md``). The failure mode that note exists to
+    prevent is not an error — it is a **join that silently returns nothing**, which reads
+    exactly like a real negative result. So it is checked here, where the tables meet, and
+    reported as a list of offending tables rather than a crash.
+    """
+    offenders = []
+    for table in tables:
+        if table not in CONTIG_TABLES:
+            continue
+        qualified = f"{ALIAS}.{safe_identifier(result_schema)}.{safe_identifier(table)}"
+        found = connection.execute(
+            f"SELECT count(*) FROM {qualified} WHERE chrom LIKE 'chr%'"
+        ).fetchone()
+        if found and int(found[0]):
+            offenders.append(f"{table} ({int(found[0]):,} chr-prefixed rows)")
+    return offenders
+
+
 def load(connection, *, schema: str, result_schema: str, out_dir: Path) -> list[Loaded]:
     """Load every step-2 table present in ``out_dir``, and record its lineage.
 
@@ -196,5 +223,12 @@ def load(connection, *, schema: str, result_schema: str, out_dir: Path) -> list[
                 "origin alone"
             ),
             tool="mva-warehouse pg-load-it2-step2",
+        )
+    mixed = check_contigs(connection, result_schema, [item.table for item in loaded])
+    if mixed:
+        raise ValueError(
+            "contig spellings disagree across step-2 tables, which makes every join "
+            "between them return nothing: " + "; ".join(mixed) + ". Convert with "
+            "mva.pipeline.variant.to_vcf_contig before writing the TSV."
         )
     return loaded

@@ -33,6 +33,7 @@ from mva.calling import sv as sv_module
 from mva.kmer import regions as regions_module
 from mva.kmer.bait import merge
 from mva.pipeline import vcf as vcf_module
+from mva.pipeline.variant import to_vcf_contig
 
 DEFAULT_OUT = Path("build/it2/step-2")
 DEFAULT_STEP1 = Path("build/it2/step-1")
@@ -165,10 +166,16 @@ def read_alleles(out: Path, tables: Path) -> int:
         calls = sorted((out / "calls").glob(f"baited.{caller}*.vcf.gz"))
         preferred = [path for path in calls if ".norm." in path.name] or calls
         for source in preferred[:1]:
+            # `mva.pipeline.vcf` returns variants in the **submission** representation,
+            # which is chr-prefixed. Every other table in this step — the depths, the SV
+            # calls, the gene model, the bait — is in the callset's bare spelling, and a
+            # join across the two silently returns nothing. `mva.pipeline.variant` owns
+            # both directions for exactly this reason
+            # (docs/step-0/notes/chr-prefix-bridge.md); this is the way back.
             rows.extend(
                 [
                     caller,
-                    call.variant.chrom,
+                    to_vcf_contig(call.variant.chrom),
                     call.variant.pos,
                     call.variant.ref,
                     call.variant.alt,
