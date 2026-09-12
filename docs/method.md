@@ -3,7 +3,8 @@
 **Standing:** the scientific method for this project. It owns the loop, the five stations,
 and the rules the register enforces. What is *currently* believed lives in the step folders
 and in `figures/science-report.html`; this page owns the *shape*, not the content.
-Last checked 2026-09-04.
+Last checked 2026-09-12 (two rules added: machinery entries inside a research step, and the
+blind gate as a completion condition).
 
 ---
 
@@ -103,6 +104,44 @@ reasoning lives in [`step-0/notes/`](step-0/notes/) as decisions, and its
 hypothesis filed under it.
 
 From step 1 on, every methodology entry is a **test bound to a hypothesis under a goal**.
+
+### The carve-out: machinery entries inside a research step
+
+A research step still has to build and measure its instruments, and an instrument is a
+decision, not a claim about the patient. "`mva.kmer` packs a 31-mer into a `uint64`" and
+"no arm64 build of DeepVariant exists" are true or false regardless of what this child's
+genome says — evidence cannot refute them, only a rerun can.
+
+So a methodology entry **inside** a research step may declare **`Hypotheses: none`**, on two
+conditions, both in the header:
+
+1. it **says why** — that it builds or measures an instrument, or records a platform fact,
+   rather than testing a claim; and
+2. it **names the hypothesis the machinery serves**, so the entry is still reachable from the
+   register by question rather than orphaned in the folder.
+
+Precedent, all iteration 2 step 2:
+[085](iteration2/step-2/methodology/085-the-bait-and-where-it-runs.md) (builds the bait and
+measures the machine, serving H021),
+[086](iteration2/step-2/methodology/086-can-the-off-target-gate-be-reached.md) (measures the
+surface behind a failed gate) and
+[089](iteration2/step-2/methodology/089-the-instruments-and-the-gate-that-was-skipped.md)
+(the platform survey that became the evidence row H017/H018 lacked).
+
+This is a carve-out for **instruments**, not for results. An entry that reports what the
+child's DNA says, under any heading, is a test and files its hypothesis first.
+
+### A red blind gate blocks a "complete" status
+
+`mva-science check --blind <iteration>` is the only mechanical proof that an iteration's
+blinding held. **A step whose blind gate is red is not complete**, whatever else passes, and
+its README may not say so: a status line that is wrong is worse than none. This rule exists
+because it was broken —
+[step 2's completion audit](iteration2/step-2/notes/completion-audit.md) found the step
+declared complete with four pre-registered items unrun while `tools/check-python.sh` was
+green and the blind gate red, with nothing connecting the two. The filesystem half of the
+gate (`tools/check_blind.py`) now runs in `tools/check-python.sh`; the register half still
+needs the warehouse and stays in `mva-science check`.
 
 ---
 

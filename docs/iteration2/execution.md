@@ -1,9 +1,13 @@
 # Iteration 2 — execution map: adopt, reuse, build, show
 
-**Standing:** written 2026-09-10 as the companion of [`plan.md`](plan.md). The plan says *what*
-each step asks and *how it would be refuted*; this page says *with which tools*, *which of them
-already exist in `src/mva/` and `app/`*, *which must be written*, and *what the dashboard shows
-for each step*. Nothing here has run. Tool versions, container digests and licences are pinned
+**Standing:** written 2026-09-10 as the companion of [`plan.md`](plan.md), **corrected
+2026-09-12 after steps 1 and 2 ran**. The plan says *what* each step asks and *how it would be
+refuted*; this page says *with which tools*, *which of them already exist in `src/mva/` and
+`app/`*, *which must be written*, and *what the dashboard shows for each step*.
+**Steps 1 and 2 have run, and step 2 diverged from this page** — read
+[`step-1/README.md`](step-1/README.md), [`step-2/README.md`](step-2/README.md) and
+[`plan.md` §11](plan.md#11-revision-after-steps-12--2026-09-12) first. Steps 3–8 have not run;
+every "Build" row below that is not marked built is still a plan, not a report. Tool versions, container digests and licences are pinned
 in the methodology entry that first installs each tool, never here. The platform inventory it
 builds on is [`../toolset.md`](../toolset.md) (verified 2026-09-05); the dashboard map below was
 re-read from `app/src/app/modules/index.ts` and `app/src/api/hooks.ts` on 2026-09-10.
@@ -80,15 +84,21 @@ flowchart LR
 
 ---
 
-## 2. Where things run
+## 2. Where things run — corrected 2026-09-12
+
+The original table routed most of step 2 to a Linux server or a cloud VM. Step 2 measured the
+alternative: **everything runs on the laptop except a pass over the 1.07 billion raw reads**,
+which belongs beside the data on the job service ([step-2 README](step-2/README.md),
+[089](step-2/methodology/089-the-instruments-and-the-gate-that-was-skipped.md)).
 
 | Stage | Machine | Why |
 |---|---|---|
-| Ranking, SQL, likelihood fits, figures, dashboard | laptop (arm64, 16 GiB) | pure Python + Postgres client; everything in `src/mva/` today runs here |
-| k-mer strike over the read store, KMC/Jellyfish counts, GenomeTester4 | Linux server (holds the Parquet read store) | I/O-bound; the tools are Linux-only ([plan §3 step 2, feasibility](plan.md)) |
-| minimap2, DeepVariant, SV callers, mosdepth, phasers | Linux server or a cloud VM with **Apptainer/Singularity** (rootless containers; no Docker on either machine assumed) | amd64 container images; a recovered read set of millions of pairs, not a billion |
-| Exomiser + LIRICAL reference run | cloud VM, ~1 h | 23 GB data bundle exceeded local disk (067) |
-| LLM tournament, ESM1b scoring | laptop (API) / server GPU-less CPU for ESM1b 650 M (slow but feasible per residue set) | ESM1b only scores the handful of top-pair missense residues |
+| Ranking, SQL, likelihood fits, figures, dashboard | laptop (arm64, 16 GiB) | pure Python + Postgres client |
+| Bait cutting, uniqueness filter, k-mer probe design, k-mer genotyping on the **recovered** reads | laptop | `mva.kmer` is NumPy over the reference and over a 7.9 M-pair Parquet file; no Linux-only k-mer counter was needed (KMC 3 / Jellyfish / GenomeTester4 were **not** used) |
+| **A pass over the whole read store** (step 2's bait; step 8's dosage k-mers) | the job service, `POST /bait` (and `POST /count`, to be built — [plan §11.8](plan.md#118-step-8-revised--and-the-counting-kernel-it-needs)) | 55.8 s/shard streamed from the laptop = 4.2 h per pass, against ~51 min beside the data; parallelism does not help |
+| Align, coverage, small-variant call, SV, phase | laptop | arm64 builds exist for `minimap2`, `mosdepth`, `freebayes`, `bcftools`, `delly`, `dysgu`, `whatshap`; bound the memory (`minimap2 -I 1G --split-prefix`) |
+| DeepVariant, Manta, LUMPY, GRIDSS, Exomiser + LIRICAL, HG002 control | **one optional amd64 VM day**, if it happens | none of the four callers has an arm64 build (089); the Exomiser bundle exceeded local disk (067). Bundled into a single day in [plan §11.9](plan.md#119-cuts-re-decided); if the day does not happen, three limitations are recorded instead |
+| LLM tournament, ESM1b scoring | laptop (API) / CPU for ESM1b 650 M | ESM1b only scores the handful of top-pair missense residues |
 
 Raw FASTQ never leaves the delivery bucket; the recovered read subset moves between our machines
 only; no patient read or k-mer is committed (`tools/check_coordinates.py` gains the candidate
@@ -117,6 +127,14 @@ artifacts* made concrete as app exhibits; §4 explains the shared plumbing they 
 | Build | `mva.phenotype.targets` — tiering (`core`, `net`, `uncurated`, `mechanism-term`), pure-score rank column, the **matched decoy set** (seeded; length + exon-count matching from the Ensembl gene table) → `results.it2_targets`, `results.it2_decoys` via a new `Derivation` | the decoy generator is reused by steps 2–3 and 7 |
 | Build | `mva.pipeline.inheritance` — the small mode-of-inheritance factor (plan §10 B2) read from OMIM inheritance fields | leaf module; consumed by step 4 |
 | Show | `/phenotype` gains: recall-at-N curve with N marked (Plot line + band), tier column and pure-score rank in the ranking table, two-ranker overlap (Plot bar of shared/unique), decoy-set card; `/steps/step-1` (see §4) | every exhibit wrapped in `Exhibit` with a legend |
+
+**Ran 2026-09-10/11 ([084](step-1/methodology/084-the-blind-target-set.md)).** Two corrections
+to the rows above: `mva.phenotype.network` was built and tested but **produced zero rows** in
+`targets.tsv` — it contributed a count (73.6 % of protein-coding genes uncurated) and nothing
+else, so **the `uncurated` tier moved out of the target set and into step 4 as a
+network-proximity lane** ([plan §11.5](plan.md#115-step-4-expanded--the-only-discriminating-and-genome-wide-route)).
+And recall@300 measured **0.360**, not the ≥ 0.90 the gate asked for, so the target set is an
+enrichment and every later step's *absence* result is "not baited", never "excluded".
 
 ### Step 2 — alleles from the reads
 
@@ -147,6 +165,16 @@ artifacts* made concrete as app exhibits; §4 explains the shared plumbing they 
 | Reuse | `mva.reads.scan.counts` (probe and calibration literals in the same strike); `warehouse.Derivation`, `lineage` | one pass, three purposes (bait, probes, dosage) |
 | Build | new package **`mva.kmer/`** — `probes.py` (≥ 3 ref/alt k-mer pairs per allele, expanded-reference uniqueness), `genotype.py` (NB fit on 20 k calibration markers, posterior per call, variance-to-mean QC, dropout and false-positive thresholds), `copynumber.py` (local-flank CN, surviving-k-mer count per exon, 1,000-exon null band, depth titration), `dosage.py` (per-chromosome 31-mer dosage for step 8) → `results.it2_kmer_genotypes`, `it2_exon_cn`, `it2_chrom_dosage` | leaf package; k-mer literals stay under `build/` |
 | Show | `/steps/step-3`: k-mer count scatter ref vs alt with the calibration cloud and fitted class boundaries (Plot scatter, three tones), variance-to-mean tile (`StatTile`), depth-response curve on downsampled reads, per-gene **exon CN strip** with k-mer count per exon (Plot bar + text), local-vs-genome-wide denominator disagreement map (heatmap) | the scatter is the step's headline figure |
+
+
+**Revised 2026-09-12 ([plan §11.4](plan.md#114-step-3-revised)).** Three changes to the rows
+above, each forced by an executed run:
+
+| Row | Correction |
+|---|---|
+| "Adopt KMC 3 / Jellyfish / GenomeTester4" | **not used.** `mva.kmer` (built in step 2) computes uniqueness on the laptop; the second independent counter is the k-mer route itself against the aligner-and-caller route, not a second k-mer program |
+| "Reuse `mva.reads.scan.counts` — one pass, three purposes" | **the pass carried bait membership only** ([087](step-2/methodology/087-the-pass-and-what-it-recovered.md)); no probe or dosage counts came out of it. `scan.counts` is capped around 500 probes and `mva.kmer.membership` answers *membership*, not multiplicity — so step 3 counts its probes **on the recovered baited read set on the laptop**, and the genome-wide counting kernel below is a new build |
+| Build `mva.kmer/` | add **`count.py` — per-k-mer occurrence counts over a read batch** (same 2-bit encoding and canonical form as `membership.py`), and **`POST /count`** on `mva-reads-api` beside `POST /bait`. Shared with step 8. Add a **stage 0**: the MAPQ distribution of off-target reads on the existing BAM, before any model is fitted |
 
 ### Step 4 — likelihood-ratio ranking over the VCF
 
@@ -199,6 +227,15 @@ artifacts* made concrete as app exhibits; §4 explains the shared plumbing they 
 | Reuse | `warehouse.analysis_karyogram.BAF_BINS` (the 037 derivation and its `LOW_CONFIDENCE_N_HET` rule) as the starting SQL; `mva.kmer.dosage` from step 3; `pages/genome/BafKaryogram.tsx` and `Karyotype.tsx` as the rendering pattern | the re-test sits beside the old figure |
 | Build | new package **`mva.mosaic/`** — `bdev.py` (fold-over B-deviation, beta-binomial over-dispersion, per-arm), `madseq.py`, `simulate.py` (mixing simulation, 1–3 affected chromosomes, detection limit at 80 % power), `baseline.py` (leave-one-chromosome-out median, absolute k-mer-mass scale) → `results.it2_mosaic_chrom` (autosomes + X) | leaf package |
 | Show | `/genome` gains a **step-8 panel** beside the flat karyogram: per-chromosome Bdev distribution (Plot violin), dosage with bootstrap interval (error bars), detection-limit curve, ΔBIC per model as a small-multiples strip; the power argument written under it as an `Explainer`; the mechanism card on `/track2` gains the burden-and-limit row | every "nothing detected" carries its limit on the chart itself |
+
+**Revised 2026-09-12 ([plan §11.8](plan.md#118-step-8-revised--and-the-counting-kernel-it-needs)).**
+The reads route was priced at zero because it rode the step-2/3 pass. It did not: that pass
+asked only "does this read touch the bait" ([087](step-2/methodology/087-the-pass-and-what-it-recovered.md)).
+Step 8 therefore **gets the one new full pass** over 1.07 B reads — per-chromosome dosage
+31-mers including X, plus a genome-wide calibration set — and it is blocked on
+**`mva.kmer.count` + `POST /count`** (the step-3 block above owns that build; step 8 is its
+second caller). The **VCF Bdev route needs none of it** and starts immediately: SQL over `AD`
+at PASS heterozygous sites plus a beta-binomial fit, on the laptop.
 
 ---
 
@@ -256,4 +293,8 @@ tool records it (CLAUDE.md: tooling is filed under the step that needed it).
   installing entry after `--help` and the repository's LICENSE are read.
 - Whether the strike or a hashed k-mer filter carries the bait — the step-2 scaling test decides.
 - Whether IHW runs in R or in Python — decided by whether `rpy2` installs cleanly on the server.
-- Anything about results. Nothing here has run.
+- Anything about results. **Steps 1 and 2 have run** — their results live in
+  [`step-1/README.md`](step-1/README.md) and [`step-2/README.md`](step-2/README.md) and in
+  entries 084–090, never here; the corrections those runs force on this page are the
+  "Ran"/"Revised 2026-09-12" blocks in §2 and §3, and
+  [`plan.md` §11](plan.md#11-revision-after-steps-12--2026-09-12). Steps 3–8 have not run.

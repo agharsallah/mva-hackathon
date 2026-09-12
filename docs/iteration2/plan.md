@@ -1,6 +1,8 @@
 # Iteration 2 — the plan: rediscover the pair blind, by independent means, and feed Track 2 along the way
 
-**Standing:** plan, written 2026-09-09, revised 2026-09-10 (blind protocol) after the oracle
+**Standing:** plan, written 2026-09-09; **revised 2026-09-12 by §11 after steps 1 and 2 ran**
+— read [§11](#11-revision-after-steps-12--2026-09-12) before acting on §3, §4 or §4b, which it
+corrects in place-by-reference rather than by edit. Earlier: revised 2026-09-10 (blind protocol) after the oracle
 confirmed submission 1
 ([083](../iteration1/step-6/methodology/083-oracle-reply-submission-1.md)), and revised again
 2026-09-10 by the **gap review** of §9, fed by the first five papers read in
@@ -10,7 +12,7 @@ Kong 2018, Kosugi 2019 — now read) and by a re-read of the clinical document (
 names its paper and page there). The tools, reuse and dashboard map for executing it is
 [`execution.md`](execution.md). Nothing in this
 page is a result; every step below files its hypotheses before it runs and records its runs in
-its own `methodology/` (next global number: **084**). Portfolio owner:
+its own `methodology/` (next free global number: **093**). Portfolio owner:
 [`ideation/solution-paths.md`](../../ideation/solution-paths.md); statistical backing:
 [`ideation/statistical-methods-survey.md`](../../ideation/statistical-methods-survey.md);
 method: [`../method.md`](../method.md). Citations: §8, PubMed-verified on 2026-09-09.
@@ -1134,3 +1136,269 @@ F = fusion, P = process. Every fix names where it landed.
 Not changed by this pass: the blind protocol (strengthened, not replaced), the no-upload
 default (§6), the step order, k = 60, N = 300 pending H012. Numbers quoted from the three
 papers are theirs, with page or table; none is ours until a methodology entry produces it.
+
+---
+
+## 11. Revision after steps 1–2 — 2026-09-12
+
+Method: steps 1 and 2 ran. Entry [084](step-1/methodology/084-the-blind-target-set.md) and
+entries [085–090](step-2/methodology/) are executed runs, and step 2's
+[completion audit](step-2/notes/completion-audit.md) is the tracker that found four
+pre-registered items unrun and closed them. This section revises the plan **against those
+runs only** — every row cites the entry that forces it. Sections 1–10 stay as written: they
+are the record of what was planned, and a plan corrected by silent edit is not a plan.
+Nothing below is a result; the results are in the entries cited.
+
+### 11.1 What ran, and what it cost the design
+
+| # | Finding | Entry | What it forces |
+|---|---|---|---|
+| F1 | held-out **recall@300 = 0.360** [0.295, 0.420]; no cutoff of a phenotype-only ranker reaches 0.90 on this corpus | [084](step-1/methodology/084-the-blind-target-set.md) | the target set is an **enrichment, never coverage**. "Absent from the target set" is not an exclusion anywhere in this plan. The genome-wide route (step 4) is promoted from safety net to **primary discriminator** (§11.5) |
+| F2 | **73.6 %** of protein-coding genes carry no HPO curation (H015 predicted < 20 %) | [084](step-1/methodology/084-the-blind-target-set.md) | the `uncurated` tier is the dominant blind spot, not a footnote. It cannot be baited (too large) and cannot be scored by the human-only ranker — so it moves into step 4 as a **network-proximity lane** (§11.5) |
+| F3 | **H020 refuted**: with the alleles only the read callers saw scored too, targets and decoys carry a biallelic candidate at **exactly the same rate, 10/396 each** (p = 0.589) | [090](step-2/methodology/090-the-alleles-the-vendor-never-reported.md) | the read route has **zero measured ranking power**. It stops being a ranking route and becomes a **confirmation route** (§11.6) |
+| F4 | without a rarity + consequence filter the **decoys beat the targets** (57.3 % vs 50.8 %); with it the ordering inverts (2.53 % vs 2.53 % once novel alleles are scored) | audit C1, C9; [090](step-2/methodology/090-the-alleles-the-vendor-never-reported.md) | **the filter discriminates, not the symptom-derived gene list.** Step 6 weights the filter, not the list; every target-vs-decoy rate anywhere states which filter produced it and whether novel alleles were in |
+| F5 | the off-target bait gate (`< 5 %`) is **unreachable at any available parameter**: measured 8.79 %, surface 8.38 %–10.25 % across padding and k | [086](step-2/methodology/086-can-the-off-target-gate-be-reached.md) | the gate was set without measuring the surface. It is **retired and replaced** by a per-gene bait-density gate (§11.8) |
+| F6 | **no arm64 build** for DeepVariant, Manta, LUMPY or GRIDSS; substitutions used instead (freebayes + `bcftools call -m`; delly + dysgu; WhatsHap + our own fragment counter; `minimap2` for bwa-mem2) | [089](step-2/methodology/089-the-instruments-and-the-gate-that-was-skipped.md) | the plan's tool table is aspirational on this machine. Either an **amd64 VM day** buys the named instruments back, or three limitations are recorded now (§11.9) |
+| F7 | a baited alignment is islands of coverage; read-pair callers read the gaps as megabase events. `MIN_BAITED_SPAN` and `MIN_SV_LENGTH` are what stopped a 13 Mb deletion and a 40 Mb inversion being reported | audit C3 | these are **permanent properties of any baited SV or dosage call**, not step-2 fixes. Step 3's copy-number work inherits them and says so |
+| F8 | the lead pair is **unphaseable**: the two alleles are 10,911 bp apart with 4 heterozygous variants between them (~2.7 kb spacing) against ~266 bp fragments, at 43.7× depth | [088](step-2/methodology/088-the-alleles-the-reads-carry.md) | not a coverage failure, and no deeper pass fixes it. Direct read-backed *trans* evidence is **unavailable for this pair**; §11.5 names what replaces it |
+| F9 | the plan's "**single read pass for steps 2–3–8**" (§4, week 1) **did not happen**. The pass carried the **bait membership question only** — does this read touch the bait — and returned reads, not counts | [087](step-2/methodology/087-the-pass-and-what-it-recovered.md) | steps 3 and 8 still need their counts. The cost model of §4 is wrong by one full pass, and §11.7 re-prices it |
+
+Two supporting numbers the revision leans on, both from executed runs: bait recall
+**0.9052** [0.815, 0.974], with the loss concentrated in probes filtered on the *reference*
+k-mer's uniqueness while the strike searches for the *alternate*
+([087](step-2/methodology/087-the-pass-and-what-it-recovered.md)); and the kernel's cost is
+set by bytes of sequence, not bait size — **1.05× per read across 36,000× of bait**
+(audit C8, [089](step-2/methodology/089-the-instruments-and-the-gate-that-was-skipped.md)).
+
+### 11.2 The revised data flow
+
+```mermaid
+flowchart LR
+  R[/"1.07 B raw reads"/]:::raw
+  V[/"5.0 M VCF records"/]:::raw
+  H[/"8 HPO terms"/]:::raw
+  L[/"public knowledge"/]:::raw
+  S1["<b>step 1</b> target set<br/>recall 0.36 — enrichment"]:::machine
+  BAITED[("baited reads<br/>7.89 M pairs, on disk")]:::machine
+  S2["<b>step 2</b> alleles from reads<br/>1,199 vendor-unreported"]:::machine
+  PASS{{"one <b>new</b> full pass<br/>counting kernel"}}:::decide
+  S3["<b>step 3</b> genotype + CN<br/><i>confirmation, laptop</i>"]:::machine
+  S8["<b>step 8</b> mosaic bound<br/>dosage k-mers + VCF Bdev"]:::machine
+  S4["<b>step 4</b> genome-wide LR<br/><i>the only discriminating route</i>"]:::good
+  S5["<b>step 5</b> knowledge"]:::machine
+  S6{{"<b>step 6</b> fusion + unblind<br/>read route = confirmation only"}}:::decide
+  S7["<b>step 7</b> Track 2<br/><i>starts now, in parallel</i>"]:::good
+  H --> S1 --> S2
+  R --> S2 --> BAITED
+  BAITED --> S3
+  L --> S3
+  R --> PASS --> S8
+  V --> S8
+  V --> S4
+  H --> S4
+  L --> S4
+  L --> S5
+  S3 -.->|"confirmed / retired alleles"| S6
+  S4 --> S6
+  S5 --> S6
+  S8 -.-> S6
+  S2 -.->|"no ranking power (H020)"| S6
+  S3 & S4 & S8 -.->|"mechanism, dosage"| S7
+  X["read route as a <b>ranking</b> route"]:::bad
+  S2 -.-> X
+  classDef raw fill:#f3e8ff,stroke:#7e22ce,color:#581c87
+  classDef machine fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a
+  classDef decide fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  classDef good fill:#dcfce7,stroke:#15803d,color:#14532d
+  classDef bad fill:#fee2e2,stroke:#b91c1c,color:#7f1d1d
+```
+
+> **Legend** — **purple = raw input**; **blue = machinery**; **yellow = a decision point**
+> (the one new full read pass, and the unblinding); **green = the routes that now carry the
+> discriminating weight** (step 4 genome-wide, and Track 2 running in parallel);
+> **red = the route this revision removes** — the read route as a *ranking* route, refuted by
+> H020. Solid arrows are data; dotted arrows are evidence entering a fusion or a card.
+> The cylinder is the baited read set already on disk: **step 3 works from it, not from a new
+> pass**; only step 8's dosage k-mers need the whole store again.
+
+### 11.3 What changed against §3, in one table
+
+| Step | §3 said | §11 says | Forced by |
+|---|---|---|---|
+| 3 | genotype every discovered allele against 1.07 B reads, sharing step 2's pass | genotype on the **recovered baited reads** on the laptop; no full pass | F9, F3 |
+| 3 | exon-scale CN for every target gene | exon CN **only where surviving k-mers ≥ 300**, else gene-pooled; cut (4) becomes **conditional, not deferred** | plan §3 step 3 (GeneToCN limits); F7 |
+| 3 | probes unique against an expanded reference | probes filtered on the **alternate** k-mer's genome-wide count | [087](step-2/methodology/087-the-pass-and-what-it-recovered.md) |
+| 8 | rides the step-2/3 pass, free | gets **the one new full pass**, and it is not free | F9 |
+| 4 | genome-wide safety net | **the primary and only discriminating route**, plus the uncurated lane and the decoy null | F1, F2, F3 |
+| 6 | four routes fused by recall-proportional weights | read route enters as **confirmation, weight from measured discrimination = 0** | F3 |
+| 7 | after step 6 | **starts now, in parallel** | intel §5 deadline ~2026-10-20 |
+| 4b | off-target < 5 % | retired; per-gene bait density instead | F5 |
+
+### 11.4 Step 3, revised
+
+Design unchanged in intent (§3 step 3); changed in where it runs, what it counts, and what
+it claims.
+
+- **Input is the recovered baited read set** (`build/it2/step-2/baited-reads.parquet`,
+  7,886,613 complete pairs), not the store. It is on the laptop, so step 3 needs no job
+  service and no new full pass (F9).
+- **Calibration markers are drawn from baited regions**, not genome-wide. The bait recovers
+  0.905 of the reads carrying a known allele ([087](step-2/methodology/087-the-pass-and-what-it-recovered.md));
+  drawing calibration and probe counts from the *same* recovery makes that factor common to
+  numerator and denominator, so **the 0.905 bias cancels** in the ratio the genotype model
+  fits. A genome-wide calibration set against baited probe counts would not — it would read
+  every allele as ~10 % under-covered. Stated as an assumption with its own QC: the fitted λ
+  is printed beside the 44.08× median baited depth, and a gap larger than the bootstrap
+  interval retires the fit.
+- **Probe uniqueness on the alternate k-mer.** `mva.kmer.uniqueness.count_in_genome` is
+  called on the *alt* k-mer of every probe pair, which is the one the strike searches for.
+  Step 2's witness set filtered the reference k-mer and lost reads because of it.
+- **Stage 0, before anything else: the MAPQ distribution of off-target reads.** Never run in
+  step 2, and 8.79 % of the bait is repeated territory (F5). If off-target reads pile at
+  MAPQ 0 in a handful of segmental-duplication families, every count from those genes is
+  suspect before a model is fitted. Cheap (the BAM exists), and it is the gate that decides
+  which genes step 3 may report at all.
+- **Headline claim:** ≥ 80 % of the **1,199 vendor-unreported alleles** are confirmed at the
+  same multiplicity by k-mer genotype. This is the claim with the most leverage in the step:
+  six of ten target genes and eight of ten decoy genes reach biallelic *only* through those
+  alleles ([090](step-2/methodology/090-the-alleles-the-vendor-never-reported.md)), so every
+  biallelic count step 2 reported is an upper bound until it is settled. Refuted by fewer
+  than 80 %: the counts are revised down and the read route gains a measured false-positive
+  rate instead of a caveat.
+- **Lead pair:** both alleles at **one-copy** multiplicity (posterior ≥ 0.95). Phasing is
+  impossible (F8); single-copy dosage on both is the strongest remaining statement about the
+  pair, and a caller artefact would not produce it. It is **not** trans evidence and the step
+  says so.
+- **Copy number:** exon scale only where an exon retains **≥ 300 surviving unique k-mers**;
+  below that, pooled to the gene. The 1,000-exon null band and both denominators (local flank,
+  genome-wide) stay. Cut (4) of §4 is therefore **conditional**, not a deferral: the exon
+  scale runs where it is supported and is reported as pooled where it is not.
+- **Claim ids.** Step 3's register ids start at **H024** and the plan-labelled claims
+  (plan H017, H018, H019) are the same claims as step-3 README §5 — the README's table is
+  authoritative for the mapping, this section for the design. The three additions the README
+  proposes (single-copy lead pair, no confident genotype below half the median bait density,
+  ≥ 80 % of the 1,199 confirmed) are adopted here as pre-registered.
+
+### 11.5 Step 4, expanded — the only discriminating and genome-wide route
+
+Step 4 was the safety net. F1 (recall 0.36), F2 (73.6 % uncurated) and F3 (read route,
+discrimination 0) make it the primary route, and it must carry three things the plan gave to
+other steps:
+
+| Addition | What it is | Why |
+|---|---|---|
+| **network-proximity lane** | `mva.phenotype.network` (built and tested in step 1, and producing **zero rows** in `targets.tsv` — it contributed a count and nothing else) is re-used here to score the uncurated genes by STRING proximity to the top-50, as a **lane in the LR**, not a tier in a target set | F2: 73.6 % of genes cannot be scored by the human-only ranker at all, and step 4 is the only step that sees them |
+| **decoy set through step 4 as a null** | the 396 matched decoys of `results.it2_decoys` are ranked by the identical LR, and the target-vs-decoy posterior separation is reported beside the permutation null | F4: the discriminating power is in the filter; step 4's filter is the LR itself, so it must be measured against a matched gene set, not only against shuffled terms |
+| **P(trans) is the only trans evidence for the lead pair** | the gnomAD co-occurrence lookup, with its *undetermined* state kept visible | F8: phasing is impossible. This is stated as a **residual unknown**, not as resolved phase — a population co-occurrence statistic is not this child's haplotype |
+
+**Failure categories gain a fifth.** §3 step 1 pre-registered four (gene outside the curated
+tier; non-coding/synonymous/deep-intronic allele; term coded at the wrong depth; caller
+dropout). Add **(v) unphaseable** — both alleles real, both single-copy, no read fragment
+spans them and no parental DNA exists. It is the category the lead pair itself falls into,
+and step 6's trace must be able to say so.
+
+### 11.6 Step 6, pre-registered now
+
+Written before the fusion runs, so it cannot be chosen afterwards:
+
+- The **read route (step 2 + step 3) enters as a confirmation route, not a ranking route.**
+  Its contribution to a pair is a triple: *read-confirmed* (the allele is seen by an
+  instrument that shares no code with the vendor's), *single-copy* (k-mer multiplicity), and
+  *no CN loss* (the exon or gene is not below the null band). It contributes **no rank**.
+- **Measured weights, not bands.** The read route's measured recall is **0.905** [0.815,
+  0.974] ([087](step-2/methodology/087-the-pass-and-what-it-recovered.md)) and its measured
+  discrimination is **0** ([090](step-2/methodology/090-the-alleles-the-vendor-never-reported.md)).
+  A route that finds almost everything and orders nothing is exactly a confirmation
+  instrument, and RRF over it would be arithmetic on noise.
+- The rediscovery claim stays on the **pure symptom-score ranking** (§10 B1) and now also
+  states the recall the target set actually had (0.36), so a rediscovery is never read as
+  coverage.
+
+### 11.7 §4b gates, revised
+
+| Gate | §4b said | Now | Why |
+|---|---|---|---|
+| bait off-target | `< 5 %` of bait k-mers | **retired.** Replaced by **per-gene bait density**: a gene below half the median surviving-k-mer density is reported as *unreachable*, and no absence claim is made for it | F5 — the threshold was set without measuring the surface, which bottoms out at 8.38 % |
+| concordance | `≥ 99 %` with the delivered callset | **split SNV / indel**, each with its own threshold and its own statement of what it validated | [088](step-2/methodology/088-the-alleles-the-reads-carry.md): 0.9957 / 0.9927, and the delivered callset is unnormalised, so indels are not comparable without left-alignment |
+| step 1 | `recall@300 ≥ 0.90` | **recall + its bootstrap interval + the blind-spot fraction**, all three reported; no pass/fail on recall alone | F1, F2 — a recall number with no interval and no uncurated fraction cannot fail honestly |
+| order | — | **the scaling gate runs before the pass it licenses** | audit B5: it ran 45.9 min against a 60 min gate, *after* the pass, and a gate that runs late licenses nothing |
+| figures | — | **figure freshness**: every figure names the producing script and the analysis file it read, and a figure whose source table is newer than it is stale | audit C7: correct figures, assembled at a prompt, with no producing script |
+
+### 11.8 Step 8, revised — and the counting kernel it needs
+
+Step 8's reads route was priced at zero because it rode the step-2 pass. It did not (F9).
+
+- **Step 8 gets the one new full pass over 1.07 B reads**, carrying: ~10,000
+  reference-unique 31-mers per chromosome **including X**, plus a **genome-wide calibration
+  set** so the dosage has an absolute scale that does not assume any chromosome is normal
+  (§3 step 8, defence (c)).
+- **It needs a counting kernel that does not exist.** `mva.kmer` answers **membership**
+  (`mva.kmer.membership`: sorted `uint64` + bitmap — "is this k-mer in the set", exact, no
+  multiplicity), and `mva.reads.scan.counts` answers multiplicity but through the
+  Aho-Corasick/Polars literal matcher, validated at ~20 literals and capped in practice
+  around **500 probes** — three orders of magnitude short of a per-chromosome dosage set.
+  **Membership ≠ count.** Build `mva.kmer.count` (per-k-mer occurrence counts over a read
+  batch, same 2-bit encoding and canonical form) and expose it as **`POST /count`** on
+  `mva-reads-api`, beside `POST /bait`. This is the one genuinely new module the revision
+  adds, and it is shared by step 3 (probe counts on the baited set) and step 8 (dosage over
+  the store).
+- **The VCF Bdev route is SQL-only and starts now.** It needs no kernel, no pass and no
+  laptop compute beyond a fit: `AD` at PASS heterozygous sites, fold-over Bdev per chromosome
+  and per arm, the beta-binomial over-dispersion fit, the detection limit per chromosome.
+  Running it now de-risks the pass: if the VCF route already resolves a chromosome, the
+  dosage pass is confirmation rather than discovery.
+
+### 11.9 Cuts, re-decided
+
+| Cut (§4 order) | State now |
+|---|---|
+| (1) LLM tournament | still first to cut |
+| (2) Exomiser / LIRICAL cloud reference | see the VM proposal below |
+| (3) GRIDSS + HG002 control | **already cut de facto** — GRIDSS has no arm64 build (F6) and no HG002 control ran. The SV consensus is "reported, unvalidated", and step 3 README §3.7 already says so. Recorded as a cut, not discovered as one later |
+| (4) exon-scale CN | **conditional, not cut** — runs where surviving k-mers ≥ 300, pooled elsewhere (§11.4) |
+| (5) MAD-seq mechanism call | unchanged |
+
+**Proposal: one amd64 VM day**, bundling everything that arm64 blocked or that disk blocked,
+so the cost is paid once:
+
+1. **Exomiser 14 + LIRICAL** reference run (cut 2; the 23 GB bundle exceeded local disk, 067).
+2. **DeepVariant** and **Manta** on the recovered FASTQ — 7.9 M pairs, not 1.07 B reads, so
+   this is a small job — giving the instruments H017/H018 originally named.
+3. **HG002** through the identical bait chain, which is the only thing that turns the SV
+   consensus and the bait-edge flag from a prior into a measurement.
+
+**If the VM day does not happen, three limitations are recorded now**, not at report time:
+(i) small-variant calls rest on freebayes + `bcftools call -m`, weaker on indels than
+DeepVariant, and the indel concordance is reported separately for that reason;
+(ii) the SV consensus is two callers of two method classes with **no positive control**, and
+Kosugi 2019's type precision is a 2019 GRCh37 prior printed beside each call, never our
+measurement; (iii) the phenotype ranker is the 067 reimplementation with **no Exomiser
+reference run**, so H022's comparison is against published figures rather than against a run
+on this data.
+
+### 11.10 Step 7 starts now, in parallel
+
+Track 2 is scored 35 % rigor / 25 % impact / 25 % innovation / 15 % scalability with a
+deadline around **2026-10-20** (intel §5). §3 step 7 placed it after step 6; that ordering
+was safe when step 6 was three weeks away and is now the main schedule risk. Step 7 runs
+**in parallel from today**: the mechanism is confirmed (083), the drug data layer exists
+(`mva.drugs`, `/api/track2`), and what step 7 lacks is the ranking, the evidence ladder, the
+decoy cards and the pathway diagram — none of which waits on a Track 1 verdict. Facts from
+steps 3, 4 and 8 land in card v3 as they arrive, as history entries.
+
+### 11.11 Order of work
+
+| # | Work | Blocked by | Where |
+|---|---|---|---|
+| 1 | step 8 **VCF Bdev route** (SQL + fit) and **step 7** opened | nothing | laptop, parallel |
+| 2 | step 3 **stage 0**: MAPQ distribution of off-target reads on the existing BAM | nothing | laptop, minutes |
+| 3 | step 3 probes (alt-k-mer uniqueness) + calibration from baited regions; **H024…** filed before the run | 2 | laptop |
+| 4 | step 3 genotyping of the 1,199 vendor-unreported alleles and the lead pair | 3 | laptop |
+| 5 | **build `mva.kmer.count` + `POST /count`** | 3 (it shares the probe encoding) | laptop + job service |
+| 6 | step 4 genome-wide LR, uncurated network lane, decoy null, P(trans) | nothing (starts beside 2–4) | laptop |
+| 7 | step 3 copy number (conditional exon scale) | 4 | laptop |
+| 8 | step 8 **the one new full pass** — dosage k-mers per chromosome incl. X + genome-wide calibration | 5 | job service |
+| 9 | the amd64 VM day, or the three limitations recorded | decision | VM |
+| 10 | step 5, then step 6 fusion and unblinding | 4, 6 | laptop |
+
+Methodology entries continue from **093** (091 and 092 are taken).

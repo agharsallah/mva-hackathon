@@ -1,8 +1,10 @@
 # Step 3 — alignment-free genotype and copy number
 
-**Standing:** opened 2026-09-12 by step 2's handover; **nothing has run.** Revised the same
-day, after step 2's completion audit changed two of the things this page hands over — see
-§3.9 and §4. Iteration 2, `step-3`.
+**Standing:** opened 2026-09-12 by step 2's handover; **nothing has run.** Revised twice the
+same day: once after step 2's completion audit changed two of the things this page hands over
+(§3.9, §4), and once by [`plan.md` §11](../plan.md#11-revision-after-steps-12--2026-09-12),
+which settled where this step runs, what it counts and what it claims (§2, §5, §6).
+Iteration 2, `step-3`.
 
 **Goal** (from `src/mva/science/steps.py`):
 
@@ -70,11 +72,33 @@ instrument; where they disagree, the disagreement is the finding.
 `baitjob` / `client` · `mva.calling` (align, coverage, smallvars, sv, phase, workflow) ·
 `mva.warehouse.it2_step2_tables` + `analysis_it2` + `analysis_it2_sv`.
 
-**`mva.kmer` is step 3's engine already.** It packs a k-mer into a `uint64`, canonicalises
-strand, and answers membership against a sorted array behind a bitmap. Step 3's probe
-counting is the same kernel with a different question: not "is this read in the bait" but
-"how many reads contain exactly this k-mer". `mva.reads.scan.counts` already answers that
-for up to 500 probes, and step 2 measured what it costs (§6).
+**`mva.kmer` is step 3's engine already — but only half of it.** It packs a k-mer into a
+`uint64`, canonicalises strand, and answers **membership** against a sorted array behind a
+bitmap: *is this k-mer in the set*, exactly, with no multiplicity. Step 3 needs the other
+question — *how many reads contain exactly this k-mer* — and **membership is not count**.
+
+Two engines, and the split between them decides where step 3 runs:
+
+| Question | Engine | Limit |
+|---|---|---|
+| is this read in the bait | `mva.kmer.membership` | none that matters; it swept 1.07 B reads ([087](../step-2/methodology/087-the-pass-and-what-it-recovered.md)) |
+| how many reads carry this probe, **tens of probes** | `mva.reads.scan.counts` (Aho-Corasick / Polars multi-literal) | validated at ~20 literals, capped in practice around **500 probes**; `contains(sequence, seq)` per probe per read |
+| how many reads carry each of **millions** of k-mers | **`mva.kmer.count` — does not exist** | to be built, with `POST /count` beside `POST /bait` ([plan §11.8](../plan.md#118-step-8-revised--and-the-counting-kernel-it-needs)) |
+
+**So step 3 does not need the new kernel and does not need a full pass.** Its probes number in
+the thousands, and it counts them **on the recovered baited read set already on this laptop**
+(`build/it2/step-2/baited-reads.parquet`, 7,886,613 complete pairs) — the plan's "single read
+pass for steps 2–3–8" never happened: the pass carried the bait membership question only, and
+returned reads, not counts. `mva.kmer.count` is built here because step 3 is the first caller
+that wants exact multiplicities at scale, and **step 8 is its second caller**, for the
+per-chromosome dosage pass over the whole store.
+
+**Calibration must be drawn from baited regions.** The bait recovers 0.905 of the reads
+carrying a known allele, with a wide interval. Drawing the calibration markers and the probe
+counts from the *same* recovery makes that factor common to both sides of the ratio the
+genotype model fits, so **the 0.905 bias cancels**; a genome-wide calibration set against
+baited probe counts would read every allele as ~10 % under-covered. The fitted λ is printed
+beside the 44.08× median baited depth as the internal-consistency check.
 
 ---
 
@@ -158,8 +182,11 @@ them, and if it does not, that is itself a result.
 
 ## 5. Claims to file before step 3 runs
 
-From `plan.md` §3 step 3, to be filed with `mva-science hypothesis-add` **before** the run.
-The register allocates ids in filing order; the next free id is **H024**.
+From `plan.md` §3 step 3, as revised by
+[§11.4](../plan.md#114-step-3-revised), to be filed with `mva-science hypothesis-add`
+**before** the run. The register allocates ids in filing order; the next free id is **H024**.
+The three "suggested" rows below are **adopted as pre-registered** by §11.4 — they are not
+optional extras.
 
 | Plan label | Claim | Refuted by |
 |---|---|---|
@@ -167,13 +194,19 @@ The register allocates ids in filing order; the next free id is **H024**.
 | H018 (plan) | at least one ClinVar P/LP allele of a target gene is present at het multiplicity above the fitted error threshold | none — the pair, if any, is novel on both sides |
 | H019 (plan) | no target-gene exon (or pooled gene) falls below the 2.5th percentile of a 1,000-exon null copy-number band | one does — a deletion candidate for step 6 |
 
+Scope, fixed by §11.4: **exon-scale copy number runs only where an exon retains ≥ 300
+surviving unique k-mers**, and is pooled to the gene below that — the plan's cut (4) becomes
+**conditional**, not deferred. Any copy-number claim that contradicts an SV call must first
+check which side of `MIN_BAITED_SPAN` / `MIN_SV_LENGTH` the call sits on (§3.8): those two
+controls are permanent properties of a baited call, not step-2 fixes.
+
 Two additions step 2's results argue for, not in the plan:
 
 | Suggested | Claim | Why step 2 makes it worth filing |
 |---|---|---|
 | new | both alleles of the lead pair are at **one-copy** multiplicity (posterior ≥ 0.95), not two | phasing failed (§1); single-copy dosage on both is the strongest statement left about the pair, and a caller artefact would not produce it |
 | new | genes below half the median bait density yield **no** confident k-mer genotype | it makes the reachability limit falsifiable rather than a caveat; the 21 genes are named in `it2_bait_density` |
-| new | **at least 80 % of the 1,199 alleles the delivered callset never reported are confirmed at the same multiplicity by k-mer genotype** | refuted by fewer, in which case every biallelic count step 2 reported is revised downward and the read route's own false-positive rate becomes a number rather than a caveat (§3.9). This is the claim with the most leverage in the whole step |
+| new (**headline**) | **at least 80 % of the 1,199 alleles the delivered callset never reported are confirmed at the same multiplicity by k-mer genotype** | refuted by fewer, in which case every biallelic count step 2 reported is revised downward and the read route's own false-positive rate becomes a number rather than a caveat (§3.9). This is the claim with the most leverage in the whole step |
 
 ---
 
@@ -187,6 +220,20 @@ Two additions step 2's results argue for, not in the plan:
 | The laptop swaps before it runs out of disk | minimap2 paged to 0.3 GB with swap at 24.9/26.6 GB | bound tool memory explicitly; `-I 1G --split-prefix` for minimap2 |
 | Contig spelling is a silent joiner | one join returned 0 rows and looked like a clean negative | `mva.pipeline.variant` owns both directions; the step-2 loader now refuses a mixed load |
 | Alignment is the hour, everything else is minutes | 63 min | `run_it2_step2_calling.py --realign` forces it; by default an indexed BAM is reused |
+
+**Stage 0, before any model is fitted: the MAPQ distribution of off-target reads.** It was
+never run in step 2, and 8.79 % of the bait is repeated territory that no parameter reduces
+below 8.38 % ([086](../step-2/methodology/086-can-the-off-target-gate-be-reached.md)). If the
+off-target reads pile at MAPQ 0 inside a handful of segmental-duplication families, every
+k-mer count from those genes is suspect *before* the negative binomial is fitted. The BAM
+already exists, so this costs minutes — and it is the gate that decides which genes step 3 is
+allowed to report on at all. Its output replaces the retired `< 5 %` off-target gate with the
+per-gene reachability rule of [plan §11.7](../plan.md#117-4b-gates-revised).
+
+**Probe uniqueness is filtered on the alternate k-mer**, not the reference one. Step 2's
+witness set filtered the *reference* k-mer while the strike searches for the *alternate*, and
+that is where its recall loss concentrated ([087](../step-2/methodology/087-the-pass-and-what-it-recovered.md));
+`mva.kmer.uniqueness.count_in_genome` is called on the alt k-mer of every probe pair.
 
 ---
 
@@ -206,7 +253,7 @@ uv run mva-science hypothesis-add --step step-3 --statement … --prediction …
 uv run mva-warehouse pg-query "SELECT * FROM pg.results.it2_scored_pairs LIMIT 5"
 ```
 
-The next methodology entry is **089**. Step 3's folder is this one; its entries go in
+The next free methodology entry is **093** (091 and 092 are taken). Step 3's folder is this one; its entries go in
 `methodology/`.
 
 ---

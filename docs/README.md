@@ -87,11 +87,14 @@ Iteration 1 is **frozen** (submission 1 uploaded 2026-09-09, full match at rank 
 | Document | Answers |
 |---|---|
 | [`iteration2/README.md`](iteration2/README.md) | Why a second iteration when the pair is confirmed, and how the folder fills in. |
-| [`iteration2/plan.md`](iteration2/plan.md) | The plan: a blind rediscovery in eight steps (symptom-only target set; allele discovery from the raw reads with a second caller and SV consensus; alignment-free k-mer genotyping and copy number; likelihood-ratio ranking over the VCF; knowledge engine; fusion and unblinding; Track 2 enrichment), order and cost, and the PubMed-verified bibliography. |
+| [`iteration2/plan.md`](iteration2/plan.md) | The plan: a blind rediscovery in eight steps (symptom-only target set; allele discovery from the raw reads with a second caller and SV consensus; alignment-free k-mer genotyping and copy number; likelihood-ratio ranking over the VCF; knowledge engine; fusion and unblinding; Track 2 enrichment), order and cost, and the PubMed-verified bibliography. **§11 (2026-09-12) revises it against steps 1–2 as run**: the target set is an enrichment at recall 0.36, the read route has no ranking power, step 4 becomes the only discriminating route, and step 8 gets the one new full pass. |
 | [`iteration2/execution.md`](iteration2/execution.md) | The plan's companion: per step, which published tools to adopt, what `src/mva/` already provides, which modules to build, and what the dashboard shows (`/api/steps`, `/steps`). |
 | [`iteration2/step-1/README.md`](iteration2/step-1/README.md) | **Run 2026-09-11.** Which genes the child's symptoms alone nominate, with the DNA never read: a 404-gene tiered target set and its 396 matched decoys. H013 supported; H012, H014 and H015 refuted. |
 | [`iteration2/step-1/methodology/`](iteration2/step-1/methodology/) | Entry 084: the run, its four verdicts, and the decision the refuted recall claim forced — the target set is an enrichment, never coverage. |
-| [`iteration2/step-2/README.md`](iteration2/step-2/README.md) | What step 1 handed over, the five claims filed before anything runs, and the two tools step 2 needs first. Nothing has run. |
+| [`iteration2/step-2/README.md`](iteration2/step-2/README.md) | **Complete 2026-09-12.** What the raw reads carry in the target set without the vendor caller: 7.89 M fragments recovered by k-mer bait, two callers of disjoint model class, 1,199 alleles the delivered callset never reported. H016/H019/H021/H022 supported; H020 and H023 refuted. |
+| [`iteration2/step-2/notes/completion-audit.md`](iteration2/step-2/notes/completion-audit.md) | What actually ran, what did not, and what the step's findings change for later steps — the tracker that found the step declared complete with four pre-registered items unrun. |
+| [`iteration2/step-2/methodology/`](iteration2/step-2/methodology/) | Entries 085–090: the bait and where it runs, the unreachable off-target gate, the pass over 1.07 billion reads, the alleles the reads carry, the instrument survey, and the alleles the vendor never reported (which flipped H020). |
+| [`iteration2/step-3/README.md`](iteration2/step-3/README.md) | Alignment-free genotype and copy number: what step 2 hands over, the ten measured assumptions step 3 inherits, and the claims to file before it runs. Nothing has run. |
 
 ## The submission
 
