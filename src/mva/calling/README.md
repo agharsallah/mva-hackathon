@@ -16,6 +16,7 @@ wall time, and the sha256 of its inputs and outputs.
 |---|---|---|
 | `align.py` | minimap2 + samtools | where did each recovered read come from |
 | `coverage.py` | mosdepth | how much evidence is there per region |
+| `mapq.py` | samtools view | where was the aligner unsure, per region |
 | `smallvars.py` | freebayes, `bcftools call` | which bases differ — said twice, by two models |
 | `sv.py` | delly, dysgu | which larger rearrangements are there, and how far to trust each type |
 | `phase.py` | whatshap + a direct fragment count | which copy is each allele on |
