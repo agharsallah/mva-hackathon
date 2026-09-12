@@ -250,25 +250,34 @@ def write(dossiers: list[Dossier], root: str | Path = "docs") -> list[Path]:
 
     base = Path(root)
     written: list[Path] = []
-    by_step: dict[str, list[Dossier]] = {}
+    # Keyed by *iteration and* slug. Slugs restart at ``step-1`` each iteration, so
+    # grouping by slug alone would write an iteration-1 claim into the current
+    # iteration's folder - which is both wrong about where the work happened and, while
+    # iteration 2 runs blind, a leak: it would put iteration 1's candidate dossiers
+    # inside ``docs/iteration2/step-*/`` before the unblinding entry exists.
+    by_step: dict[tuple[str, str], list[Dossier]] = {}
     for dossier in dossiers:
-        by_step.setdefault(dossier.hypothesis.step, []).append(dossier)
+        claim = dossier.hypothesis
+        by_step.setdefault((claim.filed_under, claim.step), []).append(dossier)
 
-    for step in steps.research_steps():
-        group = by_step.get(step.slug, [])
-        if not group and not (base / step.folder).exists():
-            continue
-        folder = base / step.folder / "hypotheses"
-        folder.mkdir(parents=True, exist_ok=True)
+    for iteration in steps.iterations():
+        for step in steps.steps_for(iteration):
+            if not step.takes_hypotheses:
+                continue
+            group = by_step.get((iteration, step.slug), [])
+            if not group and not (base / step.folder).exists():
+                continue
+            folder = base / step.folder / "hypotheses"
+            folder.mkdir(parents=True, exist_ok=True)
 
-        index = folder / "README.md"
-        index.write_text(board_markdown(group, step) + "\n", encoding="utf-8")
-        written.append(index)
+            index = folder / "README.md"
+            index.write_text(board_markdown(group, step) + "\n", encoding="utf-8")
+            written.append(index)
 
-        for dossier in group:
-            path = folder / f"{dossier.slug}.md"
-            path.write_text(dossier_markdown(dossier) + "\n", encoding="utf-8")
-            written.append(path)
+            for dossier in group:
+                path = folder / f"{dossier.slug}.md"
+                path.write_text(dossier_markdown(dossier) + "\n", encoding="utf-8")
+                written.append(path)
 
     registry = base / "science-register.json"
     registry.write_text(json.dumps(register(dossiers), indent=2) + "\n", encoding="utf-8")

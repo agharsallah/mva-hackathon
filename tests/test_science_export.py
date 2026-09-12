@@ -253,3 +253,28 @@ def test_a_common_pair_produces_refuting_evidence():
     pair = rank_pairs([(LEFT, RIGHT)], common)[0]
     rows = evidence_from_pair(pair, "H003", "methodology/018")
     assert any(row.direction is Direction.REFUTES for row in rows)
+
+
+def test_a_claim_is_written_under_its_own_iteration_not_the_current_one(tmp_path):
+    """Slugs restart at ``step-1`` every iteration.
+
+    Resolving one against the *current* map would file an iteration-1 claim inside
+    ``docs/iteration2/step-1/`` — wrong about where the work happened, and, while
+    iteration 2 runs blind, a leak: iteration 1's candidate dossiers would appear inside
+    iteration 2's folders before the unblinding entry exists.
+    """
+    write([dossier(iteration="iteration1", step="step-1")], root=tmp_path)
+
+    assert (tmp_path / "iteration1" / "step-1" / "hypotheses" / "h001-bub1b.md").is_file()
+    leaked = tmp_path / "iteration2" / "step-1" / "hypotheses" / "h001-bub1b.md"
+    assert not leaked.exists(), "an iteration-1 claim was written into iteration 2's folder"
+
+
+def test_a_dossier_prints_the_goal_of_its_own_iterations_step(tmp_path):
+    """A frozen record must not be rewritten by the goals of work that came after it."""
+    from mva.science import steps
+
+    old = dossier(iteration="iteration1", step="step-1")
+    assert old.step.goal == steps.by_slug("step-1", iteration="iteration1").goal
+    assert old.step.goal != steps.by_slug("step-1", iteration="iteration2").goal
+    assert old.step.goal in dossier_markdown(old)

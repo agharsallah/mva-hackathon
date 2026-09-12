@@ -47,8 +47,13 @@ class Dossier:
 
     @property
     def step(self) -> steps.Step:
-        """The step whose goal this claim serves."""
-        return steps.by_slug(self.hypothesis.step)
+        """The step whose goal this claim serves, read from *its own* iteration's map.
+
+        Slugs restart at ``step-1`` every iteration, so resolving one against the current
+        map would print iteration 2's goal above an iteration-1 claim — a frozen record
+        rewritten by work that came after it.
+        """
+        return self.hypothesis.step_record
 
     @property
     def supports(self) -> tuple[Evidence, ...]:

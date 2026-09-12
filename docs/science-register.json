@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-09T20:31:26+00:00",
+  "generated_at": "2026-09-12T21:58:35+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -14,81 +14,88 @@
     },
     {
       "slug": "step-1",
-      "title": "Normalize the callset",
-      "goal": "Does every variant in the callset have exactly one spelling, so that an exact-string-matching scorer can be trusted with an indel?",
+      "title": "The blind target set",
+      "goal": "Which genes do the child's symptoms alone nominate \u2014 a target set chosen with the DNA never read?",
       "kind": "research",
-      "status": "open",
+      "status": "done",
       "unblocks": [
         "step-2",
+        "step-3",
         "step-4"
       ]
     },
     {
       "slug": "step-2",
-      "title": "Annotate the callset",
-      "goal": "Which variants are rare enough and damaging enough to cause an ultra-rare recessive disease, and in which gene?",
+      "title": "Discover the alleles from the reads",
+      "goal": "Which alleles do the raw reads carry in the target set, discovered without the vendor caller \u2014 small variants, structural variants, per-exon coverage, and read-backed phase?",
       "kind": "research",
-      "status": "open",
+      "status": "done",
       "unblocks": [
         "step-3",
-        "step-6"
+        "step-6",
+        "step-7"
       ]
     },
     {
       "slug": "step-3",
-      "title": "Rank by phenotype",
-      "goal": "Does an unbiased genome-wide ranking driven by the child's HPO terms agree with the panel-first candidate list?",
+      "title": "Alignment-free genotype and copy number",
+      "goal": "Read without an aligner or a caller, are the discovered alleles at heterozygous multiplicity, is every target-gene exon at two copies, and which public ClinVar P/LP alleles are present at all?",
       "kind": "research",
-      "status": "open",
+      "status": "planned",
       "unblocks": [
-        "step-6"
+        "step-6",
+        "step-7"
       ]
     },
     {
       "slug": "step-4",
-      "title": "Mine the suppressed calls",
-      "goal": "Is one of the two alleles hiding in a call the quality filters discarded, rather than absent from the sample?",
+      "title": "Likelihood-ratio ranking over the VCF",
+      "goal": "Over every protein-coding gene in the VCF, with no hard filter, which biallelic pair has the highest posterior, and what is its P(trans)?",
       "kind": "research",
-      "status": "open",
+      "status": "planned",
       "unblocks": [
+        "step-5",
         "step-6"
       ]
     },
     {
       "slug": "step-5",
-      "title": "Recover the second allele from the reads",
-      "goal": "Is the missing allele a variant the caller could not emit at all \u2014 a structural variant, a deep intronic call, or a low-fraction mosaic?",
+      "title": "Knowledge engine",
+      "goal": "Does public knowledge \u2014 published alleles, case reports, protein-language models \u2014 nominate or corroborate a pair for this phenotype?",
       "kind": "research",
       "status": "planned",
       "unblocks": [
-        "step-6"
+        "step-6",
+        "step-7"
       ]
     },
     {
       "slug": "step-6",
-      "title": "Spend the oracle budget",
-      "goal": "Which candidate pair does the scorer confirm, and what does each reply tell us that the next submission should exploit?",
-      "kind": "research",
-      "status": "planned",
-      "unblocks": []
-    },
-    {
-      "slug": "step-7",
-      "title": "Knowledge and literature",
-      "goal": "Does public knowledge - published MVA cases, ClinVar, protein-model scores - name an allele or a pair the data-driven steps missed, or independently corroborate the one they found?",
+      "title": "Fusion and unblinding",
+      "goal": "Fused across steps 2-5 and then unblinded, does iteration 2 rediscover iteration 1's pair, and is a second upload informative?",
       "kind": "research",
       "status": "planned",
       "unblocks": [
-        "step-6"
+        "step-7"
       ]
     },
     {
-      "slug": "step-8",
-      "title": "Track 2 - drug repurposing",
-      "goal": "Which market-approved drugs act on the mechanism the confirmed alleles imply, and how strong is the evidence for each?",
+      "slug": "step-7",
+      "title": "Track 2 enrichment",
+      "goal": "Which mechanism facts from steps 2-5 and 8 revise the Track 2 card, and what does the drug evidence say for each direction?",
       "kind": "research",
       "status": "planned",
       "unblocks": []
+    },
+    {
+      "slug": "step-8",
+      "title": "The mosaic aneuploidy bound",
+      "goal": "Is mosaic aneuploidy detectable in the sequenced sample with a statistic that has power, and what cell-fraction bound does the data set per chromosome?",
+      "kind": "research",
+      "status": "planned",
+      "unblocks": [
+        "step-7"
+      ]
     }
   ],
   "hypotheses": [
@@ -544,6 +551,468 @@
           "lineage_ref": ""
         }
       ]
+    },
+    {
+      "id": "H012",
+      "step": "step-1",
+      "statement": "Held-out recall@300 of the phenotype-only ranker is at least 0.90 on the recessive-disease benchmark, so a target set of the top 300 genes is large enough to be worth baiting.",
+      "prediction": "recall@300 >= 0.90 over the held-out recessive diseases, degraded Zemojtel-style (1-2 terms blurred to a parent, 1-2 noise terms), with a bootstrap interval reported beside it.",
+      "refuted_by": "recall@300 < 0.90. N is then raised until it is met, before step 2's bait is built, and the raise is recorded.",
+      "gene": "",
+      "path": "",
+      "status": "refuted",
+      "confidence": 0.04,
+      "suggested_confidence": 0.0392,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 33,
+          "direction": "refutes",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "Held-out recall@300 is 0.360 (95% bootstrap interval 0.295-0.420) over 200 recessive diseases of the HPO 2026-06-23 corpus, degraded Zemojtel-style; recall@1000 is 0.565 and top-1 is 0.000.",
+          "source_ref": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 34,
+          "direction": "refutes",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "49 of the 200 held-out genes were unrankable: the withheld disease is the only one curating them, so a curation-driven ranker cannot place them at any N.",
+          "source_ref": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H013",
+      "step": "step-1",
+      "statement": "The blind target set contains at least one gene whose curated disease is a recessive chromosome-instability syndrome.",
+      "prediction": "At least one target-set gene has an OMIM/HPO-curated recessive disease annotated at or under HP:0002916 (chromosome segregation) or HP:0003220 (chromosome stability).",
+      "refuted_by": "No target-set gene has such a disease \u2014 the symptom ranking and the mechanism-term rule together nominate no chromosome-instability gene.",
+      "gene": "",
+      "path": "",
+      "status": "supported",
+      "confidence": 0.83,
+      "suggested_confidence": 0.8581,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 35,
+          "direction": "supports",
+          "strength": 0.9,
+          "kind": "annotation",
+          "claim": "33 genes of the 404-row target set have a curated autosomal-recessive disease annotated at or under HP:0002916 or HP:0003220 (chromosome segregation / stability).",
+          "source_ref": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H014",
+      "step": "step-1",
+      "statement": "The two independent rankers agree on at least 50% of the top 300 genes.",
+      "prediction": "The overlap between the local Resnik ranker's top 300 and Phen2Gene's top 300 on the same terms is >= 50%, read against Yuan 2022's measurement of how much two good rankers are expected to disagree.",
+      "refuted_by": "Overlap < 50% \u2014 the ranking is method-dependent, and the target set is reported as one ranker's opinion rather than a converged nomination.",
+      "gene": "",
+      "path": "",
+      "status": "refuted",
+      "confidence": 0.1,
+      "suggested_confidence": 0.168,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 36,
+          "direction": "refutes",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "Phen2Gene and the local Resnik ranker share 97 of their top 300 genes on the proband term set (32.3%); Monarch semsim returns only 50 genes, of which 13 are shared (26.0%).",
+          "source_ref": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H015",
+      "step": "step-1",
+      "statement": "Fewer than 20% of protein-coding genes have no HPO curation at all.",
+      "prediction": "The count of protein-coding genes absent from the HPO annotation corpus is < 20% of the protein-coding total.",
+      "refuted_by": ">= 20% are uncurated \u2014 the target set's coverage claim is weakened and the uncurated tier is reported as the larger blind spot it then is.",
+      "gene": "",
+      "path": "",
+      "status": "refuted",
+      "confidence": 0.02,
+      "suggested_confidence": 0.1301,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 37,
+          "direction": "refutes",
+          "strength": 0.95,
+          "kind": "measurement",
+          "claim": "14,523 of 19,723 protein-coding genes in the Ensembl-derived coding regions have no HPO curation at all (73.6%), against the predicted under 20%.",
+          "source_ref": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H016",
+      "step": "step-2",
+      "statement": "At least one target gene carries a biallelic candidate set in the read-derived calls.",
+      "prediction": "Enumerating over results.it2_read_alleles gives at least one target gene with two rare heterozygous protein-altering or splice-affecting alleles, or one such allele plus an SV or exon-coverage loss, or one homozygous allele.",
+      "refuted_by": "No target gene yields any biallelic candidate \u2014 the read route nominates nothing and its weight in the step-6 fusion is set from that.",
+      "gene": "",
+      "path": "",
+      "status": "supported",
+      "confidence": 0.88,
+      "suggested_confidence": 0.9241,
+      "revisions": 3,
+      "evidence": [
+        {
+          "id": 41,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "Four target genes carry two rare protein-altering heterozygous alleles or one homozygous: one core-tier, one mechanism-term, two net. The single core-tier gene is also the only gene among all 792 carrying both a truncating and a ClinVar-flagged allele.",
+          "source_ref": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 51,
+          "direction": "supports",
+          "strength": 0.45,
+          "kind": "measurement",
+          "claim": "With the read-derived alleles the delivered callset never reported now annotated by VEP, ten target genes carry a biallelic set of rare protein-altering alleles, three of them core tier, up from four genes when only vendor-reported alleles could be scored.",
+          "source_ref": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 52,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "Those 1,199 newly annotated alleles are calls two read-derived callers made on a baited alignment that the vendor's pipeline did not report, and none has been validated, so ten is an upper bound until step 3's alignment-free genotype check runs.",
+          "source_ref": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H017",
+      "step": "step-2",
+      "statement": "The read-derived DeepVariant calls agree with the delivered VCF at the sites where both call.",
+      "prediction": "For every target gene, DeepVariant PASS calls agree with the delivered callset at >= 99% of sites where both callers emit a genotype. Computed after the calls exist \u2014 a concordance check, never an input to discovery.",
+      "refuted_by": "Concordance < 99%, in which case every discordant site is listed with its IGV shot and the discovery route is re-examined before anything is concluded from it.",
+      "gene": "",
+      "path": "",
+      "status": "superseded",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 49,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "DeepVariant ships amd64 container images only and the analysis machine is arm64 with no Docker, Podman, Apptainer or conda, so the instrument this claim named cannot run; freebayes and bcftools call -m do run here and are disjoint model classes from each other and from the vendor's Sentieon Haplotyper.",
+          "source_ref": "docs/iteration2/step-2/methodology/089-the-instruments-and-the-gate-that-was-skipped.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H018",
+      "step": "step-2",
+      "statement": "No structural variant confirmed by two method classes removes a coding exon of a gene that also carries a rare heterozygous protein-altering allele.",
+      "prediction": "No SV called by >= 2 callers of different method classes (read-pair/split-read vs assembly), outside one insert-size of a bait edge, overlaps such an exon.",
+      "refuted_by": "A DEL or INS does \u2014 that gene becomes the lead pair. A DUP or INV does \u2014 the gene becomes a lead only once exon coverage or k-mer copy number confirms the dosage change, since Kosugi 2019 puts short-read DUP and INV precision near a coin flip.",
+      "gene": "",
+      "path": "",
+      "status": "superseded",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 50,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Manta, GRIDSS and LUMPY/smoove ship Linux x86-64 builds only, so the callers this claim named cannot run here; delly (read-pair plus split-read) and dysgu (local assembly plus learned classifier) have arm64 builds and are the two method classes Kosugi 2019 Fig. 6-7 requires.",
+          "source_ref": "docs/iteration2/step-2/methodology/089-the-instruments-and-the-gate-that-was-skipped.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H019",
+      "step": "step-2",
+      "statement": "Read-backed phasing resolves, or explicitly fails to resolve, the configuration of the top candidate pair.",
+      "prediction": "For the top candidate pair WhatsHap and HapCUT2 either agree on a phase chain closed through the intervening heterozygous SNVs, or report the exact gap that breaks it, with the fraction of the distance covered.",
+      "refuted_by": "Neither outcome is produced \u2014 a tooling failure, re-run before any phase conclusion is drawn.",
+      "gene": "",
+      "path": "",
+      "status": "supported",
+      "confidence": 0.7,
+      "suggested_confidence": 0.7685,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 48,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "Read-backed phasing did not resolve the lead gene's two alleles and the reason is measured, not guessed: they lie 10,911 bp apart with only 4 heterozygous variants between them (mean spacing ~2.7 kb against a ~266 bp fragment), no phase block overlaps the span, and mean depth there is 43.7x so coverage is not the cause.",
+          "source_ref": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H020",
+      "step": "step-2",
+      "statement": "The matched decoy set yields fewer biallelic candidates per gene than the target set.",
+      "prediction": "Running every rule of steps 2-3 identically over results.it2_decoys gives a lower per-gene rate of biallelic candidates than over results.it2_targets \u2014 the read route's empirical false-lead rate.",
+      "refuted_by": "As many or more per gene: the read route has no discriminating power of its own and enters the step-6 fusion at reduced weight.",
+      "gene": "",
+      "path": "",
+      "status": "refuted",
+      "confidence": 0.06913842034334682,
+      "suggested_confidence": 0.0691,
+      "revisions": 3,
+      "evidence": [
+        {
+          "id": 42,
+          "direction": "supports",
+          "strength": 0.35,
+          "kind": "measurement",
+          "claim": "Target genes yield a biallelic candidate at 4/396 against the decoys' 2/396 \u2014 twice the rate \u2014 and restricting to genes above half the median bait density does not change it (4/391 vs 2/380).",
+          "source_ref": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 43,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "With four events against two the comparison has almost no power: Fisher one-sided p = 0.343, so a true twofold difference and no difference at all are both consistent with this result.",
+          "source_ref": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 44,
+          "direction": "refutes",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Without the rarity and consequence filter the decoys yield MORE biallelic genes per gene than the targets (0.573 vs 0.509 core), so the gene selection alone carries no discriminating power \u2014 the filter does.",
+          "source_ref": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 53,
+          "direction": "refutes",
+          "strength": 0.65,
+          "kind": "measurement",
+          "claim": "Scoring every read-derived allele rather than only the vendor-reported ones, targets and decoys yield the same per-gene rate of biallelic candidates: 10 of 396 against 10 of 396, Fisher one-sided p = 0.589; on the pre-registered reachable-gene view the decoys are marginally ahead at 9 of 380 against 9 of 391.",
+          "source_ref": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 54,
+          "direction": "refutes",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "The twofold difference reported earlier was an artefact of the scoring join reading only annotations built from the delivered callset, which restricted the enumeration to alleles the vendor had already found and favoured the target set more than the decoy set.",
+          "source_ref": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H021",
+      "step": "step-2",
+      "statement": "A reference k-mer bait sampled at a fixed stride recovers the reads that carry a known alternate allele inside the baited region.",
+      "prediction": "For at least 100 heterozygous PASS single-nucleotide alleles drawn by script from the delivered callset inside target-gene intervals, at least 90% of the reads the existing 500-probe strike finds carrying the alternate 31-mer are also present in the bait sweep's survivor set, at stride 16.",
+      "refuted_by": "Recall below 0.90, in which case the stride is lowered and the pass repeated before any allele discovered by it is interpreted; a recall this low would mean the survivor set is not a superset of the region's variant-carrying reads and every downstream absence would be uninterpretable.",
+      "gene": "",
+      "path": "",
+      "status": "supported",
+      "confidence": 0.65,
+      "suggested_confidence": 0.8581,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 38,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Of 4,451 reads the 500-probe strike found carrying a witness alternate 31-mer, 4,029 are present in the bait sweep's survivor set: recall 0.9052, just over the 0.90 line.",
+          "source_ref": "docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 39,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "The per-probe bootstrap interval on that recall is [0.815, 0.974] and only 59% of replicates clear 0.90, so the measurement cannot distinguish 0.85 from 0.95.",
+          "source_ref": "docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 40,
+          "direction": "supports",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "Post-hoc: 184 of 195 probes have read counts consistent with a single-copy allele and recall 0.9832 there; the 11 probes found in more reads than one locus can supply recall 0.5312 and carry most of the loss.",
+          "source_ref": "docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H022",
+      "step": "step-2",
+      "statement": "The alleles discovered from the reads agree with the delivered callset wherever both call, so a discordant site is a finding about one caller and not about the recovery.",
+      "prediction": "For every target gene, filter-passing calls from both read-derived callers \u2014 freebayes (Bayesian allele-frequency) and bcftools call -m (pileup) \u2014 agree with the delivered callset at at least 99% of sites where both emit a genotype. Computed after the calls exist: a concordance check, never an input to discovery.",
+      "refuted_by": "Concordance below 99%, in which case every discordant site is listed with its evidence shot and the discovery route is re-examined before anything is concluded from it.",
+      "gene": "",
+      "path": "",
+      "status": "supported",
+      "confidence": 0.88,
+      "suggested_confidence": 0.8581,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 47,
+          "direction": "supports",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "bcftools agrees with the delivered callset at 45,316 of 45,512 co-called substitutions (0.9957) and freebayes at 43,322 of 43,639 (0.9927); at sites the delivered callset marked PASS, 0.9960 and 0.9938.",
+          "source_ref": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H023",
+      "step": "step-2",
+      "statement": "No structural variant supported by two callers of different method classes, outside the bait-edge zone, removes or duplicates a coding exon of a gene that also carries a rare heterozygous protein-altering allele.",
+      "prediction": "The merged consensus of a read-pair and split-read caller (delly) with a local-assembly caller (dysgu), after calls within one insert-size of a bait boundary are flagged out, contains no such deletion or insertion overlapping a coding exon of such a gene.",
+      "refuted_by": "A deletion or insertion does, and that gene becomes the lead pair; a duplication or inversion does, and the gene becomes a lead only when per-exon coverage or k-mer copy number confirms the dosage change, because short-read precision for those two types is close to a coin flip (Kosugi 2019, Table 1).",
+      "gene": "",
+      "path": "",
+      "status": "refuted",
+      "confidence": 0.25,
+      "suggested_confidence": 0.1978,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 45,
+          "direction": "refutes",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "Two genes carry a deletion supported by both method classes, outside the bait-edge zone and with over half its span baited, overlapping a coding exon while the gene also holds a rare protein-altering heterozygous allele: one net-tier and one decoy, deletions of 139-1296 bp.",
+          "source_ref": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 46,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "One of the two is a decoy gene, so this signal appears in genes nobody's symptoms nominated at a comparable rate, and both genes are among the most structurally polymorphic in the genome.",
+          "source_ref": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H024",
+      "step": "step-3",
+      "statement": "Every heterozygous call step 2 made in a reachable target-set gene is called heterozygous by the fitted negative-binomial k-mer genotype model at posterior at least 0.95, with all of its at least three reference/alternate probe pairs agreeing.",
+      "prediction": "For each such call the fitted model puts posterior >= 0.95 on the het class, and the >= 3 independent probe pairs designed across the variant return the same class.",
+      "refuted_by": "One or more calls fall below posterior 0.95 or have probes that disagree, in which case each is re-examined as mosaic, as a private neighbouring variant killing a probe, or as a caller artefact.",
+      "gene": "",
+      "path": "iteration2 plan 3 step 3 (plan H017)",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H025",
+      "step": "step-3",
+      "statement": "At least one ClinVar pathogenic or likely-pathogenic allele of a target-set gene is present in this sample at heterozygous multiplicity, above the error threshold fitted on the calibration set's homozygous-reference side.",
+      "prediction": "Counting the alternate k-mers of every public ClinVar P/LP allele in every target gene returns at least one allele whose count exceeds the fitted minimum-count threshold and whose posterior favours the het class.",
+      "refuted_by": "No ClinVar P/LP allele clears the fitted error threshold, in which case the causal pair, if any, is novel on both sides and no published allele contributes to it.",
+      "gene": "",
+      "path": "iteration2 plan 3 step 3 (plan H018)",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H026",
+      "step": "step-3",
+      "statement": "No exon of a reachable target-set gene, nor any such gene pooled, falls below the 2.5th percentile of a 1,000-exon null copy-number band measured on this sample.",
+      "prediction": "Alignment-free copy number, computed against a local flanking denominator and reported with its surviving unique-k-mer count, leaves every measured target exon or pooled gene inside the null band.",
+      "refuted_by": "One falls below the 2.5th percentile, which makes it a deletion candidate for step 6 after checking which side of the baited-span and minimum-length controls any contradicting structural-variant call sits on.",
+      "gene": "",
+      "path": "iteration2 plan 3 step 3 (plan H019)",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H027",
+      "step": "step-3",
+      "statement": "At least 80 percent of the 1,199 alleles the delivered callset never reported, which step 2's read-derived callers found and annotated, are confirmed at the same multiplicity by alignment-free k-mer genotyping.",
+      "prediction": "Of the 1,199 alleles in warehouse.it2_read_annotations that receive at least three usable probe pairs, at least 80 percent are called at the same genotype class the read callers assigned, at posterior >= 0.95.",
+      "refuted_by": "Fewer than 80 percent are confirmed, in which case every biallelic count step 2 reported is revised downward and the read route gains a measured false-positive rate in place of a caveat.",
+      "gene": "",
+      "path": "iteration2 plan 11.4 headline",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H028",
+      "step": "step-3",
+      "statement": "Both alleles of the top-ranked biallelic candidate pair step 2 discovered are present at one-copy multiplicity, at posterior at least 0.95 each.",
+      "prediction": "The k-mer genotype of each of the two alleles puts posterior >= 0.95 on the heterozygous class, so each allele sits on one of the two copies rather than on both or on neither.",
+      "refuted_by": "Either allele is not called single-copy at that posterior. This is a dosage statement and is not evidence of trans either way: read-backed phasing of this pair is impossible and no population statistic replaces it.",
+      "gene": "",
+      "path": "iteration2 step-3 README 5, adopted by plan 11.4",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H029",
+      "step": "step-3",
+      "statement": "Genes whose surviving-k-mer bait density is below half the median yield no confident k-mer genotype.",
+      "prediction": "Every allele in a gene flagged unreachable by the stage-0 reachability rule returns a no-call, or a posterior below 0.95, or fewer than three usable probe pairs.",
+      "refuted_by": "A gene below half the median bait density yields a confident genotype at posterior >= 0.95 with three agreeing probes, in which case the reachability limit is weaker than claimed and the rule is reported as conservative.",
+      "gene": "",
+      "path": "iteration2 step-3 README 5, adopted by plan 11.4",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
     }
   ]
 }
