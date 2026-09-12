@@ -234,6 +234,16 @@ def test_a_workflow_stage_that_runs_records_its_detail(tmp_path):
     assert flow.stages[0].ok and flow.stages[0].detail == {"records": 42}
 
 
+def test_a_reused_stage_counts_as_having_its_output(tmp_path):
+    """Alignment is the hour of the chain. Re-running to fix a caller must cost the caller,
+    and a reused stage is not a skipped one — its output exists."""
+    from mva.calling import workflow as workflow_module
+
+    reused = workflow_module.Stage(name="align", status="reused", note="already built")
+    skipped = workflow_module.Stage(name="align", status="skipped", note="no tool")
+    assert reused.ok and not skipped.ok
+
+
 def test_the_workflow_summary_is_json_and_names_every_stage(tmp_path):
     from mva.calling import workflow as workflow_module
 

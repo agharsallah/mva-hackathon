@@ -40,7 +40,8 @@ class Stage:
 
     @property
     def ok(self) -> bool:
-        return self.status == "ran"
+        """Whether the stage's output exists — produced now, or reused from a prior run."""
+        return self.status in {"ran", "reused"}
 
 
 @dataclass
@@ -155,6 +156,7 @@ def run_all(
     depth_floor: float = 10.0,
     with_sv: bool = True,
     with_phase: bool = True,
+    resume: bool = True,
 ) -> Workflow:
     """Align the recovered reads and take them to normalised, phased calls.
 
@@ -167,16 +169,40 @@ def run_all(
     out_dir.mkdir(parents=True, exist_ok=True)
     workflow = Workflow(out_dir=out_dir)
 
-    workflow.alignment = _timed(
-        workflow,
-        "align",
-        lambda: align_module.align(reference, r1, r2, out_dir, threads=threads, stem=stem),
-        detail=lambda result: {
-            "reads": result.reads,
-            "mapped_fraction": round(result.mapped_fraction, 6),
-            "duplicates": result.duplicates,
-        },
-    )
+    # Alignment is the hour of this chain and everything after it is minutes. A stage that
+    # already produced an indexed BAM is not repeated by default: re-running to fix a
+    # caller should cost the caller, not the aligner. `resume=False` forces it.
+    existing = out_dir / f"{stem}.bam"
+    if resume and existing.exists() and Path(f"{existing}.bai").exists():
+        stats = align_module.flagstat(existing)
+        workflow.alignment = align_module.Alignment(
+            bam=existing,
+            index=Path(f"{existing}.bai"),
+            manifest=out_dir / f"{stem}.align.provenance.json",
+            reads=stats["total"],
+            mapped=stats["mapped"],
+            properly_paired=stats["properly_paired"],
+            duplicates=stats["duplicates"],
+        )
+        workflow.record(
+            Stage(
+                name="align",
+                status="reused",
+                note=f"{existing.name} already built and indexed; pass resume=False to redo it",
+                detail={"reads": stats["total"], "mapped": stats["mapped"]},
+            )
+        )
+    else:
+        workflow.alignment = _timed(
+            workflow,
+            "align",
+            lambda: align_module.align(reference, r1, r2, out_dir, threads=threads, stem=stem),
+            detail=lambda result: {
+                "reads": result.reads,
+                "mapped_fraction": round(result.mapped_fraction, 6),
+                "duplicates": result.duplicates,
+            },
+        )
     if workflow.alignment is None:
         return workflow
     bam = workflow.alignment.bam

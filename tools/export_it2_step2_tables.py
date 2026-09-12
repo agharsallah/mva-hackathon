@@ -159,10 +159,12 @@ def exon_depth(out: Path, tables: Path) -> int:
 def read_alleles(out: Path, tables: Path) -> int:
     rows: list[list[Any]] = []
     for caller in ("freebayes", "bcftools"):
-        for name in (f"baited.{caller}.norm.vcf.gz", f"baited.{caller}.vcf.gz"):
-            source = out / "calls" / name
-            if not source.exists():
-                continue
+        # The normalised file's exact name depends on what the chain did to it on the way
+        # (freebayes' output is sorted first, which renames it), so it is found by pattern.
+        # Normalised wins over raw: two callers can only be compared after norm.
+        calls = sorted((out / "calls").glob(f"baited.{caller}*.vcf.gz"))
+        preferred = [path for path in calls if ".norm." in path.name] or calls
+        for source in preferred[:1]:
             rows.extend(
                 [
                     caller,

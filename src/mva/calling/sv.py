@@ -34,6 +34,7 @@ calls the edges alone produce.
 from __future__ import annotations
 
 import shutil
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -168,18 +169,10 @@ def _count(path: Path) -> int:
 
 def _records_in_vcf(path: Path) -> int:
     """Count non-header lines without loading the file."""
-    import gzip
-
-    opener = gzip.open if path.suffix == ".gz" else open
-    total = 0
     try:
-        with opener(path, "rt", encoding="utf-8", errors="replace") as handle:
-            for line in handle:
-                if not line.startswith("#"):
-                    total += 1
+        return sum(1 for line in _lines(path) if not line.startswith("#"))
     except OSError:
         return 0
-    return total
 
 
 def near_bait_edge(
@@ -237,37 +230,59 @@ class SvCall:
         return shared > 0 and shared / max(span, theirs) >= reciprocal
 
 
-def read_calls(vcf: Path, *, caller: str, method_class: str) -> tuple[SvCall, ...]:
-    """Parse an SV VCF into rows. ``SVTYPE``, ``END`` and ``SVLEN`` live in INFO, which
-    the small-variant reader does not touch, so they are pulled out here."""
-    import gzip
+def _lines(path: Path) -> Iterator[str]:
+    """Text lines of a VCF, whatever container it arrived in.
 
-    opener = gzip.open if vcf.suffix == ".gz" else open
+    ``.bcf`` is BGZF-compressed **binary**, not gzipped text — delly writes it by default,
+    and reading it as text yields mojibake rather than an error, which is the worst of both.
+    So a BCF is streamed through `bcftools view`, the tool that owns the format.
+    """
+    import gzip
+    import subprocess
+
+    if path.suffix == ".bcf":
+        process = subprocess.Popen(
+            ["bcftools", "view", str(path)], stdout=subprocess.PIPE, text=True
+        )
+        assert process.stdout is not None
+        try:
+            yield from process.stdout
+        finally:
+            process.stdout.close()
+            process.wait()
+        return
+    opener = gzip.open if path.suffix == ".gz" else open
+    with opener(path, "rt", encoding="utf-8", errors="replace") as handle:
+        yield from handle
+
+
+def read_calls(vcf: Path, *, caller: str, method_class: str) -> tuple[SvCall, ...]:
+    """Parse an SV VCF or BCF into rows. ``SVTYPE``, ``END`` and ``SVLEN`` live in INFO,
+    which the small-variant reader does not touch, so they are pulled out here."""
     found: list[SvCall] = []
-    with opener(vcf, "rt", encoding="utf-8", errors="replace") as handle:
-        for line in handle:
-            if line.startswith("#"):
-                continue
-            fields = line.rstrip("\n").split("\t")
-            if len(fields) < 8:
-                continue
-            info = _info(fields[7])
-            position = int(fields[1])
-            length = int(info.get("SVLEN", "0") or 0)
-            end = int(info.get("END", position + abs(length)) or position)
-            found.append(
-                SvCall(
-                    caller=caller,
-                    method_class=method_class,
-                    contig=fields[0],
-                    position=position,
-                    end=end,
-                    sv_type=info.get("SVTYPE", "UNKNOWN"),
-                    length=length or (end - position),
-                    filters=fields[6],
-                    genotype=fields[9].split(":")[0] if len(fields) > 9 else "",
-                )
+    for line in _lines(vcf):
+        if line.startswith("#"):
+            continue
+        fields = line.rstrip("\n").split("\t")
+        if len(fields) < 8:
+            continue
+        info = _info(fields[7])
+        position = int(fields[1])
+        length = int(info.get("SVLEN", "0") or 0)
+        end = int(info.get("END", position + abs(length)) or position)
+        found.append(
+            SvCall(
+                caller=caller,
+                method_class=method_class,
+                contig=fields[0],
+                position=position,
+                end=end,
+                sv_type=info.get("SVTYPE", "UNKNOWN"),
+                length=length or (end - position),
+                filters=fields[6],
+                genotype=fields[9].split(":")[0] if len(fields) > 9 else "",
             )
+        )
     return tuple(found)
 
 

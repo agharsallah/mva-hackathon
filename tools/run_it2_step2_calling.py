@@ -144,6 +144,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--skip-fastq", action="store_true")
     parser.add_argument("--no-sv", action="store_true")
     parser.add_argument("--no-phase", action="store_true")
+    parser.add_argument(
+        "--realign",
+        action="store_true",
+        help="redo the alignment even if an indexed BAM is already there (it is the hour "
+        "of this chain; everything after it is minutes)",
+    )
     args = parser.parse_args(argv)
 
     args.out.mkdir(parents=True, exist_ok=True)
@@ -193,6 +199,7 @@ def main(argv: list[str] | None = None) -> int:
         depth_floor=args.depth_floor,
         with_sv=not args.no_sv,
         with_phase=not args.no_phase,
+        resume=not args.realign,
     )
     report = workflow.write(args.out / "calling-report.json")
 
