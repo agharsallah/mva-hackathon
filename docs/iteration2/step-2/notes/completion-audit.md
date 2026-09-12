@@ -1,11 +1,12 @@
 # Step 2 — what actually ran, what did not, and what to change
 
-**Standing:** opened 2026-09-12. This note is the step's live completion tracker. It
-supersedes the `Standing: complete` line the step README carried on 2026-09-12, which was
-wrong: four pre-registered items had not run and the iteration's own blind gate was red.
+**Standing:** opened and closed 2026-09-12. Every row of table B is done and
+`uv run mva-science check --blind iteration2` passes. This note supersedes the
+`Standing: complete` line the step README carried earlier that day, which was wrong: four
+pre-registered items had not run and the iteration's own blind gate was red.
 
-The step README states results; this note states *state*. It closes when every row below
-is `done` and `uv run mva-science check --blind iteration2` passes.
+The step README states results; this note states *state*. Table C is the part worth
+re-reading later: the findings that change how **later** steps must report a rate.
 
 ## Why this note exists
 
@@ -46,8 +47,8 @@ Ranked by what a wrong answer costs, not by effort.
 | **B4** | Blind gate is not one of the quality gates | It went red without failing anything. `tools/check-python.sh` must run it | **done** — `tools/check_blind.py` is the filesystem half, runs with no database, and is now a gate CI runs. The register half still needs the warehouse and stays in `mva-science check` |
 | **B5** | **Stage 4 scaling test never ran** (10³–10⁷ patterns) | Pre-registered gate with a numeric threshold. Skipping a gate and reporting the step complete is the same error the off-target gate was handled correctly against | **done, and reported as late** — 45.9 min projected against a 60 min gate; a 36,000× larger bait costs 1.05× per read. It cannot license a pass that already happened and [089](../methodology/089-the-instruments-and-the-gate-that-was-skipped.md) says so |
 | **B6** | Step README claims `complete`, lists built modules under "still to build", and duplicates the H017/H018 rows | A status line that is wrong is worse than none | **done** — rewritten, with the audit named in its standing line |
-| **B7** | Dictionary: 11 of 15 step-2 terms absent | CLAUDE.md makes this mandatory per new term, and `/learn` is the reader's only route into the vocabulary | in progress |
-| **B8** | `/steps/step-2` deep page + fixture capture + hash re-bless | The dashboard is the declared single source of truth; figures alone render on `/steps`, the deep page does not exist | in progress |
+| **B7** | Dictionary: 11 of 15 step-2 terms absent | CLAUDE.md makes this mandatory per new term, and `/learn` is the reader's only route into the vocabulary | **done** — dictionary section 18, fifteen terms in dependency order with their own funnel diagram. Adding *reverse complement* gave an existing `/probes` explainer chip a definition to link to, which the link test caught |
+| **B8** | `/steps/step-2` deep page + fixture capture + hash re-bless | The dashboard is the declared single source of truth; figures alone render on `/steps`, the deep page does not exist | **done** — `GET /api/steps/step-2` (aggregates only; a test reads the SQL and fails a block that selects a position) and `/steps/step-2`, with fixtures captured and hashes re-blessed |
 
 ---
 

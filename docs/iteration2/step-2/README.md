@@ -137,8 +137,9 @@ Built here because a research step's tools are filed under that step (CLAUDE.md)
 | `tools/render_it2_step2_figures.py`, `render_it2_step2_results.py` | the eight exhibits |
 | `tools/check_blind.py` | the blind gate, as a gate CI runs |
 | the DNA-literal rule in `tools/check_coordinates.py` | patient *sequence*, not just position |
+| `src/mva/viz/steps_it2.py` + `app/src/pages/Step2.tsx` | `GET /api/steps/step-2` and the deep page, aggregates only |
 
-Still to build: the `/steps/step-2` deep page and its fixtures.
+Nothing is outstanding. The audit note tracks what each of these closed.
 
 ## Methodology
 
