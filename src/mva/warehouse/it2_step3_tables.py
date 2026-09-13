@@ -170,7 +170,14 @@ def _load_tsv(
     casts = ", ".join(f"CAST(NULLIF(\"{name}\", '') AS {sql_type})" for name, sql_type in columns)
     connection.execute(
         f"INSERT INTO {qualified} ({names}) "
-        f"SELECT {casts} FROM read_csv(?, delim='\t', header=true, all_varchar=true)",
+        # ``quote`` is passed explicitly rather than sniffed. Polars writes an empty field
+        # as a quoted empty string, and DuckDB's dialect sniffer infers the quote character
+        # from the first rows — so whether `""` parses as an empty field or as two literal
+        # quote marks depended on whether an early row happened to contain one. It silently
+        # turned every empty string into a two-character value and made `col <> ''` true for
+        # every row.
+        f"SELECT {casts} FROM read_csv(?, delim='\t', header=true, all_varchar=true, "
+        f"quote='\"', escape='\"')",
         [str(path)],
     )
     counted = connection.execute(f"SELECT count(*) FROM {qualified}").fetchone()

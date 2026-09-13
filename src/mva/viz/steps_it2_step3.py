@@ -31,6 +31,15 @@ SOURCE = "pg.results.it2_kmer_* + it2_mapq_profile + it2_exon_cn"
 #: disagree with itself.
 MIN_PROBES = 3
 
+#: The tiers step 1 actually nominated. Named explicitly rather than defined as "not a
+#: decoy": the bait pads each target by up to 50 kb, so most of the alleles typed here are
+#: in neighbouring genes the target set never chose, and counting those as targets would
+#: compare a symptom-derived gene list against a matched null it does not contain.
+TARGET_TIERS = ("core", "mechanism-term", "net")
+
+#: The matched null the target tiers are read against (entry 084).
+DECOY_TIER = "decoy"
+
 #: Each block is ``name -> SQL``. Aggregates only: see the module docstring.
 BLOCKS: dict[str, str] = {
     # The fitted model and its quality checks, as the metric rows the loader wrote.
@@ -140,8 +149,8 @@ def _contrast(confirmation: list[dict]) -> list[dict]:
     out = []
     for novel, label in ((False, "reported by the delivered callset"), (True, "vendor-unreported")):
         rows = [row for row in confirmation if bool(row["novel"]) is novel]
-        targets = [row for row in rows if row["tier"] != "decoy"]
-        decoys = [row for row in rows if row["tier"] == "decoy"]
+        targets = [row for row in rows if row["tier"] in TARGET_TIERS]
+        decoys = [row for row in rows if row["tier"] == DECOY_TIER]
         target_probed = sum(int(row["fully_probed"] or 0) for row in targets)
         decoy_probed = sum(int(row["fully_probed"] or 0) for row in decoys)
         target_hits = sum(int(row["confirmed"] or 0) for row in targets)

@@ -116,6 +116,13 @@ def caller_genotypes(settings: Postgres) -> dict[tuple[str, int, str, str], str]
     return {(str(c), int(p), str(r), str(a)): str(g) for c, p, r, a, g in rows}
 
 
+#: A gene the target set never named. The bait pads each target by up to 50 kb, so the
+#: recovered reads cover neighbouring genes too and their alleles get typed along the way.
+#: They are labelled rather than left blank: an unnamed tier sorts badly, reads as missing
+#: data, and hides the fact that most of the 164,044 alleles are in this class by design.
+OUTSIDE = "outside the target set"
+
+
 def tiers(out: Path) -> dict[str, tuple[str, bool]]:
     """Gene -> (tier, reachable), from the stage-0 profile."""
     frame = pl.read_csv(out / "mapq.tsv", separator="\t", infer_schema_length=0)
@@ -233,7 +240,7 @@ def genotype_rows(
         ordinal[symbol] += 1
         spelled = callers.get((row["chrom"], row["pos"], row["ref"], row["alt"]), "")
         expected = {CALLER_CLASS.get(part) for part in spelled.split(",") if part}
-        tier, reachable = tier_of.get(symbol, ("", False))
+        tier, reachable = tier_of.get(symbol, (OUTSIDE, False))
         rows.append(
             {
                 "symbol": symbol,

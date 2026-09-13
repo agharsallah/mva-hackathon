@@ -66,6 +66,20 @@ def test_the_contrast_reports_targets_and_decoys_for_both_allele_sets():
     assert novel["decoy_rate"] == pytest.approx(0.5)
 
 
+def test_genes_outside_the_target_set_are_not_counted_as_targets():
+    """The bait pads each target by up to 50 kb, so most alleles typed in step 3 belong to
+    neighbouring genes the symptom ranking never nominated. Folding them into "targets"
+    would compare a gene list against a null it does not contain — and it moved the headline
+    rate from 0.91 to 0.34 before the tiers were named explicitly."""
+    confirmation = [
+        {"tier": "core", "novel": False, "fully_probed": 10, "confirmed": 9},
+        {"tier": "outside the target set", "novel": False, "fully_probed": 1000, "confirmed": 300},
+        {"tier": "decoy", "novel": False, "fully_probed": 10, "confirmed": 5},
+    ]
+    row = route._contrast(confirmation)[0]
+    assert row["target_alleles"] == 10 and row["target_rate"] == pytest.approx(0.9)
+
+
 def test_the_contrast_survives_a_tier_with_nothing_in_it():
     """A rate over zero alleles is 0.0, not a division by zero — a step that found nothing
     must still render."""
