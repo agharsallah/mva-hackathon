@@ -2243,3 +2243,85 @@ flowchart LR
 **Ascertainment circularity** — scoring your discoveries with a resource that was itself built from what you were trying to improve on, so the new route can only rediscover the old one's findings. It does not announce itself; it shows up as a smaller number, not an error.
 *Example:* step 2's scoring query annotated alleles by joining a table built from the vendor's callset, so the 1,199 alleles only the new callers found had no consequence, failed the "protein-altering" test for want of one, and vanished. Annotating them separately made the target and decoy sets come out **exactly equal** and refuted H020.
 *Context: the defect a completion audit found after the step had been declared closed · source: docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md · related: Decoy set, Concordance, Null hypothesis (H₀) · first seen 2026-09-12*
+
+## 19. Counting instead of aligning — words for iteration 2's step 3
+
+**k-mer multiplicity** — how many times a particular k-mer appears in the reads, as opposed to whether it appears at all. Membership is a yes/no; multiplicity is a number, and a genotype is a statement about that number. The distinction is why step 3 needed a new instrument rather than a longer run of step 2's.
+*Example:* the step-3 pass scanned 1,876,842,047 read windows in 765 s to count 763,020 probe k-mers.
+*Context: the question `mva.kmer.count` answers and `mva.kmer.membership` cannot · source: docs/iteration2/step-3/methodology/095-the-probes-and-the-counting-kernel.md · related: k-mer, Canonical k-mer, k-mer bait · first seen 2026-09-13*
+
+**Probe (reference/alternate k-mer pair)** — the k letters around a variant, written twice: once as the reference has them and once as the allele has them. The two k-mers differ only by the variant, so counting each in the reads says how many copies carry it. Three pairs are designed per allele, spread across the variant, because a single probe can be destroyed by *another* variant the same person carries a few bases away — and three windows fail independently, so that shows up as disagreement instead of as a genotype.
+*Example:* 381,510 surviving pairs over 164,044 alleles; 95,372 alleles got all three.
+*Context: the instrument the whole step rests on, following FastGT · source: src/mva/kmer/probes.py · related: k-mer multiplicity, Calibration marker · first seen 2026-09-13*
+
+**Alternate-k-mer uniqueness** — requiring the *alternate* spelling of a probe to occur nowhere in the reference genome, and its reference partner exactly once. The alternate is the spelling being searched for, so if it already exists somewhere else, reads from that other place are counted as this allele being present.
+*Example:* 37,306 probe pairs (8.5% of those designed) were dropped because their alternate k-mer already occurs in GRCh38. Step 2's witness set filtered the *reference* side instead and lost reads because of it.
+*Context: the correction step 2 earned, applied · source: docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md · related: Uniqueness filter (off-target k-mer), Probe (reference/alternate k-mer pair) · first seen 2026-09-13*
+
+**Calibration marker** — a variant whose genotype is already settled, used to fit a model rather than to discover anything. Counting the probes of thousands of known heterozygotes tells you what "one copy" looks like *in this sample, at this depth, through this bait* — which no published constant can.
+*Example:* 7,223 heterozygous and 7,481 homozygous-alternate markers, all drawn from inside the baited intervals so the bait's own recovery rate cancels out of the ratio being fitted.
+*Context: how the genotype model learns this sample's coverage · source: src/mva/kmer/genotype.py · related: Probe (reference/alternate k-mer pair), Negative binomial · first seen 2026-09-13*
+
+**Negative binomial** — a distribution for counts that are more spread out than pure chance would make them. A Poisson distribution assumes the spread is fixed by the average; a negative binomial adds one parameter for the extra spread, which real sequencing depth always has because some places are systematically easier to read than others.
+*Example:* fitted here at a per-copy coverage of 17.96 with a dispersion of 4.68.
+*Context: the emission model of the k-mer genotyper, following FastGT · source: src/mva/kmer/genotype.py · related: Over-dispersion, Variance-to-mean ratio, Calibration marker · first seen 2026-09-13*
+
+**Over-dispersion** — the condition a negative binomial exists to describe: more variance in the counts than the average alone predicts. Ignoring it makes a model overconfident about every count it sees, which is how a merely thin region becomes a confident false deletion.
+*Example:* measured here, not assumed — see the variance-to-mean ratio below.
+*Context: why a Poisson model was refused · source: src/mva/kmer/genotype.py · related: Negative binomial, Variance-to-mean ratio · first seen 2026-09-13*
+
+**Variance-to-mean ratio** — the spread of a set of counts divided by their average. Poisson predicts exactly 1; anything above it is over-dispersion, and the number says how much.
+*Example:* **2.91** on this sample's calibration markers — so a Poisson model would have been about three times too confident about every count.
+*Context: the one number that says whether the negative binomial was necessary · source: docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md · related: Over-dispersion, Negative binomial · first seen 2026-09-13*
+
+**k-mer genotype** — reading how many copies of a gene carry an allele by counting its k-mer spellings in the reads, with no aligner and no caller in the chain. One copy puts the alternate spelling into about half the reads covering that place, two into nearly all, none into a handful from sequencing error.
+*Example:* both alleles of step 2's lead pair were called heterozygous at 11/12 and 18/16 reference-to-alternate counts, posterior 1.0, all three probes agreeing.
+*Context: the third, independent reading of the same bytes · source: src/mva/kmer/genotype.py · related: Probe (reference/alternate k-mer pair), Genotype posterior, Negative binomial · first seen 2026-09-13*
+
+**Genotype posterior** — the probability the model puts on each of "no copies", "one copy" and "two copies", given the two counts it saw. Reported instead of a threshold, so a reader can see how close a call was rather than only which side of a line it landed.
+*Example:* a call needs 0.95 before it is a call; below that it is a no-call.
+*Context: what replaces a pair of cut-offs · source: src/mva/kmer/genotype.py · related: k-mer genotype, No-call · first seen 2026-09-13*
+
+**No-call** — "the instrument could not say", recorded as its own answer. It is a different finding from "the allele is absent", and collapsing the two is how a gap in the data becomes a result. Here it means the posterior missed the floor, or the allele had too few surviving probes for its agreement to mean anything.
+*Example:* 73,067 of 164,044 alleles, mostly published alleles that could not be given three usable probes.
+*Context: the state the model returns rather than guessing · source: src/mva/kmer/genotype.py · related: Genotype posterior, Allele dropout · first seen 2026-09-13*
+
+**Allele dropout** — an allele that is genuinely present but shows a count of zero, by bad luck rather than by absence. Its probability comes from the fitted model, not from an optimistic formula: over-dispersion puts far more weight on zero than Poisson does, so the optimistic figure would make every absence look decisive.
+*Example:* computed from the fitted negative binomial and reported beside every absence claim.
+*Context: the quantity behind the word "absent" · source: src/mva/kmer/genotype.py · related: Negative binomial, No-call · first seen 2026-09-13*
+
+**Minimum count threshold** — the smallest alternate count that an allele which is *not* there would be unlikely to reach by sequencing error alone. Anything at or below it is not evidence of presence.
+*Example:* 2, at a fitted error rate of 0.000247 and a false-positive rate of 1 in 1,000. That error rate turned out to be too tight: four published alleles cleared it at alternate fractions of 0.06–0.09, a tenth of what a real heterozygote shows, and are recorded as an artefact rather than as findings.
+*Context: what "present at all" was defined to mean, and where the definition strained · source: docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md · related: Allele dropout, Genotype posterior · first seen 2026-09-13*
+
+**MAPQ (mapping quality)** — the aligner's own phred-scaled statement of how likely it is that a read was placed in the right spot. `MAPQ 0` is the special value meaning "this sequence occurs in more than one place and I picked one at random" — not a low score but a refusal to answer.
+*Example:* the median gene in this sample has a MAPQ-0 fraction of 0.000044, and the off-target reads sit at a median MAPQ of 60 — the maximum — meaning the bait pulled in reads that genuinely belong elsewhere and the aligner confidently sent them there.
+*Context: the gate that decided which genes step 3 was allowed to report on · source: src/mva/calling/mapq.py · related: Reachability, Segmental duplication · first seen 2026-09-13*
+
+**Reachability** — whether a gene can be measured here at all: enough unique bait k-mers survive, and the aligner was willing to place its reads. A gene that fails is **flagged, never dropped** — an absence inside it is not a finding, and deleting the row would make that indistinguishable from having found nothing.
+*Example:* 21 of 792 genes are unreachable, none of them core or mechanism-term. They still yield confident genotypes for 17.6% of their alleles against 59.6% elsewhere, so the rule is a 3.4-fold enrichment rather than an absolute limit — which refuted the claim that said it was one.
+*Context: the replacement for the off-target gate that could not be reached · source: docs/iteration2/step-3/methodology/093-where-the-aligner-was-unsure.md · related: MAPQ (mapping quality), Uniqueness filter (off-target k-mer) · first seen 2026-09-13*
+
+**Segmental duplication** — a long stretch of DNA that occurs in two or more near-identical copies elsewhere in the genome. It defeats both instruments in the same way and for the same reason: the uniqueness filter removes the bait's k-mers there, and the aligner refuses to place the reads.
+*Example:* `NEB`, `GTF2I`, `GTF2IRD2` and `ANAPC1` carry 61 of the 68 thin exons step 2 measured, and every one has a known paralogue or pseudogene.
+*Context: what the 8.79% of unusable bait is actually made of · source: docs/iteration2/step-2/methodology/086-can-the-off-target-gate-be-reached.md · related: Reachability, Uniqueness filter (off-target k-mer) · first seen 2026-09-13*
+
+**Copy number** — how many copies of a stretch of DNA a sample carries. Two is normal for an autosome; one means a deletion on one chromosome, three a duplication. Counted here as a ratio of k-mer counts rather than by alignment.
+*Example:* the convention is stated once — a diploid region reads as 2.0, a heterozygous exon deletion as 1.0.
+*Context: what step 3 asks of every exon, after asking about every allele · source: src/mva/kmer/copynumber.py · related: k-mer multiplicity, Local-flank denominator, Null band · first seen 2026-09-13*
+
+**Local-flank denominator** — dividing a region's k-mer counts by the counts from the sequence immediately either side of it, rather than by a genome-wide average. The neighbouring sequence shares the region's coverage bias, so dividing by it cancels the bias; a genome-wide average does not, and would read every unusually-composed exon as a deletion.
+*Example:* 2,000 unique flanking k-mers per gene, split between the two sides. The genome-wide median is computed too and kept as a cross-check, and the disagreement between the two is a reported column rather than something averaged away.
+*Context: GeneToCN's central finding, applied · source: src/mva/kmer/copynumber.py · related: Copy number, Null band · first seen 2026-09-13*
+
+**Null band** — the spread of a measurement over things that have no reason to show the effect being looked for, used as the threshold for the things that might. It answers "low compared to what" with a number measured on this sample instead of an imported constant.
+*Example:* copy number over the decoy genes' exons — 396 genes matched to the targets on coding length and exon count and carrying none of the child's symptoms — with an exon below its 2.5th percentile counting as a deletion candidate.
+*Context: why a copy number that merely sounds low is not a finding · source: src/mva/kmer/copynumber.py · related: Copy number, Decoy set, Local-flank denominator · first seen 2026-09-13*
+
+**FastGT** — the published method this step's genotyping follows: count the k-mers of known variants directly in raw reads and classify them with an empirical-Bayes negative binomial. Pajuste 2017, *Sci Rep* (PMID 28566690). Its classifier is the thing ported here; it validated single-base substitutions only, so indel probes here use the idea and not the published accuracy.
+*Example:* its rule of at least three k-mer pairs per allele is why three probes are designed rather than one.
+*Context: the direct precedent for genotyping without an aligner · source: docs/iteration2/plan.md · related: k-mer genotype, Negative binomial, Probe (reference/alternate k-mer pair) · first seen 2026-09-13*
+
+**GeneToCN** — the published method this step's copy number follows: estimate copy number from k-mer frequencies with a local flanking denominator. Pajuste 2023, *Sci Rep* (PMID 37853040). Its smallest validated unit is 5.5 kb, well above a coding exon, which is why the exon scale here is conditional on a k-mer count rather than assumed.
+*Example:* it judged 268 gene-specific k-mers unreliable against 3,095 reliable; the line drawn here, before any exon was measured, is 300.
+*Context: the precedent, and the limit that made the exon scale conditional · source: docs/iteration2/plan.md · related: Copy number, Local-flank denominator, Null band · first seen 2026-09-13*

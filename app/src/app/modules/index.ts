@@ -136,6 +136,16 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/Step2'),
   },
   {
+    id: 'step3',
+    path: '/steps/step-3',
+    navLabel: 'Step 3',
+    title: 'Step 3 — the reads, with no aligner and no caller',
+    group: 'decide',
+    description:
+      'The same bytes read a third way, by counting k-mers: what a disjoint instrument confirms of step 2\u2019s alleles, and the 80% claim it refutes.',
+    load: () => import('../../pages/Step3'),
+  },
+  {
     id: 'science',
     path: '/science',
     navLabel: 'Science',

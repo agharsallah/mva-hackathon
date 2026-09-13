@@ -187,3 +187,128 @@ export interface Step2Payload {
   unreachable: Step2Unreachable[];
   contrast: Step2Contrast[];
 }
+
+/* ── Step 3 — alignment-free genotype and copy number ───────────────────────────────── */
+
+/** One fitted parameter or quality check of the genotype model. */
+export interface Step3Calibration {
+  stage: string;
+  metric: string;
+  value: number;
+  note: string;
+}
+
+/**
+ * What a second instrument said about the first one's alleles, split by whether the
+ * delivered callset had ever reported them. The `novel` split is the step's headline.
+ */
+export interface Step3Confirmation {
+  tier: string;
+  novel: boolean;
+  alleles: number;
+  fully_probed: number;
+  no_call: number;
+  confirmed: number;
+  confirmed_fraction: number | null;
+  in_unreachable_gene: number;
+  mean_posterior: number | null;
+}
+
+/** The distribution of calls per tier. `no-call` is a class here, not a gap. */
+export interface Step3Call {
+  tier: string;
+  call: string;
+  alleles: number;
+  fully_probed: number;
+  unanimous: number;
+  mean_posterior: number | null;
+}
+
+/** Probe design per allele source. */
+export interface Step3Probes {
+  origin: string;
+  alleles: number;
+  probes_kept: number;
+  alleles_fully_probed: number;
+  alleles_without_probe: number;
+  fully_probed_fraction: number | null;
+}
+
+/** Whether genes the stage-0 gate excluded yield a confident genotype anyway (H029). */
+export interface Step3Reach {
+  reachable: boolean;
+  sparse_bait: boolean;
+  mapq_refused: boolean;
+  genes: number;
+  alleles: number;
+  confident_calls: number;
+  confident_and_unanimous: number;
+  confident_fraction: number | null;
+}
+
+/** A gene still carrying two confirmed heterozygous alleles. */
+export interface Step3Lead {
+  symbol: string;
+  tier: string;
+  reachable: boolean;
+  bait_density: number | null;
+  confirmed_het: number;
+  confirmed_novel: number;
+}
+
+/** Stage 0: where the aligner was unsure, per tier. */
+export interface Step3Mapq {
+  tier: string;
+  genes: number;
+  unreachable: number;
+  sparse_bait: number;
+  mapq_refused: number;
+  median_mapq0_fraction: number | null;
+  max_mapq0_fraction: number | null;
+}
+
+/** Copy number at whatever resolution each region earned. */
+export interface Step3CopyNumber {
+  tier: string;
+  regions: number;
+  exon_scale: number;
+  pooled: number;
+  without_local_denominator: number;
+  below_null_band: number;
+  median_copy_number: number | null;
+  median_disagreement: number | null;
+}
+
+/** What normal looks like on this sample, measured on the decoys. */
+export interface Step3CopyNumberBand {
+  percentile: number;
+  low: number;
+  high: number;
+  median: number;
+  regions: number;
+}
+
+/** Targets against decoys, for one set of alleles. */
+export interface Step3Contrast {
+  allele_set: string;
+  target_alleles: number;
+  target_confirmed: number;
+  target_rate: number;
+  decoy_alleles: number;
+  decoy_confirmed: number;
+  decoy_rate: number;
+}
+
+/** GET /api/steps/step-3 */
+export interface Step3Payload {
+  calibration: Step3Calibration[];
+  confirmation: Step3Confirmation[];
+  calls: Step3Call[];
+  probes: Step3Probes[];
+  reach: Step3Reach[];
+  leads: Step3Lead[];
+  mapq: Step3Mapq[];
+  copy_number: Step3CopyNumber[];
+  copy_number_band: Step3CopyNumberBand[];
+  contrast: Step3Contrast[];
+}

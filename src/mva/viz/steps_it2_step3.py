@@ -132,8 +132,20 @@ BLOCKS: dict[str, str] = {
 
 
 def payload(settings: Postgres) -> dict:
-    """Every block, plus the target-versus-decoy contrast the step is obliged to report."""
-    data = {name: fetch(settings, sql) for name, sql in BLOCKS.items()}
+    """Every block, plus the target-versus-decoy contrast the step is obliged to report.
+
+    A block whose table does not exist yet comes back **empty rather than raising**. Step 3
+    lands one stage at a time — the genotypes before the copy number — and a page that 500s
+    until the last stage finishes would hide the results that are already in. An empty block
+    renders as an absent exhibit, which is the same rule the figures follow: a chart of
+    zeros and a stage that did not run look identical to a reader, so neither is drawn.
+    """
+    data: dict[str, list] = {}
+    for name, sql in BLOCKS.items():
+        try:
+            data[name] = fetch(settings, sql)
+        except Exception:
+            data[name] = []
     data["contrast"] = _contrast(data["confirmation"])
     return data
 

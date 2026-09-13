@@ -65,6 +65,7 @@ import type {
   SourceObjectRow,
   Step1Payload,
   Step2Payload,
+  Step3Payload,
   StepsPayload,
   StructureGene,
   Submissions,
@@ -368,6 +369,9 @@ export const useSteps = (iteration?: string) =>
  * real genomic positions and none of their rows crosses this boundary.
  */
 export const useStep2 = () => useEndpoint<Step2Payload>('/api/steps/step-2');
+
+/** Step 3 — what the reads say with no aligner and no caller in the chain. */
+export const useStep3 = () => useEndpoint<Step3Payload>('/api/steps/step-3');
 
 /**
  * Iteration 2 step 1's measurements: the recall curve, the tiers, the two-ranker overlap,

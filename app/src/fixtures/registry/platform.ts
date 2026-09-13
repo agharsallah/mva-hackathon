@@ -3,6 +3,7 @@ import type {
   ReferenceProvenanceRow,
   Step1Payload,
   Step2Payload,
+  Step3Payload,
   StepsPayload,
   Submissions,
   Track2,
@@ -106,6 +107,10 @@ export const platformEntries: Record<string, Entry> = {
   '/api/steps/step-2': {
     source: 'CAPTURED /api/steps/step-2 reply (pg.results.it2_*, aggregated in SQL)',
     load: () => rows<Step2Payload>('steps-step-2'),
+  },
+  '/api/steps/step-3': {
+    source: 'CAPTURED /api/steps/step-3 reply (pg.results.it2_*, aggregated in SQL)',
+    load: () => rows<Step3Payload>('steps-step-3'),
   },
   '/api/science/hypotheses': {
     source: 'INVENTED research register',

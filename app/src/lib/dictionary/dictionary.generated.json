@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 18,
-    "entries": 516,
+    "chapters": 19,
+    "entries": 536,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 87
+    "contexts": 107
   },
   "chapters": [
     {
@@ -6487,6 +6487,327 @@
             "null-hypothesis-h0"
           ],
           "firstSeen": "2026-09-12"
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "id": "19-counting-instead-of-aligning--words-for-iteration-2s-step-3",
+      "title": "Counting instead of aligning — words for iteration 2's step 3",
+      "blocks": [
+        {
+          "kind": "entry",
+          "slug": "k-mer-multiplicity",
+          "term": "k-mer multiplicity",
+          "aliases": [],
+          "html": "<p>how many times a particular k-mer appears in the reads, as opposed to whether it appears at all. Membership is a yes/no; multiplicity is a number, and a genotype is a statement about that number. The distinction is why step 3 needed a new instrument rather than a longer run of step 2's.</p>",
+          "exampleHtml": "<p><em>Example:</em> the step-3 pass scanned 1,876,842,047 read windows in 765 s to count 763,020 probe k-mers.</p>",
+          "context": "<p>the question <code>mva.kmer.count</code> answers and <code>mva.kmer.membership</code> cannot</p>",
+          "source": "docs/iteration2/step-3/methodology/095-the-probes-and-the-counting-kernel.md",
+          "related": [
+            "k-mer",
+            "canonical-k-mer",
+            "k-mer-bait"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "probe-reference-alternate-k-mer-pair",
+          "term": "Probe (reference/alternate k-mer pair)",
+          "aliases": [
+            "Probe (reference",
+            "alternate k-mer pair)",
+            "reference/alternate k-mer pair"
+          ],
+          "html": "<p>the k letters around a variant, written twice: once as the reference has them and once as the allele has them. The two k-mers differ only by the variant, so counting each in the reads says how many copies carry it. Three pairs are designed per allele, spread across the variant, because a single probe can be destroyed by <em>another</em> variant the same person carries a few bases away — and three windows fail independently, so that shows up as disagreement instead of as a genotype.</p>",
+          "exampleHtml": "<p><em>Example:</em> 381,510 surviving pairs over 164,044 alleles; 95,372 alleles got all three.</p>",
+          "context": "<p>the instrument the whole step rests on, following FastGT</p>",
+          "source": "src/mva/kmer/probes.py",
+          "related": [
+            "k-mer-multiplicity",
+            "calibration-marker"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "alternate-k-mer-uniqueness",
+          "term": "Alternate-k-mer uniqueness",
+          "aliases": [],
+          "html": "<p>requiring the <em>alternate</em> spelling of a probe to occur nowhere in the reference genome, and its reference partner exactly once. The alternate is the spelling being searched for, so if it already exists somewhere else, reads from that other place are counted as this allele being present.</p>",
+          "exampleHtml": "<p><em>Example:</em> 37,306 probe pairs (8.5% of those designed) were dropped because their alternate k-mer already occurs in GRCh38. Step 2's witness set filtered the <em>reference</em> side instead and lost reads because of it.</p>",
+          "context": "<p>the correction step 2 earned, applied</p>",
+          "source": "docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md",
+          "related": [
+            "uniqueness-filter-off-target-k-mer",
+            "probe-reference-alternate-k-mer-pair"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "calibration-marker",
+          "term": "Calibration marker",
+          "aliases": [],
+          "html": "<p>a variant whose genotype is already settled, used to fit a model rather than to discover anything. Counting the probes of thousands of known heterozygotes tells you what \"one copy\" looks like <em>in this sample, at this depth, through this bait</em> — which no published constant can.</p>",
+          "exampleHtml": "<p><em>Example:</em> 7,223 heterozygous and 7,481 homozygous-alternate markers, all drawn from inside the baited intervals so the bait's own recovery rate cancels out of the ratio being fitted.</p>",
+          "context": "<p>how the genotype model learns this sample's coverage</p>",
+          "source": "src/mva/kmer/genotype.py",
+          "related": [
+            "probe-reference-alternate-k-mer-pair",
+            "poisson-negative-binomial"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "negative-binomial",
+          "term": "Negative binomial",
+          "aliases": [],
+          "html": "<p>a distribution for counts that are more spread out than pure chance would make them. A Poisson distribution assumes the spread is fixed by the average; a negative binomial adds one parameter for the extra spread, which real sequencing depth always has because some places are systematically easier to read than others.</p>",
+          "exampleHtml": "<p><em>Example:</em> fitted here at a per-copy coverage of 17.96 with a dispersion of 4.68.</p>",
+          "context": "<p>the emission model of the k-mer genotyper, following FastGT</p>",
+          "source": "src/mva/kmer/genotype.py",
+          "related": [
+            "over-dispersion",
+            "variance-to-mean-ratio",
+            "calibration-marker"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "over-dispersion",
+          "term": "Over-dispersion",
+          "aliases": [],
+          "html": "<p>the condition a negative binomial exists to describe: more variance in the counts than the average alone predicts. Ignoring it makes a model overconfident about every count it sees, which is how a merely thin region becomes a confident false deletion.</p>",
+          "exampleHtml": "<p><em>Example:</em> measured here, not assumed — see the variance-to-mean ratio below.</p>",
+          "context": "<p>why a Poisson model was refused</p>",
+          "source": "src/mva/kmer/genotype.py",
+          "related": [
+            "poisson-negative-binomial",
+            "variance-to-mean-ratio"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "variance-to-mean-ratio",
+          "term": "Variance-to-mean ratio",
+          "aliases": [],
+          "html": "<p>the spread of a set of counts divided by their average. Poisson predicts exactly 1; anything above it is over-dispersion, and the number says how much.</p>",
+          "exampleHtml": "<p><em>Example:</em> <strong>2.91</strong> on this sample's calibration markers — so a Poisson model would have been about three times too confident about every count.</p>",
+          "context": "<p>the one number that says whether the negative binomial was necessary</p>",
+          "source": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "related": [
+            "over-dispersion",
+            "poisson-negative-binomial"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "k-mer-genotype",
+          "term": "k-mer genotype",
+          "aliases": [],
+          "html": "<p>reading how many copies of a gene carry an allele by counting its k-mer spellings in the reads, with no aligner and no caller in the chain. One copy puts the alternate spelling into about half the reads covering that place, two into nearly all, none into a handful from sequencing error.</p>",
+          "exampleHtml": "<p><em>Example:</em> both alleles of step 2's lead pair were called heterozygous at 11/12 and 18/16 reference-to-alternate counts, posterior 1.0, all three probes agreeing.</p>",
+          "context": "<p>the third, independent reading of the same bytes</p>",
+          "source": "src/mva/kmer/genotype.py",
+          "related": [
+            "probe-reference-alternate-k-mer-pair",
+            "genotype-posterior",
+            "poisson-negative-binomial"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "genotype-posterior",
+          "term": "Genotype posterior",
+          "aliases": [],
+          "html": "<p>the probability the model puts on each of \"no copies\", \"one copy\" and \"two copies\", given the two counts it saw. Reported instead of a threshold, so a reader can see how close a call was rather than only which side of a line it landed.</p>",
+          "exampleHtml": "<p><em>Example:</em> a call needs 0.95 before it is a call; below that it is a no-call.</p>",
+          "context": "<p>what replaces a pair of cut-offs</p>",
+          "source": "src/mva/kmer/genotype.py",
+          "related": [
+            "k-mer-genotype",
+            "no-call"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "no-call",
+          "term": "No-call",
+          "aliases": [],
+          "html": "<p>\"the instrument could not say\", recorded as its own answer. It is a different finding from \"the allele is absent\", and collapsing the two is how a gap in the data becomes a result. Here it means the posterior missed the floor, or the allele had too few surviving probes for its agreement to mean anything.</p>",
+          "exampleHtml": "<p><em>Example:</em> 73,067 of 164,044 alleles, mostly published alleles that could not be given three usable probes.</p>",
+          "context": "<p>the state the model returns rather than guessing</p>",
+          "source": "src/mva/kmer/genotype.py",
+          "related": [
+            "genotype-posterior",
+            "allele-dropout"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "allele-dropout",
+          "term": "Allele dropout",
+          "aliases": [],
+          "html": "<p>an allele that is genuinely present but shows a count of zero, by bad luck rather than by absence. Its probability comes from the fitted model, not from an optimistic formula: over-dispersion puts far more weight on zero than Poisson does, so the optimistic figure would make every absence look decisive.</p>",
+          "exampleHtml": "<p><em>Example:</em> computed from the fitted negative binomial and reported beside every absence claim.</p>",
+          "context": "<p>the quantity behind the word \"absent\"</p>",
+          "source": "src/mva/kmer/genotype.py",
+          "related": [
+            "poisson-negative-binomial",
+            "no-call"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "minimum-count-threshold",
+          "term": "Minimum count threshold",
+          "aliases": [],
+          "html": "<p>the smallest alternate count that an allele which is <em>not</em> there would be unlikely to reach by sequencing error alone. Anything at or below it is not evidence of presence.</p>",
+          "exampleHtml": "<p><em>Example:</em> 2, at a fitted error rate of 0.000247 and a false-positive rate of 1 in 1,000. That error rate turned out to be too tight: four published alleles cleared it at alternate fractions of 0.06–0.09, a tenth of what a real heterozygote shows, and are recorded as an artefact rather than as findings.</p>",
+          "context": "<p>what \"present at all\" was defined to mean, and where the definition strained</p>",
+          "source": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "related": [
+            "allele-dropout",
+            "genotype-posterior"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "mapq-mapping-quality",
+          "term": "MAPQ (mapping quality)",
+          "aliases": [
+            "MAPQ",
+            "mapping quality"
+          ],
+          "html": "<p>the aligner's own phred-scaled statement of how likely it is that a read was placed in the right spot. <code>MAPQ 0</code> is the special value meaning \"this sequence occurs in more than one place and I picked one at random\" — not a low score but a refusal to answer.</p>",
+          "exampleHtml": "<p><em>Example:</em> the median gene in this sample has a MAPQ-0 fraction of 0.000044, and the off-target reads sit at a median MAPQ of 60 — the maximum — meaning the bait pulled in reads that genuinely belong elsewhere and the aligner confidently sent them there.</p>",
+          "context": "<p>the gate that decided which genes step 3 was allowed to report on</p>",
+          "source": "src/mva/calling/mapq.py",
+          "related": [
+            "reachability",
+            "segmental-duplication-repeat-region-mappability"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "reachability",
+          "term": "Reachability",
+          "aliases": [],
+          "html": "<p>whether a gene can be measured here at all: enough unique bait k-mers survive, and the aligner was willing to place its reads. A gene that fails is <strong>flagged, never dropped</strong> — an absence inside it is not a finding, and deleting the row would make that indistinguishable from having found nothing.</p>",
+          "exampleHtml": "<p><em>Example:</em> 21 of 792 genes are unreachable, none of them core or mechanism-term. They still yield confident genotypes for 17.6% of their alleles against 59.6% elsewhere, so the rule is a 3.4-fold enrichment rather than an absolute limit — which refuted the claim that said it was one.</p>",
+          "context": "<p>the replacement for the off-target gate that could not be reached</p>",
+          "source": "docs/iteration2/step-3/methodology/093-where-the-aligner-was-unsure.md",
+          "related": [
+            "mapq-mapping-quality",
+            "uniqueness-filter-off-target-k-mer"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "segmental-duplication",
+          "term": "Segmental duplication",
+          "aliases": [],
+          "html": "<p>a long stretch of DNA that occurs in two or more near-identical copies elsewhere in the genome. It defeats both instruments in the same way and for the same reason: the uniqueness filter removes the bait's k-mers there, and the aligner refuses to place the reads.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>NEB</code>, <code>GTF2I</code>, <code>GTF2IRD2</code> and <code>ANAPC1</code> carry 61 of the 68 thin exons step 2 measured, and every one has a known paralogue or pseudogene.</p>",
+          "context": "<p>what the 8.79% of unusable bait is actually made of</p>",
+          "source": "docs/iteration2/step-2/methodology/086-can-the-off-target-gate-be-reached.md",
+          "related": [
+            "reachability",
+            "uniqueness-filter-off-target-k-mer"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "copy-number",
+          "term": "Copy number",
+          "aliases": [],
+          "html": "<p>how many copies of a stretch of DNA a sample carries. Two is normal for an autosome; one means a deletion on one chromosome, three a duplication. Counted here as a ratio of k-mer counts rather than by alignment.</p>",
+          "exampleHtml": "<p><em>Example:</em> the convention is stated once — a diploid region reads as 2.0, a heterozygous exon deletion as 1.0.</p>",
+          "context": "<p>what step 3 asks of every exon, after asking about every allele</p>",
+          "source": "src/mva/kmer/copynumber.py",
+          "related": [
+            "k-mer-multiplicity",
+            "local-flank-denominator",
+            "null-band"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "local-flank-denominator",
+          "term": "Local-flank denominator",
+          "aliases": [],
+          "html": "<p>dividing a region's k-mer counts by the counts from the sequence immediately either side of it, rather than by a genome-wide average. The neighbouring sequence shares the region's coverage bias, so dividing by it cancels the bias; a genome-wide average does not, and would read every unusually-composed exon as a deletion.</p>",
+          "exampleHtml": "<p><em>Example:</em> 2,000 unique flanking k-mers per gene, split between the two sides. The genome-wide median is computed too and kept as a cross-check, and the disagreement between the two is a reported column rather than something averaged away.</p>",
+          "context": "<p>GeneToCN's central finding, applied</p>",
+          "source": "src/mva/kmer/copynumber.py",
+          "related": [
+            "copy-number",
+            "null-band"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "null-band",
+          "term": "Null band",
+          "aliases": [],
+          "html": "<p>the spread of a measurement over things that have no reason to show the effect being looked for, used as the threshold for the things that might. It answers \"low compared to what\" with a number measured on this sample instead of an imported constant.</p>",
+          "exampleHtml": "<p><em>Example:</em> copy number over the decoy genes' exons — 396 genes matched to the targets on coding length and exon count and carrying none of the child's symptoms — with an exon below its 2.5th percentile counting as a deletion candidate.</p>",
+          "context": "<p>why a copy number that merely sounds low is not a finding</p>",
+          "source": "src/mva/kmer/copynumber.py",
+          "related": [
+            "copy-number",
+            "decoy-set",
+            "local-flank-denominator"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "fastgt",
+          "term": "FastGT",
+          "aliases": [],
+          "html": "<p>the published method this step's genotyping follows: count the k-mers of known variants directly in raw reads and classify them with an empirical-Bayes negative binomial. Pajuste 2017, <em>Sci Rep</em> (PMID 28566690). Its classifier is the thing ported here; it validated single-base substitutions only, so indel probes here use the idea and not the published accuracy.</p>",
+          "exampleHtml": "<p><em>Example:</em> its rule of at least three k-mer pairs per allele is why three probes are designed rather than one.</p>",
+          "context": "<p>the direct precedent for genotyping without an aligner</p>",
+          "source": "docs/iteration2/plan.md",
+          "related": [
+            "k-mer-genotype",
+            "poisson-negative-binomial",
+            "probe-reference-alternate-k-mer-pair"
+          ],
+          "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "genetocn",
+          "term": "GeneToCN",
+          "aliases": [],
+          "html": "<p>the published method this step's copy number follows: estimate copy number from k-mer frequencies with a local flanking denominator. Pajuste 2023, <em>Sci Rep</em> (PMID 37853040). Its smallest validated unit is 5.5 kb, well above a coding exon, which is why the exon scale here is conditional on a k-mer count rather than assumed.</p>",
+          "exampleHtml": "<p><em>Example:</em> it judged 268 gene-specific k-mers unreliable against 3,095 reliable; the line drawn here, before any exon was measured, is 300.</p>",
+          "context": "<p>the precedent, and the limit that made the exon scale conditional</p>",
+          "source": "docs/iteration2/plan.md",
+          "related": [
+            "copy-number",
+            "local-flank-denominator",
+            "null-band"
+          ],
+          "firstSeen": "2026-09-13"
         }
       ]
     }
