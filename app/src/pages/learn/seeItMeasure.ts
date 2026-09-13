@@ -250,4 +250,57 @@ export const SEE_IT_MEASURE: Record<string, SeeIt> = {
       },
     ],
   },
+  // ── chapter 19: iteration 2's step 3, counting instead of aligning ───────
+  'k-mer-genotype': {
+    app: [
+      {
+        to: '/steps/step-3#calls-per-tier-no-call-included',
+        label: 'every allele typed, by what the model called it',
+      },
+    ],
+    docs: [
+      {
+        path: 'docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md',
+        label: 'the fit, and the five claims it settled',
+      },
+    ],
+  },
+  'no-call': {
+    app: [
+      {
+        to: '/steps/step-3#calls-per-tier-no-call-included',
+        label: 'the red band — an answer, not a gap',
+      },
+    ],
+  },
+  'negative-binomial': {
+    app: [
+      {
+        to: '/steps/step-3#the-fit-and-the-checks-that-say-whether-to-believe-it',
+        label: 'the fitted parameters and their quality checks',
+      },
+    ],
+  },
+  'variance-to-mean-ratio': {
+    app: [
+      {
+        to: '/steps/step-3#the-fit-and-the-checks-that-say-whether-to-believe-it',
+        label: 'measured at 2.91, where Poisson predicts 1',
+      },
+    ],
+  },
+  reachability: {
+    app: [
+      {
+        to: '/steps/step-3#genes-the-stage-0-gate-excluded-still-yield-some-genotypes',
+        label: 'the gate, and the claim it refuted',
+      },
+    ],
+    docs: [
+      {
+        path: 'docs/iteration2/step-3/methodology/093-where-the-aligner-was-unsure.md',
+        label: 'where the aligner was unsure, and how rarely',
+      },
+    ],
+  },
 };

@@ -1,7 +1,7 @@
 # Step 3 — alignment-free genotype and copy number
 
 **Standing:** **complete, 2026-09-13.** Six claims filed before the run, six settled:
-**four refuted, two supported.** The step's own headline claim is one of the refutations,
+**four refuted (H024, H026, H027, H029), two supported (H025, H028).** The step's own headline claim is one of the refutations,
 and it is the most useful thing the step produced. Hands over to
 [step 4](../step-4/README.md). Iteration 2, `step-3`.
 
@@ -27,6 +27,12 @@ Where the two instruments agree, an allele has survived a genuinely disjoint met
 they disagree, the disagreement is the finding — and it turned out there was a great deal of
 it.
 
+The step also produced the one thing it could not have arranged: **a positive control.**
+Nothing in the copy-number measurement was told which chromosome anything was on, or that
+the proband is male. It read the X at half the autosomal dosage anyway — 0.95 against 2.00.
+An instrument that finds the one copy-number change that is certainly there, without being
+pointed at it, has earned the absences it reports everywhere else.
+
 ## Results
 
 | | |
@@ -41,6 +47,9 @@ it.
 | calls | 20,231 het · 13,098 hom-alt · 57,648 hom-ref · **73,067 no-call** |
 | **vendor-reported alleles confirmed** (target genes) | **645 / 671 = 96.1 %** |
 | **vendor-unreported alleles confirmed** (target genes) | **140 / 397 = 35.3 %** |
+| copy-number regions | **1,430** — 664 at exon scale, 766 genes pooled from 12,588 thin exons |
+| **median copy number** | **2.00** on autosomes, **0.95** on chromosome X — a male proband's single X, found with nothing told to the measurement |
+| null band, from the decoys | **[1.028, 2.823]** over 703 regions |
 
 ## Claims — all six resolved
 
@@ -48,7 +57,7 @@ it.
 |---|---|---|---|
 | H024 | **refuted** | 0.15 | *every* step-2 het call in a reachable target gene is confirmed — 453 of 518 are |
 | H025 | **supported** | 0.60 | a ClinVar P/LP allele is present at het multiplicity — one genuinely is, four are an artefact |
-| H026 | see [097](methodology/097-copy-number-without-an-aligner.md) | | no target exon falls below the null copy-number band |
+| H026 | **refuted** | 0.30 | no target exon falls below the null band — one does, `BRD4` exon 7 at 0.85 |
 | H027 | **refuted** | 0.08 | ≥ 80 % of the 1,199 vendor-unreported alleles confirmed — **27–43 %** are |
 | H028 | **supported** | 0.85 | both lead alleles at one-copy multiplicity — both, posterior 1.0, unanimous |
 | H029 | **refuted** | 0.20 | unreachable genes yield no confident genotype — they yield 215 |
@@ -92,7 +101,7 @@ dosages. **It is not trans evidence** and the step does not offer it as any.
 | 2 | counting kernel | exact agreement with `mva.reads.scan.counts` on ≤ 20 probes | **pass** — 38 against 38, no disagreement |
 | 3 | negative-binomial fit | λ consistent with measured depth | **pass** — 35.93× against 35.2× predicted from read length |
 | 4 | genotype calls | posterior and probe agreement on every call; no-call is a state | **pass** |
-| 5 | copy number | k-mer count and both denominators printed per region | [097](methodology/097-copy-number-without-an-aligner.md) |
+| 5 | copy number | k-mer count and both denominators printed per region | **pass** — 1,430 regions, median 2.00 autosomal ([097](methodology/097-copy-number-without-an-aligner.md)) |
 | 6 | decoy symmetry | identical rules, both rates stated | **pass** — targets and decoys within a few points in both columns |
 
 ## What went wrong, and was caught
