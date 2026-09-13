@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-13T09:23:41+00:00",
+  "generated_at": "2026-09-13T09:48:18+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -41,8 +41,9 @@
       "title": "Alignment-free genotype and copy number",
       "goal": "Read without an aligner or a caller, are the discovered alleles at heterozygous multiplicity, is every target-gene exon at two copies, and which public ClinVar P/LP alleles are present at all?",
       "kind": "research",
-      "status": "planned",
+      "status": "done",
       "unblocks": [
+        "step-4",
         "step-6",
         "step-7"
       ]

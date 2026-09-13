@@ -94,7 +94,9 @@ Iteration 1 is **frozen** (submission 1 uploaded 2026-09-09, full match at rank 
 | [`iteration2/step-2/README.md`](iteration2/step-2/README.md) | **Complete 2026-09-12.** What the raw reads carry in the target set without the vendor caller: 7.89 M fragments recovered by k-mer bait, two callers of disjoint model class, 1,199 alleles the delivered callset never reported. H016/H019/H021/H022 supported; H020 and H023 refuted. |
 | [`iteration2/step-2/notes/completion-audit.md`](iteration2/step-2/notes/completion-audit.md) | What actually ran, what did not, and what the step's findings change for later steps — the tracker that found the step declared complete with four pre-registered items unrun. |
 | [`iteration2/step-2/methodology/`](iteration2/step-2/methodology/) | Entries 085–090: the bait and where it runs, the unreachable off-target gate, the pass over 1.07 billion reads, the alleles the reads carry, the instrument survey, and the alleles the vendor never reported (which flipped H020). |
-| [`iteration2/step-3/README.md`](iteration2/step-3/README.md) | Alignment-free genotype and copy number: what step 2 hands over, the ten measured assumptions step 3 inherits, and the claims to file before it runs. Nothing has run. |
+| [`iteration2/step-3/README.md`](iteration2/step-3/README.md) | **Complete 2026-09-13.** The same reads counted with no aligner and no caller: 164,044 alleles typed from 381,510 k-mer probe pairs over 1.88 billion read windows. H025 and H028 supported; H024, H026 and **H027** refuted — only ~1 in 3 of the 1,199 alleles the vendor never reported is corroborated, against ~19 in 20 of the ones it did. |
+| [`iteration2/step-3/methodology/`](iteration2/step-3/methodology/) | Entries 093, 095–097: where the aligner was unsure, the probes and the counting kernel, the alleles at their multiplicity, and copy number without an aligner. |
+| [`iteration2/step-4/README.md`](iteration2/step-4/README.md) | Likelihood-ratio ranking over the VCF — promoted from safety net to the only discriminating and genome-wide route, by the measured limits of steps 1–3. Nothing has run. |
 
 ## The submission
 

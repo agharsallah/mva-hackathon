@@ -243,7 +243,11 @@ ITERATION2: tuple[Step, ...] = (
             "heterozygous multiplicity, is every target-gene exon at two copies, and "
             "which public ClinVar P/LP alleles are present at all?"
         ),
-        unblocks=("step-6", "step-7"),
+        # Done: six claims filed before the run, six settled - four refuted, two
+        # supported. H027, the step's own headline, is one of the refutations and is
+        # the most useful thing it produced.
+        status="done",
+        unblocks=("step-4", "step-6", "step-7"),
         iteration="iteration2",
     ),
     Step(
