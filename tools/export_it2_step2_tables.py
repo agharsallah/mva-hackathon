@@ -157,6 +157,27 @@ def exon_depth(out: Path, tables: Path) -> int:
     )
 
 
+def exon_depth_by_exon(out: Path, tables: Path) -> int:
+    """The per-*exon* grid entry 092 measured, copied through as the warehouse's own table.
+
+    ``it2_exon_depth`` holds the merged baited intervals the coverage stage ran over, which
+    for 126 of the 128 core and mechanism-term genes is one interval spanning the whole
+    gene. It can say whether a gene is deep enough and cannot say whether an exon is, and a
+    gene-level mean of 44x hides an exon at 3x completely. This is the other table, and the
+    reason the audit's D7 stayed open: the measurement existed in ``build/`` with nowhere
+    for the dashboard to read it from.
+
+    Carries no coordinate — a gene, an exon's ordinal within it, its length and its depth.
+    """
+    source = out / "exon-depth.tsv"
+    if not source.exists():
+        return 0
+    with source.open(encoding="utf-8") as handle:
+        header = handle.readline().rstrip("\n").split("\t")
+        rows = [line.rstrip("\n").split("\t") for line in handle if line.strip()]
+    return write_tsv(tables / "it2_exon_depth_by_exon.tsv", header, rows)
+
+
 def read_alleles(out: Path, tables: Path) -> int:
     rows: list[list[Any]] = []
     for caller in ("freebayes", "bcftools"):
@@ -302,6 +323,7 @@ def main(argv: list[str] | None = None) -> int:
         "it2_bait_qc": bait_qc(args.out, tables),
         "it2_bait_density": bait_density(args.out, tables),
         "it2_exon_depth": exon_depth(args.out, tables),
+        "it2_exon_depth_by_exon": exon_depth_by_exon(args.out, tables),
         "it2_read_alleles": read_alleles(args.out, tables),
         "it2_sv_calls": sv_calls(args.out, tables, edges),
         "it2_phase_blocks": phase_blocks(args.out, tables),

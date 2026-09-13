@@ -50,6 +50,13 @@ SCHEMAS: dict[str, tuple[tuple[str, str], ...]] = {
         ("symbol", "VARCHAR"),
         ("mean_depth", "DOUBLE"),
     ),
+    "it2_exon_depth_by_exon": (
+        ("symbol", "VARCHAR"),
+        ("tier", "VARCHAR"),
+        ("exon_index", "BIGINT"),
+        ("exon_bases", "BIGINT"),
+        ("mean_depth", "DOUBLE"),
+    ),
     "it2_read_alleles": (
         ("caller", "VARCHAR"),
         ("chrom", "VARCHAR"),
@@ -100,6 +107,13 @@ TRANSFORMS: dict[str, str] = {
     "it2_exon_depth": (
         "mean read depth over each merged baited interval, MAPQ>=20 (mosdepth via "
         "mva.calling.coverage)"
+    ),
+    "it2_exon_depth_by_exon": (
+        "mean read depth over each *coding exon*, MAPQ>=20, as gene + ordinal + length + "
+        "depth and no coordinate (mosdepth via tools/measure_it2_exon_depth.py, entry 092). "
+        "it2_exon_depth holds the merged baited intervals, which for 126 of the 128 core "
+        "and mechanism-term genes is one interval spanning the whole gene - so it can say "
+        "whether a gene is deep enough and cannot say whether an exon is"
     ),
     "it2_read_alleles": (
         "small-variant calls from two callers of disjoint model class (freebayes; "
