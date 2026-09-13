@@ -82,7 +82,14 @@ LABELS = {
 
 
 def per_allele(values: np.ndarray, allele: np.ndarray, alleles: int) -> np.ndarray:
-    """Median probe count per allele — see the module docstring on why not the sum."""
+    """Median probe count per allele, rounded to a whole number.
+
+    Median, not sum: see the module docstring. Rounded, because the negative binomial is a
+    distribution over *counts* and has zero probability everywhere else — the median of an
+    even number of probes is ``x.5``, which makes every class impossible at once. That is
+    not hypothetical: 22,475 of these alleles have two surviving probes, and before the
+    rounding they came out of the model as a silent "homozygous reference".
+    """
     out = np.zeros(alleles, dtype=float)
     order = np.argsort(allele, kind="stable")
     grouped_allele = allele[order]
@@ -91,7 +98,7 @@ def per_allele(values: np.ndarray, allele: np.ndarray, alleles: int) -> np.ndarr
     for chunk, index in zip(
         np.split(grouped_value, edges), grouped_allele[np.concatenate([[0], edges])], strict=True
     ):
-        out[index] = float(np.median(chunk))
+        out[index] = float(np.round(np.median(chunk)))
     return out
 
 

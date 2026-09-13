@@ -234,6 +234,15 @@ def posteriors(reference: np.ndarray, alternate: np.ndarray, fit_: Fit) -> np.nd
             + np.log(prior)
         )
     stacked = np.stack(columns, axis=-1)
+    # A row where every class is impossible has no posterior to normalise, and the usual
+    # max-subtraction would turn it into NaN — which argmax then reads as class 0, quietly
+    # calling the allele homozygous reference. It happens for real: a count that is not a
+    # whole number (the median of an even number of probes) has zero probability under
+    # every negative binomial, because the distribution is over counts. Such a row is
+    # returned flat, which fails any posterior floor and is reported as a no-call — the
+    # honest answer, and the one an unexplained hom-ref would have hidden.
+    impossible = ~np.isfinite(stacked).any(axis=-1)
+    stacked = np.where(impossible[..., None], 0.0, stacked)
     stacked -= stacked.max(axis=-1, keepdims=True)
     weights = np.exp(stacked)
     return weights / weights.sum(axis=-1, keepdims=True)

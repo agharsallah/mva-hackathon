@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-12T21:58:35+00:00",
+  "generated_at": "2026-09-13T09:23:41+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -938,11 +938,30 @@
       "refuted_by": "One or more calls fall below posterior 0.95 or have probes that disagree, in which case each is re-examined as mosaic, as a private neighbouring variant killing a probe, or as a caller artefact.",
       "gene": "",
       "path": "iteration2 plan 3 step 3 (plan H017)",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.15,
+      "suggested_confidence": 0.3543,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 55,
+          "direction": "refutes",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "Of 518 fully-probed step-2 heterozygous calls in reachable target-set genes, 453 are called heterozygous at posterior >= 0.95 with all three probes agreeing; 38 are contradicted and 11 are no-calls. The claim said every one.",
+          "source_ref": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 56,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "The 87.5% that do agree were typed by an instrument sharing neither the aligner nor the caller, so the agreement is independent corroboration rather than a repeated measurement.",
+          "source_ref": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H025",
@@ -952,11 +971,30 @@
       "refuted_by": "No ClinVar P/LP allele clears the fitted error threshold, in which case the causal pair, if any, is novel on both sides and no published allele contributes to it.",
       "gene": "",
       "path": "iteration2 plan 3 step 3 (plan H018)",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.6,
+      "suggested_confidence": 0.7685,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 57,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "Five ClinVar pathogenic or likely-pathogenic alleles of reachable target-set genes are called heterozygous above the fitted error threshold with three agreeing probes. One of them has a balanced alternate fraction of 0.471 and was also called by both read-derived callers.",
+          "source_ref": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 58,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "The other four sit at alternate fractions of 0.061 to 0.091, about a tenth of a heterozygote, and no caller reported any of them. The fitted error rate of 0.000247 makes any alternate count of two or more improbable under homozygous reference, so the model calls them heterozygous; they are better read as the error model being too tight than as presence.",
+          "source_ref": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H026",
@@ -980,11 +1018,30 @@
       "refuted_by": "Fewer than 80 percent are confirmed, in which case every biallelic count step 2 reported is revised downward and the read route gains a measured false-positive rate in place of a caveat.",
       "gene": "",
       "path": "iteration2 plan 11.4 headline",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.08,
+      "suggested_confidence": 0.4013,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 59,
+          "direction": "refutes",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "Of the 1,199 alleles the delivered callset never reported, the fully-probed ones are confirmed at the same multiplicity by k-mer genotype in only 27% to 43% per tier, against the 80% the claim named.",
+          "source_ref": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 60,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "The same instrument confirms 91% to 97% of the alleles the delivered callset did report, in the same genes and in the same run, so the low rate on the vendor-unreported set is a property of those alleles and not of the instrument.",
+          "source_ref": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H028",
@@ -994,11 +1051,21 @@
       "refuted_by": "Either allele is not called single-copy at that posterior. This is a dosage statement and is not evidence of trans either way: read-backed phasing of this pair is impossible and no population statistic replaces it.",
       "gene": "",
       "path": "iteration2 step-3 README 5, adopted by plan 11.4",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.85,
+      "suggested_confidence": 0.8455,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 61,
+          "direction": "supports",
+          "strength": 0.85,
+          "kind": "measurement",
+          "claim": "Both alleles of the top-ranked biallelic candidate pair are called heterozygous at posterior 1.0 with all three probes agreeing, at counts of 11 reference to 12 alternate and 18 to 16 \u2014 one copy each, by an instrument with no aligner and no caller in the chain.",
+          "source_ref": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H029",
@@ -1008,11 +1075,30 @@
       "refuted_by": "A gene below half the median bait density yields a confident genotype at posterior >= 0.95 with three agreeing probes, in which case the reachability limit is weaker than claimed and the rule is reported as conservative.",
       "gene": "",
       "path": "iteration2 step-3 README 5, adopted by plan 11.4",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.2,
+      "suggested_confidence": 0.3543,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 62,
+          "direction": "refutes",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "The 21 genes the stage-0 reachability rule excluded yield 215 confident calls across 1,222 alleles, a 17.6% rate rather than none.",
+          "source_ref": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 63,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Reachable genes yield a confident call for 59.6% of their alleles, so the gate is 3.4 times enriched for callable alleles even though it is not absolute.",
+          "source_ref": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "lineage_ref": ""
+        }
+      ]
     }
   ]
 }

@@ -204,3 +204,26 @@ def test_the_fit_reports_the_marker_counts_behind_it():
     fitted = calibrated(markers=1234)
     assert fitted.het_markers == 1234 and fitted.hom_alt_markers == 1234
     assert fitted.as_dict()["het_markers"] == 1234
+
+
+def test_a_count_that_is_not_a_whole_number_is_a_no_call_not_a_silent_hom_ref():
+    """The negative binomial is a distribution over counts, so a fractional count has zero
+    probability under *every* class. Before this was handled the three log-likelihoods tied
+    at -inf, the normalisation produced NaN, and argmax read NaN as class 0 — reporting
+    22,475 real alleles as homozygous reference without a warning anyone would see.
+    """
+    fitted = calibrated(per_copy=22.0)
+    weights = posteriors(np.array([18.5]), np.array([15.5]), fitted)
+    assert np.isfinite(weights).all()
+    assert weights[0] == pytest.approx([1 / 3, 1 / 3, 1 / 3])
+    calls = call_alleles(np.array([18.5]), np.array([15.5]), np.array([3]), fitted)
+    assert calls[0].genotype is Genotype.NO_CALL
+
+
+def test_an_impossible_row_does_not_disturb_its_neighbours():
+    """The guard is per row, so one unusable observation in a batch of 164,000 must not
+    change the answer for any other."""
+    fitted = calibrated(per_copy=22.0)
+    alone = posteriors(np.array([22.0]), np.array([22.0]), fitted)
+    together = posteriors(np.array([22.0, 18.5]), np.array([22.0, 15.5]), fitted)
+    assert together[0] == pytest.approx(alone[0])
