@@ -179,12 +179,16 @@ class TestDerivations:
         # `pg-load-it2-step2`, which put rows from a non-SQL pipeline where SQL can read
         # them. A name here that no loader writes is the same mistake as an unproduced
         # ingest dependency, and is caught the same way.
-        from mva.warehouse import it2_step2_tables, it2_tables
+        from mva.warehouse import it2_step2_tables, it2_step3_tables, it2_tables
 
-        loadable = set(it2_step2_tables.SCHEMAS) | {
-            it2_tables.TARGETS_TABLE,
-            it2_tables.DECOYS_TABLE,
-        }
+        loadable = (
+            set(it2_step2_tables.SCHEMAS)
+            | set(it2_step3_tables.SCHEMAS)
+            | {
+                it2_tables.TARGETS_TABLE,
+                it2_tables.DECOYS_TABLE,
+            }
+        )
         for item in DERIVATIONS:
             for table in item.reads_loaded:
                 assert table in loadable, f"{item.name} reads {table}, which no loader writes"
