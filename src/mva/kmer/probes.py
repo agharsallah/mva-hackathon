@@ -38,7 +38,7 @@ from pathlib import Path
 import numpy as np
 
 from . import fasta
-from .encode import CODES, INVALID, K, window_kmers
+from .encode import CODES, K, window_kmers
 from .membership import Bait
 
 #: Probe pairs per allele. Three is FastGT's rule and the number H024 is written about.
@@ -164,15 +164,23 @@ def _haplotypes(bases: np.ndarray, allele: Allele, k: int) -> tuple[np.ndarray, 
     return CODES[reference], CODES[alternate]
 
 
-def _window(codes: np.ndarray, at: int, k: int) -> int | None:
-    """The canonical k-mer starting at ``at``, or ``None`` if it runs off or holds an ``N``."""
-    if at < 0 or at + k > codes.size:
+def _windows(codes: np.ndarray, k: int) -> tuple[np.ndarray, np.ndarray]:
+    """Every window of one local haplotype, cut once.
+
+    Cutting each window separately would call :func:`window_kmers` on a ``k``-length array,
+    which spends ``k`` vectorised passes over one element and is dominated by interpreter
+    overhead. The haplotype is ~125 bases, so cutting all of its windows in a single call
+    and indexing the two or three that are wanted is the same arithmetic with a fraction of
+    the calls — and step 3 designs probes for ~180,000 alleles.
+    """
+    return window_kmers(codes, k)
+
+
+def _at(kmers: np.ndarray, valid: np.ndarray, at: int) -> int | None:
+    """The window starting at ``at``, or ``None`` if it runs off the end or holds an ``N``."""
+    if at < 0 or at >= kmers.size:
         return None
-    piece = codes[at : at + k]
-    if (piece == INVALID).any():
-        return None
-    kmers, valid = window_kmers(piece, k)
-    return int(kmers[0]) if valid[0] else None
+    return int(kmers[at]) if valid[at] else None
 
 
 def _pairs_for(
@@ -181,14 +189,16 @@ def _pairs_for(
     reference, alternate = _haplotypes(bases, allele, k)
     anchor = min(FLANK * k, allele.position - 1)
     shift = _common_prefix(allele.ref, allele.alt)
+    ref_kmers, ref_valid = _windows(reference, k)
+    alt_kmers, alt_valid = _windows(alternate, k)
     found: list[ProbePair] = []
     for offset in _offsets(k, len(allele.ref), len(allele.alt), shift, probes):
-        ref_kmer = _window(reference, anchor + offset, k)
+        ref_kmer = _at(ref_kmers, ref_valid, anchor + offset)
         # An indel shifts everything right of the variant, so the alternate window that
         # spans the variant is not the same window on the reference. Both still span it,
         # which is what the pair is for; they are not the same coordinates, and for an
         # indel they cannot be.
-        alt_kmer = _window(alternate, anchor + offset, k)
+        alt_kmer = _at(alt_kmers, alt_valid, anchor + offset)
         if ref_kmer is None or alt_kmer is None:
             skipped["window_off_contig_or_n"] = skipped.get("window_off_contig_or_n", 0) + 1
             continue

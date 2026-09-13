@@ -310,20 +310,21 @@ def main(argv: list[str] | None = None) -> int:
     alleles, origins = merge([reads, clinvar, calibration])
     print(
         f"alleles: {len(reads):,} from the reads, {len(clinvar):,} from ClinVar, "
-        f"{len(calibration):,} calibration -> {len(alleles):,} distinct"
+        f"{len(calibration):,} calibration -> {len(alleles):,} distinct",
+        flush=True,
     )
 
     built = design(args.reference, alleles, k=args.k, probes=args.probes)
-    print(f"designed {len(built.pairs):,} probe pairs; skipped {built.skipped}")
+    print(f"designed {len(built.pairs):,} probe pairs; skipped {built.skipped}", flush=True)
 
     report = dict(built.skipped)
     if not args.skip_uniqueness:
         values = built.kmers()
         bait = Bait.of(values, k=args.k)
-        print(f"uniqueness pass over {len(bait):,} distinct probe k-mers ...")
+        print(f"uniqueness pass over {len(bait):,} distinct probe k-mers ...", flush=True)
         occurrence = uniqueness.count_in_genome(args.reference, bait)
         built, report = unique_only(built, occurrence_map(built, occurrence.counts))
-        print(f"kept {len(built.pairs):,} probe pairs; dropped {report}")
+        print(f"kept {len(built.pairs):,} probe pairs; dropped {report}", flush=True)
 
     counts = built.counts_per_allele()
     written = write_tables(args.out, alleles, origins, built, counts)
