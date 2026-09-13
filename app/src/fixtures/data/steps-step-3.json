@@ -2139,8 +2139,57 @@
       "max_mapq0_fraction": 0.082492
     }
   ],
-  "copy_number": [],
-  "copy_number_band": [],
+  "copy_number": [
+    {
+      "tier": "core",
+      "regions": 102,
+      "exon_scale": 45,
+      "pooled": 57,
+      "without_local_denominator": 0,
+      "below_null_band": 0,
+      "median_copy_number": 2.05,
+      "median_disagreement": 0.025
+    },
+    {
+      "tier": "decoy",
+      "regions": 703,
+      "exon_scale": 319,
+      "pooled": 384,
+      "without_local_denominator": 683,
+      "below_null_band": 18,
+      "median_copy_number": 1.95,
+      "median_disagreement": 0.5
+    },
+    {
+      "tier": "mechanism-term",
+      "regions": 132,
+      "exon_scale": 66,
+      "pooled": 66,
+      "without_local_denominator": 0,
+      "below_null_band": 1,
+      "median_copy_number": 2.0854,
+      "median_disagreement": 0.025
+    },
+    {
+      "tier": "net",
+      "regions": 493,
+      "exon_scale": 234,
+      "pooled": 259,
+      "without_local_denominator": 471,
+      "below_null_band": 26,
+      "median_copy_number": 2.05,
+      "median_disagreement": 0.35
+    }
+  ],
+  "copy_number_band": [
+    {
+      "percentile": 2.5,
+      "low": 1.0275,
+      "high": 2.8225,
+      "median": 1.95,
+      "regions": 703
+    }
+  ],
   "contrast": [
     {
       "allele_set": "reported by the delivered callset",

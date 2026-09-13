@@ -45,8 +45,8 @@ import polars as pl
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from mva.kmer import uniqueness
-from mva.kmer.bait import Interval, cut
+from mva.kmer import fasta, uniqueness
+from mva.kmer.bait import Interval
 from mva.kmer.copynumber import (
     DELETION_PERCENTILE,
     MIN_EXON_KMERS,
@@ -59,7 +59,7 @@ from mva.kmer.copynumber import (
     summarise,
 )
 from mva.kmer.count import tally
-from mva.kmer.encode import K
+from mva.kmer.encode import K, codes_of, window_kmers
 from mva.kmer.membership import Bait
 from mva.reads.bait import code_matrix
 from mva.warehouse.postgres import ALIAS, attached
@@ -119,13 +119,36 @@ def grouped_intervals(rows: list[tuple], flank: int) -> tuple[dict[str, list[Int
 def cut_labelled(
     reference: Path, groups: dict[str, list[Interval]], k: int
 ) -> tuple[Bait, dict[str, np.ndarray]]:
-    """One reference pass, cutting each labelled group into its own k-mer array."""
-    per_label: dict[str, np.ndarray] = {}
+    """Cut each labelled group into its own k-mer array, in **one** pass over the reference.
+
+    ``mva.kmer.bait.cut`` streams the whole FASTA for the interval list it is given, which is
+    right when there is one bait and catastrophic when there are 14,044 labelled groups — it
+    would read 3 GB of reference once per exon. So the intervals are inverted: grouped by
+    contig, cut as that contig goes past, and never revisited.
+    """
+    by_contig: dict[str, list[tuple[str, Interval]]] = {}
     for label, spans in groups.items():
-        bait, _ = cut(reference, spans, k=k, bits=None)
-        per_label[label] = bait.kmers
-    everything = np.unique(np.concatenate([values for values in per_label.values() if values.size]))
-    return Bait.of(everything, k=k), per_label
+        for span in spans:
+            by_contig.setdefault(span.contig, []).append((label, span))
+
+    per_label: dict[str, list[np.ndarray]] = {label: [] for label in groups}
+    for contig in fasta.contigs(reference, wanted=set(by_contig)):
+        codes = codes_of(contig.bases)
+        for label, span in by_contig[contig.name]:
+            piece = codes[max(0, span.start) : min(span.end, codes.size)]
+            if piece.size < k:
+                continue
+            kmers, valid = window_kmers(piece, k)
+            if valid.any():
+                per_label[label].append(kmers[valid])
+
+    joined = {
+        label: (np.unique(np.concatenate(parts)) if parts else np.empty(0, dtype=np.uint64))
+        for label, parts in per_label.items()
+    }
+    everything = [values for values in joined.values() if values.size]
+    pool = np.unique(np.concatenate(everything)) if everything else np.empty(0, dtype=np.uint64)
+    return Bait.of(pool, k=k), joined
 
 
 def counts_over_reads(reads: Path, probes: Bait, batch: int, limit: int | None) -> np.ndarray:

@@ -26,6 +26,7 @@ from it2_step3_charts import (
     calibration_figure,
     calls_figure,
     confirmation_figure,
+    copy_number_figure,
     mapq_figure,
     metric,
     probes_figure,
@@ -151,6 +152,35 @@ def build(data: dict) -> list[Exhibit]:
                     extra="**red** = the worst gene in that tier, not its average.",
                 ),
                 figure=mapq_figure(data["mapq"]),
+            )
+        )
+
+    if data.get("copy_number"):
+        exhibits.append(
+            Exhibit(
+                slug="copy-number",
+                title="Copy number, against a band measured on this sample",
+                caption=(
+                    "Every coding exon cut into 31-mers, filtered to the ones occurring once "
+                    "in GRCh38, and counted. The band is the spread over the decoy genes — "
+                    '396 genes with no reason to be deleted — so "low" means low compared '
+                    "to this sample at this depth through this bait, not compared to a "
+                    "published constant."
+                ),
+                legend=theme.legend_line(
+                    theme.GOOD,
+                    theme.MUTED,
+                    theme.MACHINE,
+                    extra="**blue band** = the measured null; **grey line** = diploid, 2.0.",
+                ),
+                figure=copy_number_figure(data["copy_number"], data.get("copy_number_band") or []),
+                notes=[
+                    (
+                        "Chromosome X reads at a median of 0.95 against 2.00 on the autosomes, "
+                        "in a male proband, with nothing told to the measurement about "
+                        "chromosomes — the step's positive control."
+                    )
+                ],
             )
         )
 

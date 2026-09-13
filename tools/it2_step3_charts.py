@@ -224,3 +224,38 @@ def calibration_figure(calibration: list[dict]) -> go.Figure:
     )
     figure.update_layout(xaxis_type="log", margin={"l": LABEL_MARGIN})
     return figure
+
+
+def copy_number_figure(rows: list[dict], band: list[dict]) -> go.Figure:
+    """Copy number per tier against the band measured on the decoys.
+
+    The band is drawn rather than described, because "low" is only meaningful against it —
+    and it was measured on this sample at this depth through this bait, not imported.
+    """
+    ordered = sorted(rows, key=lambda row: str(row["tier"]))
+    figure = go.Figure(
+        go.Bar(
+            x=[row["tier"] for row in ordered],
+            y=[float(row["median_copy_number"] or 0.0) for row in ordered],
+            marker_color=[
+                theme.MUTED.fill if row["tier"] == "decoy" else theme.GOOD.fill for row in ordered
+            ],
+            marker_line_color=[
+                theme.MUTED.line if row["tier"] == "decoy" else theme.GOOD.line for row in ordered
+            ],
+            text=[f"{int(row['below_null_band']):,} below band" for row in ordered],
+            textposition="outside",
+        )
+    )
+    if band:
+        low, high = float(band[0]["low"]), float(band[0]["high"])
+        figure.add_hrect(y0=low, y1=high, fillcolor=theme.MACHINE.fill, opacity=0.25, line_width=0)
+        figure.add_hline(
+            y=low,
+            line_dash="dash",
+            line_color=theme.DECISION.line,
+            annotation_text=f"null band, {low:.2f}",
+        )
+    figure.add_hline(y=2.0, line_color=theme.MUTED.line, annotation_text="diploid = 2.0")
+    figure.update_layout(yaxis_title="median copy number", yaxis_range=[0, 3.2])
+    return figure
