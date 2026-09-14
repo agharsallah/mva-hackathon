@@ -81,9 +81,16 @@ const PAGES_DIR = path.join(APP_ROOT, 'src/pages');
 // two Edge invocations plus a WAN round trip per panel that no longer happen
 // (`app/src/lib/queryPersistence.ts`, methodology 081). One-time bytes against per-visit
 // requests, on a deployment whose free-tier budget is invocations.
+//
+// Re-blessed 2026-09-14: 293.50 kB raw / 94.10 kB gzip. Measured against a clean checkout
+// of HEAD (3e9fa5e). The +2.66 kB raw / +0.73 kB gzip since the last bless is the module
+// manifest (`src/app/modules/index.ts`) growing by three entries — the step-1, step-2 and
+// step-3 research pages each add one route/nav/title record. That manifest drives AppShell's
+// routing, the two-tier nav and the journey footer everywhere, so it is shell and belongs in
+// first paint like the rest of this budget's contents; no page code moved into the entry.
 const BUDGETS = Object.freeze({
-  INITIAL_RAW_BYTES: 293_000,
-  INITIAL_GZIP_BYTES: 94_000,
+  INITIAL_RAW_BYTES: 293_500,
+  INITIAL_GZIP_BYTES: 94_100,
 });
 
 const KB = (bytes) => `${(bytes / 1000).toFixed(2)} kB`;
