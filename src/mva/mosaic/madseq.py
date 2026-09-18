@@ -341,7 +341,11 @@ class Verdict:
             return False
         if self.leader_rho <= betabinom.RHO_BOUNDS[0] * DEGENERATE_RHO_FACTOR:
             return True
-        if self.leader_noise <= 1e-5 or self.leader_noise >= 0.5 * (1.0 - BOUND_MARGIN):
+        # The noise share is checked at its *upper* end only. Zero is the right answer for
+        # data with no tails -- every simulated arm in the test suite fits it -- and
+        # condemning that would flag a correct fit on clean data. A large share is caught by
+        # NOISE_CEILING instead, one property up.
+        if self.leader_noise >= 0.5 * (1.0 - BOUND_MARGIN):
             return True
         if model.has_tract and self.leader_tract >= TRACT_BOUND * (1.0 - BOUND_MARGIN):
             return True

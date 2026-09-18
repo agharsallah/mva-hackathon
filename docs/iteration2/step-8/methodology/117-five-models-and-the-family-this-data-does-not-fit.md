@@ -74,8 +74,8 @@ measured rather than argued:
 | Spearman(fitted cell fraction, fitted noise share), autosomes | **0.938** |
 | Spearman(ΔBIC, fitted noise share) | 0.874 |
 | Spearman(fold-over Bdev z, fitted noise share) | 0.913 |
-| Winning fits with the balanced tract pinned at its bound (0.900) | **every non-normal call** |
-| Winning fits with the over-dispersion driven to zero | 13 of 20 |
+| Winning fits with the balanced tract pinned at its bound (0.900) | **every autosomal non-normal call** |
+| Winning fits with the over-dispersion driven to zero | 13 of 19 |
 
 The fitted "cell fraction" is a function of the tail burden. And **every** winning fit sits
 against a bound: the optimiser reporting *as much as you let me*, which says the shape the
@@ -93,9 +93,19 @@ verdict for this sample is:
 
 | Call | Contigs |
 |---|---|
-| **model family not usable** | 20 |
+| **model family not usable** | 19 |
 | **not measurable** (noise share past the 10 % ceiling) | 3 — chr21 (0.244), chr22 (0.226), chrX (0.170) |
 | normal | 1 — chr18 |
+| `meiotic_trisomy` | 1 — **chrY**, and see below |
+
+**chrY is the one contig the gate lets through, and it is exactly the one this route cannot
+see.** The proband is male: chrY's heterozygous calls are mapping artefacts, not biology —
+the density table gives chrXq 0.018 heterozygous calls per PASS call against 0.57–0.62 on the
+autosomes — so a "meiotic trisomy at 70 % of cells" there is a model fitted to noise, not a
+finding. It is left in the table rather than suppressed, because a gate that silently deleted
+the row would hide that the family will happily fit anything. The pre-registered position
+stands and is repeated everywhere the number appears: **no allele-balance result applies to X
+or Y in this proband.**
 
 **chr18 is the one contig the family fits, and it fits it entirely in the interior**:
 ρ = 0.00321, tract 0, noise 0.019, no parameter near a bound. The family can describe exactly
@@ -126,7 +136,7 @@ one chromosome of this genome, and it is the one it calls normal.
 The re-implementation reproduces Kong 2018's behaviour on simulated data — copy-neutral loss
 of heterozygosity and monosomy are called outright at 20 %, the fitted fraction recovers an
 injected one to within 0.002 — and on this callset the five-model family **does not fit at
-all**. Twenty of twenty-four contigs end at a parameter bound, the fitted fraction tracks the
+all**. Nineteen of twenty-four contigs end at a parameter bound, the fitted fraction tracks the
 tail burden at Spearman 0.94, and the single contig fitted in the interior is the one called
 normal.
 
