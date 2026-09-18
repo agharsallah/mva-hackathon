@@ -109,6 +109,10 @@ SCHEMAS: dict[str, tuple[tuple[str, str], ...]] = {
         ("false_positive_rate", "DOUBLE"),
         ("replicates", "BIGINT"),
         ("chromosomes_tested", "BIGINT"),
+        # What the injected contigs did to the two constants a real run fits: the mechanism
+        # behind any false positive, since nothing else here is shared between contigs.
+        ("refit_centre", "DOUBLE"),
+        ("refit_rho", "DOUBLE"),
         ("seconds", "DOUBLE"),
     ),
 }

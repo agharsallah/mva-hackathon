@@ -13,7 +13,9 @@ Four things live here and nothing else does:
 ``bdev``       the fold-over B-deviation statistic and the DANFIP fraction estimate
 ``models``     the five per-chromosome models, as data
 ``madseq``     fitting those five and choosing between them by BIC
-``simulate``   the forward mixing simulation: detection limits and multi-chromosome designs
+``moments``    the null distribution of a folded mean, computed rather than sampled
+``simulate``   detection limits: how small an event each arm could have shown
+``variegated`` several chromosomes abnormal at once, which is what the disease name means
 ``baseline``   the leave-one-chromosome-out baseline, which is where *variegated* bites
 ``arms``       arm assignment, and the check that the reference geometry is the right one
 

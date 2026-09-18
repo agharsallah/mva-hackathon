@@ -39,7 +39,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import numpy as np
 
 import it2_step8_common as common
-from mva.mosaic import arms, baseline, bdev, madseq, simulate
+from mva.mosaic import arms, baseline, bdev, madseq, simulate, variegated
 
 STAGES = ("constants", "bdev", "baseline", "models", "limits", "multi")
 
@@ -183,44 +183,38 @@ def stage_models(
 def stage_limits(sample: common.Sample, *, replicates: int) -> dict[str, Any]:
     """The detection limit per chromosome, for the fold-over statistic and for 037's.
 
-    Both statistics see the same draws from the same depths at the same seed, so the only
-    difference between the two curves is the line that computes the number.
+    Both statistics are evaluated on the same depth margin under the same over-dispersion,
+    so the only difference between the two curves is the quantity being averaged. 037's is
+    scored two-sided, which is the generous reading of it: a mosaic gain could have moved a
+    mean either way and that entry would have reported either.
     """
     folded: list[dict[str, Any]] = []
     mean: list[dict[str, Any]] = []
-    for index, chrom in enumerate(sample.chromosomes):
+    for chrom in sample.chromosomes:
         histogram = sample.whole_alleles(chrom)
         if not histogram.n_sites:
             continue
-        seed = common.SEED + index
-        started = time.perf_counter()
         folded.append(
-            simulate.power_curve(
-                histogram,
-                rho=sample.rho,
-                centre=sample.centre,
-                replicates=replicates,
-                seed=seed,
-            ).as_dict()
+            simulate.power_curve(histogram, rho=sample.rho, centre=sample.centre).as_dict()
         )
         mean.append(
             simulate.power_curve(
-                histogram,
-                rho=sample.rho,
-                centre=sample.centre,
-                replicates=replicates,
-                seed=seed,
-                statistic=simulate.mean_statistic,
-                name="mean_baf",
+                histogram, rho=sample.rho, centre=sample.centre, name="mean_baf"
             ).as_dict()
         )
         print(
             f"  chr{chrom:<3} {histogram.n_sites:>9,} sites  "
-            f"f80 bdev={folded[-1]['f80']}  mean={mean[-1]['f80']}  "
-            f"({time.perf_counter() - started:.1f}s)",
+            f"f80 bdev={folded[-1]['f80']}  mean={mean[-1]['f80']}",
             flush=True,
         )
-    return {"bdev": folded, "mean_baf": mean, "replicates": replicates, "grid": list(simulate.GRID)}
+    return {
+        "bdev": folded,
+        "mean_baf": mean,
+        # Zero draws: both curves are computed in closed form. The column stays so a reader
+        # of the table can see that, rather than having to know it.
+        "replicates": 0,
+        "grid": list(simulate.GRID),
+    }
 
 
 def stage_multi(sample: common.Sample, *, replicates: int) -> dict[str, Any]:
@@ -234,7 +228,7 @@ def stage_multi(sample: common.Sample, *, replicates: int) -> dict[str, Any]:
     for fraction in MULTI_FRACTIONS:
         for design in MULTI_DESIGNS:
             started = time.perf_counter()
-            results = simulate.multi_chromosome(
+            results = variegated.multi_chromosome(
                 histograms,
                 affected=design,
                 fraction=fraction,
@@ -245,6 +239,8 @@ def stage_multi(sample: common.Sample, *, replicates: int) -> dict[str, Any]:
             )
             recall = sum(item.recall for item in results) / len(results)
             false_rate = sum(item.false_positive_rate for item in results) / len(results)
+            centres = [item.centre for item in results]
+            rhos = [item.rho for item in results]
             designs.append(
                 {
                     "fraction": fraction,
@@ -254,6 +250,10 @@ def stage_multi(sample: common.Sample, *, replicates: int) -> dict[str, Any]:
                     "false_positive_rate": round(false_rate, 4),
                     "replicates": replicates,
                     "chromosomes_tested": results[0].tested,
+                    # What the injected chromosomes did to the two constants a real run
+                    # would have fitted -- the mechanism behind any false positive here.
+                    "refit_centre": round(float(np.mean(centres)), 5),
+                    "refit_rho": round(float(np.mean(rhos)), 5),
                     "seconds": round(time.perf_counter() - started, 1),
                 }
             )
@@ -313,10 +313,16 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--out", type=Path, default=common.DEFAULT_OUT)
     parser.add_argument("--stages", nargs="*", choices=STAGES, default=list(STAGES))
     parser.add_argument(
-        "--replicates", type=int, default=200, help="simulation draws per point (limits, multi)"
+        "--replicates",
+        type=int,
+        default=50,
+        help="replicates per multi-chromosome design; the limits stage is closed form",
     )
     parser.add_argument(
-        "--draws", type=int, default=200, help="null draws per arm for the Bdev test"
+        "--draws",
+        type=int,
+        default=0,
+        help="null draws per arm for the Bdev test; 0 uses the closed form, above 0 simulates",
     )
     args = parser.parse_args(argv)
 

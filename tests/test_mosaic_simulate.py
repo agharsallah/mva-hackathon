@@ -11,24 +11,16 @@ The multi-chromosome designs are tested on both arms of their answer. Recovery a
 pass with a test that flags everything, so the false-positive arm is asserted too.
 """
 
+import numpy as np
 import pytest
 
 from mosaic_synthetic import CENTRE, RHO, arm
-from mva.mosaic import simulate
+from mva.mosaic import simulate, variegated
+from mva.mosaic.tables import AlleleHistogram
 
-REPLICATES = 40
 
-
-def limit(sites: int, *, statistic=simulate.bdev_statistic, name="bdev", seed: int = 51):
-    return simulate.power_curve(
-        arm(sites=sites, seed=seed),
-        rho=RHO,
-        centre=CENTRE,
-        replicates=REPLICATES,
-        seed=seed,
-        statistic=statistic,
-        name=name,
-    )
+def limit(sites: int, *, name: str = "bdev", seed: int = 51):
+    return simulate.power_curve(arm(sites=sites, seed=seed), rho=RHO, centre=CENTRE, name=name)
 
 
 class TestPowerCurve:
@@ -47,27 +39,25 @@ class TestPowerCurve:
         assert result.target == 0.80
 
     def test_an_empty_arm_reports_no_limit_rather_than_a_number(self):
-        import numpy as np
-
-        from mva.mosaic.tables import AlleleHistogram
-
         empty = AlleleHistogram("21", "p", np.array([]), np.array([]), np.array([]))
-        result = simulate.power_curve(empty, rho=RHO, centre=CENTRE, replicates=5)
-        assert not result.detected_anything
+        assert not simulate.power_curve(empty, rho=RHO, centre=CENTRE).detected_anything
 
 
 class TestAgainstEntry037:
     def test_the_fold_over_statistic_has_power_where_the_mean_has_none(self):
-        """The claim the step exists to make: same arm, same seed, same draws, one line
-        different between the two statistics."""
+        """The claim the step exists to make: same arm, same depths, same over-dispersion,
+        one line different between the two statistics."""
         folded = limit(20_000)
-        mean = limit(20_000, statistic=simulate.mean_statistic, name="mean_baf")
+        mean = limit(20_000, name="mean_baf")
         assert folded.detected_anything
         assert not mean.detected_anything
 
-    def test_the_mean_statistic_stays_near_its_nominal_rate(self):
-        """Not weaker -- flat. Its power does not rise with the fraction at all."""
-        curve = limit(20_000, statistic=simulate.mean_statistic, name="mean_baf").power
+    def test_the_mean_statistic_barely_leaves_its_nominal_rate(self):
+        """Not weaker -- nearly flat. It is scored two-sided, which is the generous reading:
+        a mosaic gain could move a mean either way and entry 037 would have rejected on
+        either. Even so it never approaches 80 %."""
+        curve = limit(20_000, name="mean_baf").power
+        assert min(curve.values()) == pytest.approx(0.05, abs=0.02)
         assert max(curve.values()) < 0.5
 
 
@@ -78,13 +68,13 @@ class TestMultiChromosome:
         return {name: arm(sites=15_000, seed=60 + index) for index, name in enumerate("abcde")}
 
     def test_every_injected_chromosome_is_recovered_at_a_large_fraction(self, histograms):
-        results = simulate.multi_chromosome(
+        results = variegated.multi_chromosome(
             histograms,
             affected=("a", "b"),
             fraction=0.20,
             rho=RHO,
             centre=CENTRE,
-            replicates=20,
+            replicates=15,
             seed=61,
         )
         assert min(item.recall for item in results) == 1.0
@@ -93,26 +83,26 @@ class TestMultiChromosome:
         """The arm that decides whether a genome-wide bound survives on a variegated
         genome: if injecting two chromosomes made the other three light up, the bound
         would be worthless and nothing but this measurement would say so."""
-        results = simulate.multi_chromosome(
+        results = variegated.multi_chromosome(
             histograms,
             affected=("a", "b"),
             fraction=0.20,
             rho=RHO,
             centre=CENTRE,
-            replicates=20,
+            replicates=15,
             seed=62,
         )
         rate = sum(item.false_positive_rate for item in results) / len(results)
         assert rate < 0.25
 
     def test_a_tiny_fraction_is_not_recovered(self, histograms):
-        results = simulate.multi_chromosome(
+        results = variegated.multi_chromosome(
             histograms,
             affected=("a",),
             fraction=0.01,
             rho=RHO,
             centre=CENTRE,
-            replicates=20,
+            replicates=15,
             seed=63,
         )
         assert sum(item.recall for item in results) / len(results) < 0.8

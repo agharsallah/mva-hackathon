@@ -14,8 +14,12 @@ test without one.
 
 **Against what null.** Not zero: even two intact copies give a spread, and folding a
 symmetric spread gives a positive mean. The null is the same statistic computed under the
-fitted beta-binomial at p = 0.5 with this arm's own depth margin — so an arm with fewer
-reads is judged against a wider null rather than flagged for being shallow.
+fitted beta-binomial at the sample's own centre with this arm's own depth margin — so an arm
+with fewer reads is judged against a wider null rather than flagged for being shallow. It is
+**computed, not simulated** (:mod:`~mva.mosaic.moments`): the statistic is an average over
+tens of thousands of independent sites, so its distribution is Gaussian with moments
+available in closed form. :func:`null_draws` keeps the Monte Carlo version, and the test
+suite asserts the two agree — that agreement is what made it safe to stop drawing.
 
 **Reference bias is subtracted, not ignored.** Reads carrying the reference allele map
 slightly more readily, so the BAF sits a little below 0.5 genome-wide; entry 037 measured
@@ -44,8 +48,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
+from scipy.special import erfc
 
-from . import betabinom
+from . import betabinom, moments
 from .tables import AlleleHistogram
 
 __all__ = [
@@ -161,29 +166,61 @@ def null_draws(
     return values
 
 
+def null_moments(histogram: AlleleHistogram, *, rho: float, around: float) -> moments.Moments:
+    """The statistic's mean and spread on this arm when nothing is wrong with it."""
+    depths, counts = _depth_margin(histogram)
+    return moments.fold_moments(depths, counts, bands=[(around, 1.0)], rho=rho, centre=around)
+
+
+def _depth_margin(histogram: AlleleHistogram) -> tuple[np.ndarray, np.ndarray]:
+    """The arm's depths and how many calls sit at each — its own, never a nominal coverage."""
+    if not histogram.n_sites:
+        return np.array([], dtype=int), np.array([], dtype=float)
+    order = np.argsort(histogram.n)
+    depths = histogram.n[order]
+    counts = histogram.sites[order]
+    unique, index = np.unique(depths, return_inverse=True)
+    totals = np.zeros(unique.size, dtype=float)
+    np.add.at(totals, index, counts)
+    return unique, totals
+
+
 def bdev(
     histogram: AlleleHistogram,
     *,
     rho: float,
     around: float,
-    draws: int = 200,
+    draws: int = 0,
     seed: int = 0,
 ) -> Bdev:
-    """One arm's Bdev against its own simulated null."""
+    """One arm's Bdev against its own null.
+
+    ``draws`` is kept for the cross-check: at zero (the default) the null is computed in
+    closed form, and above zero it is simulated with that many draws instead. The two agree,
+    and the closed form is four orders of magnitude faster on a whole chromosome.
+    """
     observed = statistic(histogram, around=around)
-    draws_array = null_draws(
-        histogram, rho=rho, around=around, draws=draws, rng=np.random.default_rng(seed)
-    )
-    if draws_array.size == 0:
-        mean = sd = p95 = float("nan")
-        z = float("nan")
-        p_value = float("nan")
+    if draws > 0:
+        drawn = null_draws(
+            histogram, rho=rho, around=around, draws=draws, rng=np.random.default_rng(seed)
+        )
+        fitted = moments.Moments(
+            float(drawn.mean()) if drawn.size else float("nan"),
+            float(drawn.std(ddof=1)) if drawn.size > 1 else float("nan"),
+            histogram.n_sites,
+        )
     else:
-        mean = float(draws_array.mean())
-        sd = float(draws_array.std(ddof=1))
-        p95 = float(np.quantile(draws_array, 0.95))
-        z = (observed - mean) / sd if sd > 0 else float("inf")
-        p_value = float((np.count_nonzero(draws_array >= observed) + 1) / (draws_array.size + 1))
+        fitted = null_moments(histogram, rho=rho, around=around)
+
+    if not fitted.usable:
+        mean = sd = p95 = z = p_value = float("nan")
+    else:
+        mean, sd = fitted.mean, fitted.sd
+        p95 = fitted.percentile(0.95)
+        z = (observed - mean) / sd
+        # The Gaussian upper tail, floored at the smallest number worth printing rather than
+        # at zero: a p-value of exactly zero is a statement no finite test can make.
+        p_value = max(float(0.5 * erfc(z / np.sqrt(2.0))), 1e-12)
     return Bdev(
         chrom=histogram.chrom,
         arm=histogram.arm,
