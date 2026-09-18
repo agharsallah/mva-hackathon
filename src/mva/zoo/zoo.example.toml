@@ -1,0 +1,38 @@
+# The zoo's run configuration — copy it, edit the copy, keep the copy beside the run.
+#
+# `mva-zoo run --config src/mva/zoo/zoo.example.toml` runs the eight stages of
+# `mva.zoo.workflow` in order. The file's sha256 is the run id: the same configuration
+# re-run is the same run, not a new one, which is what makes every stage safe to repeat.
+
+[run]
+# `catalogue-free` nulls every field a ClinVar-trained model could have learned from
+# (`types.CATALOGUE_FIELDS`); `aware` keeps them. The plan reports both (D4).
+mode = "catalogue-free"
+
+# The MVP lanes. A name here must exist in the registry (`models.toml`) and be enabled;
+# a name the registry does not know is reported by the `registry_check` stage, not ignored.
+models = ["alphamissense", "esm1b", "spliceai", "revel"]
+
+# Everything with a patient coordinate or a raw score stays under this directory.
+out_dir = "build/it4"
+
+# The warehouse schema the run writes its tables into.
+schema = "results"
+
+[merge]
+# `fusion` = the deterministic layer only, narrative written by hand (the MVP).
+# `fusion+synthesis` and `judge` add an LLM and are plan §5 step 6's optional substeps.
+method = "fusion"
+
+# Reciprocal rank fusion's damping constant, as the original paper used it.
+rrf_k = 60
+
+[llm]
+# `none` for the MVP: no key, no network, no non-reproducible step. `claude-code` and
+# `nebius` are the two optional modes of plan §5 step 5.
+mode = "none"
+
+[paths]
+reports_dir = "docs/iteration4/reports"
+docs_runs_dir = "docs/iteration4/runs"
+merged_report = "docs/iteration4/report.md"
