@@ -27,6 +27,7 @@ from . import (
     steps_it2_step4,
     steps_it2_step5,
     steps_it2_step6,
+    steps_it2_step8,
     submissions,
     track2,
 )
@@ -200,6 +201,7 @@ def router(settings, cache: Cache) -> APIRouter:
     steps_it2_step4.add_routes(api, settings)
     steps_it2_step5.add_routes(api, settings)
     steps_it2_step6.add_routes(api, settings)
+    steps_it2_step8.add_routes(api, settings)
     phenotype.add_routes(api)
     submissions.add_routes(api, settings, cache)
     track2.add_routes(api, settings, cache)

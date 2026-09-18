@@ -10,8 +10,16 @@ each against one number would be the wrong place to do it. What lives here is ev
   *source* for the boundary, and it is exactly right as a *check* on it: if the committed
   centromere and the observed gap disagree by more than a few megabases, one of them is
   about a different assembly.
-* :func:`check` — that comparison over every metacentric autosome, with the acrocentrics
-  excluded by name of their own flag rather than by a hard-coded list.
+* :func:`check` — that comparison over every diploid autosome, with the acrocentrics and
+  the hemizygous contigs excluded by their own flags rather than by a hard-coded list.
+
+**The check is containment, not distance.** On chromosomes 1, 9 and 16 a block of
+constitutional heterochromatin sits immediately beside the centromere and carries no
+unique sequence either, so the observed gap is the centromere *plus* that block and its
+midpoint is several megabases off. Asking "is the committed centromere inside the gap the
+data leaves" is the question that has one right answer on those three and still fails if
+the geometry named a different part of the chromosome. The midpoint offset is reported
+beside it, because it is how wide the pericentromeric dead zone actually is.
 
 **Why the gap is not the source.** ``results.baf_bins`` emits no row for a megabase with no
 heterozygous call, so an empty bin is a hole in a sequence rather than a flagged value; the
@@ -28,6 +36,7 @@ from dataclasses import dataclass
 from itertools import pairwise
 
 __all__ = [
+    "HEMIZYGOUS",
     "TOLERANCE_BP",
     "ArmCheck",
     "centromere_gap",
@@ -35,11 +44,15 @@ __all__ = [
     "disagreements",
 ]
 
-#: How far the observed gap may sit from the committed centromere before it is a finding.
-#: Three megabases: pericentromeric heterochromatin extends past the band boundary, so the
-#: gap is legitimately wider than the acen bands, and a tighter tolerance would fail on
-#: correct data.
-TOLERANCE_BP = 3_000_000
+#: How far outside the observed gap the committed centromere may sit before it is a
+#: finding. One megabase, which is the resolution of the bins the gap is read from -- the
+#: check is containment, so the tolerance only absorbs the binning, not a disagreement.
+TOLERANCE_BP = 1_000_000
+
+#: Contigs with one copy in this proband: X and Y in a male. Their heterozygous calls are
+#: mapping artefacts rather than biology, so the gap they leave is not the centromere and
+#: comparing it against one measures nothing.
+HEMIZYGOUS = ("X", "Y")
 
 BP_PER_MB = 1_000_000
 
@@ -70,6 +83,7 @@ class ArmCheck:
     gap_start: int | None
     gap_end: int | None
     acrocentric: bool
+    hemizygous: bool = False
 
     @property
     def observed(self) -> bool:
@@ -85,17 +99,29 @@ class ArmCheck:
 
     @property
     def agrees(self) -> bool:
-        """Acrocentrics are exempt: their largest gap is the short arm, by construction."""
-        if self.acrocentric or not self.observed:
+        """Is the committed centromere inside the gap the heterozygous calls leave?
+
+        Acrocentrics are exempt because their largest gap is the short arm by construction,
+        and the hemizygous contigs because their calls are artefacts rather than biology.
+        Both exemptions come from a flag on the row, never from a list of contig names.
+        """
+        if self.acrocentric or self.hemizygous or not self.observed:
             return True
-        offset = self.offset_bp
-        return offset is not None and offset <= TOLERANCE_BP
+        assert self.gap_start is not None and self.gap_end is not None
+        return (
+            self.gap_start - TOLERANCE_BP <= self.cen_start
+            and self.cen_end <= self.gap_end + TOLERANCE_BP
+        )
 
     def as_dict(self) -> dict[str, object]:
         return {
             "chrom": self.chrom,
             "acrocentric": self.acrocentric,
+            "hemizygous": self.hemizygous,
             "observed_gap": self.observed,
+            "gap_mb": (
+                None if not self.observed else round((self.gap_end - self.gap_start) / BP_PER_MB, 2)  # type: ignore[operator]
+            ),
             "offset_mb": None if self.offset_bp is None else round(self.offset_bp / BP_PER_MB, 2),
             "agrees": self.agrees,
         }
@@ -125,6 +151,7 @@ def check(
                 gap_start=None if gap is None else gap[0],
                 gap_end=None if gap is None else gap[1],
                 acrocentric=bool(row["acrocentric"]),
+                hemizygous=chrom in HEMIZYGOUS,
             )
         )
     return checks
