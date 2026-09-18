@@ -16,6 +16,7 @@ from mva.pipeline.annotate_vep import (
     DEFAULT_BASE_URL,
     MAX_BATCH,
     VepError,
+    VepRejectedError,
     VepRestAnnotator,
     batches,
 )
@@ -145,6 +146,9 @@ DELETION = {
 
 TP53 = Variant("chr17", 7676154, "G", "C")
 BUB1B = Variant("chr15", 40161282, "C", "T")
+#: A second synthetic allele, used only to put two lines in one POST so the bisect around a
+#: rejected allele has something to bisect.
+BUB1B_SECOND = Variant("chr15", 40161283, "G", "A")
 
 
 def annotator(handler, **kwargs) -> VepRestAnnotator:
@@ -281,22 +285,52 @@ class TestRetries:
 
         assert annotator(handler).annotate_many([BUB1B])[0].gene == "BUB1B"
 
+    def test_a_rejection_is_its_own_error_type(self):
+        # The distinction the bisect rests on: a 4xx is a VepRejectedError, a dead server is a
+        # plain VepError. Reversing them would either retry a hopeless payload five times
+        # or silently drop an allele the server never even saw.
+        assert issubclass(VepRejectedError, VepError)
+
     def test_retries_are_bounded(self):
         client = annotator(lambda request: httpx.Response(503, json={}), max_attempts=3)
         with pytest.raises(VepError):
             client.annotate_many([BUB1B])
         assert client.requests == 3
 
-    def test_a_400_is_not_retried(self):
+    def test_a_400_is_not_retried_and_the_allele_is_skipped_not_raised(self):
+        # A 4xx means the server parsed the payload and refused it, so asking again cannot
+        # help. With one allele in the batch there is nothing left to bisect, so it is
+        # recorded in `skipped` and left out: a genome-wide pass must not die because one
+        # allele offends the parser, and a skipped allele must not vanish silently either.
         calls = []
 
         def handler(request):
             calls.append(request)
             return httpx.Response(400, text="bad input")
 
-        with pytest.raises(VepError):
-            annotator(handler).annotate_many([BUB1B])
+        client = annotator(handler)
+        assert client.annotate_many([BUB1B]) == [VepRecord(variant=BUB1B)]
         assert len(calls) == 1
+        assert [variant for variant, _reason in client.skipped] == [BUB1B]
+
+    def test_one_rejected_allele_does_not_lose_the_rest_of_the_batch(self):
+        # The live failure this exists for: Ensembl answered a 100-allele POST with
+        # `400 ... is not a supported structural variant type` naming one line, and the
+        # other 99 answers were lost with it. The batch is halved until the offender is
+        # alone, and every other allele still comes back.
+        def handler(request):
+            body = request.content.decode()
+            if query_line(BUB1B) in body and query_line(BUB1B_SECOND) in body:
+                return httpx.Response(400, text="one of these is unparseable")
+            if query_line(BUB1B_SECOND) in body:
+                return httpx.Response(400, text="this one is unparseable")
+            return httpx.Response(200, json=[BUB1B_INTRON])
+
+        client = annotator(handler)
+        records = client.annotate_many([BUB1B, BUB1B_SECOND])
+        assert records[0].gene == "BUB1B"
+        assert records[1] == VepRecord(variant=BUB1B_SECOND)
+        assert [variant for variant, _reason in client.skipped] == [BUB1B_SECOND]
 
     def test_the_port_contract_holds_even_when_the_server_is_down(self):
         # The protocol says annotate() returns UNKNOWN rather than raising: a genome-wide

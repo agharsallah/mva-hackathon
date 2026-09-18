@@ -48,7 +48,15 @@ QUERY_PARAMS = {
     "variant_class": 1,  # SNV / deletion / insertion, for reading the record back
     "canonical": 1,  # marks the representative transcript, used to break ties
     "hgvs": 1,  # protein-level notation, the form a clinician recognises
+    "numbers": 1,  # exon n/m, which a LOFTEE-style NMD rule cannot be applied without
+    "AlphaMissense": 1,  # the missense lane's calibrated tool (Cheng 2023)
+    "SpliceAI": 1,  # the splice lane's calibrated tool (Jaganathan 2019)
 }
+
+#: Options this server rejects outright, kept as a record of what was tried. Asking for
+#: either returns HTTP 500 rather than an empty field, so neither lane can be served from
+#: REST and the step records their absence instead of quietly scoring without them.
+UNAVAILABLE_PARAMS = ("CADD", "LoF")
 
 #: How long to wait when a 429 arrives without a ``Retry-After`` header.
 DEFAULT_COOLDOWN = 2.0
@@ -56,6 +64,16 @@ DEFAULT_COOLDOWN = 2.0
 
 class VepError(RuntimeError):
     """The REST server refused a request in a way retrying cannot fix."""
+
+
+class VepRejectedError(VepError):
+    """The server **parsed** the request and refused it — a 4xx, not a transport failure.
+
+    Separated from :class:`VepError` because the two need opposite handling. A timeout or a
+    dead server means "ask again"; a ``400`` means "this exact payload will never be
+    accepted", and the only way past it is to find which allele in the batch offends the
+    parser and leave that one out.
+    """
 
 
 def batches(items: Sequence, size: int = MAX_BATCH) -> list[Sequence]:
@@ -95,6 +113,8 @@ class VepRestAnnotator:
         self.client = client or httpx.Client(timeout=timeout)
         self._cache: dict[Variant, Annotation] = {}
         self.requests = 0
+        #: Alleles the server refused to parse, with the reason. Reported, never hidden.
+        self.skipped: list[tuple[Variant, str]] = []
 
     # ── the port ─────────────────────────────────────────────────────────────────────
 
@@ -117,7 +137,7 @@ class VepRestAnnotator:
         """
         found: dict[str, dict] = {}
         for chunk in batches(list(variants), self.batch_size):
-            for item in self._post_batch(chunk):
+            for item in self._ask(chunk):
                 key = item.get("input")
                 if key:
                     found[key] = item
@@ -145,6 +165,27 @@ class VepRestAnnotator:
             "assembly": str(assembly.get("default_coord_system_version", "unknown")),
             "accession": str(assembly.get("assembly_accession", "")),
         }
+
+    def _ask(self, chunk: Sequence[Variant]) -> list[dict]:
+        """One batch, bisected around any allele the server refuses outright.
+
+        Ensembl answers a whole POST with ``400`` when **one** line in it offends its
+        parser — a real reply seen on this callset is *"G is not a supported structural
+        variant type"* for an ordinary-looking SNV. Letting that fail the request loses the
+        other 99 alleles in the batch, and letting it fail the run loses the pass.
+
+        So a rejected batch is split in half and retried, down to the single allele, which
+        is then recorded in :attr:`skipped` and left out. The count is reported by the
+        caller: an allele the server would not parse is a *known* gap, not a silent one.
+        """
+        try:
+            return self._post_batch(chunk)
+        except VepRejectedError as error:
+            if len(chunk) == 1:
+                self.skipped.append((chunk[0], str(error)[:160]))
+                return []
+            middle = len(chunk) // 2
+            return self._ask(chunk[:middle]) + self._ask(chunk[middle:])
 
     def _post_batch(self, chunk: Sequence[Variant]) -> list[dict]:
         payload = {"variants": [query_line(variant) for variant in chunk], **QUERY_PARAMS}
@@ -181,7 +222,9 @@ class VepRestAnnotator:
                 self.sleep(self._backoff(attempt))
                 last = f"{response.status_code} server error"
                 continue
-            raise VepError(f"{method} {url} -> {response.status_code}: {response.text[:200]}")
+            raise VepRejectedError(
+                f"{method} {url} -> {response.status_code}: {response.text[:200]}"
+            )
         raise VepError(f"{method} {url} gave up after {self.max_attempts} attempts ({last})")
 
     def _backoff(self, attempt: int) -> float:

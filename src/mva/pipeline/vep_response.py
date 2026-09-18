@@ -90,6 +90,18 @@ class VepRecord:
     gnomad_af: float | None = None
     gnomad_af_grpmax: float | None = None
     clin_sig: tuple[str, ...] = ()
+    #: AlphaMissense's pathogenicity score and its own three-class call, present only for a
+    #: missense allele and only when the ``AlphaMissense=1`` option was asked for.
+    am_pathogenicity: float | None = None
+    am_class: str | None = None
+    #: The largest of SpliceAI's four delta scores, which is how its authors define the
+    #: variant's overall splice-altering probability, and the four written out.
+    spliceai_ds_max: float | None = None
+    spliceai: str | None = None
+    #: Which exon of how many the allele falls in, from ``numbers=1``. The pair is what a
+    #: LOFTEE-style rule needs to ask whether a truncation escapes nonsense-mediated decay.
+    exon_index: int | None = None
+    exon_total: int | None = None
 
     @property
     def annotation(self) -> Annotation:
@@ -104,8 +116,12 @@ def parse(item: dict, variant: Variant, genes: frozenset[str] = frozenset()) -> 
     two overlapping genes, the panel gene is the one the case is about.
     """
     allele = vep_allele(variant.ref, variant.alt)
+    transcript = best_transcript(item, genes)
     gene, impact = _pick_consequence(item, genes)
     overall, grpmax = _frequencies(item, allele)
+    ds_max, deltas = _spliceai(transcript)
+    exon_index, exon_total = _exon(transcript)
+    am = (transcript or {}).get("alphamissense") or {}
     return VepRecord(
         variant=variant,
         rsid=_rsid(item),
@@ -115,16 +131,26 @@ def parse(item: dict, variant: Variant, genes: frozenset[str] = frozenset()) -> 
         gnomad_af=overall,
         gnomad_af_grpmax=grpmax,
         clin_sig=_clin_sig(item, allele),
+        am_pathogenicity=_number(am.get("am_pathogenicity")),
+        am_class=am.get("am_class"),
+        spliceai_ds_max=ds_max,
+        spliceai=deltas,
+        exon_index=exon_index,
+        exon_total=exon_total,
     )
 
 
-def _pick_consequence(item: dict, genes: frozenset[str]) -> tuple[str | None, str | None]:
-    """The gene symbol and impact to report, chosen from every transcript VEP returned.
+def best_transcript(item: dict, genes: frozenset[str] = frozenset()) -> dict | None:
+    """The one transcript entry every per-transcript field is read from.
 
     VEP hands back one entry per overlapping transcript — 39 of them for a TP53 SNV — and
     they disagree. The order of preference is: a panel gene beats a neighbour, a transcript
     carrying the most severe consequence beats one that does not, the canonical transcript
     beats an alternative, and protein-coding beats everything else.
+
+    Public because the gene symbol, the impact, the AlphaMissense call, the SpliceAI deltas
+    and the exon numbers must all describe the **same** transcript. Reading each from
+    whichever entry happened to carry it would build a record no single transcript supports.
     """
     severe = item.get("most_severe_consequence")
     wanted = {name.upper() for name in genes}
@@ -139,8 +165,13 @@ def _pick_consequence(item: dict, genes: frozenset[str]) -> tuple[str | None, st
         )
 
     transcripts = item.get("transcript_consequences") or []
-    if transcripts:
-        best = max(transcripts, key=rank)
+    return max(transcripts, key=rank) if transcripts else None
+
+
+def _pick_consequence(item: dict, genes: frozenset[str]) -> tuple[str | None, str | None]:
+    """The gene symbol and impact of :func:`best_transcript`, or of a non-transcript feature."""
+    best = best_transcript(item, genes)
+    if best is not None:
         return best.get("gene_symbol"), best.get("impact")
     # Outside every transcript VEP still reports an impact, on a regulatory feature or on
     # the intergenic pseudo-consequence. There is no gene there, and inventing the nearest
@@ -224,3 +255,41 @@ def _split_clin_sig_allele(field: str) -> dict[str, list[str]]:
         if allele and term:
             out.setdefault(allele, []).append(term)
     return out
+
+
+def _spliceai(transcript: dict | None) -> tuple[float | None, str | None]:
+    """SpliceAI's four deltas as one number and one string.
+
+    The overall delta score is ``max(DS_AG, DS_AL, DS_DG, DS_DL)`` — the authors' own
+    definition, not a choice made here. The four are kept as well, because which kind of
+    splice event is predicted is the part a reviewer wants to see.
+    """
+    block = (transcript or {}).get("spliceai") or {}
+    deltas = {key: _number(block.get(key)) for key in ("DS_AG", "DS_AL", "DS_DG", "DS_DL")}
+    values = [value for value in deltas.values() if value is not None]
+    if not values:
+        return None, None
+    written = ";".join(
+        f"{key[3:]}={value:.2f}" for key, value in deltas.items() if value is not None
+    )
+    return max(values), written
+
+
+def _exon(transcript: dict | None) -> tuple[int | None, int | None]:
+    """``"7/11"`` read as ``(7, 11)``; anything else as ``(None, None)``."""
+    field = str((transcript or {}).get("exon") or "")
+    index, _, total = field.partition("/")
+    try:
+        return int(index), int(total)
+    except ValueError:
+        return None, None
+
+
+def _number(value: object) -> float | None:
+    """A float, or ``None`` for anything that is not one — VEP omits absent scores entirely."""
+    if isinstance(value, bool) or not isinstance(value, (int, float, str)):
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None

@@ -43,6 +43,7 @@ __all__ = [
     "DEFAULT_CHECKPOINT",
     "TRANSFORM",
     "Checkpoint",
+    "Writer",
     "alleles",
     "plan",
     "run",
@@ -130,6 +131,13 @@ def _default_source(connection, settings: Postgres) -> list[Variant]:
     return alleles(connection, settings.result_schema)
 
 
+#: How a run lands its records: ``(connection, schema, records, source, at, table) -> rows``.
+#: Defaulted to :func:`mva.warehouse.annotate.write`, which writes the panel shape. A wider
+#: table — iteration 2's in-silico columns — supplies its own writer, so the loop above,
+#: the checkpointing and the lineage edge are written once and not forked per table shape.
+Writer = Callable[[object, str, list[VepRecord], str, datetime, str], int]
+
+
 def plan(
     settings: Postgres,
     batch_size: int,
@@ -157,12 +165,14 @@ def run(
     base_url: str = DEFAULT_BASE_URL,
     checkpoint: Path = DEFAULT_CHECKPOINT,
     annotator=None,
+    timeout: float = 60.0,
     progress: Callable[[str], None] | None = None,
     workers: int = 1,
     source: Source | None = None,
     table: str = CODING_TABLE,
     transform: str = TRANSFORM,
     source_note: str = "the proband's ALT alleles inside coding_regions",
+    writer: Writer | None = None,
 ) -> dict:
     """Read the coding alleles, annotate the ones not yet checkpointed, land the table.
 
@@ -170,6 +180,12 @@ def run(
     all of it server time, so a few in flight cut the wall clock nearly linearly while
     staying far below Ensembl's 15 requests/s ceiling. Each batch keeps its own checkpoint
     index whatever order the replies arrive in.
+
+    ``timeout`` is a caller's concern because the *options* decide it: a plain annotation
+    answers inside a minute, while asking the same batch for AlphaMissense and SpliceAI
+    runs two more lookups per allele and times out at 60 s. A run that asks for more gives
+    the server longer and sends smaller batches, rather than losing the whole pass to a
+    ``ReadTimeout`` after five attempts.
     """
     say = progress or (lambda _line: None)
     store = Checkpoint(checkpoint)
@@ -180,7 +196,9 @@ def run(
         say(f"alleles {len(wanted):,}  checkpointed {len(records):,}  to ask {len(todo):,}")
 
         owned = annotator is None
-        client = annotator or VepRestAnnotator(base_url=base_url, batch_size=batch_size)
+        client = annotator or VepRestAnnotator(
+            base_url=base_url, batch_size=batch_size, timeout=timeout
+        )
         try:
             version = client.version()
             first = store.next_index()
@@ -215,7 +233,9 @@ def run(
             f"assembly={version.get('assembly', '?')}"
         )
         annotated_at = datetime.now(UTC).replace(tzinfo=None)
-        rows = write(connection, settings.schema, ordered, source_label, annotated_at, table)
+        rows = (writer or write)(
+            connection, settings.schema, ordered, source_label, annotated_at, table
+        )
 
         lineage.ensure_tables(connection, settings.schema)
         lineage.record(
@@ -234,11 +254,16 @@ def run(
             notes=f"requests this run: {getattr(client, 'requests', 0)}; checkpoint {checkpoint}",
         )
 
+    skipped = list(getattr(client, "skipped", ()))
     return {
         "version": version,
         "source": source_label,
         "rows": rows,
         "asked": len(todo),
+        # Count and reasons only. The variants themselves are patient positions and stay
+        # in the checkpoint directory under build/, never in a summary a report may quote.
+        "skipped": len(skipped),
+        "skipped_reasons": sorted({reason for _variant, reason in skipped}),
         "annotated": sum(1 for r in ordered if r.consequence),
         "with_gnomad_af": sum(1 for r in ordered if r.gnomad_af is not None),
         "with_clin_sig": sum(1 for r in ordered if r.clin_sig),
