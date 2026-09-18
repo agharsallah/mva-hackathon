@@ -127,6 +127,7 @@ flowchart LR
 | [111](methodology/111-the-automated-stages-literature-trials-and-labels-per-drug.md) | per approved drug: PubMed with the mechanism and the tumour, ClinicalTrials.gov studies admitting children, the label's paediatric section | one refuting row for H047 |
 | [112](methodology/112-two-decoy-cards-through-the-same-pipeline.md) | NTRK3 and XDH through the unchanged pipeline; Jaccard per direction | **H049** |
 | [113](methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md) | the ladder, the shortlist, the do-not table; the post-hoc rule refinement | **H045, H046, H047, H048, H050** |
+| [114](methodology/114-the-dashboard-surface-for-step-7.md) | the `/track2` hero (approach · suggestion · output), the pathway diagram, the panel-judged folder on `/submissions` — every number computed from the payload | machinery |
 
 ## How to reproduce it
 
@@ -152,7 +153,11 @@ uv run mva-science export                                        # the hypothesi
 
 ## Exhibits
 
-`/track2` on the dashboard, and `figures/track2/`: `evidence-ladder`, `rung-funnel`,
+`/track2` on the dashboard opens with **Track 2 in one screen** — the five-stage approach
+flow, the eleven argued drugs as cards grouped by direction with the red caution strip, and the
+output funnel with links to every artefact — followed by the pathway diagram from the alleles to
+each intervention point ([114](methodology/114-the-dashboard-surface-for-step-7.md)). The
+static figures are `figures/track2/`: `evidence-ladder`, `rung-funnel`,
 `decoy-overlap`, `pediatric-evidence`, `mechanism-literature`; the interactive page is
 `figures/track2-report.html`.
 
