@@ -7,7 +7,7 @@ chromosome 1 below 1,000,000, every allele, gene name and score is invented. Sam
 
 | file | rows | shape | used by |
 |---|---|---|---|
-| `records.tsv` | 200 | `AlleleRecord` fields + the coordinate columns the real `build/it4/records.parquet` carries | every wave-1 agent |
+| `records.tsv` | 200 | `AlleleRecord` fields (incl. `uniprot`, the ESM1b join key) + the coordinate columns the real `build/it4/records.parquet` carries | every wave-1 agent |
 | `scores/<lane>.tsv` | 50 each | `allele_id, model, version, score` — one per MVP lane (alphamissense, esm1b, spliceai, revel) | cache + adapters, rank, merge |
 | `pairs.tsv` | 20 | `gene, allele_id_left, allele_id_right, phase, is_confirmed` — one pair flagged confirmed | rank, report, merge |
 

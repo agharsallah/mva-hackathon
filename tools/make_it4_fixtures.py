@@ -76,6 +76,7 @@ def records(rng: random.Random, n: int = 200) -> list[dict]:
                 "consequence": consequence,
                 "hgvs_c": f"c.{rng.randint(10, 3000)}{ref}>{alt}",
                 "hgvs_p": hgvs_p or "",
+                "uniprot": f"P{10000 + i % len(GENES):05d}",
                 "is_read_only": "true" if i % 40 == 39 else "false",
                 "af_gnomad": round(rng.random() ** 4, 6),
                 "clin_sig": rng.choice(["", "", "", "benign", "uncertain_significance"]),

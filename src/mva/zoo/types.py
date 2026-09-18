@@ -72,6 +72,8 @@ class AlleleRecord:
     consequence: str | None = None
     hgvs_c: str | None = None
     hgvs_p: str | None = None
+    #: UniProt accession of the protein ``hgvs_p`` is spelled on (ESM1b's join key).
+    uniprot: str | None = None
     protein_window_ref: str | None = None
     protein_window_alt: str | None = None
     dna_window_ref: str | None = None
@@ -95,6 +97,7 @@ RECORD_COLUMNS: tuple[tuple[str, str], ...] = (
     ("consequence", "VARCHAR"),
     ("hgvs_c", "VARCHAR"),
     ("hgvs_p", "VARCHAR"),
+    ("uniprot", "VARCHAR"),
     ("is_read_only", "BOOLEAN"),
     ("af_gnomad", "DOUBLE"),
     ("clin_sig", "VARCHAR"),
