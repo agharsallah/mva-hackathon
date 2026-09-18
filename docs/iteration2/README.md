@@ -1,6 +1,7 @@
 # Iteration 2 — the research steps behind submission 2
 
-**Standing:** opened 2026-09-09; steps declared in `steps.py` and **step 1 run** on 2026-09-11.
+**Standing:** opened 2026-09-09; steps declared in `steps.py`. **Steps 1–4 have run**, the
+latest on 2026-09-18.
 **Plan** in [`plan.md`](plan.md) (eight steps, blind protocol, `step-1` … `step-8`), **gap-reviewed twice on 2026-09-10** against the
 eight papers in [`papers/iteration2/`](../../papers/iteration2/README.md) — `plan.md` §9 (five papers)
 and §10 (three more, plus a bias pass: term-driven target rows, the family-history term, hand-typed
@@ -31,8 +32,8 @@ once the plan is agreed, and its output is again a submission
 |---|---|---|
 | [1](step-1/README.md) | Which genes do the child's symptoms alone nominate — a target set chosen with the DNA never read? | **run 2026-09-11** — 404-row tiered target set + 396 decoys; H013 supported, H012/H014/H015 refuted ([084](step-1/methodology/084-the-blind-target-set.md)) |
 | [2](step-2/README.md) | Which alleles do the raw reads carry in the target set, discovered without the vendor caller? | **run 2026-09-12** — 14.7 M reads recovered from 1.07 B, 131,530 alleles, 98.87 % mapped; H016/H019/H021/H022 supported, **H020 and H023 refuted** ([085](step-2/methodology/085-the-bait-and-where-it-runs.md)–[090](step-2/methodology/090-the-alleles-the-vendor-never-reported.md)) |
-| [3](step-3/README.md) | Alignment-free genotype and copy number | open — [handover written](step-3/README.md), claims not yet filed |
-| 4 | Likelihood-ratio ranking over the VCF | planned |
+| [3](step-3/README.md) | Alignment-free genotype and copy number | **run 2026-09-13** — 164,044 alleles typed from 381,510 k-mer probe pairs with no aligner and no caller; H025/H028 supported, **H024, H026 and H027 refuted** ([093](step-3/methodology/093-where-the-aligner-was-unsure.md)–[097](step-3/methodology/097-copy-number-without-an-aligner.md)) |
+| [4](step-4/README.md) | Likelihood-ratio ranking over the VCF | **run 2026-09-18** — 51,920 biallelic hypotheses over 11,465 genes with no hard filter; `BUB1B` leads, targets separate from decoys at AUC 0.706 [0.655, 0.751]; H030/H034/H035 supported, **H031, H032 and H033 refuted** ([098](step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md)–[101](step-4/methodology/101-the-phase-that-cannot-be-measured.md)) |
 | 5 | Knowledge engine | planned |
 | 6 | Fusion and unblinding | planned |
 | 7 | Track 2 enrichment | planned |

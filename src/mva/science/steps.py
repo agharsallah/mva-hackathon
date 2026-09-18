@@ -257,6 +257,10 @@ ITERATION2: tuple[Step, ...] = (
             "Over every protein-coding gene in the VCF, with no hard filter, which "
             "biallelic pair has the highest posterior, and what is its P(trans)?"
         ),
+        # Done: six claims filed before the run, six settled. The leader is the gene
+        # step 1 nominated blind with the DNA unread; the margin claim is what failed,
+        # and the runner-up is a gene nobody has ever curated a phenotype for.
+        status="done",
         unblocks=("step-5", "step-6"),
         iteration="iteration2",
     ),

@@ -96,7 +96,14 @@ Iteration 1 is **frozen** (submission 1 uploaded 2026-09-09, full match at rank 
 | [`iteration2/step-2/methodology/`](iteration2/step-2/methodology/) | Entries 085–090: the bait and where it runs, the unreachable off-target gate, the pass over 1.07 billion reads, the alleles the reads carry, the instrument survey, and the alleles the vendor never reported (which flipped H020). |
 | [`iteration2/step-3/README.md`](iteration2/step-3/README.md) | **Complete 2026-09-13.** The same reads counted with no aligner and no caller: 164,044 alleles typed from 381,510 k-mer probe pairs over 1.88 billion read windows. H025 and H028 supported; H024, H026 and **H027** refuted — only ~1 in 3 of the 1,199 alleles the vendor never reported is corroborated, against ~19 in 20 of the ones it did. |
 | [`iteration2/step-3/methodology/`](iteration2/step-3/methodology/) | Entries 093, 095–097: where the aligner was unsure, the probes and the counting kernel, the alleles at their multiplicity, and copy number without an aligner. |
-| [`iteration2/step-4/README.md`](iteration2/step-4/README.md) | Likelihood-ratio ranking over the VCF — promoted from safety net to the only discriminating and genome-wide route, by the measured limits of steps 1–3. Nothing has run. |
+| [`iteration2/step-4/README.md`](iteration2/step-4/README.md) | **Complete 2026-09-18.** Every gene in the VCF ordered by a product of likelihood ratios with no hard filter — 51,920 biallelic hypotheses over 11,465 genes, including the 8,252 nobody has curated. H030 and H034/H035 settled one way, H031 and H032 the other: `BUB1B` leads, but the runner-up is 1.70× behind and is an uncurated gene. |
+| [`iteration2/step-4/methodology/`](iteration2/step-4/methodology/) | Entries 098–101: the lanes and what they were calibrated against, every gene ordered with nothing filtered out, two nulls and an ablation, and the phase that cannot be measured. |
+
+## Iteration 4 — the model zoo (draft, self-contained)
+
+| Document | Answers |
+|---|---|
+| [`iteration4/plan.md`](iteration4/plan.md) | **Draft 2026-09-13, revised 2026-09-17 with an MVP / optional split (§1b): R1 merged report in 7 laptop days from four tier-1 lanes, no LLM, no GPU; R2 Track 2 graph walk in 2 days, parallel; everything else opt-A / opt-B.** Every credible open model (precomputed tables, CPU protein models, GPU DNA models on Modal) run on the same ~40k allele records through one batch inference API and one checkpointed DAG; one report template per model with an LLM-written interpretation in two modes (Nebius via LiteLLM, Claude Code); three merge methods behind one config key; Track 2 by graph walk vs TxGNN with a decoy. Nothing trained, nothing fine-tuned, nothing run yet. |
 
 ## The submission
 

@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-13T09:56:19+00:00",
+  "generated_at": "2026-09-18T10:45:53+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -53,7 +53,7 @@
       "title": "Likelihood-ratio ranking over the VCF",
       "goal": "Over every protein-coding gene in the VCF, with no hard filter, which biallelic pair has the highest posterior, and what is its P(trans)?",
       "kind": "research",
-      "status": "planned",
+      "status": "done",
       "unblocks": [
         "step-5",
         "step-6"
@@ -1135,6 +1135,204 @@
           "claim": "Reachable genes yield a confident call for 59.6% of their alleles, so the gate is 3.4 times enriched for callable alleles even though it is not absolute.",
           "source_ref": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
           "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H030",
+      "step": "step-4",
+      "statement": "The top-posterior biallelic pair genome-wide, scored by the step-4 likelihood ratio with no hard filter, sits in a gene of the step-1 blind target set.",
+      "prediction": "Ranking every gene in the callset by pair posterior, the rank-1 pair's gene carries tier core, mechanism-term or net in results.it2_targets.",
+      "refuted_by": "The rank-1 pair's gene is absent from results.it2_targets: the symptom-derived target set was too small, and step 2's discovery is re-run on that gene.",
+      "gene": "",
+      "path": "step-4 likelihood-ratio ranking (plan H020)",
+      "status": "supported",
+      "confidence": 0.75,
+      "suggested_confidence": 0.832,
+      "revisions": 4,
+      "evidence": [
+        {
+          "id": 68,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "Scored genome-wide with no hard filter over 11,465 genes and 51,920 biallelic hypotheses, the top-ranked gene is BUB1B, which carries tier core in results.it2_targets.",
+          "source_ref": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md",
+          "lineage_ref": "results.it2_lr_top_pairs"
+        },
+        {
+          "id": 69,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "The phenotype lane contributes x52.08 of the leader's ratio, so the ranking and the target set are not independent routes; the leader's genotype-only ratio is 6,548.",
+          "source_ref": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 75,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "With the phenotype lane ablated, the DNA alone puts BUB1B joint third at 6,548 behind ADAMTS1 (529,850), HLA-DRB1 (29,451) and HLA-DQA1; the support is for the combination of the two routes, not for the genotype route alone.",
+          "source_ref": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md",
+          "lineage_ref": "results.it2_lr_pairs"
+        }
+      ]
+    },
+    {
+      "id": "H031",
+      "step": "step-4",
+      "statement": "The runner-up gene's best pair posterior is at least one order of magnitude below the leading gene's.",
+      "prediction": "posterior(best pair of gene rank 1) / posterior(best pair of gene rank 2) >= 10.",
+      "refuted_by": "The ratio is below 10: the ranking does not separate a single lead, and two leads are carried into step 6.",
+      "gene": "",
+      "path": "step-4 likelihood-ratio ranking (plan H021)",
+      "status": "refuted",
+      "confidence": 0.14185106490048777,
+      "suggested_confidence": 0.1419,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 70,
+          "direction": "refutes",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "The runner-up gene ADAMTS1 sits 1.70x behind BUB1B, well inside the one order of magnitude the claim required.",
+          "source_ref": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md",
+          "lineage_ref": "results.it2_lr_top_pairs"
+        },
+        {
+          "id": 71,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "The runner-up's pair is phased cis by the caller's own physical phasing, so it leaves one intact copy; 1,191 of 35,120 compound hypotheses are cis.",
+          "source_ref": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H032",
+      "step": "step-4",
+      "statement": "No gene that can only be scored through the network-proximity lane - no HPO curation of its own - reaches the top 20 by pair posterior.",
+      "prediction": "Every gene in the top 20 by pair posterior carries a phenotype score in warehouse.hpo_gene_scores; the count entering solely via the STRING proximity lane is zero.",
+      "refuted_by": "At least one top-20 gene has no phenotype score and entered through the network lane alone: the lane is evidence rather than a tie-break, and the report says so.",
+      "gene": "",
+      "path": "step-4 network-proximity lane (substitute for plan H022, no Exomiser reference run)",
+      "status": "refuted",
+      "confidence": 0.25,
+      "suggested_confidence": 0.4502,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 72,
+          "direction": "refutes",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "ADAMTS1 has no curated phenotype and reached rank 2 genome-wide, so not every top-20 gene carries a phenotype score.",
+          "source_ref": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 73,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "No gene in the top 25 entered through the network-proximity lane, so the stated mechanism of refutation did not occur.",
+          "source_ref": "results.it2_lr_uncurated",
+          "lineage_ref": "results.it2_lr_uncurated"
+        }
+      ]
+    },
+    {
+      "id": "H033",
+      "step": "step-4",
+      "statement": "Under a phenotype-permutation null, fewer than 1 in 1,000 random seven-term sets drawn with the child's term-depth profile produce a top pair posterior at or above the observed one.",
+      "prediction": "Recomputing the whole ranking for each of 1,000 permuted term sets, the count of draws whose top posterior >= the observed top posterior is 0, giving an empirical p < 0.001.",
+      "refuted_by": "One or more of the 1,000 draws reaches the observed top posterior: the lead is not phenotype-specific and is reported as a ranking a random symptom set could also produce.",
+      "gene": "",
+      "path": "step-4 permutation null (plan H032)",
+      "status": "refuted",
+      "confidence": 0.1544652650835347,
+      "suggested_confidence": 0.1545,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 76,
+          "direction": "refutes",
+          "strength": 0.85,
+          "kind": "measurement",
+          "claim": "55 of 1,000 permuted seven-term sets reached or exceeded the observed top ratio, giving an empirical p of 0.056 against the pre-registered threshold of 0.001.",
+          "source_ref": "docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md",
+          "lineage_ref": "results.it2_lr_nulls"
+        },
+        {
+          "id": 77,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "The null is nearly degenerate: 945 of 1,000 draws report the same top value, produced by an uncurated gene no term permutation can move, and every exceeding draw is HLA-DRB1 promoted into a better rank band.",
+          "source_ref": "docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H034",
+      "step": "step-4",
+      "statement": "Under the identical likelihood ratio, the step-1 target genes separate from their matched decoys: the bootstrap interval of the target-versus-decoy AUC on best-pair posterior excludes 0.5.",
+      "prediction": "AUC of target best-pair posteriors against decoy best-pair posteriors is above 0.5 with a 95 percent bootstrap interval whose lower bound is above 0.5.",
+      "refuted_by": "The interval covers 0.5: the likelihood ratio has no measured discrimination between a symptom-nominated gene and a size-matched control, and the step reports that instead of a lead.",
+      "gene": "",
+      "path": "step-4 decoy null (finding F4, plan section 11.5)",
+      "status": "supported",
+      "confidence": 0.9478464369215823,
+      "suggested_confidence": 0.9478,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 78,
+          "direction": "supports",
+          "strength": 0.85,
+          "kind": "measurement",
+          "claim": "Target genes separate from their size-matched decoys at AUC 0.706 with a 95 percent bootstrap interval of [0.655, 0.751] over 256 targets and 266 decoys, so the interval excludes 0.5.",
+          "source_ref": "docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md",
+          "lineage_ref": "results.it2_lr_target_decoy"
+        },
+        {
+          "id": 79,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "Step 2 measured the same two sets as indistinguishable before any filter (10 of 396 each, Fisher one-sided p = 0.589), so the separation measured here was produced by the scoring and not by the gene list.",
+          "source_ref": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H035",
+      "step": "step-4",
+      "statement": "P(trans) for the leading pair is undetermined: at least one of its two alleles is absent from the gnomAD v2 exome co-occurrence dataset, so no observed compound-heterozygosity probability exists for it.",
+      "prediction": "Resolving both alleles to gnomAD v2 identifiers and querying variant_cooccurrence returns no record for the pair; the pair is reported with the published rare-pair base rate and the state undetermined.",
+      "refuted_by": "gnomAD returns a p_compound_heterozygous for the pair: an observed population co-occurrence estimate exists and is quoted with its caveat instead of the base rate.",
+      "gene": "",
+      "path": "step-4 P(trans) (goal, second half; Guo 2024)",
+      "status": "supported",
+      "confidence": 0.8581489350995123,
+      "suggested_confidence": 0.8581,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 74,
+          "direction": "supports",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "gnomAD v2 returned no co-occurrence estimate for any of the 25 leading pairs; only 5 of their 50 alleles resolve in that dataset, and the lead pair's second allele carries no dbSNP identifier.",
+          "source_ref": "docs/iteration2/step-4/methodology/101-the-phase-that-cannot-be-measured.md",
+          "lineage_ref": "results.it2_ptrans"
         }
       ]
     }
