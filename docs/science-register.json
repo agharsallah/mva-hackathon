@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-18T20:56:07+00:00",
+  "generated_at": "2026-09-18T21:09:26+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -2024,10 +2024,10 @@
       "refuted_by": "One chromosome's exclusion shifts the baseline beyond the interval -- the variegated failure mode Kong 2018 warned about is live in this sample, and every median-normalised route is flagged as such.",
       "gene": "",
       "path": "mosaic",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.8022,
-      "revisions": 1,
+      "status": "supported",
+      "confidence": 0.8,
+      "suggested_confidence": 0.9526,
+      "revisions": 2,
       "evidence": [
         {
           "id": 124,
@@ -2036,6 +2036,15 @@
           "kind": "measurement",
           "claim": "The leave-one-chromosome-out depth baseline is 42.42x with a bootstrap interval of [42.30, 42.64], and no chromosome's exclusion moves it outside that interval.",
           "source_ref": "methodology/116",
+          "lineage_ref": ""
+        },
+        {
+          "id": 127,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "The per-chromosome depth ratio varies by plus or minus 1.19 per cent across autosomes, and the widest leave-one-out excursion is chr10 at 42.36x against chr1 at 42.48x -- both inside the bootstrap interval of [42.30, 42.64].",
+          "source_ref": "methodology/118",
           "lineage_ref": ""
         }
       ]
@@ -2048,11 +2057,30 @@
       "refuted_by": "A design where recovery falls below 80 percent power, or where unaffected chromosomes are flagged above the nominal rate -- reported as the bound's blind spot for exactly the multi-chromosome case the disease name describes.",
       "gene": "",
       "path": "mosaic",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.85,
+      "suggested_confidence": 0.9707,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 128,
+          "direction": "supports",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "Across nine designs -- one, two and three chromosomes injected at 5, 10 and 20 per cent cell fraction, thirty replicates each -- every injected chromosome was recovered in every replicate.",
+          "source_ref": "methodology/118",
+          "lineage_ref": ""
+        },
+        {
+          "id": 129,
+          "direction": "supports",
+          "strength": 0.85,
+          "kind": "measurement",
+          "claim": "The false-positive rate among untouched chromosomes is 0.0048 at worst and zero in six of the nine designs, against a nominal 0.05. Each replicate refits the fold centre and the over-dispersion from its own simulated genome, so the coupling being measured is the real one: three affected chromosomes move rho from 0.01620 to 0.01966 and the centre from 0.49300 to 0.49301.",
+          "source_ref": "methodology/118",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H057",
