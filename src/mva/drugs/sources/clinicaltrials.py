@@ -32,6 +32,7 @@ def studies(
     intr: str | None = None,
     page_size: int = PAGE_SIZE,
     max_pages: int = 3,
+    extra: dict[str, Any] | None = None,
 ) -> list[dict[str, Any]]:
     """Studies matching a condition and/or an intervention, flattened.
 
@@ -39,8 +40,11 @@ def studies(
     a snapshot does not need all of them to answer "is there any trial activity here".
     The bound is recorded in the manifest so a reader knows the table is a head, not a
     census, whenever a query hit it.
+
+    ``extra`` is passed through verbatim - the v2 API's ``aggFilters`` (for instance
+    ``ages:child``) is the one this repository uses, for the paediatric question.
     """
-    params: dict[str, Any] = {"pageSize": page_size, "format": "json"}
+    params: dict[str, Any] = {"pageSize": page_size, "format": "json", **(extra or {})}
     if cond:
         params["query.cond"] = cond
     if intr:
@@ -76,6 +80,7 @@ def _row(study: dict[str, Any]) -> dict[str, Any] | None:
     design = protocol.get("designModule") or {}
     conditions = protocol.get("conditionsModule") or {}
     arms = protocol.get("armsInterventionsModule") or {}
+    eligibility = protocol.get("eligibilityModule") or {}
     nct = str(ident.get("nctId") or "")
     if not nct:
         return None
@@ -90,4 +95,8 @@ def _row(study: dict[str, Any]) -> dict[str, Any] | None:
         ),
         "start_date": str((status.get("startDateStruct") or {}).get("date") or ""),
         "study_type": str(design.get("studyType") or ""),
+        # Eligibility, for the paediatric question. Empty when the registry states none.
+        "min_age": str(eligibility.get("minimumAge") or ""),
+        "max_age": str(eligibility.get("maximumAge") or ""),
+        "std_ages": tuple(str(a) for a in eligibility.get("stdAges") or []),
     }

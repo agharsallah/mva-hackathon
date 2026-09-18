@@ -18,8 +18,14 @@ from typing import Any
 
 __all__ = [
     "CANDIDATE_COLUMNS",
+    "DECOY_COMPARISON_COLUMNS",
+    "EVIDENCE_COLUMNS",
+    "LADDER_COLUMNS",
     "LITERATURE_COLUMNS",
+    "MECHLIT_COLUMNS",
     "PATHWAY_COLUMNS",
+    "PEDIATRIC_TRIAL_COLUMNS",
+    "SHORTLIST_COLUMNS",
     "TARGET_COLUMNS",
     "TRIAL_COLUMNS",
     "cell",
@@ -96,3 +102,88 @@ def write_tsv(path: Path, columns: Sequence[str], rows: Iterable[dict[str, Any]]
             stream.write("\t".join(cell(row.get(name)) for name in columns) + "\n")
             written += 1
     return written
+
+
+# ── step-7 enrichment tables (iteration 2) ───────────────────────────────────────────
+
+#: Curated by a person, one cited result per row. ``proxy`` true means the cited result is
+#: for a same-axis compound (``proxy_of``) rather than the approved molecule itself.
+EVIDENCE_COLUMNS = (
+    "drug_name",
+    "direction_id",
+    "rung",
+    "model",
+    "pmid",
+    "target",
+    "claim",
+    "proxy",
+    "proxy_of",
+)
+
+#: One PubMed question per approved drug per family: how much has been written about the
+#: drug *and* this mechanism, and about the drug *and* the tumour context.
+MECHLIT_COLUMNS = ("drug_name", "family", "term", "hits", "pmids")
+
+#: A registered study of an approved drug that admits children, in any indication.
+PEDIATRIC_TRIAL_COLUMNS = (
+    "drug_name",
+    "nct_id",
+    "title",
+    "phase",
+    "overall_status",
+    "conditions",
+    "min_age",
+    "max_age",
+    "std_ages",
+    "query",
+)
+
+#: One drug on one direction, its rung, and every test behind the rung - automated and
+#: curated printed side by side, never merged silently.
+LADDER_COLUMNS = (
+    "drug_name",
+    "direction_id",
+    "rung",
+    "rung_label",
+    "automated_rung",
+    "curated_rung",
+    "approved",
+    "fda_label",
+    "pediatric_label",
+    "trial_in_context",
+    "pediatric_trial",
+    "mechanism_hits",
+    "context_hits",
+    "curated_pmids",
+    "proxy",
+    "targets",
+    "action_types",
+    "flags",
+)
+
+#: The ranked shortlist and the do-not table share one shape; ``verdict`` tells them apart.
+SHORTLIST_COLUMNS = (
+    "rank",
+    "drug_name",
+    "direction_id",
+    "rung",
+    "verdict",
+    "why",
+    "pediatric_evidence",
+    "curated_pmids",
+    "targets",
+    "flags",
+)
+
+#: The real card's directions against each decoy card's approved drug set.
+DECOY_COMPARISON_COLUMNS = (
+    "decoy",
+    "direction_id",
+    "direction_approved",
+    "decoy_approved",
+    "shared",
+    "jaccard",
+    "shared_drugs",
+    "decoy_with_context_trial",
+    "decoy_with_fda_label",
+)

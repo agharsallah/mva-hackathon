@@ -42,6 +42,10 @@ def label(fetcher: Fetcher, generic_name: str) -> dict[str, Any]:
         return _empty(generic_name)
     entry = results[0].get("openfda") or {}
     return {
+        # The label's own "8.4 Pediatric Use" section, present or absent. Present means the
+        # label *discusses* children - it may say "safety not established" - so this is a
+        # pointer to read, never a licence. Absent means the label carries no such section.
+        "pediatric_use": bool(results[0].get("pediatric_use")),
         "generic_name": _first(entry.get("generic_name")) or generic_name,
         "brand_names": tuple(str(b) for b in entry.get("brand_name") or []),
         "application_numbers": tuple(str(a) for a in entry.get("application_number") or []),
@@ -57,6 +61,7 @@ def _empty(generic_name: str) -> dict[str, Any]:
         "application_numbers": (),
         "routes": (),
         "has_label": False,
+        "pediatric_use": False,
     }
 
 

@@ -57,6 +57,10 @@ def _anchor(card: MechanismCard) -> str:
     return specific[-1] if specific else card.gene_symbol
 
 
+#: The public name of the anchor rule, for the modules that build drug-level queries.
+anchor = _anchor
+
+
 @dataclass(frozen=True)
 class TrialQuery:
     """One ClinicalTrials.gov question and what it was asked about."""
