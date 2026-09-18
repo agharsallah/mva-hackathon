@@ -13,6 +13,7 @@ import type {
   Step3Payload,
   Step4Payload,
   Step5Payload,
+  Step6Payload,
   StepsPayload,
 } from './types';
 
@@ -47,6 +48,13 @@ export const useStep4 = () => useEndpoint<Step4Payload>('/api/steps/step-4');
  * fractions of protein length; no coordinate and no residue crosses this boundary.
  */
 export const useStep5 = () => useEndpoint<Step5Payload>('/api/steps/step-5');
+
+/**
+ * Iteration 2 step 6's fusion: the four routes with the measurement that admitted each one,
+ * the agreement matrix, the leave-one-route-out table and the freeze receipt. The decision
+ * block stays empty until the unblinding entry is filed, and the page reads that absence.
+ */
+export const useStep6 = () => useEndpoint<Step6Payload>('/api/steps/step-6');
 
 /**
  * Iteration 2 step 1's measurements: the recall curve, the tiers, the two-ranker overlap,

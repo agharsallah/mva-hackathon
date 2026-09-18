@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 21,
-    "entries": 566,
+    "chapters": 22,
+    "entries": 573,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 137
+    "contexts": 144
   },
   "chapters": [
     {
@@ -7296,6 +7296,127 @@
             "plddt",
             "domain-database-pfam-smart-prosite-gene3d-superfamily-cdd-prints",
             "alphamissense"
+          ],
+          "firstSeen": "2026-09-18"
+        }
+      ]
+    },
+    {
+      "number": 22,
+      "id": "22-fusing-the-routes--words-for-iteration-2s-step-6",
+      "title": "Fusing the routes — words for iteration 2's step 6",
+      "blocks": [
+        {
+          "kind": "entry",
+          "slug": "reciprocal-rank-fusion-rrf",
+          "term": "Reciprocal rank fusion (RRF)",
+          "aliases": [
+            "Reciprocal rank fusion",
+            "RRF"
+          ],
+          "html": "<p>merging several ranked lists by adding <code>w / (k + rank)</code> from each and re-sorting the sums. It needs no training data and no shared score scale, which is exactly the situation an N-of-1 case is in: four instruments that each produce an ordering and none of which is calibrated against the others. The constant <code>k</code> damps the top of every list so one route's rank 1 cannot by itself outweigh agreement further down, and it is <strong>fixed before the run</strong> — tuning it afterwards is how a fusion lies. A candidate missing from a list gets one rank worse than the list's cutoff, never a score of zero: \"not in my top 50\" is a weaker statement than \"worst\".</p>",
+          "exampleHtml": "<p><em>Example:</em> k = 60, equal weights, top 50 per route, absent = rank 51. A pair at rank 1 in one route and rank 9 in another scores 1/61 + 1/69 = 0.0309.</p>",
+          "context": "<p>the arithmetic of iteration 2's step 6; the formula is Cormack 2009's; the reference implementation <code>ranx</code> was considered and not adopted, so the tests compute every sum by hand from the published formula</p>",
+          "source": "src/mva/pipeline/fusion.py",
+          "related": [
+            "borda-count-reciprocal-rank-fusion-rrf",
+            "rank-inheritance",
+            "leave-one-route-out",
+            "ranking-route-vs-confirmation-route"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "rank-inheritance",
+          "term": "Rank inheritance",
+          "aliases": [],
+          "html": "<p>the rule that lets a list of <em>genes</em> join a fusion whose unit is a <em>candidate pair</em>: a gene's rank is copied onto every pair in that gene, an allele's onto every pair it belongs to. Without it a gene-level instrument could not vote at all. With it, ties are manufactured — a gene with eleven scored pairs occupies eleven consecutive rows — so an inherited rank is flagged as inherited everywhere it is shown, and \"top 20 pairs\" must never be read as \"top 20 genes\".</p>",
+          "exampleHtml": "<p><em>Example:</em> 206 of step 6's 233 exported rank rows are inherited; the top 20 fused pairs are three genes.</p>",
+          "context": "<p>pre-registered in the iteration-2 plan §3 before any route ran</p>",
+          "source": "src/mva/pipeline/fusion.py",
+          "related": [
+            "reciprocal-rank-fusion-rrf",
+            "agreement-matrix"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "independent-evidence-count",
+          "term": "Independent-evidence count",
+          "aliases": [],
+          "html": "<p>how many genuinely different <strong>raw sources</strong> speak for a candidate, after the routes that read the same source are counted once. Rank fusion cannot see this: it treats every list it is handed as a separate witness, so four correlated routes look like four confirmations. The count is the correction — the size of the union of the routes' declared inputs — and a candidate backed by four routes and one input is labelled as such.</p>",
+          "exampleHtml": "<p><em>Example:</em> the fused leader carries 3 of 4 — the symptom terms, the callset and the raw reads — and not the literature, because the knowledge route never listed it.</p>",
+          "context": "<p>the fix for gap F1 of the iteration-2 plan's own review</p>",
+          "source": "src/mva/pipeline/fusion.py",
+          "related": [
+            "route-dependency-graph",
+            "reciprocal-rank-fusion-rrf"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "route-dependency-graph",
+          "term": "Route-dependency graph",
+          "aliases": [],
+          "html": "<p>a drawing of which instrument consumed which other's output, and which raw sources two instruments share. It is <strong>declared</strong>, not derived from the code: a graph read out of the call sites would only ever say what the code does, and the claim being audited is what each route <em>read</em>. The dashed edges — the shared inputs — are the ones the independent-evidence count collapses.</p>",
+          "exampleHtml": "<p><em>Example:</em> six of step 6's eight edges; two routes ranked on the same eight symptom terms and two read the same callset.</p>",
+          "context": "<p>drawn on <code>/steps/step-6</code> and in entry 107</p>",
+          "source": "tools/it2_step6_routes.py",
+          "related": [
+            "independent-evidence-count",
+            "data-lineage"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "leave-one-route-out",
+          "term": "Leave-one-route-out",
+          "aliases": [],
+          "html": "<p>re-running a fusion once per instrument with that instrument silenced, to find out whether the answer was ever a consensus. If removing one route changes which candidate is first, that route was carrying the result and the fusion is it wearing several coats. It is the ablation an ensemble owes its reader, and it is reported beside the primary result rather than instead of it.</p>",
+          "exampleHtml": "<p><em>Example:</em> silencing the genome-wide likelihood route moved iteration 2's fused leader from rank 1 to rank 62; silencing either of the other two left it at rank 1.</p>",
+          "context": "<p>pre-registered as claim H042 before the fusion ran, and refuted by it</p>",
+          "source": "src/mva/pipeline/fusion.py",
+          "related": [
+            "ablation",
+            "reciprocal-rank-fusion-rrf"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "agreement-matrix",
+          "term": "Agreement matrix",
+          "aliases": [],
+          "html": "<p>routes down one axis, candidates along the other, each cell holding the rank that route gave that candidate. It is the figure that makes a fusion readable, because it shows the two things a single ordering hides: which instrument actually found the leader, and which instruments never listed it at all. A cell that is the \"absent\" default is drawn differently from a real rank — otherwise silence reads as agreement.</p>",
+          "exampleHtml": "<p><em>Example:</em> one green cell at rank 1, a column of grey beside it: one route nominated the leader and one route had never heard of it.</p>",
+          "context": "<p>iteration 2's headline figure, on <code>/steps/step-6</code></p>",
+          "source": "src/mva/warehouse/analysis_it2_fusion.py",
+          "related": [
+            "rank-inheritance",
+            "reciprocal-rank-fusion-rrf"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "frozen-artifact-hash-before-the-comparison",
+          "term": "Frozen artifact (hash before the comparison)",
+          "aliases": [
+            "Frozen artifact",
+            "hash before the comparison"
+          ],
+          "html": "<p>writing a result to a file and recording its <strong>sha256</strong> in the append-only record <em>before</em> the step that could be tempted to change it runs. It converts \"we did not steer this\" from an assertion into something a reader can check with one command, and it costs nothing: a run re-done until it agreed with the answer would not hash to the digest already written down.</p>",
+          "exampleHtml": "<p><em>Example:</em> step 6's fused ranking, 274 pairs, <code>a596abf8…</code>, hashed in entry 108 before any iteration-1 table was read.</p>",
+          "context": "<p>required by the iteration-2 plan's §4b gate for step 6</p>",
+          "source": "src/mva/pipeline/fusion_freeze.py",
+          "related": [
+            "blind-protocol",
+            "unblinding",
+            "provenance"
           ],
           "firstSeen": "2026-09-18"
         }

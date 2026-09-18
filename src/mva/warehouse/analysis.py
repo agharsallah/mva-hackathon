@@ -29,6 +29,7 @@ from .analysis_clinvar import CLINVAR_DERIVATIONS
 from .analysis_coding import CODING_DERIVATIONS
 from .analysis_funnel import FUNNEL_DERIVATIONS
 from .analysis_it2 import IT2_DERIVATIONS
+from .analysis_it2_fusion import IT2_FUSION_DERIVATIONS
 from .analysis_it2_kmer import IT2_KMER_DERIVATIONS
 from .analysis_it2_knowledge import IT2_KNOWLEDGE_DERIVATIONS
 from .analysis_it2_lr import IT2_LR_DERIVATIONS
@@ -255,6 +256,7 @@ DERIVATIONS: tuple[Derivation, ...] = (
     + IT2_KMER_DERIVATIONS
     + IT2_LR_DERIVATIONS
     + IT2_KNOWLEDGE_DERIVATIONS
+    + IT2_FUSION_DERIVATIONS
 )
 
 #: Written alongside the outputs so a result in the database can be traced to a run.

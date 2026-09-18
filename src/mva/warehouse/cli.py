@@ -204,6 +204,11 @@ def _do_pg_load_it2_step5(args) -> int:
     return cli_it2.load_it2_step5(args, _settings(args))
 
 
+def _do_pg_load_it2_step6(args) -> int:
+    """Load iteration 2's step-6 fusion, leave-one-out and route-dependency tables."""
+    return cli_it2.load_it2_step6(args, _settings(args))
+
+
 def _do_pg_list(args) -> int:
     """List everything in both managed schemas."""
     settings = _settings(args)
@@ -340,6 +345,18 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("build/it2/step-5"),
         help="the directory the step-5 tools wrote their tables under",
+    )
+
+    load_step6 = add_pg(
+        "pg-load-it2-step6",
+        _do_pg_load_it2_step6,
+        "load iteration 2's step-6 fusion, leave-one-out and route-dependency tables",
+    )
+    load_step6.add_argument(
+        "--out",
+        type=Path,
+        default=Path("build/it2/step-6"),
+        help="the directory tools/fuse_it2_routes.py wrote its tables under",
     )
 
     add_pg("pg-list", _do_pg_list, "list every table in both managed schemas")

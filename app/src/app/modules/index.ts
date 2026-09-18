@@ -166,6 +166,16 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/Step5'),
   },
   {
+    id: 'step6',
+    path: '/steps/step-6',
+    navLabel: 'Step 6',
+    title: 'Step 6 \u2014 one ranking out of three, and what carries it',
+    group: 'decide',
+    description:
+      'Reciprocal rank fusion over the routes that earned a vote, frozen and hashed before the comparison \u2014 with the leave-one-route-out table that shows the leader is carried by one route, not confirmed by four.',
+    load: () => import('../../pages/Step6'),
+  },
+  {
     id: 'science',
     path: '/science',
     navLabel: 'Science',

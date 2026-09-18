@@ -29,6 +29,7 @@ export type * from './search';
 export type * from './step1';
 export type * from './step4';
 export type * from './step5';
+export type * from './step6';
 export type * from './steps';
 export type * from './submissions';
 export type * from './track2';
