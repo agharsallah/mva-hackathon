@@ -55,6 +55,16 @@ def _load_analysis(out: Path) -> dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _checkpoint(analysis: dict[str, Any], out: Path) -> None:
+    """Write after every stage, not once at the end.
+
+    The stages are minutes to hours apart and independent. A crash in the last one used to
+    throw away the first four, which turns a resumable run into a repeated one -- and the
+    resume path is the whole reason each stage writes under its own key.
+    """
+    common.write_json(out / "analysis.json", analysis)
+
+
 def stage_constants(sample: common.Sample) -> dict[str, Any]:
     """The two fitted constants, and whether the committed arm geometry matches the data."""
     checks = arms.check(sample.geometry, sample.bins)
@@ -322,17 +332,20 @@ def main(argv: list[str] | None = None) -> int:
         analysis["constants"] = stage_constants(sample)
         disagreements = analysis["constants"]["arm_disagreements"]
         print(f"constants: arm geometry disagrees on {len(disagreements) or 'no'} chromosomes")
+        _checkpoint(analysis, args.out)
     if "bdev" in args.stages:
         analysis["bdev"] = stage_bdev(sample, draws=args.draws)
         flagged = [row["chrom"] for row in analysis["bdev"]["whole"] if row["exceeds_null"]]
         tested = len(analysis["bdev"]["whole"])
         print(f"bdev: {len(flagged)} of {tested} contigs exceed their null: {flagged}")
+        _checkpoint(analysis, args.out)
     if "baseline" in args.stages:
         analysis["baseline"] = stage_baseline(sample)
         print(
             f"baseline: robust depth {analysis['baseline']['robust']:.2f}x, "
             f"moved by {analysis['baseline']['shifted'] or 'nothing'}"
         )
+        _checkpoint(analysis, args.out)
     if "models" in args.stages:
         depth_baseline = float(
             analysis.get("baseline", {}).get("robust") or sample.whole_depth("1").mean
@@ -345,10 +358,13 @@ def main(argv: list[str] | None = None) -> int:
         )
         calls = [row for row in analysis["models"]["verdicts"] if row["call"] != "normal"]
         print(f"models: {len(calls)} contigs called something other than normal")
+        _checkpoint(analysis, args.out)
     if "limits" in args.stages:
         analysis["limits"] = stage_limits(sample, replicates=args.replicates)
+        _checkpoint(analysis, args.out)
     if "multi" in args.stages:
         analysis["multi"] = stage_multi(sample, replicates=args.replicates)
+        _checkpoint(analysis, args.out)
 
     common.write_json(args.out / "analysis.json", analysis)
     written = write_tables(analysis, args.out)

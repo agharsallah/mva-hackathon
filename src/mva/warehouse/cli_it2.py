@@ -21,6 +21,7 @@ __all__ = [
     "load_it2_step4",
     "load_it2_step5",
     "load_it2_step6",
+    "load_it2_step8",
 ]
 
 
@@ -97,6 +98,27 @@ def load_it2_step6(args, settings: Postgres) -> int:
     if not loaded:
         print(f"nothing to load: no TSVs under {args.out}/tables")
         print("run `uv run python tools/fuse_it2_routes.py` first")
+        return 1
+    for item in loaded:
+        print(f"  {settings.result_schema}.{item.table:<22} {item.rows:>7,} rows  <- {item.source}")
+    print(f"\nlineage edges appended to {settings.schema}.data_lineage")
+    return 0
+
+
+def load_it2_step8(args, settings: Postgres) -> int:
+    """Load iteration 2's step-8 mosaic bound, model comparison and detection limits."""
+    from . import it2_step8_tables
+
+    with pg.attached(settings) as connection:
+        loaded = it2_step8_tables.load(
+            connection,
+            schema=settings.schema,
+            result_schema=settings.result_schema,
+            out_dir=args.out,
+        )
+    if not loaded:
+        print(f"nothing to load: no TSVs under {args.out}/tables")
+        print("run `uv run python tools/fit_it2_mosaic.py` first")
         return 1
     for item in loaded:
         print(f"  {settings.result_schema}.{item.table:<22} {item.rows:>7,} rows  <- {item.source}")

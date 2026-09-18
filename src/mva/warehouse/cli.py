@@ -209,6 +209,11 @@ def _do_pg_load_it2_step6(args) -> int:
     return cli_it2.load_it2_step6(args, _settings(args))
 
 
+def _do_pg_load_it2_step8(args) -> int:
+    """Load iteration 2's step-8 mosaic bound, model comparison and detection limits."""
+    return cli_it2.load_it2_step8(args, _settings(args))
+
+
 def _do_pg_list(args) -> int:
     """List everything in both managed schemas."""
     settings = _settings(args)
@@ -357,6 +362,18 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("build/it2/step-6"),
         help="the directory tools/fuse_it2_routes.py wrote its tables under",
+    )
+
+    load_step8 = add_pg(
+        "pg-load-it2-step8",
+        _do_pg_load_it2_step8,
+        "load iteration 2's step-8 mosaic bound, model and detection-limit tables",
+    )
+    load_step8.add_argument(
+        "--out",
+        type=Path,
+        default=Path("build/it2/step-8"),
+        help="the directory tools/fit_it2_mosaic.py wrote its tables under",
     )
 
     add_pg("pg-list", _do_pg_list, "list every table in both managed schemas")
