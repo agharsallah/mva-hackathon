@@ -13,13 +13,15 @@ each against one number would be the wrong place to do it. What lives here is ev
 * :func:`check` — that comparison over every diploid autosome, with the acrocentrics and
   the hemizygous contigs excluded by their own flags rather than by a hard-coded list.
 
-**The check is containment, not distance.** On chromosomes 1, 9 and 16 a block of
-constitutional heterochromatin sits immediately beside the centromere and carries no
-unique sequence either, so the observed gap is the centromere *plus* that block and its
-midpoint is several megabases off. Asking "is the committed centromere inside the gap the
-data leaves" is the question that has one right answer on those three and still fails if
-the geometry named a different part of the chromosome. The midpoint offset is reported
-beside it, because it is how wide the pericentromeric dead zone actually is.
+**The check is overlap, not distance and not containment.** Both stricter forms failed on
+correct data. Distance fails on chromosomes 1, 9 and 16, where a block of constitutional
+heterochromatin sits beside the centromere and is equally callable-free, so the gap is the
+centromere *plus* that block and its midpoint is 5.7 to 11.1 Mb off. Containment fails the
+other way on chromosomes 5 and 19, where the calls do not vanish across the whole acen span
+and the observed gap is 1 to 2 Mb inside it. What both cases share is that the gap and the
+committed centromere **meet**; a gap on the other arm would not. The gap width and the
+midpoint offset are reported beside the verdict, because between them they say how wide the
+pericentromeric dead zone actually is.
 
 **Why the gap is not the source.** ``results.baf_bins`` emits no row for a megabase with no
 heterozygous call, so an empty bin is a hole in a sequence rather than a flagged value; the
@@ -44,9 +46,9 @@ __all__ = [
     "disagreements",
 ]
 
-#: How far outside the observed gap the committed centromere may sit before it is a
-#: finding. One megabase, which is the resolution of the bins the gap is read from -- the
-#: check is containment, so the tolerance only absorbs the binning, not a disagreement.
+#: How far apart the gap and the centromere may sit and still count as meeting. One
+#: megabase, which is the resolution of the bins the gap is read from: the tolerance
+#: absorbs the binning and nothing else.
 TOLERANCE_BP = 1_000_000
 
 #: Contigs with one copy in this proband: X and Y in a male. Their heterozygous calls are
@@ -99,7 +101,7 @@ class ArmCheck:
 
     @property
     def agrees(self) -> bool:
-        """Is the committed centromere inside the gap the heterozygous calls leave?
+        """Do the committed centromere and the gap the heterozygous calls leave meet?
 
         Acrocentrics are exempt because their largest gap is the short arm by construction,
         and the hemizygous contigs because their calls are artefacts rather than biology.
@@ -109,8 +111,8 @@ class ArmCheck:
             return True
         assert self.gap_start is not None and self.gap_end is not None
         return (
-            self.gap_start - TOLERANCE_BP <= self.cen_start
-            and self.cen_end <= self.gap_end + TOLERANCE_BP
+            self.gap_start - TOLERANCE_BP <= self.cen_end
+            and self.cen_start <= self.gap_end + TOLERANCE_BP
         )
 
     def as_dict(self) -> dict[str, object]:

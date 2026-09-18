@@ -93,7 +93,7 @@ class TestArmCheck:
     def test_a_chromosome_with_no_gap_reports_none(self):
         assert arms.centromere_gap([0, 1, 2, 3]) is None
 
-    def test_a_gap_containing_the_centromere_agrees(self):
+    def test_a_gap_meeting_the_centromere_agrees(self):
         geometry = {"1": {"cen_start": 5_000_000, "cen_end": 7_000_000, "acrocentric": False}}
         checks = arms.check(geometry, {"1": [0, 1, 2, 3, 4, 8, 9, 10]})
         assert checks[0].agrees
@@ -101,15 +101,22 @@ class TestArmCheck:
     def test_a_gap_that_extends_well_past_it_still_agrees(self):
         """1q, 9q and 16q carry heterochromatin beside the centromere that is equally
         callable-free, so the gap is the centromere plus that block and its midpoint is
-        megabases off. Containment is the question with one right answer there."""
+        megabases off."""
         geometry = {"9": {"cen_start": 5_000_000, "cen_end": 7_000_000, "acrocentric": False}}
         checks = arms.check(geometry, {"9": [0, 1, 2, 3, 4, 25, 26]})
         assert checks[0].agrees
         assert checks[0].offset_bp is not None and checks[0].offset_bp > 5_000_000
 
+    def test_a_gap_narrower_than_the_centromere_still_agrees(self):
+        """The other direction, and it happens too: on chr5 and chr19 the calls do not
+        vanish across the whole acen span, so the observed gap sits inside it."""
+        geometry = {"5": {"cen_start": 5_000_000, "cen_end": 12_000_000, "acrocentric": False}}
+        checks = arms.check(geometry, {"5": [0, 1, 2, 3, 4, 5, 6, 8, 9, 10, 11, 12, 13]})
+        assert checks[0].agrees
+
     def test_a_gap_elsewhere_on_the_chromosome_does_not(self):
         geometry = {"1": {"cen_start": 5_000_000, "cen_end": 7_000_000, "acrocentric": False}}
-        checks = arms.check(geometry, {"1": [0, 1, 2, 3, 4, 5, 6, 7, 40, 41]})
+        checks = arms.check(geometry, {"1": [*range(21), 40, 41]})
         assert not checks[0].agrees
         assert arms.disagreements(checks) == checks
 
