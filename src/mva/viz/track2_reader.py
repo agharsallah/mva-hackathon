@@ -42,6 +42,17 @@ TRACK2_DIR = "ressources/track2"
 #: The five tables, in the order the snapshot writes them and the page shows them.
 TABLES = ("targets", "drug_candidates", "trials", "literature", "pathways")
 
+#: Step 7's enrichment tables, read the same way; absent until ``tools/track2_enrich.py`` runs.
+STEP7_TABLES = (
+    "evidence",
+    "drug_mechanism_literature",
+    "pediatric_trials",
+    "evidence_ladder",
+    "shortlist",
+    "do_not",
+    "decoy_comparison",
+)
+
 #: The separator :mod:`mva.drugs.tables` joins list fields with. TSV has no nesting.
 LIST_SEPARATOR = "|"
 
@@ -160,7 +171,7 @@ def tables(root: Path | None = None) -> tuple[dict[str, list[dict[str, Any]]], l
     """Every table's rows, and the catalogue describing them. One pass over disk."""
     rows: dict[str, list[dict[str, Any]]] = {}
     catalog: list[dict] = []
-    for table in TABLES:
+    for table in TABLES + STEP7_TABLES:
         header, parsed = read_table(table, root)
         rows[table] = parsed
         if header:
@@ -182,7 +193,36 @@ def cited_hypotheses(text: str) -> list[str]:
     return sorted(found)
 
 
-def register(hypotheses: list[dict[str, Any]], step: str = "step-8") -> list[dict[str, Any]]:
+def decoys(root: Path | None = None) -> list[dict[str, Any]]:
+    """Every decoy card under ``decoys/``: its card, its snapshot counts, nothing else.
+
+    A decoy is a control, so the page needs what it was and what came out - not its rows,
+    which ``decoy_comparison`` already summarises against the real card.
+    """
+    base = directory(root) / "decoys"
+    out: list[dict[str, Any]] = []
+    for folder in sorted(p for p in base.glob("*") if p.is_dir()):
+        card_path = folder / "mechanism.json"
+        if not card_path.is_file():
+            continue
+        card = _load(card_path)
+        snapshot = _load(folder / "snapshot.json") if (folder / "snapshot.json").is_file() else {}
+        out.append(
+            {
+                "symbol": folder.name,
+                "card": card,
+                "snapshot": {
+                    k: snapshot.get(k)
+                    for k in ("built_at", "rows", "targets", "pathways", "candidates")
+                },
+            }
+        )
+    return out
+
+
+def register(
+    hypotheses: list[dict[str, Any]], step: str | tuple[str, ...] = "step-8"
+) -> list[dict[str, Any]]:
     """The claims filed under one step, as the page's register rows.
 
     One row per claim, not its history: the exported record carries each claim's current
@@ -201,5 +241,5 @@ def register(hypotheses: list[dict[str, Any]], step: str = "step-8") -> list[dic
             "revision": int(entry.get("revisions") or 1),
         }
         for entry in hypotheses
-        if str(entry.get("step") or "") == step
+        if str(entry.get("step") or "") in ((step,) if isinstance(step, str) else step)
     ]

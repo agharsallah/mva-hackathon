@@ -27,6 +27,8 @@ from __future__ import annotations
 
 from typing import Any
 
+from .track2_catalog_step7 import COLUMNS_STEP7
+
 #: ``table → column → (type, description)``. Types: ``string``, ``integer``, ``boolean``,
 #: ``list`` — see the module docstring for what a type is and is not.
 COLUMNS: dict[str, dict[str, tuple[str, str]]] = {
@@ -171,6 +173,8 @@ COLUMNS: dict[str, dict[str, tuple[str, str]]] = {
         ),
     },
 }
+
+COLUMNS.update(COLUMNS_STEP7)
 
 
 def describe(table: str, header: list[str]) -> list[dict[str, Any]]:

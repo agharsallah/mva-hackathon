@@ -49,8 +49,9 @@ SOURCE = (
     "warehouse.data_lineage, docs/science-register.json, submissions/*/iteration-*/"
 )
 
-#: The step whose claims this page shows. Track 2 is step 8 of the roadmap.
-STEP = "step-8"
+#: The steps whose claims this page shows: Track 2 is step 8 of iteration 1 (the hand-off,
+#: H010-H011) and step 7 of iteration 2 (the enrichment, H045-H050).
+STEP = ("step-8", "step-7")
 
 #: How Track 2 reaches its final suggestion, as the step's README states it. Static because
 #: it is a *plan*, not a measurement: nothing in the data can tell you that the ranking is
@@ -83,20 +84,21 @@ STRATEGY: list[dict[str, Any]] = [
     },
     {
         "id": "ranking",
-        "title": "Ranking and a hypothesis per candidate drug",
-        "status": "open",
+        "title": "The evidence ladder, the shortlist and the do-not table",
+        "status": "done",
         "detail": (
-            "3,766 drug-target rows are evidence, not an answer. Each candidate that "
-            "survives the approved filter needs a scored, cited path from the allele to "
-            "its target, and a registered claim with its refutation condition before it "
-            "is argued."
+            "Iteration 2, step 7: every approved drug on every direction placed on a rung "
+            "(5 approved + paediatric, 4 trial in context, 3 in vivo, 2 cell model, 1 "
+            "mechanism only) with the automated and the curated test printed side by side; "
+            "one pre-registered claim per direction (H045-H048), one for the decoy control "
+            "(H049), one for paediatric data (H050). tools/track2_enrich.py; entries 110-113."
         ),
         "depends_on": ["snapshot"],
     },
     {
         "id": "report",
         "title": "Report structured along methods-form Q14",
-        "status": "open",
+        "status": "done",
         "detail": (
             "Loss- versus gain-of-function, the pathway, the downstream consequence, and "
             "the drug x mechanism evidence table with a pathway diagram from the allele "
@@ -106,19 +108,20 @@ STRATEGY: list[dict[str, Any]] = [
     },
     {
         "id": "verdicts",
-        "title": "Verdicts on H010 and H011",
-        "status": "waiting",
+        "title": "Verdicts: the pair is confirmed, the claims are settled",
+        "status": "done",
         "detail": (
-            "The mechanism rests on an inferred trans pair. Confidence is not committed "
-            "on any Track 2 claim until step 6's oracle reply confirms the pair — a "
-            "mechanism argued from an unconfirmed allele is a guess dressed as rigour."
+            "The oracle's reply to submission 1 (083) confirmed the trans pair, so the "
+            "mechanism card moved to version 3 (measured facts F1-F9 from iteration 2) and "
+            "the Track 2 claims carry committed verdicts. The aneuploidy burden in the "
+            "sample (F8) is the one fact still marked unmeasured: step 8 has not run."
         ),
         "depends_on": ["snapshot"],
     },
     {
         "id": "merge",
-        "title": "Merge every Track 1 iteration into one final suggestion",
-        "status": "waiting",
+        "title": "One Track 2 submission, from the merged record",
+        "status": "open",
         "detail": (
             "Each oracle reply revises the card (a new version and a history entry, never "
             "an edit) and the snapshot is re-run. The final suggestion is produced once, "
@@ -173,6 +176,14 @@ def payload(settings: Postgres, root: Path | None = None) -> dict[str, Any]:
         "candidates": rows["drug_candidates"],
         "trials": rows["trials"],
         "literature": rows["literature"],
+        "evidence": rows.get("evidence", []),
+        "drug_mechanism_literature": rows.get("drug_mechanism_literature", []),
+        "pediatric_trials": rows.get("pediatric_trials", []),
+        "evidence_ladder": rows.get("evidence_ladder", []),
+        "shortlist": rows.get("shortlist", []),
+        "do_not": rows.get("do_not", []),
+        "decoy_comparison": rows.get("decoy_comparison", []),
+        "decoys": reader.decoys(base),
         "summary": reader.summary(base),
         "lineage": track2_lineage.build(ledger, base),
         "register": reader.register(submissions_audit.read_register(base), STEP),
@@ -215,6 +226,11 @@ def add_routes(api: APIRouter, settings: Postgres, cache: Cache, root: Path | No
         every Track 2 claim until the oracle confirms the pair.
 
         ``strategy`` is a static plan, not a measurement — see :data:`STRATEGY`.
+
+        Step 7's tables (``evidence``, ``drug_mechanism_literature``, ``pediatric_trials``,
+        ``evidence_ladder``, ``shortlist``, ``do_not``, ``decoy_comparison``) are empty lists
+        until ``tools/track2_enrich.py`` has run; ``decoys`` lists each decoy card and its
+        snapshot counts.
         """
         entry = cache.get_or_build(CACHE_KEY, lambda: payload(settings, base), refresh)
         return cached(entry, SOURCE)
