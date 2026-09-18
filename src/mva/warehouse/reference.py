@@ -1,4 +1,4 @@
-"""The six public reference tables, and how they are typed on the way in.
+"""The seven public reference tables, and how they are typed on the way in.
 
 ``ressources/reference/`` holds non-patient, committable comparison data: gnomAD's
 per-gene constraint metrics, the ClinVar records inside the candidate panel, and a
@@ -25,7 +25,7 @@ database without the upstream URL and release that produced it.
 import json
 from pathlib import Path
 
-from . import reference_coding
+from . import reference_coding, reference_cytobands
 from .catalog import Dataset
 
 #: Where the committed reference tables live, relative to the repository root.
@@ -153,7 +153,7 @@ QC_NORMS_TRANSFORM = ", ".join(
 
 
 def datasets(root: Path | None = None) -> list[Dataset]:
-    """The six reference tables as staging specs, rooted at ``root``."""
+    """The seven reference tables as staging specs, rooted at ``root``."""
     where = str(root or DEFAULT_ROOT)
     return [
         Dataset(
@@ -204,6 +204,7 @@ def datasets(root: Path | None = None) -> list[Dataset]:
             "without reading the callset or the candidate panel.",
         ),
         reference_coding.dataset(where),
+        reference_cytobands.dataset(where),
     ]
 
 
@@ -346,6 +347,8 @@ def lineage_for(table: str, root: Path | None = None) -> dict[str, str] | None:
         return literal
     if table == reference_coding.TABLE:
         return reference_coding.lineage(Path(root or DEFAULT_ROOT))
+    if table == reference_cytobands.TABLE:
+        return reference_cytobands.lineage(Path(root or DEFAULT_ROOT))
     return _hpo_lineage(read_provenance(root)).get(table)
 
 
