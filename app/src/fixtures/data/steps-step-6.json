@@ -44,7 +44,7 @@
       }
     ],
     "rank_sensitivity_of_confirmed": 1,
-    "unblinded_at": "2026-09-18T17:31:56+00:00",
+    "unblinded_at": "2026-09-18T17:46:47+00:00",
     "upload": "no second upload: no live hypothesis gains a bit"
   },
   "edges": [
@@ -892,7 +892,7 @@
     },
     "frozen": {
       "file": "build/it2/step-6/fused-ranking.tsv",
-      "frozen_at": "2026-09-18T17:12:43+00:00",
+      "frozen_at": "2026-09-18T17:46:21+00:00",
       "rows": 274,
       "sha256": "a596abf85a618a0b4baa40c630ae4ff58c5c25634fda7243111b07a399fb53ea"
     },
@@ -6135,7 +6135,7 @@
       "a_new_leader_gene": "CLCNKB",
       "genes_at_rank_one": 1,
       "leader_kept_rank_one": false,
-      "leader_rank": null,
+      "leader_rank": 62,
       "pairs_at_rank_one": 11,
       "removed": "likelihood",
       "statistic": "separates: AUC 0.706 [0.655, 0.751]",

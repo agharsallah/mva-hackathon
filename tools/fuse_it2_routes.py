@@ -144,7 +144,7 @@ def main(argv: list[str] | None = None) -> int:
         ),
         "it2_fusion_loo": common.write_tsv(
             tables / "it2_fusion_loo.tsv",
-            tables_module.loo_rows(dropped, primary_rank),
+            tables_module.loo_rows(dropped, primary_rank, fused[0].pair.id if fused else ""),
             tables_module.LOO_COLUMNS,
         ),
         "it2_route_edges": common.write_tsv(

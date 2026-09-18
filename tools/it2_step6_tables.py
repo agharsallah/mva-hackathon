@@ -160,9 +160,19 @@ def score_rows(fused: list[FusedPair], best: dict[str, dict[str, Any]], sensitiv
         }
 
 
-def loo_rows(out: dict[str, list[FusedPair]], primary: dict[str, int]):
+def loo_rows(out: dict[str, list[FusedPair]], primary: dict[str, int], leader: str = ""):
+    """The top of each re-fusion, **plus the all-routes leader wherever it landed**.
+
+    The second half is what makes the table able to answer the claim. Keeping only the top
+    20 of each removal answers "who wins without this route"; the claim is about "where does
+    the leader go", and when the answer is rank 62 the interesting row is precisely the one
+    a top-20 cut deletes.
+    """
     for removed, fused in sorted(out.items()):
-        for row in fused[:LOO_TOP]:
+        kept = list(fused[:LOO_TOP])
+        if leader and all(row.pair.id != leader for row in kept):
+            kept.extend(row for row in fused if row.pair.id == leader)
+        for row in kept:
             with_all = primary.get(row.pair.id)
             yield {
                 "removed": removed,

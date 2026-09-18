@@ -44,6 +44,13 @@ converged".
 | expected information gain of a second upload | **0.000 bits** on all three questions |
 | oracle budget | **5 of 6 remain**, deliberately |
 
+**On the freeze receipt's timestamp.** The stage has been re-run since entry 108 was filed —
+to add the all-routes leader to the leave-one-out export, which the fused file does not
+contain — so the `frozen at` line on `/steps/step-6` is later than the one in the entry. The
+**digest is identical**, which is the commitment: the ranking has not changed, and a re-run
+that had changed it could not hash to a value already written down. The timestamp records
+when the current file was written; the entry records when the digest was first published.
+
 ## Claims — all four resolved
 
 | Id | Verdict | Conf. | Claim |
