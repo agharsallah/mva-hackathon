@@ -47,7 +47,7 @@ from it2_step8_stages import (
     stage_multi,
     stage_verdicts,
 )
-from mva.mosaic import madseq
+from mva.mosaic.likelihood import DEFAULT_DEPTH_SD
 
 STAGES = ("constants", "bdev", "baseline", "models", "verdicts", "limits", "multi")
 
@@ -143,9 +143,7 @@ def main(argv: list[str] | None = None) -> int:
         depth_baseline = float(
             analysis.get("baseline", {}).get("robust") or sample.whole_depth("1").mean
         )
-        depth_spread = float(
-            analysis.get("baseline", {}).get("depth_spread") or madseq.DEFAULT_DEPTH_SD
-        )
+        depth_spread = float(analysis.get("baseline", {}).get("depth_spread") or DEFAULT_DEPTH_SD)
         analysis["models"] = stage_models(
             sample, depth_baseline=depth_baseline, depth_spread=depth_spread
         )

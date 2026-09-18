@@ -37,6 +37,7 @@ import hashlib
 import json
 import subprocess
 import sys
+from collections.abc import Mapping
 from pathlib import Path
 
 import numpy as np
@@ -110,7 +111,7 @@ def main(argv: list[str] | None = None) -> int:
     )
     print(f"  cut      {len(design):,} probes over {len(design.contigs)} contigs")
 
-    report: dict[str, object] = {}
+    report: Mapping[str, object] = {}
     kept = design
     if not args.skip_uniqueness:
         bait = Bait(np.sort(np.unique(design.kmers)), k=args.k)
