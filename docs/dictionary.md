@@ -2325,3 +2325,85 @@ flowchart LR
 **GeneToCN** — the published method this step's copy number follows: estimate copy number from k-mer frequencies with a local flanking denominator. Pajuste 2023, *Sci Rep* (PMID 37853040). Its smallest validated unit is 5.5 kb, well above a coding exon, which is why the exon scale here is conditional on a k-mer count rather than assumed.
 *Example:* it judged 268 gene-specific k-mers unreliable against 3,095 reliable; the line drawn here, before any exon was measured, is 300.
 *Context: the precedent, and the limit that made the exon scale conditional · source: docs/iteration2/plan.md · related: Copy number, Local-flank denominator, Null band · first seen 2026-09-13*
+
+## 20. Ordering instead of filtering — words for iteration 2's step 4
+
+**Likelihood ratio (LR)** — how many times more likely an observation is if a hypothesis is true than if it is not. It is the unit that replaces a filter: a filter says *in or out*, a likelihood ratio says *this observation multiplies the odds by 4.33*, and nothing is ever removed. Below 1 the observation argues against the hypothesis; at exactly 1 it says nothing.
+*Example:* a gene the child's symptoms rank first is worth ×66.96, one nobody has curated ×0.379 — down-weighted 2.6-fold, not deleted.
+*Context: the arithmetic the whole of step 4 is built on, following LIRICAL (Robinson 2020, PMID 32755546) · source: src/mva/pipeline/likelihood.py · related: Prior odds, Evidence lane, Posterior · first seen 2026-09-18*
+
+**Prior odds** — the odds of a hypothesis before any evidence, written as `p / (1 − p)` rather than as a probability, because odds are what a likelihood ratio multiplies. Step 4's prior is uninformative on purpose: one gene in 19,723 is causal, so every gene starts at the same place and the ordering is produced entirely by evidence.
+*Example:* 1 / 19,723 = 5.07 × 10⁻⁵, which as odds is 5.07 × 10⁻⁵ almost exactly.
+*Context: the number every lane multiplies · source: src/mva/pipeline/pair_lr.py · related: Likelihood ratio (LR), Posterior · first seen 2026-09-18*
+
+**Posterior** — the odds after every likelihood ratio has been applied, converted back to a probability. In this project it is a **transparent product of pre-registered terms used for ordering**, never a calibrated probability that a gene causes the disease, and it is quoted with that sentence attached.
+*Example:* the leading gene's ratio of 341,019 on a prior of 5.07 × 10⁻⁵ gives posterior odds of 17.3 — about 0.95 as a probability, which is why the ratio and not the probability is the number reported.
+*Context: what the ordering is, and what it is not · source: src/mva/pipeline/likelihood.py · related: Prior odds, Confidence · first seen 2026-09-18*
+
+**Evidence lane** — one named strand of evidence with its own likelihood ratio, its own source and its own correlation group. Splitting the scoring into lanes is what makes "why is this gene at rank 1" answerable by reading a table instead of re-reading the code.
+*Example:* the leading pair's lanes are `phenotype ×52.08`, `left:consequence ×350`, `right:alphamissense ×4.33`, two `frequency ×2.08` terms, and seven lanes that said nothing.
+*Context: the unit the scoring is decomposed into · source: src/mva/pipeline/likelihood.py · related: Correlation group, Likelihood ratio (LR) · first seen 2026-09-18*
+
+**Correlation group** — a set of lanes that were trained or curated on overlapping data, so multiplying them all would count one piece of evidence several times. Within a group only the strongest lane contributes; the rest are kept in the record with a ratio of 1 and a note saying which lane damped them.
+*Example:* AlphaMissense was trained partly on ClinVar, so a ClinVar-pathogenic missense allele contributes ×18.7 once, not ×18.7 × ×4.33.
+*Context: the rule that stops a posterior being inflated by its own sources · source: src/mva/pipeline/likelihood.py · related: Evidence lane, AlphaMissense · first seen 2026-09-18*
+
+**ACMG Bayesian ladder** — the four ACMG/AMP evidence strengths — supporting, moderate, strong, very strong — read as four fixed likelihood ratios rather than as criteria to be counted. Tavtigian 2018 (PMID 29300386) showed the counting rules are reproduced by a prior of 0.10 and a geometric ladder: 350, and then its square root, fourth root and eighth root.
+*Example:* 350 / 18.7 / 4.33 / 2.08. Benign evidence divides where pathogenic evidence multiplies, so a *supporting benign* observation is ×1/2.08.
+*Context: where every genotype lane's number comes from · source: src/mva/pipeline/acmg.py · related: Evidence lane, Likelihood ratio (LR) · first seen 2026-09-18*
+
+**AlphaMissense** — a deep-learning predictor that scores every possible missense substitution in the human proteome and assigns one of three classes: likely benign, ambiguous, likely pathogenic. Cheng 2023, *Science* (PMID 37733863). Used here through its own class, not a threshold chosen by us.
+*Example:* it spoke for 19,353 allele slots — 22.2 % of all of them, the single largest lane in the ranking — and its call on the leading gene's second allele is `likely_pathogenic`.
+*Context: the missense lane, served by Ensembl VEP REST · source: docs/iteration2/step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md · related: Evidence lane, SpliceAI, Correlation group · first seen 2026-09-18*
+
+**SpliceAI** — a deep-learning predictor of whether a variant changes splicing, reported as four delta scores: acceptor gain, acceptor loss, donor gain, donor loss. Jaganathan 2019, *Cell* (PMID 30661751). The overall score is the largest of the four, which is the authors' own definition.
+*Example:* their published cut-offs are 0.2 for high recall, 0.5 recommended, 0.8 for high precision; 32,534 of the 38,087 coding alleles carry a delta score.
+*Context: the splice lane, served by Ensembl VEP REST · source: docs/iteration2/step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md · related: Evidence lane, AlphaMissense · first seen 2026-09-18*
+
+**LOFTEE** — a rule set that decides whether a protein-truncating variant really destroys the protein, by asking *where* the truncation falls. Karczewski 2020, *Nature* (PMID 32461654). Not run here — Ensembl's REST endpoint does not serve the plugin — so its published rules are reimplemented over VEP's own fields and the result is called *LOFTEE-style*, never LOFTEE.
+*Example:* a stop in the NMD-competent body of a transcript is worth ×350; the same stop in the last exon is worth ×4.33.
+*Context: the truncating lane, reimplemented and labelled as such · source: src/mva/pipeline/genotype_lr.py · related: NMD escape, ACMG Bayesian ladder · first seen 2026-09-18*
+
+**NMD escape** — a premature stop codon that the cell's nonsense-mediated decay machinery does not detect, so the shortened protein is still made. Decay does not reach the last exon, which is why a stop there is much weaker evidence than the same stop earlier in the gene.
+*Example:* the published rule is "the last exon, or the last 50 bases of the penultimate exon". Ensembl REST reports which exon of how many but not exon lengths, so the last exon is read directly and the penultimate one is lowered a rung rather than guessed either way.
+*Context: why "where" matters as much as "what" for a truncation · source: src/mva/pipeline/genotype_lr.py · related: LOFTEE, LoF · first seen 2026-09-18*
+
+**P(trans)** — the probability that two variants in one gene sit on **opposite** copies of the chromosome. A recessive diagnosis needs that; two variants on the same copy leave one working copy and are not a diagnosis. With no parental DNA and no sequencing fragment spanning the pair, the only remaining estimate is a population statistic.
+*Example:* gnomAD serves `p_compound_heterozygous` per pair from the genotype-combination counts of everyone carrying both (Guo 2024, PMID 38057443) — and returned it for **none** of this case's 25 leading pairs.
+*Context: the second half of step 4's goal · source: src/mva/pipeline/ptrans.py · related: Phase / phasing, Unphaseable, Compound heterozygous · first seen 2026-09-18*
+
+**Undetermined (P(trans) state)** — the honest answer when no co-occurrence estimate exists for a pair, because at least one of its alleles is not in the reference dataset. The pair is reported at the uninformative prior of 0.5 and labelled, rather than being given 0 (which would be evidence against it) or 1 (which would manufacture a diagnosis).
+*Example:* 25 of 25 leading pairs. Only 5 of their 50 alleles are in gnomAD v2 at all — the method is least available exactly where an ultra-rare disease needs it most.
+*Context: a missing measurement kept visible as one · source: docs/iteration2/step-4/methodology/101-the-phase-that-cannot-be-measured.md · related: P(trans), Unphaseable · first seen 2026-09-18*
+
+**Unphaseable** — the fifth failure category: both alleles real, both present at one copy each, no read fragment spanning them and no parental DNA. It is a statement that phase *cannot be established*, not that it is unfavourable, and it is the category this case's lead pair falls into.
+*Example:* the lead pair's two alleles are 10,911 bases apart against ~266-base sequencing fragments.
+*Context: added by plan §11.5 to the four categories step 1 pre-registered · source: docs/iteration2/plan.md · related: P(trans), Phase block · first seen 2026-09-18*
+
+**Degrading recessive ratio** — LIRICAL's answer to a gene with one damaging allele and no partner: raise its likelihood ratio to the power of the fraction of required alleles actually seen, rather than zeroing it. One of two keeps the square root. A missing partner may be a call the pipeline never made, in an exon no bait covered, or an allele class no caller reports.
+*Example:* 2,670 single-allele hypotheses were scored this way; none reached the top 20, which is what makes keeping them cheap.
+*Context: what replaces the biallelic filter · source: src/mva/pipeline/genotype_lr.py · related: Likelihood ratio, Compound heterozygous · first seen 2026-09-18*
+
+**Permutation null** — re-running a whole analysis on inputs drawn at random with the same *shape* as the real ones, to see how high chance alone gets. It answers "did the input matter", which a large score on its own never does.
+*Example:* 1,000 random seven-term symptom sets, each drawn to match the child's own term-depth profile, each re-ranking all 11,465 genes.
+*Context: the specificity test step 4 pre-registered · source: src/mva/pipeline/nulls.py · related: Decoy null, Empirical p-value, Term-depth profile · first seen 2026-09-18*
+
+**Term-depth profile** — how far below the root of the ontology each of a patient's symptom terms sits. A random term set drawn to match it is random in *content* but comparable in *specificity*, which is what makes it a fair null: a set of seven very general terms would be easy to beat for reasons that have nothing to do with the case.
+*Example:* this child's seven terms sit at depths 6, 7, 4, 5, 5, 3, 5.
+*Context: what makes the permutation null fair rather than merely random · source: tools/run_it2_lr_nulls.py · related: Permutation null, Decoy null · first seen 2026-09-18*
+
+**Empirical p-value** — how often a null run reached or beat the observed result, written as `(exceeded + 1) / (draws + 1)`. The `+1` is not a rounding convenience: a finite null cannot demonstrate a probability of zero, and printing `0.000` from a thousand draws would claim it had.
+*Example:* 0 of 1,000 permuted runs reached the observed leader, so p = 1/1001 = 0.000999 — reported as "below 0.001", never as zero.
+*Context: how the permutation null is read · source: src/mva/pipeline/nulls.py · related: Permutation null · first seen 2026-09-18*
+
+**Decoy null** — scoring a matched control set through the **identical** code path and measuring how far apart the two end up. It tests the *scoring*, where discriminating power actually lives, rather than the gene list — step 2 measured targets and decoys as indistinguishable before any filter, so any separation here was produced by the ranking itself.
+*Example:* 396 decoys matched to the targets on coding length and exon count, drawn in step 1 before any DNA was read.
+*Context: finding F4, made measurable · source: src/mva/pipeline/nulls.py · related: Decoy set, AUC · first seen 2026-09-18*
+
+**AUC (area under the ROC curve)** — the probability that a randomly chosen member of one group scores higher than a randomly chosen member of the other, with ties counted as half. 0.5 means the two groups are indistinguishable. A point estimate alone is not a result: an interval that covers 0.5 says "no measured separation" however large the point looks.
+*Example:* reported here with a 1,000-resample bootstrap interval, and read as a separation only when that interval excludes 0.5.
+*Context: how the decoy null is quantified · source: src/mva/pipeline/nulls.py · related: Decoy null, Bootstrap interval · first seen 2026-09-18*
+
+**Network proximity** — scoring a gene nobody has curated by how strongly it interacts with the genes that *are* well-scored. It is a third kind of evidence, weaker than a phenotype match, and it is capped accordingly: a neighbour has no phenotype evidence of its own, only a neighbour that has some.
+*Example:* STRING's high-confidence partners (score ≥ 700) of the top 50 ranked genes give 1,575 edges and 569 uncurated neighbours — and **none of them reached the top 25**, so the lane was built, measured, and found not to matter here.
+*Context: plan §11.5's answer to the 73.6 % of genes with no curation · source: src/mva/phenotype/network.py · related: Likelihood ratio (LR) · first seen 2026-09-18*

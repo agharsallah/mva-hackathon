@@ -241,3 +241,44 @@ _Avoid_: case file, record, bundle, summary
 The append-only collection of hypotheses and their revisions. The evidence table beside it is
 the **ledger**, matching the probe ledger and the upload ledger.
 _Avoid_: database, store, log, tracker
+
+### Ordering without filtering
+
+**Likelihood ratio**:
+How many times more likely an observation is if a hypothesis is true than if it is not. The
+unit that replaces a filter: nothing is removed, only multiplied. Written *ratio* in prose
+when the context is already about scoring.
+_Avoid_: weight, score, boost, penalty, odds ratio
+
+**Evidence lane**:
+One named strand of evidence carrying a ratio, a source and a correlation group. Always
+*lane*, never *feature* or *signal* — a feature is an input to a model, and this is a term in
+a printed product.
+_Avoid_: feature, signal, factor, component, criterion
+
+**Correlation group**:
+A set of lanes trained or curated on overlapping data, of which only the strongest counts.
+The others are **damped**, not dropped: they keep their row and their name.
+_Avoid_: deduplication, collinearity handling, redundancy filter
+
+**Shape (of a biallelic hypothesis)**:
+Which of `compound`, `homozygous` or `single` a scored row is. Not *type*, which this project
+uses for variant classes, and not *class*, which belongs to the genotype model.
+_Avoid_: type, class, category, kind
+
+**P(trans)**:
+The probability two alleles sit on opposite copies of a chromosome, estimated from a
+reference population. Always written with its state — `observed`, `undetermined`,
+`same-site` — and never called *phase*, which is a fact about this child that is not known.
+_Avoid_: phase probability, trans probability, phasing score
+
+**Unphaseable**:
+Both alleles real, both single-copy, no fragment spanning them and no parental DNA. A
+statement that phase **cannot be established**, never that it is unfavourable.
+_Avoid_: unphased, phase unknown, unresolved
+
+**Decoy null**:
+A matched control set scored through the identical code path, reported as an AUC with a
+bootstrap interval. Distinct from the **permutation null**, which resamples the *input*
+rather than the gene set.
+_Avoid_: negative control set, background, baseline
