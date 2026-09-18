@@ -112,6 +112,11 @@ ITERATION2: tuple[Step, ...] = (
             "Which mechanism facts from steps 2-5 and 8 revise the Track 2 card, and "
             "what does the drug evidence say for each direction?"
         ),
+        # Open, not done: the six claims filed for this step (H045-H050) carry committed
+        # verdicts (methodology 110-113) and the card is at version 3, but the goal names
+        # step 8's fact - the aneuploidy burden in the sample - and that is still unmeasured
+        # (card fact F8). The step closes when step 8's row lands on the card.
+        status="open",
         iteration="iteration2",
     ),
     Step(

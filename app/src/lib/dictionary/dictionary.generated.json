@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 22,
-    "entries": 573,
+    "chapters": 23,
+    "entries": 587,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 144
+    "contexts": 158
   },
   "chapters": [
     {
@@ -7417,6 +7417,243 @@
             "blind-protocol",
             "unblinding",
             "provenance"
+          ],
+          "firstSeen": "2026-09-18"
+        }
+      ]
+    },
+    {
+      "number": 23,
+      "id": "23-grading-a-drug--words-for-iteration-2s-step-7-track-2",
+      "title": "Grading a drug — words for iteration 2's step 7 (Track 2)",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>Track 1 ends in an allele the scorer can check. Track 2 ends in a <em>suggestion</em> a panel reads, so\nthe words below are about how a suggestion earns its place: what counts as evidence for a drug,\nhow much, and what a control for the whole search looks like.</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "evidence-ladder",
+          "term": "Evidence ladder",
+          "aliases": [],
+          "html": "<p>a fixed list of five <em>rungs</em>, stated on the mechanism card before any drug is looked up, that says what kind of evidence a candidate has and what it does not have. From the top: (5) approved for a related indication with paediatric use, (4) a clinical trial in a related indication, (3) an animal model of the mechanism, (2) a cell model of the mechanism, (1) mechanism only. A drug is placed on the <em>highest</em> rung it passes, and the rung is printed beside the drug wherever it is argued. A rung is a <strong>kind</strong> of evidence, not a score: two rung-2 drugs are not equally good, and the row keeps the PMIDs so a reader can tell them apart.</p>",
+          "exampleHtml": "<p><em>Example:</em> niacin sits on rung 3 for direction D3 because an NAD⁺ precursor raised BubR1 in mice; metformin sits on rung 2 for D2 because an AMPK activator was aneuploidy-selective in cells.</p>",
+          "context": "<p>pre-registered in the iteration-2 plan (§3 step 7), written onto mechanism card v3, applied by <code>mva.drugs.ladder</code></p>",
+          "source": "docs/iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md",
+          "related": [
+            "rung",
+            "automated-versus-curated-rung",
+            "repurposing-direction",
+            "mechanism-card"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "rung",
+          "term": "Rung",
+          "aliases": [],
+          "html": "<p>one step of the evidence ladder. \"Rung 1\" means <em>named, never submitted</em>: the drug acts on a target in the direction's set and nothing more is known.</p>",
+          "exampleHtml": "<p><em>Example:</em> 359 approved drugs enter the ladder; most leave it at rung 1.</p>",
+          "context": "<p>the <code>rung</code> column of <code>ressources/track2/evidence_ladder.tsv</code></p>",
+          "source": "src/mva/drugs/ladder.py",
+          "related": [
+            "evidence-ladder"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "automated-versus-curated-rung",
+          "term": "Automated versus curated rung",
+          "aliases": [],
+          "html": "<p>the two tests that can put a drug on a rung, kept in separate columns. The <strong>automated</strong> rung comes from facts a program can look up for any card: approval, a US label and its paediatric section, a registered trial in the tumour context, a registered study admitting children. The <strong>curated</strong> rung comes from one paper read by a person and written into <code>evidence.tsv</code> with its PMID. The drug's rung is the higher of the two, and both are printed, so a reader sees which one is carrying it — and the automated one is the only one a <em>decoy</em> card can also get.</p>",
+          "exampleHtml": "<p><em>Example:</em> vincristine reaches automated rung 5 (approved, rhabdomyosarcoma trials, paediatric label) and has no curated row; niacin has curated rung 3 and automated rung 1.</p>",
+          "context": "<p>columns <code>automated_rung</code>, <code>curated_rung</code></p>",
+          "source": "src/mva/drugs/ladder.py",
+          "related": [
+            "evidence-ladder",
+            "decoy-mechanism-card",
+            "proxy-evidence"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "proxy-evidence",
+          "term": "Proxy evidence",
+          "aliases": [],
+          "html": "<p>a cited result for a compound on the <em>same axis</em> as the approved drug, but not the drug itself: the paper tested AICAR, the approved AMPK activator is metformin. The row keeps the rung and carries <code>proxy=true</code> with the compound actually tested in <code>proxy_of</code>, so the inheritance is visible, never silent. Molecule-level evidence ranks above proxy evidence at the same rung.</p>",
+          "exampleHtml": "<p><em>Example:</em> chloroquine was in the aneuploidy-selective screen (proxy=false); hydroxychloroquine inherits it (proxy=true, proxy_of chloroquine).</p>",
+          "context": "<p><code>ressources/track2/evidence.tsv</code></p>",
+          "source": "docs/iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md",
+          "related": [
+            "evidence-ladder",
+            "automated-versus-curated-rung"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "anti-direction-the-do-not-table",
+          "term": "Anti-direction (the do-not table)",
+          "aliases": [
+            "Anti-direction",
+            "the do-not table"
+          ],
+          "html": "<p>a drug class the mechanism says would make things <em>worse</em>, listed on the card with a mechanism-of-action pattern so the ladder flags it automatically. For a child whose checkpoint is already weak: agents that weaken the spindle assembly checkpoint further (<em>do not</em>), and spindle poisons, which need a working checkpoint to arrest cells (<em>caution</em> — they are also the standard rhabdomyosarcoma chemotherapy, so this is a hypothesis for the treating team, not advice to withhold treatment). The do-not table is, clinically, the more useful half of Track 2.</p>",
+          "exampleHtml": "<p><em>Example:</em> every vinca alkaloid and taxane in the candidate table carries flag A2.</p>",
+          "context": "<p><code>anti_directions</code> on mechanism card v3; <code>ressources/track2/do_not.tsv</code></p>",
+          "source": "docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md",
+          "related": [
+            "sac-spindle-assembly-checkpoint",
+            "mitotic-slippage",
+            "evidence-ladder"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "mitotic-slippage",
+          "term": "Mitotic slippage",
+          "aliases": [],
+          "html": "<p>a cell exiting mitosis without dividing properly because the checkpoint that should have held it gave way. It is why a spindle poison can <em>fail</em> in a checkpoint-deficient cell: the drug's arrest depends on the very mechanism that is broken.</p>",
+          "exampleHtml": "<p><em>Example:</em> the reason A2 is a caution: MVA1 cells have a weakened checkpoint (PMID 20516114) and slip (PMID 30601084).</p>",
+          "context": "<p>the mechanism behind anti-direction A2</p>",
+          "source": "PMID 30601084 (Sinha 2019)",
+          "related": [
+            "anti-direction-the-do-not-table",
+            "sac-spindle-assembly-checkpoint"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "standard-of-care-excluded-from-a-repurposing",
+          "term": "Standard of care (excluded from a repurposing)",
+          "aliases": [
+            "Standard of care",
+            "excluded from a repurposing"
+          ],
+          "html": "<p>the drugs already given for the tumour context. They reach a high automated rung for free (approved, trials, paediatric use) and are set aside from the shortlist because giving a child the chemotherapy they are already getting is not a repurposing. They are named in the do-not table so a reader sees they were considered, not missed.</p>",
+          "exampleHtml": "<p><em>Example:</em> vincristine, dactinomycin, cyclophosphamide, ifosfamide, doxorubicin, etoposide, irinotecan, vinorelbine, temozolomide, carboplatin, cisplatin, topotecan.</p>",
+          "context": "<p><code>case.context_standard_of_care</code> on the card</p>",
+          "source": "PMID 41749943, 40421977",
+          "related": [
+            "anti-direction-the-do-not-table",
+            "shortlist"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "shortlist",
+          "term": "Shortlist",
+          "aliases": [],
+          "html": "<p>the ladder rows the report may argue: rung 2 or higher, not standard of care, not an anti-direction, attached to a named direction. Ordered by rung, then molecule-level before proxy evidence, then paediatric evidence, then how much has been written about the drug with the mechanism (descriptive, and last for that reason). Each row prints its reasons in words.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>ressources/track2/shortlist.tsv</code>, column <code>why</code>.</p>",
+          "context": "<p>src/mva/drugs/shortlist.py</p>",
+          "related": [
+            "evidence-ladder",
+            "proxy-evidence",
+            "standard-of-care-excluded-from-a-repurposing"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "decoy-mechanism-card",
+          "term": "Decoy mechanism card",
+          "aliases": [],
+          "html": "<p>the same child, a different gene: a copy of the mechanism card with the clinical side kept and the gene, alleles and directions replaced by a gene that is <em>not</em> the answer. The unchanged pipeline runs on it. Whatever drugs come out for the decoy as readily as for the real gene were nominated by the clinical queries or by drug-database density, not by the mechanism — that direction is <strong>non-specific</strong>. Only the automated stages are comparable; a decoy gets no hand-read literature.</p>",
+          "exampleHtml": "<p><em>Example:</em> NTRK3 (a seeded draw from step 1's matched decoy set) and XDH (an unrelated metabolic enzyme).</p>",
+          "context": "<p>plan §10 gap N3 — Track 1 had permutation nulls, Track 2 had none</p>",
+          "source": "src/mva/drugs/decoy.py, docs/iteration2/step-7/methodology/112-two-decoy-cards-through-the-same-pipeline.md",
+          "related": [
+            "decoy-set",
+            "automated-versus-curated-rung",
+            "jaccard-index"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "jaccard-index",
+          "term": "Jaccard index",
+          "aliases": [],
+          "html": "<p>the overlap of two sets as a fraction: shared ÷ everything in either. 0 is disjoint, 1 is identical. Used here over the approved drug names of a real direction and of a decoy card.</p>",
+          "exampleHtml": "<p><em>Example:</em> a direction with 40 approved drugs and a decoy with 47, sharing 12, has Jaccard 12 ÷ 75 = 0.16 — above the pre-registered 0.10 line, so non-specific.</p>",
+          "context": "<p><code>ressources/track2/decoy_comparison.tsv</code>; the threshold is H049's</p>",
+          "source": "src/mva/drugs/compare.py",
+          "related": [
+            "decoy-mechanism-card"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "base-name-salt-folding",
+          "term": "Base name (salt folding)",
+          "aliases": [
+            "Base name",
+            "salt folding"
+          ],
+          "html": "<p>a drug's name with the salt or formulation words taken off the end, so <code>METFORMIN HYDROCHLORIDE</code> and <code>METFORMIN</code> are counted once. Only trailing words from a fixed list are removed; <code>SODIUM PHENYLBUTYRATE</code> keeps its leading word because there it is part of the molecule's name.</p>",
+          "exampleHtml": "<p><em>Example:</em> 3,859 candidate rows fold to 359 distinct approved drugs.</p>",
+          "context": "<p>src/mva/drugs/names.py</p>",
+          "related": [
+            "shortlist"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "pediatric-use-label-section-8-4",
+          "term": "Pediatric Use (label section 8.4)",
+          "aliases": [
+            "Pediatric Use",
+            "label section 8.4"
+          ],
+          "html": "<p>the part of a US drug label, mandated by the FDA's labelling rule, that discusses use in children. Its <em>presence</em> means the manufacturer had to say something about children — sometimes \"safety and effectiveness have not been established\" — so it is a pointer to read, never a licence. openFDA returns it as the field <code>pediatric_use</code>.</p>",
+          "exampleHtml": "<p><em>Example:</em> the <code>pediatric_label</code> column of the ladder.</p>",
+          "context": "<p>automated rung 5 test, with a registered study admitting children as the alternative</p>",
+          "source": "src/mva/drugs/sources/openfda.py",
+          "related": [
+            "openfda-drug-labels",
+            "evidence-ladder"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "drug-mechanism-literature",
+          "term": "Drug × mechanism literature",
+          "aliases": [],
+          "html": "<p>for each approved drug, how many PubMed records mention the drug together with the mechanism (gene, protein, pathway, disease) and with the tumour context. A count of papers, kept as a descriptive column and never turned into a rung: a drug can be mentioned beside a mechanism in a hundred papers that argue against it, and step 5 measured that literature volume ranks badly (ρ = 0.024 against a hit count).</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>ressources/track2/drug_mechanism_literature.tsv</code>, two rows per drug.</p>",
+          "context": "<p>src/mva/drugs/mechlit.py</p>",
+          "related": [
+            "pubmed-e-utilities",
+            "evidence-ladder",
+            "ranking-route-vs-confirmation-route"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "measured-fact-on-the-card",
+          "term": "Measured fact (on the card)",
+          "aliases": [
+            "Measured fact",
+            "on the card"
+          ],
+          "html": "<p>one row of mechanism card v3's <code>measured_facts</code> block: a thing iteration 2 measured about the genotype, with the entry that measured it and what it implies for a drug. One of the nine is honestly <em>unmeasured</em> (the aneuploid fraction in the sample, step 8), and the row says so.</p>",
+          "exampleHtml": "<p><em>Example:</em> F2, allele dosage: both lead alleles at one-copy multiplicity in the raw reads — a null + hypomorph genotype, so stabilising the remaining protein (D3) is a live direction.</p>",
+          "context": "<p>mechanism card version 3</p>",
+          "source": "docs/iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md",
+          "related": [
+            "mechanism-card",
+            "hypomorph-hypomorphic"
           ],
           "firstSeen": "2026-09-18"
         }

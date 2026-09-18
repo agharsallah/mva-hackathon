@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-18T18:52:36+00:00",
+  "generated_at": "2026-09-18T19:21:13+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -1722,11 +1722,30 @@
       "refuted_by": "An approved molecule with a cited cellular or animal result (a PMID) showing strengthened checkpoint signalling or reduced missegregation in SAC-deficient or aneuploid cells, placing it at rung 2 or higher under D1.",
       "gene": "BUB1B",
       "path": "track2-ladder",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.8021838885585817,
+      "suggested_confidence": 0.8022,
+      "revisions": 3,
+      "evidence": [
+        {
+          "id": 107,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "On the refreshed snapshot, 30 approved drugs attach to D1 seed targets and none reaches rung 2: no curated row exists for a checkpoint-reinforcing result, and the only D1 drug with a stated mechanism class is paclitaxel, a tubulin stabiliser flagged A2 (spindle poison) in the do-not table.",
+          "source_ref": "methodology/113",
+          "lineage_ref": ""
+        },
+        {
+          "id": 108,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "absence",
+          "claim": "Most D1 approved rows come from DGIdb with no action type stated (omeprazole, erythromycin, acitretin), so the prediction 'every action type is inhibitor, antagonist or tubulin-binding' is untestable on those rows rather than confirmed.",
+          "source_ref": "methodology/113",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H046",
@@ -1736,11 +1755,30 @@
       "refuted_by": "Every D2 evidence row at rung 2 or higher names an unapproved compound (AICAR, 17-AAG) with proxy=true, or no D2 row reaches rung 2 at all.",
       "gene": "BUB1B",
       "path": "track2-ladder",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.7,
+      "suggested_confidence": 0.8022,
+      "revisions": 4,
+      "evidence": [
+        {
+          "id": 109,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "literature",
+          "claim": "Chloroquine, a market-approved drug, was itself among the aneuploidy-selective antiproliferative compounds in trisomic mouse fibroblasts and aneuploid human cells (rung 2, proxy=false); metformin, hydroxychloroquine and bortezomib reach rung 2 on D2 only through same-axis proxies (AICAR, chloroquine, the proteasome-inhibitor class).",
+          "source_ref": "PMID:21315436",
+          "lineage_ref": ""
+        },
+        {
+          "id": 110,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "absence",
+          "claim": "No D2 drug reaches rung 3: the aneuploidy-selective results are cellular, and the aneuploid fraction in this child is unmeasured (card fact F8), so D2 is argued from the literature on aneuploid cells, not from a measured burden.",
+          "source_ref": "methodology/113",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H047",
@@ -1750,11 +1788,39 @@
       "refuted_by": "No approved molecule attaches to any D3 target in the snapshot, or the in-vivo BubR1 result cannot be tied to any approved molecule even as a same-axis proxy, leaving D3 at rung 1 or 2 only.",
       "gene": "BUB1B",
       "path": "track2-ladder",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.6,
+      "suggested_confidence": 0.7685,
+      "revisions": 4,
+      "evidence": [
+        {
+          "id": 111,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "literature",
+          "claim": "The NAD+ precursor nicotinamide mononucleotide raised BubR1 abundance in vivo and SIRT2 overexpression extended median lifespan of BubR1-hypomorphic mice; niacin and nicotinamide, the market-approved and vitamin-form NAD+ precursors, inherit rung 3 on D3 as proxies, both with a US label and a registered study admitting children.",
+          "source_ref": "PMID:24825348",
+          "lineage_ref": ""
+        },
+        {
+          "id": 112,
+          "direction": "refutes",
+          "strength": 0.4,
+          "kind": "absence",
+          "claim": "The snapshot returned no approved molecule for SIRT2 (10 candidates, unapproved tool compounds plus two drugs with no SIRT2 activation) or for CREBBP, so the prediction that the automated stage would surface an NAD+-axis drug failed; the D3 route exists only because the curated table names it.",
+          "source_ref": "methodology/111",
+          "lineage_ref": ""
+        },
+        {
+          "id": 113,
+          "direction": "supports",
+          "strength": 0.4,
+          "kind": "literature",
+          "claim": "HDAC2/3 bind and deacetylate BubR1 in mitosis, driving its polyubiquitination and degradation; valproic acid and vorinostat, approved HDAC inhibitors, reach rung 2 on D3 as class-level proxies (no HDAC-inhibitor result on BubR1 levels is cited).",
+          "source_ref": "PMID:28985013",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H048",
@@ -1764,11 +1830,30 @@
       "refuted_by": "Every D4 approved candidate with rung 2 or higher is a cytotoxic already in the rhabdomyosarcoma standard of care, or the non-cytotoxic candidates have no paediatric label section and no paediatric trial.",
       "gene": "BUB1B",
       "path": "track2-ladder",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.8021838885585817,
+      "suggested_confidence": 0.8022,
+      "revisions": 3,
+      "evidence": [
+        {
+          "id": 114,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "literature",
+          "claim": "Lovastatin itself reduced rhabdomyosarcoma cell proliferation (rung 2, proxy=false) and cholesterol-synthesis inhibition activated ER-stress apoptosis; lovastatin also carries a registered rhabdomyosarcoma trial, a label section 8.4 and studies admitting children, so its D4 row reaches rung 5 with the curated and the automated test agreeing.",
+          "source_ref": "PMID:41249736",
+          "lineage_ref": ""
+        },
+        {
+          "id": 115,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "The in-vivo half of the statin paper is genetic (DHCR7 silencing halted xenograft growth), not pharmacological, so the statin's own rung from the curated table is 2, not 3.",
+          "source_ref": "methodology/113",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H049",
@@ -1778,11 +1863,30 @@
       "refuted_by": "Every direction's approved drug set has Jaccard < 0.10 against both decoy cards' approved sets - the automated pipeline alone already separates the mechanism from the decoys.",
       "gene": "",
       "path": "track2-decoy",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.85,
+      "suggested_confidence": 0.9427,
+      "revisions": 4,
+      "evidence": [
+        {
+          "id": 116,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "D4's 205 approved drugs overlap the NTRK3 decoy card's 171 at Jaccard 0.249 (75 shared), and all approved drugs at 0.269; D1-D3 stay below 0.10 against NTRK3 (0.064, 0.081, 0.023) and every direction stays below 0.10 against XDH (max 0.064).",
+          "source_ref": "methodology/112",
+          "lineage_ref": ""
+        },
+        {
+          "id": 117,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "The trial-based automated rung is gene-independent by construction: 64 of NTRK3's and 8 of XDH's approved drugs have a rhabdomyosarcoma trial with the gene never consulted, and after the first grading run 85 BUB1B drugs sat at automated rung 5 on mechanism directions; the rule was refined so trial rungs grade the tumour-context direction alone.",
+          "source_ref": "methodology/112",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H050",
@@ -1792,11 +1896,21 @@
       "refuted_by": "Any shortlisted drug at rung 2 or higher with neither a pediatric_use label section nor a ClinicalTrials.gov study admitting children.",
       "gene": "",
       "path": "track2-ladder",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.7,
+      "suggested_confidence": 0.8022,
+      "revisions": 4,
+      "evidence": [
+        {
+          "id": 118,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "All 11 shortlisted rows with a curated rung (lovastatin, simvastatin, nicotinamide, niacin, chloroquine, bortezomib, valproic acid, metformin, vorinostat, hydroxychloroquine, atorvastatin) have at least one ClinicalTrials.gov study admitting children; 8 of the 11 also carry a label section 8.4, and every one of the 50 context-trial-only rows has a study admitting children by construction of rung 5.",
+          "source_ref": "methodology/113",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H051",
