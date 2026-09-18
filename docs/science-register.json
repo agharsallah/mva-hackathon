@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-18T19:21:13+00:00",
+  "generated_at": "2026-09-18T20:26:31+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -85,7 +85,7 @@
       "title": "Track 2 enrichment",
       "goal": "Which mechanism facts from steps 2-5 and 8 revise the Track 2 card, and what does the drug evidence say for each direction?",
       "kind": "research",
-      "status": "planned",
+      "status": "open",
       "unblocks": []
     },
     {
@@ -1920,11 +1920,30 @@
       "refuted_by": "One chromosome exceeds its own detection limit on either route -- reported with the estimated cell fraction, its interval, and the winning MAD-seq model; entry 037's flat karyogram is then superseded by a positive finding rather than by a power statement.",
       "gene": "",
       "path": "mosaic",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.8,
+      "suggested_confidence": 0.9526,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 119,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "No autosome's fold-over B-deviation exceeds the null built from its own depth margin; the four contigs that do are the two hemizygous ones and the two acrocentrics, whose own fitted over-dispersion is 2.6 to 11 times the genome-wide value the null was built from.",
+          "source_ref": "methodology/116",
+          "lineage_ref": ""
+        },
+        {
+          "id": 120,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "Every autosome's result is quoted with its own detection limit: 2 per cent of cells on chr1-chr6 and 3 per cent on chr7-chr22, at 80 per cent power.",
+          "source_ref": "methodology/116",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H052",
@@ -1934,11 +1953,21 @@
       "refuted_by": "Any autosome whose limit exceeds 0.10 -- that chromosome is named as a blind spot and no absence claim is made for it.",
       "gene": "",
       "path": "mosaic",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.85,
+      "suggested_confidence": 0.8581,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 121,
+          "direction": "supports",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "The smallest detectable cell fraction at 80 per cent power is 0.02 on six autosomes and 0.03 on the remaining sixteen -- three to five times better than the 0.10 the claim required.",
+          "source_ref": "methodology/116",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H053",
@@ -1948,11 +1977,30 @@
       "refuted_by": "The two limits agree within 1 percentage point on most autosomes -- entry 037 was not underpowered, and the re-test's contribution is confirmation rather than correction.",
       "gene": "",
       "path": "mosaic",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.95,
+      "suggested_confidence": 0.9608,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 122,
+          "direction": "supports",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "Run through the identical harness on the same depth margins under the same over-dispersion, fold-over B-deviation reaches 80 per cent power on 24 of 24 contigs and entry 037's mean B-allele fraction on 0 of 24; the mean statistic tops out at 0.23 power at a 30 per cent cell fraction.",
+          "source_ref": "methodology/116",
+          "lineage_ref": ""
+        },
+        {
+          "id": 123,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "The mean statistic is flat rather than weak: its power at a 1 per cent cell fraction is 0.05, its nominal rate, and it is scored two-sided, which is the generous reading of what entry 037 would have rejected on.",
+          "source_ref": "methodology/116",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H054",
@@ -1978,9 +2026,19 @@
       "path": "mosaic",
       "status": "proposed",
       "confidence": null,
-      "suggested_confidence": 0.5,
+      "suggested_confidence": 0.8022,
       "revisions": 1,
-      "evidence": []
+      "evidence": [
+        {
+          "id": 124,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "The leave-one-chromosome-out depth baseline is 42.42x with a bootstrap interval of [42.30, 42.64], and no chromosome's exclusion moves it outside that interval.",
+          "source_ref": "methodology/116",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H056",
@@ -2004,6 +2062,20 @@
       "refuted_by": "The comparison separates the two mechanisms at delta-BIC of 10 or more in a majority of replicates -- the mechanism call is then a real measurement and is handed to step 7's Track 2 card.",
       "gene": "",
       "path": "mosaic",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H058",
+      "step": "step-1",
+      "statement": "P4-1a: at least 99 % of the callset's coding alleles get a non-null hgvs_p or hgvs_c from the VEP HGVS pass, so one normalized allele record can key every tier-1 model lookup.",
+      "prediction": "The step-1 run's RunSummary reports p4_1a_fraction >= 0.99 over the coding (non read-only) alleles of results.it4_allele_records.",
+      "refuted_by": "p4_1a_fraction below 0.95 \u2014 then the failing consequence class is named from RunSummary.by_consequence and tier-1 coverage is reported per class.",
+      "gene": "",
+      "path": "",
       "status": "proposed",
       "confidence": null,
       "suggested_confidence": 0.5,
