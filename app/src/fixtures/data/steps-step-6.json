@@ -1,5 +1,52 @@
 {
-  "decision": {},
+  "decision": {
+    "entry": "109",
+    "expected_information_gain_bits": 0.0,
+    "fused_key": "BUB1B|truncating:rs759242053|missense:",
+    "fused_rank_of_confirmed": 1,
+    "independent_evidence": 3,
+    "iteration1_pair": "stop+missense (BUB1B), hypothesis H009",
+    "iteration1_selectors": "submissions/track1/iteration-1/spec.selectors.json",
+    "leader": [
+      {
+        "fused_rank": 1,
+        "gene": "BUB1B",
+        "pair_id": "BUB1B|truncating:rs759242053|missense:"
+      }
+    ],
+    "miss_category": null,
+    "notes": "The blind route rediscovered the uploaded pair: same gene, same two allele classes, same dbSNP identifier on the truncating side and the same absent one on the missense side.",
+    "outcome_row": "rediscovered \u2014 the confirmed pair is at fused rank 1",
+    "per_route": [
+      {
+        "defaulted": true,
+        "inherited": false,
+        "route": "confirmation",
+        "route_rank": 51
+      },
+      {
+        "defaulted": true,
+        "inherited": false,
+        "route": "knowledge",
+        "route_rank": 51
+      },
+      {
+        "defaulted": false,
+        "inherited": false,
+        "route": "likelihood",
+        "route_rank": 1
+      },
+      {
+        "defaulted": false,
+        "inherited": true,
+        "route": "phenotype",
+        "route_rank": 9
+      }
+    ],
+    "rank_sensitivity_of_confirmed": 1,
+    "unblinded_at": "2026-09-18T17:31:56+00:00",
+    "upload": "no second upload: no live hypothesis gains a bit"
+  },
   "edges": [
     {
       "consumed": "the same eight terms, as the phenotype lane of the likelihood ratio",

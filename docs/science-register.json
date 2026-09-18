@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-18T17:10:03+00:00",
+  "generated_at": "2026-09-18T17:33:31+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -1554,11 +1554,48 @@
       "refuted_by": "The fused rank 1 is a different pair, or any admitted ranking route places the pair outside its own top 3.",
       "gene": "",
       "path": "fusion",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.2,
+      "suggested_confidence": 0.3543,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 100,
+          "direction": "supports",
+          "strength": 0.75,
+          "kind": "measurement",
+          "claim": "The frozen fused ranking places iteration 1's confirmed pair at rank 1 of 274, matching gene, both allele classes and the dbSNP identifier on each side.",
+          "source_ref": "methodology/109",
+          "lineage_ref": ""
+        },
+        {
+          "id": 101,
+          "direction": "refutes",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "The knowledge route did not list the confirmed pair at all - it sits at the rank-51 absent default, far outside the top 3 the claim required.",
+          "source_ref": "methodology/109",
+          "lineage_ref": ""
+        },
+        {
+          "id": 102,
+          "direction": "refutes",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "The symptom-only route placed the confirmed pair at rank 9 of its own ordering, outside the top 3 the claim required.",
+          "source_ref": "methodology/109",
+          "lineage_ref": ""
+        },
+        {
+          "id": 103,
+          "direction": "supports",
+          "strength": 0.35,
+          "kind": "measurement",
+          "claim": "Re-weighting the routes by their own measured error rates leaves the confirmed pair at fused rank 1, so rank 1 is not an artefact of equal weights.",
+          "source_ref": "methodology/109",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H042",
@@ -1643,11 +1680,39 @@
       "refuted_by": "Any pre-registered decode table shows expected information gain above 0 bits on a live hypothesis.",
       "gene": "",
       "path": "oracle",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.9,
+      "suggested_confidence": 0.9526,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 104,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "All three questions a second Track 1 upload could be aimed at return an expected information gain of 0.000 bits against the local scorer replica.",
+          "source_ref": "methodology/109",
+          "lineage_ref": ""
+        },
+        {
+          "id": 105,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "A dual diagnosis is not expressible: the scorer's answer key holds one or two alleles, so no upload can distinguish one causal pair from two.",
+          "source_ref": "methodology/109",
+          "lineage_ref": ""
+        },
+        {
+          "id": 106,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "A second biallelic pair with a comparable ratio does exist - the runner-up is 1.70x behind - so the plan's fourth outcome row is live in fact and is closed by the instrument's limits rather than by the absence of a candidate.",
+          "source_ref": "methodology/109",
+          "lineage_ref": ""
+        }
+      ]
     }
   ]
 }

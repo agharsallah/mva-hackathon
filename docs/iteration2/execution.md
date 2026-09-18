@@ -4,10 +4,10 @@
 2026-09-12 after steps 1 and 2 ran**. The plan says *what* each step asks and *how it would be
 refuted*; this page says *with which tools*, *which of them already exist in `src/mva/` and
 `app/`*, *which must be written*, and *what the dashboard shows for each step*.
-**Steps 1 and 2 have run, and step 2 diverged from this page** — read
-[`step-1/README.md`](step-1/README.md), [`step-2/README.md`](step-2/README.md) and
-[`plan.md` §11](plan.md#11-revision-after-steps-12--2026-09-12) first. Steps 3–8 have not run;
-every "Build" row below that is not marked built is still a plan, not a report. Tool versions, container digests and licences are pinned
+**Steps 1–6 have run, and several diverged from this page** — read each step's
+`README.md` and [`plan.md` §11](plan.md#11-revision-after-steps-12--2026-09-12) first, then
+the "Ran"/"Revised" block under the step's section below. Steps 7 and 8 have not run; every
+"Build" row in those two sections is still a plan, not a report. Tool versions, container digests and licences are pinned
 in the methodology entry that first installs each tool, never here. The platform inventory it
 builds on is [`../toolset.md`](../toolset.md) (verified 2026-09-05); the dashboard map below was
 re-read from `app/src/app/modules/index.ts` and `app/src/api/hooks.ts` on 2026-09-10.
@@ -208,6 +208,21 @@ above, each forced by an executed run:
 | Build | `mva.pipeline.fusion` — RRF with k = 60, unit = pair, rank inheritance rule, top-50 per route, leave-one-route-out, error-rate weights, the **route-dependency graph** and **independent-evidence count**; export + hash before the comparison | the hash is written to the entry before unblinding |
 | Build | `mva.science` **blind gate** — `mva-science check --blind iteration2` parses each iteration-2 entry's `## Inputs` table and refuses an iteration-1 candidate table before the unblinding entry exists; the blinding checklist is generated from it | recorded under step 1's methodology as the first tool it needed |
 | Show | `/steps/step-6`: **agreement matrix** (routes × candidate pairs, Plot heatmap, green = rank 1) — the headline figure; route-dependency graph (reuse the shared lineage SVG component of §4); leave-one-route-out table; blinding checklist rendered from the gate output; the unblinding timestamp and hash as a `FieldList` | the page shows nothing about iteration 1 until the gate says unblinded |
+
+**Ran 2026-09-18 ([107](step-6/methodology/107-the-routes-and-which-of-them-earned-a-rank.md)–[109](step-6/methodology/109-what-the-mirror-found.md)).**
+Four departures from the rows above, each forced by a measurement or by the plan's own §11.6:
+
+| Row | Correction |
+|---|---|
+| "Adopt **ranx** as the reference implementation" | **not adopted.** A compiled dependency tree for forty lines of arithmetic. `tests/test_fusion.py` computes every expected sum by hand from Cormack 2009's published formula instead — the property the cross-check would have given. Recorded as a cut |
+| "fusion of the step-2, 3, 4 and 5 rankings" | **three ranking routes, one confirmation route.** [§11.6](plan.md#116-step-6-pre-registered-now) pre-registered the read route at weight 0 (measured discrimination 0); **step 1's pure symptom-score ranking was admitted in its place**, so leave-one-route-out has something to leave out. The weight-0 route is carried in every table and figure rather than deleted |
+| Build "the route-dependency graph" as the shared lineage SVG's fifth caller | a route graph is a **different object** — instruments and what they consumed, not datasets and transforms — so `pages/steps/step6/RouteGraph.tsx` is ~60 lines on the already-shared `lib/graphLayout.ts`, not a fourth copy of the lineage view. The 3-way `LineageGraph` extraction stays open as a platform task and did not block this step |
+| "Reuse `probe_design` for the upload decision" | reused, and the answer is stronger than "little gain": a dual diagnosis is **not expressible** in an answer key that holds one or two alleles. `tools/assess_it2_upload.py` demonstrates that mechanically rather than arguing it |
+
+Two things the page gained that this section did not plan: a **decoy-reach** exhibit (the
+fusion's own decoy null — a matched control gene reaches fused rank 13) and a **freeze
+receipt** (file, sha256, constants), because a hash quoted only in prose is not checkable
+from the dashboard.
 
 ### Step 7 — Track 2 enrichment
 

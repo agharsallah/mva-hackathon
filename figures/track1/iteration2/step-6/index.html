@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Iteration 2, step 6 — one ranking out of three</title>
+<style>/* Report styling. Light only, deliberately: the Plotly figures are drawn on a white
+   canvas and a dark shell around them would read as a rendering bug rather than a theme.
+   Print rules keep the same page usable as a PDF for the write-up. */
+
+:root {
+  --ink: #333333;
+  --subtle: #666666;
+  --faint: #8a8a8a;
+  --rule: #e6e6e6;
+  --surface: #ffffff;
+  --ground: #fafafa;
+  --good: #8fd18f;
+  --good-line: #3f8f47;
+  --bad: #ff9999;
+  --bad-line: #c0392b;
+  --decision: #ffe9b3;
+  --decision-line: #c98f1e;
+  --machine: #cfe8ff;
+  --machine-line: #3d7ebd;
+  --raw: #e0d4f7;
+  --raw-line: #7a5cab;
+  --sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --mono: "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --nav: 250px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--machine-line); }
+
+/* --- shell ---------------------------------------------------------------- */
+
+.layout { display: flex; align-items: flex-start; }
+
+nav.sidebar {
+  position: sticky;
+  top: 0;
+  width: var(--nav);
+  flex: 0 0 var(--nav);
+  height: 100vh;
+  overflow-y: auto;
+  padding: 28px 20px;
+  border-right: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+nav.sidebar h1 { font-size: 16px; margin: 0 0 4px; letter-spacing: -0.01em; }
+nav.sidebar .subject { font-size: 12px; color: var(--faint); margin: 0 0 20px; font-family: var(--mono); word-break: break-all; }
+nav.sidebar ol { list-style: none; margin: 0; padding: 0; }
+nav.sidebar > ol > li { margin-bottom: 14px; }
+nav.sidebar .section-link { display: block; font-weight: 600; font-size: 13px; color: var(--ink); text-decoration: none; padding: 3px 0; }
+nav.sidebar .exhibit-link { display: block; font-size: 12.5px; color: var(--subtle); text-decoration: none; padding: 2px 0 2px 12px; border-left: 2px solid var(--rule); }
+nav.sidebar .exhibit-link:hover, nav.sidebar .section-link:hover { color: var(--machine-line); }
+nav.sidebar .exhibit-link.active { border-left-color: var(--machine-line); color: var(--machine-line); }
+
+#filter {
+  width: 100%;
+  padding: 7px 10px;
+  margin-bottom: 18px;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 13px;
+}
+#filter:focus { outline: 2px solid var(--machine); outline-offset: -1px; }
+
+main { flex: 1 1 auto; min-width: 0; padding: 32px 40px 120px; max-width: 1180px; }
+
+header.masthead { margin-bottom: 32px; }
+header.masthead h1 { font-size: 30px; margin: 0 0 6px; letter-spacing: -0.02em; }
+header.masthead p { margin: 0; color: var(--subtle); max-width: 70ch; }
+header.masthead .meta { font-family: var(--mono); font-size: 12px; color: var(--faint); margin-top: 10px; }
+
+section.report-section { margin-bottom: 44px; }
+section.report-section > h2 {
+  font-size: 21px;
+  margin: 0 0 4px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--rule);
+  letter-spacing: -0.01em;
+}
+section.report-section > .blurb { margin: 0 0 22px; color: var(--subtle); max-width: 75ch; }
+
+/* --- exhibits --------------------------------------------------------------- */
+
+figure.exhibit {
+  margin: 0 0 24px;
+  padding: 22px 24px 18px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+figure.exhibit h3 { font-size: 17px; margin: 0 0 8px; letter-spacing: -0.01em; }
+figure.exhibit .caption { margin: 0 0 16px; color: var(--subtle); max-width: 78ch; }
+figure.exhibit .legend {
+  margin: 14px 0 0;
+  padding: 9px 12px;
+  background: var(--ground);
+  border-left: 3px solid var(--machine-line);
+  border-radius: 0 5px 5px 0;
+  font-size: 13px;
+  color: var(--subtle);
+}
+figure.exhibit .note {
+  margin: 12px 0 0;
+  font-size: 13.5px;
+  color: var(--subtle);
+  max-width: 78ch;
+}
+figure.exhibit .note strong { color: var(--ink); }
+figure.exhibit.hidden { display: none; }
+
+/* --- tiles ---------------------------------------------------------------- */
+
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px; }
+.tile { padding: 16px 18px; background: var(--ground); border: 1px solid var(--rule); border-radius: 8px; }
+.tile-value { display: block; font-size: 27px; font-weight: 650; letter-spacing: -0.02em; line-height: 1.15; }
+.tile-label { display: block; font-size: 13px; font-weight: 600; margin-top: 4px; }
+.tile-hint { display: block; font-size: 12px; color: var(--faint); margin-top: 3px; line-height: 1.45; }
+
+/* --- tables --------------------------------------------------------------- */
+
+.table-wrap { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 14px; }
+table th, table td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+table thead th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--faint); border-bottom-width: 2px; }
+table.facts th { width: 200px; color: var(--subtle); font-weight: 600; }
+td.numeric { font-family: var(--mono); white-space: nowrap; }
+table summary { cursor: pointer; font-weight: 600; }
+table summary::marker { color: var(--faint); }
+.reasoning { margin: 8px 0 4px; font-size: 13px; color: var(--subtle); max-width: 68ch; }
+.reasoning em { color: var(--ink); font-style: normal; display: block; margin-top: 6px; }
+
+.badge {
+  display: inline-block;
+  padding: 1px 9px;
+  border: 1px solid;
+  border-radius: 11px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.callout {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: #fff9ec;
+  border: 1px solid var(--decision);
+  border-left: 3px solid var(--decision-line);
+  border-radius: 0 7px 7px 0;
+}
+.callout p { margin: 0 0 6px; font-weight: 600; }
+.callout ul { margin: 0; padding-left: 20px; }
+.callout li { margin-bottom: 4px; color: var(--subtle); }
+.callout strong { color: var(--ink); }
+
+code { font-family: var(--mono); font-size: 0.9em; background: var(--ground); padding: 1px 5px; border-radius: 4px; }
+
+.empty { color: var(--faint); font-style: italic; }
+
+/* --- responsive & print --------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .layout { flex-direction: column; }
+  nav.sidebar { position: static; width: 100%; height: auto; border-right: none; border-bottom: 1px solid var(--rule); }
+  main { padding: 24px 18px 80px; }
+}
+
+@media print {
+  nav.sidebar { display: none; }
+  body { background: #fff; }
+  main { max-width: none; padding: 0; }
+  figure.exhibit { break-inside: avoid; border-color: #ddd; }
+  section.report-section { break-before: page; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="sidebar">
+  <h1>Iteration 2, step 6 — one ranking out of three</h1>
+  <p class="subject">MVA hackathon 2026 · Track 1</p>
+  <input id="filter" type="search" placeholder="Filter exhibits  ( / )" autocomplete="off">
+  <ol><li><a class="section-link" href="#section-step-6">Step 6 — fusion and unblinding</a><ol><li><a class="exhibit-link" href="#agreement-matrix" data-target="agreement-matrix">Routes against the leading pairs</a></li><li><a class="exhibit-link" href="#leave-one-route-out" data-target="leave-one-route-out">Where the leader lands when one instrument is silenced</a></li><li><a class="exhibit-link" href="#independent-evidence" data-target="independent-evidence">Which witnesses speak for each leading pair</a></li><li><a class="exhibit-link" href="#weight-sensitivity" data-target="weight-sensitivity">Equal weights against each route&#x27;s own measured error rate</a></li><li><a class="exhibit-link" href="#decoy-reach" data-target="decoy-reach">How far down the fused ranking the matched controls sit</a></li><li><a class="exhibit-link" href="#freeze-receipt" data-target="freeze-receipt">The ranking predates the comparison</a></li></ol></li></ol>
+</nav>
+<main>
+<header class="masthead">
+  <h1>Iteration 2, step 6 — one ranking out of three</h1>
+  <p>Every exhibit states how to read it and decodes its own colours; every graded number states the band it was judged against and why that band is the right one.</p>
+  <p class="meta">6 exhibits across 1 sections &middot; source
+  MVA hackathon 2026 · Track 1 &middot; generated 2026-09-18 17:43 UTC &middot; press <code>/</code> to
+  filter</p>
+</header>
+<section class="report-section" id="section-step-6">
+  <h2>Step 6 — fusion and unblinding</h2>
+  <p class="blurb">Three instruments ranked, one confirmed, and the result was hashed before it was compared to anything.</p>
+  <figure class="exhibit" id="agreement-matrix"><h3>Routes against the leading pairs</h3><p class="caption">The step&#x27;s headline. 3 of 4 instruments were admitted to the fusion; each cell is the rank that route gave that pair. A grey cell is a pair the route never listed — a weaker statement than ranking it last, and never agreement.</p><div style="height:100%; width:100%;">                        <script>window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-4.0.0.min.js" integrity="sha256-FEYfO0yRyLtZCpnW0Dw/0DHKQO7Afrq3ml4+rBB818o=" crossorigin="anonymous"></script>                <div id="fig-agreement-matrix" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("fig-agreement-matrix")) {                    Plotly.newPlot(                        "fig-agreement-matrix",                        [{"colorscale":[[0.0,"#3f8f47"],[0.05,"#c98f1e"],[1.0,"#e6e6e6"]],"hovertemplate":"%{y}\u003cbr\u003e%{x}: %{text}\u003cextra\u003e\u003c\u002fextra\u003e","showscale":false,"text":[["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["1*","not listed","not listed","not listed"],["not listed","not listed","1*","not listed"],["18*","not listed","8*","not listed"],["18*","not listed","8*","not listed"],["18*","not listed","8*","not listed"],["18*","not listed","8*","not listed"],["18*","not listed","8*","not listed"],["18*","not listed","8*","not listed"],["18*","not listed","8*","not listed"],["18*","not listed","8*","not listed"],["18*","not listed","8*","not listed"],["18*","not listed","8*","not listed"],["18*","not listed","8*","not listed"],["not listed","1","9*","not listed"]],"textfont":{"size":10},"texttemplate":"%{text}","x":["knowledge","likelihood","phenotype","confirmation (w 0)"],"xgap":2,"y":["#13 DDX11 · missense:rs1046457 + missense:rs1046458","#13 DDX11 · missense:rs2075322 + missense:rs1046457","#13 DDX11 · missense:rs2075322 + missense:rs1046458","#13 DDX11 · missense:rs2075322 + splice:rs1046456","#13 DDX11 · missense:rs2075322 + truncating:rs10771803","#13 DDX11 · silent:rs3881298 + missense:rs1046457","#13 DDX11 · silent:rs3881298 + missense:rs1046458","#13 DDX11 · silent:rs3881298 + missense:rs2075322","#13 DDX11 · silent:rs3881298 + splice:rs1046456","#13 DDX11 · silent:rs3881298 + truncating:rs10771803","#13 DDX11 · splice:rs1046456 + missense:rs1046457","#13 DDX11 · splice:rs1046456 + missense:rs1046458","#13 DDX11 · splice:rs1046456 + truncating:rs10771803","#13 DDX11 · splice:rs7308773 + missense:rs1046457","#13 DDX11 · splice:rs7308773 + missense:rs1046458","#13 DDX11 · splice:rs7308773 + missense:rs2075322","#13 DDX11 · splice:rs7308773 + silent:rs3881298","#13 DDX11 · splice:rs7308773 + splice:rs1046456","#13 DDX11 · splice:rs7308773 + truncating:rs10771803","#13 DDX11 · truncating:rs10771803 + missense:rs1046457","#13 DDX11 · truncating:rs10771803 + missense:rs1046458","#13 DDX11 · truncating:rs2536767 + missense:rs1046457","#13 DDX11 · truncating:rs2536767 + missense:rs1046458","#13 DDX11 · truncating:rs2536767 + missense:rs2075322","#13 DDX11 · truncating:rs2536767 + silent:rs3881298","#13 DDX11 · truncating:rs2536767 + splice:rs1046456","#13 DDX11 · truncating:rs2536767 + splice:rs7308773","#13 DDX11 · truncating:rs2536767 + truncating:rs10771803","#13 FOXO1 · truncating:rs200144910","#2 CLCNKB · missense:rs1889789","#2 CLCNKB · missense:rs2015352 + missense:rs1057857","#2 CLCNKB · missense:rs2275166","#2 CLCNKB · missense:rs5253","#2 CLCNKB · missense:rs7367494","#2 CLCNKB · silent:rs1889790","#2 CLCNKB · silent:rs2014562","#2 CLCNKB · silent:rs2275167","#2 CLCNKB · silent:rs5257","#2 CLCNKB · silent:rs7368151","#2 CLCNKB · splice:rs1889788","#1 BUB1B · truncating:rs759242053 + missense:"],"ygap":2,"z":[[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[1,null,null,null],[null,null,1,null],[18,null,8,null],[18,null,8,null],[18,null,8,null],[18,null,8,null],[18,null,8,null],[18,null,8,null],[18,null,8,null],[18,null,8,null],[18,null,8,null],[18,null,8,null],[18,null,8,null],[null,1,9,null]],"zmax":50,"zmin":1,"type":"heatmap"}],                        {"template":{"layout":{"colorway":["#3d7ebd","#7a5cab","#3f8f47","#c98f1e","#c0392b","#4aa3a3","#a3579b","#6b8f3f","#b5762e","#8a8a8a"],"font":{"color":"#333333","family":"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif","size":13},"hoverlabel":{"bgcolor":"#ffffff","bordercolor":"#e6e6e6","font":{"family":"'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"size":12},"orientation":"h","x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":52,"l":64,"r":28,"t":56},"paper_bgcolor":"#ffffff","plot_bgcolor":"#ffffff","title":{"font":{"color":"#333333","size":17},"pad":{"b":12},"x":0,"xanchor":"left"},"xaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"},"yaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"}}},"margin":{"l":330,"r":20,"t":10,"b":50},"yaxis":{"tickfont":{"size":10},"automargin":true},"plot_bgcolor":"#e6e6e6"},                        {"displaylogo": false, "responsive": true, "toImageButtonOptions": {"scale": 2, "filename": "agreement-matrix"}, "modeBarButtonsToRemove": ["lasso2d", "select2d"]}                    )                };            </script>        </div><figcaption class="legend"><strong>Legend</strong> — good / safe / the goal; a decision point; context, not the subject; green is rank 1; yellow is inside the route&#x27;s top 50, darker is better; grey is not listed. A * marks a rank inherited from the pair&#x27;s gene, so every pair of that gene carries it. Rows run best fused rank first.</figcaption></figure>
+<figure class="exhibit" id="leave-one-route-out"><h3>Where the leader lands when one instrument is silenced</h3><p class="caption">The ablation an ensemble owes its reader. Removing likelihood moves it off rank 1, so the fusion is carried by that route rather than confirmed by all of them.</p><div style="height:100%; width:100%;">                            <div id="fig-leave-one-route-out" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("fig-leave-one-route-out")) {                    Plotly.newPlot(                        "fig-leave-one-route-out",                        [{"hovertemplate":"%{y}: %{text}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":["#3f8f47","#3f8f47","#c0392b"]},"orientation":"h","text":["rank 1 — unchanged","rank 1 — unchanged","falls to rank outside the table"],"textposition":"outside","x":[1,1,102],"y":["without knowledge","without phenotype","without likelihood"],"type":"bar"}],                        {"template":{"layout":{"colorway":["#3d7ebd","#7a5cab","#3f8f47","#c98f1e","#c0392b","#4aa3a3","#a3579b","#6b8f3f","#b5762e","#8a8a8a"],"font":{"color":"#333333","family":"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif","size":13},"hoverlabel":{"bgcolor":"#ffffff","bordercolor":"#e6e6e6","font":{"family":"'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"size":12},"orientation":"h","x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":52,"l":64,"r":28,"t":56},"paper_bgcolor":"#ffffff","plot_bgcolor":"#ffffff","title":{"font":{"color":"#333333","size":17},"pad":{"b":12},"x":0,"xanchor":"left"},"xaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"},"yaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"}}},"margin":{"l":170,"r":160,"t":10,"b":45},"xaxis":{"title":{"text":"fused rank of the all-routes leader"},"rangemode":"tozero"},"yaxis":{"automargin":true},"showlegend":false},                        {"displaylogo": false, "responsive": true, "toImageButtonOptions": {"scale": 2, "filename": "leave-one-route-out"}, "modeBarButtonsToRemove": ["lasso2d", "select2d"]}                    )                };            </script>        </div><figcaption class="legend"><strong>Legend</strong> — good / safe / the goal; broken / dangerous / lost points; green keeps the leader at rank 1, red does not; the bar is where it lands.</figcaption></figure>
+<figure class="exhibit" id="independent-evidence"><h3>Which witnesses speak for each leading pair</h3><p class="caption">Rank fusion treats every list as a separate witness. This is the correction: one segment per raw source that speaks for the pair, after routes reading the same source are counted once. A short stack is a pair nominated by instruments that all read the same thing.</p><div style="height:100%; width:100%;">                            <div id="fig-independent-evidence" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("fig-independent-evidence")) {                    Plotly.newPlot(                        "fig-independent-evidence",                        [{"hovertemplate":"%{y} — HPO terms\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#7a5cab"},"name":"HPO terms","orientation":"h","x":[1,1,1,1,1,1,1,1,1,1,1,1],"y":["#2 CLCNKB · splice:rs1889788","#2 CLCNKB · silent:rs7368151","#2 CLCNKB · silent:rs5257","#2 CLCNKB · silent:rs2275167","#2 CLCNKB · silent:rs2014562","#2 CLCNKB · silent:rs1889790","#2 CLCNKB · missense:rs7367494","#2 CLCNKB · missense:rs5253","#2 CLCNKB · missense:rs2275166","#2 CLCNKB · missense:rs2015352 + missense:rs1057857","#2 CLCNKB · missense:rs1889789","#1 BUB1B · truncating:rs759242053 + missense:"],"type":"bar"},{"hovertemplate":"%{y} — the VCF\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#3d7ebd"},"name":"the VCF","orientation":"h","x":[1,1,1,1,1,1,1,1,1,1,1,1],"y":["#2 CLCNKB · splice:rs1889788","#2 CLCNKB · silent:rs7368151","#2 CLCNKB · silent:rs5257","#2 CLCNKB · silent:rs2275167","#2 CLCNKB · silent:rs2014562","#2 CLCNKB · silent:rs1889790","#2 CLCNKB · missense:rs7367494","#2 CLCNKB · missense:rs5253","#2 CLCNKB · missense:rs2275166","#2 CLCNKB · missense:rs2015352 + missense:rs1057857","#2 CLCNKB · missense:rs1889789","#1 BUB1B · truncating:rs759242053 + missense:"],"type":"bar"},{"hovertemplate":"%{y} — the raw reads\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#3f8f47"},"name":"the raw reads","orientation":"h","x":[1,1,1,1,1,1,1,1,1,1,1,1],"y":["#2 CLCNKB · splice:rs1889788","#2 CLCNKB · silent:rs7368151","#2 CLCNKB · silent:rs5257","#2 CLCNKB · silent:rs2275167","#2 CLCNKB · silent:rs2014562","#2 CLCNKB · silent:rs1889790","#2 CLCNKB · missense:rs7367494","#2 CLCNKB · missense:rs5253","#2 CLCNKB · missense:rs2275166","#2 CLCNKB · missense:rs2015352 + missense:rs1057857","#2 CLCNKB · missense:rs1889789","#1 BUB1B · truncating:rs759242053 + missense:"],"type":"bar"},{"hovertemplate":"%{y} — the literature\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#c98f1e"},"name":"the literature","orientation":"h","x":[1,1,1,1,1,1,1,1,1,1,1,0],"y":["#2 CLCNKB · splice:rs1889788","#2 CLCNKB · silent:rs7368151","#2 CLCNKB · silent:rs5257","#2 CLCNKB · silent:rs2275167","#2 CLCNKB · silent:rs2014562","#2 CLCNKB · silent:rs1889790","#2 CLCNKB · missense:rs7367494","#2 CLCNKB · missense:rs5253","#2 CLCNKB · missense:rs2275166","#2 CLCNKB · missense:rs2015352 + missense:rs1057857","#2 CLCNKB · missense:rs1889789","#1 BUB1B · truncating:rs759242053 + missense:"],"type":"bar"}],                        {"template":{"layout":{"colorway":["#3d7ebd","#7a5cab","#3f8f47","#c98f1e","#c0392b","#4aa3a3","#a3579b","#6b8f3f","#b5762e","#8a8a8a"],"font":{"color":"#333333","family":"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif","size":13},"hoverlabel":{"bgcolor":"#ffffff","bordercolor":"#e6e6e6","font":{"family":"'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"size":12},"orientation":"h","x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":52,"l":64,"r":28,"t":56},"paper_bgcolor":"#ffffff","plot_bgcolor":"#ffffff","title":{"font":{"color":"#333333","size":17},"pad":{"b":12},"x":0,"xanchor":"left"},"xaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"},"yaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"}}},"margin":{"l":330,"r":20,"t":10,"b":45},"xaxis":{"title":{"text":"disjoint sources speaking for the pair"},"dtick":1,"range":[0,4]},"yaxis":{"tickfont":{"size":10},"automargin":true},"legend":{"orientation":"h","y":-0.22},"barmode":"stack"},                        {"displaylogo": false, "responsive": true, "toImageButtonOptions": {"scale": 2, "filename": "independent-evidence"}, "modeBarButtonsToRemove": ["lasso2d", "select2d"]}                    )                };            </script>        </div><figcaption class="legend"><strong>Legend</strong> — the raw input; neutral machinery; good / safe / the goal; a decision point; purple is the eight clinical terms, blue the delivered callset, green the raw reads, yellow the published literature.</figcaption></figure>
+<figure class="exhibit" id="weight-sensitivity"><h3>Equal weights against each route&#x27;s own measured error rate</h3><p class="caption">The second sensitivity analysis, reported beside the primary result and never instead of it. A pair that only reaches the top under equal weights is being carried by the instruments with the worst measured error rates.</p><div style="height:100%; width:100%;">                            <div id="fig-weight-sensitivity" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("fig-weight-sensitivity")) {                    Plotly.newPlot(                        "fig-weight-sensitivity",                        [{"marker":{"color":"#3d7ebd"},"name":"equal weights","orientation":"h","x":[13,13,13,13,13,13,13,13,2,2,2,2,2,2,2,2,2,2,2,1],"y":["#13 DDX11 · silent:rs3881298 + missense:rs2075322","#13 DDX11 · silent:rs3881298 + missense:rs1046458","#13 DDX11 · silent:rs3881298 + missense:rs1046457","#13 DDX11 · missense:rs2075322 + truncating:rs10771803","#13 DDX11 · missense:rs2075322 + splice:rs1046456","#13 DDX11 · missense:rs2075322 + missense:rs1046458","#13 DDX11 · missense:rs2075322 + missense:rs1046457","#13 DDX11 · missense:rs1046457 + missense:rs1046458","#2 CLCNKB · splice:rs1889788","#2 CLCNKB · silent:rs7368151","#2 CLCNKB · silent:rs5257","#2 CLCNKB · silent:rs2275167","#2 CLCNKB · silent:rs2014562","#2 CLCNKB · silent:rs1889790","#2 CLCNKB · missense:rs7367494","#2 CLCNKB · missense:rs5253","#2 CLCNKB · missense:rs2275166","#2 CLCNKB · missense:rs2015352 + missense:rs1057857","#2 CLCNKB · missense:rs1889789","#1 BUB1B · truncating:rs759242053 + missense:"],"type":"bar"},{"marker":{"color":"#c98f1e"},"name":"measured-error-rate weights","orientation":"h","x":[12,12,12,12,12,12,12,12,49,49,49,49,49,49,49,49,49,49,49,1],"y":["#13 DDX11 · silent:rs3881298 + missense:rs2075322","#13 DDX11 · silent:rs3881298 + missense:rs1046458","#13 DDX11 · silent:rs3881298 + missense:rs1046457","#13 DDX11 · missense:rs2075322 + truncating:rs10771803","#13 DDX11 · missense:rs2075322 + splice:rs1046456","#13 DDX11 · missense:rs2075322 + missense:rs1046458","#13 DDX11 · missense:rs2075322 + missense:rs1046457","#13 DDX11 · missense:rs1046457 + missense:rs1046458","#2 CLCNKB · splice:rs1889788","#2 CLCNKB · silent:rs7368151","#2 CLCNKB · silent:rs5257","#2 CLCNKB · silent:rs2275167","#2 CLCNKB · silent:rs2014562","#2 CLCNKB · silent:rs1889790","#2 CLCNKB · missense:rs7367494","#2 CLCNKB · missense:rs5253","#2 CLCNKB · missense:rs2275166","#2 CLCNKB · missense:rs2015352 + missense:rs1057857","#2 CLCNKB · missense:rs1889789","#1 BUB1B · truncating:rs759242053 + missense:"],"type":"bar"}],                        {"template":{"layout":{"colorway":["#3d7ebd","#7a5cab","#3f8f47","#c98f1e","#c0392b","#4aa3a3","#a3579b","#6b8f3f","#b5762e","#8a8a8a"],"font":{"color":"#333333","family":"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif","size":13},"hoverlabel":{"bgcolor":"#ffffff","bordercolor":"#e6e6e6","font":{"family":"'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"size":12},"orientation":"h","x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":52,"l":64,"r":28,"t":56},"paper_bgcolor":"#ffffff","plot_bgcolor":"#ffffff","title":{"font":{"color":"#333333","size":17},"pad":{"b":12},"x":0,"xanchor":"left"},"xaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"},"yaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"}}},"margin":{"l":330,"r":20,"t":10,"b":45},"xaxis":{"title":{"text":"fused rank (lower is better)"},"rangemode":"tozero"},"yaxis":{"tickfont":{"size":10},"automargin":true},"legend":{"orientation":"h","y":-0.22},"barmode":"group"},                        {"displaylogo": false, "responsive": true, "toImageButtonOptions": {"scale": 2, "filename": "weight-sensitivity"}, "modeBarButtonsToRemove": ["lasso2d", "select2d"]}                    )                };            </script>        </div><figcaption class="legend"><strong>Legend</strong> — neutral machinery; a decision point; blue is the pre-registered equal weighting, yellow the measured one (symptom recall 0.335, 1 − permutation p 0.944, knowledge AUC 0.634); shorter is better.</figcaption></figure>
+<figure class="exhibit" id="decoy-reach"><h3>How far down the fused ranking the matched controls sit</h3><p class="caption">The fusion&#x27;s own decoy null. Size-matched control genes were run through the identical fusion, so a ranking that cannot be told apart from theirs has resolved nothing below its leader.</p><div style="height:100%; width:100%;">                            <div id="fig-decoy-reach" class="plotly-graph-div" style="height:100%; width:100%;"></div>            <script>                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("fig-decoy-reach")) {                    Plotly.newPlot(                        "fig-decoy-reach",                        [{"marker":{"color":["#3f8f47","#c0392b","#888888"]},"name":"best fused rank","text":["best 1","best 13","best 42"],"textposition":"outside","x":["target","decoy","neither"],"y":[1,13,42],"type":"bar"},{"marker":{"color":"#333333","size":11,"symbol":"diamond"},"mode":"markers+text","name":"median fused rank","text":["median 109","median 42","median 99"],"textposition":"top center","x":["target","decoy","neither"],"y":[109.0,42.0,99.0],"type":"scatter"}],                        {"template":{"layout":{"colorway":["#3d7ebd","#7a5cab","#3f8f47","#c98f1e","#c0392b","#4aa3a3","#a3579b","#6b8f3f","#b5762e","#8a8a8a"],"font":{"color":"#333333","family":"Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif","size":13},"hoverlabel":{"bgcolor":"#ffffff","bordercolor":"#e6e6e6","font":{"family":"'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace","size":12}},"legend":{"bgcolor":"rgba(0,0,0,0)","font":{"size":12},"orientation":"h","x":0,"xanchor":"left","y":1.02,"yanchor":"bottom"},"margin":{"b":52,"l":64,"r":28,"t":56},"paper_bgcolor":"#ffffff","plot_bgcolor":"#ffffff","title":{"font":{"color":"#333333","size":17},"pad":{"b":12},"x":0,"xanchor":"left"},"xaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"},"yaxis":{"gridcolor":"#e6e6e6","linecolor":"#e6e6e6","tickcolor":"#e6e6e6","ticklen":4,"ticks":"outside","title":{"font":{"color":"#666666","size":12}},"zerolinecolor":"#e6e6e6"}}},"margin":{"l":70,"r":20,"t":10,"b":45},"yaxis":{"title":{"text":"fused rank (lower is better)"},"rangemode":"tozero"},"legend":{"orientation":"h","y":-0.22}},                        {"displaylogo": false, "responsive": true, "toImageButtonOptions": {"scale": 2, "filename": "decoy-reach"}, "modeBarButtonsToRemove": ["lasso2d", "select2d"]}                    )                };            </script>        </div><figcaption class="legend"><strong>Legend</strong> — good / safe / the goal; broken / dangerous / lost points; context, not the subject; bars are the best fused rank reached by each class and diamonds the median; lower is better.</figcaption></figure>
+<figure class="exhibit" id="freeze-receipt"><h3>The ranking predates the comparison</h3><p class="caption">Not a chart: the receipt. The digest below was recorded in methodology entry 108 before any earlier-iteration table was read.</p><table class='facts'><tr><th>file</th><td><code>build/it2/step-6/fused-ranking.tsv</code></td></tr><tr><th>sha256</th><td><code>a596abf85a618a0b4baa40c630ae4ff58c5c25634fda7243111b07a399fb53ea</code></td></tr><tr><th>pairs frozen</th><td><code>274</code></td></tr><tr><th>frozen at</th><td><code>2026-09-18T17:12:43+00:00</code></td></tr><tr><th>constants</th><td><code>k = 60 · top 50 per route · absent = rank 51 · seed 20260918</code></td></tr></table><figcaption class="legend"><strong>Legend</strong> — <code>shasum -a 256</code> of the exported file reproduces this digest; the constants were fixed in the plan before any route ran.</figcaption></figure>
+</section>
+</main>
+</div>
+<script>
+const filter = document.getElementById('filter');
+const exhibits = Array.from(document.querySelectorAll('figure.exhibit'));
+const navLinks = Array.from(document.querySelectorAll('.exhibit-link'));
+
+/* Type to narrow the page to the exhibits whose title, caption or legend mentions the
+   term. Everything is already in the DOM, so this is a display toggle, not a search. */
+filter?.addEventListener('input', () => {
+  const term = filter.value.trim().toLowerCase();
+  exhibits.forEach(exhibit => {
+    const hit = !term || exhibit.innerText.toLowerCase().includes(term);
+    exhibit.classList.toggle('hidden', !hit);
+  });
+  document.querySelectorAll('section.report-section').forEach(section => {
+    const visible = section.querySelectorAll('figure.exhibit:not(.hidden)').length;
+    section.style.display = visible ? '' : 'none';
+  });
+  navLinks.forEach(link => {
+    const target = document.getElementById(link.dataset.target);
+    link.style.display = target && target.classList.contains('hidden') ? 'none' : '';
+  });
+});
+
+/* Highlight the exhibit currently in view, so the sidebar tracks the scroll position. */
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    const link = navLinks.find(l => l.dataset.target === entry.target.id);
+    if (link) link.classList.toggle('active', entry.isIntersecting);
+  });
+}, {rootMargin: '-45% 0px -45% 0px'});
+exhibits.forEach(exhibit => spy.observe(exhibit));
+
+/* "/" focuses the filter, the way every tool with a search box behaves. */
+document.addEventListener('keydown', event => {
+  if (event.key === '/' && document.activeElement !== filter) {
+    event.preventDefault();
+    filter?.focus();
+  }
+  if (event.key === 'Escape' && document.activeElement === filter) {
+    filter.value = '';
+    filter.dispatchEvent(new Event('input'));
+    filter.blur();
+  }
+});
+</script>
+</body>
+</html>

@@ -4,7 +4,7 @@ import { DataTable } from '../../../components/DataTable';
 import { Exhibit } from '../../../components/Exhibit';
 import { Plot } from '../../../components/Plot';
 import { C } from '../../../lib/palette';
-import { count, INPUTS, missingInputs } from './metrics';
+import { count, INPUTS, missingInputs, rowLabel } from './metrics';
 
 /**
  * The three exhibits that argue against the ranking above them.
@@ -179,14 +179,14 @@ export function Sensitivity({
             type: 'bar',
             orientation: 'h',
             name: input,
-            y: leaders.map((row) => `#${row.fused_rank} ${row.gene}`),
+            y: leaders.map(rowLabel),
             x: leaders.map((row) => (row.inputs.split(',').includes(input) ? 1 : 0)),
             marker: { color: [C.raw, C.machinery, C.good, C.decision][index] },
             hovertemplate: `%{y} — ${input}<extra></extra>`,
           }))}
           layout={{
             barmode: 'stack',
-            margin: { l: 170, r: 16, t: 10, b: 40 },
+            margin: { l: 330, r: 16, t: 10, b: 40 },
             xaxis: { title: { text: 'disjoint sources' }, dtick: 1, range: [0, 4] },
             yaxis: { automargin: true, autorange: 'reversed', tickfont: { size: 10 } },
             legend: { orientation: 'h', y: -0.25 },

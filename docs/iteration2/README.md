@@ -1,6 +1,6 @@
 # Iteration 2 — the research steps behind submission 2
 
-**Standing:** opened 2026-09-09; steps declared in `steps.py`. **Steps 1–5 have run**, the
+**Standing:** opened 2026-09-09; steps declared in `steps.py`. **Steps 1–6 have run**, the
 latest on 2026-09-18.
 **Plan** in [`plan.md`](plan.md) (eight steps, blind protocol, `step-1` … `step-8`), **gap-reviewed twice on 2026-09-10** against the
 eight papers in [`papers/iteration2/`](../../papers/iteration2/README.md) — `plan.md` §9 (five papers)
@@ -35,7 +35,7 @@ once the plan is agreed, and its output is again a submission
 | [3](step-3/README.md) | Alignment-free genotype and copy number | **run 2026-09-13** — 164,044 alleles typed from 381,510 k-mer probe pairs with no aligner and no caller; H025/H028 supported, **H024, H026 and H027 refuted** ([093](step-3/methodology/093-where-the-aligner-was-unsure.md)–[097](step-3/methodology/097-copy-number-without-an-aligner.md)) |
 | [4](step-4/README.md) | Likelihood-ratio ranking over the VCF | **run 2026-09-18** — 51,920 biallelic hypotheses over 11,465 genes with no hard filter; `BUB1B` leads, targets separate from decoys at AUC 0.706 [0.655, 0.751]; H030/H034/H035 supported, **H031, H032 and H033 refuted** ([098](step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md)–[101](step-4/methodology/101-the-phase-that-cannot-be-measured.md)) |
 | [5](step-5/README.md) | Does public knowledge nominate or corroborate a pair for this phenotype? | **run 2026-09-18** — 815 genes asked of LitVar, PubTator, UniProt/InterPro/AlphaFold and PubMed; the route separates from matched decoys at AUC 0.634 [0.593, 0.672] and is not citation volume (ρ = 0.024, top-5 overlap 0), yet its own top two genes are decoys and the confirmed lead sits at knowledge rank 293 of 815. H036/H038/H039 supported, **H037 and H040 refuted** ([102](step-5/methodology/102-the-sources-and-what-they-could-be-asked.md)–[106](step-5/methodology/106-where-the-missense-sits-in-the-protein.md)) |
-| 6 | Fusion and unblinding | planned |
+| [6](step-6/README.md) | Fused across steps 2–5 and then unblinded, does iteration 2 rediscover iteration 1's pair, and is a second upload informative? | **run 2026-09-18** — the fused ranking puts **the same two `BUB1B` alleles first**, blind, under both weightings; but silencing the likelihood route drops the leader to rank 62, the symptom route had it at rank 9 and the literature route never listed it. H043/H044 supported, **H041 and H042 refuted** ([107](step-6/methodology/107-the-routes-and-which-of-them-earned-a-rank.md)–[109](step-6/methodology/109-what-the-mirror-found.md)) |
 | 7 | Track 2 enrichment | planned |
 | 8 | The mosaic aneuploidy bound | planned |
 

@@ -4,7 +4,7 @@ import { DataTable } from '../../../components/DataTable';
 import { Exhibit } from '../../../components/Exhibit';
 import { Plot } from '../../../components/Plot';
 import { C } from '../../../lib/palette';
-import { alleles, cellLabel, matrixPairs, matrixRoutes, score, triple } from './metrics';
+import { alleles, cellLabel, matrixPairs, matrixRoutes, rowLabel, score, triple } from './metrics';
 
 /**
  * The step's headline: routes × leading pairs, and where each instrument actually put each one.
@@ -75,7 +75,7 @@ export function AgreementMatrix({
               type: 'heatmap',
               z,
               x: columns.map((route) => `${route.route}${route.admitted ? '' : ' (w 0)'}`),
-              y: rows.map((pair) => `#${pair.fused_rank} ${pair.gene}`),
+              y: rows.map(rowLabel),
               text,
               texttemplate: '%{text}',
               textfont: { size: 10 },
@@ -93,7 +93,7 @@ export function AgreementMatrix({
             },
           ]}
           layout={{
-            margin: { l: 180, r: 16, t: 10, b: 48 },
+            margin: { l: 330, r: 16, t: 10, b: 48 },
             plot_bgcolor: C.absent,
             yaxis: { automargin: true, tickfont: { size: 10 } },
           }}

@@ -11,14 +11,19 @@
  */
 
 import { REPO_BLOB } from '../../lib/dictionary';
+import { SEE_IT_FUSION } from './seeItFusion';
 import { SEE_IT_MEASURE } from './seeItMeasure';
 import { SEE_IT_PLATFORM } from './seeItPlatform';
 import type { SeeIt } from './seeItShared';
 
 export type { SeeIt, SeeItLink } from './seeItShared';
 
-/** Every see-it link, keyed by dictionary slug. Two halves, split only to keep files short. */
-export const SEE_IT: Record<string, SeeIt> = { ...SEE_IT_MEASURE, ...SEE_IT_PLATFORM };
+/** Every see-it link, keyed by dictionary slug. Split into files only to keep each short. */
+export const SEE_IT: Record<string, SeeIt> = {
+  ...SEE_IT_MEASURE,
+  ...SEE_IT_PLATFORM,
+  ...SEE_IT_FUSION,
+};
 
 export function seeIt(slug: string): SeeIt | undefined {
   return SEE_IT[slug];

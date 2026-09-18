@@ -88,7 +88,6 @@ IT2_FUSION_STABILITY = Derivation(
         "all-routes leader land once that route is silenced, and what takes its place? (H042)"
     ),
     reads_loaded=("it2_fusion_loo", "it2_fusion_scores", "it2_fusion_routes"),
-    depends_on=("it2_fusion_matrix",),
     sql=f"""
     WITH leader AS (
         SELECT pair_id, gene FROM {RESULT}.it2_fusion_scores WHERE fused_rank = 1 LIMIT 1

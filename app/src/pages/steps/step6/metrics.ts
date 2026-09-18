@@ -20,6 +20,18 @@ export function score(value: number | null | undefined): string {
   return value === null || value === undefined ? '—' : value.toFixed(5);
 }
 
+/**
+ * A y-axis label unique to the *pair*, not to its gene.
+ *
+ * Plotly merges categorical rows that share a label, and rank inheritance puts every pair of
+ * one gene at one fused rank — so `#2 CLCNKB` eleven times silently collapses into a single
+ * row and ten pairs' cells land on top of each other. The alleles are in the label for that
+ * reason, not for decoration.
+ */
+export function rowLabel(row: { fused_rank: number; gene: string; pair_id: string }): string {
+  return `#${row.fused_rank} ${row.gene} · ${alleles(row.pair_id)}`;
+}
+
 /** `BUB1B|truncating:rs759242053|missense:` → the two alleles, gene stripped, for a cell. */
 export function alleles(pairId: string): string {
   const parts = pairId.split('|');

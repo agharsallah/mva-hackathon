@@ -286,10 +286,10 @@ ITERATION2: tuple[Step, ...] = (
             "Fused across steps 2-5 and then unblinded, does iteration 2 rediscover "
             "iteration 1's pair, and is a second upload informative?"
         ),
-        # Open: four claims filed before the fusion runs. The step is the only one that can
-        # read every other step's measurement at once, and the only one allowed to read
-        # iteration 1 -- but not before its own ranking is frozen and hashed.
-        status="open",
+        # Done: four claims filed before the fusion ran, four settled. The blind route put
+        # the same pair first -- and the leave-one-route-out table says one route carried
+        # it, which is the half of the result the report has to lead with as well.
+        status="done",
         unblocks=("step-7",),
         iteration="iteration2",
     ),
