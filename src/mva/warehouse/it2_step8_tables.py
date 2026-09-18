@@ -70,8 +70,15 @@ SCHEMAS: dict[str, tuple[tuple[str, str], ...]] = {
         ("model", "VARCHAR"),
         ("fraction", "DOUBLE"),
         ("tract", "DOUBLE"),
+        # Fitted per chromosome here, unlike the genome-wide value the deviation null uses,
+        # and the two together are how a reader tells a repeat-dispersed contig from a
+        # mosaic one.
+        ("rho", "DOUBLE"),
+        ("noise_share", "DOUBLE"),
         ("depth_dispersion", "DOUBLE"),
         ("log_likelihood", "DOUBLE"),
+        ("allele_log_likelihood", "DOUBLE"),
+        ("depth_log_likelihood", "DOUBLE"),
         ("parameters", "BIGINT"),
         ("observations", "BIGINT"),
         ("bic", "DOUBLE"),
@@ -87,6 +94,16 @@ SCHEMAS: dict[str, tuple[tuple[str, str], ...]] = {
         ("fraction", "DOUBLE"),
         ("trisomy_vs_cnloh", "DOUBLE"),
         ("confident", "BOOLEAN"),
+        # The contig's tail burden under `normal`, and whether it is past the ceiling.
+        ("noise_share", "DOUBLE"),
+        ("measurable", "BOOLEAN"),
+        # True when a parameter of the winning fit is pinned against its bound: the
+        # optimiser reporting "as much as you let me" rather than an estimate. The leader's
+        # own parameters travel with it so the verdict can be checked rather than trusted.
+        ("degenerate", "BOOLEAN"),
+        ("leader_rho", "DOUBLE"),
+        ("leader_tract", "DOUBLE"),
+        ("leader_noise", "DOUBLE"),
     ),
     "it2_mosaic_density": (
         ("chrom", "VARCHAR"),
@@ -189,11 +206,23 @@ class Loaded:
 
 
 def _columns_for(table: str, path: Path) -> tuple[tuple[str, str], ...]:
-    """The declared schema, or -- for the limits table -- one power column per grid point."""
-    if table != LIMITS_TABLE:
-        return SCHEMAS[table]
-    header = path.read_text(encoding="utf-8").split("\n", 1)[0].split("\t")
-    return (*LIMITS_FIXED, *((name, "DOUBLE") for name in header if name.startswith("power_")))
+    """The declared schema, narrowed to what this TSV actually carries.
+
+    The schema is a promise about **types**, not about presence. A table written by an
+    earlier run legitimately has fewer columns -- the fits on disk predate two of theirs --
+    and loading should carry what is there rather than refuse the file or invent nulls for
+    the rest. The limits table takes the opposite shape for the same reason: its power
+    columns are one per simulated fraction, which is a parameter of the run.
+    """
+    header = tuple(path.read_text(encoding="utf-8").split("\n", 1)[0].rstrip("\r").split("\t"))
+    if table == LIMITS_TABLE:
+        declared = (
+            *LIMITS_FIXED,
+            *((name, "DOUBLE") for name in header if name.startswith("power_")),
+        )
+    else:
+        declared = SCHEMAS[table]
+    return tuple((name, sql_type) for name, sql_type in declared if name in header)
 
 
 def _create(connection, schema: str, table: str, columns: tuple[tuple[str, str], ...]) -> str:

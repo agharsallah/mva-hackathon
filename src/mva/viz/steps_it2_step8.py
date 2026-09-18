@@ -57,16 +57,19 @@ BLOCKS: dict[str, str] = {
         FROM {ALIAS}.results.it2_mosaic_fractions
         ORDER BY CASE WHEN chrom ~ '^[0-9]+$' THEN CAST(chrom AS INTEGER) ELSE 99 END, chrom
     """,
-    # The five fits per contig, with the margin that decides whether the ranking is a call.
+    # The five fits per contig, with the two parameters that say whether the winner is a
+    # mechanism or a density estimator: its own over-dispersion, and its noise share.
     "models": f"""
-        SELECT chrom, model, fraction, tract, depth_dispersion, log_likelihood,
-               parameters, observations, bic
+        SELECT chrom, model, fraction, tract, rho, noise_share, depth_dispersion,
+               log_likelihood, parameters, observations, bic
         FROM {ALIAS}.results.it2_mosaic_models
         ORDER BY CASE WHEN chrom ~ '^[0-9]+$' THEN CAST(chrom AS INTEGER) ELSE 99 END,
                  chrom, bic
     """,
     "verdicts": f"""
-        SELECT chrom, call, best, runner_up, delta_bic, fraction, trisomy_vs_cnloh, confident
+        SELECT chrom, call, best, runner_up, delta_bic, fraction, trisomy_vs_cnloh,
+               confident, noise_share, measurable, degenerate,
+               leader_rho, leader_tract, leader_noise
         FROM {ALIAS}.results.it2_mosaic_verdicts
         ORDER BY CASE WHEN chrom ~ '^[0-9]+$' THEN CAST(chrom AS INTEGER) ELSE 99 END, chrom
     """,
