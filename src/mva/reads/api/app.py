@@ -32,6 +32,7 @@ from .models import (
     ProbeRequest,
     ScanRequest,
     SqlRequest,
+    TallyRequest,
     VerifyRequest,
 )
 
@@ -114,6 +115,16 @@ def create_app(manager: Manager | None = None, token: str | None = None) -> Fast
     def count(request: ProbeRequest) -> JobOut:
         """Reads per probe with a triage verdict — decides whether an allele is real."""
         return submitted("count", request.model_dump(), runners.count_runner(request))
+
+    @api.post("/tally", response_model=JobOut, status_code=202, tags=["query"])
+    def tally(request: TallyRequest) -> JobOut:
+        """Count a probe set across every read — multiplicity at a scale `/count` cannot reach.
+
+        `/count` answers the same question through a literal matcher capped around five
+        hundred probes; this one carries a quarter of a million, named by object key rather
+        than posted. There is no stride: a sampled count is not a count.
+        """
+        return submitted("tally", request.model_dump(), runners.tally_runner(request))
 
     @api.post("/bait", response_model=JobOut, status_code=202, tags=["query"])
     def bait(request: BaitRequest) -> JobOut:

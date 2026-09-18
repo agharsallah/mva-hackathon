@@ -55,6 +55,57 @@ class ScanRequest(ProbeRequest):
     )
 
 
+def plain_object_key(value: str) -> str:
+    """An object key and nothing else — no scheme, no traversal, no empty string.
+
+    Validated at the edge because these keys name what a job reads and writes on a shared
+    host. Shared by every request that carries one, so the rule cannot drift between verbs.
+    """
+    key = value.strip().lstrip("/")
+    if not key or ".." in key or key.startswith("s3://"):
+        raise ValueError(f"not a plain object key: {value!r}")
+    return key
+
+
+class TallyRequest(BaseModel):
+    """Count a probe set across the whole store — how many times, not whether.
+
+    ``POST /count`` answers multiplicity too, through a literal matcher capped around five
+    hundred probes. A per-chromosome dosage set is a quarter of a million, so this verb takes
+    its probes the way :class:`BaitRequest` does — uploaded to the object store as a ``.npy``
+    of sorted ``uint64`` and named by key, keeping the request a few hundred bytes.
+
+    Unlike the bait pass this one has nothing to publish: the answer is one count per probe,
+    a few hundred kilobytes, and it comes back in the job result. **There is no stride.** A
+    sampled count is not a count — a probe occurring once in a read is seen by exactly one
+    window — so every window is read and the parameter does not exist.
+    """
+
+    probes_key: str = Field(
+        min_length=1,
+        description="object key of the probe array, e.g. derived/it2/step-8/dosage-probes.npy",
+    )
+    k: int = Field(default=31, ge=1, le=32, description="k the probes were cut at")
+    shard_limit: int | None = Field(
+        default=None,
+        ge=1,
+        description="stop after this many shards — a timing probe, never a full run",
+    )
+    workers: int = Field(
+        default=1,
+        ge=1,
+        le=16,
+        description="shards counted at once. Each worker holds one shard's batches, so this "
+        "is bounded by the server's RAM rather than by its cores.",
+    )
+    root: str | None = None
+
+    @field_validator("probes_key")
+    @classmethod
+    def _plain_probe_key(cls, value: str) -> str:
+        return plain_object_key(value)
+
+
 class BaitRequest(BaseModel):
     """Sweep the whole store against a k-mer bait and publish the reads it recovered.
 
@@ -110,10 +161,7 @@ class BaitRequest(BaseModel):
     @field_validator("bait_key", "out_key")
     @classmethod
     def _plain_key(cls, value: str) -> str:
-        key = value.strip().lstrip("/")
-        if not key or ".." in key or key.startswith("s3://"):
-            raise ValueError(f"not a plain object key: {value!r}")
-        return key
+        return plain_object_key(value)
 
 
 class SqlRequest(BaseModel):

@@ -13,7 +13,8 @@ from dataclasses import asdict
 from pathlib import Path
 
 from ...warehouse.settings import object_store, setting
-from .. import access, baitjob, bench, scan, store, triage, verify
+from ...warehouse.source import client
+from .. import access, baitjob, bench, countjob, scan, store, triage, verify
 from .jobs import Job
 
 
@@ -107,6 +108,41 @@ def bait_runner(request) -> Callable[[Job], dict]:
             staging=staging,
         )
         return {"root": root, "bait_key": request.bait_key, **result.as_dict()}
+
+    return run
+
+
+def tally_runner(request) -> Callable[[Job], dict]:
+    """Count a probe set across every shard, and hand the counts back in the reply.
+
+    The counterpart of :func:`bait_runner`, and the difference is what each answers. The bait
+    pass asks "did this read come from a baited region" and returns ~15 million reads, so it
+    publishes them. This asks "how many times was each probe seen" and returns one integer
+    per probe — a few hundred kilobytes — so it returns them.
+
+    There is no stride: a sampled count is not a count.
+    """
+
+    def run(job: Job) -> dict:
+        root = access.resolve_root(request.root)
+        staging = Path(setting("MVA_STAGING_DIR") or ".").expanduser() / "tally"
+        staging.mkdir(parents=True, exist_ok=True)
+        local = staging / Path(request.probes_key).name
+        bucket = object_store()
+        client(bucket).download_file(bucket.bucket, request.probes_key, str(local))
+        probes = countjob.load_probes(local, k=request.k)
+        result = countjob.run_count(
+            root,
+            probes,
+            shard_limit=request.shard_limit,
+            workers=request.workers,
+        )
+        return {
+            "root": root,
+            "probes_key": request.probes_key,
+            **result.as_dict(),
+            "counts": result.counts.tolist(),
+        }
 
     return run
 
