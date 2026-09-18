@@ -1,53 +1,117 @@
-# Iteration 4 — the todo board
+# Iteration 4 — the board: the whole plan, end to end
 
-**Standing:** opened 2026-09-18 from [`plan.md`](plan.md) §7b. Living checklist: ticked as work
-lands, with the commit or entry that did it. Nothing here is a result. Labels follow the plan:
-**MVP** / opt-A / opt-B. Waves follow §7b.
+**Standing:** rewritten 2026-09-18 to cover **every** item of [`plan.md`](plan.md) — MVP, opt-A and
+opt-B — after the user asked for the full system, not the minimum. Ticked as work lands, with the
+commit or entry that did it. Nothing here is a result. Labels: **MVP** / **A** (opt-A) / **B**
+(opt-B), waves per plan §7b; *build* = code vs `fixtures/it4/` (agents, parallel), *run* = real data
+(main thread, strict chain, files claims).
 
-Corrections to the plan found while opening (2026-09-18):
+**Target system.** One `AlleleRecord` in; N models behind one `Adapter` protocol across three
+hosting tiers (warehouse/table lookup on the laptop, CPU process on the laptop, GPU function on
+Modal); every score in one append-only cache with lineage; one resumable DAG from one command or
+one HTTP call; one report template per model with an LLM-written interpretation in two switchable
+modes; three merge methods behind one config key; Track 2 by graph walk **and** GNN over PrimeKG
+with a decoy control; every page on the dashboard. Change the inputs, not the code (plan §9).
 
-- Next free methodology number is **110**, not 098 — entries 098–109 were filed by iteration 2.
-- AlphaMissense and SpliceAI are **already in the warehouse** (`warehouse.it2_insilico_annotations`,
-  VEP plugins, iteration 2 entry 098). Two MVP lanes need no download; they need a warehouse-column
-  adapter.
-- CADD is not served by VEP REST (HTTP 500, entry 098) → O5 defaults to **REVEL**, tested at run.
-- No table holds `hgvs_p`/`hgvs_c`; `VepRecord` drops them. Step 1's HGVS needs a VEP re-request.
+Corrections to the plan found while opening (2026-09-18): next methodology number is **111**
+(110 = the `--iteration` platform fix); AlphaMissense and SpliceAI already sit in
+`warehouse.it2_insilico_annotations`; CADD is not served by VEP REST (entry 098) → O5 = REVEL;
+no table holds HGVS, so step 1 re-asks VEP.
 
-## Wave 0 — contracts (main thread) — **done 2026-09-18**, commits `f493364` (steps split, shared with a parallel session) + `2447e3e`
+---
 
-- [x] Plan written and revised (`plan.md`, 2026-09-13 → 09-18)
-- [x] `steps.py`: `ITERATION4`, seven steps, registered in `STEPS_BY_ITERATION`
-- [x] O4: `mva-science hypothesis-add --iteration` (platform entry 110)
-- [x] `src/mva/zoo/` package: `types.py` (AlleleRecord, ScoreRow, Coverage, Adapter, DDL), README
-- [x] import-linter layer for `mva.zoo`; `mva-zoo` script entry
-- [x] `fixtures/it4/` synthetic records, per-lane score tables, pairs (+ generator script)
-- [x] `docs/iteration4/README.md`, step folders 1–7 with README stubs
-- [x] this board
+## Wave 0 — contracts (main thread) — **done**, `f493364` + `2447e3e` + `b9429ad`
 
-## Wave 1 — build against fixtures (Opus agents, disjoint files)
+- [x] `steps.py`: `ITERATION4`, seven steps, `STEPS_BY_ITERATION`
+- [x] O4: `mva-science hypothesis-add --iteration` (entry 110)
+- [x] `src/mva/zoo/types.py`: `AlleleRecord` (+`uniprot`), `ScoreRow`, `Coverage`, `RemoteJob`, `Adapter`, DDLs, `allele_id`
+- [x] import-linter layer, `mva-zoo` script, `fixtures/it4/` + generator, folder skeleton
 
-- [x] agent *record* — `mva.zoo.record` (+ `record_hgvs`, `record_write`) + tests; HGVS + UniProt on `VepRecord` (MVP) — `41f093b`; follow-up: move `uniprot: 1` into `annotate_vep.QUERY_PARAMS` and drop `HgvsAnnotator`
-- [x] agent *registry* — `models.toml` + `models.d/`, `registry.py`, cards, licence manifest, fetch script (MVP) — `9bfdfa6`; ESM1b table 1.24 GiB, REVEL flag verified, O5 → REVEL
-- [x] agent *cache+adapters* — `cache.py`, adapters (warehouse column, DuckDB lookup, VEP REST), `cli.py` (MVP) — `91742ad`
-- [x] agent *rank+report+merge* — `pairs`/`rank`, `merge`/`merge_render`, `report`/`report_stats`/`report_sections`, `workflow`/`workflow_types`/`workflow_stages`, `tools/render_it4_figures.py` (MVP) — gaps: resume nominal (no `P4-5`), no `narrate`, `read_only_percentiles` has no stage yet
-- [ ] agent *track2* — `mva.drugs.graph_walk`, PrimeKG fetch, decoy, build **and** run (MVP R2) — **deferred 2026-09-18**: another session is actively editing `src/mva/drugs/**` and `ressources/track2/**` (decoy cards); start once that lands to avoid a file collision
+## Wave 1 — build the MVP chain against fixtures — **done**
 
-## Wave 2 — the R1 chain (main thread, strict order, files claims)
+- [x] step 1 `record` / `record_hgvs` / `record_write`; HGVS + UniProt on `VepRecord` — `41f093b`
+- [x] step 2 `registry`, `models.toml` (19 cards, 4 enabled), `models.d/`, cards, licence manifest, `fetch_zoo_tables.py` — `9bfdfa6`
+- [x] step 3 `cache`, adapters `warehouse_column` / `duckdb_lookup` / `vep_rest`, `mva-zoo` CLI — `91742ad`
+- [x] steps 4–6 `pairs`/`rank`, `report*`, `merge*`, `workflow*`, `render_it4_figures.py` — `0e5e87a`
+- [ ] step 7 *track2* build: `mva.drugs.graph_walk`, PrimeKG fetch + digest, approved-drug filter, decoy card (O6), `ranking-walk.tsv` + provenance — **deferred**: Track 2 session active in `src/mva/drugs/**`; start when it lands, or land it as `src/mva/zoo/track2/` if the collision persists
 
-- [ ] run step 1 records (VEP HGVS re-request) → file `P4-1a`, entry 111+
-- [ ] run step 2 fetch + coverage → `P4-2a`, `P4-3`; settle O5 (REVEL?)
-- [ ] run step 3 score → `P4-4a`
-- [ ] run step 4 rank + manifest; O7 (does the pair fall in an MVP lane?)
-- [ ] run step 5 render (hand-written §6)
-- [ ] run step 6 merge → `P4-6`, `P4-8`; `docs/iteration4/report.md` (R1)
-- [ ] step 7 claims `P4-11`, `P4-12` filed from the track2 agent's run
+## Wave 2 — run the MVP chain on real data (main thread, strict order, each run files its entry + claims)
 
-## Wave 3 — dashboard + docs
+- [ ] R1 step 1: smoke (`limit=200`), then `mva-zoo records` (VEP HGVS+UniProt pass, ~197 batches, resumable) → `results.it4_allele_records`, `build/it4/records.parquet`, provenance, lineage. File **P4-1a**; answer **O7** (confirmed alleles' consequence classes; promote GPN-MSA if a lane gap hits the pair). Entry **111**
+- [ ] R2 step 2: `fetch_zoo_tables.py --fetch esm1b --execute` (1.24 GiB) → parquet + digest fragment `models.d/esm1b.toml`; `mva-zoo coverage` × 4; one live REVEL reply confirms the field name (**O5**). File **P4-2a**, **P4-3**
+- [ ] R3 step 3: `mva-zoo score` × 4 lanes (catalogue-free), re-run one for the no-op proof, `--mode aware` pass for the ablation. File **P4-4a** (≤ 1 h laptop, $0)
+- [ ] R4 step 4: `mva-zoo run` → `results.it4_model_ranks`, manifest `build/it4/runs/<id>.json` + coordinate-free copy; check `skipped_genes` empty, confirmed-pair flagging unique
+- [ ] R5 step 5: per-model reports `docs/iteration4/reports/<key>.md`, §6 hand-written and signed, histograms in `figures/it4/`
+- [ ] R6 step 6: agreement matrix, RRF with/without adjacent, disagreement table, `docs/iteration4/report.md` (method `fusion`). File **P4-6**, **P4-8** (MVP lanes)
+- [ ] R7 step 7 run: walk over MONDO:0009759 and the decoy card; overlap figure; Q14 section. File **P4-11**, **P4-12**
+- [ ] step READMEs 1–7 "What happened" filled from the entries; `docs/README.md` index rows
 
-- [ ] `/steps/step-<n>` pages for iteration 4, zoo cards page, agreement matrix, lineage view; fixtures re-blessed
-- [ ] step READMEs filled, dictionary batch merged from `terms.draft.md`, `docs/README.md` index rows
+## Wave 3 — dashboard + docs for the MVP (2 agents)
 
-## Optional (after R1 closes) — plan §7 A1–A7, B1–B5
+- [ ] API: `GET /api/zoo/models` (cards + coverage), `GET /api/zoo/scores?allele_id=`, `GET /api/zoo/ranks`, `GET /api/zoo/merge` (matrix, RRF, disagreements), `GET /api/zoo/runs` (manifests) under `src/mva/viz/api_zoo*.py`
+- [ ] app: `/steps/step-<n>` pages for iteration 4 (one per step, from the live API), zoo cards page, agreement-matrix view, per-model report view, run-manifest view, lineage view per table; fixtures re-captured and hashes re-blessed
+- [ ] dictionary: merge the six `docs/iteration4/step-<n>/terms.draft.md` into `docs/dictionary.md` in dependency order; `/learn` regenerated
+- [ ] `docs/iteration4/README.md` step table with statuses; `docs/README.md` iteration-4 rows; `src/mva/README.md` gains the `zoo` row and graph edge
 
-- [ ] A1 ESM2 lane · A2 more tier-1 tables · A3 HTTP routes · A4 resume + kill test · A5 narrate · A6 synthesis + submission folder · A7 read-only pairing
-- [ ] B1 Modal + NT-v2 · B2 ESM-C/Boltz-2 · B3 EVE/ΔΔG · B4 TxGNN · B5 judge
+## Wave 4 — opt-A: widen the zoo, automate the prose, open the HTTP API (parallel groups after R6)
+
+**G1 — more lanes (rerun the chain from R3 after)**
+- [ ] A1 step 1 `protein_window` (wild-type + mutant amino-acid window from UniProt/Ensembl sequence + `hgvs_p`); file **P4-1** (protein half)
+- [ ] A1 step 2 ESM2 650M card (MIT, tier 2) + step 3 `adapters/local_process.py` (`transformers` on CPU, masked-marginal log-likelihood ratio, batched, checkpointed); `zoo-ml` dependency group (`transformers`, `torch`)
+- [ ] A2 tier-1 lanes GPN-MSA (HF `songlab/gpn-msa-hg38-scores`, tabix subset for the ~40k alleles only — R7), PrimateAI-3D (human accepts terms, drops file), Pangolin (tier 2 local, second splice opinion); `duckdb_lookup` gains a coordinate-keyed reader **inside** `build/it4/`
+- [ ] A7 read-only allele pairing with same-gene VCF alleles (step 4 substep); `read_only_percentiles` gets its stage + table
+- [ ] re-file **P4-3**, **P4-6**, **P4-8** as new revisions per added lane; **P4-2** (≥ 8 lanes) filed when the count allows
+
+**G2 — API + resume**
+- [ ] A3 read-only routes (wave 3) → batch job routes: `POST /api/zoo/score {model, allele_ids, mode} → {job_id}`, `GET /api/zoo/jobs/{id}/wait`, on the existing `/api/jobs` worker pattern (`viz/serve.py`); token-gated like the rest
+- [ ] A4 step 4 `--from <stage>` real resume: skip-if-checkpoint-exists per stage, kill-mid-fan-out test; file **P4-5**
+
+**G3 — narrate (serial inside)**
+- [ ] A5 `mva.zoo.narrate`: prompt = section JSON + "cite every sentence by row id", temperature 0; mode `claude-code` (`claude -p`, model id recorded from the reply) first
+- [ ] A5 mode `nebius` via LiteLLM (`NEBIUS_API_KEY`, model id from config — **O1**), same prompt, same JSON
+- [ ] A5 `results.it4_narratives` (prompt, reply, mode, model id, run_id); citation checker; file **P4-7**
+- [ ] both modes on every model, side by side in §6 (B)
+
+**G4 — after G3**
+- [ ] A6 merge `fusion+synthesis`: LLM synthesises the merged narrative from per-model interpretations + matrix, cited; default method
+- [ ] A6 `submissions/track1/iteration-4/` rehearsed: CSV via `tools/design_submission.py`, methods form row "model 4" (automated yes, public models only, runtime + cost from the manifest), decode table, README with sha256; `tools/check_iteration.py` green; **upload default: no** (O3)
+- [ ] `submissions/track2/iteration-<n>/` scaffolded by `tools/new_iteration.py` when R2 is upload-worthy
+
+## Wave 5 — opt-B: GPU tiers on Modal, the judge, the GNN
+
+- [ ] B1 step 1 `dna_window_ref/alt` (8,192 bp from the pinned reference, only in `build/it4/`); file **P4-1** (DNA half)
+- [ ] B1 Modal project: account, `$50` hard cap in config, one volume per model (weights), `docs/notes/data-deletion-checklist.md` lists every volume (O9: check `docs/README.md` for an owner first)
+- [ ] B1 step 3 `adapters/modal.py`: `submit()` sends windows + `allele_id` only; result parquet pulled into the cache; GPU type, seconds, dollars into the manifest (per-stage cost attribution)
+- [ ] B1 NT-v2 500M lane (plain `transformers`, any GPU) — the first tier-3 DNA-LM
+- [ ] B1 Evo 2 1B lane (A100 first, H100 if the authors' stack demands it; cut before NT-v2 — R1)
+- [ ] B2 ESM-C 600M lane (record `github.com/evolutionaryscale/esm` tag + weights digest); ESM2 vs ESM-C agreement figure
+- [ ] B2 Boltz-2: wild-type vs mutant BubR1 structure, confidence delta + visual (one protein, not a scorer); verify the bioRxiv DOI by Crossref before citing
+- [ ] B3 EVE (coverage footnote), RaSP / ThermoMPNN ΔΔG on the AlphaFold model → hypomorph vs null → drug direction D1–D4 into the Q14 section
+- [ ] B4 TxGNN on Modal (Python 3.8 / DGL 0.5.2 image, one-day timebox; fallback = walk alone, recorded) → `ranking-txgnn.tsv`; file **P4-10**
+- [ ] B5 merge `judge`: LLM ranks the models by evidential value, printed beside RRF, flagged non-reproducible; file **P4-9**
+- [ ] **P4-4** (full zoo ≤ $30, ≤ 8 h laptop) filed from the manifests; cut order §7 applied and recorded if refuted
+- [ ] re-run the chain with every lane; final revisions of **P4-3**, **P4-6**, **P4-8**; dashboard pages updated (cards, matrix, cost view)
+
+## Quality gates that hold throughout (plan §8)
+
+- [ ] every `allele_scores` row carries model, version, digest, licence, venue, run_id (test exists — keep it green as lanes are added)
+- [ ] every card says catalogue-adjacent yes/no; merge prints both ranks
+- [ ] every LLM sentence resolves to a row id; failure rate printed (A5)
+- [ ] dollars and seconds per model per run in the manifest (B1)
+- [ ] licence manifest one line per model; fetch scripts + digests only, never score files
+- [ ] `tools/check-python.sh` green before every push; `check_coordinates.py` on every commit
+- [ ] every figure names its script and source table
+
+## Open items (plan §12) — status
+
+| # | item | status |
+|---|---|---|
+| O1 | Nebius model id | open until A5 |
+| O2 | dependency groups `zoo` / `zoo-ml` | `zoo` needs nothing beyond base (duckdb is a base dep); `zoo-ml` added with A1 |
+| O3 | upload as model 4 | prepare + rehearse, **no upload** unless the user decides |
+| O4 | `--iteration` flag | **settled**, entry 110 |
+| O5 | REVEL or CADD | **REVEL** (CADD 500 on public REST); confirmed by one live reply in R2 |
+| O6 | decoy gene for step 7 | chosen in step 7's first entry |
+| O7 | confirmed pair in an MVP lane's class? | R1 decides; GPN-MSA promoted if not |
+| O8 | `ITERATION` constant | stays `iteration2`; iteration 4 steps carry their own |
+| O9 | deletion-checklist owner | B1 |
