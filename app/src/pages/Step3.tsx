@@ -1,4 +1,4 @@
-import { useStep3 } from '../api/hooks';
+import { useStep3 } from '../api/hooksSteps';
 import { Section } from '../components/Controls';
 import { Exhibit } from '../components/Exhibit';
 import { Callout, Explainer } from '../components/Explainer';

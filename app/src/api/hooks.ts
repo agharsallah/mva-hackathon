@@ -63,10 +63,6 @@ import type {
   SearchResolution,
   SequencingYieldRow,
   SourceObjectRow,
-  Step1Payload,
-  Step2Payload,
-  Step3Payload,
-  StepsPayload,
   StructureGene,
   Submissions,
   SubstitutionRow,
@@ -81,7 +77,7 @@ const GC_TIME = 24 * 60 * 60 * 1000;
 
 type Opts<T> = Omit<UseQueryOptions<Result<T>, Error>, 'queryKey' | 'queryFn'>;
 
-function useEndpoint<T>(path: string, params?: Params, opts?: Opts<T>) {
+export function useEndpoint<T>(path: string, params?: Params, opts?: Opts<T>) {
   return useQuery<Result<T>, Error>({
     queryKey: [path, params ?? null],
     queryFn: ({ signal }) => get<T>(path, params, signal),
@@ -356,28 +352,6 @@ export const usePhenotypeGene = (symbol: string, termSet: string) =>
   useEndpoint<PhenotypeGeneDetail>('/api/phenotype/gene', { symbol, term_set: termSet });
 
 export const usePhenotypeDelta = () => useEndpoint<PhenotypeDelta>('/api/phenotype/delta');
-
-/**
- * The research journey of one iteration. Omitting `iteration` asks for the current one,
- * which is what every page but the iteration switcher wants.
- */
-export const useSteps = (iteration?: string) =>
-  useEndpoint<StepsPayload>('/api/steps', iteration ? { iteration } : undefined);
-
-/**
- * Iteration 2 step 2's result tables. Aggregates only — the four tables behind it carry
- * real genomic positions and none of their rows crosses this boundary.
- */
-export const useStep2 = () => useEndpoint<Step2Payload>('/api/steps/step-2');
-
-/** Step 3 — what the reads say with no aligner and no caller in the chain. */
-export const useStep3 = () => useEndpoint<Step3Payload>('/api/steps/step-3');
-
-/**
- * Iteration 2 step 1's measurements: the recall curve, the tiers, the two-ranker overlap,
- * the decoy null and the four pre-registered gates. No coordinate, no gene symbol.
- */
-export const useStep1 = () => useEndpoint<Step1Payload>('/api/steps/step-1');
 
 const LIVE_STATES = new Set(['queued', 'running']);
 

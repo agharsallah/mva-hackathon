@@ -75,6 +75,7 @@ const OWNERS: Record<string, readonly string[]> = {
     '/api/steps/step-1',
     '/api/steps/step-2',
     '/api/steps/step-3',
+    '/api/steps/step-4',
     '/api/science/hypotheses',
     '/api/science/evidence',
     '/api/search',

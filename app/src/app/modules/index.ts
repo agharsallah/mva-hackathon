@@ -146,6 +146,16 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/Step3'),
   },
   {
+    id: 'step4',
+    path: '/steps/step-4',
+    navLabel: 'Step 4',
+    title: 'Step 4 \u2014 every gene, ordered, with nothing filtered out',
+    group: 'decide',
+    description:
+      'The funnel replaced by a product of likelihood ratios: all 11,465 genes scored, including the 73.6% nobody has curated, with the decoy and permutation nulls that say what the ordering is worth.',
+    load: () => import('../../pages/Step4'),
+  },
+  {
     id: 'science',
     path: '/science',
     navLabel: 'Science',

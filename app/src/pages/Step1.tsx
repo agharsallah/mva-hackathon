@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { useStep1 } from '../api/hooks';
+import { useStep1 } from '../api/hooksSteps';
 import { Section } from '../components/Controls';
 import { Chip, Exhibit } from '../components/Exhibit';
 import { Callout, Explainer } from '../components/Explainer';
