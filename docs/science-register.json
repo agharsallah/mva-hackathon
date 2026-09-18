@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-18T20:26:31+00:00",
+  "generated_at": "2026-09-18T20:56:07+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -2062,11 +2062,30 @@
       "refuted_by": "The comparison separates the two mechanisms at delta-BIC of 10 or more in a majority of replicates -- the mechanism call is then a real measurement and is handed to step 7's Track 2 card.",
       "gene": "",
       "path": "mosaic",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.85,
+      "suggested_confidence": 0.9677,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 125,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "On simulated trisomies at injected fractions of 0.20 and 0.30 at two balanced-tract sizes, the five-model comparison never assigns the mechanism at delta-BIC of 10 or more: the meiotic model is the mitotic one plus a tract, so their margin is bounded below by one BIC penalty.",
+          "source_ref": "methodology/117",
+          "lineage_ref": ""
+        },
+        {
+          "id": 126,
+          "direction": "supports",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "On the real callset the question does not arise, for a stronger reason: 20 of 24 contigs end with a parameter of the winning fit pinned against its bound, so no member of the family produces a usable estimate at all. The fitted cell fraction correlates with the fitted noise share at Spearman 0.938.",
+          "source_ref": "methodology/117",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H058",
