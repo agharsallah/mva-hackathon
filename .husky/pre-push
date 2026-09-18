@@ -62,8 +62,8 @@ fi
 if [ "$run_gate" = "1" ]; then
   echo "pre-push: app/ changes detected — running pnpm run check + build"
   cd app
-  npm run check
-  npm run build
+  pnpm run check
+  pnpm run build
 else
   echo "pre-push: no app/ changes in the pushed range — skipping pnpm run check + build"
 fi
