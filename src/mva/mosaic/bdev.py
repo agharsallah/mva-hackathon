@@ -66,12 +66,19 @@ MIN_SITES = 20
 
 
 def centre(histogram: AlleleHistogram) -> float:
-    """The BAF the fold is taken around — the site-weighted median, not 0.5.
+    """The BAF the fold is taken around — the site-weighted mean, not 0.5.
 
-    Called on the *pooled autosomal* histogram, once per sample. Using each arm's own
-    median would fold a genuine mosaic shift away along with the bias.
+    Called on the *pooled autosomal* histogram, once per sample. Using each arm's own value
+    would fold a genuine mosaic shift away along with the bias.
+
+    The mean and not the median, for two reasons that agree. A site's BAF lives on a grid
+    of 1/n — about 0.023 steps at this depth — so the median is one of ~44 grid points and
+    reports 0.5 exactly whenever the true centre is anywhere near it, which is precisely the
+    bias this function exists to measure. And the mean is unbiased for the centre even when
+    a mosaic *is* present: a gain splits the sites into two bands symmetric about it, which
+    is the same fact that makes the mean useless as a detector and ideal as a centre.
     """
-    return histogram.quantile(0.5)
+    return histogram.weighted(histogram.baf)
 
 
 def statistic(histogram: AlleleHistogram, *, around: float) -> float:

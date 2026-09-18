@@ -69,8 +69,10 @@ __all__ = [
     "offset",
 ]
 
-#: Fitted per chromosome by every model, including ``normal``: the depth dispersion. rho
-#: and the baseline depth are genome-wide and shared, so they are not counted here.
+#: Fitted per chromosome by every model, including ``normal``: the depth dispersion, which
+#: is reported but does not enter model selection. rho, the baseline depth and the
+#: between-chromosome depth spread are genome-wide and shared across the five, so none of
+#: them can move a Delta-BIC and none is counted here.
 NUISANCE = 1
 
 

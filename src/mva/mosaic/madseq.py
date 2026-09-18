@@ -18,10 +18,26 @@ chromosome whose best and second-best models sit inside it is reported as
 *not distinguishable*, never as the better-scoring one — the number, not the ranking, is
 what gets printed.
 
-**The depth term needs a baseline that does not assume any chromosome is normal.** That is
-the whole difficulty of a *variegated* disease and it is not solved here: this module takes
-the baseline it is given. :mod:`~mva.mosaic.baseline` is what computes it, by leaving each
-chromosome out in turn and flagging any whose exclusion moves it.
+**The depth evidence for a whole chromosome is one number, not three hundred thousand.**
+The obvious implementation sums a negative binomial over every PASS call's depth, and it is
+wrong in a way that quietly decides every call: with 350,000 sites, a chromosome sitting
+0.5 %% off the genome-wide mean — ordinary GC and mappability variation, present on a
+perfectly normal genome — produces a likelihood difference of thousands, and every
+chromosome is called monosomic or trisomic. What that sum measures is *site-to-site* depth
+variation within the chromosome, which says nothing about whether the chromosome **as a
+whole** is deeper than the rest of the genome.
+
+So the depth term here is a single Gaussian on the chromosome's mean depth ratio, whose
+width is the **measured spread of that ratio across chromosomes**. One observation, one
+comparison, against the variation a normal genome actually shows. The within-chromosome
+negative binomial is still fitted and reported — it is the right description of depth at a
+site, and its variance-to-mean ratio is a QC number — but it does not choose between models.
+This is a departure from Kong 2018's formulation and it is recorded as one.
+
+**The baseline must not assume any chromosome is normal.** That is the whole difficulty of
+a *variegated* disease and it is not solved here: this module takes the baseline and the
+spread it is given. :mod:`~mva.mosaic.baseline` computes them, by leaving each chromosome
+out in turn and flagging any whose exclusion moves the result.
 """
 
 from __future__ import annotations
@@ -38,6 +54,7 @@ from .models import Model
 from .tables import AlleleHistogram, DepthHistogram
 
 __all__ = [
+    "DEFAULT_DEPTH_SD",
     "DELTA_BIC",
     "FRACTION_BOUNDS",
     "ModelFit",
@@ -48,6 +65,7 @@ __all__ = [
     "fit_depth_dispersion",
     "fit_model",
     "fit_models",
+    "site_depth_log_likelihood",
 ]
 
 #: Kong 2018's own low-confidence threshold, adopted as written.
@@ -60,6 +78,11 @@ FRACTION_BOUNDS = (0.005, 0.90)
 
 #: Bounds for the negative-binomial depth dispersion, matching mva.kmer.genotype's.
 DISPERSION_BOUNDS = (1e-2, 1e4)
+
+#: Fallback spread of the per-chromosome depth ratio when the caller has not measured one.
+#: 2 %% is deliberately generous: it is roughly what GC and mappability produce between
+#: chromosomes on a normal genome, and a too-narrow default would manufacture calls.
+DEFAULT_DEPTH_SD = 0.02
 
 
 @dataclass(frozen=True)
@@ -118,14 +141,34 @@ def allele_log_likelihood(
     return float(np.dot(per_pair, histogram.sites))
 
 
-def depth_log_likelihood(histogram: DepthHistogram, mean: float, dispersion: float) -> float:
-    """A negative binomial on read depth, weighted by how often each depth occurred."""
+def site_depth_log_likelihood(histogram: DepthHistogram, mean: float, dispersion: float) -> float:
+    """A negative binomial over every call's depth. **Not** used for model selection.
+
+    Kept because it is the correct description of depth at a site and because
+    :func:`fit_depth_dispersion` needs a likelihood to maximise. Using it to compare models
+    would weight one chromosome-level fact by the number of sites that happen to lie on the
+    chromosome; see the module docstring.
+    """
     if not histogram.n_sites:
         return 0.0
     values = nb_logpmf(histogram.depth.astype(float), mean, dispersion)
     if not np.all(np.isfinite(values)):
         return -np.inf
     return float(np.dot(values, histogram.sites))
+
+
+def depth_log_likelihood(
+    histogram: DepthHistogram, mean: float, *, spread: float = DEFAULT_DEPTH_SD
+) -> float:
+    """One Gaussian on the chromosome's mean depth, against the between-chromosome spread.
+
+    ``spread`` is in units of the baseline, so a 2 %% spread at a 42x baseline is 0.84x.
+    """
+    if not histogram.n_sites or mean <= 0:
+        return 0.0
+    sigma = max(spread * mean, 1e-9)
+    residual = (histogram.mean - mean) / sigma
+    return float(-0.5 * residual**2 - np.log(sigma * np.sqrt(2.0 * np.pi)))
 
 
 def fit_depth_dispersion(histogram: DepthHistogram, mean: float) -> float:
@@ -141,7 +184,7 @@ def fit_depth_dispersion(histogram: DepthHistogram, mean: float) -> float:
         return DISPERSION_BOUNDS[1]
 
     def negative_log_likelihood(log_dispersion: float) -> float:
-        value = depth_log_likelihood(histogram, mean, float(np.exp(log_dispersion)))
+        value = site_depth_log_likelihood(histogram, mean, float(np.exp(log_dispersion)))
         return -value if np.isfinite(value) else 1e18
 
     result = minimize_scalar(
@@ -175,6 +218,7 @@ def fit_model(
     rho: float,
     centre: float,
     baseline_depth: float,
+    depth_spread: float = DEFAULT_DEPTH_SD,
 ) -> ModelFit:
     """Fit one model's free parameters to one chromosome, by bounded search."""
 
@@ -184,7 +228,7 @@ def fit_model(
         allele = allele_log_likelihood(alleles, bands, rho)
         mean = baseline_depth * models.depth_ratio(model, fraction)
         dispersion = fit_depth_dispersion(depth, mean)
-        return allele, depth_log_likelihood(depth, mean, dispersion), tract, dispersion
+        return allele, depth_log_likelihood(depth, mean, spread=depth_spread), tract, dispersion
 
     if model.has_fraction:
 
@@ -207,7 +251,10 @@ def fit_model(
         allele_log_likelihood=allele,
         depth_log_likelihood=depths,
         parameters=model.parameters,
-        observations=max(alleles.n_sites + depth.n_sites, 2),
+        # The heterozygous calls, plus the one chromosome-level depth observation. Counting
+        # every PASS call here would make log N -- and so the BIC penalty -- depend on how
+        # many sites happen to lie on the chromosome rather than on how much was measured.
+        observations=max(alleles.n_sites + 1, 2),
     )
 
 
