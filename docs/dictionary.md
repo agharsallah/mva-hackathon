@@ -1288,15 +1288,21 @@ flowchart LR
 
 **Binomial** — the coin-flip distribution. *A true het at 30× depth: alt reads ~ Binomial(30, 0.5). Getting 4 out of 30 would be very odd.*
 
-**Beta-binomial** — a binomial that allows extra sloppiness (real sequencing is noisier than a perfect coin).
+**Beta-binomial** — a binomial that allows extra sloppiness (real sequencing is noisier than a perfect coin). One extra parameter, **ρ** (rho, the *intra-class correlation*), widens it: at ρ = 0 it is exactly binomial, and the variance is the binomial's multiplied by `1 + (n − 1)·ρ`.
+*Example:* the child's autosomes fit ρ = 0.0162 pooled; per chromosome it runs from 0.0057 on chr5 to 0.067 on chr21 — twelvefold, which is why one shared value cannot serve as a null for every contig.
+*Context: the null every allele-balance test in step 8 is scored against · source: src/mva/mosaic/betabinom.py · related: Overdispersion, B-deviation (Bdev), BAF (B-allele frequency), Detection limit · first seen 2026-09-18*
 
-**Overdispersion** — the data varies more than the simple model expects.
+**Overdispersion** — the data varies more than the simple model expects. Counting reads is not coin-flipping: capture bias, GC content, PCR duplicates and one allele mapping better than the other all widen the spread, so a model that assumes a clean coin calls ordinary noise significant.
+*Example:* read depth in this callset has a variance-to-mean ratio of 5.09 — five times a Poisson process — and allele balance is wider than binomial by ρ = 0.0162.
+*Context: measured in this repository rather than assumed, in two places · source: src/mva/mosaic/betabinom.py · related: Beta-binomial, Poisson / negative binomial, B-deviation (Bdev) · first seen 2026-09-18*
 
 **Poisson / negative binomial** — distributions for counting things (like reads per bin). Used to spot deletions: half the expected reads = one copy lost.
 
 **Null hypothesis (H₀)** — the boring explanation. *"This 5% VAF is just sequencing error."* You test whether the data can reject it.
 
-**Power** — the chance your test would actually detect a real effect. *At 30× depth, power to spot a 10% mosaic variant at one site is poor — so restrict the search to one gene.*
+**Power** — the chance your test would actually detect a real effect. A negative result without it is not a result: "we looked and saw nothing" only means something once the sentence finishes with "and we would have seen anything above *this*".
+*Example:* at 30× depth, power to spot a 10% mosaic variant at one site is poor — so restrict the search to one gene. Across a whole chromosome it is a different question, and there the fold-over statistic reaches 80% power at 2–3% of cells while the mean B-allele fraction never reaches it at all.
+*Context: the pair (result, detection limit) is the unit step 8 reports · source: src/mva/mosaic/simulate.py · related: Detection limit, Null hypothesis (H₀), B-deviation (Bdev) · first seen 2026-09-18*
 
 **Multiple testing** — test 5 million positions and some will look significant by pure luck.
 
@@ -1329,6 +1335,28 @@ walking along a chromosome, plotting depth as log2 ratio:
 The HMM's job: decide where one flat stretch ends and the next begins, instead of trusting single noisy dots.
 
 **BAF (B-allele frequency)** — at het positions, the fraction of reads from one parent's copy. Should sit at 0.5. Deviation reveals copy-number change, and it's MORE sensitive than depth.
+*Example:* pooled over this child's autosomes the BAF averages **0.4930**, not 0.5000 — reads carrying the reference allele map slightly more readily, so the centre a deviation is measured from has to be the measured one and never the nominal half.
+*Context: reduced to (chromosome, arm, k alternate of n reads) counts, which is everything a model of allele balance needs and carries no genomic position · source: src/mva/warehouse/analysis_it2_mosaic.py · related: B-deviation (Bdev), Beta-binomial, Mosaic fraction · first seen 2026-08-29*
+
+**B-deviation (Bdev)** — the distance of a site's BAF from the centre, `|BAF − centre|`, **averaged after taking the distance and not before**. That ordering is the whole idea: a mosaic gain splits heterozygous sites into two bands symmetric about the centre, so their plain average does not move at all, while folding the two bands onto each other before averaging makes the statistic grow from the first affected cell.
+*Example:* chr21 shows Bdev 0.1003 against a null of 0.0780 — but its own overdispersion is 4× the genome's, so the excess is repeat content rather than mosaicism, which is why the fitted ρ is printed in the same table.
+*Context: step 8's re-test of the flat karyogram, which used the plain average and therefore had no power · source: src/mva/mosaic/bdev.py · related: BAF (B-allele frequency), Power, Detection limit, Mosaic fraction · see: [the karyogram it re-tests](step-0/methodology/037-baf-karyogram.md) · first seen 2026-09-18*
+
+**Detection limit** — the smallest real effect a test would have found, at a stated chance of finding it. Written as one number with its power attached: *detects a mosaic present in 3% of cells, 8 times in 10*.
+*Example:* every autosome in this sample detects at 2–3% of cells; X and Y only at 5%, and they carry almost no heterozygous calls to begin with. Quoting "no mosaic aneuploidy detected" without those numbers would repeat the mistake step 8 exists to correct.
+*Context: simulated from each arm's own depths, then read off its power curve · source: src/mva/mosaic/simulate.py · related: Power, B-deviation (Bdev), Mosaic fraction · first seen 2026-09-18*
+
+**Mosaic fraction** — what share of the sampled cells carry the event. Not a severity score and not a diagnosis: it describes the tube that was sequenced.
+*Example:* a 10% mosaic trisomy shifts a chromosome's read depth by 5% and splits its heterozygous sites into bands 4.8 percentage points either side of the centre — both small, which is why the estimate needs its interval.
+*Context: estimated two ways in step 8, and they disagree informatively — the published band estimator reads 0.30–0.44 on a balanced contig at this depth, so it is reported with its own null subtracted, while the likelihood fit recovers an injected fraction to within 0.002 · source: src/mva/mosaic/bdev.py · related: Mosaic aneuploidy, Detection limit, Copy-neutral loss of heterozygosity (CN-LOH) · first seen 2026-09-18*
+
+**Copy-neutral loss of heterozygosity (CN-LOH)** — one chromosome copy is replaced by a duplicate of the other. The cell still has two copies, so read depth does not move, but the two parental versions are no longer both present — heterozygous sites turn homozygous, or shift their balance exactly as a gain would.
+*Example:* at 5% of cells a CN-LOH and a mitotic trisomy produce the same allele-fraction bands and differ only in depth, by 2.5% — inside ordinary GC variation between chromosomes, so the two cannot be told apart at that fraction and the pairwise margin is printed rather than a call.
+*Context: one of the five per-chromosome models step 8 compares · source: src/mva/mosaic/models.py · related: Mosaic aneuploidy, BAF (B-allele frequency), BIC (Bayesian information criterion) · first seen 2026-09-18*
+
+**BIC (Bayesian information criterion)** — a score for comparing models that fit the same data with different numbers of knobs: `−2 × log-likelihood + k × log N`. Lower wins. The second term is the fine for each extra knob and it grows with the amount of data, so on a big dataset a model has to earn its complexity.
+*Example:* Kong 2018 calls a margin (ΔBIC) under **10** low-confidence, and that threshold is adopted here as written. Two of step 8's five models are *nested* — meiotic trisomy is mitotic trisomy plus one extra component — so when the extra component buys nothing the margin is exactly one penalty and the pair can never clear 10. A trisomy is therefore led but never confidently called.
+*Context: only parameters fitted per chromosome are counted in k, because a comparison is meaningless unless every model counts the same way · source: src/mva/mosaic/madseq.py · related: Likelihood, Copy-neutral loss of heterozygosity (CN-LOH), Overdispersion · first seen 2026-09-18*
 
 **Entropy `H`** — how much you don't know, measured in **bits**. 1 bit = one perfect yes/no answer's worth.
 *1225 equally likely possibilities = 10.3 bits of ignorance.*

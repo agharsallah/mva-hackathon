@@ -29,10 +29,10 @@
   ],
   "counts": {
     "chapters": 23,
-    "entries": 587,
+    "entries": 592,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 158
+    "contexts": 167
   },
   "chapters": [
     {
@@ -3866,18 +3866,33 @@
           "slug": "beta-binomial",
           "term": "Beta-binomial",
           "aliases": [],
-          "html": "<p>a binomial that allows extra sloppiness (real sequencing is noisier than a perfect coin).</p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "html": "<p>a binomial that allows extra sloppiness (real sequencing is noisier than a perfect coin). One extra parameter, <strong>ρ</strong> (rho, the <em>intra-class correlation</em>), widens it: at ρ = 0 it is exactly binomial, and the variance is the binomial's multiplied by <code>1 + (n − 1)·ρ</code>.</p>",
+          "exampleHtml": "<p><em>Example:</em> the child's autosomes fit ρ = 0.0162 pooled; per chromosome it runs from 0.0057 on chr5 to 0.067 on chr21 — twelvefold, which is why one shared value cannot serve as a null for every contig.</p>",
+          "context": "<p>the null every allele-balance test in step 8 is scored against</p>",
+          "source": "src/mva/mosaic/betabinom.py",
+          "related": [
+            "overdispersion",
+            "b-deviation-bdev",
+            "baf-b-allele-frequency",
+            "detection-limit"
+          ],
+          "firstSeen": "2026-09-18"
         },
         {
           "kind": "entry",
           "slug": "overdispersion",
           "term": "Overdispersion",
           "aliases": [],
-          "html": "<p>the data varies more than the simple model expects.</p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "html": "<p>the data varies more than the simple model expects. Counting reads is not coin-flipping: capture bias, GC content, PCR duplicates and one allele mapping better than the other all widen the spread, so a model that assumes a clean coin calls ordinary noise significant.</p>",
+          "exampleHtml": "<p><em>Example:</em> read depth in this callset has a variance-to-mean ratio of 5.09 — five times a Poisson process — and allele balance is wider than binomial by ρ = 0.0162.</p>",
+          "context": "<p>measured in this repository rather than assumed, in two places</p>",
+          "source": "src/mva/mosaic/betabinom.py",
+          "related": [
+            "beta-binomial",
+            "poisson-negative-binomial",
+            "b-deviation-bdev"
+          ],
+          "firstSeen": "2026-09-18"
         },
         {
           "kind": "entry",
@@ -3908,9 +3923,16 @@
           "slug": "power",
           "term": "Power",
           "aliases": [],
-          "html": "<p>the chance your test would actually detect a real effect. <em>At 30× depth, power to spot a 10% mosaic variant at one site is poor — so restrict the search to one gene.</em></p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "html": "<p>the chance your test would actually detect a real effect. A negative result without it is not a result: \"we looked and saw nothing\" only means something once the sentence finishes with \"and we would have seen anything above <em>this</em>\".</p>",
+          "exampleHtml": "<p><em>Example:</em> at 30× depth, power to spot a 10% mosaic variant at one site is poor — so restrict the search to one gene. Across a whole chromosome it is a different question, and there the fold-over statistic reaches 80% power at 2–3% of cells while the mean B-allele fraction never reaches it at all.</p>",
+          "context": "<p>the pair (result, detection limit) is the unit step 8 reports</p>",
+          "source": "src/mva/mosaic/simulate.py",
+          "related": [
+            "detection-limit",
+            "null-hypothesis-h0",
+            "b-deviation-bdev"
+          ],
+          "firstSeen": "2026-09-18"
         },
         {
           "kind": "entry",
@@ -3981,8 +4003,108 @@
             "B-allele frequency"
           ],
           "html": "<p>at het positions, the fraction of reads from one parent's copy. Should sit at 0.5. Deviation reveals copy-number change, and it's MORE sensitive than depth.</p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "exampleHtml": "<p><em>Example:</em> pooled over this child's autosomes the BAF averages <strong>0.4930</strong>, not 0.5000 — reads carrying the reference allele map slightly more readily, so the centre a deviation is measured from has to be the measured one and never the nominal half.</p>",
+          "context": "<p>reduced to (chromosome, arm, k alternate of n reads) counts, which is everything a model of allele balance needs and carries no genomic position</p>",
+          "source": "src/mva/warehouse/analysis_it2_mosaic.py",
+          "related": [
+            "b-deviation-bdev",
+            "beta-binomial",
+            "mosaic-fraction"
+          ],
+          "firstSeen": "2026-08-29"
+        },
+        {
+          "kind": "entry",
+          "slug": "b-deviation-bdev",
+          "term": "B-deviation (Bdev)",
+          "aliases": [
+            "B-deviation",
+            "Bdev"
+          ],
+          "html": "<p>the distance of a site's BAF from the centre, <code>|BAF − centre|</code>, <strong>averaged after taking the distance and not before</strong>. That ordering is the whole idea: a mosaic gain splits heterozygous sites into two bands symmetric about the centre, so their plain average does not move at all, while folding the two bands onto each other before averaging makes the statistic grow from the first affected cell.</p>",
+          "exampleHtml": "<p><em>Example:</em> chr21 shows Bdev 0.1003 against a null of 0.0780 — but its own overdispersion is 4× the genome's, so the excess is repeat content rather than mosaicism, which is why the fitted ρ is printed in the same table.</p>",
+          "context": "<p>step 8's re-test of the flat karyogram, which used the plain average and therefore had no power</p>",
+          "source": "src/mva/mosaic/bdev.py",
+          "related": [
+            "baf-b-allele-frequency",
+            "power",
+            "detection-limit",
+            "mosaic-fraction"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/docs/step-0/methodology/037-baf-karyogram.md"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "detection-limit",
+          "term": "Detection limit",
+          "aliases": [],
+          "html": "<p>the smallest real effect a test would have found, at a stated chance of finding it. Written as one number with its power attached: <em>detects a mosaic present in 3% of cells, 8 times in 10</em>.</p>",
+          "exampleHtml": "<p><em>Example:</em> every autosome in this sample detects at 2–3% of cells; X and Y only at 5%, and they carry almost no heterozygous calls to begin with. Quoting \"no mosaic aneuploidy detected\" without those numbers would repeat the mistake step 8 exists to correct.</p>",
+          "context": "<p>simulated from each arm's own depths, then read off its power curve</p>",
+          "source": "src/mva/mosaic/simulate.py",
+          "related": [
+            "power",
+            "b-deviation-bdev",
+            "mosaic-fraction"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "mosaic-fraction",
+          "term": "Mosaic fraction",
+          "aliases": [],
+          "html": "<p>what share of the sampled cells carry the event. Not a severity score and not a diagnosis: it describes the tube that was sequenced.</p>",
+          "exampleHtml": "<p><em>Example:</em> a 10% mosaic trisomy shifts a chromosome's read depth by 5% and splits its heterozygous sites into bands 4.8 percentage points either side of the centre — both small, which is why the estimate needs its interval.</p>",
+          "context": "<p>estimated two ways in step 8, and they disagree informatively — the published band estimator reads 0.30–0.44 on a balanced contig at this depth, so it is reported with its own null subtracted, while the likelihood fit recovers an injected fraction to within 0.002</p>",
+          "source": "src/mva/mosaic/bdev.py",
+          "related": [
+            "mosaic-aneuploidy",
+            "detection-limit",
+            "copy-neutral-loss-of-heterozygosity-cn-loh"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "copy-neutral-loss-of-heterozygosity-cn-loh",
+          "term": "Copy-neutral loss of heterozygosity (CN-LOH)",
+          "aliases": [
+            "Copy-neutral loss of heterozygosity",
+            "CN-LOH"
+          ],
+          "html": "<p>one chromosome copy is replaced by a duplicate of the other. The cell still has two copies, so read depth does not move, but the two parental versions are no longer both present — heterozygous sites turn homozygous, or shift their balance exactly as a gain would.</p>",
+          "exampleHtml": "<p><em>Example:</em> at 5% of cells a CN-LOH and a mitotic trisomy produce the same allele-fraction bands and differ only in depth, by 2.5% — inside ordinary GC variation between chromosomes, so the two cannot be told apart at that fraction and the pairwise margin is printed rather than a call.</p>",
+          "context": "<p>one of the five per-chromosome models step 8 compares</p>",
+          "source": "src/mva/mosaic/models.py",
+          "related": [
+            "mosaic-aneuploidy",
+            "baf-b-allele-frequency",
+            "bic-bayesian-information-criterion"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "bic-bayesian-information-criterion",
+          "term": "BIC (Bayesian information criterion)",
+          "aliases": [
+            "BIC",
+            "Bayesian information criterion"
+          ],
+          "html": "<p>a score for comparing models that fit the same data with different numbers of knobs: <code>−2 × log-likelihood + k × log N</code>. Lower wins. The second term is the fine for each extra knob and it grows with the amount of data, so on a big dataset a model has to earn its complexity.</p>",
+          "exampleHtml": "<p><em>Example:</em> Kong 2018 calls a margin (ΔBIC) under <strong>10</strong> low-confidence, and that threshold is adopted here as written. Two of step 8's five models are <em>nested</em> — meiotic trisomy is mitotic trisomy plus one extra component — so when the extra component buys nothing the margin is exactly one penalty and the pair can never clear 10. A trisomy is therefore led but never confidently called.</p>",
+          "context": "<p>only parameters fitted per chromosome are counted in k, because a comparison is meaningless unless every model counts the same way</p>",
+          "source": "src/mva/mosaic/madseq.py",
+          "related": [
+            "likelihood",
+            "copy-neutral-loss-of-heterozygosity-cn-loh",
+            "overdispersion"
+          ],
+          "firstSeen": "2026-09-18"
         },
         {
           "kind": "entry",

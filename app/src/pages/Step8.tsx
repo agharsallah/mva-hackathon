@@ -65,7 +65,7 @@ export default function Step8Page() {
           },
           {
             term: 'copy-neutral loss of heterozygosity',
-            dict: 'copy-neutral-loss-of-heterozygosity',
+            dict: 'copy-neutral-loss-of-heterozygosity-cn-loh',
             plain:
               'One copy replaced by a duplicate of the other. The allele balance shifts exactly as a gain would; only the read depth says which happened.',
           },
