@@ -92,7 +92,6 @@ def stage_bdev(sample: common.Sample, *, draws: int) -> dict[str, Any]:
                 histogram,
                 around=sample.centre,
                 rho=sample.rho,
-                draws=draws,
                 seed=common.SEED + index,
             ).as_dict()
         )

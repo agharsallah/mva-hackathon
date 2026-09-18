@@ -54,6 +54,7 @@ from . import betabinom, moments
 from .tables import AlleleHistogram
 
 __all__ = [
+    "DANFIP_DRAWS",
     "MIN_SITES",
     "Bdev",
     "Danfip",
@@ -290,12 +291,16 @@ def _upper_mean(baf: np.ndarray, weights: np.ndarray, around: float) -> float:
     return float(np.average(baf[upper], weights=weights[upper]))
 
 
+#: Null draws for the fraction estimator. Independent of the Bdev null, which is computed.
+DANFIP_DRAWS = 200
+
+
 def danfip(
     histogram: AlleleHistogram,
     *,
     around: float,
     rho: float,
-    draws: int = 200,
+    draws: int = DANFIP_DRAWS,
     seed: int = 0,
 ) -> Danfip:
     """Estimate the mosaic fraction from the upper band, and measure the estimator's bias.
@@ -311,6 +316,12 @@ def danfip(
 
     raw = _fraction(_upper_mean(histogram.baf, histogram.sites, around))
 
+    # This one is still drawn, and stays drawn. The estimator is a *conditional* mean --
+    # the average of the sites above the centre -- so its null is a ratio of two random
+    # quantities rather than an average, and the closed form that serves every other
+    # statistic here does not extend to it without a delta-method approximation that would
+    # be harder to check than 200 draws. It runs once per contig, not once per grid point.
+    draws = max(draws, 1)
     rng = np.random.default_rng(seed)
     ones = np.ones_like(depths, dtype=float)
     null = np.empty(draws, dtype=float)
