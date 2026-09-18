@@ -87,28 +87,17 @@ __all__ = [
     "DELTA_BIC",
     "FRACTION_BOUNDS",
     "ModelFit",
-    "Verdict",
-    "best",
     "fit_model",
     "fit_models",
 ]
 
-#: Kong 2018's own low-confidence threshold, adopted as written.
+#: Kong 2018's own low-confidence threshold, adopted as written. Applied in
+#: :mod:`mva.mosaic.verdict`, which is where every rule about reading a ranking lives.
 DELTA_BIC = 10.0
 
-#: How close to its lower bound the over-dispersion must sit to count as collapsed. Ten
-#: times the bound: a real fit never approaches it, because real allele balance is
-#: over-dispersed and rho is what says so.
-DEGENERATE_RHO_FACTOR = 10.0
-
-#: The widest balanced tract the fit may use. It is a bound, so a fit that reaches it is
-#: reporting "as much as you let me" rather than a measurement.
+#: The widest balanced tract a fit may use. A bound rather than a prior: a fit that reaches
+#: it is reporting "as much as you let me", which :mod:`mva.mosaic.verdict` refuses.
 TRACT_BOUND = 0.9
-
-#: How close to a bound counts as being at it. One per cent: tight enough that a genuine
-#: estimate near the edge is not condemned, loose enough that the optimiser stopping a
-#: rounding error short of the bound is still caught.
-BOUND_MARGIN = 0.01
 
 #: A mosaic fraction below 0.5 %% is not distinguishable from noise at any realistic depth,
 #: and above 0.9 the sample is not mosaic but constitutional -- which is a different claim
@@ -297,114 +286,4 @@ def fit_models(
             depth_spread=depth_spread,
         )
         for model in models.MODELS
-    )
-
-
-@dataclass(frozen=True)
-class Verdict:
-    """Which model won, by how much, and whether that margin means anything."""
-
-    chrom: str
-    best: str
-    runner_up: str
-    delta_bic: float
-    fraction: float
-    #: mitotic trisomy against copy-neutral LOH specifically -- the pair that differs only
-    #: by depth, and the one a reader must be able to check on its own
-    trisomy_vs_cnloh: float
-    confident: bool
-    #: the noise share the ``normal`` model needed -- this contig's honest tail burden
-    noise_share: float = 0.0
-    #: the leading fit's own parameters, so a reader can see whether any of them is pinned
-    #: against a bound -- which is what separates a mechanism from a density estimator
-    #: wearing one's name
-    leader_rho: float = float("nan")
-    leader_tract: float = 0.0
-    leader_noise: float = 0.0
-
-    @property
-    def measurable(self) -> bool:
-        """False when the tails swallow the contig: no band structure survives underneath."""
-        return self.noise_share <= models.NOISE_CEILING
-
-    @property
-    def degenerate(self) -> bool:
-        """True when a parameter of the winning fit is pinned against its own bound.
-
-        A boundary solution is not an estimate: the optimiser was pushed as far as the
-        parameterisation allows and stopped there, which says the shape the data wants is
-        outside the family rather than inside it at that value. Only parameters the winning
-        model actually fits are checked — ``normal`` has no tract and no fraction to pin.
-        """
-        model = models.by_name(self.best)
-        if not np.isfinite(self.leader_rho):
-            return False
-        if self.leader_rho <= betabinom.RHO_BOUNDS[0] * DEGENERATE_RHO_FACTOR:
-            return True
-        # The noise share is checked at its *upper* end only. Zero is the right answer for
-        # data with no tails -- every simulated arm in the test suite fits it -- and
-        # condemning that would flag a correct fit on clean data. A large share is caught by
-        # NOISE_CEILING instead, one property up.
-        if self.leader_noise >= 0.5 * (1.0 - BOUND_MARGIN):
-            return True
-        if model.has_tract and self.leader_tract >= TRACT_BOUND * (1.0 - BOUND_MARGIN):
-            return True
-        return bool(
-            model.has_fraction
-            and (
-                self.fraction <= FRACTION_BOUNDS[0] * (1.0 + BOUND_MARGIN)
-                or self.fraction >= FRACTION_BOUNDS[1] * (1.0 - BOUND_MARGIN)
-            )
-        )
-
-    @property
-    def call(self) -> str:
-        """The model name, or the honest refusal. Never the ranking on its own."""
-        if not self.measurable:
-            return "not measurable"
-        if self.degenerate:
-            return "model family not usable"
-        return self.best if self.confident else "not distinguishable"
-
-    def as_dict(self) -> dict[str, object]:
-        return {
-            "chrom": self.chrom,
-            "call": self.call,
-            "best": self.best,
-            "runner_up": self.runner_up,
-            "delta_bic": round(self.delta_bic, 2),
-            "fraction": round(self.fraction, 5),
-            "trisomy_vs_cnloh": round(self.trisomy_vs_cnloh, 2),
-            "confident": self.confident,
-            "noise_share": round(self.noise_share, 5),
-            "measurable": self.measurable,
-            "degenerate": self.degenerate,
-            "leader_rho": round(self.leader_rho, 6),
-            "leader_tract": round(self.leader_tract, 4),
-            "leader_noise": round(self.leader_noise, 5),
-        }
-
-
-def best(fits: tuple[ModelFit, ...], *, delta: float = DELTA_BIC) -> Verdict:
-    """Rank five fits by BIC and apply Kong's low-confidence rule."""
-    ranked = sorted(fits, key=lambda fit: fit.bic)
-    leader, second = ranked[0], ranked[1]
-    by_name = {fit.model: fit for fit in fits}
-    pair = by_name["cnloh"].bic - by_name["mitotic_trisomy"].bic
-    # The gate reads ``normal``'s noise share, not the leader's: a degenerate fit can hide
-    # the tails inside its extra bands and report almost none, which is exactly the failure
-    # the gate exists to catch.
-    tails = by_name["normal"].noise_share
-    return Verdict(
-        chrom=leader.chrom,
-        best=leader.model,
-        runner_up=second.model,
-        delta_bic=second.bic - leader.bic,
-        fraction=leader.fraction,
-        trisomy_vs_cnloh=pair,
-        confident=(second.bic - leader.bic) >= delta,
-        noise_share=tails,
-        leader_rho=leader.rho,
-        leader_tract=leader.tract,
-        leader_noise=leader.noise_share,
     )

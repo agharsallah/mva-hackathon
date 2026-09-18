@@ -23,6 +23,7 @@ import numpy as np
 
 import it2_step8_common as common
 from mva.mosaic import arms, baseline, bdev, madseq, simulate, variegated
+from mva.mosaic import verdict as verdict_module
 
 #: The fractions the multi-chromosome designs inject at, and how many contigs at once.
 MULTI_FRACTIONS = (0.05, 0.10, 0.20)
@@ -160,7 +161,7 @@ def stage_models(
             depth_spread=depth_spread,
         )
         fits.extend(fit.as_dict() for fit in fitted)
-        verdict = madseq.best(fitted)
+        verdict = verdict_module.best(fitted)
         verdicts.append(verdict.as_dict())
         # Per contig, because this stage is the slow one -- five nested fits over tens of
         # thousands of rows each -- and a run with no output is a run nobody can tell from
@@ -186,7 +187,7 @@ def stage_verdicts(analysis: dict[str, Any]) -> dict[str, Any]:
     output changed twice after it had run — once for the noise gate, once for the degeneracy
     one. Re-fitting to apply a new rule would be re-measuring to re-interpret, which is the
     thing an append-only record exists to prevent. This reads ``models.fits``, rebuilds the
-    fits and asks :func:`mva.mosaic.madseq.best` again.
+    fits and asks :func:`mva.mosaic.verdict.best` again.
     """
     stored = (analysis.get("models") or {}).get("fits") or []
     if not stored:
@@ -209,7 +210,7 @@ def stage_verdicts(analysis: dict[str, Any]) -> dict[str, Any]:
                 observations=int(row["observations"]),
             )
         )
-    verdicts = [madseq.best(tuple(fits)).as_dict() for fits in by_chrom.values()]
+    verdicts = [verdict_module.best(tuple(fits)).as_dict() for fits in by_chrom.values()]
     analysis["models"]["verdicts"] = verdicts
     return analysis["models"]
 

@@ -13,7 +13,8 @@ Four things live here and nothing else does:
 ``bdev``       the fold-over B-deviation statistic and the DANFIP fraction estimate
 ``models``     the five per-chromosome models, as data
 ``likelihood`` what each model says about the data: the allele mixture and the depth term
-``madseq``     fitting those five and choosing between them by BIC
+``madseq``     fitting those five, and ranking them by BIC
+``verdict``    what that ranking is allowed to say -- and the three ways it is refused
 ``moments``    the null distribution of a folded mean, computed rather than sampled
 ``simulate``   detection limits: how small an event each arm could have shown
 ``variegated`` several chromosomes abnormal at once, which is what the disease name means

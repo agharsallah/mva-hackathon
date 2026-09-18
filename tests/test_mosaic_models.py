@@ -28,6 +28,7 @@ import pytest
 
 from mosaic_synthetic import CENTRE, DEPTH, RHO, arm, depths
 from mva.mosaic import madseq, models
+from mva.mosaic import verdict as verdict_module
 
 SITES = 8_000
 
@@ -73,26 +74,26 @@ class TestBands:
 
 class TestCalls:
     def test_a_balanced_chromosome_leads_with_normal(self):
-        assert madseq.best(fit("normal", 0.0)).best == "normal"
+        assert verdict_module.best(fit("normal", 0.0)).best == "normal"
 
     def test_a_mitotic_trisomy_leads_with_one(self):
-        assert madseq.best(fit("mitotic_trisomy", 0.20)).best == "mitotic_trisomy"
+        assert verdict_module.best(fit("mitotic_trisomy", 0.20)).best == "mitotic_trisomy"
 
     def test_copy_neutral_loh_is_called_outright(self):
         """It beats the trisomy that shares its bands on depth, which is a real margin."""
-        verdict = madseq.best(fit("cnloh", 0.20))
+        verdict = verdict_module.best(fit("cnloh", 0.20))
         assert verdict.call == "cnloh"
         assert verdict.confident
 
     def test_a_monosomy_is_called_outright(self):
-        verdict = madseq.best(fit("monosomy", 0.20))
+        verdict = verdict_module.best(fit("monosomy", 0.20))
         assert verdict.call == "monosomy"
         assert verdict.confident
 
     def test_the_fitted_fraction_recovers_what_was_injected_where_it_is_identifiable(self):
         """Unlike the published band estimator, the likelihood fit is not compressed."""
         for fraction in (0.20, 0.30):
-            verdict = madseq.best(fit("mitotic_trisomy", fraction))
+            verdict = verdict_module.best(fit("mitotic_trisomy", fraction))
             assert verdict.fraction == pytest.approx(fraction, abs=0.02)
 
 
@@ -101,7 +102,7 @@ class TestTheIdentifiabilityFloor:
 
     @pytest.mark.parametrize("model", ["mitotic_trisomy", "cnloh", "monosomy"])
     def test_a_ten_per_cent_event_is_absorbed_by_normal(self, model):
-        assert madseq.best(fit(model, 0.10)).best == "normal"
+        assert verdict_module.best(fit(model, 0.10)).best == "normal"
 
     def test_and_the_absorbing_fit_reports_a_wider_spread_than_the_truth(self):
         """The mechanism of the absorption, so a reader can check it rather than trust it."""
@@ -116,7 +117,7 @@ class TestWhatCannotBeSeparated:
 
     @pytest.mark.parametrize("fraction", [0.20, 0.30])
     def test_meiotic_is_never_separated_from_mitotic_at_kongs_threshold(self, fraction):
-        verdict = madseq.best(fit("meiotic_trisomy", fraction, tract=0.5))
+        verdict = verdict_module.best(fit("meiotic_trisomy", fraction, tract=0.5))
         assert verdict.best in {"mitotic_trisomy", "meiotic_trisomy"}
         assert not verdict.confident
 
@@ -131,7 +132,7 @@ class TestWhatCannotBeSeparated:
         """Nested models bound the margin below by one BIC penalty, so "confident" is
         unreachable for the pair by construction -- and the page must say "leading" rather
         than "called"."""
-        verdict = madseq.best(fit("mitotic_trisomy", 0.30))
+        verdict = verdict_module.best(fit("mitotic_trisomy", 0.30))
         assert verdict.best == "mitotic_trisomy"
         assert not verdict.confident
         assert verdict.call == "not distinguishable"
@@ -139,14 +140,14 @@ class TestWhatCannotBeSeparated:
     def test_the_trisomy_versus_cnloh_margin_is_reported_on_its_own(self):
         """They share their bands and differ only in depth, so a reader must see that
         number without having to subtract two BICs from a table."""
-        verdict = madseq.best(fit("mitotic_trisomy", 0.20))
+        verdict = verdict_module.best(fit("mitotic_trisomy", 0.20))
         assert verdict.trisomy_vs_cnloh > 0
         assert "trisomy_vs_cnloh" in verdict.as_dict()
 
 
 class TestTheLowConfidenceRule:
     def test_a_margin_under_ten_is_not_a_call(self):
-        verdict = madseq.best(fit("normal", 0.0), delta=1e9)
+        verdict = verdict_module.best(fit("normal", 0.0), delta=1e9)
         assert verdict.call == "not distinguishable"
         assert not verdict.confident
 
@@ -158,10 +159,10 @@ class TestTheNoiseComponent:
     """Without it the richest model wins everywhere. With it the comparison is about bands."""
 
     def test_a_clean_arm_needs_almost_no_noise(self):
-        assert madseq.best(fit("normal", 0.0)).noise_share < 0.02
+        assert verdict_module.best(fit("normal", 0.0)).noise_share < 0.02
 
     def test_an_arm_whose_tails_swallow_it_is_not_measurable(self):
-        verdict = madseq.Verdict(
+        verdict = verdict_module.Verdict(
             chrom="21",
             best="meiotic_trisomy",
             runner_up="normal",
