@@ -1,0 +1,28 @@
+{
+  "key": "primekg",
+  "name": "PrimeKG",
+  "version": "PrimeKG v1 (Harvard Dataverse)",
+  "tier": 2,
+  "input_class": "disease-node",
+  "source": "table",
+  "adapter": "duckdb_lookup",
+  "params": {
+    "key": [
+      "relation",
+      "x_index",
+      "y_index"
+    ],
+    "url": "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IXA7BM",
+    "sha256": "",
+    "layout": "csv"
+  },
+  "licence": "MIT",
+  "licence_url": "https://github.com/mims-harvard/PrimeKG",
+  "non_commercial": false,
+  "catalogue_adjacent": false,
+  "pmid": "36732524",
+  "scope": "opt-b",
+  "enabled": false,
+  "ships": "fetch script + digest, never the score file",
+  "notes": "Track 2's graph, listed for roster completeness only. It is fetched by the track2 lane\n(`mva.drugs`, plan step 7), NOT by `tools/fetch_zoo_tables.py` — do not fetch it twice. It\nscores a disease node against drugs, not an allele, so it never enters the variant ranking."
+}

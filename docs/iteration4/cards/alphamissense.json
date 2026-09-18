@@ -1,0 +1,25 @@
+{
+  "key": "alphamissense",
+  "name": "AlphaMissense",
+  "version": "AlphaMissense hg38 2023",
+  "tier": 1,
+  "input_class": "missense",
+  "source": "warehouse-column",
+  "adapter": "warehouse_column",
+  "params": {
+    "table": "it2_insilico_annotations",
+    "column": "am_pathogenicity",
+    "aux": [
+      "am_class"
+    ]
+  },
+  "licence": "CC-BY-NC-SA-4.0",
+  "licence_url": "https://zenodo.org/records/8208688",
+  "non_commercial": true,
+  "catalogue_adjacent": false,
+  "pmid": "37733863",
+  "scope": "mvp",
+  "enabled": true,
+  "ships": "nothing to fetch — the score is already a warehouse column",
+  "notes": "Already in the warehouse: iteration 2 ran the VEP AlphaMissense plugin, so this lane is a\ncolumn read and needs no download. 10,601 of 38,087 annotated alleles carry a score — that\nis the missense share of a coding callset, not a failure. Coverage is measured against the\nmissense records only (plan P4-3, target >= 90%). Failure mode: a record whose consequence\nis missense but whose row predates the iteration-2 annotation pass reads null."
+}

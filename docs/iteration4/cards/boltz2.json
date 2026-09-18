@@ -1,0 +1,26 @@
+{
+  "key": "boltz2",
+  "name": "Boltz-2",
+  "version": "boltz-2 (tag recorded at fetch)",
+  "tier": 3,
+  "input_class": "structure",
+  "source": "modal",
+  "adapter": "modal",
+  "params": {
+    "image": "boltz2",
+    "gpu": "A100",
+    "needs": [
+      "protein_window_ref",
+      "protein_window_alt"
+    ]
+  },
+  "licence": "MIT",
+  "licence_url": "https://github.com/jwohlwend/boltz",
+  "non_commercial": false,
+  "catalogue_adjacent": false,
+  "pmid": "",
+  "scope": "opt-b",
+  "enabled": false,
+  "ships": "no weights — the remote image pulls them; digest and venue recorded per run",
+  "notes": "Not a scorer: it folds wild-type and mutant BubR1 and the deliverable is the picture plus the\nconfidence delta. Kept in the registry so the figure carries the same provenance row every\nscore carries. PMID unverified (bioRxiv 10.1101/2025.06.14.659707, from memory) — check by\nCrossref before citing."
+}

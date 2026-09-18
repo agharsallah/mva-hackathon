@@ -1,0 +1,23 @@
+{
+  "key": "clinpred",
+  "name": "ClinPred",
+  "version": "ClinPred via VEP REST",
+  "tier": 1,
+  "input_class": "missense",
+  "source": "vep-rest",
+  "adapter": "vep_rest",
+  "params": {
+    "plugin": "ClinPred",
+    "endpoint": "https://rest.ensembl.org/vep/human/hgvs",
+    "batch": 200
+  },
+  "licence": "ClinPred academic use — verify on fetch",
+  "licence_url": "https://sites.google.com/site/clinpred/",
+  "non_commercial": true,
+  "catalogue_adjacent": true,
+  "pmid": "30220433",
+  "scope": "opt-a",
+  "enabled": false,
+  "ships": "no file — scores are fetched per allele from the public REST service",
+  "notes": "Third adjacent opinion. Listed in the REST docs as a boolean plugin parameter; same HTTP-500\nrisk as CADD — the plugin data may not be installed on the public endpoint. Verify on fetch."
+}

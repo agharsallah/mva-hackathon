@@ -1,0 +1,27 @@
+{
+  "key": "eve",
+  "name": "EVE",
+  "version": "EVE precomputed scores (v1, ~3k genes)",
+  "tier": 1,
+  "input_class": "missense",
+  "source": "table",
+  "adapter": "duckdb_lookup",
+  "params": {
+    "key": [
+      "uniprot",
+      "hgvs_p"
+    ],
+    "url": "https://evemodel.org/download/bulk",
+    "sha256": "",
+    "layout": "csv-zip"
+  },
+  "licence": "MIT — verify on fetch",
+  "licence_url": "https://evemodel.org/",
+  "non_commercial": false,
+  "catalogue_adjacent": false,
+  "pmid": "",
+  "scope": "opt-b",
+  "enabled": false,
+  "ships": "fetch script + digest, never the score file",
+  "notes": "Kept on the roster because its *coverage* is the finding: EVE published models for roughly\n3,000 genes, so a predicted < 30% coverage of the callset's missense alleles is the named\nexception in claim P4-3. No verified PMID in plan §11 (Frazer 2021) — cite only after the\nCrossref/E-utilities check. URL and licence verify on fetch."
+}

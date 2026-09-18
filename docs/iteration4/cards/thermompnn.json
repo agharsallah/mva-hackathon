@@ -1,0 +1,24 @@
+{
+  "key": "thermompnn",
+  "name": "ThermoMPNN",
+  "version": "ThermoMPNN (local, CPU)",
+  "tier": 2,
+  "input_class": "structure",
+  "source": "local-process",
+  "adapter": "local_process",
+  "params": {
+    "entrypoint": "thermompnn",
+    "needs": [
+      "structure"
+    ]
+  },
+  "licence": "MIT — verify on fetch",
+  "licence_url": "https://github.com/Kuhlman-Lab/ThermoMPNN",
+  "non_commercial": false,
+  "catalogue_adjacent": false,
+  "pmid": "38285937",
+  "scope": "opt-b",
+  "enabled": false,
+  "ships": "no weights — the model's own installer fetches them; digest per run",
+  "notes": "Second ΔΔG opinion beside RaSP; same role, same one-protein scope."
+}

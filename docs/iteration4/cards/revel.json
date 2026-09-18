@@ -1,0 +1,23 @@
+{
+  "key": "revel",
+  "name": "REVEL",
+  "version": "REVEL 1.3 via VEP REST",
+  "tier": 1,
+  "input_class": "missense",
+  "source": "vep-rest",
+  "adapter": "vep_rest",
+  "params": {
+    "plugin": "REVEL",
+    "endpoint": "https://rest.ensembl.org/vep/human/hgvs",
+    "batch": 200
+  },
+  "licence": "REVEL non-commercial (free for non-commercial use; other uses by arrangement)",
+  "licence_url": "https://sites.google.com/site/revelgenomics/",
+  "non_commercial": true,
+  "catalogue_adjacent": true,
+  "pmid": "27666373",
+  "scope": "mvp",
+  "enabled": true,
+  "ships": "no file — scores are fetched per allele from the public REST service",
+  "notes": "The catalogue-adjacent lane, and the reason the merge is always printed twice (with and\nwithout adjacent lanes). REVEL is an ensemble trained on catalogued pathogenic/benign sets,\nso it has seen labels the other three have not.\nPlugin flag verified 2026-09-18 against the Ensembl REST docs for `/vep/human/hgvs`\n(https://rest.ensembl.org/documentation/info/vep_hgvs_get): the parameter is spelled `REVEL`\nand is boolean (`REVEL=1`). Tier 1 because REST serves a precomputed table; it is the source\nthat is remote, not the computation.\nFailure modes: REST rate limits (batch of 200 per POST, retry on 429); a record with no HGVS\nspelling cannot be asked at all."
+}

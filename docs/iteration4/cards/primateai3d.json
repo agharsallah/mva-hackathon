@@ -1,0 +1,29 @@
+{
+  "key": "primateai3d",
+  "name": "PrimateAI-3D",
+  "version": "PrimateAI-3D hg38 precomputed scores",
+  "tier": 1,
+  "input_class": "missense",
+  "source": "table",
+  "adapter": "duckdb_lookup",
+  "params": {
+    "key": [
+      "chrom",
+      "pos",
+      "ref",
+      "alt"
+    ],
+    "url": "https://primad.basespace.illumina.com/download",
+    "sha256": "",
+    "layout": "tsv"
+  },
+  "licence": "Illumina academic/non-commercial, registration required — verify on fetch",
+  "licence_url": "https://primad.basespace.illumina.com/download",
+  "non_commercial": true,
+  "catalogue_adjacent": false,
+  "pmid": "37262156",
+  "scope": "opt-a",
+  "enabled": false,
+  "ships": "fetch script + digest, never the score file",
+  "notes": "Structure-aware missense lane, the closest independent rival to AlphaMissense. The download\nis behind an Illumina BaseSpace registration page rather than a plain URL, so `--fetch` will\nnot work unattended — a human accepts the terms and drops the file in\n`build/it4/tables/primateai3d/`; the script then digests and converts it. Verify on fetch."
+}

@@ -1,0 +1,23 @@
+{
+  "key": "cadd",
+  "name": "CADD v1.7",
+  "version": "CADD v1.7 via VEP REST",
+  "tier": 1,
+  "input_class": "any",
+  "source": "vep-rest",
+  "adapter": "vep_rest",
+  "params": {
+    "plugin": "CADD",
+    "endpoint": "https://rest.ensembl.org/vep/human/hgvs",
+    "batch": 200
+  },
+  "licence": "CADD non-commercial (free for academic use, licence required otherwise)",
+  "licence_url": "https://cadd.gs.washington.edu/download",
+  "non_commercial": true,
+  "catalogue_adjacent": true,
+  "pmid": "38183205",
+  "scope": "mvp",
+  "enabled": false,
+  "ships": "no file — scores are fetched per allele from the public REST service",
+  "notes": "The alternate for the catalogue-adjacent lane (plan open question O5), kept off.\nEnsembl's REST docs list a `CADD` parameter (values snv | indels | snv_indels | sv | 1), but\nthe public REST service answered HTTP 500 for it in iteration 2 (entry 098) — the plugin data\nfile is not installed on the public endpoint. REVEL carries the lane instead. Re-enable only\nif a run shows the endpoint answering; the disagreement between REVEL and CADD would be a\nfree second adjacent opinion."
+}

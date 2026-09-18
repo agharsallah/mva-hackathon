@@ -1,0 +1,25 @@
+{
+  "key": "pangolin",
+  "name": "Pangolin",
+  "version": "Pangolin (local, CPU)",
+  "tier": 2,
+  "input_class": "splice",
+  "source": "local-process",
+  "adapter": "local_process",
+  "params": {
+    "entrypoint": "pangolin",
+    "needs": [
+      "dna_window_ref",
+      "dna_window_alt"
+    ]
+  },
+  "licence": "Apache-2.0 — verify on fetch",
+  "licence_url": "https://github.com/tkzeng/Pangolin",
+  "non_commercial": false,
+  "catalogue_adjacent": false,
+  "pmid": "35449021",
+  "scope": "opt-a",
+  "enabled": false,
+  "ships": "no weights — the model's own installer fetches them; digest per run",
+  "notes": "Second splice opinion, run locally rather than looked up — the point is an independent splice\nmodel to disagree with SpliceAI. Needs the DNA windows step 1 leaves optional in the MVP."
+}

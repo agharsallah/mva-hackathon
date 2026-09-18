@@ -1,0 +1,26 @@
+{
+  "key": "esmc",
+  "name": "ESM-C 600M",
+  "version": "esmc_600m (github.com/evolutionaryscale/esm, tag recorded at fetch)",
+  "tier": 3,
+  "input_class": "missense",
+  "source": "modal",
+  "adapter": "modal",
+  "params": {
+    "image": "esmc",
+    "gpu": "any",
+    "needs": [
+      "protein_window_ref",
+      "protein_window_alt"
+    ]
+  },
+  "licence": "EvolutionaryScale Cambrian non-commercial licence",
+  "licence_url": "https://www.evolutionaryscale.ai/policies/cambrian-non-commercial-license-agreement",
+  "non_commercial": true,
+  "catalogue_adjacent": false,
+  "pmid": "",
+  "scope": "opt-b",
+  "enabled": false,
+  "ships": "no weights — the remote image pulls them; digest and venue recorded per run",
+  "notes": "Newer protein language model than ESM2; its value is the agreement figure against ESM1b and\nESM2, not a new number. Technical release, no paper — record the repository tag and the\nweights digest at fetch instead of a PMID."
+}

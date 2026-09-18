@@ -1,0 +1,25 @@
+{
+  "key": "esm2",
+  "name": "ESM2 650M",
+  "version": "esm2_t33_650M_UR50D",
+  "tier": 2,
+  "input_class": "missense",
+  "source": "local-process",
+  "adapter": "local_process",
+  "params": {
+    "entrypoint": "esm2",
+    "needs": [
+      "protein_window_ref",
+      "protein_window_alt"
+    ]
+  },
+  "licence": "MIT",
+  "licence_url": "https://github.com/facebookresearch/esm",
+  "non_commercial": false,
+  "catalogue_adjacent": false,
+  "pmid": "36927031",
+  "scope": "opt-a",
+  "enabled": false,
+  "ships": "no weights — the model's own installer fetches them; digest per run",
+  "notes": "The first genuinely zero-shot lane: nothing is looked up, the model scores the substitution\nfrom sequence alone. Laptop CPU, hours for the callset's missense set. Needs the protein\nwindows, which the MVP record does not build."
+}
