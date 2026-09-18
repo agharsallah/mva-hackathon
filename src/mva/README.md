@@ -1,7 +1,8 @@
 # `src/mva` — package index
 
 **Standing:** 2026-09-06 — verified against source at commit `274624d`; the `drugs` row and
-its place in the graph added 2026-09-06.
+its place in the graph added 2026-09-06; the `knowledge` row added 2026-09-18 with
+iteration 2's step 5.
 
 One line per package. Each package's own `README.md` carries the module map, callers,
 gotchas and CLI/HTTP surface; this page only says what lives where.
@@ -14,6 +15,7 @@ gotchas and CLI/HTTP surface; this page only says what lives where.
 | [`reads/`](reads/README.md) | Raw sequencer output (FASTQ) turned into sharded Parquet so k-mer and QC questions run in seconds; three swappable conversion engines, plus a scan/triage path. | `mva-reads`, `mva-reads-api` |
 | [`phenotype/`](phenotype/README.md) | The child's HPO terms ranked against every gene the Human Phenotype Ontology curates, by a scorer that reads two public text files and never the callset, the panel, or a variant. A human-only reimplementation of Exomiser's hiPHIVE path — no JVM, no 31.5 GB bundle. | `mva-phenotype` |
 | [`drugs/`](drugs/README.md) | Track 2's data layer: a coordinate-free **mechanism card** in, and a target set, a candidate-drug table, trial and literature tables out — all from seven public APIs (Open Targets, ChEMBL, DGIdb, Reactome, ClinicalTrials.gov, PubMed, openFDA), disk-cached, each table with a provenance manifest. | `mva-drugs` |
+| [`knowledge/`](knowledge/README.md) | What the literature says about a candidate set, and the baselines that decide whether that is worth anything: published alleles per **sample** allele (LitVar 2.0), script-derived case-report anchors (PubTator 3.0), protein domain and structure context (UniProt → InterPro → AlphaFold DB), plus a citation-volume baseline and a matched-decoy null. Case-agnostic. | library only |
 | [`science/`](science/README.md) | The research record: append-only hypothesis and evidence registers. Enforces in code that a claim carries a prediction and a refutation condition, that an observation names a source, and that no genomic coordinate reaches an exported file. | `mva-science` |
 | [`viz/`](viz/README.md) | FastAPI service putting one HTTP origin in front of PostgreSQL, the Parquet object store and `mva-reads-api`, with a uniform `{data, cached_at, source}` envelope and a self-describing catalog. Serves the React app in [`app/`](../../app). | `mva-viz-api` |
 | [`render/`](render/README.md) | The shared visual language — exhibit/section primitives, report shell, and the one palette (`GOOD` green, `BAD` red, `DECISION` yellow, `MACHINE` blue, `RAW` purple, `MUTED` grey). Subject-agnostic. | library only |
@@ -41,6 +43,9 @@ graph TD
     pipeline --> viz
     phenotype[phenotype<br/>symptom-driven ranking]:::goal
     drugs[drugs<br/>repurposing evidence]:::goal
+    knowledge[knowledge<br/>literature + its null]:::goal
+    drugs --> knowledge
+    pipeline --> knowledge
     pipeline --> phenotype
     io --> phenotype
     phenotype --> viz
@@ -61,7 +66,8 @@ graph TD
 > **Legend** — blue = neutral machinery (leaf libraries and stores, no cross-package callers above them);
 > green = a deliverable surface a human reads or queries; purple = the consumer outside `src/mva`.
 > An arrow means "is imported by". `io`, `render` and `pipeline` import no sibling package.
-> `drugs` has no arrow at all: it imports no sibling and nothing imports it — its inputs are a
+> `drugs` is imported by exactly one sibling — `knowledge` reuses its cached HTTP client and its
+> PubMed adapter rather than owning a second one — and imports none itself; its own inputs are a
 > JSON card and seven public APIs, and its outputs are files.
 
 ## Rules that hold across every package

@@ -179,6 +179,7 @@ module = [
     "mva.drugs.*",
     "mva.io.*",
     "mva.kmer.*",
+    "mva.knowledge.*",
     "mva.phenotype.*",
     "mva.render.*",
 ]
@@ -205,12 +206,16 @@ layers = [
     "mva.science",
     "mva.reads",
     "mva.warehouse",
+    "mva.knowledge",
     "mva.phenotype | mva.drugs",
     "mva.pipeline | mva.io | mva.calling | mva.kmer | mva.render",
 ]
 # A layer may import anything below it and nothing above it. mva.pipeline, mva.io,
 # mva.kmer and mva.render sit on the bottom row together because none of them imports any
-# of the others; they are the leaves. mva.kmer is pure NumPy arithmetic over reference
+# of the others; they are the leaves. mva.knowledge sits between mva.warehouse and
+# mva.drugs because it is the one package that reuses another's source adapters: it
+# reads public literature APIs through mva.drugs.cache.Fetcher and
+# mva.drugs.sources.pubmed rather than owning a second HTTP client. mva.kmer is pure NumPy arithmetic over reference
 # sequence and is imported by mva.reads one row above it. mva.phenotype sits one row above them: it parses public
 # ontology files (mva.io) and hands a gene prior to the pair ranker (mva.pipeline), and
 # nothing in either of those may reach back up to it. mva.drugs shares that row: it reads
