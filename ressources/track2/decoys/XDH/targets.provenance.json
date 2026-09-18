@@ -1,0 +1,39 @@
+{
+  "name": "targets",
+  "built_at": "2026-09-18T18:47:16+00:00",
+  "built_by": "mva-drugs snapshot",
+  "code_version": "db3a004",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "Seed targets are the union of the card's per-direction seed_targets, in card order. Pathway targets are every human ReferenceGeneProduct participating in a Reactome pathway that (a) contains the card's UniProt accession, per /data/mapping/UniProt/{acc}/pathways?species=9606, and (b) whose displayName matches /purine/i. A gene that is already a seed keeps role 'seed'. The pattern is a parameter of the expansion, not a constant: a different mechanism card passes its own.",
+  "card": {
+    "path": "ressources/track2/decoys/XDH/mechanism.json",
+    "version": 1,
+    "gene": "XDH",
+    "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)"
+  },
+  "inputs": [
+    {
+      "name": "reactome",
+      "url": "https://reactome.org/ContentService",
+      "version": null,
+      "role": "pathway membership, for target expansion",
+      "retrieved_at": "2026-09-18T18:46:50+00:00",
+      "retrieved_from": "2026-09-18T18:46:49+00:00",
+      "requests": 2,
+      "live_calls": 2,
+      "sha256": "de003705723b16b80fd6fb4e59249ba8ae4764e075d2f6d4099a24ddb60010d7",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/decoys/XDH/targets.tsv",
+      "sha256": "06f762969b2284a1cfa47eda977179d96db9e1417e70feb5fbdd66b2b18c21d5",
+      "bytes": 424,
+      "rows": 14
+    }
+  ],
+  "licence": "Every row is derived from a public API: Open Targets Platform (CC0), ChEMBL (CC BY-SA 3.0), DGIdb (MIT, aggregating sources under their own terms), Reactome (CC0), ClinicalTrials.gov (US public domain), PubMed/NCBI (US public domain) and openFDA (US public domain). No licensed resource is queried; DrugBank is named by the challenge form but requires a licence for programmatic access and was not used.",
+  "patient_data": "none. Public API replies only - gene symbols, drug names, trial ids and citations. Nothing here was derived from the callset, and no genomic position appears in any row by construction."
+}

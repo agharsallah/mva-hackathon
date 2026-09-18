@@ -1,0 +1,397 @@
+{
+  "built_at": "2026-09-18T18:47:17+00:00",
+  "built_by": "mva-drugs snapshot",
+  "code_version": "db3a004",
+  "card": {
+    "path": "ressources/track2/decoys/XDH/mechanism.json",
+    "version": 1,
+    "gene": "XDH",
+    "uniprot": "P47989",
+    "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)",
+    "tumour_context": "rhabdomyosarcoma",
+    "pathway": "Reactome pathways containing P47989 whose name matches /purine/i",
+    "directions": [
+      {
+        "id": "D1",
+        "name": "XDH and its pathway neighbours",
+        "seed_targets": 1
+      }
+    ]
+  },
+  "retrieved_at": {
+    "from": "2026-09-05T23:06:51+00:00",
+    "to": "2026-09-18T18:47:16+00:00"
+  },
+  "rows": {
+    "targets": 14,
+    "drug_candidates": 91,
+    "trials": 136,
+    "literature": 40,
+    "pathways": 3
+  },
+  "targets": {
+    "seed": 1,
+    "pathway": 13,
+    "total": 14
+  },
+  "pathways": {
+    "walked": 3,
+    "matched": 1,
+    "pattern": "purine"
+  },
+  "candidates": {
+    "total": 91,
+    "approved": 56,
+    "with_fda_label": 44,
+    "by_source": {
+      "chembl": 9,
+      "dgidb": 91,
+      "opentargets": 10
+    },
+    "distinct_drugs": 80,
+    "distinct_approved_drugs": 47
+  },
+  "requests": {
+    "chembl": {
+      "replies": 25,
+      "live": 25
+    },
+    "clinicaltrials": {
+      "replies": 48,
+      "live": 23
+    },
+    "dgidb": {
+      "replies": 1,
+      "live": 1
+    },
+    "openfda": {
+      "replies": 47,
+      "live": 23
+    },
+    "opentargets": {
+      "replies": 28,
+      "live": 28
+    },
+    "pubmed": {
+      "replies": 7,
+      "live": 7
+    },
+    "reactome": {
+      "replies": 2,
+      "live": 2
+    }
+  },
+  "trial_queries": [
+    {
+      "family": "disease",
+      "label": "Mosaic variegated aneuploidy syndrome 1",
+      "query": "cond=Mosaic variegated aneuploidy syndrome 1",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ALLOPURINOL",
+      "query": "cond=rhabdomyosarcoma intr=ALLOPURINOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ALLOPURINOL SODIUM",
+      "query": "cond=rhabdomyosarcoma intr=ALLOPURINOL SODIUM",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "AZATHIOPRINE",
+      "query": "cond=rhabdomyosarcoma intr=AZATHIOPRINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "BENDAZAC",
+      "query": "cond=rhabdomyosarcoma intr=BENDAZAC",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CAPSAICIN",
+      "query": "cond=rhabdomyosarcoma intr=CAPSAICIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CARVEDILOL",
+      "query": "cond=rhabdomyosarcoma intr=CARVEDILOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CETUXIMAB",
+      "query": "cond=rhabdomyosarcoma intr=CETUXIMAB",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "CLADRIBINE",
+      "query": "cond=rhabdomyosarcoma intr=CLADRIBINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CLARITHROMYCIN",
+      "query": "cond=rhabdomyosarcoma intr=CLARITHROMYCIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CLOZAPINE",
+      "query": "cond=rhabdomyosarcoma intr=CLOZAPINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CURCUMIN",
+      "query": "cond=rhabdomyosarcoma intr=CURCUMIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CYTARABINE",
+      "query": "cond=rhabdomyosarcoma intr=CYTARABINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DAUNORUBICIN LIPOSOMAL",
+      "query": "cond=rhabdomyosarcoma intr=DAUNORUBICIN LIPOSOMAL",
+      "hits": 32
+    },
+    {
+      "family": "candidate",
+      "label": "DIAZOXIDE",
+      "query": "cond=rhabdomyosarcoma intr=DIAZOXIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DIDANOSINE",
+      "query": "cond=rhabdomyosarcoma intr=DIDANOSINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "DOXORUBICIN HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=DOXORUBICIN HYDROCHLORIDE",
+      "hits": 45
+    },
+    {
+      "family": "candidate",
+      "label": "EPOETIN ALFA",
+      "query": "cond=rhabdomyosarcoma intr=EPOETIN ALFA",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ERYTHROMYCIN",
+      "query": "cond=rhabdomyosarcoma intr=ERYTHROMYCIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FEBUXOSTAT",
+      "query": "cond=rhabdomyosarcoma intr=FEBUXOSTAT",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FENTANYL CITRATE",
+      "query": "cond=rhabdomyosarcoma intr=FENTANYL CITRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FLUOROURACIL",
+      "query": "cond=rhabdomyosarcoma intr=FLUOROURACIL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FOLIC ACID",
+      "query": "cond=rhabdomyosarcoma intr=FOLIC ACID",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "FORODESINE",
+      "query": "cond=rhabdomyosarcoma intr=FORODESINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FORODESINE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=FORODESINE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FOSDENOPTERIN",
+      "query": "cond=rhabdomyosarcoma intr=FOSDENOPTERIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "GEMCITABINE",
+      "query": "cond=rhabdomyosarcoma intr=GEMCITABINE",
+      "hits": 8
+    },
+    {
+      "family": "candidate",
+      "label": "HALOPERIDOL DECANOATE",
+      "query": "cond=rhabdomyosarcoma intr=HALOPERIDOL DECANOATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "INOSITOL",
+      "query": "cond=rhabdomyosarcoma intr=INOSITOL",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "INSULIN, REGULAR, HUMAN",
+      "query": "cond=rhabdomyosarcoma intr=INSULIN, REGULAR, HUMAN",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "INTERFERON ALFA-2B",
+      "query": "cond=rhabdomyosarcoma intr=INTERFERON ALFA-2B",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LAMIVUDINE",
+      "query": "cond=rhabdomyosarcoma intr=LAMIVUDINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LOVASTATIN",
+      "query": "cond=rhabdomyosarcoma intr=LOVASTATIN",
+      "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "MERCAPTOPURINE",
+      "query": "cond=rhabdomyosarcoma intr=MERCAPTOPURINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "METHYLENE BLUE ANHYDROUS",
+      "query": "cond=rhabdomyosarcoma intr=METHYLENE BLUE ANHYDROUS",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MITOMYCIN",
+      "query": "cond=rhabdomyosarcoma intr=MITOMYCIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "NITROFURANTOIN, MACROCRYSTALS",
+      "query": "cond=rhabdomyosarcoma intr=NITROFURANTOIN, MACROCRYSTALS",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PAPAVERINE",
+      "query": "cond=rhabdomyosarcoma intr=PAPAVERINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PEGINTERFERON ALFA-2A",
+      "query": "cond=rhabdomyosarcoma intr=PEGINTERFERON ALFA-2A",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "QUERCETIN",
+      "query": "cond=rhabdomyosarcoma intr=QUERCETIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "RESERPINE",
+      "query": "cond=rhabdomyosarcoma intr=RESERPINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SOFOSBUVIR",
+      "query": "cond=rhabdomyosarcoma intr=SOFOSBUVIR",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "SULFASALAZINE",
+      "query": "cond=rhabdomyosarcoma intr=SULFASALAZINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "THIOGUANINE",
+      "query": "cond=rhabdomyosarcoma intr=THIOGUANINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TINIDAZOLE",
+      "query": "cond=rhabdomyosarcoma intr=TINIDAZOLE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TOPIROXOSTAT",
+      "query": "cond=rhabdomyosarcoma intr=TOPIROXOSTAT",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "VACCINIA VIRUS, MODIFIED ENCODING EBOLA VIRUS GLYCOPROTEIN AND NUCLEOPROTEIN",
+      "query": "cond=rhabdomyosarcoma intr=VACCINIA VIRUS, MODIFIED ENCODING EBOLA VIRUS GLYCOPROTEIN AND NUCLEOPROTEIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "VINCRISTINE",
+      "query": "cond=rhabdomyosarcoma intr=VINCRISTINE",
+      "hits": 47
+    }
+  ],
+  "literature_queries": [
+    {
+      "family": "gene",
+      "label": "XDH",
+      "query": "XDH AND (repurposing OR inhibitor OR aneuploidy)",
+      "hits": 130,
+      "kept": 40
+    },
+    {
+      "family": "pathway",
+      "label": "Reactome pathways containing P47989 whose name matches /purine/i",
+      "query": "Reactome pathways containing P47989 whose name matches /purine/i AND drug",
+      "hits": 0,
+      "kept": 0
+    },
+    {
+      "family": "direction",
+      "label": "D1",
+      "query": "(XDH and its pathway neighbours) AND aneuploidy",
+      "hits": 0,
+      "kept": 0
+    }
+  ]
+}

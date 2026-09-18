@@ -1,0 +1,772 @@
+drug_name	drug_id	target_symbol	target_role	direction_ids	source	interaction_or_moa	action_type	max_phase	approved	fda_label	pmids	first_approval	atc
+ENTRECTINIB	CHEMBL1983268	NTRK3	seed	D1	opentargets|dgidb|chembl	ALK tyrosine kinase receptor inhibitor	INHIBITOR	4	true	true	26884591	2019	L01EX14
+TALETRECTINIB	CHEMBL4650989	NTRK3	seed	D1	opentargets|dgidb|chembl	Neurotrophic tyrosine kinase receptor inhibitor	INHIBITOR	3	true	true	32591465		
+PLX-7486	CHEMBL3545381	NTRK3	seed	D1	opentargets|dgidb|chembl	Nerve growth factor receptor Trk-A inhibitor	INHIBITOR	1	false				
+LAROTRECTINIB	CHEMBL3889654	NTRK3	seed	D1	opentargets|dgidb|chembl	Neurotrophic tyrosine kinase receptor inhibitor	INHIBITOR	4	true	true	29466156|26884591|26216294	2018	L01EX12
+LAROTRECTINIB SULFATE	CHEMBL3989939	NTRK3	seed	D1	opentargets|dgidb|chembl	Neurotrophic tyrosine kinase receptor inhibitor	INHIBITOR	4	true	false	28578312	2018	
+REPOTRECTINIB	CHEMBL4298138	NTRK3	seed	D1	opentargets|dgidb|chembl	NT-3 growth factor receptor inhibitor	INHIBITOR	4	true	true	30093503	2023	L01EX28
+SELITRECTINIB	CHEMBL4297627	NTRK3	seed	D1	opentargets|dgidb|chembl	Neurotrophic tyrosine kinase receptor inhibitor	INHIBITOR	2	false		32133433		
+CEP-2563	CHEMBL6069183	NTRK3	seed	D1	opentargets	Protein kinase C (PKC) inhibitor	INHIBITOR	1	false				
+AZD-6918	CHEMBL3545298	NTRK3	seed	D1	opentargets|dgidb|chembl	Neurotrophic tyrosine kinase receptor inhibitor	INHIBITOR	1	false		25700942		
+ALTIRATINIB	CHEMBL3545365	NTRK3	seed	D1	opentargets|dgidb|chembl	Hepatocyte growth factor receptor inhibitor	INHIBITOR	2	false		26285778		
+CENEGERMIN	CHEMBL4297852	NTRK3	seed	D1	opentargets|dgidb|chembl	Neurotrophic tyrosine kinase receptor agonist	AGONIST	4	true	true		2017	S01XA24
+LESTAURTINIB	CHEMBL603469	NTRK3	seed	D1	opentargets|dgidb|chembl	Nerve growth factor receptor Trk-A inhibitor	INHIBITOR	4	true	false	10473107		
+AZD-7451	CHEMBL3659497	NTRK3	seed	D1	opentargets|chembl	NT-3 growth factor receptor inhibitor	INHIBITOR	1	false		23027130|25054037		
+CEP-2563 DIHYDROCHLORIDE	CHEMBL6067987	NTRK3	seed	D1	chembl|dgidb	Neurotrophic tyrosine kinase receptor inhibitor	INHIBITOR	1	false		15292715|9259409		
+PANULISIB	CHEMBL5095025	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		25700704		
+PILARALISIB	CHEMBL3360203	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		24166903|25637314|15705718		
+IZORLISIB	CHEMBL1684984	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		21558396|25231405|36913051|15705718|21316229		
+SF-1126	CHEMBL2326966	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		10741711|18172313|8106507		
+COPANLISIB	CHEMBL3218576	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase p110-alpha subunit inhibitor	INHIBITOR	4	true	false	35133871|31934607|27672108|31624127|24170767|15705718	2017	L01EM02
+PKI-179	CHEMBL1258517	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase p110-alpha subunit inhibitor	INHIBITOR	1	false		20797855		
+RECILISIB	CHEMBL2219421	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		21341279|23505494		
+PICTILISIB	CHEMBL521851	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		23360348|20453058|23888070|23674493|27489350|24601221|30108165|34544753|27196766|24339963|37377403|37916958|28119489|26058079|27197306|36805958|28808038|27174596|39152269|23136191|27020857|18754654|25370471		
+DACTOLISIB	CHEMBL1879463	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		23619167|19029981|26270481|28446642|22543857|26013318|21966435|27974663|26627007|24927217|26137449|22662154|18606717|24591840		
+SAMOTOLISIB	CHEMBL4297181	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		39298693|33495309|31880826|27439478		
+PF-04691502	CHEMBL1234354	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		31516747|21750219|15705718		
+COPANLISIB HYDROCHLORIDE	CHEMBL3545068	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase p110-alpha subunit inhibitor	INHIBITOR	4	true	false	15705718|24170767	2017	
+ALPELISIB	CHEMBL2396661	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase p110-alpha subunit inhibitor	INHIBITOR	4	true	true	24608574|31699932|37469254|33602685|25409150|33685991|35917491|27451907|37339176|37874915|36900375|37272756|30948643|30093452|26013318|37916958|27974663|28119489|38518529|26627007|37493631|27126994|31678634|36713525|29284706|34779417|36805958|35311394|39152269|29401002|32376656|31091374|15705718|23726034	2019	L01EM03
+SONOLISIB	CHEMBL411907	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		22693357|15705718		
+GSK-1059615	CHEMBL3544966	PIK3CA	pathway		opentargets|chembl	PI3-kinase class I inhibitor	INHIBITOR	1	false		19713247		
+WX-037	CHEMBL3545385	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	1	false				
+VS-5584	CHEMBL3393066	PIK3CA	pathway		opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false		23270925		
+BAY-1082439	CHEMBL3644672	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase p110-alpha subunit inhibitor	INHIBITOR	1	false				
+OMIPALISIB	CHEMBL1236962	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		26603258|15705718|24900173		
+BGT-226	CHEMBL3545096	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		22357447|24591840		
+FIMEPINOSTAT	CHEMBL3622533	PIK3CA	pathway		opentargets|dgidb|chembl	Histone deacetylase inhibitor	INHIBITOR	2	false		22693356		
+TASELISIB	CHEMBL2387080	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		26589432|32958578|34544753|33685991|31534012|23662903|35138919|37916958|28331003|31158500|32376656		
+DS-7423	CHEMBL3545248	PIK3CA	pathway		opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false		24504419		
+SERABELISIB	CHEMBL3935857	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase p110-alpha subunit inhibitor	INHIBITOR	2	false		28490463|23275335|24915189		
+ZSTK-474	CHEMBL586702	PIK3CA	pathway		opentargets|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		16622124|17711503		
+BUPARLISIB	CHEMBL2017974	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		29975751|26909613|30577988|32767682|30093452|26013318|28539475|27974663|28119489|39199558|29636477|22188813		
+PAXALISIB	CHEMBL3813842	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		4584582		
+GEDATOLISIB	CHEMBL592445	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		21325073|25977343|17314276|24823695|37326340|15705718		
+INAVOLISIB	CHEMBL4650215	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase p110-alpha subunit inhibitor	INHIBITOR	4	true	true	40845250|31699932|34544753|37916958	2024	
+APITOLISIB	CHEMBL1922094	PIK3CA	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		26951309|26787751|15705718|21981714		
+AZD-6482	CHEMBL2165191	PIK3CA	pathway		opentargets|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		22906130		
+VOXTALISIB	CHEMBL3545366	PIK3CA	pathway		opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	2	false		24634413|15705718		
+PWT-33579	CHEMBL3545323	PIK3CA	pathway		chembl|dgidb	PI3-kinase p110-alpha subunit inhibitor	INHIBITOR	1	false				
+PWT-33587	CHEMBL3545006	PIK3CA	pathway		chembl|dgidb	PI3-kinase class I inhibitor	INHIBITOR	1	false				
+PUQUITINIB MESYLATE DIHYDRATE	CHEMBL4545915	PIK3CA	pathway		chembl|dgidb	PI3-kinase class I inhibitor	INHIBITOR	1	false		26499488|26510909		
+WX-037	CHEMBL3545385	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	1	false				
+PF-04691502	CHEMBL1234354	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		15705718|21750219		
+RECILISIB	CHEMBL2219421	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		21341279|23505494		
+SF-1126	CHEMBL2326966	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		10741711|18172313|8106507		
+IZORLISIB	CHEMBL1684984	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		15705718|21316229		
+VOXTALISIB	CHEMBL3545366	PIK3R1	pathway		opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	2	false		15705718|24634413		
+TASELISIB	CHEMBL2387080	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		23662903		
+GEDATOLISIB	CHEMBL592445	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		15705718|21325073		
+DACTOLISIB	CHEMBL1879463	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		18606717|24591840		
+BUPARLISIB	CHEMBL2017974	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		22188813		
+PILARALISIB	CHEMBL3360203	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		15705718|24166903		
+AZD-6482	CHEMBL2165191	PIK3R1	pathway		opentargets|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		22906130		
+PANULISIB	CHEMBL5095025	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		25700704		
+GSK-1059615	CHEMBL3544966	PIK3R1	pathway		opentargets|chembl	PI3-kinase class I inhibitor	INHIBITOR	1	false		19713247		
+VS-5584	CHEMBL3393066	PIK3R1	pathway		opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false		23270925		
+APITOLISIB	CHEMBL1922094	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		15705718|21981714		
+SAMOTOLISIB	CHEMBL4297181	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false				
+SONOLISIB	CHEMBL411907	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		15705718|22693357		
+PAXALISIB	CHEMBL3813842	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		4584582		
+DS-7423	CHEMBL3545248	PIK3R1	pathway		opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false		24504419		
+BGT-226	CHEMBL3545096	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		22357447|24591840		
+PICTILISIB	CHEMBL521851	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		18754654|25370471		
+ZSTK-474	CHEMBL586702	PIK3R1	pathway		opentargets|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		16622124|17711503		
+OMIPALISIB	CHEMBL1236962	PIK3R1	pathway		opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		15705718|24900173		
+PWT-33587	CHEMBL3545006	PIK3R1	pathway		chembl|dgidb	PI3-kinase class I inhibitor	INHIBITOR	1	false				
+PUQUITINIB MESYLATE DIHYDRATE	CHEMBL4545915	PIK3R1	pathway		chembl|dgidb	PI3-kinase class I inhibitor	INHIBITOR	1	false		26499488|26510909		
+DASATINIB ANHYDROUS	CHEMBL1421	SRC	pathway		opentargets|dgidb|chembl	Bcr/Abl fusion protein inhibitor	INHIBITOR	4	true	false	25835317|19462975	2006	L01EA02
+VANDETANIB	CHEMBL24828	SRC	pathway		opentargets|dgidb|chembl	Ephrin receptor inhibitor	INHIBITOR	4	true	true		2011	L01EX04
+ILORASERTIB	CHEMBL1980297	SRC	pathway		opentargets|dgidb|chembl	Platelet-derived growth factor receptor inhibitor	INHIBITOR	2	false		22935731		
+XL-228	CHEMBL3545085	SRC	pathway		opentargets|dgidb|chembl	Insulin-like growth factor I receptor inhibitor	INHIBITOR	1	false		20124450		
+SARACATINIB	CHEMBL217092	SRC	pathway		opentargets|dgidb|chembl	Tyrosine-protein kinase ABL inhibitor	INHIBITOR	3	false		17064066		
+TIRBANIBULIN	CHEMBL571546	SRC	pathway		opentargets|dgidb|chembl	Tyrosine-protein kinase SRC inhibitor	INHIBITOR	4	true	true	21509526|23361621	2020	D06BX03
+BOSUTINIB	CHEMBL288441	SRC	pathway		opentargets|dgidb|chembl	Bcr/Abl fusion protein inhibitor	INHIBITOR	4	true	true		2012	L01EA04
+ENMD-981693	CHEMBL52885	SRC	pathway		opentargets|dgidb|chembl	Fibroblast growth factor receptor inhibitor	INHIBITOR	2	false				
+JNJ-26483327	CHEMBL3109738	SRC	pathway		opentargets|dgidb|chembl	Receptor protein-tyrosine kinase erbB-4 inhibitor	INHIBITOR	1	false		20823884		
+TG100-801	CHEMBL403989	SRC	pathway		opentargets|dgidb|chembl	Ephrin type-B receptor 4 inhibitor	INHIBITOR	2	false		18311895|18330892|18483622		
+AZD-0424	CHEMBL5314408	SRC	pathway		opentargets|dgidb|chembl	Tyrosine-protein kinase ABL inhibitor	INHIBITOR	1	false		25662515		
+PD-0166285 HYDROCHLORIDE	CHEMBL3545196	SRC	pathway		chembl|dgidb	Tyrosine-protein kinase SRC inhibitor	INHIBITOR	1	false		10638483		
+AZM-475271	CHEMBL426161	SRC	pathway		chembl|dgidb	Tyrosine-protein kinase SRC inhibitor	INHIBITOR	2	false		14761189|15585638		
+AGANIRSEN	CHEMBL2108296	IRS1	pathway		opentargets|dgidb	Insulin receptor substrate 1 mRNA antisense inhibitor	ANTISENSE INHIBITOR	3	false				
+SALIRASIB	CHEMBL23293	NRAS	pathway		opentargets|dgidb|chembl	RAS inhibitor	INHIBITOR	2	false		22547163		
+SALIRASIB	CHEMBL23293	HRAS	pathway		opentargets|dgidb|chembl	RAS inhibitor	INHIBITOR	2	false		22547163		
+GENISTEIN	rxcui:25696	NTF3	pathway		dgidb				true	false	11698238		
+RECOMBINANT NERVE GROWTH FACTOR	ncit:C684	NTF3	pathway		dgidb				false		9473674		
+PHENYTOIN SODIUM	rxcui:71227	NTF3	pathway		dgidb				true	true	7841657		
+CYCLOPHOSPHAMIDE ANHYDROUS	rxcui:1545988	NTF3	pathway		dgidb				true	false	10683293		
+LIOTHYRONINE	rxcui:10814	NTF3	pathway		dgidb				true	true	8288635		
+INTERFERON-BETA	rxcui:4381	NTF3	pathway		dgidb				false		8714518		
+VANILLOID	ncit:C1955	NTF3	pathway		dgidb				false		15659614		
+DACTINOMYCIN	rxcui:3100	NTF3	pathway		dgidb				true	true	11877300		
+COLCHICINE	rxcui:2683	NTF3	pathway		dgidb				true	true	1946455		
+HEPARAN SULFATE	ncit:C540	NTF3	pathway		dgidb				false		8665526		
+AMINOGLYCOSIDE ANTIBIOTIC	ncit:C2363	NTF3	pathway		dgidb				false		10424676		
+NALOXONE HYDROCHLORIDE	rxcui:203192	NTF3	pathway		dgidb				true	true	9334418		
+HYDROGEN PEROXIDE	rxcui:5499	NTF3	pathway		dgidb				true	true	12969525		
+NIMODIPINE	rxcui:7426	NTF3	pathway		dgidb				true	true	7725105		
+TETRADECANOYLPHORBOL ACETATE	ncit:C866	NTF3	pathway		dgidb				false		8630334		
+NICOTINE POLACRILEX	rxcui:31765	NTF3	pathway		dgidb				true	true	17268847		
+VINCRISTINE	rxcui:11202	NTF3	pathway		dgidb				true	true	11378165		
+INOSITOL	rxcui:5833	NTF3	pathway		dgidb				true	true	10811820		
+INSULIN, REGULAR, HUMAN	rxcui:253182	NTF3	pathway		dgidb				true	false	10521479		
+PILOCARPINE HYDROCHLORIDE	rxcui:235426	NTF3	pathway		dgidb				true	true	7747601		
+CAPSAICIN	rxcui:1992	NTF3	pathway		dgidb				true	true	10651868		
+RECOMBINANT TRANSFORMING GROWTH FACTOR	ncit:C899	NTF3	pathway		dgidb				false		11090428		
+RECOMBINANT INTERLEUKIN-6	ncit:C591	NTF3	pathway		dgidb				false		12898533		
+THERAPEUTIC CYTOKINE	ncit:C1283	NTF3	pathway		dgidb				false		15875206		
+RISPERIDONE	rxcui:35636	NTF3	pathway		dgidb				true	true	18473918		
+EPOETIN ALFA	rxcui:105694	NTF3	pathway		dgidb				true	true	16337149		
+MIDOSTAURIN	rxcui:1919083	NTRK3	seed	D1	dgidb				true	false	21148487|23131561		
+SNS-314	chembl:CHEMBL482767	NTRK3	seed	D1	dgidb			1	false				
+CH7057288	iuphar.ligand:12237	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+ERATRECTINIB	iuphar.ligand:14070	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+MLN-8054	iuphar.ligand:5696	NTRK3	seed	D1	dgidb				false				
+GNF-5837	iuphar.ligand:8071	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+GAMBOGIC AMIDE	chembl:CHEMBL444109	NTRK3	seed	D1	dgidb				false		17911251		
+ILORASERTIB	ncit:C116729	NTRK3	seed	D1	dgidb				false				
+HESPERADIN	iuphar.ligand:8354	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false		19035792		
+GW-2580	iuphar.ligand:5685	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+UTATRECTINIB	iuphar.ligand:10360	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+MK-2461	iuphar.ligand:7962	NTRK3	seed	D1	dgidb				false				
+LEVOTHYROXINE SODIUM	rxcui:40144	NTRK3	seed	D1	dgidb				true	true	10452218		
+SORAFENIB	rxcui:495881	NTRK3	seed	D1	dgidb				true	true			
+BELIZATINIB	ncit:C169804	NTRK3	seed	D1	dgidb				false		26884591		
+AZD1332	iuphar.ligand:7700	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+RIPK1 INHIBITOR 22B	iuphar.ligand:10155	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+TOZASERTIB	ncit:C98053	NTRK3	seed	D1	dgidb				false				
+SP-600125	chembl:CHEMBL1725279	NTRK3	seed	D1	dgidb				false				
+PEXIDARTINIB	rxcui:2183102	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		true	true			
+GW441756X	chembl:CHEMBL1516890	NTRK3	seed	D1	dgidb				false				
+TANDUTINIB	chembl:CHEMBL124660	NTRK3	seed	D1	dgidb			2	false				
+RECOMBINANT NERVE GROWTH FACTOR	ncit:C684	NTRK3	seed	D1	dgidb				false		10713102		
+RECOMBINANT INTERFERON	ncit:C584	NTRK3	seed	D1	dgidb				false		15875206		
+DDR1/2 INHIBITOR 5N	iuphar.ligand:10105	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+RG-1530	iuphar.ligand:10361	NTRK3	seed	D1	dgidb				false				
+SB202190	iuphar.ligand:4307	NTRK3	seed	D1	dgidb				false				
+LINIFANIB	ncit:C71759	NTRK3	seed	D1	dgidb				false				
+PD166285	iuphar.ligand:8183	NTRK3	seed	D1	dgidb				false				
+ZURLETRECTINIB	ncit:C179627	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+DOVITINIB	ncit:C76199	NTRK3	seed	D1	dgidb				false				
+EMZELTRECTINIB	iuphar.ligand:12377	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+ALISERTIB	ncit:C71717	NTRK3	seed	D1	dgidb				false				
+NIK INHIBITOR 12F	iuphar.ligand:10947	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+CYC-116	chembl:CHEMBL482967	NTRK3	seed	D1	dgidb			1	false				
+DORAMAPIMOD	ncit:C76770	NTRK3	seed	D1	dgidb				false				
+CRIZOTINIB	rxcui:1148495	NTRK3	seed	D1	dgidb				true	true	26884591		
+DZX19	iuphar.ligand:14408	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+AST-487	iuphar.ligand:5661	NTRK3	seed	D1	dgidb				false				
+TAMATINIB	iuphar.ligand:5706	NTRK3	seed	D1	dgidb				false				
+GR-389988	iuphar.ligand:10257	NTRK3	seed	D1	dgidb	inhibitor	inhibitor		false				
+NEUROTROPHIN-3	iuphar.ligand:5033	NTRK3	seed	D1	dgidb				false				
+SURAMIN	ncit:C853	PIK3CA	pathway		dgidb				false		15833899		
+TEMSIROLIMUS	rxcui:657797	PIK3CA	pathway		dgidb				true	true	19706758|27893038|22271473|21216929|21289267|28961834|27016228|22245973|37523146		
+RIGOSERTIB	ncit:C152216	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+NEOLYMPHOSTIN A	iuphar.ligand:10151	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+RIGOSERTIB SODIUM	ncit:C71355	PIK3CA	pathway		dgidb				false		23873848|27104980		
+TAK-733	drugbank:DB12241	PIK3CA	pathway		dgidb				false		26439693		
+APILIMOD DIMESYLATE CAPSULE	ncit:C126661	PIK3CA	pathway		dgidb				false		32439931		
+COMPOUND 15A [PMID: 32069401]	iuphar.ligand:10702	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+COMPOUND 41 [PMID: 31855425]	iuphar.ligand:10598	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+ERDAFITINIB	rxcui:2123125	PIK3CA	pathway		dgidb				true	true	37377403		
+RIBOCICLIB	rxcui:1873916	PIK3CA	pathway		dgidb				true	true	29496665|31516747|25002028		
+BRAFV600/PI3K INHIBITOR ASN003	ncit:C134967	PIK3CA	pathway		dgidb				false				
+GSK2636771	iuphar.ligand:7967	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+ZINC SULFATE ANHYDROUS	rxcui:1299928	PIK3CA	pathway		dgidb				true	true	15715661		
+EVEROLIMUS	rxcui:141704	PIK3CA	pathway		dgidb				true	true	27091708|21358673|31088410|31699932|23629727|26503204|28183140|27893038|33745098|36900375|20664172|27797976|22662154|26951309		
+TANESPIMYCIN	ncit:C37899	PIK3CA	pathway		dgidb				false		16267832		
+CAPIVASERTIB	rxcui:2669967	PIK3CA	pathway		dgidb				true	true	37256976|28489509|24088382|22294718|29066505|32070411|26116361|30860570|31841354|32669708		
+U0126	iuphar.ligand:5282	PIK3CA	pathway		dgidb				false		21358673		
+M-2698	drugbank:DB15431	PIK3CA	pathway		dgidb				false		27186432		
+GSK2334470	iuphar.ligand:8008	PIK3CA	pathway		dgidb				false		37713162|32439931|27451907		
+BIMIRALISIB	iuphar.ligand:8383	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+PALBOCICLIB	rxcui:1601374	PIK3CA	pathway		dgidb				true	true	32958578|31516747|30093452|37326340|39199558|30819666|27020857|40845250|25002028		
+VULOLISIB	iuphar.ligand:12075	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+DOCETAXEL ANHYDROUS	rxcui:1299922	PIK3CA	pathway		dgidb				true	true	32205017|20157331		
+COMPOUND 27 [PMID: 35834807]	iuphar.ligand:12062	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+MILTEFOSINE	rxcui:1494066	PIK3CA	pathway		dgidb				true	true	16752184		
+CARBOPLATIN	rxcui:40048	PIK3CA	pathway		dgidb				true	true	16275998|20447721|28961834|39199558		
+ACALISIB	ncit:C103277	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+XRD-0394	iuphar.ligand:13457	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+VEMURAFENIB	rxcui:1147220	PIK3CA	pathway		dgidb				true	false	22180495|24265153|26137449|32859654		
+TG-100-115	iuphar.ligand:5715	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+IRINOTECAN HYDROCHLORIDE	rxcui:153329	PIK3CA	pathway		dgidb				true	true	25714871|37523146|20619739|15809721		
+COMPOUND 11J [PMID: 23021994]	iuphar.ligand:8827	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+DULANERMIN	ncit:C1685	PIK3CA	pathway		dgidb				false		16153452|16984382		
+ALVOCIDIB HYDROCHLORIDE	ncit:C1571	PIK3CA	pathway		dgidb				false		14767524		
+PACLITAXEL PROTEIN-BOUND	rxcui:486610	PIK3CA	pathway		dgidb				true	true	12761490|32205017|30577988|28800861|24170767|30860570|31841354|28961834|39199558|26245675		
+TORIN 1	iuphar.ligand:8004	PIK3CA	pathway		dgidb				false		32439931|27974663		
+CHEMBL:CHEMBL1379243	chembl:CHEMBL1379243	PIK3CA	pathway		dgidb				false		22212721		
+SELECTIVE ESTROGEN RECEPTOR MODULATOR	ncit:C1821	PIK3CA	pathway		dgidb				false		11901050		
+TRASTUZUMAB	rxcui:224905	PIK3CA	pathway		dgidb				true	true	25199759|21594665|19010894|22294718|26245675		
+SAR260301	iuphar.ligand:8793	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+MYRICETIN	drugbank:DB02375	PIK3CA	pathway		dgidb				false		22212721		
+SORAFENIB	rxcui:495881	PIK3CA	pathway		dgidb				true	true	23629727|30373752|28808038		
+AFATINIB	rxcui:1430438	PIK3CA	pathway		dgidb				true	true	36900375		
+LEUCOVORIN CALCIUM	rxcui:225852	PIK3CA	pathway		dgidb				true	true	32205017		
+GSK1059615	iuphar.ligand:9826	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+PIK-108	iuphar.ligand:8968	PIK3CA	pathway		dgidb	modulator	modulator		false				
+5-QUINOXALIN-6-YLMETHYLENE-THIAZOLIDINE-2,4-DIONE	drugbank:DB04769	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+PIMASERTIB	ncit:C84864	PIK3CA	pathway		dgidb				false		23629727|27636997		
+ERLOTINIB	rxcui:337525	PIK3CA	pathway		dgidb				true	true	21258250		
+AZD3458	iuphar.ligand:9997	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+THEAFLAVIN	ncit:C29855	PIK3CA	pathway		dgidb				false		11591714		
+RV6153	iuphar.ligand:10163	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+LETROZOLE	rxcui:72965	PIK3CA	pathway		dgidb				true	true	29284706|29902286|27126994		
+AZD7648	iuphar.ligand:10601	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL1939433	chembl:CHEMBL1939433	PIK3CA	pathway		dgidb				false		22212721		
+TENALISIB	ncit:C113433	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+NEMIRALISIB	ncit:C174798	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+ZOVEGALISIB	iuphar.ligand:13065	PIK3CA	pathway		dgidb	modulator	modulator		false				
+OSIMERTINIB	rxcui:1721560	PIK3CA	pathway		dgidb				true	true	31839416		
+EMODIN	chembl:CHEMBL289277	PIK3CA	pathway		dgidb				false		22212721		
+GANITUMAB	ncit:C71531	PIK3CA	pathway		dgidb				false		36322002		
+TERSOLISIB	iuphar.ligand:12903	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false		37623743		
+AZD8186	iuphar.ligand:8527	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+RECOMBINANT PARATHYROID HORMONE-RELATED PROTEIN	ncit:C1185	PIK3CA	pathway		dgidb				false		12417254		
+REGORAFENIB	rxcui:1312397	PIK3CA	pathway		dgidb				true	true	25838391|23629727		
+VEVORISERTIB	ncit:C175873	PIK3CA	pathway		dgidb				false		32439931|26469692		
+SIROLIMUS	rxcui:35302	PIK3CA	pathway		dgidb				true	true	24631838|28514312|29496665|32439931|28685070|15647370|26882569|19029981|17376864|15878982		
+TEMOZOLOMIDE	rxcui:37776	PIK3CA	pathway		dgidb				true	true	37523146		
+CELECOXIB	rxcui:140587	PIK3CA	pathway		dgidb				true	true	30683736		
+FULVESTRANT	rxcui:282357	PIK3CA	pathway		dgidb				true	true	40845250|37256976|31091374|27174596		
+TAS-117	drugbank:DB15054	PIK3CA	pathway		dgidb				false		33723724		
+TGX-221	iuphar.ligand:8244	PIK3CA	pathway		dgidb				false		26137449		
+CAPECITABINE	rxcui:194000	PIK3CA	pathway		dgidb				true	true	26920887		
+TYROSINE KINASE INHIBITOR	ncit:C1967	PIK3CA	pathway		dgidb				false		15289348		
+ADO-TRASTUZUMAB EMTANSINE	rxcui:1371041	PIK3CA	pathway		dgidb				true	true	36730339		
+PUQUITINIB	iuphar.ligand:9928	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+IFUPINOSTAT	iuphar.ligand:14249	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+AKT INHIBITOR LY2780301	ncit:C95737	PIK3CA	pathway		dgidb				false		28750271|25902900		
+AZD8835	iuphar.ligand:8915	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false		26839307		
+RETINOIC ACID AGENT	ncit:C804	PIK3CA	pathway		dgidb				false		15020266		
+DASATINIB ANHYDROUS	rxcui:1546019	PIK3CA	pathway		dgidb				true	false	37713162|37493631		
+PQR620	iuphar.ligand:10142	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+HS-173	iuphar.ligand:8243	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+AZD6482	iuphar.ligand:8059	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+A-1331852	iuphar.ligand:11102	PIK3CA	pathway		dgidb				false		37493631		
+VINCRISTINE	rxcui:11202	PIK3CA	pathway		dgidb				true	true	12874004		
+VISTUSERTIB	ncit:C88329	PIK3CA	pathway		dgidb				false		27974663		
+RAS INHIBITOR	ncit:C1902	PIK3CA	pathway		dgidb				false		12137763		
+IDELALISIB	rxcui:1544460	PIK3CA	pathway		dgidb	inhibitor	inhibitor		true	true	26466009|32193631|26137449		
+DOXORUBICIN LIPOSOME	rxcui:214525	PIK3CA	pathway		dgidb				true	false	21216929		
+INTERLEUKIN-11	rxcui:1311380	PIK3CA	pathway		dgidb				true	true	8641341		
+AZD8055	iuphar.ligand:7714	PIK3CA	pathway		dgidb				false		28446642		
+ABT-737	drugbank:DB17023	PIK3CA	pathway		dgidb				false		27974663		
+RLY-2608	drugbank:DB16751	PIK3CA	pathway		dgidb				false		37916956|37916958		
+TOPOTECAN HYDROCHLORIDE	rxcui:266573	PIK3CA	pathway		dgidb				true	true	21216929		
+EGANELISIB	ncit:C125471	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+HERBIMYCIN	ncit:C1124	PIK3CA	pathway		dgidb				false		11139143		
+QUERCETIN	rxcui:9060	PIK3CA	pathway		dgidb	inhibitor	inhibitor		true	true	22212721|17045724		
+ECF309	iuphar.ligand:9571	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+PHOSPHATIDYLINOSITIDE 3-KINASE INHIBITOR	ncit:C2152	PIK3CA	pathway		dgidb				false		25002028		
+MUTANT-SELECTIVE PI3K-ALPHA H1047R INHIBITOR OKI-219	ncit:C208266	PIK3CA	pathway		dgidb				false				
+PF-06843195	iuphar.ligand:12720	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+LINSITINIB	ncit:C70982	PIK3CA	pathway		dgidb				false		27196766		
+MIRDAMETINIB	rxcui:2705551	PIK3CA	pathway		dgidb				true	false	26272063|24339963|37326340		
+COBIMETINIB	rxcui:1722365	PIK3CA	pathway		dgidb				true	true			
+GEFITINIB	rxcui:328134	PIK3CA	pathway		dgidb				true	true	21258250		
+OLAPARIB	rxcui:1597582	PIK3CA	pathway		dgidb				true	true	26909613		
+PIK-75	iuphar.ligand:8012	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL3417704	chembl:CHEMBL3417704	PIK3CA	pathway		dgidb				false		27974663		
+XL765	drugbank:DB05241	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+AZ2	iuphar.ligand:10233	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+AZD8154	iuphar.ligand:11204	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+CETUXIMAB	rxcui:318341	PIK3CA	pathway		dgidb				true	true	28446642|25838391|30926065|25714871|25724520|31678634|28424201|30962319|20619739|19603024|19223544		
+PI3K-ALPHA INHIBITOR HS-10352	ncit:C179330	PIK3CA	pathway		dgidb				false		38037839		
+PREXASERTIB	ncit:C91392	PIK3CA	pathway		dgidb				false		33495309		
+BUPARLISIB HYDROCHLORIDE	ncit:C142973	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+BACILLUS CALMETTE-GUERIN ANTIGEN	ncit:C77178	PIK3CA	pathway		dgidb				false		14742634		
+FLUOROURACIL	rxcui:4492	PIK3CA	pathway		dgidb				true	true	32205017|22336586|25714871|28424201		
+PI 3-KG INHIBITOR II	iuphar.ligand:6024	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+MIRANSERTIB	ncit:C99172	PIK3CA	pathway		dgidb				false		32439931|26469692|37916958		
+NAVITOCLAX	ncit:C64776	PIK3CA	pathway		dgidb				false		27197306		
+ZANDELISIB	ncit:C123925	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+ATEZOLIZUMAB	rxcui:1792776	PIK3CA	pathway		dgidb				true	true			
+OXALIPLATIN	rxcui:32592	PIK3CA	pathway		dgidb				true	true	32205017		
+COMPOUND 5D [PMID: 31335136]	iuphar.ligand:10441	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+ANGIOGENESIS INHIBITOR	ncit:C1742	PIK3CA	pathway		dgidb				false		11857382		
+BEVACIZUMAB	rxcui:253337	PIK3CA	pathway		dgidb				true	true	27893038|21216929		
+RALOXIFENE HYDROCHLORIDE	rxcui:166551	PIK3CA	pathway		dgidb				true	true	11901050		
+INFIGRATINIB	rxcui:2550729	PIK3CA	pathway		dgidb	inhibitor	inhibitor		true	false	28119489		
+CC-115	drugbank:DB12740	PIK3CA	pathway		dgidb				false		37980367		
+GILMELISIB	ncit:C188554	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+PI3K/BET INHIBITOR LY294002	ncit:C148229	PIK3CA	pathway		dgidb				false		18262558		
+COMPOUND 17 [PMID: 38477582]	iuphar.ligand:13346	PIK3CA	pathway		dgidb	modulator	modulator		false				
+SELETALISIB	iuphar.ligand:9800	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+QUINOSTATIN	iuphar.ligand:8978	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+STREPTOZOCIN	rxcui:10114	PIK3CA	pathway		dgidb				true	true	16130182		
+BAY1125976	iuphar.ligand:10908	PIK3CA	pathway		dgidb				false		27699769		
+AZD0156	iuphar.ligand:9942	PIK3CA	pathway		dgidb				false		32439931		
+FLOXURIDINE	rxcui:4488	PIK3CA	pathway		dgidb				true	true	25714871		
+GEMCITABINE	rxcui:12574	PIK3CA	pathway		dgidb				true	true	28750271|28808038		
+UPROSERTIB	ncit:C84870	PIK3CA	pathway		dgidb				false				
+ENZALUTAMIDE	rxcui:1307298	PIK3CA	pathway		dgidb				true	true	37980367		
+TIPIFARNIB	ncit:C1703	PIK3CA	pathway		dgidb				false		37339176|37427101|39152269		
+PI3K-ALPHA INHIBITOR TOS-358	ncit:C198692	PIK3CA	pathway		dgidb				false				
+PERIFOSINE	ncit:C1727	PIK3CA	pathway		dgidb				false		19706758|28864978		
+RV1729	iuphar.ligand:10162	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+GM-CSF	iuphar.ligand:4942	PIK3CA	pathway		dgidb				false		15107457		
+SULINDAC	rxcui:10237	PIK3CA	pathway		dgidb				true	true	30683736|12654560		
+RISOVALISIB	ncit:C178401	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false		30003928		
+COMPOUND 2Q [PMID: 30986068]	iuphar.ligand:10365	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+CARBOXYAMIDOTRIAZOLE OROTATE	ncit:C91090	PIK3CA	pathway		dgidb				false				
+COMPOUND 82 [PMID: 21332118]	iuphar.ligand:8805	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+NONSTEROIDAL ANTIINFLAMMATORY DRUG	ncit:C257	PIK3CA	pathway		dgidb				false		12654560		
+RECOMBINANT HEPATOCYTE GROWTH FACTOR	ncit:C1122	PIK3CA	pathway		dgidb				false		16616440		
+MUTANT-SELECTIVE PI3K-ALPHA H1047R INHIBITOR LOXO-783	ncit:C187335	PIK3CA	pathway		dgidb				false				
+ASPIRIN	rxcui:1191	PIK3CA	pathway		dgidb				true	true	23094721|30683736|40961426		
+NU-7441	iuphar.ligand:8010	PIK3CA	pathway		dgidb				false		32439931		
+COMPOUND 52 [PMID: 28541707]	iuphar.ligand:10001	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+AMG319	iuphar.ligand:8917	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+IBUPROFEN, SODIUM SALT	rxcui:1429044	PIK3CA	pathway		dgidb				true	false	30683736		
+PF-4708671	iuphar.ligand:8036	PIK3CA	pathway		dgidb				false		29496665		
+PEMBROLIZUMAB	rxcui:1547545	PIK3CA	pathway		dgidb				true	true	37469254		
+NIVOLUMAB	rxcui:1597876	PIK3CA	pathway		dgidb				true	true			
+INDOLE-3-CARBINOL	ncit:C1135	PIK3CA	pathway		dgidb				false		11948137		
+RIDAFOROLIMUS	ncit:C49061	PIK3CA	pathway		dgidb				false		26187616		
+NVP-AEW541	iuphar.ligand:8067	PIK3CA	pathway		dgidb				false		27196766		
+CHEMBL:CHEMBL3342187	chembl:CHEMBL3342187	PIK3CA	pathway		dgidb				false		27974663		
+UROKINASE	rxcui:11055	PIK3CA	pathway		dgidb				true	false	11865026		
+SELUMETINIB	rxcui:2289380	PIK3CA	pathway		dgidb				true	true	21358673|26137449|29975751|27636997		
+AS-252424	iuphar.ligand:10578	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+COMPOUND 7 [PMID: 31955578]	iuphar.ligand:10649	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+CH-5132799	drugbank:DB13051	PIK3CA	pathway		dgidb				false				
+AFURESERTIB	ncit:C82390	PIK3CA	pathway		dgidb				false		24978597		
+NERATINIB	rxcui:1940643	PIK3CA	pathway		dgidb				true	true	37272756|26243863|31624127|26627007		
+MULTI-AGC KINASE INHIBITOR AT13148	ncit:C101786	PIK3CA	pathway		dgidb				false		22781553		
+PP-121	drugbank:DB08052	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+LUCITANIB	ncit:C95726	PIK3CA	pathway		dgidb				false		27126994		
+LENIOLISIB	rxcui:2633005	PIK3CA	pathway		dgidb	inhibitor	inhibitor		true	true			
+PANITUMUMAB	rxcui:263034	PIK3CA	pathway		dgidb				true	true	19223544		
+ABEMACICLIB	rxcui:1946825	PIK3CA	pathway		dgidb				true	true	31516747		
+ZSTK474	iuphar.ligand:7965	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false		26137449		
+PRASTERONE	rxcui:3143	PIK3CA	pathway		dgidb				true	true	15501480		
+Borussertib	chembl:CHEMBL4795065	PIK3CA	pathway		dgidb				false		30858154		
+SAPANISERTIB	rxcui:2395271	PIK3CA	pathway		dgidb	inhibitor	inhibitor		true	false	25261369|26272063|23085766|27974663		
+CABOZANTINIB S-MALATE	rxcui:1363267	PIK3CA	pathway		dgidb				true	false	25242168		
+(2S)-1-(1H-INDOL-3-YL)-3-{[5-(3-METHYL-1H-INDAZOL-5-YL)PYRIDIN-3-YL]OXY}PROPAN-2-AMINE	drugbank:DB08073	PIK3CA	pathway		dgidb				false		19208828		
+MTOR KINASE INHIBITOR PP242	ncit:C128632	PIK3CA	pathway		dgidb				false		21358673		
+DOXORUBICIN HYDROCHLORIDE	rxcui:142433	PIK3CA	pathway		dgidb				true	true	12761490|16905201|27893038		
+CISPLATIN	rxcui:2555	PIK3CA	pathway		dgidb				true	true	30926065|28808038|20447721|27489350		
+CRIZOTINIB	rxcui:1148495	PIK3CA	pathway		dgidb				true	true	30978502		
+ONATASERTIB	ncit:C92575	PIK3CA	pathway		dgidb				false		26177599		
+SF1126	drugbank:DB05210	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+TRAMETINIB DIMETHYL SULFOXIDE	rxcui:1425098	PIK3CA	pathway		dgidb				true	false	37011011|37713162|35005996|26882569|26469692|26627007|36322002|27797976|30819666		
+TORIPALIMAB	rxcui:2669406	PIK3CA	pathway		dgidb				true	true	37469254		
+KU-0060648	iuphar.ligand:8011	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+PP-242	iuphar.ligand:5704	PIK3CA	pathway		dgidb				false		21358673		
+LY-294002	drugbank:DB02656	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false		17562705|22212721		
+METFORMIN	rxcui:6809	PIK3CA	pathway		dgidb				true	true	23986086|35005996		
+NINTEDANIB ESYLATE	rxcui:1592736	PIK3CA	pathway		dgidb				true	true	36805958		
+MS417	iuphar.ligand:7512	PIK3CA	pathway		dgidb				false		26058079		
+VENETOCLAX	rxcui:1747556	PIK3CA	pathway		dgidb				true	true	27974663		
+RESVERATROL	ncit:C1215	PIK3CA	pathway		dgidb				false		15925284		
+CAMPTOTHECIN	ncit:C338	PIK3CA	pathway		dgidb				true	false	12464623		
+RECOMBINANT INTERLEUKIN-2	ncit:C587	PIK3CA	pathway		dgidb				false		10229082		
+ANTI-EGFR MONOCLONAL ANTIBODY	ncit:C133878	PIK3CA	pathway		dgidb				false		23435830		
+ZINILISIB	iuphar.ligand:14369	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+FUTIBATINIB	rxcui:2628190	PIK3CA	pathway		dgidb				true	true	37377403		
+LORLATINIB	rxcui:2103164	PIK3CA	pathway		dgidb				true	true	37147298		
+BINIMETINIB	rxcui:2049122	PIK3CA	pathway		dgidb				true	true	29496665		
+PI-103	iuphar.ligand:5701	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false		22336586		
+WORTMANNIN	drugbank:DB08059	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+OSI-027	drugbank:DB12387	PIK3CA	pathway		dgidb				false		21673091		
+DABRAFENIB	rxcui:1424911	PIK3CA	pathway		dgidb				true	true	27797976		
+PI3K ALPHA/BETA INHIBITOR BAY1082439	ncit:C103861	PIK3CA	pathway		dgidb				false				
+WJH-C19	iuphar.ligand:14350	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+MIDOSTAURIN	rxcui:1919083	PIK3CA	pathway		dgidb				true	false	11719451		
+IPATASERTIB	ncit:C91072	PIK3CA	pathway		dgidb				false		32205017|32439931|28800861|37916958		
+BORTEZOMIB	rxcui:358258	PIK3CA	pathway		dgidb				true	true	21216929		
+NVP-CLR457	iuphar.ligand:12119	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+AKT INHIBITOR MK2206	ncit:C90581	PIK3CA	pathway		dgidb				false		37713162|32439931|26187616|31714586|25349966|21289267|22932669|26627007|31277699|26084990|32376656|22180495|23888070		
+PI3K/MTOR KINASE INHIBITOR WXFL10030390	ncit:C159499	PIK3CA	pathway		dgidb				false				
+NAB-PACLITAXEL	ncit:C2688	PIK3CA	pathway		dgidb				false		33602685		
+DUVELISIB	rxcui:2058509	PIK3CA	pathway		dgidb	inhibitor	inhibitor		true	true			
+LAPATINIB	rxcui:480167	PIK3CA	pathway		dgidb				true	true	25199759|26920887|19010894|22294718|26627007|26245675		
+TAMOXIFEN	rxcui:10324	PIK3CA	pathway		dgidb				true	true	26116361		
+DEZAPELISIB	ncit:C107686	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+COMPOUND 12B [PMID: 31465220]	iuphar.ligand:10489	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+COMPOUND 22 [PMID: 24754609]	iuphar.ligand:10234	PIK3CA	pathway		dgidb	inhibitor	inhibitor		false				
+GSK690693	iuphar.ligand:5196	PIK3CA	pathway		dgidb				false		32439931		
+DOXORUBICIN HYDROCHLORIDE	rxcui:142433	SRC	pathway		dgidb				true	true	7532928		
+IBRUTINIB	rxcui:1442981	SRC	pathway		dgidb	inhibitor	inhibitor		true	true			
+PP-121	drugbank:DB08052	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+PONATINIB	rxcui:1364347	SRC	pathway		dgidb				true	true			
+ELZOVANTINIB	ncit:C162676	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+MLN-8054	iuphar.ligand:5696	SRC	pathway		dgidb				false				
+CHEMBL:CHEMBL374680	chembl:CHEMBL374680	SRC	pathway		dgidb				false		16890436		
+N-(5-METHYL-1H-PYRAZOL-3-YL)-2-PHENYLQUINAZOLIN-4-AMINE	drugbank:DB08454	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+KX2-361	iuphar.ligand:10004	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+KENPAULLONE	iuphar.ligand:6000	SRC	pathway		dgidb				false				
+CCT196969	iuphar.ligand:9815	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+PP2	iuphar.ligand:9404	SRC	pathway		dgidb				false		19447617|16509573		
+LINIFANIB	ncit:C71759	SRC	pathway		dgidb				false				
+XL228	drugbank:DB05184	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+COMPOUND 36 [PMID: 21958547]	iuphar.ligand:9391	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+TAK-020	iuphar.ligand:11730	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+CEDIRANIB	ncit:C80867	SRC	pathway		dgidb				false				
+BALAMAPIMOD	iuphar.ligand:9925	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+XL999	drugbank:DB05014	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+PF-562271	iuphar.ligand:9381	SRC	pathway		dgidb				false				
+NVP-TAE684	iuphar.ligand:5714	SRC	pathway		dgidb				false				
+TYRPHOSTIN A9	ncit:C2026	SRC	pathway		dgidb				false		11112699		
+CHEMBL:CHEMBL230686	chembl:CHEMBL230686	SRC	pathway		dgidb				false		17113292		
+CRENOLANIB	ncit:C64639	SRC	pathway		dgidb				false				
+VODOBATINIB	ncit:C174748	SRC	pathway		dgidb				false				
+COMPOUND 19A [PMID: 30503936]	iuphar.ligand:10181	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+COMPOUND 8H [PMID: 22765894]	iuphar.ligand:8175	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+CCT241161	iuphar.ligand:9814	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+CENISERTIB	chembl:CHEMBL1967878	SRC	pathway		dgidb			2	false				
+CLOZAPINE	rxcui:2626	SRC	pathway		dgidb				true	true	15659539		
+ENMD-2076	iuphar.ligand:7885	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+SYK INHIBITOR III	iuphar.ligand:6048	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+LAVENDUSTIN A	ncit:C1142	SRC	pathway		dgidb				false		12391293		
+SI306	iuphar.ligand:10708	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+INTERLEUKIN-11	rxcui:1311380	SRC	pathway		dgidb				true	true	8641341		
+GW559768X	chembl:CHEMBL237347	SRC	pathway		dgidb				false		17884497		
+GW843682X	chembl:CHEMBL514499	SRC	pathway		dgidb				false				
+(3Z)-N,N-DIMETHYL-2-OXO-3-(4,5,6,7-TETRAHYDRO-1H-INDOL-2-YLMETHYLIDENE)-2,3-DIHYDRO-1H-INDOLE-5-SULFONAMIDE	drugbank:DB08039	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+MAX-40279	drugbank:DB15191	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+COMPOUND 2 [PMID: 15546730]	iuphar.ligand:8136	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+ALSTERPAULLONE	drugbank:DB04014	SRC	pathway		dgidb				false				
+CINNAMTANNIN B1	iuphar.ligand:13186	SRC	pathway		dgidb				false		17602466		
+NG-25	iuphar.ligand:8074	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+PD166285	iuphar.ligand:8183	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+PD173074	iuphar.ligand:5037	SRC	pathway		dgidb				false				
+HESPERADIN	iuphar.ligand:8354	SRC	pathway		dgidb	inhibitor	inhibitor		false		19035792		
+CP-547632	iuphar.ligand:7881	SRC	pathway		dgidb				false				
+TOZASERTIB	ncit:C98053	SRC	pathway		dgidb				false				
+CYC-116	chembl:CHEMBL482967	SRC	pathway		dgidb			1	false				
+RG-1530	iuphar.ligand:10361	SRC	pathway		dgidb				false				
+ECF506	iuphar.ligand:9186	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+WH-4-023	iuphar.ligand:8068	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+ACALABRUTINIB	rxcui:1986808	SRC	pathway		dgidb	inhibitor	inhibitor		true	true			
+HERBIMYCIN A	iuphar.ligand:5984	SRC	pathway		dgidb				false				
+COMPOUND 25 [PMID: 31260299]	iuphar.ligand:10428	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+DOVITINIB	ncit:C76199	SRC	pathway		dgidb				false				
+ALISERTIB	ncit:C71717	SRC	pathway		dgidb				false				
+MASITINIB	ncit:C79910	SRC	pathway		dgidb				false				
+DORSOMORPHIN	iuphar.ligand:4907	SRC	pathway		dgidb	inhibitor	inhibitor		false				
+ENTRECTINIB	rxcui:2197862	SRC	pathway		dgidb				true	true			
+TAMATINIB	iuphar.ligand:5706	SRC	pathway		dgidb				false				
+GW441756X	chembl:CHEMBL1516890	SRC	pathway		dgidb				false				
+CATEQUENTINIB	ncit:C138997	SRC	pathway		dgidb				false				
+7-BIA	iuphar.ligand:10109	PTPRS	pathway		dgidb	inhibitor	inhibitor		false				
+COMPOUND 7B [HAFTCHENARY ET AL., 2013]	iuphar.ligand:8850	PTPRS	pathway		dgidb	inhibitor	inhibitor		false				
+ETIDRONIC ACID	rxcui:1356715	PTPRS	pathway		dgidb				false				
+TEMUTERKIB	ncit:C131335	HRAS	pathway		dgidb				false		34737198		
+TUCATINIB	rxcui:2361285	HRAS	pathway		dgidb				true	true			
+HEXAMETHYLENE BISACETAMIDE	ncit:C1125	HRAS	pathway		dgidb				false		3856429		
+ALPELISIB	rxcui:2169285	HRAS	pathway		dgidb				true	true	38219706|35247914|37339176|39152269		
+EPOETIN ALFA	rxcui:105694	HRAS	pathway		dgidb				true	true	9104820		
+CABOZANTINIB S-MALATE	rxcui:1363267	HRAS	pathway		dgidb				true	false	31549998|27525386|35491008		
+GANITUMAB	ncit:C71531	HRAS	pathway		dgidb				false		36322002		
+EVEROLIMUS	rxcui:141704	HRAS	pathway		dgidb				true	true	26544513		
+ANTISENSE OLIGONUCLEOTIDES	ncit:C1291	HRAS	pathway		dgidb				false		10911621		
+BINIMETINIB	rxcui:2049122	HRAS	pathway		dgidb				true	true	26544513		
+BEVACIZUMAB	rxcui:253337	HRAS	pathway		dgidb				true	true	15998951		
+SF1126	drugbank:DB05210	HRAS	pathway		dgidb				false		25425962		
+SELUMETINIB	rxcui:2289380	HRAS	pathway		dgidb				true	true	26544513|35363510|29975751|27222538		
+MEK INHIBITOR PD-98059	ncit:C1625	HRAS	pathway		dgidb				false		12883735		
+RIGOSERTIB	ncit:C152216	HRAS	pathway		dgidb				false		33158997		
+SCH772984	iuphar.ligand:8056	HRAS	pathway		dgidb				false		35247914		
+UPROSERTIB	ncit:C84870	HRAS	pathway		dgidb				false				
+PACLITAXEL PROTEIN-BOUND	rxcui:486610	HRAS	pathway		dgidb				true	true	39199558		
+ENCORAFENIB	rxcui:2049106	HRAS	pathway		dgidb				true	true			
+PRALSETINIB	rxcui:2394936	HRAS	pathway		dgidb				true	true	38127829		
+SOTORASIB	rxcui:2550714	HRAS	pathway		dgidb				true	true	38236605		
+ANTIBIOTIC	ncit:C258	HRAS	pathway		dgidb				false		9422737		
+TIPIFARNIB	ncit:C1703	HRAS	pathway		dgidb				false		32727882|37339176|35247914|32636318|33750196|39152269|37427101|32557577|38219706		
+MRTX-1133	chembl:CHEMBL4858364	HRAS	pathway		dgidb			1	false		37339170		
+SIROLIMUS	rxcui:35302	HRAS	pathway		dgidb				true	true	26882569		
+ISIS 2503	drugbank:DB16181	HRAS	pathway		dgidb	antisense oligonucleotide	antisense oligonucleotide		false				
+TRAMETINIB DIMETHYL SULFOXIDE	rxcui:1425098	HRAS	pathway		dgidb				true	false	28783719|27222538|34554931|26882569|26343583|36322002|39199558|39152269|34737198		
+MIRDAMETINIB	rxcui:2705551	HRAS	pathway		dgidb				true	false	26544513		
+CISPLATIN	rxcui:2555	HRAS	pathway		dgidb				true	true	39199558		
+BAY 11-7082	iuphar.ligand:5934	HRAS	pathway		dgidb				false		38982514		
+B-RAF/VEGFR-2 INHIBITOR RAF265	ncit:C61311	HRAS	pathway		dgidb				false		34554931		
+DIMETHYL SULFOXIDE	rxcui:3455	HRAS	pathway		dgidb				true	true	3856429		
+LYMPHOKINE-ACTIVATED KILLER CELLS	ncit:C13008	HRAS	pathway		dgidb				false		3489774		
+BUPARLISIB	ncit:C90565	HRAS	pathway		dgidb				false		39199558|26544513|29975751		
+VEMURAFENIB	rxcui:1147220	HRAS	pathway		dgidb				true	false			
+DASATINIB ANHYDROUS	rxcui:1546019	HRAS	pathway		dgidb				true	false	27222538		
+OPNURASIB	ncit:C177916	HRAS	pathway		dgidb				false		38236605		
+RECOMBINANT INTERLEUKIN-6	ncit:C591	HRAS	pathway		dgidb				false		9187131		
+PICTILISIB	ncit:C165479	HRAS	pathway		dgidb				false		39152269		
+BRYOSTATIN 1	ncit:C1026	HRAS	pathway		dgidb				false		16483930		
+LORLATINIB	rxcui:2103164	HRAS	pathway		dgidb				true	true	37147298|39177282		
+DIETHYLSTILBESTROL	rxcui:3390	HRAS	pathway		dgidb				true	true	1980008		
+ANTINEOPLASTIC AGENT	ncit:C274	HRAS	pathway		dgidb				false		9515813		
+SAPANISERTIB	rxcui:2395271	HRAS	pathway		dgidb				true	false			
+METFORMIN	rxcui:6809	HRAS	pathway		dgidb				true	true	26921394		
+CI-1040	drugbank:DB12429	HRAS	pathway		dgidb				false		26267534		
+METHYLNITROSOUREA	ncit:C645	HRAS	pathway		dgidb				false		10391687		
+ADENOVIRUS VECTOR	ncit:C1890	HRAS	pathway		dgidb				false		10911621		
+PD173074	iuphar.ligand:5037	HRAS	pathway		dgidb				false		22869148		
+RIGOSERTIB SODIUM	ncit:C71355	HRAS	pathway		dgidb				false		27104980		
+HYDROXYUREA	rxcui:5552	HRAS	pathway		dgidb				true	true	12041671		
+GEMCITABINE	rxcui:12574	HRAS	pathway		dgidb				true	true	16818479		
+DACTOLISIB	ncit:C74072	HRAS	pathway		dgidb				false		21831957		
+AZD8186	iuphar.ligand:8527	HRAS	pathway		dgidb				false		39152269		
+AZD8055	iuphar.ligand:7714	HRAS	pathway		dgidb				false		26544513		
+AKT INHIBITOR MK2206	ncit:C90581	HRAS	pathway		dgidb				false		21289267		
+DOCETAXEL ANHYDROUS	rxcui:1299922	HRAS	pathway		dgidb				true	true	16983095		
+NST-628	iuphar.ligand:13370	HRAS	pathway		dgidb				false		38588399		
+L-744,832	ncit:C1682	HRAS	pathway		dgidb				false		9515813		
+PANITUMUMAB	rxcui:263034	HRAS	pathway		dgidb				true	true	22797062		
+CARBOPLATIN	rxcui:40048	HRAS	pathway		dgidb				true	true	39199558		
+ANTHRACYCLINE ANTINEOPLASTIC ANTIBIOTIC	ncit:C1594	HRAS	pathway		dgidb				false		8069262		
+PEMETREXED DISODIUM	rxcui:282443	HRAS	pathway		dgidb				true	true	39199558		
+NAPORAFENIB	ncit:C125003	HRAS	pathway		dgidb				false		34554931		
+ULIXERTINIB	ncit:C104744	HRAS	pathway		dgidb				false		35247914		
+PELAREOREP	chembl:CHEMBL3545069	HRAS	pathway		dgidb			3	false				
+SR9011	iuphar.ligand:8900	HRAS	pathway		dgidb				false		29320480		
+LY3009120	iuphar.ligand:8943	HRAS	pathway		dgidb				false		34737198		
+CETUXIMAB	rxcui:318341	HRAS	pathway		dgidb				true	true	22797062		
+CRIZOTINIB	rxcui:1148495	HRAS	pathway		dgidb				true	true	29636358		
+NITROGLYCERIN	rxcui:4917	HRAS	pathway		dgidb				true	true	8968066		
+EPIDERMAL GROWTH FACTOR RECEPTOR TYROSINE KINASE INHIBITOR	ncit:C2167	HRAS	pathway		dgidb				false		26561417		
+SR9009	iuphar.ligand:8901	HRAS	pathway		dgidb				false		29320480		
+ALPHA-TOCOPHEROL	ncit:C74960	HRAS	pathway		dgidb				false		16166287|9750015		
+MTOR KINASE INHIBITOR AZD8055	ncit:C78856	HRAS	pathway		dgidb				false		26544513		
+DABRAFENIB	rxcui:1424911	HRAS	pathway		dgidb				true	true			
+ISIS-2503	chembl:CHEMBL4594562	HRAS	pathway		dgidb			2	false				
+STREPTOZOCIN	rxcui:10114	HRAS	pathway		dgidb				true	true	8171758		
+LONAFARNIB	rxcui:2467553	HRAS	pathway		dgidb	inhibitor	inhibitor		true	true			
+E6201	iuphar.ligand:7836	HRAS	pathway		dgidb				false		23039341		
+ERK1/2 INHIBITOR ERAS-007	ncit:C150248	HRAS	pathway		dgidb				false		34337566		
+FEXAGRATINIB	ncit:C88272	HRAS	pathway		dgidb				false		22869148		
+INSULIN, REGULAR, HUMAN	rxcui:253182	HRAS	pathway		dgidb				true	false	8389451		
+BAY-293	iuphar.ligand:10480	SOS1	pathway		dgidb				false				
+MRTX0902	iuphar.ligand:11966	SOS1	pathway		dgidb				false				
+RECOMBINANT INTERLEUKIN-6	ncit:C591	SOS1	pathway		dgidb				false		9815779		
+COMPOUND 37 [PMID: 36384290]	iuphar.ligand:12256	SOS1	pathway		dgidb				false				
+SOS1 PROTAC 9D	iuphar.ligand:12069	SOS1	pathway		dgidb	agonist	agonist		false				
+BI-3406	iuphar.ligand:12061	SOS1	pathway		dgidb				false				
+DEHYDRATED ALCOHOL	rxcui:1310469	IRS1	pathway		dgidb				true	true	7526037		
+INOSITOL	rxcui:5833	IRS1	pathway		dgidb				true	true	9693122		
+PRASTERONE	rxcui:3143	IRS1	pathway		dgidb				true	true	15501480		
+FLUOROURACIL	rxcui:4492	IRS1	pathway		dgidb				true	true	29593529		
+GLIMEPIRIDE	rxcui:25789	IRS1	pathway		dgidb				true	true	15710354		
+CYCLOPHOSPHAMIDE ANHYDROUS	rxcui:1545988	IRS1	pathway		dgidb				true	false	29593529		
+EPIRUBICIN	rxcui:3995	IRS1	pathway		dgidb				true	true	29593529		
+BINIMETINIB	rxcui:2049122	NRAS	pathway		dgidb				true	true	11238126|28514312|29496665|24569456|29437705|35294522|28152546|23414587|27307593|29903896|33318037|33637626|29245078|28284557|35385748|37729428|26987942|26821351|24588908		
+CETUXIMAB	rxcui:318341	NRAS	pathway		dgidb				true	true	28275037|20619739|24024839|23325582|32796636|28611205|27636997|28179366|28951457|36307056|25605843|34117033		
+NAPORAFENIB	ncit:C125003	NRAS	pathway		dgidb				false		36947734|33355204|34554931		
+XL888	iuphar.ligand:13794	NRAS	pathway		dgidb				false		22351686		
+ANTI-CD19 CAR-T CELLS	drugbank:DB21913	NRAS	pathway		dgidb				false		31905241		
+SELUMETINIB	rxcui:2289380	NRAS	pathway		dgidb				true	true	36398965|35363510|34709738|26343583|27636997|38456804|23406027|22392911		
+OLAPARIB	rxcui:1597582	NRAS	pathway		dgidb				true	true	29304353|37729428		
+QUIZARTINIB	rxcui:2643048	NRAS	pathway		dgidb				true	true	38231480|35395091		
+GDC-0623	drugbank:DB11982	NRAS	pathway		dgidb				false		35689405		
+FUTIBATINIB	rxcui:2628190	NRAS	pathway		dgidb				true	true	32973082		
+GDC-0879	iuphar.ligand:5681	NRAS	pathway		dgidb				false		19276360		
+ADAVOSERTIB	ncit:C91725	NRAS	pathway		dgidb				false		34538072|24791855		
+LEUCOVORIN CALCIUM	rxcui:225852	NRAS	pathway		dgidb				true	true	26341920|25605843		
+BAY 11-7082	iuphar.ligand:5934	NRAS	pathway		dgidb				false		38982514		
+NST-628	iuphar.ligand:13370	NRAS	pathway		dgidb				false		38588399		
+PANITUMUMAB	rxcui:263034	NRAS	pathway		dgidb				true	true	32796636|26341920|37262393|38236605|28951457|36307056|28275037|27736842		
+CYTARABINE	rxcui:3041	NRAS	pathway		dgidb				true	true	1394224		
+PIMASERTIB	ncit:C84864	NRAS	pathway		dgidb				false		23629727|32336014|27636997|30585255		
+MRTX-1133	chembl:CHEMBL4858364	NRAS	pathway		dgidb			1	false		37339170		
+MEK/RAF MOLECULAR GLUE IK-595	ncit:C207942	NRAS	pathway		dgidb				false				
+BI-3406	iuphar.ligand:12061	NRAS	pathway		dgidb				false		32816843		
+FLUOROURACIL	rxcui:4492	NRAS	pathway		dgidb				true	true	26341920|25605843		
+E6201	iuphar.ligand:7836	NRAS	pathway		dgidb				false		23039341		
+COBIMETINIB	rxcui:1722365	NRAS	pathway		dgidb				true	true	34376578|33953400|30482852		
+DUBERMATINIB	ncit:C127116	NRAS	pathway		dgidb				false		33268594		
+PLX-4720	iuphar.ligand:5703	NRAS	pathway		dgidb				false		25500121|23431193		
+SIROLIMUS	rxcui:35302	NRAS	pathway		dgidb				true	true	29496665		
+DABRAFENIB	rxcui:1424911	NRAS	pathway		dgidb				true	true	36622773|22389471|29903896|37729428|29631033|27523909|36217799|25452114		
+EXARAFENIB	ncit:C180835	NRAS	pathway		dgidb				false				
+IRINOTECAN HYDROCHLORIDE	rxcui:153329	NRAS	pathway		dgidb				true	true	20619739|25605843|26341920		
+METHYLNITROSOUREA	ncit:C645	NRAS	pathway		dgidb				false		9197527		
+TAK-733	drugbank:DB12241	NRAS	pathway		dgidb				false		26439693		
+BRIMARAFENIB	ncit:C173633	NRAS	pathway		dgidb				false				
+ALPELISIB	rxcui:2169285	NRAS	pathway		dgidb				true	true	24569456|29437705|28951457		
+GEMCITABINE	rxcui:12574	NRAS	pathway		dgidb				true	true	21636554		
+TRAMETINIB DIMETHYL SULFOXIDE	rxcui:1425098	NRAS	pathway		dgidb				true	false	36398965|34376578|37339170|28783719|28514312|36622773|39001383|32586982|31088841|27488531|36947734|31164355|30833748|34554931|28630215|29054983|31186313|22389471|26343583|27636997|28179366|35913398|38456660|27760111|38456804|39001563|33563661|29903896|35395091|36895472|36322002|38522505|33318037|38959709|22805292|37729428|30819666|29631033|34737198|22983396|36217799|25452114|23431193|25504439		
+VEMURAFENIB	rxcui:1147220	NRAS	pathway		dgidb				true	false	23569304|21107323|28783719|34376578|24265153|28986383|32586982|30559419|22389471|26343583|26267534|30036146|29903896|33318037|28951457|27523909|30333627		
+BELVARAFENIB	ncit:C121646	NRAS	pathway		dgidb				false		38470950|33953400		
+PELAREOREP	chembl:CHEMBL3545069	NRAS	pathway		dgidb			3	false				
+BIVALENT BRD4 INHIBITOR AZD5153	ncit:C151943	NRAS	pathway		dgidb				false		27573426		
+INFIGRATINIB	rxcui:2550729	NRAS	pathway		dgidb				true	false	28630215		
+INOSITOL	rxcui:5833	NRAS	pathway		dgidb				true	true	2498808		
+PLIXORAFENIB	iuphar.ligand:9131	NRAS	pathway		dgidb				false		30559419		
+PEMBROLIZUMAB	rxcui:1547545	NRAS	pathway		dgidb				true	true	28514312|37403699|29973670		
+ERK1/2 INHIBITOR ERAS-007	ncit:C150248	NRAS	pathway		dgidb				false		34337566		
+TAK-632	iuphar.ligand:10387	NRAS	pathway		dgidb				false		30559419|27523909		
+MK-8353	iuphar.ligand:9974	NRAS	pathway		dgidb				false		33318037		
+AZ628	iuphar.ligand:8475	NRAS	pathway		dgidb				false		27523909		
+CHEMBL:CHEMBL4455382	chembl:CHEMBL4455382	NRAS	pathway		dgidb				false		36398965		
+TEMUTERKIB	ncit:C131335	NRAS	pathway		dgidb				false		31744895|33926920|33536188|34737198		
+P53-HDM2 INTERACTION INHIBITOR MI-773	ncit:C106120	NRAS	pathway		dgidb				false		30585255		
+COPANLISIB	rxcui:1945077	NRAS	pathway		dgidb				true	false	34337566		
+BCL-2 INHIBITOR BCL201	ncit:C125603	NRAS	pathway		dgidb				false		38456804		
+BUPARLISIB	ncit:C90565	NRAS	pathway		dgidb				false		27307593		
+IODINE I 131-6-BETA-IODOMETHYL-19-NORCHOLESTEROL	ncit:C74052	NRAS	pathway		dgidb				false				
+LUVOMETINIB	ncit:C172382	NRAS	pathway		dgidb				false		36113242		
+ABEMACICLIB	rxcui:1946825	NRAS	pathway		dgidb				true	true	27217383|33536188		
+ERK INHIBITOR CC-90003	ncit:C119747	NRAS	pathway		dgidb				false				
+MEK INHIBITOR IMM-1-104	ncit:C192810	NRAS	pathway		dgidb				false				
+CABOZANTINIB S-MALATE	rxcui:1363267	NRAS	pathway		dgidb				true	false	31549998|27525386|35491008		
+PF-07799933	drugbank:DB17489	NRAS	pathway		dgidb				false		38691346		
+OPNURASIB	ncit:C177916	NRAS	pathway		dgidb				false		38236605		
+GANITUMAB	ncit:C71531	NRAS	pathway		dgidb				false		39001383|36322002		
+PF-4708671	iuphar.ligand:8036	NRAS	pathway		dgidb				false		29496665		
+PAZOPANIB	rxcui:714438	NRAS	pathway		dgidb				true	true	31186313|30333627		
+REGORAFENIB	rxcui:1312397	NRAS	pathway		dgidb				true	true	30120161|23629727		
+RIBOCICLIB	rxcui:1873916	NRAS	pathway		dgidb				true	true	26987942|29496665|35294522		
+AKT INHIBITOR MK2206	ncit:C90581	NRAS	pathway		dgidb				false		21289267		
+SOTORASIB	rxcui:2550714	NRAS	pathway		dgidb				true	true	37262393|38236605		
+RIGOSERTIB	ncit:C152216	NRAS	pathway		dgidb				false		33158997		
+LIFIRAFENIB	ncit:C124995	NRAS	pathway		dgidb				false		32336014|33318037		
+ULIXERTINIB	ncit:C104744	NRAS	pathway		dgidb				false		34376578|29247021|32586982|33318037		
+BEROTERKIB ANHYDROUS	ncit:C155785	NRAS	pathway		dgidb				false		34330842		
+GEDATOLISIB	ncit:C91732	NRAS	pathway		dgidb				false		21325073|12068308		
+CCT196969	iuphar.ligand:9815	NRAS	pathway		dgidb				false		25500121|23431193		
+YM-254890	iuphar.ligand:9335	NRAS	pathway		dgidb				false		33229459		
+DACTOLISIB	ncit:C74072	NRAS	pathway		dgidb				false		22392911		
+I-BET151	iuphar.ligand:7518	NRAS	pathway		dgidb				false		31164355		
+AZD5991	iuphar.ligand:11783	NRAS	pathway		dgidb				false		38456804		
+ENCORAFENIB	rxcui:2049106	NRAS	pathway		dgidb				true	true	29903896|28951457|35385748|37729428		
+OMIPALISIB	ncit:C88270	NRAS	pathway		dgidb				false		22389471|23431193		
+CHEMBL:CHEMBL3326006	chembl:CHEMBL3326006	NRAS	pathway		dgidb				false		30482852		
+CISPLATIN	rxcui:2555	NRAS	pathway		dgidb				true	true	21636554		
+TUBASTATIN A	iuphar.ligand:9702	NRAS	pathway		dgidb				false		25957812		
+EVEROLIMUS	rxcui:141704	NRAS	pathway		dgidb				true	true	23629727|33563661|26821351		
+B-RAF/VEGFR-2 INHIBITOR RAF265	ncit:C61311	NRAS	pathway		dgidb				false		34554931		
+TALAZOPARIB	rxcui:2099704	NRAS	pathway		dgidb				true	true	37729428		
+LORLATINIB	rxcui:2103164	NRAS	pathway		dgidb				true	true	35689207		
+FF-10101	chembl:CHEMBL4650283	NRAS	pathway		dgidb			1	false		35395091		
+CERITINIB	rxcui:1535457	NRAS	pathway		dgidb				true	true	35689207		
+FUTUXIMAB/MODOTUXIMAB MIXTURE	ncit:C91381	NRAS	pathway		dgidb				false		29423521		
+TETRADECANOYLPHORBOL ACETATE	ncit:C866	NRAS	pathway		dgidb				false		1394224		
+AVUTOMETINIB	ncit:C80060	NRAS	pathway		dgidb				false		25422890		
+OBATOCLAX	ncit:C60770	NRAS	pathway		dgidb				false		22460902		
+DEL-22379	wikidata:Q21044462	NRAS	pathway		dgidb				false		26267534		
+METFORMIN	rxcui:6809	NRAS	pathway		dgidb				true	true	25504439		
+AZACITIDINE	rxcui:1251	NRAS	pathway		dgidb				true	true			
+CHEMBL:CHEMBL4439276	chembl:CHEMBL4439276	NRAS	pathway		dgidb				false		27760111|36895472		
+LONAFARNIB	rxcui:2467553	NRAS	pathway		dgidb	inhibitor	inhibitor		true	true			
+TAPOTOCLAX	ncit:C127817	NRAS	pathway		dgidb				false		38456804		
+NIVOLUMAB	rxcui:1597876	NRAS	pathway		dgidb				true	true	29973670		
+TIZATERKIB	ncit:C176765	NRAS	pathway		dgidb				false		33273059		
+ICOVAMENIB	ncit:C185864	NRAS	pathway		dgidb				false				
+CHLOROQUINE	rxcui:2393	NRAS	pathway		dgidb				true	true	30833748		
+IPILIMUMAB	rxcui:1094833	NRAS	pathway		dgidb				true	true	26095797		
+GI-4000	drugbank:DB05698	NRAS	pathway		dgidb				false		29528991		
+MITOGEN-ACTIVATED PROTEIN KINASE KINASE INHIBITOR	ncit:C69145	NRAS	pathway		dgidb				false				
+OSIMERTINIB	rxcui:1721560	NRAS	pathway		dgidb				true	true	31839416		
+LY3009120	iuphar.ligand:8943	NRAS	pathway		dgidb				false		30559419|26343583|29903896|31645440|34737198		
+LYMPHOKINE-ACTIVATED KILLER CELLS	ncit:C13008	NRAS	pathway		dgidb				false		3489774		
+CHELIDONINE	ncit:C221899	NRAS	pathway		dgidb				false		32156748		
+TUCATINIB	rxcui:2361285	NRAS	pathway		dgidb				true	true			
+TIVOZANIB	rxcui:2534233	NRAS	pathway		dgidb				true	true	30333627		
+VENETOCLAX	rxcui:1747556	NRAS	pathway		dgidb				true	true	38456804|36895472|37992684		
+TORIPALIMAB	rxcui:2669406	NRAS	pathway		dgidb				true	true	37403699		
+RUCAPARIB	rxcui:1862579	NRAS	pathway		dgidb				true	true	37729428		
+SORAFENIB	rxcui:495881	NRAS	pathway		dgidb				true	true	23629727|28923853|29950351		
+LENVATINIB	rxcui:1603296	NRAS	pathway		dgidb				true	true	26169970		
+RINETERKIB	ncit:C126687	NRAS	pathway		dgidb				false				
+NAVITOCLAX	ncit:C64776	NRAS	pathway		dgidb				false		38456660|36895472		
+PALBOCICLIB	rxcui:1601374	NRAS	pathway		dgidb				true	true	34376578|27488531|35913398|30819666|22983396		
+TUNLAMETINIB	ncit:C173437	NRAS	pathway		dgidb				false		36600247|38479118		
+MIRDAMETINIB	rxcui:2705551	NRAS	pathway		dgidb				true	false	28923853|27488531|25422890|32336014|38522505		
+KO-947	iuphar.ligand:9976	NRAS	pathway		dgidb				false				
+RECOMBINANT INTERFERON	ncit:C584	NRAS	pathway		dgidb				false		2499691		
+BI-847325	iuphar.ligand:12661	NRAS	pathway		dgidb				false		25873592		
+EG5 KINESIN-RELATED MOTOR PROTEIN INHIBITOR 4SC-205	ncit:C90557	NRAS	pathway		dgidb				false		34709738		
+RAVOXERTINIB	ncit:C170364	NRAS	pathway		dgidb				false		38728872		
+GILTERITINIB	rxcui:2105806	NRAS	pathway		dgidb				true	true	38231480|31088841|37992684|33268594|35395091		
+TOVORAFENIB	rxcui:2682434	NRAS	pathway		dgidb				true	true	39001563		
+REFAMETINIB	ncit:C74059	NRAS	pathway		dgidb				false		29950351		
+SCH772984	iuphar.ligand:8056	NRAS	pathway		dgidb				false		33318037		
+FORETINIB	ncit:C80058	NRAS	pathway		dgidb				false		38231480		
+CCT241161	iuphar.ligand:9814	NRAS	pathway		dgidb				false		25500121|23431193		
+CARBOPLATIN	rxcui:40048	NRAS	pathway		dgidb				true	true	21636554		
+PRASTERONE	rxcui:3143	BAX	pathway		dgidb				true	true	9177459		
+CAMPTOTHECIN	ncit:C338	BAX	pathway		dgidb				true	false	9398050		
+TOPOISOMERASE-II-BETA INHIBITOR RACEMIC XK469	ncit:C2662	BAX	pathway		dgidb				false		12085231		
+FLUOROURACIL	rxcui:4492	BAX	pathway		dgidb				true	true	15641988		
+DACARBAZINE	rxcui:3098	BAX	pathway		dgidb				true	true	14512787		
+ERYTHROMYCIN	rxcui:4053	BAX	pathway		dgidb				true	true	17007374		
+INTERFERON ALFA-2B	rxcui:5880	BAX	pathway		dgidb				true	false	11915028		
+FOSBRETABULIN DISODIUM	ncit:C2503	BAX	pathway		dgidb				false		12171907		
+PHENYLEPHRINE HYDROCHLORIDE	rxcui:8164	BAX	pathway		dgidb				true	true	10220693		
+BINETRAKIN	rxcui:1426682	BAX	pathway		dgidb				false		10891465		
+NAFOXIDINE	ncit:C677	BAX	pathway		dgidb				false		12756268		
+CARVEDILOL	rxcui:20352	BAX	pathway		dgidb				true	true	12973927|16759520		
+PROCARBAZINE HYDROCHLORIDE	rxcui:66925	BAX	pathway		dgidb				true	true	11839668		
+THERAPEUTIC MELATONIN	ncit:C632	BAX	pathway		dgidb				false		15205854		
+CYCLOPHOSPHAMIDE ANHYDROUS	rxcui:1545988	BAX	pathway		dgidb				true	false	14767525		
+LAPACHONE	ncit:C28694	BAX	pathway		dgidb				false		15753997		
+RECOMBINANT INHIBIN	ncit:C578	BAX	pathway		dgidb				false		15590985		
+VITAMIN A COMPOUND	ncit:C938	BAX	pathway		dgidb				false		17202653		
+METHOTREXATE	rxcui:6851	BAX	pathway		dgidb				true	true	11237386		
+SULFORAPHANE	ncit:C1424	BAX	pathway		dgidb				false		15753404		
+LEUCOVORIN CALCIUM	rxcui:225852	BAX	pathway		dgidb				true	true	11237386		
+TRETINOIN	rxcui:10753	BAX	pathway		dgidb				true	true	15316139		
+NICOTINE POLACRILEX	rxcui:31765	BAX	pathway		dgidb				true	true	15225679		
+OXALIPLATIN	rxcui:32592	BAX	pathway		dgidb				true	true	14985457|15545975		
+ARGIPRESSIN	rxcui:1098	BAX	pathway		dgidb				true	false	15590985		
+RECOMBINANT MACROPHAGE COLONY-STIMULATING FACTOR	ncit:C1290	BAX	pathway		dgidb				false		10770207		
+O-CHLOROACETYLCARBAMOYLFUMAGILLOL	ncit:C1298	BAX	pathway		dgidb				false		10481942		
+VINORELBINE	rxcui:39541	BAX	pathway		dgidb				true	true	11720482		
+MEDROXYPROGESTERONE ACETATE	rxcui:1000112	BAX	pathway		dgidb				true	true	15885761		
+NALTREXONE HYDROCHLORIDE	rxcui:105069	BAX	pathway		dgidb				true	true	16716514		
+ATENOLOL	rxcui:1202	BAX	pathway		dgidb				true	true	16995309		
+QUERCETIN	ncit:C792	BAX	pathway		dgidb				false		15741050		
+PREDNISOLONE	rxcui:8638	BAX	pathway		dgidb				true	true	12730678		
+PHENOBARBITAL	rxcui:8134	BAX	pathway		dgidb				true	true	9230198		
+ESTRAMUSTINE	rxcui:4089	BAX	pathway		dgidb				true	false	15869997		
+ROFECOXIB	rxcui:232158	BAX	pathway		dgidb				true	false	14627349		
+ANTHRACYCLINE ANTINEOPLASTIC ANTIBIOTIC	ncit:C1594	BAX	pathway		dgidb				false		10641488		
+FLUDARABINE	rxcui:24698	BAX	pathway		dgidb				true	true	12040435		
+LEVODOPA	rxcui:6375	BAX	pathway		dgidb				true	true	15672541		
+PRAVASTATIN SODIUM	rxcui:203144	BAX	pathway		dgidb				true	true	16540096		
+DOCETAXEL ANHYDROUS	rxcui:1299922	BAX	pathway		dgidb				true	true	15641988		
+CISPLATIN	rxcui:2555	BAX	pathway		dgidb				true	true	15790433		
+PREGNANT MARE SERUM GONADOTROPIN	ncit:C29773	BAX	pathway		dgidb				false		15798021		
+RECOMBINANT FLT3 LIGAND	ncit:C1714	BAX	pathway		dgidb				false		8916965		
+ETOPOSIDE	rxcui:4179	BAX	pathway		dgidb				true	true	15454884		
+ANDROSTENEDIONE	rxcui:784	BAX	pathway		dgidb				false		15590985		
+CHORIOGONADOTROPIN ALFA	rxcui:283550	BAX	pathway		dgidb				true	true	11095483		
+CETUXIMAB	rxcui:318341	BAX	pathway		dgidb				true	true	12850474		
+VERAPAMIL	rxcui:11170	BAX	pathway		dgidb				true	true	9354939		
+THERAPEUTIC ANDROSTANOLONE	ncit:C29618	BAX	pathway		dgidb				false		15517879		
+KERACYANIN CATION	chembl:CHEMBL505251	BAX	pathway		dgidb			2	false		17360708		
+RECOMBINANT C5A	ncit:C388	BAX	pathway		dgidb				false		16634840		
+NEUROPROTECTIVE AGENT	ncit:C1509	BAX	pathway		dgidb				false		10460254		
+MITOXANTRONE HYDROCHLORIDE	rxcui:203129	BAX	pathway		dgidb				true	true	11839668|14767525		
+MECHLORETHAMINE HYDROCHLORIDE	ncit:C627	BAX	pathway		dgidb				false		11839668|9459175		
+BACILLUS CALMETTE-GUERIN ANTIGEN	ncit:C77178	BAX	pathway		dgidb				false		9393826		
+RECOMBINANT INTERLEUKIN-1	ncit:C586	BAX	pathway		dgidb				false		12421568		
+BICALUTAMIDE	rxcui:83008	BAX	pathway		dgidb				true	true	11845989		
+COBALT	rxcui:1310300	BAX	pathway		dgidb				false		14741615		
+SIROLIMUS	rxcui:35302	BAX	pathway		dgidb				true	true	15782132		
+PROTEIN PHOSPHATASE INHIBITOR	ncit:C2159	BAX	pathway		dgidb				false		11883953		
+CIPROFLOXACIN	rxcui:2551	BAX	pathway		dgidb				true	true	10741713|12632069		
+SODIUM CHLORIDE	rxcui:9863	BAX	pathway		dgidb				true	true	15641688		
+HYPERBARIC OXYGEN	ncit:C2351	BAX	pathway		dgidb				false		16001273		
+TESTOSTERONE	rxcui:10379	BAX	pathway		dgidb				true	true	14555326		
+DOXORUBICIN HYDROCHLORIDE	rxcui:142433	BAX	pathway		dgidb				true	true	10422567|12040435		
+ALPELISIB	rxcui:2169285	PIK3R1	pathway		dgidb	inhibitor	inhibitor		true	true			
+PI-103	drugbank:DB17046	PIK3R1	pathway		dgidb	inhibitor	inhibitor		false				
+AZD6482	iuphar.ligand:8059	PIK3R1	pathway		dgidb	inhibitor	inhibitor		false				
+SF1126	drugbank:DB05210	PIK3R1	pathway		dgidb	inhibitor	inhibitor		false				
+EVEROLIMUS	rxcui:141704	PIK3R1	pathway		dgidb				true	true	28727815		
+ZSTK474	iuphar.ligand:7965	PIK3R1	pathway		dgidb	inhibitor	inhibitor		false				
+BUPARLISIB HYDROCHLORIDE	ncit:C142973	PIK3R1	pathway		dgidb	inhibitor	inhibitor		false				
+GSK2636771	iuphar.ligand:7967	PIK3R1	pathway		dgidb	inhibitor	inhibitor		false				
+INFIGRATINIB	rxcui:2550729	PIK3R1	pathway		dgidb	inhibitor	inhibitor		true	false			
+GSK1059615	iuphar.ligand:9826	PIK3R1	pathway		dgidb	inhibitor	inhibitor		false				
+QUERCETIN	rxcui:9060	PIK3R1	pathway		dgidb	inhibitor	inhibitor		true	true			
+COPANLISIB	rxcui:1945077	PIK3R1	pathway		dgidb	inhibitor	inhibitor		true	false			
+LENIOLISIB	rxcui:2633005	PIK3R1	pathway		dgidb				true	true			
+&ALPHA;&BETA;-METHYLENEADP	iuphar.ligand:5092	PLCG1	pathway		dgidb				false				
+CEFIXIME ANHYDROUS	rxcui:1546021	PLCG1	pathway		dgidb				true	false			
+DICLOFENAC SODIUM	rxcui:203214	PLCG1	pathway		dgidb				true	true	26398624		
+ACETAMINOPHEN	rxcui:161	PLCG1	pathway		dgidb				true	true	26398624		
+9,10-PHENANTHRENEQUINONE	chembl:CHEMBL51931	PLCG1	pathway		dgidb				false				
+ASPIRIN	rxcui:1191	PLCG1	pathway		dgidb				true	true	26398624		

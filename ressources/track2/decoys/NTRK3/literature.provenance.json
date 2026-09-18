@@ -1,0 +1,44 @@
+{
+  "name": "literature",
+  "built_at": "2026-09-18T18:46:48+00:00",
+  "built_by": "mva-drugs snapshot",
+  "code_version": "db3a004",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "Four query families over PubMed E-utilities: <gene> AND (repurposing OR inhibitor OR <anchor>); <pathway head phrase> AND drug; per direction, the direction name with its slash-separated segments OR'd, AND <anchor>; and the PMIDs the card itself cites. <anchor> is the last alphabetic word of the card's disease name. The direction family is the weak one: a long descriptive name becomes a long AND-chain and can match nothing. Those zeros are recorded in snapshot.json rather than papered over with a looser query.",
+  "card": {
+    "path": "ressources/track2/decoys/NTRK3/mechanism.json",
+    "version": 1,
+    "gene": "NTRK3",
+    "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)"
+  },
+  "inputs": [
+    {
+      "name": "pubmed",
+      "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils",
+      "version": null,
+      "role": "the literature behind the gene, the pathway and each direction",
+      "retrieved_at": "2026-09-18T18:46:48+00:00",
+      "retrieved_from": "2026-09-18T18:46:45+00:00",
+      "requests": 8,
+      "live_calls": 8,
+      "sha256": "da13912444c1617b01cdc3b21cd5eb6d41aa609952a8c58a7ae88df745828111",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "queries": [
+        "NTRK3 AND (repurposing OR inhibitor OR aneuploidy)",
+        "Reactome pathways containing Q16288 whose name matches /NTRK|neurotrophin|Trk/i AND drug",
+        "(NTRK3 and its pathway neighbours) AND aneuploidy"
+      ],
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/decoys/NTRK3/literature.tsv",
+      "sha256": "6c71c611289f0de1e7d164d1f535d1aa0e6a15205059749d27f059bd4acd7987",
+      "bytes": 20036,
+      "rows": 80
+    }
+  ],
+  "licence": "Every row is derived from a public API: Open Targets Platform (CC0), ChEMBL (CC BY-SA 3.0), DGIdb (MIT, aggregating sources under their own terms), Reactome (CC0), ClinicalTrials.gov (US public domain), PubMed/NCBI (US public domain) and openFDA (US public domain). No licensed resource is queried; DrugBank is named by the challenge form but requires a licence for programmatic access and was not used.",
+  "patient_data": "none. Public API replies only - gene symbols, drug names, trial ids and citations. Nothing here was derived from the callset, and no genomic position appears in any row by construction."
+}

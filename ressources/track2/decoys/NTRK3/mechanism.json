@@ -1,0 +1,77 @@
+{
+  "_standing": "DECOY CARD - a pipeline control, not a finding. Same clinical side as the BUB1B card version 3; gene replaced by NTRK3 (seeded draw from results.it2_decoys: order by md5(symbol || '20260918'), first row). Written 2026-09-18.",
+  "version": 1,
+  "decoy": {
+    "control_for": "BUB1B",
+    "template_card_version": 3,
+    "picked_by": "seeded draw from results.it2_decoys: order by md5(symbol || '20260918'), first row",
+    "pathway_pattern": "NTRK|neurotrophin|Trk",
+    "comparable": "automated stages only: approval, label, trial activity, mechanism-literature counts. Curated rungs are read by a person and exist for the real card alone."
+  },
+  "case": {
+    "proband_id": "PROBAND01",
+    "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)",
+    "omim_phenotype": "257300",
+    "orphanet": "ORPHA:1052",
+    "mondo": "MONDO:0009759",
+    "clinical_terms_source": "ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md",
+    "hpo_terms": [
+      "HP:0002859",
+      "HP:0000121",
+      "HP:0004322",
+      "HP:0001508",
+      "HP:0003202",
+      "HP:0001622",
+      "HP:0001518"
+    ],
+    "tumour_context": "rhabdomyosarcoma (HP:0002859), a reported MVA1 malignancy (PMID:31184400)",
+    "_mondo_note": "Open Targets resolves MVA1 to MONDO_0009759 (verified live 2026-09-06 through disease_search on the disease name); the earlier MONDO:0009551 was wrong"
+  },
+  "gene": {
+    "symbol": "NTRK3",
+    "ensembl_gene_id": "ENSG00000140538",
+    "uniprot": "Q16288",
+    "protein": "NT-3 growth factor receptor (TrkC)"
+  },
+  "alleles": [],
+  "mechanism": {
+    "class": "none claimed - decoy",
+    "status": "control: no variant in this gene is asserted for the proband",
+    "pathway": "Reactome pathways containing Q16288 whose name matches /NTRK|neurotrophin|Trk/i",
+    "downstream": [],
+    "literature": []
+  },
+  "repurposing_directions": [
+    {
+      "id": "D1",
+      "name": "NTRK3 and its pathway neighbours",
+      "rationale": "the decoy's only direction: whatever the automated stages return for this gene and the pathways it sits in, with the clinical queries held fixed",
+      "seed_targets": [
+        "NTRK3"
+      ]
+    }
+  ],
+  "constraints": {
+    "eligibility": "market-approved drugs only (challenge rules, Track 2 definition); ChEMBL max_phase 4 or an FDA label is the evidence of approval",
+    "public_sources_only": true,
+    "sources": [
+      "Open Targets Platform",
+      "ChEMBL",
+      "DGIdb",
+      "Reactome",
+      "ClinicalTrials.gov",
+      "PubMed",
+      "openFDA"
+    ],
+    "not_used": {
+      "DrugBank": "licence required for programmatic access; name-dropped by the form but not queried"
+    }
+  },
+  "history": [
+    {
+      "version": 1,
+      "date": "2026-09-18",
+      "change": "decoy card for NTRK3"
+    }
+  ]
+}
