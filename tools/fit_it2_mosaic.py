@@ -161,6 +161,7 @@ def stage_models(
         depth = sample.whole_depth(chrom)
         if not depth.n_sites:
             continue
+        started = time.perf_counter()
         fitted = madseq.fit_models(
             alleles,
             depth,
@@ -170,7 +171,17 @@ def stage_models(
             depth_spread=depth_spread,
         )
         fits.extend(fit.as_dict() for fit in fitted)
-        verdicts.append(madseq.best(fitted).as_dict())
+        verdict = madseq.best(fitted)
+        verdicts.append(verdict.as_dict())
+        # Per contig, because this stage is the slow one -- five nested fits over tens of
+        # thousands of rows each -- and a run with no output is a run nobody can tell from
+        # a hang.
+        print(
+            f"  chr{chrom:<3} {alleles.n_sites:>9,} sites  {verdict.call:<22} "
+            f"dBIC={verdict.delta_bic:>8.1f}  noise={verdict.noise_share:.4f}  "
+            f"({time.perf_counter() - started:.0f}s)",
+            flush=True,
+        )
     return {
         "fits": fits,
         "verdicts": verdicts,
