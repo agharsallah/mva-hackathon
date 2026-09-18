@@ -94,7 +94,10 @@ def bdev_figure(rows: list[dict]) -> go.Figure:
         hovertemplate="chr%{x}<br>null mean %{y:.5f}<extra></extra>",
     )
     figure.update_layout(
-        xaxis_title="chromosome",
+        # Categorical, explicitly: plotly reads "1".."22" as numbers and silently drops X
+        # and Y off the end of a numeric axis -- which would hide the two contigs whose
+        # behaviour the reader most needs to see.
+        xaxis={"title": {"text": "chromosome"}, "type": "category", "categoryarray": chroms},
         yaxis_title="mean |BAF − centre|",
         barmode="overlay",
         legend={"orientation": "h", "y": 1.12},
@@ -166,12 +169,16 @@ def limit_figure(rows: list[dict]) -> go.Figure:
             hovertemplate="chr%{x}<br>never reaches 80 % power<extra></extra>",
         )
     figure.update_layout(
-        xaxis_title="chromosome",
+        xaxis={
+            "title": {"text": "chromosome"},
+            "type": "category",
+            "categoryorder": "array",
+            "categoryarray": chroms,
+        },
         yaxis_title="smallest detectable cell fraction",
         yaxis_tickformat=".0%",
         barmode="overlay",
         legend={"orientation": "h", "y": 1.12},
-        xaxis={"categoryorder": "array", "categoryarray": chroms},
     )
     return figure
 
@@ -201,7 +208,7 @@ def depth_figure(ratios: dict[str, float], sex: dict[str, float], spread: float)
         )
     figure.add_hline(y=1.0, line={"color": theme.MACHINE.line, "width": 1})
     figure.update_layout(
-        xaxis_title="chromosome",
+        xaxis={"title": {"text": "chromosome"}, "type": "category", "categoryarray": chroms},
         yaxis_title="mean depth ÷ leave-one-out baseline",
         showlegend=False,
     )
@@ -238,7 +245,7 @@ def model_figure(fits: list[dict]) -> go.Figure:
         annotation_position="top left",
     )
     figure.update_layout(
-        xaxis_title="chromosome",
+        xaxis={"title": {"text": "chromosome"}, "type": "category", "categoryarray": chroms},
         yaxis_title="ΔBIC against the best model",
         yaxis_type="log",
         barmode="group",
@@ -301,7 +308,11 @@ def density_figure(rows: list[dict]) -> go.Figure:
             hovertemplate=f"chr%{{x}}{arm}<br>%{{y:.3f}} het per PASS call<extra></extra>",
         )
     figure.update_layout(
-        xaxis_title="chromosome",
+        xaxis={
+            "title": {"text": "chromosome"},
+            "type": "category",
+            "categoryarray": [str(row["chrom"]) for row in ordered],
+        },
         yaxis_title="heterozygous calls ÷ PASS calls",
         barmode="group",
         legend={"orientation": "h", "y": 1.12},
