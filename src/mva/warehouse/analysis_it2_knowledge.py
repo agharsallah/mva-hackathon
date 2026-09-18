@@ -63,15 +63,20 @@ IT2_CATALOGUE_OVERLAP = Derivation(
            any_value(is_target)        AS is_target,
            any_value(is_decoy)         AS is_decoy,
            any_value(in_top_leaders)   AS in_top_leaders,
-           count(*)                    AS alleles,
+           -- The literature counts are about the alleles the ranking scored. The
+           -- ``clinvar-kmer`` rows are a different instrument answering a different
+           -- question, and they carry no dbSNP identifier by construction, so counting
+           -- them in the denominator would inflate "never askable" with rows nobody
+           -- intended to ask LitVar about.
+           count(*) FILTER (WHERE origin = 'ranked')                  AS alleles,
            -- An allele with no dbSNP identifier was never asked about. Counting it as
            -- "nobody published" would turn a gap in a public index into a finding.
-           count(*) FILTER (WHERE pmid_count >= 0)  AS queryable,
-           count(*) FILTER (WHERE pmid_count < 0)   AS unqueryable,
-           count(*) FILTER (WHERE pmid_count > 0)   AS described,
-           coalesce(max(pmid_count), 0)             AS most_cited_allele,
+           count(*) FILTER (WHERE origin = 'ranked' AND pmid_count >= 0) AS queryable,
+           count(*) FILTER (WHERE origin = 'ranked' AND pmid_count < 0)  AS unqueryable,
+           count(*) FILTER (WHERE origin = 'ranked' AND pmid_count > 0)  AS described,
+           coalesce(max(pmid_count) FILTER (WHERE origin = 'ranked'), 0) AS most_cited_allele,
            count(*) FILTER (
-               WHERE child_call IN ('het', 'hom-alt') AND lower(clin_sig) LIKE '%pathogenic%'
+               WHERE origin = 'clinvar-kmer' AND child_call IN ('het', 'hom-alt')
            )                                        AS carried_pathogenic
     FROM {RESULT}.it2_pub_alleles
     GROUP BY gene
@@ -182,6 +187,7 @@ IT2_PROTEIN_AGREEMENT = Derivation(
            rsid,
            consequence_class,
            in_domain,
+           in_superfamily,
            domain_accession,
            domain_name,
            plddt,
@@ -209,8 +215,7 @@ IT2_KNOWLEDGE_LEADERS = Derivation(
     WITH carried AS (
         SELECT gene,
                count(*) FILTER (
-                   WHERE child_call IN ('het', 'hom-alt')
-                     AND lower(clin_sig) LIKE '%pathogenic%'
+                   WHERE origin = 'clinvar-kmer' AND child_call IN ('het', 'hom-alt')
                ) AS carried_pathogenic
         FROM {RESULT}.it2_pub_alleles
         GROUP BY gene

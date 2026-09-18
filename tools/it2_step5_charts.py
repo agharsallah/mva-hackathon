@@ -55,7 +55,17 @@ def catalogue_figure(rows: list[dict]) -> go.Figure:
         :ROWS
     ]
     top = list(reversed(top))
-    labels = [f"{r['gene']} ({_origin(r)})" for r in top]
+    # The carried-pathogenic count goes in the label, not in a bar. It comes from a
+    # different instrument — k-mer genotyping of the public ClinVar catalogue in the raw
+    # reads — and stacking it would merge "somebody published this" with "this child has
+    # it". Without it, a gene whose only reason to be in the table is a carried allele
+    # renders as an empty row.
+    labels = [
+        f"{r['gene']} ({_origin(r)}"
+        + (f" · {r['carried_pathogenic']} ClinVar" if r.get("carried_pathogenic") else "")
+        + ")"
+        for r in top
+    ]
     published = [r.get("described", 0) for r in top]
     silent = [r.get("queryable", 0) - r.get("described", 0) for r in top]
     never = [r.get("unqueryable", 0) for r in top]
@@ -215,14 +225,24 @@ def separation_figure(groups: list[dict]) -> go.Figure:
 
 
 def domains_figure(residues: list[dict], domains: list[dict]) -> go.Figure:
-    """Each leading protein as a rule, its InterPro domains as bars, the allele as a tick.
+    """Each leading protein as a rule, its InterPro entries as bars, its alleles as ticks.
 
-    Positions are fractions of each protein's own length — the picture needs nothing else,
-    and a residue number is not something this repository commits.
+    **One row per gene, not per allele.** A gene contributes up to three missense alleles,
+    and drawing each on its own row repeats the domain map three times and makes the label
+    column unreadable — which is what the first render of this figure did.
+
+    Positions are fractions of each protein's own length, so the picture needs no residue
+    number and none is committed.
     """
-    genes = [row["gene"] for row in residues]
+    ordered: list[str] = []
+    for row in sorted(residues, key=lambda r: (r.get("gene_rank") or 0, r.get("gene") or "")):
+        if row.get("fraction") in (None, "") or row["gene"] in ordered:
+            continue
+        ordered.append(row["gene"])
+    ordered = ordered[: ROWS // 2]
+    rows = list(reversed(ordered))
     figure = go.Figure()
-    for index, gene in enumerate(genes):
+    for index, gene in enumerate(rows):
         figure.add_shape(
             type="line", x0=0, x1=1, y0=index, y1=index, line={"color": theme.MUTED.line}
         )
@@ -232,39 +252,48 @@ def domains_figure(residues: list[dict], domains: list[dict]) -> go.Figure:
                 type="rect",
                 x0=track["start_fraction"],
                 x1=track["end_fraction"],
-                y0=index - (0.28 if is_domain else 0.12),
-                y1=index + (0.28 if is_domain else 0.12),
+                y0=index - (0.30 if is_domain else 0.12),
+                y1=index + (0.30 if is_domain else 0.12),
                 fillcolor=theme.DECISION.fill if is_domain else theme.MACHINE.fill,
                 line={"width": 0},
-                opacity=0.95 if is_domain else 0.5,
+                opacity=0.95 if is_domain else 0.45,
             )
+    marks = [
+        row for row in residues if row["gene"] in rows and row.get("fraction") not in (None, "")
+    ]
     figure.add_trace(
         go.Scatter(
-            x=[row.get("fraction") or 0 for row in residues],
-            y=list(range(len(residues))),
+            x=[float(row["fraction"]) for row in marks],
+            y=[rows.index(row["gene"]) for row in marks],
             mode="markers",
             marker={
-                "symbol": "line-ns",
-                "size": 26,
-                "line": {
-                    "width": 3,
-                    "color": [
-                        theme.GOOD.line if row.get("in_domain") else theme.BAD.line
-                        for row in residues
-                    ],
-                },
+                "symbol": "line-ns-open",
+                "size": 22,
+                # An ``-open`` symbol takes its stroke from ``marker.color``; setting only
+                # ``marker.line.color`` leaves every tick at plotly's default blue, which
+                # is what the first render of this figure did.
+                "color": [
+                    theme.GOOD.line if row.get("in_domain") else theme.BAD.line for row in marks
+                ],
+                "line": {"width": 3},
             },
             text=[
                 f"{row['gene']} · pLDDT {row.get('plddt')} · {row.get('am_class') or 'no class'}"
-                for row in residues
+                for row in marks
             ],
-            name="the missense allele",
+            name="missense allele",
         )
     )
     figure.update_layout(
         xaxis={"title": "position along the protein (fraction of its length)", "range": [0, 1]},
-        yaxis={"tickmode": "array", "tickvals": list(range(len(genes))), "ticktext": genes},
-        height=max(320, 70 * len(genes)),
+        yaxis={
+            "tickmode": "array",
+            "tickvals": list(range(len(rows))),
+            "ticktext": rows,
+            "range": [-0.7, len(rows) - 0.3],
+        },
+        margin={"l": 130, "r": 40},
+        height=max(320, 46 * len(rows) + 120),
         showlegend=False,
     )
     return figure

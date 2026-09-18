@@ -156,6 +156,16 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/Step4'),
   },
   {
+    id: 'step5',
+    path: '/steps/step-5',
+    navLabel: 'Step 5',
+    title: 'Step 5 \u2014 what the literature knows, and what that is worth',
+    group: 'decide',
+    description:
+      "Published alleles keyed on this child's own variants, case-report anchors derived by script rather than typed, protein domain and structure context \u2014 each measured against a matched decoy set and a raw publication count.",
+    load: () => import('../../pages/Step5'),
+  },
+  {
     id: 'science',
     path: '/science',
     navLabel: 'Science',

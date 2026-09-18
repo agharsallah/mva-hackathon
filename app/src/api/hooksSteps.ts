@@ -7,7 +7,14 @@
  */
 
 import { useEndpoint } from './hooks';
-import type { Step1Payload, Step2Payload, Step3Payload, Step4Payload, StepsPayload } from './types';
+import type {
+  Step1Payload,
+  Step2Payload,
+  Step3Payload,
+  Step4Payload,
+  Step5Payload,
+  StepsPayload,
+} from './types';
 
 /**
  * The research journey of one iteration. Omitting `iteration` asks for the current one,
@@ -31,6 +38,15 @@ export const useStep3 = () => useEndpoint<Step3Payload>('/api/steps/step-3');
  * ratios; no coordinate crosses this boundary.
  */
 export const useStep4 = () => useEndpoint<Step4Payload>('/api/steps/step-4');
+
+/**
+ * Iteration 2 step 5's knowledge route: the published-allele catalogue keyed on this
+ * child's own alleles, the script-derived case-report anchors, the protein domain and
+ * structure context, and the two baselines — a matched decoy set and a raw publication
+ * count — that decide whether any of it is a measurement. Genes, dbSNP identifiers and
+ * fractions of protein length; no coordinate and no residue crosses this boundary.
+ */
+export const useStep5 = () => useEndpoint<Step5Payload>('/api/steps/step-5');
 
 /**
  * Iteration 2 step 1's measurements: the recall curve, the tiers, the two-ranker overlap,

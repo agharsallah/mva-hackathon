@@ -5,6 +5,7 @@ import type {
   Step2Payload,
   Step3Payload,
   Step4Payload,
+  Step5Payload,
   StepsPayload,
   Submissions,
   Track2,
@@ -116,6 +117,11 @@ export const platformEntries: Record<string, Entry> = {
   '/api/steps/step-4': {
     source: 'CAPTURED /api/steps/step-4 reply (pg.results.it2_lr_*, aggregated in SQL)',
     load: () => rows<Step4Payload>('steps-step-4'),
+  },
+  '/api/steps/step-5': {
+    source:
+      'CAPTURED /api/steps/step-5 reply (pg.results.it2_pub_alleles + it2_anchors + it2_protein_* + it2_knowledge_ranks)',
+    load: () => rows<Step5Payload>('steps-step-5'),
   },
   '/api/science/hypotheses': {
     source: 'INVENTED research register',
