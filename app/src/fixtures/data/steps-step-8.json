@@ -478,7 +478,7 @@
     "arm_check": [
       {
         "acrocentric": false,
-        "agrees": false,
+        "agrees": true,
         "chrom": "1",
         "gap_mb": 17.0,
         "hemizygous": false,
@@ -541,7 +541,7 @@
       },
       {
         "acrocentric": false,
-        "agrees": false,
+        "agrees": true,
         "chrom": "16",
         "gap_mb": 7.0,
         "hemizygous": false,
@@ -568,7 +568,7 @@
       },
       {
         "acrocentric": false,
-        "agrees": false,
+        "agrees": true,
         "chrom": "19",
         "gap_mb": 2.0,
         "hemizygous": false,
@@ -631,7 +631,7 @@
       },
       {
         "acrocentric": false,
-        "agrees": false,
+        "agrees": true,
         "chrom": "5",
         "gap_mb": 1.0,
         "hemizygous": false,
@@ -667,7 +667,7 @@
       },
       {
         "acrocentric": false,
-        "agrees": false,
+        "agrees": true,
         "chrom": "9",
         "gap_mb": 14.0,
         "hemizygous": false,
@@ -693,7 +693,7 @@
         "offset_mb": 31.05
       }
     ],
-    "arm_disagreements": ["1", "16", "19", "5", "9"],
+    "arm_disagreements": [],
     "arms_tested": ["p", "q"],
     "autosomal_het_sites": 2708898,
     "autosomal_mean_depth": 43.85,
