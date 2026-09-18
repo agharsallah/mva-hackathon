@@ -71,6 +71,28 @@ def wait_for(
     raise RuntimeError(f"job {job_id} did not finish within {rounds} polls")
 
 
+def submit(
+    verb: str,
+    body: dict[str, Any],
+    base: str,
+    token: str,
+    *,
+    report: Callable[[str], None] = print,
+) -> dict[str, Any]:
+    """Start one job and poll it to completion — the seam every verb but ``/scan`` uses.
+
+    ``scan`` below builds its own body because the probe list has a shape worth naming; every
+    other verb's request is already a dict by the time a caller has one, and a tool reaching
+    into this module for its HTTP client to post it would be a private access with no benefit.
+    """
+    with _client(base, token) as client:
+        started = client.post(f"/{verb.lstrip('/')}", json=body)
+        started.raise_for_status()
+        job_id = started.json()["id"]
+    report(f"{verb} job {job_id} submitted")
+    return wait_for(job_id, base, token, report=report)
+
+
 def scan(
     probes: Sequence[tuple[str, str]],
     base: str,
