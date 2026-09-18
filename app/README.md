@@ -7,7 +7,7 @@ meaning)` pattern, and every chart carries a `Legend` line decoding its own colo
 
 There is **no trio** in this dataset — one sample only. The app never renders a parent column.
 
-**Verified:** 2026-09-06 — `pnpm run check` green (typecheck, lint, format, theme, dictionary, 556 tests) and `pnpm run build` clean, after the hosting layer landed (methodology 080). Bundle budget last re-blessed 2026-09-03 (see `tools/bundle-budget.mjs`).
+**Verified:** 2026-09-18 — `pnpm run check` green (typecheck, lint, format, theme, dictionary, 634 tests) and `pnpm run build` clean, after the Track 2 step-7 grading landed on `/track2` (the evidence ladder, the shortlist, the do-not table, the decoy control and the paediatric pointers, from a re-captured `/api/track2`). Bundle budget last re-blessed 2026-09-03 (see `tools/bundle-budget.mjs`); `pnpm bundle-budget` is over its initial-payload line by ~1.3 kB raw at this commit, unchanged by the Track 2 work (the entry chunk is byte-identical) and awaiting a re-blessing by whoever grew it.
 
 ## Quickstart
 

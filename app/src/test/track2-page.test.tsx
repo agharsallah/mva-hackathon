@@ -12,11 +12,18 @@
  *   3. the approved-only toggle actually filters, and is on by default (Track 2's rules
  *      admit market-approved drugs only, so the default is a claim, not a convenience);
  *   4. a linked iteration card links back into the submission dossier;
- *   5. the strategy timeline paints the phases that wait on the oracle yellow;
- *   6. every dictionary link resolves to an entry that exists in the one dictionary.
+ *   5. the strategy timeline paints each phase the colour its own status maps to;
+ *   6. every dictionary link resolves to an entry that exists in the one dictionary;
+ *   7. the step-7 grading renders off the same fixture: the ladder matrix, the eleven
+ *      shortlist rows the report may argue, the do-not table's caution block, the decoy
+ *      chart's pre-registered 0.10 line, and F8 marked UNMEASURED.
  *
- * No chart component is used — the two bar charts are inline SVG — so `plotly.js-dist-min`
- * is not stubbed here; nothing in the tree imports it.
+ * Counts are read off the committed fixture rather than typed in: a re-capture of
+ * `/api/track2` changes them, and a test that hard-codes 3,766 rows fails for the wrong
+ * reason when the only thing that happened is that the snapshot was rebuilt.
+ *
+ * The decoy exhibit draws through the shared `Plot` wrapper, so `plotly.js-dist-min` is
+ * stubbed here — `vi.mock` is hoisted per file, which is why it cannot live in the harness.
  */
 
 import { act, cleanup, render, screen, within } from '@testing-library/react';
@@ -25,13 +32,25 @@ import { MemoryRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { axe } from 'vitest-axe';
 
-import type { Track2Lineage } from '../api/types';
+import type { Track2, Track2Lineage } from '../api/types';
 import { modules } from '../app/modules';
+import fixture from '../fixtures/data/track2.json';
 import { entriesOf, loadDictionary } from '../lib/dictionary';
 import { Track2LineageView } from '../pages/track2/LineageView';
 import { mountModule, stubUnreachableFetch } from './testHarness';
 
+vi.mock('plotly.js-dist-min', () => ({
+  default: { react: vi.fn().mockResolvedValue(undefined), purge: vi.fn() },
+}));
+
 const track2 = modules.find((m) => m.id === 'track2')!;
+
+/** The committed offline payload, so every count below is the fixture's own. */
+const data = fixture as unknown as Track2;
+const shortlist = data.shortlist ?? [];
+const argue = shortlist.filter((r) => r.verdict === 'argue');
+const group = (verdict: string) => (data.do_not ?? []).filter((r) => r.verdict === verdict);
+const grouped = (n: number): string => n.toLocaleString('en-US');
 
 /**
  * A standalone digit run of seven or more — the shape a GRCh38 position takes.
@@ -46,7 +65,10 @@ const STANDALONE_LONG_NUMBER = /(?<![A-Za-z0-9])\d{7,}(?![A-Za-z0-9])/;
 function withoutKnownIds(text: string): string {
   return (
     text
-      .replace(/PMID:\d+/g, '')
+      // A labelled PubMed id, in either spelling the app uses (`PMID:1234` in the card's
+      // prose, `PMID 1234` in the step-7 links), including a run of them after one label
+      // (`PMID 41749943 and 40421977`). The label is what makes it not a position.
+      .replace(/PMID[: ]\s*\d+(?:\s*(?:,|and)\s*\d+)*/gi, '')
       .replace(/NCT\d+/g, '')
       .replace(/VCV\d+/g, '')
       .replace(/\b[0-9a-f]{12,}\b/g, '')
@@ -54,6 +76,9 @@ function withoutKnownIds(text: string): string {
       // Drug development codes: a molecule with no generic name yet is registered under one
       // (`PF-02341066` is crizotinib), and they are long enough to trip the coordinate check.
       .replace(/\b[A-Z]{2,5}-\d{4,}\b/g, '')
+      // The decoy card's `picked_by` quotes its seed as an SQL string literal
+      // (`md5(symbol || '20260918')`): a YYYYMMDD date in quotes, never a position.
+      .replace(/'\d{8}'/g, '')
   );
 }
 
@@ -115,7 +140,7 @@ describe('the Track 2 report', () => {
     expect(toggle.getAttribute('aria-pressed')).toBe('false');
 
     const all = screen.getByText('rows shown').parentElement!.parentElement!;
-    expect(all.textContent).toContain('3,766');
+    expect(all.textContent).toContain(grouped(data.candidates.length));
     // Un-filtering can only ever add rows.
     expect(all.textContent).not.toBe(String(approvedOnly));
   }, 30000);
@@ -130,19 +155,25 @@ describe('the Track 2 report', () => {
     expect(cards.textContent).toContain('H003');
   }, 30000);
 
-  it('paints the oracle-blocked strategy phases yellow, and the finished ones green', async () => {
+  // The colour is the claim: `done` green, `open` blue (machinery that can run today),
+  // `waiting` yellow (blocked on an oracle reply). Which statuses are *present* is the
+  // fixture's business — the oracle has answered, so there is nothing waiting today — and
+  // asserting a status that must exist would make this test about the plan, not the paint.
+  it('paints every strategy phase the colour its own status maps to', async () => {
     await mountModule(track2);
 
+    const TONE: Record<string, string> = { done: 'good', open: 'machinery', waiting: 'decision' };
     const phases = [...screen.getByTestId('strategy-phases').querySelectorAll('li[data-phase]')];
-    expect(phases.length).toBeGreaterThan(3);
+    expect(phases.length).toBe(data.strategy.length);
 
-    const waiting = phases.filter((p) => p.getAttribute('data-status') === 'waiting');
-    expect(waiting.length).toBeGreaterThan(0);
-    for (const p of waiting) expect(p.className).toContain('decision');
+    const statuses = new Set(data.strategy.map((p) => p.status));
+    expect(statuses.size).toBeGreaterThan(1);
 
-    const done = phases.filter((p) => p.getAttribute('data-status') === 'done');
-    expect(done.length).toBeGreaterThan(0);
-    for (const p of done) expect(p.className).toContain('good');
+    for (const phase of phases) {
+      const status = phase.getAttribute('data-status')!;
+      expect(Object.keys(TONE)).toContain(status);
+      expect(phase.className).toContain(TONE[status]);
+    }
   }, 30000);
 
   it('draws both bar charts and the lineage graph, each with an accessible name', async () => {
@@ -161,11 +192,99 @@ describe('the Track 2 report', () => {
     expect(guide.querySelectorAll('li').length).toBe(6);
     const text = guide.textContent ?? '';
     // The snapshot's own counts, not typed into the component.
-    expect(text).toContain('3,766');
-    expect(text).toContain('BUB1B');
+    expect(text).toContain(grouped(data.candidates.length));
+    expect(text).toContain(data.summary.card.gene);
     // …and the guide teaches the word rather than replacing it.
     expect(text).toContain('drug repurposing');
     expect(text).toContain('market-approved');
+  }, 30000);
+
+  it('draws the ladder matrix, with a rung cell per drug and the rung definitions', async () => {
+    await mountModule(track2);
+
+    const cells = [...document.querySelectorAll('[data-rung]')];
+    expect(cells.length).toBeGreaterThan(0);
+    // Rung 1 is "named, never submitted" and is deliberately not drawn.
+    for (const c of cells) expect(Number(c.getAttribute('data-rung'))).toBeGreaterThan(1);
+
+    // The four tones are the exhibit's whole argument; at least the two that separate a
+    // curated result from an automated-only one have to be on the page.
+    const tones = new Set(cells.map((c) => c.getAttribute('data-tone')));
+    expect(tones.has('machinery')).toBe(true);
+    expect([...tones].some((t) => t === 'good' || t === 'decision')).toBe(true);
+
+    // The definitions come off the card, not out of the component.
+    const defs = screen.getByTestId('rung-definitions');
+    for (const rung of data.card.evidence_ladder!.rungs)
+      expect(defs.textContent).toContain(rung.label);
+
+    expect(screen.getByTestId('ladder-funnel').textContent).toContain('drugs by best rung');
+  }, 30000);
+
+  it('shortlists only the rows that carry a mechanism argument, each paper linked', async () => {
+    await mountModule(track2);
+
+    expect(argue.length).toBe(11);
+    const table = screen.getByTestId('shortlist-argue');
+    const rows = table.querySelectorAll('tbody tr');
+    expect(rows.length).toBe(argue.length);
+    expect(table.textContent).toContain(argue[0]!.drug_name);
+
+    // Every cited paper opens on PubMed, and the visible text keeps the PMID label.
+    const link = within(table).getAllByRole('link', { name: /^PMID / })[0]!;
+    expect(link.getAttribute('href')).toMatch(/^https:\/\/pubmed\.ncbi\.nlm\.nih\.gov\/\d+\/$/);
+
+    // The context-trial rows are real, explained, and collapsed until asked for.
+    expect(screen.queryByTestId('shortlist-context')).toBeNull();
+    await userEvent.click(
+      screen.getByRole('button', { name: `show context-trial rows (${shortlist.length - 11})` }),
+    );
+    expect(screen.getByTestId('shortlist-context')).toBeTruthy();
+  }, 30000);
+
+  it("groups the do-not table by verdict and prints the card's anti-directions", async () => {
+    await mountModule(track2);
+
+    const caution = document.querySelector('[data-verdict="caution"]')!;
+    expect(caution, 'no caution group in the do-not table').toBeTruthy();
+    expect(caution.querySelectorAll('tbody tr').length).toBe(group('caution').length);
+    expect(group('caution').length).toBeGreaterThan(0);
+
+    const soc = document.querySelector('[data-verdict="standard of care"]')!;
+    expect(soc.querySelectorAll('tbody tr').length).toBe(group('standard of care').length);
+
+    const anti = screen.getByTestId('anti-directions');
+    for (const a of data.card.anti_directions!)
+      expect(anti.querySelector(`[data-anti="${a.id}"]`)).toBeTruthy();
+  }, 30000);
+
+  it('draws the decoy control with its pre-registered 0.10 line in the legend', async () => {
+    await mountModule(track2);
+
+    const figure = document.getElementById('decoy-control')!;
+    expect(figure, 'no decoy exhibit on the page').toBeTruthy();
+    expect(figure.textContent).toContain('0.10');
+    // D4 is the tumour-context direction: a decoy reaches the same drugs through the same
+    // clinical queries, so it is the one direction that is non-specific.
+    expect(figure.textContent).toContain('D4');
+    expect(figure.textContent).toMatch(/non-specific/);
+    for (const d of data.decoys ?? []) expect(figure.textContent).toContain(d.symbol);
+  }, 30000);
+
+  it('marks F8 UNMEASURED and says so beside the table', async () => {
+    await mountModule(track2);
+
+    const f8 = data.card.measured_facts!.find((f) => f.id === 'F8')!;
+    expect(f8.value).toMatch(/^UNMEASURED/);
+    expect(screen.getAllByText('UNMEASURED').length).toBeGreaterThan(0);
+    expect(screen.getByTestId('unmeasured-note').textContent).toContain('F8 is UNMEASURED');
+  }, 30000);
+
+  it('names paediatric evidence as a pointer, never a licence', async () => {
+    await mountModule(track2);
+    expect(screen.getByTestId('pediatric-caveat').textContent).toContain(
+      'A pointer, never a licence',
+    );
   }, 30000);
 
   it('links every technical term to an entry that exists in the one dictionary', async () => {

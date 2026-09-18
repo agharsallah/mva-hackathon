@@ -14,32 +14,39 @@ import { Report } from './track2/Report';
  * deliverable, and the only part of the work that could reach the child, because a
  * repurposed drug is one that already exists.
  *
- * The page is a report *in progress* on purpose. The mechanism it argues from rests on a
- * pair the oracle has not confirmed, so the one suggestion Track 2 ends with is produced
- * once, after every Track 1 iteration is merged. What exists today is the argument, the
- * search space it implies, the candidates the public sources returned, and the audit trail
- * behind all three — laid out so a reviewer can check each step rather than trust it.
+ * The pair the mechanism argues from is confirmed by the oracle, so the card is at version 3
+ * and step 7's grading is real: every approved drug on every direction placed on a rung, a
+ * shortlist, a do-not table, and a decoy control that says how much of the list a wrong gene
+ * would also have produced. The page still ends in a *shortlist* — hypotheses for follow-up,
+ * not evidence that a medicine works — because the one final suggestion is produced after
+ * every Track 1 iteration is merged. Everything is laid out so a reviewer can check each
+ * step rather than trust it.
  */
 export default function Track2Page() {
   const q = useTrack2();
 
   return (
     <div className="space-y-6">
-      <Callout tone="decision" title="This page ends in a suggestion; it does not contain one yet">
-        The mechanism argument rests on a variant pair that only an{' '}
+      <Callout
+        tone="good"
+        title="The pair is confirmed; this page ends in a shortlist, not a prescription"
+      >
+        The variant pair the mechanism argues from is confirmed: the{' '}
         <Link
           to="/probes"
           className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"
         >
           oracle
         </Link>{' '}
-        reply confirms. Every Track 1 iteration revises the mechanism card — a new version with a
-        history entry, never an edit — and the snapshot is re-run against it.{' '}
+        answered iteration 1 with a full match at rank 1, so the mechanism card moved to{' '}
+        <strong>version 3</strong> — measured facts F1&ndash;F9, the anti-directions, and the
+        evidence ladder the grading below is built on. What follows is therefore a graded list with
+        its negative control beside it, not a guess.{' '}
         <strong>
-          The final drug suggestion is produced once, after all Track 1 iterations are merged
-        </strong>
-        : their evidence and the register combined, the ranking re-run on the confirmed pair, and
-        one Track 2 submission written. Everything below is the material that merge will read.
+          It is still a shortlist: hypotheses for follow-up, not evidence that a medicine works
+        </strong>{' '}
+        — the challenge&rsquo;s own words. The final drug suggestion is produced once, after all
+        Track 1 iterations are merged, and everything below is the material that merge will read.
       </Callout>
 
       <Explainer
@@ -128,6 +135,24 @@ export default function Track2Page() {
             dict: 'lineage-edge',
             plain:
               'one recorded derivation: this table was produced from that source by this transform',
+          },
+          {
+            term: 'evidence ladder',
+            dict: 'evidence-ladder',
+            plain:
+              'five fixed rungs, written on the card before any drug was looked up, saying what kind of evidence a candidate has — never a score',
+          },
+          {
+            term: 'anti-direction',
+            dict: 'anti-direction-the-do-not-table',
+            plain:
+              'a drug class the mechanism says would make things worse. The do-not table is, clinically, the more useful half of Track 2',
+          },
+          {
+            term: 'decoy mechanism card',
+            dict: 'decoy-mechanism-card',
+            plain:
+              'the same pipeline run on a gene that is not the answer — the negative control for the whole search',
           },
           {
             term: 'hypothesis',

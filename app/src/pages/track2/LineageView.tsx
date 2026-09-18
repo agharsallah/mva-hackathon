@@ -106,8 +106,11 @@ export function Track2LineageView({
                 </span>
               </h4>
               <ul className="space-y-2">
-                {g.sources.map((s) => (
-                  <SourceItem key={`${s.kind}:${s.ref}`} source={s} />
+                {/* The same API is a root of several tables (PubMed is read for the
+                    literature, the trials and the decoy cards), so `kind:ref` repeats and
+                    the version and digest are what tell two readings of it apart. */}
+                {g.sources.map((s, i) => (
+                  <SourceItem key={`${s.kind}:${s.ref}:${s.version}:${s.sha256}:${i}`} source={s} />
                 ))}
               </ul>
             </div>

@@ -70,8 +70,26 @@ describe('entry metadata', () => {
     expect(bad).toEqual([]);
   });
 
-  it('names a repo-relative source path wherever an entry declares one', () => {
-    const bad = entries.filter((e) => e.source && !/^[\w.@-]+\/\S+$/.test(e.source));
+  /**
+   * A `source:` names where the term came from. The dictionary's own rule allows three
+   * kinds — "the methodology entry, paper, file or tool that introduced it" — so a source
+   * is a comma-separated list whose every item is either a repo-relative path or a `PMID`
+   * citation. The rule was a single-path regex until chapter 23 landed terms whose origin
+   * genuinely is a publication (mitotic slippage, the standard of care) or two files at
+   * once (the decoy card: the module *and* the entry). Widened rather than suppressed: an
+   * item that is neither a path nor a PMID still fails.
+   */
+  const SOURCE_ITEM = /^(?:[\w.@-]+\/\S+|PMID\s*\d+(?:\s*\([^)]*\))?|\d{6,9})$/;
+
+  it('names a repo-relative path or a citation for every source an entry declares', () => {
+    const bad = entries.filter(
+      (e) =>
+        e.source &&
+        !e.source
+          .split(',')
+          .map((part) => part.trim())
+          .every((part) => SOURCE_ITEM.test(part)),
+    );
     expect(bad.map((e) => `${e.slug}: ${e.source}`)).toEqual([]);
   });
 

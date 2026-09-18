@@ -74,10 +74,12 @@ export const platformEntries: Record<string, Entry> = {
       'CAPTURED /api/submissions reply, warehouse reachable (submissions/*/iteration-*/ on disk + warehouse.data_lineage + warehouse.probe_ledger + docs/science-register.json)',
     load: () => rows<Submissions>('submissions'),
   },
-  // CAPTURED from the live endpoint's own reply (2026-09-06), warehouse reachable. The route
-  // reads `ressources/track2/*.tsv` and their five provenance manifests, `mechanism.json`,
-  // `snapshot.json`, `warehouse.data_lineage`, `docs/science-register.json` and the submission
-  // folders, and joins them; this is that answer, saved verbatim. Every count, checksum, drug
+  // CAPTURED from the live endpoint's own reply (2026-09-18), warehouse reachable. The route
+  // reads `ressources/track2/*.tsv` and their provenance manifests, `mechanism.json` (now at
+  // version 3, with the measured facts, the anti-directions and the evidence ladder),
+  // `snapshot.json`, the step-7 enrichment tables and the two decoy cards,
+  // `warehouse.data_lineage`, `docs/science-register.json` and the submission folders, and
+  // joins them; this is that answer, saved verbatim. Every count, checksum, drug
   // name, trial id and citation is the snapshot's own — nothing is synthesised, which matters
   // more here than elsewhere because a fabricated drug row would read as a clinical claim.
   // No genomic position exists anywhere in it: the mechanism card is coordinate-free by rule

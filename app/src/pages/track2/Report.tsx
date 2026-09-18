@@ -21,6 +21,7 @@ import { approvedPerDirection } from './candidateFilters';
 import { Candidates } from './Candidates';
 import { Catalog } from './Catalog';
 import { Directions } from './Directions';
+import { Grading } from './Grading';
 import { Track2LineageView } from './LineageView';
 import { LinkedIterations } from './LinkedIterations';
 import { MechanismCardExhibit } from './MechanismCard';
@@ -69,6 +70,8 @@ export function Report({ result }: { result: Result<Track2> }) {
         </div>
       </Section>
 
+      <Grading data={data} source={source} />
+
       <Section
         title="What a drug could aim at"
         subtitle="the seed genes, and the pathway expansion that widened them into a search space"
@@ -104,7 +107,7 @@ export function Report({ result }: { result: Result<Track2> }) {
 
       <Section
         title="What Track 2 claimed, before it searched"
-        subtitle="the step-8 register: two claims, each with the observation that would kill it"
+        subtitle="the register: every claim filed before its test ran, with the observation that would kill it"
       >
         <Register register={data.register} source={source} />
       </Section>
@@ -129,8 +132,9 @@ export function Report({ result }: { result: Result<Track2> }) {
 function Header({ data }: { data: Track2 }) {
   const s = data.summary;
   const done = data.strategy.filter((p) => p.status === 'done').length;
+  const argued = (data.shortlist ?? []).filter((r) => r.verdict === 'argue').length;
   return (
-    <div className={cx(WELL, 'grid grid-cols-2 gap-4 md:grid-cols-5')}>
+    <div className={cx(WELL, 'grid grid-cols-2 gap-4 md:grid-cols-6')}>
       <StatTile
         label="mechanism card"
         tone="raw"
@@ -153,6 +157,12 @@ function Header({ data }: { data: Track2 }) {
         label="evidence rows"
         value={int(data.trials.length + data.literature.length)}
         sub={`${int(data.trials.length)} trials · ${int(data.literature.length)} articles`}
+      />
+      <StatTile
+        label="shortlist"
+        tone="good"
+        value={int(argued)}
+        sub={`rows the report may argue, of ${int((data.shortlist ?? []).length)} graded`}
       />
       <StatTile
         label="strategy"

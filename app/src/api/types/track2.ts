@@ -11,6 +11,20 @@
  * renders what the tool produced rather than a shape this app fixed in advance.
  */
 
+import type {
+  AntiDirection,
+  CardEvidenceLadder,
+  DecoyCard,
+  DecoyComparisonRow,
+  DrugMechanismLiteratureRow,
+  LadderRow,
+  MeasuredFact,
+  PediatricTrialRow,
+  ShortlistRow,
+  StandardOfCare,
+  Track2EvidenceRow,
+} from './track2-step7';
+
 /** One of the two alleles, named by consequence class — never by position. */
 export interface CardAllele {
   label: string;
@@ -48,6 +62,12 @@ export interface RepurposingDirection {
   name: string;
   rationale: string;
   seed_targets: string[];
+  /**
+   * True when the direction is about the tumour the child already has. Only a context
+   * direction may reach automated rungs 4 and 5, because those rest on a registered trial
+   * in the tumour context — card v3 added the flag so the rule can be checked, not assumed.
+   */
+  context?: boolean;
 }
 
 export interface CardCase {
@@ -60,6 +80,8 @@ export interface CardCase {
   hpo_terms: string[];
   /** The child's presenting malignancy — the clinical anchor for direction D4. */
   tumour_context: string;
+  /** Card v3: the chemotherapy already given for that malignancy, and why it is set aside. */
+  context_standard_of_care?: StandardOfCare;
 }
 
 export interface CardGene {
@@ -96,6 +118,12 @@ export interface MechanismCard {
   repurposing_directions: RepurposingDirection[];
   constraints: CardConstraints;
   history: CardHistory[];
+  /** Card v3, F1-F9: what iteration 2 measured, and what each measurement implies. */
+  measured_facts?: MeasuredFact[];
+  /** Card v3: the classes that would make things worse — the do-not table's source. */
+  anti_directions?: AntiDirection[];
+  /** Card v3: the five rungs, stated before any drug was looked up. */
+  evidence_ladder?: CardEvidenceLadder;
 }
 
 /** One column of one snapshot table, with its plain-English meaning. */
@@ -329,6 +357,20 @@ export interface Track2 {
   candidates: CandidateRow[];
   trials: TrialRow[];
   literature: LiteratureRow[];
+  /**
+   * The step-7 enrichment. Optional because a checkout that has never run
+   * `tools/track2_enrich.py` has none of these TSVs and the route answers `[]`; every
+   * consumer defaults them rather than assuming the enrichment ran.
+   */
+  evidence?: Track2EvidenceRow[];
+  drug_mechanism_literature?: DrugMechanismLiteratureRow[];
+  /** ~11k rows: aggregate per drug, never render the table. */
+  pediatric_trials?: PediatricTrialRow[];
+  evidence_ladder?: LadderRow[];
+  shortlist?: ShortlistRow[];
+  do_not?: ShortlistRow[];
+  decoy_comparison?: DecoyComparisonRow[];
+  decoys?: DecoyCard[];
   summary: Track2Summary;
   lineage: Track2Lineage;
   register: Track2RegisterEntry[];

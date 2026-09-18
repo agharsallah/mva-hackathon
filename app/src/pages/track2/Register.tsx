@@ -1,9 +1,15 @@
 /**
- * The step-8 claims, as the research register holds them.
+ * Track 2's claims, as the research register holds them.
  *
- * Both were filed **before** any search ran, each with the observation that would kill it.
- * That ordering is the whole method: a drug list assembled first and justified afterwards
- * cannot be wrong, and a claim that cannot be wrong is not evidence.
+ * Two steps file here. **step-8** is iteration 1's hand-off (H010-H011, plus the aneuploidy
+ * claims its later run will settle); **step-7** is iteration 2's enrichment — one claim per
+ * repurposing direction, one for the decoy control, one for paediatric data. Every one was
+ * filed *before* its test ran, each with the observation that would kill it. That ordering
+ * is the whole method: a drug list assembled first and justified afterwards cannot be wrong,
+ * and a claim that cannot be wrong is not evidence.
+ *
+ * The step is rendered on the card rather than inferred from the id, because the register is
+ * append-only and a later step can file a claim with any number.
  */
 
 import { Link } from 'react-router-dom';
@@ -32,20 +38,24 @@ export function Register({
   register: Track2RegisterEntry[];
   source?: string;
 }) {
+  const steps = [...new Set(register.map((h) => h.step))].sort();
   return (
     <Exhibit
       title="The register — what Track 2 claimed before it searched"
       legend={
         <>
-          One card per claim. <Chip color={C.good}>green = supported</Chip> by evidence recorded
-          against it; <Chip color={C.machinery}>blue = proposed</Chip>, filed but not yet tested;{' '}
+          One card per claim, tagged with the step that filed it —{' '}
+          <span className="font-mono">step-8</span> is iteration 1&rsquo;s hand-off,{' '}
+          <span className="font-mono">step-7</span> iteration 2&rsquo;s enrichment.{' '}
+          <Chip color={C.good}>green = supported</Chip> by evidence recorded against it;{' '}
+          <Chip color={C.machinery}>blue = proposed</Chip>, filed but not yet tested;{' '}
           <Chip color={C.decision}>yellow = testing</Chip>, waiting on a measurement;{' '}
           <Chip color={C.broken}>red = refuted</Chip>. The confidence figure is a stated triage
           heuristic with its arithmetic printed on the Science page — never quote it as a
           probability.
         </>
       }
-      reading={`${register.length} claims, both filed before the first snapshot ran. Each carries the observation that would refute it, which is what makes the drug table below testable rather than decorative.`}
+      reading={`${register.length} claims across ${steps.length} step${steps.length === 1 ? '' : 's'} (${steps.join(', ')}), each filed before its own test ran. Each carries the observation that would refute it, which is what makes the tables above testable rather than decorative.`}
       data={register}
       source={source}
     >
@@ -63,6 +73,7 @@ export function Register({
                 <Link to={`/science?hypothesis=${h.hypothesis_id}`}>
                   <Badge tone="machinery">{h.hypothesis_id}</Badge>
                 </Link>
+                <Badge tone="neutral">{h.step}</Badge>
                 <Badge tone={tone}>{h.status}</Badge>
                 <span className="font-mono text-micro text-chrome-600">
                   revision {h.revision}
@@ -94,7 +105,7 @@ export function Register({
           plain="a claim written down with a prediction and the observation that would kill it, before the test runs"
         />{' '}
         is the unit of belief in this repository. The full board, with every evidence row behind
-        these two, is on the{' '}
+        these, is on the{' '}
         <Link
           to="/science"
           className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-50"

@@ -19,7 +19,8 @@ src/fixtures/data/panel-structure-genes.json
 src/lib/dictionary/dictionary.generated.json
 src/lib/dictionary/assets
 
-# The captured /api/track2 reply: 3,766 drug-target rows plus 747 trials and 273 targets.
+# The captured /api/track2 reply: 3,859 drug-target rows, 748 trials, 277 targets, plus the
+# step-7 enrichment (432 ladder rows, 61 shortlist rows and 10,770 paediatric registry rows).
 # Prettier's one-key-per-line would triple the file and turn every recapture into an
 # unreadable diff. Machine-written, never hand-edited — same reason as the structure fixtures.
 src/fixtures/data/track2.json

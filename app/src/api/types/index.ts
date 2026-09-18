@@ -33,3 +33,4 @@ export type * from './step6';
 export type * from './steps';
 export type * from './submissions';
 export type * from './track2';
+export type * from './track2-step7';

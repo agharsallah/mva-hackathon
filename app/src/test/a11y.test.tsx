@@ -71,7 +71,11 @@ describe('accessibility — every module, axe-core, offline fixtures', () => {
       if (results.violations.length > 0) console.log(`axe violations on "${mod.id}":\n${summary}`);
 
       expect(results.violations, `axe violations on "${mod.id}":\n${summary}`).toEqual([]);
-    });
+      // 60 s rather than the 5 s default: the mount, not axe, is what varies. The heaviest
+      // page (track2) now renders a ~7 MB offline payload — the drug snapshot plus the
+      // step-7 grading tables — and takes ~6 s to settle in jsdom, so the default timeout
+      // was failing this gate for page *size* rather than for an accessibility defect.
+    }, 60000);
   }
 });
 
