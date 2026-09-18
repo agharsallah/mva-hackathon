@@ -39,12 +39,31 @@ calls cleanly — what removes them is the caller's threshold, which is not a mo
 here can write down honestly. The heterozygous-site density is therefore *reported* beside
 every fit, from ``results.it2_mosaic_density``, and is not smuggled into the likelihood.
 
-**What counts as a free parameter.** Only what is fitted per chromosome: the cell fraction
-where a model has one, the balanced-tract weight where it has one, and the depth
-dispersion. ρ and the genome-wide baseline depth are fitted once for the whole sample and
-are identical across the five, so they cannot move a ΔBIC and are not counted in *k*. The
-convention is stated because BIC comparisons are only meaningful if everyone counts the
-same way.
+**Every model carries a shared noise component, and without it the comparison is useless.**
+On real whole-genome data a few per cent of heterozygous calls have an allele balance that
+two clean copies cannot produce at all: collapsed repeats, unflagged copy-number changes,
+sites where one allele maps badly. No single beta-binomial matches those tails, and with
+200,000 calls per chromosome the mismatch is worth thousands of BIC units — so the richest
+model wins everywhere, at implausible parameters, on every chromosome including the ones
+that are certainly normal. Measured on this sample before the fix: chromosome 1 preferred a
+three-band mixture at f = 0.45 over ``normal`` by ΔBIC 8,058.
+
+So each model is ``(1 − ε)`` of its own bands plus ``ε`` of a deliberately wide
+beta-binomial at the centre. All five carry it, all five fit ε, and the comparison is then
+about **band structure** rather than about which model happens to have a spare parameter to
+spend on the tails. It is the difference between a comparison that answers the question and
+one that answers "which of these is most flexible".
+
+**A contig whose noise share is large is not measurable, and is reported as such.** ε under
+the ``normal`` model is that contig's honest tail burden. Past :data:`NOISE_CEILING` the
+allele balance is not describable by any of these models and a mechanism call would be an
+artefact of the repeats — which is what the acrocentric chromosomes here do.
+
+**What counts as a free parameter.** Fitted per chromosome by every model: ρ, ε, plus the
+cell fraction and the balanced-tract weight where a model has them. The baseline depth and
+its between-chromosome spread are genome-wide and identical across the five, so they cannot
+move a ΔBIC and are not counted in *k*. The convention is stated because BIC comparisons are
+only meaningful if everyone counts the same way.
 """
 
 from __future__ import annotations
@@ -69,11 +88,21 @@ __all__ = [
     "offset",
 ]
 
-#: Fitted per chromosome by every model, including ``normal``: the depth dispersion, which
-#: is reported but does not enter model selection. rho, the baseline depth and the
-#: between-chromosome depth spread are genome-wide and shared across the five, so none of
-#: them can move a Delta-BIC and none is counted here.
-NUISANCE = 1
+#: Fitted per chromosome by every model, including ``normal``: the over-dispersion rho and
+#: the noise share epsilon. The baseline depth and its between-chromosome spread are
+#: genome-wide and shared across the five, so neither can move a Delta-BIC and neither is
+#: counted here.
+NUISANCE = 2
+
+#: The over-dispersion of the shared noise component. Deliberately large and deliberately
+#: fixed: it is not a measurement of anything, it is a wide shape for "this site's allele
+#: balance is not two clean copies". Fitting it would let it drift onto the signal.
+NOISE_RHO = 0.30
+
+#: Above this fitted noise share the contig's allele balance is not describable by these
+#: models at all, and any mechanism call from it would be an artefact. Ten per cent: an
+#: order of magnitude above what the clean autosomes here show (0.9-2.8 %).
+NOISE_CEILING = 0.10
 
 
 @dataclass(frozen=True)

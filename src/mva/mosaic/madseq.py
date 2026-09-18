@@ -6,12 +6,20 @@ builds. The model itself is a paragraph of equations, so it is re-implemented he
 the paper rather than resurrected: a beta-binomial mixture on allele fraction times a
 negative binomial on depth, five parameterisations compared by **BIC**.
 
-**Maximum likelihood, not MCMC — a stated simplification.** Every model has at most two
-free parameters beyond a nuisance dispersion, both bounded, so a bounded search finds the
-mode without a sampler, a prior or a convergence diagnostic. What is given up is the
-posterior width on *f*, and that is bought back where it matters: the interval quoted for a
-fraction comes from :mod:`~mva.mosaic.simulate`'s forward simulation, which is a stronger
-statement than a posterior anyway because it also carries the detection limit.
+**Maximum likelihood, not MCMC — a stated simplification.** Every model has at most four
+free parameters, all bounded, so a multi-start simplex finds the mode without a sampler, a
+prior or a convergence diagnostic. What is given up is the posterior width on *f*, and that
+is bought back where it matters: the interval quoted for a fraction comes from
+:mod:`~mva.mosaic.simulate`'s forward simulation, which is a stronger statement than a
+posterior anyway because it also carries the detection limit.
+
+**ρ is fitted per chromosome here, and genome-wide in the Bdev test — deliberately.** They
+answer different questions. Bdev asks "is this contig more spread out than the genome", so
+its null must come from elsewhere or there is nothing to exceed. Model selection asks "is
+the excess spread *bimodal*", and there a ρ imported from other chromosomes is simply a
+misfit that the richest model absorbs: on this sample the per-chromosome ρ ranges twelvefold
+(0.0057 on chr5 to 0.067 on chr21), so a shared value describes almost no contig. The two
+instruments have opposite blind spots, which is why the step reports both.
 
 **ΔBIC < 10 is low-confidence, and is Kong's own threshold.** Adopted as written. A
 chromosome whose best and second-best models sit inside it is reported as
@@ -45,27 +53,27 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 import numpy as np
-from scipy.optimize import minimize_scalar
-from scipy.special import logsumexp
+from scipy.optimize import minimize, minimize_scalar
+from scipy.special import expit, logit
 
-from ..kmer.genotype import nb_logpmf
 from . import betabinom, models
+from .likelihood import (
+    DEFAULT_DEPTH_SD,
+    allele_log_likelihood,
+    depth_log_likelihood,
+    fit_depth_dispersion,
+)
 from .models import Model
 from .tables import AlleleHistogram, DepthHistogram
 
 __all__ = [
-    "DEFAULT_DEPTH_SD",
     "DELTA_BIC",
     "FRACTION_BOUNDS",
     "ModelFit",
     "Verdict",
-    "allele_log_likelihood",
     "best",
-    "depth_log_likelihood",
-    "fit_depth_dispersion",
     "fit_model",
     "fit_models",
-    "site_depth_log_likelihood",
 ]
 
 #: Kong 2018's own low-confidence threshold, adopted as written.
@@ -76,14 +84,6 @@ DELTA_BIC = 10.0
 #: and a different test.
 FRACTION_BOUNDS = (0.005, 0.90)
 
-#: Bounds for the negative-binomial depth dispersion, matching mva.kmer.genotype's.
-DISPERSION_BOUNDS = (1e-2, 1e4)
-
-#: Fallback spread of the per-chromosome depth ratio when the caller has not measured one.
-#: 2 %% is deliberately generous: it is roughly what GC and mappability produce between
-#: chromosomes on a normal genome, and a too-narrow default would manufacture calls.
-DEFAULT_DEPTH_SD = 0.02
-
 
 @dataclass(frozen=True)
 class ModelFit:
@@ -93,6 +93,11 @@ class ModelFit:
     model: str
     fraction: float
     tract: float
+    #: fitted per chromosome, not the genome-wide value the Bdev null uses
+    rho: float
+    #: the share of calls no band claims to explain -- repeats, unflagged copy number,
+    #: one allele mapping badly. Every model carries it, so it cannot decide the comparison
+    noise_share: float
     depth_dispersion: float
     allele_log_likelihood: float
     depth_log_likelihood: float
@@ -114,6 +119,8 @@ class ModelFit:
             "model": self.model,
             "fraction": round(self.fraction, 5),
             "tract": round(self.tract, 4),
+            "rho": round(self.rho, 6),
+            "noise_share": round(self.noise_share, 5),
             "depth_dispersion": round(self.depth_dispersion, 3),
             "log_likelihood": round(self.log_likelihood, 2),
             "parameters": self.parameters,
@@ -122,92 +129,44 @@ class ModelFit:
         }
 
 
-def allele_log_likelihood(
-    histogram: AlleleHistogram, bands: list[models.Band], rho: float
-) -> float:
-    """A mixture of beta-binomials over the model's bands, weighted by the histogram."""
-    if not histogram.n_sites or not bands:
-        return 0.0
-    stacked = np.vstack(
-        [
-            np.log(max(band.weight, 1e-12))
-            + betabinom.logpmf(histogram.k, histogram.n, band.centre, rho)
-            for band in bands
-        ]
-    )
-    per_pair = logsumexp(stacked, axis=0)
-    if not np.all(np.isfinite(per_pair)):
-        return -np.inf
-    return float(np.dot(per_pair, histogram.sites))
+#: Starting noise share for the shape fit. Two per cent: what the clean autosomes here
+#: actually show, so the simplex begins inside the answer rather than at a boundary.
+START_NOISE = 0.02
 
 
-def site_depth_log_likelihood(histogram: DepthHistogram, mean: float, dispersion: float) -> float:
-    """A negative binomial over every call's depth. **Not** used for model selection.
+def _fit_shape(
+    alleles: AlleleHistogram,
+    bands: list[models.Band],
+    *,
+    centre: float,
+    rho: float,
+) -> tuple[float, float, float]:
+    """Best (log-likelihood, ρ, ε) for a *fixed* band layout — the inner fit.
 
-    Kept because it is the correct description of depth at a site and because
-    :func:`fit_depth_dispersion` needs a likelihood to maximise. Using it to compare models
-    would weight one chromosome-level fact by the number of sites that happen to lie on the
-    chromosome; see the module docstring.
+    Two parameters, both nuisance, both about shape rather than about mechanism. Keeping
+    them in their own simplex is what makes the outer search over the cell fraction
+    meaningful: in a four-dimensional simplex the allele term's pull on ρ is five orders of
+    magnitude larger than the depth term's pull on *f*, and the fraction coordinate simply
+    drifts to wherever it started.
     """
-    if not histogram.n_sites:
-        return 0.0
-    values = nb_logpmf(histogram.depth.astype(float), mean, dispersion)
-    if not np.all(np.isfinite(values)):
-        return -np.inf
-    return float(np.dot(values, histogram.sites))
 
-
-def depth_log_likelihood(
-    histogram: DepthHistogram, mean: float, *, spread: float = DEFAULT_DEPTH_SD
-) -> float:
-    """One Gaussian on the chromosome's mean depth, against the between-chromosome spread.
-
-    ``spread`` is in units of the baseline, so a 2 %% spread at a 42x baseline is 0.84x.
-    """
-    if not histogram.n_sites or mean <= 0:
-        return 0.0
-    sigma = max(spread * mean, 1e-9)
-    residual = (histogram.mean - mean) / sigma
-    return float(-0.5 * residual**2 - np.log(sigma * np.sqrt(2.0 * np.pi)))
-
-
-def fit_depth_dispersion(histogram: DepthHistogram, mean: float) -> float:
-    """Maximum-likelihood dispersion at a fixed mean, over the histogram rather than the calls.
-
-    :func:`mva.kmer.genotype.fit_dispersion` does the same search over an array of counts.
-    Here the counts arrive already tallied -- hundreds of thousands of calls in a few
-    hundred distinct depths -- so the likelihood is a weighted sum and the search is three
-    orders of magnitude cheaper. The search itself is identical: one bounded dimension in
-    log space.
-    """
-    if not histogram.n_sites or mean <= 0:
-        return DISPERSION_BOUNDS[1]
-
-    def negative_log_likelihood(log_dispersion: float) -> float:
-        value = site_depth_log_likelihood(histogram, mean, float(np.exp(log_dispersion)))
+    def negative(theta: np.ndarray) -> float:
+        fitted = float(np.clip(np.exp(theta[0]), *betabinom.RHO_BOUNDS))
+        noise = float(np.clip(expit(theta[1]), 1e-6, 0.5))
+        value = allele_log_likelihood(alleles, bands, fitted, noise=noise, centre=centre)
         return -value if np.isfinite(value) else 1e18
 
-    result = minimize_scalar(
-        negative_log_likelihood,
-        bounds=(float(np.log(DISPERSION_BOUNDS[0])), float(np.log(DISPERSION_BOUNDS[1]))),
-        method="bounded",
+    found = minimize(
+        negative,
+        np.array([np.log(rho), logit(START_NOISE)]),
+        method="Nelder-Mead",
+        options={"maxiter": 400, "xatol": 1e-4, "fatol": 1e-3},
     )
-    return float(np.exp(result.x))
-
-
-def _tract_weight(
-    model: Model, fraction: float, alleles: AlleleHistogram, *, rho: float, centre: float
-) -> float:
-    """The balanced-tract share, fitted only for the model that has one."""
-    if not model.has_tract:
-        return 0.0
-
-    def negative(share: float) -> float:
-        bands = models.bands_for(model, fraction, centre, share)
-        value = allele_log_likelihood(alleles, bands, rho)
-        return -value if np.isfinite(value) else 1e18
-
-    return float(minimize_scalar(negative, bounds=(0.0, 0.9), method="bounded").x)
+    return (
+        float(-found.fun),
+        float(np.clip(np.exp(found.x[0]), *betabinom.RHO_BOUNDS)),
+        float(np.clip(expit(found.x[1]), 1e-6, 0.5)),
+    )
 
 
 def fit_model(
@@ -220,36 +179,58 @@ def fit_model(
     baseline_depth: float,
     depth_spread: float = DEFAULT_DEPTH_SD,
 ) -> ModelFit:
-    """Fit one model's free parameters to one chromosome, by bounded search."""
+    """Fit one model to one chromosome: the cell fraction outside, the shape inside.
 
-    def total(fraction: float) -> tuple[float, float, float, float]:
-        tract = _tract_weight(model, fraction, alleles, rho=rho, centre=centre)
+    ``rho`` is the genome-wide value and is only a starting point; the fitted one is per
+    chromosome, for the reason in the module docstring.
+
+    **The depth term is inside the objective, not added to the result.** A monosomy's bands
+    are a normal chromosome's bands, so its allele likelihood is flat in the cell fraction
+    and depth is the only thing that identifies *f* at all. Fitting the allele term first
+    and adding depth afterwards sent it to the bound.
+    """
+
+    def score(fraction: float, tract: float) -> tuple[float, float, float, float]:
         bands = models.bands_for(model, fraction, centre, tract)
-        allele = allele_log_likelihood(alleles, bands, rho)
-        mean = baseline_depth * models.depth_ratio(model, fraction)
-        dispersion = fit_depth_dispersion(depth, mean)
-        return allele, depth_log_likelihood(depth, mean, spread=depth_spread), tract, dispersion
+        allele, fitted_rho, noise = _fit_shape(alleles, bands, centre=centre, rho=rho)
+        depths = depth_log_likelihood(
+            depth, baseline_depth * models.depth_ratio(model, fraction), spread=depth_spread
+        )
+        return allele + depths, fitted_rho, noise, allele
+
+    def best_tract(fraction: float) -> float:
+        if not model.has_tract:
+            return 0.0
+        return float(
+            minimize_scalar(
+                lambda share: -score(fraction, share)[0], bounds=(0.0, 0.9), method="bounded"
+            ).x
+        )
 
     if model.has_fraction:
-
-        def negative(fraction: float) -> float:
-            allele, depths, _, _ = total(fraction)
-            value = allele + depths
-            return -value if np.isfinite(value) else 1e18
-
-        fraction = float(minimize_scalar(negative, bounds=FRACTION_BOUNDS, method="bounded").x)
+        fraction = float(
+            minimize_scalar(
+                lambda value: -score(value, best_tract(value))[0],
+                bounds=FRACTION_BOUNDS,
+                method="bounded",
+            ).x
+        )
     else:
         fraction = 0.0
+    tract = best_tract(fraction)
+    _, fitted_rho, noise, allele = score(fraction, tract)
 
-    allele, depths, tract, dispersion = total(fraction)
+    mean = baseline_depth * models.depth_ratio(model, fraction)
     return ModelFit(
         chrom=alleles.chrom or depth.chrom,
         model=model.name,
         fraction=fraction,
         tract=tract,
-        depth_dispersion=dispersion,
+        rho=fitted_rho,
+        noise_share=noise,
+        depth_dispersion=fit_depth_dispersion(depth, mean),
         allele_log_likelihood=allele,
-        depth_log_likelihood=depths,
+        depth_log_likelihood=depth_log_likelihood(depth, mean, spread=depth_spread),
         parameters=model.parameters,
         # The heterozygous calls, plus the one chromosome-level depth observation. Counting
         # every PASS call here would make log N -- and so the BIC penalty -- depend on how
@@ -295,10 +276,19 @@ class Verdict:
     #: by depth, and the one a reader must be able to check on its own
     trisomy_vs_cnloh: float
     confident: bool
+    #: the noise share the ``normal`` model needed -- this contig's honest tail burden
+    noise_share: float = 0.0
+
+    @property
+    def measurable(self) -> bool:
+        """False when the tails swallow the contig: no band structure survives underneath."""
+        return self.noise_share <= models.NOISE_CEILING
 
     @property
     def call(self) -> str:
         """The model name, or the honest refusal. Never the ranking on its own."""
+        if not self.measurable:
+            return "not measurable"
         return self.best if self.confident else "not distinguishable"
 
     def as_dict(self) -> dict[str, object]:
@@ -311,6 +301,8 @@ class Verdict:
             "fraction": round(self.fraction, 5),
             "trisomy_vs_cnloh": round(self.trisomy_vs_cnloh, 2),
             "confident": self.confident,
+            "noise_share": round(self.noise_share, 5),
+            "measurable": self.measurable,
         }
 
 
@@ -320,6 +312,10 @@ def best(fits: tuple[ModelFit, ...], *, delta: float = DELTA_BIC) -> Verdict:
     leader, second = ranked[0], ranked[1]
     by_name = {fit.model: fit for fit in fits}
     pair = by_name["cnloh"].bic - by_name["mitotic_trisomy"].bic
+    # The gate reads ``normal``'s noise share, not the leader's: a degenerate fit can hide
+    # the tails inside its extra bands and report almost none, which is exactly the failure
+    # the gate exists to catch.
+    tails = by_name["normal"].noise_share
     return Verdict(
         chrom=leader.chrom,
         best=leader.model,
@@ -328,4 +324,5 @@ def best(fits: tuple[ModelFit, ...], *, delta: float = DELTA_BIC) -> Verdict:
         fraction=leader.fraction,
         trisomy_vs_cnloh=pair,
         confident=(second.bic - leader.bic) >= delta,
+        noise_share=tails,
     )

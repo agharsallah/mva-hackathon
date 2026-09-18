@@ -12,6 +12,7 @@ Four things live here and nothing else does:
 ``betabinom``  the over-dispersed allele-balance distribution, and its one-parameter fit
 ``bdev``       the fold-over B-deviation statistic and the DANFIP fraction estimate
 ``models``     the five per-chromosome models, as data
+``likelihood`` what each model says about the data: the allele mixture and the depth term
 ``madseq``     fitting those five and choosing between them by BIC
 ``moments``    the null distribution of a folded mean, computed rather than sampled
 ``simulate``   detection limits: how small an event each arm could have shown
