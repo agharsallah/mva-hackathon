@@ -265,10 +265,19 @@ def fit_models(
     rho: float,
     centre: float,
     baseline_depth: float,
+    depth_spread: float = DEFAULT_DEPTH_SD,
 ) -> tuple[ModelFit, ...]:
     """All five, in declaration order."""
     return tuple(
-        fit_model(model, alleles, depth, rho=rho, centre=centre, baseline_depth=baseline_depth)
+        fit_model(
+            model,
+            alleles,
+            depth,
+            rho=rho,
+            centre=centre,
+            baseline_depth=baseline_depth,
+            depth_spread=depth_spread,
+        )
         for model in models.MODELS
     )
 
