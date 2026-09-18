@@ -13,7 +13,7 @@ Corrections to the plan found while opening (2026-09-18):
 - CADD is not served by VEP REST (HTTP 500, entry 098) → O5 defaults to **REVEL**, tested at run.
 - No table holds `hgvs_p`/`hgvs_c`; `VepRecord` drops them. Step 1's HGVS needs a VEP re-request.
 
-## Wave 0 — contracts (main thread)
+## Wave 0 — contracts (main thread) — **done 2026-09-18**, commits `f493364` (steps split, shared with a parallel session) + `2447e3e`
 
 - [x] Plan written and revised (`plan.md`, 2026-09-13 → 09-18)
 - [x] `steps.py`: `ITERATION4`, seven steps, registered in `STEPS_BY_ITERATION`
@@ -26,11 +26,11 @@ Corrections to the plan found while opening (2026-09-18):
 
 ## Wave 1 — build against fixtures (Opus agents, disjoint files)
 
-- [ ] agent *record* — `mva.zoo.record` + tests; HGVS columns on `VepRecord` (MVP)
-- [ ] agent *registry* — `models.toml` + `models.d/`, `registry.py`, cards, licence manifest, fetch script (MVP)
-- [ ] agent *cache+adapters* — `cache.py`, adapters (warehouse column, DuckDB lookup, VEP REST), `cli.py` (MVP)
-- [ ] agent *rank+report+merge* — `rank.py`, `merge.py`, `report.py`, `workflow.py`, figure script (MVP)
-- [ ] agent *track2* — `mva.drugs.graph_walk`, PrimeKG fetch, decoy, build **and** run (MVP R2)
+- [x] agent *record* — `mva.zoo.record` (+ `record_hgvs`, `record_write`) + tests; HGVS + UniProt on `VepRecord` (MVP) — `41f093b`; follow-up: move `uniprot: 1` into `annotate_vep.QUERY_PARAMS` and drop `HgvsAnnotator`
+- [x] agent *registry* — `models.toml` + `models.d/`, `registry.py`, cards, licence manifest, fetch script (MVP) — `9bfdfa6`; ESM1b table 1.24 GiB, REVEL flag verified, O5 → REVEL
+- [x] agent *cache+adapters* — `cache.py`, adapters (warehouse column, DuckDB lookup, VEP REST), `cli.py` (MVP) — `91742ad`
+- [x] agent *rank+report+merge* — `pairs`/`rank`, `merge`/`merge_render`, `report`/`report_stats`/`report_sections`, `workflow`/`workflow_types`/`workflow_stages`, `tools/render_it4_figures.py` (MVP) — gaps: resume nominal (no `P4-5`), no `narrate`, `read_only_percentiles` has no stage yet
+- [ ] agent *track2* — `mva.drugs.graph_walk`, PrimeKG fetch, decoy, build **and** run (MVP R2) — **deferred 2026-09-18**: another session is actively editing `src/mva/drugs/**` and `ressources/track2/**` (decoy cards); start once that lands to avoid a file collision
 
 ## Wave 2 — the R1 chain (main thread, strict order, files claims)
 
