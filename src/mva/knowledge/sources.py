@@ -29,14 +29,17 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 from typing import Any
+from urllib.parse import quote
 
-from ..drugs.cache import Fetcher
+from ..drugs.cache import Fetcher, SourceError
 
 __all__ = [
     "LITVAR",
+    "NOT_FOUND",
     "PUBTATOR",
     "gene_query",
     "litvar_id",
+    "litvar_path",
     "publications_for_rsid",
     "search_papers",
     "unique_pmids",
@@ -55,30 +58,55 @@ PAGE = 10
 
 
 def litvar_id(rsid: str) -> str:
-    """LitVar's own identifier for a dbSNP variant: ``litvar@rs1801376##``.
-
-    The trailing ``##`` is part of the identifier, not a fragment. It is spelled out here
-    once so no caller has to know that.
-    """
+    """LitVar's own identifier for a dbSNP variant: ``litvar@rs1801376##``."""
     return f"litvar@{rsid}##"
+
+
+def litvar_path(rsid: str) -> str:
+    """The identifier as it must appear **inside a url path**: ``litvar%40rs1801376%23%23``.
+
+    This is not decoration. The trailing ``##`` is part of LitVar's identifier, but ``#``
+    in a url starts a fragment, so an HTTP client sends everything before it and drops the
+    rest — and LitVar answers the truncated identifier with *Variant not found*. Left
+    unencoded, this module reports "nobody has published about this variant" for **every**
+    variant, which is a wrong headline rather than a failed request. Measured 2026-09-18:
+    ``rs1801376`` returns 0 publications unencoded and 66 encoded.
+    """
+    return quote(litvar_id(rsid), safe="")
+
+
+#: LitVar answers a variant it holds no entry for with **HTTP 400 and this phrase**, not
+#: with 404 and not with an empty list. Measured live 2026-09-18 on ``rs12952117``. It is
+#: the same statement as "no publication mentions this variant", so it is allowed through
+#: and turned into an empty list; any other 400 is a real failure and still raises.
+NOT_FOUND = "Variant not found"
 
 
 def publications_for_rsid(fetcher: Fetcher, rsid: str) -> list[str]:
     """Every PMID LitVar holds for one dbSNP variant, newest first as LitVar orders them.
 
-    An empty list is a *result*: "this allele is in dbSNP and nobody has written about
-    it", which is the common case for a private allele and is exactly the number step 5
-    needs in its denominator. A variant LitVar has never seen answers 404, and that is
-    the same statement, so it is allowed through rather than raised.
+    An empty list is a *result*: "nobody has written about this exact variant", which is
+    the common case and is exactly the number step 5 needs in its denominator. It is
+    reached two ways — LitVar holds the variant with no publications, or LitVar holds no
+    entry at all (see :data:`NOT_FOUND`) — and both mean the same thing here.
+
+    A caller that needs "was this allele askable at all" must not use this function's zero
+    for it: that question is answered by whether the allele has a dbSNP identifier, and
+    :mod:`mva.knowledge.catalogue` keeps the two apart.
     """
     if not rsid.strip():
         return []
     payload = fetcher.get_json(
-        f"{LITVAR}/variant/get/{litvar_id(rsid.strip())}/publications",
-        allow_status=(404,),
+        f"{LITVAR}/variant/get/{litvar_path(rsid.strip())}/publications",
+        allow_status=(400, 404),
     )
     if not isinstance(payload, dict):
         return []
+    detail = str(payload.get("detail") or "")
+    if detail:
+        if NOT_FOUND.lower() in detail.lower():
+            return []
+        raise SourceError(f"{LITVAR}/variant/get/{litvar_path(rsid)}/publications", detail)
     return [str(pmid) for pmid in payload.get("pmids") or []]
 
 

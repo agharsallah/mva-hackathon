@@ -14,6 +14,9 @@ from __future__ import annotations
 
 from typing import ClassVar
 
+import pytest
+
+from mva.drugs.cache import SourceError
 from mva.knowledge import anchors, baselines, catalogue, protein, sources
 from test_drugs_support import FakeFetcher
 
@@ -67,6 +70,13 @@ class TestSources:
     def test_a_litvar_identifier_carries_its_trailing_hashes(self) -> None:
         assert sources.litvar_id("rs1801376") == "litvar@rs1801376##"
 
+    def test_the_identifier_is_percent_encoded_inside_a_url_path(self) -> None:
+        # Unencoded, the trailing ## is read as a url fragment, the client sends a
+        # truncated identifier, LitVar answers "Variant not found" — and every variant
+        # comes back with zero publications. A wrong headline, not a failed request.
+        assert sources.litvar_path("rs1801376") == "litvar%40rs1801376%23%23"
+        assert "#" not in sources.litvar_path("rs1801376")
+
     def test_publications_come_back_as_strings(self) -> None:
         fetcher = FakeFetcher().route(sources.LITVAR, LITVAR_PUBS, "")
         assert sources.publications_for_rsid(fetcher, "rs1801376")[0] == "27397505"
@@ -74,6 +84,17 @@ class TestSources:
     def test_an_allele_nobody_published_about_is_an_empty_list_not_an_error(self) -> None:
         fetcher = FakeFetcher().route(sources.LITVAR, LITVAR_NONE, "")
         assert sources.publications_for_rsid(fetcher, "rs999") == []
+
+    def test_litvars_400_variant_not_found_reads_as_nobody_published(self) -> None:
+        # Measured live: LitVar answers an unknown variant with HTTP 400 and a detail
+        # string, not 404 and not an empty list.
+        fetcher = FakeFetcher().route(sources.LITVAR, {"detail": "Variant not found: x"}, "")
+        assert sources.publications_for_rsid(fetcher, "rs999") == []
+
+    def test_any_other_400_is_still_a_failure(self) -> None:
+        fetcher = FakeFetcher().route(sources.LITVAR, {"detail": "Rate limit exceeded"}, "")
+        with pytest.raises(SourceError):
+            sources.publications_for_rsid(fetcher, "rs999")
 
     def test_a_blank_identifier_is_never_sent_to_the_network(self) -> None:
         fetcher = FakeFetcher()
@@ -170,8 +191,11 @@ class TestProtein:
         return protein.context_for_gene(fetcher, "GENEA")
 
     def test_a_superfamily_covering_the_whole_protein_does_not_count_as_a_domain(self) -> None:
-        # IPR000002 spans 1-1000, so a residue outside the real domain must still fail.
-        assert not protein.verdict(self.context(), 10).in_domain
+        # IPR000002 spans 1-1000, so a residue outside the real domain must still fail
+        # the domain test — while the superfamily column records that it was covered.
+        answer = protein.verdict(self.context(), 10)
+        assert not answer.in_domain
+        assert answer.in_superfamily
 
     def test_a_residue_inside_a_domain_at_high_confidence_supports_the_claim(self) -> None:
         answer = protein.verdict(self.context(), 800)

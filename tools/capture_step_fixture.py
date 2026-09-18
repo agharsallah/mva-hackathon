@@ -38,6 +38,7 @@ MODULES = {
     "step-2": "mva.viz.steps_it2",
     "step-3": "mva.viz.steps_it2_step3",
     "step-4": "mva.viz.steps_it2_step4",
+    "step-5": "mva.viz.steps_it2_step5",
 }
 
 DEFAULT_ROOT = Path("app/src/fixtures/data")

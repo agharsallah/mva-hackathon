@@ -97,6 +97,11 @@ class ResidueVerdict:
     gene: str
     accession: str
     in_domain: bool
+    #: Covered by *any* InterPro entry, including the family and superfamily rows that
+    #: :data:`DOMAIN_TYPES` excludes from the domain test. Reported beside ``in_domain``
+    #: because the two can disagree, and a residue outside every annotated domain but
+    #: inside a superfamily is a different finding from one outside everything.
+    in_superfamily: bool
     domain_accession: str
     domain_name: str
     plddt: float
@@ -210,17 +215,15 @@ def verdict(context: ProteinContext, residue: int) -> ResidueVerdict:
     AlphaMissense class — so a refutation can say *which* of them failed rather than only
     that the claim did.
     """
-    covering = [
-        domain
-        for domain in context.domains
-        if domain.entry_type in DOMAIN_TYPES and domain.covers(residue)
-    ]
+    over = [domain for domain in context.domains if domain.covers(residue)]
+    covering = [domain for domain in over if domain.entry_type in DOMAIN_TYPES]
     score = context.plddt.get(residue, 0.0)
-    best = covering[0] if covering else None
+    best = covering[0] if covering else (over[0] if over else None)
     return ResidueVerdict(
         gene=context.gene,
         accession=context.accession,
         in_domain=bool(covering),
+        in_superfamily=bool(over),
         domain_accession=best.accession if best else "",
         domain_name=best.name if best else "",
         plddt=score,
