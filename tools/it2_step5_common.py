@@ -13,21 +13,35 @@ produces can be read as a measurement rather than as a list of famous genes.
 
 Nothing here writes a coordinate. Alleles travel as ``(gene, dbSNP identifier, consequence
 class)``, which is what the ranking tables already carry.
+
+The TSV and JSON writers this module used to define now live in :mod:`mva.io.writers`, where
+every step can reach them; they are re-exported here so the stage scripts keep one import.
 """
 
 from __future__ import annotations
 
-import csv
-import json
 import sys
 from pathlib import Path
 from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
+from mva.io.writers import write_json, write_tsv
 from mva.viz.queries.access import fetch
 from mva.warehouse.postgres import ALIAS
 from mva.warehouse.settings import Postgres
+
+__all__ = [
+    "DEFAULT_OUT",
+    "GENE_SET",
+    "TOP_LEADERS",
+    "alleles",
+    "clinvar_carried",
+    "genes",
+    "settings",
+    "write_json",
+    "write_tsv",
+]
 
 DEFAULT_OUT = Path("build/it2/step-5")
 
@@ -128,37 +142,3 @@ def clinvar_carried() -> list[dict[str, Any]]:
     ORDER BY k.symbol, k.posterior DESC
     """
     return fetch(settings(), sql)
-
-
-def write_tsv(path: Path, rows: list[dict[str, Any]], columns: tuple[str, ...]) -> int:
-    """Write rows as a TSV the warehouse loader can read, and return how many were written.
-
-    Quoting is explicit rather than left to the dialect default: step 5 is the one step
-    whose rows carry free text — paper titles with commas, quotes and semicolons — and a
-    sniffed dialect here would corrupt the evidence itself.
-    """
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.writer(handle, delimiter="\t", lineterminator="\n", quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(columns)
-        for row in rows:
-            writer.writerow([_cell(row.get(name)) for name in columns])
-    return len(rows)
-
-
-def write_json(path: Path, payload: dict[str, Any]) -> Path:
-    """The numbers no table holds — counts, correlations, intervals — beside the tables."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(payload, indent=1, sort_keys=True) + "\n", encoding="utf-8")
-    return path
-
-
-def _cell(value: Any) -> str:
-    """One TSV cell. Booleans go out as ``true``/``false`` for DuckDB's CAST, and a tab or
-    a newline inside free text is replaced by a space rather than escaped — a paper title
-    is display text, and a literal tab in it would move every column right of it."""
-    if value is None:
-        return ""
-    if isinstance(value, bool):
-        return "true" if value else "false"
-    return str(value).replace("\t", " ").replace("\r", " ").replace("\n", " ")

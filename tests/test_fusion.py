@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import pytest
 
-from mva.pipeline import fusion
+from mva.pipeline import fusion, fusion_freeze
 from mva.pipeline.fusion import Confirmation, Pair, Route, RouteRank
 
 LEADER = Pair("GENEA", "a1", "a2")
@@ -226,7 +226,7 @@ class TestFreeze:
 
         routes = [route("one")]
         fused = fusion.fuse(routes, ranked("one", (LEADER, 1)))
-        frozen = fusion.freeze(fused, routes=routes)
+        frozen = fusion_freeze.freeze(fused, routes=routes)
 
         assert frozen.rows == 1
         assert frozen.sha256 == hashlib.sha256(frozen.text.encode("utf-8")).hexdigest()
@@ -234,18 +234,18 @@ class TestFreeze:
     def test_the_header_names_every_route_after_the_fixed_columns(self):
         routes = [route("one"), route("two")]
         fused = fusion.fuse(routes, ranked("one", (LEADER, 1)))
-        header = fusion.freeze(fused, routes=routes).text.splitlines()[0].split("\t")
+        header = fusion_freeze.freeze(fused, routes=routes).text.splitlines()[0].split("\t")
 
-        assert header[: len(fusion.COLUMNS)] == list(fusion.COLUMNS)
-        assert header[len(fusion.COLUMNS) :] == ["one", "two"]
+        assert header[: len(fusion_freeze.COLUMNS)] == list(fusion_freeze.COLUMNS)
+        assert header[len(fusion_freeze.COLUMNS) :] == ["one", "two"]
 
     def test_the_same_ranking_hashes_the_same_however_the_rows_arrived(self):
         routes = [route("one")]
         forwards = fusion.fuse(routes, ranked("one", (LEADER, 1), (RUNNER, 2)))
         backwards = fusion.fuse(routes, ranked("one", (RUNNER, 2), (LEADER, 1)))
 
-        assert fusion.freeze(forwards, routes=routes).sha256 == (
-            fusion.freeze(backwards, routes=routes).sha256
+        assert fusion_freeze.freeze(forwards, routes=routes).sha256 == (
+            fusion_freeze.freeze(backwards, routes=routes).sha256
         )
 
     def test_a_different_ordering_hashes_differently(self):
@@ -253,8 +253,8 @@ class TestFreeze:
         one = fusion.fuse(routes, ranked("one", (LEADER, 1), (RUNNER, 2)))
         other = fusion.fuse(routes, ranked("one", (RUNNER, 1), (LEADER, 2)))
 
-        assert fusion.freeze(one, routes=routes).sha256 != (
-            fusion.freeze(other, routes=routes).sha256
+        assert fusion_freeze.freeze(one, routes=routes).sha256 != (
+            fusion_freeze.freeze(other, routes=routes).sha256
         )
 
     def test_the_confirmation_triple_is_written_as_flags(self):
@@ -264,7 +264,7 @@ class TestFreeze:
             ranked("one", (LEADER, 1), (RUNNER, 2)),
             confirmations={LEADER.id: Confirmation(True, True, True)},
         )
-        rows = fusion.freeze(fused, routes=routes).text.splitlines()[1:]
+        rows = fusion_freeze.freeze(fused, routes=routes).text.splitlines()[1:]
 
         assert rows[0].split("\t")[6] == "R1C"
         assert rows[1].split("\t")[6] == "-"

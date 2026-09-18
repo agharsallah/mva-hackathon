@@ -26,11 +26,13 @@ The ``ranx`` library was considered as a reference implementation and not adopte
 compiled dependency tree for forty lines of arithmetic. The tests check every sum against the
 published formula computed by hand instead, which is the property an external library would
 have been used to check.
+
+Turning a fused ranking into the byte-stable artifact whose digest gets written down is a
+separate concern and lives in :mod:`mva.pipeline.fusion_freeze`.
 """
 
 from __future__ import annotations
 
-import hashlib
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass, field
 
@@ -40,13 +42,11 @@ __all__ = [
     "UNITS",
     "Confirmation",
     "Edge",
-    "Frozen",
     "FusedPair",
     "K",
     "Pair",
     "Route",
     "RouteRank",
-    "freeze",
     "fuse",
     "inherit",
     "leave_one_out",
@@ -197,15 +197,6 @@ class FusedPair:
         return len(self.inputs)
 
 
-@dataclass(frozen=True)
-class Frozen:
-    """A fused ranking, exported and hashed before anybody compares it to anything."""
-
-    text: str
-    sha256: str
-    rows: int
-
-
 def inherit(
     route: Route,
     order: Sequence[str],
@@ -349,45 +340,3 @@ def _silenced(route: Route) -> Route:
         inputs=route.inputs,
         reason=f"left out: {route.reason}" if route.reason else "left out",
     )
-
-
-#: The frozen export's columns. Written out rather than derived from the dataclass, because
-#: the hash of this file is quoted in a methodology entry and a silent column change would
-#: invalidate it without anybody noticing.
-COLUMNS = ("rank", "pair_id", "gene", "score", "independent_evidence", "inputs", "confirmation")
-
-
-def freeze(fused: Sequence[FusedPair], *, routes: Sequence[Route] = ()) -> Frozen:
-    """Serialise a fused ranking to canonical TSV and hash it.
-
-    The text is the artifact: same rows, same order, same formatting, therefore same digest.
-    Scores are printed at 12 significant digits — enough that two orderings which differ
-    cannot hash the same, few enough that platform float formatting cannot make an identical
-    run differ from itself.
-    """
-    header = list(COLUMNS) + [route.name for route in routes]
-    lines = ["\t".join(header)]
-    for row in fused:
-        confirmation = "".join(
-            flag
-            for flag, on in (
-                ("R", row.confirmation.read_confirmed),
-                ("1", row.confirmation.single_copy),
-                ("C", row.confirmation.no_cn_loss),
-            )
-            if on
-        )
-        cells = [
-            str(row.rank),
-            row.pair.id,
-            row.pair.gene,
-            f"{row.score:.12g}",
-            str(row.independent_evidence),
-            ",".join(row.inputs),
-            confirmation or "-",
-        ]
-        cells.extend(str(row.per_route.get(route.name, MISSING_RANK)) for route in routes)
-        lines.append("\t".join(cells))
-    text = "\n".join(lines) + "\n"
-    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
-    return Frozen(text=text, sha256=digest, rows=len(fused))

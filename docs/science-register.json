@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-18T17:07:48+00:00",
+  "generated_at": "2026-09-18T17:10:03+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -1568,11 +1568,39 @@
       "refuted_by": "Any single-route removal changes which pair holds fused rank 1.",
       "gene": "",
       "path": "fusion",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.12,
+      "suggested_confidence": 0.4502,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 95,
+          "direction": "refutes",
+          "strength": 0.85,
+          "kind": "measurement",
+          "claim": "Silencing the likelihood route moves the all-routes leader from fused rank 1 to rank 62, and CLCNKB takes rank 1: one route carries the result.",
+          "source_ref": "methodology/108",
+          "lineage_ref": ""
+        },
+        {
+          "id": 96,
+          "direction": "supports",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "Silencing the knowledge route leaves the leader at rank 1 unchanged, and silencing the phenotype route leaves it at rank 1 tied with a decoy gene.",
+          "source_ref": "methodology/108",
+          "lineage_ref": ""
+        },
+        {
+          "id": 97,
+          "direction": "supports",
+          "strength": 0.35,
+          "kind": "measurement",
+          "claim": "Re-weighting every route by its own measured error rate leaves the leader at rank 1, so the rank-1 result is not an artefact of equal weights.",
+          "source_ref": "methodology/108",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H043",
@@ -1582,11 +1610,30 @@
       "refuted_by": "The count is 1 - every route speaking for the leader traces back to a single input.",
       "gene": "",
       "path": "fusion",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.8,
+      "suggested_confidence": 0.8022,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 98,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "The fused leader carries an independent-evidence count of 3 of 4 disjoint inputs - HPO, the VCF and the reads - after routes sharing an input are collapsed.",
+          "source_ref": "methodology/108",
+          "lineage_ref": ""
+        },
+        {
+          "id": 99,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "The literature input is absent: the knowledge route placed the leading gene outside its top 50, so the count is 3 of 4 rather than 4 of 4.",
+          "source_ref": "methodology/108",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H044",
