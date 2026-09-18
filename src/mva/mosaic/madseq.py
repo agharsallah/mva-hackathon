@@ -26,6 +26,23 @@ chromosome whose best and second-best models sit inside it is reported as
 *not distinguishable*, never as the better-scoring one — the number, not the ranking, is
 what gets printed.
 
+**A large margin is not the same as a usable answer, and this data proves it.** Run on the
+real callset the comparison put ``meiotic_trisomy`` first on 21 of 24 contigs at ΔBIC from 10
+to 3,122 and fitted cell fractions of 0.20 to 0.65 — none of it credible. It wins because
+real allele balance is not a beta-binomial, and at 200,000 calls per contig any
+mis-specification is worth thousands of BIC units, so the most flexible member of the family
+takes them all. Two measurements say so rather than intuition: the fitted "cell fraction"
+correlates with the fitted **noise share** at Spearman 0.94, and every winning fit has
+**a parameter pinned against its bound**.
+
+**A boundary solution is not an estimate**, and :attr:`Verdict.degenerate` says so. A fit
+whose over-dispersion has been driven to zero, or whose balanced tract has gone to the widest
+the parameterisation allows, has stopped answering "which mechanism" and started doing
+density estimation with whatever shape it was given. Only parameters a model actually fits
+are checked — ``normal`` has no tract to pin — and a contig with any of them at a bound is
+reported **model family not usable**, which is the honest output for a family this data does
+not fit.
+
 **The depth evidence for a whole chromosome is one number, not three hundred thousand.**
 The obvious implementation sums a negative binomial over every PASS call's depth, and it is
 wrong in a way that quietly decides every call: with 350,000 sites, a chromosome sitting
@@ -79,6 +96,20 @@ __all__ = [
 #: Kong 2018's own low-confidence threshold, adopted as written.
 DELTA_BIC = 10.0
 
+#: How close to its lower bound the over-dispersion must sit to count as collapsed. Ten
+#: times the bound: a real fit never approaches it, because real allele balance is
+#: over-dispersed and rho is what says so.
+DEGENERATE_RHO_FACTOR = 10.0
+
+#: The widest balanced tract the fit may use. It is a bound, so a fit that reaches it is
+#: reporting "as much as you let me" rather than a measurement.
+TRACT_BOUND = 0.9
+
+#: How close to a bound counts as being at it. One per cent: tight enough that a genuine
+#: estimate near the edge is not condemned, loose enough that the optimiser stopping a
+#: rounding error short of the bound is still caught.
+BOUND_MARGIN = 0.01
+
 #: A mosaic fraction below 0.5 %% is not distinguishable from noise at any realistic depth,
 #: and above 0.9 the sample is not mosaic but constitutional -- which is a different claim
 #: and a different test.
@@ -123,6 +154,10 @@ class ModelFit:
             "noise_share": round(self.noise_share, 5),
             "depth_dispersion": round(self.depth_dispersion, 3),
             "log_likelihood": round(self.log_likelihood, 2),
+            # Both halves, because a verdict re-decided from this row later needs to
+            # reconstruct the fit and a total cannot be split back into its parts.
+            "allele_log_likelihood": round(self.allele_log_likelihood, 2),
+            "depth_log_likelihood": round(self.depth_log_likelihood, 4),
             "parameters": self.parameters,
             "observations": self.observations,
             "bic": round(self.bic, 2),
@@ -203,7 +238,9 @@ def fit_model(
             return 0.0
         return float(
             minimize_scalar(
-                lambda share: -score(fraction, share)[0], bounds=(0.0, 0.9), method="bounded"
+                lambda share: -score(fraction, share)[0],
+                bounds=(0.0, TRACT_BOUND),
+                method="bounded",
             ).x
         )
 
@@ -278,6 +315,12 @@ class Verdict:
     confident: bool
     #: the noise share the ``normal`` model needed -- this contig's honest tail burden
     noise_share: float = 0.0
+    #: the leading fit's own parameters, so a reader can see whether any of them is pinned
+    #: against a bound -- which is what separates a mechanism from a density estimator
+    #: wearing one's name
+    leader_rho: float = float("nan")
+    leader_tract: float = 0.0
+    leader_noise: float = 0.0
 
     @property
     def measurable(self) -> bool:
@@ -285,10 +328,38 @@ class Verdict:
         return self.noise_share <= models.NOISE_CEILING
 
     @property
+    def degenerate(self) -> bool:
+        """True when a parameter of the winning fit is pinned against its own bound.
+
+        A boundary solution is not an estimate: the optimiser was pushed as far as the
+        parameterisation allows and stopped there, which says the shape the data wants is
+        outside the family rather than inside it at that value. Only parameters the winning
+        model actually fits are checked — ``normal`` has no tract and no fraction to pin.
+        """
+        model = models.by_name(self.best)
+        if not np.isfinite(self.leader_rho):
+            return False
+        if self.leader_rho <= betabinom.RHO_BOUNDS[0] * DEGENERATE_RHO_FACTOR:
+            return True
+        if self.leader_noise <= 1e-5 or self.leader_noise >= 0.5 * (1.0 - BOUND_MARGIN):
+            return True
+        if model.has_tract and self.leader_tract >= TRACT_BOUND * (1.0 - BOUND_MARGIN):
+            return True
+        return bool(
+            model.has_fraction
+            and (
+                self.fraction <= FRACTION_BOUNDS[0] * (1.0 + BOUND_MARGIN)
+                or self.fraction >= FRACTION_BOUNDS[1] * (1.0 - BOUND_MARGIN)
+            )
+        )
+
+    @property
     def call(self) -> str:
         """The model name, or the honest refusal. Never the ranking on its own."""
         if not self.measurable:
             return "not measurable"
+        if self.degenerate:
+            return "model family not usable"
         return self.best if self.confident else "not distinguishable"
 
     def as_dict(self) -> dict[str, object]:
@@ -303,6 +374,10 @@ class Verdict:
             "confident": self.confident,
             "noise_share": round(self.noise_share, 5),
             "measurable": self.measurable,
+            "degenerate": self.degenerate,
+            "leader_rho": round(self.leader_rho, 6),
+            "leader_tract": round(self.leader_tract, 4),
+            "leader_noise": round(self.leader_noise, 5),
         }
 
 
@@ -325,4 +400,7 @@ def best(fits: tuple[ModelFit, ...], *, delta: float = DELTA_BIC) -> Verdict:
         trisomy_vs_cnloh=pair,
         confident=(second.bic - leader.bic) >= delta,
         noise_share=tails,
+        leader_rho=leader.rho,
+        leader_tract=leader.tract,
+        leader_noise=leader.noise_share,
     )

@@ -89,6 +89,38 @@ def window_kmers(codes: np.ndarray, k: int = K) -> tuple[np.ndarray, np.ndarray]
     return np.minimum(forward, reverse), ~broken
 
 
+def kmers_at(codes: np.ndarray, positions: np.ndarray, k: int = K) -> tuple[np.ndarray, np.ndarray]:
+    """Canonical k-mers at the named start positions only — not every window.
+
+    :func:`window_kmers` builds every overlapping k-mer of a sequence, which is right when
+    every one of them is wanted. Sampling a few thousand probes from a 249-megabase
+    chromosome is not that case: the full pass allocates two gigabytes to produce ten
+    thousand values. This takes the same arithmetic to the positions asked for, so the cost
+    is the sample rather than the chromosome.
+
+    The canonical form is identical to :func:`window_kmers`' — the smaller of the forward
+    k-mer and its reverse complement — and ``tests/test_kmer_encode.py`` asserts the two
+    agree window for window.
+    """
+    _check_k(k)
+    positions = np.asarray(positions, dtype=np.int64)
+    usable = positions[(positions >= 0) & (positions + k <= codes.size)]
+    if not usable.size:
+        return np.empty(0, dtype=np.uint64), np.empty(0, dtype=bool)
+    forward = np.zeros(usable.size, dtype=np.uint64)
+    reverse = np.zeros(usable.size, dtype=np.uint64)
+    broken = np.zeros(usable.size, dtype=bool)
+    top = np.uint64(2 * (k - 1))
+    for offset in range(k):
+        column = codes[usable + offset]
+        bad = column > 3
+        clean = np.where(bad, 0, column).astype(np.uint64)
+        forward = (forward << _TWO) | clean
+        reverse = (reverse >> _TWO) | ((_THREE - clean) << top)
+        broken |= bad
+    return np.minimum(forward, reverse), ~broken
+
+
 def offsets_for(length: int, k: int = K, stride: int = 1) -> np.ndarray:
     """Which start positions of a ``length``-base read are sampled at this stride.
 

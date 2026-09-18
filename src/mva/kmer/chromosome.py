@@ -35,7 +35,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from .encode import K, codes_of, window_kmers
+from .encode import K, codes_of, kmers_at
 from .fasta import Contig
 
 __all__ = ["CALIBRATION_NAME", "ChromosomeProbes", "design", "sample_contig"]
@@ -117,19 +117,22 @@ def sample_contig(
     # and the sample would be one probe from the middle.
     edge = min(margin, usable // 10)
     start, stop = edge, max(usable - edge, edge + 1)
+    # Three times the quota, because ambiguous windows will delete some of them and a
+    # second pass to top up would break the even spacing the sample exists for.
     wanted = min(count * 3, max(stop - start, 1))
     positions = np.linspace(start, stop - 1, num=wanted, dtype=np.int64)
 
-    kmers, valid = window_kmers(codes, k=k)
-    positions = positions[positions < kmers.size]
-    chosen = positions[valid[positions]]
+    # Only these positions, never every window: cutting ten thousand probes from a
+    # 249-megabase chromosome through `window_kmers` would allocate two gigabytes to
+    # produce ten thousand values, twenty-four times over.
+    kmers, valid = kmers_at(codes, positions, k=k)
+    chosen = kmers[valid]
     if chosen.size > count:
         # Thin evenly again rather than taking the first `count`, which would crowd the
         # probes into the start of the contig whenever its early windows are cleaner.
         chosen = chosen[np.linspace(0, chosen.size - 1, num=count, dtype=np.int64)]
-    picked = np.unique(kmers[chosen])
     _ = rng  # the sampling is deterministic; the generator is accepted for interface parity
-    return picked
+    return np.unique(chosen)
 
 
 def design(
