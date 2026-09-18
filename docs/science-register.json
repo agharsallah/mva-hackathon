@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-18T14:57:55+00:00",
+  "generated_at": "2026-09-18T16:52:34+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -75,7 +75,7 @@
       "title": "Fusion and unblinding",
       "goal": "Fused across steps 2-5 and then unblinded, does iteration 2 rediscover iteration 1's pair, and is a second upload informative?",
       "kind": "research",
-      "status": "planned",
+      "status": "open",
       "unblocks": [
         "step-7"
       ]
@@ -1470,6 +1470,62 @@
           "lineage_ref": ""
         }
       ]
+    },
+    {
+      "id": "H041",
+      "step": "step-6",
+      "statement": "The fused iteration-2 ranking places iteration 1's confirmed pair at rank 1, and no admitted ranking route places that pair below rank 3.",
+      "prediction": "The frozen fused ranking - exported and hashed before any iteration-1 table is read - has the iteration-1 confirmed pair at fused rank 1, and each admitted ranking route (phenotype, likelihood, knowledge) ranks it 3 or better.",
+      "refuted_by": "The fused rank 1 is a different pair, or any admitted ranking route places the pair outside its own top 3.",
+      "gene": "",
+      "path": "fusion",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H042",
+      "step": "step-6",
+      "statement": "No single route carries the fused result: removing any one admitted ranking route leaves the fused rank-1 pair unchanged.",
+      "prediction": "In the leave-one-route-out table, every single-route removal reproduces the same rank-1 pair as the all-routes fusion.",
+      "refuted_by": "Any single-route removal changes which pair holds fused rank 1.",
+      "gene": "",
+      "path": "fusion",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H043",
+      "step": "step-6",
+      "statement": "The fused leader is spoken for by at least two disjoint inputs once routes sharing an input are collapsed.",
+      "prediction": "The independent-evidence count for the fused rank-1 pair is 2 or more of reads, VCF, HPO and literature, after the route-dependency graph's shared-input edges are collapsed.",
+      "refuted_by": "The count is 1 - every route speaking for the leader traces back to a single input.",
+      "gene": "",
+      "path": "fusion",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H044",
+      "step": "step-6",
+      "statement": "A second oracle upload is not informative: the expected information gain over a pre-registered decode table is 0 bits.",
+      "prediction": "tools/design_submission.py, run on the iteration-2 hypothesis space, reports expected information gain of 0.000 bits for every candidate row layout, so the default of no second upload stands.",
+      "refuted_by": "Any pre-registered decode table shows expected information gain above 0 bits on a live hypothesis.",
+      "gene": "",
+      "path": "oracle",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
     }
   ]
 }

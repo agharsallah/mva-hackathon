@@ -285,6 +285,10 @@ ITERATION2: tuple[Step, ...] = (
             "Fused across steps 2-5 and then unblinded, does iteration 2 rediscover "
             "iteration 1's pair, and is a second upload informative?"
         ),
+        # Open: four claims filed before the fusion runs. The step is the only one that can
+        # read every other step's measurement at once, and the only one allowed to read
+        # iteration 1 -- but not before its own ranking is frozen and hashed.
+        status="open",
         unblocks=("step-7",),
         iteration="iteration2",
     ),
