@@ -33,6 +33,7 @@ from .analysis_it2_fusion import IT2_FUSION_DERIVATIONS
 from .analysis_it2_kmer import IT2_KMER_DERIVATIONS
 from .analysis_it2_knowledge import IT2_KNOWLEDGE_DERIVATIONS
 from .analysis_it2_lr import IT2_LR_DERIVATIONS
+from .analysis_it2_mosaic import IT2_MOSAIC_DERIVATIONS
 from .analysis_it2_sv import IT2_SV_DERIVATIONS
 from .analysis_karyogram import KARYOGRAM_DERIVATIONS
 from .analysis_pairs import PAIR_DERIVATIONS
@@ -257,6 +258,7 @@ DERIVATIONS: tuple[Derivation, ...] = (
     + IT2_LR_DERIVATIONS
     + IT2_KNOWLEDGE_DERIVATIONS
     + IT2_FUSION_DERIVATIONS
+    + IT2_MOSAIC_DERIVATIONS
 )
 
 #: Written alongside the outputs so a result in the database can be traced to a run.
