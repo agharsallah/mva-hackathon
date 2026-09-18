@@ -35,6 +35,10 @@ __all__ = ["CALLSET_REF", "SCHEMAS", "TOOL", "Loaded", "load"]
 SCHEMAS: dict[str, tuple[tuple[str, str], ...]] = {
     "it2_pub_alleles": (
         ("gene", "VARCHAR"),
+        # Which instrument put the row here: ``ranked`` for an allele the step-4 ranking
+        # scored, ``clinvar-kmer`` for a public ClinVar pathogenic allele step 3 typed
+        # directly in the reads. They answer different questions and are never merged.
+        ("origin", "VARCHAR"),
         ("rsid", "VARCHAR"),
         ("consequence_class", "VARCHAR"),
         # -1 is "not asked": the allele has no dbSNP identifier, so a literature index
@@ -86,6 +90,7 @@ SCHEMAS: dict[str, tuple[tuple[str, str], ...]] = {
         ("consequence_class", "VARCHAR"),
         ("gene_rank", "BIGINT"),
         ("in_domain", "BOOLEAN"),
+        ("in_superfamily", "BOOLEAN"),
         ("domain_accession", "VARCHAR"),
         ("domain_name", "VARCHAR"),
         ("plddt", "DOUBLE"),
