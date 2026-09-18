@@ -13,6 +13,7 @@ so the palette and the shell are shared.
 | `explore-report.html` | the full exploration report — twenty exhibits over the committed data profile, each with its caption and legend | `uv run mva-explore report ressources/data-profile` |
 | `science-report.html` | the research record — the method, the step goals, the hypothesis board, the evidence ledger, the oracle budget, and the methods form. **Currently renders as empty**, because no hypothesis has been recorded yet; that is the honest state, not a broken page | `uv run mva-science report --from docs/science-register.json` |
 | `locus-fixture.html` | the locus browser rendered over the **synthetic** `tests/fixtures/mini.vcf`, so the page can be committed | `uv run mva-explore locus tests/fixtures/mini.vcf --out figures/locus-fixture.html` |
+| `track2-report.html` + `track2/*.png` | Track 2's step-7 exhibits — the evidence ladder matrix, the rung funnel, the decoy overlap, the paediatric pointers, the drug × mechanism literature — rendered from `build/track2/analysis.json` and nothing else; every number is the enrichment run's | `uv run python tools/track2_enrich.py && uv run python tools/render_track2_figures.py` |
 
 `locus-fixture.html` is deliberately built from the fixture rather than the real callset:
 the locus views are the only ones that read patient records, and a page built from the real
