@@ -5,6 +5,7 @@ import { BafKaryogram } from './genome/BafKaryogram';
 import { DensityBins } from './genome/DensityBins';
 import { DepthVaf } from './genome/DepthVaf';
 import { Karyotype } from './genome/Karyotype';
+import { MosaicRetest } from './genome/MosaicRetest';
 
 export default function GenomePage() {
   return (
@@ -89,6 +90,13 @@ export default function GenomePage() {
         subtitle="A whole-chromosome mean hides a mosaic arm. The same allele-balance question, re-asked one megabase at a time."
       >
         <BafKaryogram />
+      </Section>
+
+      <Section
+        title="And would that map have seen a mosaic at all?"
+        subtitle="Step 8 re-tests the same callset with a statistic that has power, and states the smallest event each chromosome could have shown."
+      >
+        <MosaicRetest />
       </Section>
 
       <Section title="How is the callset laid out over the genome?">
