@@ -73,7 +73,7 @@ import sys
 from dataclasses import replace
 from pathlib import Path
 
-from . import cli_annotate, cli_ledger, cli_objects, cli_source, cli_vcf, reference
+from . import cli_annotate, cli_it2, cli_ledger, cli_objects, cli_source, cli_vcf, reference
 from . import postgres as pg
 from .analysis import DERIVATIONS
 from .catalog import discover
@@ -180,65 +180,23 @@ def _do_pg_derive(args) -> int:
 
 
 def _do_pg_load_it2(args) -> int:
-    """Load iteration 2's step-1 target and decoy tables from a build directory."""
-    from . import it2_tables
+    """Load iteration 2's step-1 target and decoy tables."""
+    return cli_it2.load_it2_step1(args, _settings(args))
 
-    settings = _settings(args)
-    with pg.attached(settings) as connection:
-        loaded = it2_tables.load(
-            connection,
-            schema=settings.schema,
-            result_schema=settings.result_schema,
-            out_dir=args.out,
-        )
-    for item in loaded:
-        print(f"  {settings.result_schema}.{item.table:<12} {item.rows:>5,} rows  <- {item.source}")
-    print(f"\nlineage edges appended to {settings.schema}.data_lineage")
-    return 0
+
+def _do_pg_load_it2_step2(args) -> int:
+    """Load iteration 2's step-2 read-derived tables."""
+    return cli_it2.load_it2_step2(args, _settings(args))
 
 
 def _do_pg_load_it2_step3(args) -> int:
     """Load iteration 2's step-3 alignment-free genotype and copy-number tables."""
-    from . import it2_step3_tables
-
-    settings = _settings(args)
-    with pg.attached(settings) as connection:
-        loaded = it2_step3_tables.load(
-            connection,
-            schema=settings.schema,
-            result_schema=settings.result_schema,
-            out_dir=args.out,
-        )
-    if not loaded:
-        print(f"nothing to load: no TSVs under {args.out}/tables")
-        print("run `uv run python tools/export_it2_step3_tables.py` first")
-        return 1
-    for item in loaded:
-        print(f"  {settings.result_schema}.{item.table:<22} {item.rows:>9,} rows  <- {item.source}")
-    print(f"\nlineage edges appended to {settings.schema}.data_lineage")
-    return 0
+    return cli_it2.load_it2_step3(args, _settings(args))
 
 
-def _do_pg_load_it2_step2(args) -> int:
-    """Load iteration 2's step-2 read-derived tables from a build directory."""
-    from . import it2_step2_tables
-
-    settings = _settings(args)
-    with pg.attached(settings) as connection:
-        loaded = it2_step2_tables.load(
-            connection,
-            schema=settings.schema,
-            result_schema=settings.result_schema,
-            out_dir=args.out,
-        )
-    if not loaded:
-        print(f"nothing to load: no TSVs under {args.out}/tables")
-        print("run `uv run python tools/export_it2_step2_tables.py` first")
-        return 1
-    for item in loaded:
-        print(f"  {settings.result_schema}.{item.table:<20} {item.rows:>9,} rows  <- {item.source}")
-    print(f"\nlineage edges appended to {settings.schema}.data_lineage")
-    return 0
+def _do_pg_load_it2_step4(args) -> int:
+    """Load iteration 2's step-4 likelihood-ratio ranking, P(trans) and null tables."""
+    return cli_it2.load_it2_step4(args, _settings(args))
 
 
 def _do_pg_list(args) -> int:
@@ -353,6 +311,18 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("build/it2/step-3"),
         help="the directory tools/export_it2_step3_tables.py wrote its tables under",
+    )
+
+    load_step4 = add_pg(
+        "pg-load-it2-step4",
+        _do_pg_load_it2_step4,
+        "load iteration 2's step-4 likelihood-ratio ranking, P(trans) and null tables",
+    )
+    load_step4.add_argument(
+        "--out",
+        type=Path,
+        default=Path("build/it2/step-4"),
+        help="the directory tools/rank_it2_pairs.py wrote its tables under",
     )
 
     add_pg("pg-list", _do_pg_list, "list every table in both managed schemas")

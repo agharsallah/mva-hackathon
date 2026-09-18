@@ -193,16 +193,9 @@ class TestPlaceholders:
     def test_nothing_reads_a_result_table_before_it_is_built(self):
         # The general form of the rule above, over the whole registry: a derivation may
         # reference `{res}.x` only if x is declared earlier or is written by a loader.
-        from mva.warehouse import it2_step2_tables, it2_step3_tables, it2_tables
+        from mva.warehouse.loaders import LOADED_TABLES
 
-        loaded = (
-            set(it2_step2_tables.SCHEMAS)
-            | set(it2_step3_tables.SCHEMAS)
-            | {
-                it2_tables.TARGETS_TABLE,
-                it2_tables.DECOYS_TABLE,
-            }
-        )
+        loaded = LOADED_TABLES
         built: set[str] = set()
         for item in DERIVATIONS:
             for other in DERIVATIONS:
