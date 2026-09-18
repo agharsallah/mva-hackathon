@@ -2407,3 +2407,45 @@ flowchart LR
 **Network proximity** — scoring a gene nobody has curated by how strongly it interacts with the genes that *are* well-scored. It is a third kind of evidence, weaker than a phenotype match, and it is capped accordingly: a neighbour has no phenotype evidence of its own, only a neighbour that has some.
 *Example:* STRING's high-confidence partners (score ≥ 700) of the top 50 ranked genes give 1,575 edges and 569 uncurated neighbours — and **none of them reached the top 25**, so the lane was built, measured, and found not to matter here.
 *Context: plan §11.5's answer to the 73.6 % of genes with no curation · source: src/mva/phenotype/network.py · related: Likelihood ratio (LR) · first seen 2026-09-18*
+
+## 21. Reading the literature without being read by it — words for iteration 2's step 5
+
+**Allele catalogue** — the published record of which exact variants have been written about, asked **allele-first**: take the variants this patient carries and ask the literature about each one, rather than asking a gene what its famous variants are. The direction is the whole design. A gene's famous alleles are somebody else's alleles and measure only how studied the gene is; the reverse question has a complete denominator — every allele the ranking scored — and a zero in it means something.
+*Example:* 1,924 alleles across 815 genes, asked of **LitVar 2.0** one dbSNP identifier at a time.
+*Context: the shape of step 5's first question · source: src/mva/knowledge/catalogue.py · related: rsID, PubMed / Europe PMC / PubTator3 / LitVar2 / OpenAlex / Semantic Scholar · first seen 2026-09-18*
+
+**Unqueryable (never asked)** — an item the instrument could not have an opinion about, recorded as its own outcome rather than folded into "no". A literature index keyed on dbSNP identifiers cannot answer about a variant that has no identifier; calling that "nobody has published about it" turns a gap in a public catalogue into a finding about a patient. Carried in code as a sentinel (`NOT_ASKED = -1`), never as a zero.
+*Example:* 10 of 1,924 alleles have no dbSNP identifier, so the coverage figure draws three bands — published, asked-and-silent, never-asked — and never one percentage.
+*Context: the denominator rule the whole step is built on · source: src/mva/knowledge/catalogue.py · related: Allele catalogue, No-call · first seen 2026-09-18*
+
+**Case-report anchor** — a published paper that discusses a candidate gene **alongside several of this patient's own clinical features**. It is the literature's version of a phenotype match: one paper covering five of seven features is a much stronger statement than five papers covering one each, which is why the count is per paper and not per gene.
+*Example:* one **PubTator 3.0** search per (gene, HPO term label) pair; a paper returned by five of the seven searches matches five features.
+*Context: step 5's second question · source: src/mva/knowledge/anchors.py · related: HPO (Human Phenotype Ontology), PubMed / Europe PMC / PubTator3 / LitVar2 / OpenAlex / Semantic Scholar · first seen 2026-09-18*
+
+**Script-derived anchor** — an anchor set generated from a gene list by code, never typed from a reading list. In a **blind protocol** this is not tidiness: the papers a human reaches for are the discovery papers of the gene the previous iteration already found, so a hand-written bibliography is a leak wearing a citation. The entry prints which anchor came out of which gene, so the derivation can be checked rather than trusted.
+*Example:* the plan's own bibliography (Hanks 2004, Snape 2011, Yost 2017, Mirzaa 2014) enters step 5 only if the queries produce it.
+*Context: plan §10 gap B3, fixed before the step ran · source: tools/build_it2_anchors.py · related: Case-report anchor, Blind protocol · first seen 2026-09-18*
+
+**Citation-volume baseline** — ranking the same genes by how many papers mention them at all, and holding the real ranking against it. It is the null that matters most for any literature route: the gene at the top of a biomedical search is usually the gene most has been written about, so a knowledge ordering that agrees with a raw hit count has measured fame rather than biology. Deliberately kept out of the score it judges — the knowledge score breaks its ties on the gene symbol, which carries nothing, so that this comparison stays independent.
+*Example:* `GENE[Title/Abstract]` counted through NCBI E-utilities, one query per gene, against the knowledge ordering by **Spearman rank correlation** and **top-k overlap**.
+*Context: step 5's fourth question, which judges the other three · source: src/mva/knowledge/baselines.py · related: Decoy null, Spearman rank correlation, Top-k overlap · first seen 2026-09-18*
+
+**Spearman rank correlation (ρ)** — how well one ordering predicts another, computed on ranks rather than values, so it is unmoved by how far apart the scores are. Ties share a **mid-rank** (the average of the positions they occupy) instead of being broken arbitrarily, because a coarse score — a matched-term count takes eight values — would otherwise manufacture a disagreement the data does not contain.
+*Example:* ρ ≥ 0.9 against the citation baseline, with an identical top 5, is the pre-registered condition that would refute the knowledge route's claim to add anything.
+*Context: half of how step 5's route is weighed · source: src/mva/knowledge/baselines.py · related: Citation-volume baseline, Top-k overlap · first seen 2026-09-18*
+
+**Top-k overlap** — how many names two orderings share in their first *k* positions. It fails differently from a correlation and is reported beside it: a route can reshuffle a long tail while leaving the leaders untouched, and only the overlap notices — which matters, because the leaders are the only rows anyone acts on.
+*Example:* k = 5, fixed before the run.
+*Context: the second half of the same weighing · source: src/mva/knowledge/baselines.py · related: Spearman rank correlation (ρ), Citation-volume baseline · first seen 2026-09-18*
+
+**Ranking route vs confirmation route** — the two things a route may be in a fusion, decided by measurement rather than by intuition. A **ranking route** contributes an ordering; a **confirmation route** contributes only a yes/no about a candidate another route ranked, and enters at weight zero. Iteration 2 demoted the read route this way when its measured discrimination came out at zero, and step 5 files the same two conditions for itself in advance: a route must separate targets from matched decoys **and** reorder the citation baseline before it may rank anything.
+*Example:* a route that separates but does not reorder has found famous genes; one that reorders but cannot beat its decoys has found noise. Both are confirmation routes.
+*Context: what step 6 is entitled to do with each route · source: src/mva/knowledge/baselines.py · related: Decoy null, Citation-volume baseline, Reciprocal rank fusion · first seen 2026-09-18*
+
+**Saturated evidence column** — a column that is almost always true and therefore orders almost nothing, whatever it means individually. Worth naming because it looks like strong evidence until the denominator is drawn: a field where 95 % of rows say yes cannot separate the 5 % from anything.
+*Example:* 1,821 of the 1,914 askable alleles carry at least one publication — LitVar holds a citation for nearly any variant with a dbSNP identifier — so "this allele has been published about" is nearly free and is reported as a count, never as a discriminator.
+*Context: measured in step 5, and the reason the knowledge score leans on matched terms instead · source: docs/iteration2/step-5/methodology/102-the-sources-and-what-they-could-be-asked.md · related: Allele catalogue, Unqueryable (never asked) · first seen 2026-09-18*
+
+**Structural context (domain + pLDDT)** — the second opinion step 5 gives a missense allele in place of a protein language model: does the changed residue fall inside an annotated **InterPro** domain, and does **AlphaFold** have a confident opinion about the shape there? It is not a pathogenicity score and is never read as one — **AlphaMissense** already supplies that — it is the question of whether the position is one where a swap plausibly matters. Only InterPro entries typed `domain` count; families and superfamilies span most of a protein and would make the test pass for almost any residue, so they are stored and reported in their own column instead.
+*Example:* a residue at 95.4 % along a 1,050-residue protein, pLDDT 91.1 — confident structure, and outside every annotated domain.
+*Context: plan claim H025 restated as H040 after ESM1b was cut · source: src/mva/knowledge/protein.py · related: pLDDT, Domain database (Pfam, SMART, PROSITE, Gene3D, SUPERFAMILY, CDD, PRINTS), AlphaMissense · first seen 2026-09-18*

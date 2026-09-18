@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 20,
-    "entries": 556,
+    "chapters": 21,
+    "entries": 566,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 127
+    "contexts": 137
   },
   "chapters": [
     {
@@ -7127,6 +7127,175 @@
           "source": "src/mva/phenotype/network.py",
           "related": [
             "likelihood-ratio-lr"
+          ],
+          "firstSeen": "2026-09-18"
+        }
+      ]
+    },
+    {
+      "number": 21,
+      "id": "21-reading-the-literature-without-being-read-by-it--words-for-iteration-2s-step-5",
+      "title": "Reading the literature without being read by it — words for iteration 2's step 5",
+      "blocks": [
+        {
+          "kind": "entry",
+          "slug": "allele-catalogue",
+          "term": "Allele catalogue",
+          "aliases": [],
+          "html": "<p>the published record of which exact variants have been written about, asked <strong>allele-first</strong>: take the variants this patient carries and ask the literature about each one, rather than asking a gene what its famous variants are. The direction is the whole design. A gene's famous alleles are somebody else's alleles and measure only how studied the gene is; the reverse question has a complete denominator — every allele the ranking scored — and a zero in it means something.</p>",
+          "exampleHtml": "<p><em>Example:</em> 1,924 alleles across 815 genes, asked of <strong>LitVar 2.0</strong> one dbSNP identifier at a time.</p>",
+          "context": "<p>the shape of step 5's first question</p>",
+          "source": "src/mva/knowledge/catalogue.py",
+          "related": [
+            "rsid",
+            "pubmed-europe-pmc-pubtator3-litvar2-openalex-semantic-scholar"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "unqueryable-never-asked",
+          "term": "Unqueryable (never asked)",
+          "aliases": [
+            "Unqueryable",
+            "never asked"
+          ],
+          "html": "<p>an item the instrument could not have an opinion about, recorded as its own outcome rather than folded into \"no\". A literature index keyed on dbSNP identifiers cannot answer about a variant that has no identifier; calling that \"nobody has published about it\" turns a gap in a public catalogue into a finding about a patient. Carried in code as a sentinel (<code>NOT_ASKED = -1</code>), never as a zero.</p>",
+          "exampleHtml": "<p><em>Example:</em> 10 of 1,924 alleles have no dbSNP identifier, so the coverage figure draws three bands — published, asked-and-silent, never-asked — and never one percentage.</p>",
+          "context": "<p>the denominator rule the whole step is built on</p>",
+          "source": "src/mva/knowledge/catalogue.py",
+          "related": [
+            "allele-catalogue",
+            "no-call"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "case-report-anchor",
+          "term": "Case-report anchor",
+          "aliases": [],
+          "html": "<p>a published paper that discusses a candidate gene <strong>alongside several of this patient's own clinical features</strong>. It is the literature's version of a phenotype match: one paper covering five of seven features is a much stronger statement than five papers covering one each, which is why the count is per paper and not per gene.</p>",
+          "exampleHtml": "<p><em>Example:</em> one <strong>PubTator 3.0</strong> search per (gene, HPO term label) pair; a paper returned by five of the seven searches matches five features.</p>",
+          "context": "<p>step 5's second question</p>",
+          "source": "src/mva/knowledge/anchors.py",
+          "related": [
+            "hpo-human-phenotype-ontology",
+            "pubmed-europe-pmc-pubtator3-litvar2-openalex-semantic-scholar"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "script-derived-anchor",
+          "term": "Script-derived anchor",
+          "aliases": [],
+          "html": "<p>an anchor set generated from a gene list by code, never typed from a reading list. In a <strong>blind protocol</strong> this is not tidiness: the papers a human reaches for are the discovery papers of the gene the previous iteration already found, so a hand-written bibliography is a leak wearing a citation. The entry prints which anchor came out of which gene, so the derivation can be checked rather than trusted.</p>",
+          "exampleHtml": "<p><em>Example:</em> the plan's own bibliography (Hanks 2004, Snape 2011, Yost 2017, Mirzaa 2014) enters step 5 only if the queries produce it.</p>",
+          "context": "<p>plan §10 gap B3, fixed before the step ran</p>",
+          "source": "tools/build_it2_anchors.py",
+          "related": [
+            "case-report-anchor",
+            "blind-protocol"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "citation-volume-baseline",
+          "term": "Citation-volume baseline",
+          "aliases": [],
+          "html": "<p>ranking the same genes by how many papers mention them at all, and holding the real ranking against it. It is the null that matters most for any literature route: the gene at the top of a biomedical search is usually the gene most has been written about, so a knowledge ordering that agrees with a raw hit count has measured fame rather than biology. Deliberately kept out of the score it judges — the knowledge score breaks its ties on the gene symbol, which carries nothing, so that this comparison stays independent.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>GENE[Title/Abstract]</code> counted through NCBI E-utilities, one query per gene, against the knowledge ordering by <strong>Spearman rank correlation</strong> and <strong>top-k overlap</strong>.</p>",
+          "context": "<p>step 5's fourth question, which judges the other three</p>",
+          "source": "src/mva/knowledge/baselines.py",
+          "related": [
+            "decoy-null",
+            "spearman-rank-correlation-ρ",
+            "top-k-overlap"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "spearman-rank-correlation-ρ",
+          "term": "Spearman rank correlation (ρ)",
+          "aliases": [
+            "Spearman rank correlation",
+            "ρ"
+          ],
+          "html": "<p>how well one ordering predicts another, computed on ranks rather than values, so it is unmoved by how far apart the scores are. Ties share a <strong>mid-rank</strong> (the average of the positions they occupy) instead of being broken arbitrarily, because a coarse score — a matched-term count takes eight values — would otherwise manufacture a disagreement the data does not contain.</p>",
+          "exampleHtml": "<p><em>Example:</em> ρ ≥ 0.9 against the citation baseline, with an identical top 5, is the pre-registered condition that would refute the knowledge route's claim to add anything.</p>",
+          "context": "<p>half of how step 5's route is weighed</p>",
+          "source": "src/mva/knowledge/baselines.py",
+          "related": [
+            "citation-volume-baseline",
+            "top-k-overlap"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "top-k-overlap",
+          "term": "Top-k overlap",
+          "aliases": [],
+          "html": "<p>how many names two orderings share in their first <em>k</em> positions. It fails differently from a correlation and is reported beside it: a route can reshuffle a long tail while leaving the leaders untouched, and only the overlap notices — which matters, because the leaders are the only rows anyone acts on.</p>",
+          "exampleHtml": "<p><em>Example:</em> k = 5, fixed before the run.</p>",
+          "context": "<p>the second half of the same weighing</p>",
+          "source": "src/mva/knowledge/baselines.py",
+          "related": [
+            "spearman-rank-correlation-ρ",
+            "citation-volume-baseline"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "ranking-route-vs-confirmation-route",
+          "term": "Ranking route vs confirmation route",
+          "aliases": [],
+          "html": "<p>the two things a route may be in a fusion, decided by measurement rather than by intuition. A <strong>ranking route</strong> contributes an ordering; a <strong>confirmation route</strong> contributes only a yes/no about a candidate another route ranked, and enters at weight zero. Iteration 2 demoted the read route this way when its measured discrimination came out at zero, and step 5 files the same two conditions for itself in advance: a route must separate targets from matched decoys <strong>and</strong> reorder the citation baseline before it may rank anything.</p>",
+          "exampleHtml": "<p><em>Example:</em> a route that separates but does not reorder has found famous genes; one that reorders but cannot beat its decoys has found noise. Both are confirmation routes.</p>",
+          "context": "<p>what step 6 is entitled to do with each route</p>",
+          "source": "src/mva/knowledge/baselines.py",
+          "related": [
+            "decoy-null",
+            "citation-volume-baseline",
+            "borda-count-reciprocal-rank-fusion-rrf"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "saturated-evidence-column",
+          "term": "Saturated evidence column",
+          "aliases": [],
+          "html": "<p>a column that is almost always true and therefore orders almost nothing, whatever it means individually. Worth naming because it looks like strong evidence until the denominator is drawn: a field where 95 % of rows say yes cannot separate the 5 % from anything.</p>",
+          "exampleHtml": "<p><em>Example:</em> 1,821 of the 1,914 askable alleles carry at least one publication — LitVar holds a citation for nearly any variant with a dbSNP identifier — so \"this allele has been published about\" is nearly free and is reported as a count, never as a discriminator.</p>",
+          "context": "<p>measured in step 5, and the reason the knowledge score leans on matched terms instead</p>",
+          "source": "docs/iteration2/step-5/methodology/102-the-sources-and-what-they-could-be-asked.md",
+          "related": [
+            "allele-catalogue",
+            "unqueryable-never-asked"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "structural-context-domain-plddt",
+          "term": "Structural context (domain + pLDDT)",
+          "aliases": [
+            "Structural context",
+            "domain + pLDDT"
+          ],
+          "html": "<p>the second opinion step 5 gives a missense allele in place of a protein language model: does the changed residue fall inside an annotated <strong>InterPro</strong> domain, and does <strong>AlphaFold</strong> have a confident opinion about the shape there? It is not a pathogenicity score and is never read as one — <strong>AlphaMissense</strong> already supplies that — it is the question of whether the position is one where a swap plausibly matters. Only InterPro entries typed <code>domain</code> count; families and superfamilies span most of a protein and would make the test pass for almost any residue, so they are stored and reported in their own column instead.</p>",
+          "exampleHtml": "<p><em>Example:</em> a residue at 95.4 % along a 1,050-residue protein, pLDDT 91.1 — confident structure, and outside every annotated domain.</p>",
+          "context": "<p>plan claim H025 restated as H040 after ESM1b was cut</p>",
+          "source": "src/mva/knowledge/protein.py",
+          "related": [
+            "plddt",
+            "domain-database-pfam-smart-prosite-gene3d-superfamily-cdd-prints",
+            "alphamissense"
           ],
           "firstSeen": "2026-09-18"
         }

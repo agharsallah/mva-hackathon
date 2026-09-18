@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-18T10:45:53+00:00",
+  "generated_at": "2026-09-18T14:57:55+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -64,7 +64,7 @@
       "title": "Knowledge engine",
       "goal": "Does public knowledge \u2014 published alleles, case reports, protein-language models \u2014 nominate or corroborate a pair for this phenotype?",
       "kind": "research",
-      "status": "planned",
+      "status": "open",
       "unblocks": [
         "step-6",
         "step-7"
@@ -1333,6 +1333,141 @@
           "claim": "gnomAD v2 returned no co-occurrence estimate for any of the 25 leading pairs; only 5 of their 50 alleles resolve in that dataset, and the lead pair's second allele carries no dbSNP identifier.",
           "source_ref": "docs/iteration2/step-4/methodology/101-the-phase-that-cannot-be-measured.md",
           "lineage_ref": "results.it2_ptrans"
+        }
+      ]
+    },
+    {
+      "id": "H036",
+      "step": "step-5",
+      "statement": "At least one published allele - reported in ClinVar as pathogenic or likely pathogenic, or carrying at least one publication in LitVar - is present in this child at heterozygous or homozygous-alternate multiplicity in a gene that step 4 ranks in its top 20.",
+      "prediction": "The catalogue join against results.it2_kmer_genotypes (origin clinvar) and against the LitVar publication counts of the child own alleles returns at least one row whose gene is in the step-4 top 20 and whose k-mer call is het or hom-alt.",
+      "refuted_by": "No published allele of any step-4 top-20 gene is present in the child: every such allele is hom-ref or no-call. The leading pair would then be novel on both sides, and the knowledge route would contribute no allele-level corroboration.",
+      "gene": "",
+      "path": "",
+      "status": "supported",
+      "confidence": 0.8,
+      "suggested_confidence": 0.8176,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 80,
+          "direction": "supports",
+          "strength": 0.75,
+          "kind": "annotation",
+          "claim": "The step-4 leading gene carries a ClinVar pathogenic/likely-pathogenic truncating allele with 4 LitVar publications, and the k-mer route independently types a ClinVar pathogenic allele in the same gene at heterozygous multiplicity, posterior 1.0, 3 of 3 probes agreeing.",
+          "source_ref": "methodology/103",
+          "lineage_ref": ""
+        },
+        {
+          "id": 81,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "1,821 of 1,914 askable alleles carry at least one LitVar publication, so the published-allele column is saturated at 95.1 percent and orders almost nothing on its own.",
+          "source_ref": "methodology/103",
+          "lineage_ref": ""
+        },
+        {
+          "id": 82,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "absence",
+          "claim": "The leading pair missense partner has no dbSNP identifier, so LitVar could not be asked about it; the pair is one published allele and one no literature index has seen.",
+          "source_ref": "methodology/103",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H037",
+      "step": "step-5",
+      "statement": "At least one published case report matches five or more of the child seven proband HPO terms and names a gene that step 4 ranks in its top 20.",
+      "prediction": "In the script-derived anchor table, at least one PMID is returned by five or more of the seven per-term PubTator queries for a single step-4 top-20 gene.",
+      "refuted_by": "No PMID reaches five matched terms for any top-20 gene. The literature then corroborates no lead at case-report level, and step 6 records the knowledge route as silent rather than negative.",
+      "gene": "",
+      "path": "",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H038",
+      "step": "step-5",
+      "statement": "The knowledge score separates the 404 symptom-nominated target genes from the 396 matched decoy genes.",
+      "prediction": "The target-versus-decoy AUC of the knowledge score, with a bootstrap interval computed the same way step 4 computed its own, has an interval that excludes 0.5.",
+      "refuted_by": "The bootstrap interval covers 0.5. The knowledge route then has no measured discriminating power and enters step 6 as a confirmation route at weight zero, exactly as the read route did when H020 was refuted.",
+      "gene": "",
+      "path": "",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H039",
+      "step": "step-5",
+      "statement": "The knowledge ranking reorders the leading genes against a baseline that ranks them by PubMed hit count alone.",
+      "prediction": "Spearman rank correlation between the knowledge ranking and the PubMed-count ranking is below 0.9, or the two top-5 sets differ by at least one gene.",
+      "refuted_by": "The correlation is 0.9 or above and the two top-5 sets are identical. The knowledge route is then citation volume under another name, is reported as a negative result, and is dropped from the step-6 fusion.",
+      "gene": "",
+      "path": "",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H040",
+      "step": "step-5",
+      "statement": "The missense allele of the leading pair falls inside an annotated InterPro domain, in a region the structure model is confident about, and the AlphaMissense class agrees that it is damaging.",
+      "prediction": "The residue maps inside at least one InterPro domain range of the gene canonical UniProt entry, the AlphaFold per-residue pLDDT at that position is 70 or above, and the AlphaMissense class recorded for the allele is likely_pathogenic.",
+      "refuted_by": "The residue falls outside every annotated domain, or the pLDDT is below 70 so the model has no confident opinion there, or AlphaMissense does not call it likely_pathogenic. Any one of the three refutes the claim and is reported separately.",
+      "gene": "",
+      "path": "",
+      "status": "refuted",
+      "confidence": 0.2,
+      "suggested_confidence": 0.5987,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 83,
+          "direction": "refutes",
+          "strength": 0.7,
+          "kind": "annotation",
+          "claim": "The leading missense residue is outside every InterPro entry typed domain, sitting at 95.4 percent along the protein, past both the domain-typed entry and the protein-kinase-like superfamily entry.",
+          "source_ref": "methodology/106",
+          "lineage_ref": ""
+        },
+        {
+          "id": 84,
+          "direction": "supports",
+          "strength": 0.45,
+          "kind": "annotation",
+          "claim": "AlphaFold per-residue pLDDT at that residue is 91.06, so the structure model is confident about the region rather than silent on it.",
+          "source_ref": "methodology/106",
+          "lineage_ref": ""
+        },
+        {
+          "id": 85,
+          "direction": "supports",
+          "strength": 0.45,
+          "kind": "annotation",
+          "claim": "AlphaMissense calls the allele likely_pathogenic, agreeing with the step-4 lane that scored it.",
+          "source_ref": "methodology/106",
+          "lineage_ref": ""
+        },
+        {
+          "id": 86,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "annotation",
+          "claim": "The residue is inside an InterPro family entry spanning 2 to 98.7 percent of the protein, which is why family and superfamily entry types are excluded from the domain test.",
+          "source_ref": "methodology/106",
+          "lineage_ref": ""
         }
       ]
     }

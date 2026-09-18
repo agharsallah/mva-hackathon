@@ -90,6 +90,19 @@ Layer 1 is the lossless all-text raw table; derivations are named SQL over it.
 | What changes if a term is dropped? | `mva-phenotype delta` | `/api/phenotype/delta` | `phenotype/prior.py` |
 | Do two hosted rankers agree? | `mva-phenotype agreement` | — | `phenotype/remote.py` |
 
+## Knowledge — what has already been published, and is that worth anything?
+
+| Question | CLI | API route / app page | Module |
+|---|---|---|---|
+| Has anyone published about the alleles **this sample** carries? (LitVar 2.0, one dbSNP identifier at a time; an allele with no identifier is `NOT_ASKED`, never zero) | `uv run python tools/fetch_it2_catalogue.py` | `/api/steps/step-5` → `catalogue` · `/steps/step-5` | `knowledge/catalogue.py`, `knowledge/sources.py` |
+| Does any single paper discuss a candidate gene alongside several of the patient's features? (PubTator 3.0, one search per gene × term, so the matched-term count is per paper) | `uv run python tools/build_it2_anchors.py` | `/api/steps/step-5` → `anchors` | `knowledge/anchors.py` |
+| Does a missense allele land in an annotated domain, where the structure model is confident? (UniProt → InterPro → AlphaFold DB; positions as fractions of protein length, never residues) | `uv run python tools/score_it2_protein.py` | `/api/steps/step-5` → `protein`, `domains` | `knowledge/protein.py` |
+| **Does any of that order anything a raw publication count does not?** (matched-decoy AUC and a Spearman/top-k comparison against PubMed hit counts; both conditions must hold before the route may rank) | `uv run python tools/run_it2_knowledge_baselines.py` | `/api/steps/step-5` → `citations`, `groups` | `knowledge/baselines.py`, `pipeline/nulls.py` |
+
+Fetching, caching, the courtesy interval and the provenance digest are **not** in
+`mva.knowledge`: every function takes the `mva.drugs.cache.Fetcher` the repository already
+shares, which is why the package sits one import layer above `mva.drugs`.
+
 ## Submission and the scorer — spending an oracle probe
 
 Budget is **6 submissions**; `probe-budget` is the authority on what is left.
