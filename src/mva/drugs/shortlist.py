@@ -8,6 +8,9 @@ anti-direction (a drug the mechanism says would make things worse).
 
 Ordering inside the shortlist is deliberate and printed as ``why``:
 
+0. a curated result (a paper read by a person, on the mechanism) before an automated rung
+   alone - an automated rung 5 says the drug is already being tried in the tumour, which is
+   a fact about the tumour's trial landscape and not a repurposing this work discovered;
 1. the rung, highest first;
 2. a curated result for the molecule itself before a same-axis proxy;
 3. paediatric evidence (a label section or a study admitting children) before none;
@@ -59,6 +62,7 @@ def shortlist(rows: list[dict[str, Any]], card: MechanismCard) -> list[dict[str,
     ]
     kept.sort(
         key=lambda r: (
+            0 if r.get("curated_rung") else 1,
             -int(r["rung"]),
             0 if r.get("proxy") is False else 1,
             0 if (r.get("pediatric_label") or r.get("pediatric_trial")) else 1,
@@ -85,7 +89,7 @@ def shortlist(rows: list[dict[str, Any]], card: MechanismCard) -> list[dict[str,
                 "drug_name": r["drug_name"],
                 "direction_id": r["direction_id"],
                 "rung": r["rung"],
-                "verdict": "argue" if r.get("approved") else "argue - approval to verify",
+                "verdict": _verdict(r),
                 "why": "; ".join(why),
                 "pediatric_evidence": _pediatric(r),
                 "curated_pmids": r.get("curated_pmids", ()),
@@ -94,6 +98,12 @@ def shortlist(rows: list[dict[str, Any]], card: MechanismCard) -> list[dict[str,
             }
         )
     return out
+
+
+def _verdict(r: dict[str, Any]) -> str:
+    if not r.get("curated_rung"):
+        return "context trial only - not a mechanism finding"
+    return "argue" if r.get("approved") else "argue - approval to verify"
 
 
 def do_not_table(rows: list[dict[str, Any]], card: MechanismCard) -> list[dict[str, Any]]:

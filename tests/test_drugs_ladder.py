@@ -30,6 +30,17 @@ def card_with(extra: dict, tmp_path: Path) -> MechanismCard:
 
 
 STEP7_BLOCKS = {
+    "repurposing_directions": [
+        {"id": "D2", "name": "a mechanism direction", "rationale": "", "seed_targets": ["GENEB"]},
+        {"id": "D3", "name": "another", "rationale": "", "seed_targets": ["GENED"]},
+        {
+            "id": "D4",
+            "name": "the tumour context",
+            "rationale": "",
+            "seed_targets": ["GENEC"],
+            "context": True,
+        },
+    ],
     "anti_directions": [
         {
             "id": "A1",
@@ -159,10 +170,13 @@ def test_the_rung_is_the_higher_of_automated_and_curated_and_both_are_printed(
         ladder.LadderInputs(card, candidates(), trials(), [], [], labels, evidence())
     )
     druga = next(r for r in rows if r["drug_name"] == "DRUGA")
-    # approved + context trial + paediatric label → automated 5; curated 2; rung 5
-    assert druga["automated_rung"] == 5
+    # DRUGA has a context trial and a paediatric label, but sits on D2, a mechanism
+    # direction: the trial-based rung applies to the context direction alone, so the
+    # automated rung stays 1 and the curated cell result carries the row to rung 2
+    assert druga["automated_rung"] == 1
     assert druga["curated_rung"] == 2
-    assert druga["rung"] == 5
+    assert druga["rung"] == 2
+    assert druga["trial_in_context"] is True and druga["pediatric_label"] is True
     assert druga["curated_pmids"] == ("1",)
     assert druga["proxy"] is False
     assert druga["targets"] == ("GENEB",)
@@ -189,7 +203,7 @@ def test_anti_direction_and_standard_of_care_are_flagged_not_dropped(tmp_path: P
     assert poison["direction_id"] == "pathway"
     old = next(r for r in rows if r["drug_name"] == "OLDCYTOTOXIN")
     assert "standard_of_care" in old["flags"]
-    assert old["automated_rung"] == 4  # a context trial, but no paediatric evidence supplied
+    assert old["automated_rung"] == 4  # D4 is the context direction; trial, no paediatric evidence
     assert all(r["drug_name"] != "TOOLCOMPOUND" for r in rows)
 
 
@@ -220,10 +234,24 @@ def test_the_shortlist_orders_by_rung_then_molecule_level_evidence(tmp_path: Pat
     rows = ladder.assign(ladder.LadderInputs(card, candidates(), trials(), [], [], {}, evidence()))
     short = shortlist.shortlist(rows, card)
     assert short[0]["rank"] == 1
-    assert short[0]["drug_name"] == "DRUGA" and short[0]["rung"] == 4
-    assert short[1]["drug_name"] == "CURATEDONLY" and short[1]["rung"] == 3
-    assert "rung 4" in short[0]["why"]
-    assert short[1]["verdict"] == "argue - approval to verify"
+    assert short[0]["drug_name"] == "CURATEDONLY" and short[0]["rung"] == 3
+    assert short[1]["drug_name"] == "DRUGA" and short[1]["rung"] == 2
+    assert "rung 3" in short[0]["why"]
+    assert short[0]["verdict"] == "argue - approval to verify"
+    assert short[1]["verdict"] == "argue"
+
+
+def test_an_automated_rung_alone_is_labelled_a_context_trial_not_a_finding(tmp_path: Path) -> None:
+    card = card_with(STEP7_BLOCKS, tmp_path)
+    labels = {"OLDCYTOTOXIN": {"has_label": True, "pediatric_use": True}}
+    rows = ladder.assign(
+        ladder.LadderInputs(card, candidates(), trials(), [], [], labels, evidence())
+    )
+    old = next(r for r in rows if r["drug_name"] == "OLDCYTOTOXIN")
+    assert old["automated_rung"] == 5 and old["curated_rung"] is None
+    plain = {**old, "flags": ()}  # the same row without its standard-of-care flag
+    short = shortlist.shortlist([plain], card)
+    assert short[0]["verdict"] == "context trial only - not a mechanism finding"
 
 
 def test_the_do_not_table_names_the_anti_direction_status_and_the_standard_of_care(

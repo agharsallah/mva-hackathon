@@ -18,10 +18,18 @@ from typing import Any
 
 from .sources import clinicaltrials
 
-__all__ = ["CHILD_FILTER", "studies_for", "survey"]
+__all__ = ["CHILD_FILTER", "MAX_CONDITIONS", "studies_for", "survey"]
 
 #: ClinicalTrials.gov v2's aggregate filter for studies whose age groups include children.
 CHILD_FILTER = {"aggFilters": "ages:child"}
+
+#: Basket studies list hundreds of conditions; the row keeps this many and says how many
+#: more there were. The question here is "does it admit children", not "what does it treat".
+MAX_CONDITIONS = 12
+
+#: One registry record carries a 240,000-character title (a pasted document). A title longer
+#: than this is cut and marked, so one bad record cannot make the table unreadable.
+MAX_TITLE = 300
 
 
 def studies_for(fetcher: Any, drug_name: str, *, max_pages: int = 1) -> list[dict[str, Any]]:
@@ -30,7 +38,18 @@ def studies_for(fetcher: Any, drug_name: str, *, max_pages: int = 1) -> list[dic
         fetcher, intr=drug_name, max_pages=max_pages, extra=dict(CHILD_FILTER)
     )
     query = f"intr={drug_name} aggFilters=ages:child"
-    return [{"drug_name": drug_name, **row, "query": query} for row in found]
+    return [{"drug_name": drug_name, **_trim(row), "query": query} for row in found]
+
+
+def _trim(row: dict[str, Any]) -> dict[str, Any]:
+    conditions = tuple(row.get("conditions") or ())
+    if len(conditions) > MAX_CONDITIONS:
+        extra = len(conditions) - MAX_CONDITIONS
+        conditions = (*conditions[:MAX_CONDITIONS], f"...(+{extra} more)")
+    title = str(row.get("title") or "")
+    if len(title) > MAX_TITLE:
+        title = title[:MAX_TITLE] + " ...(cut)"
+    return {**row, "conditions": conditions, "title": title}
 
 
 def survey(

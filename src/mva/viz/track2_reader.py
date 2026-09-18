@@ -29,10 +29,15 @@ from __future__ import annotations
 import csv
 import json
 import re
+import sys
 from pathlib import Path
 from typing import Any
 
 from . import track2_catalog
+
+# A registry study can list hundreds of conditions; the default 128 KiB field limit
+# would make such a row unreadable, and an unreadable row is a silent data loss.
+csv.field_size_limit(sys.maxsize)
 
 #: Relative to the repository root, which is where the API is started from.
 DEFAULT_ROOT = Path()

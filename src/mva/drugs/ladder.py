@@ -166,9 +166,25 @@ def _flags(
     return tuple(flags)
 
 
+def _context_directions(card: MechanismCard) -> set[str]:
+    """The directions about the tumour context itself - the only ones a context trial grades."""
+    return {
+        str(d.get("id"))
+        for d in card.raw.get("repurposing_directions") or []
+        if d.get("context") is True
+    }
+
+
 def assign(inputs: LadderInputs) -> list[dict[str, Any]]:
-    """One row per (drug, direction), highest rung first, then by name."""
+    """One row per (drug, direction), highest rung first, then by name.
+
+    The automated rungs 4 and 5 rest on a registered trial in the tumour context, so they
+    are given only on a direction the card marks ``context: true``. On a mechanism
+    direction the same trial is a fact about the tumour, not about the mechanism, and the
+    automated rung stays at 1 there. Recorded as a refinement in methodology 113.
+    """
     card = inputs.card
+    context_directions = _context_directions(card)
     anti = _anti_patterns(card)
     standard = _standard_of_care(card)
     context_drugs = _context_drugs(inputs.trials, card.tumour_context)
@@ -188,12 +204,11 @@ def assign(inputs: LadderInputs) -> list[dict[str, Any]]:
         pediatric_label = bool(label.get("pediatric_use"))
         in_context = name in context_drugs
         pediatric_trial = name in pediatric_drugs
-        automated = 4 if in_context else 1
+        context_rung = 4 if in_context else 1
         if approved and in_context and (pediatric_label or pediatric_trial):
-            automated = 5
+            context_rung = 5
         base = {
             "drug_name": name,
-            "automated_rung": automated,
             "approved": approved,
             "fda_label": bool(entry["fda_label"] or label.get("has_label")),
             "pediatric_label": pediatric_label,
@@ -208,11 +223,13 @@ def assign(inputs: LadderInputs) -> list[dict[str, Any]]:
         for direction in sorted(entry["directions"]) or [PATHWAY_DIRECTION]:
             rows = curated.get((name, direction), [])
             curated_rung = max((int(r["rung"]) for r in rows), default=0)
+            automated = context_rung if direction in context_directions else 1
             rung = max(automated, curated_rung)
             out.append(
                 base
                 | {
                     "direction_id": direction,
+                    "automated_rung": automated,
                     "rung": rung,
                     "rung_label": rung_label(card, rung),
                     "curated_rung": curated_rung or None,

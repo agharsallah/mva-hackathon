@@ -115,7 +115,8 @@
         "PLK1",
         "TRIP13",
         "CENPE"
-      ]
+      ],
+      "context": false
     },
     {
       "id": "D2",
@@ -130,7 +131,8 @@
         "MTOR",
         "PSMB5",
         "TFEB"
-      ]
+      ],
+      "context": false
     },
     {
       "id": "D3",
@@ -146,7 +148,8 @@
         "HSP90AA1",
         "SIRT2",
         "CREBBP"
-      ]
+      ],
+      "context": false
     },
     {
       "id": "D4",
@@ -159,7 +162,8 @@
         "CDK6",
         "MTOR",
         "HMGCR"
-      ]
+      ],
+      "context": true
     }
   ],
   "constraints": {
@@ -192,7 +196,7 @@
     {
       "version": 3,
       "date": "2026-09-18",
-      "change": "trans confirmed (083); measured facts F1-F9 from iteration 2 steps 2-6 (dosage, copy number, structure, pathogenicity lanes, P(trans), phase; aneuploidy burden marked unmeasured); D2 gains proteasome and TFEB seeds, D3 the SIRT2/CBP acetylation axis, D4 HMGCR; anti-directions and the evidence ladder added; anti-directions carry a mechanism-of-action pattern; the tumour context names its standard-of-care drugs so the shortlist can exclude them"
+      "change": "trans confirmed (083); measured facts F1-F9 from iteration 2 steps 2-6 (dosage, copy number, structure, pathogenicity lanes, P(trans), phase; aneuploidy burden marked unmeasured); D2 gains proteasome and TFEB seeds, D3 the SIRT2/CBP acetylation axis, D4 HMGCR; anti-directions and the evidence ladder added; anti-directions carry a mechanism-of-action pattern; the tumour context names its standard-of-care drugs so the shortlist can exclude them; D4 marked as the tumour-context direction so the trial-based rungs apply to it alone (113)"
     }
   ],
   "measured_facts": [
@@ -316,6 +320,6 @@
         "test": "the drug acts on a target in the direction's set and nothing above applies"
       }
     ],
-    "rule": "the rung is the highest test the drug passes; automated tests (approval, label, trials) and curated tests (a PMID read by a person) are printed side by side and never merged silently; a curated row may carry proxy=true when the cited result is for a same-axis compound rather than the approved molecule itself"
+    "rule": "the rung is the highest test the drug passes; automated tests (approval, label, trials) and curated tests (a PMID read by a person) are printed side by side and never merged silently; a curated row may carry proxy=true when the cited result is for a same-axis compound rather than the approved molecule itself; the automated rungs 4 and 5 rest on a trial in the tumour context and therefore apply only to a direction marked context=true (the tumour-context direction) - a rhabdomyosarcoma trial says nothing about a checkpoint or proteostasis mechanism (refinement recorded in methodology 113 after the first grading run)"
   }
 }

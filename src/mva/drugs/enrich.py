@@ -21,6 +21,7 @@ from __future__ import annotations
 
 import csv
 import json
+import sys
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -32,6 +33,10 @@ from .mechanism import DEFAULT_CARD, MechanismCard, load
 from .names import base_name
 from .snapshot import DEFAULT_OUT_DIR, ENDPOINTS, build_fetchers
 from .sources import openfda
+
+# A registry study can list hundreds of conditions; the default 128 KiB field limit
+# would make such a row unreadable, and an unreadable row is a silent data loss.
+csv.field_size_limit(sys.maxsize)
 
 __all__ = ["BUILT_BY", "DEFAULT_ANALYSIS", "Enrichment", "read_tsv", "run"]
 
@@ -197,24 +202,28 @@ def _write(
         }
         for d in decoys
     ]
-    plan: list[tuple[str, tuple[str, ...], list[dict[str, Any]], list[dict[str, Any]]]] = [
+    # Inputs are thunks: a table's manifest hashes the tables written *before* it in this
+    # plan, so the digest has to be taken after that write, not when the plan is declared.
+    plan: list[
+        tuple[str, tuple[str, ...], list[dict[str, Any]], Callable[[], list[dict[str, Any]]]]
+    ] = [
         (
             "drug_mechanism_literature",
             tables.MECHLIT_COLUMNS,
             result.mechlit,
-            [api("pubmed", asked or None), table_in("drug_candidates")],
+            lambda: [api("pubmed", asked or None), table_in("drug_candidates")],
         ),
         (
             "pediatric_trials",
             tables.PEDIATRIC_TRIAL_COLUMNS,
             result.pediatric,
-            [api("clinicaltrials"), table_in("drug_candidates")],
+            lambda: [api("clinicaltrials"), table_in("drug_candidates")],
         ),
         (
             "evidence_ladder",
             tables.LADDER_COLUMNS,
             result.ladder,
-            [
+            lambda: [
                 table_in("drug_candidates"),
                 table_in("trials"),
                 table_in("evidence"),
@@ -223,19 +232,24 @@ def _write(
                 api("openfda"),
             ],
         ),
-        ("shortlist", tables.SHORTLIST_COLUMNS, result.shortlist, [table_in("evidence_ladder")]),
-        ("do_not", tables.SHORTLIST_COLUMNS, result.do_not, [table_in("evidence_ladder")]),
+        (
+            "shortlist",
+            tables.SHORTLIST_COLUMNS,
+            result.shortlist,
+            lambda: [table_in("evidence_ladder")],
+        ),
+        ("do_not", tables.SHORTLIST_COLUMNS, result.do_not, lambda: [table_in("evidence_ladder")]),
         (
             "decoy_comparison",
             tables.DECOY_COMPARISON_COLUMNS,
             result.comparison,
-            [table_in("drug_candidates"), *decoy_in],
+            lambda: [table_in("drug_candidates"), *decoy_in],
         ),
     ]
     for name, columns, rows, inputs in plan:
         path = out_dir / f"{name}.tsv"
         result.counts[name] = tables.write_tsv(path, columns, rows)
-        _manifest(name, path, result.counts[name], result.card, inputs)
+        _manifest(name, path, result.counts[name], result.card, inputs())
         say(f"wrote {path}  {result.counts[name]:,} rows")
     evidence_path = out_dir / "evidence.tsv"
     _manifest(
