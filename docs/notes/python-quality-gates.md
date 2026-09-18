@@ -125,6 +125,14 @@ packages, the three leaf packages (`io`, `pipeline`, `render`) import no sibling
 nothing outside `viz` depends on `viz`. The dependency diagram in that README was drawn
 from the real imports; these contracts are what keep it true.
 
+**The iteration gate reads the track off the folder (2026-09-18).** Track 2 is panel-judged:
+no predictions CSV, no selectors, no decode table, and its methods form is the *Track 2 methods*
+sheet (rows 7-16, abstract row 16, no model-number row). Before `submissions/track2/` existed
+the gate assumed every folder was Track 1 and would have failed a correct Track 2 folder on
+four missing files and a wrong row count. `tools/check_iteration.py` now carries one `FORM`
+table per track and skips the CSV, selector and digest checks for a folder under `track2/`.
+The Track 1 rules are unchanged; iteration 2, step 7 is the change that needed it.
+
 ## What the gates found on the way in
 
 Not a clean-up exercise — the gates paid for themselves before they were wired:

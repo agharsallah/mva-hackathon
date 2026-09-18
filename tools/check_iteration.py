@@ -19,6 +19,12 @@ read. Its README declares a state — **draft**, **ready** (built, not uploaded)
 - a frozen folder has **no** uncommitted change under it;
 - no ``TODO`` / ``TBD`` / ``FIXME`` survives in a ready or frozen folder.
 
+**Track 2 folders** (``submissions/track2/``) are panel-judged, not scored: there is no
+predictions CSV, no selectors file and no decode table, and the methods form is the
+*Track 2 methods* sheet (rows 7-16, abstract row 16, no model-number row). The gate reads
+the track off the folder path and checks the deliverables that track actually has; the
+reason is recorded in ``docs/notes/python-quality-gates.md``.
+
 Usage::
 
     uv run python tools/check_iteration.py                       # every iteration folder
@@ -36,11 +42,26 @@ import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import TypedDict
 
 STATES = ("draft", "ready", "frozen")
-FORM_ROWS = [str(n) for n in range(7, 19)]
-ABSTRACT_ROW = "18"
-MODEL_ROW = "8"
+
+
+class FormRows(TypedDict):
+    rows: list[str]
+    abstract: str
+    model: str | None
+
+
+#: Per track: the methods-form rows the template asks, its abstract row, and the row that
+#: must equal the iteration number (Track 1's "model number"; Track 2 has none).
+FORM: dict[str, FormRows] = {
+    "track1": {"rows": [str(n) for n in range(7, 19)], "abstract": "18", "model": "8"},
+    "track2": {"rows": [str(n) for n in range(7, 17)], "abstract": "16", "model": None},
+}
+FORM_ROWS = FORM["track1"]["rows"]
+ABSTRACT_ROW = FORM["track1"]["abstract"]
+MODEL_ROW = FORM["track1"]["model"]
 ABSTRACT_WORDS = 500
 SHA256 = re.compile(r"\b([0-9a-f]{64})\b")
 CSV_PATH = re.compile(r"`((?:build/submission|submissions/[\w-]+/iteration-\d+)/[\w.-]+\.csv)`")
@@ -84,14 +105,21 @@ def iteration_number(folder: Path) -> int | None:
     return int(match.group(1)) if match else None
 
 
+def track_of(folder: Path) -> str:
+    """``track1`` or ``track2``, read off the parent folder; anything else is Track 1's rules."""
+    name = folder.parent.name
+    return name if name in FORM else "track1"
+
+
 def newer(rendered: Path, source: Path) -> bool:
     return rendered.stat().st_mtime >= source.stat().st_mtime
 
 
 def check_files(folder: Path, report: Report) -> None:
-    required = ["README.md", "report.md", "spec.selectors.json"]
+    scored = track_of(folder) == "track1"
+    required = ["README.md", "report.md"] + (["spec.selectors.json"] if scored else [])
     if report.state != "draft":
-        required += ["methods-form.json", "decode-table.md"]
+        required += ["methods-form.json"] + (["decode-table.md"] if scored else [])
     for name in required:
         if not (folder / name).is_file():
             report.fail(f"missing {name}")
@@ -125,21 +153,23 @@ def check_methods_form(folder: Path, report: Report) -> None:
     if not path.is_file():
         return
     answers = json.loads(path.read_text(encoding="utf-8"))
-    for row in FORM_ROWS:
+    form = FORM[track_of(folder)]
+    for row in form["rows"]:
         if not str(answers.get(row, "")).strip():
             report.fail(f"methods-form.json: row {row} unanswered")
-    words = len(str(answers.get(ABSTRACT_ROW, "")).split())
+    words = len(str(answers.get(form["abstract"], "")).split())
     if words > ABSTRACT_WORDS:
         report.fail(f"methods-form.json: abstract is {words} words, limit {ABSTRACT_WORDS}")
     number = iteration_number(folder)
-    if number is not None and str(answers.get(MODEL_ROW, "")).strip() != str(number):
-        report.fail(
-            f"methods-form.json: model number {answers.get(MODEL_ROW)!r} ≠ iteration {number}"
-        )
+    model = form["model"]
+    if model and number is not None and str(answers.get(model, "")).strip() != str(number):
+        report.fail(f"methods-form.json: model number {answers.get(model)!r} ≠ iteration {number}")
 
 
 def check_selectors(folder: Path, report: Report) -> None:
     path = folder / "spec.selectors.json"
+    if track_of(folder) != "track1" and not path.is_file():
+        return
     if not path.is_file():
         return
     try:
@@ -224,7 +254,7 @@ def check_rows(
 
 
 def check_digest(folder: Path, root: Path, readme: str, report: Report) -> None:
-    if report.state == "draft":
+    if report.state == "draft" or track_of(folder) != "track1":
         return
     digests = SHA256.findall(readme)
     if not digests:
