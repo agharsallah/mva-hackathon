@@ -14,6 +14,7 @@ import type {
   Step4Payload,
   Step5Payload,
   Step6Payload,
+  Step8Payload,
   StepsPayload,
 } from './types';
 
@@ -55,6 +56,14 @@ export const useStep5 = () => useEndpoint<Step5Payload>('/api/steps/step-5');
  * block stays empty until the unblinding entry is filed, and the page reads that absence.
  */
 export const useStep6 = () => useEndpoint<Step6Payload>('/api/steps/step-6');
+
+/**
+ * Iteration 2 step 8's mosaic bound: the fold-over deviation per contig with the null its
+ * own depths generate, the five-model comparison, and — always in the same payload — the
+ * smallest cell fraction each contig could have detected. A deviation without its limit is
+ * the sentence entry 037 wrote, and the page has to be unable to render one alone.
+ */
+export const useStep8 = () => useEndpoint<Step8Payload>('/api/steps/step-8');
 
 /**
  * Iteration 2 step 1's measurements: the recall curve, the tiers, the two-ranker overlap,
