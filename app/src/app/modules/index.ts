@@ -176,6 +176,16 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/Step6'),
   },
   {
+    id: 'step8',
+    path: '/steps/step-8',
+    navLabel: 'Step 8',
+    title: 'Step 8 \u2014 how small a mosaic could we have seen?',
+    group: 'decide',
+    description:
+      'Iteration 1 called every autosome flat with a statistic that has no power for a mosaic gain. This is the re-test, and the detection limit that makes its answer mean something \u2014 plus the five-model comparison and the two trisomies it cannot separate.',
+    load: () => import('../../pages/Step8'),
+  },
+  {
     id: 'science',
     path: '/science',
     navLabel: 'Science',
