@@ -67,6 +67,22 @@ TOOL = "mva-drugs snapshot"
 #: The tables, in the order the snapshot writes them.
 TABLES = ("targets", "drug_candidates", "trials", "literature", "pathways")
 
+#: Step 7's enrichment tables (iteration 2), written by ``tools/track2_enrich.py`` beside the
+#: five above. Their manifests name the tables they read under ``inputs[].path``, so their
+#: edges point at ``track2.<table>`` rows rather than at the target set.
+STEP7_TABLES = (
+    "evidence",
+    "drug_mechanism_literature",
+    "pediatric_trials",
+    "evidence_ladder",
+    "shortlist",
+    "do_not",
+    "decoy_comparison",
+)
+
+#: Every table lineage is recorded for.
+ALL_TABLES = TABLES + STEP7_TABLES
+
 #: The table every other table but ``pathways`` is derived from: the candidate drugs, the
 #: trials and the literature are all searched *per target*, so the target set is an input.
 TARGET_TABLE_REF = f"{TRACK2_SCHEMA}.targets"
@@ -80,6 +96,12 @@ SOURCE_ITERATION = "track1/iteration-1"
 SOURCE_ITERATION_CLAIMS = "H003-H009"
 SOURCE_ITERATION_NOTE = "the mechanism card derives from this iteration's record"
 
+#: From card version 3 on, the card also carries iteration 2's measured facts (its
+#: ``measured_facts`` block names the entries), so a second submission edge is written.
+SOURCE_ITERATION_V3 = "track1/iteration-2"
+SOURCE_ITERATION_V3_CLAIMS = "measured facts F1-F9 (methodology 083, 088-109)"
+SOURCE_ITERATION_V3_FROM_VERSION = 3
+
 
 @dataclass(frozen=True)
 class Manifest:
@@ -89,6 +111,12 @@ class Manifest:
     rows: int
     method: str
     inputs: list[dict[str, Any]]
+    built_by: str = TOOL
+
+    @property
+    def tables(self) -> list[dict[str, Any]]:
+        """Inputs that are other Track 2 tables (they carry a ``path``, not a ``url``)."""
+        return [entry for entry in self.inputs if entry.get("path") and not entry.get("url")]
 
     @property
     def hosts(self) -> list[str]:
@@ -126,6 +154,7 @@ def read_manifest(directory: Path, table: str) -> Manifest | None:
         rows=int(outputs[0].get("rows") or 0),
         method=str(loaded.get("method") or ""),
         inputs=list(loaded.get("inputs") or []),
+        built_by=str(loaded.get("built_by") or TOOL),
     )
 
 
@@ -180,7 +209,7 @@ def table_edges(directory: Path, table: str, root: Path) -> list[dict[str, objec
         "target_table": table,
         "target_rows": manifest.rows,
         "transform": manifest.method,
-        "tool": TOOL,
+        "tool": manifest.built_by,
         "notes": "",
     }
     edges: list[dict[str, object]] = [
@@ -212,6 +241,17 @@ def table_edges(directory: Path, table: str, root: Path) -> list[dict[str, objec
             "notes": SOURCE_ITERATION_NOTE,
         }
     )
+    if _card_number(directory) >= SOURCE_ITERATION_V3_FROM_VERSION:
+        edges.append(
+            {
+                **common,
+                "source_kind": "submission",
+                "source_ref": SOURCE_ITERATION_V3,
+                "source_version": SOURCE_ITERATION_V3_CLAIMS,
+                "source_sha256": "",
+                "notes": "card version 3+ carries iteration 2's measured facts",
+            }
+        )
     if table in DERIVED_FROM_TARGETS:
         edges.append(
             {
@@ -222,15 +262,41 @@ def table_edges(directory: Path, table: str, root: Path) -> list[dict[str, objec
                 "source_sha256": "",
             }
         )
+    edges += [
+        {
+            **common,
+            "source_kind": "table",
+            "source_ref": _table_ref(str(entry["path"])),
+            "source_version": "",
+            "source_sha256": str(entry.get("sha256") or ""),
+        }
+        for entry in manifest.tables
+    ]
     return edges
 
 
+def _card_number(directory: Path) -> int:
+    text = card_version(directory)
+    return int(text[1:]) if text.startswith("v") and text[1:].isdigit() else 0
+
+
+def _table_ref(path: str) -> str:
+    """The dotted table reference for one input path.
+
+    ``ressources/track2/decoys/XDH/drug_candidates.tsv`` becomes
+    ``track2.decoys.XDH.drug_candidates``: the decoy folder stays in the reference, so a
+    decoy's table is never mistaken for the real card's table of the same name.
+    """
+    inner = path.split(f"{TRACK2_DIR}/", 1)[-1]
+    return f"{TRACK2_SCHEMA}." + inner.removesuffix(".tsv").replace("/", ".")
+
+
 def planned_edges(root: Path | None = None) -> list[dict[str, object]]:
-    """Every edge the five Track 2 tables imply, before anything is written."""
+    """Every edge the Track 2 tables imply, before anything is written."""
     base = (root or Path.cwd()).resolve()
     directory = base / TRACK2_DIR
     edges: list[dict[str, object]] = []
-    for table in TABLES:
+    for table in ALL_TABLES:
         edges += table_edges(directory, table, base)
     return edges
 

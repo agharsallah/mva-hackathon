@@ -115,6 +115,9 @@ def test_a_table_names_its_card_its_api_hosts_and_the_track_1_iteration(root: Pa
         ("card", track2_lineage.CARD_FILE),
         ("api", "pathwaydb.example"),
         ("submission", track2_lineage.SOURCE_ITERATION),
+        # the fabricated card is version 7, past the version that first carried
+        # iteration 2's measured facts, so the second submission edge is expected
+        ("submission", track2_lineage.SOURCE_ITERATION_V3),
     ]
     assert all(edge["target_schema"] == "track2" for edge in edges)
     assert all(edge["target_rows"] == 12 for edge in edges)
@@ -198,3 +201,56 @@ def test_a_changed_card_is_a_new_edge_not_an_edit(connection, root: Path) -> Non
     again = track2_lineage.append_edges(connection, SCHEMA, track2_lineage.planned_edges(root))
     assert again.appended == 2, "one new card edge per table that has a manifest"
     assert len(recorded(connection)) == before + 2
+
+
+LADDER_MANIFEST = {
+    "name": "evidence_ladder",
+    "built_by": "tools/track2_enrich.py",
+    "method": "one row per (drug, direction), rung = max(automated, curated)",
+    "inputs": [
+        {
+            "name": "track2.drug_candidates",
+            "path": "ressources/track2/drug_candidates.tsv",
+            "sha256": "e" * 64,
+        },
+        {"name": "track2.evidence", "path": "ressources/track2/evidence.tsv", "sha256": "f" * 64},
+        {"name": "openfda", "url": "https://labels.example/drug/label.json", "sha256": "1" * 64},
+    ],
+    "outputs": [{"path": "ressources/track2/evidence_ladder.tsv", "rows": 5}],
+}
+
+
+def test_a_step_7_table_points_at_the_tables_it_read_and_names_its_own_tool(root: Path) -> None:
+    directory = root / track2_lineage.TRACK2_DIR
+    (directory / "evidence_ladder.provenance.json").write_text(
+        json.dumps(LADDER_MANIFEST), encoding="utf-8"
+    )
+    edges = track2_lineage.table_edges(directory, "evidence_ladder", root)
+    kinds = [(edge["source_kind"], edge["source_ref"]) for edge in edges]
+    assert ("api", "labels.example") in kinds
+    assert ("table", "track2.drug_candidates") in kinds
+    assert ("table", "track2.evidence") in kinds
+    table_edge = next(e for e in edges if e["source_ref"] == "track2.evidence")
+    assert table_edge["source_sha256"] == "f" * 64
+    assert all(edge["tool"] == "tools/track2_enrich.py" for edge in edges)
+    assert "evidence_ladder" in track2_lineage.ALL_TABLES
+
+
+def test_a_decoy_input_keeps_its_folder_in_the_reference() -> None:
+    assert (
+        track2_lineage._table_ref("ressources/track2/decoys/XDH/drug_candidates.tsv")
+        == "track2.decoys.XDH.drug_candidates"
+    )
+
+
+def test_a_card_below_version_3_writes_no_iteration_2_edge(tmp_path: Path) -> None:
+    directory = tmp_path / track2_lineage.TRACK2_DIR
+    directory.mkdir(parents=True)
+    (directory / "mechanism.json").write_text(json.dumps({"version": 2}), encoding="utf-8")
+    (directory / "targets.provenance.json").write_text(
+        json.dumps(TARGETS_MANIFEST), encoding="utf-8"
+    )
+    edges = track2_lineage.table_edges(directory, "targets", tmp_path)
+    refs = [edge["source_ref"] for edge in edges]
+    assert track2_lineage.SOURCE_ITERATION in refs
+    assert track2_lineage.SOURCE_ITERATION_V3 not in refs
