@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from mva.science import steps
+from mva.science import step, steps
 from mva.science.cli import parser as science_parser
 from mva.science.hypothesis import Hypothesis
 from mva.zoo.types import (
@@ -25,7 +25,9 @@ def test_iteration4_declares_seven_research_steps():
     research = [s for s in steps.steps_for("iteration4") if s.takes_hypotheses]
     assert [s.slug for s in research] == [f"step-{n}" for n in range(1, 8)]
     assert all(s.iteration == "iteration4" for s in research)
-    assert all(s.status == "planned" for s in research)
+    # Statuses advance as wave 2 runs each step; what is pinned is that every one of them
+    # carries a *declared* status, never an invented one.
+    assert all(s.status in step.STATUSES for s in research)
     assert steps.ITERATION == "iteration2", "iteration 4 runs beside iteration 2 (plan §5c O8)"
 
 

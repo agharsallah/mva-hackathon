@@ -37,7 +37,13 @@ no table holds HGVS, so step 1 re-asks VEP.
 
 ## Wave 2 — run the MVP chain on real data (main thread, strict order, each run files its entry + claims)
 
-- [ ] R1 step 1: smoke (`limit=200`), then `mva-zoo records` (VEP HGVS+UniProt pass, ~197 batches, resumable) → `results.it4_allele_records`, `build/it4/records.parquet`, provenance, lineage. File **P4-1a**; answer **O7** (confirmed alleles' consequence classes; promote GPN-MSA if a lane gap hits the pair). Entry **111**
+- [x] R1 step 1 — **entry 114**, `P4-1a` = **H058 supported** (0.99953 of 38,087 coding alleles
+  spelled; 39,286 records; 1 h 45 m; VEP release 116/GRCh38). Two REST fixes were needed:
+  `uniprot=1` is **500 on POST** (so `uniprot` is null everywhere — ESM1b's join key is step 2's
+  problem) and `QUERY_PARAMS` times out at 200 alleles (lean payload instead).
+  **O7 answered: the lane gap hits the pair** — `BUB1B` has exactly one `missense_variant` and
+  one `stop_gained`, and three of the four MVP lanes are missense-only, so **GPN-MSA's
+  promotion into the MVP is due** (plan §10 R9; opt-A, not built here)
 - [ ] R2 step 2: `fetch_zoo_tables.py --fetch esm1b --execute` (1.24 GiB) → parquet + digest fragment `models.d/esm1b.toml`; `mva-zoo coverage` × 4; one live REVEL reply confirms the field name (**O5**). File **P4-2a**, **P4-3**
 - [ ] R3 step 3: `mva-zoo score` × 4 lanes (catalogue-free), re-run one for the no-op proof, `--mode aware` pass for the ablation. File **P4-4a** (≤ 1 h laptop, $0)
 - [ ] R4 step 4: `mva-zoo run` → `results.it4_model_ranks`, manifest `build/it4/runs/<id>.json` + coordinate-free copy; check `skipped_genes` empty, confirmed-pair flagging unique
@@ -111,7 +117,8 @@ no table holds HGVS, so step 1 re-asks VEP.
 | O3 | upload as model 4 | prepare + rehearse, **no upload** unless the user decides |
 | O4 | `--iteration` flag | **settled**, entry 110 |
 | O5 | REVEL or CADD | **REVEL** (CADD 500 on public REST); confirmed by one live reply in R2 |
+| — | `uniprot=1` on VEP REST | **new, entry 114**: 500 on POST, 200 on GET → `AlleleRecord.uniprot` is null; ESM1b needs an `ENSP` → UniProt mapping in R2 or the lane is substituted |
 | O6 | decoy gene for step 7 | chosen in step 7's first entry |
-| O7 | confirmed pair in an MVP lane's class? | R1 decides; GPN-MSA promoted if not |
+| O7 | confirmed pair in an MVP lane's class? | **answered, entry 114**: `BUB1B` = one `missense_variant` + one `stop_gained`; three MVP lanes are missense-only and the fourth is splice, so **GPN-MSA's promotion is due** (opt-A, unbuilt) |
 | O8 | `ITERATION` constant | stays `iteration2`; iteration 4 steps carry their own |
 | O9 | deletion-checklist owner | B1 |

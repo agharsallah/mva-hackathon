@@ -34,7 +34,7 @@ from typing import Protocol
 
 import httpx
 
-from ..pipeline.annotate_vep import QUERY_PARAMS, VepError, VepRestAnnotator, batches
+from ..pipeline.annotate_vep import VepError, VepRestAnnotator, batches
 from ..pipeline.variant import Variant
 from ..pipeline.vep_response import VepRecord, query_line
 from ..warehouse.annotate_coding import Checkpoint
@@ -43,6 +43,7 @@ from .types import AlleleRecord
 __all__ = [
     "DEFAULT_CHECKPOINT",
     "EXTRA_PARAMS",
+    "LEAN_PARAMS",
     "Annotates",
     "Coordinate",
     "HgvsAnnotator",
@@ -67,27 +68,56 @@ DEFAULT_CHECKPOINT = Path("build/it4/vep-hgvs")
 #: VEP's documented POST ceiling, mirrored from :mod:`mva.pipeline.annotate_vep`.
 DEFAULT_BATCH = 200
 
-#: Response options this pass needs on top of
-#: :data:`mva.pipeline.annotate_vep.QUERY_PARAMS`. ``hgvs`` is already in that set;
-#: ``uniprot`` is not, and without it ``transcript_consequences[].swissprot`` is absent and
-#: the ESM1b lane has nothing to join on.
-EXTRA_PARAMS = {"uniprot": 1}
+#: Response options this pass adds on top of
+#: :data:`mva.pipeline.annotate_vep.QUERY_PARAMS`. **Empty, and measured to be so.**
+#:
+#: The pass was written asking for ``uniprot=1`` so that
+#: ``transcript_consequences[].swissprot`` would give the ESM1b lane its join key. Ensembl's
+#: public REST server answers that option with **HTTP 500 on the POST region endpoint** —
+#: with or without the rest of ``QUERY_PARAMS``, and on a public example variant, so it is
+#: the option and not this callset (measured 2026-09-18, methodology entry 114). The same
+#: option on the *GET* region endpoint answers 200 and does return ``swissprot``, which is
+#: one variant per request and therefore not a route for ~39,300 alleles. ``protein=1``
+#: answers on POST and returns ``protein_id``, but that is the Ensembl ``ENSP`` accession,
+#: which ``hgvs_p`` already carries as its own prefix — so it buys nothing.
+#:
+#: Consequence, recorded rather than worked around: ``AlleleRecord.uniprot`` stays null
+#: after this pass, and the ESM1b lane's ``ENSP`` → UniProt mapping is step 2's problem.
+EXTRA_PARAMS: dict[str, int] = {}
+
+#: What this pass actually asks for — **a lean payload, not**
+#: :data:`mva.pipeline.annotate_vep.QUERY_PARAMS`.
+#:
+#: :func:`_fill` reads exactly five fields off the reply (``transcript``, ``hgvsc``,
+#: ``hgvsp``, ``uniprot``, ``consequence``), and :func:`~mva.pipeline.vep_response.
+#: best_transcript` needs ``canonical`` to break ties. Everything else in ``QUERY_PARAMS``
+#: is a *second* lookup per allele — ``AlphaMissense`` and ``SpliceAI`` are plugin calls,
+#: ``af_gnomadg``/``af_gnomade`` are frequency joins — and all four are already columns of
+#: ``warehouse.it2_insilico_annotations``, which :mod:`mva.zoo.record` coalesces from
+#: before this pass ever runs. Asking for them again cost a **read timeout on every
+#: attempt** at a 200-allele batch and 60 s (measured 2026-09-18, entry 114); iteration 2's
+#: own pass had to drop to 50 alleles and 300 s for the same reason
+#: (``tools/annotate_it2_insilico.py --batch-size 50``).
+LEAN_PARAMS = {
+    "hgvs": 1,  # hgvsc + hgvsp — the two fields this pass exists for
+    "canonical": 1,  # marks the representative transcript; best_transcript breaks ties on it
+    "variant_class": 1,  # SNV / deletion / insertion, for reading the record back
+}
 
 
 class HgvsAnnotator(VepRestAnnotator):
-    """The REST client with :data:`EXTRA_PARAMS` added to every batch.
+    """The REST client that sends :data:`LEAN_PARAMS` (plus :data:`EXTRA_PARAMS`).
 
     A subclass rather than an edit because ``QUERY_PARAMS`` is a module-level constant of
-    :mod:`mva.pipeline.annotate_vep` with no per-instance override, and that module belongs
-    to another owner this wave. The override duplicates four lines of transport; the
-    durable fix is to fold ``uniprot`` into ``QUERY_PARAMS`` and delete this class, which
-    ``build/it4/agents/record.md`` asks the main thread to do.
+    :mod:`mva.pipeline.annotate_vep` with no per-instance override, and that module is the
+    annotation pipeline's, not this step's. The override is four lines of transport
+    duplicated so that this pass can ask for less than the annotation pass does.
     """
 
     def _post_batch(self, chunk: Sequence[Variant]) -> list[dict]:
         payload = {
             "variants": [query_line(variant) for variant in chunk],
-            **QUERY_PARAMS,
+            **LEAN_PARAMS,
             **EXTRA_PARAMS,
         }
         body = self._request("POST", "/vep/homo_sapiens/region", json=payload)

@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-18T21:09:26+00:00",
+  "generated_at": "2026-09-18T22:14:17+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -93,7 +93,7 @@
       "title": "The mosaic aneuploidy bound",
       "goal": "Is mosaic aneuploidy detectable in the sequenced sample with a statistic that has power, and what cell-fraction bound does the data set per chromosome?",
       "kind": "research",
-      "status": "planned",
+      "status": "open",
       "unblocks": [
         "step-7"
       ]
@@ -2123,11 +2123,39 @@
       "refuted_by": "p4_1a_fraction below 0.95 \u2014 then the failing consequence class is named from RunSummary.by_consequence and tier-1 coverage is reported per class.",
       "gene": "",
       "path": "",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.95,
+      "suggested_confidence": 0.9734,
+      "revisions": 3,
+      "evidence": [
+        {
+          "id": 130,
+          "direction": "supports",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "The full step-1 pass spelled 38,069 of 38,087 coding alleles with a cDNA or protein HGVS string: p4_1a_fraction = 0.99953, above the 0.99 the claim predicted and far above the 0.95 that would refute it.",
+          "source_ref": "docs/iteration4/step-1/methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md",
+          "lineage_ref": "warehouse.data_lineage it4-allele-records run_id=it4-records-20260918T211517Z"
+        },
+        {
+          "id": 131,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "The 18 unspelled coding alleles are 9 upstream_gene_variant, 5 downstream_gene_variant, 1 intergenic_variant, 1 stop_gained, 1 3_prime_UTR_variant and 1 incomplete_terminal_codon_variant \u2014 14 of them outside any transcript, so no consequence class the zoo scores is materially unspelled.",
+          "source_ref": "docs/iteration4/step-1/methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 132,
+          "direction": "supports",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "The record set holds 39,286 rows = 38,087 distinct coding alleles plus exactly 1,199 read-only alleles, and the parquet's sha256 equals the provenance manifest's, so neither the read-only union nor the id dedupe mis-fired.",
+          "source_ref": "docs/iteration4/step-1/methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md",
+          "lineage_ref": ""
+        }
+      ]
     }
   ]
 }
