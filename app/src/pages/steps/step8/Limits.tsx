@@ -33,7 +33,11 @@ export function Limits({
   const fractions = grid(folded);
   const reached = folded.filter((row) => row.f80 !== null);
   const meanReached = mean.filter((row) => row.f80 !== null);
-  const worst = reached.length ? Math.max(...reached.map((row) => row.f80 as number)) : null;
+  // Autosomes only: X and Y are hemizygous in this proband and their limit is the limit of
+  // a route that cannot see them, so folding them in would have the sentence claim every
+  // autosome needs 5 % when they need 2-3 %.
+  const autosomal = reached.filter((row) => !HEMIZYGOUS.has(row.chrom));
+  const worst = autosomal.length ? Math.max(...autosomal.map((row) => row.f80 as number)) : null;
 
   return (
     <div className="space-y-4">
@@ -113,7 +117,7 @@ export function Limits({
         reading={
           worst === null
             ? 'No contig reaches 80% power at any simulated fraction.'
-            : `Every autosome detects a mosaic at or above ${fraction(worst)} of cells; a blank row is a blind spot, not a small limit.`
+            : `Every autosome detects a mosaic present in ${fraction(worst)} of cells or more; a blank row is a blind spot, not a small limit.`
         }
         legend={
           <>

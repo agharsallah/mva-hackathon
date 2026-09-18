@@ -42,7 +42,8 @@ export interface Step8ArmCheck {
 /** One contig's fold-over deviation, beside the null its own depths generate. */
 export interface Step8Bdev {
   chrom: string;
-  arm: string;
+  /** `null` on a whole-chromosome row: an empty TSV cell loads as NULL, never as ''. */
+  arm: string | null;
   n_sites: number;
   mean_depth: number;
   bdev: number;
@@ -61,7 +62,8 @@ export interface Step8Bdev {
 /** The published fraction estimator, its own value on null draws, and the difference. */
 export interface Step8Fraction {
   chrom: string;
-  arm: string;
+  /** `null` on a whole-chromosome row, for the same reason as `Step8Bdev.arm`. */
+  arm: string | null;
   /** Markello 2012 as written. At this depth it reads far from zero on a balanced contig. */
   f_raw: number;
   /** The same estimator on null draws from the same depths — its bias, measured. */

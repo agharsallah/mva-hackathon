@@ -31,7 +31,10 @@ export function Deviation({
   cachedAt?: string | null;
   origin?: 'api' | 'fixture';
 }) {
-  const whole = byKaryogram(bdev.filter((row) => row.arm === ''));
+  // The whole-chromosome rows carry no arm. They come back as null rather than '' because
+  // the loader maps an empty TSV cell to NULL, so the test has to be for absence and not
+  // for the empty string -- which silently matched nothing and drew an empty chart.
+  const whole = byKaryogram(bdev.filter((row) => !row.arm));
   const flagged = whole.filter((row) => row.exceeds_null);
   const byChrom = new Map(fractions.map((row) => [row.chrom, row]));
   // Each contig's own over-dispersion, read off the `normal` fit: the Bdev null uses the
