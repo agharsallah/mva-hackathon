@@ -128,14 +128,19 @@ class Fit:
         }
 
 
-def _nb_logpmf(counts: np.ndarray, mean: float, dispersion: float) -> np.ndarray:
-    """``nbinom`` parameterised by its mean, which is how the model thinks about it."""
+def nb_logpmf(counts: np.ndarray, mean: float, dispersion: float) -> np.ndarray:
+    """``nbinom`` parameterised by its mean, which is how the model thinks about it.
+
+    Public because it is the repository's one over-dispersed count model, and step 8's
+    mosaic package fits the same distribution to read depth. Reaching across a package
+    boundary for a private name is worse than the name being public.
+    """
     mean = max(mean, 1e-9)
     probability = dispersion / (dispersion + mean)
     return np.asarray(nbinom.logpmf(counts, dispersion, probability), dtype=float)
 
 
-def _fit_dispersion(counts: np.ndarray, mean: float) -> float:
+def fit_dispersion(counts: np.ndarray, mean: float) -> float:
     """Maximum-likelihood dispersion at a fixed mean.
 
     One dimension, bounded, so a scalar search is both sufficient and auditable — there is
@@ -145,7 +150,7 @@ def _fit_dispersion(counts: np.ndarray, mean: float) -> float:
         return DISPERSION_BOUNDS[1]
 
     def negative_log_likelihood(log_dispersion: float) -> float:
-        value = _nb_logpmf(counts, mean, float(np.exp(log_dispersion))).sum()
+        value = nb_logpmf(counts, mean, float(np.exp(log_dispersion))).sum()
         return float(-value) if np.isfinite(value) else 1e18
 
     result = minimize_scalar(
@@ -177,7 +182,7 @@ def fit(
         raise ValueError("no heterozygous calibration markers: nothing to fit λ on")
 
     per_copy = float(het_alternate.mean())
-    dispersion = _fit_dispersion(het_alternate, per_copy)
+    dispersion = fit_dispersion(het_alternate, per_copy)
     variance_to_mean = float(het_alternate.var(ddof=1) / per_copy) if per_copy > 0 else 0.0
 
     # A homozygous-alternate marker has no reference copy, so every reference-probe count it
@@ -229,8 +234,8 @@ def posteriors(reference: np.ndarray, alternate: np.ndarray, fit_: Fit) -> np.nd
         mean_reference, mean_alternate = expected(fit_, int(genotype))
         prior = max(fit_.priors[index], 1e-12)
         columns.append(
-            _nb_logpmf(reference, mean_reference, fit_.dispersion)
-            + _nb_logpmf(alternate, mean_alternate, fit_.dispersion)
+            nb_logpmf(reference, mean_reference, fit_.dispersion)
+            + nb_logpmf(alternate, mean_alternate, fit_.dispersion)
             + np.log(prior)
         )
     stacked = np.stack(columns, axis=-1)
@@ -321,7 +326,7 @@ def dropout(fit_: Fit, copies: int = 1) -> float:
     Poisson does, and the optimistic figure would make every absence look decisive.
     """
     _, mean_alternate = expected(fit_, copies)
-    return float(np.exp(_nb_logpmf(np.array([0.0]), mean_alternate, fit_.dispersion))[0])
+    return float(np.exp(nb_logpmf(np.array([0.0]), mean_alternate, fit_.dispersion))[0])
 
 
 def minimum_count(fit_: Fit, *, false_positive: float = 1e-3) -> int:

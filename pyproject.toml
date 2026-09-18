@@ -208,9 +208,13 @@ layers = [
     "mva.reads",
     "mva.warehouse",
     "mva.knowledge",
-    "mva.phenotype | mva.drugs",
+    "mva.phenotype | mva.drugs | mva.mosaic",
     "mva.pipeline | mva.io | mva.calling | mva.kmer | mva.render",
 ]
+# mva.mosaic sits on the phenotype/drugs row because it reuses two things below it -- the
+# negative-binomial fit in mva.kmer.genotype and the bootstrap convention in
+# mva.pipeline.nulls -- and is read by mva.warehouse above it. It imports neither of its
+# row-mates and neither imports it.
 # A layer may import anything below it and nothing above it. mva.pipeline, mva.io,
 # mva.kmer and mva.render sit on the bottom row together because none of them imports any
 # of the others; they are the leaves. mva.knowledge sits between mva.warehouse and
@@ -243,6 +247,7 @@ source_modules = [
     "mva.drugs",
     "mva.explore",
     "mva.io",
+    "mva.mosaic",
     "mva.phenotype",
     "mva.pipeline",
     "mva.reads",
