@@ -1,6 +1,6 @@
 {
-  "_standing": "The Track 1 -> Track 2 hand-off. Written 2026-09-06 from the research record (H003-H009, methodology 070-074) and public literature. Coordinate-free by rule: it names the gene, the protein and the variant classes, never a position. Revised, never edited: bump `version` and append to `history`.",
-  "version": 2,
+  "_standing": "The Track 1 -> Track 2 hand-off. Written 2026-09-06 from the research record (H003-H009, methodology 070-074) and public literature; revised to version 3 on 2026-09-18 from the oracle reply (083) and iteration 2's steps 2-6 (methodology 088, 092, 096, 097, 099, 101, 106, 109). Coordinate-free by rule: it names the gene, the protein and the variant classes, never a position. Revised, never edited: bump `version` and append to `history`.",
+  "version": 3,
   "case": {
     "proband_id": "PROBAND01",
     "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)",
@@ -18,7 +18,25 @@
       "HP:0001518"
     ],
     "tumour_context": "rhabdomyosarcoma (HP:0002859), a reported MVA1 malignancy (PMID:31184400)",
-    "_mondo_note": "Open Targets resolves MVA1 to MONDO_0009759 (verified live 2026-09-06 through disease_search on the disease name); the earlier MONDO:0009551 was wrong"
+    "_mondo_note": "Open Targets resolves MVA1 to MONDO_0009759 (verified live 2026-09-06 through disease_search on the disease name); the earlier MONDO:0009551 was wrong",
+    "context_standard_of_care": {
+      "note": "the drugs already given for the tumour context; they can reach a high rung automatically (approved, paediatric trials) and are excluded from the repurposing shortlist because giving them is not a repurposing",
+      "drugs": [
+        "VINCRISTINE",
+        "DACTINOMYCIN",
+        "CYCLOPHOSPHAMIDE",
+        "IFOSFAMIDE",
+        "DOXORUBICIN",
+        "ETOPOSIDE",
+        "IRINOTECAN",
+        "VINORELBINE",
+        "TEMOZOLOMIDE",
+        "CARBOPLATIN",
+        "CISPLATIN",
+        "TOPOTECAN"
+      ],
+      "source": "PMID 41749943 and 40421977 (rhabdomyosarcoma treatment landscape and maintenance regimens)"
+    }
   },
   "gene": {
     "symbol": "BUB1B",
@@ -42,13 +60,14 @@
       "consequence": "missense_variant",
       "exon": "23 of 23",
       "clinvar": null,
-      "classification": "gnomAD-absent; AlphaMissense 0.92 likely pathogenic; CADD 24.5",
-      "reading": "presumed hypomorph: a partly working copy inside the C-terminal kinase domain (CDD cd14029)"
+      "classification": "gnomAD-absent; AlphaMissense likely_pathogenic (log-likelihood-ratio lane 4.33, iteration 2 methodology 099); CADD 24.5",
+      "reading": "presumed hypomorph: a partly working copy inside the C-terminal kinase domain (CDD cd14029)",
+      "structure": "outside every InterPro entry typed 'domain' (inside the protein-kinase-like superfamily entry), AlphaFold pLDDT 91.06 at the residue - the model is confident about the region (iteration 2, methodology 106, H040 refuted)"
     }
   ],
   "mechanism": {
     "class": "loss-of-function, hypomorphic (compound heterozygote: one null allele + one partly functional allele)",
-    "status": "inferred from Track 1; the trans configuration is what the oracle tests (H009, testing)",
+    "status": "confirmed: the oracle's reply to submission 1 is a full match at rank 1 for the stop + missense pair (methodology 083, H009 supported), so the trans configuration is the answer key's statement, not an inference",
     "pathway": "spindle assembly checkpoint (SAC) - mitotic checkpoint complex (MCC) formation and APC/C-CDC20 inhibition",
     "immediate_effect": "reduced BubR1 abundance and checkpoint signalling; weakened kinetochore-microtubule attachment error correction",
     "downstream": [
@@ -101,20 +120,22 @@
     {
       "id": "D2",
       "name": "aneuploidy-selective stress exploitation",
-      "rationale": "aneuploid cells carry proteotoxic and energy stress; published aneuploidy-selective killing (AICAR-class energy stress, chloroquine-class autophagy stress, HSP90/HSF1 axis)",
+      "rationale": "aneuploid cells carry proteotoxic and energy stress; published aneuploidy-selective killing (AICAR-class energy stress, chloroquine-class autophagy stress, HSP90/HSF1 axis); human aneuploid cells depend on increased RNA and protein degradation (proteasome, autophagy - PMID 39247952) and mount a TFEB-driven lysosomal stress response (PMID 26404941). Caveat: this direction kills aneuploid cells - it is a tumour-context and chemoprevention angle, not a treatment of the constitutional mosaic state",
       "seed_targets": [
         "PRKAA1",
         "PRKAA2",
         "HSP90AA1",
         "HSF1",
         "ATG5",
-        "MTOR"
+        "MTOR",
+        "PSMB5",
+        "TFEB"
       ]
     },
     {
       "id": "D3",
       "name": "proteostasis / BubR1 stabilisation for a hypomorph",
-      "rationale": "a partly working protein can be stabilised or its turnover slowed; explore APC/C, deacetylase and chaperone routes; note BubR1 acetylation regulates its stability",
+      "rationale": "a partly working protein can be stabilised or its turnover slowed; explore APC/C, deacetylase and chaperone routes; note BubR1 acetylation regulates its stability; SIRT2 deacetylates BubR1 (K668) and NAD+ repletion with nicotinamide mononucleotide raised BubR1 abundance in vivo and extended lifespan in BubR1-hypomorphic mice (PMID 24825348); BubR1 overexpression protects against aneuploidy and cancer (PMID 23242215); HDAC2/3 deacetylation of BubR1 silences the checkpoint (PMID 28985013)",
       "seed_targets": [
         "BUB1B",
         "HDAC1",
@@ -122,19 +143,22 @@
         "HDAC3",
         "PCAF",
         "KAT2B",
-        "HSP90AA1"
+        "HSP90AA1",
+        "SIRT2",
+        "CREBBP"
       ]
     },
     {
       "id": "D4",
       "name": "cancer prevention in the MVA1 tumour context",
-      "rationale": "the child's presenting tumour is rhabdomyosarcoma; approved agents with a chemoprevention or surveillance rationale in aneuploidy-driven tumours",
+      "rationale": "the child's presenting tumour is rhabdomyosarcoma; approved agents with a chemoprevention or surveillance rationale in aneuploidy-driven tumours; de novo cholesterol synthesis is a non-redundant vulnerability of rhabdomyosarcoma cells (PMID 41249736)",
       "seed_targets": [
         "TP53",
         "IGF1R",
         "CDK4",
         "CDK6",
-        "MTOR"
+        "MTOR",
+        "HMGCR"
       ]
     }
   ],
@@ -164,6 +188,134 @@
       "version": 2,
       "date": "2026-09-06",
       "change": "correct the MONDO id after the first snapshot resolved the disease by name"
+    },
+    {
+      "version": 3,
+      "date": "2026-09-18",
+      "change": "trans confirmed (083); measured facts F1-F9 from iteration 2 steps 2-6 (dosage, copy number, structure, pathogenicity lanes, P(trans), phase; aneuploidy burden marked unmeasured); D2 gains proteasome and TFEB seeds, D3 the SIRT2/CBP acetylation axis, D4 HMGCR; anti-directions and the evidence ladder added; anti-directions carry a mechanism-of-action pattern; the tumour context names its standard-of-care drugs so the shortlist can exclude them"
     }
-  ]
+  ],
+  "measured_facts": [
+    {
+      "id": "F1",
+      "fact": "trans configuration",
+      "value": "confirmed by the oracle (full match at rank 1, 100 rank points, F-max 1.0)",
+      "source": "docs/iteration1/step-6/methodology/083",
+      "step": "iteration1/step-6",
+      "implication": "the mechanism argument rests on a confirmed compound heterozygote; the card's biggest rigor caveat is closed"
+    },
+    {
+      "id": "F2",
+      "fact": "allele dosage",
+      "value": "both lead alleles at one-copy multiplicity in the raw reads, posterior 1.0, read without an aligner or a caller",
+      "source": "docs/iteration2/step-3/methodology/096",
+      "step": "iteration2/step-3",
+      "implication": "a null + hypomorph genotype, not null + null: some BubR1 is made, so stabilising it (D3) is a live direction"
+    },
+    {
+      "id": "F3",
+      "fact": "exon copy number",
+      "value": "every target-gene exon region at two copies (median 2.00 autosomal, null band [1.028, 2.823]); no exon deletion in the gene",
+      "source": "docs/iteration2/step-3/methodology/097",
+      "step": "iteration2/step-3",
+      "implication": "no hidden third allele or deletion; the two alleles are the whole genotype"
+    },
+    {
+      "id": "F4",
+      "fact": "structural variants and phase",
+      "value": "164 credible consensus structural variants genome-wide, none in the gene; 6,823 phase blocks, none reaching the gene's coding span - phase is unmeasured in the reads",
+      "source": "docs/iteration2/step-2/methodology/088 and 092",
+      "step": "iteration2/step-2",
+      "implication": "trans is the oracle's statement (F1), not a read measurement; the report says so"
+    },
+    {
+      "id": "F5",
+      "fact": "missense position in the protein",
+      "value": "outside every InterPro domain-typed entry, at 95.4 % along the protein, in a region AlphaFold models at pLDDT 91.06",
+      "source": "docs/iteration2/step-5/methodology/106",
+      "step": "iteration2/step-5",
+      "implication": "'hypomorph' rests on the allele class, the MVA1 literature and the pathogenicity predictors, not on a curated catalytic-site hit; the catalytic-dead versus unstable-protein question stays open and D3 is argued as a dosage direction, not a folding one"
+    },
+    {
+      "id": "F6",
+      "fact": "pathogenicity lanes for the missense",
+      "value": "AlphaMissense likely_pathogenic, log-likelihood-ratio contribution 4.33 (capped at moderate); the pair leads 51,920 biallelic hypotheses over 11,465 genes with no hard filter",
+      "source": "docs/iteration2/step-4/methodology/099",
+      "step": "iteration2/step-4",
+      "implication": "quantifies 'damaging' for the partly working copy"
+    },
+    {
+      "id": "F7",
+      "fact": "P(trans) from population data",
+      "value": "undetermined - 5 of 50 leading alleles reach gnomAD v2 at all",
+      "source": "docs/iteration2/step-4/methodology/101",
+      "step": "iteration2/step-4",
+      "implication": "population phasing cannot corroborate F1; F1 stands alone"
+    },
+    {
+      "id": "F8",
+      "fact": "aneuploidy burden in the sequenced sample",
+      "value": "UNMEASURED - iteration 2's step 8 (the mosaic aneuploidy bound) has not run; iteration 1's flat karyogram tested a statistic with no power for mosaic gains (methodology 037)",
+      "source": "docs/iteration2/plan.md section 3 step 8",
+      "step": "iteration2/step-8",
+      "implication": "the aneuploidy-stress direction (D2) is argued from the literature on MVA cells, not from a measured burden in this child; the report states the gap"
+    },
+    {
+      "id": "F9",
+      "fact": "literature route",
+      "value": "the knowledge route placed the gene at rank 293 of 815 and its own top two genes were decoys; the fused blind ranking still put the confirmed pair first",
+      "source": "docs/iteration2/step-6/methodology/109",
+      "step": "iteration2/step-6",
+      "implication": "the drug literature is searched per drug and per direction, never trusted as a ranker on its own"
+    }
+  ],
+  "anti_directions": [
+    {
+      "id": "A1",
+      "name": "further checkpoint weakening",
+      "agents": "Mps1/TTK inhibitors, Aurora B inhibitors, MAD2/BUB1 inhibition - none market-approved",
+      "why": "aneuploid cancer cells are selectively killed by mitotic checkpoint inhibition (PMID 33505028) - the same logic makes a constitutionally SAC-deficient child the worst candidate for it; mitotic slippage is the failure mode (PMID 30601084)",
+      "status": "do not",
+      "moa_pattern": "\\bTTK\\b|Mps1|Aurora|MAD2|\\bBUB1\\b"
+    },
+    {
+      "id": "A2",
+      "name": "spindle poisons in a SAC-deficient background",
+      "agents": "vinca alkaloids and taxanes - standard rhabdomyosarcoma chemotherapy",
+      "why": "spindle poisons rely on a working checkpoint to arrest cells; MVA1 cells have a weakened checkpoint (PMID 20516114) and slip through mitosis (PMID 30601084). Flagged for the treating team as a hypothesis to weigh, never as advice to withhold standard therapy",
+      "status": "caution",
+      "moa_pattern": "tubulin|microtubule|vinca|taxane"
+    }
+  ],
+  "evidence_ladder": {
+    "purpose": "every candidate drug is placed on one rung before it is argued; rung 1 is named, never submitted",
+    "rungs": [
+      {
+        "rung": 5,
+        "label": "approved for a related indication, with paediatric use",
+        "test": "an approved drug with an openFDA label carrying a pediatric_use section or a ClinicalTrials.gov study in the tumour context that admits children"
+      },
+      {
+        "rung": 4,
+        "label": "clinical trial in a related indication",
+        "test": "a registered study of the drug in the disease or the tumour context"
+      },
+      {
+        "rung": 3,
+        "label": "in-vivo model of aneuploidy or checkpoint deficiency",
+        "test": "a cited animal result on the direction's mechanism (a PMID in evidence.tsv)"
+      },
+      {
+        "rung": 2,
+        "label": "cell model in aneuploid or checkpoint-deficient cells",
+        "test": "a cited cellular result on the direction's mechanism (a PMID in evidence.tsv)"
+      },
+      {
+        "rung": 1,
+        "label": "mechanism only",
+        "test": "the drug acts on a target in the direction's set and nothing above applies"
+      }
+    ],
+    "rule": "the rung is the highest test the drug passes; automated tests (approval, label, trials) and curated tests (a PMID read by a person) are printed side by side and never merged silently; a curated row may carry proxy=true when the cited result is for a same-axis compound rather than the approved molecule itself"
+  }
 }

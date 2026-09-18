@@ -71,6 +71,13 @@ VS-5584	CHEMBL3393066	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-
 INDOXIMOD	CHEMBL571209	MTOR	seed	D2|D4	opentargets|dgidb|chembl	mTORC1 activator	ACTIVATOR	3	false		30254983		
 PWT-33579	CHEMBL3545323	MTOR	seed	D2|D4	chembl|dgidb	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false				
 PWT-33587	CHEMBL3545006	MTOR	seed	D2|D4	chembl|dgidb	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false				
+OPROZOMIB	CHEMBL2103884	PSMB5	seed	D2	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	2	false		21484190|26924128|27167000		
+BORTEZOMIB	CHEMBL325041	PSMB5	seed	D2	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	true	23547757|24524217|21606441		L01XG01
+IXAZOMIB	CHEMBL2141296	PSMB5	seed	D2	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	true	23995855|30867233		L01XG03
+CARFILZOMIB	CHEMBL451887	PSMB5	seed	D2	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	true	24524217|23547757|20116451	2009	L01XG02
+MARIZOMIB	CHEMBL371405	PSMB5	seed	D2	opentargets|dgidb|chembl	20S proteasome inhibitor	INHIBITOR	3	false		24269479|27161872		
+BORTEZOMIB D-MANNITOL	CHEMBL5315122	PSMB5	seed	D2	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	false		2003	
+IXAZOMIB CITRATE	CHEMBL3545432	PSMB5	seed	D2	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	false		2015	
 BELINOSTAT	CHEMBL408513	HDAC1	seed	D3	opentargets|dgidb	Histone deacetylase inhibitor	INHIBITOR	4	true	true	25937017	2014	L01XH04
 FIMEPINOSTAT	CHEMBL3622533	HDAC1	seed	D3	opentargets|dgidb	Histone deacetylase inhibitor	INHIBITOR	2	false				
 MOCETINOSTAT	CHEMBL272980	HDAC1	seed	D3	opentargets|dgidb|chembl	Histone deacetylase 11 inhibitor	INHIBITOR	2	false		23829483|26287310|18413790|27551526		
@@ -113,6 +120,7 @@ ABEXINOSTAT	CHEMBL2103863	HDAC3	seed	D3	opentargets|dgidb|chembl	Histone deacety
 BELINOSTAT	CHEMBL408513	HDAC3	seed	D3	opentargets|dgidb|chembl	Histone deacetylase inhibitor	INHIBITOR	4	true	true	25937017	2014	L01XH04
 PANOBINOSTAT LACTATE	CHEMBL3545368	HDAC3	seed	D3	opentargets|dgidb|chembl	Histone deacetylase inhibitor	INHIBITOR	4	true	false		2015	
 GIVINOSTAT HYDROCHLORIDE	CHEMBL6068400	HDAC3	seed	D3	opentargets|dgidb|chembl	Histone deacetylase inhibitor	INHIBITOR	4	true	false		2024	
+PRI-724	CHEMBL4297813	CREBBP	seed	D3	opentargets|dgidb|chembl	CBP/beta catenin inhibitor	INHIBITOR	2	false		31298961		
 TEPRASIRAN	CHEMBL4297574	TP53	seed	D4	opentargets|dgidb	p53 mRNA RNAi inhibitor	RNAI INHIBITOR	3	false				
 SIREMADLIN	CHEMBL3653256	TP53	seed	D4	opentargets|dgidb|chembl	Tumour suppressor p53/oncoprotein Mdm2 inhibitor	INHIBITOR	2	false		34862243		
 IDASANUTLIN	CHEMBL2402737	TP53	seed	D4	opentargets|dgidb|chembl	Tumour suppressor p53/oncoprotein Mdm2 inhibitor	INHIBITOR	3	false		31483066|36602782|31289443		
@@ -172,6 +180,22 @@ TRILACICLIB	CHEMBL3894860	CDK6	seed	D4	opentargets|dgidb|chembl	Cyclin-dependent
 UCN-01	CHEMBL574737	CDK6	seed	D4	opentargets|dgidb|chembl	3-phosphoinositide dependent protein kinase-1 inhibitor	INHIBITOR	2	false		12892559|19568282		
 PALBOCICLIB	CHEMBL189963	CDK6	seed	D4	opentargets|dgidb|chembl	Cyclin-dependent kinase 4/cyclin D1 inhibitor	INHIBITOR	4	true	true	20354191	2015	L01EF01
 AT-7519	CHEMBL445813	CDK6	seed	D4	opentargets|dgidb|chembl	Cyclin-dependent kinase inhibitor	INHIBITOR	2	false		19174555|25914884		
+PRAVASTATIN	CHEMBL1144	HMGCR	seed	D4	opentargets	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true		1991	C10AA03
+ROSUVASTATIN CALCIUM	CHEMBL1744447	HMGCR	seed	D4	opentargets|dgidb|chembl	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true		2003	
+LOVASTATIN	CHEMBL503	HMGCR	seed	D4	opentargets|dgidb|chembl	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true	24726306|17563401|16103896|15199031|18332269|18815589|18261733	1987	C10AA02
+PITAVASTATIN	CHEMBL1201753	HMGCR	seed	D4	opentargets|dgidb	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true		2009	C10AA08
+ATORVASTATIN CALCIUM	CHEMBL393220	HMGCR	seed	D4	opentargets|dgidb|chembl	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true		1996	
+PITAVASTATIN CALCIUM	CHEMBL1237061	HMGCR	seed	D4	opentargets|dgidb|chembl	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true		2009	
+PITAVASTATIN SODIUM	CHEMBL3989920	HMGCR	seed	D4	opentargets|dgidb|chembl	HMG-CoA reductase inhibitor	INHIBITOR	4	true	false		2017	
+ATORVASTATIN	CHEMBL1487	HMGCR	seed	D4	opentargets|dgidb	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true	15199031|16103896|17563401|18261733|18332269|18815589|20031582|21427285|26408409	1996	C10AA05
+PITAVASTATIN MAGNESIUM	CHEMBL3989923	HMGCR	seed	D4	opentargets|dgidb|chembl	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true		2017	
+CERIVASTATIN	CHEMBL1477	HMGCR	seed	D4	opentargets|dgidb	HMG-CoA reductase inhibitor	INHIBITOR	4	true	false	18815589	1997	C10AA06
+SIMVASTATIN	CHEMBL1064	HMGCR	seed	D4	opentargets|dgidb|chembl	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true	15199031|16103896|17563401|18261733|18332269|18559695|18815589|16680159	1991	C10AA01
+FLUVASTATIN SODIUM	CHEMBL2218894	HMGCR	seed	D4	opentargets|dgidb|chembl	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true		1993	
+FLUVASTATIN	CHEMBL2220442	HMGCR	seed	D4	opentargets|dgidb	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true		1993	C10AA04
+ROSUVASTATIN	CHEMBL1496	HMGCR	seed	D4	opentargets|dgidb	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true	18815589	2003	C10AA07
+PRAVASTATIN SODIUM	CHEMBL690	HMGCR	seed	D4	opentargets|dgidb|chembl	HMG-CoA reductase inhibitor	INHIBITOR	4	true	true		1991	
+CERIVASTATIN SODIUM	CHEMBL1200563	HMGCR	seed	D4	opentargets|dgidb|chembl	HMG-CoA reductase inhibitor	INHIBITOR	4	true	false		1997	
 LB-100	CHEMBL4297300	PPP2CA	pathway		opentargets|dgidb|chembl	Serine/threonine-protein phosphatase 5 inhibitor	INHIBITOR	2	false		25897893|28039265|30679389		
 LB-100	CHEMBL4297300	PPP2CB	pathway		opentargets|dgidb|chembl	Serine/threonine-protein phosphatase 5 inhibitor	INHIBITOR	2	false		25897893|28039265|30679389		
 MT-3724	CHEMBL4297789	RPS27	pathway		opentargets|dgidb|chembl	80S Ribosome inhibitor	INHIBITOR	2	false		31847708		
@@ -365,13 +389,6 @@ MARIZOMIB	CHEMBL371405	PSMA6	pathway		opentargets|dgidb|chembl	20S proteasome in
 OPROZOMIB	CHEMBL2103884	PSMA6	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	2	false		21484190|26924128|27167000		
 CARFILZOMIB	CHEMBL451887	PSMA6	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	true	24524217|20116451	2009	L01XG02
 BORTEZOMIB D-MANNITOL	CHEMBL5315122	PSMA6	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	false		2003	
-OPROZOMIB	CHEMBL2103884	PSMB5	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	2	false		21484190|26924128|27167000		
-BORTEZOMIB	CHEMBL325041	PSMB5	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	true	23547757|24524217|21606441		L01XG01
-IXAZOMIB	CHEMBL2141296	PSMB5	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	true	23995855|30867233		L01XG03
-CARFILZOMIB	CHEMBL451887	PSMB5	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	true	24524217|23547757|20116451	2009	L01XG02
-MARIZOMIB	CHEMBL371405	PSMB5	pathway		opentargets|dgidb|chembl	20S proteasome inhibitor	INHIBITOR	3	false		24269479|27161872		
-BORTEZOMIB D-MANNITOL	CHEMBL5315122	PSMB5	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	false		2003	
-IXAZOMIB CITRATE	CHEMBL3545432	PSMB5	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	false		2015	
 OPROZOMIB	CHEMBL2103884	PSMB1	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	2	false		21484190|26924128|27167000		
 BORTEZOMIB	CHEMBL325041	PSMB1	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	true	24524217|21606441		L01XG01
 IXAZOMIB CITRATE	CHEMBL3545432	PSMB1	pathway		opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	false		2015	
@@ -2381,6 +2398,36 @@ BSJ-03-204	iuphar.ligand:10530	CDK6	seed	D4	dgidb	inhibitor	inhibitor		false
 BSJ-04-132	iuphar.ligand:10531	CDK6	seed	D4	dgidb	inhibitor	inhibitor		false				
 VORUCICLIB	ncit:C141430	CDK6	seed	D4	dgidb	inhibitor	inhibitor		false				
 DALPICICLIB	iuphar.ligand:11189	CDK6	seed	D4	dgidb	inhibitor	inhibitor		false				
+TRIAZOLAM	rxcui:10767	CREBBP	seed	D3	dgidb				true	true	22137933		
+CHEMBL:CHEMBL1797712	chembl:CHEMBL1797712	CREBBP	seed	D3	dgidb				false		21292492		
+TTK21	iuphar.ligand:12197	CREBBP	seed	D3	dgidb	activator	activator		false				
+PAPAVERINE	rxcui:7895	CREBBP	seed	D3	dgidb				true	true			
+CHEMBL:CHEMBL1797707	chembl:CHEMBL1797707	CREBBP	seed	D3	dgidb				false		21292492		
+CHEMBL:CHEMBL1530911	chembl:CHEMBL1530911	CREBBP	seed	D3	dgidb				false				
+THERAPEUTIC GLUCOCORTICOID	ncit:C521	CREBBP	seed	D3	dgidb				false		21390130		
+CBPD-268	iuphar.ligand:13245	CREBBP	seed	D3	dgidb				false				
+CHEMBL:CHEMBL1797713	chembl:CHEMBL1797713	CREBBP	seed	D3	dgidb				false		21292492		
+CHEMBL:CHEMBL1797708	chembl:CHEMBL1797708	CREBBP	seed	D3	dgidb				false		21292492		
+GNE-049	iuphar.ligand:13247	CREBBP	seed	D3	dgidb	inhibitor	inhibitor		false				
+METHYLPHENIDATE HYDROCHLORIDE	rxcui:203188	CREBBP	seed	D3	dgidb				true	true	26603525		
+COLCHICINE	rxcui:2683	CREBBP	seed	D3	dgidb				true	true			
+(-)-ROLIPRAM	chembl:CHEMBL430893	CREBBP	seed	D3	dgidb				false				
+CBPD-409	iuphar.ligand:13301	CREBBP	seed	D3	dgidb				false				
+ESTAZOLAM	rxcui:4077	CREBBP	seed	D3	dgidb				true	true	22137933		
+MTOR INHIBITOR	ncit:C2201	CREBBP	seed	D3	dgidb				false		39188028		
+TRACAZOLATE	ncit:C152706	CREBBP	seed	D3	dgidb				false				
+MIDAZOLAM HYDROCHLORIDE	rxcui:203128	CREBBP	seed	D3	dgidb				true	true	22137933		
+INOBRODIB	ncit:C160195	CREBBP	seed	D3	dgidb	inhibitor	inhibitor		false				
+ISCHEMIN	iuphar.ligand:7506	CREBBP	seed	D3	dgidb	inhibitor	inhibitor		false				
+ALPRAZOLAM	rxcui:596	CREBBP	seed	D3	dgidb				true	true	22137933		
+CHEMBL:CHEMBL1797711	chembl:CHEMBL1797711	CREBBP	seed	D3	dgidb				false		21292492		
+ETAZOLATE HYDROCHLORIDE	ncit:C72768	CREBBP	seed	D3	dgidb				false				
+CHEMBL:CHEMBL257748	chembl:CHEMBL257748	CREBBP	seed	D3	dgidb				false		21292492		
+COMPOUND 50 [PMID: 24313754]	iuphar.ligand:8824	CREBBP	seed	D3	dgidb	inhibitor	inhibitor		false				
+NOCODAZOLE	ncit:C75228	CREBBP	seed	D3	dgidb				false				
+OXOGLAUCINE	iuphar.ligand:12559	CREBBP	seed	D3	dgidb				false				
+SGC-CBP30	iuphar.ligand:7529	CREBBP	seed	D3	dgidb	inhibitor	inhibitor		false				
+I-CBP112	iuphar.ligand:8236	CREBBP	seed	D3	dgidb	inhibitor	inhibitor		false				
 CHEMBL:CHEMBL409102	chembl:CHEMBL409102	KIF11	seed	D1	dgidb				false		21344920		
 EG5 KINESIN-RELATED MOTOR PROTEIN INHIBITOR ARQ 621	ncit:C82694	KIF11	seed	D1	dgidb				false				
 MK0731	ncit:C49174	KIF11	seed	D1	dgidb	inhibitor	inhibitor		false				
@@ -3085,13 +3132,13 @@ TINENGOTINIB	iuphar.ligand:11887	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false
 HESPERADIN	iuphar.ligand:8354	CSNK2A2	pathway		dgidb	inhibitor	inhibitor		false		19035792		
 COMPOUND 2C [PMID: 22115617]	iuphar.ligand:8140	CSNK2A2	pathway		dgidb	inhibitor	inhibitor		false				
 SILMITASERTIB	ncit:C98054	CSNK2A2	pathway		dgidb	inhibitor	inhibitor		false				
-WLL-VS	iuphar.ligand:11321	PSMB5	pathway		dgidb	inhibitor	inhibitor		false				
-BELACTOSIN A	chembl:CHEMBL491636	PSMB5	pathway		dgidb				false		23547757		
-MG-132	iuphar.ligand:8616	PSMB5	pathway		dgidb	inhibitor	inhibitor		false		18801655|24321833		
-LACTACYSTIN	chembl:CHEMBL374308	PSMB5	pathway		dgidb				false		23547757		
-NIC-0102	iuphar.ligand:12174	PSMB5	pathway		dgidb	inhibitor	inhibitor		false				
-ZETOMIPZOMIB	drugbank:DB16070	PSMB5	pathway		dgidb	inhibitor	inhibitor		false				
-CHEMBL:CHEMBL490829	chembl:CHEMBL490829	PSMB5	pathway		dgidb				false		18801655		
+WLL-VS	iuphar.ligand:11321	PSMB5	seed	D2	dgidb	inhibitor	inhibitor		false				
+BELACTOSIN A	chembl:CHEMBL491636	PSMB5	seed	D2	dgidb				false		23547757		
+MG-132	iuphar.ligand:8616	PSMB5	seed	D2	dgidb	inhibitor	inhibitor		false		18801655|24321833		
+LACTACYSTIN	chembl:CHEMBL374308	PSMB5	seed	D2	dgidb				false		23547757		
+NIC-0102	iuphar.ligand:12174	PSMB5	seed	D2	dgidb	inhibitor	inhibitor		false				
+ZETOMIPZOMIB	drugbank:DB16070	PSMB5	seed	D2	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL490829	chembl:CHEMBL490829	PSMB5	seed	D2	dgidb				false		18801655		
 COMPOUND 27F [PMID: 25625617]	iuphar.ligand:9238	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
 EMPESERTIB	ncit:C116074	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
 GNE-7915	iuphar.ligand:8073	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
@@ -3122,6 +3169,18 @@ LARGAZOLE	chembl:CHEMBL1173445	TUBB6	pathway		dgidb				false		20491440
 CYCLOSTREPTIN	chembl:CHEMBL1242194	TUBB6	pathway		dgidb				false		17206139		
 CURCUMIN	rxcui:2955	TUBB6	pathway		dgidb				true	true	23830698		
 ZAMPANOLIDE	chembl:CHEMBL582439	TUBB6	pathway		dgidb				false		19877653		
+RO31-8220	iuphar.ligand:5259	SIRT2	seed	D3	dgidb				false		20030343|17149860		
+PAULLONE	chembl:CHEMBL430574	SIRT2	seed	D3	dgidb				false		17149860		
+CHEMBL:CHEMBL589270	chembl:CHEMBL589270	SIRT2	seed	D3	dgidb				false		24675380		
+AGK2	iuphar.ligand:8099	SIRT2	seed	D3	dgidb	inhibitor	inhibitor		false				
+SALERMIDE	chembl:CHEMBL597845	SIRT2	seed	D3	dgidb				false				
+CHEMBL:CHEMBL1794051	chembl:CHEMBL1794051	SIRT2	seed	D3	dgidb				false		20030343		
+COMPOUND 86 [PMID: 26982234]	iuphar.ligand:9251	SIRT2	seed	D3	dgidb	inhibitor	inhibitor		false				
+PANOBINOSTAT	rxcui:1603350	SIRT2	seed	D3	dgidb	inhibitor	inhibitor		true	false			
+COMPOUND 17 [PMID: 23570514]	iuphar.ligand:8778	SIRT2	seed	D3	dgidb	inhibitor	inhibitor		false				
+TRICHOSTATIN A	drugbank:DB04297	SIRT2	seed	D3	dgidb				false		20030343|17149860		
+CHEMBL:CHEMBL1945130	chembl:CHEMBL1945130	SIRT2	seed	D3	dgidb				false		22304848		
+GEFITINIB	rxcui:328134	SIRT2	seed	D3	dgidb				true	true	31664190		
 CALYCULIN A	drugbank:DB02860	PPP2CA	pathway		dgidb	inhibitor	inhibitor		false				
 OKADAIC ACID	iuphar.ligand:5349	PPP2CA	pathway		dgidb	inhibitor	inhibitor		false				
 CANTHARIDIN	rxcui:1984	PPP2CA	pathway		dgidb	inhibitor	inhibitor		true	true			
@@ -3722,6 +3781,40 @@ CYCLOPHOSPHAMIDE ANHYDROUS	rxcui:1545988	PPP2R5D	pathway		dgidb				true	false	29
 FLUOROURACIL	rxcui:4492	PPP2R5D	pathway		dgidb				true	true	29593529		
 EPIRUBICIN	rxcui:3995	PPP2R5D	pathway		dgidb				true	true	29593529		
 CALCIUM CHANNEL BLOCKER	ncit:C333	NUMA1	pathway		dgidb				false		24192120		
+COMPOUND 9 [PMID: 1992149]	iuphar.ligand:2984	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 2T [PMID: 2296036]	iuphar.ligand:2972	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 18 [PMID: 8426367]	iuphar.ligand:2961	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 9A [PATIL ET AL., 1989]	iuphar.ligand:2958	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+CRILVASTATIN	ncit:C90865	HMGCR	seed	D4	dgidb				false				
+LAROPIPRANT	ncit:C87372	HMGCR	seed	D4	dgidb				true	false			
+DFGYVAE	iuphar.ligand:3023	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 2F [PMID: 2153213]	iuphar.ligand:3007	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 4FF [PMID: 1656041]	iuphar.ligand:2970	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 17 [PMID: 15686906]	iuphar.ligand:3000	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 41 [PMID: 17574411]	iuphar.ligand:3006	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+ASPIRIN	rxcui:1191	HMGCR	seed	D4	dgidb				true	true			
+COMPOUND 1A [PMID: 2153213]	iuphar.ligand:2987	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 2D [PMID: 2153213]	iuphar.ligand:3003	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+FPYVAE PEPTIDE [PMID: 20494585]	iuphar.ligand:3024	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 4I [PMID: 2296036]	iuphar.ligand:2968	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+HMG-COA REDUCTASE INHIBITOR	ncit:C1655	HMGCR	seed	D4	dgidb				false				
+GLPDGG PEPTIDE [PMID: 20494585]	iuphar.ligand:2980	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 6A [PATIL ET AL., 1989]	iuphar.ligand:2963	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 11NN [PMID: 1656041]	iuphar.ligand:3014	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 2 [DREYER ET AL., 1991]	iuphar.ligand:7991	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+TERIFLUNOMIDE	rxcui:1310520	HMGCR	seed	D4	dgidb				true	true			
+MEVASTATIN	ncit:C96285	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 29 [PMID: 1527791]	iuphar.ligand:3029	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 11JJ [PMID: 1656041]	iuphar.ligand:3015	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 3 [DREYER ET AL., 1991]	iuphar.ligand:7993	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 42 [PMID: 17574411]	iuphar.ligand:3001	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 1F [PMID: 2153213]	iuphar.ligand:2990	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 1E [PMID: 2153213]	iuphar.ligand:2991	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 29 [PMID: 15686906]	iuphar.ligand:2995	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+TOCOTRIENOLS	rxcui:578285	HMGCR	seed	D4	dgidb				false				
+COMPOUND 2C [PMID: 2153213]	iuphar.ligand:3004	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 1 [PATEL ET AL., 1991]	iuphar.ligand:3009	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 33 [PMID: 17574412]	iuphar.ligand:3010	HMGCR	seed	D4	dgidb	inhibitor	inhibitor		false				
 VEMURAFENIB	rxcui:1147220	STAG2	pathway		dgidb				true	false	27500726		
 ANASTROZOLE	rxcui:84857	TUBB1	pathway		dgidb				true	true	25148458		
 VORINOSTAT	rxcui:194337	TUBB1	pathway		dgidb				true	true	20491440		

@@ -1,10 +1,10 @@
 {
-  "built_at": "2026-09-05T23:16:58+00:00",
+  "built_at": "2026-09-18T18:46:31+00:00",
   "built_by": "mva-drugs snapshot",
-  "code_version": "5c9a61d",
+  "code_version": "db3a004",
   "card": {
     "path": "ressources/track2/mechanism.json",
-    "version": 2,
+    "version": 3,
     "gene": "BUB1B",
     "uniprot": "O60566",
     "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)",
@@ -19,35 +19,35 @@
       {
         "id": "D2",
         "name": "aneuploidy-selective stress exploitation",
-        "seed_targets": 6
+        "seed_targets": 8
       },
       {
         "id": "D3",
         "name": "proteostasis / BubR1 stabilisation for a hypomorph",
-        "seed_targets": 7
+        "seed_targets": 9
       },
       {
         "id": "D4",
         "name": "cancer prevention in the MVA1 tumour context",
-        "seed_targets": 5
+        "seed_targets": 6
       }
     ]
   },
   "retrieved_at": {
     "from": "2026-09-05T23:01:24+00:00",
-    "to": "2026-09-05T23:11:09+00:00"
+    "to": "2026-09-18T18:46:31+00:00"
   },
   "rows": {
-    "targets": 273,
-    "drug_candidates": 3766,
-    "trials": 747,
+    "targets": 277,
+    "drug_candidates": 3859,
+    "trials": 748,
     "literature": 157,
     "pathways": 10
   },
   "targets": {
-    "seed": 27,
-    "pathway": 246,
-    "total": 273
+    "seed": 32,
+    "pathway": 245,
+    "total": 277
   },
   "pathways": {
     "walked": 10,
@@ -55,37 +55,37 @@
     "pattern": "checkpoint|kinetochore|mitotic"
   },
   "candidates": {
-    "total": 3766,
-    "approved": 1067,
-    "with_fda_label": 808,
+    "total": 3859,
+    "approved": 1095,
+    "with_fda_label": 831,
     "by_source": {
-      "chembl": 1659,
-      "dgidb": 3702,
-      "opentargets": 1732
+      "chembl": 1670,
+      "dgidb": 3794,
+      "opentargets": 1749
     },
-    "distinct_drugs": 1513,
-    "distinct_approved_drugs": 336
+    "distinct_drugs": 1593,
+    "distinct_approved_drugs": 359
   },
   "requests": {
     "chembl": {
-      "replies": 736,
-      "live": 0
+      "replies": 755,
+      "live": 32
     },
     "clinicaltrials": {
-      "replies": 337,
-      "live": 0
+      "replies": 360,
+      "live": 23
     },
     "dgidb": {
       "replies": 1,
-      "live": 0
+      "live": 1
     },
     "openfda": {
-      "replies": 336,
-      "live": 0
+      "replies": 359,
+      "live": 21
     },
     "opentargets": {
-      "replies": 545,
-      "live": 0
+      "replies": 553,
+      "live": 8
     },
     "pubmed": {
       "replies": 17,
@@ -195,6 +195,12 @@
     },
     {
       "family": "candidate",
+      "label": "ALPRAZOLAM",
+      "query": "cond=rhabdomyosarcoma intr=ALPRAZOLAM",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
       "label": "AMIODARONE HYDROCHLORIDE",
       "query": "cond=rhabdomyosarcoma intr=AMIODARONE HYDROCHLORIDE",
       "hits": 0
@@ -261,6 +267,12 @@
     },
     {
       "family": "candidate",
+      "label": "ASPIRIN",
+      "query": "cond=rhabdomyosarcoma intr=ASPIRIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
       "label": "ASTEMIZOLE",
       "query": "cond=rhabdomyosarcoma intr=ASTEMIZOLE",
       "hits": 0
@@ -269,6 +281,18 @@
       "family": "candidate",
       "label": "ATALUREN",
       "query": "cond=rhabdomyosarcoma intr=ATALUREN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ATORVASTATIN",
+      "query": "cond=rhabdomyosarcoma intr=ATORVASTATIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ATORVASTATIN CALCIUM",
+      "query": "cond=rhabdomyosarcoma intr=ATORVASTATIN CALCIUM",
       "hits": 0
     },
     {
@@ -432,6 +456,18 @@
       "label": "CERITINIB",
       "query": "cond=rhabdomyosarcoma intr=CERITINIB",
       "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "CERIVASTATIN",
+      "query": "cond=rhabdomyosarcoma intr=CERIVASTATIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "CERIVASTATIN SODIUM",
+      "query": "cond=rhabdomyosarcoma intr=CERIVASTATIN SODIUM",
+      "hits": 0
     },
     {
       "family": "candidate",
@@ -789,6 +825,12 @@
     },
     {
       "family": "candidate",
+      "label": "ESTAZOLAM",
+      "query": "cond=rhabdomyosarcoma intr=ESTAZOLAM",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
       "label": "ETANERCEPT",
       "query": "cond=rhabdomyosarcoma intr=ETANERCEPT",
       "hits": 1
@@ -863,6 +905,18 @@
       "family": "candidate",
       "label": "FLUTAMIDE",
       "query": "cond=rhabdomyosarcoma intr=FLUTAMIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FLUVASTATIN",
+      "query": "cond=rhabdomyosarcoma intr=FLUVASTATIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "FLUVASTATIN SODIUM",
+      "query": "cond=rhabdomyosarcoma intr=FLUVASTATIN SODIUM",
       "hits": 0
     },
     {
@@ -1113,6 +1167,12 @@
     },
     {
       "family": "candidate",
+      "label": "LAROPIPRANT",
+      "query": "cond=rhabdomyosarcoma intr=LAROPIPRANT",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
       "label": "LENALIDOMIDE",
       "query": "cond=rhabdomyosarcoma intr=LENALIDOMIDE",
       "hits": 0
@@ -1152,6 +1212,12 @@
       "label": "LORLATINIB",
       "query": "cond=rhabdomyosarcoma intr=LORLATINIB",
       "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "LOVASTATIN",
+      "query": "cond=rhabdomyosarcoma intr=LOVASTATIN",
+      "hits": 1
     },
     {
       "family": "candidate",
@@ -1239,6 +1305,12 @@
     },
     {
       "family": "candidate",
+      "label": "METHYLPHENIDATE HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=METHYLPHENIDATE HYDROCHLORIDE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
       "label": "METHYLPREDNISOLONE",
       "query": "cond=rhabdomyosarcoma intr=METHYLPREDNISOLONE",
       "hits": 4
@@ -1247,6 +1319,12 @@
       "family": "candidate",
       "label": "MICONAZOLE NITRATE",
       "query": "cond=rhabdomyosarcoma intr=MICONAZOLE NITRATE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "MIDAZOLAM HYDROCHLORIDE",
+      "query": "cond=rhabdomyosarcoma intr=MIDAZOLAM HYDROCHLORIDE",
       "hits": 0
     },
     {
@@ -1437,6 +1515,12 @@
     },
     {
       "family": "candidate",
+      "label": "PAPAVERINE",
+      "query": "cond=rhabdomyosarcoma intr=PAPAVERINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
       "label": "PAROXETINE HYDROCHLORIDE, HEMIHYDRATE",
       "query": "cond=rhabdomyosarcoma intr=PAROXETINE HYDROCHLORIDE, HEMIHYDRATE",
       "hits": 0
@@ -1509,6 +1593,30 @@
     },
     {
       "family": "candidate",
+      "label": "PITAVASTATIN",
+      "query": "cond=rhabdomyosarcoma intr=PITAVASTATIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PITAVASTATIN CALCIUM",
+      "query": "cond=rhabdomyosarcoma intr=PITAVASTATIN CALCIUM",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PITAVASTATIN MAGNESIUM",
+      "query": "cond=rhabdomyosarcoma intr=PITAVASTATIN MAGNESIUM",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PITAVASTATIN SODIUM",
+      "query": "cond=rhabdomyosarcoma intr=PITAVASTATIN SODIUM",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
       "label": "PLICAMYCIN",
       "query": "cond=rhabdomyosarcoma intr=PLICAMYCIN",
       "hits": 0
@@ -1547,6 +1655,18 @@
       "family": "candidate",
       "label": "PRASTERONE",
       "query": "cond=rhabdomyosarcoma intr=PRASTERONE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PRAVASTATIN",
+      "query": "cond=rhabdomyosarcoma intr=PRAVASTATIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "PRAVASTATIN SODIUM",
+      "query": "cond=rhabdomyosarcoma intr=PRAVASTATIN SODIUM",
       "hits": 0
     },
     {
@@ -1668,6 +1788,18 @@
       "label": "ROMIDEPSIN",
       "query": "cond=rhabdomyosarcoma intr=ROMIDEPSIN",
       "hits": 1
+    },
+    {
+      "family": "candidate",
+      "label": "ROSUVASTATIN",
+      "query": "cond=rhabdomyosarcoma intr=ROSUVASTATIN",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "ROSUVASTATIN CALCIUM",
+      "query": "cond=rhabdomyosarcoma intr=ROSUVASTATIN CALCIUM",
+      "hits": 0
     },
     {
       "family": "candidate",
@@ -1835,6 +1967,12 @@
       "family": "candidate",
       "label": "TERFENADINE",
       "query": "cond=rhabdomyosarcoma intr=TERFENADINE",
+      "hits": 0
+    },
+    {
+      "family": "candidate",
+      "label": "TERIFLUNOMIDE",
+      "query": "cond=rhabdomyosarcoma intr=TERIFLUNOMIDE",
       "hits": 0
     },
     {

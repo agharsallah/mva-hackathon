@@ -1,13 +1,13 @@
 {
   "name": "pathways",
-  "built_at": "2026-09-05T23:16:58+00:00",
+  "built_at": "2026-09-18T18:46:31+00:00",
   "built_by": "mva-drugs snapshot",
-  "code_version": "5c9a61d",
+  "code_version": "db3a004",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "method": "Seed targets are the union of the card's per-direction seed_targets, in card order. Pathway targets are every human ReferenceGeneProduct participating in a Reactome pathway that (a) contains the card's UniProt accession, per /data/mapping/UniProt/{acc}/pathways?species=9606, and (b) whose displayName matches /checkpoint|kinetochore|mitotic/i. A gene that is already a seed keeps role 'seed'. The pattern is a parameter of the expansion, not a constant: a different mechanism card passes its own.",
   "card": {
     "path": "ressources/track2/mechanism.json",
-    "version": 2,
+    "version": 3,
     "gene": "BUB1B",
     "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)"
   },

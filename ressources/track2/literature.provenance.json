@@ -1,13 +1,13 @@
 {
   "name": "literature",
-  "built_at": "2026-09-05T23:16:58+00:00",
+  "built_at": "2026-09-18T18:46:31+00:00",
   "built_by": "mva-drugs snapshot",
-  "code_version": "5c9a61d",
+  "code_version": "db3a004",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "method": "Four query families over PubMed E-utilities: <gene> AND (repurposing OR inhibitor OR <anchor>); <pathway head phrase> AND drug; per direction, the direction name with its slash-separated segments OR'd, AND <anchor>; and the PMIDs the card itself cites. <anchor> is the last alphabetic word of the card's disease name. The direction family is the weak one: a long descriptive name becomes a long AND-chain and can match nothing. Those zeros are recorded in snapshot.json rather than papered over with a looser query.",
   "card": {
     "path": "ressources/track2/mechanism.json",
-    "version": 2,
+    "version": 3,
     "gene": "BUB1B",
     "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)"
   },
