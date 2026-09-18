@@ -43,6 +43,25 @@ export function newestFirst(iterations: SubmissionIteration[]): SubmissionIterat
   return [...iterations].sort((a, b) => b.number - a.number || a.track.localeCompare(b.track));
 }
 
+/**
+ * Whether this track is judged by a panel rather than by the organisers' scorer.
+ *
+ * Track 1 uploads a predictions file and gets a number back, so its folder carries a CSV, a
+ * decode table and the coordinate-free selectors behind every row. **Track 2 has no scorer
+ * at all**: it is read by people, from the report, the filled methods form, the repository
+ * and a three-minute video. Those sections are therefore absent by rule, not missing by
+ * accident, and the dossier says so instead of drawing empty frames.
+ */
+export const isPanelJudged = (it: { track: string }): boolean => it.track === 'track2';
+
+/** What a panel-judged track hands over in place of a scored predictions file. */
+export const PANEL_DELIVERABLES = [
+  'the report (PDF)',
+  'the filled methods form (xlsx)',
+  'the repository',
+  'a 3-minute video',
+] as const;
+
 /** `track1` + `1` → `track1 · iteration 1`, the label used in the selector and the header. */
 export const iterationKey = (it: { track: string; number: number }): string =>
   `${it.track}/iteration-${it.number}`;

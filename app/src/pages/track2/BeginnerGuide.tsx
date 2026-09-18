@@ -30,7 +30,9 @@ export function BeginnerGuide({ data }: { data: Track2 }) {
   const { card, summary } = data;
   const gene = card.gene.symbol;
   const c = summary.candidates;
-  const waiting = data.strategy.filter((p) => p.status === 'waiting').length;
+  const argued = (data.shortlist ?? []).filter((r) => r.verdict === 'argue').length;
+  const contextOnly = (data.shortlist ?? []).length - argued;
+  const setAside = (data.do_not ?? []).length;
   const approvedOnGene = data.candidates.filter(
     (r) => r.target_symbol === gene && r.approved,
   ).length;
@@ -128,17 +130,20 @@ export function BeginnerGuide({ data }: { data: Track2 }) {
           from a neighbour.
         </Step>
 
-        <Step n={6} title="Why there is no answer here yet.">
-          {int(c.total)} rows are <em>evidence</em>, not a recommendation. Ranking them, and
-          registering a claim per drug, is still open; {waiting} phases are yellow because they wait
-          on an{' '}
+        <Step n={6} title="What came out - and what it is not.">
+          {int(c.total)} rows are <em>evidence</em>, not a recommendation, so every approved drug
+          was placed on a five-rung{' '}
           <T
-            slug="oracle"
-            term="oracle"
-            plain="the challenge scorer, reachable only by uploading — six replies exist for this whole project"
+            slug="evidence-ladder"
+            term="evidence ladder"
+            plain="a grading scheme fixed before any drug was looked up: what kind of evidence a candidate has"
           />{' '}
-          reply that confirms the pair the mechanism is argued from. The final suggestion is
-          produced once, after every Track 1 iteration is merged.
+          written before the search. {argued} drugs carry a result a person read in a paper - the
+          cards at the top of this page; {contextOnly} more reach a high rung only because they are
+          already in rhabdomyosarcoma trials and are listed, not claimed; {setAside} sit in the
+          do-not table. That is the current suggestion. It is still a shortlist -{' '}
+          <em>hypotheses for follow-up, not evidence that a medicine works</em> - and Track 2 allows
+          one upload, not yet made.
         </Step>
       </ol>
     </section>

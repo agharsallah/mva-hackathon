@@ -995,8 +995,8 @@
         {
           "name": "README.md",
           "kind": "readme",
-          "bytes": 3388,
-          "modified": "2026-09-09T20:32:45+00:00"
+          "bytes": 3568,
+          "modified": "2026-09-09T20:38:56+00:00"
         },
         {
           "name": "methods-form.json",
@@ -1259,7 +1259,7 @@
       ],
       "contributions": [
         {
-          "step": "6 oracle",
+          "step": "iteration 1, step 6",
           "contribution": "reply decoded, H009 supported, budget 1 of 6",
           "methodology": [
             {
@@ -1267,6 +1267,11 @@
               "path": "docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md"
             }
           ]
+        },
+        {
+          "step": "iteration 2 steps",
+          "contribution": "to be declared with the plan",
+          "methodology": []
         }
       ],
       "hypotheses": ["H009"],
@@ -1486,6 +1491,441 @@
             "recorded_at": "",
             "step": "step-6",
             "statement": "The causal compound-heterozygous pair is the BUB1B stop_gained allele (ClinVar pathogenic for MVA syndrome 1) together with the BUB1B missense allele absent from gnomAD, in trans."
+          }
+        ]
+      }
+    },
+    {
+      "track": "track2",
+      "number": 1,
+      "folder": "submissions/track2/iteration-1",
+      "state": "draft",
+      "standing": "draft \u2014 the report, the methods-form answers, the pitch script and the evidence",
+      "uploaded": false,
+      "csv": {
+        "path": null,
+        "sha256": null,
+        "rows": null
+      },
+      "deliverables": [
+        {
+          "name": "README.md",
+          "kind": "readme",
+          "bytes": 6873,
+          "modified": "2026-09-18T19:30:58+00:00"
+        },
+        {
+          "name": "agharsallah_track2_methods_form.xlsx",
+          "kind": "methods-xlsx",
+          "bytes": 14990,
+          "modified": "2026-09-18T19:30:49+00:00"
+        },
+        {
+          "name": "agharsallah_track2_report.pdf",
+          "kind": "report-pdf",
+          "bytes": 690015,
+          "modified": "2026-09-18T19:30:48+00:00"
+        },
+        {
+          "name": "methods-form.json",
+          "kind": "methods-json",
+          "bytes": 11478,
+          "modified": "2026-09-18T19:30:11+00:00"
+        },
+        {
+          "name": "pitch-script.md",
+          "kind": "other",
+          "bytes": 4147,
+          "modified": "2026-09-18T19:30:37+00:00"
+        },
+        {
+          "name": "report.md",
+          "kind": "report-md",
+          "bytes": 24115,
+          "modified": "2026-09-18T19:28:11+00:00"
+        }
+      ],
+      "decode_table": {
+        "columns": [],
+        "rows": [],
+        "summary": "",
+        "row_order": ""
+      },
+      "selectors": {
+        "alleles": {},
+        "rows": [],
+        "hypotheses": [],
+        "derivation": null
+      },
+      "methods_form": [
+        {
+          "row": "7",
+          "answer": "agharsallah"
+        },
+        {
+          "row": "8",
+          "answer": "From variant to mechanism to medicine in four documented stages, each a case-agnostic tool with a provenance manifest. (1) Hand-off: Track 1's confirmed compound-heterozygous BUB1B pair (a stop allele + a kinase-region missense, trans configuration confirmed by the challenge's answer key) was written into a structured 'mechanism card' (ressources/track2/mechanism.json): gene, protein, the two allele classes (never positions), loss-of-function reading, the spindle-assembly-checkpoint pathway, downstream consequences, the tumour context (rhabdomyosarcoma) from the clinical terms, and four repurposing directions with seed genes - D1 reinforce the checkpoint, D2 exploit aneuploidy stress, D3 stabilise the remaining BubR1 (hypomorph), D4 the child's tumour. Iteration 2's measured genotype facts (allele dosage from the raw reads, exon copy number, structural-variant absence, the missense's position in the protein, pathogenicity lanes, P(trans)) were appended as a card revision (v3), with the aneuploidy burden marked unmeasured. (2) Search: the card's seeds were expanded through Reactome pathways to 277 targets; Open Targets, ChEMBL and DGIdb returned 3,859 drug-target rows and 359 market-approved drugs; openFDA confirmed US labels; ClinicalTrials.gov and PubMed answered trial and literature questions, all queries derived from the card. (3) Grading: every approved drug on every direction was placed on a five-rung evidence ladder pre-registered before the search (5 approved for a related indication with paediatric use; 4 trial in a related indication; 3 animal model of the mechanism; 2 cell model; 1 mechanism only - named, never submitted). Automated tests (approval, label and its Pediatric Use section, tumour-context trials, studies admitting children, PubMed co-mention counts) and curated tests (one PubMed paper per row, read by a person, 13 rows) are printed side by side; inherited class-level evidence is marked 'proxy'. Six falsifiable claims (one per direction, one for the control, one for paediatric data) were registered with predictions and refutation conditions before any drug-level query. (4) Control: the same pipeline ran on two decoy cards - the child's clinical side kept, the gene swapped (NTRK3 by a seeded draw from Track 1's decoy set; XDH, an unrelated metabolic enzyme). A direction whose approved drugs overlap a decoy's at Jaccard >= 0.10 is reported as non-specific; D4 did (0.25) and is argued only from curated mechanism results. Output: 11 drugs with a cited mechanism result (statins; niacin/nicotinamide; chloroquine; bortezomib, metformin, valproic acid, vorinostat, hydroxychloroquine, atorvastatin), 50 drugs already in rhabdomyosarcoma trials listed as such, and a 23-drug do-not table (spindle poisons, checkpoint inhibitors, standard of care)."
+        },
+        {
+          "row": "9",
+          "answer": "Both, kept apart and printed side by side. Automated: drug-target database queries (Open Targets, ChEMBL, DGIdb, Reactome, openFDA, ClinicalTrials.gov, PubMed E-utilities) driven by the mechanism card, plus per-drug PubMed co-mention counts and paediatric-trial lookups; these produce the candidate set and the automated rungs 4-5. Manual: the evidence rungs 2-3 come from 13 papers read by a person and entered in evidence.tsv with the PubMed id, the model (cell / in vivo) and a proxy flag when the paper tested a same-axis compound rather than the approved drug. LLM assistance was used to draft queries, code and prose; every PubMed id was resolved live against E-utilities before it was written down, and four ids first recalled from memory were wrong and replaced by title search before entering any file."
+        },
+        {
+          "row": "10",
+          "answer": "Thirteen curated rows, each one cited result: Tang & Amon 2011 (PMID 21315436) - chloroquine and the AMPK activator AICAR are aneuploidy-selective in trisomic and aneuploid cells (rung 2 for chloroquine; metformin and hydroxychloroquine inherit as proxies); Ippolito 2024 (39247952) and Chui 2019 (31530568) - aneuploid cells depend on protein degradation and are more sensitive to proteasome inhibition (bortezomib, class proxy); North 2014 (24825348) - the NAD+ precursor NMN raised BubR1 in vivo and SIRT2 extended the lifespan of BubR1-hypomorphic mice (rung 3; niacin and nicotinamide as proxies); Park 2017 (28985013) and Choi 2009 (19407811) - HDAC2/3 deacetylation drives BubR1 degradation, acetylation protects it (valproic acid, vorinostat as class proxies); Gizaw 2025 (41249736) - lovastatin itself reduced rhabdomyosarcoma cell proliferation and cholesterol synthesis is a non-redundant tumour vulnerability (rung 2; simvastatin and atorvastatin as proxies). The anti-directions rest on Suijkerbuijk 2010 (20516114, MVA cells have a weakened checkpoint), Sinha 2019 (30601084, mitotic slippage) and Cohen-Sharir 2021 (33505028, aneuploid cells are killed by checkpoint inhibition). The mechanism section rests on Hanks 2004 (15475955) and Suijkerbuijk 2010. Curation was one person's reading of the abstracts on 2026-09-18; every row carries its PubMed id so it can be checked."
+        },
+        {
+          "row": "11",
+          "answer": "Publicly available sources only. No proprietary data source was used."
+        },
+        {
+          "row": "12",
+          "answer": "Open Targets Platform (GraphQL API, drugAndClinicalCandidates per target and disease), ChEMBL (REST: target search, mechanism, molecule max_phase, first approval, ATC), DGIdb (GraphQL interactions), Reactome ContentService (pathways containing the protein, participants), openFDA drug labels (current US label; the pediatric_use section), ClinicalTrials.gov v2 (studies by condition and intervention; aggFilters=ages:child for studies admitting children), PubMed E-utilities (esearch counts and ids, esummary), plus ClinVar (the stop allele's classification) and gnomAD (population absence of the missense) from Track 1. DrugBank was named by the form but not queried: its programmatic access needs a licence. Every reply is cached and its digest rolled into the table's manifest; retrieval dates are 2026-09-05 (first snapshot) and 2026-09-18 (refresh and enrichment)."
+        },
+        {
+          "row": "13",
+          "answer": "None."
+        },
+        {
+          "row": "14",
+          "answer": "Loss of function, hypomorphic, of a confirmed compound heterozygote. One allele is a stop change in exon 17 of 23 (ClinVar pathogenic / likely pathogenic for MVA syndrome 1): no functional BubR1 from that copy. The other is a missense change in the last exon: absent from gnomAD, AlphaMissense likely-pathogenic (log-likelihood-ratio lane 4.33), CADD 24.5, sitting outside every InterPro domain-typed entry in a region AlphaFold models at pLDDT 91 - a weakened copy, not a dead one, consistent with every published MVA1 genotype (complete loss is embryonic-lethal). No gain-of-function or dominant-negative activity is reported for BUB1B. Trans configuration: confirmed by the oracle's full match at rank 1 (population phasing was undetermined; read-backed phase blocks did not reach the gene). Dosage: both alleles at one-copy multiplicity in the raw reads by an alignment-free k-mer method; every exon at two copies; no structural variant in the gene. Pathway: the spindle assembly checkpoint - BubR1 is a core component of the mitotic checkpoint complex that inhibits APC/C-CDC20 and recruits PP2A-B56 to kinetochores; less BubR1 gives a leaky checkpoint (Suijkerbuijk 2010 measured strongly reduced BubR1 and a weakened checkpoint in MVA cells). Downstream: premature anaphase and chromosome missegregation; mosaic variegated aneuploidy; proteotoxic and metabolic stress in aneuploid cells; cancer predisposition (rhabdomyosarcoma - the child's presenting tumour - Wilms tumour, leukaemia); growth restriction and nephrocalcinosis, which are the delivered clinical terms. Stated gaps: the aneuploid fraction in this child's sample is unmeasured (the karyotype statistic run had no power for mosaic gains; the powered analysis is planned), and whether the missense copy is unstable or catalytically inactive is open - so direction D3 is argued as raising BubR1 abundance, not as refolding it."
+        },
+        {
+          "row": "15",
+          "answer": "Roughly four working days across two people-equivalents: one day for the mechanism card and the data layer (iteration 1, 2026-09-05/06), and about three days on 2026-09-18 for the card revision, the six pre-registered claims, the enrichment adapters and ladder, the decoy control, the curation, the figures, the dashboard page and this report. Compute: two laptop runs of about ten minutes each against public APIs; no cloud."
+        },
+        {
+          "row": "16",
+          "answer": "Question. Given a confirmed compound-heterozygous loss of BUB1B (a stop allele and a hypomorphic kinase-region missense) in a child with mosaic variegated aneuploidy and rhabdomyosarcoma, which market-approved drugs act on the mechanism, and how strong is the evidence for each? Method. A structured mechanism card written from Track 1's confirmed result and iteration 2's measured genotype facts drives every query: Reactome expands the card's seed genes to 277 targets; Open Targets, ChEMBL and DGIdb return 359 approved drugs; openFDA, ClinicalTrials.gov and PubMed answer label, trial and literature questions per drug. Every approved drug on every direction is placed on a five-rung evidence ladder pre-registered before the search (approved with paediatric use; trial in a related indication; animal model; cell model; mechanism only), with the automated tests and the 13 person-curated PubMed rows printed side by side and inherited class-level evidence flagged as proxy. Six claims were registered with refutation conditions before any drug-level query. The whole pipeline ran unchanged on two decoy cards (same child, gene swapped for NTRK3 and for XDH) as a specificity control. Results. Direction D1 (reinforce the checkpoint) has no approved drug and became the do-not table. D2 (aneuploidy stress): chloroquine has a molecule-level cell result; metformin, hydroxychloroquine and bortezomib inherit class-level results. D3 (raise BubR1): NAD+ repletion raised BubR1 in BubR1-hypomorphic mice, inherited by niacin and nicotinamide (rung 3); HDAC inhibitors act on BubR1's acetylation switch at class level. D4 (the tumour): lovastatin itself slowed rhabdomyosarcoma cells, and a completed paediatric phase-1 trial gave simvastatin with chemotherapy in relapsed solid tumours including rhabdomyosarcoma. Eleven drugs carry a cited mechanism result; fifty more reach the top rung only because they are already in rhabdomyosarcoma trials and are listed as such, not claimed. The decoy control showed D4's automated stage is non-specific (Jaccard 0.25 against NTRK3) while D1-D3 are gene-specific, and it exposed a grading flaw (tumour trials lifting mechanism directions) that was corrected before any verdict, with the change recorded. The do-not table names 13 spindle poisons - including standard rhabdomyosarcoma chemotherapy - as a caution for the treating team, because those drugs rely on the very checkpoint that is weakened, and no approved checkpoint inhibitor exists. Strengths. Pre-registration; a decoy control for a repurposing pipeline; automated and curated evidence never merged silently; complete lineage (manifests, warehouse edges); case-agnostic tooling (swap the card, run another case); no patient data in any Track 2 artifact. Limitations. Curated rungs are one reader's; rung 3 is a single mouse paper; the child's aneuploid fraction is unmeasured; the missense's unstable-versus-inactive status is open; DrugBank was not queried; a paediatric pointer is not safety data. These are hypotheses for follow-up, not evidence that any medicine works."
+        }
+      ],
+      "contributions": [
+        {
+          "step": "iteration 1, step 6",
+          "contribution": "the oracle confirmed the trans pair (full match at rank 1) \u2014 the mechanism argues from a confirmed genotype",
+          "methodology": [
+            {
+              "label": "083",
+              "path": "docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md"
+            }
+          ]
+        },
+        {
+          "step": "iteration 1, step 8",
+          "contribution": "the mechanism card (v1\u2013v2), the data layer mva.drugs, H010/H011",
+          "methodology": [
+            {
+              "label": "078",
+              "path": "docs/iteration1/step-8/methodology/078-track2-data-layer.md"
+            }
+          ]
+        },
+        {
+          "step": "iteration 2, steps 2\u20133",
+          "contribution": "no structural variant in the gene; both alleles at one copy; every exon at two copies (facts F2\u2013F4)",
+          "methodology": [
+            {
+              "label": "088",
+              "path": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md"
+            },
+            {
+              "label": "096",
+              "path": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md"
+            },
+            {
+              "label": "097",
+              "path": "docs/iteration2/step-3/methodology/097-copy-number-without-an-aligner.md"
+            }
+          ]
+        },
+        {
+          "step": "iteration 2, step 4",
+          "contribution": "the missense's pathogenicity lane; P(trans) undetermined (F6, F7)",
+          "methodology": [
+            {
+              "label": "099",
+              "path": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md"
+            },
+            {
+              "label": "101",
+              "path": "docs/iteration2/step-4/methodology/101-the-phase-that-cannot-be-measured.md"
+            }
+          ]
+        },
+        {
+          "step": "iteration 2, step 5",
+          "contribution": "the missense sits outside every curated domain (F5)",
+          "methodology": [
+            {
+              "label": "106",
+              "path": "docs/iteration2/step-5/methodology/106-where-the-missense-sits-in-the-protein.md"
+            }
+          ]
+        },
+        {
+          "step": "iteration 2, step 6",
+          "contribution": "the blind mirror found the same pair (F9)",
+          "methodology": [
+            {
+              "label": "109",
+              "path": "docs/iteration2/step-6/methodology/109-what-the-mirror-found.md"
+            }
+          ]
+        },
+        {
+          "step": "iteration 2, step 7",
+          "contribution": "card v3; the ladder; the shortlist and do-not table; the decoy control; H045\u2013H050",
+          "methodology": [
+            {
+              "label": "110",
+              "path": "docs/iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md"
+            },
+            {
+              "label": "113",
+              "path": "docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md"
+            }
+          ]
+        },
+        {
+          "step": "iteration 2, step 8",
+          "contribution": "pending \u2014 the aneuploidy burden (F8)",
+          "methodology": []
+        }
+      ],
+      "hypotheses": ["H010", "H011", "H045", "H046", "H047", "H048", "H049", "H050"],
+      "figures": [
+        {
+          "slug": "decoy-overlap",
+          "path": "figures/track2/decoy-overlap.png",
+          "url": "/api/submissions/track2/1/figure/decoy-overlap"
+        },
+        {
+          "slug": "evidence-ladder",
+          "path": "figures/track2/evidence-ladder.png",
+          "url": "/api/submissions/track2/1/figure/evidence-ladder"
+        },
+        {
+          "slug": "mechanism-literature",
+          "path": "figures/track2/mechanism-literature.png",
+          "url": "/api/submissions/track2/1/figure/mechanism-literature"
+        },
+        {
+          "slug": "pediatric-evidence",
+          "path": "figures/track2/pediatric-evidence.png",
+          "url": "/api/submissions/track2/1/figure/pediatric-evidence"
+        },
+        {
+          "slug": "rung-funnel",
+          "path": "figures/track2/rung-funnel.png",
+          "url": "/api/submissions/track2/1/figure/rung-funnel"
+        }
+      ],
+      "report": {
+        "path": "submissions/track2/iteration-1/report.md",
+        "markdown": "# Track 2 report \u2014 which approved medicines could act on this child's broken checkpoint?\n\n**Standing:** draft, written 2026-09-18 from executed runs (iteration 2, step 7 \u2014 methodology\nentries [110](../../../docs/iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md)\u2013[113](../../../docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md)).\nEvery number is read from a table with a provenance manifest, every claim was registered before\nits test, and every cited paper was resolved against PubMed the same day. **Not uploaded.**\nTrack 2 accepts one submission; this folder will be re-read and re-rendered before it goes.\n\nWritten for the panel, in plain words. Each technical term appears once with its meaning in\nbrackets; the full dictionary is served at `/learn` on the dashboard.\n\n> The challenge's own framing, kept in view throughout: *submissions are hypotheses for\n> follow-up, not evidence that a medicine works.* Nothing below is a recommendation to treat.\n\n---\n\n## 1. The answer in one page\n\n**The child.** A boy with mosaic variegated aneuploidy (MVA: in some of his cells, a chromosome\nis missing or duplicated, and different cells are wrong in different ways), short stature,\nfailure to thrive, calcium deposits in the kidneys, and a rhabdomyosarcoma (a muscle-tissue\ncancer of childhood). Eight clinical terms were delivered with the case.\n\n**The cause.** Track 1 found, and the challenge's answer key confirmed, two different broken\ncopies of one gene, `BUB1B` \u2014 one from each parent (a *compound heterozygote*). The gene makes\nBubR1, the protein that acts as the **brake** on cell division: it holds a dividing cell until\nevery chromosome is properly attached before the cell is allowed to split. One copy makes no\nprotein at all (a *stop* change); the other makes a weakened protein (a *missense* change in the\nprotein's last stretch). The child therefore has **some brake, but less than normal** \u2014 which is\nexactly the pattern every published MVA case with this gene shows, because having no brake at\nall is not survivable.\n\n**The mechanism, in the form the methods form asks for.** *Loss of function*, not gain: less\nBubR1, a leakier checkpoint, chromosomes that separate too early, cells with the wrong count,\nand \u2014 in surviving cells \u2014 a chronic stress from carrying the wrong number of copies of many\nproteins. Downstream: the aneuploidy that names the disease, the growth problems, and a\npredisposition to exactly the cancers this child has.\n\n**Four ways a drug could act, graded on a ladder written before the search.**\n\n| Direction | The idea | What we found | Best rung |\n|---|---|---|---|\n| **D1** reinforce the brake | make the remaining checkpoint stronger | **no approved drug does this.** Every checkpoint drug on the market or in trials *weakens* it. D1 became the do-not table | \u2014 |\n| **D2** exploit the stress of aneuploid cells | aneuploid cells are already stressed; some approved drugs tip them over | **chloroquine** (a malaria drug) killed aneuploid cells preferentially in the reference screen; metformin, hydroxychloroquine and bortezomib inherit the result through their drug class | 2 (cell model) |\n| **D3** raise the amount of working BubR1 | the weakened copy still works; stabilise it | **niacin / nicotinamide** (vitamin B3 forms): boosting the NAD\u207a pathway raised BubR1 in mice bred to have too little of it; valproic acid and vorinostat act on BubR1's acetylation switch | 3 (animal model) |\n| **D4** the child's actual tumour | approved, non-chemotherapy drugs with a mechanism in rhabdomyosarcoma | **statins** (lovastatin, simvastatin, atorvastatin): rhabdomyosarcoma cells depend on making their own cholesterol; lovastatin itself slowed them; simvastatin has already been in a completed paediatric sarcoma trial | 5 (approved, trialled in this tumour, used in children) \u2014 carried by rung-2 mechanism evidence |\n\n**The half a clinician may care about most: what not to do.** Thirteen approved drugs are\n*spindle poisons* \u2014 they work by jamming cell division and relying on the checkpoint to hold\nthe cell. In a child whose checkpoint is the broken part, that reliance is a hypothesis worth\nweighing before treatment. Several of them (vincristine, vinorelbine) are standard\nrhabdomyosarcoma chemotherapy. **This report flags the question for the treating team; it does\nnot advise withholding standard care.**\n\n**What we do not know.** How aneuploid this child's cells actually are (the sequencing data\ndelivered cannot measure it with any power; the analysis that could is planned and not run).\nWhether the weakened BubR1 copy is unstable or simply inactive. And whether any drug on this\npage helps \u2014 rung 3 is one mouse paper.\n\n---\n\n## 2. Where this comes from \u2014 two datasets, one line of evidence\n\n```mermaid\nflowchart LR\n  G[/\"85 GB genomic data<br/>reads + variant calls\"/]:::raw --> T1[\"Track 1, iterations 1\u20132<br/>the pair found blind and confirmed\"]:::machine\n  C[/\"8 clinical terms<br/>(HPO)\"/]:::raw --> T1\n  T1 --> CARD[\"mechanism card v3<br/>gene \u00b7 alleles \u00b7 9 measured facts<br/>4 directions \u00b7 2 anti-directions \u00b7 the ladder\"]:::machine\n  C --> CARD\n  CARD --> SNAP[\"7 public drug sources<br/>359 approved drugs on 277 targets\"]:::machine\n  SNAP --> LAD{{\"the evidence ladder<br/>329 drugs \u00d7 directions\"}}:::decide\n  CUR[/\"13 curated results<br/>one PubMed paper each\"/]:::raw --> LAD\n  DEC[\"2 decoy genes<br/>same child, wrong gene\"]:::machine --> LAD\n  LAD --> S[\"shortlist: 11 argued<br/>+ 50 already in tumour trials\"]:::good\n  LAD --> N[\"do-not table: 23\"]:::bad\n  classDef raw fill:#f3e8ff,stroke:#7e22ce,color:#581c87\n  classDef machine fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a\n  classDef decide fill:#fef9c3,stroke:#ca8a04,color:#713f12\n  classDef good fill:#dcfce7,stroke:#15803d,color:#14532d\n  classDef bad fill:#fee2e2,stroke:#b91c1c,color:#7f1d1d\n```\n\n> **Legend** \u2014 **purple = raw inputs** (the child's DNA, the child's clinical terms, and the\n> papers a person read); **blue = machinery** (every box is a tool with a manifest); **yellow =\n> the decision point** (the ladder); **green = the goal** (the shortlist); **red = what to\n> avoid** (the do-not table).\n\nBoth datasets are used at every stage: the genomic data fixed the gene and the two alleles;\nthe clinical terms fixed the disease, the tumour and \u2014 through the tumour \u2014 the fourth\ndirection and the paediatric questions. Where a result uses only one, the table says so.\n\n---\n\n## 3. The mechanism (methods form Q14: loss- versus gain-of-function, pathway, consequence)\n\n### 3.1 Loss of function, of a specific shape\n\n| copy | what changed | what it does to the protein | evidence |\n|---|---|---|---|\n| one | a *stop* change in exon 17 of 23 | the protein ends early, before its last working part \u2014 **no functional protein** | catalogued as disease-causing for MVA (ClinVar VCV000533901) |\n| the other | a *missense* change in exon 23 of 23 \u2014 one amino acid swapped | a **weakened** protein: never seen in 140,000 healthy genomes, predicted damaging by two independent predictors | Track 1 (iteration 1, entries 070\u2013074; iteration 2, entry 099) |\n\nNine facts measured in iteration 2 sit on the mechanism card so the argument does not rest on\nthe allele labels alone:\n\n| fact | measured | what it changes for a drug |\n|---|---|---|\n| the two copies are on **different** chromosomes (*trans*) | **confirmed** by the challenge's answer key (a full match at rank 1) | the whole argument stands on a confirmed genotype, not an inference |\n| each copy present **once** in the raw sequencing reads | yes \u2014 both alleles at one-copy dosage, read without an aligner | a *null + weakened* genotype: some BubR1 exists to stabilise (D3 is live) |\n| no deleted or duplicated stretch in the gene | every exon at two copies; no structural variant in the gene | the two alleles are the whole story |\n| where the missense sits in the protein | outside every catalogued domain, in a region the structure model is confident about | we **cannot** say whether the weakened copy is unstable or inactive; D3 is argued as *more BubR1*, not *refold it* |\n| how aneuploid this child's cells are | **unmeasured** \u2014 the karyotype test iteration 1 ran has no power for mosaic gains; the powered analysis (step 8) has not run | D2 is argued from published aneuploid-cell biology, not from this child's burden |\n\n(Complete list F1\u2013F9, with the entry each comes from: mechanism card v3, and step 7's README.)\n\n### 3.2 The pathway: the spindle assembly checkpoint\n\nBubR1 is a core part of the **spindle assembly checkpoint** (SAC \u2014 the wait-until-attached\nbrake) and of the complex that switches off the machinery that pulls chromosomes apart. Less\nBubR1 means a **leaky brake**: division can proceed with chromosomes still unattached.\nPublished MVA patient cells show strongly reduced BubR1 and a weakened checkpoint\n(Suijkerbuijk 2010, PMID 20516114); the founding paper tied biallelic `BUB1B` changes to MVA\nwith cancer predisposition (Hanks 2004, PMID 15475955). Complete loss is lethal before birth\nin mouse and human \u2014 which is why \"switch BubR1 off\" is never a therapeutic direction here.\n\n### 3.3 Downstream consequences, and where a drug could stand\n\n```mermaid\nflowchart LR\n  A[/\"BUB1B: null + weakened copy\"/]:::raw --> B[\"less BubR1 \u00b7 leaky checkpoint\"]:::machine\n  B --> C{{\"D3 \u00b7 more working BubR1<br/>NAD\u207a / SIRT2 \u00b7 acetylation\"}}:::decide\n  B --> D[\"chromosomes separate too early\"]:::bad\n  D --> E[\"cells with the wrong chromosome count<br/>(burden in this child: unmeasured)\"]:::bad\n  E --> F{{\"D2 \u00b7 exploit their stress<br/>autophagy \u00b7 proteasome \u00b7 AMPK\"}}:::decide\n  E --> G[\"rhabdomyosarcoma \u00b7 growth restriction \u00b7 kidney calcium\"]:::bad\n  G --> H{{\"D4 \u00b7 the tumour itself<br/>cholesterol synthesis\"}}:::decide\n  B -.-> X[\"D1 \u00b7 strengthen the brake<br/>no approved drug\"]:::bad\n  D -.-> Y[\"spindle poisons need the brake<br/>caution\"]:::bad\n  classDef raw fill:#f3e8ff,stroke:#7e22ce,color:#581c87\n  classDef machine fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a\n  classDef decide fill:#fef9c3,stroke:#ca8a04,color:#713f12\n  classDef bad fill:#fee2e2,stroke:#b91c1c,color:#7f1d1d\n```\n\n> **Legend** \u2014 **purple** the genotype; **blue** the molecular consequence; **yellow** the three\n> places an approved drug could stand, each a direction below; **red** what goes wrong, and the\n> two dotted boxes are the direction with no drug and the class to be cautious with.\n\n---\n\n## 4. How the candidates were found and graded\n\n### 4.1 The search: one card, seven public sources, no hand-typed query\n\nThe mechanism card (a structured file naming the gene, the two allele classes, the pathway,\nthe disease, the tumour and four *directions* with seed genes) drives every query. The Reactome\npathway map widens the seed genes into 277 targets; Open Targets, ChEMBL and DGIdb list every\ndrug known to act on them (3,859 drug\u2013target rows, **359 market-approved drugs**); openFDA\nconfirms a current US label; ClinicalTrials.gov and PubMed answer the trial and literature\nquestions. Every table carries a manifest with the retrieval time and a digest of every reply,\nand the same command re-runs it for any other case by swapping the card.\n\n### 4.2 The ladder: written before the search\n\nEvery approved drug, on every direction it touches, is placed on **the highest rung it passes**:\n\n| rung | meaning | how it is tested |\n|---|---|---|\n| **5** | approved for a related indication, with paediatric use | approved **and** a registered trial in the child's tumour **and** a paediatric pointer (a label section 8.4, or a registered study admitting children) |\n| **4** | clinical trial in a related indication | a registered trial in the child's tumour |\n| **3** | animal model of the mechanism | a paper, read by a person, with its PubMed id |\n| **2** | cell model of the mechanism | a paper, read by a person, with its PubMed id |\n| **1** | mechanism only | the drug acts on a target in the direction's set \u2014 *named, never submitted* |\n\nTwo rules the ladder prints rather than hides. **Automated and curated tests sit side by side:**\nrungs 4\u20135 are looked up by a program and say \"already being tried in this tumour\"; rungs 2\u20133\ncome from a paper a person read, and the row carries the PubMed id. **Inherited evidence is\nmarked:** when the paper tested a same-axis compound and not the approved drug (the screen used\nAICAR; the approved drug is metformin), the row says `proxy` and names what was tested.\n\n### 4.3 A control the search had to pass: the same child, a different gene\n\nTrack 1 tested every ranker against decoy genes; Track 2 does the same. The mechanism card was\ncopied with the child's clinical side kept and the gene swapped \u2014 once for **NTRK3**, drawn by a\nseeded rule from Track 1's matched decoy set, once for **XDH**, a metabolic enzyme with nothing\nto do with cell division \u2014 and the unchanged pipeline ran on both. Whatever came out for the\ndecoy as readily as for `BUB1B` was nominated by the clinical queries or by database density,\nnot by the mechanism.\n\n![Overlap of each direction's approved drugs with a decoy gene's](../../../figures/track2/decoy-overlap.png)\n\n> **Legend** \u2014 one bar per decoy gene; the dashed yellow line is the pre-registered 0.10\n> threshold. **D4 (the tumour direction) is above it** against NTRK3 (Jaccard 0.25): the\n> cancer pharmacopoeia comes out for any cancer-adjacent gene. **D1\u2013D3 are below it** against\n> both decoys: the mechanism directions are specific to the gene. The consequence, applied:\n> D4 is argued only from curated mechanism results, never from \"this drug has a\n> rhabdomyosarcoma trial\".\n\nThe control also caught a flaw in the first grading run: a rhabdomyosarcoma trial was lifting\ndrugs onto rung 5 on *mechanism* directions (85 drugs, tetracycline among them). A trial in the\ntumour says nothing about a checkpoint; the rule was narrowed to the tumour direction and the\nrun repeated before any verdict \u2014 the change is recorded with before/after counts in entry 113.\n\n---\n\n## 5. The candidates\n\n![Every drug at rung 2 or higher, on every direction it touches](../../../figures/track2/evidence-ladder.png)\n\n> **Legend** \u2014 the number is the rung; **green** a curated result and rung 4\u20135; **yellow** a\n> curated result at rung 2\u20133; **blue** the automated tests alone (already being tried in the\n> tumour \u2014 not a finding of this work); **red** set aside (a spindle poison or the standard\n> chemotherapy); `*` inherited (proxy) evidence. Drugs with a curated result are listed first.\n\n### 5.1 The eleven drugs with a cited mechanism result\n\n| # | drug (approved for) | direction | rung | the cited result | inherited? | given to children? |\n|---|---|---|---|---|---|---|\n| 1 | **lovastatin** (cholesterol) | D4 tumour | 5 | lovastatin itself slowed rhabdomyosarcoma cells; the tumour depends on making its own cholesterol and cannot take it up instead (Gizaw 2025, PMID 41249736). A completed phase-1 study gave a statin with chemotherapy to children with relapsed solid tumours including rhabdomyosarcoma (NCT02390843) | no | label section 8.4; studies admitting children |\n| 2 | **simvastatin** (cholesterol) | D4 | 5 | same class result; it is the statin in NCT02390843 | yes (lovastatin) | studies admitting children |\n| 3 | **nicotinamide** (vitamin B3) | D3 more BubR1 | 3 | the NAD\u207a precursor NMN raised BubR1 in mice, and more SIRT2 (the enzyme that stabilises BubR1) extended the life of BubR1-deficient mice (North 2014, PMID 24825348) | yes (NMN) | studies admitting children |\n| 4 | **niacin** (cholesterol; vitamin B3) | D3 | 3 | same result; niacin is the prescription-strength NAD\u207a precursor | yes (NMN) | studies admitting children |\n| 5 | **chloroquine** (malaria) | D2 stress | 2 | chloroquine itself preferentially killed cells with an extra chromosome in the reference screen (Tang & Amon 2011, PMID 21315436) | **no** | studies admitting children |\n| 6 | **bortezomib** (myeloma) | D2 | 2 | aneuploid human cells depend on degrading proteins faster and are more sensitive to proteasome inhibitors; myeloma patients' aneuploidy tracked their response (Ippolito 2024, PMID 39247952; Chui 2019, PMID 31530568) | yes (the drug class) | label 8.4; studies admitting children |\n| 7 | **valproic acid** (epilepsy) | D3 | 2 | HDAC2/3 strip the acetyl mark that protects BubR1 from being degraded (Park 2017, PMID 28985013; Choi 2009, PMID 19407811); an HDAC inhibitor would be expected to slow that loss \u2014 inferred, not shown | yes (class mechanism) | label 8.4; studies admitting children |\n| 8 | **metformin** (diabetes) | D2 | 2 | the AMPK activator AICAR was aneuploidy-selective in the same screen; metformin is the approved AMPK activator | yes (AICAR) | label 8.4; studies admitting children |\n| 9 | **vorinostat** (lymphoma) | D3 | 2 | same class mechanism as valproic acid | yes | label 8.4; studies admitting children |\n| 10 | **hydroxychloroquine** (lupus, arthritis) | D2 | 2 | chloroquine's result, inherited by its clinical analogue | yes (chloroquine) | label 8.4; studies admitting children |\n| 11 | **atorvastatin** (cholesterol) | D4 | 2 | same class result as lovastatin; carries a paediatric indication on its label | yes (lovastatin) | label 8.4; studies admitting children |\n\nReading the table honestly: **one** drug has a molecule-level animal result on the checkpoint\nitself \u2014 none. The deepest mechanistic lead (D3, more BubR1) rests on one mouse paper and is\ninherited by two vitamin-B3 forms. The best-supported *tumour* lead (statins) has a completed\npaediatric trial behind it and a molecule-level cell result. The only molecule-level\n*aneuploidy* result is chloroquine's.\n\n![How 329 approved drugs shrink to the shortlist](../../../figures/track2/rung-funnel.png)\n\n> **Legend** \u2014 drugs counted once at their best rung; **green** rung 4\u20135 and the shortlist,\n> **yellow** rungs 2\u20133, **grey** rung 1 (named, never submitted). Most of the 62 at rung 5 are\n> there by the automated test alone: approved, trialled in rhabdomyosarcoma, used in children.\n\n### 5.2 Fifty drugs already being tried in rhabdomyosarcoma \u2014 listed, not claimed\n\nFifty more approved drugs reach rung 5 automatically: they have a registered rhabdomyosarcoma\ntrial and a paediatric pointer (dexamethasone, azacitidine, methotrexate, bevacizumab, the\nCDK4/6 and mTOR inhibitors, the checkpoint antibodies\u2026). They are in `shortlist.tsv` with the\nverdict *context trial only \u2013 not a mechanism finding*, because the decoy control showed the\nsame list comes out for a gene that has nothing to do with the checkpoint. They are the tumour's\ntrial landscape, and a reader deserves to see them; they are not this work's finding.\n\n### 5.3 The do-not table\n\n| verdict | drugs | why |\n|---|---|---|\n| **caution** \u2014 spindle poisons (13) | vincristine, vinorelbine, vinblastine, vinflunine, paclitaxel, docetaxel, cabazitaxel, eribulin, ixabepilone, epothilone D, colchicine, brentuximab vedotin, polatuzumab vedotin | these drugs work by jamming the division machinery and *relying on the checkpoint to hold the cell*; MVA cells have a weakened checkpoint and slip through (Suijkerbuijk 2010, PMID 20516114; Sinha 2019, PMID 30601084). Vincristine and vinorelbine are standard rhabdomyosarcoma chemotherapy: **a hypothesis for the treating team to weigh, never advice to withhold treatment** |\n| **do not** \u2014 further checkpoint weakening (0 approved) | Mps1/TTK and Aurora inhibitors | aneuploid cancer cells are selectively killed by weakening the checkpoint further (Cohen-Sharir 2021, PMID 33505028) \u2014 the same logic makes a child whose checkpoint is constitutionally weak the worst possible candidate. None is approved; every one in the candidate table is phase 3 or earlier |\n| **standard of care** (10) | vincristine, dactinomycin, cyclophosphamide, ifosfamide, doxorubicin, etoposide, irinotecan, temozolomide, carboplatin, cisplatin, topotecan | already the treatment for the tumour; giving them is not a repurposing. Named so a reader sees they were considered, not missed |\n\n### 5.4 Has each candidate been given to children?\n\n![Paediatric pointers per shortlisted drug](../../../figures/track2/pediatric-evidence.png)\n\n> **Legend** \u2014 **green** a US label with a *Pediatric Use* section (8.4); **blue** at least one\n> registered study admitting children, in any indication; empty = neither found. Every argued\n> drug has at least one pointer. **A pointer is something to read, never a licence**: a label\n> section can say \"safety not established\", and a study that admits children may have enrolled\n> none.\n\n---\n\n## 6. What this report cannot tell you\n\n1. **Whether any of these drugs helps this child.** Rung 3 is one mouse paper; rung 2 is a dish.\n   The challenge's words hold: hypotheses for follow-up.\n2. **How aneuploid this child is.** The delivered data was tested with a statistic that has no\n   power for mosaic gains; the powered analysis is planned (iteration 2, step 8) and has not\n   run. Direction D2 inherits this gap entirely.\n3. **Whether the weakened BubR1 copy is unstable or inactive.** It sits outside every\n   catalogued domain; the structural model is confident about the region but says nothing about\n   function. D3 is therefore argued as *more BubR1*, not *repair this BubR1*.\n4. **Anything about a drug the public sources never listed** beyond what a person put in the\n   curated table. Four of the eleven argued drugs (chloroquine, hydroxychloroquine, niacin,\n   nicotinamide) are there only because a person read the paper; their rows say `curated_only`.\n5. **The curated rungs are one person's reading of thirteen abstracts on one day.** Every row\n   carries its PubMed id so the reading can be checked.\n6. **DrugBank was not queried** (it needs a licence for programmatic access); Open Targets,\n   ChEMBL, DGIdb, openFDA, Reactome, ClinicalTrials.gov and PubMed were.\n\n---\n\n## 7. Reproducibility\n\nEvery step is one command, case-agnostic (swap the card, get another case), with a manifest:\n\n```bash\nuv run mva-drugs snapshot                       # card \u2192 5 tables, 7 public APIs, cached replies\nuv run python tools/track2_decoys.py ...        # a decoy card and its snapshot (\u00d72)\nuv run python tools/track2_enrich.py            # literature, paediatric trials, labels, ladder, shortlist, do-not, decoy comparison\nuv run python tools/render_track2_figures.py    # the figures in this report\nuv run python tools/record_track2_lineage.py    # 63 lineage edges into the warehouse ledger\n```\n\nRuntime on a laptop: the snapshot ~10 minutes cold (mostly polite waiting between requests),\nthe enrichment ~10 minutes cold, both seconds when cached. Code: the public repository named in\nthe submission form; every table is under `ressources/track2/`, every entry under\n`docs/iteration2/step-7/`. **No patient data appears anywhere in Track 2** \u2014 gene symbols, drug\nnames, trial ids and PubMed ids only; the mechanism card names allele *classes*, never positions.\n\n## 8. Where every claim lives\n\n| claim | register id | verdict \u00b7 confidence | entry |\n|---|---|---|---|\n| D1 yields no submittable drug and becomes the do-not table | H045 | supported \u00b7 0.80 | 113 |\n| D2 holds an approved compound with a molecule-level cell result | H046 | supported \u00b7 0.70 | 113 |\n| D3 has an approved route on the NAD\u207a/SIRT2 axis with animal evidence, by proxy | H047 | supported \u00b7 0.60 | 113 |\n| D4 holds a non-chemotherapy approved drug at rung \u2265 2 with paediatric data | H048 | supported \u00b7 0.80 | 113 |\n| the automated stages are non-specific (a direction overlaps a decoy \u2265 0.10) | H049 | supported \u00b7 0.85 | 112 |\n| every argued drug has a paediatric pointer | H050 | supported \u00b7 0.70 | 113 |\n| no approved drug acts directly on BubR1 | H011 (iteration 1) | supported \u00b7 0.80 | 078 |\n\nConfidence is a transparent triage heuristic printed with its arithmetic, not a calibrated\nprobability; the register is append-only and shows every revision, including one committed too\nearly and corrected in the open (entry 113).\n"
+      },
+      "lineage": {
+        "available": true,
+        "note": "4 edge(s) reached from 2 table(s)",
+        "sources": [
+          {
+            "kind": "raw",
+            "ref": "s3://mva/source/WGS_EX2312012_HGWCNDSX7.vcf.gz",
+            "version": "3a79ea8b-6221-4b8c-b217-94d4344db81f",
+            "sha256": "bec64c68d3ad10d05b8071d07cdf87d217013d66d3ba02e24b505035c9d42175",
+            "note": "the delivered callset, verified on ingest (named from the ledger; the recorded edges do not chain back to it)"
+          },
+          {
+            "kind": "clinical",
+            "ref": "ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md",
+            "version": "8 HPO terms",
+            "sha256": "7d410bb063951c1315a0af27f066a04703468e6021b69e66e99471af84dbf483",
+            "note": "the delivered phenotype; it named no variant but decided which gene was believed"
+          },
+          {
+            "kind": "file",
+            "ref": "submissions/track2/iteration-1/spec.selectors.json",
+            "version": "",
+            "sha256": "",
+            "note": "the committed, coordinate-free selectors the predictions CSV was resolved from"
+          },
+          {
+            "kind": "table",
+            "ref": "results.gene_biallelic",
+            "version": "",
+            "sha256": "",
+            "note": "the biallelic gene set the verdict was drawn from"
+          },
+          {
+            "kind": "table",
+            "ref": "warehouse.hpo_gene_scores",
+            "version": "",
+            "sha256": "",
+            "note": "the phenotype ranking that ordered the candidates"
+          },
+          {
+            "kind": "reference",
+            "ref": "ressources/reference/hpo_gene_scores.tsv",
+            "version": "HPO release hp/releases/2026-06-23, genes_to_phenotype.txt 20,732,778 bytes, 5267 annotated genes, built 2026-09-03T07:42:52+00:00; ontology sha256 a5092cbdf605",
+            "sha256": "26cb7ee00c73b5777f6e5ad43323c941e1fcef1d191592f332d7929f3ea1ab3f",
+            "note": "input to warehouse.hpo_gene_scores"
+          }
+        ],
+        "edges": [
+          {
+            "produced_at": "2026-09-03T09:57:43.305534",
+            "target_schema": "warehouse",
+            "target_table": "hpo_gene_scores",
+            "target_rows": 10520,
+            "source_kind": "file",
+            "source_ref": "ressources/reference/hpo_gene_scores.tsv",
+            "source_version": "HPO release hp/releases/2026-06-23, genes_to_phenotype.txt 20,732,778 bytes, 5267 annotated genes, built 2026-09-03T07:42:52+00:00; ontology sha256 a5092cbdf605",
+            "source_sha256": "26cb7ee00c73b5777f6e5ad43323c941e1fcef1d191592f332d7929f3ea1ab3f",
+            "transform": "tools/build_phenotype_data.py at f486d66: Resnik similarity over the most informative common ancestor, rolled up best-match-average in both directions and normalised by the query set's self-score. Human associations only - no mouse, no zebrafish, no protein-interaction random walk. This is a reimplementation of hiPHIVE's human-only path and is not Exomiser output. Known defect handled: rows whose gene symbol is a placeholder are dropped at parse time; in this release that is 375 rows spanning 7 distinct NCBI gene ids, which would otherwise fuse into one fabricated gene",
+            "tool": "mva-warehouse pg-ingest",
+            "notes": "upstream https://purl.obolibrary.org/obo/hp.obo and https://purl.obolibrary.org/obo/hp/hpoa/genes_to_phenotype.txt; HPO is CC BY 4.0; cite PMID 33264411. NOT Exomiser output: this is a reimplementation of hiPHIVE's human-only phenotype path. Genome Medicine 17:127 (2025), PMID 41121346 Query terms are owned by src/mva/phenotype/terms.py; both term sets are in the table, distinguished by term_set. No patient data of any kind is an input",
+            "is_current": true
+          },
+          {
+            "produced_at": "2026-09-03T09:44:57.784202",
+            "target_schema": "warehouse",
+            "target_table": "hpo_gene_scores",
+            "target_rows": 10520,
+            "source_kind": "file",
+            "source_ref": "ressources/reference/hpo_gene_scores.tsv",
+            "source_version": "HPO release hp/releases/2026-06-23, genes_to_phenotype.txt 20,732,778 bytes, 5267 annotated genes, built 2026-09-03T07:42:52+00:00; ontology sha256 a5092cbdf605",
+            "source_sha256": "26cb7ee00c73b5777f6e5ad43323c941e1fcef1d191592f332d7929f3ea1ab3f",
+            "transform": "tools/build_phenotype_data.py at f486d66: Resnik similarity over the most informative common ancestor, rolled up best-match-average in both directions and normalised by the query set's self-score. Human associations only - no mouse, no zebrafish, no protein-interaction random walk. This is a reimplementation of hiPHIVE's human-only path and is not Exomiser output. Known defect handled: rows whose gene symbol is a placeholder are dropped at parse time; in this release that is 375 rows spanning 7 distinct NCBI gene ids, which would otherwise fuse into one fabricated gene",
+            "tool": "mva-warehouse pg-ingest",
+            "notes": "upstream https://purl.obolibrary.org/obo/hp.obo and https://purl.obolibrary.org/obo/hp/hpoa/genes_to_phenotype.txt; HPO is CC BY 4.0; cite PMID 33264411. NOT Exomiser output: this is a reimplementation of hiPHIVE's human-only phenotype path. Genome Medicine 17:127 (2025), PMID 41121346 Query terms are owned by src/mva/phenotype/terms.py; both term sets are in the table, distinguished by term_set. No patient data of any kind is an input",
+            "is_current": false
+          },
+          {
+            "produced_at": "2026-09-05T15:21:13.845060",
+            "target_schema": "results",
+            "target_table": "gene_biallelic",
+            "target_rows": 667,
+            "source_kind": "table",
+            "source_ref": "warehouse.hpo_gene_scores",
+            "source_version": "",
+            "source_sha256": "",
+            "transform": "SQL derivation gene_biallelic: Which genes carry a candidate biallelic set \u2014 at least two rare protein-altering alleles in heterozygous PASS calls (or two ALTs at one multi-allelic site), or one in a homozygous PASS call \u2014 and where does each such gene rank in the phenotype ranking that never read the callset? Non-PASS alleles are counted separately so a gene one suppressed call short of biallelic is visible rather than dropped.",
+            "tool": "mva-warehouse pg-derive",
+            "notes": "derivation_runs.run_at=2026-09-05 13:20:32.465431",
+            "is_current": true
+          },
+          {
+            "produced_at": "2026-09-05T15:16:13.114167",
+            "target_schema": "results",
+            "target_table": "gene_biallelic",
+            "target_rows": 667,
+            "source_kind": "table",
+            "source_ref": "warehouse.hpo_gene_scores",
+            "source_version": "",
+            "source_sha256": "",
+            "transform": "SQL derivation gene_biallelic: Which genes carry a candidate biallelic set \u2014 at least two rare protein-altering alleles in heterozygous PASS calls (or two ALTs at one multi-allelic site), or one in a homozygous PASS call \u2014 and where does each such gene rank in the phenotype ranking that never read the callset? Non-PASS alleles are counted separately so a gene one suppressed call short of biallelic is visible rather than dropped.",
+            "tool": "mva-warehouse pg-derive",
+            "notes": "derivation_runs.run_at=2026-09-05 13:15:51.013919",
+            "is_current": false
+          }
+        ]
+      },
+      "audit": {
+        "probes": [
+          {
+            "probe_id": 1,
+            "logged_at": "2026-09-09T22:30:50.871848",
+            "track": "1",
+            "probe_type": "F",
+            "submitted_by": "agharsallah",
+            "submission_ref": "submissions/track1/iteration-1/agharsallah_bub1b-comphet-derived.csv (gitignored; sha256 54854a6ef7a2cb6ae67e54ccbf092c5c7d1459993379626c4e59f601f4ad8227)",
+            "payload_sha256": "54854a6ef7a2cb6ae67e54ccbf092c5c7d1459993379626c4e59f601f4ad8227",
+            "n_rows": 8,
+            "response": "Submission 1 | Rank points 100.0/100 | F-max 1.000 | F-max EPCR threshold 0.9963 | Full match at rank 1",
+            "score": 100.0,
+            "rationale": "iteration 1, see submissions/track1/iteration-1: pair at rank 1 tests H009, every other row a decodable alternative (074, 082)"
+          }
+        ],
+        "register": [
+          {
+            "hypothesis_id": "H010",
+            "revision": 1,
+            "status": "proposed",
+            "confidence": null,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-8",
+            "statement": "The disease mechanism in this proband is hypomorphic loss of BUB1B function: one null allele (stop_gained, exon 17 of 23) plus one partly functional allele (kinase-domain missense), leaving reduced BubR1 and a leaky spindle assembly checkpoint; there is no gain-of-function or dominant-negative component."
+          },
+          {
+            "hypothesis_id": "H011",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.8021838885585817,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-8",
+            "statement": "No market-approved drug acts directly on BubR1; approved candidates for this case will come only from pathway neighbours (spindle assembly checkpoint members) and from aneuploidy-stress, proteostasis or tumour-context directions."
+          },
+          {
+            "hypothesis_id": "H045",
+            "revision": 3,
+            "status": "supported",
+            "confidence": 0.8021838885585817,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-7",
+            "statement": "Direction D1 (checkpoint reinforcement) yields no submittable drug: no market-approved molecule strengthens the spindle assembly checkpoint or reduces chromosome missegregation in checkpoint-deficient cells, so every approved D1 candidate the sources return is a checkpoint inhibitor or a spindle poison and D1 becomes the do-not table."
+          },
+          {
+            "hypothesis_id": "H046",
+            "revision": 4,
+            "status": "supported",
+            "confidence": 0.7,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-7",
+            "statement": "Direction D2 (aneuploidy-selective stress) holds at least one market-approved compound with a cited result in aneuploid or checkpoint-deficient cell models, i.e. rung 2 or higher, and that evidence is for the approved molecule itself rather than only for an unapproved tool compound."
+          },
+          {
+            "hypothesis_id": "H047",
+            "revision": 4,
+            "status": "supported",
+            "confidence": 0.6,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-7",
+            "statement": "Direction D3 (BubR1 stabilisation for a hypomorph) has an approved-drug route: a market-approved agent acts on a BubR1-stabilising axis (SIRT2/NAD+ or acetylation) and the axis carries in-vivo evidence of raised BubR1 in a BubR1-insufficient model, i.e. rung 3, possibly through a same-axis proxy compound."
+          },
+          {
+            "hypothesis_id": "H048",
+            "revision": 3,
+            "status": "supported",
+            "confidence": 0.8021838885585817,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-7",
+            "statement": "Direction D4 (the child's tumour context, rhabdomyosarcoma) holds at least one approved, non-cytotoxic agent with a cited mechanistic result in rhabdomyosarcoma models (rung 2 or higher) and with paediatric safety data."
+          },
+          {
+            "hypothesis_id": "H049",
+            "revision": 4,
+            "status": "supported",
+            "confidence": 0.85,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-7",
+            "statement": "The automated stages of the repurposing pipeline are not specific to the mechanism: with the clinical side held fixed and the gene swapped for a decoy (NTRK3, the seeded pick from the step-2 decoy set; XDH, an unrelated metabolic enzyme), at least one of the four directions' approved drug sets overlaps a decoy card's approved set at Jaccard 0.10 or more, so the curated rung, not the automated stage, is what separates candidates."
+          },
+          {
+            "hypothesis_id": "H050",
+            "revision": 4,
+            "status": "supported",
+            "confidence": 0.7,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-7",
+            "statement": "Every drug shortlisted at rung 2 or higher for the BUB1B card has paediatric data: an openFDA label with a pediatric_use section, or a ClinicalTrials.gov study that admits children, in any indication."
           }
         ]
       }

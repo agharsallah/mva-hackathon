@@ -4,7 +4,7 @@ import type { SubmissionIteration } from '../../api/types';
 import { Badge } from '../../components/Badge';
 import { StatTile } from '../../components/StatTile';
 import { cx, WELL } from '../../lib/ui';
-import { blobUrl, iterationKey, STATE_MEANING, STATE_TONE } from './iteration';
+import { blobUrl, iterationKey, PANEL_DELIVERABLES, STATE_MEANING, STATE_TONE } from './iteration';
 
 /**
  * The header strip: which iteration this is, whether it has been sent, and the one number
@@ -14,7 +14,14 @@ import { blobUrl, iterationKey, STATE_MEANING, STATE_TONE } from './iteration';
  * so it is deliberately **not** in the repository. Its sha256 is — a content hash names
  * bytes without carrying them, which is what lets this page talk about the file at all.
  */
-export function IterationHeader({ iteration }: { iteration: SubmissionIteration }) {
+export function IterationHeader({
+  iteration,
+  panelJudged = false,
+}: {
+  iteration: SubmissionIteration;
+  /** A track with no scorer: no predictions file, and the oracle budget is not its to spend. */
+  panelJudged?: boolean;
+}) {
   const { csv, state } = iteration;
   const spent = iteration.audit.probes.length;
 
@@ -41,23 +48,32 @@ export function IterationHeader({ iteration }: { iteration: SubmissionIteration 
       </p>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <StatTile
-          label="predictions CSV"
-          tone="raw"
-          value={
-            <span className="font-mono text-sm break-all" title={csv.sha256 ?? 'not built'}>
-              {csv.sha256 ? `${csv.sha256.slice(0, 16)}…` : '—'}
-            </span>
-          }
-          sub={
-            <>
-              sha256 · {csv.rows ?? '—'} rows ·{' '}
-              <span className="text-raw-300">never committed</span> — it holds real coordinates, so
-              it lives at <span className="font-mono">{csv.path ?? 'build/submission/'}</span>,
-              outside the repository
-            </>
-          }
-        />
+        {panelJudged ? (
+          <StatTile
+            label="how it is judged"
+            tone="machinery"
+            value="panel"
+            sub={PANEL_DELIVERABLES.join(' · ')}
+          />
+        ) : (
+          <StatTile
+            label="predictions CSV"
+            tone="raw"
+            value={
+              <span className="font-mono text-sm break-all" title={csv.sha256 ?? 'not built'}>
+                {csv.sha256 ? `${csv.sha256.slice(0, 16)}…` : '—'}
+              </span>
+            }
+            sub={
+              <>
+                sha256 · {csv.rows ?? '—'} rows ·{' '}
+                <span className="text-raw-300">never committed</span> — it holds real coordinates,
+                so it lives at <span className="font-mono">{csv.path ?? 'build/submission/'}</span>,
+                outside the repository
+              </>
+            }
+          />
+        )}
         <StatTile
           label="oracle budget"
           tone={spent === 0 ? 'good' : 'decision'}
@@ -69,7 +85,10 @@ export function IterationHeader({ iteration }: { iteration: SubmissionIteration 
           }
           sub={
             <>
-              {spent} spent on this iteration · irreversible ·{' '}
+              {panelJudged
+                ? 'Track 2 has no scorer — the six uploads belong to Track 1'
+                : `${spent} spent on this iteration`}{' '}
+              · irreversible ·{' '}
               <Link
                 to="/probes"
                 className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-200"

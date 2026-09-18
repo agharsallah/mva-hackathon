@@ -1,11 +1,15 @@
 /**
- * The Track 2 report, in the order a reader needs it: what is being attempted and how far
- * it has got, what it is linked to, then the argument, then the evidence, then the audit
- * trail that lets someone check all of it.
+ * The Track 2 report, in the order a reader needs it: the answer first, then the argument
+ * behind it, then the evidence, then the machinery and the audit trail that let someone
+ * check all of it.
  *
- * Nothing here is a conclusion. The page is deliberately a *report in progress* — the one
- * suggestion Track 2 ends with is produced after every Track 1 iteration is merged, and
- * saying so at the top is more useful than a ranked list nobody could defend yet.
+ * The page used to open with a strategy timeline and a linked-iterations table, which meant
+ * a reviewer scrolled ~6,000 px before meeting a drug name. The hero now carries the
+ * approach, the suggestion and the output; every panel of it links down into the section
+ * that shows its working, and the process material has moved below the evidence.
+ *
+ * Nothing here is a conclusion. The page ends in a *shortlist* — hypotheses for follow-up,
+ * not evidence that a medicine works — and says so in the hero rather than at the bottom.
  */
 
 import { useMemo } from 'react';
@@ -22,9 +26,11 @@ import { Candidates } from './Candidates';
 import { Catalog } from './Catalog';
 import { Directions } from './Directions';
 import { Grading } from './Grading';
+import { Hero } from './Hero';
 import { Track2LineageView } from './LineageView';
 import { LinkedIterations } from './LinkedIterations';
 import { MechanismCardExhibit } from './MechanismCard';
+import { PathwayDiagram } from './PathwayDiagram';
 import { Register } from './Register';
 import { StrategyTimeline } from './StrategyTimeline';
 import { TargetSet } from './TargetSet';
@@ -39,28 +45,17 @@ export function Report({ result }: { result: Result<Track2> }) {
     <div className="space-y-6">
       <Header data={data} />
 
-      <Section
-        title="Strategy"
-        subtitle="what has run, what can run today, and what is blocked on an oracle reply"
-      >
-        <StrategyTimeline strategy={data.strategy} source={source} />
-      </Section>
-
-      <Section
-        title="Linked Track 1 iterations"
-        subtitle="the submissions whose hypotheses this mechanism argument cites"
-      >
-        <LinkedIterations iterations={data.linked_iterations} />
-      </Section>
+      <Hero data={data} source={source} />
 
       <BeginnerGuide data={data} />
 
       <Section
         title="The mechanism argument"
-        subtitle="the hand-off from Track 1, and the therapeutic angles it allows"
+        subtitle="the hand-off from Track 1, where each therapeutic angle attaches to it, and what it allows"
       >
         <div className="space-y-6">
           <MechanismCardExhibit card={data.card} source={source} />
+          <PathwayDiagram data={data} source={source} />
           <Directions
             directions={data.card.repurposing_directions}
             summary={data.summary}
@@ -103,6 +98,17 @@ export function Report({ result }: { result: Result<Track2> }) {
             source={source}
           />
         </div>
+      </Section>
+
+      <Section title="Strategy" subtitle="how this page was produced, phase by phase">
+        <StrategyTimeline strategy={data.strategy} source={source} />
+      </Section>
+
+      <Section
+        title="Linked Track 1 iterations"
+        subtitle="the submissions whose hypotheses this mechanism argument cites"
+      >
+        <LinkedIterations iterations={data.linked_iterations} />
       </Section>
 
       <Section
@@ -168,7 +174,7 @@ function Header({ data }: { data: Track2 }) {
         label="strategy"
         tone="decision"
         value={`${done} / ${data.strategy.length}`}
-        sub="phases done — the final suggestion waits for every Track 1 iteration"
+        sub="phases done — the shortlist above is the current suggestion; one upload, not yet made"
       />
     </div>
   );

@@ -1,7 +1,9 @@
 import type { Result } from '../../api/client';
 import type { Submissions } from '../../api/types';
+import { Badge } from '../../components/Badge';
 import { Section, Select } from '../../components/Controls';
 import { EmptyState } from '../../components/EmptyState';
+import { cx, RULE, WELL } from '../../lib/ui';
 import { useUrlState } from '../../lib/urlstate';
 import { Artifacts } from './Artifacts';
 import { AuditTrail } from './AuditTrail';
@@ -10,9 +12,10 @@ import { Contributions } from './Contributions';
 import { DecodeExhibit } from './DecodeExhibit';
 import { DerivationExhibit } from './DerivationExhibit';
 import { EpcrLadder } from './EpcrLadder';
-import { iterationKey, newestFirst } from './iteration';
+import { isPanelJudged, iterationKey, newestFirst, PANEL_DELIVERABLES } from './iteration';
 import { IterationHeader } from './IterationHeader';
 import { LineageView } from './LineageView';
+import { PanelGuide } from './PanelGuide';
 import { Paperwork } from './Paperwork';
 import { ReplyOdds } from './ReplyOdds';
 import { SelectorsExhibit } from './SelectorsExhibit';
@@ -32,6 +35,9 @@ export function Dossier({ result }: { result: Result<Submissions> }) {
   const [picked, setPicked] = useUrlState('it', keys[0] ?? '', keys);
   const iteration = iterations.find((i) => iterationKey(i) === picked) ?? iterations[0];
   const source = result.source;
+  // A panel-judged track has no scorer, so the decode table, the epcr ladder and the
+  // selectors have nothing to describe — see `isPanelJudged`.
+  const panel = iteration ? isPanelJudged(iteration) : false;
 
   if (!iteration) {
     return (
@@ -67,9 +73,9 @@ export function Dossier({ result }: { result: Result<Submissions> }) {
         <span className="font-mono">submissions/README.md</span>.
       </p>
 
-      <IterationHeader iteration={iteration} />
+      <IterationHeader iteration={iteration} panelJudged={panel} />
 
-      <BeginnerGuide iteration={iteration} />
+      {panel ? <PanelGuide iteration={iteration} /> : <BeginnerGuide iteration={iteration} />}
 
       <Section
         title="Two inputs, one answer"
@@ -78,26 +84,37 @@ export function Dossier({ result }: { result: Result<Submissions> }) {
         <TwoInputs iteration={iteration} source={source} />
       </Section>
 
-      <Section
-        title="What every possible reply would mean"
-        subtitle="the submission read as a measurement, before it is spent"
-      >
-        <div className="space-y-6">
-          <DecodeExhibit table={iteration.decode_table} source={source} />
-          <ReplyOdds table={iteration.decode_table} source={source} />
-        </div>
-      </Section>
+      {panel ? (
+        <Section
+          title="What the panel receives"
+          subtitle="a panel-judged track: no predictions file, no decode table, no selectors — people read it"
+        >
+          <PanelHandover />
+        </Section>
+      ) : (
+        <>
+          <Section
+            title="What every possible reply would mean"
+            subtitle="the submission read as a measurement, before it is spent"
+          >
+            <div className="space-y-6">
+              <DecodeExhibit table={iteration.decode_table} source={source} />
+              <ReplyOdds table={iteration.decode_table} source={source} />
+            </div>
+          </Section>
 
-      <Section
-        title="What is being claimed"
-        subtitle="the submitted rows and the alleles behind them, with no coordinate anywhere"
-      >
-        <div className="space-y-6">
-          <EpcrLadder selectors={iteration.selectors} source={source} />
-          <SelectorsExhibit selectors={iteration.selectors} source={source} />
-          <DerivationExhibit selectors={iteration.selectors} source={source} />
-        </div>
-      </Section>
+          <Section
+            title="What is being claimed"
+            subtitle="the submitted rows and the alleles behind them, with no coordinate anywhere"
+          >
+            <div className="space-y-6">
+              <EpcrLadder selectors={iteration.selectors} source={source} />
+              <SelectorsExhibit selectors={iteration.selectors} source={source} />
+              <DerivationExhibit selectors={iteration.selectors} source={source} />
+            </div>
+          </Section>
+        </>
+      )}
 
       <Section
         title="Which steps contributed"
@@ -129,6 +146,31 @@ export function Dossier({ result }: { result: Result<Submissions> }) {
           <Paperwork iteration={iteration} source={source} />
         </div>
       </Section>
+    </div>
+  );
+}
+
+/**
+ * What a panel-judged iteration hands over, in place of the three scored-submission
+ * sections. Stated rather than left blank: an absent decode table is a rule of the track,
+ * not a gap in the work.
+ */
+function PanelHandover() {
+  return (
+    <div className={cx(WELL, 'space-y-2 border-l-2', RULE.machinery)} data-testid="panel-handover">
+      <p className="max-w-[90ch] font-serif text-note leading-relaxed text-chrome-300">
+        This track is <strong className="text-chrome-100">panel-judged</strong>: there is no scorer
+        to upload to, so this folder carries no predictions CSV, no decode table and no
+        coordinate-free selectors. Four things are handed over instead, and all four are in the
+        repository.
+      </p>
+      <ul className="flex flex-wrap gap-2">
+        {PANEL_DELIVERABLES.map((d) => (
+          <li key={d}>
+            <Badge tone="machinery">{d}</Badge>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

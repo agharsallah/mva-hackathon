@@ -195,6 +195,72 @@ describe('the beginner guide', () => {
   }, 20000);
 });
 
+describe('a panel-judged iteration (Track 2)', () => {
+  const ITERATION_T2 = '?it=track2%2Fiteration-1';
+
+  it('renders the folder with no decode table, no CSV and no selectors', async () => {
+    const { caught } = await mountModule(submissions, ITERATION_T2);
+    expect(caught).toBeNull();
+
+    // Track 2 has no scorer, so the three scored-submission sections are absent *by rule* —
+    // and the page says which four things a panel gets instead, rather than drawing a gap.
+    expect(
+      screen.queryByRole('heading', { name: /What every possible reply would mean/ }),
+    ).toBeNull();
+    expect(screen.queryByRole('heading', { name: /What is being claimed/ })).toBeNull();
+    expect(screen.queryByText(/decode table below is that design/)).toBeTruthy();
+    expect(document.querySelectorAll('tr[data-tone]').length).toBe(0);
+
+    const handover = screen.getByTestId('panel-handover');
+    for (const item of ['the report (PDF)', 'the repository', 'a 3-minute video'])
+      expect(handover.textContent).toContain(item);
+
+    // The predictions-CSV tile is replaced, not emptied.
+    expect(screen.getAllByText('panel').length).toBeGreaterThan(0);
+  }, 20000);
+
+  it('lists the deliverables the folder actually holds, and who contributed them', async () => {
+    await mountModule(submissions, ITERATION_T2);
+
+    const body = document.body.textContent ?? '';
+    for (const file of [
+      'report.md',
+      'agharsallah_track2_report.pdf',
+      'methods-form.json',
+      'agharsallah_track2_methods_form.xlsx',
+      'pitch-script.md',
+      'README.md',
+    ])
+      expect(body, `no ${file} in the deliverables`).toContain(file);
+
+    // The contributions table is the link back into the append-only record.
+    expect(
+      screen.getAllByRole('heading', { name: 'Which steps contributed' }).length,
+    ).toBeGreaterThan(0);
+    expect(body).toContain('iteration 2, step 7');
+  }, 20000);
+
+  it('walks a panel-judged folder in six steps, built from its own payload', async () => {
+    await mountModule(submissions, ITERATION_T2);
+
+    const guide = screen.getByTestId('beginner-guide');
+    expect(guide.querySelectorAll('li').length).toBe(6);
+    const text = guide.textContent ?? '';
+    expect(text).toContain('Nothing here is scored by a program');
+    expect(text).toContain('3-minute video');
+    // Every number is the payload's own.
+    expect(text).toContain('6 files');
+
+    const slugs = [...guide.querySelectorAll('a[href]')]
+      .map((a) => a.getAttribute('href') ?? '')
+      .filter((href) => href.includes('/learn#'))
+      .map((href) => href.split('#')[1]!);
+    const dictionary = await loadDictionary();
+    const known = new Set(entriesOf(dictionary).map((e) => e.slug));
+    expect(slugs.filter((slug) => !known.has(slug))).toEqual([]);
+  }, 30000);
+});
+
 describe('the two submission figures', () => {
   it('draws the rank ladder with one bar per submitted row, over the point tiers', async () => {
     await mountModule(submissions, ITERATION_1);
