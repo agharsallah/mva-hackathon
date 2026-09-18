@@ -84,6 +84,16 @@ def for_gene(
     term. Filtering to "interesting" papers here would hide the denominator the decoy
     comparison needs: a decoy gene with many one-term papers and no five-term paper is
     precisely the shape the null is measuring.
+
+    **The matched-term count is computed over the first page of each search, not over
+    every page**, and that is a real limit on what a high count can mean. A paper reaching
+    five terms had to rank in the top ten of five separate relevance-sorted searches; a
+    paper buried at rank 200 for one of the terms is invisible to this count even if it
+    discusses that feature. The per-term *totals* in :attr:`GeneAnchors.hits_per_term` are
+    complete across all pages, so the two numbers are not symmetric and a caller must not
+    read one as the denominator of the other. Paging every query would multiply a pass
+    that already takes 5,705 requests; the cut is deliberate, and it applies identically to
+    the decoys, which is what keeps the comparison fair.
     """
     found: dict[str, dict[str, Any]] = {}
     matched: dict[str, list[str]] = {}

@@ -119,7 +119,11 @@ export default function Step5Page() {
                 {agreement && (
                   <>
                     Against the citation baseline, <strong>rho = {stat(agreement.rho)}</strong> and
-                    the two top-{agreement.k} sets share {agreement.overlap} genes.{' '}
+                    the two top-{agreement.k} sets share {agreement.overlap} genes
+                    {(agreement.tied_at_k ?? 0) > agreement.k
+                      ? ` — with ${agreement.tied_at_k} genes tied on the score that decides entry to the top ${agreement.k}, so that overlap is partly alphabetical`
+                      : ''}
+                    .{' '}
                   </>
                 )}
                 <strong>{route?.verdict}</strong>

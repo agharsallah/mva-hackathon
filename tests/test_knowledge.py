@@ -243,6 +243,13 @@ class TestBaselines:
         reversed_scores = [(name, -score) for name, score in self.KNOWLEDGE]
         assert baselines.agreement(self.KNOWLEDGE, reversed_scores).reorders
 
+    def test_a_top_k_cut_out_of_a_tie_says_how_wide_the_tie_was(self) -> None:
+        flat = [("A", 1.0), ("B", 1.0), ("C", 1.0), ("D", 1.0), ("E", 1.0), ("F", 1.0)]
+        assert baselines.tied_at(flat, 5) == 6
+        assert baselines.agreement(flat, flat).tied_at_k == 6
+        # A score with no tie at the boundary reports one.
+        assert baselines.tied_at(self.KNOWLEDGE, 5) == 1
+
     def test_a_correlation_over_fewer_than_three_shared_names_is_not_reported(self) -> None:
         assert baselines.spearman([("A", 1.0), ("B", 2.0)], [("A", 1.0), ("B", 2.0)]) == 0.0
 

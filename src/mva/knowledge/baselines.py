@@ -31,7 +31,16 @@ from dataclasses import dataclass
 
 from ..pipeline.nulls import Separation, separation
 
-__all__ = ["Agreement", "RouteWeight", "agreement", "ranks", "spearman", "top_k_overlap", "weigh"]
+__all__ = [
+    "Agreement",
+    "RouteWeight",
+    "agreement",
+    "ranks",
+    "spearman",
+    "tied_at",
+    "top_k_overlap",
+    "weigh",
+]
 
 #: The leader set the overlap is measured on. Five is what the plan pre-registered.
 TOP_K = 5
@@ -51,6 +60,13 @@ class Agreement:
     #: The leaders of each ordering, so a reader can see *which* gene moved.
     left_top: tuple[str, ...] = ()
     right_top: tuple[str, ...] = ()
+    #: How many genes sit on the score that decides entry to the left ordering's top k.
+    #:
+    #: A coarse score ties heavily, and a top-k set cut out of a tie is decided by whatever
+    #: the sort falls back on — here the gene symbol, which carries nothing. When this
+    #: number is larger than the number of slots the tie is filling, the overlap statistic
+    #: is partly alphabetical and must be read with that said out loud.
+    tied_at_k: int = 0
 
     @property
     def reorders(self) -> bool:
@@ -143,6 +159,21 @@ def top_k_overlap(
     return len(set(left_top) & set(right_top)), left_top, right_top
 
 
+def tied_at(scores: Sequence[tuple[str, float]], k: int = TOP_K) -> int:
+    """How many genes share the score that decides entry to the top ``k``.
+
+    Reported rather than resolved. A knowledge score built on a matched-term count takes a
+    handful of values, so the k-th place is often a tie of dozens, and which of them the
+    sort admits is decided by the gene symbol. That does not make the overlap statistic
+    wrong; it makes it partly alphabetical, and a reader has to be told which.
+    """
+    ordered = sorted(scores, key=lambda row: -row[1])
+    if len(ordered) < k:
+        return len(ordered)
+    boundary = ordered[k - 1][1]
+    return sum(1 for _, score in ordered if score == boundary)
+
+
 def agreement(
     knowledge: Sequence[tuple[str, float]],
     citations: Sequence[tuple[str, float]],
@@ -158,6 +189,7 @@ def agreement(
         genes=len(shared),
         left_top=left_top,
         right_top=right_top,
+        tied_at_k=tied_at(knowledge, k),
     )
 
 

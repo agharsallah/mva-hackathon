@@ -143,6 +143,7 @@ def main(argv: list[str] | None = None) -> int:
             "k": weight.agreement.k,
             "knowledge_top": list(weight.agreement.left_top),
             "citation_top": list(weight.agreement.right_top),
+            "tied_at_k": weight.agreement.tied_at_k,
             "reorders": weight.agreement.reorders,
             "verdict": weight.agreement.verdict,
         },

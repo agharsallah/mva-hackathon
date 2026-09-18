@@ -186,6 +186,8 @@ export interface Step5Payload {
       k: number;
       knowledge_top: string[];
       citation_top: string[];
+      /** How many genes share the score that decides entry to the top k. */
+      tied_at_k?: number;
       reorders: boolean;
       verdict: string;
     };
