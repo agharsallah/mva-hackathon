@@ -25,6 +25,7 @@ def do_hypothesis_add(args) -> int:
             gene=args.gene or "",
             path=args.path or "",
             author=args.by or "",
+            iteration=getattr(args, "iteration", "") or "",
         )
     except (ValueError, KeyError) as problem:
         print(f"error: {problem}", file=sys.stderr)
@@ -33,7 +34,7 @@ def do_hypothesis_add(args) -> int:
     with context.attached(settings) as connection:
         hypothesis_module.ensure_table(connection, settings.schema)
         stored = hypothesis_module.propose(connection, settings.schema, claim)
-    print(f"recorded {stored.hypothesis_id} under {stored.step}")
+    print(f"recorded {stored.hypothesis_id} under {stored.filed_under}/{stored.step}")
     return 0
 
 

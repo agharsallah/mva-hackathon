@@ -15,7 +15,7 @@ from mva.science.hypothesis import Hypothesis, _hydrate
 def test_every_iteration_has_a_map_and_the_current_one_is_selected():
     assert steps.ITERATION in steps.STEPS_BY_ITERATION
     assert steps.STEPS is steps.STEPS_BY_ITERATION[steps.ITERATION]
-    assert steps.iterations() == ("iteration1", "iteration2")
+    assert steps.iterations() == ("iteration1", "iteration2", "iteration4")
 
 
 def test_a_research_step_folders_under_its_own_iteration():

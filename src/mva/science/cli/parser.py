@@ -54,7 +54,16 @@ def _write_verbs(subparsers: argparse._SubParsersAction) -> None:
         "hypothesis-add", help="propose a claim (needs a prediction and a refutation condition)"
     )
     add.add_argument(
-        "--step", required=True, choices=[s.slug for s in steps_module.research_steps()]
+        "--step", required=True, choices=list(steps_module.research_slugs_everywhere())
+    )
+    add.add_argument(
+        "--iteration",
+        default="",
+        choices=["", *steps_module.iterations()],
+        help=(
+            "which iteration's step map --step names; default: the current one "
+            f"({steps_module.ITERATION}). Slugs restart at step-1 every iteration."
+        ),
     )
     add.add_argument("--statement", required=True, help="the falsifiable claim")
     add.add_argument(

@@ -30,6 +30,7 @@ mva-science = "mva.science.cli:main"
 mva-reads = "mva.reads.cli:main"
 mva-reads-api = "mva.reads.api.serve:main"
 mva-viz-api = "mva.viz.serve:main"
+mva-zoo = "mva.zoo.cli:main"
 
 [dependency-groups]
 bench = [
@@ -203,7 +204,7 @@ type = "layers"
 layers = [
     "mva.viz",
     "mva.explore | mva.report",
-    "mva.science",
+    "mva.science | mva.zoo",
     "mva.reads",
     "mva.warehouse",
     "mva.knowledge",
@@ -248,5 +249,6 @@ source_modules = [
     "mva.render",
     "mva.science",
     "mva.warehouse",
+    "mva.zoo",
 ]
 forbidden_modules = ["mva.viz"]
