@@ -156,6 +156,12 @@ TABLE_FACTS: dict[str, TableFact] = {
         "Gives every QC metric a cited healthy range, turning 'is this number normal?' "
         "into a join instead of an opinion.",
     ),
+    "cytoband_arms": TableFact(
+        STAGED,
+        "Marks where each chromosome's short arm ends, so a mosaic-fraction test can be "
+        "run per arm instead of per whole chromosome — an event confined to one arm "
+        "disappears into a whole-chromosome average without this boundary.",
+    ),
     "hpo_term_ic": TableFact(
         STAGED,
         "Prices every clinical feature. A symptom shared by thousands of genes proves "
