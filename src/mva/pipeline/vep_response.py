@@ -87,6 +87,23 @@ class VepRecord:
     gene: str | None = None
     consequence: str | None = None
     impact: str | None = None
+    #: The transcript every per-transcript field below describes — the one
+    #: :func:`best_transcript` picked, named by its stable Ensembl id.
+    transcript: str | None = None
+    #: HGVS notation (the standard way to spell a change in text, agreed by the Human
+    #: Genome Variation Society) at cDNA level, e.g. ``ENST00000287152.4:c.2211C>G``.
+    #: Present only when the request asked for ``hgvs=1``; the field every precomputed
+    #: score table is keyed on.
+    hgvsc: str | None = None
+    #: The same change spelled at protein level, e.g. ``ENSP00000287152.4:p.Tyr737Ter``.
+    #: ``None`` for a change with no protein consequence (intronic, synonymous in some
+    #: releases, non-coding transcript).
+    hgvsp: str | None = None
+    #: UniProt/SwissProt accession of the protein the transcript codes for, isoform suffix
+    #: stripped (``P04637.4`` → ``P04637``). Ensembl ids name a *transcript*; a precomputed
+    #: protein score table is indexed by the *protein*, so this is the join key on that
+    #: side. Present only when the request asked for ``uniprot=1``.
+    uniprot: str | None = None
     gnomad_af: float | None = None
     gnomad_af_grpmax: float | None = None
     clin_sig: tuple[str, ...] = ()
@@ -128,6 +145,10 @@ def parse(item: dict, variant: Variant, genes: frozenset[str] = frozenset()) -> 
         gene=gene,
         consequence=item.get("most_severe_consequence"),
         impact=impact,
+        transcript=(transcript or {}).get("transcript_id"),
+        hgvsc=(transcript or {}).get("hgvsc"),
+        hgvsp=(transcript or {}).get("hgvsp"),
+        uniprot=_uniprot(transcript),
         gnomad_af=overall,
         gnomad_af_grpmax=grpmax,
         clin_sig=_clin_sig(item, allele),
@@ -283,6 +304,24 @@ def _exon(transcript: dict | None) -> tuple[int | None, int | None]:
         return int(index), int(total)
     except ValueError:
         return None, None
+
+
+def _uniprot(transcript: dict | None) -> str | None:
+    """The transcript's SwissProt accession, isoform suffix stripped.
+
+    VEP returns ``swissprot`` as a **list** — one protein can have several reviewed
+    accessions — and versions them (``P04637.4``). The first entry is Ensembl's primary
+    mapping, and the version is dropped because the score tables that key on this field
+    (ESM1b's per-protein files) are indexed by the bare accession.
+    """
+    entries = (transcript or {}).get("swissprot") or []
+    if isinstance(entries, str):
+        entries = [entries]
+    for entry in entries:
+        name = str(entry).strip()
+        if name:
+            return name.split(".")[0]
+    return None
 
 
 def _number(value: object) -> float | None:
