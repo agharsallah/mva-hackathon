@@ -34,12 +34,11 @@ that over every committed manifest.
 
 import csv
 import gzip
-import json
 import subprocess
 from collections.abc import Iterable
 from pathlib import Path
 
-from . import refprovenance
+from .manifestbase import committed, envelope, fileinput, output
 
 #: The versioned gnomAD constraint object. The release lives in the path, so the URL and
 #: the release cannot disagree; ``tools/build_reference_data.py`` fetches this exact URL.
@@ -52,6 +51,12 @@ GNOMAD_RELEASE = "4.1"
 #: The ClinVar GRCh38 VCF. **Not** versioned — this URL always serves the current
 #: release, which is why the release below is read from the file's ``##fileDate``.
 CLINVAR_URL = "https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz"
+
+#: UCSC's GRCh38 cytogenetic band table. Not versioned by URL — hg38's bands have been
+#: stable since the assembly was released, so the release below is the assembly name and
+#: the digest of the downloaded bytes is what actually pins it.
+CYTOBAND_URL = "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz"
+CYTOBAND_RELEASE = "hg38 / GRCh38"
 
 GNOMAD_METHOD = (
     "One row per gene: the upstream file's Ensembl rows are kept where canonical == true "
@@ -101,6 +106,11 @@ QC_LICENCE = (
     "cited by PMID and DOI. The paraphrases are this repository's own text."
 )
 
+CYTOBAND_LICENCE = (
+    "UCSC Genome Browser data are free for any use; the cytogenetic band table is derived "
+    "from published ideograms and carries no restriction on redistribution."
+)
+
 PATIENT_DATA = (
     "none. Public reference data only - a gene, a transcript, a published classification "
     "or a literature range. This manifest records URLs, releases, digests and counts."
@@ -111,66 +121,17 @@ PATIENT_DATA = (
 BED_ROLE = "the gene panel: the intervals queried, and the symbols coverage is reported against"
 
 
-def repo_relative(path: Path) -> str:
-    """``ressources/reference/qc_norms.tsv``, not ``/Users/someone/checkout/…``.
-
-    Every path a manifest records is written relative to the repository root when it is
-    under it, because an absolute path names one laptop. ``mva.viz.refprovenance`` reads
-    the manifests through relative paths for the same reason. A path outside the tree —
-    the gitignored scratch download, if it was pointed elsewhere — is kept as it is,
-    since a relative form of it would be a lie about where the bytes were.
-    """
-    try:
-        return path.resolve().relative_to(Path.cwd().resolve()).as_posix()
-    except ValueError:
-        return path.as_posix()
-
-
-def _fileinput(path: Path, name: str, url: str, role: str, release: str | None = None) -> dict:
-    """One input, digested when the file is on disk and honestly empty when it is not."""
-    sha, size = refprovenance.digest(path) if path.is_file() else (None, None)
-    entry = {
-        "name": name,
-        "url": url,
-        "release": release,
-        "sha256": sha,
-        "bytes": size,
-        "role": role,
-    }
-    if sha is None:
-        entry["known_gap"] = (
-            f"{repo_relative(path)} was not on disk when this manifest was written, so its "
-            "digest and byte count are null rather than copied from a previous run. "
-            "Re-run the build with the scratch download present to record them."
-        )
-    return entry
-
-
-def _committed(path: Path, role: str) -> dict:
-    """An input that lives in the repository, addressed as a ``file://`` URL."""
-    where = repo_relative(path)
-    return _fileinput(path, where, f"file://{where}", role)
-
-
-def _output(path: Path) -> dict:
-    """One output, as ``{path, sha256, bytes, rows}``. Rows exclude the header line."""
-    sha, size = refprovenance.digest(path)
-    with path.open(encoding="utf-8") as stream:
-        rows = max(sum(1 for _ in stream) - 1, 0)
-    return {"path": repo_relative(path), "sha256": sha, "bytes": size, "rows": rows}
-
-
-def _envelope(name: str, built_by: str) -> dict:
-    """The five fields every manifest in this repository opens with."""
-    return {
-        "name": name,
-        "built_at": refprovenance.now(),
-        "built_by": built_by,
-        "code_version": refprovenance.code_version(),
-        "code_version_note": (
-            "the commit at build time, which precedes the commit that lands this file"
-        ),
-    }
+CYTOBAND_METHOD = (
+    "One row per canonical contig, reduced from the band table's ~1,200 rows. The "
+    "centromere is the span of the bands stained acen — there are always two, one either "
+    "side of the constriction — so p_end is the first acen start and q_start is the last "
+    "acen end; that is the definition of an arm boundary rather than a threshold. "
+    "chrom_length is the largest band end on the contig, which is the assembly length the "
+    "band table itself asserts. acrocentric is read from the file's own stain column: a "
+    "chromosome carrying a stalk band on its short arm (13, 14, 15, 21, 22) has no "
+    "callable p arm, and step 8 reports it q-arm-only. Alternate haplotypes and patch "
+    "contigs are dropped: they have no centromere and no arms."
+)
 
 
 def clinvar_release(vcf: Path) -> str | None:
@@ -213,18 +174,18 @@ def bcftools_version() -> str | None:
 
 def gnomad(out: Path, source: Path, bed: Path) -> dict:
     """The manifest for ``gnomad_constraint.tsv``."""
-    written = _output(out)
-    return _envelope("gnomad_constraint", "tools/build_reference_data.py gnomad") | {
+    written = output(out)
+    return envelope("gnomad_constraint", "tools/build_reference_data.py gnomad") | {
         "method": GNOMAD_METHOD,
         "inputs": [
-            _fileinput(
+            fileinput(
                 source,
                 "gnomAD v4.1 constraint metrics",
                 GNOMAD_URL,
                 "observed-vs-expected damage counts per transcript",
                 release=GNOMAD_RELEASE,
             ),
-            _committed(bed, BED_ROLE),
+            committed(bed, BED_ROLE),
         ],
         "outputs": [written],
         "licence": GNOMAD_LICENCE,
@@ -240,9 +201,9 @@ def gnomad(out: Path, source: Path, bed: Path) -> dict:
 
 def clinvar(out: Path, source: Path, index: Path, bed: Path) -> dict:
     """The manifest for ``clinvar_panel.tsv``."""
-    written = _output(out)
+    written = output(out)
     release = clinvar_release(source)
-    vcf = _fileinput(
+    vcf = fileinput(
         source,
         "ClinVar GRCh38 VCF",
         CLINVAR_URL,
@@ -260,18 +221,18 @@ def clinvar(out: Path, source: Path, index: Path, bed: Path) -> dict:
             "##fileDate is the only authoritative release and the file was not readable "
             "when this manifest was written. "
         ) + str(vcf.get("known_gap", ""))
-    return _envelope("clinvar_panel", "tools/build_reference_data.py clinvar") | {
+    return envelope("clinvar_panel", "tools/build_reference_data.py clinvar") | {
         "method": CLINVAR_METHOD,
         "inputs": [
             vcf,
-            _fileinput(
+            fileinput(
                 index,
                 "ClinVar GRCh38 VCF index",
                 CLINVAR_URL + ".tbi",
                 "the tabix index the region queries need",
                 release=release,
             ),
-            _committed(bed, BED_ROLE),
+            committed(bed, BED_ROLE),
         ],
         "outputs": [written],
         "tool": bcftools_version(),
@@ -286,11 +247,37 @@ def clinvar(out: Path, source: Path, index: Path, bed: Path) -> dict:
     }
 
 
+def cytobands(out: Path, source: Path) -> dict:
+    """The manifest for ``cytoband_arms.tsv``."""
+    written = output(out)
+    return envelope("cytoband_arms", "tools/build_cytobands.py") | {
+        "method": CYTOBAND_METHOD,
+        "inputs": [
+            fileinput(
+                source,
+                "UCSC hg38 cytoBand",
+                CYTOBAND_URL,
+                "cytogenetic band intervals and stains, from which the arm boundaries come",
+                release=CYTOBAND_RELEASE,
+            )
+        ],
+        "outputs": [written],
+        "licence": CYTOBAND_LICENCE,
+        "patient_data": PATIENT_DATA,
+        "note": (
+            f"{written['rows']} contigs: 22 autosomes plus X and Y. The positions here are "
+            "reference geometry — where a centromere sits in GRCh38 — and say nothing about "
+            "any sample, which is why the table is committed while every table derived from "
+            "the child's callset is not."
+        ),
+    }
+
+
 def qc_norms(out: Path) -> dict:
     """The manifest for ``qc_norms.tsv``, whose inputs are the citations it carries."""
-    written = _output(out)
+    written = output(out)
     inputs = list(citations(out))
-    return _envelope("qc_norms", "tools/build_reference_data.py qc-norms") | {
+    return envelope("qc_norms", "tools/build_reference_data.py qc-norms") | {
         "method": QC_METHOD,
         "inputs": inputs,
         "outputs": [written],
@@ -344,10 +331,3 @@ def _bed_genes(bed: Path) -> int:
         for line in bed.read_text(encoding="utf-8").splitlines()
         if line and not line.startswith(("#", "track", "browser"))
     )
-
-
-def write(manifest: dict, path: Path) -> Path:
-    """Write one manifest as pretty JSON with a trailing newline. Returns ``path``."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
-    return path

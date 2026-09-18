@@ -27,7 +27,7 @@ from pathlib import Path
 
 import pytest
 
-from mva.viz import referencemanifest, refprovenance
+from mva.viz import manifestbase, referencemanifest, refprovenance
 
 #: The keys ``ReferenceProvenanceRow`` declares, duplicated from the reader's suite so a
 #: writer that stops normalising fails here too rather than only there.
@@ -89,7 +89,7 @@ def written(manifest: dict, tmp_path: Path, name: str) -> dict:
     """
     directory = tmp_path / "reference"
     directory.mkdir(exist_ok=True)
-    referencemanifest.write(manifest, directory / f"{name}.provenance.json")
+    manifestbase.write(manifest, directory / f"{name}.provenance.json")
     (row,) = refprovenance.rows(directory, ())
     return row
 
@@ -102,12 +102,12 @@ def test_a_path_inside_the_repository_is_recorded_relative_to_it(tmp_path, monke
     (tmp_path / "ressources").mkdir()
     inside = tmp_path / "ressources" / "table.tsv"
     inside.write_text("x", encoding="utf-8")
-    assert referencemanifest.repo_relative(inside) == "ressources/table.tsv"
+    assert manifestbase.repo_relative(inside) == "ressources/table.tsv"
 
 
 def test_a_path_outside_the_repository_keeps_the_path_it_has(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path / "..")
-    assert referencemanifest.repo_relative(Path("/var/data/clinvar.vcf.gz")) == (
+    assert manifestbase.repo_relative(Path("/var/data/clinvar.vcf.gz")) == (
         "/var/data/clinvar.vcf.gz"
     )
 
@@ -266,7 +266,7 @@ def test_the_qc_norms_manifest_normalises_onto_the_row_shape(tmp_path):
 
 
 def test_write_produces_indented_json_with_a_trailing_newline(tmp_path):
-    path = referencemanifest.write({"name": "x"}, tmp_path / "deep" / "x.provenance.json")
+    path = manifestbase.write({"name": "x"}, tmp_path / "deep" / "x.provenance.json")
     text = path.read_text(encoding="utf-8")
     assert text.endswith("}\n")
     assert json.loads(text) == {"name": "x"}

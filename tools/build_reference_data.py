@@ -39,7 +39,7 @@ import sys
 import urllib.request
 from pathlib import Path
 
-from mva.viz import referencemanifest
+from mva.viz import manifestbase, referencemanifest
 
 REPO = Path(__file__).resolve().parent.parent
 DEFAULT_SCRATCH = REPO / "build" / "reference-scratch"
@@ -84,7 +84,7 @@ def manifest(built: dict, out: Path) -> Path:
     Written on every run, never by hand: a manifest a human edits is a claim, and a claim
     about provenance is exactly the thing that must not be one.
     """
-    path = referencemanifest.write(built, out.with_suffix(".provenance.json"))
+    path = manifestbase.write(built, out.with_suffix(".provenance.json"))
     sha = built["outputs"][0]["sha256"]
     print(f"manifest {path}  (describes {out.name} sha256 {sha[:8]}…)")
     return path

@@ -1,0 +1,29 @@
+{
+  "name": "cytoband_arms",
+  "built_at": "2026-09-18T18:57:31+00:00",
+  "built_by": "tools/build_cytobands.py",
+  "code_version": "7927f45",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "One row per canonical contig, reduced from the band table's ~1,200 rows. The centromere is the span of the bands stained acen \u2014 there are always two, one either side of the constriction \u2014 so p_end is the first acen start and q_start is the last acen end; that is the definition of an arm boundary rather than a threshold. chrom_length is the largest band end on the contig, which is the assembly length the band table itself asserts. acrocentric is read from the file's own stain column: a chromosome carrying a stalk band on its short arm (13, 14, 15, 21, 22) has no callable p arm, and step 8 reports it q-arm-only. Alternate haplotypes and patch contigs are dropped: they have no centromere and no arms.",
+  "inputs": [
+    {
+      "name": "UCSC hg38 cytoBand",
+      "url": "https://hgdownload.soe.ucsc.edu/goldenPath/hg38/database/cytoBand.txt.gz",
+      "release": "hg38 / GRCh38",
+      "sha256": "e514e48b0a12a516fd5231b44241a20a282f290bdd6131cadcddc6276ee26082",
+      "bytes": 12118,
+      "role": "cytogenetic band intervals and stains, from which the arm boundaries come"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/reference/cytoband_arms.tsv",
+      "sha256": "4bacf96bd39c27044e80fffde94c0728c0a2c2e021179c379d98cf2e81b4e383",
+      "bytes": 1807,
+      "rows": 24
+    }
+  ],
+  "licence": "UCSC Genome Browser data are free for any use; the cytogenetic band table is derived from published ideograms and carries no restriction on redistribution.",
+  "patient_data": "none. Public reference data only - a gene, a transcript, a published classification or a literature range. This manifest records URLs, releases, digests and counts.",
+  "note": "24 contigs: 22 autosomes plus X and Y. The positions here are reference geometry \u2014 where a centromere sits in GRCh38 \u2014 and say nothing about any sample, which is why the table is committed while every table derived from the child's callset is not."
+}

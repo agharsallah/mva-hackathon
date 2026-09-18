@@ -36,7 +36,7 @@ from pathlib import Path
 
 import duckdb
 
-from mva.viz import referencemanifest, refprovenance
+from mva.viz import manifestbase, refprovenance
 
 REFERENCE = Path("ressources/reference")
 DEFAULT_OUT = REFERENCE / "coding_regions.tsv"
@@ -201,7 +201,7 @@ def build_manifest(args: argparse.Namespace, counts: dict, cds_rows: int) -> dic
 def _output(path: Path, rows: int) -> dict:
     sha, size = refprovenance.digest(path)
     return {
-        "path": referencemanifest.repo_relative(path),
+        "path": manifestbase.repo_relative(path),
         "sha256": sha,
         "bytes": size,
         "rows": rows,
@@ -222,7 +222,7 @@ def main() -> None:
         f"{counts['bases']:,} bp  (flank ±{args.flank})"
     )
     manifest = build_manifest(args, counts, cds_rows)
-    path = referencemanifest.write(manifest, args.out.with_suffix(".provenance.json"))
+    path = manifestbase.write(manifest, args.out.with_suffix(".provenance.json"))
     print(f"manifest  {path}  (sha256 {manifest['outputs'][0]['sha256'][:8]}…)")
 
 

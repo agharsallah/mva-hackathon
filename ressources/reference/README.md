@@ -1,7 +1,8 @@
 # Population reference — what "normal" looks like
 
-**Standing:** seven public reference tables, **every one of them carrying a provenance
-manifest**; `coding_regions.tsv` added 2026-09-05 ([iteration1/step-2/069](../../docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md)); the first six as of 2026-09-03
+**Standing:** eight public reference tables, **every one of them carrying a provenance
+manifest**; `cytoband_arms.tsv` added 2026-09-18 for step 8's per-arm test
+([iteration2/step-8](../../docs/iteration2/step-8/README.md)); `coding_regions.tsv` added 2026-09-05 ([iteration1/step-2/069](../../docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md)); the first six as of 2026-09-03
 ([methodology 062](../../docs/step-0/methodology/062-reference-manifests-and-bed-notes.md)).
 The first three downloaded and derived
 2026-08-31; the two HPO tables added 2026-09-03 from release `hp/releases/2026-06-23`
@@ -28,6 +29,7 @@ count into a judgement.
 | `hpo_gene_scores.tsv` | *Which genes do this child's symptoms point at, ignoring the DNA entirely?* | 10,520 | 988 KB |
 | `structure_genes.tsv` | *Which genes may the structure explorer draw, and which of them make a protein?* | 23 | 2.6 KB |
 | `coding_regions.tsv` | *Where can a variant change a protein?* — every CDS + stop codon of every protein-coding transcript, ±8 bp, merged per gene (Ensembl 116 GTF) | 223,048 | 10.8 MB |
+| `cytoband_arms.tsv` | *Where does each chromosome's short arm end and its long arm begin?* — the centromere span per contig, and which chromosomes have no callable short arm | 24 | 1.6 KB |
 
 `structure_genes.tsv` has an editable input beside it, `structure_genes.spec.tsv`: three
 columns (symbol, group, note) that a human maintains, and from which
@@ -49,6 +51,7 @@ and needs no database ([viz-api](../../docs/step-0/viz-api.md)).
 | `clinvar_panel.tsv` | `clinvar_panel.provenance.json` | `build_reference_data.py clinvar` | yes — the 193 MB VCF, `e72f5619…`, release `2026-08-29` |
 | `coding_regions.tsv` | `coding_regions.provenance.json` | `build_coding_regions.py --gtf <scratch>/Homo_sapiens.GRCh38.116.gtf.gz` | yes — the 141 MB Ensembl 116 GTF, digest in the manifest; lineage edge written by `pg-ingest` from the same manifest ([iteration1/step-2/069](../../docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md)) |
 | `qc_norms.tsv` | `qc_norms.provenance.json` | `build_reference_data.py qc-norms` | no, legitimately: the inputs are 7 papers, not downloads |
+| `cytoband_arms.tsv` | `cytoband_arms.provenance.json` | `build_cytobands.py` | yes — UCSC's hg38 `cytoBand.txt.gz`, digest in the manifest |
 | `hpo_term_ic.tsv` | `hpo_provenance.json` | `build_phenotype_data.py` | yes — both HPO files |
 | `hpo_gene_scores.tsv` | `hpo_provenance.json` | `build_phenotype_data.py` | yes — both HPO files |
 | `structure_genes.tsv` | `structure_genes.provenance.json` | `build_gene_set.py` | n/a — Ensembl REST answers, recorded as a release |
@@ -133,6 +136,7 @@ uv run tools/build_reference_data.py clinvar       # ~0.5 s once the 193 MB VCF 
 ```bash
 uv run tools/build_reference_data.py qc-norms      # manifest only; the table is curated
 uv run tools/build_reference_data.py manifests     # all three, regenerating no table
+uv run tools/build_cytobands.py                    # ~1 s; --manifest-only re-describes it
 ```
 
 Both build subcommands download into `build/reference-scratch/` (gitignored) and skip the
