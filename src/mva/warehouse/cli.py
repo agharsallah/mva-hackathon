@@ -199,6 +199,11 @@ def _do_pg_load_it2_step4(args) -> int:
     return cli_it2.load_it2_step4(args, _settings(args))
 
 
+def _do_pg_load_it2_step5(args) -> int:
+    """Load iteration 2's step-5 literature, anchor, protein and ranking tables."""
+    return cli_it2.load_it2_step5(args, _settings(args))
+
+
 def _do_pg_list(args) -> int:
     """List everything in both managed schemas."""
     settings = _settings(args)
@@ -323,6 +328,18 @@ def _parser() -> argparse.ArgumentParser:
         type=Path,
         default=Path("build/it2/step-4"),
         help="the directory tools/rank_it2_pairs.py wrote its tables under",
+    )
+
+    load_step5 = add_pg(
+        "pg-load-it2-step5",
+        _do_pg_load_it2_step5,
+        "load iteration 2's step-5 literature, anchor, protein and ranking tables",
+    )
+    load_step5.add_argument(
+        "--out",
+        type=Path,
+        default=Path("build/it2/step-5"),
+        help="the directory the step-5 tools wrote their tables under",
     )
 
     add_pg("pg-list", _do_pg_list, "list every table in both managed schemas")

@@ -19,6 +19,7 @@ __all__ = [
     "load_it2_step2",
     "load_it2_step3",
     "load_it2_step4",
+    "load_it2_step5",
 ]
 
 
@@ -56,6 +57,27 @@ def load_it2_step4(args, settings: Postgres) -> int:
         return 1
     for item in loaded:
         print(f"  {settings.result_schema}.{item.table:<14} {item.rows:>7,} rows  <- {item.source}")
+    print(f"\nlineage edges appended to {settings.schema}.data_lineage")
+    return 0
+
+
+def load_it2_step5(args, settings: Postgres) -> int:
+    """Load iteration 2's step-5 literature, anchor, protein and ranking tables."""
+    from . import it2_step5_tables
+
+    with pg.attached(settings) as connection:
+        loaded = it2_step5_tables.load(
+            connection,
+            schema=settings.schema,
+            result_schema=settings.result_schema,
+            out_dir=args.out,
+        )
+    if not loaded:
+        print(f"nothing to load: no TSVs under {args.out}/tables")
+        print("run `uv run python tools/fetch_it2_catalogue.py` first")
+        return 1
+    for item in loaded:
+        print(f"  {settings.result_schema}.{item.table:<22} {item.rows:>7,} rows  <- {item.source}")
     print(f"\nlineage edges appended to {settings.schema}.data_lineage")
     return 0
 

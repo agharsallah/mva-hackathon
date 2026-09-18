@@ -9,7 +9,13 @@ to look instead of a hand-kept copy in each test that wants it.
 
 from __future__ import annotations
 
-from . import it2_step2_tables, it2_step3_tables, it2_step4_tables, it2_tables
+from . import (
+    it2_step2_tables,
+    it2_step3_tables,
+    it2_step4_tables,
+    it2_step5_tables,
+    it2_tables,
+)
 
 __all__ = ["LOADED_TABLES"]
 
@@ -18,5 +24,6 @@ LOADED_TABLES: frozenset[str] = frozenset(
     set(it2_step2_tables.SCHEMAS)
     | set(it2_step3_tables.SCHEMAS)
     | set(it2_step4_tables.SCHEMAS)
+    | set(it2_step5_tables.SCHEMAS)
     | {it2_tables.TARGETS_TABLE, it2_tables.DECOYS_TABLE}
 )
