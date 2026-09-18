@@ -120,6 +120,33 @@ def parse_string_network(payload: Iterable[Mapping[str, object]]) -> tuple[Edge,
 
 
 def network_url(seeds: Sequence[str], *, base: str = STRING_BASE_URL, species: int = HUMAN) -> str:
-    """The STRING request this tier is built from — printed, so the run is reproducible."""
+    """The sub-network **among** the seeds — edges where both ends are already seeds.
+
+    Useful for drawing the seed set, and useless for finding new genes: by construction it
+    returns no gene that was not asked for. Step 1's network tier called this endpoint and
+    produced zero rows for exactly that reason. Use :func:`partners_url` to reach outward.
+    """
     identifiers = "%0d".join(seeds)
     return f"{base}/json/network?identifiers={identifiers}&species={species}"
+
+
+def partners_url(
+    seeds: Sequence[str],
+    *,
+    base: str = STRING_BASE_URL,
+    species: int = HUMAN,
+    limit: int = 0,
+    required_score: int = HIGH_CONFIDENCE,
+) -> str:
+    """The seeds' interaction **partners** — the edges that leave the seed set.
+
+    This is the request a proximity tier actually needs: it returns genes that were not
+    asked about, which is the only way an uncurated gene can enter. ``limit`` caps partners
+    per seed (0 = STRING's own default), and ``required_score`` is applied server-side as
+    well as in :func:`neighbours`, so a large seed set does not download edges it will drop.
+    """
+    identifiers = "%0d".join(seeds)
+    query = f"identifiers={identifiers}&species={species}&required_score={required_score}"
+    if limit:
+        query += f"&limit={limit}"
+    return f"{base}/json/interaction_partners?{query}"
