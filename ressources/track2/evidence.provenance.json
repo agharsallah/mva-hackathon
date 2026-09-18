@@ -1,0 +1,30 @@
+{
+  "name": "evidence",
+  "built_at": "2026-09-18T19:12:26+00:00",
+  "built_by": "tools/track2_enrich.py",
+  "code_version": "76aa292",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "curated by a person: one cited PubMed result per row, rung 2 (cell) or 3 (in vivo), proxy=true when the result is for a same-axis compound named in proxy_of; every PMID was resolved against PubMed E-utilities before the row was written",
+  "card": {
+    "path": "ressources/track2/mechanism.json",
+    "version": 3,
+    "gene": "BUB1B",
+    "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)"
+  },
+  "inputs": [
+    {
+      "name": "pubmed",
+      "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils",
+      "role": "PMID resolution"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/evidence.tsv",
+      "sha256": "7932f952ff883e7d48e1b4e9b86816cc1f43f243b0ee9fc50ea54d66f95d3a83",
+      "bytes": 3065,
+      "rows": 13
+    }
+  ],
+  "patient_data": "none. Public API replies only - gene symbols, drug names, trial ids and citations. Nothing here was derived from the callset, and no genomic position appears in any row by construction."
+}

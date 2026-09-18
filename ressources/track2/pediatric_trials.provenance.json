@@ -1,0 +1,44 @@
+{
+  "name": "pediatric_trials",
+  "built_at": "2026-09-18T19:12:26+00:00",
+  "built_by": "tools/track2_enrich.py",
+  "code_version": "76aa292",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "ClinicalTrials.gov v2, query.intr=<drug> with aggFilters=ages:child, first page of 100, any indication; a study that admits children, not proof one enrolled any",
+  "card": {
+    "path": "ressources/track2/mechanism.json",
+    "version": 3,
+    "gene": "BUB1B",
+    "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)"
+  },
+  "inputs": [
+    {
+      "name": "clinicaltrials",
+      "url": "https://clinicaltrials.gov/api/v2/studies",
+      "version": null,
+      "role": "registered trial activity per disease and drug",
+      "retrieved_at": "2026-09-18T19:08:31+00:00",
+      "retrieved_from": "2026-09-18T19:06:05+00:00",
+      "requests": 329,
+      "live_calls": 0,
+      "sha256": "da017c8a6a6b2c27887fa262a5d1efd96b1e39954a585d901d05ce6ebfe27120",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "track2.drug_candidates",
+      "path": "ressources/track2/drug_candidates.tsv",
+      "sha256": "42c04912c8b26676d22c904e7a337b68cb87827c85f4e64f7b2fca72a83b361a",
+      "bytes": 402742
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/pediatric_trials.tsv",
+      "sha256": "cf883f5f4a69a84a8d1fb04afe70e311a42badc34fe27c12eff5f2362278fece",
+      "bytes": 3052747,
+      "rows": 11698
+    }
+  ],
+  "patient_data": "none. Public API replies only - gene symbols, drug names, trial ids and citations. Nothing here was derived from the callset, and no genomic position appears in any row by construction."
+}
