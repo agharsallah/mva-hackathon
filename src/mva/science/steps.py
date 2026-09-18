@@ -271,10 +271,11 @@ ITERATION2: tuple[Step, ...] = (
             "Does public knowledge — published alleles, case reports, protein-language "
             "models — nominate or corroborate a pair for this phenotype?"
         ),
-        # Open: five claims filed before the first request. The step is built around its
-        # own null, because a literature route is the easiest route here to fool yourself
-        # with — the gene at the top of any search is the gene most has been written about.
-        status="open",
+        # Done: five claims filed before the first request, five settled. The route passed
+        # both pre-registered conditions — it separates from matched decoys and it is not
+        # citation volume — and its own top two genes are decoys, with the confirmed lead
+        # at knowledge rank 293 of 815. Both facts go to step 6.
+        status="done",
         unblocks=("step-6", "step-7"),
         iteration="iteration2",
     ),

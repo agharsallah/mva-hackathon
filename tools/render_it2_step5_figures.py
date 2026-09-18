@@ -48,13 +48,17 @@ def build(data: dict) -> list[Exhibit]:
     agreement = baselines.get("agreement") or {}
     separation = baselines.get("separation") or {}
 
-    if data.get("citations") and agreement:
+    # The figure reads every gene, not the 25 the page shows: rho is a statement about all
+    # 815, and a scatter of the leaders alone is a flat band that proves nothing.
+    every_gene = data.get("citations_all") or data.get("citations") or []
+    if every_gene and agreement:
         exhibits.append(
             Exhibit(
                 slug="citations",
                 title="The knowledge ordering against the ordering a hit count alone would give",
                 caption=(
-                    "The test that decides whether this step is a result. Every gene sits at "
+                    f"The test that decides whether this step is a result. All "
+                    f"{len(every_gene):,} genes, each at "
                     "the rank the literature queries gave it and at the rank a raw PubMed hit "
                     "count alone would have given it; the dotted diagonal is no reordering at "
                     f"all. Spearman rho = {float(agreement.get('rho', 0)):.3f} and the two "
@@ -80,7 +84,7 @@ def build(data: dict) -> list[Exhibit]:
                         "reordering."
                     ),
                 ),
-                figure=citations_figure(data["citations"]),
+                figure=citations_figure(every_gene),
                 height=560,
             )
         )

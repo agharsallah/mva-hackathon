@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-18T16:52:34+00:00",
+  "generated_at": "2026-09-18T17:07:48+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -64,7 +64,7 @@
       "title": "Knowledge engine",
       "goal": "Does public knowledge \u2014 published alleles, case reports, protein-language models \u2014 nominate or corroborate a pair for this phenotype?",
       "kind": "research",
-      "status": "open",
+      "status": "done",
       "unblocks": [
         "step-6",
         "step-7"
@@ -1386,11 +1386,39 @@
       "refuted_by": "No PMID reaches five matched terms for any top-20 gene. The literature then corroborates no lead at case-report level, and step 6 records the knowledge route as silent rather than negative.",
       "gene": "",
       "path": "",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.15,
+      "suggested_confidence": 0.31,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 87,
+          "direction": "refutes",
+          "strength": 0.75,
+          "kind": "literature",
+          "claim": "No paper reaching five of the seven proband terms names any step-4 top-20 gene. 54 genes reach the threshold - 38 targets and 16 decoys - and none of them is a leader.",
+          "source_ref": "methodology/104",
+          "lineage_ref": ""
+        },
+        {
+          "id": 88,
+          "direction": "neutral",
+          "strength": 0.6,
+          "kind": "literature",
+          "claim": "The six-term anchor for 68 of the 815 genes, decoys included, is one broad clinical-genomics survey (PMID 37217505). The pre-registered threshold measures breadth of coverage, not case-report specificity; two other high-scoring rows are conference proceedings.",
+          "source_ref": "methodology/104",
+          "lineage_ref": ""
+        },
+        {
+          "id": 89,
+          "direction": "supports",
+          "strength": 0.35,
+          "kind": "literature",
+          "claim": "Without being told the gene, the script surfaced an MVA1 case paper naming the step-4 leading gene and a novel variant in it (PMID 35804254, Neurol Sci 2022) - at 3 of 7 matched terms, below the filed threshold.",
+          "source_ref": "PMID:35804254",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H038",
@@ -1400,11 +1428,39 @@
       "refuted_by": "The bootstrap interval covers 0.5. The knowledge route then has no measured discriminating power and enters step 6 as a confirmation route at weight zero, exactly as the read route did when H020 was refuted.",
       "gene": "",
       "path": "",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.78,
+      "suggested_confidence": 0.832,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 90,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "Target-versus-decoy AUC of the knowledge score is 0.634 [0.593, 0.672] over 404 targets and 396 matched decoys, 1000 bootstrap resamples; the interval excludes 0.5.",
+          "source_ref": "methodology/105",
+          "lineage_ref": ""
+        },
+        {
+          "id": 91,
+          "direction": "neutral",
+          "strength": 0.55,
+          "kind": "measurement",
+          "claim": "The published-allele column shows 250 targets against 254 decoys - no difference - so all of the separation comes from the matched-term count and none from the saturated literature column.",
+          "source_ref": "methodology/105",
+          "lineage_ref": ""
+        },
+        {
+          "id": 92,
+          "direction": "neutral",
+          "strength": 0.45,
+          "kind": "measurement",
+          "claim": "AUC 0.634 is below step 4 likelihood-ratio separation of 0.706 [0.655, 0.751] measured on the same two gene sets.",
+          "source_ref": "methodology/100",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H039",
@@ -1414,11 +1470,30 @@
       "refuted_by": "The correlation is 0.9 or above and the two top-5 sets are identical. The knowledge route is then citation volume under another name, is reported as a negative result, and is dropped from the step-6 fusion.",
       "gene": "",
       "path": "",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.85,
+      "suggested_confidence": 0.8455,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 93,
+          "direction": "supports",
+          "strength": 0.85,
+          "kind": "measurement",
+          "claim": "Spearman rho between the knowledge ordering and a PubMed-hit-count ordering of the same 815 genes is 0.024, with a top-5 overlap of 0 of 5 and only 2 genes tied at the boundary that decides entry.",
+          "source_ref": "methodology/105",
+          "lineage_ref": ""
+        },
+        {
+          "id": 94,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "The knowledge route own top two genes are decoys, 10 of its top 25 are decoys, and the step-4 leading gene sits at knowledge rank 293 of 815 - so the route reorders the citation baseline without pointing at the confirmed lead.",
+          "source_ref": "methodology/105",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H040",

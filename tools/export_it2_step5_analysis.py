@@ -44,6 +44,24 @@ SIDECARS = {
 }
 
 
+#: Blocks the **figures** need in full that the API serves truncated.
+#:
+#: `/api/steps/step-5` sends the top 25 of the citation comparison, because a page showing
+#: 815 rows is a download. The figure that comparison exists for is the opposite: rho is a
+#: statement about all 815 genes, and a scatter of the leaders alone shows a flat band and
+#: proves nothing. So the figure reads this, the page reads the block, and the caption says
+#: which.
+EXTRA_BLOCKS: dict[str, str] = {
+    "citations_all": """
+        SELECT gene, knowledge_rank, citation_rank, lr_rank, knowledge_score,
+               pubmed_count, best_terms_matched, described_alleles,
+               is_target, is_decoy, moved, distance
+        FROM pg.results.it2_knowledge_vs_citations
+        ORDER BY knowledge_rank
+    """,
+}
+
+
 def rows(connection, sql: str) -> list[dict]:
     cursor = connection.execute(sql.replace("{src}", "pg.warehouse").replace("{res}", "pg.results"))
     columns = [description[0] for description in cursor.description]
@@ -62,7 +80,7 @@ def main(argv: list[str] | None = None) -> int:
 
     data: dict[str, object] = {}
     with attached(settings, read_only=True) as connection:
-        for name, sql in BLOCKS.items():
+        for name, sql in {**BLOCKS, **EXTRA_BLOCKS}.items():
             try:
                 data[name] = rows(connection, sql)
             except Exception as error:
@@ -80,7 +98,8 @@ def main(argv: list[str] | None = None) -> int:
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(data, indent=2, sort_keys=True, default=str), encoding="utf-8")
     filled = [name for name, value in data.items() if value]
-    print(f"wrote {args.out}  ({len(filled)} of {len(BLOCKS) + len(SIDECARS)} sections filled)")
+    total = len(BLOCKS) + len(EXTRA_BLOCKS) + len(SIDECARS)
+    print(f"wrote {args.out}  ({len(filled)} of {total} sections filled)")
     return 0
 
 
