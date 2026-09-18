@@ -30,11 +30,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
+from mva.science.steps import ITERATION
 from mva.warehouse.settings import Postgres
 
 #: Step slug → the module whose ``payload(settings)`` the route serves. Listed rather than
 #: derived, because a slug is not a module name and guessing one would be a silent failure.
+#: ``index`` is the step map itself, ``/api/steps``. It was the one fixture with no rebuild
+#: command, which is how it came to say "planned" for a step that had run.
 MODULES = {
+    "index": "mva.viz.steps",
     "step-2": "mva.viz.steps_it2",
     "step-3": "mva.viz.steps_it2_step3",
     "step-4": "mva.viz.steps_it2_step4",
@@ -58,9 +62,10 @@ def main(argv: list[str] | None = None) -> int:
         return 1
 
     module = importlib.import_module(MODULES[args.step])
-    data = module.payload(settings)
+    # The index route takes the iteration it is describing; the detail routes do not.
+    data = module.payload(settings, ITERATION) if args.step == "index" else module.payload(settings)
 
-    path = args.out / f"steps-{args.step}.json"
+    path = args.out / ("steps.json" if args.step == "index" else f"steps-{args.step}.json")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(data, indent=2, sort_keys=True, default=str) + "\n", encoding="utf-8"

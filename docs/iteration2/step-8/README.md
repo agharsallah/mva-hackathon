@@ -1,9 +1,10 @@
 # Step 8 — the mosaic aneuploidy bound
 
-**Standing:** **partially complete, 2026-09-18.** Seven claims filed before the run;
-**three settled so far — all three supported (H051, H052, H053)**, and H053 by a wider margin
-than it predicted. Iteration 2, `step-8`. Contributes a mechanism fact and its limit to
-[step 7](../step-7/README.md).
+**Standing:** **complete but for the dosage pass, 2026-09-18.** Seven claims filed before the
+run; **six settled, all six supported** — H053 by a wider margin than it predicted, and H057
+by a stronger route than it named. H054 stays open: it tests the k-mer dosage route against
+the allele-balance one, and that pass has not run. Iteration 2, `step-8`. Contributes a
+mechanism fact and its limit to [step 7](../step-7/README.md).
 
 **Goal** (from `src/mva/science/steps.py`):
 
@@ -60,10 +61,42 @@ than by judgement.
 | [H051](hypotheses/h051-step-8.md) | **supported** | 0.80 | No chromosome carries a mosaic aneuploidy above its own detection limit |
 | [H052](hypotheses/h052-step-8.md) | **supported** | 0.85 | The detection limit is ≤ 10 % cell fraction for every autosome |
 | [H053](hypotheses/h053-step-8.md) | **supported** | 0.95 | Fold-over B-deviation detects at a materially lower fraction than 037's statistic |
-| [H054](hypotheses/h054-step-8.md) | open | — | The k-mer dosage route and the allele-balance route agree per chromosome |
-| [H055](hypotheses/h055-step-8.md) | open | — | The leave-one-chromosome-out baseline is stable |
-| [H056](hypotheses/h056-step-8.md) | open | — | The mixing simulation recovers 2 and 3 affected chromosomes without flagging the rest |
-| [H057](hypotheses/h057-step-8.md) | open | — | Mitotic and meiotic trisomy are not separable at ΔBIC ≥ 10 |
+| [H054](hypotheses/h054-step-8.md) | **open** | — | The k-mer dosage route and the allele-balance route agree per chromosome — the pass has not run |
+| [H055](hypotheses/h055-step-8.md) | **supported** | 0.80 | The leave-one-chromosome-out baseline is stable |
+| [H056](hypotheses/h056-step-8.md) | **supported** | 0.85 | The mixing simulation recovers 2 and 3 affected chromosomes without flagging the rest |
+| [H057](hypotheses/h057-step-8.md) | **supported** | 0.85 | Mitotic and meiotic trisomy are not separable at ΔBIC ≥ 10 |
+
+## The second finding: the mechanism models do not fit this data
+
+The five-model comparison put a trisomy first on almost every contig, at margins in the
+hundreds — and **every one of those fits ends at a parameter bound**. A boundary solution is
+not an estimate: it says the shape the data wants is outside the family rather than inside it
+at that value. Two measurements rather than an opinion: the fitted "cell fraction" correlates
+with the fitted noise share at **Spearman 0.938**, and every non-normal winner has the
+balanced tract pinned at 0.900, its upper bound.
+
+| Call | Contigs |
+|---|---|
+| model family not usable | 19 |
+| not measurable (tail burden past the 10 % ceiling) | 3 — chr21, chr22, chrX |
+| normal | 1 — chr18, and it is the only fit entirely in the interior |
+| `meiotic_trisomy` | 1 — chrY, which is exactly the contig this route cannot see |
+
+So **no mechanism is reported for any chromosome**. The allele-balance result above is
+untouched by it: that test compares an arm against a null fitted from *other* chromosomes,
+which a nested comparison cannot do, and it is why the detection limit reaches 2–3 % where
+model selection cannot see below about 15 %.
+
+## The divisor holds, at the scale tested
+
+Every bound here divides by something computed across chromosomes, which is the assumption
+*variegated* aneuploidy breaks. Both pre-registered defences pass: no chromosome's exclusion
+moves the leave-one-out depth baseline outside [42.30, 42.64], and injecting up to three
+abnormal chromosomes at once recovers **every one in every replicate** while flagging
+untouched chromosomes at **0.0048 at worst** against a nominal 0.05. Three contigs of
+twenty-two move the fitted over-dispersion from 0.01620 to 0.01966 and the fold centre from
+0.49300 to 0.49301 — not enough to drag a median. **Ten abnormal chromosomes was not tested
+and is not claimed.**
 
 ### Why the confidences are held down
 
@@ -88,6 +121,8 @@ than a beta-binomial at the fitted over-dispersion allows.
 |---|---|
 | [115](methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md) | the three tables, the two constants, and the arm geometry checked against the data |
 | [116](methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md) | the fold-over statistic, the detection limit, and what 037's statistic was worth |
+| [117](methodology/117-five-models-and-the-family-this-data-does-not-fit.md) | the five models, why every winning fit ends at a bound, and why no mechanism is named |
+| [118](methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md) | the leave-one-out baseline and the multi-chromosome designs — both arms of each |
 
 ## How to reproduce it
 
@@ -129,4 +164,4 @@ uv run python tools/run_it2_dosage_pass.py --upload --full
 `/steps/step-8` on the dashboard, and the re-test panel on `/genome` beside the karyogram it
 corrects. Figures in [`figures/track1/iteration2/step-8/`](../../../figures/track1/iteration2/step-8/):
 `power-then-and-now` (the headline), `detection-limit`, `bdev-per-chromosome`,
-`depth-against-baseline`, `model-margins`, `heterozygous-density`.
+`depth-against-baseline`, `model-margins`, `multi-chromosome`, `heterozygous-density`.
