@@ -28,8 +28,9 @@ export function Models({
   origin?: 'api' | 'fixture';
 }) {
   const rows = byKaryogram(verdicts);
-  const called = rows.filter((row) => row.confident && row.measurable);
+  const called = rows.filter((row) => row.confident && row.measurable && !row.degenerate);
   const unmeasurable = rows.filter((row) => !row.measurable);
+  const degenerate = rows.filter((row) => row.measurable && row.degenerate);
   const byChrom = new Map<string, Step8ModelFit[]>();
   for (const fit of fits) {
     byChrom.set(fit.chrom, [...(byChrom.get(fit.chrom) ?? []), fit]);
@@ -39,10 +40,14 @@ export function Models({
     <Exhibit
       title="Five models per chromosome, and what the margin allows"
       reading={
-        `${called.length} of ${rows.length} contigs clear Kong 2018's ΔBIC ≥ 10` +
+        `${called.length} of ${rows.length} contigs produce a usable mechanism call` +
+        (degenerate.length
+          ? `; on ${degenerate.length} the winning fit ends at a parameter bound, so the model family does not fit this data`
+          : '') +
         (unmeasurable.length
-          ? `; ${unmeasurable.length} are reported not measurable, their allele balance swallowed by tails no model explains.`
-          : '.')
+          ? `; ${unmeasurable.length} are not measurable at all, their allele balance swallowed by tails no model explains`
+          : '') +
+        '.'
       }
       legend={
         <>
@@ -90,6 +95,26 @@ export function Models({
             header: 'fitted fraction',
             align: 'right',
             render: (row) => (row.best === 'normal' ? '—' : fraction(row.fraction)),
+          },
+          {
+            key: 'leader_tract',
+            header: 'tract (bound 0.90)',
+            align: 'right',
+            render: (row) => (
+              <span className={row.degenerate ? 'text-broken-400' : ''}>
+                {row.leader_tract.toFixed(3)}
+              </span>
+            ),
+          },
+          {
+            key: 'leader_rho',
+            header: 'ρ of the winner',
+            align: 'right',
+            render: (row) => (
+              <span className={row.leader_rho < 1e-4 ? 'text-broken-400' : ''}>
+                {row.leader_rho.toFixed(5)}
+              </span>
+            ),
           },
           {
             key: 'noise_share',

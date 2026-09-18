@@ -80,8 +80,14 @@ export interface Step8ModelFit {
   model: string;
   fraction: number;
   tract: number;
+  /** Fitted per chromosome here, unlike the genome-wide value the deviation null uses. */
+  rho: number;
+  /** The share of calls no band claims to explain. Every model carries it, so it cannot decide. */
+  noise_share: number;
   depth_dispersion: number;
   log_likelihood: number;
+  allele_log_likelihood?: number;
+  depth_log_likelihood?: number;
   parameters: number;
   observations: number;
   bic: number;
@@ -99,6 +105,18 @@ export interface Step8Verdict {
   /** Mitotic trisomy against copy-neutral LOH: the pair that differs only by depth. */
   trisomy_vs_cnloh: number;
   confident: boolean;
+  /** The noise share the `normal` model needed — this contig's honest tail burden. */
+  noise_share: number;
+  /** False when the tails swallow the contig: no band structure survives underneath. */
+  measurable: boolean;
+  /**
+   * True when a parameter of the winning fit is pinned against its own bound. A boundary
+   * solution is not an estimate — it says the shape the data wants is outside the family.
+   */
+  degenerate: boolean;
+  leader_rho: number;
+  leader_tract: number;
+  leader_noise: number;
 }
 
 /**

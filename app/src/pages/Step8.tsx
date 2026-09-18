@@ -134,6 +134,18 @@ export default function Step8Page() {
               </Section>
 
               <Section title="Which mechanism, if any, the data can name">
+                <Callout tone="broken" title="None of them, and the table says why">
+                  The five-model comparison put a trisomy first on almost every contig, at margins
+                  in the hundreds — and{' '}
+                  <strong>every one of those fits ends at a parameter bound</strong>. A boundary
+                  solution is not an estimate: it says the shape the data wants is outside this
+                  family rather than inside it at that value. The fitted &ldquo;cell fraction&rdquo;
+                  tracks the fitted noise share, not anything biological. The one contig fitted
+                  entirely in the interior is the one the family calls normal. So{' '}
+                  <strong>no mechanism is reported for any chromosome</strong>, and the
+                  allele-balance result above is untouched by it — that test compares against a null
+                  fitted outside the family, which a nested comparison cannot do.
+                </Callout>
                 <Models fits={data.models} verdicts={data.verdicts} {...chrome} />
               </Section>
 
