@@ -44,6 +44,12 @@ sources, cached, manifests) took its first snapshot into `ressources/track2/`; t
 evidence rows; the Python suite is 1,870 tests; the dictionary 470 entries. Then ([079](step-0/methodology/079-track2-in-the-dashboard.md)):
 21 `track2` lineage edges (71 rows in all), `GET /api/track2`, the `/track2` page; 1,898 Python and 535 app tests.
 The counts in §2 below were not re-measured on that date.
+2026-09-18 (iteration 2, step 7 — [110](iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md)–[113](iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md)):
+Track 2's data layer gained the evidence ladder (`mva.drugs.{names,mechlit,pediatric,ladder,compare,shortlist,decoy,enrich}`);
+`ressources/track2/` holds 12 tables with manifests plus two decoy snapshots; `data_lineage` holds **63** `track2` edges
+(52 appended that day, counted by the recorder); the register holds 57 hypotheses and 118 evidence rows (`mva-science check` passed);
+the dictionary has 587 entries in 23 chapters; `/api/track2` serves the ladder, shortlist, do-not table and decoy comparison;
+`submissions/track2/iteration-1/` is drafted. Other counts in §2 not re-measured.
 
 This page owns **repository and infrastructure numbers** — test counts, table counts,
 object counts, what is provisioned. **Dataset measurements** (variant counts, coverage,
