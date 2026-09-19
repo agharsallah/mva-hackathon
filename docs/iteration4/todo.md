@@ -88,12 +88,17 @@ no table holds HGVS, so step 1 re-asks VEP.
   plus plan, board, merged report, per-model reports, cards, run manifests). Step 7's README
   waits on R7, which is not this agent's
 
-## Wave 3 — dashboard + docs for the MVP (2 agents)
+## Wave 3 — dashboard + docs for the MVP — **done 2026-09-20** (3 agents: zoo-api, zoo-dashboard, zoo-reuse-docs)
 
-- [ ] API: `GET /api/zoo/models` (cards + coverage), `GET /api/zoo/scores?allele_id=`, `GET /api/zoo/ranks`, `GET /api/zoo/merge` (matrix, RRF, disagreements), `GET /api/zoo/runs` (manifests) under `src/mva/viz/api_zoo*.py`
-- [ ] app: `/track1/<iteration>/step-<n>` pages for iteration 4 (one per step, from the live API), zoo cards page, agreement-matrix view, per-model report view, run-manifest view, lineage view per table; fixtures re-captured and hashes re-blessed
-- [ ] dictionary: merge the six `docs/iteration4/step-<n>/terms.draft.md` into `docs/dictionary.md` in dependency order; `/learn` regenerated
-- [ ] `docs/iteration4/README.md` step table with statuses; `docs/README.md` iteration-4 rows; `src/mva/README.md` gains the `zoo` row and graph edge
+- [x] API (`699be64`, `231f228`, `d8c7980`, `d59555f`): ten read-only routes — `/api/zoo/{case,models,scores,scores/gene/{symbol},ranks,merge,runs,reports,reports/{key},lineage}`; case resolved per request from the zoo config; tests fail if `BUB1B` or `it4_` appears in a reply
+- [x] app (`89cf069`, `f9d8d6d`, `6afa07b`, `aa8fc63`): `/zoo` — case banner, 19 cards + coverage matrix, Spearman heat map with n, confirmed-rank bars ("no opinion" hatched, never zero), RRF both ways, disagreement table, per-model report with §6 badged *written, not computed*, gene view, run manifest, lineage; fixtures captured live, hashes blessed, `pnpm run check` green (708 tests). Deviation: `/zoo?model=` and `?gene=` instead of path params (the shell matches module paths exactly). HGVS strings redacted in the gene fixture pending a rule. Iteration-4 step pages exist from a parallel session (`eaf73f5`)
+- [x] dictionary: chapter 24 merged from the six drafts by a parallel session (`9e3dc91`); case config, confirmed-pair rule, run id as config digest added (`85c754b`, `5c15999`)
+- [x] docs (`edfc162`, `d3ea5ff`): step READMEs 1–7 with limitations, iteration README with results paragraph, `docs/README.md` rows, `src/mva/README.md` zoo row + true edges (zoo imports pipeline and warehouse only)
+
+**Reusability landed in wave 3** (`6bc57ac`, `763ea54`; decision note `docs/notes/zoo-case-config.md`,
+walkthrough `docs/iteration4/reusability.md`): one `[case]` block (gene, pair rule, term set, iteration,
+table prefix) replaces every constant; a second-case fixture run proves it. Still fixed: `it4_` table
+names in `types`/`rank`, `build/it4` defaults, `figures/it4`, the 8-term count, `render_it4_figures.py`.
 
 ## Wave 4 — opt-A: widen the zoo, automate the prose, open the HTTP API (parallel groups after R6)
 
