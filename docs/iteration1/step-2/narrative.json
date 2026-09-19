@@ -1,0 +1,34 @@
+{
+  "step": "step-2",
+  "iteration": "iteration1",
+  "summary": "Built the genome-wide annotation layer the delivered callset lacks: a coding-interval reference from the Ensembl gene models (223,048 intervals across 19,750 genes), a binned range join pulling 38,437 (gene, allele) rows out of the 5,012,204-record callset, and a checkpointed Ensembl VEP (Variant Effect Predictor — the tool that says what a DNA change does to a protein) run to completion over all 38,087 distinct alleles. Filtering to rare (gnomAD population frequency under 1%) and protein-altering (VEP impact HIGH or MODERATE) alleles on PASS calls, then to genes carrying two such alleles, then to a ClinVar pathogenic/likely-pathogenic call, then to a top-30 rank in the panel-blind phenotype score, funnels the 5,012,204 starting records down to exactly one gene: BUB1B.",
+  "why": "The eight-gene panel used until now was chosen by hand from known Mosaic Variegated Aneuploidy biology — a circular prior, since the search finds MVA genes only because it looked at MVA genes. A genome-wide scan is the only way to ask whether some other gene, unbiased by that choice, produces a stronger candidate. Skipping it would leave the BUB1B pair corroborated only by the assumption that produced it.",
+  "verdict": "H004 supported, committed at 0.93: of 65 genes biallelic on PASS calls, BUB1B is the only one that also carries a ClinVar pathogenic allele and ranks in the phenotype top 30 (it ranks 6th). H003 (retrospective — the panel-only test that ran before this register existed) supported at 0.93: two independent routes agree on the same two alleles, though which parent each allele came from is not yet resolved.",
+  "inherits": {
+    "steps": ["step-0", "step-1"],
+    "what": "the raw callset and the public Ensembl gene models from step 0's object store; step 1's guarantee that every variant has one canonical spelling, so the coordinate join this step runs does not silently lose or duplicate a row."
+  },
+  "hands_to": {
+    "steps": ["step-3", "step-4", "step-6"],
+    "what": "step 3 joins this step's genome-wide gene_biallelic table to the phenotype ranking as its own cross-check (H005); step 4 mines the same table's non-PASS rows for a hiding second allele; step 6's submission design and oracle probe rest on the verdict this step reached."
+  },
+  "figures": [
+    {
+      "name": "funnel.json",
+      "reads": "Nine named counts, in order: 5,012,204 variant records in the VCF; 38,437 (gene × allele) rows landing inside a coding interval; 38,087 distinct alleles annotated; 1,524 rare; 875 rare and protein-altering; 746 of those on PASS calls; 667 genes carrying any such allele; 65 genes biallelic on PASS calls; 1 of those with a ClinVar pathogenic allele; 1 of those also ranked ≤30 by phenotype.",
+      "means": "Each number is one more filter applied to the same starting set, computed from `results.gene_biallelic` / `coding_candidates` in methodology entry 070. It is the numeric evidence for H004: every filter narrows the field, and the last two — a pathogenic ClinVar call plus a top phenotype rank — leave exactly one gene, BUB1B.",
+      "source": "docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md"
+    },
+    {
+      "name": "track1-funnel.png",
+      "reads": "A horizontal bar chart of the same nine funnel stages, one bar per stage, on a logarithmic survivor-count axis. Bars run from the full callset at the bottom (widest) to the final answer at the top (narrowest), coloured purple (raw input) through blue (machinery) to green (the answer).",
+      "means": "Shows how a five-million-row callset collapses to one gene through independent geometric, annotation and phenotype filters. The log scale is necessary because linear spacing would make every bar after the first invisible; the chart is evidence that no single filter — only their combination — isolates BUB1B.",
+      "source": "docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md"
+    }
+  ],
+  "sources": [
+    "docs/iteration1/step-2/README.md",
+    "docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md",
+    "docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md"
+  ]
+}

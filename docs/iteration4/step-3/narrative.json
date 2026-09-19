@@ -1,0 +1,20 @@
+{
+  "step": "step-3",
+  "iteration": "iteration4",
+  "summary": "This step is the shared inference API: one `Adapter.score(records) -> ScoreRow` contract, callable as `mva-zoo score --model X`, that lets three different kinds of model source (a warehouse column, a downloaded table, a live REST plugin) be called the same way and land in one append-only cache with full provenance (model, version, digest, licence, run id). A cold run scored 58,480 alleles across the four lanes in 1 h 45 m 20 s at $0: the three local/offline lanes (AlphaMissense, SpliceAI, ESM1b) together took 53 seconds for 47,697 alleles, while REVEL's live per-request calls took 6,267 seconds across 4 attempts and 3 server failures. A second run of the offline lanes, and a run with `--mode aware`, both inserted 0 new rows, confirming the cache key `(model, version, allele_id)` prevents duplicate work. For the confirmed pair, only SpliceAI produced a number for both alleles (0.00 missense, 0.03 stop-gained); the other three lanes are blank for at least one half.",
+  "why": "Without one shared contract, each of the 19+ candidate models would need its own bespoke calling code, its own retry logic, and its own place to record what version and licence produced a number — exactly the problem a plugin interface (a fixed function signature every implementation must satisfy) solves in software. Caching by `(model, version, allele_id)` also matters because REVEL is a live external service with its own rate limits and failures; without a cache key that survives interruption, an API hiccup at minute 90 would force re-scoring everything from zero rather than resuming.",
+  "verdict": "H062 (`P4-4a`) is undecided by its own terms, marked `testing`: the measured 1 h 45 m 20 s is 1.76x the 1-hour prediction but well inside the 4-hour line that would refute it, so the claim sits in the unresolved band the entry defined in advance and is not rounded to either outcome. The step also demonstrates the cache-key structure is correct (a no-op re-run and a mode-aware run both inserted zero rows) and reconfirms, at the individual-score level, that only SpliceAI has a number for the confirmed pair's stop-gained allele.",
+  "inherits": {
+    "steps": ["step-2"],
+    "what": "Only the four models step 2 licensed and confirmed can be joined are called here; the adapter for each lane exists because step 2 established which of the three source kinds (warehouse column, downloaded table, live plugin) that model needs. It also inherits step 2's exact-count integrity gates as its baseline: this step's 10,601 and 32,534 row counts must not drift from step 2's coverage numbers, or the join broke somewhere in between."
+  },
+  "hands_to": {
+    "steps": ["step-4"],
+    "what": "Step 4's workflow DAG (directed acyclic graph, a pipeline of stages that only run after their inputs are ready) reads this step's 58,480-row score cache as its `fan_out` stage's output, turning individual allele scores into per-lane rankings over compound-heterozygous pairs. Without this cache already populated, step 4 has nothing to rank."
+  },
+  "figures": [],
+  "sources": [
+    "docs/iteration4/step-3/README.md",
+    "docs/iteration4/step-3/methodology/122-every-lane-scored-once-and-only-once.md"
+  ]
+}

@@ -1,0 +1,68 @@
+{
+  "step": "step-5",
+  "iteration": "iteration2",
+  "summary": "Step 5 asks what public knowledge — published variant records, case-report-style literature, and protein structure predictions — says about the candidate genes, and builds its own null into the design from the first line: the same 815 genes (404 targets, 396 decoys, step 4's top 20, deduplicated) go through identical queries, and every knowledge score is measured against a raw PubMed hit-count baseline before it is trusted at all. It queried LitVar 2.0 for 1,924 alleles (1,914 askable by dbSNP identifier), searched PubTator 3.0 5,705 times (815 genes × 7 proband terms) for papers discussing a gene alongside the child's own features, and checked where the leading missense allele sits relative to InterPro protein domains and an AlphaFold structure. Of five pre-registered claims, three were supported and two refuted. The refutation of H037 is the step's best finding: the pre-registered 'paper covering ≥5 features' threshold is met by 54 genes, 16 of them decoys, and none of step 4's top 20 — but the script found, unprompted, a case report specifically about a novel variant in the step-4 leading gene, which the threshold ranked below a 68-gene survey paper.",
+  "why": "A literature route is the easiest route in this whole pipeline to fool yourself with: the gene at the top of any biomedical search is simply the gene most has been written about, and in a candidate set already derived from a patient's symptoms that is very often the gene somebody already solved — nothing in a naive literature score distinguishes 'this route found the answer' from 'this route found whatever is famous.' Without a decoy null and a citation-count baseline built in from the start, a plausible-looking top hit could be reported with no way to tell whether it reflects genuine corroborating evidence or just publication volume. Running both checks before trusting any score is what lets step 6 treat this route's output as a measured, weighted signal rather than an unverifiable literature search.",
+  "verdict": "H036 (a published allele of a top-20 gene is present in this child) is supported: the step-4 leading gene's truncating allele is ClinVar pathogenic with 4 papers, and step 3's independent k-mer route types it present at heterozygous, posterior 1.0. H037 (a paper covering ≥5 of the child's 7 features names a top-20 gene) is refuted — 54 genes clear the threshold (38 targets, 16 decoys) but none in the top 20; the threshold rewards broad-coverage surveys and conference abstracts over a specific case report, and was not moved after seeing this. H038 (the knowledge score separates targets from matched decoys) is supported at AUC 0.634 [0.593, 0.672], though traceably weaker than step 4's genotype-based 0.706 on the identical two gene sets, and traced to the matched-feature count alone — the saturated (95.1% covered) publication-count column contributes nothing. H039 (the ranking reorders the citation-count baseline rather than reproducing it) is supported: Spearman ρ = 0.024, zero overlap in the top 5. H040 (the leading missense allele sits in an annotated domain, is confidently modelled, and AlphaMissense agrees) is refuted on its first clause: the allele sits outside every InterPro domain, though the structure is confidently modelled (pLDDT 91.06) and AlphaMissense does agree with pathogenicity.",
+  "inherits": {
+    "steps": ["step-1", "step-3", "step-4"],
+    "what": "Step 1's 404 targets and 396 decoys are queried identically as the route's own null. Step 3's k-mer genotyping of the public ClinVar catalogue in the raw reads is the independent second instrument that corroborates the leading allele's presence for H036 — without it, presence would rest on the vendor's own annotation alone. Step 4's top-20 genome-wide ranking is the candidate list this step's literature search is actually judging."
+  },
+  "hands_to": {
+    "steps": ["step-6", "step-7"],
+    "what": "Step 6's fusion receives a ranking route with a measured, non-trivial weight (AUC 0.634) that nonetheless ranks the confirmed lead at 293rd of 815 and puts two decoys at the top — a route that is real by its own pre-registered tests and wrong at the top, which step 6 must weigh rather than either trust or discard. Step 7's Track 2 drug-repurposing enrichment receives the citable mechanism paper for the leading gene (found by script, not by hand) as mechanism evidence, explicitly flagged as Track 2 material rather than Track 1 diagnostic evidence."
+  },
+  "figures": [
+    {
+      "name": "sources.png",
+      "reads": "Horizontal rows, one per public source (LitVar allele lookup, PubTator anchor search, UniProt/InterPro/AlphaFold protein lookup), each split into green (source answered yes), blue (answered no) and grey (could not be asked at all) segments.",
+      "means": "Establishes what each instrument's blind spot actually is before any of its coloured answers can be trusted: an allele with no dbSNP id, a gene with no reviewed UniProt entry, or a residue outside any protein lookup's reach are absences of the instrument, not findings about the child — the grey band has to be read first.",
+      "source": "docs/iteration2/step-5/methodology/102-the-sources-and-what-they-could-be-asked.md"
+    },
+    {
+      "name": "catalogue.png",
+      "reads": "Stacked bars over the 1,924 alleles scored: green = at least one publication describes this exact variant, blue = askable but never described, grey = no dbSNP identifier so never askable; a separate count of ClinVar-pathogenic alleles this child carries, found by step 3's k-mer route in the raw reads.",
+      "means": "95.1% of askable alleles (1,821 of 1,914) carry at least one publication — a saturated column that discriminates almost nothing on its own — while the load-bearing evidence for H036 is the separately-tracked 15 ClinVar-pathogenic alleles this child actually carries, corroborated by an instrument (step 3's k-mer count) independent of the annotation pipeline.",
+      "source": "docs/iteration2/step-5/methodology/103-the-alleles-somebody-already-published.md"
+    },
+    {
+      "name": "anchors.png",
+      "reads": "Bars per gene (green = target, red = decoy, blue = neither) showing how many of the child's 7 proband terms that gene's best-matching paper covers, out of 5,705 total (gene × term) searches over 815 genes.",
+      "means": "Direct evidence for H037's refutation: 54 genes clear the ≥5-feature threshold and 16 are decoys — a red bar as tall as a green one is the finding — while the step-4 leading gene sits at only 3 of 7 features because its best real match, a case report specifically about a novel variant causing this exact disease, is outscored on raw feature-count by broad survey papers.",
+      "source": "docs/iteration2/step-5/methodology/104-the-papers-the-script-found.md"
+    },
+    {
+      "name": "citations.png",
+      "reads": "Scatter of all 815 genes, each gene's rank by the knowledge score on one axis and its rank by raw PubMed hit count on the other, coloured green (target)/red (decoy)/blue (neither), with a dotted diagonal marking 'no reordering at all'.",
+      "means": "The decisive test for whether this route measured anything beyond fame: Spearman ρ = 0.024 and 0 of the top-5 genes overlap between the two rankings, both far from the diagonal, so the knowledge score is not simply re-deriving how much has been written about each gene — it carries information a citation count does not, which licenses trusting the AUC result.",
+      "source": "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md"
+    },
+    {
+      "name": "separation.png",
+      "reads": "Bars by gene class (symptom-nominated targets, matched decoys, curated-but-not-nominated genes, uncurated genes) showing median/90th-percentile knowledge score, labelled with how many genes in each class found a ≥5-feature paper.",
+      "means": "Evidence for H038: targets separate from decoys (AUC 0.634 [0.593, 0.672]), a real but modest effect — explicitly weaker than step 4's genotype-based 0.706 on the identical two gene sets — and the design note that length-matched decoys are essential here, since a longer gene simply attracts more papers and alleles regardless of pathogenicity.",
+      "source": "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md"
+    },
+    {
+      "name": "domains.png",
+      "reads": "One protein per row drawn as a rule, InterPro entries as bars (amber = domain, thinner blue = family/superfamily, excluded from the claim), the leading missense allele as a tick (green = inside a domain, red = outside), positions as fractions of protein length, never a residue number.",
+      "means": "Evidence for H040's partial refutation: the leading missense allele sits outside every annotated InterPro domain, at pLDDT 91.06 (a confidently modelled region of the AlphaFold structure) where AlphaMissense nonetheless agrees the allele is damaging — domain annotation and machine-learning pathogenicity prediction disagree on this allele, which is reported as a real, unresolved discrepancy rather than smoothed over.",
+      "source": "docs/iteration2/step-5/methodology/106-where-the-missense-sits-in-the-protein.md"
+    },
+    {
+      "name": "index.html",
+      "reads": "Interactive contact sheet of all six figures (sources, catalogue, anchors, citations, separation, domains) with hover tooltips for exact per-gene and per-bar values.",
+      "means": "Same evidence as the six static figures, in a form that lets a reader inspect exact ranks, scores and feature-match counts rather than reading them off a static image.",
+      "source": "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md"
+    }
+  ],
+  "sources": [
+    "docs/iteration2/step-5/README.md",
+    "docs/iteration2/step-5/methodology/102-the-sources-and-what-they-could-be-asked.md",
+    "docs/iteration2/step-5/methodology/103-the-alleles-somebody-already-published.md",
+    "docs/iteration2/step-5/methodology/104-the-papers-the-script-found.md",
+    "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md",
+    "docs/iteration2/step-5/methodology/106-where-the-missense-sits-in-the-protein.md",
+    "docs/iteration2/step-5/notes/why-the-baseline-is-the-test.md"
+  ]
+}

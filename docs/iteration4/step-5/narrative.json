@@ -1,0 +1,95 @@
+{
+  "step": "step-5",
+  "iteration": "iteration4",
+  "summary": "This step renders one report template per model lane (coverage, score distribution, the confirmed pair's rank and percentile, a clinical cross-reference against the child's 8 HPO terms, and a hand-written interpretation), plus twelve figures, all built only from the JSON step 4 already wrote. The pair-level test found nothing decisive: only SpliceAI ranks the confirmed pair at all (23.63rd percentile, outside the top decile), and AlphaMissense and ESM1b record no opinion because each scored only one of the pair's two alleles. But the allele-level result underneath is sharp: AlphaMissense, ESM1b and REVEL — three lanes with different training data and methods — each independently place the missense half of the confirmed pair in the top 0.47-2.59% of everything that lane scored, and SpliceAI's two numbers (0.00 and 0.03) sit far below its own 0.2 damage cut-off, consistent with a change that acts through protein rather than splicing. Every report's clinical section states, independent of any model, that BUB1B ranks #14 of 5,267 genes against the child's HPO terms.",
+  "why": "A report template has to describe every model the same way, or a reader cannot tell whether one model's silence means 'nothing there' versus 'this lane can't see that consequence class at all' — exactly the ambiguity step 1 and step 2 flagged as a risk before any lane ran. Testing the claim at the pair level first, before folding in the allele-level numbers, is what exposed that the claim (`P4-6`) was aimed at the wrong unit: a roster where three of four lanes are missense-only cannot produce a verdict on a half-nonsense pair, no matter how strong its allele-level signal is.",
+  "verdict": "H063 (`P4-6`) is `testing`: neither supported nor refuted by its own terms, at confidence 0.20. SpliceAI, the only catalogue-free lane with an opinion on the pair, places it at the 23.63rd percentile — above the median that would refute the claim, but outside the top decile it predicted. AlphaMissense and ESM1b abstain rather than disagree, which the claim's own refutation clause counts as neither outcome. The entry concludes the claim was written about the wrong unit: at the allele level all three missense lanes put the pair's missense half in their own top 2.6%, which would have supported `P4-6` three times over had it been phrased about alleles.",
+  "inherits": {
+    "steps": ["step-4"],
+    "what": "Every number in every report and figure here is read from `results.it4_model_ranks` and `results.it4_model_reports`, tables step 4 wrote and did not interpret. Without step 4's rankings already computed, this step would have nothing to caption — it renders the numbers, it does not generate them."
+  },
+  "hands_to": {
+    "steps": ["step-6"],
+    "what": "Step 6's cross-lane agreement matrix and RRF (reciprocal rank fusion, a way to combine several rankings by averaging each item's 1/rank across lists) consensus both need every lane's per-pair rank and per-allele score already computed here. Step 6 also explicitly builds on this step's finding that the abstentions are structural (a missense-only lane cannot score a nonsense allele), reusing it to explain why the fused consensus later turns out to reflect one lane's opinion rather than genuine disagreement."
+  },
+  "figures": [
+    {
+      "name": "score-histogram-alphamissense.svg",
+      "reads": "Bar chart of AlphaMissense's score distribution over the 10,601 alleles it scored, x-axis the model score (higher = more damaging, per AlphaMissense's own scale), y-axis allele count. A dashed vertical line marks the confirmed pair's missense allele at score 0.9229, labelled with its percentile; a text note in the corner reads 'not scored by this lane: stop_gained' because the pair's other allele has no AlphaMissense score at all.",
+      "means": "Evidence that AlphaMissense places the confirmed missense allele in the extreme damaging tail of its own distribution: percentile 0.47%, i.e. fewer than 1 in 200 of the 10,601 alleles it scored rank higher. It also shows visually why the lane cannot speak to the pair as a whole — the stop-gained half sits entirely outside the histogram because AlphaMissense does not score that consequence class.",
+      "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+    },
+    {
+      "name": "score-histogram-alphamissense.html",
+      "reads": "The same AlphaMissense distribution as the SVG, rendered as an interactive Plotly chart with a CDN-loaded plotting library.",
+      "means": "Same evidence as the SVG — the missense allele sits at the 0.47th percentile of AlphaMissense's scores — but a reader can hover any bar for the exact score-bin edges and allele count, and hover the dashed line for the exact score and percentile, rather than reading them off a static caption.",
+      "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+    },
+    {
+      "name": "score-histogram-esm1b.svg",
+      "reads": "Bar chart of ESM1b's score distribution over the 4,562 alleles it scored (range −13.619 to 17.936), x-axis the model score, y-axis allele count. A dashed vertical line marks the confirmed missense allele at score 11.537 with its percentile; a corner note flags the stop-gained half as not scored by this lane.",
+      "means": "Evidence that a protein language model (a model trained on protein sequences alone, with no DNA or splicing information) independently agrees with AlphaMissense's direction: the missense allele sits at the 2.52nd percentile of ESM1b's own distribution — a second, methodologically unrelated lane finding the same allele extreme.",
+      "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+    },
+    {
+      "name": "score-histogram-esm1b.html",
+      "reads": "The same ESM1b distribution, interactive: hoverable bars and marker line.",
+      "means": "Same 2.52nd-percentile evidence as the SVG, with exact bin counts and the marked score available on hover instead of only at the labelled points.",
+      "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+    },
+    {
+      "name": "score-histogram-revel.svg",
+      "reads": "Bar chart of REVEL's score distribution over the alleles it scored, x-axis the model score, y-axis allele count. A dashed line marks the confirmed missense allele at score 0.472 with its percentile; a corner note marks the stop-gained half as not scored.",
+      "means": "A third, catalogue-adjacent lane (REVEL is described as catalogue-adjacent because its training draws on curated variant databases, unlike the other three) also places the missense allele in its top 2.59% — a third independent line of evidence pointing at the same allele, from a model with different provenance than either AlphaMissense or ESM1b.",
+      "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+    },
+    {
+      "name": "score-histogram-revel.html",
+      "reads": "The same REVEL distribution, interactive, with hoverable bars and the marked allele's exact score and percentile.",
+      "means": "Same top-2.59%-percentile evidence as the SVG, inspectable bin-by-bin rather than only at the marked point.",
+      "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+    },
+    {
+      "name": "score-histogram-spliceai.svg",
+      "reads": "Bar chart of SpliceAI's score distribution over 32,534 alleles, x-axis the model score, y-axis allele count, with two dashed lines: the missense half at 0.00 (24.53rd percentile) and the stop-gained half at 0.03 (9.74th percentile) — this is the only lane with a marked line for both halves of the pair.",
+      "means": "Evidence that SpliceAI has an opinion on both alleles but a weak one: its median score is 0 and its 90th percentile is only 0.03, the same value as the stop-gained allele's own score, so both marked alleles sit inside the flat, near-zero bulk of the distribution rather than its tail. This is the correct reading for changes that act through protein rather than splicing, not evidence the pair is benign.",
+      "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+    },
+    {
+      "name": "score-histogram-spliceai.html",
+      "reads": "The same SpliceAI distribution, interactive, with both marked alleles hoverable for their exact score and percentile alongside the bin counts.",
+      "means": "Same evidence as the SVG — both alleles sit in the distribution's near-zero bulk, not its tail — with the degenerate shape (median 0, p90 0.03) explorable bin by bin rather than summarised in one caption.",
+      "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+    },
+    {
+      "name": "agreement-matrix.svg",
+      "reads": "A heat map with one row and column per lane, coloured red (−1) through white (0) to green (+1) by Spearman rho (a rank-correlation coefficient: how similarly two lanes order the same alleles, from −1 fully opposite to +1 identical order), each cell also printing rho and the count of alleles both lanes scored (n); a cell is left blank rather than coloured zero when too few alleles overlap.",
+      "means": "Evidence of two separate opinions inside the zoo, not four: the three missense lanes agree with each other, from +0.168 (REVEL vs ESM1b) up to +0.580 (AlphaMissense vs ESM1b), while SpliceAI's agreement with any of them stays near zero (+0.021 to +0.043) — it is scoring a different property (splicing) and correctly does not track the others.",
+      "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+    },
+    {
+      "name": "agreement-matrix.html",
+      "reads": "The same lane-by-lane heat map, interactive: hovering any cell shows the exact rho and shared-allele count.",
+      "means": "Same two-block agreement structure as the SVG (missense lanes correlated, SpliceAI isolated), with the exact rho and n for any pair of lanes available on demand instead of only the cells the caption calls out.",
+      "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+    },
+    {
+      "name": "confirmed-rank.svg",
+      "reads": "Bar chart with one bar per lane (AlphaMissense, ESM1b, REVEL, SpliceAI) plus two consensus bars (RRF catalogue-free, RRF all lanes), y-axis the confirmed pair's rank among biallelic pairs with the axis reversed so rank 1 (best) is at the top; a bar sitting at zero, labelled 'no opinion (a half was unscored)', means that lane could not score both alleles of the pair.",
+      "means": "Evidence that the pair's apparent mediocre rank is an artefact of missing coverage, not a real disagreement: only SpliceAI and the two RRF fusions have a bar above zero (SpliceAI at 11,980 of 50,696; RRF catalogue-free at 20,639 of 52,012; RRF all lanes at 21,497 of 52,219), while AlphaMissense, ESM1b and REVEL sit at zero because each could score only one of the pair's two alleles.",
+      "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+    },
+    {
+      "name": "confirmed-rank.html",
+      "reads": "The same per-lane and fused rank bars, interactive: hovering any bar shows its exact rank and the total number of pairs it was ranked among.",
+      "means": "Same abstention-versus-opinion evidence as the SVG, with the exact denominator behind each lane's rank (e.g. 'of 50,696' for SpliceAI) readable on hover rather than only in the caption.",
+      "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+    }
+  ],
+  "sources": [
+    "docs/iteration4/step-5/README.md",
+    "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md",
+    "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md",
+    "tools/render_it4_figures.py"
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "step": "step-6",
+  "iteration": "iteration1",
+  "summary": "The one step that could be wrong in public. Steps 2 to 4 had converged on a single BUB1B compound heterozygote, but converging is not confirming: every route read the same vendor callset, so four agreements could still be one mistake counted four times. This step spent the first of six irreversible oracle submissions on it — designed as a measurement rather than a guess, rehearsed byte-for-byte on a local replica of the scorer, and laid out so that seven of the eight possible replies would be told apart by the numbers that came back. The reply was a full match at rank 1: 100 rank points, F-max 1.000, threshold 0.9963.",
+  "why": "The oracle is the only window onto the answer key, and it opens six times in total. A submission that cannot be decoded wastes one of those six: if two candidate pairs would produce the same rank_points and f_max, the reply says the answer was found but not which row found it. So the rows were chosen for distinguishability first and confidence second, and the whole design was written down before the upload — including what each possible reply would have meant. Matching is exact string equality on (chrom, pos, ref, alt), which is why step 1's normalization gates this step: a correct answer spelled differently scores zero.",
+  "verdict": "H009 supported at confidence 1.00. The answer key is the BUB1B stop-gain plus missense pair, in trans, and phase is settled by the key itself rather than by reads — which is why step 5, the read-level recovery of a partner allele, never had to run. One of six submissions is spent; five remain, and they belong to iteration 2 and later.",
+  "inherits": {
+    "steps": ["step-1", "step-2", "step-3", "step-4"],
+    "what": "The candidate pair itself comes from step 2's genome-wide coding scan, which left BUB1B as the only gene with two rare protein-altering alleles. Step 3 arrived at the same gene from the symptoms alone, without reading a variant, and step 4 showed nothing rare and protein-altering was hiding behind the quality filters. Step 1 supplies the thing that makes the upload legal at all: one spelling per variant, so an exact-match scorer can be trusted with the rows."
+  },
+  "hands_to": {
+    "steps": ["step-8"],
+    "what": "The confirmed pair is what Track 2 is allowed to argue from. Step 8's mechanism card was opened in parallel, but its verdicts waited for this reply, because a drug direction argued from an unconfirmed allele is a guess dressed as rigour. The reply also closes step 5 before it opens: no partner allele is missing, so there is nothing to recover from the reads."
+  },
+  "figures": [
+    {
+      "name": "track1-decode-table.png",
+      "reads": "One row per reply the scorer could have returned for this submission — eight keys in all — with the rank points, F-max, full-match rank and partial-match rank each would produce. The rows are ordered by rank points, from the full match at the top to `neither` at the bottom.",
+      "means": "This is the decoding key, drawn before the upload so the answer could be read rather than reacted to. Seven of the eight keys are distinguishable by the returned numbers alone; the only pair the scorer cannot separate is {stop+unseen, missense+unseen}, which carried 0.17 of the prior mass. Prior entropy 1.603 bits, expected posterior 0.149 bits, so the expected information gain of spending this submission was 1.455 bits — the number that justified spending it. The reply landed on the top row.",
+      "source": "docs/iteration1/step-6/methodology/074-submission-v1-design.md"
+    }
+  ],
+  "sources": [
+    "docs/iteration1/step-6/README.md",
+    "docs/iteration1/step-6/methodology/074-submission-v1-design.md",
+    "docs/iteration1/step-6/methodology/076-iteration-tooling.md",
+    "docs/iteration1/step-6/methodology/082-derived-submission-rows.md",
+    "docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "step": "step-8",
+  "iteration": "iteration1",
+  "summary": "Wrote the Track 1 → Track 2 mechanism hand-off: BUB1B compound heterozygote (two different broken copies of the gene, one from each parent) — a stop-gained null allele plus a missense hypomorph (a partly working copy) — weakens the spindle assembly checkpoint (the mechanism that holds a dividing cell until every chromosome is attached), a loss of function with no gain-of-function component, and named four repurposing directions (reinforce the checkpoint, exploit aneuploidy stress, stabilise the hypomorph, prevent the child's tumour). Built a case-agnostic public-source data layer (`mva.drugs`) over Open Targets, ChEMBL, DGIdb, Reactome, ClinicalTrials.gov, PubMed and openFDA; the first snapshot expanded 27 seed targets to 273 through 4 matched Reactome pathways and returned 3,766 drug-candidate rows (1,067 approved, 336 distinct approved drug names), 747 trials and 157 literature hits. Zero of those candidates target BUB1B/BubR1 directly at any clinical phase.",
+  "why": "Track 2 is a separately scored deliverable and the only part of this work that reaches the child directly — a repurposed drug is one already approved and available. A drug named without a cited mechanistic path from the confirmed allele to its target is worth nothing, so the mechanism card and a reproducible, provenance-tracked evidence layer had to exist before any candidate could be argued. Ranking and verdicts wait for step 6's oracle confirmation by design: arguing a drug direction from an unconfirmed allele is a guess dressed as rigour.",
+  "verdict": "H011 supported, committed at 0.80: no market-approved drug acts directly on BUB1B/BubR1 across three independent sources; the 336 approved candidates all attach to pathway neighbours (TP53, MTOR, HSP90AA1, AURKB, CDK4/6, tubulin genes) or off-target directions. H010 stays proposed — only its pathway clause is tested (Reactome maps BUB1B to four checkpoint/kinetochore/mitotic pathways); its loss-of-function clause awaits ClinVar/OMIM and literature evidence.",
+  "inherits": {
+    "steps": [
+      "step-1",
+      "step-2",
+      "step-3",
+      "step-4",
+      "step-6"
+    ],
+    "what": "the mechanism card is built from iteration 1's whole hypothesis record (H003–H009): the candidate gene and its two consequence classes from step 2, the phenotype corroboration from step 3, the ruling-out of a hidden filtered allele from step 4, the canonical variant spelling from step 1, and step 6's submission machinery that the ranking is waiting on before it can be argued."
+  },
+  "hands_to": {
+    "steps": [],
+    "what": "Nothing further in iteration 1's own step map follows step 8. The confirmation it was waiting for did arrive: step 6 uploaded on 2026-09-09 and the oracle answered with a full match at rank 1 (entry 083), so the pair this card argues from is confirmed — the card's own files predate that reply by three days and still call the pair inferred. Per the strategy record the ranked candidate list and the final drug verdicts are produced once, after every Track 1 iteration has reported and its evidence is merged; that merge and the single Track 2 submission sit outside this iteration's step map, and iteration 2's step 7 is where the card was next revised."
+  },
+  "figures": [],
+  "sources": [
+    "docs/iteration1/step-8/README.md",
+    "docs/iteration1/step-8/mechanism.md",
+    "docs/iteration1/step-8/methodology/078-track2-data-layer.md",
+    "docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md"
+  ]
+}
