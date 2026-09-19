@@ -54,7 +54,14 @@ no table holds HGVS, so step 1 re-asks VEP.
   `src/mva/zoo/tables.py` (**169,457,840 rows in 95 s**). ESM1b needed a new lane,
   `adapters/protein_table.py`. **Only SpliceAI sees both halves of the confirmed pair**, at
   `ds_max` 0.00 and 0.03 — recorded before R5/R6 run
-- [ ] R3 step 3: `mva-zoo score` × 4 lanes (catalogue-free), re-run one for the no-op proof, `--mode aware` pass for the ablation. File **P4-4a** (≤ 1 h laptop, $0)
+- [x] R3 step 3 — **entry 122**, `P4-4a` = **H062 testing** (undecided by its own terms):
+  the cold four-lane pass measured **1 h 45 m 20 s at $0**, 1.76× the hour predicted and
+  0.44× the 4 h that refutes. **58,480 scores cached.** The three local lanes do 47,697
+  alleles in **53 s**; 6,267 s of the total is one serial REVEL pass over an endpoint that
+  failed three times. Two fixes (`d553034`) took REVEL from ≈ 4.6 h to 1 h 45 m; the third,
+  three workers as iteration 2 already runs, would put it near 35 min — the revision the
+  claim is owed. No-op re-runs and `--mode aware` both inserted **0**.
+  **Only SpliceAI scores both halves of the confirmed pair, at 0.00 and 0.03**
 - [ ] R4 step 4: `mva-zoo run` → `results.it4_model_ranks`, manifest `build/it4/runs/<id>.json` + coordinate-free copy; check `skipped_genes` empty, confirmed-pair flagging unique
 - [ ] R5 step 5: per-model reports `docs/iteration4/reports/<key>.md`, §6 hand-written and signed, histograms in `figures/it4/`
 - [ ] R6 step 6: agreement matrix, RRF with/without adjacent, disagreement table, `docs/iteration4/report.md` (method `fusion`). File **P4-6**, **P4-8** (MVP lanes)

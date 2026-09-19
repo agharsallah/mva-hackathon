@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-19T10:45:20+00:00",
+  "generated_at": "2026-09-19T13:39:50",
   "steps": [
     {
       "slug": "step-0",
@@ -93,7 +93,7 @@
       "title": "The mosaic aneuploidy bound",
       "goal": "Is mosaic aneuploidy detectable in the sequenced sample with a statistic that has power, and what cell-fraction bound does the data set per chromosome?",
       "kind": "research",
-      "status": "open",
+      "status": "done",
       "unblocks": [
         "step-7"
       ]
@@ -1682,7 +1682,7 @@
       "path": "oracle",
       "status": "supported",
       "confidence": 0.9,
-      "suggested_confidence": 0.9526,
+      "suggested_confidence": 0.9781,
       "revisions": 2,
       "evidence": [
         {
@@ -1710,6 +1710,15 @@
           "kind": "measurement",
           "claim": "A second biallelic pair with a comparable ratio does exist - the runner-up is 1.70x behind - so the plan's fourth outcome row is live in fact and is closed by the instrument's limits rather than by the absence of a candidate.",
           "source_ref": "methodology/109",
+          "lineage_ref": ""
+        },
+        {
+          "id": 145,
+          "direction": "supports",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "The iteration-2 file built from the selectors (one primary pair, three secondary rows) grades to full match at rank 1, 100 rank points, F-max 1.0 on both the replica and the organisers' evaluation.py; its decode table has one row and the expected information gain is 0.000 bits.",
+          "source_ref": "methodology/124",
           "lineage_ref": ""
         }
       ]
@@ -2012,7 +2021,7 @@
       "path": "mosaic",
       "status": "supported",
       "confidence": 0.85,
-      "suggested_confidence": 0.9569,
+      "suggested_confidence": 0.9759,
       "revisions": 2,
       "evidence": [
         {
@@ -2041,6 +2050,15 @@
           "claim": "chr21 mean depth at called sites is 61.68x against a 42.42x baseline but its median is 45 against 43 and its 99th percentile 247 against 66 to 69 on clean autosomes, so the depth excess is a tail of mismapping pileups among the acrocentric chromosomes and not copy number.",
           "source_ref": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md",
           "lineage_ref": "results.it2_mosaic_depth"
+        },
+        {
+          "id": 144,
+          "direction": "supports",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "The absolute k-mer-mass denominator (calibration-set mean) and the autosomal-median denominator agree on all 24 contigs to within 0.017 percent (ratio 1.02767 to 1.02784), so the median assumption distorted no chromosome in this sample; defence (c) of the plan is measured, not assumed.",
+          "source_ref": "methodology/123",
+          "lineage_ref": ""
         }
       ]
     },
@@ -2310,11 +2328,39 @@
       "refuted_by": "The cold four-lane pass takes more than 4 hours \u2014 then the join is profiled and the fix recorded.",
       "gene": "",
       "path": "",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "testing",
+      "confidence": 0.15,
+      "suggested_confidence": 0.6457,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 146,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "The cold four-lane pass over the 39,286-record set took 6,320 s (1 h 45 m 20 s) and cost zero dollars \u2014 1.76x the one hour the claim predicted, and 0.44x the four hours that would refute it, so neither clause fires.",
+          "source_ref": "docs/iteration4/step-3/methodology/122-every-lane-scored-once-and-only-once.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 147,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "The lane responsible is not a join: the three local lanes score 47,697 alleles in 53 s, while 6,267 s of the 6,320 is one serial REVEL pass over a public endpoint that failed three times; iteration 2's own VEP pass runs three workers, which would put the cold pass near 35 minutes.",
+          "source_ref": "docs/iteration4/step-3/methodology/122-every-lane-scored-once-and-only-once.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 148,
+          "direction": "supports",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "Every lane wrote its it4-score:<model> lineage edge and a second run of each of the three offline lanes inserted 0 rows and skipped all of them, so the append-only cache honours its (model, version, allele_id) key.",
+          "source_ref": "docs/iteration4/step-3/methodology/122-every-lane-scored-once-and-only-once.md",
+          "lineage_ref": ""
+        }
+      ]
     }
   ]
 }

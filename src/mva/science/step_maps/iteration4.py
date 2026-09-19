@@ -54,6 +54,7 @@ ITERATION4: tuple[Step, ...] = (
         ),
         unblocks=("step-4",),
         iteration="iteration4",
+        status="open",
     ),
     Step(
         slug="step-4",
