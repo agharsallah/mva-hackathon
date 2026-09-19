@@ -147,3 +147,94 @@ class TestCountingPass:
         merged = first.merged(second)
         assert np.array_equal(merged.counts, whole.counts)
         assert merged.reads_scanned == whole.reads_scanned
+
+
+def packed(spelling: str) -> np.ndarray:
+    """One 2-bit packed k-mer, the way a probe array holds it.
+
+    ``window_kmers`` returns the **canonical** spelling -- whichever of the k-mer and its
+    reverse complement sorts smaller. That is GC-safe: complementing swaps A with T and C
+    with G, so the count of G and C is the same either way.
+    """
+    from mva.kmer.encode import window_kmers
+
+    kmers, _ = window_kmers(codes_of(spelling), len(spelling))
+    return kmers
+
+
+class TestGcFraction:
+    def test_it_reads_gc_straight_off_the_packing(self):
+        for spelling, expected in (("G" * 31, 1.0), ("A" * 31, 0.0), ("C" * 31, 1.0)):
+            assert dosage_module.gc_fraction(packed(spelling), 31)[0] == pytest.approx(expected)
+
+    def test_a_mixed_kmer_counts_only_g_and_c(self):
+        # 'GC' twelve times then 'ATATATA': 24 of the 31 bases are G or C.
+        spelling = "GC" * 12 + "ATATATA"
+        assert dosage_module.gc_fraction(packed(spelling), 31)[0] == pytest.approx(24 / 31)
+
+
+class TestComposition:
+    """The correction exists because a bootstrap over probes cannot see a chromosome-wide bias.
+
+    So the tests inject exactly that: a per-chromosome multiplier that is a function of GC and
+    nothing else. Every chromosome is truly diploid, the naive ratio says otherwise, and the
+    residual has to put them back.
+    """
+
+    def test_it_removes_a_gc_trend_a_bootstrap_would_have_missed(self, probes):
+        gc = {name: 0.35 + 0.02 * index for index, name in enumerate(probes.contigs)}
+        counts = counts_for(probes, {})
+        biased = counts.astype(np.float64)
+        for index, name in enumerate(probes.contigs):
+            biased[probes.owner == index] *= 1.0 + 2.0 * (gc[name] - 0.40)
+        rows = dosage_module.dosage(np.rint(biased).astype(np.int64), probes)
+
+        naive = np.std([row.relative for row in rows if row.chrom != "X"], ddof=1)
+        fit = dosage_module.composition(rows, probes, exclude=frozenset({"X"}), gc=gc)
+
+        assert fit.correlation > 0.9
+        assert fit.residual_spread < naive / 2
+        assert all(abs(value - 1.0) < 0.05 for value in fit.residual.values())
+
+    def test_an_excluded_contig_does_not_enter_the_fit(self, probes):
+        rows = dosage_module.dosage(counts_for(probes, {"X": 1.0}), probes)
+        fit = dosage_module.composition(rows, probes, exclude=frozenset({"X"}))
+        assert "X" not in fit.fitted
+        assert "X" not in fit.residual
+
+    def test_the_regressor_it_used_is_recorded(self, probes):
+        rows = dosage_module.dosage(counts_for(probes, {}), probes)
+        supplied = {name: 0.38 + 0.01 * index for index, name in enumerate(probes.contigs)}
+        assert "chromosome" in dosage_module.composition(rows, probes, gc=supplied).source
+        assert dosage_module.composition(rows, probes).source == "probe GC"
+
+    def test_probe_gc_and_supplied_gc_are_not_interchangeable(self, probes):
+        """The reason the reference regressor exists: the two disagree, so the fit differs.
+
+        A probe set is what the uniqueness filter left, which is not composed like the
+        sequence it was cut from. Feeding one where the other belongs silently changes every
+        residual, so the API makes the choice explicit rather than defaulting quietly.
+        """
+        rows = dosage_module.dosage(counts_for(probes, {}), probes)
+        shifted = {name: 0.30 + 0.05 * index for index, name in enumerate(probes.contigs)}
+        by_probe = dosage_module.composition(rows, probes, exclude=frozenset({"X"}))
+        by_reference = dosage_module.composition(rows, probes, exclude=frozenset({"X"}), gc=shifted)
+        assert by_probe.gc != by_reference.gc
+        assert by_probe.slope != pytest.approx(by_reference.slope)
+
+
+class TestGcContent:
+    def test_it_ignores_n_runs_rather_than_counting_them_as_at(self):
+        from mva.kmer.chromosome import gc_content
+
+        plain = Contig("t", np.frombuffer(b"GCGCATAT", dtype=np.uint8))
+        gapped = Contig("t", np.frombuffer(b"GCGCATAT" + b"N" * 500, dtype=np.uint8))
+        assert gc_content(plain) == pytest.approx(0.5)
+        assert gc_content(gapped) == pytest.approx(0.5)
+
+    def test_soft_masked_sequence_still_counts(self):
+        from mva.kmer.chromosome import gc_content
+
+        assert gc_content(Contig("t", np.frombuffer(b"gcgcatat", dtype=np.uint8))) == pytest.approx(
+            0.5
+        )

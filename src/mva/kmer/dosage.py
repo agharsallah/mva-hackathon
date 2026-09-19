@@ -215,13 +215,24 @@ class Composition:
     probes, which measures counting noise and says nothing about a bias shared by every
     probe on the chromosome.
 
-    This is the correction: regress each chromosome's dosage on the mean GC of **its own
-    probes**, and report the residual. A spread that the composition explains is an
-    instrument property; what survives is what a copy-number claim may be made from.
+    This is the correction: regress each chromosome's dosage on its GC, and report the
+    residual. A spread that the composition explains is an instrument property; what
+    survives is what a copy-number claim may be made from.
+
+    **Which GC matters, and it is not the probes'.** Pass ``gc`` to regress on the
+    chromosome's own composition, measured from the reference. Two reasons, both settled
+    before any residual was looked at. Mechanically, GC bias acts on *fragments* of a few
+    hundred bases, so a 31-mer's own GC is the wrong scale. Practically, the surviving
+    probes are a filtered sample: the uniqueness filter removes repetitive sequence, which
+    is not composed like the chromosome around it, so probe GC can understate a chromosome's
+    by two points or more -- and a chromosome whose probes understate its GC gets a positive
+    residual manufactured for it by the fit. Omitting ``gc`` falls back to probe GC, which
+    needs no reference at hand and carries exactly that risk.
     """
 
-    #: Mean GC fraction of each contig's probes.
+    #: The GC fraction each contig was regressed on, and where it came from.
     gc: Mapping[str, float]
+    source: str
     #: Dosage with the fitted composition trend removed, recentred on one.
     residual: Mapping[str, float]
     #: Pearson correlation of dosage against probe GC, across the contigs fitted.
@@ -236,6 +247,7 @@ class Composition:
 
     def as_dict(self) -> dict[str, object]:
         return {
+            "source": self.source,
             "correlation": round(self.correlation, 4),
             "slope": round(self.slope, 4),
             "intercept": round(self.intercept, 4),
@@ -268,19 +280,24 @@ def composition(
     probes: ChromosomeProbes,
     *,
     exclude: frozenset[str] = frozenset(),
+    gc: Mapping[str, float] | None = None,
 ) -> Composition:
-    """Fit each contig's dosage against the GC of its own probes and report the residual.
+    """Fit each contig's dosage against its GC content and report the residual.
 
-    ``exclude`` names contigs that must not enter the fit because their dosage is not a
-    copy-number-one measurement -- the sex chromosomes in a male proband, whose true ratio
-    is a half and would dominate any regression through them.
+    ``gc`` is the composition to regress on, per contig, and should be the chromosome's own
+    from the reference; without it the probes' mean GC is used and the docstring above says
+    what that costs. ``exclude`` names contigs that must not enter the fit because their
+    dosage is not a copy-number-one measurement -- the sex chromosomes in a male proband,
+    whose true ratio is a half and would dominate any regression through them.
     """
-    per_contig = _per_contig(probes.kmers, probes)
-    gc = {
-        name: float(gc_fraction(codes, probes.k).mean())
-        for name, codes in per_contig.items()
-        if codes.size
-    }
+    source = "reference chromosome GC" if gc is not None else "probe GC"
+    if gc is None:
+        per_contig = _per_contig(probes.kmers, probes)
+        gc = {
+            name: float(gc_fraction(codes, probes.k).mean())
+            for name, codes in per_contig.items()
+            if codes.size
+        }
     fitted = tuple(row.chrom for row in rows if row.chrom not in exclude and row.chrom in gc)
     x = np.array([gc[name] for name in fitted])
     y = np.array([row.relative for row in rows if row.chrom in fitted])
@@ -289,7 +306,8 @@ def composition(
     residual = y - predicted + 1.0
     correlation = float(np.corrcoef(x, y)[0, 1]) if x.size > 2 else 0.0
     return Composition(
-        gc=gc,
+        gc=dict(gc),
+        source=source,
         residual=dict(zip(fitted, (float(value) for value in residual), strict=True)),
         correlation=correlation,
         slope=float(slope),

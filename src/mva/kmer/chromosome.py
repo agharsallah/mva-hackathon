@@ -38,7 +38,7 @@ import numpy as np
 from .encode import K, codes_of, kmers_at
 from .fasta import Contig
 
-__all__ = ["CALIBRATION_NAME", "ChromosomeProbes", "design", "sample_contig"]
+__all__ = ["CALIBRATION_NAME", "ChromosomeProbes", "design", "gc_content", "sample_contig"]
 
 #: How many probes each chromosome gets by default. Ten thousand at ~44x depth is ~440,000
 #: expected observations per chromosome: enough that the count's own sampling noise is well
@@ -184,3 +184,24 @@ def design(
         considered=considered,
         k=k,
     )
+
+
+def gc_content(contig: Contig) -> float:
+    """The GC fraction of one reference contig, over its called bases only.
+
+    Runs of ``N`` -- centromeres, the acrocentric short arms, any gap the assembly did not
+    close -- are excluded rather than counted as neither G nor C, because a chromosome with
+    30 Mb of ``N`` would otherwise read as composition-poor when it is simply unassembled.
+    Soft-masked (lower-case) sequence is folded onto upper: masking marks repeats, and a
+    repeat is still made of bases.
+
+    This is the regressor :func:`mva.kmer.dosage.composition` wants. It is deliberately the
+    *chromosome's* composition and not the probes': GC bias in short-read sequencing acts on
+    fragments of a few hundred bases, and a probe set is a filtered sample of the
+    chromosome, so the two are not interchangeable.
+    """
+    upper = contig.bases & ~np.uint8(0x20)
+    counts = np.bincount(upper, minlength=ord("T") + 1)
+    a, c, g, t = (int(counts[ord(base)]) for base in "ACGT")
+    called = a + c + g + t
+    return (g + c) / called if called else 0.0
