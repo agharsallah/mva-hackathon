@@ -1,7 +1,12 @@
 # Figures — generated report artifacts
 
 **Standing:** generated output, not source. Everything here is regenerable; nothing is
-hand-edited. Last checked 2026-09-03.
+hand-edited. Last checked 2026-09-19 — the two `track1/` rows below were added then
+(methodology [126](../docs/step-0/methodology/126-every-iteration-on-the-steps-page.md)); the
+rest was last checked 2026-09-03.
+
+Every file here is also served by the API and shown on `/steps`: a step's figures are
+`GET /api/steps/<iteration>/<slug>/figure/<name>`, listed on the step's card.
 
 Three self-contained HTML pages, each opening from the filesystem with no server and no
 build step. Only Plotly's runtime is fetched from a CDN; every style, behaviour and data
@@ -13,6 +18,8 @@ so the palette and the shell are shared.
 | `explore-report.html` | the full exploration report — twenty exhibits over the committed data profile, each with its caption and legend | `uv run mva-explore report ressources/data-profile` |
 | `science-report.html` | the research record — the method, the step goals, the hypothesis board, the evidence ledger, the oracle budget, and the methods form. **Currently renders as empty**, because no hypothesis has been recorded yet; that is the honest state, not a broken page | `uv run mva-science report --from docs/science-register.json` |
 | `locus-fixture.html` | the locus browser rendered over the **synthetic** `tests/fixtures/mini.vcf`, so the page can be committed | `uv run mva-explore locus tests/fixtures/mini.vcf --out figures/locus-fixture.html` |
+| `track1/*.png` + `track1/funnel.json` | iteration 1's three exhibits — the filtering funnel, every biallelic gene against the phenotype ranking, and the decode table — embedded by `submissions/track1/iteration-1/report.md` and cited by methodology 070, 071 and 074/076 | `uv run python tools/render_track1_figures.py` |
+| `track1/<iteration>/step-<n>/*` | the per-step exhibits of one research iteration, PNG for the report and self-contained HTML for the interactive version. This is the convention; `track1/*.png` and `track2/*.png` predate it, and the steps that drew them name their files in the step map so they are still served | the step's own `tools/render_it2_step<n>.py` |
 | `track2-report.html` + `track2/*.png` | Track 2's step-7 exhibits — the evidence ladder matrix, the rung funnel, the decoy overlap, the paediatric pointers, the drug × mechanism literature — rendered from `build/track2/analysis.json` and nothing else; every number is the enrichment run's | `uv run python tools/track2_enrich.py && uv run python tools/render_track2_figures.py` |
 
 `locus-fixture.html` is deliberately built from the fixture rather than the real callset:

@@ -2062,6 +2062,14 @@ flowchart LR
 
 **Research goal** — the single question a step exists to answer. Not a task ("normalize the VCF") but a question ("does every variant have exactly one spelling?"). A task is done when it runs; a goal is done when it is answered. *Example:* step 1's goal is whether an exact-match scorer can be trusted with an indel.
 
+**Research iteration** — one whole route through the case: its own plan, its own numbered steps, its own claims, and — usually — its own submission folder. Not a retry of the previous one. Iteration 1 filtered the vendor callset top-down; iteration 2 re-derived the same answer blind from the raw reads; iteration 3 was drafted and absorbed rather than run; iteration 4 is the model zoo. Software analogy: a branch that re-implements a feature against the same spec, kept side by side so the two implementations can be compared rather than merged. Distinct from a [submission iteration](#13-hackathon-scoring-words), which is the *folder* one of these uploads.
+*Example:* iteration 2's step 4 and iteration 4's step 4 share a number and nothing else — one is a likelihood-ratio ranking, the other a workflow DAG.
+*Context: the switcher on `/steps` reads one of these at a time, and `GET /api/steps?iteration=` serves it · source: src/mva/science/step_maps/ · related: Step map, Research goal, Blind protocol, Submission iteration, Methodology entry · first seen 2026-09-19*
+
+**Step map** — the declared list of steps of one research iteration, held in code rather than in a table: each step's slug, title, goal, status, the track it feeds, what it unblocks, and any figure it drew outside the usual directory. It is code because it is short, changes rarely, and a reviewer should see the whole map in one diff — the same reason a routing table is code. Everything that hangs off a step (claims, evidence, entries) accumulates at runtime and lives in the warehouse instead.
+*Example:* `ITERATION2` declares nine steps, of which `step-7` is the only one whose `track` is `track2`.
+*Context: read by `/api/steps`, by the report renderer and by the CLI's `--step` choices, so none of them can hold a different list · source: src/mva/science/steps.py · related: Research iteration, Research goal, Track 2 (drug repurposing) · first seen 2026-09-19*
+
 **Hypothesis** — a claim that could turn out to be wrong, stated before you test it. In software terms it is an assertion you write before the code that makes it pass. *Example:* "the causal pair sits in BUB1B."
 *Context: filed in the register before it is tested — `mva-science hypothesis-add` refuses a claim with no prediction and no refutation condition · source: src/mva/science/hypothesis.py · related: Falsifiable, Prediction, Refutation condition, Register*
 

@@ -1,6 +1,10 @@
 # Toolset — what answers what
 
-**Standing:** current as of 2026-09-05 (layer-2 coding scan, `annotate-coding`, probe designer added), written from executed `--help` output, the route
+**Standing:** current as of 2026-09-19 for the research-record table (entry 126: the steps
+routes, the figure and entry routes, the iteration switcher). The rest is current as of
+2026-09-05 (layer-2 coding scan, `annotate-coding`, probe designer added) and has **not** been
+re-checked since — `mva-zoo` and the iteration-4 tooling are known to be missing from it.
+Written from executed `--help` output, the route
 tables in `src/mva/viz/`, the module manifest in `app/src/app/modules/index.ts`, and
 `pyproject.toml` `[project.scripts]`. Every name below was verified to exist.
 
@@ -143,7 +147,11 @@ Case-agnostic: everything reads the mechanism card, nothing hard-codes a gene.
 
 | Question | CLI | API route / app page | Module |
 |---|---|---|---|
-| The step map and each step's goal | `mva-science steps` | — | `science/steps.py` |
+| The step map and each step's goal | `mva-science steps` | `/api/steps` · `/steps` | `science/steps.py`, `science/step_maps/` |
+| **Any** iteration's steps, its claims, its blind-gate rows, and the submission folders it fed | — | `/api/steps?iteration=<name>` · `/steps?iteration=<name>` | `viz/steps.py` |
+| One figure a step drew, as it was rendered | `tools/render_it2_step*.py`, `tools/render_track1_figures.py`, `tools/render_track2_figures.py` | `/api/steps/<iteration>/<slug>/figure/<name>` | `viz/steps_artifacts.py` |
+| One methodology entry, verbatim, without leaving the page | — | `/api/steps/<iteration>/<slug>/entry/<name>` · `/steps` | `viz/steps_artifacts.py` |
+| One iteration's own detail pages (iteration 2 only) | — | `/api/steps/step-<n>` · `/steps/step-<n>` | `viz/steps_it2*.py` |
 | File a claim (needs a prediction and a refutation) | `mva-science hypothesis-add` | — | `science/hypothesis.py` |
 | Change a belief (append a revision) | `mva-science hypothesis-revise` | — | `science/record.py` |
 | Record one sourced observation | `mva-science evidence-add`, `evidence-list` | `/api/science/evidence` · `/science` | `science/evidence.py` |

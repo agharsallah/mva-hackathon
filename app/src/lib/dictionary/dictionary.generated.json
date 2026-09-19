@@ -29,10 +29,10 @@
   ],
   "counts": {
     "chapters": 23,
-    "entries": 595,
+    "entries": 597,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 170
+    "contexts": 172
   },
   "chapters": [
     {
@@ -5937,6 +5937,40 @@
           "html": "<p>the single question a step exists to answer. Not a task (\"normalize the VCF\") but a question (\"does every variant have exactly one spelling?\"). A task is done when it runs; a goal is done when it is answered. <em>Example:</em> step 1's goal is whether an exact-match scorer can be trusted with an indel.</p>",
           "exampleHtml": "",
           "firstSeen": "2026-08-29"
+        },
+        {
+          "kind": "entry",
+          "slug": "research-iteration",
+          "term": "Research iteration",
+          "aliases": [],
+          "html": "<p>one whole route through the case: its own plan, its own numbered steps, its own claims, and — usually — its own submission folder. Not a retry of the previous one. Iteration 1 filtered the vendor callset top-down; iteration 2 re-derived the same answer blind from the raw reads; iteration 3 was drafted and absorbed rather than run; iteration 4 is the model zoo. Software analogy: a branch that re-implements a feature against the same spec, kept side by side so the two implementations can be compared rather than merged. Distinct from a <a href=\"#13-hackathon-scoring-words\">submission iteration</a>, which is the <em>folder</em> one of these uploads.</p>",
+          "exampleHtml": "<p><em>Example:</em> iteration 2's step 4 and iteration 4's step 4 share a number and nothing else — one is a likelihood-ratio ranking, the other a workflow DAG.</p>",
+          "context": "<p>the switcher on <code>/steps</code> reads one of these at a time, and <code>GET /api/steps?iteration=</code> serves it</p>",
+          "source": "src/mva/science/step_maps/",
+          "related": [
+            "step-map",
+            "research-goal",
+            "blind-protocol",
+            "submission-iteration",
+            "methodology-entry"
+          ],
+          "firstSeen": "2026-09-19"
+        },
+        {
+          "kind": "entry",
+          "slug": "step-map",
+          "term": "Step map",
+          "aliases": [],
+          "html": "<p>the declared list of steps of one research iteration, held in code rather than in a table: each step's slug, title, goal, status, the track it feeds, what it unblocks, and any figure it drew outside the usual directory. It is code because it is short, changes rarely, and a reviewer should see the whole map in one diff — the same reason a routing table is code. Everything that hangs off a step (claims, evidence, entries) accumulates at runtime and lives in the warehouse instead.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>ITERATION2</code> declares nine steps, of which <code>step-7</code> is the only one whose <code>track</code> is <code>track2</code>.</p>",
+          "context": "<p>read by <code>/api/steps</code>, by the report renderer and by the CLI's <code>--step</code> choices, so none of them can hold a different list</p>",
+          "source": "src/mva/science/steps.py",
+          "related": [
+            "research-iteration",
+            "research-goal",
+            "track-2-drug-repurposing"
+          ],
+          "firstSeen": "2026-09-19"
         },
         {
           "kind": "entry",
