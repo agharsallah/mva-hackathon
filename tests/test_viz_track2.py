@@ -29,6 +29,10 @@ CARD = {
     "_standing": "written from the research record (H003-H009, methodology 070-074)",
     "gene": {"symbol": "GENEA", "uniprot": "P00000"},
     "mechanism": {"class": "loss-of-function", "status": "inferred from Track 1 (H009)"},
+    "history": [
+        {"version": 2, "date": "2099-01-01", "change": "the first revision"},
+        {"version": 3, "date": "2099-02-02", "change": "FX measured by a step that ran"},
+    ],
 }
 
 SNAPSHOT = {"built_at": "2099-01-01T00:00:00+00:00", "rows": {"targets": 2}}
@@ -303,6 +307,27 @@ def test_the_strategy_is_the_static_plan_with_its_dependencies(client: TestClien
     known = {phase["id"] for phase in phases}
     for phase in phases:
         assert set(phase["depends_on"]) <= known, "a phase depends on something that exists"
+
+
+def test_the_strategy_quotes_the_card_rather_than_restating_it(client: TestClient) -> None:
+    """Two sentences of the plan are facts *about the card*, and typing them made the page
+    claim version 2 and "step 8 has not run" long after the card reached version 4 and the
+    step closed. They are formatted from the card, so they cannot go stale again."""
+    phases = {p["id"]: p["detail"] for p in client.get("/api/track2").json()["data"]["strategy"]}
+    assert "now at version 3" in phases["handoff"]
+    assert "It is at version 3" in phases["verdicts"]
+    # The *latest* history row, not the first one and not the longest.
+    assert "FX measured by a step that ran" in phases["verdicts"]
+    assert "2099-02-02" in phases["verdicts"]
+    assert "the first revision" not in phases["verdicts"]
+    assert "{" not in phases["verdicts"], "every placeholder is filled"
+
+
+def test_a_card_with_no_history_still_renders_the_plan() -> None:
+    """A card written before the history convention is a card, not an error."""
+    detail = {p["id"]: p["detail"] for p in track2.strategy({"version": 1})}
+    assert "now at version 1" in detail["handoff"]
+    assert "undated" in detail["verdicts"] and "no change recorded" in detail["verdicts"]
 
 
 def test_refresh_rebuilds_the_cached_payload(client: TestClient, root: Path) -> None:

@@ -57,16 +57,24 @@ STEP = ("step-8", "step-7")
 #: it is a *plan*, not a measurement: nothing in the data can tell you that the ranking is
 #: open or that the merge waits on the last oracle reply. ``status`` is one of ``done``,
 #: ``open`` (workable now) and ``waiting`` (blocked on something outside Track 2).
-STRATEGY: list[dict[str, Any]] = [
+#:
+#: **Two sentences in it are not plan.** The card's version and what its last revision
+#: changed are *measurements about the card*, and typing them here made the page state
+#: version 2 and "step 8 has not run" months after the card reached version 4 and step 8
+#: closed. Those two are now formatted from the card itself by :func:`strategy`; the rest
+#: is the plan and stays written down. Anything else this list says about a number belongs
+#: in the file that owns it, not here.
+PHASES: list[dict[str, Any]] = [
     {
         "id": "handoff",
         "title": "Hand-off from Track 1",
         "status": "done",
         "detail": (
-            "The mechanism card (ressources/track2/mechanism.json, version 2) is written "
-            "from the iteration-1 research record: the gene, the protein, the two allele "
-            "classes, the pathway, and four repurposing directions with seed targets. "
-            "Coordinate-free by rule — it names consequences, never positions."
+            "The mechanism card (ressources/track2/mechanism.json, now at version "
+            "{version}) is written from the iteration-1 research record: the gene, the "
+            "protein, the two allele classes, the pathway, and four repurposing directions "
+            "with seed targets. Coordinate-free by rule — it names consequences, never "
+            "positions."
         ),
         "depends_on": [],
     },
@@ -112,9 +120,9 @@ STRATEGY: list[dict[str, Any]] = [
         "status": "done",
         "detail": (
             "The oracle's reply to submission 1 (083) confirmed the trans pair, so the "
-            "mechanism card moved to version 3 (measured facts F1-F9 from iteration 2) and "
-            "the Track 2 claims carry committed verdicts. The aneuploidy burden in the "
-            "sample (F8) is the one fact still marked unmeasured: step 8 has not run."
+            "mechanism card is revised rather than edited: a new version and a history "
+            "entry each time a measured fact lands. It is at version {version}; its last "
+            "revision ({date}) records: {change}"
         ),
         "depends_on": ["snapshot"],
     },
@@ -131,6 +139,24 @@ STRATEGY: list[dict[str, Any]] = [
         "depends_on": ["verdicts", "report"],
     },
 ]
+
+
+def strategy(card: dict[str, Any]) -> list[dict[str, Any]]:
+    """:data:`PHASES` with the card's own version and last revision filled in.
+
+    The card is append-only: a measured fact lands as a new ``version`` plus a ``history``
+    row saying what changed. Quoting that row is how this page stays true without a second
+    copy of the facts — a phase that restates a measurement goes stale the moment the
+    measurement is taken, which is exactly what happened to this one.
+    """
+    history = card.get("history") or [{}]
+    latest = max(history, key=lambda row: int(row.get("version") or 0))
+    fields = {
+        "version": card.get("version", "unknown"),
+        "date": latest.get("date", "undated"),
+        "change": latest.get("change", "no change recorded"),
+    }
+    return [{**phase, "detail": phase["detail"].format(**fields)} for phase in PHASES]
 
 
 def linked_iterations(cited: list[str], root: Path) -> list[dict[str, Any]]:
@@ -188,7 +214,7 @@ def payload(settings: Postgres, root: Path | None = None) -> dict[str, Any]:
         "lineage": track2_lineage.build(ledger, base),
         "register": reader.register(submissions_audit.read_register(base), STEP),
         "linked_iterations": linked_iterations(cited, base),
-        "strategy": STRATEGY,
+        "strategy": strategy(mechanism),
     }
 
 
