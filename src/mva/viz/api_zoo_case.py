@@ -3,7 +3,7 @@
 The zoo is meant to run on the next child by changing inputs only, so no route may know
 this case's gene, schemas or docs folder. All of it is one file:
 ``src/mva/zoo/zoo.example.toml``, or whatever ``MVA_ZOO_CONFIG`` points at.
-:class:`mva.zoo.workflow_types.Config` parses it — the same parser the workflow itself uses,
+:class:`mva.zoo.case_config.Config` parses it — the same parser the workflow itself uses,
 so the API cannot read the configuration differently from the run that produced the data.
 
 From its ``[case]`` block come the label, the confirmed gene, the table prefix and the docs
@@ -22,7 +22,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from ..zoo.workflow_types import Config
+from ..zoo.case_config import Config
 from .api_zoo_reads import Tables
 
 __all__ = ["CONFIG_ENV", "DEFAULT_CONFIG", "Case", "case_config", "sources"]

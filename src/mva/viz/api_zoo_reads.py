@@ -35,11 +35,11 @@ from typing import Any
 
 from ..warehouse.postgres import ALIAS, attached, safe_identifier
 from ..warehouse.settings import Postgres
+from ..zoo.case_config import DEFAULT_PREFIX, Config
 from ..zoo.rank import MODEL_RANKS_TABLE
 from ..zoo.registry import ModelCard, card_with_coverage
 from ..zoo.report import MODEL_REPORTS_TABLE
 from ..zoo.types import ALLELE_SCORES_TABLE, RECORDS_TABLE, Coverage
-from ..zoo.workflow_types import DEFAULT_PREFIX, Config
 
 __all__ = [
     "ZOO_TABLES",
@@ -99,7 +99,7 @@ class Tables:
     Nothing here is a constant of the method. The tables come from the run config's
     ``[run]`` block and the names from its ``[case] table_prefix``, so a second case writes
     ``<prefix>_allele_records`` beside this one rather than over it
-    (:meth:`mva.zoo.workflow_types.Config.table`). The defaults are the names the zoo's own
+    (:meth:`mva.zoo.case_config.Config.table`). The defaults are the names the zoo's own
     DDL modules declare, which is what a call with no config gets.
     """
 
