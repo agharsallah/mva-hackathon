@@ -74,7 +74,12 @@ def do_narrate(args: argparse.Namespace) -> int:
         reports_dir=case.reports_dir,
         settings=settings,
         models=args.only or (),
-        run_id=case.run_id,
+        # Not `case.run_id`: a narrative's run id is **the run of the report it explains**,
+        # so `<prefix>_narratives.run_id` joins `<prefix>_model_reports.run_id`. The narrate
+        # call's own config digest is a different run (editing `[llm]` changes it) and would
+        # break that join. It is recorded on the lineage edge instead.
+        case=case.case_json(),
+        reports_table=f"{case.schema}.{case.table('model_reports')}",
     )
     for item in result.narratives:
         print(json.dumps(item.summary(), sort_keys=True))
@@ -118,7 +123,7 @@ def _store_narratives(args: argparse.Namespace, case: Any, narratives: Sequence[
             connection,
             case.schema,
             list(narratives),
-            run_id=case.run_id,
+            run_id=case.run_id,  # the lineage edge's source_version: this narrate call
             table=table,
             source_ref=f"{case.schema}.{case.table('model_reports')}",
             lineage_schema=case.warehouse_schema,

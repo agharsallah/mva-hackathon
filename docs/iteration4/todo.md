@@ -114,10 +114,10 @@ names in `types`/`rank`, `build/it4` defaults, `figures/it4`, the 8-term count, 
 - [ ] A4 step 4 `--from <stage>` real resume: skip-if-checkpoint-exists per stage, kill-mid-fan-out test; file **P4-5**
 
 **G3 — narrate (serial inside)**
-- [ ] A5 `mva.zoo.narrate`: prompt = section JSON + "cite every sentence by row id", temperature 0; mode `claude-code` (`claude -p`, model id recorded from the reply) first
-- [ ] A5 mode `nebius` via LiteLLM (`NEBIUS_API_KEY`, model id from config — **O1**), same prompt, same JSON
-- [ ] A5 `results.it4_narratives` (prompt, reply, mode, model id, run_id); citation checker; file **P4-7**
-- [ ] both modes on every model, side by side in §6 (B)
+- [x] A5 `mva.zoo.narrate` (`bd6eab0`, entry [134](step-5/methodology/134-an-llm-that-may-only-explain-the-rows-it-was-given.md)): prompt = the report's own rows for §2-5 with stable ids + "cite every sentence by row id", no question, no repo context; mode `claude-code` ran all four lanes at `claude-opus-5[1m]` — **41 of 41 sentences cite a resolving row**, $0.534 and 128 s
+- [~] A5 mode `nebius` via LiteLLM built and fake-transport tested; **not run: no `NEBIUS_API_KEY` on this machine**. `litellm` added to the `zoo-ml` group; **O1** stays open — the model id is a config key with a documented default, recorded from the reply when it runs
+- [x] A5 `results.it4_narratives` (8 rows: prompt, reply, mode, model id, words, cited/uncited) + lineage edge; `mva.zoo.narrate_check`; **P4-7** filed as H069 **before** the run and **supported at 0.83**, scoped to `claude-code` (H070 is a duplicate filing, superseded)
+- [x] §6 now holds **a list of versions**: the generated one leads, the hand-written one stays under it, each with its own badge, and a re-render keeps both (`mva-zoo narrate --mode none`). Both *LLM* modes side by side waits on a Nebius key (B)
 
 **G4 — after G3**
 - [ ] A6 merge `fusion+synthesis`: LLM synthesises the merged narrative from per-model interpretations + matrix, cited; default method
@@ -143,7 +143,7 @@ names in `types`/`rank`, `build/it4` defaults, `figures/it4`, the 8-term count, 
 
 - [ ] every `allele_scores` row carries model, version, digest, licence, venue, run_id (test exists — keep it green as lanes are added)
 - [ ] every card says catalogue-adjacent yes/no; merge prints both ranks
-- [ ] every LLM sentence resolves to a row id; failure rate printed (A5)
+- [x] every LLM sentence resolves to a row id; failure rate printed (A5) — `mva.zoo.narrate_check`, 0.00 across four lanes, printed per lane by `mva-zoo narrate`
 - [ ] dollars and seconds per model per run in the manifest (B1)
 - [ ] licence manifest one line per model; fetch scripts + digests only, never score files
 - [ ] `tools/check-python.sh` green before every push; `check_coordinates.py` on every commit
@@ -153,7 +153,7 @@ names in `types`/`rank`, `build/it4` defaults, `figures/it4`, the 8-term count, 
 
 | # | item | status |
 |---|---|---|
-| O1 | Nebius model id | open until A5 |
+| O1 | Nebius model id | **still open**: the mode is built, `litellm` is in `zoo-ml`, the id is `[llm] model` with a documented default — no key on this machine, so nothing was run and nothing is recorded |
 | O2 | dependency groups `zoo` / `zoo-ml` | `zoo` needs nothing beyond base (duckdb is a base dep); `zoo-ml` added with A1 |
 | O3 | upload as model 4 | prepare + rehearse, **no upload** unless the user decides |
 | O4 | `--iteration` flag | **settled**, entry 110 |

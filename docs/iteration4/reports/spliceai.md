@@ -1,4 +1,6 @@
-# spliceai — iteration 4 model report
+# spliceai — model report
+
+**Case:** Mosaic Variegated Aneuploidy — challenge proband 1; confirmed pair gene `BUB1B`.
 
 **Standing:** generated 2026-09-19T16:57:25+00:00 by `mva.zoo.report.render_model_report` from run `it4-dcda40a4df2c`, catalogue mode `catalogue-free`.
 
@@ -99,6 +101,16 @@ Catalogue mode: `catalogue-free`.
 Against the child's 8 HPO terms, `BUB1B` ranks #14 of 5267 genes considered (phenotype score 0.36093, term set `with-parental`, `warehouse.hpo_gene_scores`). `spliceai` scores the molecular change only and never sees the phenotype, so this line is context for the reader, not an input to the score above.
 
 ## 6. Interpretation
+
+This section exists in more than one version — the numbers above are identical for all of them. Each version carries a badge saying who wrote it, in which mode, and how many of its sentences resolve to a row of sections 2-5 (`mva.zoo.narrate_check`).
+
+### 6.1 Generated — mode `claude-code`, model `claude-opus-5[1m]`, 9/9 sentences cited
+
+<!-- interpretation: generated 2026-09-19 | llm:claude-code | model:claude-opus-5[1m] | cited 9/9 -->
+
+This lane scored 32,534 of the set's 39,286 allele records, or 82.8% [cov.scored][cov.total][cov.fraction]. Coverage is uneven by class: 89.5% of synonymous_variant records were scored against 28.1% of splice_polypyrimidine_tract_variant, 36.4% of non_coding_transcript_exon_variant and 39.7% of inframe_deletion [cov.synonymous_variant][cov.splice_polypyrimidine_tract_variant][cov.non_coding_transcript_exon_variant][cov.inframe_deletion]. Flanking classes are barely scored — 1 of 10 upstream and 1 of 5 downstream records — and an absent score is not a low one [cov.upstream_gene_variant][cov.downstream_gene_variant]. Scores cluster near zero across the 0-to-1 range: mean 0.0153, median 0, p90 0.03, p99 0.27 [dist.min][dist.max][dist.mean][dist.p50][dist.p90][dist.p99]. The confirmed pair sits in BUB1B, its two halves scoring 0.03 and 0, at 9.74% and 24.53% from the top, placing the pair 11,980 of 50,696 ranked pairs [pair.gene][dist.mark.left][dist.mark.right][pair.rank][pair.n_ranked]. Because a pair with an unscored half is excluded rather than scored zero, that ranking covers only pairs this lane could fully see [pair.n_ranked][pair.rank]. The run was catalogue-free, which nulls every field a ClinVar-trained model could have learned from, so these numbers are not a clinical verdict [pair.mode]. BUB1B's #14 of 5,267 ranking against the child's 8 HPO terms is separate context: this lane scores the molecular change only and never sees the phenotype [hpo.rank]. They do not establish that any allele, pair or gene causes anything [cov.fraction][dist.n].
+
+### 6.2 Hand-written
 
 <!-- interpretation: hand-written 2026-09-19 | llm:none -->
 

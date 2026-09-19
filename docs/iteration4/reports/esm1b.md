@@ -1,4 +1,6 @@
-# esm1b — iteration 4 model report
+# esm1b — model report
+
+**Case:** Mosaic Variegated Aneuploidy — challenge proband 1; confirmed pair gene `BUB1B`.
 
 **Standing:** generated 2026-09-19T16:57:25+00:00 by `mva.zoo.report.render_model_report` from run `it4-dcda40a4df2c`, catalogue mode `catalogue-free`.
 
@@ -102,6 +104,16 @@ Catalogue mode: `catalogue-free`.
 Against the child's 8 HPO terms, `BUB1B` ranks #14 of 5267 genes considered (phenotype score 0.36093, term set `with-parental`, `warehouse.hpo_gene_scores`). `esm1b` scores the molecular change only and never sees the phenotype, so this line is context for the reader, not an input to the score above.
 
 ## 6. Interpretation
+
+This section exists in more than one version — the numbers above are identical for all of them. Each version carries a badge saying who wrote it, in which mode, and how many of its sentences resolve to a row of sections 2-5 (`mva.zoo.narrate_check`).
+
+### 6.1 Generated — mode `claude-code`, model `claude-opus-5[1m]`, 13/13 sentences cited
+
+<!-- interpretation: generated 2026-09-19 | llm:claude-code | model:claude-opus-5[1m] | cited 13/13 -->
+
+This lane scored 4562 of 39286 allele records, or 11.6% of the set [cov.scored][cov.total][cov.fraction]. Every scored record is a missense_variant, covering 29.2% of that class [cov.missense_variant]. It scored none of the 12036 synonymous, 5490 intron, 2455 splice_region, 564 frameshift, 555 3_prime_UTR, or 423 splice_donor_region records [cov.synonymous_variant][cov.intron_variant][cov.splice_region_variant][cov.frameshift_variant][cov.3_prime_UTR_variant][cov.splice_donor_region_variant]. So the lane can say nothing about those classes, and its silence there is an absence of opinion, not evidence of harmlessness [cov.frameshift_variant][cov.intron_variant]. Across the 4562 scored alleles, scores run from -13.619 to 17.936 with a mean of 4.10138 [dist.n][dist.min][dist.max][dist.mean]. Half fall below 3.76, with 8.2286 at p90 and 13.6305 at p99 [dist.p50][dist.p90][dist.p99]. The confirmed pair sits in the gene BUB1B [pair.gene]. Its right half scores 11.537, at 2.52% from the top [dist.mark.right][pair.right_percentile]. The left half was not scored, so it has no percentile [dist.mark.left][pair.left_percentile]. Because one half is missing, the pair is excluded from the 3673 ranked pairs and has no rank, recorded as no opinion rather than a bad one [pair.n_ranked][pair.rank]. The run was catalogue-free, which nulls every field a ClinVar-trained model could have learned from [pair.mode]. BUB1B ranks #14 of 5267 genes against the child's 8 HPO terms, but esm1b never sees phenotype, so that line is context only [hpo.rank]. Overall the lane characterises missense change alone, not the pair as a whole [cov.missense_variant][pair.rank].
+
+### 6.2 Hand-written
 
 <!-- interpretation: hand-written 2026-09-19 | llm:none -->
 

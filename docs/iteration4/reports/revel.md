@@ -1,4 +1,6 @@
-# revel — iteration 4 model report
+# revel — model report
+
+**Case:** Mosaic Variegated Aneuploidy — challenge proband 1; confirmed pair gene `BUB1B`.
 
 **Standing:** generated 2026-09-19T16:57:25+00:00 by `mva.zoo.report.render_model_report` from run `it4-dcda40a4df2c`, catalogue mode `catalogue-free`.
 
@@ -101,6 +103,16 @@ Catalogue mode: `catalogue-free`.
 Against the child's 8 HPO terms, `BUB1B` ranks #14 of 5267 genes considered (phenotype score 0.36093, term set `with-parental`, `warehouse.hpo_gene_scores`). `revel` scores the molecular change only and never sees the phenotype, so this line is context for the reader, not an input to the score above.
 
 ## 6. Interpretation
+
+This section exists in more than one version — the numbers above are identical for all of them. Each version carries a badge saying who wrote it, in which mode, and how many of its sentences resolve to a row of sections 2-5 (`mva.zoo.narrate_check`).
+
+### 6.1 Generated — mode `claude-code`, model `claude-opus-5[1m]`, 10/10 sentences cited
+
+<!-- interpretation: generated 2026-09-19 | llm:claude-code | model:claude-opus-5[1m] | cited 10/10 -->
+
+This lane scored 10,783 of the set's 39,286 allele records, 27.5% of the total [cov.scored][cov.total][cov.fraction]. Coverage concentrates in one class: 69.0% of missense records [cov.missense_variant]. It scored none of the 12,036 synonymous, 5,490 intron, 2,455 splice_region, 564 frameshift, 555 3_prime_UTR or 423 splice_donor_region records [cov.synonymous_variant][cov.intron_variant][cov.splice_region_variant][cov.frameshift_variant][cov.3_prime_UTR_variant][cov.splice_donor_region_variant]. Only 3 of 51 start_lost, 1 of 289 stop_gained and 1 of 128 splice_acceptor records were scored [cov.start_lost][cov.stop_gained][cov.splice_acceptor_variant]. An absent score means the lane had nothing to say about that record, not that the record is harmless [cov.synonymous_variant]. Scored values span 0 to 0.998, with mean 0.113433, median 0.07, p90 0.258 and p99 0.69218 across 10,783 alleles [dist.n][dist.min][dist.max][dist.mean][dist.p50][dist.p90][dist.p99]. For the confirmed pair in `BUB1B`, the left half was never scored and the right half scores 0.472, at percentile 2.59% [pair.gene][dist.mark.left][dist.mark.right]. A pair with an unscored half is excluded from the 10,456 ranked pairs rather than zeroed, so this pair has no rank, no left percentile, and the lane holds no opinion on it [pair.n_ranked][pair.rank][pair.left_percentile][pair.right_percentile]. The run was `catalogue-free`, nulling every field a ClinVar-trained model could have learned from [pair.mode]. Separately, `BUB1B` ranks #14 of 5267 genes against 8 HPO terms, but `revel` never sees the phenotype, so that line is context, not an input [hpo.rank].
+
+### 6.2 Hand-written
 
 <!-- interpretation: hand-written 2026-09-19 | llm:none -->
 

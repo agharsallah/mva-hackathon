@@ -225,25 +225,35 @@ def run_narrate(
     models: Sequence[str] = (),
     transport: Transport | None = None,
     run_id: str = "",
+    case: Mapping[str, Any] | None = None,
+    reports_table: str = "",
 ) -> NarrateRun:
-    """Generate section 6 for every stored report JSON, rewrite the Markdown, keep the hand.
+    """Generate section 6 for every stored report JSON, rewrite the Markdown, lose nothing.
 
     ``json_dir`` is where the run dumped one ``<model>.json`` per lane
     (``<out_dir>/reports``); ``reports_dir`` is where the Markdown lives
     (``docs/<iteration>/reports``). For each lane:
 
-    1. the hand-written section 6 is read out of the rendered file and becomes a ``hand``
-       narrative — nothing that was written by a person is discarded;
-    2. the LLM is asked for a new one from the lane's rows;
-    3. the report JSON's ``sections.interpretation`` is rebuilt with the generated version
-       first and the hand-written one under it, and both the JSON and the Markdown are
-       rewritten from it.
+    1. the LLM is asked for a section 6 from the lane's rows (mode ``none``: skipped);
+    2. every **prior** version already in the JSON is kept under it, and if none of them is
+       the hand-written one, the prose still in the rendered file is read back and kept —
+       nothing a person or an earlier mode wrote is discarded;
+    3. the JSON's ``sections.interpretation`` is rebuilt from that list and both the JSON and
+       the Markdown are rewritten from it.
+
+    Because of (2), ``--mode none`` is a safe **re-render**: it calls nothing and keeps every
+    version the file already carries.
+
+    ``case`` and ``reports_table`` backfill a report JSON written before those keys existed
+    (schema version 1). Without them a re-render would print "confirmed pair gene none
+    declared" for a case that has one — a renderer must not lose a fact because the file it
+    reads predates the field.
 
     Nothing is written to the warehouse here: the caller holds the connection, so this
     function is runnable with no database at all.
     """
     from .report import render_model_report
-    from .report_sections import existing_interpretation, interpretation_json
+    from .report_sections import interpretation_json
 
     wanted = set(models)
     narratives: list[Narrative] = []
@@ -254,7 +264,10 @@ def run_narrate(
         if wanted and key not in wanted:
             continue
         markdown = reports_dir / f"{key}.md"
-        versions: list[Narrative] = []
+        if case and not payload.get("case"):
+            payload["case"] = dict(case)
+        if reports_table and not payload.get("reports_table"):
+            payload["reports_table"] = reports_table
         generated = narrate_report(
             payload,
             mode=getattr(settings, "mode", "none"),
@@ -264,27 +277,63 @@ def run_narrate(
             transport=transport,
             run_id=run_id,
         )
-        if generated is not None:
-            versions.append(generated)
-        kept = existing_interpretation(markdown)
-        if kept:
-            versions.append(hand_written(payload, kept, run_id=run_id))
-        if not versions:
+        blocks = _versions(payload, markdown, generated, run_id=run_id)
+        if not blocks:
             continue
         sections = dict(payload.get("sections", {}))
         sections["interpretation"] = interpretation_json(
-            [interpretation_block(item) for item in versions],
-            marker=versions[0].marker(),
-            text=versions[0].text,
-            llm_mode=versions[0].mode,
+            blocks,
+            marker=str(blocks[0].get("marker", "")),
+            text=str(blocks[0].get("text", "")),
+            llm_mode=str(blocks[0].get("llm_mode", "")),
         )
         payload["sections"] = sections
+        # One narrative per version on the page, in the page's order: a stored row exists
+        # for everything a reader can see, including the hand-written one.
+        versions = [generated] if generated is not None else []
+        versions += [
+            hand_written(payload, str(block.get("text", "")), run_id=run_id)
+            for block in blocks
+            if block.get("llm_mode") in ("hand", "none", "")
+        ]
         path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
         reports_dir.mkdir(parents=True, exist_ok=True)
         markdown.write_text(render_model_report(payload), encoding="utf-8")
         narratives += versions
         paths += [path, markdown]
     return NarrateRun(tuple(narratives), tuple(paths))
+
+
+def _versions(
+    payload: Mapping[str, Any],
+    markdown: Path,
+    generated: Narrative | None,
+    *,
+    run_id: str,
+) -> list[dict[str, Any]]:
+    """Every version of section 6 this report should now carry, newest writer first.
+
+    The generated one leads; every version already stored under it is kept, minus any earlier
+    run of the *same* mode (a second ``claude-code`` pass replaces the first, it does not
+    stack). If nothing stored is hand-written, the prose still in the rendered Markdown is
+    read back — that is the one version that predates the JSON knowing about versions at all.
+    """
+    from .report_sections import existing_interpretation
+
+    stored = dict(payload.get("sections", {}).get("interpretation") or {})
+    prior = [stored, *(stored.get("alternatives") or [])] if stored.get("text") else []
+    mode = generated.mode if generated is not None else ""
+    kept = [
+        {key: value for key, value in block.items() if key != "alternatives"}
+        for block in prior
+        if block.get("llm_mode") != mode
+    ]
+    if not any(block.get("llm_mode") in ("hand", "none", "") for block in kept):
+        text = existing_interpretation(markdown)
+        if text:
+            kept.append(interpretation_block(hand_written(payload, text, run_id=run_id)))
+    lead = [interpretation_block(generated)] if generated is not None else []
+    return lead + kept
 
 
 # ---------------------------------------------------------------------------------------
