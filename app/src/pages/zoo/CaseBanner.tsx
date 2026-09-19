@@ -75,7 +75,15 @@ export function CaseBanner() {
               <StatTile
                 label="Lanes with an opinion"
                 value={`${opinions.length} of ${data.per_model.length}`}
-                tone={opinions.length === 0 ? 'broken' : 'good'}
+                // Green only when every lane could answer: "1 of 4" is a coverage gap, not a
+                // success, and colouring it good would read as one.
+                tone={
+                  opinions.length === data.per_model.length
+                    ? 'good'
+                    : opinions.length === 0
+                      ? 'broken'
+                      : 'decision'
+                }
                 sub={
                   silent.length
                     ? `${silent.map((m) => m.model).join(', ')} scored only one half`
