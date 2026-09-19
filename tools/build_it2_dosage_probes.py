@@ -54,9 +54,17 @@ DEFAULT_OUT = REPO / "build" / "it2" / "step-8" / "probes"
 #: The delivered callset's mapped depth. Used only to print what the pass should see.
 DEFAULT_DEPTH = 44.0
 
-#: Measured 2026-09-11 on the job service, beside the data: seconds per shard for a full
-#: pass. Printed as a projection, never as a promise.
-SECONDS_PER_SHARD = 11.0
+#: Measured 2026-09-19 on the job service, beside the data, job ``0ff66d495fe0``: 4 shards
+#: at ``workers=8`` took 500 s, so 125 s per shard. Printed as a projection, never as a
+#: promise.
+#:
+#: The 11.0 s this held until 2026-09-19 came from step 2's **bait** sweep and was wrong by
+#: an order of magnitude for a **counting** pass. A bait sweep asks whether a read contains
+#: any probe, so it sets ``stride=16`` and inspects one window in sixteen; a tally needs the
+#: multiplicity of every probe, so it reads all ~477 M windows per shard. Same store, same
+#: reads, sixteen times the windows. A constant measured under one verb does not transfer to
+#: another.
+SECONDS_PER_SHARD = 125.0
 SHARDS = 272
 
 #: The contigs a dosage is reported for, in karyogram order, in the **bare** spelling
@@ -177,8 +185,14 @@ def main(argv: list[str] | None = None) -> int:
         "projected_pass_minutes": round(SHARDS * SECONDS_PER_SHARD / 60.0, 1),
         "projected_note": (
             f"{SHARDS} shards at {SECONDS_PER_SHARD} s each, measured beside the data on "
-            "2026-09-11. From a laptop the same pass is ~4.2 h, because the object-store "
-            "link saturates and parallelism buys nothing."
+            "2026-09-19 (job 0ff66d495fe0, 4 shards at workers=8 in 500 s). This is a "
+            "counting pass: every window is read, ~477 M per shard. Step 2's bait sweep "
+            "strided one window in sixteen and cost ~11 s a shard, which is why that figure "
+            "must not be quoted here. Raising workers from 2 to 8 bought 1.66x, not 4x -- "
+            "the pass is bound by the shard reads, not by the tally. A deliberate subsample "
+            "is the cheap route: shards are flowcell partitions, so a subset is a uniform "
+            "sample of the library and a ratio between chromosomes stays unbiased "
+            "(tools/run_it2_dosage_pass.py --subsample N)."
         ),
     }
     (args.out / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")

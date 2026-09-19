@@ -11,8 +11,21 @@ guards, in the order they matter:
    real per-shard cost on this service today rather than trusting a figure measured in
    September, and the full pass is licensed by it.
 3. **A partial result is labelled partial.** ``CountResult.complete`` is false whenever fewer
-   shards were swept than the store holds, and nothing downstream reads a partial count as a
+   shards were swept than the store holds, and an accidental partial is never read as a
    dosage.
+
+``--subsample N`` is the one exception, and it is a different thing from an accidental
+partial: a *deliberate* thinning with an argument behind it. Shards are flowcell partitions
+-- lane and read number -- not genomic ones, so any subset of them is a uniform sample of
+the library with respect to the genome. Dosage is a **ratio between chromosomes**, and a
+uniform thinning multiplies every chromosome's expected count by the same factor, so the
+ratio is unbiased and only its variance rises. The thinning factor is recorded in the
+output and in every row's provenance; the full-pass projection is printed beside it so the
+cost of the choice is visible.
+
+**This argument does not transfer to genotyping.** :mod:`mva.kmer.count` needs absolute
+multiplicity at one site, where a thinned count is simply wrong -- which is why that module
+says a sampled count is not a count. The difference is the ratio.
 
 Usage::
 
@@ -73,6 +86,14 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--upload", action="store_true", help="publish the probe array first")
     parser.add_argument("--shards", type=int, default=2, help="timing probe; 0 with --full")
     parser.add_argument("--full", action="store_true", help="sweep every shard")
+    parser.add_argument(
+        "--subsample",
+        type=int,
+        default=0,
+        help="sweep this many shards and license a dosage from them. A deliberate uniform "
+        "thinning, not a partial run: shards are flowcell partitions, so the ratio between "
+        "chromosomes is unbiased and only its variance rises.",
+    )
     parser.add_argument("--workers", type=int, default=1)
     parser.add_argument("--api", default="", help="override MVA_READS_API_URL")
     args = parser.parse_args(argv)
@@ -98,13 +119,14 @@ def main(argv: list[str] | None = None) -> int:
         client(store).upload_file(str(local), store.bucket, args.key)
         print(f"published  s3://{store.bucket}/{args.key} ({local.stat().st_size:,} bytes)")
 
+    swept = 0 if args.full else (args.subsample or args.shards)
     body = {
         "probes_key": args.key,
         "k": design.k,
         "workers": args.workers,
-        **({} if args.full else {"shard_limit": args.shards}),
+        **({} if args.full else {"shard_limit": swept}),
     }
-    scope = "every shard" if args.full else f"{args.shards} shard(s)"
+    scope = "every shard" if args.full else f"{swept} shard(s)"
     print(f"submitting: {len(design):,} probes over {scope}")
     started = time.perf_counter()
     result = reads_client.submit("tally", body, base, token)
@@ -113,18 +135,44 @@ def main(argv: list[str] | None = None) -> int:
     print(f"\npass: {json.dumps(result, indent=2)}")
     print(f"wall clock {elapsed / 60:.1f} min")
 
-    if not result.get("complete"):
-        per_shard = elapsed / max(result.get("shards_swept", 1), 1)
+    per_shard = elapsed / max(result.get("shards_swept", 1), 1)
+    if not result.get("complete") and not args.subsample:
         print(
             f"\npartial pass. Measured {per_shard:.1f} s per shard here, so the full "
             f"{SHARDS} shards project to {SHARDS * per_shard / 60:.0f} min. "
-            "Re-run with --full to license a dosage."
+            "Re-run with --full, or with --subsample N to license a dosage from a "
+            "deliberate uniform thinning."
         )
         return 0
 
+    thinning = (result.get("shards_swept") or SHARDS) / SHARDS
+    if args.subsample:
+        print(
+            f"\ndeliberate subsample: {result['shards_swept']} of {SHARDS} shards "
+            f"({thinning:.1%} of the library, {result['reads_scanned']:,} reads). Shards are "
+            "flowcell partitions, so this is a uniform thinning and the ratio between "
+            f"chromosomes is unbiased. The full pass would have taken "
+            f"{SHARDS * per_shard / 60:.0f} min."
+        )
+
     args.out.mkdir(parents=True, exist_ok=True)
     rows = [row.as_dict() for row in dosage(counts, design, kmers=counted, seed=common.SEED)]
-    write_json(args.out / "dosage.json", {"pass": result, "dosage": rows})
+    for row in rows:
+        row["shards_swept"] = result.get("shards_swept")
+        row["thinning"] = round(thinning, 5)
+    write_json(
+        args.out / "dosage.json",
+        {
+            "pass": result,
+            "thinning": round(thinning, 5),
+            "thinning_note": (
+                "shards are flowcell partitions, not genomic ones, so a subset of them is a "
+                "uniform sample of the library; dosage is a ratio between chromosomes, which "
+                "a uniform thinning leaves unbiased while raising its variance"
+            ),
+            "dosage": rows,
+        },
+    )
     columns = list(rows[0]) if rows else []
     write_tsv(args.out / "tables" / "it2_chrom_dosage.tsv", rows, columns)
     print(f"\nwrote {args.out}/dosage.json and its table")
