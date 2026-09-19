@@ -10,11 +10,18 @@ Six stages, each a pure function over rows except the three that ask a public AP
 4. **the ladder** - every (drug, direction) on a rung (:mod:`mva.drugs.ladder`);
 5. **shortlist and do-not** (:mod:`mva.drugs.shortlist`);
 6. **decoy comparison** - the real directions against each decoy card under ``decoys/``
-   (:mod:`mva.drugs.compare`).
+   (:mod:`mva.drugs.compare`), written only when there is a decoy to compare against.
 
 Every table is written with a provenance manifest in the snapshot's own shape, and an
 ``analysis.json`` carries the numbers the methodology entry and the figures quote. Case-
 agnostic by the same rule as the snapshot: everything is read off the card and the tables.
+
+**An uncurated card is a supported input, not an error.** ``evidence.tsv`` is written by a
+person and exists only for a card somebody has read the literature for. A card folder
+without one - a decoy, or a transfer card on a second case - is graded on the automated
+rungs alone: the curated rows read as empty, the ladder manifest lists only the inputs that
+exist, and no ``evidence`` manifest and no empty ``decoy_comparison.tsv`` are written. A
+manifest naming a file that is not there would be a worse record than no manifest.
 """
 
 from __future__ import annotations
@@ -30,6 +37,7 @@ from typing import Any
 from . import compare, ladder, mechlit, pediatric, provenance, shortlist, tables
 from .cache import DEFAULT_CACHE_DIR, Fetcher
 from .mechanism import DEFAULT_CARD, MechanismCard, load
+from .methods import METHODS
 from .names import base_name
 from .snapshot import DEFAULT_OUT_DIR, ENDPOINTS, build_fetchers
 from .sources import openfda
@@ -38,49 +46,10 @@ from .sources import openfda
 # would make such a row unreadable, and an unreadable row is a silent data loss.
 csv.field_size_limit(sys.maxsize)
 
-__all__ = ["BUILT_BY", "DEFAULT_ANALYSIS", "Enrichment", "read_tsv", "run"]
+__all__ = ["BUILT_BY", "DEFAULT_ANALYSIS", "Enrichment", "read_optional_tsv", "read_tsv", "run"]
 
 BUILT_BY = "tools/track2_enrich.py"
 DEFAULT_ANALYSIS = Path("build/track2/analysis.json")
-
-#: Methods, as the manifests print them. One place, so the manifest and the docs agree.
-METHODS = {
-    "drug_mechanism_literature": (
-        "two PubMed questions per approved drug, derived from the card: the drug AND the "
-        "mechanism (gene, protein, pathway head, disease anchor), and the drug AND the tumour "
-        "context; hits is the PubMed record count, pmids a head of at most 10"
-    ),
-    "pediatric_trials": (
-        "ClinicalTrials.gov v2, query.intr=<drug> with aggFilters=ages:child, first page of "
-        "100, any indication; a study that admits children, not proof one enrolled any"
-    ),
-    "evidence_ladder": (
-        "one row per (approved drug, direction): automated rung from approval, tumour-context "
-        "trial and paediatric evidence (5 = approved AND context trial AND paediatric "
-        "label-or-study; 4 = context trial; else 1), curated rung from evidence.tsv (a PMID "
-        "read by a person, rung 2 cell / 3 in vivo); rung = max of the two, both printed; "
-        "flags name anti-directions (card moa_pattern), standard of care, curated-only and "
-        "unverified approval"
-    ),
-    "shortlist": (
-        "ladder rows at rung >= 2 that are neither standard of care nor anti-direction nor "
-        "pathway-only, ranked: rung, molecule-level before proxy evidence, paediatric "
-        "evidence, mechanism literature"
-    ),
-    "do_not": (
-        "every ladder drug carrying an anti-direction flag (with the card's status for it) or "
-        "the standard-of-care flag, once each"
-    ),
-    "decoy_comparison": (
-        "per real direction and per decoy card: Jaccard between the approved drug sets (base "
-        "names), the shared drugs, and the decoy's own automated flags; automated stages only"
-    ),
-    "evidence": (
-        "curated by a person: one cited PubMed result per row, rung 2 (cell) or 3 (in vivo), "
-        "proxy=true when the result is for a same-axis compound named in proxy_of; every PMID "
-        "was resolved against PubMed E-utilities before the row was written"
-    ),
-}
 
 
 def read_tsv(path: Path) -> list[dict[str, str]]:
@@ -89,6 +58,17 @@ def read_tsv(path: Path) -> list[dict[str, str]]:
     # would read that quote as the start of a multi-line field and swallow the rows after it.
     with path.open(encoding="utf-8", newline="") as stream:
         return list(csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE))
+
+
+def read_optional_tsv(path: Path) -> list[dict[str, str]]:
+    """One TSV, or no rows when the file is not there.
+
+    ``evidence.tsv`` is the only hand-written table in the folder, so a card nobody has
+    curated simply has none. *Absent* and *empty* grade the same way here - no curated
+    rung - and the difference is recorded where it belongs: the manifest for the file is
+    not written at all, so no provenance record claims a file that does not exist.
+    """
+    return read_tsv(path) if path.is_file() else []
 
 
 @dataclass
@@ -105,6 +85,8 @@ class Enrichment:
     shortlist: list[dict[str, Any]] = field(default_factory=list)
     do_not: list[dict[str, Any]] = field(default_factory=list)
     comparison: list[dict[str, Any]] = field(default_factory=list)
+    #: Rows in ``evidence.tsv``; 0 both when the file is empty and when it is absent.
+    curated: int = 0
     counts: dict[str, int] = field(default_factory=dict)
     analysis: dict[str, Any] = field(default_factory=dict)
 
@@ -225,12 +207,20 @@ def _write(
             "evidence_ladder",
             tables.LADDER_COLUMNS,
             result.ladder,
+            # An input list is a claim about what was read. ``evidence.tsv`` exists only for
+            # a curated card, so it is named only when it is there.
             lambda: [
-                table_in("drug_candidates"),
-                table_in("trials"),
-                table_in("evidence"),
-                table_in("drug_mechanism_literature"),
-                table_in("pediatric_trials"),
+                *(
+                    table_in(name)
+                    for name in (
+                        "drug_candidates",
+                        "trials",
+                        "evidence",
+                        "drug_mechanism_literature",
+                        "pediatric_trials",
+                    )
+                    if (out_dir / f"{name}.tsv").is_file()
+                ),
                 api("openfda"),
             ],
         ),
@@ -241,26 +231,34 @@ def _write(
             lambda: [table_in("evidence_ladder")],
         ),
         ("do_not", tables.SHORTLIST_COLUMNS, result.do_not, lambda: [table_in("evidence_ladder")]),
-        (
-            "decoy_comparison",
-            tables.DECOY_COMPARISON_COLUMNS,
-            result.comparison,
-            lambda: [table_in("drug_candidates"), *decoy_in],
-        ),
     ]
+    # A card with no decoys beside it gets no comparison table: an empty one would read as
+    # "compared, nothing shared" rather than "never compared".
+    if decoys:
+        plan.append(
+            (
+                "decoy_comparison",
+                tables.DECOY_COMPARISON_COLUMNS,
+                result.comparison,
+                lambda: [table_in("drug_candidates"), *decoy_in],
+            )
+        )
     for name, columns, rows, inputs in plan:
         path = out_dir / f"{name}.tsv"
         result.counts[name] = tables.write_tsv(path, columns, rows)
         _manifest(name, path, result.counts[name], result.card, inputs())
         say(f"wrote {path}  {result.counts[name]:,} rows")
     evidence_path = out_dir / "evidence.tsv"
-    _manifest(
-        "evidence",
-        evidence_path,
-        len(read_tsv(evidence_path)),
-        result.card,
-        [{"name": "pubmed", "url": ENDPOINTS["pubmed"][0], "role": "PMID resolution"}],
-    )
+    if evidence_path.is_file():
+        _manifest(
+            "evidence",
+            evidence_path,
+            len(read_tsv(evidence_path)),
+            result.card,
+            [{"name": "pubmed", "url": ENDPOINTS["pubmed"][0], "role": "PMID resolution"}],
+        )
+    else:
+        say("no evidence.tsv: automated rungs only, and no curated manifest written")
 
 
 def _by_max_rung(rows: list[dict[str, Any]]) -> dict[str, int]:
@@ -296,6 +294,7 @@ def _analysis(result: Enrichment, fetchers: dict[str, Fetcher]) -> dict[str, Any
         "code_version": provenance.code_version(),
         "card_version": result.card.version,
         "gene": result.card.gene_symbol,
+        "curated_rows": result.curated,
         "drugs_graded": len(result.drugs),
         "rows": result.counts,
         "ladder_rows_by_rung": {str(k): v for k, v in sorted(by_rung.items(), reverse=True)},
@@ -336,8 +335,8 @@ def run(
     card = load(card_path)
     candidates = read_tsv(out_dir / "drug_candidates.tsv")
     trials = read_tsv(out_dir / "trials.tsv")
-    evidence = read_tsv(out_dir / "evidence.tsv")
-    result = Enrichment(card, _drug_names(candidates, evidence))
+    evidence = read_optional_tsv(out_dir / "evidence.tsv")
+    result = Enrichment(card, _drug_names(candidates, evidence), curated=len(evidence))
     say(f"card v{card.version} {card.gene_symbol}: {len(result.drugs)} drugs to grade")
 
     fetchers = build_fetchers(cache_dir, refresh=refresh)
