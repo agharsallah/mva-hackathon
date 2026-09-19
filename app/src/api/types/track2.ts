@@ -23,6 +23,8 @@ import type {
   ShortlistRow,
   StandardOfCare,
   Track2EvidenceRow,
+  TransferCard,
+  TransferComparisonRow,
 } from './track2-step7';
 
 /** One of the two alleles, named by consequence class — never by position. */
@@ -371,6 +373,12 @@ export interface Track2 {
   do_not?: ShortlistRow[];
   decoy_comparison?: DecoyComparisonRow[];
   decoys?: DecoyCard[];
+  /**
+   * The scalability evidence: the same pipeline on a different **case**, not a different
+   * gene. Empty until `tools/track2_transfer.py` has run.
+   */
+  transfer_comparison?: TransferComparisonRow[];
+  transfers?: TransferCard[];
   summary: Track2Summary;
   lineage: Track2Lineage;
   register: Track2RegisterEntry[];

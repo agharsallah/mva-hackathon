@@ -16,7 +16,8 @@
  *   6. every dictionary link resolves to an entry that exists in the one dictionary;
  *   7. the step-7 grading renders off the same fixture: the ladder matrix, the eleven
  *      shortlist rows the report may argue, the do-not table's caution block, the decoy
- *      chart's pre-registered 0.10 line, and each card fact's measured status from the card.
+ *      chart's pre-registered 0.10 line, the transfer case's second disease with zero
+ *      curated rows, and each card fact's measured status from the card.
  *
  * Counts are read off the committed fixture rather than typed in: a re-capture of
  * `/api/track2` changes them, and a test that hard-codes 3,766 rows fails for the wrong
@@ -269,6 +270,31 @@ describe('the Track 2 report', () => {
     expect(figure.textContent).toContain('D4');
     expect(figure.textContent).toMatch(/non-specific/);
     for (const d of data.decoys ?? []) expect(figure.textContent).toContain(d.symbol);
+  }, 30000);
+
+  it('shows the transfer case: a second disease, run by the same code, with no curated rows', async () => {
+    await mountModule(track2);
+
+    const figure = document.getElementById('transfer-case')!;
+    expect(figure, 'no transfer exhibit on the page').toBeTruthy();
+
+    const rows = data.transfer_comparison ?? [];
+    const moved = rows.find((r) => r.role === 'transfer case')!;
+    expect(moved, 'the fixture carries no transfer case').toBeTruthy();
+
+    // The second case is named by its own gene and disease, not the proband's.
+    expect(figure.textContent).toContain(moved.gene);
+    expect(figure.textContent).toContain(moved.disease);
+    expect(moved.gene).not.toBe(data.card.gene.symbol);
+
+    // The boundary of the comparison, on the page rather than only in the docs: a transfer
+    // card has no hand-read evidence, so rungs 2-3 cannot exist for it.
+    expect(Number(moved.curated_rows ?? 0)).toBe(0);
+    expect(figure.textContent).toMatch(/automated rungs/i);
+
+    // The cost of the second case is readable, not implied.
+    expect(figure.textContent).toContain('live requests');
+    for (const card of data.transfers ?? []) expect(figure.textContent).toContain(card.case);
   }, 30000);
 
   it("states each fact's measured status from the card, never from a hard-coded id", async () => {

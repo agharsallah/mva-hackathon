@@ -170,6 +170,81 @@ export interface DecoyCard {
   snapshot: DecoySnapshot;
 }
 
+/* --- the transfer case: the same pipeline, a different case -------------------------- */
+
+/**
+ * One case in the cross-case comparison — the scalability evidence.
+ *
+ * A **decoy** swaps the gene and keeps the child, so it measures specificity. A **transfer
+ * card** swaps the whole case: a different disease with its own OMIM/MONDO identifiers, its
+ * own HPO terms read out of `phenotype.hpoa`, its own tumour context and its own standard
+ * of care. Running it unchanged is what makes "this pipeline is case-agnostic" a measured
+ * statement rather than a claim.
+ *
+ * Only the **automated** rungs are comparable. A transfer card has no hand-curated
+ * `evidence.tsv`, so `curated_rows` is 0 for it and rungs 2-3 cannot appear at all.
+ */
+export interface TransferComparisonRow {
+  /** Gene and disease, as the row names the case. */
+  case: string;
+  /** `real case` or `transfer case`. */
+  role: string;
+  gene: string;
+  disease: string;
+  tumour_context: string;
+  card_version: Count;
+  targets: Count;
+  candidate_rows: Count;
+  approved_drugs: Count;
+  drugs_rung_5: Count;
+  drugs_rung_4: Count;
+  drugs_rung_3: Count;
+  drugs_rung_2: Count;
+  drugs_rung_1: Count;
+  shortlist: Count;
+  do_not: Count;
+  /** Hand-read literature rows. 0 for a transfer card, by construction. */
+  curated_rows: Count;
+  live_requests: Count;
+  cached_replies: Count;
+  /** The TSV's own text; empty for a case this run did not execute. */
+  wall_seconds: string;
+}
+
+/** What a transfer card is, and what of the template it kept. Its `transfer` block. */
+export interface TransferMeta {
+  template_gene: string;
+  template_card_version: number;
+  /** Why this second case was chosen. */
+  picked_by: string;
+  /** Which stages may be compared at all: the automated ones. */
+  comparable: string;
+  copied_from_template: { blocks: string[]; why: string };
+  /** Always `nothing` — the case is built from the spec alone. */
+  inherited_from_template_case: string;
+  /** The `phenotype.hpoa` release the clinical terms were read from. */
+  hpo_source: Record<string, unknown>;
+}
+
+/** One transfer case: its card, its snapshot counts, nothing else. */
+export interface TransferCard {
+  /** The folder name — the gene symbol. */
+  case: string;
+  card: {
+    transfer?: TransferMeta;
+    case?: {
+      disease?: string;
+      omim_phenotype?: string;
+      mondo?: string;
+      orphanet?: string;
+      tumour_context?: string;
+      hpo_terms?: string[];
+    };
+    gene?: { symbol?: string; uniprot?: string };
+  } & Record<string, unknown>;
+  snapshot: DecoySnapshot;
+}
+
 /* --- mechanism card, version 3 ------------------------------------------------------- */
 
 /** One thing iteration 2 measured about the genotype, with what it implies for a drug. */

@@ -252,6 +252,7 @@ class TestComparison:
             analysis=ANALYSIS,
             curated_rows=0,
             wall_seconds=12.34,
+            warm_seconds=1.26,
         )
         row = transfer.comparison_row(run)
         assert row["case"] == "GENEZ / FSS9"
@@ -265,12 +266,14 @@ class TestComparison:
         assert (row["shortlist"], row["do_not"], row["curated_rows"]) == (3, 2, 0)
         assert (row["live_requests"], row["cached_replies"]) == (10, 13)
         assert row["wall_seconds"] == 12.3
+        assert row["warm_seconds"] == 1.3
 
     def test_a_case_this_run_did_not_execute_has_no_wall_clock(self) -> None:
         row = transfer.comparison_row(
             transfer.CaseRun("real", "real case", SNAPSHOT, ANALYSIS, curated_rows=5)
         )
         assert row["wall_seconds"] is None
+        assert row["warm_seconds"] is None
         assert row["curated_rows"] == 5
 
     def test_rows_keep_the_order_they_were_given(self) -> None:

@@ -1,8 +1,9 @@
 /**
  * Step 7's half of the Track 2 report: the grading, in the order a reader needs it.
  *
- * The snapshot answers *which drugs exist*. These six sections answer *which of them may be
- * argued, which must not be, and how much of either a wrong gene would also have produced*
+ * The snapshot answers *which drugs exist*. These seven sections answer *which of them may
+ * be argued, which must not be, how much of either a wrong gene would also have produced,
+ * and whether any of this machinery works for a patient who is not this one*
  * — so they sit immediately after the mechanism argument and before the raw search space
  * that produced them.
  *
@@ -20,6 +21,7 @@ import { splitShortlist } from './ladderModel';
 import { MeasuredFacts } from './MeasuredFacts';
 import { PediatricPointers } from './PediatricPointers';
 import { Shortlist } from './Shortlist';
+import { TransferCase } from './TransferCase';
 
 export function Grading({ data, source }: { data: Track2; source?: string }) {
   const facts = data.card.measured_facts ?? [];
@@ -28,6 +30,8 @@ export function Grading({ data, source }: { data: Track2; source?: string }) {
   const doNot = data.do_not ?? [];
   const comparison = data.decoy_comparison ?? [];
   const decoys = data.decoys ?? [];
+  const transferComparison = data.transfer_comparison ?? [];
+  const transfers = data.transfers ?? [];
   const pediatricTrials = data.pediatric_trials ?? [];
   const { argue } = splitShortlist(shortlist);
 
@@ -85,6 +89,15 @@ export function Grading({ data, source }: { data: Track2; source?: string }) {
           subtitle="the same pipeline on a gene that is not the answer — the negative control this search needed"
         >
           <DecoyControl comparison={comparison} decoys={decoys} source={source} />
+        </Section>
+      )}
+
+      {transferComparison.length > 0 && (
+        <Section
+          title="The transfer case"
+          subtitle="the same pipeline on a different case — a different disease, its own phenotype annotation, its own tumour"
+        >
+          <TransferCase comparison={transferComparison} transfers={transfers} source={source} />
         </Section>
       )}
 

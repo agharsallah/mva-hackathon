@@ -210,6 +210,8 @@ def payload(settings: Postgres, root: Path | None = None) -> dict[str, Any]:
         "do_not": rows.get("do_not", []),
         "decoy_comparison": rows.get("decoy_comparison", []),
         "decoys": reader.decoys(base),
+        "transfer_comparison": rows.get("transfer_comparison", []),
+        "transfers": reader.transfers(base),
         "summary": reader.summary(base),
         "lineage": track2_lineage.build(ledger, base),
         "register": reader.register(submissions_audit.read_register(base), STEP),
@@ -257,6 +259,13 @@ def add_routes(api: APIRouter, settings: Postgres, cache: Cache, root: Path | No
         ``evidence_ladder``, ``shortlist``, ``do_not``, ``decoy_comparison``) are empty lists
         until ``tools/track2_enrich.py`` has run; ``decoys`` lists each decoy card and its
         snapshot counts.
+
+        ``transfer_comparison`` and ``transfers`` are the **scalability** evidence: the same
+        pipeline run on a different *case* — a different disease, its own public phenotype
+        annotation, its own tumour — rather than on a different gene. Both are empty until
+        ``tools/track2_transfer.py`` has run. A transfer case carries no alleles and no
+        curated ``evidence.tsv``, so only the automated rungs are comparable and
+        ``curated_rows`` is 0 on its row by construction.
         """
         entry = cache.get_or_build(CACHE_KEY, lambda: payload(settings, base), refresh)
         return cached(entry, SOURCE)

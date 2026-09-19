@@ -145,3 +145,50 @@ COLUMNS_STEP7: dict[str, dict[str, tuple[str, str]]] = {
     },
 }
 COLUMNS_STEP7["do_not"] = COLUMNS_STEP7["shortlist"]
+
+#: The cross-case comparison: one row per case, not per drug. It answers "does this
+#: pipeline run on a case it was not written for", so every column is a count of what the
+#: same code produced, and ``curated_rows`` is the boundary of what may be compared.
+COLUMNS_STEP7["transfer_comparison"] = {
+    "case": ("string", "which case the row is about, by gene and disease"),
+    "role": (
+        "string",
+        "'real case' (the proband's card) or 'transfer case' (a second case, public data only)",
+    ),
+    "gene": ("string", "the gene the card names"),
+    "disease": ("string", "the disease the card names, as the search query was derived from it"),
+    "tumour_context": ("string", "the reported malignancy the trial queries used"),
+    "card_version": ("integer", "the version of the mechanism card the run read"),
+    "targets": ("integer", "genes in the target set: the card's seeds plus pathway expansion"),
+    "candidate_rows": ("integer", "rows in drug_candidates.tsv - one per (drug, target)"),
+    "approved_drugs": ("integer", "distinct market-approved drugs, folded to base names"),
+    "drugs_rung_5": ("integer", "drugs whose best rung is 5 (approved, context trial, paediatric)"),
+    "drugs_rung_4": ("integer", "drugs whose best rung is 4 (a registered trial in the tumour)"),
+    "drugs_rung_3": (
+        "integer",
+        "drugs whose best rung is 3 (an in-vivo result) - curated, so always 0 for a transfer card",
+    ),
+    "drugs_rung_2": (
+        "integer",
+        "drugs whose best rung is 2 (a cell result) - curated, so always 0 for a transfer card",
+    ),
+    "drugs_rung_1": ("integer", "drugs at rung 1: named by the mechanism and nothing more"),
+    "shortlist": ("integer", "rows in shortlist.tsv"),
+    "do_not": ("integer", "rows in do_not.tsv: anti-direction or standard-of-care drugs"),
+    "curated_rows": (
+        "integer",
+        (
+            "rows in evidence.tsv - hand-read literature. 0 for a transfer card by "
+            "construction, which is why only the automated rungs are comparable"
+        ),
+    ),
+    "live_requests": ("integer", "HTTP requests that reached a public API, snapshot + enrichment"),
+    "cached_replies": ("integer", "replies served from the on-disk cache: replies minus live"),
+    "wall_seconds": (
+        "string",
+        (
+            "measured wall clock of the pass this table was written from; empty for a case "
+            "this run did not execute"
+        ),
+    ),
+}

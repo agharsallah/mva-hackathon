@@ -29,10 +29,10 @@
   ],
   "counts": {
     "chapters": 24,
-    "entries": 620,
+    "entries": 622,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 197
+    "contexts": 199
   },
   "chapters": [
     {
@@ -7843,6 +7843,41 @@
             "jaccard-index"
           ],
           "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "transfer-mechanism-card",
+          "term": "Transfer mechanism card",
+          "aliases": [],
+          "html": "<p>the same pipeline, a <em>different case</em>. Where a decoy keeps the child and swaps the gene, a transfer card swaps everything case-shaped: another disease with its own OMIM and MONDO identifiers, its own HPO terms read out of the public annotation file rather than typed, its own tumour context and its own standard-of-care list. It carries <strong>no alleles</strong> and no hand-read <code>evidence.tsv</code>, so only the automated rungs (1, 4, 5) exist for it. What it measures is <strong>portability</strong> — that the code is case-agnostic in fact, not only in claim — not whether the second case's drug list is any good. The template's case-agnostic blocks (the anti-directions, the evidence ladder, the constraints) are copied and the card says which and why.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>ressources/track2/transfer/TRIP13/mechanism.json</code> — TRIP13 / mosaic variegated aneuploidy syndrome 3 (OMIM:617598, MONDO:0054736), tumour context nephroblastoma, 19 HPO terms read from <code>phenotype.hpoa</code>.</p>",
+          "context": "<p>the Scalability criterion; the comparison is <code>ressources/track2/transfer_comparison.tsv</code></p>",
+          "source": "src/mva/drugs/transfer.py, docs/iteration2/step-7/methodology/134-the-pipeline-on-a-second-case.md",
+          "related": [
+            "decoy-mechanism-card",
+            "automated-versus-curated-rung",
+            "hpo-human-phenotype-ontology",
+            "evidence-ladder"
+          ],
+          "firstSeen": "2026-09-20"
+        },
+        {
+          "kind": "entry",
+          "slug": "phenotype-hpoa-hpo-disease-annotation",
+          "term": "phenotype.hpoa (HPO disease annotation)",
+          "aliases": [
+            "phenotype.hpoa",
+            "HPO disease annotation"
+          ],
+          "html": "<p>the Human Phenotype Ontology's own table of <em>which symptoms each rare disease shows</em>: one row per (disease, HPO term), with the frequency observed and the paper it came from. A <code>#version:</code> line at the top names the release, and a row whose <code>qualifier</code> column is <code>NOT</code> states the disease does <strong>not</strong> show that feature — such a row must never become a search term. It is the file a second case's clinical terms are read from, so nobody has to type them.</p>",
+          "exampleHtml": "<p><em>Example:</em> 19 rows for <code>OMIM:617598</code>, including <code>HP:0002667</code> (nephroblastoma) at frequency 6/6; release <code>2026-09-02</code>.</p>",
+          "context": "<p>read by <code>mva.drugs.transfer.hpo_annotation</code>; the same download also feeds <code>genes_to_phenotype.txt</code></p>",
+          "source": "build/reference-scratch/phenotype.hpoa",
+          "related": [
+            "hpo-human-phenotype-ontology",
+            "transfer-mechanism-card"
+          ],
+          "firstSeen": "2026-09-20"
         },
         {
           "kind": "entry",

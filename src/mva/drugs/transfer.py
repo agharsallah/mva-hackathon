@@ -324,7 +324,11 @@ class CaseRun:
     snapshot: dict[str, Any]
     analysis: dict[str, Any]
     curated_rows: int = 0
+    #: Wall clock of the pass the counts above come from - the one that filled the cache.
     wall_seconds: float | None = None
+    #: Wall clock of a second pass over the warm cache, when one was run. The pair is the
+    #: honest cost statement: what a new case costs once, and what re-deriving it costs.
+    warm_seconds: float | None = None
 
 
 def request_totals(*blocks: dict[str, Any] | None) -> tuple[int, int]:
@@ -384,6 +388,7 @@ def comparison_row(run: CaseRun) -> dict[str, Any]:
         "live_requests": live,
         "cached_replies": cached,
         "wall_seconds": None if run.wall_seconds is None else round(run.wall_seconds, 1),
+        "warm_seconds": None if run.warm_seconds is None else round(run.warm_seconds, 1),
     }
 
 

@@ -47,6 +47,10 @@ TRACK2_DIR = "ressources/track2"
 #: The five tables, in the order the snapshot writes them and the page shows them.
 TABLES = ("targets", "drug_candidates", "trials", "literature", "pathways")
 
+#: The cross-case comparison, at the Track 2 root; absent until ``tools/track2_transfer.py``
+#: has run a second case through the pipeline.
+TRANSFER_TABLES = ("transfer_comparison",)
+
 #: Step 7's enrichment tables, read the same way; absent until ``tools/track2_enrich.py`` runs.
 STEP7_TABLES = (
     "evidence",
@@ -178,7 +182,7 @@ def tables(root: Path | None = None) -> tuple[dict[str, list[dict[str, Any]]], l
     """Every table's rows, and the catalogue describing them. One pass over disk."""
     rows: dict[str, list[dict[str, Any]]] = {}
     catalog: list[dict] = []
-    for table in TABLES + STEP7_TABLES:
+    for table in TABLES + STEP7_TABLES + TRANSFER_TABLES:
         header, parsed = read_table(table, root)
         rows[table] = parsed
         if header:
@@ -220,6 +224,35 @@ def decoys(root: Path | None = None) -> list[dict[str, Any]]:
                 "card": card,
                 "snapshot": {
                     k: snapshot.get(k)
+                    for k in ("built_at", "rows", "targets", "pathways", "candidates")
+                },
+            }
+        )
+    return out
+
+
+def _case_folders(base: Path) -> list[Path]:
+    return sorted(p for p in base.glob("*") if (p / "mechanism.json").is_file())
+
+
+def transfers(root: Path | None = None) -> list[dict[str, Any]]:
+    """Every transfer card under ``transfer/``: its card, its snapshot counts, nothing else.
+
+    Same shape as :func:`decoys` and for the same reason — the page needs *what the case
+    was* and *what came out*, not the rows, which ``transfer_comparison`` already puts side
+    by side against the real card. The card carries its own ``transfer`` block, so the page
+    can state which blocks were copied from the template and that nothing of the proband's
+    case was.
+    """
+    out: list[dict[str, Any]] = []
+    for folder in _case_folders(directory(root) / "transfer"):
+        snapshot = _load(folder / "snapshot.json")
+        out.append(
+            {
+                "case": folder.name,
+                "card": _load(folder / "mechanism.json") or {},
+                "snapshot": {
+                    k: (snapshot or {}).get(k)
                     for k in ("built_at", "rows", "targets", "pathways", "candidates")
                 },
             }

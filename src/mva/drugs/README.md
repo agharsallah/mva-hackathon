@@ -61,6 +61,9 @@ so a reader of the table alone can criticise it without opening this file.
 | `candidates.py` | three sources merged, deduped, enriched, and the `approved` flag |
 | `queries.py` | the trial and literature question families, derived from the card |
 | `tables.py` | the five TSVs: columns, and how a cell is spelled |
+| `methods.py` | one sentence per table for the manifests — prose, kept out of the pipeline module |
+| `decoy.py` | the same child, a different gene: the **specificity** control |
+| `transfer.py` | a different **case** entirely: the **portability** control, and the cross-case comparison rows |
 | `provenance.py` | one manifest per table, in the repository's reference shape |
 | `snapshot.py` | run everything once, write everything, count everything |
 | `cli.py` | `mva-drugs`: `card`, `targets`, `drugs`, `trials`, `literature`, `snapshot` |
@@ -75,6 +78,8 @@ uv run mva-drugs literature                 # the publications, per query family
 uv run mva-drugs snapshot                   # everything, written to ressources/track2/
 uv run mva-drugs --card other/card.json snapshot --out-dir ressources/other-case
 uv run mva-drugs snapshot --refresh         # bypass the cache for this run
+uv run python tools/track2_decoys.py --symbol XDH ...   # a decoy: same child, wrong gene
+uv run python tools/track2_transfer.py --warm           # a transfer case: a different case
 ```
 
 A cold `snapshot` is a few thousand requests over roughly half an hour, almost all of it
@@ -94,6 +99,19 @@ polite waiting. A warm one is seconds.
 - **`ressources/track2/`** holds only the committed outputs and the card. No patient data
   ever reaches either place.
 
+## The two controls, and what each can say
+
+| Control | What is swapped | What it measures | What it cannot say |
+|---|---|---|---|
+| **decoy card** (`decoy.py`) | the gene; the child, the disease and the clinical queries are kept | **specificity** — how much of the drug list any gene would also have produced | whether the curated rungs are right; a decoy gets no hand-read literature |
+| **transfer card** (`transfer.py`) | the whole case — another disease with its own OMIM/MONDO ids, its own HPO terms read from `phenotype.hpoa`, its own tumour and standard of care | **portability** — that the code is case-agnostic in fact, not only in claim | whether the second case's drug list is any good; it has no alleles and no `evidence.tsv`, so rungs 2 and 3 cannot exist for it |
+
+A transfer card copies exactly three blocks from the template — `anti_directions`,
+`evidence_ladder`, `constraints` — because those are the *method*, not the child, and it
+records in its own `transfer` block that it did and why. Everything else is built from the
+committed spec. Exactly one direction may carry `context: true` (the tumour direction);
+anything else raises, because that flag is the only route to the automated rungs 4 and 5.
+
 ## Gotchas
 
 - **Open Targets moved.** `Target.knownDrugs` no longer exists; the field is
@@ -108,6 +126,13 @@ polite waiting. A warm one is seconds.
 - **A 404 is sometimes data.** openFDA answers 404 for "no label under that name" and
   Reactome for "not curated here". Those adapters pass `allow_status=(404,)` and return an
   empty answer; every other 404 raises `SourceError` naming the url.
+- **An anti-direction flag is only as wide as the target set.** `A1`/`A2` are matched
+  against the mechanism-of-action text of drugs already in `drug_candidates.tsv`, so a drug
+  class reaches the do-not table only if some target in the set is drugged by it. On the
+  BUB1B card every spindle-poison flag comes from tubulin genes the *Reactome expansion*
+  added; a case Reactome does not curate (TRIP13 has no pathway at all) gets no pathway
+  targets, so its do-not table is silent about the same class. Measured in
+  [`docs/iteration2/step-7/methodology/134`](../../../docs/iteration2/step-7/methodology/134-the-pipeline-on-a-second-case.md).
 - **`fda_label` empty is not `false`.** Empty means *not checked* — only approved rows are
   label-checked, because it is one request per drug.
 - **`approved` is a disjunction, not a consensus.** ChEMBL phase 4 *or* an Open Targets

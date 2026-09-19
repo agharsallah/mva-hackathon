@@ -60,9 +60,12 @@ METHOD = (
     "no hand-written query. Counts are read back from each case's snapshot.json (targets, "
     "candidate rows, distinct approved drugs, per-source request counts) and its enrichment "
     "analysis (drugs at each best rung, shortlist and do-not row counts, per-source request "
-    "counts); cached_replies is replies minus live, summed over both stages. wall_seconds is "
-    "the measured snapshot+enrichment wall clock of the pass this table was written from, and "
-    "is empty for a case this run did not execute. Only the automated rungs (1, 4, 5) are "
+    "counts); cached_replies is replies minus live, summed over both stages. Every count on a "
+    "transfer row comes from the COLD pass - the one that filled the cache - so it states "
+    "what a case the pipeline has never seen costs; wall_seconds is that pass's measured "
+    "snapshot+enrichment wall clock and warm_seconds a second pass over the warm cache, "
+    "which is re-derivation rather than a new case. Both are empty for a case this run did "
+    "not execute. Only the automated rungs (1, 4, 5) are "
     "comparable: rungs 2 and 3 come from a hand-curated evidence.tsv that a transfer card "
     "does not have, which is what curated_rows records."
 )
@@ -217,16 +220,19 @@ def main() -> int:
         return 0
     args.analysis = args.analysis or Path(f"build/track2/transfer-{out_dir.name}-analysis.json")
 
+    # The **cold** pass is what the row reports: its counts and its request totals are the
+    # cost of running a case the pipeline has never seen. The warm pass is re-derivation
+    # from the cache and contributes its wall clock alone - folding its zero live requests
+    # into the row would claim the second case was free.
     snapshot, analysis, cold_s = one_pass(
         card_path, out_dir, args.analysis, refresh=args.refresh, label="cold"
     )
-    wall = cold_s
+    warm_s: float | None = None
     if args.warm:
-        snapshot, analysis, warm_s = one_pass(
+        _snapshot, _analysis, warm_s = one_pass(
             card_path, out_dir, args.analysis, refresh=False, label="warm"
         )
         print(f"\ncold {cold_s:.1f}s → warm {warm_s:.1f}s")
-        wall = warm_s
 
     real = transfer.CaseRun(
         label="BUB1B / MVA1 (the proband)",
@@ -241,7 +247,8 @@ def main() -> int:
         snapshot=snapshot,
         analysis=analysis,
         curated_rows=_curated_rows(out_dir),
-        wall_seconds=wall,
+        wall_seconds=cold_s,
+        warm_seconds=warm_s,
     )
     write_comparison(args, out_dir, annotation, [real, moved])
     return 0

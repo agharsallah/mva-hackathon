@@ -118,9 +118,12 @@ ITERATION2: tuple[Step, ...] = (
             "Which mechanism facts from steps 2-5 and 8 revise the Track 2 card, and "
             "what does the drug evidence say for each direction?"
         ),
-        # Done: seven claims (H045-H050, H061) carry committed verdicts (methodology
-        # 110-114, 120). The card is at version 4 with step 8's measured burden on it,
-        # and the pre-registered digest test showed that fact moved no rung.
+        # Done: nine claims (H045-H050, H061, H065, H066) carry committed verdicts
+        # (methodology 110-114, 120, 133, 134). The card is at version 5 with step 8's
+        # measured burden on it on two instruments, and the pre-registered digest test
+        # showed that fact moved no rung. H066 is the one refutation: the pipeline does
+        # transfer to a second case unchanged, but the anti-direction half of the claim
+        # failed, and why it failed is the useful half of the result.
         status="done",
         iteration="iteration2",
         track="track2",
@@ -130,6 +133,7 @@ ITERATION2: tuple[Step, ...] = (
             "figures/track2/decoy-overlap.png",
             "figures/track2/pediatric-evidence.png",
             "figures/track2/mechanism-literature.png",
+            "figures/track2/transfer-scalability.png",
         ),
     ),
     Step(

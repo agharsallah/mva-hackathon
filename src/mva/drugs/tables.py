@@ -201,6 +201,7 @@ TRANSFER_COMPARISON_COLUMNS = (
     "live_requests",
     "cached_replies",
     "wall_seconds",
+    "warm_seconds",
 )
 
 #: The real card's directions against each decoy card's approved drug set.
