@@ -1,10 +1,12 @@
 # Step 7 — Track 2 enrichment
 
-**Standing:** **complete, 2026-09-19.** Seven claims filed before their tests, seven settled —
-**all seven supported** (H045–H050, H061). The mechanism card is at **version 4**: the one row
+**Standing:** **complete, 2026-09-20.** Eight claims filed before their tests, eight settled —
+**all eight supported** (H045–H050, H061, H065). The mechanism card is at **version 5**: the one row
 step 7 was open for, the aneuploidy burden in the sample (fact **F8**), was measured by
-[step 8](../step-8/README.md) and added on 2026-09-19 ([120](methodology/120-the-card-at-version-4-and-the-second-submission-draft.md));
-a pre-registered digest test showed it moved no rung. The Track 2 submission draft is
+[step 8](../step-8/README.md) and added on 2026-09-19 ([120](methodology/120-the-card-at-version-4-and-the-second-submission-draft.md)),
+then rewritten on 2026-09-20 to carry step 8's **second instrument** — the k-mer dosage route, which
+covers X and Y and supplies a positive control ([133](methodology/133-the-card-at-version-five-and-the-second-instrument.md));
+a pre-registered digest test showed neither revision moved a rung. The Track 2 submission draft is
 [`submissions/track2/iteration-2/`](../../../submissions/track2/iteration-2/README.md) (iteration 1
 superseded, never uploaded). Iteration 2, `step-7`. Method: [`../../method.md`](../../method.md).
 
@@ -44,7 +46,7 @@ before any drug was looked up.
 
 | | |
 |---|---|
-| mechanism card | **version 3** — trans confirmed (083), measured facts F1–F9, new seeds, anti-directions, the ladder; [110](methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md) |
+| mechanism card | **version 5** — trans confirmed (083), measured facts F1–F9, new seeds, anti-directions, the ladder; [110](methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md), then F8 measured ([120](methodology/120-the-card-at-version-4-and-the-second-submission-draft.md)) and F8 on two instruments ([133](methodology/133-the-card-at-version-five-and-the-second-instrument.md)) |
 | snapshot on card v3 | 277 targets · 3,859 candidate rows · **359** distinct approved drugs · 748 trial rows |
 | drugs graded | **329** (approved base names + 4 curated-only) |
 | drugs by best rung | 5: **62** · 3: **2** · 2: **5** · 1: **260** |
@@ -55,7 +57,7 @@ before any drug was looked up.
 | paediatric pointers | 290 of 329 drugs have a study admitting children; 208 a label section 8.4; all 11 argued rows have at least one |
 | literature per drug | 658 PubMed counts (drug AND mechanism / drug AND tumour); descriptive, never a rung |
 
-## Claims — all seven resolved
+## Claims — all eight resolved
 
 | Id | Verdict | Conf. | Claim |
 |---|---|---|---|
@@ -66,6 +68,7 @@ before any drug was looked up.
 | H049 | **supported** | 0.85 | the automated stages are non-specific: D4 overlaps a decoy at Jaccard ≥ 0.10 |
 | H050 | **supported** | 0.70 | every argued drug has a paediatric pointer |
 | H061 | **supported** | 0.85 | card v4 (F8 measured) moved no rung, no shortlist row, no do-not row — byte-identical digests |
+| H065 | **supported** | 0.90 | card v5 (F8 on a second instrument) moved nothing either — the same three digests, on the first re-grade |
 
 The register shows revisions 2 → 3 → 4 for these claims; [113](methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md)
 records why (a verdict committed before its evidence landed, then corrected in the open).
@@ -91,7 +94,8 @@ records why (a verdict committed before its evidence landed, then corrected in t
 | step 4, [099](../step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md) / [101](../step-4/methodology/101-the-phase-that-cannot-be-measured.md) | F6 AlphaMissense lane 4.33; F7 P(trans) undetermined | "damaging" quantified; population phasing cannot corroborate F1 |
 | step 5, [106](../step-5/methodology/106-where-the-missense-sits-in-the-protein.md) | F5 missense outside every curated domain, pLDDT 91 | the catalytic-dead-vs-unstable question stays **open**; D3 is a dosage argument |
 | step 6, [109](../step-6/methodology/109-what-the-mirror-found.md) | F9 the blind mirror found the same pair | the drug argument rests on a rediscovered, confirmed answer |
-| step 8, [116](../step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md) | **F8 measured**: no autosome above its 2–3 % detection limit in the sequenced sample (80 % power); tissue unnamed; X/Y and sub-arm untestable | D2 is argued from the literature only and ranked below D3 and D4; nothing on the ladder moves (H061) |
+| step 8, [116](../step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md) | **F8 measured**: no autosome above its 2–3 % detection limit in the sequenced sample (80 % power); tissue unnamed; X/Y and sub-arm untestable by allele balance | D2 is argued from the literature only and ranked below D3 and D4; nothing on the ladder moves (H061) |
+| step 8, [121](../step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md) / [123](../step-8/methodology/123-the-denominator-that-assumes-nothing-read-back.md) | **F8 on a second instrument**: k-mer dosage reads one copy of X (0.4873) and Y (0.5083) against 0.5 expected, puts no autosome beyond its composition-corrected null, floor **1.6 %** of cells; the denominator that assumes nothing agrees to 0.017 % | F8's X/Y gap closed and the negative result gains a positive control; nothing on the ladder moves (H065) |
 
 The clinical dataset enters through the tumour context (rhabdomyosarcoma, HP:0002859) and the
 seven proband terms on the card; the genomic dataset through the gene, the alleles and F1–F7.
@@ -103,7 +107,7 @@ flowchart LR
   A[/"BUB1B: null + hypomorph<br/>(confirmed compound heterozygote)"/]:::raw --> B["less BubR1<br/>weaker checkpoint"]:::machine
   B --> C{{"D3 · stabilise the remaining BubR1<br/>NAD+/SIRT2 axis · acetylation<br/>niacin · nicotinamide · valproic acid"}}:::decide
   B --> D["premature anaphase<br/>chromosome missegregation"]:::bad
-  D --> E["mosaic aneuploidy<br/>(burden in this child: UNMEASURED, F8)"]:::bad
+  D --> E["mosaic aneuploidy<br/>(sequenced sample: nothing above 2-3 % of cells,<br/>dosage floor 1.6 % — F8)"]:::bad
   E --> F{{"D2 · exploit aneuploidy stress<br/>autophagy · proteasome · AMPK<br/>chloroquine · bortezomib · metformin"}}:::decide
   E --> G["rhabdomyosarcoma<br/>(the child's tumour)"]:::bad
   G --> H{{"D4 · the tumour itself<br/>cholesterol synthesis<br/>lovastatin · simvastatin · atorvastatin"}}:::decide
@@ -131,6 +135,7 @@ flowchart LR
 | [113](methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md) | the ladder, the shortlist, the do-not table; the post-hoc rule refinement | **H045, H046, H047, H048, H050** |
 | [114](methodology/114-the-dashboard-surface-for-step-7.md) | the `/track2` hero (approach · suggestion · output), the pathway diagram, the panel-judged folder on `/submissions` — every number computed from the payload | machinery |
 | [120](methodology/120-the-card-at-version-4-and-the-second-submission-draft.md) | card v4 from step 8's measured burden; the digest test; the reader fault it caught; the iteration-2 submission draft | **H061** |
+| [133](methodology/133-the-card-at-version-five-and-the-second-instrument.md) | card v5 from step 8's second instrument (the k-mer dosage route); the digest test re-run | **H065** |
 
 ## How to reproduce it
 
@@ -140,7 +145,8 @@ uv run python tools/track2_decoys.py --symbol NTRK3 --uniprot Q16288 --protein "
 uv run python tools/track2_decoys.py --symbol XDH --uniprot P47989 --protein "xanthine dehydrogenase/oxidase" --pattern purine --picked-by "an unrelated, well-drugged metabolic enzyme"
 uv run python tools/track2_enrich.py                             # ladder, shortlist, do-not, decoy comparison
 uv run python tools/render_track2_figures.py                     # figures/track2/
-uv run python tools/record_track2_lineage.py                     # 63 edges under target_schema track2
+uv run python tools/record_track2_lineage.py --dry-run           # 63 edges under target_schema track2
+uv run python tools/record_track2_lineage.py                     # appends the ones not already there
 uv run mva-science export                                        # the hypothesis mirror
 ```
 
@@ -149,9 +155,10 @@ uv run mva-science export                                        # the hypothesi
 - **Whether any of these drugs helps this child.** The challenge's own words: submissions are
   hypotheses for follow-up, not evidence that a medicine works. Rung 3 is one mouse paper.
 - **Which tissue F8 describes.** No autosome carries a mosaic population above 2–3 % *in the
-  sequenced sample*; the delivery does not name the tissue, X and Y are unreadable by allele
-  balance in a male, sub-arm events were never testable, and the dosage route (H054) has not
-  run. D2 is argued from published aneuploid-cell biology only.
+  sequenced sample* by allele balance, and none beyond its composition-corrected null on the
+  dosage route (floor **1.6 %** of cells); the delivery does not name the tissue, sub-arm events
+  were never testable by either route, and copy-neutral loss of heterozygosity is invisible to
+  the dosage route. D2 is argued from published aneuploid-cell biology only.
 - **Whether the missense copy is unstable or catalytically dead.** F5 leaves it open; D3 is
   argued as *more BubR1*, not as *refold this BubR1*.
 - **Anything about a drug the sources never listed** beyond what a person put in `evidence.tsv`
@@ -171,7 +178,7 @@ static figures are `figures/track2/`: `evidence-ladder`, `rung-funnel`,
 
 | | |
 |---|---|
-| Hypotheses | [`hypotheses/`](hypotheses/README.md) — H045–H050, written by `mva-science export` |
-| Tests run | [`methodology/`](methodology/README.md) — entries 110–113 |
+| Hypotheses | [`hypotheses/`](hypotheses/README.md) — H045–H050, H061, H065, written by `mva-science export` |
+| Tests run | [`methodology/`](methodology/README.md) — entries 110–114, 120 and 133 |
 | Tables | `ressources/track2/` — 12 TSVs, one provenance manifest each; decoys under `decoys/` |
-| Lineage | `warehouse.data_lineage`, `target_schema = track2` — 63 edges after this step |
+| Lineage | `warehouse.data_lineage`, `target_schema = track2` — 63 edges per card revision, 104 in the append-only ledger after card v5 |
