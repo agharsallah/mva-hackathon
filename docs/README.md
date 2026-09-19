@@ -123,6 +123,8 @@ Iteration 1 is **frozen** (submission 1 uploaded 2026-09-09, full match at rank 
 | [`iteration4/step-4/`](iteration4/step-4/README.md) | **Entry [128](iteration4/step-4/methodology/128-one-command-eight-stages-and-three-things-a-fixture-could-not-catch.md)** — a *machinery* entry, no hypothesis, and it says why. Eight stages from one command; the run manifest; the sixteen genes the pair builder skips; three faults only real data could expose, one of them silent. |
 | [`iteration4/step-5/`](iteration4/step-5/README.md) | **Entry [129](iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md).** `P4-6` undecided: two of three catalogue-free lanes have *no opinion* on the pair. The finding is one unit down — three models of different provenance place the pair's missense allele in the top 0.47 %, 2.52 % and 2.59 % of what they scored. |
 | [`iteration4/step-6/`](iteration4/step-6/README.md) | **Entry [130](iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md).** `P4-8` **refuted**: the consensus ranks the confirmed pair 20,639 of 52,012, not 1, because three lanes abstained rather than disagreed. The catalogue ablation moves it by 858 ranks — the leak a reviewer checks first is not load-bearing here. RRF's DOI verified against Crossref. |
+| [`iteration4/step-7/`](iteration4/step-7/README.md) | **No entry — status planned.** Track 2 (graph walk vs GNN over one knowledge graph): why R7 did not run, what it needs before it can, and the limitations stated in advance. |
+| [`iteration4/reusability.md`](iteration4/reusability.md) | **Running the zoo on another illness.** What a new case must supply (callset, annotations, HPO ranking, model tables, one case TOML), the six commands, what comes out, what it cost here (quoted from entries 114-130), and the honest list of what is still case-specific. |
 | [`iteration4/cards/`](iteration4/cards/) | One JSON card per model — version, licence, digest, input class, catalogue-adjacent yes/no — plus the licence manifest, generated from `src/mva/zoo/models.toml`. |
 | [`iteration4/runs/`](iteration4/runs/) | The coordinate-free run manifests: config digest, model versions, venues, seconds per stage, dollars. |
 
@@ -168,6 +170,7 @@ provisional, what would prompt a rethink. Full register with results:
 | [No patient data in the repository](notes/no-patient-data-in-the-repository.md) | cross-step | firm — follows from the DTA |
 | [Synthetic fixtures](notes/synthetic-fixtures.md) | cross-step | firm — follows from the above |
 | [The structure toolkit, reused on another case](notes/reusable-structure-toolkit.md) | cross-step | firm — the reuse claim is under test, not prose |
+| [One config block, not a constant: the zoo's case](notes/zoo-case-config.md) | cross-step | holds — implemented 2026-09-19; the *still fixed* inventory dates faster than the decision |
 | [Delivery is immutable](step-0/notes/delivery-is-immutable.md) | step 0 | firm — verified 12/12 hashes |
 | [Postgres for shared state](step-0/notes/postgres-for-shared-state.md) | step 0 | firm; Path A deleted 2026-08-29 |
 | [The chr-prefix bridge](step-0/notes/chr-prefix-bridge.md) | step 0 | firm — one function, enforced by test |

@@ -57,6 +57,20 @@ it from consequence classes to coverage to an absent rank.
 | every number it prints | `build/it4/merged.json` (gitignored) |
 | agreement heat map, confirmed-rank bars | [`../../../figures/it4/`](../../../figures/it4/) |
 
+## Limitations
+
+Stated by entry 130, beside the result rather than under it.
+
+- **RRF over a thin lane is not weighted by what the lane saw.** ESM1b ranked 3,673 pairs and
+  SpliceAI 50,696, yet each would cast a full first-place vote.
+- **`n_pairs` differs between the two ablation rows** (52,012 vs 52,219), because excluding a
+  lane removes the pairs only that lane ranked. The two rows are therefore not ranked over an
+  identical set.
+- **Sixteen genes are absent from the pair set** (entry 128).
+- **Section 5 of the merged report is hand-written.**
+- **No claim here is about the pair being causal.** The zoo ranks; causality is the register's
+  business, and the answer key's.
+
 ## Reproduce
 
 ```bash

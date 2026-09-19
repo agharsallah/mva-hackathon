@@ -58,6 +58,21 @@ Per-lane ranking of the confirmed pair: only **SpliceAI** has an opinion (rank 1
 | its coordinate-free copy | [`../runs/it4-dcda40a4df2c.json`](../runs/it4-dcda40a4df2c.json) |
 | four per-model reports, the merged report | [`../reports/`](../reports/), [`../report.md`](../report.md) |
 
+## Limitations
+
+Stated by entry 128, beside the result rather than under it.
+
+- **Sixteen genes are not in the pair set.** `MAX_CALLS_PER_GENE = 60` skips them (60 calls is
+  already 1,770 pairs); they are named in the entry, never silently dropped. Every "of N pairs"
+  in steps 4-6 means the pairs outside those genes.
+- **The manifest's per-stage seconds are for a warm run.** A cold run's cost is step 3's
+  6,320 s, and entry 128 says explicitly that the two must not be added.
+- **Resume is nominal.** `--from <stage>` skips stages; there is no kill-mid-fan-out test, so
+  claim `P4-5` is *not* claimed here.
+- **`read_only_percentiles` is unused** — the read-only alleles are ranked like any other.
+- **Two earlier manifests were deleted before committing**, so the run folder shows the run
+  that completed, not the two that died on the faults the entry records.
+
 ## Reproduce
 
 ```bash

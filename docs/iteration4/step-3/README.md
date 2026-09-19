@@ -58,6 +58,22 @@ before steps 4–6 ran.
 | one edge per lane per invocation (14) | `warehouse.data_lineage`, `transform LIKE 'it4-score:%'` |
 | REVEL's answers, resumable, ids and numbers only | `build/it4/vep-REVEL/answers.jsonl` (gitignored) |
 
+## Limitations
+
+Stated by entry 122, beside the result rather than under it.
+
+- **Serial by construction.** One worker, one request at a time. Entry 122: adding parallelism
+  is "~15 lines plus a lock, and it is the single change that decides `P4-4a`" — three workers
+  would put the cold pass near 35 minutes.
+- **The timing includes three server-side failures.** 6,320 s is what a free public endpoint
+  gave on 2026-09-19, not a property of the method.
+- **REVEL's 69.0 % is a realised coverage**, not the published table's: the 4,837 missense
+  alleles with no REVEL score are ones the server answered *without* the field.
+- **`--mode aware` proves the cache key, not the absence of a leak.** It shows the two modes
+  are stored apart; it does not show a model never saw a catalogue.
+- **The cache was emptied to make "cold" literal**, so the lineage edge list contains edges for
+  rows that no longer exist. Append-only means nothing is deleted to tidy that up.
+
 ## Reproduce
 
 ```bash

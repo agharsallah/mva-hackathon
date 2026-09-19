@@ -56,6 +56,23 @@ the record set does not carry.
 | `mva.zoo.adapters.protein_table` **(new)** | a lane keyed by protein accession + `R550Q`, reached from `gene` + `hgvs_p` through the publisher's own map |
 | `mva.zoo.registry` | validation at load time; `ADAPTER_FOR_SOURCE` now admits two adapters for a downloaded table |
 
+## Limitations
+
+Stated by entry 119, beside the result rather than under it.
+
+- **The remote lane's `coverage()` is an estimate, and it reads 100 %.** A live 200-allele
+  sample answered 52. Do not quote REVEL coverage from `mva-zoo coverage`; quote the realised
+  number from step 3.
+- **ESM1b's parquet is a subset** — 12,183 of the archive's 42,287 members, the ones this
+  callset needs. Another case re-runs the conversion; the archive itself is not committed.
+- **The gene-symbol bridge is weaker than an accession join.** It reaches 42.9 % of the genes
+  carrying a missense allele, because UniProt's gene names are not always the HGNC symbol.
+  The `HUMAN_9606_idmapping` join is the fix and was not done.
+- **`P4-2a` says nothing about usefulness.** "Fetched, licensed and joined" is a delivery
+  claim, not a claim that the lane's opinion is worth anything.
+- **Nothing was scored at scale in this step** — 52 REVEL rows were in the cache when the entry
+  was written.
+
 ## Reproduce
 
 ```bash

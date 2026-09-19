@@ -49,6 +49,19 @@ keeps it: `report.write_markdown` reads the prose back from under the marker.
 | 12 figures (4 histograms, agreement heat map, confirmed-rank bars; `.svg` + `.html`) | [`../../../figures/it4/`](../../../figures/it4/) |
 | the stored section JSON every report renders from | `results.it4_model_reports` |
 
+## Limitations
+
+Stated by entry 129, beside the result rather than under it.
+
+- **Percentiles are within a lane's own ranked set**, and those sets differ by an order of
+  magnitude (3,673 to 50,696 pairs). A percentile is comparable *within* a lane, not across.
+- **SpliceAI's distribution is degenerate for this purpose**: median 0, p90 0.03. A percentile
+  drawn from it separates almost nothing.
+- **Section 6 is hand-written**, so it is not reproducible from the run. Sections 1-5 and 7 are
+  rendered from the stored JSON and change only when a number changes.
+- **Sixteen genes are absent from the pair set** (entry 128), so "of 50,696 pairs" means the
+  pairs outside those genes.
+
 ## Reproduce
 
 ```bash

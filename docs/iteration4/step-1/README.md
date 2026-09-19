@@ -55,6 +55,23 @@ Sequence windows (`protein_window_*`, `dna_window_*`) are columns of the parquet
 | `mva.warehouse.annotate_coding.Checkpoint` | per-batch resume — a crash costs one batch, not a morning |
 | `mva.warehouse.lineage` | one edge per run, append-only, while the table is replaced |
 
+## Limitations
+
+Stated by entry 114, beside the result rather than under it.
+
+- **`uniprot` is null on all 39,286 records.** Ensembl's POST endpoint answers HTTP 500 for
+  `uniprot=1` (reproduced on a public example variant), so the protein-accession column the
+  ESM1b lane wants is empty and the lane joins through a gene-symbol bridge instead.
+- **No sequence windows.** `protein_window_*` and `dna_window_*` are columns of the parquet and
+  stay null — plan §5 labels them opt-A/opt-B, so claim `P4-1` is *not measurable* yet.
+- **The pass adds, it never corrects.** An annotation already in the warehouse is kept as it is;
+  the HGVS pass only fills what was missing.
+- **One representative spelling per allele.** A change on several transcripts gets the canonical
+  one, not all of them.
+- **Release-bound.** Ensembl release 116 / GRCh38. Another release is another record set.
+- **The catalogue fields are present** (`mask_catalogue=false`): masking is a scoring-time
+  decision, and the record set carries `clin_sig` so both modes can be served from it.
+
 ## Reproduce
 
 ```bash
