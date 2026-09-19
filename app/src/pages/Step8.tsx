@@ -4,6 +4,7 @@ import { Callout, Explainer } from '../components/Explainer';
 import { Loaded } from '../components/QueryState';
 import { Baseline } from './steps/step8/Baseline';
 import { Deviation } from './steps/step8/Deviation';
+import { Dosage } from './steps/step8/Dosage';
 import { Limits } from './steps/step8/Limits';
 import { dev, fraction } from './steps/step8/metrics';
 import { Models } from './steps/step8/Models';
@@ -131,6 +132,22 @@ export default function Step8Page() {
                   constants={data.constants}
                   {...chrome}
                 />
+              </Section>
+
+              <Section title="The same question, asked of the raw reads">
+                <Callout tone="machinery" title="A second instrument, blind in the opposite places">
+                  Everything above reads the <em>called variants</em> — where allele balance sits at
+                  heterozygous sites. This reads the <em>raw reads</em>: reference-unique 31-mers
+                  are assigned one chromosome each and counted across the read store, so a
+                  chromosome present in more copies is hit more often, in proportion. The two share
+                  nothing past the FASTQ. Dosage sees <strong>X and Y</strong>, where this proband
+                  has almost no heterozygous calls for the allele route to read; it is blind to{' '}
+                  <strong>copy-neutral loss of heterozygosity</strong>, which changes whose copy is
+                  present without changing how much sequence there is. Where both can see, they must
+                  agree — and if they did not, the step would name one of them wrong rather than
+                  average them.
+                </Callout>
+                <Dosage dosage={data.dosage ?? []} fractions={data.fractions} {...chrome} />
               </Section>
 
               <Section title="Which mechanism, if any, the data can name">

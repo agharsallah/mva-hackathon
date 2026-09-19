@@ -135,6 +135,13 @@ SCHEMAS: dict[str, tuple[tuple[str, str], ...]] = {
         ("absolute", "DOUBLE"),
         # Where the two denominators disagree, the median moved: defence (c) as a number.
         ("disagreement", "DOUBLE"),
+        # How much of the read store the pass actually swept. Shards are flowcell
+        # partitions, not genomic ones, so a subset is a uniform sample of the library and
+        # a ratio between chromosomes stays unbiased -- only its variance rises. That makes
+        # the thinning a precision statement rather than a bias one, and it travels with
+        # the row so nobody has to go and find out which it was.
+        ("shards_swept", "BIGINT"),
+        ("thinning", "DOUBLE"),
     ),
     "it2_mosaic_multi": (
         ("fraction", "DOUBLE"),

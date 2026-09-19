@@ -87,6 +87,16 @@ BLOCKS: dict[str, str] = {
         ORDER BY CASE WHEN chrom ~ '^[0-9]+$' THEN CAST(chrom AS INTEGER) ELSE 99 END,
                  chrom, arm
     """,
+    # The second instrument. Both denominators travel together with their disagreement,
+    # because choosing one of them for the reader is the whole failure mode a variegated
+    # genome sets up. `silent_share` is here for the same reason: a probe set that saw
+    # nothing reads as a dosage of zero unless the page can see it was never counted.
+    "dosage": f"""
+        SELECT chrom, probes, silent, silent_share, mean_count,
+               relative, low, high, absolute, disagreement, shards_swept, thinning
+        FROM {ALIAS}.results.it2_chrom_dosage
+        ORDER BY CASE WHEN chrom ~ '^[0-9]+$' THEN CAST(chrom AS INTEGER) ELSE 99 END, chrom
+    """,
     # Recovery *and* false positives when several contigs are abnormal at once, which is
     # what variegated means and what every median denominator here assumes away.
     "multi": f"""

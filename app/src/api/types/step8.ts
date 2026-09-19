@@ -179,6 +179,39 @@ export interface Step8Baseline {
   without?: Record<string, number>;
 }
 
+/**
+ * One contig's k-mer dosage: how much sequence it contributed, against two denominators.
+ *
+ * This is the step's **second instrument**, and it shares nothing with the allele-balance
+ * route past the FASTQ. It sees what that route cannot (X and Y, which have almost no
+ * heterozygous sites in a male proband) and is blind to what that route can see (copy-neutral
+ * loss of heterozygosity moves no sequence at all). Where both can see, they must agree.
+ */
+export interface Step8Dosage {
+  chrom: string;
+  /** Reference-unique 31-mers assigned to this contig. Nothing else can testify about it. */
+  probes: number;
+  /** Probes never hit. A large share is a broken probe set, not a chromosome that vanished. */
+  silent: number;
+  silent_share: number;
+  mean_count: number;
+  /** Against the autosomal median — the readable denominator, and the one that assumes most autosomes are normal. */
+  relative: number;
+  low: number;
+  high: number;
+  /** Against the genome-wide calibration set, which no single chromosome can move. */
+  absolute: number;
+  /** Where the two denominators part company: the median moved, and by how much. */
+  disagreement: number;
+  /**
+   * How much of the read store this pass swept. Shards are flowcell partitions, not genomic
+   * ones, so a subset is a uniform sample of the library: a ratio between chromosomes stays
+   * unbiased and only its variance rises. A thinning is a precision statement, not a bias one.
+   */
+  shards_swept?: number;
+  thinning?: number;
+}
+
 export interface Step8Payload {
   constants: Step8Constants;
   baseline: Step8Baseline;
@@ -188,5 +221,6 @@ export interface Step8Payload {
   verdicts: Step8Verdict[];
   limits: Step8Limit[];
   density: Step8Density[];
+  dosage: Step8Dosage[];
   multi: Step8Multi[];
 }
