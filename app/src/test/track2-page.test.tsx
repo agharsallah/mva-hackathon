@@ -16,7 +16,7 @@
  *   6. every dictionary link resolves to an entry that exists in the one dictionary;
  *   7. the step-7 grading renders off the same fixture: the ladder matrix, the eleven
  *      shortlist rows the report may argue, the do-not table's caution block, the decoy
- *      chart's pre-registered 0.10 line, and F8 marked UNMEASURED.
+ *      chart's pre-registered 0.10 line, and each card fact's measured status from the card.
  *
  * Counts are read off the committed fixture rather than typed in: a re-capture of
  * `/api/track2` changes them, and a test that hard-codes 3,766 rows fails for the wrong
@@ -271,13 +271,21 @@ describe('the Track 2 report', () => {
     for (const d of data.decoys ?? []) expect(figure.textContent).toContain(d.symbol);
   }, 30000);
 
-  it('marks F8 UNMEASURED and says so beside the table', async () => {
+  it("states each fact's measured status from the card, never from a hard-coded id", async () => {
     await mountModule(track2);
 
-    const f8 = data.card.measured_facts!.find((f) => f.id === 'F8')!;
-    expect(f8.value).toMatch(/^UNMEASURED/);
-    expect(screen.getAllByText('UNMEASURED').length).toBeGreaterThan(0);
-    expect(screen.getByTestId('unmeasured-note').textContent).toContain('F8 is UNMEASURED');
+    const facts = data.card.measured_facts!;
+    const gaps = facts.filter((f) => /^UNMEASURED\b/i.test(f.value));
+    if (gaps.length > 0) {
+      expect(screen.getAllByText('UNMEASURED').length).toBeGreaterThan(0);
+      const note = screen.getByTestId('unmeasured-note').textContent ?? '';
+      for (const gap of gaps) expect(note).toContain(gap.id);
+    } else {
+      expect(screen.queryByTestId('unmeasured-note')).toBeNull();
+      expect(screen.getByTestId('measured-note').textContent).toContain(
+        `All ${facts.length} facts are measured`,
+      );
+    }
   }, 30000);
 
   it('names paediatric evidence as a pointer, never a licence', async () => {

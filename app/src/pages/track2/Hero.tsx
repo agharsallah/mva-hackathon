@@ -107,6 +107,7 @@ export function Hero({ data, source }: { data: Track2; source?: string }) {
             setAside={aside}
             artefacts={links}
             unmeasured={unmeasuredFacts(data)}
+            measured={data.card.measured_facts ?? []}
             source={source}
           />
         </div>

@@ -35,10 +35,12 @@ export interface OutputProps {
   setAside: { total: number; byVerdict: Array<[string, number]> };
   artefacts: Artefact[];
   unmeasured: MeasuredFact[];
+  /** Every fact on the card; shown as one green chip when none is unmeasured. */
+  measured: MeasuredFact[];
   source?: string;
 }
 
-export function Output({ stages, setAside, artefacts, unmeasured, source }: OutputProps) {
+export function Output({ stages, setAside, artefacts, unmeasured, measured, source }: OutputProps) {
   const traces: Trace[] = [
     {
       type: 'bar',
@@ -112,7 +114,7 @@ export function Output({ stages, setAside, artefacts, unmeasured, source }: Outp
           </div>
         </div>
 
-        {unmeasured.length > 0 && (
+        {unmeasured.length > 0 ? (
           <ul className="flex flex-wrap gap-2" data-testid="unmeasured-chips">
             {unmeasured.map((f) => (
               <li key={f.id}>
@@ -122,6 +124,13 @@ export function Output({ stages, setAside, artefacts, unmeasured, source }: Outp
               </li>
             ))}
           </ul>
+        ) : (
+          <div data-testid="measured-chip">
+            <Badge tone="good" title={measured.find((f) => f.id === 'F8')?.value ?? ''}>
+              all {measured.length} card facts measured — F8: no autosome above its 2–3 % limit in
+              the sequenced sample
+            </Badge>
+          </div>
         )}
 
         <div className={cx(WELL, 'border-l-2 space-y-2', RULE.machinery)}>

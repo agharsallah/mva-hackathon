@@ -102,14 +102,30 @@ export function MeasuredFacts({ facts, source }: { facts: MeasuredFact[]; source
             },
           ]}
         />
-        <div className={cx(WELL, 'border-l-2', RULE.decision)} data-testid="unmeasured-note">
-          <p className="max-w-[95ch] font-serif text-note leading-relaxed text-chrome-300">
-            <strong className="text-decision-300">F8 is UNMEASURED.</strong> The aneuploid fraction
-            in the sequenced sample — how much of the child&rsquo;s tissue actually carries the
-            wrong chromosome count — has not been measured in iteration 2; its step has not run.
-            Nothing below is allowed to lean on it.
-          </p>
-        </div>
+        {unmeasured > 0 ? (
+          <div className={cx(WELL, 'border-l-2', RULE.decision)} data-testid="unmeasured-note">
+            <p className="max-w-[95ch] font-serif text-note leading-relaxed text-chrome-300">
+              <strong className="text-decision-300">
+                {facts
+                  .filter(isUnmeasured)
+                  .map((f) => f.id)
+                  .join(', ')}{' '}
+                {unmeasured === 1 ? 'is' : 'are'} UNMEASURED.
+              </strong>{' '}
+              A fact on the card as a stated gap: its step has not run, and nothing below is allowed
+              to lean on it.
+            </p>
+          </div>
+        ) : (
+          <div className={cx(WELL, 'border-l-2', RULE.good)} data-testid="measured-note">
+            <p className="max-w-[95ch] font-serif text-note leading-relaxed text-chrome-300">
+              <strong className="text-good-300">All {facts.length} facts are measured.</strong> The
+              last to land was the aneuploid fraction in the sequenced sample (F8, step 8): no
+              autosome above its own detection limit. A measured negative carries its limit; the row
+              states it.
+            </p>
+          </div>
+        )}
       </div>
     </Exhibit>
   );

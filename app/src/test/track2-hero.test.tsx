@@ -107,10 +107,17 @@ describe('the Track 2 hero', () => {
     expect(output.textContent).toContain(grouped(curated));
     expect(output.textContent).toContain(grouped((data.do_not ?? []).length));
 
-    // F8 is the card's one stated gap, and the hero says so without being told which id it is.
-    const chips = screen.getByTestId('unmeasured-chips').textContent ?? '';
-    expect(chips).toContain('F8 unmeasured');
-    expect(chips).toContain('aneuploidy burden');
+    // The card's stated gaps drive the chip: a yellow chip per UNMEASURED fact, or one green
+    // chip when every fact is measured. The test reads which case the fixture is in.
+    const gaps = (data.card.measured_facts ?? []).filter((f) => /^UNMEASURED\b/i.test(f.value));
+    if (gaps.length > 0) {
+      const chips = screen.getByTestId('unmeasured-chips').textContent ?? '';
+      for (const gap of gaps) expect(chips).toContain(`${gap.id} unmeasured`);
+    } else {
+      const chip = screen.getByTestId('measured-chip').textContent ?? '';
+      expect(chip).toContain(`all ${(data.card.measured_facts ?? []).length} card facts measured`);
+      expect(chip).toContain('F8');
+    }
 
     expect(screen.getByTestId('artefact-links').querySelectorAll('a').length).toBeGreaterThan(4);
   }, 30000);
