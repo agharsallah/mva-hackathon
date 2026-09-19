@@ -27,7 +27,16 @@ from pathlib import Path
 from . import lineage
 from .postgres import ALIAS, safe_identifier
 
-__all__ = ["CALLSET_REF", "CLINICAL_REF", "SCHEMAS", "TOOL", "Loaded", "load"]
+__all__ = [
+    "CALLSET_REF",
+    "CLINICAL_REF",
+    "READS_REF",
+    "SCHEMAS",
+    "SOURCES",
+    "TOOL",
+    "Loaded",
+    "load",
+]
 
 #: One row per table: the columns, written out rather than sniffed, because these schemas
 #: are a promise the dashboard reads.
@@ -228,6 +237,18 @@ CLINICAL_TRANSFORM = (
 )
 TOOL = "mva-warehouse pg-load-it2-step8"
 
+#: The dosage table did not come from the callset. It was counted over the raw read store
+#: with reference-unique k-mers, so it shares no input with its neighbours past the FASTQ --
+#: which is the entire reason the step runs it, and exactly the sort of thing a lineage row
+#: that quietly inherited ``CALLSET_REF`` would hide.
+READS_REF = (
+    "the 272-shard read store (raw FASTQ) counted with reference-unique 31-mers from GRCh38; "
+    "no callset, no aligner and no patient coordinate enters this route"
+)
+
+#: Tables whose source is not the callset: table -> (source kind, source reference).
+SOURCES: dict[str, tuple[str, str]] = {"it2_chrom_dosage": ("raw", READS_REF)}
+
 
 @dataclass(frozen=True)
 class Loaded:
@@ -284,6 +305,19 @@ def _load_tsv(
     return int((counted or [0])[0])
 
 
+def _thinning(path: Path) -> str:
+    """``thinning=0.11765`` from a dosage TSV, or an empty string if it carries no such column."""
+    lines = path.read_text(encoding="utf-8").split("\n", 2)
+    if len(lines) < 2:
+        return ""
+    header = lines[0].rstrip("\r").split("\t")
+    first = lines[1].rstrip("\r").split("\t")
+    fields = dict(zip(header, first, strict=False))
+    return " ".join(
+        f"{name}={fields[name]}" for name in ("shards_swept", "thinning") if name in fields
+    )
+
+
 def load(connection, *, schema: str, result_schema: str, out_dir: Path) -> list[Loaded]:
     """Load every step-8 table present in ``out_dir``, and record its lineage.
 
@@ -312,15 +346,20 @@ def load(connection, *, schema: str, result_schema: str, out_dir: Path) -> list[
             continue
         rows = _load_tsv(connection, result_schema, table, path, _columns_for(table, path))
         loaded.append(Loaded(table=table, rows=rows, source=path))
+        source_kind, source_ref = SOURCES.get(table, ("derived", CALLSET_REF))
+        # How much of the read store a dosage pass swept is a parameter of the derivation,
+        # not a property of the numbers, so it belongs in the lineage row rather than only
+        # in the column beside them.
+        source_version = f"{version} {_thinning(path)}".strip() if table in SOURCES else version
         lineage.record(
             connection,
             schema,
             target_schema=result_schema,
             target_table=table,
             target_rows=rows,
-            source_kind="derived",
-            source_ref=CALLSET_REF,
-            source_version=version,
+            source_kind=source_kind,
+            source_ref=source_ref,
+            source_version=source_version,
             transform=TRANSFORMS[table],
             tool=TOOL,
             notes=(
