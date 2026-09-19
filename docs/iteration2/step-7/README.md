@@ -1,11 +1,12 @@
 # Step 7 — Track 2 enrichment
 
-**Standing:** **open, 2026-09-18.** Six claims filed before the search, six settled — **all six
-supported** (H045–H050), the mechanism card at version 3, the first Track 2 submission folder
-drafted at [`submissions/track2/iteration-1/`](../../../submissions/track2/iteration-1/README.md).
-The step stays open for one row: the aneuploidy burden in the sample (card fact **F8**) is
-unmeasured until [step 8](../step-8/README.md) runs. Iteration 2, `step-7`. Method:
-[`../../method.md`](../../method.md).
+**Standing:** **complete, 2026-09-19.** Seven claims filed before their tests, seven settled —
+**all seven supported** (H045–H050, H061). The mechanism card is at **version 4**: the one row
+step 7 was open for, the aneuploidy burden in the sample (fact **F8**), was measured by
+[step 8](../step-8/README.md) and added on 2026-09-19 ([120](methodology/120-the-card-at-version-4-and-the-second-submission-draft.md));
+a pre-registered digest test showed it moved no rung. The Track 2 submission draft is
+[`submissions/track2/iteration-2/`](../../../submissions/track2/iteration-2/README.md) (iteration 1
+superseded, never uploaded). Iteration 2, `step-7`. Method: [`../../method.md`](../../method.md).
 
 **Goal** (from the step map):
 
@@ -54,7 +55,7 @@ before any drug was looked up.
 | paediatric pointers | 290 of 329 drugs have a study admitting children; 208 a label section 8.4; all 11 argued rows have at least one |
 | literature per drug | 658 PubMed counts (drug AND mechanism / drug AND tumour); descriptive, never a rung |
 
-## Claims — all six resolved
+## Claims — all seven resolved
 
 | Id | Verdict | Conf. | Claim |
 |---|---|---|---|
@@ -64,6 +65,7 @@ before any drug was looked up.
 | H048 | **supported** | 0.80 | D4 holds a non-cytotoxic approved agent (lovastatin) at rung ≥ 2 with paediatric data |
 | H049 | **supported** | 0.85 | the automated stages are non-specific: D4 overlaps a decoy at Jaccard ≥ 0.10 |
 | H050 | **supported** | 0.70 | every argued drug has a paediatric pointer |
+| H061 | **supported** | 0.85 | card v4 (F8 measured) moved no rung, no shortlist row, no do-not row — byte-identical digests |
 
 The register shows revisions 2 → 3 → 4 for these claims; [113](methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md)
 records why (a verdict committed before its evidence landed, then corrected in the open).
@@ -89,7 +91,7 @@ records why (a verdict committed before its evidence landed, then corrected in t
 | step 4, [099](../step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md) / [101](../step-4/methodology/101-the-phase-that-cannot-be-measured.md) | F6 AlphaMissense lane 4.33; F7 P(trans) undetermined | "damaging" quantified; population phasing cannot corroborate F1 |
 | step 5, [106](../step-5/methodology/106-where-the-missense-sits-in-the-protein.md) | F5 missense outside every curated domain, pLDDT 91 | the catalytic-dead-vs-unstable question stays **open**; D3 is a dosage argument |
 | step 6, [109](../step-6/methodology/109-what-the-mirror-found.md) | F9 the blind mirror found the same pair | the drug argument rests on a rediscovered, confirmed answer |
-| step 8 | **F8 unmeasured** | D2 is argued from the literature, not from this child's burden |
+| step 8, [116](../step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md) | **F8 measured**: no autosome above its 2–3 % detection limit in the sequenced sample (80 % power); tissue unnamed; X/Y and sub-arm untestable | D2 is argued from the literature only and ranked below D3 and D4; nothing on the ladder moves (H061) |
 
 The clinical dataset enters through the tumour context (rhabdomyosarcoma, HP:0002859) and the
 seven proband terms on the card; the genomic dataset through the gene, the alleles and F1–F7.
@@ -128,6 +130,7 @@ flowchart LR
 | [112](methodology/112-two-decoy-cards-through-the-same-pipeline.md) | NTRK3 and XDH through the unchanged pipeline; Jaccard per direction | **H049** |
 | [113](methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md) | the ladder, the shortlist, the do-not table; the post-hoc rule refinement | **H045, H046, H047, H048, H050** |
 | [114](methodology/114-the-dashboard-surface-for-step-7.md) | the `/track2` hero (approach · suggestion · output), the pathway diagram, the panel-judged folder on `/submissions` — every number computed from the payload | machinery |
+| [120](methodology/120-the-card-at-version-4-and-the-second-submission-draft.md) | card v4 from step 8's measured burden; the digest test; the reader fault it caught; the iteration-2 submission draft | **H061** |
 
 ## How to reproduce it
 
@@ -145,7 +148,10 @@ uv run mva-science export                                        # the hypothesi
 
 - **Whether any of these drugs helps this child.** The challenge's own words: submissions are
   hypotheses for follow-up, not evidence that a medicine works. Rung 3 is one mouse paper.
-- **How aneuploid this child's cells are.** F8 is unmeasured; D2 inherits that gap wholesale.
+- **Which tissue F8 describes.** No autosome carries a mosaic population above 2–3 % *in the
+  sequenced sample*; the delivery does not name the tissue, X and Y are unreadable by allele
+  balance in a male, sub-arm events were never testable, and the dosage route (H054) has not
+  run. D2 is argued from published aneuploid-cell biology only.
 - **Whether the missense copy is unstable or catalytically dead.** F5 leaves it open; D3 is
   argued as *more BubR1*, not as *refold this BubR1*.
 - **Anything about a drug the sources never listed** beyond what a person put in `evidence.tsv`
