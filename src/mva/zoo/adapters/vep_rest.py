@@ -74,8 +74,13 @@ class PluginAsker:
         self._query_line = query_line
         self.annotator = _Annotator(**kwargs)
 
-    def raw_many(self, variants: Sequence[Any]) -> dict[str, dict[str, Any]]:
-        """The server's raw JSON per variant, keyed by its query line.
+    def raw_batches(self, variants: Sequence[Any]) -> Iterator[dict[str, dict[str, Any]]]:
+        """One dict of raw JSON per **batch**, keyed by each variant's query line.
+
+        A generator rather than one big dict so the caller can write a checkpoint after
+        every batch. That matters: a 197-batch pass over this callset met a ``500`` on a
+        late batch and, when the answers were only written at the end, **twenty minutes of
+        replies were lost** (measured 2026-09-19, entry 122).
 
         The parsed record shape has no field for a plugin's output, so the adapter reads
         the JSON itself. Batching, retries and the bisect-around-a-bad-allele behaviour all
@@ -83,18 +88,43 @@ class PluginAsker:
         """
         from mva.pipeline.annotate_vep import batches
 
-        found: dict[str, dict[str, Any]] = {}
         annotator = self.annotator
         for chunk in batches(list(variants), annotator.batch_size):
+            found: dict[str, dict[str, Any]] = {}
             for item in annotator._ask(chunk):  # noqa: SLF001 — the batch entry point of the
                 # base class is protected but is exactly the seam this subclass exists to use.
                 key = item.get("input")
                 if key:
                     found[key] = item
+            yield found
+
+    def raw_many(self, variants: Sequence[Any]) -> dict[str, dict[str, Any]]:
+        """Every batch's JSON in one dict — the shape a small caller (and a test) wants."""
+        found: dict[str, dict[str, Any]] = {}
+        for batch in self.raw_batches(variants):
+            found.update(batch)
         return found
 
     def close(self) -> None:
         self.annotator.close()
+
+
+#: Which VEP consequence terms a card's ``input_class`` is worth asking about. ``any`` is
+#: absent on purpose: a lane that scores anything gets an empty set, which means "ask about
+#: every record". The terms are the ones this callset actually carries (entry 114's
+#: ``by_consequence``), so a class added later must be added here too rather than silently
+#: skipped — the lane prints what it asked about, so a mistake shows up as coverage.
+CONSEQUENCES_FOR_CLASS: dict[str, tuple[str, ...]] = {
+    "missense": ("missense_variant",),
+    "splice": (
+        "splice_acceptor_variant",
+        "splice_donor_variant",
+        "splice_donor_5th_base_variant",
+        "splice_donor_region_variant",
+        "splice_polypyrimidine_tract_variant",
+        "splice_region_variant",
+    ),
+}
 
 
 @dataclass
@@ -118,6 +148,15 @@ class VepRestAdapter:
     digest: str = ""
     asker: Any = None
     connection: Any = None
+    #: Set when a pass stopped early: the server's message and how far it got. Empty means
+    #: the lane answered for every allele it was asked about.
+    incomplete: str = ""
+    #: Which consequence classes this lane is asked about at all, from the card's
+    #: ``input_class``. Empty means every record. **This is the only lane where asking is
+    #: expensive** — one HTTPS round trip per batch — and a missense-only plugin returns a
+    #: guaranteed null for a synonymous or intronic allele. Skipping those is not a
+    #: shortcut: it is not spending a request on an answer that is already known.
+    consequences: frozenset[str] = frozenset()
     _answers: dict[str, float | None] = field(default_factory=dict)
     _loaded: bool = False
 
@@ -138,12 +177,12 @@ class VepRestAdapter:
         coverage here is "has a coordinate in the record set". The realised coverage is
         whatever :meth:`score` yields, and the report prints that one.
         """
-        return coverage_from_ids(self.name, records, set(self._coordinates(records)))
+        return coverage_from_ids(self.name, records, set(self._coordinates(self._askable(records))))
 
     def score(self, records: Sequence[AlleleRecord]) -> Iterator[ScoreRow]:
         """Ask the server about every allele not already in the checkpoint, then yield."""
         self._load_checkpoint()
-        coordinates = self._coordinates(records)
+        coordinates = self._coordinates(self._askable(records))
         pending = {key: value for key, value in coordinates.items() if key not in self._answers}
         if pending:
             self._ask(pending)
@@ -164,6 +203,12 @@ class VepRestAdapter:
 
     def submit(self, records: Sequence[AlleleRecord]) -> RemoteJob:
         raise NotImplementedError(f"{self.name} answers synchronously — call score()")
+
+    def _askable(self, records: Sequence[AlleleRecord]) -> list[AlleleRecord]:
+        """The records worth a request, per the card's ``input_class``."""
+        if not self.consequences:
+            return list(records)
+        return [record for record in records if record.consequence in self.consequences]
 
     # ── coordinates, checkpoint, transport ───────────────────────────────────────────
 
@@ -216,6 +261,7 @@ class VepRestAdapter:
                 handle.write(json.dumps({"allele_id": allele, "score": value}) + "\n")
 
     def _ask(self, coordinates: dict[str, tuple[str, int, str, str]]) -> None:
+        from mva.pipeline.annotate_vep import VepError
         from mva.pipeline.variant import Variant
         from mva.pipeline.vep_response import query_line
 
@@ -226,13 +272,23 @@ class VepRestAdapter:
             allele: Variant.from_vcf(chrom, pos, ref, alt)
             for allele, (chrom, pos, ref, alt) in coordinates.items()
         }
-        raw = asker.raw_many(list(variants.values()))
-        fresh = {
-            allele: _pick(raw.get(query_line(variant)), self.field_name)
-            for allele, variant in variants.items()
-        }
-        self._answers.update(fresh)
-        self._append_checkpoint(fresh)
+        by_line = {query_line(variant): allele for allele, variant in variants.items()}
+        asked = 0
+        try:
+            for batch in asker.raw_batches(list(variants.values())):
+                fresh = {
+                    by_line[line]: _pick(reply, self.field_name)
+                    for line, reply in batch.items()
+                    if line in by_line
+                }
+                self._answers.update(fresh)
+                self._append_checkpoint(fresh)
+                asked += len(fresh)
+        except VepError as error:
+            # A server-side failure is not a reason to throw away the batches that did
+            # answer. What was written stays written, the lane scores what it has, and the
+            # next run resumes from the checkpoint instead of re-asking.
+            self.incomplete = f"{error} — {asked:,} of {len(variants):,} alleles answered"
 
 
 def _pick(reply: dict[str, Any] | None, field_name: str) -> float | None:
@@ -268,6 +324,9 @@ def build(card: Any, *, connection: Any = None, records_parquet: Path = DEFAULT_
     """Build the lane one model card describes."""
     params = dict(getattr(card, "params", {}) or {})
     plugin = str(params["plugin"])
+    declared = params.get("consequences") or CONSEQUENCES_FOR_CLASS.get(
+        str(getattr(card, "input_class", "any")), ()
+    )
     return VepRestAdapter(
         name=str(card.key),
         version=str(card.version),
@@ -276,6 +335,7 @@ def build(card: Any, *, connection: Any = None, records_parquet: Path = DEFAULT_
         records_parquet=Path(records_parquet),
         batch_size=int(params.get("batch", 200) or 200),
         timeout=float(params.get("timeout", 300.0) or 300.0),
+        consequences=frozenset(declared),
         licence=str(getattr(card, "licence", "") or ""),
         catalogue_adjacent=bool(getattr(card, "catalogue_adjacent", True)),
         connection=connection,

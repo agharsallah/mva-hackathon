@@ -263,6 +263,12 @@ def _do_score(args: argparse.Namespace) -> int:
         f"run {run_id}: inserted {written.inserted:,}, skipped {written.skipped:,} "
         f"(already cached) — mode {args.mode}"
     )
+    # A remote lane may stop early on a server-side failure and still have written every
+    # batch that answered. Saying so is the difference between "this lane covers 71 %" and
+    # "this lane was interrupted" — and the second one is fixed by running it again.
+    stopped = str(getattr(adapter, "incomplete", "") or "")
+    if stopped:
+        print(f"  incomplete: {stopped} — re-run to resume from the checkpoint")
     return 0
 
 

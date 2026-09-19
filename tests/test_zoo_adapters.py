@@ -377,26 +377,46 @@ class TestDuckdbLookup:
 
 
 class FakeAsker:
-    """Stands in for Ensembl: canned JSON, and a count of how often it was asked."""
+    """Stands in for Ensembl: canned JSON, a call count, and an optional failure.
 
-    def __init__(self, values: dict[str, float]):
+    ``fail_after`` makes the asker raise ``VepError`` once it has yielded that many
+    batches — the shape of the real failure this lane met on a late batch, and the reason
+    it checkpoints per batch rather than at the end.
+    """
+
+    def __init__(self, values: dict[str, float], *, batch: int = 1_000, fail_after: int = 0):
         self.values = values
         self.calls = 0
+        self.batch = batch
+        self.fail_after = fail_after
 
-    def raw_many(self, variants):
+    def _reply(self, variant):
         from mva.pipeline.vep_response import query_line
 
+        key = query_line(variant)
+        score = self.values.get(f"{variant.ref}{variant.alt}")
+        return key, {
+            "input": key,
+            "transcript_consequences": [
+                {"revel": score} if score is not None else {"gene_symbol": "GENEA"}
+            ],
+        }
+
+    def raw_batches(self, variants):
+        from mva.pipeline.annotate_vep import VepError
+
         self.calls += 1
+        items = list(variants)
+        for index in range(0, len(items), self.batch):
+            served = index // self.batch
+            if self.fail_after and served >= self.fail_after:
+                raise VepError("500 server error")
+            yield dict(self._reply(variant) for variant in items[index : index + self.batch])
+
+    def raw_many(self, variants):
         replies = {}
-        for variant in variants:
-            key = query_line(variant)
-            score = self.values.get(f"{variant.ref}{variant.alt}")
-            replies[key] = {
-                "input": key,
-                "transcript_consequences": [
-                    {"revel": score} if score is not None else {"gene_symbol": "GENEA"}
-                ],
-            }
+        for batch in self.raw_batches(variants):
+            replies.update(batch)
         return replies
 
 
@@ -443,6 +463,34 @@ class TestVepRest:
         rows = list(second.score(records[:20]))
         assert asker.calls == 1
         assert len(rows) == len(list(first.score(records[:20])))
+
+    def test_a_failed_batch_keeps_the_batches_that_answered(
+        self, records_parquet, tmp_path, records
+    ):
+        # Five batches of four; the server dies before the third. The lane must keep the
+        # eight alleles the first two batches answered — not lose the whole pass, which is
+        # what cost twenty minutes of live REVEL replies (entry 122).
+        asker = FakeAsker({"CG": 0.71}, batch=4, fail_after=2)
+        built = self.adapter(records_parquet, tmp_path, asker)
+        rows = list(built.score(records[:20]))
+        assert built.incomplete.startswith("500 server error")
+        assert "8 of 20" in built.incomplete
+        assert rows  # whatever the first two batches scored
+        # and a second run resumes from the checkpoint instead of re-asking those eight
+        resumed = self.adapter(records_parquet, tmp_path, FakeAsker({"CG": 0.71}, batch=4))
+        assert len(list(resumed.score(records[:20]))) >= len(rows)
+
+    def test_a_missense_lane_asks_about_missense_only(self, records_parquet, tmp_path, records):
+        # A missense-only plugin returns a guaranteed null for a synonymous allele, and on
+        # this lane every ask is an HTTPS round trip. Measured at ~85 s per 200-allele
+        # batch, asking about all 39,286 records instead of the 15,620 missense ones is
+        # three wasted hours (entry 122).
+        asker = FakeAsker({"CG": 0.71})
+        built = self.adapter(records_parquet, tmp_path, asker)
+        built.consequences = frozenset({"missense_variant"})
+        missense = [item for item in records if item.consequence == "missense_variant"]
+        assert missense and len(missense) < len(records)
+        assert built.coverage(records).scored == len(missense)
 
     def test_coverage_is_the_alleles_it_can_ask_about(self, records_parquet, tmp_path, records):
         built = self.adapter(records_parquet, tmp_path, FakeAsker({}))
