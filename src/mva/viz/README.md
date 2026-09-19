@@ -82,6 +82,7 @@ flowchart LR
 | `routes_reads.py` | Read-store aggregates + proxy to `mva-reads-api` for probe/job verbs | `router` |
 | `routes_search.py` | `GET /api/search` and `GET /api/callset/region` | `add_routes` |
 | `probebuild.py` | `POST /api/probe/build` — turn candidates into a Track 1 submission CSV | `router`, `build` |
+| `api_zoo.py` | Every `/api/zoo/*` route, in four registrars (case, scores, ranking, documents). Its own router, mounted in `app.py`, because it resolves its **case** per request instead of sharing the warehouse router's settings | `router`, `GENE_LIMIT` |
 
 ### Data access
 
@@ -100,6 +101,10 @@ flowchart LR
 | `genestructure.py` | Fetches one gene's exons/domains from Ensembl REST, behind the disk cache. `anatomy` is the half that reads no warehouse table; `structure` adds the proband's alleles on top | `structure`, `anatomy`, `EnsemblError` |
 | `search.py` | Search query grammar (region / gene / rsID), span cap, the region read | `classify`, `region`, `Resolved` |
 | `search_resolve.py` | Resolves a gene symbol or rsID to a window (panel BED / callset / Ensembl) | `resolve`, `resolve_gene`, `resolve_rsid` |
+| `api_zoo_case.py` | Which case the zoo routes serve: `src/mva/zoo/zoo.example.toml` (or `MVA_ZOO_CONFIG`) parsed by the zoo's **own** `Config`, plus the per-route `source` lines derived from it. No gene, schema or docs path is written in the viz layer | `Case`, `case_config`, `sources`, `CONFIG_ENV` |
+| `api_zoo_reads.py` | The zoo's record table and score cache: coverage per lane, one allele, one gene. `Tables` names the two schemas and the four tables from the case's `table_prefix`, so another case reads `<prefix>_allele_records`. Every function takes a connection; `connect` is the one seam a test replaces | `Tables`, `connect`, `coverages`, `models_payload`, `scores_payload`, `gene_payload`, `genes_of` |
+| `api_zoo_ranks.py` | The ranking table and the zoo's slice of `warehouse.data_lineage`. Owns two honesty rules: `unscored_pairs` travels beside every `n_ranked`, and `skipped_genes` is reported as **unrecorded** rather than empty | `ranks_payload`, `lineage_rows`, `rank_runs`, `latest_run` |
+| `api_zoo_docs.py` | The files a run committed: the public run manifests, the rendered per-model and merged reports (Markdown + the figures they link), and the merge step's own JSON projected onto the API contract | `runs`, `report_keys`, `read_report`, `merged_document`, `merge_payload`, `lanes_by_model` |
 | `science.py` | Reads the hypothesis/evidence research register, tolerating absent tables | `hypotheses`, `evidence`, `add_routes` |
 | `steps.py` | One iteration's step map, its claims and the blind gate's checklist per step | `payload`, `add_routes` |
 | `steps_it2.py` | Iteration 2 step 2's six result tables, **aggregated in SQL** so no proband position reaches the API | `payload`, `BLOCKS`, `add_routes` |
@@ -190,6 +195,16 @@ All paths are prefixed `/api` except `/health`. `refresh=true` on a cached route
 | GET | `/api/science/hypotheses` | Research register: every hypothesis revision (or `table_exists: false`) |
 | GET | `/api/science/evidence` | Research register: every evidence row (or `table_exists: false`) |
 | GET | `/api/steps` | One iteration's research steps, with claims, figures and the blind-gate checklist |
+| GET | `/api/zoo/case` | Which case the zoo routes serve: gene (null when none is declared), label, table prefix, schemas, tables, paths, run id — all from the zoo's run config |
+| GET | `/api/zoo/models` | The model roster with measured coverage per consequence class (cached). `coverage` is **null** for a lane that never wrote a score |
+| GET | `/api/zoo/scores` | One allele (`?allele_id=`): its coordinate-free record and every lane's row (score, `aux`, venue, licence, run, ts) |
+| GET | `/api/zoo/scores/gene/{symbol}` | Every record of one gene with every lane's row — the per-gene view; the symbol is a parameter, so no gene is privileged |
+| GET | `/api/zoo/ranks` | One run's ranking per lane (`?run_id=`, default the latest): `n_ranked`, `unscored_pairs`, the confirmed pair's rank and percentiles, `pairs_total`, the top pairs |
+| GET | `/api/zoo/merge` | The lanes' agreement matrix (Spearman ρ, null where too few alleles are shared), both consensus fusions (with and without catalogue-adjacent lanes) and the disagreement table (cached) |
+| GET | `/api/zoo/runs` | Every committed run manifest: start, wall clock, dollars, models, venues, config digest |
+| GET | `/api/zoo/reports` | The reports that exist: one per lane plus `merged`, with title, size and linked figures |
+| GET | `/api/zoo/reports/{key}` | One report as Markdown, with the figures it links |
+| GET | `/api/zoo/lineage` | `warehouse.data_lineage` narrowed to the four tables the zoo writes (`?table=` for one; 422 for a table outside the set) |
 | GET | `/api/steps/step-2` | Iteration 2 step 2's tables as aggregates — funnel, tiers, leads, concordance, SV consensus, depth, phase, reachability (no positions) |
 
 ## How to run it
@@ -234,6 +249,11 @@ cd app && pnpm install && pnpm run dev     # http://127.0.0.1:5173, VITE_API_URL
   a path git tracks. This package never writes a coordinate into an exported or committed file —
   see `probebuild.py`'s round-trip self-test, which proves the CSV renders correctly without
   ever asserting a specific position is right.
+- **The zoo routes carry no case.** `/api/zoo/*` reads the confirmed gene, the two schemas,
+  the table prefix and every docs path from `src/mva/zoo/zoo.example.toml`, or from the file
+  `MVA_ZOO_CONFIG` names — resolved per request, so pointing the API at another case needs no
+  restart. `tests/test_viz_zoo.py` runs every route against a fabricated case (gene `GENEG`,
+  prefix `demo`) and fails on the string `BUB1B` or `it4_` in any reply.
 - **Env vars** (`src/mva/warehouse/settings.py`): `MVA_VIZ_CORS` (allowed browser origins, plus
   any `localhost`/`127.0.0.1` port automatically), `MVA_VIZ_CACHE` (cache directory),
   `MVA_READS_API_URL` (upstream reads service, default `http://127.0.0.1:8765`),
