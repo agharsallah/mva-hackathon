@@ -26,15 +26,20 @@ from pathlib import Path
 from typing import Any
 
 from .report_sections import (
+    HAND_MARKER,
     INTERPRETATION_TRAILER,
     coverage_json,
     distribution_json,
+    existing_interpretation,
     histogram_path,
     hpo_sentence,
+    interpretation_json,
     render_sections,
 )
 
 __all__ = [
+    "HAND_MARKER",
+    "INTERPRETATION_TRAILER",
     "MODEL_REPORTS_COLUMNS",
     "MODEL_REPORTS_TABLE",
     "REPORT_DIR",
@@ -111,6 +116,7 @@ def model_report_json(
     generated_at: str | None = None,
     reports_table: str = "",
     case: Mapping[str, Any] | None = None,
+    interpretations: Sequence[Mapping[str, Any]] = (),
 ) -> dict[str, Any]:
     """Build one lane's report JSON — the single place any of its numbers are computed.
 
@@ -121,6 +127,13 @@ def model_report_json(
     what the run cost. ``case`` is :meth:`mva.zoo.workflow_types.Config.case_json` — which
     illness this report is about — so a report never says "iteration 4" because the renderer
     was written for iteration 4.
+
+    ``interpretations`` takes section 6 as **a list of versions** rather than one string: each
+    item is a block from :func:`mva.zoo.narrate.interpretation_block` (marker, text, mode,
+    model id, citation counts). The first is primary and the rest render under it with their
+    own badges — how a generated section 6 and the hand-written one it is compared against
+    live in one file without either being lost. Leave it empty and the hand-written
+    ``interpretation`` string is used exactly as before.
     """
     key = str(card.get("key") or card.get("name") or getattr(model_rank, "model", "") or "model")
     confirmed = getattr(model_rank, "confirmed", None)
@@ -145,11 +158,12 @@ def model_report_json(
             "distribution": distribution,
             "confirmed_pair": _confirmed_json(confirmed, table, mode),
             "clinical": {"sentence": hpo_line},
-            "interpretation": {
-                "marker": f"<!-- interpretation: hand-written {day} | llm:{llm_mode} -->",
-                "text": interpretation,
-                "llm_mode": llm_mode,
-            },
+            "interpretation": interpretation_json(
+                interpretations,
+                marker=f"{HAND_MARKER} {day} | llm:{llm_mode} -->",
+                text=interpretation,
+                llm_mode=llm_mode,
+            ),
             "limitations": {
                 "licence": card.get("licence", ""),
                 "venue": cost.venue,
@@ -328,20 +342,30 @@ def write_reports(
     return len(reports)
 
 
-def write_markdown(reports: Sequence[Mapping[str, Any]], out_dir: str | Path) -> list[Path]:
+def write_markdown(
+    reports: Sequence[Mapping[str, Any]],
+    out_dir: str | Path,
+    *,
+    keep_existing: bool = True,
+) -> list[Path]:
     """Render every report to ``<out_dir>/<model>.md`` and return the paths written.
 
-    **Prose already under the section-6 marker is kept.** Sections 1-5 and 7 are regenerated
-    from the run's JSON on every render, but section 6 is the one slot a human (or, later, an
-    LLM) writes into, and a re-render must not silently delete it — the same rule
+    **Prose already under the section-6 marker is kept** by default. Sections 1-5 and 7 are
+    regenerated from the run's JSON on every render, but section 6 is the one slot a human (or
+    an LLM) writes into, and a re-render must not silently delete it — the same rule
     :func:`mva.zoo.merge_render.render_merged` already follows for the merged narrative.
+
+    ``keep_existing=False`` is for the one caller that has *already read* the file's prose and
+    put it into the report's own ``interpretations`` list (``mva-zoo narrate``): re-reading it
+    here would push the hand-written text back into the primary slot and drop the generated
+    one.
     """
     directory = Path(out_dir)
     directory.mkdir(parents=True, exist_ok=True)
     written: list[Path] = []
     for report in reports:
         path = directory / f"{report.get('model', 'model')}.md"
-        kept = existing_interpretation(path)
+        kept = existing_interpretation(path) if keep_existing else ""
         rendered = report
         if kept:
             sections = dict(report.get("sections", {}))
@@ -352,21 +376,3 @@ def write_markdown(reports: Sequence[Mapping[str, Any]], out_dir: str | Path) ->
         path.write_text(render_model_report(rendered), encoding="utf-8")
         written.append(path)
     return written
-
-
-def existing_interpretation(path: Path) -> str:
-    """The prose already written under a report's section-6 marker, or ``""``."""
-    if not path.is_file():
-        return ""
-    marker = "<!-- interpretation:"
-    text = path.read_text(encoding="utf-8")
-    if marker not in text:
-        return ""
-    tail = text.split(marker, 1)[1].split("-->", 1)[-1]
-    body = tail.split("\n## ", 1)[0].strip()
-    # The renderer prints its own trailer under every section 6; leaving it in the captured
-    # prose would append a second copy on each re-render.
-    body = body.replace(INTERPRETATION_TRAILER, "").strip()
-    if body.startswith("_Placeholder."):
-        return ""
-    return body

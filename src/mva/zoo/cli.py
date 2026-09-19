@@ -1,6 +1,6 @@
 """Command line for the model zoo — ``mva-zoo``.
 
-Six verbs, in the order a run uses them:
+Seven verbs, in the order a run uses them:
 
 ``records``
     build the normalised allele record set (step 1) and leave it in the case's output
@@ -13,20 +13,18 @@ Six verbs, in the order a run uses them:
     run one model over the record set and append its rows to the score cache, with a
     lineage edge. Re-running is a **no-op**: rows already cached are skipped.
 ``scores``
-    every model's cached row for one allele — the "what does the zoo think of this one"
-    view.
+    every model's cached row for one allele — "what does the zoo think of this one".
 ``run``
     the whole workflow from a case config (step 4), optionally resuming from one stage, with
     ``--case-gene`` and ``--iteration`` overriding the config's ``[case]`` block.
+``narrate``
+    write section 6 of each rendered report with the LLM the config's ``[llm]`` block names,
+    check every sentence's citation, keep the hand-written version beside it.
 
 Every verb that touches the record set or the cache takes ``--config <case.toml>``: the case
 config, not a constant in this file, says where the records are, which schemas to read and
 which catalogue mode to score in. Running the zoo on another illness is a copy of that file
 with its ``[case]`` block edited — see ``src/mva/zoo/cases/README.md``.
-
-Everything here runs **in process**. There is no HTTP server in the MVP: the workflow calls
-these same functions, and a result never needed a route. The read-only routes over the cache
-are a later, optional addition.
 
 Connection settings come from ``.env`` through :class:`~mva.warehouse.settings.Postgres`,
 exactly as ``mva-warehouse`` reads them; ``--schema`` overrides the schema the cache and the
@@ -47,6 +45,7 @@ from typing import Any
 from . import cache
 from .adapters import DEFAULT_RECORDS, coverage_of, records_from_parquet
 from .adapters import build as build_adapter
+from .cli_narrate import add_narrate_parser
 from .types import MODES, AlleleRecord, Coverage, ScoreRow
 
 __all__ = ["main"]
@@ -119,7 +118,17 @@ def _parser() -> argparse.ArgumentParser:
 
     run = subparsers.add_parser("run", help="run the whole workflow from a config file")
     run.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
-    run.add_argument("--from", dest="from_stage", default=None, help="resume from this stage")
+    run.add_argument(
+        "--from",
+        dest="from_stage",
+        default=None,
+        help="re-run from this stage; the earlier ones are restored from their checkpoints",
+    )
+    run.add_argument(
+        "--force",
+        action="store_true",
+        help="drop this run's checkpoints and recompute every stage",
+    )
     run.add_argument(
         "--case-gene",
         default=None,
@@ -131,6 +140,8 @@ def _parser() -> argparse.ArgumentParser:
         help="override [case] iteration — moves every default output path to docs/<value>/",
     )
     run.set_defaults(handler=_do_run)
+
+    add_narrate_parser(subparsers, default_config=DEFAULT_CONFIG)
     return parser
 
 
@@ -371,6 +382,10 @@ def _do_run(args: argparse.Namespace) -> int:
         if accepted is None:
             raise RuntimeError("this workflow build has no resume; drop --from and re-run")
         kwargs[accepted] = args.from_stage
+    if getattr(args, "force", False):
+        if "force" not in inspect.signature(workflow.run).parameters:
+            raise RuntimeError("this workflow build has no checkpoints; drop --force")
+        kwargs["force"] = True
     manifest = workflow.run(args.config, **kwargs)
     print(_describe(manifest))
     return 0

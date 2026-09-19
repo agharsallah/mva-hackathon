@@ -117,7 +117,15 @@ class TestParser:
     def test_every_verb_has_a_handler(self):
         parser = cli._parser()
         (verbs,) = [action for action in parser._actions if getattr(action, "choices", None)]
-        assert set(verbs.choices) == {"records", "models", "coverage", "score", "scores", "run"}
+        assert set(verbs.choices) == {
+            "records",
+            "models",
+            "coverage",
+            "score",
+            "scores",
+            "run",
+            "narrate",
+        }
         for name, subparser in verbs.choices.items():
             assert callable(subparser.get_default("handler")), name
 

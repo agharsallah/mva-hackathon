@@ -15,7 +15,8 @@ Section order is fixed by the plan (§5, step 5) and is the same for every model
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 from .report_stats import (
@@ -27,12 +28,18 @@ from .report_stats import (
 )
 
 __all__ = [
+    "HAND_MARKER",
     "HPO_TERM_COUNT",
+    "INTERPRETATION_MARKER",
+    "INTERPRETATION_TRAILER",
     "SECTION_TITLES",
+    "SIDE_BY_SIDE_NOTE",
     "coverage_json",
     "distribution_json",
+    "existing_interpretation",
     "histogram_path",
     "hpo_sentence",
+    "interpretation_json",
     "render_sections",
 ]
 
@@ -204,25 +211,101 @@ def _clinical(block: Mapping[str, Any]) -> list[str]:
 
 
 #: Printed under section 6 on every render. Named rather than inlined because
-#: :func:`mva.zoo.report.existing_interpretation` has to strip it back off when it reads a
-#: hand-written section out of a rendered file — otherwise a re-render appends a second copy,
-#: which is exactly what the first re-render did (entry 130).
+#: :func:`existing_interpretation` has to strip it back off when it reads a hand-written
+#: section out of a rendered file — otherwise a re-render appends a second copy, which is
+#: exactly what the first re-render did (entry 130).
 INTERPRETATION_TRAILER = (
     "Only this section is written rather than computed. Sections 1-5 and 7 are rendered "
     "from the stored JSON and change only when a number changes."
 )
 
+#: Every version of section 6 opens with this comment. The hand-written one continues
+#: ``hand-written <date>``; a generated one continues ``generated <date> | llm:<mode> |
+#: model:<id>``. It is the badge a reader sees and the anchor a re-render reads back.
+INTERPRETATION_MARKER = "<!-- interpretation:"
+HAND_MARKER = f"{INTERPRETATION_MARKER} hand-written"
+
+#: Printed above section 6 when the report carries more than one version of it. Two versions
+#: are not a draft and a final: they are the same numbers explained twice, by two different
+#: writers, kept together so a reader can see what the automation did and did not change.
+SIDE_BY_SIDE_NOTE = (
+    "This section exists in more than one version — the numbers above are identical for all "
+    "of them. Each version carries a badge saying who wrote it, in which mode, and how many "
+    "of its sentences resolve to a row of sections 2-5 (`mva.zoo.narrate_check`)."
+)
+
+_PLACEHOLDER = "_Placeholder. This is the one section prose may enter._"
+
+
+def interpretation_json(
+    versions: Sequence[Mapping[str, Any]], *, marker: str, text: str, llm_mode: str
+) -> dict[str, Any]:
+    """The stored ``sections.interpretation`` block: the primary version, then the rest.
+
+    No versions means the hand-written path, unchanged since the MVP. One or more means the
+    first is primary and the others are kept beside it under ``alternatives`` — a report never
+    drops a version of this section, because the point of generating one is to compare it with
+    the one it would otherwise replace.
+    """
+    if not versions:
+        return {"marker": marker, "text": text, "llm_mode": llm_mode}
+    primary = dict(versions[0])
+    primary["alternatives"] = [dict(other) for other in versions[1:]]
+    return primary
+
+
+def existing_interpretation(path: Path, *, marker: str = HAND_MARKER) -> str:
+    """The **hand-written** prose already in a rendered report's section 6, or ``""``.
+
+    A report may carry several versions of section 6 under ``### 6.n`` sub-headings, so the
+    reader looks for the hand-written marker specifically and stops at the next heading of any
+    level or at the next version's marker. It falls back to the first version of any kind when
+    there is no hand-written one, which is what a report generated from scratch looks like.
+    """
+    if not path.is_file():
+        return ""
+    text = path.read_text(encoding="utf-8")
+    start = text.find(marker)
+    if start < 0:
+        start = text.find(INTERPRETATION_MARKER)
+    if start < 0:
+        return ""
+    tail = text[start:].split("-->", 1)[-1]
+    for stop in ("\n## ", "\n### ", INTERPRETATION_MARKER):
+        tail = tail.split(stop, 1)[0]
+    body = tail.replace(INTERPRETATION_TRAILER, "").strip()
+    return "" if body.startswith("_Placeholder.") else body
+
 
 def _interpretation(block: Mapping[str, Any]) -> list[str]:
-    marker = block.get("marker", "<!-- interpretation: hand-written YYYY-MM-DD | llm:none -->")
-    return [
-        *_heading(6),
-        str(marker),
-        "",
-        str(block.get("text") or "_Placeholder. This is the one section prose may enter._"),
-        "",
-        INTERPRETATION_TRAILER,
-    ]
+    """Section 6, with one sub-heading per version when the report carries several."""
+    variants = [block, *(block.get("alternatives") or [])]
+    lines = [*_heading(6)]
+    if len(variants) > 1:
+        lines += [SIDE_BY_SIDE_NOTE, ""]
+    for index, variant in enumerate(variants, start=1):
+        if len(variants) > 1:
+            lines += [f"### 6.{index} {_badge(variant)}", ""]
+        lines += [
+            str(variant.get("marker", f"{HAND_MARKER} YYYY-MM-DD | llm:none -->")),
+            "",
+            str(variant.get("text") or _PLACEHOLDER),
+            "",
+        ]
+    lines.append(INTERPRETATION_TRAILER)
+    return lines
+
+
+def _badge(variant: Mapping[str, Any]) -> str:
+    """The label above one version of section 6: who wrote it, and how well it cited."""
+    mode = str(variant.get("llm_mode") or "none")
+    if mode in ("none", "hand", ""):
+        return "Hand-written"
+    model = str(variant.get("llm_model_id") or "unrecorded")
+    cited = int(variant.get("cited_sentences", 0) or 0)
+    total = cited + int(variant.get("uncited_sentences", 0) or 0)
+    tail = f", {cited}/{total} sentences cited" if total else ""
+    return f"Generated — mode `{mode}`, model `{model}`{tail}"
 
 
 def _limitations(block: Mapping[str, Any]) -> list[str]:
