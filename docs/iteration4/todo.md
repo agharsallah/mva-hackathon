@@ -69,7 +69,12 @@ no table holds HGVS, so step 1 re-asks VEP.
   three have **no opinion**. RRF catalogue-free rank **20,639**. Three faults a fixture could
   not catch, fixed first: the lineage schema (`91a7156`), the cache read from the wrong schema
   — silent, no error (`58c0ae5`), and §5 never quoting the HPO ranking (`58c0ae5`)
-- [ ] R5 step 5: per-model reports `docs/iteration4/reports/<key>.md`, §6 hand-written and signed, histograms in `figures/it4/`
+- [x] R5 step 5 — **entry 129**, `P4-6` = **H063 testing** (undecided by its own terms):
+  two of three catalogue-free lanes have **no opinion** on the pair, and SpliceAI puts it at
+  **23.63 %** — outside the decile, above the refuting median. **The finding is one unit down:**
+  AlphaMissense **0.47 %**, ESM1b **2.52 %**, REVEL **2.59 %** on the pair's *missense allele*.
+  §5 now real everywhere — `BUB1B` ranks **#14 of 5,267** on the 8 HPO terms. Four §6
+  interpretations hand-written and signed; 12 figures in `figures/it4/`
 - [ ] R6 step 6: agreement matrix, RRF with/without adjacent, disagreement table, `docs/iteration4/report.md` (method `fusion`). File **P4-6**, **P4-8** (MVP lanes)
 - [ ] R7 step 7 run: walk over MONDO:0009759 and the decoy card; overlap figure; Q14 section. File **P4-11**, **P4-12**
 - [ ] step READMEs 1–7 "What happened" filled from the entries; `docs/README.md` index rows
