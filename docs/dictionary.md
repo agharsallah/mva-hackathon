@@ -2727,3 +2727,24 @@ interrupt: after a crash you re-run the whole thing and pay only for what had no
 same property stated of a whole pipeline stage is called **idempotence**.
 *Example:* `uv run mva-zoo score --model alphamissense` twice in a row prints `inserted 0, skipped <n> (already cached)` the second time, and the table is unchanged.
 *Context: the remote lane gets the same property from a checkpoint file that holds allele ids and numbers only, and the writer returns `Written(inserted, skipped)` so the second run can say what it skipped · source: src/mva/zoo/cache.py, docs/iteration4/step-3/methodology/122-every-lane-scored-once-and-only-once.md · related: Cache key, Append-only cache, Idempotent · first seen 2026-09-18*
+
+**Case config** — the one block of the zoo's run file that says *which
+illness, in which child, in which iteration* a run is about — and the only thing that changes
+when the same code is pointed at another patient. In software terms it is the twelve-factor
+move: the environment-specific values leave the source and become configuration, so the binary
+is the same everywhere and only the file differs.
+*Example:* `[case] label = "Mosaic Variegated Aneuploidy — challenge proband 1"`, `iteration = "iteration4"`, `table_prefix = "it4"`, `confirmed_gene = "BUB1B"`, `confirmed_pair_rule = "lof+missense"`, `phenotype_term_set = "with-parental"`, `hpo_table = "hpo_gene_scores"`. An unsolved case sets `confirmed_gene = ""` and every report then says *no confirmed pair declared* rather than inventing one.
+*Context: added 2026-09-19 when the gene was hard-coded as `pairs.CONFIRMED_GENE = "BUB1B"`; the decision and the honest list of what the block does **not** yet reach (the `it4_` table names, `figures/it4/`, the child's HPO term count) are in docs/notes/zoo-case-config.md, and the walkthrough for a second case is docs/iteration4/reusability.md · source: src/mva/zoo/case_config.py, src/mva/zoo/zoo.example.toml, src/mva/zoo/cases/README.md · related: Model zoo, Research iteration, Allele record, Data lineage · first seen 2026-09-19*
+
+**Confirmed-pair rule** — how a run decides *which* pair of a gene is "the" confirmed pair, when
+that gene carries several candidate pairs. A configuration choice, not a discovery: it changes
+which pair a report is written about, never which pair is biologically right.
+*Example:* `lof+missense` (the default) prefers the pair carrying one truncating allele plus one missense allele — the shape a recessive loss-of-function case usually takes — and falls back to flagging every pair, saying so in words, when that does not single one out. `all` flags every pair of the gene and claims nothing about shape.
+*Context: the knob exists because the rule used to be an unnamed `if` inside the pair builder; the sentence it produces (`confirmed_note`) is carried into the run manifest so a reader can see which rule fired · source: src/mva/zoo/pairs.py (`PAIR_RULES`), src/mva/zoo/case_config.py · related: Case config, Compound heterozygous ("comp het"), Truncating / nonsense / stop-gained, LoF (loss of function) · first seen 2026-09-19*
+
+**Run id as config digest** — naming a run after the fingerprint of the file that configured it,
+rather than after the clock. Two runs of the same configuration are then *the same run*, which
+is what lets every stage be re-run safely; any edit to the configuration is a different run id,
+so results can never be quietly reattributed to a setup that did not produce them.
+*Example:* `it4-dcda40a4df2c` — `[case] table_prefix` plus the first 12 hex characters of SHA-256 over `zoo.example.toml`. Adding the `[case]` block to that file changed the digest to `it4-cf39acb4d64c`, so iteration 4's committed results stay under the old id and were **not** re-run.
+*Context: the property the eight-stage workflow's idempotence rests on; the manifests that carry it are docs/iteration4/runs/*.json, and the rule for any case is stated in that folder's README · source: src/mva/zoo/case_config.py (`Config.run_id`), src/mva/zoo/workflow.py · related: Checksum / SHA-256, No-op re-run, Case config, Provenance manifest · first seen 2026-09-19*

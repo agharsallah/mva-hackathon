@@ -29,10 +29,10 @@
   ],
   "counts": {
     "chapters": 24,
-    "entries": 617,
+    "entries": 620,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 194
+    "contexts": 197
   },
   "chapters": [
     {
@@ -8233,6 +8233,57 @@
             "idempotent"
           ],
           "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "case-config",
+          "term": "Case config",
+          "aliases": [],
+          "html": "<p>the one block of the zoo's run file that says <em>which\nillness, in which child, in which iteration</em> a run is about — and the only thing that changes\nwhen the same code is pointed at another patient. In software terms it is the twelve-factor\nmove: the environment-specific values leave the source and become configuration, so the binary\nis the same everywhere and only the file differs.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>[case] label = \"Mosaic Variegated Aneuploidy — challenge proband 1\"</code>, <code>iteration = \"iteration4\"</code>, <code>table_prefix = \"it4\"</code>, <code>confirmed_gene = \"BUB1B\"</code>, <code>confirmed_pair_rule = \"lof+missense\"</code>, <code>phenotype_term_set = \"with-parental\"</code>, <code>hpo_table = \"hpo_gene_scores\"</code>. An unsolved case sets <code>confirmed_gene = \"\"</code> and every report then says <em>no confirmed pair declared</em> rather than inventing one.</p>",
+          "context": "<p>added 2026-09-19 when the gene was hard-coded as <code>pairs.CONFIRMED_GENE = \"BUB1B\"</code>; the decision and the honest list of what the block does <strong>not</strong> yet reach (the <code>it4_</code> table names, <code>figures/it4/</code>, the child's HPO term count) are in docs/notes/zoo-case-config.md, and the walkthrough for a second case is docs/iteration4/reusability.md</p>",
+          "source": "src/mva/zoo/case_config.py, src/mva/zoo/zoo.example.toml, src/mva/zoo/cases/README.md",
+          "related": [
+            "model-zoo",
+            "research-iteration",
+            "allele-record",
+            "data-lineage"
+          ],
+          "firstSeen": "2026-09-19"
+        },
+        {
+          "kind": "entry",
+          "slug": "confirmed-pair-rule",
+          "term": "Confirmed-pair rule",
+          "aliases": [],
+          "html": "<p>how a run decides <em>which</em> pair of a gene is \"the\" confirmed pair, when\nthat gene carries several candidate pairs. A configuration choice, not a discovery: it changes\nwhich pair a report is written about, never which pair is biologically right.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>lof+missense</code> (the default) prefers the pair carrying one truncating allele plus one missense allele — the shape a recessive loss-of-function case usually takes — and falls back to flagging every pair, saying so in words, when that does not single one out. <code>all</code> flags every pair of the gene and claims nothing about shape.</p>",
+          "context": "<p>the knob exists because the rule used to be an unnamed <code>if</code> inside the pair builder; the sentence it produces (<code>confirmed_note</code>) is carried into the run manifest so a reader can see which rule fired</p>",
+          "source": "src/mva/zoo/pairs.py (`PAIR_RULES`), src/mva/zoo/case_config.py",
+          "related": [
+            "case-config",
+            "compound-heterozygous-comp-het",
+            "truncating-nonsense-stop-gained",
+            "lof-loss-of-function"
+          ],
+          "firstSeen": "2026-09-19"
+        },
+        {
+          "kind": "entry",
+          "slug": "run-id-as-config-digest",
+          "term": "Run id as config digest",
+          "aliases": [],
+          "html": "<p>naming a run after the fingerprint of the file that configured it,\nrather than after the clock. Two runs of the same configuration are then <em>the same run</em>, which\nis what lets every stage be re-run safely; any edit to the configuration is a different run id,\nso results can never be quietly reattributed to a setup that did not produce them.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>it4-dcda40a4df2c</code> — <code>[case] table_prefix</code> plus the first 12 hex characters of SHA-256 over <code>zoo.example.toml</code>. Adding the <code>[case]</code> block to that file changed the digest to <code>it4-cf39acb4d64c</code>, so iteration 4's committed results stay under the old id and were <strong>not</strong> re-run.</p>",
+          "context": "<p>the property the eight-stage workflow's idempotence rests on; the manifests that carry it are docs/iteration4/runs/*.json, and the rule for any case is stated in that folder's README</p>",
+          "source": "src/mva/zoo/case_config.py (`Config.run_id`), src/mva/zoo/workflow.py",
+          "related": [
+            "checksum-sha-256",
+            "no-op-re-run",
+            "case-config",
+            "provenance-manifest"
+          ],
+          "firstSeen": "2026-09-19"
         }
       ]
     }
