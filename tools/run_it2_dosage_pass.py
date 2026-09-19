@@ -156,6 +156,13 @@ def main(argv: list[str] | None = None) -> int:
         )
 
     args.out.mkdir(parents=True, exist_ok=True)
+    # The raw counts are saved before anything is derived from them. This array took the
+    # whole wall clock above to produce and every later question -- is a chromosome's signal
+    # spread across its probes or concentrated in a few, what does a trimmed estimator say,
+    # does a different denominator change the answer -- needs it. Keeping only the summary
+    # means paying 47 minutes again to ask the next question.
+    np.save(args.out / "counts.npy", counts)
+    print(f"saved      {args.out}/counts.npy ({counts.size:,} probe counts)")
     rows = [row.as_dict() for row in dosage(counts, design, kmers=counted, seed=common.SEED)]
     for row in rows:
         row["shards_swept"] = result.get("shards_swept")

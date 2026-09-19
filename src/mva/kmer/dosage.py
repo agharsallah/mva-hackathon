@@ -34,7 +34,16 @@ import numpy as np
 
 from .chromosome import CALIBRATION_NAME, ChromosomeProbes
 
-__all__ = ["LEVEL", "RESAMPLES", "Dosage", "absolute_scale", "dosage"]
+__all__ = [
+    "LEVEL",
+    "RESAMPLES",
+    "Composition",
+    "Dosage",
+    "absolute_scale",
+    "composition",
+    "dosage",
+    "gc_fraction",
+]
 
 #: The project's interval convention, restated rather than imported. ``mva.kmer`` is a leaf
 #: package -- pure NumPy over reference sequence, importing no sibling -- and
@@ -193,3 +202,99 @@ def dosage(
             )
         )
     return tuple(results)
+
+
+@dataclass(frozen=True)
+class Composition:
+    """What a chromosome's *sequence* predicts about its dosage, before biology is invoked.
+
+    A dosage is a count, and counts in short-read sequencing depend on GC content: library
+    preparation and amplification favour some compositions over others, by a few per cent
+    across a whole chromosome. That is the same size as a low-fraction mosaic gain, so the
+    two are confusable and the bootstrap interval cannot tell them apart -- it resamples
+    probes, which measures counting noise and says nothing about a bias shared by every
+    probe on the chromosome.
+
+    This is the correction: regress each chromosome's dosage on the mean GC of **its own
+    probes**, and report the residual. A spread that the composition explains is an
+    instrument property; what survives is what a copy-number claim may be made from.
+    """
+
+    #: Mean GC fraction of each contig's probes.
+    gc: Mapping[str, float]
+    #: Dosage with the fitted composition trend removed, recentred on one.
+    residual: Mapping[str, float]
+    #: Pearson correlation of dosage against probe GC, across the contigs fitted.
+    correlation: float
+    #: Dosage per unit GC fraction, and the intercept, as fitted.
+    slope: float
+    intercept: float
+    #: Standard deviation across the fitted contigs, before and after the trend is removed.
+    spread: float
+    residual_spread: float
+    fitted: tuple[str, ...]
+
+    def as_dict(self) -> dict[str, object]:
+        return {
+            "correlation": round(self.correlation, 4),
+            "slope": round(self.slope, 4),
+            "intercept": round(self.intercept, 4),
+            "spread": round(self.spread, 5),
+            "residual_spread": round(self.residual_spread, 5),
+            "fitted": list(self.fitted),
+            "gc": {name: round(value, 5) for name, value in self.gc.items()},
+            "residual": {name: round(value, 5) for name, value in self.residual.items()},
+        }
+
+
+def gc_fraction(codes: np.ndarray, k: int) -> np.ndarray:
+    """The GC share of each 2-bit packed k-mer, without decoding it to letters.
+
+    The encoding is ``A=00 C=01 G=10 T=11``, so a base is G or C exactly when its two bits
+    differ. Taking the even and odd bit planes and XOR-ing them turns "is this base G or C"
+    into one bit per base, and the popcount of that is the answer -- which keeps a million
+    k-mers in integer arrays instead of in strings.
+    """
+    packed = codes.astype(np.uint64)
+    low = packed & np.uint64(0x5555555555555555)  # the 1s bit of every base
+    high = (packed >> np.uint64(1)) & np.uint64(0x5555555555555555)  # the 2s bit
+    # One surviving bit per G or C, then count them. Bases above the k-th are zero in both
+    # planes, so they XOR to zero and cannot be miscounted as an A.
+    return np.bitwise_count(low ^ high).astype(np.float64) / k
+
+
+def composition(
+    rows: tuple[Dosage, ...],
+    probes: ChromosomeProbes,
+    *,
+    exclude: frozenset[str] = frozenset(),
+) -> Composition:
+    """Fit each contig's dosage against the GC of its own probes and report the residual.
+
+    ``exclude`` names contigs that must not enter the fit because their dosage is not a
+    copy-number-one measurement -- the sex chromosomes in a male proband, whose true ratio
+    is a half and would dominate any regression through them.
+    """
+    per_contig = _per_contig(probes.kmers, probes)
+    gc = {
+        name: float(gc_fraction(codes, probes.k).mean())
+        for name, codes in per_contig.items()
+        if codes.size
+    }
+    fitted = tuple(row.chrom for row in rows if row.chrom not in exclude and row.chrom in gc)
+    x = np.array([gc[name] for name in fitted])
+    y = np.array([row.relative for row in rows if row.chrom in fitted])
+    slope, intercept = np.polyfit(x, y, 1) if x.size > 2 else (0.0, float(y.mean()))
+    predicted = slope * x + intercept
+    residual = y - predicted + 1.0
+    correlation = float(np.corrcoef(x, y)[0, 1]) if x.size > 2 else 0.0
+    return Composition(
+        gc=gc,
+        residual=dict(zip(fitted, (float(value) for value in residual), strict=True)),
+        correlation=correlation,
+        slope=float(slope),
+        intercept=float(intercept),
+        spread=float(y.std(ddof=1)),
+        residual_spread=float(residual.std(ddof=1)),
+        fitted=fitted,
+    )
