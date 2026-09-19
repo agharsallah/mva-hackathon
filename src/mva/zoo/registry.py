@@ -68,7 +68,10 @@ ADAPTER_FOR_SOURCE: Mapping[str, tuple[str, ...]] = {
     # A downloaded table has two shapes: keyed by the genomic change (`duckdb_lookup`) or
     # keyed by a protein accession and a one-letter residue change (`protein_table`).
     # Which one a table is, is a fact about the publisher, not about the source kind.
-    "table": ("duckdb_lookup", "protein_table"),
+    # A third shape, added in wave 4: keyed on the genomic change itself
+    # (`coordinate_table`), which is joined inside `build/` because the record set that
+    # leaves this machine carries no coordinate.
+    "table": ("duckdb_lookup", "protein_table", "coordinate_table"),
     "vep-rest": ("vep_rest",),
     "local-process": ("local_process",),
     "modal": ("modal",),
@@ -80,6 +83,7 @@ ADAPTER_PARAMS: Mapping[str, tuple[str, ...]] = {
     "warehouse_column": ("table", "column"),
     "duckdb_lookup": ("key", "url"),
     "protein_table": ("key", "url"),
+    "coordinate_table": ("key", "url"),
     "vep_rest": ("plugin",),
     "local_process": ("entrypoint",),
     "modal": ("image",),

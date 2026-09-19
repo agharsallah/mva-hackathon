@@ -32,24 +32,19 @@ import argparse
 import hashlib
 import shutil
 import sys
-import zipfile
 from pathlib import Path
-from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 # The path shim above must run before these imports; that is why they are not at the top.
 from mva.drugs import provenance
-from mva.zoo import registry, tables
+from mva.zoo import registry, tabix_subset, table_convert
 
 #: Everything a fetch writes lives here; `.gitignore` keeps it out of the repository.
 DEFAULT_OUT = Path("build/it4/tables")
 
 #: Bytes per chunk while streaming and hashing. One MiB, same as the provenance helper.
 CHUNK = 1 << 20
-
-#: How the downloaded file is shaped, from `params.layout` in the roster.
-LAYOUTS = ("tsv", "csv", "matrix-zip", "csv-zip")
 
 PATIENT_DATA = (
     "none. A public precomputed score table for every possible variant in the human "
@@ -139,106 +134,6 @@ def _download(url: str, dest: Path) -> tuple[str, int]:
     return sha.hexdigest(), size
 
 
-def _extract(archive: Path, into: Path) -> list[Path]:
-    """Unpack a zip into ``into`` and return the member files, largest first."""
-    into.mkdir(parents=True, exist_ok=True)
-    with zipfile.ZipFile(archive) as bundle:
-        bundle.extractall(into)
-    return sorted((p for p in into.rglob("*") if p.is_file()), key=lambda p: -p.stat().st_size)
-
-
-def _convert(
-    card: registry.ModelCard, raw: Path, target: Path, only: frozenset[str] = frozenset()
-) -> int:
-    """Turn whatever was downloaded into one parquet keyed for lookup. Returns row count."""
-    import duckdb
-
-    layout = str(card.params.get("layout", "tsv"))
-    if layout not in LAYOUTS:
-        raise SystemExit(f"{card.key}: layout={layout!r} is not one of {LAYOUTS}")
-    con = duckdb.connect()
-    try:
-        if layout in ("tsv", "csv"):
-            rows = _convert_flat(con, raw, target, layout)
-        else:
-            rows = _convert_archive(con, card, raw, target, layout, only)
-    finally:
-        con.close()
-    return rows
-
-
-def _convert_flat(con: Any, raw: Path, target: Path, layout: str) -> int:
-    """A single delimited table (possibly bgzipped) → parquet, columns unchanged."""
-    delimiter = "\t" if layout == "tsv" else ","
-    source = str(raw)
-    con.execute(
-        "COPY (SELECT * FROM read_csv(?, delim=?, header=true, union_by_name=true, "
-        "filename=false, auto_detect=true)) TO ? (FORMAT parquet)",
-        [source, delimiter, str(target)],
-    )
-    return int(con.execute("SELECT count(*) FROM read_parquet(?)", [str(target)]).fetchone()[0])
-
-
-def _convert_archive(
-    con: Any,
-    card: registry.ModelCard,
-    raw: Path,
-    target: Path,
-    layout: str,
-    only: frozenset[str] = frozenset(),
-) -> int:
-    """A zip of per-protein files → one long parquet.
-
-    ``csv-zip``: every member is already long (one row per variant) and they are simply
-    unioned. ``matrix-zip`` (ESM1b): every member is a matrix — one column per protein
-    position, one row per substituted amino acid — so it is unpivoted into
-    ``(uniprot, hgvs_p, score)``. The member layout is printed before the conversion runs
-    so the assumption is checked against the real file rather than trusted.
-
-    ``only`` restricts the conversion to the accessions named — one member per accession.
-    This is the plan's own tier-1 rule, "a parquet subset for the ~40k records only"
-    (§10 R7): a case carries a few thousand proteins, not every protein a publisher scored.
-    The reshaping itself is :func:`mva.zoo.tables.unpivot_matrix_members`, whose docstring
-    records why it is Python and not one SQL statement.
-    """
-    members = _extract(raw, raw.parent / f"{card.key}-extracted")
-    if not members:
-        raise SystemExit(f"{card.key}: the archive held no files")
-    if only:
-        members = [item for item in members if tables.accession_of(item) in only]
-        if not members:
-            raise SystemExit(
-                f"{card.key}: no member matched the {len(only):,} accessions asked for"
-            )
-    print(f"    {len(members):,} members; first: {members[0].name}")
-    head = con.execute("SELECT * FROM read_csv(?, header=true) LIMIT 3", [str(members[0])])
-    print(f"    columns: {[d[0] for d in head.description][:8]} …")
-    # DuckDB will not take the COPY target (or a read_csv path inside COPY) as a bound
-    # parameter — "Unsupported parameter type for filename: expected e.g. TARGET
-    # 'file.parquet'". Paths are interpolated as single-quoted literals instead; they are
-    # ones this script built, never user input.
-    dst = _literal(str(target))
-    if layout == "csv-zip":
-        pattern = _literal(str(members[0].parent / str(card.params.get("member_glob", "*.csv"))))
-        con.execute(
-            f"COPY (SELECT * FROM read_csv({pattern}, header=true, union_by_name=true, "
-            f"filename=true)) TO {dst} (FORMAT parquet)"
-        )
-    else:
-        # The publisher's numbers are written **verbatim**, sign and all. Orientation is
-        # the lane's job (`score_sign` on the card, applied in the adapter), and applying
-        # it here as well would flip it twice — which it silently did until a BUB1B spot
-        # check came back negative for a damaging change (entry 119).
-        tables.unpivot_matrix_members(members, target, progress=print)
-    return int(con.execute("SELECT count(*) FROM read_parquet(?)", [str(target)]).fetchone()[0])
-
-
-def _literal(value: str) -> str:
-    """A SQL string literal, single quotes doubled — for the places DuckDB refuses a `?`."""
-    escaped = value.replace("'", "''")
-    return f"'{escaped}'"
-
-
 def _fragment(card: registry.ModelCard, sha: str) -> str:
     return (
         f"# src/mva/zoo/models.d/{card.key}.toml — written from a measured fetch.\n"
@@ -271,7 +166,7 @@ def do_fetch(
 
     target = out_dir / f"{card.key}.parquet"
     print("  converting to parquet …")
-    rows = _convert(card, raw, target, only)
+    rows = table_convert.to_parquet(card, raw, target, only)
     print(f"    {rows:,} rows -> {target}")
 
     manifest = provenance.envelope(f"zoo-table-{card.key}", built_by=Path(__file__).name)
@@ -302,6 +197,81 @@ def do_fetch(
     return 0
 
 
+def do_subset(
+    card: registry.ModelCard,
+    records: Path,
+    out_dir: Path,
+    *,
+    execute: bool,
+    jobs: int,
+    merge_gap: int,
+) -> int:
+    """Fetch **only the rows this case needs** of a remote bgzipped, tabix-indexed table.
+
+    The whole-file path above is wrong for a table like GPN-MSA's 37 GB of every possible
+    SNV in the genome: the record set asks about ~36k positions, so the fetch is a set of
+    HTTP range reads driven by the published index rather than a download. Plan §10 R7
+    ("tier 1 = parquet subset for the ~40k records only"), executed.
+    """
+    url = str(card.params.get("url", ""))
+    target = out_dir / card.key
+    if not execute:
+        regions = tabix_subset.snv_regions(records, merge_gap=merge_gap)
+        span = sum(region.span for region in regions)
+        print("DRY RUN — nothing fetched. Re-run with --execute to do this:\n")
+        print(f"  model      {card.name} ({card.key}), {card.version}")
+        print(f"  licence    {card.licence} <{card.licence_url}>")
+        print(f"  index      {url}.tbi -> {target}/  (a few MB, hashed)")
+        print(f"  regions    {len(regions):,} merged at gap {merge_gap} ({span:,} bases)")
+        print(f"  workers    {jobs} tabix processes against the resolved CDN url")
+        print(
+            f"  then       parquet -> {out_dir / (card.key + '.parquet')}, keyed chrom/pos/ref/alt"
+        )
+        print(f"             provenance -> {out_dir / (card.key + '.subset.provenance.json')}")
+        return 0
+
+    print(f"  subsetting {card.name} from {url}")
+    result = tabix_subset.subset(url, records, target, jobs=jobs, merge_gap=merge_gap)
+    print(f"    {result.rows:,} rows -> {result.parquet_path} in {result.seconds:.0f}s")
+    if result.failures:
+        for failure in result.failures:
+            print(f"    FAILED {failure}")
+
+    manifest = provenance.envelope(f"zoo-table-{card.key}", built_by=Path(__file__).name)
+    manifest["model"] = card.as_dict()
+    manifest["inputs"] = [
+        {
+            "name": card.key,
+            "url": url,
+            "version": card.version,
+            "role": "precomputed variant-effect score table, range-read by tabix",
+            "retrieved_at": provenance.now(),
+            "sha256": result.subset_sha256,
+            "sha256_scope": "the concatenated subset TSV this run wrote, not the upstream file",
+            "licence": card.licence,
+            "licence_url": card.licence_url,
+            "non_commercial": card.non_commercial,
+            **result.as_dict(),
+        },
+        {
+            "name": "record set",
+            "path": str(records),
+            "role": "which positions were asked for (SNV alleles only)",
+        },
+    ]
+    manifest["outputs"] = [provenance.output(result.parquet_path, result.parquet_rows)]
+    manifest["licence"] = f"{card.licence} — see {card.licence_url}. {registry.SHIPS['table']}."
+    manifest["patient_data"] = PATIENT_DATA + (
+        " The *choice of rows* is patient-derived, so the subset file itself stays under "
+        "build/ like every other coordinate-bearing artefact."
+    )
+    written = provenance.write(manifest, out_dir / f"{card.key}.subset.provenance.json")
+    print(f"  provenance -> {written}")
+    print(f"\nPaste this into src/mva/zoo/models.d/{card.key}.toml:\n")
+    print(_fragment(card, result.subset_sha256))
+    return 1 if result.failures else 0
+
+
 def _free_disk(path: Path) -> int:
     probe = path
     while not probe.exists() and probe != probe.parent:
@@ -329,6 +299,24 @@ def build_parser() -> argparse.ArgumentParser:
         "only — and for a matrix archive it is the difference between minutes and "
         "never finishing.",
     )
+    parser.add_argument(
+        "--subset-from",
+        type=Path,
+        metavar="RECORDS",
+        help="fetch only the rows this record set needs, by tabix range reads over the "
+        "published index, instead of downloading the whole table. For a table of every "
+        "possible SNV in the genome this is the difference between 37 GB and a few "
+        "hundred MB (plan §10 R7).",
+    )
+    parser.add_argument(
+        "--jobs", type=int, default=tabix_subset.DEFAULT_JOBS, help="parallel tabix workers"
+    )
+    parser.add_argument(
+        "--merge-gap",
+        type=int,
+        default=tabix_subset.DEFAULT_GAP,
+        help="merge wanted positions this close into one region (fewer seeks, more rows)",
+    )
     parser.add_argument("--models", type=Path, default=registry.DEFAULT_MODELS_TOML)
     parser.add_argument("--fragments", type=Path, default=registry.DEFAULT_FRAGMENTS_DIR)
     return parser
@@ -344,6 +332,15 @@ def main(argv: list[str] | None = None) -> int:
     if card is None:
         known = ", ".join(lanes) or "(none)"
         raise SystemExit(f"{args.fetch!r} is not a downloadable lane. Known: {known}")
+    if args.subset_from:
+        return do_subset(
+            card,
+            args.subset_from,
+            args.out,
+            execute=args.execute,
+            jobs=args.jobs,
+            merge_gap=args.merge_gap,
+        )
     expected = card.params.get("bytes")
     if args.execute and isinstance(expected, int) and _free_disk(args.out) < expected * 3:
         raise SystemExit(

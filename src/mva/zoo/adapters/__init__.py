@@ -16,8 +16,8 @@ module                       tier   what it reads
 ===========================  =====  ==========================================================
 
 *Tier* is where the model runs, not how good it is: **tier 1** = look the answer up (no
-model executes), **tier 2** = a local CPU process, **tier 3** = a remote GPU job. Only tier
-1 is built here.
+model executes), **tier 2** = a local CPU process, **tier 3** = a remote GPU job. Tier 3 is
+still unbuilt.
 
 This module holds what every lane shares: the factory (:func:`build`), the coordinate-free
 key expressed as SQL (:func:`allele_id_sql`, which must agree with
@@ -54,6 +54,8 @@ ADAPTER_MODULES: dict[str, str] = {
     "warehouse_column": "mva.zoo.adapters.warehouse_column",
     "duckdb_lookup": "mva.zoo.adapters.duckdb_lookup",
     "protein_table": "mva.zoo.adapters.protein_table",
+    "coordinate_table": "mva.zoo.adapters.coordinate_table",
+    "local_process": "mva.zoo.adapters.local_process",
     "vep_rest": "mva.zoo.adapters.vep_rest",
 }
 
