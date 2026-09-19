@@ -68,6 +68,11 @@ def connection():
     con = duckdb.connect()
     con.execute("ATTACH ':memory:' AS pg")
     con.execute("CREATE SCHEMA pg.results")
+    # The real warehouse has two schemas: `results` holds what a stage writes,
+    # `warehouse` holds the append-only data_lineage edge list. Emulating only one
+    # let a writer point its lineage at `results` and pass here while failing on the
+    # first real run (entry 128).
+    con.execute("CREATE SCHEMA pg.warehouse")
     from mva.warehouse.lineage import ensure_lineage_table
 
     ensure_lineage_table(con, "results")

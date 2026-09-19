@@ -120,6 +120,13 @@ class ModelRank:
 # ---------------------------------------------------------------------------------------
 
 
+#: Where the append-only lineage edge lands. Not the schema the *result* lands in:
+#: ``results`` holds the tables this module writes, ``warehouse`` holds
+#: ``data_lineage``. Passing one schema for both is the bug entry 128 caught on the
+#: first real run of the DAG.
+LINEAGE_SCHEMA = "warehouse"
+
+
 def pair_score(scores: Mapping[str, float], pair: Pair) -> tuple[float, float] | None:
     """``(min, max)`` of the pair's two allele scores, or ``None`` if either is unscored."""
     left = scores.get(pair.left_id)
@@ -328,9 +335,15 @@ def write_ranks(
     run_id: str,
     top: int = DEFAULT_TOP,
     source_ref: str = "results.coding_alleles + warehouse.allele_scores",
+    lineage_schema: str = LINEAGE_SCHEMA,
 ) -> int:
-    """Create the table if absent, append this run's rows, and record one lineage edge."""
-    from ..warehouse.lineage import record
+    """Create the table if absent, append this run's rows, and record one lineage edge.
+
+    ``schema`` is where the *result* lands (``results``); ``lineage_schema`` is where the
+    edge lands (``warehouse``). They are different schemas and were the same argument until
+    a real run said ``Table with name data_lineage does not exist`` (entry 128).
+    """
+    from ..warehouse.lineage import ensure_tables, record
     from ..warehouse.postgres import ALIAS, safe_identifier
 
     safe = safe_identifier(schema)
@@ -342,9 +355,10 @@ def write_ranks(
         connection.execute(
             f"INSERT INTO {ALIAS}.{safe}.{MODEL_RANKS_TABLE} VALUES ({placeholders})", list(row)
         )
+    ensure_tables(connection, lineage_schema)
     record(
         connection,
-        schema,
+        lineage_schema,
         target_schema=schema,
         target_table=MODEL_RANKS_TABLE,
         target_rows=len(rows),

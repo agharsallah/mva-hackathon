@@ -76,6 +76,13 @@ class ModelReport:
         return report_path(self.model)
 
 
+#: Where the append-only lineage edge lands. Not the schema the *result* lands in:
+#: ``results`` holds the tables this module writes, ``warehouse`` holds
+#: ``data_lineage``. Passing one schema for both is the bug entry 128 caught on the
+#: first real run of the DAG.
+LINEAGE_SCHEMA = "warehouse"
+
+
 def report_path(key: str) -> str:
     """The Markdown file one lane's report is written to."""
     return f"{REPORT_DIR}/{key}.md"
@@ -251,11 +258,17 @@ def write_reports(
     *,
     run_id: str,
     source_ref: str = "results.it4_model_ranks + warehouse.allele_scores",
+    lineage_schema: str = LINEAGE_SCHEMA,
 ) -> int:
-    """Append this run's report JSON rows and record one lineage edge."""
+    """Append this run's report JSON rows and record one lineage edge.
+
+    ``schema`` is where the *result* lands (``results``); ``lineage_schema`` is where the
+    edge lands (``warehouse``) — see :func:`mva.zoo.rank.write_ranks` for why they are two
+    arguments rather than one.
+    """
     import json
 
-    from ..warehouse.lineage import record
+    from ..warehouse.lineage import ensure_tables, record
     from ..warehouse.postgres import ALIAS, safe_identifier
 
     safe = safe_identifier(schema)
@@ -275,9 +288,10 @@ def write_reports(
                 now,
             ],
         )
+    ensure_tables(connection, lineage_schema)
     record(
         connection,
-        schema,
+        lineage_schema,
         target_schema=schema,
         target_table=MODEL_REPORTS_TABLE,
         target_rows=len(reports),

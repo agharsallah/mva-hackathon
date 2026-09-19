@@ -217,6 +217,11 @@ def connection():
     con = duckdb.connect()
     con.execute("ATTACH ':memory:' AS pg")
     con.execute("CREATE SCHEMA pg.results")
+    # The real warehouse has two schemas: `results` holds what a stage writes,
+    # `warehouse` holds the append-only data_lineage edge list. Emulating only one
+    # let a writer point its lineage at `results` and pass here while failing on the
+    # first real run (entry 128).
+    con.execute("CREATE SCHEMA pg.warehouse")
     from mva.warehouse.lineage import ensure_lineage_table
 
     ensure_lineage_table(con, "results")
@@ -231,7 +236,7 @@ def test_write_reports_stores_the_json_and_one_lineage_edge(connection, payload)
     assert row[:3] == ("demo", "2.1", "run-1")
     assert json.loads(row[3])["sections"]["confirmed_pair"]["rank"] == 1
     edge = connection.execute(
-        "SELECT target_table, target_rows FROM pg.results.data_lineage"
+        "SELECT target_table, target_rows FROM pg.warehouse.data_lineage"
     ).fetchone()
     assert edge == (report.MODEL_REPORTS_TABLE, 1)
 

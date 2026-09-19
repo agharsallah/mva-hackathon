@@ -212,6 +212,11 @@ def connection():
     con = duckdb.connect()
     con.execute("ATTACH ':memory:' AS pg")
     con.execute("CREATE SCHEMA pg.results")
+    # The real warehouse has two schemas: `results` holds what a stage writes,
+    # `warehouse` holds the append-only data_lineage edge list. Emulating only one
+    # let a writer point its lineage at `results` and pass here while failing on the
+    # first real run (entry 128).
+    con.execute("CREATE SCHEMA pg.warehouse")
     from mva.warehouse.lineage import ensure_lineage_table
 
     ensure_lineage_table(con, "results")
@@ -228,7 +233,7 @@ def test_write_ranks_appends_rows_and_one_lineage_edge(connection, three_pairs):
     ).fetchall()
     assert rows[0] == ("m", 1, True)
     edges = connection.execute(
-        "SELECT target_table, target_rows FROM pg.results.data_lineage"
+        "SELECT target_table, target_rows FROM pg.warehouse.data_lineage"
     ).fetchall()
     assert edges == [(rank.MODEL_RANKS_TABLE, 3)]
 
