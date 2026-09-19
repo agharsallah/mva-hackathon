@@ -1,0 +1,764 @@
+{
+  "_captured": true,
+  "captured_at": "2026-09-20",
+  "source": "pg.warehouse.allele_scores, pg.results.it4_allele_records",
+  "_redacted": ["records[].hgvs_c", "records[].hgvs_p"],
+  "payload": {
+    "BUB1B": {
+      "gene": "BUB1B",
+      "records": [
+        {
+          "allele_id": "93e077ae83ac2642",
+          "gene": "BUB1B",
+          "transcript": "ENST00000287598",
+          "consequence": "missense_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": null,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "alphamissense",
+              "version": "AlphaMissense hg38 2023",
+              "score": 0.9229,
+              "aux": {
+                "am_class": "likely_pathogenic",
+                "mode": "catalogue-free"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260919T090649Z-3766",
+              "ts": "2026-09-19T09:06:51.019832"
+            },
+            {
+              "model": "esm1b",
+              "version": "Brandes 2023 ESM1b",
+              "score": 11.537,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "cd1b009b03a3577b22b4395a0ae35500eaecb09dd28b982f70a838c748477d14",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260919T090725Z-cde3",
+              "ts": "2026-09-19T09:07:27.438998"
+            },
+            {
+              "model": "revel",
+              "version": "REVEL 1.3 via VEP REST",
+              "score": 0.472,
+              "aux": {
+                "field": "revel",
+                "mode": "catalogue-free",
+                "plugin": "REVEL"
+              },
+              "digest": "",
+              "venue": "vep-rest",
+              "licence": "REVEL non-commercial (free for non-commercial use; other uses by arrangement)",
+              "run_id": "20260919T095015Z-4ce1",
+              "ts": "2026-09-19T11:12:11.451134"
+            },
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.0,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.00;AL=0.00;DG=0.00;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:10.975047"
+            }
+          ]
+        },
+        {
+          "allele_id": "addc19de8fa29228",
+          "gene": "BUB1B",
+          "transcript": "ENST00000287598",
+          "consequence": "stop_gained",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 3.286e-5,
+          "clin_sig": "pathogenic;likely_pathogenic",
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.03,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.03;AL=0.00;DG=0.00;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:13.259783"
+            }
+          ]
+        }
+      ],
+      "models": ["alphamissense", "esm1b", "revel", "spliceai"],
+      "scored_records": 2
+    },
+    "NBPF3": {
+      "gene": "NBPF3",
+      "records": [
+        {
+          "allele_id": "02ab6c4e761a61c5",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "missense_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.08283,
+          "clin_sig": "benign",
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "alphamissense",
+              "version": "AlphaMissense hg38 2023",
+              "score": 0.1435,
+              "aux": {
+                "am_class": "likely_benign",
+                "mode": "catalogue-free"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260919T090649Z-3766",
+              "ts": "2026-09-19T09:06:49.674109"
+            },
+            {
+              "model": "esm1b",
+              "version": "Brandes 2023 ESM1b",
+              "score": 0.886,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "cd1b009b03a3577b22b4395a0ae35500eaecb09dd28b982f70a838c748477d14",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260919T090725Z-cde3",
+              "ts": "2026-09-19T09:07:27.438998"
+            },
+            {
+              "model": "revel",
+              "version": "REVEL 1.3 via VEP REST",
+              "score": 0.021,
+              "aux": {
+                "field": "revel",
+                "mode": "catalogue-free",
+                "plugin": "REVEL"
+              },
+              "digest": "",
+              "venue": "vep-rest",
+              "licence": "REVEL non-commercial (free for non-commercial use; other uses by arrangement)",
+              "run_id": "20260919T095015Z-4ce1",
+              "ts": "2026-09-19T11:12:07.223090"
+            },
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.0,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.00;AL=0.00;DG=0.00;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:05.359768"
+            }
+          ]
+        },
+        {
+          "allele_id": "1693adf43ad4004b",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "missense_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.3421,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "alphamissense",
+              "version": "AlphaMissense hg38 2023",
+              "score": 0.0535,
+              "aux": {
+                "am_class": "likely_benign",
+                "mode": "catalogue-free"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260919T090649Z-3766",
+              "ts": "2026-09-19T09:06:49.674109"
+            },
+            {
+              "model": "esm1b",
+              "version": "Brandes 2023 ESM1b",
+              "score": 0.928,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "cd1b009b03a3577b22b4395a0ae35500eaecb09dd28b982f70a838c748477d14",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260919T090725Z-cde3",
+              "ts": "2026-09-19T09:07:27.438998"
+            },
+            {
+              "model": "revel",
+              "version": "REVEL 1.3 via VEP REST",
+              "score": 0.031,
+              "aux": {
+                "field": "revel",
+                "mode": "catalogue-free",
+                "plugin": "REVEL"
+              },
+              "digest": "",
+              "venue": "vep-rest",
+              "licence": "REVEL non-commercial (free for non-commercial use; other uses by arrangement)",
+              "run_id": "20260919T095015Z-4ce1",
+              "ts": "2026-09-19T11:12:07.223090"
+            },
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.04,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.03;AL=0.00;DG=0.04;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:05.359768"
+            }
+          ]
+        },
+        {
+          "allele_id": "2f6a10afe08d12cf",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "synonymous_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.1602,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.0,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.00;AL=0.00;DG=0.00;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:07.054106"
+            }
+          ]
+        },
+        {
+          "allele_id": "6bbefee8fc7dd2a3",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "missense_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.5201,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "alphamissense",
+              "version": "AlphaMissense hg38 2023",
+              "score": 0.0508,
+              "aux": {
+                "am_class": "likely_benign",
+                "mode": "catalogue-free"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260919T090649Z-3766",
+              "ts": "2026-09-19T09:06:49.674109"
+            },
+            {
+              "model": "esm1b",
+              "version": "Brandes 2023 ESM1b",
+              "score": 5.656,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "cd1b009b03a3577b22b4395a0ae35500eaecb09dd28b982f70a838c748477d14",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260919T090725Z-cde3",
+              "ts": "2026-09-19T09:07:27.438998"
+            },
+            {
+              "model": "revel",
+              "version": "REVEL 1.3 via VEP REST",
+              "score": 0.015,
+              "aux": {
+                "field": "revel",
+                "mode": "catalogue-free",
+                "plugin": "REVEL"
+              },
+              "digest": "",
+              "venue": "vep-rest",
+              "licence": "REVEL non-commercial (free for non-commercial use; other uses by arrangement)",
+              "run_id": "20260919T095015Z-4ce1",
+              "ts": "2026-09-19T11:12:07.223090"
+            },
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.0,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.00;AL=0.00;DG=0.00;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:08.896729"
+            }
+          ]
+        },
+        {
+          "allele_id": "7afc3f053087423b",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "missense_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.05151,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "alphamissense",
+              "version": "AlphaMissense hg38 2023",
+              "score": 0.0502,
+              "aux": {
+                "am_class": "likely_benign",
+                "mode": "catalogue-free"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260919T090649Z-3766",
+              "ts": "2026-09-19T09:06:51.019832"
+            },
+            {
+              "model": "esm1b",
+              "version": "Brandes 2023 ESM1b",
+              "score": 5.17,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "cd1b009b03a3577b22b4395a0ae35500eaecb09dd28b982f70a838c748477d14",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260919T090725Z-cde3",
+              "ts": "2026-09-19T09:07:27.438998"
+            },
+            {
+              "model": "revel",
+              "version": "REVEL 1.3 via VEP REST",
+              "score": 0.149,
+              "aux": {
+                "field": "revel",
+                "mode": "catalogue-free",
+                "plugin": "REVEL"
+              },
+              "digest": "",
+              "venue": "vep-rest",
+              "licence": "REVEL non-commercial (free for non-commercial use; other uses by arrangement)",
+              "run_id": "20260919T095015Z-4ce1",
+              "ts": "2026-09-19T11:12:11.451134"
+            },
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.94,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.00;AL=0.00;DG=0.94;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:10.975047"
+            }
+          ]
+        },
+        {
+          "allele_id": "99e01866d698326d",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "synonymous_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.4561,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.0,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.00;AL=0.00;DG=0.00;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:10.975047"
+            }
+          ]
+        },
+        {
+          "allele_id": "a23a4aa0122d185c",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "synonymous_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.4828,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.0,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.00;AL=0.00;DG=0.00;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:13.259783"
+            }
+          ]
+        },
+        {
+          "allele_id": "b3cb7c121903f766",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "missense_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.457,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "alphamissense",
+              "version": "AlphaMissense hg38 2023",
+              "score": 0.1646,
+              "aux": {
+                "am_class": "likely_benign",
+                "mode": "catalogue-free"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260919T090649Z-3766",
+              "ts": "2026-09-19T09:06:51.019832"
+            },
+            {
+              "model": "esm1b",
+              "version": "Brandes 2023 ESM1b",
+              "score": 3.49,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "cd1b009b03a3577b22b4395a0ae35500eaecb09dd28b982f70a838c748477d14",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260919T090725Z-cde3",
+              "ts": "2026-09-19T09:07:27.438998"
+            },
+            {
+              "model": "revel",
+              "version": "REVEL 1.3 via VEP REST",
+              "score": 0.038,
+              "aux": {
+                "field": "revel",
+                "mode": "catalogue-free",
+                "plugin": "REVEL"
+              },
+              "digest": "",
+              "venue": "vep-rest",
+              "licence": "REVEL non-commercial (free for non-commercial use; other uses by arrangement)",
+              "run_id": "20260919T095015Z-4ce1",
+              "ts": "2026-09-19T11:12:11.451134"
+            },
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.0,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.00;AL=0.00;DG=0.00;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:13.259783"
+            }
+          ]
+        },
+        {
+          "allele_id": "be68de818b409e04",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "missense_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.04678,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "alphamissense",
+              "version": "AlphaMissense hg38 2023",
+              "score": 0.0468,
+              "aux": {
+                "am_class": "likely_benign",
+                "mode": "catalogue-free"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260919T090649Z-3766",
+              "ts": "2026-09-19T09:06:51.019832"
+            },
+            {
+              "model": "esm1b",
+              "version": "Brandes 2023 ESM1b",
+              "score": 0.877,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "cd1b009b03a3577b22b4395a0ae35500eaecb09dd28b982f70a838c748477d14",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260919T090725Z-cde3",
+              "ts": "2026-09-19T09:07:27.438998"
+            },
+            {
+              "model": "revel",
+              "version": "REVEL 1.3 via VEP REST",
+              "score": 0.065,
+              "aux": {
+                "field": "revel",
+                "mode": "catalogue-free",
+                "plugin": "REVEL"
+              },
+              "digest": "",
+              "venue": "vep-rest",
+              "licence": "REVEL non-commercial (free for non-commercial use; other uses by arrangement)",
+              "run_id": "20260919T095015Z-4ce1",
+              "ts": "2026-09-19T11:12:11.451134"
+            },
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.04,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.00;AL=0.00;DG=0.04;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:13.259783"
+            }
+          ]
+        },
+        {
+          "allele_id": "c982f5420cb3855e",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "missense_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.1177,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "alphamissense",
+              "version": "AlphaMissense hg38 2023",
+              "score": 0.2169,
+              "aux": {
+                "am_class": "likely_benign",
+                "mode": "catalogue-free"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260919T090649Z-3766",
+              "ts": "2026-09-19T09:06:51.019832"
+            },
+            {
+              "model": "esm1b",
+              "version": "Brandes 2023 ESM1b",
+              "score": 4.859,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "cd1b009b03a3577b22b4395a0ae35500eaecb09dd28b982f70a838c748477d14",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260919T090725Z-cde3",
+              "ts": "2026-09-19T09:07:27.438998"
+            },
+            {
+              "model": "revel",
+              "version": "REVEL 1.3 via VEP REST",
+              "score": 0.012,
+              "aux": {
+                "field": "revel",
+                "mode": "catalogue-free",
+                "plugin": "REVEL"
+              },
+              "digest": "",
+              "venue": "vep-rest",
+              "licence": "REVEL non-commercial (free for non-commercial use; other uses by arrangement)",
+              "run_id": "20260919T095015Z-4ce1",
+              "ts": "2026-09-19T11:12:11.451134"
+            },
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.97,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.00;AL=0.00;DG=0.97;DL=0.48"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:16.013168"
+            }
+          ]
+        },
+        {
+          "allele_id": "e887eba0676a5706",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "synonymous_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.06229,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.0,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.00;AL=0.00;DG=0.00;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:16.013168"
+            }
+          ]
+        },
+        {
+          "allele_id": "fb6faffa877a8254",
+          "gene": "NBPF3",
+          "transcript": "ENST00000318249",
+          "consequence": "synonymous_variant",
+          "hgvs_c": null,
+          "hgvs_p": null,
+          "uniprot": null,
+          "is_read_only": false,
+          "af_gnomad": 0.4619,
+          "clin_sig": null,
+          "source": "ensembl-vep-rest release=116 assembly=GRCh38",
+          "rows": [
+            {
+              "model": "spliceai",
+              "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+              "score": 0.02,
+              "aux": {
+                "mode": "catalogue-free",
+                "spliceai": "AG=0.02;AL=0.00;DG=0.00;DL=0.00"
+              },
+              "digest": "",
+              "venue": "laptop",
+              "licence": "Illumina SpliceAI non-commercial (academic use)",
+              "run_id": "20260919T090705Z-6be8",
+              "ts": "2026-09-19T09:07:18.597463"
+            }
+          ]
+        }
+      ],
+      "models": ["alphamissense", "esm1b", "revel", "spliceai"],
+      "scored_records": 12
+    }
+  }
+}

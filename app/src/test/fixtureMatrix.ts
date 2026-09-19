@@ -104,6 +104,22 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   ['/api/submissions', undefined],
   // The Track 2 report: one payload holding the mechanism card and all five snapshot tables.
   ['/api/track2', undefined],
+  // The model zoo. Every registered zoo path is listed: the two path-parameter routes answer
+  // one captured key each, so each key is its own row and a swapped payload is caught per key
+  // rather than per route.
+  ['/api/zoo/case', undefined],
+  ['/api/zoo/models', undefined],
+  ['/api/zoo/ranks', undefined],
+  ['/api/zoo/merge', undefined],
+  ['/api/zoo/runs', undefined],
+  ['/api/zoo/lineage', undefined],
+  ['/api/zoo/reports/merged', undefined],
+  ['/api/zoo/reports/alphamissense', undefined],
+  ['/api/zoo/reports/esm1b', undefined],
+  ['/api/zoo/reports/revel', undefined],
+  ['/api/zoo/reports/spliceai', undefined],
+  ['/api/zoo/scores/gene/BUB1B', undefined],
+  ['/api/zoo/scores/gene/NBPF3', undefined],
 ];
 
 export const key = (path: string, params?: Record<string, string | number>): string =>

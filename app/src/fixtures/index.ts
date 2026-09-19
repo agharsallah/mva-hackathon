@@ -87,6 +87,23 @@ const OWNERS: Record<string, readonly string[]> = {
     '/api/submissions',
     '/api/track2',
   ],
+  // The model zoo. The two path-parameter routes are listed once per captured key: a
+  // fixture answers concrete paths, and `ownerOf` matches a path exactly.
+  zoo: [
+    '/api/zoo/case',
+    '/api/zoo/models',
+    '/api/zoo/ranks',
+    '/api/zoo/merge',
+    '/api/zoo/runs',
+    '/api/zoo/lineage',
+    '/api/zoo/reports/merged',
+    '/api/zoo/reports/alphamissense',
+    '/api/zoo/reports/esm1b',
+    '/api/zoo/reports/revel',
+    '/api/zoo/reports/spliceai',
+    '/api/zoo/scores/gene/BUB1B',
+    '/api/zoo/scores/gene/NBPF3',
+  ],
 };
 
 const FRAGMENTS: Record<string, () => Promise<Record<string, Entry>>> = {
@@ -95,6 +112,7 @@ const FRAGMENTS: Record<string, () => Promise<Record<string, Entry>>> = {
   panel: () => import('./registry/panel').then((m) => m.panelEntries),
   phenotype: () => import('./registry/phenotype').then((m) => m.phenotypeEntries),
   platform: () => import('./registry/platform').then((m) => m.platformEntries),
+  zoo: () => import('./registry/zoo').then((m) => m.zooEntries),
 };
 
 const ownerOf = (path: string): string | undefined =>

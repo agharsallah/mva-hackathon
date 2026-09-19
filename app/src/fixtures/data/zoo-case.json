@@ -1,0 +1,37 @@
+{
+  "_captured": true,
+  "captured_at": "2026-09-20",
+  "source": "src/mva/zoo/zoo.example.toml",
+  "payload": {
+    "gene": "BUB1B",
+    "gene_source": "src/mva/zoo/zoo.example.toml [case].confirmed_gene",
+    "case": {
+      "label": "Mosaic Variegated Aneuploidy \u2014 challenge proband 1",
+      "iteration": "iteration4",
+      "table_prefix": "it4",
+      "confirmed_gene": "BUB1B",
+      "confirmed_pair_rule": "lof+missense",
+      "phenotype_term_set": "with-parental",
+      "hpo_table": "hpo_gene_scores"
+    },
+    "config_path": "src/mva/zoo/zoo.example.toml",
+    "config_digest": "cf39acb4d64c172e6ac8519225db879f652c0e5d985e8bf86ba068136fccac77",
+    "run_id": "it4-cf39acb4d64c",
+    "mode": "catalogue-free",
+    "merge_method": "fusion",
+    "rrf_k": 60,
+    "llm_mode": "none",
+    "models": ["alphamissense", "esm1b", "spliceai", "revel"],
+    "schemas": {
+      "results": "results",
+      "warehouse": "warehouse"
+    },
+    "tables": ["it4_allele_records", "allele_scores", "it4_model_ranks", "it4_model_reports"],
+    "paths": {
+      "out_dir": "build/it4",
+      "reports_dir": "docs/iteration4/reports",
+      "runs_dir": "docs/iteration4/runs",
+      "merged_report": "docs/iteration4/report.md"
+    }
+  }
+}

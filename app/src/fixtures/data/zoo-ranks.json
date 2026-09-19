@@ -1,0 +1,569 @@
+{
+  "_captured": true,
+  "captured_at": "2026-09-20",
+  "source": "pg.results.it4_model_ranks, build/it4/merged.json (the two allele percentiles)",
+  "payload": {
+    "run_id": "it4-dcda40a4df2c",
+    "per_model": [
+      {
+        "model": "alphamissense",
+        "catalogue_adjacent": false,
+        "version": "AlphaMissense hg38 2023",
+        "n_ranked": 10333,
+        "unscored_pairs": 53014,
+        "confirmed": {
+          "gene": "BUB1B",
+          "rank": null,
+          "percentile": null,
+          "left_percentile": null,
+          "right_percentile": 0.4717,
+          "min_score": null,
+          "max_score": null,
+          "phase": null,
+          "left_allele_id": null,
+          "right_allele_id": null
+        },
+        "top": [
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "8d352e7d4d2dd92b",
+            "right_allele_id": "728da66877278e4d",
+            "phase": "unknown",
+            "rank": 1,
+            "percentile": 0.0097,
+            "min_score": 0.9967,
+            "max_score": 0.9992,
+            "is_confirmed": false
+          },
+          {
+            "gene": "KCNJ12",
+            "left_allele_id": "8a27799ee0de84e3",
+            "right_allele_id": "b28c3449b4461745",
+            "phase": "unknown",
+            "rank": 2,
+            "percentile": 0.0194,
+            "min_score": 0.996,
+            "max_score": 0.9962,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "c0797635589b610c",
+            "right_allele_id": "728da66877278e4d",
+            "phase": "unknown",
+            "rank": 3,
+            "percentile": 0.029,
+            "min_score": 0.9958,
+            "max_score": 0.9992,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "8d352e7d4d2dd92b",
+            "right_allele_id": "c0797635589b610c",
+            "phase": "unknown",
+            "rank": 4,
+            "percentile": 0.0387,
+            "min_score": 0.9958,
+            "max_score": 0.9967,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "2954994ad613836d",
+            "right_allele_id": "728da66877278e4d",
+            "phase": "unknown",
+            "rank": 5,
+            "percentile": 0.0484,
+            "min_score": 0.9946,
+            "max_score": 0.9992,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "8d352e7d4d2dd92b",
+            "right_allele_id": "2954994ad613836d",
+            "phase": "unknown",
+            "rank": 6,
+            "percentile": 0.0581,
+            "min_score": 0.9946,
+            "max_score": 0.9967,
+            "is_confirmed": false
+          },
+          {
+            "gene": "KCNJ12",
+            "left_allele_id": "f7f9757b58947e51",
+            "right_allele_id": "b28c3449b4461745",
+            "phase": "unknown",
+            "rank": 7,
+            "percentile": 0.0677,
+            "min_score": 0.994,
+            "max_score": 0.9962,
+            "is_confirmed": false
+          },
+          {
+            "gene": "PRSS2",
+            "left_allele_id": "c67ffd4daf9413bc",
+            "right_allele_id": "a7c5e35c07d36374",
+            "phase": "unknown",
+            "rank": 8,
+            "percentile": 0.0774,
+            "min_score": 0.9887,
+            "max_score": 0.9949,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "06d5e7ee4b7ec8ed",
+            "right_allele_id": "728da66877278e4d",
+            "phase": "unknown",
+            "rank": 9,
+            "percentile": 0.0871,
+            "min_score": 0.9883,
+            "max_score": 0.9992,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "8d352e7d4d2dd92b",
+            "right_allele_id": "06d5e7ee4b7ec8ed",
+            "phase": "unknown",
+            "rank": 10,
+            "percentile": 0.0968,
+            "min_score": 0.9883,
+            "max_score": 0.9967,
+            "is_confirmed": false
+          }
+        ]
+      },
+      {
+        "model": "esm1b",
+        "catalogue_adjacent": false,
+        "version": "Brandes 2023 ESM1b",
+        "n_ranked": 3673,
+        "unscored_pairs": 59674,
+        "confirmed": {
+          "gene": "BUB1B",
+          "rank": null,
+          "percentile": null,
+          "left_percentile": null,
+          "right_percentile": 2.5208,
+          "min_score": null,
+          "max_score": null,
+          "phase": null,
+          "left_allele_id": null,
+          "right_allele_id": null
+        },
+        "top": [
+          {
+            "gene": "ELN",
+            "left_allele_id": "8e1612a63b025608",
+            "right_allele_id": "5834698d2b727c2f",
+            "phase": "unknown",
+            "rank": 1,
+            "percentile": 0.0272,
+            "min_score": 12.584,
+            "max_score": 13.016,
+            "is_confirmed": false
+          },
+          {
+            "gene": "KMT2C",
+            "left_allele_id": "c9eb69e307b9f52a",
+            "right_allele_id": "f6bdc93872ca0be6",
+            "phase": "unknown",
+            "rank": 2,
+            "percentile": 0.0545,
+            "min_score": 12.327,
+            "max_score": 16.594,
+            "is_confirmed": false
+          },
+          {
+            "gene": "NSUN4",
+            "left_allele_id": "3356ef53876ee1ce",
+            "right_allele_id": "3c43772cab14850e",
+            "phase": "unknown",
+            "rank": 3,
+            "percentile": 0.0817,
+            "min_score": 11.305,
+            "max_score": 11.479,
+            "is_confirmed": false
+          },
+          {
+            "gene": "HELZ2",
+            "left_allele_id": "88d6d7f1cdb2e6bb",
+            "right_allele_id": "3a9e7471546f811f",
+            "phase": "unknown",
+            "rank": 4,
+            "percentile": 0.1089,
+            "min_score": 11.288,
+            "max_score": 11.889,
+            "is_confirmed": false
+          },
+          {
+            "gene": "NXPE1",
+            "left_allele_id": "735871658c11ccfc",
+            "right_allele_id": "618f3b2cac060292",
+            "phase": "unknown",
+            "rank": 5,
+            "percentile": 0.1361,
+            "min_score": 11.172,
+            "max_score": 11.461,
+            "is_confirmed": false
+          },
+          {
+            "gene": "VWDE",
+            "left_allele_id": "ed25da52288b14ad",
+            "right_allele_id": "84cd08d88434ecea",
+            "phase": "unknown",
+            "rank": 6,
+            "percentile": 0.1634,
+            "min_score": 10.943,
+            "max_score": 12.942,
+            "is_confirmed": false
+          },
+          {
+            "gene": "ABCB5",
+            "left_allele_id": "b969bb41f69ace2a",
+            "right_allele_id": "76b429d1ac31887b",
+            "phase": "unknown",
+            "rank": 7,
+            "percentile": 0.1906,
+            "min_score": 10.34,
+            "max_score": 11.048,
+            "is_confirmed": false
+          },
+          {
+            "gene": "RGPD3",
+            "left_allele_id": "28c5b66b38900f56",
+            "right_allele_id": "785bbfba6f5431d4",
+            "phase": "unknown",
+            "rank": 8,
+            "percentile": 0.2178,
+            "min_score": 10.175,
+            "max_score": 10.888,
+            "is_confirmed": false
+          },
+          {
+            "gene": "CR1",
+            "left_allele_id": "cbcf7b00b09ea074",
+            "right_allele_id": "7fc4c02ae57480ef",
+            "phase": "unknown",
+            "rank": 9,
+            "percentile": 0.245,
+            "min_score": 10.169,
+            "max_score": 11.708,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SARDH",
+            "left_allele_id": "2597efa18bbdd66f",
+            "right_allele_id": "895f6b85ebbf27e3",
+            "phase": "unknown",
+            "rank": 10,
+            "percentile": 0.2723,
+            "min_score": 10.056,
+            "max_score": 10.667,
+            "is_confirmed": false
+          }
+        ]
+      },
+      {
+        "model": "revel",
+        "catalogue_adjacent": true,
+        "version": "REVEL 1.3 via VEP REST",
+        "n_ranked": 10456,
+        "unscored_pairs": 52891,
+        "confirmed": {
+          "gene": "BUB1B",
+          "rank": null,
+          "percentile": null,
+          "left_percentile": null,
+          "right_percentile": 2.5874,
+          "min_score": null,
+          "max_score": null,
+          "phase": null,
+          "left_allele_id": null,
+          "right_allele_id": null
+        },
+        "top": [
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "8d352e7d4d2dd92b",
+            "right_allele_id": "06d5e7ee4b7ec8ed",
+            "phase": "unknown",
+            "rank": 1,
+            "percentile": 0.0096,
+            "min_score": 0.935,
+            "max_score": 0.966,
+            "is_confirmed": false
+          },
+          {
+            "gene": "KCNJ12",
+            "left_allele_id": "f7f9757b58947e51",
+            "right_allele_id": "b28c3449b4461745",
+            "phase": "unknown",
+            "rank": 2,
+            "percentile": 0.0191,
+            "min_score": 0.92,
+            "max_score": 0.971,
+            "is_confirmed": false
+          },
+          {
+            "gene": "KCNJ12",
+            "left_allele_id": "8a27799ee0de84e3",
+            "right_allele_id": "b28c3449b4461745",
+            "phase": "unknown",
+            "rank": 3,
+            "percentile": 0.0287,
+            "min_score": 0.92,
+            "max_score": 0.962,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "8d352e7d4d2dd92b",
+            "right_allele_id": "2954994ad613836d",
+            "phase": "unknown",
+            "rank": 4,
+            "percentile": 0.0383,
+            "min_score": 0.918,
+            "max_score": 0.966,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "8d352e7d4d2dd92b",
+            "right_allele_id": "3cabee0b34e4f477",
+            "phase": "unknown",
+            "rank": 5,
+            "percentile": 0.0478,
+            "min_score": 0.914,
+            "max_score": 0.966,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "3cabee0b34e4f477",
+            "right_allele_id": "06d5e7ee4b7ec8ed",
+            "phase": "unknown",
+            "rank": 6,
+            "percentile": 0.0574,
+            "min_score": 0.914,
+            "max_score": 0.935,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "3cabee0b34e4f477",
+            "right_allele_id": "2954994ad613836d",
+            "phase": "unknown",
+            "rank": 7,
+            "percentile": 0.0669,
+            "min_score": 0.914,
+            "max_score": 0.918,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "b649619b54870f67",
+            "right_allele_id": "06d5e7ee4b7ec8ed",
+            "phase": "unknown",
+            "rank": 8,
+            "percentile": 0.0765,
+            "min_score": 0.912,
+            "max_score": 0.935,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "b649619b54870f67",
+            "right_allele_id": "2954994ad613836d",
+            "phase": "unknown",
+            "rank": 9,
+            "percentile": 0.0861,
+            "min_score": 0.912,
+            "max_score": 0.918,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "b649619b54870f67",
+            "right_allele_id": "3cabee0b34e4f477",
+            "phase": "unknown",
+            "rank": 10,
+            "percentile": 0.0956,
+            "min_score": 0.912,
+            "max_score": 0.914,
+            "is_confirmed": false
+          }
+        ]
+      },
+      {
+        "model": "spliceai",
+        "catalogue_adjacent": false,
+        "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
+        "n_ranked": 50696,
+        "unscored_pairs": 12651,
+        "confirmed": {
+          "gene": "BUB1B",
+          "rank": 11980,
+          "percentile": 23.6311,
+          "left_percentile": 9.7375,
+          "right_percentile": 24.5251,
+          "min_score": 0.0,
+          "max_score": 0.03,
+          "phase": "unknown",
+          "left_allele_id": "addc19de8fa29228",
+          "right_allele_id": "93e077ae83ac2642"
+        },
+        "top": [
+          {
+            "gene": "NBPF3",
+            "left_allele_id": "7afc3f053087423b",
+            "right_allele_id": "c982f5420cb3855e",
+            "phase": "unknown",
+            "rank": 1,
+            "percentile": 0.002,
+            "min_score": 0.94,
+            "max_score": 0.97,
+            "is_confirmed": false
+          },
+          {
+            "gene": "TBC1D31",
+            "left_allele_id": "7781e27acab299c9",
+            "right_allele_id": "ac6c28390eff495b",
+            "phase": "unknown",
+            "rank": 2,
+            "percentile": 0.0039,
+            "min_score": 0.85,
+            "max_score": 0.99,
+            "is_confirmed": false
+          },
+          {
+            "gene": "MROH2A",
+            "left_allele_id": "9aeb086c390e05f5",
+            "right_allele_id": "fa84e49f41619fe5",
+            "phase": "unknown",
+            "rank": 3,
+            "percentile": 0.0059,
+            "min_score": 0.81,
+            "max_score": 0.94,
+            "is_confirmed": false
+          },
+          {
+            "gene": "HLA-A",
+            "left_allele_id": "221b12b9e9d0fd70",
+            "right_allele_id": "4279446e253824e5",
+            "phase": "unknown",
+            "rank": 4,
+            "percentile": 0.0079,
+            "min_score": 0.78,
+            "max_score": 0.89,
+            "is_confirmed": false
+          },
+          {
+            "gene": "ANKRD36",
+            "left_allele_id": "719d7e0fb98f71b4",
+            "right_allele_id": "3e692488c6fad9a7",
+            "phase": "unknown",
+            "rank": 5,
+            "percentile": 0.0099,
+            "min_score": 0.64,
+            "max_score": 0.79,
+            "is_confirmed": false
+          },
+          {
+            "gene": "ANKRD36C",
+            "left_allele_id": "3daca80e71226494",
+            "right_allele_id": "76318a09883291ce",
+            "phase": "unknown",
+            "rank": 6,
+            "percentile": 0.0118,
+            "min_score": 0.58,
+            "max_score": 0.74,
+            "is_confirmed": false
+          },
+          {
+            "gene": "EFCAB13",
+            "left_allele_id": "9a7f768d335ca443",
+            "right_allele_id": "1da6d7de74084bb0",
+            "phase": "unknown",
+            "rank": 7,
+            "percentile": 0.0138,
+            "min_score": 0.56,
+            "max_score": 1.0,
+            "is_confirmed": false
+          },
+          {
+            "gene": "DDX11",
+            "left_allele_id": "c29b23986e1e9e1d",
+            "right_allele_id": "1701d2834c166af6",
+            "phase": "unknown",
+            "rank": 8,
+            "percentile": 0.0158,
+            "min_score": 0.44,
+            "max_score": 0.45,
+            "is_confirmed": false
+          },
+          {
+            "gene": "FANCD2",
+            "left_allele_id": "1999cbf4ddd2f1e7",
+            "right_allele_id": "0a1d07dca827e523",
+            "phase": "unknown",
+            "rank": 9,
+            "percentile": 0.0178,
+            "min_score": 0.35,
+            "max_score": 1.0,
+            "is_confirmed": false
+          },
+          {
+            "gene": "FANCD2",
+            "left_allele_id": "f4725a599ecd0cca",
+            "right_allele_id": "0a1d07dca827e523",
+            "phase": "unknown",
+            "rank": 9,
+            "percentile": 0.0178,
+            "min_score": 0.35,
+            "max_score": 1.0,
+            "is_confirmed": false
+          }
+        ]
+      }
+    ],
+    "pairs_total": 63347,
+    "skipped_genes": [],
+    "skipped_genes_recorded": false,
+    "case": {
+      "gene": "BUB1B",
+      "gene_source": "src/mva/zoo/zoo.example.toml [case].confirmed_gene",
+      "case": {
+        "label": "Mosaic Variegated Aneuploidy \u2014 challenge proband 1",
+        "iteration": "iteration4",
+        "table_prefix": "it4",
+        "confirmed_gene": "BUB1B",
+        "confirmed_pair_rule": "lof+missense",
+        "phenotype_term_set": "with-parental",
+        "hpo_table": "hpo_gene_scores"
+      },
+      "config_path": "src/mva/zoo/zoo.example.toml",
+      "config_digest": "cf39acb4d64c172e6ac8519225db879f652c0e5d985e8bf86ba068136fccac77",
+      "run_id": "it4-cf39acb4d64c",
+      "mode": "catalogue-free",
+      "merge_method": "fusion",
+      "rrf_k": 60,
+      "llm_mode": "none",
+      "models": ["alphamissense", "esm1b", "spliceai", "revel"],
+      "schemas": {
+        "results": "results",
+        "warehouse": "warehouse"
+      },
+      "tables": ["it4_allele_records", "allele_scores", "it4_model_ranks", "it4_model_reports"],
+      "paths": {
+        "out_dir": "build/it4",
+        "reports_dir": "docs/iteration4/reports",
+        "runs_dir": "docs/iteration4/runs",
+        "merged_report": "docs/iteration4/report.md"
+      }
+    }
+  }
+}
