@@ -69,13 +69,13 @@
       "summary": "planned only \u2014 no step map is declared for it"
     },
     {
-      "claims": 4,
+      "claims": 6,
       "current": false,
       "declared": true,
       "docs": "docs/iteration4",
-      "done": 2,
+      "done": 4,
       "iteration": "iteration4",
-      "open": 1,
+      "open": 2,
       "steps": 7,
       "submissions": [],
       "summary": "the model zoo (docs/iteration4/plan.md)."
@@ -92,6 +92,7 @@
       "goal": "Can the delivered bytes be trusted, stored without loss, and queried in SQL?",
       "hypotheses": [],
       "kind": "platform",
+      "narrative": null,
       "slug": "step-0",
       "status": "done",
       "takes_hypotheses": false,
@@ -151,6 +152,12 @@
       "figures": [
         {
           "bytes": 72135,
+          "caption": {
+            "means": "Evidence that H015 is refuted: 73.6% of protein-coding genes (14,523 of 19,723) have zero HPO curation, so a phenotype-only ranker cannot place them at any rank \u2014 this is the single largest reason recall@300 cannot reach 0.90 and the strongest argument for calling the target set an enrichment rather than coverage.",
+            "name": "curation-coverage.png",
+            "reads": "Share of protein-coding genes with any HPO curation at all versus those with none, out of 19,723 protein-coding genes.",
+            "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md"
+          },
           "kind": "png",
           "name": "curation-coverage.png",
           "path": "figures/track1/iteration2/step-1/curation-coverage.png",
@@ -160,6 +167,12 @@
         },
         {
           "bytes": 23692,
+          "caption": {
+            "means": "Same evidence as the four figures, in a form that lets a reader inspect exact values per point/bar rather than reading them off a static image.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet combining the four static figures above (recall-at-n, target-tiers, ranker-overlap, curation-coverage) with hover tooltips over each chart.",
+            "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md"
+          },
           "kind": "html",
           "name": "index.html",
           "path": "figures/track1/iteration2/step-1/index.html",
@@ -169,6 +182,12 @@
         },
         {
           "bytes": 75133,
+          "caption": {
+            "means": "Evidence that H014 is refuted: only 32.3% overlap (97 of 300 genes), far short of the predicted 50%, meaning the two independent phenotype rankers substantially disagree on which genes the symptoms implicate \u2014 a reason to treat any single ranker's output as one opinion, not ground truth.",
+            "name": "ranker-overlap.png",
+            "reads": "Overlap between Phen2Gene's and Monarch semsim's top-300 gene lists, plotted against the 50% agreement H014 predicted.",
+            "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md"
+          },
           "kind": "png",
           "name": "ranker-overlap.png",
           "path": "figures/track1/iteration2/step-1/ranker-overlap.png",
@@ -178,6 +197,12 @@
         },
         {
           "bytes": 140331,
+          "caption": {
+            "means": "Evidence that H012 fails by a wide margin: recall@300 is 0.360 (200-disease sample) / 0.335 (full population), not 0.90. The curve flattens rather than approaching 1.0 \u2014 recall@1000 is only 0.565 (sample) / 0.508 (full population) \u2014 which is the basis for the decision that raising N further is not worth the bait cost.",
+            "name": "recall-at-n.png",
+            "reads": "Held-out recall on the y-axis against list length N on the x-axis, drawn from the recall curve at N = 1, 10, 50, 300, 1000; N=300 is marked, along with the 0.90 prediction line H012 was tested against.",
+            "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md"
+          },
           "kind": "png",
           "name": "recall-at-n.png",
           "path": "figures/track1/iteration2/step-1/recall-at-n.png",
@@ -187,6 +212,12 @@
         },
         {
           "bytes": 73589,
+          "caption": {
+            "means": "Shows how much of the target set earned its place by symptom score (353 of 404) versus by the mechanism-term carve-out alone (51) \u2014 the carve-out is what makes H013 close to true by construction and why that verdict is reported as a sanity check rather than a finding.",
+            "name": "target-tiers.png",
+            "reads": "Composition of the 404-row target set by tier: `core` (62, top 50 by symptom score plus mechanism-term genes scoring inside it), `net` (272, ranks 51\u2013300), `mechanism-term` (70, admitted by annotation regardless of rank).",
+            "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md"
+          },
           "kind": "png",
           "name": "target-tiers.png",
           "path": "figures/track1/iteration2/step-1/target-tiers.png",
@@ -263,6 +294,58 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "Evidence that H012 fails by a wide margin: recall@300 is 0.360 (200-disease sample) / 0.335 (full population), not 0.90. The curve flattens rather than approaching 1.0 \u2014 recall@1000 is only 0.565 (sample) / 0.508 (full population) \u2014 which is the basis for the decision that raising N further is not worth the bait cost.",
+            "name": "recall-at-n.png",
+            "reads": "Held-out recall on the y-axis against list length N on the x-axis, drawn from the recall curve at N = 1, 10, 50, 300, 1000; N=300 is marked, along with the 0.90 prediction line H012 was tested against.",
+            "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md"
+          },
+          {
+            "means": "Shows how much of the target set earned its place by symptom score (353 of 404) versus by the mechanism-term carve-out alone (51) \u2014 the carve-out is what makes H013 close to true by construction and why that verdict is reported as a sanity check rather than a finding.",
+            "name": "target-tiers.png",
+            "reads": "Composition of the 404-row target set by tier: `core` (62, top 50 by symptom score plus mechanism-term genes scoring inside it), `net` (272, ranks 51\u2013300), `mechanism-term` (70, admitted by annotation regardless of rank).",
+            "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md"
+          },
+          {
+            "means": "Evidence that H014 is refuted: only 32.3% overlap (97 of 300 genes), far short of the predicted 50%, meaning the two independent phenotype rankers substantially disagree on which genes the symptoms implicate \u2014 a reason to treat any single ranker's output as one opinion, not ground truth.",
+            "name": "ranker-overlap.png",
+            "reads": "Overlap between Phen2Gene's and Monarch semsim's top-300 gene lists, plotted against the 50% agreement H014 predicted.",
+            "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md"
+          },
+          {
+            "means": "Evidence that H015 is refuted: 73.6% of protein-coding genes (14,523 of 19,723) have zero HPO curation, so a phenotype-only ranker cannot place them at any rank \u2014 this is the single largest reason recall@300 cannot reach 0.90 and the strongest argument for calling the target set an enrichment rather than coverage.",
+            "name": "curation-coverage.png",
+            "reads": "Share of protein-coding genes with any HPO curation at all versus those with none, out of 19,723 protein-coding genes.",
+            "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md"
+          },
+          {
+            "means": "Same evidence as the four figures, in a form that lets a reader inspect exact values per point/bar rather than reading them off a static image.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet combining the four static figures above (recall-at-n, target-tiers, ranker-overlap, curation-coverage) with hover tooltips over each chart.",
+            "source": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-2"],
+          "what": "The 404-row tiered target set and the 396-row decoy set become step 2's bait design (core \u00b150kb, net \u00b12kb padding) and its statistical null (H020 asks whether decoys yield fewer biallelic candidates than targets). Step 2 also inherits the load-bearing caveat verbatim: a gene absent from this set is not excluded, only unbaited \u2014 which is why step 4 exists as a genome-wide check that never consults this list."
+        },
+        "inherits": {
+          "steps": [],
+          "what": "Nothing from a prior iteration-2 step \u2014 this is the entry point of the blind re-derivation. It reads only the clinical HPO terms and public reference data (the HPO ontology release, the curation corpus, Ensembl gene models); no genomic file of this child other than the public reference gene model is touched, which is what keeps the blind gate green."
+        },
+        "iteration": "iteration2",
+        "sources": [
+          "docs/iteration2/step-1/README.md",
+          "docs/iteration2/step-1/methodology/084-the-blind-target-set.md",
+          "docs/iteration2/step-1/methodology/091-recall-at-the-full-population.md"
+        ],
+        "step": "step-1",
+        "summary": "Iteration 2 re-derives the case blind: no iteration-1 table, candidate gene or rank was read to build this step, and the gate that checks that (`mva-science check --blind`) is enforced by tooling, not by promise. Step 1 ranks every HPO-curated gene against the proband's 7 clinical terms (plus an 8th, parental-history term) with two independent rankers, and turns the top 300 plus a mechanism-term carve-out into a 404-gene target set with a 396-gene shape-matched decoy set alongside it as a null. Four claims were pre-registered and all four are resolved: only H013 (a recessive chromosome-instability gene is in the set) held. Held-out recall@300 was measured twice \u2014 once on a 200-disease sample (0.360) and once, after entry 091 removed the sampling, on the full population of 3,240 eligible diseases (0.335, tighter interval) \u2014 and both land far under the 0.90 the step needed to call this set complete coverage.",
+        "verdict": "H012 (recall@300 \u2265 0.90) is refuted: 0.360 [0.295, 0.420] on 200 diseases, confirmed at 0.335 [0.318, 0.350] on the full 3,240-disease population in entry 091 \u2014 slightly worse, not better, and the register verdict does not change. H013 (a recessive chromosome-instability gene is in the target set) is supported: 33 such genes are present, though the mechanism-term rule guarantees this close to true by construction, so it is reported as a sanity check, not a discovery. H014 (the two rankers agree on \u2265 50% of their top 300) is refuted at 32.3% overlap. H015 (fewer than 20% of protein-coding genes are uncurated) is refuted: 73.6% of protein-coding genes carry no HPO curation at all and are invisible to this method regardless of symptoms. Decision recorded: the target set stays at N=300 and is described everywhere as an enrichment, never as coverage.",
+        "why": "A genome has about 20,000 protein-coding genes and reading two raw datasets (85 GB of reads, a VCF) against all of them is the expensive path. The clinical dataset \u2014 8 HPO terms \u2014 is cheap to query first, so the natural move is to let symptoms alone propose a shortlist before opening any DNA. But a shortlist is only useful if its miss rate is known, so H012 measured it rather than assumed it. Without that measurement, step 2 would have baited only the top 300 genes believing that was enough, and a true answer sitting at rank 1,500 would have silently vanished. Measuring recall first \u2014 and finding it low \u2014 is what turns the target set from an unstated assumption into a stated, quantified enrichment, and is what forces step 4 to exist as a genome-wide safety net that reads every gene in the VCF with no target-set filter at all."
+      },
       "slug": "step-1",
       "status": "done",
       "takes_hypotheses": true,
@@ -415,6 +498,12 @@
       "figures": [
         {
           "bytes": 100665,
+          "caption": {
+            "means": "What the failed off-target gate was actually a proxy for: whether each gene is reachable at all by the bait. None of the sparse (unreachable) genes are core or mechanism-term \u2014 the genes step 2 actually draws conclusions from are all reachable; sparse genes are segmental-duplication families concentrated in the decoy set (16 of 21 sparse genes are decoys), which is why H020 is reported both over all genes and restricted to reachable ones.",
+            "name": "bait-density.png",
+            "reads": "Box plots of surviving unique k-mers per base, one box per tier (core, mechanism-term, net, decoy), with a red dashed line at half the median density marking the reachability threshold and the count of genes below it.",
+            "source": "docs/iteration2/step-2/methodology/085-the-bait-and-where-it-runs.md"
+          },
           "kind": "png",
           "name": "bait-density.png",
           "path": "figures/track1/iteration2/step-2/bait-density.png",
@@ -424,6 +513,12 @@
         },
         {
           "bytes": 104631,
+          "caption": {
+            "means": "The off-target gate fails at 8.79% against a 5% target, and entry 086 shows no parameter reaches it \u2014 removing the wide padding entirely only moves the number from 8.79% to 8.38%, so padding is not the lever and cannot be dropped without losing the only reach the bait has for exon-scale deletions. This is a disclosed, unresolved gate failure, not a hidden one.",
+            "name": "bait-uniqueness.png",
+            "reads": "Horizontal bars: the bait's off-target rate (repeated k-mers / total bait k-mers, 8.79%) plus zone- and k-value-sweep comparisons, colour-coded red (above gate) or green (below), against a yellow dashed 5% gate line.",
+            "source": "docs/iteration2/step-2/methodology/086-can-the-off-target-gate-be-reached.md"
+          },
           "kind": "png",
           "name": "bait-uniqueness.png",
           "path": "figures/track1/iteration2/step-2/bait-uniqueness.png",
@@ -433,6 +528,12 @@
         },
         {
           "bytes": 79796,
+          "caption": {
+            "means": "Evidence for H022: both callers clear 0.99 (0.9957 and 0.9927), which is the check that licenses trusting the rest of step 2's read-derived calls. Indels are explicitly excluded because the delivered callset is unnormalised, so this concordance figure says nothing about indel agreement \u2014 the allele class the aligner is weakest at.",
+            "name": "caller-concordance.png",
+            "reads": "Horizontal bars, one per read-derived caller, showing agreement rate with the delivered (vendor) callset at co-called single-base-substitution sites, against a yellow dashed line at the pre-registered 0.99 threshold.",
+            "source": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md"
+          },
           "kind": "png",
           "name": "caller-concordance.png",
           "path": "figures/track1/iteration2/step-2/caller-concordance.png",
@@ -442,6 +543,12 @@
         },
         {
           "bytes": 646813,
+          "caption": {
+            "means": "6,693 coding exons measured, median depth 44.96x, but 68 exons sit below the 10x floor where 'no second allele here' is a data gap, not a finding about the child. A per-gene average would hide every one of these thin exons; the grid does not. A further 61 sub-10x exons live in four net-tier paralogue-rich genes (NEB, GTF2I, GTF2IRD2, ANAPC1) where the uniqueness filter removed the bait entirely.",
+            "name": "exon-coverage.png",
+            "reads": "A gene x exon heatmap for core and mechanism-term genes, one row per gene (ordered by that gene's thinnest exon), one column per coding exon ordinal, colour = mean depth (red below 10x, yellow at 10x, blue above, capped at 80x).",
+            "source": "docs/iteration2/step-2/methodology/092-depth-per-exon-and-the-phasing-drawn.md"
+          },
           "kind": "png",
           "name": "exon-coverage.png",
           "path": "figures/track1/iteration2/step-2/exon-coverage.png",
@@ -451,6 +558,12 @@
         },
         {
           "bytes": 102425,
+          "caption": {
+            "means": "The finding that outranks H020's own verdict: an unfiltered rule makes decoys win (nearly all decoy genes carry some two-variant pair, because everyone carries ~2 differences per gene \u2014 that describes a genome, not a patient), while the rare-and-protein-altering filter is what actually separates core genes from decoys. The filter, not the gene list, is what discriminates.",
+            "name": "filter-not-genelist.png",
+            "reads": "Grouped bars per tier (core, mechanism-term, net, decoy): share of genes with a biallelic candidate under 'any two variants' (red) versus 'rare and protein-altering' (green) filtering, same genes and same reads in both bars.",
+            "source": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md"
+          },
           "kind": "png",
           "name": "filter-not-genelist.png",
           "path": "figures/track1/iteration2/step-2/filter-not-genelist.png",
@@ -460,6 +573,12 @@
         },
         {
           "bytes": 104422,
+          "caption": {
+            "means": "Same evidence as the five figures above, with hover tooltips for exact per-bar and per-cell values.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet of the instrument-side figures: recovery-funnel, bait-uniqueness, bait-density, exon-coverage, and the BUB1B phase diagram.",
+            "source": "docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md"
+          },
           "kind": "html",
           "name": "index.html",
           "path": "figures/track1/iteration2/step-2/index.html",
@@ -469,6 +588,12 @@
         },
         {
           "bytes": 24967,
+          "caption": {
+            "means": "Direct visual evidence for H019's verdict: none of the 6,823 genome-wide phase blocks reach BUB1B's coding span, and the widest unphased stretch inside the gene is named on the figure \u2014 meaning short-read fragments cannot say whether BUB1B's two heterozygous alleles sit on the same copy or opposite copies. This is a limit of the short-read instrument, not evidence either way about phase, and step 6 has to carry that distinction forward.",
+            "name": "phase-bub1b.svg",
+            "reads": "A three-lane rule diagram for BUB1B, offsets in base pairs from the baited window's own start (never a genomic position): coding exons (green), heterozygous sites the two callers agreed on (purple ticks), and read-backed phase blocks (blue) with unphased stretches inside the coding span shown red.",
+            "source": "docs/iteration2/step-2/methodology/092-depth-per-exon-and-the-phasing-drawn.md"
+          },
           "kind": "svg",
           "name": "phase-bub1b.svg",
           "path": "figures/track1/iteration2/step-2/phase-bub1b.svg",
@@ -478,6 +603,12 @@
         },
         {
           "bytes": 87074,
+          "caption": {
+            "means": "The 1.3675% matched fraction lines up with the bait's 1.361% genome coverage, which is the engineering check that the k-mer sweep is behaving correctly rather than over- or under-matching; every recovered fragment being complete (paired) confirms the FASTQ recovery step lost no mates.",
+            "name": "recovery-funnel.png",
+            "reads": "Horizontal log-scale bar funnel: reads in the store (1,071,835,104) \u2192 reads sharing a bait k-mer (14,657,560, 1.3675%) \u2192 distinct fragments (7,886,613) \u2192 complete pairs after recovery, with a yellow dashed line marking the number of reads predicted before the pass ran.",
+            "source": "docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md"
+          },
           "kind": "png",
           "name": "recovery-funnel.png",
           "path": "figures/track1/iteration2/step-2/recovery-funnel.png",
@@ -487,6 +618,12 @@
         },
         {
           "bytes": 20917,
+          "caption": {
+            "means": "Same evidence as those three figures, with hover tooltips for exact per-bar values and the H020 Fisher-exact p-values shown as notes.",
+            "name": "results.html",
+            "reads": "Interactive contact sheet of the results-side figures: caller-concordance, filter-not-genelist, and sv-artefacts.",
+            "source": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md"
+          },
           "kind": "html",
           "name": "results.html",
           "path": "figures/track1/iteration2/step-2/results.html",
@@ -496,6 +633,12 @@
         },
         {
           "bytes": 83552,
+          "caption": {
+            "means": "Shows the bait's own geometry inventing false structural variants: the first unfiltered consensus run reported a 13 Mb deletion and a 40 Mb inversion in a living child, both artefacts of read-pair callers reporting the unbaited gaps between islands of coverage as one giant event. Requiring over half a call's span to be baited territory removes them, leaving credible deletions with a median length of 302 bp \u2014 the basis for H023's refutation (one credible two-method-class deletion overlaps a coding exon, in a decoy gene).",
+            "name": "sv-artefacts.png",
+            "reads": "Grouped bars by SV type (DEL, DUP, INV), each split into three categories by count: credible (span mostly baited, away from an edge, green), at a bait edge (yellow), and spanning unbaited gaps the bait itself created (red).",
+            "source": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md"
+          },
           "kind": "png",
           "name": "sv-artefacts.png",
           "path": "figures/track1/iteration2/step-2/sv-artefacts.png",
@@ -636,6 +779,94 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "The 1.3675% matched fraction lines up with the bait's 1.361% genome coverage, which is the engineering check that the k-mer sweep is behaving correctly rather than over- or under-matching; every recovered fragment being complete (paired) confirms the FASTQ recovery step lost no mates.",
+            "name": "recovery-funnel.png",
+            "reads": "Horizontal log-scale bar funnel: reads in the store (1,071,835,104) \u2192 reads sharing a bait k-mer (14,657,560, 1.3675%) \u2192 distinct fragments (7,886,613) \u2192 complete pairs after recovery, with a yellow dashed line marking the number of reads predicted before the pass ran.",
+            "source": "docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md"
+          },
+          {
+            "means": "The off-target gate fails at 8.79% against a 5% target, and entry 086 shows no parameter reaches it \u2014 removing the wide padding entirely only moves the number from 8.79% to 8.38%, so padding is not the lever and cannot be dropped without losing the only reach the bait has for exon-scale deletions. This is a disclosed, unresolved gate failure, not a hidden one.",
+            "name": "bait-uniqueness.png",
+            "reads": "Horizontal bars: the bait's off-target rate (repeated k-mers / total bait k-mers, 8.79%) plus zone- and k-value-sweep comparisons, colour-coded red (above gate) or green (below), against a yellow dashed 5% gate line.",
+            "source": "docs/iteration2/step-2/methodology/086-can-the-off-target-gate-be-reached.md"
+          },
+          {
+            "means": "What the failed off-target gate was actually a proxy for: whether each gene is reachable at all by the bait. None of the sparse (unreachable) genes are core or mechanism-term \u2014 the genes step 2 actually draws conclusions from are all reachable; sparse genes are segmental-duplication families concentrated in the decoy set (16 of 21 sparse genes are decoys), which is why H020 is reported both over all genes and restricted to reachable ones.",
+            "name": "bait-density.png",
+            "reads": "Box plots of surviving unique k-mers per base, one box per tier (core, mechanism-term, net, decoy), with a red dashed line at half the median density marking the reachability threshold and the count of genes below it.",
+            "source": "docs/iteration2/step-2/methodology/085-the-bait-and-where-it-runs.md"
+          },
+          {
+            "means": "6,693 coding exons measured, median depth 44.96x, but 68 exons sit below the 10x floor where 'no second allele here' is a data gap, not a finding about the child. A per-gene average would hide every one of these thin exons; the grid does not. A further 61 sub-10x exons live in four net-tier paralogue-rich genes (NEB, GTF2I, GTF2IRD2, ANAPC1) where the uniqueness filter removed the bait entirely.",
+            "name": "exon-coverage.png",
+            "reads": "A gene x exon heatmap for core and mechanism-term genes, one row per gene (ordered by that gene's thinnest exon), one column per coding exon ordinal, colour = mean depth (red below 10x, yellow at 10x, blue above, capped at 80x).",
+            "source": "docs/iteration2/step-2/methodology/092-depth-per-exon-and-the-phasing-drawn.md"
+          },
+          {
+            "means": "Direct visual evidence for H019's verdict: none of the 6,823 genome-wide phase blocks reach BUB1B's coding span, and the widest unphased stretch inside the gene is named on the figure \u2014 meaning short-read fragments cannot say whether BUB1B's two heterozygous alleles sit on the same copy or opposite copies. This is a limit of the short-read instrument, not evidence either way about phase, and step 6 has to carry that distinction forward.",
+            "name": "phase-bub1b.svg",
+            "reads": "A three-lane rule diagram for BUB1B, offsets in base pairs from the baited window's own start (never a genomic position): coding exons (green), heterozygous sites the two callers agreed on (purple ticks), and read-backed phase blocks (blue) with unphased stretches inside the coding span shown red.",
+            "source": "docs/iteration2/step-2/methodology/092-depth-per-exon-and-the-phasing-drawn.md"
+          },
+          {
+            "means": "Same evidence as the five figures above, with hover tooltips for exact per-bar and per-cell values.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet of the instrument-side figures: recovery-funnel, bait-uniqueness, bait-density, exon-coverage, and the BUB1B phase diagram.",
+            "source": "docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md"
+          },
+          {
+            "means": "Evidence for H022: both callers clear 0.99 (0.9957 and 0.9927), which is the check that licenses trusting the rest of step 2's read-derived calls. Indels are explicitly excluded because the delivered callset is unnormalised, so this concordance figure says nothing about indel agreement \u2014 the allele class the aligner is weakest at.",
+            "name": "caller-concordance.png",
+            "reads": "Horizontal bars, one per read-derived caller, showing agreement rate with the delivered (vendor) callset at co-called single-base-substitution sites, against a yellow dashed line at the pre-registered 0.99 threshold.",
+            "source": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md"
+          },
+          {
+            "means": "The finding that outranks H020's own verdict: an unfiltered rule makes decoys win (nearly all decoy genes carry some two-variant pair, because everyone carries ~2 differences per gene \u2014 that describes a genome, not a patient), while the rare-and-protein-altering filter is what actually separates core genes from decoys. The filter, not the gene list, is what discriminates.",
+            "name": "filter-not-genelist.png",
+            "reads": "Grouped bars per tier (core, mechanism-term, net, decoy): share of genes with a biallelic candidate under 'any two variants' (red) versus 'rare and protein-altering' (green) filtering, same genes and same reads in both bars.",
+            "source": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md"
+          },
+          {
+            "means": "Shows the bait's own geometry inventing false structural variants: the first unfiltered consensus run reported a 13 Mb deletion and a 40 Mb inversion in a living child, both artefacts of read-pair callers reporting the unbaited gaps between islands of coverage as one giant event. Requiring over half a call's span to be baited territory removes them, leaving credible deletions with a median length of 302 bp \u2014 the basis for H023's refutation (one credible two-method-class deletion overlaps a coding exon, in a decoy gene).",
+            "name": "sv-artefacts.png",
+            "reads": "Grouped bars by SV type (DEL, DUP, INV), each split into three categories by count: credible (span mostly baited, away from an edge, green), at a bait edge (yellow), and spanning unbaited gaps the bait itself created (red).",
+            "source": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md"
+          },
+          {
+            "means": "Same evidence as those three figures, with hover tooltips for exact per-bar values and the H020 Fisher-exact p-values shown as notes.",
+            "name": "results.html",
+            "reads": "Interactive contact sheet of the results-side figures: caller-concordance, filter-not-genelist, and sv-artefacts.",
+            "source": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-3"],
+          "what": "The read-derived callset, its concordance with the vendor's, the SV consensus calls, and the exon-level depth/phase evidence all become inputs to step 3's alignment-free genotyping and copy-number work, which needs to know where step 2's short-read instrument ran out of reach (the paralogue-rich net-tier genes with sub-10x exons, and the unphased stretch inside BUB1B) so it can attempt those with a different method."
+        },
+        "inherits": {
+          "steps": ["step-1"],
+          "what": "The 404-row tiered target set and 396-row decoy set fix what to bait and how much padding to add around each gene (core/mechanism-term \u00b150kb, net/decoy \u00b12kb). Step 2 also inherits step 1's caveat as a hard constraint on interpretation: because the target set is an enrichment (measured recall \u2248 0.335\u20130.36) and not coverage, an absence of a biallelic candidate in this step's target genes cannot be read as ruling out the true gene \u2014 only step 4's genome-wide scan can do that."
+        },
+        "iteration": "iteration2",
+        "sources": [
+          "docs/iteration2/step-2/README.md",
+          "docs/iteration2/step-2/methodology/085-the-bait-and-where-it-runs.md",
+          "docs/iteration2/step-2/methodology/086-can-the-off-target-gate-be-reached.md",
+          "docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md",
+          "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md",
+          "docs/iteration2/step-2/methodology/089-the-instruments-and-the-gate-that-was-skipped.md",
+          "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md",
+          "docs/iteration2/step-2/methodology/092-depth-per-exon-and-the-phasing-drawn.md",
+          "docs/iteration2/step-2/notes/completion-audit.md"
+        ],
+        "step": "step-2",
+        "summary": "Step 2 discovers what the raw reads (FASTQ) themselves carry in the 404 target genes, without ever touching the vendor's own variant caller \u2014 a check on whether the delivered callset (VCF) is trustworthy or whether it silently dropped something. A k-mer bait (a filter that keeps only reads sharing a short DNA substring with the target genes) swept 1,071,835,104 reads and matched 14,657,560 (1.368%, against a bait covering 1.361% of the genome \u2014 the two numbers agreeing is the check that the bait engine is correct). The recovered reads were aligned, called with two callers built on different statistical models than the vendor's, checked for structural variants (SVs, large deletions/duplications/inversions) and read-backed phased. Of six pre-registered claims, four were supported and two refuted; two more (H017, H018) were superseded outright because the named tools have no arm64 build and were swapped for equivalent-class substitutes. The step was first declared done with four planned stages unrun and the iteration's own blind gate red; a completion audit caught this, the missing stages were run, and one of them (annotating 1,199 alleles the vendor callset never reported) flipped H020 from supported to refuted.",
+        "verdict": "H016 (a target gene carries a biallelic candidate) supported: ten do, three core-tier. H019 (phasing either closes the chain or names the gap) supported: it named the gap \u2014 none of 6,823 phase blocks reach BUB1B's coding span. H021 (bait recovers \u2265 90% of reads carrying a known allele) supported at 0.9052. H022 (\u2265 99% concordance with the delivered callset) supported at 0.9957/0.9927 for SNVs. H020 (decoys yield fewer biallelic candidates per gene than targets) is refuted \u2014 after annotating the 1,199 alleles only the read-derived callers saw, targets and decoys tie exactly at 10/396; the earlier apparent 2x target advantage was a scoring artefact of joining against vendor-only annotation. H023 (no two-method-class deletion overlaps an exon of a rare-allele gene) refuted: one does, in a decoy gene. H017 and H018 are superseded, not resolved \u2014 they named specific tools (DeepVariant; Manta/LUMPY/GRIDSS) with no arm64 build, replaced by freebayes+bcftools and delly+dysgu respectively, and the underlying claims (\u226599% concordance; two independent method classes) are re-tested as H022/H023 against the substitutes.",
+        "why": "A compound-heterozygous diagnosis (two different broken copies of the same gene, one from each parent) can only be trusted as far as the callset it's read from. If the vendor's caller silently missed an allele \u2014 because of a coverage gap, a caller-specific blind spot, or a filtering choice \u2014 no amount of downstream ranking recovers it; the analysis would be reasoning brilliantly from an incomplete record. Rebuilding the calls independently from raw reads, with a caller of a different statistical model, is the only way to check that. Skipping this step would mean trusting a single vendor pipeline with no cross-check at all, and \u2014 as the audit found \u2014 even running it under a scoring query that silently joined against the vendor's own annotation table would have quietly reintroduced exactly the blind spot it was built to catch."
+      },
       "slug": "step-2",
       "status": "done",
       "takes_hypotheses": true,
@@ -735,6 +966,12 @@
       "figures": [
         {
           "bytes": 34506,
+          "caption": {
+            "means": "The variance-to-mean ratio of 2.91 sits far above the Poisson line, which is the justification for fitting a negative-binomial (over-dispersed) model rather than a simpler Poisson one \u2014 a Poisson model would have been three times too confident in every genotype call. The two per-copy coverage estimates differing by 5.6% is disclosed as reference bias, not repaired.",
+            "name": "calibration.png",
+            "reads": "Horizontal bar chart, log x-axis, of the negative-binomial fit's parameters: per-copy coverage from the alternate side and the reference side, the variance-to-mean ratio, dispersion, and the minimum count needed to call an allele 'present', with a dashed line at Poisson = 1.",
+            "source": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md"
+          },
           "kind": "png",
           "name": "calibration.png",
           "path": "figures/track1/iteration2/step-3/calibration.png",
@@ -744,6 +981,12 @@
         },
         {
           "bytes": 28501,
+          "caption": {
+            "means": "Shows a no-call is drawn as its own bar rather than hidden as a gap: 73,067 of the 164,044 typed alleles landed as no-call, and the distribution across het/hom-alt/hom-ref by tier is the raw material the confirmation and calibration figures are built from.",
+            "name": "calls-by-tier.png",
+            "reads": "Stacked bars per tier, segments for het, hom-alt, hom-ref and no-call allele counts.",
+            "source": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md"
+          },
           "kind": "png",
           "name": "calls-by-tier.png",
           "path": "figures/track1/iteration2/step-3/calls-by-tier.png",
@@ -753,6 +996,12 @@
         },
         {
           "bytes": 38055,
+          "caption": {
+            "means": "The step's headline evidence: vendor-reported alleles confirm at 91\u201397% across all tiers (the instrument works), but vendor-unreported alleles confirm at only 27\u201343% \u2014 far under the 80% H027 needed \u2014 meaning about two-thirds of the 1,199 alleles the vendor callset missed cannot be independently corroborated, and every step-2 biallelic-candidate count built on them is an upper bound, not a confirmed count.",
+            "name": "confirmation.png",
+            "reads": "Grouped bars, target genes versus decoy genes, split by whether the allele set is vendor-reported or vendor-unreported, showing the fraction confirmed by the k-mer genotype instrument, with a dashed line at the H027 80% threshold and counts (confirmed/total) on each bar.",
+            "source": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md"
+          },
           "kind": "png",
           "name": "confirmation.png",
           "path": "figures/track1/iteration2/step-3/confirmation.png",
@@ -762,6 +1011,12 @@
         },
         {
           "bytes": 32760,
+          "caption": {
+            "means": "The step's strongest validation: the null band [1.028, 2.823] is measured from this sample's own decoys rather than imported from a paper, autosomal tiers sit at median 2.00 inside it, and chromosome X reads at 0.95 \u2014 half the autosomal dosage \u2014 without the model ever being told the proband is male. One region, BRD4 exon 7 at 0.85, falls below the band, which is H026's refutation.",
+            "name": "copy-number.png",
+            "reads": "Bar chart of median copy number per tier (core, mechanism-term, net, decoy, and \u2014 implicitly \u2014 chromosome X), with a shaded null band measured from the decoys, a dashed line at the band's lower edge, a reference line at diploid = 2.0, and 'below band' region counts labelled per bar.",
+            "source": "docs/iteration2/step-3/methodology/097-copy-number-without-an-aligner.md"
+          },
           "kind": "png",
           "name": "copy-number.png",
           "path": "figures/track1/iteration2/step-3/copy-number.png",
@@ -771,6 +1026,12 @@
         },
         {
           "bytes": 33514,
+          "caption": {
+            "means": "Same evidence as the seven figures, in a form that lets a reader inspect exact per-bar values rather than reading them off a static image.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet combining all seven static figures (mapq-profile, probe-design, calibration, confirmation, calls-by-tier, reachability, copy-number) with hover tooltips.",
+            "source": "docs/iteration2/step-3/methodology/097-copy-number-without-an-aligner.md"
+          },
           "kind": "html",
           "name": "index.html",
           "path": "figures/track1/iteration2/step-3/index.html",
@@ -780,6 +1041,12 @@
         },
         {
           "bytes": 27496,
+          "caption": {
+            "means": "The reachability gate's own evidence: computed before any genotype model was fit, this shows the feared MAPQ-0 pile-up mostly did not happen, which is why the reachability rule could be stated up front rather than discovered as a limitation after the fact.",
+            "name": "mapq-profile.png",
+            "reads": "Grouped bars per tier (core, mechanism-term, net, decoy) on a log y-axis: the median gene's fraction of reads at mapping quality 0 (aligner could not place them confidently) versus the worst gene's fraction, in that tier.",
+            "source": "docs/iteration2/step-3/methodology/093-where-the-aligner-was-unsure.md"
+          },
           "kind": "png",
           "name": "mapq-profile.png",
           "path": "figures/track1/iteration2/step-3/mapq-profile.png",
@@ -789,6 +1056,12 @@
         },
         {
           "bytes": 43711,
+          "caption": {
+            "means": "Evidence for the probe-design gate: 95,372 of 164,044 alleles were fully probed and 15,525 got none, all explicitly listed rather than silently dropped \u2014 the basis for trusting that a subsequent 'no-call' means insufficient probe coverage, not a hidden failure.",
+            "name": "probe-design.png",
+            "reads": "Horizontal stacked bars by allele origin (step-2 caller, ClinVar, calibration), green segment = alleles that got all three reference/alternate probe pairs, red segment = alleles with fewer or none.",
+            "source": "docs/iteration2/step-3/methodology/095-the-probes-and-the-counting-kernel.md"
+          },
           "kind": "png",
           "name": "probe-design.png",
           "path": "figures/track1/iteration2/step-3/probe-design.png",
@@ -798,6 +1071,12 @@
         },
         {
           "bytes": 31294,
+          "caption": {
+            "means": "Evidence for H029's refutation: genes the reachability gate excluded still yield 215 confident calls, so 'excluded' cannot be read as 'silent' \u2014 the gate is a caution about coverage, not a guarantee that nothing can be said about those genes.",
+            "name": "reachability.png",
+            "reads": "Bar chart of the fraction of alleles called confidently, one bar per reachability category (reachable, or excluded for a named reason \u2014 sparse bait and/or aligner refused), colour green for reachable and red for excluded, with gene counts labelled on each bar.",
+            "source": "docs/iteration2/step-3/methodology/093-where-the-aligner-was-unsure.md"
+          },
           "kind": "png",
           "name": "reachability.png",
           "path": "figures/track1/iteration2/step-3/reachability.png",
@@ -906,6 +1185,78 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "The reachability gate's own evidence: computed before any genotype model was fit, this shows the feared MAPQ-0 pile-up mostly did not happen, which is why the reachability rule could be stated up front rather than discovered as a limitation after the fact.",
+            "name": "mapq-profile.png",
+            "reads": "Grouped bars per tier (core, mechanism-term, net, decoy) on a log y-axis: the median gene's fraction of reads at mapping quality 0 (aligner could not place them confidently) versus the worst gene's fraction, in that tier.",
+            "source": "docs/iteration2/step-3/methodology/093-where-the-aligner-was-unsure.md"
+          },
+          {
+            "means": "Evidence for the probe-design gate: 95,372 of 164,044 alleles were fully probed and 15,525 got none, all explicitly listed rather than silently dropped \u2014 the basis for trusting that a subsequent 'no-call' means insufficient probe coverage, not a hidden failure.",
+            "name": "probe-design.png",
+            "reads": "Horizontal stacked bars by allele origin (step-2 caller, ClinVar, calibration), green segment = alleles that got all three reference/alternate probe pairs, red segment = alleles with fewer or none.",
+            "source": "docs/iteration2/step-3/methodology/095-the-probes-and-the-counting-kernel.md"
+          },
+          {
+            "means": "The variance-to-mean ratio of 2.91 sits far above the Poisson line, which is the justification for fitting a negative-binomial (over-dispersed) model rather than a simpler Poisson one \u2014 a Poisson model would have been three times too confident in every genotype call. The two per-copy coverage estimates differing by 5.6% is disclosed as reference bias, not repaired.",
+            "name": "calibration.png",
+            "reads": "Horizontal bar chart, log x-axis, of the negative-binomial fit's parameters: per-copy coverage from the alternate side and the reference side, the variance-to-mean ratio, dispersion, and the minimum count needed to call an allele 'present', with a dashed line at Poisson = 1.",
+            "source": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md"
+          },
+          {
+            "means": "The step's headline evidence: vendor-reported alleles confirm at 91\u201397% across all tiers (the instrument works), but vendor-unreported alleles confirm at only 27\u201343% \u2014 far under the 80% H027 needed \u2014 meaning about two-thirds of the 1,199 alleles the vendor callset missed cannot be independently corroborated, and every step-2 biallelic-candidate count built on them is an upper bound, not a confirmed count.",
+            "name": "confirmation.png",
+            "reads": "Grouped bars, target genes versus decoy genes, split by whether the allele set is vendor-reported or vendor-unreported, showing the fraction confirmed by the k-mer genotype instrument, with a dashed line at the H027 80% threshold and counts (confirmed/total) on each bar.",
+            "source": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md"
+          },
+          {
+            "means": "Shows a no-call is drawn as its own bar rather than hidden as a gap: 73,067 of the 164,044 typed alleles landed as no-call, and the distribution across het/hom-alt/hom-ref by tier is the raw material the confirmation and calibration figures are built from.",
+            "name": "calls-by-tier.png",
+            "reads": "Stacked bars per tier, segments for het, hom-alt, hom-ref and no-call allele counts.",
+            "source": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md"
+          },
+          {
+            "means": "Evidence for H029's refutation: genes the reachability gate excluded still yield 215 confident calls, so 'excluded' cannot be read as 'silent' \u2014 the gate is a caution about coverage, not a guarantee that nothing can be said about those genes.",
+            "name": "reachability.png",
+            "reads": "Bar chart of the fraction of alleles called confidently, one bar per reachability category (reachable, or excluded for a named reason \u2014 sparse bait and/or aligner refused), colour green for reachable and red for excluded, with gene counts labelled on each bar.",
+            "source": "docs/iteration2/step-3/methodology/093-where-the-aligner-was-unsure.md"
+          },
+          {
+            "means": "The step's strongest validation: the null band [1.028, 2.823] is measured from this sample's own decoys rather than imported from a paper, autosomal tiers sit at median 2.00 inside it, and chromosome X reads at 0.95 \u2014 half the autosomal dosage \u2014 without the model ever being told the proband is male. One region, BRD4 exon 7 at 0.85, falls below the band, which is H026's refutation.",
+            "name": "copy-number.png",
+            "reads": "Bar chart of median copy number per tier (core, mechanism-term, net, decoy, and \u2014 implicitly \u2014 chromosome X), with a shaded null band measured from the decoys, a dashed line at the band's lower edge, a reference line at diploid = 2.0, and 'below band' region counts labelled per bar.",
+            "source": "docs/iteration2/step-3/methodology/097-copy-number-without-an-aligner.md"
+          },
+          {
+            "means": "Same evidence as the seven figures, in a form that lets a reader inspect exact per-bar values rather than reading them off a static image.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet combining all seven static figures (mapq-profile, probe-design, calibration, confirmation, calls-by-tier, reachability, copy-number) with hover tooltips.",
+            "source": "docs/iteration2/step-3/methodology/097-copy-number-without-an-aligner.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-4"],
+          "what": "Step 4's genome-wide likelihood-ranking gets a measured, per-allele-origin error rate instead of a caveat: ~1 in 3 vendor-unreported alleles corroborated, ~19 in 20 vendor-reported ones, and a reachability flag per gene. It also hands forward `results.it2_kmer_pairs` \u2014 step 2's biallelic gene counts recounted using only k-mer-confirmed calls \u2014 and the dosage-only finding on the lead pair (both alleles at one copy each), which step 6's fusion has to weigh without ever treating it as phase evidence."
+        },
+        "inherits": {
+          "steps": ["step-2"],
+          "what": "The 75,733 step-2 alleles are exactly what this step sets out to corroborate or refute with an independent instrument, and the gene reachability flags from step 2's bait-density and MAPQ analysis (which genes the short-read aligner could place reads in at all) fix which genes this step is even allowed to report a confident genotype for."
+        },
+        "iteration": "iteration2",
+        "sources": [
+          "docs/iteration2/step-3/README.md",
+          "docs/iteration2/step-3/methodology/093-where-the-aligner-was-unsure.md",
+          "docs/iteration2/step-3/methodology/095-the-probes-and-the-counting-kernel.md",
+          "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "docs/iteration2/step-3/methodology/097-copy-number-without-an-aligner.md"
+        ],
+        "step": "step-3",
+        "summary": "Step 3 re-reads step 2's alleles with neither an aligner (a tool that decides where a read belongs on the genome) nor a variant caller (a tool that decides what a read implies about a genotype) in the loop: it counts, directly in the raw read bytes, how often the 31-letter sequence around each allele matches the reference spelling versus the alternate spelling. One copy of an allele shows up in about half the covering reads, two copies in nearly all, zero in a handful from sequencing noise \u2014 so multiplicity can be read off a count without ever modelling alignment. It typed 164,044 alleles (step 2's 75,733 plus 88,754 ClinVar pathogenic/likely-pathogenic alleles plus 20,000 calibration markers), fit a negative-binomial model to 1,876,842,047 read-window counts (variance-to-mean ratio 2.91, three times more dispersed than a naive Poisson model would assume), and measured copy number over 1,430 regions with no aligner at all \u2014 correctly recovering the proband's single X chromosome (median dosage 0.95 against 2.00 on autosomes) without being told the proband is male. Of six pre-registered claims, four were refuted and two supported; three data-processing bugs were caught mid-run by disbelieving a suspicious figure rather than by pre-built tests.",
+        "verdict": "H024 (every step-2 heterozygous call in a reachable target gene is confirmed) is refuted: 453 of 518 are, not all. H025 (a ClinVar pathogenic/likely-pathogenic allele is present at heterozygous multiplicity) is supported, but weakly: one allele is genuinely present, four others sit at alternate fractions of 0.06\u20130.09 \u2014 a tenth of a real heterozygote \u2014 and are flagged as a probable artefact of an error-rate estimate that is too tight. H026 (no target exon falls below the copy-number null band) is refuted: BRD4 exon 7 does, at 0.85. H027 (\u2265 80% of the 1,199 vendor-unreported alleles are confirmed) is refuted \u2014 only 27\u201343% are, against 91\u201397% of vendor-reported alleles confirmed by the same instrument in the same run, meaning roughly two-thirds of those 1,199 alleles cannot be independently corroborated and every step-2 biallelic count resting on them is now known to be an upper bound. H028 (both lead alleles sit at one-copy multiplicity) is supported at posterior 1.0, unanimous across all three probes per allele \u2014 explicitly a dosage statement, not phase, and not evidence the two alleles are in trans. H029 (unreachable genes yield no confident genotype) is refuted: they yield 215 confident calls anyway.",
+        "why": "Every conclusion in step 2 passed through an aligner and a caller, both of which are models with assumptions about where a read belongs and what a haplotype looks like. If those assumptions are wrong in a specific gene, step 2's calls would be wrong in a way no re-reading of the same aligned data could catch \u2014 only an instrument with no aligner or caller in it can independently corroborate them. This mattered concretely: step 2 found 1,199 alleles the vendor's own callset never reported, and six of the ten target genes reached a biallelic candidate only through those alleles. Without an independent check, there is no way to know whether those 1,199 alleles are real or an artefact of the read-recovery pipeline \u2014 and the entire compound-heterozygous case for those six genes would rest on an unverified count."
+      },
       "slug": "step-3",
       "status": "done",
       "takes_hypotheses": true,
@@ -993,6 +1344,12 @@
       "figures": [
         {
           "bytes": 41887,
+          "caption": {
+            "means": "Shows the mechanism in full: BUB1B's ratio is built from a truncating/NMD-competent allele (\u00d7350) paired with an AlphaMissense likely_pathogenic missense allele (\u00d74.33), both absent from gnomAD (\u00d72.08 each), plus the phenotype rank-6-of-5,259 lane (\u00d752.08) \u2014 reproducing, without being told it, the null-plus-hypomorph genetic model described in Hanks 2004 (PMID 15475955) for this disease class.",
+            "name": "decomposition.png",
+            "reads": "Log10-scale bars, one per scoring lane (phenotype rank, left-allele consequence, left-allele frequency, right-allele AlphaMissense, right-allele frequency, etc.), for BUB1B's leading hypothesis, summing to its total log-ratio; a lane at zero was consulted but damped because it shares a correlation group with a stronger lane.",
+            "source": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md"
+          },
           "kind": "png",
           "name": "decomposition.png",
           "path": "figures/track1/iteration2/step-4/decomposition.png",
@@ -1002,6 +1359,12 @@
         },
         {
           "bytes": 36318,
+          "caption": {
+            "means": "The ablation control for H030: the combined ranking's leader is not the leader when phenotype is removed \u2014 on DNA alone, BUB1B falls to joint third behind ADAMTS1 and HLA-DRB1. This is the honest reading of H030's support: the claim holds for the two routes (symptoms + DNA) together, not for a DNA-only genome-wide scan.",
+            "name": "genotype-only.png",
+            "reads": "Paired bars per top gene: green = the combined ranking as reported, blue = the same hypothesis re-scored with the phenotype lane fixed at 1 (no symptom contribution) for every gene.",
+            "source": "docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md"
+          },
           "kind": "png",
           "name": "genotype-only.png",
           "path": "figures/track1/iteration2/step-4/genotype-only.png",
@@ -1011,6 +1374,12 @@
         },
         {
           "bytes": 35793,
+          "caption": {
+            "means": "Direct visual evidence for H034: target genes sit well above decoys and above the ratio-1 line, even though step 2 measured the same two gene sets as statistically indistinguishable before any scoring \u2014 so the separation shown here is produced entirely by the likelihood-ratio scoring, not by which genes happened to be on the list.",
+            "name": "groups.png",
+            "reads": "Bars per gene class (targets vs. matched decoys) showing the median and 90th-percentile likelihood ratio of each class, with a dotted line at ratio = 1.",
+            "source": "docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md"
+          },
           "kind": "png",
           "name": "groups.png",
           "path": "figures/track1/iteration2/step-4/groups.png",
@@ -1020,6 +1389,12 @@
         },
         {
           "bytes": 39933,
+          "caption": {
+            "means": "Same evidence as the eight static figures, in a form a reader can inspect value-by-value rather than reading off a static image.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet of all eight figures (leaders, decomposition, groups, permutation-null, genotype-only, phenotype-bins, lane-coverage, shapes) with hover tooltips for exact values.",
+            "source": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md"
+          },
           "kind": "html",
           "name": "index.html",
           "path": "figures/track1/iteration2/step-4/index.html",
@@ -1029,6 +1404,12 @@
         },
         {
           "bytes": 53032,
+          "caption": {
+            "means": "AlphaMissense covers 10,601 alleles and wins 22.2% of all allele slots, the single largest lane, while CADD and LOFTEE contribute nothing because Ensembl's REST endpoint does not serve either plugin \u2014 recorded as an absence rather than worked around, which caps how much fine-grained missense/splice evidence the ranking can actually draw on for most alleles.",
+            "name": "lane-coverage.png",
+            "reads": "Bars showing how many allele slots each evidence lane (AlphaMissense, SpliceAI, ClinVar, consequence class alone, or no lane at all) actually won across the run, per consequence class.",
+            "source": "docs/iteration2/step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md"
+          },
           "kind": "png",
           "name": "lane-coverage.png",
           "path": "figures/track1/iteration2/step-4/lane-coverage.png",
@@ -1038,6 +1419,12 @@
         },
         {
           "bytes": 90489,
+          "caption": {
+            "means": "BUB1B leads at 341,019; no red (decoy) bar appears among the top 20, which is itself evidence for H034's separation \u2014 the decoys, scored by the identical pipeline, do not compete with real candidates. The ratio orders hypotheses; it is explicitly not a calibrated probability that a gene is causal.",
+            "name": "leaders.png",
+            "reads": "Log-scale horizontal bars of the top 20 genome-wide hypotheses by combined likelihood ratio, colour-coded: green = step-1 symptom-nominated target gene, purple = a gene with no phenotype curation, blue = curated but not nominated, red = a matched decoy.",
+            "source": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md"
+          },
           "kind": "png",
           "name": "leaders.png",
           "path": "figures/track1/iteration2/step-4/leaders.png",
@@ -1047,6 +1434,12 @@
         },
         {
           "bytes": 31636,
+          "caption": {
+            "means": "Evidence for H033's refutation: 55 of 1,000 random draws reach or exceed the observed leader (p=0.056, not <0.001), but only four genes in the entire callset can ever exceed that value under any term set, and almost every exceeding draw is HLA-DRB1 being promoted \u2014 meaning the apparent non-specificity is mostly an artefact of HLA hyperpolymorphism, not evidence the symptom set is uninformative.",
+            "name": "permutation-null.png",
+            "reads": "Histogram of the top likelihood ratio reached by 1,000 random seven-term symptom sets (each matched to the child's own term-depth profile), with a dashed line marking the observed leader's ratio.",
+            "source": "docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md"
+          },
           "kind": "png",
           "name": "permutation-null.png",
           "path": "figures/track1/iteration2/step-4/permutation-null.png",
@@ -1056,6 +1449,12 @@
         },
         {
           "bytes": 35073,
+          "caption": {
+            "means": "Shows the step's core methodological move: the phenotype-to-likelihood conversion is measured from step 1's own held-out benchmark rather than invented, and the uncurated bucket sits below 1 but never at 0 \u2014 which is exactly what lets an uncurated gene like ADAMTS1 still climb the genome-wide ranking on genotype evidence alone.",
+            "name": "phenotype-bins.png",
+            "reads": "Bars per rank band (e.g. top-50, 51\u2013300, uncurated) showing the likelihood ratio for that band, derived as the fraction of the 3,240-disease benchmark's causal genes landing in that band divided by the fraction of all genes the band contains; dotted line at ratio = 1.",
+            "source": "docs/iteration2/step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md"
+          },
           "kind": "png",
           "name": "phenotype-bins.png",
           "path": "figures/track1/iteration2/step-4/phenotype-bins.png",
@@ -1065,6 +1464,12 @@
         },
         {
           "bytes": 34335,
+          "caption": {
+            "means": "35,120 compound, 14,130 homozygous, 2,670 single hypotheses were all scored \u2014 including the 'single' shape (one damaged allele, no partner) that a hard filter would delete outright, kept here at the square root of its evidence because a missing partner may reflect a call the pipeline never made rather than a genuinely intact second copy.",
+            "name": "shapes.png",
+            "reads": "One bar per biallelic hypothesis shape (compound, homozygous, single), labelled with the gene count behind each.",
+            "source": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md"
+          },
           "kind": "png",
           "name": "shapes.png",
           "path": "figures/track1/iteration2/step-4/shapes.png",
@@ -1173,6 +1578,85 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "BUB1B leads at 341,019; no red (decoy) bar appears among the top 20, which is itself evidence for H034's separation \u2014 the decoys, scored by the identical pipeline, do not compete with real candidates. The ratio orders hypotheses; it is explicitly not a calibrated probability that a gene is causal.",
+            "name": "leaders.png",
+            "reads": "Log-scale horizontal bars of the top 20 genome-wide hypotheses by combined likelihood ratio, colour-coded: green = step-1 symptom-nominated target gene, purple = a gene with no phenotype curation, blue = curated but not nominated, red = a matched decoy.",
+            "source": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md"
+          },
+          {
+            "means": "Shows the mechanism in full: BUB1B's ratio is built from a truncating/NMD-competent allele (\u00d7350) paired with an AlphaMissense likely_pathogenic missense allele (\u00d74.33), both absent from gnomAD (\u00d72.08 each), plus the phenotype rank-6-of-5,259 lane (\u00d752.08) \u2014 reproducing, without being told it, the null-plus-hypomorph genetic model described in Hanks 2004 (PMID 15475955) for this disease class.",
+            "name": "decomposition.png",
+            "reads": "Log10-scale bars, one per scoring lane (phenotype rank, left-allele consequence, left-allele frequency, right-allele AlphaMissense, right-allele frequency, etc.), for BUB1B's leading hypothesis, summing to its total log-ratio; a lane at zero was consulted but damped because it shares a correlation group with a stronger lane.",
+            "source": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md"
+          },
+          {
+            "means": "Direct visual evidence for H034: target genes sit well above decoys and above the ratio-1 line, even though step 2 measured the same two gene sets as statistically indistinguishable before any scoring \u2014 so the separation shown here is produced entirely by the likelihood-ratio scoring, not by which genes happened to be on the list.",
+            "name": "groups.png",
+            "reads": "Bars per gene class (targets vs. matched decoys) showing the median and 90th-percentile likelihood ratio of each class, with a dotted line at ratio = 1.",
+            "source": "docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md"
+          },
+          {
+            "means": "Evidence for H033's refutation: 55 of 1,000 random draws reach or exceed the observed leader (p=0.056, not <0.001), but only four genes in the entire callset can ever exceed that value under any term set, and almost every exceeding draw is HLA-DRB1 being promoted \u2014 meaning the apparent non-specificity is mostly an artefact of HLA hyperpolymorphism, not evidence the symptom set is uninformative.",
+            "name": "permutation-null.png",
+            "reads": "Histogram of the top likelihood ratio reached by 1,000 random seven-term symptom sets (each matched to the child's own term-depth profile), with a dashed line marking the observed leader's ratio.",
+            "source": "docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md"
+          },
+          {
+            "means": "The ablation control for H030: the combined ranking's leader is not the leader when phenotype is removed \u2014 on DNA alone, BUB1B falls to joint third behind ADAMTS1 and HLA-DRB1. This is the honest reading of H030's support: the claim holds for the two routes (symptoms + DNA) together, not for a DNA-only genome-wide scan.",
+            "name": "genotype-only.png",
+            "reads": "Paired bars per top gene: green = the combined ranking as reported, blue = the same hypothesis re-scored with the phenotype lane fixed at 1 (no symptom contribution) for every gene.",
+            "source": "docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md"
+          },
+          {
+            "means": "Shows the step's core methodological move: the phenotype-to-likelihood conversion is measured from step 1's own held-out benchmark rather than invented, and the uncurated bucket sits below 1 but never at 0 \u2014 which is exactly what lets an uncurated gene like ADAMTS1 still climb the genome-wide ranking on genotype evidence alone.",
+            "name": "phenotype-bins.png",
+            "reads": "Bars per rank band (e.g. top-50, 51\u2013300, uncurated) showing the likelihood ratio for that band, derived as the fraction of the 3,240-disease benchmark's causal genes landing in that band divided by the fraction of all genes the band contains; dotted line at ratio = 1.",
+            "source": "docs/iteration2/step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md"
+          },
+          {
+            "means": "AlphaMissense covers 10,601 alleles and wins 22.2% of all allele slots, the single largest lane, while CADD and LOFTEE contribute nothing because Ensembl's REST endpoint does not serve either plugin \u2014 recorded as an absence rather than worked around, which caps how much fine-grained missense/splice evidence the ranking can actually draw on for most alleles.",
+            "name": "lane-coverage.png",
+            "reads": "Bars showing how many allele slots each evidence lane (AlphaMissense, SpliceAI, ClinVar, consequence class alone, or no lane at all) actually won across the run, per consequence class.",
+            "source": "docs/iteration2/step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md"
+          },
+          {
+            "means": "35,120 compound, 14,130 homozygous, 2,670 single hypotheses were all scored \u2014 including the 'single' shape (one damaged allele, no partner) that a hard filter would delete outright, kept here at the square root of its evidence because a missing partner may reflect a call the pipeline never made rather than a genuinely intact second copy.",
+            "name": "shapes.png",
+            "reads": "One bar per biallelic hypothesis shape (compound, homozygous, single), labelled with the gene count behind each.",
+            "source": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md"
+          },
+          {
+            "means": "Same evidence as the eight static figures, in a form a reader can inspect value-by-value rather than reading off a static image.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet of all eight figures (leaders, decomposition, groups, permutation-null, genotype-only, phenotype-bins, lane-coverage, shapes) with hover tooltips for exact values.",
+            "source": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-5", "step-6"],
+          "what": "Step 5's knowledge engine takes the top-20 genome-wide gene list to build its literature/mechanism case. Step 6's fusion takes both leads (BUB1B and ADAMTS1, with the reason ADAMTS1 is not really a compound-het hypothesis attached to its row rather than filtered out), the measured AUC 0.706 separation, the measured non-specificity (p=0.056, with the HLA explanation), and the fact that P(trans) is undetermined for every leading pair \u2014 placing the lead pair in the failure category 'unphaseable: both alleles real, both single-copy, no fragment spanning them, no parental DNA' that step 6 has to reason through explicitly rather than assume away."
+        },
+        "inherits": {
+          "steps": ["step-1", "step-2", "step-3"],
+          "what": "The phenotype lane's likelihood ratio is read directly off step 1's measured recall-at-rank curve, not an invented conversion \u2014 step 4 could not exist without that curve being a measured quantity rather than an assumption. Step 2's decoy set (H020: unfiltered targets and decoys indistinguishable) is what makes H034's AUC meaningful as attributable to the scoring rather than the gene list. Step 3's dosage finding (both lead alleles at one copy each) and its measured per-origin allele error rates feed the genotype-half evidence for the lead pair."
+        },
+        "iteration": "iteration2",
+        "sources": [
+          "docs/iteration2/step-4/README.md",
+          "docs/iteration2/step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md",
+          "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md",
+          "docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md",
+          "docs/iteration2/step-4/methodology/101-the-phase-that-cannot-be-measured.md",
+          "docs/iteration2/step-4/notes/why-no-filter-anywhere.md"
+        ],
+        "step": "step-4",
+        "summary": "Step 4 replaces iteration 1's funnel (rare AND protein-altering AND biallelic AND PASS \u2014 a gene is in or out) with a multiplier: every piece of evidence becomes a likelihood ratio (a multiplier on how much more or less likely a gene is to be causal), nothing is a hard cutoff, and every one of the 11,465 protein-coding genes with a scorable pair gets a ranked answer. It scored 51,920 biallelic hypotheses \u2014 35,120 compound (two different damaged alleles), 14,130 homozygous (one allele on both copies), 2,670 single (one damaged allele, no partner \u2014 the shape a hard filter deletes outright) \u2014 combining a genotype half (consequence severity, population frequency, AlphaMissense/SpliceAI/ClinVar evidence, non-PASS down-weighting) with a phenotype half (a likelihood ratio read directly off step 1's own measured recall curve, so an uncurated gene gets a ratio below 1, never zero). BUB1B leads genome-wide at ratio 341,019, compound, with ADAMTS1 runner-up at 201,029 (only 1.70x behind, and phased in cis \u2014 both alleles on the same copy, so it is not actually a compound-heterozygote hypothesis). Of six pre-registered claims, three were supported and three refuted, and the refutations are described as the more useful half of the result.",
+        "verdict": "H030 (the genome-wide top pair sits in a step-1 target gene) is supported: BUB1B, tier core. H031 (the runner-up is \u226510x behind) is refuted \u2014 ADAMTS1 is only 1.70x behind, though it is phased cis and therefore not a valid compound-het hypothesis at all. H032 (no uncurated gene reaches the top 20) is refuted: ADAMTS1 has no phenotype curation and reached rank 2, entering through the phenotype lane's unranked bucket (not the network-proximity lane built for exactly this case, which fired for no top-25 gene) and overcoming its 0.379x penalty on genotype evidence alone. H033 (<1 in 1,000 permuted symptom sets reach the leader) is refuted: 55 of 1,000 do, almost entirely because HLA-DRB1's extreme polymorphism gets promoted by unrelated term permutations \u2014 the null is measuring HLA hyperpolymorphism as much as phenotype specificity. H034 (targets separate from matched decoys) is supported at AUC 0.706 [0.655, 0.751], which is the step's strongest result because step 2 had already shown the same two gene sets indistinguishable before any scoring (10/396 each). H035 (the lead pair's P(trans), the probability the two alleles sit on opposite copies, is undetermined) is supported: only 5 of 50 leading alleles even appear in the population reference database (gnomAD v2), so P(trans) cannot be computed for any of the top 25 pairs, not just the leader.",
+        "why": "Steps 1\u20133 each independently measured the cost of iteration 1's cut-based funnel: symptom-only recall tops out at 0.335, three-quarters of protein-coding genes carry no phenotype curation at all, and the read-derived route's discrimination power measured at zero (targets and decoys were statistically indistinguishable before any filter, in step 2's own H020 result). A cut applied early on any one of those axes permanently deletes evidence nobody can retrieve downstream \u2014 an early filter cannot be un-filtered by a later step. Multiplying instead of cutting is the only way to let a true answer survive being uncurated, being frequency-borderline, or lacking a caller-flagged partner allele, while still producing one ranked answer across the entire coding genome rather than only across step 1's 404-gene enrichment set."
+      },
       "slug": "step-4",
       "status": "done",
       "takes_hypotheses": true,
@@ -1288,6 +1772,12 @@
       "figures": [
         {
           "bytes": 68822,
+          "caption": {
+            "means": "Direct evidence for H037's refutation: 54 genes clear the \u22655-feature threshold and 16 are decoys \u2014 a red bar as tall as a green one is the finding \u2014 while the step-4 leading gene sits at only 3 of 7 features because its best real match, a case report specifically about a novel variant causing this exact disease, is outscored on raw feature-count by broad survey papers.",
+            "name": "anchors.png",
+            "reads": "Bars per gene (green = target, red = decoy, blue = neither) showing how many of the child's 7 proband terms that gene's best-matching paper covers, out of 5,705 total (gene \u00d7 term) searches over 815 genes.",
+            "source": "docs/iteration2/step-5/methodology/104-the-papers-the-script-found.md"
+          },
           "kind": "png",
           "name": "anchors.png",
           "path": "figures/track1/iteration2/step-5/anchors.png",
@@ -1297,6 +1787,12 @@
         },
         {
           "bytes": 76111,
+          "caption": {
+            "means": "95.1% of askable alleles (1,821 of 1,914) carry at least one publication \u2014 a saturated column that discriminates almost nothing on its own \u2014 while the load-bearing evidence for H036 is the separately-tracked 15 ClinVar-pathogenic alleles this child actually carries, corroborated by an instrument (step 3's k-mer count) independent of the annotation pipeline.",
+            "name": "catalogue.png",
+            "reads": "Stacked bars over the 1,924 alleles scored: green = at least one publication describes this exact variant, blue = askable but never described, grey = no dbSNP identifier so never askable; a separate count of ClinVar-pathogenic alleles this child carries, found by step 3's k-mer route in the raw reads.",
+            "source": "docs/iteration2/step-5/methodology/103-the-alleles-somebody-already-published.md"
+          },
           "kind": "png",
           "name": "catalogue.png",
           "path": "figures/track1/iteration2/step-5/catalogue.png",
@@ -1306,6 +1802,12 @@
         },
         {
           "bytes": 244851,
+          "caption": {
+            "means": "The decisive test for whether this route measured anything beyond fame: Spearman \u03c1 = 0.024 and 0 of the top-5 genes overlap between the two rankings, both far from the diagonal, so the knowledge score is not simply re-deriving how much has been written about each gene \u2014 it carries information a citation count does not, which licenses trusting the AUC result.",
+            "name": "citations.png",
+            "reads": "Scatter of all 815 genes, each gene's rank by the knowledge score on one axis and its rank by raw PubMed hit count on the other, coloured green (target)/red (decoy)/blue (neither), with a dotted diagonal marking 'no reordering at all'.",
+            "source": "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md"
+          },
           "kind": "png",
           "name": "citations.png",
           "path": "figures/track1/iteration2/step-5/citations.png",
@@ -1315,6 +1817,12 @@
         },
         {
           "bytes": 44080,
+          "caption": {
+            "means": "Evidence for H040's partial refutation: the leading missense allele sits outside every annotated InterPro domain, at pLDDT 91.06 (a confidently modelled region of the AlphaFold structure) where AlphaMissense nonetheless agrees the allele is damaging \u2014 domain annotation and machine-learning pathogenicity prediction disagree on this allele, which is reported as a real, unresolved discrepancy rather than smoothed over.",
+            "name": "domains.png",
+            "reads": "One protein per row drawn as a rule, InterPro entries as bars (amber = domain, thinner blue = family/superfamily, excluded from the claim), the leading missense allele as a tick (green = inside a domain, red = outside), positions as fractions of protein length, never a residue number.",
+            "source": "docs/iteration2/step-5/methodology/106-where-the-missense-sits-in-the-protein.md"
+          },
           "kind": "png",
           "name": "domains.png",
           "path": "figures/track1/iteration2/step-5/domains.png",
@@ -1324,6 +1832,12 @@
         },
         {
           "bytes": 69043,
+          "caption": {
+            "means": "Same evidence as the six static figures, in a form that lets a reader inspect exact ranks, scores and feature-match counts rather than reading them off a static image.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet of all six figures (sources, catalogue, anchors, citations, separation, domains) with hover tooltips for exact per-gene and per-bar values.",
+            "source": "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md"
+          },
           "kind": "html",
           "name": "index.html",
           "path": "figures/track1/iteration2/step-5/index.html",
@@ -1333,6 +1847,12 @@
         },
         {
           "bytes": 35848,
+          "caption": {
+            "means": "Evidence for H038: targets separate from decoys (AUC 0.634 [0.593, 0.672]), a real but modest effect \u2014 explicitly weaker than step 4's genotype-based 0.706 on the identical two gene sets \u2014 and the design note that length-matched decoys are essential here, since a longer gene simply attracts more papers and alleles regardless of pathogenicity.",
+            "name": "separation.png",
+            "reads": "Bars by gene class (symptom-nominated targets, matched decoys, curated-but-not-nominated genes, uncurated genes) showing median/90th-percentile knowledge score, labelled with how many genes in each class found a \u22655-feature paper.",
+            "source": "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md"
+          },
           "kind": "png",
           "name": "separation.png",
           "path": "figures/track1/iteration2/step-5/separation.png",
@@ -1342,6 +1862,12 @@
         },
         {
           "bytes": 29285,
+          "caption": {
+            "means": "Establishes what each instrument's blind spot actually is before any of its coloured answers can be trusted: an allele with no dbSNP id, a gene with no reviewed UniProt entry, or a residue outside any protein lookup's reach are absences of the instrument, not findings about the child \u2014 the grey band has to be read first.",
+            "name": "sources.png",
+            "reads": "Horizontal rows, one per public source (LitVar allele lookup, PubTator anchor search, UniProt/InterPro/AlphaFold protein lookup), each split into green (source answered yes), blue (answered no) and grey (could not be asked at all) segments.",
+            "source": "docs/iteration2/step-5/methodology/102-the-sources-and-what-they-could-be-asked.md"
+          },
           "kind": "png",
           "name": "sources.png",
           "path": "figures/track1/iteration2/step-5/sources.png",
@@ -1434,6 +1960,74 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "Establishes what each instrument's blind spot actually is before any of its coloured answers can be trusted: an allele with no dbSNP id, a gene with no reviewed UniProt entry, or a residue outside any protein lookup's reach are absences of the instrument, not findings about the child \u2014 the grey band has to be read first.",
+            "name": "sources.png",
+            "reads": "Horizontal rows, one per public source (LitVar allele lookup, PubTator anchor search, UniProt/InterPro/AlphaFold protein lookup), each split into green (source answered yes), blue (answered no) and grey (could not be asked at all) segments.",
+            "source": "docs/iteration2/step-5/methodology/102-the-sources-and-what-they-could-be-asked.md"
+          },
+          {
+            "means": "95.1% of askable alleles (1,821 of 1,914) carry at least one publication \u2014 a saturated column that discriminates almost nothing on its own \u2014 while the load-bearing evidence for H036 is the separately-tracked 15 ClinVar-pathogenic alleles this child actually carries, corroborated by an instrument (step 3's k-mer count) independent of the annotation pipeline.",
+            "name": "catalogue.png",
+            "reads": "Stacked bars over the 1,924 alleles scored: green = at least one publication describes this exact variant, blue = askable but never described, grey = no dbSNP identifier so never askable; a separate count of ClinVar-pathogenic alleles this child carries, found by step 3's k-mer route in the raw reads.",
+            "source": "docs/iteration2/step-5/methodology/103-the-alleles-somebody-already-published.md"
+          },
+          {
+            "means": "Direct evidence for H037's refutation: 54 genes clear the \u22655-feature threshold and 16 are decoys \u2014 a red bar as tall as a green one is the finding \u2014 while the step-4 leading gene sits at only 3 of 7 features because its best real match, a case report specifically about a novel variant causing this exact disease, is outscored on raw feature-count by broad survey papers.",
+            "name": "anchors.png",
+            "reads": "Bars per gene (green = target, red = decoy, blue = neither) showing how many of the child's 7 proband terms that gene's best-matching paper covers, out of 5,705 total (gene \u00d7 term) searches over 815 genes.",
+            "source": "docs/iteration2/step-5/methodology/104-the-papers-the-script-found.md"
+          },
+          {
+            "means": "The decisive test for whether this route measured anything beyond fame: Spearman \u03c1 = 0.024 and 0 of the top-5 genes overlap between the two rankings, both far from the diagonal, so the knowledge score is not simply re-deriving how much has been written about each gene \u2014 it carries information a citation count does not, which licenses trusting the AUC result.",
+            "name": "citations.png",
+            "reads": "Scatter of all 815 genes, each gene's rank by the knowledge score on one axis and its rank by raw PubMed hit count on the other, coloured green (target)/red (decoy)/blue (neither), with a dotted diagonal marking 'no reordering at all'.",
+            "source": "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md"
+          },
+          {
+            "means": "Evidence for H038: targets separate from decoys (AUC 0.634 [0.593, 0.672]), a real but modest effect \u2014 explicitly weaker than step 4's genotype-based 0.706 on the identical two gene sets \u2014 and the design note that length-matched decoys are essential here, since a longer gene simply attracts more papers and alleles regardless of pathogenicity.",
+            "name": "separation.png",
+            "reads": "Bars by gene class (symptom-nominated targets, matched decoys, curated-but-not-nominated genes, uncurated genes) showing median/90th-percentile knowledge score, labelled with how many genes in each class found a \u22655-feature paper.",
+            "source": "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md"
+          },
+          {
+            "means": "Evidence for H040's partial refutation: the leading missense allele sits outside every annotated InterPro domain, at pLDDT 91.06 (a confidently modelled region of the AlphaFold structure) where AlphaMissense nonetheless agrees the allele is damaging \u2014 domain annotation and machine-learning pathogenicity prediction disagree on this allele, which is reported as a real, unresolved discrepancy rather than smoothed over.",
+            "name": "domains.png",
+            "reads": "One protein per row drawn as a rule, InterPro entries as bars (amber = domain, thinner blue = family/superfamily, excluded from the claim), the leading missense allele as a tick (green = inside a domain, red = outside), positions as fractions of protein length, never a residue number.",
+            "source": "docs/iteration2/step-5/methodology/106-where-the-missense-sits-in-the-protein.md"
+          },
+          {
+            "means": "Same evidence as the six static figures, in a form that lets a reader inspect exact ranks, scores and feature-match counts rather than reading them off a static image.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet of all six figures (sources, catalogue, anchors, citations, separation, domains) with hover tooltips for exact per-gene and per-bar values.",
+            "source": "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-6", "step-7"],
+          "what": "Step 6's fusion receives a ranking route with a measured, non-trivial weight (AUC 0.634) that nonetheless ranks the confirmed lead at 293rd of 815 and puts two decoys at the top \u2014 a route that is real by its own pre-registered tests and wrong at the top, which step 6 must weigh rather than either trust or discard. Step 7's Track 2 drug-repurposing enrichment receives the citable mechanism paper for the leading gene (found by script, not by hand) as mechanism evidence, explicitly flagged as Track 2 material rather than Track 1 diagnostic evidence."
+        },
+        "inherits": {
+          "steps": ["step-1", "step-3", "step-4"],
+          "what": "Step 1's 404 targets and 396 decoys are queried identically as the route's own null. Step 3's k-mer genotyping of the public ClinVar catalogue in the raw reads is the independent second instrument that corroborates the leading allele's presence for H036 \u2014 without it, presence would rest on the vendor's own annotation alone. Step 4's top-20 genome-wide ranking is the candidate list this step's literature search is actually judging."
+        },
+        "iteration": "iteration2",
+        "sources": [
+          "docs/iteration2/step-5/README.md",
+          "docs/iteration2/step-5/methodology/102-the-sources-and-what-they-could-be-asked.md",
+          "docs/iteration2/step-5/methodology/103-the-alleles-somebody-already-published.md",
+          "docs/iteration2/step-5/methodology/104-the-papers-the-script-found.md",
+          "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md",
+          "docs/iteration2/step-5/methodology/106-where-the-missense-sits-in-the-protein.md",
+          "docs/iteration2/step-5/notes/why-the-baseline-is-the-test.md"
+        ],
+        "step": "step-5",
+        "summary": "Step 5 asks what public knowledge \u2014 published variant records, case-report-style literature, and protein structure predictions \u2014 says about the candidate genes, and builds its own null into the design from the first line: the same 815 genes (404 targets, 396 decoys, step 4's top 20, deduplicated) go through identical queries, and every knowledge score is measured against a raw PubMed hit-count baseline before it is trusted at all. It queried LitVar 2.0 for 1,924 alleles (1,914 askable by dbSNP identifier), searched PubTator 3.0 5,705 times (815 genes \u00d7 7 proband terms) for papers discussing a gene alongside the child's own features, and checked where the leading missense allele sits relative to InterPro protein domains and an AlphaFold structure. Of five pre-registered claims, three were supported and two refuted. The refutation of H037 is the step's best finding: the pre-registered 'paper covering \u22655 features' threshold is met by 54 genes, 16 of them decoys, and none of step 4's top 20 \u2014 but the script found, unprompted, a case report specifically about a novel variant in the step-4 leading gene, which the threshold ranked below a 68-gene survey paper.",
+        "verdict": "H036 (a published allele of a top-20 gene is present in this child) is supported: the step-4 leading gene's truncating allele is ClinVar pathogenic with 4 papers, and step 3's independent k-mer route types it present at heterozygous, posterior 1.0. H037 (a paper covering \u22655 of the child's 7 features names a top-20 gene) is refuted \u2014 54 genes clear the threshold (38 targets, 16 decoys) but none in the top 20; the threshold rewards broad-coverage surveys and conference abstracts over a specific case report, and was not moved after seeing this. H038 (the knowledge score separates targets from matched decoys) is supported at AUC 0.634 [0.593, 0.672], though traceably weaker than step 4's genotype-based 0.706 on the identical two gene sets, and traced to the matched-feature count alone \u2014 the saturated (95.1% covered) publication-count column contributes nothing. H039 (the ranking reorders the citation-count baseline rather than reproducing it) is supported: Spearman \u03c1 = 0.024, zero overlap in the top 5. H040 (the leading missense allele sits in an annotated domain, is confidently modelled, and AlphaMissense agrees) is refuted on its first clause: the allele sits outside every InterPro domain, though the structure is confidently modelled (pLDDT 91.06) and AlphaMissense does agree with pathogenicity.",
+        "why": "A literature route is the easiest route in this whole pipeline to fool yourself with: the gene at the top of any biomedical search is simply the gene most has been written about, and in a candidate set already derived from a patient's symptoms that is very often the gene somebody already solved \u2014 nothing in a naive literature score distinguishes 'this route found the answer' from 'this route found whatever is famous.' Without a decoy null and a citation-count baseline built in from the start, a plausible-looking top hit could be reported with no way to tell whether it reflects genuine corroborating evidence or just publication volume. Running both checks before trusting any score is what lets step 6 treat this route's output as a measured, weighted signal rather than an unverifiable literature search."
+      },
       "slug": "step-5",
       "status": "done",
       "takes_hypotheses": true,
@@ -1545,6 +2139,12 @@
       "figures": [
         {
           "bytes": 7136,
+          "caption": {
+            "means": "Same evidence as the static grid, letting a reader check any cell's exact rank rather than reading it off a colour band.",
+            "name": "agreement-matrix.html",
+            "reads": "Interactive version of the same route-by-pair grid, with hover tooltips giving the exact rank per cell.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
           "kind": "html",
           "name": "agreement-matrix.html",
           "path": "figures/track1/iteration2/step-6/agreement-matrix.html",
@@ -1554,6 +2154,12 @@
         },
         {
           "bytes": 498183,
+          "caption": {
+            "means": "The step's headline visual: BUB1B's row shows green (likelihood rank 1), a mid-yellow phenotype cell (rank 9), and a grey knowledge cell (never listed) \u2014 visually showing that 'agreement' here means one strong vote and two weak or absent ones, not four green cells.",
+            "name": "agreement-matrix.png",
+            "reads": "A gene/pair-by-route grid: rows are the leading fused pairs (best fused rank first), columns are the four routes, each cell coloured by the rank that route gave the pair (green = rank 1, yellow shades = inside top 50, darker better, grey = never listed), asterisked cells marking a rank inherited from the pair's whole gene.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
           "kind": "png",
           "name": "agreement-matrix.png",
           "path": "figures/track1/iteration2/step-6/agreement-matrix.png",
@@ -1563,6 +2169,12 @@
         },
         {
           "bytes": 2721,
+          "caption": {
+            "means": "Same evidence as the static bars, letting a reader inspect the exact reach of the decoy null.",
+            "name": "decoy-reach.html",
+            "reads": "Interactive version of the decoy-reach bars, with hover tooltips for exact best-rank and median-rank values per class.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
           "kind": "html",
           "name": "decoy-reach.html",
           "path": "figures/track1/iteration2/step-6/decoy-reach.html",
@@ -1572,6 +2184,12 @@
         },
         {
           "bytes": 81115,
+          "caption": {
+            "means": "The fusion's own decoy null: a matched control gene reaches fused rank 13, well inside the top 20, while targets have a median rank of 109 versus decoys' median of 42 \u2014 evidence that the fused ranking's resolution below rank 1 is poor, and that no claim should be made about ranks 2\u201320 as a clean candidate list.",
+            "name": "decoy-reach.png",
+            "reads": "Bars showing the best fused rank reached by each gene class (targets vs. matched decoys), with diamonds marking the median fused rank per class; lower is better.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
           "kind": "png",
           "name": "decoy-reach.png",
           "path": "figures/track1/iteration2/step-6/decoy-reach.png",
@@ -1581,6 +2199,12 @@
         },
         {
           "bytes": 458,
+          "caption": {
+            "means": "The commitment device that makes the rediscovery claim falsifiable: this digest was written into methodology entry 108 before any iteration-1 table was read, so a re-run that disagreed with the answer could not silently replace it without producing a different, detectably mismatched hash.",
+            "name": "freeze-receipt.html",
+            "reads": "A plain fact table (not a chart): the frozen file's path, its sha256 digest (`a596abf8\u2026`), the row count (274), the freeze timestamp, and the fusion's fixed constants (k=60, top 50 per route, absent=rank 51, seed 20260918).",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
           "kind": "html",
           "name": "freeze-receipt.html",
           "path": "figures/track1/iteration2/step-6/freeze-receipt.html",
@@ -1590,6 +2214,12 @@
         },
         {
           "bytes": 4842,
+          "caption": {
+            "means": "Same evidence as the static stacked bars, letting a reader confirm exactly which raw sources back each leading pair.",
+            "name": "independent-evidence.html",
+            "reads": "Interactive version of the stacked independent-evidence bars, with hover tooltips naming each segment's source.",
+            "source": "docs/iteration2/step-6/methodology/107-the-routes-and-which-of-them-earned-a-rank.md"
+          },
           "kind": "html",
           "name": "independent-evidence.html",
           "path": "figures/track1/iteration2/step-6/independent-evidence.html",
@@ -1599,6 +2229,12 @@
         },
         {
           "bytes": 140040,
+          "caption": {
+            "means": "Evidence for H043: BUB1B's stack has 3 segments (HPO, VCF, reads) and is missing the literature segment \u2014 a short stack overall would mean a pair nominated only by instruments reading the same underlying data; this correction is what prevents reciprocal rank fusion's blind spot (treating correlated lists as independent) from overstating how well-supported a pair is.",
+            "name": "independent-evidence.png",
+            "reads": "Stacked bars per leading pair, one coloured segment per disjoint raw evidence source (purple = the 8 clinical terms, blue = the delivered callset/VCF, green = raw reads, yellow = published literature) that speaks for it, after collapsing routes that read the same source.",
+            "source": "docs/iteration2/step-6/methodology/107-the-routes-and-which-of-them-earned-a-rank.md"
+          },
           "kind": "png",
           "name": "independent-evidence.png",
           "path": "figures/track1/iteration2/step-6/independent-evidence.png",
@@ -1608,6 +2244,12 @@
         },
         {
           "bytes": 35059,
+          "caption": {
+            "means": "Same evidence as the individual exhibits, gathered on one page for the step's report view.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet combining all five chart exhibits (agreement-matrix, leave-one-route-out, independent-evidence, weight-sensitivity, decoy-reach) plus the freeze-receipt fact table.",
+            "source": "docs/iteration2/step-6/methodology/109-what-the-mirror-found.md"
+          },
           "kind": "html",
           "name": "index.html",
           "path": "figures/track1/iteration2/step-6/index.html",
@@ -1617,6 +2259,12 @@
         },
         {
           "bytes": 2617,
+          "caption": {
+            "means": "Same evidence as the static bars, letting a reader inspect exact post-ablation ranks.",
+            "name": "leave-one-route-out.html",
+            "reads": "Interactive version of the leave-one-route-out bars, with hover tooltips for the exact rank each ablation produces.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
           "kind": "html",
           "name": "leave-one-route-out.html",
           "path": "figures/track1/iteration2/step-6/leave-one-route-out.html",
@@ -1626,6 +2274,12 @@
         },
         {
           "bytes": 63671,
+          "caption": {
+            "means": "Direct evidence for H042's refutation: removing `likelihood` sends the bar out to rank 62 (red), while removing `phenotype` or `knowledge` keeps it at rank 1 (green) \u2014 proof that one route, not a consensus of four, is carrying the fused result.",
+            "name": "leave-one-route-out.png",
+            "reads": "Horizontal bars, one per route removed from the fusion, showing where the all-routes leader (BUB1B) lands with that route silenced; green bar = still rank 1, red bar = moved off rank 1, bar length is the new rank.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
           "kind": "png",
           "name": "leave-one-route-out.png",
           "path": "figures/track1/iteration2/step-6/leave-one-route-out.png",
@@ -1635,6 +2289,12 @@
         },
         {
           "bytes": 4372,
+          "caption": {
+            "means": "Same evidence as the static bars, letting a reader inspect exact rank shifts gene by gene.",
+            "name": "weight-sensitivity.html",
+            "reads": "Interactive version of the equal-weight vs measured-weight comparison, with hover tooltips for exact ranks under each weighting.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
           "kind": "html",
           "name": "weight-sensitivity.html",
           "path": "figures/track1/iteration2/step-6/weight-sensitivity.html",
@@ -1644,6 +2304,12 @@
         },
         {
           "bytes": 223876,
+          "caption": {
+            "means": "The robustness check reported alongside, never instead of, the primary result: BUB1B stays at rank 1 under both weightings, which is the one robustness statement this step can make \u2014 while CLCNKB falls from rank 2 to 49 once weights reflect measured route quality, showing how sensitive the rest of the ranking is to the weighting choice.",
+            "name": "weight-sensitivity.png",
+            "reads": "Paired bars per top gene: blue = rank under the pre-registered equal weighting, yellow = rank under each route's own measured error-rate weighting (symptom recall 0.335, 1\u2212permutation-p 0.944, knowledge AUC 0.634); shorter bar is a better (lower) rank.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
           "kind": "png",
           "name": "weight-sensitivity.png",
           "path": "figures/track1/iteration2/step-6/weight-sensitivity.png",
@@ -1720,6 +2386,102 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "The step's headline visual: BUB1B's row shows green (likelihood rank 1), a mid-yellow phenotype cell (rank 9), and a grey knowledge cell (never listed) \u2014 visually showing that 'agreement' here means one strong vote and two weak or absent ones, not four green cells.",
+            "name": "agreement-matrix.png",
+            "reads": "A gene/pair-by-route grid: rows are the leading fused pairs (best fused rank first), columns are the four routes, each cell coloured by the rank that route gave the pair (green = rank 1, yellow shades = inside top 50, darker better, grey = never listed), asterisked cells marking a rank inherited from the pair's whole gene.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
+          {
+            "means": "Same evidence as the static grid, letting a reader check any cell's exact rank rather than reading it off a colour band.",
+            "name": "agreement-matrix.html",
+            "reads": "Interactive version of the same route-by-pair grid, with hover tooltips giving the exact rank per cell.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
+          {
+            "means": "Direct evidence for H042's refutation: removing `likelihood` sends the bar out to rank 62 (red), while removing `phenotype` or `knowledge` keeps it at rank 1 (green) \u2014 proof that one route, not a consensus of four, is carrying the fused result.",
+            "name": "leave-one-route-out.png",
+            "reads": "Horizontal bars, one per route removed from the fusion, showing where the all-routes leader (BUB1B) lands with that route silenced; green bar = still rank 1, red bar = moved off rank 1, bar length is the new rank.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
+          {
+            "means": "Same evidence as the static bars, letting a reader inspect exact post-ablation ranks.",
+            "name": "leave-one-route-out.html",
+            "reads": "Interactive version of the leave-one-route-out bars, with hover tooltips for the exact rank each ablation produces.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
+          {
+            "means": "Evidence for H043: BUB1B's stack has 3 segments (HPO, VCF, reads) and is missing the literature segment \u2014 a short stack overall would mean a pair nominated only by instruments reading the same underlying data; this correction is what prevents reciprocal rank fusion's blind spot (treating correlated lists as independent) from overstating how well-supported a pair is.",
+            "name": "independent-evidence.png",
+            "reads": "Stacked bars per leading pair, one coloured segment per disjoint raw evidence source (purple = the 8 clinical terms, blue = the delivered callset/VCF, green = raw reads, yellow = published literature) that speaks for it, after collapsing routes that read the same source.",
+            "source": "docs/iteration2/step-6/methodology/107-the-routes-and-which-of-them-earned-a-rank.md"
+          },
+          {
+            "means": "Same evidence as the static stacked bars, letting a reader confirm exactly which raw sources back each leading pair.",
+            "name": "independent-evidence.html",
+            "reads": "Interactive version of the stacked independent-evidence bars, with hover tooltips naming each segment's source.",
+            "source": "docs/iteration2/step-6/methodology/107-the-routes-and-which-of-them-earned-a-rank.md"
+          },
+          {
+            "means": "The robustness check reported alongside, never instead of, the primary result: BUB1B stays at rank 1 under both weightings, which is the one robustness statement this step can make \u2014 while CLCNKB falls from rank 2 to 49 once weights reflect measured route quality, showing how sensitive the rest of the ranking is to the weighting choice.",
+            "name": "weight-sensitivity.png",
+            "reads": "Paired bars per top gene: blue = rank under the pre-registered equal weighting, yellow = rank under each route's own measured error-rate weighting (symptom recall 0.335, 1\u2212permutation-p 0.944, knowledge AUC 0.634); shorter bar is a better (lower) rank.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
+          {
+            "means": "Same evidence as the static bars, letting a reader inspect exact rank shifts gene by gene.",
+            "name": "weight-sensitivity.html",
+            "reads": "Interactive version of the equal-weight vs measured-weight comparison, with hover tooltips for exact ranks under each weighting.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
+          {
+            "means": "The fusion's own decoy null: a matched control gene reaches fused rank 13, well inside the top 20, while targets have a median rank of 109 versus decoys' median of 42 \u2014 evidence that the fused ranking's resolution below rank 1 is poor, and that no claim should be made about ranks 2\u201320 as a clean candidate list.",
+            "name": "decoy-reach.png",
+            "reads": "Bars showing the best fused rank reached by each gene class (targets vs. matched decoys), with diamonds marking the median fused rank per class; lower is better.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
+          {
+            "means": "Same evidence as the static bars, letting a reader inspect the exact reach of the decoy null.",
+            "name": "decoy-reach.html",
+            "reads": "Interactive version of the decoy-reach bars, with hover tooltips for exact best-rank and median-rank values per class.",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
+          {
+            "means": "The commitment device that makes the rediscovery claim falsifiable: this digest was written into methodology entry 108 before any iteration-1 table was read, so a re-run that disagreed with the answer could not silently replace it without producing a different, detectably mismatched hash.",
+            "name": "freeze-receipt.html",
+            "reads": "A plain fact table (not a chart): the frozen file's path, its sha256 digest (`a596abf8\u2026`), the row count (274), the freeze timestamp, and the fusion's fixed constants (k=60, top 50 per route, absent=rank 51, seed 20260918).",
+            "source": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md"
+          },
+          {
+            "means": "Same evidence as the individual exhibits, gathered on one page for the step's report view.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet combining all five chart exhibits (agreement-matrix, leave-one-route-out, independent-evidence, weight-sensitivity, decoy-reach) plus the freeze-receipt fact table.",
+            "source": "docs/iteration2/step-6/methodology/109-what-the-mirror-found.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-7"],
+          "what": "Step 7's Track 2 drug-repurposing enrichment inherits the confirmed, fused-rank-1 pair as the gene to build mechanism and drug-target evidence around \u2014 it can proceed on a gene the fusion corroborated from independent inputs, without needing to re-litigate whether the diagnosis holds. Step 6 also hands forward the disclosed weakness (one route carries the result) as a caveat Track 2's evidence chain should not overstate."
+        },
+        "inherits": {
+          "steps": ["step-1", "step-2", "step-3", "step-4", "step-5"],
+          "what": "Step 6 is the only step that reads all five predecessors' measured outputs directly rather than re-deriving anything: step 1's recall@300 (0.335) sets the phenotype route's measured weight and its admission as an enrichment; step 2's zero-discrimination finding (10/396 targets vs 10/396 decoys) is why the read route is admitted at weight 0 as confirmation-only, never as a ranking vote; step 3's dosage and copy-number findings become the per-gene confirmation triple (read-confirmed, single-copy, no CN loss); step 4's AUC 0.706 and permutation p=0.056 set the likelihood route's admission and its dominant measured weight (0.9441); step 5's AUC 0.634 sets the knowledge route's admission and weight, and its own admission rule (`RouteWeight.ranking_route`) is called rather than re-implemented."
+        },
+        "iteration": "iteration2",
+        "sources": [
+          "docs/iteration2/step-6/README.md",
+          "docs/iteration2/step-6/methodology/107-the-routes-and-which-of-them-earned-a-rank.md",
+          "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md",
+          "docs/iteration2/step-6/methodology/109-what-the-mirror-found.md",
+          "docs/iteration2/step-6/methodology/124-the-reserve-file-built-and-rehearsed.md"
+        ],
+        "step": "step-6",
+        "summary": "Step 6 fuses the three routes admitted to rank (phenotype from step 1, likelihood from step 4, knowledge from step 5) plus one confirmation-only route (read-derived evidence from steps 2-3, admitted at weight 0 because it measured zero discrimination between targets and decoys), using reciprocal rank fusion over 274 pairs drawn from a 51,410-pair universe. The fused ranking was frozen and sha256-hashed (`a596abf8\u2026`) before any iteration-1 table was read \u2014 the blind gate stayed green through freezing and only flipped at the unblinding entry. The fused rank-1 pair is BUB1B, the same truncating (dbSNP rs759242053) + missense pair iteration 1 uploaded and had confirmed by the oracle. It holds rank 1 under both equal weights and measured-error-rate weights, and is corroborated by 3 of 4 disjoint evidence sources (clinical terms, VCF, raw reads \u2014 literature is missing). But a leave-one-route-out ablation shows the fusion is not four independent witnesses agreeing: silencing the likelihood route alone drops the leader from rank 1 to rank 62, while silencing either other route leaves it at rank 1. Of four pre-registered claims, two were refuted and two supported; a fifth entry then built and rehearsed \u2014 but did not upload \u2014 a second oracle submission to confirm it would teach nothing (0.000 bits expected information gain).",
+        "verdict": "H041 (fused rank 1 for the confirmed pair, and no admitted route ranks it below 3) is refuted on its second clause: fused rank 1 holds, but the phenotype route ranks it 9th of its own list and the knowledge route does not list it in its top 50 at all \u2014 only the likelihood route (rank 1) meets the bar. H042 (no single route carries the fused result) is refuted: removing the likelihood route drops the leader from rank 1 to rank 62, while removing phenotype or knowledge leaves it at rank 1 \u2014 the fusion is carried by one discriminating route, corroborated at a distance by the others, not four independent witnesses. H043 (the leader has \u22652 disjoint evidence inputs behind it) is supported: it has 3 of 4 (HPO, VCF, reads; literature is the one missing). H044 (a second oracle upload is not informative) is supported: expected information gain is 0.000 bits on all three testable questions (the causal pair, a second causal pair, and secondary findings), and a later entry (124) built and rehearsed the actual reserve submission file to confirm this on real bytes without uploading it \u2014 5 of 6 oracle slots remain, deliberately.",
+        "why": "Every earlier step's route was validated in isolation, but none of them alone was allowed to be the final word: reciprocal rank fusion treats separate ranked lists as independent witnesses, and that assumption fails if the lists secretly share an input (two routes reading the same 8 clinical terms, two reading the same callset, one route seeded with another's output) \u2014 in which case a fused rank 1 could look like convergence while actually being one signal echoed. Without the leave-one-route-out ablation and the independent-evidence count, the report could not honestly distinguish 'four instruments converged on this answer' from 'one instrument found it and the others didn't disagree.' And without freezing the ranking's digest before reading any iteration-1 table, a rediscovery claim would be unfalsifiable \u2014 nothing would stop the comparison from being run, disliked, and quietly re-run until it matched."
+      },
       "slug": "step-6",
       "status": "done",
       "takes_hypotheses": true,
@@ -1852,6 +2614,12 @@
       "figures": [
         {
           "bytes": 98182,
+          "caption": {
+            "means": "Direct evidence for H049: D4's overlap with the NTRK3 decoy is 0.249, well above the 0.10 line, meaning the automated tumour-trial stage returns largely the same drug set regardless of which gene is queried \u2014 this is why the automated rung alone cannot be reported as gene-specific mechanism evidence, and why the curated rung (rung 2\u20133) carries the actual argument.",
+            "name": "decoy-overlap.png",
+            "reads": "Bars showing the Jaccard overlap (shared approved-drug set fraction) between each real direction's automated drug list and the same pipeline's output for two decoy genes (NTRK3, XDH), with a dashed line at the pre-registered 0.10 specificity threshold.",
+            "source": "docs/iteration2/step-7/methodology/112-two-decoy-cards-through-the-same-pipeline.md"
+          },
           "kind": "png",
           "name": "decoy-overlap.png",
           "path": "figures/track2/decoy-overlap.png",
@@ -1861,6 +2629,12 @@
         },
         {
           "bytes": 204608,
+          "caption": {
+            "means": "Shows exactly which drugs earned their place by a cited mechanism result versus by trial registration alone: 11 drugs (yellow/green cells) carry curated evidence, while the larger blue block of ~50 drugs is 'already being tried in this tumour type', explicitly not a mechanism finding attributable to BUB1B \u2014 the visual distinction between rungs is what keeps those two claims from being conflated.",
+            "name": "evidence-ladder.png",
+            "reads": "A drug-by-direction grid: rows are drugs that reached rung 2 or higher on any direction, columns are the four mechanistic directions plus a pathway column, each cell showing the rung number (1\u20135) coloured by what that rung means (green = curated result at rung 4\u20135, yellow = curated result at rung 2\u20133, blue = automated-only trial/paediatric evidence, red = set aside as anti-direction or standard of care); a `*` marks proxy evidence for a same-axis compound rather than the named drug.",
+            "source": "docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md"
+          },
           "kind": "png",
           "name": "evidence-ladder.png",
           "path": "figures/track2/evidence-ladder.png",
@@ -1870,6 +2644,12 @@
         },
         {
           "bytes": 423301,
+          "caption": {
+            "means": "Purely descriptive context on how much has been published connecting each shortlisted drug to the mechanism or the tumour \u2014 explicitly stated to never move a rung on the evidence ladder, distinguishing this figure's role from the curated mechanism evidence that actually determines rung placement.",
+            "name": "mechanism-literature.png",
+            "reads": "Log-scale bars per shortlisted drug, two bars each: PubMed record count for 'drug AND mechanism/gene/pathway/protein' and for 'drug AND tumour context'.",
+            "source": "docs/iteration2/step-7/methodology/111-the-automated-stages-literature-trials-and-labels-per-drug.md"
+          },
           "kind": "png",
           "name": "mechanism-literature.png",
           "path": "figures/track2/mechanism-literature.png",
@@ -1879,6 +2659,12 @@
         },
         {
           "bytes": 532375,
+          "caption": {
+            "means": "Evidence for H050: all 11 argued (curated-mechanism) drugs and 290 of 329 graded drugs overall have at least one paediatric pointer \u2014 explicitly labelled as a pointer to read, never a licence or safety guarantee, since a label section or a trial admitting children is not the same as an approval for this indication or this age group.",
+            "name": "pediatric-evidence.png",
+            "reads": "One row per shortlisted drug with two dot columns: filled/empty for whether a US drug label has a section 8.4 Pediatric Use, and filled/empty for whether a registered clinical trial admits children in any indication.",
+            "source": "docs/iteration2/step-7/methodology/111-the-automated-stages-literature-trials-and-labels-per-drug.md"
+          },
           "kind": "png",
           "name": "pediatric-evidence.png",
           "path": "figures/track2/pediatric-evidence.png",
@@ -1888,6 +2674,12 @@
         },
         {
           "bytes": 62883,
+          "caption": {
+            "means": "Quantifies the step's overall yield: of 329 drugs graded, only a small fraction clear rung 2, and the 61-row shortlist is a small, evidence-gated fraction of everything approved \u2014 most drugs a naive search would surface (grey, rung 1) carry no direction-specific evidence at all.",
+            "name": "rung-funnel.png",
+            "reads": "Funnel/bar chart from 329 graded approved (or curated) drugs down to the shortlist, with bars coloured green (argued, rungs 4\u20135, and shortlisted), yellow (rungs 2\u20133) and grey (rung 1, no evidence beyond being approved).",
+            "source": "docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md"
+          },
           "kind": "png",
           "name": "rung-funnel.png",
           "path": "figures/track2/rung-funnel.png",
@@ -2012,6 +2804,62 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "Shows exactly which drugs earned their place by a cited mechanism result versus by trial registration alone: 11 drugs (yellow/green cells) carry curated evidence, while the larger blue block of ~50 drugs is 'already being tried in this tumour type', explicitly not a mechanism finding attributable to BUB1B \u2014 the visual distinction between rungs is what keeps those two claims from being conflated.",
+            "name": "evidence-ladder.png",
+            "reads": "A drug-by-direction grid: rows are drugs that reached rung 2 or higher on any direction, columns are the four mechanistic directions plus a pathway column, each cell showing the rung number (1\u20135) coloured by what that rung means (green = curated result at rung 4\u20135, yellow = curated result at rung 2\u20133, blue = automated-only trial/paediatric evidence, red = set aside as anti-direction or standard of care); a `*` marks proxy evidence for a same-axis compound rather than the named drug.",
+            "source": "docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md"
+          },
+          {
+            "means": "Quantifies the step's overall yield: of 329 drugs graded, only a small fraction clear rung 2, and the 61-row shortlist is a small, evidence-gated fraction of everything approved \u2014 most drugs a naive search would surface (grey, rung 1) carry no direction-specific evidence at all.",
+            "name": "rung-funnel.png",
+            "reads": "Funnel/bar chart from 329 graded approved (or curated) drugs down to the shortlist, with bars coloured green (argued, rungs 4\u20135, and shortlisted), yellow (rungs 2\u20133) and grey (rung 1, no evidence beyond being approved).",
+            "source": "docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md"
+          },
+          {
+            "means": "Direct evidence for H049: D4's overlap with the NTRK3 decoy is 0.249, well above the 0.10 line, meaning the automated tumour-trial stage returns largely the same drug set regardless of which gene is queried \u2014 this is why the automated rung alone cannot be reported as gene-specific mechanism evidence, and why the curated rung (rung 2\u20133) carries the actual argument.",
+            "name": "decoy-overlap.png",
+            "reads": "Bars showing the Jaccard overlap (shared approved-drug set fraction) between each real direction's automated drug list and the same pipeline's output for two decoy genes (NTRK3, XDH), with a dashed line at the pre-registered 0.10 specificity threshold.",
+            "source": "docs/iteration2/step-7/methodology/112-two-decoy-cards-through-the-same-pipeline.md"
+          },
+          {
+            "means": "Evidence for H050: all 11 argued (curated-mechanism) drugs and 290 of 329 graded drugs overall have at least one paediatric pointer \u2014 explicitly labelled as a pointer to read, never a licence or safety guarantee, since a label section or a trial admitting children is not the same as an approval for this indication or this age group.",
+            "name": "pediatric-evidence.png",
+            "reads": "One row per shortlisted drug with two dot columns: filled/empty for whether a US drug label has a section 8.4 Pediatric Use, and filled/empty for whether a registered clinical trial admits children in any indication.",
+            "source": "docs/iteration2/step-7/methodology/111-the-automated-stages-literature-trials-and-labels-per-drug.md"
+          },
+          {
+            "means": "Purely descriptive context on how much has been published connecting each shortlisted drug to the mechanism or the tumour \u2014 explicitly stated to never move a rung on the evidence ladder, distinguishing this figure's role from the curated mechanism evidence that actually determines rung placement.",
+            "name": "mechanism-literature.png",
+            "reads": "Log-scale bars per shortlisted drug, two bars each: PubMed record count for 'drug AND mechanism/gene/pathway/protein' and for 'drug AND tumour context'.",
+            "source": "docs/iteration2/step-7/methodology/111-the-automated-stages-literature-trials-and-labels-per-drug.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-8"],
+          "what": "Step 7 explicitly left one row of the mechanism card open \u2014 the aneuploidy burden in this specific child's sample (fact F8) \u2014 for step 8 to measure. Step 8's measured detection limit and burden result feeds back into card v4, and the pre-registered digest test (H061) is the mechanism by which step 7 checks whether that new measurement changes any drug-evidence conclusion."
+        },
+        "inherits": {
+          "steps": ["step-2", "step-3", "step-4", "step-5", "step-6"],
+          "what": "Step 7 cannot start until step 6 confirms the pair \u2014 it is deliberately not blind, and every mechanism-card fact is sourced to a specific earlier entry: step 2/3 for the genotype and copy-number facts (F2\u2013F4) that establish a null+hypomorph model, step 4 for the quantified damage estimate (F6) and the undetermined population phasing (F7), step 5 for the missense allele's structural context (F5), and step 6 for the confirmed, rediscovered pair itself (F9) that licenses treating this as a settled diagnosis worth building drug evidence around rather than a hypothesis."
+        },
+        "iteration": "iteration2",
+        "sources": [
+          "docs/iteration2/step-7/README.md",
+          "docs/iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md",
+          "docs/iteration2/step-7/methodology/111-the-automated-stages-literature-trials-and-labels-per-drug.md",
+          "docs/iteration2/step-7/methodology/112-two-decoy-cards-through-the-same-pipeline.md",
+          "docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md",
+          "docs/iteration2/step-7/methodology/114-the-dashboard-surface-for-step-7.md",
+          "docs/iteration2/step-7/methodology/120-the-card-at-version-4-and-the-second-submission-draft.md"
+        ],
+        "step": "step-7",
+        "summary": "Step 7 is Track 2 (drug repurposing): given the confirmed diagnosis \u2014 the child carries two broken copies of BUB1B, one making no protein (a truncating/null allele) and one making a weakened protein (a missense/hypomorph allele) \u2014 it asks which already-approved drugs have real evidence for four mechanistic directions (D1 strengthen the checkpoint, D2 exploit the resulting aneuploid-cell stress, D3 stabilise the remaining protein, D4 treat the resulting tumour). This step is explicitly not blind: it only starts once step 6 has confirmed the pair, and every fact it draws from earlier steps was unblinded first. It graded 329 approved drugs on a five-rung evidence ladder fixed before any drug was looked up, against two decoy-gene cards run through the identical pipeline as a specificity control. Eleven drugs carry a cited, curated mechanism result (rung 2 or 3); fifty more reach the top automated rung only because they are already in a paediatric rhabdomyosarcoma trial (a fact about the tumour, not a mechanism finding attributable to this gene); a decoy gene got 64 such drugs with the gene never consulted. A do-not/caution table flags 13 spindle-poison chemotherapy drugs (including the vincristine this tumour type is normally treated with) as needing the very checkpoint that is broken \u2014 flagged for the treating team, not advice to withhold. All seven pre-registered claims were supported, and a fourth mechanism-card revision (v4, adding step 8's measured aneuploidy-burden fact) moved no rung and no table row.",
+        "verdict": "H045 (direction D1, strengthening the checkpoint, yields no submittable drug and becomes a do-not table) is supported. H046 (D2 holds an approved compound with molecule-level cell evidence) is supported: chloroquine. H047 (D3 has an approved-drug route on the NAD\u207a/SIRT2 axis with in-vivo BubR1 evidence) is supported only by proxy \u2014 the automated stage found nothing, and niacin/nicotinamide are in the ladder because a person curated them in by hand, flagged `curated_only`. H048 (D4 holds a non-cytotoxic approved agent at rung \u22652 with paediatric data) is supported: lovastatin. H049 (the automated stages are non-specific enough to need the decoy control) is supported: D4's automated drug set overlaps a decoy gene's at Jaccard 0.249, well above the pre-registered 0.10 specificity line. H050 (every argued drug has a paediatric evidence pointer) is supported: 290 of 329 graded drugs, and all 11 argued rows, have at least one. H061 (adding step 8's measured aneuploidy-burden fact to the mechanism card moves nothing) is supported: card v4's digests are byte-identical to v3's on every rung, shortlist row and do-not row.",
+        "why": "A drug-repurposing search over a confirmed rare-disease gene is exactly the kind of result that looks meaningful by construction: any gene has trials, labels and PubMed hits attached to it, and a pipeline that reports 'N approved drugs found' without a control cannot distinguish real mechanism evidence from noise that any gene would produce. Building two decoy-gene cards through the identical, unmodified pipeline is what makes the automated stage's specificity measurable rather than assumed \u2014 and it caught a real problem: the first version of the ladder rule graded 85 drugs at the top rung purely because they had a rhabdomyosarcoma trial, a rule the decoy comparison showed was gene-independent and had to be narrowed before any verdict was drawn. Without that check, the report would have presented 85 unrelated approved drugs as if they were BUB1B-specific mechanism evidence."
+      },
       "slug": "step-7",
       "status": "done",
       "takes_hypotheses": true,
@@ -2127,6 +2975,12 @@
       "figures": [
         {
           "bytes": 4242,
+          "caption": {
+            "means": "Same evidence as the static bars, letting a reader inspect exact deviation values and null bounds per chromosome.",
+            "name": "bdev-per-chromosome.html",
+            "reads": "Interactive version of the per-chromosome fold-over deviation bars against their individual nulls.",
+            "source": "docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md"
+          },
           "kind": "html",
           "name": "bdev-per-chromosome.html",
           "path": "figures/track1/iteration2/step-8/bdev-per-chromosome.html",
@@ -2136,6 +2990,12 @@
         },
         {
           "bytes": 78871,
+          "caption": {
+            "means": "Shows that no contig exceeds its own, individually-calibrated null \u2014 the per-chromosome null construction is what prevents a shallow, low-coverage chromosome from being unfairly flagged just for being noisier, which is the correct comparison for this heterogeneous dataset.",
+            "name": "bdev-per-chromosome.png",
+            "reads": "Bar chart of each contig's mean fold-over deviation |BAF\u2212centre|, each compared against a null built from that chromosome's own depth and heterozygous-site count (not a shared threshold), with the null's mean and 95th percentile marked and hemizygous contigs greyed out.",
+            "source": "docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md"
+          },
           "kind": "png",
           "name": "bdev-per-chromosome.png",
           "path": "figures/track1/iteration2/step-8/bdev-per-chromosome.png",
@@ -2145,6 +3005,12 @@
         },
         {
           "bytes": 3531,
+          "caption": {
+            "means": "Same evidence as the static chart, letting a reader confirm the baseline's stability chromosome by chromosome.",
+            "name": "depth-against-baseline.html",
+            "reads": "Interactive version of the depth-vs-leave-one-out-baseline chart, with hover tooltips for exact ratios and precision-floor values.",
+            "source": "docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md"
+          },
           "kind": "html",
           "name": "depth-against-baseline.html",
           "path": "figures/track1/iteration2/step-8/depth-against-baseline.html",
@@ -2154,6 +3020,12 @@
         },
         {
           "bytes": 98565,
+          "caption": {
+            "means": "Evidence for H055: no chromosome's exclusion shifts the baseline beyond its own bootstrap interval, meaning the denominator every relative dosage/depth statistic on this page divides by is not being propped up or distorted by any single chromosome \u2014 the X/Y depth ratio (0.5225/1.5794) is itself the expected male-proband signature and serves as a sanity check that depth measurement works correctly.",
+            "name": "depth-against-baseline.png",
+            "reads": "Each chromosome's sequencing depth ratio plotted against a leave-one-chromosome-out baseline (the median of per-chromosome medians with each chromosome excluded in turn), with dotted lines marking the measured precision floor of that ratio across autosomes.",
+            "source": "docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md"
+          },
           "kind": "png",
           "name": "depth-against-baseline.png",
           "path": "figures/track1/iteration2/step-8/depth-against-baseline.png",
@@ -2163,6 +3035,12 @@
         },
         {
           "bytes": 3142,
+          "caption": {
+            "means": "Same evidence as the static bars, letting a reader check the exact detection limit per chromosome.",
+            "name": "detection-limit.html",
+            "reads": "Interactive version of the per-chromosome detection-limit bars, with hover tooltips for exact percentages.",
+            "source": "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md"
+          },
           "kind": "html",
           "name": "detection-limit.html",
           "path": "figures/track1/iteration2/step-8/detection-limit.html",
@@ -2172,6 +3050,12 @@
         },
         {
           "bytes": 70184,
+          "caption": {
+            "means": "The number every negative result on this page must be quoted with: autosomes detect at 2% (chr1\u20136) to 3% (chr7\u201322) of cells, while X and Y (hatched/grey, allele balance blind by construction in a male) have no meaningful limit from this route at all \u2014 this is what makes 'no chromosome carries mosaicism' a quantified, falsifiable statement rather than a bare assertion.",
+            "name": "detection-limit.png",
+            "reads": "Bar chart, one bar per chromosome, showing the smallest injected mosaic cell fraction reaching 80% detection power at that chromosome's own heterozygous-site count and depth; hatched bars mark contigs that never reach 80% power at any tested fraction; grey fill marks the hemizygous X and Y.",
+            "source": "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md"
+          },
           "kind": "png",
           "name": "detection-limit.png",
           "path": "figures/track1/iteration2/step-8/detection-limit.png",
@@ -2181,6 +3065,12 @@
         },
         {
           "bytes": 3239,
+          "caption": {
+            "means": "Shows that most of what would look like a dosage 'signal' is actually a GC-content bias: chromosome GC explains 81.7% of the between-chromosome dosage spread (Pearson 0.904) \u2014 this correction is what has to be applied before any residual difference can be treated as evidence of an aneuploid cell population, since GC bias is the same order of magnitude as the event being hunted.",
+            "name": "dosage-composition.html",
+            "reads": "Scatter of each autosome's measured dosage against its own chromosome-level GC (guanine+cytosine) content fraction, with a fitted trend line.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
           "kind": "html",
           "name": "dosage-composition.html",
           "path": "figures/track1/iteration2/step-8/dosage-composition.html",
@@ -2190,6 +3080,12 @@
         },
         {
           "bytes": 150834,
+          "caption": {
+            "means": "Same evidence as the interactive scatter, establishing the GC correction before any residual is read as a possible aneuploidy signal.",
+            "name": "dosage-composition.png",
+            "reads": "Static version of the dosage-vs-chromosome-GC scatter with fitted trend line.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
           "kind": "png",
           "name": "dosage-composition.png",
           "path": "figures/track1/iteration2/step-8/dosage-composition.png",
@@ -2199,6 +3095,12 @@
         },
         {
           "bytes": 4899,
+          "caption": {
+            "means": "The second instrument's positive control, read first by design: X reads 0.4873 and Y reads 0.5083 against an expected 0.5 (one copy each in a male proband), confirming the dosage route works before any autosomal claim is trusted. The two denominators track together, meaning no single chromosome is dragging the autosomal median.",
+            "name": "dosage-per-chromosome.html",
+            "reads": "Scatter plot, one point per chromosome, of k-mer dosage (sequence contributed, from counting reference-unique 31-mers in the raw reads) measured against two denominators \u2014 the autosomal median (with bootstrap error bars) and the total genome-wide k-mer mass \u2014 with a shaded band at the one-copy range and X/Y coloured as the control.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
           "kind": "html",
           "name": "dosage-per-chromosome.html",
           "path": "figures/track1/iteration2/step-8/dosage-per-chromosome.html",
@@ -2208,6 +3110,12 @@
         },
         {
           "bytes": 118390,
+          "caption": {
+            "means": "Same evidence as the interactive scatter: X/Y at ~0.49\u20130.51 confirms the instrument, and the two denominators' agreement rules out a single chromosome distorting the baseline.",
+            "name": "dosage-per-chromosome.png",
+            "reads": "Static version of the same dual-denominator dosage scatter per chromosome.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
           "kind": "png",
           "name": "dosage-per-chromosome.png",
           "path": "figures/track1/iteration2/step-8/dosage-per-chromosome.png",
@@ -2217,6 +3125,12 @@
         },
         {
           "bytes": 3681,
+          "caption": {
+            "means": "After GC correction, the largest residual is chr21 at 2.33 sigma (implied ~1.2% of cells) \u2014 not a finding, since with 22 autosomes tested at once roughly one is expected to clear 2 sigma by chance (Bonferroni-corrected p=0.43). The spread of these residuals, not the narrower bootstrap interval, sets the route's honest precision floor at 1.6% of cells (twice the 0.802% residual spread).",
+            "name": "dosage-residual.html",
+            "reads": "Bar chart of each chromosome's residual dosage (what is left after removing the GC trend), in units of the residual spread (sigma), with dotted lines at \u00b12 sigma.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
           "kind": "html",
           "name": "dosage-residual.html",
           "path": "figures/track1/iteration2/step-8/dosage-residual.html",
@@ -2226,6 +3140,12 @@
         },
         {
           "bytes": 71278,
+          "caption": {
+            "means": "Same evidence as the interactive chart: no autosome clears the corrected significance bar after accounting for how many chromosomes were tested at once, so 0 autosomes exceed the corrected null.",
+            "name": "dosage-residual.png",
+            "reads": "Static version of the per-chromosome residual-sigma bar chart with the \u00b12 sigma lines.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
           "kind": "png",
           "name": "dosage-residual.png",
           "path": "figures/track1/iteration2/step-8/dosage-residual.png",
@@ -2235,6 +3155,12 @@
         },
         {
           "bytes": 3493,
+          "caption": {
+            "means": "Same evidence as the static chart, letting a reader inspect exact heterozygous-call density per chromosome arm.",
+            "name": "heterozygous-density.html",
+            "reads": "Interactive version of the per-arm heterozygous-density bars.",
+            "source": "docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md"
+          },
           "kind": "html",
           "name": "heterozygous-density.html",
           "path": "figures/track1/iteration2/step-8/heterozygous-density.html",
@@ -2244,6 +3170,12 @@
         },
         {
           "bytes": 71327,
+          "caption": {
+            "means": "Shown beside the mechanism models but deliberately excluded from the likelihood calculation: this statistic is what a monosomy or copy-neutral-loss event would move (by removing heterozygous sites, not shifting their balance), but in a bulk (mixed-cell) sample the diploid cells still generate heterozygous calls, so a drop reflects the variant caller's own detection threshold as much as biology \u2014 not a model that can be written down honestly, hence reported as context, not evidence.",
+            "name": "heterozygous-density.png",
+            "reads": "Bar chart of heterozygous calls per PASS call, by chromosome arm (short arm and long arm shown separately).",
+            "source": "docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md"
+          },
           "kind": "png",
           "name": "heterozygous-density.png",
           "path": "figures/track1/iteration2/step-8/heterozygous-density.png",
@@ -2253,6 +3185,12 @@
         },
         {
           "bytes": 73019,
+          "caption": {
+            "means": "Same evidence as the individual exhibits, gathered on one page as the step's report view, ordered so the power comparison (the instrument-validity finding) comes first, ahead of any chromosome-level chart.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet combining all ten figures (power-then-and-now, detection-limit, dosage-per-chromosome, dosage-composition, dosage-residual, bdev-per-chromosome, depth-against-baseline, model-margins, multi-chromosome, heterozygous-density).",
+            "source": "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md"
+          },
           "kind": "html",
           "name": "index.html",
           "path": "figures/track1/iteration2/step-8/index.html",
@@ -2262,6 +3200,12 @@
         },
         {
           "bytes": 5872,
+          "caption": {
+            "means": "Same evidence as the static chart, letting a reader inspect the exact margin between competing models per chromosome.",
+            "name": "model-margins.html",
+            "reads": "Interactive version of the per-chromosome model-comparison bars, with hover tooltips for exact BIC values per model.",
+            "source": "docs/iteration2/step-8/methodology/117-five-models-and-the-family-this-data-does-not-fit.md"
+          },
           "kind": "html",
           "name": "model-margins.html",
           "path": "figures/track1/iteration2/step-8/model-margins.html",
@@ -2271,6 +3215,12 @@
         },
         {
           "bytes": 91404,
+          "caption": {
+            "means": "Evidence for H057: only a small number of contigs clear \u0394BIC\u226510, and \u2014 as the text alongside establishes \u2014 nearly every 'winning' non-normal fit sits at a parameter boundary (the balanced-tract parameter pinned at its 0.900 upper bound), meaning the apparent trisomy leads are model-fitting artefacts rather than genuine mechanism calls; no mechanism is reported for any chromosome as a result.",
+            "name": "model-margins.png",
+            "reads": "Grouped bars per chromosome, one bar per candidate mechanism model (normal, monosomy, mitotic trisomy, meiotic trisomy, copy-neutral loss of heterozygosity) on a log BIC scale, with a dashed line at \u0394BIC = 10 (Kong 2018's threshold for a confident model call).",
+            "source": "docs/iteration2/step-8/methodology/117-five-models-and-the-family-this-data-does-not-fit.md"
+          },
           "kind": "png",
           "name": "model-margins.png",
           "path": "figures/track1/iteration2/step-8/model-margins.png",
@@ -2280,6 +3230,12 @@
         },
         {
           "bytes": 3284,
+          "caption": {
+            "means": "Same evidence as the static chart, letting a reader inspect exact recovery and false-flag rates per simulated design.",
+            "name": "multi-chromosome.html",
+            "reads": "Interactive version of the multi-chromosome injection recovery/false-flag bars.",
+            "source": "docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md"
+          },
           "kind": "html",
           "name": "multi-chromosome.html",
           "path": "figures/track1/iteration2/step-8/multi-chromosome.html",
@@ -2289,6 +3245,12 @@
         },
         {
           "bytes": 80319,
+          "caption": {
+            "means": "Evidence for H056: every injected chromosome is recovered in every replicate, and untouched chromosomes are falsely flagged at only 0.0048 at worst \u2014 far below the nominal 5% \u2014 which validates that the genome-wide baseline this whole step's relative statistics divide by remains trustworthy even when 2\u20133 chromosomes are genuinely abnormal at once (variegated aneuploidy's own defining challenge).",
+            "name": "multi-chromosome.png",
+            "reads": "Bars showing, for simulated designs injecting 2 or 3 chromosomes as simultaneously abnormal, the recovery rate of the injected chromosomes (green) against the false-flag rate of untouched chromosomes (red), with a yellow line at the nominal 5% false-positive rate.",
+            "source": "docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md"
+          },
           "kind": "png",
           "name": "multi-chromosome.png",
           "path": "figures/track1/iteration2/step-8/multi-chromosome.png",
@@ -2298,6 +3260,12 @@
         },
         {
           "bytes": 21155,
+          "caption": {
+            "means": "Same evidence as the static chart, letting a reader inspect the exact power curve for any chromosome.",
+            "name": "power-then-and-now.html",
+            "reads": "Interactive version of the same power-vs-fraction lines, with hover tooltips for exact power values at any injected fraction.",
+            "source": "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md"
+          },
           "kind": "html",
           "name": "power-then-and-now.html",
           "path": "figures/track1/iteration2/step-8/power-then-and-now.html",
@@ -2307,6 +3275,12 @@
         },
         {
           "bytes": 208757,
+          "caption": {
+            "means": "The step's headline: fold-over reaches 80% power on all 24 contigs (power rising from 0.18 to 1.00 as fraction rises from 1% to 30% on chr1), while iteration 1's mean-BAF statistic never reaches 80% power on any contig (0.05 to only 0.22 over the same range) \u2014 direct evidence that iteration 1's 'every autosome flat' finding used a statistic blind to the exact symmetric-gain signature a mosaic event produces.",
+            "name": "power-then-and-now.png",
+            "reads": "Line chart per chromosome, one line for the fold-over |BAF\u2212centre| statistic and one for iteration 1's mean-BAF statistic, both computed on identical simulated draws at the same seed and depths, plotted as detection power against injected mosaic cell fraction, with a yellow marker at the 80% power line.",
+            "source": "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md"
+          },
           "kind": "png",
           "name": "power-then-and-now.png",
           "path": "figures/track1/iteration2/step-8/power-then-and-now.png",
@@ -2431,6 +3405,158 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "The step's headline: fold-over reaches 80% power on all 24 contigs (power rising from 0.18 to 1.00 as fraction rises from 1% to 30% on chr1), while iteration 1's mean-BAF statistic never reaches 80% power on any contig (0.05 to only 0.22 over the same range) \u2014 direct evidence that iteration 1's 'every autosome flat' finding used a statistic blind to the exact symmetric-gain signature a mosaic event produces.",
+            "name": "power-then-and-now.png",
+            "reads": "Line chart per chromosome, one line for the fold-over |BAF\u2212centre| statistic and one for iteration 1's mean-BAF statistic, both computed on identical simulated draws at the same seed and depths, plotted as detection power against injected mosaic cell fraction, with a yellow marker at the 80% power line.",
+            "source": "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md"
+          },
+          {
+            "means": "Same evidence as the static chart, letting a reader inspect the exact power curve for any chromosome.",
+            "name": "power-then-and-now.html",
+            "reads": "Interactive version of the same power-vs-fraction lines, with hover tooltips for exact power values at any injected fraction.",
+            "source": "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md"
+          },
+          {
+            "means": "The number every negative result on this page must be quoted with: autosomes detect at 2% (chr1\u20136) to 3% (chr7\u201322) of cells, while X and Y (hatched/grey, allele balance blind by construction in a male) have no meaningful limit from this route at all \u2014 this is what makes 'no chromosome carries mosaicism' a quantified, falsifiable statement rather than a bare assertion.",
+            "name": "detection-limit.png",
+            "reads": "Bar chart, one bar per chromosome, showing the smallest injected mosaic cell fraction reaching 80% detection power at that chromosome's own heterozygous-site count and depth; hatched bars mark contigs that never reach 80% power at any tested fraction; grey fill marks the hemizygous X and Y.",
+            "source": "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md"
+          },
+          {
+            "means": "Same evidence as the static bars, letting a reader check the exact detection limit per chromosome.",
+            "name": "detection-limit.html",
+            "reads": "Interactive version of the per-chromosome detection-limit bars, with hover tooltips for exact percentages.",
+            "source": "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md"
+          },
+          {
+            "means": "The second instrument's positive control, read first by design: X reads 0.4873 and Y reads 0.5083 against an expected 0.5 (one copy each in a male proband), confirming the dosage route works before any autosomal claim is trusted. The two denominators track together, meaning no single chromosome is dragging the autosomal median.",
+            "name": "dosage-per-chromosome.html",
+            "reads": "Scatter plot, one point per chromosome, of k-mer dosage (sequence contributed, from counting reference-unique 31-mers in the raw reads) measured against two denominators \u2014 the autosomal median (with bootstrap error bars) and the total genome-wide k-mer mass \u2014 with a shaded band at the one-copy range and X/Y coloured as the control.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
+          {
+            "means": "Same evidence as the interactive scatter: X/Y at ~0.49\u20130.51 confirms the instrument, and the two denominators' agreement rules out a single chromosome distorting the baseline.",
+            "name": "dosage-per-chromosome.png",
+            "reads": "Static version of the same dual-denominator dosage scatter per chromosome.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
+          {
+            "means": "Shows that most of what would look like a dosage 'signal' is actually a GC-content bias: chromosome GC explains 81.7% of the between-chromosome dosage spread (Pearson 0.904) \u2014 this correction is what has to be applied before any residual difference can be treated as evidence of an aneuploid cell population, since GC bias is the same order of magnitude as the event being hunted.",
+            "name": "dosage-composition.html",
+            "reads": "Scatter of each autosome's measured dosage against its own chromosome-level GC (guanine+cytosine) content fraction, with a fitted trend line.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
+          {
+            "means": "Same evidence as the interactive scatter, establishing the GC correction before any residual is read as a possible aneuploidy signal.",
+            "name": "dosage-composition.png",
+            "reads": "Static version of the dosage-vs-chromosome-GC scatter with fitted trend line.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
+          {
+            "means": "After GC correction, the largest residual is chr21 at 2.33 sigma (implied ~1.2% of cells) \u2014 not a finding, since with 22 autosomes tested at once roughly one is expected to clear 2 sigma by chance (Bonferroni-corrected p=0.43). The spread of these residuals, not the narrower bootstrap interval, sets the route's honest precision floor at 1.6% of cells (twice the 0.802% residual spread).",
+            "name": "dosage-residual.html",
+            "reads": "Bar chart of each chromosome's residual dosage (what is left after removing the GC trend), in units of the residual spread (sigma), with dotted lines at \u00b12 sigma.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
+          {
+            "means": "Same evidence as the interactive chart: no autosome clears the corrected significance bar after accounting for how many chromosomes were tested at once, so 0 autosomes exceed the corrected null.",
+            "name": "dosage-residual.png",
+            "reads": "Static version of the per-chromosome residual-sigma bar chart with the \u00b12 sigma lines.",
+            "source": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+          },
+          {
+            "means": "Shows that no contig exceeds its own, individually-calibrated null \u2014 the per-chromosome null construction is what prevents a shallow, low-coverage chromosome from being unfairly flagged just for being noisier, which is the correct comparison for this heterogeneous dataset.",
+            "name": "bdev-per-chromosome.png",
+            "reads": "Bar chart of each contig's mean fold-over deviation |BAF\u2212centre|, each compared against a null built from that chromosome's own depth and heterozygous-site count (not a shared threshold), with the null's mean and 95th percentile marked and hemizygous contigs greyed out.",
+            "source": "docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md"
+          },
+          {
+            "means": "Same evidence as the static bars, letting a reader inspect exact deviation values and null bounds per chromosome.",
+            "name": "bdev-per-chromosome.html",
+            "reads": "Interactive version of the per-chromosome fold-over deviation bars against their individual nulls.",
+            "source": "docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md"
+          },
+          {
+            "means": "Evidence for H055: no chromosome's exclusion shifts the baseline beyond its own bootstrap interval, meaning the denominator every relative dosage/depth statistic on this page divides by is not being propped up or distorted by any single chromosome \u2014 the X/Y depth ratio (0.5225/1.5794) is itself the expected male-proband signature and serves as a sanity check that depth measurement works correctly.",
+            "name": "depth-against-baseline.png",
+            "reads": "Each chromosome's sequencing depth ratio plotted against a leave-one-chromosome-out baseline (the median of per-chromosome medians with each chromosome excluded in turn), with dotted lines marking the measured precision floor of that ratio across autosomes.",
+            "source": "docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md"
+          },
+          {
+            "means": "Same evidence as the static chart, letting a reader confirm the baseline's stability chromosome by chromosome.",
+            "name": "depth-against-baseline.html",
+            "reads": "Interactive version of the depth-vs-leave-one-out-baseline chart, with hover tooltips for exact ratios and precision-floor values.",
+            "source": "docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md"
+          },
+          {
+            "means": "Evidence for H057: only a small number of contigs clear \u0394BIC\u226510, and \u2014 as the text alongside establishes \u2014 nearly every 'winning' non-normal fit sits at a parameter boundary (the balanced-tract parameter pinned at its 0.900 upper bound), meaning the apparent trisomy leads are model-fitting artefacts rather than genuine mechanism calls; no mechanism is reported for any chromosome as a result.",
+            "name": "model-margins.png",
+            "reads": "Grouped bars per chromosome, one bar per candidate mechanism model (normal, monosomy, mitotic trisomy, meiotic trisomy, copy-neutral loss of heterozygosity) on a log BIC scale, with a dashed line at \u0394BIC = 10 (Kong 2018's threshold for a confident model call).",
+            "source": "docs/iteration2/step-8/methodology/117-five-models-and-the-family-this-data-does-not-fit.md"
+          },
+          {
+            "means": "Same evidence as the static chart, letting a reader inspect the exact margin between competing models per chromosome.",
+            "name": "model-margins.html",
+            "reads": "Interactive version of the per-chromosome model-comparison bars, with hover tooltips for exact BIC values per model.",
+            "source": "docs/iteration2/step-8/methodology/117-five-models-and-the-family-this-data-does-not-fit.md"
+          },
+          {
+            "means": "Evidence for H056: every injected chromosome is recovered in every replicate, and untouched chromosomes are falsely flagged at only 0.0048 at worst \u2014 far below the nominal 5% \u2014 which validates that the genome-wide baseline this whole step's relative statistics divide by remains trustworthy even when 2\u20133 chromosomes are genuinely abnormal at once (variegated aneuploidy's own defining challenge).",
+            "name": "multi-chromosome.png",
+            "reads": "Bars showing, for simulated designs injecting 2 or 3 chromosomes as simultaneously abnormal, the recovery rate of the injected chromosomes (green) against the false-flag rate of untouched chromosomes (red), with a yellow line at the nominal 5% false-positive rate.",
+            "source": "docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md"
+          },
+          {
+            "means": "Same evidence as the static chart, letting a reader inspect exact recovery and false-flag rates per simulated design.",
+            "name": "multi-chromosome.html",
+            "reads": "Interactive version of the multi-chromosome injection recovery/false-flag bars.",
+            "source": "docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md"
+          },
+          {
+            "means": "Shown beside the mechanism models but deliberately excluded from the likelihood calculation: this statistic is what a monosomy or copy-neutral-loss event would move (by removing heterozygous sites, not shifting their balance), but in a bulk (mixed-cell) sample the diploid cells still generate heterozygous calls, so a drop reflects the variant caller's own detection threshold as much as biology \u2014 not a model that can be written down honestly, hence reported as context, not evidence.",
+            "name": "heterozygous-density.png",
+            "reads": "Bar chart of heterozygous calls per PASS call, by chromosome arm (short arm and long arm shown separately).",
+            "source": "docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md"
+          },
+          {
+            "means": "Same evidence as the static chart, letting a reader inspect exact heterozygous-call density per chromosome arm.",
+            "name": "heterozygous-density.html",
+            "reads": "Interactive version of the per-arm heterozygous-density bars.",
+            "source": "docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md"
+          },
+          {
+            "means": "Same evidence as the individual exhibits, gathered on one page as the step's report view, ordered so the power comparison (the instrument-validity finding) comes first, ahead of any chromosome-level chart.",
+            "name": "index.html",
+            "reads": "Interactive contact sheet combining all ten figures (power-then-and-now, detection-limit, dosage-per-chromosome, dosage-composition, dosage-residual, bdev-per-chromosome, depth-against-baseline, model-margins, multi-chromosome, heterozygous-density).",
+            "source": "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-7"],
+          "what": "Step 7's Track 2 mechanism card had one row deliberately left open \u2014 fact F8, the aneuploidy burden in this specific child's sequenced sample \u2014 for this step to measure. Step 8 hands back a null result with a stated limit (no autosome above 2\u20133% cell fraction, tissue unnamed, X/Y and sub-arm events untestable), which step 7 folded into card version 4 and confirmed via a pre-registered digest test moved no drug-evidence rung, shortlist row, or do-not row."
+        },
+        "inherits": {
+          "steps": [],
+          "what": "Step 8 re-derives its own tables from the delivered callset (2,778,844 heterozygous PASS calls) and the raw read store independently of steps 1\u20137 \u2014 it does not depend on the fused diagnosis or any other iteration-2 step's output. It does, however, directly re-test and correct a specific iteration-1 result (entry 037's flat B-allele-fraction karyogram), which is the finding this whole step exists to re-examine with a statistic that actually has power."
+        },
+        "iteration": "iteration2",
+        "sources": [
+          "docs/iteration2/step-8/README.md",
+          "docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md",
+          "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md",
+          "docs/iteration2/step-8/methodology/117-five-models-and-the-family-this-data-does-not-fit.md",
+          "docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md",
+          "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md",
+          "docs/iteration2/step-8/methodology/123-the-denominator-that-assumes-nothing-read-back.md"
+        ],
+        "step": "step-8",
+        "summary": "Step 8 re-tests iteration 1's finding that every chromosome looks normal (no mosaic aneuploidy \u2014 a chromosome present in the wrong copy number in only some of the cells) in the sequenced sample, and asks the question iteration 1's own statistic could not answer: how small an event could this data even have detected? It found that iteration 1's statistic (the mean B-allele fraction, the average share of reads supporting the non-reference base at heterozygous sites) has essentially no statistical power for exactly the kind of event being hunted \u2014 a mosaic gain splits heterozygous sites into two bands symmetric around the middle, so their mean does not move regardless of event size, reaching 80% detection power on 0 of 24 contigs even at a 30% cell fraction. Replacing it with a fold-over deviation statistic (|BAF \u2212 centre|, which does move) reaches 80% power on all 24 contigs, giving a genuine detection limit of 2% (chromosomes 1\u20136) to 3% (chromosomes 7\u201322) of cells for autosomes, and 5% for X/Y where allele balance is blind by construction. A second, independent k-mer dosage instrument (counting unique 31-letter DNA substrings per chromosome directly in the raw reads, sharing nothing with the allele-balance route past the FASTQ) confirmed one copy each of X and Y (0.4873, 0.5083 against an expected 0.5 \u2014 its own positive control) and, after correcting for a chromosome-GC-content bias that explains 81.7% of the between-chromosome variation, found no autosome beyond a corrected precision floor of 1.6% of cells. All seven pre-registered claims were supported. A separate five-model mechanism comparison (normal / monosomy / mitotic trisomy / meiotic trisomy / copy-neutral loss of heterozygosity) fit no usable model on 19 of 22 testable contigs \u2014 every apparent trisomy fit hit a parameter boundary, meaning no mechanism can be named for any chromosome.",
+        "verdict": "H051 (no chromosome carries a mosaic aneuploidy above its own detection limit) is supported. H052 (the detection limit is \u226410% cell fraction for every autosome) is supported, and by a wider margin than predicted \u2014 the actual limit is 2\u20133%. H053 (fold-over B-deviation detects at a materially lower fraction than iteration 1's statistic) is supported: 24/24 contigs reach 80% power versus 0/24 for the mean-BAF statistic. H054 (the two independent routes \u2014 allele balance and k-mer dosage \u2014 agree everywhere both can see, and dosage recovers X/Y where allele balance is blind) is supported, by a second instrument sharing nothing with the first past the raw FASTQ reads. H055 (the leave-one-chromosome-out depth baseline is stable) is supported: no single chromosome's exclusion moves it outside its bootstrap interval. H056 (a mixing simulation recovers 2\u20133 simultaneously-injected abnormal chromosomes without falsely flagging untouched ones) is supported, at a false-flag rate of at most 0.0048 against a nominal 0.05. H057 (mitotic and meiotic trisomy are not separable at \u0394BIC\u226510) is supported, by an even stronger route than named: the five-model comparison could not fit a usable model at all on 19 of 22 testable contigs because the winning fits sat at a parameter bound, so no mechanism is named for any chromosome.",
+        "why": "A negative result ('every chromosome looks flat') is only meaningful if the measurement could have detected the thing it's ruling out; otherwise 'flat' just means 'the instrument was blind,' not 'there is nothing there.' Iteration 1's karyogram used a statistic that is mathematically insensitive to symmetric mosaic gains by construction \u2014 without measuring that, the report would have been claiming an absence that its own tool could not have found even at a large event size. This matters directly for step 7's drug-repurposing work: several of Track 2's mechanistic directions (D2, exploiting aneuploid-cell stress) argue from the premise that this child's cells carry a measurable aneuploid burden, and step 7 explicitly left that fact open for this step to measure rather than assume."
+      },
       "slug": "step-8",
       "status": "done",
       "takes_hypotheses": true,

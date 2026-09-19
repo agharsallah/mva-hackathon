@@ -13,6 +13,7 @@ import { STEP_BODIES } from './steps/bodies.generated';
 import { ClaimCard } from './steps/ClaimCard';
 import { EntryList } from './steps/EntryList';
 import { FigureStrip } from './steps/FigureStrip';
+import { Narrative } from './steps/Narrative';
 import { iterationLabel, parseResearchPath, stepLabel, trackLabel } from './steps/route';
 import { statusLabel, stepTone, TRACK_LABEL } from './steps/status';
 
@@ -63,6 +64,26 @@ export default function StepPage() {
 
           return (
             <div className="space-y-6">
+              <Section title="What this step did">
+                {step.narrative ? (
+                  <Narrative
+                    narrative={step.narrative}
+                    track={track}
+                    iteration={iteration}
+                    linkable={
+                      new Set(data.steps.filter((s) => s.kind !== 'platform').map((s) => s.slug))
+                    }
+                  />
+                ) : (
+                  <Callout tone="neutral" title="Nobody has written this step up yet">
+                    Its goal, claims, entries and figures are below — all of them derived. The
+                    summary, the reasoning and the hand-off to the next step are judgements a person
+                    writes, and this step has none.{' '}
+                    <span className="font-mono">tools/check_step_narrative.py</span> names it.
+                  </Callout>
+                )}
+              </Section>
+
               <Section title="The question">
                 <div className="space-y-3 rounded-card border border-line bg-panel p-4">
                   <div className="flex flex-wrap items-baseline gap-2">

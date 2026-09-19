@@ -85,13 +85,13 @@
       "summary": "planned only \u2014 no step map is declared for it"
     },
     {
-      "claims": 4,
+      "claims": 6,
       "current": false,
       "declared": true,
       "docs": "docs/iteration4",
-      "done": 2,
+      "done": 4,
       "iteration": "iteration4",
-      "open": 1,
+      "open": 2,
       "steps": 7,
       "submissions": [],
       "summary": "the model zoo (docs/iteration4/plan.md)."
@@ -108,6 +108,7 @@
       "goal": "Can the delivered bytes be trusted, stored without loss, and queried in SQL?",
       "hypotheses": [],
       "kind": "platform",
+      "narrative": null,
       "slug": "step-0",
       "status": "done",
       "takes_hypotheses": false,
@@ -157,6 +158,26 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [],
+        "hands_to": {
+          "steps": ["step-2", "step-4", "step-6"],
+          "what": "step 2's coding-interval join and step 4's suppressed-call mining both join against variant coordinates, and a join against two spellings of the same variant silently loses rows; step 6's submission rows must be spelled exactly as the exact-match scorer requires."
+        },
+        "inherits": {
+          "steps": ["step-0"],
+          "what": "the delivered VCF and the GRCh38 no-chr reference genome, fetched from the object store into scratch and byte-verified \u2014 step 1 cannot check a variant's spelling without both files present."
+        },
+        "iteration": "iteration1",
+        "sources": [
+          "docs/iteration1/step-1/README.md",
+          "docs/iteration1/step-1/methodology/073-normalization-of-the-candidates.md"
+        ],
+        "step": "step-1",
+        "summary": "Normalized the delivered VCF (Variant Call Format \u2014 the callset's row-oriented text record format) with `bcftools norm`, which splits multiallelic records (one row naming several alternate alleles) and left-aligns indels (insertions/deletions) against the GRCh38 reference genome. Across 4,968,537 records on the 195 canonical contigs, normalization split 66,639 multiallelic records into 133,278 rows and re-aligned the 39,913 alleles that split produced; zero bi-allelic (single-alternate) records changed spelling anywhere in the callset. The two candidate BUB1B alleles are single-base substitutions at bi-allelic sites, and both records were byte-identical in chromosome, position, reference and alternate allele before and after the run.",
+        "verdict": "H008 \u2014 supported, committed at confidence 0.83: both BUB1B candidate alleles are canonical single-nucleotide substitutions, unchanged by normalization. The callset as a whole needed normalizing only at its 66,639 multiallelic sites; every bi-allelic record was already spelled the way `bcftools norm` would spell it.",
+        "why": "The oracle's scorer matches a submitted variant against the answer key by exact string equality on (chromosome, position, reference, alternate). An indel has more than one valid spelling, and a multiallelic record cannot be submitted as one row at all \u2014 so a biologically correct answer typed the wrong way would score zero. This is the first question asked about the data itself, and it has to be settled before any downstream join or submission can be trusted."
+      },
       "slug": "step-1",
       "status": "open",
       "takes_hypotheses": true,
@@ -214,6 +235,12 @@
       "figures": [
         {
           "bytes": 439,
+          "caption": {
+            "means": "Each number is one more filter applied to the same starting set, computed from `results.gene_biallelic` / `coding_candidates` in methodology entry 070. It is the numeric evidence for H004: every filter narrows the field, and the last two \u2014 a pathogenic ClinVar call plus a top phenotype rank \u2014 leave exactly one gene, BUB1B.",
+            "name": "funnel.json",
+            "reads": "Nine named counts, in order: 5,012,204 variant records in the VCF; 38,437 (gene \u00d7 allele) rows landing inside a coding interval; 38,087 distinct alleles annotated; 1,524 rare; 875 rare and protein-altering; 746 of those on PASS calls; 667 genes carrying any such allele; 65 genes biallelic on PASS calls; 1 of those with a ClinVar pathogenic allele; 1 of those also ranked \u226430 by phenotype.",
+            "source": "docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md"
+          },
           "kind": "json",
           "name": "funnel.json",
           "path": "figures/track1/funnel.json",
@@ -223,6 +250,12 @@
         },
         {
           "bytes": 145977,
+          "caption": {
+            "means": "Shows how a five-million-row callset collapses to one gene through independent geometric, annotation and phenotype filters. The log scale is necessary because linear spacing would make every bar after the first invisible; the chart is evidence that no single filter \u2014 only their combination \u2014 isolates BUB1B.",
+            "name": "track1-funnel.png",
+            "reads": "A horizontal bar chart of the same nine funnel stages, one bar per stage, on a logarithmic survivor-count axis. Bars run from the full callset at the bottom (widest) to the final answer at the top (narrowest), coloured purple (raw input) through blue (machinery) to green (the answer).",
+            "source": "docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md"
+          },
           "kind": "png",
           "name": "track1-funnel.png",
           "path": "figures/track1/track1-funnel.png",
@@ -267,6 +300,40 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "Each number is one more filter applied to the same starting set, computed from `results.gene_biallelic` / `coding_candidates` in methodology entry 070. It is the numeric evidence for H004: every filter narrows the field, and the last two \u2014 a pathogenic ClinVar call plus a top phenotype rank \u2014 leave exactly one gene, BUB1B.",
+            "name": "funnel.json",
+            "reads": "Nine named counts, in order: 5,012,204 variant records in the VCF; 38,437 (gene \u00d7 allele) rows landing inside a coding interval; 38,087 distinct alleles annotated; 1,524 rare; 875 rare and protein-altering; 746 of those on PASS calls; 667 genes carrying any such allele; 65 genes biallelic on PASS calls; 1 of those with a ClinVar pathogenic allele; 1 of those also ranked \u226430 by phenotype.",
+            "source": "docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md"
+          },
+          {
+            "means": "Shows how a five-million-row callset collapses to one gene through independent geometric, annotation and phenotype filters. The log scale is necessary because linear spacing would make every bar after the first invisible; the chart is evidence that no single filter \u2014 only their combination \u2014 isolates BUB1B.",
+            "name": "track1-funnel.png",
+            "reads": "A horizontal bar chart of the same nine funnel stages, one bar per stage, on a logarithmic survivor-count axis. Bars run from the full callset at the bottom (widest) to the final answer at the top (narrowest), coloured purple (raw input) through blue (machinery) to green (the answer).",
+            "source": "docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-3", "step-4", "step-6"],
+          "what": "step 3 joins this step's genome-wide gene_biallelic table to the phenotype ranking as its own cross-check (H005); step 4 mines the same table's non-PASS rows for a hiding second allele; step 6's submission design and oracle probe rest on the verdict this step reached."
+        },
+        "inherits": {
+          "steps": ["step-0", "step-1"],
+          "what": "the raw callset and the public Ensembl gene models from step 0's object store; step 1's guarantee that every variant has one canonical spelling, so the coordinate join this step runs does not silently lose or duplicate a row."
+        },
+        "iteration": "iteration1",
+        "sources": [
+          "docs/iteration1/step-2/README.md",
+          "docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md",
+          "docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md"
+        ],
+        "step": "step-2",
+        "summary": "Built the genome-wide annotation layer the delivered callset lacks: a coding-interval reference from the Ensembl gene models (223,048 intervals across 19,750 genes), a binned range join pulling 38,437 (gene, allele) rows out of the 5,012,204-record callset, and a checkpointed Ensembl VEP (Variant Effect Predictor \u2014 the tool that says what a DNA change does to a protein) run to completion over all 38,087 distinct alleles. Filtering to rare (gnomAD population frequency under 1%) and protein-altering (VEP impact HIGH or MODERATE) alleles on PASS calls, then to genes carrying two such alleles, then to a ClinVar pathogenic/likely-pathogenic call, then to a top-30 rank in the panel-blind phenotype score, funnels the 5,012,204 starting records down to exactly one gene: BUB1B.",
+        "verdict": "H004 supported, committed at 0.93: of 65 genes biallelic on PASS calls, BUB1B is the only one that also carries a ClinVar pathogenic allele and ranks in the phenotype top 30 (it ranks 6th). H003 (retrospective \u2014 the panel-only test that ran before this register existed) supported at 0.93: two independent routes agree on the same two alleles, though which parent each allele came from is not yet resolved.",
+        "why": "The eight-gene panel used until now was chosen by hand from known Mosaic Variegated Aneuploidy biology \u2014 a circular prior, since the search finds MVA genes only because it looked at MVA genes. A genome-wide scan is the only way to ask whether some other gene, unbiased by that choice, produces a stronger candidate. Skipping it would leave the BUB1B pair corroborated only by the assumption that produced it."
+      },
       "slug": "step-2",
       "status": "done",
       "takes_hypotheses": true,
@@ -310,6 +377,12 @@
       "figures": [
         {
           "bytes": 159348,
+          "caption": {
+            "means": "Shows two independent instruments \u2014 the DNA-derived candidate list on the y-axis, the symptom-derived rank on the x-axis \u2014 agreeing on one gene: BUB1B sits alone, far left of every other candidate and left of the rank-30 marker, while the next curated biallelic gene (HSPG2) sits at rank 150.",
+            "name": "track1-gene-scatter.png",
+            "reads": "One point per gene with a candidate biallelic set (65 genes). X-axis: phenotype rank on the child's own HPO terms, logarithmic, with uncurated genes parked past a labelled boundary at the far right. Y-axis: count of rare protein-altering alleles in the gene. Filled markers are biallelic on PASS calls; hollow markers are biallelic only if a filtered call is rescued. BUB1B is drawn larger and green; genes with a ClinVar pathogenic/likely-pathogenic allele are yellow; other PASS-biallelic genes are blue; rescue-only genes are grey. A dotted vertical line marks phenotype rank 30.",
+            "source": "docs/iteration1/step-3/methodology/071-phenotype-callset-join.md"
+          },
           "kind": "png",
           "name": "track1-gene-scatter.png",
           "path": "figures/track1/track1-gene-scatter.png",
@@ -370,6 +443,34 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "Shows two independent instruments \u2014 the DNA-derived candidate list on the y-axis, the symptom-derived rank on the x-axis \u2014 agreeing on one gene: BUB1B sits alone, far left of every other candidate and left of the rank-30 marker, while the next curated biallelic gene (HSPG2) sits at rank 150.",
+            "name": "track1-gene-scatter.png",
+            "reads": "One point per gene with a candidate biallelic set (65 genes). X-axis: phenotype rank on the child's own HPO terms, logarithmic, with uncurated genes parked past a labelled boundary at the far right. Y-axis: count of rare protein-altering alleles in the gene. Filled markers are biallelic on PASS calls; hollow markers are biallelic only if a filtered call is rescued. BUB1B is drawn larger and green; genes with a ClinVar pathogenic/likely-pathogenic allele are yellow; other PASS-biallelic genes are blue; rescue-only genes are grey. A dotted vertical line marks phenotype rank 30.",
+            "source": "docs/iteration1/step-3/methodology/071-phenotype-callset-join.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-6"],
+          "what": "H005 and H001 are both settled together by the oracle's reply \u2014 a confirmed BUB1B pair makes both predictions observed \u2014 and that reply is what step 6 spends its first submission on."
+        },
+        "inherits": {
+          "steps": ["step-2"],
+          "what": "step 2's genome-wide gene_biallelic table is what the ranking is joined against for the confirmatory test (H005); the ranking itself needs only public HPO files and ran before step 2 finished, but the cross-check that could have refuted it needed step 2's output to exist."
+        },
+        "iteration": "iteration1",
+        "sources": [
+          "docs/iteration1/step-3/README.md",
+          "docs/iteration1/step-3/methodology/067-phenotype-ranking-without-java.md",
+          "docs/iteration1/step-3/methodology/071-phenotype-callset-join.md"
+        ],
+        "step": "step-3",
+        "summary": "Reimplemented Exomiser's hiPHIVE human-only phenotype-matching algorithm in pure Python \u2014 no Java virtual machine, under 100 MB of reference data \u2014 to rank all 5,267 HPO (Human Phenotype Ontology, a standard vocabulary and graph of clinical features)-annotated genes by how well their curated symptom list matches the child's own HPO terms, without ever reading the panel, the callset or a variant. On the child's own 7 terms (excluding a parental-only term), BUB1B ranks 6th of 5,267, and independently 26th of 18,882 in the unrelated tool Phen2Gene. Joining this ranking to step 2's genome-wide biallelic gene table confirms BUB1B is the best-ranked of the 65 genes carrying a candidate biallelic (two rare protein-altering alleles) set \u2014 the next-best is HSPG2, at rank 150.",
+        "verdict": "H005 supported, committed at 0.80: BUB1B is first by phenotype rank among genome-wide biallelic candidates, far ahead of the runner-up. H002 supported at 0.86: the parental term HP:0200067 (recurrent spontaneous abortion) does not belong in the child's own term set \u2014 every panel gene, BUB1B included, ranks better without it. H001 stays proposed, its prediction conditioned on the oracle.",
+        "why": "Every candidate found so far came through an eight-gene panel picked by hand from known Mosaic Variegated Aneuploidy biology, which is a circular prior. A phenotype ranking driven only by the child's symptoms is the one check that cannot inherit that bias, because it never sees the panel or the DNA. Without it, agreement between the panel and the DNA proves nothing \u2014 it would just be the same assumption checked against itself."
+      },
       "slug": "step-3",
       "status": "done",
       "takes_hypotheses": true,
@@ -435,6 +536,27 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [],
+        "hands_to": {
+          "steps": ["step-5", "step-6"],
+          "what": "step 5's read-level recovery of a partner allele was funded only conditionally, on step 6's oracle reply reporting one allele right and one wrong at rank 1 \u2014 a condition step 6's actual full-match reply closed, which is why step 5 never had to run."
+        },
+        "inherits": {
+          "steps": ["step-2"],
+          "what": "step 2's coding_alleles, coding_candidates and gene_biallelic tables keep every FILTER value rather than dropping non-PASS rows \u2014 the only reason this question could be asked genome-wide at no extra computational cost."
+        },
+        "iteration": "iteration1",
+        "sources": [
+          "docs/iteration1/step-4/README.md",
+          "docs/iteration1/step-4/methodology/072-genome-wide-suppressed-calls.md",
+          "docs/step-0/methodology/049-suppressed-calls.md"
+        ],
+        "step": "step-4",
+        "summary": "Extended a panel-only suppressed-call check (step-0 entry 049, which found 0 of 20 non-PASS panel calls rare and protein-altering) to the whole genome, using the FILTER-tagged coding layer step 2 built. Of the 875 rare, protein-altering coding alleles found genome-wide, 129 sit in calls the variant caller marked non-PASS (dominated by low-mapping-quality and low-quality-by-depth filter reasons). Twenty-six genes only reach a candidate biallelic set if one of those filtered calls is rescued, and none of those 26 also carries a ClinVar pathogenic/loss-of-function allele or a top-30 phenotype rank. BUB1B itself carries zero non-PASS coding alleles.",
+        "verdict": "H007 supported, committed at 0.80: no gene reaches a credible biallelic diagnosis only by rescuing a filtered call, and the BUB1B pair does not depend on any filter decision. H006 (retrospective) supported at 0.77: the panel's 20 filtered calls were correctly discarded, and the same conclusion holds at the coding-layer scale.",
+        "why": "A variant caller's FILTER column is tuned for a genome-wide false-positive rate, not for one child's disease allele, so a true disease variant sitting in a hard-to-map region is exactly the kind of call it would suppress. Checking this against the already-annotated callset by SQL costs hours; ruling it out by re-calling from the raw sequencing reads costs a day. It has to be ruled out before the BUB1B pair can be trusted as complete, rather than one allele of a bigger picture the filters are hiding."
+      },
       "slug": "step-4",
       "status": "done",
       "takes_hypotheses": true,
@@ -449,6 +571,7 @@
       "goal": "Is the missing allele a variant the caller could not emit at all \u2014 a structural variant, a deep intronic call, or a low-fraction mosaic?",
       "hypotheses": [],
       "kind": "research",
+      "narrative": null,
       "slug": "step-5",
       "status": "planned",
       "takes_hypotheses": true,
@@ -523,6 +646,12 @@
       "figures": [
         {
           "bytes": 108099,
+          "caption": {
+            "means": "This is the decoding key, drawn before the upload so the answer could be read rather than reacted to. Seven of the eight keys are distinguishable by the returned numbers alone; the only pair the scorer cannot separate is {stop+unseen, missense+unseen}, which carried 0.17 of the prior mass. Prior entropy 1.603 bits, expected posterior 0.149 bits, so the expected information gain of spending this submission was 1.455 bits \u2014 the number that justified spending it. The reply landed on the top row.",
+            "name": "track1-decode-table.png",
+            "reads": "One row per reply the scorer could have returned for this submission \u2014 eight keys in all \u2014 with the rank points, F-max, full-match rank and partial-match rank each would produce. The rows are ordered by rank points, from the full match at the top to `neither` at the bottom.",
+            "source": "docs/iteration1/step-6/methodology/074-submission-v1-design.md"
+          },
           "kind": "png",
           "name": "track1-decode-table.png",
           "path": "figures/track1/track1-decode-table.png",
@@ -551,6 +680,36 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "This is the decoding key, drawn before the upload so the answer could be read rather than reacted to. Seven of the eight keys are distinguishable by the returned numbers alone; the only pair the scorer cannot separate is {stop+unseen, missense+unseen}, which carried 0.17 of the prior mass. Prior entropy 1.603 bits, expected posterior 0.149 bits, so the expected information gain of spending this submission was 1.455 bits \u2014 the number that justified spending it. The reply landed on the top row.",
+            "name": "track1-decode-table.png",
+            "reads": "One row per reply the scorer could have returned for this submission \u2014 eight keys in all \u2014 with the rank points, F-max, full-match rank and partial-match rank each would produce. The rows are ordered by rank points, from the full match at the top to `neither` at the bottom.",
+            "source": "docs/iteration1/step-6/methodology/074-submission-v1-design.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-8"],
+          "what": "The confirmed pair is what Track 2 is allowed to argue from. Step 8's mechanism card was opened in parallel, but its verdicts waited for this reply, because a drug direction argued from an unconfirmed allele is a guess dressed as rigour. The reply also closes step 5 before it opens: no partner allele is missing, so there is nothing to recover from the reads."
+        },
+        "inherits": {
+          "steps": ["step-1", "step-2", "step-3", "step-4"],
+          "what": "The candidate pair itself comes from step 2's genome-wide coding scan, which left BUB1B as the only gene with two rare protein-altering alleles. Step 3 arrived at the same gene from the symptoms alone, without reading a variant, and step 4 showed nothing rare and protein-altering was hiding behind the quality filters. Step 1 supplies the thing that makes the upload legal at all: one spelling per variant, so an exact-match scorer can be trusted with the rows."
+        },
+        "iteration": "iteration1",
+        "sources": [
+          "docs/iteration1/step-6/README.md",
+          "docs/iteration1/step-6/methodology/074-submission-v1-design.md",
+          "docs/iteration1/step-6/methodology/076-iteration-tooling.md",
+          "docs/iteration1/step-6/methodology/082-derived-submission-rows.md",
+          "docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md"
+        ],
+        "step": "step-6",
+        "summary": "The one step that could be wrong in public. Steps 2 to 4 had converged on a single BUB1B compound heterozygote, but converging is not confirming: every route read the same vendor callset, so four agreements could still be one mistake counted four times. This step spent the first of six irreversible oracle submissions on it \u2014 designed as a measurement rather than a guess, rehearsed byte-for-byte on a local replica of the scorer, and laid out so that seven of the eight possible replies would be told apart by the numbers that came back. The reply was a full match at rank 1: 100 rank points, F-max 1.000, threshold 0.9963.",
+        "verdict": "H009 supported at confidence 1.00. The answer key is the BUB1B stop-gain plus missense pair, in trans, and phase is settled by the key itself rather than by reads \u2014 which is why step 5, the read-level recovery of a partner allele, never had to run. One of six submissions is spent; five remain, and they belong to iteration 2 and later.",
+        "why": "The oracle is the only window onto the answer key, and it opens six times in total. A submission that cannot be decoded wastes one of those six: if two candidate pairs would produce the same rank_points and f_max, the reply says the answer was found but not which row found it. So the rows were chosen for distinguishability first and confidence second, and the whole design was written down before the upload \u2014 including what each possible reply would have meant. Matching is exact string equality on (chrom, pos, ref, alt), which is why step 1's normalization gates this step: a correct answer spelled differently scores zero."
+      },
       "slug": "step-6",
       "status": "done",
       "takes_hypotheses": true,
@@ -565,6 +724,7 @@
       "goal": "Does public knowledge - published MVA cases, ClinVar, protein-model scores - name an allele or a pair the data-driven steps missed, or independently corroborate the one they found?",
       "hypotheses": [],
       "kind": "research",
+      "narrative": null,
       "slug": "step-7",
       "status": "planned",
       "takes_hypotheses": true,
@@ -624,6 +784,28 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [],
+        "hands_to": {
+          "steps": [],
+          "what": "Nothing further in iteration 1's own step map follows step 8. The confirmation it was waiting for did arrive: step 6 uploaded on 2026-09-09 and the oracle answered with a full match at rank 1 (entry 083), so the pair this card argues from is confirmed \u2014 the card's own files predate that reply by three days and still call the pair inferred. Per the strategy record the ranked candidate list and the final drug verdicts are produced once, after every Track 1 iteration has reported and its evidence is merged; that merge and the single Track 2 submission sit outside this iteration's step map, and iteration 2's step 7 is where the card was next revised."
+        },
+        "inherits": {
+          "steps": ["step-1", "step-2", "step-3", "step-4", "step-6"],
+          "what": "the mechanism card is built from iteration 1's whole hypothesis record (H003\u2013H009): the candidate gene and its two consequence classes from step 2, the phenotype corroboration from step 3, the ruling-out of a hidden filtered allele from step 4, the canonical variant spelling from step 1, and step 6's submission machinery that the ranking is waiting on before it can be argued."
+        },
+        "iteration": "iteration1",
+        "sources": [
+          "docs/iteration1/step-8/README.md",
+          "docs/iteration1/step-8/mechanism.md",
+          "docs/iteration1/step-8/methodology/078-track2-data-layer.md",
+          "docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md"
+        ],
+        "step": "step-8",
+        "summary": "Wrote the Track 1 \u2192 Track 2 mechanism hand-off: BUB1B compound heterozygote (two different broken copies of the gene, one from each parent) \u2014 a stop-gained null allele plus a missense hypomorph (a partly working copy) \u2014 weakens the spindle assembly checkpoint (the mechanism that holds a dividing cell until every chromosome is attached), a loss of function with no gain-of-function component, and named four repurposing directions (reinforce the checkpoint, exploit aneuploidy stress, stabilise the hypomorph, prevent the child's tumour). Built a case-agnostic public-source data layer (`mva.drugs`) over Open Targets, ChEMBL, DGIdb, Reactome, ClinicalTrials.gov, PubMed and openFDA; the first snapshot expanded 27 seed targets to 273 through 4 matched Reactome pathways and returned 3,766 drug-candidate rows (1,067 approved, 336 distinct approved drug names), 747 trials and 157 literature hits. Zero of those candidates target BUB1B/BubR1 directly at any clinical phase.",
+        "verdict": "H011 supported, committed at 0.80: no market-approved drug acts directly on BUB1B/BubR1 across three independent sources; the 336 approved candidates all attach to pathway neighbours (TP53, MTOR, HSP90AA1, AURKB, CDK4/6, tubulin genes) or off-target directions. H010 stays proposed \u2014 only its pathway clause is tested (Reactome maps BUB1B to four checkpoint/kinetochore/mitotic pathways); its loss-of-function clause awaits ClinVar/OMIM and literature evidence.",
+        "why": "Track 2 is a separately scored deliverable and the only part of this work that reaches the child directly \u2014 a repurposed drug is one already approved and available. A drug named without a cited mechanistic path from the confirmed allele to its target is worth nothing, so the mechanism card and a reproducible, provenance-tracked evidence layer had to exist before any candidate could be argued. Ranking and verdicts wait for step 6's oracle confirmation by design: arguing a drug direction from an unconfirmed allele is a guess dressed as rigour."
+      },
       "slug": "step-8",
       "status": "open",
       "takes_hypotheses": true,

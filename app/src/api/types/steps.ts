@@ -7,6 +7,7 @@
  * hand, so a new step or a whole new iteration appears the moment it is declared.
  */
 
+import type { FigureCaption, StepNarrative } from './narrative';
 import type { HypothesisRow } from './science';
 
 /** `done` | `open` | `planned`. Mirrors `mva.science.steps.STATUSES`. */
@@ -49,6 +50,8 @@ export interface StepFigure {
   path: string;
   url: string;
   bytes: number;
+  /** Written beside the figure, never generated from it. Null until someone reads it. */
+  caption?: FigureCaption | null;
 }
 
 /** Which deliverable a step feeds. `both` is a method both submissions quote. */
@@ -83,6 +86,8 @@ export interface StepRow {
   /** Every figure the step drew, with the URL that serves it. */
   figures: StepFigure[];
   entries: StepEntry[];
+  /** The step's written summary, reasoning and hand-offs. Null until it is written. */
+  narrative: StepNarrative | null;
 }
 
 /**

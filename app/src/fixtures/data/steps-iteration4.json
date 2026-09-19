@@ -69,13 +69,13 @@
       "summary": "planned only \u2014 no step map is declared for it"
     },
     {
-      "claims": 4,
+      "claims": 6,
       "current": false,
       "declared": true,
       "docs": "docs/iteration4",
-      "done": 2,
+      "done": 4,
       "iteration": "iteration4",
-      "open": 1,
+      "open": 2,
       "steps": 7,
       "submissions": [],
       "summary": "the model zoo (docs/iteration4/plan.md)."
@@ -92,6 +92,7 @@
       "goal": "Can the delivered bytes be trusted, stored without loss, and queried in SQL?",
       "hypotheses": [],
       "kind": "platform",
+      "narrative": null,
       "slug": "step-0",
       "status": "done",
       "takes_hypotheses": false,
@@ -180,6 +181,26 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [],
+        "hands_to": {
+          "steps": ["step-2"],
+          "what": "The 39,286-record set is the only thing step 2's registry can measure coverage against \u2014 'AlphaMissense covers 27.0% of records' is meaningless without a fixed denominator. Step 2 also inherits the open uniprot problem directly: ESM1b's adapter has to build its own `ENSP` (Ensembl protein id) to UniProt accession map because this step's join left that column null."
+        },
+        "inherits": {
+          "steps": [],
+          "what": "Nothing inside iteration 4 \u2014 this is the first step. It reads four source tables from the warehouse (the shared database every iteration draws from) directly, which is why its lineage edge names all four rather than pointing at another iteration-4 step."
+        },
+        "iteration": "iteration4",
+        "sources": [
+          "docs/iteration4/step-1/README.md",
+          "docs/iteration4/step-1/methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md"
+        ],
+        "step": "step-1",
+        "summary": "This step built the one normalized record every model in the zoo reads: 39,286 rows, one per allele, each carrying the genomic change, the transcript, the protein change (`hgvs_p`, the standard spelling for 'this amino acid became that one'), and the coordinate kept in a separate column so the record itself stays coordinate-free. It ran one Ensembl VEP (Variant Effect Predictor, the tool that turns a raw coordinate into gene/transcript/protein consequences) REST pass over 196 batches, checkpointed so a crash costs one batch, finishing in 1 h 45 m. 38,069 of 38,087 coding alleles (99.953%) got a usable spelling. Two problems surfaced mid-run: Ensembl's POST endpoint 500s on `uniprot=1` (so every record's `uniprot` field is null, deferred to step 2), and `BUB1B`, the gene behind the confirmed compound-heterozygous pair, carries one missense and one stop-gained allele \u2014 a consequence class three of the four planned model lanes cannot score at all.",
+        "verdict": "H058 (`P4-1a`) supported at confidence 0.95: 99.953% of coding alleles got a non-null `hgvs_c` or `hgvs_p`, comfortably over the 99% bar. The run also surfaced a structural gap it did not set out to test: the confirmed pair's stop-gained half sits in a consequence class most planned lanes cannot score, flagged as risk R9 and left for step 2 as GPN-MSA's promotion, not fixed here.",
+        "why": "Every model class downstream reads a different slice of the same allele \u2014 a genomic coordinate, a transcript-relative change, a protein substitution, a DNA or protein window \u2014 and without one record holding all of them, each model lane would need its own ad-hoc lookup, with no shared key to join scores back together or trace where a number came from. Skipping this step would mean the zoo registry (step 2) has nothing to fetch coverage against, and no adapter could promise it scores 'the record set' rather than some private list of variants."
+      },
       "slug": "step-1",
       "status": "done",
       "takes_hypotheses": true,
@@ -248,6 +269,26 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [],
+        "hands_to": {
+          "steps": ["step-3"],
+          "what": "Step 3's inference API only calls the four lanes this step enabled and licensed; it reads `models.toml` as its worklist. It also inherits the finding that only SpliceAI has any opinion on the confirmed pair's stop-gained half, which is why step 3's per-lane score table for that allele has three blanks and one near-zero number rather than four numbers."
+        },
+        "inherits": {
+          "steps": ["step-1"],
+          "what": "The registry can only report a coverage percentage against step 1's fixed 39,286-record set; without a stable denominator, 'AlphaMissense scores 10,601 alleles' would not mean anything. It also inherits step 1's unresolved uniprot gap directly and has to solve it itself, by building a protein-accession adapter that reaches ESM1b's table through the gene name and protein change instead."
+        },
+        "iteration": "iteration4",
+        "sources": [
+          "docs/iteration4/step-2/README.md",
+          "docs/iteration4/step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md"
+        ],
+        "step": "step-2",
+        "summary": "This step is a package registry for prediction models: for each of 19 candidate models it recorded whether it is credible, whether it can legally be used for this case (licence check), and how much of the 39,286-record set it can actually score, then enabled the four that passed for the MVP (minimum viable product, the smallest end-to-end version) \u2014 AlphaMissense, SpliceAI, ESM1b (a protein language model) and REVEL (a live, per-request scoring service). AlphaMissense covers 27.0% of all records (67.9% of missense alleles), SpliceAI 82.8% (84.3% of alleles it targets), ESM1b 11.6% (29.2% of missense), and REVEL was sampled live at 52 of 200 alleles. A join-integrity check confirmed AlphaMissense and SpliceAI hit their pre-registered exact row counts (10,601 and 32,534), so nothing downstream rests on a broken `allele_id` join. The step also found that only SpliceAI can see both alleles of the confirmed BUB1B pair, and it reports no splice effect on either (scores 0.00 and 0.03) \u2014 a result recorded before steps 4-6 ran, not after.",
+        "verdict": "H059 (`P4-2a`) supported at confidence 0.80: all four enabled lanes ran end-to-end on the record set in one day, and the two correctness gates (AlphaMissense/SpliceAI exact row counts) held. H060 (`P4-3`) refuted: AlphaMissense (67.9%) and ESM1b (29.2%) both fall below the 90% coverage bar, and even below the 70% line that would count as a genuine refutation rather than a near-miss \u2014 attributed to using iteration 2's narrower VEP-REST plugin pass rather than the full published AlphaMissense table, and to ESM1b's protein-accession namespace not matching the record set.",
+        "why": "A model roster has to be filtered before it is run, the same way a software team vets a third-party library before adding it as a dependency: license terms, whether the artifact can be downloaded at all, and whether it actually has data for the records at hand. Without this gate, step 3's inference layer would spend GPU/API budget calling models with near-zero coverage, and step 4's ranking would silently treat 'not scored' the same as 'scored as harmless' \u2014 the exact confusion the step 2 finding about the BUB1B pair heads off downstream."
+      },
       "slug": "step-2",
       "status": "done",
       "takes_hypotheses": true,
@@ -301,6 +342,26 @@
         }
       ],
       "kind": "research",
+      "narrative": {
+        "figures": [],
+        "hands_to": {
+          "steps": ["step-4"],
+          "what": "Step 4's workflow DAG (directed acyclic graph, a pipeline of stages that only run after their inputs are ready) reads this step's 58,480-row score cache as its `fan_out` stage's output, turning individual allele scores into per-lane rankings over compound-heterozygous pairs. Without this cache already populated, step 4 has nothing to rank."
+        },
+        "inherits": {
+          "steps": ["step-2"],
+          "what": "Only the four models step 2 licensed and confirmed can be joined are called here; the adapter for each lane exists because step 2 established which of the three source kinds (warehouse column, downloaded table, live plugin) that model needs. It also inherits step 2's exact-count integrity gates as its baseline: this step's 10,601 and 32,534 row counts must not drift from step 2's coverage numbers, or the join broke somewhere in between."
+        },
+        "iteration": "iteration4",
+        "sources": [
+          "docs/iteration4/step-3/README.md",
+          "docs/iteration4/step-3/methodology/122-every-lane-scored-once-and-only-once.md"
+        ],
+        "step": "step-3",
+        "summary": "This step is the shared inference API: one `Adapter.score(records) -> ScoreRow` contract, callable as `mva-zoo score --model X`, that lets three different kinds of model source (a warehouse column, a downloaded table, a live REST plugin) be called the same way and land in one append-only cache with full provenance (model, version, digest, licence, run id). A cold run scored 58,480 alleles across the four lanes in 1 h 45 m 20 s at $0: the three local/offline lanes (AlphaMissense, SpliceAI, ESM1b) together took 53 seconds for 47,697 alleles, while REVEL's live per-request calls took 6,267 seconds across 4 attempts and 3 server failures. A second run of the offline lanes, and a run with `--mode aware`, both inserted 0 new rows, confirming the cache key `(model, version, allele_id)` prevents duplicate work. For the confirmed pair, only SpliceAI produced a number for both alleles (0.00 missense, 0.03 stop-gained); the other three lanes are blank for at least one half.",
+        "verdict": "H062 (`P4-4a`) is undecided by its own terms, marked `testing`: the measured 1 h 45 m 20 s is 1.76x the 1-hour prediction but well inside the 4-hour line that would refute it, so the claim sits in the unresolved band the entry defined in advance and is not rounded to either outcome. The step also demonstrates the cache-key structure is correct (a no-op re-run and a mode-aware run both inserted zero rows) and reconfirms, at the individual-score level, that only SpliceAI has a number for the confirmed pair's stop-gained allele.",
+        "why": "Without one shared contract, each of the 19+ candidate models would need its own bespoke calling code, its own retry logic, and its own place to record what version and licence produced a number \u2014 exactly the problem a plugin interface (a fixed function signature every implementation must satisfy) solves in software. Caching by `(model, version, allele_id)` also matters because REVEL is a live external service with its own rate limits and failures; without a cache key that survives interruption, an API hiccup at minute 90 would force re-scoring everything from zero rather than resuming."
+      },
       "slug": "step-3",
       "status": "open",
       "takes_hypotheses": true,
@@ -310,13 +371,52 @@
     },
     {
       "docs": "docs/iteration4/step-4",
-      "entries": [],
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "128-one-command-eight-stages-and-three-things-a-fixture-could-not-catch.md",
+          "inputs": [
+            "input | rows | role",
+            "`src/mva/zoo/zoo.example.toml` | \u2014 | the config; its sha256 **is** the run id (`it4-dcda40a4df2c`)",
+            "`results.it4_allele_records` | 39,286 | the record set ([114](../../step-1/methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md))",
+            "`warehouse.allele_scores` | 58,480 over 4 lanes | the cache ([122](../../step-3/methodology/122-every-lane-scored-once-and-only-once.md))",
+            "`results.coding_alleles` | het rows | the biallelic pairs, via `mva.pipeline.compound_het`",
+            "`warehouse.hpo_gene_scores` | 5,261 rows, term set `with-parental` | section 5 of every report \u2014 the clinical half"
+          ],
+          "number": "128",
+          "path": "docs/iteration4/step-4/methodology/128-one-command-eight-stages-and-three-things-a-fixture-could-not-catch.md",
+          "title": "One command, eight stages, and three things a fixture could not catch",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-4/entry/128-one-command-eight-stages-and-three-things-a-fixture-could-not-catch.md",
+          "violations": []
+        }
+      ],
       "figures": [],
       "goal": "Does a checkpointed DAG run the whole zoo end-to-end, resumably, from one command \u2014 and what does it cost in wall-clock and dollars?",
       "hypotheses": [],
       "kind": "research",
+      "narrative": {
+        "figures": [],
+        "hands_to": {
+          "steps": ["step-5", "step-6"],
+          "what": "Step 5's per-model reports and step 6's merged report both read straight from this step's `results.it4_model_ranks` (402 rows) and `results.it4_model_reports` tables and its run manifest \u2014 they interpret numbers this step produced but does not itself interpret. Step 5's H063 and step 6's H064 are explicitly deferred to be tested here, not in this step."
+        },
+        "inherits": {
+          "steps": ["step-1", "step-2", "step-3"],
+          "what": "The `normalize` stage reads step 1's 39,286-record set; `registry_check` reads step 2's four enabled lanes; `fan_out` reads step 3's 58,480-row score cache. None of the later stages (ranking, reporting, merging) has anything to operate on until all three of those exist, which is why this step could not run until steps 1-3 completed."
+        },
+        "iteration": "iteration4",
+        "sources": [
+          "docs/iteration4/step-4/README.md",
+          "docs/iteration4/step-4/methodology/128-one-command-eight-stages-and-three-things-a-fixture-could-not-catch.md"
+        ],
+        "step": "step-4",
+        "summary": "This step is machinery, not a hypothesis test: it builds the checkpointed workflow DAG (directed acyclic graph, a pipeline whose stages only run once their inputs exist) that turns the score cache into rankings, reports and a manifest in one command, `mva-zoo run`. Eight stages \u2014 normalize, registry_check, fan_out, collect, rank_per_model, report_per_model, merge, render \u2014 ran end to end on the real warehouse in about 15 seconds warm (113 seconds cold), at $0, producing 402 per-lane rank rows over 63,347 compound-heterozygous pairs, a 20,639-pair catalogue-free merged ranking, and four per-model reports plus the merged report. Sixteen genes (AHNAK2, CARMIL1, CELF2, GRM8, HLA-DRB1, LRP1B, LTBP1, MUC16, MUC3A, MUC6, OR8U1, PDE3A, PDZD2, RYR3, SUGCT, ZNF717) exceed a 60-heterozygous-call cap and are skipped whole from every downstream pair count \u2014 BUB1B is not one of them. Only SpliceAI has an opinion on the confirmed pair (rank 11,980 of 50,696, the 23.63rd percentile); the other three lanes recorded no opinion because they each scored only one of the pair's two alleles. Three faults were caught only by running on real data, all fixed and committed before this entry.",
+        "verdict": "This step files no hypothesis, by the repo's own rule that instrument-building work is judged by whether it runs, not by a prediction about biology. What it produced settles nothing on its own but sets up the numbers step 5's H063 and step 6's H064 are judged on: the confirmed pair ranks 11,980 of 50,696 in SpliceAI (the only lane with an opinion), and three faults that only real data exposed (a shared-argument bug that killed the DAG after `collect`, a mis-wired schema read that silently zeroed every rank, and a missing dependency that hid the phenotype row) were found and fixed in this run rather than being inherited unnoticed by steps 5-6.",
+        "why": "A pipeline that only ever ran on a small fixture cannot be trusted to behave the same way on the full callset \u2014 schema mismatches, silent zero-row results, and missing wiring between stages are exactly the class of bug that only shows up at real scale. Building this as one resumable command, rather than a chain of manually-run scripts, is what lets steps 5 and 6 rebuild their inputs deterministically (the run id is the config's own digest, so a repeat run does no new work) instead of each needing its own bespoke orchestration."
+      },
       "slug": "step-4",
-      "status": "planned",
+      "status": "done",
       "takes_hypotheses": true,
       "title": "The workflow DAG",
       "track": "track1",
@@ -324,13 +424,324 @@
     },
     {
       "docs": "docs/iteration4/step-5",
-      "entries": [],
-      "figures": [],
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "129-what-each-lane-says-about-a-pair-it-can-only-half-see.md",
+          "inputs": [
+            "input | rows | role",
+            "`results.it4_model_ranks` | 402 | the per-lane rankings, run `it4-dcda40a4df2c`",
+            "`results.it4_model_reports` | 4 | the stored section JSON every report renders from",
+            "`warehouse.allele_scores` | 58,480 | the distributions in section 3",
+            "`warehouse.hpo_gene_scores` | term set `with-parental` | section 5"
+          ],
+          "number": "129",
+          "path": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md",
+          "title": "What each lane says about a pair it can only half see",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-5/entry/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md",
+          "violations": []
+        }
+      ],
+      "figures": [
+        {
+          "bytes": 3250,
+          "caption": {
+            "means": "Same two-block agreement structure as the SVG (missense lanes correlated, SpliceAI isolated), with the exact rho and n for any pair of lanes available on demand instead of only the cells the caption calls out.",
+            "name": "agreement-matrix.html",
+            "reads": "The same lane-by-lane heat map, interactive: hovering any cell shows the exact rho and shared-allele count.",
+            "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+          },
+          "kind": "html",
+          "name": "agreement-matrix.html",
+          "path": "figures/it4/agreement-matrix.html",
+          "slug": "agreement-matrix.html",
+          "title": "agreement matrix",
+          "url": "/api/steps/iteration4/step-5/figure/agreement-matrix.html"
+        },
+        {
+          "bytes": 16975,
+          "caption": {
+            "means": "Evidence of two separate opinions inside the zoo, not four: the three missense lanes agree with each other, from +0.168 (REVEL vs ESM1b) up to +0.580 (AlphaMissense vs ESM1b), while SpliceAI's agreement with any of them stays near zero (+0.021 to +0.043) \u2014 it is scoring a different property (splicing) and correctly does not track the others.",
+            "name": "agreement-matrix.svg",
+            "reads": "A heat map with one row and column per lane, coloured red (\u22121) through white (0) to green (+1) by Spearman rho (a rank-correlation coefficient: how similarly two lanes order the same alleles, from \u22121 fully opposite to +1 identical order), each cell also printing rho and the count of alleles both lanes scored (n); a cell is left blank rather than coloured zero when too few alleles overlap.",
+            "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+          },
+          "kind": "svg",
+          "name": "agreement-matrix.svg",
+          "path": "figures/it4/agreement-matrix.svg",
+          "slug": "agreement-matrix.svg",
+          "title": "agreement matrix",
+          "url": "/api/steps/iteration4/step-5/figure/agreement-matrix.svg"
+        },
+        {
+          "bytes": 2988,
+          "caption": {
+            "means": "Same abstention-versus-opinion evidence as the SVG, with the exact denominator behind each lane's rank (e.g. 'of 50,696' for SpliceAI) readable on hover rather than only in the caption.",
+            "name": "confirmed-rank.html",
+            "reads": "The same per-lane and fused rank bars, interactive: hovering any bar shows its exact rank and the total number of pairs it was ranked among.",
+            "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+          },
+          "kind": "html",
+          "name": "confirmed-rank.html",
+          "path": "figures/it4/confirmed-rank.html",
+          "slug": "confirmed-rank.html",
+          "title": "confirmed rank",
+          "url": "/api/steps/iteration4/step-5/figure/confirmed-rank.html"
+        },
+        {
+          "bytes": 12157,
+          "caption": {
+            "means": "Evidence that the pair's apparent mediocre rank is an artefact of missing coverage, not a real disagreement: only SpliceAI and the two RRF fusions have a bar above zero (SpliceAI at 11,980 of 50,696; RRF catalogue-free at 20,639 of 52,012; RRF all lanes at 21,497 of 52,219), while AlphaMissense, ESM1b and REVEL sit at zero because each could score only one of the pair's two alleles.",
+            "name": "confirmed-rank.svg",
+            "reads": "Bar chart with one bar per lane (AlphaMissense, ESM1b, REVEL, SpliceAI) plus two consensus bars (RRF catalogue-free, RRF all lanes), y-axis the confirmed pair's rank among biallelic pairs with the axis reversed so rank 1 (best) is at the top; a bar sitting at zero, labelled 'no opinion (a half was unscored)', means that lane could not score both alleles of the pair.",
+            "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+          },
+          "kind": "svg",
+          "name": "confirmed-rank.svg",
+          "path": "figures/it4/confirmed-rank.svg",
+          "slug": "confirmed-rank.svg",
+          "title": "confirmed rank",
+          "url": "/api/steps/iteration4/step-5/figure/confirmed-rank.svg"
+        },
+        {
+          "bytes": 3816,
+          "caption": {
+            "means": "Same evidence as the SVG \u2014 the missense allele sits at the 0.47th percentile of AlphaMissense's scores \u2014 but a reader can hover any bar for the exact score-bin edges and allele count, and hover the dashed line for the exact score and percentile, rather than reading them off a static caption.",
+            "name": "score-histogram-alphamissense.html",
+            "reads": "The same AlphaMissense distribution as the SVG, rendered as an interactive Plotly chart with a CDN-loaded plotting library.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          "kind": "html",
+          "name": "score-histogram-alphamissense.html",
+          "path": "figures/it4/score-histogram-alphamissense.html",
+          "slug": "score-histogram-alphamissense.html",
+          "title": "score histogram alphamissense",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-alphamissense.html"
+        },
+        {
+          "bytes": 22398,
+          "caption": {
+            "means": "Evidence that AlphaMissense places the confirmed missense allele in the extreme damaging tail of its own distribution: percentile 0.47%, i.e. fewer than 1 in 200 of the 10,601 alleles it scored rank higher. It also shows visually why the lane cannot speak to the pair as a whole \u2014 the stop-gained half sits entirely outside the histogram because AlphaMissense does not score that consequence class.",
+            "name": "score-histogram-alphamissense.svg",
+            "reads": "Bar chart of AlphaMissense's score distribution over the 10,601 alleles it scored, x-axis the model score (higher = more damaging, per AlphaMissense's own scale), y-axis allele count. A dashed vertical line marks the confirmed pair's missense allele at score 0.9229, labelled with its percentile; a text note in the corner reads 'not scored by this lane: stop_gained' because the pair's other allele has no AlphaMissense score at all.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          "kind": "svg",
+          "name": "score-histogram-alphamissense.svg",
+          "path": "figures/it4/score-histogram-alphamissense.svg",
+          "slug": "score-histogram-alphamissense.svg",
+          "title": "score histogram alphamissense",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-alphamissense.svg"
+        },
+        {
+          "bytes": 3844,
+          "caption": {
+            "means": "Same 2.52nd-percentile evidence as the SVG, with exact bin counts and the marked score available on hover instead of only at the labelled points.",
+            "name": "score-histogram-esm1b.html",
+            "reads": "The same ESM1b distribution, interactive: hoverable bars and marker line.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          "kind": "html",
+          "name": "score-histogram-esm1b.html",
+          "path": "figures/it4/score-histogram-esm1b.html",
+          "slug": "score-histogram-esm1b.html",
+          "title": "score histogram esm1b",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-esm1b.html"
+        },
+        {
+          "bytes": 21202,
+          "caption": {
+            "means": "Evidence that a protein language model (a model trained on protein sequences alone, with no DNA or splicing information) independently agrees with AlphaMissense's direction: the missense allele sits at the 2.52nd percentile of ESM1b's own distribution \u2014 a second, methodologically unrelated lane finding the same allele extreme.",
+            "name": "score-histogram-esm1b.svg",
+            "reads": "Bar chart of ESM1b's score distribution over the 4,562 alleles it scored (range \u221213.619 to 17.936), x-axis the model score, y-axis allele count. A dashed vertical line marks the confirmed missense allele at score 11.537 with its percentile; a corner note flags the stop-gained half as not scored by this lane.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          "kind": "svg",
+          "name": "score-histogram-esm1b.svg",
+          "path": "figures/it4/score-histogram-esm1b.svg",
+          "slug": "score-histogram-esm1b.svg",
+          "title": "score histogram esm1b",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-esm1b.svg"
+        },
+        {
+          "bytes": 3756,
+          "caption": {
+            "means": "Same top-2.59%-percentile evidence as the SVG, inspectable bin-by-bin rather than only at the marked point.",
+            "name": "score-histogram-revel.html",
+            "reads": "The same REVEL distribution, interactive, with hoverable bars and the marked allele's exact score and percentile.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          "kind": "html",
+          "name": "score-histogram-revel.html",
+          "path": "figures/it4/score-histogram-revel.html",
+          "slug": "score-histogram-revel.html",
+          "title": "score histogram revel",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-revel.html"
+        },
+        {
+          "bytes": 20659,
+          "caption": {
+            "means": "A third, catalogue-adjacent lane (REVEL is described as catalogue-adjacent because its training draws on curated variant databases, unlike the other three) also places the missense allele in its top 2.59% \u2014 a third independent line of evidence pointing at the same allele, from a model with different provenance than either AlphaMissense or ESM1b.",
+            "name": "score-histogram-revel.svg",
+            "reads": "Bar chart of REVEL's score distribution over the alleles it scored, x-axis the model score, y-axis allele count. A dashed line marks the confirmed missense allele at score 0.472 with its percentile; a corner note marks the stop-gained half as not scored.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          "kind": "svg",
+          "name": "score-histogram-revel.svg",
+          "path": "figures/it4/score-histogram-revel.svg",
+          "slug": "score-histogram-revel.svg",
+          "title": "score histogram revel",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-revel.svg"
+        },
+        {
+          "bytes": 3853,
+          "caption": {
+            "means": "Same evidence as the SVG \u2014 both alleles sit in the distribution's near-zero bulk, not its tail \u2014 with the degenerate shape (median 0, p90 0.03) explorable bin by bin rather than summarised in one caption.",
+            "name": "score-histogram-spliceai.html",
+            "reads": "The same SpliceAI distribution, interactive, with both marked alleles hoverable for their exact score and percentile alongside the bin counts.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          "kind": "html",
+          "name": "score-histogram-spliceai.html",
+          "path": "figures/it4/score-histogram-spliceai.html",
+          "slug": "score-histogram-spliceai.html",
+          "title": "score histogram spliceai",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-spliceai.html"
+        },
+        {
+          "bytes": 20335,
+          "caption": {
+            "means": "Evidence that SpliceAI has an opinion on both alleles but a weak one: its median score is 0 and its 90th percentile is only 0.03, the same value as the stop-gained allele's own score, so both marked alleles sit inside the flat, near-zero bulk of the distribution rather than its tail. This is the correct reading for changes that act through protein rather than splicing, not evidence the pair is benign.",
+            "name": "score-histogram-spliceai.svg",
+            "reads": "Bar chart of SpliceAI's score distribution over 32,534 alleles, x-axis the model score, y-axis allele count, with two dashed lines: the missense half at 0.00 (24.53rd percentile) and the stop-gained half at 0.03 (9.74th percentile) \u2014 this is the only lane with a marked line for both halves of the pair.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          "kind": "svg",
+          "name": "score-histogram-spliceai.svg",
+          "path": "figures/it4/score-histogram-spliceai.svg",
+          "slug": "score-histogram-spliceai.svg",
+          "title": "score histogram spliceai",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-spliceai.svg"
+        }
+      ],
       "goal": "Can one report template describe every model identically \u2014 coverage, distribution, the confirmed pair's rank and percentile, limitations \u2014 with an LLM writing only the interpretation?",
-      "hypotheses": [],
+      "hypotheses": [
+        {
+          "author": "wave2",
+          "confidence": 0.2,
+          "gene": "BUB1B",
+          "hypothesis_id": "H063",
+          "iteration": "iteration4",
+          "path": "",
+          "prediction": "For each of alphamissense, esm1b and spliceai, the confirmed pair's percentile in results.it4_model_ranks is at most 10.00 %.",
+          "reasoning": "Not supported and not refuted by its own terms, recorded as such rather than rounded. Two of the three catalogue-free lanes have no opinion on the pair \u2014 the claim's refutation clause says that is neither \u2014 because each scored the missense half and cannot score a stop_gained allele, and rank.py excludes a pair with an unscored half rather than scoring it zero. The one lane that ranks it, SpliceAI, puts it at the 23.63rd percentile: outside the predicted top decile, above the refuting median. The claim was aimed at the wrong unit: every missense lane places the pair's missense allele in its top 2.6 % and AlphaMissense in its top 0.47 %, so as a claim about alleles it would be supported three times over. As a claim about pairs it cannot be settled by a roster in which three of four lanes are missense-only and the pair is half nonsense \u2014 the lane gap entry 114 predicted from consequence classes and entry 119 confirmed by coverage. The revision it is owed is a lane that scores a nonsense allele (GPN-MSA). Entry 129.",
+          "recorded_at": "2026-09-19T18:46:34.498928",
+          "refuted_by": "Any catalogue-free lane places the confirmed pair below the median (percentile above 50 %) \u2014 reported as that lane's blind spot. A lane with no opinion on the pair is neither support nor refutation.",
+          "revision": 2,
+          "statement": "P4-6: every catalogue-free lane places the confirmed BUB1B pair in the top decile of the callset's biallelic pairs.",
+          "status": "testing",
+          "step": "step-5"
+        }
+      ],
       "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "Evidence that AlphaMissense places the confirmed missense allele in the extreme damaging tail of its own distribution: percentile 0.47%, i.e. fewer than 1 in 200 of the 10,601 alleles it scored rank higher. It also shows visually why the lane cannot speak to the pair as a whole \u2014 the stop-gained half sits entirely outside the histogram because AlphaMissense does not score that consequence class.",
+            "name": "score-histogram-alphamissense.svg",
+            "reads": "Bar chart of AlphaMissense's score distribution over the 10,601 alleles it scored, x-axis the model score (higher = more damaging, per AlphaMissense's own scale), y-axis allele count. A dashed vertical line marks the confirmed pair's missense allele at score 0.9229, labelled with its percentile; a text note in the corner reads 'not scored by this lane: stop_gained' because the pair's other allele has no AlphaMissense score at all.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          {
+            "means": "Same evidence as the SVG \u2014 the missense allele sits at the 0.47th percentile of AlphaMissense's scores \u2014 but a reader can hover any bar for the exact score-bin edges and allele count, and hover the dashed line for the exact score and percentile, rather than reading them off a static caption.",
+            "name": "score-histogram-alphamissense.html",
+            "reads": "The same AlphaMissense distribution as the SVG, rendered as an interactive Plotly chart with a CDN-loaded plotting library.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          {
+            "means": "Evidence that a protein language model (a model trained on protein sequences alone, with no DNA or splicing information) independently agrees with AlphaMissense's direction: the missense allele sits at the 2.52nd percentile of ESM1b's own distribution \u2014 a second, methodologically unrelated lane finding the same allele extreme.",
+            "name": "score-histogram-esm1b.svg",
+            "reads": "Bar chart of ESM1b's score distribution over the 4,562 alleles it scored (range \u221213.619 to 17.936), x-axis the model score, y-axis allele count. A dashed vertical line marks the confirmed missense allele at score 11.537 with its percentile; a corner note flags the stop-gained half as not scored by this lane.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          {
+            "means": "Same 2.52nd-percentile evidence as the SVG, with exact bin counts and the marked score available on hover instead of only at the labelled points.",
+            "name": "score-histogram-esm1b.html",
+            "reads": "The same ESM1b distribution, interactive: hoverable bars and marker line.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          {
+            "means": "A third, catalogue-adjacent lane (REVEL is described as catalogue-adjacent because its training draws on curated variant databases, unlike the other three) also places the missense allele in its top 2.59% \u2014 a third independent line of evidence pointing at the same allele, from a model with different provenance than either AlphaMissense or ESM1b.",
+            "name": "score-histogram-revel.svg",
+            "reads": "Bar chart of REVEL's score distribution over the alleles it scored, x-axis the model score, y-axis allele count. A dashed line marks the confirmed missense allele at score 0.472 with its percentile; a corner note marks the stop-gained half as not scored.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          {
+            "means": "Same top-2.59%-percentile evidence as the SVG, inspectable bin-by-bin rather than only at the marked point.",
+            "name": "score-histogram-revel.html",
+            "reads": "The same REVEL distribution, interactive, with hoverable bars and the marked allele's exact score and percentile.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          {
+            "means": "Evidence that SpliceAI has an opinion on both alleles but a weak one: its median score is 0 and its 90th percentile is only 0.03, the same value as the stop-gained allele's own score, so both marked alleles sit inside the flat, near-zero bulk of the distribution rather than its tail. This is the correct reading for changes that act through protein rather than splicing, not evidence the pair is benign.",
+            "name": "score-histogram-spliceai.svg",
+            "reads": "Bar chart of SpliceAI's score distribution over 32,534 alleles, x-axis the model score, y-axis allele count, with two dashed lines: the missense half at 0.00 (24.53rd percentile) and the stop-gained half at 0.03 (9.74th percentile) \u2014 this is the only lane with a marked line for both halves of the pair.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          {
+            "means": "Same evidence as the SVG \u2014 both alleles sit in the distribution's near-zero bulk, not its tail \u2014 with the degenerate shape (median 0, p90 0.03) explorable bin by bin rather than summarised in one caption.",
+            "name": "score-histogram-spliceai.html",
+            "reads": "The same SpliceAI distribution, interactive, with both marked alleles hoverable for their exact score and percentile alongside the bin counts.",
+            "source": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md"
+          },
+          {
+            "means": "Evidence of two separate opinions inside the zoo, not four: the three missense lanes agree with each other, from +0.168 (REVEL vs ESM1b) up to +0.580 (AlphaMissense vs ESM1b), while SpliceAI's agreement with any of them stays near zero (+0.021 to +0.043) \u2014 it is scoring a different property (splicing) and correctly does not track the others.",
+            "name": "agreement-matrix.svg",
+            "reads": "A heat map with one row and column per lane, coloured red (\u22121) through white (0) to green (+1) by Spearman rho (a rank-correlation coefficient: how similarly two lanes order the same alleles, from \u22121 fully opposite to +1 identical order), each cell also printing rho and the count of alleles both lanes scored (n); a cell is left blank rather than coloured zero when too few alleles overlap.",
+            "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+          },
+          {
+            "means": "Same two-block agreement structure as the SVG (missense lanes correlated, SpliceAI isolated), with the exact rho and n for any pair of lanes available on demand instead of only the cells the caption calls out.",
+            "name": "agreement-matrix.html",
+            "reads": "The same lane-by-lane heat map, interactive: hovering any cell shows the exact rho and shared-allele count.",
+            "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+          },
+          {
+            "means": "Evidence that the pair's apparent mediocre rank is an artefact of missing coverage, not a real disagreement: only SpliceAI and the two RRF fusions have a bar above zero (SpliceAI at 11,980 of 50,696; RRF catalogue-free at 20,639 of 52,012; RRF all lanes at 21,497 of 52,219), while AlphaMissense, ESM1b and REVEL sit at zero because each could score only one of the pair's two alleles.",
+            "name": "confirmed-rank.svg",
+            "reads": "Bar chart with one bar per lane (AlphaMissense, ESM1b, REVEL, SpliceAI) plus two consensus bars (RRF catalogue-free, RRF all lanes), y-axis the confirmed pair's rank among biallelic pairs with the axis reversed so rank 1 (best) is at the top; a bar sitting at zero, labelled 'no opinion (a half was unscored)', means that lane could not score both alleles of the pair.",
+            "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+          },
+          {
+            "means": "Same abstention-versus-opinion evidence as the SVG, with the exact denominator behind each lane's rank (e.g. 'of 50,696' for SpliceAI) readable on hover rather than only in the caption.",
+            "name": "confirmed-rank.html",
+            "reads": "The same per-lane and fused rank bars, interactive: hovering any bar shows its exact rank and the total number of pairs it was ranked among.",
+            "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+          }
+        ],
+        "hands_to": {
+          "steps": ["step-6"],
+          "what": "Step 6's cross-lane agreement matrix and RRF (reciprocal rank fusion, a way to combine several rankings by averaging each item's 1/rank across lists) consensus both need every lane's per-pair rank and per-allele score already computed here. Step 6 also explicitly builds on this step's finding that the abstentions are structural (a missense-only lane cannot score a nonsense allele), reusing it to explain why the fused consensus later turns out to reflect one lane's opinion rather than genuine disagreement."
+        },
+        "inherits": {
+          "steps": ["step-4"],
+          "what": "Every number in every report and figure here is read from `results.it4_model_ranks` and `results.it4_model_reports`, tables step 4 wrote and did not interpret. Without step 4's rankings already computed, this step would have nothing to caption \u2014 it renders the numbers, it does not generate them."
+        },
+        "iteration": "iteration4",
+        "sources": [
+          "docs/iteration4/step-5/README.md",
+          "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md",
+          "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md",
+          "tools/render_it4_figures.py"
+        ],
+        "step": "step-5",
+        "summary": "This step renders one report template per model lane (coverage, score distribution, the confirmed pair's rank and percentile, a clinical cross-reference against the child's 8 HPO terms, and a hand-written interpretation), plus twelve figures, all built only from the JSON step 4 already wrote. The pair-level test found nothing decisive: only SpliceAI ranks the confirmed pair at all (23.63rd percentile, outside the top decile), and AlphaMissense and ESM1b record no opinion because each scored only one of the pair's two alleles. But the allele-level result underneath is sharp: AlphaMissense, ESM1b and REVEL \u2014 three lanes with different training data and methods \u2014 each independently place the missense half of the confirmed pair in the top 0.47-2.59% of everything that lane scored, and SpliceAI's two numbers (0.00 and 0.03) sit far below its own 0.2 damage cut-off, consistent with a change that acts through protein rather than splicing. Every report's clinical section states, independent of any model, that BUB1B ranks #14 of 5,267 genes against the child's HPO terms.",
+        "verdict": "H063 (`P4-6`) is `testing`: neither supported nor refuted by its own terms, at confidence 0.20. SpliceAI, the only catalogue-free lane with an opinion on the pair, places it at the 23.63rd percentile \u2014 above the median that would refute the claim, but outside the top decile it predicted. AlphaMissense and ESM1b abstain rather than disagree, which the claim's own refutation clause counts as neither outcome. The entry concludes the claim was written about the wrong unit: at the allele level all three missense lanes put the pair's missense half in their own top 2.6%, which would have supported `P4-6` three times over had it been phrased about alleles.",
+        "why": "A report template has to describe every model the same way, or a reader cannot tell whether one model's silence means 'nothing there' versus 'this lane can't see that consequence class at all' \u2014 exactly the ambiguity step 1 and step 2 flagged as a risk before any lane ran. Testing the claim at the pair level first, before folding in the allele-level numbers, is what exposed that the claim (`P4-6`) was aimed at the wrong unit: a roster where three of four lanes are missense-only cannot produce a verdict on a half-nonsense pair, no matter how strong its allele-level signal is."
+      },
       "slug": "step-5",
-      "status": "planned",
+      "status": "open",
       "takes_hypotheses": true,
       "title": "The report per model",
       "track": "track1",
@@ -338,13 +749,68 @@
     },
     {
       "docs": "docs/iteration4/step-6",
-      "entries": [],
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "130-a-consensus-of-lanes-that-declined-to-vote.md",
+          "inputs": [
+            "input | value | role",
+            "`results.it4_model_ranks` | 402 rows, run `it4-dcda40a4df2c` | the four per-lane rankings",
+            "`warehouse.allele_scores` | 58,480 rows | the agreement matrix and the disagreement table",
+            "`build/it4/merged.json` | \u2014 | every number \u00a71\u2013\u00a74 of the merged report prints",
+            "RRF | k = 60 | Cormack, Clarke & Buettcher, SIGIR 2009"
+          ],
+          "number": "130",
+          "path": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md",
+          "title": "A consensus of lanes that declined to vote",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-6/entry/130-a-consensus-of-lanes-that-declined-to-vote.md",
+          "violations": []
+        }
+      ],
       "figures": [],
       "goal": "Do the models agree, and what does the merged report conclude under each of the three merge methods?",
-      "hypotheses": [],
+      "hypotheses": [
+        {
+          "author": "wave2",
+          "confidence": 0.02,
+          "gene": "BUB1B",
+          "hypothesis_id": "H064",
+          "iteration": "iteration4",
+          "path": "",
+          "prediction": "In docs/iteration4/report.md section 3, the catalogue-free row's confirmed-pair RRF rank is 1.",
+          "reasoning": "Predicted rank 1, pre-registered 'outside the top 5' as refuting, measured 20,639 of 52,012. There is no reading of that as a near miss. The refutation clause asks the disagreement table to name the lanes responsible, and the honest answer is that it names the wrong thing: all 90 disagreement rows are the same benign shape (a splice-window allele that missense models find unremarkable). What sank the pair is abstention, not disagreement \u2014 AlphaMissense, ESM1b and REVEL are missense-only, the pair is half stop_gained, and none of the three could rank it, so the fused score is exactly 1/(60+11,980), SpliceAI's reciprocal rank alone. Plan \u00a710 R9 named this failure mode before the iteration began and entries 114, 119 and 129 tracked it from consequence classes to coverage to an absent rank. The revision is a lane that scores a nonsense allele (GPN-MSA). What the run did establish: three models of different provenance place the pair's missense allele in the top 0.47 %, 2.52 % and 2.59 % of what they scored. Entry 130.",
+          "recorded_at": "2026-09-19T18:52:00.268559",
+          "refuted_by": "The confirmed pair's catalogue-free RRF rank is outside the top 5 \u2014 the disagreement table then names the lanes responsible.",
+          "revision": 2,
+          "statement": "P4-8: the RRF consensus places the confirmed BUB1B pair first among the callset's biallelic pairs when catalogue-adjacent lanes are excluded.",
+          "status": "refuted",
+          "step": "step-6"
+        }
+      ],
       "kind": "research",
+      "narrative": {
+        "figures": [],
+        "hands_to": {
+          "steps": [],
+          "what": "Nothing in iteration 4 reads step 6's output \u2014 it is the terminal step of the chain that ran (step 7, Track 2's graph walk, has not run). Its refutation and its abstention-not-disagreement explanation are instead the finding iteration 4 hands to Track 1's report: a compound-heterozygous zoo consensus is silent on the confirmed pair not because the models disagree with the clinical case, but because the roster is missense-heavy and the pair is half nonsense \u2014 the gap GPN-MSA's still-pending promotion (recorded since step 1) would close."
+        },
+        "inherits": {
+          "steps": ["step-5"],
+          "what": "The agreement matrix and RRF fusion both need every lane's per-pair rank and per-allele score already computed and captioned in step 5 \u2014 this step reuses step 5's allele-level finding (three lanes independently rank the missense allele in their own top 2.6%) to explain why the pair-level fusion result is abstention rather than genuine disagreement, rather than re-deriving that explanation from scratch."
+        },
+        "iteration": "iteration4",
+        "sources": [
+          "docs/iteration4/step-6/README.md",
+          "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+        ],
+        "step": "step-6",
+        "summary": "This step merges the four lanes into one consensus ranking using RRF (reciprocal rank fusion, a way to combine several ranked lists by summing each item's 1/rank across every list it appears in, so a list that never ranks an item contributes nothing to it). Two runs were made: catalogue-free (AlphaMissense, ESM1b, SpliceAI) puts the confirmed pair at rank 20,639 of 52,012, fused score 0.000083; adding REVEL moves it only to 21,497 of 52,219, an 858-place shift with an identical fused score. The fused score for the catalogue-free run is exactly 1/(60 + 11,980) \u2014 SpliceAI's own reciprocal rank and nothing else \u2014 because AlphaMissense, ESM1b and REVEL each abstain rather than vote, having scored only one of the pair's two alleles. The cross-lane agreement matrix shows two blocks: the three missense lanes correlate at +0.168 to +0.580 with each other, while SpliceAI's correlation with any of them stays near zero (+0.021 to +0.043) \u2014 one opinion sampled three ways, plus one unrelated opinion. All 90 disagreement rows share the same shape: a splice-window allele a missense model finds unremarkable.",
+        "verdict": "H064 (`P4-8`) refuted: the catalogue-free RRF consensus ranks the confirmed pair 20,639 of 52,012, far from the predicted rank 1. The refutation's cause is abstention, not disagreement \u2014 three of four lanes have no rank to contribute because each scored only one allele of a half-nonsense pair, a lane-coverage gap step 1 and step 2 predicted before any ranking ran. The step also verified the RRF method's own citation (Crossref confirms the DOI, three authors, SIGIR 2009, pages 758-759), so the refutation is not attributable to a wrong or unverifiable fusion formula.",
+        "why": "A merged ranking is only trustworthy if a reader can tell a low fused rank apart from three lanes actively voting it down \u2014 otherwise the report would misreport structural blindness (a lane that cannot see the pair's consequence class) as a genuine scientific disagreement about how damaging the pair is. Running both a catalogue-free and an all-lanes fusion, and checking the ablation's effect on rank, is what lets this step show the REVEL catalogue lane is not doing the work: excluding it barely moves the rank and leaves the fused score bit-for-bit identical."
+      },
       "slug": "step-6",
-      "status": "planned",
+      "status": "done",
       "takes_hypotheses": true,
       "title": "The merged report",
       "track": "track1",
@@ -357,6 +823,7 @@
       "goal": "Do a graph walk and a GNN over the same knowledge graph converge on the same approved drugs for the mechanism, and how does each rank against a decoy?",
       "hypotheses": [],
       "kind": "research",
+      "narrative": null,
       "slug": "step-7",
       "status": "planned",
       "takes_hypotheses": true,

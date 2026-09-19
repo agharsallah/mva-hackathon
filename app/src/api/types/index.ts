@@ -18,6 +18,7 @@ export type * from './envelope';
 export type * from './genome';
 export type * from './health';
 export type * from './jobs';
+export type * from './narrative';
 export type * from './overview';
 export type * from './panel';
 export type * from './phenotype';

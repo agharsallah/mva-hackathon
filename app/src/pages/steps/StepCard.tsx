@@ -62,6 +62,12 @@ export function StepCard({
 
       <p className="text-xs text-chrome-300">{step.goal}</p>
 
+      {step.narrative && (
+        <p className="border-l-2 border-line-soft pl-3 text-xs leading-relaxed text-chrome-200">
+          {step.narrative.summary}
+        </p>
+      )}
+
       {step.hypotheses.length > 0 && (
         <ul className="space-y-2">
           {step.hypotheses.map((claim) => (
