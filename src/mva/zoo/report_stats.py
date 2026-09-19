@@ -34,9 +34,19 @@ HISTOGRAM_BINS = 40
 HPO_TERM_COUNT = 8
 
 
+#: How to get from a rendered report (``docs/iteration4/reports/<key>.md``) back to the
+#: repository root, so a figure link resolves both on GitHub and in a local viewer. A
+#: root-relative path does not: it reads as ``docs/iteration4/reports/figures/…``.
+REPORT_TO_ROOT = "../../../"
+
+
 def histogram_path(key: str) -> str:
-    """Where ``tools/render_it4_figures.py`` writes this lane's score histogram."""
-    return f"figures/it4/score-histogram-{key}.svg"
+    """This lane's score histogram, as a report links it.
+
+    ``tools/render_it4_figures.py`` writes ``figures/it4/score-histogram-<key>.svg`` from the
+    repository root; the link is relative to the report that shows it.
+    """
+    return f"{REPORT_TO_ROOT}figures/it4/score-histogram-{key}.svg"
 
 
 # ---------------------------------------------------------------------------------------

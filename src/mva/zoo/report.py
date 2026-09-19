@@ -38,11 +38,13 @@ __all__ = [
     "MODEL_REPORTS_TABLE",
     "REPORT_DIR",
     "Runtime",
+    "existing_interpretation",
     "histogram_path",
     "hpo_sentence",
     "model_report_json",
     "render_model_report",
     "report_path",
+    "write_markdown",
     "write_reports",
 ]
 
@@ -306,12 +308,41 @@ def write_reports(
 
 
 def write_markdown(reports: Sequence[Mapping[str, Any]], out_dir: str | Path) -> list[Path]:
-    """Render every report to ``<out_dir>/<model>.md`` and return the paths written."""
+    """Render every report to ``<out_dir>/<model>.md`` and return the paths written.
+
+    **Prose already under the section-6 marker is kept.** Sections 1-5 and 7 are regenerated
+    from the run's JSON on every render, but section 6 is the one slot a human (or, later, an
+    LLM) writes into, and a re-render must not silently delete it — the same rule
+    :func:`mva.zoo.merge_render.render_merged` already follows for the merged narrative.
+    """
     directory = Path(out_dir)
     directory.mkdir(parents=True, exist_ok=True)
     written: list[Path] = []
     for report in reports:
         path = directory / f"{report.get('model', 'model')}.md"
-        path.write_text(render_model_report(report), encoding="utf-8")
+        kept = existing_interpretation(path)
+        rendered = report
+        if kept:
+            sections = dict(report.get("sections", {}))
+            block = dict(sections.get("interpretation", {}))
+            block["text"] = kept
+            sections["interpretation"] = block
+            rendered = {**report, "sections": sections}
+        path.write_text(render_model_report(rendered), encoding="utf-8")
         written.append(path)
     return written
+
+
+def existing_interpretation(path: Path) -> str:
+    """The prose already written under a report's section-6 marker, or ``""``."""
+    if not path.is_file():
+        return ""
+    marker = "<!-- interpretation:"
+    text = path.read_text(encoding="utf-8")
+    if marker not in text:
+        return ""
+    tail = text.split(marker, 1)[1].split("-->", 1)[-1]
+    body = tail.split("\n## ", 1)[0].strip()
+    if body.startswith("_Placeholder."):
+        return ""
+    return body

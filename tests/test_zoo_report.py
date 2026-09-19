@@ -245,3 +245,44 @@ def test_write_markdown_names_the_file_after_the_lane(tmp_path, payload):
     written = report.write_markdown([payload], tmp_path)
     assert [p.name for p in written] == ["demo.md"]
     assert written[0].read_text(encoding="utf-8").startswith("# demo")
+
+
+class TestInterpretationSurvivesARerender:
+    """Section 6 is the one slot prose enters; a re-render regenerates everything else.
+
+    Sections 1-5 and 7 must follow the run's JSON, but deleting a written interpretation
+    because the numbers were recomputed would lose the only part of the report a person
+    wrote. `merge_render` already keeps the merged narrative this way (entry 132).
+    """
+
+    def report(self) -> dict:
+        return {
+            "model": "fake",
+            "version": "v1",
+            "run_id": "it4-test",
+            "sections": {
+                "card": {"name": "Fake", "version": "v1", "tier": 1},
+                "coverage": {"scored": 1, "total": 2, "fraction": 0.5, "by_consequence": []},
+                "distribution": {"n": 0, "marks": [], "quantiles": {}, "histogram": {}},
+                "confirmed": {},
+                "clinical": {"sentence": "no row"},
+                "interpretation": {"marker": "<!-- interpretation: hand-written 2026-01-01 -->"},
+                "limits": {},
+            },
+        }
+
+    def test_a_written_section_is_kept(self, tmp_path):
+        from mva.zoo import report as report_module
+
+        report_module.write_markdown([self.report()], tmp_path)
+        path = tmp_path / "fake.md"
+        text = path.read_text()
+        path.write_text(text.replace("_Placeholder.", "Written by a human. Placeholder."))
+        report_module.write_markdown([self.report()], tmp_path)
+        assert "Written by a human." in path.read_text()
+
+    def test_a_placeholder_is_not_mistaken_for_prose(self, tmp_path):
+        from mva.zoo import report as report_module
+
+        report_module.write_markdown([self.report()], tmp_path)
+        assert report_module.existing_interpretation(tmp_path / "fake.md") == ""
