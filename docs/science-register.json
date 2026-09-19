@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-19T18:46:34",
+  "generated_at": "2026-09-19T18:52:00",
   "steps": [
     {
       "slug": "step-0",
@@ -2400,6 +2400,48 @@
           "kind": "measurement",
           "claim": "All three missense lanes independently place the confirmed pair's missense allele in the top 0.47-2.59 % of everything they scored (AlphaMissense 0.9229 at 0.47 %, ESM1b 11.537 at 2.52 %, REVEL 0.472 at 2.59 %), so the lanes are decisive about the half they can see.",
           "source_ref": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H064",
+      "step": "step-6",
+      "statement": "P4-8: the RRF consensus places the confirmed BUB1B pair first among the callset's biallelic pairs when catalogue-adjacent lanes are excluded.",
+      "prediction": "In docs/iteration4/report.md section 3, the catalogue-free row's confirmed-pair RRF rank is 1.",
+      "refuted_by": "The confirmed pair's catalogue-free RRF rank is outside the top 5 \u2014 the disagreement table then names the lanes responsible.",
+      "gene": "BUB1B",
+      "path": "",
+      "status": "refuted",
+      "confidence": 0.02,
+      "suggested_confidence": 0.0392,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 152,
+          "direction": "refutes",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "The catalogue-free RRF consensus places the confirmed BUB1B pair at rank 20,639 of 52,012 biallelic pairs (39.68th percentile), far outside the top 5 that the claim pre-registered as refuting.",
+          "source_ref": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 153,
+          "direction": "refutes",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "The pair's fused score is exactly 1/(60 + 11,980) \u2014 SpliceAI's reciprocal rank alone. AlphaMissense, ESM1b and REVEL have no rank for the pair at all, because each is missense-only and the pair is half stop_gained, so the consensus is one lane's opinion.",
+          "source_ref": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 154,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "Excluding the catalogue-adjacent lane moves the consensus rank by 858 of about 52,000 and leaves the fused score identical, so the ClinVar leak the ablation exists to detect is not load-bearing in this run.",
+          "source_ref": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md",
           "lineage_ref": ""
         }
       ]

@@ -92,6 +92,7 @@ ITERATION4: tuple[Step, ...] = (
             "the three merge methods?"
         ),
         iteration="iteration4",
+        status="done",
         track="track1",
     ),
     Step(

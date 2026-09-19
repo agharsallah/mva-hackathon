@@ -75,7 +75,13 @@ no table holds HGVS, so step 1 re-asks VEP.
   AlphaMissense **0.47 %**, ESM1b **2.52 %**, REVEL **2.59 %** on the pair's *missense allele*.
   §5 now real everywhere — `BUB1B` ranks **#14 of 5,267** on the 8 HPO terms. Four §6
   interpretations hand-written and signed; 12 figures in `figures/it4/`
-- [ ] R6 step 6: agreement matrix, RRF with/without adjacent, disagreement table, `docs/iteration4/report.md` (method `fusion`). File **P4-6**, **P4-8** (MVP lanes)
+- [x] R6 step 6 — **entry 130**, `P4-8` = **H064 refuted**: the catalogue-free RRF consensus
+  puts the confirmed pair at **20,639 of 52,012**, not 1. The cause is **abstention, not
+  disagreement** — the fused score is exactly `1/(60+11,980)`, SpliceAI's vote alone, because
+  the three missense lanes have no rank for a half-`stop_gained` pair. Excluding REVEL moves
+  it by 858 of ~52,000: **the catalogue ablation is not load-bearing here**. Matrix has two
+  blocks (missense +0.168…+0.580; SpliceAI +0.021…+0.043). RRF DOI **verified via Crossref**
+  (`6c054bf`). Merged narrative hand-written
 - [ ] R7 step 7 run: walk over MONDO:0009759 and the decoy card; overlap figure; Q14 section. File **P4-11**, **P4-12**
 - [ ] step READMEs 1–7 "What happened" filled from the entries; `docs/README.md` index rows
 
