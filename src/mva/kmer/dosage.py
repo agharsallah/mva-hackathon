@@ -85,23 +85,54 @@ class Dosage:
         }
 
 
-def _per_contig(counts: np.ndarray, probes: ChromosomeProbes) -> dict[str, np.ndarray]:
-    """Split a flat count vector into one array per contig, in the probe set's own order."""
-    if counts.size != len(probes):
-        raise ValueError(
-            f"counts has {counts.size} entries for {len(probes)} probes: "
-            "the tally and the probe set are not from the same design"
-        )
-    return {name: counts[probes.owner == index] for index, name in enumerate(probes.contigs)}
+def _per_contig(
+    counts: np.ndarray, probes: ChromosomeProbes, kmers: np.ndarray | None = None
+) -> dict[str, np.ndarray]:
+    """Split a count vector into one array per contig.
+
+    ``kmers`` is the **sorted unique** array the counts are indexed by -- which is what a
+    counting pass actually returns, because a lookup structure holds each k-mer once. The
+    design is deliberately not deduplicated: the calibration set is drawn from the
+    per-chromosome pool, so a probe can belong to two groups and its single count is read by
+    both. Without the mapping the two vectors are different lengths, and the mismatch fails
+    in the worst possible way -- an off-by-one that still produces plausible dosages.
+
+    Omitting ``kmers`` means the counts are already in the design's own order, which is what
+    a caller that tallied the design directly has.
+    """
+    if kmers is None:
+        if counts.size != len(probes):
+            raise ValueError(
+                f"counts has {counts.size} entries for {len(probes)} probes: "
+                "the tally and the probe set are not from the same design"
+            )
+        slots = np.arange(len(probes))
+    else:
+        if counts.size != kmers.size:
+            raise ValueError(
+                f"counts has {counts.size} entries for {kmers.size} counted k-mers: "
+                "the tally and the k-mer array are not from the same pass"
+            )
+        slots = np.searchsorted(kmers, probes.kmers)
+        if slots.size and (
+            int(slots.max()) >= kmers.size or not np.array_equal(kmers[slots], probes.kmers)
+        ):
+            raise ValueError(
+                "a probe in the design is absent from the counted k-mers: "
+                "the probe set and the pass are not from the same build"
+            )
+    return {name: counts[slots[probes.owner == index]] for index, name in enumerate(probes.contigs)}
 
 
-def absolute_scale(counts: np.ndarray, probes: ChromosomeProbes) -> float:
+def absolute_scale(
+    counts: np.ndarray, probes: ChromosomeProbes, kmers: np.ndarray | None = None
+) -> float:
     """The calibration set's mean count — the denominator that assumes nothing.
 
     Returns ``nan`` when the design carried no calibration set, which is a statement the
     caller must handle rather than a zero it can divide by.
     """
-    blocks = _per_contig(counts, probes)
+    blocks = _per_contig(counts, probes, kmers)
     calibration = blocks.get(CALIBRATION_NAME)
     if calibration is None or not calibration.size:
         return float("nan")
@@ -112,6 +143,7 @@ def dosage(
     counts: np.ndarray,
     probes: ChromosomeProbes,
     *,
+    kmers: np.ndarray | None = None,
     autosomes: Mapping[str, bool] | None = None,
     seed: int = 0,
     resamples: int = RESAMPLES,
@@ -123,7 +155,7 @@ def dosage(
     contig whose name is a number. X and Y must not: one copy of each is the expectation in
     a male proband, and including them would drag the median every autosome is judged by.
     """
-    blocks = _per_contig(counts, probes)
+    blocks = _per_contig(counts, probes, kmers)
     blocks.pop(CALIBRATION_NAME, None)
     is_autosome = autosomes or {name: name.isdigit() for name in blocks}
 
@@ -133,7 +165,7 @@ def dosage(
     }
     pool = [means[name] for name in means if is_autosome.get(name) and np.isfinite(means[name])]
     denominator = float(np.median(pool)) if pool else float("nan")
-    scale = absolute_scale(counts, probes)
+    scale = absolute_scale(counts, probes, kmers)
 
     rng = np.random.default_rng(seed)
     tail = (1.0 - level) / 2.0

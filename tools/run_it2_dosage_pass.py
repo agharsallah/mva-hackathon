@@ -38,24 +38,31 @@ from mva.io.writers import write_json, write_tsv
 from mva.kmer.chromosome import ChromosomeProbes
 from mva.kmer.dosage import dosage
 from mva.reads import client as reads_client
-from mva.warehouse import objects
 from mva.warehouse.settings import object_store, setting
+from mva.warehouse.source import client
 
 DEFAULT_PROBES = Path("build/it2/step-8/probes")
 DEFAULT_KEY = "derived/it2/step-8/dosage-probes.npy"
 SHARDS = 272
 
 
-def load_design(root: Path) -> ChromosomeProbes:
-    """The probe set as designed, so a flat count vector can be split by contig again."""
+def load_design(root: Path) -> tuple[ChromosomeProbes, np.ndarray]:
+    """The design and the sorted unique array the pass counts, which are not the same length.
+
+    The calibration set is drawn from the per-chromosome pool, so ~8,000 k-mers belong to two
+    groups. The design keeps both memberships; the uploaded array holds each k-mer once,
+    because that is what a lookup structure can hold. Both are returned and
+    :func:`mva.kmer.dosage.dosage` maps one onto the other.
+    """
     summary = json.loads((root / "summary.json").read_text(encoding="utf-8"))
-    return ChromosomeProbes(
-        kmers=np.load(root / "dosage-probes.npy"),
+    design = ChromosomeProbes(
+        kmers=np.load(root / "dosage-design.npy"),
         contigs=tuple(summary["contigs"]),
         owner=np.load(root / "dosage-owner.npy"),
         considered=summary["considered"],
         k=int(summary["k"]),
     )
+    return design, np.load(root / "dosage-probes.npy")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -73,16 +80,23 @@ def main(argv: list[str] | None = None) -> int:
     base = args.api or setting("MVA_READS_API_URL") or "http://127.0.0.1:8765"
     token = setting("MVA_API_TOKEN") or ""
 
-    design = load_design(args.probes)
-    print(f"probe set: {len(design):,} k-mers over {len(design.contigs)} contigs")
+    design, counted = load_design(args.probes)
+    print(
+        f"probe set: {len(design):,} memberships over {len(design.contigs)} contigs, "
+        f"{counted.size:,} distinct k-mers uploaded"
+    )
     print(
         f"projection: {SHARDS} shards; a partial run is labelled partial and not read as a dosage"
     )
 
     if args.upload:
+        # Raw bytes, not `objects.put`: that helper round-trips through DuckDB's Parquet
+        # writer, which is right for a table and wrong for a NumPy array. The bait upload in
+        # mva.reads.baitjob takes the same boto3 path for the same reason.
         store = object_store()
-        published = objects.put(store, args.probes / "dosage-probes.npy", args.key)
-        print(f"published  {published}")
+        local = args.probes / "dosage-probes.npy"
+        client(store).upload_file(str(local), store.bucket, args.key)
+        print(f"published  s3://{store.bucket}/{args.key} ({local.stat().st_size:,} bytes)")
 
     body = {
         "probes_key": args.key,
@@ -109,7 +123,7 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     args.out.mkdir(parents=True, exist_ok=True)
-    rows = [row.as_dict() for row in dosage(counts, design, seed=common.SEED)]
+    rows = [row.as_dict() for row in dosage(counts, design, kmers=counted, seed=common.SEED)]
     write_json(args.out / "dosage.json", {"pass": result, "dosage": rows})
     columns = list(rows[0]) if rows else []
     write_tsv(args.out / "tables" / "it2_chrom_dosage.tsv", rows, columns)

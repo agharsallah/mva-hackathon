@@ -96,6 +96,15 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="cut the probes without the genome-wide filter — a dry run, never a real set",
     )
+    parser.add_argument(
+        "--reuse-filter",
+        type=Path,
+        default=None,
+        help="an existing dosage-probes.npy to take the uniqueness result from instead of "
+        "rescanning the genome. The cut is deterministic, so re-cutting and keeping the "
+        "k-mers that survived last time reproduces the same set in seconds rather than "
+        "re-measuring something that has not changed.",
+    )
     args = parser.parse_args(argv)
 
     if not args.reference.is_file():
@@ -113,7 +122,26 @@ def main(argv: list[str] | None = None) -> int:
 
     report: Mapping[str, object] = {}
     kept = design
-    if not args.skip_uniqueness:
+    if args.reuse_filter is not None:
+        survivors_array = np.load(args.reuse_filter)
+        keep = np.isin(design.kmers, survivors_array)
+        kept = chromosome.ChromosomeProbes(
+            kmers=design.kmers[keep],
+            contigs=design.contigs,
+            owner=design.owner[keep],
+            considered=design.considered,
+            k=args.k,
+        )
+        report = {
+            "reused": str(args.reuse_filter),
+            "survivors": int(survivors_array.size),
+            "note": (
+                "uniqueness taken from a previous run's surviving k-mers rather than "
+                "re-scanning the genome; the cut is deterministic, so the set is identical"
+            ),
+        }
+        print(f"  unique   {len(kept):,} memberships survive (filter reused, genome not rescanned)")
+    elif not args.skip_uniqueness:
         bait = Bait(np.sort(np.unique(design.kmers)), k=args.k)
         occurrence = uniqueness.count_in_genome(args.reference, bait)
         unique, report = uniqueness.drop_repeats(bait, occurrence)
@@ -128,7 +156,13 @@ def main(argv: list[str] | None = None) -> int:
         )
         print(f"  unique   {len(kept):,} probes survive the genome-wide filter")
 
+    # Two files, because they are two different things and conflating them silently
+    # mis-maps every count. `dosage-probes.npy` is what the pass counts: each k-mer once,
+    # sorted, which is all a lookup structure can hold. `dosage-design.npy` plus the owner
+    # array is the membership, where the calibration set's ~8,000 k-mers appear a second
+    # time because they are also somebody's per-chromosome probes.
     np.save(args.out / "dosage-probes.npy", np.sort(np.unique(kept.kmers)))
+    np.save(args.out / "dosage-design.npy", kept.kmers)
     np.save(args.out / "dosage-owner.npy", kept.owner)
 
     per_contig = kept.per_contig()
@@ -169,8 +203,17 @@ def main(argv: list[str] | None = None) -> int:
                     "uniqueness_filtered": not args.skip_uniqueness,
                 },
                 "outputs": [
-                    {"path": "dosage-probes.npy", "probes": len(kept)},
-                    {"path": "dosage-owner.npy", "probes": int(kept.owner.size)},
+                    {
+                        "path": "dosage-probes.npy",
+                        "distinct_kmers": int(np.unique(kept.kmers).size),
+                        "role": "what the pass counts: each k-mer once, sorted",
+                    },
+                    {
+                        "path": "dosage-design.npy",
+                        "memberships": len(kept),
+                        "role": "the membership, where a calibration probe appears twice",
+                    },
+                    {"path": "dosage-owner.npy", "memberships": int(kept.owner.size)},
                 ],
                 "patient_data": "none: every probe is GRCh38 sequence",
             },
