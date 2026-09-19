@@ -83,7 +83,10 @@ no table holds HGVS, so step 1 re-asks VEP.
   blocks (missense +0.168…+0.580; SpliceAI +0.021…+0.043). RRF DOI **verified via Crossref**
   (`6c054bf`). Merged narrative hand-written
 - [ ] R7 step 7 run: walk over MONDO:0009759 and the decoy card; overlap figure; Q14 section. File **P4-11**, **P4-12**
-- [ ] step READMEs 1–7 "What happened" filled from the entries; `docs/README.md` index rows
+- [x] step READMEs **1–6** "What happened" filled from the entries; `docs/iteration4/README.md`
+  step table with statuses and verdicts; `docs/README.md` iteration-4 rows (one per step,
+  plus plan, board, merged report, per-model reports, cards, run manifests). Step 7's README
+  waits on R7, which is not this agent's
 
 ## Wave 3 — dashboard + docs for the MVP (2 agents)
 
@@ -155,3 +158,27 @@ no table holds HGVS, so step 1 re-asks VEP.
 | O7 | confirmed pair in an MVP lane's class? | **answered, entry 114**: `BUB1B` = one `missense_variant` + one `stop_gained`; three MVP lanes are missense-only and the fourth is splice, so **GPN-MSA's promotion is due** (opt-A, unbuilt) |
 | O8 | `ITERATION` constant | stays `iteration2`; iteration 4 steps carry their own |
 | O9 | deletion-checklist owner | B1 |
+
+---
+
+## Where the chain ended (2026-09-19)
+
+R1–R6 ran; R7 (Track 2) did not. Six entries, seven claims, no upload.
+
+| claim | id | verdict | the number |
+|---|---|---|---|
+| `P4-1a` | H058 | **supported** 0.95 | 0.99953 of 38,087 coding alleles carry an HGVS spelling |
+| `P4-2a` | H059 | **supported** 0.80 | four lanes fetched, licensed, joined, in one day |
+| `P4-3` | H060 | **refuted** | AlphaMissense 67.9 %, ESM1b 29.2 % of missense — both under 70 % |
+| `P4-4a` | H062 | **testing** | 1 h 45 m at $0 — over the hour predicted, under the 4 h that refutes |
+| `P4-6` | H063 | **testing** | 2 of 3 catalogue-free lanes abstain; SpliceAI 23.63 % |
+| `P4-8` | H064 | **refuted** | RRF consensus rank 20,639 of 52,012, not 1 |
+
+**Why `P4-4a` is not decided, in one line:** the claim predicted ≤ 1 h and pre-registered > 4 h
+as refuting, and the measurement — 6,320 s — fell in the band between them, so neither clause
+fires; the named fix (three workers on the one remote lane, as iteration 2 already runs) would
+put it near 35 minutes and settle it.
+
+**The one thing to change:** a lane that scores a nonsense allele. `P4-6` and `P4-8` are both
+owed the same revision, GPN-MSA's promotion has been due since entry 114, and nothing else in
+the zoo needs to move.
