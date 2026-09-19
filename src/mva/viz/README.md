@@ -82,7 +82,8 @@ flowchart LR
 | `routes_reads.py` | Read-store aggregates + proxy to `mva-reads-api` for probe/job verbs | `router` |
 | `routes_search.py` | `GET /api/search` and `GET /api/callset/region` | `add_routes` |
 | `probebuild.py` | `POST /api/probe/build` — turn candidates into a Track 1 submission CSV | `router`, `build` |
-| `api_zoo.py` | Every `/api/zoo/*` route, in four registrars (case, scores, ranking, documents). Its own router, mounted in `app.py`, because it resolves its **case** per request instead of sharing the warehouse router's settings | `router`, `GENE_LIMIT` |
+| `api_zoo.py` | Every read-only `/api/zoo/*` route, in four registrars (case, scores, ranking, documents). Its own router, mounted in `app.py`, because it resolves its **case** per request instead of sharing the warehouse router's settings | `router`, `GENE_LIMIT` |
+| `api_zoo_jobs.py` | The zoo's two **write** verbs as background jobs — score one lane, run the DAG — on `mva.reads.api.jobs.Manager` (reused, not forked). Both `POST`s refuse when `MVA_VIZ_TOKEN` is empty; `aux` is filtered so no lane can publish a position | `router`, `Runners`, `MAX_ROWS`, `FORBIDDEN_AUX` |
 
 ### Data access
 
@@ -204,6 +205,11 @@ All paths are prefixed `/api` except `/health`. `refresh=true` on a cached route
 | GET | `/api/zoo/runs` | Every committed run manifest: start, wall clock, dollars, models, venues, config digest |
 | GET | `/api/zoo/reports` | The reports that exist: one per lane plus `merged`, with title, size and linked figures |
 | GET | `/api/zoo/reports/{key}` | One report as Markdown, with the figures it links |
+| POST | `/api/zoo/score` | Score one lane over some alleles (or all of them): adapter → coverage → `warehouse.allele_scores` → lineage edge, the same four calls `mva-zoo score` makes. Returns `{job_id}`. **403 when `MVA_VIZ_TOKEN` is empty** |
+| POST | `/api/zoo/run` | Run the eight-stage DAG (`{config?, from_stage?, force?}`). Returns `{job_id}`; the result is the run manifest's coordinate-free copy. **403 when `MVA_VIZ_TOKEN` is empty** |
+| GET | `/api/zoo/jobs` | Every zoo job, newest first (`?state=`) |
+| GET | `/api/zoo/jobs/{id}` | One job: state, params, summary or error, and up to 500 score rows when the caller named the alleles |
+| GET | `/api/zoo/jobs/{id}/wait` | Long-poll (`?timeout=`, ≤ 290 s) until the job is terminal |
 | GET | `/api/zoo/lineage` | `warehouse.data_lineage` narrowed to the four tables the zoo writes (`?table=` for one; 422 for a table outside the set) |
 | GET | `/api/steps/step-2` | Iteration 2 step 2's tables as aggregates — funnel, tiers, leads, concordance, SV consensus, depth, phase, reachability (no positions) |
 

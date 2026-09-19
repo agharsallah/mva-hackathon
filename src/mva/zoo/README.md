@@ -19,14 +19,15 @@ Plan: [`docs/iteration4/plan.md`](../../../docs/iteration4/plan.md). Board:
 | `registry.py`, `models.toml`, `models.d/*.toml` | step 2 | one entry per model; card JSON generator; licence manifest |
 | `adapters/` | step 3 | one module per lane: `warehouse_column.py` (AlphaMissense, SpliceAI already in the warehouse), `duckdb_lookup.py` (a downloaded table, e.g. ESM1b), `vep_rest.py` (REVEL, catalogue-adjacent) |
 | `cache.py` | step 3 | `warehouse.allele_scores`, append-only, no-op on same key, lineage row per run |
-| `cli.py` | step 3 | `mva-zoo records|models|coverage|score|scores [--config <case.toml>]`; `mva-zoo run --config X [--from stage] [--case-gene G] [--iteration I]` |
+| `cli.py` | step 3 | `mva-zoo records|models|coverage|score|scores|narrate [--config <case.toml>]`; `mva-zoo run --config X [--from stage] [--force] [--case-gene G] [--iteration I]` |
 | `pairs.py`, `rank.py` | step 4 | pair score = `(min, max)` of the two allele scores over `compound_het` pairs; the confirmed pair's rank and percentile per model |
 | `merge.py`, `merge_render.py` | step 6 | agreement matrix (Spearman), RRF with/without catalogue-adjacent lanes, disagreement table |
 | `report.py`, `report_stats.py`, `report_sections.py` | step 5 | the seven-section template per model rendered from JSON; §6 marked as the LLM slot; the report JSON carries its `case` and its `reports_table` (`schema_version` 2) |
 | `tables.py` | step 2 | a published per-protein score *matrix* (one file per protein, positions as columns) unpivoted into the one long `(accession, change, score)` table a lookup lane joins — a leaf, written in Python because one DuckDB `UNPIVOT` per member measured at ~1,000 per 10 min (entry 119) |
 | `adapters/protein_table.py` | step 3 | the lane that joins that table, through the gene-symbol bridge |
-| `workflow.py`, `workflow_types.py`, `workflow_stages.py` | step 4 | stages as idempotent functions, the injected `Deps` bundle (warehouse or fixtures), the run manifest; the run id is the config's sha256 |
-| `narrate.py` | opt-A, not yet | LLM interpretation, two modes |
+| `workflow.py`, `workflow_types.py`, `workflow_stages.py` | step 4 | stages as idempotent functions, the injected `Deps` bundle (warehouse or fixtures, plus its cheap per-stage source `fingerprint`), the run manifest; the run id is the config's sha256 |
+| `checkpoint.py`, `checkpoint_state.py` | step 4, opt-A | the resume: one marker per stage (and one per fan-out lane) under `<out_dir>/checkpoints/<run_id>/`, matched on a **content** chain seeded with the effective config; `--from` re-runs from a stage, `--force` drops the markers. Claim `P4-5`, kill test `tests/test_zoo_resume.py` |
+| `narrate.py` | step 5, opt-A | LLM interpretation, two modes |
 
 Layering: imports `mva.io`, `mva.pipeline`, `mva.warehouse` only; imported only by `mva.viz`.
 Every module ≤ 400 lines (`uv run python tools/check_module_size.py`). Patient coordinates and
