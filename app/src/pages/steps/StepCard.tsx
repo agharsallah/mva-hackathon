@@ -1,18 +1,40 @@
+import { Link } from 'react-router-dom';
+
 import type { StepRow } from '../../api/types';
 import { Badge } from '../../components/Badge';
 import { FieldList } from '../../components/FieldList';
 import { BOX, cx } from '../../lib/ui';
-import { claimTone, statusLabel, stepTone, verdictCounts } from './status';
+import { EntryList } from './EntryList';
+import { FigureStrip } from './FigureStrip';
+import { claimTone, detailPath, statusLabel, stepTone, TRACK_LABEL, verdictCounts } from './status';
 
 /**
- * One step, as a card: its goal, what it claimed, and what became of the claims.
+ * One step, as a card: its goal, which deliverable it feeds, what it claimed, what became
+ * of the claims, what it wrote, and what it drew.
  *
  * Everything here is read from `/api/steps`. Nothing is written by hand, which is the
  * property that makes a new step — or a whole new iteration — appear on this page the
- * moment `mva.science.steps` declares it.
+ * moment `mva.science.steps` declares it. The card used to end at a comma-joined list of
+ * filenames; the figures are now shown and the methodology entries are readable in place,
+ * so a reader can check a verdict without leaving the page.
  */
-export function StepCard({ step }: { step: StepRow }) {
+export function StepCard({
+  step,
+  iteration,
+  current,
+  origin,
+  built,
+}: {
+  step: StepRow;
+  iteration: string;
+  current: string;
+  /** Every route the module manifest declares — which step pages actually exist. */
+  built: ReadonlySet<string>;
+  /** `fixture` when the page is offline — the figure strip then names files, not images. */
+  origin?: string;
+}) {
   const counts = verdictCounts(step);
+  const detail = detailPath(step, iteration, current, built);
 
   return (
     <article className={cx('rounded border', BOX[stepTone(step)], 'space-y-3 p-4')} id={step.slug}>
@@ -21,9 +43,20 @@ export function StepCard({ step }: { step: StepRow }) {
           {step.slug} — {step.title}
         </h3>
         <Badge tone={stepTone(step)}>{statusLabel(step)}</Badge>
+        <Badge tone={step.track === 'track2' ? 'raw' : 'machinery'}>
+          {TRACK_LABEL[step.track] ?? step.track}
+        </Badge>
         {counts.supported > 0 && <Badge tone="good">{counts.supported} supported</Badge>}
         {counts.refuted > 0 && <Badge tone="broken">{counts.refuted} refuted</Badge>}
         {counts.open > 0 && <Badge tone="machinery">{counts.open} open</Badge>}
+        {detail && (
+          <Link
+            to={detail}
+            className="ml-auto text-micro text-machinery-300 underline decoration-machinery-700 underline-offset-2 hover:text-machinery-200"
+          >
+            open the full step →
+          </Link>
+        )}
       </header>
 
       <p className="text-xs text-chrome-300">{step.goal}</p>
@@ -54,6 +87,20 @@ export function StepCard({ step }: { step: StepRow }) {
         </p>
       )}
 
+      {step.takes_hypotheses && (
+        <details className="rounded-control border border-line-soft bg-well/40">
+          <summary className="cursor-pointer px-2 py-1.5 text-micro text-chrome-300 hover:text-chrome-50">
+            What this step wrote and drew — {step.entries.length}{' '}
+            {step.entries.length === 1 ? 'entry' : 'entries'}, {step.figures.length}{' '}
+            {step.figures.length === 1 ? 'figure' : 'figures'}
+          </summary>
+          <div className="space-y-3 border-t border-line-soft p-2">
+            <EntryList iteration={iteration} slug={step.slug} entries={step.entries} />
+            <FigureStrip figures={step.figures} origin={origin} />
+          </div>
+        </details>
+      )}
+
       <FieldList
         fields={[
           { key: 'record', label: 'record', value: step.docs },
@@ -61,19 +108,6 @@ export function StepCard({ step }: { step: StepRow }) {
             key: 'unblocks',
             label: 'unblocks',
             value: step.unblocks.length > 0 ? step.unblocks.join(', ') : 'nothing downstream',
-          },
-          {
-            key: 'entries',
-            label: 'entries',
-            value:
-              step.entries.length > 0
-                ? step.entries.map((entry) => entry.entry).join(', ')
-                : 'none written yet',
-          },
-          {
-            key: 'figures',
-            label: 'figures',
-            value: step.figures.length > 0 ? step.figures.join(', ') : 'none drawn yet',
           },
         ]}
       />

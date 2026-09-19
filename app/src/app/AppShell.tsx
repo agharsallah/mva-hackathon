@@ -17,29 +17,38 @@ import type { JourneyGroup } from '../components/journeyContext';
 import { useTheme } from '../lib/theme';
 import { ModuleBoundary } from './ModuleBoundary';
 import { modules } from './modules';
-import { pagesIn } from './modules/journey';
+import { childrenOf, topLevelIn } from './modules/journey';
 import { NAV_GROUPS } from './modules/types';
 import { PageFrame } from './PageFrame';
 import { ScrollToTop } from './ScrollToTop';
 
 const home = modules[0];
+const page = (m: (typeof modules)[number]) => ({
+  to: m.path,
+  label: m.navLabel,
+  title: m.title,
+  description: m.description,
+  preload: () => void m.load(),
+});
+
+// Two levels, not one flat list: a page that declares a parent is nested under it, so the
+// section row stays a navigation instead of becoming an inventory of every step page.
 const groups: JourneyGroup[] = NAV_GROUPS.map((g) => ({
   id: g.id,
   label: g.label,
   question: g.question,
-  pages: pagesIn(g.id).map((m) => ({
-    to: m.path,
-    label: m.navLabel,
-    title: m.title,
-    description: m.description,
-    preload: () => void m.load(),
-  })),
+  pages: topLevelIn(g.id).map((m) => ({ ...page(m), children: childrenOf(m.id).map(page) })),
 }));
 const sections: HeaderSection[] = groups.map((g) => ({
   id: g.id,
   label: g.label,
   question: g.question,
-  pages: g.pages.map((p) => ({ to: p.to, label: p.label, preload: p.preload })),
+  pages: g.pages.map((p) => ({
+    to: p.to,
+    label: p.label,
+    preload: p.preload,
+    children: p.children?.map((c) => ({ to: c.to, label: c.label, preload: c.preload })),
+  })),
 }));
 
 export function AppShell() {

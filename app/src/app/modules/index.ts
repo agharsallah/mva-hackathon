@@ -1,11 +1,16 @@
 /**
  * The module manifest: one entry per page. This list is the only place a page's
- * route, nav label, title, group and lazy chunk are declared — AppShell turns it into
- * <Route>s, Header into the two-tier nav, PageFrame into the h1 and journey links.
+ * route, nav label, title, group, parent and lazy chunk are declared — AppShell turns it
+ * into <Route>s, Header into the three-tier nav, PageFrame into the h1 and journey links.
  *
  * Order here is journey order: within a group, the order a reader should walk the
  * pages; groups follow `NAV_GROUPS` (learn → data → case → decide → platform). Overview is
  * first and belongs to no group.
+ *
+ * A page that declares a `parent` is a *detail* of that page: it keeps its place in the
+ * reading order but leaves the section row, appearing instead in the third row while its
+ * branch is open. The seven step pages are details of `/steps`; without that, `decide`
+ * listed twelve equal tabs and the shape of the journey was invisible.
  */
 
 import type { FeatureModule } from './types';
@@ -112,15 +117,16 @@ export const modules: FeatureModule[] = [
     title: 'The research journey',
     group: 'decide',
     description:
-      'Every step of this iteration: its one question, the claims filed before the run, and what became of them.',
+      'Every iteration and every step in it: the one question each step asked, the claims filed before the run, what became of them, the methodology entries they were written in, and the figures they drew.',
     load: () => import('../../pages/Steps'),
   },
   {
     id: 'step1',
     path: '/steps/step-1',
     navLabel: 'Step 1',
-    title: 'Step 1 — the blind target set',
+    title: 'Step 1 — the blind target set (iteration 2)',
     group: 'decide',
+    parent: 'steps',
     description:
       'Which genes the symptoms alone nominate, with the DNA never opened — and the measured recall that turns the list into an enrichment rather than coverage.',
     load: () => import('../../pages/Step1'),
@@ -129,8 +135,9 @@ export const modules: FeatureModule[] = [
     id: 'step2',
     path: '/steps/step-2',
     navLabel: 'Step 2',
-    title: 'Step 2 — what the raw reads say',
+    title: 'Step 2 — what the raw reads say (iteration 2)',
     group: 'decide',
+    parent: 'steps',
     description:
       'The second, independent read of the case: 1.07 billion raw reads filtered by a k-mer bait and called without the vendor pipeline — with the gate that failed and the decoy set that matched.',
     load: () => import('../../pages/Step2'),
@@ -139,8 +146,9 @@ export const modules: FeatureModule[] = [
     id: 'step3',
     path: '/steps/step-3',
     navLabel: 'Step 3',
-    title: 'Step 3 — the reads, with no aligner and no caller',
+    title: 'Step 3 — the reads, with no aligner and no caller (iteration 2)',
     group: 'decide',
+    parent: 'steps',
     description:
       'The same bytes read a third way, by counting k-mers: what a disjoint instrument confirms of step 2\u2019s alleles, and the 80% claim it refutes.',
     load: () => import('../../pages/Step3'),
@@ -149,8 +157,9 @@ export const modules: FeatureModule[] = [
     id: 'step4',
     path: '/steps/step-4',
     navLabel: 'Step 4',
-    title: 'Step 4 \u2014 every gene, ordered, with nothing filtered out',
+    title: 'Step 4 \u2014 every gene, ordered, with nothing filtered out (iteration 2)',
     group: 'decide',
+    parent: 'steps',
     description:
       'The funnel replaced by a product of likelihood ratios: all 11,465 genes scored, including the 73.6% nobody has curated, with the decoy and permutation nulls that say what the ordering is worth.',
     load: () => import('../../pages/Step4'),
@@ -159,8 +168,9 @@ export const modules: FeatureModule[] = [
     id: 'step5',
     path: '/steps/step-5',
     navLabel: 'Step 5',
-    title: 'Step 5 \u2014 what the literature knows, and what that is worth',
+    title: 'Step 5 \u2014 what the literature knows, and what that is worth (iteration 2)',
     group: 'decide',
+    parent: 'steps',
     description:
       "Published alleles keyed on this child's own variants, case-report anchors derived by script rather than typed, protein domain and structure context \u2014 each measured against a matched decoy set and a raw publication count.",
     load: () => import('../../pages/Step5'),
@@ -169,8 +179,9 @@ export const modules: FeatureModule[] = [
     id: 'step6',
     path: '/steps/step-6',
     navLabel: 'Step 6',
-    title: 'Step 6 \u2014 one ranking out of three, and what carries it',
+    title: 'Step 6 \u2014 one ranking out of three, and what carries it (iteration 2)',
     group: 'decide',
+    parent: 'steps',
     description:
       'Reciprocal rank fusion over the routes that earned a vote, frozen and hashed before the comparison \u2014 with the leave-one-route-out table that shows the leader is carried by one route, not confirmed by four.',
     load: () => import('../../pages/Step6'),
@@ -179,8 +190,9 @@ export const modules: FeatureModule[] = [
     id: 'step8',
     path: '/steps/step-8',
     navLabel: 'Step 8',
-    title: 'Step 8 \u2014 how small a mosaic could we have seen?',
+    title: 'Step 8 \u2014 how small a mosaic could we have seen? (iteration 2)',
     group: 'decide',
+    parent: 'steps',
     description:
       'Iteration 1 called every autosome flat with a statistic that has no power for a mosaic gain. This is the re-test, and the detection limit that makes its answer mean something \u2014 plus the five-model comparison and the two trisomies it cannot separate.',
     load: () => import('../../pages/Step8'),

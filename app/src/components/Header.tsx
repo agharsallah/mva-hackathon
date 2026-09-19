@@ -1,5 +1,5 @@
 /**
- * Persistent two-tier header.
+ * Persistent three-tier header.
  *
  * Row 1 — identity and the four questions: brand, case id, one tab per section
  * (`Sections` landmark), then the chrome that must stay visible on every page: export,
@@ -7,6 +7,11 @@
  * landmark) with the section's question at the far end, so the reader always knows which
  * question the page in front of them is serving. Row 2 is absent on Overview, which is
  * the map rather than a stop on the journey.
+ *
+ * Row 3 — the detail pages of the open page, when it has any (`Detail pages` landmark).
+ * It exists because `decide` had grown to twelve sibling tabs, seven of them one
+ * iteration's step pages: a reader could not see that `Step 4` is part of `Steps` and not
+ * a peer of `Submissions`. A page declares its parent in the manifest and lands here.
  *
  * The fixture badge is not decoration — it is the difference between a live measurement
  * and a committed placeholder, so it stays visible on every page.
@@ -33,6 +38,8 @@ export interface HeaderNavItem {
   to: string;
   label: string;
   preload?: () => void;
+  /** Detail pages of this one, shown in row 3 while this branch is open. */
+  children?: HeaderNavItem[];
 }
 
 /** One section tab: where it lands, and the pages row 2 shows while it is active. */
@@ -101,6 +108,11 @@ const TAB =
 const TAB_ON = 'bg-chrome-800 text-chrome-50';
 const TAB_OFF = 'text-chrome-400 hover:bg-chrome-900 hover:text-chrome-200';
 
+const SUB =
+  'rounded-control px-2 py-0.5 text-micro transition focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-500';
+const SUB_ON = 'bg-machinery-950/60 text-chrome-50';
+const SUB_OFF = 'text-chrome-400 hover:bg-chrome-900 hover:text-chrome-200';
+
 function ApiHealth() {
   const h = useApiHealth();
   const refused = useSyncExternalStore(unauthorizedStore.subscribe, unauthorizedStore.get);
@@ -147,7 +159,16 @@ function FetchBar() {
 export function Header({ home, sections }: { home: HeaderNavItem; sections: HeaderSection[] }) {
   const onFixtures = useSyncExternalStore(fixtureModeStore.subscribe, fixtureModeStore.get);
   const { pathname } = useLocation();
-  const active = sections.find((s) => s.pages.some((p) => p.to === pathname));
+  const active = sections.find((s) =>
+    s.pages.some((p) => p.to === pathname || p.children?.some((c) => c.to === pathname)),
+  );
+  // The branch whose detail row is open: the page itself when it has children, or the
+  // parent of the open child. A page with neither keeps row 3 absent.
+  const branch = active?.pages.find(
+    (p) =>
+      (p.to === pathname && p.children && p.children.length > 0) ||
+      p.children?.some((c) => c.to === pathname),
+  );
 
   return (
     <header className="relative sticky top-0 z-20 border-b border-line bg-chrome-950/95 backdrop-blur">
@@ -252,6 +273,37 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
             <p className="ml-auto hidden py-2 font-serif text-note text-chrome-400 italic sm:block">
               {active.question}
             </p>
+          </div>
+        </div>
+      )}
+
+      {branch && (
+        <div className="border-t border-line-soft bg-chrome-950/40">
+          <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-2 px-5 py-1">
+            <span className="text-micro text-chrome-500">{branch.label} —</span>
+            <nav aria-label="Detail pages" className="flex flex-wrap items-center gap-1">
+              <NavLink
+                to={branch.to}
+                end
+                onPointerEnter={branch.preload}
+                onFocus={branch.preload}
+                className={({ isActive }) => cx(SUB, isActive ? SUB_ON : SUB_OFF)}
+              >
+                overview
+              </NavLink>
+              {branch.children?.map((c) => (
+                <NavLink
+                  key={c.to}
+                  to={c.to}
+                  end
+                  onPointerEnter={c.preload}
+                  onFocus={c.preload}
+                  className={({ isActive }) => cx(SUB, isActive ? SUB_ON : SUB_OFF)}
+                >
+                  {c.label}
+                </NavLink>
+              ))}
+            </nav>
           </div>
         </div>
       )}

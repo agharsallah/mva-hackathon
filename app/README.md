@@ -7,7 +7,7 @@ meaning)` pattern, and every chart carries a `Legend` line decoding its own colo
 
 There is **no trio** in this dataset — one sample only. The app never renders a parent column.
 
-**Verified:** 2026-09-18 — `pnpm run check` green (typecheck, lint, format, theme, dictionary, 634 tests) and `pnpm run build` clean, after the Track 2 step-7 grading landed on `/track2` (the evidence ladder, the shortlist, the do-not table, the decoy control and the paediatric pointers, from a re-captured `/api/track2`). Bundle budget last re-blessed 2026-09-03 (see `tools/bundle-budget.mjs`); `pnpm bundle-budget` is over its initial-payload line by ~1.3 kB raw at this commit, unchanged by the Track 2 work (the entry chunk is byte-identical) and awaiting a re-blessing by whoever grew it.
+**Verified:** 2026-09-19 — `pnpm run check` green (typecheck, lint, format, theme, dictionary, 649 tests) and the Python gate green, after `/steps` became iteration-aware: an iteration switcher over `GET /api/steps?iteration=`, the figures each step drew served and shown (`/api/steps/<iteration>/<slug>/figure/<name>`), its methodology entries readable in place, and a third header row that takes the `decide` section from twelve tabs to five. Rendered against the live API in a browser; see methodology [126](../docs/step-0/methodology/126-every-iteration-on-the-steps-page.md). Bundle budget re-blessed 2026-09-19 to 297.50 kB raw / 95.25 kB gzip (see `tools/bundle-budget.mjs` for the arithmetic: 2.23 kB of the rise predates this change, 1.76 kB is the third header row and the nested manifest); `pnpm bundle-budget` green.
 
 ## Quickstart
 

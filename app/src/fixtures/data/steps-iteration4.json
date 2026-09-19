@@ -1,0 +1,369 @@
+{
+  "blind": {
+    "problems": [],
+    "still_blind": true,
+    "unblinded_by": null
+  },
+  "current": "iteration2",
+  "index": [
+    {
+      "claims": 11,
+      "current": false,
+      "declared": true,
+      "docs": "docs/iteration1",
+      "done": 4,
+      "iteration": "iteration1",
+      "open": 2,
+      "steps": 8,
+      "submissions": [
+        {
+          "folder": "submissions/track1/iteration-1",
+          "number": 1,
+          "state": "frozen",
+          "track": "track1"
+        },
+        {
+          "folder": "submissions/track2/iteration-1",
+          "number": 1,
+          "state": "draft",
+          "track": "track2"
+        }
+      ],
+      "summary": "the top-down route that produced submission 1. Frozen."
+    },
+    {
+      "claims": 47,
+      "current": true,
+      "declared": true,
+      "docs": "docs/iteration2",
+      "done": 8,
+      "iteration": "iteration2",
+      "open": 0,
+      "steps": 8,
+      "submissions": [
+        {
+          "folder": "submissions/track1/iteration-2",
+          "number": 2,
+          "state": "ready",
+          "track": "track1"
+        },
+        {
+          "folder": "submissions/track2/iteration-2",
+          "number": 2,
+          "state": "draft",
+          "track": "track2"
+        }
+      ],
+      "summary": "the blind mirror of iteration 1."
+    },
+    {
+      "claims": 0,
+      "current": false,
+      "declared": false,
+      "docs": "docs/iteration3",
+      "done": 0,
+      "iteration": "iteration3",
+      "open": 0,
+      "steps": 0,
+      "submissions": [],
+      "summary": "planned only \u2014 no step map is declared for it"
+    },
+    {
+      "claims": 4,
+      "current": false,
+      "declared": true,
+      "docs": "docs/iteration4",
+      "done": 2,
+      "iteration": "iteration4",
+      "open": 1,
+      "steps": 7,
+      "submissions": [],
+      "summary": "the model zoo (docs/iteration4/plan.md)."
+    }
+  ],
+  "iteration": "iteration4",
+  "iterations": ["iteration1", "iteration2", "iteration4"],
+  "register_exists": true,
+  "steps": [
+    {
+      "docs": "docs/step-0",
+      "entries": [],
+      "figures": [],
+      "goal": "Can the delivered bytes be trusted, stored without loss, and queried in SQL?",
+      "hypotheses": [],
+      "kind": "platform",
+      "slug": "step-0",
+      "status": "done",
+      "takes_hypotheses": false,
+      "title": "The platform",
+      "track": "both",
+      "unblocks": ["step-1", "step-2", "step-7"]
+    },
+    {
+      "docs": "docs/iteration4/step-1",
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "114-one-record-per-allele-and-what-it-can-be-spelled-as.md",
+          "inputs": [
+            "input | rows | role",
+            "`results.coding_alleles` | 38,437 | the callset's coding alleles (allele rows, so one variant with two ALTs is two rows)",
+            "`warehouse.coding_annotations` | 38,087 | iteration-2 VEP layer: gene, consequence, impact, gnomAD AF, ClinVar",
+            "`warehouse.it2_insilico_annotations` | 38,087 | the same plus AlphaMissense and SpliceAI columns",
+            "`warehouse.it2_read_annotations` | 1,199 | the alleles only the raw reads saw ([data-findings \u00a76.3](../../../../ideation/data-findings.md))",
+            "Ensembl VEP REST | \u2014 | **release 116, assembly GRCh38**, read from the server, not assumed",
+            "Row counts are the manifest's own `inputs` block and match",
+            "[`ideation/data-findings.md` \u00a76](../../../../ideation/data-findings.md).",
+            "**Code.** `mva.zoo.record` / `record_hgvs` / `record_write` (agent *record*, wave 1),",
+            "`mva.zoo.types.allele_id` (wave 0). Parameters: `mask_catalogue=false`, `batch_size=200`,",
+            "`timeout=300.0`, `base_url=https://rest.ensembl.org`.",
+            "### Two fixes this run needed, both measured before being applied",
+            "The pass as delivered could not run. Neither failure was in the callset.",
+            "**1. `uniprot=1` is not served by the POST endpoint.** The first smoke run died with",
+            "`VepError: POST /vep/homo_sapiens/region gave up after 5 attempts (500 server error)`.",
+            "A four-cell probe against a **public example variant** (Ensembl's own documentation line, not",
+            "this callset) separated the option from the data:",
+            "payload | reply",
+            "`QUERY_PARAMS` (the annotation pass's set) | **200**, `transcript_consequences[]` carries `hgvsc`, `hgvsp`, `alphamissense`, `spliceai`",
+            "`uniprot=1` alone | **500**",
+            "`QUERY_PARAMS` + `uniprot=1` | **500**",
+            "`hgvs=1` + `uniprot=1` | **500**",
+            "GET region endpoint, `uniprot=1` | **200**, and `swissprot` + `uniparc` are present",
+            "`QUERY_PARAMS` + `protein=1` (POST) | **200**, adds `protein_id` (the Ensembl `ENSP`)",
+            "So the option works on **GET** \u2014 one variant per request, not a route for 39,286 alleles \u2014",
+            "and is unserved on **POST**. Same class of fact as",
+            "`annotate_vep.UNAVAILABLE_PARAMS = (\"CADD\", \"LoF\")`, which iteration 2 recorded for the same",
+            "server. `protein=1` does answer on POST, but returns the `ENSP` accession that `hgvs_p`",
+            "already carries as its own prefix, so it buys nothing.",
+            "**Fix:** `record_hgvs.EXTRA_PARAMS` is now `{}`, with the measurement in its docstring.",
+            "**Consequence, not worked around:** `uniprot` is null for all 39,286 records, and the ESM1b",
+            "lane's `ENSP` \u2192 UniProt mapping becomes step 2's problem.",
+            "**2. The annotation pass's payload times out at 200 alleles.** With `EXTRA_PARAMS` empty the",
+            "second smoke run died with `ReadTimeout` on every one of five attempts. `QUERY_PARAMS` asks",
+            "for the `AlphaMissense` and `SpliceAI` plugins and two gnomAD frequency joins *per allele* \u2014",
+            "none of which this pass reads (`_fill` takes five fields: `transcript`, `hgvsc`, `hgvsp`,",
+            "`uniprot`, `consequence`) and all of which are already columns of",
+            "`warehouse.it2_insilico_annotations`. Iteration 2's own pass hit the same wall and dropped to",
+            "50 alleles and 300 s (`tools/annotate_it2_insilico.py`, whose `--batch-size` help text says",
+            "so). **Fix:** `record_hgvs.LEAN_PARAMS = {hgvs, canonical, variant_class}` \u2014 `canonical`",
+            "because `vep_response.best_transcript` breaks ties on it. The full 200-allele batch then",
+            "answered in seconds.",
+            "Both fixes are in `src/mva/zoo/record_hgvs.py` and change *what is asked for*, never what is",
+            "recorded."
+          ],
+          "number": "114",
+          "path": "docs/iteration4/step-1/methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md",
+          "title": "One record per allele, and what it can be spelled as",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-1/entry/114-one-record-per-allele-and-what-it-can-be-spelled-as.md",
+          "violations": []
+        }
+      ],
+      "figures": [],
+      "goal": "Can every allele in scope be expressed as one normalized record that every model class can read \u2014 genomic change, transcript, protein change, DNA window, protein window \u2014 with lineage?",
+      "hypotheses": [
+        {
+          "author": "wave2",
+          "confidence": 0.95,
+          "gene": "",
+          "hypothesis_id": "H058",
+          "iteration": "iteration4",
+          "path": "",
+          "prediction": "The step-1 run's RunSummary reports p4_1a_fraction >= 0.99 over the coding (non read-only) alleles of results.it4_allele_records.",
+          "reasoning": "Supersedes revision 2, which recorded the suggested 0.97 because --confidence was omitted while the reasoning stated 0.95; the register is append-only, so the correction is this revision rather than an edit. The number: p4_1a_fraction = 0.99953 against a pre-registered 0.99 threshold, over the whole 38,087-allele coding set, nothing sampled and nothing filtered. Held below the suggested 0.97 because the three evidence rows are not independent \u2014 all three are counts off one run of one pass, so the log-odds sum over-credits them. The claim is about spelling only and says nothing about whether any model can score what is spelled (entry 114).",
+          "recorded_at": "2026-09-19T00:14:12.021754",
+          "refuted_by": "p4_1a_fraction below 0.95 \u2014 then the failing consequence class is named from RunSummary.by_consequence and tier-1 coverage is reported per class.",
+          "revision": 3,
+          "statement": "P4-1a: at least 99 % of the callset's coding alleles get a non-null hgvs_p or hgvs_c from the VEP HGVS pass, so one normalized allele record can key every tier-1 model lookup.",
+          "status": "supported",
+          "step": "step-1"
+        }
+      ],
+      "kind": "research",
+      "slug": "step-1",
+      "status": "done",
+      "takes_hypotheses": true,
+      "title": "The allele record",
+      "track": "track1",
+      "unblocks": ["step-3"]
+    },
+    {
+      "docs": "docs/iteration4/step-2",
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "119-four-lanes-fetched-licensed-and-joined.md",
+          "inputs": [
+            "input | size / rows | role",
+            "`results.it4_allele_records` | 39,286 records (15,620 `missense_variant`) | what coverage is measured against \u2014 [entry 114](../../step-1/methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md)",
+            "`warehouse.it2_insilico_annotations` | 38,087 rows; `am_pathogenicity` 10,601 non-null, `spliceai_ds_max` 32,534 non-null | the AlphaMissense and SpliceAI lanes \u2014 no download",
+            "`ALL_hum_isoforms_ESM1b_LLR.zip` | 1,335,361,543 bytes, sha256 `42b90ce7\u2026`, 42,287 members | the ESM1b lane, MIT, from the authors' Hugging Face Space",
+            "Ensembl VEP REST, `REVEL=1` | per request | the catalogue-adjacent lane",
+            "**Code.** `src/mva/zoo/registry.py`, `tools/fetch_zoo_tables.py`, `src/mva/zoo/adapters/*`,",
+            "`src/mva/zoo/tables.py` (new, this entry), `src/mva/zoo/adapters/protein_table.py` (new, this",
+            "entry). The digest was reproduced on **two independent downloads**, byte count and all."
+          ],
+          "number": "119",
+          "path": "docs/iteration4/step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md",
+          "title": "Four lanes, fetched, licensed, and joined to the record set",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-2/entry/119-four-lanes-fetched-licensed-and-joined.md",
+          "violations": []
+        }
+      ],
+      "figures": [],
+      "goal": "Which open models are credible, runnable and licensed for this case, and what is each one's coverage of the record set?",
+      "hypotheses": [
+        {
+          "author": "wave2",
+          "confidence": 0.8,
+          "gene": "",
+          "hypothesis_id": "H059",
+          "iteration": "iteration4",
+          "path": "",
+          "prediction": "Each of the four enabled cards in src/mva/zoo/models.toml can be fetched (or is already a warehouse column), is licensed for this use, and joins to results.it4_allele_records so that mva-zoo coverage reports a non-zero scored count for it.",
+          "reasoning": "All four MVP lanes ran on the real record set inside one day; the two warehouse lanes hit their pre-registered join gates exactly (10,601 and 32,534), REVEL answered live under the field name the card assumed, and ESM1b is MIT, digest-reproduced on two downloads, converted and joined. Held at 0.80 rather than the suggested 0.88 because the claim's word is 'run end-to-end' and ESM1b only does so through a gene-symbol bridge this run had to build, at 29.2 % missense coverage \u2014 and because the four lanes needed five measured fixes to get there. Feasibility is established; it was not free. Entry 119.",
+          "recorded_at": "2026-09-19T11:03:47.458890",
+          "refuted_by": "Any one of the four cannot be fetched, licensed or joined \u2014 then that lane is replaced from the opt-A list and the substitution is recorded.",
+          "revision": 2,
+          "statement": "P4-2a: all four MVP lanes (AlphaMissense, ESM1b, SpliceAI, REVEL) run end-to-end on the iteration-4 record set on the laptop in one day.",
+          "status": "supported",
+          "step": "step-2"
+        },
+        {
+          "author": "wave2",
+          "confidence": 0.05,
+          "gene": "",
+          "hypothesis_id": "H060",
+          "iteration": "iteration4",
+          "path": "",
+          "prediction": "For each missense lane that runs, mva-zoo coverage's by-consequence row for missense_variant shows scored/total >= 0.90 of the 15,620 missense alleles in results.it4_allele_records.",
+          "reasoning": "Both missense tables fall below the 70 % that the plan named as refuting: AlphaMissense 67.9 % (10,601 of 15,620) and ESM1b 29.2 % (4,562 of 15,620). The two misses have different causes and both are reported per consequence class as the refutation clause requires: AlphaMissense is served here from iteration 2's VEP REST plugin pass rather than from the published genome-wide table, so 67.9 % is a property of this delivery and not of the model; ESM1b is keyed on a protein namespace the record set does not carry, and its publisher's gene map reaches only 42.9 % of the genes that carry a missense allele. A new revision is due when a lane is added or when AlphaMissense is fetched as a table. Entry 119.",
+          "recorded_at": "2026-09-19T11:03:49.043980",
+          "refuted_by": "Any missense table other than EVE covers below 70 % of the callset's missense alleles.",
+          "revision": 2,
+          "statement": "P4-3: every precomputed missense table that runs covers at least 90 % of the callset's missense alleles, EVE excepted (predicted below 30 %).",
+          "status": "refuted",
+          "step": "step-2"
+        }
+      ],
+      "kind": "research",
+      "slug": "step-2",
+      "status": "done",
+      "takes_hypotheses": true,
+      "title": "The zoo registry",
+      "track": "track1",
+      "unblocks": ["step-3"]
+    },
+    {
+      "docs": "docs/iteration4/step-3",
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "122-every-lane-scored-once-and-only-once.md",
+          "inputs": [
+            "input | rows | role",
+            "`results.it4_allele_records` | 39,286 (15,620 `missense_variant`) | what every lane is asked about \u2014 [114](../../step-1/methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md)",
+            "`warehouse.it2_insilico_annotations` | `am_pathogenicity` 10,601, `spliceai_ds_max` 32,534 non-null | the two warehouse lanes",
+            "`build/it4/tables/esm1b.parquet` | 169,457,840 rows, sha256 `cd1b009b\u2026` | the ESM1b lane \u2014 [119](../../step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md)",
+            "Ensembl VEP REST, `REVEL=1` | live | the catalogue-adjacent lane",
+            "**Starting state.** `warehouse.allele_scores` was **emptied** before the timing, so the \"cold\"",
+            "in the claim is literal. The append-only `data_lineage` list keeps the edges of the runs that",
+            "preceded the reset, including a 52-row REVEL edge whose rows no longer exist \u2014 the edge list",
+            "records attempts, the table records state, and the two are deliberately not the same thing."
+          ],
+          "number": "122",
+          "path": "docs/iteration4/step-3/methodology/122-every-lane-scored-once-and-only-once.md",
+          "title": "Every lane scored, once and only once",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-3/entry/122-every-lane-scored-once-and-only-once.md",
+          "violations": []
+        }
+      ],
+      "figures": [],
+      "goal": "Can one batch inference API serve every model through the same contract, cache every score with provenance, and dispatch GPU work without sending more than a sequence window?",
+      "hypotheses": [
+        {
+          "author": "wave2",
+          "confidence": 0.15,
+          "gene": "",
+          "hypothesis_id": "H062",
+          "iteration": "iteration4",
+          "path": "",
+          "prediction": "Scoring all four enabled lanes from an empty cache takes <= 3,600 s of wall-clock on this laptop, spends nothing, and every lane writes exactly one warehouse.data_lineage edge named it4-score:<model>.",
+          "reasoning": "Undecided by its own terms, and recorded as such rather than rounded either way. The cold four-lane pass measured 6,320 s at zero dollars: 1.76x the 3,600 s the claim predicted, and 0.44x the 4 h that was pre-registered as refuting, so neither clause fires. Confidence 0.15 because the number is 76 % over the prediction and the run shows no sign of being unlucky. The refutation clause asks which lane is responsible and it is answered: not a join \u2014 the three local lanes finish 47,697 alleles in 53 s \u2014 but one serial remote lane, REVEL, at 6,267 s over four attempts against an endpoint that failed three times. Two fixes already took it from about 4.6 h to 1 h 45 m; the third, parallelism (iteration 2 runs three workers on the same service), would put the pass near 35 minutes. That is the revision this claim is owed. Entry 122.",
+          "recorded_at": "2026-09-19T13:39:50.358299",
+          "refuted_by": "The cold four-lane pass takes more than 4 hours \u2014 then the join is profiled and the fix recorded.",
+          "revision": 2,
+          "statement": "P4-4a: a cold MVP run \u2014 four lanes over the ~39,300 allele records \u2014 completes in at most one hour of laptop wall-clock at zero dollars.",
+          "status": "testing",
+          "step": "step-3"
+        }
+      ],
+      "kind": "research",
+      "slug": "step-3",
+      "status": "open",
+      "takes_hypotheses": true,
+      "title": "The inference API",
+      "track": "track1",
+      "unblocks": ["step-4"]
+    },
+    {
+      "docs": "docs/iteration4/step-4",
+      "entries": [],
+      "figures": [],
+      "goal": "Does a checkpointed DAG run the whole zoo end-to-end, resumably, from one command \u2014 and what does it cost in wall-clock and dollars?",
+      "hypotheses": [],
+      "kind": "research",
+      "slug": "step-4",
+      "status": "planned",
+      "takes_hypotheses": true,
+      "title": "The workflow DAG",
+      "track": "track1",
+      "unblocks": ["step-5"]
+    },
+    {
+      "docs": "docs/iteration4/step-5",
+      "entries": [],
+      "figures": [],
+      "goal": "Can one report template describe every model identically \u2014 coverage, distribution, the confirmed pair's rank and percentile, limitations \u2014 with an LLM writing only the interpretation?",
+      "hypotheses": [],
+      "kind": "research",
+      "slug": "step-5",
+      "status": "planned",
+      "takes_hypotheses": true,
+      "title": "The report per model",
+      "track": "track1",
+      "unblocks": ["step-6"]
+    },
+    {
+      "docs": "docs/iteration4/step-6",
+      "entries": [],
+      "figures": [],
+      "goal": "Do the models agree, and what does the merged report conclude under each of the three merge methods?",
+      "hypotheses": [],
+      "kind": "research",
+      "slug": "step-6",
+      "status": "planned",
+      "takes_hypotheses": true,
+      "title": "The merged report",
+      "track": "track1",
+      "unblocks": []
+    },
+    {
+      "docs": "docs/iteration4/step-7",
+      "entries": [],
+      "figures": [],
+      "goal": "Do a graph walk and a GNN over the same knowledge graph converge on the same approved drugs for the mechanism, and how does each rank against a decoy?",
+      "hypotheses": [],
+      "kind": "research",
+      "slug": "step-7",
+      "status": "planned",
+      "takes_hypotheses": true,
+      "title": "Track 2 \u2014 two engines, one graph",
+      "track": "track2",
+      "unblocks": []
+    }
+  ],
+  "submissions": []
+}

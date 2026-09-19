@@ -1,0 +1,649 @@
+{
+  "blind": {
+    "problems": [
+      "docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md: names results.gene_biallelic \u2014 iteration 1's biallelic candidate table names the pair",
+      "docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md: names results.coding_candidates \u2014 iteration 1's filtered candidate table names the pair",
+      "docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md: names results.gene_biallelic \u2014 iteration 1's biallelic candidate table names the pair",
+      "docs/iteration1/step-3/methodology/067-phenotype-ranking-without-java.md: no '## Inputs' section \u2014 a blind iteration's entry must state what it read, so a reviewer can check it read nothing it should not have",
+      "docs/iteration1/step-3/methodology/071-phenotype-callset-join.md: names results.gene_biallelic \u2014 iteration 1's biallelic candidate table names the pair",
+      "docs/iteration1/step-4/methodology/072-genome-wide-suppressed-calls.md: names results.gene_biallelic \u2014 iteration 1's biallelic candidate table names the pair",
+      "docs/iteration1/step-6/methodology/074-submission-v1-design.md: names results.coding_candidates \u2014 iteration 1's filtered candidate table names the pair",
+      "docs/iteration1/step-6/methodology/074-submission-v1-design.md: names decode-table \u2014 iteration 1's decode table names the pair and the oracle reply",
+      "docs/iteration1/step-6/methodology/076-iteration-tooling.md: no '## Inputs' section \u2014 a blind iteration's entry must state what it read, so a reviewer can check it read nothing it should not have",
+      "docs/iteration1/step-6/methodology/076-iteration-tooling.md: names decode-table \u2014 iteration 1's decode table names the pair and the oracle reply",
+      "docs/iteration1/step-6/methodology/082-derived-submission-rows.md: no '## Inputs' section \u2014 a blind iteration's entry must state what it read, so a reviewer can check it read nothing it should not have",
+      "docs/iteration1/step-6/methodology/082-derived-submission-rows.md: names decode-table \u2014 iteration 1's decode table names the pair and the oracle reply",
+      "docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md: no '## Inputs' section \u2014 a blind iteration's entry must state what it read, so a reviewer can check it read nothing it should not have",
+      "docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md: names decode-table \u2014 iteration 1's decode table names the pair and the oracle reply",
+      "docs/iteration1/step-8/methodology/078-track2-data-layer.md: no '## Inputs' section \u2014 a blind iteration's entry must state what it read, so a reviewer can check it read nothing it should not have"
+    ],
+    "still_blind": true,
+    "unblinded_by": null
+  },
+  "current": "iteration2",
+  "index": [
+    {
+      "claims": 11,
+      "current": false,
+      "declared": true,
+      "docs": "docs/iteration1",
+      "done": 4,
+      "iteration": "iteration1",
+      "open": 2,
+      "steps": 8,
+      "submissions": [
+        {
+          "folder": "submissions/track1/iteration-1",
+          "number": 1,
+          "state": "frozen",
+          "track": "track1"
+        },
+        {
+          "folder": "submissions/track2/iteration-1",
+          "number": 1,
+          "state": "draft",
+          "track": "track2"
+        }
+      ],
+      "summary": "the top-down route that produced submission 1. Frozen."
+    },
+    {
+      "claims": 47,
+      "current": true,
+      "declared": true,
+      "docs": "docs/iteration2",
+      "done": 8,
+      "iteration": "iteration2",
+      "open": 0,
+      "steps": 8,
+      "submissions": [
+        {
+          "folder": "submissions/track1/iteration-2",
+          "number": 2,
+          "state": "ready",
+          "track": "track1"
+        },
+        {
+          "folder": "submissions/track2/iteration-2",
+          "number": 2,
+          "state": "draft",
+          "track": "track2"
+        }
+      ],
+      "summary": "the blind mirror of iteration 1."
+    },
+    {
+      "claims": 0,
+      "current": false,
+      "declared": false,
+      "docs": "docs/iteration3",
+      "done": 0,
+      "iteration": "iteration3",
+      "open": 0,
+      "steps": 0,
+      "submissions": [],
+      "summary": "planned only \u2014 no step map is declared for it"
+    },
+    {
+      "claims": 4,
+      "current": false,
+      "declared": true,
+      "docs": "docs/iteration4",
+      "done": 2,
+      "iteration": "iteration4",
+      "open": 1,
+      "steps": 7,
+      "submissions": [],
+      "summary": "the model zoo (docs/iteration4/plan.md)."
+    }
+  ],
+  "iteration": "iteration1",
+  "iterations": ["iteration1", "iteration2", "iteration4"],
+  "register_exists": true,
+  "steps": [
+    {
+      "docs": "docs/step-0",
+      "entries": [],
+      "figures": [],
+      "goal": "Can the delivered bytes be trusted, stored without loss, and queried in SQL?",
+      "hypotheses": [],
+      "kind": "platform",
+      "slug": "step-0",
+      "status": "done",
+      "takes_hypotheses": false,
+      "title": "The platform",
+      "track": "both",
+      "unblocks": ["step-1"]
+    },
+    {
+      "docs": "docs/iteration1/step-1",
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "073-normalization-of-the-candidates.md",
+          "inputs": [
+            "Input | Value",
+            "Callset | `WGS_EX2312012_HGWCNDSX7.vcf.gz` fetched from the object store (315,153,971 bytes, `.tbi` alongside) into a gitignored scratch directory",
+            "Reference | UCSC `hg38.analysisSet.fa.gz` (949,157,663 bytes), decompressed with the `chr` prefix stripped from every header \u2192 195 contigs, `samtools faidx`. The VCF's own reference is the NCBI no-alt analysis set **plus hs38d1 decoys**, with contig names spelled UCSC-style minus `chr` (`1_KI270706v1_random`, `M`) \u2014 identical to the stripped UCSC names for the 195 shared contigs",
+            "Tools | bcftools 1.24, samtools 1.24",
+            "Regions | the 195 contigs present in the reference. The 43,667 records on `*_decoy` contigs have no sequence to normalize against and are not in scope for any scorer"
+          ],
+          "number": "073",
+          "path": "docs/iteration1/step-1/methodology/073-normalization-of-the-candidates.md",
+          "title": "Are the candidate alleles spelled the way the scorer will read them?",
+          "unblinds": false,
+          "url": "/api/steps/iteration1/step-1/entry/073-normalization-of-the-candidates.md",
+          "violations": []
+        }
+      ],
+      "figures": [],
+      "goal": "Does every variant in the callset have exactly one spelling, so that an exact-string-matching scorer can be trusted with an indel?",
+      "hypotheses": [
+        {
+          "author": "agharsallah",
+          "confidence": 0.8320183851339245,
+          "gene": "BUB1B",
+          "hypothesis_id": "H008",
+          "iteration": null,
+          "path": "scorer mechanics",
+          "prediction": "For both alleles len(REF) = len(ALT) = 1 and the record carries a single ALT; running bcftools norm -m -both -f <GRCh38 no-chr FASTA> over the BUB1B locus leaves both records byte-identical in CHROM, POS, REF and ALT.",
+          "reasoning": "Pre-registered before the run; measured in 073. Both alleles are SNVs at bi-allelic sites and byte-identical after bcftools norm; the callset's bi-allelic records were already left-aligned, so the scorer's exact-string match cannot miss them on spelling. Decoy records excluded; the seam is not yet a pipeline stage.",
+          "recorded_at": "2026-09-05T15:32:55.538937",
+          "refuted_by": "Either allele is an indel or sits in a multi-allelic record, or bcftools norm changes its POS, REF or ALT.",
+          "revision": 2,
+          "statement": "Both BUB1B candidate alleles are single-nucleotide substitutions at bi-allelic sites, so their submission spelling (chromosome, position, REF, ALT) is invariant under bcftools norm (left-alignment and multi-allelic splitting) and an exact-string scorer will match them as the callset spells them.",
+          "status": "supported",
+          "step": "step-1"
+        }
+      ],
+      "kind": "research",
+      "slug": "step-1",
+      "status": "open",
+      "takes_hypotheses": true,
+      "title": "Normalize the callset",
+      "track": "track1",
+      "unblocks": ["step-2", "step-4"]
+    },
+    {
+      "docs": "docs/iteration1/step-2",
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "069-layer-2-coding-scan.md",
+          "inputs": [
+            "Input | Value",
+            "GTF | `Homo_sapiens.GRCh38.116.gtf.gz`, Ensembl release 116, 141,121,632 bytes; sha256 in `ressources/reference/coding_regions.provenance.json`",
+            "Callset | `warehouse.variants_raw`, 5,012,204 rows (lineage: `data_lineage` edge from `s3://mva/source/\u2026vcf.gz`)",
+            "Contigs kept | the 25 canonical (`length(chrom) <= 2`) \u2014 matches the VCF's bare spelling",
+            "Genotypes kept | het `0/1 1/0 0|1 1|0 1/2 2/1 1|2 2|1`, hom-alt `1/1 1|1 2/2 2|2`",
+            "FILTER | **all values kept**, carried as a column",
+            "Flank | 8 bp"
+          ],
+          "number": "069",
+          "path": "docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md",
+          "title": "Which alleles can alter a protein, genome-wide? Building layer 2",
+          "unblinds": false,
+          "url": "/api/steps/iteration1/step-2/entry/069-layer-2-coding-scan.md",
+          "violations": [
+            "docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md: names results.gene_biallelic \u2014 iteration 1's biallelic candidate table names the pair",
+            "docs/iteration1/step-2/methodology/069-layer-2-coding-scan.md: names results.coding_candidates \u2014 iteration 1's filtered candidate table names the pair"
+          ]
+        },
+        {
+          "declares_inputs": true,
+          "entry": "070-genome-wide-annotation-and-verdict.md",
+          "inputs": [
+            "Input | Value",
+            "`results.coding_alleles` | 38,437 rows, 38,087 distinct alleles ([069](069-layer-2-coding-scan.md))",
+            "Ensembl VEP REST | release 116, GRCh38, `af_gnomadg=1 af_gnomade=1 canonical=1 hgvs=1`; batches of 200",
+            "Rarity cutoff | gnomAD AF absent or < 0.01 (`RARE_RECESSIVE_AF`, recessive threshold)",
+            "Protein-altering | VEP impact `HIGH` or `MODERATE`",
+            "ClinVar P/LP | `clin_sig` contains `pathogenic`, contains neither `conflicting` nor any `benign` term",
+            "Phenotype ranking | `warehouse.hpo_gene_scores`, term set `proband-only` ([067](../../step-3/methodology/067-phenotype-ranking-without-java.md))"
+          ],
+          "number": "070",
+          "path": "docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md",
+          "title": "Does any coding gene outrank the BUB1B pair? The genome-wide annotation and the verdict",
+          "unblinds": false,
+          "url": "/api/steps/iteration1/step-2/entry/070-genome-wide-annotation-and-verdict.md",
+          "violations": [
+            "docs/iteration1/step-2/methodology/070-genome-wide-annotation-and-verdict.md: names results.gene_biallelic \u2014 iteration 1's biallelic candidate table names the pair"
+          ]
+        }
+      ],
+      "figures": [
+        {
+          "bytes": 439,
+          "kind": "json",
+          "name": "funnel.json",
+          "path": "figures/track1/funnel.json",
+          "slug": "funnel.json",
+          "title": "funnel",
+          "url": "/api/steps/iteration1/step-2/figure/funnel.json"
+        },
+        {
+          "bytes": 145977,
+          "kind": "png",
+          "name": "track1-funnel.png",
+          "path": "figures/track1/track1-funnel.png",
+          "slug": "track1-funnel.png",
+          "title": "track1 funnel",
+          "url": "/api/steps/iteration1/step-2/figure/track1-funnel.png"
+        }
+      ],
+      "goal": "Which variants are rare enough and damaging enough to cause an ultra-rare recessive disease, and in which gene?",
+      "hypotheses": [
+        {
+          "author": "agharsallah",
+          "confidence": 0.9308615796566531,
+          "gene": "BUB1B",
+          "hypothesis_id": "H003",
+          "iteration": null,
+          "path": "path 1 \u2014 textbook clinic",
+          "prediction": "Re-running the panel filter (methodology 031, table results.panel_candidates) returns exactly two rows flagged rare and protein-altering, both gene BUB1B, both het, both PASS; the ClinVar site-first join (051) finds the stop_gained and nothing else.",
+          "reasoning": "Retrospective claim: the test (031, 051) ran before the register existed, so this is a recorded observation, not a pre-registered prediction. Two independent routes (call-first VEP filter, site-first ClinVar join) agree on the same two BUB1B alleles and nothing else in the panel. Phase remains unresolved, which the neutral row records; the claim is about the candidate set, not about trans.",
+          "recorded_at": "2026-09-05T15:21:32.108109",
+          "refuted_by": "A third rare protein-altering PASS allele in any panel gene, a second panel gene with two such alleles, or either BUB1B allele turning out common in gnomAD or homozygous.",
+          "revision": 2,
+          "statement": "retrospective: filtering the annotated eight-gene MVA panel to alleles that are both rare (gnomAD AF absent or below the recessive cutoff) and protein-altering (VEP impact HIGH or MODERATE) leaves exactly one candidate biallelic set, and it is in BUB1B: one stop_gained allele (ClinVar pathogenic) and one missense allele (absent from gnomAD), both heterozygous, both PASS.",
+          "status": "supported",
+          "step": "step-2"
+        },
+        {
+          "author": "agharsallah",
+          "confidence": 0.9308615796566533,
+          "gene": "BUB1B",
+          "hypothesis_id": "H004",
+          "iteration": null,
+          "path": "path 1 \u2014 textbook clinic, genome-wide",
+          "prediction": "In results.gene_biallelic (every coding allele genome-wide annotated by VEP REST), BUB1B is flagged biallelic_pass with n_plp_pass >= 1 and phenotype_rank <= 30, and no other gene satisfies all three conditions at once. Other genes with biallelic_pass true will exist (recessive carriers of two rare missense alleles are common in any genome) but none will combine a pathogenic ClinVar allele with a phenotype rank in the top 30.",
+          "reasoning": "Pre-registered in 069 before annotation ran; measured in 070. All three conditions hold for BUB1B and for no other gene among 65 biallelic genes genome-wide. Confidence is capped by the coding-only scope (neutral row): the verdict is that no coding gene outranks BUB1B, not that no gene does.",
+          "recorded_at": "2026-09-05T15:21:34.409965",
+          "refuted_by": "Another gene with biallelic_pass true, at least one ClinVar pathogenic or LoF allele, and a phenotype rank of 30 or better; or BUB1B failing to appear as biallelic_pass in the genome-wide table (which would mean the coding-region join or the annotation lost one of its alleles).",
+          "revision": 2,
+          "statement": "No protein-coding gene outside the eight-gene panel carries a candidate biallelic set of rare protein-altering PASS alleles that outranks the BUB1B pair: BUB1B is the only gene that is biallelic on PASS calls AND carries a ClinVar pathogenic allele AND sits in the top 30 of the panel-blind phenotype ranking.",
+          "status": "supported",
+          "step": "step-2"
+        }
+      ],
+      "kind": "research",
+      "slug": "step-2",
+      "status": "done",
+      "takes_hypotheses": true,
+      "title": "Annotate the callset",
+      "track": "track1",
+      "unblocks": ["step-3", "step-6"]
+    },
+    {
+      "docs": "docs/iteration1/step-3",
+      "entries": [
+        {
+          "declares_inputs": false,
+          "entry": "067-phenotype-ranking-without-java.md",
+          "inputs": [],
+          "number": "067",
+          "path": "docs/iteration1/step-3/methodology/067-phenotype-ranking-without-java.md",
+          "title": "Ranking every gene by the child's symptoms, without a JVM",
+          "unblinds": false,
+          "url": "/api/steps/iteration1/step-3/entry/067-phenotype-ranking-without-java.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "071-phenotype-callset-join.md",
+          "inputs": [
+            "`results.gene_biallelic` (070) joined in its own SQL to `warehouse.hpo_gene_scores`,",
+            "term set `proband-only` \u2014 the seven terms describing the child, without the parental",
+            "miscarriage term (H002). Neither table reads the other's inputs: the ranking reads two",
+            "public ontology files; the scan reads the callset."
+          ],
+          "number": "071",
+          "path": "docs/iteration1/step-3/methodology/071-phenotype-callset-join.md",
+          "title": "Do the symptoms and the DNA point at the same gene? The ranking joined to the callset",
+          "unblinds": false,
+          "url": "/api/steps/iteration1/step-3/entry/071-phenotype-callset-join.md",
+          "violations": [
+            "docs/iteration1/step-3/methodology/071-phenotype-callset-join.md: names results.gene_biallelic \u2014 iteration 1's biallelic candidate table names the pair"
+          ]
+        }
+      ],
+      "figures": [
+        {
+          "bytes": 159348,
+          "kind": "png",
+          "name": "track1-gene-scatter.png",
+          "path": "figures/track1/track1-gene-scatter.png",
+          "slug": "track1-gene-scatter.png",
+          "title": "track1 gene scatter",
+          "url": "/api/steps/iteration1/step-3/figure/track1-gene-scatter.png"
+        }
+      ],
+      "goal": "Does an unbiased genome-wide ranking driven by the child's HPO terms agree with the panel-first candidate list?",
+      "hypotheses": [
+        {
+          "author": "agharsallah",
+          "confidence": null,
+          "gene": "BUB1B",
+          "hypothesis_id": "H001",
+          "iteration": null,
+          "path": "phenotype-only ranking, human-only hiPHIVE reimplementation",
+          "prediction": "When the causal gene is confirmed by the oracle, its rank in the proband-only ranking over 5,267 curated genes is 30 or better. BUB1B, the current leading candidate, currently ranks 6.",
+          "reasoning": "",
+          "recorded_at": "2026-09-03T00:41:20.450422",
+          "refuted_by": "The oracle confirms a pair in a gene the phenotype ranking places outside the top 200, or in a gene HPO does not curate at all. Either would show the phenotype signal did not carry the answer and that the panel prior was doing the work.",
+          "revision": 1,
+          "statement": "The gene carrying the causal compound-heterozygous pair ranks in the top 30 of a phenotype-driven ranking that never reads the callset, the candidate panel, or any variant.",
+          "status": "proposed",
+          "step": "step-3"
+        },
+        {
+          "author": "agharsallah",
+          "confidence": 0.8581489350995123,
+          "gene": "",
+          "hypothesis_id": "H002",
+          "iteration": null,
+          "path": "phenotype-only ranking, term-set ablation",
+          "prediction": "Once the causal gene is known, its rank is strictly better in the proband-only ranking than in the with-parental ranking. Measured so far on the candidate panel: every one of the seven curated panel genes rises without the term, BUB1B by 8 places.",
+          "reasoning": "Measured in 067 section 5 before the claim was filed the same day, so it is retrospective in spirit: removing the parental miscarriage term raises every established MVA gene and removes four recurrent-miscarriage genes from the top 20. Applied downstream: gene_biallelic reads the proband-only term set.",
+          "recorded_at": "2026-09-05T15:21:44.860812",
+          "refuted_by": "The causal gene ranks worse, or unchanged, when the parental term is removed - which would mean the parents' reproductive history carried signal about the child's gene that the child's own features did not.",
+          "revision": 2,
+          "statement": "The parental term HP:0200067 (recurrent spontaneous abortion) degrades the phenotype ranking of the causal gene and should be excluded from the proband's term set.",
+          "status": "supported",
+          "step": "step-3"
+        },
+        {
+          "author": "agharsallah",
+          "confidence": 0.8021838885585817,
+          "gene": "BUB1B",
+          "hypothesis_id": "H005",
+          "iteration": null,
+          "path": "path 1 \u00d7 phenotype",
+          "prediction": "Ordering results.gene_biallelic rows with biallelic_pass true by phenotype_rank ascending puts BUB1B first; the second-ranked biallelic gene has a phenotype rank worse than BUB1B's.",
+          "reasoning": "Pre-registered before the join ran; measured in 071. BUB1B is first by a wide margin (rank 6 vs 150 for the next curated biallelic gene). The neutral row states the residual coupling between the panel literature and HPO curation.",
+          "recorded_at": "2026-09-05T15:21:37.004647",
+          "refuted_by": "A different biallelic_pass gene with a better (smaller) phenotype rank than BUB1B.",
+          "revision": 2,
+          "statement": "Among all genes that carry a candidate biallelic set of rare protein-altering PASS alleles genome-wide, BUB1B is the best-ranked gene in the panel-blind phenotype ranking \u2014 the two independent signals (DNA-derived biallelic set, symptom-derived gene rank) converge on one gene.",
+          "status": "supported",
+          "step": "step-3"
+        }
+      ],
+      "kind": "research",
+      "slug": "step-3",
+      "status": "done",
+      "takes_hypotheses": true,
+      "title": "Rank by phenotype",
+      "track": "track1",
+      "unblocks": ["step-6"]
+    },
+    {
+      "docs": "docs/iteration1/step-4",
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "072-genome-wide-suppressed-calls.md",
+          "inputs": [
+            "`results.coding_alleles` / `coding_candidates` / `gene_biallelic` (069, 070). Non-PASS",
+            "means `filter <> 'PASS'`; the values present are `MQ40`, `QD2`, `LowQual` and their",
+            "combinations."
+          ],
+          "number": "072",
+          "path": "docs/iteration1/step-4/methodology/072-genome-wide-suppressed-calls.md",
+          "title": "Is a second allele hiding in a call the filters discarded, genome-wide?",
+          "unblinds": false,
+          "url": "/api/steps/iteration1/step-4/entry/072-genome-wide-suppressed-calls.md",
+          "violations": [
+            "docs/iteration1/step-4/methodology/072-genome-wide-suppressed-calls.md: names results.gene_biallelic \u2014 iteration 1's biallelic candidate table names the pair"
+          ]
+        }
+      ],
+      "figures": [],
+      "goal": "Is one of the two alleles hiding in a call the quality filters discarded, rather than absent from the sample?",
+      "hypotheses": [
+        {
+          "author": "agharsallah",
+          "confidence": 0.7685247834990175,
+          "gene": "BUB1B",
+          "hypothesis_id": "H006",
+          "iteration": null,
+          "path": "path 2 \u2014 suppressed-evidence archaeology",
+          "prediction": "Re-running methodology 049 over results.panel_suppressed returns 20 non-PASS records, all annotated, 0 flagged rare and protein-altering.",
+          "reasoning": "Retrospective claim on entry 049; recorded observation, not a prediction. Zero of 20 panel non-PASS calls are rare and protein-altering; TRIP13's callability deficit is noted as the limit of what a non-PASS scan can see.",
+          "recorded_at": "2026-09-05T15:21:39.527570",
+          "refuted_by": "Any panel non-PASS allele that is rare and protein-altering.",
+          "revision": 2,
+          "statement": "retrospective: none of the non-PASS calls inside the eight-gene panel is a credible hidden second allele \u2014 after VEP annotation, zero are both rare and protein-altering; TRIP13's cluster of filtered calls is a paralogous-read pileup (low allele fraction, all gnomAD-common).",
+          "status": "supported",
+          "step": "step-4"
+        },
+        {
+          "author": "agharsallah",
+          "confidence": 0.8021838885585817,
+          "gene": "",
+          "hypothesis_id": "H007",
+          "iteration": null,
+          "path": "path 2 \u2014 suppressed-evidence archaeology, genome-wide",
+          "prediction": "In results.gene_biallelic, BUB1B has n_nonpass = 0; every gene with biallelic_with_rescue true and biallelic_pass false either lacks a ClinVar pathogenic/LoF allele or has a phenotype rank worse than 30 (or no curation at all).",
+          "reasoning": "Pre-registered before the genome-wide non-PASS pass ran; measured in 072. BUB1B has no suppressed coding candidate and no rescue-only gene meets the pathogenic/LoF or top-30 condition. Alleles the caller never emitted remain outside this test.",
+          "recorded_at": "2026-09-05T15:21:42.116200",
+          "refuted_by": "A rare protein-altering non-PASS coding allele in BUB1B, or a rescue-only biallelic gene with a pathogenic/LoF allele and a phenotype rank of 30 or better.",
+          "revision": 2,
+          "statement": "Genome-wide, no gene reaches a biallelic set only by rescuing a suppressed (non-PASS) coding call while also carrying a ClinVar pathogenic or LoF allele and a top-30 phenotype rank; in particular BUB1B carries no rare protein-altering non-PASS coding allele, so the BUB1B pair does not depend on a filter rescue and no rescued call adds a third BUB1B candidate.",
+          "status": "supported",
+          "step": "step-4"
+        }
+      ],
+      "kind": "research",
+      "slug": "step-4",
+      "status": "done",
+      "takes_hypotheses": true,
+      "title": "Mine the suppressed calls",
+      "track": "track1",
+      "unblocks": ["step-6"]
+    },
+    {
+      "docs": "docs/iteration1/step-5",
+      "entries": [],
+      "figures": [],
+      "goal": "Is the missing allele a variant the caller could not emit at all \u2014 a structural variant, a deep intronic call, or a low-fraction mosaic?",
+      "hypotheses": [],
+      "kind": "research",
+      "slug": "step-5",
+      "status": "planned",
+      "takes_hypotheses": true,
+      "title": "Recover the second allele from the reads",
+      "track": "track1",
+      "unblocks": ["step-6"]
+    },
+    {
+      "docs": "docs/iteration1/step-6",
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "074-submission-v1-design.md",
+          "inputs": [
+            "Input | Value",
+            "Candidate alleles | the two BUB1B alleles of H003/H004; the two rare intronic BUB1B alleles as the only in-callset alternative partners (`results.panel_candidates`, `is_rare_recessive`)",
+            "Partner plausibility | Ensembl VEP REST with `SpliceAI=1 AlphaMissense=1 CADD=1`: missense AlphaMissense 0.92 (likely pathogenic), CADD 24.5; both intronic alleles SpliceAI 0.00 on every delta",
+            "Secondary findings | `results.coding_candidates` where `is_clinvar_plp` and gnomAD AF < 0.02: heterozygous LoF in LZTR1 (dominant schwannomatosis predisposition), Factor V Leiden (F5, low-penetrance risk), heterozygous LoF in FLG (semi-dominant ichthyosis). Recessive carrier states (GNRHR, CIAO1, ZFYVE26) are noted in the report, not submitted",
+            "Priors | 0.70 pair \u00b7 0.12 stop+unseen \u00b7 0.05 missense+unseen \u00b7 0.05 other gene \u00b7 0.08 across the four intronic pairings \u2014 stated, not fitted",
+            "Spec | `build/submission/spec.json` (gitignored: holds coordinates)"
+          ],
+          "number": "074",
+          "path": "docs/iteration1/step-6/methodology/074-submission-v1-design.md",
+          "title": "Submission v1: the pair at rank 1, every other row a question",
+          "unblinds": false,
+          "url": "/api/steps/iteration1/step-6/entry/074-submission-v1-design.md",
+          "violations": [
+            "docs/iteration1/step-6/methodology/074-submission-v1-design.md: names results.coding_candidates \u2014 iteration 1's filtered candidate table names the pair",
+            "docs/iteration1/step-6/methodology/074-submission-v1-design.md: names decode-table \u2014 iteration 1's decode table names the pair and the oracle reply"
+          ]
+        },
+        {
+          "declares_inputs": false,
+          "entry": "076-iteration-tooling.md",
+          "inputs": [],
+          "number": "076",
+          "path": "docs/iteration1/step-6/methodology/076-iteration-tooling.md",
+          "title": "Can iteration 1 be rebuilt from the repository alone, and can iteration 2 be opened without hand-work?",
+          "unblinds": false,
+          "url": "/api/steps/iteration1/step-6/entry/076-iteration-tooling.md",
+          "violations": [
+            "docs/iteration1/step-6/methodology/076-iteration-tooling.md: names decode-table \u2014 iteration 1's decode table names the pair and the oracle reply"
+          ]
+        },
+        {
+          "declares_inputs": false,
+          "entry": "082-derived-submission-rows.md",
+          "inputs": [],
+          "number": "082",
+          "path": "docs/iteration1/step-6/methodology/082-derived-submission-rows.md",
+          "title": "Can every non-coordinate field of the submission CSV be derived from the warehouse and the register instead of typed?",
+          "unblinds": false,
+          "url": "/api/steps/iteration1/step-6/entry/082-derived-submission-rows.md",
+          "violations": [
+            "docs/iteration1/step-6/methodology/082-derived-submission-rows.md: names decode-table \u2014 iteration 1's decode table names the pair and the oracle reply"
+          ]
+        },
+        {
+          "declares_inputs": false,
+          "entry": "083-oracle-reply-submission-1.md",
+          "inputs": [],
+          "number": "083",
+          "path": "docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md",
+          "title": "What did the oracle say to submission 1?",
+          "unblinds": false,
+          "url": "/api/steps/iteration1/step-6/entry/083-oracle-reply-submission-1.md",
+          "violations": [
+            "docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md: names decode-table \u2014 iteration 1's decode table names the pair and the oracle reply"
+          ]
+        }
+      ],
+      "figures": [
+        {
+          "bytes": 108099,
+          "kind": "png",
+          "name": "track1-decode-table.png",
+          "path": "figures/track1/track1-decode-table.png",
+          "slug": "track1-decode-table.png",
+          "title": "track1 decode table",
+          "url": "/api/steps/iteration1/step-6/figure/track1-decode-table.png"
+        }
+      ],
+      "goal": "Which candidate pair does the scorer confirm, and what does each reply tell us that the next submission should exploit?",
+      "hypotheses": [
+        {
+          "author": "agharsallah",
+          "confidence": 0.9992539711661633,
+          "gene": "BUB1B",
+          "hypothesis_id": "H009",
+          "iteration": null,
+          "path": "path 4 \u2014 the oracle as a measurement instrument",
+          "prediction": "A submission whose rank-1 row holds exactly these two alleles returns full_match_rank = 1, rank_points = 100 and f_max = 1.0 from the challenge scorer.",
+          "reasoning": "The oracle returned a full match at rank 1 for the pair row (submission 1, probe 1): the answer key is exactly the BUB1B stop_gained + missense pair. Confidence set by the reply, not the heuristic weighing; residual doubt is only the scorer's own correctness.",
+          "recorded_at": "2026-09-09T22:31:25.283896",
+          "refuted_by": "The scorer returns no full match for that row. A partial match (partial_match_rank = 1) would mean exactly one of the two alleles is causal and the other is not; no match at all would mean neither is.",
+          "revision": 3,
+          "statement": "The causal compound-heterozygous pair is the BUB1B stop_gained allele (ClinVar pathogenic for MVA syndrome 1) together with the BUB1B missense allele absent from gnomAD, in trans.",
+          "status": "supported",
+          "step": "step-6"
+        }
+      ],
+      "kind": "research",
+      "slug": "step-6",
+      "status": "done",
+      "takes_hypotheses": true,
+      "title": "Spend the oracle budget",
+      "track": "track1",
+      "unblocks": []
+    },
+    {
+      "docs": "docs/iteration1/step-7",
+      "entries": [],
+      "figures": [],
+      "goal": "Does public knowledge - published MVA cases, ClinVar, protein-model scores - name an allele or a pair the data-driven steps missed, or independently corroborate the one they found?",
+      "hypotheses": [],
+      "kind": "research",
+      "slug": "step-7",
+      "status": "planned",
+      "takes_hypotheses": true,
+      "title": "Knowledge and literature",
+      "track": "track1",
+      "unblocks": ["step-6"]
+    },
+    {
+      "docs": "docs/iteration1/step-8",
+      "entries": [
+        {
+          "declares_inputs": false,
+          "entry": "078-track2-data-layer.md",
+          "inputs": [],
+          "number": "078",
+          "path": "docs/iteration1/step-8/methodology/078-track2-data-layer.md",
+          "title": "The Track 2 data layer: from the mechanism card to a first public-API snapshot",
+          "unblinds": false,
+          "url": "/api/steps/iteration1/step-8/entry/078-track2-data-layer.md",
+          "violations": []
+        }
+      ],
+      "figures": [],
+      "goal": "Which market-approved drugs act on the mechanism the confirmed alleles imply, and how strong is the evidence for each?",
+      "hypotheses": [
+        {
+          "author": "",
+          "confidence": null,
+          "gene": "BUB1B",
+          "hypothesis_id": "H010",
+          "iteration": null,
+          "path": "track 2 - mechanism first",
+          "prediction": "Public sources agree with the shape: ClinVar and the literature classify BUB1B MVA1 as autosomal recessive loss of function; every reported MVA1 genotype combines a null with a hypomorph or two hypomorphs; no BUB1B variant is annotated dominant or gain-of-function in ClinVar/OMIM; Reactome places BUB1B in the mitotic spindle checkpoint pathway.",
+          "reasoning": "",
+          "recorded_at": "2026-09-06T00:48:17.422262",
+          "refuted_by": "Any ClinVar or OMIM record of a dominant or gain-of-function BUB1B mechanism, functional evidence that kinase-domain missense alleles act as dominant negatives, or the oracle returning no match for the BUB1B pair (which would make the mechanism argument moot).",
+          "revision": 1,
+          "statement": "The disease mechanism in this proband is hypomorphic loss of BUB1B function: one null allele (stop_gained, exon 17 of 23) plus one partly functional allele (kinase-domain missense), leaving reduced BubR1 and a leaky spindle assembly checkpoint; there is no gain-of-function or dominant-negative component.",
+          "status": "proposed",
+          "step": "step-8"
+        },
+        {
+          "author": "",
+          "confidence": 0.8021838885585817,
+          "gene": "BUB1B",
+          "hypothesis_id": "H011",
+          "iteration": null,
+          "path": "track 2 - target search",
+          "prediction": "Open Targets knownDrugs for BUB1B, ChEMBL mechanisms for human BUB1B targets and DGIdb interactions for BUB1B return zero molecules with max_phase 4 (approved); approved molecules appear only for other targets in the expanded set (for example AURKB, KIF11, PLK1, TTK, HDAC1-3, HSP90AA1, MTOR, PRKAA1).",
+          "reasoning": "First snapshot (078): three independent drug-target sources return no molecule for BUB1B at any phase; every approved drug in the table attaches to a pathway neighbour or a direction target. One measurement, three sources - the heuristic's 0.80 is a triage number, not a posterior. Re-weighed when the sources are refreshed or DrugBank becomes available.",
+          "recorded_at": "2026-09-06T01:16:48.020009",
+          "refuted_by": "Any molecule with an approved status (ChEMBL max_phase 4 or an FDA label) whose recorded mechanism of action names BUB1B/BubR1 as the target.",
+          "revision": 2,
+          "statement": "No market-approved drug acts directly on BubR1; approved candidates for this case will come only from pathway neighbours (spindle assembly checkpoint members) and from aneuploidy-stress, proteostasis or tumour-context directions.",
+          "status": "supported",
+          "step": "step-8"
+        }
+      ],
+      "kind": "research",
+      "slug": "step-8",
+      "status": "open",
+      "takes_hypotheses": true,
+      "title": "Track 2 - drug repurposing",
+      "track": "track2",
+      "unblocks": []
+    }
+  ],
+  "submissions": [
+    {
+      "folder": "submissions/track1/iteration-1",
+      "number": 1,
+      "state": "frozen",
+      "track": "track1"
+    },
+    {
+      "folder": "submissions/track2/iteration-1",
+      "number": 1,
+      "state": "draft",
+      "track": "track2"
+    }
+  ]
+}

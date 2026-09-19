@@ -16,14 +16,29 @@ export function groupOf(m: FeatureModule | undefined): NavGroup | undefined {
   return m?.group ? NAV_GROUPS.find((g) => g.id === m.group) : undefined;
 }
 
-/** Pages in one group, in journey order. */
+/** Pages in one group, in journey order — detail pages included. */
 export function pagesIn(group: NavGroupId): FeatureModule[] {
   return modules.filter((m) => m.group === group);
 }
 
+/**
+ * Pages in one group that are not a detail of another page — what the section row lists.
+ *
+ * The reading order (`journey`, `neighbours`) still walks every page: a step detail is part
+ * of the journey, it is just not a peer of `Science` or `Submissions` in the tab row.
+ */
+export function topLevelIn(group: NavGroupId): FeatureModule[] {
+  return pagesIn(group).filter((m) => !m.parent);
+}
+
+/** The detail pages of one page, in journey order. Empty for a page that has none. */
+export function childrenOf(id: string): FeatureModule[] {
+  return modules.filter((m) => m.parent === id);
+}
+
 /** The page a group tab lands on: its first page. Every group has at least one. */
 export function groupEntry(group: NavGroupId): FeatureModule {
-  const first = pagesIn(group)[0];
+  const first = topLevelIn(group)[0];
   if (!first) throw new Error(`nav group "${group}" has no pages`);
   return first;
 }

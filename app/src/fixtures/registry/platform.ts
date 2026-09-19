@@ -1,3 +1,4 @@
+import type { Params } from '../../api/client';
 import type {
   HealthDependencies,
   ReferenceProvenanceRow,
@@ -31,6 +32,20 @@ import { regionEnvelope, searchEnvelope } from '../shape/search';
  * the (invented) research register, and universal search. See `shape/*.ts` for the
  * per-endpoint provenance notes this fragment does not repeat.
  */
+/** The iteration whose payload `data/steps.json` holds — the one the endpoint defaults to. */
+const CURRENT_ITERATION = 'iteration2';
+
+/** Which iteration a request asked for, defaulting the way the endpoint does. */
+function stepsIteration(params?: Params): string {
+  const asked = params?.iteration;
+  return typeof asked === 'string' && CAPTURED_ITERATIONS.includes(asked)
+    ? asked
+    : CURRENT_ITERATION;
+}
+
+/** The iterations a payload was captured for. Capture a new one before declaring it here. */
+const CAPTURED_ITERATIONS = ['iteration1', 'iteration2', 'iteration4'];
+
 export const platformEntries: Record<string, Entry> = {
   '/api/catalog/objects': {
     source: 'object ledger + delivery manifest',
@@ -96,10 +111,16 @@ export const platformEntries: Record<string, Entry> = {
   // committed sources — the step map, the register and the methodology entries — so a
   // synthesised version would be a second, divergent copy of facts the repository already
   // states. Re-capture after declaring a step or filing a claim.
+  // One file per iteration, because the page switches between them: asking for iteration 1
+  // offline must not answer with iteration 2's steps. An undeclared name falls back to the
+  // current iteration, which is what the endpoint does with an empty `?iteration=`.
   '/api/steps': {
-    source:
-      'CAPTURED /api/steps reply (src/mva/science/steps.py + warehouse.hypotheses + docs/iteration2/*/methodology)',
-    load: () => rows<StepsPayload>('steps'),
+    source: (p) =>
+      `CAPTURED /api/steps?iteration=${stepsIteration(p)} reply (src/mva/science/steps.py + warehouse.hypotheses + docs/${stepsIteration(p)}/*/methodology + figures/)`,
+    load: (p) =>
+      rows<StepsPayload>(
+        stepsIteration(p) === CURRENT_ITERATION ? 'steps' : `steps-${stepsIteration(p)}`,
+      ),
   },
   // CAPTURED from the live endpoint. Counts, fractions and curves: step 1 never read the
   // DNA, and gene symbols are withheld because it ran blind against iteration 1.

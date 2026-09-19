@@ -15,6 +15,7 @@ import type {
   Step5Payload,
   Step6Payload,
   Step8Payload,
+  StepEntryPayload,
   StepsPayload,
 } from './types';
 
@@ -24,6 +25,16 @@ import type {
  */
 export const useSteps = (iteration?: string) =>
   useEndpoint<StepsPayload>('/api/steps', iteration ? { iteration } : undefined);
+
+/**
+ * One methodology entry, verbatim. The audit log is quoted on the page rather than
+ * summarised there: a reader who wants to check a verdict reads the entry that made it,
+ * and `enabled` keeps the fetch out of the way until they ask for one.
+ */
+export const useStepEntry = (iteration: string, slug: string, entry: string | null) =>
+  useEndpoint<StepEntryPayload>(`/api/steps/${iteration}/${slug}/entry/${entry ?? ''}`, undefined, {
+    enabled: Boolean(entry),
+  });
 
 /**
  * Iteration 2 step 2's result tables. Aggregates only — the four tables behind it carry

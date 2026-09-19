@@ -88,9 +88,22 @@ const PAGES_DIR = path.join(APP_ROOT, 'src/pages');
 // step-3 research pages each add one route/nav/title record. That manifest drives AppShell's
 // routing, the two-tier nav and the journey footer everywhere, so it is shell and belongs in
 // first paint like the rest of this budget's contents; no page code moved into the entry.
+//
+// Re-blessed 2026-09-19: 297.50 kB raw / 95.25 kB gzip. Two components, measured
+// separately against this same tree. (1) The 2026-09-14 budget had already been exceeded
+// before this change: `git stash push -u -- app` and a clean build measure **295.73 raw /
+// 94.87 gzip** at HEAD, +2.23 / +0.77 over — the step-4, step-5, step-6 and step-8 manifest
+// entries added since, and known to be over (see the app README's 2026-09-18 line). (2) This
+// change adds **+1.76 kB raw / +0.33 kB gzip** on top (297.49 / 95.20): the third header row
+// and the nested manifest it renders — `parent`/`children` in `src/app/modules/{types,
+// journey}.ts`, the two-level build in `src/app/AppShell.tsx`, and the detail-page row in
+// `src/components/Header.tsx`. That is shell — it is what keeps `decide` at five tabs
+// instead of twelve — so it belongs in first paint like the rest of this budget's contents.
+// No page code moved into the entry: the `/steps` work is all in the lazy `steps` chunk.
+// Methodology 126.
 const BUDGETS = Object.freeze({
-  INITIAL_RAW_BYTES: 293_500,
-  INITIAL_GZIP_BYTES: 94_100,
+  INITIAL_RAW_BYTES: 297_500,
+  INITIAL_GZIP_BYTES: 95_250,
 });
 
 const KB = (bytes) => `${(bytes / 1000).toFixed(2)} kB`;

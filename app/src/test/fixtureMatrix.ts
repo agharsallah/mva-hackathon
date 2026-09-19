@@ -67,6 +67,11 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   ['/api/provenance/reference', undefined],
   ['/api/probe/ledger', undefined],
   ['/api/steps', undefined],
+  // The switcher asks for a named iteration; each one has its own captured payload, so each
+  // one is blessed separately. A request for iteration 2 by name is the same file as the
+  // default and is covered by the row above.
+  ['/api/steps', { iteration: 'iteration1' }],
+  ['/api/steps', { iteration: 'iteration4' }],
   ['/api/steps/step-1', undefined],
   ['/api/steps/step-2', undefined],
   ['/api/steps/step-3', undefined],

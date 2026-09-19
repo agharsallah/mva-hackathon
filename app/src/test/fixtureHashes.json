@@ -71,7 +71,7 @@
   "/api/search?q=BUB1B": "6199506891268504",
   "/api/search?q=nonsense+query": "74234e98afe7498f",
   "/api/search?q=rs1042522": "5a98d3ff5f6f7af1",
-  "/api/steps": "e313c7f6d8c7b104",
+  "/api/steps": "d52f40b769c911ce",
   "/api/steps/step-1": "7fc5e6b9371ea8ed",
   "/api/steps/step-2": "743bdb4f7089f69b",
   "/api/steps/step-3": "7e696b82f282191a",
@@ -79,6 +79,8 @@
   "/api/steps/step-5": "2fab27ceff5bf2dd",
   "/api/steps/step-6": "1f407783522b5e71",
   "/api/steps/step-8": "c47a2a3973779868",
+  "/api/steps?iteration=iteration1": "76099fbafb465621",
+  "/api/steps?iteration=iteration4": "95de085d045703b5",
   "/api/submissions": "000a1af276bb62ed",
   "/api/track2": "c61911a77283a55f"
 }

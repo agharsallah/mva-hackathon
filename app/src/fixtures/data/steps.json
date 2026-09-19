@@ -5,6 +5,82 @@
     "unblinded_by": "docs/iteration2/step-6/methodology/109-what-the-mirror-found.md"
   },
   "current": "iteration2",
+  "index": [
+    {
+      "claims": 11,
+      "current": false,
+      "declared": true,
+      "docs": "docs/iteration1",
+      "done": 4,
+      "iteration": "iteration1",
+      "open": 2,
+      "steps": 8,
+      "submissions": [
+        {
+          "folder": "submissions/track1/iteration-1",
+          "number": 1,
+          "state": "frozen",
+          "track": "track1"
+        },
+        {
+          "folder": "submissions/track2/iteration-1",
+          "number": 1,
+          "state": "draft",
+          "track": "track2"
+        }
+      ],
+      "summary": "the top-down route that produced submission 1. Frozen."
+    },
+    {
+      "claims": 47,
+      "current": true,
+      "declared": true,
+      "docs": "docs/iteration2",
+      "done": 8,
+      "iteration": "iteration2",
+      "open": 0,
+      "steps": 8,
+      "submissions": [
+        {
+          "folder": "submissions/track1/iteration-2",
+          "number": 2,
+          "state": "ready",
+          "track": "track1"
+        },
+        {
+          "folder": "submissions/track2/iteration-2",
+          "number": 2,
+          "state": "draft",
+          "track": "track2"
+        }
+      ],
+      "summary": "the blind mirror of iteration 1."
+    },
+    {
+      "claims": 0,
+      "current": false,
+      "declared": false,
+      "docs": "docs/iteration3",
+      "done": 0,
+      "iteration": "iteration3",
+      "open": 0,
+      "steps": 0,
+      "submissions": [],
+      "summary": "planned only \u2014 no step map is declared for it"
+    },
+    {
+      "claims": 4,
+      "current": false,
+      "declared": true,
+      "docs": "docs/iteration4",
+      "done": 2,
+      "iteration": "iteration4",
+      "open": 1,
+      "steps": 7,
+      "submissions": [],
+      "summary": "the model zoo (docs/iteration4/plan.md)."
+    }
+  ],
   "iteration": "iteration2",
   "iterations": ["iteration1", "iteration2", "iteration4"],
   "register_exists": true,
@@ -20,6 +96,7 @@
       "status": "done",
       "takes_hypotheses": false,
       "title": "The platform",
+      "track": "both",
       "unblocks": ["step-1"]
     },
     {
@@ -44,8 +121,11 @@
             "release would make this run incomparable with the tables it sits beside for no gain step 1",
             "needs. Upgrading is a separate, recorded decision."
           ],
+          "number": "084",
           "path": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md",
+          "title": "Which genes do the child's symptoms alone nominate?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-1/entry/084-the-blind-target-set.md",
           "violations": []
         },
         {
@@ -60,17 +140,60 @@
             "gene, rank or tier appears in this entry, and `mva-science check --blind iteration2` is the",
             "gate. No table produced by iteration 1 or by step 2 is an input here."
           ],
+          "number": "091",
           "path": "docs/iteration2/step-1/methodology/091-recall-at-the-full-population.md",
+          "title": "Does H012's recall@300 hold at the full population?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-1/entry/091-recall-at-the-full-population.md",
           "violations": []
         }
       ],
       "figures": [
-        "curation-coverage.png",
-        "index.html",
-        "ranker-overlap.png",
-        "recall-at-n.png",
-        "target-tiers.png"
+        {
+          "bytes": 72135,
+          "kind": "png",
+          "name": "curation-coverage.png",
+          "path": "figures/track1/iteration2/step-1/curation-coverage.png",
+          "slug": "curation-coverage.png",
+          "title": "curation coverage",
+          "url": "/api/steps/iteration2/step-1/figure/curation-coverage.png"
+        },
+        {
+          "bytes": 23692,
+          "kind": "html",
+          "name": "index.html",
+          "path": "figures/track1/iteration2/step-1/index.html",
+          "slug": "index.html",
+          "title": "index",
+          "url": "/api/steps/iteration2/step-1/figure/index.html"
+        },
+        {
+          "bytes": 75133,
+          "kind": "png",
+          "name": "ranker-overlap.png",
+          "path": "figures/track1/iteration2/step-1/ranker-overlap.png",
+          "slug": "ranker-overlap.png",
+          "title": "ranker overlap",
+          "url": "/api/steps/iteration2/step-1/figure/ranker-overlap.png"
+        },
+        {
+          "bytes": 140331,
+          "kind": "png",
+          "name": "recall-at-n.png",
+          "path": "figures/track1/iteration2/step-1/recall-at-n.png",
+          "slug": "recall-at-n.png",
+          "title": "recall at n",
+          "url": "/api/steps/iteration2/step-1/figure/recall-at-n.png"
+        },
+        {
+          "bytes": 73589,
+          "kind": "png",
+          "name": "target-tiers.png",
+          "path": "figures/track1/iteration2/step-1/target-tiers.png",
+          "slug": "target-tiers.png",
+          "title": "target tiers",
+          "url": "/api/steps/iteration2/step-1/figure/target-tiers.png"
+        }
       ],
       "goal": "Which genes do the child's symptoms alone nominate \u2014 a target set chosen with the DNA never read?",
       "hypotheses": [
@@ -144,6 +267,7 @@
       "status": "done",
       "takes_hypotheses": true,
       "title": "The blind target set",
+      "track": "track1",
       "unblocks": ["step-2", "step-3", "step-4"]
     },
     {
@@ -164,8 +288,11 @@
             "measurement below. No iteration-1 table was read \u2014 `mva-science check --blind iteration2`",
             "is the gate."
           ],
+          "number": "085",
           "path": "docs/iteration2/step-2/methodology/085-the-bait-and-where-it-runs.md",
+          "title": "Can 42 Mb of reference be turned into a k-mer bait, and where must the pass run?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-2/entry/085-the-bait-and-where-it-runs.md",
           "violations": []
         },
         {
@@ -178,8 +305,11 @@
             "public | GRCh38 no-alt analysis set + hs38d1, bare contigs | sha256 `fb4243eb\u2026`, 195 contigs",
             "No patient data of any kind. The bait is reference sequence and this entry only re-cuts it."
           ],
+          "number": "086",
           "path": "docs/iteration2/step-2/methodology/086-can-the-off-target-gate-be-reached.md",
+          "title": "Could any parameter have passed the off-target gate, and at what cost?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-2/entry/086-can-the-off-target-gate-be-reached.md",
           "violations": []
         },
         {
@@ -194,8 +324,11 @@
             "The callset is an allowed input under the blind protocol (`plan.md` \u00a71); no iteration-1",
             "candidate table was read. The witness alleles are drawn by script from a seed, never chosen."
           ],
+          "number": "087",
           "path": "docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md",
+          "title": "Does a reference k-mer bait recover the reads of 792 genes from a billion?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-2/entry/087-the-pass-and-what-it-recovered.md",
           "violations": []
         },
         {
@@ -212,8 +345,11 @@
             "`results.coding_candidates` and the decode table are untouched; the comparison they exist",
             "for is step 6's."
           ],
+          "number": "088",
           "path": "docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md",
+          "title": "Which alleles do the recovered reads carry, and does the target set earn its place?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-2/entry/088-the-alleles-the-reads-carry.md",
           "violations": []
         },
         {
@@ -227,8 +363,11 @@
             "store | one shard of the read store, taken whole | `reads/lane=1/read=1/part-0.parquet`, first 1,000,000 reads",
             "No annotation, no callset, no candidate table. Both questions are about machinery."
           ],
+          "number": "089",
           "path": "docs/iteration2/step-2/methodology/089-the-instruments-and-the-gate-that-was-skipped.md",
+          "title": "Which instruments were actually available, and does the kernel scale as the plan assumed?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-2/entry/089-the-instruments-and-the-gate-that-was-skipped.md",
           "violations": []
         },
         {
@@ -245,8 +384,11 @@
             "about this child. No candidate table of any earlier iteration was opened, and the ranking",
             "below is left in the order its own SQL produced."
           ],
+          "number": "090",
           "path": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md",
+          "title": "What happens to H016 and H020 once the alleles only our callers saw are scored?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-2/entry/090-the-alleles-the-vendor-never-reported.md",
           "violations": []
         },
         {
@@ -262,22 +404,105 @@
             "protocol is untouched: depth and phasing are properties of the *instrument*, measured",
             "identically for a target and a decoy."
           ],
+          "number": "092",
           "path": "docs/iteration2/step-2/methodology/092-depth-per-exon-and-the-phasing-drawn.md",
+          "title": "How deep is each *exon*, and what does the lead gene's phasing actually look like?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-2/entry/092-depth-per-exon-and-the-phasing-drawn.md",
           "violations": []
         }
       ],
       "figures": [
-        "bait-density.png",
-        "bait-uniqueness.png",
-        "caller-concordance.png",
-        "exon-coverage.png",
-        "filter-not-genelist.png",
-        "index.html",
-        "phase-bub1b.svg",
-        "recovery-funnel.png",
-        "results.html",
-        "sv-artefacts.png"
+        {
+          "bytes": 100665,
+          "kind": "png",
+          "name": "bait-density.png",
+          "path": "figures/track1/iteration2/step-2/bait-density.png",
+          "slug": "bait-density.png",
+          "title": "bait density",
+          "url": "/api/steps/iteration2/step-2/figure/bait-density.png"
+        },
+        {
+          "bytes": 104631,
+          "kind": "png",
+          "name": "bait-uniqueness.png",
+          "path": "figures/track1/iteration2/step-2/bait-uniqueness.png",
+          "slug": "bait-uniqueness.png",
+          "title": "bait uniqueness",
+          "url": "/api/steps/iteration2/step-2/figure/bait-uniqueness.png"
+        },
+        {
+          "bytes": 79796,
+          "kind": "png",
+          "name": "caller-concordance.png",
+          "path": "figures/track1/iteration2/step-2/caller-concordance.png",
+          "slug": "caller-concordance.png",
+          "title": "caller concordance",
+          "url": "/api/steps/iteration2/step-2/figure/caller-concordance.png"
+        },
+        {
+          "bytes": 646813,
+          "kind": "png",
+          "name": "exon-coverage.png",
+          "path": "figures/track1/iteration2/step-2/exon-coverage.png",
+          "slug": "exon-coverage.png",
+          "title": "exon coverage",
+          "url": "/api/steps/iteration2/step-2/figure/exon-coverage.png"
+        },
+        {
+          "bytes": 102425,
+          "kind": "png",
+          "name": "filter-not-genelist.png",
+          "path": "figures/track1/iteration2/step-2/filter-not-genelist.png",
+          "slug": "filter-not-genelist.png",
+          "title": "filter not genelist",
+          "url": "/api/steps/iteration2/step-2/figure/filter-not-genelist.png"
+        },
+        {
+          "bytes": 104422,
+          "kind": "html",
+          "name": "index.html",
+          "path": "figures/track1/iteration2/step-2/index.html",
+          "slug": "index.html",
+          "title": "index",
+          "url": "/api/steps/iteration2/step-2/figure/index.html"
+        },
+        {
+          "bytes": 24967,
+          "kind": "svg",
+          "name": "phase-bub1b.svg",
+          "path": "figures/track1/iteration2/step-2/phase-bub1b.svg",
+          "slug": "phase-bub1b.svg",
+          "title": "phase bub1b",
+          "url": "/api/steps/iteration2/step-2/figure/phase-bub1b.svg"
+        },
+        {
+          "bytes": 87074,
+          "kind": "png",
+          "name": "recovery-funnel.png",
+          "path": "figures/track1/iteration2/step-2/recovery-funnel.png",
+          "slug": "recovery-funnel.png",
+          "title": "recovery funnel",
+          "url": "/api/steps/iteration2/step-2/figure/recovery-funnel.png"
+        },
+        {
+          "bytes": 20917,
+          "kind": "html",
+          "name": "results.html",
+          "path": "figures/track1/iteration2/step-2/results.html",
+          "slug": "results.html",
+          "title": "results",
+          "url": "/api/steps/iteration2/step-2/figure/results.html"
+        },
+        {
+          "bytes": 83552,
+          "kind": "png",
+          "name": "sv-artefacts.png",
+          "path": "figures/track1/iteration2/step-2/sv-artefacts.png",
+          "slug": "sv-artefacts.png",
+          "title": "sv artefacts",
+          "url": "/api/steps/iteration2/step-2/figure/sv-artefacts.png"
+        }
       ],
       "goal": "Which alleles do the raw reads carry in the target set, discovered without the vendor caller \u2014 small variants, structural variants, per-exon coverage, and read-backed phase?",
       "hypotheses": [
@@ -415,6 +640,7 @@
       "status": "done",
       "takes_hypotheses": true,
       "title": "Discover the alleles from the reads",
+      "track": "track1",
       "unblocks": ["step-3", "step-6", "step-7"]
     },
     {
@@ -432,8 +658,11 @@
             "No iteration-1 candidate table was opened. MAPQ is a property of the **instrument**,",
             "measured identically for a target and a decoy, and the gene list came from symptoms."
           ],
+          "number": "093",
           "path": "docs/iteration2/step-3/methodology/093-where-the-aligner-was-unsure.md",
+          "title": "Where do the off-target reads pile up, and which genes may step 3 report on at all?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-3/entry/093-where-the-aligner-was-unsure.md",
           "violations": []
         },
         {
@@ -453,8 +682,11 @@
             "used**: it holds iteration 1's eighteen-gene panel, and reading it would import that gene",
             "list into a blind step. ClinVar was re-fetched over step 2's own baited intervals instead."
           ],
+          "number": "095",
           "path": "docs/iteration2/step-3/methodology/095-the-probes-and-the-counting-kernel.md",
+          "title": "Can an allele be spelled both ways, and does a new counting kernel count what it claims?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-3/entry/095-the-probes-and-the-counting-kernel.md",
           "violations": []
         },
         {
@@ -471,8 +703,11 @@
             "was nominated by step 2's own blind output (`results.it2_scored_pairs`), not read from",
             "iteration 1."
           ],
+          "number": "096",
           "path": "docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md",
+          "title": "At what multiplicity do the reads carry these alleles, with no aligner and no caller?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-3/entry/096-the-alleles-at-their-multiplicity.md",
           "violations": []
         },
         {
@@ -489,20 +724,87 @@
             "document and is **not** an input here: no chromosome was excluded, weighted or named, which",
             "is what makes the X result below a control rather than a circle."
           ],
+          "number": "097",
           "path": "docs/iteration2/step-3/methodology/097-copy-number-without-an-aligner.md",
+          "title": "Is every target-gene exon at two copies, counted without an aligner?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-3/entry/097-copy-number-without-an-aligner.md",
           "violations": []
         }
       ],
       "figures": [
-        "calibration.png",
-        "calls-by-tier.png",
-        "confirmation.png",
-        "copy-number.png",
-        "index.html",
-        "mapq-profile.png",
-        "probe-design.png",
-        "reachability.png"
+        {
+          "bytes": 34506,
+          "kind": "png",
+          "name": "calibration.png",
+          "path": "figures/track1/iteration2/step-3/calibration.png",
+          "slug": "calibration.png",
+          "title": "calibration",
+          "url": "/api/steps/iteration2/step-3/figure/calibration.png"
+        },
+        {
+          "bytes": 28501,
+          "kind": "png",
+          "name": "calls-by-tier.png",
+          "path": "figures/track1/iteration2/step-3/calls-by-tier.png",
+          "slug": "calls-by-tier.png",
+          "title": "calls by tier",
+          "url": "/api/steps/iteration2/step-3/figure/calls-by-tier.png"
+        },
+        {
+          "bytes": 38055,
+          "kind": "png",
+          "name": "confirmation.png",
+          "path": "figures/track1/iteration2/step-3/confirmation.png",
+          "slug": "confirmation.png",
+          "title": "confirmation",
+          "url": "/api/steps/iteration2/step-3/figure/confirmation.png"
+        },
+        {
+          "bytes": 32760,
+          "kind": "png",
+          "name": "copy-number.png",
+          "path": "figures/track1/iteration2/step-3/copy-number.png",
+          "slug": "copy-number.png",
+          "title": "copy number",
+          "url": "/api/steps/iteration2/step-3/figure/copy-number.png"
+        },
+        {
+          "bytes": 33514,
+          "kind": "html",
+          "name": "index.html",
+          "path": "figures/track1/iteration2/step-3/index.html",
+          "slug": "index.html",
+          "title": "index",
+          "url": "/api/steps/iteration2/step-3/figure/index.html"
+        },
+        {
+          "bytes": 27496,
+          "kind": "png",
+          "name": "mapq-profile.png",
+          "path": "figures/track1/iteration2/step-3/mapq-profile.png",
+          "slug": "mapq-profile.png",
+          "title": "mapq profile",
+          "url": "/api/steps/iteration2/step-3/figure/mapq-profile.png"
+        },
+        {
+          "bytes": 43711,
+          "kind": "png",
+          "name": "probe-design.png",
+          "path": "figures/track1/iteration2/step-3/probe-design.png",
+          "slug": "probe-design.png",
+          "title": "probe design",
+          "url": "/api/steps/iteration2/step-3/figure/probe-design.png"
+        },
+        {
+          "bytes": 31294,
+          "kind": "png",
+          "name": "reachability.png",
+          "path": "figures/track1/iteration2/step-3/reachability.png",
+          "slug": "reachability.png",
+          "title": "reachability",
+          "url": "/api/steps/iteration2/step-3/figure/reachability.png"
+        }
       ],
       "goal": "Read without an aligner or a caller, are the discovered alleles at heterozygous multiplicity, is every target-gene exon at two copies, and which public ClinVar P/LP alleles are present at all?",
       "hypotheses": [
@@ -608,6 +910,7 @@
       "status": "done",
       "takes_hypotheses": true,
       "title": "Alignment-free genotype and copy number",
+      "track": "track1",
       "unblocks": ["step-4", "step-6", "step-7"]
     },
     {
@@ -624,8 +927,11 @@
             "derived | `build/it2/step-1/benchmark-full.json` \u2014 the measured recall curve | [091](../../step-1/methodology/091-recall-at-the-full-population.md)",
             "clinical | the proband's seven terms, through the phenotype lane and the seed list | `Challenge_Clinical_Phenotype_1.md`, via [084](../../step-1/methodology/084-the-blind-target-set.md)"
           ],
+          "number": "098",
           "path": "docs/iteration2/step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md",
+          "title": "Which tool speaks for which allele, what each rung is worth, and what could not be read",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-4/entry/098-the-lanes-and-what-they-were-calibrated-against.md",
           "violations": []
         },
         {
@@ -642,8 +948,11 @@
             "reference | `warehouse.gnomad_constraint` \u2014 LOEUF, carried as a **column, not a lane** | gnomAD v4.1",
             "clinical | the seven proband terms, through the phenotype lane | `Challenge_Clinical_Phenotype_1.md`"
           ],
+          "number": "099",
           "path": "docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md",
+          "title": "Over every protein-coding gene in the VCF, with no hard filter, which biallelic pair leads?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-4/entry/099-every-gene-ordered-with-nothing-filtered-out.md",
           "violations": []
         },
         {
@@ -657,8 +966,11 @@
             "derived | `results.it2_targets` (404) and `results.it2_decoys` (396) | [084](../../step-1/methodology/084-the-blind-target-set.md)",
             "Seed **20260918** for every draw and every bootstrap, so both numbers reproduce exactly."
           ],
+          "number": "100",
           "path": "docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md",
+          "title": "How high would the leader have come out by chance, and does the scoring discriminate at all?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-4/entry/100-two-nulls-and-an-ablation.md",
           "violations": []
         },
         {
@@ -670,21 +982,96 @@
             "api | gnomAD GraphQL `variant_cooccurrence`, dataset `gnomad_r2_1` | every reply cached under `build/it2/step-4/ptrans/` with its query",
             "api | gnomAD GraphQL `variant(rsid:)` \u2014 the GRCh38 \u2192 GRCh37 bridge | same cache"
           ],
+          "number": "101",
           "path": "docs/iteration2/step-4/methodology/101-the-phase-that-cannot-be-measured.md",
+          "title": "What is the leading pair's P(trans), when phase cannot be measured at all?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-4/entry/101-the-phase-that-cannot-be-measured.md",
           "violations": []
         }
       ],
       "figures": [
-        "decomposition.png",
-        "genotype-only.png",
-        "groups.png",
-        "index.html",
-        "lane-coverage.png",
-        "leaders.png",
-        "permutation-null.png",
-        "phenotype-bins.png",
-        "shapes.png"
+        {
+          "bytes": 41887,
+          "kind": "png",
+          "name": "decomposition.png",
+          "path": "figures/track1/iteration2/step-4/decomposition.png",
+          "slug": "decomposition.png",
+          "title": "decomposition",
+          "url": "/api/steps/iteration2/step-4/figure/decomposition.png"
+        },
+        {
+          "bytes": 36318,
+          "kind": "png",
+          "name": "genotype-only.png",
+          "path": "figures/track1/iteration2/step-4/genotype-only.png",
+          "slug": "genotype-only.png",
+          "title": "genotype only",
+          "url": "/api/steps/iteration2/step-4/figure/genotype-only.png"
+        },
+        {
+          "bytes": 35793,
+          "kind": "png",
+          "name": "groups.png",
+          "path": "figures/track1/iteration2/step-4/groups.png",
+          "slug": "groups.png",
+          "title": "groups",
+          "url": "/api/steps/iteration2/step-4/figure/groups.png"
+        },
+        {
+          "bytes": 39933,
+          "kind": "html",
+          "name": "index.html",
+          "path": "figures/track1/iteration2/step-4/index.html",
+          "slug": "index.html",
+          "title": "index",
+          "url": "/api/steps/iteration2/step-4/figure/index.html"
+        },
+        {
+          "bytes": 53032,
+          "kind": "png",
+          "name": "lane-coverage.png",
+          "path": "figures/track1/iteration2/step-4/lane-coverage.png",
+          "slug": "lane-coverage.png",
+          "title": "lane coverage",
+          "url": "/api/steps/iteration2/step-4/figure/lane-coverage.png"
+        },
+        {
+          "bytes": 90489,
+          "kind": "png",
+          "name": "leaders.png",
+          "path": "figures/track1/iteration2/step-4/leaders.png",
+          "slug": "leaders.png",
+          "title": "leaders",
+          "url": "/api/steps/iteration2/step-4/figure/leaders.png"
+        },
+        {
+          "bytes": 31636,
+          "kind": "png",
+          "name": "permutation-null.png",
+          "path": "figures/track1/iteration2/step-4/permutation-null.png",
+          "slug": "permutation-null.png",
+          "title": "permutation null",
+          "url": "/api/steps/iteration2/step-4/figure/permutation-null.png"
+        },
+        {
+          "bytes": 35073,
+          "kind": "png",
+          "name": "phenotype-bins.png",
+          "path": "figures/track1/iteration2/step-4/phenotype-bins.png",
+          "slug": "phenotype-bins.png",
+          "title": "phenotype bins",
+          "url": "/api/steps/iteration2/step-4/figure/phenotype-bins.png"
+        },
+        {
+          "bytes": 34335,
+          "kind": "png",
+          "name": "shapes.png",
+          "path": "figures/track1/iteration2/step-4/shapes.png",
+          "slug": "shapes.png",
+          "title": "shapes",
+          "url": "/api/steps/iteration2/step-4/figure/shapes.png"
+        }
       ],
       "goal": "Over every protein-coding gene in the VCF, with no hard filter, which biallelic pair has the highest posterior, and what is its P(trans)?",
       "hypotheses": [
@@ -790,6 +1177,7 @@
       "status": "done",
       "takes_hypotheses": true,
       "title": "Likelihood-ratio ranking over the VCF",
+      "track": "track1",
       "unblocks": ["step-5", "step-6"]
     },
     {
@@ -814,8 +1202,11 @@
             "clinical document, or a public API. `tools/check_blind.py` reads the table above and runs",
             "inside `tools/check-python.sh`; it is what turns that sentence into a check."
           ],
+          "number": "102",
           "path": "docs/iteration2/step-5/methodology/102-the-sources-and-what-they-could-be-asked.md",
+          "title": "Which public sources answer this step, what they were asked, and what could not be asked at all",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-5/entry/102-the-sources-and-what-they-could-be-asked.md",
           "violations": []
         },
         {
@@ -830,8 +1221,11 @@
             "clinical document | the seven proband terms, only as the source of the target set the gene list came from",
             "No iteration-1 candidate table. Blind gate: `tools/check_blind.py`."
           ],
+          "number": "103",
           "path": "docs/iteration2/step-5/methodology/103-the-alleles-somebody-already-published.md",
+          "title": "Of the alleles this child carries, which has anyone already published about?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-5/entry/103-the-alleles-somebody-already-published.md",
           "violations": []
         },
         {
@@ -846,8 +1240,11 @@
             "No iteration-1 candidate table, and **no hand-written reading list**: the plan's own",
             "bibliography enters only if these queries produce it."
           ],
+          "number": "104",
           "path": "docs/iteration2/step-5/methodology/104-the-papers-the-script-found.md",
+          "title": "Which published papers discuss a candidate gene alongside this child's own features?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-5/entry/104-the-papers-the-script-found.md",
           "violations": []
         },
         {
@@ -861,8 +1258,11 @@
             "`results.it2_lr_top_pairs` | step 4's rank per gene, carried for comparison and **not** an input to the score",
             "PubMed E-utilities | `GENE[Title/Abstract]`, one count per gene, through `mva.drugs.sources.pubmed`"
           ],
+          "number": "105",
           "path": "docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md",
+          "title": "Does the knowledge route order anything a publication count does not, and can it tell a candidate from a control?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-5/entry/105-does-the-literature-beat-a-hit-count.md",
           "violations": []
         },
         {
@@ -877,19 +1277,78 @@
             "InterPro | every entry mapped onto that accession, with its residue ranges and its `type`",
             "AlphaFold DB | the per-residue pLDDT profile of the same accession"
           ],
+          "number": "106",
           "path": "docs/iteration2/step-5/methodology/106-where-the-missense-sits-in-the-protein.md",
+          "title": "Where does the leading missense allele sit in its protein, and does the structure agree?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-5/entry/106-where-the-missense-sits-in-the-protein.md",
           "violations": []
         }
       ],
       "figures": [
-        "anchors.png",
-        "catalogue.png",
-        "citations.png",
-        "domains.png",
-        "index.html",
-        "separation.png",
-        "sources.png"
+        {
+          "bytes": 68822,
+          "kind": "png",
+          "name": "anchors.png",
+          "path": "figures/track1/iteration2/step-5/anchors.png",
+          "slug": "anchors.png",
+          "title": "anchors",
+          "url": "/api/steps/iteration2/step-5/figure/anchors.png"
+        },
+        {
+          "bytes": 76111,
+          "kind": "png",
+          "name": "catalogue.png",
+          "path": "figures/track1/iteration2/step-5/catalogue.png",
+          "slug": "catalogue.png",
+          "title": "catalogue",
+          "url": "/api/steps/iteration2/step-5/figure/catalogue.png"
+        },
+        {
+          "bytes": 244851,
+          "kind": "png",
+          "name": "citations.png",
+          "path": "figures/track1/iteration2/step-5/citations.png",
+          "slug": "citations.png",
+          "title": "citations",
+          "url": "/api/steps/iteration2/step-5/figure/citations.png"
+        },
+        {
+          "bytes": 44080,
+          "kind": "png",
+          "name": "domains.png",
+          "path": "figures/track1/iteration2/step-5/domains.png",
+          "slug": "domains.png",
+          "title": "domains",
+          "url": "/api/steps/iteration2/step-5/figure/domains.png"
+        },
+        {
+          "bytes": 69043,
+          "kind": "html",
+          "name": "index.html",
+          "path": "figures/track1/iteration2/step-5/index.html",
+          "slug": "index.html",
+          "title": "index",
+          "url": "/api/steps/iteration2/step-5/figure/index.html"
+        },
+        {
+          "bytes": 35848,
+          "kind": "png",
+          "name": "separation.png",
+          "path": "figures/track1/iteration2/step-5/separation.png",
+          "slug": "separation.png",
+          "title": "separation",
+          "url": "/api/steps/iteration2/step-5/figure/separation.png"
+        },
+        {
+          "bytes": 29285,
+          "kind": "png",
+          "name": "sources.png",
+          "path": "figures/track1/iteration2/step-5/sources.png",
+          "slug": "sources.png",
+          "title": "sources",
+          "url": "/api/steps/iteration2/step-5/figure/sources.png"
+        }
       ],
       "goal": "Does public knowledge \u2014 published alleles, case reports, protein-language models \u2014 nominate or corroborate a pair for this phenotype?",
       "hypotheses": [
@@ -979,6 +1438,7 @@
       "status": "done",
       "takes_hypotheses": true,
       "title": "Knowledge engine",
+      "track": "track1",
       "unblocks": ["step-6", "step-7"]
     },
     {
@@ -1004,8 +1464,11 @@
             "`uv run mva-science check --root docs --blind iteration2`.",
             "Seed **20260918** for every bootstrap, so each interval below reproduces exactly."
           ],
+          "number": "107",
           "path": "docs/iteration2/step-6/methodology/107-the-routes-and-which-of-them-earned-a-rank.md",
+          "title": "Four instruments looked at this case. Which of them is entitled to a vote?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-6/entry/107-the-routes-and-which-of-them-earned-a-rank.md",
           "violations": []
         },
         {
@@ -1022,8 +1485,11 @@
             "candidate table, not its decode file. `uv run python tools/check_blind.py` was green before",
             "and after this entry was filed."
           ],
+          "number": "108",
           "path": "docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md",
+          "title": "One ranking out of three, hashed before anybody compared it to anything",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-6/entry/108-the-ranking-frozen-before-anyone-looked.md",
           "violations": []
         },
         {
@@ -1041,26 +1507,150 @@
             "iteration-2 entry has read. `tools/check_blind.py` reported *still blind* before this file",
             "existed and reports *unblinded by* this file after it."
           ],
+          "number": "109",
           "path": "docs/iteration2/step-6/methodology/109-what-the-mirror-found.md",
+          "title": "Blind, from the reads and the symptoms, did iteration 2 find the same pair?",
           "unblinds": true,
+          "url": "/api/steps/iteration2/step-6/entry/109-what-the-mirror-found.md",
           "violations": [
             "docs/iteration2/step-6/methodology/109-what-the-mirror-found.md: names results.coding_candidates \u2014 iteration 1's filtered candidate table names the pair"
+          ]
+        },
+        {
+          "declares_inputs": true,
+          "entry": "124-the-reserve-file-built-and-rehearsed.md",
+          "inputs": [
+            "Source | What was read | Receipt",
+            "derived | `results.coding_candidates` \u2014 five selectors (two `BUB1B` alleles, `LZTR1`, `F5`, `FLG`) | `submissions/track1/iteration-2/spec.selectors.json`",
+            "register | H009's suggested confidence, 0.9993, as the rank-1 epcr | `docs/science-register.json`",
+            "clinical | the eight HPO terms \u2014 through step 1's target set, which the fused ranking read | [084](../../step-1/methodology/084-the-blind-target-set.md)",
+            "organisers | `evaluation.py`, the published scorer, for the cross-check | `ressources/hackathon-rules/rare-diseas-repo/evaluation.py`",
+            "The alternative pairings iteration 1 carried at ranks 2\u20135 (the two rare intronic `BUB1B`",
+            "alleles) are **not** in this file: the reply to submission 1 eliminated them",
+            "([083](../../../iteration1/step-6/methodology/083-oracle-reply-submission-1.md)). The three",
+            "secondary rows keep iteration 1's rule (ClinVar P/LP, gnomAD < 0.02, dominant or",
+            "risk-factor genes) \u2014 they are free under the scorer and are the qualitative-review content."
+          ],
+          "number": "124",
+          "path": "docs/iteration2/step-6/methodology/124-the-reserve-file-built-and-rehearsed.md",
+          "title": "The reserve file: submission 2 built, rehearsed, and not uploaded",
+          "unblinds": false,
+          "url": "/api/steps/iteration2/step-6/entry/124-the-reserve-file-built-and-rehearsed.md",
+          "violations": [
+            "docs/iteration2/step-6/methodology/124-the-reserve-file-built-and-rehearsed.md: names results.coding_candidates \u2014 iteration 1's filtered candidate table names the pair",
+            "docs/iteration2/step-6/methodology/124-the-reserve-file-built-and-rehearsed.md: names decode-table \u2014 iteration 1's decode table names the pair and the oracle reply"
           ]
         }
       ],
       "figures": [
-        "agreement-matrix.html",
-        "agreement-matrix.png",
-        "decoy-reach.html",
-        "decoy-reach.png",
-        "freeze-receipt.html",
-        "independent-evidence.html",
-        "independent-evidence.png",
-        "index.html",
-        "leave-one-route-out.html",
-        "leave-one-route-out.png",
-        "weight-sensitivity.html",
-        "weight-sensitivity.png"
+        {
+          "bytes": 7136,
+          "kind": "html",
+          "name": "agreement-matrix.html",
+          "path": "figures/track1/iteration2/step-6/agreement-matrix.html",
+          "slug": "agreement-matrix.html",
+          "title": "agreement matrix",
+          "url": "/api/steps/iteration2/step-6/figure/agreement-matrix.html"
+        },
+        {
+          "bytes": 498183,
+          "kind": "png",
+          "name": "agreement-matrix.png",
+          "path": "figures/track1/iteration2/step-6/agreement-matrix.png",
+          "slug": "agreement-matrix.png",
+          "title": "agreement matrix",
+          "url": "/api/steps/iteration2/step-6/figure/agreement-matrix.png"
+        },
+        {
+          "bytes": 2721,
+          "kind": "html",
+          "name": "decoy-reach.html",
+          "path": "figures/track1/iteration2/step-6/decoy-reach.html",
+          "slug": "decoy-reach.html",
+          "title": "decoy reach",
+          "url": "/api/steps/iteration2/step-6/figure/decoy-reach.html"
+        },
+        {
+          "bytes": 81115,
+          "kind": "png",
+          "name": "decoy-reach.png",
+          "path": "figures/track1/iteration2/step-6/decoy-reach.png",
+          "slug": "decoy-reach.png",
+          "title": "decoy reach",
+          "url": "/api/steps/iteration2/step-6/figure/decoy-reach.png"
+        },
+        {
+          "bytes": 458,
+          "kind": "html",
+          "name": "freeze-receipt.html",
+          "path": "figures/track1/iteration2/step-6/freeze-receipt.html",
+          "slug": "freeze-receipt.html",
+          "title": "freeze receipt",
+          "url": "/api/steps/iteration2/step-6/figure/freeze-receipt.html"
+        },
+        {
+          "bytes": 4842,
+          "kind": "html",
+          "name": "independent-evidence.html",
+          "path": "figures/track1/iteration2/step-6/independent-evidence.html",
+          "slug": "independent-evidence.html",
+          "title": "independent evidence",
+          "url": "/api/steps/iteration2/step-6/figure/independent-evidence.html"
+        },
+        {
+          "bytes": 140040,
+          "kind": "png",
+          "name": "independent-evidence.png",
+          "path": "figures/track1/iteration2/step-6/independent-evidence.png",
+          "slug": "independent-evidence.png",
+          "title": "independent evidence",
+          "url": "/api/steps/iteration2/step-6/figure/independent-evidence.png"
+        },
+        {
+          "bytes": 35059,
+          "kind": "html",
+          "name": "index.html",
+          "path": "figures/track1/iteration2/step-6/index.html",
+          "slug": "index.html",
+          "title": "index",
+          "url": "/api/steps/iteration2/step-6/figure/index.html"
+        },
+        {
+          "bytes": 2617,
+          "kind": "html",
+          "name": "leave-one-route-out.html",
+          "path": "figures/track1/iteration2/step-6/leave-one-route-out.html",
+          "slug": "leave-one-route-out.html",
+          "title": "leave one route out",
+          "url": "/api/steps/iteration2/step-6/figure/leave-one-route-out.html"
+        },
+        {
+          "bytes": 63671,
+          "kind": "png",
+          "name": "leave-one-route-out.png",
+          "path": "figures/track1/iteration2/step-6/leave-one-route-out.png",
+          "slug": "leave-one-route-out.png",
+          "title": "leave one route out",
+          "url": "/api/steps/iteration2/step-6/figure/leave-one-route-out.png"
+        },
+        {
+          "bytes": 4372,
+          "kind": "html",
+          "name": "weight-sensitivity.html",
+          "path": "figures/track1/iteration2/step-6/weight-sensitivity.html",
+          "slug": "weight-sensitivity.html",
+          "title": "weight sensitivity",
+          "url": "/api/steps/iteration2/step-6/figure/weight-sensitivity.html"
+        },
+        {
+          "bytes": 223876,
+          "kind": "png",
+          "name": "weight-sensitivity.png",
+          "path": "figures/track1/iteration2/step-6/weight-sensitivity.png",
+          "slug": "weight-sensitivity.png",
+          "title": "weight sensitivity",
+          "url": "/api/steps/iteration2/step-6/figure/weight-sensitivity.png"
+        }
       ],
       "goal": "Fused across steps 2-5 and then unblinded, does iteration 2 rediscover iteration 1's pair, and is a second upload informative?",
       "hypotheses": [
@@ -1134,6 +1724,7 @@
       "status": "done",
       "takes_hypotheses": true,
       "title": "Fusion and unblinding",
+      "track": "track1",
       "unblocks": ["step-7"]
     },
     {
@@ -1157,8 +1748,11 @@
             "genomic position appears in the card or in this entry \u2014 the card names the gene, the protein",
             "and the allele classes."
           ],
+          "number": "110",
           "path": "docs/iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md",
+          "title": "The mechanism card revised from the confirmed pair, and six claims filed before any drug was looked up",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-7/entry/110-the-card-revised-and-the-claims-filed-before-the-search.md",
           "violations": []
         },
         {
@@ -1175,8 +1769,11 @@
             "card); the genomic dataset enters through the gene and pathway words. No genomic position",
             "exists in any input or output of this stage."
           ],
+          "number": "111",
           "path": "docs/iteration2/step-7/methodology/111-the-automated-stages-literature-trials-and-labels-per-drug.md",
+          "title": "Three questions asked of every approved drug: the literature, the children, the label",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-7/entry/111-the-automated-stages-literature-trials-and-labels-per-drug.md",
           "violations": []
         },
         {
@@ -1193,8 +1790,11 @@
             "entrectinib), which makes it a *harder* control than a random gene, not an easier one. XDH is",
             "the deliberately unrelated, well-drugged metabolic enzyme."
           ],
+          "number": "112",
           "path": "docs/iteration2/step-7/methodology/112-two-decoy-cards-through-the-same-pipeline.md",
+          "title": "Two decoy cards through the same pipeline: which directions nominate drugs for any gene?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-7/entry/112-two-decoy-cards-through-the-same-pipeline.md",
           "violations": []
         },
         {
@@ -1205,8 +1805,11 @@
             "card v3 | the ladder rungs and rule; `anti_directions[].moa_pattern`; `case.context_standard_of_care`; `repurposing_directions[].context`",
             "derived | `drug_candidates.tsv`, `trials.tsv` (110); `drug_mechanism_literature.tsv`, `pediatric_trials.tsv`, `labels.json` (111); `evidence.tsv` (110, 13 curated rows)"
           ],
+          "number": "113",
           "path": "docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md",
+          "title": "The ladder, the shortlist and the do-not table: what the drug evidence says for each direction",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-7/entry/113-the-ladder-the-shortlist-and-the-do-not-table.md",
           "violations": []
         },
         {
@@ -1221,12 +1824,78 @@
             "`d3e563ba\u2026`, hash `4d20555cf73904be`; `submissions.json`, hash `27fd706881726b73`) so the",
             "hosted page renders with the API down, and the fixture badge says so."
           ],
+          "number": "114",
           "path": "docs/iteration2/step-7/methodology/114-the-dashboard-surface-for-step-7.md",
+          "title": "The dashboard surface for step 7: where a reader sees the approach, the suggestion and the output",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-7/entry/114-the-dashboard-surface-for-step-7.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "120-the-card-at-version-4-and-the-second-submission-draft.md",
+          "inputs": [
+            "Source | What was read | Receipt",
+            "step 8 | no autosome above its own detection limit; limit **2 %** of cells (chr1\u20136) / **3 %** (chr7\u201322) at 80 % power; fold centre 0.49300; over-dispersion 0.01620; X and Y unreadable by allele balance in a male; the dosage route (H054) not run; sub-arm events never testable; 037's statistic had no power at any fraction tested | [116](../../step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md), H051\u2013H053",
+            "step 8 | the tissue sequenced is not named by the delivery; a karyotype's fraction is measured in cultured cells \u2014 \"in the sequenced sample\", never the diagnosis | step-8 README, *What this step cannot tell you*",
+            "card v3 | everything else, unchanged | [110](110-the-card-revised-and-the-claims-filed-before-the-search.md)",
+            "the cached replies | `build/track2-cache/` \u2014 the re-grade makes zero live requests | [111](111-the-automated-stages-literature-trials-and-labels-per-drug.md)"
+          ],
+          "number": "120",
+          "path": "docs/iteration2/step-7/methodology/120-the-card-at-version-4-and-the-second-submission-draft.md",
+          "title": "The card at version 4: step 8's measured burden, the ladder that did not move, and the second submission draft",
+          "unblinds": false,
+          "url": "/api/steps/iteration2/step-7/entry/120-the-card-at-version-4-and-the-second-submission-draft.md",
           "violations": []
         }
       ],
-      "figures": [],
+      "figures": [
+        {
+          "bytes": 98182,
+          "kind": "png",
+          "name": "decoy-overlap.png",
+          "path": "figures/track2/decoy-overlap.png",
+          "slug": "decoy-overlap.png",
+          "title": "decoy overlap",
+          "url": "/api/steps/iteration2/step-7/figure/decoy-overlap.png"
+        },
+        {
+          "bytes": 204608,
+          "kind": "png",
+          "name": "evidence-ladder.png",
+          "path": "figures/track2/evidence-ladder.png",
+          "slug": "evidence-ladder.png",
+          "title": "evidence ladder",
+          "url": "/api/steps/iteration2/step-7/figure/evidence-ladder.png"
+        },
+        {
+          "bytes": 423301,
+          "kind": "png",
+          "name": "mechanism-literature.png",
+          "path": "figures/track2/mechanism-literature.png",
+          "slug": "mechanism-literature.png",
+          "title": "mechanism literature",
+          "url": "/api/steps/iteration2/step-7/figure/mechanism-literature.png"
+        },
+        {
+          "bytes": 532375,
+          "kind": "png",
+          "name": "pediatric-evidence.png",
+          "path": "figures/track2/pediatric-evidence.png",
+          "slug": "pediatric-evidence.png",
+          "title": "pediatric evidence",
+          "url": "/api/steps/iteration2/step-7/figure/pediatric-evidence.png"
+        },
+        {
+          "bytes": 62883,
+          "kind": "png",
+          "name": "rung-funnel.png",
+          "path": "figures/track2/rung-funnel.png",
+          "slug": "rung-funnel.png",
+          "title": "rung funnel",
+          "url": "/api/steps/iteration2/step-7/figure/rung-funnel.png"
+        }
+      ],
       "goal": "Which mechanism facts from steps 2-5 and 8 revise the Track 2 card, and what does the drug evidence say for each direction?",
       "hypotheses": [
         {
@@ -1324,13 +1993,30 @@
           "statement": "Every drug shortlisted at rung 2 or higher for the BUB1B card has paediatric data: an openFDA label with a pediatric_use section, or a ClinicalTrials.gov study that admits children, in any indication.",
           "status": "supported",
           "step": "step-7"
+        },
+        {
+          "author": "agharsallah",
+          "confidence": 0.85,
+          "gene": "BUB1B",
+          "hypothesis_id": "H061",
+          "iteration": "iteration2",
+          "path": "track2-ladder",
+          "prediction": "Re-running tools/track2_enrich.py --skip-live on card v4 reproduces evidence_ladder.tsv, shortlist.tsv and do_not.tsv byte-identical to the card-v3 run (same sha256 for all three), while every manifest names card version 4.",
+          "reasoning": "Three digests identical after the reader fault was removed; the ladder reads no aneuploid-fraction field, so the claim is structural as well as observed. Held below 0.9 because the first run failed for an unrelated reason the test could not distinguish from a real change until the reader was fixed.",
+          "recorded_at": "2026-09-19T10:26:36.840495",
+          "refuted_by": "Any row of evidence_ladder.tsv, shortlist.tsv or do_not.tsv differs between the card-v3 and the card-v4 run - a rung, a flag, a verdict or a rank moved without any input table changing.",
+          "revision": 2,
+          "statement": "The evidence ladder is independent of the measured aneuploid fraction: revising the mechanism card to version 4 with step 8's result (no autosome above its 2-3 % detection limit in the sequenced sample) changes no rung, no shortlist row and no do-not row; F8 acts only on how direction D2 is argued in the report, not on what it contains.",
+          "status": "supported",
+          "step": "step-7"
         }
       ],
       "kind": "research",
       "slug": "step-7",
-      "status": "open",
+      "status": "done",
       "takes_hypotheses": true,
       "title": "Track 2 enrichment",
+      "track": "track2",
       "unblocks": []
     },
     {
@@ -1347,8 +2033,11 @@
             "clinical | **not read, and the absence is the point.** `Challenge_Clinical_Phenotype_1.md` lists no karyotype and no term a blood-DNA aneuploid fraction would predict, and the delivery never says which tissue was sequenced | [the clinical document](../../../../ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md)",
             "Step 8 names no candidate gene and is not blind; nothing here reads an iteration-1 table."
           ],
+          "number": "115",
           "path": "docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md",
+          "title": "What does a mosaic model actually need from five million VCF rows?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-8/entry/115-the-callset-reduced-to-what-a-mosaic-model-needs.md",
           "violations": []
         },
         {
@@ -1360,8 +2049,11 @@
             "method | fold-over B-deviation; Markello 2012's DANFIP relation for the fraction (PMID 22277120) | re-implemented in `mva.mosaic.bdev`",
             "clinical | not read; see [115](115-the-callset-reduced-to-what-a-mosaic-model-needs.md) | \u2014"
           ],
+          "number": "116",
           "path": "docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md",
+          "title": "Entry 037 reported every autosome flat. What was that worth?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-8/entry/116-the-statistic-that-has-power-and-the-limit-it-buys.md",
           "violations": []
         },
         {
@@ -1373,8 +2065,11 @@
             "derived | the leave-one-out depth baseline, 42.42\u00d7 \u00b1 1.19 % | [116](116-the-statistic-that-has-power-and-the-limit-it-buys.md)",
             "method | Kong 2018's five-model comparison (PMID 29773658), re-implemented from the paper | `mva.mosaic.models`, `mva.mosaic.madseq`"
           ],
+          "number": "117",
           "path": "docs/iteration2/step-8/methodology/117-five-models-and-the-family-this-data-does-not-fit.md",
+          "title": "Five models per chromosome. Which mechanism does the data name?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-8/entry/117-five-models-and-the-family-this-data-does-not-fit.md",
           "violations": []
         },
         {
@@ -1386,27 +2081,239 @@
             "derived | the fitted centre 0.49300 and \u03c1 0.01620, refitted inside every replicate | [115](115-the-callset-reduced-to-what-a-mosaic-model-needs.md)",
             "method | Kong 2018's own caveat: the model degrades when several chromosomes are abnormal at once | PMID 29773658, Discussion"
           ],
+          "number": "118",
           "path": "docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md",
+          "title": "Every bound here divides by something. What happens when the divisor is wrong?",
           "unblinds": false,
+          "url": "/api/steps/iteration2/step-8/entry/118-the-baseline-and-what-a-variegated-genome-does-to-it.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "121-the-second-instrument-and-the-shards-it-did-not-need.md",
+          "inputs": [
+            "Source | What was read | Version / receipt",
+            "raw | the 272-shard read store, 1,071,835,104 reads | `ideation/data-findings.md`",
+            "reference | GRCh38 primary contigs, for the probe set only \u2014 no patient sequence enters the design | `mva.kmer.fasta`",
+            "derived | the allele-balance estimates and intervals this route is compared against | [116](116-the-statistic-that-has-power-and-the-limit-it-buys.md)",
+            "clinical | 8 HPO terms; no karyotype, no term a blood aneuploidy fraction would predict | `ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md`"
+          ],
+          "number": "121",
+          "path": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md",
+          "title": "The second instrument, and the shards it did not need",
+          "unblinds": false,
+          "url": "/api/steps/iteration2/step-8/entry/121-the-second-instrument-and-the-shards-it-did-not-need.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "123-the-denominator-that-assumes-nothing-read-back.md",
+          "inputs": [
+            "Source | What was read | Receipt",
+            "derived | `build/it2/step-8/dosage.json` \u2014 per contig `relative`, `absolute`, `disagreement`; written by `tools/run_it2_dosage_pass.py` | [121](121-the-second-instrument-and-the-shards-it-did-not-need.md); `mva.kmer.dosage`",
+            "clinical | none read here; 121's statement stands (no karyotype, no predictive term) | \u2014",
+            "`relative` = a contig's mean probe count \u00f7 the autosomal median of those means.",
+            "`absolute` = the same mean \u00f7 the genome-wide calibration set's mean (`mva.kmer.dosage.absolute_scale`).",
+            "`disagreement` = `relative \u2212 absolute`."
+          ],
+          "number": "123",
+          "path": "docs/iteration2/step-8/methodology/123-the-denominator-that-assumes-nothing-read-back.md",
+          "title": "The denominator that assumes nothing, read back",
+          "unblinds": false,
+          "url": "/api/steps/iteration2/step-8/entry/123-the-denominator-that-assumes-nothing-read-back.md",
           "violations": []
         }
       ],
       "figures": [
-        "bdev-per-chromosome.html",
-        "bdev-per-chromosome.png",
-        "depth-against-baseline.html",
-        "depth-against-baseline.png",
-        "detection-limit.html",
-        "detection-limit.png",
-        "heterozygous-density.html",
-        "heterozygous-density.png",
-        "index.html",
-        "model-margins.html",
-        "model-margins.png",
-        "multi-chromosome.html",
-        "multi-chromosome.png",
-        "power-then-and-now.html",
-        "power-then-and-now.png"
+        {
+          "bytes": 4242,
+          "kind": "html",
+          "name": "bdev-per-chromosome.html",
+          "path": "figures/track1/iteration2/step-8/bdev-per-chromosome.html",
+          "slug": "bdev-per-chromosome.html",
+          "title": "bdev per chromosome",
+          "url": "/api/steps/iteration2/step-8/figure/bdev-per-chromosome.html"
+        },
+        {
+          "bytes": 78871,
+          "kind": "png",
+          "name": "bdev-per-chromosome.png",
+          "path": "figures/track1/iteration2/step-8/bdev-per-chromosome.png",
+          "slug": "bdev-per-chromosome.png",
+          "title": "bdev per chromosome",
+          "url": "/api/steps/iteration2/step-8/figure/bdev-per-chromosome.png"
+        },
+        {
+          "bytes": 3531,
+          "kind": "html",
+          "name": "depth-against-baseline.html",
+          "path": "figures/track1/iteration2/step-8/depth-against-baseline.html",
+          "slug": "depth-against-baseline.html",
+          "title": "depth against baseline",
+          "url": "/api/steps/iteration2/step-8/figure/depth-against-baseline.html"
+        },
+        {
+          "bytes": 98565,
+          "kind": "png",
+          "name": "depth-against-baseline.png",
+          "path": "figures/track1/iteration2/step-8/depth-against-baseline.png",
+          "slug": "depth-against-baseline.png",
+          "title": "depth against baseline",
+          "url": "/api/steps/iteration2/step-8/figure/depth-against-baseline.png"
+        },
+        {
+          "bytes": 3142,
+          "kind": "html",
+          "name": "detection-limit.html",
+          "path": "figures/track1/iteration2/step-8/detection-limit.html",
+          "slug": "detection-limit.html",
+          "title": "detection limit",
+          "url": "/api/steps/iteration2/step-8/figure/detection-limit.html"
+        },
+        {
+          "bytes": 70184,
+          "kind": "png",
+          "name": "detection-limit.png",
+          "path": "figures/track1/iteration2/step-8/detection-limit.png",
+          "slug": "detection-limit.png",
+          "title": "detection limit",
+          "url": "/api/steps/iteration2/step-8/figure/detection-limit.png"
+        },
+        {
+          "bytes": 3239,
+          "kind": "html",
+          "name": "dosage-composition.html",
+          "path": "figures/track1/iteration2/step-8/dosage-composition.html",
+          "slug": "dosage-composition.html",
+          "title": "dosage composition",
+          "url": "/api/steps/iteration2/step-8/figure/dosage-composition.html"
+        },
+        {
+          "bytes": 150834,
+          "kind": "png",
+          "name": "dosage-composition.png",
+          "path": "figures/track1/iteration2/step-8/dosage-composition.png",
+          "slug": "dosage-composition.png",
+          "title": "dosage composition",
+          "url": "/api/steps/iteration2/step-8/figure/dosage-composition.png"
+        },
+        {
+          "bytes": 4899,
+          "kind": "html",
+          "name": "dosage-per-chromosome.html",
+          "path": "figures/track1/iteration2/step-8/dosage-per-chromosome.html",
+          "slug": "dosage-per-chromosome.html",
+          "title": "dosage per chromosome",
+          "url": "/api/steps/iteration2/step-8/figure/dosage-per-chromosome.html"
+        },
+        {
+          "bytes": 118390,
+          "kind": "png",
+          "name": "dosage-per-chromosome.png",
+          "path": "figures/track1/iteration2/step-8/dosage-per-chromosome.png",
+          "slug": "dosage-per-chromosome.png",
+          "title": "dosage per chromosome",
+          "url": "/api/steps/iteration2/step-8/figure/dosage-per-chromosome.png"
+        },
+        {
+          "bytes": 3681,
+          "kind": "html",
+          "name": "dosage-residual.html",
+          "path": "figures/track1/iteration2/step-8/dosage-residual.html",
+          "slug": "dosage-residual.html",
+          "title": "dosage residual",
+          "url": "/api/steps/iteration2/step-8/figure/dosage-residual.html"
+        },
+        {
+          "bytes": 71278,
+          "kind": "png",
+          "name": "dosage-residual.png",
+          "path": "figures/track1/iteration2/step-8/dosage-residual.png",
+          "slug": "dosage-residual.png",
+          "title": "dosage residual",
+          "url": "/api/steps/iteration2/step-8/figure/dosage-residual.png"
+        },
+        {
+          "bytes": 3493,
+          "kind": "html",
+          "name": "heterozygous-density.html",
+          "path": "figures/track1/iteration2/step-8/heterozygous-density.html",
+          "slug": "heterozygous-density.html",
+          "title": "heterozygous density",
+          "url": "/api/steps/iteration2/step-8/figure/heterozygous-density.html"
+        },
+        {
+          "bytes": 71327,
+          "kind": "png",
+          "name": "heterozygous-density.png",
+          "path": "figures/track1/iteration2/step-8/heterozygous-density.png",
+          "slug": "heterozygous-density.png",
+          "title": "heterozygous density",
+          "url": "/api/steps/iteration2/step-8/figure/heterozygous-density.png"
+        },
+        {
+          "bytes": 73019,
+          "kind": "html",
+          "name": "index.html",
+          "path": "figures/track1/iteration2/step-8/index.html",
+          "slug": "index.html",
+          "title": "index",
+          "url": "/api/steps/iteration2/step-8/figure/index.html"
+        },
+        {
+          "bytes": 5872,
+          "kind": "html",
+          "name": "model-margins.html",
+          "path": "figures/track1/iteration2/step-8/model-margins.html",
+          "slug": "model-margins.html",
+          "title": "model margins",
+          "url": "/api/steps/iteration2/step-8/figure/model-margins.html"
+        },
+        {
+          "bytes": 91404,
+          "kind": "png",
+          "name": "model-margins.png",
+          "path": "figures/track1/iteration2/step-8/model-margins.png",
+          "slug": "model-margins.png",
+          "title": "model margins",
+          "url": "/api/steps/iteration2/step-8/figure/model-margins.png"
+        },
+        {
+          "bytes": 3284,
+          "kind": "html",
+          "name": "multi-chromosome.html",
+          "path": "figures/track1/iteration2/step-8/multi-chromosome.html",
+          "slug": "multi-chromosome.html",
+          "title": "multi chromosome",
+          "url": "/api/steps/iteration2/step-8/figure/multi-chromosome.html"
+        },
+        {
+          "bytes": 80319,
+          "kind": "png",
+          "name": "multi-chromosome.png",
+          "path": "figures/track1/iteration2/step-8/multi-chromosome.png",
+          "slug": "multi-chromosome.png",
+          "title": "multi chromosome",
+          "url": "/api/steps/iteration2/step-8/figure/multi-chromosome.png"
+        },
+        {
+          "bytes": 21155,
+          "kind": "html",
+          "name": "power-then-and-now.html",
+          "path": "figures/track1/iteration2/step-8/power-then-and-now.html",
+          "slug": "power-then-and-now.html",
+          "title": "power then and now",
+          "url": "/api/steps/iteration2/step-8/figure/power-then-and-now.html"
+        },
+        {
+          "bytes": 208757,
+          "kind": "png",
+          "name": "power-then-and-now.png",
+          "path": "figures/track1/iteration2/step-8/power-then-and-now.png",
+          "slug": "power-then-and-now.png",
+          "title": "power then and now",
+          "url": "/api/steps/iteration2/step-8/figure/power-then-and-now.png"
+        }
       ],
       "goal": "Is mosaic aneuploidy detectable in the sequenced sample with a statistic that has power, and what cell-fraction bound does the data set per chromosome?",
       "hypotheses": [
@@ -1460,18 +2367,18 @@
         },
         {
           "author": "step-8 plan",
-          "confidence": null,
+          "confidence": 0.85,
           "gene": "",
           "hypothesis_id": "H054",
           "iteration": "iteration2",
           "path": "mosaic",
           "prediction": "For each chromosome, the dosage bootstrap interval and the allele-balance fraction estimate interval overlap, or both are consistent with no event.",
-          "reasoning": "",
-          "recorded_at": "2026-09-18T20:51:58.828834",
+          "reasoning": "Both routes report no event where both can see, and they share nothing past the FASTQ: allele balance puts no chromosome above its 2-3 percent detection limit, and k-mer dosage puts none beyond its composition-corrected null (largest chr21, Bonferroni p 0.43, falling to 1.60 sigma when trimmed). Where only dosage can see it recovers one copy of X (0.4873) and Y (0.5083) against an expected 0.5. Held below the suggested 0.96 for two reasons stated rather than hidden: the two supporting rows come from the same single pass and the weighing treats them as independent when they are not; and the test itself was changed after pre-registration, because the bootstrap interval the claim named measures counting noise rather than the composition bias that dominates this measurement, so the comparison was made against the residual spread instead. The weighing is a transparent heuristic for triage, not a calibrated posterior.",
+          "recorded_at": "2026-09-19T12:45:19.241875",
           "refuted_by": "A chromosome where the two intervals do not overlap -- the step then names which instrument is wrong and why, rather than averaging them.",
-          "revision": 1,
+          "revision": 2,
           "statement": "The k-mer dosage route and the VCF allele-balance route agree on every chromosome within their stated intervals.",
-          "status": "proposed",
+          "status": "supported",
           "step": "step-8"
         },
         {
@@ -1525,10 +2432,25 @@
       ],
       "kind": "research",
       "slug": "step-8",
-      "status": "open",
+      "status": "done",
       "takes_hypotheses": true,
       "title": "The mosaic aneuploidy bound",
+      "track": "both",
       "unblocks": ["step-7"]
+    }
+  ],
+  "submissions": [
+    {
+      "folder": "submissions/track1/iteration-2",
+      "number": 2,
+      "state": "ready",
+      "track": "track1"
+    },
+    {
+      "folder": "submissions/track2/iteration-2",
+      "number": 2,
+      "state": "draft",
+      "track": "track2"
     }
   ]
 }

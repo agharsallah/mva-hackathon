@@ -19,6 +19,12 @@ export type StepStatus = 'done' | 'open' | 'planned';
  */
 export interface StepEntry {
   entry: string;
+  /** The global methodology number, e.g. `084`. Empty for a file that carries none. */
+  number: string;
+  /** The entry's own `#` heading, with its number stripped — what a card should show. */
+  title: string;
+  /** `GET /api/steps/<iteration>/<slug>/entry/<entry>` — the entry, verbatim. */
+  url: string;
   path: string;
   /** False when the entry carries no `## Inputs` section — itself a gate failure. */
   declares_inputs: boolean;
@@ -26,6 +32,35 @@ export interface StepEntry {
   /** True for the entry that performs the comparison and ends the blinding. */
   unblinds: boolean;
   violations: string[];
+}
+
+/**
+ * One figure a step drew. The API serves the bytes, so the page shows the same file the
+ * report embeds rather than a bundled copy of it.
+ */
+export interface StepFigure {
+  /** The filename, which is also the citable id: step 8 renders `x.png` and `x.html`. */
+  name: string;
+  slug: string;
+  /** The filename as a caption, derived: `recall-at-n.png` -> `recall at n`. */
+  title: string;
+  /** `png` | `svg` | `html` | `json` — an image is shown inline, the rest are opened. */
+  kind: string;
+  path: string;
+  url: string;
+  bytes: number;
+}
+
+/** Which deliverable a step feeds. `both` is a method both submissions quote. */
+export type StepTrack = 'track1' | 'track2' | 'both';
+
+/** The submission folder an iteration's work would be uploaded as. */
+export interface StepSubmission {
+  track: string;
+  number: number;
+  folder: string;
+  /** `frozen` (uploaded, immutable) | `ready` (built, not uploaded) | `draft`. */
+  state: string;
 }
 
 /** One step, with everything known about it. */
@@ -37,15 +72,47 @@ export interface StepRow {
   /** `platform` steps record decisions, not claims, and take no hypotheses. */
   kind: 'platform' | 'research' | string;
   status: StepStatus | string;
+  /** Which track's deliverable this step feeds, declared on the step map. */
+  track: StepTrack | string;
   unblocks: string[];
   /** Where the step's pages and methodology entries live, e.g. `docs/iteration2/step-1`. */
   docs: string;
   takes_hypotheses: boolean;
   /** Latest revision of every claim filed under this step, in this iteration. */
   hypotheses: HypothesisRow[];
-  /** Filenames under `figures/track1/<iteration>/<slug>/`. */
-  figures: string[];
+  /** Every figure the step drew, with the URL that serves it. */
+  figures: StepFigure[];
   entries: StepEntry[];
+}
+
+/**
+ * One declared iteration at a glance — what the switcher shows before the reader has
+ * chosen one. Counted from the same declarations the cards are built from.
+ */
+export interface IterationSummary {
+  iteration: string;
+  /** The map module's own opening line: what route this iteration declares. */
+  summary: string;
+  /** False for an iteration that has docs but no step map — drafted, never declared. */
+  declared: boolean;
+  /** True for the iteration `mva.science.steps.ITERATION` names. */
+  current: boolean;
+  /** Research steps only — the platform step belongs to no iteration. */
+  steps: number;
+  done: number;
+  open: number;
+  claims: number;
+  submissions: StepSubmission[];
+  docs: string;
+}
+
+/** GET /api/steps/<iteration>/<slug>/entry/<entry> — one methodology entry, verbatim. */
+export interface StepEntryPayload {
+  entry: string;
+  number: string;
+  title: string;
+  path: string;
+  markdown: string;
 }
 
 /** Whether the iteration has read anything it promised not to, and when that ended. */
@@ -64,6 +131,10 @@ export interface StepsPayload {
   current: string;
   /** False when no claim has ever been filed — different from "filed and empty". */
   register_exists: boolean;
+  /** The submission folders this iteration fed. Empty for a tooling-only iteration. */
+  submissions: StepSubmission[];
+  /** Every declared iteration, counted — the switcher and the timeline read this. */
+  index: IterationSummary[];
   blind: BlindState;
   steps: StepRow[];
 }

@@ -11,6 +11,8 @@ export interface JourneyPage {
   title: string;
   description: string;
   preload?: () => void;
+  /** Detail pages of this one. Listed under it rather than beside it. */
+  children?: JourneyPage[];
 }
 
 export interface JourneyGroup {

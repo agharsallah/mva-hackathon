@@ -49,6 +49,14 @@ export interface FeatureModule {
   title: string;
   /** Which of the five questions this page serves. Omitted only for Overview, the map. */
   group?: NavGroupId;
+  /**
+   * The page this one is a detail of, by `id`. A child stays in its parent's group and in
+   * the reading order, but the section row lists only the parent: `decide` had grown to
+   * twelve sibling tabs — seven of them one iteration's step pages — which is a list, not a
+   * navigation. A child appears in a third row, shown while the parent or one of its
+   * children is open.
+   */
+  parent?: string;
   /** One line under the h1 saying what the page shows. Also the Overview map's blurb. */
   description: string;
   /** Dynamic import of the page's default export — the existing code-split boundary. */
