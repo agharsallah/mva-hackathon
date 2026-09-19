@@ -83,6 +83,22 @@ ITERATION4: tuple[Step, ...] = (
         iteration="iteration4",
         status="open",
         track="track1",
+        # Drawn by entry 129 into figures/it4/, not the per-step convention directory:
+        # one renderer writes all twelve at once (tools/render_it4_figures.py).
+        figures=(
+            "figures/it4/score-histogram-alphamissense.svg",
+            "figures/it4/score-histogram-alphamissense.html",
+            "figures/it4/score-histogram-esm1b.svg",
+            "figures/it4/score-histogram-esm1b.html",
+            "figures/it4/score-histogram-revel.svg",
+            "figures/it4/score-histogram-revel.html",
+            "figures/it4/score-histogram-spliceai.svg",
+            "figures/it4/score-histogram-spliceai.html",
+            "figures/it4/agreement-matrix.svg",
+            "figures/it4/agreement-matrix.html",
+            "figures/it4/confirmed-rank.svg",
+            "figures/it4/confirmed-rank.html",
+        ),
     ),
     Step(
         slug="step-6",

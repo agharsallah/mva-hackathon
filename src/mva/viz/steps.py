@@ -2,10 +2,16 @@
 
 Until now a research step existed in three places that never met — a goal in
 ``mva.science.steps``, claims in the register, figures on disk — and on no page of its
-own. The ``/steps`` page is built from this one endpoint so that adding a step, or a whole
-iteration, needs no hand-written prose anywhere: the step map declares it, the register
-says what was claimed about it, the blind gate says what it read, and the figure directory
-says what it drew.
+own. The research pages are built from this one endpoint so that adding a step, or a whole
+iteration, needs no repetition anywhere: the step map declares it, the register says what
+was claimed about it, the blind gate says what it read, and the figure directory says what
+it drew.
+
+Four things cannot be derived, because they are judgements — what the step concluded, why
+the question belonged here, what it inherits and hands on, and what each figure means. Those
+come from :mod:`mva.viz.steps_narrative`, are committed beside the step's README, and are
+enforced by ``tools/check_step_narrative.py``: a step that has run and says nothing fails the
+build, and so does a figure nobody read.
 
 **Why the blind gate appears here.** The plan asks for the blinding checklist to be
 *generated* from the gate rather than typed. The gate already returns rows
@@ -29,7 +35,7 @@ from ..science import steps as steps_module
 from ..science.hypothesis import HYPOTHESIS_TABLE
 from ..science.step import Step
 from ..warehouse.settings import Postgres
-from . import submissions_reader
+from . import steps_narrative, submissions_reader
 from .response import Envelope, live
 from .science import HYPOTHESIS_COLUMNS, HYPOTHESIS_ORDER, register
 from .steps_artifacts import MEDIA_TYPES, entry_number, entry_title, figure_rows
@@ -144,6 +150,18 @@ def _index(claims_by_iteration: dict[str, int], root: Path, docs_root: Path) -> 
     return sorted(rows, key=lambda row: row["iteration"])
 
 
+def _captioned(figures: list[dict], narrative: dict | None) -> list[dict]:
+    """The figure rows with their caption folded in, so a page needs one list, not two.
+
+    The validator guarantees a caption for every figure once a narrative exists, so the
+    lookup below can only miss when the step has none written yet.
+    """
+    if narrative is None:
+        return figures
+    captions = {caption["name"]: caption for caption in narrative["figures"]}
+    return [figure | {"caption": captions.get(figure["name"])} for figure in figures]
+
+
 def _entries(report: blind.Report, slug: str, iteration: str) -> list[dict]:
     """The blinding checklist rows for one step, straight from the gate.
 
@@ -188,6 +206,20 @@ def payload(
     counted = Counter(filed)
     gate = blind.check(docs_root, iteration)
 
+    def described(slug: str, drawn: list[dict]) -> dict | None:
+        """The step's written narrative, or ``None`` — see :mod:`mva.viz.steps_narrative`."""
+        return steps_narrative.read(
+            docs_root,
+            iteration,
+            slug,
+            repo_root=repo_root,
+            figures=[figure["name"] for figure in drawn],
+        )
+
+    drawn = {
+        step.slug: figure_rows(iteration, step.slug, step.figures, repo_root) for step in declared
+    }
+
     return {
         "iteration": iteration,
         "iterations": list(steps_module.iterations()),
@@ -212,8 +244,9 @@ def payload(
                 "docs": step.docs,
                 "takes_hypotheses": step.takes_hypotheses,
                 "hypotheses": [row for row in claims if row["step"] == step.slug],
-                "figures": figure_rows(iteration, step.slug, step.figures, repo_root),
+                "figures": _captioned(drawn[step.slug], described(step.slug, drawn[step.slug])),
                 "entries": _entries(gate, step.slug, iteration),
+                "narrative": described(step.slug, drawn[step.slug]),
             }
             for step in declared
         ],

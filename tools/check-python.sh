@@ -43,6 +43,9 @@ uv run python tools/check_blind.py --quiet
 echo "==> figure freshness"
 uv run python tools/check_figures_fresh.py --quiet
 
+echo "==> step narratives"
+uv run python tools/check_step_narrative.py
+
 echo "==> iteration folders"
 uv run python tools/check_iteration.py --quiet
 

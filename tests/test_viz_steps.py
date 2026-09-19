@@ -1,10 +1,13 @@
 """``/api/steps``: the research journey, assembled rather than written.
 
-The point of this endpoint is that a new step — or a whole new iteration — needs no
-hand-written prose anywhere. The tests pin the three joins that make that true: the step
-map supplies the goals, the register supplies the claims *of that iteration*, and the
-blind gate supplies the checklist.
+The point of this endpoint is that everything *derivable* about a step is derived: the step
+map supplies the goals, the register supplies the claims *of that iteration*, the blind gate
+supplies the checklist and the filesystem supplies the figures. The tests pin those joins,
+and one more — the written half (:mod:`mva.viz.steps_narrative`), which is the small set of
+judgements no query can produce and which therefore has a gate of its own.
 """
+
+import json
 
 import pytest
 from fastapi import HTTPException
@@ -162,6 +165,44 @@ def test_an_entry_is_served_only_when_the_gate_walked_it(tmp_path):
     with pytest.raises(HTTPException) as raised:
         route.step_entry_path("iteration2", "step-1", "085-y.md", docs_root=tmp_path)
     assert raised.value.status_code == 404
+
+
+def test_a_step_with_a_narrative_carries_it_and_captions_its_figures(patched, tmp_path):
+    """The written half reaches the page on the same payload as the derived half, and a
+    caption is attached to the figure row rather than served as a second list to join."""
+    docs = patched([])
+    folder = tmp_path / "figures" / "track1" / "iteration2" / "step-1"
+    folder.mkdir(parents=True)
+    (folder / "recall.png").write_bytes(b"")
+    step = docs / "iteration2" / "step-1"
+    step.mkdir(parents=True)
+    (step / "narrative.json").write_text(
+        json.dumps(
+            {
+                "step": "step-1",
+                "iteration": "iteration2",
+                "summary": "It ran.",
+                "why": "Nothing else could answer it.",
+                "verdict": "H012 refuted.",
+                "inherits": {"steps": [], "what": "nothing"},
+                "hands_to": {"steps": ["step-4"], "what": "step 4 scores what this could not"},
+                "figures": [
+                    {
+                        "name": "recall.png",
+                        "reads": "recall against N",
+                        "means": "enrichment, not coverage",
+                    }
+                ],
+                "sources": ["figures/track1/iteration2/step-1/recall.png"],
+            }
+        ),
+        encoding="utf-8",
+    )
+    data = route.payload(_Settings(), "iteration2", docs_root=docs, repo_root=tmp_path)
+    one = next(s for s in data["steps"] if s["slug"] == "step-1")
+    assert one["narrative"]["verdict"] == "H012 refuted."
+    assert one["figures"][0]["caption"]["means"] == "enrichment, not coverage"
+    assert next(s for s in data["steps"] if s["slug"] == "step-4")["narrative"] is None
 
 
 def test_an_unknown_iteration_is_a_404_naming_the_ones_that_exist(patched):
