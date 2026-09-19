@@ -1,13 +1,13 @@
 {
   "name": "do_not",
-  "built_at": "2026-09-18T19:12:26+00:00",
+  "built_at": "2026-09-19T08:25:52+00:00",
   "built_by": "tools/track2_enrich.py",
-  "code_version": "76aa292",
+  "code_version": "05d7326",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "method": "every ladder drug carrying an anti-direction flag (with the card's status for it) or the standard-of-care flag, once each",
   "card": {
     "path": "ressources/track2/mechanism.json",
-    "version": 3,
+    "version": 4,
     "gene": "BUB1B",
     "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)"
   },

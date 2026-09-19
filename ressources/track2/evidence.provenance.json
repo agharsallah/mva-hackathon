@@ -1,13 +1,13 @@
 {
   "name": "evidence",
-  "built_at": "2026-09-18T19:12:26+00:00",
+  "built_at": "2026-09-19T08:25:52+00:00",
   "built_by": "tools/track2_enrich.py",
-  "code_version": "76aa292",
+  "code_version": "05d7326",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "method": "curated by a person: one cited PubMed result per row, rung 2 (cell) or 3 (in vivo), proxy=true when the result is for a same-axis compound named in proxy_of; every PMID was resolved against PubMed E-utilities before the row was written",
   "card": {
     "path": "ressources/track2/mechanism.json",
-    "version": 3,
+    "version": 4,
     "gene": "BUB1B",
     "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)"
   },

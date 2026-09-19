@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-18T22:14:17+00:00",
+  "generated_at": "2026-09-19T08:27:04+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -2153,6 +2153,67 @@
           "kind": "measurement",
           "claim": "The record set holds 39,286 rows = 38,087 distinct coding alleles plus exactly 1,199 read-only alleles, and the parquet's sha256 equals the provenance manifest's, so neither the read-only union nor the id dedupe mis-fired.",
           "source_ref": "docs/iteration4/step-1/methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H059",
+      "step": "step-2",
+      "statement": "P4-2a: all four MVP lanes (AlphaMissense, ESM1b, SpliceAI, REVEL) run end-to-end on the iteration-4 record set on the laptop in one day.",
+      "prediction": "Each of the four enabled cards in src/mva/zoo/models.toml can be fetched (or is already a warehouse column), is licensed for this use, and joins to results.it4_allele_records so that mva-zoo coverage reports a non-zero scored count for it.",
+      "refuted_by": "Any one of the four cannot be fetched, licensed or joined \u2014 then that lane is replaced from the opt-A list and the substitution is recorded.",
+      "gene": "",
+      "path": "",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H060",
+      "step": "step-2",
+      "statement": "P4-3: every precomputed missense table that runs covers at least 90 % of the callset's missense alleles, EVE excepted (predicted below 30 %).",
+      "prediction": "For each missense lane that runs, mva-zoo coverage's by-consequence row for missense_variant shows scored/total >= 0.90 of the 15,620 missense alleles in results.it4_allele_records.",
+      "refuted_by": "Any missense table other than EVE covers below 70 % of the callset's missense alleles.",
+      "gene": "",
+      "path": "",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H061",
+      "step": "step-7",
+      "statement": "The evidence ladder is independent of the measured aneuploid fraction: revising the mechanism card to version 4 with step 8's result (no autosome above its 2-3 % detection limit in the sequenced sample) changes no rung, no shortlist row and no do-not row; F8 acts only on how direction D2 is argued in the report, not on what it contains.",
+      "prediction": "Re-running tools/track2_enrich.py --skip-live on card v4 reproduces evidence_ladder.tsv, shortlist.tsv and do_not.tsv byte-identical to the card-v3 run (same sha256 for all three), while every manifest names card version 4.",
+      "refuted_by": "Any row of evidence_ladder.tsv, shortlist.tsv or do_not.tsv differs between the card-v3 and the card-v4 run - a rung, a flag, a verdict or a rank moved without any input table changing.",
+      "gene": "BUB1B",
+      "path": "track2-ladder",
+      "status": "supported",
+      "confidence": 0.85,
+      "suggested_confidence": 0.832,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 133,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "Re-grading on card v4 from the cached tables reproduced evidence_ladder.tsv (sha256 47d1e415...), shortlist.tsv (77b6b352...) and do_not.tsv (a7b09e9f...) byte-identical to the card-v3 run, while all seven step-7 manifests name card version 4.",
+          "source_ref": "methodology/120",
+          "lineage_ref": ""
+        },
+        {
+          "id": 134,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "A first re-grade differed on all three tables, and the cause was not the card: the TSV reader applied the default CSV quoting, so a registry title beginning with a double quote swallowed 928 paediatric-trial rows (11,698 read as 10,770) and moved rungs; with quoting disabled in both readers the digests matched. Recorded as an instrument fault found by the pre-registered test.",
+          "source_ref": "methodology/120",
           "lineage_ref": ""
         }
       ]
