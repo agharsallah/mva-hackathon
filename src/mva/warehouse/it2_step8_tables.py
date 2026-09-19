@@ -115,6 +115,27 @@ SCHEMAS: dict[str, tuple[tuple[str, str], ...]] = {
         ("het_per_mb", "DOUBLE"),
         ("het_share", "DOUBLE"),
     ),
+    # The reads half. Written by tools/run_it2_dosage_pass.py rather than by the fitting
+    # stages, because it is the only table here whose input is a pass over 1.07 billion
+    # reads instead of a callset the warehouse already holds.
+    "it2_chrom_dosage": (
+        ("chrom", "VARCHAR"),
+        ("probes", "BIGINT"),
+        # Probes never seen at all. A large share is a broken probe set, not a zero dosage,
+        # so it is a column rather than something averaged away.
+        ("silent", "BIGINT"),
+        ("silent_share", "DOUBLE"),
+        ("mean_count", "DOUBLE"),
+        # Against the autosomal median -- easy to read and easy to trust wrongly, because it
+        # assumes most chromosomes are normal.
+        ("relative", "DOUBLE"),
+        ("low", "DOUBLE"),
+        ("high", "DOUBLE"),
+        # Against the genome-wide calibration set, which no single chromosome can move.
+        ("absolute", "DOUBLE"),
+        # Where the two denominators disagree, the median moved: defence (c) as a number.
+        ("disagreement", "DOUBLE"),
+    ),
     "it2_mosaic_multi": (
         ("fraction", "DOUBLE"),
         ("affected", "VARCHAR"),
@@ -173,7 +194,12 @@ TRANSFORMS: dict[str, str] = {
     ),
     "it2_mosaic_multi": (
         "forward mixing simulation with two and three contigs abnormal at once, rescoring "
-        "every contig on the same replicate; mva.mosaic.simulate.multi_chromosome"
+        "every contig on the same replicate; mva.mosaic.variegated.multi_chromosome"
+    ),
+    "it2_chrom_dosage": (
+        "per-chromosome k-mer dosage from one counting pass over the whole read store: "
+        "reference-unique 31-mers per contig plus a genome-wide calibration set, counted "
+        "with mva.kmer.count and divided by two denominators; mva.kmer.dosage"
     ),
     LIMITS_TABLE: (
         "power against injected cell fraction from the contig's own depths, for the "
