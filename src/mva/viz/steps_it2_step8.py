@@ -137,6 +137,10 @@ def payload(settings: Postgres, root: Path = ANALYSIS) -> dict:
         key: value for key, value in (analysis.get("constants") or {}).items() if key not in BULKY
     }
     data["baseline"] = analysis.get("baseline") or {}
+    # The composition fit is served whole, both regressors. It is the difference between
+    # "chr21 is three sigma high" and "chr21 is two sigma high", and a page that showed only
+    # the chosen fit would be asking to be trusted on the choice.
+    data["composition"] = _read(root / "composition.json")
     return data
 
 

@@ -212,6 +212,51 @@ export interface Step8Dosage {
   thinning?: number;
 }
 
+/** One chromosome after the composition trend is removed. */
+export interface Step8CompositionRow {
+  chrom: string;
+  /** The GC fraction this contig was regressed on. */
+  gc: number;
+  relative: number;
+  /** Dosage with the fitted GC trend removed, recentred on one. */
+  residual: number;
+  /** Residual in units of the residual spread — the honest precision floor. */
+  z: number;
+  /** `2 × (residual − 1)`: signed, so a loss reads negative rather than folded. */
+  implied_fraction: number;
+}
+
+/** One regression of dosage on GC. Both are served; the reported one is `reported`. */
+export interface Step8CompositionFit {
+  /** `reference chromosome GC` or `probe GC` — which regressor produced this fit. */
+  source: string;
+  correlation: number;
+  slope: number;
+  intercept: number;
+  /** Spread across the fitted contigs before the trend is removed, and after. */
+  spread: number;
+  residual_spread: number;
+  fitted: string[];
+  gc: Record<string, number>;
+  residual: Record<string, number>;
+}
+
+/**
+ * The GC correction, and the alternative it was chosen over.
+ *
+ * A bootstrap over probes measures counting noise and is blind to a bias every probe on a
+ * chromosome shares. GC bias is exactly that, and at a few per cent it is the same size as
+ * the low-fraction mosaic gain this step looks for — so the residual spread, not the
+ * bootstrap width, is the precision floor for any copy-number claim.
+ */
+export interface Step8Composition {
+  reported?: Step8CompositionFit;
+  alternative?: Step8CompositionFit;
+  autosomes_tested?: number;
+  note?: string;
+  rows?: Step8CompositionRow[];
+}
+
 export interface Step8Payload {
   constants: Step8Constants;
   baseline: Step8Baseline;
@@ -222,5 +267,6 @@ export interface Step8Payload {
   limits: Step8Limit[];
   density: Step8Density[];
   dosage: Step8Dosage[];
+  composition?: Step8Composition;
   multi: Step8Multi[];
 }

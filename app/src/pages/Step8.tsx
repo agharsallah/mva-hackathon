@@ -3,6 +3,7 @@ import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { Loaded } from '../components/QueryState';
 import { Baseline } from './steps/step8/Baseline';
+import { Composition } from './steps/step8/Composition';
 import { Deviation } from './steps/step8/Deviation';
 import { Dosage } from './steps/step8/Dosage';
 import { Limits } from './steps/step8/Limits';
@@ -148,6 +149,14 @@ export default function Step8Page() {
                   average them.
                 </Callout>
                 <Dosage dosage={data.dosage ?? []} fractions={data.fractions} {...chrome} />
+                <Callout tone="decision" title="The interval on that ratio is not the precision">
+                  A bootstrap over probes measures counting noise. It cannot see a bias that every
+                  probe on a chromosome shares — and GC content is exactly such a bias, worth a few
+                  per cent across a whole chromosome, which is the same size as the mosaic gain this
+                  step is hunting. The correction below is therefore not a tidying step: it is what
+                  decides whether any number above is evidence.
+                </Callout>
+                <Composition composition={data.composition ?? {}} {...chrome} />
               </Section>
 
               <Section title="Which mechanism, if any, the data can name">
