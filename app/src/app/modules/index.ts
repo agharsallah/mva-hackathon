@@ -164,6 +164,16 @@ export const modules: FeatureModule[] = [
   },
   ...under('track2'),
   {
+    id: 'zoo',
+    path: '/zoo',
+    navLabel: 'Zoo',
+    title: 'The model zoo — several opinions, kept apart',
+    group: 'decide',
+    description:
+      'Independent variant-effect models asked the same question: what each one could score, where they agree, where the merge puts the case pair, what the run cost, and the same view for any gene.',
+    load: () => import('../../pages/Zoo'),
+  },
+  {
     id: 'submissions',
     path: '/submissions',
     navLabel: 'Submissions',
