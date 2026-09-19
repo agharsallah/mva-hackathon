@@ -31,6 +31,7 @@ from .report_sections import (
     coverage_json,
     distribution_json,
     existing_interpretation,
+    existing_interpretations,
     histogram_path,
     hpo_sentence,
     interpretation_json,
@@ -355,23 +356,30 @@ def write_markdown(
     an LLM) writes into, and a re-render must not silently delete it — the same rule
     :func:`mva.zoo.merge_render.render_merged` already follows for the merged narrative.
 
+    **Every** version is kept, not only the hand-written one: once section 6 can hold a
+    generated version beside a hand-written one, a re-render that restored one of them would
+    delete the other. The versions are rebuilt from the rendered file's own markers, so a
+    chain re-run that knows nothing about ``mva-zoo narrate`` still cannot lose its output.
+
     ``keep_existing=False`` is for the one caller that has *already read* the file's prose and
     put it into the report's own ``interpretations`` list (``mva-zoo narrate``): re-reading it
-    here would push the hand-written text back into the primary slot and drop the generated
-    one.
+    here would push the old versions back over the new one.
     """
     directory = Path(out_dir)
     directory.mkdir(parents=True, exist_ok=True)
     written: list[Path] = []
     for report in reports:
         path = directory / f"{report.get('model', 'model')}.md"
-        kept = existing_interpretation(path) if keep_existing else ""
+        kept = existing_interpretations(path) if keep_existing else []
         rendered = report
         if kept:
             sections = dict(report.get("sections", {}))
-            block = dict(sections.get("interpretation", {}))
-            block["text"] = kept
-            sections["interpretation"] = block
+            sections["interpretation"] = interpretation_json(
+                kept,
+                marker=str(kept[0].get("marker", "")),
+                text=str(kept[0].get("text", "")),
+                llm_mode=str(kept[0].get("llm_mode", "none")),
+            )
             rendered = {**report, "sections": sections}
         path.write_text(render_model_report(rendered), encoding="utf-8")
         written.append(path)

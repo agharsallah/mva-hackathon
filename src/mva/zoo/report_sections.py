@@ -15,6 +15,7 @@ Section order is fixed by the plan (§5, step 5) and is the same for every model
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -37,6 +38,7 @@ __all__ = [
     "coverage_json",
     "distribution_json",
     "existing_interpretation",
+    "existing_interpretations",
     "histogram_path",
     "hpo_sentence",
     "interpretation_json",
@@ -275,6 +277,54 @@ def existing_interpretation(path: Path, *, marker: str = HAND_MARKER) -> str:
         tail = tail.split(stop, 1)[0]
     body = tail.replace(INTERPRETATION_TRAILER, "").strip()
     return "" if body.startswith("_Placeholder.") else body
+
+
+#: The three facts a rendered marker carries beyond the date: which mode wrote the version,
+#: which model answered, and how many of its sentences cited a row.
+_MARKER_MODE = re.compile(r"llm:([^\s|]+)")
+_MARKER_MODEL = re.compile(r"model:([^|]+?)\s*(?:\||-->)")
+_MARKER_CITED = re.compile(r"cited (\d+)/(\d+)")
+
+
+def existing_interpretations(path: Path) -> list[dict[str, Any]]:
+    """**Every** version of section 6 in a rendered report, as interpretation blocks.
+
+    :func:`existing_interpretation` returns the hand-written prose alone; this returns the
+    whole slot, because a re-render that keeps only one version silently deletes the others.
+    Each block is rebuilt from its own marker — the marker *is* the record: it names the mode,
+    the model id and the citation count, so a rendered file round-trips without the JSON.
+    """
+    if not path.is_file():
+        return []
+    text = path.read_text(encoding="utf-8")
+    pieces = text.split(INTERPRETATION_MARKER)[1:]
+    blocks: list[dict[str, Any]] = []
+    for piece in pieces:
+        head, _, tail = piece.partition("-->")
+        marker = f"{INTERPRETATION_MARKER}{head}-->"
+        for stop in ("\n## ", "\n### "):
+            tail = tail.split(stop, 1)[0]
+        body = tail.replace(INTERPRETATION_TRAILER, "").strip()
+        if not body or body.startswith("_Placeholder."):
+            continue
+        blocks.append({"marker": marker, "text": body, **_from_marker(marker)})
+    return blocks
+
+
+def _from_marker(marker: str) -> dict[str, Any]:
+    """The mode, model id and citation counts a rendered marker states."""
+    mode_match = _MARKER_MODE.search(marker)
+    mode = "hand" if "hand-written" in marker else (mode_match.group(1) if mode_match else "none")
+    model_match = _MARKER_MODEL.search(marker)
+    cited_match = _MARKER_CITED.search(marker)
+    cited = int(cited_match.group(1)) if cited_match else 0
+    total = int(cited_match.group(2)) if cited_match else 0
+    return {
+        "llm_mode": mode,
+        "llm_model_id": model_match.group(1).strip() if model_match else "",
+        "cited_sentences": cited,
+        "uncited_sentences": max(total - cited, 0),
+    }
 
 
 def _interpretation(block: Mapping[str, Any]) -> list[str]:

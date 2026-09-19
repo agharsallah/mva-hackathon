@@ -396,3 +396,51 @@ class TestTheClaimP47:
     def test_a_reply_that_names_a_gene_the_rows_never_gave_it_fails_the_check(self):
         bad = GOOD + " The real answer is CEP57 [pair.gene]."
         assert check_narrative(bad, citable_rows(REPORT)).new_names == ("CEP57",)
+
+
+class TestARerenderKeepsEveryVersion:
+    """A chain re-run knows nothing about `narrate`; it must still not delete its output."""
+
+    def rendered(self, tmp_path: Path) -> Path:
+        json_dir, reports_dir = tmp_path / "json", tmp_path / "md"
+        json_dir.mkdir()
+        reports_dir.mkdir()
+        (json_dir / "demo.json").write_text(json.dumps(REPORT), encoding="utf-8")
+        payload = json.loads(json.dumps(REPORT))
+        payload["sections"]["interpretation"] = {
+            "marker": "<!-- interpretation: hand-written 2026-09-19 | llm:none -->",
+            "text": "The hand-written reading [cov.fraction].",
+            "llm_mode": "none",
+        }
+        (reports_dir / "demo.md").write_text(report.render_model_report(payload), encoding="utf-8")
+        narrate.run_narrate(
+            json_dir=json_dir,
+            reports_dir=reports_dir,
+            settings=LlmSettings(mode="claude-code"),
+            transport=fake(GOOD),
+        )
+        return reports_dir / "demo.md"
+
+    def test_the_markers_round_trip_into_blocks(self, tmp_path):
+        from mva.zoo.report_sections import existing_interpretations
+
+        blocks = existing_interpretations(self.rendered(tmp_path))
+        assert [block["llm_mode"] for block in blocks] == ["claude-code", "hand"]
+        assert blocks[0]["llm_model_id"] == "test-model"
+        assert (blocks[0]["cited_sentences"], blocks[0]["uncited_sentences"]) == (3, 0)
+        assert blocks[1]["text"].startswith("The hand-written reading")
+
+    def test_a_plain_re_render_keeps_both_versions(self, tmp_path):
+        path = self.rendered(tmp_path)
+        # What the workflow's render stage does: rebuild from the run's own JSON, which has
+        # never heard of section 6's versions.
+        report.write_markdown([REPORT], path.parent)
+        text = path.read_text(encoding="utf-8")
+        assert "### 6.1 Generated — mode `claude-code`" in text
+        assert "### 6.2 Hand-written" in text
+
+    def test_the_trailer_is_not_duplicated_by_the_round_trip(self, tmp_path):
+        path = self.rendered(tmp_path)
+        report.write_markdown([REPORT], path.parent)
+        report.write_markdown([REPORT], path.parent)
+        assert path.read_text(encoding="utf-8").count(report.INTERPRETATION_TRAILER) == 1
