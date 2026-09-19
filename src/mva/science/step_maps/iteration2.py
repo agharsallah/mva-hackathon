@@ -126,13 +126,14 @@ ITERATION2: tuple[Step, ...] = (
             "that has power, and what cell-fraction bound does the data set per "
             "chromosome?"
         ),
-        # Open, not done: six of seven claims are settled and the allele-balance route is
-        # complete, but H054 tests the k-mer dosage route against it and that pass has not
-        # run. Entry 037's answer stands with a number attached -- an event in 2-3 % of the
-        # sequenced cells would have been found on every autosome -- and the five-model
-        # mechanism comparison is reported as not usable on this data rather than as
-        # twenty trisomies.
-        status="open",
+        # Done: all seven claims settled and both routes run. Entry 037's answer stands
+        # with a number attached -- an event in 2-3 % of the sequenced cells would have been
+        # found on every autosome -- and a k-mer dosage pass sharing nothing with that route
+        # past the FASTQ agrees, at a composition-corrected floor of 1.6 % of cells. It also
+        # recovers one copy of X and Y, which allele balance cannot see at all. The
+        # five-model mechanism comparison is reported as not usable on this data rather than
+        # as twenty trisomies.
+        status="done",
         unblocks=("step-7",),
         iteration="iteration2",
     ),

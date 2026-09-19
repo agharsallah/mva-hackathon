@@ -37,11 +37,18 @@ from it2_step8_charts import (
     multi_figure,
     power_figure,
 )
+from it2_step8_dosage_charts import dosage_exhibits, optional_json
 from mva.render import theme
 from mva.render.figure import Exhibit, Section
 from mva.render.report import render
 
 DEFAULT_IN = Path("build/it2/step-8/analysis.json")
+
+#: The dosage route's own files. A counting pass over the raw reads wrote them and they share
+#: no input with the callset, which is the whole reason the route exists -- so they are read
+#: separately and their exhibits are skipped, not faked, when the pass has not run.
+DEFAULT_DOSAGE = Path("build/it2/step-8/dosage.json")
+DEFAULT_COMPOSITION = Path("build/it2/step-8/composition.json")
 DEFAULT_OUT = Path("figures/track1/iteration2/step-8")
 
 
@@ -106,9 +113,10 @@ def _limits_exhibits(data: dict) -> list[Exhibit]:
     ]
 
 
-def build(data: dict) -> list[Exhibit]:
+def build(data: dict, dosage: dict | None = None, composition: dict | None = None) -> list[Exhibit]:
     """Every exhibit whose input is present. Absent inputs are skipped, never drawn empty."""
     exhibits: list[Exhibit] = _limits_exhibits(data)
+    exhibits.extend(dosage_exhibits(dosage or {}, composition or {}))
 
     bdev = data.get("bdev") or {}
     whole = bdev.get("whole") or []
@@ -265,6 +273,8 @@ def build(data: dict) -> list[Exhibit]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--analysis", type=Path, default=DEFAULT_IN)
+    parser.add_argument("--dosage", type=Path, default=DEFAULT_DOSAGE)
+    parser.add_argument("--composition", type=Path, default=DEFAULT_COMPOSITION)
     parser.add_argument("--out", type=Path, default=DEFAULT_OUT)
     args = parser.parse_args(argv)
 
@@ -273,7 +283,7 @@ def main(argv: list[str] | None = None) -> int:
         return 1
     theme.install_template()
     data = json.loads(args.analysis.read_text(encoding="utf-8"))
-    exhibits = build(data)
+    exhibits = build(data, optional_json(args.dosage), optional_json(args.composition))
     if not exhibits:
         print("no exhibit had its input; nothing drawn")
         return 1
