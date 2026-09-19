@@ -210,13 +210,20 @@ def test_the_markdown_prints_the_json_and_marks_the_narrative_slot():
     assert "<!-- narrative: hand-written 2026-09-18 -->" in text
     assert "Two lanes out of three put it last." in text
     assert "method `fusion`" in text
-    assert "(DOI to verify)" in text
+    assert "10.1145/1571941.1572114" in text
     # Every lane appears, and the RRF rank printed is the one the JSON holds.
     for model in CARDS:
         assert f"`{model}`" in text
     assert f"| {payload['consensus']['catalogue_free']['rank']} |" in text
 
 
-def test_the_citation_does_not_assert_a_doi():
-    assert "doi.org" not in merge.RRF_CITATION.lower()
-    assert "DOI to verify" in merge.RRF_CITATION
+def test_the_citation_carries_the_verified_doi_and_says_when_it_was_checked():
+    """The RRF DOI was `(DOI to verify)` until it was checked, and the check is part of it.
+
+    Crossref returned the exact title, authors, venue, year and pages 758-759 for
+    10.1145/1571941.1572114 on 2026-09-19 (entry 130). A citation that states a DOI without
+    saying it was verified is the thing this repository does not do, so the date rides along.
+    """
+    assert "10.1145/1571941.1572114" in merge.RRF_CITATION
+    assert "verified against Crossref" in merge.RRF_CITATION
+    assert "DOI to verify" not in merge.RRF_CITATION

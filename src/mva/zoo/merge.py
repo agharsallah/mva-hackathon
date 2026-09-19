@@ -9,7 +9,9 @@ calls this the *deterministic layer*, and it is the one part of iteration 4 that
    alleles is not the same claim as one computed on thirty thousand.
 2. **Reciprocal rank fusion (RRF)** — merge N ranked lists by summing ``1 / (k + rank)``.
    Cormack, Clarke & Buettcher, *Reciprocal rank fusion outperforms Condorcet and individual
-   rank learning methods*, SIGIR 2009 (**DOI to verify** — not asserted here). The point of
+   rank learning methods*, SIGIR 2009, pp. 758-759, DOI ``10.1145/1571941.1572114``
+   (**verified against Crossref 2026-09-19** — title, authors, venue, year and pages all
+   matched; methodology entry 130). The point of
    RRF is that it has no weights to fit: a lane contributes by *where* it puts a pair, not by
    how confident its scores look, so two lanes on different scales merge honestly.
 3. **Consensus with and without catalogue-adjacent lanes** — a *catalogue-adjacent* score is
@@ -51,7 +53,8 @@ __all__ = [
 #: rule is that a citation is checked before it is printed as fact.
 RRF_CITATION = (
     "Cormack GV, Clarke CLA, Buettcher S. Reciprocal rank fusion outperforms Condorcet and "
-    "individual rank learning methods. SIGIR 2009, pp. 758-759. (DOI to verify)"
+    "individual rank learning methods. SIGIR 2009, pp. 758-759. "
+    "doi:10.1145/1571941.1572114 (verified against Crossref 2026-09-19)"
 )
 
 #: Minimum shared alleles before a Spearman ρ is reported at all. Below this the correlation
