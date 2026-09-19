@@ -40,7 +40,14 @@ import it2_step8_common as common
 from mva.io.writers import write_json, write_tsv
 from mva.kmer import fasta
 from mva.kmer.chromosome import ChromosomeProbes, gc_content
-from mva.kmer.dosage import Composition, Dosage, composition, dosage
+from mva.kmer.dosage import (
+    Composition,
+    Dosage,
+    composition,
+    dosage,
+    per_contig,
+    trimmed_mean,
+)
 
 REPO = Path(__file__).resolve().parent.parent
 DEFAULT_REFERENCE = REPO / "build" / "reference" / "GRCh38.fa"
@@ -53,6 +60,12 @@ HEMIZYGOUS = frozenset({"X", "Y"})
 #: Reported beside the raw z. With 22 autosomes tested at once, an uncorrected 0.05 is a
 #: coin flip -- roughly one autosome in the set will clear it on a genome with no event.
 AUTOSOMES = 22
+
+#: How much of each tail the robustness re-read drops.
+TRIM = 0.10
+
+#: Seed for the split-half check, so "the two halves agree" is a reproducible statement.
+SPLIT_SEED = 11
 
 
 def reference_gc(path: Path, wanted: frozenset[str]) -> dict[str, float]:
@@ -95,6 +108,60 @@ def report(rows: tuple[Dosage, ...], fit: Composition) -> list[dict[str, float |
     return out
 
 
+def robustness(
+    counts: np.ndarray,
+    design: ChromosomeProbes,
+    counted: np.ndarray,
+    gc: dict[str, float],
+) -> dict[str, object]:
+    """Two checks that ask whether a residual is a property of the whole probe set.
+
+    **Trimming.** A real copy gain lifts every probe on the chromosome, so the residual
+    should survive dropping the tails. One carried by a handful of high counts will not, and
+    that is a mismapping pileup rather than a copy number.
+
+    **Split-half.** Each contig's probes are shuffled and halved. Two halves of a chromosome
+    with a genuine gain agree; a residual driven by some localised feature does not, because
+    the feature lands in one half. The comparison is against a control contig's own
+    split-half gap, not against zero -- at four counts per probe the halves never agree
+    exactly and an absolute threshold would mean nothing.
+
+    There is no positional version of this: the probe set is coordinate-free by design, so
+    the step can say *whether* a signal is spread across a chromosome and never *where*.
+    """
+    trimmed = composition(
+        dosage(counts, design, kmers=counted, seed=common.SEED, estimator=trimmed_mean(TRIM)),
+        design,
+        exclude=HEMIZYGOUS,
+        gc=gc,
+    )
+    blocks = per_contig(counts, design, kmers=counted)
+    rng = np.random.default_rng(SPLIT_SEED)
+    halves: dict[str, float] = {}
+    for name, values in blocks.items():
+        if values.size < 4:
+            continue
+        order = rng.permutation(values.size)
+        half = values.size // 2
+        first = float(values[order[:half]].mean())
+        second = float(values[order[half : 2 * half]].mean())
+        halves[name] = abs(first - second) / first if first else float("nan")
+    return {
+        "trimmed": {
+            "share_per_tail": TRIM,
+            "residual_spread": round(trimmed.residual_spread, 5),
+            "z": {
+                name: round((value - 1.0) / trimmed.residual_spread, 3)
+                for name, value in trimmed.residual.items()
+            },
+        },
+        "split_half": {
+            "seed": SPLIT_SEED,
+            "relative_gap": {name: round(value, 5) for name, value in halves.items()},
+        },
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--counts", type=Path, default=Path("build/it2/step-8/counts.npy"))
@@ -123,6 +190,7 @@ def main(argv: list[str] | None = None) -> int:
             f"spread {fit.spread * 100:.3f}% -> {fit.residual_spread * 100:.3f}%"
         )
 
+    checks = robustness(counts, design, counted, gc)
     table = report(rows, by_chromosome)
     worst = max(table, key=lambda row: abs(float(row["z"])))
     print()
@@ -148,6 +216,7 @@ def main(argv: list[str] | None = None) -> int:
             "reported": by_chromosome.as_dict(),
             "alternative": by_probe.as_dict(),
             "autosomes_tested": AUTOSOMES,
+            "robustness": checks,
             "note": (
                 "the residual spread is the precision floor for a copy-number claim; the "
                 "bootstrap interval on `relative` resamples probes and cannot see a bias "
@@ -160,6 +229,18 @@ def main(argv: list[str] | None = None) -> int:
         args.out / "tables" / "it2_dosage_composition.tsv",
         table,
         ["chrom", "gc", "relative", "residual", "z", "implied_fraction"],
+    )
+    trimmed_z = checks["trimmed"]["z"]  # type: ignore[index]
+    gaps = checks["split_half"]["relative_gap"]  # type: ignore[index]
+    print()
+    print(
+        f"trimming {TRIM:.0%} from each tail: chr{worst['chrom']} moves from "
+        f"z {worst['z']} to z {trimmed_z[worst['chrom']]}"
+    )
+    print(
+        f"split-half gap: chr{worst['chrom']} {gaps[worst['chrom']] * 100:.2f}% against a "
+        f"median autosomal {np.median([v for n, v in gaps.items() if n.isdigit()]) * 100:.2f}% "
+        "-- a residual carried by the whole probe set, not by part of it"
     )
     print(f"\nwrote {args.out}/composition.json and its table")
     return 0

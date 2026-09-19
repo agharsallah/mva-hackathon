@@ -27,12 +27,33 @@ noise is inside each probe's count already.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 
 import numpy as np
 
 from .chromosome import CALIBRATION_NAME, ChromosomeProbes
+
+#: A per-contig summary of its probe counts. The default is the mean, which is what a
+#: dosage means; a trimmed mean answers a different and useful question -- whether a
+#: chromosome's signal is carried by all of its probes or by the few at the top of the
+#: distribution. A median is a third option and, at four counts per probe, a bad one:
+#: integer quantisation puts every contig on the same whole number and the spread explodes.
+Estimator = Callable[[np.ndarray], float]
+
+
+def trimmed_mean(share: float) -> Estimator:
+    """Mean after dropping ``share`` of the probes from each tail."""
+
+    def estimate(values: np.ndarray) -> float:
+        if not values.size:
+            return float("nan")
+        cut = int(share * values.size)
+        kept = np.sort(values)[cut : values.size - cut] if cut else values
+        return float(kept.mean()) if kept.size else float("nan")
+
+    return estimate
+
 
 __all__ = [
     "LEVEL",
@@ -43,6 +64,8 @@ __all__ = [
     "composition",
     "dosage",
     "gc_fraction",
+    "per_contig",
+    "trimmed_mean",
 ]
 
 #: The project's interval convention, restated rather than imported. ``mva.kmer`` is a leaf
@@ -94,7 +117,7 @@ class Dosage:
         }
 
 
-def _per_contig(
+def per_contig(
     counts: np.ndarray, probes: ChromosomeProbes, kmers: np.ndarray | None = None
 ) -> dict[str, np.ndarray]:
     """Split a count vector into one array per contig.
@@ -141,7 +164,7 @@ def absolute_scale(
     Returns ``nan`` when the design carried no calibration set, which is a statement the
     caller must handle rather than a zero it can divide by.
     """
-    blocks = _per_contig(counts, probes, kmers)
+    blocks = per_contig(counts, probes, kmers)
     calibration = blocks.get(CALIBRATION_NAME)
     if calibration is None or not calibration.size:
         return float("nan")
@@ -157,20 +180,27 @@ def dosage(
     seed: int = 0,
     resamples: int = RESAMPLES,
     level: float = LEVEL,
+    estimator: Estimator | None = None,
 ) -> tuple[Dosage, ...]:
     """Per-chromosome dosage against both denominators, with a probe bootstrap.
 
     ``autosomes`` names which contigs may enter the relative denominator; by default every
     contig whose name is a number. X and Y must not: one copy of each is the expectation in
     a male proband, and including them would drag the median every autosome is judged by.
+
+    ``estimator`` summarises one contig's probe counts and defaults to the mean, which is
+    what a dosage is. Passing :func:`trimmed_mean` re-reads the same counts with the tails
+    dropped, which is a check rather than an alternative answer: a real copy gain lifts
+    every probe on the chromosome, so a result that survives trimming is spread across the
+    probe set, and one that does not was carried by its tail.
     """
-    blocks = _per_contig(counts, probes, kmers)
+    summarise = estimator or (lambda values: float(values.mean()))
+    blocks = per_contig(counts, probes, kmers)
     blocks.pop(CALIBRATION_NAME, None)
     is_autosome = autosomes or {name: name.isdigit() for name in blocks}
 
     means = {
-        name: float(values.mean()) if values.size else float("nan")
-        for name, values in blocks.items()
+        name: summarise(values) if values.size else float("nan") for name, values in blocks.items()
     }
     pool = [means[name] for name in means if is_autosome.get(name) and np.isfinite(means[name])]
     denominator = float(np.median(pool)) if pool else float("nan")
@@ -184,7 +214,7 @@ def dosage(
             continue
         draws = np.array(
             [
-                float(rng.choice(values, size=values.size, replace=True).mean())
+                summarise(rng.choice(values, size=values.size, replace=True))
                 for _ in range(resamples)
             ]
         )
@@ -292,10 +322,10 @@ def composition(
     """
     source = "reference chromosome GC" if gc is not None else "probe GC"
     if gc is None:
-        per_contig = _per_contig(probes.kmers, probes)
+        blocks = per_contig(probes.kmers, probes)
         gc = {
             name: float(gc_fraction(codes, probes.k).mean())
-            for name, codes in per_contig.items()
+            for name, codes in blocks.items()
             if codes.size
         }
     fitted = tuple(row.chrom for row in rows if row.chrom not in exclude and row.chrom in gc)
@@ -316,3 +346,9 @@ def composition(
         residual_spread=float(residual.std(ddof=1)),
         fitted=fitted,
     )
+
+
+#: The previous private spelling. Kept so nothing that imported it breaks, and deprecated:
+#: a helper two modules need is public, and reaching across a boundary for an underscore
+#: name is worse than renaming it.
+_per_contig = per_contig
