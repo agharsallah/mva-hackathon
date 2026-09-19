@@ -116,6 +116,7 @@ def _run(
         models={m: str(card.get("version", "")) for m, card in sorted(state.cards.items())},
         venues=dict(sorted(state.venues.items())),
         stages=[vars(r) for r in results],
+        pairs=dict(state.pair_build),
         dollars=0.0,
         started_at=started.isoformat(timespec="seconds"),
         finished_at=datetime.now(UTC).isoformat(timespec="seconds"),

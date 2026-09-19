@@ -65,6 +65,12 @@ class RunState:
     scores: dict[str, dict[str, float]] = field(default_factory=dict)
     coverage: dict[str, Any] = field(default_factory=dict)
     pairs: list[rank_module.Pair] = field(default_factory=list)
+    #: What building the pairs found beside the pairs themselves: how many genes and
+    #: heterozygous calls were read, which genes were skipped as too dense to pair, and the
+    #: sentence saying how the confirmed pair was flagged. Computed by
+    #: :func:`mva.zoo.pairs.pairs_from_alleles` and dropped on the floor until the API needed
+    #: a real ``skipped_genes`` list to serve.
+    pair_build: dict[str, Any] = field(default_factory=dict)
     ranks: dict[str, rank_module.ModelRank] = field(default_factory=dict)
     reports: list[dict[str, Any]] = field(default_factory=list)
     merged: dict[str, Any] = field(default_factory=dict)
@@ -83,6 +89,10 @@ class Manifest:
     models: dict[str, str]
     venues: dict[str, str]
     stages: list[dict[str, Any]]
+    #: The pair-building bookkeeping of the ``rank_per_model`` stage: ``genes``, ``het_calls``,
+    #: ``skipped_genes`` and ``confirmed_note``. Empty for a run whose ``load_pairs`` returned
+    #: bare pairs (a fixture run), never invented.
+    pairs: dict[str, Any] = field(default_factory=dict)
     dollars: float = 0.0
     started_at: str = ""
     finished_at: str = ""
@@ -98,6 +108,7 @@ class Manifest:
             "models": self.models,
             "venues": self.venues,
             "stages": self.stages,
+            "pairs": self.pairs,
             "dollars": self.dollars,
             "wall_clock_seconds": round(sum(s["seconds"] for s in self.stages), 3),
             "started_at": self.started_at,
@@ -129,7 +140,10 @@ class Deps:
     load_records: Callable[[Config], list[Any]]
     load_registry: Callable[[Config], dict[str, dict[str, Any]]]
     score: Callable[[Config, str, Sequence[Any]], dict[str, float]]
-    load_pairs: Callable[[Config, Sequence[Any]], list[rank_module.Pair]]
+    #: Returns either the pairs alone or a :class:`mva.zoo.pairs.PairBuild`, which carries the
+    #: skipped genes and the confirmed-pair note as well. The stage accepts both, so a test may
+    #: hand back a plain list.
+    load_pairs: Callable[[Config, Sequence[Any]], list[rank_module.Pair] | rank_module.PairBuild]
     hpo_row: Callable[[Config, str], Mapping[str, Any] | None] = lambda _c, _g: None
     venue: Callable[[str], str] = lambda _m: "laptop"
 
@@ -159,7 +173,7 @@ class Deps:
             rows = cache_module.read(connection, config.warehouse_schema, model=model)
             return {row.allele_id: row.score for row in rows if row.score is not None}
 
-        def pairs(config: Config, records_in: Sequence[Any]) -> list[rank_module.Pair]:
+        def pairs(config: Config, records_in: Sequence[Any]) -> rank_module.PairBuild:
             from ..warehouse.postgres import ALIAS, safe_identifier
 
             safe = safe_identifier(config.schema)
@@ -173,7 +187,7 @@ class Deps:
                 confirmed_gene=config.confirmed_gene,
                 consequences=consequence_map(records_in),
                 rule=config.confirmed_pair_rule,
-            ).pairs
+            )
 
         def hpo(config: Config, gene: str) -> Mapping[str, Any] | None:
             """The gene's row in the phenotype-only ranking, or ``None`` if it has none.

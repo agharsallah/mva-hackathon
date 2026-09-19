@@ -8,6 +8,7 @@ production path and the test path run the same stage code.
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import duckdb
@@ -137,6 +138,58 @@ def test_the_manifest_is_written_twice_and_the_public_copy_drops_build_paths(con
     assert not [p for p in json.loads(public.read_text())["outputs"] if p.startswith("build/")]
     readme = (paths["docs_runs_dir"] / "README.md").read_text()
     assert "**Standing:**" in readme
+
+
+def test_the_skipped_genes_reach_the_manifest_when_the_pair_source_counted_them(connection, paths):
+    """A gene too dense to pair is a caveat on every "of N pairs" the run prints.
+
+    `PairBuild` counted them from the first run and the number was dropped on the floor, so
+    `/api/zoo/ranks` had to serve `skipped_genes: []` with `skipped_genes_recorded: false`
+    beside it. The manifest now carries both, and the cap that caused them.
+    """
+    from mva.zoo.pairs import MAX_CALLS_PER_GENE, PairBuild
+
+    build = PairBuild(
+        pairs=list(PAIRS),
+        confirmed_note="GB has one pair; flagged confirmed",
+        genes=3,
+        het_calls=7,
+        skipped_genes=("MUC16", "AHNAK2"),
+    )
+    deps = replace(fake_deps(), load_pairs=lambda _config, _records: build)
+    manifest = workflow.run(CONFIG, connection=connection, deps=deps, **paths)
+
+    assert manifest.pairs["skipped_genes"] == ["AHNAK2", "MUC16"]  # sorted, not insertion order
+    assert manifest.pairs["skipped_genes_recorded"] is True
+    assert manifest.pairs["max_calls_per_gene"] == MAX_CALLS_PER_GENE
+    assert manifest.pairs["genes"] == 3 and manifest.pairs["het_calls"] == 7
+    assert "flagged confirmed" in manifest.pairs["confirmed_note"]
+    # and it survives both copies of the manifest, not just the object
+    public = json.loads((paths["docs_runs_dir"] / f"{manifest.run_id}.json").read_text())
+    assert public["pairs"]["skipped_genes"] == ["AHNAK2", "MUC16"]
+
+
+def test_a_pair_source_that_only_returns_pairs_records_nothing_rather_than_empty(connection, paths):
+    """Absent measurement, never a claim that nothing was skipped."""
+    manifest = workflow.run(CONFIG, connection=connection, deps=fake_deps(), **paths)
+    assert manifest.pairs == {}
+    assert (
+        "skipped_genes"
+        not in json.loads((paths["docs_runs_dir"] / f"{manifest.run_id}.json").read_text())["pairs"]
+    )
+
+
+def test_the_fixture_run_records_no_pair_build_because_a_fixture_counts_nothing(paths):
+    """A pairs TSV is not a callset: it cannot say how many genes or het calls it came from.
+
+    So the fixture bundle returns bare pairs and the manifest carries no `pairs` block at all,
+    rather than a block of zeros that would read as a measurement.
+    """
+    manifest = workflow.run(CONFIG, deps=Deps.fixtures("fixtures/it4"), **paths)
+    assert manifest.pairs == {}
+    assert (
+        json.loads((paths["docs_runs_dir"] / f"{manifest.run_id}.json").read_text())["pairs"] == {}
+    )
 
 
 def test_the_merged_page_is_written_with_the_narrative_slot(connection, paths):

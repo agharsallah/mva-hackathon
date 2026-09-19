@@ -64,7 +64,11 @@ def collect(config: Config, state: RunState, deps: Deps, connection: Any) -> Sta
 
 def rank_per_model(config: Config, state: RunState, deps: Deps, connection: Any) -> StageResult:
     """Rank the callset's biallelic pairs once per lane and write ``<prefix>_model_ranks``."""
-    state.pairs = list(deps.load_pairs(config, state.records))
+    built: Any = deps.load_pairs(config, state.records)
+    # Either shape is accepted: a PairBuild (the real one, which also carries the skipped
+    # genes) or a bare list of pairs (a fixture or a test double).
+    state.pairs = list(getattr(built, "pairs", built))
+    state.pair_build = _pair_build(built)
     state.ranks = rank_module.rank_per_model(state.pairs, state.scores)
     rows = 0
     if connection is not None and not _already_written(
@@ -77,7 +81,37 @@ def rank_per_model(config: Config, state: RunState, deps: Deps, connection: Any)
             run_id=config.run_id,
             lineage_schema=config.warehouse_schema,
         )
-    return StageResult("rank_per_model", 0.0, rows, f"{len(state.pairs)} pairs, {rows} rows")
+    skipped = state.pair_build.get("skipped_genes", [])
+    note = f"{len(state.pairs)} pairs, {rows} rows"
+    if skipped:
+        note += f", {len(skipped)} genes skipped as too dense to pair"
+    return StageResult("rank_per_model", 0.0, rows, note)
+
+
+def _pair_build(built: Any) -> dict[str, Any]:
+    """The bookkeeping beside the pairs, as JSON — ``{}`` when the source gave bare pairs.
+
+    A gene with more heterozygous calls than :data:`mva.zoo.pairs.MAX_CALLS_PER_GENE` is
+    skipped rather than paired (the pair count grows as n²), and the run has to say which:
+    "of N pairs" means the pairs outside those genes, and a reader who is not told cannot know
+    that. It was computed and dropped until the API needed it.
+    """
+    if not hasattr(built, "pairs"):
+        return {}
+    from .pairs import MAX_CALLS_PER_GENE
+
+    return {
+        "genes": int(getattr(built, "genes", 0)),
+        "het_calls": int(getattr(built, "het_calls", 0)),
+        "skipped_genes": sorted(getattr(built, "skipped_genes", ())),
+        # The reader needs to tell "nothing was skipped" from "nobody wrote it down". A run
+        # whose pair source returned bare pairs has no entry at all; one that returned a
+        # PairBuild says so here, empty list or not — the same two fields `/api/zoo/ranks`
+        # serves (`src/mva/viz/api_zoo_ranks.py`).
+        "skipped_genes_recorded": True,
+        "max_calls_per_gene": MAX_CALLS_PER_GENE,
+        "confirmed_note": str(getattr(built, "confirmed_note", "")),
+    }
 
 
 def report_per_model(config: Config, state: RunState, deps: Deps, connection: Any) -> StageResult:
