@@ -27,6 +27,7 @@ __all__ = [
     "PEDIATRIC_TRIAL_COLUMNS",
     "SHORTLIST_COLUMNS",
     "TARGET_COLUMNS",
+    "TRANSFER_COMPARISON_COLUMNS",
     "TRIAL_COLUMNS",
     "cell",
     "write_tsv",
@@ -173,6 +174,33 @@ SHORTLIST_COLUMNS = (
     "curated_pmids",
     "targets",
     "flags",
+)
+
+#: One row per **case** in a transfer comparison: the real card, and the same pipeline run
+#: unchanged on a different disease with its own gene, phenotype annotation and tumour.
+#: Only the automated rungs are comparable - a transfer card carries no curated evidence,
+#: which is why ``curated_rows`` is printed rather than folded into the rung counts.
+TRANSFER_COMPARISON_COLUMNS = (
+    "case",
+    "role",
+    "gene",
+    "disease",
+    "tumour_context",
+    "card_version",
+    "targets",
+    "candidate_rows",
+    "approved_drugs",
+    "drugs_rung_5",
+    "drugs_rung_4",
+    "drugs_rung_3",
+    "drugs_rung_2",
+    "drugs_rung_1",
+    "shortlist",
+    "do_not",
+    "curated_rows",
+    "live_requests",
+    "cached_replies",
+    "wall_seconds",
 )
 
 #: The real card's directions against each decoy card's approved drug set.
