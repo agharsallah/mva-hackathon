@@ -28,6 +28,7 @@ ITERATION1: tuple[Step, ...] = (
         status="open",
         unblocks=("step-2", "step-4"),
         iteration="iteration1",
+        track="track1",
     ),
     Step(
         slug="step-2",
@@ -36,11 +37,17 @@ ITERATION1: tuple[Step, ...] = (
             "Which variants are rare enough and damaging enough to cause an ultra-rare "
             "recessive disease, and in which gene?"
         ),
-        # Open, not planned: the eight-gene panel is annotated (VEP REST, step-0 entry 031)
-        # and reduces to one BUB1B pair. The genome-wide pass has not run.
-        status="open",
+        # Done: exit criterion met 2026-09-05 - the genome-wide coding scan ran and H004
+        # (*no coding gene outranks the BUB1B pair*) is supported (entries 069, 070).
+        # Non-coding annotation stayed open and was never opened before the freeze.
+        status="done",
         unblocks=("step-3", "step-6"),
         iteration="iteration1",
+        track="track1",
+        figures=(
+            "figures/track1/funnel.json",
+            "figures/track1/track1-funnel.png",
+        ),
     ),
     Step(
         slug="step-3",
@@ -49,12 +56,15 @@ ITERATION1: tuple[Step, ...] = (
             "Does an unbiased genome-wide ranking driven by the child's HPO terms agree "
             "with the panel-first candidate list?"
         ),
-        # Open, not planned: the ranking is built and has run. It needed neither step 1 nor
+        # Done: exit criterion met 2026-09-05 - the ranking is joined to the genome-wide
+        # callset and H005 is supported (entries 067, 071). It needed neither step 1 nor
         # step 2 - ranking genes by symptoms reads no callset - so the dependency the
-        # roadmap assumed turned out not to exist. See docs/iteration1/step-3/methodology/067.
-        status="open",
+        # roadmap assumed turned out not to exist.
+        status="done",
         unblocks=("step-6",),
         iteration="iteration1",
+        track="track1",
+        figures=("figures/track1/track1-gene-scatter.png",),
     ),
     Step(
         slug="step-4",
@@ -63,11 +73,12 @@ ITERATION1: tuple[Step, ...] = (
             "Is one of the two alleles hiding in a call the quality filters discarded, "
             "rather than absent from the sample?"
         ),
-        # Open, not planned: the panel's non-PASS calls were mined in step-0 entry 049 and
-        # held nothing rare and protein-altering. Genome-wide, the question is untested.
-        status="open",
+        # Done: exit criterion met for coding calls 2026-09-05 - H006 (panel,
+        # retrospective) and H007 (genome-wide coding) supported (entry 072).
+        status="done",
         unblocks=("step-6",),
         iteration="iteration1",
+        track="track1",
     ),
     Step(
         slug="step-5",
@@ -78,6 +89,7 @@ ITERATION1: tuple[Step, ...] = (
         ),
         unblocks=("step-6",),
         iteration="iteration1",
+        track="track1",
     ),
     Step(
         slug="step-6",
@@ -86,7 +98,13 @@ ITERATION1: tuple[Step, ...] = (
             "Which candidate pair does the scorer confirm, and what does each reply "
             "tell us that the next submission should exploit?"
         ),
+        # Done: designed and rehearsed 2026-09-05 (074), rows re-derived 2026-09-09 (082),
+        # uploaded 2026-09-09 and answered - full match at rank 1, 100 rank points,
+        # F-max 1.0 (083). H009 supported. 1 of 6 oracle submissions spent.
+        status="done",
         iteration="iteration1",
+        track="track1",
+        figures=("figures/track1/track1-decode-table.png",),
     ),
     Step(
         slug="step-7",
@@ -98,17 +116,21 @@ ITERATION1: tuple[Step, ...] = (
         ),
         unblocks=("step-6",),
         iteration="iteration1",
+        track="track1",
     ),
     Step(
         slug="step-8",
         title="Track 2 - drug repurposing",
-        # Opens for desk research in parallel with steps 1-7; its verdicts wait for the
-        # pair step-6 confirms, because a mechanism argued from an unconfirmed allele is a
-        # guess dressed as rigour.
+        # Open: opened 2026-09-06 (entry 078) - the mechanism hand-off is written and the
+        # drug data layer is built, but the iteration froze before any verdict was
+        # committed. Its verdicts waited for the pair step-6 confirms, because a mechanism
+        # argued from an unconfirmed allele is a guess dressed as rigour.
+        status="open",
         goal=(
             "Which market-approved drugs act on the mechanism the confirmed alleles imply, "
             "and how strong is the evidence for each?"
         ),
         iteration="iteration1",
+        track="track2",
     ),
 )

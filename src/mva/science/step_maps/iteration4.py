@@ -32,6 +32,7 @@ ITERATION4: tuple[Step, ...] = (
         unblocks=("step-3",),
         iteration="iteration4",
         status="done",
+        track="track1",
     ),
     Step(
         slug="step-2",
@@ -43,6 +44,7 @@ ITERATION4: tuple[Step, ...] = (
         unblocks=("step-3",),
         iteration="iteration4",
         status="done",
+        track="track1",
     ),
     Step(
         slug="step-3",
@@ -55,6 +57,7 @@ ITERATION4: tuple[Step, ...] = (
         unblocks=("step-4",),
         iteration="iteration4",
         status="open",
+        track="track1",
     ),
     Step(
         slug="step-4",
@@ -65,6 +68,7 @@ ITERATION4: tuple[Step, ...] = (
         ),
         unblocks=("step-5",),
         iteration="iteration4",
+        track="track1",
     ),
     Step(
         slug="step-5",
@@ -76,6 +80,7 @@ ITERATION4: tuple[Step, ...] = (
         ),
         unblocks=("step-6",),
         iteration="iteration4",
+        track="track1",
     ),
     Step(
         slug="step-6",
@@ -85,6 +90,7 @@ ITERATION4: tuple[Step, ...] = (
             "the three merge methods?"
         ),
         iteration="iteration4",
+        track="track1",
     ),
     Step(
         slug="step-7",
@@ -94,5 +100,6 @@ ITERATION4: tuple[Step, ...] = (
             "approved drugs for the mechanism, and how does each rank against a decoy?"
         ),
         iteration="iteration4",
+        track="track2",
     ),
 )

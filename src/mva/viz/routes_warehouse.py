@@ -195,6 +195,7 @@ def router(settings, cache: Cache) -> APIRouter:
     routes_search.add_routes(api, settings, cache)
     science.add_routes(api, settings)
     steps.add_routes(api, settings)
+    steps.add_artifact_routes(api, settings)
     steps_it2_step1.add_routes(api)
     steps_it2.add_routes(api, settings)
     steps_it2_step3.add_routes(api, settings)

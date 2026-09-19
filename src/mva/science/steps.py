@@ -24,6 +24,8 @@ The order and the goals are read from ``docs/roadmap.md`` §1; that page owns th
 sequencing argument, this module owns the machine-readable form of it.
 """
 
+from importlib import import_module
+
 from .step import ITERATION, PLATFORM, RESEARCH, STATUSES, Step
 from .step_maps import ITERATION1, ITERATION2, ITERATION4
 
@@ -45,6 +47,7 @@ __all__ = [
     "research_steps",
     "slugs",
     "steps_for",
+    "summary",
 ]
 
 #: Every iteration's map, by name. One map per iteration: an iteration is a new
@@ -106,6 +109,18 @@ def steps_for(iteration: str) -> tuple[Step, ...]:
     except KeyError:
         known = ", ".join(STEPS_BY_ITERATION)
         raise KeyError(f"unknown iteration {iteration!r}; known: {known}") from None
+
+
+def summary(iteration: str) -> str:
+    """One line saying what an iteration *is*, read from its map module's own docstring.
+
+    Not a second place to maintain prose: the module that declares the steps already opens
+    by saying what route it declares, and that sentence is what a reader choosing between
+    iterations needs. A map without a docstring contributes an empty string rather than an
+    invented description.
+    """
+    module = import_module(f"{__package__}.step_maps.{iteration}")
+    return (module.__doc__ or "").strip().splitlines()[0] if module.__doc__ else ""
 
 
 def iterations() -> tuple[str, ...]:

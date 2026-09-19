@@ -32,6 +32,7 @@ ITERATION2: tuple[Step, ...] = (
         status="done",
         unblocks=("step-2", "step-3", "step-4"),
         iteration="iteration2",
+        track="track1",
     ),
     Step(
         slug="step-2",
@@ -46,6 +47,7 @@ ITERATION2: tuple[Step, ...] = (
         status="done",
         unblocks=("step-3", "step-6", "step-7"),
         iteration="iteration2",
+        track="track1",
     ),
     Step(
         slug="step-3",
@@ -61,6 +63,7 @@ ITERATION2: tuple[Step, ...] = (
         status="done",
         unblocks=("step-4", "step-6", "step-7"),
         iteration="iteration2",
+        track="track1",
     ),
     Step(
         slug="step-4",
@@ -75,6 +78,7 @@ ITERATION2: tuple[Step, ...] = (
         status="done",
         unblocks=("step-5", "step-6"),
         iteration="iteration2",
+        track="track1",
     ),
     Step(
         slug="step-5",
@@ -90,6 +94,7 @@ ITERATION2: tuple[Step, ...] = (
         status="done",
         unblocks=("step-6", "step-7"),
         iteration="iteration2",
+        track="track1",
     ),
     Step(
         slug="step-6",
@@ -104,6 +109,7 @@ ITERATION2: tuple[Step, ...] = (
         status="done",
         unblocks=("step-7",),
         iteration="iteration2",
+        track="track1",
     ),
     Step(
         slug="step-7",
@@ -117,6 +123,14 @@ ITERATION2: tuple[Step, ...] = (
         # and the pre-registered digest test showed that fact moved no rung.
         status="done",
         iteration="iteration2",
+        track="track2",
+        figures=(
+            "figures/track2/evidence-ladder.png",
+            "figures/track2/rung-funnel.png",
+            "figures/track2/decoy-overlap.png",
+            "figures/track2/pediatric-evidence.png",
+            "figures/track2/mechanism-literature.png",
+        ),
     ),
     Step(
         slug="step-8",
@@ -136,5 +150,6 @@ ITERATION2: tuple[Step, ...] = (
         status="done",
         unblocks=("step-7",),
         iteration="iteration2",
+        track="both",
     ),
 )

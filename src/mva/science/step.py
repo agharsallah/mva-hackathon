@@ -13,6 +13,11 @@ RESEARCH = "research"
 #: A step that has been finished, is being worked, or has not been opened.
 STATUSES = ("done", "open", "planned")
 
+#: Which deliverable a step serves. The challenge has two tracks and the repository has a
+#: third kind of step: one whose result is a method both tracks quote rather than a row in
+#: either submission. ``both`` is that case, not a hedge.
+TRACKS = ("track1", "track2", "both")
+
 #: The submission iteration the research steps currently contribute to: steps 1-8 are filed
 #: under ``docs/<ITERATION>/step-<n>/``; a new iteration starts a new folder.
 ITERATION = "iteration2"
@@ -31,12 +36,23 @@ class Step:
     #: The submission iteration this step contributes to. Empty means "the current one",
     #: which is what a platform step wants: it belongs to no iteration.
     iteration: str = ""
+    #: Which track's deliverable the step feeds. Read off the step's own goal, not guessed:
+    #: a step that argues a drug is ``track2``, a step that argues an allele is ``track1``,
+    #: and a step whose result both submissions quote is ``both``.
+    track: str = "both"
+    #: Figures this step drew that do **not** sit in the conventional
+    #: ``figures/track1/<iteration>/<slug>/`` directory, as repository-relative paths. The
+    #: convention came after iteration 1 and after the Track 2 renderer, so those steps
+    #: name their files here instead of being invisible.
+    figures: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if self.kind not in (PLATFORM, RESEARCH):
             raise ValueError(f"{self.slug}: kind must be {PLATFORM} or {RESEARCH}")
         if self.status not in STATUSES:
             raise ValueError(f"{self.slug}: status must be one of {STATUSES}")
+        if self.track not in TRACKS:
+            raise ValueError(f"{self.slug}: track must be one of {TRACKS}")
         if not self.goal.strip():
             raise ValueError(f"{self.slug}: a step without a goal is a folder, not a step")
 
