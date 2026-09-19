@@ -314,3 +314,18 @@ def test_the_mechanism_term_is_built_from_the_card_and_never_typed() -> None:
     assert term.startswith("(") and term.endswith(")")
     assert CARD.gene_symbol in term
     assert " OR " in term
+
+
+def test_a_title_that_starts_with_a_quote_does_not_swallow_the_next_row(tmp_path: Path) -> None:
+    from mva.drugs import tables
+    from mva.drugs.enrich import read_tsv
+
+    rows = [
+        {"drug_name": "DRUGA", "nct_id": "NCT1", "title": '"Quoted" study of DRUGA'},
+        {"drug_name": "DRUGA", "nct_id": "NCT2", "title": "plain"},
+    ]
+    path = tmp_path / "t.tsv"
+    tables.write_tsv(path, ("drug_name", "nct_id", "title"), rows)
+    back = read_tsv(path)
+    assert [r["nct_id"] for r in back] == ["NCT1", "NCT2"]
+    assert back[0]["title"] == '"Quoted" study of DRUGA'

@@ -129,7 +129,9 @@ def read_table(table: str, root: Path | None = None) -> tuple[list[str], list[di
     if not path.is_file():
         return [], []
     with path.open(encoding="utf-8", newline="") as stream:
-        reader = csv.reader(stream, delimiter="\t")
+        # quoting=QUOTE_NONE: the writer never quotes, and a registry title that begins with a
+        # double quote would otherwise open a multi-line field and swallow the rows after it.
+        reader = csv.reader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
         try:
             header = next(reader)
         except StopIteration:

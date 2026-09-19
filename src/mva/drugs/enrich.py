@@ -85,8 +85,10 @@ METHODS = {
 
 def read_tsv(path: Path) -> list[dict[str, str]]:
     """One TSV as a list of string rows."""
+    # The writer never quotes and a title may start with a double quote; the default dialect
+    # would read that quote as the start of a multi-line field and swallow the rows after it.
     with path.open(encoding="utf-8", newline="") as stream:
-        return list(csv.DictReader(stream, delimiter="\t"))
+        return list(csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE))
 
 
 @dataclass
