@@ -226,3 +226,60 @@ def mechanism_literature(short: list[dict], ladder: list[dict]) -> go.Figure:
         margin={"l": 180},
     )
     return fig
+
+
+#: What a transfer comparison plots, in reading order: what the pipeline produced, per case.
+#: ``candidate_rows`` is left out on purpose - it is an order of magnitude above every other
+#: number, and rescaling the axis for it would flatten the rows the figure exists to compare.
+TRANSFER_METRICS = (
+    ("targets", "target genes"),
+    ("approved_drugs", "approved drugs"),
+    ("drugs_rung_5", "drugs at best rung 5"),
+    ("drugs_rung_1", "drugs at best rung 1"),
+    ("shortlist", "shortlist rows"),
+    ("do_not", "do-not rows"),
+    ("curated_rows", "curated evidence rows"),
+)
+
+
+def transfer_scalability(rows: list[dict]) -> go.Figure:
+    """One bar group per count, one bar per case: the same pipeline on two different cases.
+
+    Linear axis and no normalisation: the point is that both cases produced a table of the
+    same shape, and a ratio would hide which one is bigger. ``curated evidence rows`` is
+    plotted precisely because it is zero for a transfer card - that zero is the boundary of
+    what the comparison may claim, not a gap in the data.
+    """
+    cases = [str(row.get("case") or "") for row in rows]
+    palette = [theme.MACHINE.fill, theme.RAW.fill, theme.MUTED.fill]
+    labels = [label for _key, label in TRANSFER_METRICS]
+    fig = go.Figure()
+    for index, row in enumerate(rows):
+        values = [int(row.get(key) or 0) for key, _label in TRANSFER_METRICS]
+        fig.add_bar(
+            name=cases[index],
+            y=labels,
+            x=values,
+            orientation="h",
+            marker={
+                "color": palette[index % len(palette)],
+                "line": {"color": theme.INK, "width": 0.5},
+            },
+            text=[str(value) for value in values],
+            textposition="outside",
+            cliponaxis=False,
+        )
+    widest = max(
+        (int(row.get(key) or 0) for row in rows for key, _l in TRANSFER_METRICS), default=1
+    )
+    fig.update_yaxes(autorange="reversed")
+    fig.update_xaxes(title="rows / genes / drugs", range=[0, widest * 1.22], rangemode="tozero")
+    fig.update_layout(
+        template=theme.TEMPLATE_NAME,
+        barmode="group",
+        bargap=0.35,
+        height=420,
+        margin={"l": 190, "r": 40, "t": 20},
+        legend={"orientation": "h", "y": -0.18},
+    )
+    return fig

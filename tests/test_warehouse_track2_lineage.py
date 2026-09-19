@@ -254,3 +254,119 @@ def test_a_card_below_version_3_writes_no_iteration_2_edge(tmp_path: Path) -> No
     refs = [edge["source_ref"] for edge in edges]
     assert track2_lineage.SOURCE_ITERATION in refs
     assert track2_lineage.SOURCE_ITERATION_V3 not in refs
+
+
+# ── transfer cases: the same tables for a different case, and no submission edge ─────
+
+TRANSFER_CARD = {"version": 1, "gene": "GENEZ", "disease": "a fabricated second syndrome"}
+
+TRANSFER_TARGETS_MANIFEST = {
+    "name": "targets",
+    "method": "the same expansion, on a second case",
+    "inputs": [
+        {
+            "name": "pathwaydb",
+            "url": "https://pathwaydb.example/ContentService",
+            "retrieved_from": "2099-02-01T00:00:00+00:00",
+            "retrieved_at": "2099-02-01T00:01:00+00:00",
+            "sha256": "e" * 64,
+        }
+    ],
+    "outputs": [{"path": "ressources/track2/transfer/GENEZ/targets.tsv", "rows": 9}],
+}
+
+TRANSFER_CANDIDATES_MANIFEST = {
+    "name": "drug_candidates",
+    "method": "the same gather, on a second case",
+    "inputs": [
+        {
+            "name": "drugs-one",
+            "url": "https://drugs.example/api/v4/graphql",
+            "retrieved_from": "2099-02-01T00:02:00+00:00",
+            "retrieved_at": "2099-02-01T00:03:00+00:00",
+            "sha256": "f" * 64,
+        }
+    ],
+    "outputs": [{"path": "ressources/track2/transfer/GENEZ/drug_candidates.tsv", "rows": 30}],
+}
+
+COMPARISON_MANIFEST = {
+    "name": "transfer_comparison",
+    "method": "one row per case",
+    "inputs": [
+        {"name": "spec", "path": "ressources/track2/transfer/GENEZ/transfer_spec.json"},
+        {"name": "card", "path": "ressources/track2/transfer/GENEZ/mechanism.json"},
+        {"name": "real", "path": "ressources/track2/drug_candidates.tsv", "sha256": "9" * 64},
+    ],
+    "outputs": [{"path": "ressources/track2/transfer_comparison.tsv", "rows": 2}],
+}
+
+
+@pytest.fixture
+def root_with_transfer(root: Path) -> Path:
+    """The same root, plus one transfer case and the cross-case comparison."""
+    folder = root / track2_lineage.TRANSFER_DIR / "GENEZ"
+    folder.mkdir(parents=True)
+    (folder / "mechanism.json").write_text(json.dumps(TRANSFER_CARD), encoding="utf-8")
+    (folder / "targets.provenance.json").write_text(
+        json.dumps(TRANSFER_TARGETS_MANIFEST), encoding="utf-8"
+    )
+    (folder / "drug_candidates.provenance.json").write_text(
+        json.dumps(TRANSFER_CANDIDATES_MANIFEST), encoding="utf-8"
+    )
+    (root / track2_lineage.TRACK2_DIR / "transfer_comparison.provenance.json").write_text(
+        json.dumps(COMPARISON_MANIFEST), encoding="utf-8"
+    )
+    return root
+
+
+def test_a_transfer_case_is_recorded_under_its_own_prefix(root_with_transfer: Path) -> None:
+    """``transfer.GENEZ.targets`` can never be read as the real card's ``targets``."""
+    edges = track2_lineage.transfer_edges(root_with_transfer)
+    targets = {str(edge["target_table"]) for edge in edges}
+    assert "transfer.GENEZ.targets" in targets
+    assert "transfer.GENEZ.drug_candidates" in targets
+    assert "targets" not in targets
+
+
+def test_a_transfer_case_carries_no_submission_edge(root_with_transfer: Path) -> None:
+    """It is built from public annotation; there is no patient record to point at."""
+    edges = track2_lineage.transfer_edges(root_with_transfer)
+    assert edges, "the fixture declares two manifests, so there must be edges"
+    assert not [edge for edge in edges if edge["source_kind"] == "submission"]
+    cards = {str(edge["source_ref"]) for edge in edges if edge["source_kind"] == "card"}
+    assert f"{track2_lineage.TRANSFER_DIR}/GENEZ/mechanism.json" in cards
+
+
+def test_a_transfer_table_names_its_own_target_set_not_the_real_cards(
+    root_with_transfer: Path,
+) -> None:
+    edges = track2_lineage.transfer_edges(root_with_transfer)
+    candidates = [
+        edge for edge in edges if edge["target_table"] == "transfer.GENEZ.drug_candidates"
+    ]
+    refs = [edge["source_ref"] for edge in candidates if edge["source_kind"] == "table"]
+    assert refs == ["track2.transfer.GENEZ.targets"]
+
+
+def test_the_comparison_rests_on_both_cards_and_only_on_tsv_inputs(
+    root_with_transfer: Path,
+) -> None:
+    """A ``.json`` input is a card or a spec, never a table; only ``.tsv`` becomes a table edge."""
+    edges = [
+        edge
+        for edge in track2_lineage.transfer_edges(root_with_transfer)
+        if edge["target_table"] == track2_lineage.TRANSFER_COMPARISON
+    ]
+    cards = [str(edge["source_ref"]) for edge in edges if edge["source_kind"] == "card"]
+    assert cards == [
+        track2_lineage.CARD_FILE,
+        f"{track2_lineage.TRANSFER_DIR}/GENEZ/mechanism.json",
+    ]
+    tables = [str(edge["source_ref"]) for edge in edges if edge["source_kind"] == "table"]
+    assert tables == ["track2.drug_candidates"]
+    assert not [edge for edge in edges if edge["source_kind"] == "submission"]
+
+
+def test_a_checkout_with_no_transfer_case_plans_no_transfer_edge(root: Path) -> None:
+    assert track2_lineage.transfer_edges(root) == []

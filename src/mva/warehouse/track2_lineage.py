@@ -25,6 +25,15 @@ table come from":
   This is the hop that makes Track 2 traceable to the patient evidence at all.
 * ``table`` — ``track2.targets`` for the three tables derived from the target set.
 
+**Transfer cases.** ``ressources/track2/transfer/<CASE>/`` holds the same tables for a
+*different case* run through the same pipeline (:mod:`mva.drugs.transfer`). Their edges are
+recorded as ``transfer.<CASE>.<table>`` so they can never be confused with the real card's,
+and they carry **no ``submission`` edge**: a transfer case is built from public annotation
+(OMIM, MONDO, HPO, PubMed), not from the child's record, and pointing it at a Track 1
+iteration would assert a provenance it does not have. The cross-case
+``transfer_comparison`` table rests on both cards and gets one ``card`` edge each; the walk
+back to the patient evidence still runs, through the real card's tables that it cites.
+
 **Why this lives in ``mva.warehouse`` and not in ``mva.drugs``.** ``mva.drugs`` sits below
 ``mva.warehouse`` in the package layering and may not import it, so the recorder cannot
 live beside the snapshot writer. It reads the manifests off disk instead, which also means
@@ -80,6 +89,27 @@ STEP7_TABLES = (
     "decoy_comparison",
 )
 
+#: Where a **transfer** card and its tables live: one folder per second case, built by
+#: ``tools/track2_transfer.py``. A transfer case is public annotation (OMIM, MONDO, HPO,
+#: PubMed) run through the same pipeline; it asserts no allele in any person, so its edges
+#: carry **no** ``submission`` source — there is no patient record behind it to point at.
+TRANSFER_DIR = f"{TRACK2_DIR}/transfer"
+
+#: What a transfer card produces: the snapshot's five, plus the automated half of the
+#: enrichment. No ``evidence`` (nobody curated one for a demonstration case) and no
+#: ``decoy_comparison`` (no decoys sit beside it).
+TRANSFER_TABLES = (
+    *TABLES,
+    "drug_mechanism_literature",
+    "pediatric_trials",
+    "evidence_ladder",
+    "shortlist",
+    "do_not",
+)
+
+#: The cross-case table at the Track 2 root: one row per case, real and transfer.
+TRANSFER_COMPARISON = "transfer_comparison"
+
 #: Every table lineage is recorded for.
 ALL_TABLES = TABLES + STEP7_TABLES
 
@@ -115,8 +145,18 @@ class Manifest:
 
     @property
     def tables(self) -> list[dict[str, Any]]:
-        """Inputs that are other Track 2 tables (they carry a ``path``, not a ``url``)."""
-        return [entry for entry in self.inputs if entry.get("path") and not entry.get("url")]
+        """Inputs that are other Track 2 **tables**: a ``path``, no ``url``, and a ``.tsv``.
+
+        A manifest may also name a ``.json`` input — a card, a spec, a snapshot index. Those
+        are not tables: a card gets its own ``card`` edge and a snapshot index is a roll-up
+        of tables that already have edges of their own, so turning either into a ``table``
+        edge would assert a table that does not exist.
+        """
+        return [
+            entry
+            for entry in self.inputs
+            if str(entry.get("path") or "").endswith(".tsv") and not entry.get("url")
+        ]
 
     @property
     def hosts(self) -> list[str]:
@@ -199,14 +239,30 @@ def api_version(entries: list[dict[str, Any]]) -> str:
     return f"retrieved {first}..{last}"
 
 
-def table_edges(directory: Path, table: str, root: Path) -> list[dict[str, object]]:
-    """Every edge one Track 2 table implies. Pure: reads the manifest and hashes the card."""
+def table_edges(
+    directory: Path,
+    table: str,
+    root: Path,
+    *,
+    target: str | None = None,
+    card_files: tuple[str, ...] = (CARD_FILE,),
+    submission: bool = True,
+) -> list[dict[str, object]]:
+    """Every edge one Track 2 table implies. Pure: reads the manifest and hashes the cards.
+
+    ``target`` renames the edge's ``target_table`` — a transfer case's tables are recorded
+    as ``transfer.<CASE>.<table>`` so they can never be mistaken for the real card's table
+    of the same name. ``card_files`` is a tuple because one table (the cross-case
+    comparison) rests on more than one card. ``submission`` is false for a case that came
+    from public annotation rather than from the child's record: there is no iteration to
+    point at, and inventing one would be the opposite of lineage.
+    """
     manifest = read_manifest(directory, table)
     if manifest is None:
         return []
     common = {
         "target_schema": TRACK2_SCHEMA,
-        "target_table": table,
+        "target_table": target or table,
         "target_rows": manifest.rows,
         "transform": manifest.method,
         "tool": manifest.built_by,
@@ -216,10 +272,11 @@ def table_edges(directory: Path, table: str, root: Path) -> list[dict[str, objec
         {
             **common,
             "source_kind": "card",
-            "source_ref": CARD_FILE,
-            "source_version": card_version(directory),
-            "source_sha256": sha256_of(root / CARD_FILE),
+            "source_ref": card_file,
+            "source_version": card_version((root / card_file).parent),
+            "source_sha256": sha256_of(root / card_file),
         }
+        for card_file in card_files
     ]
     edges += [
         {
@@ -231,33 +288,34 @@ def table_edges(directory: Path, table: str, root: Path) -> list[dict[str, objec
         }
         for host in manifest.hosts
     ]
-    edges.append(
-        {
-            **common,
-            "source_kind": "submission",
-            "source_ref": SOURCE_ITERATION,
-            "source_version": SOURCE_ITERATION_CLAIMS,
-            "source_sha256": "",
-            "notes": SOURCE_ITERATION_NOTE,
-        }
-    )
-    if _card_number(directory) >= SOURCE_ITERATION_V3_FROM_VERSION:
+    if submission:
         edges.append(
             {
                 **common,
                 "source_kind": "submission",
-                "source_ref": SOURCE_ITERATION_V3,
-                "source_version": SOURCE_ITERATION_V3_CLAIMS,
+                "source_ref": SOURCE_ITERATION,
+                "source_version": SOURCE_ITERATION_CLAIMS,
                 "source_sha256": "",
-                "notes": "card version 3+ carries iteration 2's measured facts",
+                "notes": SOURCE_ITERATION_NOTE,
             }
         )
+        if _card_number(directory) >= SOURCE_ITERATION_V3_FROM_VERSION:
+            edges.append(
+                {
+                    **common,
+                    "source_kind": "submission",
+                    "source_ref": SOURCE_ITERATION_V3,
+                    "source_version": SOURCE_ITERATION_V3_CLAIMS,
+                    "source_sha256": "",
+                    "notes": "card version 3+ carries iteration 2's measured facts",
+                }
+            )
     if table in DERIVED_FROM_TARGETS:
         edges.append(
             {
                 **common,
                 "source_kind": "table",
-                "source_ref": TARGET_TABLE_REF,
+                "source_ref": _targets_ref(str(common["target_table"])),
                 "source_version": "",
                 "source_sha256": "",
             }
@@ -273,6 +331,17 @@ def table_edges(directory: Path, table: str, root: Path) -> list[dict[str, objec
         for entry in manifest.tables
     ]
     return edges
+
+
+def _targets_ref(target_table: str) -> str:
+    """The ``targets`` table of the *same* case as ``target_table``.
+
+    ``drug_candidates`` is searched per target, so its input is the target set beside it —
+    ``track2.targets`` for the real card, ``track2.transfer.TRIP13.targets`` for a transfer
+    case. Pointing a transfer table at the real card's target set would be a false edge.
+    """
+    prefix = target_table.rsplit(".", 1)[0] + "." if "." in target_table else ""
+    return f"{TRACK2_SCHEMA}.{prefix}targets"
 
 
 def _card_number(directory: Path) -> int:
@@ -291,6 +360,47 @@ def _table_ref(path: str) -> str:
     return f"{TRACK2_SCHEMA}." + inner.removesuffix(".tsv").replace("/", ".")
 
 
+def transfer_folders(root: Path) -> list[Path]:
+    """Every transfer case that has a card on disk, in folder-name order."""
+    return sorted(p for p in (root / TRANSFER_DIR).glob("*") if (p / "mechanism.json").is_file())
+
+
+def transfer_edges(root: Path) -> list[dict[str, object]]:
+    """Every edge a transfer case implies — and no ``submission`` edge on any of them.
+
+    The cross-case comparison sits at the Track 2 root and rests on *both* cards, so it
+    gets one ``card`` edge each. It also gets ``table`` edges to each case's committed
+    TSVs from its own manifest, which is how the walk still reaches the Track 1 iteration:
+    through the real card's tables, which carry the submission edges themselves.
+    """
+    folders = transfer_folders(root)
+    if not folders:
+        return []
+    edges: list[dict[str, object]] = []
+    for folder in folders:
+        card_file = f"{TRANSFER_DIR}/{folder.name}/mechanism.json"
+        for table in TRANSFER_TABLES:
+            edges += table_edges(
+                folder,
+                table,
+                root,
+                target=f"transfer.{folder.name}.{table}",
+                card_files=(card_file,),
+                submission=False,
+            )
+    edges += table_edges(
+        root / TRACK2_DIR,
+        TRANSFER_COMPARISON,
+        root,
+        card_files=(
+            CARD_FILE,
+            *(f"{TRANSFER_DIR}/{folder.name}/mechanism.json" for folder in folders),
+        ),
+        submission=False,
+    )
+    return edges
+
+
 def planned_edges(root: Path | None = None) -> list[dict[str, object]]:
     """Every edge the Track 2 tables imply, before anything is written."""
     base = (root or Path.cwd()).resolve()
@@ -298,6 +408,7 @@ def planned_edges(root: Path | None = None) -> list[dict[str, object]]:
     edges: list[dict[str, object]] = []
     for table in ALL_TABLES:
         edges += table_edges(directory, table, base)
+    edges += transfer_edges(base)
     return edges
 
 

@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
-"""Render step 7's Track 2 figures from ``build/track2/analysis.json`` and nothing else.
+"""Render step 7's Track 2 figures from the files the pipeline wrote, and nothing else.
 
-Every number on every figure comes from the file ``tools/track2_enrich.py`` wrote, so a
-figure cannot drift from the entry that quotes it. A figure whose input is absent is
+Every number on every figure comes from ``build/track2/analysis.json`` (what
+``tools/track2_enrich.py`` wrote) or, for the one scalability exhibit, from
+``ressources/track2/transfer_comparison.tsv`` (what ``tools/track2_transfer.py`` wrote), so
+a figure cannot drift from the entry that quotes it. A figure whose input is absent is
 **skipped**, not drawn empty.
 
 Writes ``figures/track2/<slug>.png`` plus one interactive page ``figures/track2-report.html``.
@@ -16,6 +18,7 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import sys
 from pathlib import Path
@@ -32,9 +35,11 @@ from track2_charts import (
     mechanism_literature,
     pediatric_dots,
     rung_funnel,
+    transfer_scalability,
 )
 
 DEFAULT_IN = Path("build/track2/analysis.json")
+DEFAULT_TRANSFER = Path("ressources/track2/transfer_comparison.tsv")
 DEFAULT_OUT = Path("figures/track2")
 DEFAULT_HTML = Path("figures/track2-report.html")
 
@@ -48,7 +53,47 @@ LEGEND_RUNGS = (
 )
 
 
-def build(data: dict) -> list[Exhibit]:
+def read_transfer(path: Path) -> list[dict]:
+    """The transfer comparison as rows, or ``[]`` when the second case has never been run."""
+    if not path.is_file():
+        return []
+    with path.open(encoding="utf-8", newline="") as stream:
+        return list(csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE))
+
+
+def transfer_exhibit(rows: list[dict]) -> Exhibit:
+    """The scalability exhibit: the same pipeline, two different cases, side by side."""
+    moved = [row for row in rows if row.get("role") == "transfer case"]
+    cost = moved[0] if moved else {}
+    reading = (
+        f"{cost.get('live_requests', '?')} live requests and "
+        f"{cost.get('cached_replies', '?')} cached replies, "
+        f"{cost.get('wall_seconds', '?')} s wall clock"
+        if cost
+        else "no transfer run recorded"
+    )
+    return Exhibit(
+        slug="transfer-scalability",
+        title="The same pipeline on a different case, not just a different gene",
+        caption=(
+            "A transfer card swaps the whole case - a different disease with its own OMIM "
+            "and MONDO identifiers, its own HPO terms read out of phenotype.hpoa, its own "
+            "tumour context and its own standard of care - and the code runs unchanged. "
+            f"Cost of the second case: {reading}. Only the automated rungs (1, 4, 5) are "
+            "comparable: a transfer card has no curated evidence.tsv, which is the zero bar "
+            "at the bottom and the reason rungs 2-3 cannot appear for it."
+        ),
+        legend=(
+            "**blue** = the real case (the proband's card, the machinery this was built "
+            "for); **purple** = the transfer case (a second case supplied as raw public "
+            "input). Bars are counts on a linear axis, unnormalised."
+        ),
+        figure=transfer_scalability(rows),
+        height=420,
+    )
+
+
+def build(data: dict, transfer_rows: list[dict] | None = None) -> list[Exhibit]:
     exhibits: list[Exhibit] = []
     ladder = data.get("ladder_top") or []
     short = data.get("shortlist") or []
@@ -143,6 +188,8 @@ def build(data: dict) -> list[Exhibit]:
                 height=max(300, 26 * len(short) + 100),
             )
         )
+    if transfer_rows:
+        exhibits.append(transfer_exhibit(transfer_rows))
     return exhibits
 
 
@@ -151,13 +198,14 @@ def main() -> int:
     parser.add_argument("--analysis", type=Path, default=DEFAULT_IN)
     parser.add_argument("--out-dir", type=Path, default=DEFAULT_OUT)
     parser.add_argument("--html", type=Path, default=DEFAULT_HTML)
+    parser.add_argument("--transfer", type=Path, default=DEFAULT_TRANSFER)
     args = parser.parse_args()
     if not args.analysis.is_file():
         print(f"{args.analysis} missing - run tools/track2_enrich.py first")
         return 1
     data = json.loads(args.analysis.read_text(encoding="utf-8"))
     theme.install_template()
-    exhibits = build(data)
+    exhibits = build(data, read_transfer(args.transfer))
     args.out_dir.mkdir(parents=True, exist_ok=True)
     for exhibit in exhibits:
         png = exhibit.write_image(args.out_dir)

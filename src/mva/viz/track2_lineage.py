@@ -29,9 +29,15 @@ from ..warehouse.submission_lineage import TABLE_REF
 from ..warehouse.track2_lineage import (
     SOURCE_ITERATION,
     TRACK2_SCHEMA,
+    TRANSFER_COMPARISON,
     planned_edges,
 )
 from .submissions_lineage import Ledger, walk
+
+#: A transfer case's tables are recorded under this prefix, plus the one cross-case table
+#: at the Track 2 root. Both are listed separately on the page: a transfer case has no
+#: ``submission`` edge, and a reader must be able to see that rather than infer it.
+TRANSFER_PREFIX = "transfer."
 
 #: What each kind of source is, in one line, for the page's own explanation of the block.
 KIND_NOTES = {
@@ -73,6 +79,12 @@ def _source(edge: dict[str, Any]) -> dict[str, str]:
     }
 
 
+def is_transfer(edge: dict[str, Any]) -> bool:
+    """True for an edge about a transfer case rather than about the proband's card."""
+    target = str(edge.get("target_table") or "")
+    return target.startswith(TRANSFER_PREFIX) or target == TRANSFER_COMPARISON
+
+
 def _deduplicate(sources: list[dict[str, str]]) -> list[dict[str, str]]:
     """One row per ``(kind, ref, sha256)``; the first mention wins and keeps its note.
 
@@ -92,14 +104,22 @@ def _deduplicate(sources: list[dict[str, str]]) -> list[dict[str, str]]:
 
 
 def build(ledger: Ledger, root: Path | None = None) -> dict[str, Any]:
-    """The ``lineage`` block for ``/api/track2``: available, note, sources, edges."""
-    on_disk = _deduplicate([_source(edge) for edge in planned_edges(root)])
+    """The ``lineage`` block for ``/api/track2``: available, note, sources, edges, transfer.
+
+    ``transfer`` is always populated, database or not, because it is read off the manifests
+    on disk. It is the one block a reader needs to check the claim that a transfer case has
+    **no** ``submission`` source: the edges are there to count.
+    """
+    planned = planned_edges(root)
+    on_disk = _deduplicate([_source(edge) for edge in planned])
+    transfer = [edge for edge in planned if is_transfer(edge)]
     if not ledger.available:
         return {
             "available": False,
             "note": f"{ledger.note}; the sources below are the manifests' own claims",
             "sources": on_disk,
             "edges": [],
+            "transfer": transfer,
         }
     recorded = track2_edges(ledger)
     collected = list(recorded)
@@ -111,8 +131,11 @@ def build(ledger: Ledger, root: Path | None = None) -> dict[str, Any]:
         "available": True,
         "note": (
             f"{len(recorded)} edge(s) recorded for schema '{TRACK2_SCHEMA}', "
-            f"{len(collected) - len(recorded)} more reached by walking back"
+            f"{len(collected) - len(recorded)} more reached by walking back; "
+            f"{len(transfer)} of the planned edges belong to a transfer case and carry no "
+            "submission source"
         ),
         "sources": sources,
         "edges": collected,
+        "transfer": transfer,
     }
