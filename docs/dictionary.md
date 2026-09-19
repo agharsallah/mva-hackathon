@@ -2518,7 +2518,7 @@ flowchart LR
 
 **Route-dependency graph** — a drawing of which instrument consumed which other's output, and which raw sources two instruments share. It is **declared**, not derived from the code: a graph read out of the call sites would only ever say what the code does, and the claim being audited is what each route *read*. The dashed edges — the shared inputs — are the ones the independent-evidence count collapses.
 *Example:* six of step 6's eight edges; two routes ranked on the same eight symptom terms and two read the same callset.
-*Context: drawn on `/steps/step-6` and in entry 107 · source: tools/it2_step6_routes.py · related: Independent-evidence count, Data lineage · first seen 2026-09-18*
+*Context: drawn on `/track1/iteration2/step-6` and in entry 107 · source: tools/it2_step6_routes.py · related: Independent-evidence count, Data lineage · first seen 2026-09-18*
 
 **Leave-one-route-out** — re-running a fusion once per instrument with that instrument silenced, to find out whether the answer was ever a consensus. If removing one route changes which candidate is first, that route was carrying the result and the fusion is it wearing several coats. It is the ablation an ensemble owes its reader, and it is reported beside the primary result rather than instead of it.
 *Example:* silencing the genome-wide likelihood route moved iteration 2's fused leader from rank 1 to rank 62; silencing either of the other two left it at rank 1.
@@ -2526,7 +2526,7 @@ flowchart LR
 
 **Agreement matrix** — routes down one axis, candidates along the other, each cell holding the rank that route gave that candidate. It is the figure that makes a fusion readable, because it shows the two things a single ordering hides: which instrument actually found the leader, and which instruments never listed it at all. A cell that is the "absent" default is drawn differently from a real rank — otherwise silence reads as agreement.
 *Example:* one green cell at rank 1, a column of grey beside it: one route nominated the leader and one route had never heard of it.
-*Context: iteration 2's headline figure, on `/steps/step-6` · source: src/mva/warehouse/analysis_it2_fusion.py · related: Rank inheritance, Reciprocal rank fusion (RRF) · first seen 2026-09-18*
+*Context: iteration 2's headline figure, on `/track1/iteration2/step-6` · source: src/mva/warehouse/analysis_it2_fusion.py · related: Rank inheritance, Reciprocal rank fusion (RRF) · first seen 2026-09-18*
 
 **Frozen artifact (hash before the comparison)** — writing a result to a file and recording its **sha256** in the append-only record *before* the step that could be tempted to change it runs. It converts "we did not steer this" from an assertion into something a reader can check with one command, and it costs nothing: a run re-done until it agreed with the answer would not hash to the digest already written down.
 *Example:* step 6's fused ranking, 274 pairs, `a596abf8…`, hashed in entry 108 before any iteration-1 table was read.

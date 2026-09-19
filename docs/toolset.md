@@ -98,7 +98,7 @@ Layer 1 is the lossless all-text raw table; derivations are named SQL over it.
 
 | Question | CLI | API route / app page | Module |
 |---|---|---|---|
-| Has anyone published about the alleles **this sample** carries? (LitVar 2.0, one dbSNP identifier at a time; an allele with no identifier is `NOT_ASKED`, never zero) | `uv run python tools/fetch_it2_catalogue.py` | `/api/steps/step-5` → `catalogue` · `/steps/step-5` | `knowledge/catalogue.py`, `knowledge/sources.py` |
+| Has anyone published about the alleles **this sample** carries? (LitVar 2.0, one dbSNP identifier at a time; an allele with no identifier is `NOT_ASKED`, never zero) | `uv run python tools/fetch_it2_catalogue.py` | `/api/steps/step-5` → `catalogue` · `/track1/iteration2/step-5` | `knowledge/catalogue.py`, `knowledge/sources.py` |
 | Does any single paper discuss a candidate gene alongside several of the patient's features? (PubTator 3.0, one search per gene × term, so the matched-term count is per paper) | `uv run python tools/build_it2_anchors.py` | `/api/steps/step-5` → `anchors` | `knowledge/anchors.py` |
 | Does a missense allele land in an annotated domain, where the structure model is confident? (UniProt → InterPro → AlphaFold DB; positions as fractions of protein length, never residues) | `uv run python tools/score_it2_protein.py` | `/api/steps/step-5` → `protein`, `domains` | `knowledge/protein.py` |
 | **Does any of that order anything a raw publication count does not?** (matched-decoy AUC and a Spearman/top-k comparison against PubMed hit counts; both conditions must hold before the route may rank) | `uv run python tools/run_it2_knowledge_baselines.py` | `/api/steps/step-5` → `citations`, `groups` | `knowledge/baselines.py`, `pipeline/nulls.py` |
@@ -147,11 +147,12 @@ Case-agnostic: everything reads the mechanism card, nothing hard-codes a gene.
 
 | Question | CLI | API route / app page | Module |
 |---|---|---|---|
-| The step map and each step's goal | `mva-science steps` | `/api/steps` · `/steps` | `science/steps.py`, `science/step_maps/` |
-| **Any** iteration's steps, its claims, its blind-gate rows, and the submission folders it fed | — | `/api/steps?iteration=<name>` · `/steps?iteration=<name>` | `viz/steps.py` |
+| The step map and each step's goal | `mva-science steps` | `/api/steps` · `/track1` | `science/steps.py`, `science/step_maps/` |
+| **Any** iteration's steps, its claims, its blind-gate rows, and the submission folders it fed | — | `/api/steps?iteration=<name>` · `/track1/<iteration>` and `/track2/<iteration>` | `viz/steps.py` |
 | One figure a step drew, as it was rendered | `tools/render_it2_step*.py`, `tools/render_track1_figures.py`, `tools/render_track2_figures.py` | `/api/steps/<iteration>/<slug>/figure/<name>` | `viz/steps_artifacts.py` |
-| One methodology entry, verbatim, without leaving the page | — | `/api/steps/<iteration>/<slug>/entry/<name>` · `/steps` | `viz/steps_artifacts.py` |
-| One iteration's own detail pages (iteration 2 only) | — | `/api/steps/step-<n>` · `/steps/step-<n>` | `viz/steps_it2*.py` |
+| One methodology entry, verbatim, without leaving the page | — | `/api/steps/<iteration>/<slug>/entry/<name>` · `/track1/<iteration>/<slug>` | `viz/steps_artifacts.py` |
+| The deep analysis under a step page (iteration 2 only; other iterations render the record alone) | — | `/api/steps/step-<n>` · `/track1/iteration2/step-<n>` | `viz/steps_it2*.py` |
+| The navigation tree itself — Decide ▸ Track ▸ Iteration ▸ Step | `uv run python tools/gen_steps_nav.py` (`--check` in `pnpm check`) | the `decide` section of every page | `tools/gen_steps_nav.py` → `app/src/app/modules/steps.generated.ts` |
 | File a claim (needs a prediction and a refutation) | `mva-science hypothesis-add` | — | `science/hypothesis.py` |
 | Change a belief (append a revision) | `mva-science hypothesis-revise` | — | `science/record.py` |
 | Record one sourced observation | `mva-science evidence-add`, `evidence-list` | `/api/science/evidence` · `/science` | `science/evidence.py` |

@@ -46,7 +46,7 @@ converged".
 
 **On the freeze receipt's timestamp.** The stage has been re-run since entry 108 was filed —
 to add the all-routes leader to the leave-one-out export, which the fused file does not
-contain — so the `frozen at` line on `/steps/step-6` is later than the one in the entry. The
+contain — so the `frozen at` line on `/track1/iteration2/step-6` is later than the one in the entry. The
 **digest is identical**, which is the commitment: the ranking has not changed, and a re-run
 that had changed it could not hash to a value already written down. The timestamp records
 when the current file was written; the entry records when the digest was first published.
@@ -147,6 +147,6 @@ uv run python tools/check_blind.py               # "unblinded by …/109-…"
 
 ## Exhibits
 
-`/steps/step-6` on the dashboard, and `figures/track1/iteration2/step-6/`:
+`/track1/iteration2/step-6` on the dashboard, and `figures/track1/iteration2/step-6/`:
 `agreement-matrix`, `leave-one-route-out`, `independent-evidence`, `weight-sensitivity`,
 `decoy-reach`, `freeze-receipt`.

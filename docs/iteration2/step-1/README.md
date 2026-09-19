@@ -40,7 +40,7 @@ sampling caveat — and is slightly worse, not better.
 | inputs, sha256, release, seed, parameters | `build/it2/step-1/provenance.json` |
 | four report figures + an interactive page | `figures/track1/iteration2/step-1/` |
 | full-population recall curve, 3,240 diseases | `build/it2/step-1/benchmark-full.json` |
-| all of the above as one JSON surface | `GET /api/steps/step-1`, rendered at `/steps/step-1` and on `/phenotype` |
+| all of the above as one JSON surface | `GET /api/steps/step-1`, rendered at `/track1/iteration2/step-1` and on `/phenotype` |
 
 The tables are derived and stay under `build/`; the warehouse copies carry
 `data_lineage` rows naming **both** the public HPO release and the clinical phenotype

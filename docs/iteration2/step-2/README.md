@@ -147,7 +147,7 @@ Built here because a research step's tools are filed under that step (CLAUDE.md)
 
 The audit note tracks what each of these closed. Two things are outstanding and named
 there (D7, D8): the per-exon depth grid and the `BUB1B` phase track are in the report
-figures and not yet on `/steps/step-2`, because neither has a warehouse table the route
+figures and not yet on `/track1/iteration2/step-2`, because neither has a warehouse table the route
 could aggregate.
 
 ## Methodology

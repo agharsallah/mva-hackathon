@@ -533,7 +533,7 @@ earliest). +1 day TxGNN, +½ day ΔΔG wiring.
 | per-model reports + histograms | MVP | `docs/iteration4/reports/<model>.md`, `figures/it4/` | step 5 entry |
 | merged report R1 | MVP | `docs/iteration4/report.md` | step 6 entry |
 | Track 2 ranking R2 + decoy figure | MVP | `ressources/track2/ranking-walk.tsv` + `.provenance.json` | step 7 entry |
-| dashboard: `/steps/step-<n>` pages for iteration 4, zoo cards page, agreement-matrix view, lineage view | MVP (one page per step, as each step closes) | `app/` | `GET /api/…` over the warehouse |
+| dashboard: `/track1/<iteration>/step-<n>` pages for iteration 4, zoo cards page, agreement-matrix view, lineage view | MVP (one page per step, as each step closes) | `app/` | `GET /api/…` over the warehouse |
 | dictionary entries (every term listed per step) | MVP | `docs/dictionary.md` | |
 | `submissions/track1/iteration-4/` rehearsed folder | opt-A | | `tools/check_iteration.py` green |
 | `submissions/track2/iteration-<n>/` | opt-A | | same gate |
@@ -560,7 +560,7 @@ earliest). +1 day TxGNN, +½ day ΔΔG wiring.
   the report's every figure names its script and source table.
 - **Coordinates and sequence.** `build/it4/` is the only home of records, windows and raw scores;
   `allele_id` is the only key that leaves. `tools/check_coordinates.py` runs before every commit.
-- **Dashboard first-class.** A step is not closed until its `/steps/step-<n>` page renders from
+- **Dashboard first-class.** A step is not closed until its `/track1/<iteration>/step-<n>` page renders from
   the live API and its fixture is re-captured and re-blessed.
 - **Cuts are recorded.** A substep dropped from the plan is a one-line note in the step's
   README with the reason and the date, never a silent omission.

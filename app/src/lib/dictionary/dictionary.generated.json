@@ -7594,7 +7594,7 @@
           "aliases": [],
           "html": "<p>a drawing of which instrument consumed which other's output, and which raw sources two instruments share. It is <strong>declared</strong>, not derived from the code: a graph read out of the call sites would only ever say what the code does, and the claim being audited is what each route <em>read</em>. The dashed edges — the shared inputs — are the ones the independent-evidence count collapses.</p>",
           "exampleHtml": "<p><em>Example:</em> six of step 6's eight edges; two routes ranked on the same eight symptom terms and two read the same callset.</p>",
-          "context": "<p>drawn on <code>/steps/step-6</code> and in entry 107</p>",
+          "context": "<p>drawn on <code>/track1/iteration2/step-6</code> and in entry 107</p>",
           "source": "tools/it2_step6_routes.py",
           "related": [
             "independent-evidence-count",
@@ -7624,7 +7624,7 @@
           "aliases": [],
           "html": "<p>routes down one axis, candidates along the other, each cell holding the rank that route gave that candidate. It is the figure that makes a fusion readable, because it shows the two things a single ordering hides: which instrument actually found the leader, and which instruments never listed it at all. A cell that is the \"absent\" default is drawn differently from a real rank — otherwise silence reads as agreement.</p>",
           "exampleHtml": "<p><em>Example:</em> one green cell at rank 1, a column of grey beside it: one route nominated the leader and one route had never heard of it.</p>",
-          "context": "<p>iteration 2's headline figure, on <code>/steps/step-6</code></p>",
+          "context": "<p>iteration 2's headline figure, on <code>/track1/iteration2/step-6</code></p>",
           "source": "src/mva/warehouse/analysis_it2_fusion.py",
           "related": [
             "rank-inheritance",

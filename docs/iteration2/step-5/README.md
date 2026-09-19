@@ -177,7 +177,7 @@ Design note: [`notes/why-the-baseline-is-the-test.md`](notes/why-the-baseline-is
 
 ## Exhibits
 
-`/steps/step-5` on the dashboard, and `figures/track1/iteration2/step-5/` (each as `.png`, plus an
+`/track1/iteration2/step-5` on the dashboard, and `figures/track1/iteration2/step-5/` (each as `.png`, plus an
 `index.html` with captions and legends), rendered by `tools/render_it2_step5_figures.py` from
 `build/it2/step-5/analysis.json`: `sources`, `catalogue`, `anchors`, `citations`, `separation`, `domains`.
 

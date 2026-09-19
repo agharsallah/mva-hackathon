@@ -223,7 +223,7 @@ uv run python tools/run_it2_dosage_pass.py --upload --full
 
 ## Exhibits
 
-`/steps/step-8` on the dashboard, and the re-test panel on `/genome` beside the karyogram it
+`/track1/iteration2/step-8` on the dashboard, and the re-test panel on `/genome` beside the karyogram it
 corrects. Figures in [`figures/track1/iteration2/step-8/`](../../../figures/track1/iteration2/step-8/):
 `power-then-and-now` (the headline), `detection-limit`, `dosage-per-chromosome` (read X and
 Y first — they are the control), `dosage-composition`, `dosage-residual`,
