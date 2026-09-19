@@ -60,6 +60,10 @@ packages = ["src/mva"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
+addopts = "-m 'not slow'"
+markers = [
+    "slow: nested-optimisation fits that take double-digit seconds each; run with `-m slow`",
+]
 
 # ---------------------------------------------------------------------------------------
 # Ruff — linter and formatter. See docs/notes/python-quality-gates.md for why each block

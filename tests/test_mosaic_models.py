@@ -30,6 +30,8 @@ from mosaic_synthetic import CENTRE, DEPTH, RHO, arm, depths
 from mva.mosaic import madseq, models
 from mva.mosaic import verdict as verdict_module
 
+pytestmark = pytest.mark.slow
+
 SITES = 8_000
 
 
