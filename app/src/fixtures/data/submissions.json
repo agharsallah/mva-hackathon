@@ -137,7 +137,10 @@
               ["is_clinvar_plp", "=", true]
             ]
           },
-          "f5_leiden": { "table": "results.coding_candidates", "where": [["rsid", "=", "rs6025"]] },
+          "f5_leiden": {
+            "table": "results.coding_candidates",
+            "where": [["rsid", "=", "rs6025"]]
+          },
           "flg_stop": {
             "table": "results.coding_candidates",
             "where": [
@@ -288,8 +291,15 @@
           }
         ],
         "derivation": {
-          "anchor": { "row": "stop+missense", "hypothesis": "H009", "confidence": 0.9963 },
-          "parameters": { "epcr_digits": 4, "secondary_share": 0.5 },
+          "anchor": {
+            "row": "stop+missense",
+            "hypothesis": "H009",
+            "confidence": 0.9963
+          },
+          "parameters": {
+            "epcr_digits": 4,
+            "secondary_share": 0.5
+          },
           "alleles": {
             "stop": {
               "name": "stop",
@@ -427,8 +437,14 @@
         }
       },
       "methods_form": [
-        { "row": "7", "answer": "agharsallah" },
-        { "row": "8", "answer": "1" },
+        {
+          "row": "7",
+          "answer": "agharsallah"
+        },
+        {
+          "row": "8",
+          "answer": "1"
+        },
         {
           "row": "9",
           "answer": "Panel-first, then genome-wide, then a designed submission. (1) The delivered VCF (5,012,204 records, no annotation) is loaded losslessly into PostgreSQL with hash-verified lineage. (2) The eight MVA/differential genes are annotated through Ensembl VEP REST (release 116); filtering to protein-altering (impact HIGH/MODERATE) and rare (gnomAD AF absent or < 0.01) leaves exactly two alleles, both in BUB1B, both heterozygous PASS. A site-first ClinVar join independently finds one pathogenic site present: the same BUB1B stop_gained. (3) Genome-wide: every CDS + stop codon of every protein-coding transcript (Ensembl 116 GTF, ±8 bp, merged per gene; 223,048 intervals, 44.6 Mb) is range-joined to the callset → 38,087 distinct coding alleles, all VEP-annotated (191 requests, checkpointed) → 875 rare protein-altering → 65 genes biallelic on PASS calls → exactly 1 with a ClinVar-pathogenic allele and a top-30 phenotype rank: BUB1B. (4) A panel-blind phenotype ranker (Exomiser's human-phenotype path re-implemented in Python over HPO release 2026-06-23, reading no DNA) ranks BUB1B 6/5,267 on the child's seven own terms; joined to the 65 biallelic genes it is first by a wide margin. (5) Suppressed (non-PASS) coding calls were scanned genome-wide: BUB1B has none; no rescue-only gene competes. (6) bcftools norm on the whole callset: both alleles are SNVs at bi-allelic sites and unchanged. (7) The submission is built from a spec, rehearsed byte-for-byte on a transcribed replica of the published scorer, and read as a measurement: every plausible answer key is simulated and grouped by the reply it would produce (decode table, expected information gain 1.46 bits). Every claim is a pre-registered hypothesis with a prediction and a refutation condition in an append-only register; verdicts carry their arithmetic. Full report and code: https://github.com/agharsallah/mva-hackathon (submissions/track1/iteration-1/)."
@@ -441,12 +457,18 @@
           "row": "11",
           "answer": "None on the candidate itself. Manual steps: choosing the rarity cutoff (0.01, recessive) and the impact classes before any run; writing the hypothesis space and priors for the decode table (stated in the report); selecting secondary-finding rows by a fixed rule (ClinVar P/LP after excluding conflicting and benign-tagged records, gnomAD AF < 0.02, dominant or risk-factor genes). LLM assistance (Anthropic API, Claude) was used to write code and documentation; no LLM judged a variant."
         },
-        { "row": "12", "answer": "Public data only." },
+        {
+          "row": "12",
+          "answer": "Public data only."
+        },
         {
           "row": "13",
           "answer": "Ensembl release 116 gene models (GTF) and VEP REST (GRCh38) with gnomAD v4 genome/exome frequencies, ClinVar classifications, and the SpliceAI, AlphaMissense and CADD plugins for the two candidate alleles; ClinVar GRCh38 VCF (fileDate 2026-08-29) for the site-first join; gnomAD v4.1 constraint metrics; HPO release 2026-06-23 (hp.obo, genes_to_phenotype) for the phenotype ranking; UCSC hg38 analysis-set FASTA (chr prefix stripped) for normalization; PubMed (PMID 15475955, 20516114, 31184400, 18548531). Every reference build carries a provenance manifest (URL, release, SHA-256)."
         },
-        { "row": "14", "answer": "None." },
+        {
+          "row": "14",
+          "answer": "None."
+        },
         {
           "row": "15",
           "answer": "Pairs. Every primary row is a compound-heterozygous pair in one row (chrom_1/pos_1 + chrom_2/pos_2). The pipeline ranks genes by biallelic sets and the submission is built pair-first; single-variant rows are used only as secondary findings."
@@ -468,7 +490,12 @@
         {
           "step": "0 platform",
           "contribution": "lossless VCF layer, lineage, register, scorer replica, probe builder",
-          "methodology": [{ "label": "docs/step-0/", "path": "docs/step-0/README.md" }]
+          "methodology": [
+            {
+              "label": "docs/step-0/",
+              "path": "docs/step-0/README.md"
+            }
+          ]
         },
         {
           "step": "1 normalize",
@@ -512,7 +539,10 @@
           "step": "4 suppressed calls",
           "contribution": "nothing hides behind a filter, panel or genome-wide",
           "methodology": [
-            { "label": "049", "path": "docs/step-0/methodology/049-suppressed-calls.md" },
+            {
+              "label": "049",
+              "path": "docs/step-0/methodology/049-suppressed-calls.md"
+            },
             {
               "label": "072",
               "path": "docs/iteration1/step-4/methodology/072-genome-wide-suppressed-calls.md"
@@ -523,7 +553,10 @@
           "step": "5 reads",
           "contribution": "not needed; triggered only by the \"partner unseen\" reply",
           "methodology": [
-            { "label": "docs/iteration1/step-5/", "path": "docs/iteration1/step-5/README.md" }
+            {
+              "label": "docs/iteration1/step-5/",
+              "path": "docs/iteration1/step-5/README.md"
+            }
           ]
         },
         {
@@ -950,37 +983,89 @@
       "track": "track1",
       "number": 2,
       "folder": "submissions/track1/iteration-2",
-      "state": "draft",
-      "standing": "draft — opened 2026-09-09, nothing built. Iteration 1 is frozen at",
+      "state": "ready",
+      "standing": "built, rehearsed on two scorers, cross-checked — not uploaded, held in",
       "uploaded": false,
-      "csv": { "path": "build/submission/track1_submission_v2.csv", "sha256": null, "rows": 8 },
+      "csv": {
+        "path": "submissions/track1/iteration-2/agharsallah_bub1b-comphet-replication.csv",
+        "sha256": "325205a8abdf53d0dca12080cf29633b27d882316517bc8a4620da0b7afab359",
+        "rows": 4
+      },
       "deliverables": [
         {
           "name": "README.md",
           "kind": "readme",
-          "bytes": 3568,
-          "modified": "2026-09-09T20:38:56+00:00"
+          "bytes": 12169,
+          "modified": "2026-09-19T13:22:23+00:00"
+        },
+        {
+          "name": "agharsallah_bub1b-comphet-replication.csv",
+          "kind": "other",
+          "bytes": 1814,
+          "modified": "2026-09-19T13:21:51+00:00"
+        },
+        {
+          "name": "agharsallah_track1_methods_form.xlsx",
+          "kind": "methods-xlsx",
+          "bytes": 15010,
+          "modified": "2026-09-19T11:42:21+00:00"
+        },
+        {
+          "name": "agharsallah_track1_report.pdf",
+          "kind": "report-pdf",
+          "bytes": 1044244,
+          "modified": "2026-09-19T13:22:53+00:00"
+        },
+        {
+          "name": "decode-table.md",
+          "kind": "decode-table",
+          "bytes": 453,
+          "modified": "2026-09-19T11:30:25+00:00"
+        },
+        {
+          "name": "derivation.json",
+          "kind": "other",
+          "bytes": 5386,
+          "modified": "2026-09-19T11:31:04+00:00"
+        },
+        {
+          "name": "derivation.md",
+          "kind": "other",
+          "bytes": 2113,
+          "modified": "2026-09-19T11:31:04+00:00"
         },
         {
           "name": "methods-form.json",
           "kind": "methods-json",
-          "bytes": 6815,
-          "modified": "2026-09-09T20:31:48+00:00"
+          "bytes": 10911,
+          "modified": "2026-09-19T11:41:46+00:00"
         },
         {
           "name": "report.md",
           "kind": "report-md",
-          "bytes": 538,
-          "modified": "2026-09-09T20:31:48+00:00"
+          "bytes": 51904,
+          "modified": "2026-09-19T13:22:23+00:00"
         },
         {
           "name": "spec.selectors.json",
           "kind": "selectors",
-          "bytes": 5706,
-          "modified": "2026-09-09T20:31:48+00:00"
+          "bytes": 2954,
+          "modified": "2026-09-19T11:30:06+00:00"
         }
       ],
-      "decode_table": { "columns": [], "rows": [], "summary": "", "row_order": "" },
+      "decode_table": {
+        "columns": [
+          "Reply: full match rank",
+          "partial match rank",
+          "F-max",
+          "at epcr",
+          "prior mass",
+          "survivors"
+        ],
+        "rows": [["1", "—", "1.000", "0.9993", "1.00", "stop+missense"]],
+        "summary": "Prior entropy -0.000 bits · expected posterior 0.000 bits · expected information gain -0.000 bits · largest ambiguity 1 hypotheses in one reply.",
+        "row_order": "Rows, in rank order: 1. stop+missense; 2. LZTR1 stop_gained (secondary); 3. FLG stop_gained (secondary); 4. F5 Leiden (secondary)"
+      },
       "selectors": {
         "alleles": {
           "stop": {
@@ -997,24 +1082,6 @@
               ["consequence", "like", "%missense_variant%"]
             ]
           },
-          "intronA": {
-            "table": "results.panel_candidates",
-            "where": [
-              ["gene", "=", "BUB1B"],
-              ["consequence", "like", "%intron_variant%"],
-              ["is_rare_recessive", "=", true],
-              ["gnomad_af", "is", null]
-            ]
-          },
-          "intronB": {
-            "table": "results.panel_candidates",
-            "where": [
-              ["gene", "=", "BUB1B"],
-              ["consequence", "like", "%intron_variant%"],
-              ["is_rare_recessive", "=", true],
-              ["gnomad_af", "is not", null]
-            ]
-          },
           "lztr1_stop": {
             "table": "results.coding_candidates",
             "where": [
@@ -1023,7 +1090,10 @@
               ["is_clinvar_plp", "=", true]
             ]
           },
-          "f5_leiden": { "table": "results.coding_candidates", "where": [["rsid", "=", "rs6025"]] },
+          "f5_leiden": {
+            "table": "results.coding_candidates",
+            "where": [["rsid", "=", "rs6025"]]
+          },
           "flg_stop": {
             "table": "results.coding_candidates",
             "where": [
@@ -1038,149 +1108,211 @@
             "rank": 1,
             "variant": "stop",
             "partner": "missense",
-            "epcr": 0.0,
+            "epcr": 0.9993,
             "finding_type": "primary",
             "label": "stop+missense",
-            "notes": "",
-            "score": null,
+            "notes": "H:H009 | primary | BUB1B stop_gained, het PASS DP 46 VAF 0.54, gnomAD 3.29e-05, ClinVar pathogenic;likely_pathogenic, rs759242053 + BUB1B missense_variant, het PASS DP 28 VAF 0.46, gnomAD absent, ClinVar not listed | confirmed by the oracle at rank one; rediscovered blind by iteration two from the raw reads, the callset and the clinical terms, first under both fusion weightings; both alleles at one-copy multiplicity without an aligner; phase unmeasured in the reads, trans by the answer key | epcr = register weighing 0.9993 (triage heuristic, not a calibrated posterior)",
+            "score": 1.3,
             "hypothesis": "H009"
           },
           {
             "rank": 2,
-            "variant": "stop",
-            "partner": "intronA",
-            "epcr": 0.0,
-            "finding_type": "primary",
-            "label": "stop+intronA",
-            "notes": "",
-            "score": null,
+            "variant": "lztr1_stop",
+            "partner": null,
+            "epcr": 0.4996,
+            "finding_type": "secondary",
+            "label": "LZTR1 stop_gained (secondary)",
+            "notes": "secondary | LZTR1 stop_gained, het PASS DP 48 VAF 0.50, gnomAD 1.37e-06, ClinVar pathogenic;likely_pathogenic, rs1682503990 | dominant schwannomatosis predisposition, unrelated to MVA; reported for clinical follow-up | epcr below every primary row, ordered by allele score; not scored",
+            "score": 1.0,
             "hypothesis": null
           },
           {
             "rank": 3,
-            "variant": "missense",
-            "partner": "intronA",
-            "epcr": 0.0,
-            "finding_type": "primary",
-            "label": "missense+intronA",
-            "notes": "",
-            "score": null,
+            "variant": "flg_stop",
+            "partner": null,
+            "epcr": 0.02498,
+            "finding_type": "secondary",
+            "label": "FLG stop_gained (secondary)",
+            "notes": "secondary | FLG stop_gained, het PASS DP 38 VAF 0.45, gnomAD 0.00302, ClinVar pathogenic;pathogenic/likely_pathogenic, rs138726443 | semi-dominant ichthyosis vulgaris / atopy risk allele; low clinical priority | epcr below every primary row, ordered by allele score; not scored",
+            "score": 0.05,
             "hypothesis": null
           },
           {
             "rank": 4,
-            "variant": "stop",
-            "partner": "intronB",
-            "epcr": 0.0,
-            "finding_type": "primary",
-            "label": "stop+intronB",
-            "notes": "",
-            "score": null,
-            "hypothesis": null
-          },
-          {
-            "rank": 5,
-            "variant": "missense",
-            "partner": "intronB",
-            "epcr": 0.0,
-            "finding_type": "primary",
-            "label": "missense+intronB",
-            "notes": "",
-            "score": null,
-            "hypothesis": null
-          },
-          {
-            "rank": 6,
-            "variant": "lztr1_stop",
-            "partner": null,
-            "epcr": 0.0,
-            "finding_type": "secondary",
-            "label": "LZTR1 stop_gained (secondary)",
-            "notes": "",
-            "score": null,
-            "hypothesis": null
-          },
-          {
-            "rank": 7,
             "variant": "f5_leiden",
             "partner": null,
-            "epcr": 0.0,
+            "epcr": 0.01499,
             "finding_type": "secondary",
             "label": "F5 Leiden (secondary)",
-            "notes": "",
-            "score": null,
-            "hypothesis": null
-          },
-          {
-            "rank": 8,
-            "variant": "flg_stop",
-            "partner": null,
-            "epcr": 0.0,
-            "finding_type": "secondary",
-            "label": "FLG stop_gained (secondary)",
-            "notes": "",
-            "score": null,
+            "notes": "secondary | F5 missense_variant, het PASS DP 54 VAF 0.50, gnomAD 0.0173, ClinVar pathogenic/pathogenic,_low_penetrance;drug_response;uncertain_significance;risk_factor;pathogenic, rs6025 | Factor V Leiden, low-penetrance venous thrombosis risk factor; relevant to peri-operative and oncology care | epcr below every primary row, ordered by allele score; not scored",
+            "score": 0.03,
             "hypothesis": null
           }
         ],
         "hypotheses": [
-          { "label": "stop+missense", "alleles": ["stop", "missense"] },
-          { "label": "stop+intronA", "alleles": ["stop", "intronA"] },
-          { "label": "stop+intronB", "alleles": ["stop", "intronB"] },
-          { "label": "missense+intronA", "alleles": ["missense", "intronA"] },
-          { "label": "missense+intronB", "alleles": ["missense", "intronB"] },
-          { "label": "stop+unseen", "alleles": ["stop", "_unknown_1"], "prior": 0.12 },
-          { "label": "missense+unseen", "alleles": ["missense", "_unknown_1"], "prior": 0.05 },
           {
-            "label": "neither (other gene)",
-            "alleles": ["_unknown_1", "_unknown_2"],
-            "prior": 0.05
+            "label": "stop+missense",
+            "alleles": ["stop", "missense"],
+            "prior": 1.0,
+            "prior_source": "row stop+missense"
           }
         ],
-        "derivation": null
+        "derivation": {
+          "anchor": {
+            "row": "stop+missense",
+            "hypothesis": "H009",
+            "confidence": 0.9993
+          },
+          "parameters": {
+            "epcr_digits": 4,
+            "secondary_share": 0.5
+          },
+          "alleles": {
+            "stop": {
+              "name": "stop",
+              "table": "results.coding_candidates",
+              "gene": "BUB1B",
+              "consequence": "stop_gained",
+              "impact": "HIGH",
+              "zygosity": "het",
+              "filter": "PASS",
+              "dp": 46,
+              "vaf": 0.5435,
+              "gnomad_af": 3.286e-5,
+              "clin_sig": "pathogenic;likely_pathogenic",
+              "rsid": "rs759242053",
+              "is_clinvar_plp": true,
+              "score": 1.0
+            },
+            "missense": {
+              "name": "missense",
+              "table": "results.coding_candidates",
+              "gene": "BUB1B",
+              "consequence": "missense_variant",
+              "impact": "MODERATE",
+              "zygosity": "het",
+              "filter": "PASS",
+              "dp": 28,
+              "vaf": 0.4643,
+              "gnomad_af": null,
+              "clin_sig": null,
+              "rsid": null,
+              "is_clinvar_plp": false,
+              "score": 0.3
+            },
+            "lztr1_stop": {
+              "name": "lztr1_stop",
+              "table": "results.coding_candidates",
+              "gene": "LZTR1",
+              "consequence": "stop_gained",
+              "impact": "HIGH",
+              "zygosity": "het",
+              "filter": "PASS",
+              "dp": 48,
+              "vaf": 0.5,
+              "gnomad_af": 1.369e-6,
+              "clin_sig": "pathogenic;likely_pathogenic",
+              "rsid": "rs1682503990",
+              "is_clinvar_plp": true,
+              "score": 1.0
+            },
+            "f5_leiden": {
+              "name": "f5_leiden",
+              "table": "results.coding_candidates",
+              "gene": "F5",
+              "consequence": "missense_variant",
+              "impact": "MODERATE",
+              "zygosity": "het",
+              "filter": "PASS",
+              "dp": 54,
+              "vaf": 0.5,
+              "gnomad_af": 0.0173,
+              "clin_sig": "pathogenic/pathogenic,_low_penetrance;drug_response;uncertain_significance;risk_factor;pathogenic",
+              "rsid": "rs6025",
+              "is_clinvar_plp": true,
+              "score": 0.03
+            },
+            "flg_stop": {
+              "name": "flg_stop",
+              "table": "results.coding_candidates",
+              "gene": "FLG",
+              "consequence": "stop_gained",
+              "impact": "HIGH",
+              "zygosity": "het",
+              "filter": "PASS",
+              "dp": 38,
+              "vaf": 0.4474,
+              "gnomad_af": 0.003018,
+              "clin_sig": "pathogenic;pathogenic/likely_pathogenic",
+              "rsid": "rs138726443",
+              "is_clinvar_plp": true,
+              "score": 0.05
+            }
+          },
+          "arithmetic": [
+            "anchor: row 'stop+missense' tests H009 — register suggested confidence 0.9993",
+            "stop+missense: pair score 1.3000",
+            "LZTR1 stop_gained (secondary): lowest primary 0.9993 x 0.5 x 1.0000 / 1.0000 = 0.4996",
+            "F5 Leiden (secondary): lowest primary 0.9993 x 0.5 x 0.0300 / 1.0000 = 0.01499",
+            "FLG stop_gained (secondary): lowest primary 0.9993 x 0.5 x 0.0500 / 1.0000 = 0.02498",
+            "prior stop+missense: (1 - 0.00) x 0.9993 / 0.9993 = 1.0"
+          ]
+        }
       },
       "methods_form": [
-        { "row": "7", "answer": "agharsallah" },
-        { "row": "8", "answer": "2" },
+        {
+          "row": "7",
+          "answer": "agharsallah"
+        },
+        {
+          "row": "8",
+          "answer": "2"
+        },
         {
           "row": "9",
-          "answer": "Panel-first, then genome-wide, then a designed submission. (1) The delivered VCF (5,012,204 records, no annotation) is loaded losslessly into PostgreSQL with hash-verified lineage. (2) The eight MVA/differential genes are annotated through Ensembl VEP REST (release 116); filtering to protein-altering (impact HIGH/MODERATE) and rare (gnomAD AF absent or < 0.01) leaves exactly two alleles, both in BUB1B, both heterozygous PASS. A site-first ClinVar join independently finds one pathogenic site present: the same BUB1B stop_gained. (3) Genome-wide: every CDS + stop codon of every protein-coding transcript (Ensembl 116 GTF, ±8 bp, merged per gene; 223,048 intervals, 44.6 Mb) is range-joined to the callset → 38,087 distinct coding alleles, all VEP-annotated (191 requests, checkpointed) → 875 rare protein-altering → 65 genes biallelic on PASS calls → exactly 1 with a ClinVar-pathogenic allele and a top-30 phenotype rank: BUB1B. (4) A panel-blind phenotype ranker (Exomiser's human-phenotype path re-implemented in Python over HPO release 2026-06-23, reading no DNA) ranks BUB1B 6/5,267 on the child's seven own terms; joined to the 65 biallelic genes it is first by a wide margin. (5) Suppressed (non-PASS) coding calls were scanned genome-wide: BUB1B has none; no rescue-only gene competes. (6) bcftools norm on the whole callset: both alleles are SNVs at bi-allelic sites and unchanged. (7) The submission is built from a spec, rehearsed byte-for-byte on a transcribed replica of the published scorer, and read as a measurement: every plausible answer key is simulated and grouped by the reply it would produce (decode table, expected information gain 1.46 bits). Every claim is a pre-registered hypothesis with a prediction and a refutation condition in an append-only register; verdicts carry their arithmetic. Full report and code: https://github.com/agharsallah/mva-hackathon (submissions/track1/iteration-1/)."
+          "answer": "Model 2 is the blind mirror of model 1: it rebuilds the answer from the raw reads, the VCF and the eight HPO terms with no candidate allele, gene or iteration-1 table allowed as an input until a final comparison step (a CI gate, tools/check_blind.py, enforces the declared inputs of every methodology entry). Six research steps, each with pre-registered hypotheses: (1) a symptom-only gene ranking (Exomiser's human-phenotype path re-implemented over HPO release 2026-06-23) produces a 404-gene target set in three tiers plus 396 length-matched decoy genes; its held-out recall@300 is measured on all 3,240 recessive diseases (0.335), so the set is treated as an enrichment, never as coverage. (2) A reference k-mer bait (every 31-mer of the 792 target and decoy genes, 2-bit packed, binary search behind a bitmap) selects from 1.07 billion reads the 14.7 million that touch those genes in one 50.8-minute server pass; minimap2 alignment; two small-variant callers with disjoint models (freebayes, bcftools call -m) and two structural-variant method classes (delly, dysgu); WhatsHap phasing; per-exon depth. Concordance with the vendor's genotypes is 0.9957 and 0.9927; 1,199 coding-adjacent alleles the vendor never reported are annotated. (3) An alignment-free, caller-free genotyper counts allele-specific k-mer pairs (381,510 probe pairs, 164,044 alleles) under a negative-binomial model fitted on 20,000 calibration markers, and a k-mer copy-number pass measures every target exon against a decoy null band. (4) A genome-wide likelihood-ratio ranking over every coding allele in the VCF with no hard filter: one calibrated lane per consequence class on the Tavtigian ACMG ladder (LOFTEE-style truncation rules, AlphaMissense, SpliceAI, ClinVar, gnomAD frequency, a non-PASS down-weight), a phenotype lane calibrated on step 1's own measured recall curve, and a STRING network lane for uncurated genes; 51,920 biallelic pair hypotheses over 11,465 genes, with two nulls (1,000-draw permutation of matched term sets; matched decoys through the same ratio) and a genotype-only ablation. (5) A knowledge engine over 815 genes (LitVar published alleles, PubTator gene-by-term co-mentions, UniProt/InterPro/AlphaFold domain and confidence for each missense) judged against a PubMed hit-count baseline and matched decoys. (6) Reciprocal rank fusion (k = 60, fixed) of the routes that pass an admission rule (separates targets from decoys and reorders a trivial baseline); the read route confirms at weight 0; the ranking is hashed before the comparison, then a separate tool reads the pair to look for from iteration 1's committed selector file. Step 8 bounds mosaic aneuploidy per chromosome with two instruments sharing nothing past the FASTQ. Full report and code: https://github.com/agharsallah/mva-hackathon (submissions/track1/iteration-2/)."
         },
         {
           "row": "10",
-          "answer": "Automated to the ranked gene table and the candidate pair (results.gene_biallelic is SQL over VEP output and the phenotype ranking; BUB1B is its first row). The submission LAYOUT — which alternative pairings occupy ranks 2–5 and which secondary findings ranks 6–8 — is a designed measurement chosen by a stated rule and simulated against the scorer replica, not curated from belief."
+          "answer": "Automated. The fused ranking and its rank-1 pair were produced and hashed (sha256 recorded in methodology entry 108) before any comparison with iteration 1 or with the confirmed answer. The submission file is built from coordinate-free selectors by tools: the rank-1 epcr is the register's suggested confidence for the anchor hypothesis, secondary rows sit below it by allele score, notes quote only columns of the warehouse table each allele was selected from, and the tool refuses a typed epcr, a typed note, or a digit inside a rationale. The submission layout (one primary pair, three secondary rows) follows a stated rule and was simulated against the scorer replica and the organisers' evaluation.py."
         },
         {
           "row": "11",
-          "answer": "None on the candidate itself. Manual steps: choosing the rarity cutoff (0.01, recessive) and the impact classes before any run; writing the hypothesis space and priors for the decode table (stated in the report); selecting secondary-finding rows by a fixed rule (ClinVar P/LP after excluding conflicting and benign-tagged records, gnomAD AF < 0.02, dominant or risk-factor genes). LLM assistance (Anthropic API, Claude) was used to write code and documentation; no LLM judged a variant."
+          "answer": "None on the candidate. Manual choices, all fixed before the runs and recorded in docs/iteration2/plan.md: the target-set cutoff (N = 300) and tiers; the fusion constant (k = 60) and the route-admission rule; the ACMG ladder values and the pre-registered cap of the AlphaMissense and SpliceAI lanes at 'moderate' (the mapping papers could not be fetched; the report names this the most load-bearing assumption); the secondary-finding rule (ClinVar P/LP after excluding conflicting and benign-tagged records, gnomAD AF < 0.02, dominant or risk-factor genes). Two planned instruments were cut and recorded (ESM1b, an LLM evidence tournament); four named tools had no arm64 build and were substituted with a recorded reason. LLM assistance (Anthropic API, Claude) was used to write code and documentation; no LLM judged a variant."
         },
-        { "row": "12", "answer": "Public data only." },
+        {
+          "row": "12",
+          "answer": "Public data only."
+        },
         {
           "row": "13",
-          "answer": "Ensembl release 116 gene models (GTF) and VEP REST (GRCh38) with gnomAD v4 genome/exome frequencies, ClinVar classifications, and the SpliceAI, AlphaMissense and CADD plugins for the two candidate alleles; ClinVar GRCh38 VCF (fileDate 2026-08-29) for the site-first join; gnomAD v4.1 constraint metrics; HPO release 2026-06-23 (hp.obo, genes_to_phenotype) for the phenotype ranking; UCSC hg38 analysis-set FASTA (chr prefix stripped) for normalization; PubMed (PMID 15475955, 20516114, 31184400, 18548531). Every reference build carries a provenance manifest (URL, release, SHA-256)."
+          "answer": "GRCh38 no-alt + hs38d1 reference (195 contigs) for the bait, probes and alignment; Ensembl release 116 gene models (GTF, coding regions) and VEP REST with gnomAD v4 frequencies, ClinVar classifications, AlphaMissense and SpliceAI; ClinVar GRCh38 VCF for the pathogenic/likely-pathogenic allele catalogue typed in step 3; gnomAD v2 co-occurrence for P(trans) (GRCh37, bridged by dbSNP id); HPO release 2026-06-23 (hp.obo, genes_to_phenotype); Phen2Gene and Monarch semsim REST as a second phenotype ranker; STRING v12 interaction partners (score >= 700); LitVar 2.0, PubTator 3.0, PubMed E-utilities; UniProt, InterPro, AlphaFold DB (per-residue pLDDT); UCSC cytobands for chromosome arms. Every reference build carries a provenance manifest (URL, release, SHA-256), and every derived table an edge in warehouse.data_lineage naming the delivered callset object and the clinical document by digest."
         },
-        { "row": "14", "answer": "None." },
+        {
+          "row": "14",
+          "answer": "None."
+        },
         {
           "row": "15",
-          "answer": "Pairs. Every primary row is a compound-heterozygous pair in one row (chrom_1/pos_1 + chrom_2/pos_2). The pipeline ranks genes by biallelic sets and the submission is built pair-first; single-variant rows are used only as secondary findings."
+          "answer": "Pairs. Step 4 enumerates biallelic hypotheses per gene (compound heterozygous pairs, homozygous alleles, and single alleles as a separate shape) and ranks the pair, not the variant; step 6 fuses at the pair level; the primary row holds both alleles (chrom_1/pos_1 + chrom_2/pos_2). The pair's phase could not be measured by the reads (no phase block reaches it) nor by population co-occurrence (undetermined); the trans configuration rests on the recessive model and on the oracle's reply to submission 1, and the report says so."
         },
         {
           "row": "16",
-          "answer": "Rows 6–8 are marked finding_type=secondary: a heterozygous LZTR1 stop_gained (ClinVar P/LP, gnomAD 1.4e-6; dominant schwannomatosis predisposition, unrelated to MVA), Factor V Leiden (F5, heterozygous, low-penetrance risk factor) and a heterozygous FLG stop_gained (ichthyosis vulgaris). Rule: ClinVar pathogenic/likely pathogenic after excluding conflicting and benign-tagged records, gnomAD AF < 0.02, dominant or risk-factor genes; recessive carrier states (GNRHR, CIAO1, ZFYVE26) are reported in the report but not submitted. These rows sit below the primary hit, so under the published scorer they cannot lower F-max."
+          "answer": "Three rows are marked finding_type=secondary, below the primary hit so they cannot lower F-max: a heterozygous LZTR1 stop_gained (ClinVar P/LP; dominant schwannomatosis predisposition, unrelated to MVA), a heterozygous FLG stop_gained (ClinVar P; ichthyosis vulgaris / atopy) and Factor V Leiden (F5, heterozygous, low-penetrance thrombosis risk factor). Rule: ClinVar pathogenic/likely pathogenic after excluding conflicting and benign-tagged records, gnomAD AF < 0.02, dominant or risk-factor genes; recessive carrier states are reported in iteration 1's report, not submitted. Iteration 2 also typed 88,754 ClinVar P/LP alleles alignment-free in the raw reads: 15 are present at heterozygous multiplicity across 14 genes, one of them the BUB1B stop; the others are listed in methodology entry 103 and were not promoted to rows, because four of the five confident ClinVar calls in target genes are an artefact of an over-tight fitted error rate (entry 096)."
         },
         {
           "row": "17",
-          "answer": "About one hour of wall clock on one laptop: coding-interval build 5 s; coding layer derivation ~17 min (pulling 5 M rows over the network); genome-wide VEP annotation ~33 min at 4 concurrent requests (free Ensembl REST); gene table 24 s; normalization 15 s; figures and submission build < 2 min. Cost: none beyond a small hosted PostgreSQL (~5 €/month). No alignment of the 160 Gb of reads was needed."
+          "answer": "Two read passes ran on a small Linux server holding the 272-shard read store: the bait sweep over 1,071,835,104 reads in 50.8 minutes (4.2 hours projected on the laptop), and the k-mer dosage tally over 32 of 272 shards (124.5 million reads) in 2,803.8 seconds. Everything else ran on one arm64 laptop (16 GiB): bait build 51 s; k-mer genotype counting 765 s and copy-number counting 512 s over the baited reads; the 1,000-draw permutation null 34 minutes; the 3,240-disease phenotype benchmark about 2 h 16 min on one core; 5,705 PubTator searches and the LitVar/UniProt/InterPro/AlphaFold fetches against free public APIs; the fusion, unblinding, submission build and figure rendering in minutes. Storage: a hosted PostgreSQL (about 1.5 GB) and an object store for the reads. Cost: no paid compute; a small hosted database (about 5 euro per month)."
         },
         {
           "row": "18",
-          "answer": "We identify the causal compound-heterozygous pair for a child with mosaic variegated aneuploidy as two BUB1B alleles: a stop_gained already classified pathogenic for MVA syndrome 1 in ClinVar (exon 17 of 23, gnomAD 3.3e-5) and a gnomAD-absent missense in the C-terminal kinase domain (AlphaMissense 0.92, CADD 24.5). Four instruments converge: a panel filter (VEP rarity × consequence leaves exactly these two alleles), a site-first ClinVar join (one pathogenic site present in the callset — the same stop), a genome-wide coding scan (38,087 annotated alleles, 65 biallelic genes, exactly one with a pathogenic allele and a top-30 phenotype rank), and a symptom-only ranking that never read the DNA (BUB1B 6th of 5,267). Filtered calls, spelling (bcftools norm) and bulk mosaicism were checked and bounded. The genotype matches the established MVA1 mechanism (one null allele plus one hypomorph leaving reduced BubR1; Hanks 2004, Suijkerbuijk 2010), and rhabdomyosarcoma is a reported MVA malignancy. Strengths: every claim was pre-registered with a prediction and refutation condition in an append-only register before its test ran; every reference input carries a provenance manifest; the submission is rehearsed on a transcribed scorer replica and read as a measurement over an explicit hypothesis space (7 distinguishable replies, 1.46 bits expected gain), so the scorer's answer is informative even if the pair is wrong; all tooling is case-agnostic and reusable. Limitations: the genome-wide scan is coding-only (CDS ± 8 bp, 1.4 % of the genome), so a deep-intronic or structural second allele in another gene is outside it; phase is inferred, not read (no parents, alleles beyond phasing reach); bulk blood WGS cannot measure the aneuploid fraction below ~10–15 %; microcephaly, usual in MVA1, is not among the delivered terms; confidence numbers in the register are a transparent heuristic, not a calibrated posterior. Runtime ~1 h on a laptop with free public APIs."
+          "answer": "We rebuilt, blind, the causal compound-heterozygous pair for a child with mosaic variegated aneuploidy (MVA), a chromosome-instability disorder, after the challenge scorer had confirmed iteration 1's answer (BUB1B stop_gained + BUB1B missense) with a full match at rank 1. The question: was the pipeline right, or lucky? Iteration 2 started from the raw reads, the VCF and the eight HPO terms with no iteration-1 candidate or table allowed as input until a final comparison, enforced by a CI gate over every methodology entry's declared inputs. Six pre-registered research steps: a symptom-only target set whose held-out recall@300 was measured (0.335, not the 0.90 predicted) so it is an enrichment, not coverage; a reference k-mer read bait recovering 14.7 M of 1.07 B reads in one 50.8-minute pass, two independent callers reproducing the vendor's genotypes at 99.57 % and 99.27 % and reporting 1,199 alleles the vendor never did; an alignment-free, caller-free k-mer genotyper and copy-number pass typing 164,044 alleles, which finds both lead alleles at one copy each (posterior 1.0) and every BUB1B exon at two copies; a genome-wide likelihood-ratio ranking with no hard filter over 51,920 biallelic hypotheses in 11,465 genes, where the pair leads at ratio 341,019 (runner-up 1.70x behind and phased cis) and targets separate from matched decoys at AUC 0.706 [0.655, 0.751]; a knowledge engine over 815 genes, measured weak (AUC 0.634, gene rank 293 of 815); and a reciprocal-rank fusion frozen by hash before unblinding. The same two alleles came out first under both weightings. Strengths: replication by disjoint instruments, each with a measured error rate; every claim filed before its test with a refutation condition (40 hypotheses across steps 1-6 and 8, 16 refuted and reported); matched decoy nulls throughout; case-agnostic tools (k-mer bait and counting kernel, negative-binomial k-mer genotyper, calibrated LR pair ranker, RRF fuser with leave-one-out and freeze receipt, blind gate); coordinate-free selectors, so the submission rebuilds anywhere without a committed position. A second instrument bounds the disease's defining feature: no chromosome in the sequenced sample carries a mosaic aneuploidy above 2-3 % of cells (allele balance, 80 % power on 24 of 24 contigs, where the earlier statistic had power on none) or 1.6 % (k-mer dosage, X and Y recovered at one copy as the control). Limitations: one route carried the rediscovery (silencing the likelihood ranker drops the pair to rank 62; the symptom route had it at 9; the literature never listed it); the rank-1 position depends on the clinical terms and on one calibration cap; phase is unmeasured by reads or population data and rests on the oracle's reply; the read route has no ranking power of its own (targets and decoys equal, p = 0.589); four planned tools had no arm64 build; the mosaic bound concerns the sequenced sample only, with focal events invisible by construction. A second upload gains 0.000 bits on every expressible question, so this file is built and rehearsed on two scorers but held in reserve; 5 of 6 uploads remain."
         }
       ],
       "contributions": [
         {
           "step": "iteration 1, step 6",
-          "contribution": "reply decoded, H009 supported, budget 1 of 6",
+          "contribution": "the reply that settled the pair; H009 supported; 1 of 6 spent",
           "methodology": [
             {
               "label": "083",
@@ -1189,12 +1321,188 @@
           ]
         },
         {
-          "step": "iteration 2 steps",
-          "contribution": "to be declared with the plan",
-          "methodology": []
+          "step": "1 blind target set",
+          "contribution": "404 targets in 3 tiers + 396 matched decoys; recall@300 measured at 0.335, so enrichment not coverage; 73.6 % of genes uncurated",
+          "methodology": [
+            {
+              "label": "084",
+              "path": "docs/iteration2/step-1/methodology/084-the-blind-target-set.md"
+            },
+            {
+              "label": "091",
+              "path": "docs/iteration2/step-1/methodology/091-recall-at-the-full-population.md"
+            }
+          ]
+        },
+        {
+          "step": "2 alleles from the reads",
+          "contribution": "k-mer bait over 1.07 B reads; two callers at 0.9957 / 0.9927 concordance; 1,199 vendor-unreported alleles; no SV in BUB1B; phase unreachable; read route has no ranking power (H020 refuted)",
+          "methodology": [
+            {
+              "label": "085",
+              "path": "docs/iteration2/step-2/methodology/085-the-bait-and-where-it-runs.md"
+            },
+            {
+              "label": "090",
+              "path": "docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md"
+            },
+            {
+              "label": "092",
+              "path": "docs/iteration2/step-2/methodology/092-depth-per-exon-and-the-phasing-drawn.md"
+            }
+          ]
+        },
+        {
+          "step": "3 alignment-free genotype + CN",
+          "contribution": "both lead alleles one copy each (posterior 1.0); every BUB1B exon at two copies; X at 0.95 as the control",
+          "methodology": [
+            {
+              "label": "093",
+              "path": "docs/iteration2/step-3/methodology/093-where-the-aligner-was-unsure.md"
+            },
+            {
+              "label": "095",
+              "path": "docs/iteration2/step-3/methodology/095-the-probes-and-the-counting-kernel.md"
+            },
+            {
+              "label": "097",
+              "path": "docs/iteration2/step-3/methodology/097-copy-number-without-an-aligner.md"
+            }
+          ]
+        },
+        {
+          "step": "4 likelihood-ratio ranking",
+          "contribution": "BUB1B first of 51,920 pairs in 11,465 genes with no filter; AUC 0.706; P(trans) undetermined",
+          "methodology": [
+            {
+              "label": "098",
+              "path": "docs/iteration2/step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md"
+            },
+            {
+              "label": "101",
+              "path": "docs/iteration2/step-4/methodology/101-the-phase-that-cannot-be-measured.md"
+            }
+          ]
+        },
+        {
+          "step": "5 knowledge engine",
+          "contribution": "AUC 0.634, not citation volume; the gene at rank 293 of 815; the missense outside every domain-typed entry",
+          "methodology": [
+            {
+              "label": "102",
+              "path": "docs/iteration2/step-5/methodology/102-the-sources-and-what-they-could-be-asked.md"
+            },
+            {
+              "label": "106",
+              "path": "docs/iteration2/step-5/methodology/106-where-the-missense-sits-in-the-protein.md"
+            }
+          ]
+        },
+        {
+          "step": "6 fusion + unblinding",
+          "contribution": "same pair first under both weightings; one route carries it; second upload 0.000 bits; this folder's file built and rehearsed",
+          "methodology": [
+            {
+              "label": "107",
+              "path": "docs/iteration2/step-6/methodology/107-the-routes-and-which-of-them-earned-a-rank.md"
+            },
+            {
+              "label": "109",
+              "path": "docs/iteration2/step-6/methodology/109-what-the-mirror-found.md"
+            },
+            {
+              "label": "124",
+              "path": "docs/iteration2/step-6/methodology/124-the-reserve-file-built-and-rehearsed.md"
+            }
+          ]
+        },
+        {
+          "step": "8 mosaic aneuploidy bound",
+          "contribution": "nothing above 2–3 % of cells on any autosome (allele balance) or 1.6 % (k-mer dosage); X and Y at one copy; both denominators agree",
+          "methodology": [
+            {
+              "label": "115",
+              "path": "docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md"
+            },
+            {
+              "label": "118",
+              "path": "docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md"
+            },
+            {
+              "label": "121",
+              "path": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md"
+            },
+            {
+              "label": "123",
+              "path": "docs/iteration2/step-8/methodology/123-the-denominator-that-assumes-nothing-read-back.md"
+            }
+          ]
+        },
+        {
+          "step": "7 Track 2",
+          "contribution": "consumes the facts above (card v4); does not test the pair; its own draft is ../../track2/iteration-2/",
+          "methodology": [
+            {
+              "label": "110",
+              "path": "docs/iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md"
+            },
+            {
+              "label": "114",
+              "path": "docs/iteration2/step-7/methodology/114-the-dashboard-surface-for-step-7.md"
+            },
+            {
+              "label": "120",
+              "path": "docs/iteration2/step-7/methodology/120-the-card-at-version-4-and-the-second-submission-draft.md"
+            }
+          ]
         }
       ],
-      "hypotheses": ["H009"],
+      "hypotheses": [
+        "H009",
+        "H012",
+        "H013",
+        "H014",
+        "H015",
+        "H016",
+        "H017",
+        "H018",
+        "H019",
+        "H020",
+        "H021",
+        "H022",
+        "H023",
+        "H024",
+        "H025",
+        "H026",
+        "H027",
+        "H028",
+        "H029",
+        "H030",
+        "H031",
+        "H032",
+        "H033",
+        "H034",
+        "H035",
+        "H036",
+        "H037",
+        "H038",
+        "H039",
+        "H040",
+        "H041",
+        "H042",
+        "H043",
+        "H044",
+        "H045",
+        "H050",
+        "H051",
+        "H052",
+        "H053",
+        "H054",
+        "H055",
+        "H056",
+        "H057",
+        "H061"
+      ],
       "figures": [
         {
           "slug": "track1-decode-table",
@@ -1214,11 +1522,11 @@
       ],
       "report": {
         "path": "submissions/track1/iteration-2/report.md",
-        "markdown": "# Track1 report — iteration 2\n\n**Standing:** draft, opened 2026-09-09. Iteration 1's report is frozen at\n[`../iteration-1/report.md`](../iteration-1/report.md); this one states what the oracle's\nreply (*full match at rank 1: stop+missense (100 rank points, F-max 1.0, threshold 0.9963)*) changed and carries the rest forward by link, not by copy.\n\n## 1. What the reply said, and what it rules out\n\n## 2. What changed in the analysis\n\n## 3. The submission, read as a measurement\n\n## 4. Limitations, stated\n\n## 5. Where every claim lives\n"
+        "markdown": "# Track 1 report, iteration 2 — the same pair, found again with the answer hidden\n\n**Standing:** the Track-1 replication report, written 2026-09-19 from executed runs. Every\nnumber below was produced by the methodology entry cited beside it\n(`docs/iteration2/step-<n>/methodology/`), and every claim is a pre-registered hypothesis in\nthe append-only register ([`science-register.json`](../../../docs/science-register.json),\nrendered at [`figures/science-report.html`](../../../figures/science-report.html)).\nSubmission 1 was uploaded on 2026-09-09 and answered *full match at rank 1, 100 rank points,\nF-max 1.0* ([083](../../../docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md)).\n**Submission 2 is built, rehearsed on two scorers and not uploaded**: it would teach nothing\n([124](../../../docs/iteration2/step-6/methodology/124-the-reserve-file-built-and-rehearsed.md)),\nso 5 of 6 uploads stay in reserve.\n\nWritten for a reader who knows software, not genetics. Each domain term is given as\n`technical term (plain meaning)` on first use; the full vocabulary is\n[`dictionary.md`](../../../docs/dictionary.md), served at `/learn` on the dashboard.\n\n---\n\n## 1. The answer in one paragraph\n\nThe child has **mosaic variegated aneuploidy (MVA)**: some of his cells carry the wrong\nnumber of chromosomes, because the checkpoint that holds a dividing cell until every\nchromosome is attached is weak. Iteration 1 found the cause top-down, from the vendor's\nvariant calls: two different broken copies of **BUB1B**, the gene for that checkpoint's\nprotein BubR1, one copy from each parent (a **compound heterozygote**) — a **stop-gain**\nallele (a premature full stop, already classified pathogenic for MVA syndrome 1) and a\n**missense** allele (one amino acid swapped) that no population database has seen. The\nchallenge's answer key confirmed that pair at rank 1. Iteration 2 asked a harder question:\n**would we have found it without knowing it?** It started again from the raw reads, the\ncallset and the eight clinical terms, under a **blind protocol** (no iteration-1 candidate,\ngene or table allowed as an input), by routes that share no code with iteration 1 — a\nsymptom-only gene ranking, a k-mer read bait with two independent callers, an\nalignment-free genotyper, a genome-wide likelihood-ratio ranking with no hard filter, and a\npublic-knowledge engine — fused them, froze the ranking, and only then looked. **The same\ntwo BUB1B alleles came out first, under both weightings**\n([109](../../../docs/iteration2/step-6/methodology/109-what-the-mirror-found.md)). The\nhonest second half: one route found it, two corroborated it at a distance, one instrument\nconfirmed it in the raw reads, and the literature never listed it. A second instrument then\nset the first real bound on the disease's defining feature: no chromosome in the sequenced\nsample carries a mosaic aneuploidy above 2–3 % of cells, where the earlier statistic had no\npower at all ([116](../../../docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md)).\n\n```mermaid\nflowchart LR\n  H[/\"8 HPO terms\"/]:::raw\n  R[/\"1.07 B raw reads<br/>(FASTQ)\"/]:::raw\n  V[/\"5.0 M callset records<br/>(VCF)\"/]:::raw\n  L[/\"public knowledge<br/>HPO · ClinVar · gnomAD · PubMed · AlphaFold\"/]:::raw\n  H --> S1[\"<b>step 1</b> blind target set<br/>404 genes, DNA never read<br/>recall@300 = 0.335\"]:::machine\n  S1 --> S2[\"<b>step 2</b> alleles from the reads<br/>k-mer bait · 2 callers · SV · phase<br/>1,199 vendor-unreported alleles\"]:::machine\n  R --> S2\n  S2 --> S3[\"<b>step 3</b> k-mer genotype + copy number<br/>no aligner, no caller<br/>both lead alleles one copy each\"]:::machine\n  V --> S4[\"<b>step 4</b> likelihood-ratio ranking<br/>51,920 pairs · 11,465 genes · no filter<br/>BUB1B first, ratio 341,019\"]:::good\n  H --> S4\n  L --> S5[\"<b>step 5</b> knowledge engine<br/>815 genes · LitVar · PubTator · InterPro<br/>BUB1B rank 293\"]:::machine\n  S3 -.->|\"confirmation, weight 0\"| S6\n  S4 --> S6{{\"<b>step 6</b> fuse · freeze · unblind<br/>same pair first?\"}}:::decide\n  S5 --> S6\n  S1 --> S6\n  S6 -->|\"yes, both weightings\"| REP[\"this report<br/>+ reserve file, not uploaded<br/>expected gain 0.000 bits\"]:::good\n  R & V --> S8[\"<b>step 8</b> mosaic aneuploidy bound<br/>2 instruments · floor 2–3 % of cells\"]:::machine\n  S8 -.-> REP\n  classDef raw fill:#f3e8ff,stroke:#7e22ce,color:#581c87\n  classDef machine fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a\n  classDef decide fill:#fef9c3,stroke:#ca8a04,color:#713f12\n  classDef good fill:#dcfce7,stroke:#15803d,color:#14532d\n```\n\n> **Legend** — **purple = raw input** (what the challenge delivered); **blue = machinery**\n> (one research step each); **yellow = the decision point** (the unblinding);\n> **green = the goal** (the one route with discriminating power, and the report). Dotted\n> arrows are evidence that confirms but does not rank.\n\n---\n\n## 2. What the reply said, and what iteration 2 is for\n\nThe scorer's reply to submission 1 — `full_match_rank 1`, `rank_points 100`, `f_max 1.0` at\nthreshold 0.9963 — matched row 1 of iteration 1's pre-registered **decode table** (the\nlookup, built before the upload, that translates every possible reply into \"which rows held\nthe true alleles\"). Survivors: `stop+missense` only. The seven alternative answer keys were\neliminated in one upload; hypothesis H009 went to `supported`\n([083](../../../docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md)).\n\nNothing is left to *find* for the automated score. What is left is the question the\nautomated score cannot ask: **is the pipeline right, or was it lucky?** Iteration 1 trusted\nthe vendor's caller, applied hard filters (rarity, consequence) and checked that four\ninstruments agreed. Each of those choices could have been the reason the pair surfaced. So\niteration 2 is iteration 1's **mirror**, run **blind** ([plan §1](../../../docs/iteration2/plan.md)):\n\n| Allowed as input | Not allowed until step 6 |\n|---|---|\n| the 8 HPO terms; the FASTQ; the VCF; public knowledge (HPO, Ensembl, gnomAD, ClinVar, PubMed, protein models) | the identity of the two iteration-1 alleles; the gene name as a filter; iteration 1's decode table, verdicts and figures |\n| the step-0 platform (read store, warehouse, annotator, register, scorer replica) | any `results.*` table iteration 1 derived that encodes the candidate — iteration 2 re-derives its own under `results.it2_*` |\n\nThe gene is written all over this repository, so the blinding is a **procedural rule, not a\nsecret**: every methodology entry declares its inputs, and `tools/check_blind.py` (a CI gate)\nrefuses an entry that names an iteration-1 candidate table before entry 109. Software\nanalogy: not a sandbox, but a code review that rejects a forbidden import. The gate's current\nstate: *38 iteration-2 entries, every one declaring its inputs — unblinded by 109*.\n\nA pair rediscovered from scratch by a disjoint route is the strongest replication a single\nsample allows, and it is what makes the tooling transferable to a case with **no answer key**.\n\n---\n\n## 3. The clinical picture, and how both inputs were used\n\nThe challenge delivered eight **HPO terms** (Human Phenotype Ontology — a controlled\nvocabulary of clinical features, each with an id) and no karyotype:\n\n| Feature | HPO id | Where iteration 2 used it |\n|---|---|---|\n| Rhabdomyosarcoma (a childhood muscle-tissue cancer) | HP:0002859 | step 1 ranking; step 5 case-report search; Track 2 direction D4 |\n| Nephrocalcinosis | HP:0000121 | step 1; step 5 |\n| Short stature | HP:0004322 | step 1; step 5 |\n| Failure to thrive | HP:0001508 | step 1; step 5 |\n| Skeletal muscle atrophy | HP:0003202 | step 1; step 5 |\n| Premature birth | HP:0001622 | step 1; step 5 |\n| Small for gestational age | HP:0001518 | step 1; step 5 |\n| Recurrent spontaneous abortion (**parental** history) | HP:0200067 | step 1's `with-parental` query only; the recessive-with-lethality prior in step 4 |\n\nEvery step states which input it read. Step 1 read the clinical terms and **no DNA**. Steps 2\nand 3 read the raw reads over a gene set that exists only because of the clinical terms.\nStep 4 read the VCF and the terms together, and its ablation says exactly what the terms\nadded (§4.4). Step 5 read public knowledge against the seven proband terms. Step 8 read both\nraw inputs and the clinical document, and found in it no karyotype and no term a blood\naneuploid fraction would predict\n([115](../../../docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md)).\nThe warehouse's `data_lineage` table carries an edge from every derived table to both the\ndelivered callset object and the clinical document by digest, and the submission's own three\nedges were appended by the resolver ([124](../../../docs/iteration2/step-6/methodology/124-the-reserve-file-built-and-rehearsed.md)).\n\n---\n\n## 4. The mirror, step by step\n\nEach step declared one goal in `src/mva/science/steps.py`, filed its hypotheses with a\nprediction and a refutation condition **before** running, and closed only when every\nhypothesis had a verdict. Refutations are reported with the same weight as supports: they are\nthe half that changed the plan.\n\n### 4.1 Step 1 — which genes do the symptoms alone nominate? (entries 084, 091)\n\nA phenotype ranker (Exomiser's human-phenotype path, re-implemented in Python over HPO\nrelease 2026-06-23) scored 5,267 genes on the child's terms. Fixing N = 300 in advance would\nhave been the usual move; step 1 **measured** it first, on a held-out benchmark of every\nrecessive disease in the ontology with degraded query terms.\n\n| Measured | Value | Entry |\n|---|---|---|\n| target set | **404** genes in three tiers — `core` 62, `net` 272, `mechanism-term` 70 — plus **396** matched decoys (same length distribution, seed fixed) | [084](../../../docs/iteration2/step-1/methodology/084-the-blind-target-set.md) |\n| held-out recall@300, full population of 3,240 diseases | **0.335** [0.318, 0.350]; recall@1000 0.508; **27.8 %** of held-out genes unrankable at any N | [091](../../../docs/iteration2/step-1/methodology/091-recall-at-the-full-population.md) |\n| protein-coding genes with **no** HPO curation | **14,523 of 19,723 (73.6 %)** | [084](../../../docs/iteration2/step-1/methodology/084-the-blind-target-set.md) |\n| agreement with a second ranker (Phen2Gene) in the top 300 | **97 of 300 (32.3 %)** | [084](../../../docs/iteration2/step-1/methodology/084-the-blind-target-set.md) |\n\n![How often the symptom ranker finds the causal gene](../../../figures/track1/iteration2/step-1/recall-at-n.png)\n\n> **Legend** — **blue line** = measured recall with its 95 % bootstrap band, on the\n> 200-disease sample of entry 084; **green dashed** = the 0.90 H012 predicted; **red cross** =\n> the chosen N. The full-population number quoted above (0.335, entry 091) sits inside this\n> band. An internal consistency check, not an external validation: ground truth and scoring\n> database share curators.\n\nVerdicts: **H012 refuted** (recall ≥ 0.90; measured 0.335), **H014 refuted** (rankers agree\n≥ 50 %), **H015 refuted** (< 20 % uncurated; measured 73.6 %), **H013 supported** (a\nrecessive chromosome-instability gene is in the set — 33 are; a sanity check, since the\nmechanism-term tier guarantees a seat). Consequence, recorded in\n[plan §11](../../../docs/iteration2/plan.md): the target set is an **enrichment, never\ncoverage**; \"absent from the target set\" excludes nothing; the genome-wide route (step 4)\nbecomes the primary discriminator.\n\n### 4.2 Step 2 — which alleles do the raw reads carry? (entries 085–090, 092)\n\nThe **read route** never touches the vendor's caller. A **k-mer bait** (every 31-letter\nwindow of the 792 target and decoy genes, packed into 2 bits per base and searched by binary\nsearch behind a bitmap prefilter — the new leaf package `mva.kmer`) selected from 1.07\nbillion reads the ones that touch those genes; those were aligned and called by two callers\nwith disjoint models, and structural variants (large deletions, duplications, inversions)\nwere called by two method classes.\n\n```mermaid\nflowchart LR\n  A[/\"1,071,835,104 reads\"/]:::raw --> B[\"bait: 39.5 M canonical 31-mers<br/>1.361 % of the genome\"]:::machine\n  B --> C[\"14,657,560 matched (1.36752 %)<br/>7,886,613 complete fragments\"]:::machine\n  C --> D[\"aligned: 98.87 % mapped<br/>median depth 44.08×\"]:::machine\n  D --> E[\"131,530 alleles<br/>freebayes + bcftools\"]:::machine\n  D --> F[\"164 consensus SVs<br/>delly + dysgu\"]:::machine\n  D --> G[\"6,823 phase blocks\"]:::machine\n  E --> H[\"1,199 alleles the vendor never reported<br/>all VEP-annotated\"]:::good\n  F --> I[\"none in BUB1B\"]:::good\n  G --> J[\"none reaches BUB1B's coding span\"]:::bad\n  classDef raw fill:#f3e8ff,stroke:#7e22ce,color:#581c87\n  classDef machine fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a\n  classDef good fill:#dcfce7,stroke:#15803d,color:#14532d\n  classDef bad fill:#fee2e2,stroke:#b91c1c,color:#7f1d1d\n```\n\n> **Legend** — **purple = raw input**; **blue = one stage each**; **green = what the route\n> added**; **red = what it could not measure** (phase). Numbers from entries 087, 088, 090, 092.\n\n| Measured | Value | Entry |\n|---|---|---|\n| reads recovered against bait share of genome | **1.36752 %** vs **1.361 %** — the bait is not enriched for anything but its own size | [087](../../../docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md) |\n| bait recall on reads carrying a known allele | **0.9052** [0.815, 0.974] | [087](../../../docs/iteration2/step-2/methodology/087-the-pass-and-what-it-recovered.md) |\n| concordance with the vendor's genotypes, substitutions only | `bcftools call` **0.9957** (45,316 / 45,512); freebayes **0.9927** (43,322 / 43,639) | [088](../../../docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md) |\n| alleles in or beside a coding exon the vendor never reported | **1,199**, all annotated | [090](../../../docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md) |\n| target vs decoy genes with a rare, protein-altering biallelic candidate, **novel alleles scored** | **10 / 396 vs 10 / 396**, Fisher one-sided p = **0.589** | [090](../../../docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md) |\n| the same, with **no** rarity or consequence filter | decoys **57.3 %** vs targets **51.0 %** — the decoys win | [088](../../../docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md) |\n| the lead pair's phase | **unmeasurable**: 10,911 bp apart, 4 heterozygous sites between, ~266 bp fragments, at 43.7× | [088](../../../docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md), [092](../../../docs/iteration2/step-2/methodology/092-depth-per-exon-and-the-phasing-drawn.md) |\n| cost of the bait per read across a 36,000-fold bait-size range | **1.05×** — bound by bytes of sequence, not bait size | [089](../../../docs/iteration2/step-2/methodology/089-the-instruments-and-the-gate-that-was-skipped.md) |\n\n![The filter discriminates, not the gene list](../../../figures/track1/iteration2/step-2/filter-not-genelist.png)\n\n> **Legend** — **green = target genes**, **red = matched decoys**; left, no filter; right, the\n> rarity + consequence filter with every read-derived allele scored. The bars are equal on\n> the right: the symptom-derived list carries no signal of its own.\n\n**The finding that re-weighted the whole iteration.** H020 predicted the target genes would\ncarry biallelic candidates more often than random decoys. Its first reading (targets 4,\ndecoys 2) was an **artefact**: the scoring query judged an allele by joining an annotation\ntable built from the delivered callset, so an allele only the read callers saw could not be\nscored at all — a route built to find what the vendor missed could only rediscover what the\nvendor found. Scoring the 1,199 novel alleles too made the rates **exactly equal**. H020 is\n**refuted** on its pre-registered condition and its consequence applies: the read route\nenters the fusion as a **confirmation route at weight 0** — it says whether an allele is real,\none copy, and not deleted; it never ranks. The discriminating power lives in the **filter**,\nnot in the **gene list**.\n\n![Where the phase blocks stop](../../../figures/track1/iteration2/step-2/phase-bub1b.svg)\n\n> **Legend** — the BUB1B exon rule with the heterozygous sites the reads carry and the\n> read-backed **phase blocks** (stretches where the reads themselves say which alleles sit\n> on the same chromosome copy). No block bridges the two lead alleles: **red = the unphased\n> span**. This is a property of short-read fragments, not of depth; no deeper pass fixes it.\n\nVerdicts: **H016, H019, H021, H022 supported**; **H020, H023 refuted** (two structural\nvariants over an exon of a rare-allele gene were found, `NLRP7` net-tier and `OBSCN` decoy,\nboth weak leads); **H017, H018 superseded** by H022/H023 because DeepVariant, Manta, LUMPY and\nGRIDSS have no arm64 build on this machine ([089](../../../docs/iteration2/step-2/methodology/089-the-instruments-and-the-gate-that-was-skipped.md)).\nThe off-target bait gate (< 5 %) was **not reached** at any parameter — 8.79 % measured,\n8.38–10.25 % across padding and k ([086](../../../docs/iteration2/step-2/methodology/086-can-the-off-target-gate-be-reached.md));\nit was mis-specified, and a per-gene bait-density gate replaced it.\n\n### 4.3 Step 3 — genotype and copy number without an aligner (entries 093, 095–097)\n\nA third instrument re-typed every allele the read route found — plus every ClinVar\npathogenic allele in the target genes and 20,000 calibration markers — by counting the two\n31-mers that differ only at the allele, straight from the baited reads: **no aligner, no\ncaller**. A negative-binomial model (counts are over-dispersed; Poisson would be ~3× overconfident)\nfitted on the calibration markers turned counts into genotype posteriors.\n\n| Measured | Value | Entry |\n|---|---|---|\n| alleles typed / probe pairs kept | **164,044** / **381,510** of 439,851 designed (37,306 dropped because the alternate k-mer exists elsewhere in GRCh38) | [095](../../../docs/iteration2/step-3/methodology/095-the-probes-and-the-counting-kernel.md) |\n| fitted per-copy coverage | **17.96** → 35.93× diploid, against **35.2×** predicted from read length alone | [096](../../../docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md) |\n| **the two lead alleles** | both **heterozygous at posterior 1.0**, ref/alt counts **11/12** and **18/16**, 3 of 3 probes agreeing each | [096](../../../docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md) |\n| vendor-reported alleles confirmed vs vendor-unreported | **96.1 %** (645/671) vs **35.3 %** (140/397) | [096](../../../docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md) |\n| copy number, 1,430 regions | median **2.00** autosomal, **0.95** on X (the proband is male — the model was not told); null band **[1.028, 2.823]**; no BUB1B exon below it | [097](../../../docs/iteration2/step-3/methodology/097-copy-number-without-an-aligner.md) |\n\n![Vendor-reported versus vendor-unreported alleles, confirmed alignment-free](../../../figures/track1/iteration2/step-3/confirmation.png)\n\n> **Legend** — **green = confirmed**, **red = contradicted**, **grey = no call**; by tier and\n> by whether the vendor's caller had reported the allele. The 1,199 novel alleles are an\n> **upper bound** with a measured error rate, not a caveat.\n\nVerdicts: **H028 supported** (one copy each; 0.85), **H025 supported** (a ClinVar pathogenic\nallele present at heterozygous multiplicity — the BUB1B stop; four other \"confirmed\" ClinVar\nalleles are an artefact of an over-tight error rate and are said to be), **H024, H026, H027,\nH029 refuted**. H026's refutation surfaced one candidate autosomal exon loss unrelated to the\npair — `BRD4` exon 7 at CN 0.85, net tier — flagged, not claimed. **One-copy dosage is not\nphase evidence**; the entry says so.\n\n### 4.4 Step 4 — the genome-wide ranking with no hard filter (entries 098–101)\n\nThe one route with measured discriminating power. Every coding allele in the VCF — **all\n38,087 of them, every FILTER value kept** — gets a **likelihood ratio** (how many times more\nlikely the observation is if the allele is causal; a filter says in-or-out, a ratio says\n*×4.33*, and nothing is ever removed). One calibrated lane per consequence class (LOFTEE-style\nrules for truncating alleles, AlphaMissense for missense, SpliceAI for the splice window,\nClinVar, gnomAD frequency, a non-PASS down-weight of ⅓) on the Tavtigian ACMG ladder;\na phenotype lane calibrated on step 1's **own measured recall curve** (66.96× at rank 1 down\nto 0.379× for an unranked gene); a STRING network lane, capped at \"supporting\", for the 72 %\nof genes with no curation. Pairs, not genes, are the unit.\n\n| Measured | Value | Entry |\n|---|---|---|\n| biallelic hypotheses / genes | **51,920** over **11,465** — 35,120 compound, 14,130 homozygous, 2,670 single | [099](../../../docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md) |\n| leader | **BUB1B** stop + missense, ratio **341,019** | [099](../../../docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md) |\n| runner-up | `ADAMTS1`, ratio 201,029, **1.70×** behind — and phased **cis** by the caller's own physical phasing, so not a compound heterozygote | [099](../../../docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md) |\n| target vs matched-decoy separation | AUC **0.706** [0.655, 0.751] | [100](../../../docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md) |\n| permutation null (1,000 term sets matched to the child's) | **55 / 1,000** reach the observed leader, p = **0.056** — near-degenerate: only 4 genes in the callset can ever exceed it | [100](../../../docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md) |\n| DNA alone (phenotype lane silenced) | BUB1B **joint third**, ratio 6,548, behind `ADAMTS1` and `HLA-DRB1` | [100](../../../docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md) |\n| P(trans) from population co-occurrence | **undetermined** — 5 of 50 leading alleles reach gnomAD v2; reported at the uninformative 0.5 | [101](../../../docs/iteration2/step-4/methodology/101-the-phase-that-cannot-be-measured.md) |\n\n![The whole ordering, 51,920 hypotheses](../../../figures/track1/iteration2/step-4/leaders.png)\n\n> **Legend** — **green = a step-1 target gene**, **red = a matched decoy**, **purple = an\n> uncurated gene**, log scale. The leader stands 1.70× clear of a runner-up that is not a\n> compound heterozygote at all.\n\n![What carries the leader, lane by lane](../../../figures/track1/iteration2/step-4/decomposition.png)\n\n> **Legend** — the BUB1B pair's likelihood ratio decomposed into its lanes: **blue = genotype\n> lanes**, **green = the phenotype lane**. The symptom route does the work of moving it from\n> joint third to first.\n\nVerdicts: **H030, H034, H035 supported**; **H031 refuted** (runner-up ≥ 10× behind: 1.70×),\n**H032 refuted** (an uncurated gene reached the top 20 — through the unranked-phenotype\nbucket, not the network lane), **H033 refuted** (p < 0.001 predicted; 0.056 measured). The\nstep names its single most load-bearing assumption: the AlphaMissense and SpliceAI ACMG\nmappings could not be fetched and were **capped at *moderate***; lowering the cap to\n*supporting* flips the lead to `ADAMTS1` ([098](../../../docs/iteration2/step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md)).\n\n### 4.5 Step 5 — does public knowledge nominate a pair? (entries 102–106)\n\nAgainst 815 genes (404 targets, 396 decoys, step 4's top 20): LitVar for published alleles,\nPubTator for papers co-mentioning a gene and each of the seven proband terms (5,705\nsearches), UniProt → InterPro → AlphaFold for where a missense sits in its protein, and\nPubMed hit counts as the **baseline the engine must beat**. Two planned items were cut and\nrecorded: ESM1b (needs `torch`; AlphaMissense already covers every allele) and the LLM\nevidence tournament (the plan's own first cut).\n\n| Measured | Value | Entry |\n|---|---|---|\n| askable alleles with ≥ 1 publication | **1,821 of 1,914 (95.1 %)** — near saturation, orders almost nothing | [103](../../../docs/iteration2/step-5/methodology/103-the-alleles-somebody-already-published.md) |\n| ClinVar pathogenic alleles the child carries, typed in the raw reads | **15** across 14 genes, one of them the BUB1B stop | [103](../../../docs/iteration2/step-5/methodology/103-the-alleles-somebody-already-published.md) |\n| target vs matched-decoy separation | AUC **0.634** [0.593, 0.672] — below step 4's 0.706 on the same gene sets | [105](../../../docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md) |\n| against citation volume | Spearman ρ = **0.024**, top-5 overlap **0 of 5** | [105](../../../docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md) |\n| where BUB1B ranks by knowledge | **293 of 815**; the route's own top two genes are decoys, 10 of its top 25 are | [105](../../../docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md) |\n| the missense, in the protein | **95.4 %** along the chain, **outside every InterPro domain-typed entry**, AlphaFold pLDDT **91.06** (confidently modelled), AlphaMissense *likely_pathogenic* | [106](../../../docs/iteration2/step-5/methodology/106-where-the-missense-sits-in-the-protein.md) |\n| best case report found blind for the leading gene | PMID 35804254 (MVA1 with a novel BUB1B variant), 3 of 7 terms — below H037's 5-term bar | [104](../../../docs/iteration2/step-5/methodology/104-the-papers-the-script-found.md) |\n\n![Knowledge separates targets from decoys, weakly](../../../figures/track1/iteration2/step-5/separation.png)\n\n> **Legend** — **green = targets**, **red = matched decoys**, the bootstrap band on the AUC.\n> Length-matched decoys are essential: unmatched controls would measure gene size, not knowledge.\n\n![Where the missense sits in BubR1](../../../figures/track1/iteration2/step-5/domains.png)\n\n> **Legend** — **blue = InterPro domain-typed entries**, **purple = the family-level entry\n> spanning the chain**, **red marker = the missense**, shading = AlphaFold confidence. The\n> residue is past the kinase domain, in a confidently modelled stretch.\n\nVerdicts: **H036, H038, H039 supported**; **H037 refuted** (a ≥ 5-term case report names a\ntop-20 gene — the threshold selects surveys and guidelines, not case reports; no post-hoc fix\nwas applied), **H040 refuted** (the missense is not in a domain-typed entry). The knowledge\nroute is **corroborating, not discovery-grade**, and enters the fusion with that weight.\n\n### 4.6 Step 6 — fuse, freeze, unblind (entries 107–109, 124)\n\nThree routes earned a vote by a rule fixed beforehand — a route ranks only if it separates\ntargets from decoys **and** reorders a trivial baseline: `phenotype` (step 1), `likelihood`\n(step 4), `knowledge` (step 5). The read route (steps 2–3) confirms at **weight 0**.\n**Reciprocal rank fusion** (add `w / (k + rank)` from each list, k = 60 fixed in advance,\nabsent = rank 51, never 0) over each route's top 50 gave 274 fused pairs. The ranking was\nwritten and **hashed before the comparison** — sha256 `a596abf8…`\n([108](../../../docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md)).\nOnly then did `tools/unblind_it2.py` read the pair to look for **from the committed\niteration-1 selector file**, never by searching the ranking for a good answer.\n\n| Measured | Value | Entry |\n|---|---|---|\n| fused rank 1, equal weights | **the BUB1B stop + missense pair** | [108](../../../docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md) |\n| fused rank 1, measured-error-rate weights (phenotype 0.3346, likelihood 0.9441, knowledge 0.6337) | **the same pair**; `ADAMTS1` rises to 2, `CLCNKB` falls 2 → 49 | [108](../../../docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md) |\n| the pair's rank on each route | likelihood **1** · phenotype **9** · knowledge **not listed** | [109](../../../docs/iteration2/step-6/methodology/109-what-the-mirror-found.md) |\n| leave-one-route-out | without `likelihood` → rank **62**; without `phenotype` → 1 (tied with decoy `DDX11`); without `knowledge` → 1 | [108](../../../docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md) |\n| disjoint inputs behind the leader | **3 of 4** — HPO, VCF, reads; the literature is missing | [108](../../../docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md) |\n| what fills ranks 2–20 | `CLCNKB`, 11 pairs (ranks 2–12); `DDX11`, a **decoy**, 8 pairs (13–20) — three genes, not twenty candidates | [108](../../../docs/iteration2/step-6/methodology/108-the-ranking-frozen-before-anyone-looked.md) |\n| expected information gain of a second upload | **0.000 bits** on every expressible question | [109](../../../docs/iteration2/step-6/methodology/109-what-the-mirror-found.md), [124](../../../docs/iteration2/step-6/methodology/124-the-reserve-file-built-and-rehearsed.md) |\n\n![Silence one route at a time](../../../figures/track1/iteration2/step-6/leave-one-route-out.png)\n\n> **Legend** — the leader's fused rank with each route removed. **Green = still first**;\n> **red = falls to 62** when the likelihood route is silenced. The fusion was never a consensus.\n\n![How many independent inputs stand behind each leading pair](../../../figures/track1/iteration2/step-6/independent-evidence.png)\n\n> **Legend** — one segment per disjoint input (**HPO, VCF, reads, literature**); the BUB1B\n> pair's literature segment is empty. `CLCNKB` scores 4 of 4 on this count and is still not\n> the answer — a count of inputs is not a rank.\n\nVerdicts: **H043 supported** (≥ 2 disjoint inputs; 0.80), **H044 supported** (a second upload\nis not informative; 0.90, re-tested on the built file in 124), **H041 refuted** (rank 1 *and*\nno route below rank 3 — two routes were), **H042 refuted** (no single route carries the\nresult — the likelihood route does). Decision-table row 1 fires: **a replication report, and\nno upload**. The plan's fourth row — a second pair with comparable posterior — is *live in\nfact* (`ADAMTS1`, 1.70× behind) and *closed by the instrument*: the answer key holds one or two\nalleles, so \"both\" is not a reply this oracle can give.\n\n---\n\n## 5. The two alleles, re-measured by iteration 2\n\nIteration 1 characterised the pair from annotations. Iteration 2 measured it, by instruments\nthat did not know which pair they were measuring. The Track 2 mechanism card (version 4)\ncarries these as facts F1–F9; the primary sources are the Track 1 entries below.\n\n| Fact | Iteration 2's measurement | Entry |\n|---|---|---|\n| both alleles present, one copy each | heterozygous at posterior 1.0 in the raw reads, alignment-free; a **null + hypomorph** genotype, so some BubR1 is made | [096](../../../docs/iteration2/step-3/methodology/096-the-alleles-at-their-multiplicity.md) |\n| no hidden third allele | every BUB1B exon region at two copies; no consensus structural variant in the gene | [097](../../../docs/iteration2/step-3/methodology/097-copy-number-without-an-aligner.md), [088](../../../docs/iteration2/step-2/methodology/088-the-alleles-the-reads-carry.md) |\n| the missense is damaging | AlphaMissense *likely_pathogenic*, lane contribution 4.33 (capped at moderate); the pair leads 51,920 hypotheses with no filter | [099](../../../docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md) |\n| where the missense sits | past every domain-typed entry, 95.4 % along the chain, confidently modelled (pLDDT 91.06) — dosage, not folding, is the argued mechanism | [106](../../../docs/iteration2/step-5/methodology/106-where-the-missense-sits-in-the-protein.md) |\n| **phase** (one allele per parental copy) | **unmeasured**: no read-backed phase block reaches the pair; population co-occurrence undetermined. *Trans* is the **oracle's** statement, not a read measurement | [092](../../../docs/iteration2/step-2/methodology/092-depth-per-exon-and-the-phasing-drawn.md), [101](../../../docs/iteration2/step-4/methodology/101-the-phase-that-cannot-be-measured.md), [083](../../../docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md) |\n| the literature | the gene ranks 293 of 815 by public knowledge; the blind script still found a citable MVA1 case report for it | [105](../../../docs/iteration2/step-5/methodology/105-does-the-literature-beat-a-hit-count.md), [104](../../../docs/iteration2/step-5/methodology/104-the-papers-the-script-found.md) |\n\n---\n\n## 6. Step 8 — the disease's defining feature, bounded (entries 115–118, 121, 123)\n\nMVA means some cells have the wrong chromosome count. Iteration 1's karyogram (entry 037)\nsaid every autosome looked flat. Step 8 asked what that was worth — and found the statistic\nhad **no power**: a mosaic gain splits heterozygous sites into two bands symmetric about the\ncentre, so their plain mean does not move. Folding the bands first (**B-deviation**,\n`|BAF − centre|` averaged *after* taking the distance) does.\n\n```mermaid\nflowchart LR\n  V[/\"5,012,204 VCF records\"/]:::raw --> A[\"route A · allele balance<br/>127,913 site statistics<br/>fold-over B-deviation, beta-binomial null\"]:::machine\n  R[/\"272 read shards\"/]:::raw --> B[\"route B · k-mer dosage<br/>193,029 genome-unique 31-mers<br/>32 shards, 124.5 M reads\"]:::machine\n  A --> P{{\"power at 80 %:<br/>mean BAF 0 / 24 contigs<br/>B-deviation 24 / 24\"}}:::decide\n  P --> F1[\"floor: 2 % of cells chr1–6<br/>3 % chr7–22 · 5 % X, Y\"]:::good\n  B --> F2[\"X 0.4873 · Y 0.5083 (expected 0.5)<br/>GC explains 81.7 % of spread<br/>floor 1.6 % of cells\"]:::good\n  F1 & F2 --> H[\"nothing above its own floor<br/>on any chromosome — in the sequenced sample\"]:::good\n  classDef raw fill:#f3e8ff,stroke:#7e22ce,color:#581c87\n  classDef machine fill:#dbeafe,stroke:#1d4ed8,color:#1e3a8a\n  classDef decide fill:#fef9c3,stroke:#ca8a04,color:#713f12\n  classDef good fill:#dcfce7,stroke:#15803d,color:#14532d\n```\n\n> **Legend** — **purple = the two raw inputs**; **blue = two instruments sharing nothing past\n> the FASTQ**; **yellow = the power question**; **green = the bounds**. Route A is blind to X\n> and Y in a male (almost no heterozygous sites); route B is blind to copy-neutral loss of\n> heterozygosity. Where both can see, they must agree (H054).\n\n| Measured | Value | Entry |\n|---|---|---|\n| power at 80 %, 037's mean-BAF statistic vs fold-over B-deviation | **0 of 24** vs **24 of 24** contigs | [116](../../../docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md) |\n| detection floor, allele route | **2 %** of cells chr1–6, **3 %** chr7–22; nothing above its own floor | [116](../../../docs/iteration2/step-8/methodology/116-the-statistic-that-has-power-and-the-limit-it-buys.md) |\n| the divisor under a *variegated* genome | leave-one-out depth baseline **42.42×** [42.30, 42.64]; 1–3 injected abnormal chromosomes at 5–20 % recovered in **100 %** of 30 replicates, untouched ones false-flagged at **≤ 0.0048** | [118](../../../docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md) |\n| five-model mechanism comparison (Kong 2018, re-implemented) | **not usable**: 19 of 24 contigs end at a parameter bound; fitted fraction tracks the noise share at ρ = **0.938** | [117](../../../docs/iteration2/step-8/methodology/117-five-models-and-the-family-this-data-does-not-fit.md) |\n| k-mer dosage, the positive control | X **0.4873** [0.4790, 0.4958], Y **0.5083** [0.4959, 0.5201] against 0.5 — the model was never told the sex | [121](../../../docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md) |\n| composition correction | chromosome GC explains **81.7 %** of the between-chromosome spread (1.876 % → 0.802 %) | [121](../../../docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md) |\n| chr21, the only autosome that moved | **4.03 σ** on probe GC → **2.33 σ** on the chromosome's own GC, Bonferroni p **0.43**; a mismapping pile-up tail (p99 depth 247 vs 66–69), not copy number | [121](../../../docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md) |\n| honest floor, dosage route | **1.6 % of cells** — twice the corrected residual spread, not the bootstrap width | [121](../../../docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md) |\n| the divisor that assumes nothing | absolute k-mer-mass and autosomal-median denominators agree on **24 of 24** contigs to **0.017 %** | [123](../../../docs/iteration2/step-8/methodology/123-the-denominator-that-assumes-nothing-read-back.md) |\n\n![Then and now: the power of the two statistics](../../../figures/track1/iteration2/step-8/power-then-and-now.png)\n\n> **Legend** — power against injected cell fraction, per contig: **red = entry 037's mean\n> BAF**, which never reaches 80 %; **green = fold-over B-deviation**, which does on every contig.\n\n![The dosage of every chromosome, read from the raw reads](../../../figures/track1/iteration2/step-8/dosage-per-chromosome.png)\n\n> **Legend** — relative dosage per contig with bootstrap intervals; **blue = autosomes**,\n> **green = X and Y at one copy**, the control to read first; the band is the composition-corrected null.\n\n**All seven claims supported** (H051–H057). What this does **not** say: the tissue sequenced\nis not named by the delivery, a karyotype's fraction is measured in cultured cells, position\nwas aggregated away so focal and sub-arm events are invisible by construction, and\ncopy-neutral loss of heterozygosity is invisible to the dosage route. A bound on the sequenced\nsample, never a statement about the diagnosis.\n\n---\n\n## 7. The submission, read as a measurement (entry 124)\n\nThe scorer returns `full_match_rank`, `partial_match_rank`, `f_max` and its threshold. Read\nagainst the hypothesis space — every answer key still considered possible — a reply is a\nmeasurement. After the reply to submission 1 that space is **a single point**. The file\niteration 2 would upload was nevertheless built from coordinate-free selectors, graded\nbyte-for-byte on our replica **and** on the organisers' published `evaluation.py`, and decoded:\n\n| rank | epcr | type | row |\n|---|---|---|---|\n| 1 | 0.9993 | primary | **BUB1B stop_gained + missense** (H009) |\n| 2 | 0.4996 | secondary | **LZTR1** heterozygous stop_gained, ClinVar P/LP — dominant schwannomatosis predisposition, unrelated to MVA |\n| 3 | 0.02498 | secondary | **FLG** heterozygous stop_gained, ClinVar P — ichthyosis vulgaris / atopy |\n| 4 | 0.01499 | secondary | **F5** Factor V Leiden, heterozygous — low-penetrance thrombosis risk |\n\n**No number in this table was typed.** The rank-1 epcr is the register's suggested confidence\nfor H009 after the oracle's own reply entered its evidence (a transparent triage heuristic\ntaken to its end, not a calibrated posterior); the secondary rows sit below it by allele\nscore; the notes quote only columns of the table each allele was selected from\n([`derivation.md`](derivation.md)). Iteration 1's alternative pairings are gone — the reply\neliminated them.\n\n| Reply: full match rank | partial match rank | F-max | at epcr | prior mass | survivors |\n|---|---|---|---|---|---|\n| 1 | — | 1.000 | 0.9993 | 1.00 | stop+missense |\n\nBoth scorers agree: **100 rank points, F-max 1.0**. Prior entropy **0 bits**, expected\ninformation gain **0.000 bits**. The plan's rule ([§6](../../../docs/iteration2/plan.md)) is\nthat an upload is spent only when a pre-registered decode table shows a gain above zero on a\nlive hypothesis. It does not. **Not uploaded; 5 of 6 remain, deliberately.** The file is\n`submissions/track1/iteration-2/agharsallah_bub1b-comphet-replication.csv` (in the iteration folder,\ngitignored; sha256 `325205a8…`; rebuild in [`README.md`](README.md)). Timing of any upload is the team's call.\n\n---\n\n## 8. Reproducibility, runtime and cost\n\nEvery step has a `How to reproduce it` block in its README under\n[`docs/iteration2/`](../../../docs/iteration2/README.md); the commands below are the spine.\n\n```bash\n# step 1 — the blind target set (laptop; the full benchmark ~2 h 16 min on one core, entry 091)\nuv run python tools/build_it2_targets.py && uv run mva-phenotype benchmark --sample 3240 --seed 20260910\n# step 2 — bait, one pass over 1.07 B reads (server-side POST /bait, 50.8 min; 4.2 h projected on the laptop, entry 087)\nuv run python tools/build_it2_bait.py && uv run python tools/run_it2_step2_calling.py\n# step 3 — k-mer genotypes and copy number from the baited reads (laptop; 765 s + 512 s, entries 095, 097)\nuv run python tools/build_it2_probes.py && uv run python tools/run_it2_step3_counts.py && uv run python tools/fit_it2_genotypes.py\n# step 4 — likelihood-ratio ranking (laptop; the 1,000-draw permutation null 34 min, entry 100)\nuv run python tools/rank_it2_pairs.py\n# step 5 — the knowledge engine (free public APIs; 5,705 PubTator searches, entry 104)\nuv run python tools/fetch_it2_catalogue.py && uv run python tools/build_it2_anchors.py --interval 0.7\n# step 6 — fuse, freeze, unblind\nuv run python tools/fuse_it2_routes.py && uv run python tools/assess_it2_upload.py && uv run python tools/unblind_it2.py && uv run python tools/check_blind.py\n# step 8 — mosaic bound (route A laptop; route B 32 of 272 shards server-side, 2,803.8 s, entry 121)\nuv run python tools/fit_it2_mosaic.py --stages constants bdev baseline models limits multi\nuv run python tools/run_it2_dosage_pass.py --upload --subsample 32 --workers 8\n# the submission\nuv run python tools/resolve_submission_spec.py --selectors submissions/track1/iteration-2/spec.selectors.json --out build/submission/spec.json\nuv run python tools/design_submission.py --spec build/submission/spec.json --out submissions/track1/iteration-2/agharsallah_bub1b-comphet-replication.csv\n```\n\nHardware: one arm64 laptop (16 GiB) for everything but two read passes, which ran on a small\nLinux server holding the 272-shard read store; a hosted PostgreSQL for the warehouse; free\npublic APIs (Ensembl VEP REST, LitVar, PubTator, UniProt, InterPro, AlphaFold DB, PubMed,\nSTRING). **No paid compute.** The k-mer engine's cost is bound by bytes of sequence, not by\nbait size (1.05× per read across 36,000× of bait), which is what makes \"give me the reads for\nthese genes\" a case-agnostic tool. What the arm64 machine could not run is recorded, not\nhidden: DeepVariant, Manta, LUMPY, GRIDSS, Exomiser/LIRICAL — substituted by freebayes +\n`bcftools call`, delly + dysgu, and step 1's own ranker.\n\nThe tooling is generic: a reference k-mer read bait and counting kernel (`mva.kmer`), a\nnegative-binomial k-mer genotyper and local-flank copy number, a per-lane calibrated\nlikelihood-ratio pair ranker, a reciprocal-rank fuser with leave-one-out and a freeze\nreceipt, a knowledge fetcher with matched-decoy baselines, a mosaic-fraction bound with two\ninstruments and an injection harness, a blind gate, and a per-iteration step map. Every\ntable is in `warehouse.data_lineage`; every figure is drawn from a run's own output file.\n`tools/check-python.sh` runs the eight quality gates, including the coordinate gate and the\niteration-folder gate.\n\n---\n\n## 9. Limitations, stated\n\n- **One route carried the rediscovery.** Silence the likelihood ranker and the pair falls to\n  rank 62; the symptom route had it at rank 9; the literature never listed it. \"Three routes\n  agree\" would be false; \"one found it, two corroborated it at a distance, one confirmed it\n  in the reads\" is the sentence ([109](../../../docs/iteration2/step-6/methodology/109-what-the-mirror-found.md)).\n- **The rank-1 position depends on the clinical terms and on one calibration cap.** DNA alone\n  puts the pair joint third; capping the missense and splice lanes at *supporting* instead of\n  *moderate* flips the lead to `ADAMTS1` ([099](../../../docs/iteration2/step-4/methodology/099-every-gene-ordered-with-nothing-filtered-out.md), [100](../../../docs/iteration2/step-4/methodology/100-two-nulls-and-an-ablation.md)).\n- **Phase is unmeasured.** No read-backed phase block reaches the pair and population\n  co-occurrence is undetermined. *Trans* rests on the recessive model and on the oracle's\n  answer key; iteration 2's own instruments cannot reach it.\n- **A rediscovery is not coverage.** The symptom ranker's held-out recall@300 is 0.335, and\n  73.6 % of protein-coding genes have no HPO curation; the route found *this* pair and says\n  nothing about the next case. The genome-wide ranking is the safety net, and its permutation\n  p is 0.056, not < 0.001.\n- **The read route has no ranking power of its own** (H020 refuted); its 1,199 novel alleles\n  are corroborated at 35.3 % by the alignment-free instrument and are an upper bound with a\n  measured error rate. Concordance with the vendor covers substitutions only; the structural\n  variant consensus used two of four planned callers and no positive-control sample.\n- **Below rank 1 the fused ranking has poor resolution.** Rank inheritance makes the top 20\n  three genes; a matched decoy holds ranks 13–20. The confirmation triple is gene-level, not\n  allele-level.\n- **The literature route is weak by measurement**, AUC 0.634, and would not have found the\n  gene (rank 293 of 815). A publication is not evidence about this child; 95.1 % of alleles\n  have one.\n- **The mosaic bound is about the sequenced sample.** Tissue unstated; focal and sub-arm\n  events invisible by construction; copy-neutral loss of heterozygosity invisible to the\n  dosage route; the mechanism-of-origin models do not fit this data at all. The dosage\n  route's divisors were checked against each other (0.017 %) but were not put through the\n  injection harness the allele route was ([118](../../../docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md), [123](../../../docs/iteration2/step-8/methodology/123-the-denominator-that-assumes-nothing-read-back.md)).\n- **Confidence numbers are a heuristic.** The register's weighing is transparent arithmetic\n  for triage, not a calibrated posterior; the epcr of 0.9993 inherits that caveat.\n- **Some of the plan's instruments never ran on this hardware**, and two exhibits (the\n  per-exon depth grid, the BUB1B phase track) are committed figures not yet on the dashboard\n  route (`docs/iteration2/step-2/notes/completion-audit.md`, D7–D8).\n\n---\n\n## 10. Methods form (Track 1), model 2 — answered\n\n| Question | Answer |\n|---|---|\n| Model | model 2: the **blind mirror** — target set → k-mer read bait + two callers → alignment-free genotype and copy number → genome-wide likelihood-ratio pair ranking → knowledge engine → reciprocal-rank fusion, frozen, then unblinded |\n| Automated or curated? | **Automated** to the fused ranking and its rank-1 pair, which was hashed before anyone compared it to iteration 1. The submission layout (one primary pair, three secondary rows) follows a stated rule and was simulated; nothing in it is a belief typed by hand |\n| Public data only? | **Yes** — Ensembl 116 and VEP REST (gnomAD v4, ClinVar, AlphaMissense, SpliceAI), HPO release 2026-06-23, STRING, LitVar, PubTator, UniProt, InterPro, AlphaFold DB, PubMed, GRCh38 |\n| Pairs or singles? | **Pairs**: every hypothesis in step 4 and every fused unit in step 6 is a biallelic pair; the primary row holds both alleles |\n| Secondary findings | ClinVar P/LP after excluding conflicting and benign-tagged records, gnomAD AF < 0.02, dominant or risk-factor genes → LZTR1, FLG, F5 as `secondary`; recessive carrier states reported, not submitted |\n| Runtime and cost | two read passes on a small Linux server (50.8 min; 2,803.8 s for 32 of 272 shards), the rest on one laptop; the longest laptop jobs are the 3,240-disease benchmark (~2 h 16 min) and the permutation null (34 min); free public APIs; one small hosted PostgreSQL; no paid compute |\n| Abstract | [`methods-form.json`](methods-form.json), question 18, under 500 words; strengths and limitations from §1 and §9 |\n\n---\n\n## 11. Where every claim lives\n\n| Step | Supported | Refuted or superseded | Entries |\n|---|---|---|---|\n| 1 target set | H013 (0.83) | H012 (0.04), H014 (0.10), H015 (0.02) | [084](../../../docs/iteration2/step-1/methodology/084-the-blind-target-set.md), [091](../../../docs/iteration2/step-1/methodology/091-recall-at-the-full-population.md) |\n| 2 reads | H016 (0.88), H019 (0.70), H021 (0.65), H022 (0.88) | H020 (0.07), H023 (0.25); H017, H018 superseded | [085](../../../docs/iteration2/step-2/methodology/085-the-bait-and-where-it-runs.md)–[090](../../../docs/iteration2/step-2/methodology/090-the-alleles-the-vendor-never-reported.md), [092](../../../docs/iteration2/step-2/methodology/092-depth-per-exon-and-the-phasing-drawn.md) |\n| 3 k-mer genotype | H025 (0.60), H028 (0.85) | H024 (0.15), H026 (0.30), H027 (0.08), H029 (0.20) | [093](../../../docs/iteration2/step-3/methodology/093-where-the-aligner-was-unsure.md), [095](../../../docs/iteration2/step-3/methodology/095-the-probes-and-the-counting-kernel.md)–[097](../../../docs/iteration2/step-3/methodology/097-copy-number-without-an-aligner.md) |\n| 4 likelihood ratio | H030 (0.75), H034 (0.95), H035 (0.86) | H031 (0.14), H032 (0.25), H033 (0.15) | [098](../../../docs/iteration2/step-4/methodology/098-the-lanes-and-what-they-were-calibrated-against.md)–[101](../../../docs/iteration2/step-4/methodology/101-the-phase-that-cannot-be-measured.md) |\n| 5 knowledge | H036 (0.80), H038 (0.78), H039 (0.85) | H037 (0.15), H040 (0.20) | [102](../../../docs/iteration2/step-5/methodology/102-the-sources-and-what-they-could-be-asked.md)–[106](../../../docs/iteration2/step-5/methodology/106-where-the-missense-sits-in-the-protein.md) |\n| 6 fusion | H043 (0.80), H044 (0.90) | H041 (0.20), H042 (0.12) | [107](../../../docs/iteration2/step-6/methodology/107-the-routes-and-which-of-them-earned-a-rank.md)–[109](../../../docs/iteration2/step-6/methodology/109-what-the-mirror-found.md), [124](../../../docs/iteration2/step-6/methodology/124-the-reserve-file-built-and-rehearsed.md) |\n| 8 mosaic bound | H051 (0.80), H052 (0.85), H053 (0.95), H054 (0.85), H055 (0.80), H056 (0.85), H057 (0.85) | — | [115](../../../docs/iteration2/step-8/methodology/115-the-callset-reduced-to-what-a-mosaic-model-needs.md)–[118](../../../docs/iteration2/step-8/methodology/118-the-baseline-and-what-a-variegated-genome-does-to-it.md), [121](../../../docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md), [123](../../../docs/iteration2/step-8/methodology/123-the-denominator-that-assumes-nothing-read-back.md) |\n| the pair (iteration 1) | H009 (supported; oracle) | — | [074](../../../docs/iteration1/step-6/methodology/074-submission-v1-design.md), [083](../../../docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md) |\n\nConfidences are the register's committed values (`mva-science board`); where a committed value\nsits below the arithmetic's suggestion, the hypothesis file records why. Step 7 is Track 2's\nstep (H045–H050, H061, all supported) and is reported in\n[`submissions/track2/iteration-2/`](../../track2/iteration-2/README.md), a draft built on the\nconfirmed pair and on the facts above; it does not test the pair and is not cited here as\nevidence for it.\n"
       },
       "lineage": {
         "available": true,
-        "note": "8 edge(s) reached from 4 table(s)",
+        "note": "10 edge(s) reached from 3 table(s)",
         "sources": [
           {
             "kind": "raw",
@@ -1238,7 +1546,7 @@
             "kind": "file",
             "ref": "submissions/track1/iteration-2/spec.selectors.json",
             "version": "",
-            "sha256": "266764e642adfc9e93b149b6b7526b81a99d5251e035eadf2482d7e8b6a65ef2",
+            "sha256": "1f14f88f3733b4b2c664b87223ff421b843e3943b670efe9831d8a6f7fc53999",
             "note": "the committed, coordinate-free selectors the predictions CSV was resolved from"
           },
           {
@@ -1254,13 +1562,6 @@
             "version": "",
             "sha256": "",
             "note": "the biallelic gene set the verdict was drawn from"
-          },
-          {
-            "kind": "table",
-            "ref": "results.panel_candidates",
-            "version": "",
-            "sha256": "",
-            "note": "a selector resolves an allele against this table"
           },
           {
             "kind": "table",
@@ -1312,20 +1613,6 @@
             "tool": "mva-warehouse pg-ingest",
             "notes": "upstream https://purl.obolibrary.org/obo/hp.obo and https://purl.obolibrary.org/obo/hp/hpoa/genes_to_phenotype.txt; HPO is CC BY 4.0; cite PMID 33264411. NOT Exomiser output: this is a reimplementation of hiPHIVE's human-only phenotype path. Genome Medicine 17:127 (2025), PMID 41121346 Query terms are owned by src/mva/phenotype/terms.py; both term sets are in the table, distinguished by term_set. No patient data of any kind is an input",
             "is_current": false
-          },
-          {
-            "produced_at": "2026-08-31T20:49:14.035828",
-            "target_schema": "results",
-            "target_table": "panel_candidates",
-            "target_rows": 874,
-            "source_kind": "table",
-            "source_ref": "warehouse.panel_annotations, warehouse.variants_raw",
-            "source_version": "",
-            "source_sha256": "",
-            "transform": "SQL derivation panel_candidates: For every annotated allele in the candidate panel: the VEP consequence and population frequency next to the genotype evidence the callset carries. ALT is matched by list membership — variants_raw keeps a multi-allelic site comma-packed (G -> A,C in one row) while the annotations are one row per ALT, so the join tests that the annotated allele is an element of the split list rather than a substring of the packed string, which would match A against AT. GT and DP are located by reading the record's own FORMAT keys, never by position.",
-            "tool": "mva-warehouse pg-derive",
-            "notes": "derivation_runs.run_at=2026-08-31 18:45:22.928456",
-            "is_current": true
           },
           {
             "produced_at": "2026-09-05T15:21:13.845060",
@@ -1396,6 +1683,48 @@
             "tool": "mva-warehouse annotate-coding",
             "notes": "requests this run: 183; checkpoint build/coding-annotations",
             "is_current": true
+          },
+          {
+            "produced_at": "2026-09-19T13:31:05.675955",
+            "target_schema": "submissions",
+            "target_table": "track1/iteration-2",
+            "target_rows": 4,
+            "source_kind": "clinical",
+            "source_ref": "ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md",
+            "source_version": "8 HPO terms",
+            "source_sha256": "7d410bb063951c1315a0af27f066a04703468e6021b69e66e99471af84dbf483",
+            "transform": "resolve selectors -> spec (coordinates, gitignored) -> design_submission CSV",
+            "tool": "resolve_submission_spec",
+            "notes": "csv sha256 not recorded in the README",
+            "is_current": true
+          },
+          {
+            "produced_at": "2026-09-19T13:31:05.601596",
+            "target_schema": "submissions",
+            "target_table": "track1/iteration-2",
+            "target_rows": 4,
+            "source_kind": "file",
+            "source_ref": "submissions/track1/iteration-2/spec.selectors.json",
+            "source_version": "",
+            "source_sha256": "1f14f88f3733b4b2c664b87223ff421b843e3943b670efe9831d8a6f7fc53999",
+            "transform": "resolve selectors -> spec (coordinates, gitignored) -> design_submission CSV",
+            "tool": "resolve_submission_spec",
+            "notes": "csv sha256 not recorded in the README",
+            "is_current": false
+          },
+          {
+            "produced_at": "2026-09-19T13:31:05.521776",
+            "target_schema": "submissions",
+            "target_table": "track1/iteration-2",
+            "target_rows": 4,
+            "source_kind": "table",
+            "source_ref": "results.coding_candidates",
+            "source_version": "",
+            "source_sha256": "",
+            "transform": "resolve selectors -> spec (coordinates, gitignored) -> design_submission CSV",
+            "tool": "resolve_submission_spec",
+            "notes": "csv sha256 not recorded in the README",
+            "is_current": false
           }
         ]
       },
@@ -1411,6 +1740,436 @@
             "recorded_at": "",
             "step": "step-6",
             "statement": "The causal compound-heterozygous pair is the BUB1B stop_gained allele (ClinVar pathogenic for MVA syndrome 1) together with the BUB1B missense allele absent from gnomAD, in trans."
+          },
+          {
+            "hypothesis_id": "H012",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.04,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-1",
+            "statement": "Held-out recall@300 of the phenotype-only ranker is at least 0.90 on the recessive-disease benchmark, so a target set of the top 300 genes is large enough to be worth baiting."
+          },
+          {
+            "hypothesis_id": "H013",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.83,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-1",
+            "statement": "The blind target set contains at least one gene whose curated disease is a recessive chromosome-instability syndrome."
+          },
+          {
+            "hypothesis_id": "H014",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.1,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-1",
+            "statement": "The two independent rankers agree on at least 50% of the top 300 genes."
+          },
+          {
+            "hypothesis_id": "H015",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.02,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-1",
+            "statement": "Fewer than 20% of protein-coding genes have no HPO curation at all."
+          },
+          {
+            "hypothesis_id": "H016",
+            "revision": 3,
+            "status": "supported",
+            "confidence": 0.88,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-2",
+            "statement": "At least one target gene carries a biallelic candidate set in the read-derived calls."
+          },
+          {
+            "hypothesis_id": "H017",
+            "revision": 2,
+            "status": "superseded",
+            "confidence": null,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-2",
+            "statement": "The read-derived DeepVariant calls agree with the delivered VCF at the sites where both call."
+          },
+          {
+            "hypothesis_id": "H018",
+            "revision": 2,
+            "status": "superseded",
+            "confidence": null,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-2",
+            "statement": "No structural variant confirmed by two method classes removes a coding exon of a gene that also carries a rare heterozygous protein-altering allele."
+          },
+          {
+            "hypothesis_id": "H019",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.7,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-2",
+            "statement": "Read-backed phasing resolves, or explicitly fails to resolve, the configuration of the top candidate pair."
+          },
+          {
+            "hypothesis_id": "H020",
+            "revision": 3,
+            "status": "refuted",
+            "confidence": 0.06913842034334682,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-2",
+            "statement": "The matched decoy set yields fewer biallelic candidates per gene than the target set."
+          },
+          {
+            "hypothesis_id": "H021",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.65,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-2",
+            "statement": "A reference k-mer bait sampled at a fixed stride recovers the reads that carry a known alternate allele inside the baited region."
+          },
+          {
+            "hypothesis_id": "H022",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.88,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-2",
+            "statement": "The alleles discovered from the reads agree with the delivered callset wherever both call, so a discordant site is a finding about one caller and not about the recovery."
+          },
+          {
+            "hypothesis_id": "H023",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.25,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-2",
+            "statement": "No structural variant supported by two callers of different method classes, outside the bait-edge zone, removes or duplicates a coding exon of a gene that also carries a rare heterozygous protein-altering allele."
+          },
+          {
+            "hypothesis_id": "H024",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.15,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-3",
+            "statement": "Every heterozygous call step 2 made in a reachable target-set gene is called heterozygous by the fitted negative-binomial k-mer genotype model at posterior at least 0.95, with all of its at least three reference/alternate probe pairs agreeing."
+          },
+          {
+            "hypothesis_id": "H025",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.6,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-3",
+            "statement": "At least one ClinVar pathogenic or likely-pathogenic allele of a target-set gene is present in this sample at heterozygous multiplicity, above the error threshold fitted on the calibration set's homozygous-reference side."
+          },
+          {
+            "hypothesis_id": "H026",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.3,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-3",
+            "statement": "No exon of a reachable target-set gene, nor any such gene pooled, falls below the 2.5th percentile of a 1,000-exon null copy-number band measured on this sample."
+          },
+          {
+            "hypothesis_id": "H027",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.08,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-3",
+            "statement": "At least 80 percent of the 1,199 alleles the delivered callset never reported, which step 2's read-derived callers found and annotated, are confirmed at the same multiplicity by alignment-free k-mer genotyping."
+          },
+          {
+            "hypothesis_id": "H028",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.85,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-3",
+            "statement": "Both alleles of the top-ranked biallelic candidate pair step 2 discovered are present at one-copy multiplicity, at posterior at least 0.95 each."
+          },
+          {
+            "hypothesis_id": "H029",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.2,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-3",
+            "statement": "Genes whose surviving-k-mer bait density is below half the median yield no confident k-mer genotype."
+          },
+          {
+            "hypothesis_id": "H030",
+            "revision": 4,
+            "status": "supported",
+            "confidence": 0.75,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-4",
+            "statement": "The top-posterior biallelic pair genome-wide, scored by the step-4 likelihood ratio with no hard filter, sits in a gene of the step-1 blind target set."
+          },
+          {
+            "hypothesis_id": "H031",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.14185106490048777,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-4",
+            "statement": "The runner-up gene's best pair posterior is at least one order of magnitude below the leading gene's."
+          },
+          {
+            "hypothesis_id": "H032",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.25,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-4",
+            "statement": "No gene that can only be scored through the network-proximity lane - no HPO curation of its own - reaches the top 20 by pair posterior."
+          },
+          {
+            "hypothesis_id": "H033",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.1544652650835347,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-4",
+            "statement": "Under a phenotype-permutation null, fewer than 1 in 1,000 random seven-term sets drawn with the child's term-depth profile produce a top pair posterior at or above the observed one."
+          },
+          {
+            "hypothesis_id": "H034",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.9478464369215823,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-4",
+            "statement": "Under the identical likelihood ratio, the step-1 target genes separate from their matched decoys: the bootstrap interval of the target-versus-decoy AUC on best-pair posterior excludes 0.5."
+          },
+          {
+            "hypothesis_id": "H035",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.8581489350995123,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-4",
+            "statement": "P(trans) for the leading pair is undetermined: at least one of its two alleles is absent from the gnomAD v2 exome co-occurrence dataset, so no observed compound-heterozygosity probability exists for it."
+          },
+          {
+            "hypothesis_id": "H036",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.8,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-5",
+            "statement": "At least one published allele - reported in ClinVar as pathogenic or likely pathogenic, or carrying at least one publication in LitVar - is present in this child at heterozygous or homozygous-alternate multiplicity in a gene that step 4 ranks in its top 20."
+          },
+          {
+            "hypothesis_id": "H037",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.15,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-5",
+            "statement": "At least one published case report matches five or more of the child seven proband HPO terms and names a gene that step 4 ranks in its top 20."
+          },
+          {
+            "hypothesis_id": "H038",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.78,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-5",
+            "statement": "The knowledge score separates the 404 symptom-nominated target genes from the 396 matched decoy genes."
+          },
+          {
+            "hypothesis_id": "H039",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.85,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-5",
+            "statement": "The knowledge ranking reorders the leading genes against a baseline that ranks them by PubMed hit count alone."
+          },
+          {
+            "hypothesis_id": "H040",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.2,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-5",
+            "statement": "The missense allele of the leading pair falls inside an annotated InterPro domain, in a region the structure model is confident about, and the AlphaMissense class agrees that it is damaging."
+          },
+          {
+            "hypothesis_id": "H041",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.2,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-6",
+            "statement": "The fused iteration-2 ranking places iteration 1's confirmed pair at rank 1, and no admitted ranking route places that pair below rank 3."
+          },
+          {
+            "hypothesis_id": "H042",
+            "revision": 2,
+            "status": "refuted",
+            "confidence": 0.12,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-6",
+            "statement": "No single route carries the fused result: removing any one admitted ranking route leaves the fused rank-1 pair unchanged."
+          },
+          {
+            "hypothesis_id": "H043",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.8,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-6",
+            "statement": "The fused leader is spoken for by at least two disjoint inputs once routes sharing an input are collapsed."
+          },
+          {
+            "hypothesis_id": "H044",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.9,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-6",
+            "statement": "A second oracle upload is not informative: the expected information gain over a pre-registered decode table is 0 bits."
+          },
+          {
+            "hypothesis_id": "H045",
+            "revision": 3,
+            "status": "supported",
+            "confidence": 0.8021838885585817,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-7",
+            "statement": "Direction D1 (checkpoint reinforcement) yields no submittable drug: no market-approved molecule strengthens the spindle assembly checkpoint or reduces chromosome missegregation in checkpoint-deficient cells, so every approved D1 candidate the sources return is a checkpoint inhibitor or a spindle poison and D1 becomes the do-not table."
+          },
+          {
+            "hypothesis_id": "H050",
+            "revision": 4,
+            "status": "supported",
+            "confidence": 0.7,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-7",
+            "statement": "Every drug shortlisted at rung 2 or higher for the BUB1B card has paediatric data: an openFDA label with a pediatric_use section, or a ClinicalTrials.gov study that admits children, in any indication."
+          },
+          {
+            "hypothesis_id": "H051",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.8,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-8",
+            "statement": "No chromosome in the sequenced sample -- autosome or X -- carries a mosaic aneuploidy at a cell fraction above its own measured detection limit."
+          },
+          {
+            "hypothesis_id": "H052",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.85,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-8",
+            "statement": "The detection limit of the fold-over B-deviation test is at most 10 percent cell fraction for every autosome at this sample's heterozygous-site count and depth."
+          },
+          {
+            "hypothesis_id": "H053",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.95,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-8",
+            "statement": "Fold-over B-deviation detects a mosaic gain at a materially lower cell fraction than the mean B-allele-fraction statistic entry 037 used, on identical simulated sites."
+          },
+          {
+            "hypothesis_id": "H054",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.85,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-8",
+            "statement": "The k-mer dosage route and the VCF allele-balance route agree on every chromosome within their stated intervals."
+          },
+          {
+            "hypothesis_id": "H055",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.8,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-8",
+            "statement": "The leave-one-chromosome-out baseline is stable: no chromosome's exclusion moves the genome-wide baseline beyond its bootstrap interval."
+          },
+          {
+            "hypothesis_id": "H056",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.85,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-8",
+            "statement": "The mixing simulation recovers two and three simultaneously affected chromosomes at 10 and 20 percent cell fraction, and does not flag the unaffected ones."
+          },
+          {
+            "hypothesis_id": "H057",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.85,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-8",
+            "statement": "Mitotic and meiotic trisomy are not separable at delta-BIC of 10 or more from arm-stratified allele-fraction band structure at cell fractions up to 20 percent, at this sample's depth and heterozygous-site counts."
+          },
+          {
+            "hypothesis_id": "H061",
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.85,
+            "reasoning": "",
+            "recorded_at": "",
+            "step": "step-7",
+            "statement": "The evidence ladder is independent of the measured aneuploid fraction: revising the mechanism card to version 4 with step 8's result (no autosome above its 2-3 % detection limit in the sequenced sample) changes no rung, no shortlist row and no do-not row; F8 acts only on how direction D2 is argued in the report, not on what it contains."
           }
         ]
       }
@@ -1422,7 +2181,11 @@
       "state": "draft",
       "standing": "draft, superseded by ../iteration-2/ on 2026-09-19",
       "uploaded": false,
-      "csv": { "path": null, "sha256": null, "rows": null },
+      "csv": {
+        "path": null,
+        "sha256": null,
+        "rows": null
+      },
       "deliverables": [
         {
           "name": "README.md",
@@ -1461,10 +2224,23 @@
           "modified": "2026-09-18T19:28:11+00:00"
         }
       ],
-      "decode_table": { "columns": [], "rows": [], "summary": "", "row_order": "" },
-      "selectors": { "alleles": {}, "rows": [], "hypotheses": [], "derivation": null },
+      "decode_table": {
+        "columns": [],
+        "rows": [],
+        "summary": "",
+        "row_order": ""
+      },
+      "selectors": {
+        "alleles": {},
+        "rows": [],
+        "hypotheses": [],
+        "derivation": null
+      },
       "methods_form": [
-        { "row": "7", "answer": "agharsallah" },
+        {
+          "row": "7",
+          "answer": "agharsallah"
+        },
         {
           "row": "8",
           "answer": "From variant to mechanism to medicine in four documented stages, each a case-agnostic tool with a provenance manifest. (1) Hand-off: Track 1's confirmed compound-heterozygous BUB1B pair (a stop allele + a kinase-region missense, trans configuration confirmed by the challenge's answer key) was written into a structured 'mechanism card' (ressources/track2/mechanism.json): gene, protein, the two allele classes (never positions), loss-of-function reading, the spindle-assembly-checkpoint pathway, downstream consequences, the tumour context (rhabdomyosarcoma) from the clinical terms, and four repurposing directions with seed genes - D1 reinforce the checkpoint, D2 exploit aneuploidy stress, D3 stabilise the remaining BubR1 (hypomorph), D4 the child's tumour. Iteration 2's measured genotype facts (allele dosage from the raw reads, exon copy number, structural-variant absence, the missense's position in the protein, pathogenicity lanes, P(trans)) were appended as a card revision (v3), with the aneuploidy burden marked unmeasured. (2) Search: the card's seeds were expanded through Reactome pathways to 277 targets; Open Targets, ChEMBL and DGIdb returned 3,859 drug-target rows and 359 market-approved drugs; openFDA confirmed US labels; ClinicalTrials.gov and PubMed answered trial and literature questions, all queries derived from the card. (3) Grading: every approved drug on every direction was placed on a five-rung evidence ladder pre-registered before the search (5 approved for a related indication with paediatric use; 4 trial in a related indication; 3 animal model of the mechanism; 2 cell model; 1 mechanism only - named, never submitted). Automated tests (approval, label and its Pediatric Use section, tumour-context trials, studies admitting children, PubMed co-mention counts) and curated tests (one PubMed paper per row, read by a person, 13 rows) are printed side by side; inherited class-level evidence is marked 'proxy'. Six falsifiable claims (one per direction, one for the control, one for paediatric data) were registered with predictions and refutation conditions before any drug-level query. (4) Control: the same pipeline ran on two decoy cards - the child's clinical side kept, the gene swapped (NTRK3 by a seeded draw from Track 1's decoy set; XDH, an unrelated metabolic enzyme). A direction whose approved drugs overlap a decoy's at Jaccard >= 0.10 is reported as non-specific; D4 did (0.25) and is argued only from curated mechanism results. Output: 11 drugs with a cited mechanism result (statins; niacin/nicotinamide; chloroquine; bortezomib, metformin, valproic acid, vorinostat, hydroxychloroquine, atorvastatin), 50 drugs already in rhabdomyosarcoma trials listed as such, and a 23-drug do-not table (spindle poisons, checkpoint inhibitors, standard of care)."
@@ -1485,7 +2261,10 @@
           "row": "12",
           "answer": "Open Targets Platform (GraphQL API, drugAndClinicalCandidates per target and disease), ChEMBL (REST: target search, mechanism, molecule max_phase, first approval, ATC), DGIdb (GraphQL interactions), Reactome ContentService (pathways containing the protein, participants), openFDA drug labels (current US label; the pediatric_use section), ClinicalTrials.gov v2 (studies by condition and intervention; aggFilters=ages:child for studies admitting children), PubMed E-utilities (esearch counts and ids, esummary), plus ClinVar (the stop allele's classification) and gnomAD (population absence of the missense) from Track 1. DrugBank was named by the form but not queried: its programmatic access needs a licence. Every reply is cached and its digest rolled into the table's manifest; retrieval dates are 2026-09-05 (first snapshot) and 2026-09-18 (refresh and enrichment)."
         },
-        { "row": "13", "answer": "None." },
+        {
+          "row": "13",
+          "answer": "None."
+        },
         {
           "row": "14",
           "answer": "Loss of function, hypomorphic, of a confirmed compound heterozygote. One allele is a stop change in exon 17 of 23 (ClinVar pathogenic / likely pathogenic for MVA syndrome 1): no functional BubR1 from that copy. The other is a missense change in the last exon: absent from gnomAD, AlphaMissense likely-pathogenic (log-likelihood-ratio lane 4.33), CADD 24.5, sitting outside every InterPro domain-typed entry in a region AlphaFold models at pLDDT 91 - a weakened copy, not a dead one, consistent with every published MVA1 genotype (complete loss is embryonic-lethal). No gain-of-function or dominant-negative activity is reported for BUB1B. Trans configuration: confirmed by the oracle's full match at rank 1 (population phasing was undetermined; read-backed phase blocks did not reach the gene). Dosage: both alleles at one-copy multiplicity in the raw reads by an alignment-free k-mer method; every exon at two copies; no structural variant in the gene. Pathway: the spindle assembly checkpoint - BubR1 is a core component of the mitotic checkpoint complex that inhibits APC/C-CDC20 and recruits PP2A-B56 to kinetochores; less BubR1 gives a leaky checkpoint (Suijkerbuijk 2010 measured strongly reduced BubR1 and a weakened checkpoint in MVA cells). Downstream: premature anaphase and chromosome missegregation; mosaic variegated aneuploidy; proteotoxic and metabolic stress in aneuploid cells; cancer predisposition (rhabdomyosarcoma - the child's presenting tumour - Wilms tumour, leukaemia); growth restriction and nephrocalcinosis, which are the delivered clinical terms. Stated gaps: the aneuploid fraction in this child's sample is unmeasured (the karyotype statistic run had no power for mosaic gains; the powered analysis is planned), and whether the missense copy is unstable or catalytically inactive is open - so direction D3 is argued as raising BubR1 abundance, not as refolding it."
@@ -1837,7 +2616,11 @@
       "state": "draft",
       "standing": "draft — the curated report, the methods-form answers, the pitch script and the",
       "uploaded": false,
-      "csv": { "path": null, "sha256": null, "rows": null },
+      "csv": {
+        "path": null,
+        "sha256": null,
+        "rows": null
+      },
       "deliverables": [
         {
           "name": "README.md",
@@ -1876,10 +2659,23 @@
           "modified": "2026-09-19T08:34:35+00:00"
         }
       ],
-      "decode_table": { "columns": [], "rows": [], "summary": "", "row_order": "" },
-      "selectors": { "alleles": {}, "rows": [], "hypotheses": [], "derivation": null },
+      "decode_table": {
+        "columns": [],
+        "rows": [],
+        "summary": "",
+        "row_order": ""
+      },
+      "selectors": {
+        "alleles": {},
+        "rows": [],
+        "hypotheses": [],
+        "derivation": null
+      },
       "methods_form": [
-        { "row": "7", "answer": "agharsallah" },
+        {
+          "row": "7",
+          "answer": "agharsallah"
+        },
         {
           "row": "8",
           "answer": "From variant to mechanism to medicine in four documented stages, each a case-agnostic tool with a provenance manifest. (1) Hand-off: Track 1's confirmed compound-heterozygous BUB1B pair (a stop allele + a kinase-region missense, trans configuration confirmed by the challenge's answer key) was written into a structured 'mechanism card' (ressources/track2/mechanism.json): gene, protein, the two allele classes (never positions), loss-of-function reading, the spindle-assembly-checkpoint pathway, downstream consequences, the tumour context (rhabdomyosarcoma) from the clinical terms, and four repurposing directions with seed genes - D1 reinforce the checkpoint, D2 exploit aneuploidy stress, D3 stabilise the remaining BubR1 (hypomorph), D4 the child's tumour. Iteration 2 first rebuilt the genotype blind - a symptom-only target set with 396 matched decoy genes (step 1), alleles discovered from the raw reads without the vendor caller (step 2), alignment-free k-mer genotyping and copy number (step 3), a genome-wide likelihood-ratio ranking over 51,920 biallelic hypotheses (step 4), a public-knowledge route over 815 genes (step 5) and a rank fusion frozen by sha256 before it was compared (step 6): the same BUB1B pair came out first. Its measured facts (allele dosage, exon copy number, structural-variant absence, the missense's position in the protein, pathogenicity lanes, P(trans)) were appended as card revision v3, and step 8's mosaic-aneuploidy bound (fold-over allele-balance statistic, 80 % power at 2-3 % of cells, no autosome above its limit in the sequenced sample) as revision v4. (2) Search: the card's seeds were expanded through Reactome pathways to 277 targets; Open Targets, ChEMBL and DGIdb returned 3,859 drug-target rows and 359 market-approved drugs; openFDA confirmed US labels; ClinicalTrials.gov and PubMed answered trial and literature questions, all queries derived from the card. (3) Grading: every approved drug on every direction was placed on a five-rung evidence ladder pre-registered before the search (5 approved for a related indication with paediatric use; 4 trial in a related indication; 3 animal model of the mechanism; 2 cell model; 1 mechanism only - named, never submitted). Automated tests (approval, label and its Pediatric Use section, tumour-context trials, studies admitting children, PubMed co-mention counts) and curated tests (one PubMed paper per row, read by a person, 13 rows) are printed side by side; inherited class-level evidence is marked 'proxy'. Seven falsifiable claims (one per direction, one for the control, one for paediatric data, one that the measured aneuploid fraction moves no rung) were registered with predictions and refutation conditions before their tests; the last was tested by byte-identical table digests and caught a file-reading fault on the way. (4) Control: the same pipeline ran on two decoy cards - the child's clinical side kept, the gene swapped (NTRK3 by a seeded draw from Track 1's decoy set; XDH, an unrelated metabolic enzyme). A direction whose approved drugs overlap a decoy's at Jaccard >= 0.10 is reported as non-specific; D4 did (0.25) and is argued only from curated mechanism results. Output: 11 drugs with a cited mechanism result (statins; niacin/nicotinamide; chloroquine; bortezomib, metformin, valproic acid, vorinostat, hydroxychloroquine, atorvastatin), 50 drugs already in rhabdomyosarcoma trials listed as such, and a 23-drug do-not table (spindle poisons, checkpoint inhibitors, standard of care)."
@@ -1900,7 +2696,10 @@
           "row": "12",
           "answer": "Open Targets Platform (GraphQL API, drugAndClinicalCandidates per target and disease), ChEMBL (REST: target search, mechanism, molecule max_phase, first approval, ATC), DGIdb (GraphQL interactions), Reactome ContentService (pathways containing the protein, participants), openFDA drug labels (current US label; the pediatric_use section), ClinicalTrials.gov v2 (studies by condition and intervention; aggFilters=ages:child for studies admitting children), PubMed E-utilities (esearch counts and ids, esummary), plus ClinVar (the stop allele's classification) and gnomAD (population absence of the missense) from Track 1. DrugBank was named by the form but not queried: its programmatic access needs a licence. Every reply is cached and its digest rolled into the table's manifest; retrieval dates are 2026-09-05 (first snapshot) and 2026-09-18 (refresh and enrichment)."
         },
-        { "row": "13", "answer": "None." },
+        {
+          "row": "13",
+          "answer": "None."
+        },
         {
           "row": "14",
           "answer": "Loss of function, hypomorphic, of a confirmed compound heterozygote. One allele is a stop change in exon 17 of 23 (ClinVar pathogenic / likely pathogenic for MVA syndrome 1): no functional BubR1 from that copy. The other is a missense change in the last exon: absent from gnomAD, AlphaMissense likely-pathogenic (log-likelihood-ratio lane 4.33), CADD 24.5, sitting outside every InterPro domain-typed entry in a region AlphaFold models at pLDDT 91 - a weakened copy, not a dead one, consistent with every published MVA1 genotype (complete loss is embryonic-lethal). No gain-of-function or dominant-negative activity is reported for BUB1B. Trans configuration: confirmed by the oracle's full match at rank 1 (population phasing was undetermined; read-backed phase blocks did not reach the gene). Dosage: both alleles at one-copy multiplicity in the raw reads by an alignment-free k-mer method; every exon at two copies; no structural variant in the gene. Pathway: the spindle assembly checkpoint - BubR1 is a core component of the mitotic checkpoint complex that inhibits APC/C-CDC20 and recruits PP2A-B56 to kinetochores; less BubR1 gives a leaky checkpoint (Suijkerbuijk 2010 measured strongly reduced BubR1 and a weakened checkpoint in MVA cells). Downstream: premature anaphase and chromosome missegregation; mosaic variegated aneuploidy; proteotoxic and metabolic stress in aneuploid cells; cancer predisposition (rhabdomyosarcoma - the child's presenting tumour - Wilms tumour, leukaemia); growth restriction and nephrocalcinosis, which are the delivered clinical terms. Aneuploid fraction: measured in iteration 2's step 8 - a fold-over B-allele-deviation statistic with 80 % power at 2 % (chr1-6) and 3 % (chr7-22) of cells finds no autosome above its own detection limit in the sequenced sample (the statistic used earlier, the mean B-allele fraction per megabase, had no power at any fraction tested); X and Y are unreadable by allele balance in a male, sub-arm events were not testable, and the sequenced tissue is not named by the delivery, so this is a statement about the sample and not the diagnosis. Consequence for the drug argument: direction D2 (aneuploidy-selective stress) is argued from published aneuploid-cell biology only and ranked below D3 and D4. Open: whether the missense copy is unstable or catalytically inactive - so D3 is argued as raising BubR1 abundance, not as refolding it."
@@ -2337,9 +3136,9 @@
           },
           {
             "hypothesis_id": "H054",
-            "revision": 1,
-            "status": "proposed",
-            "confidence": null,
+            "revision": 2,
+            "status": "supported",
+            "confidence": 0.85,
             "reasoning": "",
             "recorded_at": "",
             "step": "step-8",

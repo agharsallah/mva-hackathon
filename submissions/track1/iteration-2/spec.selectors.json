@@ -1,5 +1,5 @@
 {
-  "_comment": "Coordinate-free source of build/submission/spec.json. Each allele is a selector that must match exactly one row of a warehouse result table; tools/resolve_submission_spec.py resolves it to (chrom, pos, ref, alt) on a machine with database access and writes the gitignored spec. Rows carry no epcr and no notes: both are derived (mva.warehouse.submission_rows) from the selector's table, the ranker's allele score and the register's confidence for the anchor hypothesis \u2014 see derivation.md. A rationale may contain no digit. Only a hypothesis naming an _unknown allele declares a prior.",
+  "_comment": "Coordinate-free source of build/submission/spec.json for iteration 2. Each allele is a selector that must match exactly one row of a warehouse result table; tools/resolve_submission_spec.py resolves it to (chrom, pos, ref, alt) on a machine with database access and writes the gitignored spec. Rows carry no epcr and no notes: both are derived (mva.warehouse.submission_rows) from the selector's table, the ranker's allele score and the register's confidence for the anchor hypothesis - see derivation.md. A rationale may contain no digit. Iteration 2 is a replication: the oracle collapsed the hypothesis space to one point (entry 083), so the space holds one key and the file is a reserve, built and rehearsed but not uploaded (H044, entry 109).",
   "derivation": {
     "anchor": {
       "row": "stop+missense",
@@ -9,133 +9,23 @@
   "alleles": {
     "stop": {
       "table": "results.coding_candidates",
-      "where": [
-        [
-          "gene",
-          "=",
-          "BUB1B"
-        ],
-        [
-          "consequence",
-          "like",
-          "%stop_gained%"
-        ]
-      ]
+      "where": [["gene", "=", "BUB1B"], ["consequence", "like", "%stop_gained%"]]
     },
     "missense": {
       "table": "results.coding_candidates",
-      "where": [
-        [
-          "gene",
-          "=",
-          "BUB1B"
-        ],
-        [
-          "consequence",
-          "like",
-          "%missense_variant%"
-        ]
-      ]
-    },
-    "intronA": {
-      "table": "results.panel_candidates",
-      "where": [
-        [
-          "gene",
-          "=",
-          "BUB1B"
-        ],
-        [
-          "consequence",
-          "like",
-          "%intron_variant%"
-        ],
-        [
-          "is_rare_recessive",
-          "=",
-          true
-        ],
-        [
-          "gnomad_af",
-          "is",
-          null
-        ]
-      ]
-    },
-    "intronB": {
-      "table": "results.panel_candidates",
-      "where": [
-        [
-          "gene",
-          "=",
-          "BUB1B"
-        ],
-        [
-          "consequence",
-          "like",
-          "%intron_variant%"
-        ],
-        [
-          "is_rare_recessive",
-          "=",
-          true
-        ],
-        [
-          "gnomad_af",
-          "is not",
-          null
-        ]
-      ]
+      "where": [["gene", "=", "BUB1B"], ["consequence", "like", "%missense_variant%"]]
     },
     "lztr1_stop": {
       "table": "results.coding_candidates",
-      "where": [
-        [
-          "gene",
-          "=",
-          "LZTR1"
-        ],
-        [
-          "consequence",
-          "like",
-          "%stop_gained%"
-        ],
-        [
-          "is_clinvar_plp",
-          "=",
-          true
-        ]
-      ]
+      "where": [["gene", "=", "LZTR1"], ["consequence", "like", "%stop_gained%"], ["is_clinvar_plp", "=", true]]
     },
     "f5_leiden": {
       "table": "results.coding_candidates",
-      "where": [
-        [
-          "rsid",
-          "=",
-          "rs6025"
-        ]
-      ]
+      "where": [["rsid", "=", "rs6025"]]
     },
     "flg_stop": {
       "table": "results.coding_candidates",
-      "where": [
-        [
-          "gene",
-          "=",
-          "FLG"
-        ],
-        [
-          "consequence",
-          "like",
-          "%stop_gained%"
-        ],
-        [
-          "is_clinvar_plp",
-          "=",
-          true
-        ]
-      ]
+      "where": [["gene", "=", "FLG"], ["consequence", "like", "%stop_gained%"], ["is_clinvar_plp", "=", true]]
     }
   },
   "rows": [
@@ -144,36 +34,8 @@
       "partner": "missense",
       "finding_type": "primary",
       "label": "stop+missense",
-      "rationale": "phase unresolved by reads; genome-wide scan finds no competing biallelic gene; phenotype ranking places BUB1B first among biallelic genes",
+      "rationale": "confirmed by the oracle at rank one; rediscovered blind by iteration two from the raw reads, the callset and the clinical terms, first under both fusion weightings; both alleles at one-copy multiplicity without an aligner; phase unmeasured in the reads, trans by the answer key",
       "hypothesis": "H009"
-    },
-    {
-      "variant": "stop",
-      "partner": "intronA",
-      "finding_type": "primary",
-      "label": "stop+intronA",
-      "rationale": "alternative partner; a full match here decodes the pairing directly"
-    },
-    {
-      "variant": "missense",
-      "partner": "intronA",
-      "finding_type": "primary",
-      "label": "missense+intronA",
-      "rationale": "alternative partner"
-    },
-    {
-      "variant": "stop",
-      "partner": "intronB",
-      "finding_type": "primary",
-      "label": "stop+intronB",
-      "rationale": "alternative partner; SpliceAI predicts no splice effect"
-    },
-    {
-      "variant": "missense",
-      "partner": "intronB",
-      "finding_type": "primary",
-      "label": "missense+intronB",
-      "rationale": "alternative partner"
     },
     {
       "variant": "lztr1_stop",
@@ -197,62 +59,7 @@
   "hypotheses": [
     {
       "label": "stop+missense",
-      "alleles": [
-        "stop",
-        "missense"
-      ]
-    },
-    {
-      "label": "stop+intronA",
-      "alleles": [
-        "stop",
-        "intronA"
-      ]
-    },
-    {
-      "label": "stop+intronB",
-      "alleles": [
-        "stop",
-        "intronB"
-      ]
-    },
-    {
-      "label": "missense+intronA",
-      "alleles": [
-        "missense",
-        "intronA"
-      ]
-    },
-    {
-      "label": "missense+intronB",
-      "alleles": [
-        "missense",
-        "intronB"
-      ]
-    },
-    {
-      "label": "stop+unseen",
-      "alleles": [
-        "stop",
-        "_unknown_1"
-      ],
-      "prior": 0.12
-    },
-    {
-      "label": "missense+unseen",
-      "alleles": [
-        "missense",
-        "_unknown_1"
-      ],
-      "prior": 0.05
-    },
-    {
-      "label": "neither (other gene)",
-      "alleles": [
-        "_unknown_1",
-        "_unknown_2"
-      ],
-      "prior": 0.05
+      "alleles": ["stop", "missense"]
     }
   ]
 }
