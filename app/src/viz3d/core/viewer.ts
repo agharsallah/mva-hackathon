@@ -44,6 +44,13 @@ export interface ViewerOptions {
    * state update at frame rate — the one thing this file exists to avoid.
    */
   onPoseChange?: (pose: CameraPose3D) => void;
+  /**
+   * Live read of the pose a controlling parent wants this canvas at (so two canvases can
+   * share one orbit), or `undefined`/`null` when uncontrolled. Checked every frame, before
+   * {@link onPoseChange} fires — not applied once from a `useEffect`, whose first commit can
+   * land after the loop's first frame and let that frame report the un-adopted fit pose.
+   */
+  controlledPose?: () => CameraPose3D | null | undefined;
 }
 
 /** How `setGeometry` treats the camera. See `Viewer.setGeometry`. */
@@ -67,11 +74,6 @@ export interface Viewer {
   setView(preset: CameraPreset): void;
   /** Where the camera is now, in the normalised unit box. */
   getPose(): CameraPose3D;
-  /**
-   * Put the camera exactly here. Used by the controlled `pose` prop, so two canvases can
-   * share one orbit; the pose is *not* echoed back through `onPoseChange`.
-   */
-  setPose(pose: CameraPose3D): void;
   setAutoRotate(on: boolean): void;
   resize(): void;
   /**
@@ -221,6 +223,26 @@ export function createViewer(
     };
   }
 
+  /**
+   * Snap the camera to a controlling parent's pose, if it set one and the camera is not
+   * already there. Runs first in every frame — see {@link ViewerOptions.controlledPose} for
+   * why this beats applying it from a React effect.
+   */
+  function syncControlledPose(): void {
+    const pose = options.controlledPose?.();
+    if (!pose) return;
+    if (reported && poseDistance(pose, reported) < POSE_EPSILON) return;
+    camera.up.set(pose.up[0], pose.up[1], pose.up[2]);
+    camera.position.set(pose.position[0], pose.position[1], pose.position[2]);
+    controls.target.set(pose.target[0], pose.target[1], pose.target[2]);
+    controls.update();
+    // Adopt it as the last reported pose *before* `reportPose` runs this frame: a pose that
+    // came in must not go straight back out, or two synced canvases would trade updates
+    // forever.
+    reported = pose;
+    reportedAt = Date.now();
+  }
+
   /** Report the camera at most every {@link POSE_REPORT_MS}, and only if it actually moved. */
   function reportPose(): void {
     if (!options.onPoseChange) return;
@@ -235,6 +257,7 @@ export function createViewer(
 
   function renderOnce(): void {
     if (disposed) return;
+    syncControlledPose();
     controls.update();
     if (graph) graph.update(camera);
     positionLabels();
@@ -293,15 +316,6 @@ export function createViewer(
       applyView();
     },
     getPose: currentPose,
-    setPose(pose) {
-      camera.up.set(pose.up[0], pose.up[1], pose.up[2]);
-      camera.position.set(pose.position[0], pose.position[1], pose.position[2]);
-      controls.target.set(pose.target[0], pose.target[1], pose.target[2]);
-      controls.update();
-      // Adopt it as the last reported pose: a pose that came *in* must not go straight back
-      // out, or two synced canvases would trade updates forever.
-      reported = pose;
-    },
     setAutoRotate(on) {
       controls.autoRotate = on;
     },

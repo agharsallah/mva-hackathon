@@ -15,5 +15,17 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     globals: true,
+    // Individual tests already opt into a 30s-60s timeout for the heaviest mounts
+    // (axe scans, multi-exhibit pages); the default 10s hook timeout still applies
+    // to shared `afterEach(cleanup)` hooks, so a slow machine under full-suite load
+    // can time out unmounting right after one of those renders. Match the ceiling.
+    hookTimeout: 60000,
+    // Vitest's default runs test *files* in parallel worker threads. On a modest laptop
+    // (see `docs/notes` on local machine limits) this suite's jsdom + mount-and-poll tests
+    // (`testHarness.ts`) contend hard enough for CPU that otherwise-fine `waitFor` timeouts
+    // start missing — measured: the parallel default took 122-160s and flaked on a
+    // different file each run; running files one at a time took 67.8s, clean. Serial is
+    // both faster and deterministic here, so it is the default.
+    fileParallelism: false,
   },
 });

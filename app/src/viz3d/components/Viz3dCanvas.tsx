@@ -25,13 +25,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { toGeometry } from '../adapters';
-import { poseDistance } from '../core/camera';
 import { hasWebGL } from '../core/capability';
 import { loadThreeBundle } from '../core/loadThree';
 import { datumById, idAtHit, selectionAt } from '../core/pick';
 import { createViewer, type Viewer } from '../core/viewer';
 import { describeDatumLine, describeScene } from '../spec/describe';
-import type { CameraPose3D, Viz3dCanvasProps } from '../spec/types';
+import type { Viz3dCanvasProps } from '../spec/types';
 import { SceneFallback } from './SceneFallback';
 
 interface HoverState {
@@ -68,13 +67,6 @@ export function Viz3dCanvas({
   const live = useRef({ scene, buffers, onSelect, highlighted, view, spin, onPose, pose });
   live.current = { scene, buffers, onSelect, highlighted, view, spin, onPose, pose };
 
-  /**
-   * The last pose this canvas either reported or was told to adopt — the echo guard. Without
-   * it, two canvases sharing one pose prop each re-apply what the other just sent, and the
-   * pair jitters instead of moving together.
-   */
-  const mirrored = useRef<CameraPose3D | null>(null);
-
   useEffect(() => {
     if (!webgl) return;
     let cancelled = false;
@@ -91,10 +83,8 @@ export function Viz3dCanvas({
                 ? selectionAt(live.current.scene, live.current.buffers, hit.source, hit.index)
                 : null,
             ),
-          onPoseChange: (next) => {
-            mirrored.current = next;
-            live.current.onPose?.(next);
-          },
+          controlledPose: () => live.current.pose,
+          onPoseChange: (next) => live.current.onPose?.(next),
           onHover: (hit, at) => {
             const id = hit ? idAtHit(live.current.buffers, hit.source, hit.index) : null;
             // Position first, as a transform on the existing node: no React involved, so the
@@ -115,10 +105,11 @@ export function Viz3dCanvas({
         viewer.setView(live.current.view);
         viewer.setAutoRotate(live.current.spin);
         setStatus('ready');
-        // A controlled `pose` is deliberately NOT applied here: `setView` above has just
-        // fitted the camera to the preset, and the `[pose, status]` effect below is declared
-        // after the `view` effect, so it runs last and a shared pose wins over the fit. Doing
-        // it here instead would be overwritten by that effect's first pass on `ready`.
+        // A controlled `pose` is applied by the render loop itself (`controlledPose` above),
+        // not here: `setView` just fitted the camera to the preset, and the loop's first
+        // frame — which can land before this promise callback's caller even returns control,
+        // let alone before a `useEffect` commits — checks `live.current.pose` and overrides
+        // the fit immediately, so there is no frame where the wrong pose could be reported.
       })
       .catch(() => {
         if (!cancelled) setStatus('failed');
@@ -136,16 +127,6 @@ export function Viz3dCanvas({
   // what a "reset the camera" gesture means. See `Viz3dCanvasProps.refitKey`.
   useEffect(() => void viewerRef.current?.setView(view), [view, refitKey, status]);
   useEffect(() => void viewerRef.current?.setAutoRotate(spin), [spin, status]);
-
-  // Controlled pose. Ignored when it is (within the reporting tolerance) the pose this canvas
-  // itself last emitted — see `mirrored`.
-  useEffect(() => {
-    const viewer = viewerRef.current;
-    if (!viewer || !pose) return;
-    if (mirrored.current && poseDistance(pose, mirrored.current) < 1e-4) return;
-    mirrored.current = pose;
-    viewer.setPose(pose);
-  }, [pose, status]);
 
   // Auto-rotate is an invitation, not a behaviour: the first touch of the scene stops it.
   //
