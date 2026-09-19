@@ -29,10 +29,10 @@
   ],
   "counts": {
     "chapters": 24,
-    "entries": 615,
+    "entries": 617,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 192
+    "contexts": 194
   },
   "chapters": [
     {
@@ -6055,6 +6055,43 @@
             "hypothesis"
           ],
           "firstSeen": "2026-09-05"
+        },
+        {
+          "kind": "entry",
+          "slug": "step-narrative",
+          "term": "Step narrative",
+          "aliases": [],
+          "html": "<p>the written half of a research step: what it did, why the question belonged there, what it concluded, what it could not have started without, what the next step does with its answer, and what each of its figures means. Everything else about a step is <em>derived</em> — the goal from the step map, the claims from the register, the entries from the blind gate, the figures from the filesystem — so these are exactly the judgements no query can produce. Committed as <code>narrative.json</code> beside the step's README, and enforced: a step that has run and says nothing fails the build.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>docs/iteration1/step-6/narrative.json</code> — the step that spent the first oracle submission, with what each of the eight possible replies would have meant.</p>",
+          "context": "<p>written because the dashboard could render a step's goal, claims, entries and figures and still not say what the step concluded</p>",
+          "source": "src/mva/viz/steps_narrative.py, tools/check_step_narrative.py",
+          "related": [
+            "research-goal",
+            "methodology-entry",
+            "figure-caption-reads-means",
+            "research-iteration"
+          ],
+          "firstSeen": "2026-09-19"
+        },
+        {
+          "kind": "entry",
+          "slug": "figure-caption-reads-means",
+          "term": "Figure caption (reads / means)",
+          "aliases": [
+            "Figure caption (reads",
+            "means)",
+            "reads / means"
+          ],
+          "html": "<p>a figure's two-part reading, kept apart on purpose. <strong>Reads</strong> is what the chart literally shows — the axes, what one mark is, how it is coloured, the ordering — and is checkable against the image by anyone. <strong>Means</strong> is what the chart is evidence <em>for</em>, which is argued from the methodology entry that produced it and cites that entry. A chart with neither is decoration; this repository had about seventy of them before the captions were written.</p>",
+          "exampleHtml": "<p><em>Example:</em> for the Track 1 funnel — <em>reads:</em> nine filter stages as horizontal bars on a log survivor axis, purple raw input through blue machinery to green answer; <em>means:</em> no single filter isolates the gene, only their combination does.</p>",
+          "context": "<p>validated per step, so a figure with no caption and a caption for a figure that was never drawn both fail the gate</p>",
+          "source": "tools/check_step_narrative.py",
+          "related": [
+            "step-narrative",
+            "methodology-entry",
+            "research-goal"
+          ],
+          "firstSeen": "2026-09-19"
         },
         {
           "kind": "entry",

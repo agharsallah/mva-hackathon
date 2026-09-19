@@ -143,6 +143,28 @@ green and the blind gate red, with nothing connecting the two. The filesystem ha
 gate (`tools/check_blind.py`) now runs in `tools/check-python.sh`; the register half still
 needs the warehouse and stays in `mva-science check`.
 
+### What a step says in its own words
+
+Everything above is *derived*: the goal from the step map, the claims from the register, the
+tests from the entries, the figures from the filesystem. Four things are not, because they
+are judgements a person makes, and a step that has run carries them in `narrative.json`
+beside its README:
+
+| Field | What it answers |
+|---|---|
+| `summary` | what the step did, and what came out of it |
+| `why` | why the question belonged at this point in the journey |
+| `verdict` | what the run concluded, naming the claims it settled — refutations included |
+| `inherits` / `hands_to` | the joint in the argument: what the step could not have started without, and what the next step does with the answer. `unblocks` is a dependency edge; this is the reason |
+| `figures[]` | per figure, **`reads`** — what the chart literally shows, checkable against the image — and **`means`** — what it is evidence for, argued from the entry it cites |
+
+`reads` and `means` are separate so an interpretation cannot be read as a description.
+`tools/check_step_narrative.py` runs in the Python gate: a `done` or `open` research step
+with no narrative fails, so does an empty field, a source path that does not exist, a figure
+with no caption, and a caption for a figure the step never drew. A `planned` step is exempt —
+inventing a summary for a step that has not run would be worse than the silence. Recorded in
+[`step-0/methodology/132`](step-0/methodology/132-what-a-step-says-and-what-a-figure-means.md).
+
 ---
 
 ## What the register refuses
