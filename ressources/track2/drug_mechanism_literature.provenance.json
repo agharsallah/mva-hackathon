@@ -1,13 +1,13 @@
 {
   "name": "drug_mechanism_literature",
-  "built_at": "2026-09-19T08:25:50+00:00",
+  "built_at": "2026-09-19T22:05:17+00:00",
   "built_by": "tools/track2_enrich.py",
-  "code_version": "05d7326",
+  "code_version": "d076959",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "method": "two PubMed questions per approved drug, derived from the card: the drug AND the mechanism (gene, protein, pathway head, disease anchor), and the drug AND the tumour context; hits is the PubMed record count, pmids a head of at most 10",
   "card": {
     "path": "ressources/track2/mechanism.json",
-    "version": 4,
+    "version": 5,
     "gene": "BUB1B",
     "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)"
   },
@@ -17,16 +17,12 @@
       "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils",
       "version": null,
       "role": "the literature behind the gene, the pathway and each direction",
-      "retrieved_at": "2026-09-18T19:06:05+00:00",
-      "retrieved_from": "2026-09-18T18:56:35+00:00",
-      "requests": 1003,
+      "retrieved_at": null,
+      "retrieved_from": null,
+      "requests": 0,
       "live_calls": 0,
-      "sha256": "fa037ff9c0b4454235ebbbe58b690fdea74b9fc1fd8a856402fa089d5f02b438",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
-      "queries": [
-        "mechanism: <drug> AND (BUB1B OR BubR1 OR \"spindle assembly checkpoint\" OR aneuploidy)",
-        "context: <drug> AND rhabdomyosarcoma"
-      ],
       "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
     },
     {

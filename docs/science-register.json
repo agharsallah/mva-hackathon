@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-19T18:52:00",
+  "generated_at": "2026-09-20T00:07:37",
   "steps": [
     {
       "slug": "step-0",
@@ -2442,6 +2442,39 @@
           "kind": "measurement",
           "claim": "Excluding the catalogue-adjacent lane moves the consensus rank by 858 of about 52,000 and leaves the fused score identical, so the ClinVar leak the ablation exists to detect is not load-bearing in this run.",
           "source_ref": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md",
+          "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H065",
+      "step": "step-7",
+      "statement": "The drug evidence ladder is independent of step 8's second instrument: revising the mechanism card to version 5 with the k-mer dosage route changes no rung, no shortlist row and no do-not row; F8 acts only on how the report argues direction D2 and on what the card can say about X, Y and the detection floor.",
+      "prediction": "A re-grade on card v5 returns evidence_ladder.tsv, shortlist.tsv and do_not.tsv with unchanged sha256 (47d1e415, 77b6b352, a7b09e9f), while every Track 2 provenance manifest names card version 5.",
+      "refuted_by": "Any row of evidence_ladder.tsv, shortlist.tsv or do_not.tsv differing between the card-v4 and card-v5 runs.",
+      "gene": "BUB1B",
+      "path": "",
+      "status": "supported",
+      "confidence": 0.9,
+      "suggested_confidence": 0.9569,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 155,
+          "direction": "supports",
+          "strength": 0.85,
+          "kind": "measurement",
+          "claim": "Re-grading on card v5 from the cached tables reproduced evidence_ladder.tsv (sha256 47d1e415...), shortlist.tsv (77b6b352...) and do_not.tsv (a7b09e9f...) byte-identical to the card-v4 run - 432, 61 and 23 rows, drugs by best rung 5:62 3:2 2:5 1:260 - while all seven manifests the re-grade rewrote name card version 5.",
+          "source_ref": "methodology/133",
+          "lineage_ref": ""
+        },
+        {
+          "id": 156,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "The grading pipeline never reads the card's measured_facts block: grep over src and tools finds measured_facts only in mva.warehouse.track2_lineage (a comment) and in the dashboard's display code, so no rung can depend on F8 by construction.",
+          "source_ref": "methodology/133",
           "lineage_ref": ""
         }
       ]

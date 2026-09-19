@@ -1,13 +1,13 @@
 {
   "name": "evidence_ladder",
-  "built_at": "2026-09-19T08:25:52+00:00",
+  "built_at": "2026-09-19T22:05:17+00:00",
   "built_by": "tools/track2_enrich.py",
-  "code_version": "05d7326",
+  "code_version": "d076959",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "method": "one row per (approved drug, direction): automated rung from approval, tumour-context trial and paediatric evidence (5 = approved AND context trial AND paediatric label-or-study; 4 = context trial; else 1), curated rung from evidence.tsv (a PMID read by a person, rung 2 cell / 3 in vivo); rung = max of the two, both printed; flags name anti-directions (card moa_pattern), standard of care, curated-only and unverified approval",
   "card": {
     "path": "ressources/track2/mechanism.json",
-    "version": 4,
+    "version": 5,
     "gene": "BUB1B",
     "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)"
   },
@@ -47,11 +47,11 @@
       "url": "https://api.fda.gov/drug/label.json",
       "version": null,
       "role": "current US drug labelling, the second evidence of approval",
-      "retrieved_at": "2026-09-18T19:08:43+00:00",
-      "retrieved_from": "2026-09-05T23:06:40+00:00",
-      "requests": 329,
+      "retrieved_at": null,
+      "retrieved_from": null,
+      "requests": 0,
       "live_calls": 0,
-      "sha256": "a5e088ca5a22f77ffe057bc7947f45411ee3466ecc9b42c0b24d732976f4b023",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
       "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
       "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
     }
