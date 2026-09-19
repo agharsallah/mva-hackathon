@@ -44,7 +44,16 @@ no table holds HGVS, so step 1 re-asks VEP.
   **O7 answered: the lane gap hits the pair** — `BUB1B` has exactly one `missense_variant` and
   one `stop_gained`, and three of the four MVP lanes are missense-only, so **GPN-MSA's
   promotion into the MVP is due** (plan §10 R9; opt-A, not built here)
-- [ ] R2 step 2: `fetch_zoo_tables.py --fetch esm1b --execute` (1.24 GiB) → parquet + digest fragment `models.d/esm1b.toml`; `mva-zoo coverage` × 4; one live REVEL reply confirms the field name (**O5**). File **P4-2a**, **P4-3**
+- [x] R2 step 2 — **entry 119**, `P4-2a` = **H059 supported** (all four lanes ran; AlphaMissense
+  10,601 and SpliceAI 32,534 hit their join gates exactly), `P4-3` = **H060 refuted**
+  (AlphaMissense **67.9 %** and ESM1b **29.2 %** of the 15,620 missense alleles, both under the
+  70 % refutation line). **O5 settled**: VEP REST spells the field `revel`. Five measured fixes:
+  the REVEL lane sent the whole annotation payload and timed out; the ESM1b converter excluded
+  the wrong index column, used a bound parameter as a COPY target, matched the *directory* with
+  its accession regex, and could not finish one `UNPIVOT` over a glob — reshaping now lives in
+  `src/mva/zoo/tables.py` (**169,457,840 rows in 95 s**). ESM1b needed a new lane,
+  `adapters/protein_table.py`. **Only SpliceAI sees both halves of the confirmed pair**, at
+  `ds_max` 0.00 and 0.03 — recorded before R5/R6 run
 - [ ] R3 step 3: `mva-zoo score` × 4 lanes (catalogue-free), re-run one for the no-op proof, `--mode aware` pass for the ablation. File **P4-4a** (≤ 1 h laptop, $0)
 - [ ] R4 step 4: `mva-zoo run` → `results.it4_model_ranks`, manifest `build/it4/runs/<id>.json` + coordinate-free copy; check `skipped_genes` empty, confirmed-pair flagging unique
 - [ ] R5 step 5: per-model reports `docs/iteration4/reports/<key>.md`, §6 hand-written and signed, histograms in `figures/it4/`
@@ -116,7 +125,7 @@ no table holds HGVS, so step 1 re-asks VEP.
 | O2 | dependency groups `zoo` / `zoo-ml` | `zoo` needs nothing beyond base (duckdb is a base dep); `zoo-ml` added with A1 |
 | O3 | upload as model 4 | prepare + rehearse, **no upload** unless the user decides |
 | O4 | `--iteration` flag | **settled**, entry 110 |
-| O5 | REVEL or CADD | **REVEL** (CADD 500 on public REST); confirmed by one live reply in R2 |
+| O5 | REVEL or CADD | **settled, entry 119**: REVEL, and the reply spells the field `revel` |
 | — | `uniprot=1` on VEP REST | **new, entry 114**: 500 on POST, 200 on GET → `AlleleRecord.uniprot` is null; ESM1b needs an `ENSP` → UniProt mapping in R2 or the lane is substituted |
 | O6 | decoy gene for step 7 | chosen in step 7's first entry |
 | O7 | confirmed pair in an MVP lane's class? | **answered, entry 114**: `BUB1B` = one `missense_variant` + one `stop_gained`; three MVP lanes are missense-only and the fourth is splice, so **GPN-MSA's promotion is due** (opt-A, unbuilt) |

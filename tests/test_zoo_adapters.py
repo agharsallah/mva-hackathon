@@ -492,6 +492,9 @@ class TestPluginAsker:
 
         replies = asker.raw_many([Variant("chr1", 1, "A", "G")])
         assert sent[0]["REVEL"] == 1
-        assert "af_gnomadg" in sent[0]
+        # Only the plugin and the variants: the annotation pass's QUERY_PARAMS would add
+        # two more plugin lookups and two frequency joins per allele, which read-timed out
+        # on the real endpoint at a 200-allele batch (entry 119).
+        assert set(sent[0]) == {"variants", "REVEL"}
         assert replies["1 1 . A G . . ."]["revel"] == 0.4
         asker.close()

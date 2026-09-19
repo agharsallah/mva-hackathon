@@ -53,6 +53,7 @@ DEFAULT_RECORDS = Path("build/it4/records.parquet")
 ADAPTER_MODULES: dict[str, str] = {
     "warehouse_column": "mva.zoo.adapters.warehouse_column",
     "duckdb_lookup": "mva.zoo.adapters.duckdb_lookup",
+    "protein_table": "mva.zoo.adapters.protein_table",
     "vep_rest": "mva.zoo.adapters.vep_rest",
 }
 

@@ -46,16 +46,25 @@ class PluginAsker:
     """
 
     def __init__(self, plugin: str, **kwargs: Any) -> None:
-        from mva.pipeline.annotate_vep import QUERY_PARAMS, VepRestAnnotator
+        from mva.pipeline.annotate_vep import VepRestAnnotator
         from mva.pipeline.vep_response import query_line
 
         class _Annotator(VepRestAnnotator):
-            """Adds ``{plugin: 1}`` to the POST body; everything else is inherited."""
+            """Sends **only** ``{plugin: 1}``; everything else is inherited.
+
+            Not ``QUERY_PARAMS + {plugin: 1}``, which is what this class first sent: that
+            set asks for the AlphaMissense and SpliceAI plugins and two gnomAD frequency
+            joins *per allele* on top of this lane's own plugin, and a 200-allele batch
+            then read-timed out on every one of five attempts (measured 2026-09-19,
+            methodology entry 119 — the same wall
+            :data:`mva.zoo.record_hgvs.LEAN_PARAMS` was written for). This lane reads one
+            field off the reply (:func:`_pick` on ``field_name``), so one option is all it
+            needs.
+            """
 
             def _post_batch(self, chunk: Sequence[Any]) -> list[dict[str, Any]]:
                 payload = {
                     "variants": [query_line(variant) for variant in chunk],
-                    **QUERY_PARAMS,
                     plugin: 1,
                 }
                 body = self._request("POST", "/vep/homo_sapiens/region", json=payload)
@@ -98,6 +107,10 @@ class VepRestAdapter:
     field_name: str
     records_parquet: Path = DEFAULT_RECORDS
     batch_size: int = 200
+    #: Seconds per request. The 60 s the transport defaults to is not enough for a
+    #: 200-allele plugin batch on the public endpoint; iteration 2's own pass uses 300
+    #: (``tools/annotate_it2_insilico.py --timeout``).
+    timeout: float = 300.0
     licence: str = ""
     tier: Tier = 1
     catalogue_adjacent: bool = True
@@ -206,7 +219,9 @@ class VepRestAdapter:
         from mva.pipeline.variant import Variant
         from mva.pipeline.vep_response import query_line
 
-        asker = self.asker or PluginAsker(self.plugin, batch_size=self.batch_size)
+        asker = self.asker or PluginAsker(
+            self.plugin, batch_size=self.batch_size, timeout=self.timeout
+        )
         variants = {
             allele: Variant.from_vcf(chrom, pos, ref, alt)
             for allele, (chrom, pos, ref, alt) in coordinates.items()
@@ -260,6 +275,7 @@ def build(card: Any, *, connection: Any = None, records_parquet: Path = DEFAULT_
         field_name=str(params.get("field", plugin.lower())),
         records_parquet=Path(records_parquet),
         batch_size=int(params.get("batch", 200) or 200),
+        timeout=float(params.get("timeout", 300.0) or 300.0),
         licence=str(getattr(card, "licence", "") or ""),
         catalogue_adjacent=bool(getattr(card, "catalogue_adjacent", True)),
         connection=connection,

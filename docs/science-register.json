@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-19T08:27:04+00:00",
+  "generated_at": "2026-09-19T09:03:50+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -85,7 +85,7 @@
       "title": "Track 2 enrichment",
       "goal": "Which mechanism facts from steps 2-5 and 8 revise the Track 2 card, and what does the drug evidence say for each direction?",
       "kind": "research",
-      "status": "open",
+      "status": "done",
       "unblocks": []
     },
     {
@@ -2165,11 +2165,39 @@
       "refuted_by": "Any one of the four cannot be fetched, licensed or joined \u2014 then that lane is replaced from the opt-A list and the substitution is recorded.",
       "gene": "",
       "path": "",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.8,
+      "suggested_confidence": 0.8808,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 135,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "All four MVP lanes ran end-to-end on the 39,286-record set in one day: AlphaMissense and SpliceAI as warehouse columns, REVEL live over VEP REST (52 of 200 alleles scored), ESM1b downloaded under MIT with its digest reproduced on two independent downloads, converted and joined.",
+          "source_ref": "docs/iteration4/step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 136,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "AlphaMissense reported exactly 10,601 scored and SpliceAI exactly 32,534 \u2014 the pre-registered non-null counts of warehouse.it2_insilico_annotations \u2014 so the allele_id join between the record set and the warehouse is correct.",
+          "source_ref": "docs/iteration4/step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 137,
+          "direction": "refutes",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "ESM1b could not be joined as declared: the record set carries no UniProt accession and its hgvs_p is Ensembl-flavoured three-letter, so the lane only runs through a new gene-symbol bridge built during this run.",
+          "source_ref": "docs/iteration4/step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H060",
@@ -2179,11 +2207,39 @@
       "refuted_by": "Any missense table other than EVE covers below 70 % of the callset's missense alleles.",
       "gene": "",
       "path": "",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.05,
+      "suggested_confidence": 0.0392,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 138,
+          "direction": "refutes",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "AlphaMissense covers 10,601 of the callset's 15,620 missense alleles (67.9 %), below the 70 % that refutes the claim \u2014 the warehouse column comes from iteration 2's VEP REST plugin pass, not from the published genome-wide table.",
+          "source_ref": "docs/iteration4/step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 139,
+          "direction": "refutes",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "ESM1b covers 4,562 of 15,620 missense alleles (29.2 %); its ceiling is 40.5 % because the publisher's accession-to-gene map names only 3,169 of the 7,383 genes carrying a missense allele.",
+          "source_ref": "docs/iteration4/step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 140,
+          "direction": "neutral",
+          "strength": 0.2,
+          "kind": "measurement",
+          "claim": "SpliceAI, which is not a missense table and so is outside this claim, covers 13,163 of 15,620 missense alleles (84.3 %) and 216 of 289 stop_gained (74.7 %).",
+          "source_ref": "docs/iteration4/step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H061",

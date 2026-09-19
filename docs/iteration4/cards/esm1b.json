@@ -5,18 +5,21 @@
   "tier": 1,
   "input_class": "missense",
   "source": "table",
-  "adapter": "duckdb_lookup",
+  "adapter": "protein_table",
   "params": {
     "key": [
       "uniprot",
       "hgvs_p"
     ],
     "url": "https://huggingface.co/spaces/ntranoslab/esm_variants/resolve/main/ALL_hum_isoforms_ESM1b_LLR.zip",
-    "sha256": "",
+    "sha256": "42b90ce74a007ce7147f8e4be4035fe7f11881215fecce0983441cc229207cd0",
     "bytes": 1335361543,
     "layout": "matrix-zip",
     "member_glob": "*.csv",
-    "score_sign": -1
+    "score_sign": -1,
+    "gene_map": "build/it4/tables/esm1b.genes.csv",
+    "map_accession": "id",
+    "map_gene": "gene"
   },
   "licence": "MIT",
   "licence_url": "https://github.com/ntranoslab/esm-variants/blob/main/LICENSE",

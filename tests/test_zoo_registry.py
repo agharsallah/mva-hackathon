@@ -62,7 +62,7 @@ def test_shipped_roster_loads() -> None:
     for key, card in cards.items():
         assert card.key == key
         assert card.tier in (1, 2, 3)
-        assert card.adapter == registry.ADAPTER_FOR_SOURCE[card.source]
+        assert card.adapter in registry.ADAPTER_FOR_SOURCE[card.source]
 
 
 def test_four_mvp_lanes_are_enabled() -> None:
@@ -223,7 +223,11 @@ def test_card_with_coverage_attaches_the_measured_numbers() -> None:
 
 def test_with_digest_does_not_mutate_the_card() -> None:
     card = registry.load()["esm1b"]
+    before = card.params.get("sha256", "")
     stamped = registry.with_digest(card, "a" * 64)
     assert stamped.params["sha256"] == "a" * 64
-    assert not card.params.get("sha256")
+    # The point is that stamping copies: the card the registry handed out is untouched,
+    # whether it already carried a measured digest (it does once the fetch has run) or not.
+    assert card.params.get("sha256", "") == before
+    assert before != "a" * 64
     assert stamped.params["url"] == card.params["url"]

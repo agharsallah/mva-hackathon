@@ -63,12 +63,15 @@ INPUT_CLASSES: tuple[str, ...] = ("missense", "splice", "any", "structure", "dis
 SCOPES: tuple[str, ...] = ("mvp", "opt-a", "opt-b")
 
 #: One adapter per source — the roster may not pair them freely.
-ADAPTER_FOR_SOURCE: Mapping[str, str] = {
-    "warehouse-column": "warehouse_column",
-    "table": "duckdb_lookup",
-    "vep-rest": "vep_rest",
-    "local-process": "local_process",
-    "modal": "modal",
+ADAPTER_FOR_SOURCE: Mapping[str, tuple[str, ...]] = {
+    "warehouse-column": ("warehouse_column",),
+    # A downloaded table has two shapes: keyed by the genomic change (`duckdb_lookup`) or
+    # keyed by a protein accession and a one-letter residue change (`protein_table`).
+    # Which one a table is, is a fact about the publisher, not about the source kind.
+    "table": ("duckdb_lookup", "protein_table"),
+    "vep-rest": ("vep_rest",),
+    "local-process": ("local_process",),
+    "modal": ("modal",),
 }
 
 #: What each adapter needs in ``params`` before a lane may be enabled. Anything else in
@@ -76,6 +79,7 @@ ADAPTER_FOR_SOURCE: Mapping[str, str] = {
 ADAPTER_PARAMS: Mapping[str, tuple[str, ...]] = {
     "warehouse_column": ("table", "column"),
     "duckdb_lookup": ("key", "url"),
+    "protein_table": ("key", "url"),
     "vep_rest": ("plugin",),
     "local_process": ("entrypoint",),
     "modal": ("image",),
@@ -215,10 +219,10 @@ def _card(key: str, table: dict[str, Any], origin: str) -> ModelCard:
         raise RegistryError(f"model {key!r}: tier={tier!r} is not 1, 2 or 3")
     source = _check_str(table, "source", key, SOURCES)
     adapter = table["adapter"]
-    if adapter != ADAPTER_FOR_SOURCE[source]:
+    if adapter not in ADAPTER_FOR_SOURCE[source]:
+        served = ", ".join(repr(name) for name in ADAPTER_FOR_SOURCE[source])
         raise RegistryError(
-            f"model {key!r}: source={source!r} is served by "
-            f"{ADAPTER_FOR_SOURCE[source]!r}, not by adapter={adapter!r}"
+            f"model {key!r}: source={source!r} is served by {served}, not by adapter={adapter!r}"
         )
     card = ModelCard(
         name=str(table["name"]),

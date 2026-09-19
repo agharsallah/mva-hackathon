@@ -40,7 +40,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 # The path shim above must run before these imports; that is why they are not at the top.
 from mva.drugs import provenance
-from mva.zoo import registry
+from mva.zoo import registry, tables
 
 #: Everything a fetch writes lives here; `.gitignore` keeps it out of the repository.
 DEFAULT_OUT = Path("build/it4/tables")
@@ -147,7 +147,9 @@ def _extract(archive: Path, into: Path) -> list[Path]:
     return sorted((p for p in into.rglob("*") if p.is_file()), key=lambda p: -p.stat().st_size)
 
 
-def _convert(card: registry.ModelCard, raw: Path, target: Path) -> int:
+def _convert(
+    card: registry.ModelCard, raw: Path, target: Path, only: frozenset[str] = frozenset()
+) -> int:
     """Turn whatever was downloaded into one parquet keyed for lookup. Returns row count."""
     import duckdb
 
@@ -159,7 +161,7 @@ def _convert(card: registry.ModelCard, raw: Path, target: Path) -> int:
         if layout in ("tsv", "csv"):
             rows = _convert_flat(con, raw, target, layout)
         else:
-            rows = _convert_archive(con, card, raw, target, layout)
+            rows = _convert_archive(con, card, raw, target, layout, only)
     finally:
         con.close()
     return rows
@@ -178,7 +180,12 @@ def _convert_flat(con: Any, raw: Path, target: Path, layout: str) -> int:
 
 
 def _convert_archive(
-    con: Any, card: registry.ModelCard, raw: Path, target: Path, layout: str
+    con: Any,
+    card: registry.ModelCard,
+    raw: Path,
+    target: Path,
+    layout: str,
+    only: frozenset[str] = frozenset(),
 ) -> int:
     """A zip of per-protein files → one long parquet.
 
@@ -187,32 +194,49 @@ def _convert_archive(
     position, one row per substituted amino acid — so it is unpivoted into
     ``(uniprot, hgvs_p, score)``. The member layout is printed before the conversion runs
     so the assumption is checked against the real file rather than trusted.
+
+    ``only`` restricts the conversion to the accessions named — one member per accession.
+    This is the plan's own tier-1 rule, "a parquet subset for the ~40k records only"
+    (§10 R7): a case carries a few thousand proteins, not every protein a publisher scored.
+    The reshaping itself is :func:`mva.zoo.tables.unpivot_matrix_members`, whose docstring
+    records why it is Python and not one SQL statement.
     """
     members = _extract(raw, raw.parent / f"{card.key}-extracted")
     if not members:
         raise SystemExit(f"{card.key}: the archive held no files")
-    glob = str(members[0].parent / str(card.params.get("member_glob", "*.csv")))
+    if only:
+        members = [item for item in members if tables.accession_of(item) in only]
+        if not members:
+            raise SystemExit(
+                f"{card.key}: no member matched the {len(only):,} accessions asked for"
+            )
     print(f"    {len(members):,} members; first: {members[0].name}")
     head = con.execute("SELECT * FROM read_csv(?, header=true) LIMIT 3", [str(members[0])])
     print(f"    columns: {[d[0] for d in head.description][:8]} …")
+    # DuckDB will not take the COPY target (or a read_csv path inside COPY) as a bound
+    # parameter — "Unsupported parameter type for filename: expected e.g. TARGET
+    # 'file.parquet'". Paths are interpolated as single-quoted literals instead; they are
+    # ones this script built, never user input.
+    dst = _literal(str(target))
     if layout == "csv-zip":
+        pattern = _literal(str(members[0].parent / str(card.params.get("member_glob", "*.csv"))))
         con.execute(
-            "COPY (SELECT * FROM read_csv(?, header=true, union_by_name=true, "
-            "filename=true)) TO ? (FORMAT parquet)",
-            [glob, str(target)],
+            f"COPY (SELECT * FROM read_csv({pattern}, header=true, union_by_name=true, "
+            f"filename=true)) TO {dst} (FORMAT parquet)"
         )
     else:
-        sign = int(card.params.get("score_sign", 1))
-        con.execute(
-            "COPY (SELECT regexp_extract(filename, '([^/]+?)_LLR', 1) AS uniprot, "
-            "       name AS hgvs_p, ? * value AS score "
-            "      FROM (SELECT * FROM read_csv(?, header=true, union_by_name=true, "
-            "            filename=true)) UNPIVOT (value FOR name IN (COLUMNS(* EXCLUDE "
-            "            (filename, column0)))) WHERE value IS NOT NULL) "
-            "TO ? (FORMAT parquet)",
-            [sign, glob, str(target)],
-        )
+        # The publisher's numbers are written **verbatim**, sign and all. Orientation is
+        # the lane's job (`score_sign` on the card, applied in the adapter), and applying
+        # it here as well would flip it twice — which it silently did until a BUB1B spot
+        # check came back negative for a damaging change (entry 119).
+        tables.unpivot_matrix_members(members, target, progress=print)
     return int(con.execute("SELECT count(*) FROM read_parquet(?)", [str(target)]).fetchone()[0])
+
+
+def _literal(value: str) -> str:
+    """A SQL string literal, single quotes doubled — for the places DuckDB refuses a `?`."""
+    escaped = value.replace("'", "''")
+    return f"'{escaped}'"
 
 
 def _fragment(card: registry.ModelCard, sha: str) -> str:
@@ -223,7 +247,13 @@ def _fragment(card: registry.ModelCard, sha: str) -> str:
     )
 
 
-def do_fetch(card: registry.ModelCard, out_dir: Path, *, execute: bool) -> int:
+def do_fetch(
+    card: registry.ModelCard,
+    out_dir: Path,
+    *,
+    execute: bool,
+    only: frozenset[str] = frozenset(),
+) -> int:
     """Download one lane's table, digest it, convert it, and print its fragment."""
     url = str(card.params.get("url", ""))
     if not url:
@@ -241,7 +271,7 @@ def do_fetch(card: registry.ModelCard, out_dir: Path, *, execute: bool) -> int:
 
     target = out_dir / f"{card.key}.parquet"
     print("  converting to parquet …")
-    rows = _convert(card, raw, target)
+    rows = _convert(card, raw, target, only)
     print(f"    {rows:,} rows -> {target}")
 
     manifest = provenance.envelope(f"zoo-table-{card.key}", built_by=Path(__file__).name)
@@ -291,6 +321,14 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--out", type=Path, default=DEFAULT_OUT, help=f"target folder (default {DEFAULT_OUT})"
     )
+    parser.add_argument(
+        "--accessions",
+        type=Path,
+        help="a file of accessions, one per line: convert only those members of an "
+        "archive. The plan's tier-1 rule — a parquet subset for this case's records "
+        "only — and for a matrix archive it is the difference between minutes and "
+        "never finishing.",
+    )
     parser.add_argument("--models", type=Path, default=registry.DEFAULT_MODELS_TOML)
     parser.add_argument("--fragments", type=Path, default=registry.DEFAULT_FRAGMENTS_DIR)
     return parser
@@ -312,7 +350,11 @@ def main(argv: list[str] | None = None) -> int:
             f"not enough free disk for {card.key}: it needs about "
             f"{expected * 3 / 1e9:.1f} GB free (raw + extracted + parquet)"
         )
-    return do_fetch(card, args.out, execute=args.execute)
+    only: frozenset[str] = frozenset()
+    if args.accessions:
+        only = frozenset(args.accessions.read_text().split())
+        print(f"  restricted to {len(only):,} accessions from {args.accessions}")
+    return do_fetch(card, args.out, execute=args.execute, only=only)
 
 
 if __name__ == "__main__":

@@ -29,10 +29,10 @@
   ],
   "counts": {
     "chapters": 23,
-    "entries": 592,
+    "entries": 595,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 167
+    "contexts": 170
   },
   "chapters": [
     {
@@ -6898,6 +6898,67 @@
             "local-flank-denominator"
           ],
           "firstSeen": "2026-09-13"
+        },
+        {
+          "kind": "entry",
+          "slug": "chromosome-dosage-k-mer-dosage",
+          "term": "Chromosome dosage (k-mer dosage)",
+          "aliases": [
+            "Chromosome dosage",
+            "k-mer dosage"
+          ],
+          "html": "<p>how much sequence a whole chromosome contributed to the reads, measured by counting reference-unique k-mers assigned to it. A chromosome present in more copies is hit more often, in proportion, so the count is a copy number without an aligner, a caller or a coordinate anywhere in the chain. It is the mirror image of the allele-balance route: it can see chromosomes that have no heterozygous sites to read (X and Y in a male proband) and is blind to copy-neutral loss of heterozygosity, which changes <em>whose</em> copy is present without changing how much sequence there is.</p>",
+          "exampleHtml": "<p><em>Example:</em> 7,330–8,699 unique 31-mers per contig plus a 7,999-mer genome-wide calibration set, each expected ~22 hits at 44× depth; a trisomy in a share <em>f</em> of cells raises the ratio by <em>f</em>/2, so 10% of cells is a 5% shift.</p>",
+          "context": "<p>step 8's second instrument, run once over the whole read store</p>",
+          "source": "src/mva/kmer/dosage.py, docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md",
+          "related": [
+            "copy-number",
+            "k-mer-multiplicity",
+            "uniqueness-filter-off-target-k-mer",
+            "absolute-denominator-k-mer-mass",
+            "b-deviation-bdev",
+            "mosaic-fraction"
+          ],
+          "firstSeen": "2026-09-19"
+        },
+        {
+          "kind": "entry",
+          "slug": "absolute-denominator-k-mer-mass",
+          "term": "Absolute denominator (k-mer mass)",
+          "aliases": [
+            "Absolute denominator",
+            "k-mer mass"
+          ],
+          "html": "<p>dividing by the total sequence observed rather than by the median chromosome. A median denominator assumes most chromosomes are normal, which is precisely the assumption <em>variegated</em> aneuploidy breaks; the total mass assumes nothing. Both are computed and their disagreement is a reported column, because where they part company is where the median moved.</p>",
+          "exampleHtml": "<p><em>Example:</em> the ratio against the autosomal median beside the ratio against a genome-wide calibration set, and the gap between them per chromosome.</p>",
+          "context": "<p>the defence against the failure mode the disease is named for</p>",
+          "source": "src/mva/kmer/dosage.py",
+          "related": [
+            "chromosome-dosage-k-mer-dosage",
+            "local-flank-denominator",
+            "copy-number"
+          ],
+          "firstSeen": "2026-09-19"
+        },
+        {
+          "kind": "entry",
+          "slug": "uniform-thinning-deliberate-subsample",
+          "term": "Uniform thinning (deliberate subsample)",
+          "aliases": [
+            "Uniform thinning",
+            "deliberate subsample"
+          ],
+          "html": "<p>measuring on a fraction of the reads <em>on purpose</em>, when the quantity being measured is a <strong>ratio</strong>. Reads are stored in shards that are flowcell partitions — lane and read number — not genomic ones, so any subset of shards is a uniform sample with respect to the genome: it multiplies every chromosome's expected count by the same factor, which cancels in a quotient. The ratio stays unbiased and only its variance rises, so the cost is precision and never a systematic error. The argument does <strong>not</strong> transfer to genotyping, which needs the absolute multiplicity at one site — there a sampled count is simply wrong.</p>",
+          "exampleHtml": "<p><em>Example:</em> 32 of 272 shards, 11.6% of the library, gives 20,706 observations per chromosome and a relative standard error of 0.69% — 7.2 sigma against the 5% shift a 10% mosaic trisomy produces, in 67 minutes instead of 9.4 hours.</p>",
+          "context": "<p>how step 8's dosage pass was afforded, and why the flag that licenses it is separate from the one that means \"timing probe\"</p>",
+          "source": "tools/run_it2_dosage_pass.py, docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md",
+          "related": [
+            "shard-partition",
+            "lane-flowcell-instrument",
+            "chromosome-dosage-k-mer-dosage",
+            "k-mer-multiplicity"
+          ],
+          "firstSeen": "2026-09-19"
         },
         {
           "kind": "entry",
