@@ -9,6 +9,7 @@ Append-only. An entry is never edited; a later one supersedes it and says so.
 | [117](117-five-models-and-the-family-this-data-does-not-fit.md) | Five models per chromosome. Which mechanism does the data name? | **H057 supported** |
 | [118](118-the-baseline-and-what-a-variegated-genome-does-to-it.md) | Every bound here divides by something. What happens when the divisor is wrong? | **H055, H056 supported** |
 | [121](121-the-second-instrument-and-the-shards-it-did-not-need.md) | A second instrument, sharing nothing with the first past the FASTQ. Do they agree? | H054 — verdict in the entry |
+| [123](123-the-denominator-that-assumes-nothing-read-back.md) | 121 promised two denominators and reported one. What does the absolute one say? | H054 — one evidence row, verdict unchanged |
 
 116 **supersedes [037](../../../step-0/methodology/037-baf-karyogram.md)** on one point: that
 entry's answer stands, but it was reached with a statistic that has no power for a mosaic

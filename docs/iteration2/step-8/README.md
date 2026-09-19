@@ -142,7 +142,10 @@ abnormal chromosomes at once recovers **every one in every replicate** while fla
 untouched chromosomes at **0.0048 at worst** against a nominal 0.05. Three contigs of
 twenty-two move the fitted over-dispersion from 0.01620 to 0.01966 and the fold centre from
 0.49300 to 0.49301 — not enough to drag a median. **Ten abnormal chromosomes was not tested
-and is not claimed.**
+and is not claimed.** The dosage route's third defence — the absolute k-mer-mass denominator,
+which assumes nothing about chromosomes — was computed by 121 and read back by
+[123](methodology/123-the-denominator-that-assumes-nothing-read-back.md): it agrees with the
+autosomal-median denominator on all 24 contigs to 0.017 %.
 
 ### Why the confidences are held down
 

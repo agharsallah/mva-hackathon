@@ -175,6 +175,12 @@ which is why the package takes one import layer above `mva.drugs`.
 
 Design note: [`notes/why-the-baseline-is-the-test.md`](notes/why-the-baseline-is-the-test.md).
 
+## Exhibits
+
+`/steps/step-5` on the dashboard, and `figures/track1/iteration2/step-5/` (each as `.png`, plus an
+`index.html` with captions and legends), rendered by `tools/render_it2_step5_figures.py` from
+`build/it2/step-5/analysis.json`: `sources`, `catalogue`, `anchors`, `citations`, `separation`, `domains`.
+
 ## What this hands to steps 6 and 7
 
 * **A ranking route with a measured weight** — AUC 0.634 [0.593, 0.672] — that passed both

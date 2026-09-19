@@ -173,6 +173,12 @@ is the second deliverable this project is built for.
 
 Design note: [`notes/why-no-filter-anywhere.md`](notes/why-no-filter-anywhere.md).
 
+## Exhibits
+
+`/steps/step-4` on the dashboard, and `figures/track1/iteration2/step-4/` (each as `.png`, plus an
+`index.html` with captions and legends), rendered by `tools/render_it2_step4_figures.py` from
+`build/it2/step-4/analysis.json`: `leaders`, `decomposition`, `groups`, `permutation-null`, `genotype-only`, `phenotype-bins`, `lane-coverage`, `shapes`.
+
 ## What this hands to steps 5 and 6
 
 * **Two leads, not one** — `BUB1B` at 341,019 and `ADAMTS1` at 201,029 — with the reason the
