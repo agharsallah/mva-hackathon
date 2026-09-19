@@ -21,20 +21,21 @@ import { claimTone, detailPath, statusLabel, stepTone, TRACK_LABEL, verdictCount
 export function StepCard({
   step,
   iteration,
-  current,
+  track,
   origin,
-  built,
+  open = false,
 }: {
   step: StepRow;
   iteration: string;
-  current: string;
-  /** Every route the module manifest declares — which step pages actually exist. */
-  built: ReadonlySet<string>;
+  /** Which track's page this card is on — it decides where "open the full step" goes. */
+  track: string;
   /** `fixture` when the page is offline — the figure strip then names files, not images. */
   origin?: string;
+  /** Start with the entries and figures shown. Track 2's iterations have one step each. */
+  open?: boolean;
 }) {
   const counts = verdictCounts(step);
-  const detail = detailPath(step, iteration, current, built);
+  const detail = detailPath(step, iteration, track);
 
   return (
     <article className={cx('rounded border', BOX[stepTone(step)], 'space-y-3 p-4')} id={step.slug}>
@@ -88,7 +89,7 @@ export function StepCard({
       )}
 
       {step.takes_hypotheses && (
-        <details className="rounded-control border border-line-soft bg-well/40">
+        <details open={open} className="rounded-control border border-line-soft bg-well/40">
           <summary className="cursor-pointer px-2 py-1.5 text-micro text-chrome-300 hover:text-chrome-50">
             What this step wrote and drew — {step.entries.length}{' '}
             {step.entries.length === 1 ? 'entry' : 'entries'}, {step.figures.length}{' '}

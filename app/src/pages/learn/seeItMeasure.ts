@@ -254,7 +254,7 @@ export const SEE_IT_MEASURE: Record<string, SeeIt> = {
   'k-mer-genotype': {
     app: [
       {
-        to: '/steps/step-3#calls-per-tier-no-call-included',
+        to: '/track1/iteration2/step-3#calls-per-tier-no-call-included',
         label: 'every allele typed, by what the model called it',
       },
     ],
@@ -268,7 +268,7 @@ export const SEE_IT_MEASURE: Record<string, SeeIt> = {
   'no-call': {
     app: [
       {
-        to: '/steps/step-3#calls-per-tier-no-call-included',
+        to: '/track1/iteration2/step-3#calls-per-tier-no-call-included',
         label: 'the red band — an answer, not a gap',
       },
     ],
@@ -276,7 +276,7 @@ export const SEE_IT_MEASURE: Record<string, SeeIt> = {
   'negative-binomial': {
     app: [
       {
-        to: '/steps/step-3#the-fit-and-the-checks-that-say-whether-to-believe-it',
+        to: '/track1/iteration2/step-3#the-fit-and-the-checks-that-say-whether-to-believe-it',
         label: 'the fitted parameters and their quality checks',
       },
     ],
@@ -284,7 +284,7 @@ export const SEE_IT_MEASURE: Record<string, SeeIt> = {
   'variance-to-mean-ratio': {
     app: [
       {
-        to: '/steps/step-3#the-fit-and-the-checks-that-say-whether-to-believe-it',
+        to: '/track1/iteration2/step-3#the-fit-and-the-checks-that-say-whether-to-believe-it',
         label: 'measured at 2.91, where Poisson predicts 1',
       },
     ],
@@ -292,7 +292,7 @@ export const SEE_IT_MEASURE: Record<string, SeeIt> = {
   reachability: {
     app: [
       {
-        to: '/steps/step-3#genes-the-stage-0-gate-excluded-still-yield-some-genotypes',
+        to: '/track1/iteration2/step-3#genes-the-stage-0-gate-excluded-still-yield-some-genotypes',
         label: 'the gate, and the claim it refuted',
       },
     ],

@@ -13,11 +13,11 @@ export const SEE_IT_FUSION: Record<string, SeeIt> = {
   'reciprocal-rank-fusion-rrf': {
     app: [
       {
-        to: '/steps/step-6#agreement-matrix-routes-against-the-leading-pairs',
+        to: '/track1/iteration2/step-6#agreement-matrix-routes-against-the-leading-pairs',
         label: 'three orderings merged, and where each route actually put each pair',
       },
       {
-        to: '/steps/step-6#the-fused-ranking-with-what-stands-behind-each-pair',
+        to: '/track1/iteration2/step-6#the-fused-ranking-with-what-stands-behind-each-pair',
         label: 'the fused leaderboard, with both weightings side by side',
       },
     ],
@@ -31,7 +31,7 @@ export const SEE_IT_FUSION: Record<string, SeeIt> = {
   'rank-inheritance': {
     app: [
       {
-        to: '/steps/step-6#agreement-matrix-routes-against-the-leading-pairs',
+        to: '/track1/iteration2/step-6#agreement-matrix-routes-against-the-leading-pairs',
         label: 'the * cells — a rank copied from the gene onto every pair in it',
       },
     ],
@@ -39,7 +39,7 @@ export const SEE_IT_FUSION: Record<string, SeeIt> = {
   'independent-evidence-count': {
     app: [
       {
-        to: '/steps/step-6#which-witnesses-speak-for-each-leading-pair',
+        to: '/track1/iteration2/step-6#which-witnesses-speak-for-each-leading-pair',
         label: 'four routes, four sources, and which of them is missing for the leader',
       },
     ],
@@ -47,7 +47,7 @@ export const SEE_IT_FUSION: Record<string, SeeIt> = {
   'route-dependency-graph': {
     app: [
       {
-        to: '/steps/step-6#which-route-read-what-and-where-two-of-them-read-the-same-thing',
+        to: '/track1/iteration2/step-6#which-route-read-what-and-where-two-of-them-read-the-same-thing',
         label: 'the dashed edges: two instruments reading one source',
       },
     ],
@@ -61,7 +61,7 @@ export const SEE_IT_FUSION: Record<string, SeeIt> = {
   'leave-one-route-out': {
     app: [
       {
-        to: '/steps/step-6#leave-one-route-out-does-any-single-instrument-carry-the-result',
+        to: '/track1/iteration2/step-6#leave-one-route-out-does-any-single-instrument-carry-the-result',
         label: 'silence one route: the leader falls from rank 1 to rank 62',
       },
     ],
@@ -69,7 +69,7 @@ export const SEE_IT_FUSION: Record<string, SeeIt> = {
   'agreement-matrix': {
     app: [
       {
-        to: '/steps/step-6#agreement-matrix-routes-against-the-leading-pairs',
+        to: '/track1/iteration2/step-6#agreement-matrix-routes-against-the-leading-pairs',
         label: 'the iteration&rsquo;s headline figure',
       },
     ],
@@ -77,7 +77,7 @@ export const SEE_IT_FUSION: Record<string, SeeIt> = {
   'frozen-artifact-hash-before-the-comparison': {
     app: [
       {
-        to: '/steps/step-6#freeze-receipt-the-ranking-predates-the-comparison',
+        to: '/track1/iteration2/step-6#freeze-receipt-the-ranking-predates-the-comparison',
         label: 'the file, its sha256, and the constants fixed before any route ran',
       },
     ],
@@ -91,11 +91,11 @@ export const SEE_IT_FUSION: Record<string, SeeIt> = {
   'ranking-route-vs-confirmation-route': {
     app: [
       {
-        to: '/steps/step-6#which-instrument-earned-a-vote',
+        to: '/track1/iteration2/step-6#which-instrument-earned-a-vote',
         label: 'three routes admitted, one carried at weight 0 and kept visible',
       },
       {
-        to: '/steps/step-6#what-each-instrument-measured-and-on-what',
+        to: '/track1/iteration2/step-6#what-each-instrument-measured-and-on-what',
         label: 'every instrument&rsquo;s measured error rate, side by side',
       },
     ],
@@ -103,7 +103,7 @@ export const SEE_IT_FUSION: Record<string, SeeIt> = {
   unblinding: {
     app: [
       {
-        to: '/steps/step-6#unblinding-what-the-mirror-found',
+        to: '/track1/iteration2/step-6#unblinding-what-the-mirror-found',
         label: 'the comparison, the decision row, and why no slot was spent',
       },
     ],
@@ -111,7 +111,7 @@ export const SEE_IT_FUSION: Record<string, SeeIt> = {
   'decoy-null': {
     app: [
       {
-        to: '/steps/step-6#how-far-down-the-matched-decoys-sit',
+        to: '/track1/iteration2/step-6#how-far-down-the-matched-decoys-sit',
         label: 'the fusion&rsquo;s own decoy null: a control gene reaches rank 13',
       },
     ],

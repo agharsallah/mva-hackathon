@@ -18,27 +18,17 @@ export const TRACK_LABEL: Record<string, string> = {
 };
 
 /**
- * Where a step's own page is, when it has one.
+ * Where a step's own page is.
  *
- * Only some steps earned a detail page: one is built when a step's result needs tables and
- * charts the card cannot hold. `built` is the set of routes the module manifest declares,
- * handed in by the page from the journey context — so a page added to the manifest is linked
- * from here with no second list to keep in step, and a step whose page was never built simply
- * has no link, which is the truth about it.
- *
- * The detail pages are the *current* iteration's — `current` comes from the payload, so the
- * app never keeps its own copy of which iteration that is. A frozen iteration's card must
- * not link to a page rendering another iteration's numbers, so the link appears only for it.
+ * Every research step of every iteration has one under Track 1 — the generator writes a
+ * route per declared step, so the link follows from the tree rather than from a second list
+ * that could fall behind it. Track 2's iterations have a single step each and show it in
+ * full on the iteration page, so a card there links nowhere; a platform step has no page
+ * because it belongs to no iteration.
  */
-export function detailPath(
-  step: StepRow,
-  iteration: string,
-  current: string,
-  built: ReadonlySet<string>,
-): string {
-  if (iteration !== current) return '';
-  const path = `/steps/${step.slug}`;
-  return built.has(path) ? path : '';
+export function detailPath(step: StepRow, iteration: string, track: string): string {
+  if (track !== 'track1' || step.kind === 'platform') return '';
+  return `/track1/${iteration}/${step.slug}`;
 }
 
 /** A step's tone: done is reached, open is in flight, planned has not started. */

@@ -164,7 +164,7 @@ export const SEE_IT_PLATFORM: Record<string, SeeIt> = {
   'zemojtel-style-degradation': {
     app: [
       {
-        to: '/steps/step-1#held-out-recall-against-the-cutoff-with-the-promise-it-missed',
+        to: '/track1/iteration2/step-1#held-out-recall-against-the-cutoff-with-the-promise-it-missed',
         label: 'the recall curve the degraded queries produced',
       },
     ],
@@ -178,11 +178,11 @@ export const SEE_IT_PLATFORM: Record<string, SeeIt> = {
   'bootstrap-interval': {
     app: [
       {
-        to: '/steps/step-1#held-out-recall-against-the-cutoff-with-the-promise-it-missed',
+        to: '/track1/iteration2/step-1#held-out-recall-against-the-cutoff-with-the-promise-it-missed',
         label: 'the shaded band around each recall curve',
       },
       {
-        to: '/steps/step-1#the-pre-registered-gates-including-the-three-that-failed',
+        to: '/track1/iteration2/step-1#the-pre-registered-gates-including-the-three-that-failed',
         label: 'the gates those intervals were judged against',
       },
     ],

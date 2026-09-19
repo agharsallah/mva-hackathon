@@ -1,4 +1,4 @@
-import type { StepsPayload } from '../../api/types';
+import type { StepRow, StepsPayload } from '../../api/types';
 import { Badge } from '../../components/Badge';
 import { DataTable } from '../../components/DataTable';
 import { Chip, Exhibit } from '../../components/Exhibit';
@@ -14,9 +14,19 @@ import { C } from '../../lib/palette';
  * iteration-1 candidate table before the unblinding entry.
  *
  * This table is that gate's own output. A reader checks the same rows the CI gate checks.
+ *
+ * `steps` narrows it to the ones the page is about, so a Track 2 iteration page does not
+ * list the entries of steps it does not show. The gate's *verdict* is still the whole
+ * iteration's, because blinding is a property of the iteration and not of one track.
  */
-export function BlindChecklist({ data }: { data: StepsPayload }) {
-  const rows = data.steps.flatMap((step) =>
+export function BlindChecklist({
+  data,
+  steps = data.steps,
+}: {
+  data: StepsPayload;
+  steps?: StepRow[];
+}) {
+  const rows = steps.flatMap((step) =>
     step.entries.map((entry) => ({
       step: step.slug,
       entry: entry.entry,

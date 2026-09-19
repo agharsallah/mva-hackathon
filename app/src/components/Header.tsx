@@ -1,5 +1,5 @@
 /**
- * Persistent three-tier header.
+ * Persistent four-tier header.
  *
  * Row 1 — identity and the four questions: brand, case id, one tab per section
  * (`Sections` landmark), then the chrome that must stay visible on every page: export,
@@ -8,10 +8,12 @@
  * question the page in front of them is serving. Row 2 is absent on Overview, which is
  * the map rather than a stop on the journey.
  *
- * Row 3 — the detail pages of the open page, when it has any (`Detail pages` landmark).
- * It exists because `decide` had grown to twelve sibling tabs, seven of them one
- * iteration's step pages: a reader could not see that `Step 4` is part of `Steps` and not
- * a peer of `Submissions`. A page declares its parent in the manifest and lands here.
+ * Rows 3 and 4 — the branch of the open page, and the branch inside it. `Decide` holds a
+ * three-level subtree (Track ▸ Iteration ▸ Step), so `/track1/iteration2/step-4` shows
+ * Track 1's iterations in row 3 and iteration 2's steps in row 4. Without it the section row
+ * carried twelve equal tabs, seven of them one iteration's step pages, and a reader could not
+ * see that `Step 4` is part of one iteration of one track rather than a peer of `Submissions`.
+ * A page declares its parent in the manifest and lands in the right row by itself.
  *
  * The fixture badge is not decoration — it is the difference between a live measurement
  * and a committed placeholder, so it stays visible on every page.
@@ -113,6 +115,59 @@ const SUB =
 const SUB_ON = 'bg-machinery-950/60 text-chrome-50';
 const SUB_OFF = 'text-chrome-400 hover:bg-chrome-900 hover:text-chrome-200';
 
+/** Whether this item, or anything declared under it, is the page in front of the reader. */
+function holds(item: HeaderNavItem, pathname: string): boolean {
+  return item.to === pathname || (item.children ?? []).some((c) => holds(c, pathname));
+}
+
+/**
+ * Whether this item's children should be a row: it is the open page and has children, or
+ * the open page is somewhere beneath it. A leaf never opens a row of its own.
+ */
+function opensRowFor(item: HeaderNavItem, pathname: string): boolean {
+  const children = item.children ?? [];
+  if (children.length === 0) return false;
+  return item.to === pathname || children.some((c) => holds(c, pathname));
+}
+
+/**
+ * One row of children, with the branch's own page first as "overview". The label in front
+ * of it names the branch, so three stacked rows stay readable as a path rather than as
+ * three unrelated tab strips.
+ */
+function BranchRow({ branch, tone }: { branch: HeaderNavItem; tone: string }) {
+  return (
+    <div className={cx('border-t border-line-soft', tone)}>
+      <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-2 px-5 py-1">
+        <span className="text-micro text-chrome-500">{branch.label} —</span>
+        <nav aria-label={`${branch.label} pages`} className="flex flex-wrap items-center gap-1">
+          <NavLink
+            to={branch.to}
+            end
+            onPointerEnter={branch.preload}
+            onFocus={branch.preload}
+            className={({ isActive }) => cx(SUB, isActive ? SUB_ON : SUB_OFF)}
+          >
+            overview
+          </NavLink>
+          {(branch.children ?? []).map((c) => (
+            <NavLink
+              key={c.to}
+              to={c.to}
+              end
+              onPointerEnter={c.preload}
+              onFocus={c.preload}
+              className={({ isActive }) => cx(SUB, isActive ? SUB_ON : SUB_OFF)}
+            >
+              {c.label}
+            </NavLink>
+          ))}
+        </nav>
+      </div>
+    </div>
+  );
+}
+
 function ApiHealth() {
   const h = useApiHealth();
   const refused = useSyncExternalStore(unauthorizedStore.subscribe, unauthorizedStore.get);
@@ -159,16 +214,12 @@ function FetchBar() {
 export function Header({ home, sections }: { home: HeaderNavItem; sections: HeaderSection[] }) {
   const onFixtures = useSyncExternalStore(fixtureModeStore.subscribe, fixtureModeStore.get);
   const { pathname } = useLocation();
-  const active = sections.find((s) =>
-    s.pages.some((p) => p.to === pathname || p.children?.some((c) => c.to === pathname)),
-  );
-  // The branch whose detail row is open: the page itself when it has children, or the
-  // parent of the open child. A page with neither keeps row 3 absent.
-  const branch = active?.pages.find(
-    (p) =>
-      (p.to === pathname && p.children && p.children.length > 0) ||
-      p.children?.some((c) => c.to === pathname),
-  );
+  const active = sections.find((s) => s.pages.some((p) => holds(p, pathname)));
+  // The two rows below the section row: the open page's branch, and the branch inside it.
+  // `/track1/iteration2/step-4` opens Track 1's iterations in row 3 and iteration 2's steps
+  // in row 4; `/science`, which has no children, keeps both rows absent.
+  const branch = active?.pages.find((p) => opensRowFor(p, pathname));
+  const sub = branch?.children?.find((c) => opensRowFor(c, pathname));
 
   return (
     <header className="relative sticky top-0 z-20 border-b border-line bg-chrome-950/95 backdrop-blur">
@@ -277,36 +328,9 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
         </div>
       )}
 
-      {branch && (
-        <div className="border-t border-line-soft bg-chrome-950/40">
-          <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-2 px-5 py-1">
-            <span className="text-micro text-chrome-500">{branch.label} —</span>
-            <nav aria-label="Detail pages" className="flex flex-wrap items-center gap-1">
-              <NavLink
-                to={branch.to}
-                end
-                onPointerEnter={branch.preload}
-                onFocus={branch.preload}
-                className={({ isActive }) => cx(SUB, isActive ? SUB_ON : SUB_OFF)}
-              >
-                overview
-              </NavLink>
-              {branch.children?.map((c) => (
-                <NavLink
-                  key={c.to}
-                  to={c.to}
-                  end
-                  onPointerEnter={c.preload}
-                  onFocus={c.preload}
-                  className={({ isActive }) => cx(SUB, isActive ? SUB_ON : SUB_OFF)}
-                >
-                  {c.label}
-                </NavLink>
-              ))}
-            </nav>
-          </div>
-        </div>
-      )}
+      {branch && <BranchRow branch={branch} tone="bg-chrome-950/40" />}
+      {sub && <BranchRow branch={sub} tone="bg-chrome-950/25" />}
+
       <FetchBar />
     </header>
   );

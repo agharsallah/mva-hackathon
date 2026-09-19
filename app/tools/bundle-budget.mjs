@@ -101,9 +101,22 @@ const PAGES_DIR = path.join(APP_ROOT, 'src/pages');
 // instead of twelve — so it belongs in first paint like the rest of this budget's contents.
 // No page code moved into the entry: the `/steps` work is all in the lazy `steps` chunk.
 // Methodology 126.
+//
+// Re-blessed 2026-09-19 (later the same day): 306.75 kB raw / 96.80 kB gzip. Measured on the
+// same tree: 297.49 / 95.20 before, 306.69 / 96.73 after, so +9.20 kB raw and +1.53 kB gzip.
+// All of it is the generated `Decide` subtree — 26 manifest entries, each carrying a route, a
+// nav label, an h1 and the step's goal as its description (`src/app/modules/steps.generated.ts`,
+// methodology 131). The gzip figure is the honest one here: the entries are prose with a
+// shared vocabulary, so they compress to about a sixth of their raw size.
+//
+// It is shell by the same argument as every line above it — the manifest drives routing, the
+// four-tier nav, the page headers and the journey footer, and the descriptions ARE the page
+// headers. The alternative, fetching the tree, would trade 1.5 kB gzip once for a request
+// before the first nav can render. No page code moved into the entry: every step page is a
+// lazy chunk.
 const BUDGETS = Object.freeze({
-  INITIAL_RAW_BYTES: 297_500,
-  INITIAL_GZIP_BYTES: 95_250,
+  INITIAL_RAW_BYTES: 306_750,
+  INITIAL_GZIP_BYTES: 96_800,
 });
 
 const KB = (bytes) => `${(bytes / 1000).toFixed(2)} kB`;

@@ -13,7 +13,16 @@
  * listed twelve equal tabs and the shape of the journey was invisible.
  */
 
+import { STEP_MODULES } from './steps.generated';
 import type { FeatureModule } from './types';
+
+/**
+ * The generated research nodes under one track, in the order the generator emitted them:
+ * each iteration followed by its steps. Spliced into the manifest rather than appended, so
+ * journey order stays the order a reader should walk.
+ */
+const under = (track: string): FeatureModule[] =>
+  STEP_MODULES.filter((m) => m.id === track || m.id.startsWith(`${track}-`));
 
 export const modules: FeatureModule[] = [
   {
@@ -110,93 +119,9 @@ export const modules: FeatureModule[] = [
   },
 
   // ── Decide: what do we believe, and what has it cost to find out? ───────────
-  {
-    id: 'steps',
-    path: '/steps',
-    navLabel: 'Steps',
-    title: 'The research journey',
-    group: 'decide',
-    description:
-      'Every iteration and every step in it: the one question each step asked, the claims filed before the run, what became of them, the methodology entries they were written in, and the figures they drew.',
-    load: () => import('../../pages/Steps'),
-  },
-  {
-    id: 'step1',
-    path: '/steps/step-1',
-    navLabel: 'Step 1',
-    title: 'Step 1 — the blind target set (iteration 2)',
-    group: 'decide',
-    parent: 'steps',
-    description:
-      'Which genes the symptoms alone nominate, with the DNA never opened — and the measured recall that turns the list into an enrichment rather than coverage.',
-    load: () => import('../../pages/Step1'),
-  },
-  {
-    id: 'step2',
-    path: '/steps/step-2',
-    navLabel: 'Step 2',
-    title: 'Step 2 — what the raw reads say (iteration 2)',
-    group: 'decide',
-    parent: 'steps',
-    description:
-      'The second, independent read of the case: 1.07 billion raw reads filtered by a k-mer bait and called without the vendor pipeline — with the gate that failed and the decoy set that matched.',
-    load: () => import('../../pages/Step2'),
-  },
-  {
-    id: 'step3',
-    path: '/steps/step-3',
-    navLabel: 'Step 3',
-    title: 'Step 3 — the reads, with no aligner and no caller (iteration 2)',
-    group: 'decide',
-    parent: 'steps',
-    description:
-      'The same bytes read a third way, by counting k-mers: what a disjoint instrument confirms of step 2\u2019s alleles, and the 80% claim it refutes.',
-    load: () => import('../../pages/Step3'),
-  },
-  {
-    id: 'step4',
-    path: '/steps/step-4',
-    navLabel: 'Step 4',
-    title: 'Step 4 \u2014 every gene, ordered, with nothing filtered out (iteration 2)',
-    group: 'decide',
-    parent: 'steps',
-    description:
-      'The funnel replaced by a product of likelihood ratios: all 11,465 genes scored, including the 73.6% nobody has curated, with the decoy and permutation nulls that say what the ordering is worth.',
-    load: () => import('../../pages/Step4'),
-  },
-  {
-    id: 'step5',
-    path: '/steps/step-5',
-    navLabel: 'Step 5',
-    title: 'Step 5 \u2014 what the literature knows, and what that is worth (iteration 2)',
-    group: 'decide',
-    parent: 'steps',
-    description:
-      "Published alleles keyed on this child's own variants, case-report anchors derived by script rather than typed, protein domain and structure context \u2014 each measured against a matched decoy set and a raw publication count.",
-    load: () => import('../../pages/Step5'),
-  },
-  {
-    id: 'step6',
-    path: '/steps/step-6',
-    navLabel: 'Step 6',
-    title: 'Step 6 \u2014 one ranking out of three, and what carries it (iteration 2)',
-    group: 'decide',
-    parent: 'steps',
-    description:
-      'Reciprocal rank fusion over the routes that earned a vote, frozen and hashed before the comparison \u2014 with the leave-one-route-out table that shows the leader is carried by one route, not confirmed by four.',
-    load: () => import('../../pages/Step6'),
-  },
-  {
-    id: 'step8',
-    path: '/steps/step-8',
-    navLabel: 'Step 8',
-    title: 'Step 8 \u2014 how small a mosaic could we have seen? (iteration 2)',
-    group: 'decide',
-    parent: 'steps',
-    description:
-      'Iteration 1 called every autosome flat with a statistic that has no power for a mosaic gain. This is the re-test, and the detection limit that makes its answer mean something \u2014 plus the five-model comparison and the two trisomies it cannot separate.',
-    load: () => import('../../pages/Step8'),
-  },
+  // Science and Probes are the register and the budget; Track 1 and Track 2 are the two
+  // deliverables, each opening onto its iterations and their steps (that subtree is
+  // generated from the step maps, below); Submissions is what would be uploaded.
   {
     id: 'science',
     path: '/science',
@@ -217,15 +142,16 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/Probes'),
   },
   {
-    id: 'submissions',
-    path: '/submissions',
-    navLabel: 'Submissions',
-    title: 'The submission dossier',
+    id: 'track1',
+    path: '/track1',
+    navLabel: 'Track 1',
+    title: 'Track 1 — which two broken copies, and of which gene',
     group: 'decide',
     description:
-      'Every upload-ready iteration: what would be sent, the decode table it was designed against, the coordinate-free rows behind it, and what it has cost.',
-    load: () => import('../../pages/Submissions'),
+      'The question answered more than once on purpose: one card per iteration, each opening onto that iteration\u2019s own steps, claims, methodology entries and figures.',
+    load: () => import('../../pages/Track1'),
   },
+  ...under('track1'),
   {
     id: 'track2',
     path: '/track2',
@@ -236,7 +162,17 @@ export const modules: FeatureModule[] = [
       'The mechanism hand-off from Track 1, the market-approved candidates it implies, the trials and literature behind them, and the strategy that ends in one final suggestion.',
     load: () => import('../../pages/Track2'),
   },
-
+  ...under('track2'),
+  {
+    id: 'submissions',
+    path: '/submissions',
+    navLabel: 'Submissions',
+    title: 'The submission dossier',
+    group: 'decide',
+    description:
+      'Every upload-ready iteration: what would be sent, the decode table it was designed against, the coordinate-free rows behind it, and what it has cost.',
+    load: () => import('../../pages/Submissions'),
+  },
   // ── Platform: what exists, where did it come from, and is it up? ─────────────
   {
     id: 'catalog',

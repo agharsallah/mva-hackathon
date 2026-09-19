@@ -21,9 +21,11 @@
     "theme:check": "node tools/gen-theme.mjs --check",
     "dictionary": "node tools/gen-dictionary.mjs",
     "dictionary:check": "node tools/gen-dictionary.mjs --check",
+    "steps-nav": "cd .. && uv run python tools/gen_steps_nav.py",
+    "steps-nav:check": "cd .. && uv run python tools/gen_steps_nav.py --check",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run theme:check && pnpm run dictionary:check && pnpm run test",
+    "check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run theme:check && pnpm run dictionary:check && pnpm run steps-nav:check && pnpm run test",
     "prepare": "sh -c 'test -d ../.git || exit 0; cd .. && husky && sh tools/setup-git.sh'",
     "bundle-budget": "node tools/bundle-budget.mjs"
   },

@@ -24,3 +24,9 @@ src/lib/dictionary/assets
 # Prettier's one-key-per-line would triple the file and turn every recapture into an
 # unreadable diff. Machine-written, never hand-edited — same reason as the structure fixtures.
 src/fixtures/data/track2.json
+
+# Generated from the step maps by `uv run python tools/gen_steps_nav.py` — the maps in
+# `src/mva/science/step_maps/` are the source, and `pnpm steps-nav:check` compares these
+# byte-for-byte, so prettier must not rewrite them. Same contract as the dictionary above.
+src/app/modules/steps.generated.ts
+src/pages/steps/bodies.generated.ts

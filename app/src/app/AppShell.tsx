@@ -11,9 +11,9 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 // into first paint with it (+23 kB raw, measured). Pages are lazy chunks, so they can
 // keep using the barrel.
 import { Footer } from '../components/Footer';
-import { Header, type HeaderSection } from '../components/Header';
+import { Header, type HeaderNavItem, type HeaderSection } from '../components/Header';
 import { JourneyProvider } from '../components/journey';
-import type { JourneyGroup } from '../components/journeyContext';
+import type { JourneyGroup, JourneyPage } from '../components/journeyContext';
 import { useTheme } from '../lib/theme';
 import { ModuleBoundary } from './ModuleBoundary';
 import { modules } from './modules';
@@ -23,33 +23,54 @@ import { PageFrame } from './PageFrame';
 import { ScrollToTop } from './ScrollToTop';
 
 const home = modules[0];
-const page = (m: (typeof modules)[number]) => ({
-  to: m.path,
-  label: m.navLabel,
-  title: m.title,
-  description: m.description,
-  preload: () => void m.load(),
-});
+// A page and everything declared under it, to any depth. The research subtree is three
+// levels — Track ▸ Iteration ▸ Step — and the shell builds it by following `parent` rather
+// than by knowing how deep it goes, so a fourth level would need no change here.
+const page = (m: (typeof modules)[number]): JourneyPage => {
+  const children = childrenOf(m.id).map(page);
+  return {
+    to: m.path,
+    label: m.navLabel,
+    title: m.title,
+    description: m.description,
+    preload: () => void m.load(),
+    ...(children.length > 0 ? { children } : {}),
+  };
+};
 
-// Two levels, not one flat list: a page that declares a parent is nested under it, so the
-// section row stays a navigation instead of becoming an inventory of every step page.
+// A tree, not one flat list: a page that declares a parent is nested under it, so the section
+// row stays a navigation instead of becoming an inventory of every step page.
 const groups: JourneyGroup[] = NAV_GROUPS.map((g) => ({
   id: g.id,
   label: g.label,
   question: g.question,
-  pages: topLevelIn(g.id).map((m) => ({ ...page(m), children: childrenOf(m.id).map(page) })),
+  pages: topLevelIn(g.id).map(page),
 }));
+const navItem = (p: JourneyPage): HeaderNavItem => ({
+  to: p.to,
+  label: p.label,
+  preload: p.preload,
+  ...(p.children ? { children: p.children.map(navItem) } : {}),
+});
 const sections: HeaderSection[] = groups.map((g) => ({
   id: g.id,
   label: g.label,
   question: g.question,
-  pages: g.pages.map((p) => ({
-    to: p.to,
-    label: p.label,
-    preload: p.preload,
-    children: p.children?.map((c) => ({ to: c.to, label: c.label, preload: c.preload })),
-  })),
+  pages: g.pages.map(navItem),
 }));
+
+/**
+ * Where the flat step routes used to live. `/steps` and `/steps/step-4` were iteration 2's
+ * pages before the tree existed; a link to one, in a commit message or a methodology entry,
+ * must still land on the page it meant.
+ */
+const MOVED: [string, string][] = [
+  ['/steps', '/track1'],
+  ...['1', '2', '3', '4', '5', '6', '8'].map((n): [string, string] => [
+    `/steps/step-${n}`,
+    `/track1/iteration2/step-${n}`,
+  ]),
+];
 
 export function AppShell() {
   // Keyed by theme: every exhibit builds its Plotly layout / SVG / three.js scene from `C`,
@@ -76,6 +97,9 @@ export function AppShell() {
                   // showing on the next module's route.
                   element={<ModuleBoundary key={m.id} moduleId={m.id} load={m.load} />}
                 />
+              ))}
+              {MOVED.map(([from, to]) => (
+                <Route key={from} path={from} element={<Navigate to={to} replace />} />
               ))}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
