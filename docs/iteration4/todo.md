@@ -62,7 +62,13 @@ no table holds HGVS, so step 1 re-asks VEP.
   three workers as iteration 2 already runs, would put it near 35 min — the revision the
   claim is owed. No-op re-runs and `--mode aware` both inserted **0**.
   **Only SpliceAI scores both halves of the confirmed pair, at 0.00 and 0.03**
-- [ ] R4 step 4: `mva-zoo run` → `results.it4_model_ranks`, manifest `build/it4/runs/<id>.json` + coordinate-free copy; check `skipped_genes` empty, confirmed-pair flagging unique
+- [x] R4 step 4 — **entry 128** (machinery, no hypothesis): eight stages in **≈ 15 s warm,
+  113 s cold, $0**; 63,347 pairs → 402 rank rows; the confirmed pair flagged **exactly once**.
+  `skipped_genes` is **not** empty — 16 high-diversity loci exceed the 60-call cap (BUB1B is
+  not one). Only SpliceAI ranks the confirmed pair (11,980 of 50,696, 23.63 %); the other
+  three have **no opinion**. RRF catalogue-free rank **20,639**. Three faults a fixture could
+  not catch, fixed first: the lineage schema (`91a7156`), the cache read from the wrong schema
+  — silent, no error (`58c0ae5`), and §5 never quoting the HPO ranking (`58c0ae5`)
 - [ ] R5 step 5: per-model reports `docs/iteration4/reports/<key>.md`, §6 hand-written and signed, histograms in `figures/it4/`
 - [ ] R6 step 6: agreement matrix, RRF with/without adjacent, disagreement table, `docs/iteration4/report.md` (method `fusion`). File **P4-6**, **P4-8** (MVP lanes)
 - [ ] R7 step 7 run: walk over MONDO:0009759 and the decoy card; overlap figure; Q14 section. File **P4-11**, **P4-12**
@@ -71,7 +77,7 @@ no table holds HGVS, so step 1 re-asks VEP.
 ## Wave 3 — dashboard + docs for the MVP (2 agents)
 
 - [ ] API: `GET /api/zoo/models` (cards + coverage), `GET /api/zoo/scores?allele_id=`, `GET /api/zoo/ranks`, `GET /api/zoo/merge` (matrix, RRF, disagreements), `GET /api/zoo/runs` (manifests) under `src/mva/viz/api_zoo*.py`
-- [ ] app: `/steps/step-<n>` pages for iteration 4 (one per step, from the live API), zoo cards page, agreement-matrix view, per-model report view, run-manifest view, lineage view per table; fixtures re-captured and hashes re-blessed
+- [ ] app: `/track1/<iteration>/step-<n>` pages for iteration 4 (one per step, from the live API), zoo cards page, agreement-matrix view, per-model report view, run-manifest view, lineage view per table; fixtures re-captured and hashes re-blessed
 - [ ] dictionary: merge the six `docs/iteration4/step-<n>/terms.draft.md` into `docs/dictionary.md` in dependency order; `/learn` regenerated
 - [ ] `docs/iteration4/README.md` step table with statuses; `docs/README.md` iteration-4 rows; `src/mva/README.md` gains the `zoo` row and graph edge
 
