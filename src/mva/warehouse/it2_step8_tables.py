@@ -38,7 +38,11 @@ from .it2_step8_schema import (
 )
 from .postgres import ALIAS, safe_identifier
 
-__all__ = ["SCHEMAS", "Loaded", "load"]
+#: `SCHEMAS` and `LIMITS_TABLE` are re-exported rather than left to reach through this
+#: module: the loader is what the rest of the warehouse talks to, and `mva.warehouse.loaders`
+#: names the limits table when it builds its consumer list. Declaring them here keeps that
+#: import a supported one instead of an accident of where the split landed.
+__all__ = ["LIMITS_TABLE", "SCHEMAS", "Loaded", "load"]
 
 
 @dataclass(frozen=True)
