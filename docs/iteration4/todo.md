@@ -37,14 +37,14 @@ no table holds HGVS, so step 1 re-asks VEP.
 
 ## Wave 2 — run the MVP chain on real data (main thread, strict order, each run files its entry + claims)
 
-- [x] R1 step 1 — **entry 114**, `P4-1a` = **H058 supported** (0.99953 of 38,087 coding alleles
+- [x] R1 step 1 (`05d7326`) — **entry 114**, `P4-1a` = **H058 supported** (0.99953 of 38,087 coding alleles
   spelled; 39,286 records; 1 h 45 m; VEP release 116/GRCh38). Two REST fixes were needed:
   `uniprot=1` is **500 on POST** (so `uniprot` is null everywhere — ESM1b's join key is step 2's
   problem) and `QUERY_PARAMS` times out at 200 alleles (lean payload instead).
   **O7 answered: the lane gap hits the pair** — `BUB1B` has exactly one `missense_variant` and
   one `stop_gained`, and three of the four MVP lanes are missense-only, so **GPN-MSA's
   promotion into the MVP is due** (plan §10 R9; opt-A, not built here)
-- [x] R2 step 2 — **entry 119**, `P4-2a` = **H059 supported** (all four lanes ran; AlphaMissense
+- [x] R2 step 2 (`cf492c5`) — **entry 119**, `P4-2a` = **H059 supported** (all four lanes ran; AlphaMissense
   10,601 and SpliceAI 32,534 hit their join gates exactly), `P4-3` = **H060 refuted**
   (AlphaMissense **67.9 %** and ESM1b **29.2 %** of the 15,620 missense alleles, both under the
   70 % refutation line). **O5 settled**: VEP REST spells the field `revel`. Five measured fixes:
