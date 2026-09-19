@@ -114,8 +114,16 @@ uv run python tools/render_it4_figures.py
 `mva-zoo run --case-gene GENEX --iteration demo` overrides `[case]` without editing the file;
 `--iteration` also moves every default output path to `docs/demo/`.
 
-**The run id is the sha256 of the case file.** The same file re-run is the same run — which
-is what makes every stage safe to repeat — and any edit starts a new one.
+**The run id is the sha256 of the case file**, prefixed with `[case] table_prefix`. The same
+file re-run is the same run — which is what makes every stage safe to repeat — and any edit
+starts a new one. That cuts both ways, and it already has: adding the `[case]` block to
+`src/mva/zoo/zoo.example.toml` changed its digest, so the shipped config now yields
+**`it4-cf39acb4d64c`** while iteration 4's committed results were produced under
+**`it4-dcda40a4df2c`** by the pre-`[case]` file. Nothing was re-run to reconcile them, and
+nothing should be: a manifest names the configuration that produced it, entries 114-130 cite
+the old id, and a re-run would be a *new* run to be filed as one. The rule for any case: keep
+the case file beside its manifests, and treat a changed digest as a new experiment rather than
+an edit to an old one.
 
 ---
 
