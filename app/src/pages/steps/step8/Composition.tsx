@@ -188,7 +188,7 @@ export function Composition({
             rows={[fit, other]}
             rowKey={(row) => row.source}
             columns={[
-              { key: 'source', header: 'regressor' },
+              { key: 'source', header: 'regressor', render: (row) => row.source },
               {
                 key: 'correlation',
                 header: 'Pearson r',
