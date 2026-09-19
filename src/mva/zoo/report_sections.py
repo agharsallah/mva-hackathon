@@ -203,6 +203,16 @@ def _clinical(block: Mapping[str, Any]) -> list[str]:
     return [*_heading(5), str(block.get("sentence", "—"))]
 
 
+#: Printed under section 6 on every render. Named rather than inlined because
+#: :func:`mva.zoo.report.existing_interpretation` has to strip it back off when it reads a
+#: hand-written section out of a rendered file — otherwise a re-render appends a second copy,
+#: which is exactly what the first re-render did (entry 130).
+INTERPRETATION_TRAILER = (
+    "Only this section is written rather than computed. Sections 1-5 and 7 are rendered "
+    "from the stored JSON and change only when a number changes."
+)
+
+
 def _interpretation(block: Mapping[str, Any]) -> list[str]:
     marker = block.get("marker", "<!-- interpretation: hand-written YYYY-MM-DD | llm:none -->")
     return [
@@ -211,10 +221,7 @@ def _interpretation(block: Mapping[str, Any]) -> list[str]:
         "",
         str(block.get("text") or "_Placeholder. This is the one section prose may enter._"),
         "",
-        (
-            "Only this section is written rather than computed. Sections 1-5 and 7 are rendered "
-            "from the stored JSON and change only when a number changes."
-        ),
+        INTERPRETATION_TRAILER,
     ]
 
 

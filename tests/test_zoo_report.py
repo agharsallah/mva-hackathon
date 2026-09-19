@@ -286,3 +286,19 @@ class TestInterpretationSurvivesARerender:
 
         report_module.write_markdown([self.report()], tmp_path)
         assert report_module.existing_interpretation(tmp_path / "fake.md") == ""
+
+    def test_a_re_render_does_not_duplicate_the_rendered_trailer(self, tmp_path):
+        """The renderer's own trailer must not be read back in as part of the prose.
+
+        It was, and the first re-render appended a second copy of it (entry 130).
+        """
+        from mva.zoo import report as report_module
+
+        report_module.write_markdown([self.report()], tmp_path)
+        path = tmp_path / "fake.md"
+        path.write_text(path.read_text().replace("_Placeholder.", "Written. Placeholder."))
+        for _ in range(3):
+            report_module.write_markdown([self.report()], tmp_path)
+        text = path.read_text()
+        assert text.count(report_module.INTERPRETATION_TRAILER) == 1
+        assert text.count("Written.") == 1

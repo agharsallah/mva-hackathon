@@ -26,6 +26,7 @@ from pathlib import Path
 from typing import Any
 
 from .report_sections import (
+    INTERPRETATION_TRAILER,
     coverage_json,
     distribution_json,
     histogram_path,
@@ -343,6 +344,9 @@ def existing_interpretation(path: Path) -> str:
         return ""
     tail = text.split(marker, 1)[1].split("-->", 1)[-1]
     body = tail.split("\n## ", 1)[0].strip()
+    # The renderer prints its own trailer under every section 6; leaving it in the captured
+    # prose would append a second copy on each re-render.
+    body = body.replace(INTERPRETATION_TRAILER, "").strip()
     if body.startswith("_Placeholder."):
         return ""
     return body

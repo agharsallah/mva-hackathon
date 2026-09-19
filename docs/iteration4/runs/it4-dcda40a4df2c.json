@@ -2,7 +2,7 @@
   "config_digest": "dcda40a4df2c04c87d8f9fb62dd75c0440353c6d12dc90fb19db03ef840dadc6",
   "config_path": "src/mva/zoo/zoo.example.toml",
   "dollars": 0.0,
-  "finished_at": "2026-09-19T16:38:29+00:00",
+  "finished_at": "2026-09-19T16:57:26+00:00",
   "merge_method": "fusion",
   "mode": "catalogue-free",
   "models": {
@@ -23,66 +23,66 @@
     {
       "note": "39286 records",
       "rows": 39286,
-      "seconds": 4.7788,
+      "seconds": 6.1813,
       "skipped": false,
       "stage": "normalize"
     },
     {
       "note": "4 lanes",
       "rows": 4,
-      "seconds": 0.0096,
+      "seconds": 0.0076,
       "skipped": false,
       "stage": "registry_check"
     },
     {
       "note": "58480 scores over 4 lanes",
       "rows": 58480,
-      "seconds": 6.6126,
+      "seconds": 8.4866,
       "skipped": false,
       "stage": "fan_out"
     },
     {
       "note": "4 coverages",
       "rows": 4,
-      "seconds": 0.1023,
+      "seconds": 0.1,
       "skipped": false,
       "stage": "collect"
     },
     {
       "note": "63347 pairs, 0 rows",
       "rows": 0,
-      "seconds": 1.4861,
+      "seconds": 1.7266,
       "skipped": false,
       "stage": "rank_per_model"
     },
     {
       "note": "4 reports",
       "rows": 4,
-      "seconds": 0.432,
+      "seconds": 0.3818,
       "skipped": false,
       "stage": "report_per_model"
     },
     {
       "note": "RRF rank (free): 20639",
       "rows": 4,
-      "seconds": 1.4441,
+      "seconds": 1.6249,
       "skipped": false,
       "stage": "merge"
     },
     {
       "note": "docs/iteration4/report.md",
       "rows": 1,
-      "seconds": 0.0018,
+      "seconds": 0.0019,
       "skipped": false,
       "stage": "render"
     }
   ],
-  "started_at": "2026-09-19T16:38:14+00:00",
+  "started_at": "2026-09-19T16:57:08+00:00",
   "venues": {
     "alphamissense": "laptop",
     "esm1b": "laptop",
     "revel": "laptop",
     "spliceai": "laptop"
   },
-  "wall_clock_seconds": 14.867
+  "wall_clock_seconds": 18.511
 }

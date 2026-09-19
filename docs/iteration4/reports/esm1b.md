@@ -1,6 +1,6 @@
 # esm1b — iteration 4 model report
 
-**Standing:** generated 2026-09-19T16:45:00+00:00 by `mva.zoo.report.render_model_report` from run `it4-dcda40a4df2c`, catalogue mode `catalogue-free`.
+**Standing:** generated 2026-09-19T16:57:25+00:00 by `mva.zoo.report.render_model_report` from run `it4-dcda40a4df2c`, catalogue mode `catalogue-free`.
 
 Every number below is a key of `results.it4_model_reports.report_json` for this run. Section 6 is the only written section.
 
@@ -121,8 +121,6 @@ out of proportion to what it saw. The phenotype ranking is independent of it
 (§5).
 
 _hand-written 2026-09-19_
-
-Only this section is written rather than computed. Sections 1-5 and 7 are rendered from the stored JSON and change only when a number changes.
 
 Only this section is written rather than computed. Sections 1-5 and 7 are rendered from the stored JSON and change only when a number changes.
 
