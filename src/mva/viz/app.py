@@ -29,7 +29,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from ..warehouse.objects import ObjectStore
 from ..warehouse.settings import Postgres, object_store, setting
-from . import api_zoo, health, probebuild, routes_reads, routes_warehouse
+from . import api_zoo, api_zoo_jobs, health, probebuild, routes_reads, routes_warehouse
 from .auth import guard_dependencies, resolve_token
 from .cache import Cache, default_directory
 
@@ -102,4 +102,7 @@ def create_app(
     # The model zoo. Its own router rather than a branch of the warehouse one: it resolves
     # its case from `src/mva/zoo/zoo.example.toml` (or `MVA_ZOO_CONFIG`) per request.
     app.include_router(api_zoo.router(settings, cache), dependencies=guarded)
+    # The zoo's two write verbs (score, run) as background jobs. Same guard, plus their own
+    # refusal when the token is empty: an open API may read the zoo, never spend the machine.
+    app.include_router(api_zoo_jobs.router(settings, resolve_token(token)), dependencies=guarded)
     return app
