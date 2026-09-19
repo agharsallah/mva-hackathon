@@ -40,7 +40,7 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from mva.drugs import enrich, provenance, tables, transfer
+from mva.drugs import compare, enrich, provenance, tables, transfer
 from mva.drugs.mechanism import DEFAULT_CARD, load
 from mva.drugs.snapshot import DEFAULT_OUT_DIR, write_snapshot
 
@@ -118,7 +118,7 @@ def one_pass(card_path: Path, out_dir: Path, analysis_path: Path, *, refresh: bo
         card_path, out_dir, analysis_path=analysis_path, refresh=refresh, progress=print
     )
     enrich_s = time.monotonic() - mark
-    live, cached = transfer.request_totals(
+    live, cached = compare.request_totals(
         snapshot.counts.get("requests"), result.analysis.get("requests")
     )
     print(
@@ -162,10 +162,10 @@ def write_comparison(
     args: argparse.Namespace,
     out_dir: Path,
     annotation: transfer.HpoAnnotation,
-    runs: list[transfer.CaseRun],
+    runs: list[compare.CaseRun],
 ) -> None:
     """The comparison table and its manifest. Inputs are committed files only."""
-    rows = transfer.comparison_rows(runs)
+    rows = compare.comparison_rows(runs)
     written = tables.write_tsv(args.comparison, tables.TRANSFER_COMPARISON_COLUMNS, rows)
     inputs = _manifest_inputs(
         [
@@ -234,14 +234,14 @@ def main() -> int:
         )
         print(f"\ncold {cold_s:.1f}s → warm {warm_s:.1f}s")
 
-    real = transfer.CaseRun(
+    real = compare.CaseRun(
         label="BUB1B / MVA1 (the proband)",
         role="real case",
         snapshot=_read_json(args.real_dir / "snapshot.json"),
         analysis=_read_json(args.real_analysis),
         curated_rows=_curated_rows(args.real_dir),
     )
-    moved = transfer.CaseRun(
+    moved = compare.CaseRun(
         label=f"{out_dir.name} / {annotation.disease_name}",
         role="transfer case",
         snapshot=snapshot,

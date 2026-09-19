@@ -20,7 +20,7 @@ from typing import Any
 
 import pytest
 
-from mva.drugs import enrich, mechanism, transfer
+from mva.drugs import compare, enrich, mechanism, transfer
 from test_drugs_support import FIXTURES
 
 # ── the doubles ──────────────────────────────────────────────────────────────────────
@@ -237,15 +237,15 @@ ANALYSIS = {
 
 class TestComparison:
     def test_cache_hits_are_replies_minus_live_summed_over_both_stages(self) -> None:
-        live, cached = transfer.request_totals(SNAPSHOT["requests"], ANALYSIS["requests"])
+        live, cached = compare.request_totals(SNAPSHOT["requests"], ANALYSIS["requests"])
         assert live == 10  # 4 + 0 + 6
         assert cached == 13  # (10-4) + (5-0) + (8-6)
 
     def test_a_missing_or_malformed_requests_block_contributes_nothing(self) -> None:
-        assert transfer.request_totals(None, {}, {"x": "not a dict"}) == (0, 0)
+        assert compare.request_totals(None, {}, {"x": "not a dict"}) == (0, 0)
 
     def test_one_row_per_case_with_every_rung_present_even_at_zero(self) -> None:
-        run = transfer.CaseRun(
+        run = compare.CaseRun(
             label="GENEZ / FSS9",
             role="transfer case",
             snapshot=SNAPSHOT,
@@ -254,7 +254,7 @@ class TestComparison:
             wall_seconds=12.34,
             warm_seconds=1.26,
         )
-        row = transfer.comparison_row(run)
+        row = compare.comparison_row(run)
         assert row["case"] == "GENEZ / FSS9"
         assert row["gene"] == "GENEZ"
         assert row["targets"] == 11
@@ -269,8 +269,8 @@ class TestComparison:
         assert row["warm_seconds"] == 1.3
 
     def test_a_case_this_run_did_not_execute_has_no_wall_clock(self) -> None:
-        row = transfer.comparison_row(
-            transfer.CaseRun("real", "real case", SNAPSHOT, ANALYSIS, curated_rows=5)
+        row = compare.comparison_row(
+            compare.CaseRun("real", "real case", SNAPSHOT, ANALYSIS, curated_rows=5)
         )
         assert row["wall_seconds"] is None
         assert row["warm_seconds"] is None
@@ -278,10 +278,10 @@ class TestComparison:
 
     def test_rows_keep_the_order_they_were_given(self) -> None:
         runs = [
-            transfer.CaseRun("first", "real case", SNAPSHOT, ANALYSIS),
-            transfer.CaseRun("second", "transfer case", SNAPSHOT, ANALYSIS),
+            compare.CaseRun("first", "real case", SNAPSHOT, ANALYSIS),
+            compare.CaseRun("second", "transfer case", SNAPSHOT, ANALYSIS),
         ]
-        assert [row["case"] for row in transfer.comparison_rows(runs)] == ["first", "second"]
+        assert [row["case"] for row in compare.comparison_rows(runs)] == ["first", "second"]
 
 
 # ── an uncurated card through the enrichment ─────────────────────────────────────────

@@ -278,8 +278,10 @@ def transfer_scalability(rows: list[dict]) -> go.Figure:
         template=theme.TEMPLATE_NAME,
         barmode="group",
         bargap=0.35,
-        height=420,
-        margin={"l": 190, "r": 40, "t": 20},
-        legend={"orientation": "h", "y": -0.18},
+        height=440,
+        # The axis title sits under the bars and the legend under that: without the bottom
+        # margin plotly draws them on top of each other.
+        margin={"l": 190, "r": 40, "t": 20, "b": 90},
+        legend={"orientation": "h", "y": -0.28},
     )
     return fig

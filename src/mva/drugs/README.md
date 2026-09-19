@@ -63,7 +63,8 @@ so a reader of the table alone can criticise it without opening this file.
 | `tables.py` | the five TSVs: columns, and how a cell is spelled |
 | `methods.py` | one sentence per table for the manifests — prose, kept out of the pipeline module |
 | `decoy.py` | the same child, a different gene: the **specificity** control |
-| `transfer.py` | a different **case** entirely: the **portability** control, and the cross-case comparison rows |
+| `transfer.py` | a different **case** entirely: the card, the `phenotype.hpoa` reader, the **portability** control |
+| `compare.py` | both controls' side-by-side counts: the decoy per direction, the transfer per case |
 | `provenance.py` | one manifest per table, in the repository's reference shape |
 | `snapshot.py` | run everything once, write everything, count everything |
 | `cli.py` | `mva-drugs`: `card`, `targets`, `drugs`, `trials`, `literature`, `snapshot` |
