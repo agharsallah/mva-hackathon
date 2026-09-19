@@ -111,8 +111,8 @@ export function Composition({
             those residuals. <span className="text-decision-400">Yellow dotted lines</span> — ±2
             sigma, which is where a single pre-specified chromosome would start to be interesting
             and where a set of {tested} is still noise.{' '}
-            <span className="text-machinery-400">Blue</span> — one copy per copy expected. The right
-            axis reads the same number as a cell fraction: a gain in a share <em>f</em> of cells
+            <span className="text-machinery-400">Blue</span> — one copy per copy expected. Hovering
+            a bar reads the same number as a cell fraction: a gain in a share <em>f</em> of cells
             raises a chromosome&rsquo;s sequence by <em>f</em>/2, so the fraction is twice the
             deviation, signed rather than folded so a loss reads negative.
           </>

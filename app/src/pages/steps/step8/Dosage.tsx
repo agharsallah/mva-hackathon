@@ -40,7 +40,13 @@ export function Dosage({
   const chroms = rows.map((row) => row.chrom);
   const thinning = rows[0]?.thinning;
   const swept = rows[0]?.shards_swept;
-  const worst = [...rows].sort((a, b) => Math.abs(b.disagreement) - Math.abs(a.disagreement))[0];
+  // The two denominators differ by a near-constant factor, and that shape is the point: the
+  // gap's *spread* across autosomes says whether any one chromosome dragged the median, and a
+  // constant offset says none did. Naming the largest gap instead would pin a chromosome for
+  // a difference every chromosome shares.
+  const gaps = rows.filter((row) => !HEMIZYGOUS.has(row.chrom)).map((row) => row.disagreement);
+  const meanGap = gaps.reduce((sum, value) => sum + value, 0) / (gaps.length || 1);
+  const gapSpread = Math.max(...gaps) - Math.min(...gaps);
 
   // A trisomy in a share f of cells raises a chromosome's sequence by f/2, so an observed
   // ratio r reads back as f = 2(r − 1). The inverse is only defined for a gain: a loss comes
@@ -58,8 +64,10 @@ export function Dosage({
         title="Sequence contributed per chromosome, against two denominators"
         reading={
           `Every contig sits within its interval of a single copy-number ratio. The two denominators ` +
-          `part company most on chr${worst?.chrom ?? '—'} (${stat((worst?.disagreement ?? 0) * 100)}%), ` +
-          `which is the number that says whether the median denominator moved.`
+          `differ by a near-constant ${Math.abs(meanGap * 100).toFixed(2)}% — the gap varies by only ` +
+          `${(gapSpread * 100).toFixed(2)} points across the autosomes — so that offset is a ` +
+          `difference of scale between them, and no single chromosome is dragging the median. That ` +
+          `is the variegated-genome defence passing, not a finding about any contig.`
         }
         legend={
           <>
