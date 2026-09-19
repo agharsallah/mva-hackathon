@@ -33,7 +33,7 @@ export const modules: FeatureModule[] = [
     title: 'The dictionary, as a course',
     group: 'learn',
     description:
-      'Every domain word in the repository, in fifteen chapters ordered so each one only uses words defined before it — with its diagrams, and a link to where the app shows it.',
+      'Every domain word in the repository, chapter by chapter, ordered so each one only uses words defined before it — with its diagrams, and a link to where the app shows it.',
     load: () => import('../../pages/Learn'),
   },
 

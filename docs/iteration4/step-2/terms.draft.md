@@ -1,9 +1,14 @@
 # Step 2 — dictionary terms, drafted
 
-**Standing:** drafted 2026-09-18 by the wave-1 agent *registry*. **Not merged.** The *docs*
-agent merges these into [`docs/dictionary.md`](../../dictionary.md) in one pass (plan §7b), in
-an order where every term follows the terms it depends on. Suggested order below is already
-dependency-safe: **inference tier** → **precomputed scores** → **model card** →
+**Merged 2026-09-19** into [`docs/dictionary.md`](../../dictionary.md) §24, *The model zoo —
+words for iteration 4*, which is the one dictionary and the only place to edit them now. Three
+of the drafted terms were folded into entries that already existed rather than appended
+(`HGVS`, `UniProt accession`, `Zero-shot`), per the no-second-glossary rule. This file is kept
+as the draft it was; it is not the source of the definitions any more. See
+[`../../step-0/methodology/126-every-iteration-on-the-steps-page.md`](../../step-0/methodology/126-every-iteration-on-the-steps-page.md).
+
+**Standing:** drafted 2026-09-18 by the wave-1 agent *registry*. The order below is the one they were
+merged in — every term follows the terms it depends on: **inference tier** → **precomputed scores** → **model card** →
 **non-commercial licence** → **catalogue-adjacent** → **protein language model** → **DNA
 language model** → **zero-shot inference**.
 

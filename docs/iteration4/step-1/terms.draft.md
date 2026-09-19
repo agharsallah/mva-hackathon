@@ -1,8 +1,15 @@
 # Step 1 — dictionary terms, draft
 
+**Merged 2026-09-19** into [`docs/dictionary.md`](../../dictionary.md) §24, *The model zoo —
+words for iteration 4*, which is the one dictionary and the only place to edit them now. Three
+of the drafted terms were folded into entries that already existed rather than appended
+(`HGVS`, `UniProt accession`, `Zero-shot`), per the no-second-glossary rule. This file is kept
+as the draft it was; it is not the source of the definitions any more. See
+[`../../step-0/methodology/126-every-iteration-on-the-steps-page.md`](../../step-0/methodology/126-every-iteration-on-the-steps-page.md).
+
 **Standing:** drafted 2026-09-18 by the wave-1 *record* agent, against `fixtures/it4/` only.
-Not merged: the one dictionary is [`docs/dictionary.md`](../../dictionary.md) and the wave-3
-*docs* agent merges these entries in dependency order. Nothing here is a result.
+Nothing here was a result; the entries were
+written in dependency order for a later merge, which has now happened.
 
 Source for every entry: `docs/iteration4/plan.md` §5 (step 1), `src/mva/zoo/types.py`,
 `src/mva/zoo/record.py`, `src/mva/zoo/record_hgvs.py`, `src/mva/zoo/record_write.py`.

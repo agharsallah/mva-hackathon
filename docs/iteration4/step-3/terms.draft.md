@@ -1,8 +1,14 @@
 # Step 3 — dictionary terms, drafted
 
-**Standing:** drafted 2026-09-18 by the wave-1 agent *cache-adapters*. **Not merged.** The
-*docs* agent merges these into [`docs/dictionary.md`](../../dictionary.md) in one pass (plan
-§7b), in an order where every term follows the terms it depends on.
+**Merged 2026-09-19** into [`docs/dictionary.md`](../../dictionary.md) §24, *The model zoo —
+words for iteration 4*, which is the one dictionary and the only place to edit them now. Three
+of the drafted terms were folded into entries that already existed rather than appended
+(`HGVS`, `UniProt accession`, `Zero-shot`), per the no-second-glossary rule. This file is kept
+as the draft it was; it is not the source of the definitions any more. See
+[`../../step-0/methodology/126-every-iteration-on-the-steps-page.md`](../../step-0/methodology/126-every-iteration-on-the-steps-page.md).
+
+**Standing:** drafted 2026-09-18 by the wave-1 agent *cache-adapters*. The order below is the one they were merged in: every
+term follows the terms it depends on.
 
 Dependency-safe order: **inference tier** (already drafted by step 2 — do not duplicate it) →
 **adapter** → **batch job** → **cache key** → **append-only cache** → **feature store** →

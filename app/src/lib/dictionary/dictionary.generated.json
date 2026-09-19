@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 23,
-    "entries": 597,
+    "chapters": 24,
+    "entries": 615,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 172
+    "contexts": 192
   },
   "chapters": [
     {
@@ -854,9 +854,16 @@
           "slug": "hgvs",
           "term": "HGVS",
           "aliases": [],
-          "html": "<p>the doctor-style way to write a variant. <em><code>NM_001211.6:c.1288A>T</code> or <code>p.Arg430Ter</code>. Different notation from VCF, needs conversion.</em></p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "html": "<p>the doctor-style way to write a variant, agreed by the Human Genome Variation Society. <code>hgvs_c</code> spells the change on the transcript's coding sequence, <code>hgvs_p</code> on the protein that transcript makes. <em><code>NM_001211.6:c.1288A>T</code> or <code>p.Arg430Ter</code>. Different notation from VCF, needs conversion.</em></p>",
+          "exampleHtml": "<p><em>Example:</em> <code>ENST00000000002.3:c.22C>T</code> (cDNA) and <code>ENSP00000000002.3:p.Gln8Ter</code> (protein) — one synthetic change, written twice.</p>",
+          "context": "<p>requested from Ensembl VEP REST with <code>hgvs=1</code> and parsed in <code>mva.pipeline.vep_response.parse</code>. It is the join key of every precomputed score table in the <a href=\"#24-the-model-zoo--words-for-iteration-4\">model zoo</a>, so an allele with no HGVS spelling cannot be looked up at all — which is what iteration 4's claim P4-1a measures</p>",
+          "source": "src/mva/zoo/record_hgvs.py",
+          "related": [
+            "allele-record",
+            "uniprot-accession",
+            "vep-variant-effect-predictor"
+          ],
+          "firstSeen": "2026-09-01"
         },
         {
           "kind": "entry",
@@ -3455,9 +3462,16 @@
           "slug": "zero-shot",
           "term": "Zero-shot",
           "aliases": [],
-          "html": "<p>the model was never trained on this task, it just knows enough to answer anyway.</p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "html": "<p>the model was never trained on this task, it just knows enough to answer anyway: no labelled examples, no fine-tuning, the score read straight out of what the model already learned. The opposite of a supervised predictor, which was shown labelled pathogenic and benign variants.</p>",
+          "exampleHtml": "<p><em>Example:</em> asking a protein language model how surprising an amino-acid substitution is, and calling that surprise a pathogenicity score, is zero-shot; REVEL, trained on catalogued labels, is not.</p>",
+          "context": "<p>why the language-model lanes of the <a href=\"#24-the-model-zoo--words-for-iteration-4\">model zoo</a> count as independent evidence about a catalogued variant and REVEL does not</p>",
+          "source": "docs/iteration4/plan.md",
+          "related": [
+            "protein-language-model-plm",
+            "dna-language-model",
+            "catalogue-adjacent"
+          ],
+          "firstSeen": "2026-09-18"
         },
         {
           "kind": "entry",
@@ -3577,7 +3591,7 @@
           "slug": "uniprot-accession",
           "term": "UniProt accession",
           "aliases": [],
-          "html": "<p>the stable ID of a <em>protein sequence</em> in UniProt, the reference catalogue of proteins. Same idea as an Ensembl gene ID, one level down the chain: a gene ID names the recipe, a translation ID (<code>ENSP…</code>) names one gene's protein in Ensembl's own numbering, and a UniProt accession names that protein in the numbering the rest of the protein world uses. Six or ten characters, letters and digits. Structure databases are keyed by it, so it is the join key you need before you can ask for a shape. <em>Example:</em> BUB1B's protein is <code>ENSP00000287598</code> to Ensembl and <code>O60566</code> to UniProt — the same 1050 beads, two id systems. Ensembl translates between them at <code>/xrefs/id/&#x3C;ENSP>?external_db=Uniprot/SWISSPROT</code>, whose <code>primary_id</code> is the accession. Watch out: the neighbouring <code>display_id</code> is <code>O60566.231</code>, an accession plus a <em>sequence version</em>, and it 404s against a structure database.</p>",
+          "html": "<p>the stable ID of a <em>protein sequence</em> in UniProt, the reference catalogue of proteins. VEP reports the reviewed (SwissProt) accession per transcript; the <a href=\"#24-the-model-zoo--words-for-iteration-4\">model zoo</a> drops the isoform suffix (<code>Q00000.4</code> → <code>Q00000</code>), because a precomputed score file is one per protein and indexes the bare accession. Same idea as an Ensembl gene ID, one level down the chain: a gene ID names the recipe, a translation ID (<code>ENSP…</code>) names one gene's protein in Ensembl's own numbering, and a UniProt accession names that protein in the numbering the rest of the protein world uses. Six or ten characters, letters and digits. Structure databases are keyed by it, so it is the join key you need before you can ask for a shape. <em>Example:</em> BUB1B's protein is <code>ENSP00000287598</code> to Ensembl and <code>O60566</code> to UniProt — the same 1050 beads, two id systems. Ensembl translates between them at <code>/xrefs/id/&#x3C;ENSP>?external_db=Uniprot/SWISSPROT</code>, whose <code>primary_id</code> is the accession. Watch out: the neighbouring <code>display_id</code> is <code>O60566.231</code>, an accession plus a <em>sequence version</em>, and it 404s against a structure database.</p>",
           "exampleHtml": "",
           "firstSeen": "2026-09-03"
         },
@@ -7864,13 +7878,322 @@
             "Measured fact",
             "on the card"
           ],
-          "html": "<p>one row of mechanism card v3's <code>measured_facts</code> block: a thing iteration 2 measured about the genotype, with the entry that measured it and what it implies for a drug. One of the nine is honestly <em>unmeasured</em> (the aneuploid fraction in the sample, step 8), and the row says so.</p>",
+          "html": "<p>one row of the mechanism card's <code>measured_facts</code> block: a thing iteration 2 measured about the genotype, with the entry that measured it and what it implies for a drug. The card is append-only, so a fact that lands is a new version plus a history row, never an edit: F8, the aneuploid fraction in the sample, read <em>unmeasured</em> on version 3 and was measured by step 8 on version 4.</p>",
           "exampleHtml": "<p><em>Example:</em> F2, allele dosage: both lead alleles at one-copy multiplicity in the raw reads — a null + hypomorph genotype, so stabilising the remaining protein (D3) is a live direction.</p>",
-          "context": "<p>mechanism card version 3</p>",
-          "source": "docs/iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md",
+          "context": "<p>mechanism card version 4 (all nine facts measured)</p>",
+          "source": "docs/iteration2/step-7/methodology/120-the-card-at-version-4-and-the-second-submission-draft.md",
           "related": [
             "mechanism-card",
-            "hypomorph-hypomorphic"
+            "hypomorph-hypomorphic",
+            "append-only"
+          ],
+          "firstSeen": "2026-09-18"
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "id": "24-the-model-zoo--words-for-iteration-4",
+      "title": "The model zoo — words for iteration 4",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>Iterations 1 and 2 each asked <em>one</em> instrument what it thought of an allele, and argued about\nthe answer. Iteration 4 asks <strong>every</strong> credible published model the same question through one\ncontract, and makes the disagreement itself the result. These are the words that contract is\nwritten in. Nothing here is trained: every model is used exactly as its authors published it.</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "model-zoo",
+          "term": "Model zoo",
+          "aliases": [],
+          "html": "<p>every credible open variant-effect model, run over the same allele records\nthrough one interface, cached in one table, and merged into one report no single model\nproduces. A zoo rather than a pipeline because the models are not stages feeding one another —\nthey are independent opinions about the same rows, and the point is where they differ.</p>",
+          "exampleHtml": "<p><em>Example:</em> the MVP roster is four lanes — AlphaMissense, REVEL, SpliceAI and ESM1b — chosen\nbecause all four are reachable without a GPU.</p>",
+          "context": "<p>iteration 4, the one running beside iteration 2</p>",
+          "source": "docs/iteration4/plan.md, src/mva/zoo/",
+          "related": [
+            "research-iteration",
+            "adapter",
+            "inference-tier",
+            "feature-store"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "allele-id",
+          "term": "Allele id",
+          "aliases": [],
+          "html": "<p>a short fingerprint of one genetic change, computed from the change itself, that\nnames it without saying <em>where</em> in the genome it is.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>b50f371246f588f4</code> — the first 16 hex characters of SHA-256 over <code>1:100000:C:G</code>.</p>",
+          "context": "<p>it exists because the coordinate gate (<code>tools/check_coordinates.py</code>) forbids a patient position in any tracked file: the position stays in <code>build/it4/records.parquet</code>, and the id is what appears in tables, reports and model inputs. The same expression is written twice, as <code>allele_id</code> in Python and <code>allele_id_sql</code> in SQL, and a test asserts the two agree on every contig spelling</p>",
+          "source": "src/mva/zoo/types.py, src/mva/zoo/record.py",
+          "related": [
+            "allele-record",
+            "coordinate-gate",
+            "checksum-sha-256"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "allele-record",
+          "term": "Allele record",
+          "aliases": [],
+          "html": "<p>one normalized row per genetic change, carrying every spelling of that\nchange a model might read: which gene, which transcript, the cDNA and protein notation, the\nprotein accession, the frequency, the ClinVar class, and the sequence windows. In software\nterms it is the single DTO in front of a dozen consumers: a new model is a new <em>reader</em>, never\na new query against the warehouse.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>AlleleRecord(allele_id=\"b50f3712…\", gene=\"GENEA\", consequence=\"stop_gained\", hgvs_c=\"ENST00000000002.3:c.22C>T\", hgvs_p=\"ENSP00000000002.3:p.Gln8Ter\", uniprot=\"Q00000\")</code> — the synthetic row of <code>tests/test_vep_response_hgvs.py</code>. A real example would name the child's allele, so none is written here.</p>",
+          "context": "<p>built from <code>results.coding_alleles</code> joined to the annotation tables and unioned with iteration 2's read-derived alleles; lands in <code>results.it4_allele_records</code></p>",
+          "source": "src/mva/zoo/types.py, src/mva/zoo/record.py, docs/iteration4/step-1/methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md",
+          "related": [
+            "allele-id",
+            "hgvs",
+            "sequence-window",
+            "catalogue-field"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "catalogue-field",
+          "term": "Catalogue field",
+          "aliases": [],
+          "html": "<p>a field on the allele record whose value came out of a curated <em>catalogue</em>\nof known answers (ClinVar), rather than out of a measurement or a model. Distinct from\n<strong>catalogue-adjacent</strong>, which describes a model, not a field.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>clin_sig = \"benign\"</code>; running with <code>--mask-catalogue</code> replaces it with <code>NULL</code>.</p>",
+          "context": "<p>a model trained on ClinVar can \"know\" the answer rather than predict it, so running the zoo a second time with these fields nulled is what makes the catalogue-free / catalogue-aware comparison honest (plan decision D4), and <code>CATALOGUE_FIELDS</code> with <code>AlleleRecord.masked()</code> is where the nulling happens</p>",
+          "source": "src/mva/zoo/types.py",
+          "related": [
+            "allele-record",
+            "catalogue-adjacent",
+            "circularity"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "inference-tier",
+          "term": "Inference tier",
+          "aliases": [],
+          "html": "<p>what it costs to get one model's opinion, in three steps: tier 1 = look the\nanswer up in a table somebody else already computed, tier 2 = run the model here on the laptop's\nCPU, tier 3 = run it on a rented GPU. A property of <em>how we reach</em> the model, not of how good it\nis.</p>",
+          "exampleHtml": "<p><em>Example:</em> AlphaMissense is tier 1 in this repository (its scores are already a warehouse column), ESM2 650M is tier 2 (hours of laptop CPU), Evo 2 is tier 3 (an H100 on Modal).</p>",
+          "context": "<p>the <code>tier</code> field of every model card, and the reason the MVP roster is four tier-1 lanes</p>",
+          "source": "src/mva/zoo/models.toml, src/mva/zoo/types.py",
+          "related": [
+            "model-card",
+            "precomputed-scores",
+            "zero-shot"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "precomputed-scores",
+          "term": "Precomputed scores",
+          "aliases": [],
+          "html": "<p>a published file in which somebody has already run a model over <em>every</em>\nvariant it can speak about, so using the model means a table join rather than an inference run.\nThe software analogy is a materialised view: the expensive query ran once, at the publisher's\nexpense, and everyone downstream does a lookup.</p>",
+          "exampleHtml": "<p><em>Example:</em> Brandes 2023 published ESM1b's effect for all ~450 million missense changes over 42,336 human protein isoforms as a 1.24 GiB zip; scoring our callset against it is a join on protein accession plus protein change, not a GPU job.</p>",
+          "context": "<p>what makes the MVP runnable on a laptop in a day</p>",
+          "source": "docs/iteration4/plan.md, tools/fetch_zoo_tables.py",
+          "related": [
+            "inference-tier",
+            "model-card",
+            "uniprot-accession"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "model-card",
+          "term": "Model card",
+          "aliases": [],
+          "html": "<p>the README of one model: its name, the exact published version scored against,\nwhere its numbers come from, what its licence allows, whether it has seen variant catalogues,\nand — after a run — how much of our data it could actually speak about. Generated from a\nregistry entry, never hand-written, so a model cannot be used without one.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>docs/iteration4/cards/revel.json</code> — tier 1, source <code>vep-rest</code>, plugin flag <code>REVEL</code>, non-commercial, catalogue-adjacent, PMID 27666373, enabled.</p>",
+          "context": "<p>the reusable half of iteration 4's step 2, generated by <code>mva.zoo.registry.write_cards()</code> from one TOML registry</p>",
+          "source": "docs/iteration4/cards/README.md, docs/iteration4/step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md",
+          "related": [
+            "inference-tier",
+            "catalogue-adjacent",
+            "non-commercial-licence",
+            "provenance-manifest"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "non-commercial-licence",
+          "term": "Non-commercial licence",
+          "aliases": [],
+          "html": "<p>terms that allow research or academic use but forbid commercial use,\nand usually forbid redistributing the file. A constraint on what the repository may <em>ship</em>, not\non what the hackathon may <em>run</em>: hackathon use is non-commercial.</p>",
+          "exampleHtml": "<p><em>Example:</em> AlphaMissense is CC BY-NC-SA 4.0 and SpliceAI's precomputed scores are under Illumina's non-commercial terms, so this repository commits the fetch script and the file's sha256 digest, and never the score file itself.</p>",
+          "context": "<p>the <code>non_commercial</code> column of the generated licence table</p>",
+          "source": "src/mva/zoo/registry.py, docs/iteration4/cards/licences.md",
+          "related": [
+            "model-card",
+            "provenance-manifest",
+            "precomputed-scores"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "catalogue-adjacent",
+          "term": "Catalogue-adjacent",
+          "aliases": [],
+          "html": "<p>said of a model that was trained on a variant catalogue (ClinVar, HGMD\nand friends), so it may have <em>memorised</em> the answer for a variant that is already catalogued\nrather than predicted it. Not a disqualification — a flag, because such a model cannot be counted\nas an independent opinion about a known variant.</p>",
+          "exampleHtml": "<p><em>Example:</em> REVEL is an ensemble trained on catalogued pathogenic/benign labels and is flagged <code>catalogue_adjacent = true</code>; AlphaMissense, SpliceAI and ESM1b are not. The merged ranking is therefore printed twice — with and without the adjacent lanes.</p>",
+          "context": "<p>the ablation the plan never cuts (decision D4)</p>",
+          "source": "docs/iteration4/plan.md",
+          "related": [
+            "model-card",
+            "catalogue-field",
+            "circularity",
+            "zero-shot"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "protein-language-model-plm",
+          "term": "Protein language model (pLM)",
+          "aliases": [
+            "Protein language model",
+            "pLM"
+          ],
+          "html": "<p>a model trained only to predict amino acids in protein\nsequences, the way a text language model predicts words. Having read millions of natural\nproteins, it finds a substitution \"surprising\" exactly where evolution rarely allows one, and\nthat surprise is used as a damage score. It never saw a clinical label.</p>",
+          "exampleHtml": "<p><em>Example:</em> ESM1b reports a log-likelihood ratio per substitution — at most 0, and the more negative the more surprising — so the adapter negates it to keep the zoo's convention that a higher score means more damaging.</p>",
+          "context": "<p>the ESM1b, ESM2 and ESM-C lanes of the roster</p>",
+          "source": "src/mva/zoo/models.toml, PMID 37563329",
+          "related": [
+            "zero-shot",
+            "dna-language-model",
+            "catalogue-adjacent",
+            "structural-context-domain-plddt"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "dna-language-model",
+          "term": "DNA language model",
+          "aliases": [],
+          "html": "<p>the same idea one level down: a model trained to predict DNA bases\nrather than amino acids, so it can score <em>any</em> variant — non-coding, synonymous, splice-region —\nnot only those that change a protein.</p>",
+          "exampleHtml": "<p><em>Example:</em> GPN-MSA publishes precomputed scores for all ~9 billion possible single-base changes in GRCh38 (tier 1, no GPU); Evo 2 and Nucleotide Transformer v2 are the tier-3, GPU versions of the same idea.</p>",
+          "context": "<p>the widest-coverage lanes on the roster, all optional in the MVP</p>",
+          "source": "src/mva/zoo/models.toml, PMID 39747647, PMID 39609566",
+          "related": [
+            "protein-language-model-plm",
+            "zero-shot",
+            "inference-tier"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "sequence-window",
+          "term": "Sequence window",
+          "aliases": [],
+          "html": "<p>a fixed-length stretch of sequence centred on the change, given to a model\nthat reads sequence rather than a table: an amino-acid string for a protein language model, a DNA\nstring for a DNA language model. Written in both the reference and the altered form, so the model\ncan score the difference.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>protein_window_ref</code> / <code>protein_window_alt</code> (± n amino acids) and <code>dna_window_ref</code> / <code>dna_window_alt</code> (8,192 bp).</p>",
+          "context": "<p>columns already declared on the allele record and <strong>null in the MVP</strong>, so filling them is a fill and not a schema migration. They are patient sequence, so they may only ever live in <code>build/it4/records.parquet</code></p>",
+          "source": "src/mva/zoo/types.py, src/mva/zoo/record_write.py",
+          "related": [
+            "allele-record",
+            "protein-language-model-plm",
+            "dna-language-model",
+            "coordinate-gate"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "adapter",
+          "term": "Adapter",
+          "aliases": [],
+          "html": "<p>the thin piece of code that makes one model look like every other model to the rest\nof the pipeline: hand it allele records, get score rows back. Same idea as a database driver — the\ncaller writes one piece of code and swaps the driver underneath. One file per model, so adding a\nmodel is adding a file, never editing a shared one.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>warehouse_column.py</code> answers for AlphaMissense by reading a column the warehouse already holds; <code>vep_rest.py</code> answers for REVEL by asking Ensembl. Both satisfy the same three methods — <code>coverage()</code>, <code>score()</code>, <code>submit()</code>.</p>",
+          "context": "<p>the protocol is pinned before any lane is written, which is what lets four lanes be built in parallel</p>",
+          "source": "src/mva/zoo/types.py, src/mva/zoo/adapters/",
+          "related": [
+            "model-zoo",
+            "inference-tier",
+            "batch-job"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "batch-job",
+          "term": "Batch job",
+          "aliases": [],
+          "html": "<p>one run of one model over many alleles at once, instead of one request per allele.\nBatching is what makes a remote model affordable: 40,000 single calls to a rate-limited server\nwould take days, where 200 alleles per call takes minutes.</p>",
+          "exampleHtml": "<p><em>Example:</em> the VEP REST lane sends 200 alleles per HTTP POST — Ensembl's documented ceiling — and a batch the server refuses is split in half and retried rather than lost whole.</p>",
+          "context": "<p>the batching is iteration 1's, reused unchanged by the zoo's REST lane; the cache writes in batches of 5,000 rows for the same reason</p>",
+          "source": "src/mva/pipeline/annotate_vep.py, src/mva/zoo/adapters/vep_rest.py",
+          "related": [
+            "adapter",
+            "inference-tier"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "cache-key",
+          "term": "Cache key",
+          "aliases": [],
+          "html": "<p>the columns that decide whether a stored result already exists. Ask for something\nwhose key is already present and you get the stored answer instead of a new computation.</p>",
+          "exampleHtml": "<p><em>Example:</em> the score cache's key is <code>(model, version, allele_id)</code>. A new version of the same model on the same allele is a <em>different</em> key, so it is stored beside the old row rather than replacing it.</p>",
+          "context": "<p>the skip is performed as a SQL anti-join, so a repeat run costs one round trip per batch rather than one per row, and <code>KEY_COLUMNS</code> is where the three columns are named</p>",
+          "source": "src/mva/zoo/cache.py, docs/iteration4/step-3/methodology/122-every-lane-scored-once-and-only-once.md",
+          "related": [
+            "append-only-cache",
+            "no-op-re-run",
+            "allele-id"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "append-only-cache",
+          "term": "Append-only cache",
+          "aliases": [],
+          "html": "<p>a store that is only ever added to: no row is updated, no row is deleted.\nA correction is a new row (a new model version), never an edit of the old one — the same\ndiscipline this repository already applies to its lineage table and its hypothesis register,\nfor the same reason: a record that can be edited is not evidence.</p>",
+          "exampleHtml": "<p><em>Example:</em> writing the same <code>(model, version, allele_id)</code> twice inserts nothing the second time, and the first row keeps the <code>run_id</code> of the run that produced it.</p>",
+          "context": "<p>src/mva/zoo/cache.py (<code>write</code>)</p>",
+          "related": [
+            "cache-key",
+            "no-op-re-run",
+            "append-only",
+            "data-lineage"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "feature-store",
+          "term": "Feature store",
+          "aliases": [],
+          "html": "<p>one table of pre-computed inputs that every downstream job reads, instead of\neach job recomputing them. Here: every model's verdict on every allele in one place, so the\nranker, the per-model report and the merge all read the same numbers.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>warehouse.allele_scores</code> holds <code>allele_id, model, version, digest, score, aux, venue, licence, run_id, ts</code>. The ranking step never calls a model — it reads this table.</p>",
+          "context": "<p>the idea iteration 3's draft proposed and iteration 4 absorbed as its step 3</p>",
+          "source": "src/mva/zoo/cache.py, src/mva/zoo/types.py",
+          "related": [
+            "append-only-cache",
+            "cache-key",
+            "adapter",
+            "research-iteration"
+          ],
+          "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "no-op-re-run",
+          "term": "No-op re-run",
+          "aliases": [],
+          "html": "<p>running the same command a second time and having it do nothing, because\neverything it would produce is already there. The property that makes a long pipeline safe to\ninterrupt: after a crash you re-run the whole thing and pay only for what had not finished. The\nsame property stated of a whole pipeline stage is called <strong>idempotence</strong>.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>uv run mva-zoo score --model alphamissense</code> twice in a row prints <code>inserted 0, skipped &#x3C;n> (already cached)</code> the second time, and the table is unchanged.</p>",
+          "context": "<p>the remote lane gets the same property from a checkpoint file that holds allele ids and numbers only, and the writer returns <code>Written(inserted, skipped)</code> so the second run can say what it skipped</p>",
+          "source": "src/mva/zoo/cache.py, docs/iteration4/step-3/methodology/122-every-lane-scored-once-and-only-once.md",
+          "related": [
+            "cache-key",
+            "append-only-cache",
+            "idempotent"
           ],
           "firstSeen": "2026-09-18"
         }

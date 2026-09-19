@@ -1,5 +1,5 @@
 /**
- * The course outline: fifteen chapters in the order the dictionary wants them read, with
+ * The course outline: every chapter in the order the dictionary wants them read, with
  * the reader's own progress ticked off. The order is not ours — the markdown is arranged so
  * every word uses only words defined above it, so chapter n is the prerequisite of n+1.
  */

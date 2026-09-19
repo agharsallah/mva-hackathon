@@ -1,5 +1,5 @@
 /**
- * Short paths through the dictionary. The fifteen chapters are the complete course; a track
+ * Short paths through the dictionary. The chapters are the complete course; a track
  * is the fifteen-minute version for one job — the terms to know before opening one part of
  * the app, in the order the dictionary itself defines them. Slugs are dictionary anchors and
  * `src/test/learn-links.test.tsx` proves each one exists.

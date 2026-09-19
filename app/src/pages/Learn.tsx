@@ -20,7 +20,7 @@ import { useDictionary } from './learn/useDictionary';
  * Learn — `docs/dictionary.md` as a course.
  *
  * The dictionary is the one glossary in the repository and it is already a curriculum: its
- * fifteen chapters are ordered so every word uses only words defined before it. This page
+ * chapters are ordered so every word uses only words defined before it. This page
  * does not restate it — the markdown is generated into the app at build time — it gives it
  * what a file cannot have: one chapter at a time, a search over every term, progress that
  * survives a reload, a star on any definition to come back to it, an anchor per word that
