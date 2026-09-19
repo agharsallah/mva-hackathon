@@ -68,6 +68,7 @@ ITERATION4: tuple[Step, ...] = (
         ),
         unblocks=("step-5",),
         iteration="iteration4",
+        status="done",
         track="track1",
     ),
     Step(
