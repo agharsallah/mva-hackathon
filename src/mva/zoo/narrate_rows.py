@@ -21,10 +21,13 @@ from typing import Any
 
 __all__ = [
     "DEFAULT_MAX_WORDS",
+    "MERGE_PROMPT_RULES",
     "MIN_CLASS_SHARE",
     "PROMPT_RULES",
+    "build_merge_prompt",
     "build_prompt",
     "citable_rows",
+    "merged_rows",
 ]
 
 #: The word budget the prompt states and the checker enforces. Plan §5 step 5: ≤ 200 words.
@@ -220,3 +223,143 @@ def build_prompt(rows: Sequence[Mapping[str, Any]], *, max_words: int = DEFAULT_
     """The whole prompt: the fixed rules plus this lane's rows. Nothing else is sent."""
     body = "\n".join(f"[{row['id']}] {row.get('label', '')}: {row.get('text', '')}" for row in rows)
     return PROMPT_RULES.format(max_words=max_words, rows=body)
+
+
+# ---------------------------------------------------------------------------------------
+# The merged report (step 6, `fusion+synthesis`)
+# ---------------------------------------------------------------------------------------
+
+#: The synthesis prompt. Same shape and same discipline as :data:`PROMPT_RULES`, one rule
+#: added: the per-lane interpretations are *rows too*, so a synthesis that repeats a lane's
+#: reading has to cite that lane, not restate it as its own observation.
+MERGE_PROMPT_RULES = """\
+You are writing the "What this means" section of a merged report that combines several
+variant-scoring models for a software engineer with no background in genetics. Every fact
+you may use is in the rows below; each row has an id.
+
+Rules:
+- Write at most {max_words} words of plain prose. No headings, no lists, no code fences.
+- Every sentence must end with a citation in square brackets naming the row it rests on,
+  like this: "The two lanes barely agree [rho.a.b]." A sentence may cite several rows.
+- Do not rank anything and do not say which variant, pair or gene is the cause of anything.
+- Do not name a gene, a disease, a model or a database that does not appear in the rows.
+- Do not add facts, do not estimate, do not compute new numbers.
+- Rows whose id starts with `interp.` are what each lane's own report already says. You may
+  build on them, but cite the lane you are building on rather than restating it as your own.
+- Where the rows show that lanes abstained rather than disagreed, say so plainly, and say
+  what that makes the consensus unable to claim.
+
+Rows:
+{rows}
+
+Write the section now. Output the prose only."""
+
+
+def merged_rows(
+    merged: Mapping[str, Any], interpretations: Mapping[str, str] | None = None
+) -> list[dict[str, Any]]:
+    """The merged report's citable rows: lanes, agreement, fusion, disagreement, readings.
+
+    Ids follow the same convention as the per-model rows — a prefix naming where the number
+    came from, then the thing itself: ``lane.<model>.rank``, ``rho.<a>.<b>``,
+    ``rrf.free.rank``, ``rrf.all.rank``, ``disagree.n``, ``interp.<model>``.
+    """
+    rows: list[dict[str, Any]] = [
+        _row(
+            "method",
+            "merge method (merged report)",
+            f"the lanes were merged with method `{merged.get('method', '')}` and reciprocal "
+            f"rank fusion constant k = {merged.get('rrf_k', '')}; a lane that never ranks a "
+            "pair contributes nothing to it",
+        )
+    ]
+    rows += _lane_rows(merged.get("lanes", []))
+    rows += _agreement_rows(merged.get("agreement", {}))
+    rows += _consensus_rows(merged.get("consensus", {}))
+    rows.append(
+        _row(
+            "disagree.n",
+            "disagreement rows (merged report)",
+            f"{len(merged.get('disagreements', []) or [])} alleles sit in the top 1% of one "
+            "lane and the bottom half of another",
+        )
+    )
+    for model, text in sorted((interpretations or {}).items()):
+        if text.strip():
+            rows.append(_row(f"interp.{model}", f"`{model}`'s own reading", text.strip()))
+    return rows
+
+
+def _lane_rows(lanes: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for lane in lanes:
+        model = str(lane.get("model", ""))
+        confirmed = lane.get("confirmed") or {}
+        rank = confirmed.get("rank")
+        verdict = (
+            f"ranks the confirmed pair {rank} of {lane.get('n_ranked', 0)} pairs, percentile "
+            f"{_pct(confirmed.get('percentile'))} from the top"
+            if rank is not None
+            else (
+                f"has no rank for the confirmed pair: it scored only one of its two alleles, "
+                f"so the pair left its ranking of {lane.get('n_ranked', 0)} pairs"
+            )
+        )
+        adjacent = (
+            " it is catalogue-adjacent (ClinVar was in its training data);"
+            if lane.get("catalogue_adjacent")
+            else ""
+        )
+        rows.append(
+            _row(
+                f"lane.{model}.rank",
+                f"lane `{model}` (merged report)",
+                f"lane `{model}` scored {lane.get('scored_alleles', 0)} alleles and {verdict};"
+                f"{adjacent} {lane.get('unscored_pairs', 0)} pairs had an unscored half",
+            )
+        )
+    return rows
+
+
+def _agreement_rows(agreement: Mapping[str, Any]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for cell in agreement.get("cells", []) or []:
+        a, b, rho = str(cell.get("a", "")), str(cell.get("b", "")), cell.get("rho")
+        if a >= b or rho is None:
+            continue
+        rows.append(
+            _row(
+                f"rho.{a}.{b}",
+                f"agreement `{a}` vs `{b}` (merged report)",
+                f"over the {cell.get('n', 0)} alleles both scored, `{a}` and `{b}` agree at "
+                f"Spearman rank correlation {float(rho):+.3f} (+1 = same order, 0 = unrelated)",
+            )
+        )
+    return rows
+
+
+def _consensus_rows(consensus: Mapping[str, Any]) -> list[dict[str, Any]]:
+    rows: list[dict[str, Any]] = []
+    for key, label in (("catalogue_free", "free"), ("all_lanes", "all")):
+        block = consensus.get(key) or {}
+        lanes = ", ".join(block.get("lanes", [])) or "none"
+        excluded = ", ".join(block.get("excluded_lanes", [])) or "none"
+        rank = block.get("rank")
+        rows.append(
+            _row(
+                f"rrf.{label}.rank",
+                f"fused rank, {label.replace('free', 'catalogue-free lanes only')} (merged report)",
+                f"fusing {lanes} (excluding {excluded}) puts the confirmed pair at rank "
+                f"{rank if rank is not None else 'none'} of {block.get('n_pairs', 0)} pairs, "
+                f"fused score {_num(block.get('fused_score'))}",
+            )
+        )
+    return rows
+
+
+def build_merge_prompt(
+    rows: Sequence[Mapping[str, Any]], *, max_words: int = DEFAULT_MAX_WORDS
+) -> str:
+    """The synthesis prompt: the merge rules plus the merged report's rows. Nothing else."""
+    body = "\n".join(f"[{row['id']}] {row.get('label', '')}: {row.get('text', '')}" for row in rows)
+    return MERGE_PROMPT_RULES.format(max_words=max_words, rows=body)

@@ -37,6 +37,7 @@ from typing import Any
 from .narrate_check import CheckResult, check_narrative
 from .narrate_modes import Reply, Transport, build_transport
 from .narrate_rows import DEFAULT_MAX_WORDS, build_prompt, citable_rows
+from .narrate_store import NARRATIVES_COLUMNS, NARRATIVES_TABLE, write_narratives
 
 __all__ = [
     "NARRATIVES_COLUMNS",
@@ -47,6 +48,7 @@ __all__ = [
     "citable_rows",
     "hand_written",
     "interpretation_block",
+    "narrate_merged",
     "narrate_report",
     "run_narrate",
     "write_narratives",
@@ -119,20 +121,26 @@ def narrate_report(
     max_words: int = DEFAULT_MAX_WORDS,
     transport: Transport | None = None,
     run_id: str = "",
+    rows: Sequence[Mapping[str, Any]] | None = None,
+    prompt: str = "",
 ) -> Narrative | None:
-    """Generate section 6 for one model report. ``None`` when the mode is ``none``.
+    """Generate one written section from a report's own rows. ``None`` when the mode is ``none``.
 
     ``transport`` overrides the mode's own transport — the seam every test uses, and the seam
     a future provider is added through. The reply is checked before it is returned, so a
     caller never has to remember to check it: the counts on the returned
     :class:`Narrative` *are* the check.
+
+    ``rows`` and ``prompt`` let a caller supply its own — that is how the merged report's
+    synthesis (step 6, ``fusion+synthesis``) reuses every guarantee here with a different row
+    set and a different rule block, instead of a second copy of this function.
     """
     if transport is None:
         transport = build_transport(mode, model=model, temperature=temperature)
     if transport is None:
         return None
-    rows = citable_rows(report)
-    prompt = build_prompt(rows, max_words=max_words)
+    rows = list(rows) if rows is not None else citable_rows(report)
+    prompt = prompt or build_prompt(rows, max_words=max_words)
     reply: Reply = transport(prompt)
     result = check_narrative(reply.text, rows, max_words=max_words)
     return Narrative(
@@ -318,108 +326,52 @@ def _versions(
     stack). If nothing stored is hand-written, the prose still in the rendered Markdown is
     read back — that is the one version that predates the JSON knowing about versions at all.
     """
-    from .report_sections import existing_interpretation
+    from .report_sections import existing_interpretations
 
     stored = dict(payload.get("sections", {}).get("interpretation") or {})
-    prior = [stored, *(stored.get("alternatives") or [])] if stored.get("text") else []
+    prior: list[Mapping[str, Any]] = (
+        [stored, *(stored.get("alternatives") or [])]
+        if stored.get("text")
+        # A chain re-run rewrites the JSON with an empty slot, so the rendered file is the
+        # only surviving copy. Read *every* version out of it, not only the hand-written
+        # one — that fallback is what a `mva-zoo run` after a narrate pass depends on.
+        else existing_interpretations(markdown)
+    )
     mode = generated.mode if generated is not None else ""
     kept = [
         {key: value for key, value in block.items() if key != "alternatives"}
         for block in prior
         if block.get("llm_mode") != mode
     ]
-    if not any(block.get("llm_mode") in ("hand", "none", "") for block in kept):
-        text = existing_interpretation(markdown)
-        if text:
-            kept.append(interpretation_block(hand_written(payload, text, run_id=run_id)))
     lead = [interpretation_block(generated)] if generated is not None else []
     return lead + kept
 
 
-# ---------------------------------------------------------------------------------------
-# The warehouse table
-# ---------------------------------------------------------------------------------------
-
-#: ``<schema>.<prefix>_narratives`` — one row per (model, run, mode). Append-only: a second
-#: mode's narrative is a new row beside the first, never an update, which is what makes the
-#: two modes comparable after the fact. The name below is the *default* prefix; a run passes
-#: its own through :meth:`mva.zoo.workflow_types.Config.table`.
-NARRATIVES_TABLE = "it4_narratives"
-NARRATIVES_COLUMNS: tuple[tuple[str, str], ...] = (
-    ("model", "VARCHAR"),
-    ("run_id", "VARCHAR"),
-    ("mode", "VARCHAR"),
-    ("llm_model_id", "VARCHAR"),
-    ("prompt", "VARCHAR"),
-    ("reply", "VARCHAR"),
-    ("words", "INTEGER"),
-    ("cited_sentences", "INTEGER"),
-    ("uncited_sentences", "INTEGER"),
-    ("created_at", "TIMESTAMP"),
-)
-
-#: Where the append-only lineage edge lands — the shared schema, not the result schema. The
-#: same two-argument split :func:`mva.zoo.report.write_reports` explains.
-LINEAGE_SCHEMA = "warehouse"
-
-
-def write_narratives(
-    connection: Any,
-    schema: str,
-    narratives: Sequence[Narrative],
+def narrate_merged(
+    merged: Mapping[str, Any],
+    interpretations: Mapping[str, str] | None = None,
     *,
-    run_id: str = "",
-    table: str = NARRATIVES_TABLE,
-    source_ref: str = "results.it4_model_reports",
-    lineage_schema: str = LINEAGE_SCHEMA,
-) -> int:
-    """Append this run's narratives and record one lineage edge. Returns the rows written.
+    settings: Any,
+    transport: Transport | None = None,
+) -> Narrative | None:
+    """The merged report's "What this means" section, synthesised from the merged rows.
 
-    ``connection`` is a DuckDB connection with the warehouse attached (the argument, never a
-    module-level handle — the same injection every writer in this package takes).
+    Step 6's ``fusion+synthesis`` method (plan §5). The rows are the lanes, the agreement
+    matrix, both fusions and the disagreement count — plus, as ``interp.<model>`` rows, what
+    each lane's own section 6 already said, so a synthesis can build on a lane's reading and
+    has to cite the lane it is building on.
     """
-    from ..warehouse.lineage import ensure_tables, record
-    from ..warehouse.postgres import ALIAS, safe_identifier
+    from .narrate_rows import build_merge_prompt, merged_rows
 
-    safe, safe_table = safe_identifier(schema), safe_identifier(table)
-    columns = ", ".join(f"{name} {sql}" for name, sql in NARRATIVES_COLUMNS)
-    connection.execute(f"CREATE TABLE IF NOT EXISTS {ALIAS}.{safe}.{safe_table} ({columns})")
-    placeholders = ", ".join("?" for _ in NARRATIVES_COLUMNS)
-    now = datetime.now(UTC)
-    modes: list[str] = []
-    for item in narratives:
-        connection.execute(
-            f"INSERT INTO {ALIAS}.{safe}.{safe_table} VALUES ({placeholders})",
-            [
-                item.model,
-                item.run_id or run_id,
-                item.mode,
-                item.llm_model_id,
-                item.prompt,
-                item.reply,
-                item.words,
-                item.cited_sentences,
-                item.uncited_sentences,
-                now,
-            ],
-        )
-        if item.mode not in modes:
-            modes.append(item.mode)
-    ensure_tables(connection, lineage_schema)
-    record(
-        connection,
-        lineage_schema,
-        target_schema=schema,
-        target_table=table,
-        target_rows=len(narratives),
-        source_kind="table",
-        source_ref=source_ref,
-        source_version=run_id,
-        transform=(
-            "mva.zoo.narrate.narrate_report (sections 2-5 rows -> LLM interpretation, "
-            "checked by mva.zoo.narrate_check)"
-        ),
-        tool="mva-zoo narrate",
-        notes=f"{len(narratives)} narratives, modes: {', '.join(modes) or 'none'}",
+    rows = merged_rows(merged, interpretations)
+    max_words = int(getattr(settings, "max_words", DEFAULT_MAX_WORDS))
+    return narrate_report(
+        {"model": "merged", "run_id": str(merged.get("run_id", ""))},
+        mode=getattr(settings, "mode", "none"),
+        model=getattr(settings, "model", ""),
+        temperature=float(getattr(settings, "temperature", 0.0)),
+        max_words=max_words,
+        transport=transport,
+        rows=rows,
+        prompt=build_merge_prompt(rows, max_words=max_words),
     )
-    return len(narratives)

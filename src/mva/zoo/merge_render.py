@@ -14,18 +14,32 @@ paragraph and nothing else.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Any
 
-__all__ = ["render_merged"]
+from .report_sections import SIDE_BY_SIDE_NOTE
+
+__all__ = ["NARRATIVE_MARKER", "render_merged"]
+
+#: Every version of section 5 opens with this. `fusion` writes ``hand-written <date>``;
+#: `fusion+synthesis` writes ``synthesised <date> | llm:<mode> | model:<id> | cited n/m``.
+NARRATIVE_MARKER = "<!-- narrative:"
 
 
-def render_merged(report: Mapping[str, Any], narrative: str, *, dated: str = "") -> str:
+def render_merged(
+    report: Mapping[str, Any],
+    narrative: str,
+    *,
+    dated: str = "",
+    narratives: Sequence[Mapping[str, Any]] = (),
+) -> str:
     """The merged report as Markdown — every number read straight out of ``report``.
 
-    ``narrative`` is the hand-written paragraph the MVP's ``fusion`` method requires. The slot
-    is marked in the output so a later LLM run (``fusion+synthesis``) can replace exactly that
-    paragraph and nothing else.
+    ``narrative`` is the hand-written paragraph the MVP's ``fusion`` method requires.
+    ``narratives`` is the same slot taken as **a list of versions**, which is what the
+    ``fusion+synthesis`` method produces: the synthesised paragraph leads, the hand-written one
+    stays under it with its own badge, and neither is lost. Each item is a block from
+    :func:`mva.zoo.narrate.interpretation_block`.
     """
     day = dated or str(report.get("generated_at", ""))[:10]
     lines = [
@@ -118,10 +132,7 @@ def render_merged(report: Mapping[str, Any], narrative: str, *, dated: str = "")
         "",
         "## 5. What this means",
         "",
-        f"<!-- narrative: hand-written {day} -->",
-        "",
-        narrative.strip() or "_(narrative not yet written)_",
-        "",
+        *_narrative_block(narrative, narratives, day),
         "## 6. Lineage",
         "",
         f"- run id: `{report.get('run_id', '')}`",
@@ -132,6 +143,44 @@ def render_merged(report: Mapping[str, Any], narrative: str, *, dated: str = "")
         "",
     ]
     return "\n".join(lines)
+
+
+def _narrative_block(
+    narrative: str, narratives: Sequence[Mapping[str, Any]], day: str
+) -> list[str]:
+    """Section 5, with one sub-heading per version when the merge produced more than one."""
+    if not narratives:
+        return [
+            f"{NARRATIVE_MARKER} hand-written {day} -->",
+            "",
+            narrative.strip() or "_(narrative not yet written)_",
+            "",
+        ]
+    lines: list[str] = []
+    if len(narratives) > 1:
+        lines += [SIDE_BY_SIDE_NOTE.replace("sections 2-5", "sections 1-4"), ""]
+    for index, version in enumerate(narratives, start=1):
+        if len(narratives) > 1:
+            lines += [f"### 5.{index} {_narrative_badge(version)}", ""]
+        lines += [
+            str(version.get("marker") or f"{NARRATIVE_MARKER} hand-written {day} -->"),
+            "",
+            str(version.get("text") or "_(narrative not yet written)_"),
+            "",
+        ]
+    return lines
+
+
+def _narrative_badge(version: Mapping[str, Any]) -> str:
+    """Who wrote this version of the merged narrative, and how well it cited."""
+    mode = str(version.get("llm_mode") or "none")
+    if mode in ("none", "hand", ""):
+        return "Hand-written"
+    model = str(version.get("llm_model_id") or "unrecorded")
+    cited = int(version.get("cited_sentences", 0) or 0)
+    total = cited + int(version.get("uncited_sentences", 0) or 0)
+    tail = f", {cited}/{total} sentences cited" if total else ""
+    return f"Synthesised — mode `{mode}`, model `{model}`{tail}"
 
 
 def _matrix_block(agreement: Mapping[str, Any]) -> list[str]:

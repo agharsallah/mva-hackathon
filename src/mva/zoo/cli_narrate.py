@@ -43,6 +43,11 @@ def add_narrate_parser(subparsers: Any, *, default_config: Path) -> None:
         action="store_true",
         help="do not append rows to <schema>.<prefix>_narratives",
     )
+    parser.add_argument(
+        "--merged",
+        action="store_true",
+        help="synthesise the merged report's narrative instead (step 6, fusion+synthesis)",
+    )
     parser.set_defaults(handler=do_narrate)
 
 
@@ -67,6 +72,8 @@ def do_narrate(args: argparse.Namespace) -> int:
     if args.llm_model:
         settings = replace(settings, model=args.llm_model)
     json_dir = case.out_dir / "reports"
+    if args.merged:
+        return _narrate_merged(args, case, settings, json_dir)
     if args.dry_run:
         return _narrate_dry_run(json_dir, args.only or [], settings, citable_rows, build_prompt)
     result = narrate_module.run_narrate(
@@ -129,3 +136,73 @@ def _store_narratives(args: argparse.Namespace, case: Any, narratives: Sequence[
             lineage_schema=case.warehouse_schema,
         )
     print(f"stored {written} rows in {case.schema}.{table}")
+
+
+def _narrate_merged(args: argparse.Namespace, case: Any, settings: Any, json_dir: Path) -> int:
+    """Step 6's ``fusion+synthesis``: one synthesised narrative for the merged report.
+
+    Reads the merged JSON the run left in the case's output directory, plus each lane's own
+    section 6 so the synthesis can build on the lanes rather than re-read their numbers. The
+    hand-written narrative already in ``report.md`` is kept under the synthesised one, badge
+    and all — the same rule section 6 of every per-model report follows.
+    """
+    from . import narrate as narrate_module
+    from .merge_render import NARRATIVE_MARKER, render_merged
+    from .narrate_rows import build_merge_prompt, merged_rows
+
+    merged_path = case.out_dir / "merged.json"
+    if not merged_path.is_file():
+        raise RuntimeError(f"{merged_path} is missing; run the merge stage first")
+    merged = json.loads(merged_path.read_text(encoding="utf-8"))
+    readings = _lane_readings(json_dir)
+    if args.dry_run:
+        rows = merged_rows(merged, readings)
+        print(f"--- merged: {len(rows)} citable rows, mode {settings.mode!r} ---")
+        print(build_merge_prompt(rows, max_words=settings.max_words))
+        return 0
+    item = narrate_module.narrate_merged(merged, readings, settings=settings)
+    kept = _existing_narrative(case.merged_path, NARRATIVE_MARKER)
+    versions = [narrate_module.interpretation_block(item)] if item is not None else []
+    if kept:
+        versions.append({"marker": kept[0], "text": kept[1], "llm_mode": "hand"})
+    if not versions:
+        raise RuntimeError("nothing to write: mode is 'none' and report.md holds no narrative")
+    case.merged_path.parent.mkdir(parents=True, exist_ok=True)
+    case.merged_path.write_text(
+        render_merged(merged, versions[0]["text"], narratives=versions), encoding="utf-8"
+    )
+    if item is not None:
+        print(json.dumps(item.summary(), sort_keys=True))
+        if not args.no_store:
+            _store_narratives(args, case, [item])
+    print(f"{len(versions)} narrative version(s) -> {case.merged_path}")
+    return 0
+
+
+def _lane_readings(json_dir: Path) -> dict[str, str]:
+    """Each lane's own section 6, keyed by lane — the ``interp.<model>`` rows of the prompt."""
+    out: dict[str, str] = {}
+    for path in sorted(json_dir.glob("*.json")):
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        block = payload.get("sections", {}).get("interpretation") or {}
+        text = str(block.get("text") or "")
+        if text:
+            out[str(payload.get("model") or path.stem)] = text
+    return out
+
+
+def _existing_narrative(path: Path, marker: str) -> tuple[str, str] | None:
+    """The marker and prose of the narrative already in a rendered merged report."""
+    if not path.is_file():
+        return None
+    text = path.read_text(encoding="utf-8")
+    start = text.find(marker)
+    if start < 0:
+        return None
+    head, _, tail = text[start:].partition("-->")
+    for stop in ("\n## ", "\n### ", marker):
+        tail = tail.split(stop, 1)[0]
+    body = tail.strip()
+    if not body or body.startswith("_("):
+        return None
+    return f"{head}-->", body
