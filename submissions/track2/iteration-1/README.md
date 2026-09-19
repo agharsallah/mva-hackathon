@@ -1,6 +1,8 @@
 # Track 2 — iteration 1 (2026-09-18)
 
-**Standing:** draft — the report, the methods-form answers, the pitch script and the evidence
+**Standing:** draft, **superseded by [`../iteration-2/`](../iteration-2/README.md) on 2026-09-19**
+and never uploaded — kept for provenance (card v3, F8 unmeasured). Do not upload this folder.
+Original standing: the report, the methods-form answers, the pitch script and the evidence
 tables are written from iteration 2's step 7; **not uploaded**. Track 2 accepts **one**
 submission per team, due around 2026-10-20 (intel §5), so this folder is re-read, re-rendered
 and gated before it goes. Iteration 2's step 8 (the aneuploidy burden) may add one row to the

@@ -7,7 +7,8 @@ index and the how-to.
 | Track | Iteration | Standing | Folder |
 |---|---|---|---|
 | Track 1 | 1 | built, rehearsed, cross-checked — **not uploaded** (0 of 6 spent) | [`track1/iteration-1/`](track1/iteration-1/README.md) |
-| Track 2 | 1 | **draft** — report, methods form, evidence ladder and pitch script written from iteration 2's step 7 (card v3, H045–H050); one submission only, due ~2026-10-20, not uploaded | [`track2/iteration-1/`](track2/iteration-1/README.md) · [`docs/iteration2/step-7/`](../docs/iteration2/step-7/README.md) · dashboard `/track2` |
+| Track 2 | 1 | draft, **superseded** by iteration 2 — never uploaded; kept for provenance (card v3, F8 unmeasured) | [`track2/iteration-1/`](track2/iteration-1/README.md) |
+| Track 2 | 2 | **draft** — the curated report from all eight iteration-2 steps and card v4 (F8 measured by step 8); one submission only, due ~2026-10-20, not uploaded | [`track2/iteration-2/`](track2/iteration-2/README.md) · [`docs/iteration2/step-7/`](../docs/iteration2/step-7/README.md) · dashboard `/track2` |
 
 ## What an iteration folder holds
 
