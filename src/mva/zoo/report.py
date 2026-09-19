@@ -49,10 +49,14 @@ __all__ = [
     "write_reports",
 ]
 
-#: Bumped when the JSON below changes shape.
-SCHEMA_VERSION = 1
+#: Bumped when the JSON below changes shape. Version 2 added ``reports_table`` (the warehouse
+#: table this run's row lands in — the case's prefix, not a constant) and ``case`` (which
+#: illness the report is about).
+SCHEMA_VERSION = 2
 
-#: Where a rendered report lands. One file per lane, named by the registry key.
+#: Where a rendered report lands by default. One file per lane, named by the registry key.
+#: A run overrides it from ``[paths] reports_dir``, which itself defaults to the case's
+#: ``docs/<iteration>/reports``.
 REPORT_DIR = "docs/iteration4/reports"
 
 
@@ -86,9 +90,9 @@ class ModelReport:
 LINEAGE_SCHEMA = "warehouse"
 
 
-def report_path(key: str) -> str:
-    """The Markdown file one lane's report is written to."""
-    return f"{REPORT_DIR}/{key}.md"
+def report_path(key: str, reports_dir: str | Path = REPORT_DIR) -> str:
+    """The Markdown file one lane's report is written to, under the case's reports folder."""
+    return f"{reports_dir}/{key}.md"
 
 
 def model_report_json(
@@ -105,6 +109,8 @@ def model_report_json(
     interpretation: str = "",
     interpretation_dated: str = "",
     generated_at: str | None = None,
+    reports_table: str = "",
+    case: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Build one lane's report JSON — the single place any of its numbers are computed.
 
@@ -112,7 +118,9 @@ def model_report_json(
     fields as a dict), ``coverage`` a :class:`mva.zoo.types.Coverage`, ``scores`` the lane's
     allele → score mapping, ``model_rank`` a :class:`mva.zoo.rank.ModelRank`, ``hpo_line`` the
     fixed clinical sentence from :func:`mva.zoo.report_sections.hpo_sentence`, and ``runtime``
-    what the run cost.
+    what the run cost. ``case`` is :meth:`mva.zoo.workflow_types.Config.case_json` — which
+    illness this report is about — so a report never says "iteration 4" because the renderer
+    was written for iteration 4.
     """
     key = str(card.get("key") or card.get("name") or getattr(model_rank, "model", "") or "model")
     confirmed = getattr(model_rank, "confirmed", None)
@@ -128,6 +136,8 @@ def model_report_json(
         "version": str(card.get("version", "")),
         "run_id": run_id,
         "mode": mode,
+        "reports_table": reports_table or MODEL_REPORTS_TABLE,
+        "case": dict(case or {}),
         "generated_at": generated_at or datetime.now(UTC).isoformat(timespec="seconds"),
         "sections": {
             "card": dict(card),
@@ -154,8 +164,14 @@ def model_report_json(
 
 def render_model_report(report: Mapping[str, Any]) -> str:
     """Render one lane's report to Markdown. Prints the JSON; computes nothing."""
+    case = report.get("case") or {}
+    label = str(case.get("label") or case.get("iteration") or "")
+    gene = str(case.get("confirmed_gene") or "")
     header = [
-        f"# {report.get('model', 'model')} — iteration 4 model report",
+        f"# {report.get('model', 'model')} — model report",
+        "",
+        f"**Case:** {label or '—'}; confirmed pair gene "
+        + (f"`{gene}`." if gene else "none declared."),
         "",
         f"**Standing:** generated {report.get('generated_at', '')} by "
         f"`mva.zoo.report.render_model_report` from run `{report.get('run_id', '')}`"
@@ -163,8 +179,9 @@ def render_model_report(report: Mapping[str, Any]) -> str:
         + ".",
         "",
         (
-            "Every number below is a key of `results.it4_model_reports.report_json` for this run. "
-            "Section 6 is the only written section."
+            f"Every number below is a key of "
+            f"`{report.get('reports_table', MODEL_REPORTS_TABLE)}.report_json` for this run. "
+            f"Section 6 is the only written section."
         ),
     ]
     return "\n".join([*header, *render_sections(report), ""])
@@ -242,8 +259,10 @@ def _limitations(card: Mapping[str, Any], coverage: Any, table: Any, cost: Runti
 # The warehouse table
 # ---------------------------------------------------------------------------------------
 
-#: ``results.it4_model_reports`` — one row per (model, run); append-only, the rendered
-#: Markdown is derivable from ``report_json`` and is therefore not stored twice.
+#: ``<schema>.<prefix>_model_reports`` — one row per (model, run); append-only, the rendered
+#: Markdown is derivable from ``report_json`` and is therefore not stored twice. The name
+#: below is the *default* prefix (``it4``); a run passes its own through
+#: :meth:`mva.zoo.workflow_types.Config.table`.
 MODEL_REPORTS_TABLE = "it4_model_reports"
 MODEL_REPORTS_COLUMNS: tuple[tuple[str, str], ...] = (
     ("model", "VARCHAR"),
@@ -262,12 +281,14 @@ def write_reports(
     run_id: str,
     source_ref: str = "results.it4_model_ranks + warehouse.allele_scores",
     lineage_schema: str = LINEAGE_SCHEMA,
+    table: str = MODEL_REPORTS_TABLE,
 ) -> int:
     """Append this run's report JSON rows and record one lineage edge.
 
     ``schema`` is where the *result* lands (``results``); ``lineage_schema`` is where the
     edge lands (``warehouse``) — see :func:`mva.zoo.rank.write_ranks` for why they are two
-    arguments rather than one.
+    arguments rather than one. ``table`` is the case's own name for the table
+    (``<prefix>_model_reports``), so a second case writes beside this one, not over it.
     """
     import json
 
@@ -275,14 +296,13 @@ def write_reports(
     from ..warehouse.postgres import ALIAS, safe_identifier
 
     safe = safe_identifier(schema)
+    safe_table = safe_identifier(table)
     columns = ", ".join(f"{name} {sql}" for name, sql in MODEL_REPORTS_COLUMNS)
-    connection.execute(
-        f"CREATE TABLE IF NOT EXISTS {ALIAS}.{safe}.{MODEL_REPORTS_TABLE} ({columns})"
-    )
+    connection.execute(f"CREATE TABLE IF NOT EXISTS {ALIAS}.{safe}.{safe_table} ({columns})")
     now = datetime.now(UTC)
     for report in reports:
         connection.execute(
-            f"INSERT INTO {ALIAS}.{safe}.{MODEL_REPORTS_TABLE} VALUES (?, ?, ?, ?, ?)",
+            f"INSERT INTO {ALIAS}.{safe}.{safe_table} VALUES (?, ?, ?, ?, ?)",
             [
                 report.get("model", ""),
                 report.get("version", ""),
@@ -296,7 +316,7 @@ def write_reports(
         connection,
         lineage_schema,
         target_schema=schema,
-        target_table=MODEL_REPORTS_TABLE,
+        target_table=table,
         target_rows=len(reports),
         source_kind="table",
         source_ref=source_ref,

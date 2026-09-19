@@ -129,7 +129,7 @@ def test_pairs_from_alleles_uses_the_pipeline_and_flags_the_confirmed_gene():
         {"gene": "OTHER", "chrom": "1", "pos": 303, "ref": "G", "alt": "A", "gt": "0/1"},
         {"gene": "OTHER", "chrom": "1", "pos": 404, "ref": "T", "alt": "C", "gt": "0/1"},
     ]
-    built = pairs_from_alleles(rows)
+    built = pairs_from_alleles(rows, confirmed_gene="BUB1B")
     assert built.genes == 2
     assert len(built.pairs) == 2
     confirmed = [p for p in built.pairs if p.is_confirmed]
@@ -160,7 +160,7 @@ def test_two_pairs_in_the_confirmed_gene_are_told_apart_by_consequence():
         allele_id("1", 202, "C", "G"): "missense_variant",
         allele_id("1", 303, "G", "A"): "synonymous_variant",
     }
-    built = pairs_from_alleles(rows, consequences=consequences)
+    built = pairs_from_alleles(rows, confirmed_gene="BUB1B", consequences=consequences)
     confirmed = [p for p in built.pairs if p.is_confirmed]
     assert len(confirmed) == 1
     assert set(confirmed[0].key[1:]) == {
@@ -175,7 +175,8 @@ def test_an_ambiguous_confirmed_gene_flags_them_all_and_says_so():
         {"gene": "BUB1B", "chrom": "1", "pos": 202, "ref": "C", "alt": "G", "gt": "0/1"},
         {"gene": "BUB1B", "chrom": "1", "pos": 303, "ref": "G", "alt": "A", "gt": "0/1"},
     ]
-    built = pairs_from_alleles(rows)  # no consequences → no rule can single one out
+    # no consequences → the lof+missense rule cannot single one out
+    built = pairs_from_alleles(rows, confirmed_gene="BUB1B")
     assert sum(1 for p in built.pairs if p.is_confirmed) == 3
     assert "all 3 are flagged confirmed" in built.confirmed_note
 

@@ -34,7 +34,8 @@ columns so adding them later is a fill, not a migration.
 Two outputs, on purpose:
 
 * ``results.it4_allele_records`` — coordinate-free, replaced on every run, and therefore
-  safe to read from the dashboard or quote in a report.
+  safe to read from the dashboard or quote in a report. (``it4`` is the default case prefix;
+  see `docs/notes/zoo-case-config.md` for what the case config does and does not rename.)
 * ``build/it4/records.parquet`` — the same rows **plus** the coordinate, gitignored, with a
   sibling ``records.provenance.json`` naming every input, parameter and row count and the
   parquet's own sha256. One :data:`~mva.warehouse.lineage.LINEAGE_TABLE` edge records the
@@ -255,15 +256,16 @@ def _input_rows(connection: Any, schemas: Schemas) -> dict[str, int]:
     return counts
 
 
-def consequence_classes(
-    records: Sequence[AlleleRecord], gene: str = "BUB1B"
-) -> dict[str, str | None]:
+def consequence_classes(records: Sequence[AlleleRecord], gene: str) -> dict[str, str | None]:
     """Which consequence class each of ``gene``'s alleles falls in, keyed by ``allele_id``.
 
     This is the day-1 answer to open question O7 / risk R9 of the plan: the MVP lanes are
     missense and splice tables, so if the confirmed pair's two alleles land in a class no
     MVP lane covers, a DNA-level lane (GPN-MSA) has to be promoted before step 2 runs.
     Gene symbol, never a position — the gate and the DTA both require that.
+
+    ``gene`` is **required and has no default**: which gene matters is the case's business
+    (``[case] confirmed_gene``), never this module's.
     """
     wanted = gene.upper()
     return {

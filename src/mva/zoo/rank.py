@@ -30,10 +30,9 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from typing import Any
 
-from .pairs import CONFIRMED_GENE, Pair, PairBuild, pairs_from_alleles, pairs_from_fixture
+from .pairs import Pair, PairBuild, pairs_from_alleles, pairs_from_fixture
 
 __all__ = [
-    "CONFIRMED_GENE",
     "MODEL_RANKS_COLUMNS",
     "MODEL_RANKS_TABLE",
     "ConfirmedRank",

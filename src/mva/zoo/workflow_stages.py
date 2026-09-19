@@ -63,7 +63,7 @@ def collect(config: Config, state: RunState, deps: Deps, connection: Any) -> Sta
 
 
 def rank_per_model(config: Config, state: RunState, deps: Deps, connection: Any) -> StageResult:
-    """Rank the callset's biallelic pairs once per lane and write ``it4_model_ranks``."""
+    """Rank the callset's biallelic pairs once per lane and write ``<prefix>_model_ranks``."""
     state.pairs = list(deps.load_pairs(config, state.records))
     state.ranks = rank_module.rank_per_model(state.pairs, state.scores)
     rows = 0
@@ -83,11 +83,15 @@ def rank_per_model(config: Config, state: RunState, deps: Deps, connection: Any)
 def report_per_model(config: Config, state: RunState, deps: Deps, connection: Any) -> StageResult:
     """Build and render one seven-section report per lane."""
     state.reports = []
+    reports_table = config.table("model_reports")
     for model in sorted(state.ranks):
         card = state.cards.get(model, {"key": model})
-        gene = _confirmed_gene(state.pairs)
+        gene = _confirmed_gene(state.pairs, config)
         sentence = hpo_sentence(
-            deps.hpo_row(config, gene), gene=gene, model=model, term_set=config.hpo_term_set
+            deps.hpo_row(config, gene),
+            gene=gene or "(none declared)",
+            model=model,
+            term_set=config.phenotype_term_set,
         )
         state.reports.append(
             report_module.model_report_json(
@@ -100,12 +104,14 @@ def report_per_model(config: Config, state: RunState, deps: Deps, connection: An
                 run_id=config.run_id,
                 mode=config.mode,
                 llm_mode=config.llm_mode,
+                reports_table=reports_table,
+                case=config.case_json(),
             )
         )
     report_module.write_markdown(state.reports, config.reports_dir)
     _dump_report_json(config, state)
     if connection is not None and not _already_written(
-        connection, config.schema, report_module.MODEL_REPORTS_TABLE, config.run_id
+        connection, config.schema, reports_table, config.run_id
     ):
         report_module.write_reports(
             connection,
@@ -113,6 +119,7 @@ def report_per_model(config: Config, state: RunState, deps: Deps, connection: An
             state.reports,
             run_id=config.run_id,
             lineage_schema=config.warehouse_schema,
+            table=reports_table,
         )
     return StageResult("report_per_model", 0.0, len(state.reports), f"{len(state.reports)} reports")
 
@@ -149,7 +156,7 @@ def merge(config: Config, state: RunState, deps: Deps, connection: Any) -> Stage
 
 
 def render(config: Config, state: RunState, deps: Deps, connection: Any) -> StageResult:
-    """Write ``docs/iteration4/report.md`` with the hand-written narrative slot marked."""
+    """Write the case's merged report (``[paths] merged_report``), narrative slot marked."""
     narrative = _existing_narrative(config.merged_path)
     text = merge_module.render_merged(state.merged, narrative)
     config.merged_path.parent.mkdir(parents=True, exist_ok=True)
@@ -195,8 +202,9 @@ def _field(record: Any, name: str) -> Any:
     return getattr(record, name, None)
 
 
-def _confirmed_gene(pairs: Sequence[rank_module.Pair]) -> str:
-    return next((p.gene for p in pairs if p.is_confirmed), rank_module.CONFIRMED_GENE)
+def _confirmed_gene(pairs: Sequence[rank_module.Pair], config: Config) -> str:
+    """The gene a flagged pair carries, else whatever the case config declared (maybe none)."""
+    return next((p.gene for p in pairs if p.is_confirmed), config.confirmed_gene)
 
 
 def _already_written(connection: Any, schema: str, table: str, run_id: str) -> bool:

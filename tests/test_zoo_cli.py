@@ -125,10 +125,14 @@ class TestParser:
         assert cli.main([]) == 1
         assert "mva-zoo" in capsys.readouterr().out
 
-    def test_score_defaults_to_catalogue_free(self):
+    def test_score_leaves_mode_and_records_to_the_case_config(self):
+        # Both default to None at the parser: with no `--config` the handler falls back to
+        # `catalogue-free` and `DEFAULT_RECORDS`, with one it takes the case's values.
         args = cli._parser().parse_args(["score", "--model", "x"])
-        assert args.mode == "catalogue-free"
-        assert args.records == cli.DEFAULT_RECORDS
+        assert args.mode is None
+        assert args.records is None
+        assert args.config is None
+        assert cli._records_path(args) == cli.DEFAULT_RECORDS
         assert args.dry_run is False
 
     def test_score_rejects_an_unknown_mode(self):

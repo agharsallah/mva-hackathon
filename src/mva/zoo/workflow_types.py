@@ -3,22 +3,34 @@
 Split out of :mod:`mva.zoo.workflow` so the runner file stays short and the stage file can
 import these without an import cycle. Nothing here runs a stage; it is all data plus the one
 bundle of injected callables (:class:`Deps`) that decides whether a run reads the warehouse or
-``fixtures/it4/``.
+a fixture directory.
+
+The configuration itself — what a *case* is — lives in :mod:`mva.zoo.case_config` and is
+re-exported here, so ``from .workflow_types import Config`` keeps working for every caller.
 """
 
 from __future__ import annotations
 
 import csv
-import hashlib
-import tomllib
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
 from . import rank as rank_module
+from .case_config import DEFAULT_ITERATION, DEFAULT_PREFIX, Config
 
-__all__ = ["STAGES", "Config", "Deps", "Manifest", "RunState", "StageResult"]
+__all__ = [
+    "DEFAULT_ITERATION",
+    "DEFAULT_PREFIX",
+    "STAGES",
+    "Config",
+    "Deps",
+    "Manifest",
+    "RunState",
+    "StageResult",
+    "consequence_map",
+]
 
 #: The stage names, in order. ``--from <stage>`` names one of these.
 STAGES: tuple[str, ...] = (
@@ -31,69 +43,6 @@ STAGES: tuple[str, ...] = (
     "merge",
     "render",
 )
-
-
-@dataclass(frozen=True)
-class Config:
-    """One run's configuration, read from ``zoo.example.toml`` (or a copy of it)."""
-
-    path: Path
-    digest: str = ""
-    mode: str = "catalogue-free"
-    models: tuple[str, ...] = ()
-    out_dir: Path = Path("build/it4")
-    schema: str = "results"
-    #: Where the shared, append-only tables live — ``allele_scores`` and ``data_lineage``.
-    #: A different schema from :attr:`schema`, which holds this run's *results*. They were
-    #: one field until the first real run read an empty score cache out of ``results`` and
-    #: ranked nothing at all without erroring (entry 128).
-    warehouse_schema: str = "warehouse"
-    #: Which phenotype ranking section 5 of every report quotes. ``with-parental`` is the
-    #: child's eight HPO terms plus what the parents' testing contributed; ``proband-only``
-    #: is the child's alone. Naming it here keeps the clinical half of the evidence a
-    #: configuration choice rather than a constant buried in a report renderer.
-    hpo_term_set: str = "with-parental"
-    method: str = "fusion"
-    rrf_k: int = 60
-    llm_mode: str = "none"
-    reports_dir: Path = Path("docs/iteration4/reports")
-    docs_runs_dir: Path = Path("docs/iteration4/runs")
-    merged_path: Path = Path("docs/iteration4/report.md")
-    fixtures: Path | None = None
-
-    @classmethod
-    def load(cls, path: str | Path, **overrides: Any) -> Config:
-        """Parse the TOML and hash its bytes — the digest is what the manifest records."""
-        file = Path(path)
-        raw = file.read_bytes()
-        data = tomllib.loads(raw.decode("utf-8"))
-        run_block = data.get("run", {})
-        merge_block = data.get("merge", {})
-        llm_block = data.get("llm", {})
-        paths = data.get("paths", {})
-        values: dict[str, Any] = {
-            "path": file,
-            "digest": hashlib.sha256(raw).hexdigest(),
-            "mode": run_block.get("mode", "catalogue-free"),
-            "models": tuple(run_block.get("models", ())),
-            "out_dir": Path(run_block.get("out_dir", "build/it4")),
-            "schema": run_block.get("schema", "results"),
-            "warehouse_schema": run_block.get("warehouse_schema", "warehouse"),
-            "hpo_term_set": run_block.get("hpo_term_set", "with-parental"),
-            "method": merge_block.get("method", "fusion"),
-            "rrf_k": int(merge_block.get("rrf_k", 60)),
-            "llm_mode": llm_block.get("mode", "none"),
-            "reports_dir": Path(paths.get("reports_dir", "docs/iteration4/reports")),
-            "docs_runs_dir": Path(paths.get("docs_runs_dir", "docs/iteration4/runs")),
-            "merged_path": Path(paths.get("merged_report", "docs/iteration4/report.md")),
-        }
-        values.update(overrides)
-        return cls(**values)
-
-    @property
-    def run_id(self) -> str:
-        """Deterministic in the config: the same config re-run is the same run, not a new one."""
-        return f"it4-{self.digest[:12]}"
 
 
 @dataclass(frozen=True)
@@ -210,7 +159,7 @@ class Deps:
             rows = cache_module.read(connection, config.warehouse_schema, model=model)
             return {row.allele_id: row.score for row in rows if row.score is not None}
 
-        def pairs(config: Config, _records: Sequence[Any]) -> list[rank_module.Pair]:
+        def pairs(config: Config, records_in: Sequence[Any]) -> list[rank_module.Pair]:
             from ..warehouse.postgres import ALIAS, safe_identifier
 
             safe = safe_identifier(config.schema)
@@ -220,7 +169,10 @@ class Deps:
             ).fetchall()
             columns = ("gene", "chrom", "pos", "ref", "alt", "gt", "pgt", "pid")
             return rank_module.pairs_from_alleles(
-                [dict(zip(columns, row, strict=True)) for row in rows]
+                [dict(zip(columns, row, strict=True)) for row in rows],
+                confirmed_gene=config.confirmed_gene,
+                consequences=consequence_map(records_in),
+                rule=config.confirmed_pair_rule,
             ).pairs
 
         def hpo(config: Config, gene: str) -> Mapping[str, Any] | None:
@@ -237,10 +189,11 @@ class Deps:
             if not gene:
                 return None
             safe = safe_identifier(config.warehouse_schema)
+            table = safe_identifier(config.hpo_table)
             found = connection.execute(
                 f"SELECT gene_symbol, rank, score, genes_considered FROM "
-                f"{ALIAS}.{safe}.hpo_gene_scores WHERE gene_symbol = ? AND term_set = ?",
-                [gene, config.hpo_term_set],
+                f"{ALIAS}.{safe}.{table} WHERE gene_symbol = ? AND term_set = ?",
+                [gene, config.phenotype_term_set],
             ).fetchone()
             if not found:
                 return None
@@ -290,10 +243,38 @@ class Deps:
                 if row.get("score") not in (None, "")
             }
 
-        def pairs(_config: Config, _records: Sequence[Any]) -> list[rank_module.Pair]:
-            return rank_module.pairs_from_fixture(base / "pairs.tsv")
+        def pairs(config: Config, _records: Sequence[Any]) -> list[rank_module.Pair]:
+            return rank_module.pairs_from_fixture(
+                base / "pairs.tsv",
+                confirmed_gene=config.confirmed_gene,
+                rule=config.confirmed_pair_rule,
+            )
 
         return cls(load_records=records, load_registry=registry, score=score, load_pairs=pairs)
+
+
+def consequence_map(records: Sequence[Any]) -> dict[str, str]:
+    """``allele_id`` → consequence, for the confirmed-pair rule.
+
+    The rule that picks one of several candidate pairs ("a truncating allele plus a missense
+    allele") needs to know what each allele *is*. The records already say, so the workflow
+    hands them over rather than making :mod:`mva.zoo.pairs` query anything.
+    """
+    out: dict[str, str] = {}
+    for record in records:
+        key = (
+            record.get("allele_id")
+            if isinstance(record, Mapping)
+            else getattr(record, "allele_id", None)
+        )
+        value = (
+            record.get("consequence")
+            if isinstance(record, Mapping)
+            else getattr(record, "consequence", None)
+        )
+        if key:
+            out[str(key)] = str(value or "")
+    return out
 
 
 def _read_tsv(path: Path) -> list[dict[str, Any]]:

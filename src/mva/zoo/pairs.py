@@ -25,17 +25,29 @@ from pathlib import Path
 from typing import Any
 
 __all__ = [
-    "CONFIRMED_GENE",
+    "DEFAULT_PAIR_RULE",
     "MAX_CALLS_PER_GENE",
+    "PAIR_RULES",
     "Pair",
     "PairBuild",
     "pairs_from_alleles",
     "pairs_from_fixture",
 ]
 
-#: The gene whose biallelic pair is the confirmed answer for this child. Detection is by
-#: symbol; a coordinate never appears in this package (CLAUDE.md, coordinate gate).
-CONFIRMED_GENE = "BUB1B"
+#: Which pair of a confirmed gene gets the flag, when the gene carries more than one.
+#:
+#: ``lof+missense``
+#:     prefer the pair that carries one truncating allele (a premature stop or equivalent)
+#:     plus one missense allele — the shape a recessive loss-of-function case usually takes.
+#:     If that does not single one pair out, every pair of the gene is flagged and the note
+#:     says so.
+#: ``all``
+#:     flag every pair of the gene and make no claim about shape.
+#:
+#: There is no gene constant in this module. The gene is a **configuration value**
+#: (``[case] confirmed_gene``); this package never knows which illness it is ranking.
+PAIR_RULES: tuple[str, ...] = ("lof+missense", "all")
+DEFAULT_PAIR_RULE = "lof+missense"
 
 #: Consequence classes that make a confirmed-pair candidate the *expected* shape: one
 #: truncating allele (a premature stop) plus one missense allele (a changed amino acid).
@@ -87,13 +99,22 @@ class PairBuild:
 # ---------------------------------------------------------------------------------------
 
 
-def pairs_from_fixture(path: str | Path) -> list[Pair]:
-    """Read ``fixtures/it4/pairs.tsv`` — the synthetic stand-in for a real callset's pairs.
+def pairs_from_fixture(
+    path: str | Path,
+    *,
+    confirmed_gene: str = "",
+    rule: str = DEFAULT_PAIR_RULE,
+) -> list[Pair]:
+    """Read a ``pairs.tsv`` fixture — the synthetic stand-in for a real callset's pairs.
 
     Columns: ``gene, allele_id_left, allele_id_right, phase, is_confirmed``.
+
+    ``confirmed_gene`` makes the *case config* decide which pair is flagged, exactly as it
+    does for a real callset: the file's ``is_confirmed`` column is then ignored. Left empty,
+    the column is trusted, which is what a fixture written for one specific scenario wants.
     """
     with Path(path).open(encoding="utf-8", newline="") as handle:
-        return [
+        rows = [
             Pair(
                 gene=row["gene"],
                 left_id=row["allele_id_left"],
@@ -103,14 +124,18 @@ def pairs_from_fixture(path: str | Path) -> list[Pair]:
             )
             for row in csv.DictReader(handle, delimiter="\t")
         ]
+    if not confirmed_gene:
+        return rows
+    return _flag_confirmed(rows, confirmed_gene, {}, rule)[0]
 
 
 def pairs_from_alleles(
     rows: Iterable[Mapping[str, Any]],
     *,
-    confirmed_gene: str = CONFIRMED_GENE,
+    confirmed_gene: str = "",
     consequences: Mapping[str, str] | None = None,
     max_calls_per_gene: int = MAX_CALLS_PER_GENE,
+    rule: str = DEFAULT_PAIR_RULE,
 ) -> PairBuild:
     """Build the callset's biallelic pairs from ``results.coding_alleles`` rows.
 
@@ -121,8 +146,10 @@ def pairs_from_alleles(
     classifies each pair's phase. Cis pairs (both changes on the same parental copy) are
     dropped here, exactly as the pipeline defines them.
 
-    ``consequences`` maps ``allele_id`` to the VEP consequence string; it is used only to
-    pick which of several ``confirmed_gene`` pairs carries the confirmed flag.
+    ``confirmed_gene`` is the case's answer gene, by symbol, from ``[case] confirmed_gene``;
+    empty (the default) means no pair is flagged and the note says so. ``consequences`` maps
+    ``allele_id`` to the VEP consequence string; it is used only to pick which of several
+    ``confirmed_gene`` pairs carries the flag, under ``rule`` (:data:`PAIR_RULES`).
     """
     from ..pipeline.compound_het import candidate_pairs
     from ..pipeline.variant import Variant
@@ -170,7 +197,7 @@ def pairs_from_alleles(
                 )
             )
 
-    flagged, note = _flag_confirmed(pairs, confirmed_gene, consequences or {})
+    flagged, note = _flag_confirmed(pairs, confirmed_gene, consequences or {}, rule)
     return PairBuild(
         pairs=flagged,
         confirmed_note=note,
@@ -181,10 +208,14 @@ def pairs_from_alleles(
 
 
 def _flag_confirmed(
-    pairs: Sequence[Pair], gene: str, consequences: Mapping[str, str]
+    pairs: Sequence[Pair], gene: str, consequences: Mapping[str, str], rule: str
 ) -> tuple[list[Pair], str]:
     """Mark the confirmed pair(s) of ``gene``; say in words which rule did the marking."""
-    in_gene = [p for p in pairs if p.gene == gene]
+    if rule not in PAIR_RULES:
+        raise ValueError(f"unknown confirmed_pair_rule {rule!r}; expected one of {PAIR_RULES}")
+    if not gene:
+        return list(pairs), "no confirmed pair declared: the case names no confirmed gene"
+    in_gene = [p for p in pairs if p.gene.upper() == gene.upper()]
     if not in_gene:
         return list(pairs), (
             f"no pair built for {gene}: the confirmed pair is absent from the callset"
@@ -192,25 +223,32 @@ def _flag_confirmed(
     chosen = in_gene
     note = f"{gene} has one pair; flagged confirmed"
     if len(in_gene) > 1:
-        shaped = [p for p in in_gene if _is_stop_plus_missense(p, consequences)]
-        if len(shaped) == 1:
-            chosen, note = (
-                shaped,
-                (
-                    f"{gene} has {len(in_gene)} pairs; flagged the one carrying a truncating "
-                    f"allele plus a missense allele"
-                ),
-            )
-        else:
-            note = (
-                f"{gene} has {len(in_gene)} pairs and the consequence rule did not single "
-                f"one out ({len(shaped)} matched); all {len(in_gene)} are flagged confirmed"
-            )
+        chosen, note = _choose(gene, in_gene, consequences, rule)
     marked = {p.key for p in chosen}
     out = [
         Pair(p.gene, p.left_id, p.right_id, p.phase, is_confirmed=p.key in marked) for p in pairs
     ]
     return out, note
+
+
+def _choose(
+    gene: str, in_gene: Sequence[Pair], consequences: Mapping[str, str], rule: str
+) -> tuple[list[Pair], str]:
+    """Which of several pairs of one gene carries the flag, and the sentence that says why."""
+    if rule == "all":
+        return list(in_gene), (
+            f"{gene} has {len(in_gene)} pairs and the rule is `all`; every one is flagged"
+        )
+    shaped = [p for p in in_gene if _is_stop_plus_missense(p, consequences)]
+    if len(shaped) == 1:
+        return shaped, (
+            f"{gene} has {len(in_gene)} pairs; rule `lof+missense` flagged the one carrying a "
+            f"truncating allele plus a missense allele"
+        )
+    return list(in_gene), (
+        f"{gene} has {len(in_gene)} pairs and rule `lof+missense` did not single one out "
+        f"({len(shaped)} matched); all {len(in_gene)} are flagged confirmed"
+    )
 
 
 def _is_stop_plus_missense(pair: Pair, consequences: Mapping[str, str]) -> bool:

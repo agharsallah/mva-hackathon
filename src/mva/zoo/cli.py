@@ -3,7 +3,8 @@
 Six verbs, in the order a run uses them:
 
 ``records``
-    build the normalised allele record set (step 1) and leave it in ``build/it4/``.
+    build the normalised allele record set (step 1) and leave it in the case's output
+    directory (``build/it4/`` by default).
 ``models``
     print the registry's model cards — what each lane is, its version, tier and licence.
 ``coverage``
@@ -15,7 +16,13 @@ Six verbs, in the order a run uses them:
     every model's cached row for one allele — the "what does the zoo think of this one"
     view.
 ``run``
-    the whole workflow from a config file (step 4), optionally resuming from one stage.
+    the whole workflow from a case config (step 4), optionally resuming from one stage, with
+    ``--case-gene`` and ``--iteration`` overriding the config's ``[case]`` block.
+
+Every verb that touches the record set or the cache takes ``--config <case.toml>``: the case
+config, not a constant in this file, says where the records are, which schemas to read and
+which catalogue mode to score in. Running the zoo on another illness is a copy of that file
+with its ``[case]`` block edited — see ``src/mva/zoo/cases/README.md``.
 
 Everything here runs **in process**. There is no HTTP server in the MVP: the workflow calls
 these same functions, and a result never needed a route. The read-only routes over the cache
@@ -46,6 +53,11 @@ __all__ = ["main"]
 
 DEFAULT_OUT = Path("build/it4")
 
+#: The case config a bare ``mva-zoo run`` reads. It is a *default*, not the only case: copy
+#: it into ``src/mva/zoo/cases/<name>.toml``, edit its ``[case]`` block and pass ``--config``
+#: (see ``src/mva/zoo/cases/README.md``).
+DEFAULT_CONFIG = Path("src/mva/zoo/zoo.example.toml")
+
 
 def main(argv: list[str] | None = None) -> int:
     """Entry point. Returns a process exit code."""
@@ -72,7 +84,8 @@ def _parser() -> argparse.ArgumentParser:
     records = subparsers.add_parser("records", help="build the allele record set (step 1)")
     records.add_argument("--mask-catalogue", action="store_true", help="null the clin_sig field")
     records.add_argument("--limit", type=int, default=None, help="stop after N alleles (smoke run)")
-    records.add_argument("--out-dir", type=Path, default=DEFAULT_OUT)
+    records.add_argument("--out-dir", type=Path, default=None)
+    _case_flags(records)
     _schema_flags(records)
     records.set_defaults(handler=_do_records)
 
@@ -82,30 +95,53 @@ def _parser() -> argparse.ArgumentParser:
 
     coverage = subparsers.add_parser("coverage", help="what fraction of the records a model scores")
     coverage.add_argument("--model", required=True, help="the model card's key")
-    coverage.add_argument("--records", type=Path, default=DEFAULT_RECORDS)
+    coverage.add_argument("--records", type=Path, default=None)
     coverage.add_argument("--limit", type=int, default=None)
+    _case_flags(coverage)
     _schema_flags(coverage)
     coverage.set_defaults(handler=_do_coverage)
 
     score = subparsers.add_parser("score", help="score the record set with one model")
     score.add_argument("--model", required=True, help="the model card's key")
-    score.add_argument("--mode", choices=list(MODES), default="catalogue-free")
-    score.add_argument("--records", type=Path, default=DEFAULT_RECORDS)
+    score.add_argument("--mode", choices=list(MODES), default=None)
+    score.add_argument("--records", type=Path, default=None)
     score.add_argument("--limit", type=int, default=None)
     score.add_argument("--dry-run", action="store_true", help="report coverage, write nothing")
+    _case_flags(score)
     _schema_flags(score)
     score.set_defaults(handler=_do_score)
 
     scores = subparsers.add_parser("scores", help="every model's cached row for one allele")
     scores.add_argument("--allele-id", required=True, help="the coordinate-free allele key")
+    _case_flags(scores)
     _schema_flags(scores)
     scores.set_defaults(handler=_do_scores)
 
     run = subparsers.add_parser("run", help="run the whole workflow from a config file")
-    run.add_argument("--config", type=Path, default=Path("zoo.toml"))
+    run.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     run.add_argument("--from", dest="from_stage", default=None, help="resume from this stage")
+    run.add_argument(
+        "--case-gene",
+        default=None,
+        help="override [case] confirmed_gene — the gene whose pair is the answer, by symbol",
+    )
+    run.add_argument(
+        "--iteration",
+        default=None,
+        help="override [case] iteration — moves every default output path to docs/<value>/",
+    )
     run.set_defaults(handler=_do_run)
     return parser
+
+
+def _case_flags(parser: argparse.ArgumentParser) -> None:
+    """``--config`` on a single-verb command: where this case's records and tables live."""
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=None,
+        help="a case TOML (see src/mva/zoo/cases/README.md); supplies the paths and schemas",
+    )
 
 
 def _schema_flags(parser: argparse.ArgumentParser) -> None:
@@ -116,15 +152,43 @@ def _schema_flags(parser: argparse.ArgumentParser) -> None:
 # ── shared plumbing ──────────────────────────────────────────────────────────────────
 
 
+def _case(args: argparse.Namespace) -> Any | None:
+    """The case config behind ``--config``, or ``None`` when the verb was called bare."""
+    path = getattr(args, "config", None)
+    if path is None:
+        return None
+    from .workflow_types import Config
+
+    return Config.load(path)
+
+
 def _settings(args: argparse.Namespace) -> Any:
-    """Resolve connection settings, letting flags override the environment and ``.env``."""
+    """Resolve connection settings: flags win, then the case config, then ``.env``."""
     from mva.warehouse.settings import Postgres
 
     settings = Postgres.from_env()
-    overrides = {
-        key: value for key in ("schema", "result_schema") if (value := getattr(args, key, None))
-    }
+    case = _case(args)
+    overrides = {}
+    if case is not None:
+        overrides = {"schema": case.warehouse_schema, "result_schema": case.schema}
+    overrides.update(
+        {key: value for key in ("schema", "result_schema") if (value := getattr(args, key, None))}
+    )
     return replace(settings, **overrides) if overrides else settings
+
+
+def _out_dir(args: argparse.Namespace) -> Path:
+    """Where this case's private outputs land: the flag, else the config, else ``build/it4``."""
+    case = _case(args)
+    return args.out_dir or (case.out_dir if case is not None else DEFAULT_OUT)
+
+
+def _records_path(args: argparse.Namespace) -> Path:
+    """The record parquet: the flag, else ``<case out_dir>/records.parquet``, else the default."""
+    if args.records is not None:
+        return Path(args.records)
+    case = _case(args)
+    return case.out_dir / "records.parquet" if case is not None else DEFAULT_RECORDS
 
 
 def _card(key: str) -> Any:
@@ -139,9 +203,10 @@ def _card(key: str) -> Any:
 
 def _records(args: argparse.Namespace, *, mode: str = "aware") -> list[AlleleRecord]:
     """Load the record set, masked if the run is catalogue-free."""
-    rows = records_from_parquet(args.records, limit=args.limit)
+    path = _records_path(args)
+    rows = records_from_parquet(path, limit=args.limit)
     if not rows:
-        raise RuntimeError(f"{args.records} holds no records")
+        raise RuntimeError(f"{path} holds no records")
     return [row.masked() for row in rows] if mode == "catalogue-free" else rows
 
 
@@ -171,10 +236,11 @@ def _do_records(args: argparse.Namespace) -> int:
     """Delegate to step 1's builder and report what it produced."""
     from . import record
 
+    case = _case(args)
     summary = record.run(
         _settings(args),
-        mask_catalogue=args.mask_catalogue,
-        out_dir=args.out_dir,
+        mask_catalogue=args.mask_catalogue or (case is not None and case.mode == "catalogue-free"),
+        out_dir=_out_dir(args),
         limit=args.limit,
     )
     print(_describe(summary))
@@ -223,7 +289,7 @@ def _do_coverage(args: argparse.Namespace) -> int:
     card = _card(args.model)
     records = _records(args)
     with attached(_settings(args), read_only=True) as connection:
-        adapter = build_adapter(card, connection=connection, records_parquet=Path(args.records))
+        adapter = build_adapter(card, connection=connection, records_parquet=_records_path(args))
         _print_coverage(coverage_of(adapter, records))
     return 0
 
@@ -233,10 +299,12 @@ def _do_score(args: argparse.Namespace) -> int:
     from mva.warehouse.postgres import attached
 
     settings = _settings(args)
+    case = _case(args)
+    mode = args.mode or (case.mode if case is not None else "catalogue-free")
     card = _card(args.model)
-    records = _records(args, mode=args.mode)
+    records = _records(args, mode=mode)
     with attached(settings, read_only=args.dry_run) as connection:
-        adapter = build_adapter(card, connection=connection, records_parquet=Path(args.records))
+        adapter = build_adapter(card, connection=connection, records_parquet=_records_path(args))
         coverage = coverage_of(adapter, records)
         _print_coverage(coverage)
         if args.dry_run:
@@ -246,7 +314,7 @@ def _do_score(args: argparse.Namespace) -> int:
         written = cache.write(
             connection,
             settings.schema,
-            _stamped(adapter.score(records), mode=args.mode),
+            _stamped(adapter.score(records), mode=mode),
             run_id=run_id,
         )
         cache.lineage_row(
@@ -261,7 +329,7 @@ def _do_score(args: argparse.Namespace) -> int:
         )
     print(
         f"run {run_id}: inserted {written.inserted:,}, skipped {written.skipped:,} "
-        f"(already cached) — mode {args.mode}"
+        f"(already cached) — mode {mode}"
     )
     # A remote lane may stop early on a server-side failure and still have written every
     # batch that answered. Saying so is the difference between "this lane covers 71 %" and
@@ -294,6 +362,10 @@ def _do_run(args: argparse.Namespace) -> int:
     from . import workflow
 
     kwargs: dict[str, Any] = {}
+    if args.case_gene:
+        kwargs["confirmed_gene"] = args.case_gene
+    if args.iteration:
+        kwargs["iteration"] = args.iteration
     if args.from_stage:
         accepted = _resume_parameter(workflow.run)
         if accepted is None:
