@@ -42,6 +42,7 @@ def run(
     config_path: str | Path,
     *,
     from_stage: str | None = None,
+    force: bool = False,
     connection: Any = None,
     deps: Deps | None = None,
     **overrides: Any,
@@ -56,47 +57,85 @@ def run(
       ``Deps.fixtures()`` for the synthetic set). With ``deps`` and no ``connection``, no
       warehouse table and no lineage row is written and the manifest says so.
 
-    ``from_stage`` skips the stages before it that only re-read what the cache already holds
-    (resume proper, with a kill test, is plan §5 step 4's opt-A substep and is **not** claimed
-    here).
+    **Resume.** Every stage writes a checkpoint marker when it finishes
+    (:mod:`mva.zoo.checkpoint`), and a stage whose marker matches the inputs it would read is
+    *restored* instead of run — no warehouse read, no registry read, no adapter, no callset
+    scan. A marker matches only when the chain of every earlier stage's content **and** the
+    bundle's cheap fingerprint of this stage's own source both match, so a re-built source
+    table invalidates rather than hides behind a finished checkpoint. ``from_stage`` re-runs
+    that stage and everything after it (the stages before it are still restored, or run when
+    they have no marker); ``force`` drops every marker and re-runs the lot. Claim ``P4-5``.
     """
     if deps is None and connection is None:
         from ..warehouse.postgres import attached
         from ..warehouse.settings import Postgres
 
         with attached(Postgres.from_env()) as opened:
-            return run(config_path, from_stage=from_stage, connection=opened, **overrides)
-    return _run(config_path, from_stage=from_stage, connection=connection, deps=deps, **overrides)
+            return run(
+                config_path, from_stage=from_stage, force=force, connection=opened, **overrides
+            )
+    return _run(
+        config_path,
+        from_stage=from_stage,
+        force=force,
+        connection=connection,
+        deps=deps,
+        **overrides,
+    )
 
 
 def _run(
     config_path: str | Path,
     *,
     from_stage: str | None = None,
+    force: bool = False,
     connection: Any = None,
     deps: Deps | None = None,
     **overrides: Any,
 ) -> Manifest:
     """The runner itself, once the connection and the dependency bundle are settled."""
+    from . import checkpoint, checkpoint_state
     from .workflow_stages import STAGE_FUNCTIONS
 
     config = Config.load(config_path, **overrides)
     bundle = deps or Deps.warehouse(connection)
     if from_stage is not None and from_stage not in STAGES:
         raise ValueError(f"unknown stage {from_stage!r}; expected one of {', '.join(STAGES)}")
-    start_index = STAGES.index(from_stage) if from_stage else 0
+    start_index = STAGES.index(from_stage) if from_stage else len(STAGES)
 
-    state = RunState()
+    state = RunState(force=force)
     started = datetime.now(UTC)
     results: list[StageResult] = []
     config.out_dir.mkdir(parents=True, exist_ok=True)
+    if force:
+        checkpoint.clear(config)
+    chain = checkpoint.seed(config)
     for index, stage in enumerate(STAGES):
-        skip = index < start_index and stage in ("fan_out", "report_per_model")
+        # The stage's inputs are everything the earlier stages produced (the chain) plus
+        # whatever the bundle can cheaply say about the source this stage reads from outside
+        # the process. Without the second half a re-built source table would be masked by a
+        # finished checkpoint; with it, the marker simply stops matching.
+        inputs = checkpoint.digest_of(chain, bundle.fingerprint(config, stage))
         began = time.perf_counter()
-        if skip:
-            result = StageResult(stage, 0.0, 0, "skipped (--from)", skipped=True)
+        marker = None if index >= start_index else checkpoint.load(config, stage)
+        usable = (
+            marker is not None
+            and marker.inputs_digest == inputs
+            and checkpoint_state.restore(config, stage, state, marker.state)
+        )
+        if usable and marker is not None:
+            result = StageResult(stage, 0.0, marker.rows, f"restored ({marker.note})", skipped=True)
         else:
             result = STAGE_FUNCTIONS[stage](config, state, bundle, connection)
+            marker = checkpoint.save(
+                config,
+                stage,
+                inputs_digest=inputs,
+                rows=result.rows,
+                note=result.note,
+                state=checkpoint_state.capture(config, stage, state),
+            )
+        chain = checkpoint.advance(chain, marker)
         result = StageResult(
             result.stage,
             round(time.perf_counter() - began, 4),

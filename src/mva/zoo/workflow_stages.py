@@ -45,14 +45,43 @@ def registry_check(config: Config, state: RunState, deps: Deps, connection: Any)
 
 
 def fan_out(config: Config, state: RunState, deps: Deps, connection: Any) -> StageResult:
-    """Score every lane. Scores land in the cache; this stage only asks for them."""
-    total = 0
+    """Score every lane. Scores land in the cache; this stage only asks for them.
+
+    Resumable **per lane**, not only as a whole: each lane writes its own checkpoint marker
+    the moment it comes back, keyed by ``(chain digest, model, version)``. A run killed after
+    the second of four lanes restarts with two lanes to score, and a lane whose declared
+    version changed is re-scored even though its name is unchanged
+    (:mod:`mva.zoo.checkpoint`).
+    """
+    from . import checkpoint
+
+    # A lane's key is what *that lane* consumed — the case, the record set, and its own
+    # (model, version). Deliberately not the stage's chain digest: that carries every card in
+    # the roster, so adding a fifth lane would re-score the four that did not change.
+    base = checkpoint.digest_of(
+        checkpoint.seed(config), [_field(record, "allele_id") for record in state.records]
+    )
+    total = restored = 0
     for model in sorted(state.cards):
-        scores = deps.score(config, model, state.records)
-        state.scores[model] = dict(scores)
-        state.venues[model] = deps.venue(model)
+        version = str(state.cards[model].get("version", ""))
+        key = checkpoint.digest_of(base, model, version)
+        marker = None if state.force else checkpoint.load_model(config, model, key)
+        if marker is None:
+            scores = dict(deps.score(config, model, state.records))
+            venue = deps.venue(model)
+            checkpoint.save_model(
+                config, model, version=version, venue=venue, inputs_digest=key, scores=scores
+            )
+        else:
+            scores, venue = marker.scores, marker.venue
+            restored += 1
+        state.scores[model] = scores
+        state.venues[model] = venue
         total += len(scores)
-    return StageResult("fan_out", 0.0, total, f"{total} scores over {len(state.cards)} lanes")
+    note = f"{total} scores over {len(state.cards)} lanes"
+    if restored:
+        note += f" ({restored} restored from checkpoints)"
+    return StageResult("fan_out", 0.0, total, note)
 
 
 def collect(config: Config, state: RunState, deps: Deps, connection: Any) -> StageResult:

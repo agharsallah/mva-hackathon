@@ -268,7 +268,9 @@ def test_a_hand_written_narrative_survives_a_re_render(connection, paths):
         "_(narrative not yet written)_", "Three lanes agree; the adjacent one does not."
     )
     paths["merged_path"].write_text(edited, encoding="utf-8")
-    workflow.run(CONFIG, connection=connection, deps=fake_deps(), **paths)
+    # `force=True` so `render` really runs again: a restored render leaves the file alone and
+    # would pass this test without exercising the narrative-preserving code at all.
+    workflow.run(CONFIG, force=True, connection=connection, deps=fake_deps(), **paths)
     assert "Three lanes agree" in paths["merged_path"].read_text(encoding="utf-8")
 
 
@@ -278,13 +280,32 @@ def test_a_run_without_a_connection_writes_files_but_no_table(paths):
     assert manifest.run_id
 
 
-def test_from_stage_skips_the_expensive_stages_only(connection, paths):
+def test_from_stage_re_runs_that_stage_on_and_restores_everything_before_it(connection, paths):
+    """``--from collect`` means "collect onwards is stale", not "skip the expensive ones".
+
+    The pre-checkpoint build read it the other way round: it skipped `fan_out` and
+    `report_per_model` whatever came before them, so `--from collect` could produce a run with
+    no scores at all. With markers on disk the earlier stages are *restored* — same data, no
+    deps call — and every stage from `collect` on is recomputed.
+    """
     workflow.run(CONFIG, connection=connection, deps=fake_deps(), **paths)
     manifest = workflow.run(
         CONFIG, from_stage="collect", connection=connection, deps=fake_deps(), **paths
     )
     skipped = [s["stage"] for s in manifest.stages if s["skipped"]]
-    assert skipped == ["fan_out"]
+    assert skipped == ["normalize", "registry_check", "fan_out"]
+
+
+def test_a_plain_re_run_restores_every_stage_from_its_checkpoint(connection, paths):
+    workflow.run(CONFIG, connection=connection, deps=fake_deps(), **paths)
+    manifest = workflow.run(CONFIG, connection=connection, deps=fake_deps(), **paths)
+    assert [s["stage"] for s in manifest.stages if s["skipped"]] == list(workflow.STAGES)
+
+
+def test_force_drops_the_checkpoints_and_recomputes_everything(connection, paths):
+    workflow.run(CONFIG, connection=connection, deps=fake_deps(), **paths)
+    manifest = workflow.run(CONFIG, force=True, connection=connection, deps=fake_deps(), **paths)
+    assert [s["stage"] for s in manifest.stages if s["skipped"]] == []
 
 
 def _counts(connection) -> tuple[int, int, int]:

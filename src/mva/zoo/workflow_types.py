@@ -75,6 +75,9 @@ class RunState:
     reports: list[dict[str, Any]] = field(default_factory=list)
     merged: dict[str, Any] = field(default_factory=dict)
     venues: dict[str, str] = field(default_factory=dict)
+    #: ``--force``: recompute regardless of what the checkpoints hold. Carried on the state
+    #: rather than passed, because only ``fan_out`` looks at a checkpoint from inside a stage.
+    force: bool = False
 
 
 @dataclass(frozen=True)
@@ -146,6 +149,13 @@ class Deps:
     load_pairs: Callable[[Config, Sequence[Any]], list[rank_module.Pair] | rank_module.PairBuild]
     hpo_row: Callable[[Config, str], Mapping[str, Any] | None] = lambda _c, _g: None
     venue: Callable[[str], str] = lambda _m: "laptop"
+    #: A **cheap** hash of what a stage would read from outside the process, given its name —
+    #: the row count of the source table, the digest of the roster files. The resume folds it
+    #: into the stage's input digest, so a source that changed under a finished checkpoint
+    #: invalidates it instead of being silently reused (:mod:`mva.zoo.checkpoint`). An empty
+    #: string means "this bundle cannot say", and then only ``--force`` or ``--from`` will
+    #: re-read that source — which is the documented limitation of the resume, not a bug.
+    fingerprint: Callable[[Config, str], str] = lambda _c, _s: ""
 
     @classmethod
     def warehouse(cls, connection: Any) -> Deps:
@@ -214,12 +224,46 @@ class Deps:
             names = ("gene_symbol", "rank", "score", "genes_considered")
             return dict(zip(names, found, strict=True))
 
+        def fingerprint(config: Config, stage: str) -> str:
+            """What the stage's source looks like right now, in one cheap statement.
+
+            ``normalize`` and ``rank_per_model`` both read ``<results>.coding_alleles``: its
+            row count plus the catalogue mode is enough to notice that step 1 was re-run
+            under a finished checkpoint. ``registry_check`` reads files, so its fingerprint
+            is their bytes. Anything unreadable answers ``""`` — "cannot say" — and the stage
+            then rests on the chain alone.
+            """
+            from .checkpoint import digest_of
+
+            if stage == "registry_check":
+                from .registry import DEFAULT_FRAGMENTS_DIR, DEFAULT_MODELS_TOML
+
+                files = [DEFAULT_MODELS_TOML, *sorted(DEFAULT_FRAGMENTS_DIR.glob("*.toml"))]
+                return digest_of(
+                    [(f.name, f.read_bytes().hex()) for f in files if f.is_file()],
+                )
+            if stage in ("normalize", "rank_per_model"):
+                from ..warehouse.postgres import ALIAS, safe_identifier
+
+                safe = safe_identifier(config.schema)
+                try:
+                    found = connection.execute(
+                        f"SELECT count(*) FROM {ALIAS}.{safe}.coding_alleles"
+                    ).fetchone()
+                # Any failure here means "this bundle cannot say", never a failed run: the
+                # fingerprint is an optimisation guard, not a result.
+                except Exception:
+                    return ""
+                return digest_of(stage, config.mode, found and found[0])
+            return ""
+
         return cls(
             load_records=records,
             load_registry=registry,
             score=score,
             load_pairs=pairs,
             hpo_row=hpo,
+            fingerprint=fingerprint,
         )
 
     @classmethod
