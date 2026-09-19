@@ -1,14 +1,17 @@
 /**
  * Failure classification — the data half of `ErrorCard`, kept out of the component file so
- * that file exports only components (react-refresh). Six failures a reader can act on, each
- * with its own explanation and remedy; `unknown` is the honest fallback.
+ * that file exports only components (react-refresh). One failure per thing a reader can
+ * actually do about it, each with its own explanation and remedy; `unknown` is the honest
+ * fallback. The order of the branches is the classification: the specific readings come
+ * before the generic status-range ones.
  */
 
-import { API_LABEL, ApiError } from '../api/client';
+import { API_LABEL, ApiError, isRouteMissing } from '../api/client';
 
 export type FailureKind =
   | 'unreachable'
   | 'route-missing'
+  | 'not-found'
   | 'upstream-down'
   | 'unauthorized'
   | 'bad-request'
@@ -39,7 +42,14 @@ export function classifyError(error: Error): Failure {
       remedy: 'Check the reads API on the Status page; its card names the remedy.',
     };
   }
-  if (api && (api.status === 404 || api.status === 501 || error.message.trim() === 'Not Found')) {
+  // Two different 404s, and telling a reader the wrong one costs them the whole debugging
+  // session. `isRouteMissing` is the narrow one the fetch layer already uses: FastAPI's own
+  // `{"detail": "Not Found"}` for a path nothing routes, which really does mean the process
+  // predates this build. An endpoint that ran and found nothing answers with its own
+  // sentence ("no structure gene 'BUB1B'"), and telling that reader to restart the API sends
+  // them to fix a server that is working. Seen for real: an API started from `app/` resolved
+  // every repo-relative reference path to nothing, and the fold page blamed a stale process.
+  if (isRouteMissing(error)) {
     return {
       kind: 'route-missing',
       title: 'The running API does not have this endpoint',
@@ -47,6 +57,15 @@ export function classifyError(error: Error): Failure {
         'The API process is older than this app: this page asks for a route that was added after it started.',
       remedy: 'Restart the API so it picks up the new routes.',
       command: 'uv run mva-viz-api',
+    };
+  }
+  if (api?.status === 404) {
+    return {
+      kind: 'not-found',
+      title: 'The API has no data for this selection',
+      explain: `The endpoint answered, and nothing matched: ${api.message}`,
+      remedy:
+        'Pick another selection above. If this one should exist, the reference table behind it may not be built — the Status and Provenance pages say which files the API actually loaded.',
     };
   }
   // Before the generic 4xx: a 401 is not a bad parameter, and reading it as one sent the

@@ -65,6 +65,10 @@ const FAILURES: Array<{ kind: string; error: Error }> = [
     error: new ApiError('reads API did not respond', 503, '/api/reads/job'),
   },
   { kind: 'route-missing', error: new ApiError('Not Found', 404, '/api/health/dependencies') },
+  {
+    kind: 'not-found',
+    error: new ApiError("no structure gene 'BUB1B'", 404, '/api/panel/protein-structure'),
+  },
   { kind: 'bad-request', error: new ApiError('lane must be one of …', 422, '/api/callset/region') },
   {
     kind: 'server-fault',

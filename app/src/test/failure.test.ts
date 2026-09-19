@@ -41,10 +41,23 @@ describe('classifyError', () => {
     );
   });
 
-  it("reads FastAPI's bare 'Not Found' body as route-missing whatever status carried it", () => {
-    // The message test sits beside the status test, so an ApiError whose body is exactly
-    // the framework's default sentence classifies as route-missing even off 404/501.
-    expect(classifyError(new ApiError('Not Found', 400, '/api/x')).kind).toBe('route-missing');
+  it('reads a 404 carrying the endpoint\'s own sentence as "no data", not as a stale API', () => {
+    // The two 404s are different diagnoses. Only FastAPI's bare `{"detail": "Not Found"}`
+    // means "nothing routes this path". A handler that ran and found nothing says so in its
+    // own words, and telling that reader to restart a healthy API wastes the session.
+    const f = classifyError(
+      new ApiError("no structure gene 'BUB1B'", 404, '/api/panel/protein-structure'),
+    );
+    expect(f.kind).toBe('not-found');
+    expect(f.explain).toContain("no structure gene 'BUB1B'");
+    expect(f.command).toBeUndefined();
+  });
+
+  it('classifies by the one rule the fetch layer uses, so a 400 is never route-missing', () => {
+    // `classifyError` delegates to `api/client.ts`'s `isRouteMissing`: one definition, so
+    // what falls back to a fixture and what the reader is told can never disagree. A 400 is
+    // the API rejecting parameters whatever its body says.
+    expect(classifyError(new ApiError('Not Found', 400, '/api/x')).kind).toBe('bad-request');
   });
 
   it("does NOT read a plain Error('Not Found') as route-missing — only an ApiError can be one", () => {

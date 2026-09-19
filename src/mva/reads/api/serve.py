@@ -6,7 +6,9 @@ concurrency that matters — the queries themselves.
 """
 
 import argparse
+from pathlib import Path
 
+from ...paths import anchor_cwd
 from ...warehouse.settings import setting
 
 
@@ -28,6 +30,13 @@ def main(argv: list[str] | None = None) -> int:
         "keep this small (default: %(default)s)",
     )
     args = parser.parse_args(argv)
+
+    # Same reason as `mva-viz-api`: the job directory and every reference default are
+    # spelled relative to the repository root (`mva.paths`), so the process anchors itself
+    # before the first one is read.
+    moved_from = anchor_cwd()
+    if moved_from is not None:
+        print(f"cwd: {Path.cwd()} (moved from {moved_from} — relative paths are repo-rooted)")
 
     import uvicorn
 

@@ -74,6 +74,12 @@ graph TD
 
 - No module over 400 lines — split by concern instead of growing a file. See [`CLAUDE.md`](../../CLAUDE.md).
 - Python runs through `uv` only: `uv run <entry point>`. Never `pip`, never bare `python`.
+- A default path spelled relative (`ressources/reference/...`, `build/...`, `docs/...`) names a
+  position in **this repository**, not on one machine. `mva/paths.py` is what makes that true
+  from any working directory: `repo_root()`, `resolve()` for one path, and `anchor_cwd()`, which
+  the two server entry points call at startup. Without it a server started from a subdirectory
+  answers 200 with an empty list for every file-backed endpoint — see
+  [`docs/step-0/methodology/125`](../../docs/step-0/methodology/125-the-api-anchors-itself-to-the-repository-root.md).
 - Every measured dataset number is owned by [`ideation/data-findings.md`](../../ideation/data-findings.md). These READMEs link to it; they never restate a number.
 - No genomic position (a chromosome coordinate) in any exported file — `science` enforces this in code.
 - Docs index: [`docs/README.md`](../../docs/README.md). Platform build history: [`docs/step-0/`](../../docs/step-0).

@@ -162,7 +162,7 @@ function isUnreachable(err: unknown): boolean {
  * 404 from a real endpoint still reaches the user, which is what /api/search and
  * /api/callset/region rely on.
  */
-function isRouteMissing(err: unknown): boolean {
+export function isRouteMissing(err: unknown): boolean {
   if (!(err instanceof ApiError)) return false;
   if (err.status === 501) return true;
   return err.status === 404 && err.message.trim() === 'Not Found';

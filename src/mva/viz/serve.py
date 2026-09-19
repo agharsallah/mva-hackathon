@@ -13,7 +13,9 @@ deployment sets the token and puts a TLS reverse proxy in front — see
 """
 
 import argparse
+from pathlib import Path
 
+from ..paths import anchor_cwd
 from ..warehouse.settings import setting
 
 DEFAULT_PORT = 8900
@@ -35,6 +37,14 @@ def main(argv: list[str] | None = None) -> int:
         help="allow a non-loopback bind with no MVA_VIZ_TOKEN (publishes patient positions)",
     )
     args = parser.parse_args(argv)
+
+    # Every reference table, cache and docs path in this package is spelled relative to
+    # the repository root (see `mva.paths`). A server started from `app/` answers 200 with
+    # an empty list for each of them, which reads as a finding rather than as a
+    # misconfiguration, so the process moves itself before anything reads a default.
+    moved_from = anchor_cwd()
+    if moved_from is not None:
+        print(f"cwd:     {Path.cwd()} (moved from {moved_from} — relative paths are repo-rooted)")
 
     import uvicorn
 
