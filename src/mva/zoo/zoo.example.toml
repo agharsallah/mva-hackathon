@@ -16,8 +16,12 @@ models = ["alphamissense", "esm1b", "spliceai", "revel"]
 # Everything with a patient coordinate or a raw score stays under this directory.
 out_dir = "build/it4"
 
-# The warehouse schema the run writes its tables into.
+# The warehouse schema the run writes its *results* into.
 schema = "results"
+
+# Where the shared, append-only tables live: the score cache (`allele_scores`) and the
+# lineage edge list (`data_lineage`). A different schema from `schema` above.
+warehouse_schema = "warehouse"
 
 [merge]
 # `fusion` = the deterministic layer only, narrative written by hand (the MVP).

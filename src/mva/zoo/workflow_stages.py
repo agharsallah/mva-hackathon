@@ -70,7 +70,13 @@ def rank_per_model(config: Config, state: RunState, deps: Deps, connection: Any)
     if connection is not None and not _already_written(
         connection, config.schema, rank_module.MODEL_RANKS_TABLE, config.run_id
     ):
-        rows = rank_module.write_ranks(connection, config.schema, state.ranks, run_id=config.run_id)
+        rows = rank_module.write_ranks(
+            connection,
+            config.schema,
+            state.ranks,
+            run_id=config.run_id,
+            lineage_schema=config.warehouse_schema,
+        )
     return StageResult("rank_per_model", 0.0, rows, f"{len(state.pairs)} pairs, {rows} rows")
 
 
@@ -80,7 +86,9 @@ def report_per_model(config: Config, state: RunState, deps: Deps, connection: An
     for model in sorted(state.ranks):
         card = state.cards.get(model, {"key": model})
         gene = _confirmed_gene(state.pairs)
-        sentence = hpo_sentence(deps.hpo_row(config, gene), gene=gene, model=model)
+        sentence = hpo_sentence(
+            deps.hpo_row(config, gene), gene=gene, model=model, term_set=config.hpo_term_set
+        )
         state.reports.append(
             report_module.model_report_json(
                 card,
@@ -99,7 +107,13 @@ def report_per_model(config: Config, state: RunState, deps: Deps, connection: An
     if connection is not None and not _already_written(
         connection, config.schema, report_module.MODEL_REPORTS_TABLE, config.run_id
     ):
-        report_module.write_reports(connection, config.schema, state.reports, run_id=config.run_id)
+        report_module.write_reports(
+            connection,
+            config.schema,
+            state.reports,
+            run_id=config.run_id,
+            lineage_schema=config.warehouse_schema,
+        )
     return StageResult("report_per_model", 0.0, len(state.reports), f"{len(state.reports)} reports")
 
 

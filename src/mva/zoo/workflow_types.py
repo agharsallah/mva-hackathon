@@ -43,6 +43,16 @@ class Config:
     models: tuple[str, ...] = ()
     out_dir: Path = Path("build/it4")
     schema: str = "results"
+    #: Where the shared, append-only tables live — ``allele_scores`` and ``data_lineage``.
+    #: A different schema from :attr:`schema`, which holds this run's *results*. They were
+    #: one field until the first real run read an empty score cache out of ``results`` and
+    #: ranked nothing at all without erroring (entry 128).
+    warehouse_schema: str = "warehouse"
+    #: Which phenotype ranking section 5 of every report quotes. ``with-parental`` is the
+    #: child's eight HPO terms plus what the parents' testing contributed; ``proband-only``
+    #: is the child's alone. Naming it here keeps the clinical half of the evidence a
+    #: configuration choice rather than a constant buried in a report renderer.
+    hpo_term_set: str = "with-parental"
     method: str = "fusion"
     rrf_k: int = 60
     llm_mode: str = "none"
@@ -68,6 +78,8 @@ class Config:
             "models": tuple(run_block.get("models", ())),
             "out_dir": Path(run_block.get("out_dir", "build/it4")),
             "schema": run_block.get("schema", "results"),
+            "warehouse_schema": run_block.get("warehouse_schema", "warehouse"),
+            "hpo_term_set": run_block.get("hpo_term_set", "with-parental"),
             "method": merge_block.get("method", "fusion"),
             "rrf_k": int(merge_block.get("rrf_k", 60)),
             "llm_mode": llm_block.get("mode", "none"),
@@ -182,7 +194,7 @@ class Deps:
             return list(
                 record_module.build_records(
                     connection,
-                    record_module.Schemas(warehouse="warehouse", results=config.schema),
+                    record_module.Schemas(warehouse=config.warehouse_schema, results=config.schema),
                     mask_catalogue=config.mode == "catalogue-free",
                 )
             )
@@ -195,7 +207,7 @@ class Deps:
         def score(config: Config, model: str, _records: Sequence[Any]) -> dict[str, float]:
             from . import cache as cache_module
 
-            rows = cache_module.read(connection, config.schema, model=model)
+            rows = cache_module.read(connection, config.warehouse_schema, model=model)
             return {row.allele_id: row.score for row in rows if row.score is not None}
 
         def pairs(config: Config, _records: Sequence[Any]) -> list[rank_module.Pair]:
@@ -211,7 +223,37 @@ class Deps:
                 [dict(zip(columns, row, strict=True)) for row in rows]
             ).pairs
 
-        return cls(load_records=records, load_registry=registry, score=score, load_pairs=pairs)
+        def hpo(config: Config, gene: str) -> Mapping[str, Any] | None:
+            """The gene's row in the phenotype-only ranking, or ``None`` if it has none.
+
+            This is the *clinical* half of the evidence (the repository's standing
+            two-sources rule): the eight HPO terms rank every gene without seeing the DNA,
+            and section 5 of every model report quotes that rank whether or not the model
+            can see a phenotype. Unwired until the first real run, which printed "produced
+            no `BUB1B` row" for a gene the table ranks #14 (entry 128).
+            """
+            from ..warehouse.postgres import ALIAS, safe_identifier
+
+            if not gene:
+                return None
+            safe = safe_identifier(config.warehouse_schema)
+            found = connection.execute(
+                f"SELECT gene_symbol, rank, score, genes_considered FROM "
+                f"{ALIAS}.{safe}.hpo_gene_scores WHERE gene_symbol = ? AND term_set = ?",
+                [gene, config.hpo_term_set],
+            ).fetchone()
+            if not found:
+                return None
+            names = ("gene_symbol", "rank", "score", "genes_considered")
+            return dict(zip(names, found, strict=True))
+
+        return cls(
+            load_records=records,
+            load_registry=registry,
+            score=score,
+            load_pairs=pairs,
+            hpo_row=hpo,
+        )
 
     @classmethod
     def fixtures(cls, root: str | Path = "fixtures/it4") -> Deps:

@@ -259,3 +259,20 @@ def test_the_fixture_deps_read_the_committed_fixtures(paths):
     merged = json.loads((paths["out_dir"] / "merged.json").read_text(encoding="utf-8"))
     assert len(merged["lanes"]) == 4
     assert merged["agreement"]["models"] == ["alphamissense", "esm1b", "revel", "spliceai"]
+
+
+def test_the_report_quotes_the_phenotype_ranking_when_the_warehouse_has_one(tmp_path):
+    """Section 5 is the clinical half of the evidence and must not silently read empty.
+
+    The first real run printed "produced no `BUB1B` row" for a gene the phenotype table
+    ranks #14 of 5,267, because `Deps.warehouse` never supplied an `hpo_row` reader at all
+    (entry 128). This pins the sentence against a stand-in row.
+    """
+    from mva.zoo.report_stats import hpo_sentence
+
+    row = {"gene_symbol": "GENEA", "rank": 14, "score": 0.3609, "genes_considered": 5267}
+    sentence = hpo_sentence(row, gene="GENEA", model="fake", term_set="with-parental")
+    assert "#14 of 5267" in sentence
+    assert "0.3609" in sentence
+    assert "never sees the phenotype" in sentence
+    assert "produced no" not in hpo_sentence(row, gene="GENEA", model="fake")
