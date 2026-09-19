@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-19T09:03:50+00:00",
+  "generated_at": "2026-09-19T10:45:20+00:00",
   "steps": [
     {
       "slug": "step-0",
@@ -2010,11 +2010,39 @@
       "refuted_by": "A chromosome where the two intervals do not overlap -- the step then names which instrument is wrong and why, rather than averaging them.",
       "gene": "",
       "path": "mosaic",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.85,
+      "suggested_confidence": 0.9569,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 141,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "k-mer dosage over 32 flowcell shards puts no autosome beyond its composition-corrected null after multiple testing: the largest residual is chr21 at 2.33 sigma, Bonferroni p 0.43 across 22 autosomes, and it falls to 1.60 sigma when 10 percent is trimmed from each tail.",
+          "source_ref": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md",
+          "lineage_ref": "results.it2_dosage_composition"
+        },
+        {
+          "id": 142,
+          "direction": "supports",
+          "strength": 0.75,
+          "kind": "measurement",
+          "claim": "The dosage route recovers one copy of X at 0.4873 and one copy of Y at 0.5083 against an expected 0.5, on the two chromosomes where the allele-balance route has no heterozygous sites to read, so the two instruments are complementary rather than redundant.",
+          "source_ref": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md",
+          "lineage_ref": "results.it2_chrom_dosage"
+        },
+        {
+          "id": 143,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "chr21 mean depth at called sites is 61.68x against a 42.42x baseline but its median is 45 against 43 and its 99th percentile 247 against 66 to 69 on clean autosomes, so the depth excess is a tail of mismapping pileups among the acrocentric chromosomes and not copy number.",
+          "source_ref": "docs/iteration2/step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md",
+          "lineage_ref": "results.it2_mosaic_depth"
+        }
+      ]
     },
     {
       "id": "H055",
@@ -2273,6 +2301,20 @@
           "lineage_ref": ""
         }
       ]
+    },
+    {
+      "id": "H062",
+      "step": "step-3",
+      "statement": "P4-4a: a cold MVP run \u2014 four lanes over the ~39,300 allele records \u2014 completes in at most one hour of laptop wall-clock at zero dollars.",
+      "prediction": "Scoring all four enabled lanes from an empty cache takes <= 3,600 s of wall-clock on this laptop, spends nothing, and every lane writes exactly one warehouse.data_lineage edge named it4-score:<model>.",
+      "refuted_by": "The cold four-lane pass takes more than 4 hours \u2014 then the join is profiled and the fix recorded.",
+      "gene": "",
+      "path": "",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
     }
   ]
 }
