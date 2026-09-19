@@ -1,6 +1,6 @@
 {
-  "_standing": "The Track 1 -> Track 2 hand-off. Written 2026-09-06 from the research record (H003-H009, methodology 070-074) and public literature; revised to version 3 on 2026-09-18 and to version 4 on 2026-09-19 (step 8, methodology 115-118) from the oracle reply (083) and iteration 2's steps 2-6 (methodology 088, 092, 096, 097, 099, 101, 106, 109). Coordinate-free by rule: it names the gene, the protein and the variant classes, never a position. Revised, never edited: bump `version` and append to `history`.",
-  "version": 4,
+  "_standing": "The Track 1 -> Track 2 hand-off. Written 2026-09-06 from the research record (H003-H009, methodology 070-074) and public literature; revised to version 3 on 2026-09-18, to version 4 on 2026-09-19 (step 8, methodology 115-118) from the oracle reply (083) and iteration 2's steps 2-6 (methodology 088, 092, 096, 097, 099, 101, 106, 109), and to version 5 on 2026-09-20 from step 8's second instrument (methodology 121 and 123, H054 supported). Coordinate-free by rule: it names the gene, the protein and the variant classes, never a position. Revised, never edited: bump `version` and append to `history`.",
+  "version": 5,
   "case": {
     "proband_id": "PROBAND01",
     "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)",
@@ -202,6 +202,11 @@
       "version": 4,
       "date": "2026-09-19",
       "change": "F8 measured by step 8: no autosome above its 2-3 % detection limit in the sequenced sample (methodology 115-118, H051-H053, H055-H057 supported; H054 open); D2's standing restated as literature-only. No rung, seed, direction or anti-direction changed (H061)"
+    },
+    {
+      "version": 5,
+      "date": "2026-09-20",
+      "change": "F8 gains step 8's second instrument: the k-mer dosage route (methodology 121, read back by 123; H054 supported 0.85), which shares nothing with allele balance past the raw reads. It supplies the positive control the allele route could not - one copy of X at 0.4873 and of Y at 0.5083 against 0.5 expected - puts no autosome beyond its composition-corrected null, and sets an honest floor of 1.6 % of cells. No rung, seed, direction or anti-direction changed (H065)"
     }
   ],
   "measured_facts": [
@@ -264,10 +269,10 @@
     {
       "id": "F8",
       "fact": "aneuploidy burden in the sequenced sample",
-      "value": "MEASURED (iteration 2, step 8): no autosome carries a mosaic whole-chromosome or whole-arm aneuploidy above its own detection limit - 2 % of cells on chr1-6 and 3 % on chr7-22 at 80 % power (fold-over B-allele deviation, over-dispersion 0.0162 measured, 127,913 heterozygous-call rows); X and Y cannot be read by allele balance in a male and the dosage route (H054) has not run; sub-arm events were never testable. The statistic iteration 1 used (037) had no power at any fraction tested",
-      "source": "docs/iteration2/step-8/methodology/116 (H051, H052, H053)",
+      "value": "MEASURED (iteration 2, step 8) by two instruments that share nothing past the raw reads. Allele balance: no autosome carries a mosaic whole-chromosome or whole-arm aneuploidy above its own detection limit - 2 % of cells on chr1-6 and 3 % on chr7-22 at 80 % power (fold-over B-allele deviation, over-dispersion 0.0162 measured, 127,913 heterozygous-call rows); X and Y cannot be read by allele balance in a male. k-mer dosage (H054 supported, 0.85): reference-unique 31-mers counted over 32 of the 272 flowcell shards - a thinning that is unbiased for a ratio, because shards are flowcell partitions and no chromosome is over-represented in one - recovers one copy of X at 0.4873 and one of Y at 0.5083 against 0.5 expected, the positive control the allele-balance route could not supply, and puts no autosome beyond its composition-corrected null (chromosome-GC regressor, Pearson 0.904, explains 81.7 % of the between-chromosome spread; residual spread 0.802 %; largest chr21 at 2.33 sigma, Bonferroni p 0.43, and its apparent signal dissolved under tail trimming, a probe half-split and a depth check that read the excess as mismapping pileups). Honest floor: 1.6 % of cells, twice the residual spread. The absolute k-mer-mass denominator, which assumes nothing about chromosomes, is reported beside the autosomal median and agrees with it on all 24 contigs to 0.017 % (123). Sub-arm events were never testable by either route, and copy-neutral loss of heterozygosity is invisible to the dosage route. The statistic iteration 1 used (037) had no power at any fraction tested",
+      "source": "docs/iteration2/step-8/methodology/116 (H051, H052, H053), 121 and 123 (H054)",
       "step": "iteration2/step-8",
-      "implication": "the sequenced sample shows no aneuploid population that a drug could be aimed at; the tissue is not named by the delivery and a karyotype's fraction is measured in cultured cells, so this is not a statement about the diagnosis. Direction D2 (aneuploidy-selective stress) therefore stays a tumour-context and chemoprevention angle argued from the literature; it cannot be argued from a measured burden in this child, and the report ranks it below D3 and D4 for that reason"
+      "implication": "the sequenced sample shows no aneuploid population that a drug could be aimed at - now on two independent instruments, with X and Y covered by the second and a positive control behind it; the tissue is not named by the delivery and a karyotype's fraction is measured in cultured cells, so this is not a statement about the diagnosis. Direction D2 (aneuploidy-selective stress) therefore stays a tumour-context and chemoprevention angle argued from the literature; it cannot be argued from a measured burden in this child, and the report ranks it below D3 and D4 for that reason. The limits are stated, not closed: sub-arm events are untestable by either route, the sequenced tissue is unnamed, and copy-neutral loss of heterozygosity would move no sequence for the dosage route to see"
     },
     {
       "id": "F9",
