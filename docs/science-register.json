@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-20T10:19:29",
+  "generated_at": "2026-09-20T10:50:56",
   "steps": [
     {
       "slug": "step-0",
@@ -2489,7 +2489,7 @@
       "path": "track2-transfer",
       "status": "refuted",
       "confidence": 0.1,
-      "suggested_confidence": 0.9781,
+      "suggested_confidence": 0.9983,
       "revisions": 2,
       "evidence": [
         {
@@ -2545,6 +2545,33 @@
           "claim": "the A2 flag is a regex over each drug's action_type and interaction_or_moa text, so it needs the ChEMBL mechanism strings that pathway expansion brings in; Reactome matched no checkpoint/kinetochore/mitotic pathway for TRIP13, leaving pathways.tsv header-only and all 1329 candidate rows at target_role seed with only 261 carrying any MOA text, while the real case has 2276 pathway rows and 11 of its 13 A2 drugs on direction pathway",
           "source_ref": "ressources/track2/transfer/TRIP13/pathways.tsv; ressources/track2/transfer/TRIP13/drug_candidates.tsv; src/mva/drugs/ladder.py::_flags",
           "lineage_ref": ""
+        },
+        {
+          "id": 168,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "the TRIP13 transfer shortlist holds 53 rows and every one is on the tumour-context direction D4; no D1, D2 or D3 row reaches it",
+          "source_ref": "ressources/track2/transfer/TRIP13/shortlist.tsv",
+          "lineage_ref": ""
+        },
+        {
+          "id": 169,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "only the context direction D4 reaches rung 2 or higher in the TRIP13 transfer ladder (55 D4 rows at rung 5); all 30 D1, 82 D2 and 39 D3 rows stay at rung 1, so no tumour-context trial leaked onto a mechanism direction",
+          "source_ref": "ressources/track2/transfer/TRIP13/evidence_ladder.tsv",
+          "lineage_ref": ""
+        },
+        {
+          "id": 171,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "annotation",
+          "claim": "Bookkeeping, not an observation: rows 168 and 169 duplicate rows 164 and 165 verbatim - a re-run after the venv lock deadlocked the first evidence-add batch wrote them twice. The weighing block below therefore double-counts two supporting rows; the committed verdict (refuted, 0.10) was set by hand against the conjunction and is unaffected. The register is append-only, so the duplicates stay and this row names them.",
+          "source_ref": "docs/iteration2/step-7/methodology/138-a-second-case-through-the-same-pipeline.md",
+          "lineage_ref": ""
         }
       ]
     },
@@ -2558,7 +2585,7 @@
       "path": "iteration4/step-4 resume",
       "status": "supported",
       "confidence": 0.9,
-      "suggested_confidence": 0.9526,
+      "suggested_confidence": 0.982,
       "revisions": 2,
       "evidence": [
         {
@@ -2577,6 +2604,15 @@
           "kind": "measurement",
           "claim": "Real data: two consecutive mva-zoo run calls on the same config; the eight stages took 541.21 s then 0.73 s (741x), seven of eight restored. registry_check re-ran because a parallel session had added a roster fragment, but its content was unchanged so nothing downstream re-ran - content-addressed, not name-addressed.",
           "source_ref": "docs/iteration4/step-4/methodology/135-a-resume-that-is-tested-by-killing-the-run.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 170,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Third real-data run, this time through --from render: seven stages restored in 0.69 s, only the named stage re-ran, and the re-render reproduced the two-version merged report byte for byte (git diff empty).",
+          "source_ref": "docs/iteration4/step-4/methodology/139-the-render-stage-keeps-every-narrative-and-the-manifest-says-which.md",
           "lineage_ref": ""
         }
       ]
