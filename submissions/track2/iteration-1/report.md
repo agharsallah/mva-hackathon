@@ -3,8 +3,12 @@
 **Standing:** draft, written 2026-09-18 from executed runs (iteration 2, step 7 — methodology
 entries [110](../../../docs/iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md)–[113](../../../docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md)).
 Every number is read from a table with a provenance manifest, every claim was registered before
-its test, and every cited paper was resolved against PubMed the same day. **Not uploaded.**
-Track 2 accepts one submission; this folder will be re-read and re-rendered before it goes.
+its test, and every cited paper was resolved against PubMed the same day. **Superseded by
+[`../iteration-2/`](../iteration-2/report.md) and never uploaded** — kept for provenance, with
+its facts frozen at mechanism card **version 3** (the aneuploidy burden, fact F8, is *unmeasured*
+here). Restructured on 2026-09-20 to the same four-criteria shape as iteration 2, **with every
+fact unchanged at card v3**: sections were added and renumbered, nothing was remeasured and no
+later result was imported.
 
 Written for the panel, in plain words. Each technical term appears once with its meaning in
 brackets; the full dictionary is served at `/learn` on the dashboard.
@@ -14,7 +18,25 @@ brackets; the full dictionary is served at `/learn` on the dashboard.
 
 ---
 
-## 1. The answer in one page
+## 1. How this report answers the panel's four criteria
+
+> **Rubric:** all four — this section is the map, and the last column names each criterion's
+> weakest point before a judge has to go looking for it.
+
+| criterion | weight | where in this report | the evidence, in one line | the weakest point we know |
+|---|---|---|---|---|
+| **Scientific Rigor** | 35 % | §2, §4, §5, §6, §10, §12 | the mechanism is read off a genotype the challenge's answer key confirmed, with nine facts measured onto the card; every approved drug sits on a five-rung ladder written before the search; six claims were registered with their refutation conditions before any drug-level query | **no approved drug has a molecule-level result on BubR1 itself.** The deepest mechanism lead (D3) is one mouse paper, and the two approved molecules inherit it as a *proxy* |
+| **Potential Impact** | 25 % | §7, and the do-not table in §6.3 | a do-not table naming 13 spindle poisons — two of them this child's standard chemotherapy — that work by relying on the very checkpoint that is broken; the D1 result and that caution follow from the checkpoint, so they are arguments about the disease, not only about this gene | the child's **aneuploid fraction is unmeasured in this draft**, so direction D2 is argued from published aneuploid-cell biology and not from him; and nothing here is evidence that a medicine works |
+| **Innovation** | 25 % | §8, §5.3 | one structured mechanism card drives every query; the same pipeline is re-run on a decoy gene as a negative control and the overlap is measured against a threshold fixed in advance; automated and person-read evidence are printed side by side; the do-not table is a first-class output | these are **process** innovations, not new biology: no new model, no new algorithm, and knowledge-graph repurposing rankers already exist (§8) |
+| **Scalability** | 15 % | §9, §11 | one card in, five commands out, every table carrying its own provenance manifest; the whole run is two laptop runs of about ten minutes against public APIs, seconds when cached, no cloud | the curated rungs are the human bottleneck — 13 abstracts read by one person on one day — and the transfer run onto a genuinely different case **post-dates this draft** and belongs to iteration 2 (§9) |
+
+---
+
+## 2. The answer in one page
+
+> **Rubric:** Scientific Rigor — the whole claim on one page: the mechanism read off a
+> confirmed genotype, the four directions with the highest rung each reached, and what is
+> not known. Every later section exists to support or qualify something stated here.
 
 **The child.** A boy with mosaic variegated aneuploidy (MVA: in some of his cells, a chromosome
 is missing or duplicated, and different cells are wrong in different ways), short stature,
@@ -59,7 +81,10 @@ page helps — rung 3 is one mouse paper.
 
 ---
 
-## 2. Where this comes from — two datasets, one line of evidence
+## 3. Where this comes from — two datasets, one line of evidence
+
+> **Rubric:** Scientific Rigor — shows that both delivered datasets (the DNA and the
+> clinical terms) enter the argument, and where each stage's output can be checked.
 
 ```mermaid
 flowchart LR
@@ -91,9 +116,12 @@ direction and the paediatric questions. Where a result uses only one, the table 
 
 ---
 
-## 3. The mechanism (methods form Q14: loss- versus gain-of-function, pathway, consequence)
+## 4. The mechanism (methods form Q14: loss- versus gain-of-function, pathway, consequence)
 
-### 3.1 Loss of function, of a specific shape
+> **Rubric:** Scientific Rigor — this is the methods form's Q14, the variant-mechanism
+> characterisation. Every drug argument below is only as sound as this section.
+
+### 4.1 Loss of function, of a specific shape
 
 | copy | what changed | what it does to the protein | evidence |
 |---|---|---|---|
@@ -113,7 +141,7 @@ the allele labels alone:
 
 (Complete list F1–F9, with the entry each comes from: mechanism card v3, and step 7's README.)
 
-### 3.2 The pathway: the spindle assembly checkpoint
+### 4.2 The pathway: the spindle assembly checkpoint
 
 BubR1 is a core part of the **spindle assembly checkpoint** (SAC — the wait-until-attached
 brake) and of the complex that switches off the machinery that pulls chromosomes apart. Less
@@ -123,7 +151,7 @@ Published MVA patient cells show strongly reduced BubR1 and a weakened checkpoin
 with cancer predisposition (Hanks 2004, PMID 15475955). Complete loss is lethal before birth
 in mouse and human — which is why "switch BubR1 off" is never a therapeutic direction here.
 
-### 3.3 Downstream consequences, and where a drug could stand
+### 4.3 Downstream consequences, and where a drug could stand
 
 ```mermaid
 flowchart LR
@@ -148,9 +176,13 @@ flowchart LR
 
 ---
 
-## 4. How the candidates were found and graded
+## 5. How the candidates were found and graded
 
-### 4.1 The search: one card, seven public sources, no hand-typed query
+> **Rubric:** Scientific Rigor, and the negative control that §8 claims as the new part —
+> how a candidate got in, how it was graded, and what the pipeline returns for a gene that
+> should return nothing.
+
+### 5.1 The search: one card, seven public sources, no hand-typed query
 
 The mechanism card (a structured file naming the gene, the two allele classes, the pathway,
 the disease, the tumour and four *directions* with seed genes) drives every query. The Reactome
@@ -160,7 +192,21 @@ confirms a current US label; ClinicalTrials.gov and PubMed answer the trial and 
 questions. Every table carries a manifest with the retrieval time and a digest of every reply,
 and the same command re-runs it for any other case by swapping the card.
 
-### 4.2 The ladder: written before the search
+One of those per-drug queries is worth showing, because it is the one a reader is most likely to
+mistake for evidence:
+
+![PubMed record counts per shortlisted drug, with the mechanism and with the tumour context](../../../figures/track2/mechanism-literature.png)
+
+> **Legend** — one row per shortlisted drug, the eleven argued drugs first, then the fifty
+> already in rhabdomyosarcoma trials. The axis is PubMed record counts on a **log scale**, so
+> equal bar lengths mean equal *ratios*, not equal counts. **Blue** = records matching the drug
+> *and* this mechanism (the gene, the protein, the pathway or the disease); **purple** = records
+> matching the drug *and* the tumour context. A missing bar is a count of zero, not missing data.
+> These counts are **descriptive and never move a rung**: the longest bars belong to the
+> most-written-about drugs (bortezomib, dexamethasone, methotrexate), which is a fact about the
+> literature, not about the strength of the argument for them here.
+
+### 5.2 The ladder: written before the search
 
 Every approved drug, on every direction it touches, is placed on **the highest rung it passes**:
 
@@ -178,7 +224,7 @@ come from a paper a person read, and the row carries the PubMed id. **Inherited 
 marked:** when the paper tested a same-axis compound and not the approved drug (the screen used
 AICAR; the approved drug is metformin), the row says `proxy` and names what was tested.
 
-### 4.3 A control the search had to pass: the same child, a different gene
+### 5.3 A control the search had to pass: the same child, a different gene
 
 Track 1 tested every ranker against decoy genes; Track 2 does the same. The mechanism card was
 copied with the child's clinical side kept and the gene swapped — once for **NTRK3**, drawn by a
@@ -203,7 +249,10 @@ run repeated before any verdict — the change is recorded with before/after cou
 
 ---
 
-## 5. The candidates
+## 6. The candidates
+
+> **Rubric:** Scientific Rigor — whether each proposed drug is actually supported by the
+> mechanism, drug by drug, rung by rung, with the inherited evidence marked as inherited.
 
 ![Every drug at rung 2 or higher, on every direction it touches](../../../figures/track2/evidence-ladder.png)
 
@@ -212,7 +261,7 @@ run repeated before any verdict — the change is recorded with before/after cou
 > tumour — not a finding of this work); **red** set aside (a spindle poison or the standard
 > chemotherapy); `*` inherited (proxy) evidence. Drugs with a curated result are listed first.
 
-### 5.1 The eleven drugs with a cited mechanism result
+### 6.1 The eleven drugs with a cited mechanism result
 
 | # | drug (approved for) | direction | rung | the cited result | inherited? | given to children? |
 |---|---|---|---|---|---|---|
@@ -240,7 +289,7 @@ paediatric trial behind it and a molecule-level cell result. The only molecule-l
 > **yellow** rungs 2–3, **grey** rung 1 (named, never submitted). Most of the 62 at rung 5 are
 > there by the automated test alone: approved, trialled in rhabdomyosarcoma, used in children.
 
-### 5.2 Fifty drugs already being tried in rhabdomyosarcoma — listed, not claimed
+### 6.2 Fifty drugs already being tried in rhabdomyosarcoma — listed, not claimed
 
 Fifty more approved drugs reach rung 5 automatically: they have a registered rhabdomyosarcoma
 trial and a paediatric pointer (dexamethasone, azacitidine, methotrexate, bevacizumab, the
@@ -249,7 +298,7 @@ verdict *context trial only – not a mechanism finding*, because the decoy cont
 same list comes out for a gene that has nothing to do with the checkpoint. They are the tumour's
 trial landscape, and a reader deserves to see them; they are not this work's finding.
 
-### 5.3 The do-not table
+### 6.3 The do-not table
 
 | verdict | drugs | why |
 |---|---|---|
@@ -257,7 +306,7 @@ trial landscape, and a reader deserves to see them; they are not this work's fin
 | **do not** — further checkpoint weakening (0 approved) | Mps1/TTK and Aurora inhibitors | aneuploid cancer cells are selectively killed by weakening the checkpoint further (Cohen-Sharir 2021, PMID 33505028) — the same logic makes a child whose checkpoint is constitutionally weak the worst possible candidate. None is approved; every one in the candidate table is phase 3 or earlier |
 | **standard of care** (10) | vincristine, dactinomycin, cyclophosphamide, ifosfamide, doxorubicin, etoposide, irinotecan, temozolomide, carboplatin, cisplatin, topotecan | already the treatment for the tumour; giving them is not a repurposing. Named so a reader sees they were considered, not missed |
 
-### 5.4 Has each candidate been given to children?
+### 6.4 Has each candidate been given to children?
 
 ![Paediatric pointers per shortlisted drug](../../../figures/track2/pediatric-evidence.png)
 
@@ -269,7 +318,141 @@ trial landscape, and a reader deserves to see them; they are not this work's fin
 
 ---
 
-## 6. What this report cannot tell you
+## 7. What this could change — for this child, for others with MVA, for diagnosis
+
+> **Rubric:** Potential Impact — what independent validation of this work would be worth, said
+> separately for the child in front of us, for the disease, and for recognising the condition.
+
+### 7.1 For this child: one question a treating team can act on, and one experiment that was not run
+
+The do-not table (§6.3) is not a list; it is a question with a name on it. Thirteen approved
+drugs are **spindle poisons** (they work by jamming the machine that pulls chromosomes apart, and
+then relying on the checkpoint to hold the cell until the damage is noticed). This child's
+checkpoint is the broken part. Two of the thirteen — **vincristine** and **vinorelbine** — are
+standard rhabdomyosarcoma chemotherapy, so the question is not hypothetical for him.
+
+| the question a treating team could put | what this report supplies | what it does **not** supply |
+|---|---|---|
+| does a constitutionally weakened checkpoint change how this child's cells respond to vincristine or vinorelbine? | the mechanism (§4), the two published results the caution rests on (Suijkerbuijk 2010, PMID 20516114; Sinha 2019, PMID 30601084), and the full list of thirteen (§6.3) | any measurement in this child's cells, any dose implication, and any reason to withhold standard care. **This report flags the question; it does not answer it.** |
+| is there an approved drug that reinforces the checkpoint instead? | the answer is **no** — direction D1 returned none, and every checkpoint drug on the market or in trials *weakens* it (§2, §6.3) | a reason to stop looking: the finding is about today's approved pharmacopoeia, not about what is achievable |
+
+**The one experiment that would move the deepest lead.** D3 (raise the amount of working BubR1)
+is the only direction that touches the broken protein itself, and it sits at rung 3 on a single
+mouse study in which the NAD⁺ precursor **NMN** — not an approved drug — raised BubR1; niacin and
+nicotinamide, which *are* approved, inherit that result as a `proxy` (North 2014, PMID 24825348).
+The experiment that would turn a proxy animal result into a molecule-level one: expose cells
+carrying a *null + weakened* `BUB1B` genotype to **nicotinamide or niacin themselves**, and
+measure BubR1 protein level and checkpoint strength against an untreated control. **This is a
+proposal. It was not run, and nothing in this report is evidence of what it would show.**
+
+### 7.2 For others living with MVA: two results that belong to the mechanism, not to this gene
+
+MVA is not a one-gene disease, and its other known causes sit in the same chromosome-segregation
+machinery: `BUB1B` is the core of the checkpoint itself, `TRIP13` resets the MAD2 switch so the
+checkpoint signal can be rebuilt, and `CEP57` is part of the centrosome that builds the spindle
+the checkpoint watches. Whichever gene is broken, the cell ends up with **a leaky brake**.
+
+Two of this report's results are therefore arguments about a weakened checkpoint rather than
+about this child's particular gene:
+
+1. **No approved drug reinforces the checkpoint** (direction D1, §2). Every marketed or trialled
+   checkpoint drug is built to *weaken* it, because weakening it is what kills cancer cells. A
+   child whose checkpoint is constitutionally weak is on the wrong side of that entire
+   development programme — and that is true for any MVA genotype, not only this one.
+2. **The spindle-poison caution** (§6.3). It rests on the checkpoint being leaky, which is the
+   shared endpoint of every MVA gene above.
+
+Said plainly: this is reasoning *from* the mechanism, not a measurement across genes. The claim
+that the same pipeline reproduces both results on a different MVA gene is registered as **H066**,
+and its test **post-dates this draft** — see §9 and
+[`../iteration-2/report.md`](../iteration-2/report.md).
+
+### 7.3 For diagnosis: a pipeline and its stated limits, not a measurement
+
+Be precise about what *this draft* contributes to recognising the condition. It contributes the
+**pipeline and the limits it prints**, not a number:
+
+| contribution | what it is | what it is not |
+|---|---|---|
+| the mechanism card as a hand-off format | a structured record — gene, allele *classes* (never positions), pathway, tumour context, the measured facts and the unmeasured ones — that a downstream tool consumes without a person retyping the case | a diagnostic test |
+| an explicit *unmeasured* row | this draft's card (version 3) records the aneuploid fraction as **unmeasured**, and says why: the karyotype statistic run in iteration 1 has no power for mosaic gains (§4.1) | a measurement. A pipeline that prints "I cannot see this" helps diagnosis only by stopping a reader trusting a number nobody took |
+| the burden itself | **not in this draft.** The powered analysis was run afterwards and iteration 2 reports fact F8 as measured — [`../iteration-2/report.md`](../iteration-2/report.md) | anything this report should be cited for |
+
+---
+
+## 8. What is new here, against standard practice
+
+> **Rubric:** Innovation — what this pipeline does that a repurposing write-up does not usually
+> do, and, just as importantly, what it does not claim.
+
+**The prior art, named accurately.** Computational drug repurposing has mature tooling, much of
+it graph-based: **PrimeKG** (a biomedical knowledge graph, PMID 36732524) and **TxGNN** (a graph
+neural network scoring drugs against a disease, PMID 39322717) both take a **disease node** as
+input and return a ranked drug list. That is a
+different question from the one asked here, which starts from **one child's two alleles and the
+mechanism they imply**. The repo's own notes on both tools live in `docs/iteration4/cards/` and
+**post-date this draft**; they are named here as prior art, not as a result of this work.
+
+| what a repurposing report usually does | what this one does |
+|---|---|
+| a person hand-types the target and the literature queries, and the reader never sees which queries were tried | **one structured mechanism card** — gene, allele classes, pathway, tumour context, four directions with seed genes — drives every query; swap the card, get another case (§5.1, §11) |
+| returns a ranked list, with the ranking function's weights implicit | a **five-rung evidence ladder written down before the search**, with the automated test and the person-read test **printed side by side** on every row, and inherited class-level evidence flagged `proxy` (§5.2) |
+| no negative control: the pipeline is never run on an input that should return nothing | the **same pipeline re-run on a decoy gene** — the child's clinical side kept, the gene swapped, twice — with the overlap measured against a threshold fixed in advance, and the one direction that failed it argued differently as a result (§5.3). *To our knowledge* this is the part most repurposing work has no equivalent for |
+| candidates only | a **do-not table as a first-class output**: 13 spindle poisons, the checkpoint inhibitors, and the standard of care, named so a reader can see they were considered rather than missed (§6.3) |
+| confidence asserted after the fact, in prose | an **append-only claim register**: each claim carries its prediction *and* its refutation condition, filed before the test, and a correction stays visible instead of being edited away (§12) |
+
+What is **not** claimed: no new model, no new algorithm, no new biology. The novelty is in the
+process — pre-registration, a negative control, and never silently merging machine-found with
+person-read evidence. "To our knowledge" is doing real work in the table above: no systematic
+survey of repurposing methods was run, so read it as *we are not aware of a comparable decoy
+control*, never as *none exists*.
+
+---
+
+## 9. Could this run for the next child?
+
+> **Rubric:** Scalability — what it takes to point this pipeline at another person, another gene
+> or another disease, and what breaks first when you do.
+
+**Case-agnostic by construction.** The pipeline has one input — the mechanism card — and five
+commands (§11). Nothing about this child is compiled into a module: the gene, the allele classes,
+the pathway, the disease, the tumour context and the four directions are all fields on the card,
+and every table written out carries a provenance manifest naming its queries and its retrieval
+time. The decoy runs in §5.3 are the demonstration: the same code, one field changed, no edit.
+
+**The cost shape, measured on this case.**
+
+| resource | this case |
+|---|---|
+| compute | a laptop. Two runs of about ten minutes each — the snapshot and the enrichment — most of it polite waiting between requests; **seconds when the replies are cached**. No cloud, no GPU, no cluster |
+| data | seven public APIs; no licence, no patient-scale file to move |
+| a person | the curated rungs: thirteen abstracts, read on one day |
+
+**What breaks at scale.** Three things, in the order they bite:
+
+1. **The politeness interval on public APIs.** The runtime is per-drug and dominated by waiting
+   between requests, not by computation. Ten minutes for one card is fine; a thousand cards is
+   not the same run repeated, it is a rate-limit and caching problem this pipeline does not solve.
+2. **The curated rungs are the human bottleneck.** Rungs 2 and 3 exist only because a person read
+   a paper — here, thirteen abstracts, one reader, one day (§10, item 5). The automated rungs
+   scale freely; the rungs that carry the actual mechanism argument do not.
+3. **One drug database was never queried.** DrugBank needs a licence for programmatic access, so
+   it is absent from every count in this report (§10, item 6). At scale that is a licensing
+   decision, not an engineering one.
+
+**A transfer onto a genuinely different case exists — and it is not this draft's.** The pipeline
+was run on a card for a different MVA gene, with its own disease identifiers, its own clinical
+terms, its own tumour context and no curated evidence. That run's tables are stamped 2026-09-19,
+**after this draft was written on 2026-09-18**; its claim is registered as H066 and its results
+belong to iteration 2: [`../iteration-2/report.md`](../iteration-2/report.md). **No number from
+that run appears in this report**, because this report is not written from it.
+
+---
+
+## 10. What this report cannot tell you
+
+> **Rubric:** Scientific Rigor — a report a panel can check is one that names its own
+> limits before the panel has to find them.
 
 1. **Whether any of these drugs helps this child.** Rung 3 is one mouse paper; rung 2 is a dish.
    The challenge's words hold: hypotheses for follow-up.
@@ -289,7 +472,10 @@ trial landscape, and a reader deserves to see them; they are not this work's fin
 
 ---
 
-## 7. Reproducibility
+## 11. Reproducibility
+
+> **Rubric:** Scalability and Scientific Rigor — the five commands that rebuild every
+> number in this report, and the cost of running them.
 
 Every step is one command, case-agnostic (swap the card, get another case), with a manifest:
 
@@ -307,7 +493,12 @@ the submission form; every table is under `ressources/track2/`, every entry unde
 `docs/iteration2/step-7/`. **No patient data appears anywhere in Track 2** — gene symbols, drug
 names, trial ids and PubMed ids only; the mechanism card names allele *classes*, never positions.
 
-## 8. Where every claim lives
+---
+
+## 12. Where every claim lives
+
+> **Rubric:** Scientific Rigor — each claim, its register id, its verdict and the entry
+> that tested it, so a reader can audit the reasoning rather than trust it.
 
 | claim | register id | verdict · confidence | entry |
 |---|---|---|---|

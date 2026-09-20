@@ -2,6 +2,10 @@
 
 **Standing:** draft, **superseded by [`../iteration-2/`](../iteration-2/README.md) on 2026-09-19**
 and never uploaded — kept for provenance (card v3, F8 unmeasured). Do not upload this folder.
+**Restructured on 2026-09-20** to the same four-criteria shape as iteration 2 — a criteria map,
+a `> **Rubric:**` line under every section, and new sections on impact, innovation and
+scalability — **with every fact unchanged at card v3**: nothing was remeasured, and no later
+result was imported into it.
 Original standing: the report, the methods-form answers, the pitch script and the evidence
 tables are written from iteration 2's step 7; **not uploaded**. Track 2 accepts **one**
 submission per team, due around 2026-10-20 (intel §5), so this folder is re-read, re-rendered
@@ -32,9 +36,22 @@ There is **no predictions CSV** and no decode table for Track 2 — the panel re
 
 ## How to read this folder
 
-- [`report.md`](report.md) — the submission, in plain words: the mechanism (methods form Q14),
-  the ladder, the eleven argued drugs, the fifty already-in-trials drugs, the do-not table, the
-  decoy control, the limitations, and where every claim lives.
+- [`report.md`](report.md) — the submission, in plain words, in twelve sections:
+
+  | § | section | what it carries |
+  |---|---|---|
+  | 1 | How this report answers the panel's four criteria | the criteria map, and each criterion's weakest point |
+  | 2 | The answer in one page | child, cause, mechanism, the four directions and their best rung |
+  | 3 | Where this comes from | the two datasets and the data flow |
+  | 4 | The mechanism | methods form Q14: loss of function, the pathway, the consequences |
+  | 5 | How the candidates were found and graded | the card-driven search, the ladder, the decoy control |
+  | 6 | The candidates | the eleven argued drugs, the fifty already-in-trials drugs, the do-not table, the paediatric pointers |
+  | 7 | What this could change | impact for the child, for others with MVA, for diagnosis |
+  | 8 | What is new here, against standard practice | the method, set against knowledge-graph repurposing rankers |
+  | 9 | Could this run for the next child? | the cost shape and what breaks at scale |
+  | 10 | What this report cannot tell you | the six limits |
+  | 11 | Reproducibility | the five commands |
+  | 12 | Where every claim lives | the register ids and their verdicts |
 - [`methods-form.json`](methods-form.json) — the ten answers, row-numbered as the organisers'
   template lays them out; the abstract is under 500 words.
 - [`pitch-script.md`](pitch-script.md) — the 3-minute video, shot by shot, with the figure each
@@ -42,6 +59,19 @@ There is **no predictions CSV** and no decode table for Track 2 — the panel re
 - The evidence itself is **not copied here**: the tables are `ressources/track2/*.tsv` (each
   with a `.provenance.json`), the figures `figures/track2/*.png`, the reasoning
   `docs/iteration2/step-7/methodology/110–113`.
+
+## How this folder answers the four judging criteria
+
+Track 2 is judged by a panel on four weighted criteria. Each row says where the answer sits in
+the report and what executed run stands behind it. The report's §1 carries the same map plus the
+weakest point we know for each criterion; this table adds the evidence path.
+
+| criterion | weight | report section | the evidence behind it |
+|---|---|---|---|
+| **Scientific Rigor** | 35 % | §2 the answer, §4 the mechanism, §5 the search and the ladder, §6 the candidates, §10 the limits, §12 the register | the confirmed genotype ([083](../../../docs/iteration1/step-6/methodology/083-oracle-reply-submission-1.md)); the nine card facts from iteration 2's steps 2–6; the ladder and the shortlist ([110](../../../docs/iteration2/step-7/methodology/110-the-card-revised-and-the-claims-filed-before-the-search.md), [113](../../../docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md)); `ressources/track2/*.tsv` with a `.provenance.json` each; H045–H050 registered before the search |
+| **Potential Impact** | 25 % | §7, and the do-not table in §6.3 | the do-not table and its cited basis ([113](../../../docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md)); the D1 result (no approved drug reinforces the checkpoint, H011/[078](../../../docs/iteration1/step-8/methodology/078-track2-data-layer.md)); the not-run experiment in §7.1 is a **proposal**, not a result |
+| **Innovation** | 25 % | §8, and the decoy control in §5.3 | the decoy cards and the measured overlap ([112](../../../docs/iteration2/step-7/methodology/112-two-decoy-cards-through-the-same-pipeline.md)); the ladder printing automated and person-read tests side by side ([111](../../../docs/iteration2/step-7/methodology/111-the-automated-stages-literature-trials-and-labels-per-drug.md)); the append-only register, including the verdict committed early and corrected in the open ([113](../../../docs/iteration2/step-7/methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md)) |
+| **Scalability** | 15 % | §9, §11 | the five commands in *Regenerate this folder* below, all card-driven; the cost shape (two laptop runs of ~10 minutes against public APIs, no cloud); the transfer onto a different case **post-dates this draft** and belongs to [`../iteration-2/`](../iteration-2/report.md) |
 
 ## Which steps contributed
 
