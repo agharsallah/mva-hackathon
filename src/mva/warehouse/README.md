@@ -84,6 +84,8 @@ flowchart TB
 | `lineage_naming.py` | Parse a delivered filename into structured facts | `Enriched`, `enrich()` |
 | `lineage_inventory.py` | Survey what the bucket currently holds, and the object inventory table | `OBJECTS_TABLE`, `survey()`, `replace_objects()` |
 | `lineage_edges.py` | The append-only "what produced what" edge list: write, read, repair, backfill | `LINEAGE_TABLE`, `record()`, `edges()`, `repoint()`, `derivation_edge()`, `backfill_derivations()` |
+| `track2_lineage.py` | The Track 2 drug tables (and a transfer case's) as `data_lineage` edges: card, API host, submission, table | `TRACK2_SCHEMA`, `planned_edges()`, `table_edges()`, `transfer_edges()`, `record_tables()` |
+| `track2_manifests.py` | One `*.provenance.json` read: the manifest, its API hosts, its roll-up digest and the version-or-window an API edge may claim | `Manifest`, `read_manifest()`, `card_version()`, `rollup_digest()`, `api_version()` |
 | `integrity.py` | Order-independent content fingerprints for ingest verification | `fingerprint()`, `compare()`, `retyped()`, `TableFingerprint` |
 | `reference.py` | Staging specs + lineage for the 3 committed public reference tables | `datasets()`, `LINEAGE`, `record_lineage()` |
 | `source.py` | Landing-zone ledger: hash, upload, verify, or stream from Hugging Face | `SourceFile`, `scan()`, `checksum()`, `upload()`, `stream_to_bucket()` |
