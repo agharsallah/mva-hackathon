@@ -110,6 +110,10 @@ function isKnownChromLength(n: number): boolean {
  *    panel BED, two methodology entries, the dictionary and the Python test suite; the app
  *    quotes it as the worked example of the region query grammar. Removing it would not
  *    protect the patient, it would only make the app's example stop matching the server's.
+ *    BRCA1's span (a different gene, not on this case's panel) is the literal worked example
+ *    from htslib's own `tabix` documentation, quoted verbatim in the dictionary's "Remote
+ *    range query" entry to show the command's syntax — chosen for being a gene everyone
+ *    recognises, which is also why it can never be mistaken for this proband's BUB1B call.
  * 2. FORMAT ILLUSTRATIONS. Deliberately toy values (five-digit positions, far below any
  *    panel gene) used in UI copy and payload docs to show the shape of a coordinate string.
  *    They are listed exactly, so a real position can never hide among them.
@@ -128,6 +132,7 @@ function isKnownChromLength(n: number): boolean {
 const PUBLIC_GENE_SPANS: ReadonlySet<number> = new Set([
   40140983,
   40241137, // BUB1B, GRCh38 — panel BED, docs/dictionary.md, tests/test_annotate_vep.py
+  43044295, // BRCA1, GRCh38 — htslib's own tabix usage example, docs/dictionary.md
 ]);
 
 const FORMAT_ILLUSTRATIONS: ReadonlySet<number> = new Set([
