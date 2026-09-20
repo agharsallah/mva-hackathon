@@ -388,10 +388,20 @@ def _without_timestamps(text: str) -> str:
 
 def test_the_fixture_deps_read_the_committed_fixtures(paths):
     manifest = workflow.run(CONFIG, deps=Deps.fixtures("fixtures/it4"), **paths)
-    assert set(manifest.models) == {"alphamissense", "esm1b", "revel", "spliceai"}
+    # The shipped config's lane list, whatever it is today: wave 4 added `gpnmsa` and `esm2`
+    # to it, and a test that pins four names would have to be edited by every later lane.
+    # What is worth pinning is that the run scored the lanes the config asked for and that
+    # the MVP four are still among them.
+    from mva.zoo.case_config import Config
+
+    assert set(manifest.models) == set(Config.load(CONFIG).models)
+    assert {"alphamissense", "esm1b", "revel", "spliceai"} <= set(manifest.models)
     merged = json.loads((paths["out_dir"] / "merged.json").read_text(encoding="utf-8"))
-    assert len(merged["lanes"]) == 4
-    assert merged["agreement"]["models"] == ["alphamissense", "esm1b", "revel", "spliceai"]
+    assert len(merged["lanes"]) == len(manifest.models)
+    assert set(merged["agreement"]["models"]) <= set(manifest.models)
+    assert {"alphamissense", "esm1b", "revel", "spliceai"} <= {
+        lane["model"] for lane in merged["lanes"]
+    }
 
 
 def test_the_report_quotes_the_phenotype_ranking_when_the_warehouse_has_one(tmp_path):

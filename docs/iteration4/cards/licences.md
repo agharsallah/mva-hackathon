@@ -15,7 +15,7 @@ Hackathon use is non-commercial, so a non-commercial licence is not a blocker fo
 | ESM-C 600M | esmc_600m (github.com/evolutionaryscale/esm, tag recorded at fetch) | opt-b (off) | EvolutionaryScale Cambrian non-commercial licence | **yes** | no weights — the remote image pulls them; digest and venue recorded per run | [terms](https://www.evolutionaryscale.ai/policies/cambrian-non-commercial-license-agreement) |
 | EVE | EVE precomputed scores (v1, ~3k genes) | opt-b (off) | MIT — verify on fetch | no | fetch script + digest, never the score file | [terms](https://evemodel.org/) |
 | Evo 2 1B | evo2_1b_base | opt-b (off) | Arc Institute open weights — verify on fetch | no | no weights — the remote image pulls them; digest and venue recorded per run | [terms](https://github.com/ArcInstitute/evo2) |
-| GPN-MSA | GPN-MSA hg38 precomputed scores (songlab) | opt-a (off) | check on fetch (Hugging Face dataset card) — verify on fetch | no | fetch script + digest, never the score file | [terms](https://huggingface.co/datasets/songlab/gpn-msa-hg38-scores) |
+| GPN-MSA | GPN-MSA hg38 precomputed scores (songlab) | opt-a | MIT | no | fetch script + digest, never the score file | [terms](https://huggingface.co/datasets/songlab/gpn-msa-hg38-scores) |
 | Nucleotide Transformer v2 500M | InstaDeepAI/nucleotide-transformer-v2-500m-multi-species | opt-b (off) | CC-BY-NC-SA-4.0 | **yes** | no weights — the remote image pulls them; digest and venue recorded per run | [terms](https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-500m-multi-species) |
 | Pangolin | Pangolin (local, CPU) | opt-a (off) | Apache-2.0 — verify on fetch | no | no weights — the model's own installer fetches them; digest per run | [terms](https://github.com/tkzeng/Pangolin) |
 | PrimateAI-3D | PrimateAI-3D hg38 precomputed scores | opt-a (off) | Illumina academic/non-commercial, registration required — verify on fetch | **yes** | fetch script + digest, never the score file | [terms](https://primad.basespace.illumina.com/download) |
@@ -26,4 +26,4 @@ Hackathon use is non-commercial, so a non-commercial licence is not a blocker fo
 | ThermoMPNN | ThermoMPNN (local, CPU) | opt-b (off) | MIT — verify on fetch | no | no weights — the model's own installer fetches them; digest per run | [terms](https://github.com/Kuhlman-Lab/ThermoMPNN) |
 | TxGNN | TxGNN (pretrained checkpoint, tag recorded at fetch) | opt-b (off) | MIT | no | no weights — the model's own installer fetches them; digest per run | [terms](https://github.com/mims-harvard/TxGNN) |
 
-19 models declared, 5 enabled, 8 under non-commercial terms, 3 catalogue-adjacent (trained on a variant catalogue, so the merge is printed with and without them).
+19 models declared, 6 enabled, 8 under non-commercial terms, 3 catalogue-adjacent (trained on a variant catalogue, so the merge is printed with and without them).

@@ -13,7 +13,7 @@
       "protein_window_alt"
     ],
     "checkpoint": "facebook/esm2_t33_650M_UR50D",
-    "batch": 8,
+    "batch": 64,
     "score_sign": -1
   },
   "licence": "MIT",
