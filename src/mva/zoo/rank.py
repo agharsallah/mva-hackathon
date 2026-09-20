@@ -350,9 +350,14 @@ def write_ranks(
     connection.execute(f"CREATE TABLE IF NOT EXISTS {ALIAS}.{safe}.{MODEL_RANKS_TABLE} ({columns})")
     rows = to_rows(ranks, run_id=run_id, top=top)
     placeholders = ", ".join("?" for _ in MODEL_RANKS_COLUMNS)
-    for row in rows:
-        connection.execute(
-            f"INSERT INTO {ALIAS}.{safe}.{MODEL_RANKS_TABLE} VALUES ({placeholders})", list(row)
+    if rows:
+        # One `executemany`, not 402 `execute`s. Against the *hosted* warehouse every
+        # statement is a network round trip, and the row-at-a-time loop this replaced cost
+        # 336.7 s of a 541 s run — 62 % of a whole DAG pass spent on 402 small inserts
+        # (measured by agent G2, wave 4). :mod:`mva.zoo.cache` batches for the same reason.
+        connection.executemany(
+            f"INSERT INTO {ALIAS}.{safe}.{MODEL_RANKS_TABLE} VALUES ({placeholders})",
+            [list(row) for row in rows],
         )
     ensure_tables(connection, lineage_schema)
     record(
