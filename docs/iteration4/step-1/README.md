@@ -1,7 +1,8 @@
 # Step 1 — The allele record
 
-**Standing:** **run 2026-09-18/19**; `P4-1a` filed as H058, tested and **supported**; the step
-is marked **done** in `src/mva/science/step_maps/iteration4.py`. Iteration 4, `step-1`.
+**Standing:** **run 2026-09-18/19**, protein windows added **2026-09-20** (wave 4, opt-A);
+`P4-1a` filed as H058 and **supported**, `P4-1`'s protein half filed as H071 and **supported**;
+the step is marked **done** in `src/mva/science/step_maps/iteration4.py`. Iteration 4, `step-1`.
 
 **Goal** (from `steps.py`):
 
@@ -14,6 +15,7 @@ is marked **done** in `src/mva/science/step_maps/iteration4.py`. Iteration 4, `s
 | Claim | Prediction | Verdict |
 |---|---|---|
 | H058 (`P4-1a`) | ≥ 99 % of coding alleles get a non-null `hgvs_c` or `hgvs_p` | **supported** — 0.99953 (38,069 of 38,087), confidence 0.95 ([114](methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md)) |
+| H071 (`P4-1`, protein half) | ≥ 98 % of missense records get a complete protein window pair | **supported** — **99.821 %** (15,592 of 15,620), confidence 0.90 ([141](methodology/141-a-window-for-every-substitution-the-spelling-actually-describes.md)) |
 
 **39,286 records**: 38,087 distinct coding alleles (from 38,437 allele rows) plus exactly the
 1,199 alleles only the raw reads saw. One VEP REST pass at **release 116 / GRCh38**, 196
@@ -32,6 +34,25 @@ Two things the run found that change what follows:
   half by consequence class. **GPN-MSA's promotion into the MVP is due** (plan §10 R9); it is
   recorded in [`../todo.md`](../todo.md) and not built here.
 
+### What wave 4 added (2026-09-20, entry 141)
+
+The record now carries the one input a model that **runs** needs: the protein's own letters,
+64 residues either side of the change, as the reference protein and again with the one letter
+swapped.
+
+- **15,592 of 15,620 missense records get a complete window pair — 99.821 %.**
+- **Zero residue mismatches** over all 15,592: the residue `hgvs_p` spells equals Ensembl's
+  sequence at that position every time. A window built on a disagreeing isoform looks exactly
+  like a good one, so this check is the point of the exercise, not a formality.
+- **No identifier lookup was needed.** The `ENSP` accession is `hgvs_p`'s own prefix, so the
+  `uniprot = null` finding below does not block this lane the way it blocked ESM1b.
+- The 28 without a window are all `delins` spellings replacing two or more residues — VEP
+  calls them `missense_variant`, but a one-residue substitution model has nothing to score.
+- The confirmed **missense** allele has a 113-residue window (clamped at BubR1's C-terminus).
+  The confirmed **nonsense** allele has none, and must not: there is no mutant protein to
+  window, which is why that half of the pair is GPN-MSA's job (entry 140), never ESM2's.
+- DNA windows are still null — plan §5 labels them opt-B (`P4-1`'s DNA half, wave 5).
+
 ## Outputs
 
 | Artifact | Where |
@@ -42,8 +63,11 @@ Two things the run found that change what follows:
 | the lineage edge naming the four source tables | `warehouse.data_lineage`, `transform LIKE 'it4-allele-records%'` |
 | the VEP answers, resumable | `build/it4/vep-hgvs/batch-*.jsonl` (gitignored) |
 
-Sequence windows (`protein_window_*`, `dna_window_*`) are columns of the parquet and stay
-**null**: plan §5 labels them opt-A / opt-B, so claim `P4-1` is not yet measurable.
+`protein_window_ref` / `protein_window_alt` are filled on 15,592 rows of the parquet and are
+written **nowhere else** — not to `results.it4_allele_records`, not into an entry. A window is
+patient sequence. `dna_window_*` stay null (opt-B).
+
+The per-protein sequence cache is `build/it4/protein-seq/<ENSP>.json`, 8,732 files, gitignored.
 
 ## Tools this step needed
 
@@ -54,6 +78,7 @@ Sequence windows (`protein_window_*`, `dna_window_*`) are columns of the parquet
 | `mva.pipeline.annotate_vep` + `vep_response` | the REST transport, its retry policy, and `best_transcript` |
 | `mva.warehouse.annotate_coding.Checkpoint` | per-batch resume — a crash costs one batch, not a morning |
 | `mva.warehouse.lineage` | one edge per run, append-only, while the table is replaced |
+| `mva.zoo.record_window` (wave 4) | `hgvs_p` → `(accession, position, ref, alt)`; the Ensembl sequence client with its rate-limit policy and per-accession cache; the window pair with its residue check; the in-place Parquet extension |
 
 ## Limitations
 
@@ -62,8 +87,10 @@ Stated by entry 114, beside the result rather than under it.
 - **`uniprot` is null on all 39,286 records.** Ensembl's POST endpoint answers HTTP 500 for
   `uniprot=1` (reproduced on a public example variant), so the protein-accession column the
   ESM1b lane wants is empty and the lane joins through a gene-symbol bridge instead.
-- **No sequence windows.** `protein_window_*` and `dna_window_*` are columns of the parquet and
-  stay null — plan §5 labels them opt-A/opt-B, so claim `P4-1` is *not measurable* yet.
+- **DNA windows are still null.** `protein_window_*` is filled (entry 141); `dna_window_*` is
+  opt-B and waits for wave 5, so `P4-1`'s DNA half is not measurable yet.
+- **A window is not a score.** Entry 141 measures that an input exists, not that any model can
+  turn it into a useful number — that is step 3's measurement.
 - **The pass adds, it never corrects.** An annotation already in the warehouse is kept as it is;
   the HGVS pass only fills what was missing.
 - **One representative spelling per allele.** A change on several transcripts gets the canonical
