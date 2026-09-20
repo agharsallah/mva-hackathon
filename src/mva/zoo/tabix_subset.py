@@ -18,7 +18,8 @@ The recipe, and why each step is there:
    provenance of a subset whose source is never held locally in full.
 3. **Fan out.** The regions are split into shards and one ``tabix`` process runs per shard
    against ``<url>##idx##<local index>`` — htslib's spelling for "this remote file, that
-   local index". Measured ~1.8x on four workers; the bottleneck is per-seek latency.
+   local index". Measured ~1.8x on four workers; the bottleneck is per-seek latency. A
+   dropped conversation costs a *round*, not the run: see :func:`subset`'s resume.
 4. **Digest the subset**, then convert it to one Parquet keyed on ``chrom/pos/ref/alt``.
 
 **The coordinates never leave ``build/``.** The BED files, the TSV shards and the Parquet
@@ -128,9 +129,10 @@ def resolve_url(url: str) -> str:
     """Follow the redirects once and return the final URL.
 
     Hugging Face answers ``/resolve/main/<file>`` with a redirect to a signed CDN URL.
-    htslib re-opens the file for every seek, and re-following that redirect each time cost a
-    measured 25 % of the wall clock, so the redirect is followed once here and the CDN URL
-    handed to every worker. The signature expires in hours, which is longer than a fetch.
+    Resolving it once is a measured 25 % faster per seek, and the workers are **not** given
+    the result: the signature expires in hours and the first real fan-out ran 3 h 13 m before
+    every worker died on it at once. What this is for is the provenance line — the host the
+    bytes actually came from — which is worth one ``HEAD`` and no risk.
     """
     import httpx
 
@@ -293,7 +295,10 @@ def subset(
     regions = merge_positions(remaining, merge_gap=merge_gap)
     span = sum(region.span for region in regions)
     if already:
-        progress(f"    resuming: {len(already):,} of {positions:,} positions already fetched")
+        # Count the *wanted* ones. `already` also holds every position a merged region swept
+        # up on the way, which is a much bigger number and means nothing here.
+        done = positions - len(remaining)
+        progress(f"    resuming: {done:,} of {positions:,} wanted positions already fetched")
     progress(f"    {len(regions):,} regions, {span:,} bases, merge_gap={merge_gap}")
 
     index = target / (url.rsplit("/", 1)[-1] + ".tbi")

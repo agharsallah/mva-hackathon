@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-20T10:50:56",
+  "generated_at": "2026-09-20T12:38:14",
   "steps": [
     {
       "slug": "step-0",
@@ -2625,11 +2625,30 @@
       "refuted_by": "SNV coverage below 90 percent, or either confirmed BUB1B allele missing from the subset",
       "gene": "BUB1B",
       "path": "zoo-lane-coverage",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.95,
+      "suggested_confidence": 0.9734,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 172,
+          "direction": "supports",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "The GPN-MSA subset scores 35,917 of 35,917 single-nucleotide alleles (100.0 percent) and 35,917 of 39,286 records overall, the shortfall being every insertion and deletion",
+          "source_ref": "docs/iteration4/step-2/methodology/140-the-lane-that-can-see-a-nonsense-allele.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 173,
+          "direction": "supports",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "Both confirmed BUB1B alleles carry a GPN-MSA score, including the stop_gained one that no other lane in the zoo can see; 278 of 289 stop_gained records are scored",
+          "source_ref": "docs/iteration4/step-2/methodology/140-the-lane-that-can-see-a-nonsense-allele.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H069",
