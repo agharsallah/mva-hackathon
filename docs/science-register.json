@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-20T00:55:19",
+  "generated_at": "2026-09-20T10:19:29",
   "steps": [
     {
       "slug": "step-0",
@@ -2487,11 +2487,66 @@
       "refuted_by": "Any edit to a module needed to complete the run; or a D1 row at rung 2 or higher, or any D1 row in the shortlist, which would mean a tumour-context trial leaking onto a mechanism direction (the fault methodology 113 fixed); or a do_not.tsv carrying no A2-flagged drug; or a rung-2-or-higher row on any non-context direction of a card that has no evidence.tsv.",
       "gene": "TRIP13",
       "path": "track2-transfer",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.1,
+      "suggested_confidence": 0.9781,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 162,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "tools/track2_transfer.py completed against the live public APIs with no module edit: ressources/track2/transfer/TRIP13/ carries the five snapshot tables plus evidence_ladder.tsv, shortlist.tsv and do_not.tsv with a provenance manifest each, and transfer_comparison.tsv carries one row per case",
+          "source_ref": "ressources/track2/transfer_comparison.tsv; ressources/track2/transfer/TRIP13/*.provenance.json",
+          "lineage_ref": ""
+        },
+        {
+          "id": 163,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "in the TRIP13 transfer ladder all 30 D1 (checkpoint-reinforcement) rows sit at rung 1 and none is above it, so the checkpoint direction again yields no submittable drug",
+          "source_ref": "ressources/track2/transfer/TRIP13/evidence_ladder.tsv",
+          "lineage_ref": ""
+        },
+        {
+          "id": 164,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "the TRIP13 transfer shortlist holds 53 rows and every one is on the tumour-context direction D4; no D1, D2 or D3 row reaches it",
+          "source_ref": "ressources/track2/transfer/TRIP13/shortlist.tsv",
+          "lineage_ref": ""
+        },
+        {
+          "id": 165,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "only the context direction D4 reaches rung 2 or higher in the TRIP13 transfer ladder (55 D4 rows at rung 5); all 30 D1, 82 D2 and 39 D3 rows stay at rung 1, so no tumour-context trial leaked onto a mechanism direction",
+          "source_ref": "ressources/track2/transfer/TRIP13/evidence_ladder.tsv",
+          "lineage_ref": ""
+        },
+        {
+          "id": 166,
+          "direction": "refutes",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "the spindle-poison anti-direction A2 did NOT populate the transfer do-not table: do_not.tsv holds 3 rows, all on D4 and all flagged standard_of_care, and no row anywhere in the transfer ladder carries the A2 flag (real case: 13 A2 rows)",
+          "source_ref": "ressources/track2/transfer/TRIP13/do_not.tsv",
+          "lineage_ref": ""
+        },
+        {
+          "id": 167,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "the A2 flag is a regex over each drug's action_type and interaction_or_moa text, so it needs the ChEMBL mechanism strings that pathway expansion brings in; Reactome matched no checkpoint/kinetochore/mitotic pathway for TRIP13, leaving pathways.tsv header-only and all 1329 candidate rows at target_role seed with only 261 carrying any MOA text, while the real case has 2276 pathway rows and 11 of its 13 A2 drugs on direction pathway",
+          "source_ref": "ressources/track2/transfer/TRIP13/pathways.tsv; ressources/track2/transfer/TRIP13/drug_candidates.tsv; src/mva/drugs/ladder.py::_flags",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H067",
@@ -2501,11 +2556,30 @@
       "refuted_by": "Any deps call counter above one for a stage or lane finished before the kill; any output byte-differing from the uninterrupted run beyond its generation timestamps; more than one manifest for the run id; or a second real-data run that recomputes a stage whose inputs did not change.",
       "gene": "",
       "path": "iteration4/step-4 resume",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.9,
+      "suggested_confidence": 0.9526,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 159,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "Kill test: the fixture DAG is killed inside fan_out after two of four lanes; across the killed attempt and the restart the injected Deps counts one load_records, one load_registry, one load_pairs and one score call per FINISHED lane, the restart's outputs equal an uninterrupted run's, and exactly one manifest exists (tests/test_zoo_resume.py, 11 green).",
+          "source_ref": "docs/iteration4/step-4/methodology/135-a-resume-that-is-tested-by-killing-the-run.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 160,
+          "direction": "supports",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "Real data: two consecutive mva-zoo run calls on the same config; the eight stages took 541.21 s then 0.73 s (741x), seven of eight restored. registry_check re-ran because a parallel session had added a roster fragment, but its content was unchanged so nothing downstream re-ran - content-addressed, not name-addressed.",
+          "source_ref": "docs/iteration4/step-4/methodology/135-a-resume-that-is-tested-by-killing-the-run.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H068",
@@ -2566,6 +2640,44 @@
           "claim": "No test was run against H070: it is a duplicate filing of P4-7 created when a hypothesis-add that appeared to hang was retried and both calls landed. The claim itself is tested as H069, whose evidence row 157 carries the measurement; H070 is superseded by H069 and carries no observation of its own.",
           "source_ref": "docs/iteration4/step-5/methodology/134-an-llm-that-may-only-explain-the-rows-it-was-given.md",
           "lineage_ref": ""
+        }
+      ]
+    },
+    {
+      "id": "H071",
+      "step": "step-1",
+      "statement": "The protein half of P4-1: a wild-type and mutant amino-acid window can be built for essentially every missense allele in the record set from hgvs_p plus the Ensembl protein sequence, with no extra identifier lookup",
+      "prediction": "At least 98 percent of the 15,620 missense_variant records get a complete window pair, where complete means the Ensembl sequence for the ENSP accession hgvs_p names was fetched and its residue at the named position equals the reference residue hgvs_p spells",
+      "refuted_by": "Fewer than 90 percent of missense records get a complete window pair",
+      "gene": "BUB1B",
+      "path": "zoo-record-windows",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H072",
+      "step": "step-6",
+      "statement": "The merged report's narrative, synthesised in mode claude-code from the merged rows (lanes, agreement matrix, both fusions, disagreement count, and each lane's own section 6), cites every sentence to a row that was sent and names no lane, gene or disease the rows never gave it.",
+      "prediction": "mva-zoo narrate --merged --mode claude-code: mva.zoo.narrate_check against mva.zoo.narrate_rows.merged_rows reports uncited_sentences / sentences at most 0.10, unknown_ids empty and new_names empty.",
+      "refuted_by": "The synthesis leaves more than 10 percent of its sentences without a citation that resolves to a merged row, cites an id that was never sent, or names a lane, gene or disease outside the rows.",
+      "gene": "BUB1B",
+      "path": "",
+      "status": "supported",
+      "confidence": 0.8,
+      "suggested_confidence": 0.8176,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 161,
+          "direction": "supports",
+          "strength": 0.75,
+          "kind": "measurement",
+          "claim": "mva-zoo narrate --merged in mode claude-code synthesised the merged report's section 5 from 18 rows (four lanes, six agreement cells, two fusions, the disagreement count and each lane's own section 6): 7 sentences, 7 resolving citations, 0 uncited, 0 ids that were never sent, 0 lane or gene or disease names outside the rows, 195 words, 20.1 s, 0.116 USD.",
+          "source_ref": "docs/iteration4/step-6/methodology/137-a-synthesis-that-must-cite-the-lane-it-builds-on.md",
+          "lineage_ref": "results.it4_narratives"
         }
       ]
     }

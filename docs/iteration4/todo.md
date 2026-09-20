@@ -110,8 +110,8 @@ names in `types`/`rank`, `build/it4` defaults, `figures/it4`, the 8-term count, 
 - [ ] re-file **P4-3**, **P4-6**, **P4-8** as new revisions per added lane; **P4-2** (≥ 8 lanes) filed when the count allows
 
 **G2 — API + resume**
-- [ ] A3 read-only routes (wave 3) → batch job routes: `POST /api/zoo/score {model, allele_ids, mode} → {job_id}`, `GET /api/zoo/jobs/{id}/wait`, on the existing `/api/jobs` worker pattern (`viz/serve.py`); token-gated like the rest
-- [ ] A4 step 4 `--from <stage>` real resume: skip-if-checkpoint-exists per stage, kill-mid-fan-out test; file **P4-5**
+- [x] A3 batch job routes (`50d1151`, entry [136](step-3/methodology/136-the-two-write-verbs-behind-a-job-and-a-token.md)): `POST /api/zoo/score`, `POST /api/zoo/run`, `GET /api/zoo/jobs[/{id}[/wait]]` on the existing `mva.reads.api.jobs.Manager`; both POSTs **403 when `MVA_VIZ_TOKEN` is empty**. Live smoke, 200 alleles of `spliceai`: **inserted 0**, skipped 171, coverage 85.5 %, 5.9 s — and `POST /api/zoo/run` returned the manifest with all eight stages restored in 0.754 s
+- [x] A4 real resume (`6c5311c`, entry [135](step-4/methodology/135-a-resume-that-is-tested-by-killing-the-run.md)): one checkpoint marker per stage and per fan-out lane, matched on a **content** chain (effective config → each stage's content → a cheap `Deps.fingerprint` of its source), `--from` re-runs from a stage, `--force` drops the markers. Kill test green; real data **541.21 s → 0.73 s**, 7 of 8 stages restored — the 8th re-ran because a parallel session had changed the roster's bytes, and nothing downstream followed because its *content* had not. **H067 / P4-5 supported (0.90)**
 
 **G3 — narrate (serial inside)**
 - [x] A5 `mva.zoo.narrate` (`bd6eab0`, entry [134](step-5/methodology/134-an-llm-that-may-only-explain-the-rows-it-was-given.md)): prompt = the report's own rows for §2-5 with stable ids + "cite every sentence by row id", no question, no repo context; mode `claude-code` ran all four lanes at `claude-opus-5[1m]` — **41 of 41 sentences cite a resolving row**, $0.534 and 128 s
@@ -120,7 +120,7 @@ names in `types`/`rank`, `build/it4` defaults, `figures/it4`, the 8-term count, 
 - [x] §6 now holds **a list of versions**: the generated one leads, the hand-written one stays under it, each with its own badge, and a re-render keeps both (`mva-zoo narrate --mode none`). Both *LLM* modes side by side waits on a Nebius key (B)
 
 **G4 — after G3**
-- [ ] A6 merge `fusion+synthesis`: LLM synthesises the merged narrative from per-model interpretations + matrix, cited; default method
+- [x] A6 merge `fusion+synthesis` (`b6d2968`, entry [137](step-6/methodology/137-a-synthesis-that-must-cite-the-lane-it-builds-on.md)): the merged §5 synthesised from 18 rows (lanes, six ρ cells, both fusions, `disagree.n`, `method`, each lane's own §6 as `interp.<model>`) — **7 of 7 sentences cite a row that was sent**, $0.116, 20.1 s; H072 **supported at 0.80**. The hand-written narrative stays beneath it. `[merge] method` is still `fusion`: wiring the key needs the workflow's render stage (G2's file, request filed)
 - [ ] A6 `submissions/track1/iteration-4/` rehearsed: CSV via `tools/design_submission.py`, methods form row "model 4" (automated yes, public models only, runtime + cost from the manifest), decode table, README with sha256; `tools/check_iteration.py` green; **upload default: no** (O3)
 - [ ] `submissions/track2/iteration-<n>/` scaffolded by `tools/new_iteration.py` when R2 is upload-worthy
 

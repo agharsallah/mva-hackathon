@@ -1,6 +1,6 @@
 # Iteration 4 — the merged report
 
-**Standing:** generated 2026-09-19T16:50:24+00:00 by `mva.zoo.merge.render_merged` from run `it4-dcda40a4df2c`; merge method `fusion`.
+**Standing:** generated 2026-09-19T23:02:43+00:00 by `mva.zoo.merge.render_merged` from run `it4-2962e3117b5c`; merge method `fusion`.
 
 Every number below is a key of the run's merged JSON; this page computes nothing.
 
@@ -67,93 +67,24 @@ Alleles in the top 1 % of one lane and the bottom half of another. A disagreemen
 
 ## 5. What this means
 
+This section exists in more than one version — the numbers above are identical for all of them. Each version carries a badge saying who wrote it, in which mode, and how many of its sentences resolve to a row of sections 1-4 (`mva.zoo.narrate_check`).
+
+### 5.1 Synthesised — mode `claude-code`, model `claude-opus-5[1m]`, 7/7 sentences cited
+
+<!-- narrative: synthesised 2026-09-20 | llm:claude-code | model:claude-opus-5[1m] | cited 7/7 -->
+
+Three of the four lanes returned no rank at all for the confirmed pair: each scored only one of its two alleles, and a pair with an unscored half is dropped from a lane's ranking rather than scored zero [lane.alphamissense.rank][lane.esm1b.rank][lane.revel.rank]. Those lanes' own reports describe this as holding no opinion rather than a bad one [interp.alphamissense][interp.esm1b][interp.revel]. Only one lane saw both halves, placing the pair 11980 of 50696 pairs at 23.63% from the top [lane.spliceai.rank]. Because the merge used reciprocal rank fusion with k = 60, and a lane that never ranks a pair contributes nothing to it, the fused positions — 20639 of 52012 without the catalogue-adjacent lane and 21497 of 52219 with it, at the same fused score — rest on that single lane [method][rrf.free.rank][rrf.all.rank][lane.revel.rank]. The lanes also largely do not track each other, agreeing at +0.580 in the closest case and at +0.033, +0.043, +0.021, +0.186 and +0.168 elsewhere [rho.alphamissense.esm1b][rho.alphamissense.spliceai][rho.esm1b.spliceai][rho.revel.spliceai][rho.alphamissense.revel][rho.esm1b.revel]. Ninety alleles sit in one lane's top 1% and another's bottom half [disagree.n]. So the consensus here is one opinion plus three abstentions, and it cannot show agreement, cannot read silence as harmlessness, and does not establish that anything causes anything [method][interp.spliceai][interp.revel].
+
+### 5.2 Hand-written
+
 <!-- narrative: hand-written 2026-09-19 -->
 
 **Every sentence below names the section and row it rests on. Nothing here is computed; §1–§4
 are rendered from `build/it4/merged.json` and this section is the only prose in the file.**
 
-### The headline, and it is a negative one
-
-The zoo's consensus puts the confirmed `BUB1B` pair at **rank 20,639 of 52,012** biallelic pairs
-with the catalogue-adjacent lane excluded, and **21,497 of 52,219** with it included (§3) — the
-39.7th and 41.2nd percentiles. Pre-registered claim `P4-8` predicted rank 1 and named "outside
-the top 5" as refuting it. **It is refuted, by four orders of magnitude.**
-
-### Why, in one number
-
-Read §1 rather than §3. Three of the four lanes have **no rank at all** for this pair:
-AlphaMissense ranked 10,333 pairs, ESM1b 3,673, REVEL 10,456 — and the confirmed pair is in none
-of those sets, because each lane scored one of its two alleles and a pair with an unscored half
-is excluded rather than scored zero. Only SpliceAI ranks it, at 11,980 of 50,696. A reciprocal
-rank fusion over lanes that decline to vote is not a consensus; it is one lane's opinion divided
-by four. The fused score in §3, 0.000083, is exactly `1/(60 + 11980)` — SpliceAI's vote, alone,
-with no other term in the sum.
-
-### The lane gap, named
-
-The confirmed pair is one `stop_gained` allele and one `missense_variant`. Three of the four MVP
-lanes are missense-only; the fourth is a splice model. **No lane in this roster can score a
-nonsense allele**, so no lane can price the pair's weaker half, and the pair score `(min, max)`
-has no `min` to take. This was not discovered here: entry 114 read the two consequence classes
-off the record set on day one and recorded GPN-MSA's promotion as due; entry 119 confirmed it
-with coverage; entries 128 and 129 measured it as an absent rank. Four entries, one cause.
-
-### What the lanes do say, and it is not nothing
-
-Step 5 measured the pair one unit down, at the allele. AlphaMissense puts the missense half in
-the **top 0.47 %** of the 10,601 alleles it scored, ESM1b in the **top 2.52 %** of 4,562, REVEL
-in the **top 2.59 %** of 10,783. Three models of different provenance — structure-aware,
-protein-language, ClinVar-trained ensemble — converge on one allele without conferring. Had
-`P4-8` been written about alleles rather than pairs, this report would read the other way.
-
-### The catalogue ablation changes nothing, which is itself a result
-
-§3's two rows differ by 858 ranks out of ~52,000 and share an identical fused score. REVEL is
-the one lane whose training set included ClinVar and therefore the one that might already know
-the answer; excluding it moves the consensus by 1.5 percentile points, because it too has no
-rank for this pair. **The leak a reviewer checks first is not load-bearing here.** Note also
-§2: REVEL correlates with AlphaMissense at only ρ = +0.186 (n = 9,365) and with ESM1b at
-+0.168 (n = 3,997) — weaker than the two catalogue-free missense lanes agree with each other
-(ρ = +0.580, n = 3,943). The catalogue-trained lane is the *least* typical missense lane here.
-
-### The agreement matrix, read honestly
-
-§2 has two blocks. The three missense lanes agree weakly-to-moderately with one another
-(+0.168 to +0.580). SpliceAI agrees with none of them — ρ = +0.021 to +0.043 over 4,051 to 9,816
-shared alleles. That is not a defect: splice disruption and amino-acid damage are different
-mechanisms, and a splice model that tracked a missense model would be the surprising result.
-It does mean the zoo contains **one opinion about protein damage, sampled three times, and one
-about splicing** — which is a thin basis for a fusion, and why §3's number should not be read as
-four independent votes.
-
-### The disagreement table is all one shape
-
-All 20 printed rows (90 in the JSON) have SpliceAI in the top 1 % against a missense lane in the
-bottom half (§4). Every one is the same event: an allele in a splice window whose amino-acid
-change is unremarkable. There is not a single row of the opposite kind — no allele a missense
-lane calls extreme that SpliceAI calls benign — because SpliceAI's distribution is degenerate
-(median 0, p90 0.03), so almost no allele is in *its* bottom half by a meaningful margin.
-
-### What the clinical terms say
-
-Independently of every number above, the child's eight HPO terms rank `BUB1B` **#14 of 5,267**
-genes considered (phenotype score 0.36093, term set `with-parental`; §5 of each per-model
-report). No lane in this zoo sees a phenotype. The gene the models cannot collectively rank is
-the gene the symptoms nominate fourteenth out of five thousand — and that disagreement between
-two independent sources is the most informative line in this report.
-
-### What to change
-
-One lane that scores a nonsense allele. GPN-MSA (tier 1, precomputed, any SNV) is the
-pre-registered answer (plan §10 R9) and its promotion has been due since entry 114. With it,
-every lane can price both halves, the pair re-enters three rankings, and `P4-8` gets the revision
-it is owed. Nothing else in the zoo needs to change.
-
-_hand-written 2026-09-19_
-
 ## 6. Lineage
 
-- run id: `it4-dcda40a4df2c`
+- run id: `it4-2962e3117b5c`
 - merge method: `fusion`, RRF k = 60
 - source tables: `results.it4_model_ranks`, `warehouse.allele_scores`, `results.coding_alleles`
 - built by: `mva.zoo.merge.merged_report`

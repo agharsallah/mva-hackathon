@@ -2,9 +2,9 @@
 
 **Case:** Mosaic Variegated Aneuploidy — challenge proband 1; confirmed pair gene `BUB1B`.
 
-**Standing:** generated 2026-09-19T16:57:25+00:00 by `mva.zoo.report.render_model_report` from run `it4-dcda40a4df2c`, catalogue mode `catalogue-free`.
+**Standing:** generated 2026-09-19T23:02:32+00:00 by `mva.zoo.report.render_model_report` from run `it4-2962e3117b5c`, catalogue mode `catalogue-free`.
 
-Every number below is a key of `results.it4_model_reports.report_json` for this run. Section 6 is the only written section.
+Every number below is a key of `it4_model_reports.report_json` for this run. Section 6 is the only written section.
 
 ## 1. Model card
 
@@ -139,7 +139,7 @@ Only this section is written rather than computed. Sections 1-5 and 7 are render
 | venue | laptop |
 | wall-clock (s) | 0 |
 | cost (USD) | 0 |
-| run id | `it4-dcda40a4df2c` |
+| run id | `it4-2962e3117b5c` |
 
 - Scored 27.0% of the record set; the unscored remainder is this lane's blind spot and its pairs are excluded from the ranking, not scored zero.
 - 53014 biallelic pairs had an unscored half and left this ranking.
