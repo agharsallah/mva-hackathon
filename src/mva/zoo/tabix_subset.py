@@ -188,10 +188,61 @@ def tabix_command(url: str, index: Path, bed: Path, *, tabix: str = "tabix") -> 
     return [tabix, "-R", str(bed), f"{url}##idx##{index}"]
 
 
-def _run_shard(argv: list[str], out: Path) -> tuple[int, str]:
-    with out.open("wb") as handle:
-        done = subprocess.run(argv, stdout=handle, stderr=subprocess.PIPE, check=False)
-    return done.returncode, done.stderr.decode(errors="replace")[-400:]
+def _keep_parts(target: Path) -> list[Path]:
+    """Promote any previous run's shard output to a numbered *part*, and list every part.
+
+    A shard file is this run's scratch; a part is a finished piece of the answer. Renaming
+    rather than deleting is what makes a re-run cheap instead of a re-run from zero, and it
+    keeps the old bytes around to be re-read rather than re-fetched.
+    """
+    parts = sorted(target.glob("scores.part-*.tsv"))
+    for shard_file in sorted(target.glob("scores.[0-9][0-9].tsv")):
+        if shard_file.stat().st_size == 0:
+            shard_file.unlink()
+            continue
+        moved = target / f"scores.part-{len(parts):03d}.tsv"
+        shard_file.rename(moved)
+        _drop_partial_line(moved)
+        parts.append(moved)
+    return parts
+
+
+def _drop_partial_line(path: Path) -> None:
+    """Truncate a file to its last complete line.
+
+    A worker killed mid-write leaves half a row, and half a row is a parse error three
+    steps later — where it looks like a bad table rather than a killed process.
+    """
+    with path.open("rb+") as handle:
+        handle.seek(0, 2)
+        size = handle.tell()
+        if not size:
+            return
+        handle.seek(size - 1)
+        if handle.read(1) == b"\n":
+            return
+        window = min(size, 1 << 16)
+        handle.seek(size - window)
+        tail = handle.read(window)
+        cut = tail.rfind(b"\n")
+        handle.truncate(size - window + cut + 1 if cut >= 0 else 0)
+
+
+def _covered(parts: Sequence[Path], *, connection: Any = None) -> set[tuple[str, int]]:
+    """Which ``(contig, position)`` pairs the parts already hold."""
+    import duckdb
+
+    live = [path for path in parts if path.exists() and path.stat().st_size]
+    if not live:
+        return set()
+    con = connection or duckdb.connect()
+    files = ", ".join("?" for _ in live)
+    rows = con.execute(
+        f"SELECT DISTINCT column0, column1 FROM read_csv([{files}], delim='\t', header=false, "
+        "types=['VARCHAR', 'BIGINT', 'VARCHAR', 'VARCHAR', 'DOUBLE'])",
+        [str(path) for path in live],
+    ).fetchall()
+    return {(str(row[0]), int(row[1])) for row in rows}
 
 
 # ── step 4: the whole thing ───────────────────────────────────────────────────────────
@@ -214,6 +265,14 @@ def subset(
 
     Everything it writes lands under ``out_dir`` (``build/<prefix>/tables/<lane>/``): the BED
     plan, the TSV shards, the concatenated subset and the Parquet. Nothing is committed.
+
+    **It resumes.** Whatever earlier runs already fetched is kept as ``scores.part-NN.tsv``,
+    the positions in those parts are subtracted from the plan, and only the remainder is
+    asked for. That is not a nicety: the first real run of this lane took 3 h 13 m and every
+    worker died at the end of it, because the signed CDN URL the redirect had handed out
+    expired mid-flight (measured 2026-09-20 — "Operation timed out" with an ``Expires``
+    policy in the argv). The fix is both halves — this resume, and handing the workers the
+    *un*-redirected URL below so htslib re-signs on each open.
     """
     import time
 
@@ -226,10 +285,15 @@ def subset(
     target = Path(out_dir)
     target.mkdir(parents=True, exist_ok=True)
 
+    parts = _keep_parts(target)
     wanted = snv_positions(records_parquet, connection=connection)
-    regions = merge_positions(wanted, merge_gap=merge_gap)
     positions = len(wanted)
+    already = _covered(parts, connection=connection)
+    remaining = [row for row in wanted if row not in already]
+    regions = merge_positions(remaining, merge_gap=merge_gap)
     span = sum(region.span for region in regions)
+    if already:
+        progress(f"    resuming: {len(already):,} of {positions:,} positions already fetched")
     progress(f"    {len(regions):,} regions, {span:,} bases, merge_gap={merge_gap}")
 
     index = target / (url.rsplit("/", 1)[-1] + ".tbi")
@@ -239,14 +303,17 @@ def subset(
     resolved = resolve_url(url)
     progress(f"    upstream {size:,} bytes, etag {etag}" if size else "    upstream size unknown")
 
-    shards = shard(regions, jobs)
+    shards = shard(regions, jobs) if regions else []
     procs: list[tuple[Any, Any, Path]] = []
-    outputs: list[Path] = []
+    outputs: list[Path] = list(parts)
     for number, block in enumerate(shards):
         bed = target / f"regions.{number:02d}.bed"
         write_bed(block, bed)
         out = target / f"scores.{number:02d}.tsv"
-        argv = tabix_command(resolved, index, bed, tabix=tabix)
+        # The *un*-resolved URL on purpose: htslib re-opens the file for every seek, and a
+        # signed CDN link resolved once expires under a multi-hour fan-out. Resolving is
+        # ~25 % faster per seek and loses the whole run at hour three.
+        argv = tabix_command(url, index, bed, tabix=tabix)
         handle = out.open("wb")
         procs.append((subprocess.Popen(argv, stdout=handle, stderr=subprocess.PIPE), handle, out))
         outputs.append(out)

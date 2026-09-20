@@ -430,3 +430,97 @@ class TestRegistryKnowsTheLane:
 
         assert "coordinate_table" in registry.ADAPTER_FOR_SOURCE["table"]
         assert registry.ADAPTER_PARAMS["coordinate_table"] == ("key", "url")
+
+
+class TestResume:
+    """A multi-hour fan-out must not start from zero; the first real run proved it."""
+
+    @pytest.fixture
+    def fake_tabix(self, tmp_path: Path) -> str:
+        script = tmp_path / "faketabix2"
+        script.write_text(
+            "#!/bin/sh\n"
+            "while read -r contig start end; do\n"
+            "  pos=$((start + 1))\n"
+            '  while [ "$pos" -le "$end" ]; do\n'
+            '    printf "%s\\t%s\\tA\\tT\\t-1.25\\n" "$contig" "$pos"\n'
+            "    pos=$((pos + 1))\n"
+            "  done\n"
+            'done < "$2"\n'
+        )
+        script.chmod(script.stat().st_mode | stat.S_IEXEC)
+        os.environ["PATH"] = f"{tmp_path}{os.pathsep}{os.environ['PATH']}"
+        return "faketabix2"
+
+    def _patch(self, monkeypatch: Any) -> None:
+        monkeypatch.setattr(tabix_subset, "resolve_url", lambda url: url)
+        monkeypatch.setattr(tabix_subset, "upstream_head", lambda url: (10, "e"))
+        monkeypatch.setattr(tabix_subset, "download", lambda url, dest: _stub(dest))
+
+    def test_a_second_run_asks_for_nothing_and_keeps_every_row(
+        self, tmp_path: Path, records_parquet: Path, fake_tabix: str, monkeypatch: Any
+    ) -> None:
+        self._patch(monkeypatch)
+        first = tabix_subset.subset(
+            "https://example/s.tsv.bgz",
+            records_parquet,
+            tmp_path / "lane",
+            jobs=2,
+            merge_gap=100,
+            tabix=fake_tabix,
+            progress=lambda *a: None,
+        )
+        second = tabix_subset.subset(
+            "https://example/s.tsv.bgz",
+            records_parquet,
+            tmp_path / "lane",
+            jobs=2,
+            merge_gap=100,
+            tabix=fake_tabix,
+            progress=lambda *a: None,
+        )
+        assert second.regions == 0
+        assert second.rows == first.rows
+        assert second.parquet_rows == first.parquet_rows
+
+    def test_the_previous_run_s_output_is_kept_as_a_part(
+        self, tmp_path: Path, records_parquet: Path, fake_tabix: str, monkeypatch: Any
+    ) -> None:
+        self._patch(monkeypatch)
+        for _ in range(2):
+            tabix_subset.subset(
+                "https://example/s.tsv.bgz",
+                records_parquet,
+                tmp_path / "lane",
+                jobs=2,
+                merge_gap=100,
+                tabix=fake_tabix,
+                progress=lambda *a: None,
+            )
+        assert sorted(p.name for p in (tmp_path / "lane").glob("scores.part-*.tsv")) == [
+            "scores.part-000.tsv",
+            "scores.part-001.tsv",
+        ]
+
+    def test_the_workers_are_given_the_unresolved_url(
+        self, tmp_path: Path, records_parquet: Path, fake_tabix: str, monkeypatch: Any
+    ) -> None:
+        seen: list[list[str]] = []
+        self._patch(monkeypatch)
+        monkeypatch.setattr(tabix_subset, "resolve_url", lambda url: "https://signed.example/x")
+        real = tabix_subset.tabix_command
+        monkeypatch.setattr(
+            tabix_subset,
+            "tabix_command",
+            lambda url, index, bed, **kw: (seen.append([url]), real(url, index, bed, **kw))[1],
+        )
+        tabix_subset.subset(
+            "https://example/s.tsv.bgz",
+            records_parquet,
+            tmp_path / "lane",
+            jobs=1,
+            merge_gap=100,
+            tabix=fake_tabix,
+            progress=lambda *a: None,
+        )
+        assert seen and all(url == ["https://example/s.tsv.bgz"] for url in seen)
