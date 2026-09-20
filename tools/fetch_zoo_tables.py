@@ -205,6 +205,7 @@ def do_subset(
     execute: bool,
     jobs: int,
     merge_gap: int,
+    rounds: int = 1,
 ) -> int:
     """Fetch **only the rows this case needs** of a remote bgzipped, tabix-indexed table.
 
@@ -231,11 +232,29 @@ def do_subset(
         return 0
 
     print(f"  subsetting {card.name} from {url}")
-    result = tabix_subset.subset(url, records, target, jobs=jobs, merge_gap=merge_gap)
-    print(f"    {result.rows:,} rows -> {result.parquet_path} in {result.seconds:.0f}s")
-    if result.failures:
+    # Rounds, not one pass. Range-reading 21,722 regions out of a 37 GB file over HTTPS is
+    # a multi-hour conversation with a CDN, and the CDN drops it: both real runs ended with
+    # every worker dead on "Operation timed out" or a failed BGZF header, after hours of
+    # good rows. Each round resumes from what the last one wrote, so a flaky link costs a
+    # round rather than the run. The loop stops when nothing is left to ask for, or when a
+    # round adds no rows at all — which is the honest signal that retrying will not help.
+    previous = -1
+    result = None
+    for number in range(1, rounds + 1):
+        print(f"  round {number} of at most {rounds}")
+        result = tabix_subset.subset(url, records, target, jobs=jobs, merge_gap=merge_gap)
+        print(f"    {result.rows:,} rows -> {result.parquet_path} in {result.seconds:.0f}s")
         for failure in result.failures:
             print(f"    FAILED {failure}")
+        if result.regions == 0:
+            print("    nothing left to ask for")
+            break
+        if result.rows == previous:
+            print("    a whole round added no rows — stopping rather than looping")
+            break
+        previous = result.rows
+    if result is None:
+        raise SystemExit(f"{card.key}: --rounds must be at least 1")
 
     manifest = provenance.envelope(f"zoo-table-{card.key}", built_by=Path(__file__).name)
     manifest["model"] = card.as_dict()
@@ -312,6 +331,14 @@ def build_parser() -> argparse.ArgumentParser:
         "--jobs", type=int, default=tabix_subset.DEFAULT_JOBS, help="parallel tabix workers"
     )
     parser.add_argument(
+        "--rounds",
+        type=int,
+        default=1,
+        help="with --subset-from: retry the remainder this many times. A long range-read "
+        "over HTTPS is dropped by the CDN often enough that one pass rarely finishes; "
+        "each round resumes from what the last one wrote.",
+    )
+    parser.add_argument(
         "--merge-gap",
         type=int,
         default=tabix_subset.DEFAULT_GAP,
@@ -340,6 +367,7 @@ def main(argv: list[str] | None = None) -> int:
             execute=args.execute,
             jobs=args.jobs,
             merge_gap=args.merge_gap,
+            rounds=args.rounds,
         )
     expected = card.params.get("bytes")
     if args.execute and isinstance(expected, int) and _free_disk(args.out) < expected * 3:
