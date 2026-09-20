@@ -69,6 +69,13 @@ for the four lanes this config selects did not, so nothing downstream re-ran. Cl
 `P4-5`** — supported at 0.90. `--from <stage>` now re-runs that stage onwards (restoring what
 came before); `--force` drops the markers.
 
+A third run through `--from render` (entry
+[139](methodology/139-the-render-stage-keeps-every-narrative-and-the-manifest-says-which.md))
+restored seven stages in 0.69 s and re-rendered the merged report **byte for byte**, both
+section-5 versions intact — the stage used to delete the LLM-synthesised one. The manifest now
+records the method the page realised (`fusion+synthesis` only when a synthesis is on it), and
+that value survives a resume through the render checkpoint.
+
 Limitations, stated by entry 135: a source the bundle cannot fingerprint is trusted until
 `--force`; the two fingerprints are coarse (a row count will not notice rows that changed without
 changing in number); `rank_per_model`'s restore re-derives its ranking arithmetic; the kill in
@@ -114,3 +121,5 @@ uv run pytest tests/test_zoo_resume.py -q                  # the kill test
 — the run, the manifest, the skipped genes, and the three faults.
 [`methodology/135`](methodology/135-a-resume-that-is-tested-by-killing-the-run.md)
 — the checkpoints, the kill test, and the two real-data runs that bracket them.
+[`methodology/139`](methodology/139-the-render-stage-keeps-every-narrative-and-the-manifest-says-which.md)
+— the render stage's two faults, and the run that proves the fix.
