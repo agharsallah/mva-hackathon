@@ -10,7 +10,14 @@ import duckdb
 import pytest
 
 from mva.zoo import rank
-from mva.zoo.pairs import Pair, pairs_from_alleles, pairs_from_fixture
+from mva.zoo.pairs import (
+    READ_ONLY_PHASE,
+    Pair,
+    pairs_from_alleles,
+    pairs_from_fixture,
+    read_only_pairs,
+)
+from mva.zoo.types import allele_id
 
 FIXTURES = "fixtures/it4"
 
@@ -203,6 +210,56 @@ def test_read_only_percentiles_cover_only_the_read_only_alleles():
     assert [row["allele_id"] for row in rows] == ["r1"]
     assert rows[0]["percentile"] == pytest.approx(50.0)
     assert rows[0]["n_scored"] == 2
+
+
+# ── pairing the alleles the VCF never had (opt-A row A7) ─────────────────────────────────
+
+
+def vcf_row(gene: str, pos: int) -> dict:
+    return {"chrom": "1", "pos": pos, "ref": "A", "alt": "T", "gene": gene}
+
+
+def read_only_record(gene: str, key: str) -> dict:
+    return {"allele_id": key, "gene": gene, "consequence": "missense", "is_read_only": True}
+
+
+def test_a_read_only_allele_is_paired_with_every_vcf_allele_of_its_gene():
+    calls = [vcf_row("G", 100), vcf_row("G", 200), vcf_row("H", 300)]
+    got = read_only_pairs([read_only_record("G", "r1")], calls)
+    assert {p.right_id for p in got} == {
+        allele_id("1", 100, "A", "T"),
+        allele_id("1", 200, "A", "T"),
+    }
+    assert {p.gene for p in got} == {"G"}
+
+
+def test_every_such_pair_says_it_has_no_genotype():
+    got = read_only_pairs([read_only_record("G", "r1")], [vcf_row("G", 100)])
+    assert [p.phase for p in got] == [READ_ONLY_PHASE]
+    assert READ_ONLY_PHASE != "unknown", "a missing genotype is not an unresolved one"
+    assert not any(p.is_confirmed for p in got)
+
+
+def test_a_gene_with_no_vcf_partner_proposes_nothing():
+    assert read_only_pairs([read_only_record("Z", "r1")], [vcf_row("G", 100)]) == []
+
+
+def test_a_record_that_is_its_own_partner_is_not_paired_with_itself():
+    key = allele_id("1", 100, "A", "T")
+    got = read_only_pairs([read_only_record("G", key)], [vcf_row("G", 100)])
+    assert got == []
+
+
+def test_the_same_n_squared_guard_applies():
+    calls = [vcf_row("G", 100 + i) for i in range(70)]
+    assert read_only_pairs([read_only_record("G", "r1")], calls, max_partners_per_gene=60) == []
+    assert (
+        len(read_only_pairs([read_only_record("G", "r1")], calls, max_partners_per_gene=80)) == 70
+    )
+
+
+def test_a_record_without_a_gene_is_skipped_not_guessed():
+    assert read_only_pairs([{"allele_id": "r1", "gene": None}], [vcf_row("G", 100)]) == []
 
 
 # ── the warehouse writer ─────────────────────────────────────────────────────────────────

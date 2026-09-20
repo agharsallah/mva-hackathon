@@ -14,13 +14,23 @@
 # one convention is "higher = more damaging", so the adapter negates it. The raw published
 # number is kept in `aux.llr` so nothing is lost.
 #
-# `batch = 8`: eight 129-residue windows per forward pass fit beside a 650M-parameter model
-# in 16 GiB. Raising it costs memory, not accuracy — each allele is scored independently.
+# `batch = 64` is **measured, not guessed**. Each allele is scored independently, so the batch
+# buys nothing but arithmetic efficiency — and on this CPU it buys a great deal:
+#
+#   | batch |  alleles/s | the whole missense set |
+#   |-------|-----------:|-----------------------:|
+#   |     8 |       0.56 |                 7.7 h  |
+#   |    32 |       1.70 |                 2.5 h  |
+#   |    64 |       2.19 |                 1.9 h  |
+#
+# (200, 192 and 256 real alleles respectively, 2026-09-20, entry 142.) Four times the work per
+# forward pass is four times fewer trips through a 650M-parameter model's fixed overhead. The
+# measurement is what moved this lane from "over the 6 h budget, run a subset" to "run it all".
 #
 # Licence MIT, read from the model repository, not from a search result.
 [models.esm2]
 enabled = true
-params = { entrypoint = "esm2", checkpoint = "facebook/esm2_t33_650M_UR50D", batch = 8, score_sign = -1, needs = [
+params = { entrypoint = "esm2", checkpoint = "facebook/esm2_t33_650M_UR50D", batch = 64, score_sign = -1, needs = [
   "protein_window_ref",
   "protein_window_alt",
 ] }

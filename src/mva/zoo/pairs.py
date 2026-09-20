@@ -28,11 +28,19 @@ __all__ = [
     "DEFAULT_PAIR_RULE",
     "MAX_CALLS_PER_GENE",
     "PAIR_RULES",
+    "READ_ONLY_PHASE",
     "Pair",
     "PairBuild",
     "pairs_from_alleles",
     "pairs_from_fixture",
+    "read_only_pairs",
 ]
+
+#: The phase label of a pair one of whose alleles was never in the VCF. It is **not**
+#: ``unknown``: ``unknown`` means the reads were consulted and could not say, while this
+#: means no genotype exists to consult. Keeping the two apart is what stops a hypothesis
+#: being read as a phased call.
+READ_ONLY_PHASE = "no-genotype"
 
 #: Which pair of a confirmed gene gets the flag, when the gene carries more than one.
 #:
@@ -266,3 +274,69 @@ def _as_int(value: Any) -> int | None:
 
 def _as_text(value: Any) -> str | None:
     return None if value is None or value == "" else str(value)
+
+
+# ---------------------------------------------------------------------------------------
+# The alleles the VCF never had (plan §7 opt-A row A7)
+# ---------------------------------------------------------------------------------------
+
+
+def read_only_pairs(
+    read_only: Iterable[Mapping[str, Any] | Any],
+    vcf_pairs_source: Iterable[Mapping[str, Any]],
+    *,
+    max_partners_per_gene: int = MAX_CALLS_PER_GENE,
+) -> list[Pair]:
+    """Pair each **read-only** allele with every VCF allele of the same gene.
+
+    *What a read-only allele is.* Iteration 2 found 1,199 alleles that the aligned reads
+    support but that no VCF record contains — the caller never emitted a row for them
+    (`ideation/data-findings.md`). They carry no genotype, so
+    :func:`mva.pipeline.compound_het.candidate_pairs` cannot touch them: it decides
+    heterozygosity and phase from ``GT``, and there is none.
+
+    *Why pair them anyway.* A compound heterozygote needs two broken copies of one gene. If
+    one of them is an allele the caller dropped, the VCF alone can never propose that pair —
+    the case would look like a single heterozygous carrier. This function proposes exactly
+    those pairs, and labels every one :data:`READ_ONLY_PHASE` so that no reader and no table
+    can mistake a hypothesis for a phased call.
+
+    *What it deliberately does not do.* It does not merge these into the ranked pair set. The
+    ranking's denominator is the VCF pairs, the confirmed pair's percentile is measured
+    against them, and quietly adding tens of thousands of unphased hypotheses would move
+    every percentile in the report without adding a single genotype. They are reported as
+    their own table.
+
+    ``max_partners_per_gene`` applies the same n² guard :func:`pairs_from_alleles` uses: a
+    gene with hundreds of calls is a mapping artefact.
+    """
+    from .types import allele_id
+
+    partners: dict[str, list[str]] = {}
+    for row in vcf_pairs_source:
+        gene = str(row.get("gene") or "")
+        if not gene:
+            continue
+        key = allele_id(str(row["chrom"]), int(row["pos"]), str(row["ref"]), str(row["alt"]))
+        partners.setdefault(gene, []).append(key)
+
+    out: list[Pair] = []
+    for record in read_only:
+        gene = str(_text(record, "gene") or "")
+        left = str(_text(record, "allele_id") or "")
+        if not gene or not left:
+            continue
+        same_gene = [key for key in dict.fromkeys(partners.get(gene, ())) if key != left]
+        if not same_gene or len(same_gene) > max_partners_per_gene:
+            continue
+        out.extend(
+            Pair(gene=gene, left_id=left, right_id=right, phase=READ_ONLY_PHASE)
+            for right in same_gene
+        )
+    return out
+
+
+def _text(record: Mapping[str, Any] | Any, name: str) -> Any:
+    if isinstance(record, Mapping):
+        return record.get(name)
+    return getattr(record, name, None)
