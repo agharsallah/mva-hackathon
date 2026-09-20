@@ -58,8 +58,9 @@ const grouped = (n: number): string => n.toLocaleString('en-US');
  *
  * The identifiers this page legitimately renders are stripped first rather than excluded by
  * a lookaround, because they are *long*: `PMID:42483440`, `NCT02644460`, a 64-hex checksum,
- * an OMIM number, a drug development code like `PF-02341066`. What is left is prose and table
- * cells, where a seven-digit run could only be a coordinate.
+ * an OMIM number, a drug development code like `PF-02341066`, an ontology term id like
+ * `HP:0002667` or `MONDO:0054736`. What is left is prose and table cells, where a seven-digit
+ * run could only be a coordinate.
  */
 const STANDALONE_LONG_NUMBER = /(?<![A-Za-z0-9])\d{7,}(?![A-Za-z0-9])/;
 
@@ -80,6 +81,12 @@ function withoutKnownIds(text: string): string {
       // The decoy card's `picked_by` quotes its seed as an SQL string literal
       // (`md5(symbol || '20260918')`): a YYYYMMDD date in quotes, never a position.
       .replace(/'\d{8}'/g, '')
+      // Ontology term ids. The transfer case's card carries its own clinical terms
+      // (`HP:0002667`, nephroblastoma) and disease id (`MONDO:0054736`), and HPO ids are
+      // zero-padded to seven digits, so every one of them trips the check. The ontology
+      // prefix is what makes them not a position — a bare seven-digit run with no prefix
+      // still fails this test, which is the property being guarded.
+      .replace(/\b(?:HP|MONDO|DOID|ORPHA|EFO|GO|CL|UBERON|CHEBI|MP):\d+/g, '')
   );
 }
 

@@ -53,6 +53,22 @@ function identifiers(card: TransferCard): string[] {
   ].filter(Boolean);
 }
 
+/**
+ * Wall seconds, grouped the way `int` groups counts (`1,693.7`).
+ *
+ * The grouping is not only cosmetic: the cost columns are adjacent right-aligned cells, and
+ * a bare `1693.7` beside them concatenates in `textContent` into a run of seven-plus digits,
+ * which the page's no-genomic-position test reads as a coordinate. Grouping keeps every
+ * rendered digit run short, so the guard stays a real guard.
+ */
+function seconds(value: string | number | null | undefined): string | null {
+  if (value === null || value === undefined || value === '') return null;
+  const n = Number(value);
+  return Number.isFinite(n)
+    ? n.toLocaleString('en-US', { maximumFractionDigits: 1 })
+    : String(value);
+}
+
 export function TransferCase({
   comparison,
   transfers,
@@ -87,7 +103,7 @@ export function TransferCase({
       )} shortlist rows and ${int(cost.do_not)} do-not rows, for ${int(
         cost.live_requests,
       )} live requests and ${int(cost.cached_replies)} cached replies in ${
-        cost.wall_seconds || '—'
+        seconds(cost.wall_seconds) ?? '—'
       } s. Its curated evidence rows are 0 by construction, so only the automated rungs (1, 4 and 5) may be compared — rungs 2 and 3 are read by a person and a demonstration case has nobody reading for it.`
     : 'No transfer case has been run.';
 
@@ -232,7 +248,7 @@ export function TransferCase({
               sortable: false,
               render: (r) => (
                 <span className="tabular-nums font-mono text-xs text-chrome-300">
-                  {r.wall_seconds || 'not run here'}
+                  {seconds(r.wall_seconds) ?? 'not run here'}
                 </span>
               ),
             },
