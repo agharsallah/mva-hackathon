@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-20T12:38:14",
+  "generated_at": "2026-09-20T12:49:19",
   "steps": [
     {
       "slug": "step-0",
@@ -2706,11 +2706,39 @@
       "refuted_by": "Fewer than 90 percent of missense records get a complete window pair",
       "gene": "BUB1B",
       "path": "zoo-record-windows",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.9,
+      "suggested_confidence": 0.9677,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 174,
+          "direction": "supports",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "15,592 of 15,620 missense records (99.821 percent) got a complete wild-type and mutant amino-acid window from hgvs_p plus the Ensembl protein sequence, with no identifier lookup beyond the ENSP accession the spelling already carries",
+          "source_ref": "docs/iteration4/step-1/methodology/141-a-window-for-every-substitution-the-spelling-actually-describes.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 175,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "Zero residue mismatches over 15,592 alleles: the reference residue hgvs_p spells equals the Ensembl sequence at that position every time, so no window was built on a disagreeing isoform",
+          "source_ref": "docs/iteration4/step-1/methodology/141-a-window-for-every-substitution-the-spelling-actually-describes.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 176,
+          "direction": "neutral",
+          "strength": 0.2,
+          "kind": "measurement",
+          "claim": "The 28 missense records with no window are all delins spellings that replace two or more residues, so a one-residue substitution model has nothing to score there",
+          "source_ref": "docs/iteration4/step-1/methodology/141-a-window-for-every-substitution-the-spelling-actually-describes.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H072",
