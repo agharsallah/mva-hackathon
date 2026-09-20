@@ -1,7 +1,9 @@
 # Step 7 — Track 2 enrichment
 
-**Standing:** **complete, 2026-09-20.** Eight claims filed before their tests, eight settled —
-**all eight supported** (H045–H050, H061, H065). The mechanism card is at **version 5**: the one row
+**Standing:** **complete, 2026-09-20.** Nine claims filed before their tests, nine settled —
+**eight supported** (H045–H050, H061, H065) and **one refuted** (H066, the portability transfer:
+four of its five limbs held, the anti-direction limb did not —
+[138](methodology/138-a-second-case-through-the-same-pipeline.md)). The mechanism card is at **version 5**: the one row
 step 7 was open for, the aneuploidy burden in the sample (fact **F8**), was measured by
 [step 8](../step-8/README.md) and added on 2026-09-19 ([120](methodology/120-the-card-at-version-4-and-the-second-submission-draft.md)),
 then rewritten on 2026-09-20 to carry step 8's **second instrument** — the k-mer dosage route, which
@@ -56,8 +58,9 @@ before any drug was looked up.
 | decoy control | D4 vs NTRK3 Jaccard **0.249**; every other direction < 0.10 against both decoys |
 | paediatric pointers | 290 of 329 drugs have a study admitting children; 208 a label section 8.4; all 11 argued rows have at least one |
 | literature per drug | 658 PubMed counts (drug AND mechanism / drug AND tumour); descriptive, never a rung |
+| portability control | a **whole second case** (TRIP13 / MVA3 — its own disease, HPO terms, nephroblastoma context and standard of care) through the unchanged pipeline: 28 targets · 1,329 candidate rows · 277 approved drugs · rung 5: **55**, rungs 4/3/2: **0** · shortlist **53** · do-not **3** · curated **0** · **2,077** live requests cold, 1,693.7 s (9.0 s warm) — [138](methodology/138-a-second-case-through-the-same-pipeline.md) |
 
-## Claims — all eight resolved
+## Claims — all nine resolved
 
 | Id | Verdict | Conf. | Claim |
 |---|---|---|---|
@@ -69,6 +72,7 @@ before any drug was looked up.
 | H050 | **supported** | 0.70 | every argued drug has a paediatric pointer |
 | H061 | **supported** | 0.85 | card v4 (F8 measured) moved no rung, no shortlist row, no do-not row — byte-identical digests |
 | H065 | **supported** | 0.90 | card v5 (F8 on a second instrument) moved nothing either — the same three digests, on the first re-grade |
+| H066 | **refuted** | 0.10 | the pipeline transfers to a whole second case unchanged **and** the A2 spindle-poison anti-direction again fills the do-not table. Filed as a conjunction: the first half held on every limb, the second did not (0 A2 rows against 13 on the real case), so the claim is refuted as written. The suggested 0.98 was rejected on the record — the heuristic sums rows and cannot see an AND |
 
 The register shows revisions 2 → 3 → 4 for these claims; [113](methodology/113-the-ladder-the-shortlist-and-the-do-not-table.md)
 records why (a verdict committed before its evidence landed, then corrected in the open).
@@ -136,6 +140,7 @@ flowchart LR
 | [114](methodology/114-the-dashboard-surface-for-step-7.md) | the `/track2` hero (approach · suggestion · output), the pathway diagram, the panel-judged folder on `/submissions` — every number computed from the payload | machinery |
 | [120](methodology/120-the-card-at-version-4-and-the-second-submission-draft.md) | card v4 from step 8's measured burden; the digest test; the reader fault it caught; the iteration-2 submission draft | **H061** |
 | [133](methodology/133-the-card-at-version-five-and-the-second-instrument.md) | card v5 from step 8's second instrument (the k-mer dosage route); the digest test re-run | **H065** |
+| [138](methodology/138-a-second-case-through-the-same-pipeline.md) | a whole second case (TRIP13 / MVA3) through the unchanged pipeline; the cross-case comparison table and figure; the A2 limb that failed and why | **H066** |
 
 ## How to reproduce it
 
@@ -144,8 +149,9 @@ uv run mva-drugs snapshot                                        # card v3 → r
 uv run python tools/track2_decoys.py --symbol NTRK3 --uniprot Q16288 --protein "NT-3 growth factor receptor (TrkC)" --pattern "NTRK|neurotrophin|Trk" --picked-by "seeded draw from results.it2_decoys"
 uv run python tools/track2_decoys.py --symbol XDH --uniprot P47989 --protein "xanthine dehydrogenase/oxidase" --pattern purine --picked-by "an unrelated, well-drugged metabolic enzyme"
 uv run python tools/track2_enrich.py                             # ladder, shortlist, do-not, decoy comparison
+uv run python tools/track2_transfer.py                           # a whole second case (TRIP13/MVA3) through the same code
 uv run python tools/render_track2_figures.py                     # figures/track2/
-uv run python tools/record_track2_lineage.py --dry-run           # 63 edges under target_schema track2
+uv run python tools/record_track2_lineage.py --dry-run           # 103 edges under target_schema track2 (63 real card, 40 transfer)
 uv run python tools/record_track2_lineage.py                     # appends the ones not already there
 uv run mva-science export                                        # the hypothesis mirror
 ```
@@ -163,6 +169,11 @@ uv run mva-science export                                        # the hypothesi
   argued as *more BubR1*, not as *refold this BubR1*.
 - **Anything about a drug the sources never listed** beyond what a person put in `evidence.tsv`
   — four of the eleven argued drugs are `curated_only`, and the row says so.
+- **Anything clinical about the transfer case.** TRIP13 / MVA3 is a portability demonstration for
+  the *code*, not a finding for any person: no allele is asserted, there is no `evidence.tsv`, so
+  rungs 2 and 3 cannot exist for it, and only the automated rungs (1, 4, 5) are comparable. Its
+  cost figure is the **cold** pass (2,077 requests, 1,693.7 s); the real case's 85 requests are a
+  warm re-run and are not the comparable number ([138](methodology/138-a-second-case-through-the-same-pipeline.md)).
 
 ## Exhibits
 
@@ -171,14 +182,16 @@ flow, the eleven argued drugs as cards grouped by direction with the red caution
 output funnel with links to every artefact — followed by the pathway diagram from the alleles to
 each intervention point ([114](methodology/114-the-dashboard-surface-for-step-7.md)). The
 static figures are `figures/track2/`: `evidence-ladder`, `rung-funnel`,
-`decoy-overlap`, `pediatric-evidence`, `mechanism-literature`; the interactive page is
-`figures/track2-report.html`.
+`decoy-overlap`, `pediatric-evidence`, `mechanism-literature`, `transfer-scalability` (the
+cross-case comparison, blue = the proband's case, purple = the transfer case); the interactive
+page is `figures/track2-report.html`. The transfer case has its own dashboard panel,
+`app/src/pages/track2/TransferCase.tsx`.
 
 ## The record
 
 | | |
 |---|---|
-| Hypotheses | [`hypotheses/`](hypotheses/README.md) — H045–H050, H061, H065, written by `mva-science export` |
-| Tests run | [`methodology/`](methodology/README.md) — entries 110–114, 120 and 133 |
-| Tables | `ressources/track2/` — 12 TSVs, one provenance manifest each; decoys under `decoys/` |
-| Lineage | `warehouse.data_lineage`, `target_schema = track2` — 63 edges per card revision, 104 in the append-only ledger after card v5 |
+| Hypotheses | [`hypotheses/`](hypotheses/README.md) — H045–H050, H061, H065, H066, written by `mva-science export` |
+| Tests run | [`methodology/`](methodology/README.md) — entries 110–114, 120, 133 and 138 |
+| Tables | `ressources/track2/` — 12 TSVs, one provenance manifest each; decoys under `decoys/`, the transfer case under `transfer/TRIP13/` (8 TSVs + manifests, `mechanism.json`, `transfer_spec.json`) and `transfer_comparison.tsv` at the root |
+| Lineage | `warehouse.data_lineage`, `target_schema = track2` — 63 edges for the real card plus **40** for the transfer case (recorded as `transfer.TRIP13.<table>`, and carrying no `submission` edge) |

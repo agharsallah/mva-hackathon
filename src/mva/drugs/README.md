@@ -113,6 +113,16 @@ records in its own `transfer` block that it did and why. Everything else is buil
 committed spec. Exactly one direction may carry `context: true` (the tumour direction);
 anything else raises, because that flag is the only route to the automated rungs 4 and 5.
 
+**What the first transfer run measured** (TRIP13 / MVA3, entry
+[138](../../../docs/iteration2/step-7/methodology/138-a-second-case-through-the-same-pipeline.md)):
+the pipeline ran unchanged and the directions came out the same shape — every D1 row at rung 1,
+no D1 row in the shortlist, only the context direction above rung 1 — but the **anti-directions
+did not fire**. That is a reusability gotcha, not a one-off: an anti-direction is matched by
+`moa_pattern` against each drug's `action_type` + `interaction_or_moa`, and that text arrives with
+the ChEMBL rows that *pathway expansion* pulls in. Reactome matched no pathway for TRIP13, so the
+candidate set was seed-only and the spindle poisons in it were never flagged. **Before trusting a
+new case's do-not table, check that `pathways.tsv` is not header-only.**
+
 ## Gotchas
 
 - **Open Targets moved.** `Target.knownDrugs` no longer exists; the field is

@@ -119,7 +119,7 @@ ITERATION2: tuple[Step, ...] = (
             "what does the drug evidence say for each direction?"
         ),
         # Done: nine claims (H045-H050, H061, H065, H066) carry committed verdicts
-        # (methodology 110-114, 120, 133, 134). The card is at version 5 with step 8's
+        # (methodology 110-114, 120, 133, 138). The card is at version 5 with step 8's
         # measured burden on it on two instruments, and the pre-registered digest test
         # showed that fact moved no rung. H066 is the one refutation: the pipeline does
         # transfer to a second case unchanged, but the anti-direction half of the claim
