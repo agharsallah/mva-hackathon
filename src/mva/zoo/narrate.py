@@ -80,18 +80,21 @@ class Narrative:
         total = self.cited_sentences + self.uncited_sentences
         return 1.0 if not total else self.uncited_sentences / total
 
-    def marker(self) -> str:
+    def marker(self, kind: str = "interpretation") -> str:
         """The HTML comment that labels the slot in the rendered report.
 
         A reader (and a re-render) can tell at a glance which of the two paths wrote the
-        section, in which mode, and by which model — the badge the plan asks for.
+        section, in which mode, and by which model — the badge the plan asks for. ``kind`` is
+        the slot's name: ``interpretation`` in a per-model report, ``narrative`` in the merged
+        one, which is the marker every reader and every re-render of that file looks for.
         """
         day = (self.created_at or datetime.now(UTC).isoformat())[:10]
+        written = "synthesised" if kind == "narrative" else "generated"
         if self.mode == "hand":
-            return f"<!-- interpretation: hand-written {day} | llm:none -->"
+            return f"<!-- {kind}: hand-written {day} | llm:none -->"
         model_id = self.llm_model_id or "unrecorded"
         return (
-            f"<!-- interpretation: generated {day} | llm:{self.mode} | model:{model_id} "
+            f"<!-- {kind}: {written} {day} | llm:{self.mode} | model:{model_id} "
             f"| cited {self.cited_sentences}/{self.cited_sentences + self.uncited_sentences} -->"
         )
 
@@ -192,14 +195,15 @@ def hand_written(
     )
 
 
-def interpretation_block(narrative: Narrative) -> dict[str, Any]:
+def interpretation_block(narrative: Narrative, kind: str = "interpretation") -> dict[str, Any]:
     """The ``sections.interpretation`` block a report renders from this narrative.
 
     The same shape :func:`mva.zoo.report.model_report_json` builds by hand, so the renderer
-    does not know — and must not know — which path produced the words.
+    does not know — and must not know — which path produced the words. ``kind`` names the slot
+    (``narrative`` for the merged report), which is what its marker has to say.
     """
     return {
-        "marker": narrative.marker(),
+        "marker": narrative.marker(kind),
         "text": narrative.text,
         "llm_mode": narrative.mode,
         "llm_model_id": narrative.llm_model_id,
@@ -329,8 +333,8 @@ def _versions(
     from .report_sections import existing_interpretations
 
     stored = dict(payload.get("sections", {}).get("interpretation") or {})
-    prior: list[Mapping[str, Any]] = (
-        [stored, *(stored.get("alternatives") or [])]
+    prior: list[dict[str, Any]] = (
+        [stored, *(dict(other) for other in stored.get("alternatives") or [])]
         if stored.get("text")
         # A chain re-run rewrites the JSON with an empty slot, so the rendered file is the
         # only surviving copy. Read *every* version out of it, not only the hand-written

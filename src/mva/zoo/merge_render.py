@@ -14,16 +14,60 @@ paragraph and nothing else.
 
 from __future__ import annotations
 
+import re
 from collections.abc import Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 from .report_sections import SIDE_BY_SIDE_NOTE
 
-__all__ = ["NARRATIVE_MARKER", "render_merged"]
+__all__ = ["NARRATIVE_MARKER", "existing_narratives", "render_merged"]
 
 #: Every version of section 5 opens with this. `fusion` writes ``hand-written <date>``;
 #: `fusion+synthesis` writes ``synthesised <date> | llm:<mode> | model:<id> | cited n/m``.
 NARRATIVE_MARKER = "<!-- narrative:"
+
+
+def existing_narratives(path: str | Path) -> list[dict[str, Any]]:
+    """**Every** version of section 5 in a rendered merged report, as narrative blocks.
+
+    The same round trip :func:`mva.zoo.report_sections.existing_interpretations` does for
+    section 6 of a per-model report, and for the same reason: a re-render that restores only
+    the hand-written version deletes the synthesised one. Each block is rebuilt from its own
+    marker, so the rendered file is a complete record without the merged JSON.
+    """
+    file = Path(path)
+    if not file.is_file():
+        return []
+    text = file.read_text(encoding="utf-8")
+    section = text.split("## 5. What this means", 1)[-1].split("\n## ", 1)[0]
+    blocks: list[dict[str, Any]] = []
+    for piece in section.split(NARRATIVE_MARKER)[1:]:
+        head, _, tail = piece.partition("-->")
+        marker = f"{NARRATIVE_MARKER}{head}-->"
+        for stop in ("\n### ", NARRATIVE_MARKER):
+            tail = tail.split(stop, 1)[0]
+        body = tail.strip()
+        if not body or body.startswith("_("):
+            continue
+        mode_match = re.search(r"llm:([^\s|]+)", marker)
+        model_match = re.search(r"model:([^|]+?)\s*(?:\||-->)", marker)
+        cited_match = re.search(r"cited (\d+)/(\d+)", marker)
+        cited = int(cited_match.group(1)) if cited_match else 0
+        total = int(cited_match.group(2)) if cited_match else 0
+        blocks.append(
+            {
+                "marker": marker,
+                "text": body,
+                "llm_mode": "hand"
+                if "hand-written" in marker
+                else (mode_match.group(1) if mode_match else "none"),
+                "llm_model_id": model_match.group(1).strip() if model_match else "",
+                "cited_sentences": cited,
+                "uncited_sentences": max(total - cited, 0),
+            }
+        )
+    return blocks
 
 
 def render_merged(

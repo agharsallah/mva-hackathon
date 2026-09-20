@@ -147,7 +147,7 @@ def _narrate_merged(args: argparse.Namespace, case: Any, settings: Any, json_dir
     and all — the same rule section 6 of every per-model report follows.
     """
     from . import narrate as narrate_module
-    from .merge_render import NARRATIVE_MARKER, render_merged
+    from .merge_render import existing_narratives, render_merged
     from .narrate_rows import build_merge_prompt, merged_rows
 
     merged_path = case.out_dir / "merged.json"
@@ -161,10 +161,13 @@ def _narrate_merged(args: argparse.Namespace, case: Any, settings: Any, json_dir
         print(build_merge_prompt(rows, max_words=settings.max_words))
         return 0
     item = narrate_module.narrate_merged(merged, readings, settings=settings)
-    kept = _existing_narrative(case.merged_path, NARRATIVE_MARKER)
-    versions = [narrate_module.interpretation_block(item)] if item is not None else []
-    if kept:
-        versions.append({"marker": kept[0], "text": kept[1], "llm_mode": "hand"})
+    mode = item.mode if item is not None else ""
+    versions = [narrate_module.interpretation_block(item, "narrative")] if item is not None else []
+    # Every version already on the page is kept under the new one, minus an earlier run of
+    # the same mode — the rule section 6 of each lane's report follows.
+    versions += [
+        block for block in existing_narratives(case.merged_path) if block.get("llm_mode") != mode
+    ]
     if not versions:
         raise RuntimeError("nothing to write: mode is 'none' and report.md holds no narrative")
     case.merged_path.parent.mkdir(parents=True, exist_ok=True)
@@ -189,20 +192,3 @@ def _lane_readings(json_dir: Path) -> dict[str, str]:
         if text:
             out[str(payload.get("model") or path.stem)] = text
     return out
-
-
-def _existing_narrative(path: Path, marker: str) -> tuple[str, str] | None:
-    """The marker and prose of the narrative already in a rendered merged report."""
-    if not path.is_file():
-        return None
-    text = path.read_text(encoding="utf-8")
-    start = text.find(marker)
-    if start < 0:
-        return None
-    head, _, tail = text[start:].partition("-->")
-    for stop in ("\n## ", "\n### ", marker):
-        tail = tail.split(stop, 1)[0]
-    body = tail.strip()
-    if not body or body.startswith("_("):
-        return None
-    return f"{head}-->", body
