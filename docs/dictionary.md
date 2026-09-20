@@ -1732,6 +1732,10 @@ flowchart TB
 
 **Scalability** — your method would work on the next undiagnosed child too, not just this one.
 
+**Judging rubric (Track 2)** — the four weighted questions an expert panel of researchers, clinicians and patient advocates scores the drug-repurposing submission against. There is no automatic scorer and no leaderboard: **Scientific Rigor 35 %** (is the variant mechanism characterisation sound, and is each proposed drug well supported by that mechanism?), **Potential Impact 25 %** (if independently validated, how much would this add to understanding or diagnosing the disease, for this child or for others?), **Innovation 25 %** (a genuinely creative angle, method or tool), **Scalability 15 %** (would it work on other individuals, diseases or larger datasets?). A report that answers only the first leaves 65 % of the score unaddressed, which is why each criterion owns named sections in the submission.
+*Example:* `submissions/track2/iteration-2/report.md` §1 maps each criterion to the sections that answer it, the executed evidence behind it, and the weakest point known about it.
+*Context: the criteria drive the section layout of both Track 2 submission folders · source: ressources/hackathon-rules/raw_hackathon.txt, ideation/hackathon-intel.md · related: Scalability, Reproducible, Evidence ladder, Transfer mechanism card, Decoy mechanism card · first seen 2026-09-20*
+
 ---
 
 ## 14. Drug repurposing — words for Track 2
@@ -2584,7 +2588,7 @@ how much, and what a control for the whole search looks like.
 
 **Transfer mechanism card** — the same pipeline, a *different case*. Where a decoy keeps the child and swaps the gene, a transfer card swaps everything case-shaped: another disease with its own OMIM and MONDO identifiers, its own HPO terms read out of the public annotation file rather than typed, its own tumour context and its own standard-of-care list. It carries **no alleles** and no hand-read `evidence.tsv`, so only the automated rungs (1, 4, 5) exist for it. What it measures is **portability** — that the code is case-agnostic in fact, not only in claim — not whether the second case's drug list is any good. The template's case-agnostic blocks (the anti-directions, the evidence ladder, the constraints) are copied and the card says which and why.
 *Example:* `ressources/track2/transfer/TRIP13/mechanism.json` — TRIP13 / mosaic variegated aneuploidy syndrome 3 (OMIM:617598, MONDO:0054736), tumour context nephroblastoma, 19 HPO terms read from `phenotype.hpoa`.
-*Context: the Scalability criterion; the comparison is `ressources/track2/transfer_comparison.tsv` · source: src/mva/drugs/transfer.py, docs/iteration2/step-7/methodology/134-the-pipeline-on-a-second-case.md · related: Decoy mechanism card, Automated versus curated rung, HPO (Human Phenotype Ontology), Evidence ladder · first seen 2026-09-20*
+*Context: the Scalability criterion; the comparison is `ressources/track2/transfer_comparison.tsv` · source: src/mva/drugs/transfer.py, docs/iteration2/step-7/methodology/138-a-second-case-through-the-same-pipeline.md · related: Decoy mechanism card, Automated versus curated rung, HPO (Human Phenotype Ontology), Evidence ladder · first seen 2026-09-20*
 
 **phenotype.hpoa (HPO disease annotation)** — the Human Phenotype Ontology's own table of *which symptoms each rare disease shows*: one row per (disease, HPO term), with the frequency observed and the paper it came from. A `#version:` line at the top names the release, and a row whose `qualifier` column is `NOT` states the disease does **not** show that feature — such a row must never become a search term. It is the file a second case's clinical terms are read from, so nobody has to type them.
 *Example:* 19 rows for `OMIM:617598`, including `HP:0002667` (nephroblastoma) at frequency 6/6; release `2026-09-02`.

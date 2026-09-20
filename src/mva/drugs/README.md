@@ -143,7 +143,7 @@ new case's do-not table, check that `pathways.tsv` is not header-only.**
   BUB1B card every spindle-poison flag comes from tubulin genes the *Reactome expansion*
   added; a case Reactome does not curate (TRIP13 has no pathway at all) gets no pathway
   targets, so its do-not table is silent about the same class. Measured in
-  [`docs/iteration2/step-7/methodology/134`](../../../docs/iteration2/step-7/methodology/134-the-pipeline-on-a-second-case.md).
+  [`docs/iteration2/step-7/methodology/138`](../../../docs/iteration2/step-7/methodology/138-a-second-case-through-the-same-pipeline.md).
 - **`fda_label` empty is not `false`.** Empty means *not checked* — only approved rows are
   label-checked, because it is one request per drug.
 - **`approved` is a disjunction, not a consensus.** ChEMBL phase 4 *or* an Open Targets

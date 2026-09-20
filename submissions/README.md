@@ -8,8 +8,8 @@ index and the how-to.
 |---|---|---|---|
 | Track 1 | 1 | **uploaded 2026-09-09, frozen** — reply *full match at rank 1: stop+missense* (100 rank points, F-max 1.0); 1 of 6 spent | [`track1/iteration-1/`](track1/iteration-1/README.md) |
 | Track 1 | 2 | **built, rehearsed on two scorers — not uploaded, held in reserve**: the blind replication report; a second upload gains 0.000 bits (H044), so 5 of 6 remain | [`track1/iteration-2/`](track1/iteration-2/README.md) · [`docs/iteration2/`](../docs/iteration2/README.md) |
-| Track 2 | 1 | draft, **superseded** by iteration 2 — never uploaded; kept for provenance (card v3, F8 unmeasured) | [`track2/iteration-1/`](track2/iteration-1/README.md) |
-| Track 2 | 2 | **draft** — the curated report from all eight iteration-2 steps and card v4 (F8 measured by step 8); one submission only, due ~2026-10-20, not uploaded | [`track2/iteration-2/`](track2/iteration-2/README.md) · [`docs/iteration2/step-7/`](../docs/iteration2/step-7/README.md) · dashboard `/track2` |
+| Track 2 | 1 | draft, **superseded** by iteration 2 — never uploaded; kept for provenance (card v3, F8 unmeasured). Restructured 2026-09-20 to the panel's four judged criteria, facts unchanged | [`track2/iteration-1/`](track2/iteration-1/README.md) |
+| Track 2 | 2 | **draft** — the curated report from all eight iteration-2 steps and card **v5** (F8 measured by step 8's two instruments); written to the panel's four judged criteria, with the second-case transfer run as its scalability evidence; one submission only, due ~2026-10-20, not uploaded | [`track2/iteration-2/`](track2/iteration-2/README.md) · [`docs/iteration2/step-7/`](../docs/iteration2/step-7/README.md) · dashboard `/track2` |
 
 ## What an iteration folder holds
 
