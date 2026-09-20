@@ -1,6 +1,7 @@
 # Project Instructions
 
 ## Goal
+
 - We are competing in the MVA Hackathon 2026: identify the causal compound-heterozygous variant
   pair for one child with Mosaic Variegated Aneuploidy (Track 1) and propose drug repurposing
   candidates (Track 2). The full intelligence brief — challenge rules, scorer mechanics,
@@ -17,8 +18,13 @@
   report-ready material (figures, diagrams, tables, worked examples) as it runs, not as an
   afterthought. Qualitative review of the report and repo is the tiebreaker — treat report
   quality as a first-class output, following the Visualizations rules below.
+- Write for reusability and abstraction to fit to other new data.
+- Always have good data traceability, lineage and cataloging and metadata.
+- Do not make changes only for the timestamps. Ignore the timestamps.
+-
 
 ## Solving phase (opened 2026-09-04)
+
 - Step 0 (the platform) is **closed** at methodology entry 068. Read, in order:
   [`docs/toolset.md`](docs/toolset.md) → [`docs/roadmap.md`](docs/roadmap.md) →
   [`ideation/data-findings.md` §6](ideation/data-findings.md) → the README of the step you work.
@@ -40,6 +46,7 @@
   oracle tactics. Every step produces its report artifact as it runs.
 
 ## Submissions — one iteration, one folder
+
 - Every upload-ready iteration lives in `submissions/<track>/iteration-<n>/`: the report
   (`report.md` + the rendered `<user>_<track>_report.pdf`), the filled methods form
   (`methods-form.json` → `<user>_<track>_methods_form.xlsx`), the coordinate-free decode
@@ -69,6 +76,7 @@
   `tools/fill_methods_form.py` (xlsx). Track 2 follows the same layout.
 
 ## Two data sources, one lineage (standing directive, 2026-09-05)
+
 - The case has **two inputs**: the 85 GB raw dataset (VCF + FASTQ, `ideation/data-findings.md`)
   and the **clinical dataset** — the proband's 8 HPO terms
   (`ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md`). Every analysis, derived
@@ -85,6 +93,7 @@
   next to its result, with the parameters and versions needed to reproduce it.
 
 ## The dashboard is the single source of truth
+
 - The React app (`app/`) is cumulative: it shows raw-data findings, the clinical terms, derived
   tables, the research record, **every submission iteration** (deliverables, decode table,
   coordinate-free selectors, which steps and methodology entries contributed, figures), a
@@ -96,9 +105,11 @@
   `tools/gen-dictionary.mjs`; an update to the dictionary is an update to the dashboard.
 
 ## Python
+
 - Use `uv` for all Python work: `uv run`, `uv add`, `uv sync`. Do not use `pip`, `python -m venv`, or bare `python`.
 
 ## Code structure
+
 - No script or module longer than 400 lines (600 for a test module). When a file approaches
   that limit, split it into domain-driven modules (one bounded concern per module) instead of
   growing the file. Enforced: `uv run python tools/check_module_size.py`.
@@ -108,19 +119,25 @@
   Enforced: `uv run lint-imports`.
 
 ## Quality gates
-Before pushing Python, run `tools/check-python.sh` (add `--fix` to format and autofix first).
-It runs the eight gates CI runs: ruff format, ruff lint, module size, import layering, mypy,
-the coordinate gate (`tools/check_coordinates.py` — no patient position in any tracked file;
-synthetic examples go in `tools/coordinate_allowlist.txt` with a reason), the iteration-folder
-gate (`tools/check_iteration.py` — every `submissions/*/iteration-*` honours its declared
-state), pytest. Why each rule is set where it is — and what to do when one fails — is owned by
-[`docs/notes/python-quality-gates.md`](docs/notes/python-quality-gates.md). Two standing rules:
+
+- Do not run slow and expensive checks locally.
+- Do not write slow tests.
+- Write only robust tests that are meaningful and necessary.
+  Before pushing Python, run `tools/check-python.sh` (add `--fix` to format and autofix first).
+  It runs the eight gates CI runs: ruff format, ruff lint, module size, import layering, mypy,
+  the coordinate gate (`tools/check_coordinates.py` — no patient position in any tracked file;
+  synthetic examples go in `tools/coordinate_allowlist.txt` with a reason), the iteration-folder
+  gate (`tools/check_iteration.py` — every `submissions/*/iteration-*` honours its declared
+  state), pytest. Why each rule is set where it is — and what to do when one fails — is owned by
+  [`docs/notes/python-quality-gates.md`](docs/notes/python-quality-gates.md). Two standing rules:
+
 - A gate that is wrong for a change gets fixed, and the reason recorded in that note. Never
   `--no-verify`, never a bare `# noqa` — a suppression states its reason inline.
 - mypy's per-package strict list in `pyproject.toml` is a ratchet: packages come off the
   permissive list as they are annotated, never back onto it.
 
 ## Documentation rules
+
 - One doc index: `docs/README.md`. The root `README.md` is the front door (what this is, data
   perimeter, quickstart) and links to the index; it never duplicates it.
 - Docs are grouped by roadmap step. `docs/step-0/` is the built platform (delivery, object
@@ -134,7 +151,7 @@ state), pytest. Why each rule is set where it is — and what to do when one fai
   lives in the `methodology/` entry that produced it (`docs/step-0/` or `docs/<iteration>/step-<n>/`).
 - One decision, one note: design decisions live in `docs/notes/` when they govern every step, or
   in the step's own `notes/` folder when they belong to one step — one file each, with a
-  `**Standing:**` line saying whether it still holds. Other docs state the *result* in one
+  `**Standing:**` line saying whether it still holds. Other docs state the _result_ in one
   sentence and link the note; they never re-argue it.
 - Every doc outside `methodology/` and `archive/` carries a `Standing:` or `Verified:` line near
   the top with the date it was last checked against reality. A doc describing system state that
@@ -147,10 +164,12 @@ state), pytest. Why each rule is set where it is — and what to do when one fai
   do not start a parallel document.
 
 ## Results integrity
+
 - Never invent or assume a result. Every number, finding, or conclusion must come from an actual
   executed run whose output is visible. If something was not run, say so explicitly.
 
 ## Methodology tracking
+
 - Track the methodology and how each result was reached in the `methodology/` folder of the step
   it belongs to — `docs/step-0/methodology/` for the platform,
   `docs/<iteration>/step-<n>/methodology/` after.
@@ -159,12 +178,14 @@ state), pytest. Why each rule is set where it is — and what to do when one fai
   someone else to reproduce it.
 
 ## The scientific record
+
 The method is owned by [`docs/method.md`](docs/method.md). Read it before recording a finding.
+
 - Every research step declares **one goal**, declared in `src/mva/science/steps.py`. Step 0 is
   platform machinery and takes no hypotheses; its reasoning is decisions, not claims.
 - From step 1 on, a methodology entry **is a test bound to a hypothesis**, and adds three sections
   the step-0 entries lack: `## Hypothesis and prediction` and `## What would refute it`, both
-  written *before* the run, and `## Verdict` after it.
+  written _before_ the run, and `## Verdict` after it.
 - A claim goes in the register before it is tested: `mva-science hypothesis-add` requires a
   prediction and a refutation condition, and refuses a claim without them.
 - Every observation is an evidence row naming its source — a methodology entry, a table, a PMID,
@@ -177,18 +198,20 @@ The method is owned by [`docs/method.md`](docs/method.md). Read it before record
 - Both register tables are append-only. A changed belief is a new revision, never an edit.
 
 ## Writing style
+
 - Write the minimum text that still lands every main point. Cut filler, restatement, and hedging;
   never cut a point, a caveat, or a technical term. Compact must not become unclear or incomplete.
 - Prefer lists, tables, and short sentences over prose. One idea per line.
 - Applies everywhere: chat replies, commit messages, docs, `methodology/` entries, code comments.
 
 ## Audience: explain for a software engineer, not a bioinformatician
+
 - The user's background is software engineering. Assume **no** prior knowledge of bioinformatics,
   genetics, or clinical genomics. Never assume a domain term is understood.
 - Explain domain concepts in software-engineering terms where an honest analogy exists (e.g. a VCF
   as a row-oriented record format, a reference genome as a coordinate system, a pipeline stage as a
   pure function over records). Flag when an analogy breaks down instead of stretching it.
-- Always give **both**: the plain-language explanation *and* the correct technical term. The user
+- Always give **both**: the plain-language explanation _and_ the correct technical term. The user
   needs to recognise the real word when it appears in a tool flag, a file header, a paper, or a
   conversation with a domain expert — so never silently substitute a simplification for it.
   Pattern: `technical term (plain-English meaning)` on first use, then use the technical term.
@@ -196,6 +219,7 @@ The method is owned by [`docs/method.md`](docs/method.md). Read it before record
   parent)". Do not strip the jargon out; teach it.
 
 ### Dictionary
+
 - The one dictionary is [`docs/dictionary.md`](docs/dictionary.md). Do **not** create a second
   glossary file anywhere. Enrich this one.
 - It is written for a beginner and ordered so each entry only uses words already defined above it.
@@ -212,11 +236,12 @@ The method is owned by [`docs/method.md`](docs/method.md). Read it before record
   duplicate.
 - Diagram assets for the dictionary live in `docs/assets/` and are referenced relatively as
   `assets/<name>.svg`. Each diagram is followed by a `> **Legend**` line decoding its colours.
-- `CONTEXT.md` is a different thing and stays separate: it is the *naming discipline* for code and
+- `CONTEXT.md` is a different thing and stays separate: it is the _naming discipline_ for code and
   write-ups (one chosen word per idea, plus an _Avoid_ list). The dictionary teaches concepts;
   `CONTEXT.md` fixes vocabulary. When a term belongs in both, keep them consistent.
 
 ### Visualizations
+
 - Default to showing, not just telling. For any pipeline, data flow, file format, coordinate scheme,
   filtering funnel, or result set, include a visualization.
 - Choose the lightest medium that carries the meaning: a Mermaid block inline for structure and flow,
