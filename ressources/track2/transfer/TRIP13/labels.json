@@ -1,0 +1,1062 @@
+{
+ "ABEMACICLIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ABICIPAR PEGOL": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "ABIRATERONE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ACADESINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "ACALABRUTINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ACETAMINOPHEN": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "ACETYLCYSTEINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ACITRETIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ADALIMUMAB": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "ADENOSINE TRIPHOSPHATE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "AFLIBERCEPT": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "ALBUTEROL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ALECTINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ALEMTUZUMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ALPELISIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "AMIODARONE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "AMLEXANOX": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "AMOXAPINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "AMSACRINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "ANASTROZOLE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ANISINDIONE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "APOMORPHINE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "ASTEMIZOLE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "AXITINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "AZACITIDINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "AZATHIOPRINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "BELUMOSUDIL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "BENDAMUSTINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "BENZBROMARONE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "BETAMETHASONE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "BEVACIZUMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "BEVACIZUMAB GAMMA": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "BIFONAZOLE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "BITHIONOL": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "BORTEZOMIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "BRIGATINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "BROLUCIZUMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "BROXYQUINOLINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "BUPIVACAINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "BUTOCONAZOLE NITRATE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CABAZITAXEL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CABOZANTINIB S-MALATE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "CAMPTOTHECIN": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "CAPECITABINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CAPIVASERTIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CARBOPLATIN": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "CARFILZOMIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CEFACLOR": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CELECOXIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CERITINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CETUXIMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CHLORAMBUCIL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CHLOROXINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "CHLORPROMAZINE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "CILOSTAZOL": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "CINNARIZINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "CISPLATIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CLADRIBINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CLEMASTINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CLIOQUINOL": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "CLOFIBRATE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "CLOMIPRAMINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CLOTRIMAZOLE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "CLOZAPINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "COPANLISIB": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "CRIZOTINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CYCLOPHOSPHAMIDE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CYCLOSPORINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "CYTARABINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "DABRAFENIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "DASATINIB": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "DAUNORUBICIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "DECITABINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "DEFEROXAMINE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "DEQUALINIUM": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "DEXAMETHASONE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "DIETHYLSTILBESTROL": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "DIMETHYL SULFOXIDE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "DIPYRIDAMOLE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "DISULFIRAM": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "DITHIAZANINE IODIDE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "DOCETAXEL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "DOPAMINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "DORDAVIPRONE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "DOXAZOSIN": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "DOXORUBICIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "DUVELISIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "EBASTINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "ECONAZOLE NITRATE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ENALAPRIL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ENCORAFENIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ENTRECTINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ENZALUTAMIDE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "EPINEPHRINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "EPIRUBICIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ERLOTINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ERYTHROMYCIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ETHOPROPAZINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "ETOPOSIDE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "EVEROLIMUS": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "EXEMESTANE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "FARICIMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "FENOFIBRATE MICRONIZED": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "FENRETINIDE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "FLUCONAZOLE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "FLUORESCEIN": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "FLUOROURACIL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "FLUOXETINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "FLUPHENAZINE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "FULVESTRANT": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "FURAZOLIDONE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "GEFITINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "GEMCITABINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "GENISTEIN": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "GENTAMICIN": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "GLASDEGIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "GLUTAMINE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "GRANISETRON": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "HALOFANTRINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "HALOPERIDOL DECANOATE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "HEXACHLOROPHENE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "HYDRALAZINE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "HYDROXYZINE PAMOATE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "IBRUTINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "IDARUBICIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "IDELALISIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "IFOSFAMIDE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "IMATINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "INAMRINONE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "INDOPROFEN": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "INFIGRATINIB": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "INOSITOL": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "INTERFERON ALFA-2B": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "IODOQUINOL": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "IPILIMUMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "IRINOTECAN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ISOPROTERENOL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ITRACONAZOLE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "IXAZOMIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "LANSOPRAZOLE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "LAPATINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "LENALIDOMIDE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "LETROZOLE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "LEVOKETOCONAZOLE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "LEVONORGESTREL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "LEVOTHYROXINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "LOPERAMIDE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "LORLATINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "MAPROTILINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "MASOPROCOL": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "MECASERMIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "MECASERMIN RINFABATE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "MECHLORETHAMINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "MEDROXYPROGESTERONE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "MELPHALAN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "MERCAPTOPURINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "METFORMIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "METHIMAZOLE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "METHOTREXATE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "METHYLENE BLUE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "METHYLPREDNISOLONE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "MICONAZOLE NITRATE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "MIFEPRISTONE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "MIRDAMETINIB": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "MITOMYCIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "MITOXANTRONE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "NICARDIPINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "NICLOSAMIDE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "NIROGACESTAT": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "NITAZOXANIDE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "NIVOLUMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "NORTRIPTYLINE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "O-PHENANTHROLINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "OBINUTUZUMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "OLANZAPINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "OLAPARIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "OLEIC ACID": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "OMEPRAZOLE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "OSIMERTINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "OXALIPLATIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "OXYTETRACYCLINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "PACLITAXEL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PALBOCICLIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PANITUMUMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PAROXETINE HYDROCHLORIDE, HEMIHYDRATE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PAZOPANIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PEGAPTANIB": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "PEMBROLIZUMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PEMETREXED DISODIUM": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PENTAMIDINE ISETHIONATE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PENTOSAN POLYSULPHATE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "PENTOSTATIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PERHEXILINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "PERPHENAZINE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "PHENFORMIN": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "PHENYTOIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PIMECROLIMUS": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PIMOZIDE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PIRTOBRUTINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PODOFILOX": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PRAMLINTIDE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PROCHLORPERAZINE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "PROCHLORPERAZINE EDISYLATE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "PROPAFENONE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "PROPYLTHIOURACIL": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "PYRITHIONE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "PYRITHIONE ZINC": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "QUERCETIN": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "RALOXIFENE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "RANIBIZUMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "RESVERATROL": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "RIBAVIRIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "RIDAFOROLIMUS": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "RITUXIMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "RUXOLITINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "SALMETEROL XINAFOATE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "SAPANISERTIB": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "SELINEXOR": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "SELUMETINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "SERTACONAZOLE NITRATE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "SERTRALINE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "SILDENAFIL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "SIMVASTATIN": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "SIROLIMUS": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "SOMATROPIN (RECOMBINANT DNA ORIGIN)": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "SORAFENIB": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "STAVUDINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "STREPTOZOCIN": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "SUCCIMER": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "SULCONAZOLE NITRATE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "SUNITINIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TAMOXIFEN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TEMOZOLOMIDE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TEMSIROLIMUS": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TEPROTUMUMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TERCONAZOLE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TERFENADINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "TETRACYCLINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "THALIDOMIDE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "THIORIDAZINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "THIOTEPA": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "THONZONIUM": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "THROMBIN ALFA": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "TILDRAKIZUMAB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TOPOTECAN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TRABECTEDIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TRAMETINIB DIMETHYL SULFOXIDE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "TRETINOIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TRIAMTERENE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TRICLABENDAZOLE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "TRICLOSAN": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "TRIFLUOPERAZINE": {
+  "has_label": true,
+  "pediatric_use": false
+ },
+ "TRIFLUPERIDOL": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "TRIFLUPROMAZINE": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "TRIFLURIDINE": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "URSODIOL": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "VALPROIC ACID": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "VANDETANIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "VEMURAFENIB": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "VENETOCLAX": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "VITAMIN K3": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "VORINOSTAT": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "WARFARIN": {
+  "has_label": true,
+  "pediatric_use": true
+ },
+ "ZANUBRUTINIB": {
+  "has_label": false,
+  "pediatric_use": false
+ },
+ "ZINC": {
+  "has_label": true,
+  "pediatric_use": false
+ }
+}

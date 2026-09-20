@@ -1,0 +1,31 @@
+{
+  "name": "shortlist",
+  "built_at": "2026-09-19T23:10:07+00:00",
+  "built_by": "tools/track2_enrich.py",
+  "code_version": "073b4fa",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "ladder rows at rung >= 2 that are neither standard of care nor anti-direction nor pathway-only, ranked: rung, molecule-level before proxy evidence, paediatric evidence, mechanism literature",
+  "card": {
+    "path": "ressources/track2/transfer/TRIP13/mechanism.json",
+    "version": 1,
+    "gene": "TRIP13",
+    "disease": "Mosaic variegated aneuploidy syndrome 3 (MVA3)"
+  },
+  "inputs": [
+    {
+      "name": "track2.evidence_ladder",
+      "path": "ressources/track2/transfer/TRIP13/evidence_ladder.tsv",
+      "sha256": "8176bcb2c233faed876760952a965c8055f57e469e3a4148da949a359885557c",
+      "bytes": 32515
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/transfer/TRIP13/shortlist.tsv",
+      "sha256": "1ad5172acafe9db0dd155c152dd2a69ed89f59909bf83ccf017d8009377b9e6e",
+      "bytes": 10554,
+      "rows": 53
+    }
+  ],
+  "patient_data": "none. Public API replies only - gene symbols, drug names, trial ids and citations. Nothing here was derived from the callset, and no genomic position appears in any row by construction."
+}

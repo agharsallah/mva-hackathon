@@ -1,0 +1,54 @@
+rank	drug_name	direction_id	rung	verdict	why	pediatric_evidence	curated_pmids	targets	flags
+1	LENALIDOMIDE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 258 PubMed records with the mechanism	label section 8.4; study admitting children		CTNNB1|TP53|VEGFA	
+2	THALIDOMIDE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 234 PubMed records with the mechanism	label section 8.4; study admitting children		CTNNB1|VEGFA	
+3	PACLITAXEL	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 194 PubMed records with the mechanism	label section 8.4; study admitting children		MAD1L1|TP53|VEGFA	
+4	CISPLATIN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 120 PubMed records with the mechanism	label section 8.4; study admitting children		HSPA8|TP53	
+5	DEXAMETHASONE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 95 PubMed records with the mechanism	label section 8.4; study admitting children		CTNNB1|HSPA8|VEGFA	
+6	AZACITIDINE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 92 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+7	METHOTREXATE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 78 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+8	GLUTAMINE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 75 PubMed records with the mechanism	study admitting children		IGF2	
+9	RITUXIMAB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 74 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+10	BORTEZOMIB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 62 PubMed records with the mechanism	label section 8.4; study admitting children		PSMB5|TP53	
+11	FLUOROURACIL	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 60 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+12	TEMOZOLOMIDE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 58 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+13	DAUNORUBICIN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 55 PubMed records with the mechanism	label section 8.4; study admitting children		HSP90AA1|TP53|WT1	
+14	MELPHALAN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 53 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+15	DECITABINE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 43 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+16	TRETINOIN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 42 PubMed records with the mechanism	label section 8.4; study admitting children		HSPA8|WT1	
+17	ALEMTUZUMAB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 26 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+18	CARBOPLATIN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 23 PubMed records with the mechanism	study admitting children		MAD1L1|TP53|VEGFA	
+19	DOCETAXEL	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 23 PubMed records with the mechanism	label section 8.4; study admitting children		IGF2|TP53	
+20	CAMPTOTHECIN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 19 PubMed records with the mechanism	study admitting children		TP53	
+21	METHYLPREDNISOLONE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 15 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+22	SIROLIMUS	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 15 PubMed records with the mechanism	label section 8.4; study admitting children		MTOR|PRKAA1|TP53|WT1	
+23	IRINOTECAN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 14 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+24	BEVACIZUMAB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 13 PubMed records with the mechanism	label section 8.4; study admitting children		TP53|VEGFA	
+25	GEMCITABINE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 13 PubMed records with the mechanism	label section 8.4; study admitting children		IGF2|TP53	
+26	OXALIPLATIN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 12 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+27	OLAPARIB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 11 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+28	PALBOCICLIB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 9 PubMed records with the mechanism	label section 8.4; study admitting children		PRKAA1|TP53	
+29	THIOTEPA	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 9 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+30	EPIRUBICIN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 8 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+31	MECHLORETHAMINE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 8 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+32	NIVOLUMAB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 8 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+33	ERLOTINIB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 7 PubMed records with the mechanism	label section 8.4; study admitting children		AURKB|IGF1R|TP53	
+34	IFOSFAMIDE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 6 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+35	SORAFENIB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 6 PubMed records with the mechanism	study admitting children		AURKB|CTNNB1|TP53|VEGFA	
+36	LETROZOLE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 5 PubMed records with the mechanism	label section 8.4; study admitting children		CTNNB1	
+37	TOPOTECAN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 5 PubMed records with the mechanism	label section 8.4; study admitting children		PLK1|TP53	
+38	PEMBROLIZUMAB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 4 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+39	VORINOSTAT	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 3 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+40	GENISTEIN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 2 PubMed records with the mechanism	study admitting children		TP53	
+41	IPILIMUMAB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 2 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+42	RIBAVIRIN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 2 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+43	TEMSIROLIMUS	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 2 PubMed records with the mechanism	label section 8.4; study admitting children		CTNNB1|MTOR	
+44	SELINEXOR	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 1 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+45	SELUMETINIB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 1 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+46	VEMURAFENIB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context; 1 PubMed records with the mechanism	label section 8.4; study admitting children		TP53	
+47	CABOZANTINIB S-MALATE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context	study admitting children		CTNNB1|TP53	
+48	ENTRECTINIB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context	label section 8.4; study admitting children		AURKB|IGF1R|PRKAA1	
+49	EXEMESTANE	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context	label section 8.4; study admitting children		IGF1R	
+50	PAZOPANIB	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context	label section 8.4; study admitting children		AURKB|IGF1R|MTOR|TP53|VEGFA	
+51	PEMETREXED DISODIUM	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context	label section 8.4; study admitting children		VEGFA	
+52	PODOFILOX	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context	label section 8.4; study admitting children		IGF1R	
+53	TRABECTEDIN	D4	5	context trial only - not a mechanism finding	rung 5; registered trial in the tumour context	label section 8.4; study admitting children		TP53	

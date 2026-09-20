@@ -1,0 +1,531 @@
+drug_name	family	term	hits	pmids
+ABEMACICLIB	mechanism	"ABEMACICLIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	3	42500578|29125603|28177473
+ABEMACICLIB	context	"ABEMACICLIB" AND nephroblastoma	1	35859155
+ABICIPAR PEGOL	mechanism	"ABICIPAR PEGOL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+ABICIPAR PEGOL	context	"ABICIPAR PEGOL" AND nephroblastoma	0	
+ABIRATERONE	mechanism	"ABIRATERONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	4	40084488|39663356|36413141|25232177
+ABIRATERONE	context	"ABIRATERONE" AND nephroblastoma	0	
+ACADESINE	mechanism	"ACADESINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	24623685
+ACADESINE	context	"ACADESINE" AND nephroblastoma	0	
+ACALABRUTINIB	mechanism	"ACALABRUTINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	41793543|26641137
+ACALABRUTINIB	context	"ACALABRUTINIB" AND nephroblastoma	0	
+ACETAMINOPHEN	mechanism	"ACETAMINOPHEN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	4	19177844|28863749|8861779|7341641
+ACETAMINOPHEN	context	"ACETAMINOPHEN" AND nephroblastoma	2	35789542|19431953
+ACETYLCYSTEINE	mechanism	"ACETYLCYSTEINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	10	42318799|36464114|32704009|28343997|25325158|23628427|22383538|15175263|12957649|9518655
+ACETYLCYSTEINE	context	"ACETYLCYSTEINE" AND nephroblastoma	4	34323419|30350914|22043237|18675128
+ACITRETIN	mechanism	"ACITRETIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	20166009|15902381
+ACITRETIN	context	"ACITRETIN" AND nephroblastoma	0	
+ADALIMUMAB	mechanism	"ADALIMUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	4	34930121|31705612|25665051|24332378
+ADALIMUMAB	context	"ADALIMUMAB" AND nephroblastoma	0	
+ADENOSINE TRIPHOSPHATE	mechanism	"ADENOSINE TRIPHOSPHATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	90	40641606|39572911|39341490|37495650|36935406|36215093|35217622|34048314|33634101|33597306
+ADENOSINE TRIPHOSPHATE	context	"ADENOSINE TRIPHOSPHATE" AND nephroblastoma	5	41038674|29038164|22394205|19392599|6091871
+AFLIBERCEPT	mechanism	"AFLIBERCEPT" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+AFLIBERCEPT	context	"AFLIBERCEPT" AND nephroblastoma	1	42177462
+ALBUTEROL	mechanism	"ALBUTEROL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	10641137
+ALBUTEROL	context	"ALBUTEROL" AND nephroblastoma	0	
+ALECTINIB	mechanism	"ALECTINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	29637735
+ALECTINIB	context	"ALECTINIB" AND nephroblastoma	0	
+ALEMTUZUMAB	mechanism	"ALEMTUZUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	26	30322319|28782884|28597168|27521330|25908509|25752923|25641428|25433931|24799522|24723493
+ALEMTUZUMAB	context	"ALEMTUZUMAB" AND nephroblastoma	0	
+ALPELISIB	mechanism	"ALPELISIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+ALPELISIB	context	"ALPELISIB" AND nephroblastoma	1	23946963
+AMIODARONE	mechanism	"AMIODARONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+AMIODARONE	context	"AMIODARONE" AND nephroblastoma	0	
+AMLEXANOX	mechanism	"AMLEXANOX" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+AMLEXANOX	context	"AMLEXANOX" AND nephroblastoma	0	
+AMOXAPINE	mechanism	"AMOXAPINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+AMOXAPINE	context	"AMOXAPINE" AND nephroblastoma	0	
+AMSACRINE	mechanism	"AMSACRINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	15	18069049|15162052|9283595|8653700|8665870|7532767|8313366|1948550|1647363|2055562
+AMSACRINE	context	"AMSACRINE" AND nephroblastoma	0	
+ANASTROZOLE	mechanism	"ANASTROZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+ANASTROZOLE	context	"ANASTROZOLE" AND nephroblastoma	0	
+ANISINDIONE	mechanism	"ANISINDIONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+ANISINDIONE	context	"ANISINDIONE" AND nephroblastoma	0	
+APOMORPHINE	mechanism	"APOMORPHINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	29187755
+APOMORPHINE	context	"APOMORPHINE" AND nephroblastoma	0	
+ASTEMIZOLE	mechanism	"ASTEMIZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+ASTEMIZOLE	context	"ASTEMIZOLE" AND nephroblastoma	0	
+AXITINIB	mechanism	"AXITINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+AXITINIB	context	"AXITINIB" AND nephroblastoma	0	
+AZACITIDINE	mechanism	"AZACITIDINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	92	42533241|42358941|41526076|40484156|39950462|39921387|39611877|35277655|34663807|34296432
+AZACITIDINE	context	"AZACITIDINE" AND nephroblastoma	34	42104158|40473616|40410562|39272929|39238120|39219432|38795248|38334897|36250993|35257209
+AZATHIOPRINE	mechanism	"AZATHIOPRINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	17	31291615|20674015|18799111|16273777|16044456|15921387|12400612|9724170|8616039|8566886
+AZATHIOPRINE	context	"AZATHIOPRINE" AND nephroblastoma	4	171908|4333836|4307066|4295093
+BELUMOSUDIL	mechanism	"BELUMOSUDIL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+BELUMOSUDIL	context	"BELUMOSUDIL" AND nephroblastoma	0	
+BENDAMUSTINE	mechanism	"BENDAMUSTINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	12	30696487|30467205|29728736|29352719|29222278|28782884|27913471|26332019|25908509|25752923
+BENDAMUSTINE	context	"BENDAMUSTINE" AND nephroblastoma	0	
+BENZBROMARONE	mechanism	"BENZBROMARONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+BENZBROMARONE	context	"BENZBROMARONE" AND nephroblastoma	0	
+BETAMETHASONE	mechanism	"BETAMETHASONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+BETAMETHASONE	context	"BETAMETHASONE" AND nephroblastoma	1	32793489
+BEVACIZUMAB	mechanism	"BEVACIZUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	13	39168966|35489024|34455700|30115593|29792754|29534896|28901965|25620708|25201633|25065849
+BEVACIZUMAB	context	"BEVACIZUMAB" AND nephroblastoma	12	42325919|39016020|30345041|28859044|25783402|25389453|24718015|24115645|23894304|21707287
+BEVACIZUMAB GAMMA	mechanism	"BEVACIZUMAB GAMMA" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+BEVACIZUMAB GAMMA	context	"BEVACIZUMAB GAMMA" AND nephroblastoma	0	
+BIFONAZOLE	mechanism	"BIFONAZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+BIFONAZOLE	context	"BIFONAZOLE" AND nephroblastoma	0	
+BITHIONOL	mechanism	"BITHIONOL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+BITHIONOL	context	"BITHIONOL" AND nephroblastoma	0	
+BORTEZOMIB	mechanism	"BORTEZOMIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	62	42464653|41820448|41353268|40824203|40140922|37835441|37767568|35901725|32971811|32924107
+BORTEZOMIB	context	"BORTEZOMIB" AND nephroblastoma	7	40347939|38948702|31117293|23622662|20162579|17728786|17629554
+BRIGATINIB	mechanism	"BRIGATINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+BRIGATINIB	context	"BRIGATINIB" AND nephroblastoma	0	
+BROLUCIZUMAB	mechanism	"BROLUCIZUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+BROLUCIZUMAB	context	"BROLUCIZUMAB" AND nephroblastoma	0	
+BROXYQUINOLINE	mechanism	"BROXYQUINOLINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+BROXYQUINOLINE	context	"BROXYQUINOLINE" AND nephroblastoma	0	
+BUPIVACAINE	mechanism	"BUPIVACAINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+BUPIVACAINE	context	"BUPIVACAINE" AND nephroblastoma	2	29274546|1652149
+BUTOCONAZOLE NITRATE	mechanism	"BUTOCONAZOLE NITRATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+BUTOCONAZOLE NITRATE	context	"BUTOCONAZOLE NITRATE" AND nephroblastoma	0	
+CABAZITAXEL	mechanism	"CABAZITAXEL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	4	40466638|40084488|37178439|36229449
+CABAZITAXEL	context	"CABAZITAXEL" AND nephroblastoma	0	
+CABOZANTINIB S-MALATE	mechanism	"CABOZANTINIB S-MALATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+CABOZANTINIB S-MALATE	context	"CABOZANTINIB S-MALATE" AND nephroblastoma	0	
+CAMPTOTHECIN	mechanism	"CAMPTOTHECIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	19	37854038|32450552|27457664|27029323|25679766|22328085|22262459|19357016|18480965|18339864
+CAMPTOTHECIN	context	"CAMPTOTHECIN" AND nephroblastoma	10	40545412|35657346|32184294|29077255|24183724|24115645|23894304|16809160|16651238|14679002
+CAPECITABINE	mechanism	"CAPECITABINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	6	40948910|29792754|25620708|25433931|24078664|19357016
+CAPECITABINE	context	"CAPECITABINE" AND nephroblastoma	1	32292457
+CAPIVASERTIB	mechanism	"CAPIVASERTIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	28028179
+CAPIVASERTIB	context	"CAPIVASERTIB" AND nephroblastoma	0	
+CARBOPLATIN	mechanism	"CARBOPLATIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	23	39184047|38953826|38781347|38067275|35421971|32971811|29915798|29033584|27914067|27409525
+CARBOPLATIN	context	"CARBOPLATIN" AND nephroblastoma	98	42688325|41994719|41834439|41813027|41246574|40330928|33620838|39803937|39702900|38980838
+CARFILZOMIB	mechanism	"CARFILZOMIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	26327694
+CARFILZOMIB	context	"CARFILZOMIB" AND nephroblastoma	0	
+CEFACLOR	mechanism	"CEFACLOR" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+CEFACLOR	context	"CEFACLOR" AND nephroblastoma	0	
+CELECOXIB	mechanism	"CELECOXIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	4	29511542|27270654|25620708|16439625
+CELECOXIB	context	"CELECOXIB" AND nephroblastoma	2	22883675|22156656
+CERITINIB	mechanism	"CERITINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	32344689
+CERITINIB	context	"CERITINIB" AND nephroblastoma	0	
+CETUXIMAB	mechanism	"CETUXIMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	8	39594688|39339232|34111559|25131935|24980817|22990745|19357016|17350326
+CETUXIMAB	context	"CETUXIMAB" AND nephroblastoma	0	
+CHLORAMBUCIL	mechanism	"CHLORAMBUCIL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	34	32791549|32096887|30504317|30467205|30097461|29779347|28782884|27913471|26332019|25908509
+CHLORAMBUCIL	context	"CHLORAMBUCIL" AND nephroblastoma	6	221090|4374079|4331514|4295390|4298202|14246210
+CHLOROXINE	mechanism	"CHLOROXINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+CHLOROXINE	context	"CHLOROXINE" AND nephroblastoma	0	
+CHLORPROMAZINE	mechanism	"CHLORPROMAZINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	181729
+CHLORPROMAZINE	context	"CHLORPROMAZINE" AND nephroblastoma	0	
+CILOSTAZOL	mechanism	"CILOSTAZOL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+CILOSTAZOL	context	"CILOSTAZOL" AND nephroblastoma	0	
+CINNARIZINE	mechanism	"CINNARIZINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+CINNARIZINE	context	"CINNARIZINE" AND nephroblastoma	0	
+CISPLATIN	mechanism	"CISPLATIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	120	42626030|41687980|41455703|40667108|40447611|40247223|39724069|39554001|38375594|38067275
+CISPLATIN	context	"CISPLATIN" AND nephroblastoma	106	42686854|42325919|41622830|41246574|41038674|40978995|40846737|39950833|39008481|38861022
+CLADRIBINE	mechanism	"CLADRIBINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	8	27561449|26614904|21980957|12384437|10914558|10233391|9352802|9001435
+CLADRIBINE	context	"CLADRIBINE" AND nephroblastoma	0	
+CLEMASTINE	mechanism	"CLEMASTINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+CLEMASTINE	context	"CLEMASTINE" AND nephroblastoma	0	
+CLIOQUINOL	mechanism	"CLIOQUINOL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+CLIOQUINOL	context	"CLIOQUINOL" AND nephroblastoma	0	
+CLOFIBRATE	mechanism	"CLOFIBRATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+CLOFIBRATE	context	"CLOFIBRATE" AND nephroblastoma	0	
+CLOMIPRAMINE	mechanism	"CLOMIPRAMINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+CLOMIPRAMINE	context	"CLOMIPRAMINE" AND nephroblastoma	0	
+CLOTRIMAZOLE	mechanism	"CLOTRIMAZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	39139375
+CLOTRIMAZOLE	context	"CLOTRIMAZOLE" AND nephroblastoma	0	
+CLOZAPINE	mechanism	"CLOZAPINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	9	42036753|37607488|28448680|28259864|18074829|16365290|9787744|9519634|7551965
+CLOZAPINE	context	"CLOZAPINE" AND nephroblastoma	0	
+COPANLISIB	mechanism	"COPANLISIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+COPANLISIB	context	"COPANLISIB" AND nephroblastoma	0	
+CRIZOTINIB	mechanism	"CRIZOTINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	4	36720638|32344689|25846554|25766836
+CRIZOTINIB	context	"CRIZOTINIB" AND nephroblastoma	0	
+CYCLOPHOSPHAMIDE	mechanism	"CYCLOPHOSPHAMIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	159	42715516|38914566|37033217|35973025|34164401|33622323|32791549|32172299|32114372|31634544
+CYCLOPHOSPHAMIDE	context	"CYCLOPHOSPHAMIDE" AND nephroblastoma	227	42679593|42261403|41994719|41834439|41328202|41223336|40861331|40832779|40330928|39803937
+CYCLOSPORINE	mechanism	"CYCLOSPORINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	40	42732482|42358941|39561188|39149236|30583978|28350519|26273061|24602737|19951887|18799111
+CYCLOSPORINE	context	"CYCLOSPORINE" AND nephroblastoma	19	30577324|29663071|29632851|25818337|23302619|21499692|21298518|20848129|20798252|20419325
+CYTARABINE	mechanism	"CYTARABINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	120	40066790|35181851|33822747|33203699|33058483|32338096|30608448|30523055|28400376|28350519
+CYTARABINE	context	"CYTARABINE" AND nephroblastoma	28	40410562|39191510|38867543|38795248|30783392|28771903|28125133|26563595|25867598|25026287
+DABRAFENIB	mechanism	"DABRAFENIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	34638434|32211316
+DABRAFENIB	context	"DABRAFENIB" AND nephroblastoma	3	41820933|32238401|31109800
+DASATINIB	mechanism	"DASATINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	13	33478100|30392698|29970518|29177615|28186602|24240798|21854086|21785464|27263746|20471511
+DASATINIB	context	"DASATINIB" AND nephroblastoma	3	32999661|31977890|24723681
+DAUNORUBICIN	mechanism	"DAUNORUBICIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	55	40066790|33058483|30523055|28034993|27804199|23207728|20805702|20587614|19530558|19224868
+DAUNORUBICIN	context	"DAUNORUBICIN" AND nephroblastoma	23	32880751|30837363|26304888|25026287|23991619|23469379|18559874|18081032|16883592|12673729
+DECITABINE	mechanism	"DECITABINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	43	41634435|40484156|38031760|35181851|33822747|33203699|32608992|32504186|32030889|30775878
+DECITABINE	context	"DECITABINE" AND nephroblastoma	14	42266675|39238120|36250993|29541236|26893773|22740791|22735806|21980157|18030365|16876216
+DEFEROXAMINE	mechanism	"DEFEROXAMINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	5	38781731|11106795|6200160|6516946|7115954
+DEFEROXAMINE	context	"DEFEROXAMINE" AND nephroblastoma	2	36056427|27980269
+DEQUALINIUM	mechanism	"DEQUALINIUM" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+DEQUALINIUM	context	"DEQUALINIUM" AND nephroblastoma	0	
+DEXAMETHASONE	mechanism	"DEXAMETHASONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	95	42597043|42543636|40824203|34994589|34036560|33478100|33149130|31119611|30608448|29151530
+DEXAMETHASONE	context	"DEXAMETHASONE" AND nephroblastoma	20	42022486|35789542|34256324|34015468|32914879|26479988|23267699|22765757|20423567|18989155
+DIETHYLSTILBESTROL	mechanism	"DIETHYLSTILBESTROL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	79	36384894|28760493|19747535|18162433|16445652|15215326|15135083|14630087|11850971|10753210
+DIETHYLSTILBESTROL	context	"DIETHYLSTILBESTROL" AND nephroblastoma	4	10895818|8630958|8549470|8055643
+DIMETHYL SULFOXIDE	mechanism	"DIMETHYL SULFOXIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	37	41563350|36849982|35576991|23747346|11106795|10101598|9862187|8562071|8547470|7702864
+DIMETHYL SULFOXIDE	context	"DIMETHYL SULFOXIDE" AND nephroblastoma	2	9040935|8142654
+DIPYRIDAMOLE	mechanism	"DIPYRIDAMOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+DIPYRIDAMOLE	context	"DIPYRIDAMOLE" AND nephroblastoma	3	11268451|6369051|6288824
+DISULFIRAM	mechanism	"DISULFIRAM" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+DISULFIRAM	context	"DISULFIRAM" AND nephroblastoma	1	8391710
+DITHIAZANINE IODIDE	mechanism	"DITHIAZANINE IODIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+DITHIAZANINE IODIDE	context	"DITHIAZANINE IODIDE" AND nephroblastoma	0	
+DOCETAXEL	mechanism	"DOCETAXEL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	23	42510982|40247223|40084488|38375594|36229449|35421971|35164226|33504817|33428943|30429199
+DOCETAXEL	context	"DOCETAXEL" AND nephroblastoma	5	39055564|29963201|28345629|21873157|17267660
+DOPAMINE	mechanism	"DOPAMINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	69	41484117|37989807|37530743|32507391|32060266|30238388|29721507|29187755|29038598|28624415
+DOPAMINE	context	"DOPAMINE" AND nephroblastoma	12	34239499|31112850|29351866|20658641|20186791|18586978|9765512|1321164|2748231|2840921
+DORDAVIPRONE	mechanism	"DORDAVIPRONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+DORDAVIPRONE	context	"DORDAVIPRONE" AND nephroblastoma	0	
+DOXAZOSIN	mechanism	"DOXAZOSIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+DOXAZOSIN	context	"DOXAZOSIN" AND nephroblastoma	0	
+DOXORUBICIN	mechanism	"DOXORUBICIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	137	42715516|41545558|39343771|38589567|38347785|38203554|37872247|37633598|37346953|37333126
+DOXORUBICIN	context	"DOXORUBICIN" AND nephroblastoma	354	42739130|42411285|42254928|42041717|41994719|41888523|41850280|41834439|41824924|41761364
+DUVELISIB	mechanism	"DUVELISIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	30287523
+DUVELISIB	context	"DUVELISIB" AND nephroblastoma	0	
+EBASTINE	mechanism	"EBASTINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+EBASTINE	context	"EBASTINE" AND nephroblastoma	0	
+ECONAZOLE NITRATE	mechanism	"ECONAZOLE NITRATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	7	9313341|7753109|7683386|7683383|7683382|2038274|2263203
+ECONAZOLE NITRATE	context	"ECONAZOLE NITRATE" AND nephroblastoma	0	
+ENALAPRIL	mechanism	"ENALAPRIL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+ENALAPRIL	context	"ENALAPRIL" AND nephroblastoma	3	37724538|28966119|27080979
+ENCORAFENIB	mechanism	"ENCORAFENIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	39858588
+ENCORAFENIB	context	"ENCORAFENIB" AND nephroblastoma	0	
+ENTRECTINIB	mechanism	"ENTRECTINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+ENTRECTINIB	context	"ENTRECTINIB" AND nephroblastoma	0	
+ENZALUTAMIDE	mechanism	"ENZALUTAMIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	3	40084488|39663356|34353917
+ENZALUTAMIDE	context	"ENZALUTAMIDE" AND nephroblastoma	2	41981278|27815387
+EPINEPHRINE	mechanism	"EPINEPHRINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	3	8628463|2861071|5692333
+EPINEPHRINE	context	"EPINEPHRINE" AND nephroblastoma	6	29351866|15604207|3030095|6288824|4353716|4317247
+EPIRUBICIN	mechanism	"EPIRUBICIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	8	27029323|25817540|25303090|12739000|11115565|7729938|1425834|3456485
+EPIRUBICIN	context	"EPIRUBICIN" AND nephroblastoma	14	39055564|35042071|33004767|31007495|22927531|22795263|19672975|17907529|17366799|12460787
+ERLOTINIB	mechanism	"ERLOTINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	7	38938612|36785674|27569104|26528438|25611230|25576921|16840665
+ERLOTINIB	context	"ERLOTINIB" AND nephroblastoma	1	38336778
+ERYTHROMYCIN	mechanism	"ERYTHROMYCIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	14	20537076|1938953|1657890|1367001|2121710|2113911|2553667|2685326|2499543|3127839
+ERYTHROMYCIN	context	"ERYTHROMYCIN" AND nephroblastoma	0	
+ETHOPROPAZINE	mechanism	"ETHOPROPAZINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+ETHOPROPAZINE	context	"ETHOPROPAZINE" AND nephroblastoma	0	
+ETOPOSIDE	mechanism	"ETOPOSIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	100	42339509|36989031|35084021|33058483|32634244|32276763|30900772|30523055|28943508|28853096
+ETOPOSIDE	context	"ETOPOSIDE" AND nephroblastoma	136	41834439|41223336|40861331|40330928|39803937|39702900|39501628|38571566|38396300|37218455
+EVEROLIMUS	mechanism	"EVEROLIMUS" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	28590426|26748241
+EVEROLIMUS	context	"EVEROLIMUS" AND nephroblastoma	0	
+EXEMESTANE	mechanism	"EXEMESTANE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+EXEMESTANE	context	"EXEMESTANE" AND nephroblastoma	0	
+FARICIMAB	mechanism	"FARICIMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+FARICIMAB	context	"FARICIMAB" AND nephroblastoma	0	
+FENOFIBRATE MICRONIZED	mechanism	"FENOFIBRATE MICRONIZED" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+FENOFIBRATE MICRONIZED	context	"FENOFIBRATE MICRONIZED" AND nephroblastoma	0	
+FENRETINIDE	mechanism	"FENRETINIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	5	27045034|17507625|16154183|11795443|7950899
+FENRETINIDE	context	"FENRETINIDE" AND nephroblastoma	1	22067876
+FLUCONAZOLE	mechanism	"FLUCONAZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	54	42327035|42189998|41746684|41279290|41195397|40252781|39853591|39564485|39480072|39078851
+FLUCONAZOLE	context	"FLUCONAZOLE" AND nephroblastoma	2	28188050|8650039
+FLUORESCEIN	mechanism	"FLUORESCEIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	68	40788857|38087495|37182744|37022334|35779920|35610156|34551660|30830578|29684226|29156058
+FLUORESCEIN	context	"FLUORESCEIN" AND nephroblastoma	19	40330498|31028197|30132523|25136318|24924335|24715059|15026554|14757844|12414428|12381371
+FLUOROURACIL	mechanism	"FLUOROURACIL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	60	42244292|41749420|35489024|33317574|32805281|30542142|28851003|27713084|27729614|27651161
+FLUOROURACIL	context	"FLUOROURACIL" AND nephroblastoma	21	35201461|34919493|33313663|28412738|25368235|23095233|1309716|2581512|6277228|646450
+FLUOXETINE	mechanism	"FLUOXETINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	5	38674386|25337663|20056393|18690111|17667473
+FLUOXETINE	context	"FLUOXETINE" AND nephroblastoma	0	
+FLUPHENAZINE	mechanism	"FLUPHENAZINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+FLUPHENAZINE	context	"FLUPHENAZINE" AND nephroblastoma	0	
+FULVESTRANT	mechanism	"FULVESTRANT" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	19435893|11896754
+FULVESTRANT	context	"FULVESTRANT" AND nephroblastoma	2	18984771|17170219
+FURAZOLIDONE	mechanism	"FURAZOLIDONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	2927439
+FURAZOLIDONE	context	"FURAZOLIDONE" AND nephroblastoma	1	4321598
+GEFITINIB	mechanism	"GEFITINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	5	36896765|33548356|20502057|18413808|17473657
+GEFITINIB	context	"GEFITINIB" AND nephroblastoma	2	16809160|16135484
+GEMCITABINE	mechanism	"GEMCITABINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	13	38781347|38039923|37752233|37034740|35685867|29033584|28467408|23759565|23403633|22072567
+GEMCITABINE	context	"GEMCITABINE" AND nephroblastoma	33	41088849|40714994|33620838|39384197|39055564|38665761|38026668|37591781|34919493|33886156
+GENISTEIN	mechanism	"GENISTEIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	25358106|12704663
+GENISTEIN	context	"GENISTEIN" AND nephroblastoma	1	10873031
+GENTAMICIN	mechanism	"GENTAMICIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	5	36708127|1624428|1943842|7001228|7003059
+GENTAMICIN	context	"GENTAMICIN" AND nephroblastoma	2	20810610|9499259
+GLASDEGIB	mechanism	"GLASDEGIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+GLASDEGIB	context	"GLASDEGIB" AND nephroblastoma	0	
+GLUTAMINE	mechanism	"GLUTAMINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	75	40777471|38829961|38317803|37652668|35075614|34129926|29367649|28266898|28178520|26140362
+GLUTAMINE	context	"GLUTAMINE" AND nephroblastoma	18	41727907|40491173|37046804|35054324|27596598|29235329|25808222|25258363|21237236|20137456
+GRANISETRON	mechanism	"GRANISETRON" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+GRANISETRON	context	"GRANISETRON" AND nephroblastoma	0	
+HALOFANTRINE	mechanism	"HALOFANTRINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+HALOFANTRINE	context	"HALOFANTRINE" AND nephroblastoma	0	
+HALOPERIDOL DECANOATE	mechanism	"HALOPERIDOL DECANOATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+HALOPERIDOL DECANOATE	context	"HALOPERIDOL DECANOATE" AND nephroblastoma	0	
+HEXACHLOROPHENE	mechanism	"HEXACHLOROPHENE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+HEXACHLOROPHENE	context	"HEXACHLOROPHENE" AND nephroblastoma	0	
+HYDRALAZINE	mechanism	"HYDRALAZINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+HYDRALAZINE	context	"HYDRALAZINE" AND nephroblastoma	2	27080979|8391710
+HYDROXYZINE PAMOATE	mechanism	"HYDROXYZINE PAMOATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+HYDROXYZINE PAMOATE	context	"HYDROXYZINE PAMOATE" AND nephroblastoma	0	
+IBRUTINIB	mechanism	"IBRUTINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	50	41793543|40829104|40254718|36108426|34521099|34291829|32791549|32404571|32188040|32172299
+IBRUTINIB	context	"IBRUTINIB" AND nephroblastoma	0	
+IDARUBICIN	mechanism	"IDARUBICIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	21	30523055|28400376|24446873|23207728|22821298|22537673|21856314|21325260|20587614|20568248
+IDARUBICIN	context	"IDARUBICIN" AND nephroblastoma	6	28771903|28125133|22821298|20107153|9434824|8683999
+IDELALISIB	mechanism	"IDELALISIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	15	32791549|31364186|30315344|29895707|29523661|29352719|29250930|29222277|28782884|28549767
+IDELALISIB	context	"IDELALISIB" AND nephroblastoma	0	
+IFOSFAMIDE	mechanism	"IFOSFAMIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	6	16781110|15203764|12826895|9063010|7596151|7799031
+IFOSFAMIDE	context	"IFOSFAMIDE" AND nephroblastoma	92	39055564|38571566|37452796|37218455|36336006|35259702|35042071|31723117|31007495|30345041
+IMATINIB	mechanism	"IMATINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	94	36199265|33400146|30392698|30055547|29970518|29524963|29177615|29025581|28186602|26447534
+IMATINIB	context	"IMATINIB" AND nephroblastoma	27	42458992|40927046|38427208|35339647|32999661|31014357|29423056|28927158|28383355|27889611
+INAMRINONE	mechanism	"INAMRINONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+INAMRINONE	context	"INAMRINONE" AND nephroblastoma	0	
+INDOPROFEN	mechanism	"INDOPROFEN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+INDOPROFEN	context	"INDOPROFEN" AND nephroblastoma	0	
+INFIGRATINIB	mechanism	"INFIGRATINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+INFIGRATINIB	context	"INFIGRATINIB" AND nephroblastoma	0	
+INOSITOL	mechanism	"INOSITOL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	30	37007527|30995342|28695546|28031327|27697865|27011217|23639964|23332863|22042248|18646052
+INOSITOL	context	"INOSITOL" AND nephroblastoma	8	41254747|33759343|29235329|27025059|27011217|24470551|17728783|16911581
+INTERFERON ALFA-2B	mechanism	"INTERFERON ALFA-2B" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+INTERFERON ALFA-2B	context	"INTERFERON ALFA-2B" AND nephroblastoma	0	
+IODOQUINOL	mechanism	"IODOQUINOL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+IODOQUINOL	context	"IODOQUINOL" AND nephroblastoma	0	
+IPILIMUMAB	mechanism	"IPILIMUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	30154227|27974237
+IPILIMUMAB	context	"IPILIMUMAB" AND nephroblastoma	1	34097314
+IRINOTECAN	mechanism	"IRINOTECAN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	14	41591981|38063411|37034740|29792754|28830922|27457664|27029323|25679766|25065849|21901450
+IRINOTECAN	context	"IRINOTECAN" AND nephroblastoma	23	42479499|41496708|39753413|39737308|39016020|34919493|34621673|33790625|32184294|32134700
+ISOPROTERENOL	mechanism	"ISOPROTERENOL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	5	2162359|2563305|2890637|2828022|2861071
+ISOPROTERENOL	context	"ISOPROTERENOL" AND nephroblastoma	6	29038164|8184901|1317905|2164984|6312152|4316441
+ITRACONAZOLE	mechanism	"ITRACONAZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+ITRACONAZOLE	context	"ITRACONAZOLE" AND nephroblastoma	3	29564632|28188050|20418785
+IXAZOMIB	mechanism	"IXAZOMIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+IXAZOMIB	context	"IXAZOMIB" AND nephroblastoma	0	
+LANSOPRAZOLE	mechanism	"LANSOPRAZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	35551397
+LANSOPRAZOLE	context	"LANSOPRAZOLE" AND nephroblastoma	0	
+LAPATINIB	mechanism	"LAPATINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	3	35901725|33176309|20145176
+LAPATINIB	context	"LAPATINIB" AND nephroblastoma	0	
+LENALIDOMIDE	mechanism	"LENALIDOMIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	258	42543636|40824203|40758958|40000845|39950462|39921387|39516085|39103678|39033767|38902243
+LENALIDOMIDE	context	"LENALIDOMIDE" AND nephroblastoma	3	35100339|34674611|34280257
+LETROZOLE	mechanism	"LETROZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	5	42168250|41980564|39491092|38360676|37488389
+LETROZOLE	context	"LETROZOLE" AND nephroblastoma	0	
+LEVOKETOCONAZOLE	mechanism	"LEVOKETOCONAZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+LEVOKETOCONAZOLE	context	"LEVOKETOCONAZOLE" AND nephroblastoma	0	
+LEVONORGESTREL	mechanism	"LEVONORGESTREL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+LEVONORGESTREL	context	"LEVONORGESTREL" AND nephroblastoma	1	8263008
+LEVOTHYROXINE	mechanism	"LEVOTHYROXINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	8	41379151|38144238|36076277|27631398|23364243|22947348|8608779|2627143
+LEVOTHYROXINE	context	"LEVOTHYROXINE" AND nephroblastoma	3	30738016|28960781|22687139
+LOPERAMIDE	mechanism	"LOPERAMIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+LOPERAMIDE	context	"LOPERAMIDE" AND nephroblastoma	0	
+LORLATINIB	mechanism	"LORLATINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	30171048
+LORLATINIB	context	"LORLATINIB" AND nephroblastoma	0	
+MAPROTILINE	mechanism	"MAPROTILINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+MAPROTILINE	context	"MAPROTILINE" AND nephroblastoma	0	
+MASOPROCOL	mechanism	"MASOPROCOL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+MASOPROCOL	context	"MASOPROCOL" AND nephroblastoma	0	
+MECASERMIN	mechanism	"MECASERMIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+MECASERMIN	context	"MECASERMIN" AND nephroblastoma	0	
+MECASERMIN RINFABATE	mechanism	"MECASERMIN RINFABATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+MECASERMIN RINFABATE	context	"MECASERMIN RINFABATE" AND nephroblastoma	0	
+MECHLORETHAMINE	mechanism	"MECHLORETHAMINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	8	27810161|22434555|22262459|9052924|8125481|2968514|3796674|3513712
+MECHLORETHAMINE	context	"MECHLORETHAMINE" AND nephroblastoma	9	2537348|3100034|3035354|4324078|4328983|4288887|14246210|14159065|14131719
+MEDROXYPROGESTERONE	mechanism	"MEDROXYPROGESTERONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	14	42380839|41473559|40382646|38498835|38262210|37290978|16102583|2340470|2524601|2845595
+MEDROXYPROGESTERONE	context	"MEDROXYPROGESTERONE" AND nephroblastoma	1	4331514
+MELPHALAN	mechanism	"MELPHALAN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	53	37942576|35190641|31732653|28853096|27904139|25821186|25127393|24833354|23796999|23718846
+MELPHALAN	context	"MELPHALAN" AND nephroblastoma	30	41834439|41697386|31534191|29676506|28843054|25431868|25111275|21142665|20881835|20628317
+MERCAPTOPURINE	mechanism	"MERCAPTOPURINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	34	37729596|27804199|24588411|20568248|19530558|16425025|11908732|11604555|11216703|10914558
+MERCAPTOPURINE	context	"MERCAPTOPURINE" AND nephroblastoma	11	11197266|10480287|6277228|175358|170388|4296158|4298202|4292636|4288581|14246210
+METFORMIN	mechanism	"METFORMIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	9	42036753|41352540|39609627|38164433|35685867|35568294|32557964|27957796|20814239
+METFORMIN	context	"METFORMIN" AND nephroblastoma	4	36762777|35306537|33581737|32493344
+METHIMAZOLE	mechanism	"METHIMAZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+METHIMAZOLE	context	"METHIMAZOLE" AND nephroblastoma	0	
+METHOTREXATE	mechanism	"METHOTREXATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	78	33025400|31886877|30673989|30608448|29315303|29143423|28853096|27804199|26108159|22157270
+METHOTREXATE	context	"METHOTREXATE" AND nephroblastoma	43	32689868|29190181|25867598|22703821|22156656|21164360|20423567|18663277|17120243|16883600
+METHYLENE BLUE	mechanism	"METHYLENE BLUE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	6	21417824|15796956|12590152|11757725|11042517|4116768
+METHYLENE BLUE	context	"METHYLENE BLUE" AND nephroblastoma	3	33675673|21900833|8785565
+METHYLPREDNISOLONE	mechanism	"METHYLPREDNISOLONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	15	42597043|41030452|39922322|33669083|33622323|30322319|25818969|25397619|21679253|18067017
+METHYLPREDNISOLONE	context	"METHYLPREDNISOLONE" AND nephroblastoma	7	28681589|27178679|21298518|19496980|18481113|12898378|12746168
+MICONAZOLE NITRATE	mechanism	"MICONAZOLE NITRATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+MICONAZOLE NITRATE	context	"MICONAZOLE NITRATE" AND nephroblastoma	0	
+MIFEPRISTONE	mechanism	"MIFEPRISTONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	6	35740614|17963864|1562546|1562504|2249658|1697036
+MIFEPRISTONE	context	"MIFEPRISTONE" AND nephroblastoma	0	
+MIRDAMETINIB	mechanism	"MIRDAMETINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	24519175
+MIRDAMETINIB	context	"MIRDAMETINIB" AND nephroblastoma	0	
+MITOMYCIN	mechanism	"MITOMYCIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	101	20301575|36877011|30191636|28760493|27386876|27193269|25483079|25303090|24356953|21821840
+MITOMYCIN	context	"MITOMYCIN" AND nephroblastoma	10	31413733|26691948|25418835|8392763|6146026|6144877|6944534|6267440|14205532|14129328
+MITOXANTRONE	mechanism	"MITOXANTRONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	21	35181851|33370316|30523055|24968822|19530558|18178033|18166788|15741224|15327049|12555218
+MITOXANTRONE	context	"MITOXANTRONE" AND nephroblastoma	4	30837363|9434824|3013039|6191671
+NICARDIPINE	mechanism	"NICARDIPINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+NICARDIPINE	context	"NICARDIPINE" AND nephroblastoma	1	17023826
+NICLOSAMIDE	mechanism	"NICLOSAMIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+NICLOSAMIDE	context	"NICLOSAMIDE" AND nephroblastoma	0	
+NIROGACESTAT	mechanism	"NIROGACESTAT" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+NIROGACESTAT	context	"NIROGACESTAT" AND nephroblastoma	0	
+NITAZOXANIDE	mechanism	"NITAZOXANIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+NITAZOXANIDE	context	"NITAZOXANIDE" AND nephroblastoma	0	
+NIVOLUMAB	mechanism	"NIVOLUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	8	40948910|37586766|36536180|34663807|33588420|32472114|31678168|30154227
+NIVOLUMAB	context	"NIVOLUMAB" AND nephroblastoma	5	33620838|38523872|36900251|36295490|34097314
+NORTRIPTYLINE	mechanism	"NORTRIPTYLINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+NORTRIPTYLINE	context	"NORTRIPTYLINE" AND nephroblastoma	0	
+O-PHENANTHROLINE	mechanism	"O-PHENANTHROLINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	2646633
+O-PHENANTHROLINE	context	"O-PHENANTHROLINE" AND nephroblastoma	0	
+OBINUTUZUMAB	mechanism	"OBINUTUZUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	11	32791549|32096887|31364186|30504317|30097461|29222277|28782884|27913471|27315112|26332019
+OBINUTUZUMAB	context	"OBINUTUZUMAB" AND nephroblastoma	0	
+OLANZAPINE	mechanism	"OLANZAPINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	4	42378039|42148515|28963116|19000940
+OLANZAPINE	context	"OLANZAPINE" AND nephroblastoma	0	
+OLAPARIB	mechanism	"OLAPARIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	11	42456201|41591981|39251587|35517402|34521823|32164626|31974435|30429199|28830922|26959114
+OLAPARIB	context	"OLAPARIB" AND nephroblastoma	1	35593736
+OLEIC ACID	mechanism	"OLEIC ACID" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	3	26803494|23124096|9639664
+OLEIC ACID	context	"OLEIC ACID" AND nephroblastoma	1	6595439
+OMEPRAZOLE	mechanism	"OMEPRAZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	12106657|7488672
+OMEPRAZOLE	context	"OMEPRAZOLE" AND nephroblastoma	0	
+OSIMERTINIB	mechanism	"OSIMERTINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	37669963|32860853
+OSIMERTINIB	context	"OSIMERTINIB" AND nephroblastoma	0	
+OXALIPLATIN	mechanism	"OXALIPLATIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	12	41009436|40948910|40602034|32805281|30542142|29792754|27457664|21901450|19357016|17384245
+OXALIPLATIN	context	"OXALIPLATIN" AND nephroblastoma	6	39737308|39640784|39270768|34919493|32292457|31805888
+OXYTETRACYCLINE	mechanism	"OXYTETRACYCLINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+OXYTETRACYCLINE	context	"OXYTETRACYCLINE" AND nephroblastoma	0	
+PACLITAXEL	mechanism	"PACLITAXEL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	194	42597043|42058159|41959482|41545558|41313943|41159544|40466638|40247223|40211684|40064955
+PACLITAXEL	context	"PACLITAXEL" AND nephroblastoma	24	42262677|41813027|41088849|40714994|40598415|39384197|39351154|34919493|32140530|31029154
+PALBOCICLIB	mechanism	"PALBOCICLIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	9	42099656|38504568|35197447|32554797|32393766|29125603|28467408|26398286|25940700
+PALBOCICLIB	context	"PALBOCICLIB" AND nephroblastoma	0	
+PANITUMUMAB	mechanism	"PANITUMUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	19357016
+PANITUMUMAB	context	"PANITUMUMAB" AND nephroblastoma	0	
+PAROXETINE HYDROCHLORIDE, HEMIHYDRATE	mechanism	"PAROXETINE HYDROCHLORIDE, HEMIHYDRATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PAROXETINE HYDROCHLORIDE, HEMIHYDRATE	context	"PAROXETINE HYDROCHLORIDE, HEMIHYDRATE" AND nephroblastoma	0	
+PAZOPANIB	mechanism	"PAZOPANIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PAZOPANIB	context	"PAZOPANIB" AND nephroblastoma	2	41496708|28264536
+PEGAPTANIB	mechanism	"PEGAPTANIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PEGAPTANIB	context	"PEGAPTANIB" AND nephroblastoma	0	
+PEMBROLIZUMAB	mechanism	"PEMBROLIZUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	4	42299848|35181986|34380662|30154227
+PEMBROLIZUMAB	context	"PEMBROLIZUMAB" AND nephroblastoma	4	42638924|33620838|34097314|34053383
+PEMETREXED DISODIUM	mechanism	"PEMETREXED DISODIUM" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PEMETREXED DISODIUM	context	"PEMETREXED DISODIUM" AND nephroblastoma	0	
+PENTAMIDINE ISETHIONATE	mechanism	"PENTAMIDINE ISETHIONATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PENTAMIDINE ISETHIONATE	context	"PENTAMIDINE ISETHIONATE" AND nephroblastoma	0	
+PENTOSAN POLYSULPHATE	mechanism	"PENTOSAN POLYSULPHATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PENTOSAN POLYSULPHATE	context	"PENTOSAN POLYSULPHATE" AND nephroblastoma	0	
+PENTOSTATIN	mechanism	"PENTOSTATIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	6	29460654|25433931|24723493|17143256|10877051|1980480
+PENTOSTATIN	context	"PENTOSTATIN" AND nephroblastoma	0	
+PERHEXILINE	mechanism	"PERHEXILINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PERHEXILINE	context	"PERHEXILINE" AND nephroblastoma	0	
+PERPHENAZINE	mechanism	"PERPHENAZINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PERPHENAZINE	context	"PERPHENAZINE" AND nephroblastoma	0	
+PHENFORMIN	mechanism	"PHENFORMIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PHENFORMIN	context	"PHENFORMIN" AND nephroblastoma	0	
+PHENYTOIN	mechanism	"PHENYTOIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	5	18348270|15849796|9003978|2682349|3807939
+PHENYTOIN	context	"PHENYTOIN" AND nephroblastoma	2	6106127|4318354
+PIMECROLIMUS	mechanism	"PIMECROLIMUS" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PIMECROLIMUS	context	"PIMECROLIMUS" AND nephroblastoma	0	
+PIMOZIDE	mechanism	"PIMOZIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PIMOZIDE	context	"PIMOZIDE" AND nephroblastoma	0	
+PIRTOBRUTINIB	mechanism	"PIRTOBRUTINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	41793543
+PIRTOBRUTINIB	context	"PIRTOBRUTINIB" AND nephroblastoma	0	
+PODOFILOX	mechanism	"PODOFILOX" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PODOFILOX	context	"PODOFILOX" AND nephroblastoma	0	
+PRAMLINTIDE	mechanism	"PRAMLINTIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PRAMLINTIDE	context	"PRAMLINTIDE" AND nephroblastoma	0	
+PROCHLORPERAZINE	mechanism	"PROCHLORPERAZINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PROCHLORPERAZINE	context	"PROCHLORPERAZINE" AND nephroblastoma	1	1718225
+PROCHLORPERAZINE EDISYLATE	mechanism	"PROCHLORPERAZINE EDISYLATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PROCHLORPERAZINE EDISYLATE	context	"PROCHLORPERAZINE EDISYLATE" AND nephroblastoma	0	
+PROPAFENONE	mechanism	"PROPAFENONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PROPAFENONE	context	"PROPAFENONE" AND nephroblastoma	0	
+PROPYLTHIOURACIL	mechanism	"PROPYLTHIOURACIL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	22007901|14286822
+PROPYLTHIOURACIL	context	"PROPYLTHIOURACIL" AND nephroblastoma	0	
+PYRITHIONE	mechanism	"PYRITHIONE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PYRITHIONE	context	"PYRITHIONE" AND nephroblastoma	0	
+PYRITHIONE ZINC	mechanism	"PYRITHIONE ZINC" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+PYRITHIONE ZINC	context	"PYRITHIONE ZINC" AND nephroblastoma	0	
+QUERCETIN	mechanism	"QUERCETIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	5	23382917|20814239|17575319|16950806|11746251
+QUERCETIN	context	"QUERCETIN" AND nephroblastoma	2	40151118|18549926
+RALOXIFENE	mechanism	"RALOXIFENE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	11896754
+RALOXIFENE	context	"RALOXIFENE" AND nephroblastoma	0	
+RANIBIZUMAB	mechanism	"RANIBIZUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+RANIBIZUMAB	context	"RANIBIZUMAB" AND nephroblastoma	0	
+RESVERATROL	mechanism	"RESVERATROL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	14	42546117|41483781|40720586|40641606|37633598|36241685|34502304|30771486|29307372|25869442
+RESVERATROL	context	"RESVERATROL" AND nephroblastoma	3	34256324|31853281|30972698
+RIBAVIRIN	mechanism	"RIBAVIRIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	36207145|3015723
+RIBAVIRIN	context	"RIBAVIRIN" AND nephroblastoma	1	9042308
+RIDAFOROLIMUS	mechanism	"RIDAFOROLIMUS" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+RIDAFOROLIMUS	context	"RIDAFOROLIMUS" AND nephroblastoma	0	
+RITUXIMAB	mechanism	"RITUXIMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	74	42715516|39261532|37555509|34521099|33275734|32791549|32172299|32114372|31364186|30696487
+RITUXIMAB	context	"RITUXIMAB" AND nephroblastoma	2	32511040|23622662
+RUXOLITINIB	mechanism	"RUXOLITINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	31291615|27599162
+RUXOLITINIB	context	"RUXOLITINIB" AND nephroblastoma	1	22787076
+SALMETEROL XINAFOATE	mechanism	"SALMETEROL XINAFOATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+SALMETEROL XINAFOATE	context	"SALMETEROL XINAFOATE" AND nephroblastoma	0	
+SAPANISERTIB	mechanism	"SAPANISERTIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+SAPANISERTIB	context	"SAPANISERTIB" AND nephroblastoma	0	
+SELINEXOR	mechanism	"SELINEXOR" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	38589567
+SELINEXOR	context	"SELINEXOR" AND nephroblastoma	3	38589567|36195086|26398108
+SELUMETINIB	mechanism	"SELUMETINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	38504568
+SELUMETINIB	context	"SELUMETINIB" AND nephroblastoma	0	
+SERTACONAZOLE NITRATE	mechanism	"SERTACONAZOLE NITRATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+SERTACONAZOLE NITRATE	context	"SERTACONAZOLE NITRATE" AND nephroblastoma	0	
+SERTRALINE	mechanism	"SERTRALINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	32202548
+SERTRALINE	context	"SERTRALINE" AND nephroblastoma	1	36161332
+SILDENAFIL	mechanism	"SILDENAFIL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	3	42199076|32850387|32764382
+SILDENAFIL	context	"SILDENAFIL" AND nephroblastoma	0	
+SIMVASTATIN	mechanism	"SIMVASTATIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	38604342
+SIMVASTATIN	context	"SIMVASTATIN" AND nephroblastoma	1	31157513
+SIROLIMUS	mechanism	"SIROLIMUS" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	15	41345094|38251906|38180884|37931001|35421971|34286667|32777450|30900161|30588981|26748241
+SIROLIMUS	context	"SIROLIMUS" AND nephroblastoma	7	42389452|37599001|37206983|23946963|28583549|24850187|18927120
+SOMATROPIN (RECOMBINANT DNA ORIGIN)	mechanism	"SOMATROPIN (RECOMBINANT DNA ORIGIN)" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+SOMATROPIN (RECOMBINANT DNA ORIGIN)	context	"SOMATROPIN (RECOMBINANT DNA ORIGIN)" AND nephroblastoma	0	
+SORAFENIB	mechanism	"SORAFENIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	6	41545558|30710515|26485542|23379954|19724687|19209155
+SORAFENIB	context	"SORAFENIB" AND nephroblastoma	7	42262677|41847736|39238120|31157257|26207356|25783402|21707287
+STAVUDINE	mechanism	"STAVUDINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+STAVUDINE	context	"STAVUDINE" AND nephroblastoma	0	
+STREPTOZOCIN	mechanism	"STREPTOZOCIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	3	21273367|17259378|9856686
+STREPTOZOCIN	context	"STREPTOZOCIN" AND nephroblastoma	9	39059831|35788054|35016601|34015468|25855771|24969676|24850187|2532796|145871
+SUCCIMER	mechanism	"SUCCIMER" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+SUCCIMER	context	"SUCCIMER" AND nephroblastoma	2	8388326|1331548
+SULCONAZOLE NITRATE	mechanism	"SULCONAZOLE NITRATE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+SULCONAZOLE NITRATE	context	"SULCONAZOLE NITRATE" AND nephroblastoma	0	
+SUNITINIB	mechanism	"SUNITINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	33478100|24999901
+SUNITINIB	context	"SUNITINIB" AND nephroblastoma	4	36295490|35402566|31489193|21707287
+TAMOXIFEN	mechanism	"TAMOXIFEN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	44	26898469|24389189|22884371|22479651|20814239|20458558|19435893|18497064|17925231|17409401
+TAMOXIFEN	context	"TAMOXIFEN" AND nephroblastoma	16	42411285|40554754|33987034|33726497|29398135|27080979|26278035|24854266|24571983|20944147
+TEMOZOLOMIDE	mechanism	"TEMOZOLOMIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	58	42641883|41697437|41449147|41254593|40355925|35806160|35144313|34403371|33432322|32728190
+TEMOZOLOMIDE	context	"TEMOZOLOMIDE" AND nephroblastoma	15	42327581|40347129|39085511|39016020|38503417|34335021|32793489|30080131|25772149|24490140
+TEMSIROLIMUS	mechanism	"TEMSIROLIMUS" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	27158244|26748241
+TEMSIROLIMUS	context	"TEMSIROLIMUS" AND nephroblastoma	0	
+TEPROTUMUMAB	mechanism	"TEPROTUMUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+TEPROTUMUMAB	context	"TEPROTUMUMAB" AND nephroblastoma	0	
+TERCONAZOLE	mechanism	"TERCONAZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+TERCONAZOLE	context	"TERCONAZOLE" AND nephroblastoma	0	
+TERFENADINE	mechanism	"TERFENADINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+TERFENADINE	context	"TERFENADINE" AND nephroblastoma	0	
+TETRACYCLINE	mechanism	"TETRACYCLINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	82	37370348|34085233|30582405|27104376|18728194|17597804|16739112|11461705|10329395|10094923
+TETRACYCLINE	context	"TETRACYCLINE" AND nephroblastoma	14	32102677|25107671|23291318|15613247|11960373|11686107|10047468|9771972|9744804|9459485
+THALIDOMIDE	mechanism	"THALIDOMIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	234	40496858|39950462|39921387|39103678|39033767|38499527|37835441|37493867|35959963|35732408
+THALIDOMIDE	context	"THALIDOMIDE" AND nephroblastoma	0	
+THIORIDAZINE	mechanism	"THIORIDAZINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+THIORIDAZINE	context	"THIORIDAZINE" AND nephroblastoma	0	
+THIOTEPA	mechanism	"THIOTEPA" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	9	19115598|11704786|9267167|3923337|3938161|6772541|413764|817967|4219920
+THIOTEPA	context	"THIOTEPA" AND nephroblastoma	15	31534191|28843054|25111275|17032431|15254057|12476282|11147412|1768972|1845951|2539058
+THONZONIUM	mechanism	"THONZONIUM" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+THONZONIUM	context	"THONZONIUM" AND nephroblastoma	0	
+THROMBIN ALFA	mechanism	"THROMBIN ALFA" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+THROMBIN ALFA	context	"THROMBIN ALFA" AND nephroblastoma	0	
+TILDRAKIZUMAB	mechanism	"TILDRAKIZUMAB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+TILDRAKIZUMAB	context	"TILDRAKIZUMAB" AND nephroblastoma	0	
+TOPOTECAN	mechanism	"TOPOTECAN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	5	27409525|18854698|17697969|11672782|8653700
+TOPOTECAN	context	"TOPOTECAN" AND nephroblastoma	15	25382188|25546733|22529373|21142665|20881835|20017204|18273617|17634492|15342988|14757844
+TRABECTEDIN	mechanism	"TRABECTEDIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+TRABECTEDIN	context	"TRABECTEDIN" AND nephroblastoma	0	
+TRAMETINIB DIMETHYL SULFOXIDE	mechanism	"TRAMETINIB DIMETHYL SULFOXIDE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+TRAMETINIB DIMETHYL SULFOXIDE	context	"TRAMETINIB DIMETHYL SULFOXIDE" AND nephroblastoma	0	
+TRETINOIN	mechanism	"TRETINOIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	42	38149662|35633286|32966799|28350519|24357327|23837398|23547841|23174944|22186000|21674001
+TRETINOIN	context	"TRETINOIN" AND nephroblastoma	35	42492627|37186071|31883876|31231034|30763305|28677722|28114959|25899830|23991619|23873370
+TRIAMTERENE	mechanism	"TRIAMTERENE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+TRIAMTERENE	context	"TRIAMTERENE" AND nephroblastoma	0	
+TRICLABENDAZOLE	mechanism	"TRICLABENDAZOLE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+TRICLABENDAZOLE	context	"TRICLABENDAZOLE" AND nephroblastoma	0	
+TRICLOSAN	mechanism	"TRICLOSAN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	30160090|29214481
+TRICLOSAN	context	"TRICLOSAN" AND nephroblastoma	0	
+TRIFLUOPERAZINE	mechanism	"TRIFLUOPERAZINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	2192255
+TRIFLUOPERAZINE	context	"TRIFLUOPERAZINE" AND nephroblastoma	1	1686932
+TRIFLUPERIDOL	mechanism	"TRIFLUPERIDOL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+TRIFLUPERIDOL	context	"TRIFLUPERIDOL" AND nephroblastoma	0	
+TRIFLUPROMAZINE	mechanism	"TRIFLUPROMAZINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	2725542
+TRIFLUPROMAZINE	context	"TRIFLUPROMAZINE" AND nephroblastoma	0	
+TRIFLURIDINE	mechanism	"TRIFLURIDINE" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	3	39840713|8544753|6783669
+TRIFLURIDINE	context	"TRIFLURIDINE" AND nephroblastoma	1	6250333
+URSODIOL	mechanism	"URSODIOL" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+URSODIOL	context	"URSODIOL" AND nephroblastoma	0	
+VALPROIC ACID	mechanism	"VALPROIC ACID" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	27	41564166|40394668|36183453|35411996|31148385|30151876|28631446|28350519|27010151|26552569
+VALPROIC ACID	context	"VALPROIC ACID" AND nephroblastoma	3	26023847|20469999|11686107
+VANDETANIB	mechanism	"VANDETANIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+VANDETANIB	context	"VANDETANIB" AND nephroblastoma	0	
+VEMURAFENIB	mechanism	"VEMURAFENIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	1	32211316
+VEMURAFENIB	context	"VEMURAFENIB" AND nephroblastoma	1	31109800
+VENETOCLAX	mechanism	"VENETOCLAX" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	39	42533241|42288680|42166356|41793543|41609030|40456839|40254718|38829961|38290108|38197948
+VENETOCLAX	context	"VENETOCLAX" AND nephroblastoma	4	42104158|40410562|39238120|38334897
+VITAMIN K3	mechanism	"VITAMIN K3" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	0	
+VITAMIN K3	context	"VITAMIN K3" AND nephroblastoma	0	
+VORINOSTAT	mechanism	"VORINOSTAT" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	3	31708970|23884428|23619976
+VORINOSTAT	context	"VORINOSTAT" AND nephroblastoma	1	17728786
+WARFARIN	mechanism	"WARFARIN" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	3	29222278|20084395|2750777
+WARFARIN	context	"WARFARIN" AND nephroblastoma	0	
+ZANUBRUTINIB	mechanism	"ZANUBRUTINIB" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	2	41793543|40829104
+ZANUBRUTINIB	context	"ZANUBRUTINIB" AND nephroblastoma	0	
+ZINC	mechanism	"ZINC" AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR "spindle assembly checkpoint" OR aneuploidy)	245	40367947|39997404|39673523|39078851|38786061|38768219|38694501|38496635|38203427|37999539
+ZINC	context	"ZINC" AND nephroblastoma	453	41930078|41450889|40391844|39768169|39698353|39002031|38416121|38338151|37792584|37233178

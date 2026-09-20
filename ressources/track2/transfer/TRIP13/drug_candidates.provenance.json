@@ -1,0 +1,78 @@
+{
+  "name": "drug_candidates",
+  "built_at": "2026-09-19T23:09:59+00:00",
+  "built_by": "mva-drugs snapshot",
+  "code_version": "073b4fa",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "For every target in targets.tsv: Open Targets drugAndClinicalCandidates (a search for the exact approved symbol, then the target), ChEMBL mechanisms for every human target whose components declare that gene symbol, and one batched DGIdb interactions query over the whole symbol list. Rows are deduped on (drug_name.lower(), target_symbol); a row merged from several sources lists all of them in `source`. max_phase, first_approval and atc are then filled from one batched ChEMBL molecule lookup over every ChEMBL id any source produced, which also replaces a bare ChEMBL id with the preferred name. `approved` is the disjunction of ChEMBL max_phase == 4, an Open Targets clinical stage of APPROVAL, and DGIdb's own approved flag. openFDA is then queried once per approved drug name; `fda_label` is empty for a row that was never checked, which is not the same statement as false.",
+  "card": {
+    "path": "ressources/track2/transfer/TRIP13/mechanism.json",
+    "version": 1,
+    "gene": "TRIP13",
+    "disease": "Mosaic variegated aneuploidy syndrome 3 (MVA3)"
+  },
+  "inputs": [
+    {
+      "name": "opentargets",
+      "url": "https://api.platform.opentargets.org/api/v4/graphql",
+      "version": null,
+      "role": "integrated target-drug-disease rows and clinical stage",
+      "retrieved_at": "2026-09-19T22:43:21+00:00",
+      "retrieved_from": "2026-09-19T22:41:47+00:00",
+      "requests": 56,
+      "live_calls": 0,
+      "sha256": "fcb8f48f0ae182e40544a38f37a33bbc98fbd5355bfb9694bffbf1325fcd4e33",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "chembl",
+      "url": "https://www.ebi.ac.uk/chembl/api/data",
+      "version": null,
+      "role": "mechanism of action, clinical phase, first approval, ATC class",
+      "retrieved_at": "2026-09-19T22:43:45+00:00",
+      "retrieved_from": "2026-09-19T22:41:48+00:00",
+      "requests": 128,
+      "live_calls": 0,
+      "sha256": "7e936cfd4aca55daa1742b42c785d5972befd8ec1e70d2b144da5363aabe25b1",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "dgidb",
+      "url": "https://dgidb.org/api/graphql",
+      "version": null,
+      "role": "aggregated drug-gene interaction edges over ~40 curated sources",
+      "retrieved_at": "2026-09-19T22:43:31+00:00",
+      "retrieved_from": "2026-09-19T22:43:31+00:00",
+      "requests": 1,
+      "live_calls": 0,
+      "sha256": "3cd5707b9a515b898c4dd55ef5aa05f2186fbd4abbdc1569f3582482c0dc9495",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "openfda",
+      "url": "https://api.fda.gov/drug/label.json",
+      "version": null,
+      "role": "current US drug labelling, the second evidence of approval",
+      "retrieved_at": "2026-09-19T23:09:57+00:00",
+      "retrieved_from": "2026-09-19T22:43:51+00:00",
+      "requests": 277,
+      "live_calls": 0,
+      "sha256": "a8ea110bac845e20bec5f87f7e4fcf8acf15166095e3707772c4514bc91b540e",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/transfer/TRIP13/drug_candidates.tsv",
+      "sha256": "9834171a6e49383b208c54e60f28a49d12c3f55c53104ad76b04c54f920aa850",
+      "bytes": 105706,
+      "rows": 1329
+    }
+  ],
+  "licence": "Every row is derived from a public API: Open Targets Platform (CC0), ChEMBL (CC BY-SA 3.0), DGIdb (MIT, aggregating sources under their own terms), Reactome (CC0), ClinicalTrials.gov (US public domain), PubMed/NCBI (US public domain) and openFDA (US public domain). No licensed resource is queried; DrugBank is named by the challenge form but requires a licence for programmatic access and was not used.",
+  "patient_data": "none. Public API replies only - gene symbols, drug names, trial ids and citations. Nothing here was derived from the callset, and no genomic position appears in any row by construction."
+}

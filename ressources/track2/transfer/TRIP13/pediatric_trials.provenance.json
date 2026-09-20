@@ -1,0 +1,44 @@
+{
+  "name": "pediatric_trials",
+  "built_at": "2026-09-19T23:10:07+00:00",
+  "built_by": "tools/track2_enrich.py",
+  "code_version": "073b4fa",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "ClinicalTrials.gov v2, query.intr=<drug> with aggFilters=ages:child, first page of 100, any indication; a study that admits children, not proof one enrolled any",
+  "card": {
+    "path": "ressources/track2/transfer/TRIP13/mechanism.json",
+    "version": 1,
+    "gene": "TRIP13",
+    "disease": "Mosaic variegated aneuploidy syndrome 3 (MVA3)"
+  },
+  "inputs": [
+    {
+      "name": "clinicaltrials",
+      "url": "https://clinicaltrials.gov/api/v2/studies",
+      "version": null,
+      "role": "registered trial activity per disease and drug",
+      "retrieved_at": "2026-09-19T23:07:17+00:00",
+      "retrieved_from": "2026-09-19T22:57:35+00:00",
+      "requests": 265,
+      "live_calls": 0,
+      "sha256": "edb1b0362627011e358ee86ec882205a9a886068d8fdfd2b5487eea6ddd6f13e",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "track2.drug_candidates",
+      "path": "ressources/track2/transfer/TRIP13/drug_candidates.tsv",
+      "sha256": "9834171a6e49383b208c54e60f28a49d12c3f55c53104ad76b04c54f920aa850",
+      "bytes": 105706
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/transfer/TRIP13/pediatric_trials.tsv",
+      "sha256": "7791b7aae78848d6dfb764f847de5663e0d0b13dbc02e466927e9df77d04a1ac",
+      "bytes": 2596976,
+      "rows": 9950
+    }
+  ],
+  "patient_data": "none. Public API replies only - gene symbols, drug names, trial ids and citations. Nothing here was derived from the callset, and no genomic position appears in any row by construction."
+}

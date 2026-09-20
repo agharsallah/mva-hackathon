@@ -1,0 +1,1330 @@
+drug_name	drug_id	target_symbol	target_role	direction_ids	source	interaction_or_moa	action_type	max_phase	approved	fda_label	pmids	first_approval	atc
+BAY-1161909	CHEMBL4303241	TTK	seed	D1	opentargets|dgidb|chembl	Dual specificity protein kinase TTK inhibitor	INHIBITOR	2	false				
+BAY-1217389	CHEMBL4456085	TTK	seed	D1	opentargets|chembl	Dual specificity protein kinase TTK inhibitor	INHIBITOR	1	false				
+IBCASERTIB	CHEMBL5095033	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora-B inhibitor	INHIBITOR	3	false				
+BARASERTIB	CHEMBL415049	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora-B inhibitor	INHIBITOR	3	false		20684549|36169922|17495131		
+CYC-116	CHEMBL482967	AURKB	seed	D1	opentargets|dgidb|chembl	Vascular endothelial growth factor receptor 2 inhibitor	INHIBITOR	1	false		20462263|26345296		
+TTP-607	CHEMBL3545327	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora inhibitor	INHIBITOR	1	false		20124450		
+SNS-314	CHEMBL482767	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora inhibitor	INHIBITOR	1	false		19649632|26345296		
+BI-811283	CHEMBL3545395	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora-B inhibitor	INHIBITOR	2	false		22350019|25529193		
+ENMD-2076	CHEMBL482968	AURKB	seed	D1	opentargets|dgidb|chembl	Fibroblast growth factor receptor 3 inhibitor	INHIBITOR	2	false		21177375|22397360		
+TAK-901	CHEMBL3544932	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora-B inhibitor	INHIBITOR	1	false		23358665		
+KW-2449	CHEMBL1908397	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora-A inhibitor	INHIBITOR	1	false		19541823|21474579		
+AMG-900	CHEMBL2140408	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora inhibitor	INHIBITOR	1	false		20935223|26345296		
+MK-6592	CHEMBL3545378	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora inhibitor	INHIBITOR	1	false		19684075		
+GSK-1070916	CHEMBL1090479	AURKB	seed	D1	opentargets|chembl	Serine/threonine-protein kinase Aurora-B inhibitor	INHIBITOR	1	false		20420387|24965505		
+PF-03814735	CHEMBL4289017	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora-A inhibitor	INHIBITOR	1	false		19568282|20354118		
+ILORASERTIB	CHEMBL1980297	AURKB	seed	D1	opentargets|dgidb|chembl	Platelet-derived growth factor receptor inhibitor	INHIBITOR	2	false		22935731		
+CENISERTIB	CHEMBL1967878	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora inhibitor	INHIBITOR	2	false		19609559|24965505		
+TOZASERTIB	CHEMBL572878	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora inhibitor	INHIBITOR	2	false		23808327|19035792|14981513|26345296		
+AT-9283	CHEMBL495727	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora-A inhibitor	INHIBITOR	3	false		19143567|20507304		
+DANUSERTIB	CHEMBL402548	AURKB	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase Aurora inhibitor	INHIBITOR	2	false		18089710|26345296		
+CAFUSERTIB	CHEMBL3545354	PLK1	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase PLK1 inhibitor	INHIBITOR	1	false				
+ONVANSERTIB	CHEMBL1738758	PLK1	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase PLK1 inhibitor	INHIBITOR	2	false		21470862|22319201		
+BI-2536	CHEMBL513909	PLK1	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase PLK1 inhibitor	INHIBITOR	2	false		25685941|17291758|17291761|19568282		
+MK-1496	CHEMBL5314387	PLK1	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase PLK1 inhibitor	INHIBITOR	1	false				
+GSK-461364	CHEMBL1908394	PLK1	seed	D1	opentargets|chembl	Serine/threonine-protein kinase PLK1 inhibitor	INHIBITOR	1	false		19568282|19690138		
+TAK-960	CHEMBL2392545	PLK1	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase PLK1 inhibitor	INHIBITOR	1	false		22188812		
+HMN-214	CHEMBL3991927	PLK1	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase PLK1 inhibitor	INHIBITOR	1	false		14583495|19474163		
+VOLASERTIB	CHEMBL1233528	PLK1	seed	D1	opentargets|dgidb|chembl	Serine/threonine-protein kinase PLK1 inhibitor	INHIBITOR	3	false		19383823		
+ACADESINE	CHEMBL1551724	PRKAA1	seed	D2	opentargets|dgidb|chembl	AMP-activated protein kinase, AMPK activator	ACTIVATOR	4	true	false	18671468		C01EB13
+ACADESINE	CHEMBL1551724	PRKAA2	seed	D2	opentargets|dgidb|chembl	AMP-activated protein kinase, AMPK activator	ACTIVATOR	4	true	false	18671468		C01EB13
+RETASPIMYCIN	CHEMBL1184904	HSP90AA1	seed	D2|D3	opentargets|dgidb	Heat shock protein HSP90 inhibitor	INHIBITOR	3	false				
+BIIB021	CHEMBL467399	HSP90AA1	seed	D2|D3	opentargets|dgidb|chembl	Heat shock protein HSP90 inhibitor	INHIBITOR	2	false		19372565|28443462|29749536		
+SNX 5422	CHEMBL1195136	HSP90AA1	seed	D2|D3	opentargets|dgidb|chembl	Heat shock protein HSP90 inhibitor	INHIBITOR	2	false		18948577|21908572|33627156		
+RETASPIMYCIN HYDROCHLORIDE	CHEMBL377559	HSP90AA1	seed	D2|D3	opentargets|dgidb|chembl	Heat shock protein HSP90 inhibitor	INHIBITOR	3	false		17090671|25542032		
+GANETESPIB	CHEMBL2103879	HSP90AA1	seed	D2|D3	opentargets|dgidb|chembl	Heat shock protein HSP90 inhibitor	INHIBITOR	3	false		21154128|22806877		
+LUMINESPIB	CHEMBL252164	HSP90AA1	seed	D2|D3	opentargets|dgidb|chembl	Heat shock protein HSP90 inhibitor	INHIBITOR	2	false		25313505|32796651		
+ALVESPIMYCIN	CHEMBL383824	HSP90AA1	seed	D2|D3	opentargets|dgidb|chembl	Heat shock protein HSP90 inhibitor	INHIBITOR	2	false		20111068		
+TANESPIMYCIN	CHEMBL109480	HSP90AA1	seed	D2|D3	opentargets|dgidb|chembl	Heat shock protein HSP90 inhibitor	INHIBITOR	3	false		21764310|22480433|25277067|23520985|21920765|12881371		
+ONALESPIB	CHEMBL1214827	HSP90AA1	seed	D2|D3	opentargets|dgidb|chembl	Heat shock protein HSP90 inhibitor	INHIBITOR	2	false		27197266|28679777		
+CD24FC	CHEMBL4297717	HSP90AA1	seed	D2|D3	opentargets|dgidb|chembl	Heat shock 70 kDa protein 1A/1B inhibitor	INHIBITOR	3	false		28724800		
+PERHEXILINE	CHEMBL75880	MTOR	seed	D2|D4	opentargets	Carnitine O-palmitoyltransferase 1, muscle isoform inhibitor	INHIBITOR	4	true	false		1974	C08EX02
+DS-7423	CHEMBL3545248	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false		24504419		
+CC-115	CHEMBL3586573	MTOR	seed	D2|D4	opentargets|dgidb|chembl	DNA-dependent protein kinase inhibitor	INHIBITOR	2	false		26102506		
+GEDATOLISIB	CHEMBL592445	MTOR	seed	D2|D4	opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		20166697|15705718|21325073		
+PANULISIB	CHEMBL5095025	MTOR	seed	D2|D4	opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		25700704		
+AZD-8055	CHEMBL1801204	MTOR	seed	D2|D4	opentargets|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	2	false		20028854		
+BGT-226	CHEMBL3545096	MTOR	seed	D2|D4	opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		22357447|24591840		
+SAMOTOLISIB	CHEMBL4297181	MTOR	seed	D2|D4	opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false				
+OMIPALISIB	CHEMBL1236962	MTOR	seed	D2|D4	opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		15705718|24900173		
+OSI-027	CHEMBL3120215	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	2	false		21673091		
+RG-7603	CHEMBL2331680	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false		24900569		
+VISTUSERTIB	CHEMBL2336325	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	2	false				
+DACTOLISIB	CHEMBL1879463	MTOR	seed	D2|D4	opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	3	false		23410005|18606717|24591840		
+SAPANISERTIB	CHEMBL3545097	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	2	true	false	23085766|25519700		
+PALOMID-529	CHEMBL2141712	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false		19010932|21551258|22982188		
+VOXTALISIB	CHEMBL3545366	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	2	false		15705718|24634413		
+PERHEXILINE MALEATE	CHEMBL1334033	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Carnitine O-palmitoyltransferase 1, muscle isoform inhibitor	INHIBITOR	4	true	false	19771169|24131551|3793279	1974	
+APITOLISIB	CHEMBL1922094	MTOR	seed	D2|D4	opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		15705718|21981714		
+PF-04691502	CHEMBL1234354	MTOR	seed	D2|D4	opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		15705718|21750219		
+RIDAFOROLIMUS	CHEMBL2103839	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	4	true	false	18451242		L01EG03
+PKI-179	CHEMBL1258517	MTOR	seed	D2|D4	opentargets|dgidb|chembl	PI3-kinase p110-alpha subunit inhibitor	INHIBITOR	1	false		20797855		
+SF-1126	CHEMBL2326966	MTOR	seed	D2|D4	opentargets|dgidb|chembl	PI3-kinase class I inhibitor	INHIBITOR	2	false		22261336		
+DS-3078A	CHEMBL3544963	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false				
+ONATASERTIB	CHEMBL3586404	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	2	false		25855786		
+VS-5584	CHEMBL3393066	MTOR	seed	D2|D4	opentargets|dgidb|chembl	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false		23270925		
+INDOXIMOD	CHEMBL571209	MTOR	seed	D2|D4	opentargets|dgidb|chembl	mTORC1 activator	ACTIVATOR	3	false		30254983		
+PWT-33579	CHEMBL3545323	MTOR	seed	D2|D4	chembl|dgidb	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false				
+PWT-33587	CHEMBL3545006	MTOR	seed	D2|D4	chembl|dgidb	Serine/threonine-protein kinase mTOR inhibitor	INHIBITOR	1	false				
+OPROZOMIB	CHEMBL2103884	PSMB5	seed	D2|D3	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	2	false		21484190|26924128|27167000		
+BORTEZOMIB	CHEMBL325041	PSMB5	seed	D2|D3	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	true	23547757|24524217|21606441		L01XG01
+IXAZOMIB	CHEMBL2141296	PSMB5	seed	D2|D3	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	true	23995855|30867233		L01XG03
+CARFILZOMIB	CHEMBL451887	PSMB5	seed	D2|D3	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	true	24524217|23547757|20116451	2009	L01XG02
+MARIZOMIB	CHEMBL371405	PSMB5	seed	D2|D3	opentargets|dgidb|chembl	20S proteasome inhibitor	INHIBITOR	3	false		24269479|27161872		
+BORTEZOMIB D-MANNITOL	CHEMBL5315122	PSMB5	seed	D2|D3	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	false		2003	
+IXAZOMIB CITRATE	CHEMBL3545432	PSMB5	seed	D2|D3	opentargets|dgidb|chembl	26S proteasome inhibitor	INHIBITOR	4	true	false		2015	
+FORIGERIMOD	CHEMBL3989409	HSPA8	seed	D3	opentargets	Heat shock cognate 71 kDa protein inhibitor	INHIBITOR	3	false				
+FORIGERIMOD ACETATE	CHEMBL3989801	HSPA8	seed	D3	opentargets|dgidb|chembl	Heat shock cognate 71 kDa protein inhibitor	INHIBITOR	3	false		19390596|21173017		
+OMBIPEPIMUT-S	CHEMBL4297235	WT1	seed	D4	opentargets|dgidb|chembl	Wilms tumor protein vaccine antigen	VACCINE ANTIGEN	3	false		33939067		
+GALINPEPIMUT-S	CHEMBL3833386	WT1	seed	D4	opentargets|dgidb|chembl	Wilms tumor protein vaccine antigen	VACCINE ANTIGEN	3	false		34053383		
+XENTUZUMAB	CHEMBL4297850	IGF2	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I inhibitor	INHIBITOR	2	false		24296829|32161368		
+DUSIGITUMAB	CHEMBL2109355	IGF2	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I inhibitor	INHIBITOR	2	false		25193511		
+MASOPROCOL	CHEMBL313972	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor inhibitor	INHIBITOR	4	true	false	16142439	1992	L01XX10
+VELIGROTUG	CHEMBL2109357	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor antagonist	ANTAGONIST	3	false		19165200|21875414		
+CONTELTINIB	CHEMBL3899477	IGF1R	seed	D4	opentargets|dgidb|chembl	ALK tyrosine kinase receptor inhibitor	INHIBITOR	2	false		27638856|29669759|30381078		
+PL-225B	CHEMBL3545004	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor inhibitor	INHIBITOR	1	false				
+BIIB-022	CHEMBL2109356	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor inhibitor	INHIBITOR	1	false		24458261		
+TEPROTUMUMAB	CHEMBL1743079	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor antagonist	ANTAGONIST	4	true	true	21127194|24878056	2020	L04AG13
+AXL-1717	CHEMBL283120	IGF1R	seed	D4	opentargets|chembl	Insulin-like growth factor I receptor inhibitor	INHIBITOR	2	false		15334055|20698809		
+FIGITUMUMAB	CHEMBL1743019	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor antagonist	ANTAGONIST	3	false		15756033		
+KW-2450	CHEMBL5283463	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin receptor inhibitor	INHIBITOR	2	false				
+ISTIRATUMAB	CHEMBL3989990	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor inhibitor	INHIBITOR	2	false		24282274|29549161|31912800		
+DALOTUZUMAB	CHEMBL1743006	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor antagonist	ANTAGONIST	2	false				
+AEW-541	CHEMBL551064	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor inhibitor	INHIBITOR	1	false		15050915|21875414		
+BMS-754807	CHEMBL575448	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin receptor inhibitor	INHIBITOR	2	false		19996272|21875414		
+MECASERMIN	CHEMBL1201716	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor agonist	AGONIST	4	true	true		2005	H01AC03
+LINSITINIB	CHEMBL1091644	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin receptor inhibitor	INHIBITOR	3	false		28954282|17671083|21425998|25208878		
+MECASERMIN RINFABATE	CHEMBL1201717	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor agonist	AGONIST	4	true	false		2005	H01AC05
+ROBATUMUMAB	CHEMBL1743064	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor antagonist	ANTAGONIST	2	false				
+XL-228	CHEMBL3545085	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor inhibitor	INHIBITOR	1	false		20124450		
+CIXUTUMUMAB	CHEMBL1743001	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor antagonist	ANTAGONIST	2	false				
+GANITUMAB	CHEMBL1743024	IGF1R	seed	D4	opentargets|dgidb|chembl	Insulin-like growth factor I receptor antagonist	ANTAGONIST	3	false		19366899		
+PRI-724	CHEMBL4297813	CTNNB1	seed	D4	opentargets|dgidb|chembl	CBP/beta catenin inhibitor	INHIBITOR	2	false		31298961		
+TEPRASIRAN	CHEMBL4297574	TP53	seed	D4	opentargets|dgidb	p53 mRNA RNAi inhibitor	RNAI INHIBITOR	3	false				
+SIREMADLIN	CHEMBL3653256	TP53	seed	D4	opentargets|dgidb|chembl	Tumour suppressor p53/oncoprotein Mdm2 inhibitor	INHIBITOR	2	false		34862243		
+IDASANUTLIN	CHEMBL2402737	TP53	seed	D4	opentargets|dgidb|chembl	Tumour suppressor p53/oncoprotein Mdm2 inhibitor	INHIBITOR	3	false		31483066|36602782|31289443		
+NAVTEMADLIN	CHEMBL3125702	TP53	seed	D4	opentargets|dgidb|chembl	Tumour suppressor p53/oncoprotein Mdm2 inhibitor	INHIBITOR	3	false		31359240|26162687|25567130|24456472|24967612|31253596		
+CENERSEN	CHEMBL2108280	TP53	seed	D4	opentargets	p53 mRNA antisense inhibitor	ANTISENSE INHIBITOR	2	false				
+EPRENETAPOPT	CHEMBL3186011	TP53	seed	D4	opentargets|dgidb|chembl	Cellular tumor antigen p53 stabiliser	STABILISER	3	false		33449813|36084396|26086967|22965953|21239882|27179933|21415220|32482751|33314700		
+CONTUSUGENE LADENOVEC	CHEMBL2108585	TP53	seed	D4	opentargets|dgidb|chembl	Cellular tumor antigen p53 exogenous gene	EXOGENOUS GENE	3	false		19169960		
+CENERSEN SODIUM	CHEMBL2219776	TP53	seed	D4	opentargets	p53 mRNA antisense inhibitor	ANTISENSE INHIBITOR	2	false				
+ALRIZOMADLIN	CHEMBL4091801	TP53	seed	D4	opentargets|dgidb|chembl	Tumour suppressor p53/oncoprotein Mdm2 inhibitor	INHIBITOR	2	false		28498808|29716622|33941774		
+BEVACIZUMAB GAMMA	CHEMBL5314727	VEGFA	seed	D4	opentargets|dgidb|chembl	Vascular endothelial growth factor A binding agent	BINDING AGENT	4	true	false		2024	
+FARICIMAB	CHEMBL4297750	VEGFA	seed	D4	opentargets|dgidb|chembl	Angiopoietin-2 inhibitor	INHIBITOR	4	true	true	32729897	2022	S01LA09
+PEGAPTANIB OCTASODIUM	CHEMBL2108752	VEGFA	seed	D4	opentargets|dgidb|chembl	Vascular endothelial growth factor A inhibitor	INHIBITOR	3	false				
+VANUCIZUMAB	CHEMBL3545259	VEGFA	seed	D4	opentargets|dgidb|chembl	Vascular endothelial growth factor A inhibitor	INHIBITOR	2	false		26692321|27529514		
+MUPARFOSTAT	CHEMBL4297163	VEGFA	seed	D4	opentargets|dgidb|chembl	Acidic fibroblast growth factor inhibitor	INHIBITOR	3	false		14521421		
+RANIBIZUMAB	CHEMBL1201825	VEGFA	seed	D4	opentargets|dgidb|chembl	Vascular endothelial growth factor A inhibitor	INHIBITOR	4	true	true		2006	S01LA04
+BEVACIZUMAB	CHEMBL1201583	VEGFA	seed	D4	opentargets|dgidb|chembl	Vascular endothelial growth factor A inhibitor	INHIBITOR	4	true	true	24703319|27817944|23104894|29747600|18182667|25947646|23422754|22565005|18349829|9377574	2004	L01FG01|S01LA08
+PEGAPTANIB SODIUM	CHEMBL1201421	VEGFA	seed	D4	opentargets|chembl	Vascular endothelial growth factor A antagonist	ANTAGONIST	4	true	false		2004	
+ABICIPAR PEGOL	CHEMBL4297684	VEGFA	seed	D4	opentargets|dgidb|chembl	Vascular endothelial growth factor A inhibitor	INHIBITOR	4	true	false	30535424		S01LA07
+AFLIBERCEPT	CHEMBL1742982	VEGFA	seed	D4	opentargets|dgidb|chembl	Placenta growth factor inhibitor	INHIBITOR	4	true	true	20124951	2011	L01XX44|S01LA05
+BROLUCIZUMAB	CHEMBL3707357	VEGFA	seed	D4	opentargets|dgidb|chembl	Vascular endothelial growth factor A inhibitor	INHIBITOR	4	true	true		2019	S01LA06
+BEVASIRANIB	CHEMBL2110581	VEGFA	seed	D4	opentargets|dgidb	Toll-like receptor 3 activator	ACTIVATOR	3	false				
+BEVASIRANIB SODIUM	CHEMBL2103797	VEGFA	seed	D4	opentargets	VEGF-A mRNA RNAi inhibitor	RNAI INHIBITOR	3	false				
+CONBERCEPT	CHEMBL2108313	VEGFA	seed	D4	opentargets|dgidb|chembl	Vascular endothelial growth factor B inhibitor	INHIBITOR	3	false		18246030|22958404|23950958|25960634		
+BEVACIZUMAB 111IN	CHEMBL3707253	VEGFA	seed	D4	chembl|dgidb	Vascular endothelial growth factor A binding agent	BINDING AGENT	-1	false		18240146|21429739		
+TILDRAKIZUMAB	rxcui:2053436	ATG5	seed	D2	dgidb				true	true	39081053		
+ADALIMUMAB	rxcui:327361	ATG5	seed	D2	dgidb				true	true	27096233		
+DIMETHYL SULFOXIDE	rxcui:3455	WT1	seed	D4	dgidb				true	true	9040935		
+CURCUMIN	ncit:C401	WT1	seed	D4	dgidb				false		16490174		
+TRETINOIN	rxcui:10753	WT1	seed	D4	dgidb				true	true	11018519|9040935		
+DEFEROXAMINE	rxcui:3131	WT1	seed	D4	dgidb				true	true	12738801		
+HALOFUGINONE	ncit:C1120	WT1	seed	D4	dgidb				false		16148645		
+RECOMBINANT ACTIVIN	ncit:C989	WT1	seed	D4	dgidb				false		11018519		
+THERAPEUTIC CYTOKINE	ncit:C1283	WT1	seed	D4	dgidb				false		16828156		
+CYTARABINE	rxcui:3041	WT1	seed	D4	dgidb				true	true	18591546		
+INNO-305	drugbank:DB06025	WT1	seed	D4	dgidb				false				
+SIROLIMUS	rxcui:35302	WT1	seed	D4	dgidb				true	true	15782132		
+DAUNORUBICIN LIPOSOMAL	rxcui:214468	WT1	seed	D4	dgidb				true	false	18591546		
+CENISERTIB	chembl:CHEMBL1967878	PRKAA1	seed	D2	dgidb			2	false				
+SIROLIMUS	rxcui:35302	PRKAA1	seed	D2	dgidb				true	true	16027121		
+JNJ-7706621	iuphar.ligand:5932	PRKAA1	seed	D2	dgidb				false				
+SAPONARIN	chembl:CHEMBL538921	PRKAA1	seed	D2	dgidb				false		26471090		
+TYROSINE KINASE INHIBITOR	ncit:C1967	PRKAA1	seed	D2	dgidb				false		11978788		
+METFORMIN HYDROCHLORIDE	rxcui:235743	PRKAA1	seed	D2	dgidb	activator	activator		true	true			
+ENTRECTINIB	rxcui:2197862	PRKAA1	seed	D2	dgidb				true	true			
+PHENFORMIN	rxcui:8129	PRKAA1	seed	D2	dgidb				true	false			
+PALBOCICLIB	rxcui:1601374	PRKAA1	seed	D2	dgidb				true	true			
+LY2090314	iuphar.ligand:7958	PRKAA1	seed	D2	dgidb				false				
+CHEMBL:CHEMBL1997335	chembl:CHEMBL1997335	PRKAA1	seed	D2	dgidb				false				
+TETRADECANOYLPHORBOL ACETATE	ncit:C866	PRKAA1	seed	D2	dgidb				false		15383372		
+DOVITINIB	ncit:C76199	PRKAA1	seed	D2	dgidb				false				
+CHEMOPREVENTIVE AGENT	ncit:C1892	PRKAA1	seed	D2	dgidb				false		16041863		
+METFORMIN	rxcui:6809	PRKAA1	seed	D2	dgidb				true	true	26471090		
+SOTRASTAURIN	ncit:C80630	PRKAA1	seed	D2	dgidb				false				
+CHEMBL:CHEMBL587615	chembl:CHEMBL587615	PRKAA1	seed	D2	dgidb				false		23414799		
+NVP-TAE684	iuphar.ligand:5714	PRKAA1	seed	D2	dgidb				false				
+PD166285	iuphar.ligand:8183	PRKAA1	seed	D2	dgidb				false				
+LEVOTHYROXINE SODIUM	rxcui:40144	PRKAA1	seed	D2	dgidb				true	true	12433937		
+TOZASERTIB	ncit:C98053	PRKAA1	seed	D2	dgidb				false				
+HESPERADIN	iuphar.ligand:8354	PRKAA1	seed	D2	dgidb	inhibitor	inhibitor		false		19035792		
+ADENOSINE DEAMINASE INHIBITOR	ncit:C2157	PRKAA1	seed	D2	dgidb				false		11969266		
+PENTOSTATIN	rxcui:8011	PRKAA1	seed	D2	dgidb				true	true	11969266		
+GW441756X	chembl:CHEMBL1516890	PRKAA1	seed	D2	dgidb				false				
+CHEMBL:CHEMBL379975	chembl:CHEMBL379975	PRKAA1	seed	D2	dgidb				false				
+ILORASERTIB	ncit:C116729	PRKAA1	seed	D2	dgidb				false				
+CYC-116	chembl:CHEMBL482967	PRKAA1	seed	D2	dgidb			1	false				
+RG-1530	iuphar.ligand:10361	PRKAA1	seed	D2	dgidb				false				
+PF-562271	iuphar.ligand:9381	PRKAA1	seed	D2	dgidb				false				
+STREPTOZOCIN	rxcui:10114	PRKAA1	seed	D2	dgidb				true	true	15616011		
+DOCETAXEL ANHYDROUS	rxcui:1299922	IGF2	seed	D4	dgidb				true	true	25670080		
+BETAMETHASONE	rxcui:1514	IGF2	seed	D4	dgidb				true	true	10495414		
+ETOPOSIDE	rxcui:4179	IGF2	seed	D4	dgidb				true	true	15019164		
+LINSITINIB	ncit:C70982	IGF2	seed	D4	dgidb				false		25670080		
+GLUTAMINE	rxcui:4885	IGF2	seed	D4	dgidb				true	true	14746834		
+RECOMBINANT HEPATOCYTE GROWTH FACTOR	ncit:C1122	IGF2	seed	D4	dgidb				false		9348194		
+SOMATROPIN (RECOMBINANT DNA ORIGIN)	rxcui:314845	IGF2	seed	D4	dgidb				true	false	9834461		
+TYROSINE KINASE INHIBITOR SU5402	ncit:C1725	IGF2	seed	D4	dgidb				false		15516981		
+CABAZITAXEL	rxcui:996051	IGF2	seed	D4	dgidb				true	true	25670080		
+FLUOXETINE HYDROCHLORIDE	rxcui:227224	IGF2	seed	D4	dgidb				true	true	8265809		
+THERAPEUTIC ANDROGEN	ncit:C243	IGF2	seed	D4	dgidb				false		2229290		
+GANITUMAB	ncit:C71531	IGF2	seed	D4	dgidb				false		23741071|24727326		
+GEMCITABINE	rxcui:12574	IGF2	seed	D4	dgidb				true	true	23741071		
+RECOMBINANT INTERFERON	ncit:C584	IGF2	seed	D4	dgidb				false		15342387		
+ANASTROZOLE	rxcui:84857	IGF2	seed	D4	dgidb				true	true	11983488		
+GEFITINIB	rxcui:328134	IGF2	seed	D4	dgidb				true	true	16988945		
+ACETAMINOPHEN	rxcui:161	HSPA8	seed	D3	dgidb				true	true	15010265		
+ANTIBIOTIC	ncit:C258	HSPA8	seed	D3	dgidb				false		14966137		
+CYCLOSPORINE	rxcui:3008	HSPA8	seed	D3	dgidb				true	true	1429556		
+CHEMBL:CHEMBL1481974	chembl:CHEMBL1481974	HSPA8	seed	D3	dgidb				false				
+TRETINOIN	rxcui:10753	HSPA8	seed	D3	dgidb				true	true	8578578		
+DEXAMETHASONE	rxcui:3264	HSPA8	seed	D3	dgidb				true	true	7542664		
+CHEMBL:CHEMBL487046	chembl:CHEMBL487046	HSPA8	seed	D3	dgidb				false				
+CHEMBL:CHEMBL502775	chembl:CHEMBL502775	HSPA8	seed	D3	dgidb				false				
+ADENOSINE TRIPHOSPHATE	rxcui:318	HSPA8	seed	D3	dgidb				true	true			
+BUPIVACAINE HYDROCHLORIDE	rxcui:267396	HSPA8	seed	D3	dgidb				true	true	12791605		
+CHEMBL:CHEMBL471004	chembl:CHEMBL471004	HSPA8	seed	D3	dgidb				false				
+HEXACHLOROPHENE	rxcui:5293	HSPA8	seed	D3	dgidb				true	false			
+ADP	iuphar.ligand:1712	HSPA8	seed	D3	dgidb				false				
+CISPLATIN	rxcui:2555	HSPA8	seed	D3	dgidb				true	true	15378690		
+ELLAGIC ACID	iuphar.ligand:13035	HSPA8	seed	D3	dgidb				false				
+WLL-VS	iuphar.ligand:11321	PSMB5	seed	D2|D3	dgidb	inhibitor	inhibitor		false				
+BELACTOSIN A	chembl:CHEMBL491636	PSMB5	seed	D2|D3	dgidb				false		23547757		
+MG-132	iuphar.ligand:8616	PSMB5	seed	D2|D3	dgidb	inhibitor	inhibitor		false		18801655|24321833		
+LACTACYSTIN	chembl:CHEMBL374308	PSMB5	seed	D2|D3	dgidb				false		23547757		
+NIC-0102	iuphar.ligand:12174	PSMB5	seed	D2|D3	dgidb	inhibitor	inhibitor		false				
+ZETOMIPZOMIB	drugbank:DB16070	PSMB5	seed	D2|D3	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL490829	chembl:CHEMBL490829	PSMB5	seed	D2|D3	dgidb				false		18801655		
+PROPICONAZOLE	chembl:CHEMBL560579	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL53898	chembl:CHEMBL53898	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL1439833	chembl:CHEMBL1439833	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL601768	chembl:CHEMBL601768	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL1306556	chembl:CHEMBL1306556	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL1546228	chembl:CHEMBL1546228	HSP90AA1	seed	D2|D3	dgidb				false				
+HERBIMYCIN	chembl:CHEMBL479533	HSP90AA1	seed	D2|D3	dgidb				false		23947794		
+THIRAM	chembl:CHEMBL120563	HSP90AA1	seed	D2|D3	dgidb			2	false				P03AA05
+CHEMBL:CHEMBL592600	chembl:CHEMBL592600	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL1385558	chembl:CHEMBL1385558	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL591137	chembl:CHEMBL591137	HSP90AA1	seed	D2|D3	dgidb				false				
+THIMEROSAL	chembl:CHEMBL508338	HSP90AA1	seed	D2|D3	dgidb			3	false				D08AK06
+CHEMBL:CHEMBL523200	chembl:CHEMBL523200	HSP90AA1	seed	D2|D3	dgidb				false				
+CHLOROXINE	rxcui:20875	HSP90AA1	seed	D2|D3	dgidb				true	false			
+PYRITHIONE	chembl:CHEMBL1356238	HSP90AA1	seed	D2|D3	dgidb			4	true	true		1986	
+EFUNGUMAB	ncit:C87763	HSP90AA1	seed	D2|D3	dgidb	inhibitor	inhibitor		false				
+XL888	iuphar.ligand:13794	HSP90AA1	seed	D2|D3	dgidb	inhibitor	inhibitor		false				
+TOTAROL	chembl:CHEMBL487602	HSP90AA1	seed	D2|D3	dgidb				false				
+MICONAZOLE NITRATE	rxcui:42790	HSP90AA1	seed	D2|D3	dgidb				true	true			
+AUY922	drugbank:DB11881	HSP90AA1	seed	D2|D3	dgidb	other/unknown|inhibitor	other/unknown|inhibitor		false				
+CHEMBL:CHEMBL1256761	chembl:CHEMBL1256761	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL505670	chembl:CHEMBL505670	HSP90AA1	seed	D2|D3	dgidb				false				
+FLUCONAZOLE	rxcui:4450	HSP90AA1	seed	D2|D3	dgidb				true	true			
+CHEMBL:CHEMBL1224755	chembl:CHEMBL1224755	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL428064	chembl:CHEMBL428064	HSP90AA1	seed	D2|D3	dgidb				false				
+GEDUNIN	chembl:CHEMBL465226	HSP90AA1	seed	D2|D3	dgidb				false		25756299		
+MASOPROCOL	rxcui:227239	HSP90AA1	seed	D2|D3	dgidb				true	false			
+CHEMBL:CHEMBL1567571	chembl:CHEMBL1567571	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL591363	chembl:CHEMBL591363	HSP90AA1	seed	D2|D3	dgidb				false				
+RADANAMYCIN	chembl:CHEMBL383015	HSP90AA1	seed	D2|D3	dgidb				false		16464590		
+O-PHENANTHROLINE	rxcui:1872047	HSP90AA1	seed	D2|D3	dgidb				true	false			
+NANAOMYCIN	chembl:CHEMBL1212972	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL533226	chembl:CHEMBL533226	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL600694	chembl:CHEMBL600694	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL602363	chembl:CHEMBL602363	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL463701	chembl:CHEMBL463701	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL565893	chembl:CHEMBL565893	HSP90AA1	seed	D2|D3	dgidb				false				
+SCLEROTIORIN	chembl:CHEMBL1095515	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL599098	chembl:CHEMBL599098	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL582099	chembl:CHEMBL582099	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL591126	chembl:CHEMBL591126	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL591361	chembl:CHEMBL591361	HSP90AA1	seed	D2|D3	dgidb				false				
+BIFONAZOLE	rxcui:19295	HSP90AA1	seed	D2|D3	dgidb				true	false			
+HALOFANTRINE HYDROCHLORIDE	chembl:CHEMBL1200901	HSP90AA1	seed	D2|D3	dgidb			4	true	false		1992	
+CHEMBL:CHEMBL590184	chembl:CHEMBL590184	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL578944	chembl:CHEMBL578944	HSP90AA1	seed	D2|D3	dgidb				false				
+RHEIN	chembl:CHEMBL418068	HSP90AA1	seed	D2|D3	dgidb				false				
+NOVOBIOCIN	rxcui:7538	HSP90AA1	seed	D2|D3	dgidb				false		23859777|21129982		
+TRICLABENDAZOLE	rxcui:2118525	HSP90AA1	seed	D2|D3	dgidb				true	true			
+DISULFIRAM	rxcui:3554	HSP90AA1	seed	D2|D3	dgidb				true	true			
+CHEMBL:CHEMBL260342	chembl:CHEMBL260342	HSP90AA1	seed	D2|D3	dgidb				false				
+IODOQUINOL	rxcui:3435	HSP90AA1	seed	D2|D3	dgidb				true	true			
+GAMBOGIC ACID	chembl:CHEMBL555017	HSP90AA1	seed	D2|D3	dgidb				false		21486005		
+ZEARALANONE	chembl:CHEMBL491499	HSP90AA1	seed	D2|D3	dgidb				false				
+ARGENTEOSIDE A	chembl:CHEMBL2332352	HSP90AA1	seed	D2|D3	dgidb				false		23362862		
+CHEMBL:CHEMBL591876	chembl:CHEMBL591876	HSP90AA1	seed	D2|D3	dgidb				false				
+ALVESPIMYCIN HYDROCHLORIDE	ncit:C76665	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL530499	chembl:CHEMBL530499	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL1466186	chembl:CHEMBL1466186	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL578512	chembl:CHEMBL578512	HSP90AA1	seed	D2|D3	dgidb				false				
+AMLEXANOX	rxcui:46307	HSP90AA1	seed	D2|D3	dgidb				true	false			
+SNX0723	iuphar.ligand:9260	HSP90AA1	seed	D2|D3	dgidb	inhibitor	inhibitor		false				
+DOXORUBICIN HYDROCHLORIDE	rxcui:142433	HSP90AA1	seed	D2|D3	dgidb				true	true			
+CLOXYQUIN	chembl:CHEMBL225164	HSP90AA1	seed	D2|D3	dgidb			2	false				
+CYCLOHEXIMIDE	ncit:C171712	HSP90AA1	seed	D2|D3	dgidb				false				
+SULCONAZOLE NITRATE	chembl:CHEMBL1200348	HSP90AA1	seed	D2|D3	dgidb			4	true	true		1985	
+POMIFERIN	chembl:CHEMBL393136	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL2095095	chembl:CHEMBL2095095	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL590927	chembl:CHEMBL590927	HSP90AA1	seed	D2|D3	dgidb				false				
+DIPYRIDAMOLE	rxcui:3521	HSP90AA1	seed	D2|D3	dgidb				true	true			
+CUCURBITACIN D	chembl:CHEMBL493646	HSP90AA1	seed	D2|D3	dgidb				false		25756299		
+CHEMBL:CHEMBL528694	chembl:CHEMBL528694	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL192264	chembl:CHEMBL192264	HSP90AA1	seed	D2|D3	dgidb				false		21764310		
+SNX-5422	drugbank:DB06070	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL1098875	chembl:CHEMBL1098875	HSP90AA1	seed	D2|D3	dgidb				false				
+WORTMANNIN	drugbank:DB08059	HSP90AA1	seed	D2|D3	dgidb				false				
+CLIOQUINOL	rxcui:5942	HSP90AA1	seed	D2|D3	dgidb				true	true			
+TETRACYCLINE	rxcui:10395	HSP90AA1	seed	D2|D3	dgidb				true	true			
+MONOCILLIN I	chembl:CHEMBL215853	HSP90AA1	seed	D2|D3	dgidb				false		16499313		
+LEVOKETOCONAZOLE	rxcui:2588846	HSP90AA1	seed	D2|D3	dgidb				true	true			
+DERRUBONE	chembl:CHEMBL412010	HSP90AA1	seed	D2|D3	dgidb				false		18020309		
+NITROXOLINE	rxcui:31901	HSP90AA1	seed	D2|D3	dgidb				false				
+ITRACONAZOLE	chembl:CHEMBL64391	HSP90AA1	seed	D2|D3	dgidb			4	true	true		1992	J02AC02
+CHEMBL:CHEMBL588804	chembl:CHEMBL588804	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL582983	chembl:CHEMBL582983	HSP90AA1	seed	D2|D3	dgidb				false				
+CICLOPIROX OLAMINE	chembl:CHEMBL242580	HSP90AA1	seed	D2|D3	dgidb			3	false				
+DAUNORUBICIN HYDROCHLORIDE	chembl:CHEMBL1563	HSP90AA1	seed	D2|D3	dgidb			4	true	true		1979	
+KW-2478	chembl:CHEMBL4297298	HSP90AA1	seed	D2|D3	dgidb			1	false				
+CHEMBL:CHEMBL547285	chembl:CHEMBL547285	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL1834096	chembl:CHEMBL1834096	HSP90AA1	seed	D2|D3	dgidb				false		21875802		
+FENTICLOR	chembl:CHEMBL473535	HSP90AA1	seed	D2|D3	dgidb			2	false				
+ALEXIDINE HYDROCHLORIDE	chembl:CHEMBL1487183	HSP90AA1	seed	D2|D3	dgidb				false				
+GELDANAMYCIN	drugbank:DB02424	HSP90AA1	seed	D2|D3	dgidb				false		25756299|23947794|23859777|21861487|21129982|25277067|18020309|18408713|21273068		
+TERPYRIDINE	chembl:CHEMBL89445	HSP90AA1	seed	D2|D3	dgidb				false				
+CLOTRIMAZOLE	rxcui:2623	HSP90AA1	seed	D2|D3	dgidb				true	true			
+CHEMBL:CHEMBL548540	chembl:CHEMBL548540	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL585827	chembl:CHEMBL585827	HSP90AA1	seed	D2|D3	dgidb				false				
+TRIADIMENOL	chembl:CHEMBL520275	HSP90AA1	seed	D2|D3	dgidb				false				
+RADICICOL	chembl:CHEMBL414883	HSP90AA1	seed	D2|D3	dgidb				false		16499313		
+CHEMBL:CHEMBL2022241	chembl:CHEMBL2022241	HSP90AA1	seed	D2|D3	dgidb				false		25756299		
+CETYLPYRIDINIUM BROMIDE	chembl:CHEMBL334255	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL599255	chembl:CHEMBL599255	HSP90AA1	seed	D2|D3	dgidb				false				
+HSP90 INHIBITOR LAM-003A	ncit:C84836	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL548615	chembl:CHEMBL548615	HSP90AA1	seed	D2|D3	dgidb				false				
+SILIBININ	ncit:C152359	HSP90AA1	seed	D2|D3	dgidb				false		21273068		
+ECONAZOLE NITRATE	chembl:CHEMBL1201049	HSP90AA1	seed	D2|D3	dgidb			4	true	true		1982	
+N-OLEOYLETHANOLAMIDE	iuphar.ligand:2661	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL538798	chembl:CHEMBL538798	HSP90AA1	seed	D2|D3	dgidb				false				
+HEXACHLOROPHENE	rxcui:5293	HSP90AA1	seed	D2|D3	dgidb				true	false			
+KEPONE	chembl:CHEMBL462576	HSP90AA1	seed	D2|D3	dgidb				false				
+DIACETYLRHEIN	rxcui:22759	HSP90AA1	seed	D2|D3	dgidb				false				
+DESACETYL SALANNIN	chembl:CHEMBL2270444	HSP90AA1	seed	D2|D3	dgidb				false				
+DICHLOROPHEN	chembl:CHEMBL33845	HSP90AA1	seed	D2|D3	dgidb			2	false				P02DX02
+CHEMBL:CHEMBL1321398	chembl:CHEMBL1321398	HSP90AA1	seed	D2|D3	dgidb				false				
+CCT-018159	drugbank:DB07594	HSP90AA1	seed	D2|D3	dgidb				false				
+HSP90 INHIBITOR DEBIO 0932	ncit:C92572	HSP90AA1	seed	D2|D3	dgidb				false				
+CEMDOMESPIB	drugbank:DB18953	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL1688556	chembl:CHEMBL1688556	HSP90AA1	seed	D2|D3	dgidb				false				
+BROXYQUINOLINE	chembl:CHEMBL223448	HSP90AA1	seed	D2|D3	dgidb			4	true	false			G01AC06|A07AX01|P01AA01
+ZEARALENONE	chembl:CHEMBL454173	HSP90AA1	seed	D2|D3	dgidb				false				
+CHEMBL:CHEMBL473721	chembl:CHEMBL473721	HSP90AA1	seed	D2|D3	dgidb				false				
+CALMIDAZOLIUM CHLORIDE	chembl:CHEMBL1208858	HSP90AA1	seed	D2|D3	dgidb				false				
+THONZONIUM BROMIDE	chembl:CHEMBL1200883	HSP90AA1	seed	D2|D3	dgidb			4	true	true		1982	
+CHEMBL:CHEMBL1287983	chembl:CHEMBL1287983	HSP90AA1	seed	D2|D3	dgidb				false				
+HSP90 INHIBITOR BIIB021	ncit:C62517	HSP90AA1	seed	D2|D3	dgidb				false				
+CELASTROL	chembl:CHEMBL301982	HSP90AA1	seed	D2|D3	dgidb				false		25756299		
+CHEMBL:CHEMBL534423	chembl:CHEMBL534423	HSP90AA1	seed	D2|D3	dgidb				false				
+TERCONAZOLE	rxcui:37806	HSP90AA1	seed	D2|D3	dgidb				true	true			
+TRICLOSAN	rxcui:10795	HSP90AA1	seed	D2|D3	dgidb				true	true			
+TOXYLOXANTHONE C	chembl:CHEMBL459022	HSP90AA1	seed	D2|D3	dgidb				false				
+ZERANOL	chembl:CHEMBL450613	HSP90AA1	seed	D2|D3	dgidb			2	false				
+GERONTOXANTHONE I	chembl:CHEMBL478791	HSP90AA1	seed	D2|D3	dgidb				false				
+BUTOCONAZOLE NITRATE	chembl:CHEMBL1200398	HSP90AA1	seed	D2|D3	dgidb			4	true	true		1985	
+SERTACONAZOLE NITRATE	chembl:CHEMBL1200725	HSP90AA1	seed	D2|D3	dgidb			4	true	true		2003	
+CALCIMYCIN	chembl:CHEMBL1256686	HSP90AA1	seed	D2|D3	dgidb			2	false				
+PIRARUBICIN	rxcui:33764	TP53	seed	D4	dgidb				false		16243804		
+OXALIPLATIN	rxcui:32592	TP53	seed	D4	dgidb				true	true	29925895|24957073		
+CARBOPLATIN	rxcui:40048	TP53	seed	D4	dgidb				true	true	26494859|32611648|25658463|27998224|25567130|11595686		
+DAUNORUBICIN HYDROCHLORIDE	chembl:CHEMBL1563	TP53	seed	D4	dgidb			4	true	true		1979	
+CHEMBL:CHEMBL260560	chembl:CHEMBL260560	TP53	seed	D4	dgidb				false				
+MELPHALAN	rxcui:6718	TP53	seed	D4	dgidb				true	true			
+LAPACHONE	chembl:CHEMBL15192	TP53	seed	D4	dgidb			2	false				
+VITAMIN K3	rxcui:6728	TP53	seed	D4	dgidb				true	false			
+CHEMBL:CHEMBL260451	chembl:CHEMBL260451	TP53	seed	D4	dgidb				false				
+DINOSEB	chembl:CHEMBL1892987	TP53	seed	D4	dgidb				false				
+RIMCAZOLE	chembl:CHEMBL275707	TP53	seed	D4	dgidb			2	false				
+TRACAZOLATE	ncit:C152706	TP53	seed	D4	dgidb				false				
+CAPIVASERTIB	rxcui:2669967	TP53	seed	D4	dgidb				true	true	26910118		
+AZD7648	iuphar.ligand:10601	TP53	seed	D4	dgidb				false		31699977		
+QUINALIZARIN	chembl:CHEMBL29898	TP53	seed	D4	dgidb				false				
+INOSITOL	rxcui:5833	TP53	seed	D4	dgidb				true	true	16733561		
+ECONAZOLE NITRATE	chembl:CHEMBL1201049	TP53	seed	D4	dgidb			4	true	true		1982	
+L-733,060	iuphar.ligand:13432	TP53	seed	D4	dgidb				false				
+U50488	iuphar.ligand:1652	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL260028	chembl:CHEMBL260028	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL601140	chembl:CHEMBL601140	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL408563	chembl:CHEMBL408563	TP53	seed	D4	dgidb				false				
+ENALAPRIL MALEATE	rxcui:203123	TP53	seed	D4	dgidb				true	true	16900775		
+HOMIDIUM BROMIDE	chembl:CHEMBL284328	TP53	seed	D4	dgidb			2	false				
+IOXYNIL	chembl:CHEMBL509523	TP53	seed	D4	dgidb				false				
+ACALABRUTINIB	rxcui:1986808	TP53	seed	D4	dgidb				true	true	38969011		
+INDOPROFEN	ncit:C83801	TP53	seed	D4	dgidb				true	false			
+MERCAPTOPURINE	rxcui:103	TP53	seed	D4	dgidb				true	true			
+AUTOLOGOUS DENDRITIC CELLS TRANSDUCED WITH WILD-TYPE P53 ADENOVIRUS VACCINE	ncit:C148241	TP53	seed	D4	dgidb	vaccine	vaccine		false				
+ZIRAM	chembl:CHEMBL1519327	TP53	seed	D4	dgidb				false				
+IFOSFAMIDE	rxcui:5657	TP53	seed	D4	dgidb				true	true	23165797		
+DOCETAXEL ANHYDROUS	rxcui:1299922	TP53	seed	D4	dgidb				true	true	22425996|21399868		
+SOTULETINIB	ncit:C129653	TP53	seed	D4	dgidb				false		27199435		
+SERTRALINE HYDROCHLORIDE	rxcui:155137	TP53	seed	D4	dgidb				true	true	16680159		
+PD166285	iuphar.ligand:8183	TP53	seed	D4	dgidb				false		11719452		
+SAPANISERTIB	rxcui:2395271	TP53	seed	D4	dgidb				true	false	25261369|26272063		
+ENZALUTAMIDE	rxcui:1307298	TP53	seed	D4	dgidb				true	true	30209161		
+PYRITHIONE ZINC	ncit:C47698	TP53	seed	D4	dgidb				true	true			
+CHEMBL:CHEMBL1169388	chembl:CHEMBL1169388	TP53	seed	D4	dgidb				false				
+ALPELISIB	rxcui:2169285	TP53	seed	D4	dgidb				true	true	27659046		
+CLOFOCTOL	ncit:C78048	TP53	seed	D4	dgidb				false				
+CHLOROXINE	rxcui:20875	TP53	seed	D4	dgidb				true	false			
+APOMORPHINE	rxcui:1043	TP53	seed	D4	dgidb				true	true			
+NIVOLUMAB	rxcui:1597876	TP53	seed	D4	dgidb				true	true	31097096		
+TEMOZOLOMIDE	rxcui:37776	TP53	seed	D4	dgidb				true	true	24248532|21730979		
+O-PHENANTHROLINE	rxcui:1872047	TP53	seed	D4	dgidb				true	false			
+CISPLATIN	rxcui:2555	TP53	seed	D4	dgidb				true	true	11595686|14514923|26086967|23839309|25376608|26294215|18618574|27179933|25964101|27550999|23428903|25567130|11812076|8678559|9600935		
+BUPARLISIB	ncit:C90565	TP53	seed	D4	dgidb				false		29490986		
+RALOXIFENE HYDROCHLORIDE	rxcui:166551	TP53	seed	D4	dgidb				true	true			
+IPILIMUMAB	rxcui:1094833	TP53	seed	D4	dgidb				true	true	31097096		
+CHEMBL:CHEMBL600347	chembl:CHEMBL600347	TP53	seed	D4	dgidb				false				
+DOPAMINE	rxcui:3628	TP53	seed	D4	dgidb				true	true			
+CHLORFENAPYR	chembl:CHEMBL1869551	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL259422	chembl:CHEMBL259422	TP53	seed	D4	dgidb				false				
+AHPN	iuphar.ligand:3431	TP53	seed	D4	dgidb				false				
+CLOMIPRAMINE	rxcui:2597	TP53	seed	D4	dgidb				true	true			
+TRIFLURIDINE	rxcui:10803	TP53	seed	D4	dgidb				true	true	25700705		
+CERALASERTIB	ncit:C111993	TP53	seed	D4	dgidb				false		28062704|26563132		
+METHOTREXATE	rxcui:6851	TP53	seed	D4	dgidb				true	true	17363498		
+CEP-1347	iuphar.ligand:8173	TP53	seed	D4	dgidb				false		37509605		
+SELUMETINIB	rxcui:2289380	TP53	seed	D4	dgidb				true	true	22425996|26343583		
+ELLIPTECINE	chembl:CHEMBL123	TP53	seed	D4	dgidb				false				
+GENISTEIN	rxcui:25696	TP53	seed	D4	dgidb				true	false			
+MDM2 INHIBITOR AMGMDS3	ncit:C171616	TP53	seed	D4	dgidb				false		25730903		
+CHEMBL:CHEMBL154580	chembl:CHEMBL154580	TP53	seed	D4	dgidb				false				
+MITOMYCIN	rxcui:632	TP53	seed	D4	dgidb				true	true	14514923		
+SAPONIN	ncit:C823	TP53	seed	D4	dgidb				false		16939894		
+ALT-801	drugbank:DB15386	TP53	seed	D4	dgidb				false				
+SP600125	iuphar.ligand:5273	TP53	seed	D4	dgidb				false		22438244		
+CADMIUM ACETATE	chembl:CHEMBL1476898	TP53	seed	D4	dgidb				false				
+DOXORUBICIN HYDROCHLORIDE	rxcui:142433	TP53	seed	D4	dgidb				true	true	29507678|16243804|26826118|25658463|31483066|21399868|23165797|34907344|9569050|22698404|24065105|26086967|17363498|26288684		
+OCHRATOXIN A	iuphar.ligand:4672	TP53	seed	D4	dgidb				false				
+SORAFENIB	rxcui:495881	TP53	seed	D4	dgidb				true	true	31405179		
+STREPTONIGRIN	ncit:C844	TP53	seed	D4	dgidb				false		12027749		
+CLOFIBRATE	rxcui:2594	TP53	seed	D4	dgidb				true	false	16680159		
+NIGULDIPINE	ncit:C84018	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL1389794	chembl:CHEMBL1389794	TP53	seed	D4	dgidb				false				
+SELICICLIB	ncit:C62783	TP53	seed	D4	dgidb				false		21417417|26826118|22862161		
+TERPYRIDINE	chembl:CHEMBL89445	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL545900	chembl:CHEMBL545900	TP53	seed	D4	dgidb				false				
+CADMIUM DICHLORIDE	chembl:CHEMBL1458880	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL1241268	chembl:CHEMBL1241268	TP53	seed	D4	dgidb				false		16862141		
+NORTRIPTYLINE	rxcui:7531	TP53	seed	D4	dgidb				true	true			
+GR 127935	iuphar.ligand:14	TP53	seed	D4	dgidb				false				
+DABRAFENIB	rxcui:1424911	TP53	seed	D4	dgidb				true	true	33250737|26343583|27659046		
+PACLITAXEL PROTEIN-BOUND	rxcui:486610	TP53	seed	D4	dgidb				true	true	24065105|32611648|29490986|16459017		
+PYRACLOSTROBIN	chembl:CHEMBL519873	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL1522984	chembl:CHEMBL1522984	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL233194	chembl:CHEMBL233194	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL599088	chembl:CHEMBL599088	TP53	seed	D4	dgidb				false				
+BITHIONOL	ncit:C77030	TP53	seed	D4	dgidb				true	false			
+TIRAPAZAMINE	ncit:C1464	TP53	seed	D4	dgidb				false		9647614		
+SALMETEROL XINAFOATE	chembl:CHEMBL1082607	TP53	seed	D4	dgidb			4	true	true		1994	
+DIMETHYL GAMBOGATE	chembl:CHEMBL1436860	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL1346468	chembl:CHEMBL1346468	TP53	seed	D4	dgidb				false				
+ACEQUINOCYL	chembl:CHEMBL1869353	TP53	seed	D4	dgidb				false				
+BENZO[B]FLUORANTHENE	chembl:CHEMBL1337502	TP53	seed	D4	dgidb				false				
+DORDAVIPRONE	rxcui:2721194	TP53	seed	D4	dgidb				true	true	26474387		
+SELECTIVE ESTROGEN RECEPTOR MODULATOR	ncit:C1821	TP53	seed	D4	dgidb				false		15755852		
+ZM336372	iuphar.ligand:9130	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL428789	chembl:CHEMBL428789	TP53	seed	D4	dgidb				false				
+NAVITOCLAX	ncit:C64776	TP53	seed	D4	dgidb				false		26474387|27659046		
+AZD6482	iuphar.ligand:8059	TP53	seed	D4	dgidb				false		26563132		
+ANTIMYCIN A	chembl:CHEMBL211501	TP53	seed	D4	dgidb				false				
+OLAPARIB	rxcui:1597582	TP53	seed	D4	dgidb				true	true	31699977|29304353		
+MPI-0479605	iuphar.ligand:9399	TP53	seed	D4	dgidb				false		21980130		
+VESNARINONE	ncit:C1415	TP53	seed	D4	dgidb				false		7750082		
+CHEMBL:CHEMBL596633	chembl:CHEMBL596633	TP53	seed	D4	dgidb				false				
+PRAMLINTIDE	rxcui:139953	TP53	seed	D4	dgidb				true	true			
+THIOUREIDOBUTYRONITRILE	ncit:C102881	TP53	seed	D4	dgidb				false		32945487		
+NAPABUCASIN	ncit:C96429	TP53	seed	D4	dgidb				false		30107178		
+RUXOLITINIB	rxcui:1193326	TP53	seed	D4	dgidb				true	true	31723778		
+THIMEROSAL	chembl:CHEMBL508338	TP53	seed	D4	dgidb			3	false				D08AK06
+CHEMBL:CHEMBL201325	chembl:CHEMBL201325	TP53	seed	D4	dgidb				false				
+2-AMINOANTHRACENE	chembl:CHEMBL83154	TP53	seed	D4	dgidb				false				
+CAULIBUGULONE C	chembl:CHEMBL445969	TP53	seed	D4	dgidb				false				
+KRESOXIM-METHYL	chembl:CHEMBL203191	TP53	seed	D4	dgidb				false				
+PERPHENAZINE	rxcui:8076	TP53	seed	D4	dgidb				true	true			
+CLIOQUINOL	rxcui:5942	TP53	seed	D4	dgidb				true	true			
+TAMOXIFEN CITRATE	chembl:CHEMBL786	TP53	seed	D4	dgidb			4	true	true		1977	
+2-CHLOROADENOSINE	iuphar.ligand:372	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL267160	chembl:CHEMBL267160	TP53	seed	D4	dgidb				false				
+MAPROTILINE	rxcui:6646	TP53	seed	D4	dgidb				true	false			
+PIRTOBRUTINIB	rxcui:2629338	TP53	seed	D4	dgidb				true	true			
+DECITABINE	rxcui:15657	TP53	seed	D4	dgidb				true	true			
+ZINC CHLORIDE	rxcui:39937	TP53	seed	D4	dgidb				true	true	16585387		
+CHEMBL:CHEMBL530049	chembl:CHEMBL530049	TP53	seed	D4	dgidb				false				
+PROCHLORPERAZINE	rxcui:8704	TP53	seed	D4	dgidb				true	true			
+BENOMYL	chembl:CHEMBL327919	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL546170	chembl:CHEMBL546170	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL407501	chembl:CHEMBL407501	TP53	seed	D4	dgidb				false				
+CRIZOTINIB	rxcui:1148495	TP53	seed	D4	dgidb				true	true	30978502|30165392|33310890|26438783		
+2-IODOACETAMIDE	iuphar.ligand:6271	TP53	seed	D4	dgidb				false				
+FURAZOLIDONE	chembl:CHEMBL1103	TP53	seed	D4	dgidb			4	true	false		1958	G01AX06
+PHA-680632	chembl:CHEMBL363160	TP53	seed	D4	dgidb				false		18026198		
+VORINOSTAT	rxcui:194337	TP53	seed	D4	dgidb				true	true	25669829|26009011		
+BENZO(K)FLUORANTHENE	chembl:CHEMBL1441574	TP53	seed	D4	dgidb				false				
+SULCONAZOLE NITRATE	chembl:CHEMBL1200348	TP53	seed	D4	dgidb			4	true	true		1985	
+CHEMBL:CHEMBL260213	chembl:CHEMBL260213	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL578512	chembl:CHEMBL578512	TP53	seed	D4	dgidb				false				
+RECOMBINANT MONOCYTE CHEMOATTRACTANT PROTEIN-1	ncit:C1393	TP53	seed	D4	dgidb				false		16614397		
+MITOXANTRONE	rxcui:7005	TP53	seed	D4	dgidb				true	true			
+CHK1 INHIBITOR GDC-0575	ncit:C116845	TP53	seed	D4	dgidb				false		29409053		
+PANITUMUMAB	rxcui:263034	TP53	seed	D4	dgidb				true	true	28514312		
+LENALIDOMIDE	rxcui:342369	TP53	seed	D4	dgidb				true	true			
+ALEMTUZUMAB	rxcui:117055	TP53	seed	D4	dgidb				true	true			
+CHEMBL:CHEMBL600334	chembl:CHEMBL600334	TP53	seed	D4	dgidb				false				
+CERITINIB	rxcui:1535457	TP53	seed	D4	dgidb				true	true	28425916|30165392		
+CHLORANIL	chembl:CHEMBL192627	TP53	seed	D4	dgidb				false				
+SB 206553	iuphar.ligand:189	TP53	seed	D4	dgidb				false				
+CLOTRIMAZOLE	rxcui:2623	TP53	seed	D4	dgidb				true	true	16680159		
+VANOXERINE	iuphar.ligand:9983	TP53	seed	D4	dgidb				false				
+NITAZOXANIDE	rxcui:31819	TP53	seed	D4	dgidb				true	true			
+7,8-DIHYDROXYFLAVONE	chembl:CHEMBL75267	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL601757	chembl:CHEMBL601757	TP53	seed	D4	dgidb				false				
+ABIRATERONE ACETATE	rxcui:1100071	TP53	seed	D4	dgidb				true	true	30209161		
+EPIRUBICIN	rxcui:3995	TP53	seed	D4	dgidb				true	true	17388661|16243804|22903472|29593529		
+TRABECTEDIN	rxcui:1716278	TP53	seed	D4	dgidb				true	true	16888811		
+HEXACHLOROPHENE	rxcui:5293	TP53	seed	D4	dgidb				true	false			
+BORTEZOMIB	rxcui:358258	TP53	seed	D4	dgidb				true	true	28679691		
+PENTACHLOROPHENOL	chembl:CHEMBL75967	TP53	seed	D4	dgidb				false				
+SAR-405838	drugbank:DB12541	TP53	seed	D4	dgidb				false				
+OLVANIL	ncit:C166774	TP53	seed	D4	dgidb				false				
+CHIR-124	drugbank:DB06852	TP53	seed	D4	dgidb				false		17255282		
+GOSSYPOL	iuphar.ligand:4204	TP53	seed	D4	dgidb				false		16020667		
+THUNBERGINOL B	chembl:CHEMBL70501	TP53	seed	D4	dgidb				false				
+PLUMBAGIN	iuphar.ligand:7003	TP53	seed	D4	dgidb				false				
+INTERFERON ALFA-2B	rxcui:5880	TP53	seed	D4	dgidb				true	false	16001656		
+CYTARABINE	rxcui:3041	TP53	seed	D4	dgidb				true	true	34907344		
+EMBELIN	chembl:CHEMBL221137	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL582473	chembl:CHEMBL582473	TP53	seed	D4	dgidb				false				
+OLEAMIDE	iuphar.ligand:284	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL1256869	chembl:CHEMBL1256869	TP53	seed	D4	dgidb				false				
+FULVESTRANT	rxcui:282357	TP53	seed	D4	dgidb				true	true	29236940		
+CHEMBL:CHEMBL578890	chembl:CHEMBL578890	TP53	seed	D4	dgidb				false				
+LB-100	drugbank:DB15412	TP53	seed	D4	dgidb				false		25376608		
+JQ1	drugbank:DB17021	TP53	seed	D4	dgidb				false		24231268		
+CHEMBL:CHEMBL259784	chembl:CHEMBL259784	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL1494650	chembl:CHEMBL1494650	TP53	seed	D4	dgidb				false				
+CAULIBUGULONE B	chembl:CHEMBL508779	TP53	seed	D4	dgidb				false				
+PROCHLORPERAZINE EDISYLATE	chembl:CHEMBL1201154	TP53	seed	D4	dgidb			4	true	true		1957	
+MAGROLIMAB	ncit:C117730	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL599943	chembl:CHEMBL599943	TP53	seed	D4	dgidb				false				
+AMOXAPINE	rxcui:722	TP53	seed	D4	dgidb				true	true			
+CHEMBL:CHEMBL591126	chembl:CHEMBL591126	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL259421	chembl:CHEMBL259421	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL16685	chembl:CHEMBL16685	TP53	seed	D4	dgidb				false				
+REZATAPOPT	ncit:C203051	TP53	seed	D4	dgidb				false		39945593		
+OBINUTUZUMAB	rxcui:974779	TP53	seed	D4	dgidb				true	true	38969011		
+PIMASERTIB	ncit:C84864	TP53	seed	D4	dgidb				false		30585255		
+4-METHOXYDALBERGIONE	chembl:CHEMBL1554531	TP53	seed	D4	dgidb				false				
+VENETOCLAX	rxcui:1747556	TP53	seed	D4	dgidb				true	true	38969011		
+CHEMBL:CHEMBL225513	chembl:CHEMBL225513	TP53	seed	D4	dgidb				false				
+PROPACHLOR	chembl:CHEMBL1394829	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL261693	chembl:CHEMBL261693	TP53	seed	D4	dgidb				false				
+SERDEMETAN	ncit:C77904	TP53	seed	D4	dgidb				false		21831953		
+METHYLPREDNISOLONE	rxcui:6902	TP53	seed	D4	dgidb				true	true	16684279		
+CETUXIMAB	rxcui:318341	TP53	seed	D4	dgidb				true	true	24957073		
+TETRANDRINE	iuphar.ligand:11859	TP53	seed	D4	dgidb				false				
+THIOTEPA	rxcui:10473	TP53	seed	D4	dgidb				true	true	12058967		
+CABOZANTINIB S-MALATE	rxcui:1363267	TP53	seed	D4	dgidb				true	false	37940144		
+PF-04217903	drugbank:DB12848	TP53	seed	D4	dgidb				false		27659046		
+CHEMBL:CHEMBL1397308	chembl:CHEMBL1397308	TP53	seed	D4	dgidb				false				
+GLUTARAL	chembl:CHEMBL1235482	TP53	seed	D4	dgidb			2	false				
+METHYL ROBUSTONE	chembl:CHEMBL1403041	TP53	seed	D4	dgidb				false				
+MASOPROCOL	rxcui:227239	TP53	seed	D4	dgidb				true	false			
+KU-60019	iuphar.ligand:8041	TP53	seed	D4	dgidb				false		29769307		
+MDM2 ANTAGONIST RO6839921	ncit:C114980	TP53	seed	D4	dgidb				false				
+ROTENONE	chembl:CHEMBL429023	TP53	seed	D4	dgidb				false		16680159		
+CHEMBL:CHEMBL177809	chembl:CHEMBL177809	TP53	seed	D4	dgidb				false				
+MULTI-NEO-EPITOPE VACCINE OSE 2101	ncit:C26645	TP53	seed	D4	dgidb	vaccine	vaccine		false				
+N-OLEOYLDOPAMINE	iuphar.ligand:5552	TP53	seed	D4	dgidb				false				
+(R)-INDOPROFEN	chembl:CHEMBL264931	TP53	seed	D4	dgidb				false				
+GALLIC ACID	ncit:C63648	TP53	seed	D4	dgidb				false				
+WARFARIN	rxcui:11289	TP53	seed	D4	dgidb				true	true			
+3-METHOXYCATECHOL	chembl:CHEMBL1518159	TP53	seed	D4	dgidb				false				
+BEVACIZUMAB	rxcui:253337	TP53	seed	D4	dgidb				true	true	23670029|21399868		
+PROPYLTHIOURACIL	rxcui:8794	TP53	seed	D4	dgidb				true	true	7790147		
+RS-17053	iuphar.ligand:495	TP53	seed	D4	dgidb				false				
+PIPERLONGUMINE	iuphar.ligand:13376	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL271023	chembl:CHEMBL271023	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL429335	chembl:CHEMBL429335	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL1214407	chembl:CHEMBL1214407	TP53	seed	D4	dgidb				false				
+NEBULARINE	chembl:CHEMBL1399702	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL259615	chembl:CHEMBL259615	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL265686	chembl:CHEMBL265686	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL291143	chembl:CHEMBL291143	TP53	seed	D4	dgidb				false				
+ERLOTINIB	rxcui:337525	TP53	seed	D4	dgidb				true	true	27659046		
+CHEMBL:CHEMBL602922	chembl:CHEMBL602922	TP53	seed	D4	dgidb				false				
+PEMBROLIZUMAB	rxcui:1547545	TP53	seed	D4	dgidb				true	true	36084396|28039262|31097096		
+SANGUINARINE SULFATE	chembl:CHEMBL1565133	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL429095	chembl:CHEMBL429095	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL337173	chembl:CHEMBL337173	TP53	seed	D4	dgidb				false				
+TEROXIRONE	chembl:CHEMBL453863	TP53	seed	D4	dgidb			2	false				
+AZATHIOPRINE	rxcui:1256	TP53	seed	D4	dgidb				true	true			
+PSEUDOCHELERYTHRINE	iuphar.ligand:11563	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL587620	chembl:CHEMBL587620	TP53	seed	D4	dgidb				false				
+RG7112	iuphar.ligand:9599	TP53	seed	D4	dgidb				false		26459177|31483066		
+IODOQUINOL	rxcui:3435	TP53	seed	D4	dgidb				true	true			
+LORLATINIB	rxcui:2103164	TP53	seed	D4	dgidb				true	true	28285684|36602782		
+CHEMBL:CHEMBL85194	chembl:CHEMBL85194	TP53	seed	D4	dgidb				false				
+TEBUFENPYRAD	chembl:CHEMBL1897070	TP53	seed	D4	dgidb				false				
+TARENFLURBIL	ncit:C26666	TP53	seed	D4	dgidb				false		15710360		
+CHEMBL:CHEMBL411085	chembl:CHEMBL411085	TP53	seed	D4	dgidb				false				
+MANGOSTIN	rxcui:2619910	TP53	seed	D4	dgidb				false				
+LONTUCIREV	ncit:C2830	TP53	seed	D4	dgidb				false				
+SIROLIMUS	rxcui:35302	TP53	seed	D4	dgidb				true	true	16651424		
+BAICALEIN	iuphar.ligand:5144	TP53	seed	D4	dgidb				false				
+DICHLOROPHEN	chembl:CHEMBL33845	TP53	seed	D4	dgidb			2	false				P02DX02
+CGP7930	iuphar.ligand:1079	TP53	seed	D4	dgidb				false				
+ANISINDIONE	rxcui:17941	TP53	seed	D4	dgidb				true	false			
+MICHLER'S KETONE	chembl:CHEMBL15137	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL533226	chembl:CHEMBL533226	TP53	seed	D4	dgidb				false				
+FENOFIBRATE MICRONIZED	rxcui:221100	TP53	seed	D4	dgidb				true	false	16680159		
+CHEMBL:CHEMBL1303948	chembl:CHEMBL1303948	TP53	seed	D4	dgidb				false				
+SR59230A	iuphar.ligand:547	TP53	seed	D4	dgidb				false				
+P53/HDM2 INTERACTION INHIBITOR CGM097	ncit:C104280	TP53	seed	D4	dgidb				false		28425916|27659046		
+ROBUSTIC ACID	chembl:CHEMBL400777	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL227959	chembl:CHEMBL227959	TP53	seed	D4	dgidb				false				
+NICLOSAMIDE	rxcui:7402	TP53	seed	D4	dgidb				true	false			
+TOPOTECAN HYDROCHLORIDE	rxcui:266573	TP53	seed	D4	dgidb				true	true	26438783		
+ENCORAFENIB	rxcui:2049106	TP53	seed	D4	dgidb				true	true			
+GSK2830371	iuphar.ligand:11103	TP53	seed	D4	dgidb				false		25658463		
+HALOPERIDOL DECANOATE	rxcui:26420	TP53	seed	D4	dgidb				true	true	16476148		
+ASTEMIZOLE	rxcui:42328	TP53	seed	D4	dgidb				true	false			
+PHENETHYLISOTHIOCYANATE	chembl:CHEMBL151649	TP53	seed	D4	dgidb				false		21241062		
+POTASSIUM DICHROMATE	chembl:CHEMBL1374101	TP53	seed	D4	dgidb			3	false				
+PUROMYCIN	ncit:C787	TP53	seed	D4	dgidb				false		11866936		
+RECOMBINANT VASCULAR ENDOTHELIAL GROWTH FACTOR	ncit:C1272	TP53	seed	D4	dgidb				false		11720743|15579019		
+TYRPHOSTIN A9	chembl:CHEMBL78150	TP53	seed	D4	dgidb				false				
+DOXORUBICIN LIPOSOME	rxcui:214525	TP53	seed	D4	dgidb				true	false			
+ETOPOSIDE	rxcui:4179	TP53	seed	D4	dgidb				true	true	14514923|24065105|25964101		
+CLEMASTINE	rxcui:2578	TP53	seed	D4	dgidb				true	true			
+(Z)-PIPLARTINE	chembl:CHEMBL1456697	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL406557	chembl:CHEMBL406557	TP53	seed	D4	dgidb				false				
+CHLORAMBUCIL	rxcui:2346	TP53	seed	D4	dgidb				true	true			
+ZANUBRUTINIB	rxcui:2262435	TP53	seed	D4	dgidb				true	false	31340982|38969011		
+P53-HDM2 INTERACTION INHIBITOR MI-773	ncit:C106120	TP53	seed	D4	dgidb				false		26936915|27765850|25145672|31483066|27550999|30585255		
+SELINEXOR	rxcui:2178390	TP53	seed	D4	dgidb				true	true	28819023		
+IRINOTECAN HYDROCHLORIDE	rxcui:153329	TP53	seed	D4	dgidb				true	true	18618574|17255282		
+CHEMBL:CHEMBL1708	chembl:CHEMBL1708	TP53	seed	D4	dgidb				false				
+FLUPENTHIXOL	rxcui:4495	TP53	seed	D4	dgidb				false				
+ABEMACICLIB	rxcui:1946825	TP53	seed	D4	dgidb				true	true			
+SULANEMADLIN	ncit:C118669	TP53	seed	D4	dgidb				false		34301750|29643228		
+CHEMBL:CHEMBL602150	chembl:CHEMBL602150	TP53	seed	D4	dgidb				false				
+3,4-DICHLOROBENZAMIL	iuphar.ligand:4597	TP53	seed	D4	dgidb				false				
+EMODIN	chembl:CHEMBL289277	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL2002487	chembl:CHEMBL2002487	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL329673	chembl:CHEMBL329673	TP53	seed	D4	dgidb				false				
+EDODEKIN ALFA	rxcui:1371906	TP53	seed	D4	dgidb				false		16751417		
+DS-7423	iuphar.ligand:12616	TP53	seed	D4	dgidb				false		24504419		
+DUVELISIB	rxcui:2058509	TP53	seed	D4	dgidb				true	true			
+AZD1390	iuphar.ligand:11277	TP53	seed	D4	dgidb				false				
+CHLOROTHALONIL	chembl:CHEMBL468167	TP53	seed	D4	dgidb				false				
+MITOXANTRONE HYDROCHLORIDE	chembl:CHEMBL1417019	TP53	seed	D4	dgidb			4	true	true		1987	
+CHEMBL:CHEMBL198759	chembl:CHEMBL198759	TP53	seed	D4	dgidb				false		16862141		
+CHLORPROMAZINE	rxcui:2403	TP53	seed	D4	dgidb				true	true			
+BRIGIMADLIN	ncit:C156709	TP53	seed	D4	dgidb				false		39259562		
+ALK INHIBITOR TAE684	ncit:C171615	TP53	seed	D4	dgidb				false		36602782		
+MERCURIC CHLORIDE	chembl:CHEMBL1374360	TP53	seed	D4	dgidb			-1	false				D08AK03
+CHEMBL:CHEMBL444376	chembl:CHEMBL444376	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL1333386	chembl:CHEMBL1333386	TP53	seed	D4	dgidb				false				
+METHIMAZOLE	rxcui:6835	TP53	seed	D4	dgidb				true	true	7790147		
+CHEMBL:CHEMBL195350	chembl:CHEMBL195350	TP53	seed	D4	dgidb				false				
+PF-00477736	chembl:CHEMBL3545137	TP53	seed	D4	dgidb			1	false		22713237		
+DIETHYLSTILBESTROL	rxcui:3390	TP53	seed	D4	dgidb				true	true	15545218		
+DNA VACCINE	ncit:C39619	TP53	seed	D4	dgidb				false		16751417		
+OSIMERTINIB	rxcui:1721560	TP53	seed	D4	dgidb				true	true	31839416		
+M8891	iuphar.ligand:12714	TP53	seed	D4	dgidb				false		37940144		
+PD98059	iuphar.ligand:5241	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL4165848	chembl:CHEMBL4165848	TP53	seed	D4	dgidb				false		27595393		
+DENDRITIC CELL VACCINE	ncit:C28310	TP53	seed	D4	dgidb				false				
+INDIRUBIN-3'-MONOXIME	drugbank:DB02052	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL591618	chembl:CHEMBL591618	TP53	seed	D4	dgidb				false				
+DIBENZ[A,H]ANTHRACENE	chembl:CHEMBL1346946	TP53	seed	D4	dgidb				false				
+TRIFLUOPERAZINE	rxcui:10800	TP53	seed	D4	dgidb				true	true			
+CHEMBL:CHEMBL410484	chembl:CHEMBL410484	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL408850	chembl:CHEMBL408850	TP53	seed	D4	dgidb				false				
+FENTICLOR	chembl:CHEMBL473535	TP53	seed	D4	dgidb			2	false				
+CHEMBL:CHEMBL599100	chembl:CHEMBL599100	TP53	seed	D4	dgidb				false				
+CAMPTOTHECIN	ncit:C338	TP53	seed	D4	dgidb				true	false	17255282		
+Cyazofamid	chembl:CHEMBL1863429	TP53	seed	D4	dgidb				false				
+TRIACETYLRESVERATROL	chembl:CHEMBL597744	TP53	seed	D4	dgidb				false				
+TRANSFERRIN RECEPTOR-TARGETED LIPOSOMAL P53 CDNA	ncit:C29474	TP53	seed	D4	dgidb				false				
+REBEMADLIN	ncit:C74594	TP53	seed	D4	dgidb				false		17671205|31483066|26883273|21643018|26494859|21725357|25964101		
+ATRACTYLENOLIDE I	chembl:CHEMBL449520	TP53	seed	D4	dgidb				false		22365756		
+CHEMBL:CHEMBL1801219	chembl:CHEMBL1801219	TP53	seed	D4	dgidb				false		20605095		
+CHEMBL:CHEMBL261123	chembl:CHEMBL261123	TP53	seed	D4	dgidb				false				
+TANESPIMYCIN	ncit:C37899	TP53	seed	D4	dgidb				false		30107178|26009011		
+CHEMBL:CHEMBL408653	chembl:CHEMBL408653	TP53	seed	D4	dgidb				false				
+COTI-2	drugbank:DB17507	TP53	seed	D4	dgidb				false				
+RIBAVIRIN	rxcui:9344	TP53	seed	D4	dgidb				true	true			
+QUINACRINE DIHYDROCHLORIDE	chembl:CHEMBL554190	TP53	seed	D4	dgidb				false				
+DIHYDROGAMBOGIC ACID	chembl:CHEMBL1526240	TP53	seed	D4	dgidb				false				
+URSODIOL	rxcui:11065	TP53	seed	D4	dgidb				true	true	15885361		
+ONONIN	chembl:CHEMBL465980	TP53	seed	D4	dgidb				false				
+METHYLENE BLUE	chembl:CHEMBL550495	TP53	seed	D4	dgidb			4	true	true		2016	
+IBRUTINIB	rxcui:1442981	TP53	seed	D4	dgidb				true	true	38969011|26563132|30559058		
+CAPECITABINE	rxcui:194000	TP53	seed	D4	dgidb				true	true	24957073|26696550		
+NUTLIN-3	chembl:CHEMBL191334	TP53	seed	D4	dgidb				false		21058726|26288684|24268795|19928922		
+PALBOCICLIB	rxcui:1601374	TP53	seed	D4	dgidb				true	true	29236940		
+VEMURAFENIB	rxcui:1147220	TP53	seed	D4	dgidb				true	true	28514312|26343583		
+BOMEDEMSTAT	ncit:C131827	TP53	seed	D4	dgidb				false		31723778		
+TAMOXIFEN	rxcui:10324	TP53	seed	D4	dgidb				true	true	10786679		
+CHEMBL:CHEMBL320361	chembl:CHEMBL320361	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL528712	chembl:CHEMBL528712	TP53	seed	D4	dgidb				false				
+HYDRALAZINE HYDROCHLORIDE	chembl:CHEMBL542541	TP53	seed	D4	dgidb			4	true	true		1953	
+CHEMBL:CHEMBL592123	chembl:CHEMBL592123	TP53	seed	D4	dgidb				false				
+FENRETINIDE	ncit:C1098	TP53	seed	D4	dgidb				true	false			
+BROXYQUINOLINE	chembl:CHEMBL223448	TP53	seed	D4	dgidb			4	true	false			G01AC06|A07AX01|P01AA01
+CHEMBL:CHEMBL66114	chembl:CHEMBL66114	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL1343568	chembl:CHEMBL1343568	TP53	seed	D4	dgidb				false				
+MECHLORETHAMINE HYDROCHLORIDE	chembl:CHEMBL1201001	TP53	seed	D4	dgidb			4	true	true		1949	
+N6-BENZYLADENOSINE	chembl:CHEMBL388757	TP53	seed	D4	dgidb				false				
+[3H]GBR12935	iuphar.ligand:4638	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL590665	chembl:CHEMBL590665	TP53	seed	D4	dgidb				false				
+GEMCITABINE	rxcui:12574	TP53	seed	D4	dgidb				true	true	21389100|29409053|27815358|23520471		
+CARBENDAZIM	chembl:CHEMBL70971	TP53	seed	D4	dgidb			1	false				
+CHEMBL:CHEMBL261118	chembl:CHEMBL261118	TP53	seed	D4	dgidb				false				
+BENDAMUSTINE	rxcui:134547	TP53	seed	D4	dgidb				true	true	30559058		
+SN-38	drugbank:DB05482	TP53	seed	D4	dgidb				false		17255282		
+R547	iuphar.ligand:5707	TP53	seed	D4	dgidb				false		17121911		
+FLUPHENAZINE HYDROCHLORIDE	rxcui:203207	TP53	seed	D4	dgidb				true	true			
+CIS-RESVERATROL	chembl:CHEMBL87333	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL405914	chembl:CHEMBL405914	TP53	seed	D4	dgidb				false				
+CAULIBUGULONE D	chembl:CHEMBL447876	TP53	seed	D4	dgidb				false				
+ALECTINIB	rxcui:1727455	TP53	seed	D4	dgidb				true	true	30165392|33310890|36602782		
+LOPERAMIDE	rxcui:6468	TP53	seed	D4	dgidb				true	true			
+MEDROXYPROGESTERONE ACETATE	rxcui:1000112	TP53	seed	D4	dgidb				true	true	16684279		
+CLADRIBINE	rxcui:44157	TP53	seed	D4	dgidb				true	true			
+TPCK	chembl:CHEMBL60718	TP53	seed	D4	dgidb				false				
+TRIAMTERENE	rxcui:10763	TP53	seed	D4	dgidb				true	true			
+PAZOPANIB	rxcui:714438	TP53	seed	D4	dgidb				true	true	26646755|25669829		
+TOPICAL CORTICOSTEROID	ncit:C29505	TP53	seed	D4	dgidb				false		12207591		
+PATULIN	chembl:CHEMBL294018	TP53	seed	D4	dgidb				false		16680159		
+CHEMBL:CHEMBL473735	chembl:CHEMBL473735	TP53	seed	D4	dgidb				false				
+ALEXIDINE DIHYDROCHLORIDE	chembl:CHEMBL554041	TP53	seed	D4	dgidb				false				
+PRODIGIOSIN	chembl:CHEMBL275787	TP53	seed	D4	dgidb				false		26759239		
+CHEMBL:CHEMBL99408	chembl:CHEMBL99408	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL184450	chembl:CHEMBL184450	TP53	seed	D4	dgidb				false				
+ALVESPIMYCIN	ncit:C38142	TP53	seed	D4	dgidb				false		26009011		
+KINETIN RIBOSIDE	chembl:CHEMBL411066	TP53	seed	D4	dgidb				false				
+GDC-0425	drugbank:DB14791	TP53	seed	D4	dgidb				false		27815358		
+RECOMBINANT FAS LIGAND	ncit:C1538	TP53	seed	D4	dgidb				false		14614330		
+2,6-DIMETHOXYQUINONE	chembl:CHEMBL448515	TP53	seed	D4	dgidb				false				
+TRANILAST	rxcui:57330	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL405317	chembl:CHEMBL405317	TP53	seed	D4	dgidb				false				
+TRIFLOXYSTROBIN	chemidplus:141517-21-7	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL563919	chembl:CHEMBL563919	TP53	seed	D4	dgidb				false				
+IDELALISIB	rxcui:1544460	TP53	seed	D4	dgidb				true	true	38969011		
+TRICLOCARBAN	chembl:CHEMBL1076347	TP53	seed	D4	dgidb			2	false				
+BENZALKONIUM CHLORIDE	chembl:CHEMBL502109	TP53	seed	D4	dgidb			2	false				
+FLUOROURACIL	rxcui:4492	TP53	seed	D4	dgidb				true	true	16243804|18357466|20638924|29507678|29593529		
+DEOXIEPINEPHRINE	chembl:CHEMBL31088	TP53	seed	D4	dgidb				false				
+RITUXIMAB	rxcui:121191	TP53	seed	D4	dgidb				true	true	11895917|38969011|30559058		
+RHODOMYRTOXIN B	chembl:CHEMBL1552997	TP53	seed	D4	dgidb				false				
+(R,S)-INDATRALINE	chembl:CHEMBL341898	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL422942	chembl:CHEMBL422942	TP53	seed	D4	dgidb				false				
+AZACITIDINE	rxcui:1251	TP53	seed	D4	dgidb				true	true	33449813		
+CHEMBL:CHEMBL580421	chembl:CHEMBL580421	TP53	seed	D4	dgidb				false				
+GANETESPIB	ncit:C77872	TP53	seed	D4	dgidb				false		26009011		
+LEVONORGESTREL	rxcui:6373	TP53	seed	D4	dgidb				true	true	34783250		
+CHEMBL:CHEMBL582715	chembl:CHEMBL582715	TP53	seed	D4	dgidb				false				
+BENZETHONIUM CHLORIDE	chembl:CHEMBL221753	TP53	seed	D4	dgidb			2	false				D08AJ08|D08AJ58
+L-744,832	ncit:C1682	TP53	seed	D4	dgidb				false		16224182		
+CHELERYTHRINE	iuphar.ligand:5953	TP53	seed	D4	dgidb				false				
+GEDATOLISIB	ncit:C91732	TP53	seed	D4	dgidb				false		21325073|23980093		
+DAIDZEIN	iuphar.ligand:2828	TP53	seed	D4	dgidb				false				
+LY3009120	iuphar.ligand:8943	TP53	seed	D4	dgidb				false		26343583		
+THIORIDAZINE HYDROCHLORIDE	chembl:CHEMBL1200916	TP53	seed	D4	dgidb			4	true	true		1962	
+ADAVOSERTIB	ncit:C91725	TP53	seed	D4	dgidb				false		21992793|19887545|27601554|32611648|34538072|32220892|23520471|21389100|21799033|27998224|27196784|22713237		
+PROPARGITE	chembl:CHEMBL1416084	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL374632	chembl:CHEMBL374632	TP53	seed	D4	dgidb				false				
+GARLIC	ncit:C38706	TP53	seed	D4	dgidb				false		16351512		
+AZD7762	iuphar.ligand:7713	TP53	seed	D4	dgidb				false		23839309		
+GRANISETRON	rxcui:26237	TP53	seed	D4	dgidb	activator	activator		true	true			
+CHEMBL:CHEMBL259805	chembl:CHEMBL259805	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL1321398	chembl:CHEMBL1321398	TP53	seed	D4	dgidb				false				
+FUROXAN	chembl:CHEMBL336467	TP53	seed	D4	dgidb				false				
+CYCLOPHOSPHAMIDE ANHYDROUS	rxcui:1545988	TP53	seed	D4	dgidb				true	false	17388661|16243804|26438783		
+SUNITINIB	rxcui:357977	TP53	seed	D4	dgidb				true	true	37940144		
+TRIFLUOPERAZINE HYDROCHLORIDE	rxcui:91130	TP53	seed	D4	dgidb				true	true	12415616		
+ETHOPROPAZINE HYDROCHLORIDE	chembl:CHEMBL1200970	TP53	seed	D4	dgidb			4	true	false		1982	
+BRIGATINIB	rxcui:1921217	TP53	seed	D4	dgidb				true	true	30165392		
+TRIFLUPROMAZINE	rxcui:10805	TP53	seed	D4	dgidb				true	false			
+IL-27 SUBUNIT &ALPHA;	iuphar.ligand:6152	TP53	seed	D4	dgidb				false		23449360		
+LUXEPTINIB	ncit:C162573	TP53	seed	D4	dgidb				false				
+MUNDULONE	chembl:CHEMBL465339	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL242171	chembl:CHEMBL242171	TP53	seed	D4	dgidb				false				
+AURORA KINASE INHIBITOR AMG 900	ncit:C82349	TP53	seed	D4	dgidb				false		24091768		
+CHEMBL:CHEMBL528807	chembl:CHEMBL528807	TP53	seed	D4	dgidb				false				
+S(+)-APOMORPHINE	iuphar.ligand:8285	TP53	seed	D4	dgidb				false				
+CINNARIZINE	rxcui:2549	TP53	seed	D4	dgidb				true	false	16680159		
+FLAVANONE	iuphar.ligand:408	TP53	seed	D4	dgidb				false				
+HDM2 INHIBITOR MK-8242	ncit:C116867	TP53	seed	D4	dgidb				false		28240971		
+PIMOZIDE	rxcui:8331	TP53	seed	D4	dgidb				true	true			
+PHENYLMERCURIC ACETATE	chembl:CHEMBL1333953	TP53	seed	D4	dgidb				false				
+EZABENLIMAB	ncit:C132252	TP53	seed	D4	dgidb				false				
+RESVERATROL	rxcui:1000492	TP53	seed	D4	dgidb				true	false			
+IXAZOMIB	rxcui:1723735	TP53	seed	D4	dgidb				true	true	33310890		
+TRAMETINIB DIMETHYL SULFOXIDE	rxcui:1425098	TP53	seed	D4	dgidb				true	false	33250737		
+MIRDAMETINIB	rxcui:2705551	TP53	seed	D4	dgidb				true	false	26272063		
+AXITINIB	rxcui:1242999	TP53	seed	D4	dgidb				true	true	37940144		
+CHEMBL:CHEMBL579550	chembl:CHEMBL579550	TP53	seed	D4	dgidb				false				
+CHEMBL:CHEMBL421215	chembl:CHEMBL421215	TP53	seed	D4	dgidb				false				
+ALPHA-NAPHTHOFLAVONE	chembl:CHEMBL283196	TP53	seed	D4	dgidb				false				
+BIMOCLOMOL	ncit:C171764	HSF1	seed	D2	dgidb				false				
+QUERCETIN	rxcui:9060	HSF1	seed	D2	dgidb				true	true	19296652		
+CYCLOHEXIMIDE	ncit:C171712	HSF1	seed	D2	dgidb				false				
+COMPOUND 27F [PMID: 25625617]	iuphar.ligand:9238	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+EMPESERTIB	ncit:C116074	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+GNE-7915	iuphar.ligand:8073	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+MPI-0479605	iuphar.ligand:9399	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+COMPOUND 34H [PMID: 27055065]	iuphar.ligand:9169	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+BAY1217389	iuphar.ligand:12705	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+NMS-P715	iuphar.ligand:9401	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+MPS1-IN-1	iuphar.ligand:9271	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+AZ3146	iuphar.ligand:9400	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+LUVIXASERTIB	iuphar.ligand:11664	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+COMPOUND 20 [PMID: 30998356]	iuphar.ligand:10371	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+BOS172722	drugbank:DB15498	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+HESPERADIN	iuphar.ligand:8354	TTK	seed	D1	dgidb	inhibitor	inhibitor		false		19035792		
+RO3280	iuphar.ligand:9403	TTK	seed	D1	dgidb	inhibitor	inhibitor		false				
+COMPOUND 46 [PMID: 16451062]	iuphar.ligand:8355	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+GSK2334470	iuphar.ligand:8008	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+BMS-754807	iuphar.ligand:7952	AURKB	seed	D1	dgidb				false		19778024		
+MK-5108	drugbank:DB12556	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+BX-795	iuphar.ligand:8006	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+GSK1070916	iuphar.ligand:8358	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+XMD-12	iuphar.ligand:11665	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+COMPOUND 10 [PMID: 19402633]	iuphar.ligand:8466	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+AURORA KINASE INHIBITOR AMG 900	ncit:C82349	AURKB	seed	D1	dgidb				false				
+CHEMBL:CHEMBL379975	chembl:CHEMBL379975	AURKB	seed	D1	dgidb				false				
+WITHAFERIN A	iuphar.ligand:13097	AURKB	seed	D1	dgidb				false		24079846		
+(3Z)-N,N-DIMETHYL-2-OXO-3-(4,5,6,7-TETRAHYDRO-1H-INDOL-2-YLMETHYLIDENE)-2,3-DIHYDRO-1H-INDOLE-5-SULFONAMIDE	drugbank:DB08039	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+JNJ-7706621	iuphar.ligand:5932	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+DASATINIB ANHYDROUS	rxcui:1546019	AURKB	seed	D1	dgidb				true	false			
+LAPATINIB	rxcui:480167	AURKB	seed	D1	dgidb				true	true			
+CHEMBL:CHEMBL546797	chembl:CHEMBL546797	AURKB	seed	D1	dgidb				false				
+NERVIANO	chembl:CHEMBL1172241	AURKB	seed	D1	dgidb				false		20621725		
+COPANLISIB	rxcui:1945077	AURKB	seed	D1	dgidb				true	false	36169922		
+TAK-632	iuphar.ligand:10387	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+BARASERTIB-HQPA	iuphar.ligand:5663	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false		25036791		
+COMPOUND 25 [PMID: 20855207]	iuphar.ligand:8159	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+CP-547632	iuphar.ligand:7881	AURKB	seed	D1	dgidb				false				
+SORAFENIB	rxcui:495881	AURKB	seed	D1	dgidb				true	true			
+EP-0042	drugbank:DB18120	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+ZM447439	iuphar.ligand:8353	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+HESPERADIN	iuphar.ligand:8354	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false		19035792		
+BAY 61-3606	iuphar.ligand:9693	AURKB	seed	D1	dgidb				false				
+GSK269962A	iuphar.ligand:8037	AURKB	seed	D1	dgidb				false				
+AT9283	drugbank:DB05169	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+TOZASERTIB LACTATE	ncit:C61319	AURKB	seed	D1	dgidb				false				
+PD166285	iuphar.ligand:8183	AURKB	seed	D1	dgidb				false				
+GSK2646264	iuphar.ligand:10108	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+DACTOLISIB	ncit:C74072	AURKB	seed	D1	dgidb				false				
+GW441756X	chembl:CHEMBL1516890	AURKB	seed	D1	dgidb				false				
+VANDETANIB	rxcui:1098413	AURKB	seed	D1	dgidb				true	true			
+G&OUML; 6976	iuphar.ligand:5973	AURKB	seed	D1	dgidb				false				
+NIK INHIBITOR 12F	iuphar.ligand:10947	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+AR-AO-14418	drugbank:DB01950	AURKB	seed	D1	dgidb				false				
+VIC 1911	iuphar.ligand:12070	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+DUBERMATINIB	ncit:C127116	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+DOVITINIB	ncit:C76199	AURKB	seed	D1	dgidb				false				
+KENPAULLONE	iuphar.ligand:6000	AURKB	seed	D1	dgidb				false				
+COMPOUND 1 [PMID: 21742770]	iuphar.ligand:8190	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+SP-600125	chembl:CHEMBL1725279	AURKB	seed	D1	dgidb				false		23634759		
+FASUDIL	ncit:C65624	AURKB	seed	D1	dgidb				false				
+EUPATORIN	iuphar.ligand:13862	AURKB	seed	D1	dgidb				false				
+CHEMBL:CHEMBL535331	chembl:CHEMBL535331	AURKB	seed	D1	dgidb				false				
+LAS38096	iuphar.ligand:5617	AURKB	seed	D1	dgidb				false				
+COMPOUND 38 [PMID: 20817473]	iuphar.ligand:8768	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+LINIFANIB	ncit:C71759	AURKB	seed	D1	dgidb				false				
+AURORA B/C KINASE INHIBITOR GSK1070916A	ncit:C91081	AURKB	seed	D1	dgidb				false				
+AURORA KINASE INHIBITOR II	iuphar.ligand:5930	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+NVP-TAE684	iuphar.ligand:5714	AURKB	seed	D1	dgidb				false				
+CEDIRANIB	ncit:C80867	AURKB	seed	D1	dgidb				false				
+BMS-345541	iuphar.ligand:5669	AURKB	seed	D1	dgidb				false				
+CDK2 INHIBITOR IV	iuphar.ligand:5949	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+CYC116	drugbank:DB05198	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+ENTRECTINIB	rxcui:2197862	AURKB	seed	D1	dgidb				true	true			
+ALISERTIB	ncit:C71717	AURKB	seed	D1	dgidb				false		36169922		
+PAZOPANIB	rxcui:714438	AURKB	seed	D1	dgidb				true	true			
+ERLOTINIB	rxcui:337525	AURKB	seed	D1	dgidb				true	true			
+BELUMOSUDIL	rxcui:2564025	AURKB	seed	D1	dgidb				true	true			
+MLN-8054	iuphar.ligand:5696	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false		17360485		
+BI-847325	iuphar.ligand:12661	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+PF-562271	iuphar.ligand:9381	AURKB	seed	D1	dgidb				false				
+TINENGOTINIB	iuphar.ligand:11887	AURKB	seed	D1	dgidb	inhibitor	inhibitor		false				
+OLEIC ACID	rxcui:7631	PLK1	seed	D1	dgidb				true	false			
+CHEMBL:CHEMBL171699	chembl:CHEMBL171699	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL467987	chembl:CHEMBL467987	PLK1	seed	D1	dgidb				false				
+PHOSMET	chembl:CHEMBL1481873	PLK1	seed	D1	dgidb			-1	false				
+CHEMBL:CHEMBL565893	chembl:CHEMBL565893	PLK1	seed	D1	dgidb				false				
+POLO-LIKE KINASE 1 INHIBITOR GSK461364	ncit:C70948	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+PROTOPORPHYRIN	drugbank:DB02285	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1412002	chembl:CHEMBL1412002	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL523200	chembl:CHEMBL523200	PLK1	seed	D1	dgidb				false				
+SCLEROTIORIN	chembl:CHEMBL1095515	PLK1	seed	D1	dgidb				false				
+(4-CHLOROPHENYL)(MORPHOLINO)METHANETHIONE	chembl:CHEMBL1348974	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL24983	chembl:CHEMBL24983	PLK1	seed	D1	dgidb				false				
+EMBELIN	chembl:CHEMBL221137	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL175266	chembl:CHEMBL175266	PLK1	seed	D1	dgidb				false				
+NMS-1286937	chembl:CHEMBL1094408	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+ANTISENSE OLIGONUCLEOTIDES	ncit:C1291	PLK1	seed	D1	dgidb				false		15141022		
+CHEMBL:CHEMBL1310701	chembl:CHEMBL1310701	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL534535	chembl:CHEMBL534535	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL599712	chembl:CHEMBL599712	PLK1	seed	D1	dgidb				false				
+COMPOUND 8 [PMID: 17480064]	iuphar.ligand:8763	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1426508	chembl:CHEMBL1426508	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL590665	chembl:CHEMBL590665	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL122355	chembl:CHEMBL122355	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL421431	chembl:CHEMBL421431	PLK1	seed	D1	dgidb				false				
+ACID BLUE 129	chembl:CHEMBL133576	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1519374	chembl:CHEMBL1519374	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1537417	chembl:CHEMBL1537417	PLK1	seed	D1	dgidb				false				
+RO3280	iuphar.ligand:9403	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL528373	chembl:CHEMBL528373	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL119878	chembl:CHEMBL119878	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL538798	chembl:CHEMBL538798	PLK1	seed	D1	dgidb				false				
+CRYPTOTANSHINONE	chembl:CHEMBL187460	PLK1	seed	D1	dgidb				false				
+ACITRETIN	rxcui:16818	PLK1	seed	D1	dgidb				true	true			
+RIGOSERTIB	ncit:C152216	PLK1	seed	D1	dgidb				false				
+MLN0905	iuphar.ligand:9402	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+GW853606	iuphar.ligand:8645	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+CEFAMANDOLE SODIUM	chembl:CHEMBL1360024	PLK1	seed	D1	dgidb			-1	false				
+OXYTETRACYCLINE ANHYDROUS	rxcui:1545999	PLK1	seed	D1	dgidb				true	false			
+CHEMBL:CHEMBL588749	chembl:CHEMBL588749	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1310138	chembl:CHEMBL1310138	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL585628	chembl:CHEMBL585628	PLK1	seed	D1	dgidb				false				
+1,4-DIMETHOXYANTHRAQUINONE	chembl:CHEMBL570408	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1232076	chembl:CHEMBL1232076	PLK1	seed	D1	dgidb				false				
+PURPURIN	chembl:CHEMBL294264	PLK1	seed	D1	dgidb				false				
+XY-06-007	iuphar.ligand:12141	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL530149	chembl:CHEMBL530149	PLK1	seed	D1	dgidb				false				
+EBSELEN	ncit:C65503	PLK1	seed	D1	dgidb				false				
+STAVUDINE	rxcui:59763	PLK1	seed	D1	dgidb				true	false			
+GSK579289A	iuphar.ligand:8150	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+PLOGOSERTIB	ncit:C162375	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL1306556	chembl:CHEMBL1306556	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1605629	chembl:CHEMBL1605629	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL592314	chembl:CHEMBL592314	PLK1	seed	D1	dgidb				false				
+FLUORESCEIN DIACETATE	chembl:CHEMBL1492044	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL585279	chembl:CHEMBL585279	PLK1	seed	D1	dgidb				false				
+GW843682X	chembl:CHEMBL514499	PLK1	seed	D1	dgidb				false				
+THIRAM	chembl:CHEMBL120563	PLK1	seed	D1	dgidb			2	false				P03AA05
+FLUPIRTINE MALEATE	chembl:CHEMBL1256752	PLK1	seed	D1	dgidb			-1	false				
+CHEMBL:CHEMBL585654	chembl:CHEMBL585654	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL587449	chembl:CHEMBL587449	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1363249	chembl:CHEMBL1363249	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1255944	chembl:CHEMBL1255944	PLK1	seed	D1	dgidb				false				
+SIMVASTATIN	rxcui:36567	PLK1	seed	D1	dgidb				true	true			
+DISULFIRAM	rxcui:3554	PLK1	seed	D1	dgidb				true	true			
+CHEMBL:CHEMBL1362503	chembl:CHEMBL1362503	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL184450	chembl:CHEMBL184450	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL602969	chembl:CHEMBL602969	PLK1	seed	D1	dgidb				false				
+CEPHALOCHROMIN	chembl:CHEMBL463175	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1503729	chembl:CHEMBL1503729	PLK1	seed	D1	dgidb				false				
+IDARUBICIN HYDROCHLORIDE	chembl:CHEMBL1200976	PLK1	seed	D1	dgidb			4	true	true		1990	
+CHEMBL:CHEMBL1451216	chembl:CHEMBL1451216	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL577365	chembl:CHEMBL577365	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL462861	chembl:CHEMBL462861	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL527584	chembl:CHEMBL527584	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL515505	chembl:CHEMBL515505	PLK1	seed	D1	dgidb				false				
+BENSERAZIDE HYDROCHLORIDE	chembl:CHEMBL1255778	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL584619	chembl:CHEMBL584619	PLK1	seed	D1	dgidb				false				
+PURPUROGALLIN	chembl:CHEMBL66953	PLK1	seed	D1	dgidb				false				
+TOSUFLOXACIN TOSYLATE	chembl:CHEMBL104270	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL84281	chembl:CHEMBL84281	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL223575	chembl:CHEMBL223575	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1547715	chembl:CHEMBL1547715	PLK1	seed	D1	dgidb				false				
+CHLORPYRIFOS	chembl:CHEMBL463210	PLK1	seed	D1	dgidb			-1	false				
+GSK-461364A	iuphar.ligand:5684	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+GUTHION	chembl:CHEMBL530115	PLK1	seed	D1	dgidb				false				
+6-CHLORONICOTINIC ACID	chembl:CHEMBL1723657	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL548629	chembl:CHEMBL548629	PLK1	seed	D1	dgidb				false				
+NANAOMYCIN	chembl:CHEMBL1212972	PLK1	seed	D1	dgidb				false				
+CEFACLOR ANHYDROUS	rxcui:1450910	PLK1	seed	D1	dgidb				true	false			
+CHEMBL:CHEMBL151797	chembl:CHEMBL151797	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1701915	chembl:CHEMBL1701915	PLK1	seed	D1	dgidb				false				
+OXYPHENBUTAZONE	rxcui:7816	PLK1	seed	D1	dgidb				false				
+PENTABROMOPHENOL	chembl:CHEMBL1235157	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL118678	chembl:CHEMBL118678	PLK1	seed	D1	dgidb				false				
+AROTINOID ACID	drugbank:DB02877	PLK1	seed	D1	dgidb				false				
+COMPOUND 2 [PMID: 19097784]	iuphar.ligand:8646	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL118378	chembl:CHEMBL118378	PLK1	seed	D1	dgidb				false				
+PHYSODIC ACID	chembl:CHEMBL171637	PLK1	seed	D1	dgidb				false				
+NVP-TAE684	iuphar.ligand:5714	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1459280	chembl:CHEMBL1459280	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL582478	chembl:CHEMBL582478	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1287980	chembl:CHEMBL1287980	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL297304	chembl:CHEMBL297304	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL599924	chembl:CHEMBL599924	PLK1	seed	D1	dgidb				false				
+HAEMATOXYLIN	chembl:CHEMBL1479103	PLK1	seed	D1	dgidb				false				
+LANSOPRAZOLE	rxcui:17128	PLK1	seed	D1	dgidb				true	true			
+THIOGUANOSINE	chembl:CHEMBL283078	PLK1	seed	D1	dgidb				false				
+LIPID ENCAPSULATED ANTI-PLK1 SIRNA TKM-PLK1	ncit:C116889	PLK1	seed	D1	dgidb				false				
+AMBUNOL	chembl:CHEMBL454893	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1271059	chembl:CHEMBL1271059	PLK1	seed	D1	dgidb				false				
+LOBARIC ACID	chembl:CHEMBL551842	PLK1	seed	D1	dgidb				false				
+PENTOSALEN	chembl:CHEMBL453805	PLK1	seed	D1	dgidb			-1	false				
+LOMOFUNGIN	chembl:CHEMBL1505471	PLK1	seed	D1	dgidb			-1	false				
+EUFLAVINE	chembl:CHEMBL354349	PLK1	seed	D1	dgidb			-1	false				D08AA03
+CHEMBL:CHEMBL592558	chembl:CHEMBL592558	PLK1	seed	D1	dgidb				false				
+HEXACHLOROPHENE	rxcui:5293	PLK1	seed	D1	dgidb				true	false			
+GYROPHORIC ACID	chembl:CHEMBL470648	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL602807	chembl:CHEMBL602807	PLK1	seed	D1	dgidb				false				
+BENZBROMARONE	rxcui:1385	PLK1	seed	D1	dgidb				true	false			
+WNY0824	iuphar.ligand:12143	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+PYRONIN Y	chembl:CHEMBL1486690	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1707907	chembl:CHEMBL1707907	PLK1	seed	D1	dgidb				false				
+APOMORPHINE HYDROCHLORIDE	chembl:CHEMBL3187985	PLK1	seed	D1	dgidb			4	true	true		2001	
+CHEMBL:CHEMBL374632	chembl:CHEMBL374632	PLK1	seed	D1	dgidb				false				
+HYDROXYZINE PAMOATE	chembl:CHEMBL1200467	PLK1	seed	D1	dgidb			4	true	true		1959	
+INAMRINONE	rxcui:738	PLK1	seed	D1	dgidb				true	false			
+ELLAGIC ACID	iuphar.ligand:13035	PLK1	seed	D1	dgidb				false				
+TOPOTECAN HYDROCHLORIDE	chembl:CHEMBL1607	PLK1	seed	D1	dgidb			4	true	true		1996	
+ERYTHROMYCIN	rxcui:4053	PLK1	seed	D1	dgidb				true	true			
+CEFSULODIN SODIUM	rxcui:267417	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL125044	chembl:CHEMBL125044	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1486366	chembl:CHEMBL1486366	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL599957	chembl:CHEMBL599957	PLK1	seed	D1	dgidb				false				
+VANITIOLIDE	chembl:CHEMBL1380480	PLK1	seed	D1	dgidb			2	false				
+CHEMBL:CHEMBL103583	chembl:CHEMBL103583	PLK1	seed	D1	dgidb				false				
+2,6-DIMETHOXYQUINONE	chembl:CHEMBL448515	PLK1	seed	D1	dgidb				false				
+GW7647	iuphar.ligand:2674	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL121556	chembl:CHEMBL121556	PLK1	seed	D1	dgidb				false				
+COMPOUND 6 [PMID: 30125504]	iuphar.ligand:10073	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+OXIDOPAMINE HYDROCHLORIDE	chembl:CHEMBL451197	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL555260	chembl:CHEMBL555260	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL116548	chembl:CHEMBL116548	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL495852	chembl:CHEMBL495852	PLK1	seed	D1	dgidb				false				
+SLAZINIC ACID	chembl:CHEMBL172439	PLK1	seed	D1	dgidb				false				
+SENNOSIDE B	chembl:CHEMBL445268	PLK1	seed	D1	dgidb				false				
+PYROGALLOL RED	chembl:CHEMBL210208	PLK1	seed	D1	dgidb				false				
+DUAL BRD4/PLK1 INHIBITOR 23	iuphar.ligand:10072	PLK1	seed	D1	dgidb	inhibitor	inhibitor		false				
+RG-1530	iuphar.ligand:10361	PLK1	seed	D1	dgidb				false				
+THIMEROSAL	chembl:CHEMBL508338	PLK1	seed	D1	dgidb			3	false				D08AK06
+CHEMBL:CHEMBL1489812	chembl:CHEMBL1489812	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL582764	chembl:CHEMBL582764	PLK1	seed	D1	dgidb				false				
+WORTMANNIN	ncit:C1277	PLK1	seed	D1	dgidb				false		17135248		
+PROROXAN HYDROCHLORIDE	chembl:CHEMBL1334693	PLK1	seed	D1	dgidb			-1	false				
+CHEMBL:CHEMBL429095	chembl:CHEMBL429095	PLK1	seed	D1	dgidb				false				
+2,4-DIHYDROXYBENZOPHENONE	chembl:CHEMBL1392	PLK1	seed	D1	dgidb				false				
+OMEPRAZOLE	rxcui:7646	PLK1	seed	D1	dgidb				true	true			
+PENTACHLOROPHENOL	chembl:CHEMBL75967	PLK1	seed	D1	dgidb				false				
+LITHOCHOLIC ACID	iuphar.ligand:611	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL535051	chembl:CHEMBL535051	PLK1	seed	D1	dgidb				false				
+DIFFRACTAIC ACID	chembl:CHEMBL367741	PLK1	seed	D1	dgidb				false				
+SUCCIMER	rxcui:3446	PLK1	seed	D1	dgidb				true	true			
+SOTRASTAURIN	ncit:C80630	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL164449	chembl:CHEMBL164449	PLK1	seed	D1	dgidb				false				
+AMORFRUTIN A	chembl:CHEMBL491820	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1871992	chembl:CHEMBL1871992	PLK1	seed	D1	dgidb				false				
+4-CHLOROMERCURIBENZOIC ACID	chembl:CHEMBL575867	PLK1	seed	D1	dgidb				false				
+DIPYRIDAMOLE	rxcui:3521	PLK1	seed	D1	dgidb				true	true			
+TRITIOZINE	chembl:CHEMBL1414826	PLK1	seed	D1	dgidb			2	false				
+3,5-DIPHENYLISOXAZOLE	chembl:CHEMBL1374535	PLK1	seed	D1	dgidb				false				
+MYRICETIN	drugbank:DB02375	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL599255	chembl:CHEMBL599255	PLK1	seed	D1	dgidb				false				
+BETUNOLIC ACID	chembl:CHEMBL431525	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL592124	chembl:CHEMBL592124	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL274921	chembl:CHEMBL274921	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL505670	chembl:CHEMBL505670	PLK1	seed	D1	dgidb				false				
+BI 2536	drugbank:DB16107	PLK1	seed	D1	dgidb				false				
+IMIDACLOPRID	chembl:CHEMBL406819	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL599098	chembl:CHEMBL599098	PLK1	seed	D1	dgidb				false				
+ALPHAPRODINE HYDROCHLORIDE	chembl:CHEMBL1529817	PLK1	seed	D1	dgidb			-1	false				
+CHEMBL:CHEMBL388979	chembl:CHEMBL388979	PLK1	seed	D1	dgidb				false				
+CHEMBL:CHEMBL1224755	chembl:CHEMBL1224755	PLK1	seed	D1	dgidb				false				
+N-OLEOYLDOPAMINE	iuphar.ligand:5552	PLK1	seed	D1	dgidb				false				
+CARBOPLATIN	rxcui:40048	MAD1L1	seed	D1	dgidb				true	true	23407047		
+PACLITAXEL PROTEIN-BOUND	rxcui:486610	MAD1L1	seed	D1	dgidb				true	true	23407047		
+AMENTOFLAVONE	chembl:CHEMBL63354	VCP	seed	D3	dgidb				false				
+CB-5083	drugbank:DB16874	VCP	seed	D3	dgidb				false		26104798		
+HEXACHLOROPHENE	rxcui:5293	VCP	seed	D3	dgidb				true	false			
+EVEROLIMUS	rxcui:141704	CTNNB1	seed	D4	dgidb				true	true	20347502		
+DEXAMETHASONE	rxcui:3264	CTNNB1	seed	D4	dgidb				true	true	26521987		
+TEMSIROLIMUS	rxcui:657797	CTNNB1	seed	D4	dgidb				true	true	27016228		
+CEQ508	drugbank:DB17911	CTNNB1	seed	D4	dgidb				false		21744502		
+NMS-P715	iuphar.ligand:9401	CTNNB1	seed	D4	dgidb				false		28751540		
+CYCLOPHOSPHAMIDE ANHYDROUS	rxcui:1545988	CTNNB1	seed	D4	dgidb				true	false	26521987		
+SORAFENIB	rxcui:495881	CTNNB1	seed	D4	dgidb				true	true	20347502		
+VANTICTUMAB	ncit:C96799	CTNNB1	seed	D4	dgidb				false		22753465		
+LENALIDOMIDE	rxcui:342369	CTNNB1	seed	D4	dgidb				true	true	26521987		
+CHEMBL:CHEMBL410484	chembl:CHEMBL410484	CTNNB1	seed	D4	dgidb				false				
+OSIMERTINIB	rxcui:1721560	CTNNB1	seed	D4	dgidb				true	true	31839416		
+LETROZOLE	rxcui:72965	CTNNB1	seed	D4	dgidb				true	true			
+NIROGACESTAT	rxcui:2670631	CTNNB1	seed	D4	dgidb				true	true			
+MPI-0479605	iuphar.ligand:9399	CTNNB1	seed	D4	dgidb				false		28751540		
+IMATINIB	rxcui:282388	CTNNB1	seed	D4	dgidb				true	true	26861905		
+TRAMETINIB DIMETHYL SULFOXIDE	rxcui:1425098	CTNNB1	seed	D4	dgidb				true	false	26343583		
+MPS1-IN-1	iuphar.ligand:9271	CTNNB1	seed	D4	dgidb				false		28751540		
+EOSIN_Y	chembl:CHEMBL1092023	CTNNB1	seed	D4	dgidb				false		22889313		
+CELECOXIB	rxcui:140587	CTNNB1	seed	D4	dgidb				true	true	22336956		
+ANTI-PD-L1 MONOCLONAL ANTIBODY	ncit:C128057	CTNNB1	seed	D4	dgidb				false		25970248		
+CHEMBL:CHEMBL2172378	chembl:CHEMBL2172378	CTNNB1	seed	D4	dgidb				false		22889313		
+EMPESERTIB	ncit:C116074	CTNNB1	seed	D4	dgidb				false		28751540		
+RECOMBINANT HUMAN ENDOSTATIN	ncit:C45515	CTNNB1	seed	D4	dgidb				false				
+CABOZANTINIB S-MALATE	rxcui:1363267	CTNNB1	seed	D4	dgidb				true	false	31992589		
+OSUGACESTAT	ncit:C116872	CTNNB1	seed	D4	dgidb				false		34590610		
+FLUORESCEIN SODIUM	chembl:CHEMBL1628233	CTNNB1	seed	D4	dgidb			4	true	true	22889313	1976	
+ANTI-CTLA-4 MONOCLONAL ANTIBODY	ncit:C128036	CTNNB1	seed	D4	dgidb				false		25970248		
+CETUXIMAB	rxcui:318341	CTNNB1	seed	D4	dgidb				true	true	33574948		
+SAM68 MODULATOR CWP232291	ncit:C97663	CTNNB1	seed	D4	dgidb				false				
+BAY1217389	iuphar.ligand:12705	CTNNB1	seed	D4	dgidb				false		28751540		
+TRICIRIBINE	ncit:C142998	CTNNB1	seed	D4	dgidb				false		26224873		
+CHEMBL:CHEMBL533293	chembl:CHEMBL533293	CTNNB1	seed	D4	dgidb				false				
+DITHIAZANINE IODIDE	chembl:CHEMBL421701	CTNNB1	seed	D4	dgidb			4	true	false			
+THALIDOMIDE	rxcui:10432	CTNNB1	seed	D4	dgidb				true	true	26521987		
+CHEMBL:CHEMBL91638	chembl:CHEMBL91638	CTNNB1	seed	D4	dgidb				false		24018191		
+CHEMBL:CHEMBL24983	chembl:CHEMBL24983	MTOR	seed	D2|D4	dgidb				false				
+BIMIRALISIB	iuphar.ligand:8383	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+EVEROLIMUS	rxcui:141704	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		true	true	2015|11010|26859683|24622468|24625776|25295501|25799227|25851998|24836070|26176165		
+PERPHENAZINE	rxcui:8076	MTOR	seed	D2|D4	dgidb				true	true			
+N-OLEOYLDOPAMINE	iuphar.ligand:5552	MTOR	seed	D2|D4	dgidb				false				
+CHEMBL:CHEMBL527620	chembl:CHEMBL527620	MTOR	seed	D2|D4	dgidb				false				
+LESTAURTINIB	ncit:C48402	MTOR	seed	D2|D4	dgidb				false				
+CANERTINIB	ncit:C77588	MTOR	seed	D2|D4	dgidb				false				
+GOSSYPOL	iuphar.ligand:4204	MTOR	seed	D2|D4	dgidb				false				
+METFORMIN HYDROCHLORIDE	chembl:CHEMBL1703	MTOR	seed	D2|D4	dgidb			4	true	true	23490148	1995	
+SONOLISIB	ncit:C78848	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+WIN55212-2	iuphar.ligand:733	MTOR	seed	D2|D4	dgidb				false				
+PP-121	drugbank:DB08052	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+EBASTINE	rxcui:23796	MTOR	seed	D2|D4	dgidb				true	false			
+HALOPERIDOL DECANOATE	rxcui:26420	MTOR	seed	D2|D4	dgidb				true	true			
+TAFA-93	drugbank:DB05887	MTOR	seed	D2|D4	dgidb				false				
+TEMSIROLIMUS	rxcui:657797	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		true	true			
+CALCIMYCIN	chembl:CHEMBL1256686	MTOR	seed	D2|D4	dgidb			2	false				
+COPANLISIB	rxcui:1945077	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		true	false			
+NEOLYMPHOSTIN A	iuphar.ligand:10151	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+LY-294002	drugbank:DB02656	MTOR	seed	D2|D4	dgidb				false		17562705		
+ZANDELISIB	ncit:C123925	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 7 [PMID: 31955578]	iuphar.ligand:10649	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+GDC-0349	drugbank:DB13072	MTOR	seed	D2|D4	dgidb				false				
+DOXAZOSIN MESYLATE	rxcui:39173	MTOR	seed	D2|D4	dgidb				true	true			
+CHEMBL:CHEMBL600334	chembl:CHEMBL600334	MTOR	seed	D2|D4	dgidb				false				
+EMETINE	rxcui:3820	MTOR	seed	D2|D4	dgidb				false				
+CAMPTOTHECIN	chembl:CHEMBL65	MTOR	seed	D2|D4	dgidb			-1	false				
+PIMOZIDE	rxcui:8331	MTOR	seed	D2|D4	dgidb				true	true			
+XL765	drugbank:DB05241	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL601364	chembl:CHEMBL601364	MTOR	seed	D2|D4	dgidb				false				
+AMSACRINE	rxcui:739	MTOR	seed	D2|D4	dgidb				true	false			
+TANESPIMYCIN	chembl:CHEMBL109480	MTOR	seed	D2|D4	dgidb			3	false				
+YUANHUADINE	chembl:CHEMBL1911631	MTOR	seed	D2|D4	dgidb				false		21916433		
+AMIODARONE HYDROCHLORIDE	rxcui:203114	MTOR	seed	D2|D4	dgidb				true	true			
+SIROLIMUS	rxcui:35302	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		true	true	24893224|17563385|24836070|19848404|27279227|27482884|26619011|24631838		
+SU9516	drugbank:DB03428	MTOR	seed	D2|D4	dgidb				false				
+RITANSERIN	ncit:C95217	MTOR	seed	D2|D4	dgidb				false				
+WYE-354	iuphar.ligand:9361	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+CAFFEIC ACID PHENETHYL ESTER	chembl:CHEMBL319244	MTOR	seed	D2|D4	dgidb				false				
+PI3K/BET INHIBITOR LY294002	ncit:C148229	MTOR	seed	D2|D4	dgidb				false		26490311		
+PI-103	drugbank:DB17046	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+MAPROTILINE	rxcui:6646	MTOR	seed	D2|D4	dgidb				true	false			
+FENRETINIDE	ncit:C1098	MTOR	seed	D2|D4	dgidb				true	false			
+WORTMANNIN	drugbank:DB08059	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+MTORC1/2 KINASE INHIBITOR BI 860585	ncit:C122836	MTOR	seed	D2|D4	dgidb				false				
+PAROXETINE HYDROCHLORIDE, HEMIHYDRATE	rxcui:1298842	MTOR	seed	D2|D4	dgidb				true	true			
+QUINACRINE	rxcui:9061	MTOR	seed	D2|D4	dgidb				false				
+TORIN 2	iuphar.ligand:8839	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+BISLEUCONOTHINE A	chembl:CHEMBL1077259	MTOR	seed	D2|D4	dgidb				false		26176165		
+GR 127935	iuphar.ligand:14	MTOR	seed	D2|D4	dgidb				false				
+PALOMID 529	drugbank:DB12812	MTOR	seed	D2|D4	dgidb				false				
+5-QUINOXALIN-6-YLMETHYLENE-THIAZOLIDINE-2,4-DIONE	drugbank:DB04769	MTOR	seed	D2|D4	dgidb				false				
+SF1126	drugbank:DB05210	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL429095	chembl:CHEMBL429095	MTOR	seed	D2|D4	dgidb				false				
+RAPALINK-1	iuphar.ligand:9212	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL582278	chembl:CHEMBL582278	MTOR	seed	D2|D4	dgidb				false				
+KU-0063794	iuphar.ligand:9360	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+INFIGRATINIB	rxcui:2550729	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		true	false			
+CHEMBL:CHEMBL602127	chembl:CHEMBL602127	MTOR	seed	D2|D4	dgidb				false				
+CHEMBL:CHEMBL578420	chembl:CHEMBL578420	MTOR	seed	D2|D4	dgidb				false				
+CHEMBL:CHEMBL597874	chembl:CHEMBL597874	MTOR	seed	D2|D4	dgidb				false				
+DEQUALINIUM	rxcui:3226	MTOR	seed	D2|D4	dgidb				true	false			
+CHEMBL:CHEMBL195350	chembl:CHEMBL195350	MTOR	seed	D2|D4	dgidb				false				
+ALPELISIB	rxcui:2169285	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		true	true			
+PQR620	iuphar.ligand:10142	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+IDAZOXAN	ncit:C170049	MTOR	seed	D2|D4	dgidb				false				
+ZOLANTIDINE	chembl:CHEMBL419296	MTOR	seed	D2|D4	dgidb				false				
+BW723C86	iuphar.ligand:161	MTOR	seed	D2|D4	dgidb				false				
+CANTHARIDIC_ACID	chembl:CHEMBL275516	MTOR	seed	D2|D4	dgidb				false				
+METFORMIN	rxcui:6809	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		true	true			
+(+)-BUTACLAMOL	iuphar.ligand:62	MTOR	seed	D2|D4	dgidb				false				
+EPINEPHRINE	rxcui:3992	MTOR	seed	D2|D4	dgidb				true	true			
+TORIN 1	iuphar.ligand:8004	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+THAPSIGARGIN	iuphar.ligand:5351	MTOR	seed	D2|D4	dgidb				false				
+CATECHOL	chembl:CHEMBL280998	MTOR	seed	D2|D4	dgidb				false				
+PHENETHYLISOTHIOCYANATE	chembl:CHEMBL151649	MTOR	seed	D2|D4	dgidb				false		22607231		
+CHEMBL:CHEMBL528712	chembl:CHEMBL528712	MTOR	seed	D2|D4	dgidb				false				
+LOPERAMIDE	rxcui:6468	MTOR	seed	D2|D4	dgidb				true	true			
+TERFENADINE	rxcui:42330	MTOR	seed	D2|D4	dgidb				true	false			
+CZ415	iuphar.ligand:9837	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+ECF309	iuphar.ligand:9571	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+ISOPROTERENOL	rxcui:6054	MTOR	seed	D2|D4	dgidb				true	true			
+PI3K INHIBITOR BGT226	ncit:C74073	MTOR	seed	D2|D4	dgidb				false				
+ZOTAROLIMUS	ncit:C82294	MTOR	seed	D2|D4	dgidb				false				
+L-741,626	iuphar.ligand:177	MTOR	seed	D2|D4	dgidb				false				
+COMPOUND 82 [PMID: 21332118]	iuphar.ligand:8805	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+PP-242	iuphar.ligand:5704	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+TYRPHOSTIN A9	chembl:CHEMBL78150	MTOR	seed	D2|D4	dgidb				false				
+NOVOLIMUS	drugbank:DB19085	MTOR	seed	D2|D4	dgidb				false				
+CHEMBL:CHEMBL303958	chembl:CHEMBL303958	MTOR	seed	D2|D4	dgidb				false				
+TG-100-115	iuphar.ligand:5715	MTOR	seed	D2|D4	dgidb				false		17685602		
+IDARUBICIN	rxcui:5650	MTOR	seed	D2|D4	dgidb				true	true			
+COMPOUND 11J [PMID: 23021994]	iuphar.ligand:8827	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 15A [PMID: 32069401]	iuphar.ligand:10702	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+IZORLISIB	iuphar.ligand:7743	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+MIBEFRADIL	rxcui:83213	MTOR	seed	D2|D4	dgidb				false				
+NICARDIPINE	rxcui:7396	MTOR	seed	D2|D4	dgidb				true	true			
+ME-344	drugbank:DB13062	MTOR	seed	D2|D4	dgidb				false				
+CGS 15943	iuphar.ligand:384	MTOR	seed	D2|D4	dgidb				false				
+PYRROLIDINE DITHIOCARBAMATE	chembl:CHEMBL399491	MTOR	seed	D2|D4	dgidb				false				
+VANDETANIB	rxcui:1098413	MTOR	seed	D2|D4	dgidb				true	true			
+COMPOUND 12B [PMID: 31465220]	iuphar.ligand:10489	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+MIFEPRISTONE	rxcui:6964	MTOR	seed	D2|D4	dgidb				true	true			
+ROTENONE	chembl:CHEMBL429023	MTOR	seed	D2|D4	dgidb				false		21875114		
+BERZOSERTIB	ncit:C116355	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+SYK INHIBITOR III	iuphar.ligand:6048	MTOR	seed	D2|D4	dgidb				false				
+PROPAFENONE	rxcui:8754	MTOR	seed	D2|D4	dgidb				true	true			
+SERABELISIB	ncit:C98844	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+PAZOPANIB	rxcui:714438	MTOR	seed	D2|D4	dgidb				true	true	24625776		
+GLASDEGIB	rxcui:2105845	MTOR	seed	D2|D4	dgidb				true	true			
+STK16-IN-1	iuphar.ligand:9692	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL591618	chembl:CHEMBL591618	MTOR	seed	D2|D4	dgidb				false				
+CHEMBL:CHEMBL2348411	chembl:CHEMBL2348411	MTOR	seed	D2|D4	dgidb				false		23490148		
+SIROLIMUS ALBUMIN-BOUND NANOPARTICLES	ncit:C74065	MTOR	seed	D2|D4	dgidb				false				
+DISULFIRAM	rxcui:3554	MTOR	seed	D2|D4	dgidb				true	true			
+VANOXERINE	iuphar.ligand:9983	MTOR	seed	D2|D4	dgidb				false				
+PAXALISIB	ncit:C116877	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL599088	chembl:CHEMBL599088	MTOR	seed	D2|D4	dgidb				false				
+IFENPRODIL	rxcui:27403	MTOR	seed	D2|D4	dgidb				false				
+AZD8055	iuphar.ligand:7714	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false		23375793		
+ISTIRATUMAB	ncit:C103863	MTOR	seed	D2|D4	dgidb				false				
+PIMECROLIMUS	rxcui:321952	MTOR	seed	D2|D4	dgidb				true	true			
+NICLOSAMIDE	rxcui:7402	MTOR	seed	D2|D4	dgidb				true	false			
+CHEMBL:CHEMBL587620	chembl:CHEMBL587620	MTOR	seed	D2|D4	dgidb				false				
+PENTAMIDINE ISETHIONATE	chembl:CHEMBL361506	MTOR	seed	D2|D4	dgidb			4	true	true		1984	P01CX01
+BIX-01294	iuphar.ligand:7014	MTOR	seed	D2|D4	dgidb				false				
+MTOR KINASE INHIBITOR AZD8055	ncit:C78856	MTOR	seed	D2|D4	dgidb				false		27279227		
+SALIRASIB	ncit:C71146	MTOR	seed	D2|D4	dgidb				false				
+CHEMBL:CHEMBL528807	chembl:CHEMBL528807	MTOR	seed	D2|D4	dgidb				false				
+(R,S)-INDATRALINE	chembl:CHEMBL341898	MTOR	seed	D2|D4	dgidb				false				
+CAPIVASERTIB	rxcui:2669967	MTOR	seed	D2|D4	dgidb				true	true	26490311		
+XL388	iuphar.ligand:7973	MTOR	seed	D2|D4	dgidb	inhibitor	inhibitor		false				
+CHEMBL:CHEMBL605077	chembl:CHEMBL605077	MTOR	seed	D2|D4	dgidb				false				
+MTOR INHIBITOR	ncit:C2201	MTOR	seed	D2|D4	dgidb				false		26831717		
+O-PHENANTHROLINE	rxcui:1872047	MTOR	seed	D2|D4	dgidb				true	false			
+DIPHENYLENEIODONIUM	chembl:CHEMBL365739	MTOR	seed	D2|D4	dgidb				false				
+TRIFLUPERIDOL	chembl:CHEMBL15023	MTOR	seed	D2|D4	dgidb			4	true	false			N05AD02
+BAY-320	iuphar.ligand:9126	BUB1	seed	D1	dgidb	inhibitor	inhibitor		false				
+COMPOUND 2-3-2 [PMID: 24900824]	iuphar.ligand:8110	BUB1	seed	D1	dgidb	inhibitor	inhibitor		false				
+COMPOUND 2-3-1 [PMID: 24900824]	iuphar.ligand:8111	BUB1	seed	D1	dgidb	inhibitor	inhibitor		false				
+COMPOUND 2-1-1 [PMID: 24900824]	iuphar.ligand:8109	BUB1	seed	D1	dgidb	inhibitor	inhibitor		false				
+BAY-524	iuphar.ligand:9127	BUB1	seed	D1	dgidb	inhibitor	inhibitor		false				
+COMPOUND 2-13-1 [PMID: 24900824]	iuphar.ligand:8112	BUB1	seed	D1	dgidb	inhibitor	inhibitor		false				
+BMS-536924	iuphar.ligand:9386	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false				
+GSK-1838705A	iuphar.ligand:5683	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false				
+ACETYLCYSTEINE	rxcui:197	IGF1R	seed	D4	dgidb				true	true	12485928		
+STAUROSPORINE	ncit:C1237	IGF1R	seed	D4	dgidb				false		8895768		
+CHEMBL:CHEMBL546797	chembl:CHEMBL546797	IGF1R	seed	D4	dgidb				false				
+ANTI-IGF-1R RECOMBINANT MONOCLONAL ANTIBODY BIIB022	ncit:C71530	IGF1R	seed	D4	dgidb	antibody|inhibitor	antibody|inhibitor		false				
+GW441756X	chembl:CHEMBL1516890	IGF1R	seed	D4	dgidb				false				
+GEFITINIB	rxcui:328134	IGF1R	seed	D4	dgidb				true	true	28954282		
+CERITINIB	rxcui:1535457	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		true	true	23837797		
+PODOFILOX	rxcui:8463	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		true	true			
+PD166285	iuphar.ligand:8183	IGF1R	seed	D4	dgidb				false				
+TAMOXIFEN	rxcui:10324	IGF1R	seed	D4	dgidb				true	true	23459444		
+TAMATINIB	iuphar.ligand:5706	IGF1R	seed	D4	dgidb				false				
+NVP-AEW541	iuphar.ligand:8067	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false				
+COMPOUND 19A [PMID: 30503936]	iuphar.ligand:10181	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false				
+RINFABATE	rxcui:1426631	IGF1R	seed	D4	dgidb				false				
+METFORMIN	rxcui:6809	IGF1R	seed	D4	dgidb				true	true	26706833		
+ILORASERTIB	ncit:C116729	IGF1R	seed	D4	dgidb				false				
+FEXAGRATINIB	iuphar.ligand:7707	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false				
+AG 1024	iuphar.ligand:5912	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false				
+PF-562271	iuphar.ligand:9381	IGF1R	seed	D4	dgidb				false				
+XL228	drugbank:DB05184	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false				
+AZD3463	iuphar.ligand:7706	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false				
+GSK1511931	iuphar.ligand:8644	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false				
+RALOXIFENE HYDROCHLORIDE	rxcui:166551	IGF1R	seed	D4	dgidb				true	true	14533013		
+NVP-TAE 226	iuphar.ligand:9382	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false				
+ERLOTINIB	rxcui:337525	IGF1R	seed	D4	dgidb				true	true			
+PAZOPANIB	rxcui:714438	IGF1R	seed	D4	dgidb				true	true			
+BRIGATINIB	rxcui:1921217	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		true	true			
+PICROPODOPHYLLIN	ncit:C87736	IGF1R	seed	D4	dgidb				false				
+PQ401	iuphar.ligand:5048	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false				
+ENTRECTINIB	rxcui:2197862	IGF1R	seed	D4	dgidb				true	true			
+CENISERTIB	chembl:CHEMBL1967878	IGF1R	seed	D4	dgidb			2	false				
+HESPERADIN	iuphar.ligand:8354	IGF1R	seed	D4	dgidb	inhibitor	inhibitor		false		19035792		
+SB202190	iuphar.ligand:4307	IGF1R	seed	D4	dgidb				false				
+CRIZOTINIB	rxcui:1148495	IGF1R	seed	D4	dgidb				true	true	28954282		
+THROMBIN ALFA	rxcui:1367075	IGF1R	seed	D4	dgidb				true	false	11375274|7499260		
+INSULIN-LIKE GROWTH FACTOR 2	iuphar.ligand:4972	IGF1R	seed	D4	dgidb	agonist	agonist		false				
+EXEMESTANE	rxcui:258494	IGF1R	seed	D4	dgidb				true	true	26706833		
+GSK-923295	drugbank:DB06097	CENPE	seed	D1	dgidb	inhibitor	inhibitor		false				
+METFORMIN	rxcui:6809	PRKAA2	seed	D2	dgidb				true	true	22722338|26471090		
+IMEGLIMIN	ncit:C132841	PRKAA2	seed	D2	dgidb				false				
+VALPROIC ACID	rxcui:11118	PRKAA2	seed	D2	dgidb				true	true	25740917		
+METFORMIN HYDROCHLORIDE	rxcui:235743	PRKAA2	seed	D2	dgidb	activator	activator		true	true	23490148		
+HESPERADIN	iuphar.ligand:8354	PRKAA2	seed	D2	dgidb	inhibitor	inhibitor		false		19035792		
+CHEMBL:CHEMBL2348411	chembl:CHEMBL2348411	PRKAA2	seed	D2	dgidb				false		23490148		
+SAPONARIN	chembl:CHEMBL538921	PRKAA2	seed	D2	dgidb				false		26471090		
+CLOZAPINE	rxcui:2626	PRKAA2	seed	D2	dgidb				true	true	22305490		
+LIXUMISTAT ACETATE	ncit:C153372	PRKAA2	seed	D2	dgidb				false				
+OLANZAPINE	rxcui:61381	PRKAA2	seed	D2	dgidb				true	true	22305490		
+CP-547632	iuphar.ligand:7881	VEGFA	seed	D4	dgidb				false				
+EW-A-401	drugbank:DB05525	VEGFA	seed	D4	dgidb				false				
+FENOFIBRATE MICRONIZED	rxcui:221100	VEGFA	seed	D4	dgidb				true	false	11356390		
+PEGAPTANIB	rxcui:498509	VEGFA	seed	D4	dgidb	inhibitor	inhibitor		true	false	23953100		
+DEXAMETHASONE	rxcui:3264	VEGFA	seed	D4	dgidb				true	true	28488026		
+SQUALAMINE	ncit:C143004	VEGFA	seed	D4	dgidb				false				
+PAZOPANIB	rxcui:714438	VEGFA	seed	D4	dgidb				true	true	21576632|23179337|27175586		
+CILOSTAZOL	rxcui:21107	VEGFA	seed	D4	dgidb				true	true	11524048		
+ADALIMUMAB	rxcui:327361	VEGFA	seed	D4	dgidb				true	true	28639493		
+SILDENAFIL	rxcui:136411	VEGFA	seed	D4	dgidb				true	true	23007311		
+PENTOSAN POLYSULFATE	ncit:C1755	VEGFA	seed	D4	dgidb				false		17071199		
+THALIDOMIDE	rxcui:10432	VEGFA	seed	D4	dgidb				true	true			
+RISUTEGANIB	ncit:C166449	VEGFA	seed	D4	dgidb				false				
+SELECTIVE CYTOKINE INHIBITORY DRUG CC-1088	ncit:C2210	VEGFA	seed	D4	dgidb				false		14717786		
+PHENETHYL ISOTHIOCYANATE	ncit:C2233	VEGFA	seed	D4	dgidb				false		15856023		
+EMVODODSTAT	ncit:C91100	VEGFA	seed	D4	dgidb				false				
+CARFILZOMIB	rxcui:1302966	VEGFA	seed	D4	dgidb				true	true	28488026		
+ALBUTEROL SULFATE	rxcui:142153	VEGFA	seed	D4	dgidb				true	true	31486735		
+LENALIDOMIDE	rxcui:342369	VEGFA	seed	D4	dgidb	inhibitor	inhibitor		true	true			
+SUNITINIB	rxcui:357977	VEGFA	seed	D4	dgidb				true	true	21882181|22948895|23511629|26935927|27175586|27896475		
+SHARK CARTILAGE EXTRACT AE-941	ncit:C1798	VEGFA	seed	D4	dgidb				false				
+NM-3	drugbank:DB12818	VEGFA	seed	D4	dgidb				false				
+DILPACIMAB	ncit:C116750	VEGFA	seed	D4	dgidb				false				
+PEMETREXED DISODIUM	rxcui:282443	VEGFA	seed	D4	dgidb				true	true	23179337		
+BI-836880	drugbank:DB17484	VEGFA	seed	D4	dgidb				false				
+DOMATINOSTAT	ncit:C96797	VEGFA	seed	D4	dgidb				false				
+ANTHRACYCLINE ANTINEOPLASTIC ANTIBIOTIC	ncit:C1594	VEGFA	seed	D4	dgidb				false		15297400		
+VEGF/HGF-TARGETING DARPIN MP0250	ncit:C117236	VEGFA	seed	D4	dgidb				false				
+WARFARIN	rxcui:11289	VEGFA	seed	D4	dgidb				true	true	31068094		
+CELECOXIB	rxcui:140587	VEGFA	seed	D4	dgidb				true	true	22336956		
+NAVICIXIZUMAB	ncit:C119620	VEGFA	seed	D4	dgidb				false				
+VEGLIN	drugbank:DB05890	VEGFA	seed	D4	dgidb				false				
+PENTOSAN POLYSULPHATE SODIUM	rxcui:134413	VEGFA	seed	D4	dgidb				true	false	17071199		
+ENDOSTATIN	drugbank:DB06423	VEGFA	seed	D4	dgidb	inhibitor	inhibitor		false				
+PACLITAXEL PROTEIN-BOUND	rxcui:486610	VEGFA	seed	D4	dgidb				true	true	41175304		
+GENTAMICIN	rxcui:1596450	VEGFA	seed	D4	dgidb				true	true	14986132		
+CARBOPLATIN	rxcui:40048	VEGFA	seed	D4	dgidb				true	true	26194361		
+SB-509	drugbank:DB05579	VEGFA	seed	D4	dgidb				false				
+PHENYTOIN SODIUM	rxcui:71227	VEGFA	seed	D4	dgidb				true	true	15458527		
+NANOPARTICLE ALBUMIN-BOUND THIOCOLCHICINE DIMER NAB-5404	ncit:C116890	VEGFA	seed	D4	dgidb				false				
+SORAFENIB	rxcui:495881	VEGFA	seed	D4	dgidb	inhibitor	inhibitor		true	true	22736425|24510746|26830973		

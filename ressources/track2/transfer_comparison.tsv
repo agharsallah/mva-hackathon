@@ -1,0 +1,3 @@
+case	role	gene	disease	tumour_context	card_version	targets	candidate_rows	approved_drugs	drugs_rung_5	drugs_rung_4	drugs_rung_3	drugs_rung_2	drugs_rung_1	shortlist	do_not	curated_rows	live_requests	cached_replies	wall_seconds	warm_seconds
+BUB1B / MVA1 (the proband)	real case	BUB1B	Mosaic variegated aneuploidy syndrome 1 (MVA1)	rhabdomyosarcoma	3	277	3859	359	62	0	2	5	260	61	23	13	85	1965		
+TRIP13 / Mosaic variegated aneuploidy syndrome 3	transfer case	TRIP13	Mosaic variegated aneuploidy syndrome 3 (MVA3)	nephroblastoma	1	28	1329	277	55	0	0	0	210	53	3	0	2077	0	1693.7	9.0

@@ -1,0 +1,31 @@
+{
+  "name": "do_not",
+  "built_at": "2026-09-19T23:10:07+00:00",
+  "built_by": "tools/track2_enrich.py",
+  "code_version": "073b4fa",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "every ladder drug carrying an anti-direction flag (with the card's status for it) or the standard-of-care flag, once each",
+  "card": {
+    "path": "ressources/track2/transfer/TRIP13/mechanism.json",
+    "version": 1,
+    "gene": "TRIP13",
+    "disease": "Mosaic variegated aneuploidy syndrome 3 (MVA3)"
+  },
+  "inputs": [
+    {
+      "name": "track2.evidence_ladder",
+      "path": "ressources/track2/transfer/TRIP13/evidence_ladder.tsv",
+      "sha256": "8176bcb2c233faed876760952a965c8055f57e469e3a4148da949a359885557c",
+      "bytes": 32515
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/transfer/TRIP13/do_not.tsv",
+      "sha256": "4e46177099fded237aacb193b49b3eb36e449b572cdf52c8acbad0941336275d",
+      "bytes": 659,
+      "rows": 3
+    }
+  ],
+  "patient_data": "none. Public API replies only - gene symbols, drug names, trial ids and citations. Nothing here was derived from the callset, and no genomic position appears in any row by construction."
+}

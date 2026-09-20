@@ -1,0 +1,48 @@
+{
+  "name": "drug_mechanism_literature",
+  "built_at": "2026-09-19T23:10:06+00:00",
+  "built_by": "tools/track2_enrich.py",
+  "code_version": "073b4fa",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "two PubMed questions per approved drug, derived from the card: the drug AND the mechanism (gene, protein, pathway head, disease anchor), and the drug AND the tumour context; hits is the PubMed record count, pmids a head of at most 10",
+  "card": {
+    "path": "ressources/track2/transfer/TRIP13/mechanism.json",
+    "version": 1,
+    "gene": "TRIP13",
+    "disease": "Mosaic variegated aneuploidy syndrome 3 (MVA3)"
+  },
+  "inputs": [
+    {
+      "name": "pubmed",
+      "url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils",
+      "version": null,
+      "role": "the literature behind the gene, the pathway and each direction",
+      "retrieved_at": "2026-09-19T22:57:34+00:00",
+      "retrieved_from": "2026-09-19T22:49:49+00:00",
+      "requests": 788,
+      "live_calls": 0,
+      "sha256": "a78c4b54b87752ce14c9d0ade9e1ae5b3f03381541e11b169ef164b989459910",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "queries": [
+        "mechanism: <drug> AND (TRIP13 OR Pachytene checkpoint protein 2 homolog OR \"spindle assembly checkpoint\" OR aneuploidy)",
+        "context: <drug> AND nephroblastoma"
+      ],
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "track2.drug_candidates",
+      "path": "ressources/track2/transfer/TRIP13/drug_candidates.tsv",
+      "sha256": "9834171a6e49383b208c54e60f28a49d12c3f55c53104ad76b04c54f920aa850",
+      "bytes": 105706
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/transfer/TRIP13/drug_mechanism_literature.tsv",
+      "sha256": "e2a37fca575cb837383c33861667fd15e2d4fc2fc56b1e2093b50a775ffc8697",
+      "bytes": 66081,
+      "rows": 530
+    }
+  ],
+  "patient_data": "none. Public API replies only - gene symbols, drug names, trial ids and citations. Nothing here was derived from the callset, and no genomic position appears in any row by construction."
+}

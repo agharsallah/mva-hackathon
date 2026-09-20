@@ -1,0 +1,98 @@
+{
+  "name": "transfer_comparison",
+  "built_at": "2026-09-19T23:10:07+00:00",
+  "built_by": "tools/track2_transfer.py",
+  "code_version": "073b4fa",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "One row per case. The transfer case's card is built by mva.drugs.transfer.transfer_card from the committed spec plus the HPO terms for its OMIM id read out of phenotype.hpoa (release 2026-09-02; rows whose qualifier column is NOT are skipped). The same mva-drugs snapshot and mva.drugs.enrich.run then execute on it with no code change and no hand-written query. Counts are read back from each case's snapshot.json (targets, candidate rows, distinct approved drugs, per-source request counts) and its enrichment analysis (drugs at each best rung, shortlist and do-not row counts, per-source request counts); cached_replies is replies minus live, summed over both stages. Every count on a transfer row comes from the COLD pass - the one that filled the cache - so it states what a case the pipeline has never seen costs; wall_seconds is that pass's measured snapshot+enrichment wall clock and warm_seconds a second pass over the warm cache, which is re-derivation rather than a new case. Both are empty for a case this run did not execute. Only the automated rungs (1, 4, 5) are comparable: rungs 2 and 3 come from a hand-curated evidence.tsv that a transfer card does not have, which is what curated_rows records.",
+  "cases": [
+    {
+      "case": "BUB1B / MVA1 (the proband)",
+      "role": "real case",
+      "gene": "BUB1B"
+    },
+    {
+      "case": "TRIP13 / Mosaic variegated aneuploidy syndrome 3",
+      "role": "transfer case",
+      "gene": "TRIP13"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "ressources/track2/transfer/TRIP13/transfer_spec.json",
+      "path": "ressources/track2/transfer/TRIP13/transfer_spec.json",
+      "sha256": "9ba25a6459d017df5bbe2ff33bd87dd093558965e28a7a5df972d664fc634d34",
+      "bytes": 8183
+    },
+    {
+      "name": "ressources/track2/transfer/TRIP13/mechanism.json",
+      "path": "ressources/track2/transfer/TRIP13/mechanism.json",
+      "sha256": "423b90be6ecb505bba261e8aebd9be3e6074b7c05d609fbe908f02f0c7f6d07b",
+      "bytes": 13252
+    },
+    {
+      "name": "ressources/track2/transfer/TRIP13/snapshot.json",
+      "path": "ressources/track2/transfer/TRIP13/snapshot.json",
+      "sha256": "d6178c691e87e0a1e760823d71e4565017ea109250e87e01cc5eecff81cbc473",
+      "bytes": 44531
+    },
+    {
+      "name": "ressources/track2/transfer/TRIP13/evidence_ladder.tsv",
+      "path": "ressources/track2/transfer/TRIP13/evidence_ladder.tsv",
+      "sha256": "8176bcb2c233faed876760952a965c8055f57e469e3a4148da949a359885557c",
+      "bytes": 32515
+    },
+    {
+      "name": "ressources/track2/transfer/TRIP13/shortlist.tsv",
+      "path": "ressources/track2/transfer/TRIP13/shortlist.tsv",
+      "sha256": "1ad5172acafe9db0dd155c152dd2a69ed89f59909bf83ccf017d8009377b9e6e",
+      "bytes": 10554
+    },
+    {
+      "name": "ressources/track2/transfer/TRIP13/do_not.tsv",
+      "path": "ressources/track2/transfer/TRIP13/do_not.tsv",
+      "sha256": "4e46177099fded237aacb193b49b3eb36e449b572cdf52c8acbad0941336275d",
+      "bytes": 659
+    },
+    {
+      "name": "ressources/track2/mechanism.json",
+      "path": "ressources/track2/mechanism.json",
+      "sha256": "b0b4bba70ea601a910165d71bb4465b93620c887a5a65d563b57f4accfb40d87",
+      "bytes": 19097
+    },
+    {
+      "name": "ressources/track2/snapshot.json",
+      "path": "ressources/track2/snapshot.json",
+      "sha256": "07a2423c3d0a8c08b18227ac15b4838c3efc08ad21afd216078b24f8f992c085",
+      "bytes": 57571
+    },
+    {
+      "name": "ressources/track2/evidence_ladder.tsv",
+      "path": "ressources/track2/evidence_ladder.tsv",
+      "sha256": "47d1e4157c8e2186b7effc1683648fec4dee11e5990fc383de1c90568222f8e0",
+      "bytes": 42907
+    },
+    {
+      "name": "ressources/track2/shortlist.tsv",
+      "path": "ressources/track2/shortlist.tsv",
+      "sha256": "77b6b352771a0fbf316f1959b995e47b4d20b31f8cffb3861c2a4a53205d081e",
+      "bytes": 12786
+    },
+    {
+      "name": "ressources/track2/do_not.tsv",
+      "path": "ressources/track2/do_not.tsv",
+      "sha256": "a7b09e9fe7afb9b39a123775ae5281276c160b5d13f2ca0da57f406cc6472c94",
+      "bytes": 4858
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/transfer_comparison.tsv",
+      "sha256": "27b0f77ef4d3e89b064363ccd61bb721561b0fb9356d153820b5c9bdd6d4c7c1",
+      "bytes": 577,
+      "rows": 2
+    }
+  ],
+  "known_gap": "the two enrichment analyses this table reads its rung counts, request counts and wall clock from live under build/ and are not committed: build/track2/analysis.json and build/track2/transfer-TRIP13-analysis.json. Every count in them is reproducible from the committed tables named above by re-running `uv run python tools/track2_enrich.py --skip-live` per folder; the wall clock is a measurement of one machine on one day and is not reproducible by construction. The HPO annotation the transfer card's clinical terms were read from (build/reference-scratch/phenotype.hpoa, release 2026-09-02) is a downloaded public reference under build/ as well; the card records the release it was read at.",
+  "patient_data": "none, on either row. The transfer case is public annotation (OMIM, MONDO, HPO, PubMed) and asserts no allele in any person; the real case's row carries counts only. No genomic position appears in any column by construction."
+}
