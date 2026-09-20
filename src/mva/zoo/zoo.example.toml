@@ -45,7 +45,9 @@ mode = "catalogue-free"
 
 # The MVP lanes. A name here must exist in the registry (`models.toml`) and be enabled;
 # a name the registry does not know is reported by the `registry_check` stage, not ignored.
-models = ["alphamissense", "esm1b", "spliceai", "revel"]
+# Wave 4 (opt-A) added the last two: `gpnmsa`, the first lane that can score a nonsense
+# allele (entry 140), and `esm2`, the first that is not a lookup at all (entry 142).
+models = ["alphamissense", "esm1b", "spliceai", "revel", "gpnmsa", "esm2"]
 
 # Everything with a patient coordinate or a raw score stays under this directory.
 # Omit it and it defaults to `build/<table_prefix>`.
