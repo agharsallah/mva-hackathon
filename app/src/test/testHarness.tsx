@@ -12,7 +12,7 @@
 
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { Component, lazy, type ReactNode, Suspense } from 'react';
+import { Component, type ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { expect, vi } from 'vitest';
 
@@ -75,18 +75,22 @@ export interface Mounted {
  */
 export async function mountModule(mod: FeatureModule, search = ''): Promise<Mounted> {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-  const Page = lazy(mod.load);
+  // Resolved *before* render, not through `lazy()`/`Suspense`: `mod.load` is a plain
+  // dynamic import the harness already knows how to await, and doing it here means
+  // there is no Suspense retry left to fire later, off a real timer, outside any
+  // `act()` scope — exactly the "suspended resource... not wrapped in act" warning
+  // React logs when a lazy chunk happens to resolve in the gap between two of
+  // `waitFor`'s polls rather than during one.
+  const { default: Page } = await mod.load();
   let caught: unknown = null;
 
   const { container } = render(
     <QueryClientProvider client={queryClient}>
       <MemoryRouter initialEntries={[mod.path + search]}>
         <Catch onError={(e) => (caught = e)}>
-          <Suspense fallback={<div>loading…</div>}>
-            <Routes>
-              <Route path={mod.path} element={<Page />} />
-            </Routes>
-          </Suspense>
+          <Routes>
+            <Route path={mod.path} element={<Page />} />
+          </Routes>
         </Catch>
       </MemoryRouter>
     </QueryClientProvider>,

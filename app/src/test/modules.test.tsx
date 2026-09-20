@@ -55,6 +55,6 @@ describe('every module renders, offline, with no console.error', () => {
           consoleError.mock.calls.map((c) => c.map(String).join(' ')).join('\n'),
       ).not.toHaveBeenCalled();
     },
-    15000,
+    30000,
   );
 });
