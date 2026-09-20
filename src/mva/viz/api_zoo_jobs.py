@@ -166,7 +166,7 @@ def router(
 
     @api.get("/jobs/{job_id}", response_model=Envelope, summary="one job's state and summary")
     def zoo_job(job_id: str) -> dict:
-        return live(_snapshot(_find(jobs, job_id), resolve(None), None), SOURCE)
+        return live(_snapshot(_find(jobs, job_id), resolve(None)), SOURCE)
 
     @api.get("/jobs/{job_id}/wait", response_model=Envelope, summary="long-poll until terminal")
     def zoo_job_wait(
@@ -278,7 +278,10 @@ def _rows(connection: Any, case: Case, request: ScoreRequest, model: str) -> lis
             "score": row.score,
             "aux": _safe_aux(row.aux),
             "venue": row.venue,
-            "ts": str(getattr(row, "ts", "") or ""),
+            # `null`, not "", when the cache reader did not bring a timestamp back:
+            # `mva.zoo.cache.read` does not select `ts`, and an empty string would read
+            # as "written at the epoch" rather than as "not asked for".
+            "ts": getattr(row, "ts", None) or None,
         }
         for row in sorted(found, key=lambda item: item.allele_id)
     ]
