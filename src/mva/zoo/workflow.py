@@ -151,7 +151,7 @@ def _run(
         config_path=str(config.path),
         config_digest=config.digest,
         mode=config.mode,
-        method=config.method,
+        method=state.method or config.method,
         models={m: str(card.get("version", "")) for m, card in sorted(state.cards.items())},
         venues=dict(sorted(state.venues.items())),
         stages=[vars(r) for r in results],

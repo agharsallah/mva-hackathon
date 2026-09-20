@@ -274,6 +274,65 @@ def test_a_hand_written_narrative_survives_a_re_render(connection, paths):
     assert "Three lanes agree" in paths["merged_path"].read_text(encoding="utf-8")
 
 
+def test_a_synthesised_narrative_survives_a_re_render_beside_the_hand_written_one(
+    connection, paths
+):
+    """A re-render must not delete a paid-for LLM section 5.
+
+    The stage used to restore only the hand-written version, so the next `mva-zoo run` dropped
+    the synthesised one — a model call thrown away by an idempotent stage (G3, 2026-09-20). The
+    stage now reads *every* version back out of the rendered file
+    (`merge_render.existing_narratives`, which rebuilds each block from its own marker) and
+    hands the whole list to the renderer.
+    """
+    workflow.run(CONFIG, connection=connection, deps=fake_deps(), **paths)
+    text = paths["merged_path"].read_text(encoding="utf-8")
+    versions = (
+        "<!-- narrative: synthesised 2026-09-20 | llm:claude-code | model:test-model-1"
+        " | cited 1/1 -->\n\nOne lane spoke; three abstained [rrf.free.rank].\n\n"
+        "<!-- narrative: hand-written 2026-09-20 | llm:none -->\n\nThree lanes agree."
+    )
+    paths["merged_path"].write_text(
+        text.replace("_(narrative not yet written)_", versions), encoding="utf-8"
+    )
+
+    # `force=True` so `render` really runs again: a restored render leaves the file alone and
+    # would pass without exercising the narrative-preserving code at all.
+    workflow.run(CONFIG, force=True, connection=connection, deps=fake_deps(), **paths)
+    again = paths["merged_path"].read_text(encoding="utf-8")
+    assert "One lane spoke; three abstained" in again
+    assert "Three lanes agree" in again
+    assert "test-model-1" in again  # the badge travels with its version
+
+
+def test_the_manifest_records_the_method_the_page_realised(connection, paths):
+    """`fusion+synthesis` is a claim about what is on the page, not about what was asked for.
+
+    The synthesis is written by `mva-zoo narrate --merged`, never by the render stage — a
+    billable, non-deterministic call inside a resumable stage would run once and be restored
+    ever after, so the same config would not give the same page. The manifest therefore reports
+    what the rendered file carries.
+    """
+    manifest = workflow.run(CONFIG, connection=connection, deps=fake_deps(), **paths)
+    assert manifest.method == "fusion"  # no synthesised version on the page
+
+    text = paths["merged_path"].read_text(encoding="utf-8")
+    paths["merged_path"].write_text(
+        text.replace(
+            "_(narrative not yet written)_",
+            "<!-- narrative: synthesised 2026-09-20 | llm:claude-code | model:test-model-1"
+            " | cited 1/1 -->\n\nOne lane spoke [rrf.free.rank].",
+        ),
+        encoding="utf-8",
+    )
+    again = workflow.run(CONFIG, force=True, connection=connection, deps=fake_deps(), **paths)
+    assert again.method == "fusion+synthesis"
+    # and a resumed run reads it back out of the checkpoint rather than falling back
+    resumed = workflow.run(CONFIG, connection=connection, deps=fake_deps(), **paths)
+    assert [s["stage"] for s in resumed.stages if s["skipped"]] == list(workflow.STAGES)
+    assert resumed.method == "fusion+synthesis"
+
+
 def test_a_run_without_a_connection_writes_files_but_no_table(paths):
     manifest = workflow.run(CONFIG, deps=fake_deps(), **paths)
     assert paths["merged_path"].is_file()

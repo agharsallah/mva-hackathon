@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import json
 from collections.abc import Callable, Mapping, Sequence
-from pathlib import Path
 from typing import Any
 
 from . import merge as merge_module
@@ -219,12 +218,46 @@ def merge(config: Config, state: RunState, deps: Deps, connection: Any) -> Stage
 
 
 def render(config: Config, state: RunState, deps: Deps, connection: Any) -> StageResult:
-    """Write the case's merged report (``[paths] merged_report``), narrative slot marked."""
-    narrative = _existing_narrative(config.merged_path)
-    text = merge_module.render_merged(state.merged, narrative)
+    """Write the case's merged report (``[paths] merged_report``), every narrative kept.
+
+    Section 5 holds **more than one** version once an LLM has synthesised one beside the
+    hand-written paragraph, and a re-render that restored only the hand-written one deleted the
+    synthesised one — a $0.116 model call thrown away by an idempotent stage. So the stage reads
+    *every* version back out of the rendered file
+    (:func:`mva.zoo.merge_render.existing_narratives`, which rebuilds each block from its own
+    marker) and hands the whole list back to the renderer. Same rule, same reason, as
+    ``report.write_markdown`` for section 6.
+    """
+    # The renderer, not `merge.render_merged`: that forwarder takes one narrative and is
+    # another group's file. Calling the module that owns the template is the smaller change.
+    from .merge_render import existing_narratives, render_merged
+
+    kept = existing_narratives(config.merged_path)
+    text = render_merged(state.merged, kept[0]["text"] if kept else "", narratives=kept)
     config.merged_path.parent.mkdir(parents=True, exist_ok=True)
     config.merged_path.write_text(text, encoding="utf-8")
-    return StageResult("render", 0.0, 1, str(config.merged_path))
+    state.method = _realised_method(config.method, kept)
+    note = str(config.merged_path)
+    if state.method != config.method:
+        note += f"; method realised as {state.method!r} (configured {config.method!r})"
+    return StageResult("render", 0.0, 1, note)
+
+
+def _realised_method(configured: str, narratives: Sequence[Mapping[str, Any]]) -> str:
+    """What the merge method **was**, not what was asked for — the manifest records this.
+
+    ``fusion+synthesis`` means "a model synthesised section 5". The synthesis is produced by
+    ``mva-zoo narrate --merged``, deliberately not by this stage: a billable, non-deterministic
+    call inside a resumable stage would run on the first pass and be restored on every later
+    one, so the same config would not give the same page. The stage therefore reports what the
+    rendered page actually carries — a page with a synthesised version is
+    ``fusion+synthesis`` whatever the config says, and a config that asks for one without a
+    synthesis on the page is ``fusion``, plus a note saying which command is owed.
+    """
+    synthesised = any(str(block.get("llm_mode") or "none") != "none" for block in narratives)
+    if synthesised:
+        return "fusion+synthesis"
+    return "fusion" if configured == "fusion+synthesis" else configured
 
 
 STAGE_FUNCTIONS: dict[str, Callable[[Config, RunState, Deps, Any], StageResult]] = {
@@ -283,15 +316,3 @@ def _already_written(connection: Any, schema: str, table: str, run_id: str) -> b
     except Exception:
         return False
     return bool(found and found[0])
-
-
-def _existing_narrative(path: Path) -> str:
-    """Keep a narrative a human already wrote under the marker; never overwrite prose."""
-    if not path.is_file():
-        return ""
-    marker = "<!-- narrative: hand-written"
-    text = path.read_text(encoding="utf-8")
-    if marker not in text:
-        return ""
-    tail = text.split(marker, 1)[1].split("-->", 1)[-1]
-    return tail.split("\n## ", 1)[0].strip()

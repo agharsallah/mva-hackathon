@@ -75,6 +75,10 @@ class RunState:
     reports: list[dict[str, Any]] = field(default_factory=list)
     merged: dict[str, Any] = field(default_factory=dict)
     venues: dict[str, str] = field(default_factory=dict)
+    #: The merge method the run actually realised, set by ``render``: ``fusion+synthesis`` only
+    #: when the rendered page carries a synthesised section 5. The manifest records this rather
+    #: than ``config.method``, so it cannot claim a synthesis that was never written.
+    method: str = ""
     #: ``--force``: recompute regardless of what the checkpoints hold. Carried on the state
     #: rather than passed, because only ``fan_out`` looks at a checkpoint from inside a stage.
     force: bool = False

@@ -152,13 +152,21 @@ def _restore_merge(_config: Config, state: RunState, payload: dict[str, Any]) ->
     return True
 
 
-def _capture_render(config: Config, _state: RunState) -> dict[str, Any]:
-    return {"merged_report": str(config.merged_path)}
+def _capture_render(config: Config, state: RunState) -> dict[str, Any]:
+    return {"merged_report": str(config.merged_path), "method": state.method}
 
 
-def _restore_render(config: Config, _state: RunState, _payload: dict[str, Any]) -> bool:
-    """The render stage owns a file, not state — its output has to be on disk to skip it."""
-    return Path(config.merged_path).is_file()
+def _restore_render(config: Config, state: RunState, payload: dict[str, Any]) -> bool:
+    """The render stage owns a file — but also the one fact the manifest reads back from it.
+
+    ``method`` is what the *page* realised (``fusion+synthesis`` only when a synthesised
+    section 5 is on it). A restored render must put it back, or a resumed run's manifest would
+    quietly fall back to the configured method and claim a synthesis it never wrote.
+    """
+    if not Path(config.merged_path).is_file():
+        return False
+    state.method = str(payload.get("method") or "")
+    return True
 
 
 _CAPTURE: dict[str, Callable[[Config, RunState], dict[str, Any]]] = {
