@@ -271,6 +271,13 @@ flowchart LR
 
 **tabix / bgzip / index** — compression + a table-of-contents so you can jump to `chr15` without reading the whole file.
 
+**Remote range query** — using that table-of-contents over the network: the index is downloaded
+(a few MB), and the client then asks the server for **only the byte ranges** holding the rows it
+wants. The big file is never downloaded. The same trick a video player uses to seek without
+fetching the whole film.
+*Example:* `tabix https://…/scores.tsv.bgz 17:43044295-43125364` returns the rows for that region out of a 37 GB file; htslib spells "this remote file, that local index" as `<url>##idx##<path>`.
+*Context: how the GPN-MSA lane is fed — 35,881 wanted positions merge into 21,722 regions over 3,105,436 bases, 0.1 % of the genome, and the 37,274,961,495-byte upstream file is never held. One seek costs ~0.3 s whatever it returns, so merging near neighbours into one region is the whole economy of it · source: src/mva/zoo/tabix_plan.py, src/mva/zoo/tabix_subset.py, docs/iteration4/step-2/methodology/140-the-lane-that-can-see-a-nonsense-allele.md · related: tabix / bgzip / index, Precomputed scores, Provenance manifest · first seen 2026-09-20*
+
 **QC (quality control)** — checking the data isn't broken before trusting any result. *Tools: FastQC, MultiQC, samtools stats, bcftools stats, mosdepth.*
 
 **Ti/Tv ratio** (also written **ts/tv**) — a sanity number: transitions divided by transversions (two chemically different kinds of letter swap). Real human WGS lands around 2.0–2.1. Way off = something is wrong.
@@ -332,6 +339,12 @@ three legal ways to write the exact same event:
 **Multiallelic** — one position where the person has two different ALTs. Splitting (`-m -both`) breaks it into separate lines.
 
 **HGVS** (`hgvs_c` / `hgvs_p`) — the doctor-style way to write a variant, agreed by the Human Genome Variation Society. `hgvs_c` spells the change on the transcript's coding sequence, `hgvs_p` on the protein that transcript makes. *`NM_001211.6:c.1288A>T` or `p.Arg430Ter`. Different notation from VCF, needs conversion.*
+
+**delins** (deletion–insertion) — an HGVS spelling for a change that removes some letters and
+puts different ones in their place, rather than swapping one for one. At protein level it
+replaces **two or more** residues at once.
+*Example:* `p.Asp12_Leu13delinsHisGln` — residues 12 and 13 become histidine and glutamine.
+*Context: VEP labels these `missense_variant` because the consequence class is coarse, so they arrive mixed in with one-residue substitutions. A protein-substitution model scores one changed letter against one reference letter and has nothing to say about them: 28 of the record set's 15,620 missense alleles are `delins` and are the whole reason the protein-window pass reaches 99.821 % rather than 100 % · source: docs/iteration4/step-1/methodology/141-a-window-for-every-substitution-the-spelling-actually-describes.md · related: HGVS, Indel, Consequence, Sequence window · first seen 2026-09-20*
 *Example:* `ENST00000000002.3:c.22C>T` (cDNA) and `ENSP00000000002.3:p.Gln8Ter` (protein) — one synthetic change, written twice.
 *Context: requested from Ensembl VEP REST with `hgvs=1` and parsed in `mva.pipeline.vep_response.parse`. It is the join key of every precomputed score table in the [model zoo](#24-the-model-zoo--words-for-iteration-4), so an allele with no HGVS spelling cannot be looked up at all — which is what iteration 4's claim P4-1a measures · source: src/mva/zoo/record_hgvs.py · related: Allele record, UniProt accession, VEP (Variant Effect Predictor) · first seen 2026-09-01*
 
@@ -2700,7 +2713,14 @@ that reads sequence rather than a table: an amino-acid string for a protein lang
 string for a DNA language model. Written in both the reference and the altered form, so the model
 can score the difference.
 *Example:* `protein_window_ref` / `protein_window_alt` (± n amino acids) and `dna_window_ref` / `dna_window_alt` (8,192 bp).
-*Context: columns already declared on the allele record and **null in the MVP**, so filling them is a fill and not a schema migration. They are patient sequence, so they may only ever live in `build/it4/records.parquet` · source: src/mva/zoo/types.py, src/mva/zoo/record_write.py · related: Allele record, Protein language model, DNA language model, Coordinate gate · first seen 2026-09-18*
+*Context: columns declared on the allele record from the start. The **protein** pair is filled — 15,592 of 15,620 missense alleles, entry 141 — and the DNA pair is still null (opt-B). They are patient sequence, so they may only ever live in `build/it4/records.parquet` · source: src/mva/zoo/types.py, src/mva/zoo/record_window.py · related: Allele record, Protein language model, DNA language model, Masked marginal, Coordinate gate · first seen 2026-09-18, protein half filled 2026-09-20*
+
+**Masked marginal** (masked-marginal scoring) — how a protein language model is turned into a
+variant score. Hide the changed residue from the model, ask what it expects there, and subtract:
+`log P(mutant) − log P(reference)`, both read off the **same** prediction so the two residues are
+compared under identical context. One forward pass per allele. The standard recipe for this task.
+*Example:* ESM2 650M over a 129-residue window returns a number at most 0; more negative = the model finds the substitution less plausible = more likely damaging, so the adapter negates it to keep the zoo's "higher = more damaging" convention.
+*Context: the arithmetic of the zoo's first tier-2 lane — nothing is looked up, the model runs on the laptop's CPU. Measured at 2.19 alleles/s in batches of 64, against 0.56/s in batches of 8 · source: src/mva/zoo/adapters/local_process.py · related: Protein language model, Sequence window, LLR (log-likelihood ratio), Zero-shot, Inference tier · first seen 2026-09-20*
 
 **Adapter** — the thin piece of code that makes one model look like every other model to the rest
 of the pipeline: hand it allele records, get score rows back. Same idea as a database driver — the

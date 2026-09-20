@@ -29,10 +29,10 @@
   ],
   "counts": {
     "chapters": 24,
-    "entries": 623,
+    "entries": 626,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 200
+    "contexts": 202
   },
   "chapters": [
     {
@@ -683,6 +683,22 @@
         },
         {
           "kind": "entry",
+          "slug": "remote-range-query",
+          "term": "Remote range query",
+          "aliases": [],
+          "html": "<p>using that table-of-contents over the network: the index is downloaded\n(a few MB), and the client then asks the server for <strong>only the byte ranges</strong> holding the rows it\nwants. The big file is never downloaded. The same trick a video player uses to seek without\nfetching the whole film.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>tabix https://…/scores.tsv.bgz 17:43044295-43125364</code> returns the rows for that region out of a 37 GB file; htslib spells \"this remote file, that local index\" as <code>&#x3C;url>##idx##&#x3C;path></code>.</p>",
+          "context": "<p>how the GPN-MSA lane is fed — 35,881 wanted positions merge into 21,722 regions over 3,105,436 bases, 0.1 % of the genome, and the 37,274,961,495-byte upstream file is never held. One seek costs ~0.3 s whatever it returns, so merging near neighbours into one region is the whole economy of it</p>",
+          "source": "src/mva/zoo/tabix_plan.py, src/mva/zoo/tabix_subset.py, docs/iteration4/step-2/methodology/140-the-lane-that-can-see-a-nonsense-allele.md",
+          "related": [
+            "tabix-bgzip-index",
+            "precomputed-scores",
+            "provenance-manifest"
+          ],
+          "firstSeen": "2026-09-20"
+        },
+        {
+          "kind": "entry",
           "slug": "qc-quality-control",
           "term": "QC (quality control)",
           "aliases": [
@@ -855,8 +871,17 @@
           "term": "HGVS",
           "aliases": [],
           "html": "<p>the doctor-style way to write a variant, agreed by the Human Genome Variation Society. <code>hgvs_c</code> spells the change on the transcript's coding sequence, <code>hgvs_p</code> on the protein that transcript makes. <em><code>NM_001211.6:c.1288A>T</code> or <code>p.Arg430Ter</code>. Different notation from VCF, needs conversion.</em></p>",
-          "exampleHtml": "<p><em>Example:</em> <code>ENST00000000002.3:c.22C>T</code> (cDNA) and <code>ENSP00000000002.3:p.Gln8Ter</code> (protein) — one synthetic change, written twice.</p>",
-          "context": "<p>requested from Ensembl VEP REST with <code>hgvs=1</code> and parsed in <code>mva.pipeline.vep_response.parse</code>. It is the join key of every precomputed score table in the <a href=\"#24-the-model-zoo--words-for-iteration-4\">model zoo</a>, so an allele with no HGVS spelling cannot be looked up at all — which is what iteration 4's claim P4-1a measures</p>",
+          "exampleHtml": "",
+          "firstSeen": "2026-09-01"
+        },
+        {
+          "kind": "entry",
+          "slug": "delins",
+          "term": "delins",
+          "aliases": [],
+          "html": "<p>an HGVS spelling for a change that removes some letters and\nputs different ones in their place, rather than swapping one for one. At protein level it\nreplaces <strong>two or more</strong> residues at once.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>p.Asp12_Leu13delinsHisGln</code> — residues 12 and 13 become histidine and glutamine.</p>",
+          "context": "<p>VEP labels these <code>missense_variant</code> because the consequence class is coarse, so they arrive mixed in with one-residue substitutions. A protein-substitution model scores one changed letter against one reference letter and has nothing to say about them: 28 of the record set's 15,620 missense alleles are <code>delins</code> and are the whole reason the protein-window pass reaches 99.821 % rather than 100 % first seen 2026-09-20* <em>Example:</em> <code>ENST00000000002.3:c.22C>T</code> (cDNA) and <code>ENSP00000000002.3:p.Gln8Ter</code> (protein) — one synthetic change, written twice. *Context: requested from Ensembl VEP REST with <code>hgvs=1</code> and parsed in <code>mva.pipeline.vep_response.parse</code>. It is the join key of every precomputed score table in the <a href=\"#24-the-model-zoo--words-for-iteration-4\">model zoo</a>, so an allele with no HGVS spelling cannot be looked up at all — which is what iteration 4's claim P4-1a measures</p>",
           "source": "src/mva/zoo/record_hgvs.py",
           "related": [
             "allele-record",
@@ -8184,15 +8209,34 @@
           "aliases": [],
           "html": "<p>a fixed-length stretch of sequence centred on the change, given to a model\nthat reads sequence rather than a table: an amino-acid string for a protein language model, a DNA\nstring for a DNA language model. Written in both the reference and the altered form, so the model\ncan score the difference.</p>",
           "exampleHtml": "<p><em>Example:</em> <code>protein_window_ref</code> / <code>protein_window_alt</code> (± n amino acids) and <code>dna_window_ref</code> / <code>dna_window_alt</code> (8,192 bp).</p>",
-          "context": "<p>columns already declared on the allele record and <strong>null in the MVP</strong>, so filling them is a fill and not a schema migration. They are patient sequence, so they may only ever live in <code>build/it4/records.parquet</code></p>",
-          "source": "src/mva/zoo/types.py, src/mva/zoo/record_write.py",
+          "context": "<p>columns declared on the allele record from the start. The <strong>protein</strong> pair is filled — 15,592 of 15,620 missense alleles, entry 141 — and the DNA pair is still null (opt-B). They are patient sequence, so they may only ever live in <code>build/it4/records.parquet</code> first seen 2026-09-18, protein half filled 2026-09-20</p>",
+          "source": "src/mva/zoo/types.py, src/mva/zoo/record_window.py",
           "related": [
             "allele-record",
             "protein-language-model-plm",
             "dna-language-model",
+            "masked-marginal",
             "coordinate-gate"
           ],
           "firstSeen": "2026-09-18"
+        },
+        {
+          "kind": "entry",
+          "slug": "masked-marginal",
+          "term": "Masked marginal",
+          "aliases": [],
+          "html": "<p>how a protein language model is turned into a\nvariant score. Hide the changed residue from the model, ask what it expects there, and subtract:\n<code>log P(mutant) − log P(reference)</code>, both read off the <strong>same</strong> prediction so the two residues are\ncompared under identical context. One forward pass per allele. The standard recipe for this task.</p>",
+          "exampleHtml": "<p><em>Example:</em> ESM2 650M over a 129-residue window returns a number at most 0; more negative = the model finds the substitution less plausible = more likely damaging, so the adapter negates it to keep the zoo's \"higher = more damaging\" convention.</p>",
+          "context": "<p>the arithmetic of the zoo's first tier-2 lane — nothing is looked up, the model runs on the laptop's CPU. Measured at 2.19 alleles/s in batches of 64, against 0.56/s in batches of 8</p>",
+          "source": "src/mva/zoo/adapters/local_process.py",
+          "related": [
+            "protein-language-model-plm",
+            "sequence-window",
+            "llr-log-likelihood-ratio",
+            "zero-shot",
+            "inference-tier"
+          ],
+          "firstSeen": "2026-09-20"
         },
         {
           "kind": "entry",
