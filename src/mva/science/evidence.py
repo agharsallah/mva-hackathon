@@ -73,6 +73,10 @@ class Evidence:
     strength: float = 0.5
     lineage_ref: str = ""
     author: str = ""
+    #: When the warehouse recorded this row (``now()`` at insert time). Read-only: never
+    #: set when filing an observation, only hydrated back — see :attr:`Hypothesis.recorded_at`
+    #: and :mod:`mva.science.export`.
+    recorded_at: str = ""
 
     def __post_init__(self) -> None:
         if not self.claim.strip():
@@ -225,6 +229,7 @@ _COLUMNS = (
     "source_ref",
     "lineage_ref",
     "author",
+    "recorded_at",
 )
 
 _SELECT = f"SELECT {', '.join(_COLUMNS)} FROM {{table}}"
@@ -237,6 +242,7 @@ def _hydrate(row: tuple) -> Evidence:
     fields["evidence_id"] = int(fields["evidence_id"])
     fields["lineage_ref"] = fields["lineage_ref"] or ""
     fields["author"] = fields["author"] or ""
+    fields["recorded_at"] = "" if fields["recorded_at"] is None else str(fields["recorded_at"])
     return Evidence(**fields)
 
 

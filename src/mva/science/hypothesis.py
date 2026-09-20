@@ -82,6 +82,11 @@ class Hypothesis:
     #: before the column existed is hydrated as iteration 1, the only iteration that had
     #: filed claims then.
     iteration: str = ""
+    #: When the warehouse recorded this revision (``now()`` at insert time). Read-only:
+    #: never set by a caller filing a claim, only hydrated back from a row. Exists so a
+    #: re-export of unchanged data can stamp itself with *this*, not with the moment the
+    #: export happened to run — see :mod:`mva.science.export`.
+    recorded_at: str = ""
 
     def __post_init__(self) -> None:
         for field_name in ("statement", "prediction", "refuted_by"):
@@ -251,20 +256,30 @@ _COLUMNS = (
     "reasoning",
     "author",
     "iteration",
+    "recorded_at",
 )
 
 _SELECT = f"SELECT {', '.join(_COLUMNS)} FROM {{table}}"
 
 
 def _hydrate(row: tuple) -> Hypothesis:
-    """Rebuild a :class:`Hypothesis` from a row in :data:`_COLUMNS` order."""
-    fields = dict(zip(_COLUMNS, row, strict=True))
+    """Rebuild a :class:`Hypothesis` from a row in :data:`_COLUMNS` order.
+
+    A row may end before ``_COLUMNS`` does: ``iteration`` and ``recorded_at`` were both
+    added after this table existed, so a row written earlier (a fixture, an archived
+    export) simply stops short of them. The missing trailing fields take the same default
+    an ``ALTER TABLE`` backfill would have given them.
+    """
+    if len(row) > len(_COLUMNS):
+        raise ValueError(f"row has {len(row)} columns, _COLUMNS only names {len(_COLUMNS)}")
+    fields = dict(zip(_COLUMNS, row, strict=False))
     fields["status"] = Status(fields["status"])
     fields["confidence"] = None if fields["confidence"] is None else float(fields["confidence"])
+    fields["recorded_at"] = "" if fields.get("recorded_at") is None else str(fields["recorded_at"])
     fields["revision"] = int(fields["revision"])
     # A row from before the column existed belongs to iteration 1 — made explicit here so
     # nothing downstream re-reads it as the current iteration.
-    fields["iteration"] = fields["iteration"] or steps.FIRST_ITERATION
+    fields["iteration"] = fields.get("iteration") or steps.FIRST_ITERATION
     return Hypothesis(**fields)
 
 
