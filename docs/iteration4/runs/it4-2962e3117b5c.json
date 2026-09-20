@@ -1,0 +1,113 @@
+{
+  "config_digest": "2962e3117b5cd2df2906a301dd450ace6e2fca296c8ee3394070f953d503b7b7",
+  "config_path": "src/mva/zoo/zoo.example.toml",
+  "dollars": 0.0,
+  "finished_at": "2026-09-20T08:44:10+00:00",
+  "merge_method": "fusion+synthesis",
+  "mode": "catalogue-free",
+  "models": {
+    "alphamissense": "AlphaMissense hg38 2023",
+    "esm1b": "Brandes 2023 ESM1b",
+    "revel": "REVEL 1.3 via VEP REST",
+    "spliceai": "SpliceAI via VEP plugin (iteration 2 annotation pass)"
+  },
+  "outputs": [
+    "docs/iteration4/report.md",
+    "docs/iteration4/reports/alphamissense.md",
+    "docs/iteration4/reports/esm1b.md",
+    "docs/iteration4/reports/revel.md",
+    "docs/iteration4/reports/spliceai.md"
+  ],
+  "pairs": {
+    "confirmed_note": "BUB1B has one pair; flagged confirmed",
+    "genes": 8174,
+    "het_calls": 21095,
+    "max_calls_per_gene": 60,
+    "skipped_genes": [
+      "AHNAK2",
+      "CARMIL1",
+      "CELF2",
+      "GRM8",
+      "HLA-DRB1",
+      "LRP1B",
+      "LTBP1",
+      "MUC16",
+      "MUC3A",
+      "MUC6",
+      "OR8U1",
+      "PDE3A",
+      "PDZD2",
+      "RYR3",
+      "SUGCT",
+      "ZNF717"
+    ],
+    "skipped_genes_recorded": true
+  },
+  "run_id": "it4-2962e3117b5c",
+  "stages": [
+    {
+      "note": "restored (39286 records)",
+      "rows": 39286,
+      "seconds": 0.2033,
+      "skipped": true,
+      "stage": "normalize"
+    },
+    {
+      "note": "restored (4 lanes)",
+      "rows": 4,
+      "seconds": 0.0015,
+      "skipped": true,
+      "stage": "registry_check"
+    },
+    {
+      "note": "restored (58480 scores over 4 lanes)",
+      "rows": 58480,
+      "seconds": 0.043,
+      "skipped": true,
+      "stage": "fan_out"
+    },
+    {
+      "note": "restored (4 coverages)",
+      "rows": 4,
+      "seconds": 0.0007,
+      "skipped": true,
+      "stage": "collect"
+    },
+    {
+      "note": "restored (63347 pairs, 402 rows, 16 genes skipped as too dense to pair)",
+      "rows": 402,
+      "seconds": 0.4349,
+      "skipped": true,
+      "stage": "rank_per_model"
+    },
+    {
+      "note": "restored (4 reports)",
+      "rows": 4,
+      "seconds": 0.004,
+      "skipped": true,
+      "stage": "report_per_model"
+    },
+    {
+      "note": "restored (RRF rank (free): 20639)",
+      "rows": 4,
+      "seconds": 0.0021,
+      "skipped": true,
+      "stage": "merge"
+    },
+    {
+      "note": "docs/iteration4/report.md; method realised as 'fusion+synthesis' (configured 'fusion')",
+      "rows": 1,
+      "seconds": 0.0023,
+      "skipped": false,
+      "stage": "render"
+    }
+  ],
+  "started_at": "2026-09-20T08:44:09+00:00",
+  "venues": {
+    "alphamissense": "laptop",
+    "esm1b": "laptop",
+    "revel": "laptop",
+    "spliceai": "laptop"
+  },
+  "wall_clock_seconds": 0.692
+}

@@ -2,7 +2,7 @@
 
 **Case:** Mosaic Variegated Aneuploidy — challenge proband 1; confirmed pair gene `BUB1B`.
 
-**Standing:** generated 2026-09-19T23:02:34+00:00 by `mva.zoo.report.render_model_report` from run `it4-2962e3117b5c`, catalogue mode `catalogue-free`.
+**Standing:** generated 2026-09-20T13:25:43+00:00 by `mva.zoo.report.render_model_report` from run `it4-5e25dd45eee2`, catalogue mode `catalogue-free`.
 
 Every number below is a key of `it4_model_reports.report_json` for this run. Section 6 is the only written section.
 
@@ -142,7 +142,7 @@ Only this section is written rather than computed. Sections 1-5 and 7 are render
 | venue | laptop |
 | wall-clock (s) | 0 |
 | cost (USD) | 0 |
-| run id | `it4-2962e3117b5c` |
+| run id | `it4-5e25dd45eee2` |
 
 - Catalogue-adjacent: this model's training data included ClinVar, so it may be recalling a published verdict rather than predicting one. The consensus rank is reported with and without this lane.
 - Scored 27.5% of the record set; the unscored remainder is this lane's blind spot and its pairs are excluded from the ranking, not scored zero.

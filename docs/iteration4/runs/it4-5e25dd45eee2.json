@@ -1,0 +1,119 @@
+{
+  "config_digest": "5e25dd45eee2fbc3c11cf8496ea1cc9beb69fbef129e48436bb2bc6077c3e5c8",
+  "config_path": "src/mva/zoo/zoo.example.toml",
+  "dollars": 0.0,
+  "finished_at": "2026-09-20T13:28:09+00:00",
+  "merge_method": "fusion+synthesis",
+  "mode": "catalogue-free",
+  "models": {
+    "alphamissense": "AlphaMissense hg38 2023",
+    "esm1b": "Brandes 2023 ESM1b",
+    "esm2": "esm2_t33_650M_UR50D",
+    "gpnmsa": "GPN-MSA hg38 precomputed scores (songlab)",
+    "revel": "REVEL 1.3 via VEP REST",
+    "spliceai": "SpliceAI via VEP plugin (iteration 2 annotation pass)"
+  },
+  "outputs": [
+    "docs/iteration4/report.md",
+    "docs/iteration4/reports/alphamissense.md",
+    "docs/iteration4/reports/esm1b.md",
+    "docs/iteration4/reports/esm2.md",
+    "docs/iteration4/reports/gpnmsa.md",
+    "docs/iteration4/reports/revel.md",
+    "docs/iteration4/reports/spliceai.md"
+  ],
+  "pairs": {
+    "confirmed_note": "BUB1B has one pair; flagged confirmed",
+    "genes": 8174,
+    "het_calls": 21095,
+    "max_calls_per_gene": 60,
+    "skipped_genes": [
+      "AHNAK2",
+      "CARMIL1",
+      "CELF2",
+      "GRM8",
+      "HLA-DRB1",
+      "LRP1B",
+      "LTBP1",
+      "MUC16",
+      "MUC3A",
+      "MUC6",
+      "OR8U1",
+      "PDE3A",
+      "PDZD2",
+      "RYR3",
+      "SUGCT",
+      "ZNF717"
+    ],
+    "skipped_genes_recorded": true
+  },
+  "run_id": "it4-5e25dd45eee2",
+  "stages": [
+    {
+      "note": "restored (39286 records)",
+      "rows": 39286,
+      "seconds": 0.1719,
+      "skipped": true,
+      "stage": "normalize"
+    },
+    {
+      "note": "restored (6 lanes)",
+      "rows": 6,
+      "seconds": 0.0008,
+      "skipped": true,
+      "stage": "registry_check"
+    },
+    {
+      "note": "restored (109989 scores over 6 lanes)",
+      "rows": 109989,
+      "seconds": 0.0799,
+      "skipped": true,
+      "stage": "fan_out"
+    },
+    {
+      "note": "restored (6 coverages)",
+      "rows": 6,
+      "seconds": 0.0006,
+      "skipped": true,
+      "stage": "collect"
+    },
+    {
+      "note": "restored (63347 pairs, 603 rows, 16 genes skipped as too dense to pair)",
+      "rows": 603,
+      "seconds": 0.6575,
+      "skipped": true,
+      "stage": "rank_per_model"
+    },
+    {
+      "note": "restored (6 reports)",
+      "rows": 6,
+      "seconds": 0.005,
+      "skipped": true,
+      "stage": "report_per_model"
+    },
+    {
+      "note": "restored (RRF rank (free): 2734)",
+      "rows": 6,
+      "seconds": 0.0013,
+      "skipped": true,
+      "stage": "merge"
+    },
+    {
+      "note": "docs/iteration4/report.md; method realised as 'fusion+synthesis' (configured 'fusion')",
+      "rows": 1,
+      "seconds": 0.0021,
+      "skipped": false,
+      "stage": "render"
+    }
+  ],
+  "started_at": "2026-09-20T13:28:07+00:00",
+  "venues": {
+    "alphamissense": "laptop",
+    "esm1b": "laptop",
+    "esm2": "laptop",
+    "gpnmsa": "laptop",
+    "revel": "laptop",
+    "spliceai": "laptop"
+  },
+  "wall_clock_seconds": 0.919
+}

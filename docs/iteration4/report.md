@@ -1,6 +1,6 @@
 # Iteration 4 — the merged report
 
-**Standing:** generated 2026-09-19T23:02:43+00:00 by `mva.zoo.merge.render_merged` from run `it4-2962e3117b5c`; merge method `fusion`.
+**Standing:** generated 2026-09-20T13:25:46+00:00 by `mva.zoo.merge.render_merged` from run `it4-5e25dd45eee2`; merge method `fusion`.
 
 Every number below is a key of the run's merged JSON; this page computes nothing.
 
@@ -10,6 +10,8 @@ Every number below is a key of the run's merged JSON; this page computes nothing
 |---|---|---|---|---|---|---|---|---|
 | `alphamissense` | AlphaMissense hg38 2023 | 1 | no | 10333 | 53014 | 10601 | — | — |
 | `esm1b` | Brandes 2023 ESM1b | 1 | no | 3673 | 59674 | 4562 | — | — |
+| `esm2` | esm2_t33_650M_UR50D | 2 | no | 15749 | 47598 | 15592 | — | — |
+| `gpnmsa` | GPN-MSA hg38 precomputed scores (songlab) | 1 | no | 54865 | 8482 | 35917 | 508 | 0.93 % |
 | `revel` | REVEL 1.3 via VEP REST | 1 | yes | 10456 | 52891 | 10783 | — | — |
 | `spliceai` | SpliceAI via VEP plugin (iteration 2 annotation pass) | 1 | no | 50696 | 12651 | 32534 | 11980 | 23.63 % |
 
@@ -20,12 +22,14 @@ Every number below is a key of the run's merged JSON; this page computes nothing
 
 Spearman ρ (rank correlation) over the alleles both lanes scored, with the shared-allele count. An empty cell had too few shared alleles or no variance.
 
-| ρ (n) | `alphamissense` | `esm1b` | `revel` | `spliceai` |
-|---|---|---|---|---|
-| `alphamissense` | +1.000 (10601) | +0.580 (3943) | +0.186 (9365) | +0.033 (9532) |
-| `esm1b` | +0.580 (3943) | +1.000 (4562) | +0.168 (3997) | +0.043 (4051) |
-| `revel` | +0.186 (9365) | +0.168 (3997) | +1.000 (10783) | +0.021 (9816) |
-| `spliceai` | +0.033 (9532) | +0.043 (4051) | +0.021 (9816) | +1.000 (32534) |
+| ρ (n) | `alphamissense` | `esm1b` | `esm2` | `gpnmsa` | `revel` | `spliceai` |
+|---|---|---|---|---|---|---|
+| `alphamissense` | +1.000 (10601) | +0.580 (3943) | +0.546 (10601) | +0.704 (10601) | +0.186 (9365) | +0.033 (9532) |
+| `esm1b` | +0.580 (3943) | +1.000 (4562) | +0.751 (4562) | +0.562 (4542) | +0.168 (3997) | +0.043 (4051) |
+| `esm2` | +0.546 (10601) | +0.751 (4562) | +1.000 (15592) | +0.479 (15547) | +0.157 (10778) | +0.026 (13163) |
+| `gpnmsa` | +0.704 (10601) | +0.562 (4542) | +0.479 (15547) | +1.000 (35917) | +0.221 (10783) | +0.058 (30836) |
+| `revel` | +0.186 (9365) | +0.168 (3997) | +0.157 (10778) | +0.221 (10783) | +1.000 (10783) | +0.021 (9816) |
+| `spliceai` | +0.033 (9532) | +0.043 (4051) | +0.026 (13163) | +0.058 (30836) | +0.021 (9816) | +1.000 (32534) |
 
 ## 3. Consensus — reciprocal rank fusion
 
@@ -33,8 +37,8 @@ Cormack GV, Clarke CLA, Buettcher S. Reciprocal rank fusion outperforms Condorce
 
 | run | lanes | excluded | k | confirmed pair's RRF rank | of pairs | fused score |
 |---|---|---|---|---|---|---|
-| catalogue-free | alphamissense, esm1b, spliceai | revel | 60 | 20639 | 52012 | 0.000083 |
-| all lanes | alphamissense, esm1b, revel, spliceai | — | 60 | 21497 | 52219 | 0.000083 |
+| catalogue-free | alphamissense, esm1b, esm2, gpnmsa, spliceai | revel | 60 | 2734 | 59474 | 0.001844 |
+| all lanes | alphamissense, esm1b, esm2, gpnmsa, revel, spliceai | — | 60 | 3482 | 59474 | 0.001844 |
 
 ## 4. Where the lanes disagree
 
@@ -42,38 +46,38 @@ Alleles in the top 1 % of one lane and the bottom half of another. A disagreemen
 
 | allele | high lane | its percentile | low lane | its percentile |
 |---|---|---|---|---|
+| `379ec0d38c461aab` | `spliceai` | 0.03 % | `gpnmsa` | 91.99 % |
 | `6000716b21e7d701` | `spliceai` | 0.03 % | `alphamissense` | 89.88 % |
+| `6000716b21e7d701` | `spliceai` | 0.03 % | `gpnmsa` | 73.84 % |
+| `6000716b21e7d701` | `spliceai` | 0.03 % | `esm2` | 73.38 % |
+| `3d6d7940d354625a` | `gpnmsa` | 0.06 % | `esm2` | 61.98 % |
 | `c982f5420cb3855e` | `spliceai` | 0.06 % | `revel` | 93.16 % |
+| `626ea376c2169581` | `spliceai` | 0.08 % | `gpnmsa` | 98.29 % |
+| `fa84e49f41619fe5` | `spliceai` | 0.08 % | `gpnmsa` | 99.37 % |
 | `7afc3f053087423b` | `spliceai` | 0.08 % | `alphamissense` | 87.39 % |
-| `1ed22b12dcc50ba6` | `spliceai` | 0.14 % | `alphamissense` | 92.46 % |
-| `1ed22b12dcc50ba6` | `spliceai` | 0.14 % | `revel` | 84.14 % |
-| `1ed22b12dcc50ba6` | `spliceai` | 0.14 % | `esm1b` | 64.12 % |
-| `017771f599a78157` | `spliceai` | 0.16 % | `revel` | 71.71 % |
-| `017771f599a78157` | `spliceai` | 0.16 % | `alphamissense` | 60.05 % |
-| `32b403b9ff4ab9cb` | `spliceai` | 0.18 % | `revel` | 90.53 % |
-| `8f1f3081060a323b` | `spliceai` | 0.18 % | `esm1b` | 83.30 % |
-| `8f1f3081060a323b` | `spliceai` | 0.18 % | `alphamissense` | 64.47 % |
-| `32b403b9ff4ab9cb` | `spliceai` | 0.18 % | `alphamissense` | 55.74 % |
-| `5d4ab3fe0cdf2a22` | `spliceai` | 0.20 % | `revel` | 92.33 % |
-| `6ae8c742aa03d3a5` | `spliceai` | 0.21 % | `revel` | 77.70 % |
-| `6ae8c742aa03d3a5` | `spliceai` | 0.21 % | `esm1b` | 73.54 % |
-| `6ae8c742aa03d3a5` | `spliceai` | 0.21 % | `alphamissense` | 61.15 % |
-| `d5518a598a7733c3` | `spliceai` | 0.22 % | `revel` | 56.22 % |
-| `6bfe100cf1f416d4` | `spliceai` | 0.23 % | `esm1b` | 82.24 % |
-| `ce668b09edd7c83b` | `spliceai` | 0.23 % | `revel` | 73.30 % |
-| `e732f429250a61f5` | `spliceai` | 0.25 % | `revel` | 77.70 % |
+| `fa84e49f41619fe5` | `spliceai` | 0.08 % | `esm2` | 62.27 % |
+| `7afc3f053087423b` | `spliceai` | 0.08 % | `gpnmsa` | 54.02 % |
+| `dbcf9e1e277868f4` | `spliceai` | 0.09 % | `esm2` | 76.03 % |
+| `fe5f9f335c5feeee` | `spliceai` | 0.10 % | `gpnmsa` | 68.58 % |
+| `043dd14c63f399d3` | `spliceai` | 0.10 % | `gpnmsa` | 66.88 % |
+| `043dd14c63f399d3` | `spliceai` | 0.10 % | `esm2` | 58.25 % |
+| `5f7ef0dce74aa311` | `gpnmsa` | 0.11 % | `esm1b` | 61.03 % |
+| `5f7ef0dce74aa311` | `gpnmsa` | 0.11 % | `esm2` | 56.40 % |
+| `0e2cac5237e3170f` | `spliceai` | 0.12 % | `gpnmsa` | 70.09 % |
+| `221b12b9e9d0fd70` | `spliceai` | 0.13 % | `esm2` | 63.77 % |
+| `86e40af3fcaf3da5` | `gpnmsa` | 0.13 % | `esm2` | 91.77 % |
 
-70 further rows are in the run's merged JSON.
+180 further rows are in the run's merged JSON.
 
 ## 5. What this means
 
 This section exists in more than one version — the numbers above are identical for all of them. Each version carries a badge saying who wrote it, in which mode, and how many of its sentences resolve to a row of sections 1-4 (`mva.zoo.narrate_check`).
 
-### 5.1 Synthesised — mode `claude-code`, model `claude-opus-5[1m]`, 7/7 sentences cited
+### 5.1 Synthesised — mode `claude-code`, model `claude-opus-5[1m]`, 8/8 sentences cited
 
-<!-- narrative: synthesised 2026-09-20 | llm:claude-code | model:claude-opus-5[1m] | cited 7/7 -->
+<!-- narrative: synthesised 2026-09-20 | llm:claude-code | model:claude-opus-5[1m] | cited 8/8 -->
 
-Three of the four lanes returned no rank at all for the confirmed pair: each scored only one of its two alleles, and a pair with an unscored half is dropped from a lane's ranking rather than scored zero [lane.alphamissense.rank][lane.esm1b.rank][lane.revel.rank]. Those lanes' own reports describe this as holding no opinion rather than a bad one [interp.alphamissense][interp.esm1b][interp.revel]. Only one lane saw both halves, placing the pair 11980 of 50696 pairs at 23.63% from the top [lane.spliceai.rank]. Because the merge used reciprocal rank fusion with k = 60, and a lane that never ranks a pair contributes nothing to it, the fused positions — 20639 of 52012 without the catalogue-adjacent lane and 21497 of 52219 with it, at the same fused score — rest on that single lane [method][rrf.free.rank][rrf.all.rank][lane.revel.rank]. The lanes also largely do not track each other, agreeing at +0.580 in the closest case and at +0.033, +0.043, +0.021, +0.186 and +0.168 elsewhere [rho.alphamissense.esm1b][rho.alphamissense.spliceai][rho.esm1b.spliceai][rho.revel.spliceai][rho.alphamissense.revel][rho.esm1b.revel]. Ninety alleles sit in one lane's top 1% and another's bottom half [disagree.n]. So the consensus here is one opinion plus three abstentions, and it cannot show agreement, cannot read silence as harmlessness, and does not establish that anything causes anything [method][interp.spliceai][interp.revel].
+The lanes were merged by reciprocal rank fusion with k = 60; a lane that never ranks a pair contributes nothing to it [method]. Four of the six — alphamissense, esm1b, esm2 and revel — have no rank for the confirmed pair: each scored only one of its two alleles, so the pair left their rankings [lane.alphamissense.rank][lane.esm1b.rank][lane.esm2.rank][lane.revel.rank]. That is abstention, not disagreement: esm2's report says an unscored half leaves the lane with no opinion rather than a bad one, and gpnmsa's calls such silence missing measurement, not evidence of absence [interp.esm2][interp.gpnmsa]. Only two lanes rank the pair — gpnmsa at 508 of 54865, 0.93% from the top, and spliceai at 11980 of 50696, 23.63% [lane.gpnmsa.rank][lane.spliceai.rank]. The fused positions, 2734 of 59474 excluding revel and 3482 including it, therefore rest on those two [rrf.free.rank][rrf.all.rank]. One lane, revel, is catalogue-adjacent, since ClinVar was in its training data [lane.revel.rank]. Where lanes do overlap they may order alleles similarly, +0.751 for esm1b and esm2, or almost independently, +0.021 for revel and spliceai, and 200 alleles sit in the top 1% of one lane and the bottom half of another [rho.esm1b.esm2][rho.revel.spliceai][disagree.n]. The consensus cannot claim the lanes agree here, only that most never weighed in [method].
 
 ### 5.2 Hand-written
 
@@ -145,7 +149,7 @@ _hand-written 2026-09-19_
 
 ## 6. Lineage
 
-- run id: `it4-2962e3117b5c`
+- run id: `it4-5e25dd45eee2`
 - merge method: `fusion`, RRF k = 60
 - source tables: `results.it4_model_ranks`, `warehouse.allele_scores`, `results.coding_alleles`
 - built by: `mva.zoo.merge.merged_report`
