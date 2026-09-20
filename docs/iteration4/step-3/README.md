@@ -9,7 +9,9 @@ revision, not because anything is unrun. Iteration 4, `step-3`.
 > Can one batch inference API serve every model through the same contract, cache every score with provenance, and dispatch GPU work without sending more than a sequence window?
 
 **Plan:** [`../plan.md`](../plan.md) §5, *Step 3*. The MVP is the adapter protocol, the cache and
-the in-process CLI; HTTP routes and Modal are opt-A / opt-B and are not built.
+the in-process CLI; the **batch job routes are built** (opt-A, entry
+[136](methodology/136-the-two-write-verbs-behind-a-job-and-a-token.md)); Modal is opt-B and is
+not built.
 
 ## What happened
 
@@ -50,6 +52,24 @@ Only SpliceAI has a number for both halves, and both of its numbers are essentia
 was predicted in [step 2's entry](../step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md)
 before steps 4–6 ran.
 
+
+## The HTTP write verbs (opt-A, 2026-09-20)
+
+`POST /api/zoo/score` and `POST /api/zoo/run` return a `{job_id}`; `GET /api/zoo/jobs/{id}` and
+`…/wait?timeout=` poll or long-poll it. The manager is the one `/api/jobs` already uses
+(`mva.reads.api.jobs.Manager`), and the score job makes the same four calls `mva-zoo score`
+makes, so an API-written score is indistinguishable from a terminal-written one.
+
+**Compute needs a token.** Both `POST`s answer **403** when `MVA_VIZ_TOKEN` is empty, with the
+reason in the reply; the `GET`s stay open. An open loopback API may read the zoo, never spend
+the machine.
+
+Live smoke against the real warehouse: 200 alleles, `spliceai` — `inserted 0`, `skipped 171`,
+coverage 171/200 = 85.5 %, 5.9 s, 171 rows inlined, `aux` carrying only `mode` and the lane's own
+field. `POST /api/zoo/run` came back with the manifest: run `it4-2962e3117b5c`, 0.754 s, all
+eight stages restored. Numbers and the refusal text: entry
+[136](methodology/136-the-two-write-verbs-behind-a-job-and-a-token.md).
+
 ## Outputs
 
 | Artifact | Where |
@@ -71,6 +91,9 @@ Stated by entry 122, beside the result rather than under it.
   alleles with no REVEL score are ones the server answered *without* the field.
 - **`--mode aware` proves the cache key, not the absence of a leak.** It shows the two modes
   are stored apart; it does not show a model never saw a catalogue.
+- **The job routes carry one shared secret, not identities.** Any holder of `MVA_VIZ_TOKEN` may
+  start a scoring pass. There is one worker, no cancel route, and `ts` comes back `null` because
+  `cache.read` does not select it (entry 136).
 - **The cache was emptied to make "cold" literal**, so the lineage edge list contains edges for
   rows that no longer exist. Append-only means nothing is deleted to tidy that up.
 
@@ -80,9 +103,13 @@ Stated by entry 122, beside the result rather than under it.
 for m in alphamissense spliceai esm1b revel; do uv run mva-zoo score --model "$m"; done
 uv run mva-zoo score --model alphamissense              # the no-op proof
 uv run mva-zoo score --model alphamissense --mode aware  # the ablation
+MVA_VIZ_TOKEN=… uv run mva-viz-api --port 8912          # the job routes
+uv run pytest tests/test_viz_zoo_jobs.py -q
 ```
 
 ## Methodology
 
 [`methodology/122`](methodology/122-every-lane-scored-once-and-only-once.md) — the cold timing,
 the two fixes it forced, the no-op and aware passes, and the verdict.
+[`methodology/136`](methodology/136-the-two-write-verbs-behind-a-job-and-a-token.md) — the two
+write verbs behind a job and a token, and the live smoke that inserted nothing.
