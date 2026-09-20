@@ -52,8 +52,9 @@ There is **no predictions CSV** and no decode table for Track 2 — the panel re
   | 10 | What this report cannot tell you | the six limits |
   | 11 | Reproducibility | the five commands |
   | 12 | Where every claim lives | the register ids and their verdicts |
+
 - [`methods-form.json`](methods-form.json) — the ten answers, row-numbered as the organisers'
-  template lays them out; the abstract is under 500 words.
+  template lays them out; the abstract (row 16) is 445 words, under the form's 500-word limit.
 - [`pitch-script.md`](pitch-script.md) — the 3-minute video, shot by shot, with the figure each
   shot shows.
 - The evidence itself is **not copied here**: the tables are `ressources/track2/*.tsv` (each

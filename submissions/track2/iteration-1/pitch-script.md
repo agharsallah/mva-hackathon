@@ -1,10 +1,10 @@
 # Pitch script — 3 minutes, Track 2
 
 **Standing:** draft, 2026-09-18, written from `report.md`; the *what is new* beat and the
-section references added 2026-09-20 with the report's restructure, words cut elsewhere to hold
-the running time. Not recorded. Target 2:50 spoken at a
-calm pace (~443 words). Every number on screen comes from a committed table or figure; the
-shot list names the file.
+section references added 2026-09-20 with the report's restructure, words cut elsewhere so the
+running time did not grow. Not recorded. Target 2:50 spoken at a calm pace (~443 words, down
+from 458). Every number on screen comes from a committed table or figure; the shot list names
+the file.
 
 | t | shot | on screen | words |
 |---|---|---|---|
