@@ -33,7 +33,6 @@ shapes are all arguments.
 
 from __future__ import annotations
 
-import hashlib
 import shutil
 import subprocess
 from collections.abc import Sequence
@@ -50,6 +49,7 @@ from .tabix_plan import (
     snv_regions,
     write_bed,
 )
+from .tabix_remote import digest, download, resolve_url, upstream_head
 
 __all__ = [
     "DEFAULT_GAP",
@@ -120,62 +120,6 @@ class SubsetResult:
             "shards": self.shards,
             "failures": list(self.failures),
         }
-
-
-# ── step 2: pin the remote bytes without downloading them ─────────────────────────────
-
-
-def resolve_url(url: str) -> str:
-    """Follow the redirects once and return the final URL.
-
-    Hugging Face answers ``/resolve/main/<file>`` with a redirect to a signed CDN URL.
-    Resolving it once is a measured 25 % faster per seek, and the workers are **not** given
-    the result: the signature expires in hours and the first real fan-out ran 3 h 13 m before
-    every worker died on it at once. What this is for is the provenance line — the host the
-    bytes actually came from — which is worth one ``HEAD`` and no risk.
-    """
-    import httpx
-
-    with httpx.Client(follow_redirects=True, timeout=60.0) as client:
-        reply = client.head(url)
-        reply.raise_for_status()
-        return str(reply.url)
-
-
-def upstream_head(url: str) -> tuple[int | None, str]:
-    """``(size in bytes, ETag)`` of the remote file, from a ``HEAD`` — no body is fetched."""
-    import httpx
-
-    with httpx.Client(follow_redirects=True, timeout=60.0) as client:
-        reply = client.head(url)
-        reply.raise_for_status()
-        raw = reply.headers.get("content-length") or reply.headers.get("x-linked-size")
-        size = int(raw) if raw and raw.isdigit() else None
-        etag = reply.headers.get("etag", "") or reply.headers.get("x-linked-etag", "")
-        return size, etag.strip('"')
-
-
-def download(url: str, dest: Path) -> str:
-    """Stream a small file (the index) to disk and return its sha256."""
-    import httpx
-
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    sha = hashlib.sha256()
-    with httpx.stream("GET", url, follow_redirects=True, timeout=120.0) as reply:
-        reply.raise_for_status()
-        with dest.open("wb") as handle:
-            for chunk in reply.iter_bytes(1 << 20):
-                handle.write(chunk)
-                sha.update(chunk)
-    return sha.hexdigest()
-
-
-def digest(path: Path) -> str:
-    sha = hashlib.sha256()
-    with path.open("rb") as handle:
-        for block in iter(lambda: handle.read(1 << 20), b""):
-            sha.update(block)
-    return sha.hexdigest()
 
 
 # ── step 3: fan out ───────────────────────────────────────────────────────────────────
