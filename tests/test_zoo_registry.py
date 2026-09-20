@@ -18,6 +18,10 @@ from mva.zoo.types import Coverage
 
 MVP_LANES = {"alphamissense", "spliceai", "esm1b", "revel"}
 
+#: Lanes wave 4 enabled on top of the MVP four (plan §7 opt-A rows A1/A2): the coordinate-
+#: keyed DNA model that can see a nonsense allele, and the first model that actually runs.
+OPT_A_LANES = {"gpnmsa", "esm2"}
+
 MINIMAL = """
 [models.demo]
 name = "Demo"
@@ -66,15 +70,27 @@ def test_shipped_roster_loads() -> None:
 
 
 def test_four_mvp_lanes_are_enabled() -> None:
+    """The MVP four are always on; wave 4's opt-A lanes are the only additions allowed."""
     cards = registry.load()
-    assert set(registry.enabled(cards)) == MVP_LANES
+    enabled = set(registry.enabled(cards))
+    assert enabled >= MVP_LANES
+    assert enabled - MVP_LANES <= OPT_A_LANES, "a lane was enabled without being declared here"
     assert set(registry.mvp(cards)) >= MVP_LANES
 
 
-def test_enabled_lanes_cover_three_sources_and_one_adjacent() -> None:
-    """The MVP is an agreement matrix, so the four lanes must not be one instrument."""
+def test_enabled_lanes_cover_four_sources_and_one_adjacent() -> None:
+    """The zoo is an agreement matrix, so the lanes must not be one instrument.
+
+    Wave 4 added the fourth kind of source: ``local-process``, a model that runs here
+    rather than a table somebody else published.
+    """
     enabled = registry.enabled(registry.load())
-    assert {card.source for card in enabled.values()} == {"warehouse-column", "table", "vep-rest"}
+    assert {card.source for card in enabled.values()} == {
+        "warehouse-column",
+        "table",
+        "vep-rest",
+        "local-process",
+    }
     adjacent = [key for key, card in enabled.items() if card.catalogue_adjacent]
     assert adjacent == ["revel"], "exactly one catalogue-adjacent lane runs in the MVP"
 
