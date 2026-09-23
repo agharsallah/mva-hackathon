@@ -1075,7 +1075,9 @@ and its phenotype is worded mosaic variegated **hyperploidy**, not aneuploidy.*
 **Redaction (masking)** — replacing a value with a marker (`[redacted]`, `••••`) instead of showing it. Two different uses in this project, worth keeping apart: the API *always* scrubs credentials out of any text it returns, which is a hard rule; the Status page additionally *hides hosts and ports until asked*, which is presentation hygiene for a screenshot — the values are still in the response, so it prevents an accidental display, not access.
 *Example: `mva@db.example:5432/mva` renders as `••••@••••:••••/mva` until you press `show`.*
 
-**Modal** — a cloud service to rent CPUs/GPUs for the heavy steps.
+**Modal** — a serverless cloud for renting CPUs and GPUs by the second: you write a Python function, decorate it with the hardware it needs, and Modal starts a container for each call and stops it when idle, so you pay only while code runs. Defined properly, with the words it brings, in §26.
+*Example:* `@app.cls(gpu="L4")` over NT-v2's scorer; an L4 costs $0.000222 per second (modal.com/pricing, read 2026-09-23).
+*Context: the tier-3 venue of the model zoo, iteration 4 step 8 · source: src/mva/zoo/modal_apps/, docs/iteration4/step-8/methodology/143-a-gpu-lane-that-sends-two-windows-and-a-bill.md · related: Inference tier, Serverless GPU, Spend ledger · first seen 2026-09-01*
 
 **Hail / Spark** — big-data machinery, useful for thousands of patients, pointless for one.
 
@@ -2713,7 +2715,7 @@ that reads sequence rather than a table: an amino-acid string for a protein lang
 string for a DNA language model. Written in both the reference and the altered form, so the model
 can score the difference.
 *Example:* `protein_window_ref` / `protein_window_alt` (± n amino acids) and `dna_window_ref` / `dna_window_alt` (8,192 bp).
-*Context: columns declared on the allele record from the start. The **protein** pair is filled — 15,592 of 15,620 missense alleles, entry 141 — and the DNA pair is still null (opt-B). They are patient sequence, so they may only ever live in `build/it4/records.parquet` · source: src/mva/zoo/types.py, src/mva/zoo/record_window.py · related: Allele record, Protein language model, DNA language model, Masked marginal, Coordinate gate · first seen 2026-09-18, protein half filled 2026-09-20*
+*Context: columns declared on the allele record from the start. The **protein** pair is filled — 15,592 of 15,620 missense alleles, entry 141 — and the DNA pair (8,192 bases, all 39,286 records, 0 REF mismatches, entry 143) lives in `build/it4/dna-windows.parquet`. They are patient sequence, so they may only ever live under `build/` (and travel to a Modal container inside one scoring call) · source: src/mva/zoo/types.py, src/mva/zoo/record_window.py, src/mva/zoo/record_dna.py · related: Allele record, Protein language model, DNA language model, Masked marginal, Coordinate gate · first seen 2026-09-18, protein half filled 2026-09-20*
 
 **Masked marginal** (masked-marginal scoring) — how a protein language model is turned into a
 variant score. Hide the changed residue from the model, ask what it expects there, and subtract:
@@ -2813,3 +2815,72 @@ disease, and checks the answer against a decoy disease walked the same way.
 **Promiscuous drug / cofactor** — a drug node linked to very many proteins: a multi-kinase inhibitor, or a nutrient or enzyme cofactor (zinc, NADH, pyridoxal phosphate) that DrugBank records against every enzyme that uses it. A walk that does not penalise the drug end ranks these high for almost any disease.
 *Example:* NADH has 153 drug–protein edges in PrimeKG and appears in the top 20 of both the MVA walk and the xanthinuria decoy walk.
 *Context: the two drugs the real and decoy walks share (entry 142) · related: Node degree / hub, Degree-weighted path count (DWPC), Decoy mechanism card · first seen 2026-09-23*
+
+## 26. Renting a GPU — words for iteration 4's step 8
+
+Step 8 runs the roster's GPU models on Modal (§8) and has to answer two questions for each: did
+it see the alleles the laptop lanes could not, and what did it cost?
+
+**Serverless GPU** — a GPU you rent per second, through a function call, with no machine to
+keep running. The provider starts a **container** (a packaged, isolated copy of your program and
+its libraries) when a call arrives and stops it after a short idle window. In software terms it
+is a function-as-a-service platform with a GPU attached.
+*Example:* `mva-zoo-evo2` ran on H100s for 6,426 GPU-seconds across 1,228 calls and had no machine left running afterwards.
+*Context: the hosting model of tier 3 · source: src/mva/zoo/modal_apps/README.md, docs/iteration4/step-8/methodology/143-a-gpu-lane-that-sends-two-windows-and-a-bill.md · related: Modal, Inference tier, Cold start, Spend ledger · first seen 2026-09-23*
+
+**Cold start** — the seconds a serverless container spends starting before it can do any work:
+pulling the image, loading the weights into GPU memory. Billed like any other second, and
+invisible to code that only times its own work.
+*Example:* the Boltz-2 lane measured about 80 s of cold start per call; the ESM-C lane's first start took about 200 s because it also hashed its weights once.
+*Context: why step 8's ledger (GPU seconds inside each call) reads about 1.3× lower than Modal's bill · source: docs/iteration4/step-8/methodology/147-boltz2-folds-bubr1-and-a-conservative-swap-drops-as-much.md · related: Serverless GPU, Spend ledger · first seen 2026-09-23*
+
+**Spend ledger** — an append-only file with one line per remote call: the GPU type, the seconds,
+and the dollars those seconds cost at the published rate. Checked *before* each batch of calls
+(the **guard**), so a lane stops at its budget instead of overrunning it; reconciled afterwards
+against the provider's own bill.
+*Example:* step 8's ledger totals $11.33 over four lanes; `modal billing report` for the same work says $14.57, and the guard padded every estimate by 1.3× for exactly that gap.
+*Context: `build/it4/modal/ledger.jsonl`, written by `mva.zoo.modal_budget.Ledger`; the committed summary is docs/iteration4/step-8/modal-runs.md · related: Serverless GPU, Cold start, Append-only ledger · first seen 2026-09-23*
+
+**Weights volume** — a cloud disk that holds a model's downloaded parameters (its **weights**)
+so every container reads them instead of downloading gigabytes again. Holds weights only, never
+patient input, and is on the deletion checklist.
+*Example:* `mva-zoo-ntv2-weights` holds the NT-v2 snapshot at Hugging Face revision `06615c16…`.
+*Context: one per lane · source: src/mva/zoo/modal_apps/_common.py, docs/notes/data-deletion-checklist.md · related: Serverless GPU, Container / digest · first seen 2026-09-23*
+
+**Proxy auth** — a gate in front of a web endpoint that refuses any request not carrying the
+workspace's token in two headers (`Modal-Key`, `Modal-Secret`). Needed because each call to a GPU
+endpoint spends money, so an open URL is an open wallet.
+*Example:* the ESM-C health endpoint answers 401 with no headers and 200 with the token.
+*Context: every lane's `score` endpoint and the `mva-zoo-api` gateway · source: src/mva/zoo/modal_apps/api.py · related: Serverless GPU, API gateway · first seen 2026-09-23*
+
+**API gateway** — one URL that forwards each request to the right backend, so a client learns
+one address and one request shape instead of one per model.
+*Example:* `POST /score/evo2` with `{"items": [...]}` on `mva-zoo-api` returned the same scores as calling the Evo 2 lane directly.
+*Context: `mva-zoo-api`, CPU-only, scales to zero · source: src/mva/zoo/modal_apps/api.py · related: Proxy auth, Adapter · first seen 2026-09-23*
+
+**Sequence log-likelihood ratio** — how an *autoregressive* DNA model (one that reads left to
+right and predicts the next base, like a text model predicting the next word) scores a variant:
+how probable is the altered window, compared with the reference window? More negative = the
+altered sequence looks less like anything evolution kept = more likely damaging.
+*Example:* Evo 2 gives the confirmed pair's stop-gained allele a mean per-base delta of −9.6 × 10⁻⁴ (top 5.6 % of all 39,286 alleles) and its missense allele −1.9 × 10⁻⁴ (top 32.1 %).
+*Context: the Evo 2 lane, averaged per base as the authors' BRCA1 notebook does · source: docs/iteration4/step-8/methodology/146-evo2-1b-scores-every-record-on-an-h100.md · related: DNA language model, Masked marginal, Zero-shot · first seen 2026-09-23*
+
+**Embedding distance** — a second way to score with a model: turn each window into the model's
+internal vector (its **embedding**, a list of numbers summarising the sequence) and measure how
+far apart the reference and altered vectors are. It needs no probability over bases, so it scores
+indels as easily as single-base changes; its weakness is that "different" is not "damaging".
+*Example:* NT-v2's cosine distance is about 300× larger for indels than for single-base changes, so across classes it mostly measures how much sequence changed.
+*Context: the NT-v2 lane's `score`; its `aux.llr` holds the masked 6-mer ratio instead · source: docs/iteration4/step-8/methodology/144-ntv2-reads-two-windows-on-an-l4.md · related: DNA language model, Sequence log-likelihood ratio · first seen 2026-09-23*
+
+**Local pLDDT delta** — the change in a structure predictor's per-residue confidence (§9,
+**pLDDT**) around a substituted residue, mutant fold minus wild-type fold. A proxy for "does the
+predicted shape notice this change?", not a stability measurement.
+*Example:* Boltz-2 drops the ±5-residue mean by 3.2 and 2.7 points at the confirmed missense residue (two seeds), but a conservative swap at the same residue drops just as much.
+*Context: H081's test · source: docs/iteration4/step-8/methodology/147-boltz2-folds-bubr1-and-a-conservative-swap-drops-as-much.md · related: pLDDT, AlphaFold · first seen 2026-09-23*
+
+**Leave-one-in ablation** — add one component to a fixed baseline and re-measure, one component at
+a time, so each one's effect on the result is visible alone (the mirror of an **ablation**, §12,
+which removes one).
+*Example:* step 8 re-ran the consensus with the six laptop lanes, then six + Evo 2, six + NT-v2 and six + ESM-C.
+*Context: the test behind H082 · source: docs/iteration4/step-8/methodology/148-the-gpu-lanes-and-the-consensus.md · related: Ablation, Reciprocal rank fusion (RRF) · first seen 2026-09-24*
+

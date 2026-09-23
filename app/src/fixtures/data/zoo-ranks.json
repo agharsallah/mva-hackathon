@@ -3,7 +3,7 @@
   "captured_at": "2026-09-23",
   "source": "pg.results.it4_model_ranks, build/it4/merged.json (the two allele percentiles)",
   "payload": {
-    "run_id": "it4-5e25dd45eee2",
+    "run_id": "it4-32db48decfc7",
     "per_model": [
       {
         "model": "alphamissense",
@@ -11,18 +11,7 @@
         "version": "AlphaMissense hg38 2023",
         "n_ranked": 10333,
         "unscored_pairs": 53014,
-        "confirmed": {
-          "gene": "BUB1B",
-          "rank": null,
-          "percentile": null,
-          "left_percentile": null,
-          "right_percentile": 0.4717,
-          "min_score": null,
-          "max_score": null,
-          "phase": null,
-          "left_allele_id": null,
-          "right_allele_id": null
-        },
+        "confirmed": null,
         "top": [
           {
             "gene": "SLC25A5",
@@ -142,18 +131,7 @@
         "version": "Brandes 2023 ESM1b",
         "n_ranked": 3673,
         "unscored_pairs": 59674,
-        "confirmed": {
-          "gene": "BUB1B",
-          "rank": null,
-          "percentile": null,
-          "left_percentile": null,
-          "right_percentile": 2.5208,
-          "min_score": null,
-          "max_score": null,
-          "phase": null,
-          "left_allele_id": null,
-          "right_allele_id": null
-        },
+        "confirmed": null,
         "top": [
           {
             "gene": "ELN",
@@ -273,18 +251,7 @@
         "version": "esm2_t33_650M_UR50D",
         "n_ranked": 15749,
         "unscored_pairs": 47598,
-        "confirmed": {
-          "gene": "BUB1B",
-          "rank": null,
-          "percentile": null,
-          "left_percentile": null,
-          "right_percentile": 4.8358,
-          "min_score": null,
-          "max_score": null,
-          "phase": null,
-          "left_allele_id": null,
-          "right_allele_id": null
-        },
+        "confirmed": null,
         "top": [
           {
             "gene": "SLC25A5",
@@ -399,6 +366,126 @@
         ]
       },
       {
+        "model": "esmc",
+        "catalogue_adjacent": false,
+        "version": "esmc_600m esm==3.1.1 hf:biohub/esmc-600m-2024-12@e4d83bc7e10f",
+        "n_ranked": 15749,
+        "unscored_pairs": 47598,
+        "confirmed": null,
+        "top": [
+          {
+            "gene": "MAP2K3",
+            "left_allele_id": "52689bbf7c2bf13d",
+            "right_allele_id": "0c7713f8d57c6269",
+            "phase": "unknown",
+            "rank": 1,
+            "percentile": 0.0063,
+            "min_score": 11.284524159505963,
+            "max_score": 11.654780626296997,
+            "is_confirmed": false
+          },
+          {
+            "gene": "PRSS2",
+            "left_allele_id": "c67ffd4daf9413bc",
+            "right_allele_id": "a7c5e35c07d36374",
+            "phase": "unknown",
+            "rank": 2,
+            "percentile": 0.0127,
+            "min_score": 10.382605791091919,
+            "max_score": 11.874652985854482,
+            "is_confirmed": false
+          },
+          {
+            "gene": "MAP2K3",
+            "left_allele_id": "52689bbf7c2bf13d",
+            "right_allele_id": "488ce048b48ee9af",
+            "phase": "unknown",
+            "rank": 3,
+            "percentile": 0.019,
+            "min_score": 9.2817612728104,
+            "max_score": 11.654780626296997,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "accc78df67c03734",
+            "right_allele_id": "728da66877278e4d",
+            "phase": "unknown",
+            "rank": 4,
+            "percentile": 0.0254,
+            "min_score": 9.166186640504748,
+            "max_score": 11.78164683590876,
+            "is_confirmed": false
+          },
+          {
+            "gene": "PRSS2",
+            "left_allele_id": "c1e35a8ae5b32258",
+            "right_allele_id": "a7c5e35c07d36374",
+            "phase": "unknown",
+            "rank": 5,
+            "percentile": 0.0317,
+            "min_score": 8.789526992710307,
+            "max_score": 11.874652985854482,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "2954994ad613836d",
+            "right_allele_id": "728da66877278e4d",
+            "phase": "unknown",
+            "rank": 6,
+            "percentile": 0.0381,
+            "min_score": 8.676329903770238,
+            "max_score": 11.78164683590876,
+            "is_confirmed": false
+          },
+          {
+            "gene": "SLC25A5",
+            "left_allele_id": "accc78df67c03734",
+            "right_allele_id": "2954994ad613836d",
+            "phase": "unknown",
+            "rank": 7,
+            "percentile": 0.0444,
+            "min_score": 8.676329903770238,
+            "max_score": 9.166186640504748,
+            "is_confirmed": false
+          },
+          {
+            "gene": "MAP2K3",
+            "left_allele_id": "52689bbf7c2bf13d",
+            "right_allele_id": "d7196738b87f6f84",
+            "phase": "unknown",
+            "rank": 8,
+            "percentile": 0.0508,
+            "min_score": 8.3134187720716,
+            "max_score": 11.654780626296997,
+            "is_confirmed": false
+          },
+          {
+            "gene": "MAP2K3",
+            "left_allele_id": "0c7713f8d57c6269",
+            "right_allele_id": "d7196738b87f6f84",
+            "phase": "unknown",
+            "rank": 9,
+            "percentile": 0.0571,
+            "min_score": 8.3134187720716,
+            "max_score": 11.284524159505963,
+            "is_confirmed": false
+          },
+          {
+            "gene": "MAP2K3",
+            "left_allele_id": "488ce048b48ee9af",
+            "right_allele_id": "d7196738b87f6f84",
+            "phase": "unknown",
+            "rank": 10,
+            "percentile": 0.0635,
+            "min_score": 8.3134187720716,
+            "max_score": 9.2817612728104,
+            "is_confirmed": false
+          }
+        ]
+      },
+      {
         "model": "gpnmsa",
         "catalogue_adjacent": false,
         "version": "GPN-MSA hg38 precomputed scores (songlab)",
@@ -408,8 +495,8 @@
           "gene": "BUB1B",
           "rank": 508,
           "percentile": 0.9259,
-          "left_percentile": 4.09,
-          "right_percentile": 1.3754,
+          "left_percentile": null,
+          "right_percentile": null,
           "min_score": 6.04,
           "max_score": 8.13,
           "phase": "unknown",
@@ -535,18 +622,7 @@
         "version": "REVEL 1.3 via VEP REST",
         "n_ranked": 10456,
         "unscored_pairs": 52891,
-        "confirmed": {
-          "gene": "BUB1B",
-          "rank": null,
-          "percentile": null,
-          "left_percentile": null,
-          "right_percentile": 2.5874,
-          "min_score": null,
-          "max_score": null,
-          "phase": null,
-          "left_allele_id": null,
-          "right_allele_id": null
-        },
+        "confirmed": null,
         "top": [
           {
             "gene": "SLC25A5",
@@ -670,8 +746,8 @@
           "gene": "BUB1B",
           "rank": 11980,
           "percentile": 23.6311,
-          "left_percentile": 9.7375,
-          "right_percentile": 24.5251,
+          "left_percentile": null,
+          "right_percentile": null,
           "min_score": 0.0,
           "max_score": 0.03,
           "phase": "unknown",

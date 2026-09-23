@@ -1281,143 +1281,401 @@
     },
     {
       "docs": "docs/iteration4/step-8",
-      "entries": [],
-      "figures": [],
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "143-a-gpu-lane-that-sends-two-windows-and-a-bill.md",
+          "inputs": [
+            "input | value",
+            "records | `build/it4/records.parquet` (step 1, entry 114; 39,286 rows)",
+            "reference | `build/reference/GRCh38.fa` \u2014 GCA_000001405.15 no-alt analysis set; manifest `GRCh38.provenance.json` (output sha256 `c18c666b\u2026`)",
+            "reader | `pysam` 0.24.1 `FastaFile`",
+            "window | 8,192 bases, allele at offset 4,096 (Evo 2's context; plan \u00a75)",
+            "code | `src/mva/zoo/record_dna.py`"
+          ],
+          "number": "143",
+          "path": "docs/iteration4/step-8/methodology/143-a-gpu-lane-that-sends-two-windows-and-a-bill.md",
+          "title": "A GPU lane that sends two windows and gets back a score and a bill",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-8/entry/143-a-gpu-lane-that-sends-two-windows-and-a-bill.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "144-ntv2-reads-two-windows-on-an-l4.md",
+          "inputs": [
+            "input | value",
+            "model | `InstaDeepAI/nucleotide-transformer-v2-500m-multi-species`, licence CC-BY-NC-SA-4.0",
+            "revision | Hugging Face commit `06615c1660c892fc199840c18123f8385b3542a8` (Hub API, 2026-09-23)",
+            "weights digest | `86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66` (`_common.sha256_tree` over `model.safetensors`, measured in the container)",
+            "image | Debian slim, Python 3.11; `torch==2.5.1`, `transformers==4.46.3`, `huggingface_hub==0.26.5`, `safetensors==0.4.5`, `numpy==2.1.3`, `fastapi[standard]==0.115.6`",
+            "GPU | L4, `max_containers = 4`, `scaledown_window = 60 s`",
+            "window | 6,144 bases (1,024 tokens), central crop of the 8,192-base windows (entry 143)",
+            "batch / wave | 32 items per call, 8 calls per wave; 8 sequences per forward pass",
+            "precision | fp16 autocast for the full run (weights, softmax, norms fp32); the first 256 records in fp32 \u2014 see *Observed output*",
+            "tokeniser check | every container start compares our 6-mer span tokeniser with the published tokeniser on a random probe with Ns; a mismatch aborts the container",
+            "records | `build/it4/records.parquet` (39,286), windows `build/it4/dna-windows.parquet`",
+            "clinical side | none: this lane reads DNA only. The 8 HPO terms enter at the ranking, not here",
+            "Why 6,144 bases: under NT-v2's 2,048-token limit with room for insertions, on a token boundary",
+            "at the allele, and half the attention cost of the full 8,192."
+          ],
+          "number": "144",
+          "path": "docs/iteration4/step-8/methodology/144-ntv2-reads-two-windows-on-an-l4.md",
+          "title": "NT-v2 reads every record's two DNA windows on an L4, for three dollars",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-8/entry/144-ntv2-reads-two-windows-on-an-l4.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "145-esmc-agrees-with-esm2-except-on-the-confirmed-allele.md",
+          "inputs": [
+            "input | value",
+            "weights | `biohub/esmc-600m-2024-12` (the `EvolutionaryScale/` name redirects), file `data/weights/esmc_600m_2024_12_v0.pth`",
+            "revision | Hugging Face commit `e4d83bc7e10fd55c92e598e545f4a76bf04a6e5c` (Hub API, 2026-09-23); repo **not gated**, no token, no Modal secret",
+            "weights digest | `446d3c14628290c8455dd024d2a9a42ace14bea5edd7191153a2166eaf1145ba` (`_common.sha256_tree` over the `.pth`, measured in the container; memoised on the volume by size + mtime)",
+            "licence | EvolutionaryScale Cambrian non-commercial licence; hackathon use is non-commercial",
+            "package | `esm==3.1.1` (its `ESMC_600M_202412` constructor: d_model 1152, 18 heads, 36 layers), `torch==2.4.1`, `huggingface-hub==0.36.0`, `fastapi[standard]==0.115.4`, Debian slim, Python 3.11",
+            "precision | float32 (the library's `from_pretrained` would cast to bfloat16 on GPU; ESM2 ran float32)",
+            "GPU | L4, `max_containers = 4`, `scaledown_window = 60 s`",
+            "batch / wave | 128 items per call, 16 calls per wave; 64 windows per forward pass, grouped by length (no padding)",
+            "records | `build/it4/records.parquet`, 15,592 missense records with a window pair",
+            "comparison lanes | `esm2` (entry 142) and `esm1b` (precomputed table), read from `warehouse.allele_scores`",
+            "confirmed allele | `[case] confirmed_gene` of `src/mva/zoo/zoo.example.toml`, rule `lof+missense`: the gene's one missense record",
+            "clinical side | none in the score: the lane reads protein sequence only. The 8 HPO terms enter at the ranking (entry 142's report section 5), not here"
+          ],
+          "number": "145",
+          "path": "docs/iteration4/step-8/methodology/145-esmc-agrees-with-esm2-except-on-the-confirmed-allele.md",
+          "title": "ESM-C 600M agrees with ESM2 across the case, and calls the confirmed missense allele neutral",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-8/entry/145-esmc-agrees-with-esm2-except-on-the-confirmed-allele.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "146-evo2-1b-scores-every-record-on-an-h100.md",
+          "inputs": [
+            "input | value",
+            "windows | `build/it4/dna-windows.parquet` (entry 143): 39,286 ref/alt pairs, 8,192 bases, allele at offset 4,096, 0 clipped",
+            "weights | Hugging Face `arcinstitute/evo2_1b_base`, snapshot `2279e1df422c\u2026`, file `evo2_1b_base.pt`",
+            "digest | `2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127` (`_common.sha256_tree`, measured in the container)",
+            "image | `nvcr.io/nvidia/pytorch:25.04-py3` (ships Transformer Engine + flash-attn; the Evo 2 Dockerfile's own base) + `evo2==0.6.0`, `vtx==1.1.0`, `fastapi[standard]==0.116.1`",
+            "GPU | H100 \u2014 the 1B checkpoint needs FP8 input projections (Transformer Engine) on a Hopper GPU (Evo 2 README)",
+            "window | 8,192 (the model's trained context, `configs/evo2-1b-8k.yml`; the BRCA1 notebook's window)",
+            "batch | 32 items per call, 8 sequences per forward pass, wave 16 calls, `max_containers = 4`",
+            "code | `src/mva/zoo/modal_apps/evo2.py`, card `src/mva/zoo/models.d/evo2.toml`",
+            "**Score.** The Evo 2 BRCA1 notebook recipe (`notebooks/brca1/brca1_zero_shot_vep.ipynb`, read",
+            "2026-09-23): mean per-token log-likelihood (log-probability of each real base given the ones",
+            "before it, averaged) of the alt window minus the ref window. `score_sign = -1`, so the cached",
+            "score reads \"higher = more damaging\". `aux` keeps `delta_sum` (the summed delta), `delta_mean`,",
+            "`ll_ref_mean`, token counts and `recropped`. Normalisation: for an SNV mean and sum differ by",
+            "the constant `len \u2212 1`; for an indel the mean is the length-normalised one \u2014 chosen because",
+            "the notebook uses it, and because on random bases the summed delta of a 6-base indel is \u2248 \u00b18.5",
+            "nats from length alone (smoke, below). An insertion whose alt window exceeds 8,192 bases is",
+            "re-cropped centrally so the alt fits (`fit`, tested): 1,597 records. Right padding to a",
+            "multiple of 128 tokens never touches a causal model's real-base log-probabilities."
+          ],
+          "number": "146",
+          "path": "docs/iteration4/step-8/methodology/146-evo2-1b-scores-every-record-on-an-h100.md",
+          "title": "Evo 2 1B scores every record on an H100, for $7.05",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-8/entry/146-evo2-1b-scores-every-record-on-an-h100.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "147-boltz2-folds-bubr1-and-a-conservative-swap-drops-as-much.md",
+          "inputs": [
+            "input | value",
+            "sequence | BubR1 reference protein, full length, from `build/it4/protein-seq/<ENSP>.json` (step 1's Ensembl cache); the ENSP accession and substitution come from the BUB1B `missense_variant` record's `hgvs_p` in `build/it4/records.parquet`. Reference residue checked against the record before folding.",
+            "region folded | **full length** (fits an H100 80 GB; no domain window needed)",
+            "model | `boltz==2.2.1` (PyPI, MIT), `boltz[cuda]` kernels",
+            "weights | Hugging Face `boltz-community/boltz-2@6fdef46d763fee7fbb83ca5501ccceff43b85607` (`boltz2_conf.ckpt`, `boltz2_aff.ckpt`, `mols.tar`)",
+            "weights digest | `bba514a9e792689a160a512f7b519530195f13cd4ed5cee3b24324f5baaceb76` \u2014 `_common.sha256_tree` over both `.ckpt`, measured in the container on first download",
+            "MSA | ColabFold MMseqs2 public server (`api.colabfold.com`), **reference sequence only**: 2,578 aligned sequences. Every variant reuses that alignment with its query row replaced (`_patched_msa`), so no variant sequence left Modal.",
+            "sampling | Boltz defaults \u2014 3 recycling steps, 200 diffusion steps \u2014 plus **3 diffusion samples** per input (the sample spread is the noise floor); seeds 0 and 1 (two runs)",
+            "GPU | Modal H100 80 GB, `max_containers=1`, `scaledown_window=60 s`",
+            "local window | site \u00b1 5 residues (11 residues), mean over samples",
+            "controls | `ctrl_conservative`: a BLOSUM62-positive swap at the **same** residue; `ctrl_distal`: the patient's amino-acid swap at the nearest residue of the same reference amino acid \u2265 100 residues away (scored at its own site); `wt_identity` (seed 1 only): the wild-type sequence again, through the variants' code path",
+            "No other BUB1B missense record exists in the callset (1 missense + 1 stop-gained), so the",
+            "controls are synthetic. Sites are kept in `build/it4/boltz2/*/summary.json` only."
+          ],
+          "number": "147",
+          "path": "docs/iteration4/step-8/methodology/147-boltz2-folds-bubr1-and-a-conservative-swap-drops-as-much.md",
+          "title": "Boltz-2 folds BubR1: the site loses ~3 pLDDT points, and a conservative swap loses as many",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-8/entry/147-boltz2-folds-bubr1-and-a-conservative-swap-drops-as-much.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "148-the-gpu-lanes-and-the-consensus.md",
+          "inputs": [
+            "input | value",
+            "score cache | `warehouse.allele_scores`, nine lanes, 204,153 scores; GPU lanes at venue `modal:L4` (ntv2, esmc), `modal:H100` (evo2)",
+            "pairs | `results.coding_alleles` het calls \u2192 63,347 pairs; 16 genes over the 60-call cap skipped (as entry 128)",
+            "run config | [`../zoo.step8.toml`](../zoo.step8.toml) = `src/mva/zoo/zoo.example.toml` + `ntv2`, `evo2`, `esmc`; reports to `step-8/`",
+            "ablation configs | the same file with `models` set to the six laptop lanes (AlphaMissense, ESM1b, SpliceAI, REVEL, GPN-MSA, ESM2) plus one GPU lane each; outputs in `build/it4/ablation/`",
+            "merge | RRF, k = 60 (Cormack 2009, DOI verified in entry 130); catalogue-free drops REVEL"
+          ],
+          "number": "148",
+          "path": "docs/iteration4/step-8/methodology/148-the-gpu-lanes-and-the-consensus.md",
+          "title": "Three GPU lanes see the pair, and the consensus ranks it lower",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-8/entry/148-the-gpu-lanes-and-the-consensus.md",
+          "violations": []
+        }
+      ],
+      "figures": [
+        {
+          "bytes": 425671,
+          "caption": {
+            "means": "A sub-angstrom local shift: the predicted shape barely moves. That is consistent with the confidence plots and is not evidence of misfolding.",
+            "name": "boltz2-ca-trace.svg",
+            "reads": "The backbone as one dot per residue, projected on the wild type's two principal axes, coloured from red (low pLDDT) to green (high), with the mutant superposed and the site plus or minus 5 ringed purple; the local backbone shift is 0.45 angstrom against 0.13 between wild-type samples.",
+            "source": "tools/render_step8_boltz2.py; entry 147"
+          },
+          "kind": "svg",
+          "name": "boltz2-ca-trace.svg",
+          "path": "figures/it4/boltz2-ca-trace.svg",
+          "slug": "boltz2-ca-trace.svg",
+          "title": "boltz2 ca trace",
+          "url": "/api/steps/iteration4/step-8/figure/boltz2-ca-trace.svg"
+        },
+        {
+          "bytes": 16940,
+          "caption": {
+            "means": "The patient's dip falls between the refutation line and the prediction, and a conservative swap at the same residue dips as much. The fold does not single this substitution out. H081 stays undecided, and the Track 2 drug direction is unresolved.",
+            "name": "boltz2-local-delta.svg",
+            "reads": "Mean pLDDT change within 5 residues of the site, mutant minus wild type, for the patient's substitution (red, -3.20 and -2.73 over two seeds), a conservative swap at the same residue and the same swap about 100 residues away (grey controls), and wild type again (blue); the grey band is the refutation zone (|delta| < 1), the yellow dashed line the filed prediction (-5).",
+            "source": "tools/render_step8_boltz2.py; entry 147"
+          },
+          "kind": "svg",
+          "name": "boltz2-local-delta.svg",
+          "path": "figures/it4/boltz2-local-delta.svg",
+          "slug": "boltz2-local-delta.svg",
+          "title": "boltz2 local delta",
+          "url": "/api/steps/iteration4/step-8/figure/boltz2-local-delta.svg"
+        },
+        {
+          "bytes": 46975,
+          "caption": {
+            "means": "The substitution leaves the fold's confidence unchanged outside a small local dip, so the prediction shows no global misfolding.",
+            "name": "boltz2-plddt-profile.svg",
+            "reads": "Per-residue pLDDT (Boltz-2's confidence, 0-100) along the whole BubR1 chain for wild type (blue) and mutant (red), with the substituted residue plus or minus 5 shaded purple; the right panel zooms to residues around the site. The two curves overlap almost everywhere; long stretches sit below 50 (disordered).",
+            "source": "tools/render_step8_boltz2.py over build/it4/boltz2/; entry 147"
+          },
+          "kind": "svg",
+          "name": "boltz2-plddt-profile.svg",
+          "path": "figures/it4/boltz2-plddt-profile.svg",
+          "slug": "boltz2-plddt-profile.svg",
+          "title": "boltz2 plddt profile",
+          "url": "/api/steps/iteration4/step-8/figure/boltz2-plddt-profile.svg"
+        },
+        {
+          "bytes": 41850,
+          "caption": {
+            "means": "The newer protein language model agrees with the older ones across the callset, which supports H080, but not on the one allele that matters. Agreement across the callset says nothing about any single call.",
+            "name": "esmc-vs-esm2.svg",
+            "reads": "Density of ESM-C's score against ESM2's (15,592 shared missense alleles, rho 0.8545) and against ESM1b's (4,562, rho 0.7434); the green marker is the confirmed pair's missense allele, high on ESM2 and ESM1b and mid-range on ESM-C.",
+            "source": "tools/render_step8_agreement.py over warehouse.allele_scores; entry 145"
+          },
+          "kind": "svg",
+          "name": "esmc-vs-esm2.svg",
+          "path": "figures/it4/esmc-vs-esm2.svg",
+          "slug": "esmc-vs-esm2.svg",
+          "title": "esmc vs esm2",
+          "url": "/api/steps/iteration4/step-8/figure/esmc-vs-esm2.svg"
+        },
+        {
+          "bytes": 25341,
+          "caption": {
+            "means": "Adding a lane to equal-weight RRF helps a pair only if the lane both sees it and ranks it high. Here the missense-only lane only lifts rival pairs, and the DNA lanes vote for the pair too weakly to offset the votes they give everyone else. The consensus drops as lanes are added.",
+            "name": "step8-consensus-ablation.svg",
+            "reads": "Left: the confirmed pair's catalogue-free RRF percentile for the six laptop lanes (blue, 4.60), six plus Evo 2 (5.02), plus NT-v2 (5.20), plus ESM-C (5.81) and all nine (6.82), each red because it is worse than the baseline; labels give rank / pairs. Right: the pair's percentile in each catalogue-free lane's own ranking: GPN-MSA 0.9 (green, inside the dashed top decile), Evo 2 16.4, SpliceAI 23.6, NT-v2 23.9; AlphaMissense, ESM1b, ESM2 and ESM-C are hatched grey, no opinion, because they cannot score the stop-gained half.",
+            "source": "tools/render_step8_ablation.py over build/it4/ablation/*.merged.json and build/it4/merged.json; entry 148"
+          },
+          "kind": "svg",
+          "name": "step8-consensus-ablation.svg",
+          "path": "figures/it4/step8-consensus-ablation.svg",
+          "slug": "step8-consensus-ablation.svg",
+          "title": "step8 consensus ablation",
+          "url": "/api/steps/iteration4/step-8/figure/step8-consensus-ablation.svg"
+        }
+      ],
       "goal": "Do the roster's GPU models (NT-v2, Evo 2, ESM-C, Boltz-2), run on Modal behind one HTTP contract and a $50 cap, score the confirmed pair's alleles the laptop lanes abstain on \u2014 and does adding them move the consensus rank?",
       "hypotheses": [
         {
           "author": "claude-step8",
-          "confidence": null,
+          "confidence": 0.7685247834990175,
           "gene": "",
           "hypothesis_id": "H076",
           "iteration": "iteration4",
           "path": "dna-windows",
           "prediction": "at least 99% of the 39,286 records carry a complete, unclipped window pair and 0 disagree with the reference base (record_dna run of 2026-09-23, before this filing)",
-          "reasoning": "",
-          "recorded_at": "2026-09-23T23:26:47.217468",
+          "reasoning": "39,286/39,286 complete, 0 mismatches; retrospective, measured before filing, so the suggested 0.77 stands with no predictive weight claimed (entry 143)",
+          "recorded_at": "2026-09-24T00:16:22.033438",
           "refuted_by": "under 95% complete, or any REF mismatch above 0.1%",
-          "revision": 1,
+          "revision": 2,
           "statement": "retrospective: P4-1 (DNA half): every record gets an 8,192-base DNA window pair from the pinned GRCh38 reference, with no REF mismatch",
-          "status": "proposed",
+          "status": "supported",
           "step": "step-8"
         },
         {
           "author": "claude-step8",
-          "confidence": null,
+          "confidence": 0.8320183851339245,
           "gene": "",
           "hypothesis_id": "H077",
           "iteration": "iteration4",
           "path": "modal-cost",
           "prediction": "the ledger and modal billing report for step 8 both total 30 USD or less, and no lane is stopped by its budget share before scoring every allele it covers",
-          "reasoning": "",
-          "recorded_at": "2026-09-23T23:26:48.606323",
+          "reasoning": "ledger 11.33 USD and billing 14.57 USD, both under 30; no lane stopped by the cap (entry 148)",
+          "recorded_at": "2026-09-24T01:05:15.510662",
           "refuted_by": "the billing report exceeds 50 USD, or two or more lanes are stopped by the cap before finishing",
-          "revision": 1,
+          "revision": 2,
           "statement": "P4-4 (Modal half): the whole GPU tier (NT-v2, Evo 2, ESM-C, Boltz-2) runs over the record set for at most 30 USD on Modal",
-          "status": "proposed",
+          "status": "supported",
           "step": "step-8"
         },
         {
           "author": "claude-step8",
-          "confidence": null,
+          "confidence": 0.4,
           "gene": "BUB1B",
           "hypothesis_id": "H078",
           "iteration": "iteration4",
           "path": "dna-lm-ntv2",
           "prediction": "the ntv2 lane scores both confirmed alleles and its catalogue-free rank of the confirmed pair is at or under the 10th percentile",
-          "reasoning": "",
-          "recorded_at": "2026-09-23T23:26:50.022087",
+          "reasoning": "undecided by its own terms: both alleles scored (the first half holds) but the pair sits at the 23.93rd percentile, between the top-decile prediction and the median that refutes; confidence lowered from the suggested 0.69 because the half that matters is the unmet one (entries 144, 148)",
+          "recorded_at": "2026-09-24T01:05:17.530697",
           "refuted_by": "the lane abstains on either confirmed allele, or the pair sits above the median (50th percentile) of the lane's ranking",
-          "revision": 1,
+          "revision": 2,
           "statement": "P4-13: NT-v2, a DNA language model that reads the nonsense allele as well as the missense one, ranks the confirmed pair in the top decile of its own pair ranking",
-          "status": "proposed",
+          "status": "testing",
           "step": "step-8"
         },
         {
           "author": "claude-step8",
-          "confidence": null,
+          "confidence": 0.4,
           "gene": "BUB1B",
           "hypothesis_id": "H079",
           "iteration": "iteration4",
           "path": "dna-lm-evo2",
           "prediction": "the evo2 lane scores both confirmed alleles and the confirmed pair's percentile is at or under 10",
-          "reasoning": "",
-          "recorded_at": "2026-09-23T23:26:51.232859",
+          "reasoning": "undecided by its own terms: both alleles scored, stop_gained in the top 5.6%, but the pair sits at the 16.36th percentile, between the top-decile prediction and the refuting median; lowered from 0.69 for the same reason as H078 (entries 146, 148)",
+          "recorded_at": "2026-09-24T01:05:19.596461",
           "refuted_by": "the lane abstains on either confirmed allele, or the pair sits above the median of the lane's ranking",
-          "revision": 1,
+          "revision": 2,
           "statement": "P4-14: Evo 2 1B ranks the confirmed pair in the top decile of its own pair ranking",
-          "status": "proposed",
+          "status": "testing",
           "step": "step-8"
         },
         {
           "author": "claude-step8",
-          "confidence": null,
+          "confidence": 0.85,
           "gene": "",
           "hypothesis_id": "H080",
           "iteration": "iteration4",
           "path": "plm-esmc",
           "prediction": "Spearman rho(esmc, esm2) >= 0.7 over their shared missense alleles, and rho(esmc, esm1b) >= 0.6",
-          "reasoning": "",
-          "recorded_at": "2026-09-23T23:26:52.419335",
+          "reasoning": "both pre-registered rho thresholds met (0.8545 vs ESM2, 0.7434 vs ESM1b, entry 145); confidence lowered from the suggested 0.94 because on the one allele that matters ESM-C sits at the median while ESM2 and ESM1b put it in their top 5%",
+          "recorded_at": "2026-09-24T00:16:23.477471",
           "refuted_by": "rho(esmc, esm2) below 0.5",
-          "revision": 1,
+          "revision": 2,
           "statement": "P4-15: ESM-C 600M agrees with the other protein language models: its scores on shared missense alleles correlate with ESM2's at Spearman rho of 0.7 or more",
-          "status": "proposed",
+          "status": "supported",
           "step": "step-8"
         },
         {
           "author": "claude-step8",
-          "confidence": null,
+          "confidence": 0.31,
           "gene": "BUB1B",
           "hypothesis_id": "H081",
           "iteration": "iteration4",
           "path": "structure-boltz2",
           "prediction": "mean pLDDT within 5 residues of the substituted residue drops by 5 points or more in the mutant fold versus wild type",
-          "reasoning": "",
-          "recorded_at": "2026-09-23T23:26:53.722578",
+          "reasoning": "undecided by its own terms: a local pLDDT drop of 3.2 and 2.7 points (two seeds) is under the 5-point prediction and over the 1-point refutation line; a conservative control swap at the same residue drops as much, so the fold does not single out the substitution (entry 147)",
+          "recorded_at": "2026-09-24T00:16:24.837560",
           "refuted_by": "the local pLDDT change is under 1 point in absolute value (the fold cannot see the substitution)",
-          "revision": 1,
+          "revision": 2,
           "statement": "P4-16: Boltz-2 folds wild-type and mutant BubR1 with a visible local confidence change at the confirmed missense residue",
-          "status": "proposed",
+          "status": "testing",
           "step": "step-8"
         },
         {
           "author": "claude-step8",
-          "confidence": null,
+          "confidence": 0.2,
           "gene": "BUB1B",
           "hypothesis_id": "H082",
           "iteration": "iteration4",
           "path": "consensus-gpu",
           "prediction": "the catalogue-free RRF rank of the confirmed pair, re-run with every scoring lane including the Modal ones, is 1,000 or better",
-          "reasoning": "",
-          "recorded_at": "2026-09-23T23:26:54.967787",
+          "reasoning": "undecided by its own terms (4,318: neither <= 1,000 nor > 10,000), but the leave-one-in shows every GPU lane alone worsens the six-lane baseline of 2,734, so the mechanism the claim assumed is contradicted; the filed baseline of 20,639 was stale (entry 148)",
+          "recorded_at": "2026-09-24T01:05:21.618784",
           "refuted_by": "the rank is still worse than 10,000",
-          "revision": 1,
+          "revision": 2,
           "statement": "P4-17: adding the GPU lanes moves the confirmed pair's catalogue-free RRF consensus rank from 20,639 into the top 1,000",
-          "status": "proposed",
+          "status": "testing",
           "step": "step-8"
         }
       ],
       "kind": "research",
       "narrative": {
-        "figures": [],
+        "figures": [
+          {
+            "means": "Adding a lane to equal-weight RRF helps a pair only if the lane both sees it and ranks it high. Here the missense-only lane only lifts rival pairs, and the DNA lanes vote for the pair too weakly to offset the votes they give everyone else. The consensus drops as lanes are added.",
+            "name": "step8-consensus-ablation.svg",
+            "reads": "Left: the confirmed pair's catalogue-free RRF percentile for the six laptop lanes (blue, 4.60), six plus Evo 2 (5.02), plus NT-v2 (5.20), plus ESM-C (5.81) and all nine (6.82), each red because it is worse than the baseline; labels give rank / pairs. Right: the pair's percentile in each catalogue-free lane's own ranking: GPN-MSA 0.9 (green, inside the dashed top decile), Evo 2 16.4, SpliceAI 23.6, NT-v2 23.9; AlphaMissense, ESM1b, ESM2 and ESM-C are hatched grey, no opinion, because they cannot score the stop-gained half.",
+            "source": "tools/render_step8_ablation.py over build/it4/ablation/*.merged.json and build/it4/merged.json; entry 148"
+          },
+          {
+            "means": "The newer protein language model agrees with the older ones across the callset, which supports H080, but not on the one allele that matters. Agreement across the callset says nothing about any single call.",
+            "name": "esmc-vs-esm2.svg",
+            "reads": "Density of ESM-C's score against ESM2's (15,592 shared missense alleles, rho 0.8545) and against ESM1b's (4,562, rho 0.7434); the green marker is the confirmed pair's missense allele, high on ESM2 and ESM1b and mid-range on ESM-C.",
+            "source": "tools/render_step8_agreement.py over warehouse.allele_scores; entry 145"
+          },
+          {
+            "means": "The substitution leaves the fold's confidence unchanged outside a small local dip, so the prediction shows no global misfolding.",
+            "name": "boltz2-plddt-profile.svg",
+            "reads": "Per-residue pLDDT (Boltz-2's confidence, 0-100) along the whole BubR1 chain for wild type (blue) and mutant (red), with the substituted residue plus or minus 5 shaded purple; the right panel zooms to residues around the site. The two curves overlap almost everywhere; long stretches sit below 50 (disordered).",
+            "source": "tools/render_step8_boltz2.py over build/it4/boltz2/; entry 147"
+          },
+          {
+            "means": "The patient's dip falls between the refutation line and the prediction, and a conservative swap at the same residue dips as much. The fold does not single this substitution out. H081 stays undecided, and the Track 2 drug direction is unresolved.",
+            "name": "boltz2-local-delta.svg",
+            "reads": "Mean pLDDT change within 5 residues of the site, mutant minus wild type, for the patient's substitution (red, -3.20 and -2.73 over two seeds), a conservative swap at the same residue and the same swap about 100 residues away (grey controls), and wild type again (blue); the grey band is the refutation zone (|delta| < 1), the yellow dashed line the filed prediction (-5).",
+            "source": "tools/render_step8_boltz2.py; entry 147"
+          },
+          {
+            "means": "A sub-angstrom local shift: the predicted shape barely moves. That is consistent with the confidence plots and is not evidence of misfolding.",
+            "name": "boltz2-ca-trace.svg",
+            "reads": "The backbone as one dot per residue, projected on the wild type's two principal axes, coloured from red (low pLDDT) to green (high), with the mutant superposed and the site plus or minus 5 ringed purple; the local backbone shift is 0.45 angstrom against 0.13 between wild-type samples.",
+            "source": "tools/render_step8_boltz2.py; entry 147"
+          }
+        ],
         "hands_to": {
           "steps": ["step-6"],
-          "what": "New lanes in the allele_scores cache, so the step-4 workflow and the step-6 merge can be re-run with every lane."
+          "what": "Three new scoring lanes in the cache and a nine-lane run manifest (it4-81ec74fb9f9a). The finding goes to the merge: equal-weight RRF rewards how many lanes can see a pair, so a fusion that accounts for lane coverage must be filed as a new claim before it is run."
         },
         "inherits": {
           "steps": ["step-3", "step-6"],
-          "what": "Step 3's adapter protocol and score cache (a new lane is a new module, never an edit), and step 6's finding that the consensus fails by abstention, which is what this step tests."
+          "what": "Step 3's adapter protocol and score cache: each GPU lane is one new module plus one card fragment, and its scores land in the same allele_scores table with venue modal:<gpu>. Step 6 supplies the fusion (equal-weight RRF, k = 60, pre-registered in entry 130) and the finding that the consensus fails by abstention, which this step measured one lane at a time."
         },
         "iteration": "iteration4",
         "sources": [
           "docs/iteration4/step-8/README.md",
-          "docs/iteration4/step-8/hypotheses/README.md"
+          "docs/iteration4/step-8/hypotheses/README.md",
+          "docs/iteration4/step-8/modal-runs.md",
+          "docs/iteration4/step-8/methodology/143-a-gpu-lane-that-sends-two-windows-and-a-bill.md",
+          "docs/iteration4/step-8/methodology/144-ntv2-reads-two-windows-on-an-l4.md",
+          "docs/iteration4/step-8/methodology/145-esmc-agrees-with-esm2-except-on-the-confirmed-allele.md",
+          "docs/iteration4/step-8/methodology/146-evo2-1b-scores-every-record-on-an-h100.md",
+          "docs/iteration4/step-8/methodology/147-boltz2-folds-bubr1-and-a-conservative-swap-drops-as-much.md",
+          "docs/iteration4/step-8/methodology/148-the-gpu-lanes-and-the-consensus.md"
         ],
         "step": "step-8",
-        "summary": "In progress. This step runs the roster's GPU models (NT-v2, Evo 2, ESM-C, Boltz-2) on Modal, a serverless GPU cloud, behind the same adapter contract every laptop lane uses. The contract is built: DNA windows of 8,192 bases from the pinned reference (kept under build/), one Modal app per model, and a spend ledger that prices every call and stops a lane at its share of the $50 cap.",
-        "verdict": "No verdict yet: H076 to H082 are filed and untested apart from H076, whose test ran just before it was filed and is marked retrospective.",
-        "why": "Entry 130 showed the consensus rank of the confirmed pair (20,639 of 52,012) is set by abstention: three of four laptop lanes have no score for its stop_gained half. A DNA language model reads any allele, so it is the lane that can end the abstention, and it needs a GPU."
+        "summary": "This step ran the roster's GPU models on Modal, a serverless GPU cloud billed per second, behind the same adapter contract every laptop lane uses. It built DNA windows of 8,192 bases for all 39,286 records (0 reference mismatches), one Modal app per model with a proxy-auth HTTP endpoint and a gateway, and a spend ledger that checks the budget before every batch. NT-v2 and Evo 2 (DNA language models) scored all 39,286 records and ESM-C (a protein language model) all 15,592 missense records, and Boltz-2 folded wild-type and mutant BubR1. Modal billed $14.57 of the $50 cap, and every app is stopped. With all nine lanes the catalogue-free consensus puts the confirmed pair at rank 4,318 of 63,269. That is worse than the six laptop lanes' 2,734.",
+        "verdict": "H077 (cost) is supported: billed $14.57, under $30, and no lane was stopped. H076 (DNA windows) is supported, but it is retrospective. H080 (ESM-C agrees with ESM2) is supported at rho 0.85, yet ESM-C calls the confirmed missense allele neutral. H078 and H079 are undecided by their own terms: both alleles got a score, but the pair sits at the 24th and 16th percentile, between the top-decile prediction and the refuting median. H081 (Boltz-2) is undecided: the local pLDDT dip of about 3 points is matched by a conservative control swap. H082 (consensus) is undecided at 4,318, and the leave-one-in shows every GPU lane alone ranks the pair lower. That contradicts the mechanism the claim assumed.",
+        "why": "Entry 130 showed the consensus fails by abstention: most laptop lanes have no score for the confirmed pair's stop-gained half. DNA language models read any allele, so they were the lanes that could end the abstention, and they need a GPU. Running them behind the same contract also tests whether the zoo's design holds for a remote, paid, per-second tier \u2014 the reusable half of the deliverable."
       },
       "slug": "step-8",
       "status": "open",

@@ -1,0 +1,111 @@
+# Step 8's run configuration — src/mva/zoo/zoo.example.toml plus the three Modal lanes
+# (ntv2, evo2, esmc; Boltz-2 folds one protein and is not a scorer). Reports go under
+# step-8/ so the iteration's committed report.md is not rewritten by this run.
+# Written 2026-09-24 for H082 (P4-17). Run: uv run --group zoo-ml mva-zoo run --config <this>
+# The zoo's run configuration — copy it, edit the copy, keep the copy beside the run.
+#
+# `mva-zoo run --config src/mva/zoo/zoo.example.toml` runs the eight stages of
+# `mva.zoo.workflow` in order. The file's sha256 is the run id: the same configuration
+# re-run is the same run, not a new one, which is what makes every stage safe to repeat.
+
+[case]
+# Which illness this run is about. Everything case-specific in the zoo is in this block:
+# copy the file, edit these six keys, and the same code runs on another child.
+# `docs/notes/zoo-case-config.md` records what is still fixed outside it.
+
+# A human label. Printed in every report header and in the run manifest. Never a patient id.
+label = "Mosaic Variegated Aneuploidy — challenge proband 1"
+
+# The docs folder this run writes into, and the name of the submission iteration it belongs
+# to. `[paths]` below default to `docs/<iteration>/…`; `mva-zoo run --iteration <name>`
+# overrides it and re-derives every default path.
+iteration = "iteration4"
+
+# The prefix of the result tables and of the run id (`it4-<config digest>`), so a second
+# case writes beside this one rather than over it.
+table_prefix = "it4"
+
+# The gene whose biallelic pair is the confirmed answer, **by symbol** — a coordinate never
+# appears in a tracked file. Leave it empty ("") for an unsolved case: nothing is flagged,
+# and every report says "no confirmed pair declared" instead of inventing one.
+confirmed_gene = "BUB1B"
+
+# Which pair of that gene carries the flag when the gene has more than one candidate pair.
+# `lof+missense` prefers one truncating allele plus one missense allele (the recessive
+# loss-of-function shape); `all` flags every pair of the gene and claims nothing about shape.
+confirmed_pair_rule = "lof+missense"
+
+# The clinical half of the evidence: which phenotype-only gene ranking section 5 of every
+# report quotes, and the warehouse table it is read from.
+# `with-parental` is the child's HPO terms plus what the parents' testing contributed;
+# `proband-only` is the child's alone.
+phenotype_term_set = "with-parental"
+hpo_table = "hpo_gene_scores"
+
+[run]
+# `catalogue-free` nulls every field a ClinVar-trained model could have learned from
+# (`types.CATALOGUE_FIELDS`); `aware` keeps them. The plan reports both (D4).
+mode = "catalogue-free"
+
+# The MVP lanes. A name here must exist in the registry (`models.toml`) and be enabled;
+# a name the registry does not know is reported by the `registry_check` stage, not ignored.
+# Wave 4 (opt-A) added the last two: `gpnmsa`, the first lane that can score a nonsense
+# allele (entry 140), and `esm2`, the first that is not a lookup at all (entry 142).
+models = ["alphamissense", "esm1b", "spliceai", "revel", "gpnmsa", "esm2", "ntv2", "evo2", "esmc"]
+
+# Everything with a patient coordinate or a raw score stays under this directory.
+# Omit it and it defaults to `build/<table_prefix>`.
+out_dir = "build/it4"
+
+# The warehouse schema the run writes its *results* into.
+schema = "results"
+
+# Where the shared, append-only tables live: the score cache (`allele_scores`) and the
+# lineage edge list (`data_lineage`). A different schema from `schema` above.
+warehouse_schema = "warehouse"
+
+[merge]
+# `fusion` = the deterministic layer only, narrative written by hand (the MVP).
+# `fusion+synthesis` and `judge` add an LLM and are plan §5 step 6's optional substeps.
+method = "fusion"
+
+# Reciprocal rank fusion's damping constant, as the original paper used it.
+rrf_k = 60
+
+[llm]
+# Who writes section 6 (*Interpretation*) of each per-model report — the one section that is
+# written rather than computed. `mva.zoo.narrate` reads this block; nothing else does.
+#
+# `none`        no LLM. Section 6 stays hand-written, nothing leaves the laptop, the run is
+#               fully reproducible. This is the MVP and the default.
+# `claude-code` the Claude Code CLI already on PATH, headless (`claude -p --output-format
+#               json`, prompt on stdin). No key, no new dependency.
+# `nebius`      LiteLLM -> Nebius AI Studio, open weights. Needs NEBIUS_API_KEY and the
+#               `zoo-ml` dependency group.
+#
+# In every mode the LLM sees **only** the report's own rows for sections 2-5, each with a
+# stable id, and is told to cite one on every sentence. It is never asked to rank anything.
+mode = "none"
+
+# Which model answers. Empty means the provider's own default — for `claude-code` that is
+# whatever the CLI would pick, and the id that actually answered is read back out of the
+# reply and stored, so "empty" is still auditable after the fact.
+# For `nebius`, plan open item O1: the largest open-weights instruction model listed on
+# Nebius AI Studio at run time.
+model = ""
+
+# Sampling temperature. 0 = as deterministic as the provider allows, which is what a report
+# section should be. Honoured by `nebius`; the Claude Code CLI has **no temperature flag**
+# (checked against 2.1.278), so under `claude-code` this value is recorded, not applied.
+temperature = 0
+
+# The word budget stated in the prompt and enforced by `mva.zoo.narrate_check`
+# (plan §5 step 5: section 6 is at most 200 words).
+max_words = 200
+
+[paths]
+# Omit this whole block and every path defaults to `docs/<iteration>/…`. It is spelled out
+# here so the shipped config is explicit about where iteration 4's answers live.
+reports_dir = "docs/iteration4/step-8/reports"
+docs_runs_dir = "docs/iteration4/runs"
+merged_report = "docs/iteration4/step-8/merged-report.md"

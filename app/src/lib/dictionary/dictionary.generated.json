@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 25,
-    "entries": 633,
+    "chapters": 26,
+    "entries": 643,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 209
+    "contexts": 220
   },
   "chapters": [
     {
@@ -3244,9 +3244,16 @@
           "slug": "modal",
           "term": "Modal",
           "aliases": [],
-          "html": "<p>a cloud service to rent CPUs/GPUs for the heavy steps.</p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "html": "<p>a serverless cloud for renting CPUs and GPUs by the second: you write a Python function, decorate it with the hardware it needs, and Modal starts a container for each call and stops it when idle, so you pay only while code runs. Defined properly, with the words it brings, in §26.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>@app.cls(gpu=\"L4\")</code> over NT-v2's scorer; an L4 costs $0.000222 per second (modal.com/pricing, read 2026-09-23).</p>",
+          "context": "<p>the tier-3 venue of the model zoo, iteration 4 step 8</p>",
+          "source": "src/mva/zoo/modal_apps/, docs/iteration4/step-8/methodology/143-a-gpu-lane-that-sends-two-windows-and-a-bill.md",
+          "related": [
+            "inference-tier",
+            "serverless-gpu",
+            "spend-ledger"
+          ],
+          "firstSeen": "2026-09-01"
         },
         {
           "kind": "entry",
@@ -8209,8 +8216,8 @@
           "aliases": [],
           "html": "<p>a fixed-length stretch of sequence centred on the change, given to a model\nthat reads sequence rather than a table: an amino-acid string for a protein language model, a DNA\nstring for a DNA language model. Written in both the reference and the altered form, so the model\ncan score the difference.</p>",
           "exampleHtml": "<p><em>Example:</em> <code>protein_window_ref</code> / <code>protein_window_alt</code> (± n amino acids) and <code>dna_window_ref</code> / <code>dna_window_alt</code> (8,192 bp).</p>",
-          "context": "<p>columns declared on the allele record from the start. The <strong>protein</strong> pair is filled — 15,592 of 15,620 missense alleles, entry 141 — and the DNA pair is still null (opt-B). They are patient sequence, so they may only ever live in <code>build/it4/records.parquet</code> first seen 2026-09-18, protein half filled 2026-09-20</p>",
-          "source": "src/mva/zoo/types.py, src/mva/zoo/record_window.py",
+          "context": "<p>columns declared on the allele record from the start. The <strong>protein</strong> pair is filled — 15,592 of 15,620 missense alleles, entry 141 — and the DNA pair (8,192 bases, all 39,286 records, 0 REF mismatches, entry 143) lives in <code>build/it4/dna-windows.parquet</code>. They are patient sequence, so they may only ever live under <code>build/</code> (and travel to a Modal container inside one scoring call) first seen 2026-09-18, protein half filled 2026-09-20</p>",
+          "source": "src/mva/zoo/types.py, src/mva/zoo/record_window.py, src/mva/zoo/record_dna.py",
           "related": [
             "allele-record",
             "protein-language-model-plm",
@@ -8510,6 +8517,170 @@
             "decoy-mechanism-card"
           ],
           "firstSeen": "2026-09-23"
+        }
+      ]
+    },
+    {
+      "number": 26,
+      "id": "26-renting-a-gpu--words-for-iteration-4s-step-8",
+      "title": "Renting a GPU — words for iteration 4's step 8",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>Step 8 runs the roster's GPU models on Modal (§8) and has to answer two questions for each: did\nit see the alleles the laptop lanes could not, and what did it cost?</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "serverless-gpu",
+          "term": "Serverless GPU",
+          "aliases": [],
+          "html": "<p>a GPU you rent per second, through a function call, with no machine to\nkeep running. The provider starts a <strong>container</strong> (a packaged, isolated copy of your program and\nits libraries) when a call arrives and stops it after a short idle window. In software terms it\nis a function-as-a-service platform with a GPU attached.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>mva-zoo-evo2</code> ran on H100s for 6,426 GPU-seconds across 1,228 calls and had no machine left running afterwards.</p>",
+          "context": "<p>the hosting model of tier 3</p>",
+          "source": "src/mva/zoo/modal_apps/README.md, docs/iteration4/step-8/methodology/143-a-gpu-lane-that-sends-two-windows-and-a-bill.md",
+          "related": [
+            "modal",
+            "inference-tier",
+            "cold-start",
+            "spend-ledger"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "cold-start",
+          "term": "Cold start",
+          "aliases": [],
+          "html": "<p>the seconds a serverless container spends starting before it can do any work:\npulling the image, loading the weights into GPU memory. Billed like any other second, and\ninvisible to code that only times its own work.</p>",
+          "exampleHtml": "<p><em>Example:</em> the Boltz-2 lane measured about 80 s of cold start per call; the ESM-C lane's first start took about 200 s because it also hashed its weights once.</p>",
+          "context": "<p>why step 8's ledger (GPU seconds inside each call) reads about 1.3× lower than Modal's bill</p>",
+          "source": "docs/iteration4/step-8/methodology/147-boltz2-folds-bubr1-and-a-conservative-swap-drops-as-much.md",
+          "related": [
+            "serverless-gpu",
+            "spend-ledger"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "spend-ledger",
+          "term": "Spend ledger",
+          "aliases": [],
+          "html": "<p>an append-only file with one line per remote call: the GPU type, the seconds,\nand the dollars those seconds cost at the published rate. Checked <em>before</em> each batch of calls\n(the <strong>guard</strong>), so a lane stops at its budget instead of overrunning it; reconciled afterwards\nagainst the provider's own bill.</p>",
+          "exampleHtml": "<p><em>Example:</em> step 8's ledger totals $11.33 over four lanes; <code>modal billing report</code> for the same work says $14.57, and the guard padded every estimate by 1.3× for exactly that gap.</p>",
+          "context": "<p><code>build/it4/modal/ledger.jsonl</code>, written by <code>mva.zoo.modal_budget.Ledger</code>; the committed summary is docs/iteration4/step-8/modal-runs.md</p>",
+          "related": [
+            "serverless-gpu",
+            "cold-start",
+            "append-only-ledger"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "weights-volume",
+          "term": "Weights volume",
+          "aliases": [],
+          "html": "<p>a cloud disk that holds a model's downloaded parameters (its <strong>weights</strong>)\nso every container reads them instead of downloading gigabytes again. Holds weights only, never\npatient input, and is on the deletion checklist.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>mva-zoo-ntv2-weights</code> holds the NT-v2 snapshot at Hugging Face revision <code>06615c16…</code>.</p>",
+          "context": "<p>one per lane</p>",
+          "source": "src/mva/zoo/modal_apps/_common.py, docs/notes/data-deletion-checklist.md",
+          "related": [
+            "serverless-gpu",
+            "container-digest"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "proxy-auth",
+          "term": "Proxy auth",
+          "aliases": [],
+          "html": "<p>a gate in front of a web endpoint that refuses any request not carrying the\nworkspace's token in two headers (<code>Modal-Key</code>, <code>Modal-Secret</code>). Needed because each call to a GPU\nendpoint spends money, so an open URL is an open wallet.</p>",
+          "exampleHtml": "<p><em>Example:</em> the ESM-C health endpoint answers 401 with no headers and 200 with the token.</p>",
+          "context": "<p>every lane's <code>score</code> endpoint and the <code>mva-zoo-api</code> gateway</p>",
+          "source": "src/mva/zoo/modal_apps/api.py",
+          "related": [
+            "serverless-gpu",
+            "api-gateway"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "api-gateway",
+          "term": "API gateway",
+          "aliases": [],
+          "html": "<p>one URL that forwards each request to the right backend, so a client learns\none address and one request shape instead of one per model.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>POST /score/evo2</code> with <code>{\"items\": [...]}</code> on <code>mva-zoo-api</code> returned the same scores as calling the Evo 2 lane directly.</p>",
+          "context": "<p><code>mva-zoo-api</code>, CPU-only, scales to zero</p>",
+          "source": "src/mva/zoo/modal_apps/api.py",
+          "related": [
+            "proxy-auth",
+            "adapter"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "sequence-log-likelihood-ratio",
+          "term": "Sequence log-likelihood ratio",
+          "aliases": [],
+          "html": "<p>how an <em>autoregressive</em> DNA model (one that reads left to\nright and predicts the next base, like a text model predicting the next word) scores a variant:\nhow probable is the altered window, compared with the reference window? More negative = the\naltered sequence looks less like anything evolution kept = more likely damaging.</p>",
+          "exampleHtml": "<p><em>Example:</em> Evo 2 gives the confirmed pair's stop-gained allele a mean per-base delta of −9.6 × 10⁻⁴ (top 5.6 % of all 39,286 alleles) and its missense allele −1.9 × 10⁻⁴ (top 32.1 %).</p>",
+          "context": "<p>the Evo 2 lane, averaged per base as the authors' BRCA1 notebook does</p>",
+          "source": "docs/iteration4/step-8/methodology/146-evo2-1b-scores-every-record-on-an-h100.md",
+          "related": [
+            "dna-language-model",
+            "masked-marginal",
+            "zero-shot"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "embedding-distance",
+          "term": "Embedding distance",
+          "aliases": [],
+          "html": "<p>a second way to score with a model: turn each window into the model's\ninternal vector (its <strong>embedding</strong>, a list of numbers summarising the sequence) and measure how\nfar apart the reference and altered vectors are. It needs no probability over bases, so it scores\nindels as easily as single-base changes; its weakness is that \"different\" is not \"damaging\".</p>",
+          "exampleHtml": "<p><em>Example:</em> NT-v2's cosine distance is about 300× larger for indels than for single-base changes, so across classes it mostly measures how much sequence changed.</p>",
+          "context": "<p>the NT-v2 lane's <code>score</code>; its <code>aux.llr</code> holds the masked 6-mer ratio instead</p>",
+          "source": "docs/iteration4/step-8/methodology/144-ntv2-reads-two-windows-on-an-l4.md",
+          "related": [
+            "dna-language-model",
+            "sequence-log-likelihood-ratio"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "local-plddt-delta",
+          "term": "Local pLDDT delta",
+          "aliases": [],
+          "html": "<p>the change in a structure predictor's per-residue confidence (§9,\n<strong>pLDDT</strong>) around a substituted residue, mutant fold minus wild-type fold. A proxy for \"does the\npredicted shape notice this change?\", not a stability measurement.</p>",
+          "exampleHtml": "<p><em>Example:</em> Boltz-2 drops the ±5-residue mean by 3.2 and 2.7 points at the confirmed missense residue (two seeds), but a conservative swap at the same residue drops just as much.</p>",
+          "context": "<p>H081's test</p>",
+          "source": "docs/iteration4/step-8/methodology/147-boltz2-folds-bubr1-and-a-conservative-swap-drops-as-much.md",
+          "related": [
+            "plddt",
+            "alphafold"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "leave-one-in-ablation",
+          "term": "Leave-one-in ablation",
+          "aliases": [],
+          "html": "<p>add one component to a fixed baseline and re-measure, one component at\na time, so each one's effect on the result is visible alone (the mirror of an <strong>ablation</strong>, §12,\nwhich removes one).</p>",
+          "exampleHtml": "<p><em>Example:</em> step 8 re-ran the consensus with the six laptop lanes, then six + Evo 2, six + NT-v2 and six + ESM-C.</p>",
+          "context": "<p>the test behind H082</p>",
+          "source": "docs/iteration4/step-8/methodology/148-the-gpu-lanes-and-the-consensus.md",
+          "related": [
+            "ablation",
+            "reciprocal-rank-fusion-rrf"
+          ],
+          "firstSeen": "2026-09-24"
         }
       ]
     }

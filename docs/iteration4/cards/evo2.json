@@ -7,12 +7,17 @@
   "source": "modal",
   "adapter": "modal",
   "params": {
-    "image": "evo2",
+    "image": "evo2-ngc-25.04",
     "gpu": "H100",
     "needs": [
       "dna_window_ref",
       "dna_window_alt"
-    ]
+    ],
+    "batch": 32,
+    "wave": 16,
+    "window": 8192,
+    "score_sign": -1,
+    "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127"
   },
   "licence": "Arc Institute open weights — verify on fetch",
   "licence_url": "https://github.com/ArcInstitute/evo2",
@@ -20,7 +25,7 @@
   "catalogue_adjacent": false,
   "pmid": "",
   "scope": "opt-b",
-  "enabled": false,
+  "enabled": true,
   "ships": "no weights — the remote image pulls them; digest and venue recorded per run",
   "notes": "Tier-3 DNA language model; the authors recommend an H100, minutes of use. No verified PMID:\nplan §11 has the bioRxiv DOI 10.1101/2025.02.18.638918 and a 2026 Nature paper whose PMID is\nstill to fetch — cite only after the check."
 }

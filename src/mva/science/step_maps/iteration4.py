@@ -145,7 +145,15 @@ ITERATION4: tuple[Step, ...] = (
         iteration="iteration4",
         # Opened 2026-09-23 on the user's request for wave 5 (plan §7b, B1–B2): one Modal
         # app per model, sequence windows and allele ids only, every GPU second in a ledger.
+        # Entries 143-148 ran it; H078, H079, H081 and H082 are undecided by their own terms.
         status="open",
         track="track1",
+        figures=(
+            "figures/it4/step8-consensus-ablation.svg",
+            "figures/it4/esmc-vs-esm2.svg",
+            "figures/it4/boltz2-plddt-profile.svg",
+            "figures/it4/boltz2-local-delta.svg",
+            "figures/it4/boltz2-ca-trace.svg",
+        ),
     ),
 )

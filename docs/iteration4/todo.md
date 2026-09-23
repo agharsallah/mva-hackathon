@@ -75,7 +75,7 @@ widens it.
 - [ ] **C4** the headline goes in `report.md` §1 and on `/zoo`
 
 **Skipped. Each is listed as a limitation in `report.md` and the step READMEs:**
-- Wave 5 in full: GPU tiers on Modal, ESM-C, NT-v2, Evo 2, Boltz-2, ΔΔG, the judge, and
+- Wave 5 in full — **reopened for the GPU lanes on 2026-09-23 as step 8** (user request; B1–B2 done, entries 143–148). Still skipped: ΔΔG, the judge, and
   **TxGNN** (P4-10 is never filed, so step 7's "vs GNN" half stays unanswered)
 - PrimateAI-3D and Pangolin lanes
 - CADD lane: blocked by an Ensembl HTTP 500
@@ -189,18 +189,19 @@ names in `types`/`rank`, `build/it4` defaults, `figures/it4`, the 8-term count, 
 
 ## Wave 5 — opt-B: GPU tiers on Modal, the judge, the GNN
 
-- [ ] B1 step 1 `dna_window_ref/alt` (8,192 bp from the pinned reference, only in `build/it4/`); file **P4-1** (DNA half)
-- [ ] B1 Modal project: account, `$50` hard cap in config, one volume per model (weights), `docs/notes/data-deletion-checklist.md` lists every volume (O9: check `docs/README.md` for an owner first)
-- [ ] B1 step 3 `adapters/modal.py`: `submit()` sends windows + `allele_id` only; result parquet pulled into the cache; GPU type, seconds, dollars into the manifest (per-stage cost attribution)
-- [ ] B1 NT-v2 500M lane (plain `transformers`, any GPU) — the first tier-3 DNA-LM
-- [ ] B1 Evo 2 1B lane (A100 first, H100 if the authors' stack demands it; cut before NT-v2 — R1)
-- [ ] B2 ESM-C 600M lane (record `github.com/evolutionaryscale/esm` tag + weights digest); ESM2 vs ESM-C agreement figure
-- [ ] B2 Boltz-2: wild-type vs mutant BubR1 structure, confidence delta + visual (one protein, not a scorer); verify the bioRxiv DOI by Crossref before citing
+- [x] B1 step 1 DNA windows — **entry 143**: 39,286 / 39,286, 0 REF mismatches, in `build/it4/dna-windows.parquet` (a separate file, so the record Parquet's content chain is untouched); **P4-1** DNA half = H076 supported 0.77, `retrospective:`
+- [x] B1 Modal project (entry 143): $50 cap enforced by the ledger (`modal_contract.CAP_USD`, per-lane shares; no CLI for workspace budgets), one weights volume per lane, [`../notes/data-deletion-checklist.md`](../notes/data-deletion-checklist.md) lists every volume and the proxy token (O9: no prior owner)
+- [x] B1 `adapters/modal_gpu.py` (registry key `modal`): windows + `allele_id` only, per-reply checkpoints, every reply priced into `build/it4/modal/ledger.jsonl`, guard before every wave; manifest venues now read from the cache (`modal:L4`, `modal:H100`). Deviation: `score()` maps synchronously; `submit()` is not used. Gateway `mva-zoo-api`; every Modal command traced ([`step-8/modal-runs.md`](step-8/modal-runs.md))
+- [x] B1 NT-v2 500M — **entry 144**: L4, 39,286 scored, $2.96; pair 23.93rd pct → H078 testing 0.40
+- [x] B1 Evo 2 1B — **entry 146**: H100 (FP8 needs Hopper), NGC image, 39,286 scored, $7.05; stop-gained top 5.6 %, pair 16.36th pct → H079 testing 0.40
+- [x] B2 ESM-C 600M — **entry 145**: L4, 15,592 scored, $0.08; ρ 0.85 vs ESM2 → H080 supported 0.85; figure `figures/it4/esmc-vs-esm2.svg`
+- [x] B2 Boltz-2 — **entry 147**: full-length fold, H100, $1.23; local pLDDT −3.2/−2.7 and a conservative swap drops as much → H081 testing 0.31; drug direction stays unresolved
 - [ ] B3 EVE (coverage footnote), RaSP / ThermoMPNN ΔΔG on the AlphaFold model → hypomorph vs null → drug direction D1–D4 into the Q14 section
 - [ ] B4 TxGNN on Modal (Python 3.8 / DGL 0.5.2 image, one-day timebox; fallback = walk alone, recorded) → `ranking-txgnn.tsv`; file **P4-10**
 - [ ] B5 merge `judge`: LLM ranks the models by evidential value, printed beside RRF, flagged non-reproducible; file **P4-9**
-- [ ] **P4-4** (full zoo ≤ $30, ≤ 8 h laptop) filed from the manifests; cut order §7 applied and recorded if refuted
-- [ ] re-run the chain with every lane; final revisions of **P4-3**, **P4-6**, **P4-8**; dashboard pages updated (cards, matrix, cost view)
+- [x] **P4-4** (Modal half) = H077 **supported 0.83**: billed $14.57 (ledger $11.33, ×1.29), no lane stopped (entry 148)
+- [x] re-run with nine lanes — **entry 148**, run `it4-81ec74fb9f9a`: RRF catalogue-free **4,318** (six laptop lanes 2,734); leave-one-in: **each GPU lane alone ranks the pair lower** → H082 testing 0.20
+- [ ] final revisions of **P4-3**, **P4-6**, **P4-8** with the nine lanes; dashboard pages (cards, matrix, cost view)
 
 ## Quality gates that hold throughout (plan §8)
 

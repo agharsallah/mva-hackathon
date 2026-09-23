@@ -63,6 +63,42 @@
               "ts": "2026-09-20T13:23:22.843363"
             },
             {
+              "model": "esmc",
+              "version": "esmc_600m esm==3.1.1 hf:biohub/esmc-600m-2024-12@e4d83bc7e10f",
+              "score": 0.12883567810058594,
+              "aux": {
+                "llr": -0.12883567810058594,
+                "mode": "catalogue-free",
+                "published": -0.12883567810058594
+              },
+              "digest": "446d3c14628290c8455dd024d2a9a42ace14bea5edd7191153a2166eaf1145ba",
+              "venue": "modal:L4",
+              "licence": "EvolutionaryScale Cambrian non-commercial licence",
+              "run_id": "20260923T220025Z-562a",
+              "ts": "2026-09-23T22:05:49.500774"
+            },
+            {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": 0.00019183116377718967,
+              "aux": {
+                "delta_mean": -0.00019183116377718967,
+                "delta_sum": -1.5712890625,
+                "ll_ref_mean": -1.1475592971706752,
+                "mode": "catalogue-free",
+                "published": -0.00019183116377718967,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:23.350860"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": 8.13,
@@ -74,6 +110,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:32:10.097227"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 5.5285946587435575e-6,
+              "aux": {
+                "cos_local": 0.0014843391876735446,
+                "l2": 0.025308096395462557,
+                "llr": -0.25315237045288086,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 5.5285946587435575e-6,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:45:11.409570"
             },
             {
               "model": "revel",
@@ -120,6 +176,27 @@
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
             {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": 0.0009571290135514943,
+              "aux": {
+                "delta_mean": -0.0009571290135514943,
+                "delta_sum": -7.83984375,
+                "ll_ref_mean": -1.0255215327798803,
+                "mode": "catalogue-free",
+                "published": -0.0009571290135514943,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:26.292639"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": 6.04,
@@ -131,6 +208,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:32:10.097227"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 1.6784304668782113e-5,
+              "aux": {
+                "cos_local": 0.0018770006600983269,
+                "l2": 0.03803690942194659,
+                "llr": -3.9910669326782227,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 1.6784304668782113e-5,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:45:14.616490"
             },
             {
               "model": "spliceai",
@@ -149,7 +246,17 @@
           ]
         }
       ],
-      "models": ["alphamissense", "esm1b", "esm2", "gpnmsa", "revel", "spliceai"],
+      "models": [
+        "alphamissense",
+        "esm1b",
+        "esm2",
+        "esmc",
+        "evo2",
+        "gpnmsa",
+        "ntv2",
+        "revel",
+        "spliceai"
+      ],
       "scored_records": 2
     },
     "NBPF3": {
@@ -211,6 +318,42 @@
               "ts": "2026-09-20T13:23:16.896287"
             },
             {
+              "model": "esmc",
+              "version": "esmc_600m esm==3.1.1 hf:biohub/esmc-600m-2024-12@e4d83bc7e10f",
+              "score": -0.41583251953125,
+              "aux": {
+                "llr": 0.41583251953125,
+                "mode": "catalogue-free",
+                "published": 0.41583251953125
+              },
+              "digest": "446d3c14628290c8455dd024d2a9a42ace14bea5edd7191153a2166eaf1145ba",
+              "venue": "modal:L4",
+              "licence": "EvolutionaryScale Cambrian non-commercial licence",
+              "run_id": "20260923T215959Z-a64d",
+              "ts": "2026-09-23T22:00:07.498700"
+            },
+            {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": 0.00018765832926381787,
+              "aux": {
+                "delta_mean": -0.00018765832926381787,
+                "delta_sum": -1.537109375,
+                "ll_ref_mean": -0.9869243634400562,
+                "mode": "catalogue-free",
+                "published": -0.00018765832926381787,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214715Z-4c92",
+              "ts": "2026-09-23T21:48:24.758526"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": -3.04,
@@ -222,6 +365,25 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:31:47.949511"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 1.1215486687032872e-5,
+              "aux": {
+                "cos_local": 0.001517115982236139,
+                "l2": 0.03170993402091236,
+                "llr": 2.5801005363464355,
+                "mode": "catalogue-free",
+                "published": 1.1215486687032872e-5,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214031Z-6702",
+              "ts": "2026-09-23T21:42:13.258502"
             },
             {
               "model": "revel",
@@ -310,6 +472,42 @@
               "ts": "2026-09-20T13:23:16.896287"
             },
             {
+              "model": "esmc",
+              "version": "esmc_600m esm==3.1.1 hf:biohub/esmc-600m-2024-12@e4d83bc7e10f",
+              "score": 1.3513528108596802,
+              "aux": {
+                "llr": -1.3513528108596802,
+                "mode": "catalogue-free",
+                "published": -1.3513528108596802
+              },
+              "digest": "446d3c14628290c8455dd024d2a9a42ace14bea5edd7191153a2166eaf1145ba",
+              "venue": "modal:L4",
+              "licence": "EvolutionaryScale Cambrian non-commercial licence",
+              "run_id": "20260923T220025Z-562a",
+              "ts": "2026-09-23T22:05:47.064797"
+            },
+            {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": -0.000976920171529727,
+              "aux": {
+                "delta_mean": 0.000976920171529727,
+                "delta_sum": 8.001953125,
+                "ll_ref_mean": -0.9165534437568673,
+                "mode": "catalogue-free",
+                "published": 0.000976920171529727,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:07.847542"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": -1.17,
@@ -321,6 +519,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:31:47.949511"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 7.25903660026006e-6,
+              "aux": {
+                "cos_local": 0.0013658065740951297,
+                "l2": 0.025398213112522675,
+                "llr": 1.2818489074707031,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 7.25903660026006e-6,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:44:54.516051"
             },
             {
               "model": "revel",
@@ -367,6 +585,27 @@
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
             {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": -0.000491202234159438,
+              "aux": {
+                "delta_mean": 0.000491202234159438,
+                "delta_sum": 4.0234375,
+                "ll_ref_mean": -1.0376217990782566,
+                "mode": "catalogue-free",
+                "published": 0.000491202234159438,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:13.683843"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": -3.25,
@@ -378,6 +617,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:31:53.050266"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 1.5421445711538695e-5,
+              "aux": {
+                "cos_local": 0.0016927307794077917,
+                "l2": 0.039765856169988886,
+                "llr": 1.8528881072998047,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 1.5421445711538695e-5,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:44:59.102594"
             },
             {
               "model": "spliceai",
@@ -451,6 +710,42 @@
               "ts": "2026-09-20T13:23:22.843363"
             },
             {
+              "model": "esmc",
+              "version": "esmc_600m esm==3.1.1 hf:biohub/esmc-600m-2024-12@e4d83bc7e10f",
+              "score": 0.11822700500488281,
+              "aux": {
+                "llr": -0.11822700500488281,
+                "mode": "catalogue-free",
+                "published": -0.11822700500488281
+              },
+              "digest": "446d3c14628290c8455dd024d2a9a42ace14bea5edd7191153a2166eaf1145ba",
+              "venue": "modal:L4",
+              "licence": "EvolutionaryScale Cambrian non-commercial licence",
+              "run_id": "20260923T220025Z-562a",
+              "ts": "2026-09-23T22:05:49.500774"
+            },
+            {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": -0.000190638925344766,
+              "aux": {
+                "delta_mean": 0.000190638925344766,
+                "delta_sum": 1.5615234375,
+                "ll_ref_mean": -1.0643881480054327,
+                "mode": "catalogue-free",
+                "published": 0.000190638925344766,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:20.310888"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": -2.32,
@@ -462,6 +757,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:31:58.138928"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 6.830554521441989e-6,
+              "aux": {
+                "cos_local": 0.0016562105998445542,
+                "l2": 0.02511776691952853,
+                "llr": 2.6549530029296875,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 6.830554521441989e-6,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:45:07.835851"
             },
             {
               "model": "revel",
@@ -550,6 +865,42 @@
               "ts": "2026-09-20T13:23:22.843363"
             },
             {
+              "model": "esmc",
+              "version": "esmc_600m esm==3.1.1 hf:biohub/esmc-600m-2024-12@e4d83bc7e10f",
+              "score": 0.3967478275299072,
+              "aux": {
+                "llr": -0.3967478275299072,
+                "mode": "catalogue-free",
+                "published": -0.3967478275299072
+              },
+              "digest": "446d3c14628290c8455dd024d2a9a42ace14bea5edd7191153a2166eaf1145ba",
+              "venue": "modal:L4",
+              "licence": "EvolutionaryScale Cambrian non-commercial licence",
+              "run_id": "20260923T220025Z-562a",
+              "ts": "2026-09-23T22:05:49.500774"
+            },
+            {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": 0.001957417058356725,
+              "aux": {
+                "delta_mean": -0.001957417058356725,
+                "delta_sum": -16.033203125,
+                "ll_ref_mean": -0.9063637395464534,
+                "mode": "catalogue-free",
+                "published": -0.001957417058356725,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:20.310888"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": 0.11,
@@ -561,6 +912,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:32:04.438029"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 1.679297900092358e-5,
+              "aux": {
+                "cos_local": 0.0010374415741190024,
+                "l2": 0.03816727279487461,
+                "llr": -3.1179323196411133,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 1.679297900092358e-5,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:45:07.835851"
             },
             {
               "model": "revel",
@@ -607,6 +978,27 @@
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
             {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": 0.0007604096722011455,
+              "aux": {
+                "delta_mean": -0.0007604096722011455,
+                "delta_sum": -6.228515625,
+                "ll_ref_mean": -1.0605523592967891,
+                "mode": "catalogue-free",
+                "published": -0.0007604096722011455,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:23.350860"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": 2.55,
@@ -618,6 +1010,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:32:10.097227"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 8.038943542176824e-6,
+              "aux": {
+                "cos_local": 0.0012893170735235326,
+                "l2": 0.02702829295995835,
+                "llr": -4.185775279998779,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 8.038943542176824e-6,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:45:11.409570"
             },
             {
               "model": "spliceai",
@@ -649,6 +1061,27 @@
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
             {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": 0.0006459547826882517,
+              "aux": {
+                "delta_mean": -0.0006459547826882517,
+                "delta_sum": -5.291015625,
+                "ll_ref_mean": -1.0608105981412526,
+                "mode": "catalogue-free",
+                "published": -0.0006459547826882517,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:23.350860"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": 1.52,
@@ -660,6 +1093,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:32:10.097227"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 9.542740544321582e-6,
+              "aux": {
+                "cos_local": 0.001520294818698531,
+                "l2": 0.029387880285166694,
+                "llr": -2.3973464965820312,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 9.542740544321582e-6,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:45:11.409570"
             },
             {
               "model": "spliceai",
@@ -733,6 +1186,42 @@
               "ts": "2026-09-20T13:23:29.461603"
             },
             {
+              "model": "esmc",
+              "version": "esmc_600m esm==3.1.1 hf:biohub/esmc-600m-2024-12@e4d83bc7e10f",
+              "score": 0.27732086181640625,
+              "aux": {
+                "llr": -0.27732086181640625,
+                "mode": "catalogue-free",
+                "published": -0.27732086181640625
+              },
+              "digest": "446d3c14628290c8455dd024d2a9a42ace14bea5edd7191153a2166eaf1145ba",
+              "venue": "modal:L4",
+              "licence": "EvolutionaryScale Cambrian non-commercial licence",
+              "run_id": "20260923T220025Z-562a",
+              "ts": "2026-09-23T22:05:51.840878"
+            },
+            {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": 0.0001014594905994759,
+              "aux": {
+                "delta_mean": -0.0001014594905994759,
+                "delta_sum": -0.8310546875,
+                "ll_ref_mean": -1.2446697404163105,
+                "mode": "catalogue-free",
+                "published": -0.0001014594905994759,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:26.292639"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": 2.4,
@@ -744,6 +1233,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:32:10.097227"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 8.683179509527683e-6,
+              "aux": {
+                "cos_local": 0.001105684583456834,
+                "l2": 0.03218088431185207,
+                "llr": -1.2971348762512207,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 8.683179509527683e-6,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:45:14.616490"
             },
             {
               "model": "revel",
@@ -832,6 +1341,42 @@
               "ts": "2026-09-20T13:23:29.461603"
             },
             {
+              "model": "esmc",
+              "version": "esmc_600m esm==3.1.1 hf:biohub/esmc-600m-2024-12@e4d83bc7e10f",
+              "score": 0.185546875,
+              "aux": {
+                "llr": -0.185546875,
+                "mode": "catalogue-free",
+                "published": -0.185546875
+              },
+              "digest": "446d3c14628290c8455dd024d2a9a42ace14bea5edd7191153a2166eaf1145ba",
+              "venue": "modal:L4",
+              "licence": "EvolutionaryScale Cambrian non-commercial licence",
+              "run_id": "20260923T220025Z-562a",
+              "ts": "2026-09-23T22:05:51.840878"
+            },
+            {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": 5.4723744048357226e-5,
+              "aux": {
+                "delta_mean": -5.4723744048357226e-5,
+                "delta_sum": -0.4482421875,
+                "ll_ref_mean": -0.9065821576272738,
+                "mode": "catalogue-free",
+                "published": -5.4723744048357226e-5,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:26.292639"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": -0.98,
@@ -843,6 +1388,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:32:15.807122"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 8.964857053150865e-6,
+              "aux": {
+                "cos_local": 0.0012682497791124403,
+                "l2": 0.027530377976737616,
+                "llr": 0.5624246597290039,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 8.964857053150865e-6,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:45:14.616490"
             },
             {
               "model": "revel",
@@ -931,6 +1496,42 @@
               "ts": "2026-09-20T13:23:29.461603"
             },
             {
+              "model": "esmc",
+              "version": "esmc_600m esm==3.1.1 hf:biohub/esmc-600m-2024-12@e4d83bc7e10f",
+              "score": 0.05950355529785156,
+              "aux": {
+                "llr": -0.05950355529785156,
+                "mode": "catalogue-free",
+                "published": -0.05950355529785156
+              },
+              "digest": "446d3c14628290c8455dd024d2a9a42ace14bea5edd7191153a2166eaf1145ba",
+              "venue": "modal:L4",
+              "licence": "EvolutionaryScale Cambrian non-commercial licence",
+              "run_id": "20260923T220025Z-562a",
+              "ts": "2026-09-23T22:05:51.840878"
+            },
+            {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": 0.0014603728558784113,
+              "aux": {
+                "delta_mean": -0.0014603728558784113,
+                "delta_sum": -11.9619140625,
+                "ll_ref_mean": -0.9118936990675741,
+                "mode": "catalogue-free",
+                "published": -0.0014603728558784113,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:26.292639"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": 1.42,
@@ -942,6 +1543,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:32:15.807122"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 9.069727393562488e-6,
+              "aux": {
+                "cos_local": 0.0014578518726782175,
+                "l2": 0.027787625198586567,
+                "llr": -3.7619857788085938,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 9.069727393562488e-6,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:45:14.616490"
             },
             {
               "model": "revel",
@@ -988,6 +1609,27 @@
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
             {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": 0.0001871814338908484,
+              "aux": {
+                "delta_mean": -0.0001871814338908484,
+                "delta_sum": -1.533203125,
+                "ll_ref_mean": -0.9071082924475034,
+                "mode": "catalogue-free",
+                "published": -0.0001871814338908484,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:29.633813"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": 1.36,
@@ -999,6 +1641,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:32:21.901744"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 3.71411604538352e-6,
+              "aux": {
+                "cos_local": 0.0012400066675761767,
+                "l2": 0.01774038940707755,
+                "llr": -0.7670907974243164,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 3.71411604538352e-6,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:45:17.218462"
             },
             {
               "model": "spliceai",
@@ -1030,6 +1692,27 @@
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
             {
+              "model": "evo2",
+              "version": "evo2_1b_base",
+              "score": -0.0003569561866683113,
+              "aux": {
+                "delta_mean": 0.0003569561866683113,
+                "delta_sum": 2.923828125,
+                "ll_ref_mean": -1.0599376411610304,
+                "mode": "catalogue-free",
+                "published": 0.0003569561866683113,
+                "recropped": false,
+                "reduce": "mean",
+                "tokens_alt": 8192,
+                "tokens_ref": 8192
+              },
+              "digest": "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127",
+              "venue": "modal:H100",
+              "licence": "Arc Institute open weights — verify on fetch",
+              "run_id": "20260923T214902Z-6e03",
+              "ts": "2026-09-23T22:22:32.913408"
+            },
+            {
               "model": "gpnmsa",
               "version": "GPN-MSA hg38 precomputed scores (songlab)",
               "score": -1.35,
@@ -1041,6 +1724,26 @@
               "licence": "MIT",
               "run_id": "20260920T103147Z-0397",
               "ts": "2026-09-20T10:32:21.901744"
+            },
+            {
+              "model": "ntv2",
+              "version": "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species",
+              "score": 1.0975781780331317e-5,
+              "aux": {
+                "cos_local": 0.0021280315012101036,
+                "l2": 0.03131982987951445,
+                "llr": 0.44626808166503906,
+                "mode": "catalogue-free",
+                "precision": "fp16",
+                "published": 1.0975781780331317e-5,
+                "tokens_alt": 1024,
+                "tokens_ref": 1024
+              },
+              "digest": "86a1b8144af071a923f0334456c86bd3b043eab43881f5aee2dd7f5a76947b66",
+              "venue": "modal:L4",
+              "licence": "CC-BY-NC-SA-4.0",
+              "run_id": "20260923T214522Z-dd55",
+              "ts": "2026-09-23T22:45:20.037095"
             },
             {
               "model": "spliceai",
@@ -1059,7 +1762,17 @@
           ]
         }
       ],
-      "models": ["alphamissense", "esm1b", "esm2", "gpnmsa", "revel", "spliceai"],
+      "models": [
+        "alphamissense",
+        "esm1b",
+        "esm2",
+        "esmc",
+        "evo2",
+        "gpnmsa",
+        "ntv2",
+        "revel",
+        "spliceai"
+      ],
       "scored_records": 12
     }
   }

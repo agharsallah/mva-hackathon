@@ -1,20 +1,63 @@
 {
   "step": "step-8",
   "iteration": "iteration4",
-  "summary": "In progress. This step runs the roster's GPU models (NT-v2, Evo 2, ESM-C, Boltz-2) on Modal, a serverless GPU cloud, behind the same adapter contract every laptop lane uses. The contract is built: DNA windows of 8,192 bases from the pinned reference (kept under build/), one Modal app per model, and a spend ledger that prices every call and stops a lane at its share of the $50 cap.",
-  "why": "Entry 130 showed the consensus rank of the confirmed pair (20,639 of 52,012) is set by abstention: three of four laptop lanes have no score for its stop_gained half. A DNA language model reads any allele, so it is the lane that can end the abstention, and it needs a GPU.",
-  "verdict": "No verdict yet: H076 to H082 are filed and untested apart from H076, whose test ran just before it was filed and is marked retrospective.",
+  "summary": "This step ran the roster's GPU models on Modal, a serverless GPU cloud billed per second, behind the same adapter contract every laptop lane uses. It built DNA windows of 8,192 bases for all 39,286 records (0 reference mismatches), one Modal app per model with a proxy-auth HTTP endpoint and a gateway, and a spend ledger that checks the budget before every batch. NT-v2 and Evo 2 (DNA language models) scored all 39,286 records and ESM-C (a protein language model) all 15,592 missense records, and Boltz-2 folded wild-type and mutant BubR1. Modal billed $14.57 of the $50 cap, and every app is stopped. With all nine lanes the catalogue-free consensus puts the confirmed pair at rank 4,318 of 63,269. That is worse than the six laptop lanes' 2,734.",
+  "why": "Entry 130 showed the consensus fails by abstention: most laptop lanes have no score for the confirmed pair's stop-gained half. DNA language models read any allele, so they were the lanes that could end the abstention, and they need a GPU. Running them behind the same contract also tests whether the zoo's design holds for a remote, paid, per-second tier — the reusable half of the deliverable.",
+  "verdict": "H077 (cost) is supported: billed $14.57, under $30, and no lane was stopped. H076 (DNA windows) is supported, but it is retrospective. H080 (ESM-C agrees with ESM2) is supported at rho 0.85, yet ESM-C calls the confirmed missense allele neutral. H078 and H079 are undecided by their own terms: both alleles got a score, but the pair sits at the 24th and 16th percentile, between the top-decile prediction and the refuting median. H081 (Boltz-2) is undecided: the local pLDDT dip of about 3 points is matched by a conservative control swap. H082 (consensus) is undecided at 4,318, and the leave-one-in shows every GPU lane alone ranks the pair lower. That contradicts the mechanism the claim assumed.",
   "inherits": {
-    "steps": ["step-3", "step-6"],
-    "what": "Step 3's adapter protocol and score cache (a new lane is a new module, never an edit), and step 6's finding that the consensus fails by abstention, which is what this step tests."
+    "steps": [
+      "step-3",
+      "step-6"
+    ],
+    "what": "Step 3's adapter protocol and score cache: each GPU lane is one new module plus one card fragment, and its scores land in the same allele_scores table with venue modal:<gpu>. Step 6 supplies the fusion (equal-weight RRF, k = 60, pre-registered in entry 130) and the finding that the consensus fails by abstention, which this step measured one lane at a time."
   },
   "hands_to": {
-    "steps": ["step-6"],
-    "what": "New lanes in the allele_scores cache, so the step-4 workflow and the step-6 merge can be re-run with every lane."
+    "steps": [
+      "step-6"
+    ],
+    "what": "Three new scoring lanes in the cache and a nine-lane run manifest (it4-81ec74fb9f9a). The finding goes to the merge: equal-weight RRF rewards how many lanes can see a pair, so a fusion that accounts for lane coverage must be filed as a new claim before it is run."
   },
-  "figures": [],
+  "figures": [
+    {
+      "name": "step8-consensus-ablation.svg",
+      "reads": "Left: the confirmed pair's catalogue-free RRF percentile for the six laptop lanes (blue, 4.60), six plus Evo 2 (5.02), plus NT-v2 (5.20), plus ESM-C (5.81) and all nine (6.82), each red because it is worse than the baseline; labels give rank / pairs. Right: the pair's percentile in each catalogue-free lane's own ranking: GPN-MSA 0.9 (green, inside the dashed top decile), Evo 2 16.4, SpliceAI 23.6, NT-v2 23.9; AlphaMissense, ESM1b, ESM2 and ESM-C are hatched grey, no opinion, because they cannot score the stop-gained half.",
+      "means": "Adding a lane to equal-weight RRF helps a pair only if the lane both sees it and ranks it high. Here the missense-only lane only lifts rival pairs, and the DNA lanes vote for the pair too weakly to offset the votes they give everyone else. The consensus drops as lanes are added.",
+      "source": "tools/render_step8_ablation.py over build/it4/ablation/*.merged.json and build/it4/merged.json; entry 148"
+    },
+    {
+      "name": "esmc-vs-esm2.svg",
+      "reads": "Density of ESM-C's score against ESM2's (15,592 shared missense alleles, rho 0.8545) and against ESM1b's (4,562, rho 0.7434); the green marker is the confirmed pair's missense allele, high on ESM2 and ESM1b and mid-range on ESM-C.",
+      "means": "The newer protein language model agrees with the older ones across the callset, which supports H080, but not on the one allele that matters. Agreement across the callset says nothing about any single call.",
+      "source": "tools/render_step8_agreement.py over warehouse.allele_scores; entry 145"
+    },
+    {
+      "name": "boltz2-plddt-profile.svg",
+      "reads": "Per-residue pLDDT (Boltz-2's confidence, 0-100) along the whole BubR1 chain for wild type (blue) and mutant (red), with the substituted residue plus or minus 5 shaded purple; the right panel zooms to residues around the site. The two curves overlap almost everywhere; long stretches sit below 50 (disordered).",
+      "means": "The substitution leaves the fold's confidence unchanged outside a small local dip, so the prediction shows no global misfolding.",
+      "source": "tools/render_step8_boltz2.py over build/it4/boltz2/; entry 147"
+    },
+    {
+      "name": "boltz2-local-delta.svg",
+      "reads": "Mean pLDDT change within 5 residues of the site, mutant minus wild type, for the patient's substitution (red, -3.20 and -2.73 over two seeds), a conservative swap at the same residue and the same swap about 100 residues away (grey controls), and wild type again (blue); the grey band is the refutation zone (|delta| < 1), the yellow dashed line the filed prediction (-5).",
+      "means": "The patient's dip falls between the refutation line and the prediction, and a conservative swap at the same residue dips as much. The fold does not single this substitution out. H081 stays undecided, and the Track 2 drug direction is unresolved.",
+      "source": "tools/render_step8_boltz2.py; entry 147"
+    },
+    {
+      "name": "boltz2-ca-trace.svg",
+      "reads": "The backbone as one dot per residue, projected on the wild type's two principal axes, coloured from red (low pLDDT) to green (high), with the mutant superposed and the site plus or minus 5 ringed purple; the local backbone shift is 0.45 angstrom against 0.13 between wild-type samples.",
+      "means": "A sub-angstrom local shift: the predicted shape barely moves. That is consistent with the confidence plots and is not evidence of misfolding.",
+      "source": "tools/render_step8_boltz2.py; entry 147"
+    }
+  ],
   "sources": [
     "docs/iteration4/step-8/README.md",
-    "docs/iteration4/step-8/hypotheses/README.md"
+    "docs/iteration4/step-8/hypotheses/README.md",
+    "docs/iteration4/step-8/modal-runs.md",
+    "docs/iteration4/step-8/methodology/143-a-gpu-lane-that-sends-two-windows-and-a-bill.md",
+    "docs/iteration4/step-8/methodology/144-ntv2-reads-two-windows-on-an-l4.md",
+    "docs/iteration4/step-8/methodology/145-esmc-agrees-with-esm2-except-on-the-confirmed-allele.md",
+    "docs/iteration4/step-8/methodology/146-evo2-1b-scores-every-record-on-an-h100.md",
+    "docs/iteration4/step-8/methodology/147-boltz2-folds-bubr1-and-a-conservative-swap-drops-as-much.md",
+    "docs/iteration4/step-8/methodology/148-the-gpu-lanes-and-the-consensus.md"
   ]
 }
