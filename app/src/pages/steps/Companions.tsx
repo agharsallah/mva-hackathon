@@ -1,16 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 
-import { type JourneyPage, useJourney } from '../../components/journeyContext';
-
-/** The page at `to`, anywhere in the journey tree. */
-function find(pages: readonly JourneyPage[], to: string): JourneyPage | undefined {
-  for (const p of pages) {
-    if (p.to === to) return p;
-    const hit = find(p.children ?? [], to);
-    if (hit) return hit;
-  }
-  return undefined;
-}
+import { useJourney } from '../../components/journeyContext';
+import { findPage, isStepPath } from './tree';
 
 /**
  * The pages an iteration carries besides its steps — iteration 4's model zoo, say.
@@ -23,8 +14,8 @@ function find(pages: readonly JourneyPage[], to: string): JourneyPage | undefine
 export function Companions() {
   const { pathname } = useLocation();
   const groups = useJourney();
-  const self = groups.map((g) => find(g.pages, pathname)).find(Boolean);
-  const extra = (self?.children ?? []).filter((c) => !/\/step-\d+$/.test(c.to));
+  const self = groups.map((g) => findPage(g.pages, pathname)).find(Boolean);
+  const extra = (self?.children ?? []).filter((c) => !isStepPath(c.to));
   if (extra.length === 0) return null;
 
   return (

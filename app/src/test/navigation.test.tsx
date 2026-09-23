@@ -176,4 +176,21 @@ describe('navigating with the nav bar', () => {
         .getAttribute('href'),
     ).toBe('/track1/iteration4/zoo');
   });
+
+  it('maps every iteration of Track 1 to its step tiles', async () => {
+    renderApp('/track1');
+    const map = await screen.findByText(
+      'Every Track 1 step, iteration by iteration',
+      {},
+      { timeout: 15_000 },
+    );
+    const exhibit = map.closest('section') ?? document.body;
+    await waitFor(() =>
+      expect(
+        within(exhibit as HTMLElement)
+          .getAllByRole('link')
+          .some((a) => a.getAttribute('href') === '/track1/iteration4/step-6'),
+      ).toBe(true),
+    );
+  }, 20_000);
 });

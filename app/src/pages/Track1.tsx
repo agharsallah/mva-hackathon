@@ -6,6 +6,7 @@ import { Loaded } from '../components/QueryState';
 import { StatTile } from '../components/StatTile';
 import { C } from '../lib/palette';
 import { IterationBar } from './steps/IterationBar';
+import { TrackMap } from './steps/ResearchMap';
 
 /**
  * Track 1 — the whole research journey, as the iterations that walked it.
@@ -125,6 +126,13 @@ export default function Track1Page() {
                 >
                   <IterationBar index={data.index} track="track1" />
                 </Exhibit>
+              </Section>
+
+              <Section
+                title="The research map"
+                subtitle="Every step of every iteration on one screen — the tree the header opens one branch of at a time."
+              >
+                <TrackMap track="track1" />
               </Section>
             </div>
           );

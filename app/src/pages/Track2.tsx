@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 
 import { useTrack2 } from '../api/hooks';
+import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { Loaded } from '../components/QueryState';
+import { TrackMap } from './steps/ResearchMap';
 import { Report } from './track2/Report';
 
 /**
@@ -167,6 +169,13 @@ export default function Track2Page() {
       <Loaded query={q} height={420} label="Loading the Track 2 report">
         {(_data, meta) => <Report result={meta} />}
       </Loaded>
+
+      <Section
+        title="The iterations"
+        subtitle="Where each route's Track 2 step stands; a tile opens that iteration's page."
+      >
+        <TrackMap track="track2" />
+      </Section>
     </div>
   );
 }
