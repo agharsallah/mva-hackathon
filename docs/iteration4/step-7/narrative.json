@@ -12,10 +12,17 @@
     "steps": [],
     "what": "Nothing in iteration 4 reads step 7's ranking. It hands Track 2 a second, graph-derived candidate list with full lineage (ranking-walk.tsv, its paths, and a decoy baseline), plus two gaps to close: the walk does not penalise promiscuous drugs, and the card's HPO list misses the clinical file's eighth term."
   },
-  "figures": [],
+  "figures": [
+    {
+      "name": "track2-walk-overlap.svg",
+      "reads": "Panel A splits each walk's top-20 distinct approved names into three parts: also in drug_candidates.tsv (blue: 6 for the MVA walk, 7 for the XDH decoy), shared with the other walk (yellow: 2 and 2), and neither (grey: 10 and 11); the dashed line is H075's threshold of 2. Panel B shows which of the five MVA genes carries the walk's top-20 path weight: BUB1 26.4 %, BUB3 23.6 %, TRIP13 18.5 %, BUB1B 18.1 % (green, the child's gene), CEP57 13.5 %.",
+      "means": "Panel A is the evidence that P4-12 had no power: the decoy clears the threshold by more than the real walk, so meeting it says nothing about the mechanism, while the small yellow segment is P4-11's support. Panel B shows the ranking is not BUB1B-specific: four of five start genes are not the child's and each carries a comparable share."
+    }
+  ],
   "sources": [
     "docs/iteration4/step-7/README.md",
     "docs/iteration4/step-7/methodology/142-a-graph-walk-from-the-disease-node.md",
-    "ressources/track2/ranking-walk.comparison.json"
+    "ressources/track2/ranking-walk.comparison.json",
+    "figures/it4/track2-walk-overlap.provenance.json"
   ]
 }

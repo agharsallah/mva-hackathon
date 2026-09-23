@@ -51,8 +51,11 @@ misses the eighth term (recurrent spontaneous abortion).
 
 ![Top-20 overlap: the walk vs drug_candidates.tsv vs the XDH decoy](../../../figures/it4/track2-walk-overlap.svg)
 
-> **Figure** `figures/it4/track2-walk-overlap.{svg,png}` — drawn by
-> `tools/render_track2_walk_figures.py` from the three tables below. Legend is in the figure.
+> **Legend** — A: each walk's top-20 distinct names; blue = also in `drug_candidates.tsv`,
+> yellow = shared with the other walk, grey = neither; dashed line = `P4-12`'s threshold (2).
+> B: share of top-20 path weight per start gene; green = BUB1B, the child's gene. Drawn by
+> `tools/render_track2_walk_figures.py`; inputs and digests in
+> `figures/it4/track2-walk-overlap.provenance.json`.
 
 ## Outputs
 
