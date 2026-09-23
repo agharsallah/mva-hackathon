@@ -1,0 +1,37 @@
+{
+  "name": "primekg",
+  "built_at": "2026-09-23T20:55:39+00:00",
+  "built_by": "fetch_primekg.py",
+  "code_version": "21534d0",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "Harvard Dataverse doi:10.7910/DVN/IXA7BM, latest version 2.1: kg.csv streamed to disk, sha256 and md5 measured while streaming, md5 checked against the Dataverse record, then converted once to parquet by DuckDB read_csv(all_varchar=true, RFC-4180 quoting).",
+  "citation": "Chandak P, Huang K, Zitnik M. Building a knowledge graph to enable precision medicine. Sci Data 10, 67 (2023). PMID 36732524. doi:10.1038/s41597-023-01960-3",
+  "inputs": [
+    {
+      "name": "primekg-kg.csv",
+      "url": "https://dataverse.harvard.edu/api/access/datafile/6180620",
+      "doi": "doi:10.7910/DVN/IXA7BM",
+      "version": "2.1",
+      "release_time": "2022-05-02T18:39:28Z",
+      "role": "the knowledge graph the step-7 walk reads",
+      "retrieved_at": "2026-09-23T20:55:39+00:00",
+      "sha256": "0a5a010fcd88dcec572a573d98c26c1c244a11567092b6161d3ded611cfb5c69",
+      "sha256_scope": "the kg.csv bytes: hashed while streaming, or re-read from disk (--reuse)",
+      "md5": "aac8191d4fbc5bf09cdf8c3c78b4e75f",
+      "md5_published": "aac8191d4fbc5bf09cdf8c3c78b4e75f",
+      "bytes": 981751236,
+      "licence": "CC0-1.0",
+      "licence_url": "http://creativecommons.org/publicdomain/zero/1.0"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "build/primekg/kg.parquet",
+      "sha256": "7a0df2feece6aeac90efb01b7e19e33fd56dd00378fde6195025f3487103eb08",
+      "bytes": 38140518,
+      "rows": 8100498
+    }
+  ],
+  "licence": "CC0 1.0 (http://creativecommons.org/publicdomain/zero/1.0) as stated on the Dataverse record; the graph stays under build/ and is never committed (size, not terms).",
+  "patient_data": "none. A public biomedical knowledge graph (diseases, genes, drugs, pathways, phenotypes). Nothing in it was derived from this case's callset or clinical record."
+}
