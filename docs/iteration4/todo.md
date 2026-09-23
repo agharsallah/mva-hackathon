@@ -44,7 +44,14 @@ widens it.
   - **P4-11** and **P4-12** filed *before* the run
   - outputs `ressources/track2/ranking-walk.tsv` + `.provenance.json`
   - one entry (≥ 142)
-- [ ] **T2** overlap figure: walk vs `drug_candidates.tsv` vs decoy. Add a Q14 section to
+- [x] **T2** done (`e286f84`, `375d4db`):
+  - `figures/it4/track2-walk-overlap.{png,svg}` from `tools/render_track2_walk_figures.py`
+  - `report.md` §7 (Track 2 Q14) and §8 (skipped items)
+  - Two top-5 drugs hit the card's anti-directions: fostamatinib → TTK/AURKB (A1), and
+    vincristine (A2)
+  - **Open risk:** `mva.zoo.merge.render_merged` writes only §1–§6, so a re-render deletes §7–§8.
+    The renderer must keep them (fix with C4). Original scope: overlap figure: walk vs
+    `drug_candidates.tsv` vs decoy. Add a Q14 section to
   `report.md`: mechanism → pathway → consequence → drug direction, stated as *not resolved by
   this iteration* (no ΔΔG)
 - [ ] **T3** step-7 README "What happened"; iteration README step row; dashboard step page and
