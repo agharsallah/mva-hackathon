@@ -2,6 +2,8 @@
 
 **Standing:** 2026-09-02 — every gate below was run against this repo on that date and is
 wired into `.github/workflows/ci.yml`, `.husky/pre-commit` and `.husky/pre-push`.
+Hook roles re-checked 2026-09-23: pre-commit runs the whole gate and blocks; pre-push only
+reports (see "Where the gate blocks" below).
 
 The `app/` half of this repo has had typecheck, lint, format, test and bundle gates since
 the tooling wave. The Python half had `pytest` and nothing else. This note records what
@@ -36,12 +38,12 @@ formatting or layering mistake fails in seconds.
 flowchart LR
     edit[a Python change]:::raw --> commit{pre-commit}:::decision
     commit -->|"staged .py only"| fix[ruff format<br/>ruff check --fix<br/>re-stage]:::machine
-    fix --> push{pre-push}:::decision
-    push -->|"src/ tests/ tools/<br/>pyproject uv.lock"| gate[tools/check-python.sh]:::machine
-    gate --> ci[CI python job<br/>the same eight gates]:::machine
+    fix --> gate[tools/check-python.sh]:::machine
+    gate --> push{pre-push}:::decision
+    push -->|"advisory re-run<br/>warns, never blocks"| ci[CI python job<br/>the same gates]:::machine
     ci --> merged[merged]:::goal
-    gate -.->|any gate fails| blocked[push blocked]:::bad
-    ci -.->|any gate fails| blocked
+    gate -.->|any gate fails| blocked[commit refused]:::bad
+    ci -.->|any gate fails| red[red CI run]:::bad
 
     classDef raw fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
     classDef decision fill:#fef3c7,stroke:#b45309,color:#78350f
@@ -159,8 +161,21 @@ Not a clean-up exercise — the gates paid for themselves before they were wired
 5. A **figure-freshness** failure is fixed by re-running the step's exporter and then its
    renderers, and committing both — never by touching the file's timestamp. The failure
    message prints the exact commands for the step it failed on.
-6. If a gate is wrong for a change, fix the gate and say so here. Do not push with
+6. If a gate is wrong for a change, fix the gate and say so here. Do not commit with
    `--no-verify`.
+
+## Where the gate blocks
+
+Decided 2026-09-23: **pre-commit blocks, pre-push reports.**
+
+- The whole gate runs at commit time, so a red change never enters history — the earliest
+  point it can be stopped.
+- A push is never held hostage: once history is green, re-running the gate on push only
+  duplicates it. The pre-push hook still re-runs it on the pushed range and warns, because a
+  rebase or a hook-less commit can land something pre-commit never saw.
+- CI stays the backstop (branch protection is unavailable on this plan — see CONTRIBUTING).
+- Cost: a Python commit now pays the full suite (tens of seconds). Worth it for a gate that
+  would otherwise surface only after the push.
 
 ## Related
 

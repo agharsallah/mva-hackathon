@@ -1,17 +1,23 @@
 #!/usr/bin/env sh
-# Husky pre-commit hook. Lives at the repo root (not app/.husky) because git
-# resolves `core.hooksPath` from the repository top level, and this one repo
-# holds two projects: the Python package at the root and the app/ React app.
+# Husky pre-commit hook — the blocking gate. Lives at the repo root (not app/.husky)
+# because git resolves `core.hooksPath` from the repository top level, and this one
+# repo holds two projects: the Python package at the root and the app/ React app.
 #
-# Each half has its own commit-time gate and each is skipped entirely when the
-# commit does not touch it: lint-staged (eslint --fix + prettier --write, see
-# app/.lintstagedrc.json) for app/, and ruff (format + check --fix) for Python.
-# A docs-only commit runs neither, and a Python-only commit never starts node.
+# A commit is refused unless the half it touches is green:
+#   Python (staged .py): ruff format + check --fix on the staged files (re-staged),
+#                        then tools/check-python.sh — every CI gate incl. mypy + pytest.
+#   app/ (staged app/):  lint-staged (eslint --fix + prettier --write), tsc -b, the
+#                        generated-file checks, and vitest on the tests related to
+#                        the staged sources.
+# Each half is skipped when the commit does not touch it: a docs-only commit runs
+# neither, and a Python-only commit never starts node. The pre-push hook only reports;
+# this hook is where a red gate stops the change.
+#
+# Gates run on the working tree, not the index: unstaged edits in a touched half count.
 set -e
 
 staged=$(git diff --cached --name-only --diff-filter=ACMR)
 staged_app=$(printf '%s\n' "$staged" | grep -E '^app/' || true)
-
 staged_py=$(printf '%s\n' "$staged" | grep -E '\.py$' || true)
 
 # Python first: it needs the repo root as the working directory, and the app/ gate
@@ -26,17 +32,38 @@ if [ -n "$staged_py" ]; then
   # version that was staged before the hook ran.
   # shellcheck disable=SC2086
   git add $staged_py
+  echo "pre-commit: running the Python gate (tools/check-python.sh)"
+  tools/check-python.sh
 else
-  echo "pre-commit: no staged Python files — skipping ruff"
+  echo "pre-commit: no staged Python files — skipping the Python gate"
 fi
 
 if [ -z "$staged_app" ]; then
-  echo "pre-commit: no staged files under app/ — skipping lint-staged"
+  echo "pre-commit: no staged files under app/ — skipping the app/ gate"
   exit 0
 fi
 
-echo "pre-commit: staged app/ changes — running lint-staged"
+echo "pre-commit: staged app/ changes — running lint-staged (eslint --fix + prettier --write)"
 # Run from inside app/ so pnpm resolves the local eslint/prettier binaries (a bare
 # `prettier` is not on PATH when the hook is spawned from the repo root).
 cd app
 pnpm exec lint-staged --config .lintstagedrc.json
+
+echo "pre-commit: typecheck (tsc -b)"
+pnpm run typecheck
+
+echo "pre-commit: generated files are current (theme, dictionary, steps nav)"
+pnpm run theme:check
+pnpm run dictionary:check
+pnpm run steps-nav:check
+
+# Only the tests that import a staged source (directly or transitively): the full suite
+# runs in CI, and the whole-app run belongs to `pnpm run check`.
+staged_src=$(printf '%s\n' "$staged_app" | grep -E '\.(ts|tsx|js|mjs)$' | sed 's#^app/##' || true)
+if [ -n "$staged_src" ]; then
+  echo "pre-commit: vitest on the tests related to the staged sources"
+  # shellcheck disable=SC2086
+  pnpm exec vitest related --run --passWithNoTests $staged_src
+else
+  echo "pre-commit: no staged app/ sources — skipping vitest"
+fi

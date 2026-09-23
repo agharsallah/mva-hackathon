@@ -62,22 +62,22 @@ sh tools/check-commit-msg.sh --self-test         # the gate's own 13 cases
 | Rule                                                                                           | Enforced by                                                                               | Run it locally                                  |
 | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------- |
 | Commit message convention, subject length, no genomic position, no AI trailer                  | `commit-msg` hook, CI `commit messages` job                                               | `sh tools/check-commit-msg.sh --rev HEAD`       |
-| TypeScript compiles (`tsc -b`, strict, `noUnusedLocals`/`noUnusedParameters`)                  | pre-push hook, CI `app` job                                                               | `cd app && pnpm run typecheck`                  |
-| ESLint (react-hooks, jsx-a11y, import order, repo-local rules)                                 | pre-commit hook (staged files only, `--fix`), pre-push hook, CI `app` job                 | `cd app && pnpm run lint:strict` (or `lint:fix` to autofix)       |
-| Prettier formatting                                                                            | pre-commit hook (staged files only, `--write`), pre-push hook, CI `app` job               | `cd app && pnpm run format` (or `format:check`) |
-| Vitest unit/component tests                                                                    | pre-push hook, CI `app` job                                                               | `cd app && pnpm run test`                       |
-| Production build (`tsc -b && vite build`)                                                      | pre-push hook, CI `app` job                                                               | `cd app && pnpm run build`                      |
+| TypeScript compiles (`tsc -b`, strict, `noUnusedLocals`/`noUnusedParameters`)                  | pre-commit hook (blocks), pre-push hook (advisory), CI `app` job                          | `cd app && pnpm run typecheck`                  |
+| ESLint (react-hooks, jsx-a11y, import order, repo-local rules)                                 | pre-commit hook (staged files only, `--fix`), pre-push (advisory), CI `app` job           | `cd app && pnpm run lint:strict` (or `lint:fix` to autofix)       |
+| Prettier formatting                                                                            | pre-commit hook (staged files only, `--write`), pre-push (advisory), CI `app` job         | `cd app && pnpm run format` (or `format:check`) |
+| Vitest unit/component tests                                                                    | pre-commit (related tests only), pre-push (advisory, full), CI `app` job                 | `cd app && pnpm run test`                       |
+| Production build (`tsc -b && vite build`)                                                      | pre-push hook (advisory), CI `app` job                                                    | `cd app && pnpm run build`                      |
 | Bundle size budget                                                                             | CI `app` job (`app/tools/bundle-budget.mjs`)                                              | `cd app && node tools/bundle-budget.mjs`        |
 | Dead code (unused files/exports/deps)                                                          | CI `app` job, **report-only** — see `app/knip.json`                                       | `cd app && pnpm exec knip`                      |
-| Ruff format (`ruff format`)                                                                    | pre-commit hook (staged `.py` only, rewrites + re-stages), pre-push hook, CI `python` job | `uv run ruff format src tests tools`            |
-| Ruff lint (30 rule families, line length 100)                                                  | pre-commit hook (staged `.py` only, `--fix`), pre-push hook, CI `python` job              | `uv run ruff check src tests tools`             |
-| Module size (400 lines in `src`/`tools`, 600 in `tests`)                                       | pre-push hook, CI `python` job                                                            | `uv run python tools/check_module_size.py`      |
-| Import layering (no cycles; the leaf packages import no sibling; nothing depends on `mva.viz`) | pre-push hook, CI `python` job                                                            | `uv run lint-imports`                           |
-| mypy (strict, with a per-package ratchet)                                                      | pre-push hook, CI `python` job                                                            | `uv run mypy`                                   |
-| `uv.lock` matches `pyproject.toml`, pytest suite                                               | pre-push hook, CI `python` job                                                            | `uv sync --frozen && uv run pytest`             |
+| Ruff format (`ruff format`)                                                                    | pre-commit hook (staged `.py` only, rewrites + re-stages), pre-push (advisory), CI `python` job | `uv run ruff format src tests tools`            |
+| Ruff lint (30 rule families, line length 100)                                                  | pre-commit hook (staged `.py` only, `--fix`), pre-push (advisory), CI `python` job        | `uv run ruff check src tests tools`             |
+| Module size (400 lines in `src`/`tools`, 600 in `tests`)                                       | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv run python tools/check_module_size.py`      |
+| Import layering (no cycles; the leaf packages import no sibling; nothing depends on `mva.viz`) | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv run lint-imports`                           |
+| mypy (strict, with a per-package ratchet)                                                      | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv run mypy`                                   |
+| `uv.lock` matches `pyproject.toml`, pytest suite                                               | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv sync --frozen && uv run pytest`             |
 
 `pnpm run check` in `app/` runs typecheck + lint + format:check + test in one command — the same
-four gates the pre-push hook and CI both run. `tools/check-python.sh` is its counterpart for
+four gates CI runs (the pre-push hook runs it as an advisory). `tools/check-python.sh` is its counterpart for
 the root package: the same six gates, in CI's order, with `--fix` to format and autofix first.
 Why each Python rule is set where it is:
 [`docs/notes/python-quality-gates.md`](docs/notes/python-quality-gates.md).
@@ -91,16 +91,18 @@ across both projects to decide whether it needs to run at all.
 - **commit-msg** — runs [`tools/check-commit-msg.sh`](tools/check-commit-msg.sh) on the message
   being recorded. POSIX `sh`, no node and no uv: a contributor with only one of the two
   toolchains installed still gets the gate. Cheap enough (a few `grep`s) to be unnoticeable.
-- **pre-commit** — runs `ruff format` + `ruff check --fix` on staged `.py` files and
-  re-stages them, then `lint-staged` (`app/.lintstagedrc.json`: `eslint --fix` + `prettier
---write` on staged `.ts`/`.tsx`/`.js`/`.mjs`, `prettier --write` on staged `.json`/`.md`, all
-  under `app/`) — but only if the commit actually stages a file under `app/`. A Python-only or
-  docs-only commit skips it entirely; no node process even starts.
-- **pre-push** — runs `tools/check-python.sh` if the pushed range touches `src/`, `tests/`,
-  `tools/`, `pyproject.toml` or `uv.lock`, and the full `pnpm run check` + `pnpm run build` in
-  `app/` if it touches `app/`. Each half is skipped when untouched. Same skip logic, applied to the diff between each pushed
-  ref's old and new SHA (falls back to running the gate, never to skipping it, when that diff is
-  ambiguous — e.g. a brand-new branch with no shared history).
+- **pre-commit** — **the blocking gate.** Each half runs only when the commit stages a file in it:
+  - Python (staged `.py`): `ruff format` + `ruff check --fix` on the staged files (re-staged),
+    then `tools/check-python.sh` — every CI gate, mypy and pytest included.
+  - `app/` (staged `app/` file): `lint-staged` (`app/.lintstagedrc.json`: `eslint --fix` +
+    `prettier --write`), `tsc -b`, the theme/dictionary/steps-nav checks, and
+    `vitest related --run` on the staged sources (only the tests that import them).
+  - Gates read the working tree, not the index: unstaged edits in a touched half count.
+- **pre-push** — **advisory, never blocks.** Runs `tools/check-python.sh` if the pushed range
+  touches `src/`, `tests/`, `tools/`, `pyproject.toml` or `uv.lock`, and `pnpm run check` +
+  `pnpm run build` in `app/` if it touches `app/`; a red gate prints a warning and the push goes
+  ahead (CI reports the same). Same range logic as before (falls back to running, never to
+  skipping). `MVA_SKIP_PUSH_CHECKS=1 git push` skips it for one push.
 
 **One-time setup after cloning:** `sh tools/setup-git.sh`. It is idempotent, repo-local
 (`.git/config` only, never your global config) and prints what it changed. It wires:
@@ -162,7 +164,7 @@ requires it.
 `gh api repos/agharsallah/mva-hackathon/branches/main/protection` answers
 `403 — Upgrade to GitHub Pro or make this repository public to enable this feature`. Branch
 protection needs the repo to be public or on a paid plan; this one is private on the free tier.
-Until that changes, the `commit-msg` and `pre-push` hooks are the enforcement and CI is the
+Until that changes, the `commit-msg` and `pre-commit` hooks are the enforcement and CI is the
 visible-but-not-blocking backstop — a red `commit messages` job on `main` means a commit got in
 around the hook.
 

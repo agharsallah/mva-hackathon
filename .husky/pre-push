@@ -1,15 +1,16 @@
 #!/usr/bin/env sh
-# Husky pre-push hook — root-level for the same reason as pre-commit (git
-# resolves core.hooksPath from the repo top level, and this hook needs to see
-# every ref being pushed, not just app/'s subtree).
+# Husky pre-push hook — advisory only: it never blocks a push. The blocking gate is
+# pre-commit; CI is the backstop. This hook re-runs the whole-tree gates that
+# pre-commit scopes down (full vitest, the production build) on the pushed range and
+# prints a warning when one is red, so a failure is seen before CI reports it.
 #
-# Runs the full app/ gate (`pnpm run check` + build) once for the whole push,
-# but only when the range being pushed actually touches app/ — a Python-only
-# or docs-only push is not slowed down by npm/node at all. git passes one
-# "<local ref> <local sha1> <remote ref> <remote sha1>" line per pushed ref on
-# stdin; any ambiguous case (new branch, first-ever push) falls back to
-# running the gate rather than silently skipping it.
-set -e
+# Root-level for the same reason as pre-commit (git resolves core.hooksPath from the
+# repo top level, and this hook needs to see every ref being pushed). git passes one
+# "<local ref> <local sha1> <remote ref> <remote sha1>" line per pushed ref on stdin;
+# any ambiguous case (new branch, first-ever push) falls back to running the gate
+# rather than silently skipping it.
+#
+# Skip it for one push: MVA_SKIP_PUSH_CHECKS=1 git push
 
 zero=0000000000000000000000000000000000000000
 run_gate=0
@@ -20,10 +21,8 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   [ "$local_sha" = "$zero" ] && continue # deleting the ref — nothing to check
 
   if [ "$remote_sha" = "$zero" ]; then
-    # New ref: no remote history to diff against. Compare to the merge-base
-    # with the default remote branch instead; if even that is unavailable
-    # (e.g. the very first push of the repo), diff the full tree so the gate
-    # runs rather than being skipped.
+    # New ref: no remote history to diff against. Compare to the merge-base with the
+    # default remote branch; if even that is unavailable, diff the full tree.
     default_branch=$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null || echo origin/main)
     base=$(git merge-base "$local_sha" "$default_branch" 2>/dev/null || true)
     if [ -n "$base" ]; then
@@ -33,7 +32,7 @@ while read -r local_ref local_sha remote_ref remote_sha; do
       changed=$(git diff --name-only "$empty_tree" "$local_sha")
     fi
   else
-    changed=$(git diff --name-only "$remote_sha" "$local_sha")
+    changed=$(git diff --name-only "$remote_sha" "$local_sha" 2>/dev/null || true)
   fi
 
   if printf '%s\n' "$changed" | grep -q '^app/'; then
@@ -45,25 +44,33 @@ while read -r local_ref local_sha remote_ref remote_sha; do
   fi
 done
 
-if [ "$run_gate" = "0" ] && [ "${run_python:-0}" = "0" ]; then
-  echo "pre-push: pushed range touches neither app/ nor the Python package — skipping both gates"
+if [ "${MVA_SKIP_PUSH_CHECKS:-0}" = "1" ]; then
+  echo "pre-push: MVA_SKIP_PUSH_CHECKS=1 — skipping the advisory gates"
   exit 0
 fi
 
-# Python before app/ because the app/ gate ends inside app/, and because the Python
-# gate is the faster of the two to fail.
-if [ "${run_python:-0}" = "1" ]; then
-  echo "pre-push: Python changes detected — running tools/check-python.sh"
-  tools/check-python.sh
-else
-  echo "pre-push: no Python changes in the pushed range — skipping the Python gate"
+if [ "$run_gate" = "0" ] && [ "$run_python" = "0" ]; then
+  echo "pre-push: pushed range touches neither app/ nor the Python package — nothing to check"
+  exit 0
+fi
+
+red=""
+
+if [ "$run_python" = "1" ]; then
+  echo "pre-push (advisory): running tools/check-python.sh"
+  tools/check-python.sh || red="$red python"
 fi
 
 if [ "$run_gate" = "1" ]; then
-  echo "pre-push: app/ changes detected — running pnpm run check + build"
-  cd app
-  pnpm run check
-  pnpm run build
-else
-  echo "pre-push: no app/ changes in the pushed range — skipping pnpm run check + build"
+  echo "pre-push (advisory): running pnpm run check + build in app/"
+  (cd app && pnpm run check && pnpm run build) || red="$red app"
 fi
+
+if [ -n "$red" ]; then
+  echo ""
+  echo "pre-push: WARNING — red gate(s):$red. The push goes ahead; CI will report the same."
+  echo "pre-push: fix it in a follow-up commit (the pre-commit hook blocks the next red commit)."
+else
+  echo "pre-push: every advisory gate is green"
+fi
+exit 0
