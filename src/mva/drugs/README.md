@@ -66,6 +66,9 @@ so a reader of the table alone can criticise it without opening this file.
 | `transfer.py` | a different **case** entirely: the card, the `phenotype.hpoa` reader, the **portability** control |
 | `compare.py` | both controls' side-by-side counts: the decoy per direction, the transfer per case |
 | `provenance.py` | one manifest per table, in the repository's reference shape |
+| `graph_walk.py` | from a disease node, which drugs are reachable along disease → gene → (gene \| pathway → gene) → drug, and by how many degree-weighted paths? Pure; every path kept |
+| `primekg.py` | PrimeKG through DuckDB: the walked subgraph, a MONDO id → (grouped) disease node, HPO terms vs that node, shared pathways |
+| `walk_table.py` | the walk's ranking as a table: openFDA-labelled drugs only, flagged against `drug_candidates.tsv` and the standard of care |
 | `snapshot.py` | run everything once, write everything, count everything |
 | `cli.py` | `mva-drugs`: `card`, `targets`, `drugs`, `trials`, `literature`, `snapshot` |
 
@@ -81,6 +84,8 @@ uv run mva-drugs --card other/card.json snapshot --out-dir ressources/other-case
 uv run mva-drugs snapshot --refresh         # bypass the cache for this run
 uv run python tools/track2_decoys.py --symbol XDH ...   # a decoy: same child, wrong gene
 uv run python tools/track2_transfer.py --warm           # a transfer case: a different case
+uv run python tools/fetch_primekg.py --execute          # PrimeKG into build/primekg/ (step 7)
+uv run python tools/track2_walk.py walk                 # the graph walk -> ranking-walk.tsv
 ```
 
 A cold `snapshot` is a few thousand requests over roughly half an hour, almost all of it
