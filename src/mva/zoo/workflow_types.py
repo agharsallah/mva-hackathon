@@ -181,10 +181,17 @@ class Deps:
 
             return {key: card.as_dict() for key, card in registry_module.load().items()}
 
+        venues: dict[str, str] = {}
+
         def score(config: Config, model: str, _records: Sequence[Any]) -> dict[str, float]:
+            from collections import Counter
+
             from . import cache as cache_module
 
             rows = cache_module.read(connection, config.warehouse_schema, model=model)
+            # Where the lane ran is what its cached rows say (``modal:L4``, ``vep-rest``…).
+            counted = Counter(row.venue for row in rows if row.venue)
+            venues[model] = counted.most_common(1)[0][0] if counted else "laptop"
             return {row.allele_id: row.score for row in rows if row.score is not None}
 
         def pairs(config: Config, records_in: Sequence[Any]) -> rank_module.PairBuild:
@@ -267,6 +274,7 @@ class Deps:
             score=score,
             load_pairs=pairs,
             hpo_row=hpo,
+            venue=lambda model: venues.get(model, "laptop"),
             fingerprint=fingerprint,
         )
 

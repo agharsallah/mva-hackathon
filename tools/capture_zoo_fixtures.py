@@ -100,13 +100,24 @@ def main(argv: list[str] | None = None) -> int:
     lanes = [row["model"] for row in envelopes["zoo-ranks"]["data"]["per_model"]]
     reports: dict[str, Any] = {}
     source = ""
-    for key in ["merged", *lanes]:
+    # A lane ranked by a run whose reports were written elsewhere (step 8 writes its own under
+    # docs/iteration4/step-8/reports/) has no report on this route; it is skipped and named.
+    served = {row["key"] for row in fetch(args.api, "/api/zoo/reports")["data"]}
+    missing = [key for key in lanes if key not in served]
+    if missing:
+        print(f"no served report for: {', '.join(missing)} (skipped)")
+    for key in ["merged", *[lane for lane in lanes if lane in served]]:
         envelope = fetch(args.api, f"/api/zoo/reports/{key}")
         reports[key] = envelope["data"]
         source = source or envelope.get("source", "")
     write("zoo-reports", wrap({"source": source}, reports))
 
-    case_gene = envelopes["zoo-ranks"]["data"]["per_model"][0]["confirmed"]["gene"]
+    # The first lane with an opinion on the pair names the gene; a lane that abstains has none.
+    case_gene = next(
+        row["confirmed"]["gene"]
+        for row in envelopes["zoo-ranks"]["data"]["per_model"]
+        if row.get("confirmed")
+    )
     genes = args.gene or [case_gene, *EXTRA_GENES]
     captured: dict[str, Any] = {}
     gene_source = ""

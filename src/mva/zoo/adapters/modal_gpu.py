@@ -16,7 +16,7 @@ record Parquet (:mod:`mva.zoo.record_window`). No coordinate, gene or HGVS strin
   so a killed run resumes with what it had (the ESM2 lane's rule);
 * every reply is priced into the ledger (:mod:`mva.zoo.modal_budget`) and the ledger is
   asked *before* each wave whether it can afford it — a lane stops at its share of the cap;
-* every wave is logged to ``build/it4/modal/<key>.log`` with items, seconds, dollars.
+* every wave is logged to ``<work_dir>/modal/<key>.log`` with items, seconds, dollars.
 
 The remote call is injectable (``transport``), which is how the tests run without Modal.
 """
@@ -40,7 +40,6 @@ __all__ = ["DEFAULT_DNA", "ModalAdapter", "Transport", "build", "crop", "modal_t
 
 DEFAULT_DNA = Path("build/it4/dna-windows.parquet")
 DEFAULT_WORK = Path("build/it4")
-LOG_DIR = Path("build/it4/modal")
 
 #: ``chunks -> replies``: the one seam between this module and Modal.
 Transport = Callable[[list[list[Item]]], Iterable[Reply]]
@@ -73,11 +72,13 @@ def crop(item: Item, length: int | None) -> Item:
     )
 
 
-def _logger(key: str) -> logging.Logger:
-    log = logging.getLogger(f"mva.zoo.modal.{key}")
+def _logger(key: str, directory: Path) -> logging.Logger:
+    """One file logger per lane *and* log directory, so a test's tmp_path never writes into
+    the real lane log under ``build/``."""
+    log = logging.getLogger(f"mva.zoo.modal.{key}.{abs(hash(str(directory)))}")
     if not log.handlers:
-        LOG_DIR.mkdir(parents=True, exist_ok=True)
-        handler = logging.FileHandler(LOG_DIR / f"{key}.log")
+        directory.mkdir(parents=True, exist_ok=True)
+        handler = logging.FileHandler(directory / f"{key}.log")
         handler.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(message)s"))
         log.addHandler(handler)
         log.setLevel(logging.INFO)
@@ -187,7 +188,7 @@ class ModalAdapter:
 
     def run_remote(self, records: Sequence[AlleleRecord]) -> dict[str, int | float]:
         """Send what is not yet checkpointed, wave by wave, until done or out of budget."""
-        log = _logger(self.name)
+        log = _logger(self.name, self.work_dir / "modal")
         done = self.load_checkpoints()
         items = self.items([record.allele_id for record in records])
         pending = [items[a] for a in items if a not in done]
