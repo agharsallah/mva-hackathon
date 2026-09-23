@@ -1,6 +1,6 @@
 # App shell
 
-**Standing:** current as of 2026-09-03.
+**Standing:** current as of 2026-09-23.
 
 Micro-frontend-style shell for one deployable SPA — no Module Federation, no separate
 deploys. "Modules" are lazily-loaded chunks, each isolated by its own error/Suspense boundary.
@@ -34,13 +34,19 @@ shape from it — one source, so none of these can disagree:
 Every page serves exactly one of five questions, declared as its `group`; manifest order
 inside a group is reading order. Overview has no group — it is the map.
 
-| Group      | Question                                              | Pages                                 |
-| ---------- | ----------------------------------------------------- | ------------------------------------- |
-| `learn`    | What do the words mean?                               | Learn                                 |
-| `data`     | Is the measurement trustworthy?                       | Reads → Callset → Genome              |
-| `case`     | Which gene, and which pair inside it, is causal?      | Panel → Compare → Phenotype → Search  |
-| `decide`   | What do we believe, and what has it cost to find out? | Science → Probes                      |
-| `platform` | What exists, where did it come from, and is it up?    | Catalog → Provenance → Status → Style |
+| Group      | Question                                              | Pages                                              |
+| ---------- | ----------------------------------------------------- | -------------------------------------------------- |
+| `learn`    | What do the words mean?                               | Learn                                              |
+| `data`     | Is the measurement trustworthy?                       | Reads → Callset → Genome                           |
+| `case`     | Which gene, and which pair inside it, is causal?      | Panel → Compare → Phenotype → Search               |
+| `decide`   | What do we believe, and what has it cost to find out? | Science → Probes → Track 1 → Track 2 → Submissions |
+| `platform` | What exists, where did it come from, and is it up?    | Catalog → Provenance → Status → Style              |
+
+Track 1 and Track 2 open onto a subtree (Track ▸ Iteration ▸ Step) declared by `parent` and
+generated from the step maps (`tools/gen_steps_nav.py`). The Zoo is Iteration 4's own
+dashboard (`/track1/iteration4/zoo`; `/zoo` redirects, query intact), listed beside its steps.
+Every header row marks the whole path to the open page: the page filled and ringed, its
+ancestors marked more quietly, each item's full title on hover.
 
 Page order on a screen follows the same rule everywhere: h1 and description (from the
 manifest), the headline `Callout` (the finding), the `Explainer` (background, terms as

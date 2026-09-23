@@ -8,7 +8,9 @@
  * question the page in front of them is serving. Row 2 is absent on Overview, which is
  * the map rather than a stop on the journey.
  *
- * Rows 3 and 4 — the branch of the open page, and the branch inside it. `Decide` holds a
+ * Rows 3 and 4 — the branch of the open page, and the branch inside it. Every row marks the
+ * whole path to the open page — the page itself filled and ringed, its ancestors (Track 1,
+ * Iteration 4) marked more quietly — so a step's row position is never the only clue to it. `Decide` holds a
  * three-level subtree (Track ▸ Iteration ▸ Step), so `/track1/iteration2/step-4` shows
  * Track 1's iterations in row 3 and iteration 2's steps in row 4. Without it the section row
  * carried twelve equal tabs, seven of them one iteration's step pages, and a reader could not
@@ -39,6 +41,8 @@ import { ThemeToggle } from './ThemeToggle';
 export interface HeaderNavItem {
   to: string;
   label: string;
+  /** The page's full title, shown on hover: `Step 2` alone does not say what step 2 is. */
+  title?: string;
   preload?: () => void;
   /** Detail pages of this one, shown in row 3 while this branch is open. */
   children?: HeaderNavItem[];
@@ -112,8 +116,27 @@ const TAB_OFF = 'text-chrome-400 hover:bg-chrome-900 hover:text-chrome-200';
 
 const SUB =
   'rounded-control px-2 py-0.5 text-micro transition focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-500';
-const SUB_ON = 'bg-machinery-950/60 text-chrome-50';
+/** The page in front of the reader: filled and ringed, so it reads at a glance in both themes. */
+const SUB_ON = 'bg-machinery-500/15 font-semibold text-machinery-300 ring-1 ring-machinery-500/60';
+/** A row item the open page sits beneath (its iteration, say): marked, but quieter than the page. */
+const SUB_PATH = 'bg-chrome-900 font-medium text-chrome-50';
 const SUB_OFF = 'text-chrome-400 hover:bg-chrome-900 hover:text-chrome-200';
+
+/**
+ * How one nav item relates to the open page: it is the page, the page is beneath it, or
+ * neither. `NavLink`'s own `isActive` answers only the first — with `end` it drops the
+ * ancestors, without it `/track1` would light up for `/track1x` — so the header asks the
+ * manifest tree instead, and `/track1/iteration4/step-2` marks Track 1, Iteration 4 and
+ * Step 2 in their three rows.
+ */
+type Mark = 'on' | 'path' | 'off';
+
+function markOf(item: HeaderNavItem, pathname: string): Mark {
+  if (item.to === pathname) return 'on';
+  return holds(item, pathname) ? 'path' : 'off';
+}
+
+const SUB_TONE: Record<Mark, string> = { on: SUB_ON, path: SUB_PATH, off: SUB_OFF };
 
 /** Whether this item, or anything declared under it, is the page in front of the reader. */
 function holds(item: HeaderNavItem, pathname: string): boolean {
@@ -136,32 +159,29 @@ function opensRowFor(item: HeaderNavItem, pathname: string): boolean {
  * three unrelated tab strips.
  */
 function BranchRow({ branch, tone }: { branch: HeaderNavItem; tone: string }) {
+  const { pathname } = useLocation();
+  const items = [{ ...branch, label: 'overview', children: undefined }, ...(branch.children ?? [])];
   return (
     <div className={cx('border-t border-line-soft', tone)}>
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-2 px-5 py-1">
-        <span className="text-micro text-chrome-500">{branch.label} —</span>
+        <span className="text-micro text-chrome-500">{branch.label} ▸</span>
         <nav aria-label={`${branch.label} pages`} className="flex flex-wrap items-center gap-1">
-          <NavLink
-            to={branch.to}
-            end
-            onPointerEnter={branch.preload}
-            onFocus={branch.preload}
-            className={({ isActive }) => cx(SUB, isActive ? SUB_ON : SUB_OFF)}
-          >
-            overview
-          </NavLink>
-          {(branch.children ?? []).map((c) => (
-            <NavLink
-              key={c.to}
-              to={c.to}
-              end
-              onPointerEnter={c.preload}
-              onFocus={c.preload}
-              className={({ isActive }) => cx(SUB, isActive ? SUB_ON : SUB_OFF)}
-            >
-              {c.label}
-            </NavLink>
-          ))}
+          {items.map((c) => {
+            const mark = markOf(c, pathname);
+            return (
+              <Link
+                key={c.to}
+                to={c.to}
+                onPointerEnter={c.preload}
+                onFocus={c.preload}
+                aria-current={mark === 'on' ? 'page' : mark === 'path' ? 'true' : undefined}
+                title={c.title}
+                className={cx(SUB, SUB_TONE[mark])}
+              >
+                {c.label}
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </div>
@@ -301,25 +321,29 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
         <div className="border-t border-line-soft bg-chrome-950/60">
           <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-4 gap-y-1 px-5">
             <nav aria-label="Pages" className="-mb-px flex flex-wrap items-center">
-              {active.pages.map((p) => (
-                <NavLink
-                  key={p.to}
-                  to={p.to}
-                  end
-                  onPointerEnter={p.preload}
-                  onFocus={p.preload}
-                  className={({ isActive }) =>
-                    cx(
+              {active.pages.map((p) => {
+                // Underlined while the reader is anywhere beneath it too: on a step page the
+                // Track 1 tab must still say which track the step belongs to.
+                const mark = markOf(p, pathname);
+                return (
+                  <Link
+                    key={p.to}
+                    to={p.to}
+                    onPointerEnter={p.preload}
+                    onFocus={p.preload}
+                    aria-current={mark === 'on' ? 'page' : mark === 'path' ? 'true' : undefined}
+                    title={p.title}
+                    className={cx(
                       'border-b-2 px-3 py-2 text-xs transition focus:outline-none focus-visible:bg-chrome-900',
-                      isActive
-                        ? 'border-machinery-500 text-chrome-50'
-                        : 'border-transparent text-chrome-400 hover:border-line-strong hover:text-chrome-200',
-                    )
-                  }
-                >
-                  {p.label}
-                </NavLink>
-              ))}
+                      mark === 'off'
+                        ? 'border-transparent text-chrome-400 hover:border-line-strong hover:text-chrome-200'
+                        : 'border-machinery-500 font-medium text-chrome-50',
+                    )}
+                  >
+                    {p.label}
+                  </Link>
+                );
+              })}
             </nav>
             <p className="ml-auto hidden py-2 font-serif text-note text-chrome-400 italic sm:block">
               {active.question}

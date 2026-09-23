@@ -135,4 +135,35 @@ describe('navigating with the nav bar', () => {
       within(rail).getByRole('link', { name: "What survived the caller's filters" }),
     ).toBeTruthy();
   }, 20_000);
+
+  /**
+   * A step page three levels down must say where it is in every row, not only in the last:
+   * the screenshot that prompted this showed "Step 2" lit and "Iteration 4" and "Track 1"
+   * dark, so a reader could not tell which iteration the step belonged to.
+   */
+  it('marks the whole path to a step, and the step itself as the page', async () => {
+    renderApp('/track1/iteration4/step-2');
+    const row = (name: string) => screen.getByRole('navigation', { name });
+    const current = (nav: string, label: string) =>
+      within(row(nav)).getByRole('link', { name: label }).getAttribute('aria-current');
+    await waitFor(() => expect(current('Pages', 'Track 1')).toBe('true'));
+    expect(current('Track 1 pages', 'Iteration 4')).toBe('true');
+    expect(current('Track 1 pages', 'Iteration 2')).toBeNull();
+    expect(current('Iteration 4 pages', 'Step 2')).toBe('page');
+    expect(current('Iteration 4 pages', 'overview')).toBeNull();
+    // The zoo is one of iteration 4's pages, not a peer of Track 1.
+    expect(within(row('Iteration 4 pages')).getByRole('link', { name: 'Zoo' })).toBeTruthy();
+    expect(within(row('Pages')).queryByRole('link', { name: 'Zoo' })).toBeNull();
+  });
+
+  it('sends the old /zoo address to iteration 4, query intact', async () => {
+    renderApp('/zoo?model=esm1b');
+    await waitFor(() =>
+      expect(
+        within(screen.getByRole('navigation', { name: 'Iteration 4 pages' }))
+          .getByRole('link', { name: 'Zoo' })
+          .getAttribute('aria-current'),
+      ).toBe('page'),
+    );
+  });
 });

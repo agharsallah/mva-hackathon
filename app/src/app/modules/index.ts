@@ -152,6 +152,21 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/Track1'),
   },
   ...under('track1'),
+  // The zoo is iteration 4's own dashboard: its six steps built the lanes, the cache, the DAG
+  // and the reports this page reads. It was a peer of Track 1 in the section row, which hid
+  // that it answers Track 1's question for one iteration; it now sits beside those steps.
+  // Iteration 4 is the last Track 1 iteration the generator emits, so here is journey order.
+  {
+    id: 'zoo',
+    path: '/track1/iteration4/zoo',
+    navLabel: 'Zoo',
+    title: 'The model zoo — several opinions, kept apart',
+    group: 'decide',
+    parent: 'track1-iteration4',
+    description:
+      'Independent variant-effect models asked the same question: what each one could score, where they agree, where the merge puts the case pair, what the run cost, and the same view for any gene.',
+    load: () => import('../../pages/Zoo'),
+  },
   {
     id: 'track2',
     path: '/track2',
@@ -163,16 +178,6 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/Track2'),
   },
   ...under('track2'),
-  {
-    id: 'zoo',
-    path: '/zoo',
-    navLabel: 'Zoo',
-    title: 'The model zoo — several opinions, kept apart',
-    group: 'decide',
-    description:
-      'Independent variant-effect models asked the same question: what each one could score, where they agree, where the merge puts the case pair, what the run cost, and the same view for any gene.',
-    load: () => import('../../pages/Zoo'),
-  },
   {
     id: 'submissions',
     path: '/submissions',

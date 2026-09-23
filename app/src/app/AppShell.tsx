@@ -4,7 +4,7 @@
  * inside `PageFrame`, which adds the h1 and the journey links from the same manifest.
  */
 
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 
 // Imported by their own paths, not through the components barrel: the shell is in the entry
 // chunk, and the barrel's single module pulls DataTable, Plot and every other primitive
@@ -49,6 +49,7 @@ const groups: JourneyGroup[] = NAV_GROUPS.map((g) => ({
 const navItem = (p: JourneyPage): HeaderNavItem => ({
   to: p.to,
   label: p.label,
+  title: p.title,
   preload: p.preload,
   ...(p.children ? { children: p.children.map(navItem) } : {}),
 });
@@ -70,7 +71,15 @@ const MOVED: [string, string][] = [
     `/steps/step-${n}`,
     `/track1/iteration2/step-${n}`,
   ]),
+  // The zoo was a top-level Decide tab until it moved under the iteration that built it.
+  ['/zoo', '/track1/iteration4/zoo'],
 ];
+
+/** A moved address keeps its query and fragment: `/zoo?model=esm1b` must land on that lane. */
+function Moved({ to }: { to: string }) {
+  const { search, hash } = useLocation();
+  return <Navigate to={{ pathname: to, search, hash }} replace />;
+}
 
 export function AppShell() {
   // Keyed by theme: every exhibit builds its Plotly layout / SVG / three.js scene from `C`,
@@ -99,7 +108,7 @@ export function AppShell() {
                 />
               ))}
               {MOVED.map(([from, to]) => (
-                <Route key={from} path={from} element={<Navigate to={to} replace />} />
+                <Route key={from} path={from} element={<Moved to={to} />} />
               ))}
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

@@ -11,12 +11,13 @@ import { useUrlState } from '../../lib/urlstate';
  * (`app/src/app/modules/journey.ts` → `moduleAt`), so a parameterised path would mount the
  * page but leave it without its header, its position in the journey and its nav link — and
  * fixing that means editing the shell, which this page is not allowed to do. The selections
- * are therefore query parameters on the one `/zoo` route:
+ * are therefore query parameters on the one zoo route, `/track1/iteration4/zoo` (the old
+ * `/zoo` redirects there, query intact):
  *
  * | contract view            | address here                |
  * | ------------------------ | --------------------------- |
- * | `/zoo/models/{key}`      | `/zoo?model={key}`          |
- * | `/zoo/gene/{symbol}`     | `/zoo?gene={symbol}`        |
+ * | `/zoo/models/{key}`      | `…/zoo?model={key}`         |
+ * | `/zoo/gene/{symbol}`     | `…/zoo?gene={symbol}`       |
  *
  * Both are still one-URL citations — the repo's actual requirement for a view selection
  * (`lib/urlstate.ts`) — and a later shell change can redirect the path form onto these.
