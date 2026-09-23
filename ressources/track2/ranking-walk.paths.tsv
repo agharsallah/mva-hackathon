@@ -1,0 +1,310 @@
+rank	drug_name	metapath	weight	path
+1	Fostamatinib	ppi	0.000222816	mosaic variegated aneuploidy syndrome > BUB1 > DAPK2 > Fostamatinib
+1	Fostamatinib	ppi	0.000137174	mosaic variegated aneuploidy syndrome > BUB1B > PLK3 > Fostamatinib
+1	Fostamatinib	ppi	0.000117481	mosaic variegated aneuploidy syndrome > CEP57 > PKN1 > Fostamatinib
+1	Fostamatinib	ppi	0.000117206	mosaic variegated aneuploidy syndrome > TRIP13 > PLK3 > Fostamatinib
+1	Fostamatinib	ppi	0.0001001	mosaic variegated aneuploidy syndrome > BUB1B > TTK > Fostamatinib
+1	Fostamatinib	ppi	5.32907e-05	mosaic variegated aneuploidy syndrome > BUB1B > NEK2 > Fostamatinib
+1	Fostamatinib	ppi	2.93015e-05	mosaic variegated aneuploidy syndrome > TRIP13 > PRKAA2 > Fostamatinib
+1	Fostamatinib	ppi	2.80584e-05	mosaic variegated aneuploidy syndrome > BUB1B > AURKB > Fostamatinib
+1	Fostamatinib	ppi	2.0749e-05	mosaic variegated aneuploidy syndrome > BUB1B > PLK1 > Fostamatinib
+1	Fostamatinib	ppi	1.49793e-05	mosaic variegated aneuploidy syndrome > BUB1 > PLK1 > Fostamatinib
+1	Fostamatinib	ppi	1.47558e-05	mosaic variegated aneuploidy syndrome > BUB1B > CDK1 > Fostamatinib
+1	Fostamatinib	ppi	1.06526e-05	mosaic variegated aneuploidy syndrome > BUB1 > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	4.88358e-06	mosaic variegated aneuploidy syndrome > BUB3 > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	4.14888e-06	mosaic variegated aneuploidy syndrome > BUB3 > Mitotic Prometaphase > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	4.1336e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of Nlp from mitotic centrosomes > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	4.1336e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of proteins required for interphase microtubule organization from the centrosome > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	4.00704e-06	mosaic variegated aneuploidy syndrome > BUB3 > EML4 and NUDC in mitotic spindle formation > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	3.96372e-06	mosaic variegated aneuploidy syndrome > CEP57 > AURKA Activation by TPX2 > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	3.72082e-06	mosaic variegated aneuploidy syndrome > BUB3 > Resolution of Sister Chromatid Cohesion > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	3.70788e-06	mosaic variegated aneuploidy syndrome > CEP57 > Anchoring of the basal body to the plasma membrane > MARK4 > Fostamatinib
+1	Fostamatinib	pathway	3.52868e-06	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of mitotic centrosome proteins and complexes > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	3.50255e-06	mosaic variegated aneuploidy syndrome > BUB3 > APC-Cdc20 mediated degradation of Nek2A > NEK2 > Fostamatinib
+1	Fostamatinib	pathway	3.34874e-06	mosaic variegated aneuploidy syndrome > BUB3 > RHO GTPases Activate Formins > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	3.28809e-06	mosaic variegated aneuploidy syndrome > CEP57 > Regulation of PLK1 Activity at G2/M Transition > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	3.18878e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of Nlp from mitotic centrosomes > PLK4 > Fostamatinib
+1	Fostamatinib	pathway	3.18878e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of proteins required for interphase microtubule organization from the centrosome > PLK4 > Fostamatinib
+1	Fostamatinib	pathway	3.07821e-06	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of NuMA to mitotic centrosomes > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	3.05773e-06	mosaic variegated aneuploidy syndrome > CEP57 > AURKA Activation by TPX2 > PLK4 > Fostamatinib
+1	Fostamatinib	pathway	2.95257e-06	mosaic variegated aneuploidy syndrome > CEP57 > Anchoring of the basal body to the plasma membrane > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	2.8578e-06	mosaic variegated aneuploidy syndrome > BUB1B > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	2.72213e-06	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of mitotic centrosome proteins and complexes > PLK4 > Fostamatinib
+1	Fostamatinib	pathway	2.53653e-06	mosaic variegated aneuploidy syndrome > CEP57 > Regulation of PLK1 Activity at G2/M Transition > PLK4 > Fostamatinib
+1	Fostamatinib	pathway	2.45457e-06	mosaic variegated aneuploidy syndrome > BUB3 > Separation of Sister Chromatids > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	2.44179e-06	mosaic variegated aneuploidy syndrome > BUB3 > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	2.42786e-06	mosaic variegated aneuploidy syndrome > BUB1B > Mitotic Prometaphase > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	2.37462e-06	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of NuMA to mitotic centrosomes > PLK4 > Fostamatinib
+1	Fostamatinib	pathway	2.34486e-06	mosaic variegated aneuploidy syndrome > BUB1B > EML4 and NUDC in mitotic spindle formation > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	2.2777e-06	mosaic variegated aneuploidy syndrome > CEP57 > Anchoring of the basal body to the plasma membrane > PLK4 > Fostamatinib
+1	Fostamatinib	pathway	2.17737e-06	mosaic variegated aneuploidy syndrome > BUB1B > Resolution of Sister Chromatid Cohesion > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	2.07444e-06	mosaic variegated aneuploidy syndrome > BUB3 > Mitotic Prometaphase > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	2.06311e-06	mosaic variegated aneuploidy syndrome > BUB1 > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	2.04964e-06	mosaic variegated aneuploidy syndrome > BUB1B > APC-Cdc20 mediated degradation of Nek2A > NEK2 > Fostamatinib
+1	Fostamatinib	pathway	2.00352e-06	mosaic variegated aneuploidy syndrome > BUB3 > EML4 and NUDC in mitotic spindle formation > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	1.95963e-06	mosaic variegated aneuploidy syndrome > BUB1B > RHO GTPases Activate Formins > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	1.86534e-06	mosaic variegated aneuploidy syndrome > BUB3 > EML4 and NUDC in mitotic spindle formation > NEK9 > Fostamatinib
+1	Fostamatinib	pathway	1.86041e-06	mosaic variegated aneuploidy syndrome > BUB3 > Resolution of Sister Chromatid Cohesion > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	1.75273e-06	mosaic variegated aneuploidy syndrome > BUB1 > Mitotic Prometaphase > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	1.69281e-06	mosaic variegated aneuploidy syndrome > BUB1 > EML4 and NUDC in mitotic spindle formation > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	1.67437e-06	mosaic variegated aneuploidy syndrome > BUB3 > RHO GTPases Activate Formins > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	1.60586e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of Nlp from mitotic centrosomes > NEK2 > Fostamatinib
+1	Fostamatinib	pathway	1.60586e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of proteins required for interphase microtubule organization from the centrosome > NEK2 > Fostamatinib
+1	Fostamatinib	pathway	1.5719e-06	mosaic variegated aneuploidy syndrome > BUB1 > Resolution of Sister Chromatid Cohesion > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	1.53986e-06	mosaic variegated aneuploidy syndrome > CEP57 > AURKA Activation by TPX2 > NEK2 > Fostamatinib
+1	Fostamatinib	pathway	1.43638e-06	mosaic variegated aneuploidy syndrome > BUB1B > Separation of Sister Chromatids > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	1.4289e-06	mosaic variegated aneuploidy syndrome > BUB1B > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	1.41471e-06	mosaic variegated aneuploidy syndrome > BUB1 > RHO GTPases Activate Formins > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	1.37085e-06	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of mitotic centrosome proteins and complexes > NEK2 > Fostamatinib
+1	Fostamatinib	pathway	1.27739e-06	mosaic variegated aneuploidy syndrome > CEP57 > Regulation of PLK1 Activity at G2/M Transition > NEK2 > Fostamatinib
+1	Fostamatinib	pathway	1.22729e-06	mosaic variegated aneuploidy syndrome > BUB3 > Separation of Sister Chromatids > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	1.21393e-06	mosaic variegated aneuploidy syndrome > BUB1B > Mitotic Prometaphase > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	1.19585e-06	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of NuMA to mitotic centrosomes > NEK2 > Fostamatinib
+1	Fostamatinib	pathway	1.17243e-06	mosaic variegated aneuploidy syndrome > BUB1B > EML4 and NUDC in mitotic spindle formation > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	1.14704e-06	mosaic variegated aneuploidy syndrome > CEP57 > Anchoring of the basal body to the plasma membrane > NEK2 > Fostamatinib
+1	Fostamatinib	pathway	1.09157e-06	mosaic variegated aneuploidy syndrome > BUB1B > EML4 and NUDC in mitotic spindle formation > NEK9 > Fostamatinib
+1	Fostamatinib	pathway	1.08868e-06	mosaic variegated aneuploidy syndrome > BUB1B > Resolution of Sister Chromatid Cohesion > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	1.03696e-06	mosaic variegated aneuploidy syndrome > BUB1 > Separation of Sister Chromatids > TAOK1 > Fostamatinib
+1	Fostamatinib	pathway	1.03156e-06	mosaic variegated aneuploidy syndrome > BUB1 > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	9.79816e-07	mosaic variegated aneuploidy syndrome > BUB1B > RHO GTPases Activate Formins > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	8.76367e-07	mosaic variegated aneuploidy syndrome > BUB1 > Mitotic Prometaphase > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	8.46406e-07	mosaic variegated aneuploidy syndrome > BUB1 > EML4 and NUDC in mitotic spindle formation > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	7.88033e-07	mosaic variegated aneuploidy syndrome > BUB1 > EML4 and NUDC in mitotic spindle formation > NEK9 > Fostamatinib
+1	Fostamatinib	pathway	7.85948e-07	mosaic variegated aneuploidy syndrome > BUB1 > Resolution of Sister Chromatid Cohesion > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	7.1819e-07	mosaic variegated aneuploidy syndrome > BUB1B > Separation of Sister Chromatids > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	7.07354e-07	mosaic variegated aneuploidy syndrome > BUB1 > RHO GTPases Activate Formins > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	6.52564e-07	mosaic variegated aneuploidy syndrome > CEP57 > AURKA Activation by TPX2 > AURKA > Fostamatinib
+1	Fostamatinib	pathway	6.2525e-07	mosaic variegated aneuploidy syndrome > CEP57 > Loss of Nlp from mitotic centrosomes > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	6.2525e-07	mosaic variegated aneuploidy syndrome > CEP57 > Loss of proteins required for interphase microtubule organization from the centrosome > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	5.99555e-07	mosaic variegated aneuploidy syndrome > CEP57 > AURKA Activation by TPX2 > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	5.41332e-07	mosaic variegated aneuploidy syndrome > CEP57 > Regulation of PLK1 Activity at G2/M Transition > AURKA > Fostamatinib
+1	Fostamatinib	pathway	5.3375e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of mitotic centrosome proteins and complexes > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	5.18479e-07	mosaic variegated aneuploidy syndrome > BUB1 > Separation of Sister Chromatids > CLASP1 > Fostamatinib
+1	Fostamatinib	pathway	4.99457e-07	mosaic variegated aneuploidy syndrome > BUB3 > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > AURKB > Fostamatinib
+1	Fostamatinib	pathway	4.97358e-07	mosaic variegated aneuploidy syndrome > CEP57 > Regulation of PLK1 Activity at G2/M Transition > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	4.65612e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of NuMA to mitotic centrosomes > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	4.46607e-07	mosaic variegated aneuploidy syndrome > CEP57 > Anchoring of the basal body to the plasma membrane > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	4.4465e-07	mosaic variegated aneuploidy syndrome > CEP57 > Loss of Nlp from mitotic centrosomes > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	4.4465e-07	mosaic variegated aneuploidy syndrome > CEP57 > Loss of proteins required for interphase microtubule organization from the centrosome > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	4.26377e-07	mosaic variegated aneuploidy syndrome > CEP57 > AURKA Activation by TPX2 > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	4.24317e-07	mosaic variegated aneuploidy syndrome > BUB3 > Mitotic Prometaphase > AURKB > Fostamatinib
+1	Fostamatinib	pathway	4.09811e-07	mosaic variegated aneuploidy syndrome > BUB3 > EML4 and NUDC in mitotic spindle formation > AURKB > Fostamatinib
+1	Fostamatinib	pathway	3.80538e-07	mosaic variegated aneuploidy syndrome > BUB3 > Resolution of Sister Chromatid Cohesion > AURKB > Fostamatinib
+1	Fostamatinib	pathway	3.79579e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of mitotic centrosome proteins and complexes > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	3.69346e-07	mosaic variegated aneuploidy syndrome > BUB3 > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	3.67734e-07	mosaic variegated aneuploidy syndrome > CEP57 > Loss of Nlp from mitotic centrosomes > PRKACA > Fostamatinib
+1	Fostamatinib	pathway	3.67734e-07	mosaic variegated aneuploidy syndrome > CEP57 > Loss of proteins required for interphase microtubule organization from the centrosome > PRKACA > Fostamatinib
+1	Fostamatinib	pathway	3.53699e-07	mosaic variegated aneuploidy syndrome > CEP57 > Regulation of PLK1 Activity at G2/M Transition > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	3.52621e-07	mosaic variegated aneuploidy syndrome > CEP57 > AURKA Activation by TPX2 > PRKACA > Fostamatinib
+1	Fostamatinib	pathway	3.45419e-07	mosaic variegated aneuploidy syndrome > BUB3 > Cdc20:Phospho-APC/C mediated degradation of Cyclin A > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	3.42485e-07	mosaic variegated aneuploidy syndrome > BUB3 > RHO GTPases Activate Formins > AURKB > Fostamatinib
+1	Fostamatinib	pathway	3.31122e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of NuMA to mitotic centrosomes > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	3.17607e-07	mosaic variegated aneuploidy syndrome > CEP57 > Anchoring of the basal body to the plasma membrane > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	3.13919e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of mitotic centrosome proteins and complexes > PRKACA > Fostamatinib
+1	Fostamatinib	pathway	3.13781e-07	mosaic variegated aneuploidy syndrome > BUB3 > Mitotic Prometaphase > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	3.03053e-07	mosaic variegated aneuploidy syndrome > BUB3 > EML4 and NUDC in mitotic spindle formation > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	2.92515e-07	mosaic variegated aneuploidy syndrome > CEP57 > Regulation of PLK1 Activity at G2/M Transition > PRKACA > Fostamatinib
+1	Fostamatinib	pathway	2.92275e-07	mosaic variegated aneuploidy syndrome > BUB1B > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > AURKB > Fostamatinib
+1	Fostamatinib	pathway	2.81407e-07	mosaic variegated aneuploidy syndrome > BUB3 > Resolution of Sister Chromatid Cohesion > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	2.73844e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of NuMA to mitotic centrosomes > PRKACA > Fostamatinib
+1	Fostamatinib	pathway	2.62667e-07	mosaic variegated aneuploidy syndrome > CEP57 > Anchoring of the basal body to the plasma membrane > PRKACA > Fostamatinib
+1	Fostamatinib	pathway	2.53266e-07	mosaic variegated aneuploidy syndrome > BUB3 > RHO GTPases Activate Formins > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	2.51036e-07	mosaic variegated aneuploidy syndrome > BUB3 > Separation of Sister Chromatids > AURKB > Fostamatinib
+1	Fostamatinib	pathway	2.48304e-07	mosaic variegated aneuploidy syndrome > BUB1B > Mitotic Prometaphase > AURKB > Fostamatinib
+1	Fostamatinib	pathway	2.39815e-07	mosaic variegated aneuploidy syndrome > BUB1B > EML4 and NUDC in mitotic spindle formation > AURKB > Fostamatinib
+1	Fostamatinib	pathway	2.22685e-07	mosaic variegated aneuploidy syndrome > BUB1B > Resolution of Sister Chromatid Cohesion > AURKB > Fostamatinib
+1	Fostamatinib	pathway	2.16136e-07	mosaic variegated aneuploidy syndrome > BUB1B > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	2.11e-07	mosaic variegated aneuploidy syndrome > BUB1 > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > AURKB > Fostamatinib
+1	Fostamatinib	pathway	2.02134e-07	mosaic variegated aneuploidy syndrome > BUB1B > Cdc20:Phospho-APC/C mediated degradation of Cyclin A > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	2.00417e-07	mosaic variegated aneuploidy syndrome > BUB1B > RHO GTPases Activate Formins > AURKB > Fostamatinib
+1	Fostamatinib	pathway	2.00124e-07	mosaic variegated aneuploidy syndrome > BUB3 > Resolution of Sister Chromatid Cohesion > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	1.8564e-07	mosaic variegated aneuploidy syndrome > BUB3 > Separation of Sister Chromatids > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	1.8362e-07	mosaic variegated aneuploidy syndrome > BUB1B > Mitotic Prometaphase > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	1.79257e-07	mosaic variegated aneuploidy syndrome > BUB1 > Mitotic Prometaphase > AURKB > Fostamatinib
+1	Fostamatinib	pathway	1.77342e-07	mosaic variegated aneuploidy syndrome > BUB1B > EML4 and NUDC in mitotic spindle formation > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	1.73129e-07	mosaic variegated aneuploidy syndrome > BUB1 > EML4 and NUDC in mitotic spindle formation > AURKB > Fostamatinib
+1	Fostamatinib	pathway	1.64675e-07	mosaic variegated aneuploidy syndrome > BUB1B > Resolution of Sister Chromatid Cohesion > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	1.60762e-07	mosaic variegated aneuploidy syndrome > BUB1 > Resolution of Sister Chromatid Cohesion > AURKB > Fostamatinib
+1	Fostamatinib	pathway	1.56034e-07	mosaic variegated aneuploidy syndrome > BUB1 > Amplification  of signal from unattached  kinetochores via a MAD2  inhibitory signal > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	1.48207e-07	mosaic variegated aneuploidy syndrome > BUB1B > RHO GTPases Activate Formins > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	1.46902e-07	mosaic variegated aneuploidy syndrome > BUB1B > Separation of Sister Chromatids > AURKB > Fostamatinib
+1	Fostamatinib	pathway	1.44686e-07	mosaic variegated aneuploidy syndrome > BUB1 > RHO GTPases Activate Formins > AURKB > Fostamatinib
+1	Fostamatinib	pathway	1.3256e-07	mosaic variegated aneuploidy syndrome > BUB1 > Mitotic Prometaphase > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	1.28028e-07	mosaic variegated aneuploidy syndrome > BUB1 > EML4 and NUDC in mitotic spindle formation > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	1.25578e-07	mosaic variegated aneuploidy syndrome > BUB3 > RHO GTPases Activate Formins > SRC > Fostamatinib
+1	Fostamatinib	pathway	1.18883e-07	mosaic variegated aneuploidy syndrome > BUB1 > Resolution of Sister Chromatid Cohesion > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	1.17109e-07	mosaic variegated aneuploidy syndrome > BUB1B > Resolution of Sister Chromatid Cohesion > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	1.08634e-07	mosaic variegated aneuploidy syndrome > BUB1B > Separation of Sister Chromatids > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	1.06995e-07	mosaic variegated aneuploidy syndrome > BUB1 > RHO GTPases Activate Formins > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	1.06053e-07	mosaic variegated aneuploidy syndrome > BUB1 > Separation of Sister Chromatids > AURKB > Fostamatinib
+1	Fostamatinib	pathway	8.45443e-08	mosaic variegated aneuploidy syndrome > BUB1 > Resolution of Sister Chromatid Cohesion > CDK1 > Fostamatinib
+1	Fostamatinib	pathway	7.84254e-08	mosaic variegated aneuploidy syndrome > BUB1 > Separation of Sister Chromatids > PLK1 > Fostamatinib
+1	Fostamatinib	pathway	7.34862e-08	mosaic variegated aneuploidy syndrome > BUB1B > RHO GTPases Activate Formins > SRC > Fostamatinib
+1	Fostamatinib	pathway	5.30515e-08	mosaic variegated aneuploidy syndrome > BUB1 > RHO GTPases Activate Formins > SRC > Fostamatinib
+2	Theophylline	ppi	0.000527426	mosaic variegated aneuploidy syndrome > BUB3 > CPNE1 > Theophylline
+2	Theophylline	ppi	4.34991e-05	mosaic variegated aneuploidy syndrome > BUB3 > PARP1 > Theophylline
+2	Theophylline	ppi	3.14881e-05	mosaic variegated aneuploidy syndrome > BUB3 > HDAC2 > Theophylline
+2	Theophylline	ppi	2.5455e-05	mosaic variegated aneuploidy syndrome > BUB1B > PARP1 > Theophylline
+2	Theophylline	ppi	1.84264e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC2 > Theophylline
+3	NADH	ppi	0.000178253	mosaic variegated aneuploidy syndrome > BUB1 > HSD17B3 > NADH
+3	NADH	ppi	0.000152788	mosaic variegated aneuploidy syndrome > BUB1 > ALDH1B1 > NADH
+3	NADH	ppi	6.67334e-05	mosaic variegated aneuploidy syndrome > BUB1B > NDUFA2 > NADH
+3	NADH	ppi	6.23558e-05	mosaic variegated aneuploidy syndrome > BUB3 > HSD17B10 > NADH
+3	NADH	ppi	3.47754e-05	mosaic variegated aneuploidy syndrome > BUB3 > DLD > NADH
+4	Pyridoxal phosphate	ppi	0.000243427	mosaic variegated aneuploidy syndrome > TRIP13 > KYAT1 > Pyridoxal phosphate
+4	Pyridoxal phosphate	ppi	0.000137118	mosaic variegated aneuploidy syndrome > BUB1 > SPTLC1 > Pyridoxal phosphate
+5	Copper	ppi	0.00010016	mosaic variegated aneuploidy syndrome > CEP57 > KRT8 > Copper
+5	Copper	ppi	9.17263e-05	mosaic variegated aneuploidy syndrome > BUB3 > PKM > Copper
+5	Copper	ppi	4.25713e-05	mosaic variegated aneuploidy syndrome > BUB1B > C1QBP > Copper
+5	Copper	ppi	4.17781e-05	mosaic variegated aneuploidy syndrome > BUB1 > STIP1 > Copper
+5	Copper	ppi	2.90968e-05	mosaic variegated aneuploidy syndrome > CEP57 > HSP90AA1 > Copper
+5	Copper	ppi	2.44182e-05	mosaic variegated aneuploidy syndrome > BUB1 > CLU > Copper
+5	Copper	ppi	1.52886e-05	mosaic variegated aneuploidy syndrome > CEP57 > APP > Copper
+5	Copper	pathway	1.22113e-06	mosaic variegated aneuploidy syndrome > BUB3 > Cdc20:Phospho-APC/C mediated degradation of Cyclin A > PSME1 > Copper
+5	Copper	pathway	1.11607e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of Nlp from mitotic centrosomes > TUBB > Copper
+5	Copper	pathway	1.11607e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of proteins required for interphase microtubule organization from the centrosome > TUBB > Copper
+5	Copper	pathway	1.07021e-06	mosaic variegated aneuploidy syndrome > CEP57 > AURKA Activation by TPX2 > TUBB > Copper
+5	Copper	pathway	9.52744e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of mitotic centrosome proteins and complexes > TUBB > Copper
+5	Copper	pathway	8.87784e-07	mosaic variegated aneuploidy syndrome > CEP57 > Regulation of PLK1 Activity at G2/M Transition > TUBB > Copper
+5	Copper	pathway	8.31117e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of NuMA to mitotic centrosomes > TUBB > Copper
+5	Copper	pathway	7.97194e-07	mosaic variegated aneuploidy syndrome > CEP57 > Anchoring of the basal body to the plasma membrane > TUBB > Copper
+5	Copper	pathway	7.14587e-07	mosaic variegated aneuploidy syndrome > BUB1B > Cdc20:Phospho-APC/C mediated degradation of Cyclin A > PSME1 > Copper
+5	Copper	pathway	4.66714e-07	mosaic variegated aneuploidy syndrome > BUB3 > Separation of Sister Chromatids > PSME1 > Copper
+5	Copper	pathway	4.34692e-07	mosaic variegated aneuploidy syndrome > BUB3 > RHO GTPases Activate Formins > ACTG1 > Copper
+5	Copper	pathway	4.15669e-07	mosaic variegated aneuploidy syndrome > CEP57 > Loss of Nlp from mitotic centrosomes > HSP90AA1 > Copper
+5	Copper	pathway	4.15669e-07	mosaic variegated aneuploidy syndrome > CEP57 > Loss of proteins required for interphase microtubule organization from the centrosome > HSP90AA1 > Copper
+5	Copper	pathway	3.98587e-07	mosaic variegated aneuploidy syndrome > CEP57 > AURKA Activation by TPX2 > HSP90AA1 > Copper
+5	Copper	pathway	3.54839e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of mitotic centrosome proteins and complexes > HSP90AA1 > Copper
+5	Copper	pathway	3.30646e-07	mosaic variegated aneuploidy syndrome > CEP57 > Regulation of PLK1 Activity at G2/M Transition > HSP90AA1 > Copper
+5	Copper	pathway	3.09541e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of NuMA to mitotic centrosomes > HSP90AA1 > Copper
+5	Copper	pathway	2.96906e-07	mosaic variegated aneuploidy syndrome > CEP57 > Anchoring of the basal body to the plasma membrane > HSP90AA1 > Copper
+5	Copper	pathway	2.73114e-07	mosaic variegated aneuploidy syndrome > BUB1B > Separation of Sister Chromatids > PSME1 > Copper
+5	Copper	pathway	2.54375e-07	mosaic variegated aneuploidy syndrome > BUB1B > RHO GTPases Activate Formins > ACTG1 > Copper
+5	Copper	pathway	1.97168e-07	mosaic variegated aneuploidy syndrome > BUB1 > Separation of Sister Chromatids > PSME1 > Copper
+5	Copper	pathway	1.8364e-07	mosaic variegated aneuploidy syndrome > BUB1 > RHO GTPases Activate Formins > ACTG1 > Copper
+6	Cannabidiol	ppi	0.000333111	mosaic variegated aneuploidy syndrome > TRIP13 > CRYZ > Cannabidiol
+7	L-Glutamine	ppi	0.000243427	mosaic variegated aneuploidy syndrome > TRIP13 > KYAT1 > L-Glutamine
+7	L-Glutamine	ppi	5.06329e-05	mosaic variegated aneuploidy syndrome > TRIP13 > QARS1 > L-Glutamine
+8	Brentuximab vedotin	ppi	0.000274123	mosaic variegated aneuploidy syndrome > CEP57 > TNFRSF8 > Brentuximab vedotin
+9	Cyclosporine	ppi	0.00026738	mosaic variegated aneuploidy syndrome > BUB1 > PPP3R2 > Cyclosporine
+10	Voclosporin	ppi	0.00026738	mosaic variegated aneuploidy syndrome > BUB1 > PPP3R2 > Voclosporin
+11	Zinc	ppi	4.34991e-05	mosaic variegated aneuploidy syndrome > BUB3 > PARP1 > Zinc
+11	Zinc	ppi	3.83803e-05	mosaic variegated aneuploidy syndrome > BUB1B > TP73 > Zinc
+11	Zinc	ppi	3.41355e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC4 > Zinc
+11	Zinc	ppi	2.5455e-05	mosaic variegated aneuploidy syndrome > BUB1B > PARP1 > Zinc
+11	Zinc	ppi	2.44182e-05	mosaic variegated aneuploidy syndrome > BUB1 > CLU > Zinc
+11	Zinc	ppi	2.25637e-05	mosaic variegated aneuploidy syndrome > BUB3 > HDAC1 > Zinc
+11	Zinc	ppi	1.61381e-05	mosaic variegated aneuploidy syndrome > BUB1B > MDM2 > Zinc
+11	Zinc	ppi	1.52886e-05	mosaic variegated aneuploidy syndrome > CEP57 > APP > Zinc
+11	Zinc	ppi	1.32039e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC1 > Zinc
+11	Zinc	ppi	1.16505e-05	mosaic variegated aneuploidy syndrome > BUB1 > MDM2 > Zinc
+11	Zinc	ppi	9.53225e-06	mosaic variegated aneuploidy syndrome > BUB1 > HDAC1 > Zinc
+11	Zinc	pathway	1.49943e-06	mosaic variegated aneuploidy syndrome > BUB3 > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc
+11	Zinc	pathway	9.89156e-07	mosaic variegated aneuploidy syndrome > BUB3 > Separation of Sister Chromatids > HDAC8 > Zinc
+11	Zinc	pathway	8.77447e-07	mosaic variegated aneuploidy syndrome > BUB1B > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc
+11	Zinc	pathway	6.33451e-07	mosaic variegated aneuploidy syndrome > BUB1 > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc
+11	Zinc	pathway	5.78839e-07	mosaic variegated aneuploidy syndrome > BUB1B > Separation of Sister Chromatids > HDAC8 > Zinc
+11	Zinc	pathway	4.17879e-07	mosaic variegated aneuploidy syndrome > BUB1 > Separation of Sister Chromatids > HDAC8 > Zinc
+12	Zinc acetate	ppi	4.34991e-05	mosaic variegated aneuploidy syndrome > BUB3 > PARP1 > Zinc acetate
+12	Zinc acetate	ppi	3.83803e-05	mosaic variegated aneuploidy syndrome > BUB1B > TP73 > Zinc acetate
+12	Zinc acetate	ppi	3.41355e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC4 > Zinc acetate
+12	Zinc acetate	ppi	2.5455e-05	mosaic variegated aneuploidy syndrome > BUB1B > PARP1 > Zinc acetate
+12	Zinc acetate	ppi	2.44182e-05	mosaic variegated aneuploidy syndrome > BUB1 > CLU > Zinc acetate
+12	Zinc acetate	ppi	2.25637e-05	mosaic variegated aneuploidy syndrome > BUB3 > HDAC1 > Zinc acetate
+12	Zinc acetate	ppi	1.61381e-05	mosaic variegated aneuploidy syndrome > BUB1B > MDM2 > Zinc acetate
+12	Zinc acetate	ppi	1.52886e-05	mosaic variegated aneuploidy syndrome > CEP57 > APP > Zinc acetate
+12	Zinc acetate	ppi	1.32039e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC1 > Zinc acetate
+12	Zinc acetate	ppi	1.16505e-05	mosaic variegated aneuploidy syndrome > BUB1 > MDM2 > Zinc acetate
+12	Zinc acetate	ppi	9.53225e-06	mosaic variegated aneuploidy syndrome > BUB1 > HDAC1 > Zinc acetate
+12	Zinc acetate	pathway	1.49943e-06	mosaic variegated aneuploidy syndrome > BUB3 > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc acetate
+12	Zinc acetate	pathway	9.89156e-07	mosaic variegated aneuploidy syndrome > BUB3 > Separation of Sister Chromatids > HDAC8 > Zinc acetate
+12	Zinc acetate	pathway	8.77447e-07	mosaic variegated aneuploidy syndrome > BUB1B > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc acetate
+12	Zinc acetate	pathway	6.33451e-07	mosaic variegated aneuploidy syndrome > BUB1 > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc acetate
+12	Zinc acetate	pathway	5.78839e-07	mosaic variegated aneuploidy syndrome > BUB1B > Separation of Sister Chromatids > HDAC8 > Zinc acetate
+12	Zinc acetate	pathway	4.17879e-07	mosaic variegated aneuploidy syndrome > BUB1 > Separation of Sister Chromatids > HDAC8 > Zinc acetate
+13	Zinc chloride	ppi	4.34991e-05	mosaic variegated aneuploidy syndrome > BUB3 > PARP1 > Zinc chloride
+13	Zinc chloride	ppi	3.83803e-05	mosaic variegated aneuploidy syndrome > BUB1B > TP73 > Zinc chloride
+13	Zinc chloride	ppi	3.41355e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC4 > Zinc chloride
+13	Zinc chloride	ppi	2.5455e-05	mosaic variegated aneuploidy syndrome > BUB1B > PARP1 > Zinc chloride
+13	Zinc chloride	ppi	2.44182e-05	mosaic variegated aneuploidy syndrome > BUB1 > CLU > Zinc chloride
+13	Zinc chloride	ppi	2.25637e-05	mosaic variegated aneuploidy syndrome > BUB3 > HDAC1 > Zinc chloride
+13	Zinc chloride	ppi	1.61381e-05	mosaic variegated aneuploidy syndrome > BUB1B > MDM2 > Zinc chloride
+13	Zinc chloride	ppi	1.52886e-05	mosaic variegated aneuploidy syndrome > CEP57 > APP > Zinc chloride
+13	Zinc chloride	ppi	1.32039e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC1 > Zinc chloride
+13	Zinc chloride	ppi	1.16505e-05	mosaic variegated aneuploidy syndrome > BUB1 > MDM2 > Zinc chloride
+13	Zinc chloride	ppi	9.53225e-06	mosaic variegated aneuploidy syndrome > BUB1 > HDAC1 > Zinc chloride
+13	Zinc chloride	pathway	1.49943e-06	mosaic variegated aneuploidy syndrome > BUB3 > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc chloride
+13	Zinc chloride	pathway	9.89156e-07	mosaic variegated aneuploidy syndrome > BUB3 > Separation of Sister Chromatids > HDAC8 > Zinc chloride
+13	Zinc chloride	pathway	8.77447e-07	mosaic variegated aneuploidy syndrome > BUB1B > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc chloride
+13	Zinc chloride	pathway	6.33451e-07	mosaic variegated aneuploidy syndrome > BUB1 > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc chloride
+13	Zinc chloride	pathway	5.78839e-07	mosaic variegated aneuploidy syndrome > BUB1B > Separation of Sister Chromatids > HDAC8 > Zinc chloride
+13	Zinc chloride	pathway	4.17879e-07	mosaic variegated aneuploidy syndrome > BUB1 > Separation of Sister Chromatids > HDAC8 > Zinc chloride
+14	Zinc sulfate, unspecified form	ppi	4.34991e-05	mosaic variegated aneuploidy syndrome > BUB3 > PARP1 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	ppi	3.83803e-05	mosaic variegated aneuploidy syndrome > BUB1B > TP73 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	ppi	3.41355e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC4 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	ppi	2.5455e-05	mosaic variegated aneuploidy syndrome > BUB1B > PARP1 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	ppi	2.44182e-05	mosaic variegated aneuploidy syndrome > BUB1 > CLU > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	ppi	2.25637e-05	mosaic variegated aneuploidy syndrome > BUB3 > HDAC1 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	ppi	1.61381e-05	mosaic variegated aneuploidy syndrome > BUB1B > MDM2 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	ppi	1.52886e-05	mosaic variegated aneuploidy syndrome > CEP57 > APP > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	ppi	1.32039e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC1 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	ppi	1.16505e-05	mosaic variegated aneuploidy syndrome > BUB1 > MDM2 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	ppi	9.53225e-06	mosaic variegated aneuploidy syndrome > BUB1 > HDAC1 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	pathway	1.49943e-06	mosaic variegated aneuploidy syndrome > BUB3 > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	pathway	9.89156e-07	mosaic variegated aneuploidy syndrome > BUB3 > Separation of Sister Chromatids > HDAC8 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	pathway	8.77447e-07	mosaic variegated aneuploidy syndrome > BUB1B > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	pathway	6.33451e-07	mosaic variegated aneuploidy syndrome > BUB1 > Resolution of Sister Chromatid Cohesion > HDAC8 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	pathway	5.78839e-07	mosaic variegated aneuploidy syndrome > BUB1B > Separation of Sister Chromatids > HDAC8 > Zinc sulfate, unspecified form
+14	Zinc sulfate, unspecified form	pathway	4.17879e-07	mosaic variegated aneuploidy syndrome > BUB1 > Separation of Sister Chromatids > HDAC8 > Zinc sulfate, unspecified form
+15	Vincristine	ppi	0.00013587	mosaic variegated aneuploidy syndrome > CEP57 > RALBP1 > Vincristine
+15	Vincristine	ppi	7.00673e-05	mosaic variegated aneuploidy syndrome > CEP57 > TUBA4A > Vincristine
+15	Vincristine	pathway	1.11607e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of Nlp from mitotic centrosomes > TUBB > Vincristine
+15	Vincristine	pathway	1.11607e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of proteins required for interphase microtubule organization from the centrosome > TUBB > Vincristine
+15	Vincristine	pathway	1.07021e-06	mosaic variegated aneuploidy syndrome > CEP57 > AURKA Activation by TPX2 > TUBB > Vincristine
+15	Vincristine	pathway	1.00096e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of Nlp from mitotic centrosomes > TUBA4A > Vincristine
+15	Vincristine	pathway	1.00096e-06	mosaic variegated aneuploidy syndrome > CEP57 > Loss of proteins required for interphase microtubule organization from the centrosome > TUBA4A > Vincristine
+15	Vincristine	pathway	9.59826e-07	mosaic variegated aneuploidy syndrome > CEP57 > AURKA Activation by TPX2 > TUBA4A > Vincristine
+15	Vincristine	pathway	9.52744e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of mitotic centrosome proteins and complexes > TUBB > Vincristine
+15	Vincristine	pathway	8.87784e-07	mosaic variegated aneuploidy syndrome > CEP57 > Regulation of PLK1 Activity at G2/M Transition > TUBB > Vincristine
+15	Vincristine	pathway	8.54479e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of mitotic centrosome proteins and complexes > TUBA4A > Vincristine
+15	Vincristine	pathway	8.31117e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of NuMA to mitotic centrosomes > TUBB > Vincristine
+15	Vincristine	pathway	7.97194e-07	mosaic variegated aneuploidy syndrome > CEP57 > Anchoring of the basal body to the plasma membrane > TUBB > Vincristine
+15	Vincristine	pathway	7.96219e-07	mosaic variegated aneuploidy syndrome > CEP57 > Regulation of PLK1 Activity at G2/M Transition > TUBA4A > Vincristine
+15	Vincristine	pathway	7.45396e-07	mosaic variegated aneuploidy syndrome > CEP57 > Recruitment of NuMA to mitotic centrosomes > TUBA4A > Vincristine
+15	Vincristine	pathway	7.14972e-07	mosaic variegated aneuploidy syndrome > CEP57 > Anchoring of the basal body to the plasma membrane > TUBA4A > Vincristine
+15	Vincristine	pathway	5.02331e-07	mosaic variegated aneuploidy syndrome > BUB3 > Mitotic Prometaphase > TUBA4A > Vincristine
+15	Vincristine	pathway	4.85157e-07	mosaic variegated aneuploidy syndrome > BUB3 > EML4 and NUDC in mitotic spindle formation > TUBA4A > Vincristine
+15	Vincristine	pathway	4.50503e-07	mosaic variegated aneuploidy syndrome > BUB3 > Resolution of Sister Chromatid Cohesion > TUBA4A > Vincristine
+15	Vincristine	pathway	4.05453e-07	mosaic variegated aneuploidy syndrome > BUB3 > RHO GTPases Activate Formins > TUBA4A > Vincristine
+15	Vincristine	pathway	2.9719e-07	mosaic variegated aneuploidy syndrome > BUB3 > Separation of Sister Chromatids > TUBA4A > Vincristine
+15	Vincristine	pathway	2.93956e-07	mosaic variegated aneuploidy syndrome > BUB1B > Mitotic Prometaphase > TUBA4A > Vincristine
+15	Vincristine	pathway	2.83907e-07	mosaic variegated aneuploidy syndrome > BUB1B > EML4 and NUDC in mitotic spindle formation > TUBA4A > Vincristine
+15	Vincristine	pathway	2.63628e-07	mosaic variegated aneuploidy syndrome > BUB1B > Resolution of Sister Chromatid Cohesion > TUBA4A > Vincristine
+15	Vincristine	pathway	2.37265e-07	mosaic variegated aneuploidy syndrome > BUB1B > RHO GTPases Activate Formins > TUBA4A > Vincristine
+15	Vincristine	pathway	2.12215e-07	mosaic variegated aneuploidy syndrome > BUB1 > Mitotic Prometaphase > TUBA4A > Vincristine
+15	Vincristine	pathway	2.04959e-07	mosaic variegated aneuploidy syndrome > BUB1 > EML4 and NUDC in mitotic spindle formation > TUBA4A > Vincristine
+15	Vincristine	pathway	1.90319e-07	mosaic variegated aneuploidy syndrome > BUB1 > Resolution of Sister Chromatid Cohesion > TUBA4A > Vincristine
+15	Vincristine	pathway	1.73911e-07	mosaic variegated aneuploidy syndrome > BUB1B > Separation of Sister Chromatids > TUBA4A > Vincristine
+15	Vincristine	pathway	1.71287e-07	mosaic variegated aneuploidy syndrome > BUB1 > RHO GTPases Activate Formins > TUBA4A > Vincristine
+15	Vincristine	pathway	1.25551e-07	mosaic variegated aneuploidy syndrome > BUB1 > Separation of Sister Chromatids > TUBA4A > Vincristine
+16	Vitamin A	ppi	0.000213904	mosaic variegated aneuploidy syndrome > BUB1 > RDH12 > Vitamin A
+17	Belinostat	ppi	4.87329e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC5 > Belinostat
+17	Belinostat	ppi	3.41355e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC4 > Belinostat
+17	Belinostat	ppi	3.14881e-05	mosaic variegated aneuploidy syndrome > BUB3 > HDAC2 > Belinostat
+17	Belinostat	ppi	2.82725e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC3 > Belinostat
+17	Belinostat	ppi	2.25637e-05	mosaic variegated aneuploidy syndrome > BUB3 > HDAC1 > Belinostat
+17	Belinostat	ppi	1.84264e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC2 > Belinostat
+17	Belinostat	ppi	1.32039e-05	mosaic variegated aneuploidy syndrome > BUB1B > HDAC1 > Belinostat
+17	Belinostat	ppi	9.53225e-06	mosaic variegated aneuploidy syndrome > BUB1 > HDAC1 > Belinostat
+17	Belinostat	pathway	1.49943e-06	mosaic variegated aneuploidy syndrome > BUB3 > Resolution of Sister Chromatid Cohesion > HDAC8 > Belinostat
+17	Belinostat	pathway	9.89156e-07	mosaic variegated aneuploidy syndrome > BUB3 > Separation of Sister Chromatids > HDAC8 > Belinostat
+17	Belinostat	pathway	8.77447e-07	mosaic variegated aneuploidy syndrome > BUB1B > Resolution of Sister Chromatid Cohesion > HDAC8 > Belinostat
+17	Belinostat	pathway	6.33451e-07	mosaic variegated aneuploidy syndrome > BUB1 > Resolution of Sister Chromatid Cohesion > HDAC8 > Belinostat
+17	Belinostat	pathway	5.78839e-07	mosaic variegated aneuploidy syndrome > BUB1B > Separation of Sister Chromatids > HDAC8 > Belinostat
+17	Belinostat	pathway	4.17879e-07	mosaic variegated aneuploidy syndrome > BUB1 > Separation of Sister Chromatids > HDAC8 > Belinostat
+18	Levothyroxine	ppi	0.000130497	mosaic variegated aneuploidy syndrome > BUB3 > THRA > Levothyroxine
+18	Levothyroxine	ppi	6.8055e-05	mosaic variegated aneuploidy syndrome > TRIP13 > THRB > Levothyroxine
+19	Liothyronine	ppi	0.000130497	mosaic variegated aneuploidy syndrome > BUB3 > THRA > Liothyronine
+19	Liothyronine	ppi	6.8055e-05	mosaic variegated aneuploidy syndrome > TRIP13 > THRB > Liothyronine
+20	Thyroid, porcine	ppi	0.000130497	mosaic variegated aneuploidy syndrome > BUB3 > THRA > Thyroid, porcine
+20	Thyroid, porcine	ppi	6.8055e-05	mosaic variegated aneuploidy syndrome > TRIP13 > THRB > Thyroid, porcine

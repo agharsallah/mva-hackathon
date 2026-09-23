@@ -2780,3 +2780,36 @@ is what lets every stage be re-run safely; any edit to the configuration is a di
 so results can never be quietly reattributed to a setup that did not produce them.
 *Example:* `it4-dcda40a4df2c` — `[case] table_prefix` plus the first 12 hex characters of SHA-256 over `zoo.example.toml`. Adding the `[case]` block to that file changed the digest to `it4-cf39acb4d64c`, so iteration 4's committed results stay under the old id and were **not** re-run.
 *Context: the property the eight-stage workflow's idempotence rests on; the manifests that carry it are docs/iteration4/runs/*.json, and the rule for any case is stated in that folder's README · source: src/mva/zoo/case_config.py, src/mva/zoo/workflow.py · related: Checksum / SHA-256, No-op re-run, Case config, Provenance manifest · first seen 2026-09-19*
+
+## 25. Walking a knowledge graph — words for iteration 4's step 7 (Track 2)
+
+Step 7 asks a public knowledge graph which approved drugs sit a few hops from the child's
+disease, and checks the answer against a decoy disease walked the same way.
+
+**MONDO id** — an identifier from the Mondo Disease Ontology, which merges OMIM, Orphanet and other disease catalogues into one id per disease. Written `MONDO:` plus seven digits. Software analogy: a canonical primary key that several legacy systems' keys map onto.
+*Example:* `MONDO:0009759` = mosaic variegated aneuploidy syndrome 1; `MONDO:0010209` = xanthinuria type I.
+*Context: the mechanism card's `case.mondo`; the walk's starting point · source: ressources/track2/mechanism.json, docs/iteration4/step-7/methodology/142-a-graph-walk-from-the-disease-node.md · related: OMIM / Orphanet / GeneReviews / ClinGen / GenCC, MIM number, Knowledge graph (KG) · first seen 2026-09-23*
+
+**PrimeKG** — a public knowledge graph for precision medicine (Chandak 2023, PMID 36732524): 129,375 nodes of ten types (disease, gene/protein, drug, pathway, phenotype, …) and 8,100,498 edge rows (both counted on the v2.1 download) built from 20 curated resources. Shipped as one CSV edge table, `kg.csv`; licence CC0 1.0 on Harvard Dataverse. Software analogy: a property-graph export with typed nodes and labelled edges, one row per directed copy of an undirected edge.
+*Example:* the row `disease_protein, mosaic variegated aneuploidy syndrome, BUB1B` says a disease is linked to a gene; `drug_protein, Vincristine, TUBB` says a drug acts on a protein.
+*Context: fetched by tools/fetch_primekg.py into build/primekg/ (never committed), digest in ressources/track2/primekg.provenance.json · source: docs/iteration4/step-7/methodology/142-a-graph-walk-from-the-disease-node.md · related: Knowledge graph (KG), MONDO id, Reactome / STRING / Open Targets / PrimeKG · first seen 2026-09-23*
+
+**Grouped disease node** — a PrimeKG disease node that stands for several near-identical MONDO diseases at once; its id joins the member numbers with `_`. A MONDO id is found by matching it against every member. Consequence: a walk from one disease starts from the whole group and reaches every group member's genes.
+*Example:* `MONDO:0009759` (MVA1) resolves to the node `mosaic variegated aneuploidy syndrome`, members MVA, MVA1, MVA2 and MVA3, linked to BUB1, BUB1B, BUB3, CEP57 and TRIP13.
+*Context: resolved in src/mva/drugs/primekg.py (`disease_nodes`) and recorded in each ranking's manifest under `source.resolved_nodes` · related: PrimeKG, MONDO id · first seen 2026-09-23*
+
+**Metapath** — a path template: the fixed sequence of edge and node types a route through a knowledge graph must follow. Software analogy: a typed query pattern, like a Cypher `MATCH (d:Disease)-[:ASSOC]-(g:Gene)-[:TARGET]-(x:Drug)`.
+*Example:* `ppi` = disease → gene → gene → drug (one protein–protein interaction in the middle); `pathway` = disease → gene → pathway → gene → drug.
+*Context: the walk's three metapaths are `DEFAULT_METAPATHS` in src/mva/drugs/graph_walk.py · related: PrimeKG, Degree-weighted path count (DWPC) · first seen 2026-09-23*
+
+**Node degree / hub** — a node's degree is how many distinct neighbours it has. A **hub** is a node with a very high degree, such as a protein that interacts with thousands of others. A path through a hub says little, because a hub is next to almost everything.
+*Example:* XDH has degree 62 over the four walked relations, so a one-gene path through it weighs 1/62 ≈ 0.016.
+*Context: measured over the walked relations only (disease_protein, protein_protein, pathway_protein, drug_protein) · source: src/mva/drugs/graph_walk.py (`Graph.degree`) · related: Metapath, Degree-weighted path count (DWPC) · first seen 2026-09-23*
+
+**Degree-weighted path count (DWPC)** — a way to score how strongly two nodes are connected: count every path between them along the metapaths, but let each path weigh the product of `degree ** -damping` over its intermediate nodes, so routes through hubs count less. Damping 1 is plain inverse degree; damping 0 is a raw path count. From Himmelstein 2015 (Hetionet).
+*Example:* a drug reached by one path through a gene of degree 4 and a partner of degree 2 scores 1/4 × 1/2 = 0.125.
+*Context: the walk's score, `ressources/track2/ranking-walk.tsv` column `score`; every path behind a top-20 drug is in `ranking-walk.paths.tsv` · source: src/mva/drugs/graph_walk.py · related: Metapath, Node degree / hub, Decoy mechanism card · first seen 2026-09-23*
+
+**Promiscuous drug / cofactor** — a drug node linked to very many proteins: a multi-kinase inhibitor, or a nutrient or enzyme cofactor (zinc, NADH, pyridoxal phosphate) that DrugBank records against every enzyme that uses it. A walk that does not penalise the drug end ranks these high for almost any disease.
+*Example:* NADH has 153 drug–protein edges in PrimeKG and appears in the top 20 of both the MVA walk and the xanthinuria decoy walk.
+*Context: the two drugs the real and decoy walks share (entry 142) · related: Node degree / hub, Degree-weighted path count (DWPC), Decoy mechanism card · first seen 2026-09-23*

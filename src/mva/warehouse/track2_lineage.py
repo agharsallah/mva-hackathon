@@ -131,6 +131,12 @@ TRANSFER_COMPARISON = "transfer_comparison"
 #: Every table lineage is recorded for.
 ALL_TABLES = TABLES + STEP7_TABLES
 
+#: Iteration 4 step 7's PrimeKG walk (methodology 142): one ranking beside the card, and one
+#: per decoy folder that has been walked. Its inputs are the graph (an ``api`` edge on the
+#: Dataverse host, carrying the file's sha256), openFDA, and ``drug_candidates`` (a table).
+WALK_TABLE = "ranking-walk"
+DECOY_DIR = f"{TRACK2_DIR}/decoys"
+
 #: The table every other table but ``pathways`` is derived from: the candidate drugs, the
 #: trials and the literature are all searched *per target*, so the target set is an input.
 TARGET_TABLE_REF = f"{TRACK2_SCHEMA}.targets"
@@ -313,6 +319,21 @@ def transfer_edges(root: Path) -> list[dict[str, object]]:
     return edges
 
 
+def walk_edges(root: Path) -> list[dict[str, object]]:
+    """The walk's edges: the real card's ranking, then each walked decoy (no submission edge)."""
+    edges = table_edges(root / TRACK2_DIR, WALK_TABLE, root)
+    for folder in sorted(p for p in (root / DECOY_DIR).glob("*") if p.is_dir()):
+        edges += table_edges(
+            folder,
+            WALK_TABLE,
+            root,
+            target=f"decoys.{folder.name}.{WALK_TABLE}",
+            card_files=(f"{DECOY_DIR}/{folder.name}/mechanism.json",),
+            submission=False,
+        )
+    return edges
+
+
 def planned_edges(root: Path | None = None) -> list[dict[str, object]]:
     """Every edge the Track 2 tables imply, before anything is written."""
     base = (root or Path.cwd()).resolve()
@@ -321,6 +342,7 @@ def planned_edges(root: Path | None = None) -> list[dict[str, object]]:
     for table in ALL_TABLES:
         edges += table_edges(directory, table, base)
     edges += transfer_edges(base)
+    edges += walk_edges(base)
     return edges
 
 

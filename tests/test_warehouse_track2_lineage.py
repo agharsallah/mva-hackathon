@@ -370,3 +370,30 @@ def test_the_comparison_rests_on_both_cards_and_only_on_tsv_inputs(
 
 def test_a_checkout_with_no_transfer_case_plans_no_transfer_edge(root: Path) -> None:
     assert track2_lineage.transfer_edges(root) == []
+
+
+def test_walk_edges_cover_the_card_and_each_walked_decoy(tmp_path: Path) -> None:
+    walk = {
+        "name": "ranking-walk",
+        "method": "a graph walk",
+        "inputs": [
+            {"name": "graph", "url": "https://graph.example/file/1", "version": "2.1",
+             "sha256": "e" * 64},
+            {"name": "drug_candidates", "path": "ressources/track2/drug_candidates.tsv",
+             "sha256": "f" * 64},
+        ],
+        "outputs": [{"path": "ressources/track2/ranking-walk.tsv", "rows": 3}],
+    }  # fmt: skip
+    real = tmp_path / "ressources/track2"
+    decoy = real / "decoys/GENEZ"
+    decoy.mkdir(parents=True)
+    for folder in (real, decoy):
+        (folder / "mechanism.json").write_text(json.dumps(CARD))
+        (folder / "ranking-walk.provenance.json").write_text(json.dumps(walk))
+    edges = track2_lineage.walk_edges(tmp_path)
+    kinds = {(e["target_table"], e["source_kind"]) for e in edges}
+    assert ("ranking-walk", "submission") in kinds
+    assert ("decoys.GENEZ.ranking-walk", "submission") not in kinds
+    assert ("decoys.GENEZ.ranking-walk", "api") in kinds
+    tables = {e["source_ref"] for e in edges if e["source_kind"] == "table"}
+    assert tables == {"track2.drug_candidates"}

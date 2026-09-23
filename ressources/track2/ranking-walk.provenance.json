@@ -1,0 +1,233 @@
+{
+  "name": "ranking-walk",
+  "built_at": "2026-09-23T20:57:59+00:00",
+  "built_by": "track2_walk.py walk",
+  "code_version": "2d83246",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "method": "The card's MONDO id is matched against every member of PrimeKG's (grouped) disease node ids; from those nodes every simple path along the metapaths is enumerated over the subgraph of their relations; a path weighs the product of degree^-damping over its intermediate nodes (degree over the walked relations); a drug's score is the sum of its path weights (degree-weighted path count). Drugs are taken in score order (ties by name) and kept when openFDA holds a label for their base name, until `keep` are kept.",
+  "card": {
+    "path": "ressources/track2/mechanism.json",
+    "version": 5,
+    "gene": "BUB1B",
+    "disease": "Mosaic variegated aneuploidy syndrome 1 (MVA1)",
+    "decoy": null
+  },
+  "source": {
+    "mondo": "MONDO:0009759",
+    "from": "card case.mondo",
+    "override_reason": null,
+    "resolved_nodes": [
+      {
+        "primekg_index": "28004",
+        "name": "mosaic variegated aneuploidy syndrome",
+        "source": "MONDO_grouped",
+        "mondo_members": [
+          "MONDO:0013582",
+          "MONDO:0009759",
+          "MONDO:0054736",
+          "MONDO:0000141"
+        ]
+      }
+    ],
+    "resolution": "MONDO number matched against the '_'-joined member list of x_id",
+    "disease_genes": [
+      "BUB1",
+      "BUB1B",
+      "BUB3",
+      "CEP57",
+      "TRIP13"
+    ]
+  },
+  "parameters": {
+    "metapaths": {
+      "direct": [
+        [
+          "disease_protein",
+          "gene/protein"
+        ],
+        [
+          "drug_protein",
+          "drug"
+        ]
+      ],
+      "ppi": [
+        [
+          "disease_protein",
+          "gene/protein"
+        ],
+        [
+          "protein_protein",
+          "gene/protein"
+        ],
+        [
+          "drug_protein",
+          "drug"
+        ]
+      ],
+      "pathway": [
+        [
+          "disease_protein",
+          "gene/protein"
+        ],
+        [
+          "pathway_protein",
+          "pathway"
+        ],
+        [
+          "pathway_protein",
+          "gene/protein"
+        ],
+        [
+          "drug_protein",
+          "drug"
+        ]
+      ]
+    },
+    "damping": 1.0,
+    "keep": 100,
+    "paths_top": 20,
+    "tie_break": "score descending, then drug name, then PrimeKG node key",
+    "approval_gate": "openFDA label present for mva.drugs.names.base_name(drug_name)"
+  },
+  "clinical": {
+    "source": "ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md",
+    "on_card": [
+      "HP:0002859",
+      "HP:0000121",
+      "HP:0004322",
+      "HP:0001508",
+      "HP:0003202",
+      "HP:0001622",
+      "HP:0001518"
+    ],
+    "in_source_file": [
+      "HP:0000121",
+      "HP:0001508",
+      "HP:0001518",
+      "HP:0001622",
+      "HP:0002859",
+      "HP:0003202",
+      "HP:0004322",
+      "HP:0200067"
+    ],
+    "only_in_source_file": [
+      "HP:0200067"
+    ],
+    "terms": [
+      "HP:0000121",
+      "HP:0001508",
+      "HP:0001518",
+      "HP:0001622",
+      "HP:0002859",
+      "HP:0003202",
+      "HP:0004322",
+      "HP:0200067"
+    ],
+    "check": [
+      {
+        "hpo": "HP:0000121",
+        "primekg_node": "Nephrocalcinosis",
+        "linked_to_disease": false
+      },
+      {
+        "hpo": "HP:0001508",
+        "primekg_node": "Failure to thrive",
+        "linked_to_disease": false
+      },
+      {
+        "hpo": "HP:0001518",
+        "primekg_node": "Small for gestational age",
+        "linked_to_disease": true
+      },
+      {
+        "hpo": "HP:0001622",
+        "primekg_node": "Premature birth",
+        "linked_to_disease": false
+      },
+      {
+        "hpo": "HP:0002859",
+        "primekg_node": null,
+        "linked_to_disease": false
+      },
+      {
+        "hpo": "HP:0003202",
+        "primekg_node": "Skeletal muscle atrophy",
+        "linked_to_disease": false
+      },
+      {
+        "hpo": "HP:0004322",
+        "primekg_node": "Short stature",
+        "linked_to_disease": true
+      },
+      {
+        "hpo": "HP:0200067",
+        "primekg_node": "Recurrent spontaneous abortion",
+        "linked_to_disease": false
+      }
+    ]
+  },
+  "counts": {
+    "graph_nodes": 33551,
+    "paths": 4265,
+    "drugs_reached": 745,
+    "label_checks": 334,
+    "kept": 100
+  },
+  "inputs": [
+    {
+      "name": "primekg-kg.csv",
+      "url": "https://dataverse.harvard.edu/api/access/datafile/6180620",
+      "doi": "doi:10.7910/DVN/IXA7BM",
+      "version": "2.1",
+      "release_time": "2022-05-02T18:39:28Z",
+      "role": "the knowledge graph the step-7 walk reads",
+      "retrieved_at": "2026-09-23T20:55:39+00:00",
+      "sha256": "0a5a010fcd88dcec572a573d98c26c1c244a11567092b6161d3ded611cfb5c69",
+      "sha256_scope": "the kg.csv bytes: hashed while streaming, or re-read from disk (--reuse)",
+      "md5": "aac8191d4fbc5bf09cdf8c3c78b4e75f",
+      "md5_published": "aac8191d4fbc5bf09cdf8c3c78b4e75f",
+      "bytes": 981751236,
+      "licence": "CC0-1.0",
+      "licence_url": "http://creativecommons.org/publicdomain/zero/1.0",
+      "converted_path": "build/primekg/kg.parquet",
+      "converted_sha256": "7a0df2feece6aeac90efb01b7e19e33fd56dd00378fde6195025f3487103eb08",
+      "converted_bytes": 38140518,
+      "manifest": "ressources/track2/primekg.provenance.json"
+    },
+    {
+      "name": "openfda",
+      "url": "https://api.fda.gov/drug/label.json",
+      "version": null,
+      "role": "US label present = approved",
+      "retrieved_at": "2026-09-23T20:57:59+00:00",
+      "retrieved_from": "2026-09-05T23:06:48+00:00",
+      "requests": 334,
+      "live_calls": 288,
+      "sha256": "320b6acd0d273a5adb2b0dc92c79782e396a5aaa97aa868d221dca624871f6b0",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "drug_candidates",
+      "path": "ressources/track2/drug_candidates.tsv",
+      "sha256": "42c04912c8b26676d22c904e7a337b68cb87827c85f4e64f7b2fca72a83b361a",
+      "bytes": 402742,
+      "rows": 1550
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/ranking-walk.tsv",
+      "sha256": "9d151791bb7d72ca0c86be7b82e88b10abcb8a04387fb3167d829ce853848be8",
+      "bytes": 25696,
+      "rows": 100
+    },
+    {
+      "path": "ressources/track2/ranking-walk.paths.tsv",
+      "sha256": "41bb73ae8493ed4e6d9ad8c17d3effbef2c03f1e793c8ae8aeaa9f71a968de32",
+      "bytes": 40972,
+      "rows": 309
+    }
+  ],
+  "patient_data": "none. A public knowledge graph and public drug labels, walked from a disease identifier. The clinical HPO terms are read only to check their presence in the graph; no genomic position appears anywhere."
+}
