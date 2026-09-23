@@ -1,0 +1,19 @@
+# src/mva/zoo/models.d/evo2.toml — the Evo 2 1B lane on Modal (iteration 4, step 8, entry 146).
+#
+# App `mva-zoo-evo2` (src/mva/zoo/modal_apps/evo2.py), image = NGC PyTorch 25.04 + evo2 0.6.0
+# + vtx 1.1.0. Weights `arcinstitute/evo2_1b_base`, HF snapshot 2279e1df422c; `digest` is the
+# sha256 tree the container measured over evo2_1b_base.pt on first load (smoke, 2026-09-23).
+#
+# Score: mean per-token log-likelihood of the alt window minus the ref window (the Evo 2 BRCA1
+# notebook's recipe). Negative = alt less plausible = more damaging, so `score_sign = -1`.
+# The summed delta rides in `aux.delta_sum`.
+#
+# `gpu = "H100"`: the 1B checkpoint needs FP8 (Transformer Engine) on a Hopper GPU.
+# `window = 8192`, the model's trained context and the paper's BRCA1 window: measured
+# 0.164 GPU-s per allele over all 39,286 records, $7.05 of the $18 share (entry 146).
+[models.evo2]
+enabled = true
+params = { image = "evo2-ngc-25.04", gpu = "H100", needs = [
+  "dna_window_ref",
+  "dna_window_alt",
+], batch = 32, wave = 16, window = 8192, score_sign = -1, digest = "2cf1b34e95715d93fcb851cab971349e69d20acd82e532edd88fc8666a04a127" }
