@@ -153,3 +153,94 @@ _hand-written 2026-09-19_
 - merge method: `fusion`, RRF k = 60
 - source tables: `results.it4_model_ranks`, `warehouse.allele_scores`, `results.coding_alleles`
 - built by: `mva.zoo.merge.merged_report`
+
+## 7. Track 2 — mechanism → pathway → consequence → drug direction
+
+<!-- hand-written 2026-09-23 (step 7, T2). Not produced by mva.zoo.merge.render_merged:
+     a re-render keeps only §1–§6 and must re-append §7–§8 from git. -->
+
+**Standing:** written 2026-09-23 from entry
+[142](step-7/methodology/142-a-graph-walk-from-the-disease-node.md) and the committed walk
+tables. Every number is entry 142's. Uses both sources: the genomic card and the 8 HPO terms.
+
+**The question (plan §5 Step 7).** From the child's diagnosis, walk a knowledge graph (network of
+typed facts: gene, pathway, drug) to approved drugs. Then check whether the drugs are specific
+to the disease (a decoy walk) and whether they agree with the literature list.
+
+| link | what this iteration can state | source |
+|---|---|---|
+| **mechanism** | compound heterozygote (two different broken copies, one per parent) in `BUB1B`: one `stop_gained` null allele + one `missense_variant` presumed hypomorph (a partly working copy). Loss of function, confirmed by the oracle (entry 083) | `ressources/track2/mechanism.json`, card v5 |
+| **pathway** | card: spindle assembly checkpoint (SAC, the "don't split yet" signal of cell division). Walk: the grouped PrimeKG node for MVA links **five** genes (BUB1, BUB1B, BUB3, CEP57, TRIP13). **No `direct` path** (disease → gene → drug) exists, because no drug edge sits on any of the five. Of the top 20's 309 paths, 211 go through a pathway and 98 through a protein–protein edge. The heaviest pathway paths cross mitotic Reactome pathways (e.g. *Amplification of signal from unattached kinetochores via a MAD2 inhibitory signal*, *Mitotic Prometaphase*, *Resolution of Sister Chromatid Cohesion*) | entry 142; `ressources/track2/ranking-walk.paths.tsv` |
+| **consequence** | card: premature anaphase → chromosome missegregation → mosaic aneuploidy (cells with wrong chromosome counts) → cancer predisposition and growth restriction. The walk does not model consequences: it scores graph proximity only | card v5 `mechanism.downstream` |
+| **drug direction** | **Not resolved by this iteration.** The card's four directions (D1 reinforce the SAC, D2 exploit aneuploid-cell stress, D3 stabilise a hypomorph, D4 tumour prevention) need to know how much the missense copy still works. That needs ΔΔG (predicted change in protein stability). The stability lane (RaSP/ThermoMPNN) was skipped with Wave 5, so no ΔΔG exists. The walk also has no sign: an edge does not say whether a drug inhibits or activates its target | plan §5 Step 7 scope; `todo.md` *Close-out* |
+
+**What the walk ranks.** The top 5 are Fostamatinib, Theophylline, NADH, Pyridoxal phosphate and
+Copper. These are multi-target drugs and cofactors, and **none targets an MVA gene directly**.
+Fostamatinib has 302 target edges. NADH has 153 drug–protein edges. Two readings of
+`targets_reached` in `ressources/track2/ranking-walk.tsv` matter for direction:
+
+- Fostamatinib reaches TTK and AURKB. Inhibiting them is the card's anti-direction **A1**
+  (weakening the checkpoint further).
+- Vincristine is the only standard-of-care drug in the top 20. It is a spindle poison, which is
+  anti-direction **A2** (caution).
+
+So graph proximity can land on drugs the mechanism warns against. This is why the direction column
+stays empty.
+
+![The walk's top 20 against the XDH decoy's top 20 and the literature candidate list (A), and
+each disease gene's share of the top-20 score (B)](../../figures/it4/track2-walk-overlap.svg)
+
+> **Legend** — **A:** one bar per walk, counting the distinct approved-drug base names in its top 20.
+> Blue = also in `drug_candidates.tsv` (the literature/API list, neutral machinery). Yellow = shared
+> with the other walk (the specificity test). Grey = neither. The dashed yellow line is H075's
+> pre-registered bar of 2 (a decision point). **B:** share of summed path weight entering through
+> each disease gene. Green = `BUB1B`, the child's gene. Grey = the other four genes on the node.
+> Built by `tools/render_track2_walk_figures.py` from `ressources/track2/ranking-walk{,.paths}.tsv`,
+> `ressources/track2/decoys/XDH/ranking-walk.tsv` and `ressources/track2/drug_candidates.tsv`.
+> Lineage and input sha256 are in `figures/it4/track2-walk-overlap.provenance.json`.
+
+**The two claims** (entry 142, *Verdict*; the weighing is a transparent heuristic for triage, not a
+calibrated posterior):
+
+| claim | measured | verdict | caveat |
+|---|---|---|---|
+| **H074 / P4-11**: top-20 overlap with the decoy ≤ 5 | **2** (NADH, pyridoxal phosphate); still 2 with rank-20 ties | **supported, 0.75** | the decoy graph is **~38× smaller** (113 vs 4,265 paths), so low overlap is partly built in. Both shared drugs are promiscuous cofactors |
+| **H075 / P4-12**: ≥ 2 of the top 20 in `drug_candidates.tsv` | **6** | **supported, 0.45** | the decoy scores **7** on the same list (post hoc). **The test had no power**: any walk clears a bar of 2 against a list of 1,550 names |
+
+**Whose score is it?** The MVA node carries five genes. **BUB1B holds 18 %** of the top-20 path
+weight, behind BUB1 26 % and BUB3 24 % (TRIP13 19 %, CEP57 14 %). Most of the ranking is driven
+by the four genes that are not the child's. PrimeKG has no MVA1-only node.
+
+**Clinical cross-reference.** Of the 8 HPO terms (standard codes for symptoms), 7 are PrimeKG
+phenotype nodes. **Rhabdomyosarcoma (HP:0002859) is absent from PrimeKG.** Only **2 of the 8**
+link to the MVA node: short stature (HP:0004322) and small for gestational age (HP:0001518).
+Nephrocalcinosis, failure to thrive, skeletal muscle atrophy, premature birth and recurrent
+spontaneous abortion are nodes, but they are not linked to MVA. None links to the decoy's
+node. The walk does not use phenotype edges: this check is reported, not scored. The card
+explains the growth terms (short stature, failure to thrive) and names rhabdomyosarcoma as part
+of the MVA1 spectrum. The graph states neither link. Card v5 also omits the eighth term
+(HP:0200067), which the walk read from the clinical file.
+
+**Limitations.**
+
+- **TxGNN skipped** (user decision 2026-09-23). The "graph walk vs GNN (graph neural network)"
+  half of step 7's goal is unanswered, and `P4-10` is never filed.
+- **Convergence ≠ correctness.** A drug close to the disease in the graph is not a drug that
+  helps. The walk measures proximity, not efficacy or direction.
+- **Snapshot graph.** PrimeKG v2.1 was released 2022-05-02. A drug or edge added after that date
+  cannot rank.
+- **Hub drugs are not penalised.** The walk counts `drug_protein` edges of every kind (target,
+  enzyme, transporter, carrier) the same way.
+- **Name matching** uses `base_name`. A drug labelled under another generic name is dropped as
+  unapproved.
+
+## 8. Limitations of iteration 4 — what was skipped
+
+Recorded in `todo.md` *Close-out* (2026-09-23). Each item is an unanswered question, not a
+negative result.
+
+| skipped | consequence |
+|---|---|
+| **Wave 5** in full: GPU tiers on Modal, ESM-C, NT-v2, Evo 2, Boltz-2, ΔΔG, the judge, and TxGNN | no ΔΔG, so §7's drug direction stays unresolved; the "vs GNN" half of step 7 is unanswered |
+| **PrimateAI-3D** and **Pangolin** lanes | two fewer independent opinions on the missense and splice halves |
+| **CADD** lane | blocked by an Ensembl HTTP 500; the zoo has no CADD lane |
