@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 24,
-    "entries": 626,
+    "chapters": 25,
+    "entries": 633,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 202
+    "contexts": 209
   },
   "chapters": [
     {
@@ -8384,6 +8384,132 @@
             "provenance-manifest"
           ],
           "firstSeen": "2026-09-19"
+        }
+      ]
+    },
+    {
+      "number": 25,
+      "id": "25-walking-a-knowledge-graph--words-for-iteration-4s-step-7-track-2",
+      "title": "Walking a knowledge graph — words for iteration 4's step 7 (Track 2)",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>Step 7 asks a public knowledge graph which approved drugs sit a few hops from the child's\ndisease, and checks the answer against a decoy disease walked the same way.</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "mondo-id",
+          "term": "MONDO id",
+          "aliases": [],
+          "html": "<p>an identifier from the Mondo Disease Ontology, which merges OMIM, Orphanet and other disease catalogues into one id per disease. Written <code>MONDO:</code> plus seven digits. Software analogy: a canonical primary key that several legacy systems' keys map onto.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>MONDO:0009759</code> = mosaic variegated aneuploidy syndrome 1; <code>MONDO:0010209</code> = xanthinuria type I.</p>",
+          "context": "<p>the mechanism card's <code>case.mondo</code>; the walk's starting point</p>",
+          "source": "ressources/track2/mechanism.json, docs/iteration4/step-7/methodology/142-a-graph-walk-from-the-disease-node.md",
+          "related": [
+            "omim-orphanet-genereviews-clingen-gencc",
+            "mim-number",
+            "knowledge-graph-kg"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "primekg",
+          "term": "PrimeKG",
+          "aliases": [],
+          "html": "<p>a public knowledge graph for precision medicine (Chandak 2023, PMID 36732524): 129,375 nodes of ten types (disease, gene/protein, drug, pathway, phenotype, …) and 8,100,498 edge rows (both counted on the v2.1 download) built from 20 curated resources. Shipped as one CSV edge table, <code>kg.csv</code>; licence CC0 1.0 on Harvard Dataverse. Software analogy: a property-graph export with typed nodes and labelled edges, one row per directed copy of an undirected edge.</p>",
+          "exampleHtml": "<p><em>Example:</em> the row <code>disease_protein, mosaic variegated aneuploidy syndrome, BUB1B</code> says a disease is linked to a gene; <code>drug_protein, Vincristine, TUBB</code> says a drug acts on a protein.</p>",
+          "context": "<p>fetched by tools/fetch_primekg.py into build/primekg/ (never committed), digest in ressources/track2/primekg.provenance.json</p>",
+          "source": "docs/iteration4/step-7/methodology/142-a-graph-walk-from-the-disease-node.md",
+          "related": [
+            "knowledge-graph-kg",
+            "mondo-id",
+            "reactome-string-open-targets-primekg"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "grouped-disease-node",
+          "term": "Grouped disease node",
+          "aliases": [],
+          "html": "<p>a PrimeKG disease node that stands for several near-identical MONDO diseases at once; its id joins the member numbers with <code>_</code>. A MONDO id is found by matching it against every member. Consequence: a walk from one disease starts from the whole group and reaches every group member's genes.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>MONDO:0009759</code> (MVA1) resolves to the node <code>mosaic variegated aneuploidy syndrome</code>, members MVA, MVA1, MVA2 and MVA3, linked to BUB1, BUB1B, BUB3, CEP57 and TRIP13.</p>",
+          "context": "<p>resolved in src/mva/drugs/primekg.py (<code>disease_nodes</code>) and recorded in each ranking's manifest under <code>source.resolved_nodes</code></p>",
+          "related": [
+            "reactome-string-open-targets-primekg",
+            "mondo-id"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "metapath",
+          "term": "Metapath",
+          "aliases": [],
+          "html": "<p>a path template: the fixed sequence of edge and node types a route through a knowledge graph must follow. Software analogy: a typed query pattern, like a Cypher <code>MATCH (d:Disease)-[:ASSOC]-(g:Gene)-[:TARGET]-(x:Drug)</code>.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>ppi</code> = disease → gene → gene → drug (one protein–protein interaction in the middle); <code>pathway</code> = disease → gene → pathway → gene → drug.</p>",
+          "context": "<p>the walk's three metapaths are <code>DEFAULT_METAPATHS</code> in src/mva/drugs/graph_walk.py</p>",
+          "related": [
+            "reactome-string-open-targets-primekg",
+            "degree-weighted-path-count-dwpc"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "node-degree-hub",
+          "term": "Node degree / hub",
+          "aliases": [
+            "Node degree",
+            "hub"
+          ],
+          "html": "<p>a node's degree is how many distinct neighbours it has. A <strong>hub</strong> is a node with a very high degree, such as a protein that interacts with thousands of others. A path through a hub says little, because a hub is next to almost everything.</p>",
+          "exampleHtml": "<p><em>Example:</em> XDH has degree 62 over the four walked relations, so a one-gene path through it weighs 1/62 ≈ 0.016.</p>",
+          "context": "<p>measured over the walked relations only (disease_protein, protein_protein, pathway_protein, drug_protein)</p>",
+          "source": "src/mva/drugs/graph_walk.py (`Graph.degree`)",
+          "related": [
+            "metapath",
+            "degree-weighted-path-count-dwpc"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "degree-weighted-path-count-dwpc",
+          "term": "Degree-weighted path count (DWPC)",
+          "aliases": [
+            "Degree-weighted path count",
+            "DWPC"
+          ],
+          "html": "<p>a way to score how strongly two nodes are connected: count every path between them along the metapaths, but let each path weigh the product of <code>degree ** -damping</code> over its intermediate nodes, so routes through hubs count less. Damping 1 is plain inverse degree; damping 0 is a raw path count. From Himmelstein 2015 (Hetionet).</p>",
+          "exampleHtml": "<p><em>Example:</em> a drug reached by one path through a gene of degree 4 and a partner of degree 2 scores 1/4 × 1/2 = 0.125.</p>",
+          "context": "<p>the walk's score, <code>ressources/track2/ranking-walk.tsv</code> column <code>score</code>; every path behind a top-20 drug is in <code>ranking-walk.paths.tsv</code></p>",
+          "source": "src/mva/drugs/graph_walk.py",
+          "related": [
+            "metapath",
+            "node-degree-hub",
+            "decoy-mechanism-card"
+          ],
+          "firstSeen": "2026-09-23"
+        },
+        {
+          "kind": "entry",
+          "slug": "promiscuous-drug-cofactor",
+          "term": "Promiscuous drug / cofactor",
+          "aliases": [
+            "Promiscuous drug",
+            "cofactor"
+          ],
+          "html": "<p>a drug node linked to very many proteins: a multi-kinase inhibitor, or a nutrient or enzyme cofactor (zinc, NADH, pyridoxal phosphate) that DrugBank records against every enzyme that uses it. A walk that does not penalise the drug end ranks these high for almost any disease.</p>",
+          "exampleHtml": "<p><em>Example:</em> NADH has 153 drug–protein edges in PrimeKG and appears in the top 20 of both the MVA walk and the xanthinuria decoy walk.</p>",
+          "context": "<p>the two drugs the real and decoy walks share (entry 142)</p>",
+          "related": [
+            "node-degree-hub",
+            "degree-weighted-path-count-dwpc",
+            "decoy-mechanism-card"
+          ],
+          "firstSeen": "2026-09-23"
         }
       ]
     }
