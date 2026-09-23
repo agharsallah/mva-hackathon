@@ -83,8 +83,10 @@ ITERATION4: tuple[Step, ...] = (
         iteration="iteration4",
         status="open",
         track="track1",
-        # Drawn by entry 129 into figures/it4/, not the per-step convention directory:
-        # one renderer writes all twelve at once (tools/render_it4_figures.py).
+        # Drawn into figures/it4/, not the per-step convention directory: one renderer
+        # writes them all at once (tools/render_it4_figures.py). Entry 129 drew the first
+        # twelve; commit 2dc82d0 added the coverage matrix, and run it4-5e25dd45eee2 the
+        # ESM2 and GPN-MSA histograms.
         figures=(
             "figures/it4/score-histogram-alphamissense.svg",
             "figures/it4/score-histogram-alphamissense.html",
@@ -94,6 +96,12 @@ ITERATION4: tuple[Step, ...] = (
             "figures/it4/score-histogram-revel.html",
             "figures/it4/score-histogram-spliceai.svg",
             "figures/it4/score-histogram-spliceai.html",
+            "figures/it4/score-histogram-esm2.svg",
+            "figures/it4/score-histogram-esm2.html",
+            "figures/it4/score-histogram-gpnmsa.svg",
+            "figures/it4/score-histogram-gpnmsa.html",
+            "figures/it4/coverage-matrix.svg",
+            "figures/it4/coverage-matrix.html",
             "figures/it4/agreement-matrix.svg",
             "figures/it4/agreement-matrix.html",
             "figures/it4/confirmed-rank.svg",

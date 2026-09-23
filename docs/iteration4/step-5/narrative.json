@@ -84,6 +84,42 @@
       "reads": "The same per-lane and fused rank bars, interactive: hovering any bar shows its exact rank and the total number of pairs it was ranked among.",
       "means": "Same abstention-versus-opinion evidence as the SVG, with the exact denominator behind each lane's rank (e.g. 'of 50,696' for SpliceAI) readable on hover rather than only in the caption.",
       "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+    },
+    {
+      "name": "score-histogram-esm2.svg",
+      "reads": "Bar chart of ESM2 650M's score distribution over the 15,592 alleles it scored (range -12.32 to 12.63, median 0.13), x-axis the model score, y-axis allele count. A dashed line marks the confirmed pair's missense allele at 4.234 with its percentile; a corner note flags the stop-gained half as not scored by this lane.",
+      "means": "A fourth missense lane, and the first genuinely zero-shot one (a protein language model scoring the substitution from sequence alone, nothing looked up), places the missense allele 4.84 % from the top of its own ranking. It covers 99.8 % of missense records but 0 of 289 stop-gained ones, so it has no opinion on the pair as a whole — the same blind spot as AlphaMissense, ESM1b and REVEL.",
+      "source": "docs/iteration4/reports/esm2.md"
+    },
+    {
+      "name": "score-histogram-esm2.html",
+      "reads": "The same ESM2 distribution, interactive: hoverable bars and the marked allele's exact score and percentile.",
+      "means": "Same 4.84 %-from-the-top evidence as the SVG, inspectable bin by bin.",
+      "source": "docs/iteration4/reports/esm2.md"
+    },
+    {
+      "name": "score-histogram-gpnmsa.svg",
+      "reads": "Bar chart of GPN-MSA's score distribution over the 35,917 alleles it scored (range -12.63 to 12.92), x-axis the model score, y-axis allele count, with two dashed lines: the stop-gained half at 6.04 (4.09 % from the top) and the missense half at 8.13 (1.38 % from the top).",
+      "means": "The only lane besides SpliceAI that sees both halves of the confirmed pair, and the only one that puts both in its top 5 %: a DNA language model (trained on multi-species genome alignments, no protein or catalogue input) that scores 96.2 % of stop-gained records. It ranks the BUB1B pair 508 of 54,865 — a position in this lane's own ranking, not a claim about cause.",
+      "source": "docs/iteration4/reports/gpnmsa.md"
+    },
+    {
+      "name": "score-histogram-gpnmsa.html",
+      "reads": "The same GPN-MSA distribution, interactive, with both marked alleles hoverable for their exact score and percentile.",
+      "means": "Same evidence as the SVG — both halves in the lane's top 5 % — with the bin counts explorable rather than summarised.",
+      "source": "docs/iteration4/reports/gpnmsa.md"
+    },
+    {
+      "name": "coverage-matrix.svg",
+      "reads": "A heat map with one row per lane and one column per consequence class (the 14 largest, by record count), each cell the share of that class's records the lane scored — red 0 %, yellow 50 %, green 100 % — printed with the scored count.",
+      "means": "The zoo's blind spots in one picture: the stop-gained column is red for AlphaMissense, ESM1b, ESM2 and REVEL (0, 0, 0 and 1 of 289 records) and green only for GPN-MSA (96.2 %) and SpliceAI (74.7 %). The confirmed pair has an allele in that column, which is why four of six lanes abstain on it rather than disagree.",
+      "source": "docs/iteration4/runs/it4-5e25dd45eee2.json"
+    },
+    {
+      "name": "coverage-matrix.html",
+      "reads": "The same lane-by-class coverage grid, interactive: hovering a cell shows the exact scored count and share.",
+      "means": "Same blind-spot evidence as the SVG, with every cell's count readable on demand.",
+      "source": "docs/iteration4/runs/it4-5e25dd45eee2.json"
     }
   ],
   "sources": [

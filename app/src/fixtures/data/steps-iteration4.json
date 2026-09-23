@@ -1,6 +1,9 @@
 {
   "blind": {
-    "problems": [],
+    "problems": [
+      "docs/iteration4/step-3/methodology/136-the-two-write-verbs-behind-a-job-and-a-token.md: no '## Inputs' section \u2014 a blind iteration's entry must state what it read, so a reviewer can check it read nothing it should not have",
+      "docs/iteration4/step-4/methodology/135-a-resume-that-is-tested-by-killing-the-run.md: no '## Inputs' section \u2014 a blind iteration's entry must state what it read, so a reviewer can check it read nothing it should not have"
+    ],
     "still_blind": true,
     "unblinded_by": null
   },
@@ -32,7 +35,7 @@
       "summary": "the top-down route that produced submission 1. Frozen."
     },
     {
-      "claims": 47,
+      "claims": 49,
       "current": true,
       "declared": true,
       "docs": "docs/iteration2",
@@ -69,7 +72,7 @@
       "summary": "planned only \u2014 no step map is declared for it"
     },
     {
-      "claims": 6,
+      "claims": 13,
       "current": false,
       "declared": true,
       "docs": "docs/iteration4",
@@ -158,6 +161,24 @@
           "unblinds": false,
           "url": "/api/steps/iteration4/step-1/entry/114-one-record-per-allele-and-what-it-can-be-spelled-as.md",
           "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "141-a-window-for-every-substitution-the-spelling-actually-describes.md",
+          "inputs": [
+            "input | what it is",
+            "`build/it4/records.parquet` | 39,286 records; **15,620** are `missense_variant` (entry 114)",
+            "`hgvs_p` | e.g. `ENSP00000287598.7:p.Asn1002Lys`. The `ENSP` accession is the string's own prefix \u2014 which is why no identifier lookup is needed, and the reason entry 114's `uniprot = null` finding does not block this",
+            "Ensembl REST | `POST https://rest.ensembl.org/sequence/id?type=protein`, 50 accessions per request, **8,732 distinct accessions**",
+            "cache | `build/it4/protein-seq/<ENSP>.json`, one file per protein \u2014 gitignored; protein sequence never leaves `build/`",
+            "parameters | `radius = 64` \u2192 a 129-residue window; `mva.zoo.record_window`"
+          ],
+          "number": "141",
+          "path": "docs/iteration4/step-1/methodology/141-a-window-for-every-substitution-the-spelling-actually-describes.md",
+          "title": "A window for every substitution the spelling actually describes",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-1/entry/141-a-window-for-every-substitution-the-spelling-actually-describes.md",
+          "violations": []
         }
       ],
       "figures": [],
@@ -176,6 +197,22 @@
           "refuted_by": "p4_1a_fraction below 0.95 \u2014 then the failing consequence class is named from RunSummary.by_consequence and tier-1 coverage is reported per class.",
           "revision": 3,
           "statement": "P4-1a: at least 99 % of the callset's coding alleles get a non-null hgvs_p or hgvs_c from the VEP HGVS pass, so one normalized allele record can key every tier-1 model lookup.",
+          "status": "supported",
+          "step": "step-1"
+        },
+        {
+          "author": "g1-lanes",
+          "confidence": 0.9,
+          "gene": "BUB1B",
+          "hypothesis_id": "H071",
+          "iteration": "iteration4",
+          "path": "zoo-record-windows",
+          "prediction": "At least 98 percent of the 15,620 missense_variant records get a complete window pair, where complete means the Ensembl sequence for the ENSP accession hgvs_p names was fetched and its residue at the named position equals the reference residue hgvs_p spells",
+          "reasoning": "99.821 percent against a 98 percent prediction and a 90 percent refutation line, with zero residue mismatches. Held at 0.9 rather than higher: the evidence rows are readings of one run, and the run measures that an input exists, not that it is useful",
+          "recorded_at": "2026-09-20T12:49:19.614323",
+          "refuted_by": "Fewer than 90 percent of missense records get a complete window pair",
+          "revision": 2,
+          "statement": "The protein half of P4-1: a wild-type and mutant amino-acid window can be built for essentially every missense allele in the record set from hgvs_p plus the Ensembl protein sequence, with no extra identifier lookup",
           "status": "supported",
           "step": "step-1"
         }
@@ -230,6 +267,23 @@
           "unblinds": false,
           "url": "/api/steps/iteration4/step-2/entry/119-four-lanes-fetched-licensed-and-joined.md",
           "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "140-the-lane-that-can-see-a-nonsense-allele.md",
+          "inputs": [
+            "input | what it is",
+            "`build/it4/records.parquet` | 39,286 allele records (entry 114), of which **35,917 are SNVs** at **35,881 distinct positions**",
+            "`https://huggingface.co/datasets/songlab/gpn-msa-hg38-scores` | `scores.tsv.bgz`, **37,274,961,495 bytes**, ETag `eb0b78fc\u2026f32f60d`; `scores.tsv.bgz.tbi`, 2,782,844 bytes, sha256 `6b5241c207be318d\u2026`. Sizes and ids read from the HF tree API before the fetch, never from the dataset page's prose",
+            "licence | **MIT**, from the dataset card's own YAML front-matter. The shared roster said \"check on fetch\"; this is the check, and `models.d/gpnmsa.toml` overrides the placeholder",
+            "tool | `tabix` (htslib) on the PATH; `tools/fetch_zoo_tables.py --subset-from`; `mva.zoo.tabix_plan` + `mva.zoo.tabix_subset`; lane `mva.zoo.adapters.coordinate_table`"
+          ],
+          "number": "140",
+          "path": "docs/iteration4/step-2/methodology/140-the-lane-that-can-see-a-nonsense-allele.md",
+          "title": "The lane that can see a nonsense allele",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-2/entry/140-the-lane-that-can-see-a-nonsense-allele.md",
+          "violations": []
         }
       ],
       "figures": [],
@@ -265,6 +319,22 @@
           "revision": 2,
           "statement": "P4-3: every precomputed missense table that runs covers at least 90 % of the callset's missense alleles, EVE excepted (predicted below 30 %).",
           "status": "refuted",
+          "step": "step-2"
+        },
+        {
+          "author": "g1-lanes",
+          "confidence": 0.95,
+          "gene": "BUB1B",
+          "hypothesis_id": "H068",
+          "iteration": "iteration4",
+          "path": "zoo-lane-coverage",
+          "prediction": "A tabix subset of songlab/gpn-msa-hg38-scores joined to the record set scores at least 99 percent of the single-nucleotide alleles, and both confirmed BUB1B alleles (the missense one and the stop_gained one) carry a score",
+          "reasoning": "Both arms of the prediction met: 100.0 percent of SNV alleles scored against a 99 percent threshold, and both confirmed BUB1B alleles carry a score. Held at 0.95 rather than the heuristic's 0.97 because the two evidence rows are one measurement read two ways, not two independent tests, and because coverage is not accuracy",
+          "recorded_at": "2026-09-20T12:38:14.865673",
+          "refuted_by": "SNV coverage below 90 percent, or either confirmed BUB1B allele missing from the subset",
+          "revision": 2,
+          "statement": "GPN-MSA's published all-possible-SNV table covers the iteration-4 record set's SNV alleles, including both confirmed BUB1B alleles, so the zoo gains its first lane that can score a nonsense allele",
+          "status": "supported",
           "step": "step-2"
         }
       ],
@@ -319,6 +389,17 @@
           "unblinds": false,
           "url": "/api/steps/iteration4/step-3/entry/122-every-lane-scored-once-and-only-once.md",
           "violations": []
+        },
+        {
+          "declares_inputs": false,
+          "entry": "136-the-two-write-verbs-behind-a-job-and-a-token.md",
+          "inputs": [],
+          "number": "136",
+          "path": "docs/iteration4/step-3/methodology/136-the-two-write-verbs-behind-a-job-and-a-token.md",
+          "title": "The two write verbs, behind a job and behind a token",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-3/entry/136-the-two-write-verbs-behind-a-job-and-a-token.md",
+          "violations": []
         }
       ],
       "figures": [],
@@ -338,6 +419,22 @@
           "revision": 2,
           "statement": "P4-4a: a cold MVP run \u2014 four lanes over the ~39,300 allele records \u2014 completes in at most one hour of laptop wall-clock at zero dollars.",
           "status": "testing",
+          "step": "step-3"
+        },
+        {
+          "author": "g1-lanes",
+          "confidence": null,
+          "gene": "",
+          "hypothesis_id": "H073",
+          "iteration": "iteration4",
+          "path": "zoo-lane-count",
+          "prediction": "One mva-zoo run over the shipped config scores 8 or more distinct lanes into warehouse.allele_scores, each with a version, a digest, a licence and a venue, at no dollar cost",
+          "reasoning": "",
+          "recorded_at": "2026-09-20T13:52:58.902584",
+          "refuted_by": "Fewer than 5 lanes score the record set end-to-end by the close of the plan's optional waves",
+          "revision": 1,
+          "statement": "P4-2: at least 8 of the roster's models run end-to-end on the record set inside the laptop and dollar budget",
+          "status": "proposed",
           "step": "step-3"
         }
       ],
@@ -389,11 +486,55 @@
           "unblinds": false,
           "url": "/api/steps/iteration4/step-4/entry/128-one-command-eight-stages-and-three-things-a-fixture-could-not-catch.md",
           "violations": []
+        },
+        {
+          "declares_inputs": false,
+          "entry": "135-a-resume-that-is-tested-by-killing-the-run.md",
+          "inputs": [],
+          "number": "135",
+          "path": "docs/iteration4/step-4/methodology/135-a-resume-that-is-tested-by-killing-the-run.md",
+          "title": "A resume that is tested by killing the run",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-4/entry/135-a-resume-that-is-tested-by-killing-the-run.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "139-the-render-stage-keeps-every-narrative-and-the-manifest-says-which.md",
+          "inputs": [
+            "input | role",
+            "`docs/iteration4/report.md` at `c69fcc0` | a merged report carrying **two** section-5 versions: synthesised (`claude-code`, `claude-opus-5[1m]`, 7/7 cited) and hand-written",
+            "`build/it4/checkpoints/it4-2962e3117b5c/` | the markers entry 135's runs left",
+            "`src/mva/zoo/merge_render.existing_narratives` | G3's round trip: every version rebuilt from its own marker"
+          ],
+          "number": "139",
+          "path": "docs/iteration4/step-4/methodology/139-the-render-stage-keeps-every-narrative-and-the-manifest-says-which.md",
+          "title": "The render stage keeps every narrative, and the manifest says which",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-4/entry/139-the-render-stage-keeps-every-narrative-and-the-manifest-says-which.md",
+          "violations": []
         }
       ],
       "figures": [],
       "goal": "Does a checkpointed DAG run the whole zoo end-to-end, resumably, from one command \u2014 and what does it cost in wall-clock and dollars?",
-      "hypotheses": [],
+      "hypotheses": [
+        {
+          "author": "g2-api-resume",
+          "confidence": 0.9,
+          "gene": "",
+          "hypothesis_id": "H067",
+          "iteration": "iteration4",
+          "path": "iteration4/step-4 resume",
+          "prediction": "With counting Deps injected, a workflow killed inside fan_out after the first lane and restarted makes exactly one load_records, one load_registry, one load_pairs and one score call per lane in total across both attempts; the restarted run's merged.json, per-model report JSON and merged report are identical (generation timestamps aside) to an uninterrupted run of the same config, and exactly one manifest exists for the run id. On real data, a second mva-zoo run of the same config restores all eight stages and finishes in a fraction of the first run's wall-clock.",
+          "reasoning": "Both halves observed: the kill test asserts no finished stage or finished lane is recomputed, that the restart reproduces an uninterrupted run and that one manifest exists; the real-data pair went 541.21 s to 0.73 s with seven of eight stages restored. Held below the suggested 0.95 for two stated limits: a source the bundle cannot fingerprint is trusted until --force, and the kill is a cooperative hook in a thread rather than a signal to a subprocess.",
+          "recorded_at": "2026-09-20T10:07:44.906665",
+          "refuted_by": "Any deps call counter above one for a stage or lane finished before the kill; any output byte-differing from the uninterrupted run beyond its generation timestamps; more than one manifest for the run id; or a second real-data run that recomputes a stage whose inputs did not change.",
+          "revision": 2,
+          "statement": "P4-5: the zoo DAG resumes from any stage without recomputing a finished stage or a finished fan-out lane; a run killed mid-fan-out and restarted with the same config reproduces the uninterrupted run's outputs.",
+          "status": "supported",
+          "step": "step-4"
+        }
+      ],
       "kind": "research",
       "narrative": {
         "figures": [],
@@ -441,11 +582,28 @@
           "unblinds": false,
           "url": "/api/steps/iteration4/step-5/entry/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md",
           "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "134-an-llm-that-may-only-explain-the-rows-it-was-given.md",
+          "inputs": [
+            "input | rows | role",
+            "`build/it4/reports/{alphamissense,esm1b,revel,spliceai}.json` | 4 | the stored section JSON, run `it4-dcda40a4df2c`",
+            "`docs/iteration4/reports/*.md` | 4 | the hand-written section 6 of each, read back and kept",
+            "Claude Code CLI | 2.1.278 | the `claude-code` mode's transport",
+            "`src/mva/zoo/zoo.example.toml` | `[llm]` | mode, model, temperature, `max_words = 200`"
+          ],
+          "number": "134",
+          "path": "docs/iteration4/step-5/methodology/134-an-llm-that-may-only-explain-the-rows-it-was-given.md",
+          "title": "An LLM that may only explain the rows it was given",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-5/entry/134-an-llm-that-may-only-explain-the-rows-it-was-given.md",
+          "violations": []
         }
       ],
       "figures": [
         {
-          "bytes": 3250,
+          "bytes": 3998,
           "caption": {
             "means": "Same two-block agreement structure as the SVG (missense lanes correlated, SpliceAI isolated), with the exact rho and n for any pair of lanes available on demand instead of only the cells the caption calls out.",
             "name": "agreement-matrix.html",
@@ -460,7 +618,7 @@
           "url": "/api/steps/iteration4/step-5/figure/agreement-matrix.html"
         },
         {
-          "bytes": 16975,
+          "bytes": 27440,
           "caption": {
             "means": "Evidence of two separate opinions inside the zoo, not four: the three missense lanes agree with each other, from +0.168 (REVEL vs ESM1b) up to +0.580 (AlphaMissense vs ESM1b), while SpliceAI's agreement with any of them stays near zero (+0.021 to +0.043) \u2014 it is scoring a different property (splicing) and correctly does not track the others.",
             "name": "agreement-matrix.svg",
@@ -475,7 +633,7 @@
           "url": "/api/steps/iteration4/step-5/figure/agreement-matrix.svg"
         },
         {
-          "bytes": 2988,
+          "bytes": 3085,
           "caption": {
             "means": "Same abstention-versus-opinion evidence as the SVG, with the exact denominator behind each lane's rank (e.g. 'of 50,696' for SpliceAI) readable on hover rather than only in the caption.",
             "name": "confirmed-rank.html",
@@ -490,7 +648,7 @@
           "url": "/api/steps/iteration4/step-5/figure/confirmed-rank.html"
         },
         {
-          "bytes": 12157,
+          "bytes": 15307,
           "caption": {
             "means": "Evidence that the pair's apparent mediocre rank is an artefact of missing coverage, not a real disagreement: only SpliceAI and the two RRF fusions have a bar above zero (SpliceAI at 11,980 of 50,696; RRF catalogue-free at 20,639 of 52,012; RRF all lanes at 21,497 of 52,219), while AlphaMissense, ESM1b and REVEL sit at zero because each could score only one of the pair's two alleles.",
             "name": "confirmed-rank.svg",
@@ -503,6 +661,36 @@
           "slug": "confirmed-rank.svg",
           "title": "confirmed rank",
           "url": "/api/steps/iteration4/step-5/figure/confirmed-rank.svg"
+        },
+        {
+          "bytes": 5494,
+          "caption": {
+            "means": "Same blind-spot evidence as the SVG, with every cell's count readable on demand.",
+            "name": "coverage-matrix.html",
+            "reads": "The same lane-by-class coverage grid, interactive: hovering a cell shows the exact scored count and share.",
+            "source": "docs/iteration4/runs/it4-5e25dd45eee2.json"
+          },
+          "kind": "html",
+          "name": "coverage-matrix.html",
+          "path": "figures/it4/coverage-matrix.html",
+          "slug": "coverage-matrix.html",
+          "title": "coverage matrix",
+          "url": "/api/steps/iteration4/step-5/figure/coverage-matrix.html"
+        },
+        {
+          "bytes": 51625,
+          "caption": {
+            "means": "The zoo's blind spots in one picture: the stop-gained column is red for AlphaMissense, ESM1b, ESM2 and REVEL (0, 0, 0 and 1 of 289 records) and green only for GPN-MSA (96.2 %) and SpliceAI (74.7 %). The confirmed pair has an allele in that column, which is why four of six lanes abstain on it rather than disagree.",
+            "name": "coverage-matrix.svg",
+            "reads": "A heat map with one row per lane and one column per consequence class (the 14 largest, by record count), each cell the share of that class's records the lane scored \u2014 red 0 %, yellow 50 %, green 100 % \u2014 printed with the scored count.",
+            "source": "docs/iteration4/runs/it4-5e25dd45eee2.json"
+          },
+          "kind": "svg",
+          "name": "coverage-matrix.svg",
+          "path": "figures/it4/coverage-matrix.svg",
+          "slug": "coverage-matrix.svg",
+          "title": "coverage matrix",
+          "url": "/api/steps/iteration4/step-5/figure/coverage-matrix.svg"
         },
         {
           "bytes": 3816,
@@ -563,6 +751,66 @@
           "slug": "score-histogram-esm1b.svg",
           "title": "score histogram esm1b",
           "url": "/api/steps/iteration4/step-5/figure/score-histogram-esm1b.svg"
+        },
+        {
+          "bytes": 3826,
+          "caption": {
+            "means": "Same 4.84 %-from-the-top evidence as the SVG, inspectable bin by bin.",
+            "name": "score-histogram-esm2.html",
+            "reads": "The same ESM2 distribution, interactive: hoverable bars and the marked allele's exact score and percentile.",
+            "source": "docs/iteration4/reports/esm2.md"
+          },
+          "kind": "html",
+          "name": "score-histogram-esm2.html",
+          "path": "figures/it4/score-histogram-esm2.html",
+          "slug": "score-histogram-esm2.html",
+          "title": "score histogram esm2",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-esm2.html"
+        },
+        {
+          "bytes": 19017,
+          "caption": {
+            "means": "A fourth missense lane, and the first genuinely zero-shot one (a protein language model scoring the substitution from sequence alone, nothing looked up), places the missense allele 4.84 % from the top of its own ranking. It covers 99.8 % of missense records but 0 of 289 stop-gained ones, so it has no opinion on the pair as a whole \u2014 the same blind spot as AlphaMissense, ESM1b and REVEL.",
+            "name": "score-histogram-esm2.svg",
+            "reads": "Bar chart of ESM2 650M's score distribution over the 15,592 alleles it scored (range -12.32 to 12.63, median 0.13), x-axis the model score, y-axis allele count. A dashed line marks the confirmed pair's missense allele at 4.234 with its percentile; a corner note flags the stop-gained half as not scored by this lane.",
+            "source": "docs/iteration4/reports/esm2.md"
+          },
+          "kind": "svg",
+          "name": "score-histogram-esm2.svg",
+          "path": "figures/it4/score-histogram-esm2.svg",
+          "slug": "score-histogram-esm2.svg",
+          "title": "score histogram esm2",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-esm2.svg"
+        },
+        {
+          "bytes": 3959,
+          "caption": {
+            "means": "Same evidence as the SVG \u2014 both halves in the lane's top 5 % \u2014 with the bin counts explorable rather than summarised.",
+            "name": "score-histogram-gpnmsa.html",
+            "reads": "The same GPN-MSA distribution, interactive, with both marked alleles hoverable for their exact score and percentile.",
+            "source": "docs/iteration4/reports/gpnmsa.md"
+          },
+          "kind": "html",
+          "name": "score-histogram-gpnmsa.html",
+          "path": "figures/it4/score-histogram-gpnmsa.html",
+          "slug": "score-histogram-gpnmsa.html",
+          "title": "score histogram gpnmsa",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-gpnmsa.html"
+        },
+        {
+          "bytes": 20435,
+          "caption": {
+            "means": "The only lane besides SpliceAI that sees both halves of the confirmed pair, and the only one that puts both in its top 5 %: a DNA language model (trained on multi-species genome alignments, no protein or catalogue input) that scores 96.2 % of stop-gained records. It ranks the BUB1B pair 508 of 54,865 \u2014 a position in this lane's own ranking, not a claim about cause.",
+            "name": "score-histogram-gpnmsa.svg",
+            "reads": "Bar chart of GPN-MSA's score distribution over the 35,917 alleles it scored (range -12.63 to 12.92), x-axis the model score, y-axis allele count, with two dashed lines: the stop-gained half at 6.04 (4.09 % from the top) and the missense half at 8.13 (1.38 % from the top).",
+            "source": "docs/iteration4/reports/gpnmsa.md"
+          },
+          "kind": "svg",
+          "name": "score-histogram-gpnmsa.svg",
+          "path": "figures/it4/score-histogram-gpnmsa.svg",
+          "slug": "score-histogram-gpnmsa.svg",
+          "title": "score histogram gpnmsa",
+          "url": "/api/steps/iteration4/step-5/figure/score-histogram-gpnmsa.svg"
         },
         {
           "bytes": 3756,
@@ -642,6 +890,38 @@
           "statement": "P4-6: every catalogue-free lane places the confirmed BUB1B pair in the top decile of the callset's biallelic pairs.",
           "status": "testing",
           "step": "step-5"
+        },
+        {
+          "author": "g3-narrate",
+          "confidence": 0.83,
+          "gene": "BUB1B",
+          "hypothesis_id": "H069",
+          "iteration": "iteration4",
+          "path": "",
+          "prediction": "Run mva-zoo narrate in mode claude-code over all four MVP lanes (alphamissense, esm1b, revel, spliceai). For each lane, mva.zoo.narrate_check reports uncited_sentences / sentences at most 0.10, new_names empty, and at most 200 words. Scope: claude-code only; the nebius mode is built and fake-transport tested but not run, because NEBIUS_API_KEY is absent on this machine.",
+          "reasoning": "All four claude-code narratives cite every sentence to a row that was sent (41/41), invent no row id and name no gene or disease outside the rows; the refutation condition was met by no lane. Confidence is held at the heuristic's 0.83 rather than higher because the claim is tested in one of the two modes the plan names (nebius has no key on this machine), because claude -p has no temperature flag so the reply is a record rather than a reproducible function of the prompt, and because the checker proves a sentence points at a row, not that it reads it correctly. The weighing is a transparent triage heuristic, not a calibrated posterior.",
+          "recorded_at": "2026-09-20T00:54:41.976049",
+          "refuted_by": "Any of the four lanes returns an interpretation whose uncited-sentence rate exceeds 10 percent, or whose prose names a gene or disease that appears in none of the citable rows. Either observation is recorded per lane, not averaged away.",
+          "revision": 2,
+          "statement": "P4-7 (claude-code mode only): the LLM-written interpretation section of every per-model report cites its numbers \u2014 each sentence ends in a row id from the report's own sections 2-5 \u2014 so the uncited-sentence rate stays at or under 10 percent, and no gene or disease the rows never named appears in the prose.",
+          "status": "supported",
+          "step": "step-5"
+        },
+        {
+          "author": "g3-narrate",
+          "confidence": null,
+          "gene": "BUB1B",
+          "hypothesis_id": "H070",
+          "iteration": "iteration4",
+          "path": "",
+          "prediction": "Run mva-zoo narrate in mode claude-code over all four MVP lanes (alphamissense, esm1b, revel, spliceai). For each lane, mva.zoo.narrate_check reports uncited_sentences / sentences <= 0.10 and new_names == (), and the reply is at most 200 words. Scope: claude-code only; the nebius mode is built and fake-transport tested but not run, because NEBIUS_API_KEY is absent on this machine.",
+          "reasoning": "Duplicate filing of P4-7: a first hypothesis-add appeared to hang, was retried, and both landed (H069 first, H070 second). H069 is the claim the step-5 entry tests; H070 records nothing H069 does not and is superseded by it, not by a change of belief.",
+          "recorded_at": "2026-09-20T00:50:37.327186",
+          "refuted_by": "Any of the four lanes returns an interpretation whose uncited-sentence rate exceeds 10 %, or whose prose names a gene or disease that appears in none of the citable rows. Either observation is recorded per lane, not averaged away.",
+          "revision": 2,
+          "statement": "P4-7 (claude-code mode only): the LLM-written interpretation section of every per-model report cites its numbers \u2014 each sentence ends in a row id from the report's own sections 2-5 \u2014 so the uncited-sentence rate stays at or under 10 %, and no gene or disease the rows never named appears in the prose.",
+          "status": "superseded",
+          "step": "step-5"
         }
       ],
       "kind": "research",
@@ -718,6 +998,42 @@
             "name": "confirmed-rank.html",
             "reads": "The same per-lane and fused rank bars, interactive: hovering any bar shows its exact rank and the total number of pairs it was ranked among.",
             "source": "docs/iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md"
+          },
+          {
+            "means": "A fourth missense lane, and the first genuinely zero-shot one (a protein language model scoring the substitution from sequence alone, nothing looked up), places the missense allele 4.84 % from the top of its own ranking. It covers 99.8 % of missense records but 0 of 289 stop-gained ones, so it has no opinion on the pair as a whole \u2014 the same blind spot as AlphaMissense, ESM1b and REVEL.",
+            "name": "score-histogram-esm2.svg",
+            "reads": "Bar chart of ESM2 650M's score distribution over the 15,592 alleles it scored (range -12.32 to 12.63, median 0.13), x-axis the model score, y-axis allele count. A dashed line marks the confirmed pair's missense allele at 4.234 with its percentile; a corner note flags the stop-gained half as not scored by this lane.",
+            "source": "docs/iteration4/reports/esm2.md"
+          },
+          {
+            "means": "Same 4.84 %-from-the-top evidence as the SVG, inspectable bin by bin.",
+            "name": "score-histogram-esm2.html",
+            "reads": "The same ESM2 distribution, interactive: hoverable bars and the marked allele's exact score and percentile.",
+            "source": "docs/iteration4/reports/esm2.md"
+          },
+          {
+            "means": "The only lane besides SpliceAI that sees both halves of the confirmed pair, and the only one that puts both in its top 5 %: a DNA language model (trained on multi-species genome alignments, no protein or catalogue input) that scores 96.2 % of stop-gained records. It ranks the BUB1B pair 508 of 54,865 \u2014 a position in this lane's own ranking, not a claim about cause.",
+            "name": "score-histogram-gpnmsa.svg",
+            "reads": "Bar chart of GPN-MSA's score distribution over the 35,917 alleles it scored (range -12.63 to 12.92), x-axis the model score, y-axis allele count, with two dashed lines: the stop-gained half at 6.04 (4.09 % from the top) and the missense half at 8.13 (1.38 % from the top).",
+            "source": "docs/iteration4/reports/gpnmsa.md"
+          },
+          {
+            "means": "Same evidence as the SVG \u2014 both halves in the lane's top 5 % \u2014 with the bin counts explorable rather than summarised.",
+            "name": "score-histogram-gpnmsa.html",
+            "reads": "The same GPN-MSA distribution, interactive, with both marked alleles hoverable for their exact score and percentile.",
+            "source": "docs/iteration4/reports/gpnmsa.md"
+          },
+          {
+            "means": "The zoo's blind spots in one picture: the stop-gained column is red for AlphaMissense, ESM1b, ESM2 and REVEL (0, 0, 0 and 1 of 289 records) and green only for GPN-MSA (96.2 %) and SpliceAI (74.7 %). The confirmed pair has an allele in that column, which is why four of six lanes abstain on it rather than disagree.",
+            "name": "coverage-matrix.svg",
+            "reads": "A heat map with one row per lane and one column per consequence class (the 14 largest, by record count), each cell the share of that class's records the lane scored \u2014 red 0 %, yellow 50 %, green 100 % \u2014 printed with the scored count.",
+            "source": "docs/iteration4/runs/it4-5e25dd45eee2.json"
+          },
+          {
+            "means": "Same blind-spot evidence as the SVG, with every cell's count readable on demand.",
+            "name": "coverage-matrix.html",
+            "reads": "The same lane-by-class coverage grid, interactive: hovering a cell shows the exact scored count and share.",
+            "source": "docs/iteration4/runs/it4-5e25dd45eee2.json"
           }
         ],
         "hands_to": {
@@ -766,6 +1082,24 @@
           "unblinds": false,
           "url": "/api/steps/iteration4/step-6/entry/130-a-consensus-of-lanes-that-declined-to-vote.md",
           "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "137-a-synthesis-that-must-cite-the-lane-it-builds-on.md",
+          "inputs": [
+            "input | rows | role",
+            "`build/it4/merged.json` | 4 lanes, 6 off-diagonal \u03c1 cells, 2 fusions, 90 disagreements | the deterministic layer, run `it4-2962e3117b5c`",
+            "`build/it4/reports/*.json` | 4 | each lane's own section 6, as the `interp.<model>` rows",
+            "Claude Code CLI | 2.1.278, model `claude-opus-5[1m]` | the `claude-code` transport",
+            "**18 citable rows**: `method`, four `lane.<model>.rank`, six `rho.<a>.<b>`, `rrf.free.rank`,",
+            "`rrf.all.rank`, `disagree.n`, four `interp.<model>`."
+          ],
+          "number": "137",
+          "path": "docs/iteration4/step-6/methodology/137-a-synthesis-that-must-cite-the-lane-it-builds-on.md",
+          "title": "A synthesis that must cite the lane it builds on",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-6/entry/137-a-synthesis-that-must-cite-the-lane-it-builds-on.md",
+          "violations": []
         }
       ],
       "figures": [],
@@ -785,6 +1119,22 @@
           "revision": 2,
           "statement": "P4-8: the RRF consensus places the confirmed BUB1B pair first among the callset's biallelic pairs when catalogue-adjacent lanes are excluded.",
           "status": "refuted",
+          "step": "step-6"
+        },
+        {
+          "author": "g3-narrate",
+          "confidence": 0.8,
+          "gene": "BUB1B",
+          "hypothesis_id": "H072",
+          "iteration": "iteration4",
+          "path": "",
+          "prediction": "mva-zoo narrate --merged --mode claude-code: mva.zoo.narrate_check against mva.zoo.narrate_rows.merged_rows reports uncited_sentences / sentences at most 0.10, unknown_ids empty and new_names empty.",
+          "reasoning": "Seven of seven sentences cite a merged row that was sent, none cites an id that was not, and no lane, gene or disease outside the rows appears; the refutation condition was met by nothing. Confidence is held at 0.80 rather than higher for the same three reasons as H069: one mode (nebius has no key), no temperature flag so the reply is a record rather than a reproducible function of the prompt, and a citation proves a sentence points at a row, not that it reads it correctly. The weighing is a transparent triage heuristic, not a calibrated posterior.",
+          "recorded_at": "2026-09-20T10:10:39.432810",
+          "refuted_by": "The synthesis leaves more than 10 percent of its sentences without a citation that resolves to a merged row, cites an id that was never sent, or names a lane, gene or disease outside the rows.",
+          "revision": 2,
+          "statement": "The merged report's narrative, synthesised in mode claude-code from the merged rows (lanes, agreement matrix, both fusions, disagreement count, and each lane's own section 6), cites every sentence to a row that was sent and names no lane, gene or disease the rows never gave it.",
+          "status": "supported",
           "step": "step-6"
         }
       ],

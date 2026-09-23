@@ -17,6 +17,7 @@ After running this, run the app's fixture test, read the hash it reports, and pu
 Usage::
 
     uv run python tools/capture_step_fixture.py --step step-4
+    uv run python tools/capture_step_fixture.py --step index --iteration iteration4
     cd app && pnpm vitest run src/test/fixtures.test.ts   # read the new hash, then bless it
 """
 
@@ -54,6 +55,11 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--step", choices=sorted(MODULES), required=True)
     parser.add_argument("--out", type=Path, default=DEFAULT_ROOT)
+    parser.add_argument(
+        "--iteration",
+        default=ITERATION,
+        help="the iteration an index capture describes; a non-current one is steps-<it>.json",
+    )
     args = parser.parse_args(argv)
 
     settings = Postgres.from_env()
@@ -63,9 +69,13 @@ def main(argv: list[str] | None = None) -> int:
 
     module = importlib.import_module(MODULES[args.step])
     # The index route takes the iteration it is describing; the detail routes do not.
-    data = module.payload(settings, ITERATION) if args.step == "index" else module.payload(settings)
+    index = args.step == "index"
+    data = module.payload(settings, args.iteration) if index else module.payload(settings)
 
-    path = args.out / ("steps.json" if args.step == "index" else f"steps-{args.step}.json")
+    # The current iteration's index is `steps.json`; every other iteration's is named for it,
+    # which is where `registry/platform.ts` looks for `?iteration=` captures.
+    name = "steps" if args.iteration == ITERATION else f"steps-{args.iteration}"
+    path = args.out / (f"{name}.json" if index else f"steps-{args.step}.json")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(
         json.dumps(data, indent=2, sort_keys=True, default=str) + "\n", encoding="utf-8"
