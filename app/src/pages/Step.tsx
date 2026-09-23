@@ -27,7 +27,7 @@ import { statusLabel, stepTone, TRACK_LABEL } from './steps/status';
  * blind gate and the figure directory — the four places the record already lives.
  *
  * **The analysis body.** Seven of iteration 2's steps have a deep page of their own, with
- * their tables, nulls and charts. Those are rendered *below* the record, from the generated
+ * their tables, nulls and charts; four of iteration 4's borrow the zoo dashboard's exhibits. Those are rendered *below* the record, from the generated
  * registry, so one address carries both halves. A step without one says so and shows the
  * record alone, which is the whole truth about it.
  */

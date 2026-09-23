@@ -18,4 +18,8 @@ export const STEP_BODIES: Record<string, () => Promise<{ default: ComponentType 
   'iteration2/step-5': () => import('../Step5'),
   'iteration2/step-6': () => import('../Step6'),
   'iteration2/step-8': () => import('../Step8'),
+  'iteration4/step-2': () => import('../zoo/bodies/Registry'),
+  'iteration4/step-4': () => import('../zoo/bodies/Workflow'),
+  'iteration4/step-5': () => import('../zoo/bodies/Reports'),
+  'iteration4/step-6': () => import('../zoo/bodies/Merged'),
 };

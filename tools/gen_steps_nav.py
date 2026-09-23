@@ -42,7 +42,7 @@ OUT = Path("app/src/app/modules/steps.generated.ts")
 #: enforces — and this map is a page's business, not the shell's.
 OUT_BODIES = Path("app/src/pages/steps/bodies.generated.ts")
 
-#: The rich iteration-2 step bodies that already exist as pages. A step with an entry here
+#: The analysis bodies that already exist as pages. A step with an entry here
 #: renders its record *and* that analysis; a step without one renders its record alone,
 #: which is the whole truth about a step whose deep page was never built.
 BODIES = {
@@ -53,6 +53,12 @@ BODIES = {
     "iteration2/step-5": "Step5",
     "iteration2/step-6": "Step6",
     "iteration2/step-8": "Step8",
+    # Iteration 4's bodies are slices of the zoo dashboard: the same components, so a step
+    # page and /track1/iteration4/zoo cannot draw the same table two ways.
+    "iteration4/step-2": "zoo/bodies/Registry",
+    "iteration4/step-4": "zoo/bodies/Workflow",
+    "iteration4/step-5": "zoo/bodies/Reports",
+    "iteration4/step-6": "zoo/bodies/Merged",
 }
 
 #: The two tracks, as the navigation names them, and which step tracks each one collects.
@@ -74,6 +80,34 @@ def summary(iteration: str) -> str:
     _, separator, rest = line.partition("—")
     # A trailing "(docs/…/plan.md)" is a citation, right in a docstring and wrong in an <h1>.
     return re.sub(r"\s*\([^)]*\)$", "", (rest if separator else line).strip().rstrip("."))
+
+
+def headline(iteration: str, collected: list[Step]) -> str:
+    """What an iteration's page is about, for this track.
+
+    The iteration's own summary describes its main question — Track 1's. A track that owns a
+    single step of that iteration is about *that step*: "Track 2, iteration 4 — the model zoo"
+    named the wrong subject, so a lone step's title (less a leading track name) heads it.
+    """
+    if len(collected) != 1:
+        return summary(iteration)
+    title = re.sub(r"^Track \d+\s*[-—:]?\s*", "", collected[0].title).strip()
+    return title or summary(iteration)
+
+
+def describe(iteration: str, track_label: str, collected: list[Step]) -> str:
+    """The page's one-line description, in the right number, naming the iteration's subject."""
+    if len(collected) == 1:
+        return (
+            f"The one step of this iteration that argues {track_label}'s answer — its question, "
+            "the claims filed before the run, what became of them, its methodology entries and "
+            f"its figures. The iteration as a whole: {summary(iteration)}."
+        )
+    return (
+        f"The {len(collected)} steps of this iteration that argue {track_label}'s answer: each "
+        "one's question, the claims filed before the run, what became of them, the methodology "
+        "entries they were written in, and the figures they drew."
+    )
 
 
 def number(iteration: str) -> str:
@@ -145,20 +179,14 @@ def render() -> str:
             if not collected:
                 continue
             label = f"Iteration {number(iteration)}"
-            plural = "" if len(collected) == 1 else "s"
             out.append(
                 module(
                     mid=f"{track}-{iteration}",
                     path=f"/{track}/{iteration}",
                     label=label,
-                    title=f"{track_label}, {label.lower()} — {summary(iteration)}",
+                    title=f"{track_label}, {label.lower()} — {headline(iteration, collected)}",
                     parent=track,
-                    description=(
-                        f"The {len(collected)} step{plural} of this iteration that argue "
-                        f"{track_label}'s answer: each one's question, the claims filed before "
-                        "the run, what became of them, the methodology entries they were "
-                        "written in, and the figures they drew."
-                    ),
+                    description=describe(iteration, track_label, collected),
                     load="() => import('../../pages/Iteration')",
                 )
             )
