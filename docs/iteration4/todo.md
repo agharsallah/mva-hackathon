@@ -20,6 +20,48 @@ no table holds HGVS, so step 1 re-asks VEP.
 
 ---
 
+## Close-out — 2026-09-23: iteration 4 closes as a story, not a longer plan
+
+**The headline, unchanged:** running every model under one contract does not find the answer
+alone. RRF puts the confirmed pair at **20,639 of 52,012** (H064 refuted, entry 130). The step
+that reads the proband's 8 HPO terms (clinical terms) puts `BUB1B` at **#14 of 5,267** (entry 129).
+So the clinical step is load-bearing. Everything below makes that story complete. Nothing below
+widens it.
+
+**Track 2 (step 7): what closing needs.** Only the MVP. TxGNN (the GNN half of the goal) is skipped.
+- [ ] **T1 R7 run** (graph walk + decoy):
+  - PrimeKG fetched and digested
+  - `src/mva/drugs/graph_walk.py`: MONDO node → gene → pathway/protein → drug, inverse-degree
+    weights, approved drugs only
+  - decoy card reused from `ressources/track2/decoys/` (answers O6)
+  - **P4-11** and **P4-12** filed *before* the run
+  - outputs `ressources/track2/ranking-walk.tsv` + `.provenance.json`
+  - one entry (≥ 142)
+  - **in progress, subagent, 2026-09-23**
+- [ ] **T2** overlap figure: walk vs `drug_candidates.tsv` vs decoy. Add a Q14 section to
+  `report.md`: mechanism → pathway → consequence → drug direction, stated as *not resolved by
+  this iteration* (no ΔΔG)
+- [ ] **T3** step-7 README "What happened"; iteration README step row; dashboard step page and
+  fixture re-capture
+- [ ] **T4** the user decides: does the walk enter `submissions/track2/iteration-2/` as the second
+  independent method? No new Track 2 folder unless the ranking is worth uploading
+
+**Track 1: the user's close list.**
+- [ ] **C1** step 3: tests for the inference API routes; a verdict revision for H062
+- [ ] **C2** step 5: every per-model report is present (six in `reports/`); an H063 revision that
+  includes GPN-MSA
+- [ ] **C3** rehearse `submissions/track1/iteration-4/` (the A6 item below); `check_iteration.py`
+  green; no upload
+- [ ] **C4** the headline goes in `report.md` §1 and on `/zoo`
+
+**Skipped. Each is listed as a limitation in `report.md` and the step READMEs:**
+- Wave 5 in full: GPU tiers on Modal, ESM-C, NT-v2, Evo 2, Boltz-2, ΔΔG, the judge, and
+  **TxGNN** (P4-10 is never filed, so step 7's "vs GNN" half stays unanswered)
+- PrimateAI-3D and Pangolin lanes
+- CADD lane: blocked by an Ensembl HTTP 500
+
+---
+
 ## Wave 0 — contracts (main thread) — **done**, `f493364` + `2447e3e` + `b9429ad`
 
 - [x] `steps.py`: `ITERATION4`, seven steps, `STEPS_BY_ITERATION`
