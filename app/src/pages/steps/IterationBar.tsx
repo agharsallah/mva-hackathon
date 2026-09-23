@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import type { IterationSummary } from '../../api/types';
 import { Badge } from '../../components/Badge';
 import { BOX, cx } from '../../lib/ui';
-import { iterationLabel, type TrackId } from './route';
+import { iterationLabel, plainSummary, type TrackId } from './route';
 
 /**
  * The iterations of one track, as the way into them.
@@ -37,7 +37,7 @@ function Face({ row, track }: { row: IterationSummary; track: TrackId }) {
         {!row.declared && <Badge tone="neutral">not declared</Badge>}
       </div>
 
-      <p className="text-micro leading-relaxed text-chrome-300">{row.summary}</p>
+      <p className="text-micro leading-relaxed text-chrome-300">{plainSummary(row.summary)}</p>
 
       <dl className="flex flex-wrap gap-x-4 gap-y-1 text-micro text-chrome-400">
         <div>

@@ -18,7 +18,7 @@ import { ZooLineage } from './zoo/ZooLineage';
  * apart, and merged only at the end.
  *
  * Every other page in this app argues towards one answer. This one deliberately does not: it
- * runs four programs that were built by different groups on different evidence, keeps each
+ * runs several programs that were built by different groups on different evidence, keeps each
  * one's ranking separate, and shows where they agree, where they disagree and where each one
  * has nothing to say. The merge is the last step and is printed twice — with and without the
  * lane that was trained on curated verdicts — so a reader can see how much of the consensus
@@ -37,7 +37,7 @@ export default function ZooPage() {
 
   return (
     <div className="space-y-6">
-      <Callout tone="machinery" title="Four opinions, kept apart on purpose">
+      <Callout tone="machinery" title="Several opinions, kept apart on purpose">
         A single pathogenicity score is one laboratory&rsquo;s judgement wearing the clothes of a
         measurement. The zoo asks several, records each one&rsquo;s coverage and blind spots before
         looking at any result, and merges them by <em>rank</em> rather than by score — so no
@@ -170,10 +170,11 @@ export default function ZooPage() {
 
       <Callout tone="decision" title="What a consensus rank here is, and what it is not">
         The merge ranks <em>pairs</em> by how consistently the lanes put them near the top. A pair
-        can rank poorly here and still be the answer — three of the four lanes score only missense
-        changes, so a pair with a truncating half is unrankable by them and carries the opinion of
-        whichever lane could see it. Read the consensus together with the coverage table above it;
-        on its own it measures the roster as much as it measures the pair.
+        can rank poorly here and still be the answer — the missense-only lanes (the coverage table
+        names them) cannot score a truncating change, so a pair with a truncating half is unrankable
+        by them and carries the opinion of whichever lane could see it. Read the consensus together
+        with the coverage table above it; on its own it measures the roster as much as it measures
+        the pair.
       </Callout>
     </div>
   );

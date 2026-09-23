@@ -166,4 +166,14 @@ describe('navigating with the nav bar', () => {
       ).toBe('page'),
     );
   });
+
+  it("lists an iteration's non-step pages on its overview", async () => {
+    renderApp('/track1/iteration4');
+    const block = await screen.findByRole('region', { name: 'Pages of this iteration' });
+    expect(
+      within(block)
+        .getByRole('link', { name: /model zoo/i })
+        .getAttribute('href'),
+    ).toBe('/track1/iteration4/zoo');
+  });
 });

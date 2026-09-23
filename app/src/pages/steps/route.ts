@@ -32,6 +32,15 @@ export function iterationLabel(iteration: string): string {
   return digits ? `iteration ${digits}` : iteration;
 }
 
+/**
+ * An iteration's summary as a reader should see it: the step map's docstring line ends in a
+ * citation (`… (docs/iteration4/plan.md).`), right in a docstring and noise in a card. The
+ * nav generator strips it the same way (`tools/gen_steps_nav.py` → `summary`).
+ */
+export function plainSummary(summary: string): string {
+  return summary.replace(/\s*\([^)]*\)\s*\.?\s*$/, '.').replace(/\.\.$/, '.');
+}
+
 /** `step-4` -> `Step 4`. */
 export function stepLabel(slug: string): string {
   const digits = slug.replace(/\D/g, '');

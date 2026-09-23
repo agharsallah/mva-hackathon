@@ -9,7 +9,14 @@ import { Loaded } from '../components/QueryState';
 import { StatTile } from '../components/StatTile';
 import { C } from '../lib/palette';
 import { BlindChecklist } from './steps/BlindChecklist';
-import { iterationLabel, parseResearchPath, trackLabel, tracksShownOn } from './steps/route';
+import { Companions } from './steps/Companions';
+import {
+  iterationLabel,
+  parseResearchPath,
+  plainSummary,
+  trackLabel,
+  tracksShownOn,
+} from './steps/route';
 import { StepCard } from './steps/StepCard';
 import { Submissions } from './steps/Submissions';
 
@@ -108,8 +115,10 @@ export default function IterationPage() {
                 tone="machinery"
                 title={`${trackLabel(track)}, ${iterationLabel(iteration)}`}
               >
-                {data.index.find((row) => row.iteration === iteration)?.summary ??
-                  'No summary is declared for this iteration.'}{' '}
+                {plainSummary(
+                  data.index.find((row) => row.iteration === iteration)?.summary ??
+                    'No summary is declared for this iteration.',
+                )}{' '}
                 {iteration === data.current
                   ? 'This is the iteration being worked now.'
                   : 'This iteration is not the one being worked now.'}
@@ -146,6 +155,8 @@ export default function IterationPage() {
               </div>
 
               <Submissions rows={submissions} iteration={iteration} />
+
+              <Companions />
 
               <Section title="The steps">
                 <Exhibit

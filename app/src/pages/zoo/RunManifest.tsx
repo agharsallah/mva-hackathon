@@ -159,9 +159,10 @@ export function RunManifest() {
       }
       reading={
         <>
-          Four models over tens of thousands of alleles, on a laptop, for seconds of wall clock and
-          no dollars — because every lane in this run is a lookup against a precomputed table rather
-          than an inference pass.
+          Every lane over tens of thousands of alleles, on a laptop, for seconds of wall clock and
+          no dollars — because each score is read from the cache (a precomputed table, or a score a
+          local model computed once and stored), so a run ranks, reports and merges rather than
+          re-running inference. The venue and the elapsed time of each run are on its card.
         </>
       }
       source={q.data?.source}

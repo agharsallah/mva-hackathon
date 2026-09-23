@@ -139,7 +139,7 @@ export function GeneScores({ gene, onGene }: { gene: string; onGene: (symbol: st
       }
       reading={
         <>
-          The gene box is the reusable door into this page: type any symbol and the same four lanes
+          The gene box is the reusable door into this page: type any symbol and the same lanes
           answer for it, which is what makes the zoo a tool rather than a one-case script.
         </>
       }
