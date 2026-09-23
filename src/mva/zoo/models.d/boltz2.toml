@@ -1,0 +1,15 @@
+# src/mva/zoo/models.d/boltz2.toml — the Boltz-2 lane (step 8, entry 147).
+#
+# Not a callset scorer, so `enabled` stays false: the lane folds wild-type and variant BubR1
+# on a Modal H100 (app `mva-zoo-boltz2`, `src/mva/zoo/modal_apps/boltz2.py`) and the
+# deliverable is the local pLDDT change plus figures, not a score per allele.
+#
+# `sha256` is measured, not typed: `_common.sha256_tree` over the two `.ckpt` files the
+# container downloaded from Hugging Face `boltz-community/boltz-2` at the pinned revision
+# (first run 2026-09-23; stamped in the weights volume `mva-zoo-boltz2-weights`).
+# `msa`: the ColabFold MMseqs2 server is asked for the reference sequence only; every variant
+# reuses that alignment with its query row patched, so no variant sequence leaves Modal.
+[models.boltz2]
+version = "boltz==2.2.1 (weights boltz-community/boltz-2@6fdef46d763fee7fbb83ca5501ccceff43b85607)"
+enabled = false
+params = { image = "boltz2", gpu = "H100", sha256 = "bba514a9e792689a160a512f7b519530195f13cd4ed5cee3b24324f5baaceb76", msa = "colabfold-server, reference only", samples = 3, recycling = 3, sampling_steps = 200, seed = 0 }
