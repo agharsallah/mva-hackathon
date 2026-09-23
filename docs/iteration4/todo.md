@@ -29,7 +29,14 @@ So the clinical step is load-bearing. Everything below makes that story complete
 widens it.
 
 **Track 2 (step 7): what closing needs.** Only the MVP. TxGNN (the GNN half of the goal) is skipped.
-- [ ] **T1 R7 run** (graph walk + decoy):
+- [x] **T1 R7 run** (graph walk + decoy): **done**, entry
+  [142](step-7/methodology/142-a-graph-walk-from-the-disease-node.md) (`8b2ede5`, `62fb9a7`,
+  `2d83246`, `956ff3c`). **H074 / P4-11 supported 0.75**: 2 drugs shared with the decoy's top 20
+  (XDH), but the decoy's graph has ~38× fewer paths. **H075 / P4-12 supported 0.45**: 6 of 20
+  are in `drug_candidates.tsv`, but the decoy also hits 7, so the test had no power. The walk
+  starts from the MVA node, which carries five genes; BUB1B holds 18 % of the top-20 score. Only
+  2 of the 8 HPO terms link to that node. The register rows are uncommitted because
+  `docs/science-register.json` also holds another session's H073. Original scope:
   - PrimeKG fetched and digested
   - `src/mva/drugs/graph_walk.py`: MONDO node → gene → pathway/protein → drug, inverse-degree
     weights, approved drugs only
@@ -37,7 +44,6 @@ widens it.
   - **P4-11** and **P4-12** filed *before* the run
   - outputs `ressources/track2/ranking-walk.tsv` + `.provenance.json`
   - one entry (≥ 142)
-  - **in progress, subagent, 2026-09-23**
 - [ ] **T2** overlap figure: walk vs `drug_candidates.tsv` vs decoy. Add a Q14 section to
   `report.md`: mechanism → pathway → consequence → drug direction, stated as *not resolved by
   this iteration* (no ΔΔG)
