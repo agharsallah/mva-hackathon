@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-20T12:49:19",
+  "generated_at": "2026-09-23T23:01:35",
   "steps": [
     {
       "slug": "step-0",
@@ -2761,6 +2761,86 @@
           "claim": "mva-zoo narrate --merged in mode claude-code synthesised the merged report's section 5 from 18 rows (four lanes, six agreement cells, two fusions, the disagreement count and each lane's own section 6): 7 sentences, 7 resolving citations, 0 uncited, 0 ids that were never sent, 0 lane or gene or disease names outside the rows, 195 words, 20.1 s, 0.116 USD.",
           "source_ref": "docs/iteration4/step-6/methodology/137-a-synthesis-that-must-cite-the-lane-it-builds-on.md",
           "lineage_ref": "results.it4_narratives"
+        }
+      ]
+    },
+    {
+      "id": "H073",
+      "step": "step-3",
+      "statement": "P4-2: at least 8 of the roster's models run end-to-end on the record set inside the laptop and dollar budget",
+      "prediction": "One mva-zoo run over the shipped config scores 8 or more distinct lanes into warehouse.allele_scores, each with a version, a digest, a licence and a venue, at no dollar cost",
+      "refuted_by": "Fewer than 5 lanes score the record set end-to-end by the close of the plan's optional waves",
+      "gene": "",
+      "path": "zoo-lane-count",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H074",
+      "step": "step-7",
+      "statement": "P4-11: the PrimeKG graph walk from the card's disease node is specific to the mechanism: its top 20 approved drugs share at most 5 with the same walk run from a decoy card's disease node (XDH, chosen by plan O6's rule; NTRK3 only if XDH fails a rule condition).",
+      "prediction": "Top-20 overlap (approved drugs, matched on mva.drugs.names.base_name) between ranking-walk.tsv and the decoy ranking is <= 5.",
+      "refuted_by": "Top-20 overlap above 10 (6 to 10 is recorded as inconclusive, neither supported nor refuted).",
+      "gene": "BUB1B",
+      "path": "graph walk (PrimeKG)",
+      "status": "supported",
+      "confidence": 0.75,
+      "suggested_confidence": 0.832,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 177,
+          "direction": "supports",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "The PrimeKG walk's top 20 approved drugs from the MVA disease node share 2 of 20 base names (NADH, pyridoxal phosphate) with the same walk from the XDH decoy's xanthinuria node; the count is unchanged when every drug tied with rank 20 is included on either side.",
+          "source_ref": "methodology/142",
+          "lineage_ref": "track2.decoys.XDH.ranking-walk"
+        },
+        {
+          "id": 178,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "Low overlap is partly structural: the decoy walk reaches 109 drugs by 113 paths against 745 drugs by 4,265 paths for the real one, and both shared drugs are enzyme cofactors that reach any metabolic protein, so the test separates neighbourhoods more than it proves mechanism specificity.",
+          "source_ref": "methodology/142",
+          "lineage_ref": "track2.decoys.XDH.ranking-walk"
+        }
+      ]
+    },
+    {
+      "id": "H075",
+      "step": "step-7",
+      "statement": "P4-12: the PrimeKG graph walk and iteration 2's literature/API-derived candidate list agree on the mechanism: the walk's top 20 approved drugs contain at least 2 drugs that appear in ressources/track2/drug_candidates.tsv.",
+      "prediction": ">= 2 of the walk's top-20 drugs match a drug_name in drug_candidates.tsv (matched on mva.drugs.names.base_name, case-insensitive; any row, approved or not).",
+      "refuted_by": "0 matches (1 match is recorded as inconclusive); the entry then lists which expected paths were absent from the graph.",
+      "gene": "BUB1B",
+      "path": "graph walk (PrimeKG)",
+      "status": "supported",
+      "confidence": 0.45,
+      "suggested_confidence": 0.5498,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 179,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "6 of the walk's top-20 base names appear in drug_candidates.tsv (belinostat, brentuximab vedotin, levothyroxine, theophylline, vincristine, zinc); all 6 are approved rows there, and 31 of the walk's 96 distinct approved names overall are in the list.",
+          "source_ref": "methodology/142",
+          "lineage_ref": "track2.ranking-walk"
+        },
+        {
+          "id": 180,
+          "direction": "refutes",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Post hoc base rate: the XDH decoy walk's top 20 matches 7 drug_candidates.tsv names (azathioprine, carboplatin, cisplatin, daunorubicin, deferoxamine, doxorubicin, mercaptopurine), more than the real walk, so meeting the >= 2 threshold does not show agreement on the mechanism.",
+          "source_ref": "methodology/142",
+          "lineage_ref": "track2.decoys.XDH.ranking-walk"
         }
       ]
     }
