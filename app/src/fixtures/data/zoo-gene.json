@@ -1,6 +1,6 @@
 {
   "_captured": true,
-  "captured_at": "2026-09-20",
+  "captured_at": "2026-09-23",
   "source": "pg.warehouse.allele_scores, pg.results.it4_allele_records",
   "_redacted": ["records[].hgvs_c", "records[].hgvs_p"],
   "payload": {
@@ -48,6 +48,34 @@
               "ts": "2026-09-19T09:07:27.438998"
             },
             {
+              "model": "esm2",
+              "version": "esm2_t33_650M_UR50D",
+              "score": 4.234064102172852,
+              "aux": {
+                "checkpoint": "facebook/esm2_t33_650M_UR50D",
+                "llr": -4.234064102172852,
+                "mode": "catalogue-free"
+              },
+              "digest": "a08adabb949fa67ad3c14b509d04fd60368b35007b0095e3358f81200c4f4db0",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T132316Z-5227",
+              "ts": "2026-09-20T13:23:22.843363"
+            },
+            {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": 8.13,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:32:10.097227"
+            },
+            {
               "model": "revel",
               "version": "REVEL 1.3 via VEP REST",
               "score": 0.472,
@@ -92,6 +120,19 @@
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
             {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": 6.04,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:32:10.097227"
+            },
+            {
               "model": "spliceai",
               "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
               "score": 0.03,
@@ -108,7 +149,7 @@
           ]
         }
       ],
-      "models": ["alphamissense", "esm1b", "revel", "spliceai"],
+      "models": ["alphamissense", "esm1b", "esm2", "gpnmsa", "revel", "spliceai"],
       "scored_records": 2
     },
     "NBPF3": {
@@ -153,6 +194,34 @@
               "licence": "MIT",
               "run_id": "20260919T090725Z-cde3",
               "ts": "2026-09-19T09:07:27.438998"
+            },
+            {
+              "model": "esm2",
+              "version": "esm2_t33_650M_UR50D",
+              "score": -0.51611328125,
+              "aux": {
+                "checkpoint": "facebook/esm2_t33_650M_UR50D",
+                "llr": 0.51611328125,
+                "mode": "catalogue-free"
+              },
+              "digest": "a08adabb949fa67ad3c14b509d04fd60368b35007b0095e3358f81200c4f4db0",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T132316Z-5227",
+              "ts": "2026-09-20T13:23:16.896287"
+            },
+            {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": -3.04,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:31:47.949511"
             },
             {
               "model": "revel",
@@ -226,6 +295,34 @@
               "ts": "2026-09-19T09:07:27.438998"
             },
             {
+              "model": "esm2",
+              "version": "esm2_t33_650M_UR50D",
+              "score": 1.3726845979690552,
+              "aux": {
+                "checkpoint": "facebook/esm2_t33_650M_UR50D",
+                "llr": -1.3726845979690552,
+                "mode": "catalogue-free"
+              },
+              "digest": "a08adabb949fa67ad3c14b509d04fd60368b35007b0095e3358f81200c4f4db0",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T132316Z-5227",
+              "ts": "2026-09-20T13:23:16.896287"
+            },
+            {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": -1.17,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:31:47.949511"
+            },
+            {
               "model": "revel",
               "version": "REVEL 1.3 via VEP REST",
               "score": 0.031,
@@ -269,6 +366,19 @@
           "clin_sig": null,
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
+            {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": -3.25,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:31:53.050266"
+            },
             {
               "model": "spliceai",
               "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
@@ -324,6 +434,34 @@
               "licence": "MIT",
               "run_id": "20260919T090725Z-cde3",
               "ts": "2026-09-19T09:07:27.438998"
+            },
+            {
+              "model": "esm2",
+              "version": "esm2_t33_650M_UR50D",
+              "score": 0.2172074317932129,
+              "aux": {
+                "checkpoint": "facebook/esm2_t33_650M_UR50D",
+                "llr": -0.2172074317932129,
+                "mode": "catalogue-free"
+              },
+              "digest": "a08adabb949fa67ad3c14b509d04fd60368b35007b0095e3358f81200c4f4db0",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T132316Z-5227",
+              "ts": "2026-09-20T13:23:22.843363"
+            },
+            {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": -2.32,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:31:58.138928"
             },
             {
               "model": "revel",
@@ -397,6 +535,34 @@
               "ts": "2026-09-19T09:07:27.438998"
             },
             {
+              "model": "esm2",
+              "version": "esm2_t33_650M_UR50D",
+              "score": 0.2984490394592285,
+              "aux": {
+                "checkpoint": "facebook/esm2_t33_650M_UR50D",
+                "llr": -0.2984490394592285,
+                "mode": "catalogue-free"
+              },
+              "digest": "a08adabb949fa67ad3c14b509d04fd60368b35007b0095e3358f81200c4f4db0",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T132316Z-5227",
+              "ts": "2026-09-20T13:23:22.843363"
+            },
+            {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": 0.11,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:32:04.438029"
+            },
+            {
               "model": "revel",
               "version": "REVEL 1.3 via VEP REST",
               "score": 0.149,
@@ -441,6 +607,19 @@
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
             {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": 2.55,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:32:10.097227"
+            },
+            {
               "model": "spliceai",
               "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
               "score": 0.0,
@@ -469,6 +648,19 @@
           "clin_sig": null,
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
+            {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": 1.52,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:32:10.097227"
+            },
             {
               "model": "spliceai",
               "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
@@ -524,6 +716,34 @@
               "licence": "MIT",
               "run_id": "20260919T090725Z-cde3",
               "ts": "2026-09-19T09:07:27.438998"
+            },
+            {
+              "model": "esm2",
+              "version": "esm2_t33_650M_UR50D",
+              "score": -0.10638809204101562,
+              "aux": {
+                "checkpoint": "facebook/esm2_t33_650M_UR50D",
+                "llr": 0.10638809204101562,
+                "mode": "catalogue-free"
+              },
+              "digest": "a08adabb949fa67ad3c14b509d04fd60368b35007b0095e3358f81200c4f4db0",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T132316Z-5227",
+              "ts": "2026-09-20T13:23:29.461603"
+            },
+            {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": 2.4,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:32:10.097227"
             },
             {
               "model": "revel",
@@ -597,6 +817,34 @@
               "ts": "2026-09-19T09:07:27.438998"
             },
             {
+              "model": "esm2",
+              "version": "esm2_t33_650M_UR50D",
+              "score": -0.034211158752441406,
+              "aux": {
+                "checkpoint": "facebook/esm2_t33_650M_UR50D",
+                "llr": 0.034211158752441406,
+                "mode": "catalogue-free"
+              },
+              "digest": "a08adabb949fa67ad3c14b509d04fd60368b35007b0095e3358f81200c4f4db0",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T132316Z-5227",
+              "ts": "2026-09-20T13:23:29.461603"
+            },
+            {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": -0.98,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:32:15.807122"
+            },
+            {
               "model": "revel",
               "version": "REVEL 1.3 via VEP REST",
               "score": 0.065,
@@ -668,6 +916,34 @@
               "ts": "2026-09-19T09:07:27.438998"
             },
             {
+              "model": "esm2",
+              "version": "esm2_t33_650M_UR50D",
+              "score": 0.2507166862487793,
+              "aux": {
+                "checkpoint": "facebook/esm2_t33_650M_UR50D",
+                "llr": -0.2507166862487793,
+                "mode": "catalogue-free"
+              },
+              "digest": "a08adabb949fa67ad3c14b509d04fd60368b35007b0095e3358f81200c4f4db0",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T132316Z-5227",
+              "ts": "2026-09-20T13:23:29.461603"
+            },
+            {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": 1.42,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:32:15.807122"
+            },
+            {
               "model": "revel",
               "version": "REVEL 1.3 via VEP REST",
               "score": 0.012,
@@ -712,6 +988,19 @@
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
             {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": 1.36,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:32:21.901744"
+            },
+            {
               "model": "spliceai",
               "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
               "score": 0.0,
@@ -741,6 +1030,19 @@
           "source": "ensembl-vep-rest release=116 assembly=GRCh38",
           "rows": [
             {
+              "model": "gpnmsa",
+              "version": "GPN-MSA hg38 precomputed scores (songlab)",
+              "score": -1.35,
+              "aux": {
+                "mode": "catalogue-free"
+              },
+              "digest": "e452de52ce87b4977347defe7f68822032aa3253b132e0951520b21eedc67bdd",
+              "venue": "laptop",
+              "licence": "MIT",
+              "run_id": "20260920T103147Z-0397",
+              "ts": "2026-09-20T10:32:21.901744"
+            },
+            {
               "model": "spliceai",
               "version": "SpliceAI via VEP plugin (iteration 2 annotation pass)",
               "score": 0.02,
@@ -757,7 +1059,7 @@
           ]
         }
       ],
-      "models": ["alphamissense", "esm1b", "revel", "spliceai"],
+      "models": ["alphamissense", "esm1b", "esm2", "gpnmsa", "revel", "spliceai"],
       "scored_records": 12
     }
   }

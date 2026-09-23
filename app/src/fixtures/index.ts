@@ -99,6 +99,8 @@ const OWNERS: Record<string, readonly string[]> = {
     '/api/zoo/reports/merged',
     '/api/zoo/reports/alphamissense',
     '/api/zoo/reports/esm1b',
+    '/api/zoo/reports/esm2',
+    '/api/zoo/reports/gpnmsa',
     '/api/zoo/reports/revel',
     '/api/zoo/reports/spliceai',
     '/api/zoo/scores/gene/BUB1B',

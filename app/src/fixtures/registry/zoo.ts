@@ -15,8 +15,9 @@ import { rows } from '../loader';
 /**
  * Model-zoo fixtures — **captured from the live API**, not synthesised.
  *
- * Every payload below was taken from a running `mva-viz-api` on 2026-09-20 by
- * `GET`ting the route and keeping the envelope's `data` verbatim; each file records
+ * Every payload below was taken from a running `mva-viz-api` on 2026-09-23 (run
+ * `it4-5e25dd45eee2`, six lanes) by `tools/capture_zoo_fixtures.py`, which `GET`s each
+ * route and keeps the envelope's `data` verbatim; each file records
  * `"_captured": true`, the capture date and the API's own `source` line, which is the string
  * the registry then shows next to the exhibit. Nothing here is shaped by hand.
  *
@@ -47,10 +48,10 @@ async function unwrap<T>(name: string): Promise<T> {
 }
 
 /** The provenance line an exhibit prints: the API's own source, marked as a capture. */
-const from = (what: string): string => `captured 2026-09-20 from the live route · ${what}`;
+const from = (what: string): string => `captured 2026-09-23 from the live route · ${what}`;
 
 /** The report keys captured: one per lane that ran, plus the cross-lane `merged` one. */
-const REPORT_KEYS = ['merged', 'alphamissense', 'esm1b', 'revel', 'spliceai'];
+const REPORT_KEYS = ['merged', 'alphamissense', 'esm1b', 'esm2', 'gpnmsa', 'revel', 'spliceai'];
 
 /** The genes captured. Any other symbol has no offline answer, and the page says so. */
 const GENES = ['BUB1B', 'NBPF3'];

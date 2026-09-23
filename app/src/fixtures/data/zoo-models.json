@@ -1,6 +1,6 @@
 {
   "_captured": true,
-  "captured_at": "2026-09-20",
+  "captured_at": "2026-09-23",
   "source": "src/mva/zoo/models.toml + models.d/*.toml, pg.warehouse.allele_scores, pg.results.it4_allele_records",
   "payload": [
     {
@@ -23,8 +23,8 @@
       "pmid": "37733863",
       "scope": "mvp",
       "enabled": true,
-      "ships": "nothing to fetch \u2014 the score is already a warehouse column",
-      "notes": "Already in the warehouse: iteration 2 ran the VEP AlphaMissense plugin, so this lane is a\ncolumn read and needs no download. 10,601 of 38,087 annotated alleles carry a score \u2014 that\nis the missense share of a coding callset, not a failure. Coverage is measured against the\nmissense records only (plan P4-3, target >= 90%). Failure mode: a record whose consequence\nis missense but whose row predates the iteration-2 annotation pass reads null.",
+      "ships": "nothing to fetch — the score is already a warehouse column",
+      "notes": "Already in the warehouse: iteration 2 ran the VEP AlphaMissense plugin, so this lane is a\ncolumn read and needs no download. 10,601 of 38,087 annotated alleles carry a score — that\nis the missense share of a coding callset, not a failure. Coverage is measured against the\nmissense records only (plan P4-3, target >= 90%). Failure mode: a record whose consequence\nis missense but whose row predates the iteration-2 annotation pass reads null.",
       "coverage": {
         "model": "alphamissense",
         "scored": 10601,
@@ -158,8 +158,8 @@
       "pmid": "",
       "scope": "opt-b",
       "enabled": false,
-      "ships": "no weights \u2014 the remote image pulls them; digest and venue recorded per run",
-      "notes": "Not a scorer: it folds wild-type and mutant BubR1 and the deliverable is the picture plus the\nconfidence delta. Kept in the registry so the figure carries the same provenance row every\nscore carries. PMID unverified (bioRxiv 10.1101/2025.06.14.659707, from memory) \u2014 check by\nCrossref before citing.",
+      "ships": "no weights — the remote image pulls them; digest and venue recorded per run",
+      "notes": "Not a scorer: it folds wild-type and mutant BubR1 and the deliverable is the picture plus the\nconfidence delta. Kept in the registry so the figure carries the same provenance row every\nscore carries. PMID unverified (bioRxiv 10.1101/2025.06.14.659707, from memory) — check by\nCrossref before citing.",
       "coverage": null
     },
     {
@@ -182,8 +182,8 @@
       "pmid": "38183205",
       "scope": "mvp",
       "enabled": false,
-      "ships": "no file \u2014 scores are fetched per allele from the public REST service",
-      "notes": "The alternate for the catalogue-adjacent lane (plan open question O5), kept off.\nEnsembl's REST docs list a `CADD` parameter (values snv | indels | snv_indels | sv | 1), but\nthe public REST service answered HTTP 500 for it in iteration 2 (entry 098) \u2014 the plugin data\nfile is not installed on the public endpoint. REVEL carries the lane instead. Re-enable only\nif a run shows the endpoint answering; the disagreement between REVEL and CADD would be a\nfree second adjacent opinion.",
+      "ships": "no file — scores are fetched per allele from the public REST service",
+      "notes": "The alternate for the catalogue-adjacent lane (plan open question O5), kept off.\nEnsembl's REST docs list a `CADD` parameter (values snv | indels | snv_indels | sv | 1), but\nthe public REST service answered HTTP 500 for it in iteration 2 (entry 098) — the plugin data\nfile is not installed on the public endpoint. REVEL carries the lane instead. Re-enable only\nif a run shows the endpoint answering; the disagreement between REVEL and CADD would be a\nfree second adjacent opinion.",
       "coverage": null
     },
     {
@@ -199,15 +199,15 @@
         "endpoint": "https://rest.ensembl.org/vep/human/hgvs",
         "batch": 200
       },
-      "licence": "ClinPred academic use \u2014 verify on fetch",
+      "licence": "ClinPred academic use — verify on fetch",
       "licence_url": "https://sites.google.com/site/clinpred/",
       "non_commercial": true,
       "catalogue_adjacent": true,
       "pmid": "30220433",
       "scope": "opt-a",
       "enabled": false,
-      "ships": "no file \u2014 scores are fetched per allele from the public REST service",
-      "notes": "Third adjacent opinion. Listed in the REST docs as a boolean plugin parameter; same HTTP-500\nrisk as CADD \u2014 the plugin data may not be installed on the public endpoint. Verify on fetch.",
+      "ships": "no file — scores are fetched per allele from the public REST service",
+      "notes": "Third adjacent opinion. Listed in the REST docs as a boolean plugin parameter; same HTTP-500\nrisk as CADD — the plugin data may not be installed on the public endpoint. Verify on fetch.",
       "coverage": null
     },
     {
@@ -238,7 +238,7 @@
       "scope": "mvp",
       "enabled": true,
       "ships": "fetch script + digest, never the score file",
-      "notes": "The only MVP lane that downloads. Found 2026-09-18 by listing the authors' Hugging Face Space\ntree (https://huggingface.co/api/spaces/ntranoslab/esm_variants/tree/main):\n`ALL_hum_isoforms_ESM1b_LLR.zip`, 1,335,361,543 bytes (1.24 GiB) \u2014 all ~450M missense effects\nover 42,336 human protein isoforms, one CSV matrix per isoform (rows = the 20 amino acids,\ncolumns = position + wild-type residue). Licence read from the code repository (MIT); the\nSpace itself states no separate data licence \u2014 verify on fetch.\nThe score is a log-likelihood ratio, <= 0, more negative = more damaging, so the adapter\nnegates it (`score_sign = -1`) to keep the zoo's \"higher = more damaging\" convention.\nJoin key: UniProt isoform accession + protein change, so this lane needs step 1's `hgvs_p`\nand a UniProt mapping; records without either are uncovered, and that is a reportable number.",
+      "notes": "The only MVP lane that downloads. Found 2026-09-18 by listing the authors' Hugging Face Space\ntree (https://huggingface.co/api/spaces/ntranoslab/esm_variants/tree/main):\n`ALL_hum_isoforms_ESM1b_LLR.zip`, 1,335,361,543 bytes (1.24 GiB) — all ~450M missense effects\nover 42,336 human protein isoforms, one CSV matrix per isoform (rows = the 20 amino acids,\ncolumns = position + wild-type residue). Licence read from the code repository (MIT); the\nSpace itself states no separate data licence — verify on fetch.\nThe score is a log-likelihood ratio, <= 0, more negative = more damaging, so the adapter\nnegates it (`score_sign = -1`) to keep the zoo's \"higher = more damaging\" convention.\nJoin key: UniProt isoform accession + protein change, so this lane needs step 1's `hgvs_p`\nand a UniProt mapping; records without either are uncovered, and that is a reportable number.",
       "coverage": {
         "model": "esm1b",
         "scored": 4562,
@@ -371,7 +371,7 @@
       "pmid": "36927031",
       "scope": "opt-a",
       "enabled": false,
-      "ships": "no weights \u2014 the model's own installer fetches them; digest per run",
+      "ships": "no weights — the model's own installer fetches them; digest per run",
       "notes": "The first genuinely zero-shot lane: nothing is looked up, the model scores the substitution\nfrom sequence alone. Laptop CPU, hours for the callset's missense set. Needs the protein\nwindows, which the MVP record does not build.",
       "coverage": null
     },
@@ -395,8 +395,8 @@
       "pmid": "",
       "scope": "opt-b",
       "enabled": false,
-      "ships": "no weights \u2014 the remote image pulls them; digest and venue recorded per run",
-      "notes": "Newer protein language model than ESM2; its value is the agreement figure against ESM1b and\nESM2, not a new number. Technical release, no paper \u2014 record the repository tag and the\nweights digest at fetch instead of a PMID.",
+      "ships": "no weights — the remote image pulls them; digest and venue recorded per run",
+      "notes": "Newer protein language model than ESM2; its value is the agreement figure against ESM1b and\nESM2, not a new number. Technical release, no paper — record the repository tag and the\nweights digest at fetch instead of a PMID.",
       "coverage": null
     },
     {
@@ -413,7 +413,7 @@
         "sha256": "",
         "layout": "csv-zip"
       },
-      "licence": "MIT \u2014 verify on fetch",
+      "licence": "MIT — verify on fetch",
       "licence_url": "https://evemodel.org/",
       "non_commercial": false,
       "catalogue_adjacent": false,
@@ -421,7 +421,7 @@
       "scope": "opt-b",
       "enabled": false,
       "ships": "fetch script + digest, never the score file",
-      "notes": "Kept on the roster because its *coverage* is the finding: EVE published models for roughly\n3,000 genes, so a predicted < 30% coverage of the callset's missense alleles is the named\nexception in claim P4-3. No verified PMID in plan \u00a711 (Frazer 2021) \u2014 cite only after the\nCrossref/E-utilities check. URL and licence verify on fetch.",
+      "notes": "Kept on the roster because its *coverage* is the finding: EVE published models for roughly\n3,000 genes, so a predicted < 30% coverage of the callset's missense alleles is the named\nexception in claim P4-3. No verified PMID in plan §11 (Frazer 2021) — cite only after the\nCrossref/E-utilities check. URL and licence verify on fetch.",
       "coverage": null
     },
     {
@@ -437,15 +437,15 @@
         "gpu": "H100",
         "needs": ["dna_window_ref", "dna_window_alt"]
       },
-      "licence": "Arc Institute open weights \u2014 verify on fetch",
+      "licence": "Arc Institute open weights — verify on fetch",
       "licence_url": "https://github.com/ArcInstitute/evo2",
       "non_commercial": false,
       "catalogue_adjacent": false,
       "pmid": "",
       "scope": "opt-b",
       "enabled": false,
-      "ships": "no weights \u2014 the remote image pulls them; digest and venue recorded per run",
-      "notes": "Tier-3 DNA language model; the authors recommend an H100, minutes of use. No verified PMID:\nplan \u00a711 has the bioRxiv DOI 10.1101/2025.02.18.638918 and a 2026 Nature paper whose PMID is\nstill to fetch \u2014 cite only after the check.",
+      "ships": "no weights — the remote image pulls them; digest and venue recorded per run",
+      "notes": "Tier-3 DNA language model; the authors recommend an H100, minutes of use. No verified PMID:\nplan §11 has the bioRxiv DOI 10.1101/2025.02.18.638918 and a 2026 Nature paper whose PMID is\nstill to fetch — cite only after the check.",
       "coverage": null
     },
     {
@@ -462,7 +462,7 @@
         "sha256": "",
         "layout": "tsv"
       },
-      "licence": "check on fetch (Hugging Face dataset card) \u2014 verify on fetch",
+      "licence": "check on fetch (Hugging Face dataset card) — verify on fetch",
       "licence_url": "https://huggingface.co/datasets/songlab/gpn-msa-hg38-scores",
       "non_commercial": false,
       "catalogue_adjacent": false,
@@ -470,7 +470,7 @@
       "scope": "opt-a",
       "enabled": false,
       "ships": "fetch script + digest, never the score file",
-      "notes": "The GPU-free DNA language model lane: precomputed scores for all ~9 billion possible SNVs in\nGRCh38, columns chrom/pos/ref/alt/score, bgzipped TSV with a tabix index alongside\n(`scores.tsv.bgz.tbi`). URL found 2026-09-18 from the dataset card; size not stated there \u2014\nverify on fetch. This is the one tier-1 lane that also scores non-coding and synonymous\nalleles, so it is the widest coverage on the roster. Keying on the coordinate means the join\nhappens inside `build/it4/` and only `allele_id` leaves.",
+      "notes": "The GPU-free DNA language model lane: precomputed scores for all ~9 billion possible SNVs in\nGRCh38, columns chrom/pos/ref/alt/score, bgzipped TSV with a tabix index alongside\n(`scores.tsv.bgz.tbi`). URL found 2026-09-18 from the dataset card; size not stated there —\nverify on fetch. This is the one tier-1 lane that also scores non-coding and synonymous\nalleles, so it is the widest coverage on the roster. Keying on the coordinate means the join\nhappens inside `build/it4/` and only `allele_id` leaves.",
       "coverage": null
     },
     {
@@ -493,8 +493,8 @@
       "pmid": "39609566",
       "scope": "opt-b",
       "enabled": false,
-      "ships": "no weights \u2014 the remote image pulls them; digest and venue recorded per run",
-      "notes": "Runs through HF `transformers` on any GPU \u2014 the cheap tier-3 lane, and the fallback if Evo 2 will not fit.",
+      "ships": "no weights — the remote image pulls them; digest and venue recorded per run",
+      "notes": "Runs through HF `transformers` on any GPU — the cheap tier-3 lane, and the fallback if Evo 2 will not fit.",
       "coverage": null
     },
     {
@@ -509,15 +509,15 @@
         "entrypoint": "pangolin",
         "needs": ["dna_window_ref", "dna_window_alt"]
       },
-      "licence": "Apache-2.0 \u2014 verify on fetch",
+      "licence": "Apache-2.0 — verify on fetch",
       "licence_url": "https://github.com/tkzeng/Pangolin",
       "non_commercial": false,
       "catalogue_adjacent": false,
       "pmid": "35449021",
       "scope": "opt-a",
       "enabled": false,
-      "ships": "no weights \u2014 the model's own installer fetches them; digest per run",
-      "notes": "Second splice opinion, run locally rather than looked up \u2014 the point is an independent splice\nmodel to disagree with SpliceAI. Needs the DNA windows step 1 leaves optional in the MVP.",
+      "ships": "no weights — the model's own installer fetches them; digest per run",
+      "notes": "Second splice opinion, run locally rather than looked up — the point is an independent splice\nmodel to disagree with SpliceAI. Needs the DNA windows step 1 leaves optional in the MVP.",
       "coverage": null
     },
     {
@@ -534,7 +534,7 @@
         "sha256": "",
         "layout": "tsv"
       },
-      "licence": "Illumina academic/non-commercial, registration required \u2014 verify on fetch",
+      "licence": "Illumina academic/non-commercial, registration required — verify on fetch",
       "licence_url": "https://primad.basespace.illumina.com/download",
       "non_commercial": true,
       "catalogue_adjacent": false,
@@ -542,7 +542,7 @@
       "scope": "opt-a",
       "enabled": false,
       "ships": "fetch script + digest, never the score file",
-      "notes": "Structure-aware missense lane, the closest independent rival to AlphaMissense. The download\nis behind an Illumina BaseSpace registration page rather than a plain URL, so `--fetch` will\nnot work unattended \u2014 a human accepts the terms and drops the file in\n`build/it4/tables/primateai3d/`; the script then digests and converts it. Verify on fetch.",
+      "notes": "Structure-aware missense lane, the closest independent rival to AlphaMissense. The download\nis behind an Illumina BaseSpace registration page rather than a plain URL, so `--fetch` will\nnot work unattended — a human accepts the terms and drops the file in\n`build/it4/tables/primateai3d/`; the script then digests and converts it. Verify on fetch.",
       "coverage": null
     },
     {
@@ -567,7 +567,7 @@
       "scope": "opt-b",
       "enabled": false,
       "ships": "fetch script + digest, never the score file",
-      "notes": "Track 2's graph, listed for roster completeness only. It is fetched by the track2 lane\n(`mva.drugs`, plan step 7), NOT by `tools/fetch_zoo_tables.py` \u2014 do not fetch it twice. It\nscores a disease node against drugs, not an allele, so it never enters the variant ranking.",
+      "notes": "Track 2's graph, listed for roster completeness only. It is fetched by the track2 lane\n(`mva.drugs`, plan step 7), NOT by `tools/fetch_zoo_tables.py` — do not fetch it twice. It\nscores a disease node against drugs, not an allele, so it never enters the variant ranking.",
       "coverage": null
     },
     {
@@ -582,15 +582,15 @@
         "entrypoint": "rasp",
         "needs": ["structure"]
       },
-      "licence": "open \u2014 verify on fetch",
+      "licence": "open — verify on fetch",
       "licence_url": "https://github.com/KULL-Centre/_2022_ML-ddG-Blaabjerg",
       "non_commercial": false,
       "catalogue_adjacent": false,
       "pmid": "37184062",
       "scope": "opt-b",
       "enabled": false,
-      "ships": "no weights \u2014 the model's own installer fetches them; digest per run",
-      "notes": "Predicts a stability change (\u0394\u0394G) on the AlphaFold model of one protein rather than a\npathogenicity score, so it is not a ranking lane: it serves the hypomorph-vs-null question\nthat Track 2 needs. One protein only.",
+      "ships": "no weights — the model's own installer fetches them; digest per run",
+      "notes": "Predicts a stability change (ΔΔG) on the AlphaFold model of one protein rather than a\npathogenicity score, so it is not a ranking lane: it serves the hypomorph-vs-null question\nthat Track 2 needs. One protein only.",
       "coverage": null
     },
     {
@@ -613,7 +613,7 @@
       "pmid": "27666373",
       "scope": "mvp",
       "enabled": true,
-      "ships": "no file \u2014 scores are fetched per allele from the public REST service",
+      "ships": "no file — scores are fetched per allele from the public REST service",
       "notes": "The catalogue-adjacent lane, and the reason the merge is always printed twice (with and\nwithout adjacent lanes). REVEL is an ensemble trained on catalogued pathogenic/benign sets,\nso it has seen labels the other three have not.\nPlugin flag verified 2026-09-18 against the Ensembl REST docs for `/vep/human/hgvs`\n(https://rest.ensembl.org/documentation/info/vep_hgvs_get): the parameter is spelled `REVEL`\nand is boolean (`REVEL=1`). Tier 1 because REST serves a precomputed table; it is the source\nthat is remote, not the computation.\nFailure modes: REST rate limits (batch of 200 per POST, retry on 429); a record with no HGVS\nspelling cannot be asked at all.",
       "coverage": {
         "model": "revel",
@@ -748,8 +748,8 @@
       "pmid": "30661751",
       "scope": "mvp",
       "enabled": true,
-      "ships": "nothing to fetch \u2014 the score is already a warehouse column",
-      "notes": "Also already in the warehouse (32,534 of 38,087 rows non-null) \u2014 the second no-download lane.\n`spliceai_ds_max` is the maximum delta score over the four events; the raw per-event string is\nkept as aux. Iteration 2 used the published delta >= 0.2 recall cut (Z2); the zoo keeps the\nraw number and leaves the cut to the ranker. Failure mode: indels outside the precomputed SNV\nset read null; the code is GPL-3.0 but the precomputed scores are the non-commercial artefact.",
+      "ships": "nothing to fetch — the score is already a warehouse column",
+      "notes": "Also already in the warehouse (32,534 of 38,087 rows non-null) — the second no-download lane.\n`spliceai_ds_max` is the maximum delta score over the four events; the raw per-event string is\nkept as aux. Iteration 2 used the published delta >= 0.2 recall cut (Z2); the zoo keeps the\nraw number and leaves the cut to the ranker. Failure mode: indels outside the precomputed SNV\nset read null; the code is GPL-3.0 but the precomputed scores are the non-commercial artefact.",
       "coverage": {
         "model": "spliceai",
         "scored": 32534,
@@ -875,15 +875,15 @@
         "entrypoint": "thermompnn",
         "needs": ["structure"]
       },
-      "licence": "MIT \u2014 verify on fetch",
+      "licence": "MIT — verify on fetch",
       "licence_url": "https://github.com/Kuhlman-Lab/ThermoMPNN",
       "non_commercial": false,
       "catalogue_adjacent": false,
       "pmid": "38285937",
       "scope": "opt-b",
       "enabled": false,
-      "ships": "no weights \u2014 the model's own installer fetches them; digest per run",
-      "notes": "Second \u0394\u0394G opinion beside RaSP; same role, same one-protein scope.",
+      "ships": "no weights — the model's own installer fetches them; digest per run",
+      "notes": "Second ΔΔG opinion beside RaSP; same role, same one-protein scope.",
       "coverage": null
     },
     {
@@ -905,7 +905,7 @@
       "pmid": "39322717",
       "scope": "opt-b",
       "enabled": false,
-      "ships": "no weights \u2014 the model's own installer fetches them; digest per run",
+      "ships": "no weights — the model's own installer fetches them; digest per run",
       "notes": "Track 2 opt-B: a learned second opinion beside the deterministic PrimeKG walk. Same input as PrimeKG, a disease node, never an allele.",
       "coverage": null
     }

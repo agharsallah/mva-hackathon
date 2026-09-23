@@ -24,6 +24,7 @@ import { cleanup, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
 import { modules } from '../app/modules';
+import mergeFixture from '../fixtures/data/zoo-merge.json';
 import { mountModule, stubUnreachableFetch } from './testHarness';
 
 const zoo = modules.find((m) => m.id === 'zoo')!;
@@ -76,8 +77,10 @@ describe('the model zoo page', () => {
     const matrix = screen.getByRole('table', {
       name: /Spearman rank correlation between every pair of model lanes/i,
     });
-    // Four lanes → sixteen cells, each carrying its own overlap count.
-    expect(within(matrix).getAllByText(/^n /).length).toBe(16);
+    // Every lane × every lane, each cell carrying its own overlap count — sized from the
+    // captured payload, so a capture with more lanes does not need this test edited.
+    const lanes = mergeFixture.payload.matrix.models.length;
+    expect(within(matrix).getAllByText(/^n /).length).toBe(lanes * lanes);
     // The measured ρ between the two protein lanes, with the overlap it stands on.
     expect(within(matrix).getAllByText('0.580').length).toBeGreaterThan(0);
     expect(within(matrix).getAllByText('n 3,943').length).toBeGreaterThan(0);

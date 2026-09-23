@@ -116,6 +116,8 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   ['/api/zoo/reports/merged', undefined],
   ['/api/zoo/reports/alphamissense', undefined],
   ['/api/zoo/reports/esm1b', undefined],
+  ['/api/zoo/reports/esm2', undefined],
+  ['/api/zoo/reports/gpnmsa', undefined],
   ['/api/zoo/reports/revel', undefined],
   ['/api/zoo/reports/spliceai', undefined],
   ['/api/zoo/scores/gene/BUB1B', undefined],

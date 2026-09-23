@@ -1,8 +1,176 @@
 {
   "_captured": true,
-  "captured_at": "2026-09-20",
+  "captured_at": "2026-09-23",
   "source": "docs/iteration4/runs/*.json",
   "payload": [
+    {
+      "run_id": "it4-5e25dd45eee2",
+      "started": "2026-09-20T13:28:07+00:00",
+      "finished": "2026-09-20T13:28:09+00:00",
+      "wall_clock_s": 0.919,
+      "dollars": 0.0,
+      "models": {
+        "alphamissense": "AlphaMissense hg38 2023",
+        "esm1b": "Brandes 2023 ESM1b",
+        "esm2": "esm2_t33_650M_UR50D",
+        "gpnmsa": "GPN-MSA hg38 precomputed scores (songlab)",
+        "revel": "REVEL 1.3 via VEP REST",
+        "spliceai": "SpliceAI via VEP plugin (iteration 2 annotation pass)"
+      },
+      "venues": {
+        "alphamissense": "laptop",
+        "esm1b": "laptop",
+        "esm2": "laptop",
+        "gpnmsa": "laptop",
+        "revel": "laptop",
+        "spliceai": "laptop"
+      },
+      "config_digest": "5e25dd45eee2fbc3c11cf8496ea1cc9beb69fbef129e48436bb2bc6077c3e5c8",
+      "config_path": "src/mva/zoo/zoo.example.toml",
+      "mode": "catalogue-free",
+      "merge_method": "fusion+synthesis",
+      "stages": [
+        {
+          "note": "restored (39286 records)",
+          "rows": 39286,
+          "seconds": 0.1719,
+          "skipped": true,
+          "stage": "normalize"
+        },
+        {
+          "note": "restored (6 lanes)",
+          "rows": 6,
+          "seconds": 0.0008,
+          "skipped": true,
+          "stage": "registry_check"
+        },
+        {
+          "note": "restored (109989 scores over 6 lanes)",
+          "rows": 109989,
+          "seconds": 0.0799,
+          "skipped": true,
+          "stage": "fan_out"
+        },
+        {
+          "note": "restored (6 coverages)",
+          "rows": 6,
+          "seconds": 0.0006,
+          "skipped": true,
+          "stage": "collect"
+        },
+        {
+          "note": "restored (63347 pairs, 603 rows, 16 genes skipped as too dense to pair)",
+          "rows": 603,
+          "seconds": 0.6575,
+          "skipped": true,
+          "stage": "rank_per_model"
+        },
+        {
+          "note": "restored (6 reports)",
+          "rows": 6,
+          "seconds": 0.005,
+          "skipped": true,
+          "stage": "report_per_model"
+        },
+        {
+          "note": "restored (RRF rank (free): 2734)",
+          "rows": 6,
+          "seconds": 0.0013,
+          "skipped": true,
+          "stage": "merge"
+        },
+        {
+          "note": "docs/iteration4/report.md; method realised as 'fusion+synthesis' (configured 'fusion')",
+          "rows": 1,
+          "seconds": 0.0021,
+          "skipped": false,
+          "stage": "render"
+        }
+      ],
+      "file": "docs/iteration4/runs/it4-5e25dd45eee2.json"
+    },
+    {
+      "run_id": "it4-2962e3117b5c",
+      "started": "2026-09-20T08:44:09+00:00",
+      "finished": "2026-09-20T08:44:10+00:00",
+      "wall_clock_s": 0.692,
+      "dollars": 0.0,
+      "models": {
+        "alphamissense": "AlphaMissense hg38 2023",
+        "esm1b": "Brandes 2023 ESM1b",
+        "revel": "REVEL 1.3 via VEP REST",
+        "spliceai": "SpliceAI via VEP plugin (iteration 2 annotation pass)"
+      },
+      "venues": {
+        "alphamissense": "laptop",
+        "esm1b": "laptop",
+        "revel": "laptop",
+        "spliceai": "laptop"
+      },
+      "config_digest": "2962e3117b5cd2df2906a301dd450ace6e2fca296c8ee3394070f953d503b7b7",
+      "config_path": "src/mva/zoo/zoo.example.toml",
+      "mode": "catalogue-free",
+      "merge_method": "fusion+synthesis",
+      "stages": [
+        {
+          "note": "restored (39286 records)",
+          "rows": 39286,
+          "seconds": 0.2033,
+          "skipped": true,
+          "stage": "normalize"
+        },
+        {
+          "note": "restored (4 lanes)",
+          "rows": 4,
+          "seconds": 0.0015,
+          "skipped": true,
+          "stage": "registry_check"
+        },
+        {
+          "note": "restored (58480 scores over 4 lanes)",
+          "rows": 58480,
+          "seconds": 0.043,
+          "skipped": true,
+          "stage": "fan_out"
+        },
+        {
+          "note": "restored (4 coverages)",
+          "rows": 4,
+          "seconds": 0.0007,
+          "skipped": true,
+          "stage": "collect"
+        },
+        {
+          "note": "restored (63347 pairs, 402 rows, 16 genes skipped as too dense to pair)",
+          "rows": 402,
+          "seconds": 0.4349,
+          "skipped": true,
+          "stage": "rank_per_model"
+        },
+        {
+          "note": "restored (4 reports)",
+          "rows": 4,
+          "seconds": 0.004,
+          "skipped": true,
+          "stage": "report_per_model"
+        },
+        {
+          "note": "restored (RRF rank (free): 20639)",
+          "rows": 4,
+          "seconds": 0.0021,
+          "skipped": true,
+          "stage": "merge"
+        },
+        {
+          "note": "docs/iteration4/report.md; method realised as 'fusion+synthesis' (configured 'fusion')",
+          "rows": 1,
+          "seconds": 0.0023,
+          "skipped": false,
+          "stage": "render"
+        }
+      ],
+      "file": "docs/iteration4/runs/it4-2962e3117b5c.json"
+    },
     {
       "run_id": "it4-dcda40a4df2c",
       "started": "2026-09-19T16:57:08+00:00",

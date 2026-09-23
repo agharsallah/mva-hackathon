@@ -1,49 +1,61 @@
 {
   "_captured": true,
-  "captured_at": "2026-09-20",
+  "captured_at": "2026-09-23",
   "source": "build/it4/merged.json, pg.results.it4_allele_records",
   "payload": {
-    "run_id": "it4-dcda40a4df2c",
+    "run_id": "it4-5e25dd45eee2",
     "method": "fusion",
     "rrf_k": 60,
-    "generated_at": "2026-09-19T16:57:26+00:00",
+    "generated_at": "2026-09-20T13:25:46+00:00",
     "citation": "Cormack GV, Clarke CLA, Buettcher S. Reciprocal rank fusion outperforms Condorcet and individual rank learning methods. SIGIR 2009, pp. 758-759. doi:10.1145/1571941.1572114 (verified against Crossref 2026-09-19)",
     "matrix": {
-      "models": ["alphamissense", "esm1b", "revel", "spliceai"],
+      "models": ["alphamissense", "esm1b", "esm2", "gpnmsa", "revel", "spliceai"],
       "rho": [
-        [1.0, 0.5802, 0.1863, 0.0325],
-        [0.5802, 1.0, 0.1683, 0.0432],
-        [0.1863, 0.1683, 1.0, 0.0209],
-        [0.0325, 0.0432, 0.0209, 1.0]
+        [1.0, 0.5802, 0.5458, 0.7042, 0.1863, 0.0325],
+        [0.5802, 1.0, 0.751, 0.5617, 0.1683, 0.0432],
+        [0.5458, 0.751, 1.0, 0.4788, 0.1565, 0.0261],
+        [0.7042, 0.5617, 0.4788, 1.0, 0.2211, 0.0579],
+        [0.1863, 0.1683, 0.1565, 0.2211, 1.0, 0.0209],
+        [0.0325, 0.0432, 0.0261, 0.0579, 0.0209, 1.0]
       ],
       "n": [
-        [10601, 3943, 9365, 9532],
-        [3943, 4562, 3997, 4051],
-        [9365, 3997, 10783, 9816],
-        [9532, 4051, 9816, 32534]
+        [10601, 3943, 10601, 10601, 9365, 9532],
+        [3943, 4562, 4562, 4542, 3997, 4051],
+        [10601, 4562, 15592, 15547, 10778, 13163],
+        [10601, 4542, 15547, 35917, 10783, 30836],
+        [9365, 3997, 10778, 10783, 10783, 9816],
+        [9532, 4051, 13163, 30836, 9816, 32534]
       ]
     },
     "consensus": {
       "catalogue_free": {
-        "rank": 20639,
-        "n": 52012,
-        "fused": 8.30565e-5,
-        "percentile": 39.6812,
-        "lanes": ["alphamissense", "esm1b", "spliceai"],
+        "rank": 2734,
+        "n": 59474,
+        "fused": 0.0018436199,
+        "percentile": 4.597,
+        "lanes": ["alphamissense", "esm1b", "esm2", "gpnmsa", "spliceai"],
         "excluded_lanes": ["revel"],
         "k": 60
       },
       "all_lanes": {
-        "rank": 21497,
-        "n": 52219,
-        "fused": 8.30565e-5,
-        "percentile": 41.167,
-        "lanes": ["alphamissense", "esm1b", "revel", "spliceai"],
+        "rank": 3482,
+        "n": 59474,
+        "fused": 0.0018436199,
+        "percentile": 5.8547,
+        "lanes": ["alphamissense", "esm1b", "esm2", "gpnmsa", "revel", "spliceai"],
         "excluded_lanes": [],
         "k": 60
       }
     },
     "disagreements": [
+      {
+        "allele_id": "379ec0d38c461aab",
+        "gene": "CYP2C19",
+        "top_model": "spliceai",
+        "top_pct": 0.0307,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 91.9926
+      },
       {
         "allele_id": "6000716b21e7d701",
         "gene": "CEACAM18",
@@ -51,6 +63,30 @@
         "top_pct": 0.0307,
         "bottom_model": "alphamissense",
         "bottom_pct": 89.8783
+      },
+      {
+        "allele_id": "6000716b21e7d701",
+        "gene": "CEACAM18",
+        "top_model": "spliceai",
+        "top_pct": 0.0307,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 73.8397
+      },
+      {
+        "allele_id": "6000716b21e7d701",
+        "gene": "CEACAM18",
+        "top_model": "spliceai",
+        "top_pct": 0.0307,
+        "bottom_model": "esm2",
+        "bottom_pct": 73.3838
+      },
+      {
+        "allele_id": "3d6d7940d354625a",
+        "gene": "RPL8",
+        "top_model": "gpnmsa",
+        "top_pct": 0.064,
+        "bottom_model": "esm2",
+        "bottom_pct": 61.9805
       },
       {
         "allele_id": "c982f5420cb3855e",
@@ -61,12 +97,132 @@
         "bottom_pct": 93.1559
       },
       {
+        "allele_id": "626ea376c2169581",
+        "gene": "DZANK1",
+        "top_model": "spliceai",
+        "top_pct": 0.0799,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 98.2933
+      },
+      {
+        "allele_id": "fa84e49f41619fe5",
+        "gene": "MROH2A",
+        "top_model": "spliceai",
+        "top_pct": 0.083,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 99.368
+      },
+      {
         "allele_id": "7afc3f053087423b",
         "gene": "NBPF3",
         "top_model": "spliceai",
         "top_pct": 0.083,
         "bottom_model": "alphamissense",
         "bottom_pct": 87.388
+      },
+      {
+        "allele_id": "fa84e49f41619fe5",
+        "gene": "MROH2A",
+        "top_model": "spliceai",
+        "top_pct": 0.083,
+        "bottom_model": "esm2",
+        "bottom_pct": 62.2691
+      },
+      {
+        "allele_id": "7afc3f053087423b",
+        "gene": "NBPF3",
+        "top_model": "spliceai",
+        "top_pct": 0.083,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 54.019
+      },
+      {
+        "allele_id": "dbcf9e1e277868f4",
+        "gene": "FAM186A",
+        "top_model": "spliceai",
+        "top_pct": 0.0891,
+        "bottom_model": "esm2",
+        "bottom_pct": 76.0262
+      },
+      {
+        "allele_id": "fe5f9f335c5feeee",
+        "gene": "CDK11A",
+        "top_model": "spliceai",
+        "top_pct": 0.0984,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 68.5803
+      },
+      {
+        "allele_id": "043dd14c63f399d3",
+        "gene": "CDK11B",
+        "top_model": "spliceai",
+        "top_pct": 0.0984,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 66.882
+      },
+      {
+        "allele_id": "043dd14c63f399d3",
+        "gene": "CDK11B",
+        "top_model": "spliceai",
+        "top_pct": 0.0984,
+        "bottom_model": "esm2",
+        "bottom_pct": 58.2478
+      },
+      {
+        "allele_id": "5f7ef0dce74aa311",
+        "gene": "NEK9",
+        "top_model": "gpnmsa",
+        "top_pct": 0.1058,
+        "bottom_model": "esm1b",
+        "bottom_pct": 61.0259
+      },
+      {
+        "allele_id": "5f7ef0dce74aa311",
+        "gene": "NEK9",
+        "top_model": "gpnmsa",
+        "top_pct": 0.1058,
+        "bottom_model": "esm2",
+        "bottom_pct": 56.4007
+      },
+      {
+        "allele_id": "0e2cac5237e3170f",
+        "gene": "CROCC2",
+        "top_model": "spliceai",
+        "top_pct": 0.1168,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 70.0866
+      },
+      {
+        "allele_id": "221b12b9e9d0fd70",
+        "gene": "HLA-A",
+        "top_model": "spliceai",
+        "top_pct": 0.126,
+        "bottom_model": "esm2",
+        "bottom_pct": 63.7699
+      },
+      {
+        "allele_id": "86e40af3fcaf3da5",
+        "gene": "HNRNPL",
+        "top_model": "gpnmsa",
+        "top_pct": 0.1336,
+        "bottom_model": "esm2",
+        "bottom_pct": 91.765
+      },
+      {
+        "allele_id": "c90bf7ba2c37f613",
+        "gene": "AHCYL2",
+        "top_model": "gpnmsa",
+        "top_pct": 0.1364,
+        "bottom_model": "esm2",
+        "bottom_pct": 58.0362
+      },
+      {
+        "allele_id": "1ed22b12dcc50ba6",
+        "gene": "PHIP",
+        "top_model": "spliceai",
+        "top_pct": 0.1414,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 97.3411
       },
       {
         "allele_id": "1ed22b12dcc50ba6",
@@ -89,8 +245,32 @@
         "gene": "PHIP",
         "top_model": "spliceai",
         "top_pct": 0.1414,
+        "bottom_model": "esm2",
+        "bottom_pct": 66.2006
+      },
+      {
+        "allele_id": "1ed22b12dcc50ba6",
+        "gene": "PHIP",
+        "top_model": "spliceai",
+        "top_pct": 0.1414,
         "bottom_model": "esm1b",
         "bottom_pct": 64.1166
+      },
+      {
+        "allele_id": "1b548a75160121eb",
+        "gene": "MARK4",
+        "top_model": "gpnmsa",
+        "top_pct": 0.1448,
+        "bottom_model": "esm2",
+        "bottom_pct": 71.3443
+      },
+      {
+        "allele_id": "8e3e96408c047a52",
+        "gene": "PC",
+        "top_model": "revel",
+        "top_pct": 0.1577,
+        "bottom_model": "esm2",
+        "bottom_pct": 80.0859
       },
       {
         "allele_id": "017771f599a78157",
@@ -101,12 +281,44 @@
         "bottom_pct": 71.7055
       },
       {
+        "allele_id": "2e5e3167a42222eb",
+        "gene": "PRR23D1",
+        "top_model": "spliceai",
+        "top_pct": 0.1629,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 62.0514
+      },
+      {
         "allele_id": "017771f599a78157",
         "gene": "RNF215",
         "top_model": "spliceai",
         "top_pct": 0.1629,
         "bottom_model": "alphamissense",
         "bottom_pct": 60.0509
+      },
+      {
+        "allele_id": "bfd33b8f3b8ab325",
+        "gene": "ZNF608",
+        "top_model": "spliceai",
+        "top_pct": 0.1629,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 57.7582
+      },
+      {
+        "allele_id": "3e692488c6fad9a7",
+        "gene": "ANKRD36",
+        "top_model": "spliceai",
+        "top_pct": 0.1752,
+        "bottom_model": "esm2",
+        "bottom_pct": 51.1993
+      },
+      {
+        "allele_id": "6087882f501315a5",
+        "gene": "FOXD4L1",
+        "top_model": "alphamissense",
+        "top_pct": 0.1792,
+        "bottom_model": "esm2",
+        "bottom_pct": 54.0085
       },
       {
         "allele_id": "32b403b9ff4ab9cb",
@@ -137,6 +349,14 @@
         "gene": "MAGEC3",
         "top_model": "spliceai",
         "top_pct": 0.1844,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 56.934
+      },
+      {
+        "allele_id": "32b403b9ff4ab9cb",
+        "gene": "MAGEC3",
+        "top_model": "spliceai",
+        "top_pct": 0.1844,
         "bottom_model": "alphamissense",
         "bottom_pct": 55.74
       },
@@ -147,6 +367,70 @@
         "top_pct": 0.1967,
         "bottom_model": "revel",
         "bottom_pct": 92.3305
+      },
+      {
+        "allele_id": "5d4ab3fe0cdf2a22",
+        "gene": "OR2F2",
+        "top_model": "spliceai",
+        "top_pct": 0.1967,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 67.9288
+      },
+      {
+        "allele_id": "3daca80e71226494",
+        "gene": "ANKRD36C",
+        "top_model": "spliceai",
+        "top_pct": 0.1967,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 51.0761
+      },
+      {
+        "allele_id": "c7d24e627452b609",
+        "gene": "HNRNPL",
+        "top_model": "gpnmsa",
+        "top_pct": 0.1977,
+        "bottom_model": "esm2",
+        "bottom_pct": 94.9718
+      },
+      {
+        "allele_id": "f64abe0cf67dc787",
+        "gene": "MAPK6",
+        "top_model": "spliceai",
+        "top_pct": 0.2059,
+        "bottom_model": "esm2",
+        "bottom_pct": 59.9153
+      },
+      {
+        "allele_id": "b39421cccfcd9403",
+        "gene": "MIDN",
+        "top_model": "gpnmsa",
+        "top_pct": 0.2088,
+        "bottom_model": "esm2",
+        "bottom_pct": 94.0803
+      },
+      {
+        "allele_id": "b39421cccfcd9403",
+        "gene": "MIDN",
+        "top_model": "gpnmsa",
+        "top_pct": 0.2088,
+        "bottom_model": "esm1b",
+        "bottom_pct": 91.0346
+      },
+      {
+        "allele_id": "a9d8cf4c86ece360",
+        "gene": "GABRR1",
+        "top_model": "spliceai",
+        "top_pct": 0.2121,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 94.6042
+      },
+      {
+        "allele_id": "6ae8c742aa03d3a5",
+        "gene": "ARSG",
+        "top_model": "spliceai",
+        "top_pct": 0.2121,
+        "bottom_model": "esm2",
+        "bottom_pct": 82.3179
       },
       {
         "allele_id": "6ae8c742aa03d3a5",
@@ -173,12 +457,52 @@
         "bottom_pct": 61.1452
       },
       {
+        "allele_id": "813ddedd44d29c3f",
+        "gene": "CEP89",
+        "top_model": "spliceai",
+        "top_pct": 0.2121,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 51.2014
+      },
+      {
+        "allele_id": "7706ebeffa66f027",
+        "gene": "KCNJ12",
+        "top_model": "gpnmsa",
+        "top_pct": 0.2144,
+        "bottom_model": "esm2",
+        "bottom_pct": 80.2527
+      },
+      {
+        "allele_id": "b0e26580eb09ba64",
+        "gene": "MTA1",
+        "top_model": "esm2",
+        "top_pct": 0.2181,
+        "bottom_model": "revel",
+        "bottom_pct": 54.3263
+      },
+      {
         "allele_id": "d5518a598a7733c3",
         "gene": "CTU2",
         "top_model": "spliceai",
         "top_pct": 0.2213,
         "bottom_model": "revel",
         "bottom_pct": 56.2181
+      },
+      {
+        "allele_id": "127d57bccedc77bd",
+        "gene": "SOX9",
+        "top_model": "gpnmsa",
+        "top_pct": 0.2255,
+        "bottom_model": "esm2",
+        "bottom_pct": 67.0664
+      },
+      {
+        "allele_id": "d91801f0d4ff0c5e",
+        "gene": "BCO1",
+        "top_model": "spliceai",
+        "top_pct": 0.2336,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 85.5612
       },
       {
         "allele_id": "6bfe100cf1f416d4",
@@ -197,6 +521,30 @@
         "bottom_pct": 73.3006
       },
       {
+        "allele_id": "6bfe100cf1f416d4",
+        "gene": "ULK3",
+        "top_model": "spliceai",
+        "top_pct": 0.2336,
+        "bottom_model": "esm2",
+        "bottom_pct": 70.0744
+      },
+      {
+        "allele_id": "ce668b09edd7c83b",
+        "gene": "IGFBP2",
+        "top_model": "spliceai",
+        "top_pct": 0.2336,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 61.1076
+      },
+      {
+        "allele_id": "2717dd0d25ecfb89",
+        "gene": "AGAP3",
+        "top_model": "esm1b",
+        "top_pct": 0.2411,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 81.6271
+      },
+      {
         "allele_id": "e732f429250a61f5",
         "gene": "TDRD12",
         "top_model": "spliceai",
@@ -211,6 +559,46 @@
         "top_pct": 0.249,
         "bottom_model": "alphamissense",
         "bottom_pct": 66.9842
+      },
+      {
+        "allele_id": "7ae9401784b5acad",
+        "gene": "TBXT",
+        "top_model": "gpnmsa",
+        "top_pct": 0.2617,
+        "bottom_model": "esm2",
+        "bottom_pct": 83.1195
+      },
+      {
+        "allele_id": "b0e26580eb09ba64",
+        "gene": "MTA1",
+        "top_model": "gpnmsa",
+        "top_pct": 0.2617,
+        "bottom_model": "revel",
+        "bottom_pct": 54.3263
+      },
+      {
+        "allele_id": "8a4b121f01f74903",
+        "gene": "GMPPA",
+        "top_model": "esm1b",
+        "top_pct": 0.263,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 78.4058
+      },
+      {
+        "allele_id": "f702d2090de4d44c",
+        "gene": "OR14C36",
+        "top_model": "spliceai",
+        "top_pct": 0.2643,
+        "bottom_model": "esm2",
+        "bottom_pct": 93.657
+      },
+      {
+        "allele_id": "f702d2090de4d44c",
+        "gene": "OR14C36",
+        "top_model": "spliceai",
+        "top_pct": 0.2643,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 80.8308
       },
       {
         "allele_id": "f702d2090de4d44c",
@@ -229,12 +617,132 @@
         "bottom_pct": 60.249
       },
       {
+        "allele_id": "89733d73fd520e26",
+        "gene": "MARK4",
+        "top_model": "gpnmsa",
+        "top_pct": 0.2673,
+        "bottom_model": "esm2",
+        "bottom_pct": 83.1067
+      },
+      {
+        "allele_id": "89733d73fd520e26",
+        "gene": "MARK4",
+        "top_model": "gpnmsa",
+        "top_pct": 0.2673,
+        "bottom_model": "esm1b",
+        "bottom_pct": 62.363
+      },
+      {
+        "allele_id": "47d0632dcbcb923d",
+        "gene": "ZNF292",
+        "top_model": "gpnmsa",
+        "top_pct": 0.2701,
+        "bottom_model": "esm2",
+        "bottom_pct": 82.1575
+      },
+      {
+        "allele_id": "804bc14691206e73",
+        "gene": "AGFG1",
+        "top_model": "gpnmsa",
+        "top_pct": 0.2701,
+        "bottom_model": "esm2",
+        "bottom_pct": 81.08
+      },
+      {
+        "allele_id": "7706ebeffa66f027",
+        "gene": "KCNJ12",
+        "top_model": "alphamissense",
+        "top_pct": 0.2736,
+        "bottom_model": "esm2",
+        "bottom_pct": 80.2527
+      },
+      {
+        "allele_id": "1932e569225b6152",
+        "gene": "SFTPA2",
+        "top_model": "spliceai",
+        "top_pct": 0.2797,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 56.3549
+      },
+      {
+        "allele_id": "002bdd11ab2f3dca",
+        "gene": "TUBGCP6",
+        "top_model": "alphamissense",
+        "top_pct": 0.283,
+        "bottom_model": "esm2",
+        "bottom_pct": 84.4792
+      },
+      {
+        "allele_id": "b00470ee5e124ce6",
+        "gene": "CITED2",
+        "top_model": "gpnmsa",
+        "top_pct": 0.284,
+        "bottom_model": "esm2",
+        "bottom_pct": 81.9587
+      },
+      {
+        "allele_id": "4fd516fc9d062a87",
+        "gene": "CAMKV",
+        "top_model": "esm1b",
+        "top_pct": 0.285,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 85.1602
+      },
+      {
+        "allele_id": "4fd516fc9d062a87",
+        "gene": "CAMKV",
+        "top_model": "esm1b",
+        "top_pct": 0.285,
+        "bottom_model": "esm2",
+        "bottom_pct": 54.3548
+      },
+      {
+        "allele_id": "6f7e382a30318576",
+        "gene": "MALRD1",
+        "top_model": "spliceai",
+        "top_pct": 0.2859,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 89.6428
+      },
+      {
+        "allele_id": "255a171bdc9d3931",
+        "gene": "NPDC1",
+        "top_model": "spliceai",
+        "top_pct": 0.2859,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 75.0146
+      },
+      {
+        "allele_id": "6f7e382a30318576",
+        "gene": "MALRD1",
+        "top_model": "spliceai",
+        "top_pct": 0.2859,
+        "bottom_model": "esm2",
+        "bottom_pct": 73.7237
+      },
+      {
         "allele_id": "dff3f9564844ac55",
         "gene": "POLE4",
         "top_model": "spliceai",
         "top_pct": 0.2859,
         "bottom_model": "revel",
         "bottom_pct": 62.4131
+      },
+      {
+        "allele_id": "bf45d3f7ef23b70d",
+        "gene": "AGAP3",
+        "top_model": "spliceai",
+        "top_pct": 0.2859,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 61.8175
+      },
+      {
+        "allele_id": "bf45d3f7ef23b70d",
+        "gene": "AGAP3",
+        "top_model": "spliceai",
+        "top_pct": 0.2859,
+        "bottom_model": "esm2",
+        "bottom_pct": 56.1057
       },
       {
         "allele_id": "dff3f9564844ac55",
@@ -253,12 +761,116 @@
         "bottom_pct": 51.7781
       },
       {
+        "allele_id": "e3b060089cb03842",
+        "gene": "SOX9",
+        "top_model": "gpnmsa",
+        "top_pct": 0.2896,
+        "bottom_model": "esm2",
+        "bottom_pct": 56.8881
+      },
+      {
         "allele_id": "faeb34f3802b0abc",
         "gene": "TAS2R31",
         "top_model": "spliceai",
         "top_pct": 0.3074,
         "bottom_model": "revel",
         "bottom_pct": 59.2507
+      },
+      {
+        "allele_id": "ffb566f9dbf8ce2b",
+        "gene": "ABCC10",
+        "top_model": "spliceai",
+        "top_pct": 0.3074,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 56.7419
+      },
+      {
+        "allele_id": "7d62d3f9358120d4",
+        "gene": "SLC12A9",
+        "top_model": "gpnmsa",
+        "top_pct": 0.309,
+        "bottom_model": "esm2",
+        "bottom_pct": 71.6329
+      },
+      {
+        "allele_id": "3ddf163e0fbedcc1",
+        "gene": "GCSH",
+        "top_model": "spliceai",
+        "top_pct": 0.3135,
+        "bottom_model": "esm2",
+        "bottom_pct": 80.8171
+      },
+      {
+        "allele_id": "3ddf163e0fbedcc1",
+        "gene": "GCSH",
+        "top_model": "spliceai",
+        "top_pct": 0.3135,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 71.0973
+      },
+      {
+        "allele_id": "89fc0b33377383f6",
+        "gene": "WDFY1",
+        "top_model": "spliceai",
+        "top_pct": 0.3227,
+        "bottom_model": "esm2",
+        "bottom_pct": 83.6775
+      },
+      {
+        "allele_id": "6e5bd82579b9357a",
+        "gene": "TRIM8",
+        "top_model": "gpnmsa",
+        "top_pct": 0.323,
+        "bottom_model": "esm1b",
+        "bottom_pct": 51.2714
+      },
+      {
+        "allele_id": "7149253afb5850f4",
+        "gene": "SGCG",
+        "top_model": "esm1b",
+        "top_pct": 0.3288,
+        "bottom_model": "esm2",
+        "bottom_pct": 50.3399
+      },
+      {
+        "allele_id": "4a7e222a5ceb420a",
+        "gene": "RPS6KA1",
+        "top_model": "gpnmsa",
+        "top_pct": 0.3341,
+        "bottom_model": "esm2",
+        "bottom_pct": 69.8499
+      },
+      {
+        "allele_id": "1df40972ca07da58",
+        "gene": "COG1",
+        "top_model": "spliceai",
+        "top_pct": 0.3381,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 81.2095
+      },
+      {
+        "allele_id": "91ea430e8b778e7f",
+        "gene": "ZP1",
+        "top_model": "spliceai",
+        "top_pct": 0.3381,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 62.3911
+      },
+      {
+        "allele_id": "b111c2dbbb9e4df9",
+        "gene": "MAST3",
+        "top_model": "gpnmsa",
+        "top_pct": 0.3452,
+        "bottom_model": "esm2",
+        "bottom_pct": 81.6957
+      },
+      {
+        "allele_id": "cbaa709c0e6284ff",
+        "gene": "ADGRE2",
+        "top_model": "spliceai",
+        "top_pct": 0.3504,
+        "bottom_model": "esm2",
+        "bottom_pct": 76.892
       },
       {
         "allele_id": "cbaa709c0e6284ff",
@@ -275,6 +887,86 @@
         "top_pct": 0.3504,
         "bottom_model": "alphamissense",
         "bottom_pct": 50.6462
+      },
+      {
+        "allele_id": "7ae9401784b5acad",
+        "gene": "TBXT",
+        "top_model": "esm1b",
+        "top_pct": 0.3507,
+        "bottom_model": "esm2",
+        "bottom_pct": 83.1195
+      },
+      {
+        "allele_id": "1e3de6c6b77a48a6",
+        "gene": "ABCC6",
+        "top_model": "spliceai",
+        "top_pct": 0.3596,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 83.4034
+      },
+      {
+        "allele_id": "dbf0fdc4a87c7c01",
+        "gene": "CNN2",
+        "top_model": "spliceai",
+        "top_pct": 0.3596,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 66.4114
+      },
+      {
+        "allele_id": "722d9f096c640375",
+        "gene": "BPIFB4",
+        "top_model": "spliceai",
+        "top_pct": 0.3719,
+        "bottom_model": "esm2",
+        "bottom_pct": 68.362
+      },
+      {
+        "allele_id": "583ebc7d41e30dda",
+        "gene": "TPPP2",
+        "top_model": "alphamissense",
+        "top_pct": 0.3773,
+        "bottom_model": "esm2",
+        "bottom_pct": 63.8148
+      },
+      {
+        "allele_id": "0dcf53c8f1f24010",
+        "gene": "UBASH3A",
+        "top_model": "spliceai",
+        "top_pct": 0.3781,
+        "bottom_model": "esm2",
+        "bottom_pct": 86.6406
+      },
+      {
+        "allele_id": "c2e336e8a981b815",
+        "gene": "EML1",
+        "top_model": "spliceai",
+        "top_pct": 0.3781,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 58.5795
+      },
+      {
+        "allele_id": "3800eb814059eec8",
+        "gene": "PC",
+        "top_model": "revel",
+        "top_pct": 0.3802,
+        "bottom_model": "esm2",
+        "bottom_pct": 75.9043
+      },
+      {
+        "allele_id": "9e33d762175fd528",
+        "gene": "HPSE2",
+        "top_model": "gpnmsa",
+        "top_pct": 0.387,
+        "bottom_model": "esm2",
+        "bottom_pct": 87.5321
+      },
+      {
+        "allele_id": "9e33d762175fd528",
+        "gene": "HPSE2",
+        "top_model": "gpnmsa",
+        "top_pct": 0.387,
+        "bottom_model": "esm1b",
+        "bottom_pct": 51.8632
       },
       {
         "allele_id": "08841dc03660f91e",
@@ -317,12 +1009,92 @@
         "bottom_pct": 51.6366
       },
       {
+        "allele_id": "858d93292a60dddb",
+        "gene": "ZNF704",
+        "top_model": "gpnmsa",
+        "top_pct": 0.3981,
+        "bottom_model": "esm2",
+        "bottom_pct": 62.0126
+      },
+      {
+        "allele_id": "0f8828e7f19a402b",
+        "gene": "GAK",
+        "top_model": "gpnmsa",
+        "top_pct": 0.3981,
+        "bottom_model": "esm2",
+        "bottom_pct": 58.1452
+      },
+      {
+        "allele_id": "1f2d020e0de64014",
+        "gene": "SCN10A",
+        "top_model": "revel",
+        "top_pct": 0.408,
+        "bottom_model": "esm2",
+        "bottom_pct": 66.4828
+      },
+      {
+        "allele_id": "b802d8e43a0d1e8b",
+        "gene": "ZNF528",
+        "top_model": "spliceai",
+        "top_pct": 0.4211,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 53.0222
+      },
+      {
+        "allele_id": "b8e804822d3be646",
+        "gene": "ERI3",
+        "top_model": "spliceai",
+        "top_pct": 0.4242,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 76.0197
+      },
+      {
         "allele_id": "b8e804822d3be646",
         "gene": "ERI3",
         "top_model": "spliceai",
         "top_pct": 0.4242,
         "bottom_model": "revel",
         "bottom_pct": 72.4752
+      },
+      {
+        "allele_id": "ed3eb76fb5dbacb5",
+        "gene": "CABP4",
+        "top_model": "spliceai",
+        "top_pct": 0.4242,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 66.1915
+      },
+      {
+        "allele_id": "b8e804822d3be646",
+        "gene": "ERI3",
+        "top_model": "spliceai",
+        "top_pct": 0.4242,
+        "bottom_model": "esm2",
+        "bottom_pct": 61.9869
+      },
+      {
+        "allele_id": "7706ebeffa66f027",
+        "gene": "KCNJ12",
+        "top_model": "revel",
+        "top_pct": 0.4266,
+        "bottom_model": "esm2",
+        "bottom_pct": 80.2527
+      },
+      {
+        "allele_id": "ecd7a9459096d03d",
+        "gene": "RHBG",
+        "top_model": "spliceai",
+        "top_pct": 0.4395,
+        "bottom_model": "esm2",
+        "bottom_pct": 78.8866
+      },
+      {
+        "allele_id": "89e654d9d1830262",
+        "gene": "ZNF512B",
+        "top_model": "spliceai",
+        "top_pct": 0.4395,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 64.521
       },
       {
         "allele_id": "73a7b41a9924eca2",
@@ -339,6 +1111,14 @@
         "top_pct": 0.4395,
         "bottom_model": "alphamissense",
         "bottom_pct": 57.6738
+      },
+      {
+        "allele_id": "73a7b41a9924eca2",
+        "gene": "ECT2L",
+        "top_model": "spliceai",
+        "top_pct": 0.4395,
+        "bottom_model": "esm2",
+        "bottom_pct": 52.1806
       },
       {
         "allele_id": "0cfae0804390fbf8",
@@ -365,6 +1145,38 @@
         "bottom_pct": 56.2181
       },
       {
+        "allele_id": "48a35b2a748dec6d",
+        "gene": "SVIL",
+        "top_model": "gpnmsa",
+        "top_pct": 0.4622,
+        "bottom_model": "esm2",
+        "bottom_pct": 76.3404
+      },
+      {
+        "allele_id": "3800eb814059eec8",
+        "gene": "PC",
+        "top_model": "gpnmsa",
+        "top_pct": 0.4733,
+        "bottom_model": "esm2",
+        "bottom_pct": 75.9043
+      },
+      {
+        "allele_id": "9c5ddb852ce3d117",
+        "gene": "ANKRD30B",
+        "top_model": "spliceai",
+        "top_pct": 0.4826,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 97.8868
+      },
+      {
+        "allele_id": "d87d52f6ced70215",
+        "gene": "CLRN2",
+        "top_model": "spliceai",
+        "top_pct": 0.4826,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 86.2015
+      },
+      {
         "allele_id": "4d48834e78040a40",
         "gene": "RABL6",
         "top_model": "spliceai",
@@ -373,12 +1185,60 @@
         "bottom_pct": 52.1743
       },
       {
+        "allele_id": "2f6215fb3315c71a",
+        "gene": "ZIC2",
+        "top_model": "esm1b",
+        "top_pct": 0.5042,
+        "bottom_model": "esm2",
+        "bottom_pct": 64.5587
+      },
+      {
+        "allele_id": "d1e02d4fa8a44bbe",
+        "gene": "GIPR",
+        "top_model": "spliceai",
+        "top_pct": 0.5102,
+        "bottom_model": "esm2",
+        "bottom_pct": 95.1257
+      },
+      {
+        "allele_id": "51cbf118a3da9e94",
+        "gene": "OR4C16",
+        "top_model": "spliceai",
+        "top_pct": 0.5102,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 87.7106
+      },
+      {
+        "allele_id": "1020c16e4e3591e7",
+        "gene": "CNTN6",
+        "top_model": "spliceai",
+        "top_pct": 0.5102,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 85.6308
+      },
+      {
+        "allele_id": "30a42bdf587daefb",
+        "gene": "MSH3",
+        "top_model": "spliceai",
+        "top_pct": 0.5102,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 81.6271
+      },
+      {
         "allele_id": "30a42bdf587daefb",
         "gene": "MSH3",
         "top_model": "spliceai",
         "top_pct": 0.5102,
         "bottom_model": "alphamissense",
         "bottom_pct": 79.9736
+      },
+      {
+        "allele_id": "30a42bdf587daefb",
+        "gene": "MSH3",
+        "top_model": "spliceai",
+        "top_pct": 0.5102,
+        "bottom_model": "esm2",
+        "bottom_pct": 78.1362
       },
       {
         "allele_id": "30a42bdf587daefb",
@@ -405,6 +1265,14 @@
         "bottom_pct": 68.7418
       },
       {
+        "allele_id": "393bf9b7f39c634c",
+        "gene": "STK31",
+        "top_model": "spliceai",
+        "top_pct": 0.5102,
+        "bottom_model": "esm2",
+        "bottom_pct": 68.1247
+      },
+      {
         "allele_id": "e1e0face43daff8b",
         "gene": "PNPT1",
         "top_model": "spliceai",
@@ -419,6 +1287,102 @@
         "top_pct": 0.5102,
         "bottom_model": "alphamissense",
         "bottom_pct": 62.013
+      },
+      {
+        "allele_id": "51cbf118a3da9e94",
+        "gene": "OR4C16",
+        "top_model": "spliceai",
+        "top_pct": 0.5102,
+        "bottom_model": "esm2",
+        "bottom_pct": 56.8625
+      },
+      {
+        "allele_id": "6092b59baa57bdd4",
+        "gene": "SSBP4",
+        "top_model": "gpnmsa",
+        "top_pct": 0.5179,
+        "bottom_model": "esm2",
+        "bottom_pct": 77.5847
+      },
+      {
+        "allele_id": "1c76942acc3fc6e1",
+        "gene": "SHANK1",
+        "top_model": "gpnmsa",
+        "top_pct": 0.5206,
+        "bottom_model": "esm2",
+        "bottom_pct": 70.2732
+      },
+      {
+        "allele_id": "b283bf2a31d35be9",
+        "gene": "POTEH",
+        "top_model": "spliceai",
+        "top_pct": 0.5379,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 73.4889
+      },
+      {
+        "allele_id": "f9cb26ba3aa37807",
+        "gene": "UGGT2",
+        "top_model": "spliceai",
+        "top_pct": 0.5379,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 64.8133
+      },
+      {
+        "allele_id": "8e3e96408c047a52",
+        "gene": "PC",
+        "top_model": "gpnmsa",
+        "top_pct": 0.5429,
+        "bottom_model": "esm2",
+        "bottom_pct": 80.0859
+      },
+      {
+        "allele_id": "b2e72742d9a1799e",
+        "gene": "SASH1",
+        "top_model": "spliceai",
+        "top_pct": 0.544,
+        "bottom_model": "esm2",
+        "bottom_pct": 76.3853
+      },
+      {
+        "allele_id": "bf5742e000b32864",
+        "gene": "FUT7",
+        "top_model": "spliceai",
+        "top_pct": 0.544,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 70.5794
+      },
+      {
+        "allele_id": "7ba2cd5e2a356bb0",
+        "gene": "GOLGA6L2",
+        "top_model": "spliceai",
+        "top_pct": 0.544,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 52.5239
+      },
+      {
+        "allele_id": "eaeb931f39daadb5",
+        "gene": "CDON",
+        "top_model": "esm1b",
+        "top_pct": 0.548,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 55.5976
+      },
+      {
+        "allele_id": "94771828729f092f",
+        "gene": "VAV3",
+        "top_model": "spliceai",
+        "top_pct": 0.5594,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 92.3184
+      },
+      {
+        "allele_id": "3dce91a2b4d3a218",
+        "gene": "DTX2",
+        "top_model": "spliceai",
+        "top_pct": 0.5594,
+        "bottom_model": "esm2",
+        "bottom_pct": 81.4905
       },
       {
         "allele_id": "31cd0782328518df",
@@ -445,12 +1409,100 @@
         "bottom_pct": 72.4752
       },
       {
+        "allele_id": "e55fb2b6a3ae67fa",
+        "gene": "C1QL3",
+        "top_model": "gpnmsa",
+        "top_pct": 0.568,
+        "bottom_model": "revel",
+        "bottom_pct": 63.7578
+      },
+      {
+        "allele_id": "127d57bccedc77bd",
+        "gene": "SOX9",
+        "top_model": "esm1b",
+        "top_pct": 0.5699,
+        "bottom_model": "esm2",
+        "bottom_pct": 67.0664
+      },
+      {
+        "allele_id": "f9442c6f278bc2f4",
+        "gene": "PRDM6",
+        "top_model": "gpnmsa",
+        "top_pct": 0.5735,
+        "bottom_model": "esm2",
+        "bottom_pct": 84.3574
+      },
+      {
+        "allele_id": "f9442c6f278bc2f4",
+        "gene": "PRDM6",
+        "top_model": "gpnmsa",
+        "top_pct": 0.5735,
+        "bottom_model": "esm1b",
+        "bottom_pct": 71.3722
+      },
+      {
+        "allele_id": "7a6e6421057db3af",
+        "gene": "IL1A",
+        "top_model": "spliceai",
+        "top_pct": 0.5748,
+        "bottom_model": "esm2",
+        "bottom_pct": 82.1126
+      },
+      {
         "allele_id": "7a6e6421057db3af",
         "gene": "IL1A",
         "top_model": "spliceai",
         "top_pct": 0.5748,
         "bottom_model": "esm1b",
         "bottom_pct": 76.1727
+      },
+      {
+        "allele_id": "ab0a4e37c3393468",
+        "gene": "ABHD10",
+        "top_model": "spliceai",
+        "top_pct": 0.5748,
+        "bottom_model": "esm2",
+        "bottom_pct": 59.6909
+      },
+      {
+        "allele_id": "ec008c7e05e89b9e",
+        "gene": "CD55",
+        "top_model": "spliceai",
+        "top_pct": 0.5748,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 54.019
+      },
+      {
+        "allele_id": "72f6f2cf0d5aac72",
+        "gene": "RAPGEF3",
+        "top_model": "spliceai",
+        "top_pct": 0.5748,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 52.5239
+      },
+      {
+        "allele_id": "7d62d3f9358120d4",
+        "gene": "SLC12A9",
+        "top_model": "revel",
+        "top_pct": 0.575,
+        "bottom_model": "esm2",
+        "bottom_pct": 71.6329
+      },
+      {
+        "allele_id": "750e9c0c7fa099b8",
+        "gene": "CATSPERH",
+        "top_model": "alphamissense",
+        "top_pct": 0.5849,
+        "bottom_model": "esm2",
+        "bottom_pct": 70.3374
+      },
+      {
+        "allele_id": "d939c91cec9dac2a",
+        "gene": "RAET1E",
+        "top_model": "spliceai",
+        "top_pct": 0.5902,
+        "bottom_model": "esm2",
+        "bottom_pct": 99.8653
       },
       {
         "allele_id": "d939c91cec9dac2a",
@@ -469,300 +1521,132 @@
         "bottom_pct": 87.944
       },
       {
-        "allele_id": "824c5182861940c8",
-        "gene": "TBATA",
+        "allele_id": "e31aa2f9c70d35e3",
+        "gene": "GLYCTK",
         "top_model": "spliceai",
-        "top_pct": 0.6301,
-        "bottom_model": "alphamissense",
-        "bottom_pct": 88.237
+        "top_pct": 0.5902,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 84.9932
       },
       {
-        "allele_id": "558f919738d8810d",
-        "gene": "HLA-A",
+        "allele_id": "d939c91cec9dac2a",
+        "gene": "RAET1E",
         "top_model": "spliceai",
-        "top_pct": 0.6301,
-        "bottom_model": "revel",
-        "bottom_pct": 63.7578
+        "top_pct": 0.5902,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 77.0276
       },
       {
-        "allele_id": "6bf1a4e2d9e0f661",
-        "gene": "TAS2R46",
-        "top_model": "spliceai",
-        "top_pct": 0.6578,
-        "bottom_model": "revel",
-        "bottom_pct": 93.1559
+        "allele_id": "31e64b26caa32341",
+        "gene": "SACS",
+        "top_model": "gpnmsa",
+        "top_pct": 0.5902,
+        "bottom_model": "esm2",
+        "bottom_pct": 70.812
       },
       {
-        "allele_id": "577bf82de97adbc8",
-        "gene": "EMID1",
-        "top_model": "spliceai",
-        "top_pct": 0.6578,
+        "allele_id": "31e64b26caa32341",
+        "gene": "SACS",
+        "top_model": "gpnmsa",
+        "top_pct": 0.5902,
         "bottom_model": "esm1b",
-        "bottom_pct": 87.6808
+        "bottom_pct": 51.7098
       },
       {
-        "allele_id": "c8645ce97419663a",
-        "gene": "LHCGR",
+        "allele_id": "89578b96709c016f",
+        "gene": "DOCK6",
+        "top_model": "gpnmsa",
+        "top_pct": 0.6042,
+        "bottom_model": "esm2",
+        "bottom_pct": 71.4918
+      },
+      {
+        "allele_id": "821a87ee5d2a370d",
+        "gene": "LYST",
+        "top_model": "gpnmsa",
+        "top_pct": 0.6042,
+        "bottom_model": "esm2",
+        "bottom_pct": 65.0654
+      },
+      {
+        "allele_id": "9b82c09ad4abeccb",
+        "gene": "CHI3L2",
         "top_model": "spliceai",
-        "top_pct": 0.6578,
-        "bottom_model": "alphamissense",
-        "bottom_pct": 65.2863
+        "top_pct": 0.6055,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 87.8386
       },
       {
-        "allele_id": "cfe67bb6caa63852",
-        "gene": "GLIS3",
-        "top_model": "esm1b",
-        "top_pct": 0.6795,
-        "bottom_model": "revel",
-        "bottom_pct": 99.2859
-      },
-      {
-        "allele_id": "cfe67bb6caa63852",
-        "gene": "GLIS3",
-        "top_model": "esm1b",
-        "top_pct": 0.6795,
-        "bottom_model": "alphamissense",
-        "bottom_pct": 75.8702
-      },
-      {
-        "allele_id": "20b77ffe727dbf52",
-        "gene": "PKD1",
+        "allele_id": "b7aeff5b6a5c0de5",
+        "gene": "NME7",
         "top_model": "spliceai",
-        "top_pct": 0.707,
-        "bottom_model": "revel",
-        "bottom_pct": 97.8021
+        "top_pct": 0.6055,
+        "bottom_model": "gpnmsa",
+        "bottom_pct": 50.7865
       },
       {
-        "allele_id": "425d1d5fd3138813",
-        "gene": "EXD3",
-        "top_model": "spliceai",
-        "top_pct": 0.707,
-        "bottom_model": "alphamissense",
-        "bottom_pct": 73.8044
-      },
-      {
-        "allele_id": "11eabc92e7e9e2b7",
-        "gene": "PXK",
-        "top_model": "spliceai",
-        "top_pct": 0.707,
-        "bottom_model": "revel",
-        "bottom_pct": 69.4055
-      },
-      {
-        "allele_id": "425d1d5fd3138813",
-        "gene": "EXD3",
-        "top_model": "spliceai",
-        "top_pct": 0.707,
-        "bottom_model": "revel",
-        "bottom_pct": 68.5616
-      },
-      {
-        "allele_id": "fba2944a8ef362fa",
-        "gene": "KRTAP4-8",
-        "top_model": "spliceai",
-        "top_pct": 0.707,
-        "bottom_model": "revel",
-        "bottom_pct": 64.4997
-      },
-      {
-        "allele_id": "5b8b0e9d5aa2548a",
-        "gene": "WDR49",
-        "top_model": "spliceai",
-        "top_pct": 0.707,
-        "bottom_model": "revel",
-        "bottom_pct": 52.6013
-      },
-      {
-        "allele_id": "b5932a03b113e1f4",
-        "gene": "DNAAF1",
-        "top_model": "spliceai",
-        "top_pct": 0.7561,
-        "bottom_model": "revel",
-        "bottom_pct": 74.8864
-      },
-      {
-        "allele_id": "61f286bd59b16c21",
-        "gene": "CFAP46",
-        "top_model": "spliceai",
-        "top_pct": 0.7869,
-        "bottom_model": "revel",
-        "bottom_pct": 98.3956
-      },
-      {
-        "allele_id": "23615f10c3bf0768",
-        "gene": "RNASE3",
-        "top_model": "spliceai",
-        "top_pct": 0.7869,
-        "bottom_model": "alphamissense",
-        "bottom_pct": 93.4157
-      },
-      {
-        "allele_id": "61f286bd59b16c21",
-        "gene": "CFAP46",
-        "top_model": "spliceai",
-        "top_pct": 0.7869,
-        "bottom_model": "alphamissense",
-        "bottom_pct": 64.6826
-      },
-      {
-        "allele_id": "23615f10c3bf0768",
-        "gene": "RNASE3",
-        "top_model": "spliceai",
-        "top_pct": 0.7869,
-        "bottom_model": "revel",
-        "bottom_pct": 57.4886
-      },
-      {
-        "allele_id": "9a78135c62980890",
-        "gene": "FAM136A",
-        "top_model": "alphamissense",
-        "top_pct": 0.8018,
-        "bottom_model": "revel",
-        "bottom_pct": 74.1167
-      },
-      {
-        "allele_id": "f4f9e8e458d94ecf",
-        "gene": "ADGRV1",
-        "top_model": "spliceai",
-        "top_pct": 0.8268,
-        "bottom_model": "alphamissense",
-        "bottom_pct": 93.3214
-      },
-      {
-        "allele_id": "55551e96d5d9f9b7",
-        "gene": "ANO9",
-        "top_model": "spliceai",
-        "top_pct": 0.8268,
-        "bottom_model": "alphamissense",
-        "bottom_pct": 86.8692
-      },
-      {
-        "allele_id": "68d6b47e6b92167b",
-        "gene": "OR9G4",
-        "top_model": "spliceai",
-        "top_pct": 0.8268,
-        "bottom_model": "alphamissense",
-        "bottom_pct": 86.8692
-      },
-      {
-        "allele_id": "55551e96d5d9f9b7",
-        "gene": "ANO9",
-        "top_model": "spliceai",
-        "top_pct": 0.8268,
-        "bottom_model": "esm1b",
-        "bottom_pct": 68.6979
-      },
-      {
-        "allele_id": "55551e96d5d9f9b7",
-        "gene": "ANO9",
-        "top_model": "spliceai",
-        "top_pct": 0.8268,
-        "bottom_model": "revel",
-        "bottom_pct": 58.0265
-      },
-      {
-        "allele_id": "f2dbc87e6afbbc35",
-        "gene": "MAGEC1",
-        "top_model": "alphamissense",
-        "top_pct": 0.8678,
-        "bottom_model": "revel",
-        "bottom_pct": 90.5314
-      },
-      {
-        "allele_id": "e8865f5ddabe5613",
-        "gene": "ZNF23",
-        "top_model": "spliceai",
-        "top_pct": 0.8791,
-        "bottom_model": "alphamissense",
-        "bottom_pct": 78.5492
-      },
-      {
-        "allele_id": "e8865f5ddabe5613",
-        "gene": "ZNF23",
-        "top_model": "spliceai",
-        "top_pct": 0.8791,
-        "bottom_model": "revel",
-        "bottom_pct": 70.2309
-      },
-      {
-        "allele_id": "72e648baff294593",
-        "gene": "CHAF1A",
-        "top_model": "spliceai",
-        "top_pct": 0.8791,
-        "bottom_model": "revel",
-        "bottom_pct": 66.4472
-      },
-      {
-        "allele_id": "4beb323c5fa6b315",
-        "gene": "RBMX",
+        "allele_id": "a69c4ba2a9b579a4",
+        "gene": "RYR1",
         "top_model": "revel",
-        "top_pct": 0.881,
-        "bottom_model": "esm1b",
-        "bottom_pct": 53.7264
+        "top_pct": 0.6121,
+        "bottom_model": "esm2",
+        "bottom_pct": 57.9143
       },
       {
-        "allele_id": "e4d9593a17c6b96d",
-        "gene": "ZDHHC11B",
-        "top_model": "spliceai",
-        "top_pct": 0.9283,
-        "bottom_model": "revel",
-        "bottom_pct": 97.0231
+        "allele_id": "b02a3dd2c258964b",
+        "gene": "CHD1L",
+        "top_model": "esm1b",
+        "top_pct": 0.6138,
+        "bottom_model": "esm2",
+        "bottom_pct": 58.1131
       },
       {
-        "allele_id": "e169bae40d008e20",
-        "gene": "CAP1",
-        "top_model": "spliceai",
-        "top_pct": 0.9283,
+        "allele_id": "4c8bbadaff3ed6fe",
+        "gene": "PCDH7",
+        "top_model": "gpnmsa",
+        "top_pct": 0.6153,
+        "bottom_model": "esm2",
+        "bottom_pct": 79.0149
+      },
+      {
+        "allele_id": "f054590c4d4f30ac",
+        "gene": "CTDNEP1",
+        "top_model": "gpnmsa",
+        "top_pct": 0.6181,
+        "bottom_model": "esm2",
+        "bottom_pct": 72.5949
+      },
+      {
+        "allele_id": "f054590c4d4f30ac",
+        "gene": "CTDNEP1",
+        "top_model": "gpnmsa",
+        "top_pct": 0.6181,
         "bottom_model": "alphamissense",
-        "bottom_pct": 92.6045
+        "bottom_pct": 63.1922
       },
       {
-        "allele_id": "e169bae40d008e20",
-        "gene": "CAP1",
-        "top_model": "spliceai",
-        "top_pct": 0.9283,
-        "bottom_model": "esm1b",
-        "bottom_pct": 75.822
-      },
-      {
-        "allele_id": "e169bae40d008e20",
-        "gene": "CAP1",
-        "top_model": "spliceai",
-        "top_pct": 0.9283,
+        "allele_id": "f054590c4d4f30ac",
+        "gene": "CTDNEP1",
+        "top_model": "gpnmsa",
+        "top_pct": 0.6181,
         "bottom_model": "revel",
         "bottom_pct": 50.3199
       },
       {
-        "allele_id": "a16d6fa1b914ffa2",
-        "gene": "SMAP1",
-        "top_model": "spliceai",
-        "top_pct": 0.9713,
-        "bottom_model": "revel",
-        "bottom_pct": 99.8052
+        "allele_id": "39f561c8a533c7e4",
+        "gene": "MAST3",
+        "top_model": "gpnmsa",
+        "top_pct": 0.6264,
+        "bottom_model": "esm2",
+        "bottom_pct": 63.539
       },
       {
-        "allele_id": "60490b36ab0391ef",
-        "gene": "HLA-A",
-        "top_model": "spliceai",
-        "top_pct": 0.9713,
+        "allele_id": "696a2cb7dff503ec",
+        "gene": "R3HCC1",
+        "top_model": "esm2",
+        "top_pct": 0.6285,
         "bottom_model": "revel",
-        "bottom_pct": 89.6411
-      },
-      {
-        "allele_id": "a16d6fa1b914ffa2",
-        "gene": "SMAP1",
-        "top_model": "spliceai",
-        "top_pct": 0.9713,
-        "bottom_model": "esm1b",
-        "bottom_pct": 77.0495
-      },
-      {
-        "allele_id": "53c775de4ee52f9e",
-        "gene": "TYK2",
-        "top_model": "spliceai",
-        "top_pct": 0.9713,
-        "bottom_model": "revel",
-        "bottom_pct": 59.8906
+        "bottom_pct": 87.944
       }
     ],
     "lanes": [
@@ -807,6 +1691,46 @@
         "version": "Brandes 2023 ESM1b"
       },
       {
+        "catalogue_adjacent": false,
+        "confirmed": {
+          "gene": "BUB1B",
+          "left_percentile": null,
+          "max_score": null,
+          "min_score": null,
+          "n_ranked": 15749,
+          "percentile": null,
+          "rank": null,
+          "right_percentile": 4.8358
+        },
+        "licence": "MIT",
+        "model": "esm2",
+        "n_ranked": 15749,
+        "scored_alleles": 15592,
+        "tier": 2,
+        "unscored_pairs": 47598,
+        "version": "esm2_t33_650M_UR50D"
+      },
+      {
+        "catalogue_adjacent": false,
+        "confirmed": {
+          "gene": "BUB1B",
+          "left_percentile": 4.09,
+          "max_score": 8.13,
+          "min_score": 6.04,
+          "n_ranked": 54865,
+          "percentile": 0.9259,
+          "rank": 508,
+          "right_percentile": 1.3754
+        },
+        "licence": "MIT",
+        "model": "gpnmsa",
+        "n_ranked": 54865,
+        "scored_alleles": 35917,
+        "tier": 1,
+        "unscored_pairs": 8482,
+        "version": "GPN-MSA hg38 precomputed scores (songlab)"
+      },
+      {
         "catalogue_adjacent": true,
         "confirmed": {
           "gene": "BUB1B",
@@ -848,7 +1772,7 @@
       }
     ],
     "lineage": {
-      "run_id": "it4-dcda40a4df2c",
+      "run_id": "it4-5e25dd45eee2",
       "sources": ["results.it4_model_ranks", "warehouse.allele_scores", "results.coding_alleles"],
       "tool": "mva.zoo.merge.merged_report"
     }
