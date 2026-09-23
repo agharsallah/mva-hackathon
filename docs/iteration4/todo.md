@@ -54,8 +54,15 @@ widens it.
     `drug_candidates.tsv` vs decoy. Add a Q14 section to
   `report.md`: mechanism → pathway → consequence → drug direction, stated as *not resolved by
   this iteration* (no ΔΔG)
-- [ ] **T3** step-7 README "What happened"; iteration README step row; dashboard step page and
-  fixture re-capture
+- [~] **T3** (`eb8b38e`, `b4fc185`, `c140f0e`), done except one file:
+  - done: step-7 README + `narrative.json`, iteration README row + entry list,
+    `docs/README.md` rows
+  - done: `/track2/iteration4` fixture re-captured and its hash re-blessed
+  - done: the dictionary copy regenerated
+  - **blocked:** the `src/mva/science/step_maps/iteration4.py` hunk (step 7 → done, figure
+    declared) plus the regenerated `steps.generated.ts`. The file also holds another session's
+    step-8 block, and a permission check refused committing it whole. Until it lands, the live
+    API reads step 7 as *planned*
 - [ ] **T4** the user decides: does the walk enter `submissions/track2/iteration-2/` as the second
   independent method? No new Track 2 folder unless the ranking is worth uploading
 
