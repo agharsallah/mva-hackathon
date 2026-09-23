@@ -2804,7 +2804,7 @@ disease, and checks the answer against a decoy disease walked the same way.
 
 **Node degree / hub** — a node's degree is how many distinct neighbours it has. A **hub** is a node with a very high degree, such as a protein that interacts with thousands of others. A path through a hub says little, because a hub is next to almost everything.
 *Example:* XDH has degree 62 over the four walked relations, so a one-gene path through it weighs 1/62 ≈ 0.016.
-*Context: measured over the walked relations only (disease_protein, protein_protein, pathway_protein, drug_protein) · source: src/mva/drugs/graph_walk.py (`Graph.degree`) · related: Metapath, Degree-weighted path count (DWPC) · first seen 2026-09-23*
+*Context: measured over the walked relations only (disease_protein, protein_protein, pathway_protein, drug_protein), computed by `Graph.degree` · source: src/mva/drugs/graph_walk.py · related: Metapath, Degree-weighted path count (DWPC) · first seen 2026-09-23*
 
 **Degree-weighted path count (DWPC)** — a way to score how strongly two nodes are connected: count every path between them along the metapaths, but let each path weigh the product of `degree ** -damping` over its intermediate nodes, so routes through hubs count less. Damping 1 is plain inverse degree; damping 0 is a raw path count. From Himmelstein 2015 (Hetionet).
 *Example:* a drug reached by one path through a gene of degree 4 and a partner of degree 2 scores 1/4 × 1/2 = 0.125.

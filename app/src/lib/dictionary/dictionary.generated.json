@@ -8466,8 +8466,8 @@
           ],
           "html": "<p>a node's degree is how many distinct neighbours it has. A <strong>hub</strong> is a node with a very high degree, such as a protein that interacts with thousands of others. A path through a hub says little, because a hub is next to almost everything.</p>",
           "exampleHtml": "<p><em>Example:</em> XDH has degree 62 over the four walked relations, so a one-gene path through it weighs 1/62 ≈ 0.016.</p>",
-          "context": "<p>measured over the walked relations only (disease_protein, protein_protein, pathway_protein, drug_protein)</p>",
-          "source": "src/mva/drugs/graph_walk.py (`Graph.degree`)",
+          "context": "<p>measured over the walked relations only (disease_protein, protein_protein, pathway_protein, drug_protein), computed by <code>Graph.degree</code></p>",
+          "source": "src/mva/drugs/graph_walk.py",
           "related": [
             "metapath",
             "degree-weighted-path-count-dwpc"
