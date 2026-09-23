@@ -51,6 +51,7 @@ dev = [
 ]
 zoo-ml = [
     "litellm>=1.101.0",
+    "modal>=1.5.5",
     "torch>=2.14.0",
     "transformers>=5.17.0",
 ]

@@ -72,14 +72,14 @@
       "summary": "planned only \u2014 no step map is declared for it"
     },
     {
-      "claims": 15,
+      "claims": 22,
       "current": false,
       "declared": true,
       "docs": "docs/iteration4",
       "done": 5,
       "iteration": "iteration4",
-      "open": 2,
-      "steps": 7,
+      "open": 3,
+      "steps": 8,
       "submissions": [],
       "summary": "the model zoo (docs/iteration4/plan.md)."
     }
@@ -1277,6 +1277,153 @@
       "takes_hypotheses": true,
       "title": "Track 2 \u2014 two engines, one graph",
       "track": "track2",
+      "unblocks": []
+    },
+    {
+      "docs": "docs/iteration4/step-8",
+      "entries": [],
+      "figures": [],
+      "goal": "Do the roster's GPU models (NT-v2, Evo 2, ESM-C, Boltz-2), run on Modal behind one HTTP contract and a $50 cap, score the confirmed pair's alleles the laptop lanes abstain on \u2014 and does adding them move the consensus rank?",
+      "hypotheses": [
+        {
+          "author": "claude-step8",
+          "confidence": null,
+          "gene": "",
+          "hypothesis_id": "H076",
+          "iteration": "iteration4",
+          "path": "dna-windows",
+          "prediction": "at least 99% of the 39,286 records carry a complete, unclipped window pair and 0 disagree with the reference base (record_dna run of 2026-09-23, before this filing)",
+          "reasoning": "",
+          "recorded_at": "2026-09-23T23:26:47.217468",
+          "refuted_by": "under 95% complete, or any REF mismatch above 0.1%",
+          "revision": 1,
+          "statement": "retrospective: P4-1 (DNA half): every record gets an 8,192-base DNA window pair from the pinned GRCh38 reference, with no REF mismatch",
+          "status": "proposed",
+          "step": "step-8"
+        },
+        {
+          "author": "claude-step8",
+          "confidence": null,
+          "gene": "",
+          "hypothesis_id": "H077",
+          "iteration": "iteration4",
+          "path": "modal-cost",
+          "prediction": "the ledger and modal billing report for step 8 both total 30 USD or less, and no lane is stopped by its budget share before scoring every allele it covers",
+          "reasoning": "",
+          "recorded_at": "2026-09-23T23:26:48.606323",
+          "refuted_by": "the billing report exceeds 50 USD, or two or more lanes are stopped by the cap before finishing",
+          "revision": 1,
+          "statement": "P4-4 (Modal half): the whole GPU tier (NT-v2, Evo 2, ESM-C, Boltz-2) runs over the record set for at most 30 USD on Modal",
+          "status": "proposed",
+          "step": "step-8"
+        },
+        {
+          "author": "claude-step8",
+          "confidence": null,
+          "gene": "BUB1B",
+          "hypothesis_id": "H078",
+          "iteration": "iteration4",
+          "path": "dna-lm-ntv2",
+          "prediction": "the ntv2 lane scores both confirmed alleles and its catalogue-free rank of the confirmed pair is at or under the 10th percentile",
+          "reasoning": "",
+          "recorded_at": "2026-09-23T23:26:50.022087",
+          "refuted_by": "the lane abstains on either confirmed allele, or the pair sits above the median (50th percentile) of the lane's ranking",
+          "revision": 1,
+          "statement": "P4-13: NT-v2, a DNA language model that reads the nonsense allele as well as the missense one, ranks the confirmed pair in the top decile of its own pair ranking",
+          "status": "proposed",
+          "step": "step-8"
+        },
+        {
+          "author": "claude-step8",
+          "confidence": null,
+          "gene": "BUB1B",
+          "hypothesis_id": "H079",
+          "iteration": "iteration4",
+          "path": "dna-lm-evo2",
+          "prediction": "the evo2 lane scores both confirmed alleles and the confirmed pair's percentile is at or under 10",
+          "reasoning": "",
+          "recorded_at": "2026-09-23T23:26:51.232859",
+          "refuted_by": "the lane abstains on either confirmed allele, or the pair sits above the median of the lane's ranking",
+          "revision": 1,
+          "statement": "P4-14: Evo 2 1B ranks the confirmed pair in the top decile of its own pair ranking",
+          "status": "proposed",
+          "step": "step-8"
+        },
+        {
+          "author": "claude-step8",
+          "confidence": null,
+          "gene": "",
+          "hypothesis_id": "H080",
+          "iteration": "iteration4",
+          "path": "plm-esmc",
+          "prediction": "Spearman rho(esmc, esm2) >= 0.7 over their shared missense alleles, and rho(esmc, esm1b) >= 0.6",
+          "reasoning": "",
+          "recorded_at": "2026-09-23T23:26:52.419335",
+          "refuted_by": "rho(esmc, esm2) below 0.5",
+          "revision": 1,
+          "statement": "P4-15: ESM-C 600M agrees with the other protein language models: its scores on shared missense alleles correlate with ESM2's at Spearman rho of 0.7 or more",
+          "status": "proposed",
+          "step": "step-8"
+        },
+        {
+          "author": "claude-step8",
+          "confidence": null,
+          "gene": "BUB1B",
+          "hypothesis_id": "H081",
+          "iteration": "iteration4",
+          "path": "structure-boltz2",
+          "prediction": "mean pLDDT within 5 residues of the substituted residue drops by 5 points or more in the mutant fold versus wild type",
+          "reasoning": "",
+          "recorded_at": "2026-09-23T23:26:53.722578",
+          "refuted_by": "the local pLDDT change is under 1 point in absolute value (the fold cannot see the substitution)",
+          "revision": 1,
+          "statement": "P4-16: Boltz-2 folds wild-type and mutant BubR1 with a visible local confidence change at the confirmed missense residue",
+          "status": "proposed",
+          "step": "step-8"
+        },
+        {
+          "author": "claude-step8",
+          "confidence": null,
+          "gene": "BUB1B",
+          "hypothesis_id": "H082",
+          "iteration": "iteration4",
+          "path": "consensus-gpu",
+          "prediction": "the catalogue-free RRF rank of the confirmed pair, re-run with every scoring lane including the Modal ones, is 1,000 or better",
+          "reasoning": "",
+          "recorded_at": "2026-09-23T23:26:54.967787",
+          "refuted_by": "the rank is still worse than 10,000",
+          "revision": 1,
+          "statement": "P4-17: adding the GPU lanes moves the confirmed pair's catalogue-free RRF consensus rank from 20,639 into the top 1,000",
+          "status": "proposed",
+          "step": "step-8"
+        }
+      ],
+      "kind": "research",
+      "narrative": {
+        "figures": [],
+        "hands_to": {
+          "steps": ["step-6"],
+          "what": "New lanes in the allele_scores cache, so the step-4 workflow and the step-6 merge can be re-run with every lane."
+        },
+        "inherits": {
+          "steps": ["step-3", "step-6"],
+          "what": "Step 3's adapter protocol and score cache (a new lane is a new module, never an edit), and step 6's finding that the consensus fails by abstention, which is what this step tests."
+        },
+        "iteration": "iteration4",
+        "sources": [
+          "docs/iteration4/step-8/README.md",
+          "docs/iteration4/step-8/hypotheses/README.md"
+        ],
+        "step": "step-8",
+        "summary": "In progress. This step runs the roster's GPU models (NT-v2, Evo 2, ESM-C, Boltz-2) on Modal, a serverless GPU cloud, behind the same adapter contract every laptop lane uses. The contract is built: DNA windows of 8,192 bases from the pinned reference (kept under build/), one Modal app per model, and a spend ledger that prices every call and stops a lane at its share of the $50 cap.",
+        "verdict": "No verdict yet: H076 to H082 are filed and untested apart from H076, whose test ran just before it was filed and is marked retrospective.",
+        "why": "Entry 130 showed the consensus rank of the confirmed pair (20,639 of 52,012) is set by abstention: three of four laptop lanes have no score for its stop_gained half. A DNA language model reads any allele, so it is the lane that can end the abstention, and it needs a GPU."
+      },
+      "slug": "step-8",
+      "status": "open",
+      "takes_hypotheses": true,
+      "title": "The GPU tier on Modal",
+      "track": "track1",
       "unblocks": []
     }
   ],

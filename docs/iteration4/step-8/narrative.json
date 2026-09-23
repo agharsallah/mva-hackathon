@@ -1,0 +1,20 @@
+{
+  "step": "step-8",
+  "iteration": "iteration4",
+  "summary": "In progress. This step runs the roster's GPU models (NT-v2, Evo 2, ESM-C, Boltz-2) on Modal, a serverless GPU cloud, behind the same adapter contract every laptop lane uses. The contract is built: DNA windows of 8,192 bases from the pinned reference (kept under build/), one Modal app per model, and a spend ledger that prices every call and stops a lane at its share of the $50 cap.",
+  "why": "Entry 130 showed the consensus rank of the confirmed pair (20,639 of 52,012) is set by abstention: three of four laptop lanes have no score for its stop_gained half. A DNA language model reads any allele, so it is the lane that can end the abstention, and it needs a GPU.",
+  "verdict": "No verdict yet: H076 to H082 are filed and untested apart from H076, whose test ran just before it was filed and is marked retrospective.",
+  "inherits": {
+    "steps": ["step-3", "step-6"],
+    "what": "Step 3's adapter protocol and score cache (a new lane is a new module, never an edit), and step 6's finding that the consensus fails by abstention, which is what this step tests."
+  },
+  "hands_to": {
+    "steps": ["step-6"],
+    "what": "New lanes in the allele_scores cache, so the step-4 workflow and the step-6 merge can be re-run with every lane."
+  },
+  "figures": [],
+  "sources": [
+    "docs/iteration4/step-8/README.md",
+    "docs/iteration4/step-8/hypotheses/README.md"
+  ]
+}

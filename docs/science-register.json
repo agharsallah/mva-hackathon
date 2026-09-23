@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-23T23:01:35",
+  "generated_at": "2026-09-23T23:26:54",
   "steps": [
     {
       "slug": "step-0",
@@ -2843,6 +2843,104 @@
           "lineage_ref": "track2.decoys.XDH.ranking-walk"
         }
       ]
+    },
+    {
+      "id": "H076",
+      "step": "step-8",
+      "statement": "retrospective: P4-1 (DNA half): every record gets an 8,192-base DNA window pair from the pinned GRCh38 reference, with no REF mismatch",
+      "prediction": "at least 99% of the 39,286 records carry a complete, unclipped window pair and 0 disagree with the reference base (record_dna run of 2026-09-23, before this filing)",
+      "refuted_by": "under 95% complete, or any REF mismatch above 0.1%",
+      "gene": "",
+      "path": "dna-windows",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H077",
+      "step": "step-8",
+      "statement": "P4-4 (Modal half): the whole GPU tier (NT-v2, Evo 2, ESM-C, Boltz-2) runs over the record set for at most 30 USD on Modal",
+      "prediction": "the ledger and modal billing report for step 8 both total 30 USD or less, and no lane is stopped by its budget share before scoring every allele it covers",
+      "refuted_by": "the billing report exceeds 50 USD, or two or more lanes are stopped by the cap before finishing",
+      "gene": "",
+      "path": "modal-cost",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H078",
+      "step": "step-8",
+      "statement": "P4-13: NT-v2, a DNA language model that reads the nonsense allele as well as the missense one, ranks the confirmed pair in the top decile of its own pair ranking",
+      "prediction": "the ntv2 lane scores both confirmed alleles and its catalogue-free rank of the confirmed pair is at or under the 10th percentile",
+      "refuted_by": "the lane abstains on either confirmed allele, or the pair sits above the median (50th percentile) of the lane's ranking",
+      "gene": "BUB1B",
+      "path": "dna-lm-ntv2",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H079",
+      "step": "step-8",
+      "statement": "P4-14: Evo 2 1B ranks the confirmed pair in the top decile of its own pair ranking",
+      "prediction": "the evo2 lane scores both confirmed alleles and the confirmed pair's percentile is at or under 10",
+      "refuted_by": "the lane abstains on either confirmed allele, or the pair sits above the median of the lane's ranking",
+      "gene": "BUB1B",
+      "path": "dna-lm-evo2",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H080",
+      "step": "step-8",
+      "statement": "P4-15: ESM-C 600M agrees with the other protein language models: its scores on shared missense alleles correlate with ESM2's at Spearman rho of 0.7 or more",
+      "prediction": "Spearman rho(esmc, esm2) >= 0.7 over their shared missense alleles, and rho(esmc, esm1b) >= 0.6",
+      "refuted_by": "rho(esmc, esm2) below 0.5",
+      "gene": "",
+      "path": "plm-esmc",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H081",
+      "step": "step-8",
+      "statement": "P4-16: Boltz-2 folds wild-type and mutant BubR1 with a visible local confidence change at the confirmed missense residue",
+      "prediction": "mean pLDDT within 5 residues of the substituted residue drops by 5 points or more in the mutant fold versus wild type",
+      "refuted_by": "the local pLDDT change is under 1 point in absolute value (the fold cannot see the substitution)",
+      "gene": "BUB1B",
+      "path": "structure-boltz2",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H082",
+      "step": "step-8",
+      "statement": "P4-17: adding the GPU lanes moves the confirmed pair's catalogue-free RRF consensus rank from 20,639 into the top 1,000",
+      "prediction": "the catalogue-free RRF rank of the confirmed pair, re-run with every scoring lane including the Modal ones, is 1,000 or better",
+      "refuted_by": "the rank is still worse than 10,000",
+      "gene": "BUB1B",
+      "path": "consensus-gpu",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
     }
   ]
 }

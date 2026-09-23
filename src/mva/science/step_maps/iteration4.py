@@ -127,6 +127,25 @@ ITERATION4: tuple[Step, ...] = (
             "approved drugs for the mechanism, and how does each rank against a decoy?"
         ),
         iteration="iteration4",
+        # Entry 142 settled both walk claims (P4-11, P4-12). The GNN half was skipped by
+        # the user's decision of 2026-09-23, so nothing is pending: the step is closed.
+        status="done",
         track="track2",
+        # Drawn into figures/it4/ by tools/render_track2_walk_figures.py (T2 of the close-out).
+        figures=("figures/it4/track2-walk-overlap.svg",),
+    ),
+    Step(
+        slug="step-8",
+        title="The GPU tier on Modal",
+        goal=(
+            "Do the roster's GPU models (NT-v2, Evo 2, ESM-C, Boltz-2), run on Modal behind "
+            "one HTTP contract and a $50 cap, score the confirmed pair's alleles the laptop "
+            "lanes abstain on — and does adding them move the consensus rank?"
+        ),
+        iteration="iteration4",
+        # Opened 2026-09-23 on the user's request for wave 5 (plan §7b, B1–B2): one Modal
+        # app per model, sequence windows and allele ids only, every GPU second in a ledger.
+        status="open",
+        track="track1",
     ),
 )

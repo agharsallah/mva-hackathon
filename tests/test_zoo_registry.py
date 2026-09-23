@@ -21,6 +21,9 @@ MVP_LANES = {"alphamissense", "spliceai", "esm1b", "revel"}
 #: Lanes wave 4 enabled on top of the MVP four (plan §7 opt-A rows A1/A2): the coordinate-
 #: keyed DNA model that can see a nonsense allele, and the first model that actually runs.
 OPT_A_LANES = {"gpnmsa", "esm2"}
+#: Step 8 (wave 5, opt-B): the Modal GPU lanes that score the callset. Boltz-2 folds one
+#: protein and stays disabled as a scorer.
+OPT_B_GPU_LANES = frozenset({"ntv2", "evo2", "esmc"})
 
 MINIMAL = """
 [models.demo]
@@ -70,11 +73,14 @@ def test_shipped_roster_loads() -> None:
 
 
 def test_four_mvp_lanes_are_enabled() -> None:
-    """The MVP four are always on; wave 4's opt-A lanes are the only additions allowed."""
+    """The MVP four are always on; wave 4's opt-A lanes and step 8's GPU lanes are the only
+    additions allowed."""
     cards = registry.load()
     enabled = set(registry.enabled(cards))
     assert enabled >= MVP_LANES
-    assert enabled - MVP_LANES <= OPT_A_LANES, "a lane was enabled without being declared here"
+    assert enabled - MVP_LANES <= OPT_A_LANES | OPT_B_GPU_LANES, (
+        "a lane was enabled without being declared here"
+    )
     assert set(registry.mvp(cards)) >= MVP_LANES
 
 
@@ -82,15 +88,12 @@ def test_enabled_lanes_cover_four_sources_and_one_adjacent() -> None:
     """The zoo is an agreement matrix, so the lanes must not be one instrument.
 
     Wave 4 added the fourth kind of source: ``local-process``, a model that runs here
-    rather than a table somebody else published.
+    rather than a table somebody else published. Step 8 may add a fifth, ``modal``.
     """
     enabled = registry.enabled(registry.load())
-    assert {card.source for card in enabled.values()} == {
-        "warehouse-column",
-        "table",
-        "vep-rest",
-        "local-process",
-    }
+    sources = {card.source for card in enabled.values()}
+    assert {"warehouse-column", "table", "vep-rest", "local-process"} <= sources
+    assert sources <= {"warehouse-column", "table", "vep-rest", "local-process", "modal"}
     adjacent = [key for key, card in enabled.items() if card.catalogue_adjacent]
     assert adjacent == ["revel"], "exactly one catalogue-adjacent lane runs in the MVP"
 

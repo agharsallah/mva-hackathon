@@ -21,9 +21,10 @@ from mva.zoo.types import (
 FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "it4"
 
 
-def test_iteration4_declares_seven_research_steps():
+def test_iteration4_declares_eight_research_steps():
+    # Seven from the plan; step 8 (the GPU tier on Modal) opened 2026-09-23 for wave 5.
     research = [s for s in steps.steps_for("iteration4") if s.takes_hypotheses]
-    assert [s.slug for s in research] == [f"step-{n}" for n in range(1, 8)]
+    assert [s.slug for s in research] == [f"step-{n}" for n in range(1, 9)]
     assert all(s.iteration == "iteration4" for s in research)
     # Statuses advance as wave 2 runs each step; what is pinned is that every one of them
     # carries a *declared* status, never an invented one.

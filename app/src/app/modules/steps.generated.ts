@@ -178,7 +178,7 @@ export const STEP_MODULES: FeatureModule[] = [
     title: 'Track 1, iteration 4 — the model zoo',
     group: 'decide',
     parent: 'track1',
-    description: 'The 6 steps of this iteration that argue Track 1\'s answer: each one\'s question, the claims filed before the run, what became of them, the methodology entries they were written in, and the figures they drew.',
+    description: 'The 7 steps of this iteration that argue Track 1\'s answer: each one\'s question, the claims filed before the run, what became of them, the methodology entries they were written in, and the figures they drew.',
     load: () => import('../../pages/Iteration'),
   },
   {
@@ -239,6 +239,16 @@ export const STEP_MODULES: FeatureModule[] = [
     group: 'decide',
     parent: 'track1-iteration4',
     description: 'Do the models agree, and what does the merged report conclude under each of the three merge methods?',
+    load: () => import('../../pages/Step'),
+  },
+  {
+    id: 'track1-iteration4-step-8',
+    path: '/track1/iteration4/step-8',
+    navLabel: 'Step 8',
+    title: 'Step 8 — The GPU tier on Modal (iteration 4)',
+    group: 'decide',
+    parent: 'track1-iteration4',
+    description: 'Do the roster\'s GPU models (NT-v2, Evo 2, ESM-C, Boltz-2), run on Modal behind one HTTP contract and a $50 cap, score the confirmed pair\'s alleles the laptop lanes abstain on — and does adding them move the consensus rank?',
     load: () => import('../../pages/Step'),
   },
   {

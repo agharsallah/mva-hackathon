@@ -57,6 +57,7 @@ ADAPTER_MODULES: dict[str, str] = {
     "coordinate_table": "mva.zoo.adapters.coordinate_table",
     "local_process": "mva.zoo.adapters.local_process",
     "vep_rest": "mva.zoo.adapters.vep_rest",
+    "modal": "mva.zoo.adapters.modal_gpu",
 }
 
 
