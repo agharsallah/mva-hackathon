@@ -54,7 +54,9 @@ widens it.
     `drug_candidates.tsv` vs decoy. Add a Q14 section to
   `report.md`: mechanism → pathway → consequence → drug direction, stated as *not resolved by
   this iteration* (no ΔΔG)
-- [~] **T3** (`eb8b38e`, `b4fc185`, `c140f0e`), done except one file:
+- [x] **T3** (`eb8b38e`, `b4fc185`, `c140f0e`). The blocked hunk landed in the other session's
+  `e88a901` (step 7 `done`, figure declared). `gen_steps_nav.py` re-run shows no diff. The steps
+  fixture was re-captured in `13c91ec`. History:
   - done: step-7 README + `narrative.json`, iteration README row + entry list,
     `docs/README.md` rows
   - done: `/track2/iteration4` fixture re-captured and its hash re-blessed
