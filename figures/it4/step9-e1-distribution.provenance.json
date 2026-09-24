@@ -1,0 +1,19 @@
+{
+  "name": "step9-e1-distribution",
+  "built_at": "2026-09-24T07:13:39+00:00",
+  "built_by": "tools/render_step9_e1.py",
+  "code_version": "2551195",
+  "inputs": [
+    {
+      "path": "ressources/track2/bub1b_atlas.parquet",
+      "sha256": "54298e34e3ec9f87e3b15772eb703e7468476432a8aa152667873a4a7e95cb1f"
+    },
+    {
+      "path": "build/it4/track2-e1/child.json",
+      "sha256": "8cfcb0252b40bca42eaae5dfd2445900ff85a895677137bb197c9d4a60bb8800"
+    }
+  ],
+  "entry": "docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md",
+  "legend": "**Legend** \u2014 neutral machinery; a decision point; the raw input; blue bars = every possible substitution; yellow dashed = the pre-registered top-20 % cut (H084); purple = the child's allele, value rounded to 0.1.",
+  "patient_data": "none on the position axis; panel (b) shows the child's \u0394\u0394G rounded to 0.1 kcal/mol and its percentile rounded to an integer (from build/, not committed)"
+}

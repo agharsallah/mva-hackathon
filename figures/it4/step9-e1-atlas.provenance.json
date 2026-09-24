@@ -1,0 +1,23 @@
+{
+  "name": "step9-e1-atlas",
+  "built_at": "2026-09-24T07:13:35+00:00",
+  "built_by": "tools/render_step9_e1.py",
+  "code_version": "2551195",
+  "inputs": [
+    {
+      "path": "ressources/track2/bub1b_atlas.parquet",
+      "sha256": "54298e34e3ec9f87e3b15772eb703e7468476432a8aa152667873a4a7e95cb1f"
+    },
+    {
+      "path": "ressources/track2/bub1b_published_alleles.tsv",
+      "sha256": "dc255602c3eb4a53933df6fc23952f094dc0249115001bfdbdf2c450a1532bbe"
+    },
+    {
+      "path": "build/it4/track2-e1/evaluate.json",
+      "sha256": "e884bcb990a7e5ae36495a9860e2998cf7acc0183aac9221e3976a64a92580e9"
+    }
+  ],
+  "entry": "docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md",
+  "legend": "**Legend** \u2014 neutral machinery; broken / dangerous / lost points; context, not the subject; blue line = mean \u0394\u0394G of the 19 substitutions at each residue; red circles = published abundance-lowering alleles, blue squares = published stable alleles (each at its own \u0394\u0394G); grey bars = annotated domains. The child's allele is not drawn.",
+  "patient_data": "none"
+}
