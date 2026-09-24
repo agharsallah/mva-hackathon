@@ -1167,7 +1167,9 @@ flowchart LR
 
 **Orthogonal** — an independent opinion, from a different source of information. Two orthogonal tools agreeing is real evidence; two circular ones agreeing is not.
 
-**ΔΔG (delta-delta-G)** — predicted change in protein stability from the variant. *Tools: FoldX, Rosetta.*
+**ΔΔG (delta-delta-G)** — how much a substitution changes a protein's folding free energy (the energy the folded shape saves over the unfolded chain), in kcal/mol; in this repo **+ = destabilising**, so a large positive value predicts a protein the cell may unfold and degrade. A prediction, not a measurement. *Tools: FoldX, Rosetta, ThermoMPNN.*
+*Example:* the published MVA allele L1012P scores +3.1 kcal/mol in ThermoMPNN; the child's missense sits at the 87th percentile of all 19,950 possible BubR1 substitutions.
+*Context: the stability half of experiment E1 · source: docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md · related: ThermoMPNN, Variant atlas, Abundance-lowering vs function-impairing allele · first seen 2026-09-01*
 
 **Domain / TPR / pseudo-kinase / KEN-box** — named functional parts of a protein. Landing inside one is worse than landing in a random spot.
 
@@ -2883,4 +2885,89 @@ a time, so each one's effect on the result is visible alone (the mirror of an **
 which removes one).
 *Example:* step 8 re-ran the consensus with the six laptop lanes, then six + Evo 2, six + NT-v2 and six + ESM-C.
 *Context: the test behind H082 · source: docs/iteration4/step-8/methodology/148-the-gpu-lanes-and-the-consensus.md · related: Ablation, Reciprocal rank fusion (RRF) · first seen 2026-09-24*
+
+## 27. One mechanism, many sources — words for iteration 4's step 9 (Track 2)
+
+Step 9 checks the Track 2 drug directions against datasets that share nothing: a structure
+atlas of every possible substitution, and every mouse model on record.
+
+**Abundance-lowering vs function-impairing allele** — the two ways a missense allele can weaken
+a protein: the cell makes a protein it degrades faster (**less of it**), or a protein present in
+normal amounts that does its job worse (**broken, not scarce**). The distinction decides the
+drug direction: only the first is helped by making or keeping more of the protein.
+*Example:* in MVA, I909T lowers BubR1 abundance while Y155C leaves the amount normal and impairs function (Suijkerbuijk 2010, PMID 20516114).
+*Context: H083, H084 and direction D3 · source: docs/iteration4/step-9/research/papers.md · related: Hypomorph / hypomorphic, ΔΔG (delta-delta-G), Variant atlas · first seen 2026-09-24*
+
+**Site-saturation mutagenesis (SSM)** — trying every amino acid at every position of a protein,
+in the lab or in silico, so each real variant can be read against all the ones that could have
+happened.
+*Example:* 1,050 residues × 19 alternatives = 19,950 BubR1 substitutions.
+*Context: ThermoMPNN's scan mode, entry 149 · related: Variant atlas, ThermoMPNN · first seen 2026-09-24*
+
+**ThermoMPNN** — a graph neural network that reads a protein structure and predicts ΔΔG for
+every single substitution in one pass (Dieckhaus 2024, PMID 38285937).
+*Example:* all ~20k BubR1 substitutions on the AlphaFold model in about 12 seconds on a T4 GPU, for $0.003; the container reproduced the authors' p53 example to 0.0006 kcal/mol.
+*Context: the Modal app `mva-zoo-thermompnn`, entry 149 · related: ΔΔG (delta-delta-G), Site-saturation mutagenesis (SSM), AlphaFold · first seen 2026-09-24*
+
+**Relative solvent accessibility (RSA)** — the fraction of a residue's surface that water can
+reach, from 0 (buried in the core) to 1 (fully exposed). A substitution in the buried core is
+more likely to unfold the protein. **Shrake–Rupley** is the classic way to compute it: scatter
+test points on each atom's sphere and count those no neighbour covers.
+*Example:* the child's missense residue is buried (RSA < 0.2) at pLDDT ≥ 90.
+*Context: `mva.drugs.variant_atlas_sources`, entry 149 · related: pLDDT, ΔΔG (delta-delta-G) · first seen 2026-09-24*
+
+**Variant atlas** — one row per possible substitution of one protein, with its predicted effect
+(ΔΔG, conservation) and its structural context (RSA, pLDDT, domain). Built once per protein, it
+answers for any future patient's allele on day one.
+*Example:* `ressources/track2/bub1b_atlas.parquet`, 19,950 rows, from `tools/variant_atlas.py --uniprot O60566`.
+*Context: E1, entry 149; gene-agnostic by construction · related: Site-saturation mutagenesis (SSM), Abundance-lowering vs function-impairing allele · first seen 2026-09-24*
+
+**Leave-one-out (LOO)** — fit a model on all examples but one, score the one left out, repeat for
+each. The honest way to measure a classifier on a handful of labels, and a noisy one: with eight
+examples a single allele moves the result a great deal.
+*Example:* E1's logistic model scores AUROC 0.13 under LOO on eight labelled alleles — an artefact of the small set, reported as such.
+*Context: entry 149 · related: Ablation, Leave-one-in ablation · first seen 2026-09-24*
+
+**Mammalian Phenotype ontology (MP)** — the mouse counterpart of HPO: a graph of mouse phenotype
+terms from general to specific, used to annotate every mouse model.
+*Example:* MP:0001732 postnatal growth retardation.
+*Context: the mouse half of E2, entry 150 · related: HPO, Phenotype twin, uPheno and SSSOM · first seen 2026-09-24*
+
+**MGI genotype** — one mouse line's exact allele combination, as curated by Mouse Genome
+Informatics, with the MP terms observed in it. A **knock-in allele** is an engineered allele
+carrying one specific change (often a patient mutation); a **hypomorph** mouse carries an allele
+that makes less protein.
+*Example:* `Bub1b<tm1Jvd>/Bub1b<tm1Jvd>` is the BubR1 H/H hypomorph (PMID 15208629); `Bub1b<tm3.1Jvd>` is the L1002P knock-in.
+*Context: `MGI_PhenoGenoMP.rpt`, 76,699 genotypes scored in entry 150 · related: Mammalian Phenotype ontology (MP), Hypomorph / hypomorphic, Phenotype twin · first seen 2026-09-24*
+
+**uPheno and SSSOM** — uPheno is the cross-species phenotype ontology that aligns HPO with MP
+(and fish, fly and worm ontologies); SSSOM is the plain-TSV standard its term-to-term mappings
+are published in, one row per mapping with a predicate and a justification.
+*Example:* HP:0000121 nephrocalcinosis ↔ MP:0003197 nephrocalcinosis.
+*Context: the bridge between the child's terms and the mouse terms, entry 150 · related: HPO, Mammalian Phenotype ontology (MP) · first seen 2026-09-24*
+
+**Phenotype twin** — the model organism whose recorded phenotype is closest to one patient's,
+found by semantic similarity over all models, never by picking the gene first. Its published
+interventions become candidate treatments with an animal-model rung.
+*Example:* the best Bub1b genotype ranks in the top 1.0–1.4 % of 76,699 MGI genotypes against the child's terms.
+*Context: E2, entry 150; `tools/phenotype_twin.py` takes any HPO set · related: Semantic similarity (Resnik / Lin / Jiang–Conrath / Phenomizer), Best-match-average (BMA), Phenodigm, IC-matched null · first seen 2026-09-24*
+
+**Phenodigm** — a model-to-disease similarity that mixes the single best term match with the
+average match, each divided by what a perfect match would score. Used here as E2's second
+rollup beside symmetric best-match-average; a claim holds only if both agree.
+*Example:* Phenodigm ranks the BubR1 H/H mouse 768th of 76,699; the symmetric rollup prefers the K243R/+ knock-in.
+*Context: entry 150 · related: Best-match-average (BMA), Phenotype twin · first seen 2026-09-24*
+
+**IC-matched null** — random term sets whose terms are as specific (same information content) as
+the real ones. It asks whether the match comes from *these* terms or from *any* terms this
+specific.
+*Example:* 1,000 random 8-term sets; the child's terms beat them with p = 0.026.
+*Context: entry 150 · related: Information content IC, Phenotype twin · first seen 2026-09-24*
+
+**Senescence and senolytics** — a senescent cell has stopped dividing for good but stays alive
+and secretes inflammatory signals (the SASP); a senolytic is a drug that selectively kills such
+cells. **INK-ATTAC** is a transgene that kills p16Ink4a-expressing (senescent) cells when the
+mouse is given a trigger compound — the genetic proof behind the drug idea.
+*Example:* clearing p16Ink4a cells delayed ageing phenotypes in BubR1 hypomorph mice (Baker 2011, PMID 22048312); dasatinib (approved) plus quercetin is the standard senolytic pair.
+*Context: new direction D5, `ressources/track2/model_interventions.tsv` · related: Hypomorph / hypomorphic, Phenotype twin · first seen 2026-09-24*
 

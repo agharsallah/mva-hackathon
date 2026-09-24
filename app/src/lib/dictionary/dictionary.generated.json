@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 26,
-    "entries": 643,
+    "chapters": 27,
+    "entries": 656,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 220
+    "contexts": 234
   },
   "chapters": [
     {
@@ -3561,9 +3561,16 @@
             "ΔΔG",
             "delta-delta-G"
           ],
-          "html": "<p>predicted change in protein stability from the variant. <em>Tools: FoldX, Rosetta.</em></p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "html": "<p>how much a substitution changes a protein's folding free energy (the energy the folded shape saves over the unfolded chain), in kcal/mol; in this repo <strong>+ = destabilising</strong>, so a large positive value predicts a protein the cell may unfold and degrade. A prediction, not a measurement. <em>Tools: FoldX, Rosetta, ThermoMPNN.</em></p>",
+          "exampleHtml": "<p><em>Example:</em> the published MVA allele L1012P scores +3.1 kcal/mol in ThermoMPNN; the child's missense sits at the 87th percentile of all 19,950 possible BubR1 substitutions.</p>",
+          "context": "<p>the stability half of experiment E1</p>",
+          "source": "docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md",
+          "related": [
+            "thermompnn",
+            "variant-atlas",
+            "abundance-lowering-vs-function-impairing-allele"
+          ],
+          "firstSeen": "2026-09-01"
         },
         {
           "kind": "entry",
@@ -8679,6 +8686,218 @@
           "related": [
             "ablation",
             "reciprocal-rank-fusion-rrf"
+          ],
+          "firstSeen": "2026-09-24"
+        }
+      ]
+    },
+    {
+      "number": 27,
+      "id": "27-one-mechanism-many-sources--words-for-iteration-4s-step-9-track-2",
+      "title": "One mechanism, many sources — words for iteration 4's step 9 (Track 2)",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>Step 9 checks the Track 2 drug directions against datasets that share nothing: a structure\natlas of every possible substitution, and every mouse model on record.</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "abundance-lowering-vs-function-impairing-allele",
+          "term": "Abundance-lowering vs function-impairing allele",
+          "aliases": [],
+          "html": "<p>the two ways a missense allele can weaken\na protein: the cell makes a protein it degrades faster (<strong>less of it</strong>), or a protein present in\nnormal amounts that does its job worse (<strong>broken, not scarce</strong>). The distinction decides the\ndrug direction: only the first is helped by making or keeping more of the protein.</p>",
+          "exampleHtml": "<p><em>Example:</em> in MVA, I909T lowers BubR1 abundance while Y155C leaves the amount normal and impairs function (Suijkerbuijk 2010, PMID 20516114).</p>",
+          "context": "<p>H083, H084 and direction D3</p>",
+          "source": "docs/iteration4/step-9/research/papers.md",
+          "related": [
+            "hypomorph-hypomorphic",
+            "δδg-delta-delta-g",
+            "variant-atlas"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "site-saturation-mutagenesis-ssm",
+          "term": "Site-saturation mutagenesis (SSM)",
+          "aliases": [
+            "Site-saturation mutagenesis",
+            "SSM"
+          ],
+          "html": "<p>trying every amino acid at every position of a protein,\nin the lab or in silico, so each real variant can be read against all the ones that could have\nhappened.</p>",
+          "exampleHtml": "<p><em>Example:</em> 1,050 residues × 19 alternatives = 19,950 BubR1 substitutions.</p>",
+          "context": "<p>ThermoMPNN's scan mode, entry 149</p>",
+          "related": [
+            "variant-atlas",
+            "thermompnn"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "thermompnn",
+          "term": "ThermoMPNN",
+          "aliases": [],
+          "html": "<p>a graph neural network that reads a protein structure and predicts ΔΔG for\nevery single substitution in one pass (Dieckhaus 2024, PMID 38285937).</p>",
+          "exampleHtml": "<p><em>Example:</em> all ~20k BubR1 substitutions on the AlphaFold model in about 12 seconds on a T4 GPU, for $0.003; the container reproduced the authors' p53 example to 0.0006 kcal/mol.</p>",
+          "context": "<p>the Modal app <code>mva-zoo-thermompnn</code>, entry 149</p>",
+          "related": [
+            "δδg-delta-delta-g",
+            "site-saturation-mutagenesis-ssm",
+            "alphafold"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "relative-solvent-accessibility-rsa",
+          "term": "Relative solvent accessibility (RSA)",
+          "aliases": [
+            "Relative solvent accessibility",
+            "RSA"
+          ],
+          "html": "<p>the fraction of a residue's surface that water can\nreach, from 0 (buried in the core) to 1 (fully exposed). A substitution in the buried core is\nmore likely to unfold the protein. <strong>Shrake–Rupley</strong> is the classic way to compute it: scatter\ntest points on each atom's sphere and count those no neighbour covers.</p>",
+          "exampleHtml": "<p><em>Example:</em> the child's missense residue is buried (RSA &#x3C; 0.2) at pLDDT ≥ 90.</p>",
+          "context": "<p><code>mva.drugs.variant_atlas_sources</code>, entry 149</p>",
+          "related": [
+            "plddt",
+            "δδg-delta-delta-g"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "variant-atlas",
+          "term": "Variant atlas",
+          "aliases": [],
+          "html": "<p>one row per possible substitution of one protein, with its predicted effect\n(ΔΔG, conservation) and its structural context (RSA, pLDDT, domain). Built once per protein, it\nanswers for any future patient's allele on day one.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>ressources/track2/bub1b_atlas.parquet</code>, 19,950 rows, from <code>tools/variant_atlas.py --uniprot O60566</code>.</p>",
+          "context": "<p>E1, entry 149; gene-agnostic by construction</p>",
+          "related": [
+            "site-saturation-mutagenesis-ssm",
+            "abundance-lowering-vs-function-impairing-allele"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "leave-one-out-loo",
+          "term": "Leave-one-out (LOO)",
+          "aliases": [
+            "Leave-one-out",
+            "LOO"
+          ],
+          "html": "<p>fit a model on all examples but one, score the one left out, repeat for\neach. The honest way to measure a classifier on a handful of labels, and a noisy one: with eight\nexamples a single allele moves the result a great deal.</p>",
+          "exampleHtml": "<p><em>Example:</em> E1's logistic model scores AUROC 0.13 under LOO on eight labelled alleles — an artefact of the small set, reported as such.</p>",
+          "context": "<p>entry 149</p>",
+          "related": [
+            "ablation",
+            "leave-one-in-ablation"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "mammalian-phenotype-ontology-mp",
+          "term": "Mammalian Phenotype ontology (MP)",
+          "aliases": [
+            "Mammalian Phenotype ontology",
+            "MP"
+          ],
+          "html": "<p>the mouse counterpart of HPO: a graph of mouse phenotype\nterms from general to specific, used to annotate every mouse model.</p>",
+          "exampleHtml": "<p><em>Example:</em> MP:0001732 postnatal growth retardation.</p>",
+          "context": "<p>the mouse half of E2, entry 150</p>",
+          "related": [
+            "hpo-human-phenotype-ontology",
+            "phenotype-twin",
+            "upheno-and-sssom"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "mgi-genotype",
+          "term": "MGI genotype",
+          "aliases": [],
+          "html": "<p>one mouse line's exact allele combination, as curated by Mouse Genome\nInformatics, with the MP terms observed in it. A <strong>knock-in allele</strong> is an engineered allele\ncarrying one specific change (often a patient mutation); a <strong>hypomorph</strong> mouse carries an allele\nthat makes less protein.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>Bub1b&#x3C;tm1Jvd>/Bub1b&#x3C;tm1Jvd></code> is the BubR1 H/H hypomorph (PMID 15208629); <code>Bub1b&#x3C;tm3.1Jvd></code> is the L1002P knock-in.</p>",
+          "context": "<p><code>MGI_PhenoGenoMP.rpt</code>, 76,699 genotypes scored in entry 150</p>",
+          "related": [
+            "mammalian-phenotype-ontology-mp",
+            "hypomorph-hypomorphic",
+            "phenotype-twin"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "upheno-and-sssom",
+          "term": "uPheno and SSSOM",
+          "aliases": [],
+          "html": "<p>uPheno is the cross-species phenotype ontology that aligns HPO with MP\n(and fish, fly and worm ontologies); SSSOM is the plain-TSV standard its term-to-term mappings\nare published in, one row per mapping with a predicate and a justification.</p>",
+          "exampleHtml": "<p><em>Example:</em> HP:0000121 nephrocalcinosis ↔ MP:0003197 nephrocalcinosis.</p>",
+          "context": "<p>the bridge between the child's terms and the mouse terms, entry 150</p>",
+          "related": [
+            "hpo-human-phenotype-ontology",
+            "mammalian-phenotype-ontology-mp"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "phenotype-twin",
+          "term": "Phenotype twin",
+          "aliases": [],
+          "html": "<p>the model organism whose recorded phenotype is closest to one patient's,\nfound by semantic similarity over all models, never by picking the gene first. Its published\ninterventions become candidate treatments with an animal-model rung.</p>",
+          "exampleHtml": "<p><em>Example:</em> the best Bub1b genotype ranks in the top 1.0–1.4 % of 76,699 MGI genotypes against the child's terms.</p>",
+          "context": "<p>E2, entry 150; <code>tools/phenotype_twin.py</code> takes any HPO set</p>",
+          "related": [
+            "semantic-similarity-resnik-lin-jiang-conrath-phenomizer",
+            "best-match-average-bma",
+            "phenodigm",
+            "ic-matched-null"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "phenodigm-2",
+          "term": "Phenodigm",
+          "aliases": [],
+          "html": "<p>a model-to-disease similarity that mixes the single best term match with the\naverage match, each divided by what a perfect match would score. Used here as E2's second\nrollup beside symmetric best-match-average; a claim holds only if both agree.</p>",
+          "exampleHtml": "<p><em>Example:</em> Phenodigm ranks the BubR1 H/H mouse 768th of 76,699; the symmetric rollup prefers the K243R/+ knock-in.</p>",
+          "context": "<p>entry 150</p>",
+          "related": [
+            "best-match-average-bma",
+            "phenotype-twin"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "ic-matched-null",
+          "term": "IC-matched null",
+          "aliases": [],
+          "html": "<p>random term sets whose terms are as specific (same information content) as\nthe real ones. It asks whether the match comes from <em>these</em> terms or from <em>any</em> terms this\nspecific.</p>",
+          "exampleHtml": "<p><em>Example:</em> 1,000 random 8-term sets; the child's terms beat them with p = 0.026.</p>",
+          "context": "<p>entry 150</p>",
+          "related": [
+            "information-content-ic-t-log-p-t",
+            "phenotype-twin"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "senescence-and-senolytics",
+          "term": "Senescence and senolytics",
+          "aliases": [],
+          "html": "<p>a senescent cell has stopped dividing for good but stays alive\nand secretes inflammatory signals (the SASP); a senolytic is a drug that selectively kills such\ncells. <strong>INK-ATTAC</strong> is a transgene that kills p16Ink4a-expressing (senescent) cells when the\nmouse is given a trigger compound — the genetic proof behind the drug idea.</p>",
+          "exampleHtml": "<p><em>Example:</em> clearing p16Ink4a cells delayed ageing phenotypes in BubR1 hypomorph mice (Baker 2011, PMID 22048312); dasatinib (approved) plus quercetin is the standard senolytic pair.</p>",
+          "context": "<p>new direction D5, <code>ressources/track2/model_interventions.tsv</code></p>",
+          "related": [
+            "hypomorph-hypomorphic",
+            "phenotype-twin"
           ],
           "firstSeen": "2026-09-24"
         }

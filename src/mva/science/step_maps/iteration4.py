@@ -172,5 +172,13 @@ ITERATION4: tuple[Step, ...] = (
         # final Track 2 submission is assembled from them, not rewritten.
         status="open",
         track="track2",
+        figures=(
+            "figures/it4/step9-e1-atlas.svg",
+            "figures/it4/step9-e1-distribution.svg",
+            "figures/it4/step9-e1-roc.svg",
+            "figures/it4/step9-e2-rank.svg",
+            "figures/it4/step9-e2-terms.svg",
+            "figures/it4/step9-e2-controls.svg",
+        ),
     ),
 )

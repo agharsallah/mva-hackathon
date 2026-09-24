@@ -1686,78 +1686,263 @@
     },
     {
       "docs": "docs/iteration4/step-9",
-      "entries": [],
-      "figures": [],
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "149-the-stability-atlas-and-the-childs-missense.md",
+          "inputs": [
+            "input | value",
+            "structure | AlphaFold DB `AF-O60566-F1-model_v6.pdb` (model 2025-08-01, UniProt seq v3, mean pLDDT 63.59), sha256 `684e4316\u2026cd49f`; CC BY 4.0. Its sequence equals the UniProt canonical (checked by `build`).",
+            "features | UniProtKB O60566 JSON (entry v234; sha256 `73899b2e\u202636ec1`); InterPro `entry/all` for O60566 (Pfam, CDD, SMART, PROSITE profile rows kept); a KEN tripeptide scan; one literature span: BUB3-binding (GLEBS) bound 387\u2013483 (Suijkerbuijk 2010: the 386X truncation cannot bind BUB3, 483X can). UniProt and InterPro annotate no GLEBS and no ABBA motif; none is invented.",
+            "stability model | ThermoMPNN (Dieckhaus 2024, PNAS, PMID 38285937; MIT), repo commit `370f76ec62bd`, `thermoMPNN_default.pt` + ProteinMPNN `v_48_020`; weights digest `d7169ce6\u2026:fdacf4e2\u2026` (sha256 over each weights folder). Sign: + = destabilising.",
+            "sequence model (comparator) | ESM1b LLR matrix for O60566 (Brandes 2023, PMID 37563329; MIT), from `ALL_hum_isoforms_ESM1b_LLR.zip` sha256 `42b90ce7\u20267cd0` already in `build/it4/tables/esm1b/` (step 8). Not re-run.",
+            "RSA | Shrake\u2013Rupley in numpy (probe 1.4 \u00c5, 100 dots, Bondi radii) \u00f7 Tien 2013 max ASA, capped at 1. Checked against Biopython 1.88 `ShrakeRupley`: Pearson r = 0.997 over 1,050 residues, max |\u0394| 0.099.",
+            "labels | `ressources/track2/bub1b_published_alleles.tsv` (+ provenance): full texts of Suijkerbuijk 2010 (PMC2887387, eutils XML), Sieben 2020 (PMC6934189 HTML), Wei 2026 (PMC13349884), abstracts incl. Hahn 2016 (PMID 27239782). Hanks 2004, Matsuura 2006, Rio Frio 2010 are not in PMC; their missense alleles either are the ones Suijkerbuijk assayed (Hanks, same group) or have no allele-level protein readout in the abstract (Matsuura; full text not accessed).",
+            "the child's allele | the BUB1B `missense_variant` record's `hgvs_p` in `build/it4/records.parquet`, found via `[case] confirmed_gene` in `src/mva/zoo/zoo.example.toml`; read only by `place`; output `build/it4/track2-e1/child.json` only",
+            "GPU | Modal T4, app `mva-zoo-thermompnn` (ephemeral `modal run`), `max_containers=1`, no volume (weights ship in the cloned repo)",
+            "Labels recovered:",
+            "class | primary (MVA patients) | extended only",
+            "abundance-lowering | I909T, R727C, R814H, L844F, L1012P (5) | \u2014",
+            "stable | Y155C (function-impairing: checkpoint lost), R550Q (functional), Q921H (wild-type-like, in cis with L844F) (3) | C945Y (heterozygous colorectal-cancer carrier, not MVA)",
+            "ambiguous (excluded) | \u2014 | W722R, A739S (carrier lymphocytes, qualitative trend, mRNA also lower)",
+            "**The child's allele is not among the labelled alleles** (`place` \u2192 `in_labelled_set: false`)."
+          ],
+          "number": "149",
+          "path": "docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md",
+          "title": "The BubR1 stability atlas and the child's missense allele",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-9/entry/149-the-stability-atlas-and-the-childs-missense.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "150-the-childs-phenotype-twin-among-mgi-mice.md",
+          "inputs": [
+            "Raw files in `build/it4/track2-e2/raw/` (not committed; `manifest.json` there, copied into",
+            "[`ressources/phenotype/phenotype_twin.provenance.json`](../../../../ressources/phenotype/phenotype_twin.provenance.json)).",
+            "All fetched 2026-09-24.",
+            "file | release / Last-Modified | bytes | sha256 (first 16) | licence",
+            "`MGI_PhenoGenoMP.rpt` (genotype \u2192 MP) | 2026-09-21 | 54,098,874 | `3649756742d27455` | MGI: free use, cite MGI",
+            "`MGI_PhenotypicAllele.rpt` (allele type + attributes) | 2026-09-21 | 32,307,545 | `4939874cf83d5ad0` | MGI: free use, cite MGI",
+            "`mp.obo` | `releases/2026-08-25` | 7,679,452 | `30840ff64fd27b14` | CC BY 4.0",
+            "`hp.obo` | `hp/releases/2026-09-01` | 10,863,613 | `93dace952fcb3ec4` | HPO licence",
+            "`phenotype.hpoa` (controls) | 2026-09-02 | 35,816,037 | `e89aa39c8f97bf5a` | HPO licence",
+            "`mp_hp_mgi_all.sssom.tsv` (tier 1) | GitHub master | 328,986 | `6b23131d80d596a8` | CC BY 4.0",
+            "`upheno-species-independent.sssom.tsv` (tier 1) | GitHub master | 2,554,239 | `9caed6f21238b5fa` | CC BY 4.0",
+            "`hp-to-mp-bestmatches.tsv` (tier 2) | GitHub master | 1,262,175 | `f9ec5b8b7a777463` | CC BY 4.0",
+            "Code: `src/mva/phenotype/cross_species{,_io,_controls,_run}.py`, `tools/phenotype_twin.py`,",
+            "`tools/render_step9_e2.py`; tests `tests/test_cross_species.py` (10, synthetic ontology).",
+            "Parameters: null n = 1,000, seed 0, IC window \u00b10.25 nats; controls k = 8, 20 draws, seed 0.",
+            "Corpus: **76,699** genotypes (0 unresolved MP ids), **14,860** live MP terms, **13,680** HP terms",
+            "with a bridge row (13,083 with projected IC > 0 = the null pool), **22** Bub1b genotypes."
+          ],
+          "number": "150",
+          "path": "docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md",
+          "title": "The child's phenotype twin among 76,699 MGI mouse genotypes",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-9/entry/150-the-childs-phenotype-twin-among-mgi-mice.md",
+          "violations": []
+        }
+      ],
+      "figures": [
+        {
+          "bytes": 38110,
+          "caption": {
+            "means": "High-\u0394\u0394G alleles of both classes sit in the two folded domains, so position and stability alone cannot tell an unstable allele from an inactive one. That is why H083 fails.",
+            "name": "step9-e1-atlas.svg",
+            "reads": "Mean ThermoMPNN \u0394\u0394G of the 19 substitutions at each BubR1 residue along the protein, with UniProt domains; the folded TPR and pseudokinase domains run high and the disordered middle near zero. The published MVA alleles are marked by class (red = abundance-lowering, blue = stable). The child's allele is not marked on the position axis.",
+            "source": "tools/render_step9_e1.py over ressources/track2/bub1b_atlas.parquet; entry 149"
+          },
+          "kind": "svg",
+          "name": "step9-e1-atlas.svg",
+          "path": "figures/it4/step9-e1-atlas.svg",
+          "slug": "step9-e1-atlas.svg",
+          "title": "step9 e1 atlas",
+          "url": "/api/steps/iteration4/step-9/figure/step9-e1-atlas.svg"
+        },
+        {
+          "bytes": 24529,
+          "caption": {
+            "means": "The child's substitution is more destabilising than most possible changes. That supports, weakly, the abundance-lowering reading that direction D3 needs.",
+            "name": "step9-e1-distribution.svg",
+            "reads": "The distribution of \u0394\u0394G over all 19,950 possible substitutions, with the child's missense as one line at the 87th percentile.",
+            "source": "tools/render_step9_e1.py; entry 149"
+          },
+          "kind": "svg",
+          "name": "step9-e1-distribution.svg",
+          "path": "figures/it4/step9-e1-distribution.svg",
+          "slug": "step9-e1-distribution.svg",
+          "title": "step9 e1 distribution",
+          "url": "/api/steps/iteration4/step-9/figure/step9-e1-distribution.svg"
+        },
+        {
+          "bytes": 31676,
+          "caption": {
+            "means": "With eight labels the curve cannot distinguish a useful score from chance. The test had no power, and the entry reports it as such.",
+            "name": "step9-e1-roc.svg",
+            "reads": "ROC of \u0394\u0394G separating 5 abundance-lowering from 3 stable published MVA alleles: AUROC 0.60 (bootstrap 95% CI 0.13-1.00); the extended set with one non-MVA stable allele gives 0.70.",
+            "source": "tools/render_step9_e1.py; entry 149"
+          },
+          "kind": "svg",
+          "name": "step9-e1-roc.svg",
+          "path": "figures/it4/step9-e1-roc.svg",
+          "slug": "step9-e1-roc.svg",
+          "title": "step9 e1 roc",
+          "url": "/api/steps/iteration4/step-9/figure/step9-e1-roc.svg"
+        },
+        {
+          "bytes": 49512,
+          "caption": {
+            "means": "The similarity method finds known disease genes, so the Bub1b result is not an artefact of the scorer.",
+            "name": "step9-e2-controls.svg",
+            "reads": "Method checks: the Bloom syndrome to Blm positive control (median 2.73% / 1.40% over 20 draws), 6 of 7 calibration diseases in the top 5%, and the other checkpoint genes' mice (Bub1 ties at 1.09%; the others 7-16%).",
+            "source": "tools/render_step9_e2.py; entry 150"
+          },
+          "kind": "svg",
+          "name": "step9-e2-controls.svg",
+          "path": "figures/it4/step9-e2-controls.svg",
+          "slug": "step9-e2-controls.svg",
+          "title": "step9 e2 controls",
+          "url": "/api/steps/iteration4/step-9/figure/step9-e2-controls.svg"
+        },
+        {
+          "bytes": 42245,
+          "caption": {
+            "means": "The child's terms point at Bub1b mice about ten times better than random terms of equal specificity. That supports using the hypomorph models' interventions, while the two rollups still disagree on the single best mouse.",
+            "name": "step9-e2-rank.svg",
+            "reads": "Every Bub1b genotype's percentile among 76,699 MGI genotypes under the symmetric and Phenodigm rollups. H/H and H/L1002P sit near 1% on Phenodigm, and K243R/+ leads on symmetric. The IC-matched null band spans 2.0-31.7% (symmetric) and 0.9-25.1% (Phenodigm).",
+            "source": "tools/render_step9_e2.py over ressources/phenotype/phenotype_twin.json; entry 150"
+          },
+          "kind": "svg",
+          "name": "step9-e2-rank.svg",
+          "path": "figures/it4/step9-e2-rank.svg",
+          "slug": "step9-e2-rank.svg",
+          "title": "step9 e2 rank",
+          "url": "/api/steps/iteration4/step-9/figure/step9-e2-rank.svg"
+        },
+        {
+          "bytes": 44201,
+          "caption": {
+            "means": "The match rests on the growth and muscle phenotypes, the same ones the D5 papers rescue. The kidney phenotype is unexplained by any mouse model.",
+            "name": "step9-e2-terms.svg",
+            "reads": "A heat map of each of the child's HPO terms against its best-matching MP term in the top Bub1b genotypes. Muscle atrophy (5.68) and failure to thrive (3.75, exact) carry the H/H match. The parental and prematurity terms match only through the mutant mice's infertility, and nephrocalcinosis scores 0 because no Bub1b genotype carries a kidney term.",
+            "source": "tools/render_step9_e2.py; entry 150"
+          },
+          "kind": "svg",
+          "name": "step9-e2-terms.svg",
+          "path": "figures/it4/step9-e2-terms.svg",
+          "slug": "step9-e2-terms.svg",
+          "title": "step9 e2 terms",
+          "url": "/api/steps/iteration4/step-9/figure/step9-e2-terms.svg"
+        }
+      ],
       "goal": "Does the mechanism class of the child's BUB1B alleles, checked against sources that share nothing (a structure atlas, mouse phenotypes, expression signatures, cell-line screens, the child's own pharmacogenome, phenotype-specific safety), support each drug direction \u2014 and which approved candidates survive all of them?",
       "hypotheses": [
         {
           "author": "claude-step9",
-          "confidence": null,
+          "confidence": 0.15,
           "gene": "BUB1B",
           "hypothesis_id": "H083",
           "iteration": "iteration4",
           "path": "e1-atlas",
           "prediction": "over the MVA missense alleles Suijkerbuijk 2010 (PMID 20516114) and the other verified papers classify by protein level, the ddG-based score ranks abundance-lowering above function-impairing with AUROC >= 0.8",
-          "reasoning": "",
-          "recorded_at": "2026-09-24T08:49:28.851716",
+          "reasoning": "refuted as registered on both clauses: AUROC 0.60 (<= 0.6) and only 3 stable alleles (< 4), so the test had no power; stated as a failure to separate, not evidence that stability is irrelevant (entry 149)",
+          "recorded_at": "2026-09-24T09:20:59.693082",
           "refuted_by": "AUROC <= 0.6, or fewer than 4 labelled alleles per class can be recovered from the literature (then the test has no power and is reported as such)",
-          "revision": 1,
+          "revision": 2,
           "statement": "P4-18: predicted stability change (ddG) separates the published abundance-lowering MVA missense alleles of BUB1B from the function-impairing ones",
-          "status": "proposed",
+          "status": "refuted",
           "step": "step-9"
         },
         {
           "author": "claude-step9",
-          "confidence": null,
+          "confidence": 0.55,
           "gene": "BUB1B",
           "hypothesis_id": "H084",
           "iteration": "iteration4",
           "path": "e1-atlas",
           "prediction": "its predicted ddG falls in the most destabilising 20% of all possible BubR1 missense substitutions and the E1 classifier calls it abundance-lowering",
-          "reasoning": "",
-          "recorded_at": "2026-09-24T08:49:30.019777",
+          "reasoning": "the ddG half holds (87th percentile, inside the top 20%); the classifier half is met only nominally, since p = 0.64 equals the base rate; confidence a little above the prior, as the entry recommends (entry 149)",
+          "recorded_at": "2026-09-24T09:21:01.267184",
           "refuted_by": "its ddG falls in the least destabilising 50% of all possible substitutions, or the classifier calls it function-impairing",
-          "revision": 1,
+          "revision": 2,
           "statement": "P4-19: the child's BUB1B missense allele is predicted abundance-lowering (destabilising), which is the class the raise-BubR1 direction (D3) needs",
-          "status": "proposed",
+          "status": "supported",
           "step": "step-9"
         },
         {
           "author": "claude-step9",
-          "confidence": null,
+          "confidence": 0.7,
           "gene": "BUB1B",
           "hypothesis_id": "H085",
           "iteration": "iteration4",
           "path": "e2-phenotype-twin",
           "prediction": "the best-matching Bub1b genotype ranks in the top 5% of all MGI mouse genotypes by phenotype similarity to the eight terms",
-          "reasoning": "",
-          "recorded_at": "2026-09-24T08:49:31.367304",
+          "reasoning": "top 1.0-1.4% of 76,699 genotypes on both rollups, inside the 5% prediction; about 10x chance against an IC-matched null (one cell p = 0.060); the method passes its positive control (entry 150)",
+          "recorded_at": "2026-09-24T09:24:27.523102",
           "refuted_by": "the best Bub1b genotype ranks outside the top 25%",
-          "revision": 1,
+          "revision": 2,
           "statement": "P4-20: the child's eight HPO terms match Bub1b mutant mice better than almost every other mouse model",
-          "status": "proposed",
+          "status": "supported",
           "step": "step-9"
         },
         {
           "author": "claude-step9",
-          "confidence": null,
+          "confidence": 0.45,
           "gene": "BUB1B",
           "hypothesis_id": "H086",
           "iteration": "iteration4",
           "path": "e2-phenotype-twin",
           "prediction": "the top-scoring Bub1b genotype carries a hypomorphic allele (e.g. H/H or H/L1002P), not a null or heterozygous knockout",
-          "reasoning": "",
-          "recorded_at": "2026-09-24T08:49:32.528202",
+          "reasoning": "undecided by its own terms: the two rollups pick different winners (K243R/+ knock-in vs H/H or H/L1002P hypomorph), no null genotype wins anywhere; the forward-only view favours H/H but was not pre-registered (entry 150)",
+          "recorded_at": "2026-09-24T09:24:28.805357",
           "refuted_by": "a null, knockout or heterozygous-null Bub1b genotype scores highest",
-          "revision": 1,
+          "revision": 2,
           "statement": "P4-21: among Bub1b mouse genotypes, a hypomorphic or compound hypomorph genotype matches the child best, so the interventions tested in hypomorph mice are the ones to import",
-          "status": "proposed",
+          "status": "testing",
           "step": "step-9"
         }
       ],
       "kind": "research",
       "narrative": {
-        "figures": [],
+        "figures": [
+          {
+            "means": "High-\u0394\u0394G alleles of both classes sit in the two folded domains, so position and stability alone cannot tell an unstable allele from an inactive one. That is why H083 fails.",
+            "name": "step9-e1-atlas.svg",
+            "reads": "Mean ThermoMPNN \u0394\u0394G of the 19 substitutions at each BubR1 residue along the protein, with UniProt domains; the folded TPR and pseudokinase domains run high and the disordered middle near zero. The published MVA alleles are marked by class (red = abundance-lowering, blue = stable). The child's allele is not marked on the position axis.",
+            "source": "tools/render_step9_e1.py over ressources/track2/bub1b_atlas.parquet; entry 149"
+          },
+          {
+            "means": "The child's substitution is more destabilising than most possible changes. That supports, weakly, the abundance-lowering reading that direction D3 needs.",
+            "name": "step9-e1-distribution.svg",
+            "reads": "The distribution of \u0394\u0394G over all 19,950 possible substitutions, with the child's missense as one line at the 87th percentile.",
+            "source": "tools/render_step9_e1.py; entry 149"
+          },
+          {
+            "means": "With eight labels the curve cannot distinguish a useful score from chance. The test had no power, and the entry reports it as such.",
+            "name": "step9-e1-roc.svg",
+            "reads": "ROC of \u0394\u0394G separating 5 abundance-lowering from 3 stable published MVA alleles: AUROC 0.60 (bootstrap 95% CI 0.13-1.00); the extended set with one non-MVA stable allele gives 0.70.",
+            "source": "tools/render_step9_e1.py; entry 149"
+          },
+          {
+            "means": "The child's terms point at Bub1b mice about ten times better than random terms of equal specificity. That supports using the hypomorph models' interventions, while the two rollups still disagree on the single best mouse.",
+            "name": "step9-e2-rank.svg",
+            "reads": "Every Bub1b genotype's percentile among 76,699 MGI genotypes under the symmetric and Phenodigm rollups. H/H and H/L1002P sit near 1% on Phenodigm, and K243R/+ leads on symmetric. The IC-matched null band spans 2.0-31.7% (symmetric) and 0.9-25.1% (Phenodigm).",
+            "source": "tools/render_step9_e2.py over ressources/phenotype/phenotype_twin.json; entry 150"
+          },
+          {
+            "means": "The match rests on the growth and muscle phenotypes, the same ones the D5 papers rescue. The kidney phenotype is unexplained by any mouse model.",
+            "name": "step9-e2-terms.svg",
+            "reads": "A heat map of each of the child's HPO terms against its best-matching MP term in the top Bub1b genotypes. Muscle atrophy (5.68) and failure to thrive (3.75, exact) carry the H/H match. The parental and prematurity terms match only through the mutant mice's infertility, and nephrocalcinosis scores 0 because no Bub1b genotype carries a kidney term.",
+            "source": "tools/render_step9_e2.py; entry 150"
+          },
+          {
+            "means": "The similarity method finds known disease genes, so the Bub1b result is not an artefact of the scorer.",
+            "name": "step9-e2-controls.svg",
+            "reads": "Method checks: the Bloom syndrome to Blm positive control (median 2.73% / 1.40% over 20 draws), 6 of 7 calibration diseases in the top 5%, and the other checkpoint genes' mice (Bub1 ties at 1.09%; the others 7-16%).",
+            "source": "tools/render_step9_e2.py; entry 150"
+          }
+        ],
         "hands_to": {
           "steps": [],
           "what": "A Track 2 submission assembled from the per-experiment submission notes in docs/iteration4/step-9/submission-notes/."
@@ -1770,11 +1955,15 @@
         "sources": [
           "docs/iteration4/step-9/README.md",
           "docs/iteration4/step-9/research/papers.md",
-          "docs/iteration4/step-9/research/data-sources.md"
+          "docs/iteration4/step-9/research/data-sources.md",
+          "docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md",
+          "docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md",
+          "docs/iteration4/step-9/submission-notes/E1.md",
+          "docs/iteration4/step-9/submission-notes/E2.md"
         ],
         "step": "step-9",
-        "summary": "In progress. This step tests the Track 2 drug directions against sources that share nothing. It asks two questions: is the child's missense BubR1 unstable or inactive (a structure atlas over every possible substitution), and which mouse model is the child's phenotypic twin (the eight HPO terms against every mouse genotype)? Expression signatures, cell-line screens, the child's pharmacogenome and phenotype-specific safety follow. Every experiment writes a submission note the final report is assembled from.",
-        "verdict": "No verdict yet: H083 to H086 are filed before any run.",
+        "summary": "This step tests the Track 2 drug directions against sources that share nothing. E1 scored every possible BubR1 substitution for stability (19,950, ThermoMPNN on Modal, $0.003). The child's missense is predicted destabilising: 87th percentile, buried, inside the pseudokinase domain. The eight published MVA alleles with a protein-level readout are too few for \u0394\u0394G to tell unstable from inactive (AUROC 0.60). E2 scored the child's eight HPO terms against all 76,699 MGI mouse genotypes. The best Bub1b mouse ranks in the top 1.0-1.4%, and its published interventions give a new senolytic/mTOR direction (D5). E3 to E10 follow; each experiment writes a submission note the final report is assembled from.",
+        "verdict": "H083 is refuted as registered, and without power: AUROC 0.60 with only 3 stable alleles. H084 is supported, but weakly (0.55): the \u0394\u0394G half holds, while the classifier's call equals its base rate. H085 is supported (0.70): top 1.0-1.4% of mouse genotypes, about 10 times chance, and the positive control passes. H086 is undecided (0.45): the two similarity rollups pick different Bub1b mice, though no null genotype wins under either.",
         "why": "The iteration-2 Track 2 report rests its deepest lead (raise BubR1) on one mouse paper, and step 8 left the mechanism question open: a fold cannot say whether the weakened copy is unstable or inactive. Published MVA alleles split into exactly those two classes, and the mouse allelic series carries the tested interventions, so both questions are answerable from public data."
       },
       "slug": "step-9",

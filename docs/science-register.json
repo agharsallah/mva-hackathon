@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-24T08:49:32",
+  "generated_at": "2026-09-24T09:24:28",
   "steps": [
     {
       "slug": "step-0",
@@ -3074,11 +3074,30 @@
       "refuted_by": "AUROC <= 0.6, or fewer than 4 labelled alleles per class can be recovered from the literature (then the test has no power and is reported as such)",
       "gene": "BUB1B",
       "path": "e1-atlas",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.15,
+      "suggested_confidence": 0.2315,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 194,
+          "direction": "refutes",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "Over 8 published MVA missense alleles of BUB1B with a protein-level readout (5 abundance-lowering, 3 stable; PMID 20516114), ThermoMPNN ddG ranks abundance-lowering above stable with AUROC 0.60 (bootstrap 95% CI 0.13-1.00): at the refutation line, and under 4 stable alleles, so the test had no power",
+          "source_ref": "docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 195,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "Adding one non-MVA stable allele (PMID 27239782) gives AUROC 0.70 (0.25-1.00); a sequence-only score (ESM1b) gives 0.53 on the MVA set",
+          "source_ref": "docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H084",
@@ -3088,11 +3107,30 @@
       "refuted_by": "its ddG falls in the least destabilising 50% of all possible substitutions, or the classifier calls it function-impairing",
       "gene": "BUB1B",
       "path": "e1-atlas",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.55,
+      "suggested_confidence": 0.69,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 196,
+          "direction": "supports",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "The child's BUB1B missense has ThermoMPNN ddG at the 87th percentile of all 19,950 possible BubR1 substitutions (74th among folded residues), buried and inside the UniProt pseudokinase domain",
+          "source_ref": "docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 197,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "The E1 classifier calls the child's missense abundance-lowering with p = 0.64, equal to the class base rate (0.625); its leave-one-out AUROC is 0.13, so the call carries no information beyond the prior",
+          "source_ref": "docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H085",
@@ -3102,11 +3140,30 @@
       "refuted_by": "the best Bub1b genotype ranks outside the top 25%",
       "gene": "BUB1B",
       "path": "e2-phenotype-twin",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.7,
+      "suggested_confidence": 0.8808,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 198,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "Best Bub1b genotype ranks 1,045 of 76,699 MGI genotypes (1.36%, symmetric BMA) and 768 (1.00%, Phenodigm-style) on the 8 terms; 1.07% / 0.87% on the 7 proband terms; IC-matched null (n = 1,000) p = 0.026 / 0.060 (8 terms), 0.018 / 0.040 (7)",
+          "source_ref": "docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 199,
+          "direction": "supports",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "Method check: positive control Bloom to Blm median 2.73% / 1.40% over 20 draws; 6 of 7 calibration diseases in the top 5% on both rollups (the miss: MVA1's own HPO annotation to Bub1b at 10.4%)",
+          "source_ref": "docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H086",
@@ -3116,11 +3173,30 @@
       "refuted_by": "a null, knockout or heterozygous-null Bub1b genotype scores highest",
       "gene": "BUB1B",
       "path": "e2-phenotype-twin",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "testing",
+      "confidence": 0.45,
+      "suggested_confidence": 0.5987,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 200,
+          "direction": "neutral",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Symmetric BMA's top Bub1b genotype is K243R/+ (acetylation-deficient knock-in, neither hypomorph nor null); Phenodigm's is H/H (8 terms) or H/L1002P (7 terms), both hypomorphic; the entry's both-rollups-agree rule fails; no null-type genotype is best under any rollup (best null rank 10,420 / 6,431)",
+          "source_ref": "docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 201,
+          "direction": "supports",
+          "strength": 0.2,
+          "kind": "measurement",
+          "claim": "Not pre-registered: forward-only best is H/H at rank 39 (0.05%); H/H matches 7 of 8 terms with IC > 0 while K243R/+ matches only rhabdomyosarcoma; dropping rhabdomyosarcoma flips the symmetric winner to H/H",
+          "source_ref": "docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md",
+          "lineage_ref": ""
+        }
+      ]
     }
   ]
 }
