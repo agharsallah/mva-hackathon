@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-24T09:47:24",
+  "generated_at": "2026-09-24T10:34:10",
   "steps": [
     {
       "slug": "step-0",
@@ -3206,11 +3206,39 @@
       "refuted_by": "no approved statin shows RMS selectivity at p < 0.2, or most statins point the other way",
       "gene": "",
       "path": "e4-prism",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.55,
+      "suggested_confidence": 0.69,
+      "revisions": 3,
+      "evidence": [
+        {
+          "id": 202,
+          "direction": "supports",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "In PRISM Repurposing 24Q2 (6,790 compounds \u00d7 919 lines), 4 of the 5 approved statins measurable on \u2265 3 of the 14 rhabdomyosarcoma lines are more sensitive in those lines; simvastatin Cliff's \u03b4 +0.681 (95 % CI 0.417\u20130.875, n 3 vs 528, one-sided p 0.0189) and rosuvastatin \u03b4 +0.274 (\u22120.070\u20130.557, n 14 vs 858, p 0.0394).",
+          "source_ref": "docs/iteration4/step-9/methodology/151-prism-replication-of-the-track2-leads.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 203,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "No statin survives Benjamini-Hochberg correction across the 24 candidates (best q = 0.132), and the negative-control band for the same contrast spans Cliff's \u03b4 \u22120.73 to +0.67, so a 3-line result of \u03b4 +0.68 is inside the noise.",
+          "source_ref": "docs/iteration4/step-9/methodology/151-prism-replication-of-the-track2-leads.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 204,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "Against other soft-tissue lines only, rosuvastatin reaches \u03b4 +0.584 (0.169\u20130.922, n 14 vs 11, p 0.0074); lovastatin, pravastatin and mevastatin are measured on 2 rhabdomyosarcoma lines and cannot be tested.",
+          "source_ref": "docs/iteration4/step-9/methodology/151-prism-replication-of-the-track2-leads.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H088",
@@ -3220,11 +3248,30 @@
       "refuted_by": "chloroquine shows no aneuploidy trend at p < 0.2, or the high-aneuploidy group is less sensitive",
       "gene": "",
       "path": "e4-prism",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.2,
+      "suggested_confidence": 0.2315,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 205,
+          "direction": "refutes",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "Chloroquine shows no aneuploidy selectivity in PRISM (Cliff's \u03b4 +0.027, 95 % CI \u22120.088\u20130.142, n 241 high vs 180 low, one-sided p 0.315); the tertile split gives p 0.372 and chloroquine is absent from the 20Q2 dose-response release.",
+          "source_ref": "docs/iteration4/step-9/methodology/151-prism-replication-of-the-track2-leads.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 206,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "Three of four D2 drugs (bortezomib, metformin, chloroquine) still point toward high-aneuploidy lines being more sensitive, none reaching p < 0.05, so the screen withholds support rather than reversing the direction.",
+          "source_ref": "docs/iteration4/step-9/methodology/151-prism-replication-of-the-track2-leads.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H089",
@@ -3234,11 +3281,30 @@
       "refuted_by": "neither drug is in PRISM, so the screen cannot speak to D5 and the entry says so",
       "gene": "",
       "path": "e4-prism",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.8,
+      "suggested_confidence": 0.69,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 207,
+          "direction": "supports",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "Dasatinib is the 99.4th percentile of all 6,790 PRISM compounds on the high- vs low-aneuploidy contrast (\u03b4 +0.135, 95 % CI 0.020\u20130.248, n 238 vs 176, p 0.0096, q 0.231) \u2014 the only candidate that clears its own negative-control band \u2014 while ranking among the least rhabdomyosarcoma-selective (\u03b4 \u22120.388).",
+          "source_ref": "docs/iteration4/step-9/methodology/151-prism-replication-of-the-track2-leads.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 208,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "Sirolimus and temsirolimus point toward high-aneuploidy lines being more sensitive in the 20Q2 AUC release (p 0.050 and 0.057) and are flat in the 24Q2 log-fold-change release; everolimus points the other way in both.",
+          "source_ref": "docs/iteration4/step-9/methodology/151-prism-replication-of-the-track2-leads.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H090",
@@ -3248,11 +3314,39 @@
       "refuted_by": "every relevant gene calls a normal phenotype, or too few pharmacogene positions are callable to make a diplotype for any of them",
       "gene": "",
       "path": "e5-pgx",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.4,
+      "suggested_confidence": 0.6682,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 209,
+          "direction": "supports",
+          "strength": 0.35,
+          "kind": "measurement",
+          "claim": "PharmCAT 3.4.0 on the child's callset returns an observed non-normal phenotype for CYP3A5 (poor metaboliser), CYP2C19 (poor/intermediate), CYP2B6 (intermediate) and RYR1 (uncertain malignant-hyperthermia susceptibility); CYP3A5 is in the pre-registered gene list and is the gene of the one paediatric-rhabdomyosarcoma pharmacogenomic study (PMID 38680001)",
+          "source_ref": "docs/iteration4/step-9/methodology/152-is-each-candidate-safe-for-this-child.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 210,
+          "direction": "neutral",
+          "strength": 0.7,
+          "kind": "measurement",
+          "claim": "Only 20 of 1,223 distinct PharmCAT definition positions are genotyped (1.6 percent). Every gene with a guideline for a shortlisted drug - SLCO1B1 (all three statins, CPIC level A), G6PD (chloroquine, hydroxychloroquine), UGT1A1 (irinotecan) - is a no call; their phenotypes exist only under --absent-to-ref, which PharmCAT labels DANGEROUS",
+          "source_ref": "docs/iteration4/step-9/methodology/152-is-each-candidate-safe-for-this-child.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 211,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "CYP3A5 poor metabolism is the majority phenotype in European-ancestry populations and CPIC has no vincristine-CYP3A5 guideline, so the call is non-normal by name and common by frequency",
+          "source_ref": "docs/iteration4/step-9/methodology/152-is-each-candidate-safe-for-this-child.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H091",
@@ -3262,11 +3356,39 @@
       "refuted_by": "no shortlisted drug carries any of those adverse effects, or the shortlist rate is no higher than the comparison set's",
       "gene": "",
       "path": "e6-safety",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.7,
+      "suggested_confidence": 0.9427,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 212,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "45 of 75 candidate ingredients (60.0 percent, Wilson 95 percent CI 48.7-70.3) carry a labelled adverse effect matching one of the child's own phenotypes, against 149 of 375 (39.7 percent, CI 34.9-44.8) in a comparison set matched on label effect breadth; the intervals do not overlap",
+          "source_ref": "docs/iteration4/step-9/methodology/152-is-each-candidate-safe-for-this-child.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 213,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Lovastatin 80/80, atorvastatin 382/397 and simvastatin 184/194 labels carry Myopathy or Rhabdomyolysis; hydroxychloroquine 45/58 Myopathy; bortezomib 35/35; vincristine's single label carries Muscle atrophy, an exact match to the child's HP:0003202",
+          "source_ref": "docs/iteration4/step-9/methodology/152-is-each-candidate-safe-for-this-child.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 214,
+          "direction": "supports",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "Method validity: the positive controls furosemide (5 of 164 labels, Nephrocalcinosis and Nephrolithiasis; published preterm association PMID 35348900) and calcitriol (7 of 46) are both recovered by the HPO-to-MedDRA mapping",
+          "source_ref": "docs/iteration4/step-9/methodology/152-is-each-candidate-safe-for-this-child.md",
+          "lineage_ref": ""
+        }
+      ]
     }
   ]
 }
