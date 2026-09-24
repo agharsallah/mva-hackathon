@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 27,
-    "entries": 656,
+    "chapters": 28,
+    "entries": 684,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 234
+    "contexts": 262
   },
   "chapters": [
     {
@@ -8899,6 +8899,357 @@
             "hypomorph-hypomorphic",
             "phenotype-twin"
           ],
+          "firstSeen": "2026-09-24"
+        }
+      ]
+    },
+    {
+      "number": 28,
+      "id": "28-reading-a-screen-and-reading-a-label--words-for-iteration-4s-step-9-e4-e5e6",
+      "title": "Reading a screen, and reading a label — words for iteration 4's step 9 (E4, E5+E6)",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>Step 9's last three experiments ask whether the drug leads survive in data nobody curated for\nthis case (a pooled cell-line screen) and whether each candidate is safe for <em>this</em> child (his\nown genome, his own phenotypes).</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "prism-profiling-relative-inhibition-simultaneously-in-mixtures",
+          "term": "PRISM (Profiling Relative Inhibition Simultaneously in Mixtures)",
+          "aliases": [
+            "PRISM",
+            "Profiling Relative Inhibition Simultaneously in Mixtures"
+          ],
+          "html": "<p>a screen that pools DNA-barcoded cancer cell lines in one well, adds a drug, and reads how much of each line's barcode survives. <em>Example:</em> PRISM Repurposing 24Q2, 6,790 compound rows × 919 lines.</p>",
+          "exampleHtml": "",
+          "context": "<p>Corsello 2020 PMID 32613204 entry 151 figures <code>step9-e4-*</code></p>",
+          "related": [
+            "aneuploidy-score-depmap",
+            "log-fold-change-lfc-in-a-screen"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "log-fold-change-lfc-in-a-screen",
+          "term": "Log fold change (LFC) in a screen",
+          "aliases": [
+            "LFC"
+          ],
+          "html": "<p>log₂ of a line's barcode abundance with drug over without; <strong>more negative = the drug killed more of that line</strong>. <em>Example:</em> bortezomib's median −4.19 across the screen.</p>",
+          "exampleHtml": "",
+          "context": "<p>PRISM 24Q2 primary, entry 151</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "auc-area-under-the-dose-response-curve",
+          "term": "AUC (area under the dose-response curve)",
+          "aliases": [
+            "AUC",
+            "area under the dose-response curve"
+          ],
+          "html": "<p>one number summarising a whole dose series; lower = more sensitive. <em>Example:</em> dasatinib median 0.694 in high-aneuploidy lines.</p>",
+          "exampleHtml": "",
+          "context": "<p>PRISM 20Q2 secondary, entry 151 the sensitivity metric that checks LFC</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "aneuploidy-score-depmap",
+          "term": "Aneuploidy score (DepMap)",
+          "aliases": [
+            "Aneuploidy score",
+            "DepMap"
+          ],
+          "html": "<p>how many chromosome arms a cell line has gained or lost, counted 0–39. <em>Example:</em> the screen's median is 20; the rhabdomyosarcoma lines' median is 21.</p>",
+          "exampleHtml": "",
+          "context": "<p><code>OmicsSignatures.csv</code> 24Q4, Cohen-Sharir 2021 entry 151</p>",
+          "related": [
+            "aneuploidy",
+            "splicing"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "cliff-s-delta",
+          "term": "Cliff's delta",
+          "aliases": [],
+          "html": "<p>P(a member of group A ranks above a member of group B) minus the reverse; +1 total separation, 0 no ordering. A rank effect size that needs no distribution. <em>Example:</em> dabrafenib +0.670 for melanoma lines.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 151, <code>mva.drugs.screen_replication.cliffs_delta</code></p>",
+          "related": [
+            "mann-whitney-u-test"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "mann-whitney-u-test",
+          "term": "Mann-Whitney U test",
+          "aliases": [],
+          "html": "<p>asks whether values from one group tend to rank above another's, using only the ordering. <em>Example:</em> simvastatin, 3 RMS lines vs 528, one-sided p 0.0189.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 151</p>",
+          "related": [
+            "cliff-s-delta"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "benjamini-hochberg-bh-correction-adjusted-p-q",
+          "term": "Benjamini-Hochberg (BH) correction / adjusted p (q)",
+          "aliases": [
+            "Benjamini-Hochberg (BH) correction",
+            "adjusted p",
+            "BH"
+          ],
+          "html": "<p>testing many drugs at once produces small p values by chance; BH rescales them so that a stated share of the \"hits\" are expected to be false. <em>Example:</em> simvastatin p 0.0189 → q 0.132 over 24 candidates.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 151</p>",
+          "related": [
+            "benjamini-hochberg-bh-correction-adjusted-p-q"
+          ],
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "negative-control-band",
+          "term": "Negative-control band",
+          "aliases": [],
+          "html": "<p>the same test run on drugs with no tie to the question, used to show what \"significant\" looks like when nothing is there. <em>Example:</em> in the 14-line RMS contrast, 95 % of unrelated drugs fall within Cliff's δ ±0.7.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 151, figure <code>step9-e4-effects</code></p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "oncotree-code",
+          "term": "Oncotree code",
+          "aliases": [],
+          "html": "<p>the standardised cancer-type label DepMap tags each line with. <em>Example:</em> <code>ERMS</code> = embryonal rhabdomyosarcoma, <code>ARMS</code> = alveolar.</p>",
+          "exampleHtml": "",
+          "context": "<p><code>Model.csv</code> 24Q4, entry 151</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "brd-id-broad-compound-id",
+          "term": "BRD id (Broad compound id)",
+          "aliases": [
+            "BRD id",
+            "Broad compound id"
+          ],
+          "html": "<p>the Broad Institute's identifier for a compound batch, e.g. <code>BRD-K09416995-001-39-9</code>; the first two segments are the molecule, the rest the batch. <em>Example:</em> lovastatin is <code>BRD-K09416995</code> across releases.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 151, <code>mva.drugs.screen_replication_prism.core_broad_id</code> the stable key for cross-release joins</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "rank-normalisation-within-line",
+          "term": "Rank normalisation (within line)",
+          "aliases": [
+            "Rank normalisation",
+            "within line"
+          ],
+          "html": "<p>replacing each cell line's responses by their percentile <em>within that line</em>, so a line that is simply easy to kill stops looking drug-selective. <em>Example:</em> it halves rosuvastatin's RMS effect.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 151, <code>ResponseMatrix.rank_normalised</code></p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "pharmacogenomics-pgx",
+          "term": "pharmacogenomics (PGx)",
+          "aliases": [
+            "pharmacogenomics",
+            "PGx"
+          ],
+          "html": "<p>how a person's own DNA changes what a drug does to them: how fast they clear it, how much reaches the target, how likely a side effect is. <em>Example:</em> a poor metaboliser of CYP2C19 clears clopidogrel slowly.</p>",
+          "exampleHtml": "",
+          "context": "<p>E5, entry 152 the two-source safety table</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "star-allele-allele",
+          "term": "star allele (* allele)",
+          "aliases": [
+            "star allele",
+            "* allele"
+          ],
+          "html": "<p>the naming scheme for pharmacogene variants: a numbered haplotype (a set of variants inherited together) rather than one position. <em>Example:</em> <code>SLCO1B1*5</code>.</p>",
+          "exampleHtml": "",
+          "context": "<p>PharmCAT's output unit entry 152 never writes one, because a star allele is a genotype</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "diplotype",
+          "term": "diplotype",
+          "aliases": [],
+          "html": "<p>the pair of star alleles a person carries in one gene, one per chromosome copy.</p>",
+          "exampleHtml": "",
+          "context": "<p>PharmCAT's intermediate result it stays in <code>build/</code>, entry 152</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "metaboliser-phenotype",
+          "term": "metaboliser phenotype",
+          "aliases": [],
+          "html": "<p>the <em>actionability word</em> a diplotype maps to: poor, intermediate, normal, rapid, ultrarapid. This, not the diplotype, is what a guideline keys on and what this repository is allowed to write down. <em>Example:</em> \"CYP3A5: Poor Metabolizer\".</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 152 <code>ressources/track2/candidate_safety.tsv</code></p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "cpic-clinical-pharmacogenetics-implementation-consortium",
+          "term": "CPIC (Clinical Pharmacogenetics Implementation Consortium)",
+          "aliases": [
+            "CPIC",
+            "Clinical Pharmacogenetics Implementation Consortium"
+          ],
+          "html": "<p>publishes the \"given this metaboliser phenotype, prescribe like this\" guidelines, graded A (act on it) to D. <em>Example:</em> SLCO1B1 and statins, level A (PMID 35152405).</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 152 CPIC API</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "pharmcat",
+          "term": "PharmCAT",
+          "aliases": [],
+          "html": "<p>open-source tool that reads a VCF, calls diplotypes for ~23 pharmacogenes and attaches the matching CPIC/DPWG/FDA guideline text. <em>Example:</em> v3.4.0, data 2026-07-13.</p>",
+          "exampleHtml": "",
+          "context": "<p>PMID 31306493 E5</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "variant-only-vcf",
+          "term": "variant-only VCF",
+          "aliases": [],
+          "html": "<p>a callset holding a record only where the sample differs from the reference; the ordinary output of a small-variant pipeline. The trap: a position with no record is <em>unknown</em>, not <em>reference</em>. <em>Example:</em> 1,204 of 1,226 PharmCAT positions absent here.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 152 E5.1 <code>ideation/data-findings.md</code> §2.3</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "absent-to-ref",
+          "term": "--absent-to-ref",
+          "aliases": [],
+          "html": "<p>PharmCAT's flag that assumes every absent PGx position is homozygous reference. Its own authors label it DANGEROUS; entry 152 runs it only as a second arm and labels every result from it an assumption.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 152</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "regional-callability-proxy",
+          "term": "regional callability proxy",
+          "aliases": [],
+          "html": "<p>a cheap way to ask whether an absent position is \"matches the reference\" or \"a hole\": compare the variant density the pipeline <em>did</em> call across the gene's region with the genome-wide density. <em>Example:</em> SLCO1B1 0.52×, ABCG2 0.00×.</p>",
+          "exampleHtml": "",
+          "context": "<p>introduced in entry 152 <code>figures/it4/step9-e56-coverage.svg</code></p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "meddra-medical-dictionary-for-regulatory-activities",
+          "term": "MedDRA (Medical Dictionary for Regulatory Activities)",
+          "aliases": [
+            "MedDRA",
+            "Medical Dictionary for Regulatory Activities"
+          ],
+          "html": "<p>the controlled vocabulary drug labels and adverse-event reports are coded in; PT = preferred term, LLT = lower-level term. <em>Example:</em> PT 10029146 Nephrocalcinosis.</p>",
+          "exampleHtml": "",
+          "context": "<p>OnSIDES <code>hpo_to_adverse_terms.tsv</code></p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "adverse-drug-event-ade-labelled-adverse-effect",
+          "term": "adverse drug event (ADE) / labelled adverse effect",
+          "aliases": [
+            "adverse drug event",
+            "labelled adverse effect",
+            "ADE"
+          ],
+          "html": "<p>an effect a regulator required the manufacturer to print on the product label. A hazard statement, not an incidence. <em>Example:</em> Myopathy on 382 of 397 atorvastatin labels.</p>",
+          "exampleHtml": "",
+          "context": "<p>E6, entry 152</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "onsides",
+          "term": "OnSIDES",
+          "aliases": [],
+          "html": "<p>a machine-readable table of drug→adverse-effect pairs extracted from regulatory labels with a fine-tuned PubMedBERT (F1 0.90). <em>Example:</em> v3.1.1, 6.93 M rows, 1,866 ingredients.</p>",
+          "exampleHtml": "",
+          "context": "<p>PMID 40179876 data CC BY 4.0</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "faers-fda-adverse-event-reporting-system",
+          "term": "FAERS (FDA Adverse Event Reporting System)",
+          "aliases": [
+            "FAERS",
+            "FDA Adverse Event Reporting System"
+          ],
+          "html": "<p>the spontaneous-report database: anyone may file a report. A numerator with <strong>no denominator</strong>, so it shows signals, never rates. <em>Example:</em> 57 paediatric reports of muscular weakness with vincristine.</p>",
+          "exampleHtml": "",
+          "context": "<p>openFDA, entry 152 E6.3</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "base-rate-of-a-labelled-effect",
+          "term": "base rate (of a labelled effect)",
+          "aliases": [
+            "base rate",
+            "of a labelled effect"
+          ],
+          "html": "<p>how often <em>any</em> comparable drug's label carries the effect. Without it, \"statins cause myopathy\" is uninterpretable. <em>Example:</em> 39.7 % of a matched comparison set.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 152 E6.2 <code>figures/it4/step9-e56-baserate.svg</code></p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "matched-comparison-set",
+          "term": "matched comparison set",
+          "aliases": [],
+          "html": "<p>controls chosen to resemble the cases on the main confounder, here the number of distinct adverse effects a drug's labels carry (a proxy for label verbosity and depth of study). <em>Example:</em> 5 nearest ingredients per candidate, 375 in all.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 152</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "wilson-score-interval",
+          "term": "Wilson score interval",
+          "aliases": [],
+          "html": "<p>a confidence interval for a proportion that stays inside 0 and 1 even with a handful of observations, unlike the normal approximation. <em>Example:</em> 45/75 → 48.7–70.3 %.</p>",
+          "exampleHtml": "",
+          "context": "<p><code>mva.drugs.patient_safety.wilson_interval</code>, entry 152</p>",
+          "firstSeen": "2026-09-24"
+        },
+        {
+          "kind": "entry",
+          "slug": "malignant-hyperthermia-susceptibility",
+          "term": "malignant hyperthermia susceptibility",
+          "aliases": [],
+          "html": "<p>an inherited risk of a life-threatening reaction to certain general anaesthetics and succinylcholine, carried by RYR1 and CACNA1S variants. <em>Example:</em> RYR1 \"Uncertain Susceptibility\" in this child's observed calls.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 152 E5.2 an incidental finding, not a Track 2 candidate</p>",
           "firstSeen": "2026-09-24"
         }
       ]

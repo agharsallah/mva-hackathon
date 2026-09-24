@@ -2971,3 +2971,92 @@ mouse is given a trigger compound — the genetic proof behind the drug idea.
 *Example:* clearing p16Ink4a cells delayed ageing phenotypes in BubR1 hypomorph mice (Baker 2011, PMID 22048312); dasatinib (approved) plus quercetin is the standard senolytic pair.
 *Context: new direction D5, `ressources/track2/model_interventions.tsv` · related: Hypomorph / hypomorphic, Phenotype twin · first seen 2026-09-24*
 
+## 28. Reading a screen, and reading a label — words for iteration 4's step 9 (E4, E5+E6)
+
+Step 9's last three experiments ask whether the drug leads survive in data nobody curated for
+this case (a pooled cell-line screen) and whether each candidate is safe for *this* child (his
+own genome, his own phenotypes).
+
+**PRISM (Profiling Relative Inhibition Simultaneously in Mixtures)** — a screen that pools DNA-barcoded cancer cell lines in one well, adds a drug, and reads how much of each line's barcode survives. *Example:* PRISM Repurposing 24Q2, 6,790 compound rows × 919 lines.
+*Context: Corsello 2020 PMID 32613204 · entry 151 · figures `step9-e4-*` · related: DepMap, Log fold change (LFC) in a screen · first seen 2026-09-24*
+
+**Log fold change (LFC) in a screen** — log₂ of a line's barcode abundance with drug over without; **more negative = the drug killed more of that line**. *Example:* bortezomib's median −4.19 across the screen.
+*Context: PRISM 24Q2 primary, entry 151 · first seen 2026-09-24*
+
+**AUC (area under the dose-response curve)** — one number summarising a whole dose series; lower = more sensitive. *Example:* dasatinib median 0.694 in high-aneuploidy lines.
+*Context: PRISM 20Q2 secondary, entry 151 · the sensitivity metric that checks LFC · first seen 2026-09-24*
+
+**Aneuploidy score (DepMap)** — how many chromosome arms a cell line has gained or lost, counted 0–39. *Example:* the screen's median is 20; the rhabdomyosarcoma lines' median is 21.
+*Context: `OmicsSignatures.csv` 24Q4, Cohen-Sharir 2021 · entry 151 · related: aneuploidy, Splicing · first seen 2026-09-24*
+
+**Cliff's delta** — P(a member of group A ranks above a member of group B) minus the reverse; +1 total separation, 0 no ordering. A rank effect size that needs no distribution. *Example:* dabrafenib +0.670 for melanoma lines.
+*Context: entry 151, `mva.drugs.screen_replication.cliffs_delta` · related: Mann-Whitney U test · first seen 2026-09-24*
+
+**Mann-Whitney U test** — asks whether values from one group tend to rank above another's, using only the ordering. *Example:* simvastatin, 3 RMS lines vs 528, one-sided p 0.0189.
+*Context: entry 151 · related: Cliff's delta · first seen 2026-09-24*
+
+**Benjamini-Hochberg (BH) correction / adjusted p (q)** — testing many drugs at once produces small p values by chance; BH rescales them so that a stated share of the "hits" are expected to be false. *Example:* simvastatin p 0.0189 → q 0.132 over 24 candidates.
+*Context: entry 151 · related: Benjamini-Hochberg (BH) correction / adjusted p (q) · first seen 2026-09-24*
+
+**Negative-control band** — the same test run on drugs with no tie to the question, used to show what "significant" looks like when nothing is there. *Example:* in the 14-line RMS contrast, 95 % of unrelated drugs fall within Cliff's δ ±0.7.
+*Context: entry 151, figure `step9-e4-effects` · first seen 2026-09-24*
+
+**Oncotree code** — the standardised cancer-type label DepMap tags each line with. *Example:* `ERMS` = embryonal rhabdomyosarcoma, `ARMS` = alveolar.
+*Context: `Model.csv` 24Q4, entry 151 · first seen 2026-09-24*
+
+**BRD id (Broad compound id)** — the Broad Institute's identifier for a compound batch, e.g. `BRD-K09416995-001-39-9`; the first two segments are the molecule, the rest the batch. *Example:* lovastatin is `BRD-K09416995` across releases.
+*Context: entry 151, `mva.drugs.screen_replication_prism.core_broad_id` · the stable key for cross-release joins · first seen 2026-09-24*
+
+**Rank normalisation (within line)** — replacing each cell line's responses by their percentile *within that line*, so a line that is simply easy to kill stops looking drug-selective. *Example:* it halves rosuvastatin's RMS effect.
+*Context: entry 151, `ResponseMatrix.rank_normalised` · first seen 2026-09-24*
+
+**pharmacogenomics (PGx)** — how a person's own DNA changes what a drug does to them: how fast they clear it, how much reaches the target, how likely a side effect is. *Example:* a poor metaboliser of CYP2C19 clears clopidogrel slowly.
+*Context: E5, entry 152 · the two-source safety table · first seen 2026-09-24*
+
+**star allele (`*` allele)** — the naming scheme for pharmacogene variants: a numbered haplotype (a set of variants inherited together) rather than one position. *Example:* `SLCO1B1*5`.
+*Context: PharmCAT's output unit · entry 152 never writes one, because a star allele is a genotype · first seen 2026-09-24*
+
+**diplotype** — the pair of star alleles a person carries in one gene, one per chromosome copy.
+*Context: PharmCAT's intermediate result · it stays in `build/`, entry 152 · first seen 2026-09-24*
+
+**metaboliser phenotype** — the *actionability word* a diplotype maps to: poor, intermediate, normal, rapid, ultrarapid. This, not the diplotype, is what a guideline keys on and what this repository is allowed to write down. *Example:* "CYP3A5: Poor Metabolizer".
+*Context: entry 152 · `ressources/track2/candidate_safety.tsv` · first seen 2026-09-24*
+
+**CPIC (Clinical Pharmacogenetics Implementation Consortium)** — publishes the "given this metaboliser phenotype, prescribe like this" guidelines, graded A (act on it) to D. *Example:* SLCO1B1 and statins, level A (PMID 35152405).
+*Context: entry 152 · CPIC API · first seen 2026-09-24*
+
+**PharmCAT** — open-source tool that reads a VCF, calls diplotypes for ~23 pharmacogenes and attaches the matching CPIC/DPWG/FDA guideline text. *Example:* v3.4.0, data 2026-07-13.
+*Context: PMID 31306493 · E5 · first seen 2026-09-24*
+
+**variant-only VCF** — a callset holding a record only where the sample differs from the reference; the ordinary output of a small-variant pipeline. The trap: a position with no record is *unknown*, not *reference*. *Example:* 1,204 of 1,226 PharmCAT positions absent here.
+*Context: entry 152 E5.1 · `ideation/data-findings.md` §2.3 · first seen 2026-09-24*
+
+**`--absent-to-ref`** — PharmCAT's flag that assumes every absent PGx position is homozygous reference. Its own authors label it DANGEROUS; entry 152 runs it only as a second arm and labels every result from it an assumption.
+*Context: entry 152 · first seen 2026-09-24*
+
+**regional callability proxy** — a cheap way to ask whether an absent position is "matches the reference" or "a hole": compare the variant density the pipeline *did* call across the gene's region with the genome-wide density. *Example:* SLCO1B1 0.52×, ABCG2 0.00×.
+*Context: introduced in entry 152 · `figures/it4/step9-e56-coverage.svg` · first seen 2026-09-24*
+
+**MedDRA (Medical Dictionary for Regulatory Activities)** — the controlled vocabulary drug labels and adverse-event reports are coded in; PT = preferred term, LLT = lower-level term. *Example:* PT 10029146 Nephrocalcinosis.
+*Context: OnSIDES · `hpo_to_adverse_terms.tsv` · first seen 2026-09-24*
+
+**adverse drug event (ADE) / labelled adverse effect** — an effect a regulator required the manufacturer to print on the product label. A hazard statement, not an incidence. *Example:* Myopathy on 382 of 397 atorvastatin labels.
+*Context: E6, entry 152 · first seen 2026-09-24*
+
+**OnSIDES** — a machine-readable table of drug→adverse-effect pairs extracted from regulatory labels with a fine-tuned PubMedBERT (F1 0.90). *Example:* v3.1.1, 6.93 M rows, 1,866 ingredients.
+*Context: PMID 40179876 · data CC BY 4.0 · first seen 2026-09-24*
+
+**FAERS (FDA Adverse Event Reporting System)** — the spontaneous-report database: anyone may file a report. A numerator with **no denominator**, so it shows signals, never rates. *Example:* 57 paediatric reports of muscular weakness with vincristine.
+*Context: openFDA, entry 152 E6.3 · first seen 2026-09-24*
+
+**base rate (of a labelled effect)** — how often *any* comparable drug's label carries the effect. Without it, "statins cause myopathy" is uninterpretable. *Example:* 39.7 % of a matched comparison set.
+*Context: entry 152 E6.2 · `figures/it4/step9-e56-baserate.svg` · first seen 2026-09-24*
+
+**matched comparison set** — controls chosen to resemble the cases on the main confounder, here the number of distinct adverse effects a drug's labels carry (a proxy for label verbosity and depth of study). *Example:* 5 nearest ingredients per candidate, 375 in all.
+*Context: entry 152 · first seen 2026-09-24*
+
+**Wilson score interval** — a confidence interval for a proportion that stays inside 0 and 1 even with a handful of observations, unlike the normal approximation. *Example:* 45/75 → 48.7–70.3 %.
+*Context: `mva.drugs.patient_safety.wilson_interval`, entry 152 · first seen 2026-09-24*
+
+**malignant hyperthermia susceptibility** — an inherited risk of a life-threatening reaction to certain general anaesthetics and succinylcholine, carried by RYR1 and CACNA1S variants. *Example:* RYR1 "Uncertain Susceptibility" in this child's observed calls.
+*Context: entry 152 E5.2 · an incidental finding, not a Track 2 candidate · first seen 2026-09-24*
