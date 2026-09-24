@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-24T09:24:28",
+  "generated_at": "2026-09-24T09:47:24",
   "steps": [
     {
       "slug": "step-0",
@@ -3197,6 +3197,76 @@
           "lineage_ref": ""
         }
       ]
+    },
+    {
+      "id": "H087",
+      "step": "step-9",
+      "statement": "P4-22: approved statins selectively inhibit rhabdomyosarcoma cell lines in the PRISM repurposing screen",
+      "prediction": "RMS lines are more sensitive than non-RMS lines to at least one approved statin (one-sided rank test p < 0.05, lineage-aware), with most statins in the same direction",
+      "refuted_by": "no approved statin shows RMS selectivity at p < 0.2, or most statins point the other way",
+      "gene": "",
+      "path": "e4-prism",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H088",
+      "step": "step-9",
+      "statement": "P4-23: chloroquine and the other D2 stress drugs are more potent in high-aneuploidy cell lines than in low-aneuploidy ones",
+      "prediction": "across PRISM lines split by published aneuploidy score, chloroquine shows greater potency in the high-aneuploidy group (one-sided rank test p < 0.05), and most D2 drugs point the same way",
+      "refuted_by": "chloroquine shows no aneuploidy trend at p < 0.2, or the high-aneuploidy group is less sensitive",
+      "gene": "",
+      "path": "e4-prism",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H089",
+      "step": "step-9",
+      "statement": "P4-24: the D5 drugs found from the child's phenotype twin (dasatinib, mTOR inhibitors) show a selectivity pattern in PRISM that the report can state honestly, whatever its direction",
+      "prediction": "both are present in PRISM and their RMS and aneuploidy contrasts are reported with effect size and p-value, whichever way they point",
+      "refuted_by": "neither drug is in PRISM, so the screen cannot speak to D5 and the entry says so",
+      "gene": "",
+      "path": "e4-prism",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H090",
+      "step": "step-9",
+      "statement": "P4-25: the child's own genome carries at least one pharmacogenomic result that changes how a shortlisted candidate would be prescribed",
+      "prediction": "PharmCAT plus CPIC over the child's genotypes returns at least one non-normal phenotype for a gene governing a shortlisted drug (SLCO1B1, ABCG2 or CYP2C9 for the statins; CYP3A5 for vincristine; CYP2C9 for valproate; G6PD for chloroquine or hydroxychloroquine)",
+      "refuted_by": "every relevant gene calls a normal phenotype, or too few pharmacogene positions are callable to make a diplotype for any of them",
+      "gene": "",
+      "path": "e5-pgx",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H091",
+      "step": "step-9",
+      "statement": "P4-26: label-derived adverse effects flag a conflict between at least one shortlisted candidate and one of the child's own phenotypes",
+      "prediction": "in OnSIDES, at least one shortlisted approved drug carries a labelled adverse effect matching nephrocalcinosis, growth failure or myopathy, above the rate of a matched set of approved drugs not on the shortlist",
+      "refuted_by": "no shortlisted drug carries any of those adverse effects, or the shortlist rate is no higher than the comparison set's",
+      "gene": "",
+      "path": "e6-safety",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
     }
   ]
 }

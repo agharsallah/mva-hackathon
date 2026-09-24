@@ -1,6 +1,6 @@
 # Step 9 — Track 2: one mechanism, many independent sources
 
-**Standing:** **E1 and E2 run 2026-09-24**; E3–E10 planned. Iteration 4, `step-9`, track 2.
+**Standing:** **E1 and E2 run 2026-09-24**; E4 and E5+E6 running; E3, E7–E10 planned. Iteration 4, `step-9`, track 2.
 Marked **open** in `src/mva/science/step_maps/iteration4.py`. Every number below is owned by an
 entry under [`methodology/`](methodology/).
 
@@ -53,13 +53,19 @@ R = Scientific Rigor (35 %), I = Potential Impact (25 %), N = Innovation (25 %),
 | E1 | BUB1B variant-to-drug-direction atlas: ΔΔG + conservation for every possible missense, trained on published MVA alleles | AlphaFold O60566, literature labels | R, I, S | **done** | H083 refuted 0.15, H084 supported 0.55 | [149](methodology/149-the-stability-atlas-and-the-childs-missense.md) |
 | E2 | Mouse–human phenotype twin: 8 HPO terms vs every MGI genotype, decoys | MGI / IMPC, HPO–MP mapping | R, N, S | **done** | H085 supported 0.70, H086 testing 0.45 | [150](methodology/150-the-childs-phenotype-twin-among-mgi-mice.md) |
 | E3 | Signature reversal on LINCS from the compound-het mouse series + human BUB1B cells | GEO GSE134780, GSE22206; SigCom LINCS | N, R | planned | — | — |
-| E4 | DepMap / PRISM: aneuploidy- and RMS-selective approved drugs | DepMap 24Q4, PRISM | R, S | planned | — | — |
-| E5 | The child's pharmacogenome (PharmCAT / CPIC) for every candidate | the VCF (+ reads at PGx positions), CPIC | I, S | planned | — | — |
-| E6 | Safety against the child's own phenotypes | OnSIDES (paediatric), FAERS | R, I, N | planned | — | — |
+| E4 | DepMap / PRISM: aneuploidy- and RMS-selective approved drugs | DepMap 24Q4, PRISM | R, S | running | H087 (`P4-22`), H088 (`P4-23`), H089 (`P4-24`) | 151 |
+| E5 | The child's pharmacogenome (PharmCAT / CPIC) for every candidate — **merged with E6** | the VCF (+ reads at PGx positions), CPIC | I, S | running | H090 (`P4-25`) | 152 |
+| E6 | Safety against the child's own phenotypes — **merged with E5** (note `E56.md`) | OnSIDES (paediatric), FAERS | R, I, N | running | H091 (`P4-26`) | 152 |
 | E7 | D5 (senolytic / mTOR) graded on the existing ladder with decoys | papers.md, E2–E4 | R, N | planned | — | — |
 | E8 | BubR1–BUB3 / CDC20 interface fold, WT vs mutant (only if E1 places the residue near one) | PDB, AlphaFold | R | planned | — | — |
 | E9 | LLM evidence extraction at scale, citation-checked (Qwen3-Next on Modal) | PubTator3, Europe PMC | S, N, R | planned | — | — |
 | E10 | PrimeKG embedding ranker (TxGNN stand-in) with the decoy | PrimeKG | N, S | planned | — | — |
+
+**Scope decision (user, 2026-09-24):** three more experiments only, in value order —
+E4, E5+E6 merged, E3. E7 (grading D5) is part of the submission write-up, not an experiment.
+E8, E9 and E10 are not run: E1 placed the residue away from the BUB3 and CDC20 binding motifs,
+and the submission already shows scalability through the TRIP13 transfer run and innovation
+through the step-7 walk.
 
 ## Submission notes — the assembly rule
 
