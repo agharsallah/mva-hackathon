@@ -1,0 +1,14 @@
+{
+  "name": "step9-e2-rank",
+  "built_at": "2026-09-24T07:18:55+00:00",
+  "built_by": "tools/render_step9_e2.py",
+  "code_version": "2551195",
+  "inputs": [
+    {
+      "path": "ressources/phenotype/phenotype_twin.json",
+      "sha256": "e26486905478e3984c5e482ff0df150e0ef2db382716ceed704bd3dcef9914cb"
+    }
+  ],
+  "study": "with-parental",
+  "entry": "docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md"
+}
