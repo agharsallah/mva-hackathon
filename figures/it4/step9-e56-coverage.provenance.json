@@ -1,0 +1,25 @@
+{
+  "name": "step9-e56-coverage",
+  "built_at": "2026-09-24T08:19:20+00:00",
+  "built_by": "tools/render_step9_e56.py",
+  "code_version": "1942daf",
+  "inputs": [
+    {
+      "path": "ressources/track2/candidate_safety.tsv",
+      "sha256": "2be4ae7b733bae68d3185ff7df2e551f9d0f151c35f85d2c896c4f44ddef2d1c"
+    },
+    {
+      "path": "build/it4/track2-e56/pgx_summary.json",
+      "sha256": "581c9c4ca8aae9e2dbf2e5938ca78fa3a22073e4939c7acfae34fab4168c3d8a"
+    },
+    {
+      "path": "build/it4/track2-e56/label_summary.json",
+      "sha256": "d811d1383de04b4f69c0db9fb7a2981eee81f6b82f3b640bf34a48ca0354895d"
+    }
+  ],
+  "sources": {
+    "genomic": "the child's callset, read only as PharmCAT actionability words",
+    "clinical": "the proband's 7 own HPO terms, mapped in hpo_to_adverse_terms.tsv"
+  },
+  "entry": "docs/iteration4/step-9/methodology/152-is-each-candidate-safe-for-this-child.md"
+}
