@@ -1,0 +1,23 @@
+{
+  "name": "step9-e4-background",
+  "built_at": "2026-09-24T08:15:11+00:00",
+  "built_by": "tools/render_step9_e4.py",
+  "code_version": "1942daf",
+  "inputs": [
+    {
+      "path": "ressources/track2/prism_replication.tsv",
+      "sha256": "978aafbb64060e60be230f01da2d5f43cdd9e3f3b9cf7ad72d6c94bb4ff4e1ba"
+    },
+    {
+      "path": "build/it4/track2-e4/background-lineage-vs-all.parquet",
+      "sha256": "e1a7635b9264540f26f127688163c599322f028ea50f394a872ea3650e02c397"
+    },
+    {
+      "path": "build/it4/track2-e4/background-aneuploidy-high-vs-low.parquet",
+      "sha256": "15b369e3fbf5474f005c0468df32dc8d53a2c5630300e9257077738c239f680c"
+    }
+  ],
+  "entry": "docs/iteration4/step-9/methodology/151-prism-replication-of-the-track2-leads.md",
+  "legend": "**Legend** \u2014 neutral machinery; the raw input; good / safe / the goal; broken / dangerous / lost points; blue bars = every compound the contrast could test; purple lines = the approved statins that cleared the 3-line minimum, with their percentile among all compounds; green = dasatinib; dotted red = each Mps1 / Aurora inhibitor, whose leftward mass reproduces Cohen-Sharir 2021's direction (aneuploid lines are *less* sensitive to short-term checkpoint inhibition).",
+  "patient_data": "none. Public cell-line screen results only; no patient-derived value and no genomic position appears on any axis"
+}
