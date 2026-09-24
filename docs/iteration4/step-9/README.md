@@ -1,6 +1,6 @@
 # Step 9 — Track 2: one mechanism, many independent sources
 
-**Standing:** **E1 and E2 run 2026-09-24**; E4 and E5+E6 running; E3, E7–E10 planned. Iteration 4, `step-9`, track 2.
+**Standing:** **E1, E2, E4 and E5+E6 run 2026-09-24**; E3 planned; E7–E10 not run. Iteration 4, `step-9`, track 2.
 Marked **open** in `src/mva/science/step_maps/iteration4.py`. Every number below is owned by an
 entry under [`methodology/`](methodology/).
 
@@ -53,9 +53,9 @@ R = Scientific Rigor (35 %), I = Potential Impact (25 %), N = Innovation (25 %),
 | E1 | BUB1B variant-to-drug-direction atlas: ΔΔG + conservation for every possible missense, trained on published MVA alleles | AlphaFold O60566, literature labels | R, I, S | **done** | H083 refuted 0.15, H084 supported 0.55 | [149](methodology/149-the-stability-atlas-and-the-childs-missense.md) |
 | E2 | Mouse–human phenotype twin: 8 HPO terms vs every MGI genotype, decoys | MGI / IMPC, HPO–MP mapping | R, N, S | **done** | H085 supported 0.70, H086 testing 0.45 | [150](methodology/150-the-childs-phenotype-twin-among-mgi-mice.md) |
 | E3 | Signature reversal on LINCS from the compound-het mouse series + human BUB1B cells | GEO GSE134780, GSE22206; SigCom LINCS | N, R | planned | — | — |
-| E4 | DepMap / PRISM: aneuploidy- and RMS-selective approved drugs | DepMap 24Q4, PRISM | R, S | running | H087 (`P4-22`), H088 (`P4-23`), H089 (`P4-24`) | 151 |
-| E5 | The child's pharmacogenome (PharmCAT / CPIC) for every candidate — **merged with E6** | the VCF (+ reads at PGx positions), CPIC | I, S | running | H090 (`P4-25`) | 152 |
-| E6 | Safety against the child's own phenotypes — **merged with E5** (note `E56.md`) | OnSIDES (paediatric), FAERS | R, I, N | running | H091 (`P4-26`) | 152 |
+| E4 | DepMap / PRISM: aneuploidy- and RMS-selective approved drugs | DepMap 24Q4, PRISM 24Q2 | R, S | **done** | H087 supported 0.55, H088 **refuted** 0.20, H089 supported 0.80 | [151](methodology/151-prism-replication-of-the-track2-leads.md) |
+| E5 | The child's pharmacogenome (PharmCAT / CPIC) for every candidate — **merged with E6** | the VCF, CPIC via PharmCAT 3.4.0 | I, S | **done** | H090 supported 0.40 (1.6 % of positions callable) | [152](methodology/152-is-each-candidate-safe-for-this-child.md) |
+| E6 | Safety against the child's own phenotypes — **merged with E5** (note [E56](submission-notes/E56.md)) | OnSIDES v3.1.1, openFDA FAERS | R, I, N | **done** | H091 supported 0.70 | [152](methodology/152-is-each-candidate-safe-for-this-child.md) |
 | E7 | D5 (senolytic / mTOR) graded on the existing ladder with decoys | papers.md, E2–E4 | R, N | planned | — | — |
 | E8 | BubR1–BUB3 / CDC20 interface fold, WT vs mutant (only if E1 places the residue near one) | PDB, AlphaFold | R | planned | — | — |
 | E9 | LLM evidence extraction at scale, citation-checked (Qwen3-Next on Modal) | PubTator3, Europe PMC | S, N, R | planned | — | — |
@@ -114,6 +114,66 @@ published interventions are in `ressources/track2/model_interventions.tsv`: 12 r
 > grey band = context, not the subject: central 90 % of the null; dashed red = 5 % (H085
 > prediction), dotted red = 25 % (refutation).
 
+**E4 — the leads in a screen nobody curated for this case**
+([151](methodology/151-prism-replication-of-the-track2-leads.md), note [E4](submission-notes/E4.md)).
+PRISM 24Q2, 6,790 compounds × 919 lines, **$0**. All 24 candidates are present, but 10 are
+measured on fewer than 3 of the 14 rhabdomyosarcoma lines and cannot be tested — **including
+lovastatin, the report's rank-1 lead**.
+
+| claim | result | verdict |
+|---|---|---|
+| H087 statins are RMS-selective | 4 of 5 testable statins point the predicted way (simvastatin δ +0.681, n 3 lines, p 0.0189; rosuvastatin lineage-matched p 0.0074) but **nothing survives BH correction** (best q 0.132) and the control band spans the same range | **supported, weakly** 0.55 |
+| H088 chloroquine is aneuploidy-selective | δ +0.027, p **0.315** — no trend; the second clause did not fire (3 of 4 D2 drugs still point the predicted way) | **refuted** 0.20 |
+| H089 the D5 drugs, reported either way | **dasatinib is the 99.4th percentile of 6,790 compounds** on aneuploidy (δ +0.135, p 0.0096) and the only candidate clearing its control band — yet among the **least** RMS-selective (δ −0.388); the mTOR drugs disagree between releases | **supported** 0.80 |
+
+Calibration: dabrafenib δ +0.670 (p 1.6 × 10⁻¹²) on melanoma lines; a 200-drug negative control
+fires at 5.3 % and 3.0 % at raw p < 0.05, as expected by chance. **Unasked bonus:** 33 of 34
+Mps1 and Aurora inhibitors are *less* effective in high-aneuploidy lines — Cohen-Sharir 2021
+(PMID 33505028) re-derived here, a second independent leg under the do-not table.
+
+![E4 effects](../../../figures/it4/step9-e4-effects.svg)
+
+> **Legend** — good / safe / the goal; neutral machinery; context, not the subject; green = raw
+> one-sided p < 0.05, blue = not; bars = 95 % percentile bootstrap CI on Cliff's delta; grey
+> band = the central 95 % of 200 unrelated launched drugs through the identical test; dotted
+> line = no effect. Only rows measured on ≥ 3 in-group lines are drawn.
+
+**E5+E6 — is each candidate safe for *this* child?**
+([152](methodology/152-is-each-candidate-safe-for-this-child.md), note [E56](submission-notes/E56.md)).
+The two-source experiment: his genome and his clinical terms, side by side. **$0.**
+
+- **The genome half is mostly a negative result, and that is the finding.** Only **20 of 1,223**
+  PharmCAT definition positions are genotyped (**1.6 %**), because the delivery is a
+  variant-only callset and no BAM/CRAM ships with it (re-calling would mean streaming 67.68 GB
+  at ~11.5 MB/s, ≥ 1.7 h). **Every gene that governs a shortlisted drug is a no call** —
+  SLCO1B1 (all three statins, CPIC level A), G6PD (chloroquine, hydroxychloroquine), UGT1A1
+  (irinotecan). Observed non-normal phenotypes exist for CYP3A5 (poor metaboliser), CYP2C19,
+  CYP2B6 and RYR1 (uncertain malignant-hyperthermia susceptibility). **H090 supported at 0.40**:
+  met literally, unanswered where it matters. A **regional callability proxy** says where the
+  `--absent-to-ref` assumption holds at all (SLCO1B1 0.52×, G6PD 0.26×, ABCG2 0.00×).
+- **The phenotype half is positive.** 45 of 75 candidates (**60.0 %**, CI 48.7–70.3) carry a
+  labelled adverse effect matching one of the child's own phenotypes, against **39.7 %**
+  (CI 34.9–44.8) in a breadth-matched comparison set — intervals do not overlap. Lovastatin
+  80/80, atorvastatin 382/397, simvastatin 184/194 name myopathy or rhabdomyolysis;
+  vincristine's single label carries **`Muscle atrophy`**, an exact match to the child's term.
+  Paediatric FAERS: vincristine–muscular weakness 57 reports, metformin–rhabdomyolysis 49.
+  Both positive controls (furosemide, calcitriol) recovered. **H091 supported at 0.70.**
+- **Five of 85 candidates are flagged by both sources**: lovastatin, simvastatin, atorvastatin,
+  hydroxychloroquine, vincristine.
+
+![E5+E6 evidence](../../../figures/it4/step9-e56-evidence.svg)
+
+> **Legend** — red = that source raises a question; green = that source looked and raised none;
+> yellow = exactly one of the two sources; grey = the source had nothing on this drug.
+> "Unflagged" is not safe: it means these two sources are silent.
+
+**What this asks the treating team** (research exercise; nothing here advises for or against any
+drug): the statin arm can be neither cleared nor contraindicated from the delivered callset,
+because its governing gene is unreadable while 95–100 % of those labels name the child's own
+muscle phenotype. The cheap, concrete action is a **targeted pharmacogenomic panel** — or a
+re-call of the reads at PharmCAT's 1,226 positions — over SLCO1B1, ABCG2, CYP2C9, G6PD and
+UGT1A1, plus the incidental RYR1 call in a child facing repeated anaesthesia.
+
 ## Corrections the Track 2 report owes (collected for the final submission)
 
 | where | now says | should say | source |
@@ -124,3 +184,10 @@ published interventions are in `ressources/track2/model_interventions.tsv`: 12 r
 | iteration-2 report, D3 row | the lead rests on one mouse paper | that mouse (H/H) is the child's phenotype twin (Phenodigm rank 768 of 76,699). A second paper bounds the result: SIRT2 is inert on a wild-type background (PMID 38009412) | entry 150 |
 | iteration-2 report, D3 HDAC arm | valproate and vorinostat act on BubR1 acetylation | re-verify the cited PMIDs (28985013, 19407811); the research scan found no paper linking an approved HDAC inhibitor to BubR1 | research/papers.md |
 | iteration-2 report, D2 | metformin and bortezomib inherit class results | keep them inherited; the research scan found no primary aneuploidy-selectivity paper for either | research/papers.md |
+| iteration-2 report §7.1 rank 1 (lovastatin) | the best-supported lead | its PRISM coverage is 2 of 14 RMS lines, so the screen **cannot test it**; the class direction is weakly reproduced by simvastatin and rosuvastatin, neither surviving correction | entry 151 |
+| iteration-2 report §7.1 row 8 (chloroquine) | the only molecule-level aneuploidy result | not reproduced in PRISM (p 0.315); keep the published cell result, add the non-replication | entry 151 |
+| `ressources/track2/mechanism.json` D2 rationale | aneuploid cells are selectively vulnerable | add: in 919 lines the effect is absent for chloroquine and the direction is unresolved for the class | entry 151 |
+| iteration-2 report §7.3 do-not table | spindle poisons rely on the checkpoint (argued from biology) | now also **measured**: 33 of 34 Mps1/Aurora inhibitors are less effective in high-aneuploidy lines | entry 151 |
+| iteration-2 report §7 (new row) | — | **D5: dasatinib**, 99.4th percentile of 6,790 compounds on the aneuploidy contrast, and the D5 direction from the phenotype twin | entries 150, 151 |
+| iteration-2 report §7.4 / new §7.5 | candidates are graded for children in general | add the per-candidate two-source safety table for **this** child, and the five drugs both sources flag | entry 152 |
+| iteration-2 report §11 limits | — | add: 1.6 % of pharmacogene positions callable from the delivered VCF; every guideline gene for a shortlisted drug is a no call | entry 152 |

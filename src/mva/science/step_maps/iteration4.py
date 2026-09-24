@@ -179,6 +179,12 @@ ITERATION4: tuple[Step, ...] = (
             "figures/it4/step9-e2-rank.svg",
             "figures/it4/step9-e2-terms.svg",
             "figures/it4/step9-e2-controls.svg",
+            "figures/it4/step9-e4-effects.svg",
+            "figures/it4/step9-e4-background.svg",
+            "figures/it4/step9-e4-coverage.svg",
+            "figures/it4/step9-e56-evidence.svg",
+            "figures/it4/step9-e56-baserate.svg",
+            "figures/it4/step9-e56-coverage.svg",
         ),
     ),
 )
