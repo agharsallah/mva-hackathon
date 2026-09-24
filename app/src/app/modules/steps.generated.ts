@@ -275,10 +275,10 @@ export const STEP_MODULES: FeatureModule[] = [
     id: 'track2-iteration4',
     path: '/track2/iteration4',
     navLabel: 'Iteration 4',
-    title: 'Track 2, iteration 4 — two engines, one graph',
+    title: 'Track 2, iteration 4 — the model zoo',
     group: 'decide',
     parent: 'track2',
-    description: 'The one step of this iteration that argues Track 2\'s answer — its question, the claims filed before the run, what became of them, its methodology entries and its figures. The iteration as a whole: the model zoo.',
+    description: 'The 2 steps of this iteration that argue Track 2\'s answer: each one\'s question, the claims filed before the run, what became of them, the methodology entries they were written in, and the figures they drew.',
     load: () => import('../../pages/Iteration'),
   },
 ];

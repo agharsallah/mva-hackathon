@@ -1,0 +1,11 @@
+{
+  "step": "step-9",
+  "iteration": "iteration4",
+  "summary": "In progress. This step tests the Track 2 drug directions against sources that share nothing. It asks two questions: is the child's missense BubR1 unstable or inactive (a structure atlas over every possible substitution), and which mouse model is the child's phenotypic twin (the eight HPO terms against every mouse genotype)? Expression signatures, cell-line screens, the child's pharmacogenome and phenotype-specific safety follow. Every experiment writes a submission note the final report is assembled from.",
+  "why": "The iteration-2 Track 2 report rests its deepest lead (raise BubR1) on one mouse paper, and step 8 left the mechanism question open: a fold cannot say whether the weakened copy is unstable or inactive. Published MVA alleles split into exactly those two classes, and the mouse allelic series carries the tested interventions, so both questions are answerable from public data.",
+  "verdict": "No verdict yet: H083 to H086 are filed before any run.",
+  "inherits": {"steps": ["step-7", "step-8"], "what": "Step 7's PrimeKG walk and decoy control, step 8's Boltz-2 fold (entry 147) and GPU tier on Modal, and iteration 2's Track 2 directions D1 to D4, evidence ladder and do-not table."},
+  "hands_to": {"steps": [], "what": "A Track 2 submission assembled from the per-experiment submission notes in docs/iteration4/step-9/submission-notes/."},
+  "figures": [],
+  "sources": ["docs/iteration4/step-9/README.md", "docs/iteration4/step-9/research/papers.md", "docs/iteration4/step-9/research/data-sources.md"]
+}

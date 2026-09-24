@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-24T01:05:21",
+  "generated_at": "2026-09-24T08:49:32",
   "steps": [
     {
       "slug": "step-0",
@@ -3065,6 +3065,62 @@
           "lineage_ref": ""
         }
       ]
+    },
+    {
+      "id": "H083",
+      "step": "step-9",
+      "statement": "P4-18: predicted stability change (ddG) separates the published abundance-lowering MVA missense alleles of BUB1B from the function-impairing ones",
+      "prediction": "over the MVA missense alleles Suijkerbuijk 2010 (PMID 20516114) and the other verified papers classify by protein level, the ddG-based score ranks abundance-lowering above function-impairing with AUROC >= 0.8",
+      "refuted_by": "AUROC <= 0.6, or fewer than 4 labelled alleles per class can be recovered from the literature (then the test has no power and is reported as such)",
+      "gene": "BUB1B",
+      "path": "e1-atlas",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H084",
+      "step": "step-9",
+      "statement": "P4-19: the child's BUB1B missense allele is predicted abundance-lowering (destabilising), which is the class the raise-BubR1 direction (D3) needs",
+      "prediction": "its predicted ddG falls in the most destabilising 20% of all possible BubR1 missense substitutions and the E1 classifier calls it abundance-lowering",
+      "refuted_by": "its ddG falls in the least destabilising 50% of all possible substitutions, or the classifier calls it function-impairing",
+      "gene": "BUB1B",
+      "path": "e1-atlas",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H085",
+      "step": "step-9",
+      "statement": "P4-20: the child's eight HPO terms match Bub1b mutant mice better than almost every other mouse model",
+      "prediction": "the best-matching Bub1b genotype ranks in the top 5% of all MGI mouse genotypes by phenotype similarity to the eight terms",
+      "refuted_by": "the best Bub1b genotype ranks outside the top 25%",
+      "gene": "BUB1B",
+      "path": "e2-phenotype-twin",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H086",
+      "step": "step-9",
+      "statement": "P4-21: among Bub1b mouse genotypes, a hypomorphic or compound hypomorph genotype matches the child best, so the interventions tested in hypomorph mice are the ones to import",
+      "prediction": "the top-scoring Bub1b genotype carries a hypomorphic allele (e.g. H/H or H/L1002P), not a null or heterozygous knockout",
+      "refuted_by": "a null, knockout or heterozygous-null Bub1b genotype scores highest",
+      "gene": "BUB1B",
+      "path": "e2-phenotype-twin",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
     }
   ]
 }

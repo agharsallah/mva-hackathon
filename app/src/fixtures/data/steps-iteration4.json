@@ -72,14 +72,14 @@
       "summary": "planned only \u2014 no step map is declared for it"
     },
     {
-      "claims": 22,
+      "claims": 26,
       "current": false,
       "declared": true,
       "docs": "docs/iteration4",
       "done": 5,
       "iteration": "iteration4",
-      "open": 3,
-      "steps": 8,
+      "open": 4,
+      "steps": 9,
       "submissions": [],
       "summary": "the model zoo (docs/iteration4/plan.md)."
     }
@@ -1682,6 +1682,106 @@
       "takes_hypotheses": true,
       "title": "The GPU tier on Modal",
       "track": "track1",
+      "unblocks": []
+    },
+    {
+      "docs": "docs/iteration4/step-9",
+      "entries": [],
+      "figures": [],
+      "goal": "Does the mechanism class of the child's BUB1B alleles, checked against sources that share nothing (a structure atlas, mouse phenotypes, expression signatures, cell-line screens, the child's own pharmacogenome, phenotype-specific safety), support each drug direction \u2014 and which approved candidates survive all of them?",
+      "hypotheses": [
+        {
+          "author": "claude-step9",
+          "confidence": null,
+          "gene": "BUB1B",
+          "hypothesis_id": "H083",
+          "iteration": "iteration4",
+          "path": "e1-atlas",
+          "prediction": "over the MVA missense alleles Suijkerbuijk 2010 (PMID 20516114) and the other verified papers classify by protein level, the ddG-based score ranks abundance-lowering above function-impairing with AUROC >= 0.8",
+          "reasoning": "",
+          "recorded_at": "2026-09-24T08:49:28.851716",
+          "refuted_by": "AUROC <= 0.6, or fewer than 4 labelled alleles per class can be recovered from the literature (then the test has no power and is reported as such)",
+          "revision": 1,
+          "statement": "P4-18: predicted stability change (ddG) separates the published abundance-lowering MVA missense alleles of BUB1B from the function-impairing ones",
+          "status": "proposed",
+          "step": "step-9"
+        },
+        {
+          "author": "claude-step9",
+          "confidence": null,
+          "gene": "BUB1B",
+          "hypothesis_id": "H084",
+          "iteration": "iteration4",
+          "path": "e1-atlas",
+          "prediction": "its predicted ddG falls in the most destabilising 20% of all possible BubR1 missense substitutions and the E1 classifier calls it abundance-lowering",
+          "reasoning": "",
+          "recorded_at": "2026-09-24T08:49:30.019777",
+          "refuted_by": "its ddG falls in the least destabilising 50% of all possible substitutions, or the classifier calls it function-impairing",
+          "revision": 1,
+          "statement": "P4-19: the child's BUB1B missense allele is predicted abundance-lowering (destabilising), which is the class the raise-BubR1 direction (D3) needs",
+          "status": "proposed",
+          "step": "step-9"
+        },
+        {
+          "author": "claude-step9",
+          "confidence": null,
+          "gene": "BUB1B",
+          "hypothesis_id": "H085",
+          "iteration": "iteration4",
+          "path": "e2-phenotype-twin",
+          "prediction": "the best-matching Bub1b genotype ranks in the top 5% of all MGI mouse genotypes by phenotype similarity to the eight terms",
+          "reasoning": "",
+          "recorded_at": "2026-09-24T08:49:31.367304",
+          "refuted_by": "the best Bub1b genotype ranks outside the top 25%",
+          "revision": 1,
+          "statement": "P4-20: the child's eight HPO terms match Bub1b mutant mice better than almost every other mouse model",
+          "status": "proposed",
+          "step": "step-9"
+        },
+        {
+          "author": "claude-step9",
+          "confidence": null,
+          "gene": "BUB1B",
+          "hypothesis_id": "H086",
+          "iteration": "iteration4",
+          "path": "e2-phenotype-twin",
+          "prediction": "the top-scoring Bub1b genotype carries a hypomorphic allele (e.g. H/H or H/L1002P), not a null or heterozygous knockout",
+          "reasoning": "",
+          "recorded_at": "2026-09-24T08:49:32.528202",
+          "refuted_by": "a null, knockout or heterozygous-null Bub1b genotype scores highest",
+          "revision": 1,
+          "statement": "P4-21: among Bub1b mouse genotypes, a hypomorphic or compound hypomorph genotype matches the child best, so the interventions tested in hypomorph mice are the ones to import",
+          "status": "proposed",
+          "step": "step-9"
+        }
+      ],
+      "kind": "research",
+      "narrative": {
+        "figures": [],
+        "hands_to": {
+          "steps": [],
+          "what": "A Track 2 submission assembled from the per-experiment submission notes in docs/iteration4/step-9/submission-notes/."
+        },
+        "inherits": {
+          "steps": ["step-7", "step-8"],
+          "what": "Step 7's PrimeKG walk and decoy control, step 8's Boltz-2 fold (entry 147) and GPU tier on Modal, and iteration 2's Track 2 directions D1 to D4, evidence ladder and do-not table."
+        },
+        "iteration": "iteration4",
+        "sources": [
+          "docs/iteration4/step-9/README.md",
+          "docs/iteration4/step-9/research/papers.md",
+          "docs/iteration4/step-9/research/data-sources.md"
+        ],
+        "step": "step-9",
+        "summary": "In progress. This step tests the Track 2 drug directions against sources that share nothing. It asks two questions: is the child's missense BubR1 unstable or inactive (a structure atlas over every possible substitution), and which mouse model is the child's phenotypic twin (the eight HPO terms against every mouse genotype)? Expression signatures, cell-line screens, the child's pharmacogenome and phenotype-specific safety follow. Every experiment writes a submission note the final report is assembled from.",
+        "verdict": "No verdict yet: H083 to H086 are filed before any run.",
+        "why": "The iteration-2 Track 2 report rests its deepest lead (raise BubR1) on one mouse paper, and step 8 left the mechanism question open: a fold cannot say whether the weakened copy is unstable or inactive. Published MVA alleles split into exactly those two classes, and the mouse allelic series carries the tested interventions, so both questions are answerable from public data."
+      },
+      "slug": "step-9",
+      "status": "open",
+      "takes_hypotheses": true,
+      "title": "Track 2 \u2014 one mechanism, many independent sources",
+      "track": "track2",
       "unblocks": []
     }
   ],

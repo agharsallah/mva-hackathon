@@ -156,4 +156,21 @@ ITERATION4: tuple[Step, ...] = (
             "figures/it4/boltz2-ca-trace.svg",
         ),
     ),
+    Step(
+        slug="step-9",
+        title="Track 2 — one mechanism, many independent sources",
+        goal=(
+            "Does the mechanism class of the child's BUB1B alleles, checked against sources "
+            "that share nothing (a structure atlas, mouse phenotypes, expression signatures, "
+            "cell-line screens, the child's own pharmacogenome, phenotype-specific safety), "
+            "support each drug direction — and which approved candidates survive all of them?"
+        ),
+        iteration="iteration4",
+        # Opened 2026-09-24 on the user's request for creative Track 2 experiments (E1-E10,
+        # plan in docs/iteration4/step-9/README.md), graded on the panel's four criteria.
+        # Every experiment writes a submission note under step-9/submission-notes/ so the
+        # final Track 2 submission is assembled from them, not rewritten.
+        status="open",
+        track="track2",
+    ),
 )
