@@ -1,0 +1,15 @@
+{
+  "name": "r1-stop-anatomy",
+  "built_at": "2026-09-25T16:48:00+00:00",
+  "built_by": "tools/render_it5_r1.py",
+  "code_version": "5965bb6",
+  "inputs": [
+    {
+      "path": "build/it5/r1/stop_facts.json",
+      "sha256": "e63a27621849613d306c539ea876b22b1307ce79c69faabbcde5112e78d3fa07"
+    }
+  ],
+  "entry": "docs/iteration5/step-1/work/r1-entry.md",
+  "legend": "purple = coding exons before the stop; yellow = the exon carrying the stop (the decision point for the 50-55 nt rule); red = the exons the truncated protein never reaches; blue text = the junction the rule is measured against",
+  "patient_data": "none. Exon indices, counts, fractions, codon identities and public measurements; no genomic position and no run of patient sequence appears"
+}

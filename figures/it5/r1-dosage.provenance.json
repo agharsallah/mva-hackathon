@@ -1,0 +1,15 @@
+{
+  "name": "r1-dosage",
+  "built_at": "2026-09-25T16:48:07+00:00",
+  "built_by": "tools/render_it5_r1.py",
+  "code_version": "5965bb6",
+  "inputs": [
+    {
+      "path": "ressources/track2/it5/allele_dosage.tsv",
+      "sha256": "c340fc8bf281735acd87dc2f2480a88579715a47ddbf1f86edc1afe083dfe89e"
+    }
+  ],
+  "entry": "docs/iteration5/step-1/work/r1-entry.md",
+  "legend": "green bars = scenarios with a treatment; blue bars = untreated states; dashed lines = published genotypes and cell measurements used as yardsticks (green = safe side, yellow = the viable hypomorph, red = the failing side)",
+  "patient_data": "none. Exon indices, counts, fractions, codon identities and public measurements; no genomic position and no run of patient sequence appears"
+}
