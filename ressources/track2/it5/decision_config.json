@@ -1,0 +1,85 @@
+{
+  "name": "it5-r4-decision-config",
+  "standing": "draft 2026-09-25: priors and test performances marked todo are placeholders awaiting R1-R3; every other number is a stated R4 config choice, swept in the tornado",
+  "framing": "triage heuristic over stated weights; not a calibrated posterior, not a probability of benefit, not advice for or against giving any drug to any patient",
+  "combine": "max",
+  "combine_source": "R4 choice: a drug's utility is its best single argument; 'noisy_or' would reward convergence, which iteration 4 measured at chance level (entry 155, H094 refuted)",
+  "state_variables": {
+    "missense_class": {
+      "prior": {"unstable": 0.55, "inactive": 0.45},
+      "source": "the register's triage weight for H084 ('the missense is destabilising', supported 0.55): ThermoMPNN ddG at the 87th percentile of 19,950 BubR1 substitutions, buried, pLDDT >= 90 (docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md). The same entry's calibration (AUROC 0.60, 95% CI 0.13-1.00, n = 8; H083 refuted) says the predictor cannot yet separate the classes, so this is a weight, not a probability",
+      "todo": "R2 / R3: replace if a measured BubR1 abundance for this or an equivalent missense is found (protein-level proteomics or a quoted Western blot); otherwise keep and read the sweep"
+    },
+    "readthrough_feasible": {
+      "prior": {"yes": 0.5, "no": 0.5},
+      "source": "placeholder: no iteration-4 measurement bears on it",
+      "todo": "R1 supplies: P(read-through of the child's stop codon restores enough full-length BubR1), from the stop codon identity, its +4 context, NMD (nonsense-mediated decay) escape and the published measured read-through of comparable premature stops"
+    }
+  },
+  "applicability": {
+    "_doc": "factor in [0, 1] that a row's mechanism branch acts in a world-state; a variable not listed for a branch does not affect it",
+    "stop_allele": {"readthrough_feasible": {"yes": 1.0, "no": 0.0}},
+    "missense_unstable": {"missense_class": {"unstable": 1.0, "inactive": 0.0}},
+    "missense_inactive": {"missense_class": {"unstable": 0.0, "inactive": 1.0}},
+    "any": {}
+  },
+  "safety": {
+    "factors": {
+      "unflagged": 1.0,
+      "genome_flag": 0.75,
+      "phenotype_flag": 0.75,
+      "both_flag": 0.4,
+      "unassessed": 0.6
+    },
+    "source": "R4 choice. Order follows iteration 4's K2 rule (both sources flag = fail, one = caution; docs/iteration4/step-10/methodology/155-convergence-and-checks.md, method of entry 152); magnitudes are not measured. 'unassessed' (drug absent from the per-child table) is below 'unflagged' by design: no flag is not safety"
+  },
+  "control": {
+    "policy": "penalty",
+    "failed_factor": 0.25,
+    "unknown_factor": 0.5,
+    "source": "R4 choice. A route whose positive control failed is uninterpretable (docs/iteration5/notes/exploratory-no-hypotheses.md; the lesson of entry 153); 'penalty' keeps its rows visible at a quarter weight, 'exclude' drops them"
+  },
+  "baseline": {
+    "name": "defer (no drug; run the test first)",
+    "utility": 0.0,
+    "source": "the reference action: every utility is relative to not acting on this list"
+  },
+  "route_weights": {},
+  "tests": [
+    {
+      "name": "chx_chase_blot",
+      "variable": "missense_class",
+      "positive": "unstable",
+      "sensitivity": 0.85,
+      "specificity": 0.85,
+      "source": "the experiment named in submissions/track2/iteration-4/report.md 7.3: a BubR1 Western blot with a cycloheximide chase (protein decay rate) in the child's cells against the parents'. Performance is an R4 assumption, swept 0.6-0.99 in the tornado",
+      "todo": "R3: a quoted performance or replicate agreement for cycloheximide-chase half-life calls, if the literature states one"
+    },
+    {
+      "name": "readthrough_reporter",
+      "variable": "readthrough_feasible",
+      "positive": "yes",
+      "sensitivity": 0.8,
+      "specificity": 0.8,
+      "source": "optional: a dual-luciferase read-through reporter carrying the child's stop codon and context. Performance is an R4 assumption",
+      "todo": "R1: the reporter's published agreement with protein-level rescue, if its positive-control papers state one"
+    }
+  ],
+  "tornado_metric": "evsi:chx_chase_blot",
+  "tornado": [
+    {"param": "prior:missense_class=unstable", "low": 0.2, "high": 0.9},
+    {"param": "prior:readthrough_feasible=yes", "low": 0.1, "high": 0.9},
+    {"param": "test:chx_chase_blot:sensitivity", "low": 0.6, "high": 0.99},
+    {"param": "test:chx_chase_blot:specificity", "low": 0.6, "high": 0.99},
+    {"param": "safety:unassessed", "low": 0.3, "high": 1.0},
+    {"param": "safety:phenotype_flag", "low": 0.4, "high": 1.0},
+    {"param": "safety:genome_flag", "low": 0.4, "high": 1.0},
+    {"param": "safety:both_flag", "low": 0.0, "high": 0.75},
+    {"param": "control:failed_factor", "low": 0.0, "high": 0.5},
+    {"param": "control:unknown_factor", "low": 0.25, "high": 0.75},
+    {"param": "applicability:missense_inactive:missense_class=unstable", "low": 0.0, "high": 0.5},
+    {"param": "applicability:missense_unstable:missense_class=inactive", "low": 0.0, "high": 0.5},
+    {"param": "baseline", "low": 0.0, "high": 0.2}
+  ],
+  "tornado_todo": "add route:<id> rows (low 0.5, high 1.0) once R1-R3 fix the ids they write in the 'route' column"
+}
