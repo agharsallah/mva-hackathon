@@ -1,0 +1,19 @@
+{
+  "step": "step-11",
+  "iteration": "iteration4",
+  "summary": "Opened 2026-09-25, nothing run yet. This step runs iteration 4's whole Track 2 chain on a second rare disease, Bloom syndrome (gene BLM): the phenotype twin over MGI mice, the PrimeKG walk, the screen-wide PRISM sweep, LINCS signature reversal, convergence against a permutation null, and the checks. The only allowed change is configuration. It is the scalability evidence of the iteration-4 Track 2 submission.",
+  "why": "A tool set that only works on the case it was built for does not scale. Bloom syndrome swaps the gene, the pathway and the clinical terms while asking the same kind of question, so each stage has something to find and a known answer to check against.",
+  "verdict": "Not yet tested. H096 is filed and proposed.",
+  "inherits": {
+    "steps": ["step-9", "step-10"],
+    "what": "Every tool of steps 9 and 10, unchanged: the phenotype twin (entry 150), the PRISM sweep (entry 154), LINCS reversal (entry 153), the convergence engine and checks (entry 155), and step 7's PrimeKG walk (entry 142)."
+  },
+  "hands_to": {
+    "steps": [],
+    "what": "The scalability section of submissions/track2/iteration-4/."
+  },
+  "figures": [],
+  "sources": [
+    "docs/iteration4/step-11/README.md"
+  ]
+}

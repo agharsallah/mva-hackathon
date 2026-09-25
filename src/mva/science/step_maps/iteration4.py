@@ -211,4 +211,19 @@ ITERATION4: tuple[Step, ...] = (
             "figures/it4/step10-s1-funnel.svg",
         ),
     ),
+    Step(
+        slug="step-11",
+        title="Track 2 — the same chain, a second case",
+        goal=(
+            "Does iteration 4's Track 2 chain (phenotype twin, PrimeKG walk, screen sweep, "
+            "signature reversal, convergence, checks) run on a second rare disease, Bloom "
+            "syndrome (BLM), by configuration alone, and does it propose a different drug set?"
+        ),
+        iteration="iteration4",
+        # Opened 2026-09-25 as the scalability evidence of submissions/track2/iteration-4/:
+        # the panel scores scalability at 15 %, and iteration 4's chain must show it
+        # transfers without borrowing iteration 2's TRIP13 run.
+        status="open",
+        track="track2",
+    ),
 )

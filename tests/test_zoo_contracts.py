@@ -24,9 +24,9 @@ FIXTURES = Path(__file__).resolve().parents[1] / "fixtures" / "it4"
 def test_iteration4_declares_ten_research_steps():
     # Seven from the plan; step 8 (the GPU tier on Modal) opened 2026-09-23 for wave 5;
     # step 9 (Track 2, many independent sources) opened 2026-09-24; step 10 (Track 2,
-    # iteration 4's own candidate set) opened 2026-09-25.
+    # iteration 4's own candidate set) and step 11 (Track 2, a second case) opened 2026-09-25.
     research = [s for s in steps.steps_for("iteration4") if s.takes_hypotheses]
-    assert [s.slug for s in research] == [f"step-{n}" for n in range(1, 11)]
+    assert [s.slug for s in research] == [f"step-{n}" for n in range(1, 12)]
     assert all(s.iteration == "iteration4" for s in research)
     # Statuses advance as wave 2 runs each step; what is pinned is that every one of them
     # carries a *declared* status, never an invented one.

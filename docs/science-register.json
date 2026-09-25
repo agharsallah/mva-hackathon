@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-25T14:26:00",
+  "generated_at": "2026-09-25T14:34:27",
   "steps": [
     {
       "slug": "step-0",
@@ -3496,6 +3496,20 @@
       "refuted_by": "Every converging drug fails at least one of the three checks, or no drug converges",
       "gene": "",
       "path": "s10-survival",
+      "status": "proposed",
+      "confidence": null,
+      "suggested_confidence": 0.5,
+      "revisions": 1,
+      "evidence": []
+    },
+    {
+      "id": "H096",
+      "step": "step-11",
+      "statement": "P4-31: iteration 4's Track 2 chain runs on a second rare disease, Bloom syndrome, by configuration alone, and proposes a drug set distinct from the MVA case's",
+      "prediction": "With a case configuration for Bloom syndrome (gene BLM, its disease node in PrimeKG and MONDO, its HPO terms read from phenotype.hpoa, a lineage contrast fixed from the literature before the run), and zero source-code lines changed: (a) every stage writes its table with a provenance manifest - the phenotype twin over MGI, the PrimeKG walk, the PRISM sweep, LINCS reversal (or a recorded reason it has no BLM signature), convergence with its null, and checks K1 and K3 (K2 runs its label half only, with no patient genome); (b) the phenotype twin ranks a Blm genotype in the top 5 % of MGI genotypes; (c) the union of the four generator lists shares at most 20 % of its drugs with the MVA case's union (Jaccard index <= 0.20)",
+      "refuted_by": "Any source-code change is needed to run the second case, or any stage fails to write its table, or the Blm twin ranks outside the top 25 %, or the Jaccard index of the two unions exceeds 0.50",
+      "gene": "BLM",
+      "path": "s11-transfer",
       "status": "proposed",
       "confidence": null,
       "suggested_confidence": 0.5,
