@@ -34,7 +34,10 @@ from mva.drugs.readthrough import ReadthroughModel
 from mva.drugs.readthrough_dataset import TOLEDANO_2024, load_wide
 from mva.render.theme import BAD, DECISION, GOOD, MACHINE, MUTED, RAW, install_template
 
-ENTRY = "docs/iteration5/step-1/work/r1-entry.md"
+ENTRY = (
+    "docs/iteration5/step-1/methodology/"
+    "158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md"
+)
 BUILD = Path("build/it5/r1")
 TABLES = Path("ressources/track2/it5")
 OUT = Path("figures/it5")

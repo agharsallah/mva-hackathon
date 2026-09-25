@@ -9,7 +9,7 @@
       "sha256": "45142714c7132125e817ff732d006210dace9419da97c82fb0a0e0f24e1111ce"
     }
   ],
-  "entry": "docs/iteration5/step-1/work/r1-entry.md",
+  "entry": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
   "legend": "blue = the named benchmark panel, the declared primary control; green = the random held-out fifth; yellow dashed = the pass bar fixed before the run; the red note marks the dataset's own no-drug column, which must fail and does",
   "patient_data": "none. Exon indices, counts, fractions, codon identities and public measurements; no genomic position and no run of patient sequence appears"
 }

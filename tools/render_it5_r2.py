@@ -32,7 +32,10 @@ from mva.render.theme import BAD, DECISION, GOOD, MACHINE, MUTED, RAW, install_t
 TABLES = Path("ressources/track2/it5")
 BUILD = Path("build/it5/r2")
 OUT = Path("figures/it5")
-ENTRY = "docs/iteration5/step-1/work/r2-entry.md"
+ENTRY = (
+    "docs/iteration5/step-1/methodology/"
+    "159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md"
+)
 Z_MIN, BROAD = 3.0, 0.05
 PATIENT_DATA = (
     "none. Public proteomics and LINCS values, gene symbols and drug names only; no "

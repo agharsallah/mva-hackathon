@@ -9,7 +9,7 @@
       "sha256": "8654a0e155b60f0f11afd8a65fa26499af73f5708cc66f5347ca2040a518fd80"
     }
   ],
-  "entry": "docs/iteration5/step-1/work/r1-entry.md",
+  "entry": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
   "legend": "red = the +4 base this child's stop actually has; blue = the three bases it does not; grey dotted = the assay's no-drug floor, below which a prediction is noise",
   "patient_data": "none. Exon indices, counts, fractions, codon identities and public measurements; no genomic position and no run of patient sequence appears"
 }

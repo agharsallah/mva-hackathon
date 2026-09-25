@@ -91,7 +91,10 @@ from mva.drugs.signature_reversal_approval import (
 RAW = Path("build/it5/r2/raw")
 BUILD = Path("build/it5/r2")
 OUT = Path("ressources/track2/it5")
-ENTRY = "docs/iteration5/step-1/work/r2-entry.md"
+ENTRY = (
+    "docs/iteration5/step-1/methodology/"
+    "159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md"
+)
 TARGET = "BUB1B"
 CONTRACT = "iteration-5 route contract (docs/iteration5/plan.md)"
 FRAMING = "research exercise; no row advises for or against giving any drug to any patient"

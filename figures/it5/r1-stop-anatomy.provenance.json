@@ -9,7 +9,7 @@
       "sha256": "e63a27621849613d306c539ea876b22b1307ce79c69faabbcde5112e78d3fa07"
     }
   ],
-  "entry": "docs/iteration5/step-1/work/r1-entry.md",
+  "entry": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
   "legend": "purple = coding exons before the stop; yellow = the exon carrying the stop (the decision point for the 50-55 nt rule); red = the exons the truncated protein never reaches; blue text = the junction the rule is measured against",
   "patient_data": "none. Exon indices, counts, fractions, codon identities and public measurements; no genomic position and no run of patient sequence appears"
 }

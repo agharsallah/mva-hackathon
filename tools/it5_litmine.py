@@ -57,7 +57,10 @@ from mva.drugs.litmine_verify import (
 )
 
 SCRIPT = "tools/it5_litmine.py"
-ENTRY = "docs/iteration5/step-1/work/r3-entry.md"
+ENTRY = (
+    "docs/iteration5/step-1/methodology/"
+    "160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md"
+)
 BUILD = Path("build/it5/r3")
 DOCS = BUILD / "docs"
 OUT = Path("ressources/track2/it5")

@@ -75,7 +75,10 @@ GENEINFO = Path("build/it4/track2-e3/raw/geneinfo_beta.txt")
 CP = Path("build/it5/r2/raw/cp_mean_coeff_mat.tsv.gz")
 BUILD = Path("build/it5/r2")
 OUT = Path("ressources/track2/it5")
-ENTRY = "docs/iteration5/step-1/work/r2-entry.md"
+ENTRY = (
+    "docs/iteration5/step-1/methodology/"
+    "159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md"
+)
 URLS = {
     XPR: "https://lincs-dcic.s3.amazonaws.com/LINCS-sigs-2021/means/xpr_mean_coeff_mat.tsv.gz",
     GENEINFO: "https://s3.amazonaws.com/macchiato.clue.io/builds/LINCS2020/geneinfo_beta.txt",
