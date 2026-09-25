@@ -87,6 +87,18 @@
       "reads": "Pharmacogene positions callable from the delivered variant-only callset, per gene, against the total each gene's definition needs: 20 of 1,223 overall (1.6%), with SLCO1B1, ABCG2, CYP2C9, G6PD and UGT1A1 unreadable.",
       "means": "The genomic half of the safety question cannot be answered from this delivery. That is the result, and it names the cheap fix: a targeted panel or a re-call at those positions.",
       "source": "tools/render_step9_e56.py; entry 152"
+    },
+    {
+      "name": "step9-e3-engines.svg",
+      "reads": "Each compound both LINCS engines ranked as a reverser of the BUB1B knockout consensus, SigCom rank against iLINCS rank, with the pre-registered top-100 box; beside it, how many of 20 random decoy signatures also put each approved drug in their top 100.",
+      "means": "Eight compounds are in both top 100s; three are approved and two (phenytoin, albendazole) are in no decoy's top 100. The positive control failed, so this is not support.",
+      "source": "tools/render_step9_e3.py over ressources/track2/it4/lincs_reversal.tsv; entry 153"
+    },
+    {
+      "name": "step9-e3-control.svg",
+      "reads": "Where the other checkpoint genes' knockouts (CRISPR) and knockdowns (shRNA) rank as mimickers of the BUB1B signature, against the 5 % cut, with each decoy's best checkpoint gene for comparison.",
+      "means": "No sibling reaches the cut (best BUB1 at 5.6 %), and random decoys pass it 10-20 % of the time. The run is uninterpretable by its own registration.",
+      "source": "tools/render_step9_e3.py over build/it4/track2-e3/summary.json; entry 153"
     }
   ],
   "sources": [
@@ -100,6 +112,8 @@
     "docs/iteration4/step-9/methodology/151-prism-replication-of-the-track2-leads.md",
     "docs/iteration4/step-9/methodology/152-is-each-candidate-safe-for-this-child.md",
     "docs/iteration4/step-9/submission-notes/E4.md",
-    "docs/iteration4/step-9/submission-notes/E56.md"
+    "docs/iteration4/step-9/submission-notes/E56.md",
+    "docs/iteration4/step-9/methodology/153-lincs-signature-reversal-of-bub1b-loss.md",
+    "docs/iteration4/step-9/submission-notes/E3.md"
   ]
 }

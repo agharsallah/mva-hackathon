@@ -1,0 +1,15 @@
+{
+  "name": "step9-e3-control",
+  "built_at": "2026-09-25T12:20:03+00:00",
+  "built_by": "tools/render_step9_e3.py",
+  "code_version": "89cf730",
+  "inputs": [
+    {
+      "path": "build/it4/track2-e3/summary.json",
+      "sha256": "9095afe87ad68dfb3410049d060edf9cf82aa02a8f5388d8cc8339aa1c7a2538"
+    }
+  ],
+  "entry": "docs/iteration4/step-9/methodology/153-lincs-signature-reversal-of-bub1b-loss.md",
+  "legend": "**Legend** \u2014 good / safe / the goal; broken / dangerous / lost points; context, not the subject; a decision point; green = a checkpoint gene (BUB1, BUB3, MAD1L1, MAD2L1, TTK) in the top 5% of perturbed genes as a mimicker of the real signature, red = outside (number = its rank; a gene beyond the retrieved depth is not drawn); grey dots = each decoy's best checkpoint gene, the chance rate of the control; yellow dashed = the pre-registered 5% cut; log axis.",
+  "patient_data": "none. Public LINCS signatures, gene symbols and drug names only; no patient-derived value and no genomic position appears on any axis"
+}

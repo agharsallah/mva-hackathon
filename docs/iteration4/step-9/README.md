@@ -1,6 +1,6 @@
 # Step 9 — Track 2: one mechanism, many independent sources
 
-**Standing:** **E1, E2, E4 and E5+E6 run 2026-09-24**; E3 running 2026-09-25 (H092 filed); E7 moved to step 10; E8–E10 not run. Iteration 4, `step-9`, track 2.
+**Standing:** **E1, E2, E4 and E5+E6 run 2026-09-24**; E3 run 2026-09-25 (H092 uninterpretable: its positive control failed); E7 moved to step 10; E8–E10 not run. Iteration 4, `step-9`, track 2.
 Marked **open** in `src/mva/science/step_maps/iteration4.py`. Every number below is owned by an
 entry under [`methodology/`](methodology/).
 
@@ -52,7 +52,7 @@ R = Scientific Rigor (35 %), I = Potential Impact (25 %), N = Innovation (25 %),
 |---|---|---|---|---|---|---|
 | E1 | BUB1B variant-to-drug-direction atlas: ΔΔG + conservation for every possible missense, trained on published MVA alleles | AlphaFold O60566, literature labels | R, I, S | **done** | H083 refuted 0.15, H084 supported 0.55 | [149](methodology/149-the-stability-atlas-and-the-childs-missense.md) |
 | E2 | Mouse–human phenotype twin: 8 HPO terms vs every MGI genotype, decoys | MGI / IMPC, HPO–MP mapping | R, N, S | **done** | H085 supported 0.70, H086 testing 0.45 | [150](methodology/150-the-childs-phenotype-twin-among-mgi-mice.md) |
-| E3 | Signature reversal on LINCS: a BUB1B loss-of-function signature, two engines, 20 decoy signatures | LINCS L1000 (SigCom LINCS, iLINCS); GEO fallback | N, R | **running** (2026-09-25) | H092 `P4-27` | 153 (reserved) |
+| E3 | Signature reversal on LINCS: a BUB1B loss-of-function signature, two engines, 20 decoy signatures | LINCS L1000 (SigCom LINCS, iLINCS); GEO fallback | N, R | **done** (2026-09-25) | H092 `P4-27` **uninterpretable** (positive control failed) | [153](methodology/153-lincs-signature-reversal-of-bub1b-loss.md) |
 | E4 | DepMap / PRISM: aneuploidy- and RMS-selective approved drugs | DepMap 24Q4, PRISM 24Q2 | R, S | **done** | H087 supported 0.55, H088 **refuted** 0.20, H089 supported 0.80 | [151](methodology/151-prism-replication-of-the-track2-leads.md) |
 | E5 | The child's pharmacogenome (PharmCAT / CPIC) for every candidate — **merged with E6** | the VCF, CPIC via PharmCAT 3.4.0 | I, S | **done** | H090 supported 0.40 (1.6 % of positions callable) | [152](methodology/152-is-each-candidate-safe-for-this-child.md) |
 | E6 | Safety against the child's own phenotypes — **merged with E5** (note [E56](submission-notes/E56.md)) | OnSIDES v3.1.1, openFDA FAERS | R, I, N | **done** | H091 supported 0.70 | [152](methodology/152-is-each-candidate-safe-for-this-child.md) |
@@ -175,6 +175,25 @@ because its governing gene is unreadable while 95–100 % of those labels name t
 muscle phenotype. The cheap, concrete action is a **targeted pharmacogenomic panel** — or a
 re-call of the reads at PharmCAT's 1,226 positions — over SLCO1B1, ABCG2, CYP2C9, G6PD and
 UGT1A1, plus the incidental RYR1 call in a child facing repeated anaesthesia.
+
+**E3 — does an approved drug reverse the BUB1B-loss signature?**
+([153](methodology/153-lincs-signature-reversal-of-bub1b-loss.md), note [E3](submission-notes/E3.md)).
+Query: SigCom LINCS's BUB1B CRISPR-knockout consensus, top 100 raised and 100 lowered landmark
+genes, hashed before any drug query. BUB1B is its most-lowered gene, so the knockout hit its
+target. Both engines were queried; 20 random decoys; **$0**.
+**The registered positive control fails.** The best checkpoint sibling is BUB1 at **5.6 %** of
+5,156 CRISPR genes (cut 5 %); the best in shRNA is BUB3 at 16.9 %. Random decoys pass the
+same control 2 and 4 times in 20. So **H092 is uninterpretable**, neither support nor refutation.
+On the drug side, 8 compounds are in both engines' top 100. Three are approved; two
+(phenytoin, albendazole) are in no decoy's top 100. They go to step 10 as generator G4 with a
+caution and are not called LINCS-supported. The signature is mostly p21 up and mitosis genes
+down, a generic arrest. That is the likeliest reason the control finds no sibling.
+
+![E3 control](../../../figures/it4/step9-e3-control.svg)
+
+> **Legend** — green = a checkpoint sibling within the pre-registered 5 % (none is); red =
+> outside (number = gene rank); grey = each decoy's best sibling, the control's chance rate;
+> yellow dashed = the 5 % cut; log axis.
 
 ## Corrections the Track 2 report owes (collected for the final submission)
 

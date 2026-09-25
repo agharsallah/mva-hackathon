@@ -1,0 +1,19 @@
+{
+  "name": "step9-e3-engines",
+  "built_at": "2026-09-25T12:19:59+00:00",
+  "built_by": "tools/render_step9_e3.py",
+  "code_version": "89cf730",
+  "inputs": [
+    {
+      "path": "ressources/track2/it4/lincs_reversal.tsv",
+      "sha256": "ba9ca648fac5e22ed478687c386f24c44acaa87765f2483eebb239f5e2af3f47"
+    },
+    {
+      "path": "build/it4/track2-e3/summary.json",
+      "sha256": "9095afe87ad68dfb3410049d060edf9cf82aa02a8f5388d8cc8339aa1c7a2538"
+    }
+  ],
+  "entry": "docs/iteration4/step-9/methodology/153-lincs-signature-reversal-of-bub1b-loss.md",
+  "legend": "**Legend** \u2014 good / safe / the goal; broken / dangerous / lost points; neutral machinery; context, not the subject; a decision point; green = approved, in both engines' top 100 and in at most 1 decoy's top 100; red = the same but in 2 or more decoys' tops (not specific); blue = approved, outside the double top; grey = tool compounds with no approval; yellow dashed = the pre-registered cuts (rank 100; 1 decoy).",
+  "patient_data": "none. Public LINCS signatures, gene symbols and drug names only; no patient-derived value and no genomic position appears on any axis"
+}
