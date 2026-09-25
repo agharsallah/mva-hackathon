@@ -8,5 +8,85 @@
   "[css]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "prettier.configPath": "app/.prettierrc.json",
-  "prettier.ignorePath": "app/.prettierignore"
+  "prettier.ignorePath": "app/.prettierignore",
+
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.mypy_cache": true,
+    "**/.ruff_cache": true,
+    "**/.pytest_cache": true,
+    "**/.import_linter_cache": true,
+    "**/*.tsbuildinfo": true,
+    "**/.DS_Store": true
+  },
+  "files.watcherExclude": {
+    "**/.git/objects/**": true,
+    "**/.git/subtree-cache/**": true,
+    "**/node_modules/**": true,
+    "**/.venv/**": true,
+    "**/__pycache__/**": true,
+    "**/.mypy_cache/**": true,
+    "**/.ruff_cache/**": true,
+    "**/.pytest_cache/**": true,
+    "**/.import_linter_cache/**": true,
+    "**/dist/**": true,
+    "**/.vite/**": true,
+    "**/coverage/**": true,
+    "build/**": true,
+    "app/build/**": true,
+    "papers/**": true,
+    "figures/exhibits/**": true,
+    "mva-data/**": true,
+    "work/**": true,
+    "raw/**": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.venv": true,
+    "**/dist": true,
+    "**/.vite": true,
+    "**/coverage": true,
+    "build": true,
+    "app/build": true,
+    "papers": true,
+    "figures/exhibits": true,
+    "**/pnpm-lock.yaml": true,
+    "uv.lock": true
+  },
+  "search.followSymlinks": false,
+
+  "editor.maxTokenizationLineLength": 5000,
+  "editor.largeFileOptimizations": true,
+  "workbench.editor.limit.enabled": true,
+  "workbench.editor.limit.value": 12,
+  "workbench.editor.limit.perEditorGroup": false,
+
+  "typescript.tsserver.maxTsServerMemory": 3072,
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "typescript.tsserver.watchOptions": {
+    "excludeDirectories": ["**/node_modules", "**/dist", "**/build", "**/.venv"]
+  },
+  "eslint.workingDirectories": ["app"],
+  "npm.autoDetect": "off",
+
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "python.analysis.diagnosticMode": "openFilesOnly",
+  "python.analysis.autoImportCompletions": false,
+  "python.analysis.userFileIndexingLimit": 2000,
+  "python.analysis.include": ["src", "tests", "tools"],
+  "python.analysis.exclude": [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.*",
+    "app",
+    "build",
+    "papers",
+    "figures",
+    "ressources",
+    "docs",
+    "submissions",
+    "archive"
+  ],
+
+  "git.repositoryScanMaxDepth": 1
 }
