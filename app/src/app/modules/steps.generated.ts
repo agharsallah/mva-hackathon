@@ -281,4 +281,14 @@ export const STEP_MODULES: FeatureModule[] = [
     description: 'The 4 steps of this iteration that argue Track 2\'s answer: each one\'s question, the claims filed before the run, what became of them, the methodology entries they were written in, and the figures they drew.',
     load: () => import('../../pages/Iteration'),
   },
+  {
+    id: 'track2-iteration5',
+    path: '/track2/iteration5',
+    navLabel: 'Iteration 5',
+    title: 'Track 2, iteration 5 — allele-first therapy routes',
+    group: 'decide',
+    parent: 'track2',
+    description: 'The one step of this iteration that argues Track 2\'s answer — its question, the claims filed before the run, what became of them, its methodology entries and its figures. The iteration as a whole: allele-first Track 2.',
+    load: () => import('../../pages/Iteration'),
+  },
 ];
