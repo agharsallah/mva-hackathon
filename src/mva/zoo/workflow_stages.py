@@ -226,14 +226,21 @@ def render(config: Config, state: RunState, deps: Deps, connection: Any) -> Stag
     *every* version back out of the rendered file
     (:func:`mva.zoo.merge_render.existing_narratives`, which rebuilds each block from its own
     marker) and hands the whole list back to the renderer. Same rule, same reason, as
-    ``report.write_markdown`` for section 6.
+    ``report.write_markdown`` for section 6. Every hand-written ``## `` section outside §1–§6
+    (a headline, a Track 2 chapter) is read back too
+    (:func:`mva.zoo.merge_render.hand_written_sections`) and kept verbatim.
     """
     # The renderer, not `merge.render_merged`: that forwarder takes one narrative and is
     # another group's file. Calling the module that owns the template is the smaller change.
-    from .merge_render import existing_narratives, render_merged
+    from .merge_render import existing_narratives, hand_written_sections, render_merged
 
     kept = existing_narratives(config.merged_path)
-    text = render_merged(state.merged, kept[0]["text"] if kept else "", narratives=kept)
+    text = render_merged(
+        state.merged,
+        kept[0]["text"] if kept else "",
+        narratives=kept,
+        hand_written=hand_written_sections(config.merged_path),
+    )
     config.merged_path.parent.mkdir(parents=True, exist_ok=True)
     config.merged_path.write_text(text, encoding="utf-8")
     state.method = _realised_method(config.method, kept)

@@ -10,22 +10,117 @@ The hand-written narrative sits under a marker::
 
 which is what lets the optional ``fusion+synthesis`` merge method later replace exactly that
 paragraph and nothing else.
+
+**Hand-written sections survive a re-render.** The renderer owns the preamble and the six
+numbered sections it writes (``## 1.`` … ``## 6.``, :data:`OWNED_SECTIONS`). Every *other*
+``## `` section in the rendered file — a headline above §1, a Track 2 chapter after §6 — is
+hand-written: :func:`hand_written_sections` reads each one back verbatim, remembers which
+generated section it followed, and :func:`render_merged` puts it back in the same place.
+Ownership is decided by the heading's number, not by begin/end markers, because a marker a
+writer forgets is a section silently deleted, while an unnumbered heading is kept by default.
+The rule it imposes: a hand-written ``## `` section never takes a number from 1 to 6.
 """
 
 from __future__ import annotations
 
 import re
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 from .report_sections import SIDE_BY_SIDE_NOTE
 
-__all__ = ["NARRATIVE_MARKER", "existing_narratives", "render_merged"]
+__all__ = [
+    "NARRATIVE_MARKER",
+    "OWNED_SECTIONS",
+    "HandWritten",
+    "existing_narratives",
+    "hand_written_sections",
+    "render_merged",
+]
 
 #: Every version of section 5 opens with this. `fusion` writes ``hand-written <date>``;
 #: `fusion+synthesis` writes ``synthesised <date> | llm:<mode> | model:<id> | cited n/m``.
 NARRATIVE_MARKER = "<!-- narrative:"
+
+#: The numbers of the ``## `` sections :func:`render_merged` writes. A ``## `` heading that
+#: does not open with one of these (``## 3. …``) belongs to a person, not to this renderer.
+OWNED_SECTIONS = ("1", "2", "3", "4", "5", "6")
+
+_OWNED = re.compile(r"^## (\d+)\. ")
+_FENCE = re.compile(r"^(```|~~~)")
+
+
+@dataclass(frozen=True)
+class HandWritten:
+    """One hand-written ``## `` section, verbatim, and the generated section it follows.
+
+    ``after`` is ``""`` for a section above §1 (a headline), otherwise the number of the last
+    generated section before it. ``text`` runs from the heading line to the next ``## ``
+    heading, with its trailing blank lines removed — the seam is the renderer's to write.
+    """
+
+    after: str
+    text: str
+
+
+def _chunks(text: str) -> list[str]:
+    """The preamble, then one chunk per ``## `` heading. Headings inside a fence do not count."""
+    chunks: list[str] = [""]
+    fenced = False
+    for line in text.splitlines(keepends=True):
+        if _FENCE.match(line):
+            fenced = not fenced
+        if not fenced and line.startswith("## "):
+            chunks.append("")
+        chunks[-1] += line
+    return chunks
+
+
+def _owned(chunk: str) -> str | None:
+    """The section number when the renderer owns this chunk, else ``None``."""
+    match = _OWNED.match(chunk)
+    return match.group(1) if match and match.group(1) in OWNED_SECTIONS else None
+
+
+def hand_written_sections(path: str | Path) -> list[HandWritten]:
+    """Every ``## `` section of a rendered merged report that this renderer did not write.
+
+    Read back before a re-render and handed to :func:`render_merged`, so the next render keeps
+    them byte for byte. A missing file has none.
+    """
+    file = Path(path)
+    if not file.is_file():
+        return []
+    kept: list[HandWritten] = []
+    after = ""
+    for chunk in _chunks(file.read_text(encoding="utf-8"))[1:]:
+        number = _owned(chunk)
+        if number is not None:
+            after = number
+        else:
+            kept.append(HandWritten(after=after, text=chunk.rstrip("\n")))
+    return kept
+
+
+def _splice(generated: str, hand_written: Sequence[HandWritten]) -> str:
+    """Put each hand-written section back after the generated section it followed.
+
+    One blank line between sections and one newline at the end, whatever the seams were. A
+    section anchored to a number the renderer no longer writes goes at the end: kept, never
+    dropped.
+    """
+    chunks = _chunks(generated)
+    written = {_owned(chunk) for chunk in chunks[1:]}
+    out = [chunks[0], *(h.text for h in hand_written if h.after == "")]
+    for chunk in chunks[1:]:
+        out.append(chunk)
+        number = _owned(chunk)
+        out += [h.text for h in hand_written if number is not None and h.after == number]
+    out += [h.text for h in hand_written if h.after and h.after not in written]
+    body = [piece.rstrip("\n") for piece in out if piece.strip()]
+    return "\n\n".join(body) + "\n"
 
 
 def existing_narratives(path: str | Path) -> list[dict[str, Any]]:
@@ -76,6 +171,7 @@ def render_merged(
     *,
     dated: str = "",
     narratives: Sequence[Mapping[str, Any]] = (),
+    hand_written: Sequence[HandWritten] = (),
 ) -> str:
     """The merged report as Markdown — every number read straight out of ``report``.
 
@@ -84,6 +180,8 @@ def render_merged(
     ``fusion+synthesis`` method produces: the synthesised paragraph leads, the hand-written one
     stays under it with its own badge, and neither is lost. Each item is a block from
     :func:`mva.zoo.narrate.interpretation_block`.
+    ``hand_written`` is :func:`hand_written_sections` of the file being replaced: each section
+    goes back where it was, verbatim. Without it the output is exactly the generated page.
     """
     day = dated or str(report.get("generated_at", ""))[:10]
     lines = [
@@ -186,7 +284,8 @@ def render_merged(
         f"- built by: `{report.get('lineage', {}).get('tool', '')}`",
         "",
     ]
-    return "\n".join(lines)
+    text = "\n".join(lines)
+    return _splice(text, hand_written) if hand_written else text
 
 
 def _narrative_block(

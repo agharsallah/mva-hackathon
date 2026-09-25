@@ -147,7 +147,7 @@ def _narrate_merged(args: argparse.Namespace, case: Any, settings: Any, json_dir
     and all — the same rule section 6 of every per-model report follows.
     """
     from . import narrate as narrate_module
-    from .merge_render import existing_narratives, render_merged
+    from .merge_render import existing_narratives, hand_written_sections, render_merged
     from .narrate_rows import build_merge_prompt, merged_rows
 
     merged_path = case.out_dir / "merged.json"
@@ -172,7 +172,13 @@ def _narrate_merged(args: argparse.Namespace, case: Any, settings: Any, json_dir
         raise RuntimeError("nothing to write: mode is 'none' and report.md holds no narrative")
     case.merged_path.parent.mkdir(parents=True, exist_ok=True)
     case.merged_path.write_text(
-        render_merged(merged, versions[0]["text"], narratives=versions), encoding="utf-8"
+        render_merged(
+            merged,
+            versions[0]["text"],
+            narratives=versions,
+            hand_written=hand_written_sections(case.merged_path),
+        ),
+        encoding="utf-8",
     )
     if item is not None:
         print(json.dumps(item.summary(), sort_keys=True))

@@ -350,8 +350,18 @@ def _consensus_json(value: ConsensusRank) -> dict[str, Any]:
     }
 
 
-def render_merged(report: Mapping[str, Any], narrative: str, *, dated: str = "") -> str:
-    """The merged report as Markdown (see :mod:`mva.zoo.merge_render`)."""
+def render_merged(
+    report: Mapping[str, Any],
+    narrative: str,
+    *,
+    dated: str = "",
+    hand_written: Sequence[Any] = (),
+) -> str:
+    """The merged report as Markdown (see :mod:`mva.zoo.merge_render`).
+
+    ``hand_written`` is :func:`mva.zoo.merge_render.hand_written_sections` of the file this
+    render replaces; every section in it survives the re-render verbatim.
+    """
     from .merge_render import render_merged as _render
 
-    return _render(report, narrative, dated=dated)
+    return _render(report, narrative, dated=dated, hand_written=hand_written)
