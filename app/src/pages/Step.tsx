@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { type ComponentType, lazy, type LazyExoticComponent, Suspense } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { useSteps } from '../api/hooksSteps';
@@ -16,6 +16,23 @@ import { FigureStrip } from './steps/FigureStrip';
 import { Narrative } from './steps/Narrative';
 import { iterationLabel, parseResearchPath, stepLabel, trackLabel } from './steps/route';
 import { statusLabel, stepTone, TRACK_LABEL } from './steps/status';
+
+/**
+ * One `lazy()` per body, made once. Made inside the render, a new component type each render
+ * remounted the analysis — its state gone, its skeleton back — on every re-render of this page,
+ * such as the address change an opened figure writes.
+ */
+const BODIES = new Map<string, LazyExoticComponent<ComponentType>>();
+function bodyFor(key: string): LazyExoticComponent<ComponentType> | null {
+  const load = STEP_BODIES[key];
+  if (!load) return null;
+  let body = BODIES.get(key);
+  if (!body) {
+    body = lazy(load);
+    BODIES.set(key, body);
+  }
+  return body;
+}
 
 /**
  * One step, complete: the question, what was claimed, what was written and what was drawn.
@@ -45,9 +62,7 @@ export default function StepPage() {
   }
 
   const { track, iteration, slug } = route;
-  const bodyKey = `${iteration}/${slug}`;
-  const loadBody = STEP_BODIES[bodyKey];
-  const Body = loadBody ? lazy(loadBody) : null;
+  const Body = bodyFor(`${iteration}/${slug}`);
 
   return (
     <div className="space-y-6">
@@ -168,7 +183,14 @@ export default function StepPage() {
 
               {Body ? (
                 <Section title="The analysis">
-                  <Suspense fallback={<Skeleton height={320} />}>
+                  <Suspense
+                    fallback={
+                      // Marked so the test harness waits for the chunk (`testHarness.tsx`).
+                      <div data-suspense-fallback>
+                        <Skeleton height={320} label="Loading the analysis" />
+                      </div>
+                    }
+                  >
                     <Body />
                   </Suspense>
                 </Section>

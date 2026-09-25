@@ -104,7 +104,16 @@ export async function mountModule(mod: FeatureModule, search = ''): Promise<Moun
     { timeout: 8000 },
   );
 
-  const noneInFlight = () => expect(queryClient.isFetching()).toBe(0);
+  // "Idle" also means no in-page `Suspense` still showing its fallback. The step page mounts
+  // its deep analysis body with `lazy()`; while that chunk imports, the body's own query has
+  // not started, so `isFetching()` alone read the record half as the finished page and
+  // returned before the analysis (and every exhibit id in it) existed. Such a fallback is
+  // marked `data-suspense-fallback`. Not any `aria-busy` skeleton: `/style-guide` shows
+  // skeletons as specimens that never clear.
+  const noneInFlight = () => {
+    expect(queryClient.isFetching()).toBe(0);
+    expect(container.querySelector('[data-suspense-fallback]')).toBeNull();
+  };
   if (!caught) {
     // Settle-then-recheck, in a loop rather than once. A one-step waterfall (a chip firing
     // its own query when its parent's data lands) needed one recheck; `/panel` now has a
