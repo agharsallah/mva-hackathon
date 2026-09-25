@@ -1,7 +1,7 @@
 # Step 10 — Track 2: iteration 4's own answer
 
-**Standing:** **opened 2026-09-25**; claims H093–H095 filed before any run; entries 154 and
-155 reserved. Iteration 4, `step-10`, track 2. Marked **open** in
+**Standing:** **run 2026-09-25**, marked **done**: H093 refuted, H094 refuted, H095 supported
+weakly (entries 154, 155); claims filed before any run (commit `1b02e44`). Iteration 4, `step-10`, track 2. Status in
 `src/mva/science/step_maps/iteration4.py`. Every number this page will quote is owned by an
 entry under [`methodology/`](methodology/).
 
@@ -74,7 +74,7 @@ votes for a drug it could have generated.
 | id | generator | the rule that makes its list | approved means | its universe (for the null) |
 |---|---|---|---|---|
 | G1 `walk` | PrimeKG walk from the MVA disease node (entry 142) | top **50** openFDA-labelled drugs by walk score | an openFDA label | every openFDA-labelled drug the walk reached |
-| G2 `twin` | the phenotype twin's published interventions (entry 150) | every approved analogue in `model_interventions.tsv` whose row **supports** a direction | the row's `analogue_status` says approved | the approved drugs named by any row, plus every approved drug in the other three universes (the twin's space is literature, so it has no natural universe; the widest one is used, which makes the null harder to beat) |
+| G2 `twin` | the phenotype twin's published interventions (entry 150) | every approved analogue in `model_interventions.tsv` whose row **supports** a direction | the row's `analogue_status` says approved | the approved drugs named by any row, plus every approved drug in the other three universes (the twin's space is literature, so it has no natural universe; the widest one is used. This page first said that makes the null harder to beat; entry 155 measured the opposite — a wider universe makes it easier, p 0.263 vs 0.329 — and the rule stands as registered) |
 | G3 `prism` | screen-wide PRISM sweep (entry 154) | union of the top **0.5 %** of eligible Launched compounds on each contrast (aneuploidy, rhabdomyosarcoma) | PRISM `Launched` | every eligible Launched compound |
 | G4 `lincs` | signature reversal (entry 153) | approved drugs in the top **100** reversers of **both** SigCom LINCS and iLINCS | ChEMBL max phase 4 or an openFDA label | every approved compound present in both engines |
 
@@ -116,7 +116,7 @@ The universe file has two columns: `drug`, `approved`.
 | id | what | claims | entry | status |
 |---|---|---|---|---|
 | S1 | screen-wide PRISM sweep (generator G3) | H093 `P4-28` | [154](methodology/154-screen-wide-prism-sweep.md) | done 2026-09-25 — H093 refuted; G3 = 8 drugs |
-| S2 | convergence, checks, candidate table | H094 `P4-29`, H095 `P4-30` | 155 | planned |
+| S2 | convergence, checks, candidate table | H094 `P4-29`, H095 `P4-30` | [155](methodology/155-convergence-and-checks.md) | done 2026-09-25 — H094 refuted (p 0.263); H095 met, weakly: dasatinib the one survivor |
 
 G4 runs in step 9 as E3 (entry 153, H092 `P4-27`) and hands its list here.
 
@@ -138,6 +138,33 @@ corrected-significant; dasatinib is aneuploidy rank 4 of 613, on the list's boun
 > 200 seeded unrelated eligible Launched drugs; dashed yellow = the p value BH needs for
 > q < 0.10 (control: the largest passing p; the two real contrasts: 0.10 / 613, which no drug
 > reaches); purple label = dasatinib, marked only because entry 151 already reported it.
+
+**S2 — convergence, checks, the candidate table**
+([155](methodology/155-convergence-and-checks.md), note [S2](submission-notes/S2.md)).
+
+- **The lists.** The four generators list 50 drugs (walk), 2 (twin), 8 (PRISM) and 3 (LINCS). Together they name 62 approved drugs.
+- **Only one drug appears in two lists:** dasatinib (twin #1, PRISM #8). A 10,000-draw null (seed 20260925) gives mean 0.30 and 95th percentile 1.0, so one agreement is chance: **p 0.263**. **H094 is refuted as registered.**
+- **Sensitivities agree.** Without dasatinib, and without G4 (whose positive control failed, entry 153), p runs 0.261–1.
+- **Dasatinib passes K1, K2 and K3.**
+  - K1: its MOA is in no do-not class.
+  - K2: neither the genome nor the phenotype source flags it; they are silent, which is not the same as safe.
+  - K3: aneuploidy δ +0.135.
+- **H095 is met literally, weakly.** The lead was known before the join, and K3 re-reads G3's own contrast.
+- **The only K2 fail** is vincristine, as in entry 152. No Mps1/Aurora inhibitor appears in any list.
+- **Correction to the G2 universe rule above.** The widest twin universe makes the null *easier* to beat, not harder: G2's own 4-drug universe gives p 0.329. The verdict does not change.
+
+![S2 null](../../../figures/it4/step10-s2-null.svg)
+
+> **Legend** — blue bars = the null distribution; yellow bars = null counts above its 95th
+> percentile (the pre-registered bar the observed count had to reach); solid line = the observed
+> count, green when it clears the bar, red when it does not; only the first panel is a verdict
+> input.
+
+![S2 checks](../../../figures/it4/step10-s2-checks.svg)
+
+> **Legend** — generator columns: blue = the generator names the drug (#rank within it); K
+> columns: green = pass, yellow = caution (kept, reason in the table), red = fail, grey = not
+> run; survivor: green = converges and fails no check, red = does not.
 
 ## Data handling
 

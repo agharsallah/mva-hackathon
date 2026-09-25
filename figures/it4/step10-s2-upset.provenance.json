@@ -1,0 +1,19 @@
+{
+  "name": "step10-s2-upset",
+  "built_at": "2026-09-25T12:31:35+00:00",
+  "built_by": "tools/render_step10_s2.py",
+  "code_version": "77ea199",
+  "inputs": [
+    {
+      "path": "ressources/track2/it4/candidates.tsv",
+      "sha256": "10f38f68d6a66edce4ef0b3875dfe253b86989b8a38e178f2c54c38f62842bfa"
+    },
+    {
+      "path": "build/it4/track2-s2/convergence.json",
+      "sha256": "ebd8d43415cbabed26e74ba0b918bcb9355b982067740e7019b79aff48ffcf44"
+    }
+  ],
+  "entry": "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+  "legend": "**Legend** \u2014 good / safe / the goal; neutral machinery; context, not the subject; green bar = a combination of \u2265 k generators (a converging drug), blue bar = one generator alone; dark dot = the generator is in the combination, grey dot = it is not; (n) = drugs the generator lists.",
+  "patient_data": "none on any axis: drug names, generator ids, counts and check verdicts. K2's genome half is PharmCAT actionability words only (entry 152)"
+}

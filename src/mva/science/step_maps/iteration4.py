@@ -203,12 +203,15 @@ ITERATION4: tuple[Step, ...] = (
         # iteration 4 only (submissions/track2/iteration-4/). Steps 7 and 9 tested drugs
         # drawn from iteration 2's shortlist; this step generates its own candidate set and
         # re-runs the checks on it. E7 (grading D5) is answered here, not in step 9.
-        status="open",
+        status="done",
         track="track2",
         figures=(
             "figures/it4/step10-s1-volcano.svg",
             "figures/it4/step10-s1-percentiles.svg",
             "figures/it4/step10-s1-funnel.svg",
+            "figures/it4/step10-s2-upset.svg",
+            "figures/it4/step10-s2-null.svg",
+            "figures/it4/step10-s2-checks.svg",
         ),
     ),
     Step(

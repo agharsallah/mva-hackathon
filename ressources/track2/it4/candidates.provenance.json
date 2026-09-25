@@ -1,0 +1,574 @@
+{
+  "name": "candidates",
+  "built_at": "2026-09-25T12:29:27+00:00",
+  "built_by": "tools/converge.py run",
+  "code_version": "c0385cf",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+  "method": "Join every generator's approved list on mva.drugs.names.base_name; the statistic is the number of drugs named by >= 2 generators; the null replaces each list by an equal-sized draw without replacement from its own approved universe, 10000 draws, numpy default_rng seed 20260925; one-sided p = (1 + #null >= observed) / (1 + draws); repeated with ['DASATINIB'] removed from every list and universe. K1 from the Drug Repurposing Hub MOA, K2 by re-running entry 152's tools/patient_safety.py (labels, faers, table) with its PharmCAT result reused, K3 from the screen-wide sweep. A survivor converges and fails no check.",
+  "parameters": {
+    "k": 2,
+    "draws": 10000,
+    "seed": 20260925,
+    "exclude": [
+      "DASATINIB"
+    ],
+    "generators": [
+      "walk",
+      "twin",
+      "prism",
+      "lincs"
+    ],
+    "k1_rule": {
+      "do_not_moa": [
+        "MONOPOLAR SPINDLE 1 KINASE INHIBITOR",
+        "AURORA KINASE INHIBITOR",
+        "TTK INHIBITOR",
+        "MPS1 INHIBITOR"
+      ],
+      "caution_moa": [
+        "TUBULIN POLYMERIZATION INHIBITOR",
+        "TUBULIN INHIBITOR",
+        "MICROTUBULE INHIBITOR",
+        "MICROTUBULE STABILIZING AGENT",
+        "MICROTUBULE STIMULANT"
+      ],
+      "checkpoint_targets": [
+        "TTK",
+        "AURKA",
+        "AURKB",
+        "AURKC"
+      ],
+      "moa_source": "Drug Repurposing Hub MOA field (PRISM compound annotation)",
+      "source_entry": "entry 151: 33 of 34 Mps1/Aurora inhibitors less effective in aneuploid lines",
+      "rule": "fail when the annotated MOA contains a do_not_moa phrase; caution when it contains a caution_moa phrase (spindle poison), when the drug has no MOA annotation, or when its annotated targets include a checkpoint_targets symbol the MOA does not name; pass otherwise"
+    },
+    "k3_rule": {
+      "direction_contrasts": {
+        "D2": [
+          "aneuploidy"
+        ],
+        "D4": [
+          "rms"
+        ]
+      },
+      "alpha": 0.05,
+      "rule": "fail when, on a contrast the drug's direction maps to, Cliff's delta < 0 and the one-sided p that the in-group is LESS sensitive < alpha; pass (not applicable) when no direction maps to a contrast or the drug is not measured"
+    },
+    "k3_sweep_columns": {
+      "drug": "drug",
+      "contrast": "contrast",
+      "delta": "cliffs_delta",
+      "p": "p_raw",
+      "p_opposite": "p_opposite",
+      "only_column": "representative",
+      "only_value": "true"
+    },
+    "k2_faers_scope": "converging",
+    "k2_faers_rule": "every drug in scope x every MedDRA PT with used_for_flag = yes"
+  },
+  "inputs": [
+    {
+      "path": "ressources/track2/it4/generators/walk.tsv",
+      "sha256": "30463e73c775904cd67a5f47e99df762021d274a25519e4818fd0a82dd7508d8",
+      "bytes": 16720
+    },
+    {
+      "path": "ressources/track2/it4/generators/walk.universe.tsv",
+      "sha256": "0b93d93e83c84a35a132b41cac28aa6a25d633fdff35205eebb247dd40b081f8",
+      "bytes": 31042
+    },
+    {
+      "path": "ressources/track2/it4/generators/walk.provenance.json",
+      "sha256": "965eda9910067f78f9bece60f8b1699fc04fff45a07b0b11435960a0f1574f8d",
+      "bytes": 3184
+    },
+    {
+      "path": "ressources/track2/it4/generators/twin.tsv",
+      "sha256": "e86418b6a4d206a2594cbd30a71f1d4344463d56b1948257668298fb8909f56d",
+      "bytes": 859
+    },
+    {
+      "path": "ressources/track2/it4/generators/twin.universe.tsv",
+      "sha256": "6eed04aee37cdcb26c8462c5e843fe6fd50af037480d0c636d38cd7d02d80f52",
+      "bytes": 25737
+    },
+    {
+      "path": "ressources/track2/it4/generators/twin.provenance.json",
+      "sha256": "342890cadb8b42f19405fdc94e763a2950b00ba460dedc346d056b1342a492f7",
+      "bytes": 3869
+    },
+    {
+      "path": "ressources/track2/it4/generators/prism.tsv",
+      "sha256": "f45750b8052253507b481ed301c7683dc4e14754002505a6fe96a251185dac8e",
+      "bytes": 2808
+    },
+    {
+      "path": "ressources/track2/it4/generators/prism.universe.tsv",
+      "sha256": "293171e171d08375a791316fcb5c16163e2dad77d371a3b3af21a0d918dcad32",
+      "bytes": 10617
+    },
+    {
+      "path": "ressources/track2/it4/generators/prism.provenance.json",
+      "sha256": "e0d524598b59a2a6d2285114b87a4589727f7ea5ec230c8e9559735dfa4baf51",
+      "bytes": 5079
+    },
+    {
+      "path": "ressources/track2/it4/generators/lincs.tsv",
+      "sha256": "6e5088044f7336e50764a79ba5876b8ed3bbe9d0d15cc95e17808af87a95c79f",
+      "bytes": 1208
+    },
+    {
+      "path": "ressources/track2/it4/generators/lincs.universe.tsv",
+      "sha256": "ccae3933bdf3af1db69a0b8494ff4a3cb279b1618616a486b7898228d80806b6",
+      "bytes": 20759
+    },
+    {
+      "path": "ressources/track2/it4/generators/lincs.provenance.json",
+      "sha256": "6ffbe6cf178d1edbeaf744aa93f1c3764b65df2ad0ad13a42d8a7938f84d27be",
+      "bytes": 10255
+    },
+    {
+      "path": "build/it4/track2-e4/raw/PRISM_24Q2_Extended_Primary_Compound_List.csv",
+      "sha256": "7e78f5901c1a97d2baab0789ab89832e716388da4eacaa9f094e7d2f2f5a3463",
+      "bytes": 719567
+    },
+    {
+      "path": "build/it4/track2-e4/raw/PRISM_20Q2_secondary_treatment_info.csv",
+      "sha256": "f0ec000acda7c1a01ebae2aa0a2b5dba2821abb674f1fec7a363cdc60d8b379e",
+      "bytes": 4284816
+    },
+    {
+      "path": "ressources/track2/it4/prism_sweep.tsv",
+      "sha256": "7749f9f129bd52eb0a1611659156e7cb4d4b29ba0b1e3c698d54eb2025e9bf55",
+      "bytes": 498779
+    },
+    {
+      "path": "build/it4/track2-e56/pgx_summary.json",
+      "sha256": "581c9c4ca8aae9e2dbf2e5938ca78fa3a22073e4939c7acfae34fab4168c3d8a",
+      "bytes": 65843
+    },
+    {
+      "path": "ressources/track2/hpo_to_adverse_terms.tsv",
+      "sha256": "3313fd4506cd9ff8f7dc6aed1bc5a1ec52b561569077aff540f719b4ddf88f06",
+      "bytes": 3720
+    }
+  ],
+  "safety_commands": [
+    {
+      "argv": [
+        "tools/patient_safety.py",
+        "--work",
+        "build/it4/track2-s2/safety",
+        "labels",
+        "--onsides",
+        "build/it4/track2-e56/onsides/csv",
+        "--mapping",
+        "ressources/track2/hpo_to_adverse_terms.tsv",
+        "--drug-table",
+        "build/it4/track2-s2/safety/safety_drugs.tsv:drug_name:direction_id",
+        "--per-candidate",
+        "5",
+        "--alias",
+        "valproic acid=valproate",
+        "--alias",
+        "nicotinamide=niacinamide",
+        "--alias",
+        "cabozantinib s-malate=cabozantinib",
+        "--alias",
+        "mecasermin rinfabate=mecasermin"
+      ],
+      "stdout_tail": [
+        "wrote build/it4/track2-s2/safety/label_summary.json: shortlist 12/40 (0.30) vs comparison 45/200 (0.23)"
+      ]
+    },
+    {
+      "argv": [
+        "tools/patient_safety.py",
+        "--work",
+        "build/it4/track2-s2/safety",
+        "faers",
+        "--pair",
+        "dasatinib=SARCOMA",
+        "--pair",
+        "dasatinib=SOFT TISSUE SARCOMA",
+        "--pair",
+        "dasatinib=NEPHROCALCINOSIS",
+        "--pair",
+        "dasatinib=NEPHROLITHIASIS",
+        "--pair",
+        "dasatinib=CALCULUS URINARY",
+        "--pair",
+        "dasatinib=HYPERCALCIURIA",
+        "--pair",
+        "dasatinib=GROWTH RETARDATION",
+        "--pair",
+        "dasatinib=FAILURE TO THRIVE",
+        "--pair",
+        "dasatinib=WEIGHT DECREASED",
+        "--pair",
+        "dasatinib=MALNUTRITION",
+        "--pair",
+        "dasatinib=CACHEXIA",
+        "--pair",
+        "dasatinib=MUSCLE ATROPHY",
+        "--pair",
+        "dasatinib=MYOPATHY",
+        "--pair",
+        "dasatinib=MUSCULAR WEAKNESS",
+        "--pair",
+        "dasatinib=RHABDOMYOLYSIS",
+        "--pair",
+        "dasatinib=MYOSITIS"
+      ],
+      "stdout_tail": [
+        "  dasatinib            RHABDOMYOLYSIS            1",
+        "  dasatinib            MYOSITIS                  0",
+        "wrote build/it4/track2-s2/safety/faers_summary.json"
+      ]
+    },
+    {
+      "argv": [
+        "tools/patient_safety.py",
+        "--work",
+        "build/it4/track2-s2/safety",
+        "table",
+        "--drug-table",
+        "build/it4/track2-s2/safety/safety_drugs.tsv:drug_name:direction_id",
+        "--mapping",
+        "ressources/track2/hpo_to_adverse_terms.tsv",
+        "--out",
+        "ressources/track2/it4/candidate_safety.tsv",
+        "--entry",
+        "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+        "--sources",
+        "PharmCAT 3.4.0 (CPIC/DPWG/FDA data 2026-07-13, reused from entry 152); OnSIDES v3.1.1 (CC BY 4.0); openFDA FAERS; ressources/track2/hpo_to_adverse_terms.tsv",
+        "--extra-gene",
+        "vincristine=CYP3A5,CEP72",
+        "--extra-gene",
+        "valproic acid=POLG"
+      ],
+      "stdout_tail": [
+        "wrote ressources/track2/it4/candidate_safety.tsv (62 rows) and its provenance"
+      ]
+    }
+  ],
+  "summary": {
+    "generators": {
+      "walk": {
+        "listed_approved": 50,
+        "universe_approved": 188,
+        "listed_outside_universe": []
+      },
+      "twin": {
+        "listed_approved": 2,
+        "universe_approved": 1498,
+        "listed_outside_universe": []
+      },
+      "prism": {
+        "listed_approved": 8,
+        "universe_approved": 613,
+        "listed_outside_universe": []
+      },
+      "lincs": {
+        "listed_approved": 3,
+        "universe_approved": 1157,
+        "listed_outside_universe": []
+      }
+    },
+    "tests": [
+      {
+        "label": "primary: all generators",
+        "k": 2,
+        "draws": 10000,
+        "seed": 20260925,
+        "excluded": [],
+        "sizes": {
+          "walk": 50,
+          "twin": 2,
+          "prism": 8,
+          "lincs": 3
+        },
+        "universe_sizes": {
+          "walk": 188,
+          "twin": 1498,
+          "prism": 613,
+          "lincs": 1157
+        },
+        "observed": 1,
+        "drugs": [
+          "DASATINIB"
+        ],
+        "null_mean": 0.3011,
+        "null_p95": 1.0,
+        "null_max": 4,
+        "exceed": 2632,
+        "p_value": 0.2632736726327367,
+        "beats_p95": false,
+        "histogram": {
+          "0": 7368,
+          "1": 2275,
+          "2": 337,
+          "3": 18,
+          "4": 2
+        },
+        "role": "primary (verdict input)",
+        "generators": [
+          "walk",
+          "twin",
+          "prism",
+          "lincs"
+        ],
+        "universe_swaps": {}
+      },
+      {
+        "label": "without DASATINIB",
+        "k": 2,
+        "draws": 10000,
+        "seed": 20260925,
+        "excluded": [
+          "DASATINIB"
+        ],
+        "sizes": {
+          "walk": 50,
+          "twin": 1,
+          "prism": 7,
+          "lincs": 3
+        },
+        "universe_sizes": {
+          "walk": 187,
+          "twin": 1497,
+          "prism": 612,
+          "lincs": 1156
+        },
+        "observed": 0,
+        "drugs": [],
+        "null_mean": 0.2454,
+        "null_p95": 1.0,
+        "null_max": 4,
+        "exceed": 10000,
+        "p_value": 1.0,
+        "beats_p95": false,
+        "histogram": {
+          "0": 7799,
+          "1": 1965,
+          "2": 220,
+          "3": 15,
+          "4": 1
+        },
+        "role": "registered sensitivity (H094 retrospective note)",
+        "generators": [
+          "walk",
+          "twin",
+          "prism",
+          "lincs"
+        ],
+        "universe_swaps": {}
+      },
+      {
+        "label": "without lincs (G4 positive control failed)",
+        "k": 2,
+        "draws": 10000,
+        "seed": 20260925,
+        "excluded": [],
+        "sizes": {
+          "walk": 50,
+          "twin": 2,
+          "prism": 8
+        },
+        "universe_sizes": {
+          "walk": 188,
+          "twin": 760,
+          "prism": 613
+        },
+        "observed": 1,
+        "drugs": [
+          "DASATINIB"
+        ],
+        "null_mean": 0.2934,
+        "null_p95": 1.0,
+        "null_max": 4,
+        "exceed": 2608,
+        "p_value": 0.2608739126087391,
+        "beats_p95": false,
+        "histogram": {
+          "0": 7392,
+          "1": 2309,
+          "2": 274,
+          "3": 23,
+          "4": 2
+        },
+        "role": "sensitivity (not a verdict input)",
+        "generators": [
+          "walk",
+          "twin",
+          "prism"
+        ],
+        "universe_swaps": {
+          "twin": "build/it4/track2-s2/universes/twin-no-lincs/twin.universe.tsv"
+        }
+      },
+      {
+        "label": "without lincs and DASATINIB",
+        "k": 2,
+        "draws": 10000,
+        "seed": 20260925,
+        "excluded": [
+          "DASATINIB"
+        ],
+        "sizes": {
+          "walk": 50,
+          "twin": 1,
+          "prism": 7
+        },
+        "universe_sizes": {
+          "walk": 187,
+          "twin": 759,
+          "prism": 612
+        },
+        "observed": 0,
+        "drugs": [],
+        "null_mean": 0.1991,
+        "null_p95": 1.0,
+        "null_max": 3,
+        "exceed": 10000,
+        "p_value": 1.0,
+        "beats_p95": false,
+        "histogram": {
+          "0": 8174,
+          "1": 1664,
+          "2": 159,
+          "3": 3
+        },
+        "role": "sensitivity (not a verdict input)",
+        "generators": [
+          "walk",
+          "twin",
+          "prism"
+        ],
+        "universe_swaps": {
+          "twin": "build/it4/track2-s2/universes/twin-no-lincs/twin.universe.tsv"
+        }
+      },
+      {
+        "label": "twin universe = its own analogues only",
+        "k": 2,
+        "draws": 10000,
+        "seed": 20260925,
+        "excluded": [],
+        "sizes": {
+          "walk": 50,
+          "twin": 2,
+          "prism": 8,
+          "lincs": 3
+        },
+        "universe_sizes": {
+          "walk": 188,
+          "twin": 4,
+          "prism": 613,
+          "lincs": 1157
+        },
+        "observed": 1,
+        "drugs": [
+          "DASATINIB"
+        ],
+        "null_mean": 0.3812,
+        "null_p95": 1.0,
+        "null_max": 4,
+        "exceed": 3289,
+        "p_value": 0.32896710328967105,
+        "beats_p95": false,
+        "histogram": {
+          "0": 6711,
+          "1": 2808,
+          "2": 441,
+          "3": 38,
+          "4": 2
+        },
+        "role": "sensitivity: universe rule (not a verdict input)",
+        "generators": [
+          "walk",
+          "twin",
+          "prism",
+          "lincs"
+        ],
+        "universe_swaps": {
+          "twin": "build/it4/track2-s2/universes/twin-own/twin.universe.tsv"
+        }
+      },
+      {
+        "label": "twin own universe, without lincs",
+        "k": 2,
+        "draws": 10000,
+        "seed": 20260925,
+        "excluded": [],
+        "sizes": {
+          "walk": 50,
+          "twin": 2,
+          "prism": 8
+        },
+        "universe_sizes": {
+          "walk": 188,
+          "twin": 4,
+          "prism": 613
+        },
+        "observed": 1,
+        "drugs": [
+          "DASATINIB"
+        ],
+        "null_mean": 0.2883,
+        "null_p95": 1.0,
+        "null_max": 4,
+        "exceed": 2577,
+        "p_value": 0.25777422257774224,
+        "beats_p95": false,
+        "histogram": {
+          "0": 7423,
+          "1": 2292,
+          "2": 265,
+          "3": 19,
+          "4": 1
+        },
+        "role": "sensitivity: universe rule (not a verdict input)",
+        "generators": [
+          "walk",
+          "twin",
+          "prism"
+        ],
+        "universe_swaps": {
+          "twin": "build/it4/track2-s2/universes/twin-own/twin.universe.tsv"
+        }
+      }
+    ],
+    "seed": 20260925,
+    "pairwise_shared": {
+      "walk|twin": 0,
+      "walk|prism": 0,
+      "walk|lincs": 0,
+      "twin|prism": 1,
+      "twin|lincs": 0,
+      "prism|lincs": 0
+    },
+    "survivors": [
+      "DASATINIB"
+    ],
+    "checks_run": {
+      "k1": true,
+      "k2": true,
+      "k3": true
+    }
+  },
+  "outputs": [
+    {
+      "path": "ressources/track2/it4/candidates.tsv",
+      "sha256": "10f38f68d6a66edce4ef0b3875dfe253b86989b8a38e178f2c54c38f62842bfa",
+      "bytes": 25146,
+      "rows": 62
+    }
+  ],
+  "sources": {
+    "genomic": "BUB1B mechanism (walk, screen, signatures) and, in K2, PharmCAT phenotypes of the child's callset (actionability words only, reused from entry 152)",
+    "clinical": "the 8 HPO terms through the phenotype twin (G2) and K2's label matching"
+  },
+  "limitations": "each generator's approval proxy differs (openFDA label, PRISM Launched, ChEMBL phase 4); a caution never removes a drug; an unflagged K2 row means two sources are silent"
+}

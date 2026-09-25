@@ -1,0 +1,104 @@
+{
+  "name": "twin",
+  "built_at": "2026-09-25T12:28:47+00:00",
+  "built_by": "tools/converge.py twin",
+  "code_version": "c0385cf",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+  "generator_rule": "every approved analogue in model_interventions.tsv on a row whose supports_direction begins with 'supports'; 'approved' read from the row's own analogue_status (mva.drugs.convergence_generators.approved_analogues). Universe = approved analogues named by any row, plus every approved drug in the other generators' universes (the widest space, so the null is harder)",
+  "rows_not_voting": [
+    {
+      "intervention": "Cdkn2a p19Arf inactivation (cross)",
+      "reason": "supports_direction = 'warns'"
+    },
+    {
+      "intervention": "Trp53 or Cdkn1a (p21) deletion",
+      "reason": "supports_direction = 'warns'"
+    },
+    {
+      "intervention": "SIRT2 overexpression on a wild-type background",
+      "reason": "supports_direction = 'limits'"
+    },
+    {
+      "intervention": "Pak2 depletion",
+      "reason": "supports, but its analogue_status names no approved drug"
+    },
+    {
+      "intervention": "Sfrp3 genetic inhibition",
+      "reason": "supports, but its analogue_status names no approved drug"
+    },
+    {
+      "intervention": "sustained high BubR1 expression",
+      "reason": "supports, but its analogue_status names no approved drug"
+    },
+    {
+      "intervention": "none - observational",
+      "reason": "supports_direction = 'hypothesis only'"
+    },
+    {
+      "intervention": "none - observational",
+      "reason": "supports_direction = 'warns'"
+    },
+    {
+      "intervention": "none - observational",
+      "reason": "supports_direction = 'context'"
+    }
+  ],
+  "other_universes": [
+    {
+      "path": "ressources/track2/it4/generators/walk.universe.tsv",
+      "sha256": "0b93d93e83c84a35a132b41cac28aa6a25d633fdff35205eebb247dd40b081f8",
+      "bytes": 31042,
+      "rows": 188,
+      "approved": 188
+    },
+    {
+      "path": "ressources/track2/it4/generators/prism.universe.tsv",
+      "sha256": "293171e171d08375a791316fcb5c16163e2dad77d371a3b3af21a0d918dcad32",
+      "bytes": 10617,
+      "rows": 613,
+      "approved": 613
+    },
+    {
+      "path": "ressources/track2/it4/generators/lincs.universe.tsv",
+      "sha256": "ccae3933bdf3af1db69a0b8494ff4a3cb279b1618616a486b7898228d80806b6",
+      "bytes": 20759,
+      "rows": 1157,
+      "approved": 1157
+    }
+  ],
+  "counts": {
+    "table_rows": 12,
+    "listed": 2,
+    "universe_drugs": 1498
+  },
+  "inputs": [
+    {
+      "name": "model_interventions.tsv",
+      "path": "ressources/track2/model_interventions.tsv",
+      "sha256": "df0a98864f99c2f16cd9b4594b602393b604480268a1592ec27b23c993677dba",
+      "bytes": 6894,
+      "manifest": "ressources/track2/model_interventions.provenance.json",
+      "entry": "docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/it4/generators/twin.tsv",
+      "sha256": "e86418b6a4d206a2594cbd30a71f1d4344463d56b1948257668298fb8909f56d",
+      "bytes": 859,
+      "rows": 2
+    },
+    {
+      "path": "ressources/track2/it4/generators/twin.universe.tsv",
+      "sha256": "6eed04aee37cdcb26c8462c5e843fe6fd50af037480d0c636d38cd7d02d80f52",
+      "bytes": 25737,
+      "rows": 1498
+    }
+  ],
+  "sources": {
+    "clinical": "the child's 8 HPO terms chose the twin mice (entry 150); rows link rescued phenotypes to them",
+    "genomic": "the gene BUB1B (Track 1 pair) chose the mouse models; no patient sequence"
+  },
+  "limitations": "abstract-level literature table, hand-curated in entry 150; 'supports' is that table's own word. 'hypothesis only' rows (the rapalogs) do not vote by this rule"
+}

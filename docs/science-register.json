@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-25T14:34:27",
+  "generated_at": "2026-09-25T14:39:16",
   "steps": [
     {
       "slug": "step-0",
@@ -3482,11 +3482,39 @@
       "refuted_by": "No drug is named by 2 or more generators, or the observed count is at or below the null's 95th percentile",
       "gene": "",
       "path": "s10-convergence",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.15,
+      "suggested_confidence": 0.0691,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 221,
+          "direction": "refutes",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "The four iteration-4 generators name one approved drug in common (dasatinib, twin and PRISM); a 10,000-draw permutation null (seed 20260925) has a 95th percentile of 1.0, so the observed count does not exceed it (p 0.263).",
+          "source_ref": "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 222,
+          "direction": "refutes",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Without dasatinib, the registered retrospective exclusion, no drug is named by two generators (p 1).",
+          "source_ref": "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 223,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "Dropping G4 (its positive control failed) or narrowing G2's universe to its own analogues leaves p between 0.258 and 1; no sensitivity analysis clears the null, and a wider G2 universe makes the null easier to beat, not harder as the step README had said.",
+          "source_ref": "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H095",
@@ -3496,11 +3524,39 @@
       "refuted_by": "Every converging drug fails at least one of the three checks, or no drug converges",
       "gene": "",
       "path": "s10-survival",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "supported",
+      "confidence": 0.4,
+      "suggested_confidence": 0.7311,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 224,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "Dasatinib, named by the twin and PRISM generators, passes K1 (its mechanism is in no do-not class), K2 (flagged by neither the genome nor the label source) and K3 (aneuploidy Cliff's delta +0.135, opposite-direction p 0.99).",
+          "source_ref": "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 225,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "The survivor's convergence is at chance level (H094 refuted) and both generators naming it were known to favour it before the join (entries 150, 151).",
+          "source_ref": "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 226,
+          "direction": "neutral",
+          "strength": 0.2,
+          "kind": "measurement",
+          "claim": "K3 cannot fail a drug G3 listed on the same contrast, K2's pass means both sources are silent rather than that the drug is safe, and paediatric FAERS pairs dasatinib with growth retardation in 15 reports.",
+          "source_ref": "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H096",

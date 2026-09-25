@@ -1,11 +1,14 @@
 {
   "step": "step-10",
   "iteration": "iteration4",
-  "summary": "Opened 2026-09-25, nothing run yet. This step builds the Track 2 answer from iteration 4 alone. Four sources that share no data each propose approved drugs: the PrimeKG walk (entry 142), the child's phenotype twin among mouse models (entry 150), a screen-wide PRISM sweep (entry 154) and LINCS signature reversal (entry 153). The step tests whether they agree more often than chance, then filters the agreeing drugs through three checks: mechanism direction, the child's own safety (genome and clinical terms), and a contrary screen result. The rules for every list were fixed before any join.",
+  "summary": "This step builds the Track 2 answer from iteration 4 alone. Four sources that share no data each proposed approved drugs by a rule fixed before any join: the PrimeKG walk (50 drugs), the child's phenotype twin among mouse models (2), a screen-wide PRISM sweep (8) and LINCS signature reversal (3), 62 drugs in all. The sweep found no Launched drug selective for rhabdomyosarcoma or aneuploid lines after correction (best q 0.122 and 0.287), and LINCS reversal is uninterpretable because its positive control failed. The four lists share one drug, dasatinib (twin and PRISM), which is what a permutation null expects by chance (p 0.263). Dasatinib passes the three checks: mechanism direction, the child's own safety from his genome and his clinical terms, and a contrary screen result. Vincristine is the one drug both safety sources flag.",
   "why": "Step 9's E4 and E5+E6 tested drugs drawn from iteration 2's shortlist. A submission built from iteration 4 only cannot borrow that list, so iteration 4 must generate its own candidates and re-run its checks on them.",
-  "verdict": "Not yet tested. H093 (screen-wide PRISM), H094 (convergence against a permutation null) and H095 (at least one survivor) are filed and proposed.",
+  "verdict": "Three claims settled. H093 refuted (0.10): no eligible Launched drug reaches q < 0.10 in either PRISM contrast, while the positive-control sweep recovers the RAF inhibitors. H094 refuted (0.15): one converging drug against a null 95th percentile of 1.0, none without the pre-known dasatinib. H095 supported weakly (0.40): dasatinib passes every check, but its convergence is chance-level and it was known before the join.",
   "inherits": {
-    "steps": ["step-7", "step-9"],
+    "steps": [
+      "step-7",
+      "step-9"
+    ],
     "what": "Step 7's PrimeKG walk ranking, step 9's phenotype twin interventions (E2), PRISM readers and tests (E4), the per-child safety method (E5+E6) and the LINCS signature reversal (E3). The confirmed BUB1B pair comes from Track 1's oracle reply (entry 083)."
   },
   "hands_to": {
@@ -30,12 +33,32 @@
       "reads": "6,790 PRISM compounds, 2,189 marked Launched, 633 eligible copies, 613 eligible drugs, 8 G3-listed, 0 with q < 0.10 in both contrasts; 1,489 newer compounds carry no PRISM phase.",
       "means": "Coverage and the approval label, not only biology, bound what the screen can say.",
       "source": "tools/render_step10_s1.py over build/it4/track2-s1/controls.json; entry 154"
+    },
+    {
+      "name": "step10-s2-upset.svg",
+      "reads": "An UpSet view of 62 approved drugs across the four generators (walk 50, twin 2, PRISM 8, LINCS 3). One combination holds two generators: twin and PRISM share dasatinib. Every other drug is named by one generator alone.",
+      "means": "The four independent sources almost never name the same drug.",
+      "source": "tools/render_step10_s2.py over ressources/track2/it4/candidates.tsv and build/it4/track2-s2/convergence.json; entry 155"
+    },
+    {
+      "name": "step10-s2-null.svg",
+      "reads": "The permutation null (10,000 draws, seed 20260925) of 'drugs named by at least 2 generators' for six tests. Primary: observed 1, null 95th percentile 1.0, p 0.263. Without dasatinib: 0, p 1. Without LINCS: p 0.261. With the twin's narrowest universe: p 0.329.",
+      "means": "One agreement is what chance gives; H094 is refuted, and no sensitivity changes that.",
+      "source": "tools/render_step10_s2.py over build/it4/track2-s2/convergence.json; entry 155"
+    },
+    {
+      "name": "step10-s2-checks.svg",
+      "reads": "Check matrix for the converging drug and each generator's top 10 (22 of 62 drugs). Dasatinib passes K1, K2 and K3 and is the one survivor. Cautions are mostly drugs with no mechanism annotation. The one K2 fail, vincristine (walk #13), is outside the top 10 and is listed in the entry's table.",
+      "means": "Dasatinib is iteration 4's only candidate that converges and passes every check: a pre-known lead that survived, not a discovery.",
+      "source": "tools/render_step10_s2.py over ressources/track2/it4/candidates.tsv; entry 155"
     }
   ],
   "sources": [
     "docs/iteration4/step-10/README.md",
     "docs/iteration4/step-10/hypotheses/README.md",
     "docs/iteration4/step-10/methodology/154-screen-wide-prism-sweep.md",
-    "docs/iteration4/step-10/submission-notes/S1.md"
+    "docs/iteration4/step-10/submission-notes/S1.md",
+    "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+    "docs/iteration4/step-10/submission-notes/S2.md"
   ]
 }
