@@ -65,16 +65,17 @@ widens it.
     declared) plus the regenerated `steps.generated.ts`. The file also holds another session's
     step-8 block, and a permission check refused committing it whole. Until it lands, the live
     API reads step 7 as *planned*
-- [ ] **T4** the user decides: does the walk enter `submissions/track2/iteration-2/` as the second
-  independent method? No new Track 2 folder unless the ranking is worth uploading
+- [x] **T4** decided 2026-09-25: the walk is generator G1 of iteration 4's own Track 2 submission,
+  `submissions/track2/iteration-4/` (steps 10–11, entries 154–156), not a row of iteration 2's
 
 **Track 1: the user's close list.**
-- [ ] **C1** step 3: tests for the inference API routes; a verdict revision for H062
-- [ ] **C2** step 5: every per-model report is present (six in `reports/`); an H063 revision that
-  includes GPN-MSA
-- [ ] **C3** rehearse `submissions/track1/iteration-4/` (the A6 item below); `check_iteration.py`
-  green; no upload
-- [ ] **C4** the headline goes in `report.md` §1 and on `/zoo`
+- [x] **C1** step 3: route tests `tests/test_viz_zoo_jobs_body.py` (`bd30785`); H062 closed undecided,
+  revision 3 (`1943903`): the owed three-worker re-run was not made
+- [x] **C2** step 5: H063 closed undecided with a GPN-MSA evidence row (0.93rd percentile, entry 148),
+  revisions 3–4 (`1943903`)
+- [x] **C3** skipped, as in the plan the user approved 2026-09-25: a nine-lane Track 1 folder ranks the pair 4,318 (entry
+  148), which cannot improve on the submitted answer; nothing to rehearse
+- [x] **C4** the headline above `report.md` §1 and on `/zoo` (`89cf730`); the renderer keeps §7–§8 (`c0385cf`)
 
 **Skipped. Each is listed as a limitation in `report.md` and the step READMEs:**
 - Wave 5 in full — **reopened for the GPU lanes on 2026-09-23 as step 8** (user request; B1–B2 done, entries 143–148). Still skipped: ΔΔG, the judge, and
