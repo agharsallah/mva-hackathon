@@ -1,0 +1,128 @@
+{
+  "name": "proteome_hits",
+  "built_at": "2026-09-25T16:43:34+00:00",
+  "built_by": "tools/it5_proteome.py run",
+  "code_version": "5965bb6",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration5/step-1/work/r2-entry.md",
+  "tool": "tools/it5_proteome.py run",
+  "inputs": [
+    {
+      "file": "build/it5/r2/raw/mitchell/MOESM3.csv",
+      "url": "https://static-content.springer.com/esm/art%3A10.1038%2Fs41587-022-01539-0/MediaObjects/41587_2022_1539_MOESM3_ESM.csv",
+      "role": "Mitchell 2023 Nat Biotechnol 41:845 (PMID 36593396) Supp. Data 3, log2 FC vs DMSO",
+      "sha256": "fc0e7385aa07e99daeed8398217b05dc2d38797b6bc758c48ef1b116711fb6bc",
+      "bytes": 43215683
+    },
+    {
+      "file": "build/it5/r2/raw/ptm/MOESM7.xlsx",
+      "url": "https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-019-13582-8/MediaObjects/41467_2019_13582_MOESM7_ESM.xlsx",
+      "role": "Saei 2019 Nat Commun 10:5715 (PMID 31844049) deep set A549, fold change vs control",
+      "sha256": "27c7fc74fd0bd1644e7f88de0ca92677d7164dd2ba699bef9967a944360d2891",
+      "bytes": 3313960
+    },
+    {
+      "file": "build/it5/r2/raw/ptm/MOESM8.xlsx",
+      "url": "https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-019-13582-8/MediaObjects/41467_2019_13582_MOESM8_ESM.xlsx",
+      "role": "Saei 2019 Nat Commun 10:5715 (PMID 31844049) deep set MCF-7, fold change vs control",
+      "sha256": "91d20df8cac9d8f2de60bbb3721c9bdac1739d604397033b4e231d7d676a169b",
+      "bytes": 3990783
+    },
+    {
+      "file": "build/it5/r2/raw/ptm/MOESM9.xlsx",
+      "url": "https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-019-13582-8/MediaObjects/41467_2019_13582_MOESM9_ESM.xlsx",
+      "role": "Saei 2019 Nat Commun 10:5715 (PMID 31844049) deep set RKO, fold change vs control",
+      "sha256": "d3f3d8f39be3ab9742e3f903cae40d58be9cf3ceebc798526602e1e68149a839",
+      "bytes": 3829137
+    },
+    {
+      "file": "build/it5/r2/raw/ccle/protein_quant_current_normalized.csv.gz",
+      "url": "https://gygi.hms.harvard.edu/data/ccle/protein_quant_current_normalized.csv.gz",
+      "role": "Nusinow 2020 Cell 180:387 CCLE protein (baseline only)",
+      "sha256": "b72a9ff39b123c801249ea212844ac1f500c3f38fa0f399ec6ad08ee1be2a7ed",
+      "bytes": 30916232
+    },
+    {
+      "file": "build/it5/r2/raw/halflife/MOESM5.xlsx",
+      "url": "https://static-content.springer.com/esm/art%3A10.1038%2Fs41467-018-03106-1/MediaObjects/41467_2018_3106_MOESM5_ESM.xlsx",
+      "role": "Mathieson 2018 Nat Commun 9:689 half-lives (baseline)",
+      "sha256": "e0503f49230680cbf86fbc86db145ba439c03382e584fde8f0d83241c9826515",
+      "bytes": 3338308
+    },
+    {
+      "name": "ChEMBL",
+      "url": "https://www.ebi.ac.uk/chembl/api/data",
+      "version": null,
+      "role": "max_phase 4 index",
+      "retrieved_at": "2026-09-25T12:00:00+00:00",
+      "retrieved_from": "2026-09-25T11:59:34+00:00",
+      "requests": 5,
+      "live_calls": 0,
+      "sha256": "4048707e0b7c8f0f36058bab25f20cd3a350d7ea1738ed990e632ee9745aee3a",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "openFDA",
+      "url": "https://api.fda.gov/drug/label.json",
+      "version": null,
+      "role": "label for non-ChEMBL names",
+      "retrieved_at": "2026-09-25T16:32:55+00:00",
+      "retrieved_from": "2026-09-05T23:07:14+00:00",
+      "requests": 261,
+      "live_calls": 0,
+      "sha256": "267bf4fb8ca8dc0f106cdf097402cf01b51778ec71b7551e08ef207a74f3a03f",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    }
+  ],
+  "parameters": {
+    "target": "BUB1B",
+    "score_set": "Tirosh 2016 G2/M (54)",
+    "z_min": 3.0,
+    "top_fraction": 0.02,
+    "broad_share": 0.05,
+    "deep_sets": "z_min 2, rank 1 of 9"
+  },
+  "sources": {
+    "genomic": "the target gene only (BUB1B, from the child's two alleles, entry 083); no patient value or position",
+    "clinical": "not used by this table; the entry cross-references the 8 HPO terms"
+  },
+  "clinical_framing": "research exercise; no row advises for or against giving any drug to any patient",
+  "limitations": "cancer cell lines, one dose and one time point (Mitchell), 9 drugs (deep sets); protein level, not BubR1 function or stability; a regression on one score removes only what that score captures",
+  "columns": {
+    "robust_z": "proliferation-corrected response / robust spread",
+    "hit": "z \u2265 cut and raw log2 FC > 0",
+    "breadth": "share of all proteins that are hits under the same perturbation",
+    "sensitivity_z": "z with the SAC/kinetochore module removed from the score"
+  },
+  "rows": 902,
+  "outputs": [
+    {
+      "path": "ressources/track2/it5/proteome_hits.tsv",
+      "sha256": "09b032f0bc71620f80a1c0da6100164727d788194b1b9e4d5f5970925a4fd0dc",
+      "bytes": 142102,
+      "rows": 902
+    }
+  ],
+  "validation": {
+    "mitchell2023": {
+      "HSPA1A": true,
+      "CDT1": true,
+      "MDM2": true,
+      "CDKN1A": false
+    },
+    "protargetminer_A549": {
+      "HSPA1A": true,
+      "MDM2": false
+    },
+    "protargetminer_MCF-7": {
+      "HSPA1A": true,
+      "MDM2": true
+    },
+    "protargetminer_RKO": {
+      "HSPA1A": true,
+      "MDM2": false
+    }
+  }
+}

@@ -1,0 +1,51 @@
+variant	gates	gene	role	has_consensus_row	rank	percentile	universe	any_in_top5pct	mean_percentile	permutation_p	control_passed
+cc_primary	True	BUB1	named sibling	True	6398	88.46	7233	True	44.23	0.38966	False
+cc_primary	True	BUB3	named sibling	False			7233	True	44.23	0.38966	False
+cc_primary	True	MAD1L1	named sibling	False			7233	True	44.23	0.38966	False
+cc_primary	True	MAD2L1	named sibling	False			7233	True	44.23	0.38966	False
+cc_primary	True	TTK	named sibling	True	1	0.01	7233	True	44.23	0.38966	False
+cc_primary	True	AURKB	context	True	824	11.39	7233	False	74.33	0.969	
+cc_primary	True	CENPE	context	True	5634	77.89	7233	False	74.33	0.969	
+cc_primary	True	ZWINT	context	True	6333	87.56	7233	False	74.33	0.969	
+cc_primary	True	PLK1	context	True	6926	95.76	7233	False	74.33	0.969	
+cc_primary	True	MAD2L1BP	context	True	7164	99.05	7233	False	74.33	0.969	
+raw	False	BUB1	named sibling	True	655	9.06	7233	True	4.53	0.0041	True
+raw	False	BUB3	named sibling	False			7233	True	4.53	0.0041	True
+raw	False	MAD1L1	named sibling	False			7233	True	4.53	0.0041	True
+raw	False	MAD2L1	named sibling	False			7233	True	4.53	0.0041	True
+raw	False	TTK	named sibling	True	1	0.01	7233	True	4.53	0.0041	True
+raw	False	AURKB	context	True	2322	32.1	7233	False	42.68	0.29007	
+raw	False	CENPE	context	True	4081	56.42	7233	False	42.68	0.29007	
+raw	False	ZWINT	context	True	3140	43.41	7233	False	42.68	0.29007	
+raw	False	PLK1	context	True	4109	56.81	7233	False	42.68	0.29007	
+raw	False	MAD2L1BP	context	True	1782	24.64	7233	False	42.68	0.29007	
+pc1	False	BUB1	named sibling	True	4610	63.74	7233	True	31.87	0.20288	False
+pc1	False	BUB3	named sibling	False			7233	True	31.87	0.20288	False
+pc1	False	MAD1L1	named sibling	False			7233	True	31.87	0.20288	False
+pc1	False	MAD2L1	named sibling	False			7233	True	31.87	0.20288	False
+pc1	False	TTK	named sibling	True	1	0.01	7233	True	31.87	0.20288	False
+pc1	False	AURKB	context	True	1194	16.51	7233	False	72.91	0.9596	
+pc1	False	CENPE	context	True	5222	72.2	7233	False	72.91	0.9596	
+pc1	False	ZWINT	context	True	6062	83.81	7233	False	72.91	0.9596	
+pc1	False	PLK1	context	True	6800	94.01	7233	False	72.91	0.9596	
+pc1	False	MAD2L1BP	context	True	7089	98.01	7233	False	72.91	0.9596	
+pc3	False	BUB1	named sibling	True	5960	82.4	7233	True	41.21	0.33787	False
+pc3	False	BUB3	named sibling	False			7233	True	41.21	0.33787	False
+pc3	False	MAD1L1	named sibling	False			7233	True	41.21	0.33787	False
+pc3	False	MAD2L1	named sibling	False			7233	True	41.21	0.33787	False
+pc3	False	TTK	named sibling	True	1	0.01	7233	True	41.21	0.33787	False
+pc3	False	AURKB	context	True	1160	16.04	7233	False	71.24	0.94571	
+pc3	False	CENPE	context	True	4959	68.56	7233	False	71.24	0.94571	
+pc3	False	ZWINT	context	True	5863	81.06	7233	False	71.24	0.94571	
+pc3	False	PLK1	context	True	6759	93.45	7233	False	71.24	0.94571	
+pc3	False	MAD2L1BP	context	True	7022	97.08	7233	False	71.24	0.94571	
+pc10	False	BUB1	named sibling	True	6351	87.81	7233	True	43.91	0.38356	False
+pc10	False	BUB3	named sibling	False			7233	True	43.91	0.38356	False
+pc10	False	MAD1L1	named sibling	False			7233	True	43.91	0.38356	False
+pc10	False	MAD2L1	named sibling	False			7233	True	43.91	0.38356	False
+pc10	False	TTK	named sibling	True	1	0.01	7233	True	43.91	0.38356	False
+pc10	False	AURKB	context	True	6089	84.18	7233	False	83.21	0.9952	
+pc10	False	CENPE	context	True	4198	58.04	7233	False	83.21	0.9952	
+pc10	False	ZWINT	context	True	5950	82.26	7233	False	83.21	0.9952	
+pc10	False	PLK1	context	True	7001	96.79	7233	False	83.21	0.9952	
+pc10	False	MAD2L1BP	context	True	6855	94.77	7233	False	83.21	0.9952	

@@ -1,0 +1,134 @@
+{
+  "name": "lincs_cc_control",
+  "built_at": "2026-09-25T16:35:53+00:00",
+  "built_by": "tools/it5_lincs_cc.py control",
+  "code_version": "5965bb6",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration5/step-1/work/r2-entry.md",
+  "tool": "tools/it5_lincs_cc.py control",
+  "inputs": [
+    {
+      "file": "build/it4/track2-e3/raw/xpr_mean_coeff_mat.tsv.gz",
+      "url": "https://lincs-dcic.s3.amazonaws.com/LINCS-sigs-2021/means/xpr_mean_coeff_mat.tsv.gz",
+      "sha256": "f8b115513c365340fb714fa0f2c4c8b215f1247bee4365fb59a3d7dd49a9fac4",
+      "bytes": 432492125
+    },
+    {
+      "file": "build/it4/track2-e3/raw/geneinfo_beta.txt",
+      "url": "https://s3.amazonaws.com/macchiato.clue.io/builds/LINCS2020/geneinfo_beta.txt",
+      "sha256": "e739d06bad42ff9285c00b778e65d8999425062a3375cc7e7cdab0e7154490b5",
+      "bytes": 1141389
+    }
+  ],
+  "parameters": {
+    "target": "BUB1B",
+    "siblings": [
+      "BUB1",
+      "BUB3",
+      "MAD1L1",
+      "MAD2L1",
+      "TTK"
+    ],
+    "cut": 0.05,
+    "draws": 10000,
+    "seed": 20260925,
+    "top_n": 100,
+    "decoys": 20,
+    "pcs": [
+      1,
+      3,
+      10
+    ],
+    "scores": "Tirosh 2016 S and G2/M, target + siblings removed"
+  },
+  "sources": {
+    "genomic": "the knockout gene only (BUB1B, entry 083); no patient value or position",
+    "clinical": "not used by this table; cross-referenced in the entry"
+  },
+  "limitations": "LINCS consensus rows are cancer-cell-line knockouts; regression on two scores removes only what they capture; similarity is correlation over 977 landmark genes",
+  "validation": {
+    "target": "BUB1B",
+    "knockouts": 7234,
+    "landmark_space": 977,
+    "s_members": 40,
+    "g2m_members": 46,
+    "variants": {
+      "cc_primary": {
+        "passed": false,
+        "any_in_cut": true,
+        "mean_percentile": 44.23,
+        "permutation_p": 0.38966,
+        "context_percentiles": {
+          "AURKB": 11.39,
+          "CENPE": 77.89,
+          "ZWINT": 87.56,
+          "PLK1": 95.76,
+          "MAD2L1BP": 99.05
+        }
+      },
+      "raw": {
+        "passed": true,
+        "any_in_cut": true,
+        "mean_percentile": 4.53,
+        "permutation_p": 0.0041,
+        "context_percentiles": {
+          "AURKB": 32.1,
+          "CENPE": 56.42,
+          "ZWINT": 43.41,
+          "PLK1": 56.81,
+          "MAD2L1BP": 24.64
+        }
+      },
+      "pc1": {
+        "passed": false,
+        "any_in_cut": true,
+        "mean_percentile": 31.87,
+        "permutation_p": 0.20288,
+        "context_percentiles": {
+          "AURKB": 16.51,
+          "CENPE": 72.2,
+          "ZWINT": 83.81,
+          "PLK1": 94.01,
+          "MAD2L1BP": 98.01
+        }
+      },
+      "pc3": {
+        "passed": false,
+        "any_in_cut": true,
+        "mean_percentile": 41.21,
+        "permutation_p": 0.33787,
+        "context_percentiles": {
+          "AURKB": 16.04,
+          "CENPE": 68.56,
+          "ZWINT": 81.06,
+          "PLK1": 93.45,
+          "MAD2L1BP": 97.08
+        }
+      },
+      "pc10": {
+        "passed": false,
+        "any_in_cut": true,
+        "mean_percentile": 43.91,
+        "permutation_p": 0.38356,
+        "context_percentiles": {
+          "AURKB": 84.18,
+          "CENPE": 58.04,
+          "ZWINT": 82.26,
+          "PLK1": 96.79,
+          "MAD2L1BP": 94.77
+        }
+      }
+    },
+    "primary_passed": false
+  },
+  "rows": 50,
+  "outputs": [
+    {
+      "path": "ressources/track2/it5/lincs_cc_control.tsv",
+      "sha256": "db2a8f6f0be0f5024cf93f487ac67077432afda0c7b324f73dfd8d5bcf9b6d20",
+      "bytes": 3617,
+      "rows": 50
+    }
+  ],
+  "clinical_framing": "research exercise; no row advises for or against giving any drug to any patient"
+}

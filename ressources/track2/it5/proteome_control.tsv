@@ -1,0 +1,14 @@
+dataset	context	protein	inducer	gates	rank	robust_z	universe	cut_rank	z_min	control_passed	why
+mitchell2023	HCT116, 10 µM, 24 h	HSPA1A	NVP-BEP800_HSP90AA1;HSP90B1	True	1	46.654	875	17	3.0	True	HSP90 inhibition → HSF1 → HSP70 (textbook)
+mitchell2023	HCT116, 10 µM, 24 h	HSPA1A	Radicicol_HSP90AA1	True	2	39.354	875	17	3.0	True	HSP90 inhibition → HSF1 → HSP70 (textbook)
+mitchell2023	HCT116, 10 µM, 24 h	CDT1	MLN4924_NAE1	False	4	17.33	875	17	3.0	True	neddylation block stabilises CRL4 substrate CDT1
+mitchell2023	HCT116, 10 µM, 24 h	MDM2	Nutlin3a_MDM2	False	5	21.272	845	16	3.0	True	MDM2 inhibition → p53 → MDM2 transcription
+mitchell2023	HCT116, 10 µM, 24 h	MDM2	Idasanutlin_MDM2	False	6	18.319	845	16	3.0	True	MDM2 inhibition → p53 → MDM2 transcription
+mitchell2023	HCT116, 10 µM, 24 h	CDKN1A	Nutlin3a_MDM2	False	15	11.085	875	17	3.0	False	MDM2 inhibition → p53 → p21
+mitchell2023	HCT116, 10 µM, 24 h	CDKN1A	Idasanutlin_MDM2	False	34	8.243	875	17	3.0	False	MDM2 inhibition → p53 → p21
+protargetminer_A549	A549, 9 drugs, replicate mean	HSPA1A	Bortezomib	True	1	5.317	9	1	2.0	True	proteasome inhibition → HSF1 → HSP70
+protargetminer_A549	A549, 9 drugs, replicate mean	MDM2	Nutlin	True	2	1.431	9	1	2.0	False	MDM2 inhibition → p53 → MDM2 transcription
+protargetminer_MCF-7	MCF-7, 9 drugs, replicate mean	HSPA1A	Bortezomib	True	1	2.723	9	1	2.0	True	proteasome inhibition → HSF1 → HSP70
+protargetminer_MCF-7	MCF-7, 9 drugs, replicate mean	MDM2	Nutlin	True	1	6.921	9	1	2.0	True	MDM2 inhibition → p53 → MDM2 transcription
+protargetminer_RKO	RKO, 9 drugs, replicate mean	HSPA1A	Bortezomib	True	1	3.28	9	1	2.0	True	proteasome inhibition → HSF1 → HSP70
+protargetminer_RKO	RKO, 9 drugs, replicate mean	MDM2	Nutlin	True	2	3.41	9	1	2.0	False	MDM2 inhibition → p53 → MDM2 transcription
