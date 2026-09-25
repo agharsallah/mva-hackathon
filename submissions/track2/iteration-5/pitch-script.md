@@ -1,8 +1,10 @@
 # Pitch script — Track 2, iteration 5 (3 minutes)
 
-**Standing:** outline, written 2026-09-25 from the filed entries 158–160. Shots 6–8 depend on
-route R4 and are marked TODO. Every number must be the report's; read at about 150 words a
-minute; each shot names the figure on screen.
+**Standing:** complete outline, 2026-09-25, written from the filed entries 158–162 and
+[`report.md`](report.md). **Not recorded** — no video exists and no URL is published. Every
+number here is the report's; read at about 150 words a minute; each shot names the figure on
+screen. The script ends where the report ends: the stop allele is not the lever, the decisive
+output is the cycloheximide-chase blot at 59 % of EVPI, and the top-ranked drug is not robust.
 
 | # | time | on screen | voice-over |
 |---|---|---|---|
@@ -12,5 +14,5 @@ minute; each shot names the figure on screen.
 | 4 | 1:05–1:30 | `figures/it5/r1-dosage.svg` | The result that redirects the whole iteration: even a perfect readthrough drug adds about 1.4 points of working BubR1 against a gap of roughly 6.5. Doubling the *other* copy's protein is worth 12.5. The lever is the missense allele. |
 | 5 | 1:30–2:00 | `figures/it5/r2-proliferation.svg` and `r2-hits.svg` | So we asked protein data directly, across 875 compounds. Almost everything a drug does to this protein is "it changed how many cells divide", so we remove that first — our control finds the textbook protein induction at ranks 1 and 2. What is left: five approved drugs raising BubR1 by 14 to 16 percent. Not a rescue. The big raisers point at degradation instead. |
 | 6 | 2:00–2:25 | `figures/it5/r3-evidence-map.svg` and `r3-mva-exposures.svg` | The literature holds what no database encodes — seven ways to raise this protein, each with a sentence our code checked word for word against the source. And the disease's own safety record: a severe reaction to one chemotherapy drug, a published warning against two more, growth hormone ineffective in four reports. |
-| 7 | 2:25–2:50 | TODO (part B): R4 decision / value-of-information figure | TODO (part B): the per-branch recommendation and what the one lab test is worth. |
-| 8 | 2:50–3:00 | repo URL | TODO (part B): the closing line — reusable tooling, full provenance, and what we report as uninterpretable. |
+| 7 | 2:25–2:50 | `figures/it5/r4-voi-curve.svg`, then `figures/it5/r4-tornado.svg` | So we do not end with a ranked list. One unmeasured fact decides everything: is the missense protein unstable, or inactive? Perfect knowledge is worth 0.18 on our scale — all of it on that question, none on readthrough. A single bench test, a cycloheximide chase, buys 59 percent of it. And our top-ranked drug does not survive three of our own assumptions. The value of the test does. |
+| 8 | 2:50–3:00 | `figures/it5/s1-transfer.svg`, then the repo URL | So our answer is a measurement and an avoid list, not a prescription. The same three routes re-ran on a second disease from configuration files, and every first-case table came back byte-identical. Two of our six controls failed; both are in the report. |

@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 29,
-    "entries": 712,
+    "chapters": 31,
+    "entries": 777,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 290
+    "contexts": 360
   },
   "chapters": [
     {
@@ -1375,8 +1375,14 @@
             "stop-gained"
           ],
           "html": "<p>the recipe hits a \"STOP\" too early, so you get half a protein.</p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "exampleHtml": "<p><em>Example:</em> the child's <code>BUB1B</code> stop-gained copy stops at residue 736 of 1,050 and loses the whole kinase domain.</p>",
+          "context": "<p>iteration 5 route R1</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "premature-termination-codon-ptc",
+            "nmd-nonsense-mediated-decay"
+          ],
+          "firstSeen": "2026-09-05"
         },
         {
           "kind": "entry",
@@ -1401,9 +1407,16 @@
             "NMD",
             "nonsense-mediated decay"
           ],
-          "html": "<p>the cell's quality checker destroys recipes with an early STOP. So truncating variants usually make zero protein.</p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "html": "<p>the cell's quality checker destroys recipes with an early STOP. So truncating variants usually make zero protein. A garbage collector for malformed records, running before they are ever executed.</p>",
+          "exampleHtml": "<p><em>Example:</em> the child's stop copy is NMD-competent, so a readthrough drug has almost no recipe left to act on — worth at most +1.42 points of normal BubR1 in iteration 5's arithmetic.</p>",
+          "context": "<p>the constraint that decides whether readthrough is worth anything</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "nmd-escape",
+            "50-55-nt-rule",
+            "nonsense-readthrough-stop-codon-read-through"
+          ],
+          "firstSeen": "2026-09-05"
         },
         {
           "kind": "entry",
@@ -1437,8 +1450,15 @@
             "hypomorphic"
           ],
           "html": "<p>makes SOME working protein, just less or weaker. \"Leaky\", not dead.</p>",
-          "exampleHtml": "<p><em>Key rule for this case: two nulls in <code>BUB1B</code> = the baby doesn't survive. So the answer is almost certainly <strong>one null + one hypomorph</strong>.</em></p>",
-          "firstSeen": "2026-08-27"
+          "exampleHtml": "<p><em>Key rule for this case: two nulls in <code>BUB1B</code> = the baby doesn't survive. So the answer is almost certainly <strong>one null + one hypomorph</strong>.</em>\n<em>Example:</em> the mouse BubR1 H/H hypomorph makes ~10 % of normal BubR1, lives but ages early; −/H at ~4–5 % dies at birth.</p>",
+          "context": "<p>the yardstick of iteration 5's dosage table</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "null-allele",
+            "allelic-series",
+            "protein-dosage-threshold"
+          ],
+          "firstSeen": "2026-09-05"
         },
         {
           "kind": "code",
@@ -1855,8 +1875,14 @@
             "MPS1"
           ],
           "html": "<p>other division-machinery genes. Rare or suspected causes. Keep on the list, don't bet on them.</p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "exampleHtml": "<p><em>Example:</em> TTK (MPS1) is the kinase that recruits BubR1 to the kinetochore; in a public library of gene-knockout experiments, losing TTK looks more like losing BUB1B than losing any of 7,233 other genes, even after the cell-cycle effect is removed.</p>",
+          "context": "<p>iteration 5 route R2 (b)</p>",
+          "source": "docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md",
+          "related": [
+            "sac-spindle-assembly-checkpoint",
+            "kinetochore"
+          ],
+          "firstSeen": "2026-09-05"
         },
         {
           "kind": "mermaid",
@@ -2397,9 +2423,15 @@
             "OpenAlex",
             "Semantic Scholar"
           ],
-          "html": "<p>ways to search scientific papers by program instead of by hand. PubTator3 already tags which genes and variants each paper mentions.</p>",
-          "exampleHtml": "",
-          "firstSeen": "2026-08-27"
+          "html": "<p>ways to search scientific papers by program instead of by hand. PubTator3 already tags which genes and variants each paper mentions. Europe PMC also serves the full text of open-access papers: a REST API whose <code>/search</code> returns JSON records and whose <code>/{PMCID}/fullTextXML</code> returns the paper body.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>TITLE_ABS:(BUB1B OR BubR1) AND TITLE_ABS:(\"protein level\") AND SRC:MED</code> returned 275 Europe PMC records on 2026-09-25.</p>",
+          "context": "<p>iteration 5 route R3's corpus source</p>",
+          "source": "docs/iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md",
+          "related": [
+            "pmid-doi",
+            "corpus"
+          ],
+          "firstSeen": "2026-09-05"
         },
         {
           "kind": "entry",
@@ -7408,7 +7440,7 @@
           "aliases": [],
           "html": "<p>re-running a whole analysis on inputs drawn at random with the same <em>shape</em> as the real ones, to see how high chance alone gets. It answers \"did the input matter\", which a large score on its own never does.</p>",
           "exampleHtml": "<p><em>Example:</em> 1,000 random seven-term symptom sets, each drawn to match the child's own term-depth profile, each re-ranking all 11,465 genes.</p>",
-          "context": "<p>the specificity test step 4 pre-registered</p>",
+          "context": "<p>the specificity test step 4 pre-registered; iteration 5 route R2 uses it on a control — the corrected LINCS checkpoint-sibling mean percentile 44.23 is beaten by random sets 39 % of the time (p 0.390)</p>",
           "source": "src/mva/pipeline/nulls.py",
           "related": [
             "decoy-null",
@@ -8973,7 +9005,10 @@
           ],
           "html": "<p>log₂ of a line's barcode abundance with drug over without; <strong>more negative = the drug killed more of that line</strong>. <em>Example:</em> bortezomib's median −4.19 across the screen.</p>",
           "exampleHtml": "",
-          "context": "<p>PRISM 24Q2 primary, entry 151</p>",
+          "context": "<p>PRISM 24Q2 primary, entry 151; the same log₂(treated / control) arithmetic reads protein amount in drug-perturbation proteomics (iteration 5 route R2: Ro-3306 raises BUB1B protein by log2 +0.91, 1.9×)</p>",
+          "related": [
+            "drug-perturbation-proteomics"
+          ],
           "firstSeen": "2026-09-24"
         },
         {
@@ -9306,10 +9341,13 @@
           "aliases": [],
           "html": "<p>a case where the right answer is already known, run through the same code first. If it fails, the pipeline (or the question) is broken and the real result cannot be read. <em>Example:</em> the screen sweep must find dabrafenib in melanoma lines; it does, at q 3.2 × 10⁻⁹.</p>",
           "exampleHtml": "",
-          "context": "<p>entries 153, 154</p>",
+          "context": "<p>entries 153, 154; in iteration 5 every route carries one in place of a pre-registered claim (<a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/docs/iteration5/notes/exploratory-no-hypotheses.md\">note</a>) — e.g. route R3's unseeded queries had to retrieve and reproduce PMIDs 24825348, 18516091, 22048312 (3/3, 3/3)</p>",
           "related": [
             "decoy-null",
-            "permutation-null"
+            "permutation-null",
+            "negative-control",
+            "held-out-control",
+            "gating-control"
           ],
           "firstSeen": "2026-09-25"
         },
@@ -9399,7 +9437,11 @@
           "aliases": [],
           "html": "<p>a drug that selectively kills senescent cells (cells permanently stopped from dividing that inflame their neighbours). <em>Example:</em> dasatinib (+ quercetin), the approved analogue of the p16⁺-cell clearance that delayed ageing in BubR1-hypomorph mice.</p>",
           "exampleHtml": "",
-          "context": "<p>direction D5, entry 150</p>",
+          "context": "<p>direction D5, entry 150; re-derived mechanically by iteration 5 route R3 (dasatinib 0.134)</p>",
+          "related": [
+            "senescence-and-senolytics",
+            "class-analogue"
+          ],
           "firstSeen": "2026-09-25"
         },
         {
@@ -9543,11 +9585,15 @@
           "slug": "bloom-syndrome",
           "term": "Bloom syndrome",
           "aliases": [],
-          "html": "<p>a recessive disease of the BLM DNA helicase: growth restriction, sun-sensitive skin, immune deficiency and very early, multiple cancers. Step 11's second case. <em>Example:</em> MONDO:0008876, 42 HPO terms in <code>phenotype.hpoa</code>.</p>",
+          "html": "<p>a recessive disease of the BLM DNA helicase: growth restriction, sun-sensitive skin, immune deficiency and very early, multiple cancers. Step 11's second case, and iteration 5's transfer case. Most disease-causing copies of <code>BLM</code> cut translation short, which is why it is the right second case for a read-through model: a published <code>BLM</code> early-stop copy has a <em>measured</em> read-through value and the child's <code>BUB1B</code> one does not. <em>Example:</em> MONDO:0008876, 42 HPO terms in <code>phenotype.hpoa</code>; 54 of 64 registry mutations terminate translation early (PMID 17407155).</p>",
           "exampleHtml": "",
-          "context": "<p>entry 156 (GeneReviews PMID 20301572)</p>",
+          "context": "<p>entries 156 (GeneReviews PMID 20301572) and 162</p>",
+          "source": "docs/iteration5/step-1/methodology/162-the-three-routes-on-bloom-syndrome.md, ressources/track2/it5/transfer/r1/blm_allele_note.md",
           "related": [
-            "transfer-mechanism-card"
+            "transfer-mechanism-card",
+            "recq-helicase",
+            "sister-chromatid-exchange-sce",
+            "external-validation-held-out-measurement"
           ],
           "firstSeen": "2026-09-25"
         },
@@ -9600,11 +9646,15 @@
             "transfer test",
             "configuration surface"
           ],
-          "html": "<p>running a pipeline built for one case on a second case, and scoring each stage by what it took: configuration alone, configuration plus corrected text, or new code. <em>Example:</em> Bloom syndrome: four stages needed new code, so \"configuration alone\" was refuted (H096).</p>",
+          "html": "<p>running a pipeline built for one case on a second case, and scoring each stage by what it took: configuration alone, configuration plus corrected text, or new code. Iteration 5 turns the score into a <strong>number</strong>: lines of configuration against lines of shared-code change, both measured from the repository with <code>git diff --numstat</code>, plus a check that the first case's committed tables did not move. <em>Example:</em> iteration 4's transfer of its chain to Bloom syndrome needed a 378-line purpose-built driver (<code>tools/transfer_it4.py</code>, entry 156); iteration 5's three routes needed 587 lines of case card and 271 lines of shared-code parameterisation for the same disease, and one route (R2) needed no card at all.</p>",
           "exampleHtml": "",
-          "context": "<p>entry 156, <code>tools/transfer_it4.py</code>, <code>figures/it4/step11-t1-stages.svg</code></p>",
+          "context": "<p>entries 156 and 162</p>",
+          "source": "tools/transfer_it4.py`, `tools/it5_transfer_summary.py`, `figures/it4/step11-t1-stages.svg`, [the transfer figure](../figures/it5/s1-transfer.svg)",
           "related": [
-            "transfer-mechanism-card"
+            "transfer-mechanism-card",
+            "case-card",
+            "configuration-line-vs-code-line",
+            "byte-identity-check-golden-output-regression"
           ],
           "firstSeen": "2026-09-25"
         },
@@ -9634,6 +9684,1120 @@
           "context": "<p><code>app/src/lib/lineageChains.ts</code>, <code>/track2</code> and <code>/submissions</code> lineage views</p>",
           "related": [
             "case-text-leak-relabel"
+          ],
+          "firstSeen": "2026-09-25"
+        }
+      ]
+    },
+    {
+      "number": 30,
+      "id": "30-starting-from-the-alleles--words-for-iteration-5-track-2",
+      "title": "Starting from the alleles — words for iteration 5 (Track 2)",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>Iteration 5 starts from the child's two <code>BUB1B</code> copies — one early stop, one missense — and from\nthe BubR1 protein, not from drug databases. One step, four routes: R1 reads the stop allele, R2\nreads protein-level drug data, R3 reads the literature, R4 weighs the three. No route carries a\npre-registered claim; each carries a positive control instead\n(<a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/docs/iteration5/notes/exploratory-no-hypotheses.md\">note</a>).</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "premature-termination-codon-ptc",
+          "term": "Premature termination codon (PTC)",
+          "aliases": [
+            "Premature termination codon",
+            "PTC"
+          ],
+          "html": "<p>a \"stop\" word that appears in the middle of a gene's recipe instead of at its end, so the protein is never finished. In record terms: an end-of-record marker written into the middle of the record.</p>",
+          "exampleHtml": "<p><em>Example:</em> the child's <code>BUB1B</code> stop-gained copy puts a UGA stop in exon 17 of 23 and keeps 736 of 1,050 residues.</p>",
+          "context": "<p>the object route R1 works on</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "truncating-nonsense-stop-gained",
+            "nmd-nonsense-mediated-decay"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "stop-codon-identity-uga-uag-uaa",
+          "term": "Stop codon identity (UGA / UAG / UAA)",
+          "aliases": [
+            "Stop codon identity (UGA",
+            "UAG",
+            "UAA)",
+            "UGA / UAG / UAA"
+          ],
+          "html": "<p>which of the three three-letter \"stop\" words the recipe uses. They are not interchangeable: ribosomes misread them at different rates, and some drugs act on only one.</p>",
+          "exampleHtml": "<p><em>Example:</em> the child's premature stop is UGA — the most permissive of the three, and the only one 2,6-diaminopurine (DAP) acts on.</p>",
+          "context": "<p>the first key of route R1's model</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md (Toledano 2024, PMID 39174735)",
+          "related": [
+            "premature-termination-codon-ptc"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "4-base",
+          "term": "+4 base",
+          "aliases": [],
+          "html": "<p>the one letter right after a stop codon. The strongest sequence predictor of how often the ribosome runs past that stop.</p>",
+          "exampleHtml": "<p><em>Example:</em> the child's stop has +4 A; the best base, C, would raise predicted G418 readthrough 3.6-fold (0.58 % → 2.10 %) but DAP only 1.3-fold (2.85 % → 3.71 %).</p>",
+          "context": "<p>with the stop identity and the −1 base, the key of route R1's model</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "stop-codon-identity-uga-uag-uaa"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r1-plus4.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "exon-exon-junction",
+          "term": "Exon–exon junction",
+          "aliases": [],
+          "html": "<p>the seam in a finished recipe where splicing joined two exons. The cell leaves a marker protein there, which is how it later tells an early stop from a normal one.</p>",
+          "exampleHtml": "<p><em>Example:</em> the child's transcript has 23 exons; the stop sits 746 letters upstream of the last junction, with 6 junctions downstream of it.</p>",
+          "context": "<p>route R1, Ensembl release 116 gene model</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "exon",
+            "splicing",
+            "nmd-nonsense-mediated-decay"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "50-55-nt-rule",
+          "term": "50–55 nt rule",
+          "aliases": [],
+          "html": "<p>the rule of thumb for NMD: a stop more than about 50–55 letters (nucleotides, nt) upstream of the <strong>last</strong> exon–exon junction marks the recipe for destruction; a stop closer than that, or in the last exon, escapes.</p>",
+          "exampleHtml": "<p><em>Example:</em> 746 nt ≫ 55 nt, so the child's stop copy is NMD-competent — its recipe is destroyed and no half-protein accumulates.</p>",
+          "context": "<p>computed by <code>mva.drugs.readthrough_context</code></p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "nmd-nonsense-mediated-decay",
+            "nmd-escape",
+            "exon-exon-junction"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r1-stop-anatomy.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "nonsense-readthrough-stop-codon-read-through",
+          "term": "Nonsense readthrough (stop-codon read-through)",
+          "aliases": [
+            "Nonsense readthrough",
+            "stop-codon read-through"
+          ],
+          "html": "<p>the ribosome ignoring a premature stop and carrying on to the real end, making a full-length protein with one swapped amino acid where the stop was. Some small molecules raise the rate.</p>",
+          "exampleHtml": "<p><em>Example:</em> for the child's UGA / +4 A stop, DAP is predicted at 2.85 % of a no-stop control, against a no-drug floor of 0.18 %.</p>",
+          "context": "<p>the mechanism route R1 prices, and — as the state variable <code>readthrough_feasible</code>, \"does a read-through dose lift the child past R1's fidelity threshold?\" — one of the two unknowns route R4's decision turns on; R1 supplies its prior, which comes out at 0</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md (PMID 39174735), docs/iteration5/step-1/methodology/161-the-decision-and-what-the-next-measurement-is-worth.md",
+          "related": [
+            "premature-termination-codon-ptc",
+            "4-base",
+            "nmd-escape",
+            "world-state",
+            "derived-prior"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "readthrough-agent-trid-translational-readthrough-inducing-drug",
+          "term": "Readthrough agent (TRID, translational readthrough-inducing drug)",
+          "aliases": [
+            "Readthrough agent",
+            "TRID, translational readthrough-inducing drug"
+          ],
+          "html": "<p>a compound that raises nonsense readthrough. Classes: aminoglycoside antibiotics (gentamicin, G418, ELX-02), tRNA-modification inhibitors (DAP), release-factor degraders (SRI-41315), nucleoside analogues (clitocine).</p>",
+          "exampleHtml": "<p><em>Example:</em> ataluren, the best-known, is ruled out: EU authorisation not renewed (EC decision 28 March 2025), and no reproducible readthrough in the dataset route R1 uses.</p>",
+          "context": "<p>the candidate class of route R1's <code>stop_allele</code> branch</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "nonsense-readthrough-stop-codon-read-through"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "near-cognate-amino-acid",
+          "term": "Near-cognate amino acid",
+          "aliases": [],
+          "html": "<p>the amino acid a ribosome inserts when it reads through a stop: close to, but not necessarily, what the healthy gene specifies. A readthrough protein is full length but not guaranteed to work.</p>",
+          "exampleHtml": "<p><em>Example:</em> route R1 gives the readthrough protein a specific activity of 0.5 — a stated guess, rerun at 1.0 in its ceiling scenario.</p>",
+          "context": "<p>why readthrough percent is not functional rescue</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "amino-acid-residue",
+            "nonsense-readthrough-stop-codon-read-through"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "sort-seq-pooled-reporter-assay",
+          "term": "Sort-seq (pooled reporter assay)",
+          "aliases": [
+            "Sort-seq",
+            "pooled reporter assay"
+          ],
+          "html": "<p>measuring thousands of sequence variants at once: each is put into a glowing reporter gene, cells are sorted by brightness, and each brightness bin is sequenced. One experiment, one number per variant.</p>",
+          "exampleHtml": "<p><em>Example:</em> Toledano et al. measured 5,837 pathogenic premature stops × 8 compounds in HEK293T cells; each value is a percent of a no-stop control.</p>",
+          "context": "<p>the source dataset of route R1</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md (PMID 39174735)",
+          "related": [
+            "nonsense-readthrough-stop-codon-read-through"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "assay-ceiling-censoring",
+          "term": "Assay ceiling censoring",
+          "aliases": [],
+          "html": "<p>a measurement reported as \"more than x\" because it hit the top of the assay's range. The value is a lower bound, so any average over it is a lower bound too.</p>",
+          "exampleHtml": "<p><em>Example:</em> 431 of 52,062 values in route R1's source table are censored; the loader keeps the number and flags the row.</p>",
+          "context": "<p>a limitation in <code>readthrough.provenance.json</code></p>",
+          "source": "ressources/track2/it5/readthrough.provenance.json",
+          "related": [
+            "sort-seq-pooled-reporter-assay"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "negative-control",
+          "term": "negative control",
+          "aliases": [],
+          "html": "<p>a case where the right answer is \"nothing happens\", run through the same code. It must fail; if it passes, the method is finding structure in the assay, not biology.</p>",
+          "exampleHtml": "<p><em>Example:</em> route R1's untreated column (no drug at all) scores ρ 0.02 and pairwise ordering 0.494 — a coin flip, exactly as required.</p>",
+          "context": "<p>iteration 5's routes R1 and R2</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "positive-control",
+            "decoy-null"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "pairwise-ordering-accuracy",
+          "term": "Pairwise ordering accuracy",
+          "aliases": [],
+          "html": "<p>of all pairs of test cases, the share a model puts in the right order. A rank measure: it says whether the model gets the direction right, not how far off it is. 0.5 is a coin flip.</p>",
+          "exampleHtml": "<p><em>Example:</em> DAP 0.820 on route R1's named panel; the untreated column 0.494.</p>",
+          "context": "<p>half of route R1's pass bar</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "spearman-rank-correlation-ρ"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "held-out-control",
+          "term": "Held-out control",
+          "aliases": [],
+          "html": "<p>a positive control built by hiding known cases from the method, refitting, and asking it to predict exactly those. The discipline iteration 5 uses in place of pre-registration.</p>",
+          "exampleHtml": "<p><em>Example:</em> route R1 hid 14 benchmark stops (CFTR G542X, … BUB1B R114X); bar fixed before the run: ρ ≥ 0.5 and pairwise ordering ≥ 0.7 on both held-out sets. DAP ρ 0.83, G418 0.78, SRI-41315 0.65 pass; five other compounds fail.</p>",
+          "context": "<p><code>mva.drugs.readthrough</code></p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "positive-control",
+            "negative-control",
+            "pairwise-ordering-accuracy",
+            "spearman-rank-correlation-ρ"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r1-control.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "backoff-in-a-group-mean-model",
+          "term": "Backoff (in a group-mean model)",
+          "aliases": [
+            "Backoff",
+            "in a group-mean model"
+          ],
+          "html": "<p>use the most specific group that still has enough measurements; fall back to a coarser group when it does not, and report which level answered. A cache hierarchy for evidence.</p>",
+          "exampleHtml": "<p><em>Example:</em> route R1's levels are (drug, stop, +4, −1) → (drug, stop, +4) → (drug, stop) → (drug); every prediction for the child's stop came from the finest level, over 143–144 measured stops.</p>",
+          "context": "<p><code>mva.drugs.readthrough</code></p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "held-out-control"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "allelic-series",
+          "term": "Allelic series",
+          "aliases": [],
+          "html": "<p>a set of engineered versions of one gene, each making a different amount or quality of protein, used to map dose to symptom.</p>",
+          "exampleHtml": "<p><em>Example:</em> the mouse BubR1 series — null (dies before implantation), −/H (~4–5 %, dies at birth), H/H (~10 %, viable, ages early), H/L1002P (same total protein as H/H, 147 days longer median life), carriers (~50 %).</p>",
+          "context": "<p>the yardsticks of route R1's dosage table</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md (PMIDs 15208629, 23300461, 31738183)",
+          "related": [
+            "hypomorph-hypomorphic",
+            "null-allele"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "protein-dosage-threshold",
+          "term": "Protein dosage threshold",
+          "aliases": [],
+          "html": "<p>the level of a protein below which a symptom appears; the bar a dosage-raising therapy has to clear.</p>",
+          "exampleHtml": "<p><em>Example:</em> for BubR1 in human cells the chromosome-sorting cliff lies between ~6 % (most divisions go wrong) and ~13 % (near normal) — about a 2-fold gap. The child's base case is 12.5 %.</p>",
+          "context": "<p>the target route R1 prices each lever against</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md (PMID 20516114)",
+          "related": [
+            "allelic-series",
+            "hypomorph-hypomorphic"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r1-dosage.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "allele-specific-expression-ase",
+          "term": "Allele-specific expression (ASE)",
+          "aliases": [
+            "Allele-specific expression",
+            "ASE"
+          ],
+          "html": "<p>measuring how much of a gene's recipe comes from each of the two copies, rather than from the gene as a whole.</p>",
+          "exampleHtml": "<p><em>Example:</em> never published for <code>BUB1B</code> in an MVA patient — so route R1's 10 % NMD escape is an assumption; ASE in the child's cells would replace it with a number.</p>",
+          "context": "<p>a limit and an experimental proposal of route R1</p>",
+          "source": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+          "related": [
+            "nmd-nonsense-mediated-decay",
+            "premature-termination-codon-ptc"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "proteomics",
+          "term": "Proteomics",
+          "aliases": [],
+          "html": "<p>measuring how much of each protein a cell holds, directly, usually by mass spectrometry (weighing protein fragments). Expression signatures measure the recipe copies (mRNA); proteomics measures the protein itself. The two often disagree.</p>",
+          "exampleHtml": "<p><em>Example:</em> Mitchell 2023 measured 9,714 proteins in HCT116 cells under each of 875 compounds.</p>",
+          "context": "<p>route R2</p>",
+          "source": "docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md (PMID 36593396)",
+          "related": [
+            "expression-signature"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "drug-perturbation-proteomics",
+          "term": "Drug-perturbation proteomics",
+          "aliases": [],
+          "html": "<p>a dataset where many compounds were each applied to cells and the whole proteome measured afterwards: a proteins × compounds matrix of log fold changes. The protein counterpart of LINCS.</p>",
+          "exampleHtml": "<p><em>Example:</em> Mitchell 2023 (875 compounds, HCT116, 24 h) and ProTargetMiner (Saei 2019, 9 drugs × 3 cell lines).</p>",
+          "context": "<p>route R2 (a)</p>",
+          "source": "docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md",
+          "related": [
+            "proteomics",
+            "lincs-library-of-integrated-network-based-cellular-signatures",
+            "log-fold-change-lfc-in-a-screen"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "g2-m-gene-set-tirosh-2016",
+          "term": "G2/M gene set (Tirosh 2016)",
+          "aliases": [
+            "G2",
+            "M gene set",
+            "Tirosh 2016"
+          ],
+          "html": "<p>54 genes whose activity peaks while a cell prepares for and goes through division (the G2 phase and mitosis); with a matching S-phase list, the most reused published cell-cycle lists.</p>",
+          "exampleHtml": "<p><em>Example:</em> CDK1, UBE2C, TOP2A, BUB1, CDC20, TTK, …; BUB1B itself is removed before the set scores anything about BUB1B.</p>",
+          "context": "<p>route R2</p>",
+          "source": "src/mva/drugs/proteome_sets.py (PMID 27124452)",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "proliferation-score-cell-cycle-score",
+          "term": "Proliferation score (cell-cycle score)",
+          "aliases": [
+            "Proliferation score",
+            "cell-cycle score"
+          ],
+          "html": "<p>one number per compound saying how much it moved the cell-division machinery: the median log fold change over the G2/M gene set. A drug that halts division scores strongly negative.</p>",
+          "exampleHtml": "<p><em>Example:</em> across 875 compounds, BUB1B protein tracks this score at r = 0.925 — four fifths of what a drug does to BubR1 is \"it changed how many cells divide\".</p>",
+          "context": "<p>routes R2 (a) and (b)</p>",
+          "source": "src/mva/drugs/proteome_sets.py",
+          "related": [
+            "g2-m-gene-set-tirosh-2016"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "residual",
+          "term": "Residual",
+          "aliases": [],
+          "html": "<p>what is left of a measurement once the part a model explains is subtracted.</p>",
+          "exampleHtml": "<p><em>Example:</em> nisoldipine's BUB1B change is +0.21 log2; the proliferation score predicts almost none of it, so the residual is +0.21.</p>",
+          "context": "<p>route R2</p>",
+          "source": "ressources/track2/it5/proteome_hits.tsv",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "cell-cycle-correction-regressing-out-a-covariate",
+          "term": "Cell-cycle correction (regressing out a covariate)",
+          "aliases": [
+            "Cell-cycle correction",
+            "regressing out a covariate"
+          ],
+          "html": "<p>fit each measurement against the proliferation score across all compounds, then keep only the residual. Like subtracting a known baseline load before comparing two servers' latency.</p>",
+          "exampleHtml": "<p><em>Example:</em> after correction, 18 of 875 compounds still raise BUB1B protein; 5 are approved drugs.</p>",
+          "context": "<p>routes R2 (a) and (b)</p>",
+          "source": "docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md",
+          "related": [
+            "residual",
+            "proliferation-score-cell-cycle-score"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r2-proliferation.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "robust-z",
+          "term": "Robust z",
+          "aliases": [],
+          "html": "<p>how far a value sits from the middle, in units of a spread that a few extreme values cannot inflate: (value − median) / (1.4826 × median absolute deviation). For clean bell-shaped data it equals the ordinary z-score.</p>",
+          "exampleHtml": "<p><em>Example:</em> HSPA1A under the HSP90 inhibitor NVP-BEP800 has robust z 46.65 among 875 compounds.</p>",
+          "context": "<p>route R2 (a)</p>",
+          "source": "src/mva/drugs/proteome.py",
+          "related": [
+            "residual"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "breadth-of-a-perturbation",
+          "term": "Breadth (of a perturbation)",
+          "aliases": [
+            "Breadth",
+            "of a perturbation"
+          ],
+          "html": "<p>the share of <em>all</em> measured proteins one compound raises by the same rule used for the target. A compound that raises a quarter of the proteome has done nothing specific.</p>",
+          "exampleHtml": "<p><em>Example:</em> epoxomicin (a proteasome inhibitor) 25.5 %; gliclazide 0.3 %.</p>",
+          "context": "<p>route R2 (a)</p>",
+          "source": "ressources/track2/it5/proteome_hits.tsv",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "heat-shock-response-hsp90-inhibition-hsp70-induction",
+          "term": "Heat-shock response (HSP90 inhibition → HSP70 induction)",
+          "aliases": [
+            "Heat-shock response",
+            "HSP90 inhibition → HSP70 induction"
+          ],
+          "html": "<p>HSP90 is a chaperone (a helper protein that keeps others folded). Blocking it makes the cell produce large amounts of another chaperone, HSP70 (gene <code>HSPA1A</code>). One of the most reproducible induced protein changes known — which is what makes it a positive control.</p>",
+          "exampleHtml": "<p><em>Example:</em> in Mitchell 2023 the two HSP90 inhibitors rank 1 and 2 of 875 compounds for HSPA1A.</p>",
+          "context": "<p>route R2's gating control</p>",
+          "source": "docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md",
+          "related": [
+            "positive-control"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r2-control.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "pharmacological-chaperone",
+          "term": "Pharmacological chaperone",
+          "aliases": [],
+          "html": "<p>a small molecule that binds a misfolded protein and helps it fold and survive, raising the amount of working protein without touching the gene. The kind of drug a missense protein that is <em>unstable</em> (made, then quickly destroyed) would need.</p>",
+          "exampleHtml": "<p><em>Example:</em> migalastat, approved for α-galactosidase A in Fabry disease; route R2 finds it raising BUB1B protein by ~15 % — an argument for the class, not for this drug.</p>",
+          "context": "<p>routes R2 and R4</p>",
+          "source": "docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md",
+          "related": [
+            "heat-shock-response-hsp90-inhibition-hsp70-induction",
+            "missense"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "gating-control",
+          "term": "Gating control",
+          "aliases": [],
+          "html": "<p>a positive control whose failure makes a whole dataset unreadable, as opposed to one reported for context. Rows from a dataset whose gating control failed are kept and capped, never promoted.</p>",
+          "exampleHtml": "<p><em>Example:</em> HSPA1A under HSP90 inhibition gates Mitchell 2023 (passes); MDM2 under nutlin gates the ProTargetMiner sets and fails in A549 and RKO, so bortezomib's rows there are capped at 0.10.</p>",
+          "context": "<p>route R2 (a)</p>",
+          "source": "src/mva/drugs/proteome_run.py",
+          "related": [
+            "positive-control"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "principal-component-removal",
+          "term": "Principal component removal",
+          "aliases": [],
+          "html": "<p>subtract the few strongest shared patterns from a data matrix, whatever they are, instead of a named covariate. A data-driven alternative to cell-cycle correction, used as a sensitivity check.</p>",
+          "exampleHtml": "<p><em>Example:</em> removing 1, 3 or 10 components from the LINCS knockout matrix; the checkpoint-sibling control fails in all three.</p>",
+          "context": "<p>route R2 (b)</p>",
+          "source": "src/mva/drugs/signature_cc.py",
+          "related": [
+            "cell-cycle-correction-regressing-out-a-covariate"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "decrypte",
+          "term": "decryptE",
+          "aliases": [],
+          "html": "<p>a published dose-resolved proteomics resource (144 drugs × 5 doses, Jurkat cells, over a million dose–response curves). Named because it is route R2's best next input and its bulk tables could not be downloaded from this machine.</p>",
+          "exampleHtml": "<p><em>Example:</em> MassIVE <code>MSV000093659</code> / ProteomeXchange <code>PXD047799</code>; FTP timed out, the listing endpoints return 404.</p>",
+          "context": "<p>route R2, listed as unavailable</p>",
+          "source": "docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md (Eckert 2024, PMID 38714896)",
+          "related": [
+            "drug-perturbation-proteomics"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "corpus",
+          "term": "Corpus",
+          "aliases": [],
+          "html": "<p>the fixed set of documents a piece of work is allowed to read, each saved with a checksum so a later claim can be checked against the exact bytes read.</p>",
+          "exampleHtml": "<p><em>Example:</em> route R3's corpus: 767 papers, 1,065 cached texts (758 abstracts, 307 open-access full texts), each with a sha256 in <code>litmine_corpus.tsv</code>.</p>",
+          "context": "<p>route R3</p>",
+          "source": "ressources/track2/it5/litmine_corpus.tsv",
+          "related": [
+            "checksum-sha-256",
+            "pubmed-europe-pmc-pubtator3-litvar2-openalex-semantic-scholar"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "jats-xml",
+          "term": "JATS XML",
+          "aliases": [],
+          "html": "<p>the standard format a publisher ships an article in: text marked up in tags (<code>&#x3C;abstract></code>, <code>&#x3C;p></code>, <code>&#x3C;ref-list></code>) rather than a PDF. HTML for scientific papers.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>mva.drugs.litmine_corpus</code> keeps abstract and body prose and drops tables and reference lists — a sentence from a reference list is somebody else's title, not this paper's finding.</p>",
+          "context": "<p>how full text becomes the plain text the quote gate checks</p>",
+          "source": "src/mva/drugs/litmine_corpus.py",
+          "related": [
+            "corpus"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "lexical-screen",
+          "term": "Lexical screen",
+          "aliases": [],
+          "html": "<p>a cheap keyword filter that picks the sentences worth a careful read: keep a sentence only if it names the subject <strong>and</strong> an effect <strong>and</strong> an intervention. A recall ceiling, not a search: a finding phrased without all three never reaches the reader.</p>",
+          "exampleHtml": "<p><em>Example:</em> 1,109 of the corpus's 79,435 sentences (1.4 %) passed route R3's intervention screen.</p>",
+          "context": "<p>stage 2 of route R3</p>",
+          "source": "src/mva/drugs/litmine_screen.py",
+          "related": [
+            "corpus",
+            "precision-recall"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "quote-verification-the-quote-gate",
+          "term": "Quote verification (the quote gate)",
+          "aliases": [
+            "Quote verification",
+            "the quote gate"
+          ],
+          "html": "<p>the rule that a claim extracted from a paper must carry a sentence that appears <strong>verbatim</strong> in the cached text of that paper, checked by code. A failing row is rejected, never repaired. In software terms: a checksum for a sentence, with the language model as the untrusted input.</p>",
+          "exampleHtml": "<p><em>Example:</em> 42 of 42 rows passed; a unit test changes one word of a true quote (<code>increases</code> → <code>decreases</code>) and the gate rejects it as <code>quote_not_in_source</code>.</p>",
+          "context": "<p>route R3 — the model supplies judgement, the gate supplies proof</p>",
+          "source": "src/mva/drugs/litmine_verify.py",
+          "related": [
+            "corpus",
+            "llm-large-language-model"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r3-extraction-funnel.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "text-normalisation-for-quote-matching",
+          "term": "Text normalisation (for quote matching)",
+          "aliases": [
+            "Text normalisation",
+            "for quote matching"
+          ],
+          "html": "<p>folding two renderings of the same sentence into one comparison form without changing any word: Unicode NFKC, curly quotes and dashes to ASCII, invisible characters removed, runs of spaces collapsed. Think <code>git diff -w</code> plus Unicode. Not the same as VCF normalization.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>NAD⁺</code> against <code>NAD+</code>, or a non-breaking space against a space, must not fail a true quote; a quote under 30 characters is rejected as too short.</p>",
+          "context": "<p>what the quote gate may do before comparing</p>",
+          "source": "src/mva/drugs/litmine_verify.py",
+          "related": [
+            "quote-verification-the-quote-gate"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "intervention-row",
+          "term": "Intervention row",
+          "aliases": [],
+          "html": "<p>one structured record of \"somebody did X to Y and Z changed\", with the sentence that says so: intervention, type, mode, target, effect_on, direction, model_system, pmid, quote.</p>",
+          "exampleHtml": "<p><em>Example:</em> NMN (an NAD⁺ precursor) · drug · gain · NAD+ · bubr1_level · increase · mouse_in_vivo · PMID 24825348 · the verified sentence.</p>",
+          "context": "<p>the unit of evidence in <code>litmine_interventions.tsv</code></p>",
+          "source": "ressources/track2/it5/litmine_interventions.tsv",
+          "related": [
+            "quote-verification-the-quote-gate"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "mode-gain-loss-exposure",
+          "term": "Mode (gain / loss / exposure)",
+          "aliases": [
+            "Mode (gain",
+            "loss",
+            "exposure)",
+            "gain / loss / exposure"
+          ],
+          "html": "<p>which way an experiment pushed its target: gain for overexpression, a transgene or a supplement; loss for a knockout, a knockdown, an inhibitor or removal of the cells that carry it; exposure when a patient was simply given something.</p>",
+          "exampleHtml": "<p><em>Example:</em> \"SIRT2 overexpression\" is gain on SIRT2; \"clearing p16Ink4a-positive senescent cells\" is loss on those cells.</p>",
+          "context": "<p>the field the direction check reads</p>",
+          "source": "docs/iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md",
+          "related": [
+            "intervention-row"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "direction-check",
+          "term": "Direction check",
+          "aliases": [],
+          "html": "<p>a drug may stand in for a genetic experiment only if it pushes the target the same way: a gain needs an activator, a loss needs an inhibitor. A mismatch is recorded and flagged, never turned into a candidate.</p>",
+          "exampleHtml": "<p><em>Example:</em> CHEK1 knockdown <em>lowers</em> BubR1; nine CHK1 inhibitors match that knockdown — which is exactly why they are dropped and recorded as drugs to keep away from this child.</p>",
+          "context": "<p>stage 4 of route R3</p>",
+          "source": "src/mva/drugs/litmine_translate.py",
+          "related": [
+            "mode-gain-loss-exposure",
+            "mechanism-of-action-moa"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "class-analogue",
+          "term": "Class analogue",
+          "aliases": [],
+          "html": "<p>an approved drug used as the stand-in for an unapproved tool compound or a genetic experiment, because it acts on the same target in the same direction. Declared in the case card where a reader can argue with it, never inferred silently.</p>",
+          "exampleHtml": "<p><em>Example:</em> trichostatin A (a lab deacetylase inhibitor that raises BubR1) → the approved HDAC inhibitors vorinostat, romidepsin, belinostat, panobinostat, valproic acid.</p>",
+          "context": "<p>how route R3 turns literature into approved-drug candidates</p>",
+          "source": "tools/it5_litmine_params.py",
+          "related": [
+            "direction-check",
+            "senolytic",
+            "drug-repurposing"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "hypomethylating-agent",
+          "term": "Hypomethylating agent",
+          "aliases": [],
+          "html": "<p>a drug that strips methyl groups (chemical \"off\" tags) from DNA, so genes those tags silenced are read again. Approved examples: decitabine, azacitidine.</p>",
+          "exampleHtml": "<p><em>Example:</em> demethylation raises BubR1 expression; 5-aza-2′-deoxycytidine releases two repressor proteins (MBD2, HDAC1) from the switch region in front of <code>BUB1B</code> (PMID 17464181).</p>",
+          "context": "<p>a transcription-level route to more BubR1, new in iteration 5</p>",
+          "source": "docs/iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md",
+          "related": [
+            "class-analogue",
+            "tss-transcription-start-site"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "evidence-strength-iteration-5-rubric",
+          "term": "evidence_strength (iteration 5 rubric)",
+          "aliases": [
+            "evidence_strength",
+            "iteration 5 rubric"
+          ],
+          "html": "<p>one number in [0, 1] on every candidate row, for triage only. Each route states its own rubric in its entry; it ranks rows, it is not a probability and it is not calibrated.</p>",
+          "exampleHtml": "<p><em>Example:</em> R1 gives 0.6 to a prediction whose control passed; R2 gives an approved corrected riser 0.40 + 0.15 + 0.15 = 0.70; R3 multiplies model × directness × replication × translation, so nicotinamide = 0.8 × 1.0 × 0.6 × 0.4 = 0.192.</p>",
+          "context": "<p>the <code>evidence_strength</code> column of every <code>ressources/track2/it5/*_candidates.tsv</code></p>",
+          "source": "docs/iteration5/plan.md",
+          "related": [
+            "confidence"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "drug-exposure-patient",
+          "term": "Drug exposure (patient)",
+          "aliases": [
+            "Drug exposure",
+            "patient"
+          ],
+          "html": "<p>what a real patient in a published case report was actually given, and what happened next — the disease's own safety record, as opposed to a label database.</p>",
+          "exampleHtml": "<p><em>Example:</em> a child with biallelic <code>BUB1B</code> MVA and bilateral Wilms tumour had a severe reaction to dactinomycin and could receive no further chemotherapy (PMID 31081598); another <code>BUB1B</code> report advises avoiding vincristine or taxol (PMID 28611924).</p>",
+          "context": "<p><code>litmine_mva_exposures.tsv</code>, cross-referenced to the child's HPO terms</p>",
+          "source": "ressources/track2/it5/litmine_mva_exposures.tsv",
+          "related": [
+            "hpo-human-phenotype-ontology",
+            "quote-verification-the-quote-gate"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r3-mva-exposures.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "reduced-intensity-conditioning-ric",
+          "term": "Reduced-intensity conditioning (RIC)",
+          "aliases": [
+            "Reduced-intensity conditioning",
+            "RIC"
+          ],
+          "html": "<p>a gentler drug regimen given before a bone-marrow (haematopoietic stem cell) transplant, HSCT, used when full-dose conditioning would be too toxic — as in chromosome-instability syndromes, where DNA repair is weak.</p>",
+          "exampleHtml": "<p><em>Example:</em> the one reported transplant in MVA type 1 used treosulfan-based RIC: well tolerated, full blood recovery, then graft rejection and death from sepsis on day +156 (PMID 31053147).</p>",
+          "context": "<p>the most serious exposure row of route R3</p>",
+          "source": "ressources/track2/it5/litmine_mva_exposures.tsv",
+          "related": [
+            "drug-exposure-patient",
+            "cohesinopathy-centrosomopathy-chromosome-instability-syndrome"
+          ],
+          "firstSeen": "2026-09-25"
+        }
+      ]
+    },
+    {
+      "number": 31,
+      "id": "31-deciding-and-proving-it-transfers--words-for-iteration-5s-r4-and-its-transfer-check",
+      "title": "Deciding, and proving it transfers — words for iteration 5's R4 and its transfer check",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>Routes R1–R3 (chapter 30) each produced candidate rows. Route <strong>R4</strong> does not add a route: it\nweighs the three against the two facts nobody has measured, then asks what it would be worth to\nmeasure one of them. The <strong>transfer check</strong> then re-runs R1–R3 on a second disease and counts\nwhat had to be written. Both were filed after chapter 30\n(<a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/docs/iteration5/step-1/methodology/161-the-decision-and-what-the-next-measurement-is-worth.md\">entry 161</a>,\n<a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/docs/iteration5/step-1/methodology/162-the-three-routes-on-bloom-syndrome.md\">entry 162</a>).</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "sensitivity-specificity-of-a-test",
+          "term": "Sensitivity / specificity (of a test)",
+          "aliases": [
+            "Sensitivity",
+            "specificity",
+            "of a test"
+          ],
+          "html": "<p>sensitivity is the share of true positives a test calls positive; specificity is the share of true negatives it calls negative. A unit suite's catch rate and its freedom from false alarms, one number each.</p>",
+          "exampleHtml": "<p><em>Example:</em> R4 assumes 0.85 / 0.85 for the cycloheximide-chase blot, because no route measures a value, and sweeps both over 0.6–0.99.</p>",
+          "context": "<p>an R4 assumption, stated as one</p>",
+          "source": "ressources/track2/it5/decision_config.json, entry 161",
+          "related": [
+            "posterior",
+            "positive-control"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "cycloheximide-chase",
+          "term": "Cycloheximide chase",
+          "aliases": [],
+          "html": "<p>block all new protein production with the drug cycloheximide, then watch how fast the protein already in the cell disappears (its half-life), read off a Western blot (antibody staining of proteins sorted by size). It separates a protein that is made and then destroyed fast (<em>unstable</em>) from one that is present in normal amounts but does not work (<em>inactive</em>).</p>",
+          "exampleHtml": "<p><em>Example:</em> BubR1 in the child's cells against his parents' — the one bench test route R4 prices, at 59 % of everything perfect knowledge could buy.</p>",
+          "context": "<p>the measurement iteration 5 recommends ahead of any drug</p>",
+          "source": "iteration-4 report §7.3, entry 161",
+          "related": [
+            "proteomics",
+            "evsi-expected-value-of-sample-information"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "world-state",
+          "term": "World-state",
+          "aliases": [],
+          "html": "<p>one complete assignment of every uncertain fact a decision depends on; one row of a truth table over the unknowns.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>missense_class = unstable &#x26; readthrough_feasible = no</code>, prior weight 0.55 — the most likely of R4's four world-states.</p>",
+          "context": "<p>the unit route R4's utility table is indexed by</p>",
+          "source": "src/mva/drugs/decision_model.py, entry 161",
+          "related": [
+            "prior",
+            "nonsense-readthrough-stop-codon-read-through"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "utility-decision-analysis",
+          "term": "Utility (decision analysis)",
+          "aliases": [
+            "Utility",
+            "decision analysis"
+          ],
+          "html": "<p>a single number for how good one action is in one world-state; higher is better. In R4 it is a product of stated weights (evidence strength × does the mechanism apply in this state × the route's control factor × a per-child safety factor), so it <strong>orders</strong> actions; it does not measure benefit.</p>",
+          "exampleHtml": "<p><em>Example:</em> an unstable-branch candidate with evidence strength 0.70 and no safety flag scores 0.70 when the missense protein is unstable and 0 when it is inactive.</p>",
+          "context": "<p>every cell of <code>decision_utilities.tsv</code></p>",
+          "source": "src/mva/drugs/decision_model.py, entry 161",
+          "related": [
+            "confidence",
+            "world-state",
+            "evidence-strength-iteration-5-rubric"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "expected-utility-eu",
+          "term": "Expected utility (EU)",
+          "aliases": [
+            "Expected utility",
+            "EU"
+          ],
+          "html": "<p>the prior-weighted average of an action's utility across all world-states. The action with the highest EU is the best choice <em>before</em> anyone measures anything.</p>",
+          "exampleHtml": "<p><em>Example:</em> gliclazide, tied with migalastat, at EU 0.385 = 0.70 × P(unstable) 0.55. The baseline action \"defer, run the test first\" has utility 0 and wins ties, so a drug has to beat doing nothing strictly.</p>",
+          "context": "<p>the ranking in the iteration-5 report's Appendix A</p>",
+          "source": "src/mva/drugs/decision_voi.py, entry 161",
+          "related": [
+            "utility-decision-analysis",
+            "world-state"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "decision-tree-decision-analysis",
+          "term": "Decision tree (decision analysis)",
+          "aliases": [
+            "Decision tree",
+            "decision analysis"
+          ],
+          "html": "<p>a drawing of one choice under uncertainty: a branch per uncertain fact, each carrying its prior, ending in the best action for that world-state and its utility. Not the machine-learning classifier of the same name.</p>",
+          "exampleHtml": "<p><em>Example:</em> <a href=\"https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r4-decision-tree.svg\"><code>figures/it5/r4-decision-tree.svg</code></a> — two facts, four leaves, two distinct answers.</p>",
+          "context": "<p>the figure that opens the report's answer-in-one-page</p>",
+          "source": "tools/render_it5_r4.py, entry 161",
+          "related": [
+            "world-state",
+            "expected-utility-eu"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "evpi-expected-value-of-perfect-information",
+          "term": "EVPI (expected value of perfect information)",
+          "aliases": [
+            "EVPI",
+            "expected value of perfect information"
+          ],
+          "html": "<p>how much the expected utility would rise if every uncertain fact were known before choosing: the average of the per-state best, minus the best average. It is the <strong>ceiling</strong> on what any test can be worth, so a test priced above it has been priced wrong.</p>",
+          "exampleHtml": "<p><em>Example:</em> R4's hand-worked positive control: 0.66 − 0.48 = <strong>0.18</strong>. The final run: <strong>0.180</strong>.</p>",
+          "context": "<p><code>decision_voi.tsv</code></p>",
+          "source": "src/mva/drugs/decision_voi.py, entry 161",
+          "related": [
+            "expected-utility-eu"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r4-voi-curve.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "evppi-expected-value-of-partial-perfect-information",
+          "term": "EVPPI (expected value of partial perfect information)",
+          "aliases": [
+            "EVPPI",
+            "expected value of partial perfect information"
+          ],
+          "html": "<p>EVPI for one variable on its own: which <em>single</em> unknown is worth resolving. The pieces need not add up to EVPI.</p>",
+          "exampleHtml": "<p><em>Example:</em> the final run puts <strong>0.180 on <code>missense_class</code> and 0.000 on <code>readthrough_feasible</code></strong> — the whole ceiling sits on one fact, and the read-through question is worth nothing, exactly as route R1 concluded.</p>",
+          "context": "<p><code>decision_voi.tsv</code>, the result the report calls its centre</p>",
+          "source": "src/mva/drugs/decision_voi.py, entry 161",
+          "related": [
+            "evpi-expected-value-of-perfect-information"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "evsi-expected-value-of-sample-information",
+          "term": "EVSI (expected value of sample information)",
+          "aliases": [
+            "EVSI",
+            "expected value of sample information"
+          ],
+          "html": "<p>what a real, imperfect test is worth: for each result it could return, update the prior with Bayes' rule, re-choose the best action, then average over how likely each result is, and subtract the best choice made without the test. Always between 0 and EVPI.</p>",
+          "exampleHtml": "<p><em>Example:</em> the cycloheximide-chase blot scores <strong>0.106, 59 % of the 0.180 ceiling</strong>; the read-through reporter assay scores 0.000 and is not worth running.</p>",
+          "context": "<p>the report's actual recommendation — a measurement, not a molecule</p>",
+          "source": "src/mva/drugs/decision_voi.py, entry 161",
+          "related": [
+            "evpi-expected-value-of-perfect-information",
+            "sensitivity-specificity-of-a-test",
+            "cycloheximide-chase",
+            "posterior"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "flip-point",
+          "term": "Flip point",
+          "aliases": [],
+          "html": "<p>the value of a prior at which the best action changes. Each action's EU is a straight line in one prior, so the best action is the upper envelope of those lines and the flip points are where the top line changes — computed exactly, not found by grid search.</p>",
+          "exampleHtml": "<p><em>Example:</em> the best action flips at <strong>P(unstable) = 0.414</strong>: dasatinib below it, gliclazide/migalastat above. The configured prior, 0.55, sits only 0.14 above the line.</p>",
+          "context": "<p><code>decision_flips.tsv</code></p>",
+          "source": "src/mva/drugs/decision_sensitivity.py, entry 161",
+          "related": [
+            "expected-utility-eu"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r4-voi-curve.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "tornado-diagram",
+          "term": "Tornado diagram",
+          "aliases": [],
+          "html": "<p>one horizontal bar per parameter, showing how far an output moves when that parameter alone runs from its low to its high value with the rest held; longest bar on top, so the shape narrows like a funnel. It answers \"which assumption is actually carrying this result?\".</p>",
+          "exampleHtml": "<p><em>Example:</em> blot sensitivity 0.6 → 0.99 moves the blot's EVSI from 0.028 to 0.150 — the longest bar, and still positive at both ends.</p>",
+          "context": "<p><code>decision_tornado.tsv</code>; the check that separated \"the drug is not robust\" from \"the blot is\"</p>",
+          "source": "src/mva/drugs/decision_sensitivity.py, entry 161",
+          "related": [
+            "evsi-expected-value-of-sample-information",
+            "sensitivity-specificity-of-a-test"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/r4-tornado.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "noisy-or",
+          "term": "Noisy-OR",
+          "aliases": [],
+          "html": "<p>a way of combining several independent chances that something works: <code>1 − Π(1 − pᵢ)</code>. It rewards agreement between sources, and is wrong when those sources rest on the same data.</p>",
+          "exampleHtml": "<p><em>Example:</em> two routes at 0.5 each give 0.75 under noisy-OR and 0.5 under <code>max</code>. R4 uses <code>max</code> — a drug's utility is its single best argument — because iteration 4 measured cross-route convergence at chance level (H094, entry 155).</p>",
+          "context": "<p>the <code>combine</code> option of <code>decision_config.json</code>, set to <code>max</code> and recorded as a choice</p>",
+          "source": "src/mva/drugs/decision_model.py, entry 161",
+          "related": [
+            "utility-decision-analysis"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "derived-prior",
+          "term": "Derived prior",
+          "aliases": [],
+          "html": "<p>a prior computed by a stated rule from another step's committed table, instead of typed in by hand. The rule, its inputs and its arithmetic are stored next to the value, so a reader can redo it.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>readthrough_feasible</code> is read out of R1's dosage table: <strong>0 of 9</strong> real-dose (start, gain) pairs reach the 13.0 % fidelity threshold → P(yes) = <strong>0</strong>; including R1's two stated upper bounds, 2 of 15 → 0.133, used as the top of the tornado range.</p>",
+          "context": "<p>what keeps one of R4's two priors from being an opinion</p>",
+          "source": "src/mva/drugs/decision_priors.py, entry 161",
+          "related": [
+            "prior",
+            "protein-dosage-threshold",
+            "world-state"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "avoid-list",
+          "term": "Avoid list",
+          "aliases": [],
+          "html": "<p>the drugs with evidence <em>against</em> them for this particular child: they lower the protein he is short of, harmed a patient with the same disease, or weaken the already-weak checkpoint further. Each row names its source; a listed drug gets utility 0 (avoid) or half (caution), and the lowest factor among a drug's classes wins.</p>",
+          "exampleHtml": "<p><em>Example:</em> 35 rows — dactinomycin (severe reaction in a biallelic-<code>BUB1B</code> patient, PMID 31081598), nine CHEK1 inhibitors (CHK1 knockdown lowers BubR1, PMID 19778378), gentamicin/amikacin/G418 against the child's nephrocalcinosis. It drives three drugs that other routes proposed — G418, gentamicin, geldanamycin — to zero.</p>",
+          "context": "<p><code>decision_avoid.tsv</code>; the output the report calls its most transferable</p>",
+          "source": "src/mva/drugs/decision_avoid.py, entry 161",
+          "related": [
+            "utility-decision-analysis",
+            "direction-check",
+            "drug-exposure-patient"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "case-card",
+          "term": "Case card",
+          "aliases": [],
+          "html": "<p>the one file holding everything a pipeline knows about a <em>specific</em> case: the gene, its aliases, the words its literature uses, the published numbers it is measured against, the drug classes a reader may argue with. Everything else — the model, the gates, the tables — is written to know nothing about any disease. For a programmer: the difference between a config file and the program, enforced by keeping every case-shaped constant out of the modules and in one importable module the driver takes as a flag (<code>--card</code>).</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>tools/it5_litmine_params.py</code> is BUB1B's R3 card; <code>tools/it5_litmine_params_blm.py</code> is Bloom syndrome's — and no module under <code>mva.drugs.litmine_*</code> changed between them.</p>",
+          "context": "<p>the unit iteration 5's routes are parameterised by, and the unit the transfer check counts</p>",
+          "source": "entries 158–160 and 162",
+          "related": [
+            "transfer-mechanism-card",
+            "class-analogue",
+            "transfer-test-configuration-surface"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "parameterisation",
+          "term": "Parameterisation",
+          "aliases": [],
+          "html": "<p>the edit that turns a constant hiding inside a shared module into a value the caller passes in. It is the work a transfer exposes: a pipeline is only case-agnostic to the extent that its case-shaped constants have already been lifted out.</p>",
+          "exampleHtml": "<p><em>Example:</em> iteration 5's transfer needed <strong>271 lines</strong> of it across the three routes — the effect vocabulary, the directness scale, the target gene, the case name and the manifest prose were each still hard-coded — now guarded by <code>tests/test_drugs_case_cards.py</code>.</p>",
+          "context": "<p>the one-time cost every future case inherits, reported separately from the per-case cost</p>",
+          "source": "entry 162",
+          "related": [
+            "case-card",
+            "configuration-line-vs-code-line"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "configuration-line-vs-code-line",
+          "term": "Configuration line vs code line",
+          "aliases": [],
+          "html": "<p>the measure of how portable a pipeline really is: when a second case is added, how many of the lines a person wrote were <em>configuration</em> (a new case card, naming the new disease) and how many were <em>code</em> (a change inside a shared module or driver). A pipeline that claims to be case-agnostic should need configuration only; each code line is a constant that had been hiding in the machinery. A proxy for effort, not effort — a one-line change can be harder than a hundred.</p>",
+          "exampleHtml": "<p><em>Example:</em> moving route R2 to <code>BLM</code> cost <strong>no case card at all</strong> (four new flags, +47 / −59 lines of code); moving R1 cost a 311-line card and +330 / −135 lines. Totals: <strong>587 configuration lines, 271 lines of parameterisation</strong> — or 357 counting the churn the repo's own 400-line module gate then forced, which excludes 134 lines of genuinely new capability.</p>",
+          "context": "<p>the columns of <code>ressources/track2/it5/transfer/transfer_summary.tsv</code>, measured with <code>git diff --numstat</code></p>",
+          "source": "tools/it5_transfer_summary.py, entry 162",
+          "related": [
+            "case-card",
+            "parameterisation",
+            "transfer-test-configuration-surface"
+          ],
+          "see": [
+            "https://github.com/agharsallah/mva-hackathon/blob/main/figures/it5/s1-transfer.svg"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "byte-identity-check-golden-output-regression",
+          "term": "Byte-identity check (golden-output regression)",
+          "aliases": [
+            "Byte-identity check",
+            "golden-output regression"
+          ],
+          "html": "<p>after changing shared code so it can admit a second case, re-run the <em>first</em> case and check that every committed table still has exactly the same sha256 as before. It is the cheapest possible proof that a refactor changed capability and not results; one differing byte fails it.</p>",
+          "exampleHtml": "<p><em>Example:</em> all nine of iteration 5's first-case tables (R1's three, R2's three, R3's three) matched their recorded digests — checked twice, after the parameterisation and again after the module split.</p>",
+          "context": "<p>the <code>first_case_outputs_identical</code> column of the transfer table</p>",
+          "source": "entry 162",
+          "related": [
+            "frozen-artifact-hash-before-the-comparison",
+            "parameterisation",
+            "provenance-manifest"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "external-validation-held-out-measurement",
+          "term": "External validation (held-out measurement)",
+          "aliases": [
+            "External validation",
+            "held-out measurement"
+          ],
+          "html": "<p>checking a model against a measurement of <em>the very thing it predicts</em>, made by somebody else, that the model never saw. Stronger than a positive control, which only shows the method recovers something already known in general: here the specific case's answer exists in a published dataset and is deleted from the fit before the prediction is made.</p>",
+          "exampleHtml": "<p><em>Example:</em> the read-through prediction for the published <code>BLM</code> p.Gln548* stop, refit with that stop's context removed: <strong>Spearman 0.70 across nine compounds (p = 0.036), mean absolute error 0.41 percentage points</strong> — but up to 4× over-prediction for the two strongest compounds, which is the error bar any later quotation needs.</p>",
+          "context": "<p>what made Bloom syndrome the right second case for route R1 — the child's <code>BUB1B</code> stop has no such measurement</p>",
+          "source": "ressources/track2/it5/transfer/r1/readthrough_external_check.tsv, entry 162 (PMID 39174735)",
+          "related": [
+            "held-out-control",
+            "positive-control",
+            "premature-termination-codon-ptc"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "sister-chromatid-exchange-sce",
+          "term": "Sister chromatid exchange (SCE)",
+          "aliases": [
+            "Sister chromatid exchange",
+            "SCE"
+          ],
+          "html": "<p>when a chromosome copies itself, the two identical copies (sister chromatids) sometimes swap matching pieces. A healthy cell does this a few times per division; a Bloom-syndrome cell does it many times more, and counting the swaps under a microscope is still how the disease is diagnosed.</p>",
+          "exampleHtml": "<p><em>Example:</em> two quote-verified rows from the transfer run: putting a working <code>BLM</code> copy back into Bloom-syndrome cells <em>corrected</em> SCE (PMID 12034743), and the BLM inhibitor ML216 <em>induces</em> it (PMID 23352139). The hallmark paper is Chaganti 1974, \"A manyfold increase in sister chromatid exchanges in Bloom's syndrome lymphocytes\" (PMID 4140506).</p>",
+          "context": "<p>the phenotype the transfer case's literature route scores interventions on (<code>effect_on = sce</code>), standing where BubR1 level stands in the first case</p>",
+          "source": "ressources/track2/it5/transfer/r3/litmine_interventions.tsv, tools/it5_litmine_params_blm.py, entry 162",
+          "related": [
+            "aneuploidy",
+            "recq-helicase",
+            "bloom-syndrome",
+            "intervention-row"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "recurrent-founder-allele",
+          "term": "Recurrent / founder allele",
+          "aliases": [
+            "Recurrent",
+            "founder allele"
+          ],
+          "html": "<p>one broken copy of a gene carried by many apparently unrelated people, because they share a distant common ancestor. It is why a rare recessive disease can have a handful of very common alleles instead of a long tail of private ones — and why a second case can be modelled from the literature alone.</p>",
+          "exampleHtml": "<p><em>Example:</em> the transfer case models <code>BLM</code> c.1642C>T (p.Gln548*) homozygous, read from published papers (PMID 39174735 measured it; PMID 17407155's registry has 54 of 64 alleles terminating translation early). <strong>No project patient carries it</strong> and no callset was read for that case.</p>",
+          "context": "<p>why the transfer needed no genomic input at all</p>",
+          "source": "ressources/track2/it5/transfer/r1/blm_allele_note.md, entry 162",
+          "related": [
+            "allele",
+            "premature-termination-codon-ptc",
+            "bloom-syndrome"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "ambiguous-gene-symbol",
+          "term": "Ambiguous gene symbol",
+          "aliases": [],
+          "html": "<p>a gene abbreviation that is also a common abbreviation for something else, so a literature query on the symbol alone drags in the wrong papers. The fix is never the query: it is the stages after it that can <em>reject</em> a wrong paper — a screen requiring the subject, an effect and an intervention in one sentence, and a gate checking that the quoted sentence exists in the cited paper.</p>",
+          "exampleHtml": "<p><em>Example:</em> <code>BLM</code> is also the usual abbreviation for the drug bleomycin, and the corpus duly retrieved bleomycin chemistry papers. The transfer card adds the unambiguous aliases <code>RECQL3</code> and <code>RECQ2</code> and declares the weakness rather than hiding it.</p>",
+          "context": "<p>a stated limitation of the R3 transfer</p>",
+          "source": "tools/it5_litmine_params_blm.py, entry 162",
+          "related": [
+            "corpus",
+            "lexical-screen",
+            "quote-verification-the-quote-gate",
+            "case-card"
           ],
           "firstSeen": "2026-09-25"
         }

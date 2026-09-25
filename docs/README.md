@@ -132,6 +132,13 @@ Iteration 1 is **frozen** (submission 1 uploaded 2026-09-09, full match at rank 
 | [`iteration4/cards/`](iteration4/cards/) | One JSON card per model — version, licence, digest, input class, catalogue-adjacent yes/no — plus the licence manifest, generated from `src/mva/zoo/models.toml`. |
 | [`iteration4/runs/`](iteration4/runs/) | The coordinate-free run manifests: config digest, model versions, venues, seconds per stage, dollars. |
 
+## Iteration 5 — allele-first Track 2
+
+| Document | Answers |
+|---|---|
+| [`iteration5/README.md`](iteration5/README.md) | **Open.** Track 2 restarted from the child's two `BUB1B` alleles and the protein: one exploratory step, four routes, a positive control per route instead of pre-registered claims ([plan](iteration5/plan.md), [decision](iteration5/notes/exploratory-no-hypotheses.md)). |
+| [`iteration5/step-1/`](iteration5/step-1/README.md) | **Entries [158](iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md)–[160](iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md)**, R4 pending. Stop-codon readthrough and allele dosage, proliferation-corrected drug proteomics, quote-verified literature mining. Feeds [`submissions/track2/iteration-5/`](../submissions/track2/iteration-5/README.md). |
+
 ## The submission
 
 | Document | Answers |

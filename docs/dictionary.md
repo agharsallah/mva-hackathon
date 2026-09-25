@@ -516,6 +516,8 @@ Two rare variants in the same gene look identical in a VCF. **Only phasing tells
 **LoF (loss of function)** — the variant kills the protein completely.
 
 **Truncating / nonsense / stop-gained** — the recipe hits a "STOP" too early, so you get half a protein.
+*Example:* the child's `BUB1B` stop-gained copy stops at residue 736 of 1,050 and loses the whole kinase domain.
+*Context: iteration 5 route R1 · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: Premature termination codon (PTC), NMD (nonsense-mediated decay)*
 
 **Frameshift** — an indel of a number not divisible by 3, so everything after it is read in the wrong grouping — total nonsense.
 
@@ -523,7 +525,9 @@ Two rare variants in the same gene look identical in a VCF. **Only phasing tells
 
 > **Legend** — gray letters are still read correctly · red letters are read in the wrong grouping · circles are the amino acids produced · red circles are nonsense.
 
-**NMD (nonsense-mediated decay)** — the cell's quality checker destroys recipes with an early STOP. So truncating variants usually make zero protein.
+**NMD (nonsense-mediated decay)** — the cell's quality checker destroys recipes with an early STOP. So truncating variants usually make zero protein. A garbage collector for malformed records, running before they are ever executed.
+*Example:* the child's stop copy is NMD-competent, so a readthrough drug has almost no recipe left to act on — worth at most +1.42 points of normal BubR1 in iteration 5's arithmetic.
+*Context: the constraint that decides whether readthrough is worth anything · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: NMD escape, 50–55 nt rule, Nonsense readthrough (stop-codon read-through)*
 
 **NMD escape** — if the early STOP is in the last exon, the checker misses it, so a partly-working protein IS made. Matters a lot: an "obvious LoF" might actually be a mild variant.
 
@@ -544,6 +548,8 @@ flowchart TB
 
 **Hypomorph / hypomorphic** — makes SOME working protein, just less or weaker. "Leaky", not dead.
 *Key rule for this case: two nulls in `BUB1B` = the baby doesn't survive. So the answer is almost certainly **one null + one hypomorph**.*
+*Example:* the mouse BubR1 H/H hypomorph makes ~10 % of normal BubR1, lives but ages early; −/H at ~4–5 % dies at birth.
+*Context: the yardstick of iteration 5's dosage table · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: Null allele, Allelic series, Protein dosage threshold*
 
 ```text
                               working BUB1B protein produced
@@ -682,6 +688,8 @@ flowchart LR
 > **Legend** — blue: the chromosome arms · gray oval: the centromere · pin colour and size show how much prior belief each gene carries.
 
 **CEP192, CENPE, SMC5, BUB1, BUB3, KNL1/CASC5, PLK4, MAD1L1, MAD2L1, CDC20, TTK/MPS1** — other division-machinery genes. Rare or suspected causes. Keep on the list, don't bet on them.
+*Example:* TTK (MPS1) is the kinase that recruits BubR1 to the kinetochore; in a public library of gene-knockout experiments, losing TTK looks more like losing BUB1B than losing any of 7,233 other genes, even after the cell-cycle effect is removed.
+*Context: iteration 5 route R2 (b) · source: docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md · related: SAC (spindle assembly checkpoint), Kinetochore*
 
 ```mermaid
 pie showData
@@ -872,7 +880,9 @@ and its phenotype is worded mosaic variegated **hyperploidy**, not aneuploidy.*
 
 **HGMD / DECIPHER / DGV / dbVar / gnomAD-SV** — more variant databases (disease variants, structural variants, patient cases).
 
-**PubMed / Europe PMC / PubTator3 / LitVar2 / OpenAlex / Semantic Scholar** — ways to search scientific papers by program instead of by hand. PubTator3 already tags which genes and variants each paper mentions.
+**PubMed / Europe PMC / PubTator3 / LitVar2 / OpenAlex / Semantic Scholar** — ways to search scientific papers by program instead of by hand. PubTator3 already tags which genes and variants each paper mentions. Europe PMC also serves the full text of open-access papers: a REST API whose `/search` returns JSON records and whose `/{PMCID}/fullTextXML` returns the paper body.
+*Example:* `TITLE_ABS:(BUB1B OR BubR1) AND TITLE_ABS:("protein level") AND SRC:MED` returned 275 Europe PMC records on 2026-09-25.
+*Context: iteration 5 route R3's corpus source · source: docs/iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md · related: PMID / DOI, Corpus*
 
 **PMID / DOI** — the ID number of a paper. Every claim must carry one, or it can't be checked.
 
@@ -2475,7 +2485,7 @@ flowchart LR
 
 **Permutation null** — re-running a whole analysis on inputs drawn at random with the same *shape* as the real ones, to see how high chance alone gets. It answers "did the input matter", which a large score on its own never does.
 *Example:* 1,000 random seven-term symptom sets, each drawn to match the child's own term-depth profile, each re-ranking all 11,465 genes.
-*Context: the specificity test step 4 pre-registered · source: src/mva/pipeline/nulls.py · related: Decoy null, Empirical p-value, Term-depth profile · first seen 2026-09-18*
+*Context: the specificity test step 4 pre-registered; iteration 5 route R2 uses it on a control — the corrected LINCS checkpoint-sibling mean percentile 44.23 is beaten by random sets 39 % of the time (p 0.390) · source: src/mva/pipeline/nulls.py · related: Decoy null, Empirical p-value, Term-depth profile · first seen 2026-09-18*
 
 **Term-depth profile** — how far below the root of the ontology each of a patient's symptom terms sits. A random term set drawn to match it is random in *content* but comparable in *specificity*, which is what makes it a fair null: a set of seven very general terms would be easy to beat for reasons that have nothing to do with the case.
 *Example:* this child's seven terms sit at depths 6, 7, 4, 5, 5, 3, 5.
@@ -2989,7 +2999,7 @@ own genome, his own phenotypes).
 *Context: Corsello 2020 PMID 32613204 · entry 151 · figures `step9-e4-*` · related: DepMap, Log fold change (LFC) in a screen · first seen 2026-09-24*
 
 **Log fold change (LFC) in a screen** — log₂ of a line's barcode abundance with drug over without; **more negative = the drug killed more of that line**. *Example:* bortezomib's median −4.19 across the screen.
-*Context: PRISM 24Q2 primary, entry 151 · first seen 2026-09-24*
+*Context: PRISM 24Q2 primary, entry 151; the same log₂(treated / control) arithmetic reads protein amount in drug-perturbation proteomics (iteration 5 route R2: Ro-3306 raises BUB1B protein by log2 +0.91, 1.9×) · related: Drug-perturbation proteomics · first seen 2026-09-24*
 
 **AUC (area under the dose-response curve)** — one number summarising a whole dose series; lower = more sensitive. *Example:* dasatinib median 0.694 in high-aneuploidy lines.
 *Context: PRISM 20Q2 secondary, entry 151 · the sensitivity metric that checks LFC · first seen 2026-09-24*
@@ -3076,7 +3086,7 @@ sources each propose drugs, and their agreement is tested against chance. E3 add
 gene-expression source; step 11 runs the whole chain on a second disease.
 
 **positive control** — a case where the right answer is already known, run through the same code first. If it fails, the pipeline (or the question) is broken and the real result cannot be read. *Example:* the screen sweep must find dabrafenib in melanoma lines; it does, at q 3.2 × 10⁻⁹.
-*Context: entries 153, 154 · related: Decoy null, Permutation null · first seen 2026-09-25*
+*Context: entries 153, 154; in iteration 5 every route carries one in place of a pre-registered claim ([note](iteration5/notes/exploratory-no-hypotheses.md)) — e.g. route R3's unseeded queries had to retrieve and reproduce PMIDs 24825348, 18516091, 22048312 (3/3, 3/3) · related: Decoy null, Permutation null, negative control, Held-out control, Gating control · first seen 2026-09-25*
 
 **expression signature** — the list of genes a perturbation turns up and turns down, compared with untreated cells. Like a diff of gene activity. *Example:* the BUB1B knockout's 100 most raised and 100 most lowered genes.
 *Context: entry 153 · first seen 2026-09-25*
@@ -3097,7 +3107,7 @@ gene-expression source; step 11 runs the whole chain on a second disease.
 *Context: entry 153 · related: Decoy set · first seen 2026-09-25*
 
 **senolytic** — a drug that selectively kills senescent cells (cells permanently stopped from dividing that inflame their neighbours). *Example:* dasatinib (+ quercetin), the approved analogue of the p16⁺-cell clearance that delayed ageing in BubR1-hypomorph mice.
-*Context: direction D5, entry 150 · first seen 2026-09-25*
+*Context: direction D5, entry 150; re-derived mechanically by iteration 5 route R3 (dasatinib 0.134) · related: Senescence and senolytics, Class analogue · first seen 2026-09-25*
 
 **Launched** — the Drug Repurposing Hub's word for a compound approved and marketed somewhere. PRISM copies it into its release files. *Example:* 613 Launched drugs were eligible in the sweep.
 *Context: entry 154 · related: PRISM · first seen 2026-09-25*
@@ -3132,8 +3142,8 @@ gene-expression source; step 11 runs the whole chain on a second disease.
 **UpSet plot** — a chart of set intersections: each bar counts the items in exactly one combination of sets, and dots below say which sets. It replaces a Venn diagram once there are more than three sets. *Example:* `figures/it4/step10-s2-upset.svg`.
 *Context: entry 155 · first seen 2026-09-25*
 
-**Bloom syndrome** — a recessive disease of the BLM DNA helicase: growth restriction, sun-sensitive skin, immune deficiency and very early, multiple cancers. Step 11's second case. *Example:* MONDO:0008876, 42 HPO terms in `phenotype.hpoa`.
-*Context: entry 156 (GeneReviews PMID 20301572) · related: Transfer mechanism card · first seen 2026-09-25*
+**Bloom syndrome** — a recessive disease of the BLM DNA helicase: growth restriction, sun-sensitive skin, immune deficiency and very early, multiple cancers. Step 11's second case, and iteration 5's transfer case. Most disease-causing copies of `BLM` cut translation short, which is why it is the right second case for a read-through model: a published `BLM` early-stop copy has a *measured* read-through value and the child's `BUB1B` one does not. *Example:* MONDO:0008876, 42 HPO terms in `phenotype.hpoa`; 54 of 64 registry mutations terminate translation early (PMID 17407155).
+*Context: entries 156 (GeneReviews PMID 20301572) and 162 · source: docs/iteration5/step-1/methodology/162-the-three-routes-on-bloom-syndrome.md, ressources/track2/it5/transfer/r1/blm_allele_note.md · related: Transfer mechanism card, RecQ helicase, Sister chromatid exchange (SCE), External validation (held-out measurement) · first seen 2026-09-25*
 
 **RecQ helicase** — a family of enzymes that unwind DNA to repair and restart it. Losing three of them (BLM, WRN, RECQL4) causes three different syndromes. *Example:* in Bloom syndrome's twin search a Recql4 mouse (0.82 %) ranked above the best Blm mouse (1.15 %).
 *Context: entry 156 · related: Bloom syndrome, Phenotype twin · first seen 2026-09-25*
@@ -3144,11 +3154,288 @@ gene-expression source; step 11 runs the whole chain on a second disease.
 **alkylating agent** — a chemotherapy drug that attaches chemical groups to DNA and damages it; avoided where possible in Bloom syndrome. *Example:* cisplatin, check K1's one fail on the Bloom case.
 *Context: entry 156 · related: check (versus a generator) · first seen 2026-09-25*
 
-**transfer test (configuration surface)** — running a pipeline built for one case on a second case, and scoring each stage by what it took: configuration alone, configuration plus corrected text, or new code. *Example:* Bloom syndrome: four stages needed new code, so "configuration alone" was refuted (H096).
-*Context: entry 156, `tools/transfer_it4.py`, `figures/it4/step11-t1-stages.svg` · related: Transfer mechanism card · first seen 2026-09-25*
+**transfer test (configuration surface)** — running a pipeline built for one case on a second case, and scoring each stage by what it took: configuration alone, configuration plus corrected text, or new code. Iteration 5 turns the score into a **number**: lines of configuration against lines of shared-code change, both measured from the repository with `git diff --numstat`, plus a check that the first case's committed tables did not move. *Example:* iteration 4's transfer of its chain to Bloom syndrome needed a 378-line purpose-built driver (`tools/transfer_it4.py`, entry 156); iteration 5's three routes needed 587 lines of case card and 271 lines of shared-code parameterisation for the same disease, and one route (R2) needed no card at all.
+*Context: entries 156 and 162 · source: `tools/transfer_it4.py`, `tools/it5_transfer_summary.py`, `figures/it4/step11-t1-stages.svg`, [the transfer figure](../figures/it5/s1-transfer.svg) · related: Transfer mechanism card, Case card, Configuration line vs code line, Byte-identity check (golden-output regression) · first seen 2026-09-25*
 
 **case-text leak / relabel** — a pipeline writing the first case's words (a gene, "the child") into a second case's outputs; corrected by recorded substitutions and re-hashing every manifest. *Example:* 136 substitutions from 24 rules on the Bloom case.
 *Context: entry 156, `ressources/track2/transfer-it4/BLM/relabel.json` · related: transfer test (configuration surface) · first seen 2026-09-25*
 
 **lineage chain** — one connected strand of a large lineage graph, drawn back to its roots and named after its table prefix, so a graph with hundreds of edges can be read one strand at a time. *Example:* the `it4` chain on `/track2` (iteration 4's generator, sweep and candidate tables) beside `transfer.BLM`.
 *Context: `app/src/lib/lineageChains.ts`, `/track2` and `/submissions` lineage views · related: case-text leak / relabel · first seen 2026-09-25*
+
+## 30. Starting from the alleles — words for iteration 5 (Track 2)
+
+Iteration 5 starts from the child's two `BUB1B` copies — one early stop, one missense — and from
+the BubR1 protein, not from drug databases. One step, four routes: R1 reads the stop allele, R2
+reads protein-level drug data, R3 reads the literature, R4 weighs the three. No route carries a
+pre-registered claim; each carries a positive control instead
+([note](iteration5/notes/exploratory-no-hypotheses.md)).
+
+**Premature termination codon (PTC)** — a "stop" word that appears in the middle of a gene's recipe instead of at its end, so the protein is never finished. In record terms: an end-of-record marker written into the middle of the record.
+*Example:* the child's `BUB1B` stop-gained copy puts a UGA stop in exon 17 of 23 and keeps 736 of 1,050 residues.
+*Context: the object route R1 works on · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: Truncating / nonsense / stop-gained, NMD (nonsense-mediated decay) · first seen 2026-09-25*
+
+**Stop codon identity (UGA / UAG / UAA)** — which of the three three-letter "stop" words the recipe uses. They are not interchangeable: ribosomes misread them at different rates, and some drugs act on only one.
+*Example:* the child's premature stop is UGA — the most permissive of the three, and the only one 2,6-diaminopurine (DAP) acts on.
+*Context: the first key of route R1's model · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md (Toledano 2024, PMID 39174735) · related: Premature termination codon (PTC) · first seen 2026-09-25*
+
+**+4 base** — the one letter right after a stop codon. The strongest sequence predictor of how often the ribosome runs past that stop.
+*Example:* the child's stop has +4 A; the best base, C, would raise predicted G418 readthrough 3.6-fold (0.58 % → 2.10 %) but DAP only 1.3-fold (2.85 % → 3.71 %).
+*Context: with the stop identity and the −1 base, the key of route R1's model · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: Stop codon identity (UGA / UAG / UAA) · see: [the +4 figure](../figures/it5/r1-plus4.svg) · first seen 2026-09-25*
+
+**Exon–exon junction** — the seam in a finished recipe where splicing joined two exons. The cell leaves a marker protein there, which is how it later tells an early stop from a normal one.
+*Example:* the child's transcript has 23 exons; the stop sits 746 letters upstream of the last junction, with 6 junctions downstream of it.
+*Context: route R1, Ensembl release 116 gene model · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: Exon, Splicing, NMD (nonsense-mediated decay) · first seen 2026-09-25*
+
+**50–55 nt rule** — the rule of thumb for NMD: a stop more than about 50–55 letters (nucleotides, nt) upstream of the **last** exon–exon junction marks the recipe for destruction; a stop closer than that, or in the last exon, escapes.
+*Example:* 746 nt ≫ 55 nt, so the child's stop copy is NMD-competent — its recipe is destroyed and no half-protein accumulates.
+*Context: computed by `mva.drugs.readthrough_context` · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: NMD (nonsense-mediated decay), NMD escape, Exon–exon junction · see: [stop anatomy](../figures/it5/r1-stop-anatomy.svg) · first seen 2026-09-25*
+
+**Nonsense readthrough (stop-codon read-through)** — the ribosome ignoring a premature stop and carrying on to the real end, making a full-length protein with one swapped amino acid where the stop was. Some small molecules raise the rate.
+*Example:* for the child's UGA / +4 A stop, DAP is predicted at 2.85 % of a no-stop control, against a no-drug floor of 0.18 %.
+*Context: the mechanism route R1 prices, and — as the state variable `readthrough_feasible`, "does a read-through dose lift the child past R1's fidelity threshold?" — one of the two unknowns route R4's decision turns on; R1 supplies its prior, which comes out at 0 · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md (PMID 39174735), docs/iteration5/step-1/methodology/161-the-decision-and-what-the-next-measurement-is-worth.md · related: Premature termination codon (PTC), +4 base, NMD escape, World-state, Derived prior · first seen 2026-09-25*
+
+**Readthrough agent (TRID, translational readthrough-inducing drug)** — a compound that raises nonsense readthrough. Classes: aminoglycoside antibiotics (gentamicin, G418, ELX-02), tRNA-modification inhibitors (DAP), release-factor degraders (SRI-41315), nucleoside analogues (clitocine).
+*Example:* ataluren, the best-known, is ruled out: EU authorisation not renewed (EC decision 28 March 2025), and no reproducible readthrough in the dataset route R1 uses.
+*Context: the candidate class of route R1's `stop_allele` branch · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: Nonsense readthrough (stop-codon read-through) · first seen 2026-09-25*
+
+**Near-cognate amino acid** — the amino acid a ribosome inserts when it reads through a stop: close to, but not necessarily, what the healthy gene specifies. A readthrough protein is full length but not guaranteed to work.
+*Example:* route R1 gives the readthrough protein a specific activity of 0.5 — a stated guess, rerun at 1.0 in its ceiling scenario.
+*Context: why readthrough percent is not functional rescue · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: Amino acid / residue, Nonsense readthrough (stop-codon read-through) · first seen 2026-09-25*
+
+**Sort-seq (pooled reporter assay)** — measuring thousands of sequence variants at once: each is put into a glowing reporter gene, cells are sorted by brightness, and each brightness bin is sequenced. One experiment, one number per variant.
+*Example:* Toledano et al. measured 5,837 pathogenic premature stops × 8 compounds in HEK293T cells; each value is a percent of a no-stop control.
+*Context: the source dataset of route R1 · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md (PMID 39174735) · related: Nonsense readthrough (stop-codon read-through) · first seen 2026-09-25*
+
+**Assay ceiling censoring** — a measurement reported as "more than x" because it hit the top of the assay's range. The value is a lower bound, so any average over it is a lower bound too.
+*Example:* 431 of 52,062 values in route R1's source table are censored; the loader keeps the number and flags the row.
+*Context: a limitation in `readthrough.provenance.json` · source: ressources/track2/it5/readthrough.provenance.json · related: Sort-seq (pooled reporter assay) · first seen 2026-09-25*
+
+**negative control** — a case where the right answer is "nothing happens", run through the same code. It must fail; if it passes, the method is finding structure in the assay, not biology.
+*Example:* route R1's untreated column (no drug at all) scores ρ 0.02 and pairwise ordering 0.494 — a coin flip, exactly as required.
+*Context: iteration 5's routes R1 and R2 · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: positive control, Decoy null · first seen 2026-09-25*
+
+**Pairwise ordering accuracy** — of all pairs of test cases, the share a model puts in the right order. A rank measure: it says whether the model gets the direction right, not how far off it is. 0.5 is a coin flip.
+*Example:* DAP 0.820 on route R1's named panel; the untreated column 0.494.
+*Context: half of route R1's pass bar · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: Spearman rank correlation (ρ) · first seen 2026-09-25*
+
+**Held-out control** — a positive control built by hiding known cases from the method, refitting, and asking it to predict exactly those. The discipline iteration 5 uses in place of pre-registration.
+*Example:* route R1 hid 14 benchmark stops (CFTR G542X, … BUB1B R114X); bar fixed before the run: ρ ≥ 0.5 and pairwise ordering ≥ 0.7 on both held-out sets. DAP ρ 0.83, G418 0.78, SRI-41315 0.65 pass; five other compounds fail.
+*Context: `mva.drugs.readthrough` · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: positive control, negative control, Pairwise ordering accuracy, Spearman rank correlation (ρ) · see: [the control figure](../figures/it5/r1-control.svg) · first seen 2026-09-25*
+
+**Backoff (in a group-mean model)** — use the most specific group that still has enough measurements; fall back to a coarser group when it does not, and report which level answered. A cache hierarchy for evidence.
+*Example:* route R1's levels are (drug, stop, +4, −1) → (drug, stop, +4) → (drug, stop) → (drug); every prediction for the child's stop came from the finest level, over 143–144 measured stops.
+*Context: `mva.drugs.readthrough` · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: Held-out control · first seen 2026-09-25*
+
+**Allelic series** — a set of engineered versions of one gene, each making a different amount or quality of protein, used to map dose to symptom.
+*Example:* the mouse BubR1 series — null (dies before implantation), −/H (~4–5 %, dies at birth), H/H (~10 %, viable, ages early), H/L1002P (same total protein as H/H, 147 days longer median life), carriers (~50 %).
+*Context: the yardsticks of route R1's dosage table · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md (PMIDs 15208629, 23300461, 31738183) · related: Hypomorph / hypomorphic, Null allele · first seen 2026-09-25*
+
+**Protein dosage threshold** — the level of a protein below which a symptom appears; the bar a dosage-raising therapy has to clear.
+*Example:* for BubR1 in human cells the chromosome-sorting cliff lies between ~6 % (most divisions go wrong) and ~13 % (near normal) — about a 2-fold gap. The child's base case is 12.5 %.
+*Context: the target route R1 prices each lever against · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md (PMID 20516114) · related: Allelic series, Hypomorph / hypomorphic · see: [dosage figure](../figures/it5/r1-dosage.svg) · first seen 2026-09-25*
+
+**Allele-specific expression (ASE)** — measuring how much of a gene's recipe comes from each of the two copies, rather than from the gene as a whole.
+*Example:* never published for `BUB1B` in an MVA patient — so route R1's 10 % NMD escape is an assumption; ASE in the child's cells would replace it with a number.
+*Context: a limit and an experimental proposal of route R1 · source: docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md · related: NMD (nonsense-mediated decay), Premature termination codon (PTC) · first seen 2026-09-25*
+
+**Proteomics** — measuring how much of each protein a cell holds, directly, usually by mass spectrometry (weighing protein fragments). Expression signatures measure the recipe copies (mRNA); proteomics measures the protein itself. The two often disagree.
+*Example:* Mitchell 2023 measured 9,714 proteins in HCT116 cells under each of 875 compounds.
+*Context: route R2 · source: docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md (PMID 36593396) · related: expression signature · first seen 2026-09-25*
+
+**Drug-perturbation proteomics** — a dataset where many compounds were each applied to cells and the whole proteome measured afterwards: a proteins × compounds matrix of log fold changes. The protein counterpart of LINCS.
+*Example:* Mitchell 2023 (875 compounds, HCT116, 24 h) and ProTargetMiner (Saei 2019, 9 drugs × 3 cell lines).
+*Context: route R2 (a) · source: docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md · related: Proteomics, LINCS (Library of Integrated Network-based Cellular Signatures), Log fold change (LFC) in a screen · first seen 2026-09-25*
+
+**G2/M gene set (Tirosh 2016)** — 54 genes whose activity peaks while a cell prepares for and goes through division (the G2 phase and mitosis); with a matching S-phase list, the most reused published cell-cycle lists.
+*Example:* CDK1, UBE2C, TOP2A, BUB1, CDC20, TTK, …; BUB1B itself is removed before the set scores anything about BUB1B.
+*Context: route R2 · source: src/mva/drugs/proteome_sets.py (PMID 27124452) · first seen 2026-09-25*
+
+**Proliferation score (cell-cycle score)** — one number per compound saying how much it moved the cell-division machinery: the median log fold change over the G2/M gene set. A drug that halts division scores strongly negative.
+*Example:* across 875 compounds, BUB1B protein tracks this score at r = 0.925 — four fifths of what a drug does to BubR1 is "it changed how many cells divide".
+*Context: routes R2 (a) and (b) · source: src/mva/drugs/proteome_sets.py · related: G2/M gene set (Tirosh 2016) · first seen 2026-09-25*
+
+**Residual** — what is left of a measurement once the part a model explains is subtracted.
+*Example:* nisoldipine's BUB1B change is +0.21 log2; the proliferation score predicts almost none of it, so the residual is +0.21.
+*Context: route R2 · source: ressources/track2/it5/proteome_hits.tsv · first seen 2026-09-25*
+
+**Cell-cycle correction (regressing out a covariate)** — fit each measurement against the proliferation score across all compounds, then keep only the residual. Like subtracting a known baseline load before comparing two servers' latency.
+*Example:* after correction, 18 of 875 compounds still raise BUB1B protein; 5 are approved drugs.
+*Context: routes R2 (a) and (b) · source: docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md · related: Residual, Proliferation score (cell-cycle score) · see: [proliferation figure](../figures/it5/r2-proliferation.svg) · first seen 2026-09-25*
+
+**Robust z** — how far a value sits from the middle, in units of a spread that a few extreme values cannot inflate: (value − median) / (1.4826 × median absolute deviation). For clean bell-shaped data it equals the ordinary z-score.
+*Example:* HSPA1A under the HSP90 inhibitor NVP-BEP800 has robust z 46.65 among 875 compounds.
+*Context: route R2 (a) · source: src/mva/drugs/proteome.py · related: Residual · first seen 2026-09-25*
+
+**Breadth (of a perturbation)** — the share of *all* measured proteins one compound raises by the same rule used for the target. A compound that raises a quarter of the proteome has done nothing specific.
+*Example:* epoxomicin (a proteasome inhibitor) 25.5 %; gliclazide 0.3 %.
+*Context: route R2 (a) · source: ressources/track2/it5/proteome_hits.tsv · first seen 2026-09-25*
+
+**Heat-shock response (HSP90 inhibition → HSP70 induction)** — HSP90 is a chaperone (a helper protein that keeps others folded). Blocking it makes the cell produce large amounts of another chaperone, HSP70 (gene `HSPA1A`). One of the most reproducible induced protein changes known — which is what makes it a positive control.
+*Example:* in Mitchell 2023 the two HSP90 inhibitors rank 1 and 2 of 875 compounds for HSPA1A.
+*Context: route R2's gating control · source: docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md · related: positive control · see: [the two controls](../figures/it5/r2-control.svg) · first seen 2026-09-25*
+
+**Pharmacological chaperone** — a small molecule that binds a misfolded protein and helps it fold and survive, raising the amount of working protein without touching the gene. The kind of drug a missense protein that is *unstable* (made, then quickly destroyed) would need.
+*Example:* migalastat, approved for α-galactosidase A in Fabry disease; route R2 finds it raising BUB1B protein by ~15 % — an argument for the class, not for this drug.
+*Context: routes R2 and R4 · source: docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md · related: Heat-shock response (HSP90 inhibition → HSP70 induction), Missense · first seen 2026-09-25*
+
+**Gating control** — a positive control whose failure makes a whole dataset unreadable, as opposed to one reported for context. Rows from a dataset whose gating control failed are kept and capped, never promoted.
+*Example:* HSPA1A under HSP90 inhibition gates Mitchell 2023 (passes); MDM2 under nutlin gates the ProTargetMiner sets and fails in A549 and RKO, so bortezomib's rows there are capped at 0.10.
+*Context: route R2 (a) · source: src/mva/drugs/proteome_run.py · related: positive control · first seen 2026-09-25*
+
+**Principal component removal** — subtract the few strongest shared patterns from a data matrix, whatever they are, instead of a named covariate. A data-driven alternative to cell-cycle correction, used as a sensitivity check.
+*Example:* removing 1, 3 or 10 components from the LINCS knockout matrix; the checkpoint-sibling control fails in all three.
+*Context: route R2 (b) · source: src/mva/drugs/signature_cc.py · related: Cell-cycle correction (regressing out a covariate) · first seen 2026-09-25*
+
+**decryptE** — a published dose-resolved proteomics resource (144 drugs × 5 doses, Jurkat cells, over a million dose–response curves). Named because it is route R2's best next input and its bulk tables could not be downloaded from this machine.
+*Example:* MassIVE `MSV000093659` / ProteomeXchange `PXD047799`; FTP timed out, the listing endpoints return 404.
+*Context: route R2, listed as unavailable · source: docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md (Eckert 2024, PMID 38714896) · related: Drug-perturbation proteomics · first seen 2026-09-25*
+
+**Corpus** — the fixed set of documents a piece of work is allowed to read, each saved with a checksum so a later claim can be checked against the exact bytes read.
+*Example:* route R3's corpus: 767 papers, 1,065 cached texts (758 abstracts, 307 open-access full texts), each with a sha256 in `litmine_corpus.tsv`.
+*Context: route R3 · source: ressources/track2/it5/litmine_corpus.tsv · related: Checksum / SHA-256, PubMed / Europe PMC / PubTator3 / LitVar2 / OpenAlex / Semantic Scholar · first seen 2026-09-25*
+
+**JATS XML** — the standard format a publisher ships an article in: text marked up in tags (`<abstract>`, `<p>`, `<ref-list>`) rather than a PDF. HTML for scientific papers.
+*Example:* `mva.drugs.litmine_corpus` keeps abstract and body prose and drops tables and reference lists — a sentence from a reference list is somebody else's title, not this paper's finding.
+*Context: how full text becomes the plain text the quote gate checks · source: src/mva/drugs/litmine_corpus.py · related: Corpus · first seen 2026-09-25*
+
+**Lexical screen** — a cheap keyword filter that picks the sentences worth a careful read: keep a sentence only if it names the subject **and** an effect **and** an intervention. A recall ceiling, not a search: a finding phrased without all three never reaches the reader.
+*Example:* 1,109 of the corpus's 79,435 sentences (1.4 %) passed route R3's intervention screen.
+*Context: stage 2 of route R3 · source: src/mva/drugs/litmine_screen.py · related: Corpus, Precision / Recall · first seen 2026-09-25*
+
+**Quote verification (the quote gate)** — the rule that a claim extracted from a paper must carry a sentence that appears **verbatim** in the cached text of that paper, checked by code. A failing row is rejected, never repaired. In software terms: a checksum for a sentence, with the language model as the untrusted input.
+*Example:* 42 of 42 rows passed; a unit test changes one word of a true quote (`increases` → `decreases`) and the gate rejects it as `quote_not_in_source`.
+*Context: route R3 — the model supplies judgement, the gate supplies proof · source: src/mva/drugs/litmine_verify.py · related: Corpus, LLM (large language model) · see: [extraction funnel](../figures/it5/r3-extraction-funnel.svg) · first seen 2026-09-25*
+
+**Text normalisation (for quote matching)** — folding two renderings of the same sentence into one comparison form without changing any word: Unicode NFKC, curly quotes and dashes to ASCII, invisible characters removed, runs of spaces collapsed. Think `git diff -w` plus Unicode. Not the same as VCF normalization.
+*Example:* `NAD⁺` against `NAD+`, or a non-breaking space against a space, must not fail a true quote; a quote under 30 characters is rejected as too short.
+*Context: what the quote gate may do before comparing · source: src/mva/drugs/litmine_verify.py · related: Quote verification (the quote gate) · first seen 2026-09-25*
+
+**Intervention row** — one structured record of "somebody did X to Y and Z changed", with the sentence that says so: intervention, type, mode, target, effect_on, direction, model_system, pmid, quote.
+*Example:* NMN (an NAD⁺ precursor) · drug · gain · NAD+ · bubr1_level · increase · mouse_in_vivo · PMID 24825348 · the verified sentence.
+*Context: the unit of evidence in `litmine_interventions.tsv` · source: ressources/track2/it5/litmine_interventions.tsv · related: Quote verification (the quote gate) · first seen 2026-09-25*
+
+**Mode (gain / loss / exposure)** — which way an experiment pushed its target: gain for overexpression, a transgene or a supplement; loss for a knockout, a knockdown, an inhibitor or removal of the cells that carry it; exposure when a patient was simply given something.
+*Example:* "SIRT2 overexpression" is gain on SIRT2; "clearing p16Ink4a-positive senescent cells" is loss on those cells.
+*Context: the field the direction check reads · source: docs/iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md · related: Intervention row · first seen 2026-09-25*
+
+**Direction check** — a drug may stand in for a genetic experiment only if it pushes the target the same way: a gain needs an activator, a loss needs an inhibitor. A mismatch is recorded and flagged, never turned into a candidate.
+*Example:* CHEK1 knockdown *lowers* BubR1; nine CHK1 inhibitors match that knockdown — which is exactly why they are dropped and recorded as drugs to keep away from this child.
+*Context: stage 4 of route R3 · source: src/mva/drugs/litmine_translate.py · related: Mode (gain / loss / exposure), Mechanism of action (MoA) · first seen 2026-09-25*
+
+**Class analogue** — an approved drug used as the stand-in for an unapproved tool compound or a genetic experiment, because it acts on the same target in the same direction. Declared in the case card where a reader can argue with it, never inferred silently.
+*Example:* trichostatin A (a lab deacetylase inhibitor that raises BubR1) → the approved HDAC inhibitors vorinostat, romidepsin, belinostat, panobinostat, valproic acid.
+*Context: how route R3 turns literature into approved-drug candidates · source: tools/it5_litmine_params.py · related: Direction check, senolytic, Drug repurposing · first seen 2026-09-25*
+
+**Hypomethylating agent** — a drug that strips methyl groups (chemical "off" tags) from DNA, so genes those tags silenced are read again. Approved examples: decitabine, azacitidine.
+*Example:* demethylation raises BubR1 expression; 5-aza-2′-deoxycytidine releases two repressor proteins (MBD2, HDAC1) from the switch region in front of `BUB1B` (PMID 17464181).
+*Context: a transcription-level route to more BubR1, new in iteration 5 · source: docs/iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md · related: Class analogue, TSS (transcription start site) · first seen 2026-09-25*
+
+**evidence_strength (iteration 5 rubric)** — one number in [0, 1] on every candidate row, for triage only. Each route states its own rubric in its entry; it ranks rows, it is not a probability and it is not calibrated.
+*Example:* R1 gives 0.6 to a prediction whose control passed; R2 gives an approved corrected riser 0.40 + 0.15 + 0.15 = 0.70; R3 multiplies model × directness × replication × translation, so nicotinamide = 0.8 × 1.0 × 0.6 × 0.4 = 0.192.
+*Context: the `evidence_strength` column of every `ressources/track2/it5/*_candidates.tsv` · source: docs/iteration5/plan.md · related: Confidence · first seen 2026-09-25*
+
+**Drug exposure (patient)** — what a real patient in a published case report was actually given, and what happened next — the disease's own safety record, as opposed to a label database.
+*Example:* a child with biallelic `BUB1B` MVA and bilateral Wilms tumour had a severe reaction to dactinomycin and could receive no further chemotherapy (PMID 31081598); another `BUB1B` report advises avoiding vincristine or taxol (PMID 28611924).
+*Context: `litmine_mva_exposures.tsv`, cross-referenced to the child's HPO terms · source: ressources/track2/it5/litmine_mva_exposures.tsv · related: HPO (Human Phenotype Ontology), Quote verification (the quote gate) · see: [MVA exposures](../figures/it5/r3-mva-exposures.svg) · first seen 2026-09-25*
+
+**Reduced-intensity conditioning (RIC)** — a gentler drug regimen given before a bone-marrow (haematopoietic stem cell) transplant, HSCT, used when full-dose conditioning would be too toxic — as in chromosome-instability syndromes, where DNA repair is weak.
+*Example:* the one reported transplant in MVA type 1 used treosulfan-based RIC: well tolerated, full blood recovery, then graft rejection and death from sepsis on day +156 (PMID 31053147).
+*Context: the most serious exposure row of route R3 · source: ressources/track2/it5/litmine_mva_exposures.tsv · related: Drug exposure (patient), Cohesinopathy / centrosomopathy / chromosome-instability syndrome · first seen 2026-09-25*
+
+## 31. Deciding, and proving it transfers — words for iteration 5's R4 and its transfer check
+
+Routes R1–R3 (chapter 30) each produced candidate rows. Route **R4** does not add a route: it
+weighs the three against the two facts nobody has measured, then asks what it would be worth to
+measure one of them. The **transfer check** then re-runs R1–R3 on a second disease and counts
+what had to be written. Both were filed after chapter 30
+([entry 161](iteration5/step-1/methodology/161-the-decision-and-what-the-next-measurement-is-worth.md),
+[entry 162](iteration5/step-1/methodology/162-the-three-routes-on-bloom-syndrome.md)).
+
+**Sensitivity / specificity (of a test)** — sensitivity is the share of true positives a test calls positive; specificity is the share of true negatives it calls negative. A unit suite's catch rate and its freedom from false alarms, one number each.
+*Example:* R4 assumes 0.85 / 0.85 for the cycloheximide-chase blot, because no route measures a value, and sweeps both over 0.6–0.99.
+*Context: an R4 assumption, stated as one · source: ressources/track2/it5/decision_config.json, entry 161 · related: Posterior, positive control · first seen 2026-09-25*
+
+**Cycloheximide chase** — block all new protein production with the drug cycloheximide, then watch how fast the protein already in the cell disappears (its half-life), read off a Western blot (antibody staining of proteins sorted by size). It separates a protein that is made and then destroyed fast (*unstable*) from one that is present in normal amounts but does not work (*inactive*).
+*Example:* BubR1 in the child's cells against his parents' — the one bench test route R4 prices, at 59 % of everything perfect knowledge could buy.
+*Context: the measurement iteration 5 recommends ahead of any drug · source: iteration-4 report §7.3, entry 161 · related: Proteomics, EVSI (expected value of sample information) · first seen 2026-09-25*
+
+**World-state** — one complete assignment of every uncertain fact a decision depends on; one row of a truth table over the unknowns.
+*Example:* `missense_class = unstable & readthrough_feasible = no`, prior weight 0.55 — the most likely of R4's four world-states.
+*Context: the unit route R4's utility table is indexed by · source: src/mva/drugs/decision_model.py, entry 161 · related: Prior, Nonsense readthrough (stop-codon read-through) · first seen 2026-09-25*
+
+**Utility (decision analysis)** — a single number for how good one action is in one world-state; higher is better. In R4 it is a product of stated weights (evidence strength × does the mechanism apply in this state × the route's control factor × a per-child safety factor), so it **orders** actions; it does not measure benefit.
+*Example:* an unstable-branch candidate with evidence strength 0.70 and no safety flag scores 0.70 when the missense protein is unstable and 0 when it is inactive.
+*Context: every cell of `decision_utilities.tsv` · source: src/mva/drugs/decision_model.py, entry 161 · related: Confidence, World-state, evidence_strength (iteration 5 rubric) · first seen 2026-09-25*
+
+**Expected utility (EU)** — the prior-weighted average of an action's utility across all world-states. The action with the highest EU is the best choice *before* anyone measures anything.
+*Example:* gliclazide, tied with migalastat, at EU 0.385 = 0.70 × P(unstable) 0.55. The baseline action "defer, run the test first" has utility 0 and wins ties, so a drug has to beat doing nothing strictly.
+*Context: the ranking in the iteration-5 report's Appendix A · source: src/mva/drugs/decision_voi.py, entry 161 · related: Utility (decision analysis), World-state · first seen 2026-09-25*
+
+**Decision tree (decision analysis)** — a drawing of one choice under uncertainty: a branch per uncertain fact, each carrying its prior, ending in the best action for that world-state and its utility. Not the machine-learning classifier of the same name.
+*Example:* [`figures/it5/r4-decision-tree.svg`](../figures/it5/r4-decision-tree.svg) — two facts, four leaves, two distinct answers.
+*Context: the figure that opens the report's answer-in-one-page · source: tools/render_it5_r4.py, entry 161 · related: World-state, Expected utility (EU) · first seen 2026-09-25*
+
+**EVPI (expected value of perfect information)** — how much the expected utility would rise if every uncertain fact were known before choosing: the average of the per-state best, minus the best average. It is the **ceiling** on what any test can be worth, so a test priced above it has been priced wrong.
+*Example:* R4's hand-worked positive control: 0.66 − 0.48 = **0.18**. The final run: **0.180**.
+*Context: `decision_voi.tsv` · source: src/mva/drugs/decision_voi.py, entry 161 · related: Expected utility (EU) · see: [the VOI curve](../figures/it5/r4-voi-curve.svg) · first seen 2026-09-25*
+
+**EVPPI (expected value of partial perfect information)** — EVPI for one variable on its own: which *single* unknown is worth resolving. The pieces need not add up to EVPI.
+*Example:* the final run puts **0.180 on `missense_class` and 0.000 on `readthrough_feasible`** — the whole ceiling sits on one fact, and the read-through question is worth nothing, exactly as route R1 concluded.
+*Context: `decision_voi.tsv`, the result the report calls its centre · source: src/mva/drugs/decision_voi.py, entry 161 · related: EVPI (expected value of perfect information) · first seen 2026-09-25*
+
+**EVSI (expected value of sample information)** — what a real, imperfect test is worth: for each result it could return, update the prior with Bayes' rule, re-choose the best action, then average over how likely each result is, and subtract the best choice made without the test. Always between 0 and EVPI.
+*Example:* the cycloheximide-chase blot scores **0.106, 59 % of the 0.180 ceiling**; the read-through reporter assay scores 0.000 and is not worth running.
+*Context: the report's actual recommendation — a measurement, not a molecule · source: src/mva/drugs/decision_voi.py, entry 161 · related: EVPI (expected value of perfect information), Sensitivity / specificity (of a test), Cycloheximide chase, Posterior · first seen 2026-09-25*
+
+**Flip point** — the value of a prior at which the best action changes. Each action's EU is a straight line in one prior, so the best action is the upper envelope of those lines and the flip points are where the top line changes — computed exactly, not found by grid search.
+*Example:* the best action flips at **P(unstable) = 0.414**: dasatinib below it, gliclazide/migalastat above. The configured prior, 0.55, sits only 0.14 above the line.
+*Context: `decision_flips.tsv` · source: src/mva/drugs/decision_sensitivity.py, entry 161 · related: Expected utility (EU) · see: [the VOI curve](../figures/it5/r4-voi-curve.svg) · first seen 2026-09-25*
+
+**Tornado diagram** — one horizontal bar per parameter, showing how far an output moves when that parameter alone runs from its low to its high value with the rest held; longest bar on top, so the shape narrows like a funnel. It answers "which assumption is actually carrying this result?".
+*Example:* blot sensitivity 0.6 → 0.99 moves the blot's EVSI from 0.028 to 0.150 — the longest bar, and still positive at both ends.
+*Context: `decision_tornado.tsv`; the check that separated "the drug is not robust" from "the blot is" · source: src/mva/drugs/decision_sensitivity.py, entry 161 · related: EVSI (expected value of sample information), Sensitivity / specificity (of a test) · see: [the tornado](../figures/it5/r4-tornado.svg) · first seen 2026-09-25*
+
+**Noisy-OR** — a way of combining several independent chances that something works: `1 − Π(1 − pᵢ)`. It rewards agreement between sources, and is wrong when those sources rest on the same data.
+*Example:* two routes at 0.5 each give 0.75 under noisy-OR and 0.5 under `max`. R4 uses `max` — a drug's utility is its single best argument — because iteration 4 measured cross-route convergence at chance level (H094, entry 155).
+*Context: the `combine` option of `decision_config.json`, set to `max` and recorded as a choice · source: src/mva/drugs/decision_model.py, entry 161 · related: Utility (decision analysis) · first seen 2026-09-25*
+
+**Derived prior** — a prior computed by a stated rule from another step's committed table, instead of typed in by hand. The rule, its inputs and its arithmetic are stored next to the value, so a reader can redo it.
+*Example:* `readthrough_feasible` is read out of R1's dosage table: **0 of 9** real-dose (start, gain) pairs reach the 13.0 % fidelity threshold → P(yes) = **0**; including R1's two stated upper bounds, 2 of 15 → 0.133, used as the top of the tornado range.
+*Context: what keeps one of R4's two priors from being an opinion · source: src/mva/drugs/decision_priors.py, entry 161 · related: Prior, Protein dosage threshold, World-state · first seen 2026-09-25*
+
+**Avoid list** — the drugs with evidence *against* them for this particular child: they lower the protein he is short of, harmed a patient with the same disease, or weaken the already-weak checkpoint further. Each row names its source; a listed drug gets utility 0 (avoid) or half (caution), and the lowest factor among a drug's classes wins.
+*Example:* 35 rows — dactinomycin (severe reaction in a biallelic-`BUB1B` patient, PMID 31081598), nine CHEK1 inhibitors (CHK1 knockdown lowers BubR1, PMID 19778378), gentamicin/amikacin/G418 against the child's nephrocalcinosis. It drives three drugs that other routes proposed — G418, gentamicin, geldanamycin — to zero.
+*Context: `decision_avoid.tsv`; the output the report calls its most transferable · source: src/mva/drugs/decision_avoid.py, entry 161 · related: Utility (decision analysis), Direction check, Drug exposure (patient) · first seen 2026-09-25*
+
+**Case card** — the one file holding everything a pipeline knows about a *specific* case: the gene, its aliases, the words its literature uses, the published numbers it is measured against, the drug classes a reader may argue with. Everything else — the model, the gates, the tables — is written to know nothing about any disease. For a programmer: the difference between a config file and the program, enforced by keeping every case-shaped constant out of the modules and in one importable module the driver takes as a flag (`--card`).
+*Example:* `tools/it5_litmine_params.py` is BUB1B's R3 card; `tools/it5_litmine_params_blm.py` is Bloom syndrome's — and no module under `mva.drugs.litmine_*` changed between them.
+*Context: the unit iteration 5's routes are parameterised by, and the unit the transfer check counts · source: entries 158–160 and 162 · related: Transfer mechanism card, Class analogue, transfer test (configuration surface) · first seen 2026-09-25*
+
+**Parameterisation** — the edit that turns a constant hiding inside a shared module into a value the caller passes in. It is the work a transfer exposes: a pipeline is only case-agnostic to the extent that its case-shaped constants have already been lifted out.
+*Example:* iteration 5's transfer needed **271 lines** of it across the three routes — the effect vocabulary, the directness scale, the target gene, the case name and the manifest prose were each still hard-coded — now guarded by `tests/test_drugs_case_cards.py`.
+*Context: the one-time cost every future case inherits, reported separately from the per-case cost · source: entry 162 · related: Case card, Configuration line vs code line · first seen 2026-09-25*
+
+**Configuration line vs code line** — the measure of how portable a pipeline really is: when a second case is added, how many of the lines a person wrote were *configuration* (a new case card, naming the new disease) and how many were *code* (a change inside a shared module or driver). A pipeline that claims to be case-agnostic should need configuration only; each code line is a constant that had been hiding in the machinery. A proxy for effort, not effort — a one-line change can be harder than a hundred.
+*Example:* moving route R2 to `BLM` cost **no case card at all** (four new flags, +47 / −59 lines of code); moving R1 cost a 311-line card and +330 / −135 lines. Totals: **587 configuration lines, 271 lines of parameterisation** — or 357 counting the churn the repo's own 400-line module gate then forced, which excludes 134 lines of genuinely new capability.
+*Context: the columns of `ressources/track2/it5/transfer/transfer_summary.tsv`, measured with `git diff --numstat` · source: tools/it5_transfer_summary.py, entry 162 · related: Case card, Parameterisation, transfer test (configuration surface) · see: [the transfer figure](../figures/it5/s1-transfer.svg) · first seen 2026-09-25*
+
+**Byte-identity check (golden-output regression)** — after changing shared code so it can admit a second case, re-run the *first* case and check that every committed table still has exactly the same sha256 as before. It is the cheapest possible proof that a refactor changed capability and not results; one differing byte fails it.
+*Example:* all nine of iteration 5's first-case tables (R1's three, R2's three, R3's three) matched their recorded digests — checked twice, after the parameterisation and again after the module split.
+*Context: the `first_case_outputs_identical` column of the transfer table · source: entry 162 · related: Frozen artifact (hash before the comparison), Parameterisation, Provenance manifest · first seen 2026-09-25*
+
+**External validation (held-out measurement)** — checking a model against a measurement of *the very thing it predicts*, made by somebody else, that the model never saw. Stronger than a positive control, which only shows the method recovers something already known in general: here the specific case's answer exists in a published dataset and is deleted from the fit before the prediction is made.
+*Example:* the read-through prediction for the published `BLM` p.Gln548* stop, refit with that stop's context removed: **Spearman 0.70 across nine compounds (p = 0.036), mean absolute error 0.41 percentage points** — but up to 4× over-prediction for the two strongest compounds, which is the error bar any later quotation needs.
+*Context: what made Bloom syndrome the right second case for route R1 — the child's `BUB1B` stop has no such measurement · source: ressources/track2/it5/transfer/r1/readthrough_external_check.tsv, entry 162 (PMID 39174735) · related: Held-out control, positive control, Premature termination codon (PTC) · first seen 2026-09-25*
+
+**Sister chromatid exchange (SCE)** — when a chromosome copies itself, the two identical copies (sister chromatids) sometimes swap matching pieces. A healthy cell does this a few times per division; a Bloom-syndrome cell does it many times more, and counting the swaps under a microscope is still how the disease is diagnosed.
+*Example:* two quote-verified rows from the transfer run: putting a working `BLM` copy back into Bloom-syndrome cells *corrected* SCE (PMID 12034743), and the BLM inhibitor ML216 *induces* it (PMID 23352139). The hallmark paper is Chaganti 1974, "A manyfold increase in sister chromatid exchanges in Bloom's syndrome lymphocytes" (PMID 4140506).
+*Context: the phenotype the transfer case's literature route scores interventions on (`effect_on = sce`), standing where BubR1 level stands in the first case · source: ressources/track2/it5/transfer/r3/litmine_interventions.tsv, tools/it5_litmine_params_blm.py, entry 162 · related: Aneuploidy, RecQ helicase, Bloom syndrome, Intervention row · first seen 2026-09-25*
+
+**Recurrent / founder allele** — one broken copy of a gene carried by many apparently unrelated people, because they share a distant common ancestor. It is why a rare recessive disease can have a handful of very common alleles instead of a long tail of private ones — and why a second case can be modelled from the literature alone.
+*Example:* the transfer case models `BLM` c.1642C>T (p.Gln548*) homozygous, read from published papers (PMID 39174735 measured it; PMID 17407155's registry has 54 of 64 alleles terminating translation early). **No project patient carries it** and no callset was read for that case.
+*Context: why the transfer needed no genomic input at all · source: ressources/track2/it5/transfer/r1/blm_allele_note.md, entry 162 · related: Allele, Premature termination codon (PTC), Bloom syndrome · first seen 2026-09-25*
+
+**Ambiguous gene symbol** — a gene abbreviation that is also a common abbreviation for something else, so a literature query on the symbol alone drags in the wrong papers. The fix is never the query: it is the stages after it that can *reject* a wrong paper — a screen requiring the subject, an effect and an intervention in one sentence, and a gate checking that the quoted sentence exists in the cited paper.
+*Example:* `BLM` is also the usual abbreviation for the drug bleomycin, and the corpus duly retrieved bleomycin chemistry papers. The transfer card adds the unambiguous aliases `RECQL3` and `RECQ2` and declares the weakness rather than hiding it.
+*Context: a stated limitation of the R3 transfer · source: tools/it5_litmine_params_blm.py, entry 162 · related: Corpus, Lexical screen, Quote verification (the quote gate), Case card · first seen 2026-09-25*

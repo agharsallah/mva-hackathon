@@ -27,7 +27,7 @@ patient, and no number here is a probability of benefit.
 | **Scientific rigor** | 35 % | §5–§8, §12 | four routes, **each with a positive control declared in writing before the child's data were touched**; two of those controls **failed and are reported as failed**; every table carries a `.provenance.json` with input sha256s | this iteration files **no pre-registered hypotheses** (§3). A route that passes its control is *a validated method applied once*, not a tested claim |
 | **Potential impact** | 25 % | §9 | a named next measurement worth more than any drug choice on the table; an **avoid list** built from the child's own genome, his own HPO terms, and what MVA patients were actually given | the highest-ranked drug is a weak, mechanism-free hit (§6); the impact is in the *test*, not the prescription |
 | **Innovation** | 25 % | §10 | readthrough priced **per allele** against a dosage arithmetic; **proliferation-corrected** protein-level drug screening for a cell-cycle gene; a **code-enforced quote gate** over model-read literature; a decision layer that reports **EVPI/EVSI** instead of a ranked list | the decision layer is a transparent heuristic, not a calibrated posterior |
-| **Scalability** | 15 % | §11 | all three discovery routes re-run on **Bloom syndrome** from case cards; 587 configuration lines against entry 156's 378-line purpose-built driver; every first-case table byte-identical | "configuration only" was **false** as the routes stood: 271 lines of parameterisation were needed first, and we report both that number and the 357-line full diff |
+| **Scalability** | 15 % | §11 | all three discovery routes re-run on **Bloom syndrome** from case cards; 587 configuration lines against entry 156's 378-line purpose-built driver; every first-case table byte-identical | "configuration only" was **false** as the routes stood: 271 lines of parameterisation were needed first, and we report that number, the 357 that includes the forced module splits, and the 491-line full diff |
 
 ---
 
@@ -54,7 +54,8 @@ BubR1, and how much would each route actually be worth?*
    **+14–16 %**. The strongest raisers are a CDK1 inhibitor (+88 %) and a proteasome inhibitor
    (+45 %) — unapproved and non-specific, but they name the lever: **degradation** (§6).
 3. **The literature holds what no database encodes**, and every row is machine-verified against
-   its source text. 42 interventions kept, 0 rejected, gate mutation-tested; NAD⁺/NMN, HDAC
+   its source text. 30 intervention rows and 12 patient-exposure rows kept, 0 rejected, gate
+   mutation-tested; NAD⁺/NMN, HDAC
    inhibitors, proteasome inhibitors and senolytics. It also yields something no drug database
    has: **what MVA patients were actually given** — a severe dactinomycin reaction in a
    biallelic-`BUB1B` case, published advice to avoid vincristine or taxol, growth hormone
@@ -105,7 +106,7 @@ itself on a case it cannot get wrong before it is pointed at the child.
 Instead, **each route declares a positive control in writing before it runs**. That is weaker
 than pre-registration in one specific way — the analysis could have been steered after seeing
 the data — and stronger in another: a route whose control fails is reported as uninterpretable
-rather than argued around. **Two of the six controls in this report failed** (§6b, §11), which
+rather than argued around. **Two of the six controls in this report failed** (§6.3, §11), which
 is the only evidence we can offer that the discipline was applied rather than announced.
 
 ---
@@ -330,7 +331,7 @@ rejects any row whose quote is not a **verbatim substring** of the cached source
 | papers retrieved | 767 (760 with text; 1,065 cached texts, 307 open-access full texts) |
 | sentences screened | 79,435 |
 | sentences kept by the lexical screen | 1,109 (1.4 %) in 283 papers |
-| intervention rows written | 42 |
+| rows written | **30** intervention + **12** patient-exposure = 42 |
 | **rows surviving the quote gate** | **42 kept, 0 rejected** |
 
 **Zero rejections is not proof that a gate works**, so the gate is **mutation-tested**: flipping
@@ -547,7 +548,9 @@ future case inherits. R2 transferred with **no card at all**.
    hiding in a shared module (the effect vocabulary, the directness scale, the target gene, the
    case name, the manifest prose). All are now parameters, guarded by
    `tests/test_drugs_case_cards.py`. We report both **271** (the parameterisation) and **357**
-   (the whole diff, once the repo's own 400-line module-size gate forced five splits).
+   (that plus the five module splits the repo's own 400-line size gate then forced). Neither
+   counts the 134 lines of *new capability* the transfer added, which are not a transfer cost;
+   the full added diff is 491 lines.
 2. **R3's declared control failed: retrieval 3/3, extraction 0/3.** The diagnosis is that two of
    the three famous Bloom papers we named in advance are genotype–phenotype *observations*, not
    interventions, so the screen correctly dropped them — **the control was mis-specified, not
@@ -658,7 +661,7 @@ v3.1.1; Europe PMC; Ensembl 116; UniProt O60566; MGI; PharmCAT.
 | the second disease and what the transfer cost | [entry 162](../../../docs/iteration5/step-1/methodology/162-the-three-routes-on-bloom-syndrome.md) |
 | why no hypotheses were filed | [the note](../../../docs/iteration5/notes/exploratory-no-hypotheses.md) |
 | the step's written summary and one caption per figure | [`narrative.json`](../../../docs/iteration5/step-1/narrative.json) |
-| every term used here, defined for a beginner | [`docs/dictionary.md`](../../../docs/dictionary.md), chapter 30 |
+| every term used here, defined for a beginner | [`docs/dictionary.md`](../../../docs/dictionary.md), chapters 30 (the routes) and 31 (deciding, and proving it transfers) |
 
 ---
 
