@@ -34,6 +34,9 @@ iteration would assert a provenance it does not have. The cross-case
 ``transfer_comparison`` table rests on both cards and gets one ``card`` edge each; the walk
 back to the patient evidence still runs, through the real card's tables that it cites.
 
+**Iteration 4.** Steps 9-11's tables come from four other writers with other manifest
+shapes, and add ``file``, ``clinical`` and ``derived`` sources: :mod:`.track2_lineage_it4`.
+
 **What this module does not do.** Reading a ``*.provenance.json`` — the :class:`Manifest`
 dataclass and the digest/version values an edge needs from it — is
 :mod:`mva.warehouse.track2_manifests`. This module only turns tables into edges and appends
@@ -60,7 +63,16 @@ from .lineage_edges import ensure_lineage_table, record
 from .postgres import ALIAS, attached, safe_identifier
 from .settings import Postgres
 from .submission_lineage import Recorded, sha256_of
-from .track2_manifests import TOOL, api_version, card_version, read_manifest, rollup_digest
+from .track2_lineage_it4 import it4_edges
+from .track2_manifests import (
+    TOOL,
+    TRACK2_DIR,
+    TRACK2_SCHEMA,
+    api_version,
+    card_version,
+    read_manifest,
+    rollup_digest,
+)
 
 #: ``TOOL`` is re-exported: it names the tool in every edge this module writes, and callers
 #: (the recorder's tests) read it from here rather than having to know where it is defined.
@@ -81,12 +93,6 @@ __all__ = [
     "transfer_edges",
     "transfer_folders",
 ]
-
-#: The schema name written into the edge. Not a real schema — see the module docstring.
-TRACK2_SCHEMA = "track2"
-
-#: Where the snapshot writes, relative to the repository root.
-TRACK2_DIR = "ressources/track2"
 
 #: The mechanism card. The one input every Track 2 query is derived from.
 CARD_FILE = f"{TRACK2_DIR}/mechanism.json"
@@ -343,6 +349,7 @@ def planned_edges(root: Path | None = None) -> list[dict[str, object]]:
         edges += table_edges(directory, table, base)
     edges += transfer_edges(base)
     edges += walk_edges(base)
+    edges += it4_edges(base)  # iteration 4: steps 9-10 and the step-11 transfer
     return edges
 
 

@@ -24,6 +24,8 @@ from urllib.parse import urlparse
 
 __all__ = [
     "TOOL",
+    "TRACK2_DIR",
+    "TRACK2_SCHEMA",
     "Manifest",
     "api_host",
     "api_version",
@@ -34,6 +36,14 @@ __all__ = [
 
 #: The tool that produced the tables, for the ``tool`` column and as the manifest default.
 TOOL = "mva-drugs snapshot"
+
+#: The schema name written into every Track 2 edge. Not a real PostgreSQL schema — see
+#: :mod:`mva.warehouse.track2_lineage`. Defined here, the lowest Track 2 lineage module, so
+#: the recorders beside it can share it without importing each other.
+TRACK2_SCHEMA = "track2"
+
+#: Where the snapshot writes, relative to the repository root.
+TRACK2_DIR = "ressources/track2"
 
 
 @dataclass(frozen=True)
