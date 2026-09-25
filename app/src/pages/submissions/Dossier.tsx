@@ -1,19 +1,22 @@
 import type { Result } from '../../api/client';
 import type { Submissions } from '../../api/types';
 import { Badge } from '../../components/Badge';
-import { Section, Select } from '../../components/Controls';
+import { Section } from '../../components/Controls';
 import { EmptyState } from '../../components/EmptyState';
 import { cx, RULE, WELL } from '../../lib/ui';
 import { useUrlState } from '../../lib/urlstate';
+import { CatalogPanel } from '../iterations/CatalogPanel';
 import { Artifacts } from './Artifacts';
 import { AuditTrail } from './AuditTrail';
 import { BeginnerGuide } from './BeginnerGuide';
 import { Contributions } from './Contributions';
 import { DecodeExhibit } from './DecodeExhibit';
 import { DerivationExhibit } from './DerivationExhibit';
+import { DossierLinks } from './DossierLinks';
 import { EpcrLadder } from './EpcrLadder';
 import { isPanelJudged, iterationKey, newestFirst, PANEL_DELIVERABLES } from './iteration';
 import { IterationHeader } from './IterationHeader';
+import { IterationPicker } from './IterationPicker';
 import { LineageView } from './LineageView';
 import { PanelGuide } from './PanelGuide';
 import { Paperwork } from './Paperwork';
@@ -24,8 +27,8 @@ import { TwoInputs } from './TwoInputs';
 /**
  * One iteration, opened.
  *
- * Cumulative by design: the picker lists every iteration the endpoint returns, newest
- * first, because a frozen folder is never edited — iteration 2 exists *because* of what
+ * Cumulative by design: the picker lists every folder the endpoint returns, one chip row per
+ * track, opening on the newest, because a frozen folder is never edited — iteration 2 exists *because* of what
  * iteration 1's reply said, and comparing them is the point. The selection lives in the
  * URL, so one address is a complete citation of one dossier.
  */
@@ -52,22 +55,16 @@ export function Dossier({ result }: { result: Result<Submissions> }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <Select
-          label="iteration"
-          value={picked}
-          options={iterations.map((i) => ({
-            value: iterationKey(i),
-            label: `${iterationKey(i)} — ${i.state}`,
-          }))}
-          onChange={setPicked}
-        />
-        <span className="text-micro text-chrome-400">
+      <div className="space-y-2">
+        <IterationPicker iterations={iterations} picked={picked} onPick={setPicked} />
+        <p className="text-micro text-chrome-400">
           {iterations.filter((i) => !isPanelJudged(i)).length} of 6 oracle uploads planned or spent
-          {iterations.some(isPanelJudged) ? ' (a panel-judged folder uses none)' : ''} · newest
-          first · a frozen folder is never edited
-        </span>
+          {iterations.some(isPanelJudged) ? ' (a panel-judged folder uses none)' : ''} · a frozen
+          folder is never edited
+        </p>
       </div>
+
+      <DossierLinks iteration={iteration} />
 
       <p className="text-micro text-chrome-400">
         New iterations appear here automatically once their folder exists — recipe in{' '}
@@ -129,6 +126,17 @@ export function Dossier({ result }: { result: Result<Submissions> }) {
         subtitle="the roots it rests on and the derivations the warehouse recorded"
       >
         <LineageView lineage={iteration.lineage} source={source} />
+      </Section>
+
+      <Section
+        title="What data it rests on"
+        subtitle="every dataset the contributing entries name, and the edge or manifest that explains it"
+      >
+        <CatalogPanel
+          catalog={iteration.catalog}
+          title={`The data catalogue of ${iterationKey(iteration)}`}
+          source={source}
+        />
       </Section>
 
       <Section

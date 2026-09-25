@@ -4,6 +4,8 @@ import { useTrack2 } from '../api/hooks';
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
 import { Loaded } from '../components/QueryState';
+import { HubLinks } from './iterations/HubLinks';
+import { iterationHubLinks } from './iterations/model';
 import { TrackMap } from './steps/ResearchMap';
 import { Report } from './track2/Report';
 
@@ -29,6 +31,8 @@ export default function Track2Page() {
 
   return (
     <div className="space-y-6">
+      <HubLinks links={iterationHubLinks()} />
+
       <Callout
         tone="good"
         title="The pair is confirmed; this page ends in a shortlist, not a prescription"

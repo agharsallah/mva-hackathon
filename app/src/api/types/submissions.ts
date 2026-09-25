@@ -13,6 +13,8 @@
  * built from them. See `SelectorSpec`.
  */
 
+import type { IterationCatalog } from './iterations';
+
 /** `draft` = still being written · `ready` = built and rehearsed · `frozen` = uploaded. */
 export type IterationState = 'draft' | 'ready' | 'frozen';
 
@@ -254,6 +256,8 @@ export interface SubmissionIteration {
   figures: SubmissionFigure[];
   report: SubmissionReport;
   lineage: SubmissionLineage;
+  /** Every dataset the contributing entries name, joined to the ledger and manifests. */
+  catalog: IterationCatalog;
   audit: SubmissionAudit;
 }
 

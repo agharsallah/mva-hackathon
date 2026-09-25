@@ -133,3 +133,68 @@ export function buildSubmissionGraph(edges: SubmissionLineageEdge[]): Submission
 
   return { nodes: ordered, edges: out, levels };
 }
+
+/** Above this many roots the first column stops being readable, so roots fold by kind. */
+export const FOLD_ROOTS_ABOVE = 12;
+
+/**
+ * Fold the roots of a large graph into one node per kind: `24 file roots` instead of 24
+ * boxes whose fan of edges hides the derivations that matter. Only kinds with three or more
+ * roots fold; a lone clinical document or raw callset keeps its own box. Edges are
+ * re-pointed and de-duplicated, so each derived table shows one arrow per root kind it
+ * reads. Nothing is dropped from the record: every root is still listed under the graph.
+ *
+ * A graph at or under `threshold` roots is returned unchanged.
+ */
+export function foldRoots(graph: SubmissionGraph, threshold = FOLD_ROOTS_ABOVE): SubmissionGraph {
+  const roots = graph.nodes.filter((n) => n.level === 0);
+  if (roots.length <= threshold) return graph;
+
+  const byKind = new Map<string, GraphNode[]>();
+  for (const r of roots) byKind.set(r.kind, [...(byKind.get(r.kind) ?? []), r]);
+  const folded = new Map<string, string>();
+  const nodes: GraphNode[] = graph.nodes.filter((n) => n.level !== 0);
+  for (const [kind, group] of byKind) {
+    if (group.length < 3) {
+      nodes.push(...group);
+      continue;
+    }
+    const id = `roots:${kind}`;
+    for (const r of group) folded.set(r.id, id);
+    const verified = group.filter((r) => r.verified).length;
+    nodes.push({
+      id,
+      label: `${group.length} ${kind} roots`,
+      sublabel: `${verified} of ${group.length} with sha256 · listed below`,
+      kind,
+      rows: null,
+      level: 0,
+      slot: 0,
+      verified: verified === group.length,
+    });
+  }
+
+  const merged = new Map<string, GraphEdge & { count: number; tools: Set<string> }>();
+  for (const e of graph.edges) {
+    const from = folded.get(e.from) ?? e.from;
+    const key = `${from}>${e.to}`;
+    const hit = merged.get(key);
+    if (hit) {
+      hit.count += 1;
+      hit.tools.add(e.tool);
+    } else {
+      merged.set(key, { ...e, from, count: 1, tools: new Set([e.tool]) });
+    }
+  }
+  const edges: GraphEdge[] = [...merged.values()].map(({ count, tools, ...e }) =>
+    count === 1
+      ? e
+      : { ...e, transform: `${count} edges from these roots`, tool: [...tools].join(', ') },
+  );
+
+  const ordered = nodes.sort(
+    (a, b) => a.level - b.level || rank(a.kind) - rank(b.kind) || a.label.localeCompare(b.label),
+  );
+  assignSlots(ordered);
+  return { nodes: ordered, edges, levels: graph.levels };
+}

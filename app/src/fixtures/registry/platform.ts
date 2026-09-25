@@ -1,6 +1,7 @@
 import type { Params } from '../../api/client';
 import type {
   HealthDependencies,
+  IterationsOverview,
   ReferenceProvenanceRow,
   Step1Payload,
   Step2Payload,
@@ -89,6 +90,15 @@ export const platformEntries: Record<string, Entry> = {
     source:
       'CAPTURED /api/submissions reply, warehouse reachable (submissions/*/iteration-*/ on disk + warehouse.data_lineage + warehouse.probe_ledger + docs/science-register.json)',
     load: () => rows<Submissions>('submissions'),
+  },
+  // CAPTURED: the real `/api/iterations` answer — research iterations with the catalogue their
+  // methodology entries name (joined to the ledger and to the manifests beside each file),
+  // the submission folders with the research iterations they cite, and the ledger's
+  // attribution count. Derived server-side from committed sources; no genomic position.
+  '/api/iterations': {
+    source:
+      'CAPTURED /api/iterations reply (docs/iteration*/**/methodology + submissions/*/iteration-*/ + warehouse.data_lineage + *.provenance.json)',
+    load: () => rows<IterationsOverview>('iterations'),
   },
   // CAPTURED from the live endpoint's own reply (2026-09-18), warehouse reachable. The route
   // reads `ressources/track2/*.tsv` and their provenance manifests, `mechanism.json` (now at

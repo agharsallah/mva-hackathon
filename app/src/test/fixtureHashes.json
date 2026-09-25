@@ -81,7 +81,7 @@
   "/api/steps/step-8": "c47a2a3973779868",
   "/api/steps?iteration=iteration1": "7a1ff79641f702c5",
   "/api/steps?iteration=iteration4": "293bc5357197baec",
-  "/api/submissions": "d1f489dc3ed89f56",
+  "/api/submissions": "a77d34051e3152e8",
   "/api/track2": "6af366428b43b6b1",
   "/api/zoo/case": "6c35c1e9d72b8752",
   "/api/zoo/lineage": "6d2e5e876b7f14c0",
@@ -97,5 +97,6 @@
   "/api/zoo/scores/gene/BUB1B": "8081f850bd586e88",
   "/api/zoo/scores/gene/NBPF3": "b4174091a442c4f8",
   "/api/zoo/reports/esm2": "100696a50261ded1",
-  "/api/zoo/reports/gpnmsa": "01c6023fd00e36c6"
+  "/api/zoo/reports/gpnmsa": "01c6023fd00e36c6",
+  "/api/iterations": "c9aa1a42f803a9bc"
 }

@@ -8,6 +8,8 @@ import { Callout, Explainer } from '../components/Explainer';
 import { Loaded } from '../components/QueryState';
 import { StatTile } from '../components/StatTile';
 import { C } from '../lib/palette';
+import { HubLinks } from './iterations/HubLinks';
+import { iterationHubLinks } from './iterations/model';
 import { BlindChecklist } from './steps/BlindChecklist';
 import { Companions } from './steps/Companions';
 import {
@@ -55,6 +57,8 @@ export default function IterationPage() {
 
   return (
     <div className="space-y-6">
+      <HubLinks links={iterationHubLinks(iteration)} />
+
       <Explainer
         intro={
           <>

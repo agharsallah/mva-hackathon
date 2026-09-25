@@ -17,6 +17,7 @@ export type * from './clinvar';
 export type * from './envelope';
 export type * from './genome';
 export type * from './health';
+export type * from './iterations';
 export type * from './jobs';
 export type * from './narrative';
 export type * from './overview';

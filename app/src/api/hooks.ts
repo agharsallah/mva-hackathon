@@ -38,6 +38,7 @@ import type {
   HealthDependencies,
   HypothesisRegister,
   IndelLengthRow,
+  IterationsOverview,
   Job,
   LineageRow,
   LocusVariant,
@@ -259,6 +260,13 @@ export const useEvidence = () => useEndpoint<EvidenceRegister>('/api/science/evi
  * server, so the page never has to fan out and can never show a half-joined dossier.
  */
 export const useSubmissions = () => useEndpoint<Submissions>('/api/submissions');
+
+/**
+ * Every iteration on both axes: the research iterations (`docs/iteration<n>/`) with the data
+ * catalogue their entries name, and the submission folders with the research iterations they
+ * cite. One request, because the page is the join between the two numberings.
+ */
+export const useIterations = () => useEndpoint<IterationsOverview>('/api/iterations');
 
 /**
  * The whole Track 2 report in one request: the mechanism card, the snapshot tables and

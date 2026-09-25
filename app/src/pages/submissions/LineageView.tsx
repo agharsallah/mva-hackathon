@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import type { LineageSource, SubmissionLineage } from '../../api/types';
 import { Badge } from '../../components/Badge';
 import { ChainPicker } from '../../components/ChainPicker';
+import { Toggle } from '../../components/Controls';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Callout } from '../../components/Explainer';
 import { int } from '../../lib/format';
@@ -10,8 +11,16 @@ import { clipLabel, edgePath, type Geometry, layout } from '../../lib/graphLayou
 import { sourcesFor, useChainView } from '../../lib/lineageChains';
 import { C } from '../../lib/palette';
 import { cx, WELL } from '../../lib/ui';
+import { useUrlToggle } from '../../lib/urlstate';
 import { shortSha } from './iteration';
-import { buildSubmissionGraph, type GraphEdge, type GraphNode, KIND_ORDER } from './lineageGraph';
+import {
+  buildSubmissionGraph,
+  FOLD_ROOTS_ABOVE,
+  foldRoots,
+  type GraphEdge,
+  type GraphNode,
+  KIND_ORDER,
+} from './lineageGraph';
 
 /**
  * Where this submission came from: the roots it rests on, and the recorded edges that
@@ -39,7 +48,13 @@ const dashOf = (kind: string): string | undefined =>
 
 export function LineageView({ lineage, source }: { lineage: SubmissionLineage; source?: string }) {
   const view = useChainView(lineage.edges);
-  const graph = useMemo(() => buildSubmissionGraph(view.edges), [view.edges]);
+  const full = useMemo(() => buildSubmissionGraph(view.edges), [view.edges]);
+  // A big chain folds its roots by kind; the reader can unfold them. The roots stay listed
+  // below either way, so folding hides boxes, never records.
+  const [unfold, setUnfold] = useUrlToggle('lin.roots');
+  const rootCount = full.nodes.filter((n) => n.level === 0).length;
+  const foldable = rootCount > FOLD_ROOTS_ABOVE;
+  const graph = useMemo(() => (unfold ? full : foldRoots(full)), [full, unfold]);
   const [hovered, setHovered] = useState<GraphEdge | null>(null);
   const grouped = groupByKind(sourcesFor(lineage.sources, lineage.edges, view.edges));
 
@@ -56,15 +71,29 @@ export function LineageView({ lineage, source }: { lineage: SubmissionLineage; s
           public API, fetched rather than derived, so it carries a manifest instead of an edge.{' '}
           <Chip color={C.good}>green = the goal</Chip> — the iteration folder itself. A padlock-free{' '}
           <Badge tone="good">sha256</Badge> tag means the digest is recorded; the number inside a
-          node is its row count. Hover an arrow for the transform and the tool that ran it.
+          node is its row count; a box reading <em>n file roots</em> is several roots of one kind
+          folded together. Hover an arrow for the transform and the tool that ran it.
         </>
       }
-      reading={reading(graph)}
+      reading={reading(full)}
       data={lineage}
       source={source}
     >
       <div className="space-y-3">
-        <ChainPicker view={view} total={lineage.edges.length} />
+        <div className="flex flex-wrap items-center gap-3">
+          <ChainPicker view={view} total={lineage.edges.length} />
+          {foldable && (
+            <Toggle on={unfold} onChange={setUnfold}>
+              {unfold ? `showing all ${rootCount} roots` : `show all ${rootCount} roots`}
+            </Toggle>
+          )}
+        </div>
+        {foldable && !unfold && (
+          <p className="text-micro text-chrome-400">
+            {rootCount} roots are folded into one box per kind so the derivations stay readable;
+            every root is still listed under the graph.
+          </p>
+        )}
         {!lineage.available && (
           <Callout tone="broken" title="Database unreachable — lineage roots from disk only">
             The warehouse could not be reached, so no derivation edge could be read and the graph

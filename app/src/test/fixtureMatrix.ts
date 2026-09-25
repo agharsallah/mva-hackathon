@@ -102,6 +102,7 @@ export const MATRIX: Array<[string, Record<string, string | number> | undefined]
   // `submissions/<track>/iteration-<n>/` folder at once so a page can never render a
   // half-joined submission.
   ['/api/submissions', undefined],
+  ['/api/iterations', undefined],
   // The Track 2 report: one payload holding the mechanism card and all five snapshot tables.
   ['/api/track2', undefined],
   // The model zoo. Every registered zoo path is listed: the two path-parameter routes answer

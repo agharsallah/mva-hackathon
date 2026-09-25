@@ -2095,6 +2095,14 @@ flowchart LR
 *Example:* `ITERATION2` declares nine steps, of which `step-7` is the only one whose `track` is `track2`.
 *Context: read by `/api/steps`, by the report renderer and by the CLI's `--step` choices, so none of them can hold a different list · source: src/mva/science/steps.py · related: Research iteration, Research goal, Track 2 (drug repurposing) · first seen 2026-09-19*
 
+**Iteration data catalog** — the list of every dataset one iteration touched: each warehouse table, committed data file, gitignored build file and store object that its methodology entries name, with its row count, digest, producer and lineage status. Nobody types it: it is read out of the entries' text and joined to the lineage ledger and to the provenance manifest beside each file, so it cannot drift from the record. Software analogy: a dependency lockfile generated from the imports, not a hand-kept list. Each row has a **role** — `produced` when a recorded producer ties it to one of the entries, `cited` when the entries only name it (naming proves use, not production) — and a **lineage status**: `edge` (a `data_lineage` row), `manifest` (a provenance record committed with the bytes, including a card that carries its own standing line and history) or `none`.
+*Example:* research iteration 2's catalog holds 76 datasets, 66 of them with recorded lineage; `track2.shortlist` is `produced` by entry 114 because its edge names `tools/track2_enrich.py` and entry 114 ran that tool.
+*Context: built by `src/mva/viz/iteration_catalog.py`; served per research iteration by `GET /api/iterations` and per submission folder in `GET /api/submissions` (`catalog`); shown on the dashboard's `/iterations` and `/submissions` pages · source: docs/step-0/methodology/157-an-iteration-data-catalog-and-both-axes-on-one-page.md · related: Data lineage, Provenance manifest, Research iteration, Submission iteration, Methodology entry, Lineage attribution · first seen 2026-09-25*
+
+**Lineage attribution** — whether a lineage edge says *which methodology entry* produced it. An edge always names its table, its input and its tool; only some also cite the entry (`entry docs/…/154-….md` in its `notes`). Without that citation the ledger alone cannot say which iteration a table belongs to, and the catalog has to infer it from the entry naming the edge's tool. Software analogy: a commit that links its ticket versus one that does not — both are history, only one is traceable to a decision.
+*Example:* 204 of the ledger's 730 edges cite an entry, all written from iteration 2's entry 084 onwards; iteration 1's edges predate the convention.
+*Context: counted by `GET /api/iterations` (`ledger.attributed`) and drawn on `/iterations`; recorders that write `notes: entry <path>` keep it rising · source: docs/step-0/methodology/157-an-iteration-data-catalog-and-both-axes-on-one-page.md · related: Lineage edge, Iteration data catalog, Methodology entry · first seen 2026-09-25*
+
 **Hypothesis** — a claim that could turn out to be wrong, stated before you test it. In software terms it is an assertion you write before the code that makes it pass. *Example:* "the causal pair sits in BUB1B."
 *Context: filed in the register before it is tested — `mva-science hypothesis-add` refuses a claim with no prediction and no refutation condition · source: src/mva/science/hypothesis.py · related: Falsifiable, Prediction, Refutation condition, Register*
 
@@ -2996,7 +3004,7 @@ own genome, his own phenotypes).
 *Context: entry 151 · related: Cliff's delta · first seen 2026-09-24*
 
 **Benjamini-Hochberg (BH) correction / adjusted p (q)** — testing many drugs at once produces small p values by chance; BH rescales them so that a stated share of the "hits" are expected to be false. *Example:* simvastatin p 0.0189 → q 0.132 over 24 candidates.
-*Context: entry 151 · related: Benjamini-Hochberg (BH) correction / adjusted p (q) · first seen 2026-09-24*
+*Context: entry 151 · related: Multiple testing, Negative-control band · first seen 2026-09-24*
 
 **Negative-control band** — the same test run on drugs with no tie to the question, used to show what "significant" looks like when nothing is there. *Example:* in the 14-line RMS contrast, 95 % of unrelated drugs fall within Cliff's δ ±0.7.
 *Context: entry 151, figure `step9-e4-effects` · first seen 2026-09-24*

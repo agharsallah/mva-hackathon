@@ -141,6 +141,18 @@ export const modules: FeatureModule[] = [
     description: 'Build and submit probes, watch jobs, and account for the 6-query budget.',
     load: () => import('../../pages/Probes'),
   },
+  // The hub between the two numberings: research iterations (routes through the case) and
+  // submission folders (what the organisers receive), with the data each one rests on.
+  {
+    id: 'iterations',
+    path: '/iterations',
+    navLabel: 'Iterations',
+    title: 'Every iteration, both tracks',
+    group: 'decide',
+    description:
+      'Which research iteration fed which submission folder, what state each folder is in, and the datasets each one rests on — with the lineage behind them.',
+    load: () => import('../../pages/Iterations'),
+  },
   {
     id: 'track1',
     path: '/track1',

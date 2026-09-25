@@ -85,6 +85,7 @@ const OWNERS: Record<string, readonly string[]> = {
     '/api/callset/region',
     '/api/health/dependencies',
     '/api/submissions',
+    '/api/iterations',
     '/api/track2',
   ],
   // The model zoo. The two path-parameter routes are listed once per captured key: a
