@@ -28,8 +28,14 @@ from typing import Any
 
 import pytest
 
-from mva.drugs import decision_config
-from mva.drugs.decision_io import COLUMNS, read_candidates, read_safety, safety_class
+from mva.drugs import decision_avoid, decision_config, decision_priors
+from mva.drugs.decision_io import (
+    COLUMNS,
+    expand_aliases,
+    read_candidates,
+    read_safety,
+    safety_class,
+)
 from mva.drugs.decision_model import EvidenceRow, build_table
 from mva.drugs.decision_run import analyse
 from mva.drugs.decision_sensitivity import envelope, flip_points
@@ -52,6 +58,8 @@ RAW: dict[str, Any] = {
             "phenotype_flag": 0.5,
             "both_flag": 0.25,
             "unassessed": 0.6,
+            "caution": 0.5,
+            "avoid": 0.0,
         }
     },
     "control": {"policy": "penalty", "failed_factor": 0.5, "unknown_factor": 0.5},
@@ -215,3 +223,75 @@ def test_the_committed_config_parses_and_names_its_todos() -> None:
     assert all(v.source for v in config.variables)
     assert isinstance(decision_config.todos(raw), list)
     json.dumps(raw)
+
+
+def test_class_rows_expand_to_named_members_and_control_rows_drop() -> None:
+    rows = [
+        _row("proteasome inhibition (MG132; bortezomib)", "R1", "missense_unstable", 0.5, "n/a"),
+        EvidenceRow("Untreated", "R1", "any", "negative control", 0.0, "failed", "s", "", "t"),
+    ]
+    aliases = {"proteasome inhibition (MG132; bortezomib)": {"MG132": 1.0, "BORTEZOMIB": 0.4}}
+    kept, dropped = expand_aliases(rows, aliases, ["negative control"])
+    assert [(r.drug_name, r.evidence_strength) for r in kept] == [
+        ("MG132", 0.5),
+        ("BORTEZOMIB", pytest.approx(0.2)),
+    ]
+    assert [r.drug_name for r, _ in dropped] == ["Untreated"]
+
+
+def test_not_applicable_control_takes_its_own_factor() -> None:
+    control = {"policy": "penalty", "failed_factor": 0.5, "unknown_factor": 0.5, "na_factor": 0.8}
+    table = build_table(
+        _config(control=control), [_row("X", "r", "any", 0.5, "not_applicable")], {}
+    )
+    assert table.utility[1][0] == pytest.approx(0.5 * 0.8 * 0.6)
+
+
+def test_unflagged_without_any_label_is_unassessed(tmp_path: Path) -> None:
+    path = tmp_path / "s.tsv"
+    path.write_text(
+        "drug\tcombined_flag\tlabels_total\n"
+        "a\tunflagged by these two sources (not evidence of safety)\t0\n"
+        "b\tunflagged by these two sources (not evidence of safety)\t12\n"
+    )
+    assert read_safety(path) == {"A": "unassessed", "B": "unflagged"}
+
+
+def test_threshold_crossing_counts_pairs_that_reach_the_threshold(tmp_path: Path) -> None:
+    table = tmp_path / "dose.tsv"
+    table.write_text(
+        "scenario\tdrug\ttotal\tgain\tanchor\tanchor_pct\n"
+        "child now, a\tnone\t12\t0\tcliff\t13\n"
+        "child now, b\tnone\t5\t0\tother\t4\n"
+        "child now, c\tnone\t20\t0\tother\t4\n"
+        "child + x (real)\tx\t12.5\t0.5\tcliff\t13\n"
+        "child + y (bound)\ty\t14\t2\tcliff\t13\n"
+    )
+    spec = {
+        "table": str(table),
+        "threshold": {"column": "anchor_pct", "where_column": "anchor", "where_contains": "cliff"},
+        "start": {"drug_column": "drug", "drug_value": "none", "scenario_column": "scenario",
+                  "scenario_prefix": "child now"},
+        "total_column": "total",
+        "gain_column": "gain",
+        "gains": {"strict": ["(real)"], "lenient": ["(real)", "(bound)"]},
+    }  # fmt: skip
+    out = decision_priors.threshold_crossing(spec)
+    assert out["threshold"] == 13.0
+    assert sorted(out["starts"].values()) == [5.0, 12.0]  # 20 is already above
+    assert out["strict"]["prior_yes"] == 0.0  # 12 + 0.5 < 13
+    assert out["lenient"]["prior_yes"] == pytest.approx(1 / 4)  # only 12 + 2
+
+
+def test_avoid_rules_check_their_source_and_the_lowest_factor_wins(tmp_path: Path) -> None:
+    source = tmp_path / "exposures.tsv"
+    source.write_text("drug\toutcome\nvincristine\tauthors advise avoiding antimitotics\n")
+    rule = {"drugs": ["vincristine"], "level": "avoid", "reason": "r", "source": "PMID:1",
+            "source_file": str(source), "must_contain": ["advise avoiding"]}  # fmt: skip
+    rows = decision_avoid.build({"rules": [rule]})
+    factors = decision_config.parse(RAW).safety
+    assert decision_avoid.merge({"VINCRISTINE": "unflagged"}, rows, factors) == {
+        "VINCRISTINE": "avoid"
+    }
+    with pytest.raises(ValueError, match="lacks"):
+        decision_avoid.build({"rules": [{**rule, "must_contain": ["not in the file"]}]})
