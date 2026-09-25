@@ -88,3 +88,48 @@ export function edgePath(
   const mid = (x1 + x2) / 2;
   return `M${x1},${y1} C${mid},${y1} ${mid},${y2} ${x2},${y2}`;
 }
+
+/**
+ * Longest-path levelling, in place: every node sits one column right of its deepest source.
+ *
+ * `levels` starts from each node's current level, so a caller can pin a node further right.
+ * The loop is bounded by the node count, so a cycle in recorded lineage stops rather than
+ * spinning; the edge counts here are hundreds at most, cheaper than building an index.
+ */
+export function levelLongestPath(
+  nodes: Map<string, Placed>,
+  edges: readonly { from: string; to: string }[],
+): number {
+  for (let pass = 0; pass < nodes.size; pass++) {
+    let moved = false;
+    for (const e of edges) {
+      const from = nodes.get(e.from);
+      const to = nodes.get(e.to);
+      if (from && to && to.level <= from.level) {
+        to.level = from.level + 1;
+        moved = true;
+      }
+    }
+    if (!moved) break;
+  }
+  const levels = [...nodes.values()].map((n) => n.level);
+  return levels.length > 0 ? Math.max(...levels) + 1 : 0;
+}
+
+/** Number each node's position within its level, in the order given. */
+export function assignSlots(ordered: readonly Placed[]): void {
+  const perLevel = new Map<number, number>();
+  for (const node of ordered) {
+    const slot = perLevel.get(node.level) ?? 0;
+    node.slot = slot;
+    perLevel.set(node.level, slot + 1);
+  }
+}
+
+/**
+ * A node label cut to fit its box, with an ellipsis. SVG text does not wrap or clip, so an
+ * uncut release name (`PRISM Repurposing 20Q2 primary (figshare article …)`) runs across
+ * the neighbouring column; the full text stays in the node's `<title>` and the source list.
+ */
+export const clipLabel = (text: string, max: number): string =>
+  text.length > max ? `${text.slice(0, max - 1)}…` : text;

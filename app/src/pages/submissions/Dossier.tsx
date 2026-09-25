@@ -63,8 +63,9 @@ export function Dossier({ result }: { result: Result<Submissions> }) {
           onChange={setPicked}
         />
         <span className="text-micro text-chrome-400">
-          {iterations.length} of 6 oracle uploads planned or spent · newest first · a frozen folder
-          is never edited
+          {iterations.filter((i) => !isPanelJudged(i)).length} of 6 oracle uploads planned or spent
+          {iterations.some(isPanelJudged) ? ' (a panel-judged folder uses none)' : ''} · newest
+          first · a frozen folder is never edited
         </span>
       </div>
 

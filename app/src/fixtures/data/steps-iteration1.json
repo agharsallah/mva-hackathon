@@ -48,7 +48,7 @@
       "summary": "the top-down route that produced submission 1. Frozen."
     },
     {
-      "claims": 47,
+      "claims": 49,
       "current": true,
       "declared": true,
       "docs": "docs/iteration2",
@@ -85,15 +85,22 @@
       "summary": "planned only \u2014 no step map is declared for it"
     },
     {
-      "claims": 6,
+      "claims": 36,
       "current": false,
       "declared": true,
       "docs": "docs/iteration4",
-      "done": 4,
+      "done": 7,
       "iteration": "iteration4",
-      "open": 2,
-      "steps": 7,
-      "submissions": [],
+      "open": 4,
+      "steps": 11,
+      "submissions": [
+        {
+          "folder": "submissions/track2/iteration-4",
+          "number": 4,
+          "state": "ready",
+          "track": "track2"
+        }
+      ],
       "summary": "the model zoo (docs/iteration4/plan.md)."
     }
   ],

@@ -261,6 +261,35 @@ describe('a panel-judged iteration (Track 2)', () => {
   }, 30000);
 });
 
+describe('a panel-judged iteration built on generators, not a shortlist (Track 2, iteration 4)', () => {
+  const ITERATION_T2_4 = '?it=track2%2Fiteration-4';
+
+  it('describes itself from its own report, figures and lineage', async () => {
+    const { caught } = await mountModule(submissions, ITERATION_T2_4);
+    expect(caught).toBeNull();
+
+    const guide = screen.getByTestId('beginner-guide');
+    const text = guide.textContent ?? '';
+    // The title and the method words are read off this report, not typed for iteration 2.
+    expect(text).toContain('one mechanism read from many independent sources');
+    const slugs = [...guide.querySelectorAll('a[href*="/learn#"]')].map(
+      (a) => a.getAttribute('href')!.split('#')[1]!,
+    );
+    expect(slugs).toContain('generator');
+    expect(slugs).toContain('convergence');
+    // Its figures are the ones its report cites, not the track folder's older plots.
+    expect(text).toContain('figures/it4/');
+    expect(document.body.textContent).not.toContain('figures/track2/evidence-ladder.png');
+
+    // The walk reaches the tables its entries recorded; too many for one diagram, so the
+    // lineage offers one chain at a time, and every chain is drawn.
+    const picker = screen.getByTestId('chain-picker');
+    const options = [...picker.querySelectorAll('option')].map((o) => o.value);
+    expect(options).toContain('it4');
+    expect(document.querySelector('svg[aria-label*="recorded derivations"]')).toBeTruthy();
+  }, 30000);
+});
+
 describe('the two submission figures', () => {
   it('draws the rank ladder with one bar per submitted row, over the point tiers', async () => {
     await mountModule(submissions, ITERATION_1);

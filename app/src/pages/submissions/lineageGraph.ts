@@ -1,18 +1,28 @@
 /**
  * The lineage edges of one iteration, laid out as a layered graph.
  *
- * Same approach as `pages/provenance/graph.ts` — longest-path levelling, then plain SVG,
- * no graph library, so the diagram stays reproducible from its own source. It is a
- * separate function rather than a shared one because the shapes differ: a submission's
- * edges all point at a single target (`submissions/<track>/iteration-<n>`), so the graph is
- * a fan-in whose left column is the roots this answer rests on, and the node's label is a
- * source *kind* rather than a schema.
+ * Same approach as `pages/provenance/graph.ts` — longest-path levelling
+ * (`lib/graphLayout.ts`), then plain SVG, no graph library, so the diagram stays reproducible
+ * from its own source. A scored iteration is mostly a fan-in to its folder
+ * (`submissions/<track>/iteration-<n>`); a panel-judged one has no folder edge and walks from
+ * the tables its entries recorded, so both shapes go through the same levelling. A node's
+ * label is a source *kind* rather than a schema.
  */
 
 import type { SubmissionLineageEdge } from '../../api/types';
+import { assignSlots, levelLongestPath } from '../../lib/graphLayout';
 
-/** The five root kinds, in the order the diagram stacks them. */
-export const KIND_ORDER = ['raw', 'clinical', 'reference', 'table', 'file'] as const;
+/** The root kinds, in the order the diagram stacks them; an unlisted kind sorts last. */
+export const KIND_ORDER = [
+  'raw',
+  'clinical',
+  'card',
+  'reference',
+  'file',
+  'api',
+  'derived',
+  'table',
+] as const;
 
 export interface GraphNode {
   id: string;
@@ -52,8 +62,13 @@ const rank = (kind: string): number => {
 };
 
 /**
- * Build the graph. Sources sit on level 0 ordered by kind (raw first, the way the repo's
- * colour convention reads), the submission on level 1.
+ * Build the graph. Roots sit on level 0 ordered by kind (raw first, the way the repo's colour
+ * convention reads); every derived table sits one column right of its deepest source, and
+ * the iteration folder — a target in schema `submissions` — is the green sink.
+ *
+ * A table that is both a target and a source is one node, whichever spelling the source
+ * used (`results.gene_biallelic`, or a bare `track1/iteration-1`), so a walked chain draws
+ * as a chain rather than as two disconnected fans.
  *
  * Returns an empty graph for an empty edge list — the caller renders the "database
  * unreachable" notice rather than an empty box, which is why this never invents a node.
@@ -63,11 +78,17 @@ export function buildSubmissionGraph(edges: SubmissionLineageEdge[]): Submission
 
   const nodes = new Map<string, GraphNode>();
   const out: GraphEdge[] = [];
+  const targetId = (e: SubmissionLineageEdge) => `${e.target_schema}.${e.target_table}`;
+  const bare = new Map(edges.map((e) => [e.target_table, targetId(e)]));
+  const sourceId = (ref: string) => (bare.has(ref) && !ref.includes('.') ? bare.get(ref)! : ref);
+  const sinkKind = (e: SubmissionLineageEdge) =>
+    e.target_schema === 'submissions' ? 'submission' : 'table';
 
   for (const e of edges) {
-    if (!nodes.has(e.source_ref)) {
-      nodes.set(e.source_ref, {
-        id: e.source_ref,
+    const sid = sourceId(e.source_ref);
+    if (!nodes.has(sid)) {
+      nodes.set(sid, {
+        id: sid,
         label: tail(e.source_ref),
         sublabel: e.source_version || e.source_kind,
         kind: e.source_kind,
@@ -77,13 +98,18 @@ export function buildSubmissionGraph(edges: SubmissionLineageEdge[]): Submission
         verified: !!e.source_sha256,
       });
     }
-    const targetId = `${e.target_schema}/${e.target_table}`;
-    if (!nodes.has(targetId)) {
-      nodes.set(targetId, {
-        id: targetId,
+    const tid = targetId(e);
+    const existing = nodes.get(tid);
+    if (existing) {
+      existing.rows = e.target_rows;
+      existing.kind = sinkKind(e);
+      existing.label = e.target_table;
+    } else {
+      nodes.set(tid, {
+        id: tid,
         label: e.target_table,
         sublabel: e.target_schema,
-        kind: 'submission',
+        kind: sinkKind(e),
         rows: e.target_rows,
         level: 1,
         slot: 0,
@@ -91,27 +117,19 @@ export function buildSubmissionGraph(edges: SubmissionLineageEdge[]): Submission
       });
     }
     out.push({
-      from: e.source_ref,
-      to: targetId,
+      from: sid,
+      to: tid,
       transform: e.transform,
       tool: e.tool,
       notes: e.notes,
     });
   }
 
+  const levels = levelLongestPath(nodes, out);
   const ordered = [...nodes.values()].sort(
     (a, b) => a.level - b.level || rank(a.kind) - rank(b.kind) || a.label.localeCompare(b.label),
   );
-  const perLevel = new Map<number, number>();
-  for (const node of ordered) {
-    const slot = perLevel.get(node.level) ?? 0;
-    node.slot = slot;
-    perLevel.set(node.level, slot + 1);
-  }
+  assignSlots(ordered);
 
-  return {
-    nodes: ordered,
-    edges: out,
-    levels: Math.max(...ordered.map((n) => n.level)) + 1,
-  };
+  return { nodes: ordered, edges: out, levels };
 }

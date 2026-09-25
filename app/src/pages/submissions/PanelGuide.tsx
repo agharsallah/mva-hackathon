@@ -5,7 +5,9 @@
  * None of that exists here, because Track 2 has no scorer: it is read by people. So this is
  * the same six-step shape asking the questions that *do* apply — what is being sent, what it
  * argues, who grades it, why no position appears, and where the folder stands — with every
- * number read off the payload rather than typed, exactly as the scored guide does.
+ * number read off the payload rather than typed, exactly as the scored guide does. What the
+ * report argues is read off its own title and method words (`reportTerms`), so an iteration
+ * built on a shortlist and one built on converging generators each describe themselves.
  */
 
 import type { ReactNode } from 'react';
@@ -13,7 +15,14 @@ import { Link } from 'react-router-dom';
 
 import type { SubmissionIteration } from '../../api/types';
 import { cx, WELL } from '../../lib/ui';
-import { PANEL_DELIVERABLES, STATE_MEANING } from './iteration';
+import {
+  figureDirs,
+  PANEL_DELIVERABLES,
+  reportSections,
+  reportTerms,
+  reportTitle,
+  STATE_MEANING,
+} from './iteration';
 
 /** `term (plain meaning)`, the term linked to its entry in the one dictionary. */
 function T({ slug, term, plain }: { slug: string; term: string; plain: ReactNode }) {
@@ -46,6 +55,11 @@ export function PanelGuide({ iteration }: { iteration: SubmissionIteration }) {
   const files = iteration.deliverables;
   const uploaded = files.filter((d) => d.kind === 'report-pdf' || d.kind === 'methods-xlsx');
   const figures = iteration.figures.length;
+  const dirs = figureDirs(iteration.figures.map((f) => f.path));
+  const markdown = iteration.report.markdown;
+  const title = reportTitle(markdown);
+  const sections = reportSections(markdown);
+  const terms = reportTerms(markdown);
 
   return (
     <section className={cx(WELL, 'space-y-3')} data-testid="beginner-guide">
@@ -88,26 +102,34 @@ export function PanelGuide({ iteration }: { iteration: SubmissionIteration }) {
         </Step>
 
         <Step n={3} title="What it argues.">
-          The report names a{' '}
-          <T
-            slug="shortlist"
-            term="shortlist"
-            plain="drugs with a cited path from the broken gene to the drug's target"
-          />{' '}
-          of already-approved medicines, and a{' '}
-          <T
-            slug="anti-direction-the-do-not-table"
-            term="do-not table"
-            plain="the classes the mechanism says would make things worse"
-          />{' '}
-          beside it. The{' '}
+          {title ? (
+            <>
+              The report&rsquo;s own title says it: &ldquo;{title}&rdquo;
+              {sections > 0 ? <>, over {sections} numbered sections</> : null}.{' '}
+            </>
+          ) : (
+            <>No report has been written into this folder yet. </>
+          )}
+          {terms.length > 0 ? (
+            <>
+              It argues with{' '}
+              {terms.map((t, i) => (
+                <span key={t.slug}>
+                  {i > 0 ? (i === terms.length - 1 ? ' and ' : ', ') : null}
+                  <T slug={t.slug} term={t.term} plain={t.plain} />
+                </span>
+              ))}
+              .{' '}
+            </>
+          ) : null}
+          The{' '}
           <Link
             to="/track2"
             className="underline decoration-chrome-600 underline-offset-2 hover:text-chrome-200"
           >
             Track 2 page
           </Link>{' '}
-          renders the same tables this report was written from, with the grading visible.
+          renders the tables behind it, with the grading visible.
         </Step>
 
         <Step n={4} title="What backs it.">
@@ -117,9 +139,21 @@ export function PanelGuide({ iteration }: { iteration: SubmissionIteration }) {
             term="hypotheses"
             plain="a claim filed with its prediction and what would disprove it, before the test"
           />{' '}
-          were registered before their tests ran, and {figures} rendered figures are committed under{' '}
-          <span className="font-mono">figures/{iteration.track}/</span>. Each contribution below
-          links to the append-only entry that produced it.
+          were registered before their tests ran, and the report cites {figures} rendered figure
+          {figures === 1 ? '' : 's'}
+          {dirs.length > 0 ? (
+            <>
+              {' '}
+              committed under{' '}
+              {dirs.map((d, i) => (
+                <span key={d}>
+                  {i > 0 ? ', ' : null}
+                  <span className="font-mono">{d}</span>
+                </span>
+              ))}
+            </>
+          ) : null}
+          . Each contribution below links to the append-only entry that produced it.
         </Step>
 
         <Step n={5} title="Why no position appears anywhere.">
@@ -136,8 +170,15 @@ export function PanelGuide({ iteration }: { iteration: SubmissionIteration }) {
         <Step n={6} title="Where this folder stands.">
           State <span className="font-mono text-chrome-100">{iteration.state}</span> —{' '}
           {STATE_MEANING[iteration.state]}. Track 2 accepts{' '}
-          <strong className="text-chrome-100">one submission</strong>, and it has not been made:
-          this folder will be re-read and re-rendered before it goes.
+          <strong className="text-chrome-100">one submission</strong>
+          {iteration.uploaded ? (
+            <>, and this folder is it: it is frozen and only ever gains a successor.</>
+          ) : (
+            <>
+              , and it has not been made: this folder will be re-read and re-rendered before it
+              goes.
+            </>
+          )}
         </Step>
       </ol>
     </section>

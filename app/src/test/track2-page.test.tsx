@@ -81,6 +81,12 @@ function withoutKnownIds(text: string): string {
       // The decoy card's `picked_by` quotes its seed as an SQL string literal
       // (`md5(symbol || '20260918')`): a YYYYMMDD date in quotes, never a position.
       .replace(/'\d{8}'/g, '')
+      // A downloaded release named by its record: iteration 4's lineage sources cite the PRISM
+      // and DepMap releases as `figshare article 20564034` / `figshare.plus 27993248`, and a
+      // URL (`…figshare.com/files/36794583`, `efetch.fcgi?db=pmc&id=2887387`) is an address,
+      // never a position. The label or the scheme is what makes the number a record id.
+      .replace(/https?:\/\/\S+/g, '')
+      .replace(/figshare(?:\.plus)?(?: article)? \d+/gi, '')
       // Ontology term ids. The transfer case's card carries its own clinical terms
       // (`HP:0002667`, nephroblastoma) and disease id (`MONDO:0054736`), and HPO ids are
       // zero-padded to seven digits, so every one of them trips the check. The ontology
@@ -191,6 +197,15 @@ describe('the Track 2 report', () => {
     expect(document.querySelector('svg[aria-label*="public source"]')).toBeTruthy();
     const graph = document.querySelector('svg[aria-label*="recorded derivations"]');
     expect(graph, 'no lineage graph rendered').toBeTruthy();
+
+    // Hundreds of edges are offered one chain at a time: the proband's newest chain first,
+    // each transfer case after the proband's own.
+    const options = [...screen.getByTestId('chain-picker').querySelectorAll('option')].map(
+      (o) => o.value,
+    );
+    expect(options[0]).toBe('it4');
+    expect(options).toContain('transfer.BLM');
+    expect(options.indexOf('track2')).toBeLessThan(options.indexOf('transfer.BLM'));
   }, 30000);
 
   it('walks Track 2 in six steps, every one of them read off the payload', async () => {

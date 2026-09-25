@@ -160,10 +160,12 @@ export interface SubmissionReport {
  *
  * `raw` is the delivered VCF object, `clinical` the phenotype document — the two data
  * sources every conclusion must be cross-referenced against. `reference` is public
- * annotation, `table` a warehouse result table, `file` a committed spec.
+ * annotation, `table` a warehouse result table, `file` a committed spec or a downloaded
+ * release. A walk through a panel-judged iteration's tables also meets the kinds its
+ * recorders wrote (`api`, `card`, `derived`), kept under the edge's own word.
  */
 export interface LineageSource {
-  kind: 'raw' | 'clinical' | 'reference' | 'table' | 'file';
+  kind: 'raw' | 'clinical' | 'reference' | 'table' | 'file' | (string & {});
   ref: string;
   version: string;
   sha256: string;

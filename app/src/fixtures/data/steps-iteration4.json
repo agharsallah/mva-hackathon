@@ -72,15 +72,22 @@
       "summary": "planned only \u2014 no step map is declared for it"
     },
     {
-      "claims": 31,
+      "claims": 36,
       "current": false,
       "declared": true,
       "docs": "docs/iteration4",
-      "done": 5,
+      "done": 7,
       "iteration": "iteration4",
       "open": 4,
-      "steps": 9,
-      "submissions": [],
+      "steps": 11,
+      "submissions": [
+        {
+          "folder": "submissions/track2/iteration-4",
+          "number": 4,
+          "state": "ready",
+          "track": "track2"
+        }
+      ],
       "summary": "the model zoo (docs/iteration4/plan.md)."
     }
   ],
@@ -406,17 +413,17 @@
       "goal": "Can one batch inference API serve every model through the same contract, cache every score with provenance, and dispatch GPU work without sending more than a sequence window?",
       "hypotheses": [
         {
-          "author": "wave2",
+          "author": "claude",
           "confidence": 0.15,
           "gene": "",
           "hypothesis_id": "H062",
           "iteration": "iteration4",
           "path": "",
           "prediction": "Scoring all four enabled lanes from an empty cache takes <= 3,600 s of wall-clock on this laptop, spends nothing, and every lane writes exactly one warehouse.data_lineage edge named it4-score:<model>.",
-          "reasoning": "Undecided by its own terms, and recorded as such rather than rounded either way. The cold four-lane pass measured 6,320 s at zero dollars: 1.76x the 3,600 s the claim predicted, and 0.44x the 4 h that was pre-registered as refuting, so neither clause fires. Confidence 0.15 because the number is 76 % over the prediction and the run shows no sign of being unlucky. The refutation clause asks which lane is responsible and it is answered: not a join \u2014 the three local lanes finish 47,697 alleles in 53 s \u2014 but one serial remote lane, REVEL, at 6,267 s over four attempts against an endpoint that failed three times. Two fixes already took it from about 4.6 h to 1 h 45 m; the third, parallelism (iteration 2 runs three workers on the same service), would put the pass near 35 minutes. That is the revision this claim is owed. Entry 122.",
-          "recorded_at": "2026-09-19T13:39:50.358299",
+          "reasoning": "Closed undecided at iteration 4's close-out (2026-09-25): the revision it was owed needs a second cold four-lane pass with three REVEL workers, and that run was not made; 6,320 s sits between the predicted 3,600 s and the refuting 4 h, so the claim stays neither supported nor refuted (entry 122).",
+          "recorded_at": "2026-09-25T13:18:19.209537",
           "refuted_by": "The cold four-lane pass takes more than 4 hours \u2014 then the join is profiled and the fix recorded.",
-          "revision": 2,
+          "revision": 3,
           "statement": "P4-4a: a cold MVP run \u2014 four lanes over the ~39,300 allele records \u2014 completes in at most one hour of laptop wall-clock at zero dollars.",
           "status": "testing",
           "step": "step-3"
@@ -876,17 +883,17 @@
       "goal": "Can one report template describe every model identically \u2014 coverage, distribution, the confirmed pair's rank and percentile, limitations \u2014 with an LLM writing only the interpretation?",
       "hypotheses": [
         {
-          "author": "wave2",
+          "author": "claude",
           "confidence": 0.2,
           "gene": "BUB1B",
           "hypothesis_id": "H063",
           "iteration": "iteration4",
           "path": "",
           "prediction": "For each of alphamissense, esm1b and spliceai, the confirmed pair's percentile in results.it4_model_ranks is at most 10.00 %.",
-          "reasoning": "Not supported and not refuted by its own terms, recorded as such rather than rounded. Two of the three catalogue-free lanes have no opinion on the pair \u2014 the claim's refutation clause says that is neither \u2014 because each scored the missense half and cannot score a stop_gained allele, and rank.py excludes a pair with an unscored half rather than scoring it zero. The one lane that ranks it, SpliceAI, puts it at the 23.63rd percentile: outside the predicted top decile, above the refuting median. The claim was aimed at the wrong unit: every missense lane places the pair's missense allele in its top 2.6 % and AlphaMissense in its top 0.47 %, so as a claim about alleles it would be supported three times over. As a claim about pairs it cannot be settled by a roster in which three of four lanes are missense-only and the pair is half nonsense \u2014 the lane gap entry 114 predicted from consequence classes and entry 119 confirmed by coverage. The revision it is owed is a lane that scores a nonsense allele (GPN-MSA). Entry 129.",
-          "recorded_at": "2026-09-19T18:46:34.498928",
+          "reasoning": "Corrects revision 3, whose 0.35 contradicted its own reasoning: the GPN-MSA row is neutral for H063's three named lanes, so confidence returns to revision 2's 0.20 and the claim closes undecided (entries 129, 148).",
+          "recorded_at": "2026-09-25T13:18:47.330222",
           "refuted_by": "Any catalogue-free lane places the confirmed pair below the median (percentile above 50 %) \u2014 reported as that lane's blind spot. A lane with no opinion on the pair is neither support nor refutation.",
-          "revision": 2,
+          "revision": 4,
           "statement": "P4-6: every catalogue-free lane places the confirmed BUB1B pair in the top decile of the callset's biallelic pairs.",
           "status": "testing",
           "step": "step-5"
@@ -1799,6 +1806,34 @@
           "unblinds": false,
           "url": "/api/steps/iteration4/step-9/entry/152-is-each-candidate-safe-for-this-child.md",
           "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "153-lincs-signature-reversal-of-bub1b-loss.md",
+          "inputs": [
+            "input | release | bytes | sha256 (first 16) | licence",
+            "`xpr_mean_coeff_mat.tsv.gz` \u2014 `lincs-dcic.s3.amazonaws.com/LINCS-sigs-2021/means/` | LINCS L1000 2021 (S3 Last-Modified 2023-09-05) | 432,492,125 | `f8b115513c365340` | LINCS public; SigCom states none",
+            "`geneinfo_beta.txt` \u2014 `s3.amazonaws.com/macchiato.clue.io/builds/LINCS2020/` | CMap LINCS 2020 beta | 1,141,389 | `e739d06bad42ff92` | CMap / LINCS public",
+            "31 per-cell-line BUB1B knockout files (`LINCS-sigs-2021/cd/xpr/`) | LINCS L1000 2021 | ~217 KB each | one manifest each in `build/it4/track2-e3/raw/per-signature/` | as above",
+            "`signature.json` \u2014 the fixed query, written **before** any drug query | this repo | 2,720 | `d63a6194517e40d5` | this repo",
+            "SigCom LINCS metadata + data API (PMID 35524556) | not stated by the API | 124 cached replies | roll-up `2cdf6c4fbe58b338` | \u2014",
+            "iLINCS API, `LIB_5` (PMID 35945222) | not stated by the API | 10 cached replies | roll-up `91ce04a19fe449a0` | \"Creative Commons Terms of Use\"",
+            "ChEMBL REST, every `max_phase = 4` molecule | ChEMBL 37 (data-sources.md) | 5 replies | roll-up `4048707e0b7c8f0f` | CC BY-SA 3.0",
+            "openFDA drug label, 897 generic names | \u2014 | 897 replies (0 failed) | roll-up `d7bce4e2297bc07a` | public domain",
+            "Libraries crawled in full, each equal to the server's own `count`: SigCom `l1000_cp` 718,055",
+            "signatures, `l1000_xpr` 140,945, `l1000_shRNA` 158,003; iLINCS `LIB_5` 143,374.",
+            "Code: `src/mva/drugs/sources/{sigcom,ilincs}.py`,",
+            "`src/mva/drugs/signature_reversal{,_approval,_tables,_plan,_controls,_run}.py`,",
+            "`tools/signature_reversal.py`, `tools/render_step9_e3.py`; tests",
+            "`tests/test_signature_reversal.py` (24, synthetic, no network). numpy 2.5.2. Code version",
+            "`89cf730` (in the manifests). Cost $0; wall time ~20 min fetch + ~20 min queries."
+          ],
+          "number": "153",
+          "path": "docs/iteration4/step-9/methodology/153-lincs-signature-reversal-of-bub1b-loss.md",
+          "title": "Does an approved drug reverse the expression signature of BUB1B loss, in two engines, specifically?",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-9/entry/153-lincs-signature-reversal-of-bub1b-loss.md",
+          "violations": []
         }
       ],
       "figures": [
@@ -1891,6 +1926,36 @@
           "slug": "step9-e2-terms.svg",
           "title": "step9 e2 terms",
           "url": "/api/steps/iteration4/step-9/figure/step9-e2-terms.svg"
+        },
+        {
+          "bytes": 33430,
+          "caption": {
+            "means": "No sibling reaches the cut (best BUB1 at 5.6 %), and random decoys pass it 10-20 % of the time. The run is uninterpretable by its own registration.",
+            "name": "step9-e3-control.svg",
+            "reads": "Where the other checkpoint genes' knockouts (CRISPR) and knockdowns (shRNA) rank as mimickers of the BUB1B signature, against the 5 % cut, with each decoy's best checkpoint gene for comparison.",
+            "source": "tools/render_step9_e3.py over build/it4/track2-e3/summary.json; entry 153"
+          },
+          "kind": "svg",
+          "name": "step9-e3-control.svg",
+          "path": "figures/it4/step9-e3-control.svg",
+          "slug": "step9-e3-control.svg",
+          "title": "step9 e3 control",
+          "url": "/api/steps/iteration4/step-9/figure/step9-e3-control.svg"
+        },
+        {
+          "bytes": 157815,
+          "caption": {
+            "means": "Eight compounds are in both top 100s; three are approved and two (phenytoin, albendazole) are in no decoy's top 100. The positive control failed, so this is not support.",
+            "name": "step9-e3-engines.svg",
+            "reads": "Each compound both LINCS engines ranked as a reverser of the BUB1B knockout consensus, SigCom rank against iLINCS rank, with the pre-registered top-100 box; beside it, how many of 20 random decoy signatures also put each approved drug in their top 100.",
+            "source": "tools/render_step9_e3.py over ressources/track2/it4/lincs_reversal.tsv; entry 153"
+          },
+          "kind": "svg",
+          "name": "step9-e3-engines.svg",
+          "path": "figures/it4/step9-e3-engines.svg",
+          "slug": "step9-e3-engines.svg",
+          "title": "step9 e3 engines",
+          "url": "/api/steps/iteration4/step-9/figure/step9-e3-engines.svg"
         },
         {
           "bytes": 58604,
@@ -2128,6 +2193,22 @@
           "statement": "P4-26: label-derived adverse effects flag a conflict between at least one shortlisted candidate and one of the child's own phenotypes",
           "status": "supported",
           "step": "step-9"
+        },
+        {
+          "author": "claude",
+          "confidence": 0.5,
+          "gene": "BUB1B",
+          "hypothesis_id": "H092",
+          "iteration": "iteration4",
+          "path": "e3-lincs",
+          "prediction": "Signature fixed before any drug query: the LINCS L1000 BUB1B loss-of-function consensus signature (CRISPR knockout if SigCom LINCS holds one, else shRNA), its 100 most raised and 100 most lowered genes; if LINCS holds none, the GEO human BUB1B knockdown series named in step-9 research/data-sources.md. At least one approved drug (ChEMBL max phase 4 or an openFDA label), aggregated per compound by its best signature rank, is in the top 100 reversers of both SigCom LINCS (l1000_cp) and iLINCS, and is in the top 100 reversers of at most 1 of 20 size-matched random-gene decoy signatures run through SigCom. Positive control, required for the result to count: queried against the genetic-perturbation library, the signature ranks at least one other checkpoint-gene loss (BUB1, BUB3, MAD2L1, MAD1L1, TTK) in the top 5 % of mimickers",
+          "reasoning": "Uninterpretable by its own registration: the positive control failed (the signature reads as a generic cell-cycle arrest, not checkpoint loss), so the drug result is neither support nor refutation and confidence stays at the prior (entry 153).",
+          "recorded_at": "2026-09-25T14:26:00.603141",
+          "refuted_by": "No approved drug is in both engines' top 100 reversers, or every such drug is also in the top 100 reversers of 2 or more of the 20 decoys. If the positive control fails, the run is recorded as uninterpretable, never as support",
+          "revision": 2,
+          "statement": "P4-27: a BUB1B loss-of-function expression signature is reversed by at least one approved drug in two independent connectivity engines, and specifically to that signature",
+          "status": "testing",
+          "step": "step-9"
         }
       ],
       "kind": "research",
@@ -2204,6 +2285,18 @@
             "name": "step9-e56-coverage.svg",
             "reads": "Pharmacogene positions callable from the delivered variant-only callset, per gene, against the total each gene's definition needs: 20 of 1,223 overall (1.6%), with SLCO1B1, ABCG2, CYP2C9, G6PD and UGT1A1 unreadable.",
             "source": "tools/render_step9_e56.py; entry 152"
+          },
+          {
+            "means": "Eight compounds are in both top 100s; three are approved and two (phenytoin, albendazole) are in no decoy's top 100. The positive control failed, so this is not support.",
+            "name": "step9-e3-engines.svg",
+            "reads": "Each compound both LINCS engines ranked as a reverser of the BUB1B knockout consensus, SigCom rank against iLINCS rank, with the pre-registered top-100 box; beside it, how many of 20 random decoy signatures also put each approved drug in their top 100.",
+            "source": "tools/render_step9_e3.py over ressources/track2/it4/lincs_reversal.tsv; entry 153"
+          },
+          {
+            "means": "No sibling reaches the cut (best BUB1 at 5.6 %), and random decoys pass it 10-20 % of the time. The run is uninterpretable by its own registration.",
+            "name": "step9-e3-control.svg",
+            "reads": "Where the other checkpoint genes' knockouts (CRISPR) and knockdowns (shRNA) rank as mimickers of the BUB1B signature, against the 5 % cut, with each decoy's best checkpoint gene for comparison.",
+            "source": "tools/render_step9_e3.py over build/it4/track2-e3/summary.json; entry 153"
           }
         ],
         "hands_to": {
@@ -2226,7 +2319,9 @@
           "docs/iteration4/step-9/methodology/151-prism-replication-of-the-track2-leads.md",
           "docs/iteration4/step-9/methodology/152-is-each-candidate-safe-for-this-child.md",
           "docs/iteration4/step-9/submission-notes/E4.md",
-          "docs/iteration4/step-9/submission-notes/E56.md"
+          "docs/iteration4/step-9/submission-notes/E56.md",
+          "docs/iteration4/step-9/methodology/153-lincs-signature-reversal-of-bub1b-loss.md",
+          "docs/iteration4/step-9/submission-notes/E3.md"
         ],
         "step": "step-9",
         "summary": "This step tests the Track 2 drug directions against sources that share nothing. E1 scored every possible BubR1 substitution for stability: the child's missense is predicted destabilising (87th percentile, pseudokinase domain), but eight published alleles are too few to validate the unstable-versus-inactive split. E2 matched the child's eight clinical terms against all 76,699 MGI mouse genotypes: a Bub1b mouse ranks in the top 1.0-1.4%, and its published interventions open a senolytic and mTOR direction (D5). E4 replicated the leads in PRISM (6,790 compounds, 919 lines): the statin direction reproduces weakly and survives no correction, chloroquine does not reproduce, and dasatinib is the 99.4th percentile on aneuploidy. E5+E6 asked whether each candidate is safe for this child from his genome and his phenotypes: only 1.6% of pharmacogene positions are callable and every guideline gene for a shortlisted drug is a no call, while 60.0% of candidates carry a label effect matching his own phenotypes against 39.7% in a matched set. Each experiment writes a submission note the final report is assembled from.",
@@ -2239,7 +2334,435 @@
       "title": "Track 2 \u2014 one mechanism, many independent sources",
       "track": "track2",
       "unblocks": []
+    },
+    {
+      "docs": "docs/iteration4/step-10",
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "154-screen-wide-prism-sweep.md",
+          "inputs": [
+            "file | release | sha256 (first 16) | licence",
+            "`PRISM_24Q2_Extended_Primary_Data_Matrix.csv` | PRISM Repurposing 24Q2 | `3b6554cfc6c765af` | CC BY 4.0",
+            "`PRISM_24Q2_Extended_Primary_Compound_List.csv` | PRISM Repurposing 24Q2 | `7e78f5901c1a97d2` | CC BY 4.0",
+            "`Model_24Q4.csv` | DepMap 24Q4 | `b7a0c1385e6cef30` | CC BY 4.0",
+            "`OmicsSignatures_24Q4.csv` | DepMap 24Q4 | `2eb6d83065db5b59` | CC BY 4.0",
+            "`PRISM_20Q2_secondary_treatment_info.csv` | PRISM Repurposing 20Q2 secondary | `f0ec000acda7c1a0` | CC BY 4.0",
+            "`PRISM_20Q2_primary_treatment_info.csv` (**new**, figshare files/36794583, `prism-repurposing-20q2-primary-screen-replicate-collapsed-treatment-info.csv`, 1,312,286 bytes; md5 matched figshare's `1e69e342\u2026`) | PRISM Repurposing 20Q2 primary (article 20564034) | `f92e58eb04b0db5c` | CC BY 4.0",
+            "The first five are entry 151's downloads under `build/it4/track2-e4/raw/`. The run digests each",
+            "and **refuses** on any mismatch with `ressources/track2/prism_replication.provenance.json`; all",
+            "matched. The new file lives in `build/it4/track2-s1/raw/` with its own manifest.",
+            "Code: `src/mva/drugs/screen_sweep{,_plan,_prism,_controls,_report,_run}.py`,",
+            "`tools/screen_sweep.py`, `tools/render_step10_s1.py`. Reused unchanged:",
+            "`mva.drugs.screen_replication` (`contrast_item`, `with_adjusted`, `median_split`,",
+            "`run_contrast`), `_prism` (readers, `lineage_group`), `_report` (`representative`,",
+            "`negative_control_band`, `confounder_summary`, `write_provenance`). One backward-compatible",
+            "addition: `screen_replication_plan.fetch_files` (the body of `fetch_sources`, callable with any",
+            "file list). scipy 1.18.1, numpy 2.5.2, polars 1.44.1."
+          ],
+          "number": "154",
+          "path": "docs/iteration4/step-10/methodology/154-screen-wide-prism-sweep.md",
+          "title": "Is any launched drug selective for both high-aneuploidy and rhabdomyosarcoma lines, screen-wide?",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-10/entry/154-screen-wide-prism-sweep.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "155-convergence-and-checks.md",
+          "inputs": [
+            "input | release / version | sha256 (first 16) | rows | licence",
+            "`ressources/track2/it4/generators/walk.tsv` / `.universe.tsv` (G1, this entry) | PrimeKG 2.1 (`build/primekg/kg.parquet` `7a0df2feece6aeac`), openFDA label API (cached; roll-up digest in the manifest) | `30463e73c775904c` / `0b93d93e83c84a35` | 50 / 738 | CC0-1.0; openFDA public",
+            "`.../twin.tsv` / `.universe.tsv` (G2, this entry) | `ressources/track2/model_interventions.tsv` `df0a98864f99c2f1` (entry 150) | `e86418b6a4d206a2` / `6eed04aee37cdcb2` | 2 / 1,498 | literature table, PMIDs cited",
+            "`.../prism.tsv` / `.universe.tsv` (G3) | entry 154 | `f45750b805225350` / `293171e171d08375` | 8 / 613 | CC BY 4.0",
+            "`.../lincs.tsv` / `.universe.tsv` (G4) | entry 153 | `6e5088044f7336e5` / `ccae3933bdf3af1d` | 3 / 1,157 | per entry 153",
+            "`ressources/track2/it4/prism_sweep.tsv` (K3) | entry 154 | `7749f9f129bd52eb` | 1,266 | CC BY 4.0",
+            "`PRISM_24Q2_Extended_Primary_Compound_List.csv`, `PRISM_20Q2_secondary_treatment_info.csv` (K1) | PRISM 24Q2 / 20Q2 | `7e78f5901c1a97d2` / `f0ec000acda7c1a0` | 6,790 / 15,014 | CC BY 4.0",
+            "`build/it4/track2-e56/pgx_summary.json` (K2 genome) | PharmCAT 3.4.0, entry 152 | `581c9c4ca8aae9e2` | 171 drug\u2192gene pairs | \u2014 (patient-derived, gitignored)",
+            "OnSIDES `csv/` (K2 phenotype) | v3.1.1 | per entry 152 | \u2014 | CC BY 4.0",
+            "`ressources/track2/hpo_to_adverse_terms.tsv` | entry 152 | `3313fd4506cd9ff8` | 19 | \u2014",
+            "Code:",
+            "- `src/mva/drugs/convergence{,_tables,_generators,_build,_candidates,_run}.py` and `checks{,_safety,_sources}.py`.",
+            "- `tools/converge.py`, `tools/render_step10_s2.py`, `tests/test_convergence.py` (22 tests).",
+            "- The code version at build time is in each manifest (`77ea199` for the run)."
+          ],
+          "number": "155",
+          "path": "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+          "title": "Do iteration 4's four independent drug generators agree beyond chance, and what survives the checks?",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-10/entry/155-convergence-and-checks.md",
+          "violations": []
+        }
+      ],
+      "figures": [
+        {
+          "bytes": 17530,
+          "caption": {
+            "means": "Coverage and the approval label, not only biology, bound what the screen can say.",
+            "name": "step10-s1-funnel.svg",
+            "reads": "6,790 PRISM compounds, 2,189 marked Launched, 633 eligible copies, 613 eligible drugs, 8 G3-listed, 0 with q < 0.10 in both contrasts; 1,489 newer compounds carry no PRISM phase.",
+            "source": "tools/render_step10_s1.py over build/it4/track2-s1/controls.json; entry 154"
+          },
+          "kind": "svg",
+          "name": "step10-s1-funnel.svg",
+          "path": "figures/it4/step10-s1-funnel.svg",
+          "slug": "step10-s1-funnel.svg",
+          "title": "step10 s1 funnel",
+          "url": "/api/steps/iteration4/step-10/figure/step10-s1-funnel.svg"
+        },
+        {
+          "bytes": 157698,
+          "caption": {
+            "means": "The two contrasts are independent sources that do not pick the same drugs, so a drug good for both would have to be found, not assumed.",
+            "name": "step10-s1-percentiles.svg",
+            "reads": "Each of 613 drugs placed by its delta percentile in the rhabdomyosarcoma contrast (x) and the aneuploidy contrast (y); Spearman rho -0.112. The 8 G3-listed drugs lie along the two edges, none in the top-right decile of both.",
+            "source": "tools/render_step10_s1.py; entry 154"
+          },
+          "kind": "svg",
+          "name": "step10-s1-percentiles.svg",
+          "path": "figures/it4/step10-s1-percentiles.svg",
+          "slug": "step10-s1-percentiles.svg",
+          "title": "step10 s1 percentiles",
+          "url": "/api/steps/iteration4/step-10/figure/step10-s1-percentiles.svg"
+        },
+        {
+          "bytes": 778462,
+          "caption": {
+            "means": "PRISM has no launched drug selective for either of the child's contexts at a corrected level, and the pipeline can find one when one exists. H093 is refuted.",
+            "name": "step10-s1-volcano.svg",
+            "reads": "Cliff's delta against -log10 one-sided p for three families run through one code path: skin/melanoma lines vs the rest over 2,032 launched drugs (the positive control), rhabdomyosarcoma vs the rest over 613, and high vs low aneuploidy over 613. Dabrafenib and vemurafenib sit far above the BH line; in the two real contrasts no drug crosses it.",
+            "source": "tools/render_step10_s1.py over ressources/track2/it4/prism_sweep.tsv and build/it4/track2-s1/; entry 154"
+          },
+          "kind": "svg",
+          "name": "step10-s1-volcano.svg",
+          "path": "figures/it4/step10-s1-volcano.svg",
+          "slug": "step10-s1-volcano.svg",
+          "title": "step10 s1 volcano",
+          "url": "/api/steps/iteration4/step-10/figure/step10-s1-volcano.svg"
+        },
+        {
+          "bytes": 176297,
+          "caption": {
+            "means": "Dasatinib is iteration 4's only candidate that converges and passes every check: a pre-known lead that survived, not a discovery.",
+            "name": "step10-s2-checks.svg",
+            "reads": "Check matrix for the converging drug and each generator's top 10 (22 of 62 drugs). Dasatinib passes K1, K2 and K3 and is the one survivor. Cautions are mostly drugs with no mechanism annotation. The one K2 fail, vincristine (walk #13), is outside the top 10 and is listed in the entry's table.",
+            "source": "tools/render_step10_s2.py over ressources/track2/it4/candidates.tsv; entry 155"
+          },
+          "kind": "svg",
+          "name": "step10-s2-checks.svg",
+          "path": "figures/it4/step10-s2-checks.svg",
+          "slug": "step10-s2-checks.svg",
+          "title": "step10 s2 checks",
+          "url": "/api/steps/iteration4/step-10/figure/step10-s2-checks.svg"
+        },
+        {
+          "bytes": 59062,
+          "caption": {
+            "means": "One agreement is what chance gives; H094 is refuted, and no sensitivity changes that.",
+            "name": "step10-s2-null.svg",
+            "reads": "The permutation null (10,000 draws, seed 20260925) of 'drugs named by at least 2 generators' for six tests. Primary: observed 1, null 95th percentile 1.0, p 0.263. Without dasatinib: 0, p 1. Without LINCS: p 0.261. With the twin's narrowest universe: p 0.329.",
+            "source": "tools/render_step10_s2.py over build/it4/track2-s2/convergence.json; entry 155"
+          },
+          "kind": "svg",
+          "name": "step10-s2-null.svg",
+          "path": "figures/it4/step10-s2-null.svg",
+          "slug": "step10-s2-null.svg",
+          "title": "step10 s2 null",
+          "url": "/api/steps/iteration4/step-10/figure/step10-s2-null.svg"
+        },
+        {
+          "bytes": 22220,
+          "caption": {
+            "means": "The four independent sources almost never name the same drug.",
+            "name": "step10-s2-upset.svg",
+            "reads": "An UpSet view of 62 approved drugs across the four generators (walk 50, twin 2, PRISM 8, LINCS 3). One combination holds two generators: twin and PRISM share dasatinib. Every other drug is named by one generator alone.",
+            "source": "tools/render_step10_s2.py over ressources/track2/it4/candidates.tsv and build/it4/track2-s2/convergence.json; entry 155"
+          },
+          "kind": "svg",
+          "name": "step10-s2-upset.svg",
+          "path": "figures/it4/step10-s2-upset.svg",
+          "slug": "step10-s2-upset.svg",
+          "title": "step10 s2 upset",
+          "url": "/api/steps/iteration4/step-10/figure/step10-s2-upset.svg"
+        }
+      ],
+      "goal": "From iteration 4's evidence alone, which approved drugs do its independent generators (the PrimeKG walk, the phenotype twin, a screen-wide PRISM sweep, LINCS signature reversal) converge on beyond chance, and which of those survive every iteration-4 check (mechanism direction, the child's own safety, a decoy)?",
+      "hypotheses": [
+        {
+          "author": "claude",
+          "confidence": 0.1,
+          "gene": "",
+          "hypothesis_id": "H093",
+          "iteration": "iteration4",
+          "path": "s10-prism-sweep",
+          "prediction": "Over every Launched compound in PRISM Repurposing 24Q2 measurable on at least 3 rhabdomyosarcoma lines and at least 20 lines in each aneuploidy arm, with entry 151's tests unchanged (24Q2 LFC, one-sided Mann-Whitney U, strict median aneuploidy split), at least one drug has Benjamini-Hochberg q < 0.10 in the aneuploidy contrast and q < 0.10 in the rhabdomyosarcoma contrast, BH taken across all eligible Launched compounds in each contrast",
+          "reasoning": "The registered refutation fires exactly: no eligible Launched drug reaches q < 0.10 in either contrast, while the positive-control sweep recovers the RAF inhibitors, so the screen offers no drug selective for both cell groups at this power (entry 154).",
+          "recorded_at": "2026-09-25T14:00:10.238276",
+          "refuted_by": "No eligible Launched compound reaches q < 0.10 in both contrasts",
+          "revision": 2,
+          "statement": "P4-28: screen-wide, at least one launched drug is selective for both high-aneuploidy and rhabdomyosarcoma cell lines in PRISM",
+          "status": "refuted",
+          "step": "step-10"
+        },
+        {
+          "author": "claude",
+          "confidence": 0.15,
+          "gene": "",
+          "hypothesis_id": "H094",
+          "iteration": "iteration4",
+          "path": "s10-convergence",
+          "prediction": "Four generator lists, each fixed by a rule before the join: (1) the PrimeKG walk's top 50 openFDA-labelled drugs (entry 142); (2) the phenotype twin's approved analogues (entry 150, model_interventions.tsv); (3) PRISM: the union of the top 0.5 % of eligible Launched compounds on each contrast of the screen-wide sweep; (4) LINCS: approved drugs in both engines' top 100 reversers (E3). Drugs are joined on one normalised name. The count of approved drugs named by 2 or more generators exceeds the 95th percentile of a 10,000-draw null that replaces each list with an equal-sized random draw from that generator's own approved universe (one-sided p < 0.05). Retrospective note, stated before the join: entry 151 already placed dasatinib at the 99.4th percentile of all compounds on the aneuploidy contrast and entry 150 already names it as the twin's approved analogue, so the report gives the count with and without dasatinib",
+          "reasoning": "The registered refutation fires: one converging drug against a null whose 95th percentile is 1.0 (p 0.263), and none without the pre-known dasatinib; iteration 4's four sources do not agree beyond chance (entry 155).",
+          "recorded_at": "2026-09-25T14:39:15.463400",
+          "refuted_by": "No drug is named by 2 or more generators, or the observed count is at or below the null's 95th percentile",
+          "revision": 2,
+          "statement": "P4-29: iteration 4's independent drug generators converge on the same approved drugs more often than chance",
+          "status": "refuted",
+          "step": "step-10"
+        },
+        {
+          "author": "claude",
+          "confidence": 0.4,
+          "gene": "",
+          "hypothesis_id": "H095",
+          "iteration": "iteration4",
+          "path": "s10-survival",
+          "prediction": "At least one drug named by 2 or more generators (P4-29) passes all three checks: (a) it is not in an iteration-4 do-not class (checkpoint-kinase inhibitors, Mps1/TTK and Aurora, measured less effective in aneuploid lines by entry 151; spindle poisons carried as a caution, not an exclusion); (b) it is not flagged by both safety sources for this child when entry 152's method is re-run on the iteration-4 candidate set; (c) where PRISM measures it, its effect does not point against the direction it is proposed for (Cliff's delta below 0 with one-sided p < 0.05 in the opposite direction)",
+          "reasoning": "Met as registered by one drug, dasatinib, which passes all three checks; confidence stays below the prior because its convergence is chance-level, it was known before the join, and one of its checks re-reads its own generator's contrast (entry 155).",
+          "recorded_at": "2026-09-25T14:39:16.885474",
+          "refuted_by": "Every converging drug fails at least one of the three checks, or no drug converges",
+          "revision": 2,
+          "statement": "P4-30: at least one converging approved drug survives every iteration-4 check for this child",
+          "status": "supported",
+          "step": "step-10"
+        }
+      ],
+      "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "PRISM has no launched drug selective for either of the child's contexts at a corrected level, and the pipeline can find one when one exists. H093 is refuted.",
+            "name": "step10-s1-volcano.svg",
+            "reads": "Cliff's delta against -log10 one-sided p for three families run through one code path: skin/melanoma lines vs the rest over 2,032 launched drugs (the positive control), rhabdomyosarcoma vs the rest over 613, and high vs low aneuploidy over 613. Dabrafenib and vemurafenib sit far above the BH line; in the two real contrasts no drug crosses it.",
+            "source": "tools/render_step10_s1.py over ressources/track2/it4/prism_sweep.tsv and build/it4/track2-s1/; entry 154"
+          },
+          {
+            "means": "The two contrasts are independent sources that do not pick the same drugs, so a drug good for both would have to be found, not assumed.",
+            "name": "step10-s1-percentiles.svg",
+            "reads": "Each of 613 drugs placed by its delta percentile in the rhabdomyosarcoma contrast (x) and the aneuploidy contrast (y); Spearman rho -0.112. The 8 G3-listed drugs lie along the two edges, none in the top-right decile of both.",
+            "source": "tools/render_step10_s1.py; entry 154"
+          },
+          {
+            "means": "Coverage and the approval label, not only biology, bound what the screen can say.",
+            "name": "step10-s1-funnel.svg",
+            "reads": "6,790 PRISM compounds, 2,189 marked Launched, 633 eligible copies, 613 eligible drugs, 8 G3-listed, 0 with q < 0.10 in both contrasts; 1,489 newer compounds carry no PRISM phase.",
+            "source": "tools/render_step10_s1.py over build/it4/track2-s1/controls.json; entry 154"
+          },
+          {
+            "means": "The four independent sources almost never name the same drug.",
+            "name": "step10-s2-upset.svg",
+            "reads": "An UpSet view of 62 approved drugs across the four generators (walk 50, twin 2, PRISM 8, LINCS 3). One combination holds two generators: twin and PRISM share dasatinib. Every other drug is named by one generator alone.",
+            "source": "tools/render_step10_s2.py over ressources/track2/it4/candidates.tsv and build/it4/track2-s2/convergence.json; entry 155"
+          },
+          {
+            "means": "One agreement is what chance gives; H094 is refuted, and no sensitivity changes that.",
+            "name": "step10-s2-null.svg",
+            "reads": "The permutation null (10,000 draws, seed 20260925) of 'drugs named by at least 2 generators' for six tests. Primary: observed 1, null 95th percentile 1.0, p 0.263. Without dasatinib: 0, p 1. Without LINCS: p 0.261. With the twin's narrowest universe: p 0.329.",
+            "source": "tools/render_step10_s2.py over build/it4/track2-s2/convergence.json; entry 155"
+          },
+          {
+            "means": "Dasatinib is iteration 4's only candidate that converges and passes every check: a pre-known lead that survived, not a discovery.",
+            "name": "step10-s2-checks.svg",
+            "reads": "Check matrix for the converging drug and each generator's top 10 (22 of 62 drugs). Dasatinib passes K1, K2 and K3 and is the one survivor. Cautions are mostly drugs with no mechanism annotation. The one K2 fail, vincristine (walk #13), is outside the top 10 and is listed in the entry's table.",
+            "source": "tools/render_step10_s2.py over ressources/track2/it4/candidates.tsv; entry 155"
+          }
+        ],
+        "hands_to": {
+          "steps": [],
+          "what": "The candidate table and survivors for submissions/track2/iteration-4/."
+        },
+        "inherits": {
+          "steps": ["step-7", "step-9"],
+          "what": "Step 7's PrimeKG walk ranking, step 9's phenotype twin interventions (E2), PRISM readers and tests (E4), the per-child safety method (E5+E6) and the LINCS signature reversal (E3). The confirmed BUB1B pair comes from Track 1's oracle reply (entry 083)."
+        },
+        "iteration": "iteration4",
+        "sources": [
+          "docs/iteration4/step-10/README.md",
+          "docs/iteration4/step-10/hypotheses/README.md",
+          "docs/iteration4/step-10/methodology/154-screen-wide-prism-sweep.md",
+          "docs/iteration4/step-10/submission-notes/S1.md",
+          "docs/iteration4/step-10/methodology/155-convergence-and-checks.md",
+          "docs/iteration4/step-10/submission-notes/S2.md"
+        ],
+        "step": "step-10",
+        "summary": "This step builds the Track 2 answer from iteration 4 alone. Four sources that share no data each proposed approved drugs by a rule fixed before any join: the PrimeKG walk (50 drugs), the child's phenotype twin among mouse models (2), a screen-wide PRISM sweep (8) and LINCS signature reversal (3), 62 drugs in all. The sweep found no Launched drug selective for rhabdomyosarcoma or aneuploid lines after correction (best q 0.122 and 0.287), and LINCS reversal is uninterpretable because its positive control failed. The four lists share one drug, dasatinib (twin and PRISM), which is what a permutation null expects by chance (p 0.263). Dasatinib passes the three checks: mechanism direction, the child's own safety from his genome and his clinical terms, and a contrary screen result. Vincristine is the one drug both safety sources flag.",
+        "verdict": "Three claims settled. H093 refuted (0.10): no eligible Launched drug reaches q < 0.10 in either PRISM contrast, while the positive-control sweep recovers the RAF inhibitors. H094 refuted (0.15): one converging drug against a null 95th percentile of 1.0, none without the pre-known dasatinib. H095 supported weakly (0.40): dasatinib passes every check, but its convergence is chance-level and it was known before the join.",
+        "why": "Step 9's E4 and E5+E6 tested drugs drawn from iteration 2's shortlist. A submission built from iteration 4 only cannot borrow that list, so iteration 4 must generate its own candidates and re-run its checks on them."
+      },
+      "slug": "step-10",
+      "status": "done",
+      "takes_hypotheses": true,
+      "title": "Track 2 \u2014 iteration 4's own answer",
+      "track": "track2",
+      "unblocks": []
+    },
+    {
+      "docs": "docs/iteration4/step-11",
+      "entries": [
+        {
+          "declares_inputs": true,
+          "entry": "156-the-chain-on-bloom-syndrome.md",
+          "inputs": [
+            "No new download except the LINCS per-signature files for BLM; every other file is the copy the",
+            "MVA entries fetched, digests re-verified by the tools.",
+            "input | release | sha256 (first 16) | licence | owner entry",
+            "`phenotype.hpoa` | 2026-09-02 | `e89aa39c8f97bf5a` | HPO licence | 150",
+            "MGI reports, `mp.obo`, `hp.obo`, three SSSOM files | entry 150's table | entry 150's table | MGI / CC BY 4.0 | 150",
+            "PrimeKG `kg.parquet` | 2.1 (doi:10.7910/DVN/IXA7BM) | `7a0df2feece6aeac` | CC0-1.0 | 142",
+            "PRISM 24Q2 extended primary matrix / compound list | figshare 25917643 | `3b6554cfc6c765af` / `7e78f5901c1a97d2` | CC BY 4.0 | 151",
+            "DepMap 24Q4 `Model.csv` / `OmicsSignatures.csv` | figshare.plus 27993248 | `b7a0c1385e6cef30` / `2eb6d83065db5b59` | CC BY 4.0 | 151",
+            "PRISM 20Q2 primary / secondary treatment info | figshare 20564034 | `f92e58eb04b0db5c` / `f0ec000acda7c1a0` | CC BY 4.0 | 154 / 151",
+            "LINCS 2021 `xpr_mean_coeff_mat.tsv.gz`, `geneinfo_beta.txt` | S3 2023-09-05 / LINCS2020 beta | `f8b115513c365340` / `e739d06bad42ff92` | public | 153",
+            "20 BLM per-cell-line CRISPR signatures (SigCom, new) | LINCS 2021 | per file in `build/it4/track2-t1/lincs/raw/per-signature/*.provenance.json` | public | this entry",
+            "SigCom LINCS, iLINCS, ChEMBL, openFDA (APIs, shared cache) | 2026-09-25 | roll-ups in `lincs_reversal.provenance.json` | public | 153",
+            "OnSIDES v3.1.1 | v3.1.1 | entry 152 | CC BY 4.0 | 152",
+            "PubMed (E-utilities) | 2026-09-25 | search replies in `build/it4/track2-t1/g2_*.json` | NCBI public | this entry",
+            "Case configuration (all in [`ressources/track2/transfer-it4/BLM/`](../../../../ressources/track2/transfer-it4/BLM/)):",
+            "`case.json` (every choice above), `model_interventions.tsv` (G2 input, 4 rows),",
+            "`hpo_to_adverse_terms.tsv` (K2 mapping, 57 rows over the 42 terms, 23 terms used for the flag,",
+            "33 MedDRA ids, each verified on \u2265 1 OnSIDES label), `no-genome/pgx_summary.json` (declares no",
+            "gene), `relabel.json` (24 substitutions), `transfer_stages.tsv` (the survey, for the figure)."
+          ],
+          "number": "156",
+          "path": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+          "title": "Iteration 4's Track 2 chain on a second disease: Bloom syndrome",
+          "unblinds": false,
+          "url": "/api/steps/iteration4/step-11/entry/156-the-chain-on-bloom-syndrome.md",
+          "violations": []
+        }
+      ],
+      "figures": [
+        {
+          "bytes": 26352,
+          "caption": {
+            "means": "A different disease gives a different drug set (Jaccard 0.095, under H096's 0.20 bar); nine of the ten shared drugs are PrimeKG hub drugs both walks reach, and dasatinib is the one drug both cases name by different evidence.",
+            "name": "step11-t1-overlap.svg",
+            "reads": "Approved drugs listed per generator for MVA and Bloom (walk 50/50, twin 2/0, PRISM 8/2, LINCS 3/1), and the two unions: 52 MVA only, 10 shared, 43 Bloom only.",
+            "source": "tools/render_step11_t1.py over ressources/track2/it4/generators/ and ressources/track2/transfer-it4/BLM/generators/; entry 156"
+          },
+          "kind": "svg",
+          "name": "step11-t1-overlap.svg",
+          "path": "figures/it4/step11-t1-overlap.svg",
+          "slug": "step11-t1-overlap.svg",
+          "title": "step11 t1 overlap",
+          "url": "/api/steps/iteration4/step-11/figure/step11-t1-overlap.svg"
+        },
+        {
+          "bytes": 17848,
+          "caption": {
+            "means": "The chain's machinery transfers; its surface does not. Four tools need a --case flag and seven hard-coded source strings belong in the plans.",
+            "name": "step11-t1-stages.svg",
+            "reads": "One row per stage, one column per case. MVA's column is the run built for it; Bloom's column is coloured by what running it took (green configuration alone, yellow configuration but MVA text corrected, red new code) and labelled with rows written and wall time. Four red, three yellow, no green.",
+            "source": "tools/render_step11_t1.py over ressources/track2/transfer-it4/BLM/ (transfer_stages.tsv and the stage outputs), MVA's step-9/10 tables and build/it4/track2-t1/*.log; entry 156"
+          },
+          "kind": "svg",
+          "name": "step11-t1-stages.svg",
+          "path": "figures/it4/step11-t1-stages.svg",
+          "slug": "step11-t1-stages.svg",
+          "title": "step11 t1 stages",
+          "url": "/api/steps/iteration4/step-11/figure/step11-t1-stages.svg"
+        },
+        {
+          "bytes": 43198,
+          "caption": {
+            "means": "The twin stage finds the right mouse gene for a second disease (a retrospective result: entry 150 already ran this control), but not uniquely: a neighbouring RecQ-helicase syndrome gene matches as well.",
+            "name": "step11-t1-twin.svg",
+            "reads": "The best Blm genotype's percentile among 76,699 MGI genotypes against 1,000 IC-matched random 42-term queries, for the symmetric and Phenodigm rollups (1.15 % and 1.08 %, p 0.037 and 0.021), and the best genotype of each within-pathway gene (Recql4 0.82 %, Wrn 8.43 %, Rmi1 31.4 %, Top3a 71.8 %).",
+            "source": "tools/render_step11_t1.py over build/it4/track2-t1/twin/twin.json; entry 156"
+          },
+          "kind": "svg",
+          "name": "step11-t1-twin.svg",
+          "path": "figures/it4/step11-t1-twin.svg",
+          "slug": "step11-t1-twin.svg",
+          "title": "step11 t1 twin",
+          "url": "/api/steps/iteration4/step-11/figure/step11-t1-twin.svg"
+        }
+      ],
+      "goal": "Does iteration 4's Track 2 chain (phenotype twin, PrimeKG walk, screen sweep, signature reversal, convergence, checks) run on a second rare disease, Bloom syndrome (BLM), by configuration alone, and does it propose a different drug set?",
+      "hypotheses": [
+        {
+          "author": "claude",
+          "confidence": 0.15,
+          "gene": "BLM",
+          "hypothesis_id": "H096",
+          "iteration": "iteration4",
+          "path": "s11-transfer",
+          "prediction": "With a case configuration for Bloom syndrome (gene BLM, its disease node in PrimeKG and MONDO, its HPO terms read from phenotype.hpoa, a lineage contrast fixed from the literature before the run), and zero source-code lines changed: (a) every stage writes its table with a provenance manifest - the phenotype twin over MGI, the PrimeKG walk, the PRISM sweep, LINCS reversal (or a recorded reason it has no BLM signature), convergence with its null, and checks K1 and K3 (K2 runs its label half only, with no patient genome); (b) the phenotype twin ranks a Blm genotype in the top 5 % of MGI genotypes; (c) the union of the four generator lists shares at most 20 % of its drugs with the MVA case's union (Jaccard index <= 0.20)",
+          "reasoning": "Clause (a)'s refutation fires: four stages needed new code and seven wrote the first case's text into the second's outputs; clause (c) is met (Jaccard 0.095) and clause (b) only retrospectively, so the chain runs on a second disease but not by configuration alone (entry 156).",
+          "recorded_at": "2026-09-25T15:58:45.048030",
+          "refuted_by": "Any source-code change is needed to run the second case, or any stage fails to write its table, or the Blm twin ranks outside the top 25 %, or the Jaccard index of the two unions exceeds 0.50",
+          "revision": 2,
+          "statement": "P4-31: iteration 4's Track 2 chain runs on a second rare disease, Bloom syndrome, by configuration alone, and proposes a drug set distinct from the MVA case's",
+          "status": "refuted",
+          "step": "step-11"
+        }
+      ],
+      "kind": "research",
+      "narrative": {
+        "figures": [
+          {
+            "means": "The chain's machinery transfers; its surface does not. Four tools need a --case flag and seven hard-coded source strings belong in the plans.",
+            "name": "step11-t1-stages.svg",
+            "reads": "One row per stage, one column per case. MVA's column is the run built for it; Bloom's column is coloured by what running it took (green configuration alone, yellow configuration but MVA text corrected, red new code) and labelled with rows written and wall time. Four red, three yellow, no green.",
+            "source": "tools/render_step11_t1.py over ressources/track2/transfer-it4/BLM/ (transfer_stages.tsv and the stage outputs), MVA's step-9/10 tables and build/it4/track2-t1/*.log; entry 156"
+          },
+          {
+            "means": "A different disease gives a different drug set (Jaccard 0.095, under H096's 0.20 bar); nine of the ten shared drugs are PrimeKG hub drugs both walks reach, and dasatinib is the one drug both cases name by different evidence.",
+            "name": "step11-t1-overlap.svg",
+            "reads": "Approved drugs listed per generator for MVA and Bloom (walk 50/50, twin 2/0, PRISM 8/2, LINCS 3/1), and the two unions: 52 MVA only, 10 shared, 43 Bloom only.",
+            "source": "tools/render_step11_t1.py over ressources/track2/it4/generators/ and ressources/track2/transfer-it4/BLM/generators/; entry 156"
+          },
+          {
+            "means": "The twin stage finds the right mouse gene for a second disease (a retrospective result: entry 150 already ran this control), but not uniquely: a neighbouring RecQ-helicase syndrome gene matches as well.",
+            "name": "step11-t1-twin.svg",
+            "reads": "The best Blm genotype's percentile among 76,699 MGI genotypes against 1,000 IC-matched random 42-term queries, for the symmetric and Phenodigm rollups (1.15 % and 1.08 %, p 0.037 and 0.021), and the best genotype of each within-pathway gene (Recql4 0.82 %, Wrn 8.43 %, Rmi1 31.4 %, Top3a 71.8 %).",
+            "source": "tools/render_step11_t1.py over build/it4/track2-t1/twin/twin.json; entry 156"
+          }
+        ],
+        "hands_to": {
+          "steps": [],
+          "what": "The scalability section of submissions/track2/iteration-4/."
+        },
+        "inherits": {
+          "steps": ["step-9", "step-10"],
+          "what": "Every tool of steps 9 and 10, unchanged: the phenotype twin (entry 150), the PRISM sweep (entry 154), LINCS reversal (entry 153), the convergence engine and checks (entry 155), and step 7's PrimeKG walk (entry 142)."
+        },
+        "iteration": "iteration4",
+        "sources": [
+          "docs/iteration4/step-11/README.md",
+          "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+          "docs/iteration4/step-11/submission-notes/T1.md",
+          "ressources/track2/transfer-it4/BLM/case.json"
+        ],
+        "step": "step-11",
+        "summary": "Run 2026-09-25 (entry 156). Iteration 4's whole Track 2 chain ran on Bloom syndrome (gene BLM): the phenotype twin over MGI mice, the PrimeKG walk, the PRISM sweep, LINCS signature reversal, convergence against a permutation null, and checks K1-K3. Every stage wrote its table with a manifest, in 53 minutes for $0, but only after one new driver (tools/transfer_it4.py, no existing line edited) and 136 recorded corrections of MVA text the tools write into any case's outputs.",
+        "verdict": "H096 refuted as registered (clause a): four stages keep their case in Python constants and seven write MVA text, so the chain does not transfer by configuration alone. Clause (b), retrospective: the best Blm genotype ranks at 1.15 % / 1.08 % of 76,699 (Recql4 ranks higher). Clause (c) met: the two cases' generator unions share 10 of 105 drugs (Jaccard 0.095). Nothing converges for Bloom and no drug survives.",
+        "why": "A tool set that only works on the case it was built for does not scale. Bloom syndrome swaps the gene, the pathway and the clinical terms while asking the same kind of question, so each stage has something to find and a known answer to check against."
+      },
+      "slug": "step-11",
+      "status": "done",
+      "takes_hypotheses": true,
+      "title": "Track 2 \u2014 the same chain, a second case",
+      "track": "track2",
+      "unblocks": []
     }
   ],
-  "submissions": []
+  "submissions": [
+    {
+      "folder": "submissions/track2/iteration-4",
+      "number": 4,
+      "state": "ready",
+      "track": "track2"
+    }
+  ]
 }

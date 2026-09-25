@@ -11,9 +11,18 @@
  */
 
 import type { Track2LineageEdge } from '../../api/types';
+import { assignSlots, levelLongestPath } from '../../lib/graphLayout';
 
 /** The source kinds, in the order the diagram stacks them. */
-export const KIND_ORDER = ['card', 'submission', 'api', 'table'] as const;
+export const KIND_ORDER = [
+  'card',
+  'submission',
+  'clinical',
+  'file',
+  'api',
+  'derived',
+  'table',
+] as const;
 
 export interface GraphNode {
   id: string;
@@ -69,12 +78,16 @@ export function buildTrack2Graph(edges: Track2LineageEdge[]): Track2Graph {
   const nodes = new Map<string, GraphNode>();
   const out: GraphEdge[] = [];
   const targetId = (e: Track2LineageEdge) => `${e.target_schema}.${e.target_table}`;
+  // A source naming a recorded target by its bare table (`track1/iteration-1`) is that node.
+  const bare = new Map(edges.map((e) => [e.target_table, targetId(e)]));
+  const sourceId = (ref: string) => (bare.has(ref) && !ref.includes('.') ? bare.get(ref)! : ref);
 
   for (const e of edges) {
     const tid = targetId(e);
-    if (!nodes.has(e.source_ref)) {
-      nodes.set(e.source_ref, {
-        id: e.source_ref,
+    const sid = sourceId(e.source_ref);
+    if (!nodes.has(sid)) {
+      nodes.set(sid, {
+        id: sid,
         label: shortRef(e.source_ref),
         sublabel: e.source_version || e.source_kind,
         kind: e.source_kind,
@@ -86,9 +99,11 @@ export function buildTrack2Graph(edges: Track2LineageEdge[]): Track2Graph {
     }
     const existing = nodes.get(tid);
     if (existing) {
-      // A node that is both a source and a target (`track2.targets`) keeps its row count.
+      // A node that is both a source and a target (`track2.targets`) keeps its row count,
+      // and is named as the table it is rather than by the spelling a source used for it.
       existing.rows = e.target_rows;
       existing.kind = 'output';
+      existing.label = e.target_table;
     } else {
       nodes.set(tid, {
         id: tid,
@@ -102,7 +117,7 @@ export function buildTrack2Graph(edges: Track2LineageEdge[]): Track2Graph {
       });
     }
     out.push({
-      from: e.source_ref,
+      from: sid,
       to: tid,
       transform: e.transform,
       tool: e.tool,
@@ -110,30 +125,11 @@ export function buildTrack2Graph(edges: Track2LineageEdge[]): Track2Graph {
     });
   }
 
-  // Longest-path levelling: repeat until nothing moves. The edge count here is tens, so
-  // the naive fixed point is cheaper than building an index.
-  for (let pass = 0; pass < nodes.size; pass++) {
-    let moved = false;
-    for (const e of out) {
-      const from = nodes.get(e.from)!;
-      const to = nodes.get(e.to)!;
-      if (to.level <= from.level) {
-        to.level = from.level + 1;
-        moved = true;
-      }
-    }
-    if (!moved) break;
-  }
-
+  const levels = levelLongestPath(nodes, out);
   const ordered = [...nodes.values()].sort(
     (a, b) => a.level - b.level || rank(a.kind) - rank(b.kind) || a.label.localeCompare(b.label),
   );
-  const perLevel = new Map<number, number>();
-  for (const node of ordered) {
-    const slot = perLevel.get(node.level) ?? 0;
-    node.slot = slot;
-    perLevel.set(node.level, slot + 1);
-  }
+  assignSlots(ordered);
 
-  return { nodes: ordered, edges: out, levels: Math.max(...ordered.map((n) => n.level)) + 1 };
+  return { nodes: ordered, edges: out, levels };
 }

@@ -10,10 +10,12 @@ import { useMemo, useState } from 'react';
 
 import type { Track2Lineage, Track2Source } from '../../api/types';
 import { Badge } from '../../components/Badge';
+import { ChainPicker } from '../../components/ChainPicker';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Callout } from '../../components/Explainer';
 import { int } from '../../lib/format';
-import { edgePath, type Geometry, layout } from '../../lib/graphLayout';
+import { clipLabel, edgePath, type Geometry, layout } from '../../lib/graphLayout';
+import { sourcesFor, useChainView } from '../../lib/lineageChains';
 import { C } from '../../lib/palette';
 import { cx, WELL } from '../../lib/ui';
 import { buildTrack2Graph, type GraphEdge, type GraphNode, KIND_ORDER } from './lineageGraph';
@@ -24,7 +26,7 @@ const { nodeWidth: NODE_W, nodeHeight: NODE_H } = GEOMETRY;
 
 /** The repo's colour convention over the source kinds plus the produced tables. */
 function strokeOf(kind: string): string {
-  if (kind === 'card' || kind === 'submission') return C.raw;
+  if (kind === 'card' || kind === 'submission' || kind === 'clinical') return C.raw;
   if (kind === 'output') return C.good;
   return C.machinery;
 }
@@ -41,13 +43,11 @@ export function Track2LineageView({
   lineage: Track2Lineage;
   source?: string;
 }) {
-  const graph = useMemo(() => buildTrack2Graph(lineage.edges), [lineage.edges]);
+  const view = useChainView(lineage.edges);
+  const graph = useMemo(() => buildTrack2Graph(view.edges), [view.edges]);
   const [hovered, setHovered] = useState<GraphEdge | null>(null);
-
-  const grouped = KIND_ORDER.map((kind) => ({
-    kind,
-    sources: lineage.sources.filter((s) => s.kind === kind),
-  })).filter((g) => g.sources.length > 0);
+  const shown = sourcesFor(lineage.sources, lineage.edges, view.edges);
+  const grouped = groupByKind(shown);
 
   return (
     <Exhibit
@@ -59,16 +59,18 @@ export function Track2LineageView({
           iteration it was written from, the only things here nobody fetched.{' '}
           <Chip color={C.machinery}>blue = neutral machinery</Chip> — the public APIs; a{' '}
           <strong>dashed</strong> box is fetched rather than derived, so it carries a manifest
-          instead of an edge. <Chip color={C.good}>green = the goal</Chip> — the five snapshot
-          tables. A <Badge tone="good">sha256</Badge> tag means the digest is recorded; the number
-          inside a node is its row count. Hover an arrow for the transform.
+          instead of an edge; a solid blue root is a downloaded file or a derived summary.{' '}
+          <Chip color={C.good}>green = the goal</Chip> — the tables the chain produced. A{' '}
+          <Badge tone="good">sha256</Badge> tag means the digest is recorded; the number inside a
+          node is its row count. Hover an arrow for the transform.
         </>
       }
-      reading="Two hops separate every drug name in this report from a cached public reply whose digest is recorded — and the mechanism card is a root beside the APIs, which is the structural form of the rule that a candidate is only worth naming if a cited path runs from the allele to its target."
+      reading={reading(graph)}
       data={lineage}
       source={source}
     >
       <div className="space-y-3">
+        <ChainPicker view={view} total={lineage.edges.length} />
         {!lineage.available && (
           <Callout tone="broken" title="Warehouse unreachable — lineage roots from disk only">
             No derivation edge could be read, so the graph below is empty. That is a missing
@@ -119,6 +121,26 @@ export function Track2LineageView({
       </div>
     </Exhibit>
   );
+}
+
+/** Sources grouped by kind: the known kinds in diagram order, then any other kind by name. */
+function groupByKind(sources: Track2Source[]) {
+  const known = KIND_ORDER as readonly string[];
+  const extra = [...new Set(sources.map((s) => s.kind))].filter((k) => !known.includes(k)).sort();
+  return [...known, ...extra]
+    .map((kind) => ({ kind, sources: sources.filter((s) => s.kind === kind) }))
+    .filter((g) => g.sources.length > 0);
+}
+
+/** The exhibit's reading, counted off the diagram drawn rather than typed. */
+function reading(graph: ReturnType<typeof buildTrack2Graph>): string {
+  if (graph.nodes.length === 0) {
+    return 'No derivation edge to read: the roots below are the manifests’ own claims.';
+  }
+  const roots = graph.nodes.filter((n) => n.level === 0).length;
+  const tables = graph.nodes.filter((n) => n.kind === 'output').length;
+  const hops = graph.levels - 1;
+  return `${roots} roots feed ${tables} tables, at most ${hops} recorded hop${hops === 1 ? '' : 's'} apart: every drug name in these tables walks back to a file, a public reply or the mechanism card whose version is recorded — the structural form of the rule that a candidate is only worth naming if a cited path runs from the allele to its target.`;
 }
 
 function SourceItem({ source }: { source: Track2Source }) {
@@ -201,6 +223,7 @@ function GraphSvg({
 
           {graph.nodes.map((n) => (
             <g key={n.id}>
+              <title>{`${n.id} — ${n.sublabel}`}</title>
               <rect
                 x={x(n)}
                 y={y(n)}
@@ -219,10 +242,10 @@ function GraphSvg({
                 fontSize="12"
                 fontFamily="ui-monospace, monospace"
               >
-                {n.label.length > 28 ? `${n.label.slice(0, 27)}…` : n.label}
+                {clipLabel(n.label, 28)}
               </text>
               <text x={x(n) + 12} y={y(n) + 38} fill={C.inkDim} fontSize="10">
-                {n.sublabel}
+                {clipLabel(n.sublabel, n.verified ? 24 : 34)}
                 {n.verified ? ' · sha256 ✓' : ''}
               </text>
               <text

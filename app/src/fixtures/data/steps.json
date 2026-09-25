@@ -32,7 +32,7 @@
       "summary": "the top-down route that produced submission 1. Frozen."
     },
     {
-      "claims": 47,
+      "claims": 49,
       "current": true,
       "declared": true,
       "docs": "docs/iteration2",
@@ -69,15 +69,22 @@
       "summary": "planned only \u2014 no step map is declared for it"
     },
     {
-      "claims": 6,
+      "claims": 36,
       "current": false,
       "declared": true,
       "docs": "docs/iteration4",
-      "done": 4,
+      "done": 7,
       "iteration": "iteration4",
-      "open": 2,
-      "steps": 7,
-      "submissions": [],
+      "open": 4,
+      "steps": 11,
+      "submissions": [
+        {
+          "folder": "submissions/track2/iteration-4",
+          "number": 4,
+          "state": "ready",
+          "track": "track2"
+        }
+      ],
       "summary": "the model zoo (docs/iteration4/plan.md)."
     }
   ],
@@ -2609,6 +2616,41 @@
           "unblinds": false,
           "url": "/api/steps/iteration2/step-7/entry/120-the-card-at-version-4-and-the-second-submission-draft.md",
           "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "133-the-card-at-version-five-and-the-second-instrument.md",
+          "inputs": [
+            "Source | What was read | Receipt",
+            "step 8 | X dosage **0.4873**, Y **0.5083** against 0.5 expected \u2014 the positive control the allele-balance route could not supply; chromosome-GC regressor chosen (Pearson **0.904**, explains **81.7 %**), residual spread **0.802 %**, honest floor **1.6 %** of cells; chr21's apparent signal dissolved under tail trimming (2.33 \u03c3 \u2192 1.60 \u03c3), a probe half-split (0.77 % against a 0.76 % median) and a depth check (mean 61.68\u00d7 but median 45 against 43, p99 247 against 66\u201369 \u2014 mismapping pileups); 32 of 272 flowcell shards, a thinning unbiased for a ratio | [121](../../step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md), H054",
+            "step 8 | the absolute k-mer-mass denominator, which assumes nothing about chromosomes, agrees with the autosomal median on all 24 contigs to **0.017 %** | [123](../../step-8/methodology/123-the-denominator-that-assumes-nothing-read-back.md)",
+            "step 8 | still true and kept on the card: sub-arm events untestable by either route; the sequenced tissue unnamed by the delivery; copy-neutral loss of heterozygosity invisible to the dosage route | [121](../../step-8/methodology/121-the-second-instrument-and-the-shards-it-did-not-need.md), step-8 README",
+            "card v4 | everything else, unchanged | [120](120-the-card-at-version-4-and-the-second-submission-draft.md)",
+            "the cached replies | `build/track2-cache/` \u2014 the re-grade makes zero live requests | [111](111-the-automated-stages-literature-trials-and-labels-per-drug.md)"
+          ],
+          "number": "133",
+          "path": "docs/iteration2/step-7/methodology/133-the-card-at-version-five-and-the-second-instrument.md",
+          "title": "The card at version 5: step 8's second instrument, and the ladder that did not move again",
+          "unblinds": false,
+          "url": "/api/steps/iteration2/step-7/entry/133-the-card-at-version-five-and-the-second-instrument.md",
+          "violations": []
+        },
+        {
+          "declares_inputs": true,
+          "entry": "138-a-second-case-through-the-same-pipeline.md",
+          "inputs": [
+            "Source | What was read | Receipt",
+            "`ressources/track2/transfer/TRIP13/transfer_spec.json` | the case: gene TRIP13 (UniProt Q15645, HGNC:12307), MVA3 (OMIM 617598, MONDO:0054736), tumour context nephroblastoma, the context standard of care, four directions and two anti-directions. Every identifier resolved live before the file was committed | the file's `_standing` and `_verified` fields",
+            "`build/reference-scratch/phenotype.hpoa` | the HPO terms for OMIM:617598, read by `mva.drugs.transfer` \u2014 **not** the proband's terms | `mechanism.json` \u2192 `case.clinical_terms`",
+            "Open Targets, ChEMBL, DGIdb, Reactome, ClinicalTrials.gov, PubMed, openFDA | the whole snapshot and enrichment, **cold** (an empty cache for this case) | the seven `*.provenance.json` in the transfer folder",
+            "`ressources/track2/mechanism.json` (card v5) + its tables | the real case's side of the comparison; re-read, not re-run | [133](133-the-card-at-version-five-and-the-second-instrument.md)"
+          ],
+          "number": "138",
+          "path": "docs/iteration2/step-7/methodology/138-a-second-case-through-the-same-pipeline.md",
+          "title": "A second case through the same pipeline: what transferred, and the one limb that did not",
+          "unblinds": false,
+          "url": "/api/steps/iteration2/step-7/entry/138-a-second-case-through-the-same-pipeline.md",
+          "violations": []
         }
       ],
       "figures": [
@@ -2686,6 +2728,21 @@
           "slug": "rung-funnel.png",
           "title": "rung funnel",
           "url": "/api/steps/iteration2/step-7/figure/rung-funnel.png"
+        },
+        {
+          "bytes": 118181,
+          "caption": {
+            "means": "The portability control. The second case ran through the unchanged pipeline with no hand-written query, so every purple bar is code output rather than curation, and the two cases are comparable stage by stage. Two gaps are the point: 'curated evidence rows' is 13 against 0, because a transfer card has no evidence.tsv and therefore cannot reach rungs 2 or 3 at all \u2014 only the automated rungs 1, 4 and 5 are comparable; and 'do-not rows' is 23 against 3, because Reactome matched no checkpoint pathway for TRIP13, so pathway expansion was empty and the mechanism-of-action text the spindle-poison anti-direction matches on never arrived. That gap refuted one limb of H066 and is the finding, not a defect in the drawing.",
+            "name": "transfer-scalability.png",
+            "reads": "Paired horizontal bars, one pair per stage of the pipeline (target genes, approved drugs, drugs at best rung 5, drugs at best rung 1, shortlist rows, do-not rows, curated evidence rows), with the value printed at the end of each bar: blue = BUB1B / MVA1, the proband's case; purple = TRIP13 / MVA3, a second case handed to the same code as raw public annotation.",
+            "source": "docs/iteration2/step-7/methodology/138-a-second-case-through-the-same-pipeline.md"
+          },
+          "kind": "png",
+          "name": "transfer-scalability.png",
+          "path": "figures/track2/transfer-scalability.png",
+          "slug": "transfer-scalability.png",
+          "title": "transfer scalability",
+          "url": "/api/steps/iteration2/step-7/figure/transfer-scalability.png"
         }
       ],
       "goal": "Which mechanism facts from steps 2-5 and 8 revise the Track 2 card, and what does the drug evidence say for each direction?",
@@ -2801,6 +2858,38 @@
           "statement": "The evidence ladder is independent of the measured aneuploid fraction: revising the mechanism card to version 4 with step 8's result (no autosome above its 2-3 % detection limit in the sequenced sample) changes no rung, no shortlist row and no do-not row; F8 acts only on how direction D2 is argued in the report, not on what it contains.",
           "status": "supported",
           "step": "step-7"
+        },
+        {
+          "author": "",
+          "confidence": 0.9,
+          "gene": "BUB1B",
+          "hypothesis_id": "H065",
+          "iteration": "iteration2",
+          "path": "",
+          "prediction": "A re-grade on card v5 returns evidence_ladder.tsv, shortlist.tsv and do_not.tsv with unchanged sha256 (47d1e415, 77b6b352, a7b09e9f), while every Track 2 provenance manifest names card version 5.",
+          "reasoning": "The three digests are unchanged on the first re-grade (no reader fault this time), 432/61/23 rows and the rung histogram identical, and all seven rewritten manifests name card version 5. Held below the suggested 0.96 because the two evidence rows are not independent - the grep explains why the digests could not move - and because the card change is text on a fact the grader never reads, so the test can only ever confirm a structural property.",
+          "recorded_at": "2026-09-20T00:07:37.564114",
+          "refuted_by": "Any row of evidence_ladder.tsv, shortlist.tsv or do_not.tsv differing between the card-v4 and card-v5 runs.",
+          "revision": 2,
+          "statement": "The drug evidence ladder is independent of step 8's second instrument: revising the mechanism card to version 5 with the k-mer dosage route changes no rung, no shortlist row and no do-not row; F8 acts only on how the report argues direction D2 and on what the card can say about X, Y and the detection floor.",
+          "status": "supported",
+          "step": "step-7"
+        },
+        {
+          "author": "agharsallah",
+          "confidence": 0.1,
+          "gene": "TRIP13",
+          "hypothesis_id": "H066",
+          "iteration": "iteration2",
+          "path": "track2-transfer",
+          "prediction": "tools/track2_transfer.py completes against the live public APIs with no edit to any module: ressources/track2/transfer/TRIP13/ gains the five snapshot tables plus evidence_ladder.tsv, shortlist.tsv and do_not.tsv with a provenance manifest each, and ressources/track2/transfer_comparison.tsv carries one row per case. In the transfer card's evidence_ladder.tsv no D1 row is above rung 1 and no D1 row reaches shortlist.tsv; do_not.tsv carries at least one drug flagged A2; and the only direction reaching rung 2 or higher is the context direction D4.",
+          "reasoning": "Refuted as written, because it was written as a conjunction and one limb was measured false. Four of the five predicted limbs hold, including every limb that tests portability: tools/track2_transfer.py completed against the live public APIs with no module edit and wrote all eight tables with a provenance manifest each; all 30 D1 rows stayed at rung 1; no D1 row reached the 53-row shortlist (all 53 are D4); and the context direction D4 was the only one above rung 1 on a card with no evidence.tsv. The fourth limb failed outright: the transfer do_not.tsv holds 3 rows, all D4 and all flagged standard_of_care, and no row anywhere in the transfer ladder carries the A2 spindle-poison flag, against 13 on the real case. That is the stated refutation condition, met by direct measurement of the written table, so the confidence is the confidence in the conjunction (0.10), not in portability. The cause is recorded as a neutral row and in entry 138: the A2 flag is a regex over action_type and interaction_or_moa, Reactome matched no checkpoint/kinetochore/mitotic pathway for TRIP13, so pathway expansion was empty and the ChEMBL mechanism text the regex needs never arrived - the spindle poisons are in the candidate set but unflagged. The suggested 0.98 is rejected: the heuristic sums independent evidence and cannot see that the claim is a conjunction. The portability result stands on its own in 138 and is not asserted by this verdict.",
+          "recorded_at": "2026-09-20T10:19:29.060672",
+          "refuted_by": "Any edit to a module needed to complete the run; or a D1 row at rung 2 or higher, or any D1 row in the shortlist, which would mean a tumour-context trial leaking onto a mechanism direction (the fault methodology 113 fixed); or a do_not.tsv carrying no A2-flagged drug; or a rung-2-or-higher row on any non-context direction of a card that has no evidence.tsv.",
+          "revision": 2,
+          "statement": "The Track 2 drug-repurposing pipeline is portable to a different case, not only a different gene: a TRIP13 / mosaic variegated aneuploidy syndrome 3 transfer card - its own disease and identifiers, its own HPO terms read out of phenotype.hpoa, its own nephroblastoma tumour context and standard of care, no alleles and no curated evidence - runs through mva-drugs snapshot and the step-7 enrichment with no code change and no hand-written query; the checkpoint-reinforcement direction D1 again yields no submittable drug and every D1 row stays at rung 1, and the spindle-poison anti-direction A2 again populates the do-not table.",
+          "status": "refuted",
+          "step": "step-7"
         }
       ],
       "kind": "research",
@@ -2835,6 +2924,12 @@
             "name": "mechanism-literature.png",
             "reads": "Log-scale bars per shortlisted drug, two bars each: PubMed record count for 'drug AND mechanism/gene/pathway/protein' and for 'drug AND tumour context'.",
             "source": "docs/iteration2/step-7/methodology/111-the-automated-stages-literature-trials-and-labels-per-drug.md"
+          },
+          {
+            "means": "The portability control. The second case ran through the unchanged pipeline with no hand-written query, so every purple bar is code output rather than curation, and the two cases are comparable stage by stage. Two gaps are the point: 'curated evidence rows' is 13 against 0, because a transfer card has no evidence.tsv and therefore cannot reach rungs 2 or 3 at all \u2014 only the automated rungs 1, 4 and 5 are comparable; and 'do-not rows' is 23 against 3, because Reactome matched no checkpoint pathway for TRIP13, so pathway expansion was empty and the mechanism-of-action text the spindle-poison anti-direction matches on never arrived. That gap refuted one limb of H066 and is the finding, not a defect in the drawing.",
+            "name": "transfer-scalability.png",
+            "reads": "Paired horizontal bars, one pair per stage of the pipeline (target genes, approved drugs, drugs at best rung 5, drugs at best rung 1, shortlist rows, do-not rows, curated evidence rows), with the value printed at the end of each bar: blue = BUB1B / MVA1, the proband's case; purple = TRIP13 / MVA3, a second case handed to the same code as raw public annotation.",
+            "source": "docs/iteration2/step-7/methodology/138-a-second-case-through-the-same-pipeline.md"
           }
         ],
         "hands_to": {
@@ -2857,7 +2952,7 @@
         ],
         "step": "step-7",
         "summary": "Step 7 is Track 2 (drug repurposing): given the confirmed diagnosis \u2014 the child carries two broken copies of BUB1B, one making no protein (a truncating/null allele) and one making a weakened protein (a missense/hypomorph allele) \u2014 it asks which already-approved drugs have real evidence for four mechanistic directions (D1 strengthen the checkpoint, D2 exploit the resulting aneuploid-cell stress, D3 stabilise the remaining protein, D4 treat the resulting tumour). This step is explicitly not blind: it only starts once step 6 has confirmed the pair, and every fact it draws from earlier steps was unblinded first. It graded 329 approved drugs on a five-rung evidence ladder fixed before any drug was looked up, against two decoy-gene cards run through the identical pipeline as a specificity control. Eleven drugs carry a cited, curated mechanism result (rung 2 or 3); fifty more reach the top automated rung only because they are already in a paediatric rhabdomyosarcoma trial (a fact about the tumour, not a mechanism finding attributable to this gene); a decoy gene got 64 such drugs with the gene never consulted. A do-not/caution table flags 13 spindle-poison chemotherapy drugs (including the vincristine this tumour type is normally treated with) as needing the very checkpoint that is broken \u2014 flagged for the treating team, not advice to withhold. All seven pre-registered claims were supported, and a fourth mechanism-card revision (v4, adding step 8's measured aneuploidy-burden fact) moved no rung and no table row.",
-        "verdict": "H045 (direction D1, strengthening the checkpoint, yields no submittable drug and becomes a do-not table) is supported. H046 (D2 holds an approved compound with molecule-level cell evidence) is supported: chloroquine. H047 (D3 has an approved-drug route on the NAD\u207a/SIRT2 axis with in-vivo BubR1 evidence) is supported only by proxy \u2014 the automated stage found nothing, and niacin/nicotinamide are in the ladder because a person curated them in by hand, flagged `curated_only`. H048 (D4 holds a non-cytotoxic approved agent at rung \u22652 with paediatric data) is supported: lovastatin. H049 (the automated stages are non-specific enough to need the decoy control) is supported: D4's automated drug set overlaps a decoy gene's at Jaccard 0.249, well above the pre-registered 0.10 specificity line. H050 (every argued drug has a paediatric evidence pointer) is supported: 290 of 329 graded drugs, and all 11 argued rows, have at least one. H061 (adding step 8's measured aneuploidy-burden fact to the mechanism card moves nothing) is supported: card v4's digests are byte-identical to v3's on every rung, shortlist row and do-not row.",
+        "verdict": "H045 (direction D1, strengthening the checkpoint, yields no submittable drug and becomes a do-not table) is supported. H046 (D2 holds an approved compound with molecule-level cell evidence) is supported: chloroquine. H047 (D3 has an approved-drug route on the NAD\u207a/SIRT2 axis with in-vivo BubR1 evidence) is supported only by proxy \u2014 the automated stage found nothing, and niacin/nicotinamide are in the ladder because a person curated them in by hand, flagged `curated_only`. H048 (D4 holds a non-cytotoxic approved agent at rung \u22652 with paediatric data) is supported: lovastatin. H049 (the automated stages are non-specific enough to need the decoy control) is supported: D4's automated drug set overlaps a decoy gene's at Jaccard 0.249, well above the pre-registered 0.10 specificity line. H050 (every argued drug has a paediatric evidence pointer) is supported: 290 of 329 graded drugs, and all 11 argued rows, have at least one. H061 (adding step 8's measured aneuploidy-burden fact to the mechanism card moves nothing) is supported: card v4's digests are byte-identical to v3's on every rung, shortlist row and do-not row. H065 (the same, once F8 carries step 8's second instrument on card v5) is supported on the first re-grade. H066 (the pipeline transfers to a whole second case unchanged AND the spindle-poison anti-direction again fills the do-not table) is refuted as written: it was filed as a conjunction, and although every portability limb held \u2014 the run completed with no module edit, all 30 D1 rows stayed at rung 1, no D1 row reached the 53-row shortlist, and only the context direction D4 rose above rung 1 \u2014 the transfer do-not table carries 0 A2-flagged drugs against 13 on the real case, which was the pre-registered refutation condition.",
         "why": "A drug-repurposing search over a confirmed rare-disease gene is exactly the kind of result that looks meaningful by construction: any gene has trials, labels and PubMed hits attached to it, and a pipeline that reports 'N approved drugs found' without a control cannot distinguish real mechanism evidence from noise that any gene would produce. Building two decoy-gene cards through the identical, unmodified pipeline is what makes the automated stage's specificity measurable rather than assumed \u2014 and it caught a real problem: the first version of the ladder rule graded 85 drugs at the top rung purely because they had a rhabdomyosarcoma trial, a rule the decoy comparison showed was gene-independent and had to be narrowed before any verdict was drawn. Without that check, the report would have presented 85 unrelated approved drugs as if they were BUB1B-specific mechanism evidence."
       },
       "slug": "step-7",

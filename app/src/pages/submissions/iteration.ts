@@ -203,3 +203,79 @@ export function primaryGene(selectors: Selectors): string | null {
 export function fmtEpcr(value: number): string {
   return value >= 0.01 ? value.toFixed(value >= 0.1 ? 2 : 3) : value.toPrecision(3);
 }
+
+// ── what a panel-judged report argues, read off its own markdown ────────────────────────
+
+/** A report's `# ` title with a leading `Track n report —` label cut, or `null`. */
+export function reportTitle(markdown: string): string | null {
+  const line = markdown.split('\n').find((l) => l.startsWith('# '));
+  if (!line) return null;
+  const title = line.slice(2).trim();
+  const cut = /^track\s*\d+\s+report\s*[—–-]\s*/i.exec(title);
+  return cut ? title.slice(cut[0].length) : title;
+}
+
+/** How many numbered `## n.` sections the report has. */
+export const reportSections = (markdown: string): number =>
+  markdown.split('\n').filter((l) => /^##\s+\d+\./.test(l)).length;
+
+/** A method word a report may argue with, and the dictionary entry that teaches it. */
+export interface ReportTerm {
+  pattern: RegExp;
+  slug: string;
+  term: string;
+  plain: string;
+}
+
+/**
+ * The Track 2 method vocabulary, in reading order. The walkthrough names only the ones the
+ * report actually uses, so an iteration that argues from a shortlist and one that argues
+ * from converging generators each get their own sentence with no edit here.
+ */
+export const REPORT_TERMS: readonly ReportTerm[] = [
+  {
+    pattern: /\bshortlist/i,
+    slug: 'shortlist',
+    term: 'shortlist',
+    plain: "drugs with a cited path from the broken gene to the drug's target",
+  },
+  {
+    pattern: /\bgenerators?\b/i,
+    slug: 'generator',
+    term: 'generators',
+    plain: 'independent sources that each propose drugs by a rule fixed before any join',
+  },
+  {
+    pattern: /\bconvergen/i,
+    slug: 'convergence',
+    term: 'convergence',
+    plain: 'independent generators naming the same drug, counted only if it beats chance',
+  },
+  {
+    pattern: /\bpermutation\b/i,
+    slug: 'permutation-null',
+    term: 'permutation null',
+    plain: 'the same analysis on random inputs of the same shape, to see how high chance gets',
+  },
+  {
+    pattern: /\bdo-not\b/i,
+    slug: 'anti-direction-the-do-not-table',
+    term: 'do-not table',
+    plain: 'the classes the mechanism says would make things worse',
+  },
+  {
+    pattern: /\btransfer\b|\bsecond (?:case|disease)\b/i,
+    slug: 'transfer-mechanism-card',
+    term: 'transfer case',
+    plain:
+      'the same pipeline run on a different disease, to test whether the code is case-agnostic',
+  },
+];
+
+export const reportTerms = (markdown: string): ReportTerm[] =>
+  REPORT_TERMS.filter((t) => t.pattern.test(markdown));
+
+/** `figures/it4/a.svg`, `figures/it4/b.svg` → `['figures/it4/']`: where the figures live. */
+export const figureDirs = (paths: readonly string[]): string[] => [
+  ...new Set(paths.map((p) => p.slice(0, p.lastIndexOf('/') + 1))),
+];

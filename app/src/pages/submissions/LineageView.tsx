@@ -2,10 +2,12 @@ import { useMemo, useState } from 'react';
 
 import type { LineageSource, SubmissionLineage } from '../../api/types';
 import { Badge } from '../../components/Badge';
+import { ChainPicker } from '../../components/ChainPicker';
 import { Chip, Exhibit } from '../../components/Exhibit';
 import { Callout } from '../../components/Explainer';
 import { int } from '../../lib/format';
-import { edgePath, type Geometry, layout } from '../../lib/graphLayout';
+import { clipLabel, edgePath, type Geometry, layout } from '../../lib/graphLayout';
+import { sourcesFor, useChainView } from '../../lib/lineageChains';
 import { C } from '../../lib/palette';
 import { cx, WELL } from '../../lib/ui';
 import { shortSha } from './iteration';
@@ -24,24 +26,22 @@ import { buildSubmissionGraph, type GraphEdge, type GraphNode, KIND_ORDER } from
 const GEOMETRY: Geometry = { nodeWidth: 250, nodeHeight: 58, gapX: 130, gapY: 18, pad: 14 };
 const { nodeWidth: NODE_W, nodeHeight: NODE_H } = GEOMETRY;
 
-/** The repo's colour convention, applied to the five source kinds plus the sink. */
+/** The repo's colour convention, applied to the source kinds plus the sink. */
 function strokeOf(kind: string): string {
-  if (kind === 'raw' || kind === 'clinical') return C.raw;
+  if (kind === 'raw' || kind === 'clinical' || kind === 'card') return C.raw;
   if (kind === 'submission') return C.good;
   return C.machinery;
 }
 
-/** Reference inputs are fetched, not derived, so their box is dashed like on Provenance. */
-const dashOf = (kind: string): string | undefined => (kind === 'reference' ? '4 3' : undefined);
+/** Reference inputs and public APIs are fetched, not derived: dashed, like on Provenance. */
+const dashOf = (kind: string): string | undefined =>
+  kind === 'reference' || kind === 'api' ? '4 3' : undefined;
 
 export function LineageView({ lineage, source }: { lineage: SubmissionLineage; source?: string }) {
-  const graph = useMemo(() => buildSubmissionGraph(lineage.edges), [lineage.edges]);
+  const view = useChainView(lineage.edges);
+  const graph = useMemo(() => buildSubmissionGraph(view.edges), [view.edges]);
   const [hovered, setHovered] = useState<GraphEdge | null>(null);
-
-  const grouped = KIND_ORDER.map((kind) => ({
-    kind,
-    sources: lineage.sources.filter((s) => s.kind === kind),
-  })).filter((g) => g.sources.length > 0);
+  const grouped = groupByKind(sourcesFor(lineage.sources, lineage.edges, view.edges));
 
   return (
     <Exhibit
@@ -49,21 +49,22 @@ export function LineageView({ lineage, source }: { lineage: SubmissionLineage; s
       legend={
         <>
           Nodes are datasets, arrows are recorded derivations, and flow reads left to right.{' '}
-          <Chip color={C.raw}>purple = the raw input</Chip> — the delivered callset and the clinical
-          document, the only two things nobody here computed.{' '}
+          <Chip color={C.raw}>purple = the raw input</Chip> — the delivered callset, the clinical
+          document and a mechanism card, the things nobody here fetched or computed.{' '}
           <Chip color={C.machinery}>blue = neutral machinery</Chip> — warehouse result tables and
-          committed spec files; a <strong>dashed</strong> box is public reference data, fetched
-          rather than derived, so it carries a manifest instead of an edge.{' '}
+          committed or downloaded files; a <strong>dashed</strong> box is public reference data or a
+          public API, fetched rather than derived, so it carries a manifest instead of an edge.{' '}
           <Chip color={C.good}>green = the goal</Chip> — the iteration folder itself. A padlock-free{' '}
           <Badge tone="good">sha256</Badge> tag means the digest is recorded; the number inside a
           node is its row count. Hover an arrow for the transform and the tool that ran it.
         </>
       }
-      reading="The graph is short on purpose. Two hops separate the file the organisers would receive from bytes whose checksum was recomputed locally — and the clinical document is a root beside the callset, not an afterthought, which is the structural form of the rule that both data sources are cross-referenced."
+      reading={reading(graph)}
       data={lineage}
       source={source}
     >
       <div className="space-y-3">
+        <ChainPicker view={view} total={lineage.edges.length} />
         {!lineage.available && (
           <Callout tone="broken" title="Database unreachable — lineage roots from disk only">
             The warehouse could not be reached, so no derivation edge could be read and the graph
@@ -109,6 +110,34 @@ export function LineageView({ lineage, source }: { lineage: SubmissionLineage; s
         </div>
       </div>
     </Exhibit>
+  );
+}
+
+/** Sources grouped by kind: the known kinds in diagram order, then any other kind by name. */
+function groupByKind(sources: LineageSource[]) {
+  const known = KIND_ORDER as readonly string[];
+  const extra = [...new Set(sources.map((s) => s.kind))].filter((k) => !known.includes(k)).sort();
+  return [...known, ...extra]
+    .map((kind) => ({ kind, sources: sources.filter((s) => s.kind === kind) }))
+    .filter((g) => g.sources.length > 0);
+}
+
+/** The exhibit's reading, counted off the diagram drawn rather than typed. */
+function reading(graph: ReturnType<typeof buildSubmissionGraph>): string {
+  if (graph.nodes.length === 0) {
+    return 'No derivation edge to read: the roots below are the ones knowable from disk.';
+  }
+  const roots = graph.nodes.filter((n) => n.level === 0);
+  const hops = graph.levels - 1;
+  const sink = graph.nodes.some((n) => n.kind === 'submission');
+  const kinds = new Set(roots.map((n) => n.kind));
+  const both = kinds.has('clinical') && kinds.has('raw');
+  return (
+    `${roots.length} roots, at most ${hops} recorded hop${hops === 1 ? '' : 's'} from ` +
+    `${sink ? 'the folder the organisers would receive' : 'the tables this iteration argues from'}` +
+    (both
+      ? ' — and the clinical document is a root beside the callset, the structural form of the rule that both data sources are cross-referenced.'
+      : '. Every root is named with the version and digest the recorder read.')
   );
 }
 
@@ -192,6 +221,7 @@ function GraphSvg({
 
           {graph.nodes.map((n) => (
             <g key={n.id}>
+              <title>{`${n.id} — ${n.sublabel}`}</title>
               <rect
                 x={x(n)}
                 y={y(n)}
@@ -210,10 +240,10 @@ function GraphSvg({
                 fontSize="12"
                 fontFamily="ui-monospace, monospace"
               >
-                {n.label.length > 30 ? `${n.label.slice(0, 29)}…` : n.label}
+                {clipLabel(n.label, 30)}
               </text>
               <text x={x(n) + 12} y={y(n) + 38} fill={C.inkDim} fontSize="10">
-                {n.sublabel}
+                {clipLabel(n.sublabel, n.verified ? 23 : 34)}
                 {n.verified ? ' · sha256 ✓' : ''}
               </text>
               <text
