@@ -64,6 +64,7 @@ from .postgres import ALIAS, attached, safe_identifier
 from .settings import Postgres
 from .submission_lineage import Recorded, sha256_of
 from .track2_lineage_it4 import it4_edges
+from .track2_lineage_it5 import it5_edges
 from .track2_manifests import (
     TOOL,
     TRACK2_DIR,
@@ -350,6 +351,7 @@ def planned_edges(root: Path | None = None) -> list[dict[str, object]]:
     edges += transfer_edges(base)
     edges += walk_edges(base)
     edges += it4_edges(base)  # iteration 4: steps 9-10 and the step-11 transfer
+    edges += it5_edges(base)  # iteration 5: the tables whose entry is filed
     return edges
 
 

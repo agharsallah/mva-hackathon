@@ -31,6 +31,7 @@ __all__ = [
     "EXPOSURE_ENUMS",
     "INTERVENTION_ENUMS",
     "INTERVENTION_FIELDS",
+    "intervention_enums",
     "normalise",
     "verify_rows",
 ]
@@ -74,6 +75,16 @@ INTERVENTION_ENUMS: Mapping[str, frozenset[str]] = {
 EXPOSURE_ENUMS: Mapping[str, frozenset[str]] = {
     "outcome_kind": frozenset({"toxicity", "response", "death", "tolerated", "other"}),
 }
+
+
+def intervention_enums(effect_on: Iterable[str]) -> Mapping[str, frozenset[str]]:
+    """:data:`INTERVENTION_ENUMS` with the case card's ``effect_on`` vocabulary substituted.
+
+    Everything else in the schema (intervention type, mode, direction, model system) is
+    case-agnostic; only *what the effect is measured on* is a property of the gene.
+    """
+    return {**INTERVENTION_ENUMS, "effect_on": frozenset(effect_on)}
+
 
 _QUOTES = str.maketrans(
     {

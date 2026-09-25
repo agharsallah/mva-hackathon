@@ -2,7 +2,7 @@
   "assumptions": "state variables are independent; a row's mechanism branch acts only in the states its applicability rule names; utilities are products of stated weights; a drug absent from the safety table is 'unassessed', never 'safe'",
   "clinical_framing": "research exercise; no row advises for or against giving any drug to any patient",
   "columns": "evidence against a drug for this child; is_candidate = a route named it",
-  "entry": "docs/iteration5/step-1/methodology/161 (R4; drafted at work/r4-entry.md)",
+  "entry": "docs/iteration5/step-1/methodology/161-the-decision-and-what-the-next-measurement-is-worth.md",
   "generated_at": "2026-09-25T17:25:53+00:00",
   "code_version": "29ce58b",
   "inputs": [

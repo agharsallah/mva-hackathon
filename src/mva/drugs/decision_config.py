@@ -11,7 +11,7 @@ silent default.
 
     prior:<variable>=<value>          the prior weight of one value (others rescale)
     safety:<class>                    one safety factor
-    control:failed_factor | control:unknown_factor
+    control:failed_factor | control:unknown_factor | control:na_factor
     test:<name>:sensitivity | test:<name>:specificity
     applicability:<branch>:<variable>=<value>
     route:<route>                     one route's weight (default 1)
@@ -33,6 +33,7 @@ from mva.drugs.decision_model import (
     StateVariable,
     TornadoParam,
 )
+from mva.drugs.decision_priors import resolve
 
 __all__ = ["load", "parse", "todos", "with_param", "with_prior"]
 
@@ -107,6 +108,7 @@ def parse(raw: dict[str, Any]) -> DecisionConfig:
         control_policy=control["policy"],
         failed_factor=_unit(control["failed_factor"], "control.failed_factor"),
         unknown_factor=_unit(control["unknown_factor"], "control.unknown_factor"),
+        na_factor=_unit(control.get("na_factor", 1.0), "control.na_factor"),
         combine=combine,
         baseline_name=raw["baseline"]["name"],
         baseline_utility=_unit(raw["baseline"]["utility"], "baseline.utility"),
@@ -120,8 +122,13 @@ def parse(raw: dict[str, Any]) -> DecisionConfig:
 
 
 def load(path: Path) -> tuple[DecisionConfig, dict[str, Any]]:
-    """``(config, raw JSON)``; the raw object is kept for the provenance manifest."""
-    raw = json.loads(path.read_text(encoding="utf-8"))
+    """``(config, raw JSON)`` with derived priors computed (:mod:`mva.drugs.decision_priors`).
+
+    The raw object is kept for the provenance manifest; its ``_derived`` key holds each
+    derivation's rule, inputs and arithmetic.
+    """
+    raw, derived = resolve(json.loads(path.read_text(encoding="utf-8")))
+    raw["_derived"] = derived
     return parse(raw), raw
 
 
@@ -185,6 +192,8 @@ def with_param(config: DecisionConfig, param: str, value: float) -> DecisionConf
         return dataclasses.replace(config, failed_factor=value)
     if kind == "control" and rest == "unknown_factor":
         return dataclasses.replace(config, unknown_factor=value)
+    if kind == "control" and rest == "na_factor":
+        return dataclasses.replace(config, na_factor=value)
     if kind == "test":
         name, _, field = rest.rpartition(":")
         if field not in ("sensitivity", "specificity"):

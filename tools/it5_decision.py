@@ -29,8 +29,14 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from mva.drugs import decision_config, provenance
-from mva.drugs.decision_io import COLUMNS, read_candidates, read_safety, read_tsv
+from mva.drugs import decision_avoid, decision_config, provenance
+from mva.drugs.decision_io import (
+    COLUMNS,
+    expand_aliases,
+    read_candidates,
+    read_safety,
+    read_tsv,
+)
 from mva.drugs.decision_run import analyse, write
 from mva.drugs.tables import write_tsv
 
@@ -38,7 +44,10 @@ CONFIG = Path("ressources/track2/it5/decision_config.json")
 SAFETY = Path("ressources/track2/it4/candidate_safety.tsv")
 IT4_CANDIDATES = Path("ressources/track2/it4/candidates.tsv")
 DRYRUN = Path("build/it5/r4/dryrun")
-ENTRY = "docs/iteration5/step-1/work/r4-entry.md (draft; number assigned at merge)"
+ENTRY = (
+    "docs/iteration5/step-1/methodology/"
+    "161 (R4; drafted at methodology/161-the-decision-and-what-the-next-measurement-is-worth.md)"
+)
 
 #: Dry-run only: how an iteration-4 generator's listing becomes an evidence row. These are
 #: R4's stated weights for exercising the pipeline, not a finding about any drug.
@@ -61,13 +70,18 @@ FIXTURE = [
 
 
 def _meta(args: argparse.Namespace, raw: dict[str, Any], overrides: list[str]) -> dict[str, Any]:
-    files = [*args.candidates, args.config] + ([args.safety] if args.safety else [])
+    files = [*args.candidates, args.config, *args.safety]
+    derived = [
+        {"file": d["table"], "sha256": d["sha256"]} for d in raw.get("_derived", {}).values()
+    ]
     return {
         "entry": ENTRY,
         "tool": "tools/it5_decision.py " + args.command,
         "inputs": [
             {"file": provenance.repo_relative(p), "sha256": provenance.digest(p)[0]} for p in files
-        ],
+        ]
+        + derived
+        + (decision_avoid.inputs(raw["avoid"]) if raw.get("avoid") else []),
         "parameters": {"config": raw, "overrides": overrides, "steps": args.steps},
         "assumptions": (
             "state variables are independent; a row's mechanism branch acts only in the states "
@@ -133,16 +147,51 @@ def _lineage(path: Path, meta: dict[str, Any], tables: list[Path]) -> None:
     path.write_text(json.dumps(doc, indent=2) + "\n", encoding="utf-8")
 
 
+def _rows(args: argparse.Namespace, raw: dict[str, Any]) -> tuple[list[Any], list[Any]]:
+    """Validated rows with class rows expanded and control rows dropped (config-driven)."""
+    return expand_aliases(
+        read_candidates(args.candidates),
+        raw.get("aliases", {}),
+        raw.get("drop_evidence_kinds", []),
+    )
+
+
+def _safety_drugs(args: argparse.Namespace) -> int:
+    """The expanded drug list, in the TSV shape ``tools/patient_safety.py --drug-table`` reads."""
+    _, raw = decision_config.load(args.config)
+    rows, _ = _rows(args, raw)
+    branches: dict[str, set[str]] = {}
+    for row in rows:
+        branches.setdefault(row.drug_name.strip().lower(), set()).add(row.branch)
+    records = [
+        {"drug_name": name, "direction_id": "|".join(sorted(b))}
+        for name, b in sorted(branches.items())
+    ]
+    written = write_tsv(args.out, ("drug_name", "direction_id"), records)
+    print(f"wrote {provenance.repo_relative(args.out)} ({written} drugs)")
+    return 0
+
+
 def _run(args: argparse.Namespace) -> int:
     config, raw = decision_config.load(args.config)
     overrides = list(args.set or [])
     for item in overrides:
         param, _, value = item.rpartition("=")
         config = decision_config.with_param(config, param, float(value))
-    rows = read_candidates(args.candidates)
-    safety = read_safety(args.safety)
+    rows, dropped = _rows(args, raw)
+    safety: dict[str, str] = {}
+    for path in args.safety:  # later tables win for a drug in several
+        safety.update(read_safety(path))
+    avoid = decision_avoid.build(raw["avoid"]) if raw.get("avoid") else []
+    safety = decision_avoid.merge(safety, avoid, config.safety)
     report = analyse(
-        config, rows, safety, tornado_metric=raw.get("tornado_metric"), steps=args.steps
+        config,
+        rows,
+        safety,
+        tornado_metric=raw.get("tornado_metric"),
+        steps=args.steps,
+        avoid=avoid,
+        dropped=dropped,
     )
     meta = _meta(args, raw, overrides)
     written = write(report, args.out, meta)
@@ -155,9 +204,11 @@ def _run(args: argparse.Namespace) -> int:
     print(
         f"\nrows {report['n_rows']}, drugs {report['n_drugs']}, excluded {len(report['excluded'])}"
     )
-    print(f"best overall: {best['action']} (EU {best['expected_utility']:.4f}; heuristic)")
+    tie = f", tied with {', '.join(best['tied'])}" if best["tied"] else ""
+    print(f"best overall: {best['action']} (EU {best['expected_utility']:.4f}{tie}; heuristic)")
     for state in report["states"]:
-        print(f"  {state['state']:<55} p={state['prior']:.3f}  best {state['best']}")
+        tied = f" (tie: {', '.join(state['tied'])})" if state["tied"] else ""
+        print(f"  {state['state']:<55} p={state['prior']:.3f}  best {state['best']}{tied}")
     for voi in report["voi"]:
         print(f"  {voi['kind']:<6} {voi['target']:<28} {voi['value']:.4f}")
     for todo in decision_config.todos(raw):
@@ -215,10 +266,14 @@ def _dryrun(args: argparse.Namespace) -> int:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0] if __doc__ else None)
     sub = parser.add_subparsers(dest="command", required=True)
+    drugs = sub.add_parser("safety-drugs", help="the expanded drug list for the safety tool")
+    drugs.add_argument("--config", type=Path, default=CONFIG)
+    drugs.add_argument("--candidates", type=Path, nargs="+", required=True)
+    drugs.add_argument("--out", type=Path, required=True)
     for name in ("run", "dryrun"):
         cmd = sub.add_parser(name)
         cmd.add_argument("--config", type=Path, default=CONFIG)
-        cmd.add_argument("--safety", type=Path, default=SAFETY)
+        cmd.add_argument("--safety", type=Path, nargs="*", default=[SAFETY])
         cmd.add_argument("--out", type=Path, default=DRYRUN if name == "dryrun" else None)
         cmd.add_argument("--set", action="append", metavar="PARAM=VALUE")
         cmd.add_argument("--steps", type=int, default=101, help="grid points per prior sweep")
@@ -226,6 +281,8 @@ def main(argv: list[str] | None = None) -> int:
         if name == "run":
             cmd.add_argument("--candidates", type=Path, nargs="+", required=True)
     args = parser.parse_args(argv)
+    if args.command == "safety-drugs":
+        return _safety_drugs(args)
     if args.out is None:
         parser.error("--out is required for run")
     return _dryrun(args) if args.command == "dryrun" else _run(args)

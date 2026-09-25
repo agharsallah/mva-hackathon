@@ -3912,7 +3912,7 @@
   "n_rows": 54,
   "n_drugs": 45,
   "meta": {
-    "entry": "docs/iteration5/step-1/methodology/161 (R4; drafted at work/r4-entry.md)",
+    "entry": "docs/iteration5/step-1/methodology/161-the-decision-and-what-the-next-measurement-is-worth.md",
     "tool": "tools/it5_decision.py run",
     "inputs": [
       {

@@ -23,21 +23,11 @@ from __future__ import annotations
 
 import argparse
 import csv
+import importlib
 import json
 from pathlib import Path
 from typing import Any
 
-from it5_litmine_params import (
-    ANALOGUES,
-    BRANCH_BY_EFFECT,
-    CONTROLS,
-    DESIRED,
-    DISEASE_MARKERS,
-    EXPOSURE_LEXICON,
-    EXTRACTOR,
-    INTERVENTION_LEXICON,
-    SPEC,
-)
 from mva.drugs import provenance
 from mva.drugs.cache import Fetcher
 from mva.drugs.litmine_corpus import (
@@ -51,8 +41,8 @@ from mva.drugs.litmine_screen import load_texts, screen_corpus, write_reading_pa
 from mva.drugs.litmine_translate import candidates, control_recall, translate
 from mva.drugs.litmine_verify import (
     EXPOSURE_ENUMS,
-    INTERVENTION_ENUMS,
     INTERVENTION_FIELDS,
+    intervention_enums,
     verify_rows,
 )
 
@@ -61,9 +51,15 @@ ENTRY = (
     "docs/iteration5/step-1/methodology/"
     "160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md"
 )
-BUILD = Path("build/it5/r3")
-DOCS = BUILD / "docs"
-OUT = Path("ressources/track2/it5")
+DEFAULT_BUILD = Path("build/it5/r3")
+DEFAULT_OUT = Path("ressources/track2/it5")
+BUILD = DEFAULT_BUILD
+OUT = DEFAULT_OUT
+#: Set once by :func:`main` from ``--card``/``--build``/``--out``; a second case changes these
+#: three flags and writes its own card, and no module under ``mva.drugs`` changes at all.
+CARD: Any
+DOCS: Path
+CLINICAL_DOC = "ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md"
 EXPOSURE_FIELDS = (
     "patient_gene",
     "tumour",
@@ -108,9 +104,10 @@ def file_input(path: Path) -> dict[str, Any]:
 
 
 def stage_corpus(refresh: bool) -> None:
+    spec, controls = CARD.SPEC, CARD.CONTROLS
     fetcher = Fetcher(source="europepmc", cache_dir=BUILD / "cache", refresh=refresh)
-    queries = build_queries(SPEC)
-    docs, log = run_queries(fetcher, queries, max_records=SPEC.max_records)
+    queries = build_queries(spec)
+    docs, log = run_queries(fetcher, queries, max_records=spec.max_records)
     texts = TextCache(BUILD / "fulltext-xml")
     rows = save_documents(docs, DOCS, texts, fulltext_for=set(docs))
     (BUILD / "query_log.json").write_text(json.dumps(log, indent=1) + "\n", encoding="utf-8")
@@ -148,11 +145,11 @@ def stage_corpus(refresh: bool) -> None:
             },
         ],
         parameters={
-            "gene": SPEC.gene,
-            "aliases": list(SPEC.aliases),
-            "topics": {k: list(v) for k, v in SPEC.topics.items()},
-            "disease_phrases": list(SPEC.disease_phrases),
-            "max_records_per_query": SPEC.max_records,
+            "gene": spec.gene,
+            "aliases": list(spec.aliases),
+            "topics": {k: list(v) for k, v in spec.topics.items()},
+            "disease_phrases": list(spec.disease_phrases),
+            "max_records_per_query": spec.max_records,
             "query_log": log,
         },
         columns={
@@ -176,22 +173,24 @@ def stage_corpus(refresh: bool) -> None:
         fulltext_documents=fulltext,
     )
     print(f"corpus: {len(docs)} papers, {len(rows)} texts ({fulltext} full text)")
-    for pmid in CONTROLS:
+    for pmid in controls:
         print(f"  control {pmid}: {'retrieved' if pmid in docs else 'MISSING'}")
 
 
 def stage_screen() -> None:
+    spec, markers = CARD.SPEC, CARD.DISEASE_MARKERS
+    interventions, exposures = CARD.INTERVENTION_LEXICON, CARD.EXPOSURE_LEXICON
     texts = load_texts(DOCS)
     titles = {r["pmid"]: r["title"] for r in read_tsv(OUT / "litmine_corpus.tsv")}
-    phrases = [p.lower() for p in (*SPEC.disease_phrases, *DISEASE_MARKERS)]
+    phrases = [p.lower() for p in (*spec.disease_phrases, *markers)]
     disease = {
         pmid
         for pmid, kinds in texts.items()
         if any(p in text.lower() for text in kinds.values() for p in phrases)
     }
-    hits = screen_corpus(texts, INTERVENTION_LEXICON)
+    hits = screen_corpus(texts, interventions)
     write_reading_pack(hits, titles, BUILD / "reading" / "interventions.md")
-    exposure = screen_corpus(texts, EXPOSURE_LEXICON, only=disease)
+    exposure = screen_corpus(texts, exposures, only=disease)
     write_reading_pack(exposure, titles, BUILD / "reading" / "exposures.md")
     stats = {
         "intervention_sentences": len(hits),
@@ -205,14 +204,16 @@ def stage_screen() -> None:
 
 
 def stage_verify() -> None:
+    controls, extractor = CARD.CONTROLS, CARD.EXTRACTOR
     texts = load_texts(DOCS)
     raw = read_tsv(OUT / "litmine_extraction.tsv")
-    kept, rejected = verify_rows(raw, texts, required=INTERVENTION_FIELDS, enums=INTERVENTION_ENUMS)
+    enums = intervention_enums(CARD.EFFECT_ON)
+    kept, rejected = verify_rows(raw, texts, required=INTERVENTION_FIELDS, enums=enums)
     raw_exp = read_tsv(OUT / "litmine_exposure_extraction.tsv")
     kept_exp, rejected_exp = verify_rows(
         raw_exp, texts, required=EXPOSURE_FIELDS, enums=EXPOSURE_ENUMS
     )
-    recall = control_recall(kept, CONTROLS, texts)
+    recall = control_recall(kept, controls, texts)
     cols = [*INTERVENTION_FIELDS, "verified_in", "note"]
     t1 = write_tsv(OUT / "litmine_interventions.tsv", kept, cols)
     t2 = write_tsv(OUT / "litmine_mva_exposures.tsv", kept_exp, [*EXPOSURE_FIELDS, "verified_in"])
@@ -230,7 +231,7 @@ def stage_verify() -> None:
         file_input(OUT / "litmine_exposure_extraction.tsv"),
     ]
     common = {
-        "extractor": EXTRACTOR,
+        "extractor": extractor,
         "gate": "mva.drugs.litmine_verify.verify_rows: NFKC + quote/dash folding + whitespace "
         "collapse, case kept, min 30 characters, verbatim substring of the cached text of the "
         "cited PMID; a failing row is rejected, never repaired",
@@ -244,7 +245,10 @@ def stage_verify() -> None:
         "proves the sentence exists, not that the row reads it correctly",
     }
     manifest(t1, len(kept), inputs=ins, **common, rejected=len(rejected))
-    manifest(t2, len(kept_exp), inputs=ins, **common, rejected=len(rejected_exp))
+    # Only the exposures table reads the clinical document (its hpo_overlap column).
+    clinical = f"hpo_overlap names the child's HPO terms from {CLINICAL_DOC}"
+    exposures = {**common, "sources": {**common["sources"], "clinical": clinical}}
+    manifest(t2, len(kept_exp), inputs=ins, **exposures, rejected=len(rejected_exp))
     manifest(t3, len(all_rejected), inputs=ins, **common)
     print(
         f"verify: interventions kept {len(kept)} rejected {len(rejected)}; "
@@ -254,14 +258,21 @@ def stage_verify() -> None:
 
 
 def stage_translate(refresh: bool) -> None:
+    analogues, desired, extractor = CARD.ANALOGUES, CARD.DESIRED, CARD.EXTRACTOR
+    branch_by_effect, directness = CARD.BRANCH_BY_EFFECT, CARD.DIRECTNESS
     kept = read_tsv(OUT / "litmine_interventions.tsv")
     recall = json.loads((OUT / "litmine_interventions.provenance.json").read_text())[
         "positive_control"
     ]
     fetcher = Fetcher(source="chembl", cache_dir=Path("build/track2-cache"), refresh=refresh)
-    mapped = translate(kept, fetcher, desired=DESIRED, analogues=ANALOGUES)
+    mapped = translate(kept, fetcher, desired=desired, analogues=analogues)
     (BUILD / "translation.json").write_text(json.dumps(mapped, indent=1) + "\n", encoding="utf-8")
-    rows = candidates(mapped, branch_by_effect=BRANCH_BY_EFFECT, control_passed=recall["passed"])
+    rows = candidates(
+        mapped,
+        branch_by_effect=branch_by_effect,
+        control_passed=recall["passed"],
+        directness=directness,
+    )
     cols = [
         "drug_name",
         "route",
@@ -286,14 +297,15 @@ def stage_translate(refresh: bool) -> None:
             ),
         ],
         parameters={
-            "desired_direction": DESIRED,
-            "branch_by_effect": BRANCH_BY_EFFECT,
-            "analogues": ANALOGUES,
+            "desired_direction": desired,
+            "branch_by_effect": branch_by_effect,
+            "directness": directness,
+            "analogues": analogues,
         },
         rubric="evidence_strength = model × directness × replication × translation; "
         "see the entry's rubric table",
         positive_control=recall,
-        extractor=EXTRACTOR,
+        extractor=extractor,
         clinical_framing="research exercise; no row advises for or against giving any drug",
         sources={
             "literature": "litmine_interventions.tsv (quote-verified)",
@@ -310,7 +322,19 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("stage", choices=["corpus", "screen", "verify", "translate", "all"])
     parser.add_argument("--refresh", action="store_true", help="bypass the API caches")
+    parser.add_argument("--card", default="it5_litmine_params", help="the case card module")
+    parser.add_argument(
+        "--build", default=str(DEFAULT_BUILD), help="working directory for this case"
+    )
+    parser.add_argument(
+        "--out", default=str(DEFAULT_OUT), help="where this case's tables are written"
+    )
     args = parser.parse_args()
+    global CARD, DOCS, BUILD, OUT  # noqa: PLW0603 — the three flags that name a case
+    CARD = importlib.import_module(args.card)
+    BUILD, OUT = Path(args.build), Path(args.out)
+    DOCS = BUILD / "docs"
+    OUT.mkdir(parents=True, exist_ok=True)
     if args.stage in ("corpus", "all"):
         stage_corpus(args.refresh)
     if args.stage in ("screen", "all"):

@@ -25,7 +25,7 @@ from pathlib import Path
 
 from mva.drugs.readthrough import Measurement
 
-__all__ = ["TOLEDANO_2024", "WideSpec", "load_wide"]
+__all__ = ["TOLEDANO_2024", "WideSpec", "load_wide", "workbook_to_long"]
 
 
 @dataclass(frozen=True)
@@ -67,6 +67,27 @@ TOLEDANO_2024 = WideSpec(
     assay="pooled fluorescent reporter (sort-seq), HEK293T, 144 nt of native context",
     source="PMID:39174735",
 )
+
+
+def workbook_to_long(source: Path, sheet_name: str, out: Path, *, skip_columns: int = 2) -> int:
+    """Reshape one sheet of a published ``.xlsx`` into the TSV :func:`load_wide` reads.
+
+    Supplementary workbooks carry a couple of leading layout columns before the data; how many
+    is a property of the file, so it is a parameter (``skip_columns``), not a guess. Returns
+    the number of data rows written.
+    """
+    import openpyxl  # deferred: reading the workbook is a one-off, the rest of the route is not
+
+    sheet = openpyxl.load_workbook(source, read_only=True, data_only=True)[sheet_name]
+    rows = [row[skip_columns:] for row in sheet.iter_rows(values_only=True)]
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.writer(handle, delimiter="\t", lineterminator="\n")
+        writer.writerow([str(cell) for cell in rows[0]])
+        writer.writerows(
+            ["" if cell is None else str(cell) for cell in row] for row in rows[1:] if row[0]
+        )
+    return len(rows) - 1
 
 
 def _value(raw: str, marks: tuple[str, ...]) -> tuple[float, bool] | None:

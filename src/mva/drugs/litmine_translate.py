@@ -260,10 +260,19 @@ def _replication(pmids: Sequence[str]) -> float:
     return RUBRIC["replication"]["3+" if n >= 3 else str(max(n, 1))]
 
 
-def strength(rows: Sequence[Mapping[str, str]], translation: str) -> float:
-    """model × directness × replication × translation, each the best the rows offer."""
+def strength(
+    rows: Sequence[Mapping[str, str]],
+    translation: str,
+    directness: Mapping[str, float] | None = None,
+) -> float:
+    """model × directness × replication × translation, each the best the rows offer.
+
+    ``directness`` is the case card's map from ``effect_on`` to how directly that effect
+    speaks to the gene's amount; ``None`` uses this repo's first case (BUB1B).
+    """
+    scale = directness or RUBRIC["directness"]
     model = max(RUBRIC["model"].get(r["model_system"], 0.0) for r in rows)
-    direct = max(RUBRIC["directness"].get(r["effect_on"], 0.0) for r in rows)
+    direct = max(scale.get(r["effect_on"], 0.0) for r in rows)
     return round(
         model
         * direct
@@ -289,6 +298,7 @@ def candidates(
     branch_by_effect: Mapping[str, str],
     control_passed: bool,
     route: str = "R3",
+    directness: Mapping[str, float] | None = None,
 ) -> list[dict[str, Any]]:
     """Candidate rows in the plan's pinned columns, best row per (drug, branch)."""
     best: dict[tuple[str, str], dict[str, Any]] = {}
@@ -296,7 +306,8 @@ def candidates(
         rows = record["benefit_rows"]
         if not rows:
             continue
-        lead = max(rows, key=lambda r: RUBRIC["directness"].get(r["effect_on"], 0.0))
+        scale = directness or RUBRIC["directness"]
+        lead = max(rows, key=lambda r: scale.get(r["effect_on"], 0.0))
         branch = branch_by_effect.get(lead["effect_on"], "any")
         for drug in record["drugs"]:
             if drug["direction_check"] == "mismatch":
@@ -304,7 +315,7 @@ def candidates(
             if drug["mapping"] == "gene_analogue" and (drug.get("max_phase") or 0) < 4:
                 continue
             key = _translation_key(drug)
-            score = strength(rows, key)
+            score = strength(rows, key, directness)
             effects = sorted({f"{r['effect_on']}:{r['direction']}" for r in rows})
             row = {
                 "drug_name": drug["drug_name"],

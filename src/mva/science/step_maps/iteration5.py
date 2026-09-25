@@ -31,8 +31,21 @@ ITERATION5: tuple[Step, ...] = (
             "treating team pursue given the one lab test that separates them?"
         ),
         iteration="iteration5",
-        # planned until the first route files an entry; then open with a narrative.json
-        status="planned",
+        status="open",
         track="track2",
+        # Drawn into figures/it5/, one renderer per route (tools/render_it5_r{1,2,3}.py).
+        # R4's figures join this tuple when its entry is filed.
+        figures=(
+            "figures/it5/r1-stop-anatomy.svg",
+            "figures/it5/r1-control.svg",
+            "figures/it5/r1-plus4.svg",
+            "figures/it5/r1-dosage.svg",
+            "figures/it5/r2-proliferation.svg",
+            "figures/it5/r2-control.svg",
+            "figures/it5/r2-hits.svg",
+            "figures/it5/r3-extraction-funnel.svg",
+            "figures/it5/r3-evidence-map.svg",
+            "figures/it5/r3-mva-exposures.svg",
+        ),
     ),
 )

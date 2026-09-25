@@ -17,7 +17,12 @@ from mva.drugs import provenance
 from mva.drugs import readthrough_notes as notes
 from mva.drugs.readthrough_tables import manifest
 
-__all__ = ["candidates_manifest", "dosage_manifest", "readthrough_manifest"]
+__all__ = [
+    "candidates_manifest",
+    "dosage_manifest",
+    "external_check_manifest",
+    "readthrough_manifest",
+]
 
 
 def _file(path: str | Path, role: str, **extra: Any) -> dict[str, Any]:
@@ -39,8 +44,14 @@ def readthrough_manifest(
     workbook_url: str,
     stop_facts: Path,
     parameters: dict[str, Any],
+    case_notes: Any = None,
 ) -> dict[str, Any]:
-    """The predicted-readthrough table: a public measurement set plus this case's stop context."""
+    """The predicted-readthrough table: a public measurement set plus this case's stop context.
+
+    ``case_notes`` is the case card's prose block (same attribute names as
+    :mod:`mva.drugs.readthrough_notes`); ``None`` keeps this repo's first case.
+    """
+    n = case_notes or notes
     return manifest(
         name="readthrough",
         built_by="tools/it5_readthrough.py predict",
@@ -68,16 +79,16 @@ def readthrough_manifest(
             ),
         ],
         parameters=parameters,
-        assumptions=notes.READTHROUGH_ASSUMPTIONS,
-        limitations=notes.READTHROUGH_LIMITATIONS,
+        assumptions=n.READTHROUGH_ASSUMPTIONS,
+        limitations=n.READTHROUGH_LIMITATIONS,
         validation=(
             "every drug's row carries its own held-out control, on a benchmark panel named "
             "before the run and on a random fifth of contexts; a row whose control failed is "
             "not interpretable as a prediction. The dataset's own untreated column runs through "
             "the identical pipeline as a negative control and must fail"
         ),
-        sources=notes.SOURCES,
-        columns=notes.READTHROUGH_COLUMN_NOTES,
+        sources=n.SOURCES,
+        columns=n.READTHROUGH_COLUMN_NOTES,
     )
 
 
@@ -90,8 +101,10 @@ def dosage_manifest(
     readthrough_table: Path,
     published_alleles: Path,
     parameters: dict[str, Any],
+    case_notes: Any = None,
 ) -> dict[str, Any]:
     """The dosage-scenario table: what each allele contributes and what a drug could add."""
+    n = case_notes or notes
     return manifest(
         name="allele_dosage",
         built_by="tools/it5_readthrough.py dosage",
@@ -114,11 +127,11 @@ def dosage_manifest(
             ),
         ],
         parameters=parameters,
-        assumptions=notes.DOSAGE_ASSUMPTIONS,
-        limitations=notes.DOSAGE_LIMITATIONS,
-        validation=notes.DOSAGE_VALIDATION,
-        sources=notes.SOURCES,
-        columns=notes.DOSAGE_COLUMN_NOTES,
+        assumptions=n.DOSAGE_ASSUMPTIONS,
+        limitations=n.DOSAGE_LIMITATIONS,
+        validation=n.DOSAGE_VALIDATION,
+        sources=n.SOURCES,
+        columns=n.DOSAGE_COLUMN_NOTES,
     )
 
 
@@ -158,4 +171,56 @@ def candidates_manifest(
         ),
         sources=notes.SOURCES,
         columns=notes.CANDIDATE_COLUMN_NOTES,
+    )
+
+
+def external_check_manifest(
+    *,
+    entry: str,
+    output_path: Path,
+    rows: int,
+    measurements: Path,
+    parameters: dict[str, Any],
+) -> dict[str, Any]:
+    """The external check: a published measurement of the case's own allele, held out."""
+    return manifest(
+        name="readthrough_external_check",
+        built_by="tools/it5_readthrough.py holdout",
+        entry=entry,
+        output_path=output_path,
+        rows=rows,
+        inputs=[
+            _file(
+                measurements,
+                (
+                    "Toledano et al., Nat Genet 56:1914-1924 (2024), PMID 39174735: measured "
+                    "readthrough. The held-out context's rows are removed from the fit and "
+                    "used only as the answer"
+                ),
+                citation="PMID:39174735",
+            )
+        ],
+        parameters=parameters,
+        assumptions=(
+            "the reporter assay's percent-of-no-PTC scale is comparable across contexts, so a "
+            "prediction learned on other contexts is on the same scale as this one"
+        ),
+        limitations=(
+            "one context per row group and a handful of compounds; a rank correlation over so "
+            "few points is weak evidence, and censored (>) measurements are lower bounds"
+        ),
+        validation=(
+            "the context is removed from the model entirely before it is predicted, so nothing "
+            "about it can leak into its own prediction"
+        ),
+        sources={
+            "literature": "PMID:39174735 supplementary table 3",
+            "clinical": "none",
+            "genomic": "none: a published allele of another person's gene",
+        },
+        columns={
+            "predicted": "group mean from every other context, same compound",
+            "measured": "the held-out measurement",
+            "backoff_level": "which key answered: stop+4-1, stop+4, stop or drug",
+        },
     )

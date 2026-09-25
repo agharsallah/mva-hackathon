@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 from mva.drugs import provenance
+from mva.drugs.decision_avoid import AvoidRow
 from mva.drugs.decision_model import (
     HEURISTIC_NOTE,
     DecisionConfig,
@@ -29,7 +30,14 @@ from mva.drugs.tables import write_tsv
 __all__ = ["analyse", "write"]
 
 
-def _utility_rows(table: DecisionTable, eus: Sequence[float]) -> list[dict[str, Any]]:
+def _tied(actions: Sequence[str], values: Sequence[float], best: int) -> list[str]:
+    """Other actions within 1e-9 of the best: a tie is reported, never silently broken."""
+    return [a for j, a in enumerate(actions) if j != best and abs(values[j] - values[best]) < 1e-9]
+
+
+def _utility_rows(
+    table: DecisionTable, eus: Sequence[float], avoid: Sequence[AvoidRow]
+) -> list[dict[str, Any]]:
     labels = [state_label(s) for s in table.states]
     best_per_state = [best_index([row[s] for row in table.utility]) for s in range(len(labels))]
     drugs = {drug.key: drug for drug in table.drugs}
@@ -48,6 +56,9 @@ def _utility_rows(table: DecisionTable, eus: Sequence[float]) -> list[dict[str, 
                 "n_rows": len(drug.rows) if drug else 0,
                 "controls": sorted({r.control for r in drug.rows}) if drug else (),
                 "safety_class": table.safety.get(key, "n/a (baseline)"),
+                "avoid_evidence": sorted(
+                    {f"{a.level}: {a.reason} ({a.source})" for a in avoid if a.key == key}
+                ),
                 "expected_utility": round(eus[i], 6),
                 "best_in_states": [labels[s] for s, b in enumerate(best_per_state) if b == i],
                 **{f"u[{label}]": round(table.utility[i][s], 6) for s, label in enumerate(labels)},
@@ -63,6 +74,8 @@ def analyse(
     *,
     tornado_metric: str | None = None,
     steps: int = 101,
+    avoid: Sequence[AvoidRow] = (),
+    dropped: Sequence[tuple[EvidenceRow, str]] = (),
 ) -> dict[str, Any]:
     """Everything the decision engine concludes from ``rows``, ``safety`` and ``config``."""
 
@@ -83,6 +96,7 @@ def analyse(
                 "prior": table.probs[s],
                 "best": table.actions[i],
                 "utility": column[i],
+                "tied": _tied(table.actions, column, i),
             }
         )
     voi: list[dict[str, Any]] = [
@@ -156,17 +170,33 @@ def analyse(
     return {
         "note": HEURISTIC_NOTE,
         "priors": {v.name: dict(v.prior) for v in config.variables},
-        "best": {"action": table.actions[best], "expected_utility": eus[best]},
+        "best": {
+            "action": table.actions[best],
+            "expected_utility": eus[best],
+            "tied": _tied(table.actions, eus, best),
+        },
         "baseline": config.baseline_name,
         "states": states,
-        "utilities": _utility_rows(table, eus),
+        "utilities": _utility_rows(table, eus, avoid),
+        "avoid": [
+            {
+                "drug": a.drug,
+                "key": a.key,
+                "level": a.level,
+                "reason": a.reason,
+                "source": a.source,
+                "origin": a.origin,
+                "is_candidate": a.key in table.actions,
+            }
+            for a in avoid
+        ],
         "voi": voi,
         "flips": flips,
         "sweep": sweeps,
         "tornado": torn,
         "excluded": [
             {"drug_name": row.drug_name, "route": row.route, "reason": why, "origin": row.origin}
-            for row, why in table.excluded
+            for row, why in [*dropped, *table.excluded]
         ],
         "n_rows": len(rows),
         "n_drugs": len(table.drugs),
@@ -187,6 +217,7 @@ _TABLES: dict[str, tuple[str, str]] = {
     "flips": ("flips", "the best action on each [start, end] of one prior; ends are exact"),
     "sweep": ("sweep", "best action, EVPI and EVSI on a grid of one prior"),
     "tornado": ("tornado", "each parameter at its low/high end, the rest held"),
+    "avoid": ("avoid", "evidence against a drug for this child; is_candidate = a route named it"),
 }
 
 

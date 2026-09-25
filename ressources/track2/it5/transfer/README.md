@@ -1,7 +1,7 @@
 # `transfer/` — iteration 5's routes run on a second disease
 
 **Standing:** written 2026-09-25 by the iteration-5 scalability run. Draft entry:
-[`docs/iteration5/step-1/work/s1-entry.md`](../../../../docs/iteration5/step-1/work/s1-entry.md)
+[`docs/iteration5/step-1/methodology/162-the-three-routes-on-bloom-syndrome.md`](../../../../docs/iteration5/step-1/methodology/162-the-three-routes-on-bloom-syndrome.md)
 (unnumbered; the coordinator files it). Figure:
 [`figures/it5/s1-transfer.svg`](../../../../figures/it5/s1-transfer.svg).
 

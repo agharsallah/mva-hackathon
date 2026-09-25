@@ -4,24 +4,40 @@
 Validation refuses, with the file and line, a missing column, a branch outside
 :data:`~mva.drugs.decision_model.BRANCHES` or an ``evidence_strength`` outside [0, 1].
 ``positive_control_passed`` reads ``true/yes/1/passed`` as passed, ``false/no/0/failed`` as
-failed and anything else (empty, ``unknown``, ``na``) as unknown - never as passed.
+failed, ``n/a``/``na``/``not applicable`` as not_applicable (the row is a published fact, not
+the output of a controlled method) and anything else (empty, ``unknown``) as unknown - never
+as passed.
 
 **Safety tables** are either iteration 4's ``candidate_safety.tsv`` (a ``drug`` column and
 the ``combined_flag`` sentence) or any table with ``drug``/``drug_name`` and a
 ``safety_class`` column already in :data:`~mva.drugs.decision_model.SAFETY_CLASSES`. A drug
-absent from the table is ``unassessed`` downstream - absence of a flag is not safety.
+absent from the table is ``unassessed`` downstream - absence of a flag is not safety - and so
+is an 'unflagged' drug whose ``labels_total`` is 0 (no label: the phenotype source was silent).
+
+**Aliases.** A route may name a class (``proteasome inhibition (MG132 as the tool; ...)``).
+:func:`expand_aliases` turns such a row into one row per named member at a stated weight
+(config ``aliases``), so class evidence meets the same molecule named by another route.
 """
 
 from __future__ import annotations
 
 import csv
-from collections.abc import Sequence
+import dataclasses
+from collections.abc import Mapping, Sequence
 from pathlib import Path
 
 from mva.drugs.decision_model import BRANCHES, SAFETY_CLASSES, EvidenceRow, drug_key
 from mva.drugs.provenance import repo_relative
 
-__all__ = ["COLUMNS", "parse_control", "read_candidates", "read_safety", "read_tsv", "safety_class"]
+__all__ = [
+    "COLUMNS",
+    "expand_aliases",
+    "parse_control",
+    "read_candidates",
+    "read_safety",
+    "read_tsv",
+    "safety_class",
+]
 
 #: The pinned candidate-table schema (``docs/iteration5/plan.md``, "Contracts").
 COLUMNS = (
@@ -37,6 +53,7 @@ COLUMNS = (
 
 _PASSED = {"true", "yes", "1", "passed", "pass"}
 _FAILED = {"false", "no", "0", "failed", "fail"}
+_NA = {"n/a", "na", "not applicable", "not_applicable"}
 
 
 def read_tsv(path: Path) -> list[dict[str, str]]:
@@ -52,6 +69,8 @@ def parse_control(text: str) -> str:
         return "passed"
     if word in _FAILED:
         return "failed"
+    if word in _NA:
+        return "not_applicable"
     return "unknown"
 
 
@@ -90,6 +109,41 @@ def read_candidates(paths: Sequence[Path]) -> list[EvidenceRow]:
     return rows
 
 
+def expand_aliases(
+    rows: Sequence[EvidenceRow],
+    aliases: Mapping[str, Mapping[str, float]],
+    drop_kinds: Sequence[str] = (),
+) -> tuple[list[EvidenceRow], list[tuple[EvidenceRow, str]]]:
+    """``(kept rows, dropped rows with reason)``: class rows expanded, control rows dropped.
+
+    ``aliases`` maps a raw ``drug_name`` (matched by :func:`drug_key`) to ``{member: weight}``;
+    each member row carries ``evidence_strength x weight`` and says where it came from.
+    """
+    table = {drug_key(name): members for name, members in aliases.items()}
+    drop = {kind.strip().lower() for kind in drop_kinds}
+    kept: list[EvidenceRow] = []
+    dropped: list[tuple[EvidenceRow, str]] = []
+    for row in rows:
+        if row.evidence_kind.strip().lower() in drop:
+            dropped.append((row, f"evidence_kind '{row.evidence_kind}' is a control row"))
+            continue
+        members = table.get(drug_key(row.drug_name))
+        if not members:
+            kept.append(row)
+            continue
+        for member, weight in members.items():
+            note = f"via class row '{row.drug_name}' x {weight}"
+            kept.append(
+                dataclasses.replace(
+                    row,
+                    drug_name=member,
+                    evidence_strength=row.evidence_strength * float(weight),
+                    notes=f"{note}; {row.notes}" if row.notes else note,
+                )
+            )
+    return kept, dropped
+
+
 def _header(path: Path) -> list[str]:
     with path.open(encoding="utf-8") as stream:
         return stream.readline().rstrip("\n").split("\t")
@@ -124,5 +178,7 @@ def read_safety(path: Path | None) -> dict[str, str]:
                 raise ValueError(f"{path}: unknown safety_class {klass!r} for {name!r}")
         else:
             klass = safety_class(rec.get("combined_flag", ""))
+            if klass == "unflagged" and rec.get("labels_total", "").strip() == "0":
+                klass = "unassessed"  # no label exists, so the phenotype source was silent
         out[drug_key(name)] = klass
     return out

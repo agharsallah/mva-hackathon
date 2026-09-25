@@ -10,7 +10,7 @@
       "sha256": "6c04f5deb797f7d3d8b7bb661a79c54bd84ee886ebe383129cc889a4937919f8"
     }
   ],
-  "entry": "docs/iteration5/step-1/methodology/161 (R4; drafted at work/r4-entry.md)",
+  "entry": "docs/iteration5/step-1/methodology/161-the-decision-and-what-the-next-measurement-is-worth.md",
   "legend": "**Legend** \u2014 yellow = the first uncertain fact, purple = further facts about the child's alleles, edge = value (prior weight), green = the best drug in that state, red = only the baseline (defer) is best.",
   "wording": "triage heuristic, not a calibrated posterior",
   "patient_data": "none: drug names, state labels, weights and utilities; no position"

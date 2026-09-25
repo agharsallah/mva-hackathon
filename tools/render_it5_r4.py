@@ -16,7 +16,7 @@ is computed here that the summary does not hold, except layout.
     uv run python tools/render_it5_r4.py            # the dry run (build/, never committed)
 
 Writes ``<out>/r4-<name>.{svg,html}`` + ``.provenance.json`` and PNG previews under
-``<work>/preview``; prints each figure's legend line.
+``--preview`` (default ``build/it5/r4/preview``); prints each figure's legend line.
 """
 
 from __future__ import annotations
@@ -35,7 +35,6 @@ from mva.render.theme import (
     DECISION,
     GOOD,
     MACHINE,
-    MUTED,
     RAW,
     install_template,
     legend_line,
@@ -43,13 +42,14 @@ from mva.render.theme import (
 
 DRY = Path("build/it5/r4/dryrun")
 NOTE = "triage heuristic, not a calibrated posterior"
+DASHES = ("solid", "dashdot", "dot")
 
 
 def _write(
     fig: go.Figure, args: argparse.Namespace, name: str, size: tuple[int, int], legend: str
 ) -> None:
     out: Path = args.out
-    preview = args.work / "preview"
+    preview: Path = args.preview
     out.mkdir(parents=True, exist_ok=True)
     preview.mkdir(parents=True, exist_ok=True)
     svg = out / f"r4-{name}.svg"
@@ -62,7 +62,10 @@ def _write(
         "inputs": [
             {"path": provenance.repo_relative(source), "sha256": provenance.digest(source)[0]}
         ],
-        "entry": "docs/iteration5/step-1/work/r4-entry.md (draft)",
+        "entry": (
+            "docs/iteration5/step-1/methodology/"
+            "161-the-decision-and-what-the-next-measurement-is-worth.md"
+        ),
         "legend": legend,
         "wording": NOTE,
         "patient_data": "none: drug names, state labels, weights and utilities; no position",
@@ -125,13 +128,15 @@ def tree(summary: dict[str, Any], args: argparse.Namespace) -> None:
             _box(fig, level, node_y(prefix), f"<b>{var}</b>?", DECISION if level == 0 else RAW)
     for i, s in enumerate(states):
         hue = BAD if s["best"] == summary["baseline"] or s["utility"] <= 0 else GOOD
-        _box(fig, len(names) + 0.45, ys[i], f"{s['best']}<br>u = {s['utility']:.3f}", hue)
+        tie = f"<br>(tie: {', '.join(s.get('tied', []))})" if s.get("tied") else ""
+        _box(fig, len(names) + 0.45, ys[i], f"{s['best']}{tie}<br>u = {s['utility']:.3f}", hue)
     best = summary["best"]
     voi = " · ".join(
         f"{v['kind'].upper()} {'' if v['kind'] == 'evpi' else v['target'] + ' '}{v['value']:.3f}"
         for v in summary["voi"]
     )
-    head = f"decide now: <b>{best['action']}</b> (EU {best['expected_utility']:.3f}) · {NOTE}"
+    tie = f", tied with {', '.join(best.get('tied', []))}" if best.get("tied") else ""
+    head = f"decide now: <b>{best['action']}</b>{tie} (EU {best['expected_utility']:.3f}) · {NOTE}"
     head += f"<br>{voi}"
     fig.update_layout(
         title=dict(text=f"Which candidate in which world-state<br><sup>{head}</sup>"),
@@ -176,19 +181,15 @@ def voi_curve(summary: dict[str, Any], args: argparse.Namespace) -> None:
             col=col,
         )
         for name, test in tests.items():
-            own = test["variable"] == var
+            dash = DASHES[list(tests).index(name) % len(DASHES)]
             fig.add_trace(
                 go.Scatter(
                     x=xs,
                     y=[p[f"evsi:{name}"] for p in pts],
-                    name=f"EVSI {name}",
+                    name=f"EVSI {name} (tests {test['variable']})",
                     legendgroup=name,
                     showlegend=col == 1,
-                    line=dict(
-                        color=GOOD.line if own else MUTED.line,
-                        dash="solid" if own else "dot",
-                        width=2,
-                    ),
+                    line=dict(color=GOOD.line, dash=dash, width=2),
                 ),
                 row=1,
                 col=col,
@@ -224,9 +225,9 @@ def voi_curve(summary: dict[str, Any], args: argparse.Namespace) -> None:
     )
     legend = legend_line(
         extra=(
-            "blue = EVPI (upper bound), green = EVSI of the test on that variable, grey dotted = a "
-            "test on another variable, yellow dashed = exact flip point (segment labels = best "
-            "action), purple dotted = the configured prior"
+            "blue = EVPI (upper bound), green = EVSI of a named test (one dash style per test, "
+            "the legend names the variable it measures), yellow dashed = exact flip point "
+            "(segment labels = best action), purple dotted = the configured prior"
         )
     )
     _write(fig, args, "voi-curve", (560 * len(variables) + 120, 520), legend)
@@ -257,16 +258,12 @@ def heatmap(summary: dict[str, Any], args: argparse.Namespace) -> None:
         )
     )
     for s, state in enumerate(summary["states"]):
-        if state["best"] in [r["action"] for r in rows]:
-            y = [r["action"] for r in rows].index(state["best"])
-            fig.add_shape(
-                type="rect",
-                x0=s - 0.5,
-                x1=s + 0.5,
-                y0=y - 0.5,
-                y1=y + 0.5,
-                line=dict(color=DECISION.line, width=3),
-            )
+        names = [r["action"] for r in rows]
+        for best in (state["best"], *state.get("tied", [])):
+            if best in names:
+                y = names.index(best)
+                fig.add_shape(type="rect", x0=s - 0.5, x1=s + 0.5, y0=y - 0.5, y1=y + 0.5,
+                              line=dict(color=DECISION.line, width=3))  # fmt: skip
     fig.update_yaxes(autorange="reversed")
     fig.update_xaxes(title_text=f"world-state ({axis}) · expected utility", side="bottom")
     fig.update_layout(
@@ -276,7 +273,7 @@ def heatmap(summary: dict[str, Any], args: argparse.Namespace) -> None:
     legend = legend_line(
         extra=(
             "white to green = heuristic utility 0 to max, yellow outline = the best action in that "
-            "state, row label = action · per-child safety class"
+            "state (every tied action outlined), row label = action · per-child safety class"
         )
     )
     _write(fig, args, "heatmap", (1180, 160 + 34 * len(rows)), legend)
@@ -326,6 +323,12 @@ def main() -> None:
         "--out", type=Path, default=None, help="figure folder (default <work>/figures)"
     )
     parser.add_argument("--top", type=int, default=15, help="heatmap rows")
+    parser.add_argument(
+        "--preview",
+        type=Path,
+        default=Path("build/it5/r4/preview"),
+        help="PNG previews (kept under build/, never committed)",
+    )
     args = parser.parse_args()
     args.out = args.out or args.work / "figures"
     install_template()

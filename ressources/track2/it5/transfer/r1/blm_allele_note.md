@@ -1,7 +1,7 @@
 # The BLM allele this transfer models
 
 **Standing:** written 2026-09-25 for the iteration-5 scalability transfer (draft entry
-`docs/iteration5/step-1/work/s1-entry.md`).
+`docs/iteration5/step-1/methodology/162-the-three-routes-on-bloom-syndrome.md`).
 
 | field | value | source |
 |---|---|---|

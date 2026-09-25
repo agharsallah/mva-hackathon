@@ -18,7 +18,9 @@ __all__ = [
     "BRANCH_BY_EFFECT",
     "CONTROLS",
     "DESIRED",
+    "DIRECTNESS",
     "DISEASE_MARKERS",
+    "EFFECT_ON",
     "EXPOSURE_LEXICON",
     "EXTRACTOR",
     "INTERVENTION_LEXICON",
@@ -231,6 +233,31 @@ CONTROLS: dict[str, list[tuple[str, str]]] = {
     "24825348": [("bubr1_level", "increase")],
     "18516091": [("senescence", "decrease"), ("other", "decrease")],
     "22048312": [("senescence", "decrease"), ("other", "decrease")],
+}
+
+#: The ``effect_on`` vocabulary of this case: what an extracted row is allowed to be about.
+#: The quote gate rejects a row outside it, so a new category is a card change, not a guess.
+EFFECT_ON: tuple[str, ...] = (
+    "bubr1_level",
+    "acetylation",
+    "function",
+    "aneuploidy",
+    "senescence",
+    "lifespan",
+    "tumour",
+    "other",
+)
+
+#: How directly each effect speaks to the amount of working protein (the rubric's second axis).
+DIRECTNESS: dict[str, float] = {
+    "bubr1_level": 1.0,
+    "function": 0.9,
+    "acetylation": 0.8,
+    "aneuploidy": 0.8,
+    "lifespan": 0.7,
+    "senescence": 0.6,
+    "tumour": 0.6,
+    "other": 0.6,
 }
 
 #: For a hypomorphic (too-little-protein) gene, which direction of each effect is the goal.

@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import importlib
 import json
 import random
 from dataclasses import replace
@@ -41,33 +42,39 @@ from typing import Any
 import duckdb
 
 from mva.drugs import provenance
-from mva.drugs import readthrough_case as case
+from mva.drugs import readthrough_case as default_case
 from mva.drugs import readthrough_dossier as dossier
 from mva.drugs import readthrough_manifests as manifests
 from mva.drugs.cache import Fetcher
 from mva.drugs.readthrough import ControlResult, Measurement, ReadthroughModel, held_out_control
-from mva.drugs.readthrough_context import (
-    Domain,
-    TranscriptModel,
-    nmd_call,
-    parse_hgvs_c,
-    stop_context,
-    transcript_from_ensembl,
-    truncation,
-)
-from mva.drugs.readthrough_dataset import TOLEDANO_2024, load_wide
+from mva.drugs.readthrough_dataset import TOLEDANO_2024, load_wide, workbook_to_long
 from mva.drugs.readthrough_dosage import evaluate, nearest_threshold
+from mva.drugs.readthrough_external import COLUMNS, external_check
+from mva.drugs.readthrough_facts import stop_facts, transcript_model
 from mva.drugs.readthrough_tables import write_candidates, write_dosage, write_readthrough
 
-ENTRY = "docs/iteration5/step-1/methodology/<numbered by the coordinator>-r1.md"
+ENTRY = (
+    "docs/iteration5/step-1/methodology/"
+    "158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md"
+)
 BUILD = Path("build/it5/r1")
 TABLES = Path("ressources/track2/it5")
-ENSEMBL = "https://rest.ensembl.org"
+
+
+def _card(args: argparse.Namespace) -> Any:
+    """The case card module named by ``--card`` (the BUB1B one by default)."""
+    return importlib.import_module(args.card) if args.card else default_case
+
+
+def _dirs(args: argparse.Namespace) -> tuple[Path, Path]:
+    """``(build, tables)`` for this run; a second case writes beside the first, never over it."""
+    return Path(args.build), Path(args.tables)
+
+
 WORKBOOK_URL = (
     "https://static-content.springer.com/esm/art%3A10.1038%2Fs41588-024-01878-5/"
     "MediaObjects/41588_2024_1878_MOESM4_ESM.xlsx"
 )
-UNIPROT = "https://rest.uniprot.org/uniprotkb"
 
 
 # ── stage 1: the sequence facts ────────────────────────────────────────────────────────
@@ -87,86 +94,32 @@ def _record(records: Path, gene: str, consequence: str) -> dict[str, Any]:
     return dict(zip(keys, rows[0], strict=True))
 
 
-def _transcript(fetcher: Fetcher, transcript: str, accession: str) -> TranscriptModel:
-    lookup = fetcher.get_json(
-        f"{ENSEMBL}/lookup/id/{transcript}", {"expand": 1, "content-type": "application/json"}
-    )
-    cds = fetcher.get_json(
-        f"{ENSEMBL}/sequence/id/{transcript}", {"type": "cds", "content-type": "application/json"}
-    )["seq"]
-    features = fetcher.get_json(
-        f"{UNIPROT}/{accession}.json", {"fields": "ft_domain,ft_region,ft_motif,ft_mod_res"}
-    )
-    domains = tuple(
-        Domain(
-            feature.get("description") or feature["type"],
-            int(feature["location"]["start"]["value"]),
-            int(feature["location"]["end"]["value"]),
-        )
-        for feature in features.get("features", [])
-        if feature["type"] == "Domain"
-    )
-    return transcript_from_ensembl(lookup, cds, domains=domains)
-
-
 def facts(args: argparse.Namespace) -> dict[str, Any]:
-    """Derive every sequence fact the route needs, and cache them under ``build/``."""
-    record = _record(Path(args.records), args.gene, "stop_gained")
-    spelling = parse_hgvs_c(str(record["hgvs_c"]).split(":", 1)[-1])
-    fetcher = Fetcher(source="ensembl-uniprot", cache_dir=BUILD / "cache")
-    model = _transcript(fetcher, str(record["transcript"]), args.accession)
-    context = stop_context(model, spelling.offset, spelling.alt, flank=args.flank)
-    decay = nmd_call(model, context.codon_index, rule_nt=args.nmd_rule_nt)
-    lost = truncation(model, context.codon_index)
-    out = {
-        "gene": args.gene,
-        "transcript": model.transcript_id,
-        "uniprot": args.accession,
-        "coding_length_nt": len(model.cds),
-        "protein_length_aa": model.protein_length,
-        "exons_total": model.exons_total,
-        "coding_exons": model.coding_exons,
-        "stop": {
-            "rna_stop": context.rna_stop,
-            "tetranucleotide": context.tetranucleotide,
-            "plus4": context.plus4,
-            "minus1": context.minus1,
-            "reference_codon": context.reference_codon,
-            "upstream": context.upstream,
-            "downstream": context.downstream,
-            "codon_index": context.codon_index,
-        },
-        "nmd": {
-            "exon_index": decay.exon_index,
-            "nt_to_last_junction": decay.nt_to_last_junction,
-            "junctions_downstream": decay.junctions_downstream,
-            "rule_nt": decay.rule_nt,
-            "competent": decay.competent,
-            "reason": decay.reason,
-        },
-        "truncation": {
-            "residues_kept": lost.residues_kept,
-            "protein_length": lost.protein_length,
-            "fraction_lost": lost.fraction_lost,
-            "domains_lost": list(lost.domains_lost),
-            "domains_truncated": list(lost.domains_truncated),
-            "domains_kept": list(lost.domains_kept),
-        },
-        "clin_sig": record["clin_sig"],
-        "af_gnomad": record["af_gnomad"],
-        "source": "Ensembl REST (gene model, CDS) + UniProt (domains); allele from the callset",
-        "patient_data": (
-            "transcript offsets only, no genomic position; this file stays under build/"
-        ),
-    }
-    BUILD.mkdir(parents=True, exist_ok=True)
-    (BUILD / "stop_facts.json").write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
+    """Derive every sequence fact the route needs, and cache them under ``build/``.
+
+    The allele comes from the case's own callset, unless the card carries a published one
+    (``ALLELE``) — a transfer case is read from the literature, never from a patient.
+    """
+    card, (build, _) = _card(args), _dirs(args)
+    record = getattr(card, "ALLELE", None) or _record(Path(args.records), args.gene, "stop_gained")
+    fetcher = Fetcher(source="ensembl-uniprot", cache_dir=build / "cache")
+    model = transcript_model(fetcher, str(record["transcript"]), args.accession)
+    out = stop_facts(
+        record,
+        model,
+        gene=args.gene,
+        accession=args.accession,
+        flank=args.flank,
+        nmd_rule_nt=args.nmd_rule_nt,
+    )
+    build.mkdir(parents=True, exist_ok=True)
+    (build / "stop_facts.json").write_text(json.dumps(out, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({k: v for k, v in out.items() if k != "stop"}, indent=2))
     return out
 
 
-def _facts() -> dict[str, Any]:
-    path = BUILD / "stop_facts.json"
+def _facts(build: Path) -> dict[str, Any]:
+    path = build / "stop_facts.json"
     if not path.is_file():
         raise SystemExit(f"{path} missing: run `it5_readthrough.py facts` first")
     return json.loads(path.read_text(encoding="utf-8"))
@@ -177,25 +130,14 @@ def _facts() -> dict[str, Any]:
 
 def dataset(args: argparse.Namespace) -> None:
     """Reshape the published workbook's PTC sheet into the long TSV every later stage reads."""
-    import openpyxl
-
     source = Path(args.workbook)
     if not source.is_file():
         raise SystemExit(
             f"{source} missing. Download it first:\n  curl -L -o {source} '{WORKBOOK_URL}'"
         )
-    sheet = openpyxl.load_workbook(source, read_only=True, data_only=True)[args.sheet]
-    rows = [row[2:] for row in sheet.iter_rows(values_only=True)]
-    header = [str(cell) for cell in rows[0]]
     out = Path(args.measurements)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    with out.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.writer(handle, delimiter="\t", lineterminator="\n")
-        writer.writerow(header)
-        writer.writerows(
-            ["" if cell is None else str(cell) for cell in row] for row in rows[1:] if row[0]
-        )
-    print(f"wrote {out}: {len(rows) - 1} PTC rows, sha256 {provenance.digest(source)[0][:12]}…")
+    written = workbook_to_long(source, args.sheet, out)
+    print(f"wrote {out}: {written} PTC rows, sha256 {provenance.digest(source)[0][:12]}…")
 
 
 def _measurements(args: argparse.Namespace) -> list[Measurement]:
@@ -205,23 +147,26 @@ def _measurements(args: argparse.Namespace) -> list[Measurement]:
     return load_wide(path, TOLEDANO_2024)
 
 
-def _panels(measurements: list[Measurement], seed: int) -> dict[str, frozenset[str]]:
+def _panels(
+    measurements: list[Measurement], seed: int, panel: frozenset[str]
+) -> dict[str, frozenset[str]]:
     """Both held-out sets, fixed before any prediction: the named panel and a random 20 %."""
     contexts = sorted({m.context for m in measurements})
     rng = random.Random(seed)
     return {
-        "panel": case.BENCHMARK_PANEL,
+        "panel": panel,
         "random20": frozenset(rng.sample(contexts, k=int(0.2 * len(contexts)))),
     }
 
 
 def control(args: argparse.Namespace) -> dict[str, ControlResult]:
     """Both declared held-out controls, per drug. The named panel is the one rows carry."""
+    card, (build, _) = _card(args), _dirs(args)
     measurements = _measurements(args)
     drugs = sorted({m.drug for m in measurements})
     results: dict[str, ControlResult] = {}
     recorded: dict[str, dict[str, Any]] = {}
-    for name, held in _panels(measurements, args.seed).items():
+    for name, held in _panels(measurements, args.seed, card.BENCHMARK_PANEL).items():
         recorded[name] = {"held_out_contexts": len(held), "drugs": {}}
         print(f"-- control {name}: {len(held)} contexts held out of the fit")
         for drug in drugs:
@@ -255,8 +200,8 @@ def control(args: argparse.Namespace) -> dict[str, ControlResult]:
                     passed=False,
                     reason=results[drug].reason + "; but the random 20 % held-out set failed",
                 )
-    BUILD.mkdir(parents=True, exist_ok=True)
-    (BUILD / "controls.json").write_text(
+    build.mkdir(parents=True, exist_ok=True)
+    (build / "controls.json").write_text(
         json.dumps(
             {
                 "bar": {
@@ -276,7 +221,8 @@ def control(args: argparse.Namespace) -> dict[str, ControlResult]:
 
 def predict(args: argparse.Namespace) -> None:
     """Apply the model to the case's stop and write the readthrough table."""
-    known = _facts()
+    build, tables = _dirs(args)
+    known = _facts(build)
     measurements = _measurements(args)
     model = ReadthroughModel(measurements)
     controls = control(args)
@@ -287,7 +233,8 @@ def predict(args: argparse.Namespace) -> None:
         guess = model.predict(drug, stop, plus4, minus1)
         sources = sorted({m.source for m in measurements if m.drug == drug})
         rows.append((guess, controls.get(drug), ";".join(sources)))
-    path = TABLES / "readthrough.tsv"
+    path = tables / "readthrough.tsv"
+    path.parent.mkdir(parents=True, exist_ok=True)
     written = write_readthrough(path, rows)
     provenance.write(
         manifests.readthrough_manifest(
@@ -296,7 +243,8 @@ def predict(args: argparse.Namespace) -> None:
             rows=written,
             workbook=Path(args.workbook),
             workbook_url=WORKBOOK_URL,
-            stop_facts=BUILD / "stop_facts.json",
+            stop_facts=build / "stop_facts.json",
+            case_notes=getattr(_card(args), "NOTES", None),
             parameters={
                 "min_rows_per_cell": model.min_rows,
                 "backoff": "(drug, stop, +4, -1) -> (drug, stop, +4) -> (drug, stop) -> (drug)",
@@ -314,41 +262,85 @@ def predict(args: argparse.Namespace) -> None:
     print(f"wrote {path} ({written} rows)")
 
 
+# ── external check: predict a context the fit has never seen, against its measurement ──
+
+
+def holdout(args: argparse.Namespace) -> None:
+    """Refit without one *measured* PTC context, predict it, and compare with the measurement.
+
+    This is the check a case only gets when the published dataset happens to contain its own
+    gene: the context is removed from the fit entirely, so the comparison is external.
+    """
+    _, tables = _dirs(args)
+    card = _card(args)
+    contexts = tuple(args.holdout_context) or tuple(getattr(card, "HOLDOUT_CONTEXTS", ()))
+    if not contexts:
+        raise SystemExit("no --holdout-context given and the card names none")
+    try:
+        rows, summary = external_check(_measurements(args), contexts)
+    except KeyError as missing:
+        raise SystemExit(f"{missing.args[0]} (measurements: {args.measurements})") from missing
+    path = tables / "readthrough_external_check.tsv"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle, fieldnames=list(COLUMNS), delimiter="\t", lineterminator="\n"
+        )
+        writer.writeheader()
+        writer.writerows(rows)
+    provenance.write(
+        manifests.external_check_manifest(
+            entry=ENTRY,
+            output_path=path,
+            rows=len(rows),
+            measurements=Path(args.measurements),
+            parameters={"held_out_contexts": list(contexts), "summary": summary},
+        ),
+        path.with_suffix(".provenance.json"),
+    )
+    print(f"wrote {path} ({len(rows)} rows)")
+    print(json.dumps(summary, indent=1))
+
+
 # ── stage 4: dosage, then the candidate table ──────────────────────────────────────────
 
 
 def dosage(args: argparse.Namespace) -> None:
     """Evaluate every scenario and write the dosage and candidate tables."""
-    known = _facts()
-    predicted = case.best_readthrough(TABLES / "readthrough.tsv")
-    scenarios = case.scenarios(known, predicted)
+    card, (build, tables) = _card(args), _dirs(args)
+    known = _facts(build)
+    predicted = card.best_readthrough(tables / "readthrough.tsv")
+    scenarios = card.scenarios(known, predicted)
     results = [(evaluate(s), None) for s in scenarios]
-    scored = [(r, nearest_threshold(r, case.THRESHOLDS)) for r, _ in results]
-    path = TABLES / "allele_dosage.tsv"
+    scored = [(r, nearest_threshold(r, card.THRESHOLDS)) for r, _ in results]
+    path = tables / "allele_dosage.tsv"
     written = write_dosage(path, scored)
     provenance.write(
         manifests.dosage_manifest(
             entry=ENTRY,
             output_path=path,
             rows=written,
-            stop_facts=BUILD / "stop_facts.json",
-            readthrough_table=TABLES / "readthrough.tsv",
-            published_alleles=Path("ressources/track2/bub1b_published_alleles.tsv"),
-            parameters=case.DOSAGE_PARAMETERS,
+            stop_facts=build / "stop_facts.json",
+            readthrough_table=tables / "readthrough.tsv",
+            published_alleles=Path(card.PUBLISHED_ALLELES),
+            parameters=card.DOSAGE_PARAMETERS,
+            case_notes=getattr(card, "NOTES", None),
         ),
         path.with_suffix(".provenance.json"),
     )
     print(f"wrote {path} ({written} rows)")
 
-    candidates = dossier.candidates(TABLES / "readthrough.tsv")
-    path = TABLES / "readthrough_candidates.tsv"
+    if not getattr(card, "DOSSIER", True):
+        return
+    candidates = dossier.candidates(tables / "readthrough.tsv")
+    path = tables / "readthrough_candidates.tsv"
     written = write_candidates(path, candidates)
     provenance.write(
         manifests.candidates_manifest(
             entry=ENTRY,
             output_path=path,
             rows=written,
-            readthrough_table=TABLES / "readthrough.tsv",
+            readthrough_table=tables / "readthrough.tsv",
             hpo_map=Path("ressources/track2/hpo_to_adverse_terms.tsv"),
         ),
         path.with_suffix(".provenance.json"),
@@ -360,10 +352,21 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "stage",
-        choices=("dataset", "facts", "control", "predict", "dosage", "all"),
+        choices=("dataset", "facts", "control", "predict", "holdout", "dosage", "all"),
         help="which stage to run",
     )
     parser.add_argument("--gene", default="BUB1B")
+    parser.add_argument(
+        "--card", default="", help="case-card module (default: mva.drugs.readthrough_case)"
+    )
+    parser.add_argument("--build", default=str(BUILD), help="working directory for this case")
+    parser.add_argument("--tables", default=str(TABLES), help="where the case's tables are written")
+    parser.add_argument(
+        "--holdout-context",
+        action="append",
+        default=[],
+        help="a measured PTC context to remove from the fit and predict (repeatable)",
+    )
     parser.add_argument("--accession", default="O60566", help="UniProt accession for the protein")
     parser.add_argument("--records", default="build/it4/records.parquet")
     parser.add_argument("--measurements", default=str(BUILD / "toledano_ptc.tsv"))
@@ -388,6 +391,7 @@ def main() -> None:
             "facts": facts,
             "control": control,
             "predict": predict,
+            "holdout": holdout,
             "dosage": dosage,
         }[stage](args)
 

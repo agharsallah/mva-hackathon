@@ -54,22 +54,19 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
-import numpy as np
-
 from mva.drugs import provenance
 from mva.drugs.cache import Fetcher
-from mva.drugs.proteome import score_correlations, set_score
+from mva.drugs.proteome_baseline import baseline
 from mva.drugs.proteome_manifest import file_input, write_manifests
 from mva.drugs.proteome_run import ControlSpec, DatasetResult, ProteomePlan, run_dataset
-from mva.drugs.proteome_sets import TIROSH_G2M, members
+from mva.drugs.proteome_sets import TIROSH_G2M
 from mva.drugs.proteome_sources import (
     compound_of,
     drug_means,
-    read_ccle_protein,
-    read_half_lives,
     read_ratio_workbook,
     read_wide_log2fc,
 )
@@ -91,10 +88,15 @@ from mva.drugs.signature_reversal_approval import (
 RAW = Path("build/it5/r2/raw")
 BUILD = Path("build/it5/r2")
 OUT = Path("ressources/track2/it5")
+#: The gene whose protein this route ranks. A second case changes this flag and nothing else:
+#: the datasets, the proliferation score and the gating controls are dataset properties.
+#: Which allele branch a "more protein" lead can help, in the plan's branch vocabulary.
+DEFAULT_BRANCH = "missense_unstable"
 ENTRY = (
     "docs/iteration5/step-1/methodology/"
     "159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md"
 )
+#: The gene whose protein this route ranks by default.
 TARGET = "BUB1B"
 CONTRACT = "iteration-5 route contract (docs/iteration5/plan.md)"
 FRAMING = "research exercise; no row advises for or against giving any drug to any patient"
@@ -171,40 +173,16 @@ def _approval() -> tuple[Any, Fetcher, Fetcher]:
     return index, chembl_fetch, fda_fetch
 
 
-def _baseline(target: str) -> dict[str, Any]:
-    """Descriptive: is BUB1B protein cell-cycle-bound at baseline, and how long does it live?"""
-    ccle = read_ccle_protein(CCLE)
-    genes = members(TIROSH_G2M, set(ccle.genes), {target})
-    score, used = set_score(ccle, genes, min_members=10)
-    r = score_correlations(ccle, score)
-    at = ccle.index()[target]
-    finite = r[np.isfinite(r)]
-    halves = read_half_lives(HALF_LIFE)
-    hl: dict[str, Any] = {}
-    for column, value in halves.get(target, {}).items():
-        pool = np.array([v[column] for v in halves.values() if column in v])
-        hl[column] = {
-            "hours": round(value, 2),
-            "percentile_among_proteins": round(float(np.mean(pool <= value)) * 100, 1),
-            "proteins": int(pool.size),
-        }
-    return {
-        "ccle_lines": len(ccle.perturbations),
-        "ccle_score_members": len(used),
-        "ccle_r_target_vs_g2m": round(float(r[at]), 4),
-        "ccle_percentile_of_r": round(float(np.mean(finite <= r[at])) * 100, 1),
-        "ccle_proteins_with_r": int(finite.size),
-        "half_life": hl,
-    }
-
-
-def run() -> None:
+def run(args: argparse.Namespace) -> None:
+    target, branch = args.target, args.branch
+    build, out_dir = Path(args.build), Path(args.out)
+    plan = replace(PLAN, target=target)
     index, chembl_fetch, fda_fetch = _approval()
     results: list[tuple[DatasetResult, Any]] = []
     mitchell = read_wide_log2fc(MITCHELL)
     _log(f"mitchell: {len(mitchell.genes)} proteins x {len(mitchell.perturbations)}")
     res = run_dataset(
-        "mitchell2023", "HCT116, 10 µM, 24 h", mitchell, PLAN, MITCHELL_CONTROLS, progress=_log
+        "mitchell2023", "HCT116, 10 µM, 24 h", mitchell, plan, MITCHELL_CONTROLS, progress=_log
     )
     results.append((res, compound_of))
     for line, path in PTM.items():
@@ -213,7 +191,7 @@ def run() -> None:
             f"protargetminer_{line}",
             f"{line}, 9 drugs, replicate mean",
             deep,
-            PLAN,
+            plan,
             PTM_CONTROLS,
             z_min=2.0,
             top_fraction=1 / 9,
@@ -235,10 +213,10 @@ def run() -> None:
     hits: list[dict[str, Any]] = []
     controls: list[dict[str, Any]] = []
     for res, of in results:
-        hits += hit_rows(res, of, canon, broad_share=PLAN.broad_share)
+        hits += hit_rows(res, of, canon, broad_share=plan.broad_share)
         controls += control_rows(res)
     summary: dict[str, Any] = {
-        "target": TARGET,
+        "target": target,
         "datasets": {
             res.name: {
                 "context": res.context,
@@ -255,16 +233,17 @@ def run() -> None:
             "openfda_labelled": len(fda),
             "openfda_failed": failed,
         },
-        "baseline": _baseline(TARGET),
+        "baseline": baseline(target, ccle_path=CCLE, half_life_path=HALF_LIFE),
     }
-    BUILD.mkdir(parents=True, exist_ok=True)
-    (BUILD / "proteome_summary.json").write_text(json.dumps(summary, indent=1) + "\n")
+    build.mkdir(parents=True, exist_ok=True)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (build / "proteome_summary.json").write_text(json.dumps(summary, indent=1) + "\n")
     hit_cols = list(hits[0])
     ctrl_cols = list(controls[0])
-    n_hits = write_tsv(OUT / "proteome_hits.tsv", hits, hit_cols)
-    n_ctrl = write_tsv(OUT / "proteome_control.tsv", controls, ctrl_cols)
+    n_hits = write_tsv(out_dir / "proteome_hits.tsv", hits, hit_cols)
+    n_ctrl = write_tsv(out_dir / "proteome_control.tsv", controls, ctrl_cols)
     write_manifests(
-        out=OUT,
+        out=out_dir,
         entry=ENTRY,
         inputs=[
             file_input(MITCHELL, MITCHELL_ROLE, URLS),
@@ -285,15 +264,15 @@ def run() -> None:
             ),
         ],
         parameters={
-            "target": TARGET,
+            "target": target,
             "score_set": "Tirosh 2016 G2/M (54)",
-            "z_min": PLAN.z_min,
-            "top_fraction": PLAN.top_fraction,
-            "broad_share": PLAN.broad_share,
+            "z_min": plan.z_min,
+            "top_fraction": plan.top_fraction,
+            "broad_share": plan.broad_share,
             "deep_sets": "z_min 2, rank 1 of 9",
         },
         sources={
-            "genomic": GENOMIC_SOURCE,
+            "genomic": args.genomic_source or GENOMIC_SOURCE,
             "clinical": "not used by this table; the entry cross-references the 8 HPO terms",
         },
         framing=FRAMING,
@@ -304,11 +283,11 @@ def run() -> None:
         ],
         validation={k: v["controls"] for k, v in summary["datasets"].items()},
     )
-    _protein_rows(hits)
+    _protein_rows(hits, target=target, branch=branch, build=build)
     print(json.dumps(summary, indent=1))
 
 
-def _protein_rows(hits: list[dict[str, Any]]) -> None:
+def _protein_rows(hits: list[dict[str, Any]], *, target: str, branch: str, build: Path) -> None:
     """Approved hits → candidate rows (build/, merged by ``candidates``)."""
     hit_studies: dict[str, set[str]] = {}
     for h in hits:
@@ -325,8 +304,8 @@ def _protein_rows(hits: list[dict[str, Any]]) -> None:
             {
                 "drug_name": h["canonical_name"],
                 "route": "R2",
-                "branch": "missense_unstable",
-                "evidence_kind": "proteome: BUB1B protein raised beyond proliferation score",
+                "branch": branch,
+                "evidence_kind": (f"proteome: {target} protein raised beyond proliferation score"),
                 "evidence_strength": strength,
                 "positive_control_passed": h["dataset_interpretable"],
                 "source": f"{h['dataset']} ({h['context']}); {h['chembl_id']}",
@@ -336,21 +315,22 @@ def _protein_rows(hits: list[dict[str, Any]]) -> None:
                 ),
             }
         )
-    write_tsv(BUILD / "protein_rows.tsv", rows, CANDIDATE_COLUMNS)
+    write_tsv(build / "protein_rows.tsv", rows, CANDIDATE_COLUMNS)
     _log(f"protein candidate rows: {len(rows)}")
 
 
-def candidates() -> None:
+def candidates(args: argparse.Namespace) -> None:
     """Merge the protein rows and the LINCS rows into the route's candidate file."""
+    build, out_dir = Path(args.build), Path(args.out)
     rows: list[dict[str, Any]] = []
-    parts = [BUILD / "protein_rows.tsv", BUILD / "lincs_rows.tsv"]
+    parts = [build / "protein_rows.tsv", build / "lincs_rows.tsv"]
     for part in parts:
         if part.exists():
             lines = part.read_text().splitlines()
             head = lines[0].split("\t")
             rows += [dict(zip(head, line.split("\t"), strict=True)) for line in lines[1:]]
     rows.sort(key=lambda r: (-float(r["evidence_strength"] or 0), r["drug_name"]))
-    path = OUT / "protein_candidates.tsv"
+    path = out_dir / "protein_candidates.tsv"
     n = write_tsv(path, rows, CANDIDATE_COLUMNS)
     manifest = provenance.envelope(
         "protein_candidates", built_by="tools/it5_proteome.py candidates"
@@ -371,7 +351,10 @@ def candidates() -> None:
             "rows": n,
             "outputs": [provenance.output(path, n)],
             "clinical_framing": FRAMING,
-            "sources": {"genomic": "target gene only", "clinical": "cross-referenced in entry"},
+            "sources": {
+                "genomic": args.genomic_source or "target gene only",
+                "clinical": "cross-referenced in entry",
+            },
         }
     )
     provenance.write(manifest, path.with_suffix(".provenance.json"))
@@ -381,8 +364,13 @@ def candidates() -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[1])
     parser.add_argument("command", choices=["run", "candidates"])
+    parser.add_argument("--target", default=TARGET, help="the protein to rank")
+    parser.add_argument("--branch", default=DEFAULT_BRANCH, help="branch the rows are filed under")
+    parser.add_argument("--out", default=str(OUT), help="where the tables are written")
+    parser.add_argument("--build", default=str(BUILD), help="working directory for this case")
+    parser.add_argument("--genomic-source", default="", help="override the sources.genomic line")
     args = parser.parse_args()
-    run() if args.command == "run" else candidates()
+    run(args) if args.command == "run" else candidates(args)
 
 
 if __name__ == "__main__":

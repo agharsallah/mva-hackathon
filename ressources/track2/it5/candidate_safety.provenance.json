@@ -8,7 +8,7 @@
     "genome_flag": "yes when a gene is actionable, uncallable, or outside the caller",
     "phenotype_flag": "yes on either trigger; phenotype_flag_reason says which"
   },
-  "entry": "docs/iteration5/step-1/methodology/161 (R4; drafted at docs/iteration5/step-1/work/r4-entry.md)",
+  "entry": "docs/iteration5/step-1/methodology/161-the-decision-and-what-the-next-measurement-is-worth.md",
   "generated_at": "2026-09-25T17:18:36+00:00",
   "inputs": [
     {

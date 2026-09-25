@@ -14,7 +14,9 @@ The utility of drug ``d`` in state ``s`` is a product of stated weights, one per
 * ``applicability`` - does the row's mechanism branch act in this state? A read-through drug
   (branch ``stop_allele``) does nothing if read-through is infeasible.
 * ``control`` - did the route that produced the row pass its positive control? A failed
-  control is penalised or the row excluded; that is a config choice.
+  control is penalised or the row excluded; that is a config choice. A row the route marks
+  ``n/a`` (a published measurement, not an output of a controlled method) takes its own
+  stated factor.
 * ``safety`` - the per-child two-source flag (iteration 4, entries 152/155). A drug missing
   from the safety table is ``unassessed``, never ``safe``.
 * ``combine`` - ``max`` (default: the best single argument; convergent routes are not
@@ -60,9 +62,18 @@ __all__ = [
 #: The pinned ``branch`` vocabulary of every route's candidate table (iteration-5 plan).
 BRANCHES = ("stop_allele", "missense_unstable", "missense_inactive", "any")
 #: ``positive_control_passed`` after normalisation.
-CONTROL_STATES = ("passed", "failed", "unknown")
-#: Per-child safety classes; the first four mirror it4 ``candidate_safety.tsv``'s combined flag.
-SAFETY_CLASSES = ("unflagged", "genome_flag", "phenotype_flag", "both_flag", "unassessed")
+CONTROL_STATES = ("passed", "failed", "unknown", "not_applicable")
+#: Per-child safety classes: the first four mirror it4 ``candidate_safety.tsv``'s combined
+#: flag; ``caution`` / ``avoid`` come from :mod:`mva.drugs.decision_avoid`.
+SAFETY_CLASSES = (
+    "unflagged",
+    "genome_flag",
+    "phenotype_flag",
+    "both_flag",
+    "unassessed",
+    "caution",
+    "avoid",
+)
 #: Printed on every output so no number is quoted as a probability of benefit.
 HEURISTIC_NOTE = (
     "triage heuristic: each utility is a product of stated weights and each prior a stated "
@@ -123,6 +134,7 @@ class DecisionConfig:
     control_policy: str
     failed_factor: float
     unknown_factor: float
+    na_factor: float
     combine: str
     baseline_name: str
     baseline_utility: float
@@ -218,6 +230,8 @@ def control_factor(config: DecisionConfig, control: str) -> float | None:
     """1 for a passed control; the stated penalty otherwise; ``None`` = row excluded."""
     if control == "passed":
         return 1.0
+    if control == "not_applicable":
+        return config.na_factor
     if control == "unknown":
         return config.unknown_factor
     if config.control_policy == "exclude":

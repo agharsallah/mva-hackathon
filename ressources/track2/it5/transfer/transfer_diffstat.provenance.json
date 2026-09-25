@@ -4,7 +4,7 @@
   "built_by": "tools/it5_transfer_summary.py",
   "code_version": "29ce58b",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
-  "entry": "docs/iteration5/step-1/work/s1-entry.md",
+  "entry": "docs/iteration5/step-1/methodology/162-the-three-routes-on-bloom-syndrome.md",
   "inputs": [
     {
       "name": "git working tree",

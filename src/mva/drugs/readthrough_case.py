@@ -29,10 +29,18 @@ from mva.drugs.readthrough_dosage import Allele, DrugEffect, Scenario, Threshold
 __all__ = [
     "BENCHMARK_PANEL",
     "DOSAGE_PARAMETERS",
+    "DOSSIER",
+    "PUBLISHED_ALLELES",
     "THRESHOLDS",
     "best_readthrough",
     "scenarios",
 ]
+
+#: The published allele table the dosage manifest cites for the non-stop allele.
+PUBLISHED_ALLELES = "ressources/track2/bub1b_published_alleles.tsv"
+
+#: This case has a hand-written candidate dossier (:mod:`mva.drugs.readthrough_dossier`).
+DOSSIER = True
 
 #: The PTC contexts held out of the fit before anything was predicted for this child. Chosen
 #: from the readthrough literature (the alleles other papers benchmark on), not from any model
