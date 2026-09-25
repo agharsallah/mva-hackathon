@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-25T13:18:47",
+  "generated_at": "2026-09-25T14:26:00",
   "steps": [
     {
       "slug": "step-0",
@@ -3407,11 +3407,30 @@
       "refuted_by": "No approved drug is in both engines' top 100 reversers, or every such drug is also in the top 100 reversers of 2 or more of the 20 decoys. If the positive control fails, the run is recorded as uninterpretable, never as support",
       "gene": "BUB1B",
       "path": "e3-lincs",
-      "status": "proposed",
-      "confidence": null,
+      "status": "testing",
+      "confidence": 0.5,
       "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 219,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "The registered positive control failed in both genetic libraries: the best checkpoint sibling of the BUB1B knockout signature is BUB1 at 5.6 % of 5,156 CRISPR-knockout genes (the cut is 5 %) and BUB3 at 16.9 % in shRNA, while random decoy signatures pass the same control 2 and 4 times in 20, so the run is uninterpretable by registration.",
+          "source_ref": "docs/iteration4/step-9/methodology/153-lincs-signature-reversal-of-bub1b-loss.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 220,
+          "direction": "neutral",
+          "strength": 0.1,
+          "kind": "measurement",
+          "claim": "The drug clause is met descriptively but not counted: phenytoin and albendazole are in both engines' top 100 reversers and in none of the 20 decoys' top 100; tofacitinib is in both but also in 2 decoys.",
+          "source_ref": "docs/iteration4/step-9/methodology/153-lincs-signature-reversal-of-bub1b-loss.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H093",
@@ -3421,11 +3440,39 @@
       "refuted_by": "No eligible Launched compound reaches q < 0.10 in both contrasts",
       "gene": "",
       "path": "s10-prism-sweep",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.1,
+      "suggested_confidence": 0.168,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 216,
+          "direction": "refutes",
+          "strength": 0.8,
+          "kind": "measurement",
+          "claim": "Over 613 eligible Launched drugs in PRISM 24Q2, with Benjamini-Hochberg within each contrast, no drug reaches q < 0.10 in the rhabdomyosarcoma contrast (best 0.122) or the aneuploidy contrast (best 0.287), so none reaches it in both.",
+          "source_ref": "docs/iteration4/step-10/methodology/154-screen-wide-prism-sweep.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 217,
+          "direction": "neutral",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "The same sweep code, run over skin/melanoma lines against the rest, puts dabrafenib and vemurafenib at ranks 1 and 2 of 2,032 Launched drugs (q 3.2e-9 and 4.5e-8), so the null is not a pipeline failure.",
+          "source_ref": "docs/iteration4/step-10/methodology/154-screen-wide-prism-sweep.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 218,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "The rhabdomyosarcoma contrast rests on three lines (TE617T, RD, RH30) for 619 of 633 compound copies and fires at 9.6 % raw p < 0.05, twice the nominal rate, so its arm of the test has little power.",
+          "source_ref": "docs/iteration4/step-10/methodology/154-screen-wide-prism-sweep.md",
+          "lineage_ref": ""
+        }
+      ]
     },
     {
       "id": "H094",
