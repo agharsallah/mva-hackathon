@@ -27,7 +27,7 @@ sequencing argument, this module owns the machine-readable form of it.
 from importlib import import_module
 
 from .step import ITERATION, PLATFORM, RESEARCH, STATUSES, Step
-from .step_maps import ITERATION1, ITERATION2, ITERATION4
+from .step_maps import ITERATION1, ITERATION2, ITERATION4, ITERATION5
 
 __all__ = [
     "FIRST_ITERATION",
@@ -35,6 +35,7 @@ __all__ = [
     "ITERATION1",
     "ITERATION2",
     "ITERATION4",
+    "ITERATION5",
     "PLATFORM",
     "RESEARCH",
     "STATUSES",
@@ -56,6 +57,7 @@ STEPS_BY_ITERATION: dict[str, tuple[Step, ...]] = {
     "iteration1": ITERATION1,
     "iteration2": ITERATION2,
     "iteration4": ITERATION4,
+    "iteration5": ITERATION5,
 }
 
 #: The iteration that was being worked before the column recording it existed: a claim

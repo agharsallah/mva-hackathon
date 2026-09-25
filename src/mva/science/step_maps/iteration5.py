@@ -1,0 +1,38 @@
+"""Iteration 5's step map — allele-first Track 2 (``docs/iteration5/plan.md``).
+
+Part of :mod:`mva.science.steps`, which owns the API; this module only holds the map.
+"""
+
+from ..step import PLATFORM, Step
+
+__all__ = ["ITERATION5"]
+
+#: Iteration 5 — start from the child's two alleles and the protein, not from the drug
+#: databases. One exploratory step, no pre-registered claims (user decision 2026-09-25,
+#: ``docs/iteration5/notes/exploratory-no-hypotheses.md``); every route carries its own
+#: positive control instead. Declared 2026-09-25.
+ITERATION5: tuple[Step, ...] = (
+    Step(
+        slug="step-0",
+        title="The platform",
+        goal="Can the delivered bytes be trusted, stored without loss, and queried in SQL?",
+        kind=PLATFORM,
+        status="done",
+        unblocks=("step-1",),
+    ),
+    Step(
+        slug="step-1",
+        title="Track 2 — allele-first therapy routes",
+        goal=(
+            "Starting from the child's two BUB1B alleles and the BubR1 protein, which "
+            "therapeutic routes exist per allele (stop-codon readthrough, protein "
+            "stabilisation, BubR1-raising interventions from protein-level data and the "
+            "literature), each validated on a positive control, and which one should the "
+            "treating team pursue given the one lab test that separates them?"
+        ),
+        iteration="iteration5",
+        # planned until the first route files an entry; then open with a narrative.json
+        status="planned",
+        track="track2",
+    ),
+)
