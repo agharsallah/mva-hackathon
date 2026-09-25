@@ -28,11 +28,11 @@
     }
   ],
   "counts": {
-    "chapters": 28,
-    "entries": 684,
+    "chapters": 29,
+    "entries": 703,
     "figures": 20,
     "diagrams": 22,
-    "contexts": 262
+    "contexts": 281
   },
   "chapters": [
     {
@@ -9251,6 +9251,256 @@
           "exampleHtml": "",
           "context": "<p>entry 152 E5.2 an incidental finding, not a Track 2 candidate</p>",
           "firstSeen": "2026-09-24"
+        }
+      ]
+    },
+    {
+      "number": 29,
+      "id": "29-iteration-4s-own-track-2-answer--words-for-steps-9-e3-10-and-11",
+      "title": "Iteration 4's own Track 2 answer — words for steps 9 (E3), 10 and 11",
+      "blocks": [
+        {
+          "kind": "prose",
+          "html": "<p>Step 10 rebuilds the Track 2 drug list from iteration 4's evidence alone: several independent\nsources each propose drugs, and their agreement is tested against chance. E3 adds a\ngene-expression source; step 11 runs the whole chain on a second disease.</p>"
+        },
+        {
+          "kind": "entry",
+          "slug": "positive-control",
+          "term": "positive control",
+          "aliases": [],
+          "html": "<p>a case where the right answer is already known, run through the same code first. If it fails, the pipeline (or the question) is broken and the real result cannot be read. <em>Example:</em> the screen sweep must find dabrafenib in melanoma lines; it does, at q 3.2 × 10⁻⁹.</p>",
+          "exampleHtml": "",
+          "context": "<p>entries 153, 154</p>",
+          "related": [
+            "decoy-null",
+            "permutation-null"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "expression-signature",
+          "term": "expression signature",
+          "aliases": [],
+          "html": "<p>the list of genes a perturbation turns up and turns down, compared with untreated cells. Like a diff of gene activity. <em>Example:</em> the BUB1B knockout's 100 most raised and 100 most lowered genes.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 153</p>",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "l1000-landmark-gene",
+          "term": "L1000 / landmark gene",
+          "aliases": [
+            "L1000",
+            "landmark gene"
+          ],
+          "html": "<p>a cheap assay that measures 978 \"landmark\" genes directly and infers the rest. LINCS built most of its signatures with it. <em>Example:</em> E3's signature uses landmark genes only, so both engines read the same 200 genes.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 153</p>",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "lincs-library-of-integrated-network-based-cellular-signatures",
+          "term": "LINCS (Library of Integrated Network-based Cellular Signatures)",
+          "aliases": [
+            "LINCS",
+            "Library of Integrated Network-based Cellular Signatures"
+          ],
+          "html": "<p>a public library of expression signatures for thousands of drugs and gene knockouts across cell lines. <em>Example:</em> 718,055 compound signatures in SigCom's copy.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 153</p>",
+          "related": [
+            "expression-signature"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "consensus-signature",
+          "term": "consensus signature",
+          "aliases": [],
+          "html": "<p>one signature summarising many replicates of the same perturbation. <em>Example:</em> the BUB1B row of the LINCS 2021 CRISPR consensus matrix, summarising 31 knockout signatures.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 153</p>",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "connectivity-engine-reverser-mimicker",
+          "term": "connectivity engine / reverser / mimicker",
+          "aliases": [
+            "connectivity engine",
+            "reverser",
+            "mimicker"
+          ],
+          "html": "<p>a search engine that takes a query signature and ranks library signatures by similarity. A <strong>reverser</strong> moves genes the opposite way (a candidate treatment); a <strong>mimicker</strong> moves them the same way. <em>Example:</em> SigCom LINCS and iLINCS; phenytoin is a reverser in both.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 153</p>",
+          "related": [
+            "expression-signature"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "decoy-signature",
+          "term": "decoy signature",
+          "aliases": [],
+          "html": "<p>a random gene set of the same size, queried like the real one. A drug that reverses decoys too is not specific. <em>Example:</em> 20 decoys; phenytoin reverses none of them.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 153</p>",
+          "related": [
+            "decoy-set"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "senolytic",
+          "term": "senolytic",
+          "aliases": [],
+          "html": "<p>a drug that selectively kills senescent cells (cells permanently stopped from dividing that inflame their neighbours). <em>Example:</em> dasatinib (+ quercetin), the approved analogue of the p16⁺-cell clearance that delayed ageing in BubR1-hypomorph mice.</p>",
+          "exampleHtml": "",
+          "context": "<p>direction D5, entry 150</p>",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "launched",
+          "term": "Launched",
+          "aliases": [],
+          "html": "<p>the Drug Repurposing Hub's word for a compound approved and marketed somewhere. PRISM copies it into its release files. <em>Example:</em> 613 Launched drugs were eligible in the sweep.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 154</p>",
+          "related": [
+            "prism-profiling-relative-inhibition-simultaneously-in-mixtures"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "drug-repurposing-hub-moa",
+          "term": "Drug Repurposing Hub MOA",
+          "aliases": [],
+          "html": "<p>the Broad Institute's curated mechanism-of-action label for each compound, shipped with PRISM. <em>Example:</em> \"AURORA KINASE INHIBITOR\" fails check K1.</p>",
+          "exampleHtml": "",
+          "context": "<p>entries 151, 155</p>",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "representative-copy",
+          "term": "representative copy",
+          "aliases": [],
+          "html": "<p>when a screen tested a drug several times, the one copy that enters the multiple-testing correction: the copy measured on the most in-group lines. <em>Example:</em> rosuvastatin's REP.1M copy (14 rhabdomyosarcoma lines) over its 3-line copy.</p>",
+          "exampleHtml": "",
+          "context": "<p>entries 151, 154</p>",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "screen-wide-sweep",
+          "term": "screen-wide sweep",
+          "aliases": [],
+          "html": "<p>the same drug-versus-cell-group test run over every compound a screen measured well enough, with the correction taken over all of them. Discovery mode, where a replication tests a short list. <em>Example:</em> 613 drugs, best q 0.122.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 154</p>",
+          "related": [
+            "positive-control"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "contrary-direction-p-p-opposite",
+          "term": "contrary-direction p (p_opposite)",
+          "aliases": [
+            "contrary-direction p",
+            "p_opposite"
+          ],
+          "html": "<p>the one-sided p for the other tail: that the in-group is <em>less</em> sensitive. <em>Example:</em> cefpirome in rhabdomyosarcoma lines, δ −0.655, p_opposite 0.024.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 154, read by check K3</p>",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "volcano-plot",
+          "term": "volcano plot",
+          "aliases": [],
+          "html": "<p>effect size on x, −log₁₀ p on y, one dot per tested item; strong results rise to the top corners. <em>Example:</em> <code>figures/it4/step10-s1-volcano.svg</code>.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 154</p>",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "generator",
+          "term": "generator",
+          "aliases": [],
+          "html": "<p>an independent source that proposes drugs by a rule fixed before any join. <em>Example:</em> G1, the PrimeKG walk's top 50 labelled drugs.</p>",
+          "exampleHtml": "",
+          "context": "<p>step 10 README, entry 155</p>",
+          "related": [
+            "check-versus-a-generator",
+            "universe-of-a-generator"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "check-versus-a-generator",
+          "term": "check (versus a generator)",
+          "aliases": [
+            "check",
+            "versus a generator"
+          ],
+          "html": "<p>a filter that can remove a drug or add a caution, but never propose one. Keeping the two apart stops a source from voting twice. <em>Example:</em> K1 would fail an Aurora-kinase inhibitor.</p>",
+          "exampleHtml": "",
+          "context": "<p>step 10 README</p>",
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "universe-of-a-generator",
+          "term": "universe (of a generator)",
+          "aliases": [
+            "universe",
+            "of a generator"
+          ],
+          "html": "<p>every drug a generator <em>could</em> have proposed. The permutation null draws its random lists from it. <em>Example:</em> 188 labelled drugs the walk reached.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 155</p>",
+          "related": [
+            "permutation-null"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "convergence",
+          "term": "convergence",
+          "aliases": [],
+          "html": "<p>independent generators naming the same drug. It counts only if it beats a null: random lists of the same sizes also overlap sometimes. <em>Example:</em> one drug (dasatinib); random lists produce one or more 26.3 % of the time (p 0.263).</p>",
+          "exampleHtml": "",
+          "context": "<p>H094, entry 155</p>",
+          "related": [
+            "generator",
+            "universe-of-a-generator"
+          ],
+          "firstSeen": "2026-09-25"
+        },
+        {
+          "kind": "entry",
+          "slug": "upset-plot",
+          "term": "UpSet plot",
+          "aliases": [],
+          "html": "<p>a chart of set intersections: each bar counts the items in exactly one combination of sets, and dots below say which sets. It replaces a Venn diagram once there are more than three sets. <em>Example:</em> <code>figures/it4/step10-s2-upset.svg</code>.</p>",
+          "exampleHtml": "",
+          "context": "<p>entry 155</p>",
+          "firstSeen": "2026-09-25"
         }
       ]
     }

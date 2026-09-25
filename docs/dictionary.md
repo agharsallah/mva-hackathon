@@ -3060,3 +3060,66 @@ own genome, his own phenotypes).
 
 **malignant hyperthermia susceptibility** — an inherited risk of a life-threatening reaction to certain general anaesthetics and succinylcholine, carried by RYR1 and CACNA1S variants. *Example:* RYR1 "Uncertain Susceptibility" in this child's observed calls.
 *Context: entry 152 E5.2 · an incidental finding, not a Track 2 candidate · first seen 2026-09-24*
+
+## 29. Iteration 4's own Track 2 answer — words for steps 9 (E3), 10 and 11
+
+Step 10 rebuilds the Track 2 drug list from iteration 4's evidence alone: several independent
+sources each propose drugs, and their agreement is tested against chance. E3 adds a
+gene-expression source; step 11 runs the whole chain on a second disease.
+
+**positive control** — a case where the right answer is already known, run through the same code first. If it fails, the pipeline (or the question) is broken and the real result cannot be read. *Example:* the screen sweep must find dabrafenib in melanoma lines; it does, at q 3.2 × 10⁻⁹.
+*Context: entries 153, 154 · related: Decoy null, Permutation null · first seen 2026-09-25*
+
+**expression signature** — the list of genes a perturbation turns up and turns down, compared with untreated cells. Like a diff of gene activity. *Example:* the BUB1B knockout's 100 most raised and 100 most lowered genes.
+*Context: entry 153 · first seen 2026-09-25*
+
+**L1000 / landmark gene** — a cheap assay that measures 978 "landmark" genes directly and infers the rest. LINCS built most of its signatures with it. *Example:* E3's signature uses landmark genes only, so both engines read the same 200 genes.
+*Context: entry 153 · first seen 2026-09-25*
+
+**LINCS (Library of Integrated Network-based Cellular Signatures)** — a public library of expression signatures for thousands of drugs and gene knockouts across cell lines. *Example:* 718,055 compound signatures in SigCom's copy.
+*Context: entry 153 · related: expression signature · first seen 2026-09-25*
+
+**consensus signature** — one signature summarising many replicates of the same perturbation. *Example:* the BUB1B row of the LINCS 2021 CRISPR consensus matrix, summarising 31 knockout signatures.
+*Context: entry 153 · first seen 2026-09-25*
+
+**connectivity engine / reverser / mimicker** — a search engine that takes a query signature and ranks library signatures by similarity. A **reverser** moves genes the opposite way (a candidate treatment); a **mimicker** moves them the same way. *Example:* SigCom LINCS and iLINCS; phenytoin is a reverser in both.
+*Context: entry 153 · related: expression signature · first seen 2026-09-25*
+
+**decoy signature** — a random gene set of the same size, queried like the real one. A drug that reverses decoys too is not specific. *Example:* 20 decoys; phenytoin reverses none of them.
+*Context: entry 153 · related: Decoy set · first seen 2026-09-25*
+
+**senolytic** — a drug that selectively kills senescent cells (cells permanently stopped from dividing that inflame their neighbours). *Example:* dasatinib (+ quercetin), the approved analogue of the p16⁺-cell clearance that delayed ageing in BubR1-hypomorph mice.
+*Context: direction D5, entry 150 · first seen 2026-09-25*
+
+**Launched** — the Drug Repurposing Hub's word for a compound approved and marketed somewhere. PRISM copies it into its release files. *Example:* 613 Launched drugs were eligible in the sweep.
+*Context: entry 154 · related: PRISM · first seen 2026-09-25*
+
+**Drug Repurposing Hub MOA** — the Broad Institute's curated mechanism-of-action label for each compound, shipped with PRISM. *Example:* "AURORA KINASE INHIBITOR" fails check K1.
+*Context: entries 151, 155 · first seen 2026-09-25*
+
+**representative copy** — when a screen tested a drug several times, the one copy that enters the multiple-testing correction: the copy measured on the most in-group lines. *Example:* rosuvastatin's REP.1M copy (14 rhabdomyosarcoma lines) over its 3-line copy.
+*Context: entries 151, 154 · first seen 2026-09-25*
+
+**screen-wide sweep** — the same drug-versus-cell-group test run over every compound a screen measured well enough, with the correction taken over all of them. Discovery mode, where a replication tests a short list. *Example:* 613 drugs, best q 0.122.
+*Context: entry 154 · related: positive control · first seen 2026-09-25*
+
+**contrary-direction p (`p_opposite`)** — the one-sided p for the other tail: that the in-group is *less* sensitive. *Example:* cefpirome in rhabdomyosarcoma lines, δ −0.655, p_opposite 0.024.
+*Context: entry 154, read by check K3 · first seen 2026-09-25*
+
+**volcano plot** — effect size on x, −log₁₀ p on y, one dot per tested item; strong results rise to the top corners. *Example:* `figures/it4/step10-s1-volcano.svg`.
+*Context: entry 154 · first seen 2026-09-25*
+
+**generator** — an independent source that proposes drugs by a rule fixed before any join. *Example:* G1, the PrimeKG walk's top 50 labelled drugs.
+*Context: step 10 README, entry 155 · related: check, universe · first seen 2026-09-25*
+
+**check (versus a generator)** — a filter that can remove a drug or add a caution, but never propose one. Keeping the two apart stops a source from voting twice. *Example:* K1 would fail an Aurora-kinase inhibitor.
+*Context: step 10 README · first seen 2026-09-25*
+
+**universe (of a generator)** — every drug a generator *could* have proposed. The permutation null draws its random lists from it. *Example:* 188 labelled drugs the walk reached.
+*Context: entry 155 · related: Permutation null · first seen 2026-09-25*
+
+**convergence** — independent generators naming the same drug. It counts only if it beats a null: random lists of the same sizes also overlap sometimes. *Example:* one drug (dasatinib); random lists produce one or more 26.3 % of the time (p 0.263).
+*Context: H094, entry 155 · related: generator, universe · first seen 2026-09-25*
+
+**UpSet plot** — a chart of set intersections: each bar counts the items in exactly one combination of sets, and dots below say which sets. It replaces a Venn diagram once there are more than three sets. *Example:* `figures/it4/step10-s2-upset.svg`.
+*Context: entry 155 · first seen 2026-09-25*
