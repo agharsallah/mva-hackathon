@@ -1,0 +1,9 @@
+{
+  "_standing": "2026-09-25, entry 156. Bloom syndrome is run from its gene and its public phenotype annotation; there is no patient and no genome. This file declares no pharmacogene call, so K2 runs its label half only (H096). It is configuration, not a PharmCAT result.",
+  "generated_at": "2026-09-25T00:00:00+00:00",
+  "genome_per_kb": 0.0,
+  "genes": {},
+  "drug_genes": {},
+  "recommendations_absent_to_ref": {},
+  "recommendations_observed": {}
+}

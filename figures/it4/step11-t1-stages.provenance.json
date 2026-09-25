@@ -1,0 +1,67 @@
+{
+  "name": "step11-t1-stages",
+  "built_at": "2026-09-25T13:51:28+00:00",
+  "built_by": "tools/render_step11_t1.py",
+  "code_version": "ae9948d",
+  "inputs": [
+    {
+      "path": "ressources/phenotype/phenotype_twin_genotypes.tsv",
+      "sha256": "8e48148fe68359d58afd93071eac0177740c7410a211b7b6fd9004f23e19b5b8"
+    },
+    {
+      "path": "ressources/track2/it4/generators/walk.tsv",
+      "sha256": "30463e73c775904cd67a5f47e99df762021d274a25519e4818fd0a82dd7508d8"
+    },
+    {
+      "path": "ressources/track2/it4/generators/twin.tsv",
+      "sha256": "e86418b6a4d206a2594cbd30a71f1d4344463d56b1948257668298fb8909f56d"
+    },
+    {
+      "path": "ressources/track2/it4/prism_sweep.tsv",
+      "sha256": "7749f9f129bd52eb0a1611659156e7cb4d4b29ba0b1e3c698d54eb2025e9bf55"
+    },
+    {
+      "path": "ressources/track2/it4/lincs_reversal.tsv",
+      "sha256": "ba9ca648fac5e22ed478687c386f24c44acaa87765f2483eebb239f5e2af3f47"
+    },
+    {
+      "path": "ressources/track2/it4/candidates.tsv",
+      "sha256": "10f38f68d6a66edce4ef0b3875dfe253b86989b8a38e178f2c54c38f62842bfa"
+    },
+    {
+      "path": "ressources/track2/it4/candidate_safety.tsv",
+      "sha256": "a54e63b973bcaf0868f7a8bc2b42e6d6e04ba9b0cd3e9de187a4745e13bb81ed"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/phenotype/phenotype_twin_genotypes.tsv",
+      "sha256": "17351e52e6d1437b0082a56953872d3df9ee97b9a5764741a9cda1914ed4b8b3"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/walk.tsv",
+      "sha256": "fd5b3da3f39dfd3e12e92b5df19116ccbf014c8b509ced072af0859378c17849"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/twin.tsv",
+      "sha256": "c24cf3e0bccd64cf4f3106c7f2062381f5ae1475b0927a7989f49887cf7dee06"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/prism_sweep.tsv",
+      "sha256": "6e995b7c29986987f0f6b51bed1a5a50b01f7ae2b7ec81b2654069bda685d895"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/lincs_reversal.tsv",
+      "sha256": "f0bf046871bfd32bcb273cd9aaa81d9de227f4441f9d83fac2bb8558dc0ceec4"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/candidates.tsv",
+      "sha256": "a5692df1a61a75b534177ec7f094918b335ec85bcc092ba9c39b61305792a086"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/candidate_safety.tsv",
+      "sha256": "fc30fab207fe8ecafa0ba871bbb0f1e9a23e8606c82338aa05d31bdb6c704aa1"
+    }
+  ],
+  "entry": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+  "legend": "**Legend** \u2014 neutral machinery; blue = the MVA run, built for that case; Bloom column: green = configuration alone, yellow = ran from flags but wrote MVA-case text that tools/transfer_it4.py relabel had to correct, red = needed new code (tools/transfer_it4.py), grey = not written; 'gap' = entry 156's static-survey row; seconds = wall time from the log.",
+  "patient_data": "none. Public screens, graphs, signatures and annotations; MVA's generator lists are drug names only; no genomic position appears"
+}

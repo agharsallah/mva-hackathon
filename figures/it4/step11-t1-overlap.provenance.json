@@ -1,0 +1,43 @@
+{
+  "name": "step11-t1-overlap",
+  "built_at": "2026-09-25T13:51:32+00:00",
+  "built_by": "tools/render_step11_t1.py",
+  "code_version": "ae9948d",
+  "inputs": [
+    {
+      "path": "ressources/track2/it4/generators/walk.tsv",
+      "sha256": "30463e73c775904cd67a5f47e99df762021d274a25519e4818fd0a82dd7508d8"
+    },
+    {
+      "path": "ressources/track2/it4/generators/twin.tsv",
+      "sha256": "e86418b6a4d206a2594cbd30a71f1d4344463d56b1948257668298fb8909f56d"
+    },
+    {
+      "path": "ressources/track2/it4/generators/prism.tsv",
+      "sha256": "f45750b8052253507b481ed301c7683dc4e14754002505a6fe96a251185dac8e"
+    },
+    {
+      "path": "ressources/track2/it4/generators/lincs.tsv",
+      "sha256": "6e5088044f7336e50764a79ba5876b8ed3bbe9d0d15cc95e17808af87a95c79f"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/walk.tsv",
+      "sha256": "fd5b3da3f39dfd3e12e92b5df19116ccbf014c8b509ced072af0859378c17849"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/twin.tsv",
+      "sha256": "c24cf3e0bccd64cf4f3106c7f2062381f5ae1475b0927a7989f49887cf7dee06"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/prism.tsv",
+      "sha256": "7f4272cb5efcb7f1368c3cc3fb40861cccc6f951d8314090bfaec521c195ff3f"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/lincs.tsv",
+      "sha256": "647d62dbd17199bb15230e7485cc3767d667ff57a09a5efd3eae6bba53a9b03e"
+    }
+  ],
+  "entry": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+  "legend": "**Legend** \u2014 neutral machinery; a decision point; blue = MVA's lists, yellow = Bloom's lists; the shared bar is green when the Jaccard index is \u2264 0.20 (H096 clause c met), red above 0.50 (refuted), yellow between; counts are approved listed drugs by mva.drugs.convergence_tables.read_generator (join key base_name).",
+  "patient_data": "none. Public screens, graphs, signatures and annotations; MVA's generator lists are drug names only; no genomic position appears"
+}

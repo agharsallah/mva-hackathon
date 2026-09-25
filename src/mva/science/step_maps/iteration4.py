@@ -226,7 +226,12 @@ ITERATION4: tuple[Step, ...] = (
         # Opened 2026-09-25 as the scalability evidence of submissions/track2/iteration-4/:
         # the panel scores scalability at 15 %, and iteration 4's chain must show it
         # transfers without borrowing iteration 2's TRIP13 run.
-        status="open",
+        status="done",
         track="track2",
+        figures=(
+            "figures/it4/step11-t1-stages.svg",
+            "figures/it4/step11-t1-overlap.svg",
+            "figures/it4/step11-t1-twin.svg",
+        ),
     ),
 )

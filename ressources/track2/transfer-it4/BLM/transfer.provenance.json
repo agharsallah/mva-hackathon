@@ -1,0 +1,266 @@
+{
+  "name": "transfer",
+  "built_at": "2026-09-25T13:48:54+00:00",
+  "built_by": "tools/transfer_it4.py relabel",
+  "code_version": "ae9948d",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+  "why": "stages write MVA-case text into their outputs whatever case they run on (entry 156, gaps 2-4, 7, 9-11); each substitution below restores the truth for this case, and every manifest digesting a changed file was re-hashed",
+  "substitutions": [
+    {
+      "file": "ressources/track2/transfer-it4/BLM/phenotype/phenotype_twin.provenance.json",
+      "from": "the case's HPO terms (mva.phenotype.terms; ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md)",
+      "to": "Bloom syndrome's 42 aspect-P HPO terms from phenotype.hpoa 2026-09-02 (OMIM:210900), passed as --hpo from ressources/track2/transfer-it4/BLM/case.json",
+      "gap": 2,
+      "why": "tools/phenotype_twin.py write() names the MVA clinical file whatever query ran",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/phenotype/phenotype_twin.provenance.json",
+      "from": "the gene only (BUB1B, the Track 1 pair); no variant or position read",
+      "to": "the gene only (BLM, from the case file); no variant or position read",
+      "gap": 2,
+      "why": "hard-coded BUB1B",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/phenotype/phenotype_twin.provenance.json",
+      "from": "\"entry\": \"docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md\"",
+      "to": "\"entry\": \"docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md\",\n  \"method_entry\": \"docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md\"",
+      "gap": 2,
+      "why": "the table was built by entry 156 with entry 150's method",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/generators/walk.provenance.json",
+      "from": "the gene set of the disease node (BUB1B and its PrimeKG disease genes); no patient data",
+      "to": "the gene set of the Bloom syndrome disease node (MONDO:0008876) in PrimeKG; no patient data",
+      "gap": 3,
+      "why": "convergence_build.py:166 hard-codes BUB1B",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/generators/twin.provenance.json",
+      "from": "the child's 8 HPO terms chose the twin mice (entry 150); rows link rescued phenotypes to them",
+      "to": "Bloom syndrome's 42 HPO terms chose the twin mice (entry 156); rows link rescued phenotypes to them",
+      "gap": 4,
+      "why": "convergence_build.py:240",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/generators/twin.provenance.json",
+      "from": "the gene BUB1B (Track 1 pair) chose the mouse models; no patient sequence",
+      "to": "the gene BLM (case file) chose the mouse models; no patient sequence",
+      "gap": 4,
+      "why": "convergence_build.py:244",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/generators/twin.provenance.json",
+      "from": "ressources/track2/model_interventions.provenance.json",
+      "to": "ressources/track2/transfer-it4/BLM/model_interventions.provenance.json",
+      "gap": 4,
+      "why": "the input manifest path is a constant; the input itself was the Bloom table",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/generators/twin.provenance.json",
+      "from": "\"entry\": \"docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md\"",
+      "to": "\"entry\": \"docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md\"",
+      "gap": 4,
+      "why": "ENTRY_150 constant: the Bloom table was curated in entry 156",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/generators/twin.provenance.json",
+      "from": "hand-curated in entry 150; 'supports' is that table's own word. 'hypothesis only' rows (the rapalogs) do not vote by this rule",
+      "to": "hand-curated in entry 156 by entry 150's method; 'supports' is that table's own word. 'hypothesis only' rows do not vote by this rule",
+      "gap": 4,
+      "why": "MVA-specific limitation text",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/generators/prism.provenance.json",
+      "from": "\"min_lines_per_aneuploidy_arm\"",
+      "to": "\"min_lines_per_annotation_arm\"",
+      "gap": 5,
+      "why": "the annotation contrast here is LoHFraction, not aneuploidy",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/prism_sweep.provenance.json",
+      "from": "\"min_lines_per_aneuploidy_arm\"",
+      "to": "\"min_lines_per_annotation_arm\"",
+      "gap": 5,
+      "why": "as above",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/generators/lincs.tsv",
+      "from": "reverses the BUB1B-loss signature",
+      "to": "reverses the BLM-loss signature",
+      "gap": 7,
+      "why": "signature_reversal_tables.py:205 hard-codes BUB1B in every row",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidates.tsv",
+      "from": "checkpoint-kinase inhibitor: MOA",
+      "to": "do-not class (Bloom K1: alkylating / cross-linking agent): MOA",
+      "gap": 9,
+      "why": "checks.py:109 fail reason is MVA wording",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidates.tsv",
+      "from": "spindle poison (caution, not an exclusion): MOA",
+      "to": "caution class (DNA-damage / replication-stress; kept): MOA",
+      "gap": 9,
+      "why": "checks.py caution reason is MVA wording",
+      "replaced": 9
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidates.tsv",
+      "from": "genome: no pharmacogene tied to this drug",
+      "to": "genome: not run, no patient genome",
+      "gap": 10,
+      "why": "with the no-genome file the code's words would read as a genome result",
+      "replaced": 53
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidate_safety.tsv",
+      "from": "no pharmacogene tied to this drug",
+      "to": "not run: no patient genome",
+      "gap": 10,
+      "why": "as above",
+      "replaced": 53
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidates.provenance.json",
+      "from": "caution when it contains a caution_moa phrase (spindle poison)",
+      "to": "caution when it contains a caution_moa phrase",
+      "gap": 9,
+      "why": "K1Rule.as_manifest wording",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidates.provenance.json",
+      "from": "BUB1B mechanism (walk, screen, signatures) and, in K2, PharmCAT phenotypes of the child's callset (actionability words only, reused from entry 152)",
+      "to": "the gene BLM and its disease node (walk, screen, signatures); K2's genome half not run (no patient genome)",
+      "gap": 11,
+      "why": "convergence_run.py:302",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidates.provenance.json",
+      "from": "the 8 HPO terms through the phenotype twin (G2) and K2's label matching",
+      "to": "Bloom syndrome's 42 HPO terms through the phenotype twin (G2) and K2's label matching",
+      "gap": 11,
+      "why": "convergence_run.py:305",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidates.provenance.json",
+      "from": "K2 by re-running entry 152's tools/patient_safety.py (labels, faers, table) with its PharmCAT result reused",
+      "to": "K2 by re-running entry 152's tools/patient_safety.py (labels, faers, table), its label half only (no patient genome)",
+      "gap": 11,
+      "why": "method text",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidate_safety.provenance.json",
+      "from": "the proband's 7 own HPO terms (the 8th is parental history and is excluded), mapped to MedDRA in ressources/track2/hpo_to_adverse_terms.tsv",
+      "to": "Bloom syndrome's 42 HPO terms (23 used for the flag), mapped to MedDRA in ressources/track2/transfer-it4/BLM/hpo_to_adverse_terms.tsv",
+      "gap": 10,
+      "why": "tools/patient_safety.py do_table",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidate_safety.provenance.json",
+      "from": "the child's WGS callset, read only through PharmCAT phenotypes: this table carries actionability words and counts, never a diplotype or a position",
+      "to": "none: no patient genome (the pgx_summary.json read declares no gene); the genome half is not run",
+      "gap": 10,
+      "why": "tools/patient_safety.py do_table",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidate_safety.provenance.json",
+      "from": "the callset is variant-only, so most PGx positions are no-calls and the absent-to-ref column is an assumption, not a measurement; ",
+      "to": "no patient genome, so K2 can never reach its fail state (both sources flag); ",
+      "gap": 10,
+      "why": "MVA-callset limitation",
+      "replaced": 1
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/candidate_safety.provenance.json",
+      "from": "furosemide and calcitriol carried as positive controls for the nephrocalcinosis arm of the mapping; both are matched",
+      "to": "none: no positive-control drug was fixed for the Bloom mapping (entry 156)",
+      "gap": 10,
+      "why": "MVA positive controls do not apply",
+      "replaced": 1
+    }
+  ],
+  "manifest_digests_updated": 7,
+  "outputs": [
+    {
+      "path": "ressources/track2/transfer-it4/BLM/candidate_safety.provenance.json",
+      "sha256": "dcc801c5d2b25faa2facad01a98a7bcf6c22bacf8117be057181364df810ca73",
+      "bytes": 2658,
+      "rows": 0
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/candidate_safety.tsv",
+      "sha256": "fc30fab207fe8ecafa0ba871bbb0f1e9a23e8606c82338aa05d31bdb6c704aa1",
+      "bytes": 18044,
+      "rows": 0
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/candidates.provenance.json",
+      "sha256": "4cd11039ac364ab5d0e7378d12302e76253ed1916ca79c11e336353e31542fc4",
+      "bytes": 12421,
+      "rows": 0
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/candidates.tsv",
+      "sha256": "a5692df1a61a75b534177ec7f094918b335ec85bcc092ba9c39b61305792a086",
+      "bytes": 21916,
+      "rows": 0
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/lincs.tsv",
+      "sha256": "647d62dbd17199bb15230e7485cc3767d667ff57a09a5efd3eae6bba53a9b03e",
+      "bytes": 463,
+      "rows": 0
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/prism.provenance.json",
+      "sha256": "fc229bff7b4d2fd81fbd895fa689e356ce98c50eee69e4fdb33fa121e9cdca34",
+      "bytes": 6276,
+      "rows": 0
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/twin.provenance.json",
+      "sha256": "d7093d79526cb28131893ecb9ad641047303b42e3c5d04bd4e1ef0859e9409fa",
+      "bytes": 3422,
+      "rows": 0
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/walk.provenance.json",
+      "sha256": "00bc98690017d6d43102e2b496b865b2cbebb04b6c4f2882b55d2c3ab2bb9d83",
+      "bytes": 3421,
+      "rows": 0
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/phenotype/phenotype_twin.provenance.json",
+      "sha256": "7c38722a491fd1ef9779cc43f11bb927832669d9c98a506f006a5fe80334bcdb",
+      "bytes": 4993,
+      "rows": 0
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/prism_sweep.provenance.json",
+      "sha256": "3410fced9bc37d379b0548a6ed2f2d08c1b446b6543e05925faf330a2ad6f7fa",
+      "bytes": 5459,
+      "rows": 0
+    }
+  ]
+}

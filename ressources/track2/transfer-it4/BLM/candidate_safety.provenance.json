@@ -1,0 +1,51 @@
+{
+  "assumptions": "a label adverse effect on the same clinical axis as a patient phenotype is a potential collision; a pharmacogene the callset cannot answer is a question, not a normal result",
+  "clinical_framing": "research exercise; no row advises for or against giving any drug to any patient",
+  "columns": {
+    "combined_flag": "the two-source verdict; 'unflagged' is never 'safe'",
+    "comparison_set_rate": "share of matched comparison ingredients with any mapped effect",
+    "genome_call": "actionability words per pharmacogene; 'no call' is a result",
+    "genome_flag": "yes when a gene is actionable, uncallable, or outside the caller",
+    "phenotype_flag": "yes on either trigger; phenotype_flag_reason says which"
+  },
+  "entry": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+  "generated_at": "2026-09-25T13:46:52+00:00",
+  "inputs": [
+    {
+      "file": "build/it4/track2-t1/converge/safety/pgx_summary.json",
+      "sha256": "fafafc86d192d4e917e8e5be8928551af2396272376ee73e9b9d872cacba82a2"
+    },
+    {
+      "file": "build/it4/track2-t1/converge/safety/label_summary.json",
+      "sha256": "647d277f48105d4b142c6b66930dc64280f7f96a781739c749f25db81a77da2a"
+    },
+    {
+      "file": "ressources/track2/transfer-it4/BLM/hpo_to_adverse_terms.tsv",
+      "sha256": "2ca98192ae76742cba47fc793bdbe5a9587db3ead60292dd17701b269246d365"
+    },
+    {
+      "file": "build/it4/track2-t1/converge/safety/safety_drugs.tsv",
+      "sha256": "c12357196831b168a45ed5e94d4e8722fcd737a6af90652f4130ec426a60ec38"
+    }
+  ],
+  "limitations": "no patient genome, so K2 can never reach its fail state (both sources flag); OnSIDES v3.1.1 ships no paediatric ADE subset (its paediatric file is a 200-label annotation gold standard), so the paediatric view comes from FAERS, which has no denominator",
+  "parameters": {
+    "comparison_rate": 0.586,
+    "comparison_rule": "5 nearest approved ingredients per candidate, matched on the number of distinct adverse effects their labels carry; candidates excluded",
+    "extra_gene": [],
+    "label_sources": [
+      "US",
+      "EU",
+      "UK",
+      "JP"
+    ]
+  },
+  "rows": 53,
+  "sources": {
+    "clinical": "Bloom syndrome's 42 HPO terms (23 used for the flag), mapped to MedDRA in ressources/track2/transfer-it4/BLM/hpo_to_adverse_terms.tsv",
+    "genomic": "none: no patient genome (the pgx_summary.json read declares no gene); the genome half is not run"
+  },
+  "tool": "tools/patient_safety.py table",
+  "validation": "none: no positive-control drug was fixed for the Bloom mapping (entry 156)",
+  "wording": "unflagged by these two sources (not evidence of safety)"
+}

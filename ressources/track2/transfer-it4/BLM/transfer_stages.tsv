@@ -1,0 +1,8 @@
+stage	case_file	mva_file	class	gaps	log
+phenotype twin (MGI)	phenotype/phenotype_twin_genotypes.tsv	ressources/phenotype/phenotype_twin_genotypes.tsv	code	1, 2	twin.log
+G1 PrimeKG walk	generators/walk.tsv	ressources/track2/it4/generators/walk.tsv	mislabelled	3	walk.log
+G2 twin interventions	generators/twin.tsv	ressources/track2/it4/generators/twin.tsv	mislabelled	4	twin-gen.log
+G3 PRISM sweep	prism_sweep.tsv	ressources/track2/it4/prism_sweep.tsv	code	5	sweep.log
+G4 LINCS reversal	lincs_reversal.tsv	ressources/track2/it4/lincs_reversal.tsv	code	6, 7	lincs-run.log
+convergence + K1 + K3	candidates.tsv	ressources/track2/it4/candidates.tsv	code	8, 9, 11	converge.log
+K2 label half	candidate_safety.tsv	ressources/track2/it4/candidate_safety.tsv	mislabelled	10	

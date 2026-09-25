@@ -1,0 +1,15 @@
+{
+  "name": "step11-t1-twin",
+  "built_at": "2026-09-25T13:51:36+00:00",
+  "built_by": "tools/render_step11_t1.py",
+  "code_version": "ae9948d",
+  "inputs": [
+    {
+      "path": "build/it4/track2-t1/twin/twin.json",
+      "sha256": "57ab14e7622451410e8cb6c3d748df1066679f2dc403dd8da865067bf79962c9"
+    }
+  ],
+  "entry": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+  "legend": "**Legend** \u2014 neutral machinery; blue bars = the best-genotype percentile for 1,000 IC-matched random term sets of the same size; solid line = the real query's best genotype, green when \u2264 5 % (H096 clause b), red above 25 %, yellow between; dashed yellow = the 5 % bar; right: yellow = Blm, grey = the case's within-pathway genes (context).",
+  "patient_data": "none. Public screens, graphs, signatures and annotations; MVA's generator lists are drug names only; no genomic position appears"
+}

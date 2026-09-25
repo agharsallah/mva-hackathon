@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-25T14:39:16",
+  "generated_at": "2026-09-25T15:58:45",
   "steps": [
     {
       "slug": "step-0",
@@ -3566,11 +3566,66 @@
       "refuted_by": "Any source-code change is needed to run the second case, or any stage fails to write its table, or the Blm twin ranks outside the top 25 %, or the Jaccard index of the two unions exceeds 0.50",
       "gene": "BLM",
       "path": "s11-transfer",
-      "status": "proposed",
-      "confidence": null,
-      "suggested_confidence": 0.5,
-      "revisions": 1,
-      "evidence": []
+      "status": "refuted",
+      "confidence": 0.15,
+      "suggested_confidence": 0.4013,
+      "revisions": 2,
+      "evidence": [
+        {
+          "id": 227,
+          "direction": "refutes",
+          "strength": 0.9,
+          "kind": "measurement",
+          "claim": "Four stages (the phenotype twin's output directory, the PRISM sweep's lineage and annotation, the LINCS reversal's gene and control genes, and check K1's rule) cannot be pointed at Bloom syndrome by flags or data files; a new 378-line driver, tools/transfer_it4.py, was needed, with no existing line edited.",
+          "source_ref": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 228,
+          "direction": "refutes",
+          "strength": 0.4,
+          "kind": "measurement",
+          "claim": "Seven stages write the MVA case's text (the gene, the child, the MVA controls) into any case's outputs; 136 recorded substitutions from 24 rules were needed to make Bloom syndrome's tables and manifests truthful.",
+          "source_ref": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 229,
+          "direction": "supports",
+          "strength": 0.5,
+          "kind": "measurement",
+          "claim": "With the driver, all seven stages wrote a table and a provenance manifest on Bloom syndrome (twin 13 genotypes, walk 50, twin generator 0, sweep 28 rows, reversal 6,699 rows, candidates 53, safety 53) at 0 dollars in 53 minutes.",
+          "source_ref": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 230,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "retrospective: the best Blm genotype ranks at 1.15 % (symmetric) and 1.08 % (Phenodigm) of 76,699 MGI genotypes on Bloom syndrome's 42 HPO terms (IC-matched p 0.037, 0.021); entry 150 already ran this control, and Recql4 ranks higher (0.82 %).",
+          "source_ref": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 231,
+          "direction": "supports",
+          "strength": 0.6,
+          "kind": "measurement",
+          "claim": "The Bloom and MVA generator unions share 10 of 105 approved drugs, Jaccard index 0.095 against a 0.20 bar; nine of the ten shared drugs are PrimeKG hub nodes the two walks both reach.",
+          "source_ref": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 232,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "Bloom syndrome's chain converges on nothing (no drug named by two generators, p 1.0): PRISM measures blood-cancer lines for only 14 Launched drugs, and the LINCS positive control (RMI1, RMI2, TOP3A) failed as it did for MVA.",
+          "source_ref": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+          "lineage_ref": ""
+        }
+      ]
     }
   ]
 }

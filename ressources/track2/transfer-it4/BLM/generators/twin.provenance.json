@@ -1,0 +1,84 @@
+{
+  "name": "twin",
+  "built_at": "2026-09-25T13:46:39+00:00",
+  "built_by": "tools/converge.py twin",
+  "code_version": "ae9948d",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+  "generator_rule": "every approved analogue in model_interventions.tsv on a row whose supports_direction begins with 'supports'; 'approved' read from the row's own analogue_status (mva.drugs.convergence_generators.approved_analogues). Universe = approved analogues named by any row, plus every approved drug in the other generators' universes (the widest space, so the null is harder)",
+  "rows_not_voting": [
+    {
+      "intervention": "Trp53bp1 (53BP1) deletion (cross)",
+      "reason": "supports, but its analogue_status names no approved drug"
+    },
+    {
+      "intervention": "PARP inhibitor exposure (cells)",
+      "reason": "supports_direction = 'warns'"
+    },
+    {
+      "intervention": "human BLM transgene (overexpression, cross)",
+      "reason": "supports_direction = 'context'"
+    },
+    {
+      "intervention": "MALT1 or constitutively active IKKbeta reintroduced (cells)",
+      "reason": "supports, but its analogue_status names no approved drug"
+    }
+  ],
+  "other_universes": [
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/walk.universe.tsv",
+      "sha256": "8dd1e5cf92511694de1c92cfa2d04a9f1f55ea9a5d02ac84117f3ede4ea1398d",
+      "bytes": 45694,
+      "rows": 239,
+      "approved": 239
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/prism.universe.tsv",
+      "sha256": "4e3e234cfc697e58a673759f9484fd024e545e56d9eda88c755c5bfb46c3cd14",
+      "bytes": 260,
+      "rows": 14,
+      "approved": 14
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/lincs.universe.tsv",
+      "sha256": "ccae3933bdf3af1db69a0b8494ff4a3cb279b1618616a486b7898228d80806b6",
+      "bytes": 20759,
+      "rows": 1157,
+      "approved": 1157
+    }
+  ],
+  "counts": {
+    "table_rows": 4,
+    "listed": 0,
+    "universe_drugs": 1288
+  },
+  "inputs": [
+    {
+      "name": "model_interventions.tsv",
+      "path": "ressources/track2/transfer-it4/BLM/model_interventions.tsv",
+      "sha256": "ce18724ed508100ed34de8670facbfe92bd7465f899e972dd120016594068d5e",
+      "bytes": 3263,
+      "manifest": "ressources/track2/transfer-it4/BLM/model_interventions.provenance.json",
+      "entry": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/twin.tsv",
+      "sha256": "c24cf3e0bccd64cf4f3106c7f2062381f5ae1475b0927a7989f49887cf7dee06",
+      "bytes": 110,
+      "rows": 0
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/twin.universe.tsv",
+      "sha256": "79e2ef679586c372fda69c2ef557be147f4cfe7472838c33055b0c0ede5da673",
+      "bytes": 22000,
+      "rows": 1288
+    }
+  ],
+  "sources": {
+    "clinical": "Bloom syndrome's 42 HPO terms chose the twin mice (entry 156); rows link rescued phenotypes to them",
+    "genomic": "the gene BLM (case file) chose the mouse models; no patient sequence"
+  },
+  "limitations": "abstract-level literature table, hand-curated in entry 156 by entry 150's method; 'supports' is that table's own word. 'hypothesis only' rows do not vote by this rule"
+}

@@ -1,0 +1,216 @@
+{
+  "name": "lincs",
+  "built_at": "2026-09-25T13:46:11+00:00",
+  "built_by": "tools/signature_reversal.py",
+  "code_version": "ae9948d",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+  "inputs": [
+    {
+      "name": "xpr_mean_coeff_mat.tsv.gz",
+      "role": "consensus signatures (CRISPR knockout, mean CD coefficient)",
+      "url": "https://lincs-dcic.s3.amazonaws.com/LINCS-sigs-2021/means/xpr_mean_coeff_mat.tsv.gz",
+      "sha256": "f8b115513c365340fb714fa0f2c4c8b215f1247bee4365fb59a3d7dd49a9fac4",
+      "bytes": 432492125,
+      "licence": "LINCS data: public (no licence stated by SigCom)",
+      "release": "LINCS L1000 2021 (SigCom LINCS downloads; S3 Last-Modified 2023-09-05)"
+    },
+    {
+      "name": "geneinfo_beta.txt",
+      "role": "L1000 gene space (landmark / inferred)",
+      "url": "https://s3.amazonaws.com/macchiato.clue.io/builds/LINCS2020/geneinfo_beta.txt",
+      "sha256": "e739d06bad42ff9285c00b778e65d8999425062a3375cc7e7cdab0e7154490b5",
+      "bytes": 1141389,
+      "licence": "CMap / LINCS: public",
+      "release": "CMap LINCS 2020 beta"
+    },
+    {
+      "name": "signature.json",
+      "role": "the fixed query, written before any drug query",
+      "url": null,
+      "sha256": "66e64140e7eaadac357395147cc5cccf3a544268584d124cb3a9c0d018504c43",
+      "bytes": 2709,
+      "licence": "this repository",
+      "release": null
+    },
+    {
+      "name": "SigCom LINCS",
+      "url": "https://data-api.sigcom-lincs.k8s.maayanlab.cloud/v1/api/v1",
+      "version": null,
+      "role": "connectivity / approval",
+      "retrieved_at": "2026-09-25T13:46:08+00:00",
+      "retrieved_from": "2026-09-25T11:51:39+00:00",
+      "requests": 124,
+      "live_calls": 63,
+      "sha256": "e6fc2464b8c5e832b6df7796c81c2dfed5601f725914d59c532e81a44ebaab19",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "iLINCS",
+      "url": "https://www.ilincs.org/api",
+      "version": null,
+      "role": "connectivity / approval",
+      "retrieved_at": "2026-09-25T13:33:48+00:00",
+      "retrieved_from": "2026-09-25T11:57:41+00:00",
+      "requests": 10,
+      "live_calls": 1,
+      "sha256": "2437bb02f5feb64b629f185654794f42e50fc77bd3e19ad4dd5aa0dfaee53fa0",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "ChEMBL",
+      "url": "https://www.ebi.ac.uk/chembl/api/data",
+      "version": null,
+      "role": "connectivity / approval",
+      "retrieved_at": "2026-09-25T12:00:00+00:00",
+      "retrieved_from": "2026-09-25T11:59:34+00:00",
+      "requests": 5,
+      "live_calls": 0,
+      "sha256": "4048707e0b7c8f0f36058bab25f20cd3a350d7ea1738ed990e632ee9745aee3a",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "openFDA drug label",
+      "url": "https://api.fda.gov/drug/label.json",
+      "version": null,
+      "role": "connectivity / approval",
+      "retrieved_at": "2026-09-25T12:16:51+00:00",
+      "retrieved_from": "2026-09-05T23:07:05+00:00",
+      "requests": 897,
+      "live_calls": 0,
+      "sha256": "d7bce4e2297bc07abfcae37da1f65244b5d3ed6e9094c4a3e5111a8e27e6941c",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    }
+  ],
+  "parameters": {
+    "perturbation": "BLM",
+    "consensus": {
+      "role": "consensus signatures (CRISPR knockout, mean CD coefficient)",
+      "name": "xpr_mean_coeff_mat.tsv.gz",
+      "url": "https://lincs-dcic.s3.amazonaws.com/LINCS-sigs-2021/means/xpr_mean_coeff_mat.tsv.gz",
+      "release": "LINCS L1000 2021 (SigCom LINCS downloads; S3 Last-Modified 2023-09-05)",
+      "licence": "LINCS data: public (no licence stated by SigCom)"
+    },
+    "gene_info": {
+      "role": "L1000 gene space (landmark / inferred)",
+      "name": "geneinfo_beta.txt",
+      "url": "https://s3.amazonaws.com/macchiato.clue.io/builds/LINCS2020/geneinfo_beta.txt",
+      "release": "CMap LINCS 2020 beta",
+      "licence": "CMap / LINCS: public"
+    },
+    "per_signature_database": "l1000_xpr",
+    "gene_space": "landmark",
+    "size": 100,
+    "decoys": 20,
+    "seed": 20260925,
+    "top_n": 100,
+    "decoy_max_hits": 1,
+    "sigcom_limit": 10000,
+    "drug_database": "l1000_cp",
+    "control_databases": [
+      "l1000_xpr",
+      "l1000_shRNA"
+    ],
+    "control_genes": [
+      "RMI1",
+      "RMI2",
+      "TOP3A"
+    ],
+    "control_cut": 0.05,
+    "raw_dir": "build/it4/track2-t1/lincs/raw",
+    "build_dir": "build/it4/track2-t1/lincs",
+    "out": "ressources/track2/transfer-it4/BLM/lincs_reversal.tsv",
+    "generator_dir": "ressources/track2/transfer-it4/BLM/generators",
+    "entry": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md",
+    "claim": "H096 (P4-31) clause (a), stage G4: a BLM loss-of-function signature queried for reversers by entry 153's method, unchanged",
+    "mechanism_note": "loss-of-function query: Bloom syndrome is biallelic BLM loss of function (PMID 28232778)",
+    "patient_data": "none. Public LINCS signatures, gene symbols and drug names only; the gene comes from the case file, no clinical term is read.",
+    "cache_dir": "build/track2-cache",
+    "refresh": false,
+    "notes": [],
+    "counts": {
+      "landmark_genes": 978,
+      "signature_genes_with_sigcom_entity": 200,
+      "ilincs_genes_used": 196,
+      "ilincs_rows_p_below_0_05": 14337,
+      "sigcom_compounds_ranked": 3530,
+      "ilincs_compounds_ranked": 4520,
+      "sigcom_compound_universe": 33568,
+      "ilincs_compound_universe": 15058,
+      "compounds_in_both": 9998,
+      "openfda_names_asked": 897,
+      "openfda_labelled": 41,
+      "openfda_failed": 0,
+      "chembl_phase4_names": 25138,
+      "approved_in_both": 1157,
+      "sigcom:l1000_cp": 718055,
+      "sigcom:l1000_shRNA": 158003,
+      "sigcom:l1000_xpr": 140945,
+      "ilincs:LIB_5": 143374
+    }
+  },
+  "test": "H096 (P4-31) clause (a), stage G4: a BLM loss-of-function signature queried for reversers by entry 153's method, unchanged. Signature: top 100 raised and lowered landmark genes of the BLM consensus, BLM itself excluded. Compound rank = rank of its best reverser signature (SigCom z-sum; iLINCS concordance). Decoys: 20 random 100+100 draws from the same space, seed 20260925, through SigCom l1000_cp. Positive control: RMI1, RMI2, TOP3A gene-level mimicker rank in l1000_xpr, l1000_shRNA, pass at <= 5% of genes.",
+  "software": {
+    "numpy": "2.5.2"
+  },
+  "patient_data": "none. Public LINCS signatures, gene symbols and drug names only; the gene comes from the case file, no clinical term is read.",
+  "list_rule": "approved drugs (ChEMBL max_phase 4 or an openFDA label) in the top 100 compound reversers of both SigCom LINCS l1000_cp and iLINCS LIB_5",
+  "universe_rule": "every approved compound present in both engines' libraries",
+  "join_key_rule": "drug = mva.drugs.names.base_name(name.replace('-', ' ')): hyphens folded to spaces first; applied to ChEMBL's folded preferred name where ChEMBL knows the library label",
+  "verdict_inputs": {
+    "top_both": 17,
+    "top_both_approved": 1,
+    "top_both_approved_specific": 1,
+    "specific_drugs": [
+      "MEPIVACAINE"
+    ],
+    "listed_drugs": [
+      "MEPIVACAINE"
+    ],
+    "control_passed": false,
+    "controls": {
+      "l1000_xpr": {
+        "passed": false,
+        "universe_genes": 5156,
+        "genes_in_depth": 3813,
+        "ranks": {
+          "RMI1": null,
+          "RMI2": 1304,
+          "TOP3A": null
+        },
+        "cut": 0.05
+      },
+      "l1000_shRNA": {
+        "passed": false,
+        "universe_genes": 4916,
+        "genes_in_depth": 3544,
+        "ranks": {
+          "RMI1": null,
+          "RMI2": null,
+          "TOP3A": null
+        },
+        "cut": 0.05
+      }
+    },
+    "status": "uninterpretable"
+  },
+  "caution": "the registered positive control failed, so H092 is uninterpretable: this list is the step-10 rule applied to the run, not a supported result",
+  "outputs": [
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/lincs.tsv",
+      "sha256": "647d62dbd17199bb15230e7485cc3767d667ff57a09a5efd3eae6bba53a9b03e",
+      "bytes": 463,
+      "rows": 1
+    },
+    {
+      "path": "ressources/track2/transfer-it4/BLM/generators/lincs.universe.tsv",
+      "sha256": "ccae3933bdf3af1db69a0b8494ff4a3cb279b1618616a486b7898228d80806b6",
+      "bytes": 20759,
+      "rows": 1157
+    }
+  ]
+}

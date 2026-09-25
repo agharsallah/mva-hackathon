@@ -1,0 +1,21 @@
+{
+  "name": "hpo_to_adverse_terms (Bloom syndrome)",
+  "built_at": "2026-09-25",
+  "built_by": "hand-written in step 11, experiment T1 (entry 156) by entry 152's method; every MedDRA id verified against OnSIDES v3.1.1 vocab_meddra_adverse_effect.csv (name and id agree) and confirmed on at least one label in product_adverse_effect.csv on 2026-09-25",
+  "code_version": "379e86d",
+  "sha256": "2ca98192ae76742cba47fc793bdbe5a9587db3ead60292dd17701b269246d365",
+  "method": "Bloom syndrome's 42 aspect-P HPO terms (OMIM:210900, phenotype.hpoa 2026-09-02) read one by one against the MedDRA PTs OnSIDES uses: candidates by case-insensitive regex over vocab_meddra_adverse_effect.csv (patterns in entry 156), kept or dropped by hand. Tiers as entry 152: exact = the same event, class = a parent or sibling on the same axis. used_for_flag = no for congenital / structural features and pregnancy outcomes (a drug given after birth cannot cause them) and for terms with no label wording; every exclusion is a row with its reason.",
+  "counts": {"rows": 57, "hpo_terms": 42, "hpo_terms_used_for_flag": 23, "meddra_ids_used": 33},
+  "sources": {
+    "clinical": "Bloom syndrome's public HPO annotation (OMIM:210900) - the case's clinical input; no patient",
+    "genomic": "none - this table is clinical only"
+  },
+  "inputs": [
+    {"name": "OnSIDES v3.1.1", "url": "https://github.com/tatonetti-lab/onsides/releases/download/v3.1.1/onsides-v3.1.1.zip", "path": "build/it4/track2-e56/onsides/csv (entry 152's copy)", "licence": "data CC BY 4.0, code MIT"},
+    {"name": "phenotype.hpoa", "release": "2026-09-02", "path": "build/it4/track2-e2/raw/phenotype.hpoa"},
+    {"name": "GeneReviews Bloom syndrome (PMID 20301572)", "role": "names secondary malignancy and sun exposure as the risks to avoid"}
+  ],
+  "assumptions": "a label adverse effect on the same axis as a disease feature is a potential collision for a person with that disease",
+  "limitations": "no standard HPO-to-MedDRA mapping exists; manual judgement, reviewed by no clinician; several kept terms (Erythema, Upper respiratory tract infection, Interstitial lung disease, Diabetes mellitus) have high base rates, which the matched comparison set corrects for; no positive-control drug was fixed for this case",
+  "entry": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md"
+}
