@@ -1,6 +1,6 @@
 # Track 2 report — iteration 4: one mechanism read from many independent sources, and a drug list tested against chance
 
-**Standing:** draft, written 2026-09-25 from executed runs of iteration 4 only (steps 1–11). It
+**Standing:** ready, written 2026-09-25 from executed runs of iteration 4 only (steps 1–11). It
 does **not** use the results of any earlier iteration: the candidate list, the directions and
 the checks were all rebuilt from iteration-4 evidence. The one input taken from outside
 iteration 4 is the challenge's own answer: the oracle confirmed the causal pair (entry 083).
@@ -23,10 +23,10 @@ dashboard.
 
 | criterion | weight | where | the evidence, in one line | the weakest point we know |
 |---|---|---|---|---|
-| **Scientific rigor** | 35 % | §3–§6 | the mechanism is read from **five instruments that share no data** (variant-effect models, a structure predictor, a stability atlas, 76,699 mouse genotypes, a gene ranking on the clinical terms); four point the same way and one is inconclusive; the drug list comes from **four generators fixed before any join**, and their agreement is **tested against a permutation null** instead of assumed; 12 claims filed before their runs; **4 came back refuted or uninterpretable** and are reported as such (§12) | the four generators agree on **one** drug, and chance gives one (p 0.263, H094 refuted). The survivor, dasatinib, was known before the join. Two of the four generators are weak: the screen sweep finds nothing past correction, and the expression-signature generator failed its own positive control |
+| **Scientific rigor** | 35 % | §3–§6 | the mechanism is read from **five instruments that share no data** (variant-effect models, a structure predictor, a stability atlas, 76,699 mouse genotypes, a gene ranking on the clinical terms); four point the same way and one is inconclusive; the drug list comes from **four generators fixed before any join**, and their agreement is **tested against a permutation null** instead of assumed; 12 claims filed before their runs; **5 came back refuted or uninterpretable** and are reported as such (§12) | the four generators agree on **one** drug, and chance gives one (p 0.263, H094 refuted). The survivor, dasatinib, was known before the join. Two of the four generators are weak: the screen sweep finds nothing past correction, and the expression-signature generator failed its own positive control |
 | **Potential impact** | 25 % | §7 | three things a treating team can act on **for this child**: a named pharmacogenomic test (the delivered callset answers 1.6 % of the positions it needs); vincristine flagged by **both** safety sources; an incidental malignant-hyperthermia susceptibility call. Plus the mouse model any preclinical test should use | no candidate has been tested in this child or in any BubR1-deficient model with an approved drug; "unflagged" means two sources are silent, not that a drug is safe |
 | **Innovation** | 25 % | §8 | convergence of independent drug generators **tested against chance**; a patient-to-mouse-**genotype** phenotype match over a whole database; a per-child safety check that reads the child's **genome and clinical terms side by side**; a stability atlas **calibrated on published alleles before** the child's allele is placed | every part uses public tools; what we claim is the assembly and the discipline, "to our knowledge". We ran no systematic survey of prior art |
-| **Scalability** | 15 % | §9 | every stage is a case-agnostic tool with a table contract; the whole chain ran on a **second disease** (Bloom syndrome) by configuration (step 11) | see §9 for what the second case did not carry over |
+| **Scalability** | 15 % | §9 | every stage writes one table contract with a provenance manifest; the whole chain **ran on a second disease** (Bloom syndrome), $0 in 53 minutes, and proposed a different drug set (10 of 105 drugs shared) | our own claim that it would move **by configuration alone** came back **refuted** (H096): four stages kept the case in code and seven wrote the first case's text into the second's outputs. A 378-line driver fixed both, and names exactly what to fold into the tools next |
 
 ---
 
@@ -334,8 +334,9 @@ prediction in §3.3. A positive answer (unstable) is also the biomarker for dire
 
 > **Rubric:** Scalability (15 %).
 
-Every stage is a case-agnostic tool with a table contract. The inputs are a gene, a disease
-node, a list of clinical terms and, for the safety check, a VCF.
+Every stage is a tool with one table contract and a provenance manifest. The inputs are meant
+to be a gene, a disease node, a list of clinical terms and, for the safety check, a VCF. Step 11
+measured how far that holds.
 
 | stage | tool | what changes for another case |
 |---|---|---|
@@ -346,7 +347,30 @@ node, a list of clinical terms and, for the safety check, a VCF.
 | convergence + checks | `tools/converge.py` | generator ids and paths |
 | per-child safety | `tools/patient_safety.py` | the VCF, the drug table, the HPO terms |
 
-**The second case (step 11, Bloom syndrome, `BLM`).** *Result pending: entry 156, H096.*
+**The second case (step 11, Bloom syndrome, `BLM`).** Bloom syndrome swaps the gene (a DNA
+helicase), the pathway (DNA repair, not the mitotic checkpoint) and the clinical terms (42, from
+the public `phenotype.hpoa`), while asking the same kind of question (entry 156).
+
+| stage | on Bloom syndrome | rows written | what it took |
+|---|---|---|---|
+| phenotype twin | best *Blm* mouse at 1.15 % of 76,699 (retrospective: entry 150 ran this control; *Recql4* ranks higher) | 13 genotypes | new code (its output directory was fixed) |
+| G1 PrimeKG walk | 1,026 drugs reached, 239 labelled; KIT dominates Bloom's disease node | 50 | flags, but MVA text in its manifest |
+| G2 twin rescues | no *Blm*-mouse rescue names an approved drug | 0 | flags, from a curated table |
+| G3 PRISM sweep | only 14 Launched drugs are measured in blood-cancer lines | 28 | new code (lineage in constants) |
+| G4 LINCS reversal | positive control (RMI1, RMI2, TOP3A) failed, as for MVA | 6,699 | new code (gene in constants) |
+| convergence + checks | no drug named by ≥ 2 generators (p 1.0); K1 fails cisplatin | 53 | new code (K1 rule in constants) |
+
+**H096 is refuted (0.15).** The chain runs on a second disease and proposes a different set
+(Jaccard 0.095 against a 0.20 bar), but not by configuration alone. The driver
+`tools/transfer_it4.py` (378 lines, no existing line edited) fills the four code gaps and
+corrects 136 strings of first-case text by recorded substitutions, re-hashing every manifest. That
+list is the work order for making the tools truly case-agnostic.
+
+![what running each stage on a second disease took](../../../figures/it4/step11-t1-stages.svg)
+
+> **Legend** blue = the MVA run, built for that case · Bloom column: green = configuration alone,
+> yellow = ran from flags but wrote MVA-case text that `relabel` had to correct, red = needed new
+> code, grey = not written · "gap" = entry 156's static-survey row · seconds = wall time.
 
 ### 9.1 What it cost
 
@@ -358,6 +382,7 @@ node, a list of clinical terms and, for the safety check, a VCF.
 | PRISM replication and sweep | laptop, ~4 min | $0 | entries 151, 154 |
 | per-child safety | laptop, < 1 min PharmCAT | $0 | entry 152 |
 | LINCS reversal | public APIs | $0 | entry 153 |
+| the second disease, all stages | laptop + public APIs, 53 min | $0 | entry 156 |
 | convergence + checks | laptop, 27 s | $0 | entry 155 |
 
 ---
@@ -379,6 +404,7 @@ node, a list of clinical terms and, for the safety check, a VCF.
   BubR1-deficient mouse (entry 150).
 - **Safety sources are silent more often than they speak.** 22 of 62 candidates have no
   OnSIDES label; the genome answers 1.6 % of the positions (entries 152, 155).
+- **The chain is not yet configuration-only.** A second disease needed a 378-line driver (entry 156).
 - **Nothing here was tested in this child.**
 
 ---
@@ -418,7 +444,7 @@ uv run python tools/render_step10_s2.py
 | H093 | a Launched drug is selective for both aneuploid and RMS lines | refuted 0.10 | 154 |
 | H094 | the four generators converge beyond chance | refuted 0.15 | 155 |
 | H095 | a converging drug survives every check | supported 0.40 | 155 |
-| H096 | the chain runs on a second disease by configuration | pending | 156 |
+| H096 | the chain runs on a second disease by configuration | refuted 0.15 (it runs, with a 378-line driver) | 156 |
 
 Entries are under `docs/iteration4/step-<n>/methodology/`. Three iteration-4 claims are left
 out on purpose: H087, H088 and H091 tested drugs drawn from an earlier iteration's shortlist.

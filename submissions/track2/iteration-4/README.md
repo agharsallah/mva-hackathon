@@ -1,6 +1,6 @@
 # Track 2 — iteration 4 (2026-09-25)
 
-**Standing:** draft — the Track 2 report built from **iteration 4 only** (steps 1–11), user
+**Standing:** ready — built 2026-09-25, report, PDF and methods form rendered, from **iteration 4 only** (steps 1–11), user
 decision 2026-09-25; **not uploaded**. Iteration 2's folder ([`../iteration-2/`](../iteration-2/README.md))
 stays a separate, unfrozen draft; the user plans to merge the Track 2 iterations into one
 upload later. Track 2 accepts **one** submission per team, due around 2026-10-20.
@@ -59,7 +59,7 @@ No predictions CSV, selectors or decode table: Track 2 is panel-judged, and
 | iteration 4, step 7 | generator G1, the PrimeKG walk, and its decoy (H074) | [142](../../../docs/iteration4/step-7/methodology/142-a-graph-walk-from-the-disease-node.md) |
 | iteration 4, step 9 | E1 stability atlas; E2 phenotype twin (generator G2); E4 the measured do-not leg; E5+E6 the child's pharmacogenome and safety method; E3 LINCS (generator G4) | [149](../../../docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md), [150](../../../docs/iteration4/step-9/methodology/150-the-childs-phenotype-twin-among-mgi-mice.md), [151](../../../docs/iteration4/step-9/methodology/151-prism-replication-of-the-track2-leads.md), [152](../../../docs/iteration4/step-9/methodology/152-is-each-candidate-safe-for-this-child.md), [153](../../../docs/iteration4/step-9/methodology/153-lincs-signature-reversal-of-bub1b-loss.md) |
 | **iteration 4, step 10** | generator G3 (the screen-wide sweep); convergence against a null; the checks; the candidate table | [154](../../../docs/iteration4/step-10/methodology/154-screen-wide-prism-sweep.md), [155](../../../docs/iteration4/step-10/methodology/155-convergence-and-checks.md) |
-| iteration 4, step 11 | the second disease (Bloom syndrome) | 156 (pending) |
+| iteration 4, step 11 | the second disease (Bloom syndrome): runs with a 378-line driver, a different drug set; H096 refuted | [156](../../../docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md) |
 
 **Both datasets.** The genome fixed the gene, the alleles and their predicted effect (steps 1–9)
 and the child's pharmacogenome (entry 152). The clinical terms fixed the phenotype twin (entry
