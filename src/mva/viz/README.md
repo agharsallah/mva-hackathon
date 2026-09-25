@@ -84,6 +84,10 @@ flowchart LR
 | `probebuild.py` | `POST /api/probe/build` — turn candidates into a Track 1 submission CSV | `router`, `build` |
 | `api_zoo.py` | Every read-only `/api/zoo/*` route, in four registrars (case, scores, ranking, documents). Its own router, mounted in `app.py`, because it resolves its **case** per request instead of sharing the warehouse router's settings | `router`, `GENE_LIMIT` |
 | `api_zoo_jobs.py` | The zoo's two **write** verbs as background jobs — score one lane, run the DAG — on `mva.reads.api.jobs.Manager` (reused, not forked). Both `POST`s refuse when `MVA_VIZ_TOKEN` is empty; `aux` is filtered so no lane can publish a position | `router`, `Runners`, `MAX_ROWS`, `FORBIDDEN_AUX` |
+| `iterations.py` | `GET /api/iterations`: both iteration axes on one page — research iterations (steps per track, claims by status, entries, catalog) beside submission folders (state, reply, research iterations cited, lineage size, catalog coverage) and the ledger's attribution count. Reuses the `/api/submissions` payload builder | `add_routes`, `payload`, `research_row`, `submission_row` |
+| `iteration_catalog.py` | The data catalog of a set of methodology entries: every table, data file and store object they name, joined to `data_lineage` and to manifests; role `produced` only on recorded evidence, else `cited` | `build`, `mentions`, `tables_of`, `cited_entries` |
+| `iteration_manifest.py` | Reads the provenance manifest beside a data file in every shape the repo's tools wrote (list or map `outputs`, several producer/instant keys) and self-described cards | `read`, `locate`, `Manifest` |
+| `iterations_io.py` | The two facts a catalog needs beyond the entries — which tables the database holds, which files git tracks — both degrading instead of failing | `known_tables`, `tracked_files` |
 
 ### Data access
 

@@ -33,7 +33,13 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 
 from ..warehouse.settings import Postgres
-from . import submissions_audit, submissions_lineage, submissions_reader
+from . import (
+    iteration_catalog,
+    iterations_io,
+    submissions_audit,
+    submissions_lineage,
+    submissions_reader,
+)
 from .cache import Cache
 from .response import Envelope, cached, live
 
@@ -52,19 +58,37 @@ SOURCE = (
 SEGMENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$")
 
 
-def payload(settings: Postgres, root: Path | None = None) -> dict[str, Any]:
-    """Every iteration folder, fully resolved. One ledger read and one probe read, total."""
+def payload(
+    settings: Postgres,
+    root: Path | None = None,
+    *,
+    ledger: submissions_lineage.Ledger | None = None,
+    known: set[str] | None = None,
+    tracked: set[str] | None = None,
+) -> dict[str, Any]:
+    """Every iteration folder, fully resolved. One ledger read and one probe read, total.
+
+    ``ledger``, ``known`` (the database's tables) and ``tracked`` (``git ls-files``) may be
+    passed in by a caller that already read them — :mod:`mva.viz.iterations` does.
+    """
     base = (root or submissions_reader.DEFAULT_ROOT).resolve()
-    ledger = submissions_lineage.read_ledger(settings)
+    ledger = ledger if ledger is not None else submissions_lineage.read_ledger(settings)
+    known = known if known is not None else iterations_io.known_tables(settings)
+    tracked = tracked if tracked is not None else iterations_io.tracked_files(base)
     probes = submissions_audit.read_probes(settings)
     register = submissions_audit.read_register(base)
 
     iterations = []
     for folder in submissions_reader.iteration_folders(base):
         iteration = submissions_reader.read(folder, base)
+        entries = submissions_lineage.contribution_entries(iteration["contributions"])
+        # The catalogue first: the tables its entries name extend the lineage walk, which is
+        # what lets a panel-judged folder with no selectors trace itself.
+        iteration["catalog"] = iteration_catalog.build(base, entries, ledger, known, tracked)
         tables = submissions_lineage.selector_tables(iteration["selectors"])
-        cited = submissions_lineage.entry_tables(
-            ledger, submissions_lineage.contribution_entries(iteration["contributions"])
+        cited = sorted(
+            set(submissions_lineage.entry_tables(ledger, entries))
+            | set(iteration_catalog.tables_of(iteration["catalog"]))
         )
         iteration["lineage"] = submissions_lineage.build(
             ledger, base, folder, iteration["track"], iteration["number"], tables, cited
@@ -75,6 +99,7 @@ def payload(settings: Postgres, root: Path | None = None) -> dict[str, Any]:
             iteration["number"],
             iteration["csv"]["sha256"],
             iteration["hypotheses"],
+            iteration["track"],
         )
         iterations.append(iteration)
     return {"iterations": iterations}

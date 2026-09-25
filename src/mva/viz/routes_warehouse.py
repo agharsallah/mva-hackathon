@@ -14,6 +14,7 @@ from fastapi import APIRouter, Query
 
 from . import (
     catalog,
+    iterations,
     phenotype,
     queries,
     refprovenance,
@@ -205,6 +206,7 @@ def router(settings, cache: Cache) -> APIRouter:
     steps_it2_step8.add_routes(api, settings)
     phenotype.add_routes(api)
     submissions.add_routes(api, settings, cache)
+    iterations.add_routes(api, settings, cache)
     track2.add_routes(api, settings, cache)
     return api
 

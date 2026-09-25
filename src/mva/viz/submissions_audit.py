@@ -57,15 +57,31 @@ def read_probes(settings: Postgres) -> list[dict[str, Any]]:
         return []
 
 
-def probes_for(probes: list[dict[str, Any]], number: int, csv_sha256: str | None) -> list[dict]:
-    """The probes belonging to one iteration: by rationale, or by payload digest."""
+def probes_for(
+    probes: list[dict[str, Any]], number: int, csv_sha256: str | None, track: str = ""
+) -> list[dict]:
+    """The probes belonging to one iteration: by rationale, or by payload digest.
+
+    ``track`` (``track1``) excludes a probe the ledger files under another track: the
+    rationale "iteration 1" alone would otherwise hand Track 1's reply to Track 2's
+    iteration-1 folder, which was never uploaded.
+    """
     needle = f"iteration {number}"
     matched = []
     for probe in probes:
+        if not _same_track(probe, track):
+            continue
         rationale = str(probe.get("rationale") or "").lower()
         if needle in rationale or _digest_matches(probe, csv_sha256):
             matched.append(probe)
     return matched
+
+
+def _same_track(probe: dict[str, Any], track: str) -> bool:
+    """True unless both sides name a track and they differ (ledger ``1`` ~ folder ``track1``)."""
+    filed = str(probe.get("track") or "").strip()
+    wanted = "".join(c for c in track if c.isdigit())
+    return not filed or not wanted or filed.removeprefix("track") == wanted
 
 
 def _digest_matches(probe: dict[str, Any], csv_sha256: str | None) -> bool:
@@ -121,9 +137,10 @@ def build(
     number: int,
     csv_sha256: str | None,
     wanted: list[str],
+    track: str = "",
 ) -> dict[str, Any]:
     """The ``audit`` object for one iteration."""
     return {
-        "probes": probes_for(probes, number, csv_sha256),
+        "probes": probes_for(probes, number, csv_sha256, track),
         "register": revisions_for(hypotheses, wanted),
     }
