@@ -1,0 +1,20 @@
+{
+  "step": "step-10",
+  "iteration": "iteration4",
+  "summary": "Opened 2026-09-25, nothing run yet. This step builds the Track 2 answer from iteration 4 alone. Four sources that share no data each propose approved drugs: the PrimeKG walk (entry 142), the child's phenotype twin among mouse models (entry 150), a screen-wide PRISM sweep (entry 154) and LINCS signature reversal (entry 153). The step tests whether they agree more often than chance, then filters the agreeing drugs through three checks: mechanism direction, the child's own safety (genome and clinical terms), and a contrary screen result. The rules for every list were fixed before any join.",
+  "why": "Step 9's E4 and E5+E6 tested drugs drawn from iteration 2's shortlist. A submission built from iteration 4 only cannot borrow that list, so iteration 4 must generate its own candidates and re-run its checks on them.",
+  "verdict": "Not yet tested. H093 (screen-wide PRISM), H094 (convergence against a permutation null) and H095 (at least one survivor) are filed and proposed.",
+  "inherits": {
+    "steps": ["step-7", "step-9"],
+    "what": "Step 7's PrimeKG walk ranking, step 9's phenotype twin interventions (E2), PRISM readers and tests (E4), the per-child safety method (E5+E6) and the LINCS signature reversal (E3). The confirmed BUB1B pair comes from Track 1's oracle reply (entry 083)."
+  },
+  "hands_to": {
+    "steps": [],
+    "what": "The candidate table and survivors for submissions/track2/iteration-4/."
+  },
+  "figures": [],
+  "sources": [
+    "docs/iteration4/step-10/README.md",
+    "docs/iteration4/step-10/hypotheses/README.md"
+  ]
+}

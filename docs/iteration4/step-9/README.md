@@ -1,6 +1,6 @@
 # Step 9 — Track 2: one mechanism, many independent sources
 
-**Standing:** **E1, E2, E4 and E5+E6 run 2026-09-24**; E3 planned; E7–E10 not run. Iteration 4, `step-9`, track 2.
+**Standing:** **E1, E2, E4 and E5+E6 run 2026-09-24**; E3 running 2026-09-25 (H092 filed); E7 moved to step 10; E8–E10 not run. Iteration 4, `step-9`, track 2.
 Marked **open** in `src/mva/science/step_maps/iteration4.py`. Every number below is owned by an
 entry under [`methodology/`](methodology/).
 
@@ -52,11 +52,11 @@ R = Scientific Rigor (35 %), I = Potential Impact (25 %), N = Innovation (25 %),
 |---|---|---|---|---|---|---|
 | E1 | BUB1B variant-to-drug-direction atlas: ΔΔG + conservation for every possible missense, trained on published MVA alleles | AlphaFold O60566, literature labels | R, I, S | **done** | H083 refuted 0.15, H084 supported 0.55 | [149](methodology/149-the-stability-atlas-and-the-childs-missense.md) |
 | E2 | Mouse–human phenotype twin: 8 HPO terms vs every MGI genotype, decoys | MGI / IMPC, HPO–MP mapping | R, N, S | **done** | H085 supported 0.70, H086 testing 0.45 | [150](methodology/150-the-childs-phenotype-twin-among-mgi-mice.md) |
-| E3 | Signature reversal on LINCS from the compound-het mouse series + human BUB1B cells | GEO GSE134780, GSE22206; SigCom LINCS | N, R | planned | — | — |
+| E3 | Signature reversal on LINCS: a BUB1B loss-of-function signature, two engines, 20 decoy signatures | LINCS L1000 (SigCom LINCS, iLINCS); GEO fallback | N, R | **running** (2026-09-25) | H092 `P4-27` | 153 (reserved) |
 | E4 | DepMap / PRISM: aneuploidy- and RMS-selective approved drugs | DepMap 24Q4, PRISM 24Q2 | R, S | **done** | H087 supported 0.55, H088 **refuted** 0.20, H089 supported 0.80 | [151](methodology/151-prism-replication-of-the-track2-leads.md) |
 | E5 | The child's pharmacogenome (PharmCAT / CPIC) for every candidate — **merged with E6** | the VCF, CPIC via PharmCAT 3.4.0 | I, S | **done** | H090 supported 0.40 (1.6 % of positions callable) | [152](methodology/152-is-each-candidate-safe-for-this-child.md) |
 | E6 | Safety against the child's own phenotypes — **merged with E5** (note [E56](submission-notes/E56.md)) | OnSIDES v3.1.1, openFDA FAERS | R, I, N | **done** | H091 supported 0.70 | [152](methodology/152-is-each-candidate-safe-for-this-child.md) |
-| E7 | D5 (senolytic / mTOR) graded on the existing ladder with decoys | papers.md, E2–E4 | R, N | planned | — | — |
+| E7 | D5 (senolytic / mTOR) graded | papers.md, E2–E4 | R, N | **moved to [step 10](../step-10/README.md)** (2026-09-25): graded by convergence and checks, not iteration 2's ladder | H094, H095 | 155 |
 | E8 | BubR1–BUB3 / CDC20 interface fold, WT vs mutant (only if E1 places the residue near one) | PDB, AlphaFold | R | planned | — | — |
 | E9 | LLM evidence extraction at scale, citation-checked (Qwen3-Next on Modal) | PubTator3, Europe PMC | S, N, R | planned | — | — |
 | E10 | PrimeKG embedding ranker (TxGNN stand-in) with the decoy | PrimeKG | N, S | planned | — | — |
@@ -72,9 +72,11 @@ through the step-7 walk.
 Every experiment writes [`submission-notes/E<n>.md`](submission-notes/) from the
 [template](submission-notes/TEMPLATE.md) as it finishes: the one-sentence finding, its numbers
 with the entry that owns them, the figure, **which report section it feeds**, which existing
-claim it changes, its limits. The final Track 2 submission (a new `submissions/track2/iteration-3/`
-opened with `tools/new_iteration.py`) is assembled from these notes and the entries, never
-rewritten from memory.
+claim it changes, its limits. The Track 2 submission for this iteration,
+[`submissions/track2/iteration-4/`](../../../submissions/track2/iteration-4/README.md) (user
+decision, 2026-09-25: iteration 4 only, opened by hand because `tools/new_iteration.py` would
+open iteration 3), is assembled from these notes, step 10's entries and the entries they cite,
+never rewritten from memory.
 
 ## Data handling
 

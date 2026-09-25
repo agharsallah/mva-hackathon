@@ -187,4 +187,21 @@ ITERATION4: tuple[Step, ...] = (
             "figures/it4/step9-e56-coverage.svg",
         ),
     ),
+    Step(
+        slug="step-10",
+        title="Track 2 — iteration 4's own answer",
+        goal=(
+            "From iteration 4's evidence alone, which approved drugs do its independent "
+            "generators (the PrimeKG walk, the phenotype twin, a screen-wide PRISM sweep, "
+            "LINCS signature reversal) converge on beyond chance, and which of those survive "
+            "every iteration-4 check (mechanism direction, the child's own safety, a decoy)?"
+        ),
+        iteration="iteration4",
+        # Opened 2026-09-25 on the user's request for a Track 2 submission built from
+        # iteration 4 only (submissions/track2/iteration-4/). Steps 7 and 9 tested drugs
+        # drawn from iteration 2's shortlist; this step generates its own candidate set and
+        # re-runs the checks on it. E7 (grading D5) is answered here, not in step 9.
+        status="open",
+        track="track2",
+    ),
 )
