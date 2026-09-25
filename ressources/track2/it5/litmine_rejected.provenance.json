@@ -1,0 +1,64 @@
+{
+  "name": "litmine_rejected.tsv",
+  "built_at": "2026-09-25T16:43:40+00:00",
+  "built_by": "tools/it5_litmine.py",
+  "code_version": "5965bb6",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration5/step-1/work/r3-entry.md",
+  "tool": "tools/it5_litmine.py",
+  "inputs": [
+    {
+      "file": "ressources/track2/it5/litmine_corpus.tsv",
+      "sha256": "62f61bd2c77d83ce4e1c42aa729c93b383ecde3b17cfb4e784c946617640be83"
+    },
+    {
+      "file": "ressources/track2/it5/litmine_extraction.tsv",
+      "sha256": "c2872c2659b7ae8e0cdb5cc97a090a0dcf65cc285e5864da6bc3bb649ef5e05c"
+    },
+    {
+      "file": "ressources/track2/it5/litmine_exposure_extraction.tsv",
+      "sha256": "83c67211d5facd0ec4654a4d6dff96034286c11bca6ac0303dcddbff20a589ee"
+    }
+  ],
+  "rows": 0,
+  "extractor": {
+    "model": "claude-opus-5-5",
+    "role": "iteration-5 route R3 subagent",
+    "date": "2026-09-25",
+    "method": "read the screened sentences (build/it5/r3/reading/*.md) with their context and wrote each row by hand, copying the quote from the cached text"
+  },
+  "gate": "mva.drugs.litmine_verify.verify_rows: NFKC + quote/dash folding + whitespace collapse, case kept, min 30 characters, verbatim substring of the cached text of the cited PMID; a failing row is rejected, never repaired",
+  "positive_control": {
+    "retrieval": "3/3",
+    "extraction": "3/3",
+    "per_pmid": {
+      "24825348": {
+        "retrieved": true,
+        "extracted": true
+      },
+      "18516091": {
+        "retrieved": true,
+        "extracted": true
+      },
+      "22048312": {
+        "retrieved": true,
+        "extracted": true
+      }
+    },
+    "passed": true
+  },
+  "sources": {
+    "literature": "the cached corpus texts (litmine_corpus.tsv digests)",
+    "clinical": "hpo_overlap names the child's HPO terms (exposures table)",
+    "genomic": "none"
+  },
+  "limitations": "the reader saw screened sentences, not whole papers; a verified quote proves the sentence exists, not that the row reads it correctly",
+  "outputs": [
+    {
+      "path": "ressources/track2/it5/litmine_rejected.tsv",
+      "sha256": "9ac269d3803e80cd0c1e9eda59229aa623efc06bbe8610da4c6a5632349ff944",
+      "bytes": 60,
+      "rows": 0
+    }
+  ]
+}
