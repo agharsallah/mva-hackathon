@@ -46,7 +46,7 @@ function sections(markdown: string): Part[] {
 }
 
 /** The figure the report points at. The route names it; it does not serve its bytes. */
-function Figure({ path, alt }: { path: string; alt: string }) {
+export function ReportFigure({ path, alt }: { path: string; alt: string }) {
   const name = path.split('/').pop() ?? path;
   return (
     <p className={cx(WELL, 'text-micro text-chrome-400')}>
@@ -140,7 +140,7 @@ export function ModelReport({
                 )}
                 <Markdown
                   markdown={part.body}
-                  renderImage={(alt, src) => <Figure alt={alt} path={src} />}
+                  renderImage={(alt, src) => <ReportFigure alt={alt} path={src} />}
                 />
               </section>
             ))}

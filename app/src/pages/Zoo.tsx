@@ -11,6 +11,7 @@ import { ModelCards } from './zoo/ModelCards';
 import { ModelReport } from './zoo/ModelReport';
 import { resolveGene, useGeneParam, useModelParam } from './zoo/route';
 import { RunManifest } from './zoo/RunManifest';
+import { ZooHeadline } from './zoo/ZooHeadline';
 import { ZooLineage } from './zoo/ZooLineage';
 
 /**
@@ -26,7 +27,8 @@ import { ZooLineage } from './zoo/ZooLineage';
  *
  * **Nothing on this page is typed into it.** The gene, the iteration, the lanes, the
  * percentiles and the costs all arrive from `/api/zoo/*`, which reads them from the run
- * configuration and the warehouse. Point the configuration at another illness and the page
+ * configuration and the warehouse. The headline at the top is the merged report's own
+ * hand-written section, cut out of `/api/zoo/reports/merged` (`zoo/headline.ts`). Point the configuration at another illness and the page
  * follows — that is the deliverable here, as much as this case's answer is.
  */
 export default function ZooPage() {
@@ -37,6 +39,8 @@ export default function ZooPage() {
 
   return (
     <div className="space-y-6">
+      <ZooHeadline />
+
       <Callout tone="machinery" title="Several opinions, kept apart on purpose">
         A single pathogenicity score is one laboratory&rsquo;s judgement wearing the clothes of a
         measurement. The zoo asks several, records each one&rsquo;s coverage and blind spots before

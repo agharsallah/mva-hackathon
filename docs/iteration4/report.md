@@ -4,6 +4,55 @@
 
 Every number below is a key of the run's merged JSON; this page computes nothing.
 
+## The headline — one contract, every open model, and no answer from the fusion alone
+
+<!-- hand-written 2026-09-25 (close-out C4). Not generated: render_merged keeps every
+     unnumbered ## section verbatim on a re-render. Every number is quoted from the entry cited
+     beside it. -->
+
+**Standing:** written 2026-09-25 from entries
+[129](step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md),
+[130](step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md) and
+[148](step-8/methodology/148-the-gpu-lanes-and-the-consensus.md). Uses both sources: the genomic
+lanes and the child's 8 HPO terms (standard codes for symptoms).
+
+**Running every open model under one contract does not find the answer alone.** The RRF
+consensus (reciprocal rank fusion: each lane adds `1/(60 + rank)` for a pair, sums re-ranked) is
+*catalogue-free* here — the lane trained on ClinVar, REVEL, is left out.
+
+| measured | result | entry |
+|---|---|---|
+| consensus, the four MVP lanes (three vote once REVEL is left out) | confirmed `BUB1B` pair at **20,639 of 52,012** pairs | 130 |
+| consensus, six laptop lanes (+ ESM2, GPN-MSA) — the run in §1–§6 below | **2,734 of 59,474** | 148 |
+| consensus, all nine lanes (+ the GPU tier: Evo 2, NT-v2, ESM-C) | **4,318 of 63,269** | 148 |
+| six lanes + **one** GPU lane | 3,176 (Evo 2), 3,290 (NT-v2), 3,456 (ESM-C): **each one alone lowers the pair** | 148 |
+| the pair's `missense_variant` allele, in each lane's own scored alleles | top **0.47 %** AlphaMissense, **2.52 %** ESM1b, **2.59 %** REVEL | 129 |
+| the pair's `stop_gained` (nonsense) allele | **no missense-only lane scores it** (AlphaMissense, ESM1b, ESM2, ESM-C, REVEL), so none of them ranks the pair | 129, 148 |
+| best single catalogue-free lane on the pair | GPN-MSA, 508 of 54,865 (0.93 %) | 148 |
+| clinical: the 8 HPO terms alone | `BUB1B` **#14 of 5,267** genes (phenotype score 0.36093) | 129 |
+
+**Why.** Equal-weight RRF rewards *how many lanes can see a pair*, not how damaging it is. A
+missense-only lane abstains on a missense + nonsense pair and adds votes to every missense +
+missense pair, which then climb past it (entry 148). The allele-level signal is strong; the
+pair-level fusion throws it away.
+
+**Claims.** H064 (`P4-8`, consensus rank 1) **refuted** (entry 130). H082 (`P4-17`, the GPU lanes
+lift the consensus into the top 1,000) **testing**, undecided by its own terms, with its mechanism
+contradicted (entry 148). Confidences in the register are a transparent triage heuristic, not
+calibrated posteriors. **Next:** a fusion that accounts for which lanes can see a pair, filed as a
+new claim before it runs (entry 148).
+
+**Reading §5.** §5.1 was synthesised against the six-lane run in §1–§3; §5.2 was hand-written
+against the four-lane run of entry 130, so its numbers are that run's.
+
+![The confirmed pair's catalogue-free RRF percentile for six lanes, each GPU lane added alone, and all nine (left); each lane's own percentile for the pair (right)](../../figures/it4/step8-consensus-ablation.svg)
+
+> **Legend** — blue = neutral machinery (the six-lane baseline; a lane that ranks the pair) · red
+> = broken / lost points (a configuration that ranks the pair worse than the baseline) · green =
+> good / the goal (the top decile, dashed) · grey = context · hatched = no
+> opinion (the lane cannot score both alleles). Built by `tools/render_step8_ablation.py`;
+> lineage in `figures/it4/step8-consensus-ablation.provenance.json`. Entry 148.
+
 ## 1. The lanes
 
 | lane | version | tier | catalogue-adjacent | pairs ranked | pairs unscored | alleles scored | confirmed rank | percentile |
@@ -157,7 +206,7 @@ _hand-written 2026-09-19_
 ## 7. Track 2 — mechanism → pathway → consequence → drug direction
 
 <!-- hand-written 2026-09-23 (step 7, T2). Not produced by mva.zoo.merge.render_merged:
-     a re-render keeps only §1–§6 and must re-append §7–§8 from git. -->
+     since 2026-09-25 a re-render keeps §7–§8 verbatim (merge_render.hand_written_sections). -->
 
 **Standing:** written 2026-09-23 from entry
 [142](step-7/methodology/142-a-graph-walk-from-the-disease-node.md) and the committed walk

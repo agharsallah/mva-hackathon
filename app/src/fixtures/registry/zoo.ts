@@ -48,7 +48,17 @@ async function unwrap<T>(name: string): Promise<T> {
 }
 
 /** The provenance line an exhibit prints: the API's own source, marked as a capture. */
-const from = (what: string): string => `captured 2026-09-23 from the live route · ${what}`;
+const from = (what: string, on = '2026-09-23'): string =>
+  `captured ${on} from the live route · ${what}`;
+
+/**
+ * The merged report was re-captured on 2026-09-25, after it gained its hand-written headline
+ * (close-out C4). The six lane reports were fetched again in the same pass and came back
+ * identical to the 2026-09-23 capture, so they keep that date. The reports route reads
+ * committed Markdown only, so the capture ran the real route in-process
+ * (`TestClient(create_app())`), with the same wrapper as `tools/capture_zoo_fixtures.py`.
+ */
+const MERGED_CAPTURED = '2026-09-25';
 
 /** The report keys captured: one per lane that ran, plus the cross-lane `merged` one. */
 const REPORT_KEYS = ['merged', 'alphamissense', 'esm1b', 'esm2', 'gpnmsa', 'revel', 'spliceai'];
@@ -59,6 +69,7 @@ const GENES = ['BUB1B', 'NBPF3'];
 const reportEntry = (key: string): Entry => ({
   source: from(
     key === 'merged' ? 'docs/iteration4/report.md' : `docs/iteration4/reports/${key}.md`,
+    key === 'merged' ? MERGED_CAPTURED : undefined,
   ),
   load: async () => (await unwrap<ZooReports>('zoo-reports'))[key] as ZooReport,
 });
