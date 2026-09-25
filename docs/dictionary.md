@@ -3123,3 +3123,24 @@ gene-expression source; step 11 runs the whole chain on a second disease.
 
 **UpSet plot** — a chart of set intersections: each bar counts the items in exactly one combination of sets, and dots below say which sets. It replaces a Venn diagram once there are more than three sets. *Example:* `figures/it4/step10-s2-upset.svg`.
 *Context: entry 155 · first seen 2026-09-25*
+
+**Bloom syndrome** — a recessive disease of the BLM DNA helicase: growth restriction, sun-sensitive skin, immune deficiency and very early, multiple cancers. Step 11's second case. *Example:* MONDO:0008876, 42 HPO terms in `phenotype.hpoa`.
+*Context: entry 156 (GeneReviews PMID 20301572) · related: Transfer mechanism card · first seen 2026-09-25*
+
+**RecQ helicase** — a family of enzymes that unwind DNA to repair and restart it. Losing three of them (BLM, WRN, RECQL4) causes three different syndromes. *Example:* in Bloom syndrome's twin search a Recql4 mouse (0.82 %) ranked above the best Blm mouse (1.15 %).
+*Context: entry 156 · related: Bloom syndrome, Phenotype twin · first seen 2026-09-25*
+
+**BTR complex** — BLM working with TOP3A, RMI1 and RMI2 to untangle crossed DNA strands without swapping chromosome arms. *Example:* RMI1, RMI2 and TOP3A were step 11's LINCS positive-control genes; the control failed.
+*Context: entry 156 (PMIDs 27977684, 30057030) · related: RecQ helicase, positive control · first seen 2026-09-25*
+
+**alkylating agent** — a chemotherapy drug that attaches chemical groups to DNA and damages it; avoided where possible in Bloom syndrome. *Example:* cisplatin, check K1's one fail on the Bloom case.
+*Context: entry 156 · related: check (versus a generator) · first seen 2026-09-25*
+
+**transfer test (configuration surface)** — running a pipeline built for one case on a second case, and scoring each stage by what it took: configuration alone, configuration plus corrected text, or new code. *Example:* Bloom syndrome: four stages needed new code, so "configuration alone" was refuted (H096).
+*Context: entry 156, `tools/transfer_it4.py`, `figures/it4/step11-t1-stages.svg` · related: Transfer mechanism card · first seen 2026-09-25*
+
+**case-text leak / relabel** — a pipeline writing the first case's words (a gene, "the child") into a second case's outputs; corrected by recorded substitutions and re-hashing every manifest. *Example:* 136 substitutions from 24 rules on the Bloom case.
+*Context: entry 156, `ressources/track2/transfer-it4/BLM/relabel.json` · related: transfer test (configuration surface) · first seen 2026-09-25*
+
+**lineage chain** — one connected strand of a large lineage graph, drawn back to its roots and named after its table prefix, so a graph with hundreds of edges can be read one strand at a time. *Example:* the `it4` chain on `/track2` (iteration 4's generator, sweep and candidate tables) beside `transfer.BLM`.
+*Context: `app/src/lib/lineageChains.ts`, `/track2` and `/submissions` lineage views · related: case-text leak / relabel · first seen 2026-09-25*
