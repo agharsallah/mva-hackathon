@@ -53,6 +53,9 @@ SHA256 = re.compile(r"\b([0-9a-f]{64})\b")
 CSV_PATH = re.compile(r"`((?:build/submission|submissions/[\w-]+/iteration-\d+)/[\w.-]+\.csv)`")
 HYPOTHESIS_ID = re.compile(r"\bH\d{3}\b")
 ITERATION_NAME = re.compile(r"^iteration-(\d+)$")
+#: A figure a report cites: a repository-relative ``figures/`` path to a PNG or an SVG. No
+#: ``..`` can match, so a cited path cannot leave the figures tree.
+FIGURE_PATH = re.compile(r"\b(figures/(?:[\w-]+/)*[\w.-]+\.(?:png|svg))\b")
 
 #: File name → the ``kind`` the browser groups deliverables by. Suffix rules first, then
 #: exact names; anything unrecognised is ``other`` rather than dropped, because a folder
@@ -256,23 +259,39 @@ def methods_form(folder: Path) -> list[dict[str, str]]:
     return [{"row": key, "answer": str(answers[key])} for key in sorted(keys, key=int)]
 
 
-def figures(root: Path, track: str, number: int) -> list[dict[str, str]]:
-    """Every PNG under ``figures/<track>/``, with the URL that serves it.
+def figures(root: Path, track: str, number: int, cited: str = "") -> list[dict[str, str]]:
+    """The figures this iteration's report shows, with the URL that serves each one.
 
-    A missing directory contributes no rows rather than an error: a track whose figures
-    were never rendered has nothing to show, which is a true statement about it.
+    **The report is the declaration.** Every ``figures/`` path to a ``.png`` or ``.svg`` it cites is
+    listed, in citation order, and only those that exist on disk: iteration 4's Track 2
+    report draws on ``figures/it4/`` and must not be illustrated with iteration 2's
+    ``figures/track2/`` plots. A report citing none falls back to every PNG under
+    ``figures/<track>/``, the rule every iteration was served by before reports cited theirs.
+
+    ``slug`` is the file stem, the URL segment :func:`mva.viz.submissions.figure_path`
+    resolves back against this same list, so only a listed file can ever be served. A second
+    file with an already-used stem gets its parent directory prefixed rather than dropped.
     """
-    directory = root / FIGURES_DIR / track
-    if not directory.is_dir():
-        return []
-    return [
-        {
-            "slug": path.stem,
-            "path": path.relative_to(root).as_posix() if path.is_relative_to(root) else str(path),
-            "url": f"/api/submissions/{track}/{number}/figure/{path.stem}",
-        }
-        for path in sorted(directory.glob("*.png"))
-    ]
+    paths = [root / match for match in FIGURE_PATH.findall(cited)]
+    listed = list(dict.fromkeys(path for path in paths if path.is_file()))
+    if not listed:
+        directory = root / FIGURES_DIR / track
+        listed = sorted(directory.glob("*.png")) if directory.is_dir() else []
+    rows: list[dict[str, str]] = []
+    for path in listed:
+        slug = path.stem
+        if any(row["slug"] == slug for row in rows):
+            slug = f"{path.parent.name}-{path.stem}"
+        rows.append(
+            {
+                "slug": slug,
+                "path": path.relative_to(root).as_posix()
+                if path.is_relative_to(root)
+                else str(path),
+                "url": f"/api/submissions/{track}/{number}/figure/{slug}",
+            }
+        )
+    return rows
 
 
 def report(folder: Path, root: Path) -> dict[str, str]:
@@ -323,6 +342,6 @@ def read(folder: Path, root: Path | None = None) -> dict[str, Any]:
         "methods_form": methods_form(folder),
         "contributions": contributions(readme, folder, base),
         "hypotheses": hypothesis_ids(readme, text["markdown"], selector_text(folder)),
-        "figures": figures(base, track, number),
+        "figures": figures(base, track, number, text["markdown"]),
         "report": text,
     }

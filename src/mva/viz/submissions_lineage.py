@@ -179,15 +179,20 @@ def disk_sources(root: Path, folder: Path, tables: list[str]) -> list[dict[str, 
             CLINICAL_VERSION,
             sha256_of(root / CLINICAL_FILE),
             "the delivered phenotype; it named no variant but decided which gene was believed",
-        ),
-        _source(
-            "file",
-            relative,
-            "",
-            sha256_of(selectors),
-            "the committed, coordinate-free selectors the predictions CSV was resolved from",
-        ),
+        )
     ]
+    # A panel-judged iteration has no predictions file and so no selector spec; naming the
+    # file anyway would list a source that does not exist.
+    if selectors.is_file():
+        found.append(
+            _source(
+                "file",
+                relative,
+                "",
+                sha256_of(selectors),
+                "the committed, coordinate-free selectors the predictions CSV was resolved from",
+            )
+        )
     found += [
         _source(
             "table",
@@ -249,6 +254,38 @@ def _reference_sources(collected: list[dict[str, Any]]) -> list[dict[str, str]]:
     return found
 
 
+def _other_roots(collected: list[dict[str, Any]]) -> list[dict[str, str]]:
+    """Every other root the walk stopped at — a downloaded file, a public API, a card.
+
+    Kept under the edge's own ``source_kind``: a PRISM release and a mechanism card are
+    different kinds of root, and the page groups by kind. Tables, the callset object and the
+    reference inputs are listed by the functions above and skipped here.
+    """
+    found = []
+    for edge in collected:
+        reference = str(edge.get("source_ref") or "")
+        kind = str(edge.get("source_kind") or "")
+        haystack = f"{reference} {kind}".lower()
+        if (
+            not reference
+            or TABLE_REF.match(reference)
+            or reference.startswith("s3://")
+            or kind in ("table", "submission")
+            or any(hint in haystack for hint in REFERENCE_HINTS)
+        ):
+            continue
+        found.append(
+            _source(
+                kind or "file",
+                reference,
+                str(edge.get("source_version") or ""),
+                str(edge.get("source_sha256") or ""),
+                f"input to {edge.get('target_schema')}.{edge.get('target_table')}",
+            )
+        )
+    return found
+
+
 def _deduplicate(sources: list[dict[str, str]]) -> list[dict[str, str]]:
     """One row per ``(kind, ref)``; the first mention wins and keeps its note."""
     seen: set[tuple[str, str]] = set()
@@ -262,12 +299,55 @@ def _deduplicate(sources: list[dict[str, str]]) -> list[dict[str, str]]:
     return unique
 
 
+def contribution_entries(contributions: list[dict[str, Any]]) -> list[str]:
+    """Every methodology entry the README's contributions table links, as a repo path."""
+    return sorted(
+        {
+            str(link.get("path") or "")
+            for row in contributions
+            for link in row.get("methodology", [])
+            if link.get("path")
+        }
+    )
+
+
+def entry_tables(ledger: Ledger, entries: list[str]) -> list[str]:
+    """The ``schema.table`` of every edge whose ``notes`` cite one of ``entries``.
+
+    A panel-judged iteration has no selectors, so the selector walk cannot find the tables
+    it argues from. The contributions table can: it links the entries that built them, and
+    each recorder writes its entry's path into the edge's ``notes``
+    (``entry docs/<iteration>/step-<n>/methodology/<entry>.md``). An iteration whose
+    entries recorded no edge gains nothing here.
+    """
+    if not entries:
+        return []
+    return sorted(
+        {
+            f"{edge.get('target_schema')}.{edge.get('target_table')}"
+            for edge in ledger.edges
+            if any(entry in str(edge.get("notes") or "") for entry in entries)
+        }
+    )
+
+
 def build(
-    ledger: Ledger, root: Path, folder: Path, track: str, number: int, tables: list[str]
+    ledger: Ledger,
+    root: Path,
+    folder: Path,
+    track: str,
+    number: int,
+    tables: list[str],
+    cited: list[str] | None = None,
 ) -> dict[str, Any]:
-    """The ``Lineage`` object for one iteration: available, note, sources, edges."""
-    seeds = sorted(set(tables) | set(JOINED_TABLES))
-    on_disk = disk_sources(root, folder, seeds)
+    """The ``Lineage`` object for one iteration: available, note, sources, edges.
+
+    ``tables`` are the selector tables (listed as sources even with no database);
+    ``cited`` are the tables its contributing entries recorded (:func:`entry_tables`), which
+    extend the walk but are only known from the ledger.
+    """
+    seeds = sorted(set(tables) | set(JOINED_TABLES) | set(cited or []))
+    on_disk = disk_sources(root, folder, sorted(set(tables) | set(JOINED_TABLES)))
     if not ledger.available:
         return {
             "available": False,
@@ -279,7 +359,12 @@ def build(
     for edge in iteration_edges(ledger, track, number):
         if edge not in collected:
             collected.append(edge)
-    sources = _raw_sources(collected, ledger) + on_disk + _reference_sources(collected)
+    sources = (
+        _raw_sources(collected, ledger)
+        + on_disk
+        + _reference_sources(collected)
+        + _other_roots(collected)
+    )
     return {
         "available": True,
         "note": f"{len(collected)} edge(s) reached from {len(seeds)} table(s)",

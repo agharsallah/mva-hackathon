@@ -46,10 +46,9 @@ SOURCE = (
     "warehouse.probe_ledger + docs/science-register.json"
 )
 
-#: A figure slug and a track name are path segments a client chooses, so they are validated
-#: rather than escaped — the same discipline
-#: :func:`mva.warehouse.postgres.safe_identifier` applies to table names. This shape cannot
-#: contain a separator or a ``..``, so it cannot leave ``figures/<track>/``.
+#: A figure slug is a path segment a client chooses, so it is validated rather than escaped —
+#: the same discipline :func:`mva.warehouse.postgres.safe_identifier` applies to table names —
+#: and then only looked up in the payload, never joined into a path.
 SEGMENT = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,63}$")
 
 
@@ -64,8 +63,11 @@ def payload(settings: Postgres, root: Path | None = None) -> dict[str, Any]:
     for folder in submissions_reader.iteration_folders(base):
         iteration = submissions_reader.read(folder, base)
         tables = submissions_lineage.selector_tables(iteration["selectors"])
+        cited = submissions_lineage.entry_tables(
+            ledger, submissions_lineage.contribution_entries(iteration["contributions"])
+        )
         iteration["lineage"] = submissions_lineage.build(
-            ledger, base, folder, iteration["track"], iteration["number"], tables
+            ledger, base, folder, iteration["track"], iteration["number"], tables, cited
         )
         iteration["audit"] = submissions_audit.build(
             probes,
@@ -86,15 +88,27 @@ def find(iterations: list[dict[str, Any]], track: str, number: int) -> dict[str,
     raise HTTPException(status_code=404, detail=f"no iteration {number} for track {track!r}")
 
 
-def figure_path(root: Path, track: str, slug: str) -> Path:
-    """The PNG behind one figure slug, or a 404. Both segments are validated first."""
-    for segment in (track, slug):
-        if not SEGMENT.match(segment):
-            raise HTTPException(status_code=404, detail=f"not a figure name: {segment!r}")
-    path = root / submissions_reader.FIGURES_DIR / track / f"{slug}.png"
-    if not path.is_file():
-        raise HTTPException(status_code=404, detail=f"no figure {slug!r} for track {track!r}")
-    return path
+#: What an ``<img>`` is told a figure is. The reader lists only these two suffixes.
+MEDIA_TYPES = {".png": "image/png", ".svg": "image/svg+xml"}
+
+
+def figure_path(root: Path, iteration: dict[str, Any], slug: str) -> Path:
+    """The file behind one figure slug of one iteration, or a 404.
+
+    The slug is validated, then looked up in the iteration's own ``figures`` list — the
+    files its report cites — so a client can only ever reach a file the payload already
+    names. No path is built from the request.
+    """
+    if not SEGMENT.match(slug):
+        raise HTTPException(status_code=404, detail=f"not a figure name: {slug!r}")
+    for figure in iteration["figures"]:
+        path = root / figure["path"]
+        if figure["slug"] == slug and path.suffix in MEDIA_TYPES and path.is_file():
+            return path
+    raise HTTPException(
+        status_code=404,
+        detail=f"no figure {slug!r} for {iteration['track']} iteration {iteration['number']}",
+    )
 
 
 def add_routes(api: APIRouter, settings: Postgres, cache: Cache, root: Path | None = None) -> None:
@@ -152,15 +166,16 @@ def add_routes(api: APIRouter, settings: Postgres, cache: Cache, root: Path | No
     @api.get(
         "/submissions/{track}/{number}/figure/{slug}",
         tags=["submissions"],
-        summary="one rendered figure from figures/<track>/, as PNG",
+        summary="one figure the iteration's report cites, as PNG or SVG",
         response_class=FileResponse,
     )
     def submission_figure(track: str, number: int, slug: str) -> FileResponse:
-        """One PNG out of ``figures/<track>/``.
+        """One figure out of the iteration's ``figures`` list.
 
-        Bytes, not an envelope: an ``<img src>`` cannot read JSON. ``number`` is in the
-        path so a figure URL identifies the iteration it illustrates even though the
-        figures directory is per track; it is validated, not used to pick the file.
+        Bytes, not an envelope: an ``<img src>`` cannot read JSON. The list is the files the
+        report cites (``figures/<track>/*.png`` for a report citing none), so ``number``
+        picks which list the slug is resolved against.
         """
-        find(built().data["iterations"], track, number)
-        return FileResponse(figure_path(base, track, slug), media_type="image/png")
+        iteration = find(built().data["iterations"], track, number)
+        path = figure_path(base, iteration, slug)
+        return FileResponse(path, media_type=MEDIA_TYPES[path.suffix])

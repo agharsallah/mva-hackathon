@@ -17,6 +17,7 @@ import json
 from pathlib import Path
 
 import pytest
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 from mva.viz import (
@@ -314,6 +315,30 @@ def test_only_pngs_are_figures_and_each_carries_the_url_that_serves_it(iteration
     ]
 
 
+def test_a_report_citing_figures_is_illustrated_by_those_and_not_the_track_folder(
+    tmp_path: Path,
+) -> None:
+    folder = write_iteration(tmp_path)
+    drawn = tmp_path / "figures" / "it9"
+    drawn.mkdir()
+    (drawn / "b-volcano.svg").write_text("<svg/>", encoding="utf-8")
+    (drawn / "a-rank.png").write_bytes(b"\x89PNG")
+    (folder / "report.md").write_text(
+        "![](../../../figures/it9/b-volcano.svg) then figures/it9/a-rank.png, "
+        "figures/it9/never-drawn.svg and figures/it9/b-volcano.svg again\n",
+        encoding="utf-8",
+    )
+    iteration = submissions_reader.read(folder, tmp_path)
+    assert [f["path"] for f in iteration["figures"]] == [
+        "figures/it9/b-volcano.svg",
+        "figures/it9/a-rank.png",
+    ]
+    figure = submissions.figure_path(tmp_path, iteration, "b-volcano")
+    assert figure.name == "b-volcano.svg"
+    with pytest.raises(HTTPException):
+        submissions.figure_path(tmp_path, iteration, "track9-funnel")
+
+
 def test_the_report_is_returned_verbatim(iteration: dict) -> None:
     assert iteration["report"]["markdown"] == REPORT
     assert iteration["report"]["path"] == f"submissions/{TRACK}/iteration-{NUMBER}/report.md"
@@ -518,3 +543,32 @@ def test_edges_recorded_for_the_iteration_itself_are_included(folder: Path, tmp_
     ledger = submissions_lineage.Ledger([*EDGES, own], True, "5 edges")
     lineage = submissions_lineage.build(ledger, tmp_path, folder, TRACK, NUMBER, [])
     assert own in lineage["edges"]
+
+
+def test_a_panel_iteration_walks_from_the_tables_its_entries_recorded(
+    folder: Path, tmp_path: Path
+) -> None:
+    """No selectors, but the contributions link an entry whose recorder cited it in notes."""
+    entry = "docs/iteration9/step-2/methodology/200-a-sweep.md"
+    recorded = {
+        **EDGES[0],
+        "target_schema": "track9",
+        "target_table": "it9.sweep",
+        "source_kind": "file",
+        "source_ref": "https://example.org/release.csv",
+        "source_version": "20Q2",
+        "notes": f"entry {entry}; the primary screen",
+    }
+    ledger = submissions_lineage.Ledger([*EDGES, recorded], True, "5 edges")
+    contributions = [{"step": "step 2", "methodology": [{"label": "200", "path": entry}]}]
+    cited = submissions_lineage.entry_tables(
+        ledger, submissions_lineage.contribution_entries(contributions)
+    )
+    assert cited == ["track9.it9.sweep"]
+    (folder / "spec.selectors.json").unlink()
+    lineage = submissions_lineage.build(ledger, tmp_path, folder, TRACK, NUMBER, [], cited)
+    assert recorded in lineage["edges"]
+    refs = {(s["kind"], s["ref"]) for s in lineage["sources"]}
+    assert ("file", "https://example.org/release.csv") in refs
+    assert ("table", "track9.it9.sweep") not in refs, "a cited table is walked, not a selector"
+    assert not any(s["ref"].endswith("spec.selectors.json") for s in lineage["sources"])
