@@ -1,0 +1,15 @@
+{
+  "name": "step10-s1-funnel",
+  "built_at": "2026-09-25T11:54:46+00:00",
+  "built_by": "tools/render_step10_s1.py",
+  "code_version": "1943903",
+  "inputs": [
+    {
+      "path": "build/it4/track2-s1/controls.json",
+      "sha256": "eee0e94efe3273078bb0758b50c141aed3948c8f8b2f8eccd4f007166d17ea6d"
+    }
+  ],
+  "entry": "docs/iteration4/step-10/methodology/154-screen-wide-prism-sweep.md",
+  "legend": "**Legend** \u2014 the raw input; neutral machinery; a decision point; broken / dangerous / lost points; purple = the raw screen; blue = each filter; yellow = the list G3 hands to the convergence test; red = the H093 count, zero (a zero bar is drawn at its label).",
+  "patient_data": "none. Public cell-line screen results only; no patient-derived value and no genomic position appears on any axis"
+}

@@ -115,10 +115,29 @@ The universe file has two columns: `drug`, `approved`.
 
 | id | what | claims | entry | status |
 |---|---|---|---|---|
-| S1 | screen-wide PRISM sweep (generator G3) | H093 `P4-28` | 154 | planned |
+| S1 | screen-wide PRISM sweep (generator G3) | H093 `P4-28` | [154](methodology/154-screen-wide-prism-sweep.md) | done 2026-09-25 — H093 refuted; G3 = 8 drugs |
 | S2 | convergence, checks, candidate table | H094 `P4-29`, H095 `P4-30` | 155 | planned |
 
 G4 runs in step 9 as E3 (entry 153, H092 `P4-27`) and hands its list here.
+
+## What happened
+
+**S1 — the screen-wide PRISM sweep** ([154](methodology/154-screen-wide-prism-sweep.md), note
+[S1](submission-notes/S1.md)). Entry 151's tests, unchanged, over **613** launched drugs measured
+on ≥ 3 rhabdomyosarcoma lines and ≥ 20 lines per aneuploidy arm. **No drug reaches q < 0.10 in
+either contrast** (best q 0.122 RMS, 0.287 aneuploidy), so **H093 is refuted as registered**.
+The same code finds dabrafenib and vemurafenib for melanoma lines at q ≈ 10⁻⁹ over 2,032 drugs,
+so the null is the screen's, not the pipeline's. The RMS contrast is three lines for 619 of 633
+copies and fires at 9.6 % raw (4.4 % once line fragility is removed). G3 lists 8 drugs, none
+corrected-significant; dasatinib is aneuploidy rank 4 of 613, on the list's boundary.
+
+![S1 volcano](../../../figures/it4/step10-s1-volcano.svg)
+
+> **Legend** — green = q < 0.10 (BH over the whole family); yellow = G3-listed (top 0.5 % of
+> one contrast); blue = every other eligible drug; grey band = central 95 % of Cliff's delta over
+> 200 seeded unrelated eligible Launched drugs; dashed yellow = the p value BH needs for
+> q < 0.10 (control: the largest passing p; the two real contrasts: 0.10 / 613, which no drug
+> reaches); purple label = dasatinib, marked only because entry 151 already reported it.
 
 ## Data handling
 

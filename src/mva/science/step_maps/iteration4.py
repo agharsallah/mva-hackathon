@@ -182,6 +182,8 @@ ITERATION4: tuple[Step, ...] = (
             "figures/it4/step9-e4-effects.svg",
             "figures/it4/step9-e4-background.svg",
             "figures/it4/step9-e4-coverage.svg",
+            "figures/it4/step9-e3-engines.svg",
+            "figures/it4/step9-e3-control.svg",
             "figures/it4/step9-e56-evidence.svg",
             "figures/it4/step9-e56-baserate.svg",
             "figures/it4/step9-e56-coverage.svg",
@@ -203,5 +205,10 @@ ITERATION4: tuple[Step, ...] = (
         # re-runs the checks on it. E7 (grading D5) is answered here, not in step 9.
         status="open",
         track="track2",
+        figures=(
+            "figures/it4/step10-s1-volcano.svg",
+            "figures/it4/step10-s1-percentiles.svg",
+            "figures/it4/step10-s1-funnel.svg",
+        ),
     ),
 )

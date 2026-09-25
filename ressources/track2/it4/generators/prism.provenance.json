@@ -1,0 +1,121 @@
+{
+  "name": "prism",
+  "built_at": "2026-09-25T11:51:21+00:00",
+  "built_by": "tools/screen_sweep.py",
+  "code_version": "1943903",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration4/step-10/methodology/154-screen-wide-prism-sweep.md",
+  "inputs": [
+    {
+      "role": "primary_matrix",
+      "name": "PRISM_24Q2_Extended_Primary_Data_Matrix.csv",
+      "url": "https://ndownloader.figshare.com/files/46630984",
+      "release": "PRISM Repurposing 24Q2 (figshare article 25917643)",
+      "licence": "CC BY 4.0",
+      "sha256": "3b6554cfc6c765af53088a676edc7bce00ee7d84fe808b93bbfa892de607bc3d",
+      "bytes": 72456953
+    },
+    {
+      "role": "primary_compounds",
+      "name": "PRISM_24Q2_Extended_Primary_Compound_List.csv",
+      "url": "https://ndownloader.figshare.com/files/46630981",
+      "release": "PRISM Repurposing 24Q2",
+      "licence": "CC BY 4.0",
+      "sha256": "7e78f5901c1a97d2baab0789ab89832e716388da4eacaa9f094e7d2f2f5a3463",
+      "bytes": 719567
+    },
+    {
+      "role": "models",
+      "name": "Model_24Q4.csv",
+      "url": "https://ndownloader.figshare.com/files/51065297",
+      "release": "DepMap 24Q4 (figshare.plus 27993248)",
+      "licence": "CC BY 4.0",
+      "sha256": "b7a0c1385e6cef30132b56aff61f1261d11e3f490490b355c430d32ee0dbdcfa",
+      "bytes": 645696
+    },
+    {
+      "role": "signatures",
+      "name": "OmicsSignatures_24Q4.csv",
+      "url": "https://ndownloader.figshare.com/files/51065726",
+      "release": "DepMap 24Q4",
+      "licence": "CC BY 4.0",
+      "sha256": "2eb6d83065db5b591d9904339a1eaeb769a4db8593fe80a135399d7708b39bef",
+      "bytes": 131912
+    },
+    {
+      "role": "secondary_compounds",
+      "name": "PRISM_20Q2_secondary_treatment_info.csv",
+      "url": "https://ndownloader.figshare.com/files/36794619",
+      "release": "PRISM Repurposing 20Q2 secondary",
+      "licence": "CC BY 4.0",
+      "sha256": "f0ec000acda7c1a01ebae2aa0a2b5dba2821abb674f1fec7a363cdc60d8b379e",
+      "bytes": 4284816
+    },
+    {
+      "role": "primary_treatment_info",
+      "name": "PRISM_20Q2_primary_treatment_info.csv",
+      "url": "https://ndownloader.figshare.com/files/36794583",
+      "release": "PRISM Repurposing 20Q2 primary (figshare article 20564034; prism-repurposing-20q2-primary-screen-replicate-collapsed-treatment-info.csv)",
+      "licence": "CC BY 4.0",
+      "sha256": "f92e58eb04b0db5c35412b08c50446078de153a2f6a5b862cdb89f532ed29bc5",
+      "bytes": 1312286
+    },
+    {
+      "name": "ressources/track2/it4/prism_sweep.tsv",
+      "role": "the sweep table this list is cut from",
+      "sha256": "7749f9f129bd52eb0a1611659156e7cb4d4b29ba0b1e3c698d54eb2025e9bf55",
+      "bytes": 498779,
+      "licence": "this repository"
+    }
+  ],
+  "parameters": {
+    "seed": 20260924,
+    "bootstrap_resamples": 2000,
+    "alpha": 0.1,
+    "min_in_group_lines": 3,
+    "min_lines_per_aneuploidy_arm": 20,
+    "in_group_codes": [
+      "RMS",
+      "ERMS",
+      "ARMS",
+      "PLRMS",
+      "SCRMS",
+      "SRMS"
+    ],
+    "annotation_column": "Aneuploidy",
+    "groups": {
+      "rms": "DepMap 24Q4 Model.csv OncotreeCode in ('RMS', 'ERMS', 'ARMS', 'PLRMS', 'SCRMS', 'SRMS') (14 screened lines) versus every other screened line (884)",
+      "aneuploidy": "median split at 20 over the 729 annotated lines; ties at the median dropped"
+    },
+    "launched_rule": "core BRD id marked Launched in the 20Q2 primary or secondary file",
+    "join_key": "prism_join_key: drop a trailing '-(+/-)', then mva.drugs.names.base_name(name.replace('-', ' '))",
+    "bh_family": "one representative copy per eligible drug, within each contrast",
+    "top_fraction": 0.005,
+    "hints": {
+      "rms": "D4",
+      "aneuploidy": "D2"
+    }
+  },
+  "method": "G3: union of the top 0.5% (ceil) of eligible Launched drugs on each contrast, ranked by one-sided p (ties by larger delta); the union is ranked by best within-contrast rank, then p; universe = every eligible Launched drug; direction_hint per contrast {'rms': 'D4', 'aneuploidy': 'D2'}; approved = PRISM Launched",
+  "test": "entry 151 unchanged: Mann-Whitney U one-sided 'in-group more sensitive'; Cliff's delta from the same U; 95 % percentile bootstrap CI; Benjamini-Hochberg over every eligible Launched drug within each contrast",
+  "software": {
+    "scipy": "1.18.1",
+    "numpy": "2.5.2",
+    "polars": "1.44.1"
+  },
+  "patient_data": "none. Public cell-line screens and public line annotations only. The clinical terms enter at one remove: HP:0002859 (rhabdomyosarcoma) is why the lineage contrast is RMS. No patient sequence, position or allele is read.",
+  "outputs": [
+    {
+      "path": "ressources/track2/it4/generators/prism.tsv",
+      "sha256": "f45750b8052253507b481ed301c7683dc4e14754002505a6fe96a251185dac8e",
+      "bytes": 2808,
+      "rows": 8
+    },
+    {
+      "path": "ressources/track2/it4/generators/prism.universe.tsv",
+      "sha256": "293171e171d08375a791316fcb5c16163e2dad77d371a3b3af21a0d918dcad32",
+      "bytes": 10617,
+      "rows": 613
+    }
+  ]
+}

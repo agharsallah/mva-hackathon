@@ -12,9 +12,30 @@
     "steps": [],
     "what": "The candidate table and survivors for submissions/track2/iteration-4/."
   },
-  "figures": [],
+  "figures": [
+    {
+      "name": "step10-s1-volcano.svg",
+      "reads": "Cliff's delta against -log10 one-sided p for three families run through one code path: skin/melanoma lines vs the rest over 2,032 launched drugs (the positive control), rhabdomyosarcoma vs the rest over 613, and high vs low aneuploidy over 613. Dabrafenib and vemurafenib sit far above the BH line; in the two real contrasts no drug crosses it.",
+      "means": "PRISM has no launched drug selective for either of the child's contexts at a corrected level, and the pipeline can find one when one exists. H093 is refuted.",
+      "source": "tools/render_step10_s1.py over ressources/track2/it4/prism_sweep.tsv and build/it4/track2-s1/; entry 154"
+    },
+    {
+      "name": "step10-s1-percentiles.svg",
+      "reads": "Each of 613 drugs placed by its delta percentile in the rhabdomyosarcoma contrast (x) and the aneuploidy contrast (y); Spearman rho -0.112. The 8 G3-listed drugs lie along the two edges, none in the top-right decile of both.",
+      "means": "The two contrasts are independent sources that do not pick the same drugs, so a drug good for both would have to be found, not assumed.",
+      "source": "tools/render_step10_s1.py; entry 154"
+    },
+    {
+      "name": "step10-s1-funnel.svg",
+      "reads": "6,790 PRISM compounds, 2,189 marked Launched, 633 eligible copies, 613 eligible drugs, 8 G3-listed, 0 with q < 0.10 in both contrasts; 1,489 newer compounds carry no PRISM phase.",
+      "means": "Coverage and the approval label, not only biology, bound what the screen can say.",
+      "source": "tools/render_step10_s1.py over build/it4/track2-s1/controls.json; entry 154"
+    }
+  ],
   "sources": [
     "docs/iteration4/step-10/README.md",
-    "docs/iteration4/step-10/hypotheses/README.md"
+    "docs/iteration4/step-10/hypotheses/README.md",
+    "docs/iteration4/step-10/methodology/154-screen-wide-prism-sweep.md",
+    "docs/iteration4/step-10/submission-notes/S1.md"
   ]
 }

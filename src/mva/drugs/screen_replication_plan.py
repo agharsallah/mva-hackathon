@@ -44,7 +44,14 @@ from mva.drugs.screen_replication_prism import (
     normalise_name,
 )
 
-__all__ = ["ReplicationPlan", "SourceFile", "candidates", "fetch_sources", "match_drug"]
+__all__ = [
+    "ReplicationPlan",
+    "SourceFile",
+    "candidates",
+    "fetch_files",
+    "fetch_sources",
+    "match_drug",
+]
 
 
 @dataclass(frozen=True)
@@ -104,9 +111,14 @@ def fetch_sources(plan: ReplicationPlan) -> int:
     Re-running is cheap and idempotent: an existing file is only re-digested, and the
     original ``fetched_at`` is preserved while ``verified_at`` moves.
     """
-    plan.raw_dir.mkdir(parents=True, exist_ok=True)
-    for source in plan.sources:
-        path = plan.raw_dir / source.name
+    return fetch_files(plan.sources, plan.raw_dir, source_note=plan.source_note)
+
+
+def fetch_files(sources: Sequence[SourceFile], raw_dir: Path, *, source_note: str = "") -> int:
+    """:func:`fetch_sources` for any list of files, so another plan can reuse the fetcher."""
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    for source in sources:
+        path = raw_dir / source.name
         stamp = datetime.now(UTC).isoformat(timespec="seconds")
         if not path.exists() or path.stat().st_size == 0:
             print(f"fetching {source.name} ...")
@@ -128,7 +140,7 @@ def fetch_sources(plan: ReplicationPlan) -> int:
                     "sha256": sha,
                     "licence": source.licence,
                     "release": source.release,
-                    "source_note": plan.source_note,
+                    "source_note": source_note,
                 },
                 indent=2,
             )
