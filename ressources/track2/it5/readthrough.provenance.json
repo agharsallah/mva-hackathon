@@ -1,10 +1,10 @@
 {
   "name": "readthrough",
-  "built_at": "2026-09-25T16:47:51+00:00",
+  "built_at": "2026-09-25T17:53:34+00:00",
   "built_by": "tools/it5_readthrough.py predict",
-  "code_version": "5965bb6",
+  "code_version": "29ce58b",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
-  "entry": "docs/iteration5/step-1/methodology/<numbered by the coordinator>-r1.md",
+  "entry": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
   "inputs": [
     {
       "file": "build/it5/r1/toledano_MOESM4.xlsx",

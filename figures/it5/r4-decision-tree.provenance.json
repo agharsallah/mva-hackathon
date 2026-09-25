@@ -1,0 +1,17 @@
+{
+  "name": "r4-decision-tree",
+  "built_at": "2026-09-25T17:25:57+00:00",
+  "built_by": "tools/render_it5_r4.py",
+  "code_version": "29ce58b",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "inputs": [
+    {
+      "path": "ressources/track2/it5/decision_summary.json",
+      "sha256": "6c04f5deb797f7d3d8b7bb661a79c54bd84ee886ebe383129cc889a4937919f8"
+    }
+  ],
+  "entry": "docs/iteration5/step-1/methodology/161 (R4; drafted at work/r4-entry.md)",
+  "legend": "**Legend** \u2014 yellow = the first uncertain fact, purple = further facts about the child's alleles, edge = value (prior weight), green = the best drug in that state, red = only the baseline (defer) is best.",
+  "wording": "triage heuristic, not a calibrated posterior",
+  "patient_data": "none: drug names, state labels, weights and utilities; no position"
+}

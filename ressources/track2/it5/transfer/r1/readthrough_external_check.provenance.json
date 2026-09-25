@@ -1,0 +1,52 @@
+{
+  "name": "readthrough_external_check",
+  "built_at": "2026-09-25T17:54:52+00:00",
+  "built_by": "tools/it5_readthrough.py holdout",
+  "code_version": "29ce58b",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+  "inputs": [
+    {
+      "file": "build/it5/r1/toledano_ptc.tsv",
+      "role": "Toledano et al., Nat Genet 56:1914-1924 (2024), PMID 39174735: measured readthrough. The held-out context's rows are removed from the fit and used only as the answer",
+      "sha256": "8654a0e155b60f0f11afd8a65fa26499af73f5708cc66f5347ca2040a518fd80",
+      "citation": "PMID:39174735"
+    }
+  ],
+  "output": {
+    "path": "ressources/track2/it5/transfer/r1/readthrough_external_check.tsv",
+    "sha256": "83ec3d04598ec50b45296827a20d08cac02de3a2fbe5f69bf72c9f750f377df8",
+    "bytes": 956,
+    "rows": 9
+  },
+  "rows": 9,
+  "parameters": {
+    "held_out_contexts": [
+      "BLM_Q548X"
+    ],
+    "summary": {
+      "BLM_Q548X": {
+        "drugs_compared": 9,
+        "spearman_across_drugs": 0.7,
+        "p_value": 0.03577,
+        "mean_absolute_error": 0.4053,
+        "median_measured": 0.288
+      }
+    }
+  },
+  "assumptions": "the reporter assay's percent-of-no-PTC scale is comparable across contexts, so a prediction learned on other contexts is on the same scale as this one",
+  "limitations": "one context per row group and a handful of compounds; a rank correlation over so few points is weak evidence, and censored (>) measurements are lower bounds",
+  "validation": "the context is removed from the model entirely before it is predicted, so nothing about it can leak into its own prediction",
+  "sources": {
+    "literature": "PMID:39174735 supplementary table 3",
+    "clinical": "none",
+    "genomic": "none: a published allele of another person's gene"
+  },
+  "columns": {
+    "predicted": "group mean from every other context, same compound",
+    "measured": "the held-out measurement",
+    "backoff_level": "which key answered: stop+4-1, stop+4, stop or drug"
+  },
+  "clinical_framing": "research exercise; no row advises for or against giving any drug to any patient",
+  "patient_data": "none in this file. Sequence-derived facts are stated as codon identity, exon index, counts and fractions; no genomic position and no run of patient sequence appears"
+}

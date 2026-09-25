@@ -1,0 +1,53 @@
+{
+  "assumptions": "a label adverse effect on the same clinical axis as a patient phenotype is a potential collision; a pharmacogene the callset cannot answer is a question, not a normal result",
+  "clinical_framing": "research exercise; no row advises for or against giving any drug to any patient",
+  "columns": {
+    "combined_flag": "the two-source verdict; 'unflagged' is never 'safe'",
+    "comparison_set_rate": "share of matched comparison ingredients with any mapped effect",
+    "genome_call": "actionability words per pharmacogene; 'no call' is a result",
+    "genome_flag": "yes when a gene is actionable, uncallable, or outside the caller",
+    "phenotype_flag": "yes on either trigger; phenotype_flag_reason says which"
+  },
+  "entry": "docs/iteration5/step-1/methodology/161 (R4; drafted at docs/iteration5/step-1/work/r4-entry.md)",
+  "generated_at": "2026-09-25T17:18:36+00:00",
+  "inputs": [
+    {
+      "file": "build/it5/r4/safety/pgx_summary.json",
+      "sha256": "581c9c4ca8aae9e2dbf2e5938ca78fa3a22073e4939c7acfae34fab4168c3d8a"
+    },
+    {
+      "file": "build/it5/r4/safety/label_summary.json",
+      "sha256": "60544cc46892e1f972372ebfad4fc77613906e8b9dd6fdfc66baee934a1b535d"
+    },
+    {
+      "file": "ressources/track2/hpo_to_adverse_terms.tsv",
+      "sha256": "3313fd4506cd9ff8f7dc6aed1bc5a1ec52b561569077aff540f719b4ddf88f06"
+    },
+    {
+      "file": "build/it5/r4/safety/drugs.tsv",
+      "sha256": "c6dcb0c237452d6001c0544361d813b5c875bd72e4e2622688f565528d025b33"
+    }
+  ],
+  "limitations": "the callset is variant-only, so most PGx positions are no-calls and the absent-to-ref column is an assumption, not a measurement; OnSIDES v3.1.1 ships no paediatric ADE subset (its paediatric file is a 200-label annotation gold standard), so the paediatric view comes from FAERS, which has no denominator",
+  "parameters": {
+    "comparison_rate": 0.4381,
+    "comparison_rule": "5 nearest approved ingredients per candidate, matched on the number of distinct adverse effects their labels carry; candidates excluded",
+    "extra_gene": [
+      "valproic acid=POLG"
+    ],
+    "label_sources": [
+      "US",
+      "EU",
+      "UK",
+      "JP"
+    ]
+  },
+  "rows": 47,
+  "sources": {
+    "clinical": "the proband's 7 own HPO terms (the 8th is parental history and is excluded), mapped to MedDRA in ressources/track2/hpo_to_adverse_terms.tsv",
+    "genomic": "the child's WGS callset, read only through PharmCAT phenotypes: this table carries actionability words and counts, never a diplotype or a position"
+  },
+  "tool": "tools/patient_safety.py table",
+  "validation": "furosemide and calcitriol carried as positive controls for the nephrocalcinosis arm of the mapping; both are matched",
+  "wording": "unflagged by these two sources (not evidence of safety)"
+}

@@ -1,0 +1,26 @@
+{
+  "name": "s1-transfer",
+  "built_at": "2026-09-25T18:00:01+00:00",
+  "built_by": "tools/render_it5_s1.py",
+  "code_version": "29ce58b",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration5/step-1/work/s1-entry.md",
+  "inputs": [
+    {
+      "path": "ressources/track2/it5/transfer/transfer_summary.tsv",
+      "sha256": "b2593a52655342734008f96516451bf5a8df1ecd7cba4c19debafe1d24e9b19d"
+    },
+    {
+      "name": "yardstick",
+      "role": "tools/transfer_it4.py, docs/iteration4/step-11 (entry 156)",
+      "lines": 378
+    }
+  ],
+  "legend": "**Legend** \u2014 the raw input; a decision point; neutral machinery; good / safe / the goal; broken / dangerous / lost points; purple = configuration (a case card), yellow = code that turned a constant into a parameter, blue = a new capability that is not a transfer cost, green = a check that passed, red = the one-off driver this replaces.",
+  "assumptions": "a line count is a proxy for effort; the two counts are comparable only in that both are lines a person had to write for the same second disease",
+  "patient_data": "none: line counts, row counts and pass/fail flags",
+  "sources": {
+    "genomic": "none",
+    "clinical": "none"
+  }
+}

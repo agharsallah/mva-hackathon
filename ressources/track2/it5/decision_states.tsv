@@ -1,0 +1,5 @@
+state	prior	best	utility	tied
+missense_class=unstable & readthrough_feasible=yes	0.0	GLICLAZIDE	0.7	["MIGALASTAT"]
+missense_class=unstable & readthrough_feasible=no	0.55	GLICLAZIDE	0.7	["MIGALASTAT"]
+missense_class=inactive & readthrough_feasible=yes	0.0	DASATINIB	0.4	[]
+missense_class=inactive & readthrough_feasible=no	0.45	DASATINIB	0.4	[]

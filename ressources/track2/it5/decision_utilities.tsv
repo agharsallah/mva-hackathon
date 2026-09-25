@@ -1,0 +1,47 @@
+rank	action	names	routes	branches	n_rows	controls	safety_class	avoid_evidence	expected_utility	best_in_states	u[missense_class=unstable & readthrough_feasible=yes]	u[missense_class=unstable & readthrough_feasible=no]	u[missense_class=inactive & readthrough_feasible=yes]	u[missense_class=inactive & readthrough_feasible=no]
+1	GLICLAZIDE	GLICLAZIDE	R2	missense_unstable	1	["passed"]	unflagged	[]	0.385	["missense_class=unstable & readthrough_feasible=yes", "missense_class=unstable & readthrough_feasible=no"]	0.7	0.7	0.0	0.0
+2	MIGALASTAT	MIGALASTAT	R2	missense_unstable	1	["passed"]	unflagged	[]	0.385	[]	0.7	0.7	0.0	0.0
+3	NMN	NMN|nmn	R1|R3	missense_unstable	2	["not_applicable", "passed"]	unassessed	[]	0.264	[]	0.48	0.48	0.0	0.0
+4	DASATINIB	DASATINIB|dasatinib	R1|R3	any|missense_inactive	2	["not_applicable", "passed"]	unflagged	[]	0.2537	["missense_class=inactive & readthrough_feasible=yes", "missense_class=inactive & readthrough_feasible=no"]	0.134	0.134	0.4	0.4
+5	ETHOXZOLAMIDE	ETHOXZOLAMIDE	R2	missense_unstable	1	["passed"]	unassessed	[]	0.231	[]	0.42	0.42	0.0	0.0
+6	NISOLDIPINE	NISOLDIPINE	R2	missense_unstable	1	["passed"]	unassessed	[]	0.231	[]	0.42	0.42	0.0	0.0
+7	TESTOLACTONE	TESTOLACTONE	R2	missense_unstable	1	["passed"]	unassessed	[]	0.231	[]	0.42	0.42	0.0	0.0
+8	MG132	MG132|mg132	R1|R3	missense_unstable	2	["not_applicable", "passed"]	unassessed	[]	0.165	[]	0.3	0.3	0.0	0.0
+9	QUERCETIN	QUERCETIN|quercetin	R1|R3	any|missense_inactive	2	["not_applicable", "passed"]	unassessed	[]	0.13011	[]	0.0402	0.0402	0.24	0.24
+10	NIACIN	niacin	R3	missense_unstable	1	["passed"]	unflagged	[]	0.1056	[]	0.192	0.192	0.0	0.0
+11	NICOTINAMIDE	nicotinamide	R3	missense_unstable	1	["passed"]	unflagged	[]	0.1056	[]	0.192	0.192	0.0	0.0
+12	SIROLIMUS	SIROLIMUS	R1	missense_inactive	1	["not_applicable"]	unflagged	[]	0.09	[]	0.0	0.0	0.2	0.2
+13	BORTEZOMIB	BORTEZOMIB|bortezomib	R1|R2|R3	missense_unstable	4	["failed", "not_applicable", "passed"]	phenotype_flag	[]	0.0825	[]	0.15	0.15	0.0	0.0
+14	CARFILZOMIB	CARFILZOMIB|carfilzomib	R1|R3	missense_unstable	2	["not_applicable", "passed"]	phenotype_flag	[]	0.0825	[]	0.15	0.15	0.0	0.0
+15	ROMIDEPSIN	romidepsin	R3	missense_unstable	1	["passed"]	unflagged	[]	0.0792	[]	0.144	0.144	0.0	0.0
+16	EVEROLIMUS	EVEROLIMUS	R1	missense_inactive	1	["not_applicable"]	phenotype_flag	[]	0.0675	[]	0.0	0.0	0.15	0.15
+17	CBP/P300 INHIBITION	CBP/p300 inhibition	R1	missense_unstable	1	["not_applicable"]	unassessed	[]	0.066	[]	0.12	0.12	0.0	0.0
+18	NAVITOCLAX	NAVITOCLAX|navitoclax	R1|R3	any|missense_inactive	2	["not_applicable", "passed"]	unassessed	[]	0.06531	[]	0.0402	0.0402	0.096	0.096
+19	AZACITIDINE	azacitidine	R3	missense_unstable	1	["passed"]	phenotype_flag	[]	0.0594	[]	0.108	0.108	0.0	0.0
+20	BELINOSTAT	belinostat	R3	missense_unstable	1	["passed"]	genome_flag	[]	0.0594	[]	0.108	0.108	0.0	0.0
+21	DECITABINE	decitabine	R3	missense_unstable	1	["passed"]	phenotype_flag	[]	0.0594	[]	0.108	0.108	0.0	0.0
+22	LONAFARNIB	lonafarnib	R3	missense_unstable	1	["passed"]	phenotype_flag	[]	0.0594	[]	0.108	0.108	0.0	0.0
+23	PANOBINOSTAT	panobinostat	R3	missense_unstable	1	["passed"]	phenotype_flag	[]	0.0594	[]	0.108	0.108	0.0	0.0
+24	VALPROIC ACID	valproic acid	R3	missense_unstable	1	["passed"]	genome_flag	[]	0.0594	[]	0.108	0.108	0.0	0.0
+25	IXAZOMIB	ixazomib	R3	missense_unstable	1	["passed"]	unflagged	[]	0.0528	[]	0.096	0.096	0.0	0.0
+26	PROGERIN C-TERMINAL PEPTIDE	progerin c-terminal peptide	R3	missense_unstable	1	["passed"]	unassessed	[]	0.04752	[]	0.0864	0.0864	0.0	0.0
+27	VORINOSTAT	vorinostat	R3	missense_unstable	1	["passed"]	unassessed	[]	0.04752	[]	0.0864	0.0864	0.0	0.0
+28	FISETIN	fisetin	R3	any	1	["passed"]	unassessed	[]	0.0402	[]	0.0402	0.0402	0.0402	0.0402
+29	FTI-277	fti-277	R3	missense_unstable	1	["passed"]	unassessed	[]	0.03564	[]	0.0648	0.0648	0.0	0.0
+30	TRICHOSTATIN A	TRICHOSTATIN A	R3	missense_unstable	1	["passed"]	unassessed	[]	0.03564	[]	0.0648	0.0648	0.0	0.0
+31	NICOTINAMIDE RIBOSIDE	nicotinamide riboside	R3	missense_unstable	1	["passed"]	unassessed	[]	0.03168	[]	0.0576	0.0576	0.0	0.0
+32	TIPIFARNIB	tipifarnib	R3	missense_unstable	1	["passed"]	unassessed	[]	0.02376	[]	0.0432	0.0432	0.0	0.0
+33	defer (no drug; run the test first)	baseline			0		n/a (baseline)	[]	0.0	[]	0.0	0.0	0.0	0.0
+34	5-FLUOROURIDINE	5-FLUOROURIDINE	R1	stop_allele	1	["failed"]	unassessed	[]	0.0	[]	0.045	0.0	0.045	0.0
+35	AMLEXANOX	amlexanox	R1	stop_allele	1	["not_applicable"]	unassessed	[]	0.0	[]	0.12	0.0	0.12	0.0
+36	ATALUREN	ATALUREN	R1	stop_allele	1	["not_applicable"]	unflagged	[]	0.0	[]	0.0	0.0	0.0	0.0
+37	CC90009	CC90009	R1	stop_allele	1	["failed"]	unassessed	[]	0.0	[]	0.045	0.0	0.045	0.0
+38	CLITOCINE	Clitocine	R1	stop_allele	1	["failed"]	unassessed	[]	0.0	[]	0.045	0.0	0.045	0.0
+39	DAP	DAP	R1	stop_allele	1	["passed"]	unassessed	[]	0.0	[]	0.36	0.0	0.36	0.0
+40	ELX-02	ELX-02	R1	stop_allele	1	["not_applicable"]	unassessed	[]	0.0	[]	0.24	0.0	0.24	0.0
+41	G418	G418	R1	stop_allele	1	["passed"]	avoid	["avoid: aminoglycoside proximal renal tubular injury in a child with nephrocalcinosis (HP:0000121), and predicted readthrough at the assay floor for this stop (entry 158 section 5) (entry 158)"]	0.0	[]	0.0	0.0	0.0	0.0
+42	GELDANAMYCIN	GELDANAMYCIN	R1	missense_unstable	1	["not_applicable"]	avoid	["avoid: HSP90 inhibition: mutant, not wild-type, BubR1 depends on HSP90 and geldanamycin collapses it (R1 row strength 0) (PMID:20516114)"]	0.0	[]	0.0	0.0	0.0	0.0
+43	GENTAMICIN	Gentamicin	R1	stop_allele	1	["failed"]	avoid	["avoid: aminoglycoside proximal renal tubular injury in a child with nephrocalcinosis (HP:0000121), and predicted readthrough at the assay floor for this stop (entry 158 section 5) (entry 158)"]	0.0	[]	0.0	0.0	0.0	0.0
+44	NMDI-14	NMDI-14	R1	stop_allele	1	["not_applicable"]	unassessed	[]	0.0	[]	0.12	0.0	0.12	0.0
+45	SJ6986	SJ6986	R1	stop_allele	1	["failed"]	unassessed	[]	0.0	[]	0.045	0.0	0.045	0.0
+46	SRI-41315	SRI-41315	R1	stop_allele	1	["passed"]	unassessed	[]	0.0	[]	0.36	0.0	0.36	0.0

@@ -1,0 +1,36 @@
+drug	key	level	reason	source	origin	is_candidate
+azd-7762	AZD-7762	avoid	CHK1 knockdown lowers BubR1: harm row: a CHK1 inhibitor would move BubR1 the wrong way	PMID:19778378	build/it5/r3/translation.json	false
+pf-00477736	PF-00477736	avoid	CHK1 knockdown lowers BubR1: harm row: a CHK1 inhibitor would move BubR1 the wrong way	PMID:19778378	build/it5/r3/translation.json	false
+rg-7602	RG-7602	avoid	CHK1 knockdown lowers BubR1: harm row: a CHK1 inhibitor would move BubR1 the wrong way	PMID:19778378	build/it5/r3/translation.json	false
+rg-7741	RG-7741	avoid	CHK1 knockdown lowers BubR1: harm row: a CHK1 inhibitor would move BubR1 the wrong way	PMID:19778378	build/it5/r3/translation.json	false
+sch-900776	SCH-900776	avoid	CHK1 knockdown lowers BubR1: harm row: a CHK1 inhibitor would move BubR1 the wrong way	PMID:19778378	build/it5/r3/translation.json	false
+xl-844	XL-844	avoid	CHK1 knockdown lowers BubR1: harm row: a CHK1 inhibitor would move BubR1 the wrong way	PMID:19778378	build/it5/r3/translation.json	false
+rabusertib	RABUSERTIB	avoid	CHK1 knockdown lowers BubR1: harm row: a CHK1 inhibitor would move BubR1 the wrong way	PMID:19778378	build/it5/r3/translation.json	false
+ucn-01	UCN-01	avoid	CHK1 knockdown lowers BubR1: harm row: a CHK1 inhibitor would move BubR1 the wrong way	PMID:19778378	build/it5/r3/translation.json	false
+prexasertib	PREXASERTIB	avoid	CHK1 knockdown lowers BubR1: harm row: a CHK1 inhibitor would move BubR1 the wrong way	PMID:19778378	build/it5/r3/translation.json	false
+bomedemstat	BOMEDEMSTAT	avoid	LSD1 knockdown lowers BubR1: harm row: LSD1 inhibitors are in trials; direction check flags them	PMID:20189264	build/it5/r3/translation.json	false
+su6656	SU6656	avoid	SU6656 or geraldol lowers BubR1: harm row: these compounds drive BubR1 degradation	PMID:21441410	build/it5/r3/translation.json	false
+geraldol	GERALDOL	avoid	SU6656 or geraldol lowers BubR1: harm row: these compounds drive BubR1 degradation	PMID:21441410	build/it5/r3/translation.json	false
+BRENTUXIMAB VEDOTIN	BRENTUXIMAB VEDOTIN	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+CABAZITAXEL	CABAZITAXEL	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+COLCHICINE	COLCHICINE	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+DOCETAXEL	DOCETAXEL	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+EPOTHILONE D	EPOTHILONE D	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+ERIBULIN	ERIBULIN	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+IXABEPILONE	IXABEPILONE	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+PACLITAXEL	PACLITAXEL	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+POLATUZUMAB VEDOTIN	POLATUZUMAB VEDOTIN	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+VINBLASTINE	VINBLASTINE	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+VINCRISTINE	VINCRISTINE	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+VINFLUNINE	VINFLUNINE	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+VINORELBINE	VINORELBINE	caution	A2: spindle poisons in a SAC-deficient background	do-not direction table	ressources/track2/do_not.tsv	false
+dactinomycin	DACTINOMYCIN	avoid	same gene (biallelic BUB1B PCS/MVA): severe adverse reaction to dactinomycin monotherapy, chemotherapy stopped	PMID:31081598	ressources/track2/it5/litmine_mva_exposures.tsv	false
+vincristine	VINCRISTINE	avoid	BUB1B PCS/MVA case report advises avoiding antimitotic drugs such as vincristine or taxol; vincristine is also iteration 4's one two-source safety flag (entry 155)	PMID:28611924	ressources/track2/it5/litmine_mva_exposures.tsv	false
+paclitaxel	PACLITAXEL	avoid	BUB1B PCS/MVA case report advises avoiding antimitotic drugs such as vincristine or taxol; vincristine is also iteration 4's one two-source safety flag (entry 155)	PMID:28611924	ressources/track2/it5/litmine_mva_exposures.tsv	false
+somatropin	SOMATROPIN	caution	growth hormone: unsatisfactory or absent response in 4 MVA reports; one adds it might not have been prescribed had the cancer risk been known	PMID:35434947;36588761;12116237;30147898	ressources/track2/it5/litmine_mva_exposures.tsv	false
+geldanamycin	GELDANAMYCIN	avoid	HSP90 inhibition: mutant, not wild-type, BubR1 depends on HSP90 and geldanamycin collapses it (R1 row strength 0)	PMID:20516114	ressources/track2/it5/readthrough_candidates.tsv	true
+gentamicin	GENTAMICIN	avoid	aminoglycoside proximal renal tubular injury in a child with nephrocalcinosis (HP:0000121), and predicted readthrough at the assay floor for this stop (entry 158 section 5)	entry 158	docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md	true
+amikacin	AMIKACIN	avoid	aminoglycoside proximal renal tubular injury in a child with nephrocalcinosis (HP:0000121), and predicted readthrough at the assay floor for this stop (entry 158 section 5)	entry 158	docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md	false
+g418	G418	avoid	aminoglycoside proximal renal tubular injury in a child with nephrocalcinosis (HP:0000121), and predicted readthrough at the assay floor for this stop (entry 158 section 5)	entry 158	docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md	true
+class: Mps1/TTK kinase inhibitors	CLASS: MPS1/TTK KINASE INHIBITORS	avoid	A1, weakens the checkpoint the child already lacks: 33 of 34 Mps1/Aurora inhibitors less effective in high-aneuploidy lines (entry 151); iteration 4's K1 fails this MOA class	entry 151; K1 (entry 155)	src/mva/drugs/checks.py	false
+class: Aurora kinase inhibitors	CLASS: AURORA KINASE INHIBITORS	avoid	A1, weakens the checkpoint the child already lacks: 33 of 34 Mps1/Aurora inhibitors less effective in high-aneuploidy lines (entry 151); iteration 4's K1 fails this MOA class	entry 151; K1 (entry 155)	src/mva/drugs/checks.py	false

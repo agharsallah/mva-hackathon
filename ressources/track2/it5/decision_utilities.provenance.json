@@ -1,0 +1,478 @@
+{
+  "assumptions": "state variables are independent; a row's mechanism branch acts only in the states its applicability rule names; utilities are products of stated weights; a drug absent from the safety table is 'unassessed', never 'safe'",
+  "clinical_framing": "research exercise; no row advises for or against giving any drug to any patient",
+  "columns": "one action per row, ranked by expected utility; u[<state>] is the heuristic utility in that world-state; baseline = defer",
+  "entry": "docs/iteration5/step-1/methodology/161 (R4; drafted at work/r4-entry.md)",
+  "generated_at": "2026-09-25T17:25:53+00:00",
+  "code_version": "29ce58b",
+  "inputs": [
+    {
+      "file": "ressources/track2/it5/readthrough_candidates.tsv",
+      "sha256": "3eb2433c9bacc6b7c356df860358032d696a624f92908d376725de0e030eb887"
+    },
+    {
+      "file": "ressources/track2/it5/protein_candidates.tsv",
+      "sha256": "b034c1eff4062412fe75b48a87b1d59330899f522deef82ef550ed072040f43f"
+    },
+    {
+      "file": "ressources/track2/it5/literature_candidates.tsv",
+      "sha256": "3d0083d001e04d5b58aaad200e4ca65e26bf5634bde6b5e461bd763944f94eed"
+    },
+    {
+      "file": "ressources/track2/it5/decision_config.json",
+      "sha256": "b4afb1b451ad64b270ee682117b2e30b0cac8852421d8e9342212870dc8e95d9"
+    },
+    {
+      "file": "ressources/track2/it4/candidate_safety.tsv",
+      "sha256": "a54e63b973bcaf0868f7a8bc2b42e6d6e04ba9b0cd3e9de187a4745e13bb81ed"
+    },
+    {
+      "file": "ressources/track2/it5/candidate_safety.tsv",
+      "sha256": "e961a8a720b1d2a150355aa7c8b9d206a29287d1836e63bda31d8a131d3ebc84"
+    },
+    {
+      "file": "ressources/track2/it5/allele_dosage.tsv",
+      "sha256": "c340fc8bf281735acd87dc2f2480a88579715a47ddbf1f86edc1afe083dfe89e"
+    },
+    {
+      "file": "build/it5/r3/translation.json",
+      "sha256": "88816aad6c583f2374b5f16a219afb6b1fc829f54e0dae155f92a9b45574f450"
+    },
+    {
+      "file": "ressources/track2/do_not.tsv",
+      "sha256": "a7b09e9fe7afb9b39a123775ae5281276c160b5d13f2ca0da57f406cc6472c94"
+    },
+    {
+      "file": "ressources/track2/it5/litmine_mva_exposures.tsv",
+      "sha256": "ef15c6fe9c3e1352cd09f112c25454cd053979c93103a2d867686d2d849f1471"
+    },
+    {
+      "file": "ressources/track2/it5/readthrough_candidates.tsv",
+      "sha256": "3eb2433c9bacc6b7c356df860358032d696a624f92908d376725de0e030eb887"
+    },
+    {
+      "file": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+      "sha256": "2f83f5c6e88cec85472c2824854798e158522030a352152ae7e1aa87e9a469a2"
+    },
+    {
+      "file": "src/mva/drugs/checks.py",
+      "sha256": "e671f299d3ae5d7a16b83f01d33ce304af1618befab427d3e5133270361229db"
+    }
+  ],
+  "limitations": "every weight is a choice or a placeholder (the config's todo markers list which); no harm term beyond the safety factor; EVSI assumes the test's sensitivity and specificity are known; utility units are not money, QALYs or probabilities",
+  "parameters": {
+    "config": {
+      "name": "it5-r4-decision-config",
+      "standing": "final-run config 2026-09-25: readthrough prior derived from R1's allele_dosage.tsv at run time; missense prior kept from H084 (no R-table measures the child's missense abundance); test performances are stated R4 assumptions, swept in the tornado",
+      "framing": "triage heuristic over stated weights; not a calibrated posterior, not a probability of benefit, not advice for or against giving any drug to any patient",
+      "combine": "max",
+      "combine_source": "R4 choice: a drug's utility is its best single argument; 'noisy_or' would reward convergence, which iteration 4 measured at chance level (entry 155, H094 refuted)",
+      "state_variables": {
+        "missense_class": {
+          "prior": {
+            "unstable": 0.55,
+            "inactive": 0.45
+          },
+          "source": "the register's triage weight for H084 ('the missense is destabilising', supported 0.55): ThermoMPNN ddG at the 87th percentile of 19,950 BubR1 substitutions, buried, pLDDT >= 90 (docs/iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md). The same entry's calibration (AUROC 0.60, 95% CI 0.13-1.00, n = 8; H083 refuted) says the predictor cannot yet separate the classes, so this is a weight, not a probability. Kept at the final run: no R1-R3 table holds a measured abundance for this missense (R1 entry 158 states the child's BubR1 level has never been measured; R2 entry 159 measures drug effects in cancer lines, not the allele)"
+        },
+        "readthrough_feasible": {
+          "prior": {
+            "yes": 0.0,
+            "no": 1.0
+          },
+          "source": "derived at run time from R1's dosage arithmetic (entry 158, ressources/track2/it5/allele_dosage.tsv): 'feasible' = a readthrough scenario's gain lifts an untreated child scenario that sits below R1's segregation-fidelity threshold to at or above it. Strict reading (used): real-dose agents only ('readthrough only' rows). Lenient reading (tornado end): also R1's two stated upper bounds (complete NMD blockade, perfect agent). Equal weight per (start, gain) pair",
+          "derive": {
+            "method": "threshold_crossing",
+            "values": [
+              "yes",
+              "no"
+            ],
+            "use": "strict",
+            "table": "ressources/track2/it5/allele_dosage.tsv",
+            "threshold": {
+              "column": "nearest_genotype_pct",
+              "where_column": "nearest_published_genotype",
+              "where_contains": "segregation-fidelity cliff"
+            },
+            "start": {
+              "drug_column": "drug",
+              "drug_value": "none",
+              "scenario_column": "scenario",
+              "scenario_prefix": "child now"
+            },
+            "total_column": "total_pct_of_wild_type",
+            "gain_column": "gain_pct_points",
+            "gains": {
+              "strict": [
+                "readthrough only"
+              ],
+              "lenient": [
+                "readthrough only",
+                "NMD blockade",
+                "perfect readthrough"
+              ]
+            }
+          }
+        }
+      },
+      "applicability": {
+        "_doc": "factor in [0, 1] that a row's mechanism branch acts in a world-state; a variable not listed for a branch does not affect it",
+        "stop_allele": {
+          "readthrough_feasible": {
+            "yes": 1.0,
+            "no": 0.0
+          }
+        },
+        "missense_unstable": {
+          "missense_class": {
+            "unstable": 1.0,
+            "inactive": 0.0
+          }
+        },
+        "missense_inactive": {
+          "missense_class": {
+            "unstable": 0.0,
+            "inactive": 1.0
+          }
+        },
+        "any": {}
+      },
+      "safety": {
+        "factors": {
+          "unflagged": 1.0,
+          "genome_flag": 0.75,
+          "phenotype_flag": 0.75,
+          "both_flag": 0.4,
+          "unassessed": 0.6,
+          "caution": 0.5,
+          "avoid": 0.0
+        },
+        "source": "R4 choice. Order follows iteration 4's K2 rule (both sources flag = fail, one = caution; docs/iteration4/step-10/methodology/155-convergence-and-checks.md, method of entry 152); magnitudes are not measured. 'unassessed' (drug absent from the per-child table) is below 'unflagged' by design: no flag is not safety. 'caution' (0.5) and 'avoid' (0.0) come from the avoid list (R3 harm rows, same-disease exposures, do-not classes, R1's ruled-out-as-harmful rows); the lowest factor of a drug's classes applies"
+      },
+      "control": {
+        "policy": "penalty",
+        "failed_factor": 0.25,
+        "unknown_factor": 0.5,
+        "source": "R4 choice. A route whose positive control failed is uninterpretable (docs/iteration5/notes/exploratory-no-hypotheses.md; the lesson of entry 153); 'penalty' keeps its rows visible at a quarter weight, 'exclude' drops them. 'n/a' rows (R1's published measurements and facts, not outputs of its context model) take na_factor 1.0: the route's own rubric already grades them (entry 158 section 4); swept 0.5-1.0",
+        "na_factor": 1.0
+      },
+      "baseline": {
+        "name": "defer (no drug; run the test first)",
+        "utility": 0.0,
+        "source": "the reference action: every utility is relative to not acting on this list"
+      },
+      "route_weights": {},
+      "tests": [
+        {
+          "name": "chx_chase_blot",
+          "variable": "missense_class",
+          "positive": "unstable",
+          "sensitivity": 0.85,
+          "specificity": 0.85,
+          "source": "the experiment named in submissions/track2/iteration-4/report.md 7.3: a BubR1 Western blot with a cycloheximide chase (protein decay rate) in the child's cells against the parents'. Performance is an R4 assumption, swept 0.6-0.99 in the tornado. No R1-R3 table states this test's performance, so the value stays an assumption"
+        },
+        {
+          "name": "readthrough_reporter",
+          "variable": "readthrough_feasible",
+          "positive": "yes",
+          "sensitivity": 0.8,
+          "specificity": 0.8,
+          "source": "optional: a dual-luciferase read-through reporter carrying the child's stop codon and context. Performance is an R4 assumption. R1 states no reporter-to-protein agreement, so the value stays an assumption"
+        }
+      ],
+      "tornado_metric": "evsi:chx_chase_blot",
+      "aliases_source": "R4 choice: a class row names its members; the named tool compound or the named class members take weight 1.0, members the row names only as clinic analogues take 0.4 (R3's 'class analogue approved' translation factor, entry 160). A member the row does not name is not added",
+      "aliases": {
+        "nicotinamide mononucleotide / NAD+ precursors": {
+          "NMN": 1.0
+        },
+        "proteasome inhibition (MG132 as the tool; bortezomib, carfilzomib in clinic)": {
+          "MG132": 1.0,
+          "BORTEZOMIB": 0.4,
+          "CARFILZOMIB": 0.4
+        },
+        "senolytics (dasatinib + quercetin; navitoclax as the mechanistic analogue)": {
+          "DASATINIB": 1.0,
+          "QUERCETIN": 1.0,
+          "NAVITOCLAX": 0.4
+        },
+        "rapalogs (sirolimus, everolimus)": {
+          "SIROLIMUS": 1.0,
+          "EVEROLIMUS": 1.0
+        },
+        "ELX-02 (designer aminoglycoside)": {
+          "ELX-02": 1.0
+        },
+        "ataluren (Translarna)": {
+          "ATALUREN": 1.0
+        },
+        "HSP90 inhibitors (geldanamycin class)": {
+          "GELDANAMYCIN": 1.0
+        },
+        "NMD inhibition (SMG1 inhibitors, NMDI-14)": {
+          "NMDI-14": 1.0
+        },
+        "SRI": {
+          "SRI-41315": 1.0
+        },
+        "FUr": {
+          "5-FLUOROURIDINE": 1.0
+        },
+        "tsa": {
+          "TRICHOSTATIN A": 1.0
+        }
+      },
+      "drop_evidence_kinds": [
+        "negative control"
+      ],
+      "avoid": {
+        "source": "evidence against a drug for this child, read from route files (mva.drugs.decision_avoid); each rule's words are checked in its source file at run time",
+        "translation": "build/it5/r3/translation.json",
+        "do_not": "ressources/track2/do_not.tsv",
+        "rules": [
+          {
+            "drugs": [
+              "dactinomycin"
+            ],
+            "level": "avoid",
+            "reason": "same gene (biallelic BUB1B PCS/MVA): severe adverse reaction to dactinomycin monotherapy, chemotherapy stopped",
+            "source": "PMID:31081598",
+            "source_file": "ressources/track2/it5/litmine_mva_exposures.tsv",
+            "must_contain": [
+              "dactinomycin",
+              "severe adverse reaction",
+              "31081598"
+            ]
+          },
+          {
+            "drugs": [
+              "vincristine",
+              "paclitaxel"
+            ],
+            "level": "avoid",
+            "reason": "BUB1B PCS/MVA case report advises avoiding antimitotic drugs such as vincristine or taxol; vincristine is also iteration 4's one two-source safety flag (entry 155)",
+            "source": "PMID:28611924",
+            "source_file": "ressources/track2/it5/litmine_mva_exposures.tsv",
+            "must_contain": [
+              "vincristine, taxol",
+              "avoiding antimitotic",
+              "28611924"
+            ]
+          },
+          {
+            "drugs": [
+              "somatropin"
+            ],
+            "level": "caution",
+            "reason": "growth hormone: unsatisfactory or absent response in 4 MVA reports; one adds it might not have been prescribed had the cancer risk been known",
+            "source": "PMID:35434947;36588761;12116237;30147898",
+            "source_file": "ressources/track2/it5/litmine_mva_exposures.tsv",
+            "must_contain": [
+              "growth hormone (somatropin)",
+              "35434947",
+              "36588761",
+              "12116237",
+              "30147898"
+            ]
+          },
+          {
+            "drugs": [
+              "geldanamycin"
+            ],
+            "level": "avoid",
+            "reason": "HSP90 inhibition: mutant, not wild-type, BubR1 depends on HSP90 and geldanamycin collapses it (R1 row strength 0)",
+            "source": "PMID:20516114",
+            "source_file": "ressources/track2/it5/readthrough_candidates.tsv",
+            "must_contain": [
+              "HSP90 inhibitors (geldanamycin class)",
+              "ruled out as harmful",
+              "20516114"
+            ]
+          },
+          {
+            "drugs": [
+              "gentamicin",
+              "amikacin",
+              "g418"
+            ],
+            "level": "avoid",
+            "reason": "aminoglycoside proximal renal tubular injury in a child with nephrocalcinosis (HP:0000121), and predicted readthrough at the assay floor for this stop (entry 158 section 5)",
+            "source": "entry 158",
+            "source_file": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+            "must_contain": [
+              "gentamicin, amikacin, G418",
+              "renal tubular",
+              "HP:0000121"
+            ]
+          },
+          {
+            "drugs": [
+              "class: Mps1/TTK kinase inhibitors",
+              "class: Aurora kinase inhibitors"
+            ],
+            "level": "avoid",
+            "reason": "A1, weakens the checkpoint the child already lacks: 33 of 34 Mps1/Aurora inhibitors less effective in high-aneuploidy lines (entry 151); iteration 4's K1 fails this MOA class",
+            "source": "entry 151; K1 (entry 155)",
+            "source_file": "src/mva/drugs/checks.py",
+            "must_contain": [
+              "MONOPOLAR SPINDLE 1 KINASE INHIBITOR",
+              "AURORA KINASE INHIBITOR",
+              "33 of 34 Mps1/Aurora inhibitors"
+            ]
+          }
+        ]
+      },
+      "tornado": [
+        {
+          "param": "prior:missense_class=unstable",
+          "low": 0.2,
+          "high": 0.9
+        },
+        {
+          "param": "prior:readthrough_feasible=yes",
+          "low": 0.0,
+          "high": 0.13333333333333333
+        },
+        {
+          "param": "test:chx_chase_blot:sensitivity",
+          "low": 0.6,
+          "high": 0.99
+        },
+        {
+          "param": "test:chx_chase_blot:specificity",
+          "low": 0.6,
+          "high": 0.99
+        },
+        {
+          "param": "safety:unassessed",
+          "low": 0.3,
+          "high": 1.0
+        },
+        {
+          "param": "safety:phenotype_flag",
+          "low": 0.4,
+          "high": 1.0
+        },
+        {
+          "param": "safety:genome_flag",
+          "low": 0.4,
+          "high": 1.0
+        },
+        {
+          "param": "safety:both_flag",
+          "low": 0.0,
+          "high": 0.75
+        },
+        {
+          "param": "control:failed_factor",
+          "low": 0.0,
+          "high": 0.5
+        },
+        {
+          "param": "control:unknown_factor",
+          "low": 0.25,
+          "high": 0.75
+        },
+        {
+          "param": "applicability:missense_inactive:missense_class=unstable",
+          "low": 0.0,
+          "high": 0.5
+        },
+        {
+          "param": "applicability:missense_unstable:missense_class=inactive",
+          "low": 0.0,
+          "high": 0.5
+        },
+        {
+          "param": "baseline",
+          "low": 0.0,
+          "high": 0.2
+        },
+        {
+          "param": "control:na_factor",
+          "low": 0.5,
+          "high": 1.0
+        },
+        {
+          "param": "safety:caution",
+          "low": 0.25,
+          "high": 0.75
+        },
+        {
+          "param": "route:R1",
+          "low": 0.25,
+          "high": 1.0
+        },
+        {
+          "param": "route:R2",
+          "low": 0.25,
+          "high": 1.0
+        },
+        {
+          "param": "route:R3",
+          "low": 0.25,
+          "high": 1.0
+        }
+      ],
+      "route_weights_source": "all routes 1.0: the three rubrics are on different scales (R3's ceiling is 0.192 by construction, entry 160; R2's approved risers score 0.70 for a +14-16 % protein change, entry 159), so the tornado sweeps each route 0.25-1.0 rather than asserting a calibration",
+      "_derived": {
+        "readthrough_feasible": {
+          "method": "threshold_crossing",
+          "table": "ressources/track2/it5/allele_dosage.tsv",
+          "sha256": "c340fc8bf281735acd87dc2f2480a88579715a47ddbf1f86edc1afe083dfe89e",
+          "threshold": 13.0,
+          "threshold_row": "segregation-fidelity cliff, upper lip (human cells, ~13 %)",
+          "starts": {
+            "child now, missense unstable, base (4-fold down)": 12.5,
+            "child now, missense unstable, pessimistic (6-fold down)": 8.5,
+            "child now, missense inactive": 5.0
+          },
+          "strict": {
+            "gains": {
+              "child + DAP (readthrough only)": 0.071,
+              "child + SRI (readthrough only)": 0.058,
+              "child + G418 (readthrough only)": 0.014
+            },
+            "pairs": 9,
+            "crossing": 0,
+            "prior_yes": 0.0,
+            "crossing_pairs": []
+          },
+          "lenient": {
+            "gains": {
+              "child + DAP (readthrough only)": 0.071,
+              "child + SRI (readthrough only)": 0.058,
+              "child + G418 (readthrough only)": 0.014,
+              "child + DAP + complete NMD blockade (upper bound, not a dose)": 0.712,
+              "child + a perfect readthrough agent (ceiling)": 1.423
+            },
+            "pairs": 15,
+            "crossing": 2,
+            "prior_yes": 0.13333333333333333,
+            "crossing_pairs": [
+              "child now, missense unstable, base (4-fold down) + child + DAP + complete NMD blockade (upper bound, not a dose)",
+              "child now, missense unstable, base (4-fold down) + child + a perfect readthrough agent (ceiling)"
+            ]
+          }
+        }
+      }
+    },
+    "overrides": [],
+    "steps": 101
+  },
+  "rows": 46,
+  "output": {
+    "path": "ressources/track2/it5/decision_utilities.tsv",
+    "sha256": "f3f760602a883681f75645009f97b49b82159eb53a392d03a2d03b2db0e3e1b4",
+    "bytes": 5937,
+    "rows": 46
+  },
+  "sources": {
+    "clinical": "the proband's 7 own HPO terms enter only through the per-child safety table (iteration 4, entries 152/155: OnSIDES label effects matched to the terms)",
+    "genomic": "the two BUB1B alleles enter as state variables (stop_gained -> readthrough_feasible; missense -> missense_class) and, through the safety table, as PharmCAT actionability words; no position is read or written"
+  },
+  "tool": "tools/it5_decision.py run",
+  "validation": "positive control: the hand-worked four-drug case in tests/test_drugs_decision.py is reproduced exactly (EU, EVPI 0.18, EVSI 0.096, flip at P(unstable) = 0.36)",
+  "wording": "triage heuristic: each utility is a product of stated weights and each prior a stated weight; nothing here is a calibrated posterior, a probability of benefit, or advice for or against giving any drug to any patient",
+  "table": "utilities"
+}

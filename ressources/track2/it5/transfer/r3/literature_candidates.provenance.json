@@ -1,0 +1,123 @@
+{
+  "name": "literature_candidates.tsv",
+  "built_at": "2026-09-25T17:45:30+00:00",
+  "built_by": "tools/it5_litmine.py",
+  "code_version": "29ce58b",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md",
+  "tool": "tools/it5_litmine.py",
+  "inputs": [
+    {
+      "file": "ressources/track2/it5/transfer/r3/litmine_interventions.tsv",
+      "sha256": "ecb13dbf6b3db307aa5d8c083e9fe124ab4066d2c6e7ba122d68cf2c416f0ae7"
+    },
+    {
+      "name": "ChEMBL",
+      "url": "https://www.ebi.ac.uk/chembl/api/data",
+      "version": null,
+      "role": "drug names \u2192 molecules, targets \u2192 mechanisms",
+      "retrieved_at": "2026-09-25T17:45:30+00:00",
+      "retrieved_from": "2026-09-25T16:46:59+00:00",
+      "requests": 38,
+      "live_calls": 28,
+      "sha256": "351d7f319cea8160ea81e28e879e14b9c398ee9d448223739684e5b611e587f4",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    }
+  ],
+  "rows": 5,
+  "parameters": {
+    "desired_direction": {
+      "blm_level": "increase",
+      "function": "increase",
+      "sce": "decrease",
+      "genome_instability": "decrease",
+      "cancer": "decrease",
+      "growth": "increase",
+      "lifespan": "increase"
+    },
+    "branch_by_effect": {
+      "blm_level": "stop_allele",
+      "function": "stop_allele",
+      "sce": "any",
+      "genome_instability": "any",
+      "cancer": "any",
+      "growth": "any",
+      "lifespan": "any",
+      "other": "any"
+    },
+    "directness": {
+      "blm_level": 1.0,
+      "function": 0.9,
+      "sce": 0.8,
+      "genome_instability": 0.8,
+      "lifespan": 0.7,
+      "cancer": 0.6,
+      "growth": 0.6,
+      "other": 0.6
+    },
+    "analogues": {
+      "26S proteasome": {
+        "act": "loss",
+        "drugs": [
+          "bortezomib",
+          "carfilzomib",
+          "ixazomib"
+        ],
+        "class": "proteasome inhibitor"
+      },
+      "protein deacetylases (HDAC)": {
+        "act": "loss",
+        "drugs": [
+          "vorinostat",
+          "romidepsin",
+          "belinostat",
+          "panobinostat",
+          "valproic acid"
+        ],
+        "class": "histone deacetylase inhibitor"
+      }
+    }
+  },
+  "rubric": "evidence_strength = model \u00d7 directness \u00d7 replication \u00d7 translation; see the entry's rubric table",
+  "positive_control": {
+    "retrieval": "3/3",
+    "extraction": "0/3",
+    "per_pmid": {
+      "4140506": {
+        "retrieved": true,
+        "extracted": false
+      },
+      "7585968": {
+        "retrieved": true,
+        "extracted": false
+      },
+      "17407155": {
+        "retrieved": true,
+        "extracted": false
+      }
+    },
+    "passed": false
+  },
+  "extractor": {
+    "model": "claude-opus-5-5",
+    "role": "iteration-5 scalability (transfer) subagent",
+    "date": "2026-09-25",
+    "method": "read the screened sentences (build/it5/transfer/r3/reading/*.md) with their context and wrote each row by hand, copying the quote from the cached text"
+  },
+  "clinical_framing": "research exercise; no row advises for or against giving any drug",
+  "sources": {
+    "literature": "litmine_interventions.tsv (quote-verified)",
+    "clinical": "none directly; the branch column is the allele question",
+    "genomic": "the branch names the child's two allele classes, not positions"
+  },
+  "limitations": "a candidate is a literature lead, not an efficacy claim; strength is a stated heuristic, not a calibrated probability",
+  "outputs": [
+    {
+      "path": "ressources/track2/it5/transfer/r3/literature_candidates.tsv",
+      "sha256": "e08c11c08882a335372082565bd0772900a2a092f0dfdf83bcf398c4bd943911",
+      "bytes": 1449,
+      "rows": 5
+    }
+  ]
+}

@@ -1,0 +1,192 @@
+{
+  "name": "litmine_corpus.tsv",
+  "built_at": "2026-09-25T17:41:16+00:00",
+  "built_by": "tools/it5_litmine.py",
+  "code_version": "29ce58b",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md",
+  "tool": "tools/it5_litmine.py",
+  "inputs": [
+    {
+      "name": "Europe PMC search",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/search",
+      "version": null,
+      "role": "corpus metadata + abstracts",
+      "retrieved_at": "2026-09-25T17:30:11+00:00",
+      "retrieved_from": "2026-09-25T17:29:42+00:00",
+      "requests": 8,
+      "live_calls": 8,
+      "sha256": "2db19e84f9c9f058c2f3771e806860bbd73b33569d7dc8d65af40f431d99eaf5",
+      "sha256_scope": "roll-up: sha256 over the sorted sha256 digests of every cached reply body this build read from this API. A public API has no single byte stream to hash; this value is reproducible from the cache and changes when any reply changes.",
+      "queries": [
+        "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(\"protein level\" OR \"protein levels\" OR \"protein abundance\" OR stability OR stabilization OR degradation OR half-life OR \"expression level\") AND SRC:MED",
+        "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(phosphorylation OR ubiquitination OR ubiquitylation OR sumoylation OR acetylation) AND SRC:MED",
+        "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(rescue OR rescued OR restore OR restored OR restores OR complementation OR overexpression OR transgenic) AND SRC:MED",
+        "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(\"helicase activity\" OR unwinding OR ATPase OR \"double Holliday junction\" OR dissolution OR resolvase) AND SRC:MED",
+        "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(\"sister chromatid exchange\" OR \"sister chromatid exchanges\" OR \"genome instability\" OR \"genomic instability\" OR \"chromosomal instability\" OR micronuclei) AND SRC:MED",
+        "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(knockdown OR knockout OR depletion OR silencing OR \"small molecule inhibitor\" OR ML216) AND SRC:MED",
+        "TITLE_ABS:\"bloom syndrome\" AND SRC:MED",
+        "TITLE_ABS:\"bloom's syndrome\" AND SRC:MED"
+      ],
+      "known_gap": "this API states no release or version in its replies, so the field is null rather than a date copied from the run."
+    },
+    {
+      "name": "Europe PMC full text",
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/{PMCID}/fullTextXML",
+      "role": "open-access full text (JATS XML), cached under build/it5/r3/fulltext-xml",
+      "live_calls": 780,
+      "failed_after_retries": [
+        "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC3805358/fullTextXML HTTP 500"
+      ]
+    }
+  ],
+  "rows": 3675,
+  "parameters": {
+    "gene": "BLM",
+    "aliases": [
+      "RECQL3",
+      "RECQ2",
+      "BLM helicase",
+      "Bloom helicase"
+    ],
+    "topics": {
+      "level": [
+        "protein level",
+        "protein levels",
+        "protein abundance",
+        "stability",
+        "stabilization",
+        "degradation",
+        "half-life",
+        "expression level"
+      ],
+      "modification": [
+        "phosphorylation",
+        "ubiquitination",
+        "ubiquitylation",
+        "sumoylation",
+        "acetylation"
+      ],
+      "rescue": [
+        "rescue",
+        "rescued",
+        "restore",
+        "restored",
+        "restores",
+        "complementation",
+        "overexpression",
+        "transgenic"
+      ],
+      "function": [
+        "helicase activity",
+        "unwinding",
+        "ATPase",
+        "double Holliday junction",
+        "dissolution",
+        "resolvase"
+      ],
+      "instability": [
+        "sister chromatid exchange",
+        "sister chromatid exchanges",
+        "genome instability",
+        "genomic instability",
+        "chromosomal instability",
+        "micronuclei"
+      ],
+      "perturbation": [
+        "knockdown",
+        "knockout",
+        "depletion",
+        "silencing",
+        "small molecule inhibitor",
+        "ML216"
+      ]
+    },
+    "disease_phrases": [
+      "bloom syndrome",
+      "bloom's syndrome"
+    ],
+    "max_records_per_query": 1000,
+    "query_log": [
+      {
+        "qid": "topic:level",
+        "family": "gene_topic",
+        "term": "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(\"protein level\" OR \"protein levels\" OR \"protein abundance\" OR stability OR stabilization OR degradation OR half-life OR \"expression level\") AND SRC:MED",
+        "hit_count": 817,
+        "taken": 817
+      },
+      {
+        "qid": "topic:modification",
+        "family": "gene_topic",
+        "term": "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(phosphorylation OR ubiquitination OR ubiquitylation OR sumoylation OR acetylation) AND SRC:MED",
+        "hit_count": 330,
+        "taken": 330
+      },
+      {
+        "qid": "topic:rescue",
+        "family": "gene_topic",
+        "term": "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(rescue OR rescued OR restore OR restored OR restores OR complementation OR overexpression OR transgenic) AND SRC:MED",
+        "hit_count": 486,
+        "taken": 486
+      },
+      {
+        "qid": "topic:function",
+        "family": "gene_topic",
+        "term": "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(\"helicase activity\" OR unwinding OR ATPase OR \"double Holliday junction\" OR dissolution OR resolvase) AND SRC:MED",
+        "hit_count": 376,
+        "taken": 376
+      },
+      {
+        "qid": "topic:instability",
+        "family": "gene_topic",
+        "term": "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(\"sister chromatid exchange\" OR \"sister chromatid exchanges\" OR \"genome instability\" OR \"genomic instability\" OR \"chromosomal instability\" OR micronuclei) AND SRC:MED",
+        "hit_count": 422,
+        "taken": 422
+      },
+      {
+        "qid": "topic:perturbation",
+        "family": "gene_topic",
+        "term": "TITLE_ABS:(BLM OR RECQL3 OR RECQ2 OR \"BLM helicase\" OR \"Bloom helicase\") AND TITLE_ABS:(knockdown OR knockout OR depletion OR silencing OR \"small molecule inhibitor\" OR ML216) AND SRC:MED",
+        "hit_count": 512,
+        "taken": 512
+      },
+      {
+        "qid": "disease:1",
+        "family": "disease",
+        "term": "TITLE_ABS:\"bloom syndrome\" AND SRC:MED",
+        "hit_count": 746,
+        "taken": 746
+      },
+      {
+        "qid": "disease:2",
+        "family": "disease",
+        "term": "TITLE_ABS:\"bloom's syndrome\" AND SRC:MED",
+        "hit_count": 588,
+        "taken": 588
+      }
+    ]
+  },
+  "columns": {
+    "text_kind": "abstract = title + abstract from the search record; fulltext = JATS abstract + body prose (tables and reference lists dropped)",
+    "text_sha256": "sha256 of the UTF-8 text file build/it5/r3/docs/<pmid>.<kind>.txt the quote verifier reads",
+    "queries": "the query ids that retrieved the paper"
+  },
+  "sources": {
+    "literature": "Europe PMC (MEDLINE records, SRC:MED)",
+    "clinical": "none",
+    "genomic": "none: the queries name the gene, never a variant or position"
+  },
+  "assumptions": "title+abstract matching finds the papers whose main subject is the gene",
+  "limitations": "one page (<=1000 records) per query; full text only when open access; the cached text files stay in build/ (copyright), only their digests are committed",
+  "validation": "positive control: the three control PMIDs must be retrieved (recall reported by the verify stage)",
+  "documents": 2909,
+  "fulltext_documents": 776,
+  "outputs": [
+    {
+      "path": "ressources/track2/it5/transfer/r3/litmine_corpus.tsv",
+      "sha256": "bec458e686707281e45bef94710c68b95d57a5a63ec0ce73d8cd273f1df97718",
+      "bytes": 825795,
+      "rows": 3675
+    }
+  ]
+}

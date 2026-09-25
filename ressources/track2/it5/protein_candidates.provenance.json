@@ -1,8 +1,8 @@
 {
   "name": "protein_candidates",
-  "built_at": "2026-09-25T16:43:41+00:00",
+  "built_at": "2026-09-25T17:50:49+00:00",
   "built_by": "tools/it5_proteome.py candidates",
-  "code_version": "5965bb6",
+  "code_version": "29ce58b",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "entry": "docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md",
   "inputs": [

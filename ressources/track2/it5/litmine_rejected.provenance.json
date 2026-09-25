@@ -1,8 +1,8 @@
 {
   "name": "litmine_rejected.tsv",
-  "built_at": "2026-09-25T16:43:40+00:00",
+  "built_at": "2026-09-25T17:53:38+00:00",
   "built_by": "tools/it5_litmine.py",
-  "code_version": "5965bb6",
+  "code_version": "29ce58b",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "entry": "docs/iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md",
   "tool": "tools/it5_litmine.py",

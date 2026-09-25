@@ -1,0 +1,53 @@
+{
+  "name": "transfer_diffstat",
+  "built_at": "2026-09-25T17:55:12+00:00",
+  "built_by": "tools/it5_transfer_summary.py",
+  "code_version": "29ce58b",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration5/step-1/work/s1-entry.md",
+  "inputs": [
+    {
+      "name": "git working tree",
+      "role": "line counts, measured with git diff --numstat against HEAD",
+      "head": "29ce58b69f5b737268843a2f7cd003d77b2d0000"
+    },
+    {
+      "name": "the transferred routes' own tables and manifests",
+      "role": "row counts, positive-control verdicts, digest checks"
+    },
+    {
+      "file": "build/it5/transfer/timing.json",
+      "role": "wall clock per route, recorded by the runs"
+    }
+  ],
+  "parameters": {
+    "cases": {
+      "first": "BUB1B / mosaic variegated aneuploidy (the child)",
+      "transfer": "BLM / Bloom syndrome (published literature only)"
+    },
+    "routes": {
+      "R1": "readthrough context model + allele dosage",
+      "R2": "proliferation-corrected drug proteomics",
+      "R3": "quote-verified literature mining"
+    },
+    "new_capability_excluded": {
+      "tools/it5_readthrough.py:holdout": "the external check: refit without a measured context, predict it, compare"
+    }
+  },
+  "rows": 15,
+  "outputs": [
+    {
+      "path": "ressources/track2/it5/transfer/transfer_diffstat.tsv",
+      "sha256": "fd23a88ad6a4aeb2cd7180ff6adcedeed00351f94c2f69469e636cf6de655daa",
+      "bytes": 1731,
+      "rows": 15
+    }
+  ],
+  "assumptions": "a line of a new case card is configuration; a line in a shared module or driver is code. Blank lines and docstrings are counted, because a card is read by a person and its prose is part of the cost. portability_and_refactor_lines is the remainder after the declared new capability and moved files are removed, so it still contains the churn of splitting a driver that the repo's 400-line module gate forced; the entry quotes the cleaner pre-split figures (112 / 45 / 114) beside it",
+  "limitations": "line counts are a proxy for effort, not effort; a one-line change can be harder than a hundred. The comparison with entry 156's 378-line driver is like for like only in that both counts are lines a person had to write",
+  "validation": "first_case_outputs_identical re-checks each first-case table against the digest in its own manifest after the parameterisation",
+  "sources": {
+    "genomic": "none: line counts and row counts",
+    "clinical": "none"
+  }
+}
