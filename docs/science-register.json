@@ -1,6 +1,6 @@
 {
   "generator": "mva-science export",
-  "generated_at": "2026-09-25T13:10:18",
+  "generated_at": "2026-09-25T13:18:47",
   "steps": [
     {
       "slug": "step-0",
@@ -2331,7 +2331,7 @@
       "status": "testing",
       "confidence": 0.15,
       "suggested_confidence": 0.6457,
-      "revisions": 2,
+      "revisions": 3,
       "evidence": [
         {
           "id": 146,
@@ -2373,7 +2373,7 @@
       "status": "testing",
       "confidence": 0.2,
       "suggested_confidence": 0.69,
-      "revisions": 2,
+      "revisions": 4,
       "evidence": [
         {
           "id": 149,
@@ -2400,6 +2400,15 @@
           "kind": "measurement",
           "claim": "All three missense lanes independently place the confirmed pair's missense allele in the top 0.47-2.59 % of everything they scored (AlphaMissense 0.9229 at 0.47 %, ESM1b 11.537 at 2.52 %, REVEL 0.472 at 2.59 %), so the lanes are decisive about the half they can see.",
           "source_ref": "docs/iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md",
+          "lineage_ref": ""
+        },
+        {
+          "id": 215,
+          "direction": "neutral",
+          "strength": 0.3,
+          "kind": "measurement",
+          "claim": "GPN-MSA, the DNA-level lane plan risk R9 promised and entry 140 fetched, is catalogue-free and scores both halves: it places the confirmed pair 508th of 54,865 (0.93rd percentile, missense half 1.38, stop-gained half 4.09), inside the top decile - but it is not one of the three lanes H063 names, so it cannot settle H063 by its own terms.",
+          "source_ref": "docs/iteration4/step-8/methodology/148-the-gpu-lanes-and-the-consensus.md",
           "lineage_ref": ""
         }
       ]
