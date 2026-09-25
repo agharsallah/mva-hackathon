@@ -1,6 +1,6 @@
 # Submissions — one iteration, one folder
 
-**Standing:** the lifecycle of a submission iteration, written 2026-09-05. Rules are in
+**Standing:** the lifecycle of a submission iteration, written 2026-09-05, dashboard section re-checked 2026-09-25. Rules are in
 [`CLAUDE.md`](../CLAUDE.md) (*Submissions — one iteration, one folder*); this page is the
 index and the how-to.
 
@@ -70,13 +70,19 @@ uv run python tools/new_iteration.py --track track1 --reply '<reply as the decod
 
 ## Where it shows in the dashboard
 
+**Start at `/iterations`** (API `GET /api/iterations`): every research iteration beside every
+folder in one matrix — which research iterations each folder cites, its state and reply, its
+lineage size, and each iteration's **data catalog** (every table, data file and object its
+methodology entries name, with its producer and lineage status). Derived on read, so a new
+folder or entry appears with no edit; how it is built is [entry 157](../docs/step-0/methodology/157-an-iteration-data-catalog-and-both-axes-on-one-page.md).
+
 The app's `/submissions` page (API `GET /api/submissions`) lists every iteration folder,
 cumulatively: state, deliverables, decode table, the coordinate-free selectors, which steps
 contributed, a lineage view (the raw VCF object, the clinical HPO terms, the warehouse tables
 and every `data_lineage` edge between them), and the audit trail (probe ledger, register).
 Recipe for the next iteration: steps 1–5 above, then re-capture `app/src/fixtures/data/submissions.json`
-from the live API and re-bless its hash in `app/src/test/fixtureHashes.json` — the page needs no other
-change. Each iteration gets a generated beginner walkthrough with dictionary links; figures open in a
+and `app/src/fixtures/data/iterations.json` from the live API and re-bless both hashes in
+`app/src/test/fixtureHashes.json` — the pages need no other change. Each iteration gets a generated beginner walkthrough with dictionary links; figures open in a
 shareable lightbox (`?figure=<slug>`).
 `tools/resolve_submission_spec.py --record-lineage` appends the iteration's own lineage edges
 (`target_schema = submissions`): one per selector table, one for `spec.selectors.json`

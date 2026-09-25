@@ -1,6 +1,7 @@
 # Toolset — what answers what
 
-**Standing:** current as of 2026-09-19 for the research-record table (entry 126: the steps
+**Standing:** current as of 2026-09-25 for the iterations overview and data-catalog row
+(entry 157), 2026-09-19 for the research-record table (entry 126: the steps
 routes, the figure and entry routes, the iteration switcher). The rest is current as of
 2026-09-05 (layer-2 coding scan, `annotate-coding`, probe designer added) and has **not** been
 re-checked since — `mva-zoo` and the iteration-4 tooling are known to be missing from it.
@@ -123,6 +124,7 @@ Budget is **6 submissions**; `probe-budget` is the authority on what is left.
 | Is an iteration folder complete, fresh, consistent and — if frozen — untouched? (quality gate) | `tools/check_iteration.py` | — | — |
 | Freeze iteration n, open iteration n+1 (docs + submission folders), bump `ITERATION` | `tools/new_iteration.py` | — | `science/steps.py` |
 | Every submission iteration in the app: state, deliverables, decode table, coordinate-free selectors, contributions, lineage per submission (raw VCF + clinical terms + tables + edges), audit trail (probe ledger, register) | `tools/resolve_submission_spec.py --record-lineage` (writes the edges) | `/api/submissions`, `/api/submissions/{track}/{n}/report`, `/api/submissions/{track}/{n}/figure/{slug}` · `/submissions` | `viz/submissions*.py`, `warehouse/submission_lineage.py` |
+| Every iteration of both tracks on one page — research iterations (steps per track, claims by status, entry range) beside submission folders (state, reply, which research iterations they cite) — and each one's **data catalog**: every table, data file and object its methodology entries name, with its role (`produced`/`cited`), rows, producer and lineage status (edge / manifest / none); ledger attribution counted | — (derived on read; entry 157) | `/api/iterations`, `catalog` in `/api/submissions` · `/iterations`, `/submissions` | `viz/iteration_catalog.py`, `viz/iteration_manifest.py`, `viz/iterations.py` |
 | How many probes are left? | `mva-warehouse probe-budget` | `/api/probe/ledger` · `/probes` | `warehouse/probes.py` |
 | Record a spent submission and its reply | `mva-warehouse probe-log`, `probe-list` | `/api/probe/ledger` | `warehouse/probes.py`, `cli_ledger.py` |
 | Bind an oracle reply to the claims it tested | `mva-science probe-link` | `/science` | `science/evidence.py` |

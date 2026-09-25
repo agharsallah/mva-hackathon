@@ -63,7 +63,8 @@
   is `submissions/README.md`.
 - The dashboard's `/submissions` page picks up every iteration folder automatically from
   `GET /api/submissions`; after adding one, re-capture `app/src/fixtures/data/submissions.json`
-  from the live API and re-bless its hash (`app/src/test/fixtureHashes.json`). Every iteration
+  and `iterations.json` (the cross-track `/iterations` overview and each iteration's data
+  catalog) from the live API and re-bless their hashes (`app/src/test/fixtureHashes.json`). Every iteration
   shown there carries a beginner walkthrough (plain words, each term linked to `/learn`) built
   from its own payload — a new iteration must not need hand-written prose to be understood.
 - Tooling, in order: `tools/resolve_submission_spec.py` (committed coordinate-free
