@@ -13,8 +13,8 @@ Two properties make it safe rather than merely fast:
 * **A miss is never a partial write.** The payload goes to a temporary file and is
   renamed into place, so a killed process leaves either the old entry or none.
 
-The directory lives under ``build/``, which is gitignored, and that is load-bearing:
-the locus cache holds **real patient positions**, which must never enter the repository.
+The directory lives under ``build/``, which is gitignored: a cache entry is a derived
+artifact reproducible from the inputs, so it is never committed.
 """
 
 import json
@@ -147,7 +147,7 @@ class Cache:
 
 
 def default_directory() -> Path:
-    """Where the cache lives: ``MVA_VIZ_CACHE``, defaulting under gitignored ``build/``."""
-    from ..warehouse.settings import setting
+    """Where the cache lives: ``API_CACHE``, defaulting under gitignored ``build/``."""
+    from ..settings import setting
 
-    return Path(setting("MVA_VIZ_CACHE") or "build/viz-cache").expanduser()
+    return Path(setting("API_CACHE") or "build/api-cache").expanduser()

@@ -34,21 +34,6 @@ uv run lint-imports
 echo "==> mypy"
 uv run mypy
 
-echo "==> coordinate gate"
-uv run python tools/check_coordinates.py --quiet
-
-echo "==> blind gate"
-uv run python tools/check_blind.py --quiet
-
-echo "==> figure freshness"
-uv run python tools/check_figures_fresh.py --quiet
-
-echo "==> step narratives"
-uv run python tools/check_step_narrative.py
-
-echo "==> iteration folders"
-uv run python tools/check_iteration.py --quiet
-
 echo "==> pytest"
 uv run pytest -q
 

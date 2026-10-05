@@ -1,7 +1,7 @@
 """The spend ledger: every Modal call priced, appended, and checked against the cap.
 
 A GPU lane that runs out of money halfway should stop with what it has, not overrun. The
-ledger is a JSONL file under ``build/it4/modal/`` — one line per remote call, never edited —
+ledger is a JSONL file under ``build/modal/`` — one line per remote call, never edited —
 and :func:`guard` is asked *before* every wave of calls: "would this wave, padded by
 :data:`~mva.zoo.modal_contract.OVERHEAD_FACTOR`, push the lane past its share or the step
 past the cap?". :func:`billing_report` asks Modal itself, for the reconciliation.
@@ -20,7 +20,7 @@ from .modal_contract import CAP_USD, LANE_BUDGET_USD, OVERHEAD_FACTOR, price
 
 __all__ = ["DEFAULT_LEDGER", "BudgetExceededError", "Ledger", "billing_report"]
 
-DEFAULT_LEDGER = Path("build/it4/modal/ledger.jsonl")
+DEFAULT_LEDGER = Path("build/modal/ledger.jsonl")
 
 
 class BudgetExceededError(RuntimeError):

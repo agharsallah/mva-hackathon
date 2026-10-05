@@ -4,15 +4,15 @@ Pinned here so both halves import one definition: :mod:`mva.zoo.adapters.modal_g
 laptop side, which never imports ``modal`` at module level) and every app under
 :mod:`mva.zoo.modal_apps` (the container side). Pure data — no ``modal``, no ``torch``.
 
-**The wire shape, in plain words.** One call carries a batch of *items*; each item is an
-allele id plus two sequence windows and where the change sits in them. Nothing else crosses
-the wire: no chromosome, no position, no gene, no HGVS. The reply carries one score per item
-it could score, the weights digest the container measured, and the GPU seconds it spent — so
-the laptop's ledger can price every call without trusting a dashboard.
+**The wire shape, in plain words.** One call carries a batch of *items*; each item is a
+content-addressed id plus its named chains. Nothing else crosses the wire: no labels, no
+grouping keys, nothing the container has no use for. The reply carries one score per item
+it could score, the weights digest the container measured, and the GPU seconds it spent —
+so the laptop's ledger can price every call without trusting a dashboard.
 
 **Money.** :data:`GPU_USD_PER_SECOND` is Modal's published per-second GPU rate, read from
 ``modal.com/pricing`` on 2026-09-23. It prices the ledger; ``modal billing report`` is the
-reconciliation, and the two are both quoted in step 8's entries.
+reconciliation, and a run quotes both.
 """
 
 from __future__ import annotations
@@ -79,19 +79,21 @@ GPU_USD_PER_SECOND: dict[str, float] = {
 
 
 class Item(TypedDict):
-    """One allele on the wire. ``center`` is the 0-based offset of the change in both windows."""
+    """One record on the wire: its id and its named chains, as plain sequence strings."""
 
-    allele_id: str
-    ref: str
-    alt: str
-    center: int
+    item_id: str
+    chains: dict[str, str]
 
 
 class ScoredItem(TypedDict):
-    """One lane's verdict on one item. ``score`` is the model's *published* number; the
-    card's ``score_sign`` turns it into the zoo's "higher = more damaging" on the laptop."""
+    """One lane's verdict on one item.
 
-    allele_id: str
+    ``score`` is the model's *published* number; the card's ``score_sign`` orients it on
+    the laptop, so the container never has to know which direction the zoo reads. Anything
+    vector-valued — per-residue probabilities, a contact map — goes in ``aux``.
+    """
+
+    item_id: str
     score: float
     aux: dict[str, Any]
 

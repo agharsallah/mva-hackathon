@@ -10,7 +10,7 @@ Three properties are the reason this is a module and not four lines of ``httpx``
 * **Down is a 503, never a hang.** A connection error, a DNS failure or a timeout becomes
   ``503 {"detail": "reads API unreachable at <url>"}``. A chart can render that; a
   30-second white screen it cannot.
-* **The secret stays server-side.** ``MVA_API_TOKEN`` is attached here as ``X-API-Key``,
+* **The secret stays server-side.** ``API_TOKEN`` is attached here as ``X-API-Key``,
   so the token never reaches the browser.
 * **The upstream's own errors survive.** A 404 for an unknown job, or a 422 for a probe
   that is not DNA, is forwarded with its status and body intact rather than flattened
@@ -22,7 +22,7 @@ from typing import Any
 
 from fastapi import HTTPException
 
-from ..warehouse.settings import setting
+from ..settings import setting
 
 #: Long enough for the upstream's own capped long-poll (290 s) plus its overhead.
 LONG_POLL_TIMEOUT = 300.0
@@ -33,12 +33,12 @@ DEFAULT_TIMEOUT = 30.0
 
 def base_url() -> str:
     """Where ``mva-reads-api`` is, without a trailing slash."""
-    return (setting("MVA_READS_API_URL") or "http://127.0.0.1:8765").rstrip("/")
+    return (setting("UPSTREAM_URL") or "http://127.0.0.1:8765").rstrip("/")
 
 
 def headers() -> dict[str, str]:
     """Auth for the upstream, when a token is configured."""
-    token = setting("MVA_API_TOKEN")
+    token = setting("API_TOKEN")
     return {"X-API-Key": token} if token else {}
 
 

@@ -1,13 +1,12 @@
-"""Parsers for the plain-text formats bioinformatics tools emit.
+"""Parsers for the plain-text shapes command-line tools emit.
 
-None of these know anything about this proband, this panel or this challenge. They know
-about *shapes*: a tab-separated table with a header and a couple of rollup lines glued to
-the bottom, a file cut into ``##``-delimited sections, the seven-column output of
-``bcftools stats``, a BED interval, a VCF header. Everything case-specific is assembled a
-layer up in :mod:`mva.explore.profile`.
+None of these know anything about one dataset or one challenge. They know about
+*shapes*: a tab-separated table with a header and a couple of rollup lines glued to the
+bottom, and a file cut into ``##``-delimited sections. Everything case-specific is
+assembled a layer up.
 
-That split is what makes the toolkit transfer: pointing it at a different N-of-1 case
-means writing a new profile layout, not a new parser.
+That split is what makes the toolkit transfer: pointing it at a different dataset means
+writing a new assembly layer, not a new parser.
 
 Two conventions are shared across all of them:
 
@@ -62,37 +61,6 @@ class Sections:
         return {label: number for label, number in parsed if number is not None}
 
 
-@dataclass(frozen=True)
-class Region:
-    """One BED interval: a named span on a contig, half-open and 0-based as BED is."""
-
-    chrom: str
-    start: int
-    end: int
-    name: str = ""
-    extras: tuple[str, ...] = ()
-
-    @property
-    def length(self) -> int:
-        """Span in bases."""
-        return self.end - self.start
-
-
-@dataclass(frozen=True)
-class VcfHeader:
-    """The declarative part of a VCF: what the file promises to contain.
-
-    ``fields`` is keyed by kind (``INFO``, ``FORMAT``, ``FILTER``) so a report can show
-    what the caller recorded without opening a single record.
-    """
-
-    contigs: list[tuple[str, int]] = field(default_factory=list)
-    fields: dict[str, dict[str, str]] = field(default_factory=dict)
-    references: list[str] = field(default_factory=list)
-    sources: list[str] = field(default_factory=list)
-    sample: str | None = None
-
-
 def read_table(path: str | Path) -> Table:
     """Read a header-first TSV, separating rollup scalars and ``#`` comments from rows."""
     columns: tuple[str, ...] = ()
@@ -139,90 +107,6 @@ def read_sections(path: str | Path) -> Sections:
     return Sections(blocks, scalars)
 
 
-def read_bcftools_stats(path: str | Path) -> dict[str, list[list[str]]]:
-    """Read ``bcftools stats`` output into its section codes.
-
-    The format is one section code per line — ``SN`` summary numbers, ``TSTV`` the
-    transition/transversion ratio, ``ST`` the substitution spectrum, ``IDD`` the indel
-    length distribution, ``DP`` the depth distribution. The leading id column (which
-    identifies the input file in a multi-file comparison) is dropped, since a single
-    callset always reports ``0``.
-    """
-    sections: dict[str, list[list[str]]] = {}
-    for line in _lines(path):
-        if line.startswith("#"):
-            continue
-        cells = line.split("\t")
-        if len(cells) < 2:
-            continue
-        sections.setdefault(cells[0], []).append(cells[2:] if cells[1].isdigit() else cells[1:])
-    return sections
-
-
-def summary_numbers(sections: dict[str, list[list[str]]]) -> dict[str, int]:
-    """Pull the ``SN`` block into a mapping, stripping its ``number of …:`` phrasing."""
-    out: dict[str, int] = {}
-    for cells in sections.get("SN", []):
-        if len(cells) < 2:
-            continue
-        key = cells[0].strip().rstrip(":").removeprefix("number of ").strip()
-        value = as_int(cells[1])
-        if value is not None:
-            out[key] = value
-    return out
-
-
-def read_bed(path: str | Path) -> list[Region]:
-    """Read a BED file into intervals, keeping any columns beyond the fourth as extras."""
-    regions: list[Region] = []
-    for line in _lines(path):
-        if line.startswith(("#", "track", "browser")):
-            continue
-        cells = line.split("\t")
-        if len(cells) < 3:
-            continue
-        start, end = as_int(cells[1]), as_int(cells[2])
-        if start is None or end is None:
-            continue
-        regions.append(
-            Region(cells[0], start, end, cells[3] if len(cells) > 3 else "", tuple(cells[4:]))
-        )
-    return regions
-
-
-def read_vcf_header(path: str | Path) -> VcfHeader:
-    """Read a VCF header block into what the file declares about itself."""
-    contigs: list[tuple[str, int]] = []
-    fields: dict[str, dict[str, str]] = {}
-    references: list[str] = []
-    sources: list[str] = []
-    sample: str | None = None
-
-    for line in _lines(path, keep_blank=False):
-        if line.startswith("#CHROM"):
-            cells = line.split("\t")
-            # Columns 0-8 are the fixed VCF fields; anything after them is a sample.
-            sample = cells[9] if len(cells) > 9 else None
-            continue
-        if not line.startswith("##"):
-            continue
-        key, _, value = line[2:].partition("=")
-        if key == "contig":
-            attrs = _attributes(value)
-            length = as_int(attrs.get("length", ""))
-            if "ID" in attrs and length is not None:
-                contigs.append((attrs["ID"], length))
-        elif key in ("INFO", "FORMAT", "FILTER"):
-            attrs = _attributes(value)
-            if "ID" in attrs:
-                fields.setdefault(key, {})[attrs["ID"]] = attrs.get("Description", "")
-        elif key == "reference":
-            references.append(value)
-        elif key == "source":
-            sources.append(value)
-    return VcfHeader(contigs, fields, references, sources, sample)
-
-
 def as_int(value: str | None) -> int | None:
     """Parse a whole number, returning ``None`` for anything that is not one."""
     try:
@@ -245,26 +129,3 @@ def _lines(path: str | Path, keep_blank: bool = False) -> Iterator[str]:
         line = raw.rstrip("\n").rstrip("\r")
         if line or keep_blank:
             yield line
-
-
-def _attributes(value: str) -> dict[str, str]:
-    """Split a ``<ID=x,Description="y, with a comma">`` payload into its attributes."""
-    inner = value.strip()
-    if inner.startswith("<") and inner.endswith(">"):
-        inner = inner[1:-1]
-    attrs: dict[str, str] = {}
-    key, buf, in_quotes = "", "", False
-    for char in inner:
-        if char == '"':
-            in_quotes = not in_quotes
-        elif char == "=" and not in_quotes and not key:
-            key, buf = buf, ""
-        elif char == "," and not in_quotes:
-            if key:
-                attrs[key] = buf
-            key, buf = "", ""
-        else:
-            buf += char
-    if key:
-        attrs[key] = buf
-    return attrs

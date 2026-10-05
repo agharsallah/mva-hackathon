@@ -1,16 +1,15 @@
 """Where the repository root is, so a relative default path means the same thing everywhere.
 
-Most default paths in this package are written relative — ``ressources/reference/...``,
-``build/viz-cache``, ``docs/``, ``figures/``. That is deliberate: they name positions in
-*this* repository, not absolute locations on one machine, so a checkout anywhere works and
+Most default paths in this package are written relative — ``data/raw/...``,
+``build/api-cache``, ``docs/``. That is deliberate: they name positions in *this*
+repository, not absolute locations on one machine, so a checkout anywhere works and
 nothing committed carries a developer's home directory.
 
 The cost is that they only resolve when the working directory is the repository root. A
-server started from ``app/`` reads the same code and finds nothing: every reference table
-is "missing", and the symptom is not an error but an **empty answer** — ``/api/panel/
-structure-genes`` serving ``[]``, ``/api/provenance/reference`` serving ``[]``, the 3D fold
-page reporting "no structure gene 'BUB1B'". Silent emptiness is the worst failure shape
-available, because it looks like a finding.
+server started from ``app/`` reads the same code and finds nothing: every input table is
+"missing", and the symptom is not an error but an **empty answer** — a route serving
+``[]``. Silent emptiness is the worst failure shape available, because it looks like a
+finding.
 
 So a long-running entry point anchors itself: :func:`anchor_cwd` moves the process to the
 repository root once, at startup, before any module reads a default path. It is done there
@@ -18,7 +17,7 @@ rather than by rewriting every default to an absolute path because the relative 
 are the contract the module docstrings state, and one ``chdir`` in an entry point is a
 smaller, more reviewable thing than a hundred call sites.
 
-Nothing here is patient-derived and nothing here reads a file: it is directory arithmetic.
+Nothing here reads a file: it is directory arithmetic.
 """
 
 import os
@@ -28,7 +27,7 @@ from pathlib import Path
 #: Files and directories that together identify a checkout of *this* repository rather
 #: than any Python project that happens to sit above the installed package. All must be
 #: present, so a stray ``pyproject.toml`` in a parent directory cannot claim the root.
-MARKERS = ("pyproject.toml", "src/mva", "ressources")
+MARKERS = ("pyproject.toml", "src/mva", "docs")
 
 
 @lru_cache(maxsize=1)

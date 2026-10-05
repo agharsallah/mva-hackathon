@@ -1,467 +1,51 @@
-# The zoo roster — one table per model, read by `mva.zoo.registry`.
+# The zoo roster: one table per model, keyed by `key`.
 #
-# This file is the SHARED roster and is edited only when the roster itself changes. A later
-# lane, and every measured digest, lands as a fragment in `models.d/<key>.toml` instead, so
-# two agents never edit one file (plan §7b, "Shared hot spots").
+# This file holds the shared roster. A later lane, or a measured weights digest, arrives
+# as a fragment in `models.d/<key>.toml` so two people adding two lanes never edit one
+# file. A fragment adds a model or overrides fields of one already here (top-level fields
+# replace, `params` merges key by key); two fragments claiming one key is an error.
 #
-# Fields (all required unless marked optional):
-#   name               human name of the model
-#   key                the registry key; must equal the table name
-#   version            the exact artefact that will be scored against, not the paper version
-#   tier               1 = precomputed lookup, 2 = local CPU process, 3 = remote GPU
-#   input_class        missense | splice | any | structure | disease-node
-#   source             warehouse-column | table | vep-rest | local-process | modal
-#   adapter            module under `mva.zoo.adapters` that speaks to this source
-#   params             what the adapter needs (see `registry.ADAPTER_PARAMS`)
-#   licence            SPDX id where one exists, else the licence's name
-#   licence_url        where those terms are published
-#   non_commercial     true if the terms forbid commercial use (hackathon use is non-commercial)
-#   catalogue_adjacent true if the model was trained on a variant catalogue (ClinVar/HGMD);
-#                      the merge is printed with and without these lanes (plan D4)
-#   pmid               only PMIDs verified in plan §11; empty string when none is verified yet
-#   scope              mvp | opt-a | opt-b (plan §5 step 2)
-#   enabled            true only for the four MVP lanes
-#   notes              coverage expectation, failure modes, what still needs verifying
+# `mva.zoo.registry` parses and validates this file. The field meanings:
 #
-# "verify on fetch" in `notes` means the URL or the licence text was read from a search result
-# or a paper, not from the artefact itself. No digest is ever guessed: `sha256 = ""` means
-# nothing has been downloaded, and `tools/fetch_zoo_tables.py` prints the fragment to paste.
+#   name               what the publishers call it
+#   version            the exact release scored against — never "latest"
+#   tier               1 = precomputed table lookup, 2 = local CPU, 3 = remote GPU
+#   input_class        sequence | pair | structure  (what the lane reads)
+#   source             table | rest | local-process | modal
+#   adapter            the module that speaks that source
+#   licence            SPDX id or the publisher's own name for it
+#   non_commercial     true if the terms forbid commercial use — it changes what ships
+#   catalogue_adjacent true if trained on the same public data an evaluation is drawn
+#                      from; such a lane is reported separately, because its agreement
+#                      may be recall rather than prediction
+#   scope              mvp | opt-a | opt-b  (rollout bucket)
+#   enabled            false parks a card without deleting it
+#   pmid               the paper, so a reader can check the claim
+#
+# The roster is EMPTY on purpose: no model has been chosen for this challenge yet, and a
+# card is a claim about a published artefact that must be checked before it is written.
+# The block below is a disabled template showing the shape — it names no real model.
 
-# --------------------------------------------------------------------------------------
-# MVP lanes — the four that run end-to-end on the laptop (plan P4-2a).
-# --------------------------------------------------------------------------------------
-
-[models.alphamissense]
-name = "AlphaMissense"
-key = "alphamissense"
-version = "AlphaMissense hg38 2023"
-tier = 1
-input_class = "missense"
-source = "warehouse-column"
-adapter = "warehouse_column"
-params = { table = "it2_insilico_annotations", column = "am_pathogenicity", aux = ["am_class"] }
-licence = "CC-BY-NC-SA-4.0"
-licence_url = "https://zenodo.org/records/8208688"
-non_commercial = true
-catalogue_adjacent = false
-pmid = "37733863"
-scope = "mvp"
-enabled = true
-notes = """
-Already in the warehouse: iteration 2 ran the VEP AlphaMissense plugin, so this lane is a
-column read and needs no download. 10,601 of 38,087 annotated alleles carry a score — that
-is the missense share of a coding callset, not a failure. Coverage is measured against the
-missense records only (plan P4-3, target >= 90%). Failure mode: a record whose consequence
-is missense but whose row predates the iteration-2 annotation pass reads null.
-"""
-
-[models.spliceai]
-name = "SpliceAI"
-key = "spliceai"
-version = "SpliceAI via VEP plugin (iteration 2 annotation pass)"
-tier = 1
-input_class = "splice"
-source = "warehouse-column"
-adapter = "warehouse_column"
-params = { table = "it2_insilico_annotations", column = "spliceai_ds_max", aux = ["spliceai"] }
-licence = "Illumina SpliceAI non-commercial (academic use)"
-licence_url = "https://github.com/Illumina/SpliceAI"
-non_commercial = true
-catalogue_adjacent = false
-pmid = "30661751"
-scope = "mvp"
-enabled = true
-notes = """
-Also already in the warehouse (32,534 of 38,087 rows non-null) — the second no-download lane.
-`spliceai_ds_max` is the maximum delta score over the four events; the raw per-event string is
-kept as aux. Iteration 2 used the published delta >= 0.2 recall cut (Z2); the zoo keeps the
-raw number and leaves the cut to the ranker. Failure mode: indels outside the precomputed SNV
-set read null; the code is GPL-3.0 but the precomputed scores are the non-commercial artefact.
-"""
-
-[models.esm1b]
-name = "ESM1b variant effects (Brandes 2023)"
-key = "esm1b"
-version = "Brandes 2023 ESM1b"
-tier = 1
-input_class = "missense"
-source = "table"
-adapter = "duckdb_lookup"
-params = { key = ["uniprot", "hgvs_p"], url = "https://huggingface.co/spaces/ntranoslab/esm_variants/resolve/main/ALL_hum_isoforms_ESM1b_LLR.zip", sha256 = "", bytes = 1335361543, layout = "matrix-zip", member_glob = "*.csv", score_sign = -1 }
-licence = "MIT"
-licence_url = "https://github.com/ntranoslab/esm-variants/blob/main/LICENSE"
-non_commercial = false
-catalogue_adjacent = false
-pmid = "37563329"
-scope = "mvp"
-enabled = true
-notes = """
-The only MVP lane that downloads. Found 2026-09-18 by listing the authors' Hugging Face Space
-tree (https://huggingface.co/api/spaces/ntranoslab/esm_variants/tree/main):
-`ALL_hum_isoforms_ESM1b_LLR.zip`, 1,335,361,543 bytes (1.24 GiB) — all ~450M missense effects
-over 42,336 human protein isoforms, one CSV matrix per isoform (rows = the 20 amino acids,
-columns = position + wild-type residue). Licence read from the code repository (MIT); the
-Space itself states no separate data licence — verify on fetch.
-The score is a log-likelihood ratio, <= 0, more negative = more damaging, so the adapter
-negates it (`score_sign = -1`) to keep the zoo's "higher = more damaging" convention.
-Join key: UniProt isoform accession + protein change, so this lane needs step 1's `hgvs_p`
-and a UniProt mapping; records without either are uncovered, and that is a reportable number.
-"""
-
-[models.revel]
-name = "REVEL"
-key = "revel"
-version = "REVEL 1.3 via VEP REST"
-tier = 1
-input_class = "missense"
-source = "vep-rest"
-adapter = "vep_rest"
-params = { plugin = "REVEL", endpoint = "https://rest.ensembl.org/vep/human/hgvs", batch = 200 }
-licence = "REVEL non-commercial (free for non-commercial use; other uses by arrangement)"
-licence_url = "https://sites.google.com/site/revelgenomics/"
-non_commercial = true
-catalogue_adjacent = true
-pmid = "27666373"
-scope = "mvp"
-enabled = true
-notes = """
-The catalogue-adjacent lane, and the reason the merge is always printed twice (with and
-without adjacent lanes). REVEL is an ensemble trained on catalogued pathogenic/benign sets,
-so it has seen labels the other three have not.
-Plugin flag verified 2026-09-18 against the Ensembl REST docs for `/vep/human/hgvs`
-(https://rest.ensembl.org/documentation/info/vep_hgvs_get): the parameter is spelled `REVEL`
-and is boolean (`REVEL=1`). Tier 1 because REST serves a precomputed table; it is the source
-that is remote, not the computation.
-Failure modes: REST rate limits (batch of 200 per POST, retry on 429); a record with no HGVS
-spelling cannot be asked at all.
-"""
-
-# --------------------------------------------------------------------------------------
-# Rest of the plan §5 roster — declared, not enabled. `enabled = false` means the lane is
-# described and licensed here but does not run in the MVP.
-# --------------------------------------------------------------------------------------
-
-[models.cadd]
-name = "CADD v1.7"
-key = "cadd"
-version = "CADD v1.7 via VEP REST"
-tier = 1
-input_class = "any"
-source = "vep-rest"
-adapter = "vep_rest"
-params = { plugin = "CADD", endpoint = "https://rest.ensembl.org/vep/human/hgvs", batch = 200 }
-licence = "CADD non-commercial (free for academic use, licence required otherwise)"
-licence_url = "https://cadd.gs.washington.edu/download"
-non_commercial = true
-catalogue_adjacent = true
-pmid = "38183205"
-scope = "mvp"
-enabled = false
-notes = """
-The alternate for the catalogue-adjacent lane (plan open question O5), kept off.
-Ensembl's REST docs list a `CADD` parameter (values snv | indels | snv_indels | sv | 1), but
-the public REST service answered HTTP 500 for it in iteration 2 (entry 098) — the plugin data
-file is not installed on the public endpoint. REVEL carries the lane instead. Re-enable only
-if a run shows the endpoint answering; the disagreement between REVEL and CADD would be a
-free second adjacent opinion.
-"""
-
-[models.clinpred]
-name = "ClinPred"
-key = "clinpred"
-version = "ClinPred via VEP REST"
-tier = 1
-input_class = "missense"
-source = "vep-rest"
-adapter = "vep_rest"
-params = { plugin = "ClinPred", endpoint = "https://rest.ensembl.org/vep/human/hgvs", batch = 200 }
-licence = "ClinPred academic use — verify on fetch"
-licence_url = "https://sites.google.com/site/clinpred/"
-non_commercial = true
-catalogue_adjacent = true
-pmid = "30220433"
-scope = "opt-a"
-enabled = false
-notes = """
-Third adjacent opinion. Listed in the REST docs as a boolean plugin parameter; same HTTP-500
-risk as CADD — the plugin data may not be installed on the public endpoint. Verify on fetch.
-"""
-
-[models.gpnmsa]
-name = "GPN-MSA"
-key = "gpnmsa"
-version = "GPN-MSA hg38 precomputed scores (songlab)"
-tier = 1
-input_class = "any"
-source = "table"
-adapter = "duckdb_lookup"
-params = { key = ["chrom", "pos", "ref", "alt"], url = "https://huggingface.co/datasets/songlab/gpn-msa-hg38-scores/resolve/main/scores.tsv.bgz", sha256 = "", layout = "tsv" }
-licence = "check on fetch (Hugging Face dataset card) — verify on fetch"
-licence_url = "https://huggingface.co/datasets/songlab/gpn-msa-hg38-scores"
-non_commercial = false
-catalogue_adjacent = false
-pmid = "39747647"
-scope = "opt-a"
-enabled = false
-notes = """
-The GPU-free DNA language model lane: precomputed scores for all ~9 billion possible SNVs in
-GRCh38, columns chrom/pos/ref/alt/score, bgzipped TSV with a tabix index alongside
-(`scores.tsv.bgz.tbi`). URL found 2026-09-18 from the dataset card; size not stated there —
-verify on fetch. This is the one tier-1 lane that also scores non-coding and synonymous
-alleles, so it is the widest coverage on the roster. Keying on the coordinate means the join
-happens inside `build/it4/` and only `allele_id` leaves.
-"""
-
-[models.primateai3d]
-name = "PrimateAI-3D"
-key = "primateai3d"
-version = "PrimateAI-3D hg38 precomputed scores"
-tier = 1
-input_class = "missense"
-source = "table"
-adapter = "duckdb_lookup"
-params = { key = ["chrom", "pos", "ref", "alt"], url = "https://primad.basespace.illumina.com/download", sha256 = "", layout = "tsv" }
-licence = "Illumina academic/non-commercial, registration required — verify on fetch"
-licence_url = "https://primad.basespace.illumina.com/download"
-non_commercial = true
-catalogue_adjacent = false
-pmid = "37262156"
-scope = "opt-a"
-enabled = false
-notes = """
-Structure-aware missense lane, the closest independent rival to AlphaMissense. The download
-is behind an Illumina BaseSpace registration page rather than a plain URL, so `--fetch` will
-not work unattended — a human accepts the terms and drops the file in
-`build/it4/tables/primateai3d/`; the script then digests and converts it. Verify on fetch.
-"""
-
-[models.eve]
-name = "EVE"
-key = "eve"
-version = "EVE precomputed scores (v1, ~3k genes)"
-tier = 1
-input_class = "missense"
-source = "table"
-adapter = "duckdb_lookup"
-params = { key = ["uniprot", "hgvs_p"], url = "https://evemodel.org/download/bulk", sha256 = "", layout = "csv-zip" }
-licence = "MIT — verify on fetch"
-licence_url = "https://evemodel.org/"
-non_commercial = false
-catalogue_adjacent = false
-pmid = ""
-scope = "opt-b"
-enabled = false
-notes = """
-Kept on the roster because its *coverage* is the finding: EVE published models for roughly
-3,000 genes, so a predicted < 30% coverage of the callset's missense alleles is the named
-exception in claim P4-3. No verified PMID in plan §11 (Frazer 2021) — cite only after the
-Crossref/E-utilities check. URL and licence verify on fetch.
-"""
-
-[models.pangolin]
-name = "Pangolin"
-key = "pangolin"
-version = "Pangolin (local, CPU)"
-tier = 2
-input_class = "splice"
-source = "local-process"
-adapter = "local_process"
-params = { entrypoint = "pangolin", needs = ["dna_window_ref", "dna_window_alt"] }
-licence = "Apache-2.0 — verify on fetch"
-licence_url = "https://github.com/tkzeng/Pangolin"
-non_commercial = false
-catalogue_adjacent = false
-pmid = "35449021"
-scope = "opt-a"
-enabled = false
-notes = """
-Second splice opinion, run locally rather than looked up — the point is an independent splice
-model to disagree with SpliceAI. Needs the DNA windows step 1 leaves optional in the MVP.
-"""
-
-[models.esm2]
-name = "ESM2 650M"
-key = "esm2"
-version = "esm2_t33_650M_UR50D"
-tier = 2
-input_class = "missense"
-source = "local-process"
-adapter = "local_process"
-params = { entrypoint = "esm2", needs = ["protein_window_ref", "protein_window_alt"] }
-licence = "MIT"
-licence_url = "https://github.com/facebookresearch/esm"
-non_commercial = false
-catalogue_adjacent = false
-pmid = "36927031"
-scope = "opt-a"
-enabled = false
-notes = """
-The first genuinely zero-shot lane: nothing is looked up, the model scores the substitution
-from sequence alone. Laptop CPU, hours for the callset's missense set. Needs the protein
-windows, which the MVP record does not build.
-"""
-
-[models.rasp]
-name = "RaSP"
-key = "rasp"
-version = "RaSP (local, CPU)"
-tier = 2
-input_class = "structure"
-source = "local-process"
-adapter = "local_process"
-params = { entrypoint = "rasp", needs = ["structure"] }
-licence = "open — verify on fetch"
-licence_url = "https://github.com/KULL-Centre/_2022_ML-ddG-Blaabjerg"
-non_commercial = false
-catalogue_adjacent = false
-pmid = "37184062"
-scope = "opt-b"
-enabled = false
-notes = """
-Predicts a stability change (ΔΔG) on the AlphaFold model of one protein rather than a
-pathogenicity score, so it is not a ranking lane: it serves the hypomorph-vs-null question
-that Track 2 needs. One protein only.
-"""
-
-[models.thermompnn]
-name = "ThermoMPNN"
-key = "thermompnn"
-version = "ThermoMPNN (local, CPU)"
-tier = 2
-input_class = "structure"
-source = "local-process"
-adapter = "local_process"
-params = { entrypoint = "thermompnn", needs = ["structure"] }
-licence = "MIT — verify on fetch"
-licence_url = "https://github.com/Kuhlman-Lab/ThermoMPNN"
-non_commercial = false
-catalogue_adjacent = false
-pmid = "38285937"
-scope = "opt-b"
-enabled = false
-notes = "Second ΔΔG opinion beside RaSP; same role, same one-protein scope."
-
-[models.evo2]
-name = "Evo 2 1B"
-key = "evo2"
-version = "evo2_1b_base"
+[models.example]
+key = "example"
+name = "Template lane — not a real model"
+version = "0.0.0"
 tier = 3
-input_class = "any"
+input_class = "pair"
 source = "modal"
 adapter = "modal"
-params = { image = "evo2", gpu = "H100", needs = ["dna_window_ref", "dna_window_alt"] }
-licence = "Arc Institute open weights — verify on fetch"
-licence_url = "https://github.com/ArcInstitute/evo2"
+licence = "UNSET"
+licence_url = ""
 non_commercial = false
 catalogue_adjacent = false
+scope = "mvp"
+enabled = false
 pmid = ""
-scope = "opt-b"
-enabled = false
 notes = """
-Tier-3 DNA language model; the authors recommend an H100, minutes of use. No verified PMID:
-plan §11 has the bioRxiv DOI 10.1101/2025.02.18.638918 and a 2026 Nature paper whose PMID is
-still to fetch — cite only after the check.
+Copy this block, fill every field from the model's own README and licence file, and set
+enabled = true once an adapter exists. Delete this template when the first real card
+lands.
 """
 
-[models.ntv2]
-name = "Nucleotide Transformer v2 500M"
-key = "ntv2"
-version = "InstaDeepAI/nucleotide-transformer-v2-500m-multi-species"
-tier = 3
-input_class = "any"
-source = "modal"
-adapter = "modal"
-params = { image = "nt-v2", gpu = "any", needs = ["dna_window_ref", "dna_window_alt"] }
-licence = "CC-BY-NC-SA-4.0"
-licence_url = "https://huggingface.co/InstaDeepAI/nucleotide-transformer-v2-500m-multi-species"
-non_commercial = true
-catalogue_adjacent = false
-pmid = "39609566"
-scope = "opt-b"
-enabled = false
-notes = "Runs through HF `transformers` on any GPU — the cheap tier-3 lane, and the fallback if Evo 2 will not fit."
-
-[models.esmc]
-name = "ESM-C 600M"
-key = "esmc"
-version = "esmc_600m (github.com/evolutionaryscale/esm, tag recorded at fetch)"
-tier = 3
-input_class = "missense"
-source = "modal"
-adapter = "modal"
-params = { image = "esmc", gpu = "any", needs = ["protein_window_ref", "protein_window_alt"] }
-licence = "EvolutionaryScale Cambrian non-commercial licence"
-licence_url = "https://www.evolutionaryscale.ai/policies/cambrian-non-commercial-license-agreement"
-non_commercial = true
-catalogue_adjacent = false
-pmid = ""
-scope = "opt-b"
-enabled = false
-notes = """
-Newer protein language model than ESM2; its value is the agreement figure against ESM1b and
-ESM2, not a new number. Technical release, no paper — record the repository tag and the
-weights digest at fetch instead of a PMID.
-"""
-
-[models.boltz2]
-name = "Boltz-2"
-key = "boltz2"
-version = "boltz-2 (tag recorded at fetch)"
-tier = 3
-input_class = "structure"
-source = "modal"
-adapter = "modal"
-params = { image = "boltz2", gpu = "A100", needs = ["protein_window_ref", "protein_window_alt"] }
-licence = "MIT"
-licence_url = "https://github.com/jwohlwend/boltz"
-non_commercial = false
-catalogue_adjacent = false
-pmid = ""
-scope = "opt-b"
-enabled = false
-notes = """
-Not a scorer: it folds wild-type and mutant BubR1 and the deliverable is the picture plus the
-confidence delta. Kept in the registry so the figure carries the same provenance row every
-score carries. PMID unverified (bioRxiv 10.1101/2025.06.14.659707, from memory) — check by
-Crossref before citing.
-"""
-
-[models.primekg]
-name = "PrimeKG"
-key = "primekg"
-version = "PrimeKG v1 (Harvard Dataverse)"
-tier = 2
-input_class = "disease-node"
-source = "table"
-adapter = "duckdb_lookup"
-params = { key = ["relation", "x_index", "y_index"], url = "https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IXA7BM", sha256 = "", layout = "csv" }
-licence = "MIT"
-licence_url = "https://github.com/mims-harvard/PrimeKG"
-non_commercial = false
-catalogue_adjacent = false
-pmid = "36732524"
-scope = "opt-b"
-enabled = false
-notes = """
-Track 2's graph, listed for roster completeness only. It is fetched by the track2 lane
-(`mva.drugs`, plan step 7), NOT by `tools/fetch_zoo_tables.py` — do not fetch it twice. It
-scores a disease node against drugs, not an allele, so it never enters the variant ranking.
-"""
-
-[models.txgnn]
-name = "TxGNN"
-key = "txgnn"
-version = "TxGNN (pretrained checkpoint, tag recorded at fetch)"
-tier = 3
-input_class = "disease-node"
-source = "local-process"
-adapter = "local_process"
-params = { entrypoint = "txgnn", needs = ["mondo_id"] }
-licence = "MIT"
-licence_url = "https://github.com/mims-harvard/TxGNN"
-non_commercial = false
-catalogue_adjacent = false
-pmid = "39322717"
-scope = "opt-b"
-enabled = false
-notes = "Track 2 opt-B: a learned second opinion beside the deterministic PrimeKG walk. Same input as PrimeKG, a disease node, never an allele."
+[models.example.params]
+image = "unset"

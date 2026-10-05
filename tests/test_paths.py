@@ -22,9 +22,9 @@ def test_repo_root_finds_this_checkout_regardless_of_cwd(tmp_path, monkeypatch):
 
 def test_resolve_anchors_a_relative_path_and_leaves_an_absolute_one(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    resolved = paths.resolve("ressources/reference/structure_genes.tsv")
+    resolved = paths.resolve("pyproject.toml")
     assert resolved.is_absolute()
-    assert resolved.is_file(), "the reference table must resolve from any working directory"
+    assert resolved.is_file(), "a repo-relative path must resolve from any working directory"
     absolute = tmp_path / "elsewhere.tsv"
     assert paths.resolve(absolute) == absolute
 

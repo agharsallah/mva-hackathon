@@ -1,122 +1,103 @@
-"""The contracts every zoo module shares — pinned in wave 0, read-only afterwards.
+"""The contracts every zoo module shares.
 
-Three shapes and one function:
+The zoo runs **frozen third-party models** as interchangeable lanes: nothing here is
+trained. One record shape goes in, one score row comes out, and which model produced it
+is a registry entry rather than a branch in the code.
 
-* :class:`AlleleRecord` — step 1's row: one allele, every spelling a model class reads.
-* :class:`ScoreRow` — one model's verdict on one allele, as cached in
-  ``warehouse.allele_scores``.
-* :class:`Coverage` — how much of a record set a model can score, by consequence class.
-* :func:`allele_id` — the stable, coordinate-free key. The coordinate stays in ``build/``;
-  the id is what leaves.
+Four shapes and one function:
 
-The :class:`Adapter` protocol is what a model looks like to the workflow: tier 1 and 2 score
-locally, tier 3 submits a remote job and the workflow collects it later.
+* :class:`SequenceRecord` — the unit a model scores. One or more named chains plus free
+  metadata, because what a lane needs varies: a protein language model reads a single
+  chain, an interface predictor reads two, a structure predictor reads two and returns
+  coordinates.
+* :class:`ScoreRow` — one model's verdict on one record. ``score`` is the single summary
+  number; anything vector-valued (per-residue probabilities, a contact map) goes in
+  ``aux``.
+* :class:`Coverage` — how much of a record set a model can score, by class.
+* :class:`RemoteJob` — a tier-3 submission the workflow polls.
+* :func:`item_id` — the stable content key.
+
+The :class:`Adapter` protocol is what a model looks like to a caller: tier 1 and 2 score
+locally, tier 3 submits a remote job and the caller collects it later.
 """
 
 from __future__ import annotations
 
 import hashlib
-from collections.abc import Iterator, Sequence
+from collections.abc import Iterator, Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import Any, Literal, Protocol
+from typing import Any, Literal, Protocol, TypedDict
 
 __all__ = [
-    "ALLELE_SCORES_COLUMNS",
-    "ALLELE_SCORES_TABLE",
-    "CATALOGUE_FIELDS",
-    "MODES",
-    "RECORDS_TABLE",
-    "RECORD_COLUMNS",
     "Adapter",
-    "AlleleRecord",
     "Coverage",
-    "Mode",
     "RemoteJob",
     "ScoreRow",
+    "SequenceRecord",
     "Tier",
-    "allele_id",
+    "item_id",
 ]
 
 #: Inference tiers: 1 = precomputed table lookup, 2 = local CPU process, 3 = remote GPU.
 Tier = Literal[1, 2, 3]
 
-#: ``catalogue-free`` nulls every field a ClinVar-trained model could have learned from;
-#: ``aware`` keeps them. Both are reported (plan D4).
-Mode = Literal["catalogue-free", "aware"]
-MODES: tuple[str, ...] = ("catalogue-free", "aware")
 
-#: The record fields ``--mask-catalogue`` nulls.
-CATALOGUE_FIELDS: tuple[str, ...] = ("clin_sig",)
+def item_id(*parts: str) -> str:
+    """The stable key of one record: 16 hex chars of SHA-256 over ``parts`` joined by ``:``.
 
-
-def allele_id(chrom: str, pos: int, ref: str, alt: str) -> str:
-    """The stable key of one allele: 16 hex chars of SHA-256 over ``chrom:pos:ref:alt``.
-
-    ``chrom`` is normalised to the VCF spelling (no ``chr`` prefix, uppercase) before hashing
-    so the two contig conventions in the repo yield one id. The id carries no coordinate and
-    is the only allele key allowed in any tracked file.
+    Content-addressed on purpose. Two runs that build the same record from the same
+    sequences agree on its id without coordinating, so a score cached by one run is a hit
+    for the next, and a changed input is a different id rather than a silent overwrite.
     """
-    contig = chrom.removeprefix("chr").removeprefix("CHR").upper()
-    text = f"{contig}:{int(pos)}:{ref.upper()}:{alt.upper()}"
+    text = ":".join(part.strip().upper() for part in parts)
     return hashlib.sha256(text.encode()).hexdigest()[:16]
 
 
+class Chains(TypedDict, total=False):
+    """The named chains of one record, as plain sequence strings.
+
+    Named rather than positional because a lane asks for what it needs by name, and an
+    interface model that silently swapped its two inputs would still run.
+    """
+
+    binder: str
+    target: str
+
+
 @dataclass(frozen=True)
-class AlleleRecord:
-    """One allele, spelled every way a model class reads it. Everything but the id is
-    nullable: a tier-1 lookup keys on HGVS, a DNA language model on the window."""
+class SequenceRecord:
+    """One unit of work: named chains plus whatever a lane needs to know about them.
 
-    allele_id: str
-    gene: str | None = None
-    transcript: str | None = None
-    consequence: str | None = None
-    hgvs_c: str | None = None
-    hgvs_p: str | None = None
-    #: UniProt accession of the protein ``hgvs_p`` is spelled on (ESM1b's join key).
-    uniprot: str | None = None
-    protein_window_ref: str | None = None
-    protein_window_alt: str | None = None
-    dna_window_ref: str | None = None
-    dna_window_alt: str | None = None
-    is_read_only: bool = False
-    af_gnomad: float | None = None
-    clin_sig: str | None = None
+    ``meta`` is deliberately open. A record carries the identifiers, labels and grouping
+    keys the surrounding analysis attached to it, and a lane reads only the keys it
+    declares — so adding a field never breaks a lane that does not use it.
+    """
 
-    def masked(self) -> AlleleRecord:
-        """The same record with every catalogue field nulled (``catalogue-free`` mode)."""
-        return AlleleRecord(**{**self.__dict__, **dict.fromkeys(CATALOGUE_FIELDS)})
+    item_id: str
+    chains: Chains = field(default_factory=Chains)
+    meta: Mapping[str, Any] = field(default_factory=dict)
 
-
-#: ``results.it4_allele_records`` — the coordinate-free half of the record. The sequence
-#: windows and the coordinate live only in ``build/it4/records.parquet``.
-RECORDS_TABLE = "it4_allele_records"
-RECORD_COLUMNS: tuple[tuple[str, str], ...] = (
-    ("allele_id", "VARCHAR"),
-    ("gene", "VARCHAR"),
-    ("transcript", "VARCHAR"),
-    ("consequence", "VARCHAR"),
-    ("hgvs_c", "VARCHAR"),
-    ("hgvs_p", "VARCHAR"),
-    ("uniprot", "VARCHAR"),
-    ("is_read_only", "BOOLEAN"),
-    ("af_gnomad", "DOUBLE"),
-    ("clin_sig", "VARCHAR"),
-    ("built_at", "TIMESTAMP"),
-    ("source", "VARCHAR"),
-)
+    @classmethod
+    def of(cls, chains: Chains, **meta: Any) -> SequenceRecord:
+        """Build a record, deriving its id from the chain contents in a fixed order."""
+        ordered = [f"{name}={chains[name]}" for name in sorted(chains)]  # type: ignore[literal-required]
+        return cls(item_id=item_id(*ordered), chains=chains, meta=meta)
 
 
 @dataclass(frozen=True)
 class ScoreRow:
-    """One model's score for one allele — the row shape of ``warehouse.allele_scores``.
+    """One model's score for one record.
 
-    ``score`` is the model's primary number, higher = more damaging, as the adapter
-    defines it; ``aux`` holds anything else the model emitted (classes, per-site deltas).
-    ``venue`` is where it ran (``laptop``, ``vep-rest``, ``modal:<gpu>``); ``licence`` the
+    ``score`` is the model's primary number, oriented as the adapter defines it; ``aux``
+    holds anything else it emitted — per-residue probability vectors, a contact map, a
+    confidence. ``venue`` is where it ran (``laptop``, ``modal:<gpu>``); ``licence`` the
     model's terms; ``digest`` the weights or table digest the adapter read.
+
+    ``digest`` is what makes a cached row trustworthy: a lane whose weights changed
+    produces a different digest, so a stale score is visible rather than silently reused.
     """
 
-    allele_id: str
+    item_id: str
     model: str
     version: str
     score: float | None
@@ -127,31 +108,19 @@ class ScoreRow:
     run_id: str = ""
 
 
-#: ``warehouse.allele_scores`` — append-only; a re-run on the same (model, version,
-#: allele_id) is a no-op. This is the feature store the plan describes (step 3).
-ALLELE_SCORES_TABLE = "allele_scores"
-ALLELE_SCORES_COLUMNS: tuple[tuple[str, str], ...] = (
-    ("allele_id", "VARCHAR"),
-    ("model", "VARCHAR"),
-    ("version", "VARCHAR"),
-    ("digest", "VARCHAR"),
-    ("score", "DOUBLE"),
-    ("aux", "VARCHAR"),  # JSON text
-    ("venue", "VARCHAR"),
-    ("licence", "VARCHAR"),
-    ("run_id", "VARCHAR"),
-    ("ts", "TIMESTAMP"),
-)
-
-
 @dataclass(frozen=True)
 class Coverage:
-    """How much of a record set one model can score, by consequence class."""
+    """How much of a record set one model can score, by class.
+
+    A lane that scores 40% of the records is not a broken lane — it is a lane with a
+    stated domain — so coverage is reported next to every result rather than hidden
+    behind a filter.
+    """
 
     model: str
     scored: int
     total: int
-    by_consequence: dict[str, tuple[int, int]] = field(default_factory=dict)
+    by_class: dict[str, tuple[int, int]] = field(default_factory=dict)
 
     @property
     def fraction(self) -> float:
@@ -160,7 +129,7 @@ class Coverage:
 
 @dataclass(frozen=True)
 class RemoteJob:
-    """A tier-3 submission the workflow polls: where it went and how to fetch the parquet."""
+    """A tier-3 submission the caller polls: where it went and how to fetch the result."""
 
     model: str
     job_id: str
@@ -169,20 +138,26 @@ class RemoteJob:
 
 
 class Adapter(Protocol):
-    """What a model looks like to the workflow. One module per model under
-    :mod:`mva.zoo.adapters`; a new lane is a new file, never an edit to a shared one."""
+    """What a model looks like to a caller.
+
+    One module per model: a new lane is a new file plus a registry entry, never an edit to
+    a shared one. ``catalogue_adjacent`` marks a model trained on the same public
+    structures or complexes an evaluation is drawn from — such a lane is not excluded, but
+    its agreement with the answer is reported separately, because it may be recall rather
+    than prediction.
+    """
 
     name: str
     version: str
     tier: Tier
     catalogue_adjacent: bool
 
-    def coverage(self, records: Sequence[AlleleRecord]) -> Coverage: ...
+    def coverage(self, records: Sequence[SequenceRecord]) -> Coverage: ...
 
-    def score(self, records: Sequence[AlleleRecord]) -> Iterator[ScoreRow]:
+    def score(self, records: Sequence[SequenceRecord]) -> Iterator[ScoreRow]:
         """Tier 1 and 2: score locally, yielding one row per record it can score."""
         ...
 
-    def submit(self, records: Sequence[AlleleRecord]) -> RemoteJob:
-        """Tier 3: send sequence windows and ``allele_id`` only — never a coordinate."""
+    def submit(self, records: Sequence[SequenceRecord]) -> RemoteJob:
+        """Tier 3: send the chains and the ``item_id``, and nothing else."""
         ...

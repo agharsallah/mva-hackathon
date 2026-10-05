@@ -1,4 +1,4 @@
-"""Writing a stage's rows out as a TSV the warehouse loader can read, and its numbers as JSON.
+"""Writing a stage's rows out as a TSV a loader can read, and its numbers as JSON.
 
 Every analysis stage in this project ends the same way: a handful of tables written to
 ``build/<step>/tables/*.tsv`` for the loader, and one JSON sidecar holding the counts and

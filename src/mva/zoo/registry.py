@@ -12,8 +12,8 @@ per measured digest. A fragment **adds** a model or **overrides** fields of one 
 edit one file, and a measured ``sha256`` arrives as a fragment. Two fragments claiming one key
 is an error — that is a genuine collision.
 
-Nothing here downloads, scores or touches patient data: a card is a declaration, and the
-adapters in :mod:`mva.zoo.adapters` are what act on it.
+Nothing here downloads or scores: a card is a declaration, and the adapter it names is
+what acts on it.
 """
 
 from __future__ import annotations
@@ -53,26 +53,23 @@ DEFAULT_MODELS_TOML = Path(__file__).with_name("models.toml")
 DEFAULT_FRAGMENTS_DIR = Path(__file__).with_name("models.d")
 
 #: Where a model's numbers come from. One adapter module speaks each of these.
-SOURCES: tuple[str, ...] = ("warehouse-column", "table", "vep-rest", "local-process", "modal")
+SOURCES: tuple[str, ...] = ("table", "rest", "local-process", "modal")
 
-#: What a model will read: a protein change, a splice site, any variant, a structure, or —
-#: for the Track 2 lanes — a disease node rather than an allele at all.
-INPUT_CLASSES: tuple[str, ...] = ("missense", "splice", "any", "structure", "disease-node")
+#: What a model will read. ``sequence`` is a single chain; ``pair`` is two chains whose
+#: relationship is the question; ``structure`` is a model that emits or consumes
+#: coordinates. A lane declares one, and a record set is matched against it.
+INPUT_CLASSES: tuple[str, ...] = ("sequence", "pair", "structure")
 
-#: Plan §5 buckets: the MVP four, then the two optional widenings.
+#: Rollout buckets: the first lanes that must work, then the optional widenings.
 SCOPES: tuple[str, ...] = ("mvp", "opt-a", "opt-b")
 
 #: One adapter per source — the roster may not pair them freely.
 ADAPTER_FOR_SOURCE: Mapping[str, tuple[str, ...]] = {
-    "warehouse-column": ("warehouse_column",),
-    # A downloaded table has two shapes: keyed by the genomic change (`duckdb_lookup`) or
-    # keyed by a protein accession and a one-letter residue change (`protein_table`).
-    # Which one a table is, is a fact about the publisher, not about the source kind.
-    # A third shape, added in wave 4: keyed on the genomic change itself
-    # (`coordinate_table`), which is joined inside `build/` because the record set that
-    # leaves this machine carries no coordinate.
-    "table": ("duckdb_lookup", "protein_table", "coordinate_table"),
-    "vep-rest": ("vep_rest",),
+    # A downloaded table is joined in-process with DuckDB, keyed by whatever column the
+    # publisher chose. Which key a table uses is a fact about the publisher, not about the
+    # source kind, so the key is a parameter rather than a separate source.
+    "table": ("duckdb_lookup",),
+    "rest": ("rest",),
     "local-process": ("local_process",),
     "modal": ("modal",),
 }
@@ -80,11 +77,8 @@ ADAPTER_FOR_SOURCE: Mapping[str, tuple[str, ...]] = {
 #: What each adapter needs in ``params`` before a lane may be enabled. Anything else in
 #: ``params`` is the adapter's own business and is passed through untouched.
 ADAPTER_PARAMS: Mapping[str, tuple[str, ...]] = {
-    "warehouse_column": ("table", "column"),
     "duckdb_lookup": ("key", "url"),
-    "protein_table": ("key", "url"),
-    "coordinate_table": ("key", "url"),
-    "vep_rest": ("plugin",),
+    "rest": ("endpoint",),
     "local_process": ("entrypoint",),
     "modal": ("image",),
 }
@@ -92,17 +86,15 @@ ADAPTER_PARAMS: Mapping[str, tuple[str, ...]] = {
 #: What the public repository is allowed to ship for each source. A non-commercial score
 #: table is never committed; the fetch script and its digest are.
 SHIPS: Mapping[str, str] = {
-    "warehouse-column": "nothing to fetch — the score is already a warehouse column",
     "table": "fetch script + digest, never the score file",
-    "vep-rest": "no file — scores are fetched per allele from the public REST service",
+    "rest": "no file — scores are fetched per record from the public service",
     "local-process": "no weights — the model's own installer fetches them; digest per run",
     "modal": "no weights — the remote image pulls them; digest and venue recorded per run",
 }
 
 #: The one command that writes the manifest, quoted in the manifest itself.
 REGENERATE = (
-    'uv run python -c "from mva.zoo import registry as r; '
-    "r.write_cards(r.load(), 'docs/iteration4/cards')\""
+    "uv run python -c \"from mva.zoo import registry as r; r.write_cards(r.load(), 'docs/cards')\""
 )
 
 _GENERATED = (
@@ -134,7 +126,7 @@ class ModelCard:
     """One model's declaration — the TOML table, parsed and checked.
 
     Frozen because a card is a fact about a published artefact: a run may read it, never
-    edit it. ``params`` is whatever the adapter needs (a warehouse column name, a download
+    edit it. ``params`` is whatever the adapter needs (a join key, a download
     URL, a REST plugin flag); :data:`ADAPTER_PARAMS` says which keys are mandatory.
     """
 
@@ -331,9 +323,9 @@ def card_with_coverage(card: ModelCard, coverage: Coverage) -> dict[str, Any]:
         "scored": coverage.scored,
         "total": coverage.total,
         "fraction": round(coverage.fraction, 6),
-        "by_consequence": {
-            consequence: {"scored": scored, "total": total}
-            for consequence, (scored, total) in sorted(coverage.by_consequence.items())
+        "by_class": {
+            name: {"scored": scored, "total": total}
+            for name, (scored, total) in sorted(coverage.by_class.items())
         },
     }
     return payload
@@ -364,7 +356,7 @@ def licence_manifest(cards: Mapping[str, ModelCard]) -> str:
             f"{len(cards)} models declared, {len(enabled(cards))} enabled,"
             f" {sum(1 for c in cards.values() if c.non_commercial)} under non-commercial"
             f" terms, {sum(1 for c in cards.values() if c.catalogue_adjacent)}"
-            " catalogue-adjacent (trained on a variant catalogue, so the merge is printed"
+            " catalogue-adjacent (trained on the same public data an evaluation is drawn"
             " with and without them)."
         ),
         "",

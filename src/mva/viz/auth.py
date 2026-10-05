@@ -1,15 +1,11 @@
-"""One shared token for ``mva-viz-api``, for the day it stops being a loopback service.
+"""One shared token, for the day this stops being a loopback service.
 
 The API was written for one client on one machine, so it had no authentication: nothing
-it serves is reachable by a browser that could not already reach the warehouse. That
-stops being true the moment it binds a public interface — ``/api/panel/locus`` serves
-**real patient positions**, and ``/api/submissions/*`` serves the deliverables.
+it serves is reachable by a browser that could not already reach the data. That stops
+being true the moment it binds a public interface.
 
-The guard here is the same shape as the read-store API's (:mod:`mva.reads.api.app`), on
-purpose: one mechanism to reason about, one header to configure.
-
-* ``MVA_VIZ_TOKEN`` empty  → the API is open. The only correct setting for loopback.
-* ``MVA_VIZ_TOKEN`` set    → every ``/api/*`` request must carry it as ``X-API-Key``.
+* ``API_TOKEN`` empty  → the API is open. The only correct setting for loopback.
+* ``API_TOKEN`` set    → every ``/api/*`` request must carry it as ``X-API-Key``.
 
 ``/health`` is deliberately outside the guard: an uptime probe carries no secret and the
 response is a constant. Nothing else is exempt.
@@ -25,14 +21,14 @@ from collections.abc import Callable
 from fastapi import Depends, HTTPException
 from fastapi.security import APIKeyHeader
 
-from ..warehouse.settings import setting
+from ..settings import setting
 
 #: The header clients send. ``auto_error=False`` so a missing header reaches the guard
 #: as ``None`` and an open API (empty token) still answers it.
 HEADER = APIKeyHeader(
     name="X-API-Key",
     auto_error=False,
-    description="the value of MVA_VIZ_TOKEN on the server; not needed when it is empty",
+    description="the value of API_TOKEN on the server; not needed when it is empty",
 )
 
 
@@ -42,7 +38,7 @@ def resolve_token(token: str | None = None) -> str:
     Passed explicitly it wins — that is the seam tests use to get an open API regardless
     of the ``.env`` sitting above the working directory. ``None`` reads the setting.
     """
-    return setting("MVA_VIZ_TOKEN") if token is None else token
+    return setting("API_TOKEN") if token is None else token
 
 
 def token_guard(expected: str) -> Callable[[str | None], None]:

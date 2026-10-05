@@ -1,36 +1,25 @@
-"""The model zoo — every credible open variant-effect model, one contract, one cache.
+"""The model zoo — every credible open model behind one contract.
 
-Iteration 4 (``docs/iteration4/plan.md``). Nothing here is trained: every model is a frozen
-published artefact, and the package's job is organisational — one input record
-(:mod:`.record`), one registry (:mod:`.registry`), one adapter protocol and one score cache
-(:mod:`.adapters`, :mod:`.cache`), one workflow (:mod:`.workflow`), one ranking
-(:mod:`.rank`), one report template (:mod:`.report`) and three merge methods
-(:mod:`.merge`). The shared types every module agrees on live in :mod:`.types`.
+Nothing here is trained: every model is a frozen published artefact, and the package's
+job is organisational. One record shape and one adapter protocol (:mod:`.types`), one
+registry of model cards (:mod:`.registry`), and one tier-3 contract with its spend ledger
+(:mod:`.modal_contract`, :mod:`.modal_budget`, :mod:`.modal_apps`) for the lanes that need
+a GPU.
 
-Layering: ``mva.zoo`` may import ``mva.io``, ``mva.pipeline`` and ``mva.warehouse``; only
-``mva.viz`` may import it (``pyproject.toml``, import-linter).
+Adding a model is a TOML entry plus one adapter module — never an edit to a shared file.
+
+Layering: ``mva.zoo`` may import ``mva.io``; only ``mva.viz`` may import it
+(``pyproject.toml``, import-linter).
 """
 
-from .types import (
-    ALLELE_SCORES_COLUMNS,
-    ALLELE_SCORES_TABLE,
-    RECORD_COLUMNS,
-    RECORDS_TABLE,
-    Adapter,
-    AlleleRecord,
-    Coverage,
-    ScoreRow,
-    allele_id,
-)
+from .types import Adapter, Coverage, RemoteJob, ScoreRow, SequenceRecord, Tier, item_id
 
 __all__ = [
-    "ALLELE_SCORES_COLUMNS",
-    "ALLELE_SCORES_TABLE",
-    "RECORDS_TABLE",
-    "RECORD_COLUMNS",
     "Adapter",
-    "AlleleRecord",
     "Coverage",
+    "RemoteJob",
     "ScoreRow",
-    "allele_id",
+    "SequenceRecord",
+    "Tier",
+    "item_id",
 ]

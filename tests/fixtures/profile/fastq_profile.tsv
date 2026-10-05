@@ -1,5 +1,0 @@
-file	bytes	read_len	est_reads	est_gbases
-SYNTH_S1_L001_R1_001.fastq.gz	1000	149	10000000	1.49
-SYNTH_S1_L001_R2_001.fastq.gz	1010	149	10000000	1.49
-est_total_gbases	2.98
-est_raw_coverage_x	1.0

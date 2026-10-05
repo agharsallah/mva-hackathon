@@ -1,39 +1,23 @@
 """Format parsers, below every domain layer.
 
-These read the plain-text shapes bioinformatics tools emit — TSV tables with rollup
-lines, ``##``-sectioned files, ``bcftools stats``, BED intervals, VCF headers — and know
-nothing about this proband, this panel or this challenge. Both the warehouse and the
-exploration toolkit sit on top of them, so they live here rather than inside either.
+These read the plain-text shapes command-line tools emit — TSV tables with rollup lines
+glued to the bottom, ``##``-sectioned files — and know nothing about one dataset or one
+challenge. Every layer above sits on them, so they live here rather than inside any one
+of those layers.
 """
 
-from .readers import (
-    Region,
-    Row,
-    Sections,
-    Table,
-    VcfHeader,
-    as_float,
-    as_int,
-    read_bcftools_stats,
-    read_bed,
-    read_sections,
-    read_table,
-    read_vcf_header,
-    summary_numbers,
-)
+from .readers import Row, Sections, Table, as_float, as_int, read_sections, read_table
+from .writers import cell, write_json, write_tsv
 
 __all__ = [
-    "Region",
     "Row",
     "Sections",
     "Table",
-    "VcfHeader",
     "as_float",
     "as_int",
-    "read_bcftools_stats",
-    "read_bed",
+    "cell",
     "read_sections",
     "read_table",
-    "read_vcf_header",
-    "summary_numbers",
+    "write_json",
+    "write_tsv",
 ]
