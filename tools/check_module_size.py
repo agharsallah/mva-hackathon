@@ -13,7 +13,7 @@ as a blocked commit:
 
 Usage::
 
-    uv run python tools/check_module_size.py                  # src, tests, tools
+    uv run python tools/check_module_size.py                  # src, tools
     uv run python tools/check_module_size.py --limit 300 src  # one tree, tighter cap
     uv run python tools/check_module_size.py --quiet          # only what fails
 
@@ -33,13 +33,13 @@ DEFAULT_LIMIT = 400
 #: 600: a test file is the executable description of one module's behaviour, and cutting
 #: it in half to satisfy a line count splits one story across two files without making
 #: either easier to read. The cap still exists so a test file cannot grow unbounded.
-LIMITS = {"src": DEFAULT_LIMIT, "tools": DEFAULT_LIMIT, "tests": 600}
+LIMITS = {"src": DEFAULT_LIMIT, "tools": DEFAULT_LIMIT}
 
 #: Report a file this far below the cap so a split happens before it is urgent.
 DEFAULT_WARN_RATIO = 0.9
 
 #: Trees checked when none are named. Generated and archived code is not checked.
-DEFAULT_PATHS = ("src", "tests", "tools")
+DEFAULT_PATHS = ("src", "tools")
 
 #: Never checked: provenance that must not be edited, or output that is regenerated.
 EXCLUDED = {"archive", "build", "figures", "ressources", "__pycache__", ".venv"}
@@ -111,9 +111,7 @@ def main(argv: list[str] | None = None) -> int:
         prog="check_module_size",
         description="fail when a Python module is longer than the project allows",
     )
-    parser.add_argument(
-        "paths", nargs="*", type=Path, help="files or trees (default: src tests tools)"
-    )
+    parser.add_argument("paths", nargs="*", type=Path, help="files or trees (default: src tools)")
     parser.add_argument(
         "--limit",
         type=int,

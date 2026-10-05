@@ -1,26 +1,25 @@
 # `src/mva` — package index
 
-**Standing:** 2026-09-06 — verified against source at commit `274624d`; the `drugs` row and
-its place in the graph added 2026-09-06; the `knowledge` row added 2026-09-18 with
-iteration 2's step 5; the **`zoo` row and its edges added 2026-09-19** with iteration 4.
+**Standing:** 2026-10-05 — written when the repository was stripped of its previous case
+(MVA genomics) and repointed at the SEPIQ 2026 antibody–antigen challenge. Everything
+listed here is machinery; none of it encodes the new case yet.
 
 One line per package. Each package's own `README.md` carries the module map, callers,
 gotchas and CLI/HTTP surface; this page only says what lives where.
 
 | Package | Holds | Entry point |
 |---|---|---|
-| [`io/`](io/README.md) | Parsers for the plain-text shapes bioinformatics tools emit — TSV tables, `##`-sectioned files, `bcftools stats`, BED intervals, VCF headers. Missing values become `None`, never exceptions. | library only |
-| [`pipeline/`](pipeline/README.md) | The deterministic core: read a VCF (variant call format — one row per difference from the reference genome), build candidate variant pairs, classify phase (which parent each copy came from), rank them, write the submission CSV. Includes a local replica of the official scorer. | library only |
-| [`warehouse/`](warehouse/README.md) | Ingest and lineage: delivered files → Parquet → PostgreSQL, plus ~20 named SQL derivations into a `results` schema, and the append-only ledgers (source uploads, lineage edges, integrity fingerprints, oracle probe budget). | `mva-warehouse` |
-| [`reads/`](reads/README.md) | Raw sequencer output (FASTQ) turned into sharded Parquet so k-mer and QC questions run in seconds; three swappable conversion engines, plus a scan/triage path. | `mva-reads`, `mva-reads-api` |
-| [`phenotype/`](phenotype/README.md) | The child's HPO terms ranked against every gene the Human Phenotype Ontology curates, by a scorer that reads two public text files and never the callset, the panel, or a variant. A human-only reimplementation of Exomiser's hiPHIVE path — no JVM, no 31.5 GB bundle. | `mva-phenotype` |
-| [`drugs/`](drugs/README.md) | Track 2's data layer: a coordinate-free **mechanism card** in, and a target set, a candidate-drug table, trial and literature tables out — all from seven public APIs (Open Targets, ChEMBL, DGIdb, Reactome, ClinicalTrials.gov, PubMed, openFDA), disk-cached, each table with a provenance manifest. | `mva-drugs` |
-| [`knowledge/`](knowledge/README.md) | What the literature says about a candidate set, and the baselines that decide whether that is worth anything: published alleles per **sample** allele (LitVar 2.0), script-derived case-report anchors (PubTator 3.0), protein domain and structure context (UniProt → InterPro → AlphaFold DB), plus a citation-volume baseline and a matched-decoy null. Case-agnostic. | library only |
-| [`zoo/`](zoo/README.md) | The model zoo: every credible **open variant-effect model** (a frozen third-party predictor that scores one DNA change) run under one contract — normalized allele record in, cached score out — then pairs ranked per model, one seven-section report per model, and a merged report (agreement matrix, reciprocal rank fusion with and without catalogue-trained lanes). Nothing is trained; adding a model is a TOML entry plus one adapter, and the case (which gene, which iteration) is a config block, not code. | `mva-zoo` |
-| [`science/`](science/README.md) | The research record: append-only hypothesis and evidence registers. Enforces in code that a claim carries a prediction and a refutation condition, that an observation names a source, and that no genomic coordinate reaches an exported file. | `mva-science` |
-| [`viz/`](viz/README.md) | FastAPI service putting one HTTP origin in front of PostgreSQL, the Parquet object store and `mva-reads-api`, with a uniform `{data, cached_at, source}` envelope and a self-describing catalog. Serves the React app in [`app/`](../../app). | `mva-viz-api` |
-| [`render/`](render/README.md) | The shared visual language — exhibit/section primitives, report shell, and the one palette (`GOOD` green, `BAD` red, `DECISION` yellow, `MACHINE` blue, `RAW` purple, `MUTED` grey). Subject-agnostic. | library only |
-| [`explore/`](explore/README.md) | The callset-profile report and its views (overview, quality, karyotype, panel, locus, reads, callset). `figure.py` and `theme.py` here are re-export shims over `render/`. | `mva-explore` |
+| [`io/`](io/README.md) | Parsers for the plain-text shapes command-line tools emit — header-first TSVs with rollup lines glued to the bottom, `##`-sectioned files — and the TSV/JSON writers that stage a step's output. A missing value becomes `None`, never an exception. | library only |
+| [`render/`](render/README.md) | The shared visual language — exhibit/section primitives, the report shell, and the one palette (`GOOD` green, `BAD` red, `DECISION` yellow, `MACHINE` blue, `RAW` purple, `MUTED` grey). Subject-agnostic. | library only |
+| [`zoo/`](zoo/README.md) | The model zoo: frozen third-party models run under one contract — a record in, a cached score out. A TOML registry of model cards, the tier-3 Modal wire contract and its spend ledger. Nothing is trained; adding a model is a TOML entry plus one adapter. | library only |
+| [`viz/`](viz/README.md) | FastAPI service putting one HTTP origin in front of the data layer, with a uniform `{data, cached_at, source}` envelope. Serves the React app in [`app/`](../../app). | `mva-api` |
+
+Two loose modules sit beside them:
+
+| Module | Holds |
+|---|---|
+| `settings.py` | The `.env` loader. Real environment beats the file beats `DEFAULTS`; the parse is cached on the file's fingerprint. `DEFAULTS` is the one place to look for "what can I configure". |
+| `paths.py` | Where the repository root is, so a relative default path means the same thing from any working directory. `anchor_cwd()` is what a long-running entry point calls at startup. |
 
 ## How they depend on each other
 
@@ -28,63 +27,33 @@ gotchas and CLI/HTTP surface; this page only says what lives where.
 graph TD
     io[io<br/>parsers]:::machine
     render[render<br/>visual language]:::machine
-    pipeline[pipeline<br/>variant logic]:::machine
-    warehouse[warehouse<br/>ingest + lineage]:::machine
-    reads[reads<br/>raw-read store]:::machine
-    science[science<br/>research record]:::goal
-    explore[explore<br/>profile report]:::goal
-    viz[viz<br/>HTTP API]:::goal
-    app[app/<br/>React UI]:::raw
+    zoo[zoo<br/>model lanes]:::machine
+    viz[viz<br/>HTTP service]:::goal
+    app[app/<br/>React dashboard]:::raw
 
-    io --> warehouse
-    io --> explore
-    pipeline --> warehouse
-    pipeline --> science
-    pipeline --> explore
-    pipeline --> viz
-    phenotype[phenotype<br/>symptom-driven ranking]:::goal
-    drugs[drugs<br/>repurposing evidence]:::goal
-    knowledge[knowledge<br/>literature + its null]:::goal
-    zoo[zoo<br/>open model zoo]:::goal
-    pipeline --> zoo
-    warehouse --> zoo
-    zoo --> viz
-    drugs --> knowledge
-    pipeline --> knowledge
-    pipeline --> phenotype
-    io --> phenotype
-    phenotype --> viz
-    render --> science
-    render --> explore
-    warehouse --> science
-    warehouse --> reads
-    warehouse --> viz
-    reads --> viz
-    science --> viz
-    viz --> app
+    zoo --> io
+    viz --> zoo
+    viz --> io
+    viz --> render
+    app -.HTTP.-> viz
 
-    classDef machine fill:#dbeafe,stroke:#1e40af,color:#1e3a8a
-    classDef goal fill:#dcfce7,stroke:#15803d,color:#14532d
-    classDef raw fill:#ede9fe,stroke:#6d28d9,color:#4c1d95
+    classDef machine fill:#e3f2fd,stroke:#1565c0
+    classDef goal fill:#e8f5e9,stroke:#2e7d32
+    classDef raw fill:#ede7f6,stroke:#5e35b1
 ```
 
-> **Legend** — blue = neutral machinery (leaf libraries and stores, no cross-package callers above them);
-> green = a deliverable surface a human reads or queries; purple = the consumer outside `src/mva`.
-> An arrow means "is imported by". `io`, `render` and `pipeline` import no sibling package.
-> `drugs` is imported by exactly one sibling — `knowledge` reuses its cached HTTP client and its
-> PubMed adapter rather than owning a second one — and imports none itself; its own inputs are a
-> JSON card and seven public APIs, and its outputs are files.
+> **Legend** — blue = neutral machinery · green = the layer something outside the package
+> talks to · purple = the consumer that is not Python · a solid arrow is a Python import,
+> the dashed one is an HTTP call.
 
-## Rules that hold across every package
+**The rule, and it is enforced.** `io` and `render` are leaves: they import no sibling
+package. Nothing outside `mva.viz` may import `mva.viz` — the web layer is a consumer of
+everything and a dependency of nothing. Three import-linter contracts in `pyproject.toml`
+check this on every run of `tools/check-python.sh`; without them the graph above would be
+a diagram in a README that nothing verifies.
 
-- No module over 400 lines — split by concern instead of growing a file. See [`CLAUDE.md`](../../CLAUDE.md).
-- Python runs through `uv` only: `uv run <entry point>`. Never `pip`, never bare `python`.
-- A default path spelled relative (`ressources/reference/...`, `build/...`, `docs/...`) names a
-  position in **this repository**, not on one machine. `mva/paths.py` is what makes that true
-  from any working directory: `repo_root()`, `resolve()` for one path, and `anchor_cwd()`, which
-  the two server entry points call at startup. Without it a server started from a subdirectory
-  answers 200 with an empty list for every file-backed endpoint — see
-  [`docs/step-0/methodology/125`](../../docs/step-0/methodology/125-the-api-anchors-itself-to-the-repository-root.md).
-- Every measured dataset number is owned by [`ideation/data-findings.md`](../../ideation/data-findings.md). These READMEs link to it; they never restate a number.
-- No genomic position (a chromosome coordinate) in any exported file — `science` enforces this in code.
-- Docs index: [`docs/README.md`](../../docs/README.md). Platform build history: [`docs/step-0/`](../../docs/step-0).
+## What is deliberately missing
+
+There is no data-ingest package yet. The challenge's two CSVs are read in-process with
+Polars/DuckDB rather than loaded into a database — see the **Data** section of
+[`CLAUDE.md`](../../CLAUDE.md). When that code lands it becomes a new leaf package here.

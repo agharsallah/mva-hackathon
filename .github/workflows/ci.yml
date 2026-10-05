@@ -63,9 +63,6 @@ jobs:
       - name: Theme tokens in sync (pnpm theme:check)
         run: pnpm run theme:check
 
-      - name: Test (vitest run)
-        run: pnpm run test
-
       - name: Build (tsc -b && vite build)
         run: pnpm run build
 
@@ -105,15 +102,16 @@ jobs:
       - name: Sync dependencies (uv sync --frozen)
         run: uv sync --frozen
 
-      # Order matters: the cheap, deterministic gates run before the 20-second test
-      # suite so a formatting or import-layering mistake fails in seconds.
+      # There is no test suite on this branch: the repository was stripped of its
+      # previous case and nothing new has been built yet. These gates are static
+      # analysis only, and they are the same ones tools/check-python.sh runs.
       - name: Format check (ruff format --check)
-        run: uv run ruff format --check src tests tools
+        run: uv run ruff format --check src tools
 
       - name: Lint (ruff check)
-        run: uv run ruff check src tests tools
+        run: uv run ruff check src tools
 
-      - name: Module size (400 lines in src, 600 in tests)
+      - name: Module size (400 lines)
         run: uv run python tools/check_module_size.py
 
       # The package layering documented in src/mva/README.md. Without this the
@@ -124,13 +122,9 @@ jobs:
       - name: Typecheck (mypy)
         run: uv run mypy
 
-      - name: Test (pytest)
-        run: uv run pytest
-
   # The history gate. Runs the same script the .husky/commit-msg hook runs, so a
   # commit written with --no-verify (or on a machine whose hooks were never
-  # wired) still cannot reach main with a broken message — or with a genomic
-  # position in it, which no later cleanup can remove from history.
+  # wired) still cannot reach main with a broken message.
   commits:
     name: commit messages
     runs-on: ubuntu-latest
