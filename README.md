@@ -17,6 +17,10 @@ The full challenge statement — both tracks, the dataset schema, what is organi
 fact versus our inference, and the open questions — is
 **[`docs/challenge.md`](docs/challenge.md)**. Read it first.
 
+What we actually have to work with — every module with its state, what is declared but
+unproven, and the ordered next steps — is
+**[`docs/current-state.md`](docs/current-state.md)**.
+
 ## Data perimeter
 
 Two published CSVs (625 MB total) plus three prediction templates, from the organisers'

@@ -31,7 +31,9 @@ A **platform, stripped of its previous case**. The MVA genomics work was removed
 | [`app/`](app/) | The React dashboard, stripped to its shell: router, components, theme, the `/learn` dictionary, and `viz3d` — the 3D structure viewer, which Track B needs. |
 
 **No science has been done yet. The dataset is not downloaded.** Say so rather than implying
-otherwise.
+otherwise. The module-by-module inventory — what works, what is declared but unproven, and
+the ordered next steps — is [`docs/current-state.md`](docs/current-state.md); keep it
+current as things land.
 
 ## Data
 

@@ -12,6 +12,7 @@ run and the dataset is not downloaded.**
 | Read | For |
 |---|---|
 | [`../README.md`](../README.md) | The front door: what this is, the data perimeter, the quickstart. |
+| [`current-state.md`](current-state.md) | **What exists, what works, what to build next.** The honest inventory after the strip — every module with its state, what is declared but unproven, and the ordered next steps. |
 | [`challenge.md`](challenge.md) | **The challenge statement.** Both tracks, their metrics, the AVIDa-hHER2 schema, what is organiser-stated fact versus inference, and the open questions. Read before any strategy decision. |
 | [`toolset.md`](toolset.md) | What exists and what each piece is for. Read before writing a new script. |
 | [`dictionary.md`](dictionary.md) | Every unclear word, explained for a software engineer with no biology background. Rendered at `/learn` in the app. |
@@ -50,5 +51,5 @@ than looking like an oversight.
 | Page | When it appears |
 |---|---|
 | `methodology/` | With the first executed run. |
-| `data-profile.md` | Once the dataset is downloaded and profiled — it becomes the owner of every measured number about it. |
+| `data-profile.md` | Once the dataset is downloaded and profiled — it becomes the owner of every measured number about it. Step 3 of [`current-state.md`](current-state.md) §5. |
 | `notes/` on split strategy, metric replicas, model choice | As each decision is actually made. |
