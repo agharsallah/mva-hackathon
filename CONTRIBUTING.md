@@ -33,17 +33,12 @@ where the commit produced one, e.g. "296.89 kB -> 236.44 kB raw".>
   and CI can never disagree.
 - `scope`: the package or app area touched — `app`, `viz`, `compare`, `panel`, `search`,
   `probes`, `callset`, `fixtures`, `src`, `step-0`, etc. Omit it for a repo-wide change
-  (`docs: replace ~/ubuntu/work references with the warehouse DB and reads/viz API`).
+  (`docs: replace the step-0 references with the toolset page`).
 - Body explains _why_ and states any number the change produced or changed — per the repo's
   [Results integrity](CLAUDE.md#results-integrity) rule, a number in a commit message must come
   from a real run.
 - **Subject**: imperative, lowercase after the colon, no trailing period, blank line before the
   body. Warns over 72 characters (the width `git log --oneline` shows unwrapped), fails over 90.
-- **No genomic position** — `chr15:40142000`, `15-40142000`, `g.40142000A>G` — in any part of a
-  message. Name the gene and the consequence instead. A message is permanent: the same
-  data-transfer-agreement rule `mva-science export` enforces on exported files applies here, with
-  the same regex (`mva.science.export.COORDINATE`). See
-  [`docs/notes/no-patient-data-in-the-repository.md`](docs/notes/no-patient-data-in-the-repository.md).
 - No AI-attribution trailers (`Generated with Claude Code`, `Co-Authored-By: Claude ...`) in new
   commits from this tooling wave — a project-level policy, not a repo-wide ban on any trailer
   that already exists in older history. Enforced by the same gate.
@@ -54,18 +49,17 @@ Check a message before you write it, or an existing one after the fact:
 ```sh
 sh tools/check-commit-msg.sh --rev HEAD          # the last commit
 sh tools/check-commit-msg.sh --range main..HEAD  # everything a branch adds
-sh tools/check-commit-msg.sh --self-test         # the gate's own 13 cases
+sh tools/check-commit-msg.sh --self-test         # the gate's own 11 cases
 ```
 
 ## What enforces what
 
 | Rule                                                                                           | Enforced by                                                                               | Run it locally                                  |
 | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------- |
-| Commit message convention, subject length, no genomic position, no AI trailer                  | `commit-msg` hook, CI `commit messages` job                                               | `sh tools/check-commit-msg.sh --rev HEAD`       |
+| Commit message convention, subject length, no AI trailer                                       | `commit-msg` hook, CI `commit messages` job                                               | `sh tools/check-commit-msg.sh --rev HEAD`       |
 | TypeScript compiles (`tsc -b`, strict, `noUnusedLocals`/`noUnusedParameters`)                  | pre-commit hook (blocks), pre-push hook (advisory), CI `app` job                          | `cd app && pnpm run typecheck`                  |
 | ESLint (react-hooks, jsx-a11y, import order, repo-local rules)                                 | pre-commit hook (staged files only, `--fix`), pre-push (advisory), CI `app` job           | `cd app && pnpm run lint:strict` (or `lint:fix` to autofix)       |
 | Prettier formatting                                                                            | pre-commit hook (staged files only, `--write`), pre-push (advisory), CI `app` job         | `cd app && pnpm run format` (or `format:check`) |
-| Vitest unit/component tests                                                                    | pre-commit (related tests only), pre-push (advisory, full), CI `app` job                 | `cd app && pnpm run test`                       |
 | Production build (`tsc -b && vite build`)                                                      | pre-push hook (advisory), CI `app` job                                                    | `cd app && pnpm run build`                      |
 | Bundle size budget                                                                             | CI `app` job (`app/tools/bundle-budget.mjs`)                                              | `cd app && node tools/bundle-budget.mjs`        |
 | Dead code (unused files/exports/deps)                                                          | CI `app` job, **report-only** — see `app/knip.json`                                       | `cd app && pnpm exec knip`                      |
@@ -74,7 +68,7 @@ sh tools/check-commit-msg.sh --self-test         # the gate's own 13 cases
 | Module size (400 lines in `src`/`tools`, 600 in `tests`)                                       | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv run python tools/check_module_size.py`      |
 | Import layering (no cycles; the leaf packages import no sibling; nothing depends on `mva.viz`) | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv run lint-imports`                           |
 | mypy (strict, with a per-package ratchet)                                                      | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv run mypy`                                   |
-| `uv.lock` matches `pyproject.toml`, pytest suite                                               | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv sync --frozen && uv run pytest`             |
+| `uv.lock` matches `pyproject.toml`                                                             | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv sync --frozen`                              |
 
 `pnpm run check` in `app/` runs typecheck + lint + format:check + test in one command — the same
 four gates CI runs (the pre-push hook runs it as an advisory). `tools/check-python.sh` is its counterpart for
@@ -93,16 +87,16 @@ across both projects to decide whether it needs to run at all.
   toolchains installed still gets the gate. Cheap enough (a few `grep`s) to be unnoticeable.
 - **pre-commit** — **the blocking gate.** Each half runs only when the commit stages a file in it:
   - Python (staged `.py`): `ruff format` + `ruff check --fix` on the staged files (re-staged),
-    then `tools/check-python.sh` — every CI gate, mypy and pytest included.
+    then `tools/check-python.sh` — every CI gate, mypy included. **There is no test step:
+    this branch has no test suite.**
   - `app/` (staged `app/` file): `lint-staged` (`app/.lintstagedrc.json`: `eslint --fix` +
-    `prettier --write`), `tsc -b`, the theme/dictionary/steps-nav checks, and
-    `vitest related --run` on the staged sources (only the tests that import them).
+    `prettier --write`), `tsc -b`, and the theme/dictionary checks.
   - Gates read the working tree, not the index: unstaged edits in a touched half count.
 - **pre-push** — **advisory, never blocks.** Runs `tools/check-python.sh` if the pushed range
-  touches `src/`, `tests/`, `tools/`, `pyproject.toml` or `uv.lock`, and `pnpm run check` +
+  touches `src/`, `tools/`, `pyproject.toml` or `uv.lock`, and `pnpm run check` +
   `pnpm run build` in `app/` if it touches `app/`; a red gate prints a warning and the push goes
   ahead (CI reports the same). Same range logic as before (falls back to running, never to
-  skipping). `MVA_SKIP_PUSH_CHECKS=1 git push` skips it for one push.
+  skipping). `SKIP_PUSH_CHECKS=1 git push` skips it for one push.
 
 **One-time setup after cloning:** `sh tools/setup-git.sh`. It is idempotent, repo-local
 (`.git/config` only, never your global config) and prints what it changed. It wires:
@@ -124,7 +118,7 @@ runs `sh tools/setup-git.sh` once instead.
 1. Read the failing step's output — every gate prints what it checked and why it failed.
 2. Fix locally with the "Run it locally" command above, or its `--fix`/`--write` variant
    (`pnpm run lint:fix`, `pnpm run format`).
-3. Re-run `pnpm run check` in `app/` (or `uv run pytest` for Python) before pushing again.
+3. Re-run `pnpm run check` in `app/` (or `tools/check-python.sh` for Python) before pushing again.
 4. A **knip** finding is a report, not a blocker — it does not fail CI. Triage it, but don't
    feel compelled to fix it in the same change.
 5. If a hook is wrong for your change (e.g. it ran when it shouldn't have, or vice versa),

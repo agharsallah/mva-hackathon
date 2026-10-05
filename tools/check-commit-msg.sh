@@ -7,7 +7,7 @@
 # that needs either would be skipped by half the repo.
 #
 # The convention is not invented here — it is what `git log` has done for 120+
-# commits, written down in CONTRIBUTING.md and now checked.
+# commits, written down in CONTRIBUTING.md and checked here.
 set -e
 
 SUBJECT_HARD_MAX=90 # fails: longer than any subject the repo has needed
@@ -15,14 +15,6 @@ SUBJECT_SOFT_MAX=72 # warns: the width `git log --oneline` shows without wrappin
 BODY_MAX=100        # warns: the repo's prose wrap
 
 TYPES='feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert'
-
-# A genomic position, in the spellings that actually occur: chr15:40142000,
-# 15:40142000, chr15-40142000, g.40142000A>G. Kept in step with
-# `mva.science.export.COORDINATE` — a commit message is as permanent as an
-# exported file, so it is held to the same data-transfer-agreement rule.
-# See docs/notes/no-patient-data-in-the-repository.md.
-COORDINATE='(^|[^A-Za-z0-9_])(chr)?([1-9]|1[0-9]|2[0-2]|[XYMxym]|MT|mt)[:_-][0-9]{4,}([^0-9]|$)'
-COORDINATE_HGVS='(^|[^A-Za-z0-9_])g\.[0-9]{4,} *[ACGTacgt]+ *> *[ACGTacgt]+'
 
 # Attribution trailers this project does not carry (CLAUDE.md, global rules).
 AI_TRAILER='^(Co-Authored-By: *Claude|.*Generated with \[?Claude Code)'
@@ -93,13 +85,6 @@ check_message() {
     err "$label: line 2 must be blank — subject, blank line, then the body"
   fi
 
-  if printf '%s\n' "$clean" | grep -Eqi "$COORDINATE|$COORDINATE_HGVS"; then
-    offender=$(printf '%s\n' "$clean" | grep -Ein "$COORDINATE|$COORDINATE_HGVS" | head -1)
-    err "$label: a genomic position must never enter git history — name the gene and the
-    consequence instead (docs/notes/no-patient-data-in-the-repository.md)
-    got: $offender"
-  fi
-
   if printf '%s\n' "$clean" | grep -Eq "$AI_TRAILER"; then
     err "$label: remove the AI attribution trailer — this project does not carry them"
   fi
@@ -168,12 +153,6 @@ Body.' 'capitalised summary'
   case_check bad 'fix(app): correct the label.' 'trailing period'
   case_check bad 'fix(app): correct the label
 body on line 2' 'missing blank line'
-  case_check bad 'fix(app): show the variant
-
-Found at chr15:40142000 in the callset.' 'genomic coordinate'
-  case_check bad 'fix(app): show the variant
-
-Seen as g.40142000A>G.' 'hgvs genomic coordinate'
   case_check bad 'fix(app): correct the label
 
 Body.

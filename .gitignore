@@ -1,44 +1,14 @@
-# ── DTA guard ────────────────────────────────────────────────────────────────
-# Patient genomic data must never enter this repository. These patterns are a
-# safety net, not a substitute for keeping the data outside the git tree.
-*.vcf
-*.vcf.gz
-*.vcf.gz.tbi
-*.bcf
-*.fastq
-*.fastq.gz
-*.fq
-*.fq.gz
-*.bam
-*.bai
-*.cram
-*.crai
-*.sam
-mva-data/
-work/
-raw/
-
-# The panel BED is public gene coordinates, not patient data — keep it.
-!ressources/data-profile/mva_panel_grch38.bed
-
-# Synthetic test fixtures. Plain-text VCF only, never the bgzipped form: a reviewer can
-# read a .vcf in a diff and confirm by eye that it is fabricated, which is not true of a
-# binary .vcf.gz. Tests bgzip/index these into a tmp dir at run time.
-!tests/fixtures/*.vcf
-tests/fixtures/*.vcf.gz
-tests/fixtures/*.vcf.gz.tbi
-
-# Exploration output. The assembled report is committed — it is built from the committable
-# profile and contains no patient record. The per-exhibit copies are regenerable noise, and
-# a locus page IS patient coordinates: `mva-explore locus` writes wherever it is told, so
-# anything but the synthetic-fixture page stays out of the tree.
-figures/exhibits/*
-figures/locus-*.html
-!figures/locus-fixture.html
-# ...but the app's 3D exhibit screenshots living in the same folder ARE committed: they are
-# report and video material, they are not regenerable without a browser, and they hold only
-# public reference data (an AlphaFold model) plus synthetic alleles. See figures/README.md.
-!figures/exhibits/*.png
+# ── Challenge data ───────────────────────────────────────────────────────────
+# The published dataset is 625 MB of CSV and is re-downloadable from the organisers, so
+# the tree carries the recipe, not the files. Everything under `data/` is either raw
+# input or derived from it; only the manifests that record HOW a table was derived are
+# committed.
+data/raw/
+data/parquet/
+data/*.csv
+data/*.parquet
+!data/manifests/
+!data/manifests/*.json
 
 .DS_Store
 __pycache__/
@@ -48,29 +18,23 @@ __pycache__/
 venv/
 env/
 *.egg-info/
-.pytest_cache/
 
-# Warehouse staging. The Parquet and the .duckdb file are *derived* — rebuilt from the
-# committed profile by `mva-warehouse stage` in under a second — so the tree carries the
-# recipe, not the output. This also keeps a future warehouse built over patient-derived
-# tables from ever being committed by reflex.
+# Derived output. Rebuilt by the pipeline, so the tree carries the recipe, not the
+# result: caches, Parquet staging, Modal traces and ledgers all live here.
 build/
 *.duckdb
 *.duckdb.wal
 
-# Live database credentials. `.env.example` is the committed template; `.env` never is.
+# Credentials. `.env.example` is the committed template; `.env` never is.
 .env
-
-# `vercel env pull` writes the hosted dashboard's secrets here for `vercel dev`:
-# MVA_VIZ_API_TOKEN, DASHBOARD_PASSWORD, DASHBOARD_SESSION_SECRET. Never committed.
 .env.local
 .env.*.local
 
 # Vercel CLI project link (holds the project and org ids).
 .vercel/
 
-# Node / frontend build artifacts. `app/` is a Vite app: the lockfile and sources are
-# committed, the installed tree and the build output are not.
+# Node / frontend. `app/` is a Vite app: the lockfile and sources are committed, the
+# installed tree and the build output are not.
 node_modules/
 dist/
 .vite/
@@ -81,8 +45,3 @@ yarn-error.log*
 pnpm-debug.log*
 .eslintcache
 coverage/
-
-# The predictions CSV holds real patient coordinates. An iteration folder may keep a local copy
-# for the upload (tools/design_submission.py --out); the copy is never committed.
-submissions/**/*.csv
-papers/**/*.pdf

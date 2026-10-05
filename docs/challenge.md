@@ -3,7 +3,7 @@
 **Standing:** 2026-10-05 — written from the challenge brief and the dataset file listing supplied
 by the organisers. The dataset itself is **not yet downloaded**; every column description below is
 read off the published schema, not off data we have measured. Numbers measured from the data get
-their own owner page once the files land ([`data-profile.md`](data-profile.md), not yet written).
+their own owner page once the files land (`docs/data-profile.md`, not yet written).
 
 ---
 

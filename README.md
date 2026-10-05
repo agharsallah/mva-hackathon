@@ -1,111 +1,77 @@
-# MVA Hackathon 2026
+# SEPIQ 2026 — antibody–antigen interface prediction
 
-**Standing:** the front door. What this is, where the data may live, how to start. Every
-other topic is one link away in [`docs/README.md`](docs/README.md), which is the only
-documentation index. Last checked 2026-09-04.
+**Standing:** 2026-10-05 — this branch was stripped of its previous case and repointed at
+the SEPIQ challenge on this date. **No analysis has been run. The dataset is not
+downloaded.** Everything here is machinery.
 
-An N-of-1 causal-variant pipeline for the
-[Rare Disease, Real Kid: MVA Hackathon 2026](https://sagebio-rare-disease-real-kid-mva-hackathon-2026.hf.space/).
+Predict where a **VHH** (a single-chain antibody, ~120 amino acids) touches **HER2** (a
+human cell-surface receptor and a major cancer drug target), from sequence alone.
 
-One child with Mosaic Variegated Aneuploidy, whole-genome sequencing, and a
-compound-heterozygous answer key: two variants in one gene, one on each allele.
-
-## Data handling — read this first
-
-The dataset is gated under a Data Transfer Agreement. **No patient sequence enters this
-repository**, ever: no VCF slice, no read, no variant table with real coordinates, no IGV
-screenshot. The rule, why it is absolute rather than proportionate, and what it forbids:
-[no patient data in the repository](docs/notes/no-patient-data-in-the-repository.md).
-
-Where everything lives:
-
-| | Location | In git |
+| | **Track A · SEPIQ** | **Track B · CAPRI** |
 |---|---|---|
-| The delivery as source of truth | MinIO bucket `mva`, `source/` — remote VPS | no |
-| Ingested and derived tables | PostgreSQL `mva` — remote VPS | no |
-| Derived patient slices, panel extracts, smoke samples | warehouse tables, queried via the reads API / viz API — remote VPS | no |
-| Aggregate profiles, counts, redacted headers | `ressources/data-profile/` | yes |
-| Synthetic fixtures | `tests/fixtures/` | yes |
+| Question | which *residues* form the interface? | what does the *complex* look like in 3D? |
+| Output | per-residue probabilities, or a binary contact map | predicted atomic coordinates |
+| Metric | **PR AUC** | **DockQ**, L-RMSD, i-RMSDbb, fnat |
 
-`.gitignore` blocks the genomic file types as a safety net; the real control is keeping the
-data outside the git tree entirely. The fixture guard is deliberately narrow —
-`tests/fixtures/*.vcf` is allowed but `*.vcf.gz` is not — so any fixture entering git is
-plain text a reviewer can read in a diff and confirm by eye is fabricated.
+The full challenge statement — both tracks, the dataset schema, what is organiser-stated
+fact versus our inference, and the open questions — is
+**[`docs/challenge.md`](docs/challenge.md)**. Read it first.
 
-Everything must be deleted within 30 days of the hackathon close, with confirmation emailed
-to the organisers.
+## Data perimeter
 
-## Getting started
+Two published CSVs (625 MB total) plus three prediction templates, from the organisers'
+AVIDa-hHER2 release. They live in `data/raw/` and are **gitignored**: re-downloadable
+from the organisers, so the tree carries the recipe, not the bytes. Derived tables go to
+`data/parquet/`, each with a committed provenance manifest in `data/manifests/` recording
+how it was made. Layout and the reasoning: [`data/README.md`](data/README.md).
 
-```bash
-tools/setup-env.sh            # uv + micromamba (bcftools, samtools, seqkit, fastp)
-sh tools/setup-git.sh         # hooks, commit template, rebase-pull — idempotent, repo-local
-source tools/activate.sh      # puts the bio binaries on PATH
-uv run pytest                 # hermetic: synthetic fixtures, no dataset, no services
+Queried in-process with Polars and DuckDB. **There is no database server to set up.**
+
+## Quickstart
+
+```sh
+# Python — uv only, never pip or bare python
+uv sync
+tools/check-python.sh          # the five static gates; --fix to format first
+
+# The HTTP API (serves the dashboard; wires no routes yet)
+uv run mva-api                 # 127.0.0.1:8900
+
+# The dashboard — pnpm only, never npm
+cd app && pnpm install && pnpm run dev
 ```
 
-How to get a change in — the two toolchains, the quality gates, the commit convention and the
-history rules: [`CONTRIBUTING.md`](CONTRIBUTING.md).
+Hooks and the commit convention: `sh tools/setup-git.sh`, then
+[`CONTRIBUTING.md`](CONTRIBUTING.md).
 
-Look at the data profile (needs no dataset — the profile is committed):
+## What is in here
 
-```bash
-uv run mva-explore checks ressources/data-profile     # graded metrics, in the terminal
-uv run mva-explore report ressources/data-profile     # figures/explore-report.html
+```
+docs/        challenge statement, toolset, dictionary, decision notes  → docs/README.md
+src/mva/     io · render · zoo · viz                                   → src/mva/README.md
+app/         the React dashboard (shell + 3D structure viewer)
+tools/       the gates, the report renderers, the Modal tracer         → docs/toolset.md
+data/        raw (ignored) · parquet (ignored) · manifests (committed) → data/README.md
 ```
 
-Reproduce the profile itself (needs the gated dataset, ~10 min):
+Start at **[`docs/README.md`](docs/README.md)** — the one documentation index. This page
+is the front door and does not duplicate it.
 
-```bash
-tools/profile-genomic-data.sh ~/ubuntu/data
-```
+## How this repo is meant to be read
 
-Query the same data in SQL, against the shared Postgres and object store:
+Two things are being built at once: a solution to this challenge, and a toolset that
+transfers to the next one. That is why `io`, `render`, `zoo` and `viz` carry no challenge
+vocabulary, and why the enforced package layering
+([`src/mva/README.md`](src/mva/README.md)) matters more than it would in a one-off.
 
-```bash
-cp .env.example .env                       # fill in PGPASSWORD and the S3 keys
-uv run mva-warehouse pg-check              # resolved settings + a live probe
-uv run mva-warehouse s3-check
-```
+Three rules shape everything written here:
 
-Setup, ports, credentials and the sharp edges: [`docs/step-0/infrastructure.md`](docs/step-0/infrastructure.md).
-
-Read it all in a browser — the dashboard is the single source of truth for findings, tables,
-figures and every submission iteration:
-
-```bash
-uv run mva-viz-api            # the JSON API, http://127.0.0.1:8900
-cd app && pnpm install && pnpm run dev    # http://127.0.0.1:5173
-```
-
-It also runs with **no backend at all**, on committed fixtures, and says so in the header.
-Hosting it for other people — on Vercel, behind a password, with every API call proxied
-server-side so the backend's address never reaches the browser — is
-[`app/README.md` § Hosting](app/README.md#hosting) and
-[`docs/step-0/infrastructure.md` §3](docs/step-0/infrastructure.md).
-
-## How a question becomes an answer
-
-Work is grouped by **step**, and every research step declares one goal. A claim under it
-states its prediction and what would refute it *before* it is tested; every observation is
-recorded with the run it came from; every verdict is weighed and appended, never edited.
-The loop, and what the register refuses to store: [`docs/method.md`](docs/method.md).
-
-```bash
-uv run mva-science steps                                   # the goals, no database needed
-uv run mva-science report --from docs/science-register.json  # the record, as a page
-```
-
-The register holds two step-3 claims (the phenotype ranking's), no verdict yet; the
-mirror is `docs/science-register.json`. Step 0 closed on 2026-09-04; the solving phase
-starts at [`docs/toolset.md`](docs/toolset.md) and [`docs/roadmap.md`](docs/roadmap.md).
-
-## Where the work stands
-
-Test count, what is provisioned, what runs, and the known gaps:
-[`docs/current-state.md`](docs/current-state.md).
-What is measurably in the data: [`ideation/data-findings.md`](ideation/data-findings.md).
-
-## Documentation
-
-Everything is indexed in **[`docs/README.md`](docs/README.md)**. Start there.
+- **Never invent a result.** Every number comes from an executed run whose output is
+  visible. If something was not run, the page says so. There are no results yet, and the
+  docs say that on every page.
+- **Explain for a software engineer, not a biologist.** Domain terms get the plain-English
+  meaning *and* the real technical word, every time. The teaching reference is
+  [`docs/dictionary.md`](docs/dictionary.md), served at `/learn` in the app.
+- **Show, don't only tell.** Every pipeline, funnel and result set gets a diagram, under
+  one colour convention: green = the goal, red = lost points, yellow = a decision point,
+  blue = machinery, purple = the raw input.

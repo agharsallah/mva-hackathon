@@ -1,196 +1,54 @@
 # Documentation index
 
-**Standing:** the single index. Every live document in the repository is listed here; if a
-doc is not on this page it does not exist yet. Last checked 2026-09-04.
+**Standing:** 2026-10-05 — the one index. Every doc in this repository is reachable from
+here; nothing links to a page this index does not list.
 
-Each topic has exactly one owner. Before writing a new doc, extend the owner below.
-
-Work is grouped by **step**, and every step declares one research goal. Everything already
-built — the delivery, the object store, the warehouse, the read store, the app — is
-[step 0](step-0/README.md), which is machinery, takes no hypotheses, and **closed on
-2026-09-04**. From [step 1](iteration1/step-1/README.md) on, each step carries a goal and a register of
-falsifiable claims: [`method.md`](method.md) is how that works. The pages below the steps
-are cross-step — they describe the whole project, not one phase of it.
-
-**Solving phase — read in this order:** [`toolset.md`](toolset.md) (what tool answers what)
-→ [`roadmap.md`](roadmap.md) (the 8-step plan) → [`../ideation/data-findings.md` §6](../ideation/data-findings.md)
-(the leading candidate) → the README of the step you are working.
+The repository was stripped of its previous case (MVA genomics) and repointed at the
+**SEPIQ 2026 challenge** on this date. What survives is machinery. **No analysis has been
+run and the dataset is not downloaded.**
 
 ## Start here
 
-| Document | Answers |
+| Read | For |
 |---|---|
-| [`toolset.md`](toolset.md) | Which tool answers which question? CLI verb, API route, app page and module per capability, plus the gaps. |
-| [`current-state.md`](current-state.md) | What exists right now? Provisioned infrastructure, what runs, repo layout, known gaps. Owns repo and infra numbers. |
-| [`method.md`](method.md) | How does a question become a scored answer? The loop — goal, hypothesis, test, evidence, verdict — and what the register refuses to store. **Owns the scientific method.** |
-| [`dictionary.md`](dictionary.md) | I have no genetics background — what *is* any of this? Every domain term from scratch, with diagrams. Rendered as a course at `/learn` in the app — generated from this file, never copied. |
-| [`../CONTEXT.md`](../CONTEXT.md) | Which word do we use for it? Naming discipline for code and write-ups, plus what to avoid. |
+| [`../README.md`](../README.md) | The front door: what this is, the data perimeter, the quickstart. |
+| [`challenge.md`](challenge.md) | **The challenge statement.** Both tracks, their metrics, the AVIDa-hHER2 schema, what is organiser-stated fact versus inference, and the open questions. Read before any strategy decision. |
+| [`toolset.md`](toolset.md) | What exists and what each piece is for. Read before writing a new script. |
+| [`dictionary.md`](dictionary.md) | Every unclear word, explained for a software engineer with no biology background. Rendered at `/learn` in the app. |
 
-## Step 0 — the platform (closed 2026-09-04)
+## Reference
 
-Full index and what "step 0" covers: [`step-0/README.md`](step-0/README.md).
-
-| Document | Answers |
+| Page | Owns |
 |---|---|
-| [`step-0/architecture.md`](step-0/architecture.md) | How do the pieces fit? Data flow, seams, sharp edges, extension points. |
-| [`step-0/infrastructure.md`](step-0/infrastructure.md) | How do I operate Postgres, the object store and the hosted `mva-viz-api`? Setup, verbs, tunnels, credentials, and the deployment runbook for the Vercel dashboard. |
-| [`step-0/data-layers.md`](step-0/data-layers.md) | What shape does the data take on the way in? Layer 0 bytes → layer 1 anchor → layer 2 typed tables. |
-| [`step-0/exploration.md`](step-0/exploration.md) | How do I actually *look* at the data? The exploration toolkit — exhibits, graded checks, one interactive page. |
-| [`step-0/reads-storage.md`](step-0/reads-storage.md) | Where do the raw reads go, and what can you ask of them? Built — 1,071,835,104 reads as queryable Parquet. |
-| [`step-0/reads-api.md`](step-0/reads-api.md) | How do I query the store without a shell on the server? Every `mva-reads` verb over HTTP, long jobs handled. |
-| [`step-0/viz-api.md`](step-0/viz-api.md) | How does the browser read the warehouse? Every table and read-store aggregate as JSON — `mva-viz-api`. |
-| [`step-0/viz-app.md`](step-0/viz-app.md) | How do I *see* the data? The React app — 16 routes, 2D + 3D, and a `/style-guide` that renders its own design system. |
-| [`step-0/methodology/`](step-0/methodology/) | How was each step-0 result reached? One append-only entry per executed run, 001–068; 068 is the close-out. 075 is a cross-step platform fix (the coordinate gate and one redaction). |
-| [`step-0/notes/`](step-0/notes/) | Why the platform looks like this. Seven decisions, one file each. |
+| [`notes/python-quality-gates.md`](notes/python-quality-gates.md) | Why each gate is set where it is, and what to do when one fails. |
+| [`../src/mva/README.md`](../src/mva/README.md) | The package index and the enforced layering. |
+| [`../CONTEXT.md`](../CONTEXT.md) | The naming discipline: one chosen word per idea, plus the _Avoid_ list. |
+| [`../CONTRIBUTING.md`](../CONTRIBUTING.md) | Commit convention, hooks, how to run the gates. |
 
-## Iteration 1 — the research steps behind submission 1
+## The rules, in one place
 
-Steps 1–8 live under [`iteration1/`](iteration1/README.md), one folder per step, because
-they are the work that produced [`submissions/track1/iteration-1/`](../submissions/track1/iteration-1/README.md).
-Iteration 1 is **frozen** (submission 1 uploaded 2026-09-09, full match at rank 1 — entry 083).
+- **One doc index** — this page. The root `README.md` is the front door and never
+  duplicates it.
+- **One owner per fact.** Every measured number has exactly one owning page; others link
+  to it and never restate it.
+- **One decision, one note** in `notes/`, each with a `**Standing:**` line saying whether
+  it still holds. Other docs state the _result_ in a sentence and link the note; they
+  never re-argue it.
+- **`Standing:` or `Verified:` near the top of every page**, with the date it was last
+  checked against reality. A page describing system state that has not been re-verified
+  must say so.
+- **`methodology/` is append-only.** Never edit an entry; append one that supersedes it
+  and says so. Numbers are global and monotonic from **001**.
+- **Check for an existing owner before writing a new page.** Extend the owner; do not
+  start a parallel document.
 
-### Step 1 — Normalize the callset (open)
+## Not yet written
 
-| Document | Answers |
+These are expected and deliberately absent — listed so their absence is visible rather
+than looking like an oversight.
+
+| Page | When it appears |
 |---|---|
-| [`iteration1/step-1/README.md`](iteration1/step-1/README.md) | What is this step's goal, why does it come first, and what does it unblock? |
-| [`iteration1/step-1/hypotheses/`](iteration1/step-1/hypotheses/) | What is claimed under this goal, and what would refute each claim? Generated by `mva-science export`. |
-| [`iteration1/step-1/methodology/`](iteration1/step-1/methodology/) | Which tests were run against those claims? Entries from 069, numbered globally. |
-
-### Step 2 — Annotate the callset (open)
-
-| Document | Answers |
-|---|---|
-| [`iteration1/step-2/README.md`](iteration1/step-2/README.md) | Which variants are rare and damaging enough, and in which gene? Panel (031) and genome-wide coding scan (069–070) both ran; H003 and H004 supported. |
-
-### Step 3 — Rank by phenotype (open)
-
-| Document | Answers |
-|---|---|
-| [`iteration1/step-3/README.md`](iteration1/step-3/README.md) | What does a ranking driven by the child's symptoms alone say, and why did it not have to wait for the callset? |
-| [`iteration1/step-3/hypotheses/`](iteration1/step-3/hypotheses/) | The claims filed (H001, H002, H005). Generated by `mva-science export`. |
-| [`iteration1/step-3/methodology/`](iteration1/step-3/methodology/) | How was it reached? Entry 067 (filed as 056) — the Java-free reimplementation — and 071, the join to the genome-wide callset. |
-| [`../src/mva/phenotype/README.md`](../src/mva/phenotype/README.md) | How does the package work, and what are its gotchas? |
-
-### Steps 4–8 (open or planned)
-
-| Document | Answers |
-|---|---|
-| [`iteration1/step-4/README.md`](iteration1/step-4/README.md) | Is one allele hiding in a call the filters discarded? Panel (049) and genome-wide coding (072) both ran; nothing hides. |
-| [`iteration1/step-5/README.md`](iteration1/step-5/README.md) | Is the missing allele one the caller could not emit — SV, deep intronic, low-fraction mosaic? The k-mer strike is the funded route. |
-| [`iteration1/step-6/README.md`](iteration1/step-6/README.md) | Which pair does the scorer confirm? Owns the probe gate; 0 of 6 uploads spent. |
-| [`iteration1/step-7/README.md`](iteration1/step-7/README.md) | Does public knowledge name or corroborate an allele? Solution paths 5 and 6. |
-| [`iteration1/step-8/README.md`](iteration1/step-8/README.md) | Track 2 — which market-approved drugs act on the confirmed mechanism? Hand-off from Track 1: [`mechanism.md`](iteration1/step-8/mechanism.md) (Q15: loss- vs gain-of-function, pathway, downstream) and its structured twin `ressources/track2/mechanism.json`. |
-
-## Iteration 2 — replicate by independent means, feed Track 2
-
-| Document | Answers |
-|---|---|
-| [`iteration2/README.md`](iteration2/README.md) | Why a second iteration when the pair is confirmed, and how the folder fills in. |
-| [`iteration2/plan.md`](iteration2/plan.md) | The plan: a blind rediscovery in eight steps (symptom-only target set; allele discovery from the raw reads with a second caller and SV consensus; alignment-free k-mer genotyping and copy number; likelihood-ratio ranking over the VCF; knowledge engine; fusion and unblinding; Track 2 enrichment), order and cost, and the PubMed-verified bibliography. **§11 (2026-09-12) revises it against steps 1–2 as run**: the target set is an enrichment at recall 0.36, the read route has no ranking power, step 4 becomes the only discriminating route, and step 8 gets the one new full pass. |
-| [`iteration2/execution.md`](iteration2/execution.md) | The plan's companion: per step, which published tools to adopt, what `src/mva/` already provides, which modules to build, and what the dashboard shows (`/api/steps`, `/steps`). |
-| [`iteration2/step-1/README.md`](iteration2/step-1/README.md) | **Run 2026-09-11.** Which genes the child's symptoms alone nominate, with the DNA never read: a 404-gene tiered target set and its 396 matched decoys. H013 supported; H012, H014 and H015 refuted. |
-| [`iteration2/step-1/methodology/`](iteration2/step-1/methodology/) | Entry 084: the run, its four verdicts, and the decision the refuted recall claim forced — the target set is an enrichment, never coverage. |
-| [`iteration2/step-2/README.md`](iteration2/step-2/README.md) | **Complete 2026-09-12.** What the raw reads carry in the target set without the vendor caller: 7.89 M fragments recovered by k-mer bait, two callers of disjoint model class, 1,199 alleles the delivered callset never reported. H016/H019/H021/H022 supported; H020 and H023 refuted. |
-| [`iteration2/step-2/notes/completion-audit.md`](iteration2/step-2/notes/completion-audit.md) | What actually ran, what did not, and what the step's findings change for later steps — the tracker that found the step declared complete with four pre-registered items unrun. |
-| [`iteration2/step-2/methodology/`](iteration2/step-2/methodology/) | Entries 085–090: the bait and where it runs, the unreachable off-target gate, the pass over 1.07 billion reads, the alleles the reads carry, the instrument survey, and the alleles the vendor never reported (which flipped H020). |
-| [`iteration2/step-3/README.md`](iteration2/step-3/README.md) | **Complete 2026-09-13.** The same reads counted with no aligner and no caller: 164,044 alleles typed from 381,510 k-mer probe pairs over 1.88 billion read windows. H025 and H028 supported; H024, H026 and **H027** refuted — only ~1 in 3 of the 1,199 alleles the vendor never reported is corroborated, against ~19 in 20 of the ones it did. |
-| [`iteration2/step-3/methodology/`](iteration2/step-3/methodology/) | Entries 093, 095–097: where the aligner was unsure, the probes and the counting kernel, the alleles at their multiplicity, and copy number without an aligner. |
-| [`iteration2/step-4/README.md`](iteration2/step-4/README.md) | **Complete 2026-09-18.** Every gene in the VCF ordered by a product of likelihood ratios with no hard filter — 51,920 biallelic hypotheses over 11,465 genes, including the 8,252 nobody has curated. H030 and H034/H035 settled one way, H031 and H032 the other: `BUB1B` leads, but the runner-up is 1.70× behind and is an uncurated gene. |
-| [`iteration2/step-4/methodology/`](iteration2/step-4/methodology/) | Entries 098–101: the lanes and what they were calibrated against, every gene ordered with nothing filtered out, two nulls and an ablation, and the phase that cannot be measured. |
-| [`iteration2/step-5/README.md`](iteration2/step-5/README.md) | **Complete 2026-09-18.** What public knowledge says about the candidate set, and what that is worth: 1,924 of this child's own alleles asked of LitVar, 5,705 gene × symptom searches through PubTator, and the two nulls that judge them. H036/H038/H039 supported; **H037 and H040 refuted** — the ≥5-feature threshold selects survey papers, and the genuine MVA case report the script found for the leading gene scores three. |
-| [`iteration2/step-5/methodology/`](iteration2/step-5/methodology/) | Entries 102–106: the sources and what could not be asked of them, the alleles somebody already published, the papers the script found, whether the literature beats a hit count, and where the missense sits in the protein. |
-| [`iteration2/step-5/notes/why-the-baseline-is-the-test.md`](iteration2/step-5/notes/why-the-baseline-is-the-test.md) | Why a literature route must clear a matched-decoy null **and** a citation-volume baseline before it may rank anything, and why the two conditions are conjunctive. |
-| [`iteration2/step-6/README.md`](iteration2/step-6/README.md) | **Complete 2026-09-18.** Reciprocal rank fusion over the routes that earned a vote, frozen and hashed before the comparison: the blind ranking puts the **same two `BUB1B` alleles first**. H043/H044 supported; **H041 and H042 refuted** — the leave-one-route-out table shows one route carrying the result, and a second upload gains 0.000 bits. |
-| [`iteration2/step-6/methodology/`](iteration2/step-6/methodology/) | Entries 107–109: the routes and which of them earned a rank, the ranking frozen before anyone looked, and the unblinding — the one entry of iteration 2 permitted to read an iteration-1 candidate table. |
-| [`iteration2/step-7/README.md`](iteration2/step-7/README.md) | **Complete 2026-09-19.** Track 2 enrichment: mechanism card v4 (all nine facts measured) from the confirmed pair and iteration 2's measured facts; 329 approved drugs on a pre-registered five-rung evidence ladder; 11 argued drugs, 50 already in tumour trials, 23 in the do-not table; two decoy cards as a specificity control. H045–H050 and H061 supported; the iteration-2 Track 2 submission drafted from all eight steps. |
-| [`iteration2/step-7/methodology/`](iteration2/step-7/methodology/README.md) | Entries 110–114 and 120: the card revised and the claims filed before the search; the per-drug literature, paediatric and label stages; the two decoy cards; the ladder, the shortlist and the do-not table (with the post-hoc rule refinement recorded); the dashboard surface — the `/track2` hero and pathway diagram; card v4 from step 8's measured burden and the digest test that showed the ladder unmoved. |
-| [`iteration2/step-8/README.md`](iteration2/step-8/README.md) | **Done 2026-09-19, both routes run.** The mosaic aneuploidy bound: entry 037's flat karyogram re-tested with a statistic that has power. Fold-over B-deviation reaches 80 % power on 24 of 24 contigs where the mean B-allele fraction reaches it on 0 of 24, so the negative result now carries its number — an event in 2–3 % of the sequenced cells would have been found on every autosome. A k-mer dosage pass agrees from the raw reads, recovers one copy of X and Y where allele balance is blind, and sets its own floor at 1.6 % of cells after a GC correction that explains 81.7 % of the between-chromosome spread. All seven claims supported. |
-| [`iteration2/step-8/methodology/`](iteration2/step-8/methodology/) | Entries 115–118 and 121: the callset reduced to sufficient statistics and reconciled against 037 by an exact count; the fold-over statistic, the detection limit per chromosome, and what 037's statistic was worth; the five models and why every winning fit ends at a bound; the leave-one-out baseline and the multi-chromosome designs; and the k-mer dosage pass — the GC regressor that turned a 4.03 σ chr21 into a 2.33 σ one, and why 32 of 272 shards were enough. |
-
-## Iteration 4 — the model zoo (running beside iteration 2)
-
-| Document | Answers |
-|---|---|
-| [`iteration4/README.md`](iteration4/README.md) | **The R1 critical path ran 2026-09-18/19: steps 1–6, one entry and one verdict each; step 7 (Track 2, the PrimeKG walk) ran 2026-09-23.** The index: each step's goal, its methodology entry, its verdicts, and what to read. The result in one line — the zoo works and the roster does not. |
-| [`iteration4/plan.md`](iteration4/plan.md) | The plan: every credible open variant-effect model run under one contract (record → adapter → cache → rank → template → merge), three hosting tiers, one report template per model, three merge methods behind one config key, Track 2 by graph walk and GNN. §1b splits MVP from optional; §7b splits *build* (parallel agents, synthetic fixtures) from *run* (one strict data chain). |
-| [`iteration4/todo.md`](iteration4/todo.md) | The board: every item of the plan by wave, ticked as it lands with the entry and commit that did it. |
-| [`iteration4/report.md`](iteration4/report.md) | **The merged report (R1).** Agreement matrix, RRF with and without the catalogue-adjacent lane, the disagreement table, and a hand-written narrative in which every sentence names the row it rests on. |
-| [`iteration4/reports/`](iteration4/reports/) | One seven-section report per lane — card, coverage by consequence class, distribution with the confirmed pair marked, the pair's rank, what the 8 HPO terms say, a hand-written interpretation, limitations and cost. |
-| [`iteration4/step-1/`](iteration4/step-1/README.md) | **Entry [114](iteration4/step-1/methodology/114-one-record-per-allele-and-what-it-can-be-spelled-as.md).** One normalized record for 39,286 alleles; `P4-1a` supported at 0.99953. Two things Ensembl's POST endpoint will not do, and the day-one reading of the confirmed pair's consequence classes that predicted everything below. |
-| [`iteration4/step-2/`](iteration4/step-2/README.md) | **Entry [119](iteration4/step-2/methodology/119-four-lanes-fetched-licensed-and-joined.md).** Four lanes fetched, licensed and joined; `P4-2a` supported, `P4-3` **refuted** — AlphaMissense covers 67.9 % of missense alleles and ESM1b 29.2 %, both under the 70 % that refutes. Five measured fixes, including the one `UNPIVOT` that never finishes. |
-| [`iteration4/step-3/`](iteration4/step-3/README.md) | **Entry [122](iteration4/step-3/methodology/122-every-lane-scored-once-and-only-once.md).** 58,480 scores cached with provenance for $0; `P4-4a` undecided by its own terms at 1 h 45 m. Three local lanes do 47,697 alleles in 53 s; the rest is one serial REST lane. |
-| [`iteration4/step-4/`](iteration4/step-4/README.md) | **Entry [128](iteration4/step-4/methodology/128-one-command-eight-stages-and-three-things-a-fixture-could-not-catch.md)** — a *machinery* entry, no hypothesis, and it says why. Eight stages from one command; the run manifest; the sixteen genes the pair builder skips; three faults only real data could expose, one of them silent. |
-| [`iteration4/step-5/`](iteration4/step-5/README.md) | **Entry [129](iteration4/step-5/methodology/129-what-each-lane-says-about-a-pair-it-can-only-half-see.md).** `P4-6` undecided: two of three catalogue-free lanes have *no opinion* on the pair. The finding is one unit down — three models of different provenance place the pair's missense allele in the top 0.47 %, 2.52 % and 2.59 % of what they scored. |
-| [`iteration4/step-6/`](iteration4/step-6/README.md) | **Entry [130](iteration4/step-6/methodology/130-a-consensus-of-lanes-that-declined-to-vote.md).** `P4-8` **refuted**: the consensus ranks the confirmed pair 20,639 of 52,012, not 1, because three lanes abstained rather than disagreed. The catalogue ablation moves it by 858 ranks — the leak a reviewer checks first is not load-bearing here. RRF's DOI verified against Crossref. |
-| [`iteration4/step-7/`](iteration4/step-7/README.md) | **Entry [142](iteration4/step-7/methodology/142-a-graph-walk-from-the-disease-node.md).** Track 2: a PrimeKG graph walk from the MVA disease node ranks 100 approved drugs. `P4-11` supported 0.75 (decoy XDH shares 2 of the top 20, but its graph is ~38× smaller); `P4-12` supported 0.45 (6 in `drug_candidates.tsv`, but the decoy hits 7, so no power). The GNN half was skipped by user decision. |
-| [`iteration4/step-8/`](iteration4/step-8/README.md) | **Entries [143](iteration4/step-8/methodology/143-a-gpu-lane-that-sends-two-windows-and-a-bill.md)–[148](iteration4/step-8/methodology/148-the-gpu-lanes-and-the-consensus.md).** The GPU tier on Modal: NT-v2, Evo 2 and ESM-C scored the callset and Boltz-2 folded BubR1, for $14.57 billed of a $50 cap, behind one HTTP contract; every app stopped. The nine-lane consensus ranks the pair 4,318 (six lanes: 2,734): each GPU lane alone ranks it lower. Every Modal command: [`modal-runs.md`](iteration4/step-8/modal-runs.md). |
-| [`iteration4/step-9/`](iteration4/step-9/README.md) | **Entries [149](iteration4/step-9/methodology/149-the-stability-atlas-and-the-childs-missense.md)–[152](iteration4/step-9/methodology/152-is-each-candidate-safe-for-this-child.md)** (E1, E2, E4, E5+E6). Track 2 checked against sources that share nothing. The child's missense is predicted destabilising but the unstable/inactive split cannot be validated; his phenotype twin is a Bub1b mouse (top 1–1.4 % of 76,699), opening direction D5. In PRISM the statin direction reproduces weakly and survives no correction, chloroquine does not reproduce, and **dasatinib is the 99.4th percentile of 6,790 compounds** on aneuploidy. For this child, **1.6 % of pharmacogene positions are callable** and every guideline gene for a shortlisted drug is a no call, while 60 % of candidates carry a label effect matching his own phenotypes (vs 40 %). The [submission notes](iteration4/step-9/submission-notes/) feed the final Track 2 submission. |
-| [`iteration4/step-10/`](iteration4/step-10/README.md) | **Entries [154](iteration4/step-10/methodology/154-screen-wide-prism-sweep.md)–[155](iteration4/step-10/methodology/155-convergence-and-checks.md).** Track 2 from iteration 4 alone: four drug generators fixed before any join (PrimeKG walk, phenotype twin, a screen-wide PRISM sweep, LINCS reversal) name 62 drugs and agree on **one, dasatinib, at chance** (permutation null p 0.263, H094 refuted); the sweep finds no drug past correction (H093 refuted); dasatinib passes the direction, per-child safety and contrary-screen checks (H095, weak); vincristine is the one drug both safety sources flag. Feeds [`submissions/track2/iteration-4/`](../submissions/track2/iteration-4/README.md). |
-| [`iteration4/step-11/`](iteration4/step-11/README.md) | **Entry 156.** The same Track 2 chain on a second disease, Bloom syndrome (`BLM`), by configuration alone: the scalability evidence of the iteration-4 submission (H096). |
-| [`iteration4/reusability.md`](iteration4/reusability.md) | **Running the zoo on another illness.** What a new case must supply (callset, annotations, HPO ranking, model tables, one case TOML), the six commands, what comes out, what it cost here (quoted from entries 114-130), and the honest list of what is still case-specific. |
-| [`iteration4/cards/`](iteration4/cards/) | One JSON card per model — version, licence, digest, input class, catalogue-adjacent yes/no — plus the licence manifest, generated from `src/mva/zoo/models.toml`. |
-| [`iteration4/runs/`](iteration4/runs/) | The coordinate-free run manifests: config digest, model versions, venues, seconds per stage, dollars. |
-
-## Iteration 5 — allele-first Track 2
-
-| Document | Answers |
-|---|---|
-| [`iteration5/README.md`](iteration5/README.md) | **Open.** Track 2 restarted from the child's two `BUB1B` alleles and the protein: one exploratory step, four routes, a positive control per route instead of pre-registered claims ([plan](iteration5/plan.md), [decision](iteration5/notes/exploratory-no-hypotheses.md)). |
-| [`iteration5/step-1/`](iteration5/step-1/README.md) | **Entries [158](iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md)–[160](iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md)**, R4 pending. Stop-codon readthrough and allele dosage, proliferation-corrected drug proteomics, quote-verified literature mining. Feeds [`submissions/track2/iteration-5/`](../submissions/track2/iteration-5/README.md). |
-
-## The submission
-
-| Document | Answers |
-|---|---|
-| [`submissions/README.md`](../submissions/README.md) | How does a submission iteration live: the folder contract, the lifecycle diagram, the commands in order, and the tools that enforce the rules (coordinate gate, folder gate, scaffolder). |
-| [`submissions/track1/iteration-1/report.md`](../submissions/track1/iteration-1/report.md) | **The Track-1 report.** The clinical picture, the funnel from 5 M records to one gene, the four converging instruments, the two alleles, the submission read as a measurement (decode table), limitations, the methods form. Figures in [`../figures/track1/`](../figures/track1/); the whole iteration (report, PDF, methods form, decode table, navigation README) is [`../submissions/track1/iteration-1/`](../submissions/track1/iteration-1/README.md). |
-
-## Direction and reasoning
-
-| Document | Answers |
-|---|---|
-| [`roadmap.md`](roadmap.md) | The 8-step plan: per step its goal, status, what ran, what remains, exit criterion, report artifact; the probe gate; the week plan to the 2026-10-24 freeze. |
-| [`../ideation/solution-paths.md`](../ideation/solution-paths.md) | Six routes to the causal pair, conventional → inventive, and when to spend a probe. Owns the portfolio. |
-| [`decisions.md`](decisions.md) | What was decided and does it still hold? The register over every `notes/` file, step-0 included. |
-| [`notes/`](notes/) | Why the *pipeline* looks like this — the decisions not yet tied to a built step. |
-
-## Evidence
-
-| Document | Answers |
-|---|---|
-| [`../ideation/data-findings.md`](../ideation/data-findings.md) | What is actually in the data? Measured, not assumed. **Owns every dataset number.** |
-| [`../ideation/hackathon-intel.md`](../ideation/hackathon-intel.md) | What is the strategy? Scoring mechanics, oracle protocol (6 uploads), master plan. |
-| [`../ideation/statistical-methods-survey.md`](../ideation/statistical-methods-survey.md) | Which statistics apply here — BAF deviation power, beta-binomial overdispersion, PU learning on PASS/non-PASS — and which do not. |
-| [`../CONTRIBUTING.md`](../CONTRIBUTING.md) | How to contribute: gates, commit convention, hooks. |
-| [`../ressources/hackathon-rules/`](../ressources/hackathon-rules/) | The challenge documents: phenotype, submission contract, methods form, rules. |
-| [`../ressources/data-profile/`](../ressources/data-profile/) | The raw evidence behind the findings. |
-| [`../figures/`](../figures/) | The generated report artifacts — the data profile and the research record. |
-| [`science-register.json`](science-register.json) | The whole research record as plain data. Generated; renders the report with no database. |
-| [`../archive/`](../archive/) | Superseded documents, kept for provenance. Never current. |
-
-## Design notes
-
-Working notes, not commitments. Each carries its standing: what is settled, what is
-provisional, what would prompt a rethink. Full register with results:
-[`decisions.md`](decisions.md).
-
-| Note | Where | Standing |
-|---|---|---|
-| [The Python quality gates](notes/python-quality-gates.md) | cross-step | firm — six gates wired into CI and both hooks |
-| [No patient data in the repository](notes/no-patient-data-in-the-repository.md) | cross-step | firm — follows from the DTA |
-| [Synthetic fixtures](notes/synthetic-fixtures.md) | cross-step | firm — follows from the above |
-| [The structure toolkit, reused on another case](notes/reusable-structure-toolkit.md) | cross-step | firm — the reuse claim is under test, not prose |
-| [One config block, not a constant: the zoo's case](notes/zoo-case-config.md) | cross-step | holds — implemented 2026-09-19; the *still fixed* inventory dates faster than the decision |
-| [Data deletion checklist](notes/data-deletion-checklist.md) | cross-step | open — every Modal volume, the proxy token and `build/` to delete within 30 days of the close |
-| [Delivery is immutable](step-0/notes/delivery-is-immutable.md) | step 0 | firm — verified 12/12 hashes |
-| [Postgres for shared state](step-0/notes/postgres-for-shared-state.md) | step 0 | firm; Path A deleted 2026-08-29 |
-| [The chr-prefix bridge](step-0/notes/chr-prefix-bridge.md) | step 0 | firm — one function, enforced by test |
-| [Colour is generated](step-0/notes/colour-is-generated.md) | step 0 | firm — one generator, four gates |
-| [Toolchain choice](step-0/notes/toolchain-choice.md) | step 0 | provisional |
-| [three.js behind one wrapper](step-0/notes/three-js-behind-one-wrapper.md) | step 0 | built 2026-09-03 — one module, one exhibit |
-| [The dictionary is generated into the app](step-0/notes/dictionary-is-generated-into-the-app.md) | step 0 | firm — one generator, `dictionary:check` in the gate, three test files |
-| [A hand-rolled VCF reader](notes/hand-rolled-vcf-reader.md) | pipeline | provisional |
-| [A local replica of the scorer](notes/local-scorer-replica.md) | pipeline | settled for the challenge |
-| [Annotation enters through a port](notes/annotation-as-a-port.md) | pipeline | port settled, backend open |
-| [Ranking pairs, not variants](notes/ranking-pairs-not-variants.md) | pipeline | follows from the answer key |
+| `methodology/` | With the first executed run. |
+| `data-profile.md` | Once the dataset is downloaded and profiled — it becomes the owner of every measured number about it. |
+| `notes/` on split strategy, metric replicas, model choice | As each decision is actually made. |
