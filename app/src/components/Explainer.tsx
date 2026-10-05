@@ -1,8 +1,9 @@
 /**
  * Explainer — the page's background panel.
  *
- * The audience is a software engineer with no genomics background, so every page opens by
- * naming its concepts in the repo's house pattern: `technical term (plain-English meaning)`.
+ * The audience is a software engineer with no background in the problem domain, so every
+ * page opens by naming its concepts in the repo's house pattern:
+ * `technical term (plain-English meaning)`.
  * The jargon is never removed, only paired with its translation, because the reader has to
  * recognise the real word in a tool flag or a paper later.
  *
@@ -51,7 +52,7 @@ export interface ExplainerProps {
   caveat?: ReactNode;
 }
 
-const PREF_KEY = 'mva.explainer.definitions';
+const PREF_KEY = 'app.explainer.definitions';
 
 function readPref(): boolean {
   try {

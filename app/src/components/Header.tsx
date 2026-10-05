@@ -1,38 +1,23 @@
 /**
- * Persistent four-tier header.
+ * Persistent multi-tier header.
  *
- * Row 1 — identity and the four questions: brand, case id, one tab per section
- * (`Sections` landmark), then the chrome that must stay visible on every page: export,
- * fixture badge, API health. Row 2 — the pages inside the active section (`Pages`
- * landmark) with the section's question at the far end, so the reader always knows which
- * question the page in front of them is serving. Row 2 is absent on Overview, which is
- * the map rather than a stop on the journey.
+ * Row 1 — identity and the sections: brand, one tab per section (`Sections` landmark), then
+ * the chrome that must stay visible on every page: export, theme, API health. Row 2 — the
+ * pages inside the active section (`Pages` landmark) with the section's question at the far
+ * end, so the reader always knows which question the page in front of them is serving. Row 2
+ * is absent on the overview, which is the map rather than a stop on the journey.
  *
  * Rows 3 and 4 — the branch of the open page, and the branch inside it. Every row marks the
- * whole path to the open page — the page itself filled and ringed, its ancestors (Track 1,
- * Iteration 4) marked more quietly — so a step's row position is never the only clue to it. `Decide` holds a
- * three-level subtree (Track ▸ Iteration ▸ Step), so `/track1/iteration2/step-4` shows
- * Track 1's iterations in row 3 and iteration 2's steps in row 4. Without it the section row
- * carried twelve equal tabs, seven of them one iteration's step pages, and a reader could not
- * see that `Step 4` is part of one iteration of one track rather than a peer of `Submissions`.
- * A page declares its parent in the manifest and lands in the right row by itself.
- *
- * The fixture badge is not decoration — it is the difference between a live measurement
- * and a committed placeholder, so it stays visible on every page.
+ * whole path to the open page — the page itself filled and ringed, its ancestors marked more
+ * quietly — so a child's row position is never the only clue to it. A page declares its
+ * parent in the manifest and lands in the right row by itself.
  */
 
 import { useIsFetching, useQuery } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 
-import {
-  API_LABEL,
-  API_URL,
-  fixtureModeStore,
-  FIXTURES_ENABLED,
-  health,
-  unauthorizedStore,
-} from '../api/client';
+import { API_LABEL, API_URL, health, unauthorizedStore } from '../api/client';
 import { cx } from '../lib/ui';
 import { AiExport } from './AiExport';
 import { CommandPalette } from './CommandPalette';
@@ -41,7 +26,7 @@ import { ThemeToggle } from './ThemeToggle';
 export interface HeaderNavItem {
   to: string;
   label: string;
-  /** The page's full title, shown on hover: `Step 2` alone does not say what step 2 is. */
+  /** The page's full title, shown on hover: a one-word label does not say what it holds. */
   title?: string;
   preload?: () => void;
   /** Detail pages of this one, shown in row 3 while this branch is open. */
@@ -66,7 +51,7 @@ function useApiHealth() {
     queryFn: health,
     retry: false,
     // A minute, not fifteen seconds. The dot answers "is the API alive"; at 15 s an open
-    // tab spent 240 requests an hour on that question, each one two Vercel invocations
+    // tab spent 240 requests an hour on that question, each one two serverless invocations
     // plus a WAN round trip. react-query does not run the timer while the tab is hidden
     // (`refetchIntervalInBackground` defaults false), so this is the cost of a tab being
     // *looked at*, and a minute is well inside how fast anyone reacts to a red dot.
@@ -83,8 +68,8 @@ function useApiHealth() {
  * the dot names both causes and both origins, which is what tells them apart.
  *
  * The hosted deployment cannot have the CORS half of that problem: the browser talks to
- * its own origin and Vercel's proxy talks to the API server-to-server, where CORS does not
- * apply. There, "down" means the proxy could not reach `mva-viz-api`.
+ * its own origin and the proxy talks to the API server-to-server, where CORS does not
+ * apply. There, "down" means the proxy could not reach the backend.
  */
 function statusTitle(state: 'checking' | 'up' | 'down' | 'refused'): string {
   if (state === 'refused') {
@@ -98,13 +83,13 @@ function statusTitle(state: 'checking' | 'up' | 'down' | 'refused'): string {
   if (!API_URL) {
     return (
       `${API_LABEL} did not answer.\n` +
-      `Vercel's proxy could not reach mva-viz-api — check MVA_VIZ_API_URL and ` +
-      `MVA_VIZ_API_TOKEN in the project, and that the service is up on the server.`
+      `The proxy could not reach the backend — check API_UPSTREAM_URL and API_UPSTREAM_TOKEN ` +
+      `in the project, and that the service is up on the server.`
     );
   }
   return (
     `${API_LABEL} did not answer.\n` +
-    `Either mva-viz-api is not running, or this page's origin (${window.location.origin}) ` +
+    `Either the backend is not running, or this page's origin (${window.location.origin}) ` +
     `is blocked by the API's CORS policy — check the browser console for the CORS message.`
   );
 }
@@ -118,16 +103,15 @@ const SUB =
   'rounded-control px-2 py-0.5 text-micro transition focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-500';
 /** The page in front of the reader: filled and ringed, so it reads at a glance in both themes. */
 const SUB_ON = 'bg-machinery-500/15 font-semibold text-machinery-300 ring-1 ring-machinery-500/60';
-/** A row item the open page sits beneath (its iteration, say): marked, but quieter than the page. */
+/** A row item the open page sits beneath: marked, but quieter than the page itself. */
 const SUB_PATH = 'bg-chrome-900 font-medium text-chrome-50';
 const SUB_OFF = 'text-chrome-400 hover:bg-chrome-900 hover:text-chrome-200';
 
 /**
  * How one nav item relates to the open page: it is the page, the page is beneath it, or
  * neither. `NavLink`'s own `isActive` answers only the first — with `end` it drops the
- * ancestors, without it `/track1` would light up for `/track1x` — so the header asks the
- * manifest tree instead, and `/track1/iteration4/step-2` marks Track 1, Iteration 4 and
- * Step 2 in their three rows.
+ * ancestors, without it `/a` would light up for `/ab` — so the header asks the manifest
+ * tree instead, and every ancestor of the open page is marked in its own row.
  */
 type Mark = 'on' | 'path' | 'off';
 
@@ -155,8 +139,8 @@ function opensRowFor(item: HeaderNavItem, pathname: string): boolean {
 
 /**
  * One row of children, with the branch's own page first as "overview". The label in front
- * of it names the branch, so three stacked rows stay readable as a path rather than as
- * three unrelated tab strips.
+ * of it names the branch, so stacked rows stay readable as a path rather than as several
+ * unrelated tab strips.
  */
 function BranchRow({ branch, tone }: { branch: HeaderNavItem; tone: string }) {
   const { pathname } = useLocation();
@@ -231,13 +215,20 @@ function FetchBar() {
   );
 }
 
-export function Header({ home, sections }: { home: HeaderNavItem; sections: HeaderSection[] }) {
-  const onFixtures = useSyncExternalStore(fixtureModeStore.subscribe, fixtureModeStore.get);
+export function Header({
+  home,
+  sections,
+  brand = 'Dashboard',
+}: {
+  home: HeaderNavItem;
+  sections: HeaderSection[];
+  /** The product name in the top-left corner. One place, so renaming is one prop. */
+  brand?: string;
+}) {
   const { pathname } = useLocation();
   const active = sections.find((s) => s.pages.some((p) => holds(p, pathname)));
   // The two rows below the section row: the open page's branch, and the branch inside it.
-  // `/track1/iteration2/step-4` opens Track 1's iterations in row 3 and iteration 2's steps
-  // in row 4; `/science`, which has no children, keeps both rows absent.
+  // A page with no children keeps both rows absent.
   const branch = active?.pages.find((p) => opensRowFor(p, pathname));
   const sub = branch?.children?.find((c) => opensRowFor(c, pathname));
 
@@ -250,15 +241,7 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
           onFocus={home.preload}
           className="flex items-baseline gap-2 rounded-control focus:outline-none focus-visible:ring-1 focus-visible:ring-machinery-500"
         >
-          <span className="text-sm font-semibold tracking-tight text-chrome-50">
-            MVA Case Explorer
-          </span>
-          <span className="hidden items-baseline gap-2 text-xs text-chrome-400 md:inline-flex">
-            <span className="rounded-pill border border-line px-2 py-px text-micro text-chrome-400">
-              PROBAND01
-            </span>
-            single sample, no trio
-          </span>
+          <span className="text-sm font-semibold tracking-tight text-chrome-50">{brand}</span>
         </Link>
 
         {/* Labelled because row 2 and the footer carry further navs: three unnamed
@@ -296,22 +279,6 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
         <div className="flex items-center gap-3">
           <CommandPalette />
           <AiExport />
-          {onFixtures && (
-            <span
-              className="rounded-control bg-decision-500/15 px-2 py-1 text-micro font-medium text-decision-300"
-              title="At least one panel on this session was served from a committed fixture, not the live API."
-            >
-              fixture data
-            </span>
-          )}
-          {!FIXTURES_ENABLED && (
-            <span
-              className="rounded-control bg-chrome-800 px-2 py-1 text-micro text-chrome-400"
-              title="VITE_USE_FIXTURES=false"
-            >
-              fixtures off
-            </span>
-          )}
           <ThemeToggle />
           <ApiHealth />
         </div>
@@ -322,8 +289,8 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
           <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-4 gap-y-1 px-5">
             <nav aria-label="Pages" className="-mb-px flex flex-wrap items-center">
               {active.pages.map((p) => {
-                // Underlined while the reader is anywhere beneath it too: on a step page the
-                // Track 1 tab must still say which track the step belongs to.
+                // Underlined while the reader is anywhere beneath it too: on a child page
+                // the parent tab must still say which branch the child belongs to.
                 const mark = markOf(p, pathname);
                 return (
                   <Link

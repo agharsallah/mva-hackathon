@@ -14,7 +14,7 @@
  * counter is defeated by concurrency, so the delay above is the whole defence. A password
  * with real entropy is doing the work here — generate one, do not choose one.
  * `vercel firewall` rate-limiting rules are the upgrade path if this is ever more than a
- * hackathon dashboard.
+ * private dashboard.
  *
  * Accepts JSON (the login page's `fetch`) or a form post (its no-JavaScript fallback) and
  * answers in kind: JSON gets `{next}`, a form gets a 303 to the same place.

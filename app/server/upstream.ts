@@ -1,32 +1,32 @@
 /**
- * One forwarder to `mva-viz-api`, shared by the two routes that talk to it.
+ * One forwarder to the backend API, shared by the two routes that talk to it.
  *
  * `api/[...path].ts` forwards `/api/*` unchanged; `api/liveness.ts` forwards the single
  * path `/health`, which sits outside `/api` on the backend. Both go through {@link forward}
  * so the token, the timeout, the header allowlist and the no-store rule are decided once.
  *
  * ```
- *   browser ──▶ /api/panel/genes            (same origin — all it ever sees)
+ *   browser ──▶ /api/records                (same origin — all it ever sees)
  *                 │  Vercel edge
- *                 │  + X-API-Key: MVA_VIZ_API_TOKEN
+ *                 │  + X-API-Key: API_UPSTREAM_TOKEN
  *                 ▼
- *              https://viz.example.org/api/panel/genes     (never in the bundle)
+ *              https://api.example.org/api/records         (never in the bundle)
  *                 │  TLS reverse proxy on the VPS
  *                 ▼
- *              127.0.0.1:8900  mva-viz-api
+ *              127.0.0.1:8900  the API
  * ```
  *
- * `MVA_VIZ_API_URL` and `MVA_VIZ_API_TOKEN` are plain (not `VITE_`-prefixed) Vercel
+ * `API_UPSTREAM_URL` and `API_UPSTREAM_TOKEN` are plain (not `VITE_`-prefixed) Vercel
  * environment variables, so Vite cannot inline them even by accident: `import.meta.env`
  * exposes only `VITE_*`.
  *
- * **Nothing it returns is cacheable.** `/api/panel/locus` serves real patient positions,
+ * **Nothing it returns is cacheable.** The routes it forwards can serve private data,
  * so every reply carries `no-store, private` regardless of what upstream said. A CDN that
  * cached one would serve it to the next visitor — including one who arrives after the
  * password has changed.
  */
 
-/** Long enough for a locus query over the WAN; the reads-API job routes return at once. */
+/** Long enough for a heavy query over the WAN; most routes return at once. */
 export const UPSTREAM_TIMEOUT_MS = 30_000;
 
 export const NO_STORE = { 'cache-control': 'no-store, private' } as const;
@@ -53,7 +53,7 @@ export function problem(status: number, detail: string): Response {
   });
 }
 
-/** `https://host` + `/api/panel/genes` + `?gene=BUB1B`, with no doubled slash. */
+/** `https://host` + `/api/records` + `?id=42`, with no doubled slash. */
 export function upstreamUrl(base: string, path: string, search = ''): string {
   return `${base.replace(/\/+$/, '')}${path}${search}`;
 }
@@ -68,7 +68,7 @@ export function upstreamUrl(base: string, path: string, search = ''): string {
  *
  * Checked up front so the reply says what to change instead. A server reachable only by
  * IP still works — give it any name that resolves to it (a hosting provider's default
- * reverse-DNS name is enough) and put that in `MVA_VIZ_API_URL`.
+ * reverse-DNS name is enough) and put that in `API_UPSTREAM_URL`.
  */
 export function isBareIpHost(base: string): boolean {
   let host: string;
@@ -96,14 +96,14 @@ export async function forward(
   path: string,
   search = '',
 ): Promise<Response> {
-  const base = env.MVA_VIZ_API_URL ?? '';
+  const base = env.API_UPSTREAM_URL ?? '';
   if (!base) {
-    return problem(503, 'MVA_VIZ_API_URL is not set in this Vercel project — see app/README.md');
+    return problem(503, 'API_UPSTREAM_URL is not set in this Vercel project — see app/README.md');
   }
   if (isBareIpHost(base)) {
     return problem(
       503,
-      'MVA_VIZ_API_URL is a bare IP address, which the Edge runtime refuses to fetch. ' +
+      'API_UPSTREAM_URL is a bare IP address, which the Edge runtime refuses to fetch. ' +
         'Use a hostname that resolves to the server instead.',
     );
   }
@@ -111,7 +111,7 @@ export async function forward(
   const headers: Record<string, string> = {
     accept: request.headers.get('accept') ?? 'application/json',
   };
-  const token = env.MVA_VIZ_API_TOKEN;
+  const token = env.API_UPSTREAM_TOKEN;
   if (token) headers['X-API-Key'] = token;
 
   let body: string | undefined;
@@ -139,7 +139,7 @@ export async function forward(
   }
 
   if (upstream.status === 401) {
-    return problem(502, 'the viz API rejected this deployment: MVA_VIZ_API_TOKEN is wrong');
+    return problem(502, 'the API rejected this deployment: API_UPSTREAM_TOKEN is wrong');
   }
 
   const out = new Headers(NO_STORE);

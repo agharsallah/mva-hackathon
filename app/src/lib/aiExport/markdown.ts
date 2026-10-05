@@ -23,11 +23,10 @@ function fence(data: unknown): string {
   return ['```json', JSON.stringify(data, null, 2), '```'].join('\n');
 }
 
-function provenance(r: { source?: string; cachedAt?: string | null; origin?: string }): string[] {
+function provenance(r: { source?: string; cachedAt?: string | null }): string[] {
   const parts: string[] = [];
   if (r.source) parts.push(`**Source:** ${r.source}`);
   if (r.cachedAt) parts.push(`**Cached at:** ${r.cachedAt}`);
-  if (r.origin) parts.push(`**Origin:** ${r.origin}`);
   return parts.length > 0 ? [parts.join(' · ')] : [];
 }
 
@@ -59,22 +58,14 @@ export function bundleMarkdown(
   extraNotes: string[] = [],
 ): string {
   const head = [
-    '# MVA case export',
+    '# Exhibit export',
     '',
     `**Scope:** ${scope}`,
     `**Generated:** ${new Date().toISOString()}`,
     '',
-    'This document was exported from the MVA Case Explorer for analysis by a language model.',
-    'It describes one whole-genome case (proband `PROBAND01`, single sample, no parents).',
+    'This document was exported from the dashboard for analysis by a language model.',
     '',
     CAVEAT,
-    '',
-    'No patient variant coordinate appears in this document. Chromosome and position are stripped',
-    'from every variant-level payload, and the exhibits whose subject *is* the coordinate — the locus',
-    'tracks, the pair matrix, a searched window — export their narrative and no rows at all. What does',
-    'appear is chromosome names, 1 Mb bin indices and reference gene spans: aggregates and public',
-    'reference data, not this proband’s variant positions. Name genes and consequences in any answer,',
-    'never positions.',
     ...extraNotes.flatMap((n) => ['', n]),
   ];
   return [head.join('\n'), ...sections].join('\n\n---\n\n') + '\n';

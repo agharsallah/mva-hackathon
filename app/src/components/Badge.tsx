@@ -4,7 +4,7 @@
  * `NormChip` already does exactly this for one specific verdict shape (`within/above/below`);
  * this is the general version, for the other places the same recipe was being hand-typed: the
  * amber "gap" tags on the Catalog tables, the boolean rare/protein-altering flags in the pair
- * comparator, ClinVar assertion tags. The tone vocabulary is `lib/palette`'s `Tone`, shared with
+ * comparator, assertion tags. The tone vocabulary is `lib/palette`'s `Tone`, shared with
  * `StatTile` and `Callout`, so a badge and the tile it sits on cannot disagree about what a
  * colour means.
  */

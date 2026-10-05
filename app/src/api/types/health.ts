@@ -2,23 +2,20 @@
  * GET /api/health/dependencies — liveness of every backing service this app depends on.
  *
  * Unlike the rest of the API, this endpoint never returns 5xx: a dead dependency is a
- * `down` row in `checks`, not an exception. See scratchpad/health-contract.md for the
- * full contract this was transcribed from.
+ * `down` row in `checks`, not an exception.
  */
 
-/** `skipped` means "not configured" (e.g. no S3 credentials) — not a failure. */
+/** `skipped` means "not configured" (e.g. no object-store credentials) — not a failure. */
 export type HealthStatus = 'up' | 'degraded' | 'down' | 'skipped';
 
 /**
- * `internal` — ours, required. `upstream` — ours, optional service (e.g. the reads API).
- * `third-party` — someone else's live service (Ensembl). `snapshot` — ingested reference
- * data, not a live service at all.
+ * `internal` — ours, required. `upstream` — ours, optional service. `third-party` —
+ * someone else's live service. `snapshot` — ingested reference data, not a live service.
  */
 export type DependencyKind = 'internal' | 'upstream' | 'third-party' | 'snapshot';
 
 export interface DependencyCheck {
-  /** Stable slug, one of: viz-api, warehouse, object-store, parquet, reads-api, ensembl,
-   * reference-snapshots. */
+  /** Stable slug naming the dependency (`api`, `warehouse`, `object-store`, …). */
   id: string;
   name: string;
   kind: DependencyKind;
@@ -26,7 +23,7 @@ export interface DependencyCheck {
   /** Integer milliseconds; `null` when skipped. */
   latency_ms: number | null;
   /** This check's own timeout budget in ms — the number a `timed out after Ns` blew
-   * through, and the one `MVA_HEALTH_TIMEOUTS` changes. Per check, because the probes
+   * through, and the one the API's timeout settings change. Per check, because the probes
    * cost wildly different amounts (a WAN Postgres greet vs. pinging this process). */
   timeout_ms: number;
   /** When *this row* was measured. Per check rather than per payload, because

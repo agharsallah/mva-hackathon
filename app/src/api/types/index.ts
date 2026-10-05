@@ -1,6 +1,5 @@
 /**
- * Types transcribed 1:1 from the viz API contract
- * (scratchpad/viz-api-contract.md). Service: mva-viz-api, FastAPI, 127.0.0.1:8900.
+ * Types transcribed 1:1 from the backend API contract.
  *
  * Every endpoint answers with the same envelope, so the client can be one function:
  *   { data, cached_at, source }
@@ -11,29 +10,5 @@
  * writing `from '../api/types'` regardless of which domain a type lives in.
  */
 
-export type * from './callset';
-export type * from './catalog';
-export type * from './clinvar';
 export type * from './envelope';
-export type * from './genome';
 export type * from './health';
-export type * from './iterations';
-export type * from './jobs';
-export type * from './narrative';
-export type * from './overview';
-export type * from './panel';
-export type * from './phenotype';
-export type * from './protein';
-export type * from './provenance';
-export type * from './reads';
-export type * from './science';
-export type * from './search';
-export type * from './step1';
-export type * from './step4';
-export type * from './step5';
-export type * from './step6';
-export type * from './step8';
-export type * from './steps';
-export type * from './submissions';
-export type * from './track2';
-export type * from './track2-step7';

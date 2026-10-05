@@ -12,8 +12,8 @@ export interface StatTileProps {
   tone?: Tone;
   hint?: string;
   /**
-   * Optional badge on the label row — a `NormChip` verdict, where the metric has a
-   * published expectation. Omitted on every tile that has none, which is the default.
+   * Optional badge on the label row — a verdict chip, where the metric has a published
+   * expectation. Omitted on every tile that has none, which is the default.
    */
   chip?: ReactNode;
 }

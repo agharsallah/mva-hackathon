@@ -3,10 +3,9 @@
  * in-app pages and repo docs a reader would want next. Mounted once by AppShell,
  * replacing the previous inline `<footer>` paragraph — see src/app/AppShell.tsx.
  *
- * Degrades on purpose: the status endpoint (`GET /api/health/dependencies`, contract
- * in scratchpad/health-contract.md) does not exist yet on the Python side, so while
- * the query is pending, errors, or 404s, this renders the footer's static content plus
- * a neutral "status unknown" chip instead of a spinner or a crash.
+ * Degrades on purpose: while the status query (`GET /api/health/dependencies`) is pending,
+ * errors, or 404s, this renders the footer's static content plus a neutral "status unknown"
+ * chip instead of a spinner or a crash.
  */
 import { Link } from 'react-router-dom';
 
@@ -55,9 +54,12 @@ const REPO_DOCS = [
   { href: '../docs/dictionary.md', label: 'Dictionary' },
 ];
 
+/** The product name in the footer's first column. Kept beside the header's `brand` prop. */
+const BRAND = 'Dashboard';
+
 /**
- * The four questions with their pages — the same manifest the header reads, so the footer
- * is a sitemap rather than a second, hand-picked nav. Empty outside the shell.
+ * Every section with its pages — the same manifest the header reads, so the footer is a
+ * sitemap rather than a second, hand-picked nav. Empty outside the shell.
  */
 function SectionIndex() {
   const groups = useJourney();
@@ -89,11 +91,10 @@ export function Footer() {
     <footer className="border-t border-line">
       <div className="mx-auto flex max-w-[1600px] flex-col gap-6 px-5 py-6 text-micro leading-relaxed text-chrome-400 sm:flex-row sm:flex-wrap sm:justify-between">
         <div className="max-w-sm space-y-2">
-          <p className="font-medium text-chrome-400">MVA Case Explorer</p>
+          <p className="font-medium text-chrome-400">{BRAND}</p>
           <p>
-            Understanding tool for one whole-genome case. No genomic coordinate is committed to this
-            repository: the locus explorer shows real positions only when served by the live API,
-            and its fixture uses a synthetic counter.
+            An understanding tool: every figure carries its legend, its provenance and the rows
+            behind it, and the dictionary defines every word the pages use.
           </p>
         </div>
 

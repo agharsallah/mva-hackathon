@@ -24,7 +24,7 @@ import { useSyncExternalStore } from 'react';
 export type Theme = 'dark' | 'light';
 
 /** localStorage key. Namespaced: this app is not the only thing on localhost. */
-const STORAGE_KEY = 'mva.theme';
+const STORAGE_KEY = 'app.theme';
 
 const listeners = new Set<() => void>();
 

@@ -40,7 +40,7 @@ import { gzipSync } from 'node:zlib';
 const APP_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(APP_ROOT, 'dist');
 const ASSETS = path.join(DIST, 'assets');
-const FIXTURE_DATA_DIR = path.join(APP_ROOT, 'src/fixtures/data');
+const DATA_DIR = path.join(APP_ROOT, 'src/lib/dictionary');
 const PAGES_DIR = path.join(APP_ROOT, 'src/pages');
 
 // --- the budget, in one clearly-marked block ---------------------------------------------
@@ -48,75 +48,27 @@ const PAGES_DIR = path.join(APP_ROOT, 'src/pages');
 // WHY THIS MEASURES MORE THAN THE ENTRY CHUNK
 // The first version budgeted the entry chunk alone. That is not what a browser downloads
 // before it can paint: dist/index.html also carries <link rel="modulepreload"> tags, and
-// the bundler is free to move code out of the entry into those. It did exactly that on
-// 2026-09-02 — the entry "shrank" from 236 kB to 160 kB while a preloaded QueryState
-// chunk appeared at 87 kB, so the entry-only gate reported an improvement for a payload
-// that had actually grown. The budget is therefore the SUM of the entry chunk and every
-// chunk index.html preloads: the number that survives a chunking change.
+// the bundler is free to move code out of the entry into those. It did exactly that once —
+// the entry "shrank" while a preloaded sibling chunk appeared, so the entry-only gate
+// reported an improvement for a payload that had actually grown. The budget is therefore
+// the SUM of the entry chunk and every chunk index.html preloads: the number that survives
+// a chunking change.
 //
-// Measured 2026-09-02 against a clean `pnpm run build`: 244.50 kB raw / 78.91 kB gzip
-// across 2 initial files. The commit before the footer landed measured 237.02 / 76.63 in
-// a clean worktree; the footer's live dependency-status query is the +7.5 kB raw.
-// Budgets give ~6% headroom — enough for incidental churn, not enough to hide a real
-// regression.
+// RE-BLESSING
+// Read the reported raw/gzip numbers from a build you trust (clean tree, frozen lockfile)
+// and update BUDGETS below with a comment recording the date and why the new number is
+// acceptable. Never move a budget to make a regression pass without that dated
+// justification — the whole point of this gate is that "the bundle grew" should be a
+// conversation, not a silent fact.
 //
-// Re-blessed 2026-09-03: 267.65 kB raw / 85.06 kB gzip across 3 initial files. HEAD before
-// the change measured 259.58 / 83.11 in a clean worktree; the +8 kB raw is the information
-// architecture that now lives in the entry chunk — the two-tier header (section tabs + the
-// active section's pages), the manifest-driven page header and journey footer, and the
-// footer sitemap (`src/app/PageFrame.tsx`, `src/components/{Header,PageHeader,journey}.tsx`).
-// That is shell, so it belongs in first paint; no page code moved into the entry.
-//
-// Re-blessed 2026-09-03 (later the same day): 280.52 kB raw / 89.92 kB gzip. The in-page
-// navigation joined the shell — the section registry, the "On this page" rail, the jump
-// select and the ⌘K button. The palette's dialog body is a lazy chunk (PaletteDialog, ~3.7 kB)
-// fetched on first open, so only the hotkey and the button ride in first paint.
-//
-// Re-blessed 2026-09-06: 290.84 kB raw / 93.29 kB gzip. Measured against the same tree with
-// only `src/app/providers.tsx` reverted (284.90 / 91.39), so the delta is exactly the two
-// persistence packages: +5.94 kB raw / +1.90 kB gzip for
-// `@tanstack/query-sync-storage-persister` + `@tanstack/react-query-persist-client`.
-// Bought with it: the query cache survives a reload, so a returning visitor re-renders
-// every coordinate-free panel from localStorage instead of re-asking the API — on Vercel,
-// two Edge invocations plus a WAN round trip per panel that no longer happen
-// (`app/src/lib/queryPersistence.ts`, methodology 081). One-time bytes against per-visit
-// requests, on a deployment whose free-tier budget is invocations.
-//
-// Re-blessed 2026-09-14: 293.50 kB raw / 94.10 kB gzip. Measured against a clean checkout
-// of HEAD (3e9fa5e). The +2.66 kB raw / +0.73 kB gzip since the last bless is the module
-// manifest (`src/app/modules/index.ts`) growing by three entries — the step-1, step-2 and
-// step-3 research pages each add one route/nav/title record. That manifest drives AppShell's
-// routing, the two-tier nav and the journey footer everywhere, so it is shell and belongs in
-// first paint like the rest of this budget's contents; no page code moved into the entry.
-//
-// Re-blessed 2026-09-19: 297.50 kB raw / 95.25 kB gzip. Two components, measured
-// separately against this same tree. (1) The 2026-09-14 budget had already been exceeded
-// before this change: `git stash push -u -- app` and a clean build measure **295.73 raw /
-// 94.87 gzip** at HEAD, +2.23 / +0.77 over — the step-4, step-5, step-6 and step-8 manifest
-// entries added since, and known to be over (see the app README's 2026-09-18 line). (2) This
-// change adds **+1.76 kB raw / +0.33 kB gzip** on top (297.49 / 95.20): the third header row
-// and the nested manifest it renders — `parent`/`children` in `src/app/modules/{types,
-// journey}.ts`, the two-level build in `src/app/AppShell.tsx`, and the detail-page row in
-// `src/components/Header.tsx`. That is shell — it is what keeps `decide` at five tabs
-// instead of twelve — so it belongs in first paint like the rest of this budget's contents.
-// No page code moved into the entry: the `/steps` work is all in the lazy `steps` chunk.
-// Methodology 126.
-//
-// Re-blessed 2026-09-19 (later the same day): 306.75 kB raw / 96.80 kB gzip. Measured on the
-// same tree: 297.49 / 95.20 before, 306.69 / 96.73 after, so +9.20 kB raw and +1.53 kB gzip.
-// All of it is the generated `Decide` subtree — 26 manifest entries, each carrying a route, a
-// nav label, an h1 and the step's goal as its description (`src/app/modules/steps.generated.ts`,
-// methodology 131). The gzip figure is the honest one here: the entries are prose with a
-// shared vocabulary, so they compress to about a sixth of their raw size.
-//
-// It is shell by the same argument as every line above it — the manifest drives routing, the
-// four-tier nav, the page headers and the journey footer, and the descriptions ARE the page
-// headers. The alternative, fetching the tree, would trade 1.5 kB gzip once for a request
-// before the first nav can render. No page code moved into the entry: every step page is a
-// lazy chunk.
+// Re-blessed 2026-10-05 against the stripped shell: measured 253.68 kB raw / 81.82 kB gzip
+// across 4 initial files. The budget below leaves ~8% headroom over that measurement —
+// enough for incidental churn, not enough to hide a real regression. What is in first paint
+// is shell only: the module manifest, the header rows, the page frame, the footer sitemap,
+// the section registry and the ⌘K hotkey. Every page, Plotly, three and mermaid are lazy.
 const BUDGETS = Object.freeze({
-  INITIAL_RAW_BYTES: 306_750,
-  INITIAL_GZIP_BYTES: 96_800,
+  INITIAL_RAW_BYTES: 274_000,
+  INITIAL_GZIP_BYTES: 88_400,
 });
 
 const KB = (bytes) => `${(bytes / 1000).toFixed(2)} kB`;
@@ -173,6 +125,15 @@ function findEntryFile() {
  * something renders a 3D exhibit.
  */
 function importsViz3d() {
+  return pagesMatch(/from '.*viz3d/);
+}
+
+/** The same source-level question for Plotly: does any page mount the `Plot` wrapper? */
+function importsPlot() {
+  return pagesMatch(/\bPlot\b/);
+}
+
+function pagesMatch(pattern) {
   const stack = [PAGES_DIR];
   while (stack.length > 0) {
     const dir = stack.pop();
@@ -180,7 +141,7 @@ function importsViz3d() {
     for (const item of readdirSync(dir, { withFileTypes: true })) {
       const full = path.join(dir, item.name);
       if (item.isDirectory()) stack.push(full);
-      else if (/\.tsx?$/.test(item.name) && /from '.*viz3d/.test(readFileSync(full, 'utf-8'))) {
+      else if (/\.tsx?$/.test(item.name) && pattern.test(readFileSync(full, 'utf-8'))) {
         return true;
       }
     }
@@ -199,18 +160,18 @@ function measureAssets() {
 }
 
 /**
- * Defense-in-depth beyond the raw-size budget: re-serialize every committed fixture
- * `data/*.json` file the same way Vite's JSON transform would, and check the exact text
- * doesn't appear inside the entry chunk. This is a shape check, not a proof — a fixture
- * payload embedded with different key order or spread across several literals would slip
- * past it — but it directly verifies the specific rule ("no fixture payload in the entry
- * chunk"), rather than only inferring it from a size threshold.
+ * Defense-in-depth beyond the raw-size budget: re-serialize every committed bulk `*.json`
+ * data file the same way Vite's JSON transform would, and check the exact text doesn't
+ * appear inside the entry chunk. This is a shape check, not a proof — a payload embedded
+ * with different key order or spread across several literals would slip past it — but it
+ * directly verifies the specific rule ("no bulk data in the entry chunk"), rather than only
+ * inferring it from a size threshold.
  */
-function findInlinedFixturePayloads(entryText) {
-  if (!existsSync(FIXTURE_DATA_DIR)) return [];
+function findInlinedDataPayloads(entryText) {
+  if (!existsSync(DATA_DIR)) return [];
   const hits = [];
-  for (const file of readdirSync(FIXTURE_DATA_DIR).filter((f) => f.endsWith('.json'))) {
-    const raw = readFileSync(path.join(FIXTURE_DATA_DIR, file), 'utf-8');
+  for (const file of readdirSync(DATA_DIR).filter((f) => f.endsWith('.json'))) {
+    const raw = readFileSync(path.join(DATA_DIR, file), 'utf-8');
     let minified;
     try {
       minified = JSON.stringify(JSON.parse(raw));
@@ -296,10 +257,13 @@ function main() {
   if (/plotly/i.test(entryFile)) {
     problems.push(`entry chunk "${entryFile}" itself matches /plotly/i`);
   }
-  const plotlyChunks = rows.filter((r) => /plotly/i.test(r.file));
-  if (plotlyChunks.length === 0) {
+  // Conditioned on a real consumer, the same way the three check below is: if a page mounts
+  // a `Plot`, Plotly must have its own chunk — its absence would mean the library was inlined
+  // into a page chunk. With no consumer the assertion would be about code nobody imports.
+  if (importsPlot() && rows.filter((r) => /plotly/i.test(r.file)).length === 0) {
     problems.push(
-      'no emitted chunk matches /plotly/i — Plotly may have been inlined elsewhere or removed',
+      'a page mounts a Plot but no emitted chunk matches /plotly/i — Plotly may have been ' +
+        'inlined into a page chunk instead of dynamically imported by components/Plot.tsx',
     );
   }
 
@@ -323,10 +287,8 @@ function main() {
     if (/plotly\.js/i.test(text)) {
       problems.push(`initial chunk "${file}" contains a "plotly.js" signature string`);
     }
-    for (const fixture of findInlinedFixturePayloads(text)) {
-      problems.push(
-        `initial chunk "${file}" contains the full payload of fixtures/data/${fixture}`,
-      );
+    for (const data of findInlinedDataPayloads(text)) {
+      problems.push(`initial chunk "${file}" contains the full payload of ${data}`);
     }
   }
 

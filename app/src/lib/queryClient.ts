@@ -1,7 +1,7 @@
 /**
- * The one QueryClient. Exported rather than built inside `main.tsx` because the whole-case
- * export fetches ~30 endpoints from outside React, and going through this client means it
- * reuses whatever the open page already loaded instead of asking the API twice.
+ * The one QueryClient. Exported rather than built inside `main.tsx` so code outside React
+ * (an export that fetches several endpoints at once) can go through the same cache and
+ * reuse whatever the open page already loaded instead of asking the API twice.
  *
  * Retry policy: a network failure or a 5xx is retried twice with a short back-off — the API
  * may be restarting, and the reader should not have to click Retry for that. A 4xx is the
@@ -18,10 +18,9 @@ export const FIVE_MIN = 5 * 60 * 1000;
  * How long a fetched payload is served without re-asking.
  *
  * Half an hour rather than five minutes, because of what these payloads are: aggregates
- * over a callset that changes only when an ingest runs, not a live feed. Paired with the
- * persisted cache (`queryPersistence.ts`), a reload inside the window costs zero requests.
- * The endpoints where staleness *is* wrong — the health board, the job queue, the header's
- * dot — override this with their own short times where they are declared.
+ * over a dataset that changes only when an ingest runs, not a live feed. The endpoints
+ * where staleness *is* wrong — the health board, the header's dot — override this with
+ * their own short times where they are declared.
  */
 export const STALE_TIME = 30 * 60 * 1000;
 

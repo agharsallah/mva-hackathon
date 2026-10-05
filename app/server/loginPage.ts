@@ -52,7 +52,7 @@ export function loginPage({ next, error }: LoginPageOptions): string {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>MVA dashboard — password</title>
+<title>Dashboard — password</title>
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
@@ -88,9 +88,9 @@ export function loginPage({ next, error }: LoginPageOptions): string {
 </head>
 <body>
 <main>
-  <h1>MVA Hackathon 2026 — dashboard</h1>
-  <p class="lede">This deployment is private. It shows patient-derived analysis, so it asks
-  for the shared password before it loads anything.</p>
+  <h1>Dashboard</h1>
+  <p class="lede">This deployment is private. It asks for the shared password before it
+  loads anything.</p>
   <form id="f" method="post" action="/api/login">
     <label for="password">Password</label>
     <input id="password" name="password" type="password" autocomplete="current-password"

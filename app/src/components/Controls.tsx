@@ -42,7 +42,7 @@ export interface SelectGroup<T extends string | number> {
  * `groups` is additive: a call site that passes only `options` renders exactly what it
  * always did. Passing `groups` renders `<optgroup>` headings instead — the browser's own
  * grouping affordance, which is what a picker over a set that splits into meaningful
- * classes (an annotated panel vs. fold-only reference genes) needs, and which a flat list
+ * classes (a curated set vs. everything else) needs, and which a flat list
  * of 20 symbols cannot express. Both may be passed; `options` then renders ungrouped
  * *above* the groups.
  */
@@ -74,7 +74,7 @@ export function Select<T extends string | number>({
         value={String(value)}
         // Explicit, even though the wrapping `<label>` already names it: a label that *wraps*
         // its control has the control's own text inside it, so the computed accessible name
-        // came out as the label plus every option ("A CEP57 DICER1 BUB1B …"). That is what a
+        // came out as the label plus every option ("Series A B C …"). That is what a
         // screen reader announces, and what a browser-driver locator matches on.
         aria-label={label}
         disabled={disabled}

@@ -30,11 +30,7 @@ export interface ExhibitProps {
   /** The API's provenance string for these rows. */
   source?: string;
   cachedAt?: string | null;
-  origin?: 'api' | 'fixture';
-  /**
-   * The endpoint payload behind this figure, for the AI export. Omitted where the payload
-   * carries a patient genomic coordinate — see `lib/aiExport/redact.ts`.
-   */
+  /** The endpoint payload behind this figure, for the AI export. */
   data?: unknown;
   /** Controls (toggles, selects) rendered on the title row. */
   controls?: ReactNode;
@@ -42,12 +38,12 @@ export interface ExhibitProps {
   /**
    * The DOM id, so another page can deep-link to this figure with `#id` — the Learn page's
    * "see it in the app" links do. Defaults to a slug of the title; pass one when the title
-   * carries a variable (a gene symbol) and the link must survive the user changing it.
+   * carries a variable the reader can change and the link must survive that change.
    */
   id?: string;
 }
 
-/** "Allele balance — the aneuploidy screen" → "allele-balance-the-aneuploidy-screen". */
+/** "Depth by bin — the coverage screen" → "depth-by-bin-the-coverage-screen". */
 function exhibitAnchor(title: string): string {
   return title
     .toLowerCase()
@@ -64,7 +60,6 @@ export function Exhibit({
   reading,
   source,
   cachedAt,
-  origin,
   data,
   controls,
   className = '',
@@ -82,7 +77,6 @@ export function Exhibit({
     reading: readingText,
     source,
     cachedAt,
-    origin,
     data,
   };
 
@@ -94,11 +88,10 @@ export function Exhibit({
       reading: readingText,
       source,
       cachedAt,
-      origin,
       data,
     });
     return () => exhibitRegistry.unregister(page, title);
-  }, [page, title, legendText, readingText, source, cachedAt, origin, data]);
+  }, [page, title, legendText, readingText, source, cachedAt, data]);
 
   // A deep link lands here: the page is a lazy chunk, so the browser's own hash scroll ran
   // before this figure existed. Once it mounts under the URL's hash, it puts itself on screen.
@@ -127,16 +120,11 @@ export function Exhibit({
             {reading}
           </p>
         )}
-        {(source || origin) && (
+        {source && (
           // The per-reply `source` strings now carry URLs and cache keys, so they must wrap
           // rather than run off the card: `break-words` breaks a long token only when it
           // cannot fit, leaving normal prose alone.
           <p className="font-mono text-micro break-words text-chrome-600">
-            {origin === 'fixture' && (
-              <span className="mr-2 rounded-pill bg-decision-500/15 px-1 py-px text-decision-300">
-                fixture
-              </span>
-            )}
             {source}
             {cachedAt ? `, cached ${cachedAt.replace('T', ' ').slice(0, 19)}` : ''}
           </p>
@@ -148,7 +136,7 @@ export function Exhibit({
 
 const AI_HINT =
   'Copy this exhibit as Markdown for an AI chat: its legend and reading, its provenance, and the ' +
-  'rows behind it as JSON. No genomic coordinate is ever exported.';
+  'rows behind it as JSON.';
 
 function CopyForAi({ record }: { record: ExhibitRecord }) {
   const [said, setSaid] = useState<string | null>(null);

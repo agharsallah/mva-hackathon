@@ -19,8 +19,8 @@ export type Colorscale = [number, string][];
  * A sequential ramp does not encode identity, it encodes distance from the page: its cold end
  * *is* the background (chrome-950 in dark) and its hot end is the furthest thing from it. Both
  * ends therefore have to flip together. Mirroring only the chrome end would leave the hot end
- * a pale lavender painted on a white page — the densest chromosome rendering as the faintest
- * bar, which inverts the reading of the figure.
+ * a pale lavender painted on a white page — the densest bin rendering as the faintest bar,
+ * which inverts the reading of the figure.
  *
  * The verdict ramps below (`QUALITY_SCALE`, `DIVERGING_SCALE`) and every categorical list are
  * deliberately *not* mirrored: those encode meaning, and red has to stay the same red.
@@ -66,12 +66,11 @@ export const QUALITY_SCALE: Colorscale = [
 ];
 
 /**
- * Diverging ramp for a signed deviation from a neutral midpoint, e.g. BAF away from 0.5.
+ * Diverging ramp for a signed deviation from a neutral midpoint, e.g. a ratio away from 0.5.
  *
- * Green sits at the **centre**, not at an end: for allele balance the goal is the middle of
- * the range, and both directions away from it are the abnormal outcome. Red marks a deficit
- * (fewer variant reads than expected) and purple a surplus, so the sign of the shift is
- * readable and neither direction is quietly privileged.
+ * Green sits at the **centre**, not at an end: where the goal is the middle of the range,
+ * both directions away from it are the abnormal outcome. Red marks a deficit and purple a
+ * surplus, so the sign of the shift is readable and neither direction is quietly privileged.
  */
 export const DIVERGING_SCALE: Colorscale = [
   [0, RAMP.broken[900]],

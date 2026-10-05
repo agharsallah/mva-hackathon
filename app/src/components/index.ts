@@ -14,8 +14,6 @@ export { baseLayout, scene3d } from './plotLayout';
 // Data display
 export { type Column, DataTable, type SortValue } from './DataTable';
 export { type Field, FieldList, type FieldListProps } from './FieldList';
-export { NormChip } from './NormChip';
-export { pickNorm } from './pickNorm';
 export { StatTile, type StatTileProps } from './StatTile';
 
 // Layout and structure

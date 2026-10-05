@@ -126,18 +126,14 @@ export default [
   // Layer graph (CLAUDE.md's "Code structure" + each src/**/README.md).
   //
   //   app        -> components, lib, pages (lazy import()), api
-  //   pages      -> components, lib, api
-  //   components -> components, lib, api                  (never pages, never fixtures)
-  //   api        -> lib, fixtures (client.ts only)
-  //   fixtures   -> api, lib                               (never components, never pages)
+  //   pages      -> components, lib, api, viz3d
+  //   components -> components, lib, api, viz3d            (never pages)
+  //   api        -> lib
+  //   viz3d      -> viz3d, lib                             (never api, never components)
   //   lib        -> lib, api (aiExport reaches api/client.ts for the shared fetch helper)
-  //   test       -> anything
   //
-  // Verified against the real tree before writing this: 0 violations today for every
-  // edge above, including the `lib -> api` edge (src/lib/aiExport/{types,wholeCase}.ts
-  // import `Origin`/`get` from src/api/client.ts) — the READMEs describe lib as "the
-  // bottom layer", but aiExport is real, shipped code that reaches api, so the graph
-  // says so rather than pretending it doesn't.
+  // The `lib -> api` edge is real, shipped code (`src/lib/aiExport` imports the shared
+  // fetch helper), so the graph says so rather than pretending lib is the bottom layer.
   // ---------------------------------------------------------------------------
   {
     files: ['src/**/*.{ts,tsx}'],
@@ -154,16 +150,13 @@ export default [
       },
       'boundaries/root-path': import.meta.dirname,
       'boundaries/elements': [
-        { type: 'test', pattern: 'src/test/**' },
         { type: 'app', pattern: 'src/app/**' },
         { type: 'pages', pattern: 'src/pages/**' },
         { type: 'components', pattern: 'src/components/**' },
         { type: 'api', pattern: 'src/api/**' },
-        { type: 'fixtures', pattern: 'src/fixtures/**' },
         { type: 'lib', pattern: 'src/lib/**' },
         { type: 'viz3d', pattern: 'src/viz3d/**' },
       ],
-      'boundaries/files': [{ category: 'api-client', pattern: 'src/api/client.ts' }],
     },
     rules: {
       'boundaries/dependencies': [
@@ -187,7 +180,7 @@ export default [
                 to: { element: { types: { anyOf: ['components', 'lib', 'api', 'viz3d'] } } },
               },
               message:
-                'pages/** may import components, lib and api — never fixtures directly (go through src/api/hooks.ts) and never another page. See app/README.md.',
+                'pages/** may import components, lib, api and viz3d — never another page. See app/README.md.',
             },
             {
               from: { element: { type: 'components' } },
@@ -195,61 +188,26 @@ export default [
                 to: { element: { types: { anyOf: ['components', 'lib', 'api', 'viz3d'] } } },
               },
               message:
-                'components/** may import components, lib and api — never pages, never fixtures. See src/components/README.md.',
-            },
-            {
-              from: { element: { type: 'api' }, file: { categories: 'api-client' } },
-              allow: { to: { element: { types: { anyOf: ['lib', 'fixtures'] } } } },
-              message:
-                'src/api/client.ts is the one file allowed to reach fixtures — the offline fallback boundary. See src/fixtures/README.md.',
+                'components/** may import components, lib, api and viz3d — never pages. See src/components/README.md.',
             },
             {
               from: { element: { type: 'api' } },
               allow: { to: { element: { type: 'lib' } } },
-              message:
-                'src/api/** (outside client.ts) may only import lib — fixtures are reached exclusively through src/api/client.ts. See src/fixtures/README.md.',
-            },
-            {
-              from: { element: { type: 'fixtures' } },
-              allow: { to: { element: { types: { anyOf: ['api', 'lib'] } } } },
-              message:
-                'fixtures/** may import api (types) and lib — never components, never pages. See src/fixtures/README.md.',
+              message: 'src/api/** may only import lib.',
             },
             {
               from: { element: { type: 'lib' } },
               allow: { to: { element: { types: { anyOf: ['lib', 'api'] } } } },
               message:
-                'lib/** is (almost) the bottom layer: lib and api only (src/lib/aiExport reaches src/api/client.ts for the shared fetch helper). Never components, pages or fixtures.',
+                'lib/** is (almost) the bottom layer: lib and api only (src/lib/aiExport reaches src/api/client.ts for the shared fetch helper). Never components or pages.',
             },
             {
               from: { element: { type: 'viz3d' } },
               allow: { to: { element: { types: { anyOf: ['viz3d', 'lib'] } } } },
               message:
-                'viz3d/** is case-agnostic: lib only (palette, urlstate, format, ui). Never api, ' +
-                'never components — a page maps API rows into a Scene3D and hands that in. See ' +
-                'src/viz3d/README.md.',
-            },
-            {
-              from: { element: { type: 'test' } },
-              allow: {
-                to: {
-                  element: {
-                    types: {
-                      anyOf: [
-                        'app',
-                        'pages',
-                        'components',
-                        'api',
-                        'fixtures',
-                        'lib',
-                        'test',
-                        'viz3d',
-                      ],
-                    },
-                  },
-                },
-              },
-              message: 'src/test/** may import anything.',
+                'viz3d/** is domain-agnostic: lib only (palette, urlstate, format, ui). Never ' +
+                'api, never components — a page maps API rows into a Scene3D and hands that in. ' +
+                'See src/viz3d/README.md.',
             },
           ],
         },
@@ -259,9 +217,8 @@ export default [
 
   // ---------------------------------------------------------------------------
   // "`fetch(` is only allowed in src/api/**" (app/README.md's stack table: client.ts
-  // owns the one fetch wrapper). Layered in three tiers because `no-restricted-syntax`
-  // holds one severity per rule instance and pages/JobsMonitor.tsx need selector sets
-  // that differ from the blanket one — each tier restates the FULL selector set for
+  // owns the one fetch wrapper). Layered in two tiers because `no-restricted-syntax`
+  // holds one severity per rule instance — each tier restates the FULL selector set for
   // its scope rather than relying on a later block to merge with an earlier one
   // (flat config replaces a rule wholesale per matching file, it does not merge arrays).
   // ---------------------------------------------------------------------------
@@ -280,20 +237,8 @@ export default [
     // the fetch ban (Header.tsx's health-dot useQuery is an intentional exception,
     // allowed simply by components/** never getting the useQuery selector).
     files: ['src/pages/**/*.{ts,tsx}'],
-    ignores: ['src/pages/probes/JobsMonitor.tsx'],
     rules: {
       'no-restricted-syntax': ['error', FETCH_RESTRICTION, USE_QUERY_RESTRICTION],
-    },
-  },
-  {
-    // Tier 3: src/pages/probes/JobsMonitor.tsx — documented exception. It only calls
-    // useQueryClient() (cache invalidation for the cancel button), never useQuery()
-    // directly, so today this override changes nothing observable; it stays explicit
-    // per the architecture note so a future switch to direct polling here doesn't
-    // silently need rediscovering. The fetch ban still applies.
-    files: ['src/pages/probes/JobsMonitor.tsx'],
-    rules: {
-      'no-restricted-syntax': ['error', FETCH_RESTRICTION],
     },
   },
 
@@ -360,17 +305,10 @@ export default [
   },
 
   {
-    // eslint-rules/**: node scripts, and the RuleTester test needs vitest globals. Both
-    // colour rules are off here — a rule that bans a hex has to contain one to test it.
+    // eslint-rules/**: node scripts. Both colour rules are off here — a rule that bans a
+    // hex has to contain one in its own source to match against.
     files: ['eslint-rules/**/*.js'],
-    languageOptions: { globals: { ...globals.node, ...globals.vitest } },
-  },
-
-  {
-    files: ['src/test/**', '**/*.test.{ts,tsx}'],
-    languageOptions: {
-      globals: { ...globals.browser, ...globals.node },
-    },
+    languageOptions: { globals: globals.node },
   },
   {
     // app-local gate scripts run in node, not the browser: `process`, `console`, `URL`.
@@ -378,7 +316,7 @@ export default [
     languageOptions: { globals: globals.node },
   },
   {
-    files: ['vite.config.ts', 'vitest.config.ts'],
+    files: ['vite.config.ts'],
     languageOptions: {
       globals: globals.node,
     },

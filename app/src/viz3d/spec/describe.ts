@@ -11,17 +11,15 @@
  * It is deterministic: same scene in, byte-identical description out, so a blessed export
  * hash does not churn.
  *
- * Numbers are formatted through `lib/format`, which groups thousands with commas. That is not
- * cosmetic: the repo's binding rule is that no genomic coordinate is ever exported, and a
- * grouped number can never present the bare 7–9 digit run a coordinate takes. Axes are
- * declared in bins/Mb/index units by the page for the same reason.
+ * Numbers are formatted through `lib/format`, which groups thousands with commas, so a long
+ * value reads as a quantity rather than as an opaque digit run.
  */
 
 import { compact, dec, int } from '../../lib/format';
 import { fieldValue, sceneDatums } from './datums';
 import type { Axes3D, Bounds3, ColorEncoding, Datum3D, Scene3D, SceneKind } from './types';
 
-/** Grouped, never a bare long digit run. See the module note above. */
+/** Grouped, never a bare long digit run. */
 export function num(n: number | null | undefined): string {
   if (n === null || n === undefined || !Number.isFinite(n)) return '—';
   if (Number.isInteger(n)) return int(n);
@@ -103,7 +101,6 @@ function colorWords(color: ColorEncoding): string {
 const KIND_NOUN: Record<SceneKind, string> = {
   surface: 'surface',
   points: 'point cloud',
-  karyotype: 'karyotype',
   protein: 'protein backbone',
 };
 

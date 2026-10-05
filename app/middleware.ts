@@ -20,7 +20,7 @@
  *
  * The gate is not the only check: `api/[...path].ts` verifies the session again before it
  * forwards anything upstream. Middleware alone is one deployment-config mistake away from
- * being skipped, and the proxy is the route that reaches patient data.
+ * being skipped, and the proxy is the route that reaches private data.
  */
 
 import { next } from '@vercel/functions';

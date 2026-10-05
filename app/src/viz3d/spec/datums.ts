@@ -2,9 +2,9 @@
  * Reading a `Scene3D` as a flat list of pickable datums, and reading a field off one.
  *
  * Every kind is ultimately a bag of `Datum3D`s: `points` and `protein` carry them directly,
- * `surface` and `karyotype` derive them from their grid/bars. Picking, the keyboard fallback,
- * the filters and the text description all work off this one list, so a new scene kind gets
- * all four by answering this function.
+ * `surface` derives them from its grid. Picking, the keyboard fallback, the filters and the
+ * text description all work off this one list, so a new scene kind gets all four by
+ * answering this function.
  */
 
 import type { Datum3D, Scene3D } from './types';
@@ -35,14 +35,6 @@ export function sceneDatums(scene: Scene3D): readonly Datum3D[] {
       });
       return out;
     }
-    case 'karyotype':
-      return scene.chromosomes.map((bar, index) => ({
-        id: bar.name,
-        label: bar.name,
-        at: [bar.length / 2, index, bar.copies] as const,
-        value: bar.copies,
-        meta: { length: bar.length, copies: bar.copies },
-      }));
   }
 }
 

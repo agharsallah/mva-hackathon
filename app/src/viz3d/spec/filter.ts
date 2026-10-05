@@ -38,19 +38,6 @@ export function filterScene(scene: Scene3D, keep: DatumPredicate): Scene3D {
         backbone: kept.map((k) => scene.backbone[k.index]),
       };
     }
-    case 'karyotype':
-      return {
-        ...scene,
-        chromosomes: scene.chromosomes.filter((bar, index) =>
-          keep({
-            id: bar.name,
-            label: bar.name,
-            at: [bar.length / 2, index, bar.copies],
-            value: bar.copies,
-            meta: { length: bar.length, copies: bar.copies },
-          }),
-        ),
-      };
     case 'surface':
       return {
         ...scene,

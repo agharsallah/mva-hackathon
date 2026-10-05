@@ -8,7 +8,7 @@
  * figure URLs come from a Vite glob so a new diagram in the markdown needs no code change.
  *
  * Nothing here knows about React or routes: a component maps blocks to elements, and the
- * Explainer links a term by its `slug` (`/learn#allele`).
+ * Explainer links a term by its `slug` (`/learn#<slug>`).
  */
 
 /** Where a relative `docs/...` path opens — the same base the generator rewrites links to. */

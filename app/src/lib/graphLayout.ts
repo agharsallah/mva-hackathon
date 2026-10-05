@@ -1,10 +1,9 @@
 /**
- * Levelled layout for a small directed graph, shared by every lineage view.
+ * Levelled layout for a small directed graph, shared by every lineage or flow view.
  *
- * The three lineage panels (`provenance`, `submissions`, `track2`) each hand-rolled the
- * same arithmetic with different constants, and a fourth caller was about to. The maths is
- * tiny and identical: nodes carry a level and a slot, levels march left to right, and each
- * level is centred vertically against the tallest one.
+ * Panels that draw a dependency graph each hand-rolled the same arithmetic with different
+ * constants. The maths is tiny and identical: nodes carry a level and a slot, levels march
+ * left to right, and each level is centred vertically against the tallest one.
  *
  * Geometry is a parameter rather than a constant because the three panels genuinely differ
  * — a node showing a file path needs more width than one showing a table name.

@@ -3,7 +3,7 @@
  *
  * Every control on this app is a *view* selection — which contig, which metric, 2D or 3D.
  * Held in `useState` those selections die on reload and cannot be linked to, which makes a
- * figure in the report unciteable: "open Genome, pick chr7, switch to 3D" is not a
+ * figure in the report unciteable: "open the page, pick a series, switch to 3D" is not a
  * reference. Held in the query string they survive reload, back/forward and copy-paste, and
  * one URL is a complete citation of one figure.
  *
@@ -164,9 +164,9 @@ export function useUrlText(key: string, fallback = '', delayMs = 300): [string, 
 /**
  * Fall back when a parameter names something the *loaded* options do not contain.
  *
- * Some vocabularies are not known until the API answers (the panel gene list). Until they
+ * Some vocabularies are not known until the API answers (a list the server owns). Until they
  * arrive the parameter is taken at face value; once they do, an unknown value reads as the
- * default rather than driving a query for a gene that does not exist.
+ * default rather than driving a query for a value that does not exist.
  */
 export function known<T extends string>(value: T, options: readonly T[], fallback: T): T {
   return options.length === 0 || options.includes(value) ? value : fallback;

@@ -1,18 +1,22 @@
 /**
  * A feature module is one page, described data-first instead of hand-wired into a
  * <Route> list. The manifest built from these descriptors is the single source of
- * truth that the router, the two-tier nav, the page header and the journey footer all
+ * truth that the router, the nav rows, the page header and the journey footer all
  * read, so none of them can drift apart.
  */
 
 import type { ComponentType } from 'react';
 
 /**
- * The five questions the app answers, in the order a reader should ask them. A page
- * belongs to exactly one; Overview belongs to none because it is the map of all five.
- * `learn` comes first because the other four are written in its words.
+ * The questions the app answers, in the order a reader should ask them. A page belongs to
+ * exactly one; the overview belongs to none, because it is the map of all of them.
+ * `learn` comes first because the other sections are written in its words.
+ *
+ * Adding a section is adding an id here plus an entry in `NAV_GROUPS` — and at least one
+ * page in the manifest that declares it, because a section with no pages has nothing to
+ * link to.
  */
-export type NavGroupId = 'learn' | 'data' | 'case' | 'decide' | 'platform';
+export type NavGroupId = 'learn' | 'platform';
 
 export interface NavGroup {
   id: NavGroupId;
@@ -24,40 +28,28 @@ export interface NavGroup {
 
 export const NAV_GROUPS: readonly NavGroup[] = [
   { id: 'learn', label: 'Learn', question: 'What do the words mean?' },
-  { id: 'data', label: 'Data', question: 'Is the measurement trustworthy?' },
-  { id: 'case', label: 'Case', question: 'Which gene, and which pair inside it, is causal?' },
-  {
-    id: 'decide',
-    label: 'Decide',
-    question: 'What do we believe, and what has it cost to find out?',
-  },
-  {
-    id: 'platform',
-    label: 'Platform',
-    question: 'What exists, where did it come from, and is it up?',
-  },
+  { id: 'platform', label: 'Platform', question: 'What is this app built from?' },
 ];
 
 export interface FeatureModule {
   /** Stable key: route key, error-boundary label, React key. Not shown to users. */
   id: string;
-  /** react-router path, exactly as registered today (e.g. '/', '/genome'). */
+  /** react-router path, exactly as registered today (e.g. '/', '/learn'). */
   path: string;
   /** Short label shown in the nav tab, verbatim. */
   navLabel: string;
   /** The page's h1 — a full phrase, where `navLabel` is one word. */
   title: string;
-  /** Which of the five questions this page serves. Omitted only for Overview, the map. */
+  /** Which question this page serves. Omitted only for the overview, the map. */
   group?: NavGroupId;
   /**
    * The page this one is a detail of, by `id`. A child stays in its parent's group and in
-   * the reading order, but the section row lists only the parent: `decide` had grown to
-   * twelve sibling tabs — seven of them one iteration's step pages — which is a list, not a
-   * navigation. A child appears in a third row, shown while the parent or one of its
-   * children is open.
+   * the reading order, but the section row lists only the parent — so a section that grows
+   * a subtree stays a navigation instead of becoming an inventory of every leaf. A child
+   * appears in a further row, shown while the parent or one of its children is open.
    */
   parent?: string;
-  /** One line under the h1 saying what the page shows. Also the Overview map's blurb. */
+  /** One line under the h1 saying what the page shows. Also the overview map's blurb. */
   description: string;
   /** Dynamic import of the page's default export — the existing code-split boundary. */
   load: () => Promise<{ default: ComponentType }>;

@@ -1,13 +1,8 @@
 /**
  * One fetch wrapper for the whole app.
  *
- * Every viz-API endpoint answers with the same envelope `{data, cached_at, source}`,
+ * Every backend endpoint answers with the same envelope `{data, cached_at, source}`,
  * so there is exactly one request function and every hook is a thin call on it.
- *
- * Fixture fallback: the API is built concurrently and may not be running. When a request
- * cannot reach the server at all (or the endpoint is not implemented yet), and fixtures
- * are enabled, we serve the committed fixture for that path and mark the app as running
- * on fixture data. Endpoints with no fixture (the reads-API job proxy) still raise.
  *
  * ## Two deployments, one code path
  *
@@ -15,7 +10,7 @@
  *
  * | Value | Where a request goes | Used by |
  * |---|---|---|
- * | unset | `http://127.0.0.1:8900` | local development, `uv run mva-viz-api` on the same machine |
+ * | unset | `http://127.0.0.1:8900` | local development, the API running on the same machine |
  * | `/` or `` | this page's own origin | the hosted dashboard, where Vercel's proxy forwards `/api/*` |
  *
  * The hosted build is the reason the second shape exists: an absolute URL in the bundle
@@ -24,7 +19,6 @@
  * on Vercel is what knows the real one, and it runs on the server.
  */
 
-import { fixtureFor } from '../fixtures';
 import type { Envelope, Health } from './types';
 
 /**
@@ -47,17 +41,11 @@ export const API_URL: string = apiBase(import.meta.env.VITE_API_URL);
 export const API_LABEL: string =
   API_URL || `${globalThis.location?.origin ?? 'this origin'} (proxied)`;
 
-export const FIXTURES_ENABLED: boolean = import.meta.env.VITE_USE_FIXTURES !== 'false';
-
-/** Where a given payload actually came from — surfaced next to every exhibit. */
-export type Origin = 'api' | 'fixture';
-
 export interface Result<T> {
   data: T;
   cachedAt: string | null;
   /** The API's own provenance string: the table, object or file behind these rows. */
   source: string;
-  origin: Origin;
 }
 
 export class ApiError extends Error {
@@ -70,7 +58,7 @@ export class ApiError extends Error {
     this.name = 'ApiError';
   }
 
-  /** 503 from the proxy means the upstream reads API is down — a state worth showing. */
+  /** 503 from the proxy means the upstream service is down — a state worth showing. */
   get isUpstreamDown(): boolean {
     return this.status === 503;
   }
@@ -100,9 +88,6 @@ function flagStore() {
   };
 }
 
-/** At least one exhibit on this session was served from a committed fixture. */
-export const fixtureModeStore = flagStore();
-
 /**
  * The API answered, and refused for want of a token.
  *
@@ -130,37 +115,16 @@ function buildUrl(path: string, params?: Params): string {
 }
 
 /**
- * True when the failure means "no server there", as opposed to "server said no".
- *
- * A cancelled fetch (AbortError) is deliberately NOT unreachable: react-query aborts the
- * first request of every StrictMode double-mount, and treating that as a dead API would
- * flip the whole app into fixture mode on a perfectly healthy server.
- */
-function isUnreachable(err: unknown): boolean {
-  if (err instanceof TypeError) return true;
-  // The hosted deployment never gets a TypeError for a dead backend: the browser reaches
-  // Vercel fine, and Vercel's proxy reports the failure as a status. 502 is "no server
-  // there", 504 "it did not answer in time" — both mean the same thing here, and both are
-  // codes only that proxy emits (`app/server/upstream.ts`). 503 is deliberately excluded:
-  // the reads-API job routes use it for "the upstream read store is down", which the
-  // Probes page shows on purpose rather than papering over with fixtures.
-  return err instanceof ApiError && (err.status === 502 || err.status === 504);
-}
-
-/**
  * True when this build of the app knows a path this server does not.
  *
  * A long-running API process predates the app that talks to it: a newly added endpoint
- * gets a 404 from the old process, and treating that as "the API answered no" left every
- * new page showing "Request failed / Not Found" until someone restarted the server. That
- * happened to /api/health/dependencies against an API started the day before.
+ * gets a 404 from the old process, and treating that as "the API answered no" leaves every
+ * new page showing "Request failed / Not Found" until someone restarts the server.
  *
  * The distinction is narrow on purpose. FastAPI answers an unrouted path with exactly
  * `{"detail": "Not Found"}`; an endpoint that looked and found nothing answers with its
- * own sentence ("no such gene", "shard 9 out of range"). Only the framework's default
- * text — and only when a fixture exists for the path — counts as "route missing". A real
- * 404 from a real endpoint still reaches the user, which is what /api/search and
- * /api/callset/region rely on.
+ * own sentence. Only the framework's default text counts as "route missing", so a real
+ * 404 from a real endpoint still reaches the user as the answer it is.
  */
 export function isRouteMissing(err: unknown): boolean {
   if (!(err instanceof ApiError)) return false;
@@ -168,49 +132,18 @@ export function isRouteMissing(err: unknown): boolean {
   return err.status === 404 && err.message.trim() === 'Not Found';
 }
 
-async function raw<T>(path: string, params?: Params, signal?: AbortSignal): Promise<Result<T>> {
-  const res = await fetch(buildUrl(path, params), {
-    signal,
-    headers: { accept: 'application/json' },
-  });
-  if (!res.ok) {
-    let detail = `${res.status} ${res.statusText}`;
-    try {
-      const body = (await res.json()) as { detail?: string };
-      if (body?.detail) detail = body.detail;
-    } catch {
-      /* non-JSON error body — keep the status line */
-    }
-    if (res.status === 401 || res.status === 403) unauthorizedStore.raise();
-    throw new ApiError(detail, res.status, path);
-  }
-  const body = (await res.json()) as Envelope<T>;
-  return { data: body.data, cachedAt: body.cached_at, source: body.source, origin: 'api' };
-}
-
 export async function get<T>(
   path: string,
   params?: Params,
   signal?: AbortSignal,
 ): Promise<Result<T>> {
-  try {
-    return await raw<T>(path, params, signal);
-  } catch (err) {
-    // Only "no server there" or "this server has no such route" falls back. A 404 the
-    // endpoint itself raised (unknown gene, unknown shard) or a 422 (bad lane) is the live
-    // API answering correctly and must reach the user as an error, not be papered over
-    // with fixture rows.
-    if (!FIXTURES_ENABLED || !(isUnreachable(err) || isRouteMissing(err))) throw err;
-    const fixture = await fixtureFor(path, params);
-    if (!fixture) throw err;
-    fixtureModeStore.raise();
-    return {
-      data: fixture.data as T,
-      cachedAt: fixture.cached_at,
-      source: fixture.source,
-      origin: 'fixture',
-    };
-  }
+  const res = await fetch(buildUrl(path, params), {
+    signal,
+    headers: { accept: 'application/json' },
+  });
+  await assertOk(res, path);
+  const body = (await res.json()) as Envelope<T>;
+  return { data: body.data, cachedAt: body.cached_at, source: body.source };
 }
 
 /**
@@ -231,9 +164,8 @@ async function assertOk(res: Response, path: string): Promise<void> {
 }
 
 /**
- * POST to the reads-API proxy. No fixture fallback: submitting a job needs a real server.
- * The proxy routes carry the same `{data, cached_at, source}` envelope as everything else,
- * so the upstream JobOut is unwrapped here and callers only ever see the job itself.
+ * POST to the API. The routes carry the same `{data, cached_at, source}` envelope as
+ * everything else, so the payload is unwrapped here and callers only ever see it.
  */
 export async function post<T>(path: string, body?: unknown): Promise<T> {
   const res = await fetch(buildUrl(path), {
@@ -245,7 +177,7 @@ export async function post<T>(path: string, body?: unknown): Promise<T> {
   return ((await res.json()) as Envelope<T>).data;
 }
 
-/** GET on a proxy route: enveloped like the rest, unwrapped to the upstream payload. */
+/** GET on a route whose payload is the whole answer: enveloped, unwrapped here. */
 export async function getBare<T>(path: string, params?: Params): Promise<T> {
   const res = await fetch(buildUrl(path, params), { headers: { accept: 'application/json' } });
   await assertOk(res, path);

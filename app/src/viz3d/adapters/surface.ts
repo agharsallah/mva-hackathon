@@ -3,7 +3,7 @@
  * sheet).
  *
  * Why quads and not an interpolated mesh: the data a `SurfaceGrid` carries in this repo is
- * *binned* — calls per megabase, mean quality per cycle. A smooth surface would invent values
+ * *binned* — events per bin, mean quality per cycle. A smooth surface would invent values
  * between bins and imply a continuity the measurement does not have. A cell with `z === null`
  * is dropped entirely rather than interpolated across, so "not measured" reads as a hole.
  *

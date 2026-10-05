@@ -2,9 +2,8 @@
  * `protein` -> a smooth tube through the backbone, plus one sphere per residue datum.
  *
  * Why 3D genuinely earns its place here: a 1D residue axis (the domain lollipop) answers
- * "which domain", but a compound heterozygote (two different broken copies of one gene, one
- * from each parent) turns on two questions a sequence axis cannot see — are the two alleles'
- * residues *spatially adjacent*, and does a residue sit on a partner interface.
+ * "which domain", but two questions a sequence axis cannot see — are two marked residues
+ * *spatially adjacent*, and does a residue sit on a partner interface — need the fold.
  *
  * The curve is sampled here, in plain TypeScript, rather than by `three.CatmullRomCurve3`:
  * the per-residue colour and the pick ranges are the part that must be correct, and keeping
@@ -105,8 +104,9 @@ function frames(centreline: readonly Vec3[]): { tangent: Vec3; normal: Vec3; bin
  * A `protein` scene's `backbone[i]` *is* `residues[i]`'s Cα — the index alignment
  * `spec/filter.ts` preserves when it trims — so that atom index is the residue index.
  *
- * The scan it replaces was O(samples x residues): 6,295 x 1,050 ~= 6.6 M distance evaluations
- * for BUB1B, each allocating a `Vec3`, redone on every recolour and every filter toggle.
+ * The scan it replaces was O(samples x residues): for a 1,050-residue chain that is 6,295 x
+ * 1,050 ~= 6.6 M distance evaluations, each allocating a `Vec3`, redone on every recolour and
+ * every filter toggle.
  *
  * A scene whose two arrays are *not* index-aligned carries no such mapping (nothing says which
  * residue an atom belongs to), so it keeps the nearest-neighbour scan and stays correct.

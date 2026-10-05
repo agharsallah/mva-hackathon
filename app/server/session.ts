@@ -11,7 +11,7 @@
  * whole session, and it is trustworthy because forging one means forging the HMAC.
  *
  * ```
- *   cookie   mva_dash=1757260800.k7Qf...T4
+ *   cookie   dash_session=1757260800.k7Qf...T4
  *                     └─ expiry ─┘ └ signature ┘
  *   key      DASHBOARD_SESSION_SECRET + ":" + DASHBOARD_PASSWORD
  *   message  "v1:1757260800"
@@ -25,7 +25,7 @@
  *
  * One shared password, so a session identifies "someone who knew the password", never a
  * person — there is no user, no role and no audit trail of who looked at what. That is the
- * right level for a hackathon dashboard shown to judges and wrong for anything else.
+ * right level for a small private dashboard and wrong for anything else.
  *
  * Two comparisons here are constant-time ({@link timingSafeEqual}). A plain `===` returns
  * as soon as two characters differ, so its duration leaks how much of a guess was correct.
@@ -34,7 +34,7 @@
 /** How long a login lasts. Short enough that a borrowed laptop stops working by morning. */
 export const SESSION_TTL_SECONDS = 12 * 60 * 60;
 
-export const COOKIE_NAME = 'mva_dash';
+export const COOKIE_NAME = 'dash_session';
 
 /** The signed-message version, so the format can change without accepting old cookies. */
 const VERSION = 'v1';

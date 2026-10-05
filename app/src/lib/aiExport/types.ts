@@ -5,8 +5,6 @@
  * the exported document says what a figure means before it shows the numbers behind it.
  */
 
-import type { Origin } from '../../api/client';
-
 export interface ExhibitRecord {
   /** Route pathname the exhibit was mounted on — the export's page scope. */
   page: string;
@@ -15,17 +13,15 @@ export interface ExhibitRecord {
   reading?: string;
   source?: string;
   cachedAt?: string | null;
-  origin?: Origin;
   /** The endpoint payload behind the exhibit, or undefined when none was wired. */
   data?: unknown;
 }
 
-/** One endpoint of the whole-case bundle, fetched or failed. */
+/** One endpoint of a multi-endpoint bundle, fetched or failed. */
 export interface EndpointRecord {
   path: string;
   source?: string;
   cachedAt?: string | null;
-  origin?: Origin;
   data?: unknown;
   error?: string;
 }

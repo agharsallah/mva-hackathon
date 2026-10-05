@@ -66,7 +66,7 @@ const wall = () => (themeStore.get() === 'light' ? 'rgba(0,0,0,0.03)' : 'rgba(25
 
 /**
  * A translucent band drawn on the plot background (e.g. the tolerance band around 0.5 on the
- * allele-balance screen): a barely-there lift that has to darken a light page and lighten a
+ * a density screen): a barely-there lift that has to darken a light page and lighten a
  * dark one, so it is read from the theme at layout-build time like `scene3d`'s wall.
  */
 export function bandTint(): string {

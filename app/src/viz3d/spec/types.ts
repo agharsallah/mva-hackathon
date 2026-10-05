@@ -1,17 +1,17 @@
 /**
  * The whole public data contract of `viz3d`.
  *
- * A page supplies **data**, never three.js code: it maps this case's API rows into a
- * `Scene3D` and hands that in. Nothing in this folder knows what a `DensityBinRow` is, which
- * is the property that makes the module transferable to another N-of-1 case — a new case adds
- * a `Scene3D` variant plus an adapter, and nothing else.
+ * A page supplies **data**, never three.js code: it maps its own API rows into a `Scene3D`
+ * and hands that in. Nothing in this folder knows what any one domain's row type is, which
+ * is the property that makes the module transferable — a new domain adds a `Scene3D`
+ * union member plus an adapter, and nothing else.
  *
  * Layer edge: `viz3d` imports `lib` only (palette, urlstate, format). Never `api`.
  */
 
 import type { Colorscale, Tone } from '../../lib/palette';
 
-/** A point in the scene's own units (bins, megabases, Ångström, index). */
+/** A point in the scene's own units (bins, Ångström, residue index, arbitrary units). */
 export type Vec3 = readonly [number, number, number];
 
 export interface Bounds3 {
@@ -20,11 +20,11 @@ export interface Bounds3 {
 }
 
 export interface AxisSpec {
-  /** Axis title in the reader's words ('megabase', 'flowcell tile', 'residue index'). */
+  /** Axis title in the reader's words ('residue index', 'bin', 'score'). */
   label: string;
   /** Unit, for the legend and the text description. */
   unit?: string;
-  /** Tick labels when the axis is ordinal (chromosome names, partitions). */
+  /** Tick labels when the axis is ordinal (category names, partitions). */
   categories?: readonly string[];
 }
 
@@ -43,7 +43,7 @@ export interface Axes3D {
  */
 export interface NumericEncoding {
   id: string;
-  /** Words for the control and the legend ('calls per megabase'). */
+  /** Words for the control and the legend ('contacts per residue'). */
   label: string;
   kind: 'numeric';
   field: string;
@@ -62,7 +62,7 @@ export interface CategoricalEncoding {
   field: string;
   /** Category value -> tone. A value not in the map is drawn in `C.unmeasured`. */
   tones: Readonly<Record<string, Tone>>;
-  /** Legend words for the whole encoding ('one colour per consequence class'). */
+  /** Legend words for the whole encoding ('one colour per class'). */
   means: string;
 }
 
@@ -80,7 +80,7 @@ export interface Datum3D {
   size?: number;
   /** Which toggleable layer this datum belongs to (see `SceneBase.layers`). */
   layer?: string;
-  /** Extra facts for the tooltip, the filters and the AI export. Never a coordinate. */
+  /** Extra facts for the tooltip, the filters and the AI export. */
   meta?: Readonly<Record<string, string | number | null>>;
 }
 
@@ -89,15 +89,6 @@ export interface SurfaceGrid {
   y: readonly (number | string)[];
   /** `z[yIndex][xIndex]`; `null` = not measured (drawn flat in `C.unmeasured`). */
   z: readonly (readonly (number | null)[])[];
-}
-
-export interface ChromosomeBar {
-  name: string;
-  /** In the axis's own unit (Mb/bins) — never a patient position. */
-  length: number;
-  /** The aneuploidy signal: 1, 2, 3… */
-  copies: number;
-  bands?: readonly { from: number; to: number; value: number }[];
 }
 
 /** A drawn relationship between two datums — e.g. the distance between two picked residues. */
@@ -125,14 +116,13 @@ export interface SceneBase {
   encodings?: readonly ColorEncoding[];
   layers?: readonly SceneLayer[];
   links?: readonly SceneLink[];
-  /** Unit for a link label and for spatial prose ('Å', 'Mb'). */
+  /** Unit for a link label and for spatial prose ('Å', 'nm'). */
   unit?: string;
 }
 
 export type Scene3D =
   | (SceneBase & { kind: 'surface'; grid: SurfaceGrid })
   | (SceneBase & { kind: 'points'; points: readonly Datum3D[]; radius?: number })
-  | (SceneBase & { kind: 'karyotype'; chromosomes: readonly ChromosomeBar[] })
   | (SceneBase & {
       kind: 'protein';
       backbone: readonly Vec3[];

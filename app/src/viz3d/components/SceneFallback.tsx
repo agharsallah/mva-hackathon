@@ -10,11 +10,11 @@
  * **Every datum is reachable.** A page-worth is rendered at a time, and the reader can walk to
  * the end with the *show next* button — a real control, not the "filter the scene" advice this
  * used to give (a protein exhibit deliberately renders no filter panel, so that advice named a
- * control that did not exist and left 990 of BUB1B's 1,050 residues off the keyboard path).
+ * control that did not exist and left most of a long chain's residues off the keyboard path).
  *
  * The order is not the scene's: **highlighted datums first, then the ones carrying an explicit
- * tone** — a candidate allele, a verdict the page has already decided — then the rest in scene
- * order. So the datums a reader came for are on the first page whatever their residue index.
+ * tone** — a candidate, a verdict the page has already decided — then the rest in scene order.
+ * So the datums a reader came for are on the first page whatever their index.
  */
 
 import { useState } from 'react';

@@ -36,19 +36,19 @@ export function classifyError(error: Error): Failure {
   if (api?.isUpstreamDown) {
     return {
       kind: 'upstream-down',
-      title: 'The reads service is not answering',
+      title: 'An upstream service is not answering',
       explain:
-        'The viz API is up, but the service that reads the raw sequencing data behind it did not respond. Everything that does not need raw reads keeps working.',
-      remedy: 'Check the reads API on the Status page; its card names the remedy.',
+        'The API is up, but a service behind it did not respond. Everything that does not need that service keeps working.',
+      remedy: 'Check the dependency status in the footer; its card names the remedy.',
     };
   }
   // Two different 404s, and telling a reader the wrong one costs them the whole debugging
   // session. `isRouteMissing` is the narrow one the fetch layer already uses: FastAPI's own
   // `{"detail": "Not Found"}` for a path nothing routes, which really does mean the process
   // predates this build. An endpoint that ran and found nothing answers with its own
-  // sentence ("no structure gene 'BUB1B'"), and telling that reader to restart the API sends
-  // them to fix a server that is working. Seen for real: an API started from `app/` resolved
-  // every repo-relative reference path to nothing, and the fold page blamed a stale process.
+  // sentence ("no such record"), and telling that reader to restart the API sends them to
+  // fix a server that is working. Seen for real: an API started from the wrong directory
+  // resolved every repo-relative reference path to nothing, and a page blamed a stale process.
   if (isRouteMissing(error)) {
     return {
       kind: 'route-missing',
@@ -56,7 +56,6 @@ export function classifyError(error: Error): Failure {
       explain:
         'The API process is older than this app: this page asks for a route that was added after it started.',
       remedy: 'Restart the API so it picks up the new routes.',
-      command: 'uv run mva-viz-api',
     };
   }
   if (api?.status === 404) {
@@ -65,12 +64,12 @@ export function classifyError(error: Error): Failure {
       title: 'The API has no data for this selection',
       explain: `The endpoint answered, and nothing matched: ${api.message}`,
       remedy:
-        'Pick another selection above. If this one should exist, the reference table behind it may not be built — the Status and Provenance pages say which files the API actually loaded.',
+        'Pick another selection above. If this one should exist, the table behind it may not be built — the dependency status says which inputs the API actually loaded.',
     };
   }
   // Before the generic 4xx: a 401 is not a bad parameter, and reading it as one sent the
   // reader off to change a selection that was never the problem. It means this build is
-  // talking to an API that requires `MVA_VIZ_TOKEN`, and a browser has no way to hold that
+  // talking to an API that requires an API key, and a browser has no way to hold that
   // token — only the server-side proxy does. Seen for real: a dev build pointed straight at
   // the deployed API answered 401 on every panel while the header still said "API up",
   // because `/health` is deliberately unauthenticated.
@@ -79,10 +78,9 @@ export function classifyError(error: Error): Failure {
       kind: 'unauthorized',
       title: 'This API needs a token, and a browser cannot hold one',
       explain:
-        'The API answered, but refused without a valid X-API-Key. Only the hosted deployment can send it — the token lives in the Vercel proxy, never in the bundle, which is the whole point of it.',
+        'The API answered, but refused without a valid X-API-Key. Only the hosted deployment can send it — the token lives in the server-side proxy, never in the bundle, which is the whole point of it.',
       remedy:
         'Point this build at a local API instead (leave VITE_API_URL unset), or run the proxy locally with `vercel dev`. Never put the token in VITE_API_URL or any VITE_ variable — Vite inlines those into the bundle.',
-      command: 'uv run mva-viz-api',
     };
   }
   if (api && api.status >= 400 && api.status < 500) {
@@ -99,7 +97,7 @@ export function classifyError(error: Error): Failure {
       kind: 'server-fault',
       title: 'The API failed while answering',
       explain: 'The API accepted the request and then hit an error of its own.',
-      remedy: 'The API log has the traceback. The Status page shows whether a dependency is down.',
+      remedy: 'The API log has the traceback. The dependency status shows whether one is down.',
     };
   }
   if (error.name === 'AbortError') {
@@ -115,9 +113,8 @@ export function classifyError(error: Error): Failure {
       kind: 'unreachable',
       title: `No API answered at ${API_LABEL}`,
       explain:
-        'Either the viz API is not running, or the browser blocked the request (a CORS refusal looks identical from here; the console has the reason).',
-      remedy: 'Start the API, or leave VITE_USE_FIXTURES unset to browse the committed fixtures.',
-      command: 'uv run mva-viz-api',
+        'Either the API is not running, or the browser blocked the request (a CORS refusal looks identical from here; the console has the reason).',
+      remedy: 'Start the API, or point VITE_API_URL at one that is running.',
     };
   }
   return {

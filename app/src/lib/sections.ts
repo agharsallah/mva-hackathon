@@ -23,7 +23,7 @@ function bump(): void {
   listeners.forEach((fn) => fn());
 }
 
-/** "Which candidate genes have evidence?" → "which-candidate-genes-have-evidence". */
+/** "Which inputs have evidence?" → "which-inputs-have-evidence". */
 export function slugify(title: string): string {
   return title
     .toLowerCase()

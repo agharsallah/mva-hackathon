@@ -24,8 +24,8 @@ export function pagesIn(group: NavGroupId): FeatureModule[] {
 /**
  * Pages in one group that are not a detail of another page — what the section row lists.
  *
- * The reading order (`journey`, `neighbours`) still walks every page: a step detail is part
- * of the journey, it is just not a peer of `Science` or `Submissions` in the tab row.
+ * The reading order (`journey`, `neighbours`) still walks every page: a detail page is part
+ * of the journey, it is just not a peer of its parent in the tab row.
  */
 export function topLevelIn(group: NavGroupId): FeatureModule[] {
   return pagesIn(group).filter((m) => !m.parent);
@@ -43,13 +43,13 @@ export function groupEntry(group: NavGroupId): FeatureModule {
   return first;
 }
 
-/** Every grouped page in journey order — the reading path from Reads to Style. */
+/** Every grouped page in journey order — the whole reading path, first page to last. */
 export function journey(): FeatureModule[] {
   return modules.filter((m) => m.group !== undefined);
 }
 
 /**
- * The page before and after `m` on the journey. Overview has no previous page and its
+ * The page before and after `m` on the journey. The overview has no previous page and its
  * next page is the start of the journey; the last page has no next.
  */
 export function neighbours(m: FeatureModule): {

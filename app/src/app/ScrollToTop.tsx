@@ -5,7 +5,7 @@
  * content they never asked for.
  *
  * Skipped when the new location carries a `hash`: that is a deep link to a specific
- * anchor (`/learn#allele`, `/provenance#reference`) and the target page (or the browser,
+ * anchor (`/learn#<slug>`) and the target page (or the browser,
  * on a fresh load) is responsible for scrolling to it — see `Learn.tsx`'s own
  * hash-driven `scrollIntoView`. Forcing the top here would fight that.
  */

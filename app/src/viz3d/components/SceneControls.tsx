@@ -3,8 +3,8 @@
  * filters, reset. Built to drop into an `Exhibit`'s `controls` slot, or above the canvas.
  *
  * It renders whatever the *scene* declared — `encodings`, `layers`, and the fields
- * `useSceneExplorer` classified out of `Datum3D.meta`. Nothing here names a gene, a
- * chromosome or a metric, which is the property that lets another case reuse it unchanged.
+ * `useSceneExplorer` classified out of `Datum3D.meta`. Nothing here names a domain entity
+ * or a metric, which is the property that lets another problem reuse it unchanged.
  *
  * Why the little `<select>`/`<button>` primitives are re-implemented here rather than
  * imported from `src/components/Controls.tsx`: `viz3d` may import `lib` only (see

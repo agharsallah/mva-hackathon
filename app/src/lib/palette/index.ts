@@ -29,16 +29,6 @@
  * (`local/no-builtin-tailwind-color`) — the semantic families are the only way in.
  */
 
-export {
-  balanceColor,
-  impactColor,
-  impactTone,
-  jobStateTone,
-  oeVerdictColor,
-  oeVerdictTone,
-  verdictColor,
-  verdictTone,
-} from './encode';
 export { type Family, RAMP, type Shade, SHADES } from './ramps.generated';
 export {
   type Colorscale,
@@ -134,7 +124,7 @@ export const C = {
     return live().chrome[700];
   },
   /** The blue stop inside `DENSITY_SCALE` — reused verbatim wherever legend prose spells out
-   * the "dark → blue → purple" ramp inline (BAF karyogram, density bins, karyotype, flowcell). */
+   * the "dark → blue → purple" ramp inline. */
   get densityBlue(): string {
     return live().machinery[700];
   },

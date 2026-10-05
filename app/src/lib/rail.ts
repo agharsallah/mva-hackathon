@@ -1,12 +1,12 @@
 /**
  * Whether the "On this page" rail is open. One store rather than component state because
  * two components need it — the rail itself and the page frame whose grid column it sits in —
- * and because the choice is remembered across pages and reloads (localStorage `mva.rail`).
+ * and because the choice is remembered across pages and reloads (localStorage `app.rail`).
  */
 
 import { useSyncExternalStore } from 'react';
 
-const KEY = 'mva.rail';
+const KEY = 'app.rail';
 const listeners = new Set<() => void>();
 
 function read(): boolean {

@@ -1,8 +1,8 @@
 /**
- * The API proxy — every `/api/*` request the dashboard makes, forwarded to `mva-viz-api`.
+ * The API proxy — every `/api/*` request the dashboard makes, forwarded to the backend.
  *
  * The browser must never learn where the backend is. Before this, the bundle carried
- * `VITE_API_URL` and the browser opened a connection straight to `mva-viz-api`, which put
+ * `VITE_API_URL` and the browser opened a connection straight to the backend, which put
  * the API's hostname, its port and (once it had one) its token in devtools for anyone who
  * got past the password. Now the only address in the bundle is this origin's own.
  *
@@ -23,9 +23,9 @@
  * ## It re-checks the session
  *
  * `middleware.ts` already refused an unauthenticated request, and this checks again anyway.
- * This is the one route that reaches patient data; a matcher edited wrongly, or a future
+ * This is the one route that reaches private data; a matcher edited wrongly, or a future
  * change in how Vercel orders routing, must not be the only thing standing between the
- * public and `/api/panel/locus`.
+ * public and every data route.
  */
 
 import { hasSession } from '../server/session';
@@ -52,7 +52,7 @@ export function safeUpstreamPath(raw: string | null): string | null {
 /**
  * The request's own query, minus the routing parameter.
  *
- * `?gene=BUB1B` must survive; `?upstream=` is this layer's plumbing and would be an
+ * `?id=42` must survive; `?upstream=` is this layer's plumbing and would be an
  * unknown parameter to FastAPI.
  */
 export function forwardedSearch(url: URL): string {

@@ -5,28 +5,7 @@ coverage
 # generated lockfile — pnpm owns its formatting
 pnpm-lock.yaml
 
-# Generated structure fixtures — `tools/build_protein_fixture.py` owns their formatting.
-# They are machine-written reference data (one real AlphaFold trace and one real Ensembl
-# exon/domain track per gene) and are never hand-edited. Prettier puts one key per line,
-# which inflates a 1,050-residue trace by ~30 % and turns every regeneration into a
-# thousands-of-lines diff nobody can read. Same reason pnpm owns its lockfile above.
-src/fixtures/data/protein
-src/fixtures/data/gene-structure
-src/fixtures/data/panel-structure-genes.json
-
 # Generated from docs/dictionary.md by `tools/gen-dictionary.mjs` — the markdown is the source,
 # `pnpm dictionary:check` compares these byte-for-byte, so prettier must not rewrite them.
 src/lib/dictionary/dictionary.generated.json
 src/lib/dictionary/assets
-
-# The captured /api/track2 reply: 3,859 drug-target rows, 748 trials, 277 targets, plus the
-# step-7 enrichment (432 ladder rows, 61 shortlist rows and 10,770 paediatric registry rows).
-# Prettier's one-key-per-line would triple the file and turn every recapture into an
-# unreadable diff. Machine-written, never hand-edited — same reason as the structure fixtures.
-src/fixtures/data/track2.json
-
-# Generated from the step maps by `uv run python tools/gen_steps_nav.py` — the maps in
-# `src/mva/science/step_maps/` are the source, and `pnpm steps-nav:check` compares these
-# byte-for-byte, so prettier must not rewrite them. Same contract as the dictionary above.
-src/app/modules/steps.generated.ts
-src/pages/steps/bodies.generated.ts

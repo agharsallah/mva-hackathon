@@ -65,7 +65,7 @@ export interface SetGeometryOptions {
 export interface Viewer {
   /**
    * Swap the geometry. **The camera is only refitted when the scene's box changed** (a
-   * different residue window, a different gene, a filter that drops datums). A recolour, a
+   * different residue window, a different subject, a filter that drops datums). A recolour, a
    * highlight or a de-emphasis pass produces the same box, and refitting on those threw away
    * the reader's orbit on every chip toggle. Pass `{ refit: true }` to force one.
    */
@@ -80,7 +80,7 @@ export interface Viewer {
    * Start or stop the render loop.
    *
    * A page may now mount several canvases at once (the side-by-side protein comparison mounts
-   * two beside the single-gene explorer), and every one of them holds its own WebGL context
+   * two side by side in a comparison), and every one of them holds its own WebGL context
    * and its own `requestAnimationFrame` chain. Pausing the ones nobody is looking at is what
    * keeps that page affordable — measured on headless software WebGL, three simultaneous
    * always-on contexts starved the renderer badly enough that navigating away from the page

@@ -1,7 +1,7 @@
 /**
  * `GET /health` — the backend's liveness probe, behind the same proxy as everything else.
  *
- * The header's status dot calls `/health`, and on `mva-viz-api` that path sits *outside*
+ * The header's status dot calls `/health`, and on the backend that path sits *outside*
  * `/api` (it is the one route with no token guard, so an uptime probe carries no secret).
  * The catch-all proxy only matches `/api/*`, so `vercel.json` rewrites `/health` here and
  * this file maps it back to the upstream `/health`.
@@ -21,7 +21,7 @@ export default async function handler(request: Request): Promise<Response> {
 
   const reply = await forward(request, env, '/health');
   if (reply.ok) return reply;
-  return new Response(JSON.stringify({ ok: false, service: 'mva-viz-api' }), {
+  return new Response(JSON.stringify({ ok: false, service: 'api' }), {
     status: 200,
     headers: { 'content-type': 'application/json', ...NO_STORE },
   });

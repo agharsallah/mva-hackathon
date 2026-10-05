@@ -42,5 +42,3 @@ export function iso(s: string | number | null | undefined): string {
   }
   return s.replace('T', ' ').replace(/(\.\d+)?(Z|[+-]\d\d:\d\d)?$/, '');
 }
-
-export const mb = (n: number): string => `${(n / 1e6).toFixed(1)} Mb`;
