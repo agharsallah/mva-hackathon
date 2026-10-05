@@ -24,10 +24,10 @@ A **platform, stripped of its previous case**. The MVA genomics work was removed
 
 | Package | What it is |
 |---|---|
-| [`src/mva/io/`](src/mva/io/README.md) | Parsers for plain-text tool output — header-first TSVs with rollup lines, `##`-sectioned files — plus the TSV/JSON writers. Missing values become `None`, never exceptions. |
-| [`src/mva/render/`](src/mva/render/README.md) | The shared visual language: exhibit/section primitives, the report shell, the one palette. Subject-agnostic. |
-| [`src/mva/viz/`](src/mva/viz/README.md) | The FastAPI shell: app factory, bearer-token auth, disk cache, the `{data, cached_at, source}` envelope, an upstream proxy, the uvicorn entrypoint. Serves the React app. No routers yet. |
-| [`src/mva/zoo/`](src/mva/zoo/README.md) | The model-lane contract: a TOML registry of frozen third-party models, the tier-3 Modal wire contract, the GPU spend ledger. Nothing is trained. The roster is empty. |
+| [`src/sepiq/io/`](src/sepiq/io/README.md) | Parsers for plain-text tool output — header-first TSVs with rollup lines, `##`-sectioned files — plus the TSV/JSON writers. Missing values become `None`, never exceptions. |
+| [`src/sepiq/render/`](src/sepiq/render/README.md) | The shared visual language: exhibit/section primitives, the report shell, the one palette. Subject-agnostic. |
+| [`src/sepiq/viz/`](src/sepiq/viz/README.md) | The FastAPI shell: app factory, bearer-token auth, disk cache, the `{data, cached_at, source}` envelope, an upstream proxy, the uvicorn entrypoint. Serves the React app. No routers yet. |
+| [`src/sepiq/zoo/`](src/sepiq/zoo/README.md) | The model-lane contract: a TOML registry of frozen third-party models, the tier-3 Modal wire contract, the GPU spend ledger. Nothing is trained. The roster is empty. |
 | [`app/`](app/) | The React dashboard, stripped to its shell: router, components, theme, the `/learn` dictionary, and `viz3d` — the 3D structure viewer, which Track B needs. |
 
 **No science has been done yet. The dataset is not downloaded.** Say so rather than implying
@@ -77,19 +77,21 @@ otherwise.
 
 ## Code structure
 
-- No module longer than 400 lines (600 for a test module). When a file approaches the limit,
+- No module longer than 400 lines. When a file approaches the limit,
   split it into domain-driven modules — one bounded concern each — instead of growing it.
   Enforced: `uv run python tools/check_module_size.py`.
 - Favour reusability: extract shared logic rather than duplicating it.
-- Respect the layering in [`src/mva/README.md`](src/mva/README.md): `io` and `render` are leaves
-  and import no sibling; nothing outside `mva.viz` may import it. Enforced: `uv run lint-imports`.
+- Respect the layering in [`src/sepiq/README.md`](src/sepiq/README.md): `io` and `render` are leaves
+  and import no sibling; nothing outside `sepiq.viz` may import it. Enforced: `uv run lint-imports`.
 
 ## Quality gates
 
-- Do not run slow or expensive checks locally. Do not write slow tests. Write only robust tests
-  that are meaningful and necessary.
+- Do not run slow or expensive checks locally.
+- **There is no test suite on this branch, and none is to be written unless asked for.**
 - Before pushing Python, run `tools/check-python.sh` (`--fix` to format and autofix first). It
-  runs the five gates CI runs: ruff format, ruff lint, module size, import layering, mypy, pytest.
+  runs the five gates CI runs: ruff format, ruff lint, module size, import layering, mypy. They
+  are static analysis only — green means it parses, type-checks and respects the layering, not
+  that it does the right thing. Say so wherever the gates are quoted as evidence.
   Why each rule sits where it does — and what to do when one fails — is owned by
   [`docs/notes/python-quality-gates.md`](docs/notes/python-quality-gates.md).
 - A gate that is wrong for a change gets **fixed**, and the reason recorded in that note. Never

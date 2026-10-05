@@ -13,20 +13,20 @@ page to read before writing a new script.
 
 ## 1. Python packages
 
-Full detail in [`src/mva/README.md`](../src/mva/README.md) and each package's own README.
+Full detail in [`src/sepiq/README.md`](../src/sepiq/README.md) and each package's own README.
 
 | Need | Reach for | Entry point |
 |---|---|---|
-| Parse a TSV a tool emitted, with rollup lines and `#` comments | `mva.io.read_table` | library |
-| Parse a `##`-sectioned text file | `mva.io.read_sections` | library |
-| Write a step's rows / numbers to disk | `mva.io.write_tsv`, `write_json` | library |
-| Make a figure that matches every other figure | `mva.render` — `Exhibit`, `Section`, the palette | library |
-| Assemble figures into one self-contained HTML page | `mva.render.report` | library |
-| Run a third-party model as a comparable lane | `mva.zoo` — registry, adapter protocol, tiers | library |
-| Spend GPU money with a record of it | `mva.zoo.modal_budget` + `tools/modal_trace.py` | both |
-| Serve data to the React app | `mva.viz` | `mva-api` |
-| Read a config knob | `mva.settings.setting()` | library |
-| Resolve a repo-relative path from any cwd | `mva.paths.resolve()` / `anchor_cwd()` | library |
+| Parse a TSV a tool emitted, with rollup lines and `#` comments | `sepiq.io.read_table` | library |
+| Parse a `##`-sectioned text file | `sepiq.io.read_sections` | library |
+| Write a step's rows / numbers to disk | `sepiq.io.write_tsv`, `write_json` | library |
+| Make a figure that matches every other figure | `sepiq.render` — `Exhibit`, `Section`, the palette | library |
+| Assemble figures into one self-contained HTML page | `sepiq.render.report` | library |
+| Run a third-party model as a comparable lane | `sepiq.zoo` — registry, adapter protocol, tiers | library |
+| Spend GPU money with a record of it | `sepiq.zoo.modal_budget` + `tools/modal_trace.py` | both |
+| Serve data to the React app | `sepiq.viz` | `sepiq-api` |
+| Read a config knob | `sepiq.settings.setting()` | library |
+| Resolve a repo-relative path from any cwd | `sepiq.paths.resolve()` / `anchor_cwd()` | library |
 
 ---
 
@@ -42,7 +42,7 @@ Full detail in [`src/mva/README.md`](../src/mva/README.md) and each package's ow
 | `tools/xlsx_to_md.py` | An `.xlsx` (an organiser's form, usually) as readable Markdown. | `uv run python tools/xlsx_to_md.py <file>` |
 | `tools/setup-env.sh` | First-run environment setup. | `sh tools/setup-env.sh` |
 | `tools/setup-git.sh` | Wires the husky hooks and the commit template. | `sh tools/setup-git.sh` |
-| `tools/setup-viz-api-service.sh` | Installs `mva-api` as a long-running service. | see the file |
+| `tools/setup-viz-api-service.sh` | Installs `sepiq-api` as a long-running service. | see the file |
 | `tools/activate.sh` | Shell helper for the uv environment. | `. tools/activate.sh` |
 | `tools/extract-rules.sh` | Pulls the repo's own rules out of the docs. | `sh tools/extract-rules.sh` |
 
@@ -107,4 +107,4 @@ Use **pnpm**, never npm.
 | A test suite | Removed with the previous case; nothing new is built yet. |
 | A hypothesis register | This challenge is scored against a held-out answer key, not on pre-registered predictions. |
 | Any model | The zoo roster is empty. Choosing lanes is a decision with evidence behind it, not a default. |
-| A data-ingest package | The first real thing to write. It becomes a new leaf package in `src/mva/`. |
+| A data-ingest package | The first real thing to write. It becomes a new leaf package in `src/sepiq/`. |

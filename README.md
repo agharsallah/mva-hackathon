@@ -35,7 +35,7 @@ uv sync
 tools/check-python.sh          # the five static gates; --fix to format first
 
 # The HTTP API (serves the dashboard; wires no routes yet)
-uv run mva-api                 # 127.0.0.1:8900
+uv run sepiq-api                 # 127.0.0.1:8900
 
 # The dashboard — pnpm only, never npm
 cd app && pnpm install && pnpm run dev
@@ -48,7 +48,7 @@ Hooks and the commit convention: `sh tools/setup-git.sh`, then
 
 ```
 docs/        challenge statement, toolset, dictionary, decision notes  → docs/README.md
-src/mva/     io · render · zoo · viz                                   → src/mva/README.md
+src/sepiq/     io · render · zoo · viz                                   → src/sepiq/README.md
 app/         the React dashboard (shell + 3D structure viewer)
 tools/       the gates, the report renderers, the Modal tracer         → docs/toolset.md
 data/        raw (ignored) · parquet (ignored) · manifests (committed) → data/README.md
@@ -62,7 +62,7 @@ is the front door and does not duplicate it.
 Two things are being built at once: a solution to this challenge, and a toolset that
 transfers to the next one. That is why `io`, `render`, `zoo` and `viz` carry no challenge
 vocabulary, and why the enforced package layering
-([`src/mva/README.md`](src/mva/README.md)) matters more than it would in a one-off.
+([`src/sepiq/README.md`](src/sepiq/README.md)) matters more than it would in a one-off.
 
 Three rules shape everything written here:
 

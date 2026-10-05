@@ -24,11 +24,11 @@ DEFAULTS = {
     "RAW_DIR": "data/raw",
     "PARQUET_DIR": "data/parquet",
     "MANIFEST_DIR": "data/manifests",
-    # The HTTP service in `mva.viz`.
+    # The HTTP service in `sepiq.viz`.
     "API_TOKEN": "",
     "API_CORS": "http://localhost:5173,http://127.0.0.1:5173",
     "API_CACHE": "build/api-cache",
-    # Optional upstream a job-shaped verb is forwarded to (see `mva.viz.proxy`).
+    # Optional upstream a job-shaped verb is forwarded to (see `sepiq.viz.proxy`).
     "UPSTREAM_URL": "",
 }
 

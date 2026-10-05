@@ -1,8 +1,8 @@
 """The tier-3 contract: what the laptop sends a Modal GPU lane, and what comes back.
 
-Pinned here so both halves import one definition: :mod:`mva.zoo.adapters.modal_gpu` (the
+Pinned here so both halves import one definition: :mod:`sepiq.zoo.adapters.modal_gpu` (the
 laptop side, which never imports ``modal`` at module level) and every app under
-:mod:`mva.zoo.modal_apps` (the container side). Pure data — no ``modal``, no ``torch``.
+:mod:`sepiq.zoo.modal_apps` (the container side). Pure data — no ``modal``, no ``torch``.
 
 **The wire shape, in plain words.** One call carries a batch of *items*; each item is a
 content-addressed id plus its named chains. Nothing else crosses the wire: no labels, no
@@ -36,16 +36,16 @@ __all__ = [
     "reply",
 ]
 
-#: One Modal app per lane: ``mva-zoo-<key>``. One app per lane so a deploy of one lane never
+#: One Modal app per lane: ``sepiq-zoo-<key>``. One app per lane so a deploy of one lane never
 #: replaces another's functions, and ``modal app stop`` can end one lane alone.
-APP_PREFIX = "mva-zoo-"
+APP_PREFIX = "sepiq-zoo-"
 
 #: Every lane app exposes one class with this name, and this method on it.
 CLASS_NAME = "Scorer"
 METHOD = "score_batch"
 
 #: Weights live in one Modal Volume per lane (plan B1), listed in the deletion checklist.
-WEIGHTS_VOLUME = "mva-zoo-{key}-weights"
+WEIGHTS_VOLUME = "sepiq-zoo-{key}-weights"
 
 #: The user's hard cap for the whole of step 8 (2026-09-23), and each lane's share of it.
 #: The rest is reserve. A lane that would exceed its share stops and says so.

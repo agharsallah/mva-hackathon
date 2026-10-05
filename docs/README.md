@@ -21,7 +21,7 @@ run and the dataset is not downloaded.**
 | Page | Owns |
 |---|---|
 | [`notes/python-quality-gates.md`](notes/python-quality-gates.md) | Why each gate is set where it is, and what to do when one fails. |
-| [`../src/mva/README.md`](../src/mva/README.md) | The package index and the enforced layering. |
+| [`../src/sepiq/README.md`](../src/sepiq/README.md) | The package index and the enforced layering. |
 | [`../CONTEXT.md`](../CONTEXT.md) | The naming discipline: one chosen word per idea, plus the _Avoid_ list. |
 | [`../CONTRIBUTING.md`](../CONTRIBUTING.md) | Commit convention, hooks, how to run the gates. |
 

@@ -59,13 +59,13 @@ PAPER = "#ffffff"
 FONT = "Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif"
 MONO = "'SF Mono', 'JetBrains Mono', Menlo, Consolas, monospace"
 
-TEMPLATE_NAME = "mva"
+TEMPLATE_NAME = "sepiq"
 
 
 def install_template() -> None:
     """Register the repository template with Plotly and make it the default.
 
-    Idempotent, and called at import time of :mod:`mva.explore`, so every figure built
+    Idempotent, and called at import time of :mod:`sepiq.explore`, so every figure built
     anywhere in the package inherits the same axes, fonts and background without each
     view having to remember to ask.
     """

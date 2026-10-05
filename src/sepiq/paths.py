@@ -27,7 +27,7 @@ from pathlib import Path
 #: Files and directories that together identify a checkout of *this* repository rather
 #: than any Python project that happens to sit above the installed package. All must be
 #: present, so a stray ``pyproject.toml`` in a parent directory cannot claim the root.
-MARKERS = ("pyproject.toml", "src/mva", "docs")
+MARKERS = ("pyproject.toml", "src/sepiq", "docs")
 
 
 @lru_cache(maxsize=1)

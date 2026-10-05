@@ -18,7 +18,7 @@ Three things are configured here rather than hard-coded, because a browser is in
 * **The shared token.** ``API_TOKEN``, empty by default, which leaves the API open — the
   only correct setting while it is bound to loopback. Set it and every ``/api/*`` route
   requires it as ``X-API-Key``; ``/health`` stays open for uptime probes. See
-  :mod:`mva.viz.auth`. Set it whenever the service binds anything but loopback.
+  :mod:`sepiq.viz.auth`. Set it whenever the service binds anything but loopback.
 
 The router list is empty while the data layer for this challenge is being built: this is
 the shell, and a route is added here as its module lands.

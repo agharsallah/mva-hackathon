@@ -104,11 +104,11 @@ set — so both are needed together.
 **mypy is a ratchet, not a wall.** Full `strict` over code that predates it is 522
 errors — but 496 of those are missing annotations, not type mistakes. So the four
 annotation-completeness flags are off globally and turned back **on per package** as each
-one is annotated; `mva.io` and `mva.render` are strict today. Every other error class
+one is annotated; `sepiq.io` and `sepiq.render` are strict today. Every other error class
 stays on everywhere, which is what surfaced the 27 real ones (see below). Entries come off
 the ratchet list, never onto it.
 
-**The import contracts encode `src/mva/README.md`.** Three contracts: no cycles between
+**The import contracts encode `src/sepiq/README.md`.** Three contracts: no cycles between
 packages, the two leaf packages (`io`, `render`) import no sibling, and nothing outside
 `viz` depends on `viz`. The dependency diagram in that README was drawn from the real
 imports; these contracts are what keep it true.
@@ -131,7 +131,7 @@ clean-up exercise — the gates paid for themselves before they were wired:
 2. A **module-size** failure is a design signal, not a formatting one: split by concern,
    one bounded responsibility per module. Do not raise the limit.
 3. An **import-layering** failure means the change contradicts the package layering. Fix
-   the dependency direction, or argue the layering — in `src/mva/README.md` and here —
+   the dependency direction, or argue the layering — in `src/sepiq/README.md` and here —
    before editing the contract.
 4. A **mypy** failure in a package on the strict list is not to be solved by taking the
    package off the list.
@@ -154,5 +154,5 @@ Decided 2026-09-23: **pre-commit blocks, pre-push reports.**
 ## Related
 
 - [`CONTRIBUTING.md`](../../CONTRIBUTING.md) — the mechanics table, both halves of the repo.
-- [`src/mva/README.md`](../../src/mva/README.md) — the package layering the contracts enforce.
+- [`src/sepiq/README.md`](../../src/sepiq/README.md) — the package layering the contracts enforce.
 - [`../toolset.md`](../toolset.md) — every tool, including the gate runners.

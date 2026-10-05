@@ -9,7 +9,7 @@ Two projects live in one git repo. Pick the toolchain by which half you touched.
 
 | Project               | Where                           | Toolchain                                                                  | Entry point                                                                                                    |
 | --------------------- | ------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Python (the platform) | repo root, `src/mva/` | [`uv`](https://docs.astral.sh/uv/) — never `pip`, `venv`, or bare `python` | `uv sync`, `uv run <cmd>`. One script: `mva-api`. |
+| Python (the platform) | repo root, `src/sepiq/` | [`uv`](https://docs.astral.sh/uv/) — never `pip`, `venv`, or bare `python` | `uv sync`, `uv run <cmd>`. One script: `sepiq-api`. |
 | App (the viewer)      | `app/`                          | `pnpm`                                                                     | `cd app && pnpm install && pnpm run dev` — see [`app/README.md`](app/README.md).                               |
 
 Read [`docs/README.md`](docs/README.md) for the project's domain, method, and roadmap before
@@ -66,7 +66,7 @@ sh tools/check-commit-msg.sh --self-test         # the gate's own 11 cases
 | Ruff format (`ruff format`)                                                                    | pre-commit hook (staged `.py` only, rewrites + re-stages), pre-push (advisory), CI `python` job | `uv run ruff format src tests tools`            |
 | Ruff lint (30 rule families, line length 100)                                                  | pre-commit hook (staged `.py` only, `--fix`), pre-push (advisory), CI `python` job        | `uv run ruff check src tests tools`             |
 | Module size (400 lines in `src`/`tools`, 600 in `tests`)                                       | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv run python tools/check_module_size.py`      |
-| Import layering (no cycles; the leaf packages import no sibling; nothing depends on `mva.viz`) | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv run lint-imports`                           |
+| Import layering (no cycles; the leaf packages import no sibling; nothing depends on `sepiq.viz`) | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv run lint-imports`                           |
 | mypy (strict, with a per-package ratchet)                                                      | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv run mypy`                                   |
 | `uv.lock` matches `pyproject.toml`                                                             | pre-commit hook (blocks), pre-push (advisory), CI `python` job                           | `uv sync --frozen`                              |
 

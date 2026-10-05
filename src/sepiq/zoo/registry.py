@@ -93,12 +93,11 @@ SHIPS: Mapping[str, str] = {
 }
 
 #: The one command that writes the manifest, quoted in the manifest itself.
-REGENERATE = (
-    "uv run python -c \"from mva.zoo import registry as r; r.write_cards(r.load(), 'docs/cards')\""
-)
+_REGEN_BODY = "from sepiq.zoo import registry as r; r.write_cards(r.load(), 'docs/cards')"
+REGENERATE = f'uv run python -c "{_REGEN_BODY}"'
 
 _GENERATED = (
-    f"**Generated**, not written: `{REGENERATE}`. Edit `src/mva/zoo/models.toml` (or a "
+    f"**Generated**, not written: `{REGENERATE}`. Edit `src/sepiq/zoo/models.toml` (or a "
     "`models.d/*.toml` fragment), never this file."
 )
 

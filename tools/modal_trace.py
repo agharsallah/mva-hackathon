@@ -8,7 +8,7 @@
 
 Each command appends one line to ``build/modal/trace.jsonl``: when it ran, the command, the
 exit code, the seconds, and the output's last lines. ``summary`` writes a page from the
-trace, the spend ledger (:mod:`mva.zoo.modal_budget`) and ``modal billing report``. That
+trace, the spend ledger (:mod:`sepiq.zoo.modal_budget`) and ``modal billing report``. That
 page is committed; the trace and the ledger stay in ``build/``.
 
 Why a wrapper rather than bare ``modal``: rented GPU time is spend, and spend that is not
@@ -25,8 +25,8 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
-from mva.zoo.modal_budget import Ledger, billing_report
-from mva.zoo.modal_contract import APP_PREFIX, CAP_USD, LANE_BUDGET_USD, app_name
+from sepiq.zoo.modal_budget import Ledger, billing_report
+from sepiq.zoo.modal_contract import APP_PREFIX, CAP_USD, LANE_BUDGET_USD, app_name
 
 TRACE = Path("build/modal/trace.jsonl")
 PAGE = Path("docs/modal-runs.md")
@@ -124,7 +124,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("lane", nargs="?", default="")
     parser.add_argument("extra", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
-    module = f"mva.zoo.modal_apps.{args.lane}"
+    module = f"sepiq.zoo.modal_apps.{args.lane}"
     extra = [x for x in args.extra if x != "--"]
     if args.action == "deploy":
         return _run("deploy", args.lane, ["modal", "deploy", "-m", module])

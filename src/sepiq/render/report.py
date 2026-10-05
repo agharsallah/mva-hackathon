@@ -9,7 +9,7 @@ Only Plotly's runtime is fetched from a CDN; everything else is inlined, so the 
 survives being emailed, committed or opened offline apart from the charts' interactivity.
 
 **This module knows nothing about its subject.** It takes a list of
-:class:`~mva.render.figure.Section` and renders it. What those sections contain — a data
+:class:`~sepiq.render.figure.Section` and renders it. What those sections contain — a data
 profile, a hypothesis board, a locus browser — is the caller's business, which is what
 lets one shell serve every report in the repository.
 """

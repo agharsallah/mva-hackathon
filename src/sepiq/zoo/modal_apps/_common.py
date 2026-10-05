@@ -1,6 +1,6 @@
 """Helpers every lane container shares: the image base, the weights digest, the timer.
 
-Imported inside Modal containers (the image carries ``mva`` via
+Imported inside Modal containers (the image carries ``sepiq`` via
 ``add_local_python_source``) and on the laptop at deploy time, so stdlib and ``modal`` only.
 """
 
@@ -31,7 +31,7 @@ MINUTES = 60
 SCALEDOWN_SECONDS = 60
 
 
-#: The only ``mva`` files a lane container needs, relative to ``src/mva``. Shipping the whole
+#: The only ``sepiq`` files a lane container needs, relative to ``src/sepiq``. Shipping the whole
 #: package would re-upload (and fail on) any file another lane is editing mid-build.
 CONTAINER_MODULES = (
     "__init__.py",
@@ -44,9 +44,9 @@ CONTAINER_MODULES = (
 
 
 def with_mva(image: Any, lane: str) -> Any:
-    """``image`` plus the contract modules and this lane's own file, nothing else of ``mva``."""
+    """``image`` plus the contract modules and this lane's own file, nothing else of ``sepiq``."""
     keep = {*CONTAINER_MODULES, f"zoo/modal_apps/{lane}.py"}
-    root = Path(__file__).resolve().parents[2]  # src/mva
+    root = Path(__file__).resolve().parents[2]  # src/sepiq
 
     def ignore(path: Path) -> bool:
         full = path if path.is_absolute() else root / path
@@ -56,7 +56,7 @@ def with_mva(image: Any, lane: str) -> Any:
             return True
         return full.is_file() and rel not in keep
 
-    return image.add_local_python_source("mva", ignore=ignore)
+    return image.add_local_python_source("sepiq", ignore=ignore)
 
 
 def weights_volume(key: str) -> Any:

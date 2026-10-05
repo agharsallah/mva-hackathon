@@ -62,7 +62,7 @@ class Built:
     a gene record came from. Those facts belong in the envelope's ``source`` line, but the
     client contracts in ``app/src/api/types/`` are frozen and have no field for them, so
     they are stored **beside** the payload in the cache entry and rendered into ``source``
-    by :func:`mva.viz.response.cached`. A cache hit therefore reports the provenance of
+    by :func:`sepiq.viz.response.cached`. A cache hit therefore reports the provenance of
     the reply it is actually serving, not of a request that never happened.
     """
 

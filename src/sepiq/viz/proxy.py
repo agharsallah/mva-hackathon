@@ -1,19 +1,19 @@
-"""Forwarding the job-shaped verbs to ``mva-reads-api`` instead of reimplementing them.
+"""Forwarding the job-shaped verbs to the upstream service instead of reimplementing them.
 
-The browser must talk to one origin, but a k-mer probe over 1.07 billion reads already
-has a service: ``mva-reads-api``, with a job registry, cancellation and restart-safe
-history. Re-hosting that logic here would give the front end two answers to "what is the
-state of my probe". So these routes are a thin pass-through.
+The browser must talk to one origin, but a long-running computation may already have a
+service of its own, with a job registry, cancellation and restart-safe history.
+Re-hosting that logic here would give the front end two answers to "what is the state of
+my job". So these routes are a thin pass-through.
 
 Three properties are the reason this is a module and not four lines of ``httpx``:
 
 * **Down is a 503, never a hang.** A connection error, a DNS failure or a timeout becomes
-  ``503 {"detail": "reads API unreachable at <url>"}``. A chart can render that; a
+  ``503 {"detail": "upstream unreachable at <url>"}``. A chart can render that; a
   30-second white screen it cannot.
 * **The secret stays server-side.** ``API_TOKEN`` is attached here as ``X-API-Key``,
   so the token never reaches the browser.
-* **The upstream's own errors survive.** A 404 for an unknown job, or a 422 for a probe
-  that is not DNA, is forwarded with its status and body intact rather than flattened
+* **The upstream's own errors survive.** A 404 for an unknown job, or a 422 for a
+  malformed request, is forwarded with its status and body intact rather than flattened
   into a generic failure.
 """
 
@@ -32,7 +32,7 @@ DEFAULT_TIMEOUT = 30.0
 
 
 def base_url() -> str:
-    """Where ``mva-reads-api`` is, without a trailing slash."""
+    """Where the upstream service is, without a trailing slash."""
     return (setting("UPSTREAM_URL") or "http://127.0.0.1:8765").rstrip("/")
 
 
@@ -51,7 +51,7 @@ class Reply:
 
 
 class Upstream:
-    """The reads API as a callable. Swapped for a fake in tests."""
+    """The upstream service as a callable. Swapped for a fake by a caller that needs one."""
 
     async def request(
         self,
@@ -79,7 +79,7 @@ class UnreachableError(RuntimeError):
     """The upstream could not be reached at all — distinct from it returning an error."""
 
     def __init__(self, url: str) -> None:
-        super().__init__(f"reads API unreachable at {url}")
+        super().__init__(f"upstream unreachable at {url}")
         self.url = url
 
 

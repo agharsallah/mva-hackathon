@@ -1,4 +1,4 @@
-"""``mva-api`` — run the HTTP API under uvicorn.
+"""``sepiq-api`` — run the HTTP API under uvicorn.
 
 Defaults to ``127.0.0.1:8900``: the only client is a React dev server on the same
 machine, and with ``API_TOKEN`` empty this API has **no authentication**, which is
@@ -20,7 +20,7 @@ DEFAULT_PORT = 8900
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        prog="mva-api",
+        prog="sepiq-api",
         description="serve the derived tables as JSON for the React app",
     )
     parser.add_argument("--host", default="127.0.0.1", help="bind address (default: %(default)s)")
@@ -36,7 +36,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     # Every reference table, cache and docs path in this package is spelled relative to
-    # the repository root (see `mva.paths`). A server started from `app/` answers 200 with
+    # the repository root (see `sepiq.paths`). A server started from `app/` answers 200 with
     # an empty list for each of them, which reads as a finding rather than as a
     # misconfiguration, so the process moves itself before anything reads a default.
     moved_from = anchor_cwd()
@@ -68,7 +68,7 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.reload:
         uvicorn.run(
-            "mva.viz.app:create_app", factory=True, host=args.host, port=args.port, reload=True
+            "sepiq.viz.app:create_app", factory=True, host=args.host, port=args.port, reload=True
         )
     else:
         uvicorn.run(create_app(), host=args.host, port=args.port)

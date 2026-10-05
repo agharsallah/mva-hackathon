@@ -17,7 +17,7 @@ this package's problem, not the browser's.
 | `cache.py` | A disk cache whose hit returns the payload **and** the instant it was built. Writes go to a temp file and are renamed into place. |
 | `response.py` | The `{data, cached_at, source}` envelope every `/api/*` route returns. |
 | `proxy.py` | Forwards a job-shaped verb to an upstream service instead of reimplementing it, attaching the token server-side. |
-| `serve.py` | The `mva-api` uvicorn entrypoint. Anchors the working directory, refuses a non-loopback bind without a token. |
+| `serve.py` | The `sepiq-api` uvicorn entrypoint. Anchors the working directory, refuses a non-loopback bind without a token. |
 | `mmcif_tokens.py` | A tokenizer for the mmCIF `loop_` table syntax — the text format structures are published in. Pure syntax, no chemistry. |
 
 ## The envelope, and why every route uses it
@@ -67,19 +67,19 @@ graph LR
 
 ## Configuration
 
-Every knob is in `mva.settings.DEFAULTS`: `API_TOKEN`, `API_CORS`, `API_CACHE`,
+Every knob is in `sepiq.settings.DEFAULTS`: `API_TOKEN`, `API_CORS`, `API_CACHE`,
 `UPSTREAM_URL`. Real environment beats `.env` beats the defaults.
 
 ## Running it
 
 ```sh
-uv run mva-api                      # 127.0.0.1:8900
-uv run mva-api --reload             # restart on source changes
-uv run mva-api --host 0.0.0.0       # refused unless API_TOKEN is set
+uv run sepiq-api                      # 127.0.0.1:8900
+uv run sepiq-api --reload             # restart on source changes
+uv run sepiq-api --host 0.0.0.0       # refused unless API_TOKEN is set
 ```
 
 ## Layering
 
-`mva.viz` may import anything. **Nothing may import `mva.viz`** — it is a consumer of
+`sepiq.viz` may import anything. **Nothing may import `sepiq.viz`** — it is a consumer of
 every other package and a dependency of none, enforced by the "nothing depends on the web
 layer" contract in `pyproject.toml`.

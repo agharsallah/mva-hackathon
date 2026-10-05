@@ -8,7 +8,7 @@ a GPU.
 
 Adding a model is a TOML entry plus one adapter module — never an edit to a shared file.
 
-Layering: ``mva.zoo`` may import ``mva.io``; only ``mva.viz`` may import it
+Layering: ``sepiq.zoo`` may import ``sepiq.io``; only ``sepiq.viz`` may import it
 (``pyproject.toml``, import-linter).
 """
 

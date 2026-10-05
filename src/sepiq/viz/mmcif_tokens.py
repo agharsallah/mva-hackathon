@@ -1,8 +1,8 @@
 """The mmCIF *syntax* layer: tokenising a line, and reading one ``loop_`` table.
 
-Split out of :mod:`mva.viz.mmcif` so the file format and the structural biology are two
+Split out of :mod:`sepiq.viz.mmcif` so the file format and the structural biology are two
 bounded concerns: this module knows nothing about atoms, residues or chains — it turns
-text into rows of strings. :mod:`mva.viz.mmcif` gives those rows meaning.
+text into rows of strings. :mod:`sepiq.viz.mmcif` gives those rows meaning.
 
 **What the format is.** An mmCIF file is a bundle of named tables in one text file. A
 table with many rows is written as a ``loop_`` header listing the column names

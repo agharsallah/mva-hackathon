@@ -3,13 +3,13 @@
 **Standing:** 2026-10-05 — written when the repository was stripped of its previous case.
 **No model app ships here yet**: the roster is empty, so there is nothing to deploy.
 
-Two halves, one contract. `mva.zoo.modal_contract` is the shared definition, imported by
+Two halves, one contract. `sepiq.zoo.modal_contract` is the shared definition, imported by
 both and depending on neither — it holds no `modal` and no `torch`, so the laptop can
 import it without installing either.
 
 | Half | Where | What it does |
 |---|---|---|
-| laptop | an adapter in `mva.zoo` | batches records, submits, polls, prices the call into the ledger |
+| laptop | an adapter in `sepiq.zoo` | batches records, submits, polls, prices the call into the ledger |
 | container | a module here | loads weights once, scores a batch, reports its own GPU seconds and weights digest |
 
 ## Modules

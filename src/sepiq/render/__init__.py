@@ -1,16 +1,16 @@
 """One report shell, one palette, for every subject in the repository.
 
-Extracted out of ``mva.explore`` once a second report needed it. Nothing in here knows
-what it is drawing: :class:`~mva.render.figure.Exhibit` is a figure plus the words that
-make it readable, :class:`~mva.render.figure.Section` is a group of them, and
-:func:`~mva.render.report.render` turns a list of sections into a self-contained page.
+Extracted out of ``sepiq.explore`` once a second report needed it. Nothing in here knows
+what it is drawing: :class:`~sepiq.render.figure.Exhibit` is a figure plus the words that
+make it readable, :class:`~sepiq.render.figure.Section` is a group of them, and
+:func:`~sepiq.render.report.render` turns a list of sections into a self-contained page.
 
 The layers:
 
 ``theme``
     The one place a colour is chosen. Green is good, red is broken, yellow is a decision,
     blue is neutral machinery, purple is raw input — the convention fixed in `CLAUDE.md`,
-    carried into Plotly by :func:`~mva.render.theme.install_template`.
+    carried into Plotly by :func:`~sepiq.render.theme.install_template`.
 ``figure``
     The rule that a chart never travels alone: it carries a caption saying how to read it
     and a ``**Legend**`` line decoding its own colours.
@@ -20,7 +20,7 @@ The layers:
 
 The quick path::
 
-    from mva.render import Exhibit, Section, render
+    from sepiq.render import Exhibit, Section, render
 
     page = render(
         [Section("s", "Title", "What this shows", [exhibit])],
@@ -28,7 +28,7 @@ The quick path::
         subject="where it came from",
     )
 
-Consumers: :mod:`mva.explore` (the data profile) and :mod:`mva.science` (the research
+Consumers: :mod:`sepiq.explore` (the data profile) and :mod:`sepiq.science` (the research
 record). Both draw on the same palette, so a reader moving between them does not have to
 relearn what a colour means.
 """

@@ -44,5 +44,5 @@ a different kind of thing is a module with the domain baked in too deep.
 
 ## Callers
 
-`mva.viz` may import it. It imports no sibling package itself — enforced by the "leaf
+`sepiq.viz` may import it. It imports no sibling package itself — enforced by the "leaf
 packages import no sibling package" contract in `pyproject.toml`.

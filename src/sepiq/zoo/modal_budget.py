@@ -3,7 +3,7 @@
 A GPU lane that runs out of money halfway should stop with what it has, not overrun. The
 ledger is a JSONL file under ``build/modal/`` — one line per remote call, never edited —
 and :func:`guard` is asked *before* every wave of calls: "would this wave, padded by
-:data:`~mva.zoo.modal_contract.OVERHEAD_FACTOR`, push the lane past its share or the step
+:data:`~sepiq.zoo.modal_contract.OVERHEAD_FACTOR`, push the lane past its share or the step
 past the cap?". :func:`billing_report` asks Modal itself, for the reconciliation.
 """
 

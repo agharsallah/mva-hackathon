@@ -33,9 +33,9 @@ def live(data: Any, source: str) -> dict:
 
 
 def cached(entry, source: str, **extra: object) -> dict:
-    """Envelope a :class:`~mva.viz.cache.Cached` payload, keeping its build instant.
+    """Envelope a :class:`~sepiq.viz.cache.Cached` payload, keeping its build instant.
 
-    When the entry carries provenance (:class:`mva.viz.cache.Built`), it is appended to
+    When the entry carries provenance (:class:`sepiq.viz.cache.Built`), it is appended to
     ``source``, so the line names *this* reply's upstreams rather than only the module's
     generic list of endpoints it could have called. ``extra`` is for facts the *route*
     knows and the builder does not — the disk-cache key being the one that matters, since

@@ -1,11 +1,11 @@
-"""``mva-zoo-api`` — one HTTP front door for every GPU lane (CPU only, proxy-auth).
+"""``sepiq-zoo-api`` — one HTTP front door for every GPU lane (CPU only, proxy-auth).
 
 Each lane app already serves its own endpoint; this gateway gives the zoo one URL and one
 vocabulary, so a client never needs to know which lane is deployed where:
 
 * ``GET  /models`` — every lane app the gateway can reach, with its health reply;
 * ``POST /score/{key}`` — ``{"items": [Item, ...]}`` in, the lane's
-  :class:`~mva.zoo.modal_contract.Reply` out, forwarded to ``mva-zoo-<key>``'s
+  :class:`~sepiq.zoo.modal_contract.Reply` out, forwarded to ``sepiq-zoo-<key>``'s
   ``Scorer.score_batch``.
 
 Proxy auth (``Modal-Key`` / ``Modal-Secret`` headers) because every call spends GPU money.
@@ -35,7 +35,7 @@ app = modal.App(app_name("api"), image=image)
 def web() -> Any:
     from fastapi import FastAPI, HTTPException
 
-    api = FastAPI(title="mva-zoo", description=__doc__)
+    api = FastAPI(title="sepiq-zoo", description=__doc__)
 
     def lane(key: str) -> Any:
         if key not in LANES:

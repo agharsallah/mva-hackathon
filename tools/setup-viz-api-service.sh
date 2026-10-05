@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Install `mva-api` as a systemd service on this server, so the hosted dashboard has
+# Install `sepiq-api` as a systemd service on this server, so the hosted dashboard has
 # a backend to talk to. Run this ON THE SERVER, from a checkout of the repository.
 #
 # What it does, in order:
@@ -14,17 +14,17 @@
 # belong to the reverse proxy, which is the only thing that should hold a public port.
 #
 # Usage:
-#   ./tools/setup-viz-api-service.sh [--port 8900] [--user $USER] [--name mva-api]
+#   ./tools/setup-viz-api-service.sh [--port 8900] [--user $USER] [--name sepiq-api]
 #                                    [--domain viz.example.org] [--no-start]
 #
 # --domain only changes the reverse-proxy block that is printed; nothing is installed
-# for it. Uninstall with:  sudo systemctl disable --now mva-api
+# for it. Uninstall with:  sudo systemctl disable --now sepiq-api
 
 set -euo pipefail
 
 PORT=8900
 SERVICE_USER="${USER}"
-NAME=mva-api
+NAME=sepiq-api
 DOMAIN=""
 START=1
 
@@ -48,7 +48,7 @@ REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$REPO"
 
 # --- 1. the token -----------------------------------------------------------------
-# Read from the environment first, then from .env, matching mva.settings.
+# Read from the environment first, then from .env, matching sepiq.settings.
 say "checking API_TOKEN"
 TOKEN="${API_TOKEN:-}"
 if [[ -z "$TOKEN" && -f .env ]]; then
@@ -77,7 +77,7 @@ uv sync --all-groups
 ok "environment ready at $REPO/.venv"
 
 say "smoke-testing the API in-process"
-uv run python -c "from mva.viz.app import create_app; create_app()" >/dev/null
+uv run python -c "from sepiq.viz.app import create_app; create_app()" >/dev/null
 ok "create_app() builds"
 
 # The unit below names $REPO/build in ReadWritePaths, and systemd refuses to start a unit
@@ -92,7 +92,7 @@ UNIT="/etc/systemd/system/${NAME}.service"
 say "writing $UNIT"
 sudo tee "$UNIT" >/dev/null <<EOF
 [Unit]
-Description=mva-api — the derived tables as JSON, for the dashboard
+Description=sepiq-api — the derived tables as JSON, for the dashboard
 Documentation=file://$REPO/docs/step-0/infrastructure.md
 After=network-online.target
 Wants=network-online.target
@@ -104,7 +104,7 @@ WorkingDirectory=$REPO
 # .env holds API_TOKEN. It is read by the
 # settings loader from WorkingDirectory, so nothing is duplicated into this unit and
 # no secret lands in /etc/systemd or in \`systemctl show\`.
-ExecStart=$(command -v uv) run mva-api --host 127.0.0.1 --port $PORT
+ExecStart=$(command -v uv) run sepiq-api --host 127.0.0.1 --port $PORT
 Restart=on-failure
 RestartSec=5
 # The service reads the repository and the data directory. It writes only its

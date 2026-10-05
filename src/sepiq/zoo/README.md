@@ -109,4 +109,4 @@ recorded rather than remembered.
 
 ## Layering
 
-`mva.zoo` may import `mva.io`. Only `mva.viz` may import it.
+`sepiq.zoo` may import `sepiq.io`. Only `sepiq.viz` may import it.

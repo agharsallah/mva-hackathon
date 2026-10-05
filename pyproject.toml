@@ -1,5 +1,5 @@
 [project]
-name = "mva"
+name = "sepiq"
 version = "0.1.0"
 description = "Antibody-antigen interface prediction for the SEPIQ 2026 challenge"
 requires-python = ">=3.11,<3.15"
@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
-mva-api = "mva.viz.serve:main"
+sepiq-api = "sepiq.viz.serve:main"
 
 [dependency-groups]
 dev = [
@@ -41,7 +41,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/mva"]
+packages = ["src/sepiq"]
 
 # ---------------------------------------------------------------------------------------
 # Ruff — linter and formatter. See docs/notes/python-quality-gates.md for why each block
@@ -115,7 +115,7 @@ ignore = [
 "tools/**" = ["T201"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["mva"]
+known-first-party = ["sepiq"]
 
 [tool.ruff.format]
 # Adopted deliberately in one pass rather than left to per-author wrapping; the
@@ -132,7 +132,7 @@ docstring-code-format = true
 # syntax, so pinning 3.11 makes mypy fail inside numpy before it reaches our code. The
 # 3.11 floor from requires-python is enforced instead by ruff's `target-version = py311`,
 # which rejects any syntax or stdlib API newer than that.
-files = ["src/mva", "tools"]
+files = ["src/sepiq", "tools"]
 namespace_packages = true
 explicit_package_bases = true
 mypy_path = "src"
@@ -155,9 +155,9 @@ warn_return_any = false
 # Packages already clean under the full ruleset. Add the next one here when it is.
 [[tool.mypy.overrides]]
 module = [
-    "mva.io.*",
-    "mva.render.*",
-    "mva.settings",
+    "sepiq.io.*",
+    "sepiq.render.*",
+    "sepiq.settings",
 ]
 disallow_untyped_defs = true
 disallow_incomplete_defs = true
@@ -165,34 +165,45 @@ disallow_untyped_calls = true
 disallow_any_generics = true
 warn_return_any = true
 
+# The container side of a tier-3 lane. `modal` is an optional dependency (the `zoo-ml`
+# group) and is NOT installed in the default sync or in CI, so `@app.function` and
+# `@modal.asgi_app` resolve to `Any` and every decorated function reads as untyped. The
+# alternative — making a GPU SDK a hard dependency of the whole package so a type checker
+# can see its stubs — costs far more than the rule buys. These modules are the only place
+# in the package that imports `modal` at module level, which is why the exemption can be
+# this narrow.
+[[tool.mypy.overrides]]
+module = ["sepiq.zoo.modal_apps.*"]
+disallow_untyped_decorators = false
+
 # ---------------------------------------------------------------------------------------
-# import-linter — the package layering from src/mva/README.md, enforced. Without this the
+# import-linter — the package layering from src/sepiq/README.md, enforced. Without this the
 # dependency graph is a diagram in a README that nothing checks.
 # ---------------------------------------------------------------------------------------
 [tool.importlinter]
-root_package = "mva"
+root_package = "sepiq"
 include_external_packages = false
 
 [[tool.importlinter.contracts]]
 name = "No import cycles between packages"
 type = "layers"
 layers = [
-    "mva.viz",
-    "mva.zoo",
-    "mva.io | mva.render",
+    "sepiq.viz",
+    "sepiq.zoo",
+    "sepiq.io | sepiq.render",
 ]
-# A layer may import anything below it and nothing above it. mva.io and mva.render sit on
+# A layer may import anything below it and nothing above it. sepiq.io and sepiq.render sit on
 # the bottom row together because neither imports the other; they are the leaves.
 exhaustive = false
 
 [[tool.importlinter.contracts]]
 name = "The leaf packages import no sibling package"
 type = "forbidden"
-source_modules = ["mva.io", "mva.render"]
-forbidden_modules = ["mva.viz", "mva.zoo"]
+source_modules = ["sepiq.io", "sepiq.render"]
+forbidden_modules = ["sepiq.viz", "sepiq.zoo"]
 
 [[tool.importlinter.contracts]]
 name = "Nothing depends on the web layer"
 type = "forbidden"
-source_modules = ["mva.io", "mva.render", "mva.zoo"]
-forbidden_modules = ["mva.viz"]
+source_modules = ["sepiq.io", "sepiq.render", "sepiq.zoo"]
+forbidden_modules = ["sepiq.viz"]

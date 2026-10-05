@@ -5,7 +5,7 @@
 # file. A fragment adds a model or overrides fields of one already here (top-level fields
 # replace, `params` merges key by key); two fragments claiming one key is an error.
 #
-# `mva.zoo.registry` parses and validates this file. The field meanings:
+# `sepiq.zoo.registry` parses and validates this file. The field meanings:
 #
 #   name               what the publishers call it
 #   version            the exact release scored against — never "latest"
