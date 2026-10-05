@@ -240,8 +240,7 @@ Each row is a decision that unblocks the one below it.
 
 | Item | Detail |
 |---|---|
-| `docs/assets/` | Six SVGs from the previous case, referenced by nothing. Pending deletion. |
-| Repo name | The directory and remote are still `mva-hackathon`; the URL is hardcoded in two `REPO_BLOB` constants and works. |
+| `REPO_BLOB` | `app/src/lib/dictionary/index.ts` and `app/tools/gen-dictionary.mjs` still point `REPO_BLOB` at the previous repository, so a dictionary `source:` link resolves there rather than here. Repoint both when this repo is public. |
 | Hosted deploy | `API_UPSTREAM_URL` / `API_UPSTREAM_TOKEN` replaced the old `MVA_VIZ_API_*` names, and the session cookie is now `dash_session`. A deployment must rename those env vars. |
-| `zoo` RRF fusion | `merge`/`rank`/`workflow` were cut rather than ported — their dependency chain ran into the most DNA-coupled file in the old repo. The arithmetic is ~15 lines and is recoverable from git history. |
+| `zoo` RRF fusion | `merge`/`rank`/`workflow` were cut rather than ported — their dependency chain ran into the most domain-coupled file in the previous repo. The arithmetic is ~15 lines; it is recoverable from [`agharsallah/mva-hackathon`](https://github.com/agharsallah/mva-hackathon), branch `SEPIQ-2026-Challenge`, not from this repo's history. |
 | `registry.py` | 383 lines against a 400 limit. The next feature splits it. |

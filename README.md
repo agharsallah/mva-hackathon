@@ -1,8 +1,16 @@
 # SEPIQ 2026 — antibody–antigen interface prediction
 
-**Standing:** 2026-10-05 — this branch was stripped of its previous case and repointed at
-the SEPIQ challenge on this date. **No analysis has been run. The dataset is not
-downloaded.** Everything here is machinery.
+**Standing:** 2026-10-05 — **No analysis has been run. The dataset is not downloaded.**
+Everything here is machinery.
+
+**Where this came from.** The platform in `src/sepiq/`, `app/` and `tools/` was built for a
+different problem — an N-of-1 rare-disease genomics case — and was stripped of that case
+before this repository's first commit. Only domain-neutral machinery survived. The 640
+commits of that work, including the code cut rather than ported (the zoo's RRF fusion,
+ranking and workflow DAG), are in
+[`agharsallah/mva-hackathon`](https://github.com/agharsallah/mva-hackathon) on the
+`SEPIQ-2026-Challenge` branch. Nothing here depends on it; it is where to look when a
+decision on this page needs its reasoning.
 
 Predict where a **VHH** (a single-chain antibody, ~120 amino acids) touches **HER2** (a
 human cell-surface receptor and a major cancer drug target), from sequence alone.
