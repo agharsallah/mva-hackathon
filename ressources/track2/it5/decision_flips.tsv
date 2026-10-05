@@ -1,4 +1,0 @@
-variable	value	start	end	action
-missense_class	unstable	0.0	0.414079	DASATINIB
-missense_class	unstable	0.414079	1.0	GLICLAZIDE
-readthrough_feasible	yes	0.0	1.0	GLICLAZIDE

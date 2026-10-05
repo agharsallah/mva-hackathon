@@ -1,2 +1,0 @@
-generator	rank	drug	drug_label	approved	approval_evidence	score	score_name	direction_hint	evidence	source_ids
-lincs	1	MEPIVACAINE	mepivacaine	true	ChEMBL max_phase 4 (CHEMBL1087)	17	worse of the two engines' compound reverser ranks (1 = best)	none	reverses the BLM-loss signature (CRISPR-knockout consensus): SigCom rank 17, iLINCS rank 3; in the top reversers of 0 of 20 random decoys	entry:docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md

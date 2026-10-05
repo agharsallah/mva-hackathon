@@ -1,9 +1,0 @@
-{
-  "name": "transfer_stages",
-  "built_at": "2026-09-25",
-  "built_by": "hand-written from entry 156's static survey (written before any stage ran)",
-  "sha256": "27243a1a771bb6865f00a008059b8d76a2cbc3a5ac4b76070ce051ce215c0ece",
-  "method": "one row per stage of iteration 4's Track 2 chain: the file it writes for this case, MVA's equivalent file, the class entry 156's survey gave it (config / mislabelled / code), the survey's gap ids, and the build log whose 'real' line is its wall time. tools/render_step11_t1.py reads it for figures/it4/step11-t1-stages.svg; the row counts in the figure are read from the files, never from this table.",
-  "sources": {"clinical": "none", "genomic": "none"},
-  "entry": "docs/iteration4/step-11/methodology/156-the-chain-on-bloom-syndrome.md"
-}

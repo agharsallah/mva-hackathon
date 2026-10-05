@@ -1,4 +1,0 @@
-route	name	new_config_files	config_lines	shared_code_files_changed	code_lines_added	code_lines_removed	portability_and_refactor_lines	new_capability_lines_added	moved_lines	code_change_needed	first_case_outputs_identical	positive_control_passed	positive_control	transfer_output_rows	wall_clock_s
-R1	readthrough context model + allele dosage	2	311	4	330	135	196	134	119	yes	yes	yes	3/8 compounds passed the held-out panel; the untreated column failed as designed	readthrough.tsv=9;readthrough_external_check.tsv=9;allele_dosage.tsv=8	6.1
-R2	proliferation-corrected drug proteomics	0	0	1	47	59	47	0	54	yes	yes	yes	2/4 datasets interpretable (mitchell2023, protargetminer_MCF-7)	proteome_hits.tsv=902;proteome_control.tsv=13;protein_candidates.tsv=5	12.5
-R3	quote-verified literature mining	1	276	4	114	41	114	0	0	yes	yes	no	FAILED: retrieval 3/3, extraction 0/3	litmine_corpus.tsv=3675;litmine_interventions.tsv=14;litmine_mva_exposures.tsv=8;literature_candidates.tsv=5	738.5

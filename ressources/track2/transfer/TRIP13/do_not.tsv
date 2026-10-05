@@ -1,4 +1,0 @@
-rank	drug_name	direction_id	rung	verdict	why	pediatric_evidence	curated_pmids	targets	flags
-	CYCLOPHOSPHAMIDE	D4	1	standard of care	already part of the tumour context's treatment; giving it is not a repurposing	label section 8.4; study admitting children		CTNNB1|TP53	standard_of_care
-	DOXORUBICIN	D4	5	standard of care	already part of the tumour context's treatment; giving it is not a repurposing	label section 8.4; study admitting children		HSP90AA1|TP53	standard_of_care
-	ETOPOSIDE	D4	5	standard of care	already part of the tumour context's treatment; giving it is not a repurposing	label section 8.4; study admitting children		IGF2|TP53	standard_of_care
