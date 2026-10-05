@@ -10,8 +10,8 @@
 
 Pair with ``tools/md_to_pdf.mjs``::
 
-    uv run python tools/md_to_html.py submissions/track1/iteration-1/report.md build/report.html
-    node tools/md_to_pdf.mjs build/report.html submissions/track1/iteration-1/team_track1_report.pdf
+    uv run python tools/md_to_html.py docs/report.md build/report.html
+    node tools/md_to_pdf.mjs build/report.html build/report.pdf
 """
 
 from __future__ import annotations

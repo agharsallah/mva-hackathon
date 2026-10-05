@@ -13,7 +13,7 @@ to the deleted case rather than to this codebase:
 
 | Removed | Checked | Why it went |
 |---|---|---|
-| Coordinates | no patient genomic position in a tracked file | there is no patient and no genome; the Data Transfer Agreement it enforced does not apply to this challenge |
+| Coordinates | no genomic position from the previous case in a tracked file | there is no genome here; the data-transfer agreement it enforced does not apply to this challenge |
 | Blind gate | the blinded-analysis protocol held | that protocol belonged to the previous case |
 | Figure freshness | no committed figure older than its analysis | there are no figures yet; it is worth restoring once there are |
 | Step narratives | each research step had its narrative | the step model went with the science register |

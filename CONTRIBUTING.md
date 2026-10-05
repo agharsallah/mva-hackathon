@@ -9,7 +9,7 @@ Two projects live in one git repo. Pick the toolchain by which half you touched.
 
 | Project               | Where                           | Toolchain                                                                  | Entry point                                                                                                    |
 | --------------------- | ------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| Python (the pipeline) | repo root, `src/mva/`, `tests/` | [`uv`](https://docs.astral.sh/uv/) — never `pip`, `venv`, or bare `python` | `uv sync`, `uv run <cmd>`. Scripts: `mva-explore`, `mva-warehouse`, `mva-science`, `mva-reads`, `mva-viz-api`. |
+| Python (the platform) | repo root, `src/mva/` | [`uv`](https://docs.astral.sh/uv/) — never `pip`, `venv`, or bare `python` | `uv sync`, `uv run <cmd>`. One script: `mva-api`. |
 | App (the viewer)      | `app/`                          | `pnpm`                                                                     | `cd app && pnpm install && pnpm run dev` — see [`app/README.md`](app/README.md).                               |
 
 Read [`docs/README.md`](docs/README.md) for the project's domain, method, and roadmap before
