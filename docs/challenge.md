@@ -164,11 +164,24 @@ it gives is:
 - a **stratification** for Track A — train and evaluate per epitope bin instead of pooling;
 - a **check** on any model's predicted epitope, independent of the structure predictor.
 
-**This is a hypothesis about the data, not a measured result.** It rests on (a) the column names
-meaning what they appear to mean, and (b) trastuzumab/pertuzumab epitopes being where the
-literature places them. Both must be verified — the first against the organisers' README, the
-second against the published HER2–trastuzumab and HER2–pertuzumab structures — before anything is
-built on it.
+**This is a hypothesis about the data, not a measured result.** It rests on three assumptions,
+all of which must be checked before anything is built on it:
+
+1. **The column names mean what they appear to mean.** Verify against the organisers' README.
+2. **Trastuzumab and pertuzumab bind where the literature places them.** Verify against the
+   published HER2–trastuzumab and HER2–pertuzumab structures, not against memory.
+3. **Blocking is steric and complete.** This is the quiet one. "Enrichment retained → epitope
+   elsewhere" only follows if the blocker physically occupies its site and nothing else changes.
+   A *partial* block leaves enrichment that looks like non-overlap; an *allosteric* change — the
+   blocker binding one subdomain and altering HER2's shape elsewhere — destroys binding at a site
+   it never touched, which looks exactly like overlap. Neither is detectable from the count table
+   alone. The competition signal is therefore evidence about the epitope, not a measurement of it.
+
+**RabMAb is a different kind of column.** Its epitope is not public, so a VHH that loses
+enrichment under RabMAb is known to overlap *something* at an unknown location. That makes it a
+useful third **partition** — it separates binders into groups — and useless as a **restraint**,
+because there is no region to restrain a docked pose to. Do not treat the three blockers as
+interchangeable.
 
 ---
 
@@ -187,13 +200,42 @@ built on it.
 
 ## 5. Open questions, in priority order
 
-1. Read the organisers' `README.md` (17.3 kB) — it likely answers most of §2's flagged items.
-2. What exactly does a `prediction_template_ONU*.csv` row represent? That defines the output contract.
-3. Are ONU11/13/23 rows in the big table, and what do their competition columns say?
-4. Is there ground truth anywhere — solved HER2–VHH structures for these three, or is Track B
-   scored against structures held back by the organisers?
-5. What does `NGS_read_count_table.csv` hold that `AVIDa-hHER2.csv` does not — raw per-run counts
+Everything here is **blocking**: none of it can be guessed, and several items decide what the
+deliverable even is. Read the organisers' `README.md` (17.3 kB) first — it likely answers most of
+§2's flagged items.
+
+### Blocking on the output contract
+
+1. **What does a `prediction_template_ONU*.csv` row represent?** One row per residue, or per
+   residue-pair? This is the single most important unknown: it decides the shape of the file we
+   submit.
+2. **Whose residues does Track A score — the VHH's, HER2's, or both?** §1's "which residues form
+   the interface" does not say. Epitope-only, paratope-only and both-sides are three different
+   tasks with three different positive-class rates, and therefore three different PR AUC values
+   for the same model.
+3. **What contact distance cutoff defines a positive?** Nothing is scoreable without it. The
+   common convention is any heavy atom within ~4.5–5 Å, but a convention is not the scorer. A
+   half-ångström difference moves residues across the boundary and changes the metric.
+4. **Is PR AUC macro-averaged across the three targets, or micro-averaged over pooled residues?**
+   With three targets of different lengths these differ materially, and the choice changes which
+   model looks best.
+
+### Blocking on the data
+
+5. Are ONU11/13/23 rows in the big table, and what do their competition columns say?
+6. What does `NGS_read_count_table.csv` hold that `AVIDa-hHER2.csv` does not — raw per-run counts
    behind the IE scores?
+7. What does the `Marin-` prefix on all 26 condition columns denote? It is on every one of them,
+   so it carries no discriminating information, but it probably names a plate, a campaign or a
+   source lab — and that matters if it indicates a batch effect.
+
+### Blocking on Track B
+
+8. Is there ground truth anywhere — solved HER2–VHH structures for these three, or is Track B
+   scored against structures held back by the organisers?
+9. **Are Track B's targets the same three VHHs?** §2.1 infers this from the template filenames and
+   it is not stated. It decides whether the competition-column restraint from §3 is usable for
+   Track B at all.
 
 ---
 
