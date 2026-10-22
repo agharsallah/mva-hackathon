@@ -1,0 +1,53 @@
+drug	branch	iterations	n_iterations	it2_direction	it2_rung	it2_verdict	it4_generators	it4_n_generators	it5_routes	evidence_tier	safety_class	safety_factor	uncalibrated_u_unstable	uncalibrated_u_inactive	uncalibrated_eu	calibrated_u_unstable	calibrated_u_inactive	calibrated_eu	tumour_context_rung	clinical_role
+NMN	missense_unstable	it5	1	none	0	not_in_it2	none	0	R1|R3	tier1_in_vivo_animal_rescue_rung3	unassessed	0.6	0.48	0.0	0.264	0.48	0.0	0.264	0	lead_if_unstable_tool_or_supplement
+DASATINIB	any|missense_inactive	it4|it5	2	none	0	not_in_it2	twin|prism	2	R1|R3	tier1_in_vivo_animal_rescue_rung3	unflagged	1.0	0.134	0.4	0.2537	0.134	0.4	0.2537	0	lead_if_inactive_approved
+MG132	missense_unstable	it5	1	none	0	not_in_it2	none	0	R1|R3	tier2_mechanistic_cell_rescue_rung2	unassessed	0.6	0.3	0.0	0.165	0.3	0.0	0.165	0	secondary_mechanistic_backup
+QUERCETIN	any|missense_inactive	it4|it5	2	none	0	not_in_it2	walk	1	R1|R3	tier2_mechanistic_cell_rescue_rung2	unassessed	0.6	0.0402	0.24	0.13011	0.0402	0.24	0.13011	0	secondary_mechanistic_backup
+NIACIN	missense_unstable	it2|it4|it5	3	D3	3	argue	twin	1	R3	tier1_in_vivo_animal_rescue_rung3	unflagged	1.0	0.192	0.0	0.1056	0.192	0.0	0.1056	0	lead_if_unstable_approved
+NICOTINAMIDE	missense_unstable	it2|it5	2	D3	3	argue	none	0	R3	tier1_in_vivo_animal_rescue_rung3	unflagged	1.0	0.192	0.0	0.1056	0.192	0.0	0.1056	0	lead_if_unstable_approved
+GLICLAZIDE	missense_unstable	it5	1	none	0	not_in_it2	none	0	R2	tier3_single_line_screen_residual_rung1	unflagged	1.0	0.7	0.0	0.385	0.175	0.0	0.09625	0	screen_tail_unverified
+MIGALASTAT	missense_unstable	it5	1	none	0	not_in_it2	none	0	R2	tier3_single_line_screen_residual_rung1	unflagged	1.0	0.7	0.0	0.385	0.175	0.0	0.09625	0	screen_tail_unverified
+SIROLIMUS	missense_inactive	it5	1	D4	5	context_trial_only	none	0	R1	tier2_mechanistic_cell_rescue_rung2	unflagged	1.0	0.0	0.2	0.09	0.0	0.2	0.09	5	secondary_mechanistic_backup
+BORTEZOMIB	missense_unstable	it2|it5	2	D2	2	argue	none	0	R1|R2|R3	tier2_mechanistic_cell_rescue_rung2	phenotype_flag	0.75	0.15	0.0	0.0825	0.15	0.0	0.0825	0	secondary_mechanistic_backup
+CARFILZOMIB	missense_unstable	it5	1	none	0	not_in_it2	none	0	R1|R3	tier2_mechanistic_cell_rescue_rung2	phenotype_flag	0.75	0.15	0.0	0.0825	0.15	0.0	0.0825	0	secondary_mechanistic_backup
+ROMIDEPSIN	missense_unstable	it4|it5	2	none	0	not_in_it2	walk	1	R3	tier2_mechanistic_cell_rescue_rung2	unflagged	1.0	0.144	0.0	0.0792	0.144	0.0	0.0792	0	secondary_mechanistic_backup
+EVEROLIMUS	missense_inactive	it5	1	D4	5	context_trial_only	none	0	R1	tier2_mechanistic_cell_rescue_rung2	phenotype_flag	0.75	0.0	0.15	0.0675	0.0	0.15	0.0675	5	secondary_mechanistic_backup
+CBP/P300 INHIBITION	missense_unstable	it5	1	none	0	not_in_it2	none	0	R1	tier2_mechanistic_cell_rescue_rung2	unassessed	0.6	0.12	0.0	0.066	0.12	0.0	0.066	0	secondary_mechanistic_backup
+NAVITOCLAX	any|missense_inactive	it5	1	none	0	not_in_it2	none	0	R1|R3	tier2_mechanistic_cell_rescue_rung2	unassessed	0.6	0.0402	0.096	0.06531	0.0402	0.096	0.06531	0	secondary_mechanistic_backup
+AZACITIDINE	missense_unstable	it5	1	D4	5	context_trial_only	none	0	R3	tier2_mechanistic_cell_rescue_rung2	phenotype_flag	0.75	0.108	0.0	0.0594	0.108	0.0	0.0594	5	secondary_mechanistic_backup
+DECITABINE	missense_unstable	it5	1	D4	5	context_trial_only	none	0	R3	tier2_mechanistic_cell_rescue_rung2	phenotype_flag	0.75	0.108	0.0	0.0594	0.108	0.0	0.0594	5	secondary_mechanistic_backup
+BELINOSTAT	missense_unstable	it4|it5	2	none	0	not_in_it2	walk	1	R3	tier2_mechanistic_cell_rescue_rung2	genome_flag	0.75	0.108	0.0	0.0594	0.108	0.0	0.0594	0	secondary_mechanistic_backup
+VALPROIC ACID	missense_unstable	it2|it5	2	D3	2	argue	none	0	R3	tier2_mechanistic_cell_rescue_rung2	genome_flag	0.75	0.108	0.0	0.0594	0.108	0.0	0.0594	0	secondary_mechanistic_backup
+LONAFARNIB	missense_unstable	it5	1	none	0	not_in_it2	none	0	R3	tier2_mechanistic_cell_rescue_rung2	phenotype_flag	0.75	0.108	0.0	0.0594	0.108	0.0	0.0594	0	secondary_mechanistic_backup
+PANOBINOSTAT	missense_unstable	it5	1	none	0	not_in_it2	none	0	R3	tier2_mechanistic_cell_rescue_rung2	phenotype_flag	0.75	0.108	0.0	0.0594	0.108	0.0	0.0594	0	secondary_mechanistic_backup
+ETHOXZOLAMIDE	missense_unstable	it5	1	none	0	not_in_it2	none	0	R2	tier3_single_line_screen_residual_rung1	unassessed	0.6	0.42	0.0	0.231	0.105	0.0	0.05775	0	screen_tail_unverified
+NISOLDIPINE	missense_unstable	it5	1	none	0	not_in_it2	none	0	R2	tier3_single_line_screen_residual_rung1	unassessed	0.6	0.42	0.0	0.231	0.105	0.0	0.05775	0	screen_tail_unverified
+TESTOLACTONE	missense_unstable	it5	1	none	0	not_in_it2	none	0	R2	tier3_single_line_screen_residual_rung1	unassessed	0.6	0.42	0.0	0.231	0.105	0.0	0.05775	0	screen_tail_unverified
+IXAZOMIB	missense_unstable	it5	1	none	0	not_in_it2	none	0	R3	tier2_mechanistic_cell_rescue_rung2	unflagged	1.0	0.096	0.0	0.0528	0.096	0.0	0.0528	0	secondary_mechanistic_backup
+VORINOSTAT	missense_unstable	it2|it4|it5	3	D3	2	argue	walk	1	R3	tier2_mechanistic_cell_rescue_rung2	unassessed	0.6	0.0864	0.0	0.04752	0.0864	0.0	0.04752	0	secondary_mechanistic_backup
+PROGERIN C-TERMINAL PEPTIDE	missense_unstable	it5	1	none	0	not_in_it2	none	0	R3	tier2_mechanistic_cell_rescue_rung2	unassessed	0.6	0.0864	0.0	0.04752	0.0864	0.0	0.04752	0	secondary_mechanistic_backup
+FISETIN	any	it5	1	none	0	not_in_it2	none	0	R3	tier2_mechanistic_cell_rescue_rung2	unassessed	0.6	0.0402	0.0402	0.0402	0.0402	0.0402	0.0402	0	secondary_mechanistic_backup
+FTI-277	missense_unstable	it5	1	none	0	not_in_it2	none	0	R3	tier2_mechanistic_cell_rescue_rung2	unassessed	0.6	0.0648	0.0	0.03564	0.0648	0.0	0.03564	0	secondary_mechanistic_backup
+TRICHOSTATIN A	missense_unstable	it5	1	none	0	not_in_it2	none	0	R3	tier2_mechanistic_cell_rescue_rung2	unassessed	0.6	0.0648	0.0	0.03564	0.0648	0.0	0.03564	0	secondary_mechanistic_backup
+NICOTINAMIDE RIBOSIDE	missense_unstable	it5	1	none	0	not_in_it2	none	0	R3	tier2_mechanistic_cell_rescue_rung2	unassessed	0.6	0.0576	0.0	0.03168	0.0576	0.0	0.03168	0	secondary_mechanistic_backup
+TIPIFARNIB	missense_unstable	it5	1	none	0	not_in_it2	none	0	R3	tier2_mechanistic_cell_rescue_rung2	unassessed	0.6	0.0432	0.0	0.02376	0.0432	0.0	0.02376	0	secondary_mechanistic_backup
+LOVASTATIN	tumour_context	it2	1	D4	5	argue	none	0	none	tier1_paediatric_tumour_trial_rung5	both_flag	0.4	0.0	0.0	0.0	0.0	0.0	0.0	5	lead_tumour_context_post_pgx
+SIMVASTATIN	tumour_context	it2	1	D4	5	argue	none	0	none	tier1_paediatric_tumour_trial_rung5	both_flag	0.4	0.0	0.0	0.0	0.0	0.0	0.0	5	lead_tumour_context_post_pgx
+ATORVASTATIN	tumour_context	it2	1	D4	2	argue	none	0	none	tier2_mechanistic_cell_rescue_rung2	both_flag	0.4	0.0	0.0	0.0	0.0	0.0	0.0	2	secondary_tumour_context
+5-FLUOROURIDINE	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	tier3_readthrough_context_model	unassessed	0.6	0.0	0.0	0.0	0.0	0.0	0.0	0	readthrough_below_fidelity_gap
+AMLEXANOX	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	tier3_readthrough_context_model	unassessed	0.6	0.0	0.0	0.0	0.0	0.0	0.0	0	readthrough_below_fidelity_gap
+ATALUREN	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	tier3_readthrough_context_model	unflagged	1.0	0.0	0.0	0.0	0.0	0.0	0.0	0	readthrough_below_fidelity_gap
+CC90009	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	tier3_readthrough_context_model	unassessed	0.6	0.0	0.0	0.0	0.0	0.0	0.0	0	readthrough_below_fidelity_gap
+CHLOROQUINE	aneuploidy_stress	it2	1	D2	2	argue	none	0	none	tier2_mechanistic_cell_rescue_rung2	genome_flag	0.75	0.0	0.0	0.0	0.0	0.0	0.0	0	secondary_mechanistic_backup
+CLITOCINE	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	tier3_readthrough_context_model	unassessed	0.6	0.0	0.0	0.0	0.0	0.0	0.0	0	readthrough_below_fidelity_gap
+DAP	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	tier3_readthrough_context_model	unassessed	0.6	0.0	0.0	0.0	0.0	0.0	0.0	0	readthrough_below_fidelity_gap
+ELX-02	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	tier3_readthrough_context_model	unassessed	0.6	0.0	0.0	0.0	0.0	0.0	0.0	0	readthrough_below_fidelity_gap
+G418	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	avoid_or_excluded	avoid	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0	avoid
+GELDANAMYCIN	missense_unstable	it5	1	none	0	not_in_it2	none	0	R1	avoid_or_excluded	avoid	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0	avoid
+GENTAMICIN	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	avoid_or_excluded	avoid	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0	avoid
+HYDROXYCHLOROQUINE	aneuploidy_stress	it2	1	D2	2	argue	none	0	none	tier2_mechanistic_cell_rescue_rung2	both_flag	0.4	0.0	0.0	0.0	0.0	0.0	0.0	0	secondary_mechanistic_backup
+METFORMIN	aneuploidy_stress	it2	1	D2	2	argue	none	0	none	tier2_mechanistic_cell_rescue_rung2	unflagged	1.0	0.0	0.0	0.0	0.0	0.0	0.0	0	secondary_mechanistic_backup
+NMDI-14	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	tier3_readthrough_context_model	unassessed	0.6	0.0	0.0	0.0	0.0	0.0	0.0	0	readthrough_below_fidelity_gap
+SJ6986	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	tier3_readthrough_context_model	unassessed	0.6	0.0	0.0	0.0	0.0	0.0	0.0	0	readthrough_below_fidelity_gap
+SRI-41315	stop_allele	it5	1	none	0	not_in_it2	none	0	R1	tier3_readthrough_context_model	unassessed	0.6	0.0	0.0	0.0	0.0	0.0	0.0	0	readthrough_below_fidelity_gap
+defer (no drug; run the test first)		it5	1	none	0	not_in_it2	none	0		tier2_mechanistic_cell_rescue_rung2	n/a (baseline)	0.6	0.0	0.0	0.0	0.0	0.0	0.0	0	secondary_mechanistic_backup

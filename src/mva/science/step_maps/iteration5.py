@@ -51,6 +51,8 @@ ITERATION5: tuple[Step, ...] = (
             "figures/it5/r4-heatmap.svg",
             "figures/it5/r4-tornado.svg",
             "figures/it5/s1-transfer.svg",
+            "figures/it5/r5-cross-iteration.svg",
+            "figures/it5/r6-pitch-overview.svg",
         ),
     ),
 )

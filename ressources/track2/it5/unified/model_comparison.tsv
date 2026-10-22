@@ -1,0 +1,12 @@
+metric	uncalibrated_it5_r4	calibrated_it6_unified	invariant_or_shift	explanation
+route_weights (R1, R2, R3)	1.00, 1.00, 1.00	1.00, 0.25, 1.00	calibration	scales R2 HCT116 residual (0.175) < R3 mouse rescue (0.192)
+best_if_missense_unstable_all (P=0.55)	GLICLAZIDE | MIGALASTAT (u=0.7000, EU=0.3850)	NMN (u=0.4800, EU=0.2640)	shift	in-vivo Bub1b^{H/H} rescue (PMID 24825348) leads
+best_if_missense_unstable_approved (P=0.55)	GLICLAZIDE | MIGALASTAT (u=0.7000, EU=0.3850)	NIACIN | NICOTINAMIDE (u=0.1920, EU=0.1056) > GLICLAZIDE | MIGALASTAT (u=0.1750)	shifts_to_nad_precursor	3-iteration Rung-3 NAD+ precursors lead
+best_if_missense_inactive (P=0.45)	DASATINIB (u=0.4000, EU=0.2537)	DASATINIB (u=0.4000, EU=0.2537)	invariant	2-generator survivor (twin|prism 99.4th pct) + R3
+best_tumour_context_d4 (rhabdomyosarcoma)	not_in_r4_table	SIMVASTATIN | LOVASTATIN (Rung 5, NCT02390843)	restored_d4	RMS apoptosis via HMGCR (NCT02390843, PGx-gated)
+baseline_expected_utility (EU*)	0.3850	0.2640	rescaled	expected utility of unstable leader before blot
+evpi (value of perfect information)	0.1800 (46.8% of EU*)	0.1800 (68.2% of EU*)	invariant_0.1800	resolving missense_class adds +0.1800 over baseline
+evppi_share_on_missense_class	100.0% (0.1800 / 0.1800)	100.0% (0.1800 / 0.1800)	invariant_100%	100% of information value sits on missense_class
+evsi_blot_chx (cycloheximide-chase blot)	0.1063 (59.1% of EVPI)	0.1245 (69.1% of EVPI)	increases_59.1%_to_69.1%	flip at P=0.5362 raises blot EVSI to 69.1%
+evsi_readthrough_reporter	0.0000 (0.0% of EVPI)	0.0000 (0.0% of EVPI)	invariant_zero	stop readthrough reporter has zero EVSI under dosage gap
+flip_threshold_p_unstable	0.4141	0.5362	inside_blot_posteriors	both flip points lie inside blot [0.177, 0.874] posteriors

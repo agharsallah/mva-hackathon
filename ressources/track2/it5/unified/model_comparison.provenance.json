@@ -1,0 +1,98 @@
+{
+  "name": "model_comparison",
+  "built_at": "2026-10-20T19:30:05+00:00",
+  "built_by": "tools/it5_unified_synthesis.py",
+  "code_version": "fb9c708",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "entry": "docs/iteration5/step-1/methodology/163-cross-iteration-synthesis-and-calibrated-decision-analysis.md",
+  "method": "compare uncalibrated (R1=1, R2=1, R3=1) vs hierarchy-calibrated (R1=1, R2=0.25, R3=1) decision metrics and VOI ratios",
+  "inputs": [
+    {
+      "path": "ressources/track2/bub1b_atlas.parquet",
+      "sha256": "54298e34e3ec9f87e3b15772eb703e7468476432a8aa152667873a4a7e95cb1f"
+    },
+    {
+      "path": "ressources/track2/bub1b_published_alleles.tsv",
+      "sha256": "dc255602c3eb4a53933df6fc23952f094dc0249115001bfdbdf2c450a1532bbe"
+    },
+    {
+      "path": "ressources/track2/it5/decision_config.json",
+      "sha256": "b4afb1b451ad64b270ee682117b2e30b0cac8852421d8e9342212870dc8e95d9"
+    },
+    {
+      "path": "ressources/track2/it5/readthrough_candidates.tsv",
+      "sha256": "3eb2433c9bacc6b7c356df860358032d696a624f92908d376725de0e030eb887"
+    },
+    {
+      "path": "ressources/track2/it5/protein_candidates.tsv",
+      "sha256": "b034c1eff4062412fe75b48a87b1d59330899f522deef82ef550ed072040f43f"
+    },
+    {
+      "path": "ressources/track2/it5/literature_candidates.tsv",
+      "sha256": "3d0083d001e04d5b58aaad200e4ca65e26bf5634bde6b5e461bd763944f94eed"
+    },
+    {
+      "path": "ressources/track2/candidate_safety.tsv",
+      "sha256": "2be4ae7b733bae68d3185ff7df2e551f9d0f151c35f85d2c896c4f44ddef2d1c"
+    },
+    {
+      "path": "ressources/track2/it4/candidate_safety.tsv",
+      "sha256": "a54e63b973bcaf0868f7a8bc2b42e6d6e04ba9b0cd3e9de187a4745e13bb81ed"
+    },
+    {
+      "path": "ressources/track2/it5/candidate_safety.tsv",
+      "sha256": "e961a8a720b1d2a150355aa7c8b9d206a29287d1836e63bda31d8a131d3ebc84"
+    },
+    {
+      "path": "ressources/track2/shortlist.tsv",
+      "sha256": "77b6b352771a0fbf316f1959b995e47b4d20b31f8cffb3861c2a4a53205d081e"
+    },
+    {
+      "path": "ressources/track2/it4/candidates.tsv",
+      "sha256": "10f38f68d6a66edce4ef0b3875dfe253b86989b8a38e178f2c54c38f62842bfa"
+    },
+    {
+      "path": "ressources/track2/it5/allele_dosage.tsv",
+      "sha256": "c340fc8bf281735acd87dc2f2480a88579715a47ddbf1f86edc1afe083dfe89e"
+    },
+    {
+      "path": "build/it5/r3/translation.json",
+      "sha256": "88816aad6c583f2374b5f16a219afb6b1fc829f54e0dae155f92a9b45574f450"
+    },
+    {
+      "path": "ressources/track2/do_not.tsv",
+      "sha256": "a7b09e9fe7afb9b39a123775ae5281276c160b5d13f2ca0da57f406cc6472c94"
+    },
+    {
+      "path": "ressources/track2/it5/litmine_mva_exposures.tsv",
+      "sha256": "ef15c6fe9c3e1352cd09f112c25454cd053979c93103a2d867686d2d849f1471"
+    },
+    {
+      "path": "ressources/track2/it5/readthrough_candidates.tsv",
+      "sha256": "3eb2433c9bacc6b7c356df860358032d696a624f92908d376725de0e030eb887"
+    },
+    {
+      "path": "docs/iteration5/step-1/methodology/158-the-stop-allele-can-be-read-through-and-it-is-not-the-lever.md",
+      "sha256": "2f83f5c6e88cec85472c2824854798e158522030a352152ae7e1aa87e9a469a2"
+    },
+    {
+      "path": "src/mva/drugs/checks.py",
+      "sha256": "e671f299d3ae5d7a16b83f01d33ce304af1618befab427d3e5133270361229db"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/it5/unified/model_comparison.tsv",
+      "sha256": "d6aa4d7b3120205fe97a63d325dbcee825eac65957675fb93fb905625ee4fcd3",
+      "bytes": 1755,
+      "rows": 11
+    }
+  ],
+  "sources": {
+    "clinical": "ressources/hackathon-rules/Challenge_Clinical_Phenotype_1.md (8 HPO terms enter through Iteration 2's rhabdomyosarcoma direction D4, Iteration 4's MGI phenotype twin and OnSIDES/FAERS safety table, and Iteration 5's nephrocalcinosis/chemotherapy avoid rules)",
+    "genomic": "BUB1B compound-heterozygous consequence classes (stop_gained exon 17 + missense exon 23), Fact F8 mosaic aneuploidy bound (<= 1.6-3%), and PharmCAT PGx summary; no genomic position is read or written"
+  },
+  "assumptions": "route ceiling calibration maps R2 (single-line HCT116 proteomics residual without mechanism, raw max 0.700) to weight 0.25 (effective max 0.175 < 0.192), below R3's approved in-vivo Bub1b^{H/H} mouse rescue (niacin/nicotinamide, 0.192) and R1/R3's in-vivo NMN benchmark (0.480)",
+  "limitations": "heuristic decision utilities are for transparent triage and experiment pricing, not calibrated clinical probabilities; SLCO1B1 is uncalled in the 1.6%-covered VCF and requires a targeted PGx panel before statin dosing",
+  "validation": "reproduces Iteration 5 R4 uncalibrated numbers byte-for-byte at w=(1,1,1) and verifies EVPI=0.1800 and EVSI(chx_chase_blot)/EVPI = 59.1-69.1% across all 20 grid points of w_R2 in [0.05, 1.00]"
+}

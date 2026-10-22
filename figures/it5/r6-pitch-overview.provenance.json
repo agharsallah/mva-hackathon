@@ -1,0 +1,23 @@
+{
+  "name": "r6-pitch-overview",
+  "built_at": "2026-10-21T07:46:35+00:00",
+  "built_by": "tools/render_track2_pitch_slides.py",
+  "code_version": "fb9c708",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "inputs": [
+    {
+      "path": "ressources/track2/it5/unified/unified_summary.json",
+      "sha256": "91a851f900cdc47e14413f9ddc02c1e927ee71123cd1bfa3fdb7b776e78f2409"
+    },
+    {
+      "path": "ressources/track2/it5/unified/structural_pocket_audit.tsv",
+      "sha256": "06a6c714bd823f8bf70259801c2b49120f5bd70d9cf8c1e5c655d782071e77b8"
+    },
+    {
+      "path": "ressources/track2/it5/unified/paediatric_pkpd_dosing.tsv",
+      "sha256": "da6eec0e8495a68651379ade33ef444d1434276aa8584608dd615cdcbf4e1daf"
+    }
+  ],
+  "entry": "docs/iteration5/step-1/methodology/163-cross-iteration-synthesis-and-calibrated-decision-analysis.md",
+  "patient_data": "none: mechanism classes, drug names, VOI metrics; no genomic coordinates"
+}

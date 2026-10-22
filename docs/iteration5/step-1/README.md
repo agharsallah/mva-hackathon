@@ -51,6 +51,7 @@ flowchart LR
 | [160](methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md) | R3 — quote-verified literature mining | control passes; NAD⁺, HDAC, proteasome, hypomethylating and senolytic classes; safety evidence from MVA patients |
 | [161](methodology/161-the-decision-and-what-the-next-measurement-is-worth.md) | R4 — decision and value of information | the hand-worked control reproduces exactly; the choice turns entirely on `missense_class` (EVPPI 0.180 of an EVPI of 0.180, 0 on readthrough); the cycloheximide-chase blot is worth 0.106, 59 % of the ceiling, and stays positive over every range swept, while the top-ranked drug flips under three assumptions |
 | [162](methodology/162-the-three-routes-on-bloom-syndrome.md) | transfer check — R1–R3 on Bloom syndrome | all three transfer by case card (587 configuration lines + 271 of one-time parameterisation, against entry 156's 378-line driver); every first-case table byte-identical; R1 passes an external check against a published measurement (Spearman 0.70, p 0.036); R3's declared control **fails** (extraction 0/3) and its rows are uninterpretable |
+| [163](methodology/163-cross-iteration-synthesis-and-calibrated-decision-analysis.md) | R5 — cross-iteration synthesis and calibrated decision analysis | merges Iterations 2, 4, and 5 (52 drugs); calibrating `route:R2 = 0.25` aligns single-line screen residuals below Rung-3 *in vivo* `Bub1b^{H/H}` mouse rescues (`NMN` 0.480; FDA-approved `niacin`/`nicotinamide` 0.192 > `gliclazide`/`migalastat` 0.175; `dasatinib` 0.400 if inactive), restores `simvastatin`/`lovastatin` for tumour-context D4, and proves `EVPI = 0.1800` and `EVSI(chx_chase_blot) = 59.1–69.1%` of EVPI across all 20 route weights |
 
 ## Figures
 
@@ -64,6 +65,7 @@ interactive `.html` twin. Captions: [`narrative.json`](narrative.json).
 | R3 | `r3-extraction-funnel.svg`, `r3-evidence-map.svg`, `r3-mva-exposures.svg` |
 | R4 | `r4-decision-tree.svg`, `r4-voi-curve.svg`, `r4-heatmap.svg`, `r4-tornado.svg` |
 | transfer | `s1-transfer.svg` |
+| R5 | `r5-cross-iteration.svg`, `r6-pitch-overview.svg` |
 
 ## Tables
 
@@ -78,11 +80,13 @@ filed (`uv run python tools/record_track2_lineage.py`).
 | R3 | `litmine_corpus.tsv`, `litmine_extraction.tsv`, `litmine_exposure_extraction.tsv`, `litmine_interventions.tsv`, `litmine_mva_exposures.tsv`, `litmine_rejected.tsv`, `literature_candidates.tsv` |
 | R4 | `decision_utilities.tsv`, `decision_states.tsv`, `decision_voi.tsv`, `decision_flips.tsv`, `decision_sweep.tsv`, `decision_tornado.tsv`, `decision_avoid.tsv`, `candidate_safety.tsv`, `decision_config.json`, `decision_summary.json` |
 | transfer | under `transfer/`: `transfer_summary.tsv`, `transfer_diffstat.tsv`, and each route's own tables in `r1/`, `r2/`, `r3/` — recorded as `track2.it5.transfer.*`, never mixed with the first case's |
+| R5 | under `unified/`: `cross_iteration_candidates.tsv`, `model_comparison.tsv`, `route_weight_sweep.tsv`, `unified_summary.json` |
 
 Every `*_candidates.tsv` shares the plan's columns (`drug_name, route, branch, evidence_kind,
 evidence_strength, positive_control_passed, source, notes`); `evidence_strength` is a per-route
 triage rubric, not a probability.
 
-## Submission
+## Submissions
 
-[`submissions/track2/iteration-5/`](../../../submissions/track2/iteration-5/README.md) (draft).
+[`submissions/track2/iteration-5/`](../../../submissions/track2/iteration-5/README.md) (draft) ·
+[`submissions/track2/iteration-6/`](../../../submissions/track2/iteration-6/README.md) (unified cross-iteration synthesis).

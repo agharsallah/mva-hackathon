@@ -1,0 +1,17 @@
+{
+  "name": "r5-cross-iteration",
+  "built_at": "2026-10-20T16:58:13+00:00",
+  "built_by": "tools/render_it5_r5.py",
+  "code_version": "fb9c708",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "inputs": [
+    {
+      "path": "ressources/track2/it5/unified/unified_summary.json",
+      "sha256": "16f87f4e8a4eb2fc1bdf23f6213c4e379fc4cb0ce9cdcd915214cc9280515738"
+    }
+  ],
+  "entry": "docs/iteration5/step-1/methodology/163-cross-iteration-synthesis-and-calibrated-decision-analysis.md",
+  "legend": "**Legend** \u2014 good / safe / the goal; neutral machinery; a decision point; the raw input; broken / dangerous / lost points; panel (a) bars compare uncalibrated R4 (w_R2=1.00) vs calibrated R5 (w_R2=0.25); panel (b) sweeps w_R2 in [0.05, 1.00] showing leader flips at w_R2*=0.686 and 0.274 while EVPI=0.1800 and EVSI(chx_chase_blot)=0.106-0.124 stay strictly positive.",
+  "wording": "triage heuristic, not a calibrated posterior",
+  "patient_data": "none: drug names, route weights, utilities, and VOI metrics; no genomic coordinates"
+}

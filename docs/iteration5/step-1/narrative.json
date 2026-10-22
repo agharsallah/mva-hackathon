@@ -102,6 +102,18 @@
       "reads": "What moving each of R1, R2 and R3 to Bloom syndrome cost: configuration lines in a new case card against lines of shared-code change, with the new capability shown separately, the control verdict per route, and entry 156's 378-line purpose-built driver drawn as the yardstick. R1 311 config lines, R2 none at all, R3 276; 587 configuration and 271 parameterisation lines in total.",
       "means": "The three routes transfer by case card rather than by a new driver, at roughly a third of iteration 4's per-case cost - but 'configuration only' was still false as they stood, and R3's control failed on the second case, so the claim is reported with both numbers against it.",
       "source": "tools/render_it5_s1.py over ressources/track2/it5/transfer/transfer_summary.tsv and transfer_diffstat.tsv; entry 162"
+    },
+    {
+      "name": "r5-cross-iteration.svg",
+      "reads": "(a) Heuristic state utility across the top candidates under uncalibrated R4 (w_R2 = 1.00) vs evidence-hierarchy-calibrated R5 (w_R2 = 0.25), where Rung-3 in-vivo Bub1b^{H/H} mouse rescues (NMN 0.480; FDA-approved niacin and nicotinamide 0.192 across Iterations 2, 4 and 5) overtake R2's single-line HCT116 screen residuals (gliclazide and migalastat 0.700 -> 0.175). (b) A 20-step sweep of w_R2 in [0.05, 1.00] marking the overall flip boundary (w_R2* = 0.686) and FDA-approved flip boundary (w_R2* = 0.274), while EVPI = 0.1800 and EVSI(chx_chase_blot) = 0.106-0.124 (59.1-69.1% of EVPI) stay invariant.",
+      "means": "Calibrating R2 to the pre-registered evidence hierarchy resolves the tension between Iteration 4 and Iteration 5: niacin/nicotinamide (if unstable) and dasatinib (if inactive) lead the FDA-approved shortlist, while the cycloheximide-chase Western blot remains the single highest-value action across every calibration weight.",
+      "source": "tools/render_it5_r5.py over ressources/track2/it5/unified/unified_summary.json; entry 163"
+    },
+    {
+      "name": "r6-pitch-overview.svg",
+      "reads": "(a) Two-allele mechanism and 3D pseudokinase pocket biophysics: Copy #1 (stop_gained, R1 = 0.33, <1.5% rescue, EVPPI = 0%) vs Copy #2 (missense_variant in 62-residue buried pseudokinase core RSA < 0.20, +1.55 kcal/mol), contrasting blocked active-site docking (migalastat logP = -2.6) against solvent-exposed distal Lys668 deacetylation via NAD+/SIRT2 (NMN, nicotinamide, niacin). (b) The Clinical Tumor Board test-then-treat protocol: a 48h cycloheximide-chase Western blot (EVSI = 69.1% of EVPI) branching into Nicotinamide/Niacin/NMN (unstable) vs Dasatinib PFOS suspension (inactive), plus SLCO1B1-gated Simvastatin/Lovastatin and 38 Do-Not/caution drugs.",
+      "means": "Visualizes on one canvas why the missense copy is the sole therapeutic lever, why distal Lys668 NAD+/SIRT2 shielding outranks direct orthosteric docking in the buried pseudokinase core, and how one 48-hour blot governs bedside prescribing.",
+      "source": "tools/render_track2_pitch_slides.py over ressources/track2/it5/unified/{unified_summary.json,structural_pocket_audit.tsv,paediatric_pkpd_dosing.tsv}; entry 163"
     }
   ],
   "sources": [
@@ -112,6 +124,7 @@
     "docs/iteration5/step-1/methodology/159-which-drugs-raise-bubr1-protein-once-proliferation-is-removed.md",
     "docs/iteration5/step-1/methodology/160-every-bubr1-intervention-in-the-literature-with-a-verified-quote.md",
     "docs/iteration5/step-1/methodology/161-the-decision-and-what-the-next-measurement-is-worth.md",
-    "docs/iteration5/step-1/methodology/162-the-three-routes-on-bloom-syndrome.md"
+    "docs/iteration5/step-1/methodology/162-the-three-routes-on-bloom-syndrome.md",
+    "docs/iteration5/step-1/methodology/163-cross-iteration-synthesis-and-calibrated-decision-analysis.md"
   ]
 }
