@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { defineConfig, loadEnv } from 'vite';
+import { defineConfig, loadEnv, type ProxyOptions } from 'vite';
 
 /**
  * The dependency endpoints the Status page shows while it is serving fixture rows.
@@ -34,6 +34,27 @@ function configuredEndpoints(mode: string): Record<string, string> {
   };
 }
 
+/**
+ * `pnpm dev` against the server's token-protected viz API, without Vercel.
+ *
+ * With `VITE_API_URL=/` the browser asks this dev server for `/api/*` and `/health`; this
+ * forwards them to `MVA_VIZ_API_URL` and adds `X-API-Key: MVA_VIZ_API_TOKEN` — the job
+ * `api/proxy.ts` does on Vercel. Both come from the repo-root `.env` and live only in the
+ * Node process, never in `import.meta.env` or the bundle. Unset `MVA_VIZ_API_URL` and
+ * there is no proxy; with `VITE_API_URL` absolute the browser never asks this server.
+ */
+function devApiProxy(mode: string): Record<string, ProxyOptions> | undefined {
+  const env = loadEnv(mode, fileURLToPath(new URL('..', import.meta.url)), '');
+  const target = env.MVA_VIZ_API_URL?.replace(/\/+$/, '');
+  if (!target) return undefined;
+  const options: ProxyOptions = {
+    target,
+    changeOrigin: true,
+    headers: env.MVA_VIZ_API_TOKEN ? { 'X-API-Key': env.MVA_VIZ_API_TOKEN } : {},
+  };
+  return { '/api': options, '^/health$': options };
+}
+
 export default defineConfig(({ mode }) => ({
   plugins: [react(), tailwindcss()],
   define: {
@@ -52,7 +73,7 @@ export default defineConfig(({ mode }) => ({
   // strictPort: without it Vite silently takes 5174 when 5173 is busy (a second dev
   // server, or one left running), and the app then loads on an origin the API's CORS
   // list does not name — which reaches the user as "api down", not as a port clash.
-  server: { port: 5173, host: '127.0.0.1', strictPort: true },
+  server: { port: 5173, host: '127.0.0.1', strictPort: true, proxy: devApiProxy(mode) },
   build: {
     // Plotly is a ~4 MB bundle; keep it in its own lazily-loaded chunk.
     chunkSizeWarningLimit: 5000,
