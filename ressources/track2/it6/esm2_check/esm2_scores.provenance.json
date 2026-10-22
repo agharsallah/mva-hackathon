@@ -1,0 +1,57 @@
+{
+  "name": "esm2_scores",
+  "built_at": "2026-10-22T16:24:12+00:00",
+  "built_by": "tools/esm2_check.py evaluate",
+  "code_version": "f94dc54",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "protocol": {
+    "path": "ressources/track2/it6/esm2_check/protocol.md",
+    "sha256": "938bf011202b1940244e38ae8458e25a5986089990c3df87daa188168be5eb2c"
+  },
+  "method": "ESM-2 650M masked marginals: llr = log P(alt) - log P(wt) at the masked site, damage = -llr. Primary window: 1,022 residues, site-centred, terminal-clamped; damage_n / damage_c: fixed windows 1-1022 and 29-1050.",
+  "inputs": [
+    {
+      "name": "UniProtKB O60566 canonical FASTA",
+      "url": "https://rest.uniprot.org/uniprotkb/O60566.fasta",
+      "path": "build/it6/esm2/O60566.fasta",
+      "sha256": "4ac6895daf90501d8398d17ded42f46d78b9db777f5084facc875c2926496d1b",
+      "role": "sequence (checked equal to the atlas reference)"
+    },
+    {
+      "name": "ESM-2 650M",
+      "url": "https://huggingface.co/facebook/esm2_t33_650M_UR50D",
+      "version": "esm2_t33_650M_UR50D transformers==4.46.3 hf:08e4846e5371",
+      "weights_digest": "82983b601a1b448448481d0f7a4b34cb7e42540401cff81325563d126bfdf672",
+      "gpu": "L4",
+      "gpu_seconds": 604.4,
+      "role": "masked-marginal log-probs"
+    },
+    {
+      "name": "published allele labels",
+      "path": "ressources/track2/bub1b_published_alleles.tsv",
+      "sha256": "dc255602c3eb4a53933df6fc23952f094dc0249115001bfdbdf2c450a1532bbe",
+      "role": "evaluation labels (PMID 20516114)"
+    },
+    {
+      "name": "variant atlas",
+      "path": "ressources/track2/bub1b_atlas.parquet",
+      "sha256": "54298e34e3ec9f87e3b15772eb703e7468476432a8aa152667873a4a7e95cb1f",
+      "role": "ThermoMPNN ddg and ESM1b comparators; region"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/it6/esm2_check/esm2_scores.parquet",
+      "sha256": "ed96e28d6b7c9261e9111f07695442cbda313527aaf61defe3b2a5ff54afd180",
+      "bytes": 575511,
+      "rows": 19950
+    },
+    {
+      "path": "ressources/track2/it6/esm2_check/evaluation.json",
+      "sha256": "09bd542cf0ce233f1dba9bb06a3db16eb3325531278251ba6404bbc17603d85d",
+      "bytes": 9285,
+      "rows": 1
+    }
+  ],
+  "patient_data": "none: every row is a possible substitution of the public protein."
+}
