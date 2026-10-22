@@ -1,150 +1,187 @@
-# Track 2 — 3-Minute Video Pitch Script & 7-Slide Companion Deck (Unified Iteration 6)
+# Track 2 — 4-Minute Pitch Script & 10-Slide Companion Deck (Unified Iteration 6)
 
-**Standing:** ready (written 2026-09-27 for `submissions/track2/iteration-6/`).
-**Target duration:** 3 minutes 00 seconds (~420–430 spoken words at 140–145 wpm).
-**Companion Slide Deck (in this folder):**
-- **Interactive Widescreen HTML Deck:** [`pitch-slides.html`](pitch-slides.html) — open in any browser; use **`→` / `Space`** to advance slides at each **`[👉 SLIDE N]`** cue below, and press **`T`** to toggle the built-in bottom teleprompter between **Version A (Technical)**, **Version B (Plain-English)**, or **Hidden** (for clean video capture).
-- **Print / Screen-Share 16:9 PDF Deck:** [`pitch-slides.pdf`](pitch-slides.pdf) — 7 widescreen slides with all research figures and our new two-panel synthesis diagram (`figures/it5/r6-pitch-overview.svg`) pre-embedded.
+**Standing:** ready (rewritten 2026-10-22 to match the 10-slide `pitch-slides.html`). The pitch is now **4:00**. It is the round-2 3:00 pitch plus a 60-second engineering and infrastructure segment (slides 7–8). Every science number traces to `report.md`, `README.md` or `methods-form.json` in this folder. Every infrastructure number traces to a file path in the repository, and the cited path is shown on each slide.
+**Target duration:** 4 minutes 00 seconds, 10 slides, ~570 spoken words at ~145 wpm. Both versions are timed to the same slide grid: Version A runs 565 words and Version B runs 576.
+
+> **3-minute cut.** The README describes the optional video pitch as 3 minutes. For a 3:00 delivery, **skip slides 7–8** (the engineering segment, 2:26–3:26). Their opening line ("Every number you just heard comes out of one machine…" / "How do you know any of this is real?") is that segment's only transition, so it goes with them. Nothing else in the script changes. To jump from the end of slide 6, press **`O`** and click slide 9. Exact 3:00 timings: slides 1–6 `0:00–2:26` (unchanged) · slide 9 `2:26–2:44` · slide 10 `2:44–3:00`. That is 428 words (A) or 440 words (B). **`A` (auto-advance) follows the 4:00 grid**, so for a 3:00 voice-over, advance by hand.
+
+**Companion deck (in this folder):** [`pitch-slides.html`](pitch-slides.html) is a single self-contained file. It opens in any browser and needs no network. The notes for both versions live inside the deck.
+
+| Key | What it does |
+| :--- | :--- |
+| **`→` / `Space` / `PageDown`**, **`←` / `PageUp`** | Next or previous step. Each **`[click]`** below reveals one fragment, and the slide advances after its last fragment. Clickers work the same way. |
+| **Mouse on slides 7–8** | Architecture boxes, the **Trace** buttons, lineage chains and API endpoints are buttons. Clicking them opens facts or animates a path, and **never advances the slide**. They also work with `Tab` and `Enter`. Below, these are marked **`[tap: …]`**, which is different from `[click]`. |
+| **`F`** | Fullscreen |
+| **`P`** | Opens the presenter window (current and next slide, notes, timer). Put it on your second screen. |
+| **`N`** *(presenter window)* | Switches the presenter notes between Tech and Plain |
+| **`T`** *(audience window)* | Cycles the inline teleprompter: Tech → Plain → Hidden |
+| **`V`** | Visibility panel for timing, criterion, sources, caveat, captions, teleprompter, toolbar and more. It has three presets: **Rehearsal** (everything visible), **Live pitch** (hides timing, teleprompter and toolbar on the audience screen) and **Recording** (also hides the progress bar and timer). |
+| **`S`** | Start or pause the timer. `Shift`+`R` resets it. |
+| **`A`** | **Auto-advance on the slide timings (4:00 grid).** It follows the timer and spreads each slide's fragments evenly over that slide's budget. Use it for voice-over recording of the full 4:00. |
+| **`O`** · **`Z`** · **`L`** · **`B`** | Overview grid (click a slide to jump) · zoom the figure · laser pointer · blackout |
+| **`?`** | Shows every shortcut |
+| URL **`pitch-slides.html?preset=recording`** | Opens with the Recording preset already applied. **`?view=presenter`** opens the presenter view directly. |
+| Toolbar **print** button | Exports a PDF with all fragments revealed, one slide per page. The interactive slides print in their default state: the full diagram and every chain listed. |
 
 ---
 
-## 7-Slide Deck Map & Timing Cue Sheet
+## 10-Slide Deck Map & Timing Cue Sheet
 
-| Slide | Timestamp | Slide Title | Embedded Visuals on Slide | Key Message Before Advancing |
+| Slide | Timestamp | Slide Title | Visuals on Slide | Key Message Before Advancing |
 | :--- | :--- | :--- | :--- | :--- |
-| **Slide 1** | `0:00 – 0:25` *(Tech)*<br/>`0:00 – 0:30` *(Plain)* | **The Child, the "Seatbelt Inspector" (`BUB1B`), and the 5-Instrument Mechanism** | `figures/it4/step9-e1-distribution.svg` ($\Delta\Delta G = +1.55\text{ kcal/mol}$) + `step9-e2-rank.svg` (`Bub1b^{H/H}` mouse twin top 0.99%) | Copy #1 (`stop_gained`) is destroyed; Copy #2 (`missense`) is the sole lever (`55% Unstable` vs. `45% Inactive`). |
-| **Slide 2** | `0:25 – 0:52` *(Tech)*<br/>`0:30 – 0:52` *(Plain)* | **Why Stop-Skipping & Naive AI Fail — And What Survives Null Testing** | `figures/it5/r1-dosage.svg` + `figures/it4/step10-s2-upset.svg` + **5-Archetype Naive-AI Counterfactual Table** | Stop-codon readthrough adds `<1.5%` protein (`EVPPI = 0%`); **dasatinib** (`twin\|prism`) is the sole 2-generator survivor ($p=0.0096$). |
-| **Slide 3** | `0:52 – 1:15` | **8,793-Compound Proteome Scan vs. 3D Pseudokinase Pocket Biophysics** | `figures/it5/r2-hits.svg` + **New Hero Diagram `figures/it5/r6-pitch-overview.svg`** (Buried core vs. distal `Lys668`) | `Gliclazide`/`migalastat` raise BubR1 `2.7x` in cells, but because the missense sits in a buried pseudokinase core (`RSA < 0.20`), distal `Lys668` `NAD+/SIRT2` shielding (`NMN`, `nicotinamide`, `niacin`) is biophysically superior. |
-| **Slide 4** | `1:15 – 1:42` | **Cross-Iteration Synthesis & Route Calibration (`Entry 163`: 52 Drugs Unified)** | `figures/it5/r5-cross-iteration.svg` (Panel A candidate comparison + Panel B 20-step $w_{R2}$ sweep) | `EVPI = 0.1800` is 100% invariant (`100%` on `missense_class`); calibrating $w_{R2}=0.25$ raises the 48h `CHX`-chase blot value to **`69.1% of EVPI`**. |
-| **Slide 5** | `1:42 – 2:05` | **Clinical Tumor Board Action Card & Paediatric PK/PD Dosing Protocol** | `figures/it5/r4-decision-tree.svg` + **Paediatric PK/PD Dosing & Liquid Formulation Table** | "Test Once Before You Treat": 48h blot $\rightarrow$ **Unstable:** `nicotinamide`/`niacin`/`NMN` (backups `migalastat`/`gliclazide`) · **Inactive:** `dasatinib` `PFOS` suspension · **Tumour D4:** `simvastatin`/`lovastatin` liquid. |
-| **Slide 6** | `2:05 – 2:40` | **First, Do No Harm — 2-Source Per-Child Safety & PGx Callability Honesty** | `figures/it5/r3-mva-exposures.svg` + `figures/it4/step9-e56-coverage.svg` (`1.6%` VCF PGx coverage) | **Do-Not K1:** 33/34 Mps1/Aurora inhibitors fail in aneuploidy ($p=0.0096$) · **Double-Flag K2:** `vincristine` (`CYP3A5 *1/*3` + `HP:0003202`) · **Gate K3:** 5-gene PGx panel + `RYR1` anaesthesia alert. |
-| **Slide 7** | `2:40 – 3:00` | **Zero-Edit Scalability — Re-Executed on Bloom Syndrome (`BLM`) in 53 Min for $0** | `figures/it4/step11-t1-stages.svg` + `figures/it5/s1-transfer.svg` | Full pipeline re-ran on Bloom syndrome in `53 min` for `$0` (`Blm` twin top `1.15%`, `Jaccard = 0.095`, 522 provenance edges). |
+| **Slide 1** | `0:00 – 0:22` | **One child, one lever left** | Copy #1 vs Copy #2 compare panel · `s1-mgi-twin` (child's 8 HPO terms vs 76,699 MGI genotypes) · KPIs: Rank 1 oracle, 8 HPO terms, top 0.99% mouse twin · "seatbelt inspector" callout | Copy #1 (`stop_gained`) is lost to NMD, so every therapeutic decision runs through Copy #2 (pseudokinase missense). |
+| **Slide 2** | `0:22 – 0:46` | **One unknown decides the treatment** | `s1-thermompnn` (all 19,950 substitutions, child at +1.55 kcal/mol, 87.3rd pct) · KPIs: ΔΔG, 55%, 45%, AUROC 0.60 · two-branch bullets · "We did not hide the weak link" callout | Is BubR1 **unstable (55%)** or **inactive (45%)**? These odds come from a calibration that failed (H083), and we report it that way. |
+| **Slide 3** | `0:46 – 1:10` | **How we refused to fool ourselves** | `s2-upset` (4-generator convergence) · KPIs: 21 pre-registered, 8 refuted, p = 0.263, R1 = 0.33 · naive-pipeline vs executed-test table (DO-NOT / FUTILE / CONFOUNDED / CALIBRATED) | The refutations are the product. Convergence on dasatinib is at chance, readthrough is futile, and the naive shortcuts fail. |
+| **Slide 4** | `1:10 – 1:34` | **What survived, and how we weighed it** | Full-width `s4-r5-calibration` (Panel A: R4 vs R5 utilities; Panel B: 20-step w<sub>R2</sub> sweep, flip points 0.2743 / 0.6857) · evidence-hierarchy flow: in vivo rescue → senolytic clearance → cell-line proteomics | With the one-replicate screen weighted at w<sub>R2</sub> = 0.25, the in-vivo `Bub1b` rescues lead again: NMN overall, dasatinib among approved drugs. |
+| **Slide 5** | `1:34 – 2:04` | **Test once before you treat** | `s5-decision-tree` (R4 tree) · KPIs: EVPI 0.1800, 100% on `missense_class` / 0% readthrough, 69.1% of EVPI · **next-experiment flow:** CHX-chase blot protocol → Branch A (P = 0.912) / Branch B (P = 0.831) / tumour adjunct · "first measurement in the child's own cells" callout | One cycloheximide-chase blot in weeks 1–2 captures 69.1% of the decision value, and its result selects a branch that was specified in advance. |
+| **Slide 6** | `2:04 – 2:26` | **First, do no harm** | `s6-pharmcat-coverage` (20 / 1,223 PharmCAT positions callable) · KPIs: 33/34, vincristine, 1.6%, 5 genes · DO-NOT / MONITOR / GATE list | The checkpoint-inhibitor class is hard-excluded. Vincristine gets a monitoring alert. We order the panel rather than assume reference. |
+| **Slide 7** *(new)* | `2:26 – 2:58` | **One machine behind every number** | **Interactive architecture**, five lanes (Sources → Compute → Storage → API → Experience) with 9 clickable boxes: patient WGS delivery, 13 public databases, laptop CPU, Modal GPU, MinIO, PostgreSQL 18.4, provenance manifests, `mva-viz-api`, React dashboard · three **Trace** buttons (a request, a figure, the patient data) · KPIs: 84.99 GB in MinIO (12/12 hash-verified), 87 API operations with one `{data, cached_at, source}` envelope, $0.015 Track 2 GPU bill | One storage layer, one API envelope and one dashboard, so any number can be followed back to where it came from. |
+| **Slide 8** *(new)* | `2:58 – 3:26` | **Every claim walks back to its bytes** | **Interactive lineage**: three clickable chains, each lighting source → script@commit → artifact (SHA-256) → ledger → claim. The chains are EVSI 69.1%, ΔΔG +1.55 and 33/34 Do-Not · fragment: **"Or ask the API yourself"**, three real endpoints with sample envelopes · KPIs: 150 manifests, 3,656 Python tests (+483 app), 11 CI gates including the patient-coordinate gate | Nothing has to be taken on trust: each number names its table, its script and commit, and the hashes of its inputs. |
+| **Slide 9** | `3:26 – 3:44` | **A second disease, with the cost measured** | `s7-case-card-transfer` (Iteration-5 routes R1–R3 moved to Bloom: lines written vs the 378-line Iteration-4 driver; positive-control and byte-identity grid) · KPIs: 53 min · $0, `Blm` top 1.15%, Jaccard 0.095 · H096 and Bloom re-test callouts | Bloom syndrome ran end to end on the same machine. The zero-edit claim was refuted and the fix measured: R1 and R2 pass their control on Bloom, R3 fails, and MVA stays byte-identical. |
+| **Slide 10** | `3:44 – 4:00` | **What we are asking for** | Ask flow: Day 1 (5-gene PGx panel + vincristine / `RYR1` alerts) → Week 1–2 (CHX-chase blot) → branch · openness callout · "Stated plainly" disclaimer | Order the panel, chart the alerts, run the blot. Then choose the medicine with the evidence in hand. |
+
+**Why the engineering segment sits at 2:26.** By then the audience has heard every science number. The segment then shows the machine that makes those numbers checkable: storage, compute, the API envelope, the dashboard, and three of those numbers traced back to their hashed sources. The Bloom slide that follows becomes the proof that the same machine takes a second disease. Slides 7–8 can be cut without touching any other line (see the 3-minute cut above).
+
+Figures used: 7 of the 12 research figures, one per science slide. Slides 7, 8 and 10 have none; slides 7–8 are interactive diagrams instead. Four figures were dropped to keep the rest legible: `r1-dosage`, `r2-hits`, `r3-mva-exposures` and `step11-t1-stages`. The numbers they carried are still on the slides or in the notes. A fifth, the `r6-pitch-overview` infographic, is too dense to read at slide scale.
+
+**What slides 7–8 deliberately do not claim.** Track 2's drug tables are committed files with SHA-256 manifests, not Postgres tables. PostgreSQL holds their lineage edges and the Track 1 warehouse, and MinIO holds the Track 1 patient delivery and read store. The password-gated Vercel hosting path is built and tested but **not deployed**, so no live URL is shown. The setup is research infrastructure on one VPS, not production. Its table and ledger counts date from September 2026 and were not re-counted live for this deck.
 
 ---
 
-This document provides **two complete 3-minute scripts** synchronized to the exact same 7 slides:
-1. **[Version A — Technical Bioinformatics & Pharmacology Cut](#version-a--technical-bioinformatics--pharmacology-cut):** Written for computational biology and clinical pharmacology judges.
-2. **[Version B — Plain-English / Non-Technical Cut (With Everyday Analogies)](#version-b--plain-english--non-technical-cut-with-everyday-analogies):** Written for non-technical audiences, patient families, and general reviewers.
+This document provides **two complete 4-minute scripts**, synchronized to the same 10 slides and the same `[click]` cues:
+1. **[Version A — Technical Cut](#version-a--technical-cut)**, for computational-biology, clinical-pharmacology and engineering judges. This text is the deck's **Tech** teleprompter.
+2. **[Version B — Plain-English Cut](#version-b--plain-english-cut)**, for patient advocates, families and general reviewers. This text is the deck's **Plain** teleprompter.
+
+`[click]` marks where to press `→` mid-sentence. With **`A`** (auto-advance), the fragments fall at about ⅓ and ⅔ of each slide's window (on slides 4 and 8, at the halfway point), so pace the words to land near those marks. `[tap: …]` marks a mouse click on an interactive element of slides 7–8. It never advances the slide, and auto-advance does not perform it.
 
 ---
 
-## Version A — Technical Bioinformatics & Pharmacology Cut
+## Version A — Technical Cut
 
-### `[🎬 START ON SLIDE 1 — 0:00]` The Child, the "Seatbelt Inspector" (`BUB1B`), and the 5-Instrument Mechanism
-- **On screen (`Slide 1 / 7`):** KPI cards (`Rank 1 Confirmed`, `ΔΔG = +1.55 kcal/mol`, `Top 0.99% MGI Twin`, `RMSD = 0.45 Å`) + `step9-e1-distribution.svg` (ThermoMPNN stability atlas) + `step9-e2-rank.svg` (76,699 MGI mouse twin ranking).
-- **Spoken narration (`0:00 – 0:25`):**
-  > "In Track 1, the oracle confirmed at Rank 1 that this child's Mosaic Variegated Aneuploidy and rhabdomyosarcoma are caused by two broken copies of `BUB1B`: one premature stop codon and one missense swap in the BubR1 pseudokinase domain.
-  > Before naming a single medicine, we read the disease mechanism from five independent instruments that share no data: nine variant-effect models, a Boltz-2 structure fold, an all-19,950-substitution ThermoMPNN stability atlas *(point left)*, and a cross-species match of the child's 8 HPO terms against all 76,699 mouse genotypes in MGI *(point right)*.
-  > The result is hypomorphic loss of function: the child's phenotype twin in the top 1% of all mouse models (`p = 0.026`) is the `Bub1b^{H/H}` hypomorph — a mouse with too little stable BubR1, premature cellular senescence, and muscle wasting. Meanwhile, the child's missense allele sits at the 87.3rd percentile of destabilizing folding energy (`+1.55 kcal/mol`), giving a 55% prior that the mutant protein is unstable and degraded, versus 45% that it folds stably but is catalytically inactive."
+### `[🎬 START ON SLIDE 1 — 0:00]` One child, one lever left
+- **On screen (`Slide 1 / 10`):** Copy #1 vs Copy #2 compare panel and the Rank 1 / 8 HPO KPIs. Click 1 reveals the mouse-twin figure. Click 2 reveals the seatbelt-inspector callout.
+- **Stage direction:** open calmly, on the child, not on the data.
+- **Spoken narration (`0:00 – 0:22`, 53 words):**
+  > "This child is a **BUB1B** compound heterozygote, confirmed at Rank 1: one `stop_gained` allele lost to nonsense-mediated decay, one pseudokinase missense in trans. Biallelic nulls are lethal, so the missense copy carries all remaining function. **[click]** Independently, the child's 8 clinical terms select the `Bub1b` hypomorph mouse in the top 1% of 76,699 genotypes. **[click]**"
 
-### `[👉 ADVANCE TO SLIDE 2 — 0:25]` Why Stop-Skipping & Naive AI Pipelines Fail — And What Survives Null Testing
-- **On screen (`Slide 2 / 7`):** Left: `r1-dosage.svg` (stop-allele readthrough dosage gap) + `step10-s2-upset.svg` (4-generator convergence). Right: **5-Archetype Naive-AI Counterfactual Benchmark Table**.
-- **Spoken narration (`0:25 – 0:52`):**
-  > "**[CLICK → SLIDE 2]** Rather than trusting a single pipeline or a naive AI target lookup — which, as our counterfactual table on the right shows, would fatally recommend mitotic inhibitors or neurotoxic vincristine — we forced every generator through pre-registered negative controls and permutation nulls.
-  > Across four independent drug generators *(point bottom-left)*, only one FDA-approved drug converged across two sources: **dasatinib**, which clears senescent cells in the `Bub1b^{H/H}` twin and ranks at the 99.4th percentile for selectively killing high-aneuploidy cancer cells (`p = 0.0096`).
-  > And because our 10,000-draw permutation null showed one overlap can occur by chance (`p = 0.263`), we audited stop-codon readthrough (`Route R1`, *top-left*) and proved its sequence context is suboptimal (`score = 0.33`), adding under 1.5% functional protein against an 8.5% to 28.5% rescue gap."
+### `[👉 SLIDE 2 — 0:22]` One unknown decides the treatment
+- **On screen (`Slide 2 / 10`):** ThermoMPNN atlas and the ΔΔG KPI. Click 1 reveals the 55% / 45% KPIs and the two branches. Click 2 reveals AUROC 0.60 and the "We did not hide the weak link" callout.
+- **Stage direction:** point left at the atlas and the child's line.
+- **Spoken narration (`0:22 – 0:46`, 58 words):**
+  > "The missense costs plus 1.55 kilocalories per mole: the 87.3rd percentile of all 19,950 substitutions. **[click]** So is mutant BubR1 unstable, 55%, or folded but inactive, 45%? One answer says keep the protein; the other, clear the damage. **[click]** Those odds are honest: our pre-registered calibration reached only AUROC 0.60 on 8 alleles, so we refused to call it destabilising."
 
-### `[👉 ADVANCE TO SLIDE 3 — 0:52]` 8,793-Compound Proteome Scan vs. 3D Pseudokinase Pocket Biophysics
-- **On screen (`Slide 3 / 7`):** Left: `r2-hits.svg` (proliferation-corrected & Gygi-10k proteome raisers). Right: **`r6-pitch-overview.svg`** (3D Buried Pseudokinase Core `RSA < 0.20` vs. Distal `Lys668` `SIRT2`/`NAD+` Shielding).
-- **Spoken narration (`0:52 – 1:15`):**
-  > "**[CLICK → SLIDE 3]** Next, we scanned 8,793 chemical perturbations in the Gygi-10k proteome atlas (`Route R2`, *left*) using empirical-Bayes shrinkage, uncovering two oral FDA-approved drugs — **gliclazide** and **migalastat** — that raise endogenous BubR1 protein 2.7-fold (`+1.47` and `+1.44 log2FC`).
-  > Crucially, we then audited 3D biophysical plausibility across all 1,178 substitutions in the 62-residue buried pseudokinase core (`RSA < 0.20`, *right*): because the missense site is buried inside a non-catalytic pseudokinase with no open cleft for polar chaperones like `migalastat` (`logP = -2.6`), distal deacetylation of solvent-exposed `Lys668` via `SIRT2` and `NAD+` precursors (**NMN, nicotinamide, and niacin** — which double `Bub1b^{H/H}` mouse survival *in vivo*) is biophysically superior to direct orthosteric docking."
+### `[👉 SLIDE 3 — 0:46]` How we refused to fool ourselves
+- **On screen (`Slide 3 / 10`):** 21 / 8 KPIs. Click 1 reveals the UpSet figure plus p = 0.263 and 0.33. Click 2 reveals the naive-pipeline table.
+- **Stage direction:** say the 21 / 8 numbers slowly, and linger on the DO-NOT row.
+- **Spoken narration (`0:46 – 1:10`, 55 words):**
+  > "We pre-registered 21 hypotheses; 8 came back refuted, and we show them. **[click]** Four generators overlapped on one drug, dasatinib: exactly what a 10,000-draw null predicts, p = 0.263. Readthrough context scored 0.33. **[click]** And the obvious shortcuts fail our executed tests: checkpoint inhibitors are worse in aneuploid cells, and LINCS reversal is confounded by generic arrest."
 
-### `[👉 ADVANCE TO SLIDE 4 — 1:15]` Cross-Iteration Synthesis & Route Calibration (`Entry 163`)
-- **On screen (`Slide 4 / 7`):** KPI banner (`w_R2 = 0.25`, `EVPI = 0.1800`, `EVSI = 69.1% of EVPI`, `2 Exact Flip Points`) + full-width `r5-cross-iteration.svg` (Panel A & Panel B).
-- **Spoken narration (`1:15 – 1:42`):**
-  > "**[CLICK → SLIDE 4]** In Iteration 6 (`Entry 163`), we unified all 52 drug candidates across Iterations 2, 4, and 5 and swept the Route-R2 proteomics weight across 20 calibration steps *(Panel B)*.
-  > Two mathematical results stand out:
-  > First, Expected Value of Perfect Information (`EVPI = 0.1800`) is 100% invariant across every weight — and **100% of that uncertainty (`EVPPI = 0.1800`) sits on a single biological question**: is the child's missense protein unstable or inactive? Zero percent sits on stop-codon readthrough.
-  > Second, calibrating `w_R2 = 0.25` *(Panel A)* restores evidence-hierarchy coherence and increases the Value of Sample Information of a single **48-hour cycloheximide-chase BubR1 Western blot** from **59% to 69.1% of EVPI (`EVSI = 0.1245`)**."
+### `[👉 SLIDE 4 — 1:10]` What survived, and how we weighed it
+- **On screen (`Slide 4 / 10`):** full-width calibration figure. Click 1 reveals the evidence-hierarchy flow.
+- **Stage direction:** point at Panel A, where the violet proteomic bars shrink under calibration, then at Panel B's two flip lines. Say "discounted" as the violet step appears.
+- **Spoken narration (`1:10 – 1:34`, 55 words):**
+  > "A scan of 8,793 perturbations found two oral approved drugs raising BubR1 nearly threefold, but from one replicate whose own positive control failed. So we swept that route's weight over 20 steps and solved its two exact flip points; we calibrate at 0.25. **[click]** The in-vivo `Bub1b` rescues lead again: NMN overall, dasatinib among approved drugs."
 
-### `[👉 ADVANCE TO SLIDE 5 — 1:42]` Clinical Tumor Board Action Card & Paediatric PK/PD Dosing Protocol
-- **On screen (`Slide 5 / 7`):** Left: `r4-decision-tree.svg` (two-state VOI tree). Right: **Paediatric PK/PD Dosing, Liquid Formulations & Mandatory Pre-Gates Table**.
-- **Spoken narration (`1:42 – 2:05`):**
-  > "**[CLICK → SLIDE 5]** This gives the Clinical Tumor Board a bedside-ready protocol with paediatric `mg/kg` and `mg/m²` formulations:
-  > - **Step 1:** Run the 48-hour cycloheximide-chase Western blot in patient versus parental cells.
-  > - **Before the blot — and if the blot shows stable-but-inactive BubR1:** **dasatinib** (`60–85 mg/m²/day` paediatric `PFOS` oral suspension, `EU = 0.2537`) is the #1 FDA-approved lead.
-  > - **If the blot confirms unstable BubR1:** **NMN** (`u = 0.4800`) is the #1 overall compound, oral **nicotinamide** (`10–20 mg/kg/day`) and **niacin** (`u = 0.1920`, supported across all three iterations) are the #1 FDA-approved drugs, and **migalastat** and **gliclazide** serve as oral backups.
-  > - **For the presenting embryonal rhabdomyosarcoma:** `SLCO1B1`-gated **simvastatin or lovastatin** oral suspension (`NCT02390843`) is our Rung-5 tumour adjunct."
+### `[👉 SLIDE 5 — 1:34]` Test once before you treat
+- **On screen (`Slide 5 / 10`):** decision tree, EVPI 0.1800, and 100% `missense_class` / 0% readthrough. Click 1 reveals the blot protocol, the branches and 69.1% of EVPI. Click 2 reveals the "first measurement in the child's own cells" callout.
+- **Stage direction:** point at the tree's single node, then hold one beat on the callout.
+- **Spoken narration (`1:34 – 2:04`, 74 words):**
+  > "Value of information picks the next step. EVPI is 0.18 at every weight: all on the missense class, none on readthrough. **[click]** So step one is a cycloheximide-chase BubR1 blot: zero to eight hours, with and without MG132, patient versus parental cells, weeks one to two. It captures 69.1% of EVPI. Rapid decay means unstable at 0.91: NAD-plus precursors. Normal abundance means inactive at 0.83: dasatinib. **[click]** It is our first measurement in the child's cells."
 
-### `[👉 ADVANCE TO SLIDE 6 — 2:05]` First, Do No Harm — 2-Source Per-Child Safety & PGx Callability Honesty
-- **On screen (`Slide 6 / 7`):** Red/Amber safety KPIs + `r3-mva-exposures.svg` (published MVA exposures) + `step9-e56-coverage.svg` (`1.6%` PharmCAT VCF coverage).
-- **Spoken narration (`2:05 – 2:40`):**
-  > "**[CLICK → SLIDE 6]** Every candidate was audited against the child's own genome and clinical terms (`Entries 152, 161`).
-  > First, **Do-Not K1**: across 919 cancer lines, **33 of 34 Mps1/TTK and Aurora kinase inhibitors** are *less* effective in aneuploid cells (`p = 0.0096`) and worsen chromosomal chaos — they are strictly contraindicated.
-  > Second, **vincristine** — a standard rhabdomyosarcoma backbone drug — is the only medicine flagged by **both** safety sources: a `CYP3A5 *1/*3` genotype plus an exact drug-label match to the child's skeletal muscle atrophy (`HP:0003202`).
-  > Third, because the delivered variant-only VCF covers just **1.6% (`20 of 1,223`)** of PharmCAT loci *(right)*, we require a **5-gene clinical PGx panel (`SLCO1B1`, `ABCG2`, `CYP2C9`, `G6PD`, `UGT1A1`)** before statin or adjunct therapy, plus malignant-hyperthermia anaesthesia precautions for an incidental `RYR1` variant."
+### `[👉 SLIDE 6 — 2:04]` First, do no harm
+- **On screen (`Slide 6 / 10`):** callability figure and the 33 / 34 KPI. Click 1 reveals vincristine and the DO-NOT / MONITOR / GATE list. Click 2 reveals 1.6% and the 5-gene panel.
+- **Stage direction:** stress "monitoring alert, not a discontinuation order", and point left at the figure on "1.6%".
+- **Spoken narration (`2:04 – 2:26`, 50 words):**
+  > "Safety is audited per child. Across 919 cancer lines, 33 of 34 Mps1 and Aurora inhibitors work worse in aneuploid cells: hard-excluded. **[click]** Vincristine alone is flagged by both the child's genome and symptom-matched drug labels. **[click]** And the file calls only 1.6% of pharmacogenomic positions, so we order a five-gene panel."
 
-### `[👉 ADVANCE TO SLIDE 7 — 2:40]` Zero-Edit Scalability — Re-Executed on Bloom Syndrome (`BLM`) in 53 Min for $0
-- **On screen (`Slide 7 / 7`):** Scalability KPIs (`53 Min • $0`, `Top 1.15% MGI Twin`, `522 Provenance Edges`, `Zero Coordinates Leaked`) + `step11-t1-stages.svg` + `s1-transfer.svg`.
-- **Spoken narration (`2:40 – 3:00`):**
-  > "**[CLICK → SLIDE 7]** Finally, this entire platform is built for any N-of-1 rare disease. We executed the full chain on a second chromosomal-instability disorder — **Bloom syndrome (`BLM`)** — in 53 minutes on a laptop for **$0**, matching `Blm` mice in the top 1.15% of MGI and generating a disease-specific candidate list (`Jaccard = 0.095`) with byte-identical regression checks on Case 1. Every script, provenance manifest, and negative result is open and reproducible in our repository. Thank you."
+### `[👉 SLIDE 7 — 2:26]` One machine behind every number *(engineering; skip in the 3-minute cut)*
+- **On screen (`Slide 7 / 10`):** the full five-lane architecture and three KPIs (84.99 GB, 87, $0.015). There are no fragments. Everything else on this slide is a tap.
+- **Stage direction:** sweep left to right across the lanes on the first sentence. Tap boxes as they are named. The fact panel opens without moving the slide.
+- **Spoken narration (`2:26 – 2:58`, 70 words):**
+  > "Every number you just heard comes out of one machine. The child's 85-gigabyte genome sits in a versioned MinIO bucket, **[tap: MinIO]** hash-checked against the publisher, and DuckDB queries it in place. Postgres holds the warehouse and an append-only lineage ledger. **[tap: PostgreSQL]** Track 2 ran on a laptop, plus one Modal GPU job costing a cent and a half. One FastAPI service, 87 routes, one envelope: data, cached-at, source. **[tap: Trace a request]** The dashboard renders it."
+- **If time allows:** **`[tap: Trace a figure]`** previews slide 8's ΔΔG chain. Skip it when running long.
+
+### `[👉 SLIDE 8 — 2:58]` Every claim walks back to its bytes *(engineering; skip in the 3-minute cut)*
+- **On screen (`Slide 8 / 10`):** three lineage chains and three KPIs (150 manifests, 3,656 tests, 11 gates). Click 1 reveals "Or ask the API yourself" with three real endpoints.
+- **Stage direction:** tap each chain as you name it, and let it light from source to claim before speaking the next one.
+- **Spoken narration (`2:58 – 3:26`, 67 words):**
+  > "Every claim walks back to bytes. **[tap: EVSI = 69.1% of EVPI]** EVSI 69.1% is one row of the route-weight sweep, built by the synthesis script at commit fb9c708 from eighteen hashed inputs. **[tap: ΔΔG +1.55]** The ΔΔG goes back to an AlphaFold model, a T4 scan, the atlas parquet and five lineage edges. 150 manifests like these, 3,656 tests, and a gate that fails the build if a patient coordinate leaks. **[click]** Anyone can query it."
+
+### `[👉 SLIDE 9 — 3:26]` A second disease, with the cost measured
+- **On screen (`Slide 9 / 10`):** Bloom KPIs and the case-card transfer figure. Click 1 reveals the H096 callout. Click 2 reveals the "Re-tested on Bloom" callout.
+- **Stage direction:** keep the pace brisk. Point at the red 378-line bar, then at the pass / fail grid.
+- **Spoken narration (`3:26 – 3:44`, 44 words):**
+  > "Does it scale? The whole chain ran on Bloom syndrome: 53 minutes, zero dollars, Blm twin top 1.15%, Jaccard 0.095, cisplatin flagged. **[click]** Our zero-edit claim failed, so we parameterised the later modules. **[click]** On Bloom, two of three routes passed their control; MVA stayed byte-identical."
+
+### `[👉 SLIDE 10 — 3:44]` What we are asking for
+- **On screen (`Slide 10 / 10`):** the Day 1 → Week 1–2 → branch flow. Click 1 reveals the openness callout. Click 2 reveals the disclaimer.
+- **Stage direction:** walk the three steps left to right. Do not rush the thank you.
+- **Spoken narration (`3:44 – 4:00`, 39 words):**
+  > "So the ask. Day one: order the five-gene panel; chart both alerts. Weeks one to two: run the chase blot in the child's cells; its result picks the branch. **[click]** Everything is open. **[click]** These are hypotheses, not prescriptions. Thank you."
 
 ---
 
-## Version B — Plain-English / Non-Technical Cut (With Everyday Analogies)
+## Version B — Plain-English Cut
 
 ### Plain-English Analogy Cheat-Sheet (How We Explain the Science)
 
 | Scientific Concept | Plain-English Meaning & Analogy Used in Script |
 | :--- | :--- |
-| **`BUB1B` gene / BubR1 protein** (spindle assembly checkpoint kinase) | **The cell's "seatbelt inspector"**: Before a cell divides in two, BubR1 checks that every chromosome is buckled in properly so neither daughter cell gets the wrong number of chromosomes. |
-| **Mosaic Variegated Aneuploidy (MVA)** | **Unbuckled cell division**: Because the seatbelt inspector is faulty, cells divide with missing or extra chromosomes, causing slow growth, premature cell aging, and childhood muscle cancer (**rhabdomyosarcoma**). |
-| **Compound heterozygote (`stop_gained` + `missense_variant`)** | **Two different broken instruction manuals** (one from each parent): Copy #1 has a **full stop sign halfway through** (`stop_gained`), so the cell shreds it. Copy #2 has a **single letter typo** (`missense_variant`) — it still builds the inspector protein, which is the only reason this child is alive. |
-| **`unstable` vs. `inactive` missense state** | **The one big question about Copy #2**: Does the typo make the inspector protein **crumple and melt away too fast** (`unstable`, 55% chance), or does it **hold its shape but fail to do its job** (`inactive`, 45% chance)? |
-| **Value of Information (`EVPI` / `EVSI`) & Cycloheximide-chase Western blot** | **"Test once before you treat"**: A math framework that proves **one simple 48-hour lab test on the child's cells** (measuring how fast the BubR1 protein disappears) removes **nearly 70% of the guesswork** before a doctor picks a medicine. |
+| **`BUB1B` gene / BubR1 protein** (spindle assembly checkpoint) | **The cell's "seatbelt inspector".** Before a cell divides, BubR1 checks that every chromosome is buckled in, so neither daughter cell ends up with the wrong number. |
+| **Compound heterozygote (`stop_gained` + `missense_variant`)** | **Two broken copies of the instructions, one from each parent.** Copy one has a stop sign halfway through, so the cell shreds it. Copy two has a one-letter typo but still builds the inspector. |
+| **`unstable` vs `inactive` missense** | **The one big question.** Does the typo make the inspector crumple and get thrown away (55%), or hold its shape but not do its job (45%)? |
+| **Route weight `w_R2` (calibration)** | **A trust dial.** One petri-dish experiment is turned down so that it cannot outvote a whole-animal rescue. |
+| **Cycloheximide-chase Western blot (EVSI = 69.1% of EVPI)** | **"Test once before you treat."** Stop the child's cells making new protein and watch how fast the inspector disappears. This one result removes most of the guesswork before anyone picks a medicine. |
+| **MinIO object store / PostgreSQL warehouse** | **A locked filing room and a card index.** The raw genome sits in the filing room, checked byte by byte. The index holds the tables and a ledger of where each one came from. |
+| **SHA-256 provenance manifest / lineage chain** | **A receipt with a fingerprint.** Every table carries a receipt naming the script that made it and a fingerprint of every file it used. Change one byte and the fingerprint no longer matches. |
+
+### `[🎬 START ON SLIDE 1 — 0:00]` One child, one lever left
+- **Spoken narration (`0:00 – 0:22`, 55 words):**
+  > "BubR1 is the cell's seatbelt inspector: before a cell divides, it checks every chromosome is buckled in. This child inherited two broken copies of its gene. Copy one is shredded by the cell, so everything rests on copy two, which has a one-letter typo. **[click]** The child's symptoms match a mouse with far too little inspector. **[click]**"
+
+### `[👉 SLIDE 2 — 0:22]` One unknown decides the treatment
+- **Spoken narration (`0:22 – 0:46`, 59 words):**
+  > "Which medicine depends on copy two. Our folding atlas of every possible typo puts the child's among the more damaging. **[click]** Does it make the inspector crumple and get thrown away, or hold its shape but not work? Different answers, different medicines. **[click]** Our own check of the atlas was too weak to settle it, so we carry both: fifty-five, forty-five."
+
+### `[👉 SLIDE 3 — 0:46]` How we refused to fool ourselves
+- **Spoken narration (`0:46 – 1:10`, 56 words):**
+  > "Then we tried hard to prove ourselves wrong. We wrote down twenty-one predictions before testing them; eight came back wrong. **[click]** Even our hoped-for agreement between four search methods proved no better than chance. **[click]** And the obvious shortcuts? Blocking cell division makes things worse in cells like the child's; skipping the stop sign adds too little protein."
+
+### `[👉 SLIDE 4 — 1:10]` What survived, and how we weighed it
+- **Spoken narration (`1:10 – 1:34`, 57 words):**
+  > "What survived? Two ordinary pills raised the inspector protein nearly threefold in human cells, but from a single experiment. So we turned how much to trust it into a dial, tested every setting, and set it low. **[click]** Back on top: vitamin B3-type boosters that doubled lifespan in the matching mouse, and a drug that clears worn-out cells."
+
+### `[👉 SLIDE 5 — 1:34]` Test once before you treat
+- **Spoken narration (`1:34 – 2:04`, 75 words):**
+  > "So instead of a ranked list, we hand doctors a rule. All the uncertainty comes down to that one question. **[click]** One standard lab test answers most of it: stop the child's cells making new protein, and watch how fast the inspector disappears, within the first two weeks. If it melts away, the stabilising route. If it holds steady, the cleanup route. **[click]** And it is the first test in the child's own cells, not a mouse's."
+
+### `[👉 SLIDE 6 — 2:04]` First, do no harm
+- **Spoken narration (`2:04 – 2:26`, 56 words):**
+  > "For a fragile child, what not to give matters as much. Blocking cell division is wrong here: thirty-three of thirty-four such drugs do worse in cells like the child's. **[click]** One routine chemotherapy is flagged by both the child's DNA and muscle weakness. **[click]** And the child's DNA file barely covers drug-handling genes, so we order a test."
+
+### `[👉 SLIDE 7 — 2:26]` One machine behind every number *(skip in the 3-minute cut)*
+- **Spoken narration (`2:26 – 2:58`, 70 words):**
+  > "How do you know any of this is real? Behind every number sits one machine. **[tap: MinIO]** The child's genome lives in a locked storage bucket, checked byte by byte. **[tap: PostgreSQL]** A database keeps the tables, plus a ledger of where each one came from. Almost everything ran on a laptop; one graphics-card job cost under two cents. **[tap: Trace a request]** Every answer the website receives says where it came from, and the dashboard shows that."
+
+### `[👉 SLIDE 8 — 2:58]` Every claim walks back to its bytes *(skip in the 3-minute cut)*
+- **Spoken narration (`2:58 – 3:26`, 66 words):**
+  > "And you can check us. Pick any claim on these slides and follow it back. **[tap: EVSI = 69.1% of EVPI]** The sixty-nine percent is one row of one table, made by one saved script from eighteen fingerprinted files. **[tap: ΔΔG +1.55]** The folding score traces to a public protein model and a short graphics-card run. **[click]** That makes a hundred and fifty receipts and thousands of automatic tests, with a guard against patient data leaking."
+
+### `[👉 SLIDE 9 — 3:26]` A second disease, with the cost measured
+- **Spoken narration (`3:26 – 3:44`, 44 words):**
+  > "It is not a one-off. On another disorder, Bloom syndrome, it ran in under an hour on a laptop, for nothing. **[click]** Our no-code-change claim was wrong, so we rebuilt for it. **[click]** Now two of three newer parts pass their check on the new disease."
+
+### `[👉 SLIDE 10 — 3:44]` What we are asking for
+- **Spoken narration (`3:44 – 4:00`, 38 words):**
+  > "Here is the ask. Order the five-gene safety test; put both warnings in the chart. Run the one lab test and let it choose the branch. **[click]** Everything is open. **[click]** These are ideas to test, not prescriptions. Thank you."
 
 ---
 
-### `[🎬 START ON SLIDE 1 — 0:00]` The Child's Condition — A Faulty "Seatbelt Inspector" Inside Dividing Cells
-- **On screen (`Slide 1 / 7`):** KPI cards + 3D stability distribution (`step9-e1-distribution.svg`) + 76,699 mouse twin match (`step9-e2-rank.svg`).
-- **Spoken narration (`0:00 – 0:30`):**
-  > "Every time one of our cells divides, a guardian protein called **BubR1** acts like a **seatbelt inspector** — making sure every chromosome is properly lined up before the cell splits.
-  > In Track 1, we proved that this child inherited two broken copies of the `BUB1B` gene that makes this inspector.
-  > The first copy has a premature stop sign halfway through, so the cell's cleanup crew destroys it almost completely.
-  > That means the child's survival depends entirely on the **second copy**, which has just a **single-letter typo**.
-  > By testing that typo across 3D protein-folding models *(point left)* and comparing the child's symptoms against over 76,000 laboratory mouse models *(point right)*, we found the child's exact biological twin: a well-studied mouse with **too little working BubR1**, whose cells age prematurely and whose muscles waste away.
-  > And our 3D folding map revealed the **one crucial question** that decides how to treat this child: does that single typo make the BubR1 protein **crumple and break down too fast** — a 55% chance — or does the protein **hold its shape, but sit on the job without working** — a 45% chance?"
+## Recording Checklist
 
-### `[👉 ADVANCE TO SLIDE 2 — 0:30]` Why "Stop-Skipping" Drugs & Standard AI Shortcuts Fail
-- **On screen (`Slide 2 / 7`):** Left: `r1-dosage.svg` + `step10-s2-upset.svg`. Right: **5-Archetype Naive-AI Counterfactual Table**.
-- **Spoken narration (`0:30 – 0:52`):**
-  > "**[CLICK → SLIDE 2]** Because developing a brand-new drug takes a decade, we searched thousands of **already-approved medicines** from three completely different angles — and we checked every idea against strict statistical controls so we wouldn't fall into the traps that trip up standard AI tools *(point right)*.
-  > **First**, we asked: can a drug force the cell to ignore the stop sign on Copy #1? Our sequence check *(top-left)* showed that 'stop-skipping' drugs would restore less than 1.5% of normal protein, which isn't enough.
-  > And when we asked what protects tissues if Copy #2 cannot be rescued at all *(bottom-left)*, one FDA-approved medicine stood out across both our mouse twin and 919 cancer cell lines: **dasatinib**, which clears out damaged aging cells."
-
-### `[👉 ADVANCE TO SLIDE 3 — 0:52]` 8,793-Drug Protein Scan & Why Surface Shielding (`Lys668`) Beats Deep Docking
-- **On screen (`Slide 3 / 7`):** Left: `r2-hits.svg`. Right: **`r6-pitch-overview.svg`** (3D Buried Core vs. Distal `Lys668` `NAD+/SIRT2` Shield).
-- **Spoken narration (`0:52 – 1:15`):**
-  > "**[CLICK → SLIDE 3]** **Second**, we asked: what if Copy #2 is **crumpling too fast**?
-  > A scan of **8,793 compounds** in human cells *(left)* uncovered two oral pills — **migalastat** and **gliclazide** — that raised BubR1 protein levels more than **two-and-a-half-fold**.
-  > And when we inspected the 3D protein structure *(right)*, we saw why our mouse-twin **vitamin B3 / NAD+ boosters — NMN, nicotinamide, and niacin** — are even stronger: the child's typo is buried deep inside the protein core where a drug cannot easily dock, whereas **NAD+ boosters flip a surface switch (`Lys668`)** that shields the whole BubR1 protein from being thrown in the cellular trash — doubling healthy lifespan in the matching mouse model."
-
-### `[👉 ADVANCE TO SLIDE 4 — 1:15]` One Simple Lab Test Removes 70% of the Guesswork (`Entry 163`)
-- **On screen (`Slide 4 / 7`):** KPI banner + `r5-cross-iteration.svg` (52 candidates unified + 20-step calibration curve).
-- **Spoken narration (`1:15 – 1:42`):**
-  > "**[CLICK → SLIDE 4]** In our final unified submission, we combined all 52 drug candidates from every stage of our work into a single **clinical decision engine** that weighs real whole-animal survival higher than single petri-dish experiments.
-  > Instead of handing doctors a static list and guessing, our math proves something remarkable: **100% of the uncertainty** about which drug is best comes down to that one question about Copy #2.
-  > Better yet, doctors don't have to guess. A **single, standard 48-hour lab test** on a small sample of the child's cells — called a **protein stability blot** — measures whether the child's BubR1 protein melts away too fast or holds steady, capturing **nearly 70% of the entire decision value** before giving a single dose."
-
-### `[👉 ADVANCE TO SLIDE 5 — 1:42]` The Bedside Action Card — Child-Friendly Doses for Every Branch
-- **On screen (`Slide 5 / 7`):** Left: `r4-decision-tree.svg`. Right: **Paediatric PK/PD Dosing & Liquid Formulation Table**.
-- **Spoken narration (`1:42 – 2:05`):**
-  > "**[CLICK → SLIDE 5]** Here is how the care team uses our Action Card at the bedside:
-  > - **If the 48-hour lab test shows the protein melts away too fast:** start with the **NAD+ boosters (NMN, niacin, or nicotinamide in child-friendly liquid form)** to stabilize BubR1 via its natural repair pathway, with **migalastat** or **gliclazide** as oral backups.
-  > - **If the lab test shows the protein is stable but inactive:** switch to **dasatinib oral suspension** to clear damaged aging cells.
-  > - **And to help fight the child's muscle tumour directly:** pair standard care with **simvastatin or lovastatin strawberry oral suspension**, two cholesterol medicines already tested in children's cancer trials that starve this specific muscle tumour."
-
-### `[👉 ADVANCE TO SLIDE 6 — 2:05]` First, Do No Harm — Checking the Child's Own DNA for Drug Safety
-- **On screen (`Slide 6 / 7`):** Safety KPIs + `r3-mva-exposures.svg` + `step9-e56-coverage.svg`.
-- **Spoken narration (`2:05 – 2:40`):**
-  > "**[CLICK → SLIDE 6]** For a fragile child, knowing **what not to give** is just as important as finding a treatment.
-  > First, a common hunch in biology is to use cell-division-blocking cancer drugs. Our data across 919 cell lines proves the exact opposite: **33 out of 34 drugs in that class actually work worse** in cells like this child's and make chromosome scrambling worse. We flag the entire class as **strictly do-not-give**.
-  > Second, by cross-checking the child's DNA and existing muscle weakness against drug safety labels, we flagged **vincristine** — a routine childhood chemotherapy — as a **double-warning risk** for severe nerve and muscle toxicity in this specific child.
-  > And because standard genetic files only cover **1.6%** of known drug-metabolism spots *(right)*, we give the care team an exact **5-gene safety checklist** to run before prescribing a statin, plus an anaesthesia surgical alert we caught in the child's DNA."
-
-### `[👉 ADVANCE TO SLIDE 7 — 2:40]` Built to Help the Next Rare-Disease Child in Under an Hour
-- **On screen (`Slide 7 / 7`):** `step11-t1-stages.svg` + `s1-transfer.svg` (Bloom syndrome transfer in 53 minutes for $0).
-- **Spoken narration (`2:40 – 3:00`):**
-  > "**[CLICK → SLIDE 7]** Best of all, we didn't build a one-off script just for this hackathon. We built a reusable, open-source rare-disease engine. When we pointed it at a completely different genetic disorder — **Bloom syndrome** — without changing a single line of code, it ran in **53 minutes on a standard laptop for $0** and produced a tailored, safety-checked treatment roadmap. Thank you."
-
+1. **Choose the cut.** For the full **4:00**, record all 10 slides with **`A`** or by hand. For the **3:00** video, skip slides 7–8: at the end of slide 6, press **`O`** and click slide 9, then advance by hand. Auto-advance runs on the 4:00 grid. Targets for the 3:00 cut: slide 9 at `2:26`, slide 10 at `2:44`, end at `3:00`.
+2. **Open the Recording preset.** Load `pitch-slides.html?preset=recording`, or press **`V`** and choose **Recording**. This hides timing, teleprompter, toolbar, progress bar and timer on the audience screen.
+3. **Put the presenter on the second screen.** Press **`P`**, drag the presenter window to the other display, and press **`N`** to pick Tech or Plain notes. Record only the audience window, in fullscreen (**`F`**). Do the slide 7–8 taps in the **audience** window. The presenter preview is a static copy.
+4. **Do one timed dry run.** Press **`S`** at 0:00 and read the chosen version against the presenter timer. Each slide should land within ±2 s of its cue above. On slides 7–8, rehearse the taps. Each tap must land on its word without stalling the sentence.
+5. **Check before recording.** Every figure is legible (press **`Z`** on any figure to inspect it). Nothing is clipped at the recording resolution. The slide 7 fact panel and the slide 8 chains are readable at that resolution.
+6. **Export the PDF.** Press the toolbar **print** button and save as PDF to make the static companion deck. It has one slide per page with all fragments revealed, and slides 7–8 print in their default state.
