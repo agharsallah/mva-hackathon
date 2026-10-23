@@ -48,6 +48,7 @@ scored with full confidence, and would be a window of the wrong protein.
 ```python
 # uv run python - (the whole driver; the entry is the record of it)
 from mva.zoo import adapters, record_window
+
 records = adapters.records_from_parquet("build/it4/records.parquet")
 missense = [r for r in records if r.consequence == "missense_variant"]
 windows, report = record_window.protein_windows(
