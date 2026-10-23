@@ -17,7 +17,7 @@ import type { Envelope } from '../api/types';
 import { type Entry, isEnvelopeEntry } from './loader';
 
 /** Fragment name → its paths. Static, so no fragment is loaded to find out who owns a path. */
-const OWNERS: Record<string, readonly string[]> = {
+const ALL_OWNERS: Record<string, readonly string[]> = {
   callset: [
     '/api/overview',
     '/api/callset/filters',
@@ -109,14 +109,35 @@ const OWNERS: Record<string, readonly string[]> = {
   ],
 };
 
-const FRAGMENTS: Record<string, () => Promise<Record<string, Entry>>> = {
+// The demo build (see `src/demo.ts`) keeps the four data fragments plus search, and must not
+// reference the platform or zoo fragments at all, or their chunks would ship with it.
+// `import.meta.env` is inlined here rather than imported so the dead branch is dropped.
+const OWNERS: Record<string, readonly string[]> =
+  import.meta.env.VITE_DEMO === 'true'
+    ? {
+        callset: ALL_OWNERS.callset,
+        genome: ALL_OWNERS.genome,
+        panel: ALL_OWNERS.panel,
+        phenotype: ALL_OWNERS.phenotype,
+        demo: ['/api/search', '/api/callset/region'],
+      }
+    : ALL_OWNERS;
+
+const DATA_FRAGMENTS: Record<string, () => Promise<Record<string, Entry>>> = {
   callset: () => import('./registry/callset').then((m) => m.callsetEntries),
   genome: () => import('./registry/genome').then((m) => m.genomeEntries),
   panel: () => import('./registry/panel').then((m) => m.panelEntries),
   phenotype: () => import('./registry/phenotype').then((m) => m.phenotypeEntries),
-  platform: () => import('./registry/platform').then((m) => m.platformEntries),
-  zoo: () => import('./registry/zoo').then((m) => m.zooEntries),
 };
+
+const FRAGMENTS: Record<string, () => Promise<Record<string, Entry>>> =
+  import.meta.env.VITE_DEMO === 'true'
+    ? { ...DATA_FRAGMENTS, demo: () => import('./registry/demo').then((m) => m.demoEntries) }
+    : {
+        ...DATA_FRAGMENTS,
+        platform: () => import('./registry/platform').then((m) => m.platformEntries),
+        zoo: () => import('./registry/zoo').then((m) => m.zooEntries),
+      };
 
 const ownerOf = (path: string): string | undefined =>
   Object.keys(OWNERS).find((name) => OWNERS[name].includes(path));

@@ -1,0 +1,240 @@
+{
+  "BUB1B": {
+    "gene": "BUB1B",
+    "in_panel": true,
+    "term_set": "proband-only",
+    "by_term_set": {
+      "with-parental": {
+        "gene": "BUB1B",
+        "entrez_id": "701",
+        "rank": 14,
+        "score": 0.359289,
+        "forward": 1.837175,
+        "reverse": 0.552371,
+        "curated_terms": 112,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0002859",
+        "best_ic": 5.524694,
+        "in_panel": true
+      },
+      "proband-only": {
+        "gene": "BUB1B",
+        "entrez_id": "701",
+        "rank": 6,
+        "score": 0.452792,
+        "forward": 2.100885,
+        "reverse": 0.543165,
+        "curated_terms": 112,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0002859",
+        "best_ic": 5.524694,
+        "in_panel": true
+      }
+    },
+    "delta": { "with_parental": 14, "proband_only": 6, "moved": 8 }
+  },
+  "CEP57": {
+    "gene": "CEP57",
+    "in_panel": true,
+    "term_set": "proband-only",
+    "by_term_set": {
+      "with-parental": {
+        "gene": "CEP57",
+        "entrez_id": "9702",
+        "rank": 27,
+        "score": 0.339403,
+        "forward": 1.854144,
+        "reverse": 0.420052,
+        "curated_terms": 93,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0002859",
+        "best_ic": 5.524694,
+        "in_panel": true
+      },
+      "proband-only": {
+        "gene": "CEP57",
+        "entrez_id": "9702",
+        "rank": 17,
+        "score": 0.436272,
+        "forward": 2.116274,
+        "reverse": 0.4206,
+        "curated_terms": 93,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0002859",
+        "best_ic": 5.524694,
+        "in_panel": true
+      }
+    },
+    "delta": { "with_parental": 26, "proband_only": 17, "moved": 10 }
+  },
+  "TRIP13": {
+    "gene": "TRIP13",
+    "in_panel": true,
+    "term_set": "proband-only",
+    "by_term_set": {
+      "with-parental": {
+        "gene": "TRIP13",
+        "entrez_id": "9319",
+        "rank": 45,
+        "score": 0.323048,
+        "forward": 1.626004,
+        "reverse": 0.490239,
+        "curated_terms": 105,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0002859",
+        "best_ic": 5.524694,
+        "in_panel": true
+      },
+      "proband-only": {
+        "gene": "TRIP13",
+        "entrez_id": "9319",
+        "rank": 26,
+        "score": 0.404926,
+        "forward": 1.8868,
+        "reverse": 0.494213,
+        "curated_terms": 105,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0002859",
+        "best_ic": 5.524694,
+        "in_panel": true
+      }
+    },
+    "delta": { "with_parental": 42, "proband_only": 25, "moved": 19 }
+  },
+  "DICER1": {
+    "gene": "DICER1",
+    "in_panel": true,
+    "term_set": "proband-only",
+    "by_term_set": {
+      "with-parental": {
+        "gene": "DICER1",
+        "entrez_id": "23405",
+        "rank": 13,
+        "score": 0.365727,
+        "forward": 1.342012,
+        "reverse": 1.097704,
+        "curated_terms": 46,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0002859",
+        "best_ic": 5.524694,
+        "in_panel": true
+      },
+      "proband-only": {
+        "gene": "DICER1",
+        "entrez_id": "23405",
+        "rank": 8,
+        "score": 0.448637,
+        "forward": 1.547268,
+        "reverse": 1.100734,
+        "curated_terms": 46,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0002859",
+        "best_ic": 5.524694,
+        "in_panel": true
+      }
+    },
+    "delta": { "with_parental": 13, "proband_only": 8, "moved": 5 }
+  },
+  "TP53": {
+    "gene": "TP53",
+    "in_panel": true,
+    "term_set": "proband-only",
+    "by_term_set": {
+      "with-parental": {
+        "gene": "TP53",
+        "entrez_id": "7157",
+        "rank": 23,
+        "score": 0.353137,
+        "forward": 1.738691,
+        "reverse": 0.587323,
+        "curated_terms": 224,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0002859",
+        "best_ic": 5.524694,
+        "in_panel": true
+      },
+      "proband-only": {
+        "gene": "TP53",
+        "entrez_id": "7157",
+        "rank": 11,
+        "score": 0.445729,
+        "forward": 1.994654,
+        "reverse": 0.583472,
+        "curated_terms": 224,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0002859",
+        "best_ic": 5.524694,
+        "in_panel": true
+      }
+    },
+    "delta": { "with_parental": 22, "proband_only": 11, "moved": 12 }
+  },
+  "CENPE": {
+    "gene": "CENPE",
+    "in_panel": true,
+    "term_set": "proband-only",
+    "by_term_set": {
+      "with-parental": {
+        "gene": "CENPE",
+        "entrez_id": "1062",
+        "rank": 1065,
+        "score": 0.175007,
+        "forward": 0.911063,
+        "reverse": 0.25239,
+        "curated_terms": 58,
+        "best_term": "HP:0001511",
+        "best_common_ancestor": "HP:0001511",
+        "best_ic": 2.852189,
+        "in_panel": true
+      },
+      "proband-only": {
+        "gene": "CENPE",
+        "entrez_id": "1062",
+        "rank": 1010,
+        "score": 0.221025,
+        "forward": 1.036691,
+        "reverse": 0.250431,
+        "curated_terms": 58,
+        "best_term": "HP:0001511",
+        "best_common_ancestor": "HP:0001511",
+        "best_ic": 2.852189,
+        "in_panel": true
+      }
+    },
+    "delta": { "with_parental": 1019, "proband_only": 973, "moved": 53 }
+  },
+  "SMC5": {
+    "gene": "SMC5",
+    "in_panel": true,
+    "term_set": "proband-only",
+    "by_term_set": {
+      "with-parental": {
+        "gene": "SMC5",
+        "entrez_id": "23137",
+        "rank": 4490,
+        "score": 0.017177,
+        "forward": 0.07315,
+        "reverse": 0.041418,
+        "curated_terms": 43,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0033127",
+        "best_ic": 0.290026,
+        "in_panel": true
+      },
+      "proband-only": {
+        "gene": "SMC5",
+        "entrez_id": "23137",
+        "rank": 4485,
+        "score": 0.021509,
+        "forward": 0.083992,
+        "reverse": 0.042142,
+        "curated_terms": 43,
+        "best_term": "HP:0002859",
+        "best_common_ancestor": "HP:0033127",
+        "best_ic": 0.290026,
+        "in_panel": true
+      }
+    },
+    "delta": { "with_parental": 4372, "proband_only": 4360, "moved": 5 }
+  }
+}

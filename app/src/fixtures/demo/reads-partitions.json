@@ -1,0 +1,10 @@
+[
+  { "lane": 1, "read_num": 1, "shards": 34, "reads": 87846194, "gib": 5.486177 },
+  { "lane": 1, "read_num": 2, "shards": 34, "reads": 87471666, "gib": 5.455463 },
+  { "lane": 2, "read_num": 1, "shards": 34, "reads": 88493328, "gib": 5.31525 },
+  { "lane": 2, "read_num": 2, "shards": 34, "reads": 89154161, "gib": 5.315994 },
+  { "lane": 3, "read_num": 1, "shards": 34, "reads": 86394256, "gib": 5.361118 },
+  { "lane": 3, "read_num": 2, "shards": 34, "reads": 87860152, "gib": 5.347783 },
+  { "lane": 4, "read_num": 1, "shards": 34, "reads": 86905074, "gib": 5.237708 },
+  { "lane": 4, "read_num": 2, "shards": 34, "reads": 86901588, "gib": 5.238909 }
+]

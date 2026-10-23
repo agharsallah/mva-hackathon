@@ -1,0 +1,42 @@
+[
+  {
+    "chrom": "chr15",
+    "pos": 900000,
+    "ref": "C",
+    "alt": "T",
+    "rsid": "rs137852899",
+    "gene": "BUB1B",
+    "consequence": "stop_gained",
+    "impact": "HIGH",
+    "gnomad_af": 6.2e-6,
+    "gnomad_af_grpmax": 1.41e-5,
+    "clin_sig": "Pathogenic",
+    "qual": 1846.681898,
+    "filter": "PASS",
+    "gt": "0/1",
+    "dp": 45,
+    "vaf": 0.511765,
+    "is_rare_recessive": true,
+    "is_protein_altering": true
+  },
+  {
+    "chrom": "chr15",
+    "pos": 901000,
+    "ref": "G",
+    "alt": "A",
+    "rsid": null,
+    "gene": "BUB1B",
+    "consequence": "missense_variant",
+    "impact": "MODERATE",
+    "gnomad_af": null,
+    "gnomad_af_grpmax": null,
+    "clin_sig": null,
+    "qual": 1193.109603,
+    "filter": "PASS",
+    "gt": "0/1",
+    "dp": 38,
+    "vaf": 0.488512,
+    "is_rare_recessive": true,
+    "is_protein_altering": true
+  }
+]

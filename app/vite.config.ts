@@ -2,7 +2,7 @@ import { fileURLToPath } from 'node:url';
 
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
-import { defineConfig, loadEnv, type ProxyOptions } from 'vite';
+import { defineConfig, loadEnv, type Plugin, type ProxyOptions } from 'vite';
 
 /**
  * The dependency endpoints the Status page shows while it is serving fixture rows.
@@ -19,6 +19,8 @@ import { defineConfig, loadEnv, type ProxyOptions } from 'vite';
  * be used because these keys are not VITE_-prefixed and must not all be exposed wholesale.
  */
 function configuredEndpoints(mode: string): Record<string, string> {
+  // The shareable demo build names no host at all.
+  if (process.env.VITE_DEMO === 'true') return {};
   const env = loadEnv(mode, fileURLToPath(new URL('..', import.meta.url)), '');
   const port = env.PGPORT || '5432';
   const scheme = (env.S3_USE_SSL || 'true') === 'false' ? 'http' : 'https';
@@ -44,6 +46,7 @@ function configuredEndpoints(mode: string): Record<string, string> {
  * there is no proxy; with `VITE_API_URL` absolute the browser never asks this server.
  */
 function devApiProxy(mode: string): Record<string, ProxyOptions> | undefined {
+  if (process.env.VITE_DEMO === 'true') return undefined;
   const env = loadEnv(mode, fileURLToPath(new URL('..', import.meta.url)), '');
   const target = env.MVA_VIZ_API_URL?.replace(/\/+$/, '');
   if (!target) return undefined;
@@ -55,8 +58,57 @@ function devApiProxy(mode: string): Record<string, ProxyOptions> | undefined {
   return { '/api': options, '^/health$': options };
 }
 
+/**
+ * In the demo build, rewrite every text that names the real case — page prose, the glossary
+ * (generated from `docs/dictionary.md`) and the page title. Same mapping as
+ * `tools/build_demo_fixtures.py`; `tools/check-demo-leaks.mjs` fails the build if it misses.
+ */
+const DEMO_RENAMES: [string, string][] = [
+  ['PROBAND01', 'HG002'],
+  ['HP:0000121', 'HP:0002667'],
+  ['Nephrocalcinosis', 'Nephroblastoma'],
+  ['HP:0001508', 'HP:0000252'],
+  ['Failure to thrive', 'Microcephaly'],
+  ['HP:0003202', 'HP:0001305'],
+  ['Skeletal muscle atrophy', 'Dandy-Walker malformation'],
+  ['HP:0001622', 'HP:0000518'],
+  ['Premature birth', 'Cataract'],
+  ['HP:0001518', 'HP:0001511'],
+  ['Small for gestational age', 'Intrauterine growth retardation'],
+  ['HP:0200067', 'HP:0003826'],
+  ['Recurrent spontaneous abortion', 'Stillbirth'],
+  ['recurrent-miscarriage', 'stillbirth'],
+  ['recurrent miscarriage', 'stillbirth'],
+  ['miscarriage', 'stillbirth'],
+  // headline counts the page prose quotes, real -> demo (overview.json in fixtures/demo)
+  ['1,071,835,104', '711,908,327'],
+  ['1,079,858,785', '717,312,040'],
+  ['136,586,642', '88,125,298'],
+  ['5,012,204', '4,819,668'],
+  ['271,414', '207,456'],
+  ['94.58', '95.70'],
+  ['66,860', '62,944'],
+];
+const demoRename = (text: string): string =>
+  DEMO_RENAMES.reduce((t, [from, to]) => t.replaceAll(from, to), text);
+
+function demoSanitize(): Plugin {
+  return {
+    name: 'demo-sanitize',
+    apply: () => process.env.VITE_DEMO === 'true',
+    transform: (code, id) => (/\/src\/.*\.(tsx?|json)$/.test(id) ? demoRename(code) : null),
+    transformIndexHtml: (html) => demoRename(html),
+    // The figure of the real submission file: emitted by the glossary's eager glob even
+    // when nothing in the demo links to it.
+    generateBundle(_, bundle) {
+      for (const name of Object.keys(bundle))
+        if (name.includes('submission-csv')) delete bundle[name];
+    },
+  };
+}
+
 export default defineConfig(({ mode }) => ({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), demoSanitize()],
   define: {
     __CONFIGURED_ENDPOINTS__: JSON.stringify(configuredEndpoints(mode)),
     // The fence on the persisted query cache: a deployment never reads the cache a

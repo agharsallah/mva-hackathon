@@ -33,6 +33,7 @@ import {
   health,
   unauthorizedStore,
 } from '../api/client';
+import { SAMPLE_ID } from '../demo';
 import { cx } from '../lib/ui';
 import { AiExport } from './AiExport';
 import { CommandPalette } from './CommandPalette';
@@ -255,7 +256,7 @@ export function Header({ home, sections }: { home: HeaderNavItem; sections: Head
           </span>
           <span className="hidden items-baseline gap-2 text-xs text-chrome-400 md:inline-flex">
             <span className="rounded-pill border border-line px-2 py-px text-micro text-chrome-400">
-              PROBAND01
+              {SAMPLE_ID}
             </span>
             single sample, no trio
           </span>

@@ -1,0 +1,14 @@
+[
+  { "sub_type": "A>C", "count": 165110, "is_transition": false },
+  { "sub_type": "A>G", "count": 640578, "is_transition": true },
+  { "sub_type": "A>T", "count": 168342, "is_transition": false },
+  { "sub_type": "C>A", "count": 167456, "is_transition": false },
+  { "sub_type": "C>G", "count": 165448, "is_transition": false },
+  { "sub_type": "C>T", "count": 674515, "is_transition": true },
+  { "sub_type": "G>A", "count": 662166, "is_transition": true },
+  { "sub_type": "G>C", "count": 167577, "is_transition": false },
+  { "sub_type": "G>T", "count": 168511, "is_transition": false },
+  { "sub_type": "T>A", "count": 167041, "is_transition": false },
+  { "sub_type": "T>C", "count": 625816, "is_transition": true },
+  { "sub_type": "T>G", "count": 170676, "is_transition": false }
+]

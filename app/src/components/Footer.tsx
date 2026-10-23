@@ -11,6 +11,7 @@
 import { Link } from 'react-router-dom';
 
 import { useHealthDependencies } from '../api/hooks';
+import { DEMO } from '../demo';
 import { C } from '../lib/palette';
 import { BADGE, cx } from '../lib/ui';
 import { type HealthTone, summarizeHealth } from './footerHealth';
@@ -97,25 +98,30 @@ export function Footer() {
           </p>
         </div>
 
-        <div className="space-y-2">
-          <p className="font-medium text-chrome-400">Dependency status</p>
-          <DependencyStatusLink />
-        </div>
+        {/* The demo build has no services to probe and serves no repo docs. */}
+        {!DEMO && (
+          <div className="space-y-2">
+            <p className="font-medium text-chrome-400">Dependency status</p>
+            <DependencyStatusLink />
+          </div>
+        )}
 
         <SectionIndex />
 
-        <nav aria-label="Repository documentation" className="space-y-2">
-          <p className="font-medium text-chrome-400">Repo docs</p>
-          <ul className="space-y-1">
-            {REPO_DOCS.map((doc) => (
-              <li key={doc.href}>
-                <a href={doc.href} className="hover:text-chrome-300">
-                  {doc.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {!DEMO && (
+          <nav aria-label="Repository documentation" className="space-y-2">
+            <p className="font-medium text-chrome-400">Repo docs</p>
+            <ul className="space-y-1">
+              {REPO_DOCS.map((doc) => (
+                <li key={doc.href}>
+                  <a href={doc.href} className="hover:text-chrome-300">
+                    {doc.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )}
       </div>
     </footer>
   );

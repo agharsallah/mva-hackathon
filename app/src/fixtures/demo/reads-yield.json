@@ -1,0 +1,30 @@
+[
+  {
+    "lane": "L001",
+    "est_reads": 179495261,
+    "est_gbases": 27.811402,
+    "gigabytes": 14.62501,
+    "n_files": 2
+  },
+  {
+    "lane": "L002",
+    "est_reads": 180519462,
+    "est_gbases": 27.521452,
+    "gigabytes": 14.57134,
+    "n_files": 2
+  },
+  {
+    "lane": "L003",
+    "est_reads": 169127875,
+    "est_gbases": 26.94609,
+    "gigabytes": 14.137414,
+    "n_files": 2
+  },
+  {
+    "lane": "L004",
+    "est_reads": 172241314,
+    "est_gbases": 26.965779,
+    "gigabytes": 14.237034,
+    "n_files": 2
+  }
+]

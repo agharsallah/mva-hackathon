@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
+import { DEMO } from '../demo';
 import { GeneRanking } from './phenotype/GeneRanking';
 import { MatchBreakdown } from './phenotype/MatchBreakdown';
 import { ParentalDelta } from './phenotype/ParentalDelta';
@@ -115,9 +116,12 @@ export default function PhenotypePage() {
         <ParentalDelta />
       </Section>
 
-      <Section title="How far this ranking reaches">
-        <Reach />
-      </Section>
+      {/* Reads the Track 1 step-1 payload, which the demo build does not ship. */}
+      {!DEMO && (
+        <Section title="How far this ranking reaches">
+          <Reach />
+        </Section>
+      )}
 
       <Callout tone="decision" title="What a rank here is, and what it is not">
         This ranking is over <strong>genes</strong>, not variants. It says a gene is a plausible

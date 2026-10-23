@@ -1,0 +1,31 @@
+[
+  ["BUB1B", "MQ40", "1/1", 24, 24, "intron_variant", "MODIFIER", 0.999184],
+  ["BUB1B", "MQ40", "0/1", 29, 12, "intron_variant", "MODIFIER", 0.084482],
+  ["BUB1B", "MQ40", "1/1", 36, 37, "intron_variant", "MODIFIER", 0.636938],
+  [
+    "BUB1B",
+    "LowQual;QD2",
+    "0/1",
+    13,
+    5,
+    "non_coding_transcript_exon_variant",
+    "MODIFIER",
+    0.220651
+  ],
+  ["CENPE", "MQ40", "0/1", 12, 5, "intron_variant", "MODIFIER", 0.208906],
+  ["CENPE", "QD2", "0/1", 26, 7, "intron_variant", "MODIFIER", 0.163412],
+  ["CENPE", "LowQual;QD2", "0/1", 32, 7, null, null, null],
+  ["CEP192", "MQ40", "1/1", 50, 49, "intron_variant", "MODIFIER", 0.690831],
+  ["CEP192", "MQ40", "1/1", 31, 29, "intron_variant", "MODIFIER", 0.691756],
+  ["CEP192", "MQ40", "1/1", 31, 30, "intron_variant", "MODIFIER", 0.689917],
+  ["CEP192", "LowQual", "0/1", 5, 2, "intron_variant", "MODIFIER", 0.08718],
+  ["SMC5", "LowQual", "0/1", 8, 5, "intron_variant", "MODIFIER", 0.242256],
+  ["TP53", "LowQual", "1/1", 4, 3, "intron_variant", "MODIFIER", 0.002601],
+  ["TP53", "LowQual;QD2", "0/1", 13, 5, "intron_variant", "MODIFIER", 0.005714],
+  ["TRIP13", "MQ40", "0/1", 23, 6, "non_coding_transcript_exon_variant", "MODIFIER", 0.436321],
+  ["TRIP13", "MQ40", "0/1", 24, 6, "non_coding_transcript_exon_variant", "MODIFIER", 0.389453],
+  ["TRIP13", "MQ40", "0/1", 19, 4, "non_coding_transcript_exon_variant", "MODIFIER", 0.458196],
+  ["TRIP13", "MQ40", "0/1", 17, 2, "non_coding_transcript_exon_variant", "MODIFIER", 0.061485],
+  ["TRIP13", "MQ40", "0/1", 38, 11, "intron_variant", "MODIFIER", 0.333075],
+  ["TRIP13", "QD2", "0/1", 46, 6, "missense_variant", "MODERATE", 0.32308]
+]

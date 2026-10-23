@@ -24,7 +24,7 @@ import type { FeatureModule } from './types';
 const under = (track: string): FeatureModule[] =>
   STEP_MODULES.filter((m) => m.id === track || m.id.startsWith(`${track}-`));
 
-export const modules: FeatureModule[] = [
+const caseModules: FeatureModule[] = [
   {
     id: 'overview',
     path: '/',
@@ -117,7 +117,11 @@ export const modules: FeatureModule[] = [
     description: 'Look up a gene, region or record you chose yourself, with a density strip.',
     load: () => import('../../pages/Search'),
   },
+];
 
+// Everything after Case. A separate array, so the demo build (`src/demo.ts`) never
+// references these pages and their chunks are not emitted at all.
+const decideAndPlatformModules: FeatureModule[] = [
   // ── Decide: what do we believe, and what has it cost to find out? ───────────
   // Science and Probes are the register and the budget; Track 1 and Track 2 are the two
   // deliverables, each opening onto its iterations and their steps (that subtree is
@@ -239,3 +243,8 @@ export const modules: FeatureModule[] = [
     load: () => import('../../pages/StyleGuide'),
   },
 ];
+
+export const modules: FeatureModule[] =
+  import.meta.env.VITE_DEMO === 'true'
+    ? caseModules
+    : [...caseModules, ...decideAndPlatformModules];

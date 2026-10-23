@@ -45,7 +45,8 @@ const groups: JourneyGroup[] = NAV_GROUPS.map((g) => ({
   label: g.label,
   question: g.question,
   pages: topLevelIn(g.id).map(page),
-}));
+  // A group the demo build has no page in (Decide, Platform) is dropped, not drawn empty.
+})).filter((g) => g.pages.length > 0);
 const navItem = (p: JourneyPage): HeaderNavItem => ({
   to: p.to,
   label: p.label,

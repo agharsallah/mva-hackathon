@@ -1,0 +1,95 @@
+{
+  "terms": [
+    {
+      "hpo_id": "HP:0002859",
+      "label": "Rhabdomyosarcoma",
+      "note": "public OMIM 257300 (MVA1) annotation \u2014 demo case, not a real patient",
+      "proband": true,
+      "information_content": 5.524694
+    },
+    {
+      "hpo_id": "HP:0002667",
+      "label": "Nephroblastoma",
+      "note": "public OMIM 257300 (MVA1) annotation \u2014 demo case, not a real patient",
+      "proband": true,
+      "information_content": 3.896387
+    },
+    {
+      "hpo_id": "HP:0004322",
+      "label": "Short stature",
+      "note": "public OMIM 257300 (MVA1) annotation \u2014 demo case, not a real patient",
+      "proband": true,
+      "information_content": 1.267394
+    },
+    {
+      "hpo_id": "HP:0000252",
+      "label": "Microcephaly",
+      "note": "public OMIM 257300 (MVA1) annotation \u2014 demo case, not a real patient",
+      "proband": true,
+      "information_content": 1.496794
+    },
+    {
+      "hpo_id": "HP:0001305",
+      "label": "Dandy-Walker malformation",
+      "note": "public OMIM 257300 (MVA1) annotation \u2014 demo case, not a real patient",
+      "proband": true,
+      "information_content": 2.160687
+    },
+    {
+      "hpo_id": "HP:0000518",
+      "label": "Cataract",
+      "note": "public OMIM 257300 (MVA1) annotation \u2014 demo case, not a real patient",
+      "proband": true,
+      "information_content": 3.275911
+    },
+    {
+      "hpo_id": "HP:0001511",
+      "label": "Intrauterine growth retardation",
+      "note": "public OMIM 257300 (MVA1) annotation \u2014 demo case, not a real patient",
+      "proband": true,
+      "information_content": 2.852189
+    },
+    {
+      "hpo_id": "HP:0003826",
+      "label": "Stillbirth",
+      "note": "public OMIM 257300 (MVA1) annotation \u2014 demo case, not a real patient",
+      "proband": false,
+      "information_content": 6.08431
+    }
+  ],
+  "sets": [
+    {
+      "name": "with-parental",
+      "size": 8,
+      "rationale": "with-parental: demo term set from the public MVA1 annotation.",
+      "ids": [
+        "HP:0002859",
+        "HP:0002667",
+        "HP:0004322",
+        "HP:0000252",
+        "HP:0001305",
+        "HP:0000518",
+        "HP:0001511",
+        "HP:0003826"
+      ]
+    },
+    {
+      "name": "proband-only",
+      "size": 7,
+      "rationale": "proband-only: demo term set from the public MVA1 annotation.",
+      "ids": [
+        "HP:0002859",
+        "HP:0002667",
+        "HP:0004322",
+        "HP:0000252",
+        "HP:0001305",
+        "HP:0000518",
+        "HP:0001511"
+      ]
+    }
+  ],
+  "notably_absent": [
+    { "hpo_id": "HP:0000252", "label": "Microcephaly" },
+    { "hpo_id": "HP:0001249", "label": "Intellectual disability" }
+  ]
+}

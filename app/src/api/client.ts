@@ -194,6 +194,8 @@ export async function get<T>(
   signal?: AbortSignal,
 ): Promise<Result<T>> {
   try {
+    // The demo build has no API: every request is answered by its synthetic fixture.
+    if (import.meta.env.VITE_DEMO === 'true') throw new TypeError('demo build: no API');
     return await raw<T>(path, params, signal);
   } catch (err) {
     // Only "no server there" or "this server has no such route" falls back. A 404 the
@@ -254,6 +256,7 @@ export async function getBare<T>(path: string, params?: Params): Promise<T> {
 
 /** GET /health — no envelope. Used by the header's status dot. */
 export async function health(): Promise<Health> {
+  if (import.meta.env.VITE_DEMO === 'true') return { ok: true, service: 'demo (no API)' };
   const res = await fetch(buildUrl('/health'));
   if (!res.ok) throw new ApiError(`${res.status}`, res.status, '/health');
   return (await res.json()) as Health;

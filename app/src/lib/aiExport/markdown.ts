@@ -7,6 +7,7 @@
  * payload directly under the sentences that say how to read it.
  */
 
+import { SAMPLE_ID } from '../../demo';
 import type { EndpointRecord, ExhibitRecord } from './types';
 
 const NO_PAYLOAD =
@@ -65,7 +66,7 @@ export function bundleMarkdown(
     `**Generated:** ${new Date().toISOString()}`,
     '',
     'This document was exported from the MVA Case Explorer for analysis by a language model.',
-    'It describes one whole-genome case (proband `PROBAND01`, single sample, no parents).',
+    `It describes one whole-genome case (proband \`${SAMPLE_ID}\`, single sample, no parents).`,
     '',
     CAVEAT,
     '',

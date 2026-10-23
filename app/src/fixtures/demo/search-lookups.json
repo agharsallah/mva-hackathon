@@ -1,0 +1,18 @@
+{
+  "panel": {
+    "BUB1B": { "chrom": "15", "start": 953051, "end": 1038240 },
+    "CEP57": { "chrom": "11", "start": 1942420, "end": 2030316 },
+    "TRIP13": { "chrom": "5", "start": 2867627, "end": 2973211 },
+    "CENPE": { "chrom": "4", "start": 3850956, "end": 3931233 },
+    "CEP192": { "chrom": "18", "start": 4849704, "end": 4916815 },
+    "SMC5": { "chrom": "9", "start": 5785438, "end": 5800232 },
+    "DICER1": { "chrom": "14", "start": 6746354, "end": 6888506 },
+    "TP53": { "chrom": "17", "start": 7756742, "end": 7788405 }
+  },
+  "offPanel": {
+    "TTN": { "chrom": "2", "start": 8558145, "end": 8902433 },
+    "BRCA1": { "chrom": "17", "start": 8315173, "end": 8143081 }
+  },
+  "inCallset": { "rs1042522": { "chrom": "17", "start": 7849922 } },
+  "inDbsnpOnly": { "rs137852899": { "chrom": "12", "start": 4336288 } }
+}

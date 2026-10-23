@@ -1,0 +1,34 @@
+[
+  [
+    "BUB1B",
+    "chr15",
+    77,
+    73,
+    794.75528,
+    95.323188,
+    "spindle assembly checkpoint; the canonical MVA gene"
+  ],
+  [
+    "CEP57",
+    "chr11",
+    13,
+    13,
+    1000.395443,
+    99.502178,
+    "centrosomal, microtubule nucleation; MVA type 2"
+  ],
+  ["TRIP13", "chr5", 12, 6, 1009.714846, 50.338695, "AAA-ATPase, checkpoint silencing; MVA type 3"],
+  ["CENPE", "chr4", 165, 162, 1267.497651, 97.509506, "centromere kinesin, chromosome congression"],
+  ["CEP192", "chr18", 248, 241, 1481.959506, 97.858877, "centrosome maturation and duplication"],
+  ["SMC5", "chr9", 119, 121, 914.280989, 98.642332, "SMC5/6 complex, genome stability"],
+  [
+    "DICER1",
+    "chr14",
+    82,
+    83,
+    990.226707,
+    100.109121,
+    "miRNA processing; tumour-predisposition overlap"
+  ],
+  ["TP53", "chr17", 117, 112, 1827.816863, 98.909072, "tumour suppressor; mitotic surveillance"]
+]

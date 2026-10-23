@@ -1,0 +1,21 @@
+{
+  "parental_term": "HP:0003826",
+  "parental_label": "Stillbirth",
+  "considered": 5082,
+  "rows": [
+    { "gene": "BUB1B", "with_parental": 14, "proband_only": 6, "moved": 8, "curated": true },
+    { "gene": "CENPE", "with_parental": 1016, "proband_only": 984, "moved": 52, "curated": true },
+    {
+      "gene": "CEP192",
+      "with_parental": null,
+      "proband_only": null,
+      "moved": null,
+      "curated": false
+    },
+    { "gene": "CEP57", "with_parental": 26, "proband_only": 17, "moved": 10, "curated": true },
+    { "gene": "DICER1", "with_parental": 13, "proband_only": 8, "moved": 5, "curated": true },
+    { "gene": "SMC5", "with_parental": 4330, "proband_only": 4250, "moved": 5, "curated": true },
+    { "gene": "TP53", "with_parental": 22, "proband_only": 11, "moved": 12, "curated": true },
+    { "gene": "TRIP13", "with_parental": 43, "proband_only": 25, "moved": 19, "curated": true }
+  ]
+}

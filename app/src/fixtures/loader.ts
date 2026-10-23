@@ -20,7 +20,26 @@
 
 import type { Params } from '../api/client';
 
-const files = import.meta.glob<{ default: unknown }>(['./data/*.json', './data/**/*.json']);
+// The demo build reads its SYNTHETIC rows from `demo/` and, from `data/`, only public
+// reference files (GRCh38 lengths, VCF field definitions, Ensembl/AlphaFold structures).
+// Inlined `import.meta.env` so the other glob — and every real-data chunk — is dropped.
+const files =
+  import.meta.env.VITE_DEMO === 'true'
+    ? {
+        ...import.meta.glob<{ default: unknown }>([
+          './data/genome-canonical-order.json',
+          './data/genome-grch38-lengths.json',
+          './data/callset-fields.json',
+          './data/gene-structure/*.json',
+          './data/protein/*.json',
+        ]),
+        ...Object.fromEntries(
+          Object.entries(import.meta.glob<{ default: unknown }>('./demo/*.json')).map(
+            ([path, load]) => [path.replace('./demo/', './data/'), load],
+          ),
+        ),
+      }
+    : import.meta.glob<{ default: unknown }>(['./data/*.json', './data/**/*.json']);
 
 /**
  * Load one `data/<name>.json` payload, cast to its row type.

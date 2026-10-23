@@ -1,0 +1,82 @@
+[
+  {
+    "metric": "tstv",
+    "label": "Ts/Tv ratio (whole genome)",
+    "observed": 1.948104,
+    "expected_low": 1.9,
+    "expected_high": 2.1,
+    "unit": "ratio",
+    "verdict": "within",
+    "source": "Wang et al. 2015, WGS QC norms"
+  },
+  {
+    "metric": "mean_depth",
+    "label": "Mean read depth",
+    "observed": 44.48128,
+    "expected_low": 30,
+    "expected_high": 50,
+    "unit": "\u00d7",
+    "verdict": "within",
+    "source": "clinical WGS 30\u00d7 floor (ACMG/AMP lab guidance)"
+  },
+  {
+    "metric": "pass_rate",
+    "label": "PASS share of records",
+    "observed": 94.697597,
+    "expected_low": 90,
+    "expected_high": 99,
+    "unit": "%",
+    "verdict": "within",
+    "source": "GATK VQSR tranche 99.0 typical yield"
+  },
+  {
+    "metric": "total_variants",
+    "label": "Variant records per genome",
+    "observed": 4809458,
+    "expected_low": 4000000,
+    "expected_high": 5000000,
+    "unit": "records",
+    "verdict": "above",
+    "source": "1000 Genomes phase 3, per-sample totals"
+  },
+  {
+    "metric": "indel_fraction",
+    "label": "Indels as a share of records",
+    "observed": 18.626608,
+    "expected_low": 12,
+    "expected_high": 18,
+    "unit": "%",
+    "verdict": "above",
+    "source": "gnomAD v4 genome release notes"
+  },
+  {
+    "metric": "multiallelic_rate",
+    "label": "Multiallelic (1/2) sites",
+    "observed": 1.333856,
+    "expected_low": 1.5,
+    "expected_high": 3.5,
+    "unit": "%",
+    "verdict": "below",
+    "source": "gnomAD v4 genome release notes"
+  },
+  {
+    "metric": "read_length",
+    "label": "Read length",
+    "observed": 141,
+    "expected_low": 150,
+    "expected_high": 150,
+    "unit": "bp",
+    "verdict": "below",
+    "source": "Illumina 2\u00d7150 nominal (point estimate)"
+  },
+  {
+    "metric": "contamination",
+    "label": "Cross-sample contamination",
+    "observed": 0,
+    "expected_low": 0,
+    "expected_high": 0.02,
+    "unit": "fraction",
+    "verdict": "unknown",
+    "source": "not measured \u2014 needs verifyBamID on the BAM, which was not delivered"
+  }
+]

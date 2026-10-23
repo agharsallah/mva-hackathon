@@ -1,0 +1,177 @@
+[
+  {
+    "chrom": "1",
+    "length": 248956422,
+    "n_records": 371596,
+    "variants_per_mb": 1540.867409,
+    "pct_of_callset": 7.613386
+  },
+  {
+    "chrom": "2",
+    "length": 242193529,
+    "n_records": 377029,
+    "variants_per_mb": 1573,
+    "pct_of_callset": 7.803128
+  },
+  {
+    "chrom": "3",
+    "length": 198295559,
+    "n_records": 309824,
+    "variants_per_mb": 1598.104952,
+    "pct_of_callset": 6.285772
+  },
+  {
+    "chrom": "4",
+    "length": 190214555,
+    "n_records": 322762,
+    "variants_per_mb": 1772.432048,
+    "pct_of_callset": 6.753391
+  },
+  {
+    "chrom": "5",
+    "length": 181538259,
+    "n_records": 288216,
+    "variants_per_mb": 1666.053406,
+    "pct_of_callset": 5.96635
+  },
+  {
+    "chrom": "6",
+    "length": 170805979,
+    "n_records": 269138,
+    "variants_per_mb": 1662.860523,
+    "pct_of_callset": 5.652635
+  },
+  {
+    "chrom": "7",
+    "length": 159345973,
+    "n_records": 260495,
+    "variants_per_mb": 1692.249631,
+    "pct_of_callset": 5.444486
+  },
+  {
+    "chrom": "8",
+    "length": 145138636,
+    "n_records": 243944,
+    "variants_per_mb": 1715.36077,
+    "pct_of_callset": 5.01307
+  },
+  {
+    "chrom": "9",
+    "length": 138394717,
+    "n_records": 210875,
+    "variants_per_mb": 1588.308755,
+    "pct_of_callset": 4.427832
+  },
+  {
+    "chrom": "10",
+    "length": 133797422,
+    "n_records": 233930,
+    "variants_per_mb": 1794.549062,
+    "pct_of_callset": 4.774117
+  },
+  {
+    "chrom": "11",
+    "length": 135086622,
+    "n_records": 221105,
+    "variants_per_mb": 1689.470407,
+    "pct_of_callset": 4.503229
+  },
+  {
+    "chrom": "12",
+    "length": 133275309,
+    "n_records": 211005,
+    "variants_per_mb": 1684.403095,
+    "pct_of_callset": 4.40658
+  },
+  {
+    "chrom": "13",
+    "length": 114364328,
+    "n_records": 188114,
+    "variants_per_mb": 1753.291518,
+    "pct_of_callset": 3.946164
+  },
+  {
+    "chrom": "14",
+    "length": 107043718,
+    "n_records": 167793,
+    "variants_per_mb": 1657.447578,
+    "pct_of_callset": 3.532404
+  },
+  {
+    "chrom": "15",
+    "length": 101991189,
+    "n_records": 166586,
+    "variants_per_mb": 1710.335196,
+    "pct_of_callset": 3.420348
+  },
+  {
+    "chrom": "16",
+    "length": 90338345,
+    "n_records": 151196,
+    "variants_per_mb": 1783.875167,
+    "pct_of_callset": 3.188867
+  },
+  {
+    "chrom": "17",
+    "length": 83257441,
+    "n_records": 139821,
+    "variants_per_mb": 1668,
+    "pct_of_callset": 2.84738
+  },
+  {
+    "chrom": "18",
+    "length": 80373285,
+    "n_records": 132237,
+    "variants_per_mb": 1721.404165,
+    "pct_of_callset": 2.748935
+  },
+  {
+    "chrom": "19",
+    "length": 58617616,
+    "n_records": 109416,
+    "variants_per_mb": 1841,
+    "pct_of_callset": 2.229848
+  },
+  {
+    "chrom": "20",
+    "length": 64444167,
+    "n_records": 114891,
+    "variants_per_mb": 1839.011085,
+    "pct_of_callset": 2.376682
+  },
+  {
+    "chrom": "21",
+    "length": 46709983,
+    "n_records": 82284,
+    "variants_per_mb": 1833.764215,
+    "pct_of_callset": 1.715909
+  },
+  {
+    "chrom": "22",
+    "length": 50818468,
+    "n_records": 82403,
+    "variants_per_mb": 1695.905132,
+    "pct_of_callset": 1.725025
+  },
+  {
+    "chrom": "X",
+    "length": 156040895,
+    "n_records": 155285,
+    "variants_per_mb": 1045.961264,
+    "pct_of_callset": 3.277455
+  },
+  {
+    "chrom": "Y",
+    "length": 57227415,
+    "n_records": 11705,
+    "variants_per_mb": 213.71429,
+    "pct_of_callset": 0.242659
+  },
+  {
+    "chrom": "MT",
+    "length": 16569,
+    "n_records": 19,
+    "variants_per_mb": 1202.089113,
+    "pct_of_callset": 0
+  }
+]

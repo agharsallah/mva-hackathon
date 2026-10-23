@@ -1,0 +1,8 @@
+[
+  { "filter_value": "PASS", "count": 4565065, "pct_of_section": 94.604739, "impact_rank": 0 },
+  { "filter_value": "MQ40", "count": 168576, "pct_of_section": 3.555378, "impact_rank": 1 },
+  { "filter_value": "QD2", "count": 34008, "pct_of_section": 0.704694, "impact_rank": 2 },
+  { "filter_value": "LowQual;QD2", "count": 16264, "pct_of_section": 0.34202, "impact_rank": 3 },
+  { "filter_value": "MQ40;QD2", "count": 12040, "pct_of_section": 0.248871, "impact_rank": 4 },
+  { "filter_value": "other", "count": 28220, "pct_of_section": 0.577656, "impact_rank": 5 }
+]

@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build:demo": "VITE_DEMO=true VITE_USE_FIXTURES=true vite build --outDir dist-demo && node tools/check-demo-leaks.mjs dist-demo",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "lint": "eslint .",

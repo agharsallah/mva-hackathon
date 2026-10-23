@@ -1,5 +1,6 @@
 import { Section } from '../components/Controls';
 import { Callout, Explainer } from '../components/Explainer';
+import { DEMO } from '../demo';
 import { AlleleBalance } from './genome/AlleleBalance';
 import { BafKaryogram } from './genome/BafKaryogram';
 import { DensityBins } from './genome/DensityBins';
@@ -92,12 +93,15 @@ export default function GenomePage() {
         <BafKaryogram />
       </Section>
 
-      <Section
-        title="And would that map have seen a mosaic at all?"
-        subtitle="Step 8 re-tests the same callset with a statistic that has power, and states the smallest event each chromosome could have shown."
-      >
-        <MosaicRetest />
-      </Section>
+      {/* Reads the Track 1 step-8 payload, which the demo build does not ship. */}
+      {!DEMO && (
+        <Section
+          title="And would that map have seen a mosaic at all?"
+          subtitle="Step 8 re-tests the same callset with a statistic that has power, and states the smallest event each chromosome could have shown."
+        >
+          <MosaicRetest />
+        </Section>
+      )}
 
       <Section title="How is the callset laid out over the genome?">
         <div className="space-y-4">

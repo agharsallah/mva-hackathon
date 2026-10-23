@@ -91,8 +91,11 @@ the viz API answers `503` and the page shows the start command instead of an err
 
 ## Hosting
 
-The dashboard is deployed on **Vercel**; `mva-viz-api` stays on the project's own VPS, next to
-the warehouse and the object store it reads. Nothing about the backend is in the bundle.
+The dashboard includes a **Vercel deployment configuration**; a live deployment has not
+been verified. The recorded infrastructure status is in
+[`docs/current-state.md`](../docs/current-state.md). The intended topology keeps
+`mva-viz-api` on the project's own VPS, next to the warehouse and object store.
+Nothing about the backend is in the bundle.
 
 ```mermaid
 flowchart LR
