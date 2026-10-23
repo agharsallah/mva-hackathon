@@ -1,0 +1,35 @@
+hpo_id	name	reference	evidence
+HP:0003213	Deficient excision of UV-induced pyrimidine dimers in DNA	OMIM:227650	IEA
+HP:0003214	Prolonged G2 phase of cell cycle	OMIM:227650	IEA
+HP:0000365	Hearing impairment	OMIM:227650	IEA
+HP:0000486	Strabismus	OMIM:227650	IEA
+HP:0004322	Short stature	OMIM:227650	IEA
+HP:0000086	Ectopic kidney	OMIM:227650	IEA
+HP:0003251	Male infertility	PMID:29904161	TAS
+HP:0000085	Horseshoe kidney	OMIM:227650	IEA
+HP:0000081	Duplicated collecting system	OMIM:227650	IEA
+HP:0012210	Abnormal renal morphology	OMIM:227650	IEA
+HP:0001909	Leukemia	OMIM:227650	IEA
+HP:0000815	Hypergonadotropic hypogonadism	OMIM:227650	IEA
+HP:0000957	Cafe-au-lait spot	OMIM:227650	IEA
+HP:0001903	Anemia	OMIM:227650	TAS
+HP:0030680	Abnormal cardiovascular system morphology	OMIM:227650	IEA
+HP:0000978	Bruising susceptibility	OMIM:227650	IEA
+HP:0001627	Abnormal heart morphology	OMIM:227650	TAS
+HP:0009943	Complete duplication of thumb phalanx	OMIM:227650	IEA
+HP:0001249	Intellectual disability	OMIM:227650	IEA
+HP:0000252	Microcephaly	OMIM:227650	IEA
+HP:0001000	Abnormal skin pigmentation	OMIM:227650	TAS
+HP:0003221	Chromosomal breakage induced by crosslinking agents	OMIM:227650	IEA
+HP:0001518	Small for gestational age	OMIM:227650	IEA
+HP:0000568	Microphthalmia	OMIM:227650	IEA
+HP:0009777	Absent thumb	OMIM:227650	IEA
+HP:0001896	Reticulocytopenia	OMIM:227650	IEA
+HP:0009778	Short thumb	OMIM:227650	IEA
+HP:0001873	Thrombocytopenia	OMIM:227650	TAS
+HP:0000028	Cryptorchidism	OMIM:227650	IEA
+HP:0001876	Pancytopenia	OMIM:227650	IEA
+HP:0003974	Absent radius	OMIM:227650	IEA
+HP:0000104	Renal agenesis	OMIM:227650	IEA
+HP:0001017	Anemic pallor	OMIM:227650	IEA
+HP:0001875	Decreased total neutrophil count	OMIM:227650	IEA

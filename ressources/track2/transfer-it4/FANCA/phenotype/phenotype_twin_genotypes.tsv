@@ -1,0 +1,12 @@
+genotype_id	composition	background	allele_class	n_mp_terms	pmids	symmetric_score	symmetric_rank	symmetric_percentile	phenodigm_score	phenodigm_rank	phenodigm_percentile	forward_score	forward_rank	forward_percentile
+MGI:3609225	Fanca<tm1Zqw>/Fanca<tm1Zqw>	involves: 129P2/OlaHsd	null	1	15905196	3.3905	37	0.0482	55.7781	102	0.133	0.3697	27970	36.4672
+MGI:3618916	Fanca<tm1Faw>/Fanca<+>	involves: 129P2/OlaHsd * FVB	null	1	10915769	3.3905	37	0.0482	55.7781	102	0.133	0.3697	27970	36.4672
+MGI:3618892	Fanca<tm1Faw>/Fanca<tm1Faw>	involves: 129P2/OlaHsd * FVB	null	13	10915769	2.5973	578	0.7536	49.3968	375	0.4889	1.2418	2015	2.6272
+MGI:3047099	Fanca<tm1.1Wong>/Fanca<tm1.1Wong>	involves: C57BL/6	null	9	12913077	2.1053	3609	4.7054	37.4036	4599	5.9962	1.0548	3382	4.4094
+MGI:3047131	Fanca<tm1Wong>/Fanca<tm1Wong>	involves: C57BL/6	null	6	12913077	2.0015	5363	6.9923	36.5684	5469	7.1305	0.9555	4459	5.8136
+MGI:3047139	Fanca<tm1Wong>/Fanca<tm1Wong>	either: 129S6/SvEvTac or C57BL/6	null	6	12913077	1.9861	5597	7.2974	33.4718	9444	12.3131	0.5456	15257	19.892
+MGI:3047101	Fanca<tm1Wong>/Fanca<tm1Wong>	either: 129S6/SvEvTac or (involves: 129S6/SvEvTac * CD-1)	null	1	12913077	1.9844	5661	7.3808	32.437	11258	14.6782	0.2634	36363	47.41
+MGI:3047126	Fanca<tm1Wong>/Fanca<tm1Wong>	involves: 129S6/SvEvTac	null	8	12913077	1.97	5903	7.6963	34.8405	7466	9.7342	0.5661	14511	18.9194
+MGI:5691433	Faap20<tm1(KOMP)Mbp>/Faap20<tm1(KOMP)Mbp>,Fanca<tm1.1Wong>/Fanca<tm1.1Wong>	involves: 129S6/SvEvTac * C57BL/6 * C57BL/6N	null	1	25917546	0.9951	46240	60.2876	15.5251	52625	68.6124	0.2985	33358	43.4921
+MGI:5608998	Fanca<tm1a(EUCOMM)Wtsi>/Fanca<tm1a(EUCOMM)Wtsi>	involves: C57BL/6N	null	2	22922648	0.941	47992	62.5719	16.3146	51592	67.2655	0.1736	45026	58.7048
+MGI:3833152	Fanca<tm1Faw>/Fanca<tm1Faw>	involves: 129P2/OlaHsd * FVB/N	null	1	16859999	0.9401	48175	62.8105	15.2439	55439	72.2813	0.1524	46912	61.1638

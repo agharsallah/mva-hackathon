@@ -1,0 +1,116 @@
+{
+  "name": "phenotype_twin",
+  "built_at": "2026-10-22T14:50:23+00:00",
+  "built_by": "uv run python tools/fanca_transfer.py",
+  "code_version": "0656cf0",
+  "code_version_note": "the commit at build time, which precedes the commit landing this",
+  "modules": [
+    "src/mva/phenotype/cross_species.py",
+    "src/mva/phenotype/cross_species_io.py",
+    "src/mva/phenotype/cross_species_controls.py",
+    "src/mva/phenotype/cross_species_run.py"
+  ],
+  "sources": {
+    "clinical": "OMIM:227650 non-NOT aspect-P terms; see ../hpo_case.tsv and ../case.json",
+    "genomic": "Fanca gene only; no variants or patient data"
+  },
+  "parameters": {
+    "null": 100,
+    "seed": 0,
+    "gene": "Fanca",
+    "pathway": [
+      "Fancc",
+      "Fancd2",
+      "Fancg"
+    ],
+    "controls": []
+  },
+  "inputs": [
+    {
+      "name": "MGI_PhenoGenoMP.rpt",
+      "url": "https://www.informatics.jax.org/downloads/reports/MGI_PhenoGenoMP.rpt",
+      "retrieved_at": "2026-09-24T06:55:40+00:00",
+      "last_modified": "Mon, 21 Sep 2026 12:00:54 GMT",
+      "data_version": null,
+      "bytes": 54098874,
+      "sha256": "3649756742d27455ce63f34bb2d2b4b008c938ccd4c587adbeb1bb20d4e9a3ad",
+      "licence": "MGI: free use; cite Mouse Genome Informatics (www.informatics.jax.org)"
+    },
+    {
+      "name": "MGI_PhenotypicAllele.rpt",
+      "url": "https://www.informatics.jax.org/downloads/reports/MGI_PhenotypicAllele.rpt",
+      "retrieved_at": "2026-09-24T06:55:43+00:00",
+      "last_modified": "Mon, 21 Sep 2026 12:00:55 GMT",
+      "data_version": null,
+      "bytes": 32307545,
+      "sha256": "4939874cf83d5ad08825253156534d0b2e9dd9e9efb697d67d917706ea7c04dc",
+      "licence": "MGI: free use; cite Mouse Genome Informatics (www.informatics.jax.org)"
+    },
+    {
+      "name": "mp.obo",
+      "url": "https://purl.obolibrary.org/obo/mp.obo",
+      "retrieved_at": "2026-09-24T06:55:45+00:00",
+      "last_modified": "Mon, 21 Sep 2026 12:00:56 GMT",
+      "data_version": "releases/2026-08-25/mp.obo",
+      "bytes": 7679452,
+      "sha256": "30840ff64fd27b14b665efd0af4fadba31389a6b47543c2f8ac12bbecebef755",
+      "licence": "CC BY 4.0"
+    },
+    {
+      "name": "hp.obo",
+      "url": "https://purl.obolibrary.org/obo/hp.obo",
+      "retrieved_at": "2026-09-24T06:55:56+00:00",
+      "last_modified": "Wed, 02 Sep 2026 20:59:18 GMT",
+      "data_version": "hp/releases/2026-09-01",
+      "bytes": 10863613,
+      "sha256": "93dace952fcb3ec4728818857f6ba76bc2d5312f4d83266519b8694b8e798f22",
+      "licence": "HPO licence (free with attribution)"
+    },
+    {
+      "name": "phenotype.hpoa",
+      "url": "https://purl.obolibrary.org/obo/hp/hpoa/phenotype.hpoa",
+      "retrieved_at": "2026-09-24T06:55:47+00:00",
+      "last_modified": "Wed, 02 Sep 2026 21:12:10 GMT",
+      "data_version": null,
+      "bytes": 35816037,
+      "sha256": "e89aa39c8f97bf5a52c5d160f9250a603681d630ade8ec2679d84ac5aece1f72",
+      "licence": "HPO licence (free with attribution)"
+    },
+    {
+      "name": "mp_hp_mgi_all.sssom.tsv",
+      "url": "https://raw.githubusercontent.com/mapping-commons/mh_mapping_initiative/master/mappings/mp_hp_mgi_all.sssom.tsv",
+      "retrieved_at": "2026-09-24T06:55:47+00:00",
+      "last_modified": null,
+      "data_version": null,
+      "bytes": 328986,
+      "sha256": "6b23131d80d596a8a5d5a5e6c3a3e94a63c83229059bc6b346888d6b9fd7a5de",
+      "licence": "CC BY 4.0 (declared in the file header)"
+    },
+    {
+      "name": "upheno-species-independent.sssom.tsv",
+      "url": "https://raw.githubusercontent.com/obophenotype/upheno/master/mappings/upheno-species-independent.sssom.tsv",
+      "retrieved_at": "2026-09-24T06:55:47+00:00",
+      "last_modified": null,
+      "data_version": null,
+      "bytes": 2554239,
+      "sha256": "9caed6f21238b5fa87cc171da5d7344731d8bba0b1dc7d1da350a5efff0b63dd",
+      "licence": "CC BY 4.0 (uPheno)"
+    },
+    {
+      "name": "hp-to-mp-bestmatches.tsv",
+      "url": "https://raw.githubusercontent.com/obophenotype/upheno/master/mappings/hp-to-mp-bestmatches.tsv",
+      "retrieved_at": "2026-09-24T06:55:48+00:00",
+      "last_modified": null,
+      "data_version": null,
+      "bytes": 1262175,
+      "sha256": "f9ec5b8b7a777463de851a9c50b7aa1f670b9529b56ae78f650d36d246722e63",
+      "licence": "CC BY 4.0 (uPheno)"
+    }
+  ],
+  "outputs": {
+    "phenotype_twin.json": "every study, null percentiles, controls, pathway",
+    "phenotype_twin_genotypes.tsv": "every genotype of the gene, first query only"
+  },
+  "entry": "ressources/track2/transfer-it4/FANCA/README.md",
+  "transfer_note": "Corrected legacy MVA labels; numerical outputs unchanged."
+}

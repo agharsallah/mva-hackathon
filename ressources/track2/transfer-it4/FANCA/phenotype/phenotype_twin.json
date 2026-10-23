@@ -1,0 +1,3667 @@
+{
+ "gene": "Fanca",
+ "n_genotypes": 76699,
+ "n_mp_terms": 14860,
+ "unresolved_annotations": 0,
+ "bridge_hp_terms": 13680,
+ "studies": {
+  "custom": {
+   "query": [
+    "HP:0003213",
+    "HP:0003214",
+    "HP:0000365",
+    "HP:0000486",
+    "HP:0004322",
+    "HP:0000086",
+    "HP:0003251",
+    "HP:0000085",
+    "HP:0000081",
+    "HP:0012210",
+    "HP:0001909",
+    "HP:0000815",
+    "HP:0000957",
+    "HP:0001903",
+    "HP:0030680",
+    "HP:0000978",
+    "HP:0001627",
+    "HP:0009943",
+    "HP:0001249",
+    "HP:0000252",
+    "HP:0001000",
+    "HP:0003221",
+    "HP:0001518",
+    "HP:0000568",
+    "HP:0009777",
+    "HP:0001896",
+    "HP:0009778",
+    "HP:0001873",
+    "HP:0000028",
+    "HP:0001876",
+    "HP:0003974",
+    "HP:0000104",
+    "HP:0001017",
+    "HP:0001875"
+   ],
+   "gene": "Fanca",
+   "marker_id": "MGI:1341823",
+   "n_genotypes": 76699,
+   "projection": [
+    {
+     "hp": "HP:0003213",
+     "hp_name": "Deficient excision of UV-induced pyrimidine dimers in DNA",
+     "mp": [
+      "MP:0008058"
+     ],
+     "mp_names": [
+      "abnormal DNA repair"
+     ],
+     "sources": [
+      "upheno-bestmatch"
+     ],
+     "tier": 2,
+     "self_ic": 5.788
+    },
+    {
+     "hp": "HP:0003214",
+     "hp_name": "Prolonged G2 phase of cell cycle",
+     "mp": [
+      "MP:0003077"
+     ],
+     "mp_names": [
+      "abnormal cell cycle"
+     ],
+     "sources": [
+      "upheno-bestmatch"
+     ],
+     "tier": 2,
+     "self_ic": 4.272
+    },
+    {
+     "hp": "HP:0000365",
+     "hp_name": "Hearing impairment",
+     "mp": [
+      "MP:0006325"
+     ],
+     "mp_names": [
+      "impaired hearing"
+     ],
+     "sources": [
+      "mgi-curated",
+      "upheno-logical"
+     ],
+     "tier": 1,
+     "self_ic": 4.824
+    },
+    {
+     "hp": "HP:0000486",
+     "hp_name": "Strabismus",
+     "mp": [
+      "MP:0005254"
+     ],
+     "mp_names": [
+      "strabismus"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 0.0
+    },
+    {
+     "hp": "HP:0004322",
+     "hp_name": "Short stature",
+     "mp": [
+      "MP:0001255",
+      "MP:0001258",
+      "MP:0001265"
+     ],
+     "mp_names": [
+      "decreased body height",
+      "decreased body length",
+      "decreased body size"
+     ],
+     "sources": [
+      "mgi-curated",
+      "upheno-logical"
+     ],
+     "tier": 1,
+     "self_ic": 7.24
+    },
+    {
+     "hp": "HP:0000086",
+     "hp_name": "Ectopic kidney",
+     "mp": [
+      "MP:0003600"
+     ],
+     "mp_names": [
+      "ectopic kidney"
+     ],
+     "sources": [
+      "mgi-curated",
+      "upheno-logical"
+     ],
+     "tier": 1,
+     "self_ic": 8.475
+    },
+    {
+     "hp": "HP:0003251",
+     "hp_name": "Male infertility",
+     "mp": [
+      "MP:0001925"
+     ],
+     "mp_names": [
+      "male infertility"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 3.761
+    },
+    {
+     "hp": "HP:0000085",
+     "hp_name": "Horseshoe kidney",
+     "mp": [
+      "MP:0003605"
+     ],
+     "mp_names": [
+      "fused kidneys"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 9.456
+    },
+    {
+     "hp": "HP:0000081",
+     "hp_name": "Duplicated collecting system",
+     "mp": [
+      "MP:0011803"
+     ],
+     "mp_names": [
+      "double kidney pelvis"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 10.149
+    },
+    {
+     "hp": "HP:0012210",
+     "hp_name": "Abnormal renal morphology",
+     "mp": [
+      "MP:0002135"
+     ],
+     "mp_names": [
+      "abnormal kidney morphology"
+     ],
+     "sources": [
+      "mgi-curated",
+      "upheno-logical"
+     ],
+     "tier": 1,
+     "self_ic": 3.277
+    },
+    {
+     "hp": "HP:0001909",
+     "hp_name": "Leukemia",
+     "mp": [
+      "MP:0002026"
+     ],
+     "mp_names": [
+      "increased leukemia incidence"
+     ],
+     "sources": [
+      "upheno-bestmatch"
+     ],
+     "tier": 2,
+     "self_ic": 5.616
+    },
+    {
+     "hp": "HP:0000815",
+     "hp_name": "Hypergonadotropic hypogonadism",
+     "mp": [
+      "MP:0001116"
+     ],
+     "mp_names": [
+      "small gonad"
+     ],
+     "sources": [
+      "upheno-bestmatch"
+     ],
+     "tier": 2,
+     "self_ic": 3.935
+    },
+    {
+     "hp": "HP:0000957",
+     "hp_name": "Cafe-au-lait spot",
+     "mp": [
+      "MP:0002095"
+     ],
+     "mp_names": [
+      "abnormal skin pigmentation"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 5.356
+    },
+    {
+     "hp": "HP:0001903",
+     "hp_name": "Anemia",
+     "mp": [
+      "MP:0001577"
+     ],
+     "mp_names": [
+      "anemia"
+     ],
+     "sources": [
+      "upheno-bestmatch"
+     ],
+     "tier": 2,
+     "self_ic": 4.531
+    },
+    {
+     "hp": "HP:0030680",
+     "hp_name": "Abnormal cardiovascular system morphology",
+     "mp": [
+      "MP:0002127"
+     ],
+     "mp_names": [
+      "abnormal cardiovascular system morphology"
+     ],
+     "sources": [
+      "mgi-curated",
+      "upheno-logical"
+     ],
+     "tier": 1,
+     "self_ic": 2.355
+    },
+    {
+     "hp": "HP:0000978",
+     "hp_name": "Bruising susceptibility",
+     "mp": [
+      "MP:0009276"
+     ],
+     "mp_names": [
+      "ecchymosis"
+     ],
+     "sources": [
+      "upheno-bestmatch"
+     ],
+     "tier": 2,
+     "self_ic": 11.248
+    },
+    {
+     "hp": "HP:0001627",
+     "hp_name": "Abnormal heart morphology",
+     "mp": [
+      "MP:0000266",
+      "MP:0000267",
+      "MP:0000297",
+      "MP:0012515"
+     ],
+     "mp_names": [
+      "abnormal heart morphology",
+      "abnormal heart development",
+      "abnormal atrioventricular cushion morphology",
+      "abnormal heart apex morphology"
+     ],
+     "sources": [
+      "mgi-curated",
+      "upheno-logical"
+     ],
+     "tier": 1,
+     "self_ic": 8.609
+    },
+    {
+     "hp": "HP:0009943",
+     "hp_name": "Complete duplication of thumb phalanx",
+     "mp": [
+      "MP:0005306"
+     ],
+     "mp_names": [
+      "abnormal phalanx morphology"
+     ],
+     "sources": [
+      "upheno-bestmatch"
+     ],
+     "tier": 2,
+     "self_ic": 5.801
+    },
+    {
+     "hp": "HP:0001249",
+     "hp_name": "Intellectual disability",
+     "mp": [
+      "MP:0014114"
+     ],
+     "mp_names": [
+      "abnormal cognition"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 3.569
+    },
+    {
+     "hp": "HP:0000252",
+     "hp_name": "Microcephaly",
+     "mp": [
+      "MP:0000433"
+     ],
+     "mp_names": [
+      "microcephaly"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 6.044
+    },
+    {
+     "hp": "HP:0001000",
+     "hp_name": "Abnormal skin pigmentation",
+     "mp": [
+      "MP:0002095"
+     ],
+     "mp_names": [
+      "abnormal skin pigmentation"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 5.356
+    },
+    {
+     "hp": "HP:0003221",
+     "hp_name": "Chromosomal breakage induced by crosslinking agents",
+     "mp": [
+      "MP:0004028"
+     ],
+     "mp_names": [
+      "chromosome breakage"
+     ],
+     "sources": [
+      "upheno-bestmatch"
+     ],
+     "tier": 2,
+     "self_ic": 6.411
+    },
+    {
+     "hp": "HP:0001518",
+     "hp_name": "Small for gestational age",
+     "mp": [
+      "MP:0004200",
+      "MP:0009429",
+      "MP:0009431",
+      "MP:0009674",
+      "MP:0009703"
+     ],
+     "mp_names": [
+      "decreased fetal size",
+      "decreased embryo weight",
+      "decreased fetal weight",
+      "decreased birth weight",
+      "decreased birth body size"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 7.51
+    },
+    {
+     "hp": "HP:0000568",
+     "hp_name": "Microphthalmia",
+     "mp": [
+      "MP:0001297"
+     ],
+     "mp_names": [
+      "microphthalmia"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 4.604
+    },
+    {
+     "hp": "HP:0009777",
+     "hp_name": "Absent thumb",
+     "mp": [
+      "MP:0000561"
+     ],
+     "mp_names": [
+      "adactyly"
+     ],
+     "sources": [
+      "upheno-bestmatch"
+     ],
+     "tier": 2,
+     "self_ic": 8.54
+    },
+    {
+     "hp": "HP:0001896",
+     "hp_name": "Reticulocytopenia",
+     "mp": [
+      "MP:0008941"
+     ],
+     "mp_names": [
+      "reticulocytopenia"
+     ],
+     "sources": [
+      "upheno-logical"
+     ],
+     "tier": 1,
+     "self_ic": 8.252
+    },
+    {
+     "hp": "HP:0009778",
+     "hp_name": "Short thumb",
+     "mp": [
+      "MP:0010772"
+     ],
+     "mp_names": [
+      "abnormal pollex morphology"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 9.168
+    },
+    {
+     "hp": "HP:0001873",
+     "hp_name": "Thrombocytopenia",
+     "mp": [
+      "MP:0003179"
+     ],
+     "mp_names": [
+      "thrombocytopenia"
+     ],
+     "sources": [
+      "mgi-curated",
+      "upheno-logical"
+     ],
+     "tier": 1,
+     "self_ic": 5.07
+    },
+    {
+     "hp": "HP:0000028",
+     "hp_name": "Cryptorchidism",
+     "mp": [
+      "MP:0002286",
+      "MP:0011410"
+     ],
+     "mp_names": [
+      "cryptorchism",
+      "ectopic testis"
+     ],
+     "sources": [
+      "mgi-curated",
+      "upheno-logical"
+     ],
+     "tier": 1,
+     "self_ic": 9.638
+    },
+    {
+     "hp": "HP:0001876",
+     "hp_name": "Pancytopenia",
+     "mp": [
+      "MP:0005152"
+     ],
+     "mp_names": [
+      "pancytopenia"
+     ],
+     "sources": [
+      "upheno-bestmatch"
+     ],
+     "tier": 2,
+     "self_ic": 7.441
+    },
+    {
+     "hp": "HP:0003974",
+     "hp_name": "Absent radius",
+     "mp": [
+      "MP:0000553"
+     ],
+     "mp_names": [
+      "absent radius"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 8.112
+    },
+    {
+     "hp": "HP:0000104",
+     "hp_name": "Renal agenesis",
+     "mp": [
+      "MP:0000520",
+      "MP:0003604"
+     ],
+     "mp_names": [
+      "absent kidney",
+      "single kidney"
+     ],
+     "sources": [
+      "mgi-curated"
+     ],
+     "tier": 1,
+     "self_ic": 6.477
+    },
+    {
+     "hp": "HP:0001017",
+     "hp_name": "Anemic pallor",
+     "mp": [
+      "MP:0001577"
+     ],
+     "mp_names": [
+      "anemia"
+     ],
+     "sources": [
+      "upheno-bestmatch"
+     ],
+     "tier": 2,
+     "self_ic": 4.531
+    },
+    {
+     "hp": "HP:0001875",
+     "hp_name": "Decreased total neutrophil count",
+     "mp": [
+      "MP:0000222"
+     ],
+     "mp_names": [
+      "decreased neutrophil cell number"
+     ],
+     "sources": [
+      "upheno-logical"
+     ],
+     "tier": 1,
+     "self_ic": 5.891
+    }
+   ],
+   "best": {
+    "symmetric": {
+     "genotype_id": "MGI:3609225",
+     "row": 13688,
+     "score": 3.390506603299574,
+     "rank": 37,
+     "percentile": 0.048240524648300497,
+     "n_genotypes": 11
+    },
+    "phenodigm": {
+     "genotype_id": "MGI:3609225",
+     "row": 13688,
+     "score": 55.77811927491252,
+     "rank": 102,
+     "percentile": 0.13298739227369327,
+     "n_genotypes": 11
+    },
+    "forward": {
+     "genotype_id": "MGI:3618892",
+     "row": 14792,
+     "score": 1.2417904686279437,
+     "rank": 2015,
+     "percentile": 2.6271528963871758,
+     "n_genotypes": 11
+    }
+   },
+   "gene_rank": {
+    "symmetric": [
+     34,
+     24195
+    ],
+    "phenodigm": [
+     92,
+     24195
+    ],
+    "forward": [
+     1624,
+     24195
+    ]
+   },
+   "genotypes": [
+    {
+     "genotype_id": "MGI:3609225",
+     "composition": "Fanca<tm1Zqw>/Fanca<tm1Zqw>",
+     "background": "involves: 129P2/OlaHsd",
+     "allele_class": "null",
+     "n_mp_terms": 1,
+     "pmids": [
+      "15905196"
+     ],
+     "symmetric_score": 3.3905,
+     "symmetric_rank": 37,
+     "symmetric_percentile": 0.0482,
+     "phenodigm_score": 55.7781,
+     "phenodigm_rank": 102,
+     "phenodigm_percentile": 0.133,
+     "forward_score": 0.3697,
+     "forward_rank": 27970,
+     "forward_percentile": 36.4672,
+     "per_term": [
+      4.19,
+      1.967,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      6.411,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "genotype_id": "MGI:3618916",
+     "composition": "Fanca<tm1Faw>/Fanca<+>",
+     "background": "involves: 129P2/OlaHsd * FVB",
+     "allele_class": "null",
+     "n_mp_terms": 1,
+     "pmids": [
+      "10915769"
+     ],
+     "symmetric_score": 3.3905,
+     "symmetric_rank": 37,
+     "symmetric_percentile": 0.0482,
+     "phenodigm_score": 55.7781,
+     "phenodigm_rank": 102,
+     "phenodigm_percentile": 0.133,
+     "forward_score": 0.3697,
+     "forward_rank": 27970,
+     "forward_percentile": 36.4672,
+     "per_term": [
+      4.19,
+      1.967,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      6.411,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "genotype_id": "MGI:3618892",
+     "composition": "Fanca<tm1Faw>/Fanca<tm1Faw>",
+     "background": "involves: 129P2/OlaHsd * FVB",
+     "allele_class": "null",
+     "n_mp_terms": 13,
+     "pmids": [
+      "10915769"
+     ],
+     "symmetric_score": 2.5973,
+     "symmetric_rank": 578,
+     "symmetric_percentile": 0.7536,
+     "phenodigm_score": 49.3968,
+     "phenodigm_rank": 375,
+     "phenodigm_percentile": 0.4889,
+     "forward_score": 1.2418,
+     "forward_rank": 2015,
+     "forward_percentile": 2.6272,
+     "per_term": [
+      4.19,
+      1.967,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.399,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.935,
+      0.0,
+      1.845,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      6.411,
+      0.0,
+      0.0,
+      0.0,
+      4.318,
+      0.0,
+      5.07,
+      3.705,
+      2.768,
+      0.0,
+      0.0,
+      1.845,
+      2.768
+     ]
+    },
+    {
+     "genotype_id": "MGI:3047099",
+     "composition": "Fanca<tm1.1Wong>/Fanca<tm1.1Wong>",
+     "background": "involves: C57BL/6",
+     "allele_class": "null",
+     "n_mp_terms": 9,
+     "pmids": [
+      "12913077"
+     ],
+     "symmetric_score": 2.1053,
+     "symmetric_rank": 3609,
+     "symmetric_percentile": 4.7054,
+     "phenodigm_score": 37.4036,
+     "phenodigm_rank": 4599,
+     "phenodigm_percentile": 5.9962,
+     "forward_score": 1.0548,
+     "forward_rank": 3382,
+     "forward_percentile": 4.4094,
+     "per_term": [
+      1.967,
+      1.967,
+      0.0,
+      2.526,
+      2.465,
+      0.0,
+      3.02,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.935,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      2.382,
+      0.0,
+      1.438,
+      0.0,
+      1.967,
+      3.505,
+      4.604,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.705,
+      0.0,
+      2.382,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "genotype_id": "MGI:3047131",
+     "composition": "Fanca<tm1Wong>/Fanca<tm1Wong>",
+     "background": "involves: C57BL/6",
+     "allele_class": "null",
+     "n_mp_terms": 6,
+     "pmids": [
+      "12913077"
+     ],
+     "symmetric_score": 2.0015,
+     "symmetric_rank": 5363,
+     "symmetric_percentile": 6.9923,
+     "phenodigm_score": 36.5684,
+     "phenodigm_rank": 5469,
+     "phenodigm_percentile": 7.1305,
+     "forward_score": 0.9555,
+     "forward_rank": 4459,
+     "forward_percentile": 5.8136,
+     "per_term": [
+      1.728,
+      1.728,
+      0.0,
+      2.526,
+      2.465,
+      0.0,
+      2.43,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.935,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      2.382,
+      0.0,
+      1.438,
+      0.0,
+      1.728,
+      1.438,
+      4.604,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.705,
+      0.0,
+      2.382,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "genotype_id": "MGI:3047139",
+     "composition": "Fanca<tm1Wong>/Fanca<tm1Wong>",
+     "background": "either: 129S6/SvEvTac or C57BL/6",
+     "allele_class": "null",
+     "n_mp_terms": 6,
+     "pmids": [
+      "12913077"
+     ],
+     "symmetric_score": 1.9861,
+     "symmetric_rank": 5597,
+     "symmetric_percentile": 7.2974,
+     "phenodigm_score": 33.4718,
+     "phenodigm_rank": 9444,
+     "phenodigm_percentile": 12.3131,
+     "forward_score": 0.5456,
+     "forward_rank": 15257,
+     "forward_percentile": 19.892,
+     "per_term": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.438,
+      0.0,
+      2.862,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.935,
+      0.0,
+      0.0,
+      2.082,
+      0.0,
+      2.082,
+      0.0,
+      0.0,
+      1.438,
+      0.0,
+      0.0,
+      1.438,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.276,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "genotype_id": "MGI:3047101",
+     "composition": "Fanca<tm1Wong>/Fanca<tm1Wong>",
+     "background": "either: 129S6/SvEvTac or (involves: 129S6/SvEvTac * CD-1)",
+     "allele_class": "null",
+     "n_mp_terms": 1,
+     "pmids": [
+      "12913077"
+     ],
+     "symmetric_score": 1.9844,
+     "symmetric_rank": 5661,
+     "symmetric_percentile": 7.3808,
+     "phenodigm_score": 32.437,
+     "phenodigm_rank": 11258,
+     "phenodigm_percentile": 14.6782,
+     "forward_score": 0.2634,
+     "forward_rank": 36363,
+     "forward_percentile": 47.41,
+     "per_term": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      2.43,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      2.82,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.705,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "genotype_id": "MGI:3047126",
+     "composition": "Fanca<tm1Wong>/Fanca<tm1Wong>",
+     "background": "involves: 129S6/SvEvTac",
+     "allele_class": "null",
+     "n_mp_terms": 8,
+     "pmids": [
+      "12913077"
+     ],
+     "symmetric_score": 1.97,
+     "symmetric_rank": 5903,
+     "symmetric_percentile": 7.6963,
+     "phenodigm_score": 34.8405,
+     "phenodigm_rank": 7466,
+     "phenodigm_percentile": 9.7342,
+     "forward_score": 0.5661,
+     "forward_rank": 14511,
+     "forward_percentile": 18.9194,
+     "per_term": [
+      1.967,
+      4.272,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.399,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.935,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.967,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      3.705,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "genotype_id": "MGI:5691433",
+     "composition": "Faap20<tm1(KOMP)Mbp>/Faap20<tm1(KOMP)Mbp>,Fanca<tm1.1Wong>/Fanca<tm1.1Wong>",
+     "background": "involves: 129S6/SvEvTac * C57BL/6 * C57BL/6N",
+     "allele_class": "null",
+     "n_mp_terms": 1,
+     "pmids": [
+      "25917546"
+     ],
+     "symmetric_score": 0.9951,
+     "symmetric_rank": 46240,
+     "symmetric_percentile": 60.2876,
+     "phenodigm_score": 15.5251,
+     "phenodigm_rank": 52625,
+     "phenodigm_percentile": 68.6124,
+     "forward_score": 0.2985,
+     "forward_rank": 33358,
+     "forward_percentile": 43.4921,
+     "per_term": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.692,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.692,
+      0.0,
+      1.692,
+      0.0,
+      1.692,
+      0.0,
+      0.0,
+      1.692,
+      1.692
+     ]
+    },
+    {
+     "genotype_id": "MGI:5608998",
+     "composition": "Fanca<tm1a(EUCOMM)Wtsi>/Fanca<tm1a(EUCOMM)Wtsi>",
+     "background": "involves: C57BL/6N",
+     "allele_class": "null",
+     "n_mp_terms": 2,
+     "pmids": [
+      "22922648"
+     ],
+     "symmetric_score": 0.941,
+     "symmetric_rank": 47992,
+     "symmetric_percentile": 62.5719,
+     "phenodigm_score": 16.3146,
+     "phenodigm_rank": 51592,
+     "phenodigm_percentile": 67.2655,
+     "forward_score": 0.1736,
+     "forward_rank": 45026,
+     "forward_percentile": 58.7048,
+     "per_term": [
+      1.967,
+      1.967,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.967,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    },
+    {
+     "genotype_id": "MGI:3833152",
+     "composition": "Fanca<tm1Faw>/Fanca<tm1Faw>",
+     "background": "involves: 129P2/OlaHsd * FVB/N",
+     "allele_class": "null",
+     "n_mp_terms": 1,
+     "pmids": [
+      "16859999"
+     ],
+     "symmetric_score": 0.9401,
+     "symmetric_rank": 48175,
+     "symmetric_percentile": 62.8105,
+     "phenodigm_score": 15.2439,
+     "phenodigm_rank": 55439,
+     "phenodigm_percentile": 72.2813,
+     "forward_score": 0.1524,
+     "forward_rank": 46912,
+     "forward_percentile": 61.1638,
+     "per_term": [
+      1.728,
+      1.728,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.728,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+     ]
+    }
+   ],
+   "null": {
+    "n": 100,
+    "seed": 0,
+    "window_nats": 0.25,
+    "pool_size": 13083,
+    "percentiles": {
+     "symmetric": [
+      17.2167,
+      32.0604,
+      31.3655,
+      33.1021,
+      41.3617,
+      4.5959,
+      43.7515,
+      15.0732,
+      36.4464,
+      3.6728,
+      25.2846,
+      15.5517,
+      5.4512,
+      8.3769,
+      55.5861,
+      39.0122,
+      20.5257,
+      33.9001,
+      11.669,
+      9.4525,
+      22.0707,
+      35.5663,
+      33.1504,
+      10.4734,
+      26.2611,
+      40.4569,
+      3.0378,
+      2.9661,
+      15.0289,
+      0.0469,
+      4.2047,
+      4.5437,
+      5.5959,
+      16.686,
+      5.1331,
+      2.4863,
+      12.8385,
+      7.5568,
+      7.3951,
+      27.6927,
+      8.2178,
+      49.8898,
+      6.1422,
+      31.9222,
+      31.2872,
+      29.0773,
+      20.5087,
+      2.253,
+      0.6219,
+      14.7486,
+      10.4851,
+      0.4381,
+      12.9845,
+      32.2182,
+      18.4057,
+      36.994,
+      12.9832,
+      41.5077,
+      6.1565,
+      31.3185,
+      3.8188,
+      12.9545,
+      11.8228,
+      21.5739,
+      38.0631,
+      6.0561,
+      9.6051,
+      4.7484,
+      5.9492,
+      0.3325,
+      18.7304,
+      4.3964,
+      9.1149,
+      1.0509,
+      0.2894,
+      32.8036,
+      4.7067,
+      26.4606,
+      2.8045,
+      3.5111,
+      7.1891,
+      6.0757,
+      3.1669,
+      32.8023,
+      20.5061,
+      26.1855,
+      2.0065,
+      0.1708,
+      3.4733,
+      12.579,
+      6.0209,
+      5.0653,
+      4.828,
+      34.1373,
+      24.0981,
+      47.8481,
+      4.7315,
+      34.1191,
+      19.3405,
+      0.2699
+     ],
+     "phenodigm": [
+      12.1266,
+      26.9339,
+      29.6432,
+      36.389,
+      42.6407,
+      8.8319,
+      33.844,
+      9.1122,
+      31.8544,
+      8.8697,
+      26.1529,
+      5.017,
+      9.0236,
+      15.8177,
+      37.5324,
+      39.2091,
+      26.0069,
+      39.5598,
+      16.0823,
+      17.523,
+      26.3797,
+      45.1101,
+      31.7957,
+      8.1109,
+      23.0446,
+      34.7527,
+      4.8606,
+      6.004,
+      17.8294,
+      0.1134,
+      8.0457,
+      5.7211,
+      10.3548,
+      18.7799,
+      8.7902,
+      4.223,
+      18.0511,
+      4.6063,
+      6.519,
+      21.9846,
+      12.4878,
+      41.4947,
+      12.6807,
+      30.8622,
+      26.5897,
+      14.8633,
+      15.5582,
+      7.489,
+      0.0561,
+      20.8908,
+      18.7382,
+      2.2152,
+      2.4942,
+      21.2662,
+      12.5464,
+      31.8296,
+      14.0589,
+      34.5963,
+      9.6338,
+      39.2,
+      8.9049,
+      19.0289,
+      16.1606,
+      13.7903,
+      35.1491,
+      14.0302,
+      13.566,
+      8.669,
+      10.5647,
+      0.6858,
+      18.4826,
+      8.1148,
+      13.2153,
+      0.6128,
+      0.5893,
+      27.6888,
+      8.3365,
+      23.4957,
+      5.12,
+      5.2726,
+      13.566,
+      8.9258,
+      5.4121,
+      15.9481,
+      21.2819,
+      27.3433,
+      3.2595,
+      0.5724,
+      4.2621,
+      17.3666,
+      8.1696,
+      9.2374,
+      5.7654,
+      38.333,
+      12.9167,
+      38.2834,
+      8.4864,
+      30.6497,
+      10.5986,
+      0.5997
+     ],
+     "forward": [
+      6.6376,
+      5.0405,
+      7.0966,
+      5.7667,
+      6.7837,
+      7.5607,
+      8.5881,
+      3.5933,
+      5.6689,
+      8.7341,
+      5.1213,
+      4.7758,
+      2.781,
+      4.3364,
+      7.8867,
+      9.596,
+      3.2738,
+      7.4343,
+      4.193,
+      2.9335,
+      12.0341,
+      10.7824,
+      4.4694,
+      6.4851,
+      5.0731,
+      5.7719,
+      6.3599,
+      5.6494,
+      5.2817,
+      11.1266,
+      3.3586,
+      3.1565,
+      1.8449,
+      3.5437,
+      4.1383,
+      2.1461,
+      6.0222,
+      5.8541,
+      5.4668,
+      9.24,
+      1.8514,
+      5.5803,
+      2.3286,
+      6.12,
+      5.7054,
+      9.2139,
+      8.639,
+      10.3926,
+      3.8918,
+      8.7798,
+      23.7695,
+      3.8971,
+      5.8084,
+      23.0055,
+      4.8749,
+      3.8579,
+      4.5124,
+      6.9857,
+      3.7197,
+      8.9884,
+      14.2974,
+      4.7693,
+      2.7497,
+      4.3599,
+      8.2478,
+      1.8749,
+      9.2935,
+      5.0222,
+      2.7497,
+      6.5829,
+      5.6467,
+      11.8111,
+      4.0626,
+      4.1682,
+      3.0587,
+      7.4082,
+      4.24,
+      5.9571,
+      2.4772,
+      3.708,
+      3.6937,
+      5.1304,
+      5.4212,
+      7.6846,
+      6.7133,
+      6.9623,
+      4.0248,
+      6.9284,
+      4.0613,
+      3.1604,
+      5.3782,
+      3.5776,
+      3.9492,
+      8.3782,
+      8.3586,
+      8.8098,
+      7.7302,
+      7.0848,
+      9.4773,
+      9.3482
+     ]
+    },
+    "median_percentile": {
+     "symmetric": 12.708770648900247,
+     "phenodigm": 13.678144434738392,
+     "forward": 5.648052777741562
+    },
+    "empirical_p": {
+     "symmetric": 0.019801980198019802,
+     "phenodigm": 0.0297029702970297,
+     "forward": 0.06930693069306931
+    }
+   },
+   "leave_one_out": {
+    "symmetric": [
+     {
+      "dropped": "HP:0003213",
+      "genotype_id": "MGI:3609225",
+      "rank": 42,
+      "percentile": 0.054759514465638405
+     },
+     {
+      "dropped": "HP:0003214",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0000365",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0000486",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0004322",
+      "genotype_id": "MGI:3609225",
+      "rank": 33,
+      "percentile": 0.043025332794430174
+     },
+     {
+      "dropped": "HP:0000086",
+      "genotype_id": "MGI:3609225",
+      "rank": 34,
+      "percentile": 0.04432913075789775
+     },
+     {
+      "dropped": "HP:0003251",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0000085",
+      "genotype_id": "MGI:3609225",
+      "rank": 34,
+      "percentile": 0.04432913075789775
+     },
+     {
+      "dropped": "HP:0000081",
+      "genotype_id": "MGI:3609225",
+      "rank": 34,
+      "percentile": 0.04432913075789775
+     },
+     {
+      "dropped": "HP:0012210",
+      "genotype_id": "MGI:3609225",
+      "rank": 34,
+      "percentile": 0.04432913075789775
+     },
+     {
+      "dropped": "HP:0001909",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0000815",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0000957",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0001903",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0030680",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0000978",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0001627",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0009943",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0001249",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0000252",
+      "genotype_id": "MGI:3609225",
+      "rank": 36,
+      "percentile": 0.04693672668483292
+     },
+     {
+      "dropped": "HP:0001000",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0003221",
+      "genotype_id": "MGI:3618892",
+      "rank": 1368,
+      "percentile": 1.7835956140236509
+     },
+     {
+      "dropped": "HP:0001518",
+      "genotype_id": "MGI:3609225",
+      "rank": 34,
+      "percentile": 0.04432913075789775
+     },
+     {
+      "dropped": "HP:0000568",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0009777",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0001896",
+      "genotype_id": "MGI:3609225",
+      "rank": 36,
+      "percentile": 0.04693672668483292
+     },
+     {
+      "dropped": "HP:0009778",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0001873",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0000028",
+      "genotype_id": "MGI:3609225",
+      "rank": 32,
+      "percentile": 0.041721534830962595
+     },
+     {
+      "dropped": "HP:0001876",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0003974",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0000104",
+      "genotype_id": "MGI:3609225",
+      "rank": 30,
+      "percentile": 0.03911393890402743
+     },
+     {
+      "dropped": "HP:0001017",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     },
+     {
+      "dropped": "HP:0001875",
+      "genotype_id": "MGI:3609225",
+      "rank": 37,
+      "percentile": 0.048240524648300497
+     }
+    ],
+    "phenodigm": [
+     {
+      "dropped": "HP:0003213",
+      "genotype_id": "MGI:3609225",
+      "rank": 106,
+      "percentile": 0.1382025841275636
+     },
+     {
+      "dropped": "HP:0003214",
+      "genotype_id": "MGI:3609225",
+      "rank": 104,
+      "percentile": 0.13559498820062843
+     },
+     {
+      "dropped": "HP:0000365",
+      "genotype_id": "MGI:3609225",
+      "rank": 100,
+      "percentile": 0.13037979634675811
+     },
+     {
+      "dropped": "HP:0000486",
+      "genotype_id": "MGI:3609225",
+      "rank": 103,
+      "percentile": 0.13429119023716085
+     },
+     {
+      "dropped": "HP:0004322",
+      "genotype_id": "MGI:3609225",
+      "rank": 97,
+      "percentile": 0.12646840245635535
+     },
+     {
+      "dropped": "HP:0000086",
+      "genotype_id": "MGI:3609225",
+      "rank": 92,
+      "percentile": 0.11994941263901746
+     },
+     {
+      "dropped": "HP:0003251",
+      "genotype_id": "MGI:3609225",
+      "rank": 102,
+      "percentile": 0.13298739227369327
+     },
+     {
+      "dropped": "HP:0000085",
+      "genotype_id": "MGI:3609225",
+      "rank": 95,
+      "percentile": 0.1238608065294202
+     },
+     {
+      "dropped": "HP:0000081",
+      "genotype_id": "MGI:3609225",
+      "rank": 94,
+      "percentile": 0.12255700856595261
+     },
+     {
+      "dropped": "HP:0012210",
+      "genotype_id": "MGI:3609225",
+      "rank": 102,
+      "percentile": 0.13298739227369327
+     },
+     {
+      "dropped": "HP:0001909",
+      "genotype_id": "MGI:3609225",
+      "rank": 102,
+      "percentile": 0.13298739227369327
+     },
+     {
+      "dropped": "HP:0000815",
+      "genotype_id": "MGI:3609225",
+      "rank": 102,
+      "percentile": 0.13298739227369327
+     },
+     {
+      "dropped": "HP:0000957",
+      "genotype_id": "MGI:3609225",
+      "rank": 102,
+      "percentile": 0.13298739227369327
+     },
+     {
+      "dropped": "HP:0001903",
+      "genotype_id": "MGI:3609225",
+      "rank": 101,
+      "percentile": 0.1316835943102257
+     },
+     {
+      "dropped": "HP:0030680",
+      "genotype_id": "MGI:3609225",
+      "rank": 103,
+      "percentile": 0.13429119023716085
+     },
+     {
+      "dropped": "HP:0000978",
+      "genotype_id": "MGI:3609225",
+      "rank": 106,
+      "percentile": 0.1382025841275636
+     },
+     {
+      "dropped": "HP:0001627",
+      "genotype_id": "MGI:3609225",
+      "rank": 99,
+      "percentile": 0.12907599838329054
+     },
+     {
+      "dropped": "HP:0009943",
+      "genotype_id": "MGI:3609225",
+      "rank": 99,
+      "percentile": 0.12907599838329054
+     },
+     {
+      "dropped": "HP:0001249",
+      "genotype_id": "MGI:3609225",
+      "rank": 101,
+      "percentile": 0.1316835943102257
+     },
+     {
+      "dropped": "HP:0000252",
+      "genotype_id": "MGI:3609225",
+      "rank": 97,
+      "percentile": 0.12646840245635535
+     },
+     {
+      "dropped": "HP:0001000",
+      "genotype_id": "MGI:3609225",
+      "rank": 102,
+      "percentile": 0.13298739227369327
+     },
+     {
+      "dropped": "HP:0003221",
+      "genotype_id": "MGI:3618892",
+      "rank": 2239,
+      "percentile": 2.919203640203914
+     },
+     {
+      "dropped": "HP:0001518",
+      "genotype_id": "MGI:3609225",
+      "rank": 88,
+      "percentile": 0.11473422078514714
+     },
+     {
+      "dropped": "HP:0000568",
+      "genotype_id": "MGI:3609225",
+      "rank": 103,
+      "percentile": 0.13429119023716085
+     },
+     {
+      "dropped": "HP:0009777",
+      "genotype_id": "MGI:3609225",
+      "rank": 92,
+      "percentile": 0.11994941263901746
+     },
+     {
+      "dropped": "HP:0001896",
+      "genotype_id": "MGI:3609225",
+      "rank": 92,
+      "percentile": 0.11994941263901746
+     },
+     {
+      "dropped": "HP:0009778",
+      "genotype_id": "MGI:3609225",
+      "rank": 91,
+      "percentile": 0.11864561467554988
+     },
+     {
+      "dropped": "HP:0001873",
+      "genotype_id": "MGI:3609225",
+      "rank": 99,
+      "percentile": 0.12907599838329054
+     },
+     {
+      "dropped": "HP:0000028",
+      "genotype_id": "MGI:3609225",
+      "rank": 83,
+      "percentile": 0.10821523096780923
+     },
+     {
+      "dropped": "HP:0001876",
+      "genotype_id": "MGI:3609225",
+      "rank": 101,
+      "percentile": 0.1316835943102257
+     },
+     {
+      "dropped": "HP:0003974",
+      "genotype_id": "MGI:3609225",
+      "rank": 83,
+      "percentile": 0.10821523096780923
+     },
+     {
+      "dropped": "HP:0000104",
+      "genotype_id": "MGI:3609225",
+      "rank": 95,
+      "percentile": 0.1238608065294202
+     },
+     {
+      "dropped": "HP:0001017",
+      "genotype_id": "MGI:3609225",
+      "rank": 101,
+      "percentile": 0.1316835943102257
+     },
+     {
+      "dropped": "HP:0001875",
+      "genotype_id": "MGI:3609225",
+      "rank": 99,
+      "percentile": 0.12907599838329054
+     }
+    ],
+    "forward": [
+     {
+      "dropped": "HP:0003213",
+      "genotype_id": "MGI:3618892",
+      "rank": 2542,
+      "percentile": 3.314254423134591
+     },
+     {
+      "dropped": "HP:0003214",
+      "genotype_id": "MGI:3618892",
+      "rank": 2212,
+      "percentile": 2.8840010951902895
+     },
+     {
+      "dropped": "HP:0000365",
+      "genotype_id": "MGI:3618892",
+      "rank": 1954,
+      "percentile": 2.547621220615653
+     },
+     {
+      "dropped": "HP:0000486",
+      "genotype_id": "MGI:3618892",
+      "rank": 1907,
+      "percentile": 2.4863427163326772
+     },
+     {
+      "dropped": "HP:0004322",
+      "genotype_id": "MGI:3618892",
+      "rank": 1752,
+      "percentile": 2.284254031995202
+     },
+     {
+      "dropped": "HP:0000086",
+      "genotype_id": "MGI:3618892",
+      "rank": 1813,
+      "percentile": 2.3637857077667244
+     },
+     {
+      "dropped": "HP:0003251",
+      "genotype_id": "MGI:3618892",
+      "rank": 2511,
+      "percentile": 3.2738366862670962
+     },
+     {
+      "dropped": "HP:0000085",
+      "genotype_id": "MGI:3618892",
+      "rank": 1816,
+      "percentile": 2.3676971016571273
+     },
+     {
+      "dropped": "HP:0000081",
+      "genotype_id": "MGI:3618892",
+      "rank": 1803,
+      "percentile": 2.3507477281320486
+     },
+     {
+      "dropped": "HP:0012210",
+      "genotype_id": "MGI:3618892",
+      "rank": 1816,
+      "percentile": 2.3676971016571273
+     },
+     {
+      "dropped": "HP:0001909",
+      "genotype_id": "MGI:3618892",
+      "rank": 1966,
+      "percentile": 2.563266796177264
+     },
+     {
+      "dropped": "HP:0000815",
+      "genotype_id": "MGI:3618892",
+      "rank": 2625,
+      "percentile": 3.4224696541024002
+     },
+     {
+      "dropped": "HP:0000957",
+      "genotype_id": "MGI:3618892",
+      "rank": 1824,
+      "percentile": 2.378127485364868
+     },
+     {
+      "dropped": "HP:0001903",
+      "genotype_id": "MGI:3618892",
+      "rank": 2072,
+      "percentile": 2.701469380304828
+     },
+     {
+      "dropped": "HP:0030680",
+      "genotype_id": "MGI:3618892",
+      "rank": 1866,
+      "percentile": 2.4328869998305063
+     },
+     {
+      "dropped": "HP:0000978",
+      "genotype_id": "MGI:3618892",
+      "rank": 1824,
+      "percentile": 2.378127485364868
+     },
+     {
+      "dropped": "HP:0001627",
+      "genotype_id": "MGI:3618892",
+      "rank": 1845,
+      "percentile": 2.405507242597687
+     },
+     {
+      "dropped": "HP:0009943",
+      "genotype_id": "MGI:3618892",
+      "rank": 1766,
+      "percentile": 2.3025072034837484
+     },
+     {
+      "dropped": "HP:0001249",
+      "genotype_id": "MGI:3618892",
+      "rank": 1915,
+      "percentile": 2.496773100040418
+     },
+     {
+      "dropped": "HP:0000252",
+      "genotype_id": "MGI:3618892",
+      "rank": 1789,
+      "percentile": 2.3324945566435025
+     },
+     {
+      "dropped": "HP:0001000",
+      "genotype_id": "MGI:3618892",
+      "rank": 1824,
+      "percentile": 2.378127485364868
+     },
+     {
+      "dropped": "HP:0003221",
+      "genotype_id": "MGI:3618892",
+      "rank": 3181,
+      "percentile": 4.147381321790375
+     },
+     {
+      "dropped": "HP:0001518",
+      "genotype_id": "MGI:3618892",
+      "rank": 1745,
+      "percentile": 2.275127446250929
+     },
+     {
+      "dropped": "HP:0000568",
+      "genotype_id": "MGI:3618892",
+      "rank": 1894,
+      "percentile": 2.4693933428075985
+     },
+     {
+      "dropped": "HP:0009777",
+      "genotype_id": "MGI:3618892",
+      "rank": 1864,
+      "percentile": 2.430279403903571
+     },
+     {
+      "dropped": "HP:0001896",
+      "genotype_id": "MGI:3618892",
+      "rank": 2472,
+      "percentile": 3.2229885656918604
+     },
+     {
+      "dropped": "HP:0009778",
+      "genotype_id": "MGI:3618892",
+      "rank": 1865,
+      "percentile": 2.4315832018670385
+     },
+     {
+      "dropped": "HP:0001873",
+      "genotype_id": "MGI:3618892",
+      "rank": 2658,
+      "percentile": 3.4654949868968306
+     },
+     {
+      "dropped": "HP:0000028",
+      "genotype_id": "MGI:3618892",
+      "rank": 2481,
+      "percentile": 3.2347227473630684
+     },
+     {
+      "dropped": "HP:0001876",
+      "genotype_id": "MGI:3618892",
+      "rank": 2246,
+      "percentile": 2.928330225948187
+     },
+     {
+      "dropped": "HP:0003974",
+      "genotype_id": "MGI:3618892",
+      "rank": 1774,
+      "percentile": 2.312937587191489
+     },
+     {
+      "dropped": "HP:0000104",
+      "genotype_id": "MGI:3618892",
+      "rank": 1807,
+      "percentile": 2.355962919985919
+     },
+     {
+      "dropped": "HP:0001017",
+      "genotype_id": "MGI:3618892",
+      "rank": 2072,
+      "percentile": 2.701469380304828
+     },
+     {
+      "dropped": "HP:0001875",
+      "genotype_id": "MGI:3618892",
+      "rank": 2167,
+      "percentile": 2.825330186834248
+     }
+    ]
+   },
+   "explain": {
+    "symmetric": [
+     {
+      "hp": "HP:0003213",
+      "projected": "MP:0008058",
+      "mouse_term": "MP:0004028",
+      "common_ancestor": "MP:0014241",
+      "ic": 4.18974601204885
+     },
+     {
+      "hp": "HP:0003214",
+      "projected": "MP:0003077",
+      "mouse_term": "MP:0004028",
+      "common_ancestor": "MP:0005621",
+      "ic": 1.967031524499192
+     },
+     {
+      "hp": "HP:0000365",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000486",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0004322",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000086",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0003251",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000085",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000081",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0012210",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001909",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000815",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000957",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001903",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0030680",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000978",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001627",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0009943",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001249",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000252",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001000",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0003221",
+      "projected": "MP:0004028",
+      "mouse_term": "MP:0004028",
+      "common_ancestor": "MP:0004028",
+      "ic": 6.411362042509229
+     },
+     {
+      "hp": "HP:0001518",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000568",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0009777",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001896",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0009778",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001873",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000028",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001876",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0003974",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000104",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001017",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001875",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     }
+    ],
+    "phenodigm": [
+     {
+      "hp": "HP:0003213",
+      "projected": "MP:0008058",
+      "mouse_term": "MP:0004028",
+      "common_ancestor": "MP:0014241",
+      "ic": 4.18974601204885
+     },
+     {
+      "hp": "HP:0003214",
+      "projected": "MP:0003077",
+      "mouse_term": "MP:0004028",
+      "common_ancestor": "MP:0005621",
+      "ic": 1.967031524499192
+     },
+     {
+      "hp": "HP:0000365",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000486",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0004322",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000086",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0003251",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000085",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000081",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0012210",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001909",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000815",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000957",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001903",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0030680",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000978",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001627",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0009943",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001249",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000252",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001000",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0003221",
+      "projected": "MP:0004028",
+      "mouse_term": "MP:0004028",
+      "common_ancestor": "MP:0004028",
+      "ic": 6.411362042509229
+     },
+     {
+      "hp": "HP:0001518",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000568",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0009777",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001896",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0009778",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001873",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000028",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001876",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0003974",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000104",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001017",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001875",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     }
+    ],
+    "forward": [
+     {
+      "hp": "HP:0003213",
+      "projected": "MP:0008058",
+      "mouse_term": "MP:0004029",
+      "common_ancestor": "MP:0014241",
+      "ic": 4.18974601204885
+     },
+     {
+      "hp": "HP:0003214",
+      "projected": "MP:0003077",
+      "mouse_term": "MP:0004029",
+      "common_ancestor": "MP:0005621",
+      "ic": 1.967031524499192
+     },
+     {
+      "hp": "HP:0000365",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000486",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0004322",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000086",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0003251",
+      "projected": "MP:0001925",
+      "mouse_term": "MP:0001922",
+      "common_ancestor": "MP:0003698",
+      "ic": 3.399100467004027
+     },
+     {
+      "hp": "HP:0000085",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000081",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0012210",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001909",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000815",
+      "projected": "MP:0001116",
+      "mouse_term": "MP:0001116",
+      "common_ancestor": "MP:0001116",
+      "ic": 3.935090451358109
+     },
+     {
+      "hp": "HP:0000957",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001903",
+      "projected": "MP:0001577",
+      "mouse_term": "MP:0002590",
+      "common_ancestor": "MP:0002396",
+      "ic": 1.845114201492219
+     },
+     {
+      "hp": "HP:0030680",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000978",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001627",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0009943",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001249",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000252",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001000",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0003221",
+      "projected": "MP:0004028",
+      "mouse_term": "MP:0004029",
+      "common_ancestor": "MP:0004028",
+      "ic": 6.411362042509229
+     },
+     {
+      "hp": "HP:0001518",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000568",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0009777",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001896",
+      "projected": "MP:0008941",
+      "mouse_term": "MP:0003179",
+      "common_ancestor": "MP:0013662",
+      "ic": 4.318127178697057
+     },
+     {
+      "hp": "HP:0009778",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001873",
+      "projected": "MP:0003179",
+      "mouse_term": "MP:0003179",
+      "common_ancestor": "MP:0003179",
+      "ic": 5.069699835410106
+     },
+     {
+      "hp": "HP:0000028",
+      "projected": "MP:0002286",
+      "mouse_term": "MP:0001152",
+      "common_ancestor": "MP:0001146",
+      "ic": 3.705430486267304
+     },
+     {
+      "hp": "HP:0001876",
+      "projected": "MP:0005152",
+      "mouse_term": "MP:0003179",
+      "common_ancestor": "MP:0011182",
+      "ic": 2.76752976628589
+     },
+     {
+      "hp": "HP:0003974",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0000104",
+      "projected": null,
+      "mouse_term": null,
+      "common_ancestor": null,
+      "ic": 0.0
+     },
+     {
+      "hp": "HP:0001017",
+      "projected": "MP:0001577",
+      "mouse_term": "MP:0002590",
+      "common_ancestor": "MP:0002396",
+      "ic": 1.845114201492219
+     },
+     {
+      "hp": "HP:0001875",
+      "projected": "MP:0000222",
+      "mouse_term": "MP:0003179",
+      "common_ancestor": "MP:0011182",
+      "ic": 2.76752976628589
+     }
+    ]
+   },
+   "term_matrix": {
+    "MGI:3609225": {
+     "composition": "Fanca<tm1Zqw>/Fanca<tm1Zqw>",
+     "mp": [
+      "MP:0004028"
+     ],
+     "mp_names": [
+      "chromosome breakage"
+     ],
+     "values": [
+      [
+       4.19
+      ],
+      [
+       1.967
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       6.411
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ],
+      [
+       0.0
+      ]
+     ]
+    },
+    "MGI:3618892": {
+     "composition": "Fanca<tm1Faw>/Fanca<tm1Faw>",
+     "mp": [
+      "MP:0001116",
+      "MP:0001126",
+      "MP:0001132",
+      "MP:0001152",
+      "MP:0001153",
+      "MP:0001156",
+      "MP:0001922",
+      "MP:0001923",
+      "MP:0001935",
+      "MP:0002590",
+      "MP:0003179",
+      "MP:0004029",
+      "MP:0004030"
+     ],
+     "mp_names": [
+      "small gonad",
+      "abnormal ovary morphology",
+      "absent mature ovarian follicles",
+      "increased Leydig cell number",
+      "small seminiferous tubules",
+      "abnormal spermatogenesis",
+      "reduced male fertility",
+      "reduced female fertility",
+      "decreased litter size",
+      "increased mean corpuscular volume",
+      "thrombocytopenia",
+      "spontaneous chromosome breakage",
+      "induced chromosome breakage"
+     ],
+     "values": [
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       4.19,
+       4.19
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       1.967,
+       1.967
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       2.43,
+       2.43,
+       2.43,
+       2.43,
+       2.43,
+       2.43,
+       3.399,
+       3.02,
+       3.02,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       3.935,
+       2.82,
+       2.82,
+       2.82,
+       2.82,
+       2.82,
+       2.43,
+       2.43,
+       2.43,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       1.845,
+       1.845,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       6.411,
+       6.411
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       3.339,
+       4.318,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       2.661,
+       5.07,
+       0.0,
+       0.0
+      ],
+      [
+       2.82,
+       3.276,
+       3.276,
+       3.705,
+       3.705,
+       2.82,
+       2.43,
+       2.43,
+       2.43,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       2.032,
+       2.768,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       1.845,
+       1.845,
+       0.0,
+       0.0
+      ],
+      [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       2.661,
+       2.768,
+       0.0,
+       0.0
+      ]
+     ]
+    }
+   }
+  }
+ },
+ "pathway": {
+  "custom": [
+   {
+    "gene": "Fancc",
+    "marker_id": "MGI:95480",
+    "n_genotypes": 6,
+    "symmetric": {
+     "genotype_id": "MGI:2450132",
+     "row": 2225,
+     "score": 2.473758351557648,
+     "rank": 883,
+     "percentile": 1.1512536017418742,
+     "n_genotypes": 6,
+     "composition": "Fancc<tm1Mgo>/Fancc<tm1Mgo>"
+    },
+    "phenodigm": {
+     "genotype_id": "MGI:2450132",
+     "row": 2225,
+     "score": 48.402722119615774,
+     "rank": 486,
+     "percentile": 0.6336458102452444,
+     "n_genotypes": 6,
+     "composition": "Fancc<tm1Mgo>/Fancc<tm1Mgo>"
+    },
+    "forward": {
+     "genotype_id": "MGI:8298293",
+     "row": 76089,
+     "score": 1.5238131225404403,
+     "rank": 846,
+     "percentile": 1.1030130770935735,
+     "n_genotypes": 6,
+     "composition": "Fancc<em1(IMPC)Ccpcz>/Fancc<em1(IMPC)Ccpcz>"
+    }
+   },
+   {
+    "gene": "Fancd2",
+    "marker_id": "MGI:2448480",
+    "n_genotypes": 18,
+    "symmetric": {
+     "genotype_id": "MGI:3838391",
+     "row": 30961,
+     "score": 2.63880146832327,
+     "rank": 493,
+     "percentile": 0.6427723959895175,
+     "n_genotypes": 18,
+     "composition": "Fancd2<Gt(OST57859)Lex>/Fancd2<Gt(OST57859)Lex>,Usp1<tm1.1Ada>/Usp1<tm1.1Ada>"
+    },
+    "phenodigm": {
+     "genotype_id": "MGI:5467971",
+     "row": 46138,
+     "score": 52.06126254386921,
+     "rank": 180,
+     "percentile": 0.2346836334241646,
+     "n_genotypes": 18,
+     "composition": "Aldh2<tm1a(EUCOMM)Wtsi>/Aldh2<tm1a(EUCOMM)Wtsi>,Fancd2<tm1Hou>/Fancd2<tm1Hou>"
+    },
+    "forward": {
+     "genotype_id": "MGI:5467971",
+     "row": 46138,
+     "score": 1.9641719576258543,
+     "rank": 178,
+     "percentile": 0.23207603749722944,
+     "n_genotypes": 18,
+     "composition": "Aldh2<tm1a(EUCOMM)Wtsi>/Aldh2<tm1a(EUCOMM)Wtsi>,Fancd2<tm1Hou>/Fancd2<tm1Hou>"
+    }
+   },
+   {
+    "gene": "Fancg",
+    "marker_id": "MGI:1926471",
+    "n_genotypes": 3,
+    "symmetric": {
+     "genotype_id": "MGI:3621178",
+     "row": 15171,
+     "score": 2.4432411289487814,
+     "rank": 972,
+     "percentile": 1.2672916204904887,
+     "n_genotypes": 3,
+     "composition": "Fancg<tm1Faw>/Fancg<tm1Faw>"
+    },
+    "phenodigm": {
+     "genotype_id": "MGI:3621178",
+     "row": 15171,
+     "score": 48.157205821777936,
+     "rank": 560,
+     "percentile": 0.7301268595418454,
+     "n_genotypes": 3,
+     "composition": "Fancg<tm1Faw>/Fancg<tm1Faw>"
+    },
+    "forward": {
+     "genotype_id": "MGI:8298294",
+     "row": 76090,
+     "score": 1.0538721977136052,
+     "rank": 3398,
+     "percentile": 4.430305479862841,
+     "n_genotypes": 3,
+     "composition": "Fancg<em1(IMPC)Ccpcz>/Fancg<em1(IMPC)Ccpcz>"
+    }
+   }
+  ]
+ },
+ "controls": [],
+ "runtime_s": 20.2
+}

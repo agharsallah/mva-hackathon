@@ -1,0 +1,80 @@
+{
+  "version": 1,
+  "case": {
+    "disease": "Fanconi anemia (FANCA hypothesis; disease-level phenotype)",
+    "omim_phenotype": "227650",
+    "mondo": "MONDO:0019391",
+    "hpo_terms": [
+      "HP:0003213",
+      "HP:0003214",
+      "HP:0000365",
+      "HP:0000486",
+      "HP:0004322",
+      "HP:0000086",
+      "HP:0003251",
+      "HP:0000085",
+      "HP:0000081",
+      "HP:0012210",
+      "HP:0001909",
+      "HP:0000815",
+      "HP:0000957",
+      "HP:0001903",
+      "HP:0030680",
+      "HP:0000978",
+      "HP:0001627",
+      "HP:0009943",
+      "HP:0001249",
+      "HP:0000252",
+      "HP:0001000",
+      "HP:0003221",
+      "HP:0001518",
+      "HP:0000568",
+      "HP:0009777",
+      "HP:0001896",
+      "HP:0009778",
+      "HP:0001873",
+      "HP:0000028",
+      "HP:0001876",
+      "HP:0003974",
+      "HP:0000104",
+      "HP:0001017",
+      "HP:0001875"
+    ],
+    "hpo_source": {
+      "path": "build/it4/track2-e2/raw/phenotype.hpoa",
+      "bytes": 35816037,
+      "sha256": "e89aa39c8f97bf5a52c5d160f9250a603681d630ade8ec2679d84ac5aece1f72",
+      "release": "2026-09-02",
+      "rule": "aspect P, qualifier != NOT, deduplicate in file order",
+      "scope": "disease-level annotation, not a FANCA-specific patient or subtype"
+    }
+  },
+  "gene": {
+    "symbol": "FANCA",
+    "mouse_symbol": "Fanca"
+  },
+  "mechanism": {
+    "class": "biallelic loss-of-function hypothesis; no individual variants asserted",
+    "pathway": "FA core complex / DNA interstrand cross-link repair",
+    "source": "https://medlineplus.gov/genetics/condition/fanconi-anemia/",
+    "distinction": "MVA: BUB1B spindle checkpoint; Bloom: BLM homologous recombination"
+  },
+  "chain": {
+    "twin": {
+      "gene": "Fanca",
+      "null": 100,
+      "seed": 0,
+      "pathway": [
+        "Fancc",
+        "Fancd2",
+        "Fancg"
+      ],
+      "controls": []
+    }
+  },
+  "limitations": [
+    "Bounded null: 100 draws vs 1000 historically; no calibration panel rerun.",
+    "No patient genome or pharmacogenomics; no clinical interpretation.",
+    "Not run: PRISM, LINCS, approval labels, intervention curation, convergence, K1/K2/K3."
+  ]
+}

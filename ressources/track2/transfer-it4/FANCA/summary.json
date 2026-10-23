@@ -1,0 +1,525 @@
+{
+  "status": "partial_cached_public_computation_NOT_end_to_end",
+  "built_at": "2026-10-22T14:50:29.187553+00:00",
+  "command": "uv run python tools/fanca_transfer.py",
+  "live_requests": 0,
+  "fixture_inputs": 0,
+  "patient_data": "none",
+  "hpo_terms": 34,
+  "twin_seconds": 20.327168959076516,
+  "graph_seconds": 5.779758334043436,
+  "wall_seconds": 28.4112822500756,
+  "phenotype_comparison": {
+    "MVA": {
+      "source": "ressources/phenotype/phenotype_twin.json",
+      "gene": "Bub1b",
+      "studies": {
+        "with-parental": {
+          "best": {
+            "symmetric": {
+              "genotype_id": "MGI:5543391",
+              "row": 48886,
+              "score": 2.2482513494874414,
+              "rank": 1045,
+              "percentile": 1.3624688718236222,
+              "n_genotypes": 22
+            },
+            "phenodigm": {
+              "genotype_id": "MGI:3046582",
+              "row": 8461,
+              "score": 42.20285757892127,
+              "rank": 768,
+              "percentile": 1.0013168359431022,
+              "n_genotypes": 22
+            },
+            "forward": {
+              "genotype_id": "MGI:3046582",
+              "row": 8461,
+              "score": 3.016712385212867,
+              "rank": 39,
+              "percentile": 0.05084812057523566,
+              "n_genotypes": 22
+            }
+          },
+          "n_genotypes": 76699
+        },
+        "proband-only": {
+          "best": {
+            "symmetric": {
+              "genotype_id": "MGI:5543391",
+              "row": 48886,
+              "score": 2.3340690152323207,
+              "rank": 818,
+              "percentile": 1.0665067341164813,
+              "n_genotypes": 22
+            },
+            "phenodigm": {
+              "genotype_id": "MGI:6478931",
+              "row": 67513,
+              "score": 43.42901610853953,
+              "rank": 667,
+              "percentile": 0.8696332416328766,
+              "n_genotypes": 22
+            },
+            "forward": {
+              "genotype_id": "MGI:3046582",
+              "row": 8461,
+              "score": 2.901545270580777,
+              "rank": 65,
+              "percentile": 0.08474686762539277,
+              "n_genotypes": 22
+            }
+          },
+          "n_genotypes": 76699
+        }
+      }
+    },
+    "Bloom": {
+      "source": "ressources/track2/transfer-it4/BLM/phenotype/phenotype_twin.json",
+      "gene": "Blm",
+      "studies": {
+        "custom": {
+          "best": {
+            "symmetric": {
+              "genotype_id": "MGI:3664440",
+              "row": 17298,
+              "score": 2.724288414613242,
+              "rank": 881,
+              "percentile": 1.1486460058149388,
+              "n_genotypes": 13
+            },
+            "phenodigm": {
+              "genotype_id": "MGI:3582673",
+              "row": 11890,
+              "score": 52.039515132688074,
+              "rank": 828,
+              "percentile": 1.0795447137511571,
+              "n_genotypes": 13
+            },
+            "forward": {
+              "genotype_id": "MGI:2683776",
+              "row": 5781,
+              "score": 1.4398421664992909,
+              "rank": 2114,
+              "percentile": 2.7562288947704663,
+              "n_genotypes": 13
+            }
+          },
+          "n_genotypes": 76699
+        }
+      }
+    },
+    "FANCA": {
+      "source": "ressources/track2/transfer-it4/FANCA/phenotype/phenotype_twin.json",
+      "gene": "Fanca",
+      "studies": {
+        "custom": {
+          "best": {
+            "symmetric": {
+              "genotype_id": "MGI:3609225",
+              "row": 13688,
+              "score": 3.390506603299574,
+              "rank": 37,
+              "percentile": 0.048240524648300497,
+              "n_genotypes": 11
+            },
+            "phenodigm": {
+              "genotype_id": "MGI:3609225",
+              "row": 13688,
+              "score": 55.77811927491252,
+              "rank": 102,
+              "percentile": 0.13298739227369327,
+              "n_genotypes": 11
+            },
+            "forward": {
+              "genotype_id": "MGI:3618892",
+              "row": 14792,
+              "score": 1.2417904686279437,
+              "rank": 2015,
+              "percentile": 2.6271528963871758,
+              "n_genotypes": 11
+            }
+          },
+          "n_genotypes": 76699
+        }
+      }
+    }
+  },
+  "fanca_empirical_p": {
+    "symmetric": 0.019801980198019802,
+    "phenodigm": 0.0297029702970297,
+    "forward": 0.06930693069306931
+  },
+  "graph_comparison": {
+    "FANCA": {
+      "nodes": [
+        {
+          "primekg_index": "32319",
+          "name": "Fanconi anemia",
+          "source": "MONDO",
+          "mondo_members": [
+            "MONDO:0019391"
+          ]
+        }
+      ],
+      "paths": 8495,
+      "drugs_reached": 2042,
+      "top10": [
+        {
+          "rank": 1,
+          "drug": "Phosphoaminophosphonic Acid-Adenylate Ester",
+          "source_id": "DB04395",
+          "score": 0.0057258964749695536,
+          "paths": 55,
+          "best_path": "[direct] Fanconi anemia \u2192 RAD51 \u2192 Phosphoaminophosphonic Acid-Adenylate Ester  (w=0.00518)"
+        },
+        {
+          "rank": 2,
+          "drug": "Amuvatinib",
+          "source_id": "DB12742",
+          "score": 0.005531524223091168,
+          "paths": 45,
+          "best_path": "[direct] Fanconi anemia \u2192 RAD51 \u2192 Amuvatinib  (w=0.00518)"
+        },
+        {
+          "rank": 3,
+          "drug": "Fostamatinib",
+          "source_id": "DB12010",
+          "score": 0.0029913825166452477,
+          "paths": 155,
+          "best_path": "[ppi] Fanconi anemia \u2192 RFWD3 \u2192 CAMK1G \u2192 Fostamatinib  (w=0.000923)"
+        },
+        {
+          "rank": 4,
+          "drug": "Pseudoephedrine",
+          "source_id": "DB00852",
+          "score": 0.002473229102969274,
+          "paths": 28,
+          "best_path": "[direct] Fanconi anemia \u2192 TNF \u2192 Pseudoephedrine  (w=0.00227)"
+        },
+        {
+          "rank": 5,
+          "drug": "Polaprezinc",
+          "source_id": "DB09221",
+          "score": 0.002412786629549445,
+          "paths": 13,
+          "best_path": "[direct] Fanconi anemia \u2192 TNF \u2192 Polaprezinc  (w=0.00227)"
+        },
+        {
+          "rank": 6,
+          "drug": "Foreskin keratinocyte (neonatal)",
+          "source_id": "DB10772",
+          "score": 0.002340424265481703,
+          "paths": 12,
+          "best_path": "[direct] Fanconi anemia \u2192 TNF \u2192 Foreskin keratinocyte (neonatal)  (w=0.00227)"
+        },
+        {
+          "rank": 7,
+          "drug": "Glycyrrhizic acid",
+          "source_id": "DB13751",
+          "score": 0.002327951540556074,
+          "paths": 7,
+          "best_path": "[direct] Fanconi anemia \u2192 TNF \u2192 Glycyrrhizic acid  (w=0.00227)"
+        },
+        {
+          "rank": 8,
+          "drug": "Thalidomide",
+          "source_id": "DB01041",
+          "score": 0.0023242462018192626,
+          "paths": 7,
+          "best_path": "[direct] Fanconi anemia \u2192 TNF \u2192 Thalidomide  (w=0.00227)"
+        },
+        {
+          "rank": 9,
+          "drug": "Bryostatin 1",
+          "source_id": "DB11752",
+          "score": 0.0023175907925414288,
+          "paths": 10,
+          "best_path": "[direct] Fanconi anemia \u2192 TNF \u2192 Bryostatin 1  (w=0.00227)"
+        },
+        {
+          "rank": 10,
+          "drug": "Foreskin fibroblast (neonatal)",
+          "source_id": "DB10770",
+          "score": 0.002306413496646107,
+          "paths": 7,
+          "best_path": "[direct] Fanconi anemia \u2192 TNF \u2192 Foreskin fibroblast (neonatal)  (w=0.00227)"
+        }
+      ]
+    },
+    "MVA": {
+      "nodes": [
+        {
+          "primekg_index": "28004",
+          "name": "mosaic variegated aneuploidy syndrome",
+          "source": "MONDO_grouped",
+          "mondo_members": [
+            "MONDO:0013582",
+            "MONDO:0009759",
+            "MONDO:0054736",
+            "MONDO:0000141"
+          ]
+        }
+      ],
+      "paths": 4265,
+      "drugs_reached": 745,
+      "top10": [
+        {
+          "rank": 1,
+          "drug": "Fostamatinib",
+          "source_id": "DB12010",
+          "score": 0.0010208633744830953,
+          "paths": 142,
+          "best_path": "[ppi] mosaic variegated aneuploidy syndrome \u2192 BUB1 \u2192 DAPK2 \u2192 Fostamatinib  (w=0.000223)"
+        },
+        {
+          "rank": 2,
+          "drug": "Theophylline",
+          "source_id": "DB00277",
+          "score": 0.0006462947489415047,
+          "paths": 5,
+          "best_path": "[ppi] mosaic variegated aneuploidy syndrome \u2192 BUB3 \u2192 CPNE1 \u2192 Theophylline  (w=0.000527)"
+        },
+        {
+          "rank": 3,
+          "drug": "Phenethyl Isothiocyanate",
+          "source_id": "DB12695",
+          "score": 0.000512520615939814,
+          "paths": 156,
+          "best_path": "[ppi] mosaic variegated aneuploidy syndrome \u2192 BUB3 \u2192 HSPH1 \u2192 Phenethyl Isothiocyanate  (w=0.000248)"
+        },
+        {
+          "rank": 4,
+          "drug": "NADH",
+          "source_id": "DB00157",
+          "score": 0.000494906061017272,
+          "paths": 5,
+          "best_path": "[ppi] mosaic variegated aneuploidy syndrome \u2192 BUB1 \u2192 HSD17B3 \u2192 NADH  (w=0.000178)"
+        },
+        {
+          "rank": 5,
+          "drug": "Pyridoxal phosphate",
+          "source_id": "DB00114",
+          "score": 0.0003805452427939397,
+          "paths": 2,
+          "best_path": "[ppi] mosaic variegated aneuploidy syndrome \u2192 TRIP13 \u2192 KYAT1 \u2192 Pyridoxal phosphate  (w=0.000243)"
+        },
+        {
+          "rank": 6,
+          "drug": "Copper",
+          "source_id": "DB09130",
+          "score": 0.00035807811135188427,
+          "paths": 29,
+          "best_path": "[ppi] mosaic variegated aneuploidy syndrome \u2192 CEP57 \u2192 KRT8 \u2192 Copper  (w=0.0001)"
+        },
+        {
+          "rank": 7,
+          "drug": "Cannabidiol",
+          "source_id": "DB09061",
+          "score": 0.0003331112591605596,
+          "paths": 1,
+          "best_path": "[ppi] mosaic variegated aneuploidy syndrome \u2192 TRIP13 \u2192 CRYZ \u2192 Cannabidiol  (w=0.000333)"
+        },
+        {
+          "rank": 8,
+          "drug": "Dicoumarol",
+          "source_id": "DB00266",
+          "score": 0.0003331112591605596,
+          "paths": 1,
+          "best_path": "[ppi] mosaic variegated aneuploidy syndrome \u2192 TRIP13 \u2192 CRYZ \u2192 Dicoumarol  (w=0.000333)"
+        },
+        {
+          "rank": 9,
+          "drug": "Medical Cannabis",
+          "source_id": "DB14009",
+          "score": 0.0003331112591605596,
+          "paths": 1,
+          "best_path": "[ppi] mosaic variegated aneuploidy syndrome \u2192 TRIP13 \u2192 CRYZ \u2192 Medical Cannabis  (w=0.000333)"
+        },
+        {
+          "rank": 10,
+          "drug": "Nabiximols",
+          "source_id": "DB14011",
+          "score": 0.0003331112591605596,
+          "paths": 1,
+          "best_path": "[ppi] mosaic variegated aneuploidy syndrome \u2192 TRIP13 \u2192 CRYZ \u2192 Nabiximols  (w=0.000333)"
+        }
+      ]
+    },
+    "Bloom": {
+      "nodes": [
+        {
+          "primekg_index": "28619",
+          "name": "Bloom syndrome",
+          "source": "MONDO",
+          "mondo_members": [
+            "MONDO:0008876"
+          ]
+        }
+      ],
+      "paths": 4521,
+      "drugs_reached": 1037,
+      "top10": [
+        {
+          "rank": 1,
+          "drug": "1-(2-DEOXY-5-O-PHOSPHONO-BETA-D-ERYTHRO-PENTOFURANOSYL)-4-METHYL-1H-INDOLE",
+          "source_id": "DB07116",
+          "score": 0.029411764705882353,
+          "paths": 1,
+          "best_path": "[direct] Bloom syndrome \u2192 UNG \u2192 1-(2-DEOXY-5-O-PHOSPHONO-BETA-D-ERYTHRO-PENTOFURANOSYL)-4-METHYL-1H-INDOLE  (w=0.0294)"
+        },
+        {
+          "rank": 2,
+          "drug": "3-[(1E,7E)-8-(2,6-dioxo-1,2,3,6-tetrahydropyrimidin-4-yl)-3,6-dioxa-2,7-diazaocta-1,7-dien-1-yl]benzoic acid",
+          "source_id": "DB07760",
+          "score": 0.029411764705882353,
+          "paths": 1,
+          "best_path": "[direct] Bloom syndrome \u2192 UNG \u2192 3-[(1E,7E)-8-(2,6-dioxo-1,2,3,6-tetrahydropyrimidin-4-yl)-3,6-dioxa-2,7-diazaocta-1,7-dien-1-yl]benzoic acid  (w=0.0294)"
+        },
+        {
+          "rank": 3,
+          "drug": "4-[(1E,7E)-8-(2,6-DIOXO-1,2,3,6-TETRAHYDROPYRIMIDIN-4-YL)-3,6-DIOXA-2,7-DIAZAOCTA-1,7-DIEN-1-YL]BENZOIC ACID",
+          "source_id": "DB06990",
+          "score": 0.029411764705882353,
+          "paths": 1,
+          "best_path": "[direct] Bloom syndrome \u2192 UNG \u2192 4-[(1E,7E)-8-(2,6-DIOXO-1,2,3,6-TETRAHYDROPYRIMIDIN-4-YL)-3,6-DIOXA-2,7-DIAZAOCTA-1,7-DIEN-1-YL]BENZOIC ACID  (w=0.0294)"
+        },
+        {
+          "rank": 4,
+          "drug": "Fostamatinib",
+          "source_id": "DB12010",
+          "score": 0.006724174880179231,
+          "paths": 152,
+          "best_path": "[direct] Bloom syndrome \u2192 KIT \u2192 Fostamatinib  (w=0.00435)"
+        },
+        {
+          "rank": 5,
+          "drug": "Dasatinib",
+          "source_id": "DB01254",
+          "score": 0.004571114037999831,
+          "paths": 44,
+          "best_path": "[direct] Bloom syndrome \u2192 KIT \u2192 Dasatinib  (w=0.00435)"
+        },
+        {
+          "rank": 6,
+          "drug": "Ponatinib",
+          "source_id": "DB08901",
+          "score": 0.004467255211284381,
+          "paths": 49,
+          "best_path": "[direct] Bloom syndrome \u2192 KIT \u2192 Ponatinib  (w=0.00435)"
+        },
+        {
+          "rank": 7,
+          "drug": "Amuvatinib",
+          "source_id": "DB12742",
+          "score": 0.004434213552896987,
+          "paths": 23,
+          "best_path": "[direct] Bloom syndrome \u2192 KIT \u2192 Amuvatinib  (w=0.00435)"
+        },
+        {
+          "rank": 8,
+          "drug": "Pazopanib",
+          "source_id": "DB06589",
+          "score": 0.004432589995198721,
+          "paths": 20,
+          "best_path": "[direct] Bloom syndrome \u2192 KIT \u2192 Pazopanib  (w=0.00435)"
+        },
+        {
+          "rank": 9,
+          "drug": "Imatinib",
+          "source_id": "DB00619",
+          "score": 0.004414328157536632,
+          "paths": 13,
+          "best_path": "[direct] Bloom syndrome \u2192 KIT \u2192 Imatinib  (w=0.00435)"
+        },
+        {
+          "rank": 10,
+          "drug": "Regorafenib",
+          "source_id": "DB08896",
+          "score": 0.004389317126409214,
+          "paths": 23,
+          "best_path": "[direct] Bloom syndrome \u2192 KIT \u2192 Regorafenib  (w=0.00435)"
+        }
+      ]
+    }
+  },
+  "top50_unlabelled_graph_jaccard": {
+    "MVA": 0.0989010989010989,
+    "Bloom": 0.041666666666666664
+  },
+  "comparison_limitations": [
+    "Graph scores are identically rerun unlabelled rankings, not approved-drug generators.",
+    "Fanconi graph node is disease-wide, not FANCA-specific.",
+    "Historical phenotype queries/null sizes differ; not a controlled accuracy benchmark.",
+    "No FANCA-specific therapeutic rescue evidence established by these computations."
+  ],
+  "inputs": [
+    {
+      "path": "build/primekg/kg.parquet",
+      "bytes": 38140518,
+      "sha256": "7a0df2feece6aeac90efb01b7e19e33fd56dd00378fde6195025f3487103eb08"
+    },
+    {
+      "path": "build/it4/track2-e2/raw/manifest.json",
+      "bytes": 3648,
+      "sha256": "f32bf12063ba23ae078493d978c54585fee76e2d9a9f6bc37e29858f6ddda7da"
+    },
+    {
+      "path": "/Users/agharsallah/Desktop/git/mva-hackathon/tools/fanca_transfer.py",
+      "bytes": 9277,
+      "sha256": "5f00e7ab1e4593bcd986cc7ec22114c0daee37c23354bf6f1b9283b0769c0825"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/transfer-it4/FANCA/README.md",
+      "bytes": 5035,
+      "sha256": "378366c7b32d42df0a380040fd93e9ebd3190d37ca1cfcaf656e695d0745ce6a"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/FANCA/bloom_graph_ranking.tsv",
+      "bytes": 201171,
+      "sha256": "6d7aba1b180e73c78300db53c4c66d61fa08adca151fdf09431697532d89d9c4"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/FANCA/case.json",
+      "bytes": 2135,
+      "sha256": "a89599460581ce791aef2558917c1fd2a05c52dd08d4100fa2c12e15bb7f16c8"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/FANCA/fanca_graph_ranking.tsv",
+      "bytes": 348611,
+      "sha256": "2beb53c45af67a0e4f3776854db7086c635d6ab0ec082c62eeba3442ad63cf48"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/FANCA/hpo_case.tsv",
+      "bytes": 1741,
+      "sha256": "e9f9412b3646abb6befe272c3a70d8532eb33a1ec2f4e40e271a490e6e79e253"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/FANCA/mva_graph_ranking.tsv",
+      "bytes": 149385,
+      "sha256": "919561d8e8442c33a5bb28df956bc24b4821d47c0fce5247ccc1970d034b7db7"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/FANCA/phenotype/phenotype_twin.json",
+      "bytes": 66530,
+      "sha256": "5effac886887df1af44698dbfc0fec0a0bdcf6096c127b4f41b265ee0faf583b"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/FANCA/phenotype/phenotype_twin.provenance.json",
+      "bytes": 4615,
+      "sha256": "a25c9959f4bd3a3c6c2867843238b3b2df175ef169bc6e02b80b825155d54fc8"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/FANCA/phenotype/phenotype_twin_genotypes.tsv",
+      "bytes": 1900,
+      "sha256": "5567614c5e25d5a2ccbe2ab95482736ebbd81ce7ad10830b320b3da723a4411c"
+    },
+    {
+      "path": "ressources/track2/transfer-it4/FANCA/work/twin/twin.json",
+      "bytes": 70965,
+      "sha256": "4c194a1ccc7649ba74586c39f589b40841f1eb95180151aee6f477c75272dc43"
+    }
+  ]
+}
