@@ -1,7 +1,13 @@
 # Track 2 — 4-Minute Pitch Script & 10-Slide Companion Deck (Unified Iteration 6)
 
+> **Embedded historical images:** R2–R5 images are retained as historical analysis illustrations, not current numerical authority. Any image label 1.47/1.44 as BUB1B log2FC is incorrect: canonical raw values are 0.22/0.20. Any historical .90-specificity or .912/.831 posterior label is superseded by assumed .85 specificity and the generated section 6 table.
+
+> **Sensitivity headline:** Only 3,815/7,425 assumption-grid settings (51.38% unweighted coverage, not confidence) capture at least half of EVPI; EVSI/EVPI spans 0–0.98. The often-quoted 69.1% is the nominal assumed-point scenario, not a robust universal result. See section 6 for all six axes.
+
+> **Current model and protocol:** All priors, utilities, route weights, safety multipliers and assay accuracies are assumed research-triage weights, not calibrated probabilities of benefit, a validated diagnostic assay, or clinical prescriptions. Current assumed Se = Sp = 0.85 gives P(low) = 0.535, P(normal) = 0.465, P(unstable | low) = 0.8738 and P(inactive | normal) = 0.8226. EVPI = prior(inactive) × 0.4 = 0.18 is structural over the reported route-weight sweep, not independent biological confirmation. Readthrough information value is zero because the strict dosage-feasibility prior is zero; context heuristic 0.10 is a separate score. Use primary patient and parental fibroblasts, CHX 0, 2, 4, 8 h ±MG132. These are assay sampling hours; culture and turnaround are weeks 1–2, with no guaranteed 48h clinical result. Candidate doses are literature context only, not a dosing plan. Embedded R4/R5 decision SVGs are historical illustrations: any .90-specificity or .912/.831 labels in those figures are superseded by the current .85 model.
+
 **Standing:** ready (rewritten 2026-10-22 to match the 10-slide `pitch-slides.html`). The pitch is now **4:00**. It is the round-2 3:00 pitch plus a 60-second engineering and infrastructure segment (slides 7–8). Every science number traces to `report.md`, `README.md` or `methods-form.json` in this folder. Every infrastructure number traces to a file path in the repository, and the cited path is shown on each slide.
-**Target duration:** 4 minutes 00 seconds, 10 slides, ~570 spoken words at ~145 wpm. Both versions are timed to the same slide grid: Version A runs 565 words and Version B runs 576.
+**Target duration:** 4 minutes 00 seconds, 10 slides, ~570 spoken words at ~145 wpm. Both versions are timed to the same slide grid: Version A runs 563 words and Version B runs 577.
 
 > **3-minute cut.** The README describes the optional video pitch as 3 minutes. For a 3:00 delivery, **skip slides 7–8** (the engineering segment, 2:26–3:26). Their opening line ("Every number you just heard comes out of one machine…" / "How do you know any of this is real?") is that segment's only transition, so it goes with them. Nothing else in the script changes. To jump from the end of slide 6, press **`O`** and click slide 9. Exact 3:00 timings: slides 1–6 `0:00–2:26` (unchanged) · slide 9 `2:26–2:44` · slide 10 `2:44–3:00`. That is 428 words (A) or 440 words (B). **`A` (auto-advance) follows the 4:00 grid**, so for a 3:00 voice-over, advance by hand.
 
@@ -30,12 +36,12 @@
 | Slide | Timestamp | Slide Title | Visuals on Slide | Key Message Before Advancing |
 | :--- | :--- | :--- | :--- | :--- |
 | **Slide 1** | `0:00 – 0:22` | **One child, one lever left** | Copy #1 vs Copy #2 compare panel · `s1-mgi-twin` (child's 8 HPO terms vs 76,699 MGI genotypes) · KPIs: Rank 1 oracle, 8 HPO terms, top 0.99% mouse twin · "seatbelt inspector" callout | Copy #1 (`stop_gained`) is lost to NMD, so every therapeutic decision runs through Copy #2 (pseudokinase missense). |
-| **Slide 2** | `0:22 – 0:46` | **One unknown decides the treatment** | `s1-thermompnn` (all 19,950 substitutions, child at +1.55 kcal/mol, 87.3rd pct) · KPIs: ΔΔG, 55%, 45%, AUROC 0.60 · two-branch bullets · "We did not hide the weak link" callout | Is BubR1 **unstable (55%)** or **inactive (45%)**? These odds come from a calibration that failed (H083), and we report it that way. |
+| **Slide 2** | `0:22 – 0:46` | **One unknown decides the treatment** | `s1-thermompnn` (all 19,950 substitutions, child at +1.55 kcal/mol, 87.3rd pct) · KPIs: ΔΔG, 55%, 45%, AUROC 0.76 across 11 DMS proteins (0.60 on 8 MVA alleles; new-protein range `0.31–0.88`) · two-branch bullets · "We did not hide the weak link" callout | Is BubR1 **unstable (55%)** or **inactive (45%)**? The stability score works on 18,825 measured buried variants in 11 proteins (AUROC 0.76), but it cannot say which branch this protein is on (new-protein range 0.31–0.88), so 55/45 stays and the blot decides. |
 | **Slide 3** | `0:46 – 1:10` | **How we refused to fool ourselves** | `s2-upset` (4-generator convergence) · KPIs: 21 pre-registered, 8 refuted, p = 0.263, R1 = 0.33 · naive-pipeline vs executed-test table (DO-NOT / FUTILE / CONFOUNDED / CALIBRATED) | The refutations are the product. Convergence on dasatinib is at chance, readthrough is futile, and the naive shortcuts fail. |
 | **Slide 4** | `1:10 – 1:34` | **What survived, and how we weighed it** | Full-width `s4-r5-calibration` (Panel A: R4 vs R5 utilities; Panel B: 20-step w<sub>R2</sub> sweep, flip points 0.2743 / 0.6857) · evidence-hierarchy flow: in vivo rescue → senolytic clearance → cell-line proteomics | With the one-replicate screen weighted at w<sub>R2</sub> = 0.25, the in-vivo `Bub1b` rescues lead again: NMN overall, dasatinib among approved drugs. |
-| **Slide 5** | `1:34 – 2:04` | **Test once before you treat** | `s5-decision-tree` (R4 tree) · KPIs: EVPI 0.1800, 100% on `missense_class` / 0% readthrough, 69.1% of EVPI · **next-experiment flow:** CHX-chase blot protocol → Branch A (P = 0.912) / Branch B (P = 0.831) / tumour adjunct · "first measurement in the child's own cells" callout | One cycloheximide-chase blot in weeks 1–2 captures 69.1% of the decision value, and its result selects a branch that was specified in advance. |
+| **Slide 5** | `1:34 – 2:04` | **Test once before you treat** | `s5-decision-tree` (R4 tree) · KPIs: EVPI 0.1800, 100% on `missense_class` / 0% readthrough, 69.1% of EVPI · **next-experiment flow:** CHX-chase blot protocol → Branch A (P = 0.874) / Branch B (P = 0.823) / tumour adjunct · "first measurement in the child's own cells" callout | One cycloheximide-chase blot in weeks 1–2 captures 69.1% of the decision value, and its result selects a branch that was specified in advance. |
 | **Slide 6** | `2:04 – 2:26` | **First, do no harm** | `s6-pharmcat-coverage` (20 / 1,223 PharmCAT positions callable) · KPIs: 33/34, vincristine, 1.6%, 5 genes · DO-NOT / MONITOR / GATE list | The checkpoint-inhibitor class is hard-excluded. Vincristine gets a monitoring alert. We order the panel rather than assume reference. |
-| **Slide 7** *(new)* | `2:26 – 2:58` | **One machine behind every number** | **Interactive architecture**, five lanes (Sources → Compute → Storage → API → Experience) with 9 clickable boxes: patient WGS delivery, 13 public databases, laptop CPU, Modal GPU, MinIO, PostgreSQL 18.4, provenance manifests, `mva-viz-api`, React dashboard · three **Trace** buttons (a request, a figure, the patient data) · KPIs: 84.99 GB in MinIO (12/12 hash-verified), 87 API operations with one `{data, cached_at, source}` envelope, $0.015 Track 2 GPU bill | One storage layer, one API envelope and one dashboard, so any number can be followed back to where it came from. |
+| **Slide 7** *(new)* | `2:26 – 2:58` | **One machine behind every number** | **Interactive architecture**, five lanes (Sources → Compute → Storage → API → Experience) with 9 clickable boxes: patient WGS delivery, 13 public databases, laptop CPU, Modal GPU, MinIO, PostgreSQL 18.4, provenance manifests, `mva-viz-api`, React dashboard · three **Trace** buttons (a request, a figure, the patient data) · KPIs: 84.99 GB in MinIO (12/12 hash-verified), 87 API operations with one `{data, cached_at, source}` envelope, < 15 s to re-run the whole synthesis on a laptop CPU | One storage layer, one API envelope and one dashboard, so any number can be followed back to where it came from. |
 | **Slide 8** *(new)* | `2:58 – 3:26` | **Every claim walks back to its bytes** | **Interactive lineage**: three clickable chains, each lighting source → script@commit → artifact (SHA-256) → ledger → claim. The chains are EVSI 69.1%, ΔΔG +1.55 and 33/34 Do-Not · fragment: **"Or ask the API yourself"**, three real endpoints with sample envelopes · KPIs: 150 manifests, 3,656 Python tests (+483 app), 11 CI gates including the patient-coordinate gate | Nothing has to be taken on trust: each number names its table, its script and commit, and the hashes of its inputs. |
 | **Slide 9** | `3:26 – 3:44` | **A second disease, with the cost measured** | `s7-case-card-transfer` (Iteration-5 routes R1–R3 moved to Bloom: lines written vs the 378-line Iteration-4 driver; positive-control and byte-identity grid) · KPIs: 53 min · $0, `Blm` top 1.15%, Jaccard 0.095 · H096 and Bloom re-test callouts | Bloom syndrome ran end to end on the same machine. The zero-edit claim was refuted and the fix measured: R1 and R2 pass their control on Bloom, R3 fails, and MVA stays byte-identical. |
 | **Slide 10** | `3:44 – 4:00` | **What we are asking for** | Ask flow: Day 1 (5-gene PGx panel + vincristine / `RYR1` alerts) → Week 1–2 (CHX-chase blot) → branch · openness callout · "Stated plainly" disclaimer | Order the panel, chart the alerts, run the blot. Then choose the medicine with the evidence in hand. |
@@ -65,10 +71,10 @@ This document provides **two complete 4-minute scripts**, synchronized to the sa
   > "This child is a **BUB1B** compound heterozygote, confirmed at Rank 1: one `stop_gained` allele lost to nonsense-mediated decay, one pseudokinase missense in trans. Biallelic nulls are lethal, so the missense copy carries all remaining function. **[click]** Independently, the child's 8 clinical terms select the `Bub1b` hypomorph mouse in the top 1% of 76,699 genotypes. **[click]**"
 
 ### `[👉 SLIDE 2 — 0:22]` One unknown decides the treatment
-- **On screen (`Slide 2 / 10`):** ThermoMPNN atlas and the ΔΔG KPI. Click 1 reveals the 55% / 45% KPIs and the two branches. Click 2 reveals AUROC 0.60 and the "We did not hide the weak link" callout.
+- **On screen (`Slide 2 / 10`):** ThermoMPNN atlas and the ΔΔG KPI. Click 1 reveals the 55% / 45% KPIs and the two branches. Click 2 reveals AUROC 0.76 across 11 DMS proteins (0.60 on 8 alleles, new-protein range 0.31–0.88) and the "We did not hide the weak link" callout.
 - **Stage direction:** point left at the atlas and the child's line.
-- **Spoken narration (`0:22 – 0:46`, 58 words):**
-  > "The missense costs plus 1.55 kilocalories per mole: the 87.3rd percentile of all 19,950 substitutions. **[click]** So is mutant BubR1 unstable, 55%, or folded but inactive, 45%? One answer says keep the protein; the other, clear the damage. **[click]** Those odds are honest: our pre-registered calibration reached only AUROC 0.60 on 8 alleles, so we refused to call it destabilising."
+- **Spoken narration (`0:22 – 0:46`, 57 words):**
+  > "The missense costs plus 1.55 kilocalories per mole: the 87.3rd percentile of all 19,950 substitutions. **[click]** So is mutant BubR1 unstable, 55%, or folded but inactive, 45%? One answer says keep the protein; the other, clear the damage. **[click]** Across 11 measured proteins the score works, AUROC 0.76, but a new protein ranges 31 to 88%, so 55/45 stands."
 
 ### `[👉 SLIDE 3 — 0:46]` How we refused to fool ourselves
 - **On screen (`Slide 3 / 10`):** 21 / 8 KPIs. Click 1 reveals the UpSet figure plus p = 0.263 and 0.33. Click 2 reveals the naive-pipeline table.
@@ -79,14 +85,14 @@ This document provides **two complete 4-minute scripts**, synchronized to the sa
 ### `[👉 SLIDE 4 — 1:10]` What survived, and how we weighed it
 - **On screen (`Slide 4 / 10`):** full-width calibration figure. Click 1 reveals the evidence-hierarchy flow.
 - **Stage direction:** point at Panel A, where the violet proteomic bars shrink under calibration, then at Panel B's two flip lines. Say "discounted" as the violet step appears.
-- **Spoken narration (`1:10 – 1:34`, 55 words):**
-  > "A scan of 8,793 perturbations found two oral approved drugs raising BubR1 nearly threefold, but from one replicate whose own positive control failed. So we swept that route's weight over 20 steps and solved its two exact flip points; we calibrate at 0.25. **[click]** The in-vivo `Bub1b` rescues lead again: NMN overall, dasatinib among approved drugs."
+- **Spoken narration (`1:10 – 1:34`, 56 words):**
+  > "A scan of 875 compounds found two oral approved drugs raising BubR1 by about 15%, but from one replicate whose own positive control failed. So we swept that route's weight over 20 steps and solved its two exact flip points; we calibrate at 0.25. **[click]** The in-vivo `Bub1b` rescues lead again: NMN overall, dasatinib among approved drugs."
 
 ### `[👉 SLIDE 5 — 1:34]` Test once before you treat
 - **On screen (`Slide 5 / 10`):** decision tree, EVPI 0.1800, and 100% `missense_class` / 0% readthrough. Click 1 reveals the blot protocol, the branches and 69.1% of EVPI. Click 2 reveals the "first measurement in the child's own cells" callout.
 - **Stage direction:** point at the tree's single node, then hold one beat on the callout.
 - **Spoken narration (`1:34 – 2:04`, 74 words):**
-  > "Value of information picks the next step. EVPI is 0.18 at every weight: all on the missense class, none on readthrough. **[click]** So step one is a cycloheximide-chase BubR1 blot: zero to eight hours, with and without MG132, patient versus parental cells, weeks one to two. It captures 69.1% of EVPI. Rapid decay means unstable at 0.91: NAD-plus precursors. Normal abundance means inactive at 0.83: dasatinib. **[click]** It is our first measurement in the child's cells."
+  > "Value of information picks the next step. EVPI is 0.18 at every weight: all on the missense class, none on readthrough. **[click]** So step one is a cycloheximide-chase BubR1 blot: zero to eight hours, with and without MG132, patient versus parental cells, weeks one to two. It captures 69.1% of EVPI. Rapid decay means unstable at 0.87: NAD-plus precursors. Normal abundance means inactive at 0.82: dasatinib. **[click]** It is our first measurement in the child's cells."
 
 ### `[👉 SLIDE 6 — 2:04]` First, do no harm
 - **On screen (`Slide 6 / 10`):** callability figure and the 33 / 34 KPI. Click 1 reveals vincristine and the DO-NOT / MONITOR / GATE list. Click 2 reveals 1.6% and the 5-gene panel.
@@ -95,10 +101,10 @@ This document provides **two complete 4-minute scripts**, synchronized to the sa
   > "Safety is audited per child. Across 919 cancer lines, 33 of 34 Mps1 and Aurora inhibitors work worse in aneuploid cells: hard-excluded. **[click]** Vincristine alone is flagged by both the child's genome and symptom-matched drug labels. **[click]** And the file calls only 1.6% of pharmacogenomic positions, so we order a five-gene panel."
 
 ### `[👉 SLIDE 7 — 2:26]` One machine behind every number *(engineering; skip in the 3-minute cut)*
-- **On screen (`Slide 7 / 10`):** the full five-lane architecture and three KPIs (84.99 GB, 87, $0.015). There are no fragments. Everything else on this slide is a tap.
+- **On screen (`Slide 7 / 10`):** the full five-lane architecture and three KPIs (84.99 GB, 87, < 15 s). There are no fragments. Everything else on this slide is a tap.
 - **Stage direction:** sweep left to right across the lanes on the first sentence. Tap boxes as they are named. The fact panel opens without moving the slide.
-- **Spoken narration (`2:26 – 2:58`, 70 words):**
-  > "Every number you just heard comes out of one machine. The child's 85-gigabyte genome sits in a versioned MinIO bucket, **[tap: MinIO]** hash-checked against the publisher, and DuckDB queries it in place. Postgres holds the warehouse and an append-only lineage ledger. **[tap: PostgreSQL]** Track 2 ran on a laptop, plus one Modal GPU job costing a cent and a half. One FastAPI service, 87 routes, one envelope: data, cached-at, source. **[tap: Trace a request]** The dashboard renders it."
+- **Spoken narration (`2:26 – 2:58`, 68 words):**
+  > "Every number you just heard comes out of one machine. The child's 85-gigabyte genome sits in a versioned MinIO bucket, **[tap: MinIO]** hash-checked against the publisher, and DuckDB queries it in place. Postgres holds the warehouse and an append-only lineage ledger. **[tap: PostgreSQL]** Track 2 runs on a laptop, with GPU models on demand on Modal; the whole synthesis re-runs in under fifteen seconds. One FastAPI service, 87 routes, one envelope: data, cached-at, source. **[tap: Trace a request]** The dashboard renders it."
 - **If time allows:** **`[tap: Trace a figure]`** previews slide 8's ΔΔG chain. Skip it when running long.
 
 ### `[👉 SLIDE 8 — 2:58]` Every claim walks back to its bytes *(engineering; skip in the 3-minute cut)*
@@ -141,15 +147,15 @@ This document provides **two complete 4-minute scripts**, synchronized to the sa
 
 ### `[👉 SLIDE 2 — 0:22]` One unknown decides the treatment
 - **Spoken narration (`0:22 – 0:46`, 59 words):**
-  > "Which medicine depends on copy two. Our folding atlas of every possible typo puts the child's among the more damaging. **[click]** Does it make the inspector crumple and get thrown away, or hold its shape but not work? Different answers, different medicines. **[click]** Our own check of the atlas was too weak to settle it, so we carry both: fifty-five, forty-five."
+  > "Which medicine depends on copy two. Our folding atlas of every possible typo puts the child's among the more damaging. **[click]** Does it make the inspector crumple and get thrown away, or hold its shape but not work? Different answers, different medicines. **[click]** Eight published cases could not settle it, and eleven external protein scans still leave protein-to-protein spread, so we keep fifty-five, forty-five."
 
 ### `[👉 SLIDE 3 — 0:46]` How we refused to fool ourselves
 - **Spoken narration (`0:46 – 1:10`, 56 words):**
   > "Then we tried hard to prove ourselves wrong. We wrote down twenty-one predictions before testing them; eight came back wrong. **[click]** Even our hoped-for agreement between four search methods proved no better than chance. **[click]** And the obvious shortcuts? Blocking cell division makes things worse in cells like the child's; skipping the stop sign adds too little protein."
 
 ### `[👉 SLIDE 4 — 1:10]` What survived, and how we weighed it
-- **Spoken narration (`1:10 – 1:34`, 57 words):**
-  > "What survived? Two ordinary pills raised the inspector protein nearly threefold in human cells, but from a single experiment. So we turned how much to trust it into a dial, tested every setting, and set it low. **[click]** Back on top: vitamin B3-type boosters that doubled lifespan in the matching mouse, and a drug that clears worn-out cells."
+- **Spoken narration (`1:10 – 1:34`, 58 words):**
+  > "What survived? Two ordinary pills raised the inspector protein by about 15% in human cells, but from a single experiment. So we turned how much to trust it into a dial, tested every setting, and set it low. **[click]** Back on top: vitamin B3-type boosters that doubled lifespan in the matching mouse, and a drug that clears worn-out cells."
 
 ### `[👉 SLIDE 5 — 1:34]` Test once before you treat
 - **Spoken narration (`1:34 – 2:04`, 75 words):**
@@ -161,7 +167,7 @@ This document provides **two complete 4-minute scripts**, synchronized to the sa
 
 ### `[👉 SLIDE 7 — 2:26]` One machine behind every number *(skip in the 3-minute cut)*
 - **Spoken narration (`2:26 – 2:58`, 70 words):**
-  > "How do you know any of this is real? Behind every number sits one machine. **[tap: MinIO]** The child's genome lives in a locked storage bucket, checked byte by byte. **[tap: PostgreSQL]** A database keeps the tables, plus a ledger of where each one came from. Almost everything ran on a laptop; one graphics-card job cost under two cents. **[tap: Trace a request]** Every answer the website receives says where it came from, and the dashboard shows that."
+  > "How do you know any of this is real? Behind every number sits one machine. **[tap: MinIO]** The child's genome lives in a locked storage bucket, checked byte by byte. **[tap: PostgreSQL]** A database keeps the tables, plus a ledger of where each one came from. Almost everything runs on a laptop, with rented graphics cards only when a protein model needs them. **[tap: Trace a request]** Every answer the website receives says where it came from, and the dashboard shows that."
 
 ### `[👉 SLIDE 8 — 2:58]` Every claim walks back to its bytes *(skip in the 3-minute cut)*
 - **Spoken narration (`2:58 – 3:26`, 66 words):**

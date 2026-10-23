@@ -1,0 +1,1258 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Inspector Atlas</title>
+<meta name="description" content="An illustrated, figure-by-figure 3D atlas of the Track 2 story: how cells divide, what BubR1 checks, what went wrong in one child, and why one lab test should come before any medicine.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#dfe6ef; --plate:#f7f9fc; --rail:#eef2f8; --ink:#17213a; --muted:#5a6680; --rule:#c9d3e3;
+  --hi:#ff6b4a; --hi-ink:#17213a; --hi-text:#b5381a; --hi-soft:#ffe3dc; --acc2:#2456b8; --on-acc2:#ffffff; --warn:#c42f20; --cool:#17756a; --chip:#ffffff; --scrim:#17213a; --on-scrim:#ffffff;
+  --shadow:0 1px 0 rgba(23,33,58,.06), 0 24px 60px -20px rgba(23,33,58,.35);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --page:#0d1220; --plate:#141b2d; --rail:#111828; --ink:#e6ecf7; --muted:#93a0bb; --rule:#28324a;
+  --hi:#ff7a5c; --hi-ink:#14090a; --hi-text:#ff8f75; --hi-soft:#3a1d18; --acc2:#6ea0ff; --on-acc2:#0d1220; --warn:#c42f20; --cool:#17756a; --chip:#1a2338; --scrim:#e6ecf7; --on-scrim:#0d1220;
+  --shadow:0 24px 60px -20px rgba(0,0,0,.7);
+}}
+:root[data-theme="dark"]{
+  --page:#0d1220; --plate:#141b2d; --rail:#111828; --ink:#e6ecf7; --muted:#93a0bb; --rule:#28324a;
+  --hi:#ff7a5c; --hi-ink:#14090a; --hi-text:#ff8f75; --hi-soft:#3a1d18; --acc2:#6ea0ff; --on-acc2:#0d1220; --warn:#c42f20; --cool:#17756a; --chip:#1a2338; --scrim:#e6ecf7; --on-scrim:#0d1220;
+  --shadow:0 24px 60px -20px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:radial-gradient(1200px 600px at 80% -10%,rgba(47,111,222,.12),transparent),var(--page);color:var(--ink);font:15px/1.55 "Space Grotesk",system-ui,sans-serif;overflow:hidden}
+.mono{font-family:"JetBrains Mono",ui-monospace,monospace}
+button{font:inherit;color:inherit;cursor:pointer}
+.shell{height:100vh;display:grid;grid-template-rows:auto 1fr;padding:12px 18px 16px;gap:10px}
+.figbar{display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}
+.figbar::-webkit-scrollbar{display:none}
+.figbar .brand{flex:none;font:700 15px "Space Grotesk";margin-right:12px;letter-spacing:-.01em}
+.figbar .brand i{font-style:normal;color:var(--hi-text)}
+.figbar .tab{flex:none;border:0;background:transparent;border-radius:999px;padding:5px 10px;font:500 11px "JetBrains Mono",monospace;color:var(--muted);position:relative}
+.figbar .tab.seen::after{content:"";position:absolute;left:50%;bottom:1px;width:4px;height:4px;margin-left:-2px;border-radius:50%;background:var(--acc2)}
+.figbar .tab.on{background:var(--ink);color:var(--plate)}
+.figbar .sp{flex:1}
+.figbar.pulse .tab{animation:pulse 1.2s 2}
+@keyframes pulse{50%{background:var(--hi-soft);color:var(--ink)}}
+.figbar .ctl{flex:none;border:1px solid var(--rule);background:var(--plate);border-radius:999px;padding:5px 12px;font:500 12px "JetBrains Mono",monospace}
+.plate{display:grid;grid-template-columns:1fr 280px;grid-template-rows:1fr auto;background:var(--plate);border:1px solid var(--rule);border-radius:18px;box-shadow:var(--shadow);min-height:0;overflow:hidden}
+.rail{grid-column:2;grid-row:1/2;border-left:1px solid var(--rule);background:var(--rail);padding:18px 16px;overflow-y:auto}
+.figno{font:600 11px "JetBrains Mono",monospace;letter-spacing:.08em;color:var(--hi-text)}
+.rail h1{font:700 23px/1.12 "Space Grotesk";margin:6px 0 16px;letter-spacing:-.02em}
+.steps{display:flex;flex-direction:column;gap:2px;position:relative;padding-left:4px}
+.steps::before{content:"";position:absolute;left:15px;top:12px;bottom:12px;width:2px;background:var(--rule)}
+.steps button{position:relative;display:flex;align-items:center;gap:10px;text-align:left;border:0;background:transparent;border-radius:10px;padding:6px 8px 6px 2px;font:500 13px "Space Grotesk";transition:.15s;color:var(--muted)}
+.steps button .n{flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:600 10px "JetBrains Mono";background:var(--plate);border:2px solid var(--rule);color:var(--muted);z-index:1}
+.steps button.done .n{background:var(--acc2);border-color:var(--acc2);color:var(--on-acc2)}
+.steps button:hover{background:var(--plate);color:var(--ink)}
+.steps button.on{background:var(--hi-soft);color:var(--ink);font-weight:600}
+.steps button.on .n{background:var(--hi);border-color:var(--hi);color:var(--hi-ink)}
+.rail .note{margin-top:16px;font-size:13.5px;color:var(--muted)}
+.rail .note b{color:var(--ink)}
+.main{grid-column:1;grid-row:1;display:grid;grid-template-rows:1fr auto;min-height:0;padding-top:16px}
+.caprow{display:flex;align-items:flex-start;gap:12px;padding:14px 18px 10px}
+.caption{flex:1;font-size:15.5px;min-height:50px;max-width:960px}
+.caption .tag{display:inline-block;font:600 10px "JetBrains Mono";background:var(--acc2);color:var(--on-acc2);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:1px}
+.explainBtn{flex:none;border:1.5px solid var(--hi);background:var(--hi-soft);color:var(--ink);border-radius:999px;padding:6px 14px;font:600 13px "Space Grotesk";white-space:nowrap}
+.explainBtn:hover,.explainBtn.on{background:var(--hi);color:var(--hi-ink)}
+.stagewrap{position:relative;margin:0 18px;border-radius:14px;overflow:hidden;min-height:0;touch-action:none;cursor:grab;box-shadow:inset 0 0 0 1px var(--rule)}
+#stage{position:absolute;inset:0;width:100%;height:100%;display:block}
+.labels{position:absolute;inset:0;pointer-events:none}
+.lbl{position:absolute;transform:translate(-50%,-100%);white-space:nowrap;font:600 11px "JetBrains Mono",monospace;background:var(--chip);color:var(--ink);border-radius:999px;padding:3px 9px;transition:opacity .3s;box-shadow:0 4px 14px rgba(10,20,40,.25)}
+.lbl::after{content:"";position:absolute;left:50%;top:100%;width:2px;height:12px;margin-left:-1px;background:var(--chip)}
+.lbl.hot{background:var(--hi);color:var(--hi-ink)} .lbl.hot::after{background:var(--hi)}
+.lbl.warn{background:var(--warn);color:#fff} .lbl.warn::after{background:var(--warn)}
+.lbl.cool{background:var(--cool);color:#fff} .lbl.cool::after{background:var(--cool)}
+.speed{position:absolute;right:12px;top:12px;font:600 11px "JetBrains Mono";background:var(--scrim);color:var(--on-scrim);border-radius:999px;padding:3px 9px}
+.progress{position:absolute;left:0;top:0;height:3px;background:var(--hi);transition:width .4s}
+.hint{position:absolute;left:12px;bottom:10px;font:500 11px "JetBrains Mono";color:var(--ink);background:var(--plate);border-radius:999px;padding:3px 10px;box-shadow:0 0 0 1px var(--rule)}
+.toggles{position:absolute;right:12px;bottom:12px;display:flex;gap:6px}
+.toggles button{border:0;background:var(--plate);color:var(--ink);border-radius:999px;padding:5px 11px;font:600 11px "JetBrains Mono";box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.toggles button.on{background:var(--hi);color:var(--hi-ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:10px 18px 12px}
+.chip{border:1px solid var(--rule);background:var(--chip);border-radius:999px;padding:3px 10px;font:500 11px "JetBrains Mono",monospace;color:var(--muted);transition:background .3s}
+.chip b{color:var(--ink);font-weight:600}
+.chip.flash{background:var(--hi);border-color:var(--hi)}
+.chip.flash, .chip.flash b{color:var(--hi-ink)}
+.foot{grid-column:1/3;border-top:1px solid var(--rule);display:flex;align-items:center;gap:18px;padding:10px 18px}
+.foot p{margin:0;flex:1;font-size:14px}
+.swatches{display:flex;align-items:center;gap:6px;font:600 10px "JetBrains Mono";color:var(--muted)}
+.swatches button{width:18px;height:18px;border-radius:50%;border:2px solid var(--plate);padding:0;box-shadow:0 0 0 1px var(--rule)}
+.swatches button.on{box-shadow:0 0 0 2px var(--hi)}
+.navbtn{border:0;background:var(--hi);color:var(--hi-ink);border-radius:999px;padding:7px 16px;font:600 13px "Space Grotesk"}
+.navbtn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1px var(--rule)}
+.navbtn:disabled{opacity:.35}
+.deeper{margin-top:14px;border-top:1px dashed var(--rule);padding-top:10px;font-size:13.5px}
+.deeper summary{cursor:pointer;font:600 12px "JetBrains Mono";color:var(--acc2)}
+.deeper p{margin:.5em 0;color:var(--ink)}
+.fallback{position:absolute;inset:0;display:none;place-items:center;text-align:center;padding:24px;color:var(--muted);background:var(--plate)}
+/* explain drawer */
+.drawer{position:absolute;top:12px;bottom:12px;left:12px;width:min(420px,calc(100% - 24px));background:var(--plate);color:var(--ink);border-radius:14px;box-shadow:0 20px 50px rgba(0,0,0,.35);padding:18px 20px;overflow-y:auto;transform:translateX(-110%);transition:transform .35s cubic-bezier(.2,.8,.2,1);z-index:5;cursor:auto}
+.drawer.open{transform:none}
+.drawer h3{margin:0 0 4px;font:700 18px "Space Grotesk"}
+.drawer .k{font:600 10px "JetBrains Mono";letter-spacing:.08em;color:var(--hi-text)}
+.drawer p{margin:.6em 0}
+.drawer .eg{background:var(--hi-soft);border-radius:10px;padding:10px 12px;margin:10px 0}
+.drawer .x{position:absolute;right:12px;top:10px;border:0;background:transparent;font-size:20px;color:var(--muted)}
+.drawer .words{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.drawer .words span{font:500 12px "JetBrains Mono";background:var(--rail);border-radius:6px;padding:2px 7px}
+/* end screen */
+.endcard{position:absolute;inset:0;display:none;place-items:center;background:rgba(10,16,30,.62);backdrop-filter:blur(3px);z-index:6;cursor:auto}
+.endcard.show{display:grid}
+.endcard .box{background:var(--plate);color:var(--ink);border-radius:18px;padding:26px 28px;max-width:520px;width:calc(100% - 32px);box-shadow:0 30px 80px rgba(0,0,0,.45);text-align:center}
+.endcard .flag{font-size:34px}
+.endcard h2{margin:6px 0 6px;font:700 24px "Space Grotesk"}
+.endcard p{color:var(--muted);margin:.4em 0 1em}
+.endcard .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.endcard ol{text-align:left;margin:0 auto 16px;max-width:400px;padding-left:20px;font-size:14px}
+@media (max-width:900px){
+  body{overflow:auto}
+  .shell{height:auto;padding:10px}
+  .plate{grid-template-columns:1fr;grid-template-rows:auto auto auto}
+  .main{grid-column:1;grid-row:2}
+  .rail{grid-column:1;grid-row:1;border-left:0;border-bottom:1px solid var(--rule)}
+  .stagewrap{height:62vh;margin:0 10px}
+  .caprow{padding:10px 12px;flex-direction:column}
+  .chips{padding:10px 12px}
+  .foot{grid-column:1;grid-row:3;flex-wrap:wrap;padding:10px 12px}
+}
+
+/* narrator card: the reading lives on the stage */
+.story{position:absolute;left:16px;bottom:16px;width:min(470px,calc(100% - 32px));z-index:4;cursor:auto;
+  background:var(--plate);
+  border-radius:16px;padding:16px 18px 14px;box-shadow:0 18px 40px -12px rgba(5,12,30,.55),0 0 0 1px color-mix(in srgb,var(--ink) 8%,transparent);
+  border-left:4px solid var(--hi);transition:opacity .3s,transform .3s}
+.story.hidden{opacity:0;transform:translateY(16px);pointer-events:none}
+.story-top{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+.story-k{font:600 10.5px "JetBrains Mono";letter-spacing:.08em;color:var(--hi-text)}
+.dots{display:flex;gap:4px;flex:1}
+.dots i{width:16px;height:4px;border-radius:2px;background:var(--rule)}
+.dots i.on{background:var(--hi)} .dots i.done{background:var(--acc2)}
+.story-min{border:0;background:var(--rail);border-radius:8px;width:26px;height:22px;line-height:1;color:var(--muted);font-weight:700}
+.story-h{margin:0 0 6px;font:700 24px/1.15 "Space Grotesk";letter-spacing:-.02em}
+.story-p{margin:0;font:400 18px/1.5 "Newsreader",Georgia,serif;color:var(--ink);min-height:3em}
+.story-p b{font-weight:600;background:linear-gradient(transparent 58%,color-mix(in srgb,var(--hi) 35%,transparent) 0);padding:0 1px}
+.story-p .w{opacity:0;transition:opacity .25s}
+.story-p .w.in{opacity:1}
+.story-p .tag{font:600 10px "JetBrains Mono";background:var(--acc2);color:var(--on-acc2);border-radius:999px;padding:1px 7px;margin-left:6px;vertical-align:2px}
+.story-act{display:flex;align-items:center;gap:8px;margin-top:12px}
+.story-sp{flex:1}
+.story-next{border:0;background:var(--hi);color:var(--hi-ink);border-radius:999px;padding:7px 16px;font:600 14px "Space Grotesk";box-shadow:0 6px 16px -6px var(--hi)}
+.story-next.nudge{animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{0%,100%{transform:none}50%{transform:translateX(3px)}}
+.story-pill{position:absolute;left:16px;bottom:16px;z-index:4;display:none;border:0;background:var(--plate);color:var(--ink);border-radius:999px;padding:8px 14px;font:600 13px "Space Grotesk";box-shadow:0 10px 24px -8px rgba(0,0,0,.5)}
+.story.hidden ~ .story-pill{display:block}
+.stagewrap::after{content:"";position:absolute;inset:auto auto 0 0;width:70%;height:55%;pointer-events:none;background:radial-gradient(120% 100% at 0% 100%,rgba(5,12,30,.35),transparent 70%)}
+.hint{left:auto;right:12px;bottom:auto;top:40px}
+.drawer.open ~ .story{opacity:0;pointer-events:none}
+@media (max-width:900px){
+  .story{position:relative;left:auto;bottom:auto;width:auto;margin:10px;backdrop-filter:none;background:var(--plate)}
+  .stagewrap{display:flex;flex-direction:column;justify-content:flex-end}
+  .stagewrap::after{display:none}
+  .hint{display:none}
+  .story-h{font-size:21px} .story-p{font-size:17px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <nav class="figbar" id="figbar"><span class="brand">Inspector <i>Atlas</i></span></nav>
+  <article class="plate">
+    <aside class="rail">
+      <div class="figno mono" id="figno"></div>
+      <h1 id="figtitle"></h1>
+      <div class="steps" id="steps"></div>
+      <div class="note" id="figside"></div>
+      <details class="deeper" id="deeper"><summary>Go deeper (more science)</summary><div id="deeperBody"></div></details>
+    </aside>
+    <section class="main">
+      <div class="stagewrap" id="wrap">
+        <canvas id="stage"></canvas>
+        <div class="labels" id="labels"></div>
+        <div class="progress" id="progress"></div>
+        <div class="speed" id="speed">×1</div>
+        <div class="toggles" id="toggles"></div>
+        <div class="hint">drag to orbit · scroll to zoom · ←/→ steps · E explain · H hide text</div>
+        <aside class="drawer" id="drawer"><button class="x" id="drawerX" aria-label="Close">×</button><div id="drawerBody"></div></aside>
+        <section class="story" id="story" aria-live="polite">
+          <div class="story-top"><span class="story-k" id="storyK"></span><span class="dots" id="storyDots"></span><button class="story-min" id="storyMin" title="Hide the text to see the whole scene (H)">–</button></div>
+          <h2 class="story-h" id="storyH"></h2>
+          <p class="story-p caption" id="caption"></p>
+          <div class="story-act"><button class="explainBtn" id="explainBtn" title="Plain-language explanation (E)">💬 Explain it simply</button><span class="story-sp"></span><button class="story-next" id="storyNext">Next →</button></div>
+        </section>
+        <button class="story-pill" id="storyPill">📖 Show the story</button>
+        <div class="endcard" id="endcard"><div class="box">
+          <div class="flag">🏁</div>
+          <h2>You've reached the last figure</h2>
+          <p>That was all 11 figures and 49 steps. In one breath:</p>
+          <ol>
+            <li>The child's only working copy of the seatbelt inspector has a one-letter typo.</li>
+            <li>Computers can't tell whether it <b>crumples</b> or <b>idles</b>, and the two need opposite medicines.</li>
+            <li>So one lab test on the child's cells should come <b>before</b> any medicine, inside a safety fence.</li>
+          </ol>
+          <div class="row"><button class="navbtn" id="restartBtn">↺ Start again from FIG. 01</button><button class="navbtn ghost" id="pickBtn">Pick a figure</button><button class="navbtn ghost" id="stayBtn">Stay here</button></div>
+        </div></div>
+        <div class="fallback" id="fallback">This atlas draws its figures with WebGL (Three.js). Your browser blocked it or it failed to load, so only the text is available.</div>
+      </div>
+      <div class="chips" id="chips"></div>
+    </section>
+    <footer class="foot">
+      <p id="bigidea"></p>
+      <div class="swatches" id="swatches">GROUND</div>
+      <button class="navbtn ghost" id="prevFig">← Back</button>
+      <button class="navbtn" id="nextFig">Next →</button>
+    </footer>
+  </article>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+"use strict";
+/* =====================================================================
+   Inspector Atlas: one persistent cel-shaded stage, eleven figures.
+   Each figure = { id, title, steps[{label, caption, shot, chips?}], build(), update(dt) }.
+   Numbers that come from the project are marked "(ours)" in the Go-deeper notes;
+   textbook background is general knowledge, simplified on purpose.
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const cssv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const clamp = (v,a,b) => Math.max(a, Math.min(b, v));
+const ease = t => { t = clamp(t,0,1); return t*t*(3-2*t); };
+const lerp = (a,b,t) => a + (b-a)*t;
+function rng(seed){ let s = seed>>>0; return () => (s = (s*1664525+1013904223)>>>0)/4294967296; }
+
+const PAL = { teal:0x5fb3b3, coral:0xef6c4a, violet:0x8a73d9, gold:0xf2c14e, green:0x6fbf73, cream:0xf6f1e5,
+  steel:0xd9dee6, ink:0x1f2430, rose:0xe58fa6, sky:0x8ec5ea, sand:0xe8d6a8, dirt:0x7a5a3e, grass:0x8db89a };
+let matKey = 'blueprint';
+const MATS = { blueprint:[0x1f3c6e,0x2c4f8a], slate:[0x34405a,0x435070], teal:[0x1d5f63,0x2a7479], clay:[0xb9785c,0xc98a6e], paper:[0xd8dee8,0xc6cfdd] };
+
+/* ---------------- renderer, camera, lights ---------------- */
+let R, scene, cam, ok3d = true;
+try {
+  if (!window.THREE) throw new Error('no three');
+  R = new THREE.WebGLRenderer({ canvas: $('stage'), antialias: true });
+  R.setPixelRatio(Math.min(2, devicePixelRatio));
+  R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap;
+} catch (e) { ok3d = false; $('fallback').style.display = 'grid'; }
+
+const shot = { az: .78, el: .62, zoom: 1, tx: 0, ty: 0, tz: 0 }, want = Object.assign({}, shot);
+let userAz = 0, userEl = 0, userZoom = 1;
+if (ok3d){
+  scene = new THREE.Scene();
+  cam = new THREE.OrthographicCamera(-10, 10, 10, -10, -200, 400);
+  scene.add(new THREE.HemisphereLight(0xffffff, 0xb9ad94, .75));
+  const sun = new THREE.DirectionalLight(0xffffff, .75);
+  sun.position.set(14, 26, 10); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
+  Object.assign(sun.shadow.camera, { left:-24, right:24, top:24, bottom:-24, near:1, far:90 }); sun.shadow.bias = -0.0008;
+  scene.add(sun);
+}
+
+/* cel shading: 3-step gradient + inverted-hull ink outline */
+let gradTex = null;
+if (ok3d){
+  gradTex = new THREE.DataTexture(new Uint8Array([120,120,120,255, 200,200,200,255, 255,255,255,255]), 3, 1, THREE.RGBAFormat);
+  gradTex.minFilter = gradTex.magFilter = THREE.NearestFilter; gradTex.generateMipmaps = false; gradTex.needsUpdate = true;
+}
+const inkMat = ok3d ? new THREE.MeshBasicMaterial({ color: PAL.ink, side: THREE.BackSide }) : null;
+const matCache = {};
+function toon(color, extra){
+  const key = color + JSON.stringify(extra || {});
+  if (!extra && matCache[key]) return matCache[key];
+  const m = new THREE.MeshToonMaterial(Object.assign({ color, gradientMap: gradTex }, extra || {}));
+  if (!extra) matCache[key] = m; return m;
+}
+function mesh(geo, color, opt){
+  opt = opt || {};
+  const m = new THREE.Mesh(geo, opt.mat || toon(color, opt.extra));
+  m.castShadow = opt.shadow !== false; m.receiveShadow = !!opt.receive;
+  if (opt.outline !== false){ const o = new THREE.Mesh(geo, inkMat); o.userData.isInk = true;
+    geo.computeBoundingBox(); const sz = new THREE.Vector3(); geo.boundingBox.getSize(sz);
+    // keep the ink line roughly constant in world units (≈0.05) instead of a fixed percentage
+    const ink = (opt.ow || .06) * Math.min(1.2, Math.max(sz.x, sz.y, sz.z));
+    o.scale.set(1 + ink/Math.max(sz.x, .01) * 2 * .5, 1 + ink/Math.max(sz.y, .01) * 2 * .5, 1 + ink/Math.max(sz.z, .01) * 2 * .5); m.add(o); }
+  return m;
+}
+const G = {
+  box: (x,y,z) => new THREE.BoxGeometry(x,y,z),
+  sph: (r,w,h) => new THREE.SphereGeometry(r, w||20, h||14),
+  cyl: (r1,r2,h,s) => new THREE.CylinderGeometry(r1, r2, h, s||18),
+  tor: (r,t) => new THREE.TorusGeometry(r, t, 10, 32),
+};
+function at(o, x, y, z){ o.position.set(x, y, z); return o; }
+function rod(len, r, color){ // capsule-ish: cylinder + 2 caps, one outline each
+  const g = new THREE.Group();
+  g.add(mesh(G.cyl(r, r, len, 14), color, { ow:.12 }));
+  [-len/2, len/2].forEach(y => { const s = mesh(G.sph(r, 14, 10), color, { ow:.12 }); s.position.y = y; g.add(s); });
+  return g;
+}
+
+/* cutting-mat ground and floating island */
+let matPlane = null, matGrid = null;
+function cuttingMat(){
+  const g = new THREE.Group();
+  matPlane = new THREE.Mesh(G.box(46, .4, 46), new THREE.MeshToonMaterial({ color: MATS[matKey][0], gradientMap: gradTex }));
+  matPlane.position.y = -.2; matPlane.receiveShadow = true; g.add(matPlane);
+  matGrid = new THREE.GridHelper(46, 46, MATS[matKey][1], MATS[matKey][1]); matGrid.position.y = .01; g.add(matGrid);
+  const big = new THREE.GridHelper(46, 9, 0xffffff, 0xffffff); big.material.transparent = true; big.material.opacity = .18; big.position.y = .02; g.add(big);
+  return g;
+}
+function island(w, d, top){
+  const g = new THREE.Group();
+  const grass = mesh(G.box(w, .6, d), top || PAL.grass, { receive:true, ow:.012 }); grass.position.y = -.3; g.add(grass);
+  const dirt = mesh(G.box(w*.96, 1.6, d*.96), PAL.dirt, { receive:true, ow:.012 }); dirt.position.y = -1.4; g.add(dirt);
+  const r = rng(w*7+d);
+  for (let i=0;i<10;i++){ const rock = mesh(G.box(.6+r()*.8,.8+r()*1.2,.6+r()*.8), 0x6e5440); rock.position.set((r()-.5)*w*.8, -2.4-r()*.6, (r()-.5)*d*.8); g.add(rock); }
+  return g;
+}
+
+/* HTML callout labels pinned to 3D points */
+const labels = [];
+function label(text, obj, offset, cls){
+  const el = document.createElement('div'); el.className = 'lbl ' + (cls || ''); el.textContent = text; $('labels').appendChild(el);
+  const L = { el, obj, off: offset || [0,1,0], fig: null, on: false };
+  labels.push(L); return L;
+}
+const tmpV = ok3d ? new THREE.Vector3() : null;
+function placeLabels(){
+  const w = $('wrap').clientWidth, h = $('wrap').clientHeight;
+  labels.forEach(L => {
+    const show = L.on && L.fig === cur && L.obj.visible !== false;
+    L.el.style.opacity = show ? 1 : 0;
+    if (!show) return;
+    L.obj.getWorldPosition(tmpV); tmpV.x += L.off[0]; tmpV.y += L.off[1]; tmpV.z += L.off[2];
+    tmpV.project(cam);
+    L.el.style.left = ((tmpV.x+1)/2*w) + 'px'; L.el.style.top = ((1-tmpV.y)/2*h - 12) + 'px';
+  });
+}
+
+/* ---------------- figure registry ---------------- */
+const FIGS = [];
+let cur = 0, step = 0, since = 0, speed = 1;
+function fig(def){ def.group = ok3d ? new THREE.Group() : null; def.labels = []; def.toggles = def.toggles || []; FIGS.push(def); return def; }
+function L(def, text, obj, off, cls){ const l = label(text, obj, off, cls); l.fig = FIGS.indexOf(def); def.labels.push(l); return l; }
+
+/* =====================================================================
+   FIG 01 · The city of cells
+   ===================================================================== */
+fig({
+  id:'01', title:'A body is a city of cells',
+  side:'<b>Scale:</b> a cell is about a tenth of a hair\'s width. You are made of roughly 37 trillion of them.',
+  bigidea:'<b>The big idea:</b> your body rebuilds itself every day by splitting cells in two, and every split must hand each new cell a perfect copy of the DNA.',
+  deeper:'<p>Adults replace on the order of 330 billion cells a day, mostly blood and gut lining (Sender &amp; Milo, 2021). The visible step of a split, <b>mitosis</b>, takes about an hour in a typical human cell.</p><p>The illness in this story is about what happens when that hand-over goes wrong.</p>',
+  steps:[
+    { label:'A patch of tissue', caption:'Zoom in on any tissue and you find tightly packed cells, like houses in a city. Each has a control room, the <b>nucleus</b>, where the DNA is kept.', shot:{az:.78, el:.62, zoom:1} },
+    { label:'Open one cell', caption:'Slice one cell open. Inside: the nucleus (purple), small power plants (mitochondria, gold) and a soup of working proteins.', shot:{az:.6, el:.42, zoom:2.4, ty:3} },
+    { label:'Cells split', caption:'To grow or repair, a cell copies everything and pinches into two. Watch new cells appear at the edges of the patch.', shot:{az:.9, el:.7, zoom:1.1}, speed:'×60' },
+    { label:'Why it must be exact', caption:'Every new cell needs the full instruction set: no pages missing, no extras. The next figure opens the instruction library.', shot:{az:.78, el:.62, zoom:1.4, ty:.4} },
+  ],
+  chips:() => [['CELLS IN A BODY','≈37 trillion'],['MADE SO FAR TODAY ≈', Math.round(330e9*clamp((performance.now()%86400000)/86400000,0,1)).toLocaleString()],['ONE SPLIT','≈1 h'],['DNA COPIES PER CELL','2 sets']],
+  build(){
+    const g = this.group, r = rng(4); g.add(island(18, 14));
+    this.cells = [];
+    for (let i=0;i<9;i++) for (let j=0;j<7;j++){
+      const x = (i-4)*1.85 + (j%2)*.9, z = (j-3)*1.75;
+      if (Math.abs(x) < 1 && Math.abs(z) < 1) continue;
+      const c = mesh(G.sph(.95, 18, 12), [PAL.teal, 0x7fc4c0, 0x9ad1c9][(i+j)%3]);
+      c.scale.set(1, .62, 1); c.position.set(x, .55, z);
+      const nu = mesh(G.sph(.34, 14, 10), PAL.violet, { ow:.1 }); nu.position.y = .25; c.add(nu);
+      const extra = (i===0||i===8||j===0||j===6) && r() < .55;
+      c.userData = { extra, base: c.scale.clone(), phase: r()*6 };
+      g.add(c); this.cells.push(c);
+    }
+    // the opened cell: a hemisphere shell with organelles
+    const open = new THREE.Group(); open.position.set(0, .2, 0);
+    const shell = new THREE.Mesh(new THREE.SphereGeometry(1.4, 32, 18, 0, Math.PI*2, Math.PI/2, Math.PI/2), toon(0x9ad1c9, { side: THREE.DoubleSide }));
+    shell.scale.set(1, .75, 1); shell.castShadow = true; open.add(shell);
+    const rim = mesh(G.tor(1.4, .05), PAL.ink, { outline:false }); rim.rotation.x = Math.PI/2; open.add(rim);
+    this.lid = new THREE.Mesh(new THREE.SphereGeometry(1.4, 32, 18, 0, Math.PI*2, 0, Math.PI/2), toon(0x9ad1c9, { side: THREE.DoubleSide }));
+    this.lid.scale.set(1, .75, 1); this.lid.castShadow = true; open.add(this.lid);
+    const nuc = mesh(G.sph(.55, 22, 16), PAL.violet); nuc.position.set(-.2, .35, .1); open.add(nuc);
+    for (let k=0;k<5;k++){ const m = rod(.5, .12, PAL.gold); m.rotation.z = Math.PI/2; m.rotation.y = k*1.3; m.position.set(Math.cos(k*1.3)*.9, .25, Math.sin(k*1.3)*.85); open.add(m); }
+    for (let k=0;k<14;k++){ const d = mesh(G.sph(.07, 8, 6), PAL.coral, { outline:false }); d.position.set((r()-.5)*2, .1+r()*.5, (r()-.5)*2); open.add(d); }
+    g.add(open); this.open = open; this.nuc = nuc;
+    L(this, 'nucleus · the control room', nuc, [0, .8, 0], 'hot');
+    L(this, 'mitochondria · power', open.children[4], [0, .5, 0]);
+    L(this, 'a single cell', this.cells[20], [0, 1, 0]);
+  },
+  update(dt, t){
+    const lidT = step === 1 || step === 3 ? ease(since*1.2) : 1 - ease(since*1.5);
+    this.open.position.y = .2 + lidT*2.6; this.open.scale.setScalar(1 + lidT*.5);
+    this.lid.position.y = lidT*2.2; this.lid.rotation.z = lidT*.8; this.lid.visible = lidT < .98;
+    this.labels[0].on = step === 1 || step === 3; this.labels[1].on = step === 1; this.labels[2].on = step === 0;
+    this.cells.forEach(c => {
+      const u = c.userData, b = .62 + .03*Math.sin(t*1.6 + u.phase);
+      if (u.extra){ const grow = step >= 2 ? ease((since - u.phase*.3)*.8) : (step === 0 ? 0 : 0); c.visible = grow > .01; c.scale.set(grow, b*grow, grow); }
+      else if (step === 2){ const pinch = .5 + .5*Math.sin(t*3 + u.phase); c.scale.set(1 + .18*pinch, b, 1 - .12*pinch); }
+      else c.scale.set(1, b, 1);
+    });
+  }
+});
+
+/* =====================================================================
+   FIG 02 · The library: 46 books
+   ===================================================================== */
+function chromosomeX(len, color, sisters){
+  const g = new THREE.Group(), arms = [];
+  [-1, 1].forEach(s => { const sis = new THREE.Group();
+    const a = rod(len, .16, color); a.rotation.z = s * .32; sis.add(a);
+    const kt = mesh(G.sph(.11, 10, 8), PAL.coral, { ow:.15 }); kt.position.x = s*.14; sis.add(kt);
+    sis.userData.kt = kt; g.add(sis); arms.push(sis); });
+  g.userData.arms = arms;
+  if (!sisters){ arms[1].visible = false; arms[0].children[0].rotation.z = 0; }
+  return g;
+}
+fig({
+  id:'02', title:'The library: 46 books of DNA',
+  side:'<b>DNA</b> is the manual. It is cut into 46 volumes called <b>chromosomes</b>: 23 pairs, one of each pair from each parent.',
+  bigidea:'<b>The big idea:</b> before a split, the cell photocopies all 46 books, so each becomes an X of two identical copies. The split must give one copy of every book to each side.',
+  deeper:'<p>The human manual has about 3.1 billion letters and roughly 20,000 recipes (genes). The recipe for the inspector, <b>BUB1B</b>, sits on chromosome 15.</p><p>The X shape you see in textbooks only exists after copying: the two identical halves (sister chromatids) are held together at a waist called the centromere.</p>',
+  steps:[
+    { label:'Books in the nucleus', caption:'Normally the 46 chromosomes are loose threads inside the nucleus. Here each is drawn as a short rod, colour-coded by pair.', shot:{az:.78, el:.7, zoom:1.2} },
+    { label:'Sort into 23 pairs', caption:'Laid out by size, they form 23 matched pairs: one from mum, one from dad. Doctors call this layout a <b>karyotype</b>.', shot:{az:0, el:1.1, zoom:1.05} },
+    { label:'Photocopy everything', caption:'Before splitting, every book is copied. Each chromosome becomes an <b>X</b>: two identical copies joined at the waist. Small red knobs (<b>kinetochores</b>) are where pulling ropes will clip on.', shot:{az:.3, el:.9, zoom:1.4} },
+    { label:'Find chromosome 15', caption:'Pair 15 carries <b>BUB1B</b>, the recipe for the seatbelt inspector. Our child has a different mistake in each of the two copies.', shot:{az:.3, el:.85, zoom:2.2, tx:-5.4, ty:.9, tz:1.6} },
+  ],
+  chips:() => [['BOOKS','46'],['PAIRS','23'],['LETTERS','≈3.1 billion'],['RECIPES','≈20,000'],['AFTER COPYING', step >= 2 ? '92 copies' : '46'],['BUB1B','chromosome 15']],
+  build(){
+    const g = this.group, r = rng(9); g.add(cuttingMat());
+    const nucleus = new THREE.Mesh(G.sph(6.2, 40, 26), new THREE.MeshToonMaterial({ color: PAL.violet, gradientMap: gradTex, transparent:true, opacity:.16, depthWrite:false }));
+    nucleus.position.y = 3.2; g.add(nucleus); this.nucleus = nucleus;
+    const hues = [0x5fb3b3,0xef6c4a,0x8a73d9,0x9aa3b5,0x6fbf73,0xe58fa6,0x8ec5ea,0xc7a27a];
+    this.chr = [];
+    for (let p=0;p<23;p++) for (let s=0;s<2;s++){
+      const len = 1.5 - p*.045, c = chromosomeX(len, p===14 ? PAL.gold : hues[p%8], true);
+      const a = r()*6.28, b = Math.acos(2*r()-1), rad = 1+r()*3.8;
+      c.userData.loose = new THREE.Vector3(rad*Math.sin(b)*Math.cos(a), 3.2 + rad*Math.cos(b)*.8, rad*Math.sin(b)*Math.sin(a));
+      c.userData.looseRot = new THREE.Euler(r()*3, r()*3, r()*3);
+      const col = p % 12, row = Math.floor(p/12);
+      c.userData.grid = new THREE.Vector3((col-5.5)*1.55 + (s ? .38 : -.38), .9, row*3.2 - 1.6);
+      c.userData.pair = p; g.add(c); this.chr.push(c);
+    }
+    L(this, 'pair 15 · BUB1B lives here', this.chr[28], [0, .9, 0], 'hot');
+    L(this, 'kinetochore · rope clip', this.chr[0].userData.arms[0].userData.kt, [0, .5, 0], 'warn');
+  },
+  update(dt, t){
+    const k = ease(since*.9);
+    this.nucleus.material.opacity = step === 0 ? .16 : .16*(1-k);
+    this.chr.forEach((c,i) => {
+      const u = c.userData, toGrid = step >= 1;
+      const from = toGrid ? (step === 1 ? u.loose : u.grid) : u.grid, to = toGrid ? u.grid : u.loose;
+      const kk = step === 1 || step === 0 ? k : 1;
+      c.position.lerpVectors(from, to, kk);
+      if (step === 0){ c.rotation.set(lerp(0,u.looseRot.x,kk), lerp(0,u.looseRot.y,kk) + t*.1, lerp(0,u.looseRot.z,kk)); }
+      else { c.rotation.set(lerp(u.looseRot.x,0, step===1?kk:1), lerp(u.looseRot.y,0, step===1?kk:1), lerp(u.looseRot.z,0, step===1?kk:1)); }
+      const dup = step >= 2 ? ease(since*1.2) : 0;
+      const [a0, a1] = u.arms; a1.visible = dup > .02;
+      a0.children[0].rotation.z = -.32*dup; a1.children[0].rotation.z = .32*dup; a1.scale.setScalar(Math.max(.01, dup));
+      const glow = step === 3 && u.pair === 14; c.scale.setScalar(glow ? 1.3 + .1*Math.sin(t*5) : 1);
+    });
+    this.labels[0].on = step === 3; this.labels[1].on = step === 2;
+  }
+});
+
+/* =====================================================================
+   FIG 03 · The division machine and its inspector
+   ===================================================================== */
+fig({
+  id:'03', title:'The split, and the seatbelt check',
+  side:'<b>BubR1</b> is part of the <b>spindle assembly checkpoint</b>: a "wait" alarm that stays on while any chromosome is not clipped to a rope.',
+  bigidea:'<b>The big idea:</b> the cell will not cut the glue between copies until every kinetochore is attached. BubR1 is a key part of the "wait" signal, so a weak BubR1 lets the cell split too early.',
+  deeper:'<p>Each unclipped kinetochore churns out a "wait" signal, the <b>mitotic checkpoint complex</b> (BubR1, Bub3, Mad2 and Cdc20). It blocks the enzyme that would start the split (the APC/C). When the last rope clips on, the signal fades. Then an enzyme called separase cuts the cohesin glue, and the copies are pulled apart.</p><p>One unclipped chromosome is enough to hold the whole cell. That is how sensitive a healthy checkpoint is.</p>',
+  toggles:[{ id:'insp', labels:['Inspector: healthy','Inspector: weak'], val:0 }],
+  steps:[
+    { label:'Line up', caption:'Two rope towers (<b>spindle poles</b>, gold) form at opposite ends. The copied chromosomes drift to the middle line.', shot:{az:.55, el:.55, zoom:1.15, ty:3.2} },
+    { label:'Clip the ropes', caption:'Ropes (<b>microtubules</b>) grow from both poles and clip onto the red kinetochores. One chromosome is still unclipped on one side.', shot:{az:.5, el:.45, zoom:1.5, ty:3.2} },
+    { label:'The check', caption:'The unclipped kinetochore broadcasts "WAIT" (orange sparks). BubR1 is part of that signal. Nothing moves until the last rope clips on.', shot:{az:.42, el:.4, zoom:2.2, ty:4.4}, speed:'×1/8' },
+    { label:'Cut the glue, pull', caption:'Last rope clipped, the alarm goes quiet. The glue is cut and each X splits into two single copies, one pulled to each side.', shot:{az:.55, el:.55, zoom:1.15, ty:3.2} },
+    { label:'With a weak inspector', caption:'Switch the inspector to <b>weak</b> (bottom right) and replay. The cell does not wait: the unclipped chromosome goes to the wrong side, so one new cell gets an extra book and the other is missing one.', shot:{az:.55, el:.7, zoom:1.15, ty:3.2} },
+  ],
+  chips(){ const att = this.attached ? this.chr.length : this.chr.length - 1;
+    return [['CHROMOSOMES (DRAWN)', String(this.chr.length)],['CLIPPED', att + '/' + this.chr.length],['SIGNAL', this.signal, this.signal === 'WAIT'],['INSPECTOR', this.weak ? 'weak' : 'healthy', this.weak],['NEW CELLS', this.outcome || '—']]; },
+  build(){
+    const g = this.group, r = rng(13); g.add(cuttingMat());
+    const cellBody = new THREE.Mesh(G.sph(7, 40, 24), new THREE.MeshToonMaterial({ color: PAL.teal, gradientMap: gradTex, transparent:true, opacity:.12, depthWrite:false }));
+    cellBody.scale.set(1.25, .6, .75); cellBody.position.y = 3.2; g.add(cellBody); this.body = cellBody;
+    this.poles = [-1, 1].map(s => { const p = new THREE.Group();
+      const c = mesh(G.cyl(.05, .45, 1, 12), PAL.gold); c.rotation.z = s * Math.PI/2; p.add(c);
+      const b = mesh(G.sph(.35, 16, 12), PAL.gold); p.add(b);
+      p.position.set(s*7, 3.2, 0); g.add(p); return p; });
+    const n = 8; this.chr = [];
+    for (let i=0;i<n;i++){
+      const c = chromosomeX(1.1, [PAL.teal, PAL.violet, PAL.coral, PAL.green][i%4], true);
+      c.rotation.y = Math.PI/2;
+      c.userData.home = new THREE.Vector3((r()-.5)*7, 3.2 + (r()-.5)*2.2, (r()-.5)*3);
+      c.userData.plate = new THREE.Vector3(0, 3.2 + (i-(n-1)/2)*.62, (i%2 ? .5 : -.5));
+      g.add(c); this.chr.push(c);
+    }
+    this.loose = 5;
+    const lineMat = new THREE.LineBasicMaterial({ color: 0x3a4a63 });
+    this.ropes = [];
+    this.chr.forEach((c,i) => [0,1].forEach(side => {
+      const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]);
+      const l = new THREE.Line(geo, lineMat); g.add(l); this.ropes.push({ l, i, side });
+    }));
+    // WAIT sparks
+    this.sparks = [];
+    for (let k=0;k<26;k++){ const s = mesh(G.sph(.08, 8, 6), 0xff9b55, { outline:false, extra:{ emissive: 0xff7a30, emissiveIntensity:.6 } }); s.visible = false; s.userData.ph = k/26; g.add(s); this.sparks.push(s); }
+    this.signal = 'WAIT'; this.attached = false; this.weak = false;
+    L(this, 'spindle pole', this.poles[0], [0, .9, 0]);
+    L(this, 'unclipped! → WAIT', this.chr[this.loose], [0, .9, 0], 'warn');
+    L(this, 'microtubule rope', this.chr[1], [-2.5, .4, 0]);
+  },
+  onToggle(id, v){ if (id === 'insp'){ this.weak = !!v; } },
+  update(dt, t){
+    const s = since * (step === 2 ? .45 : 1), weak = this.weak || step === 4;
+    if (step === 4 && !this.weak){ this.weak = true; setToggle('insp', 1); }
+    const line = step === 0 ? ease(s*.7) : 1;
+    const clip = step === 0 ? 0 : step === 1 ? ease(s*.8) : 1;
+    let lateClip;
+    if (step <= 1) lateClip = 0; else if (step === 2) lateClip = s > 3.2 ? 1 : 0; else lateClip = weak ? 0 : 1;
+    const pull = step === 3 ? ease((s-.6)*.6) : step === 4 ? ease((s-.4)*.6) : 0;
+    this.attached = lateClip > 0;
+    this.signal = (step >= 1 && !this.attached && !(weak && step >= 3)) ? 'WAIT' : 'GO';
+    this.outcome = pull > .9 ? (weak ? '47 / 45 ✗' : '46 / 46 ✓') : '';
+    this.chr.forEach((c,i) => {
+      const u = c.userData; c.position.lerpVectors(u.home, u.plate, line);
+      const [a0, a1] = u.arms; const wrong = weak && i === this.loose;
+      const d = pull * 5.6;
+      a0.position.set(0, 0, 0); a1.position.set(0, 0, 0);
+      // arms are rotated with the group (rotation.y = 90°), so local z is world x
+      a0.position.z = d; a1.position.z = wrong ? d : -d;
+      if (wrong) { a0.position.z = d*.95; a1.position.z = d*1.05; }
+    });
+    this.ropes.forEach(R2 => {
+      const c = this.chr[R2.i], arm = c.userData.arms[R2.side], kt = arm.userData.kt;
+      const isLate = R2.i === this.loose && R2.side === 1;
+      const vis = clip > (R2.i/this.chr.length)*.9 && (!isLate || lateClip > 0);
+      R2.l.visible = vis && (pull < .95 || !(R2.i === this.loose && weak && R2.side === 1));
+      const pole = this.poles[R2.side === 0 ? 1 : 0];
+      kt.getWorldPosition(tmpV);
+      const pa = R2.l.geometry.attributes.position;
+      const target = (R2.i === this.loose && weak && R2.side === 1) ? this.poles[1] : pole;
+      pa.setXYZ(0, target.position.x, target.position.y, target.position.z); pa.setXYZ(1, tmpV.x, tmpV.y, tmpV.z); pa.needsUpdate = true;
+    });
+    const k = this.chr[this.loose].userData.arms[1].userData.kt; k.getWorldPosition(tmpV);
+    const emitting = this.signal === 'WAIT' && step >= 1;
+    this.sparks.forEach(sp => { sp.visible = emitting; if (!emitting) return;
+      const ph = (t*.35 + sp.userData.ph) % 1, a = sp.userData.ph*40;
+      sp.position.set(tmpV.x + Math.cos(a)*ph*2.2, tmpV.y + ph*2.5, tmpV.z + Math.sin(a)*ph*2.2); sp.scale.setScalar(1-ph); });
+    this.body.scale.set(1.25 + .25*pull, .6 - .08*pull, .75 - .05*pull);
+    this.labels[0].on = step === 0; this.labels[1].on = (step === 1 || step === 2) && !this.attached; this.labels[2].on = step === 1;
+    $('speed').textContent = step === 2 ? '×1/8' : '×1';
+  }
+});
+
+/* =====================================================================
+   FIG 04 · Inside the inspector (exploded view)
+   ===================================================================== */
+fig({
+  id:'04', title:'Inside the inspector: BubR1 taken apart',
+  side:'<b>BubR1</b> is one chain of <b>1,050</b> building blocks folded into regions, each with its own job. Positions shown are approximate.',
+  bigidea:'<b>The big idea:</b> where a typo lands matters. Most typos known to cause MVA sit in the tail-end region (the pseudokinase), and so does the child\'s, buried in its core.',
+  deeper:'<p>The front of BubR1 (the <b>TPR</b> region) grips a protein on the kinetochore. Short <b>KEN</b> and <b>ABBA</b> motifs grab Cdc20, the target the "wait" signal must block. The <b>GLEBS</b> motif docks a partner, Bub3. The tail end looks like a kinase (an enzyme that tags other proteins), but it has lost that job. It is a <b>pseudokinase</b> that mainly keeps BubR1 stable.</p><p>That is why a tail-end typo can make the whole protein fall apart and get recycled. The 8 published typos are real; their positions on this drawing are schematic.</p>',
+  steps:[
+    { label:'Whole protein', caption:'BubR1 as a folded machine: one continuous chain, shown as stacked parts for clarity.', shot:{az:.8, el:.5, zoom:1.5, ty:3} },
+    { label:'Take it apart', caption:'Lifted along its axis: 6 regions, from the front (top) to the tail (bottom). Each label says what that part grabs.', shot:{az:.8, el:.35, zoom:1.05, ty:4.5}, speed:'exploded' },
+    { label:'Known MVA typos', caption:'Pins mark the 8 published typos measured in labs: <b style="color:#ef6c4a">coral</b> made the protein disappear, <b style="color:#5fb3b3">teal</b> left it stable. Most coral pins sit in the tail.', shot:{az:1.1, el:.3, zoom:1.15, ty:4} },
+    { label:"The child's typo", caption:"The gold star is the child's typo: in the tail, <b>buried inside</b> the fold rather than on the surface, next to two of the typos known to make BubR1 vanish.", shot:{az:1.2, el:.25, zoom:2.4, ty:1.3} },
+    { label:'Put it back', caption:'Reassembled. The question for the rest of the atlas: does this one buried typo make the whole machine fall apart, or just stop it working?', shot:{az:.8, el:.5, zoom:1.5, ty:3} },
+  ],
+  chips:() => [['CHAIN LENGTH','1,050'],['REGIONS','6 (simplified)'],['PUBLISHED TYPOS','8'],['DISAPPEAR / STABLE','5 / 3'],['CHILD','tail, buried', step===3]],
+  build(){
+    const g = this.group; g.add(cuttingMat());
+    const parts = [
+      ['KEN · grabs Cdc20', PAL.sky, () => { const p = new THREE.Group(); p.add(mesh(G.sph(.45), PAL.sky)); return p; }],
+      ['TPR · grips the kinetochore', PAL.teal, () => { const p = new THREE.Group(); for (let k=0;k<6;k++){ const h = rod(1.4, .22, PAL.teal); h.rotation.z = Math.PI/2 + (k%2 ? .3 : -.3); h.position.set(0, (k-2.5)*.42, (k%2)*.3); p.add(h);} return p; }],
+      ['KEN + ABBA · grab Cdc20', PAL.sky, () => { const p = new THREE.Group(); p.add(mesh(G.sph(.4), PAL.sky)); const b = mesh(G.sph(.32), PAL.sky); b.position.x = .7; p.add(b); return p; }],
+      ['GLEBS · docks Bub3', PAL.rose, () => { const p = new THREE.Group(); p.add(rod(.9, .2, PAL.rose));
+        const bub3 = mesh(G.cyl(.9, .9, .45, 7), 0xd7c3e8); bub3.position.x = 1.4; bub3.rotation.x = Math.PI/2; p.add(bub3); return p; }],
+      ['linker', 0xbfb6a3, () => { const p = new THREE.Group(); const l = rod(1.2, .12, 0xbfb6a3); l.rotation.z = .5; p.add(l); return p; }],
+      ['PSEUDOKINASE · keeps it stable', PAL.violet, () => { const p = new THREE.Group();
+        const lo = mesh(G.sph(1.15, 22, 16), PAL.violet); lo.scale.set(1.2, .75, 1); p.add(lo);
+        const up = mesh(G.sph(.85, 20, 14), 0x9e8ae0); up.position.set(.2, .95, .1); up.scale.set(1.1, .7, 1); p.add(up); return p; }],
+    ];
+    this.parts = [];
+    parts.forEach((d, i) => { const p = d[2](); p.userData.assembled = new THREE.Vector3(0, 6.3 - i*.95 - (i===5 ? .8 : 0), 0);
+      p.userData.exploded = new THREE.Vector3(0, 10.5 - i*1.85 - (i===5 ? .4 : 0), 0); p.position.copy(p.userData.assembled);
+      g.add(p); this.parts.push(p); L(this, d[0], p, [i===3 ? 1.6 : 0, i===5 ? 1.9 : 1, 0], i===5 ? 'hot' : ''); });
+    // axis rod
+    const axis = mesh(G.cyl(.04, .04, 12, 6), PAL.ink, { outline:false }); axis.position.y = 5.2; g.add(axis); this.axis = axis;
+    // mutation pins: [name, part index, unstable, angle]
+    const pins = [['Y155C',1,0,.4],['R550Q',4,0,2],['R727C',5,1,.3],['R814H',5,1,1.4],['L844F',5,1,2.4],['I909T',5,1,3.4],['Q921H',5,0,4.4],['L1012P',5,1,5.4]];
+    this.pins = pins.map(([n, pi, bad, a]) => { const pin = new THREE.Group();
+      const stick = mesh(G.cyl(.03, .03, .9, 6), PAL.ink, { outline:false }); stick.position.y = .45; pin.add(stick);
+      const head = mesh(G.sph(.15, 12, 8), bad ? PAL.coral : PAL.teal, { ow:.2 }); head.position.y = .95; pin.add(head);
+      const rad = pi === 5 ? 1.3 : .8; pin.position.set(Math.cos(a)*rad, (pi===5 ? (a%2 ? .7 : -.2) : 0), Math.sin(a)*rad);
+      pin.rotation.z = -Math.cos(a)*.9; pin.rotation.x = Math.sin(a)*.9;
+      this.parts[pi].add(pin); const lb = L(this, n, head, [0, .3, 0], bad ? 'warn' : 'cool'); return { pin, lb }; });
+    // child's star, buried
+    const star = mesh(new THREE.OctahedronGeometry(.32), PAL.gold, { ow:.18, extra:{ emissive: PAL.gold, emissiveIntensity:.35 } });
+    star.position.set(.15, .05, .15); this.parts[5].add(star); this.star = star;
+    this.starLbl = L(this, "child's typo · buried", star, [0, .5, 0], 'hot');
+  },
+  update(dt, t){
+    const ex = step === 1 || step === 2 || step === 3 ? ease(since*.9) : (step === 4 ? 1 - ease(since*.9) : 0);
+    const exK = (step === 2 || step === 3) ? 1 : ex;
+    this.parts.forEach((p, i) => { p.position.lerpVectors(p.userData.assembled, p.userData.exploded, exK); p.rotation.y = t*.15*(i%2 ? 1 : -1)*exK; });
+    // see-through tail when showing the buried star
+    const tail = this.parts[5];
+    tail.children.forEach(ch => { if (ch.material && ch !== this.star && !ch.userData.isInk && ch.material.isMeshToonMaterial){
+      if (!ch.userData.ghost){ ch.material = ch.material.clone(); ch.material.transparent = true; ch.userData.ghost = true; }
+      ch.material.opacity = step === 3 ? lerp(1, .32, ease(since)) : 1; ch.children.forEach(o => o.visible = step !== 3); } });
+    this.star.rotation.y = t*2; this.star.visible = step >= 3;
+    this.starLbl.on = step === 3;
+    this.pins.forEach(p => { p.pin.visible = step === 2 || step === 3; p.lb.on = step === 2; });
+    this.labels.slice(0, 6).forEach(l => l.on = step === 1);
+  }
+});
+
+/* =====================================================================
+   FIG 05 · Reading the two copies
+   ===================================================================== */
+fig({
+  id:'05', title:'Two copies of the recipe, two different mistakes',
+  side:'A <b>ribosome</b> (the two-part reader) walks along a working copy of the recipe and strings beads into a protein chain.',
+  bigidea:'<b>The big idea:</b> copy 1 hits a premature STOP and the cell shreds it, so it makes almost nothing. Copy 2 is read to the end with one wrong bead. Every BubR1 in this child comes from copy 2.',
+  deeper:'<p>The shredding is called <b>nonsense-mediated decay</b>: a quality check that destroys working copies stopping far too early, because half a protein is often harmful. It protects the cell, but it also means copy 1 cannot be "rescued" by tricking the reader past the stop. Our project checked this route and found it would add far too little protein (it was dropped).</p><p>Biallelic total loss of BubR1 is not survivable, so a partly working copy 2 fits the child.</p>',
+  toggles:[{ id:'copy', labels:['Copy 1','Copy 2'], val:0 }],
+  steps:[
+    { label:'The reader', caption:'Two working copies of BUB1B (letter tiles). The ribosome clamps on at the start of each.', shot:{az:.7, el:.6, zoom:1.2} },
+    { label:'Copy 1 hits STOP', caption:'Halfway along copy 1, one changed letter spells <b>STOP</b> (red tile). The reader falls off with a half-built chain.', shot:{az:.6, el:.5, zoom:1.8, tx:-1, tz:-2.2} },
+    { label:'Shredded', caption:'The cell\'s quality check spots the early stop and pulls copy 1 into the shredder. Copy 1 contributes almost no inspector.', shot:{az:.6, el:.5, zoom:1.6, tx:3, tz:-2.2} },
+    { label:'Copy 2 reads through', caption:'Copy 2 is read to the end and makes a full-length chain of 1,050 beads.', shot:{az:.8, el:.55, zoom:1.5, tz:2.2} },
+    { label:'One wrong bead', caption:'Look closely: one bead (gold) is the wrong type. That one swap is the typo the rest of the atlas is about.', shot:{az:.9, el:.45, zoom:2.6, tx:1.5, tz:2.2} },
+  ],
+  chips:() => [['COPIES','2'],['COPY 1', step >= 2 ? 'shredded' : 'STOP at mid', step===2],['COPY 2', step >= 3 ? 'full length' : 'waiting'],['WRONG BEADS', step === 4 ? '1 of 1,050' : '—', step===4],['INSPECTOR SOURCE','copy 2 only']],
+  build(){
+    const g = this.group, r = rng(21); g.add(cuttingMat());
+    const letters = [PAL.teal, PAL.gold, PAL.violet, PAL.green];
+    this.copies = [-2.2, 2.2].map((z, ci) => { const strand = new THREE.Group(); strand.position.z = z;
+      const tiles = [];
+      for (let i=0;i<26;i++){ const isStop = ci === 0 && i === 12, isTypo = ci === 1 && i === 17;
+        const tcol = isStop ? PAL.coral : letters[Math.floor(r()*4)];
+        const tile = mesh(G.box(.42, .18, .7), tcol, { ow:.08 }); tile.position.set((i-12.5)*.48, .1, 0);
+        if (isStop){ const sign = mesh(G.cyl(.32, .32, .08, 8), PAL.coral); sign.rotation.x = Math.PI/2; sign.position.set(0, .9, 0); tile.add(sign); }
+        tile.userData.home = tile.position.clone(); strand.add(tile); tiles.push(tile); }
+      strand.userData.tiles = tiles; g.add(strand); return strand; });
+    this.ribos = this.copies.map(st => { const rb = new THREE.Group();
+      const big = mesh(G.sph(.55, 18, 12), 0xd9c7a3); big.scale.set(1, .8, 1); big.position.y = .75; rb.add(big);
+      const small = mesh(G.sph(.4, 16, 10), 0xc4b08a); small.scale.set(1, .6, 1); small.position.y = .1; rb.add(small);
+      st.add(rb); return rb; });
+    this.chains = this.copies.map(st => { const beads = [];
+      for (let k=0;k<24;k++){ const b = mesh(G.sph(.13, 10, 8), PAL.teal, { ow:.15 }); b.visible = false; st.add(b); beads.push(b); } return beads; });
+    this.chains[1][16].material = toon(PAL.gold, { emissive: PAL.gold, emissiveIntensity:.35 });
+    const shred = new THREE.Group(); shred.position.set(8.2, .7, -2.2);
+    shred.add(mesh(G.box(1.8, 1.4, 1.6), 0x5a6170));
+    for (let k=0;k<6;k++){ const tooth = mesh(G.box(.12, .3, 1.5), 0xd9dee6, { ow:.1 }); tooth.position.set(-.6 + k*.24, .8, 0); shred.add(tooth); }
+    g.add(shred); this.shred = shred;
+    L(this, 'copy 1', this.copies[0].userData.tiles[0], [-.6, .7, 0]);
+    L(this, 'copy 2', this.copies[1].userData.tiles[0], [-.6, .7, 0]);
+    L(this, 'STOP', this.copies[0].userData.tiles[12], [0, 1.5, 0], 'warn');
+    L(this, 'ribosome · the reader', this.ribos[0], [0, 1.4, 0]);
+    L(this, 'shredder · nonsense-mediated decay', shred, [0, 1.3, 0], 'warn');
+    L(this, 'wrong bead', this.chains[1][16], [0, .4, 0], 'hot');
+  },
+  onToggle(id, v){ if (id === 'copy') goStep(v ? 3 : 1); },
+  update(dt, t){
+    const read = (ci, upto, s) => { const pos = Math.min(upto, s*4.5);
+      this.ribos[ci].position.x = (pos-12.5)*.48;
+      this.chains[ci].forEach((b, k) => { b.visible = k < pos - .5; const a = k*.55;
+        b.position.set((pos-12.5)*.48 - .4 - k*.05 - Math.min(k,8)*.0, 1.5 + k*.18, Math.sin(a+t)*.25); }); };
+    if (step === 0){ this.ribos.forEach(r => r.position.x = -12.5*.48); this.chains.forEach(c => c.forEach(b => b.visible = false)); }
+    if (step >= 1) read(0, 12, step === 1 ? since : 99);
+    if (step >= 3) read(1, 25.5, step === 3 ? since : 99); else { this.ribos[1].position.x = -12.5*.48; this.chains[1].forEach(b => b.visible = false); }
+    const sh = step >= 2 ? ease((step === 2 ? since : 9)*.5) : 0;
+    this.copies[0].userData.tiles.forEach((tile, i) => { const h = tile.userData.home;
+      tile.position.set(lerp(h.x, 8.2 + (i%5-2)*.2, sh), lerp(h.y, .9 - sh*(i%3)*.2, sh), lerp(h.z, (i%3-1)*.25, sh)); tile.visible = sh < .97; });
+    this.ribos[0].visible = sh < .5; this.chains[0].forEach(b => { if (sh > .2) b.visible = false; });
+    this.shred.children.slice(1).forEach((tooth, k) => tooth.position.y = .8 + (step === 2 ? .12*Math.sin(t*20 + k) : 0));
+    const on = [step <= 2, step >= 3, step === 1 || step === 2, step === 0 || step === 1, step === 2, step === 4];
+    this.labels.forEach((l, i) => l.on = on[i]);
+  }
+});
+
+/* =====================================================================
+   FIG 06 · Folding and the two fates
+   ===================================================================== */
+fig({
+  id:'06', title:'The one question: crumple, or idle?',
+  side:'A protein\'s job depends on its folded shape. The typo can break it in two different ways, and <b>they need opposite medicines</b>.',
+  bigidea:'<b>The big idea:</b> if BubR1 crumples, it gets tagged and recycled, so the fix is to protect it. If it folds but idles, more of it will not help, and the fix is to clean up the damage. Our starting guess is 55% crumple, 45% idle.',
+  deeper:'<p>Cells tag worn-out proteins with chains of a small protein called <b>ubiquitin</b>. Tagged proteins are fed into the <b>proteasome</b>, a barrel-shaped shredder. Helper proteins called <b>chaperones</b> (such as HSP90) can hold a wobbly protein together for a while. The published MVA typos that make BubR1 disappear depend on HSP90 and are destroyed by the proteasome.</p><p>A computer model (ThermoMPNN, ours) estimates the child\'s typo costs +1.55 kcal/mol of folding "glue": more than 87 of every 100 possible typos.</p>',
+  toggles:[{ id:'fate', labels:['Fate A: crumple','Fate B: idle'], val:0 }],
+  steps:[
+    { label:'Fold', caption:'A fresh chain folds itself into a compact shape. The green bead is the working spot; the gold bead is the typo, buried in the core.', shot:{az:.7, el:.5, zoom:2} },
+    { label:'Helper clamp', caption:'A chaperone (the grey clamp, like HSP90) hugs wobbly proteins and buys them time. With a shaky core, BubR1 leans on it.', shot:{az:.8, el:.45, zoom:1.9} },
+    { label:'Fate A · crumple', caption:'The core loosens, yellow <b>ubiquitin</b> tags pile on, and the <b>proteasome</b> barrel eats it. Too few inspectors are left. <b>Fix:</b> protect it.', shot:{az:.55, el:.5, zoom:1.25, tx:2} },
+    { label:'Fate B · idle', caption:'The shape holds, the protein lasts, but the working spot goes dark. Plenty of inspectors, none working well. <b>Fix:</b> clear the damaged cells instead.', shot:{az:.7, el:.5, zoom:2} },
+    { label:'Our starting odds', caption:'Before any measurement: 55% crumple, 45% idle. A guess written down in advance, not a measured fact. The bars show it; the next figures test it.', shot:{az:.6, el:.55, zoom:1.3, tx:1} },
+  ],
+  chips(){ return [['GLUE LOST','+1.55 kcal/mol'],['TYPO RANK','87.3rd of 100'],['FATE', step===2 ? 'A · crumple' : step===3 ? 'B · idle' : '?', step===2||step===3],['ODDS','55 / 45', step===4],['UBIQUITIN TAGS', String(this.tags ? this.tags.filter(x=>x.visible).length : 0)]]; },
+  build(){
+    const g = this.group, N = 40; g.add(cuttingMat());
+    this.line = []; this.ball = [];
+    for (let i=0;i<N;i++){ this.line.push(new THREE.Vector3((i-N/2)*.3 - 1, 1.2 + Math.sin(i*.6)*.3, 0));
+      const a = i*2.4, y = 1-2*(i+.5)/N, rr = Math.sqrt(1-y*y)*1.35; this.ball.push(new THREE.Vector3(rr*Math.cos(a), 1.6 + y*1.35, rr*Math.sin(a))); }
+    this.typo = 18; this.site = 31; this.ball[this.typo] = new THREE.Vector3(.1, 1.65, .1);
+    this.beads = this.line.map((p, i) => { const c = i === this.typo ? PAL.gold : i === this.site ? PAL.green : PAL.violet;
+      const b = mesh(G.sph(.2, 14, 10), c, { ow:.12, extra: i === this.site ? { emissive: PAL.green, emissiveIntensity:.5 } : undefined }); b.position.copy(p); g.add(b); return b; });
+    this.siteMat = this.beads[this.site].material;
+    const tubeGeo = new THREE.BufferGeometry().setFromPoints(this.line);
+    this.tube = new THREE.Line(tubeGeo, new THREE.LineBasicMaterial({ color: PAL.ink })); g.add(this.tube);
+    // chaperone clamp
+    const clamp3 = new THREE.Group();
+    [-1, 1].forEach(s => { const arm = mesh(G.box(.5, 2.6, .9), 0xaab1bd); arm.position.set(s*1.85, 1.6, 0); arm.rotation.z = -s*.15; clamp3.add(arm); });
+    const bridge = mesh(G.box(4.2, .4, .9), 0xaab1bd); bridge.position.y = 3.05; clamp3.add(bridge);
+    clamp3.visible = false; g.add(clamp3); this.clamp = clamp3;
+    // proteasome barrel: 4 stacked rings
+    const pro = new THREE.Group(); pro.position.set(5.2, 0, 0);
+    [0,1,2,3].forEach(k => { const ring = mesh(G.cyl(1, 1, .55, 7), k===0||k===3 ? 0xc9a24a : 0xe0bd62); ring.position.y = .3 + k*.6; pro.add(ring); });
+    const cap = mesh(G.tor(.55, .18), 0x9c7b2e); cap.rotation.x = Math.PI/2; cap.position.y = 2.7; pro.add(cap);
+    pro.visible = false; g.add(pro); this.pro = pro;
+    this.tags = [];
+    for (let k=0;k<8;k++){ const tg = mesh(new THREE.TetrahedronGeometry(.18), PAL.gold, { ow:.2 }); tg.visible = false; g.add(tg); this.tags.push(tg); }
+    // odds bars
+    this.bars = [[PAL.coral, .55, -1.3], [PAL.violet, .45, 1.3]].map(([c, v, z]) => { const b = mesh(G.box(1.2, 1, 1.2), c); b.position.set(4.6, .5, z); b.userData.v = v; b.visible = false; g.add(b); return b; });
+    L(this, "typo (buried)", this.beads[this.typo], [0, .5, 0], 'hot');
+    L(this, 'working spot', this.beads[this.site], [0, .5, 0]);
+    L(this, 'chaperone · HSP90-like', bridge, [0, .6, 0]);
+    L(this, 'proteasome · recycler', cap, [0, .6, 0], 'warn');
+    L(this, '55% crumple', this.bars[0], [0, 0, 0], 'warn');
+    L(this, '45% idle', this.bars[1], [0, 0, 0]);
+  },
+  onToggle(id, v){ if (id === 'fate') goStep(v ? 3 : 2); },
+  update(dt, t){
+    const fold = step === 0 ? ease(since*.6) : 1;
+    const pa = this.tube.geometry.attributes.position;
+    const crum = step === 2 ? ease(since*.5) : 0, eat = step === 2 ? ease((since-2.4)*.45) : 0;
+    this.beads.forEach((b, i) => {
+      const p = this.line[i].clone().lerp(this.ball[i], fold);
+      if (step === 2){ p.multiplyScalar(1); p.x += Math.sin(i*3 + t*5)*.25*crum; p.y += Math.cos(i*2 + t*4)*.2*crum; p.x *= 1 + .3*crum;
+        p.lerp(new THREE.Vector3(5.2, 2.9 - eat*1.4, 0), eat); b.scale.setScalar(1 - .6*eat); }
+      else b.scale.setScalar(1);
+      if (step === 4) p.x -= 1.8;
+      b.position.copy(p); pa.setXYZ(i, p.x, p.y, p.z); });
+    pa.needsUpdate = true;
+    this.clamp.visible = step === 1; if (step === 1){ const s = ease(since); this.clamp.scale.set(lerp(1.6, 1, s), 1, 1); }
+    this.pro.visible = step === 2;
+    this.tags.forEach((tg, k) => { const show = step === 2 && since > .9 + k*.18 && eat < .7; tg.visible = show;
+      const b = this.beads[(k*5) % 40]; tg.position.set(b.position.x, b.position.y + .35, b.position.z); tg.rotation.y = t*3; });
+    const idle = step === 3 ? ease(since) : 0;
+    this.siteMat.emissiveIntensity = .5*(1-idle); this.siteMat.color.setHex(idle > .5 ? 0x777777 : PAL.green);
+    this.bars.forEach(b => { b.visible = step === 4; const h = Math.max(.01, b.userData.v*5*ease(since)); b.scale.y = h; b.position.y = h/2; });
+    const on = [step <= 1 || step === 3, step === 0 || step === 3, step === 1, step === 2, step === 4, step === 4];
+    this.labels.forEach((l, i) => l.on = on[i]);
+    this.labels[4].off = [0, this.bars[0].scale.y/2 + .3, 0]; this.labels[5].off = [0, this.bars[1].scale.y/2 + .3, 0];
+  }
+});
+
+/* =====================================================================
+   FIG 07 · Grading the computer
+   ===================================================================== */
+fig({
+  id:'07', title:'Grading the computer that scored the typo',
+  side:'<b>AUROC</b> is a grade for a yes/no guesser: pick one protein-losing typo and one harmless typo; how often does the computer rank the harmful one higher? 0.5 is a coin flip, 1.0 is perfect.',
+  bigidea:'<b>The big idea:</b> the computer does recognise fold-breaking typos (grade 0.76 across 11 measured proteins), but proteins differ so much that for a new one, like BubR1, a typo like the child\'s could mean anything from a 31% to an 88% chance of the protein disappearing. So we kept 55/45.',
+  deeper:'<p>How do labs measure thousands of typos at once? In <b>VAMP-seq</b>, every possible typo version of a protein is fused to a glowing tag and put into separate cells. Cells whose protein falls apart glow dimly. A sorter splits cells by brightness, and DNA sequencing reads which typo was in each bin.</p><p>We kept only typos buried in the core (like the child\'s), 18,825 of them across 11 proteins, and used rules written before looking (ours). With 8 BubR1 cases the grade was 0.60, which could plausibly be anywhere from 0.13 to 1.00.</p>',
+  steps:[
+    { label:'Exam 1 · 8 BubR1 cases', caption:'Eight published BubR1 typos with a lab answer (5 disappear, 3 stay). The computer gets 9 of the 15 possible pairs right: grade <b>0.60</b>, too few cases to trust.', shot:{az:.6, el:.55, zoom:1.8, tx:-9.5, ty:1} },
+    { label:'Exam 2 · 11 proteins', caption:'Eleven other proteins, each measured typo by typo in living cells. Each tower is one protein; its height is the grade. Typical grade <b>0.76</b>.', shot:{az:.75, el:.55, zoom:1.05} },
+    { label:'How labs measured', caption:'Each tower is built from glowing cells: bright = protein survived, dim = protein lost. That is the VAMP-seq idea (see Go deeper).', shot:{az:.9, el:.4, zoom:1.8, tx:2} },
+    { label:'The 12th city: BubR1', caption:'For a protein the computer has never been graded on, the honest answer at the child\'s score is a wide band: <b>31% to 88%</b> chance of disappearing. It straddles 50/50, so it cannot pick a branch.', shot:{az:.7, el:.45, zoom:1.9, tx:9.5, ty:2.2} },
+  ],
+  chips:() => [['BUBR1 GRADE','0.60 (n=8)', step===0],['TYPICAL GRADE','0.76 (11 proteins)', step===1],['VARIANTS USED','18,825 buried'],['NEW PROTEIN','31–88%', step===3],['VERDICT','keep 55/45']],
+  build(){
+    const g = this.group; g.add(island(26, 14));
+    const prots = [["SPIKE",.848],["TPMT",.782],["RHO",.778],["CYP2C9",.773],["NUDT15",.769],["PTEN",.759],["PRKN",.756],["GCK",.737],["VKORC1",.720],["HLA-A",.674],["KCNJ2",.654]];
+    this.towers = prots.map(([n, v], i) => { const tw = new THREE.Group(); const x = -2.2 + (i%6)*1.6, z = i < 6 ? -1.6 : 1.6;
+      tw.position.set(x, 0, z); const h = (v - .5)*13;
+      const body = mesh(G.box(1, 1, 1), PAL.teal); body.position.y = .5; tw.add(body);
+      tw.userData = { h, body }; g.add(tw); L(this, n + ' · ' + v.toFixed(2), tw, [0, 0, 0]); return tw; });
+    // glow cells on one tower
+    this.glows = [];
+    for (let k=0;k<18;k++){ const c = mesh(G.sph(.16, 10, 8), k%3 ? PAL.green : 0x2f3a33, { ow:.15, extra: k%3 ? { emissive: 0x7dff8a, emissiveIntensity:.6 } : undefined });
+      c.visible = false; g.add(c); this.glows.push(c); }
+    // BubR1 pins plot
+    const plot = mesh(G.box(4.2, .2, 3), PAL.sand, { receive:true, ow:.03 }); plot.position.set(-9.5, .1, 0); g.add(plot);
+    const scores = [1.941,.911,.857,1.513,3.105,2.225,.039,.976];
+    this.pins8 = scores.map((s, i) => { const bad = i < 5; const p = mesh(G.cyl(.14, .14, 1, 10), bad ? PAL.coral : PAL.teal); p.userData.h = .3 + s*.9;
+      p.position.set(-11 + i*.45, 0, bad ? -.5 : .6); g.add(p); return p; });
+    L(this, 'BubR1 · 8 cases · 0.60', plot, [0, 2.2, 0], 'warn');
+    // 12th plot with fog and band
+    const lot = mesh(G.box(3.4, .2, 3.4), 0xcfc6b2, { receive:true, ow:.03 }); lot.position.set(9.5, .1, 0); g.add(lot);
+    this.fog = new THREE.Mesh(G.box(2.6, 4, 2.6), new THREE.MeshToonMaterial({ color: 0xffffff, gradientMap: gradTex, transparent:true, opacity:.35 })); this.fog.position.set(9.5, 2.2, 0); g.add(this.fog);
+    this.band = mesh(G.box(.5, 1, .5), PAL.gold, { extra:{ emissive: PAL.gold, emissiveIntensity:.3 } }); this.band.position.set(9.5, 0, 0); g.add(this.band);
+    const half = mesh(G.box(3, .05, .05), PAL.ink, { outline:false }); half.position.set(9.5, 2.4, 0); g.add(half); this.half = half;
+    L(this, 'BubR1 · 31–88%', this.band, [0, 2.6, 0], 'hot');
+    L(this, '50/50 line', half, [1.6, .2, 0]);
+  },
+  update(dt, t){
+    const rise = step >= 1 ? ease((step === 1 ? since : 9)*.7) : 0;
+    this.towers.forEach((tw, i) => { const h = Math.max(.02, tw.userData.h * ease(rise*1.2 - i*.03)); tw.userData.body.scale.y = h; tw.userData.body.position.y = h/2; tw.visible = step >= 1; });
+    this.labels.slice(0, 11).forEach((l, i) => { l.on = step === 1 || step === 2; l.off = [0, this.towers[i].userData.body.scale.y + .3, 0]; });
+    this.pins8.forEach((p, i) => { const h = p.userData.h * ease(since*1.2 - i*.08); p.scale.y = Math.max(.01, h); p.position.y = p.scale.y/2 + .2; });
+    this.labels[11].on = step === 0;
+    const tw = this.towers[0];
+    this.glows.forEach((c, k) => { c.visible = step === 2; const lv = (k*.37 + t*.4) % 1;
+      c.position.set(tw.position.x + Math.cos(k*2.1)*.75, lv*tw.userData.body.scale.y, tw.position.z + Math.sin(k*2.1)*.75); });
+    const b = step === 3 ? ease(since) : 0;
+    const lo = .31*4.8, hi = .88*4.8; this.band.scale.y = Math.max(.01, (hi-lo)*b); this.band.position.y = .2 + lo + (hi-lo)*b/2;
+    this.band.visible = step === 3; this.half.visible = step === 3; this.fog.visible = step === 3;
+    this.labels[12].on = step === 3; this.labels[13].on = step === 3;
+  }
+});
+
+/* =====================================================================
+   FIG 08 · The mouse twin
+   ===================================================================== */
+fig({
+  id:'08', title:'A twin among 76,699 mice',
+  side:'Doctors describe symptoms with a shared dictionary (<b>HPO terms</b>). Scientists describe mouse models the same way, so a computer can compare a child to every mouse.',
+  bigidea:'<b>The big idea:</b> using only the child\'s 8 symptoms and no DNA, the best matches include a mouse that makes only about a tenth of the normal inspector. That supports "too little inspector" as the cause, independently of the genetics.',
+  deeper:'<p>The match (ours): the <i>Bub1b</i> hypomorph mouse ranked #758 of 76,699 genotypes, the top 0.99%, and beat 500 random symptom sets (p = 0.026).</p><p>These mice also age early: cataracts, curved spines, thin muscles. Clearing their worn-out (senescent) cells delayed several of these problems in a classic 2011 study, one of the reasons a "clean-up" drug is on our list.</p>',
+  steps:[
+    { label:'Every described mouse', caption:'Each block stands for about 5 mouse models, 76,699 in total, laid out like a city seen from above.', shot:{az:.78, el:.95, zoom:1} },
+    { label:'Compare symptoms', caption:'Each block rises by how closely its mice match the child\'s 8 symptoms. Most barely move.', shot:{az:.7, el:.55, zoom:1.05}, speed:'scoring' },
+    { label:'The top 1%', caption:'Only the top 1% are kept lit: a thin skyline among thousands.', shot:{az:.7, el:.5, zoom:1.2} },
+    { label:'The match', caption:'One of them is the <b>Bub1b weak-inspector mouse</b>, with about 10% of normal BubR1. Its symptoms echo the child\'s: small size, muscle wasting, cancer risk.', shot:{az:.65, el:.45, zoom:3, tx:4.2, tz:-3.3} },
+  ],
+  chips:() => [['MOUSE MODELS','76,699'],['CHILD SYMPTOMS','8 terms'],['MATCH RANK', step >= 3 ? '#758 (top 0.99%)' : '—', step===3],['P VS RANDOM','0.026'],['USES DNA?','no']],
+  build(){
+    const g = this.group; g.add(cuttingMat());
+    const n = 120, s = .14, r = rng(5);
+    const geo = new THREE.BoxGeometry(s*.85, 1, s*.85);
+    this.inst = new THREE.InstancedMesh(geo, new THREE.MeshToonMaterial({ gradientMap: gradTex, color: 0xffffff }), n*n);
+    this.inst.castShadow = true; this.h = new Float32Array(n*n); this.n = n; this.s = s;
+    const col = new THREE.Color();
+    for (let i=0;i<n*n;i++){ const v = Math.pow(r(), 6); this.h[i] = v; col.setHex(0xcfc6b2); this.inst.setColorAt(i, col); }
+    this.target = Math.floor(n*n*.27) + 30; this.h[this.target] = 1.05;
+    
+    g.add(this.inst); this.dummy = new THREE.Object3D(); this.col = col;
+    const ti = this.target, tx = (ti % n - n/2)*s, tz = (Math.floor(ti/n) - n/2)*s;
+    this.beacon = mesh(G.sph(.22, 14, 10), PAL.green, { extra:{ emissive: PAL.green, emissiveIntensity:.6 } }); this.beacon.position.set(tx, 0, tz); g.add(this.beacon);
+    shotFix(this, 3, tx, tz);
+    L(this, 'Bub1b weak-inspector mouse · #758', this.beacon, [0, .5, 0], 'hot');
+    this.last = -1;
+  },
+  update(dt, t){
+    const rise = step === 0 ? 0 : step === 1 ? ease(since*.6) : 1, n = this.n, s = this.s;
+    const key = step + ':' + Math.round(rise*40);
+    if (key !== this.last){ this.last = key;
+      for (let i=0;i<n*n;i++){ const h = .05 + this.h[i]*2.6*rise; this.dummy.position.set((i%n - n/2)*s, h/2, (Math.floor(i/n) - n/2)*s); this.dummy.scale.set(1, h, 1); this.dummy.updateMatrix(); this.inst.setMatrixAt(i, this.dummy.matrix);
+        const lit = step >= 2 && this.h[i] > .941; this.col.setHex(i === this.target && step >= 2 ? PAL.green : lit ? PAL.teal : (step >= 2 ? 0x8f8a7e : 0xcfc6b2)); this.inst.setColorAt(i, this.col); }
+      this.inst.instanceMatrix.needsUpdate = true; this.inst.instanceColor.needsUpdate = true; }
+    this.beacon.visible = step === 3; this.beacon.position.y = .05 + 1.05*2.6 + .4 + .15*Math.sin(t*3);
+    this.labels[0].on = step === 3;
+  }
+});
+function shotFix(def, i, x, z){ def.steps[i].shot.tx = x; def.steps[i].shot.tz = z; def.steps[i].shot.ty = 2; }
+
+/* =====================================================================
+   FIG 09 · The lab test
+   ===================================================================== */
+fig({
+  id:'09', title:'The test: stop the factory, time the melt',
+  side:'A <b>cycloheximide chase</b> stops a cell from making new proteins, then measures how fast the existing ones disappear. That speed is the protein\'s <b>half-life</b>.',
+  bigidea:'<b>The big idea:</b> one standard lab test on the child\'s own skin cells answers the crumple-or-idle question directly. If BubR1 melts away fast, it crumples; if it holds like the parent\'s, it idles.',
+  deeper:'<p><b>Half-life</b> is the time for half the protein to vanish. After 2 half-lives a quarter is left, after 3 an eighth. Comparing the child\'s half-life with a parent\'s (who carries one of the same copies) is a fair, side-by-side test.</p><p>A second dish adds <b>MG132</b>, which jams the proteasome. If BubR1 then stops disappearing, the loss really comes from the recycler, the signature of the crumple fate. Growing the cells and reading the result takes about 1–2 weeks. The bands here are an illustration; no blot has been run yet.</p>',
+  toggles:[{ id:'out', labels:['If it crumples','If it idles'], val:0 }],
+  steps:[
+    { label:'Grow skin cells', caption:'A small skin sample from the child, and one from a parent for comparison, is grown in dishes for about 1–2 weeks.', shot:{az:.7, el:.55, zoom:1.6, tx:-3} },
+    { label:'Stop the factory', caption:'Add <b>cycloheximide</b>: the ribosomes stop. No new BubR1 is made from now on, so whatever is there can only go down.', shot:{az:.7, el:.5, zoom:2, tx:-3} },
+    { label:'Sample 0 · 2 · 4 · 8 h', caption:'Take cells at 0, 2, 4 and 8 hours (the clock runs fast here). Each sample becomes one lane on the membrane.', shot:{az:.75, el:.6, zoom:1.3}, speed:'×3600' },
+    { label:'Read the bands', caption:'Dark band = lots of BubR1. Switch the outcome (bottom right) to compare the two worlds.', shot:{az:.3, el:1.05, zoom:2.2, tx:3} },
+    { label:'Control: jam the recycler', caption:'Same test with <b>MG132</b> added. In the crumple world the child\'s band now holds: proof the loss came from the proteasome.', shot:{az:.3, el:1.05, zoom:2.2, tx:3} },
+  ],
+  chips(){ const hrs = this.hours || 0, hl = this.crumple ? 1.7 : 14;
+    return [['HOURS', hrs.toFixed(1)],['CHILD BUBR1 LEFT', Math.round(100*Math.pow(.5, hrs/hl)) + '%', step>=3],['PARENT LEFT', Math.round(100*Math.pow(.5, hrs/12)) + '%'],['CHILD HALF-LIFE', this.crumple ? '≈1.7 h (illustrative)' : '>8 h (illustrative)'],['TURNAROUND','1–2 weeks']]; },
+  build(){
+    const g = this.group; g.add(island(20, 12, 0xd9cfb8));
+    const bench = mesh(G.box(16, .5, 7), 0xe9e2d0, { receive:true, ow:.015 }); bench.position.y = .25; g.add(bench);
+    this.dishes = [-5, -2.6].map((x, k) => { const d = new THREE.Group(); d.position.set(x, .55, 0);
+      const plate = new THREE.Mesh(G.cyl(1, 1, .25, 28), toon(0xd7eef0, { transparent:true, opacity:.8 })); plate.castShadow = true; d.add(plate);
+      const rimM = mesh(G.tor(1, .05), 0x9fb7ba, { outline:false }); rimM.rotation.x = Math.PI/2; rimM.position.y = .12; d.add(rimM);
+      const r = rng(k+3); for (let i=0;i<22;i++){ const c = mesh(G.sph(.08, 8, 6), k ? PAL.teal : PAL.violet, { outline:false }); c.position.set((r()-.5)*1.5, .15, (r()-.5)*1.5); c.userData.dot = true; d.add(c); }
+      g.add(d); return d; });
+    L(this, "child's cells", this.dishes[0], [0, .8, 0]); L(this, "parent's cells", this.dishes[1], [0, .8, 0]);
+    // dropper
+    const drop = new THREE.Group(); drop.add(mesh(G.cyl(.12, .05, 1.6, 10), 0xf6f1e5)); const bulb = mesh(G.sph(.22, 12, 10), PAL.coral); bulb.position.y = .9; drop.add(bulb);
+    drop.position.set(-5, 3, 0); g.add(drop); this.drop = drop; L(this, 'cycloheximide', drop, [0, 1.4, 0], 'warn');
+    this.drips = [0,1,2].map(() => { const d = mesh(G.sph(.08, 8, 6), PAL.coral, { outline:false }); d.visible = false; g.add(d); return d; });
+    // clock
+    const clock = new THREE.Group(); clock.position.set(.4, .55, -2);
+    const face = mesh(G.cyl(1, 1, .2, 32), 0xfbf8f0); clock.add(face);
+    for (let k=0;k<8;k++){ const tick = mesh(G.box(.06, .05, .22), PAL.ink, { outline:false }); const a = k/8*Math.PI*2; tick.position.set(Math.sin(a)*.8, .12, -Math.cos(a)*.8); tick.rotation.y = -a; clock.add(tick); }
+    this.hand = mesh(G.box(.06, .06, .7), PAL.coral, { outline:false }); this.hand.geometry.translate(0, 0, -.35); this.hand.position.y = .16; clock.add(this.hand);
+    g.add(clock); L(this, 'hours since stop', clock, [0, .7, 0]);
+    // membrane with bands: rows = parent, child, child+MG132
+    const mem = mesh(G.box(5, .08, 3.6), 0xffffff, { receive:true, ow:.02 }); mem.position.set(3.6, .55, .6); g.add(mem); this.mem = mem;
+    this.bands = [];
+    ['parent','child','child + MG132'].forEach((nm, row) => { for (let lane=0;lane<4;lane++){
+      const b = new THREE.Mesh(G.box(.9, .05, .32), new THREE.MeshBasicMaterial({ color: 0x1b1d22, transparent:true, opacity:0 }));
+      b.position.set(3.6 - 1.65 + lane*1.1, .62, .6 - 1.1 + row*1.1); b.userData = { row, lane }; g.add(b); this.bands.push(b); }
+      L(this, nm, this.bands[row*4], [-.9, .15, 0]); });
+    this.laneLbls = ['0 h','2 h','4 h','8 h'].map((s, lane) => L(this, s, this.bands[lane], [0, .1, -.55]));
+    this.crumple = true;
+  },
+  onToggle(id, v){ if (id === 'out') this.crumple = !v; },
+  update(dt, t){
+    const k = since;
+    this.drop.visible = step === 1; this.drop.position.y = 2.6 + .1*Math.sin(t*4);
+    this.drips.forEach((d, i) => { d.visible = step === 1; const ph = (t*1.2 + i/3) % 1; d.position.set(-5, 2.2 - ph*1.6, 0); });
+    this.dishes.forEach(dd => dd.children.forEach(c => { if (c.userData.dot) c.scale.setScalar(step === 0 ? .6 + .4*ease(k*.5) : 1); }));
+    const hrs = step < 2 ? 0 : step === 2 ? clamp(k*1.6, 0, 8) : 8; this.hours = hrs;
+    this.hand.rotation.y = -hrs/8*Math.PI*2*.875;
+    const tp = [0, 2, 4, 8];
+    this.bands.forEach(b => { const { row, lane } = b.userData; const sampled = hrs >= tp[lane] && step >= 2;
+      const hl = row === 0 ? 12 : row === 1 ? (this.crumple ? 1.7 : 14) : 14;
+      const v = Math.pow(.5, tp[lane]/hl); const showRow = row < 2 || step === 4;
+      b.material.opacity = sampled && showRow ? .1 + .88*v : 0; b.scale.x = .55 + .45*v; });
+    const on = [step <= 1, step <= 1, step === 1, step === 2, true, true, step === 4];
+    this.labels.slice(0, 7).forEach((l, i) => l.on = on[i] && (i < 4 || step >= 2));
+    this.laneLbls.forEach(l => l.on = step >= 2);
+  }
+});
+
+/* =====================================================================
+   FIG 10 · The decision: a fork in the road
+   ===================================================================== */
+fig({
+  id:'10', title:'A rule, not a ranking',
+  side:'A maths tool called <b>value of information</b> asks which single test would remove the most guesswork before choosing. Here it points at the blot.',
+  bigidea:'<b>The big idea:</b> we don\'t hand doctors a "best drug". We hand them a rule: run the blot first, let the result choose the branch, and keep a safety fence around every branch. These are research ideas to test, not prescriptions.',
+  deeper:'<p>With assumed test accuracy of 85% (ours), a "melts fast" result moves the crumple odds from 55% to about 87%, and a "holds" result moves the idle odds to about 82%. In our main scenario the blot removes about 69% of the decision\'s uncertainty, though that figure depends on assumptions (it captures at least half in about half of the settings we swept).</p><p><b>Protect branch:</b> NAD+ boosters (NMN, niacin-type B3) feed SIRT2, an enzyme that strips a tag from BubR1 so it is recycled less; raising SIRT2 extended life in weak-inspector mice. <b>Clean-up branch:</b> dasatinib is an approved drug used in research to clear senescent cells.</p>',
+  steps:[
+    { label:'Today: a fork', caption:'One road, one gate (the blot), two destinations. Today we stand before the gate, at 55/45.', shot:{az:.7, el:.6, zoom:1} },
+    { label:'If it melts fast', caption:'Blot shows fast loss → crumple is now about <b>87%</b> likely → the road to <b>Protect</b> lights up: research NAD+/SIRT2 boosters that shield BubR1.', shot:{az:.5, el:.55, zoom:1.4, tx:-3, tz:-3} },
+    { label:'If it holds', caption:'Blot shows normal levels → idle is now about <b>82%</b> likely → the road to <b>Clean up</b> lights up: research clearing worn-out cells (dasatinib).', shot:{az:.9, el:.55, zoom:1.4, tx:3, tz:-3} },
+    { label:'The safety fence', caption:'Around every branch: <b>do not</b> use drugs that jam the checkpoint (33 of 34 do worse in cells like the child\'s), <b>watch</b> vincristine, and <b>order</b> a 5-gene drug-handling test, because the child\'s DNA file covers only 1.6% of the drug-safety map.', shot:{az:.75, el:.75, zoom:1.05} },
+  ],
+  chips:() => [['P(CRUMPLE)', step===1 ? '≈87%' : step===2 ? '≈18%' : '55%', step===1||step===2],['GUESSWORK REMOVED','≈69% (main case)'],['DO-NOT CLASS','33/34 worse'],['MONITOR','vincristine'],['ORDER','5-gene panel']],
+  build(){
+    const g = this.group; g.add(island(22, 18));
+    const road = (pts, color) => { const grp = new THREE.Group(); for (let i=0;i<pts.length-1;i++){ const a = pts[i], b = pts[i+1];
+      const len = Math.hypot(b[0]-a[0], b[1]-a[1]); const seg = mesh(G.box(1.4, .12, len + .2), color, { receive:true, ow:.02, extra:{} });
+      seg.position.set((a[0]+b[0])/2, .06, (a[1]+b[1])/2); seg.rotation.y = Math.atan2(b[0]-a[0], b[1]-a[1]); grp.add(seg); } g.add(grp); return grp; };
+    road([[0,7],[0,1.5]], 0x5b606b);
+    this.left = road([[0,1.5],[-5,-4]], 0x5b606b); this.right = road([[0,1.5],[5,-4]], 0x5b606b);
+    // gate = blot
+    const gate = new THREE.Group(); gate.position.set(0, 0, 3.5);
+    [-1.1, 1.1].forEach(x => { const p = mesh(G.box(.3, 2.4, .3), 0xf6f1e5); p.position.set(x, 1.2, 0); gate.add(p); });
+    const top = mesh(G.box(2.8, .7, .35), PAL.gold); top.position.y = 2.5; gate.add(top); g.add(gate);
+    L(this, 'the blot · step 1', top, [0, .6, 0], 'hot');
+    // protect building: dome shield
+    const pr = new THREE.Group(); pr.position.set(-5.5, 0, -5.2);
+    pr.add(at(mesh(G.box(2.4, 1.6, 2.4), 0xf6f1e5), 0, .8, 0));
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(1.9, 24, 14, 0, Math.PI*2, 0, Math.PI/2), toon(PAL.coral, { transparent:true, opacity:.55 })); dome.position.y = 1.6; pr.add(dome);
+    g.add(pr); this.protect = pr; this.dome = dome; L(this, 'PROTECT · NAD+ / SIRT2 boosters', pr, [0, 3.8, 0], 'warn');
+    // clean-up building: with broom
+    const cu = new THREE.Group(); cu.position.set(5.5, 0, -5.2);
+    cu.add(at(mesh(G.box(2.4, 2.2, 2.4), 0xf6f1e5), 0, 1.1, 0));
+    const roof = mesh(G.cyl(0, 2, 1.2, 4), PAL.violet); roof.position.y = 2.8; roof.rotation.y = Math.PI/4; cu.add(roof);
+    const broom = new THREE.Group(); const handle = mesh(G.cyl(.06, .06, 2.4, 8), 0x9c7b52); broom.add(handle); const brush = mesh(G.cyl(.15, .45, .7, 10), PAL.gold); brush.position.y = -1.3; broom.add(brush);
+    broom.position.set(1.7, 1.5, 1.2); broom.rotation.z = .3; cu.add(broom); this.broom = broom;
+    g.add(cu); this.clean = cu; L(this, 'CLEAN UP · dasatinib (research)', cu, [0, 3.9, 0]);
+    // safety fence
+    this.fence = new THREE.Group();
+    for (let i=0;i<22;i++){ const a = i/22*Math.PI*2; const post = mesh(G.box(.18, 1, .18), 0xd94a3a); post.position.set(Math.cos(a)*9.2, .5, Math.sin(a)*7.4); this.fence.add(post);
+      const rail = mesh(G.box(2.7, .16, .1), 0xf6f1e5, { ow:.08 }); rail.position.set(Math.cos(a+.14)*9.2, .75, Math.sin(a+.14)*7.4); rail.rotation.y = -a - Math.PI/2 - .1; this.fence.add(rail); }
+    g.add(this.fence);
+    const sign1 = mesh(G.box(1.8, 1, .12), 0xd94a3a); sign1.position.set(-7.8, 1.3, 2.8); g.add(sign1); this.sDo = sign1;
+    const sign2 = mesh(G.box(1.8, 1, .12), PAL.gold); sign2.position.set(7.8, 1.3, 2.8); g.add(sign2); this.sMon = sign2;
+    L(this, 'DO NOT · checkpoint blockers', sign1, [0, .9, 0], 'warn'); L(this, 'WATCH · vincristine', sign2, [0, .9, 0], 'hot');
+    const kit = mesh(G.box(.9, .6, .7), PAL.teal); kit.position.set(0, .3, 6.2); g.add(kit); this.kit = kit; L(this, 'ORDER · 5-gene test', kit, [0, .7, 0], 'cool');
+    // a walker
+    this.walker = mesh(G.cyl(.25, .25, .9, 12), PAL.ink); this.walker.position.set(0, .55, 6); g.add(this.walker);
+  },
+  update(dt, t){
+    const k = ease(since*.6);
+    const lit = (grp, on) => grp.children.forEach(s => s.material.color.setHex(on ? PAL.gold : 0x5b606b));
+    if (this._ls === undefined) this._ls = -1;
+    if (this._ls !== step){ lit(this.left, step === 1); lit(this.right, step === 2); this._ls = step; }
+    let p;
+    if (step === 0) p = [0, lerp(6, 4.6, k)];
+    else if (step === 1) p = k < .4 ? [0, lerp(4.6, 1.5, k/.4)] : [lerp(0, -4.6, (k-.4)/.6), lerp(1.5, -3.6, (k-.4)/.6)];
+    else if (step === 2) p = k < .4 ? [0, lerp(4.6, 1.5, k/.4)] : [lerp(0, 4.6, (k-.4)/.6), lerp(1.5, -3.6, (k-.4)/.6)];
+    else p = [0, 4.6];
+    this.walker.position.set(p[0], .55 + .05*Math.abs(Math.sin(t*8)), p[1]);
+    this.dome.scale.setScalar(step === 1 ? 1 + .05*Math.sin(t*4) : 1);
+    this.broom.rotation.z = step === 2 ? .3 + .35*Math.sin(t*5) : .3;
+    this.fence.visible = step === 3; this.sDo.visible = this.sMon.visible = this.kit.visible = step === 3;
+    const on = [step <= 2, step !== 2, step !== 1, step === 3, step === 3, step === 3];
+    this.labels.forEach((l, i) => l.on = on[i]);
+  }
+});
+
+/* =====================================================================
+   FIG 11 · Receipts
+   ===================================================================== */
+fig({
+  id:'11', title:'Every number carries a receipt',
+  side:'Each result is stored with a small <b>receipt</b>: which script made it, and a <b>fingerprint</b> of every input file. Change one byte anywhere and the fingerprint stops matching.',
+  bigidea:'<b>The big idea:</b> you don\'t have to trust us. Any number in the pitch can be followed down to the public data it came from, and re-made by the same script.',
+  deeper:'<p>The fingerprint is a <b>SHA-256</b> hash: a 64-character code computed from a file\'s bytes. Two different files essentially never share one. The project keeps about 150 such receipts, runs thousands of automatic tests, and has a guard that blocks the child\'s genetic coordinates from leaking into public outputs.</p><p>The whole decision analysis re-runs on a laptop in under 15 seconds; graphics cards were rented only for the protein models.</p>',
+  steps:[
+    { label:'A claim', caption:'Take the claim "the typo scores +1.55". It sits on top of a stack of layers.', shot:{az:.75, el:.5, zoom:1.6, ty:2.5} },
+    { label:'Take it apart', caption:'Lift the layers: public data → the script that ran → the table it produced (with fingerprint) → the project ledger → the sentence on the slide.', shot:{az:.8, el:.35, zoom:1.15, ty:4}, speed:'exploded' },
+    { label:'Change one byte', caption:'Edit a single character in the source data. Its fingerprint changes, and every layer above it turns red: the claim can no longer be verified until it is re-made.', shot:{az:.8, el:.35, zoom:1.15, ty:4} },
+    { label:'Put it back', caption:'Re-run the script, and the fingerprints line up again. That is how every figure in this atlas and the pitch can be checked.', shot:{az:.75, el:.5, zoom:1.6, ty:2.5} },
+  ],
+  chips:() => [['RECEIPTS','≈150'],['AUTOMATED TESTS','3,656 + 483'],['RE-RUN','< 15 s'],['FINGERPRINT', step===2 ? 'MISMATCH' : 'match', step===2],['PATIENT DATA','stays local']],
+  build(){
+    const g = this.group; g.add(cuttingMat());
+    const names = [['public data · AlphaFold model', PAL.sky],['script · ThermoMPNN run', PAL.violet],['table · 19,950 scores · sha256 9e1f…', PAL.teal],['ledger · lineage entry', PAL.sand],['claim · "+1.55, 87.3rd pct"', PAL.gold]];
+    this.layers = names.map(([n, c], i) => { const slab = mesh(G.box(4.2, .5, 3), c); slab.userData = { base: .25 + i*.55, ex: .25 + i*1.7, c };
+      slab.position.y = slab.userData.base; g.add(slab); L(this, n, slab, [0, .45, 0], i === 4 ? 'hot' : ''); return slab; });
+    this.layerMats = this.layers.map(s => { s.material = s.material.clone(); return s.material; });
+  },
+  update(dt, t){
+    const ex = step === 1 || step === 2 ? ease(since) : step === 3 ? 1 - ease(since) : 0;
+    this.layers.forEach((s, i) => { s.position.y = lerp(s.userData.base, s.userData.ex, (step === 2) ? 1 : ex); s.rotation.y = (step === 2 ? 1 : ex)*.15*(i - 2);
+      const red = step === 2 && since > .4 + (4 - i)*.0 + i*.25; this.layerMats[i].color.setHex(red ? PAL.coral : s.userData.c); });
+    this.labels.forEach((l, i) => l.on = step === 1 || step === 2 || (step === 0 && i === 4));
+  }
+});
+
+/* ---------------- shell: tabs, steps, chips, toggles ---------------- */
+const fb = $('figbar');
+FIGS.forEach((f, i) => { const b = document.createElement('button'); b.className = 'tab'; b.textContent = 'FIG. ' + f.id; b.title = f.title; b.onclick = () => goFig(i); fb.appendChild(b); });
+fb.appendChild(Object.assign(document.createElement('span'), { className:'sp' }));
+const themeBtn = Object.assign(document.createElement('button'), { className:'ctl', textContent:'◐ theme' });
+themeBtn.onclick = () => { const r = document.documentElement, dark = matchMedia('(prefers-color-scheme: dark)').matches;
+  r.dataset.theme = (r.dataset.theme || (dark ? 'dark' : 'light')) === 'dark' ? 'light' : 'dark'; try { localStorage.setItem('atlas-theme', r.dataset.theme); } catch (e) {} applyBg(); };
+fb.appendChild(themeBtn);
+try { const tt = localStorage.getItem('atlas-theme'); if (tt) document.documentElement.dataset.theme = tt; } catch (e) {}
+
+Object.entries(MATS).forEach(([k, v], i) => { const b = document.createElement('button'); b.style.background = '#' + v[0].toString(16).padStart(6, '0'); b.title = k + ' mat';
+  if (i === 0) b.classList.add('on'); b.onclick = () => { [...$('swatches').querySelectorAll('button')].forEach(o => o.classList.toggle('on', o === b)); setMat(k); }; $('swatches').appendChild(b); });
+function setMat(k){ matKey = k; if (!ok3d) return; FIGS.forEach(f => f.group && f.group.traverse(o => { if (o.userData.isMat){ o.material.color.setHex(MATS[k][0]); } if (o.userData.isMatGrid){ o.material.color.setHex(MATS[k][1]); } })); }
+function applyBg(){ if (ok3d) scene.background = new THREE.Color(cssv('--plate') || '#f6f1e5'); }
+
+function setToggle(id, v){ const f = FIGS[cur]; const tg = f.toggles.find(x => x.id === id); if (!tg) return; tg.val = v;
+  [...$('toggles').children].forEach(b => { if (b.dataset.id === id) b.classList.toggle('on', +b.dataset.v === v); }); }
+function renderToggles(f){ const box = $('toggles'); box.innerHTML = '';
+  f.toggles.forEach(tg => tg.labels.forEach((lab, v) => { const b = document.createElement('button'); b.textContent = lab; b.dataset.id = tg.id; b.dataset.v = v;
+    b.classList.toggle('on', tg.val === v); b.onclick = () => { setToggle(tg.id, v); f.onToggle && f.onToggle(tg.id, v); if (tg.id === 'insp' || tg.id === 'out') since = 0; }; box.appendChild(b); })); }
+
+let chipPrev = '';
+function renderChips(){ const f = FIGS[cur]; let list; try { list = f.chips.call(f); } catch (e) { list = []; }
+  const html = list.map(([k, v, hot]) => '<span class="chip' + (hot ? ' flash' : '') + '">' + k + ' <b>' + v + '</b></span>').join('');
+  if (html !== chipPrev){ $('chips').innerHTML = html; chipPrev = html; } }
+
+/* ---------------- plain-language explanations, one per step ----------------
+   [title, plain explanation, everyday comparison, key words] */
+const EXPLAIN = {
+'01':[
+ ['What is tissue?','Every part of you, skin, muscle, liver, is made of tiny living units called cells, packed side by side. Each one is alive on its own: it eats, makes things and can split.','Like a city: the city is you, each house is a cell, and the families inside do the work.',['cell','tissue']],
+ ['What is inside a cell?','The purple ball is the nucleus, where the DNA instructions are stored. The gold rods are mitochondria, which turn food into energy. Everything else is a busy soup of small machines called proteins.','A house has an office with the family recipe books (nucleus), a boiler (mitochondria) and lots of appliances (proteins).',['nucleus','mitochondria','protein']],
+ ['Why do cells split?','You grow, heal cuts and replace worn-out cells by having one cell turn into two. Each new cell must be complete, so before splitting the cell copies everything inside it.','Like a bakery that bakes a second identical cake before cutting the order in two, so each customer gets a whole cake.',['cell division','mitosis']],
+ ['Why must the copy be exact?','A cell uses its DNA as an instruction manual. If a new cell gets missing or extra pages, it makes the wrong amounts of things and can get sick, die, or grow out of control.','Imagine assembling furniture with three pages of the manual missing and two pages printed twice.',['instructions','error']],
+],
+'02':[
+ ['What is DNA?','DNA is a very long molecule that stores instructions as a code of four letters: A, C, G and T. It is so long it is cut into 46 pieces called chromosomes.','A library of 46 books, all written with an alphabet of only four letters.',['DNA','chromosome']],
+ ['Why pairs?','You inherit one set of 23 chromosomes from your mother and one set of 23 from your father. So you have two versions of almost every book.','Two editions of the same cookbook, one from each grandparent, with small differences in the recipes.',['pair','inherit','karyotype']],
+ ['Why the X shape?','Before splitting, the cell copies every chromosome. The two identical copies stay joined in the middle, which makes the X. The small red knobs are handles that pulling ropes will grab.','Like photocopying a book and stapling the copy to the original until it is time to hand them out.',['sister copies','kinetochore']],
+ ['Where is our gene?','A gene is one recipe inside a chromosome. The recipe for the seatbelt inspector protein is called BUB1B and sits on chromosome 15. The child has a mistake in both copies of it.','One recipe on one page of book 15, and both editions of that page have a misprint.',['gene','BUB1B','chromosome 15']],
+],
+'03':[
+ ['How does a cell split?','Two anchor points (gold) appear at opposite ends of the cell. The copied chromosomes move to the middle and line up in a row.','Like two teams lining up for tug of war, with all the ropes laid out in the middle.',['spindle pole','metaphase']],
+ ['What are the ropes?','Long protein threads (microtubules) grow from each anchor and clip onto the red handles on each chromosome. Each X needs a rope from both sides.','Every passenger on a ride needs both straps of the harness clipped in.',['microtubule','kinetochore']],
+ ['What does the inspector do?','While any handle has no rope, it sends out a "wait!" signal (orange sparks). BubR1, the protein this story is about, is part of that signal. The cell will not split while it hears "wait".','The roller-coaster attendant will not start the ride while even one seatbelt light is still red.',['checkpoint','BubR1','wait signal']],
+ ['What happens on "go"?','Once every handle is clipped, the alarm goes quiet. An enzyme cuts the glue holding each X together, and the ropes pull one copy to each side. Each new cell gets one copy of every chromosome.','The ride starts only after the last belt clicks, and everyone arrives safely.',['separase','anaphase']],
+ ['What if the inspector is weak?','A weak inspector gives up waiting too early. A chromosome that was not properly clipped gets dragged to the wrong side, so one new cell has 47 books and the other 45. This is what happens in the child\'s cells.','An attendant who starts the ride with a belt still open: sometimes nothing happens, sometimes someone gets hurt.',['aneuploidy','MVA']],
+],
+'04':[
+ ['What does a protein look like?','A protein is one long chain of building blocks that folds into a 3D shape. BubR1 has 1,050 blocks. Here it is drawn as stacked parts so you can see its regions.','Like one long piece of wire bent into a tool with a handle, a hook and a clamp.',['protein','fold']],
+ ['What does each part do?','Different regions grab different partners. Some grab the chromosome handle, some grab the "start the split" switch to hold it off, and the big bottom part keeps the whole protein steady.','A Swiss army knife: one blade for each job, all on one body.',['domain','pseudokinase']],
+ ['What are the pins?','Doctors have found 8 different one-letter typos in BubR1 in other families with the same disease. Labs measured each one: 5 made the protein disappear (red), 3 left it present (teal). Most red ones sit in the bottom part.','Knowing where other cars of the same model broke down tells you which parts are weak.',['variant','published cases']],
+ ['Where is the child\'s typo?','The gold star is the child\'s typo. It is in the bottom part, close to the red pins, and buried inside the folded core rather than on the surface.','A crack inside the frame of a chair is more worrying than a scratch on the paint.',['buried','core']],
+ ['So what is the question?','One wrong block inside the core can do one of two things: make the whole protein fall apart, or leave it in one piece but unable to do its job. The rest of the atlas is about telling these apart.','A cracked chair can collapse, or stay standing but wobble so much nobody can use it.',['unstable','inactive']],
+],
+'05':[
+ ['How is a gene read?','The cell makes a working copy of the gene. A machine called the ribosome slides along it, reading three letters at a time, and adds one matching block to a growing chain for each group.','Like a knitting machine reading a pattern and adding one stitch for each instruction.',['ribosome','translation']],
+ ['What is a stop typo?','In copy 1, one letter change turns a normal instruction into "STOP" halfway through. The ribosome falls off and only half a chain is made.','A recipe with "THE END" printed in the middle of step 4.',['stop codon','nonsense']],
+ ['Why is copy 1 shredded?','The cell has a quality check that destroys working copies with an early STOP, because half-made proteins can be harmful. So copy 1 produces almost nothing.','A print shop that bins any book whose pages stop halfway through, rather than shipping it.',['nonsense-mediated decay']],
+ ['What about copy 2?','Copy 2 has no STOP, so it is read all the way to the end and makes a full-length BubR1 chain.','The second cookbook is complete, so the dish can be made.',['full length']],
+ ['What is the wrong bead?','Copy 2 has a different typo: one letter is changed, so one block of the 1,050 is the wrong type (gold). All of the child\'s BubR1 is this slightly wrong version.','The cake is made, but with salt instead of sugar in one spoonful.',['missense','amino acid']],
+],
+'06':[
+ ['How does a chain fold?','A protein chain folds itself into a compact shape because some blocks like water and some avoid it. The water-avoiding blocks hide in the middle, like the gold typo here.','A ball of yarn naturally forms when you wind it; the inside strands are hidden.',['folding','core']],
+ ['What is the clamp?','Helper proteins called chaperones hold wobbly proteins in shape for a while. Proteins with a weakened core often lean on them. One such helper is called HSP90.','Training wheels that keep a wobbly bike upright.',['chaperone','HSP90']],
+ ['What happens if it crumples?','If the fold is too weak, the cell marks the protein with small tags (ubiquitin) meaning "rubbish", and a barrel-shaped shredder (the proteasome) destroys it. The cell then has too little BubR1.','A damaged item gets a red sticker and goes down the recycling chute.',['ubiquitin','proteasome','unstable']],
+ ['What if it stays but idles?','The protein may keep its shape and last a normal time, yet the typo stops it doing its job. Then there is plenty of BubR1, but it works poorly.','A smoke alarm that is on the ceiling and looks fine, but its sensor is broken.',['inactive']],
+ ['Why do the odds matter?','The two cases need opposite help: protect the protein so it lasts longer, or clean up the damage it causes. Before measuring, our honest guess is 55% crumple and 45% idle. That is close to a coin flip.','If you don\'t know whether the tyre is flat or the engine is broken, you shouldn\'t start repairs yet.',['prior','55/45']],
+],
+'07':[
+ ['How do you grade a computer?','We show it pairs: one typo known to make a protein disappear, and one known to be harmless. A good computer gives the harmful one the higher score. Its success rate is the grade (AUROC): 0.5 is guessing, 1.0 is perfect.','Like testing a smoke detector with real smoke and with steam from a kettle, many times.',['AUROC','test']],
+ ['What is the bigger exam?','Labs have measured, for other proteins, what thousands of typos do. Across 11 such proteins the computer scored about 0.76: clearly better than guessing.','A weather app checked against a whole year of real weather in 11 cities.',['benchmark','DMS']],
+ ['How did labs measure it?','They attach a glowing tag to every typo version of a protein, one version per cell. If the protein falls apart, the cell glows dimly. A machine sorts cells by brightness and reads which typo each one had.','Giving each lightbulb a different flaw and seeing which ones still shine.',['VAMP-seq','fluorescence']],
+ ['Why still unsure for BubR1?','Proteins differ. For a protein the computer has never been checked on, the honest answer for the child\'s typo is "between 31% and 88% chance it falls apart". That includes 50/50, so it cannot decide for us.','A weather app good in 11 cities still can\'t promise rain in a 12th city.',['uncertainty','new protein']],
+],
+'08':[
+ ['Why compare with mice?','Scientists have bred tens of thousands of mice with known gene changes and written down their symptoms in the same standard words doctors use. That lets a computer compare a child to every mouse.','A huge catalogue of "what happens when part X breaks", to compare a new breakdown against.',['mouse model','HPO']],
+ ['How is the match scored?','The child has 8 recorded symptoms. Each mouse gets a score for how many of those it shares, giving extra weight to rare symptoms. Higher block = better match.','Matching a stranger to their relatives by rare traits, not by having two eyes.',['similarity']],
+ ['What does top 1% mean?','Only about 1 in 100 mouse types match the child as well as the lit ones do. Random sets of symptoms rarely score this well (p = 0.026).','Being in the top row of a stadium of 77,000 people.',['top 1%','p-value']],
+ ['Why does this match matter?','One of the best matches is a mouse that makes only about 10% of normal BubR1. That points to "too little working inspector", and it was found without looking at the DNA at all.','Two different detectives, using different clues, pointing at the same suspect.',['independent evidence']],
+],
+'09':[
+ ['Whose cells are used?','A small skin sample from the child, and one from a parent, is grown in dishes. Skin cells make BubR1 too, so they can be tested safely without touching the child again.','Taking a tiny cutting of a plant to test in a pot instead of digging up the whole garden.',['fibroblast','skin biopsy']],
+ ['What does cycloheximide do?','It is a chemical that stops ribosomes, so the cells stop making any new protein. From then on, BubR1 can only stay or go down.','Turning off the ice machine so you can see how fast the existing ice melts.',['cycloheximide']],
+ ['Why several time points?','Cells are collected at 0, 2, 4 and 8 hours. Comparing the amounts over time shows how fast BubR1 disappears.','Photographing an ice cube every two hours.',['time course']],
+ ['How do we read the result?','The lab separates the proteins on a sheet and stains BubR1: a dark band means lots of it. If the child\'s band fades much faster than the parent\'s, BubR1 crumples. If it stays dark, it idles.','Fast-melting ice was fragile; ice that lasts was solid but maybe the wrong shape.',['Western blot','half-life']],
+ ['What is the control?','The same test with MG132, which jams the shredder. If BubR1 now stops disappearing, we know the shredder was destroying it, which confirms the crumple case.','If the leak stops when you close one valve, you have found the leak.',['MG132','control']],
+],
+'10':[
+ ['Why a rule, not a drug?','Because the best medicine depends on the crumple-or-idle answer, and we do not have it yet. So we give a plan: test first, then choose.','A sat-nav that says "turn at the next sign" rather than guessing the whole route without knowing the roads.',['decision rule']],
+ ['If it melts fast…','A fast-fading band makes "crumple" about 87% likely. Then research focuses on protecting BubR1, for example with vitamin B3-type molecules that feed a helper enzyme (SIRT2) that shields it.','If the tyre is flat, you patch the tyre.',['protect','NAD+','SIRT2']],
+ ['If it holds…','A steady band makes "idle" about 82% likely. More BubR1 would not help, so research focuses on clearing the worn-out cells it leaves behind, for example with a drug called dasatinib.','If the engine is broken, pumping the tyres is pointless; you deal with the engine damage.',['clean up','senescent cells','dasatinib']],
+ ['What is the safety fence?','Whatever the result: avoid drugs that jam the cell-division checkpoint (they did worse in cells like the child\'s), watch a chemotherapy called vincristine closely, and order a small gene test for how the child processes drugs.','Before any repair, you mark the live wires that must not be touched.',['do not give','monitor','pharmacogenomics']],
+],
+'11':[
+ ['What is a receipt?','Every number we show is stored with a small file saying exactly which data and which program made it.','Like a cake label listing every ingredient and the recipe used.',['provenance']],
+ ['Why split the layers?','Following the layers down shows the path from the public data, through the program, to the table, to the sentence you read.','Tracing a parcel from the warehouse, through each depot, to your door.',['lineage']],
+ ['What is a fingerprint?','Each file gets a short code computed from its exact contents. Change a single letter and the code changes completely, so tampering or mistakes are easy to spot.','A wax seal on a letter: if it is broken, you know someone opened it.',['SHA-256','hash']],
+ ['Why does this matter?','Anyone can re-run the same programs and get the same fingerprints. You do not have to trust us; you can check.','A recipe precise enough that any baker gets the same cake.',['reproducible']],
+],
+};
+
+let explainOpen = false;
+function renderExplain(){
+  const f = FIGS[cur], e = (EXPLAIN[f.id] || [])[step];
+  $('explainBtn').classList.toggle('on', explainOpen);
+  $('drawer').classList.toggle('open', explainOpen);
+  if (!e) { $('drawerBody').innerHTML = ''; return; }
+  $('drawerBody').innerHTML = '<div class="k">FIG. ' + f.id + ' · STEP ' + (step + 1) + ' · IN PLAIN WORDS</div><h3>' + e[0] + '</h3><p>' + e[1] + '</p>' +
+    '<div class="eg">🧭 <b>Think of it like this:</b> ' + e[2] + '</div>' +
+    '<div class="small" style="font-size:12px;color:var(--muted)">Words to remember</div><div class="words">' + e[3].map(w => '<span>' + w + '</span>').join('') + '</div>' +
+    '<p style="font-size:12.5px;color:var(--muted);margin-top:14px">More science for this figure: open "Go deeper" in the right-hand panel.</p>';
+}
+$('explainBtn').onclick = () => { explainOpen = !explainOpen; renderExplain(); };
+$('drawerX').onclick = () => { explainOpen = false; renderExplain(); };
+
+
+/* narrator card: headline + word-by-word reveal of the caption */
+let revealTimer = null;
+function renderStory(f, s){
+  $('storyK').textContent = 'FIG. ' + f.id + ' · STEP ' + (step + 1) + ' OF ' + f.steps.length;
+  $('storyDots').innerHTML = f.steps.map((_, k) => '<i class="' + (k === step ? 'on' : (k < step ? 'done' : '')) + '"></i>').join('');
+  $('storyH').textContent = s.label;
+  const box = $('caption'); box.innerHTML = s.caption + (s.speed ? '<span class="tag">' + s.speed + '</span>' : '');
+  // wrap every word (inside or outside <b>) so it can fade in
+  const walk = node => [...node.childNodes].forEach(n => {
+    if (n.nodeType === 3){ const frag = document.createDocumentFragment();
+      n.textContent.split(/(\s+)/).forEach(t => { if (!t) return; if (/^\s+$/.test(t)) frag.appendChild(document.createTextNode(t)); else { const sp = document.createElement('span'); sp.className = 'w'; sp.textContent = t; frag.appendChild(sp); } });
+      n.replaceWith(frag); }
+    else if (n.nodeType === 1 && !n.classList.contains('tag')) walk(n); });
+  walk(box);
+  const words = [...box.querySelectorAll('.w')]; clearInterval(revealTimer);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) words.forEach(w => w.classList.add('in'));
+  else { let i = 0; revealTimer = setInterval(() => { for (let k = 0; k < 2 && i < words.length; k++) words[i++].classList.add('in'); if (i >= words.length) clearInterval(revealTimer); }, 28); }
+  const nx = $('storyNext'); nx.textContent = isLast() ? 'Finish 🏁' : (step === f.steps.length - 1 ? 'Next figure →' : 'Next step →');
+  nx.classList.remove('nudge'); clearTimeout(nx._t); nx._t = setTimeout(() => nx.classList.add('nudge'), 9000);
+}
+$('storyMin').onclick = () => $('story').classList.add('hidden');
+$('storyPill').onclick = () => $('story').classList.remove('hidden');
+
+/* ---------------- navigation: steps → figures → end screen (no silent wrap) ---------------- */
+const TOTAL_STEPS = FIGS.reduce((n, f) => n + f.steps.length, 0);
+const seen = new Set();
+function globalIndex(){ let n = 0; for (let k = 0; k < cur; k++) n += FIGS[k].steps.length; return n + step; }
+function isLast(){ return cur === FIGS.length - 1 && step === FIGS[cur].steps.length - 1; }
+function showEnd(on){ $('endcard').classList.toggle('show', on); }
+function updateNav(){
+  const atStart = cur === 0 && step === 0;
+  $('prevFig').disabled = atStart;
+  $('nextFig').textContent = isLast() ? 'Finish 🏁' : (step === FIGS[cur].steps.length - 1 ? 'Next figure →' : 'Next step →');
+  $('progress').style.width = (100 * (globalIndex() + 1) / TOTAL_STEPS) + '%';
+  [...$('steps').children].forEach((b, k) => { b.classList.toggle('on', k === step); b.classList.toggle('done', seen.has(cur + ':' + k) && k !== step); });
+  [...fb.querySelectorAll('.tab')].forEach((b, k) => b.classList.toggle('seen', FIGS[k].steps.some((_, j) => seen.has(k + ':' + j))));
+}
+function goStep(i){ const f = FIGS[cur]; step = clamp(i, 0, f.steps.length - 1); since = 0; seen.add(cur + ':' + step); showEnd(false);
+  const s = f.steps[step]; renderStory(f, s);
+  $('speed').textContent = s.speed || '×1';
+  Object.assign(want, { az: .78, el: .6, zoom: 1, tx: 0, ty: 0, tz: 0 }, s.shot); userAz = 0; userEl = 0; userZoom = 1;
+  if (f.id === '05') setToggle('copy', step >= 3 ? 1 : 0);
+  if (f.id === '06') setToggle('fate', step === 3 ? 1 : 0);
+  try { history.replaceState(null, '', '#fig' + f.id + '-' + (step + 1)); } catch (e) {}
+  updateNav(); renderExplain();
+}
+function goFig(i, atStep){
+  cur = clamp(i, 0, FIGS.length - 1); const f = FIGS[cur];
+  if (ok3d){ FIGS.forEach((o, k) => { if (o.group) o.group.visible = k === cur; });
+    if (!f.built){ f.build(); f.built = true; scene.add(f.group);
+      f.group.traverse(o => { if (o.isMesh && o.geometry && o.geometry.parameters && o.geometry.parameters.width === 46){ o.userData.isMat = true; } }); setMat(matKey); } }
+  [...fb.querySelectorAll('.tab')].forEach((b, k) => b.classList.toggle('on', k === cur));
+  $('figno').textContent = 'FIG. ' + f.id + ' · ' + String(cur + 1) + ' OF ' + FIGS.length;
+  $('figtitle').textContent = f.title; $('figside').innerHTML = f.side; $('bigidea').innerHTML = f.bigidea; $('deeperBody').innerHTML = f.deeper || '';
+  const st = $('steps'); st.innerHTML = '';
+  f.steps.forEach((s, k) => { const b = document.createElement('button'); b.innerHTML = '<span class="n">' + (k + 1) + '</span>' + s.label; b.onclick = () => goStep(k); st.appendChild(b); });
+  renderToggles(f); chipPrev = ''; goStep(atStep === 'last' ? f.steps.length - 1 : 0);
+}
+function next(){
+  if ($('endcard').classList.contains('show')) return;
+  if (step < FIGS[cur].steps.length - 1) goStep(step + 1);
+  else if (cur < FIGS.length - 1) goFig(cur + 1);
+  else showEnd(true);
+}
+function prev(){
+  if ($('endcard').classList.contains('show')) { showEnd(false); return; }
+  if (step > 0) goStep(step - 1); else if (cur > 0) goFig(cur - 1, 'last');
+}
+$('prevFig').onclick = prev;
+$('nextFig').onclick = next;
+$('storyNext').onclick = next;
+$('restartBtn').onclick = () => { showEnd(false); explainOpen = false; goFig(0); };
+$('stayBtn').onclick = () => showEnd(false);
+$('pickBtn').onclick = () => { showEnd(false); fb.querySelector('.tab').focus(); fb.classList.add('pulse'); };
+addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' '){ e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft'){ e.preventDefault(); prev(); }
+  if (e.key === 'ArrowDown'){ e.preventDefault(); if (cur < FIGS.length - 1) goFig(cur + 1); else showEnd(true); }
+  if (e.key === 'ArrowUp'){ e.preventDefault(); if (cur > 0) goFig(cur - 1); }
+  if (e.key === 'h' || e.key === 'H'){ $('story').classList.toggle('hidden'); }
+  if (e.key === 'e' || e.key === 'E'){ explainOpen = !explainOpen; renderExplain(); }
+  if (e.key === 'Escape'){ if (explainOpen){ explainOpen = false; renderExplain(); } else showEnd(false); }
+});
+
+/* orbit + zoom */
+const wrap = $('wrap'); let drag = null;
+wrap.addEventListener('pointerdown', e => { if (e.target.closest('.toggles,.drawer,.endcard,.story,.story-pill')) return; drag = [e.clientX, e.clientY, userAz, userEl]; wrap.setPointerCapture(e.pointerId); wrap.style.cursor = 'grabbing'; });
+wrap.addEventListener('pointermove', e => { if (!drag) return; userAz = drag[2] - (e.clientX - drag[0])*.008; userEl = clamp(drag[3] + (e.clientY - drag[1])*.006, -.5, .7); });
+wrap.addEventListener('pointerup', () => { drag = null; wrap.style.cursor = ''; });
+wrap.addEventListener('wheel', e => { if (e.target.closest('.drawer,.endcard,.story')) return; e.preventDefault(); userZoom = clamp(userZoom * (e.deltaY > 0 ? .92 : 1.08), .5, 3); }, { passive:false });
+
+/* ---------------- render loop ---------------- */
+function resize(){ if (!ok3d) return; const w = wrap.clientWidth, h = wrap.clientHeight; if (!w || !h) return;
+  R.setSize(w, h, false); const asp = w/h, v = 11; cam.left = -v*asp; cam.right = v*asp; cam.top = v; cam.bottom = -v; cam.updateProjectionMatrix(); }
+addEventListener('resize', resize);
+let last = performance.now(), T = 0, chipTick = 0;
+function loop(now){
+  const dt = Math.min(.05, (now - last)/1000); last = now; T += dt; since += dt;
+  const f = FIGS[cur];
+  if (ok3d){
+    const d = 1 - Math.pow(.02, dt);
+    ['az','el','zoom','tx','ty','tz'].forEach(k => shot[k] = lerp(shot[k], want[k], d));
+    const az = shot.az + userAz + (drag ? 0 : Math.sin(T*.15)*.04), el = clamp(shot.el + userEl, .08, 1.45), r = 60;
+    cam.position.set(shot.tx + r*Math.cos(el)*Math.sin(az), shot.ty + r*Math.sin(el), shot.tz + r*Math.cos(el)*Math.cos(az));
+    cam.lookAt(shot.tx, shot.ty, shot.tz); cam.zoom = shot.zoom * userZoom; cam.updateProjectionMatrix();
+    if (f.built) f.update(dt, T);
+    R.render(scene, cam); placeLabels();
+  }
+  if ((chipTick += dt) > .15){ chipTick = 0; renderChips(); }
+  requestAnimationFrame(loop);
+}
+applyBg(); resize();
+const m = /#fig(\d+)(?:-(\d+))?/.exec(location.hash || '');
+goFig(m ? Math.max(0, FIGS.findIndex(f => f.id === m[1])) : 0);
+if (m && m[2]) goStep(+m[2] - 1);
+resize();
+requestAnimationFrame(loop);
+</script>
+</body>
+</html>

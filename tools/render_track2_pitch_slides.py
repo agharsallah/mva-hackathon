@@ -1,20 +1,21 @@
-"""Render the Track 2 3-minute pitch hero visual and 7-slide interactive/PDF deck.
+"""Refresh the Track 2 hero visual and preserved ten-slide interactive deck.
 
 Produces:
 - ``figures/it5/r6-pitch-overview.svg`` (+ ``.provenance.json``): 2-panel explanatory figure
   contrasting the two BUB1B alleles, the buried pseudokinase core (RSA < 0.20) vs distal
-  Lys668 SIRT2/NAD+ shielding, and the 48-hour CHX-chase blot clinical decision card.
+  Lys668 SIRT2/NAD+ shielding, and the weeks 1–2 research assay decision card.
 - ``submissions/track2/iteration-6/pitch-slides.html``: self-contained 16:9 widescreen
-  7-slide deck with embedded research SVGs, keyboard navigation (Arrow keys / Space), and
+  ten-slide deck with embedded research SVGs, keyboard navigation (Arrow keys / Space), and
   toggleable teleprompter (Key 'T': Technical / Plain-English / Hidden for recording).
 """
 
 from __future__ import annotations
 
+import argparse
+import subprocess
 from pathlib import Path
 
 from mva.drugs import provenance
-from mva.drugs.pitch_deck import build_slides_html
 
 ROOT = Path(__file__).resolve().parents[1]
 FIG_OUT = ROOT / "figures/it5/r6-pitch-overview.svg"
@@ -195,104 +196,31 @@ _HERO_SVG = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 540"
 """
 
 
-_DECK_CSS = (
-    ":root{--green:#059669;--green-bg:#ecfdf5;--red:#dc2626;--red-bg:#fef2f2;--amber:#d97706;"
-    "--amber-bg:#fefce8;--blue:#2563eb;--blue-bg:#eff6ff;--purple:#7c3aed;--purple-bg:#f5f3ff;}"
-    "*{box-sizing:border-box;margin:0;padding:0;}"
-    'body{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;'
-    "background:#090d16;color:#0f172a;overflow:hidden;}"
-    ".deck{width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;}"
-    ".slide{display:none;width:1280px;height:720px;background:#f8fafc;border-radius:12px;"
-    "box-shadow:0 25px 60px rgba(0,0,0,0.55);padding:18px 26px 14px 26px;"
-    "flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;}"
-    ".slide.active{display:flex;}"
-    ".topbar{display:flex;align-items:center;justify-content:space-between;background:#0f172a;"
-    "color:#fff;padding:9px 16px;border-radius:8px;}"
-    ".topbar-left{display:flex;align-items:center;gap:10px;}"
-    ".slide-badge{background:#2563eb;color:#fff;font-weight:800;font-size:11.5px;"
-    "padding:4px 10px;border-radius:999px;}"
-    ".time-badge{background:#1e293b;color:#38bdf8;font-weight:700;font-size:11.5px;"
-    "padding:4px 10px;border-radius:999px;border:1px solid #334155;}"
-    ".crit-badge{background:#065f46;color:#a7f3d0;font-weight:700;font-size:11px;"
-    "padding:4px 10px;border-radius:999px;}"
-    ".slide-title{font-size:16px;font-weight:800;color:#ffffff;}"
-    ".content-grid-2{display:grid;grid-template-columns:1.04fr 0.96fr;gap:14px;flex:1;"
-    "margin:10px 0;min-height:0;}"
-    ".panel{background:#ffffff;border:1.5px solid #cbd5e1;border-radius:10px;padding:10px 12px;"
-    "display:flex;flex-direction:column;justify-content:space-between;min-height:0;}"
-    ".panel h3{font-size:13px;font-weight:800;color:#0f172a;margin-bottom:5px;display:flex;"
-    "align-items:center;justify-content:space-between;}"
-    ".fig-box{flex:1;display:flex;align-items:center;justify-content:center;"
-    "overflow:hidden;min-height:0;}"
-    ".fig-box img{max-width:100%;max-height:100%;object-fit:contain;}"
-    ".kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px;}"
-    ".kpi{border-radius:8px;padding:7px 10px;border:1.5px solid #cbd5e1;background:#fff;}"
-    ".kpi.green{background:var(--green-bg);border-color:var(--green);}"
-    ".kpi.red{background:var(--red-bg);border-color:var(--red);}"
-    ".kpi.amber{background:var(--amber-bg);border-color:var(--amber);}"
-    ".kpi.blue{background:var(--blue-bg);border-color:var(--blue);}"
-    ".kpi.purple{background:var(--purple-bg);border-color:var(--purple);}"
-    ".kpi-val{font-size:15px;font-weight:800;color:#0f172a;}"
-    ".kpi-lbl{font-size:10.8px;color:#334155;margin-top:2px;line-height:1.25;}"
-    ".mini-table{width:100%;border-collapse:collapse;font-size:10.8px;}"
-    ".mini-table th{background:#0f172a;color:#fff;text-align:left;padding:5px 6px;font-weight:700;}"
-    ".mini-table td{padding:5px 6px;border-bottom:1px solid #e2e8f0;"
-    "vertical-align:top;line-height:1.28;}"
-    ".pill{display:inline-block;padding:1px 6px;border-radius:4px;font-weight:700;font-size:9.8px;}"
-    ".pill.green{background:#d1fae5;color:#065f46;}.pill.red{background:#fee2e2;color:#991b1b;}"
-    ".pill.amber{background:#fef3c7;color:#92400e;}.pill.blue{background:#dbeafe;color:#1e40af;}"
-    ".teleprompter{background:#0f172a;color:#f8fafc;border-radius:8px;padding:8px 13px;"
-    "font-size:11.8px;line-height:1.38;border-left:5px solid #38bdf8;}"
-    ".teleprompter.hidden{display:none;}"
-    ".tp-mode{font-size:9.8px;font-weight:800;text-transform:uppercase;color:#38bdf8;"
-    "margin-bottom:2px;display:flex;justify-content:space-between;}"
-    ".controls-bar{position:fixed;bottom:8px;right:14px;background:rgba(15,23,42,0.92);"
-    "color:#cbd5e1;padding:5px 10px;border-radius:999px;font-size:11px;display:flex;gap:8px;"
-    "align-items:center;z-index:100;border:1px solid #334155;}"
-    ".controls-bar button{background:#1e293b;color:#fff;border:1px solid #475569;border-radius:6px;"
-    "padding:2px 8px;font-size:11px;cursor:pointer;font-weight:600;}"
-    "@media print{@page{size:1280px 720px;margin:0;}body{background:#fff;overflow:visible;}"
-    ".deck{display:block;width:auto;height:auto;}.slide{display:flex!important;"
-    "page-break-after:always;box-shadow:none;border-radius:0;width:1280px;height:720px;}"
-    ".controls-bar{display:none!important;}}"
-)
-
-_DECK_JS = (
-    "let cur=0,mode=0;"
-    "const slides=Array.from(document.querySelectorAll('.slide'));"
-    "const ind=document.getElementById('slideIndicator');"
-    "const modeBtn=document.getElementById('modeBtn');"
-    "function showSlide(idx){cur=Math.max(0,Math.min(slides.length-1,idx));"
-    "slides.forEach((s,i)=>s.classList.toggle('active',i===cur));"
-    "ind.textContent=`Slide ${cur+1} / ${slides.length}`;}"
-    "function nextSlide(){showSlide(cur+1);}function prevSlide(){showSlide(cur-1);}"
-    "function toggleMode(){mode=(mode+1)%3;"
-    "const tps=document.querySelectorAll('.teleprompter');"
-    "const techs=document.querySelectorAll('.tp-tech');"
-    "const plains=document.querySelectorAll('.tp-plain');"
-    "const labels=document.querySelectorAll('.tp-label');"
-    "if(mode===0){tps.forEach(el=>el.classList.remove('hidden'));"
-    "techs.forEach(el=>el.style.display='block');plains.forEach(el=>el.style.display='none');"
-    "labels.forEach(el=>el.textContent='SPEAKER SCRIPT — VERSION A (TECHNICAL)');"
-    "modeBtn.textContent='Script: Tech (T)';}else if(mode===1){"
-    "tps.forEach(el=>el.classList.remove('hidden'));"
-    "techs.forEach(el=>el.style.display='none');plains.forEach(el=>el.style.display='block');"
-    "labels.forEach(el=>el.textContent='SPEAKER SCRIPT — VERSION B (PLAIN-ENGLISH)');"
-    "modeBtn.textContent='Script: Plain (T)';}else{"
-    "tps.forEach(el=>el.classList.add('hidden'));modeBtn.textContent='Script: Hidden (T)';}}"
-    "document.addEventListener('keydown',(e)=>{"
-    "if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();nextSlide();}"
-    "else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prevSlide();}"
-    "else if(e.key==='t'||e.key==='T'){e.preventDefault();toggleMode();}});"
-)
-
-
 def build_hero_svg() -> str:
     """Return the 2-panel explanatory SVG string."""
-    return _HERO_SVG
+    svg = _HERO_SVG
+    for old, new in {
+        "48-Hour": "Weeks 1–2",
+        "48-hour": "weeks 1–2",
+        "48h": "weeks 1–2",
+        "10–20 mg/kg/d PO": "research hypothesis",
+        "or Niacin / NMN (u=0.4800)": "or Niacin (u=.192); NMN (u=.480)",
+        "before dosing": "before preclinical selection",
+        "actionable therapeutic rescue": "research hypotheses",
+        "Clinical Tumor Board": "Research Triage",
+        "+1.47": "+0.22",
+        "+1.44": "+0.20",
+        "8,793": "875",
+        "8793": "875",
+        "38942016": "36593396",
+        "empirical-Bayes": "robust residual",
+    }.items():
+        svg = svg.replace(old, new)
+    return svg
 
 
 def main() -> int:
+    argparse.ArgumentParser(description=__doc__).parse_args()
     FIG_OUT.parent.mkdir(parents=True, exist_ok=True)
     FIG_OUT.write_text(build_hero_svg(), encoding="utf-8")
     inputs = [
@@ -309,7 +237,99 @@ def main() -> int:
         "patient_data": "none: mechanism classes, drug names, VOI metrics; no genomic coordinates",
     }
     provenance.write(manifest, FIG_OUT.with_suffix(".provenance.json"))
-    HTML_OUT.write_text(build_slides_html(ROOT, css=_DECK_CSS, js=_DECK_JS), encoding="utf-8")
+    # Preserve the final hand-enhanced presentation rather than replace it with
+    # the older seven-slide builder (which loses the interactive lineage).
+    html = HTML_OUT.read_text(encoding="utf-8")
+    for old, new in {
+        "8,793": "875",
+        "8793": "875",
+        "38942016": "36593396",
+        "empirical-Bayes": "robust residual",
+    }.items():
+        html = html.replace(old, new)
+    if len(html.splitlines()) < 1000:
+        html = subprocess.check_output(
+            ["git", "show", "HEAD:submissions/track2/iteration-6/pitch-slides.html"],
+            cwd=ROOT,
+            text=True,
+        )
+    for old, new in {
+        "0.9122": "0.8738",
+        "0.8308": "0.8226",
+        "0.8742": "0.8738",
+        "0.8208": "0.8226",
+        "0.5125": "0.5350",
+        "0.4875": "0.4650",
+        "Sp=0.90": "Sp=0.85",
+        "Sp = 0.90": "Sp = 0.85",
+        "0.912": "0.874",
+        "0.831": "0.823",
+        "0.91": "0.87",
+        "0.83": "0.82",
+        "522-edge": "recorded",
+        "522 lineage edges": "recorded lineage edges",
+        "48-hour": "weeks 1–2",
+        "48-Hour": "Weeks 1–2",
+        "48h": "weeks 1–2",
+        "+1.47": "+0.22",
+        "+1.44": "+0.20",
+        "69.1%": "69.1% nominal",
+        "69.1 %": "69.1% nominal",
+        "EVPI is 0.18 at every weight": (
+            "Joint sensitivity captures half EVPI in 51.38% of 7,425 settings; "
+            "EVPI is structurally 0.18 in the original route-only sweep"
+        ),
+    }.items():
+        if old == "69.1%":
+            import re
+
+            html = re.sub(r"69\.1%(?! nominal)", new, html)
+        else:
+            html = html.replace(old, new)
+    notice = (
+        "<aside style='font-size:10px;padding:8px;background:#fff3cd;color:#222'>"
+        "Research triage only: priors, utilities and assay Se=Sp=0.85 are assumptions, "
+        "not validated benefit or diagnostic probabilities. P(low)=0.535; P(normal)=0.465; "
+        "P(unstable|low)=0.874; P(inactive|normal)=0.823. "
+        "EVPI=0.18 is structurally prior(inactive)×0.4; zero readthrough information value "
+        "uses strict dosage feasibility prior zero, not context heuristic 0.10. "
+        "Primary patient/parental fibroblasts; CHX 0,2,4,8h ±MG132; culture and turnaround "
+        "weeks 1–2, not a guaranteed 48h clinical result. "
+        "Embedded R4/R5 figures are historical model illustrations; any .90 specificity "
+        "or .912/.831 posteriors in them are superseded by this .85-specificity model. "
+        "No candidate is a prescription; approval metadata does not establish MVA efficacy."
+        " Historical R2 image labels 1.47/1.44 are not raw BUB1B log2FC; "
+        "canonical raw values are .22/.20."
+        "</aside>"
+    )
+    update = (
+        "<section class='slide' data-slide='8'><h1>Final audit: assumptions and portability</h1>"
+        "<h2>Sensitivity is conditional, not confidence</h2>"
+        "<p>Joint grid: 3,815/7,425 settings (51.38%) capture ≥50% EVPI. "
+        "EVPI .012–.240; blot EVSI 0–.2352. Canonical 69.1% is not universal.</p>"
+        "<h2>Third disease: partial real cached-public transfer</h2>"
+        "<p>Fanconi/FANCA: 34 public HPO terms; Fanca rank 37/76,699 "
+        "(symmetric), 102 (Phenodigm). Raw graph top-50 Jaccard .098901 vs MVA; "
+        ".041667 vs Bloom. About 29s cached CPU; no live requests, no fixtures. "
+        "No PRISM/LINCS, approval labelling, convergence, safety checks "
+        "or therapeutic validation.</p>"
+        "<h2>Evidence boundary</h2><p>Eight allele abundance labels; stability AUROC .60 "
+        "[.133,1] failed calibration. No measured patient prior or validated assay. "
+        "Raw HCT116 10µM 24h BUB1B log2FC: gliclazide +.22, migalastat +.20; "
+        "one summary column each. Earlier 1.47/1.44 are not raw BUB1B changes. "
+        "No independent candidate replication or validated label expansion found.</p>"
+        + notice
+        + "</section>"
+    )
+    # Keep the ten-slide presentation and its fragment/lineage controls intact.
+    # The audit is an accessible endnote, not an extra slide with incompatible navigation.
+    if "Final audit: assumptions and portability" not in html:
+        html = html.replace(
+            "</body>", update.replace("class='slide'", "class='audit-note'") + "</body>"
+        )
+    elif "Historical R2 image labels" not in html:
+        html = html.replace("</body>", notice + "</body>")
+    HTML_OUT.write_text(html, encoding="utf-8")
     print(f"wrote {FIG_OUT.relative_to(ROOT)}")
     print(f"wrote {HTML_OUT.relative_to(ROOT)}")
     return 0

@@ -164,15 +164,16 @@ def build_slides_html(root: Path, css: str = "", js: str = "") -> str:
     s3 = _slide(
         3,
         "0:52 – 1:15 (Tech &amp; Plain)",
-        "8,793-Compound Proteome Scan vs. 3D Pseudokinase Pocket Biophysics",
+        "Exploratory Proteome Scan vs. 3D Pseudokinase Pocket Biophysics",
         "Innovation (25%) &amp; Rigor (35%)",
         '<div class="content-grid-2">'
-        '<div class="panel"><h3><span>Route R2: Proliferation-Corrected &amp; Gygi-10k '
+        '<div class="panel"><h3><span>Route R2: Proliferation-Corrected '
         'Proteome Scan (Entries 159, 160)</span><span class="pill blue">Proteomics</span></h3>'
         f'<div class="fig-box"><img src="{u_r2}" alt="Proteome hits"/></div>'
         '<div style="font-size:10.8px;color:#334155;margin-top:4px;">'
-        "• <b>Gygi-10k (8,793 drugs):</b> <b>Gliclazide (+1.47 log₂FC, 2.8×)</b> &amp; "
-        "<b>Migalastat (+1.44 log₂FC, 2.7×)</b> are the top clean oral BubR1 raisers.<br/>"
+        "• <b>Exploratory HCT116 screen:</b> <b>Gliclazide (+0.22 raw log₂FC)</b> &amp; "
+        "<b>Migalastat (+0.20 raw log₂FC)</b>; one replicate, no independent "
+        "candidate replication recovered.<br/>"
         "• <b>Proliferation-corrected (Mitchell 2023):</b> Blocking proteasomal degradation "
         "is the dominant mechanism raising BubR1 protein.</div></div>"
         '<div class="panel"><h3><span>3D Pseudokinase Pocket Plausibility Audit '
@@ -184,20 +185,20 @@ def build_slides_html(root: Path, css: str = "", js: str = "") -> str:
         "72.2% swaps ΔΔG ≥ +1.0) with no cleft for polar <code>migalastat</code> (logP=-2.6).<br/>"
         "• <b>Distal Lys668 is solvent-exposed:</b> <b>NAD+/SIRT2</b> (<code>NMN</code>, "
         "<code>nicotinamide</code>, <code>niacin</code>) shields BubR1 in vivo.</div></div></div>",
-        '"Third, we scanned 8,793 chemical perturbations in the Gygi-10k HCT116 proteome '
-        "atlas (Route R2) using empirical-Bayes shrinkage, uncovering two oral FDA-approved "
-        "small molecules — gliclazide and migalastat — that raise endogenous BubR1 protein "
-        "by +1.47 and +1.44 log2 fold-change (2.7x above baseline). Crucially, our 3D "
+        '"Third, the proliferation-corrected HCT116 proteome screen (Route R2) nominated '
+        "gliclazide and migalastat as exploratory leads, with raw BubR1 log2 fold-changes "
+        "of +0.22 and +0.20. These are single-replicate cell-line observations, not "
+        "independently replicated rescue or evidence of benefit in this child. Our 3D "
         "pseudokinase audit across 1,178 buried-core swaps (RSA < 0.20) shows why distal "
         "Lys668 deacetylation via NAD+/SIRT2 (NMN, nicotinamide, niacin) is biophysically "
         'superior to direct active-site docking into a buried pseudokinase core."',
         '"Second, we asked: what if Copy #2 is crumpling too fast? Both our mouse-twin '
-        "studies and a scan of 8,793 compounds in human cells revealed two groups of safe, "
-        "oral medicines that boost or stabilize BubR1 protein levels: vitamin B3 / NAD+ "
+        "studies and an exploratory human-cell screen nominated two groups for research: "
+        "vitamin B3 / NAD+ "
         "boosters (NMN, niacin, and nicotinamide), which flip a surface switch (Lys668) to "
         "shield BubR1 from decay and doubled healthy lifespan in the matching mouse model, "
-        "and two oral pills — migalastat and gliclazide — that raised BubR1 protein levels "
-        'more than two-and-a-half-fold in human cells."',
+        "and migalastat and gliclazide, which showed small protein increases in a "
+        'single cancer-cell experiment, not yet independently confirmed."',
     )
 
     s4 = _slide(

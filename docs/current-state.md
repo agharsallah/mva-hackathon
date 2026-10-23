@@ -172,7 +172,8 @@ The **tests are hermetic**: synthetic fixtures only, no dataset, no Postgres, no
 A green suite says nothing about whether the infrastructure is up — that is what `pg-check`
 and `s3-check` are for. 60 test files.
 
-**Not yet running anywhere but a laptop.** The hosting layer landed 2026-09-06
+**Hosting status last recorded 2026-09-06; no live deployment re-verified for submission.**
+The hosting layer landed 2026-09-06
 (methodology 080): `mva-viz-api` can take a `MVA_VIZ_TOKEN` and be installed as a systemd
 service, and the dashboard can be deployed to Vercel behind a password with every API call
 proxied server-side. Tested in both suites; **no deployment has been made**, so

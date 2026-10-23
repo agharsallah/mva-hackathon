@@ -1,0 +1,974 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Seatbelt Inspector</title>
+<meta name="description" content="A plain-language, interactive story version of the Track 2 pitch: one child, one broken protein, and how we decided what to test before anyone treats.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f4ee; --paper:#fffdf8; --ink:#1d2433; --muted:#5b6475; --line:#e3ddd0;
+  --teal:#0f8b8d; --teal-soft:#d7efef; --coral:#e4572e; --coral-soft:#fbe0d7;
+  --gold:#c98a0b; --gold-soft:#f8ecd0; --violet:#6c4bd8; --violet-soft:#e7e1fb;
+  --green:#2f9e44; --green-soft:#dcf2e1; --shadow:0 10px 30px rgba(29,36,51,.08);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#12151d; --paper:#1a1f2a; --ink:#ecebe6; --muted:#a3aab8; --line:#2c3342;
+  --teal:#3cc4c6; --teal-soft:#123537; --coral:#ff7a52; --coral-soft:#3a1f17;
+  --gold:#f0b43c; --gold-soft:#3a2d12; --violet:#9d85ff; --violet-soft:#272042;
+  --green:#5ccc72; --green-soft:#16301c; --shadow:0 10px 30px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{
+  --bg:#12151d; --paper:#1a1f2a; --ink:#ecebe6; --muted:#a3aab8; --line:#2c3342;
+  --teal:#3cc4c6; --teal-soft:#123537; --coral:#ff7a52; --coral-soft:#3a1f17;
+  --gold:#f0b43c; --gold-soft:#3a2d12; --violet:#9d85ff; --violet-soft:#272042;
+  --green:#5ccc72; --green-soft:#16301c; --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:17px/1.6 Inter,system-ui,sans-serif;overflow:hidden}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:700;line-height:1.15;margin:0 0 .5em}
+h1{font-size:clamp(34px,5vw,60px)} h2{font-size:clamp(26px,3.4vw,40px)} h3{font-size:20px}
+p{margin:0 0 .9em}
+button{font:inherit;cursor:pointer}
+.app{display:grid;grid-template-rows:auto 1fr auto;height:100vh}
+/* top bar */
+.top{display:flex;align-items:center;gap:14px;padding:10px 20px;border-bottom:1px solid var(--line);background:var(--paper)}
+.top .brand{font-family:Fraunces,serif;font-weight:700}
+.top .chap{color:var(--muted);font-size:14px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.iconbtn{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:14px}
+.iconbtn:hover{border-color:var(--teal)}
+/* stage */
+.stage{position:relative;overflow:hidden}
+.slide{position:absolute;inset:0;overflow-y:auto;padding:36px max(20px,5vw) 40px;opacity:0;visibility:hidden;transform:translateY(14px);transition:opacity .45s,transform .45s,visibility .45s}
+.slide.on{opacity:1;visibility:visible;transform:none}
+.wrap{max-width:1180px;margin:0 auto}
+.kicker{display:inline-block;font-size:13px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.lead{font-size:20px;color:var(--muted);max-width:760px}
+.grid2{display:grid;grid-template-columns:1.05fr 1fr;gap:34px;align-items:start}
+.grid2>*,.grid3>*{min-width:0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media (max-width:860px){.grid2,.grid3{grid-template-columns:1fr}.slide{padding:24px 16px 40px}.top .chap{display:none}.top .brand{flex:1}.dots{display:none!important}.bottom{justify-content:space-between}}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px 22px;box-shadow:var(--shadow)}
+.card.teal{background:var(--teal-soft);border-color:transparent}
+.card.coral{background:var(--coral-soft);border-color:transparent}
+.card.gold{background:var(--gold-soft);border-color:transparent}
+.card.violet{background:var(--violet-soft);border-color:transparent}
+.card.green{background:var(--green-soft);border-color:transparent}
+.big{font-family:Fraunces,serif;font-size:44px;font-weight:700;line-height:1}
+.small{font-size:14px;color:var(--muted)}
+.story{border-left:4px solid var(--gold);padding:6px 0 6px 16px;margin:18px 0;font-style:italic;color:var(--ink)}
+.analogy{display:flex;gap:12px;align-items:flex-start;background:var(--gold-soft);border-radius:14px;padding:14px 16px;margin:14px 0}
+.analogy .em{font-size:26px;line-height:1}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600}
+.pill.teal{background:var(--teal-soft);color:var(--teal)} .pill.coral{background:var(--coral-soft);color:var(--coral)}
+.pill.violet{background:var(--violet-soft);color:var(--violet)} .pill.gold{background:var(--gold-soft);color:var(--gold)}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.btn{border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:8px 14px;font-weight:600;font-size:15px;transition:.2s}
+.btn:hover{border-color:var(--teal)}
+.btn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.coral.on{background:var(--coral);border-color:var(--coral)}
+.btn.violet.on{background:var(--violet);border-color:var(--violet)}
+/* 3d */
+.three{position:relative;width:100%;aspect-ratio:4/3;border-radius:20px;overflow:hidden;background:radial-gradient(circle at 50% 40%,var(--paper),var(--bg));border:1px solid var(--line);touch-action:none;cursor:grab}
+.three canvas{display:block;width:100%!important;height:100%!important}
+.three .hint{position:absolute;left:12px;bottom:10px;font-size:12px;color:var(--muted);pointer-events:none}
+.three .fallback{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;padding:20px;color:var(--muted)}
+.three .caption3d{position:absolute;right:12px;top:10px;font-size:13px;font-weight:600;background:var(--paper);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
+/* glossary terms */
+.term{border-bottom:2px dotted var(--teal);cursor:help;font-weight:600}
+.tip{position:fixed;z-index:50;max-width:300px;background:var(--ink);color:var(--bg);font-size:14px;line-height:1.45;padding:10px 12px;border-radius:10px;pointer-events:none;opacity:0;transition:opacity .15s}
+.tip.on{opacity:1}
+/* reveal steps */
+.step{opacity:.0;transform:translateY(8px);transition:.4s}
+.step.in{opacity:1;transform:none}
+/* bottom nav */
+.bottom{display:flex;align-items:center;gap:12px;padding:10px 20px;border-top:1px solid var(--line);background:var(--paper)}
+.dots{flex:1;display:flex;gap:5px;flex-wrap:wrap;justify-content:center}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--line);border:0;padding:0}
+.dot.on{background:var(--teal);transform:scale(1.3)}
+.nav{border:0;background:var(--teal);color:#fff;border-radius:12px;padding:9px 18px;font-weight:700}
+.nav:disabled{opacity:.35;cursor:default}
+.nav.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+/* quiz */
+.quiz .opt{display:block;width:100%;text-align:left;margin:6px 0;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:10px 14px}
+.quiz .opt.right{border-color:var(--green);background:var(--green-soft)}
+.quiz .opt.wrong{border-color:var(--coral);background:var(--coral-soft)}
+.quiz .fb{min-height:1.6em;font-weight:600}
+/* sim boxes */
+canvas.sim{max-width:100%;height:auto;width:100%;border-radius:16px;background:var(--paper);border:1px solid var(--line);display:block}
+input[type=range]{width:100%;accent-color:var(--teal)}
+.flip{perspective:900px;cursor:pointer;min-height:150px}
+.flip .in{position:relative;width:100%;height:100%;min-height:150px;transition:transform .6s;transform-style:preserve-3d}
+.flip.done .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;padding:16px;display:flex;flex-direction:column;justify-content:center}
+.flip .f{background:var(--paper);border:1px solid var(--line)}
+.flip .b{transform:rotateY(180deg)}
+.flip .b.ok{background:var(--green-soft)} .flip .b.no{background:var(--coral-soft)}
+.tree{display:flex;flex-direction:column;align-items:center;gap:10px}
+.tree .row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.tree .node{border-radius:14px;padding:12px 16px;text-align:center;max-width:280px}
+.arrow{font-size:22px;color:var(--muted)}
+.progressbar{height:3px;background:var(--teal);position:absolute;top:0;left:0;transition:width .4s}
+.toc{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-top:16px}
+.toc button{text-align:left;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:12px;padding:10px 12px;font-size:14px}
+.toc button b{color:var(--teal);margin-right:6px}
+.blot{display:grid;grid-template-columns:90px repeat(4,1fr);gap:8px;align-items:center}
+.band{height:22px;border-radius:6px;background:var(--ink);transition:opacity .6s,transform .6s}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 5px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <span class="brand">🔎 The Seatbelt Inspector</span>
+    <span class="chap" id="chap"></span>
+    <button class="iconbtn" id="tocBtn" title="All chapters">☰ Chapters</button>
+    <button class="iconbtn" id="themeBtn" title="Light / dark">◐</button>
+  </header>
+  <main class="stage" id="stage">
+    <div class="progressbar" id="pbar"></div>
+
+<!-- 1 -->
+<section class="slide" data-title="Welcome">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">A story in 20 short chapters</span>
+      <h1>One child, one tiny typo, and one test before any medicine</h1>
+      <p class="lead">This is the long, friendly version of our 4-minute pitch. No science background needed. Every strange word has a dotted line: hover or tap it and a plain explanation pops up.</p>
+      <div class="story">Somewhere there is a child who grows slowly, whose muscles tire easily, and whose doctors are worried about cancer later in life. Their DNA was read letter by letter. Our job: turn those letters into a clear, safe next step.</div>
+      <p class="small">How to move: <kbd>→</kbd> / <kbd>Space</kbd> next · <kbd>←</kbd> back · or the buttons below. Drag any 3D scene to spin it.</p>
+      <div class="btnrow"><button class="btn on" onclick="go(1)">Start the story →</button><button class="btn" onclick="openToc()">Jump to a chapter</button></div>
+    </div>
+    <div class="three" data-scene="cell" data-mode="intro"><div class="caption3d">A cell about to split in two</div><div class="hint">drag to rotate</div><div class="fallback">3D view needs WebGL. The story works without it.</div></div>
+  </div>
+</section>
+
+<!-- 2 -->
+<section class="slide" data-title="Your body is a city of cells">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 1 · The setting</span>
+      <h2>Your body is a city of about 37 trillion tiny workers</h2>
+      <p>Each worker is a <span class="term" data-t="cell">cell</span>. To grow, heal and replace old ones, cells make copies of themselves: one cell splits into two.</p>
+      <div class="analogy"><span class="em">🏙️</span><div>Think of a city that has to keep building new workers every second. Each new worker must get a <b>complete instruction manual</b> or it will do its job badly.</div></div>
+      <p>Press the button and watch a single cell become many. Each split doubles the count.</p>
+      <div class="btnrow"><button class="btn" id="splitBtn">Split all cells</button><button class="btn" id="splitReset">Reset</button></div>
+      <p class="big" id="splitCount">1 cell</p>
+      <p class="small" id="splitNote">After about 45 rounds of doubling you would pass the number of cells in a human body.</p>
+    </div>
+    <canvas class="sim" id="splitCanvas" width="560" height="420"></canvas>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="slide" data-title="The instruction books">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 2 · The instruction manual</span>
+      <h2>Inside every cell: 46 instruction books</h2>
+      <p>The manual is called <span class="term" data-t="dna">DNA</span>. It is split into 46 volumes called <span class="term" data-t="chromosome">chromosomes</span>, in 23 pairs: one of each pair from mum, one from dad.</p>
+      <p>A <span class="term" data-t="gene">gene</span> is one recipe inside a book. Each recipe tells the cell how to build one machine, called a <span class="term" data-t="protein">protein</span>.</p>
+      <div class="analogy"><span class="em">📚</span><div><b>DNA</b> = the whole library · <b>chromosome</b> = one book · <b>gene</b> = one recipe · <b>protein</b> = the machine the recipe builds.</div></div>
+      <p>Before a cell splits, it photocopies all 46 books. Then it has 92, and it must hand <b>exactly 46</b> to each new cell. That handing-over is where our story happens.</p>
+    </div>
+    <div class="three" data-scene="dna" data-mode="plain"><div class="caption3d">DNA: a twisted ladder of 4 letters</div><div class="hint">drag to rotate</div><div class="fallback">3D view needs WebGL.</div></div>
+  </div>
+</section>
+
+<!-- 4 -->
+<section class="slide" data-title="Meet the seatbelt inspector">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 3 · The hero of the story</span>
+      <h2>Meet BubR1, the cell's seatbelt inspector</h2>
+      <p>When a cell splits, ropes pull each copied book to opposite sides. Before the ropes pull, a protein called <span class="term" data-t="bubr1">BubR1</span> walks down the line and checks that <b>every</b> book is clipped to a rope.</p>
+      <div class="analogy"><span class="em">🎢</span><div>Like the attendant on a roller-coaster who checks every seatbelt before the ride starts. If one belt is open, the ride waits.</div></div>
+      <p><b>Try it:</b> run the split with the inspector on, then switch it off. Watch which new cell ends up with too many or too few books.</p>
+      <div class="btnrow"><button class="btn on" data-insp="on">Inspector ON</button><button class="btn coral" data-insp="off">Inspector OFF</button><button class="btn" id="replayCell">↻ Replay split</button></div>
+      <p class="small" id="inspNote">Inspector on: both new cells get exactly the right set.</p>
+    </div>
+    <div class="three" data-scene="cell" data-mode="divide"><div class="caption3d" id="cellCap">Inspector ON</div><div class="hint">drag to rotate</div><div class="fallback">3D view needs WebGL.</div></div>
+  </div>
+</section>
+
+<!-- 5 -->
+<section class="slide" data-title="When the inspector is weak">
+  <div class="wrap">
+    <span class="kicker">Chapter 4 · The illness</span>
+    <h2>A weak inspector means cells with the wrong number of books</h2>
+    <p class="lead">Scientists call this mistake <span class="term" data-t="aneuploidy">aneuploidy</span>. When the inspector is weak in the whole body, the result is a rare condition called <span class="term" data-t="mva">MVA</span> (mosaic variegated aneuploidy). "Mosaic" means some cells are fine and some are not, like a patchwork.</p>
+    <div class="grid3" style="margin-top:18px">
+      <div class="card teal"><div class="big">📏</div><h3>Slow growth</h3><p>Cells with wrong book counts work badly or die, so the body grows more slowly. The head is often small (microcephaly).</p></div>
+      <div class="card gold"><div class="big">💪</div><h3>Weak muscles</h3><p>Tissue that needs a lot of healthy cells, like muscle, is affected. Our child has muscle wasting.</p></div>
+      <div class="card coral"><div class="big">⚠️</div><h3>Cancer risk</h3><p>Cells with scrambled books can grow out of control. Children with MVA can get cancers early, so safety matters a lot.</p></div>
+    </div>
+    <h3 style="margin-top:26px">Play with the patchwork</h3>
+    <p class="small">Each square is a cell. Slide the inspector's strength down and watch the mosaic of wrong cells (orange) appear.</p>
+    <div class="grid2" style="align-items:center">
+      <canvas class="sim" id="mosaicCanvas" width="560" height="260"></canvas>
+      <div><label><b>Inspector strength: <span id="strengthVal">100%</span></b></label><input type="range" id="strength" min="0" max="100" value="100"><p class="small" id="mosaicNote"></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="slide" data-title="Two copies of the recipe">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 5 · What went wrong in this child</span>
+      <h2>Two copies of the recipe, and both are damaged</h2>
+      <p>Everyone has <b>two copies</b> of the BubR1 recipe (the gene is called <span class="term" data-t="bub1b">BUB1B</span>): one from mum, one from dad. One good copy is usually enough. This child inherited a different mistake on each copy.</p>
+      <div class="btnrow"><button class="btn coral on" data-copy="1">Copy 1: the stop sign</button><button class="btn violet" data-copy="2">Copy 2: the one-letter typo</button></div>
+      <div class="card coral" id="copy1"><h3>🛑 Copy 1: a stop sign halfway</h3><p>A single letter change turns a normal word into "STOP" in the middle of the recipe. The cell has a quality check that notices recipes stopping too early and <b>shreds them</b> (<span class="term" data-t="nmd">nonsense-mediated decay</span>). So copy 1 makes almost nothing.</p></div>
+      <div class="card violet" id="copy2" style="display:none"><h3>✏️ Copy 2: one wrong letter</h3><p>One letter is swapped, so one building block of the protein is different (a <span class="term" data-t="missense">missense</span> change). The recipe is still read, and the cell still builds the inspector, but with one wrong part, in the section called the <span class="term" data-t="pseudokinase">pseudokinase</span> domain.</p></div>
+      <div class="story">So the child's whole supply of inspectors comes from copy 2. If we want to help, copy 2 is the only lever left.</div>
+    </div>
+    <div class="three" data-scene="dna" data-mode="copies"><div class="caption3d" id="dnaCap">Copy 1: the stop sign</div><div class="hint">drag to rotate</div><div class="fallback">3D view needs WebGL.</div></div>
+  </div>
+</section>
+
+<!-- 7 -->
+<section class="slide" data-title="How do we know? The mouse twin">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 6 · Double-checking the diagnosis</span>
+      <h2>A "twin" among 76,699 mice</h2>
+      <p>The DNA pointed at BUB1B. But we wanted a second, independent check that did <b>not</b> use the DNA at all.</p>
+      <p>Doctors describe symptoms with a standard list of terms (<span class="term" data-t="hpo">HPO terms</span>). The child has 8 of them. Scientists have described 76,699 kinds of genetically changed mice the same way. We asked a computer: which mouse looks most like this child?</p>
+      <div class="card green"><div class="big">top 1%</div><p>The best-matching group included a mouse that makes only about <b>10% of the normal inspector</b> (the <i>Bub1b</i> "hypomorph" mouse). It ranked #758 of 76,699.</p></div>
+      <p class="small">Why it matters: the child's body behaves like "too little inspector", not "no inspector at all". Having zero is lethal before birth, so a weak copy 2 fits.</p>
+    </div>
+    <div>
+      <canvas class="sim" id="mouseCanvas" width="560" height="420"></canvas>
+      <div class="btnrow"><button class="btn" id="mouseRun">▶ Search all mice</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section class="slide" data-title="Proteins are origami">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 7 · How a recipe becomes a machine</span>
+      <h2>A protein is a chain of beads that folds into a shape</h2>
+      <p>The cell reads the recipe and strings together beads called <span class="term" data-t="aa">amino acids</span>. BubR1 is a chain of <b>1,050 beads</b>. The chain then folds itself into a precise 3D shape, like origami. The shape is what lets it do its job.</p>
+      <div class="analogy"><span class="em">🦢</span><div>A sheet of paper is useless until folded into a crane. One wrong crease can make the whole crane collapse.</div></div>
+      <div class="btnrow"><button class="btn on" data-fold="unfold">1 · Fresh chain</button><button class="btn" data-fold="fold">2 · Fold it</button></div>
+      <p class="small">In the child, one of the 1,050 beads is the wrong type, and it sits <b>buried deep inside</b> the folded core, not on the surface.</p>
+    </div>
+    <div class="three" data-scene="fold" data-mode="intro"><div class="caption3d">BubR1-like chain (simplified)</div><div class="hint">drag to rotate</div><div class="fallback">3D view needs WebGL.</div></div>
+  </div>
+</section>
+
+<!-- 9 -->
+<section class="slide" data-title="The one big question">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 8 · The question everything depends on</span>
+      <h2>Does the typo make the inspector <span style="color:var(--coral)">crumple</span>, or make it <span style="color:var(--violet)">lazy</span>?</h2>
+      <p>A wrong bead can break a protein in two very different ways. Click each one:</p>
+      <div class="btnrow"><button class="btn on" data-fold="fold">Healthy</button><button class="btn coral" data-fold="crumple">Crumples (unstable)</button><button class="btn violet" data-fold="lazy">Folded but lazy (inactive)</button></div>
+      <div class="card" id="qText"><b>Healthy:</b> folds correctly, lasts a normal time, does its checking job.</div>
+      <div class="grid2" style="gap:12px;margin-top:14px">
+        <div class="card coral"><div class="big">55%</div><p><b>Crumples.</b> The cell's recycling bin (the <span class="term" data-t="proteasome">proteasome</span>) throws it out too soon. <b>Fix:</b> protect it so it lasts longer.</p></div>
+        <div class="card violet"><div class="big">45%</div><p><b>Lazy.</b> Keeps its shape but doesn't check properly. <b>Fix:</b> making more won't help; clean up the damage it leaves behind instead.</p></div>
+      </div>
+      <p class="small">55/45 is our honest starting guess, not a measurement. The rest of the story is about how we tested that guess and what we propose to measure.</p>
+    </div>
+    <div class="three" data-scene="fold" data-mode="question"><div class="caption3d" id="foldCap">Healthy</div><div class="hint">drag to rotate</div><div class="fallback">3D view needs WebGL.</div></div>
+  </div>
+</section>
+
+<!-- 10 -->
+<section class="slide" data-title="A computer scores every possible typo">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 9 · Asking a computer</span>
+      <h2>We scored all 19,950 possible typos</h2>
+      <p>Each of the 1,050 beads could be swapped for 19 other kinds: 1,050 × 19 = <b>19,950</b> possible one-letter typos. A computer model called <span class="term" data-t="thermompnn">ThermoMPNN</span> looked at a predicted 3D shape of BubR1 and estimated how much each typo weakens the fold.</p>
+      <p>The score is in <span class="term" data-t="ddg">kcal/mol</span>. Think of it as "how much glue was lost". Bigger number = shakier fold.</p>
+      <div class="card gold"><div class="big">+1.55</div><p>The child's typo. It is more damaging than <b>87 out of every 100</b> possible typos (87.3rd percentile).</p></div>
+      <p><b>Try it:</b> drag the slider to pick a typo score and see where it falls.</p>
+      <input type="range" id="ddgSlider" min="-1.5" max="4" step="0.05" value="1.55">
+      <p id="ddgNote" class="small"></p>
+    </div>
+    <canvas class="sim" id="histCanvas" width="560" height="420"></canvas>
+  </div>
+</section>
+
+<!-- 11 -->
+<section class="slide" data-title="Can we trust the computer?">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 10 · Grading the computer</span>
+      <h2>Can we trust the computer? We gave it an exam</h2>
+      <p>Other families with MVA have published 8 BubR1 typos where a lab measured the answer: <b>5 crumple, 3 stay stable</b>. We hid the answers and let the computer guess.</p>
+      <p>The grade is called <span class="term" data-t="auroc">AUROC</span>. Here is the idea as a game: take one "crumple" typo and one "stable" typo. Does the computer give the crumple one the bigger score? Do this for every pair. <b>0.5 = coin flip, 1.0 = perfect.</b></p>
+      <div class="btnrow"><button class="btn" id="pairBtn">🎲 Draw a random pair</button></div>
+      <p id="pairNote" class="small">8 typos give only 5 × 3 = 15 pairs.</p>
+      <div class="card coral"><div class="big">0.60</div><p>On the 8 BubR1 cases. Slightly better than a coin flip, but with so few examples the true grade could be anywhere from 0.13 to 1.00. <b>Too few to decide.</b></p></div>
+    </div>
+    <canvas class="sim" id="pairCanvas" width="560" height="420"></canvas>
+  </div>
+</section>
+
+<!-- 12 -->
+<section class="slide" data-title="A bigger exam: 11 other proteins">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 11 · A fairer exam</span>
+      <h2>A much bigger exam: 18,825 measured typos in 11 other proteins</h2>
+      <p>Labs have measured, typo by typo, which changes make other proteins disappear from cells. We took 11 such proteins, kept only typos buried in the core (like the child's), and asked the same computer.</p>
+      <div class="grid2" style="gap:12px">
+        <div class="card green"><div class="big">0.76</div><p>Typical grade across the 11 proteins. The computer <b>does</b> spot fold-breaking typos.</p></div>
+        <div class="card gold"><div class="big">31–88%</div><p>Chance that a typo like the child's makes a <i>new</i> protein disappear. Proteins differ too much to narrow it.</p></div>
+      </div>
+      <div class="analogy"><span class="em">🌦️</span><div>A weather app that is right most days in 11 cities still can't promise rain in a 12th city it has never seen. It can only say "somewhere between 31% and 88%".</div></div>
+      <p><b>So we kept 55/45.</b> The computer narrowed things, but it can't answer the question for this child. Only a measurement in the child's own cells can.</p>
+    </div>
+    <div>
+      <canvas class="sim" id="cityCanvas" width="560" height="420"></canvas>
+      <p class="small">Each bar is one protein's grade (0.65 to 0.85). Gold band: the range of answers for a new protein at the child's score.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 13 -->
+<section class="slide" data-title="Trying to prove ourselves wrong">
+  <div class="wrap">
+    <span class="kicker">Chapter 12 · Honesty as a method</span>
+    <h2>We wrote down 21 predictions <i>before</i> testing them. 8 were wrong.</h2>
+    <p class="lead">It is easy to fool yourself by looking at results first and telling a story afterwards. So we wrote each prediction down, with what would count as failure, and then ran the test. Wrong predictions were kept, not hidden. Click the cards to see how some turned out.</p>
+    <div class="grid3" style="margin-top:16px">
+      <div class="flip"><div class="in"><div class="f"><b>Prediction</b><p>"Four different computer search methods will agree on the same drugs."</p><span class="small">click to reveal</span></div><div class="b no"><b>❌ Wrong</b><p>Their agreement was no better than chance (p = 0.263). So agreement is not used as evidence.</p></div></div></div>
+      <div class="flip"><div class="in"><div class="f"><b>Prediction</b><p>"Making the cell read through the stop sign (copy 1) could help."</p><span class="small">click to reveal</span></div><div class="b no"><b>❌ Futile</b><p>It would add far too little protein to matter. That route is dropped.</p></div></div></div>
+      <div class="flip"><div class="in"><div class="f"><b>Prediction</b><p>"The child's symptoms will match a weak-inspector mouse."</p><span class="small">click to reveal</span></div><div class="b ok"><b>✅ Supported</b><p>Top 1% of 76,699 mice, independent of the DNA.</p></div></div></div>
+      <div class="flip"><div class="in"><div class="f"><b>Prediction</b><p>"Drugs that block cell division are a safe option."</p><span class="small">click to reveal</span></div><div class="b no"><b>❌ Wrong, and dangerous</b><p>33 of 34 such drugs do worse in cells like the child's. They go on the do-not-give list.</p></div></div></div>
+      <div class="flip"><div class="in"><div class="f"><b>Prediction</b><p>"The computer's fold score will cleanly separate the 8 known BubR1 typos."</p><span class="small">click to reveal</span></div><div class="b no"><b>❌ Not proven</b><p>Grade 0.60 on 8 cases: too few. Reported as a failure, not dressed up.</p></div></div></div>
+      <div class="flip"><div class="in"><div class="f"><b>Prediction</b><p>"The method will work on a second disease."</p><span class="small">click to reveal</span></div><div class="b ok"><b>✅ Mostly</b><p>Ran on Bloom syndrome in under an hour. Our "no code change needed" claim was wrong, so we fixed that.</p></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 -->
+<section class="slide" data-title="The candidate medicines">
+  <div class="wrap">
+    <span class="kicker">Chapter 13 · What could help</span>
+    <h2>Two families of ideas, one for each answer</h2>
+    <p class="lead">We searched public databases of drugs, lab experiments and mouse studies: 52 candidates in total. Two kinds of evidence rose to the top, and they match the two possible answers to the big question.</p>
+    <div class="grid2" style="margin-top:14px">
+      <div class="card coral"><span class="pill coral">If it crumples</span><h3>🛡️ Protect the inspector: NMN / vitamin B3-type boosters</h3><p>In mice with a weak inspector, these boosters raised a helper protein (<span class="term" data-t="sirt2">SIRT2</span>) that shields BubR1 from being thrown away. The mice lived about <b>twice as long</b>. They work on the protein's surface, so they don't need a pocket at the typo.</p></div>
+      <div class="card violet"><span class="pill violet">If it is lazy</span><h3>🧹 Clean up the damage: dasatinib</h3><p>A weak inspector leaves behind worn-out "zombie" cells (<span class="term" data-t="senescent">senescent cells</span>). In mice, clearing those cells eased the damage. Dasatinib is an approved drug that clears such cells in research settings.</p></div>
+    </div>
+    <h3 style="margin-top:24px">The trust dial</h3>
+    <p>One lab screen found two everyday pills that raised the inspector by <b>about 15%</b>, but in a single run whose own control check failed. How much should that count against a whole-animal result? Turn the dial and see who wins.</p>
+    <div class="grid2" style="align-items:center">
+      <div><input type="range" id="trust" min="0" max="100" value="25"><p><b>Trust in the one-off screen: <span id="trustVal">0.25</span></b></p><p class="small">We set it low (0.25). The winner only changes if you trust the screen above 0.69.</p></div>
+      <div class="card" id="trustWin"></div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 -->
+<section class="slide" data-title="First, do no harm">
+  <div class="wrap">
+    <span class="kicker">Chapter 14 · Safety first</span>
+    <h2>For a fragile child, what <i>not</i> to give matters just as much</h2>
+    <div class="grid3" style="margin-top:12px">
+      <div class="card coral"><span class="pill coral">DO NOT</span><h3>Drugs that block cell division</h3><p>A whole class of cancer drugs works by jamming the very checkpoint the inspector runs. In cells like the child's, 33 of 34 make things worse. Excluded.</p></div>
+      <div class="card gold"><span class="pill gold">MONITOR</span><h3>Vincristine</h3><p>A common chemotherapy. Flagged twice: by the child's DNA and by the child's existing muscle weakness, a known side effect. If ever needed, watch closely.</p></div>
+      <div class="card teal"><span class="pill teal">ORDER A TEST</span><h3>5 drug-handling genes</h3><p>The child's DNA file covers only 20 of 1,223 positions that decide how the body processes drugs (1.6%). So we don't guess: we ask for a small, standard 5-gene test.</p></div>
+    </div>
+    <h3 style="margin-top:22px">How much of the drug-safety map is visible?</h3>
+    <canvas class="sim" id="safetyCanvas" width="1100" height="180"></canvas>
+    <p class="small">Each tiny square is one position on the drug-safety map. Teal = we can read it in the child's file. Grey = unknown.</p>
+  </div>
+</section>
+
+<!-- 16 -->
+<section class="slide" data-title="Test once before you treat">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 15 · The answer: a test, not a guess</span>
+      <h2>Stop the factory and watch the inspector disappear</h2>
+      <p>The lab test is called a <span class="term" data-t="chx">cycloheximide chase</span>. Take a few skin cells from the child (and from a parent for comparison). Add a chemical that stops the cell from making <b>new</b> proteins. Then measure how much inspector is left after 0, 2, 4 and 8 hours.</p>
+      <div class="analogy"><span class="em">🧊</span><div>Like turning off the ice machine and timing how fast the ice cubes melt. Fast melting means the cubes were fragile.</div></div>
+      <div class="btnrow"><button class="btn coral on" data-blot="unstable">If it crumples</button><button class="btn violet" data-blot="stable">If it is lazy</button><button class="btn" id="blotPlay">▶ Play the 8 hours</button></div>
+      <p class="small">A second dish with a recycling-bin blocker (MG132) checks that the disappearance really comes from the bin.</p>
+    </div>
+    <div class="card">
+      <h3>The lab picture (a "Western blot")</h3>
+      <div class="blot" id="blot">
+        <b class="small">Hours</b><b class="small">0 h</b><b class="small">2 h</b><b class="small">4 h</b><b class="small">8 h</b>
+        <span class="small">Parent</span><div class="band" data-r="p0"></div><div class="band" data-r="p1"></div><div class="band" data-r="p2"></div><div class="band" data-r="p3"></div>
+        <span class="small">Child</span><div class="band" data-r="c0"></div><div class="band" data-r="c1"></div><div class="band" data-r="c2"></div><div class="band" data-r="c3"></div>
+      </div>
+      <p id="blotNote" style="margin-top:14px"></p>
+      <p class="small">Illustration only: no real blot has been run yet. Culturing the cells and reading the result takes about 1–2 weeks.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 17 -->
+<section class="slide" data-title="The decision rule">
+  <div class="wrap">
+    <span class="kicker">Chapter 16 · A rule, not a ranking</span>
+    <h2>Instead of a list of drugs, we hand doctors a rule</h2>
+    <p class="lead">A maths tool called <span class="term" data-t="voi">value of information</span> asks: "Which single test would remove the most guesswork before choosing?" The answer is this one blot. In our main scenario it removes about 69% of the guesswork, and none of it depends on the stop-sign copy.</p>
+    <div class="tree" style="margin-top:18px">
+      <div class="node card teal"><b>Step 1</b><br>Run the cycloheximide-chase blot (weeks 1–2)</div>
+      <div class="arrow">↙ ↘</div>
+      <div class="row">
+        <div class="node card coral"><b>Inspector melts away fast</b><br>→ "crumples" now about 87% likely<br>→ research the <b>protect</b> branch (NMN / B3 boosters)</div>
+        <div class="node card violet"><b>Inspector stays steady</b><br>→ "lazy" now about 82% likely<br>→ research the <b>clean-up</b> branch (dasatinib)</div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="node card gold">In every branch: keep the DO-NOT list, watch vincristine, run the 5-gene safety test</div>
+    </div>
+    <div class="quiz card" style="margin-top:22px">
+      <h3>Check yourself</h3>
+      <p>Why don't we simply give the top-ranked drug now?</p>
+      <button class="opt" data-ok="0">Because the computer said 55%, which is a pass.</button>
+      <button class="opt" data-ok="1">Because the best drug depends on an answer we haven't measured yet, and one test can measure it.</button>
+      <button class="opt" data-ok="0">Because drugs are never useful for rare diseases.</button>
+      <p class="fb"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 18 -->
+<section class="slide" data-title="Receipts for every number">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 17 · Why you can check us</span>
+      <h2>Every number comes with a receipt</h2>
+      <p>Each table we made carries a small file, a <span class="term" data-t="manifest">receipt</span>, naming the script that made it and a <span class="term" data-t="sha">fingerprint</span> of every file it used. Change one letter in any input and the fingerprint no longer matches.</p>
+      <div class="grid2" style="gap:12px">
+        <div class="card teal"><div class="big">150</div><p>receipts</p></div>
+        <div class="card gold"><div class="big">&lt;15 s</div><p>to re-run the whole decision analysis on a laptop. Graphics cards were rented only for the protein models.</p></div>
+      </div>
+      <p style="margin-top:12px"><b>Try it:</b> click a claim to follow it back to where it came from.</p>
+      <div class="btnrow"><button class="btn" data-chain="0">"+1.55 fold score"</button><button class="btn" data-chain="1">"69% of the guesswork"</button><button class="btn" data-chain="2">"33 of 34 are worse"</button></div>
+    </div>
+    <div class="card" id="chainBox"><p class="small">Pick a claim on the left.</p></div>
+  </div>
+</section>
+
+<!-- 19 -->
+<section class="slide" data-title="It works for other diseases too">
+  <div class="wrap grid2">
+    <div>
+      <span class="kicker">Chapter 18 · Beyond one child</span>
+      <h2>Not a one-off: the same pipeline on another disease</h2>
+      <p>We pointed the same machinery at <span class="term" data-t="bloom">Bloom syndrome</span>, another rare disorder where chromosomes break easily. It ran from start to finish in <b>under an hour on a laptop, for $0</b>.</p>
+      <p>We had claimed it would need no code changes. That claim was wrong, so we said so and rebuilt the parts that needed it. Now two of the three newer parts pass their checks on the new disease.</p>
+      <div class="story">Every rare-disease family deserves the same careful reading. Tools that are cheap, open and honest about their limits are how that scales.</div>
+    </div>
+    <div class="three" data-scene="cell" data-mode="many"><div class="caption3d">Same method, new disease</div><div class="hint">drag to rotate</div><div class="fallback">3D view needs WebGL.</div></div>
+  </div>
+</section>
+
+<!-- 20 -->
+<section class="slide" data-title="What we ask for">
+  <div class="wrap">
+    <span class="kicker">Chapter 19 · The ask</span>
+    <h2>Three concrete next steps</h2>
+    <div class="grid3" style="margin-top:12px">
+      <div class="card teal"><div class="big">1</div><h3>Order the 5-gene safety test</h3><p>And put the two warnings (do-not-give class, vincristine) in the child's chart today.</p></div>
+      <div class="card gold"><div class="big">2</div><h3>Run the one lab test</h3><p>The cycloheximide-chase blot on the child's and a parent's skin cells. Let the result pick the branch.</p></div>
+      <div class="card green"><div class="big">3</div><h3>Use and check our work</h3><p>Everything is open, with receipts. Anyone can re-run it.</p></div>
+    </div>
+    <div class="card coral" style="margin-top:20px"><b>Important:</b> these are research ideas to test, not prescriptions. Nothing here tells anyone to give any medicine to any patient. All probabilities are stated assumptions for sorting ideas, not proven chances of benefit.</div>
+    <div class="quiz card" style="margin-top:18px">
+      <h3>Final check: in one sentence, what is the story?</h3>
+      <button class="opt" data-ok="0">A computer found the cure for MVA.</button>
+      <button class="opt" data-ok="1">The child's only working copy of the inspector has a typo; we can't tell if it crumples or is lazy, so one lab test should decide before any medicine is chosen.</button>
+      <button class="opt" data-ok="0">The child should start NMN immediately.</button>
+      <p class="fb"></p>
+    </div>
+  </div>
+</section>
+
+<!-- 21 -->
+<section class="slide" data-title="Glossary">
+  <div class="wrap">
+    <span class="kicker">Appendix · Every word in one place</span>
+    <h2>Glossary</h2>
+    <div class="grid3" id="glossary"></div>
+  </div>
+</section>
+
+  </main>
+  <footer class="bottom">
+    <button class="nav ghost" id="prev">← Back</button>
+    <div class="dots" id="dots"></div>
+    <button class="nav" id="next">Next →</button>
+  </footer>
+</div>
+<div class="tip" id="tip"></div>
+<dialog id="tocDlg" style="border:0;border-radius:18px;max-width:900px;width:92vw;background:var(--paper);color:var(--ink)">
+  <h2>Chapters</h2><div class="toc" id="toc"></div>
+  <div class="btnrow"><button class="btn" onclick="document.getElementById('tocDlg').close()">Close</button></div>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ---------------- glossary ---------------- */
+const G = {
+  cell:["Cell","The smallest living unit. Your body has about 37 trillion."],
+  dna:["DNA","The instruction manual inside every cell, written in 4 letters: A, C, G, T."],
+  chromosome:["Chromosome","One 'volume' of the DNA manual. Humans have 46, in 23 pairs."],
+  gene:["Gene","One recipe in the manual. It tells the cell how to build one protein."],
+  protein:["Protein","A tiny machine built from a gene's recipe. It does a job in the cell."],
+  bubr1:["BubR1","The 'seatbelt inspector' protein. It stops a cell from splitting until every chromosome is attached to the pulling ropes."],
+  bub1b:["BUB1B","The name of the gene (recipe) that builds BubR1."],
+  aneuploidy:["Aneuploidy","A cell with the wrong number of chromosomes, too many or too few."],
+  mva:["MVA","Mosaic variegated aneuploidy: a rare inherited condition where many cells end up with the wrong chromosome count."],
+  nmd:["Nonsense-mediated decay","The cell's shredder for recipes that stop too early."],
+  missense:["Missense change","A one-letter typo that swaps one building block of a protein for another."],
+  pseudokinase:["Pseudokinase domain","A folded region at the end of BubR1. The child's typo is buried inside it."],
+  hpo:["HPO terms","A standard dictionary doctors use to describe symptoms, so computers can compare patients."],
+  aa:["Amino acid","One bead in a protein chain. There are 20 kinds."],
+  proteasome:["Proteasome","The cell's recycling bin. It shreds damaged or unwanted proteins."],
+  thermompnn:["ThermoMPNN","A published computer model that predicts how much a typo weakens a protein's fold."],
+  ddg:["ΔΔG (kcal/mol)","'How much glue was lost' when a typo is introduced. Larger positive = shakier fold."],
+  auroc:["AUROC","A grade for a yes/no predictor: 0.5 is a coin flip, 1.0 is perfect."],
+  sirt2:["SIRT2","A helper protein that removes a tag from BubR1, so the recycling bin leaves it alone. Fuelled by vitamin B3-type molecules (NAD+)."],
+  senescent:["Senescent cells","Worn-out 'zombie' cells that stopped dividing but linger and cause harm around them."],
+  chx:["Cycloheximide chase","A lab test: stop the cell making new protein, then measure how fast the existing protein disappears."],
+  voi:["Value of information","A maths tool that ranks tests by how much guesswork they remove before a decision."],
+  manifest:["Receipt (provenance manifest)","A small file stored next to each result, listing the script and input files that produced it."],
+  sha:["Fingerprint (SHA-256)","A short code computed from a file. Change one byte and the code changes completely."],
+  bloom:["Bloom syndrome","Another rare inherited disorder, caused by a different gene (BLM), where chromosomes break easily."]
+};
+const tip = document.getElementById('tip');
+document.querySelectorAll('.term').forEach(el => {
+  const g = G[el.dataset.t]; if (!g) return;
+  const show = e => { tip.innerHTML = '<b>'+g[0]+'</b><br>'+g[1]; tip.classList.add('on');
+    const r = el.getBoundingClientRect(); tip.style.left = Math.min(innerWidth-320, Math.max(8, r.left))+'px'; tip.style.top = (r.bottom+8)+'px'; };
+  el.addEventListener('mouseenter', show); el.addEventListener('mouseleave', () => tip.classList.remove('on'));
+  el.addEventListener('click', e => { e.stopPropagation(); tip.classList.contains('on') ? tip.classList.remove('on') : show(); });
+});
+document.getElementById('glossary').innerHTML = Object.values(G).sort((a,b)=>a[0].localeCompare(b[0])).map(g=>'<div class="card"><h3>'+g[0]+'</h3><p class="small" style="color:var(--ink)">'+g[1]+'</p></div>').join('');
+
+/* ---------------- theme helpers ---------------- */
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+document.getElementById('themeBtn').onclick = () => {
+  const r = document.documentElement, dark = matchMedia('(prefers-color-scheme: dark)').matches;
+  const cur = r.dataset.theme || (dark ? 'dark' : 'light');
+  r.dataset.theme = cur === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem('seatbelt-theme', r.dataset.theme); } catch (e) {}
+  redrawAll(); three.forEach(t => t.recolor && t.recolor());
+};
+try { const t = localStorage.getItem('seatbelt-theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+
+/* ---------------- navigation ---------------- */
+const slides = [...document.querySelectorAll('.slide')];
+let cur = 0;
+const dots = document.getElementById('dots');
+slides.forEach((s, i) => { const d = document.createElement('button'); d.className = 'dot'; d.title = s.dataset.title; d.onclick = () => go(i); dots.appendChild(d); });
+document.getElementById('toc').innerHTML = slides.map((s,i)=>'<button onclick="go('+i+');document.getElementById(\'tocDlg\').close()"><b>'+(i+1)+'</b>'+s.dataset.title+'</button>').join('');
+function openToc(){ document.getElementById('tocDlg').showModal(); }
+document.getElementById('tocBtn').onclick = openToc;
+function go(i) {
+  cur = Math.max(0, Math.min(slides.length-1, i));
+  slides.forEach((s, k) => s.classList.toggle('on', k === cur));
+  [...dots.children].forEach((d, k) => d.classList.toggle('on', k === cur));
+  document.getElementById('chap').textContent = (cur+1)+' / '+slides.length+' · '+slides[cur].dataset.title;
+  document.getElementById('prev').disabled = cur === 0;
+  document.getElementById('next').disabled = cur === slides.length-1;
+  document.getElementById('pbar').style.width = (100*(cur+1)/slides.length)+'%';
+  try { history.replaceState(null, '', '#'+(cur+1)); } catch (e) {}
+  onEnter(slides[cur]);
+}
+document.getElementById('prev').onclick = () => go(cur-1);
+document.getElementById('next').onclick = () => go(cur+1);
+addEventListener('keydown', e => {
+  if (e.target.tagName === 'INPUT') return;
+  if (['ArrowRight','PageDown',' '].includes(e.key)) { e.preventDefault(); go(cur+1); }
+  if (['ArrowLeft','PageUp'].includes(e.key)) { e.preventDefault(); go(cur-1); }
+});
+let tx = null;
+document.getElementById('stage').addEventListener('touchstart', e => { if (!e.target.closest('.three,input')) tx = e.touches[0].clientX; }, {passive:true});
+document.getElementById('stage').addEventListener('touchend', e => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 70) go(cur + (dx < 0 ? 1 : -1)); tx = null; });
+
+/* ---------------- 2D canvas helpers ---------------- */
+function ctxOf(id){ const c = document.getElementById(id); const x = c.getContext('2d'); return [c, x]; }
+function clear(c, x){ x.clearRect(0,0,c.width,c.height); x.fillStyle = css('--paper'); x.fillRect(0,0,c.width,c.height); }
+function rng(seed){ let s = seed>>>0; return () => (s = (s*1664525+1013904223)>>>0)/4294967296; }
+
+/* split sim */
+let splitN = 0;
+function drawSplit(){
+  const [c,x] = ctxOf('splitCanvas'); clear(c,x);
+  const shown = Math.min(Math.pow(2, splitN), 256), cols = Math.ceil(Math.sqrt(shown)), cell = Math.min(c.width, c.height-20)/cols;
+  for (let i=0;i<shown;i++){ const cx=(i%cols+.5)*cell+(c.width-cols*cell)/2, cy=(Math.floor(i/cols)+.5)*cell+10;
+    x.beginPath(); x.arc(cx,cy,cell*.42,0,7); x.fillStyle=css('--teal-soft'); x.fill(); x.strokeStyle=css('--teal'); x.lineWidth=Math.max(1,cell*.05); x.stroke();
+    x.beginPath(); x.arc(cx,cy,cell*.13,0,7); x.fillStyle=css('--violet'); x.fill(); }
+  if (Math.pow(2, splitN) > 256){ x.fillStyle=css('--muted'); x.font='14px Inter'; x.fillText('(showing 256, the rest are off-screen)',12,c.height-6); }
+  const n = Math.pow(2, splitN);
+  document.getElementById('splitCount').textContent = n.toLocaleString()+(n===1?' cell':' cells');
+}
+document.getElementById('splitBtn').onclick = () => { splitN = Math.min(splitN+1, 45); drawSplit(); };
+document.getElementById('splitReset').onclick = () => { splitN = 0; drawSplit(); };
+
+/* mosaic */
+function drawMosaic(){
+  const [c,x] = ctxOf('mosaicCanvas'); clear(c,x);
+  const s = +document.getElementById('strength').value, r = rng(7), n = 28, m = 13, w = c.width/n, h = c.height/m; let bad = 0;
+  for (let i=0;i<n;i++) for (let j=0;j<m;j++){ const isBad = r()*100 > s*0.97+3 || (s<100 && r()<(100-s)/400);
+    if (isBad) bad++; x.fillStyle = isBad ? css('--coral') : css('--teal-soft'); x.fillRect(i*w+1.5,j*h+1.5,w-3,h-3); }
+  document.getElementById('strengthVal').textContent = s+'%';
+  document.getElementById('mosaicNote').textContent = s===100 ? 'Healthy inspector: practically every cell gets the right set.' :
+    Math.round(100*bad/(n*m))+'% of cells have the wrong count. Toy picture, not real numbers: it shows why "mosaic" is the name.';
+}
+document.getElementById('strength').oninput = drawMosaic;
+
+/* mouse search */
+let mouseAnim = null;
+function drawMouse(progress){
+  const [c,x] = ctxOf('mouseCanvas'); clear(c,x);
+  const r = rng(3), N = 900, shown = Math.floor(N*progress);
+  for (let i=0;i<shown;i++){ const px = 20+r()*(c.width-40), py = 40+r()*(c.height-110); x.fillStyle = css('--line'); x.fillRect(px,py,4,4); }
+  x.fillStyle = css('--muted'); x.font = '14px Inter';
+  x.fillText('Each dot ≈ 85 mouse types (76,699 in total)', 20, 24);
+  if (progress >= 1){ const px = c.width*0.72, py = 110;
+    x.beginPath(); x.arc(px,py,16,0,7); x.fillStyle = css('--green'); x.fill();
+    x.fillStyle = css('--ink'); x.font = '600 15px Inter'; x.fillText('Bub1b "weak inspector" mouse', px-150, py+38); x.font='14px Inter'; x.fillText('rank #758 of 76,699 · top 1%', px-150, py+58);
+    x.fillStyle = css('--teal'); x.fillRect(20, c.height-50, (c.width-40)*0.0099, 20); x.strokeStyle = css('--line'); x.strokeRect(20, c.height-50, c.width-40, 20);
+    x.fillStyle = css('--muted'); x.fillText('the top 1% sliver (left) vs all mice', 20, c.height-12); }
+}
+document.getElementById('mouseRun').onclick = () => { cancelAnimationFrame(mouseAnim); const t0 = performance.now();
+  const step = t => { const p = Math.min(1,(t-t0)/1800); drawMouse(p); if (p<1) mouseAnim = requestAnimationFrame(step); }; mouseAnim = requestAnimationFrame(step); };
+
+/* ddG histogram (shape approximates the published atlas: peak near 0, long right tail) */
+const hist = (() => { const r = rng(11), v = []; for (let i=0;i<19950;i++){ let z = (r()+r()+r()+r()-2)*0.8; if (r()<0.35) z = Math.abs(z)*1.6+0.3; v.push(z+0.05); } return v; })();
+const p87 = (() => { const s = [...hist].sort((a,b)=>a-b); return s; })();
+function pct(v){ let lo=0, hi=p87.length; while(lo<hi){ const m=(lo+hi)>>1; if(p87[m]<v) lo=m+1; else hi=m; } return 100*lo/p87.length; }
+function drawHist(){
+  const [c,x] = ctxOf('histCanvas'); clear(c,x);
+  const v = +document.getElementById('ddgSlider').value, lo=-1.5, hi=4, B=55, bins=new Array(B).fill(0);
+  hist.forEach(h => { const b = Math.floor((h-lo)/(hi-lo)*B); if (b>=0&&b<B) bins[b]++; });
+  const mx = Math.max(...bins), W = (c.width-60)/B, H = c.height-90;
+  bins.forEach((n,i) => { const bx = 40+i*W, center = lo+(i+.5)*(hi-lo)/B; x.globalAlpha = .7; x.fillStyle = center < v ? css('--teal') : css('--coral'); x.fillRect(bx, 30+H-n/mx*H, W-1, n/mx*H); x.globalAlpha = 1; });
+  const gx = val => 40+(val-lo)/(hi-lo)*(c.width-60);
+  x.strokeStyle = css('--gold'); x.lineWidth = 3; x.beginPath(); x.moveTo(gx(1.55),24); x.lineTo(gx(1.55),30+H); x.stroke();
+  x.fillStyle = css('--gold'); x.font = '600 13px Inter'; x.fillText("child's typo +1.55", gx(1.55)+6, 40);
+  x.strokeStyle = css('--ink'); x.lineWidth = 2; x.setLineDash([5,4]); x.beginPath(); x.moveTo(gx(v),24); x.lineTo(gx(v),30+H); x.stroke(); x.setLineDash([]);
+  x.fillStyle = css('--muted'); x.font = '13px Inter'; x.fillText('← sturdier fold', 40, c.height-30); x.fillText('shakier fold →', c.width-130, c.height-30);
+  x.fillText('fold score (kcal/mol)', c.width/2-60, c.height-10);
+  const p = v === 1.55 ? 87.3 : pct(v);
+  document.getElementById('ddgNote').innerHTML = 'A typo scoring <b>'+v.toFixed(2)+'</b> is shakier than about <b>'+Math.round(p)+'%</b> of all possible typos.'+(Math.abs(v-1.55)<.03?' That is the child\'s.':'');
+}
+document.getElementById('ddgSlider').oninput = drawHist;
+
+/* pair game (real ThermoMPNN scores of the 8 published alleles) */
+const alleles = [["I909T",1.941,1],["R727C",0.911,1],["R814H",0.857,1],["L844F",1.513,1],["L1012P",3.105,1],["Y155C",2.225,0],["R550Q",0.039,0],["Q921H",0.976,0]];
+let pairPick = null;
+function drawPairs(){
+  const [c,x] = ctxOf('pairCanvas'); clear(c,x);
+  const gx = v => 50+(v+0.2)/3.5*(c.width-100);
+  x.strokeStyle = css('--line'); x.lineWidth = 2; x.beginPath(); x.moveTo(40,c.height/2); x.lineTo(c.width-40,c.height/2); x.stroke();
+  x.fillStyle = css('--muted'); x.font = '13px Inter'; x.fillText('fold score →', c.width-120, c.height/2+40);
+  alleles.forEach(([n,v,y],i) => { const px = gx(v), py = c.height/2 + (y ? -60 - (i%2)*40 : 60 + (i%2)*40);
+    const hl = pairPick && (pairPick[0]===i || pairPick[1]===i);
+    x.beginPath(); x.arc(px,c.height/2,hl?10:7,0,7); x.fillStyle = y ? css('--coral') : css('--teal'); x.fill();
+    x.strokeStyle = y ? css('--coral') : css('--teal'); x.lineWidth = 1; x.beginPath(); x.moveTo(px,c.height/2); x.lineTo(px,py); x.stroke();
+    x.fillStyle = css('--ink'); x.font = (hl?'700 ':'')+'13px Inter'; x.fillText(n, px-18, py+(y?-4:14)); });
+  x.font = '600 13px Inter'; x.fillStyle = css('--coral'); x.fillText('● crumples (measured)', 40, 26); x.fillStyle = css('--teal'); x.fillText('● stays stable (measured)', 220, 26);
+}
+document.getElementById('pairBtn').onclick = () => {
+  const pos = [0,1,2,3,4], neg = [5,6,7], a = pos[Math.floor(Math.random()*5)], b = neg[Math.floor(Math.random()*3)];
+  pairPick = [a,b]; drawPairs();
+  const ok = alleles[a][1] > alleles[b][1];
+  document.getElementById('pairNote').innerHTML = (ok?'✅ Right: ':'❌ Wrong: ')+'crumpling <b>'+alleles[a][0]+'</b> scored '+alleles[a][1].toFixed(2)+' vs stable <b>'+alleles[b][0]+'</b> '+alleles[b][1].toFixed(2)+'. Across all 15 pairs the computer gets 9 right: 9/15 = 0.60.';
+};
+
+/* 11-protein bars */
+const prots = [["SPIKE",.848],["TPMT",.782],["RHO",.778],["CYP2C9",.773],["NUDT15",.769],["PTEN",.759],["PRKN",.756],["GCK",.737],["VKORC1",.720],["HLA-A",.674],["KCNJ2",.654]];
+function drawCity(){
+  const [c,x] = ctxOf('cityCanvas'); clear(c,x);
+  const top = 30, H = 230, gy = v => top+H-(v-0.4)/0.6*H, W = (c.width-80)/prots.length;
+  const W2 = (c.width-150)/prots.length;
+  prots.forEach(([n,v],i) => { x.fillStyle = css('--teal'); x.fillRect(40+i*W2, gy(v), W2-8, top+H-gy(v));
+    x.save(); x.translate(40+i*W2+W2/2-2, top+H+8); x.rotate(Math.PI/4); x.fillStyle = css('--muted'); x.font='11px Inter'; x.fillText(n,0,0); x.restore(); });
+  [0.5,0.76].forEach((v,k) => { x.strokeStyle = k?css('--green'):css('--ink'); x.lineWidth = 2; x.setLineDash(k?[]:[5,4]); x.beginPath(); x.moveTo(36,gy(v)); x.lineTo(c.width-110,gy(v)); x.stroke(); x.setLineDash([]); x.lineWidth = 1;
+    x.fillStyle = k?css('--green'):css('--ink'); x.font='600 12px Inter'; x.fillText(k?'typical 0.76':'coin flip 0.5', c.width-104, gy(v)+4); });
+  const y0 = 340, x0 = 60, x1 = c.width-30, px = p => x0+p*(x1-x0);
+  x.fillStyle = css('--line'); x.fillRect(x0,y0,x1-x0,14);
+  x.fillStyle = css('--gold'); x.fillRect(px(.31),y0,px(.88)-px(.31),14);
+  x.fillStyle = css('--ink'); x.fillRect(px(.5)-1,y0-6,2,26);
+  x.font='12px Inter'; x.fillStyle=css('--muted'); x.fillText('0%',x0,y0+32); x.fillText('100%',x1-30,y0+32); x.fillText('50/50',px(.5)-16,y0-10);
+  x.fillStyle=css('--gold'); x.font='600 13px Inter'; x.fillText('new protein: 31% – 88%', px(.31), y0+34);
+}
+
+/* trust dial */
+function drawTrust(){
+  const w = +document.getElementById('trust').value/100;
+  document.getElementById('trustVal').textContent = w.toFixed(2);
+  const win = w > 0.6857 ? ['A one-off screen pill','The single lab screen now outweighs the mouse rescue. Risky: it rests on one run with a failed control.','coral']
+                         : ['NMN (vitamin B3-type booster)','The whole-animal rescue stays on top. Among already-approved drugs, dasatinib leads.','green'];
+  const b = document.getElementById('trustWin'); b.className = 'card '+win[2]; b.innerHTML = '<span class="small">Current winner</span><h3>'+win[0]+'</h3><p>'+win[1]+'</p>';
+}
+document.getElementById('trust').oninput = drawTrust;
+
+/* safety grid */
+function drawSafety(){
+  const [c,x] = ctxOf('safetyCanvas'); clear(c,x);
+  const cols = 82, s = c.width/cols, r = rng(5), seen = new Set(); while (seen.size < 20) seen.add(Math.floor(r()*1223));
+  for (let i=0;i<1223;i++){ const cx = (i%cols)*s, cy = Math.floor(i/cols)*s; x.fillStyle = seen.has(i) ? css('--teal') : css('--line'); x.fillRect(cx+1,cy+1,s-2,s-2); }
+}
+
+/* blot */
+let blotMode = 'unstable';
+const decay = { unstable:[1,.45,.2,.05], stable:[1,.92,.85,.75], parent:[1,.9,.82,.7] };
+function setBlot(t){
+  document.querySelectorAll('#blot .band').forEach(b => { const r = b.dataset.r, k = +r[1], show = k <= t;
+    const v = r[0]==='p' ? decay.parent[k] : decay[blotMode][k];
+    b.style.opacity = show ? (0.12+0.88*v) : 0.04; b.style.transform = show ? 'scaleX('+(0.55+0.45*v)+')' : 'scaleX(.5)'; });
+  document.getElementById('blotNote').innerHTML = t < 3 ? 'Watching…' : (blotMode==='unstable'
+    ? '<b style="color:var(--coral)">The child\'s band fades fast.</b> The inspector is being thrown away → "crumples" becomes about 87% likely → research the protect branch.'
+    : '<b style="color:var(--violet)">The child\'s band holds like the parent\'s.</b> The inspector lasts but doesn\'t work → "lazy" becomes about 82% likely → research the clean-up branch.');
+}
+let blotTimer = null;
+document.getElementById('blotPlay').onclick = () => { clearInterval(blotTimer); let t = 0; setBlot(0); blotTimer = setInterval(() => { t++; setBlot(t); if (t>=3) clearInterval(blotTimer); }, 700); };
+document.querySelectorAll('[data-blot]').forEach(b => b.onclick = () => { blotMode = b.dataset.blot; document.querySelectorAll('[data-blot]').forEach(o=>o.classList.toggle('on',o===b)); document.getElementById('blotPlay').click(); });
+
+/* quizzes and flips */
+document.querySelectorAll('.quiz').forEach(q => q.querySelectorAll('.opt').forEach(o => o.onclick = () => {
+  q.querySelectorAll('.opt').forEach(p => p.classList.remove('right','wrong'));
+  const ok = o.dataset.ok === '1'; o.classList.add(ok?'right':'wrong');
+  q.querySelector('.fb').textContent = ok ? 'Exactly right.' : 'Not quite. Try another answer.';
+}));
+document.querySelectorAll('.flip').forEach(f => f.onclick = () => f.classList.toggle('done'));
+
+/* lineage chains */
+const chains = [
+  ['"+1.55 fold score"', ['Public 3D model of BubR1 (AlphaFold, UniProt O60566)','ThermoMPNN run on a rented graphics card (12 seconds)','Table of all 19,950 typo scores, with its fingerprint','The child\'s typo looked up on the laptop only (patient data never leaves)','Claim: +1.55, 87.3rd percentile']],
+  ['"69% of the guesswork"', ['18 input tables, each fingerprinted','One saved decision script, at a recorded code version','Value-of-information table','One row: the blot captures 69.1% (main scenario; it varies with assumptions)','Claim on the slide']],
+  ['"33 of 34 are worse"', ['Public cancer cell-line drug screens (DepMap / PRISM)','Replication script, re-run on 919 cell lines','Table of checkpoint-drug effects in weak-inspector-like cells','33 of 34 drugs worse','Claim: do-not-give list']],
+];
+document.querySelectorAll('[data-chain]').forEach(b => b.onclick = () => {
+  document.querySelectorAll('[data-chain]').forEach(o=>o.classList.toggle('on',o===b));
+  const [t, steps] = chains[+b.dataset.chain];
+  const box = document.getElementById('chainBox');
+  box.innerHTML = '<h3>'+t+'</h3>'+steps.map((s,i)=>'<div class="step" style="display:flex;gap:10px;align-items:center;margin:6px 0"><span class="pill teal">'+(i+1)+'</span><span>'+s+'</span></div>'+(i<steps.length-1?'<div class="step small" style="margin-left:14px">↓</div>':'')).join('');
+  box.querySelectorAll('.step').forEach((e,i)=>setTimeout(()=>e.classList.add('in'),120*i));
+});
+
+function redrawAll(){ drawSplit(); drawMosaic(); drawMouse(0); drawHist(); drawPairs(); drawCity(); drawTrust(); drawSafety(); setBlot(0); }
+
+/* ---------------- 3D scenes ---------------- */
+const three = [];
+function hexColor(v){ return new THREE.Color(v || '#888'); }
+function makeScene(box){
+  const scene = new THREE.Scene(), cam = new THREE.PerspectiveCamera(40, 4/3, .1, 100);
+  cam.position.set(0, 0, 12);
+  const ren = new THREE.WebGLRenderer({antialias:true, alpha:true});
+  ren.setPixelRatio(Math.min(2, devicePixelRatio));
+  box.appendChild(ren.domElement);
+  scene.add(new THREE.AmbientLight(0xffffff, .65));
+  const dl = new THREE.DirectionalLight(0xffffff, .8); dl.position.set(4,6,8); scene.add(dl);
+  const root = new THREE.Group(); scene.add(root);
+  let drag = null, rx = .25, ry = 0, auto = true;
+  box.addEventListener('pointerdown', e => { drag = [e.clientX, e.clientY, rx, ry]; auto = false; box.setPointerCapture(e.pointerId); });
+  box.addEventListener('pointermove', e => { if (!drag) return; ry = drag[3] + (e.clientX-drag[0])*.01; rx = Math.max(-1.2, Math.min(1.2, drag[2] + (e.clientY-drag[1])*.01)); });
+  box.addEventListener('pointerup', () => { drag = null; setTimeout(()=>auto=true, 2500); });
+  const st = { scene, cam, ren, root, box, update: null, t: 0,
+    resize(){ const w = box.clientWidth, h = box.clientHeight; if (!w) return; ren.setSize(w, h, false); cam.aspect = w/h; cam.updateProjectionMatrix(); },
+    frame(dt){ if (auto && !drag) ry += dt*.25; root.rotation.set(rx, ry, 0); st.t += dt; st.update && st.update(dt, st.t); ren.render(scene, cam); } };
+  return st;
+}
+function mat(c, o){ return new THREE.MeshStandardMaterial(Object.assign({color: hexColor(c), roughness:.45, metalness:.05}, o||{})); }
+
+/* chromosome: two crossed rounded rods */
+function chromosome(color){
+  const g = new THREE.Group(), m = mat(color);
+  [-.35,.35].forEach(a => { const arm = new THREE.Group();
+    const cyl = new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,.9,14), m); arm.add(cyl);
+    [-.45,.45].forEach(y => { const s = new THREE.Mesh(new THREE.SphereGeometry(.13,14,10), m); s.position.y = y; arm.add(s); });
+    arm.rotation.z = a; g.add(arm); });
+  return g;
+}
+function buildCell(st, mode){
+  const pal = ['--teal','--coral','--violet','--gold','--green'];
+  const membrane = new THREE.Mesh(new THREE.SphereGeometry(3.7, 48, 32), new THREE.MeshStandardMaterial({color: hexColor(css('--teal')), transparent:true, opacity:.12, roughness:.2, depthWrite:false}));
+  st.root.add(membrane);
+  const n = mode === 'many' ? 0 : 10, chroms = [];
+  for (let i=0;i<n;i++){
+    const c = chromosome(css(pal[i%5]));
+    const home = new THREE.Vector3((Math.random()-.5)*4.5, (Math.random()-.5)*4.5, (Math.random()-.5)*4.5);
+    c.position.copy(home); c.userData = {home, line: new THREE.Vector3(0, (i-(n-1)/2)*.62, 0), wrong: false, side: i%2 ? 1 : -1, spin: Math.random()*6};
+    st.root.add(c); chroms.push(c);
+  }
+  // spindle poles and ropes
+  const poleM = mat(css('--gold')), poles = [-3.3,3.3].map(x => { const p = new THREE.Mesh(new THREE.SphereGeometry(.22,16,12), poleM); p.position.x = x; st.root.add(p); return p; });
+  const ropeM = new THREE.LineBasicMaterial({color: hexColor(css('--muted')), transparent:true, opacity:.6});
+  const ropes = chroms.map(() => { const geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]); const l = new THREE.Line(geo, ropeM); st.root.add(l); return l; });
+  // inspector "badge" that travels down the line
+  const insp = new THREE.Mesh(new THREE.TorusGeometry(.32,.07,10,28), mat(css('--green'), {emissive: hexColor(css('--green')), emissiveIntensity:.4}));
+  st.root.add(insp);
+  st.inspector = true;
+  // many-cells mode: a cluster of small cells
+  const minis = [];
+  if (mode === 'many'){ membrane.visible = false; poles.forEach(p=>p.visible=false); insp.visible = false;
+    for (let i=0;i<26;i++){ const m = new THREE.Mesh(new THREE.SphereGeometry(.55+Math.random()*.25, 24, 16), mat(css(pal[i%5]), {transparent:true, opacity:.85}));
+      const a = Math.random()*6.28, b = Math.acos(2*Math.random()-1), r = 1.2+Math.random()*2.3; m.position.set(r*Math.sin(b)*Math.cos(a), r*Math.cos(b), r*Math.sin(b)*Math.sin(a)); st.root.add(m); minis.push(m); } }
+  st.replay = () => { st.t = 0; chroms.forEach((c,i) => { c.userData.wrong = !st.inspector && (i===2 || i===7); }); };
+  st.replay();
+  const ease = t => t<0 ? 0 : t>1 ? 1 : t*t*(3-2*t);
+  st.update = (dt, t) => {
+    if (mode === 'many'){ minis.forEach((m,i)=>{ const s = 1+.06*Math.sin(t*2+i); m.scale.set(s,s,s); }); return; }
+    const T = (mode === 'intro' ? t*.8 : t) % 9; // cycle: scatter → line up → check → pull → hold
+    const a1 = ease((T-.5)/1.8), a3 = ease((T-4.6)/2.2);
+    chroms.forEach((c,i) => { const u = c.userData;
+      const lined = u.home.clone().lerp(u.line, a1);
+      const pullX = (u.wrong ? -u.side : u.side) * 2.6;
+      // when the inspector is off, the "wrong" ones never attach properly and drift to the wrong pole
+      c.position.set(lined.x + pullX*a3, lined.y*(1-.25*a3), lined.z*(1-a3));
+      c.rotation.z = u.spin + t*.2*(1-a1);
+      const ropeOn = a1 > .9 && (st.inspector || !u.wrong || a3 > 0);
+      const pos = ropes[i].geometry.attributes.position; pos.setXYZ(0, (u.wrong ? -u.side : u.side) * 3.3, 0, 0); pos.setXYZ(1, c.position.x, c.position.y, c.position.z); pos.needsUpdate = true;
+      ropes[i].visible = ropeOn; });
+    const checking = T > 2.3 && T < 4.6;
+    insp.visible = checking && (st.inspector || mode === 'intro');
+    insp.position.set(0, 3 - 6*ease((T-2.3)/2.3), .4); insp.rotation.y = t*3;
+    membrane.scale.set(1+.18*a3, 1-.08*a3, 1-.08*a3);
+  };
+  st.recolor = () => { membrane.material.color = hexColor(css('--teal')); };
+}
+
+function buildDNA(st, mode){
+  const N = 26, R = 1.25, pitch = .34, A = mat(css('--teal')), B = mat(css('--violet'));
+  const letters = [css('--teal'), css('--gold'), css('--violet'), css('--green')];
+  const typo = 15, stop = 12, rungs = [], beads = [];
+  const helix = new THREE.Group(); st.root.add(helix);
+  for (let i=0;i<N;i++){
+    const y = (i-N/2)*pitch, a = i*.55;
+    const p1 = new THREE.Vector3(R*Math.cos(a), y, R*Math.sin(a)), p2 = new THREE.Vector3(-R*Math.cos(a), y, -R*Math.sin(a));
+    const s1 = new THREE.Mesh(new THREE.SphereGeometry(.17,14,10), A), s2 = new THREE.Mesh(new THREE.SphereGeometry(.17,14,10), B);
+    s1.position.copy(p1); s2.position.copy(p2); helix.add(s1, s2); beads.push([s1,s2]);
+    const rung = new THREE.Mesh(new THREE.CylinderGeometry(.07,.07,2*R,8), mat(letters[i%4]));
+    rung.position.set(0,y,0); rung.rotation.z = Math.PI/2; rung.rotation.y = -a; helix.add(rung); rungs.push(rung);
+  }
+  const hiM = mat(css('--coral'), {emissive: hexColor(css('--coral')), emissiveIntensity:.5});
+  helix.rotation.z = .25; helix.scale.setScalar(.72);
+  beads.forEach(pr => pr.forEach(b => b.userData.base = b.position.clone()));
+  st.copy = 1;
+  st.update = (dt, t) => {
+    rungs.forEach((r,i) => { r.scale.set(1,1,1); r.material = r.userData.m || (r.userData.m = r.material); });
+    if (mode === 'copies'){
+      if (st.copy === 1){ // stop sign: everything after the stop is "shredded"
+        rungs[stop].material = hiM; rungs[stop].scale.set(1.8,1.8,1.8);
+        for (let i=stop+1;i<N;i++){ const k = Math.min(1, ((t*.6)%4)/2); const off = (i-stop)*k*.35;
+          beads[i].forEach((b,j) => { b.visible = k < .98; b.position.set(b.userData.base.x + Math.sin(i*7+j)*off, b.userData.base.y - off*.4, b.userData.base.z + Math.cos(i*5+j)*off); });
+          rungs[i].visible = k < .98; rungs[i].position.x = Math.sin(i*7)*off; rungs[i].position.z = Math.cos(i*5)*off; }
+      } else {
+        for (let i=0;i<N;i++){ beads[i].forEach(b=>{ b.visible=true; b.position.copy(b.userData.base); }); rungs[i].visible = true; rungs[i].position.x = 0; rungs[i].position.z = 0; }
+        rungs[typo].material = hiM; const s = 1.3+.4*Math.sin(t*4); rungs[typo].scale.set(s,1,s);
+      }
+    }
+  };
+  st.recolor = () => {};
+}
+
+function buildFold(st, mode){
+  const N = 42, beads = [], r = rng(21);
+  // folded target: points on a compact blob; extended: a straight-ish wave
+  const folded = [], line = [];
+  for (let i=0;i<N;i++){ line.push(new THREE.Vector3((i-N/2)*.32, Math.sin(i*.5)*.4, 0));
+    const a = i*2.4, y = 1-2*(i+.5)/N, rad = Math.sqrt(1-y*y)*1.7; folded.push(new THREE.Vector3(rad*Math.cos(a), y*1.7, rad*Math.sin(a))); }
+  const typo = 21, site = 33;
+  folded[typo] = new THREE.Vector3(.15, .1, .2);
+  const bm = mat(css('--teal')), tm = mat(css('--coral'), {emissive: hexColor(css('--coral')), emissiveIntensity:.5}), sm = mat(css('--green'), {emissive: hexColor(css('--green')), emissiveIntensity:.6});
+  for (let i=0;i<N;i++){ const m = new THREE.Mesh(new THREE.SphereGeometry(.21,16,12), i===typo ? tm : i===site ? sm : bm); st.root.add(m); beads.push(m); }
+  const links = new THREE.Line(new THREE.BufferGeometry().setFromPoints(line), new THREE.LineBasicMaterial({color: hexColor(css('--muted'))})); st.root.add(links);
+  // the recycling bin (proteasome) for the crumple story
+  const bin = new THREE.Mesh(new THREE.CylinderGeometry(.9,.9,1.6,24,1,true), mat(css('--gold'), {side: THREE.DoubleSide, transparent:true, opacity:.55}));
+  bin.position.set(3.4,-1.6,0); bin.visible = false; st.root.add(bin);
+  st.state = mode === 'intro' ? 'unfold' : 'fold'; st.since = 0;
+  let prev = st.state;
+  st.update = (dt) => {
+    if (st.state !== prev){ prev = st.state; st.since = 0; } st.since += dt;
+    const k = Math.min(1, st.since/1.6), e = k*k*(3-2*k);
+    bin.visible = st.state === 'crumple';
+    sm.emissiveIntensity = st.state === 'lazy' ? 0 : .5+.4*Math.sin(st.since*5);
+    sm.color = hexColor(st.state === 'lazy' ? css('--muted') : css('--green'));
+    const pos = links.geometry.attributes.position;
+    beads.forEach((b,i) => {
+      let p;
+      if (st.state === 'unfold') p = line[i].clone().lerp(folded[i], 0);
+      else if (st.state === 'fold' || st.state === 'lazy') p = line[i].clone().lerp(folded[i], st.state==='lazy'?1:e);
+      else { // crumple: loosen, wobble, then get pulled into the bin
+        const loose = folded[i].clone().multiplyScalar(1+.6*e).add(new THREE.Vector3(Math.sin(i*3+st.since*6)*.25*e, Math.cos(i*2+st.since*5)*.25*e, 0));
+        const t2 = Math.max(0, Math.min(1, (st.since-1.8)/1.6)); p = loose.lerp(bin.position.clone().add(new THREE.Vector3(0,.4,0)), t2*t2);
+        b.scale.setScalar(1 - .7*t2);
+      }
+      if (st.state !== 'crumple') b.scale.setScalar(1);
+      b.position.copy(p); pos.setXYZ(i, p.x, p.y, p.z);
+    });
+    pos.needsUpdate = true;
+    if (st.state === 'crumple' && st.since > 5) st.since = 0;
+  };
+  st.recolor = () => {};
+}
+
+function init3D(){
+  if (!window.THREE){ document.querySelectorAll('.three .fallback').forEach(f=>f.style.display='flex'); return; }
+  document.querySelectorAll('.three').forEach(box => {
+    let st; try { st = makeScene(box); } catch (e) { box.querySelector('.fallback').style.display = 'flex'; return; }
+    const kind = box.dataset.scene, mode = box.dataset.mode;
+    if (kind === 'cell') buildCell(st, mode); else if (kind === 'dna') buildDNA(st, mode); else buildFold(st, mode);
+    st.kind = kind; st.mode = mode; st.slide = box.closest('.slide'); st.resize(); three.push(st);
+  });
+  let last = performance.now();
+  const loop = now => { const dt = Math.min(.05, (now-last)/1000); last = now;
+    three.forEach(st => { if (st.slide.classList.contains('on')) st.frame(dt); });
+    requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+  addEventListener('resize', () => three.forEach(s => s.resize()));
+}
+function sceneOn(slideEl){ return three.find(s => s.slide === slideEl); }
+
+/* scene controls */
+document.querySelectorAll('[data-insp]').forEach(b => b.onclick = () => {
+  const on = b.dataset.insp === 'on'; document.querySelectorAll('[data-insp]').forEach(o=>o.classList.toggle('on',o===b));
+  const st = sceneOn(b.closest('.slide')); if (st){ st.inspector = on; st.replay(); }
+  document.getElementById('cellCap').textContent = on ? 'Inspector ON' : 'Inspector OFF';
+  document.getElementById('inspNote').innerHTML = on ? 'Inspector on: both new cells get exactly the right set.' : '<b style="color:var(--coral)">Inspector off:</b> two loose books are never clipped in, get dragged to the wrong side, and one new cell ends up with extras while the other is missing some.';
+});
+document.getElementById('replayCell').onclick = e => { const st = sceneOn(e.target.closest('.slide')); st && st.replay(); };
+document.querySelectorAll('[data-copy]').forEach(b => b.onclick = () => {
+  const c = +b.dataset.copy; document.querySelectorAll('[data-copy]').forEach(o=>o.classList.toggle('on',o===b));
+  document.getElementById('copy1').style.display = c===1?'':'none'; document.getElementById('copy2').style.display = c===2?'':'none';
+  document.getElementById('dnaCap').textContent = c===1 ? 'Copy 1: the stop sign (shredded)' : 'Copy 2: one wrong letter (glowing)';
+  const st = sceneOn(b.closest('.slide')); if (st){ st.copy = c; st.t = 0; }
+});
+const foldText = { fold:'<b>Healthy:</b> folds correctly, lasts a normal time, and its working spot (green) does the checking job.',
+  crumple:'<b style="color:var(--coral)">Crumples:</b> the wrong bead (red) loosens the core, the shape wobbles, and the recycling bin (gold) pulls it in. Too few inspectors are left.',
+  lazy:'<b style="color:var(--violet)">Folded but lazy:</b> the shape holds and the protein lasts, but its working spot goes dark (grey). Plenty of inspectors, none doing the job well.', unfold:'' };
+document.querySelectorAll('[data-fold]').forEach(b => b.onclick = () => {
+  const slide = b.closest('.slide'); slide.querySelectorAll('[data-fold]').forEach(o=>o.classList.toggle('on',o===b));
+  const st = sceneOn(slide); if (st) st.state = b.dataset.fold;
+  const q = slide.querySelector('#qText'); if (q) q.innerHTML = foldText[b.dataset.fold];
+  const cap = slide.querySelector('#foldCap'); if (cap) cap.textContent = b.textContent;
+});
+
+function onEnter(slide){
+  const st = sceneOn(slide); if (st){ st.resize(); if (st.replay) st.replay(); }
+  if (slide.querySelector('#mouseCanvas')) setTimeout(()=>document.getElementById('mouseRun').click(), 400);
+  if (slide.querySelector('#blot')) setTimeout(()=>document.getElementById('blotPlay').click(), 400);
+}
+
+redrawAll();
+init3D();
+const start = parseInt((location.hash||'').slice(1), 10);
+go(isFinite(start) && start > 0 ? start-1 : 0);
+</script>
+</body>
+</html>
