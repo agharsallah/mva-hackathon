@@ -3,7 +3,7 @@
 <rect width="1200" height="540" fill="#f8fafc" rx="12"/>
 <rect x="20" y="16" width="1160" height="52" rx="8" fill="#0f172a"/>
 <text x="38" y="40" font-size="17" font-weight="700" fill="#ffffff">
-  MVA Track 2 Unified Synthesis — From Two Broken BUB1B Copies to a 48-Hour Protocol
+  MVA Track 2 Unified Synthesis — From Two Broken BUB1B Copies to a Weeks 1–2 Protocol
 </text>
 <text x="38" y="58" font-size="12" fill="#94a3b8">
   Why Copy #1 cannot rescue the child, why Copy #2 favors distal Lys668 NAD+/SIRT2
@@ -68,18 +68,18 @@
 <rect x="605" y="82" width="575" height="412" rx="10" fill="#ffffff"
   stroke="#cbd5e1" stroke-width="1.5"/>
 <text x="621" y="108" font-size="15" font-weight="700" fill="#0f172a">
-  B. Clinical Tumor Board Protocol — "Test Once Before You Treat"
+  B. Research Triage Protocol — "Test Once Before You Treat"
 </text>
 <rect x="621" y="122" width="543" height="68" rx="8" fill="#fefce8"
   stroke="#eab308" stroke-width="1.8"/>
 <text x="635" y="143" font-size="13" font-weight="700" fill="#854d0e">
-  STEP 1 — Run 48-Hour Cycloheximide-Chase BubR1 Western Blot ($300, Patient vs Parent)
+  STEP 1 — Run Weeks 1–2 Cycloheximide-Chase BubR1 Western Blot ($300, Patient vs Parent)
 </text>
 <text x="635" y="162" font-size="11.5" fill="#713f12">
   • 100% of uncertainty (EVPI = 0.1800) sits on Missense Unstable (55%) vs Inactive (45%)
 </text>
 <text x="635" y="178" font-size="11.5" fill="#713f12">
-  • One 48h blot captures 69.1% of total decision value (EVSI = 0.1245) before dosing
+  • One weeks 1–2 blot captures 69.1% of total decision value (EVSI = 0.1245) before preclinical selection
 </text>
 <rect x="621" y="202" width="264" height="128" rx="8" fill="#ecfdf5"
   stroke="#10b981" stroke-width="1.5"/>
@@ -87,10 +87,10 @@
   IF UNSTABLE (t½ &lt; WT, P=0.55)
 </text>
 <text x="633" y="241" font-size="11" font-weight="600" fill="#065f46">
-  1. Nicotinamide (10–20 mg/kg/d PO)
+  1. Nicotinamide (research hypothesis)
 </text>
 <text x="633" y="257" font-size="11" font-weight="600" fill="#065f46">
-     or Niacin / NMN (u=0.4800)
+     or Niacin (u=.192); NMN (u=.480)
 </text>
 <text x="633" y="275" font-size="10.5" fill="#047857">
      3-iteration consensus NAD+/SIRT2 rescue
@@ -162,7 +162,7 @@
   • ANAESTHESIA: RYR1 VUS (avoid volatile)
 </text>
 <text x="24" y="518" font-size="11.5" fill="#475569">
-  Legend: Green = actionable therapeutic rescue • Yellow = 48h diagnostic decision gate
+  Legend: Green = research hypotheses • Yellow = weeks 1–2 diagnostic decision gate
   (EVSI = 69.1% of EVPI) • Blue = senolytic lead • Purple = raw input • Red = contraindicated
 </text>
 </svg>

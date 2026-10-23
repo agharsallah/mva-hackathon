@@ -1,13 +1,13 @@
 {
   "name": "r6-pitch-overview",
-  "built_at": "2026-10-21T07:46:35+00:00",
+  "built_at": "2026-10-22T14:54:31+00:00",
   "built_by": "tools/render_track2_pitch_slides.py",
-  "code_version": "fb9c708",
+  "code_version": "0656cf0",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "inputs": [
     {
       "path": "ressources/track2/it5/unified/unified_summary.json",
-      "sha256": "91a851f900cdc47e14413f9ddc02c1e927ee71123cd1bfa3fdb7b776e78f2409"
+      "sha256": "7cb275e6dcd74af944ec72686116906b2403529b9dd32e9a393bad6c88295af0"
     },
     {
       "path": "ressources/track2/it5/unified/structural_pocket_audit.tsv",
@@ -15,7 +15,7 @@
     },
     {
       "path": "ressources/track2/it5/unified/paediatric_pkpd_dosing.tsv",
-      "sha256": "da6eec0e8495a68651379ade33ef444d1434276aa8584608dd615cdcbf4e1daf"
+      "sha256": "a0fb4bac9ce88cdd92d3d6f8e2b3fd2a859bab47944e1fbd11e4a4ab3d62b9cd"
     }
   ],
   "entry": "docs/iteration5/step-1/methodology/163-cross-iteration-synthesis-and-calibrated-decision-analysis.md",

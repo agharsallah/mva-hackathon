@@ -12,6 +12,8 @@ Writes under ``ressources/track2/it5/unified/``:
   * ``model_comparison.tsv`` (+ ``.provenance.json``)
   * ``route_weight_sweep.tsv`` (+ ``.provenance.json``)
   * ``unified_summary.json``
+  * ``multidimensional_sensitivity.tsv`` and ``sensitivity_summary.json``:
+    full 7,425-point joint assumption grid (coverage, not probability/confidence)
 
 Usage::
 
@@ -33,6 +35,7 @@ from mva.drugs.unified_clinical import (
     POCKET_COLUMNS,
     build_clinical_tables,
 )
+from mva.drugs.unified_sensitivity import SENSITIVITY_COLUMNS
 from mva.drugs.unified_synthesis import (
     CANDIDATE_COLUMNS,
     COMPARISON_COLUMNS,
@@ -165,6 +168,25 @@ def main(argv: list[str] | None = None) -> int:
         inputs,
         "sweep route:R2 weight across [0.05, 1.00] in 0.05 increments holding R1=1.00, R3=1.00",
     )
+    sensitivity = result["sensitivity"]
+    sensitivity_path = out_dir / "multidimensional_sensitivity.tsv"
+    write_tsv(sensitivity_path, SENSITIVITY_COLUMNS, sensitivity["rows"])
+    sensitivity_summary_path = out_dir / "sensitivity_summary.json"
+    sensitivity_summary_path.write_text(
+        json.dumps(sensitivity["summary"], indent=2) + "\n", encoding="utf-8"
+    )
+    provenance.write(
+        {
+            **provenance.envelope("multidimensional_sensitivity", TOOL),
+            "inputs": inputs,
+            "method": sensitivity["summary"],
+            "outputs": [
+                provenance.output(sensitivity_path, len(sensitivity["rows"])),
+                provenance.output(sensitivity_summary_path, 1),
+            ],
+        },
+        sensitivity_path.with_suffix(".provenance.json"),
+    )
     pocket_path = _write_table_with_manifest(
         out_dir / "structural_pocket_audit.tsv",
         POCKET_COLUMNS,
@@ -205,10 +227,21 @@ def main(argv: list[str] | None = None) -> int:
         "calibrated_states": result["calibrated"]["states"],
         "calibrated_voi": result["calibrated"]["voi"],
         "uncalibrated_voi": result["uncalibrated"]["voi"],
+        "sensitivity": sensitivity["summary"],
     }
     summary_path.write_text(json.dumps(summary_doc, indent=2) + "\n", encoding="utf-8")
 
-    for p in (cand_path, comp_path, sweep_path, pocket_path, bench_path, pkpd_path, summary_path):
+    for p in (
+        cand_path,
+        comp_path,
+        sweep_path,
+        pocket_path,
+        bench_path,
+        pkpd_path,
+        summary_path,
+        sensitivity_path,
+        sensitivity_summary_path,
+    ):
         print(f"wrote {provenance.repo_relative(p)}")
     print(f"\nUnified ledger: {len(result['ledger'])} drugs across Iterations 2, 4, and 5")
     for row in result["comparison"]:

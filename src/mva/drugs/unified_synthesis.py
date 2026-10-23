@@ -18,6 +18,7 @@ from mva.drugs import decision_avoid, decision_config
 from mva.drugs.decision_io import expand_aliases, read_candidates, read_safety, read_tsv
 from mva.drugs.decision_model import DecisionConfig, drug_key
 from mva.drugs.decision_run import analyse
+from mva.drugs.unified_sensitivity import build_sensitivity
 
 __all__ = [
     "CALIBRATED_ROUTE_WEIGHTS",
@@ -317,6 +318,7 @@ def build_synthesis(
         "uncalibrated": uncal,
         "calibrated": cal,
         "raw_config": raw,
+        "sensitivity": build_sensitivity(cal_cfg, rows, merged_safety),
     }
 
 
@@ -330,7 +332,9 @@ _CMP_NOTES = {
     "evpi (value of perfect information)": "resolving missense_class adds +0.1800 over baseline",
     "evppi_share_on_missense_class": "100% of information value sits on missense_class",
     "evsi_blot_chx (cycloheximide-chase blot)": "flip at P=0.5362 raises blot EVSI to 69.1%",
-    "evsi_readthrough_reporter": "stop readthrough reporter has zero EVSI under dosage gap",
+    "evsi_readthrough_reporter": (
+        "zero follows the fixed feasibility prior/action structure, not empirical assay validation"
+    ),
     "flip_threshold_p_unstable": "both flip points lie inside blot [0.177, 0.874] posteriors",
 }
 

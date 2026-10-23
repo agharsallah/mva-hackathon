@@ -1,8 +1,8 @@
 {
   "name": "route_weight_sweep",
-  "built_at": "2026-10-20T19:30:05+00:00",
+  "built_at": "2026-10-23T14:52:49+00:00",
   "built_by": "tools/it5_unified_synthesis.py",
-  "code_version": "fb9c708",
+  "code_version": "629a501",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "entry": "docs/iteration5/step-1/methodology/163-cross-iteration-synthesis-and-calibrated-decision-analysis.md",
   "method": "sweep route:R2 weight across [0.05, 1.00] in 0.05 increments holding R1=1.00, R3=1.00",

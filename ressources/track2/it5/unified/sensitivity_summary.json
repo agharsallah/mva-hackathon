@@ -1,0 +1,593 @@
+{
+  "interpretation": "Unweighted coverage of an explicitly specified Cartesian assumption grid; not probability, confidence, empirical assay validation or clinical benefit.",
+  "recommendation_definitions": {
+    "recommendation_changed_from_canonical": "Scenario pre-test expected-utility maximizing action differs from canonical pre-test NMN; not a state-branch comparison.",
+    "assay_changes_recommendation": "At least one positive-probability assay outcome selects a different action from that same scenario's pre-test maximizing action."
+  },
+  "grid": {
+    "prior:missense_class=unstable": [
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8
+    ],
+    "test:chx_chase_blot:sensitivity": [
+      0.6,
+      0.75,
+      0.85,
+      0.95,
+      0.99
+    ],
+    "test:chx_chase_blot:specificity": [
+      0.6,
+      0.75,
+      0.85,
+      0.95,
+      0.99
+    ],
+    "route:R2": [
+      0.05,
+      0.25,
+      1.0
+    ],
+    "safety:unassessed": [
+      0.3,
+      0.6,
+      1.0
+    ],
+    "applicability:missense_inactive:missense_class=unstable": [
+      0.0,
+      0.25,
+      0.5
+    ]
+  },
+  "utility_rationale": {
+    "route:R2": "strong discount, hierarchy calibration, and no discount",
+    "safety:unassessed": "conservative, canonical, and no safety discount",
+    "applicability:missense_inactive:missense_class=unstable": "canonical zero, 0.25, and 0.50 cross-state benefit for inactive-branch drugs"
+  },
+  "fixed": "Other canonical coefficients, independent state priors, max evidence combination and readthrough prior remain unchanged; R1=R3=1.",
+  "canonical": {
+    "best_action": "NMN",
+    "eu_baseline": 0.264,
+    "evpi": 0.18000000000000005,
+    "evsi_blot": 0.12445499999999998,
+    "evsi_share_of_evpi": 0.6914166666666663,
+    "captures_half_evpi": true,
+    "positive_p_unstable": 0.8738317757009346,
+    "negative_p_unstable": 0.17741935483870971,
+    "positive_action": "NMN",
+    "negative_action": "DASATINIB",
+    "assay_changes_recommendation": true,
+    "evsi_readthrough": 0.0
+  },
+  "canonical_parameters": {
+    "prior_unstable": 0.55,
+    "blot_sensitivity": 0.85,
+    "blot_specificity": 0.85,
+    "route_weights": {
+      "R1": 1.0,
+      "R2": 0.25,
+      "R3": 1.0
+    },
+    "unassessed_safety": 0.6,
+    "inactive_branch_unstable_applicability": 0.0
+  },
+  "n_grid": 7425,
+  "n_positive_evpi": 7425,
+  "n_captures_half_evpi": 3815,
+  "fraction_grid_captures_half_evpi": 0.5138047138047138,
+  "fraction_positive_evpi_captures_half_evpi": 0.5138047138047138,
+  "n_recommendation_changed_from_canonical": 4525,
+  "fraction_grid_recommendation_changed_from_canonical": 0.6094276094276094,
+  "n_assay_changes_recommendation": 5996,
+  "fraction_grid_assay_changes_recommendation": 0.8075420875420876,
+  "best_action_counts": {
+    "DASATINIB": 3325,
+    "NMN": 2900,
+    "GLICLAZIDE": 1200
+  },
+  "ranges": {
+    "eu_baseline": [
+      0.192,
+      0.6400000000000001
+    ],
+    "evpi": [
+      0.01200000000000001,
+      0.24
+    ],
+    "evsi_blot": [
+      0.0,
+      0.23519999999999996
+    ],
+    "evsi_share_of_evpi": [
+      0.0,
+      0.9799999999999999
+    ],
+    "positive_p_unstable": [
+      0.391304347826087,
+      0.9974811083123426
+    ],
+    "negative_p_unstable": [
+      0.004310344827586211,
+      0.7272727272727273
+    ],
+    "evsi_readthrough": [
+      0.0,
+      1.1102230246251565e-16
+    ]
+  },
+  "exact_prior_recommendation_segments": [
+    {
+      "route:R2": 0.05,
+      "safety:unassessed": 0.3,
+      "applicability:missense_inactive:missense_class=unstable": 0.0,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.7905138339920948,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.7905138339920948,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.05,
+      "safety:unassessed": 0.3,
+      "applicability:missense_inactive:missense_class=unstable": 0.25,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.7905138339920948,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.7905138339920948,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.05,
+      "safety:unassessed": 0.3,
+      "applicability:missense_inactive:missense_class=unstable": 0.5,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.9090909090909092,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.9090909090909092,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.05,
+      "safety:unassessed": 0.6,
+      "applicability:missense_inactive:missense_class=unstable": 0.0,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.5361930294906166,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.5361930294906166,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.05,
+      "safety:unassessed": 0.6,
+      "applicability:missense_inactive:missense_class=unstable": 0.25,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.5361930294906166,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.5361930294906166,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.05,
+      "safety:unassessed": 0.6,
+      "applicability:missense_inactive:missense_class=unstable": 0.5,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.5882352941176472,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.5882352941176472,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.05,
+      "safety:unassessed": 1.0,
+      "applicability:missense_inactive:missense_class=unstable": 0.0,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.37523452157598497,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.37523452157598497,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.05,
+      "safety:unassessed": 1.0,
+      "applicability:missense_inactive:missense_class=unstable": 0.25,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.37523452157598497,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.37523452157598497,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.05,
+      "safety:unassessed": 1.0,
+      "applicability:missense_inactive:missense_class=unstable": 0.5,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.4,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.4,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.25,
+      "safety:unassessed": 0.3,
+      "applicability:missense_inactive:missense_class=unstable": 0.0,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.7905138339920948,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.7905138339920948,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.25,
+      "safety:unassessed": 0.3,
+      "applicability:missense_inactive:missense_class=unstable": 0.25,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.7905138339920948,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.7905138339920948,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.25,
+      "safety:unassessed": 0.3,
+      "applicability:missense_inactive:missense_class=unstable": 0.5,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.9090909090909092,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.9090909090909092,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.25,
+      "safety:unassessed": 0.6,
+      "applicability:missense_inactive:missense_class=unstable": 0.0,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.5361930294906166,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.5361930294906166,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.25,
+      "safety:unassessed": 0.6,
+      "applicability:missense_inactive:missense_class=unstable": 0.25,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.5361930294906166,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.5361930294906166,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.25,
+      "safety:unassessed": 0.6,
+      "applicability:missense_inactive:missense_class=unstable": 0.5,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.5882352941176472,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.5882352941176472,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.25,
+      "safety:unassessed": 1.0,
+      "applicability:missense_inactive:missense_class=unstable": 0.0,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.37523452157598497,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.37523452157598497,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.25,
+      "safety:unassessed": 1.0,
+      "applicability:missense_inactive:missense_class=unstable": 0.25,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.37523452157598497,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.37523452157598497,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 0.25,
+      "safety:unassessed": 1.0,
+      "applicability:missense_inactive:missense_class=unstable": 0.5,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.4,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.4,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 1.0,
+      "safety:unassessed": 0.3,
+      "applicability:missense_inactive:missense_class=unstable": 0.0,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.4140786749482402,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.4140786749482402,
+          "end": 1.0,
+          "action": "GLICLAZIDE"
+        }
+      ]
+    },
+    {
+      "route:R2": 1.0,
+      "safety:unassessed": 0.3,
+      "applicability:missense_inactive:missense_class=unstable": 0.25,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.4140786749482402,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.4140786749482402,
+          "end": 1.0,
+          "action": "GLICLAZIDE"
+        }
+      ]
+    },
+    {
+      "route:R2": 1.0,
+      "safety:unassessed": 0.3,
+      "applicability:missense_inactive:missense_class=unstable": 0.5,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.44444444444444453,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.44444444444444453,
+          "end": 1.0,
+          "action": "GLICLAZIDE"
+        }
+      ]
+    },
+    {
+      "route:R2": 1.0,
+      "safety:unassessed": 0.6,
+      "applicability:missense_inactive:missense_class=unstable": 0.0,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.4140786749482402,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.4140786749482402,
+          "end": 1.0,
+          "action": "GLICLAZIDE"
+        }
+      ]
+    },
+    {
+      "route:R2": 1.0,
+      "safety:unassessed": 0.6,
+      "applicability:missense_inactive:missense_class=unstable": 0.25,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.4140786749482402,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.4140786749482402,
+          "end": 1.0,
+          "action": "GLICLAZIDE"
+        }
+      ]
+    },
+    {
+      "route:R2": 1.0,
+      "safety:unassessed": 0.6,
+      "applicability:missense_inactive:missense_class=unstable": 0.5,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.44444444444444453,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.44444444444444453,
+          "end": 1.0,
+          "action": "GLICLAZIDE"
+        }
+      ]
+    },
+    {
+      "route:R2": 1.0,
+      "safety:unassessed": 1.0,
+      "applicability:missense_inactive:missense_class=unstable": 0.0,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.37523452157598497,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.37523452157598497,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 1.0,
+      "safety:unassessed": 1.0,
+      "applicability:missense_inactive:missense_class=unstable": 0.25,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.37523452157598497,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.37523452157598497,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    },
+    {
+      "route:R2": 1.0,
+      "safety:unassessed": 1.0,
+      "applicability:missense_inactive:missense_class=unstable": 0.5,
+      "segments": [
+        {
+          "start": 0.0,
+          "end": 0.4,
+          "action": "DASATINIB"
+        },
+        {
+          "start": 0.4,
+          "end": 1.0,
+          "action": "NMN"
+        }
+      ]
+    }
+  ],
+  "prior_flip_threshold_range": [
+    0.37523452157598497,
+    0.9090909090909092
+  ],
+  "structural_caveats": "Zero readthrough EVSI follows the fixed derived feasibility prior and action structure, not empirical proof of assay uselessness. EVPI=0.18 is invariant only on the original route-only sweep, not this joint grid."
+}

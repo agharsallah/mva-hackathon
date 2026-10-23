@@ -345,8 +345,9 @@ def _build_pkpd() -> list[dict[str, Any]]:
             "t1/2 ~4 hours, 90% unchanged renal clearance)",
             "broad distribution into total body water and peripheral tissues "
             "(`Vd ~76-133 L`); zero hepatic CYP metabolism (no CYP3A5 interaction)",
-            "raises endogenous BubR1 protein +1.44 log2FC (2.7x) in Gygi-10k HCT116 "
-            "proteome (PMID 38942016); indirect proteostasis/chaperone candidate",
+            "endogenous BubR1 raw +0.20 log2FC in Gygi-10k HCT116 proteome "
+            "(PMID 38942016); indirect proteostasis/chaperone candidate; "
+            "single dataset, no independent replication",
             "CHX-chase + 24h drug-pulse Western blot in patient fibroblasts confirming "
             "BubR1 rescue + baseline eGFR (>=30 mL/min/1.73m^2)",
             "renal function (eGFR/creatinine); no hypoglycaemia or hepatic CYP "
@@ -361,8 +362,8 @@ def _build_pkpd() -> list[dict[str, Any]]:
             "scored immediate-release tablet (halved/quartered and given with carbohydrate meal)",
             "extracellular and peripheral tissue distribution (`Vd ~13-24 L`, 95% "
             "albumin-bound); acts on pancreatic/muscle K_ATP (SUR1/SUR2) channels",
-            "raises endogenous BubR1 protein +1.47 log2FC (2.8x, rank #4/8,793) in "
-            "Gygi-10k HCT116 proteome (PMID 38942016)",
+            "endogenous BubR1 raw +0.22 log2FC in Gygi-10k HCT116 proteome "
+            "(PMID 38942016); single dataset, no independent replication",
             "CHX-chase + 24h drug-pulse Western blot in patient cells + CYP2C9 genotyping "
             "+ inpatient fasted/fed glucose safety protocol",
             "STRICT capillary/CGM blood glucose monitoring (hypoglycaemia risk via SUR1 "

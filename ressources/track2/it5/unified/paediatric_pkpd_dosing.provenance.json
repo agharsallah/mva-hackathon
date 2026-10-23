@@ -1,8 +1,8 @@
 {
   "name": "paediatric_pkpd_dosing",
-  "built_at": "2026-10-20T19:30:05+00:00",
+  "built_at": "2026-10-23T14:52:49+00:00",
   "built_by": "tools/it5_unified_synthesis.py",
-  "code_version": "fb9c708",
+  "code_version": "629a501",
   "code_version_note": "the commit at build time, which precedes the commit that lands this file",
   "entry": "docs/iteration5/step-1/methodology/163-cross-iteration-synthesis-and-calibrated-decision-analysis.md",
   "method": "compile paediatric dosing (mg/kg, mg/m^2), oral formulations, muscle/CNS exposure, mandatory PGx gates, and clinical monitoring for top Iteration 6 leads",
@@ -83,8 +83,8 @@
   "outputs": [
     {
       "path": "ressources/track2/it5/unified/paediatric_pkpd_dosing.tsv",
-      "sha256": "da6eec0e8495a68651379ade33ef444d1434276aa8584608dd615cdcbf4e1daf",
-      "bytes": 6662,
+      "sha256": "a0fb4bac9ce88cdd92d3d6f8e2b3fd2a859bab47944e1fbd11e4a4ab3d62b9cd",
+      "bytes": 6699,
       "rows": 8
     }
   ],
