@@ -56,6 +56,7 @@ LANE_BUDGET_USD: dict[str, float] = {
     "evo2": 18.0,
     "boltz2": 6.0,
     "api": 1.0,
+    "esm2": 5.0,  # iteration-6 model-generation check (protocol ceiling, 2026-10-22)
 }
 
 #: Measured GPU seconds exclude cold start and the idle window before scale-down; the guard
