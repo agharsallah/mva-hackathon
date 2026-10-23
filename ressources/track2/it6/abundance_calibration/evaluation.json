@@ -1,0 +1,882 @@
+{
+  "n_candidate_assays": 13,
+  "n_surviving_proteins": 11,
+  "n_total_single_variants": 52016,
+  "n_total_buried_variants": 18825,
+  "excluded_under_50_buried": [
+    "ERBB2_HUMAN_Elazar_2016",
+    "LYAM1_HUMAN_Elazar_2016"
+  ],
+  "summary_all_11_proteins": {
+    "median_auroc_buried": 0.7588,
+    "median_auroc_buried_ci95": [
+      0.7198,
+      0.7783
+    ],
+    "mean_auroc_buried": 0.7499,
+    "min_auroc_buried": 0.6543,
+    "max_auroc_buried": 0.8483,
+    "median_auroc_all_residues": 0.7928,
+    "median_auroc_all_residues_ci95": [
+      0.7413,
+      0.81
+    ]
+  },
+  "summary_intracellular_7_proteins": {
+    "n_proteins": 7,
+    "median_auroc_buried": 0.7588,
+    "median_auroc_buried_ci95": [
+      0.7365,
+      0.7732
+    ],
+    "calibration_at_1_55": {
+      "target_ddg_kcal_mol": 1.55,
+      "beta0": -0.9902,
+      "beta1": 0.9269,
+      "p_low_abundance": 0.6098,
+      "cluster_bootstrap_ci95": [
+        0.4801,
+        0.7324
+      ],
+      "lopo_median_p": 0.5979,
+      "lopo_range_p": [
+        0.5781,
+        0.6632
+      ],
+      "lopo_mean_brier": 0.2145,
+      "lopo_median_brier": 0.2043,
+      "lopo_folds": [
+        {
+          "held_out_dms_id": "CP2C9_HUMAN_Amorosi_2021_abundance",
+          "beta0": -1.04,
+          "beta1": 0.9079,
+          "p_low_at_target": 0.5908,
+          "brier_buried": 0.1913
+        },
+        {
+          "held_out_dms_id": "HXK4_HUMAN_Gersing_2023_abundance",
+          "beta0": -0.8904,
+          "beta1": 0.9392,
+          "p_low_at_target": 0.6377,
+          "brier_buried": 0.2357
+        },
+        {
+          "held_out_dms_id": "NUD15_HUMAN_Suiter_2020",
+          "beta0": -0.9394,
+          "beta1": 0.9082,
+          "p_low_at_target": 0.615,
+          "brier_buried": 0.199
+        },
+        {
+          "held_out_dms_id": "PRKN_HUMAN_Clausen_2023",
+          "beta0": -1.1748,
+          "beta1": 0.9613,
+          "p_low_at_target": 0.5781,
+          "brier_buried": 0.2043
+        },
+        {
+          "held_out_dms_id": "PTEN_HUMAN_Matreyek_2021",
+          "beta0": -1.0419,
+          "beta1": 0.8974,
+          "p_low_at_target": 0.5864,
+          "brier_buried": 0.1825
+        },
+        {
+          "held_out_dms_id": "TPMT_HUMAN_Matreyek_2018",
+          "beta0": -0.8078,
+          "beta1": 0.9584,
+          "p_low_at_target": 0.6632,
+          "brier_buried": 0.2768
+        },
+        {
+          "held_out_dms_id": "VKOR1_HUMAN_Chiasson_2020_abundance",
+          "beta0": -1.0661,
+          "beta1": 0.9438,
+          "p_low_at_target": 0.5979,
+          "brier_buried": 0.2118
+        }
+      ],
+      "random_intercept": {
+        "beta1": 1.0687,
+        "mu_alpha": -1.1494,
+        "tau_alpha": 0.817,
+        "population_median_p": 0.6241,
+        "empirical_median_p": 0.6941,
+        "empirical_iqr_p": [
+          0.5116,
+          0.7366
+        ],
+        "empirical_range_p": [
+          0.295,
+          0.8097
+        ],
+        "per_protein_p": [
+          0.725,
+          0.4442,
+          0.5791,
+          0.8097,
+          0.7482,
+          0.295,
+          0.6941
+        ],
+        "new_protein_predictive_ci95": [
+          0.2284,
+          0.8826
+        ]
+      }
+    }
+  },
+  "calibration_at_1_55": {
+    "target_ddg_kcal_mol": 1.55,
+    "beta0": -0.7913,
+    "beta1": 0.9146,
+    "p_low_abundance": 0.6517,
+    "cluster_bootstrap_ci95": [
+      0.5531,
+      0.7349
+    ],
+    "lopo_median_p": 0.6456,
+    "lopo_range_p": [
+      0.6334,
+      0.6878
+    ],
+    "lopo_mean_brier": 0.2043,
+    "lopo_median_brier": 0.2051,
+    "lopo_folds": [
+      {
+        "held_out_dms_id": "CP2C9_HUMAN_Amorosi_2021_abundance",
+        "beta0": -0.7981,
+        "beta1": 0.8984,
+        "p_low_at_target": 0.6444,
+        "brier_buried": 0.183
+      },
+      {
+        "held_out_dms_id": "HXK4_HUMAN_Gersing_2023_abundance",
+        "beta0": -0.7151,
+        "beta1": 0.9258,
+        "p_low_at_target": 0.6726,
+        "brier_buried": 0.2479
+      },
+      {
+        "held_out_dms_id": "KCNJ2_MOUSE_Coyote-Maestas_2022_surface",
+        "beta0": -0.8395,
+        "beta1": 0.9511,
+        "p_low_at_target": 0.6535,
+        "brier_buried": 0.2251
+      },
+      {
+        "held_out_dms_id": "NUD15_HUMAN_Suiter_2020",
+        "beta0": -0.7399,
+        "beta1": 0.9015,
+        "p_low_at_target": 0.6587,
+        "brier_buried": 0.2051
+      },
+      {
+        "held_out_dms_id": "OPSD_HUMAN_Wan_2019",
+        "beta0": -0.7872,
+        "beta1": 0.8926,
+        "p_low_at_target": 0.6448,
+        "brier_buried": 0.1819
+      },
+      {
+        "held_out_dms_id": "PRKN_HUMAN_Clausen_2023",
+        "beta0": -0.8745,
+        "beta1": 0.927,
+        "p_low_at_target": 0.637,
+        "brier_buried": 0.1855
+      },
+      {
+        "held_out_dms_id": "PTEN_HUMAN_Matreyek_2021",
+        "beta0": -0.8072,
+        "beta1": 0.897,
+        "p_low_at_target": 0.6418,
+        "brier_buried": 0.1719
+      },
+      {
+        "held_out_dms_id": "Q53Z42_HUMAN_McShan_2019_expression",
+        "beta0": -0.8903,
+        "beta1": 0.9613,
+        "p_low_at_target": 0.6456,
+        "brier_buried": 0.2167
+      },
+      {
+        "held_out_dms_id": "SPIKE_SARS2_Starr_2020_expression",
+        "beta0": -0.7905,
+        "beta1": 0.8629,
+        "p_low_at_target": 0.6334,
+        "brier_buried": 0.1307
+      },
+      {
+        "held_out_dms_id": "TPMT_HUMAN_Matreyek_2018",
+        "beta0": -0.6654,
+        "beta1": 0.9389,
+        "p_low_at_target": 0.6878,
+        "brier_buried": 0.2928
+      },
+      {
+        "held_out_dms_id": "VKOR1_HUMAN_Chiasson_2020_abundance",
+        "beta0": -0.8077,
+        "beta1": 0.9173,
+        "p_low_at_target": 0.6489,
+        "brier_buried": 0.2063
+      }
+    ],
+    "random_intercept": {
+      "beta1": 1.0013,
+      "mu_alpha": -0.8643,
+      "tau_alpha": 0.7048,
+      "population_median_p": 0.6654,
+      "empirical_median_p": 0.7127,
+      "empirical_iqr_p": [
+        0.6162,
+        0.7423
+      ],
+      "empirical_range_p": [
+        0.2983,
+        0.8207
+      ],
+      "per_protein_p": [
+        0.7198,
+        0.4452,
+        0.6565,
+        0.5758,
+        0.7127,
+        0.8035,
+        0.7451,
+        0.7395,
+        0.8207,
+        0.2983,
+        0.6875
+      ],
+      "new_protein_predictive_ci95": [
+        0.3099,
+        0.8788
+      ]
+    }
+  },
+  "per_protein": [
+    {
+      "dms_id": "CP2C9_HUMAN_Amorosi_2021_abundance",
+      "uniprot": "P11712",
+      "gene": "CYP2C9",
+      "assay_kind": "VAMP-seq",
+      "intracellular_abundance": true,
+      "n_all": 6370,
+      "n_buried": 3092,
+      "n_buried_low": 2045,
+      "n_buried_wt": 1047,
+      "auroc_buried": 0.7732,
+      "auroc_buried_ci95": [
+        0.7566,
+        0.7905
+      ],
+      "auroc_all": 0.7928,
+      "auroc_all_ci95": [
+        0.7814,
+        0.8038
+      ],
+      "spearman_buried": 0.579,
+      "spearman_all": 0.5809,
+      "single_protein_p_at_1_55": 0.7317
+    },
+    {
+      "dms_id": "HXK4_HUMAN_Gersing_2023_abundance",
+      "uniprot": "P35557",
+      "gene": "GCK",
+      "assay_kind": "DHFR-PCA abundance",
+      "intracellular_abundance": true,
+      "n_all": 8396,
+      "n_buried": 4211,
+      "n_buried_low": 1896,
+      "n_buried_wt": 2315,
+      "auroc_buried": 0.7365,
+      "auroc_buried_ci95": [
+        0.7216,
+        0.7506
+      ],
+      "auroc_all": 0.7471,
+      "auroc_all_ci95": [
+        0.7359,
+        0.7593
+      ],
+      "spearman_buried": 0.4535,
+      "spearman_all": 0.4085,
+      "single_protein_p_at_1_55": 0.4446
+    },
+    {
+      "dms_id": "KCNJ2_MOUSE_Coyote-Maestas_2022_surface",
+      "uniprot": "P35561",
+      "gene": "Kcnj2",
+      "assay_kind": "surface FACS",
+      "intracellular_abundance": false,
+      "n_all": 6917,
+      "n_buried": 1921,
+      "n_buried_low": 1209,
+      "n_buried_wt": 712,
+      "auroc_buried": 0.6543,
+      "auroc_buried_ci95": [
+        0.6313,
+        0.6785
+      ],
+      "auroc_all": 0.6034,
+      "auroc_all_ci95": [
+        0.5908,
+        0.6171
+      ],
+      "spearman_buried": 0.3485,
+      "spearman_all": 0.2687,
+      "single_protein_p_at_1_55": 0.6396
+    },
+    {
+      "dms_id": "NUD15_HUMAN_Suiter_2020",
+      "uniprot": "Q9NV35",
+      "gene": "NUDT15",
+      "assay_kind": "VAMP-seq",
+      "intracellular_abundance": true,
+      "n_all": 2844,
+      "n_buried": 1221,
+      "n_buried_low": 652,
+      "n_buried_wt": 569,
+      "auroc_buried": 0.7689,
+      "auroc_buried_ci95": [
+        0.7421,
+        0.7944
+      ],
+      "auroc_all": 0.8026,
+      "auroc_all_ci95": [
+        0.7833,
+        0.8215
+      ],
+      "spearman_buried": 0.4915,
+      "spearman_all": 0.5351,
+      "single_protein_p_at_1_55": 0.5768
+    },
+    {
+      "dms_id": "OPSD_HUMAN_Wan_2019",
+      "uniprot": "P08100",
+      "gene": "RHO",
+      "assay_kind": "surface expression",
+      "intracellular_abundance": false,
+      "n_all": 165,
+      "n_buried": 99,
+      "n_buried_low": 65,
+      "n_buried_wt": 34,
+      "auroc_buried": 0.7783,
+      "auroc_buried_ci95": [
+        0.6787,
+        0.8742
+      ],
+      "auroc_all": 0.8194,
+      "auroc_all_ci95": [
+        0.7542,
+        0.8789
+      ],
+      "spearman_buried": 0.4091,
+      "spearman_all": 0.5847,
+      "single_protein_p_at_1_55": 0.7344
+    },
+    {
+      "dms_id": "PRKN_HUMAN_Clausen_2023",
+      "uniprot": "O60260",
+      "gene": "PRKN",
+      "assay_kind": "GFP stability/abundance",
+      "intracellular_abundance": true,
+      "n_all": 8756,
+      "n_buried": 1705,
+      "n_buried_low": 1262,
+      "n_buried_wt": 443,
+      "auroc_buried": 0.7559,
+      "auroc_buried_ci95": [
+        0.7318,
+        0.7791
+      ],
+      "auroc_all": 0.81,
+      "auroc_all_ci95": [
+        0.8006,
+        0.82
+      ],
+      "spearman_buried": 0.3596,
+      "spearman_all": 0.5686,
+      "single_protein_p_at_1_55": 0.8013
+    },
+    {
+      "dms_id": "PTEN_HUMAN_Matreyek_2021",
+      "uniprot": "P60484",
+      "gene": "PTEN",
+      "assay_kind": "VAMP-seq",
+      "intracellular_abundance": true,
+      "n_all": 5083,
+      "n_buried": 2087,
+      "n_buried_low": 1525,
+      "n_buried_wt": 562,
+      "auroc_buried": 0.7588,
+      "auroc_buried_ci95": [
+        0.7358,
+        0.7799
+      ],
+      "auroc_all": 0.7537,
+      "auroc_all_ci95": [
+        0.7406,
+        0.7672
+      ],
+      "spearman_buried": 0.4903,
+      "spearman_all": 0.5229,
+      "single_protein_p_at_1_55": 0.7491
+    },
+    {
+      "dms_id": "Q53Z42_HUMAN_McShan_2019_expression",
+      "uniprot": "Q53Z42",
+      "gene": "HLA-A",
+      "assay_kind": "surface FACS",
+      "intracellular_abundance": false,
+      "n_all": 3344,
+      "n_buried": 1439,
+      "n_buried_low": 955,
+      "n_buried_wt": 484,
+      "auroc_buried": 0.6735,
+      "auroc_buried_ci95": [
+        0.6435,
+        0.7044
+      ],
+      "auroc_all": 0.7196,
+      "auroc_all_ci95": [
+        0.7017,
+        0.7375
+      ],
+      "spearman_buried": 0.3057,
+      "spearman_all": 0.4384,
+      "single_protein_p_at_1_55": 0.7037
+    },
+    {
+      "dms_id": "SPIKE_SARS2_Starr_2020_expression",
+      "uniprot": "P0DTC2",
+      "gene": "S",
+      "assay_kind": "yeast surface display",
+      "intracellular_abundance": false,
+      "n_all": 3798,
+      "n_buried": 242,
+      "n_buried_low": 200,
+      "n_buried_wt": 42,
+      "auroc_buried": 0.8483,
+      "auroc_buried_ci95": [
+        0.7794,
+        0.9091
+      ],
+      "auroc_all": 0.7935,
+      "auroc_all_ci95": [
+        0.7794,
+        0.8079
+      ],
+      "spearman_buried": 0.6225,
+      "spearman_all": 0.5605,
+      "single_protein_p_at_1_55": 0.8508
+    },
+    {
+      "dms_id": "TPMT_HUMAN_Matreyek_2018",
+      "uniprot": "P51580",
+      "gene": "TPMT",
+      "assay_kind": "VAMP-seq",
+      "intracellular_abundance": true,
+      "n_all": 3648,
+      "n_buried": 1772,
+      "n_buried_low": 571,
+      "n_buried_wt": 1201,
+      "auroc_buried": 0.7819,
+      "auroc_buried_ci95": [
+        0.7588,
+        0.8041
+      ],
+      "auroc_all": 0.8193,
+      "auroc_all_ci95": [
+        0.8008,
+        0.8362
+      ],
+      "spearman_buried": 0.4982,
+      "spearman_all": 0.5122,
+      "single_protein_p_at_1_55": 0.2784
+    },
+    {
+      "dms_id": "VKOR1_HUMAN_Chiasson_2020_abundance",
+      "uniprot": "Q9BQB6",
+      "gene": "VKORC1",
+      "assay_kind": "VAMP-seq",
+      "intracellular_abundance": true,
+      "n_all": 2695,
+      "n_buried": 1036,
+      "n_buried_low": 619,
+      "n_buried_wt": 417,
+      "auroc_buried": 0.7198,
+      "auroc_buried_ci95": [
+        0.6885,
+        0.751
+      ],
+      "auroc_all": 0.7413,
+      "auroc_all_ci95": [
+        0.7219,
+        0.7603
+      ],
+      "spearman_buried": 0.4119,
+      "spearman_all": 0.466,
+      "single_protein_p_at_1_55": 0.6799
+    }
+  ],
+  "bub1b_zero_refit_transfer": {
+    "n_alleles": 8,
+    "auroc_all_8": 0.6,
+    "post_hoc_auroc_without_y155c": 0.8,
+    "external_brier_all_8": 0.2107,
+    "alleles": [
+      {
+        "change": "I909T",
+        "label": "abundance-lowering",
+        "y": 1,
+        "ddg": 1.941,
+        "rsa": 0.023,
+        "plddt": 87.0,
+        "region": "Protein kinase",
+        "external_p_low_abundance": 0.7279
+      },
+      {
+        "change": "R727C",
+        "label": "abundance-lowering",
+        "y": 1,
+        "ddg": 0.911,
+        "rsa": 0.06,
+        "plddt": 88.5,
+        "region": "none annotated",
+        "external_p_low_abundance": 0.5105
+      },
+      {
+        "change": "R814H",
+        "label": "abundance-lowering",
+        "y": 1,
+        "ddg": 0.857,
+        "rsa": 0.165,
+        "plddt": 90.2,
+        "region": "Protein kinase",
+        "external_p_low_abundance": 0.4982
+      },
+      {
+        "change": "L844F",
+        "label": "abundance-lowering",
+        "y": 1,
+        "ddg": 1.513,
+        "rsa": 0.006,
+        "plddt": 85.9,
+        "region": "Protein kinase",
+        "external_p_low_abundance": 0.6439
+      },
+      {
+        "change": "L1012P",
+        "label": "abundance-lowering",
+        "y": 1,
+        "ddg": 3.105,
+        "rsa": 0.006,
+        "plddt": 95.3,
+        "region": "Protein kinase",
+        "external_p_low_abundance": 0.8858
+      },
+      {
+        "change": "Y155C",
+        "label": "stable",
+        "y": 0,
+        "ddg": 2.225,
+        "rsa": 0.004,
+        "plddt": 96.3,
+        "region": "BUB1 N-terminal",
+        "external_p_low_abundance": 0.7762
+      },
+      {
+        "change": "R550Q",
+        "label": "stable",
+        "y": 0,
+        "ddg": 0.039,
+        "rsa": 0.801,
+        "plddt": 35.3,
+        "region": "none annotated",
+        "external_p_low_abundance": 0.3195
+      },
+      {
+        "change": "Q921H",
+        "label": "stable",
+        "y": 0,
+        "ddg": 0.976,
+        "rsa": 0.026,
+        "plddt": 83.2,
+        "region": "Protein kinase",
+        "external_p_low_abundance": 0.5254
+      }
+    ]
+  },
+  "gate": {
+    "gate": "B",
+    "gate_a_informative": false,
+    "verdict": "Gate B (Predictor works, patient uncertain): median buried AUROC >= 0.70 with CI lower bound > 0.55, but the new-protein predictive 95% interval at +1.55 kcal/mol [0.31, 0.88] includes 0.50. The 55/45 prior is kept; the CHX-chase blot decides."
+  },
+  "decision_model_consequence": {
+    "r5_hierarchy_calibrated": {
+      "pre_calibration_weight_0_55": {
+        "p_unstable": 0.55,
+        "best_action": "NMN",
+        "eu_baseline": 0.264,
+        "evpi": 0.18,
+        "evsi_blot": 0.1245,
+        "evsi_share_of_evpi": 0.6914,
+        "positive_p_unstable": 0.8738,
+        "negative_p_unstable": 0.1774,
+        "positive_action": "NMN",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "calibrated_point": {
+        "p_unstable": 0.6517,
+        "best_action": "NMN",
+        "eu_baseline": 0.3128,
+        "evpi": 0.1393,
+        "evsi_blot": 0.0846,
+        "evsi_share_of_evpi": 0.6072,
+        "positive_p_unstable": 0.9138,
+        "negative_p_unstable": 0.2482,
+        "positive_action": "NMN",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "calibrated_lopo_median": {
+        "p_unstable": 0.6456,
+        "best_action": "NMN",
+        "eu_baseline": 0.3099,
+        "evpi": 0.1418,
+        "evsi_blot": 0.087,
+        "evsi_share_of_evpi": 0.6136,
+        "positive_p_unstable": 0.9117,
+        "negative_p_unstable": 0.2433,
+        "positive_action": "NMN",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "calibrated_ci95_low": {
+        "p_unstable": 0.5531,
+        "best_action": "NMN",
+        "eu_baseline": 0.2655,
+        "evpi": 0.1788,
+        "evsi_blot": 0.1232,
+        "evsi_share_of_evpi": 0.6894,
+        "positive_p_unstable": 0.8752,
+        "negative_p_unstable": 0.1793,
+        "positive_action": "NMN",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "calibrated_ci95_high": {
+        "p_unstable": 0.7349,
+        "best_action": "NMN",
+        "eu_baseline": 0.3528,
+        "evpi": 0.106,
+        "evsi_blot": 0.052,
+        "evsi_share_of_evpi": 0.4903,
+        "positive_p_unstable": 0.9402,
+        "negative_p_unstable": 0.3285,
+        "positive_action": "NMN",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "random_intercept_iqr_low": {
+        "p_unstable": 0.6162,
+        "best_action": "NMN",
+        "eu_baseline": 0.2958,
+        "evpi": 0.1535,
+        "evsi_blot": 0.0985,
+        "evsi_share_of_evpi": 0.6417,
+        "positive_p_unstable": 0.901,
+        "negative_p_unstable": 0.2208,
+        "positive_action": "NMN",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "random_intercept_median": {
+        "p_unstable": 0.7127,
+        "best_action": "NMN",
+        "eu_baseline": 0.3421,
+        "evpi": 0.1149,
+        "evsi_blot": 0.0607,
+        "evsi_share_of_evpi": 0.5281,
+        "positive_p_unstable": 0.9336,
+        "negative_p_unstable": 0.3045,
+        "positive_action": "NMN",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "random_intercept_iqr_high": {
+        "p_unstable": 0.7423,
+        "best_action": "NMN",
+        "eu_baseline": 0.3563,
+        "evpi": 0.1031,
+        "evsi_blot": 0.0491,
+        "evsi_share_of_evpi": 0.4763,
+        "positive_p_unstable": 0.9423,
+        "negative_p_unstable": 0.337,
+        "positive_action": "NMN",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "new_protein_pred_low": {
+        "p_unstable": 0.3099,
+        "best_action": "DASATINIB",
+        "eu_baseline": 0.3176,
+        "evpi": 0.1072,
+        "evsi_blot": 0.0497,
+        "evsi_share_of_evpi": 0.4638,
+        "positive_p_unstable": 0.7179,
+        "negative_p_unstable": 0.0734,
+        "positive_action": "NMN",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "new_protein_pred_high": {
+        "p_unstable": 0.8788,
+        "best_action": "NMN",
+        "eu_baseline": 0.4218,
+        "evpi": 0.0485,
+        "evsi_blot": 0.0,
+        "evsi_share_of_evpi": 0.0,
+        "positive_p_unstable": 0.9762,
+        "negative_p_unstable": 0.5613,
+        "positive_action": "NMN",
+        "negative_action": "NMN",
+        "assay_changes_recommendation": false
+      }
+    },
+    "r4_uncalibrated": {
+      "pre_calibration_weight_0_55": {
+        "p_unstable": 0.55,
+        "best_action": "GLICLAZIDE",
+        "eu_baseline": 0.385,
+        "evpi": 0.18,
+        "evsi_blot": 0.1063,
+        "evsi_share_of_evpi": 0.5906,
+        "positive_p_unstable": 0.8738,
+        "negative_p_unstable": 0.1774,
+        "positive_action": "GLICLAZIDE",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "calibrated_point": {
+        "p_unstable": 0.6517,
+        "best_action": "GLICLAZIDE",
+        "eu_baseline": 0.4562,
+        "evpi": 0.1393,
+        "evsi_blot": 0.0631,
+        "evsi_share_of_evpi": 0.4529,
+        "positive_p_unstable": 0.9138,
+        "negative_p_unstable": 0.2482,
+        "positive_action": "GLICLAZIDE",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "calibrated_lopo_median": {
+        "p_unstable": 0.6456,
+        "best_action": "GLICLAZIDE",
+        "eu_baseline": 0.4519,
+        "evpi": 0.1418,
+        "evsi_blot": 0.0657,
+        "evsi_share_of_evpi": 0.4634,
+        "positive_p_unstable": 0.9117,
+        "negative_p_unstable": 0.2433,
+        "positive_action": "GLICLAZIDE",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "calibrated_ci95_low": {
+        "p_unstable": 0.5531,
+        "best_action": "GLICLAZIDE",
+        "eu_baseline": 0.3872,
+        "evpi": 0.1788,
+        "evsi_blot": 0.105,
+        "evsi_share_of_evpi": 0.5873,
+        "positive_p_unstable": 0.8752,
+        "negative_p_unstable": 0.1793,
+        "positive_action": "GLICLAZIDE",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "calibrated_ci95_high": {
+        "p_unstable": 0.7349,
+        "best_action": "GLICLAZIDE",
+        "eu_baseline": 0.5144,
+        "evpi": 0.106,
+        "evsi_blot": 0.0277,
+        "evsi_share_of_evpi": 0.2616,
+        "positive_p_unstable": 0.9402,
+        "negative_p_unstable": 0.3285,
+        "positive_action": "GLICLAZIDE",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "random_intercept_iqr_low": {
+        "p_unstable": 0.6162,
+        "best_action": "GLICLAZIDE",
+        "eu_baseline": 0.4313,
+        "evpi": 0.1535,
+        "evsi_blot": 0.0782,
+        "evsi_share_of_evpi": 0.5092,
+        "positive_p_unstable": 0.901,
+        "negative_p_unstable": 0.2208,
+        "positive_action": "GLICLAZIDE",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "random_intercept_median": {
+        "p_unstable": 0.7127,
+        "best_action": "GLICLAZIDE",
+        "eu_baseline": 0.4989,
+        "evpi": 0.1149,
+        "evsi_blot": 0.0372,
+        "evsi_share_of_evpi": 0.3235,
+        "positive_p_unstable": 0.9336,
+        "negative_p_unstable": 0.3045,
+        "positive_action": "GLICLAZIDE",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "random_intercept_iqr_high": {
+        "p_unstable": 0.7423,
+        "best_action": "GLICLAZIDE",
+        "eu_baseline": 0.5196,
+        "evpi": 0.1031,
+        "evsi_blot": 0.0246,
+        "evsi_share_of_evpi": 0.2386,
+        "positive_p_unstable": 0.9423,
+        "negative_p_unstable": 0.337,
+        "positive_action": "GLICLAZIDE",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "new_protein_pred_low": {
+        "p_unstable": 0.3099,
+        "best_action": "DASATINIB",
+        "eu_baseline": 0.3176,
+        "evpi": 0.1754,
+        "evsi_blot": 0.1077,
+        "evsi_share_of_evpi": 0.6139,
+        "positive_p_unstable": 0.7179,
+        "negative_p_unstable": 0.0734,
+        "positive_action": "GLICLAZIDE",
+        "negative_action": "DASATINIB",
+        "assay_changes_recommendation": true
+      },
+      "new_protein_pred_high": {
+        "p_unstable": 0.8788,
+        "best_action": "GLICLAZIDE",
+        "eu_baseline": 0.6152,
+        "evpi": 0.0485,
+        "evsi_blot": 0.0,
+        "evsi_share_of_evpi": 0.0,
+        "positive_p_unstable": 0.9762,
+        "negative_p_unstable": 0.5613,
+        "positive_action": "GLICLAZIDE",
+        "negative_action": "GLICLAZIDE",
+        "assay_changes_recommendation": false
+      }
+    }
+  }
+}

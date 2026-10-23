@@ -1,0 +1,23 @@
+{
+  "name": "abundance_calibration_figure",
+  "built_at": "2026-10-22T19:08:52+00:00",
+  "built_by": "tools/abundance_calibration.py evaluate",
+  "code_version": "da2d3c5",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "inputs": [
+    {
+      "name": "abundance calibration evaluation",
+      "path": "ressources/track2/it6/abundance_calibration/evaluation.json",
+      "sha256": "46a04205d5456243f5fa29364eb36db7bacdadb7aa0233231d0bc4be80fd171c",
+      "role": "per-protein buried AUROCs and logistic calibration curve"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "figures/it6/abundance-calibration.svg",
+      "sha256": "247eee8b0b2c2f609dd33cabb46ffb6628caf6c77055445992803f6e5ae69086",
+      "bytes": 22381,
+      "rows": 1
+    }
+  ]
+}

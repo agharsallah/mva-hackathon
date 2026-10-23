@@ -1,0 +1,109 @@
+{
+  "protocol": {
+    "path": "ressources/track2/it6/abundance_calibration/protocol.md",
+    "sha256": "3049d986754d820f1d29775c28adac2eaff482771f834620b4902ac16201ed3d"
+  },
+  "thermompnn_version": "370f76ec62bd",
+  "thermompnn_gpu": "T4",
+  "surviving_proteins": [
+    {
+      "dms_id": "CP2C9_HUMAN_Amorosi_2021_abundance",
+      "uniprot": "P11712",
+      "gene": "CYP2C9",
+      "assay_kind": "VAMP-seq",
+      "n_all": 6370,
+      "n_buried": 3092,
+      "thermompnn_tsv_sha256": "12d6e9be1235c8e3df32ac2f1fe54f9deac665c4f1b3c1c64173ddd65d56ed6f"
+    },
+    {
+      "dms_id": "HXK4_HUMAN_Gersing_2023_abundance",
+      "uniprot": "P35557",
+      "gene": "GCK",
+      "assay_kind": "DHFR-PCA abundance",
+      "n_all": 8396,
+      "n_buried": 4211,
+      "thermompnn_tsv_sha256": "e7bc6050f27dc19aa2ab56d0f7f4f91201f0f02e02a5bdcefd5ef4753cde5673"
+    },
+    {
+      "dms_id": "KCNJ2_MOUSE_Coyote-Maestas_2022_surface",
+      "uniprot": "P35561",
+      "gene": "Kcnj2",
+      "assay_kind": "surface FACS",
+      "n_all": 6917,
+      "n_buried": 1921,
+      "thermompnn_tsv_sha256": "e8904fbb1b98673efe8064ecdfd32c4ecc368b6bbace51487666419d29bd650d"
+    },
+    {
+      "dms_id": "NUD15_HUMAN_Suiter_2020",
+      "uniprot": "Q9NV35",
+      "gene": "NUDT15",
+      "assay_kind": "VAMP-seq",
+      "n_all": 2844,
+      "n_buried": 1221,
+      "thermompnn_tsv_sha256": "47ab9d107af26ca06a31126932ed3d2228a814978a8073fb5bdfa130ead21aa7"
+    },
+    {
+      "dms_id": "OPSD_HUMAN_Wan_2019",
+      "uniprot": "P08100",
+      "gene": "RHO",
+      "assay_kind": "surface expression",
+      "n_all": 165,
+      "n_buried": 99,
+      "thermompnn_tsv_sha256": "ec8997b5feeb168dc6b74daf50d9de4d225d83615dc0eb0fb5a3c044f70c5565"
+    },
+    {
+      "dms_id": "PRKN_HUMAN_Clausen_2023",
+      "uniprot": "O60260",
+      "gene": "PRKN",
+      "assay_kind": "GFP stability/abundance",
+      "n_all": 8756,
+      "n_buried": 1705,
+      "thermompnn_tsv_sha256": "46c45b95f1354e0458cdd5a99c2c64d57539e19771b1079aa293bf8f28e1105f"
+    },
+    {
+      "dms_id": "PTEN_HUMAN_Matreyek_2021",
+      "uniprot": "P60484",
+      "gene": "PTEN",
+      "assay_kind": "VAMP-seq",
+      "n_all": 5083,
+      "n_buried": 2087,
+      "thermompnn_tsv_sha256": "0b2bf1de5ae2dc0b39f5bbbcd3b931b725f3eb451cf26507146d323f884a7d2d"
+    },
+    {
+      "dms_id": "Q53Z42_HUMAN_McShan_2019_expression",
+      "uniprot": "Q53Z42",
+      "gene": "HLA-A",
+      "assay_kind": "surface FACS",
+      "n_all": 3344,
+      "n_buried": 1439,
+      "thermompnn_tsv_sha256": "a6a30ce6c765b672a1c63be8e88749acc2c2dd07819c0ee6eac6ce12147bb76f"
+    },
+    {
+      "dms_id": "SPIKE_SARS2_Starr_2020_expression",
+      "uniprot": "P0DTC2",
+      "gene": "S",
+      "assay_kind": "yeast surface display",
+      "n_all": 3798,
+      "n_buried": 242,
+      "thermompnn_tsv_sha256": "15fe51a86b4113206780e42d88bdd1673d33cb7f63c273f22ff08ffe7bda5636"
+    },
+    {
+      "dms_id": "TPMT_HUMAN_Matreyek_2018",
+      "uniprot": "P51580",
+      "gene": "TPMT",
+      "assay_kind": "VAMP-seq",
+      "n_all": 3648,
+      "n_buried": 1772,
+      "thermompnn_tsv_sha256": "a04968372fad02717c9e0e23d9fabac4ca5441378af58a4d8819dc6a15f6732b"
+    },
+    {
+      "dms_id": "VKOR1_HUMAN_Chiasson_2020_abundance",
+      "uniprot": "Q9BQB6",
+      "gene": "VKORC1",
+      "assay_kind": "VAMP-seq",
+      "n_all": 2695,
+      "n_buried": 1036,
+      "thermompnn_tsv_sha256": "82453d4fa3dadb915d4ab7b386b3890965742e46762e86346c71e2c8facf86c7"
+    }
+  ]
+}

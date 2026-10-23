@@ -1,0 +1,53 @@
+{
+  "name": "abundance_calibration",
+  "built_at": "2026-10-22T19:08:52+00:00",
+  "built_by": "tools/abundance_calibration.py evaluate",
+  "code_version": "da2d3c5",
+  "code_version_note": "the commit at build time, which precedes the commit that lands this file",
+  "protocol": {
+    "path": "ressources/track2/it6/abundance_calibration/protocol.md",
+    "sha256": "3049d986754d820f1d29775c28adac2eaff482771f834620b4902ac16201ed3d"
+  },
+  "method": "ThermoMPNN \u0394\u0394G evaluated on 11 sequence-matched, split-disjoint ProteinGym v1 Expression DMS proteins within buried high-confidence residues (RSA < 0.20, pLDDT >= 90); protein-equally-weighted logistic calibration at +1.55 kcal/mol with LOPO cross-validation, cluster bootstrap, and random-intercept intervals.",
+  "inputs": [
+    {
+      "name": "Frozen calibration protocol",
+      "path": "ressources/track2/it6/abundance_calibration/protocol.md",
+      "sha256": "3049d986754d820f1d29775c28adac2eaff482771f834620b4902ac16201ed3d",
+      "role": "pre-registered selection rules, stratum, and endpoints"
+    },
+    {
+      "name": "BUB1B variant atlas",
+      "path": "ressources/track2/bub1b_atlas.parquet",
+      "sha256": "54298e34e3ec9f87e3b15772eb703e7468476432a8aa152667873a4a7e95cb1f",
+      "role": "zero-refit transfer target"
+    },
+    {
+      "name": "BUB1B published allele labels",
+      "path": "ressources/track2/bub1b_published_alleles.tsv",
+      "sha256": "dc255602c3eb4a53933df6fc23952f094dc0249115001bfdbdf2c450a1532bbe",
+      "role": "8 primary MVA alleles (PMID 20516114)"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "ressources/track2/it6/abundance_calibration/scores.parquet",
+      "sha256": "9327cf001b58b6f40293676e44d68ac5625c0e1e71857052ffaed1366970f590",
+      "bytes": 675240,
+      "rows": 52016
+    },
+    {
+      "path": "ressources/track2/it6/abundance_calibration/evaluation.json",
+      "sha256": "46a04205d5456243f5fa29364eb36db7bacdadb7aa0233231d0bc4be80fd171c",
+      "bytes": 23827,
+      "rows": 1
+    },
+    {
+      "path": "ressources/track2/it6/abundance_calibration/manifest.json",
+      "sha256": "09681660857b238cdc3e32651be6fb4b8d96947c19578eb0c17744ce479dcfd6",
+      "bytes": 3476,
+      "rows": 1
+    }
+  ],
+  "patient_data": "none: evaluates public DMS assays and the public reference value +1.55 kcal/mol."
+}
