@@ -1,0 +1,11 @@
+{
+  "source_url": "https://static-content.springer.com/esm/art%3A10.1038%2Fs41587-024-02218-y/MediaObjects/41587_2024_2218_MOESM2_ESM.xlsx",
+  "citation": "https://doi.org/10.1038/s41587-024-02218-y",
+  "pmid": "38714896",
+  "sheet": "Table S1 - Cpd info",
+  "source_sha256": "ef30d2fd91783e9cd23ca9a592c6e679912ea551a17b20a257cc23fef47db956",
+  "source_bytes": 90702616,
+  "rows": 144,
+  "extraction": "openpyxl read_only=True,data_only=True; exact sheet cell values to TSV",
+  "large_workbook_retained": false
+}

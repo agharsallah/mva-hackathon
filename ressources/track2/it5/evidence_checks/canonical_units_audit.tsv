@@ -1,0 +1,3 @@
+compound	raw_log2fc	raw_fold_change	proliferation_score	residual	robust_z	rank	sensitivity_z	sensitivity_rank	unsupported_narrative_value	unsupported_value_is_demonstrated_EB_z
+Gliclazide	0.22	1.1647335864684558	0.04	0.1953	3.591	20	3.149	19	1.47	False
+Migalastat	0.2	1.148698354997035	0.03	0.1866	3.416	23	3.239	17	1.44	False

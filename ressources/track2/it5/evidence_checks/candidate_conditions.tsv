@@ -1,0 +1,3 @@
+dataset	compound	cell	dose_uM	time_h	published_summary_columns	independent_replicates_recoverable	raw_BUB1B_log2FC	raw_BUB1B_fold_change	additional_dose_time_conditions	citation
+Mitchell 2023	Gliclazide	HCT116	10	24	1	not resolved in summary	0.22	1.1647335864684558	0	https://doi.org/10.1038/s41587-022-01539-0
+Mitchell 2023	Migalastat	HCT116	10	24	1	not resolved in summary	0.2	1.148698354997035	0	https://doi.org/10.1038/s41587-022-01539-0

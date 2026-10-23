@@ -1,0 +1,88 @@
+{
+  "scope": "Bounded cached primary evidence, not a systematic literature review",
+  "assumptions": [
+    "Run from repository root with existing public caches and project uv environment",
+    "Existing primary labels and their assay-context classifications are preserved",
+    "Mitchell CSV first two columns are gene and accession; remaining columns are compounds",
+    "Candidate workbook search uses case-insensitive literal gliclazide/migalastat names",
+    "decryptE full compound and listed-alias inventory is searched, not protein measurements",
+    "One summary column does not establish biological replicate count",
+    "Drug target annotations, inhibition and association are not demonstrated BUB1B abundance rescue",
+    "No comparable-domain panel was validated; this is not an exhaustive negative search"
+  ],
+  "primary_labels": {
+    "abundance-lowering": 5,
+    "stable": 3
+  },
+  "primary_n": 8,
+  "extended_stable_n": 1,
+  "ambiguous_excluded_n": 2,
+  "new_validated_independent_abundance_labels": 0,
+  "new_validated_comparable_domain_labels": 0,
+  "raw_ddg_AUROC_primary": 0.6,
+  "reported_bootstrap95": [
+    0.13333333333333333,
+    1.0
+  ],
+  "calibrated_measured_prior_available": false,
+  "mitchell_compound_columns": 875,
+  "candidate_additional_dose_time_conditions": 0,
+  "independent_Saei_BUB1B_columns": 81,
+  "independent_Saei_drugs": 9,
+  "independent_Saei_cell_lines": 3,
+  "independent_Saei_replicates_per_drug_cell": 3,
+  "Saei_candidate_overlap": 0,
+  "decryptE_drugs": 144,
+  "decryptE_candidate_overlap": 0,
+  "conclusion": "No validated expansion; candidate protein signals and stability inference remain exploratory",
+  "inputs": [
+    {
+      "path": "ressources/track2/bub1b_published_alleles.tsv",
+      "sha256": "dc255602c3eb4a53933df6fc23952f094dc0249115001bfdbdf2c450a1532bbe"
+    },
+    {
+      "path": "build/it5/r2/raw/mitchell/MOESM3.csv",
+      "sha256": "fc0e7385aa07e99daeed8398217b05dc2d38797b6bc758c48ef1b116711fb6bc"
+    },
+    {
+      "path": "ressources/track2/it5/proteome_hits.tsv",
+      "sha256": "09b032f0bc71620f80a1c0da6100164727d788194b1b9e4d5f5970925a4fd0dc"
+    },
+    {
+      "path": "build/it5/r2/raw/mitchell/MOESM4.xlsx",
+      "sha256": "4ad3888c86bd10aad934490be06346e0790559872425de7728e1e81b679c2bef"
+    },
+    {
+      "path": "build/it5/r2/raw/mitchell/MOESM5.xlsx",
+      "sha256": "c3a8098e3d10a58878552a2cf0a4f377d01b3957b63a2435a2543f1421cdb37e"
+    },
+    {
+      "path": "build/it5/r2/raw/mitchell/MOESM6.xlsx",
+      "sha256": "ea5d47ac72fd4937d59c7bf0b64d37c7e8f9c13787db2986c5ea1942a08e8c3a"
+    },
+    {
+      "path": "build/it5/r2/raw/mitchell/MOESM7.xlsx",
+      "sha256": "9ac59d32daa1436ae0cb926629246f93ea7e1d9d808f1f4a5dc2c1622dfac369"
+    },
+    {
+      "path": "build/it5/r2/raw/mitchell/MOESM8.xlsx",
+      "sha256": "7b37b3973d53813739dd102ad1a123f21bdf957beee5318e1bfa8145579f7cfb"
+    },
+    {
+      "path": "build/it5/r2/raw/ptm/MOESM7.xlsx",
+      "sha256": "27c7fc74fd0bd1644e7f88de0ca92677d7164dd2ba699bef9967a944360d2891"
+    },
+    {
+      "path": "build/it5/r2/raw/ptm/MOESM8.xlsx",
+      "sha256": "91d20df8cac9d8f2de60bbb3721c9bdac1739d604397033b4e231d7d676a169b"
+    },
+    {
+      "path": "build/it5/r2/raw/ptm/MOESM9.xlsx",
+      "sha256": "d3f3d8f39be3ab9742e3f903cae40d58be9cf3ceebc798526602e1e68149a839"
+    },
+    {
+      "path": "/Users/agharsallah/Desktop/git/mva-hackathon/ressources/track2/it5/evidence_checks/decryptE_compounds.tsv",
+      "sha256": "205f0b92a776eb74492549daa79f521567aa6f3fe75fe3c3002debc713d8f248"
+    }
+  ]
+}

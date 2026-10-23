@@ -1,0 +1,3 @@
+file	sheet	row_1based	compound	row_values_json
+build/it5/r2/raw/mitchell/MOESM4.xlsx	Sheet1	383	gliclazide	"[""Gliclazide"", ""KCNJ11"", ""NA"", ""O=C(NS(=O)(=O)c1ccc(cc1)C)NN1CC2C(C1)CCC2"", 323.13, ""C15H21N3O3S"", ""10uM""]"
+build/it5/r2/raw/mitchell/MOESM4.xlsx	Sheet1	487	migalastat	"[""Migalastat"", ""GLA"", ""NA"", ""O[C@H]1[C@@H](CO)NC[C@H](O)[C@H]1O.Cl"", 199.06, ""C6H14ClNO4"", ""10uM""]"
